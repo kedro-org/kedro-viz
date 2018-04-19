@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
-// import {
-//   forceSimulation,
-//   forceManyBody,
-//   forceCenter,
-//   forceX,
-//   forceLink,
-// } from 'd3-force';
+import {
+  forceSimulation,
+  forceManyBody,
+  forceCenter,
+  forceY,
+  forceLink,
+} from 'd3-force';
 import { select } from 'd3-selection';
 import { linkVertical } from 'd3-shape';
-import { scaleBand, scaleLinear } from 'd3-scale';
+import {
+  scaleBand,
+  scaleLinear,
+  scaleOrdinal,
+  scalePoint,
+} from 'd3-scale';
 import './flowchart.css';
 
 const getArray = n => Array.from(new Array(n)).map((d, i) => i);
@@ -31,6 +36,9 @@ class FlowChart extends Component {
     setChartHeight();
     // window.addEventListener('resize', setChartHeight);
 
+
+    // Generate data
+
     const bands_data = getArray(6);
 
     const nodes_data = getArray(30)
@@ -41,7 +49,7 @@ class FlowChart extends Component {
         level: getRandom(bands_data),
       }));
       
-    const links_data = getArray(20)
+    const links_data = getArray(30)
       .map((d, i) => {
         const source = getRandom(nodes_data);
         const target = getRandom(
@@ -52,32 +60,62 @@ class FlowChart extends Component {
         return { source, target };
       });
 
-    const xScale = scaleLinear()
-      .domain([0, 1])
-      .range([0, width]);
-    // const xScale = forceX()
-    //   .x(d => d.name);
 
-    const bandScale = scaleBand()
-      .domain(bands_data)
-      .range([0, height]);
+    // Create scales
+    const scale = {
+      x: scaleLinear()
+        .domain([0, 1])
+        .range([0, width]),
+  
+      y: scalePoint()
+        .padding(0.5)
+        .domain(bands_data)
+        .range([0, height]),
+  
+      link: linkVertical()
+        .x(d => d.x)
+        .y(d => d.y),
+        // .x(d => scale.x(d.x))
+        // .y(d => scale.y(d.name)),
+  
+      band: scaleBand()
+        .domain(bands_data)
+        .range([0, height]),
+  
+      colour: scaleOrdinal()
+        .domain(bands_data)
+        .range(bands_data.map((d, i) =>
+          `hsl(${i * (360 / bands_data.length)}, 50%, 50%)`
+        )),
+    };
 
-    const yScale = scaleBand()
-      .domain(nodes_data.map(d => d.name))
-      .range([0, height]);
+    
+    // Init force
 
-    const linkShape = linkVertical()
-      .x(d => xScale(d.x))
-      .y(d => yScale(d.name));
-
-    // const simulation = forceSimulation()
-    //   .nodes(nodes_data);
+    const simulation = forceSimulation()
+      .nodes(nodes_data);
 
     // add a charge to each node and a centering force
-    // simulation
-    //   .force('charge_force', forceManyBody())
-    //   .force('center_force', forceCenter(width / 2, height / 2));
+    simulation
+      .force('y', forceY().y(d => scale.y(d.level)))
+      .force('charge_force', forceManyBody())
+      .force('center_force', forceCenter(width / 2, height / 2));
+      
+    // add tick instructions: 
+    simulation.on('tick', tickActions);
 
+    // Create the link force 
+    // We need the id accessor to use named sources and targets 
+    const link_force = forceLink(links_data)
+      .id(function (d) { return d.name; })
+      .strength(() => 0.001);
+
+    // Add a links force to the simulation
+    // Specify links in d3.forceLink argument
+    simulation.force('links', link_force);
+
+
+    // Add objects to the DOM
 
     const bandRect = svg.append('g')
       .attr('class', 'bands')
@@ -85,41 +123,13 @@ class FlowChart extends Component {
       .data(bands_data)
       .enter()
       .append('rect')
-      .attr('fill', (d, i) => `hsl(${i * 50}, 70%, 90%)`)
+      .attr('fill', d => scale.colour(d))
+      .attr('fill-opacity', 0.4)
       .attr('x', 0)
       .attr('width', width)
-      .attr('height', bandScale.bandwidth())
-      .attr('y', d => bandScale(d));
+      .attr('height', scale.band.bandwidth())
+      .attr('y', d => scale.band(d));
 
-      
-    // add tick instructions: 
-    // simulation.on('tick', tickActions);
-
-    
-    // Create the link force 
-    // We need the id accessor to use named sources and targets 
-    // const link_force = forceLink(links_data)
-    //   .id(function (d) { return d.name; })
-
-    // //Add a links force to the simulation
-    // //Specify links in d3.forceLink argument
-    // simulation.force('links', link_force)
-
-    // draw lines for the links 
-    // const link = svg.append('g')
-    //   .attr('class', 'links')
-    //   .selectAll('line')
-    //   .data(links_data)
-    //   .enter()
-    //   .append('line')
-    //   .attr('stroke-width', 2)
-    //   .attr('stroke', 'steelblue')
-    //   .attr('x1', d => xScale(d.source.x))
-    //   .attr('y1', d => yScale(d.source.name))
-    //   .attr('x2', d => xScale(d.target.x))
-    //   .attr('y2', d => yScale(d.target.name));
-
-    // draw lines for the links 
     const link = svg.append('g')
       .attr('class', 'links')
       .selectAll('path')
@@ -128,10 +138,8 @@ class FlowChart extends Component {
       .append('path')
       .attr('fill', 'none')
       .attr('stroke-width', 2)
-      .attr('stroke', '#aaa')
-      .attr('d', linkShape);
+      .attr('stroke', '#aaa');
 
-    // draw circles for the nodes 
     const node = svg.append('g')
       .attr('class', 'nodes')
       .selectAll('circle')
@@ -140,26 +148,19 @@ class FlowChart extends Component {
       .append('circle')
       .attr('r', 10)
       .attr('fill', 'tomato')
-      .attr('title', d => d.name)
-      .attr('cx', d => xScale(d.x))
-      .attr('cy', d => yScale(d.name));
+      .attr('fill', d => scale.colour(d.level))
+      .attr('title', d => d.name + '-' + d.level);
 
-    // function tickActions() {
-    //   console.log(node.data());
-    //   //update circle positions each tick of the simulation 
-    //   node
-    //     .attr('cx', function (d) { return d.x; })
-    //     .attr('cy', function (d) { return d.y; });
+    function tickActions() {
+      node
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y);
+        // .attr('cx', d => scale.x(d.x))
+        // .attr('cy', d => scale.y(d.level));
 
-    //   //update link positions 
-    //   //simply tells one end of the line to follow one node around
-    //   //and the other end of the line to follow the other node around
-    //   link
-    //     .attr('x1', function (d) { return d.source.x; })
-    //     .attr('y1', function (d) { return d.source.y; })
-    //     .attr('x2', function (d) { return d.target.x; })
-    //     .attr('y2', function (d) { return d.target.y; });
-    // }
+      link.attr('d', scale.link);
+      console.log(nodes_data);
+    }
   }
 
   componentDidMount() {
