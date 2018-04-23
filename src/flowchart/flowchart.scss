@@ -1,0 +1,30 @@
+// TODO remove this:
+ul {
+  position: absolute;
+  right: 0;
+  li {
+    padding: 8px 20px;
+    list-style: none;
+    &:nth-child(even) {
+      background: rgba(#fff, 0.4);
+    }
+  }
+}
+
+table {
+  position: absolute;
+  padding: 20px;
+}
+tr:nth-child(even) {
+  background: rgba(#fff, 0.4);
+}
+td {
+  border-collapse: collapse;
+  border-spacing: 0;
+  padding: 5px 10px;
+}
+
+svg {
+  font-size: 14px;
+  text-shadow: 0 0 3px #000;
+}
