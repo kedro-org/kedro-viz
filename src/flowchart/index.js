@@ -1,20 +1,15 @@
 import React, { Component } from 'react';
 import { select } from 'd3-selection';
 import { linkVertical, stack } from 'd3-shape';
-import {
-  scaleLinear,
-  scaleOrdinal,
-  scalePoint,
-} from 'd3-scale';
+import { scaleLinear, scaleOrdinal, scalePoint } from 'd3-scale';
 import './flowchart.css';
 
 const getArray = n => Array.from(Array(n).keys());
 
-const getRandom = (range) => range[Math.floor(Math.random() * range.length)];
+const getRandom = range => range[Math.floor(Math.random() * range.length)];
 
 const first = arr => arr[0];
 const last = arr => arr[arr.length - 1];
-
 
 class FlowChart extends Component {
   componentDidMount() {
@@ -27,8 +22,7 @@ class FlowChart extends Component {
   setChartHeight() {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
-    this.svg.attr('width', this.width)
-      .attr('height', this.height);
+    this.svg.attr('width', this.width).attr('height', this.height);
   }
 
   generateRandomData() {
@@ -38,20 +32,19 @@ class FlowChart extends Component {
       'Primary',
       'Feature',
       'Model Input',
-      'Model Output',
+      'Model Output'
     ].map((name, id) => ({ id, name }));
 
-    const nodes = getArray(30)
-      .map((d, i, arr) => ({
-        name: d + getRandom('QWERTYUIOPASDFGHJKLZXCVBNM'),
-        layer: getRandom(layers).id,
-        // layer: Math.ceil((i / arr.length) * layers.length),
-      }));
+    const nodes = getArray(30).map((d, i, arr) => ({
+      name: d + getRandom('QWERTYUIOPASDFGHJKLZXCVBNM'),
+      layer: getRandom(layers).id
+      // layer: Math.ceil((i / arr.length) * layers.length),
+    }));
 
     const links = nodes.map((d, i) => {
       const source = d;
-      const targets = nodes.filter((dd) =>
-        dd.name !== source.name && dd.layer >= source.layer
+      const targets = nodes.filter(
+        dd => dd.name !== source.name && dd.layer >= source.layer
       );
       if (targets.length) {
         return {
@@ -64,11 +57,11 @@ class FlowChart extends Component {
         source: getRandom(nodes)
       };
     });
-    
+
     return {
       layers,
       nodes,
-      links,
+      links
     };
   }
 
@@ -76,12 +69,8 @@ class FlowChart extends Component {
    * Experiment
    */
   calculatePaths(data) {
-
     // Convert each link into a path
-    const paths = data.links.map(link => [
-      link.source,
-      link.target,
-    ]);
+    const paths = data.links.map(link => [link.source, link.target]);
 
     // Calculate all the possible paths through the flowchart,
     // and make each one a path array of nodes inside the paths array
@@ -129,7 +118,7 @@ class FlowChart extends Component {
       b.y1 = a + b.length;
       return b.y1;
     }, 0);
-    
+
     data.paths = paths;
 
     return data;
@@ -151,9 +140,11 @@ class FlowChart extends Component {
 
       colour: scaleOrdinal()
         .domain(data.layers.map(d => d.id))
-        .range(data.layers.map((d, i) =>
-          `hsl(${i * (360 / data.layers.length)}, 50%, 70%)`
-        )),
+        .range(
+          data.layers.map(
+            (d, i) => `hsl(${i * (360 / data.layers.length)}, 50%, 70%)`
+          )
+        )
     };
 
     return scale;
@@ -188,7 +179,8 @@ class FlowChart extends Component {
       .style('background', d => scale.colour(d.layer))
       .text(d => `${d.name} - ${d.level}` || '');
 
-    const layerRect = this.svg.append('g')
+    const layerRect = this.svg
+      .append('g')
       .attr('class', 'layers')
       .selectAll('rect')
       .data(data.layers)
@@ -201,7 +193,8 @@ class FlowChart extends Component {
       .attr('height', d => scale.y(d.length))
       .attr('y', d => scale.y(d.y0));
 
-    const link = this.svg.append('g')
+    const link = this.svg
+      .append('g')
       .attr('class', 'links')
       .selectAll('path')
       .data(data.links)
@@ -212,7 +205,8 @@ class FlowChart extends Component {
       .attr('stroke', 'rgba(0,0,0,0.15)')
       .attr('d', scale.link);
 
-    const node = this.svg.append('g')
+    const node = this.svg
+      .append('g')
       .attr('class', 'nodes')
       .selectAll('circle')
       .data(data.nodes)
@@ -224,7 +218,8 @@ class FlowChart extends Component {
       .attr('cx', d => scale.x(d.name))
       .attr('cy', d => scale.y(d.level + 0.5));
 
-    const text = this.svg.append('g')
+    const text = this.svg
+      .append('g')
       .attr('class', 'text')
       .selectAll('text')
       .data(data.nodes)
@@ -240,10 +235,10 @@ class FlowChart extends Component {
 
   render() {
     return (
-      <div className='FlowChart'>
-        <table id='pathlist' />
-        <ul id='nodelist' />
-        <svg ref={el => this._svg = el } width='960' height='600'></svg>
+      <div className="FlowChart">
+        <table id="pathlist" />
+        <ul id="nodelist" />
+        <svg ref={el => (this._svg = el)} width="960" height="600" />
       </div>
     );
   }
