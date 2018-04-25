@@ -1,15 +1,25 @@
 ul {
   position: absolute;
-  right: 0; }
+  right: 20px;
+  opacity: 0.8; }
+  ul:before {
+    content: 'Nodes';
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px; }
   ul li {
     padding: 8px 20px;
     list-style: none; }
-    ul li:nth-child(even) {
-      background: rgba(255, 255, 255, 0.4); }
 
 table {
   position: absolute;
-  padding: 20px; }
+  padding: 20px;
+  opacity: 0.8; }
+  table:before {
+    content: 'Paths';
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px; }
 
 tr:nth-child(even) {
   background: rgba(255, 255, 255, 0.4); }
@@ -17,7 +27,8 @@ tr:nth-child(even) {
 td {
   border-collapse: collapse;
   border-spacing: 0;
-  padding: 5px 10px; }
+  padding: 5px 10px;
+  text-align: center; }
 
 svg {
   font-size: 14px;
