@@ -10,8 +10,14 @@ const getArray = n => Array.from(Array(n).keys());
 
 const getRandom = range => range[Math.floor(Math.random() * range.length)];
 
-const first = arr => arr[0];
-const last = arr => arr[arr.length - 1];
+const loremIpsum = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
+  ' '
+);
+
+const randomName = n =>
+  getArray(n)
+    .map(() => loremIpsum[getRandom(loremIpsum).length])
+    .join('_');
 
 class FlowChart extends Component {
   componentDidMount() {
@@ -39,16 +45,16 @@ class FlowChart extends Component {
       'Model Output'
     ].map((name, id) => ({ id, name }));
 
-    const nodes = getArray(30).map((d, i, arr) => ({
-      name: d + getRandom('QWERTYUIOPASDFGHJKLZXCVBNM'),
-      layer: getRandom(layers).id
-      // layer: Math.ceil((i / arr.length) * layers.length),
+    const nodes = getArray(30).map((id, i, arr) => ({
+      id,
+      name: randomName(Math.ceil(Math.random() * 10)),
+      layer: getRandom(layers)
     }));
 
     const links = nodes.map((d, i) => {
       const source = d;
       const targets = nodes.filter(
-        dd => dd.name !== source.name && dd.layer > source.layer
+        dd => dd.id !== source.id && dd.layer.id > source.layer.id
       );
       if (targets.length) {
         return {
@@ -82,93 +88,29 @@ class FlowChart extends Component {
   }
 
   makeChart() {
-    this.svg
-      .append('g')
-      .attr('class', 'layers')
-      .selectAll('rect')
-      .data(this.data.layers)
-      .enter()
-      .append('rect')
-      .attr('fill', d => this.scale.colour(d.id))
-      .attr('fill-opacity', 0.3)
-      .attr('x', 0)
-      .attr('width', this.width)
-      .attr('height', d => this.scale.y(d.length))
-      .attr('y', d => this.scale.y(d.y0));
-
-    this.svg
-      .append('g')
-      .attr('class', 'links')
-      .selectAll('path')
-      .data(this.data.links)
-      .enter()
-      .append('path')
-      .attr('fill', 'none')
-      .attr('stroke-width', 2)
-      .attr('stroke', 'rgba(0,0,0,0.15)')
-      .attr('d', this.scale.link);
-
-    this.svg
-      .append('g')
-      .attr('class', 'nodes')
-      .selectAll('circle')
-      .data(this.data.nodes)
-      .enter()
-      .append('circle')
-      .attr('r', 15)
-      .attr('fill', d => this.scale.colour(d.layer))
-      .attr('title', d => d.name)
-      .attr('cx', d => this.scale.x(d.name))
-      .attr('cy', d => this.scale.y(d.level + 0.5));
-
-    this.svg
-      .append('g')
-      .attr('class', 'text')
-      .selectAll('text')
-      .data(this.data.nodes)
-      .enter()
-      .append('text')
-      .attr('fill', '#fff')
-      .attr('text-anchor', 'middle')
-      .attr('dy', '5')
-      .text(d => d.name)
-      .attr('x', d => this.scale.x(d.name))
-      .attr('y', d => this.scale.y(d.level + 0.5));
-  }
-
-  makeChart2() {
-    // Create the input graph
     this.graph = new DagreD3.graphlib.Graph({ compound: true })
       .setGraph({})
       .setDefaultEdgeLabel(() => ({}));
 
-    // this.data.layers.forEach(d => {
-    //   g.setNode(d.id, {
-    //     label: d.name,
-    //     clusterLabelPos: 'top',
-    //     style: `fill: ${this.scale.colour(d.id)}`
-    //   });
-    // });
-
     this.data.nodes.forEach(d => {
-      this.graph.setNode(d.name, {
+      this.graph.setNode(d.id, {
+        data: d,
         label: () => {
           var icon = document.createElement('img');
           icon.setAttribute('src', '/database.svg');
           icon.setAttribute('width', 25);
           icon.setAttribute('height', 25);
           icon.setAttribute('transform', 'translateY(4px)');
-          icon.setAttribute('alt', d.name);
+          icon.setAttribute('alt', d.id);
           return icon;
         },
         shape: 'circle',
-        style: `fill: ${this.scale.colour(d.layer)}`
+        style: `fill: ${this.scale.colour(d.layer.id)}`
       });
-      // this.graph.setParent(d.name, d.layer);
     });
 
     this.data.links.forEach(d => {
-      this.graph.setEdge(d.source.name, d.target.name, {
+      this.graph.setEdge(d.source.id, d.target.id, {
         arrowhead: 'vee',
         curve: curveBasis
       });
@@ -200,12 +142,42 @@ class FlowChart extends Component {
       zoomGroup.attr('transform', event.transform);
     });
     svg.call(zoomBehaviour);
+
+    const tooltip = select(this._tooltip);
+
+    graphGroup
+      .selectAll('.node')
+      .on('mouseover', () => {
+        tooltip.classed('tooltip--visible', true);
+      })
+      .on('mouseout', () => {
+        tooltip.classed('tooltip--visible', false);
+      })
+      .on('mousemove', d => {
+        const node = this.graph.node(d);
+        const { clientX, clientY } = event;
+        const isRight = clientX > this.width / 2;
+        const x = isRight ? clientX - this.width : clientX;
+        tooltip
+          .classed('tooltip--visible', true)
+          .classed('tooltip--right', isRight)
+          .html(
+            `<b>${node.data.name}</b><small>${node.data.layer.name}</small>`
+          )
+          .style('transform', `translate(${x}px, ${clientY}px)`);
+      });
   }
 
   render() {
     return (
-      <div className="FlowChart">
-        <svg ref={el => (this._svg = el)} width="960" height="600" />
+      <div className="flowchart">
+        <svg
+          className="flowchart__graph"
+          ref={el => (this._svg = el)}
+          width="960"
+          height="600"
+        />
+        <div className="flowchart__tooltip" ref={el => (this._tooltip = el)} />
       </div>
     );
   }

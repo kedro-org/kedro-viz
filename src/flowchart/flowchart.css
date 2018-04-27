@@ -1,14 +1,52 @@
-svg {
+.flowchart {
+  position: relative; }
+
+.flowchart__graph {
   display: block;
   font-size: 14px; }
+  .flowchart__graph .node rect {
+    stroke: rgba(0, 0, 0, 0.15);
+    stroke-width: 1px; }
+  .flowchart__graph .edgePath > path {
+    stroke: #dde0e1;
+    stroke-width: 1.5px; }
+  .flowchart__graph .edgePath marker path {
+    fill: #dde0e1; }
 
-.node rect {
-  stroke: rgba(0, 0, 0, 0.15);
-  stroke-width: 1px; }
-
-.edgePath > path {
-  stroke: #dde0e1;
-  stroke-width: 1.5px; }
-
-.edgePath marker path {
-  fill: #dde0e1; }
+.flowchart__tooltip {
+  position: absolute;
+  top: -70px;
+  left: -20px;
+  padding: 12px 20px;
+  background: rgba(23, 32, 38, 0.9);
+  color: white;
+  opacity: 0;
+  transition: opacity ease 0.1s;
+  pointer-events: none;
+  z-index: 9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+  .flowchart__tooltip.tooltip--visible {
+    opacity: 1; }
+  .flowchart__tooltip.tooltip--right {
+    left: auto;
+    right: -20px; }
+    .flowchart__tooltip.tooltip--right::before {
+      left: auto;
+      right: 10px; }
+  .flowchart__tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 10px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 10px 0 10px;
+    border-color: rgba(23, 32, 38, 0.9) transparent transparent; }
+  .flowchart__tooltip b {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 3px; }
+  .flowchart__tooltip small {
+    display: block;
+    font-size: 10px; }

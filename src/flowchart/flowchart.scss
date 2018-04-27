@@ -1,27 +1,75 @@
-svg {
+$c_edge: mix(#1d2f3a, #fff, 15);
+$c_tooltipBg: rgba(mix(#1d2f3a, #111, 50), 0.9);
+
+.flowchart {
+  position: relative;
+}
+
+.flowchart__graph {
   display: block;
   font-size: 14px;
-  // text-shadow: 0 0 3px #000;
+
+  .node rect {
+    stroke: rgba(#000, 0.15);
+    stroke-width: 1px;
+  }
+
+  .edgePath > path {
+    stroke: $c_edge;
+    stroke-width: 1.5px;
+  }
+
+  .edgePath marker path {
+    fill: $c_edge;
+  }
 }
 
-// dagre
+.flowchart__tooltip {
+  position: absolute;
+  top: -70px;
+  left: -20px;
+  padding: 12px 20px;
+  background: $c_tooltipBg;
+  color: white;
+  opacity: 0;
+  transition: opacity ease 0.1s;
+  pointer-events: none;
+  z-index: 9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
-// text {
-//   font-weight: 300;
-//   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serf;
-//   font-size: 14px;
-// }
+  &.tooltip--visible {
+    opacity: 1;
+  }
 
-.node rect {
-  stroke: rgba(#000, 0.15);
-  stroke-width: 1px;
-}
+  &.tooltip--right {
+    left: auto;
+    right: -20px;
 
-$edgeColour: mix(#1d2f3a, #fff, 15);
-.edgePath > path {
-  stroke: $edgeColour;
-  stroke-width: 1.5px;
-}
-.edgePath marker path {
-  fill: $edgeColour;
+    &::before {
+      left: auto;
+      right: 10px;
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 10px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 10px 0 10px;
+    border-color: $c_tooltipBg transparent transparent;
+  }
+
+  b {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 3px;
+  }
+  small {
+    display: block;
+    font-size: 10px;
+  }
 }
