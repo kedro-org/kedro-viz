@@ -241,7 +241,7 @@ class FlowChart extends Component {
 
     this.data.links.forEach(d => {
       this.graph.setEdge(d.source.name, d.target.name, {
-        arrowHead: 'vee',
+        arrowhead: 'vee',
         curve: curveBasis
       });
     });
