@@ -4,27 +4,19 @@ import { curveBasis } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { zoom } from 'd3-zoom';
 import DagreD3 from 'dagre-d3';
+import generateRandomData from '../utils/randomData';
 import './flowchart.css';
 
-const getArray = n => Array.from(Array(n).keys());
-
-const getRandom = range => range[Math.floor(Math.random() * range.length)];
-
-const loremIpsum = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
-  ' '
-);
-
-const randomName = n =>
-  getArray(n)
-    .map(() => loremIpsum[getRandom(loremIpsum).length])
-    .join('_');
-
 class FlowChart extends Component {
+  constructor(props) {
+    super(props);
+    this.data = generateRandomData();
+  }
+
   componentDidMount() {
     this.svg = select(this._svg);
     this.setChartHeight();
     window.addEventListener('resize', this.setChartHeight.bind(this));
-    this.generateRandomData();
     this.setScales();
     this.makeChart();
   }
@@ -33,46 +25,6 @@ class FlowChart extends Component {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
     this.svg.attr('width', this.width).attr('height', this.height);
-  }
-
-  generateRandomData() {
-    const layers = [
-      'Raw',
-      'Intermediate',
-      'Primary',
-      'Feature',
-      'Model Input',
-      'Model Output'
-    ].map((name, id) => ({ id, name }));
-
-    const nodes = getArray(30).map((id, i, arr) => ({
-      id,
-      name: randomName(Math.ceil(Math.random() * 10)),
-      layer: getRandom(layers)
-    }));
-
-    const links = nodes.map((d, i) => {
-      const source = d;
-      const targets = nodes.filter(
-        dd => dd.id !== source.id && dd.layer.id > source.layer.id
-      );
-      if (targets.length) {
-        return {
-          source,
-          target: getRandom(targets)
-        };
-      }
-      return {
-        target: source,
-        source: getRandom(nodes)
-      };
-    });
-
-    this.data = {
-      layers,
-      nodes,
-      links
-    };
   }
 
   setScales() {
