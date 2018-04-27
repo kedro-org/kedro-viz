@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { select, event } from 'd3-selection';
-import { curveBasis, linkVertical } from 'd3-shape';
-import { scaleLinear, scaleOrdinal, scalePoint } from 'd3-scale';
+import { curveBasis } from 'd3-shape';
+import { scaleOrdinal } from 'd3-scale';
 import { zoom } from 'd3-zoom';
 import DagreD3 from 'dagre-d3';
 import './flowchart.css';
@@ -19,10 +19,8 @@ class FlowChart extends Component {
     this.setChartHeight();
     window.addEventListener('resize', this.setChartHeight.bind(this));
     this.generateRandomData();
-    this.calculatePaths();
     this.setScales();
-    // this.makeChart();
-    this.makeChart2();
+    this.makeChart();
   }
 
   setChartHeight() {
@@ -71,78 +69,8 @@ class FlowChart extends Component {
     };
   }
 
-  /**
-   * Experiment
-   */
-  calculatePaths() {
-    // Convert each link into a path
-    const paths = this.data.links.map(link => [link.source, link.target]);
-
-    // Calculate all the possible paths through the flowchart,
-    // and make each one a path array of nodes inside the paths array
-    for (let i = 0; i < paths.length; i++) {
-      for (let j = 0; j < paths.length; j++) {
-        if (first(paths[i]).name === last(paths[j]).name) {
-          paths[i] = paths[j].concat(paths[i].slice(1));
-          paths.splice(j, 1);
-          break;
-        } else if (last(paths[i]).name === first(paths[j]).name) {
-          paths[i] = paths[i].concat(paths[j].slice(1));
-          paths.splice(j, 1);
-          break;
-        }
-      }
-    }
-
-    // Get the length of the longest path for each layer
-    let yMax = 0;
-    this.data.layers.forEach(layer => {
-      // Get the y index for each node, corresponding to its relevant layer
-      let layerY = 0;
-      paths.forEach((path, i) => {
-        let pathY = 0;
-        path.forEach(node => {
-          if (node.layer === layer.id) {
-            const nodeLevel = pathY + yMax;
-            if (typeof node.level === 'undefined' || nodeLevel > node.level) {
-              node.level = pathY + yMax;
-            }
-            pathY++;
-            if (pathY > layerY) {
-              layerY = pathY;
-            }
-          }
-        });
-      });
-      layer.length = layerY;
-      yMax += layerY;
-    });
-
-    // Calculate start/end of each layer band, for stack viz
-    this.data.layers.reduce((a, b) => {
-      b.y0 = a;
-      b.y1 = a + b.length;
-      return b.y1;
-    }, 0);
-
-    this.data.paths = paths;
-    this.data.yMax = yMax;
-  }
-
   setScales() {
     this.scale = {
-      x: scalePoint()
-        .domain(this.data.nodes.map(d => d.name))
-        .range([this.width * 0.2, this.width * 0.8]),
-
-      y: scaleLinear()
-        .domain([0, this.data.yMax])
-        .range([0, this.height]),
-
-      link: linkVertical()
-        .x(d => this.scale.x(d.name))
-        .y(d => this.scale.y(d.level + 0.5)),
-
       colour: scaleOrdinal()
         .domain(this.data.layers.map(d => d.id))
         .range(
