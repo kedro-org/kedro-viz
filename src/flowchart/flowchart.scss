@@ -37,6 +37,29 @@ td {
 }
 
 svg {
+  display: block;
   font-size: 14px;
-  text-shadow: 0 0 3px #000;
+  // text-shadow: 0 0 3px #000;
+}
+
+// dagre
+
+// text {
+//   font-weight: 300;
+//   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serf;
+//   font-size: 14px;
+// }
+
+.node rect {
+  stroke: rgba(#000, 0.15);
+  stroke-width: 1px;
+}
+
+$edgeColour: mix(#1d2f3a, #fff, 15);
+.edgePath > path {
+  stroke: $edgeColour;
+  stroke-width: 1.5px;
+}
+.edgePath marker path {
+  fill: $edgeColour;
 }

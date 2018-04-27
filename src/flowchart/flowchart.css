@@ -31,5 +31,16 @@ td {
   text-align: center; }
 
 svg {
-  font-size: 14px;
-  text-shadow: 0 0 3px #000; }
+  display: block;
+  font-size: 14px; }
+
+.node rect {
+  stroke: rgba(0, 0, 0, 0.15);
+  stroke-width: 1px; }
+
+.edgePath > path {
+  stroke: #dde0e1;
+  stroke-width: 1.5px; }
+
+.edgePath marker path {
+  fill: #dde0e1; }
