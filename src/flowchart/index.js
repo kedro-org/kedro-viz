@@ -21,7 +21,6 @@ class FlowChart extends Component {
     this.generateRandomData();
     this.calculatePaths();
     this.setScales();
-    // this.populateDataTables();
     // this.makeChart();
     this.makeChart2();
   }
@@ -275,34 +274,9 @@ class FlowChart extends Component {
     svg.call(zoomBehaviour);
   }
 
-  populateDataTables() {
-    // TODO remove this
-    select('#pathlist')
-      .selectAll('tr')
-      .data(this.data.paths)
-      .enter()
-      .append('tr')
-      .selectAll('td')
-      .data(d => d)
-      .enter()
-      .append('td')
-      .style('background', d => this.scale.colour(d.layer))
-      .text(d => d.name || '');
-
-    select('#nodelist')
-      .selectAll('li')
-      .data(this.data.nodes.sort((a, b) => a.level - b.level))
-      .enter()
-      .append('li')
-      .style('background', d => this.scale.colour(d.layer))
-      .text(d => `${d.name} - ${d.level}` || '');
-  }
-
   render() {
     return (
       <div className="FlowChart">
-        {/* <table id="pathlist" />
-        <ul id="nodelist" /> */}
         <svg ref={el => (this._svg = el)} width="960" height="600" />
       </div>
     );
