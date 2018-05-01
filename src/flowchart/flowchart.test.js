@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Flowchart from './index';
+// import Flowchart from './index';
 
 // const getArray = n => Array.from(new Array(n)).map((d, i) => i);
 
@@ -18,9 +18,12 @@ import Flowchart from './index';
 //   source: arr[i],
 //   target: arr[i + 1]
 // }));
+const addOne = n => n + 1;
 
-it('calculates the length of paths', () => {
-  // flowchart.calculateBuckets(data);
+describe('addOne', () => {
+  it('calculates the length of paths', () => {
+    expect(addOne(1)).toBe(2);
+  });
 });
 
 // it('calculates complex buckets', () => {
