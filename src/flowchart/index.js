@@ -74,10 +74,11 @@ class FlowChart extends Component {
       selection.transition().duration(500);
   }
 
-  drawChart(isUpdate) {
+  // Update node and link data
+  updata() {
     const { textLabels } = this.state;
+    const { graph } = this.dagreD3;
     const { nodes, links } = this.data;
-    const { graph, render } = this.dagreD3;
 
     nodes.forEach(d => {
       graph.setNode(d.id, {
@@ -102,6 +103,12 @@ class FlowChart extends Component {
         curve: curveBasis
       });
     });
+  }
+
+  drawChart(isUpdate) {
+    const { textLabels } = this.state;
+    const { graph, render } = this.dagreD3;
+    this.updata();
 
     // Reset zoom before rendering HTML nodes to force them to scale properly
     // when appending to the DOM
