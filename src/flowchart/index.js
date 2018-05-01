@@ -2,23 +2,37 @@ import React, { Component } from 'react';
 import { select, event } from 'd3-selection';
 import { curveBasis } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
-import { zoom } from 'd3-zoom';
+import { zoom, zoomIdentity } from 'd3-zoom';
 import DagreD3 from 'dagre-d3';
 import generateRandomData from '../utils/randomData';
+import database from './database.svg';
 import './flowchart.css';
 
 class FlowChart extends Component {
   constructor(props) {
     super(props);
     this.data = generateRandomData();
+    this.dagreD3 = {};
+    this.state = {
+      textLabels: false
+    };
+    this.setChartHeight = this.setChartHeight.bind(this);
   }
 
   componentDidMount() {
     this.svg = select(this._svg);
+    this.inner = select(this._gInner);
+    this.tooltip = select(this._tooltip);
+
     this.setChartHeight();
-    window.addEventListener('resize', this.setChartHeight.bind(this));
+    window.addEventListener('resize', this.setChartHeight);
     this.setScales();
-    this.makeChart();
+    this.setupChart();
+    this.drawChart(false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('resize', this.setChartHeight);
   }
 
   setChartHeight() {
@@ -38,97 +52,122 @@ class FlowChart extends Component {
         )
     };
   }
-
-  makeChart() {
-    this.graph = new DagreD3.graphlib.Graph({ compound: true })
-      .setGraph({})
+  setupChart() {
+    this.dagreD3.graph = new DagreD3.graphlib.Graph({ compound: true })
+      .setGraph({
+        marginx: 50,
+        marginy: 50
+      })
       .setDefaultEdgeLabel(() => ({}));
 
-    this.data.nodes.forEach(d => {
-      this.graph.setNode(d.id, {
+    // Create the renderer
+    this.dagreD3.render = new DagreD3.render();
+
+    // Initialize zoom behaviour
+    this.zoomBehaviour = zoom().on('zoom', () => {
+      this.inner.attr('transform', event.transform);
+    });
+    this.svg.call(this.zoomBehaviour);
+
+    // Add transition animations
+    this.dagreD3.graph.graph().transition = selection =>
+      selection.transition().duration(500);
+  }
+
+  drawChart(isUpdate) {
+    const { textLabels } = this.state;
+    const { nodes, links } = this.data;
+    const { graph, render } = this.dagreD3;
+
+    nodes.forEach(d => {
+      graph.setNode(d.id, {
         data: d,
-        label: () => {
-          var icon = document.createElement('img');
-          icon.setAttribute('src', '/database.svg');
-          icon.setAttribute('width', 25);
-          icon.setAttribute('height', 25);
-          icon.setAttribute('transform', 'translateY(4px)');
-          icon.setAttribute('alt', d.id);
-          return icon;
-        },
-        shape: 'circle',
+        labelType: 'html',
+        label: textLabels
+          ? d.name
+          : `<img
+              src="${database}"
+              width="25"
+              height="25"
+              transform="translateY(4px)"
+              alt="${d.id}" />`,
+        shape: textLabels ? 'rect' : 'circle',
         style: `fill: ${this.scale.colour(d.layer.id)}`
       });
     });
 
-    this.data.links.forEach(d => {
-      this.graph.setEdge(d.source.id, d.target.id, {
+    links.forEach(d => {
+      graph.setEdge(d.source.id, d.target.id, {
         arrowhead: 'vee',
         curve: curveBasis
       });
     });
 
-    // Create the renderer
-    const render = new DagreD3.render();
-
-    // Set up an SVG group so that we can translate the final graph.
-    const svg = select(this._svg);
-    const zoomGroup = svg.append('g');
-    const graphGroup = zoomGroup.append('g');
-
-    this.graph.graph().transition = selection =>
-      selection.transition().duration(500);
+    // Reset zoom before rendering HTML nodes to force them to scale properly
+    // when appending to the DOM
+    if (isUpdate) {
+      this.svg.call(this.zoomBehaviour.transform, zoomIdentity.scale(1));
+    }
 
     // Run the renderer. This is what draws the final graph.
-    render(graphGroup, this.graph);
+    this.inner.call(render, graph);
 
-    // Center the graph
-    const offset = {
-      x: (this.width - this.graph.graph().width) / 2,
-      y: (this.height - this.graph.graph().height) / 2
-    };
-    graphGroup.attr('transform', `translate(${offset.x}, ${offset.y})`);
+    // Zoom and scale to fit
+    const { width, height } = graph.graph();
+    const zoomScale = Math.min(this.width / width, this.height / height);
+    const translateX = this.width / 2 - width * zoomScale / 2;
+    const translateY = this.height / 2 - height * zoomScale / 2;
+    const svgZoom = isUpdate ? this.svg.transition().duration(500) : this.svg;
+    svgZoom.call(
+      this.zoomBehaviour.transform,
+      zoomIdentity.translate(translateX, translateY).scale(zoomScale)
+    );
 
-    // Initialize zoom behaviour
-    const zoomBehaviour = zoom().on('zoom', () => {
-      zoomGroup.attr('transform', event.transform);
-    });
-    svg.call(zoomBehaviour);
-
-    const tooltip = select(this._tooltip);
-
-    graphGroup
-      .selectAll('.node')
-      .on('mouseover', () => {
-        tooltip.classed('tooltip--visible', true);
-      })
-      .on('mouseout', () => {
-        tooltip.classed('tooltip--visible', false);
-      })
-      .on('mousemove', d => {
-        const node = this.graph.node(d);
-        const { clientX, clientY } = event;
-        const isRight = clientX > this.width / 2;
-        const x = isRight ? clientX - this.width : clientX;
-        tooltip
-          .classed('tooltip--visible', true)
-          .classed('tooltip--right', isRight)
-          .html(
-            `<b>${node.data.name}</b><small>${node.data.layer.name}</small>`
-          )
-          .style('transform', `translate(${x}px, ${clientY}px)`);
-      });
+    if (!textLabels) {
+      this.inner
+        .selectAll('.node')
+        .on('mouseover', () => {
+          this.tooltip.classed('tooltip--visible', true);
+        })
+        .on('mouseout', () => {
+          this.tooltip.classed('tooltip--visible', false);
+        })
+        .on('mousemove', d => {
+          const node = graph.node(d);
+          const { clientX, clientY } = event;
+          const isRight = clientX > this.width / 2;
+          const x = isRight ? clientX - this.width : clientX;
+          this.tooltip
+            .classed('tooltip--visible', true)
+            .classed('tooltip--right', isRight)
+            .html(
+              `<b>${node.data.name}</b><small>${node.data.layer.name}</small>`
+            )
+            .style('transform', `translate(${x}px, ${clientY}px)`);
+        });
+    }
   }
 
   render() {
     return (
       <div className="flowchart">
+        <div className="flowchart__ui">
+          <button
+            onClick={() => {
+              this.setState({ textLabels: !this.state.textLabels }, () => {
+                this.drawChart(true);
+              });
+            }}>
+            Toggle labels
+          </button>
+        </div>
         <svg
           className="flowchart__graph"
           ref={el => (this._svg = el)}
           width="960"
-          height="600"
-        />
+          height="600">
+          <g ref={el => (this._gInner = el)} />
+        </svg>
         <div className="flowchart__tooltip" ref={el => (this._tooltip = el)} />
       </div>
     );

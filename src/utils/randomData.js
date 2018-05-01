@@ -1,3 +1,5 @@
+const NODE_COUNT = 40;
+
 const getArray = n => Array.from(Array(n).keys());
 
 const getRandom = range => range[Math.floor(Math.random() * range.length)];
@@ -21,7 +23,7 @@ const generateRandomData = () => {
     'Model Output'
   ].map((name, id) => ({ id, name }));
 
-  const nodes = getArray(30).map((id, i, arr) => ({
+  const nodes = getArray(NODE_COUNT).map((id, i, arr) => ({
     id,
     name: randomName(Math.ceil(Math.random() * 10)),
     layer: getRandom(layers)

@@ -1,6 +1,20 @@
 .flowchart {
   position: relative; }
 
+.flowchart__ui {
+  position: absolute;
+  top: 20px;
+  right: 20px; }
+  .flowchart__ui button {
+    background: #eee;
+    color: #333;
+    border: none;
+    padding: 10px 12px;
+    font-size: 16px;
+    cursor: pointer; }
+    .flowchart__ui button:hover, .flowchart__ui button:focus {
+      background: #fff; }
+
 .flowchart__graph {
   display: block;
   font-size: 14px; }
