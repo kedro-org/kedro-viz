@@ -29,8 +29,7 @@ const generateRandomData = () => {
     layer: getRandom(layers)
   }));
 
-  const links = nodes.map((d, i) => {
-    const source = d;
+  const links = nodes.map((source, i) => {
     const targets = nodes.filter(
       dd => dd.id !== source.id && dd.layer.id > source.layer.id
     );
@@ -42,7 +41,7 @@ const generateRandomData = () => {
     }
     return {
       target: source,
-      source: getRandom(nodes)
+      source: getRandom(nodes.filter(dd => source.id !== dd.id))
     };
   });
 
