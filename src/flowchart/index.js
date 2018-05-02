@@ -52,6 +52,7 @@ class FlowChart extends Component {
         )
     };
   }
+
   setupChart() {
     this.dagreD3.graph = new DagreD3.graphlib.Graph({ compound: true })
       .setGraph({

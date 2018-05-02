@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button } from '@quantumblack/carbon-ui-components';
 import './chart-ui.css';
 
 class ChartUI extends Component {
@@ -6,7 +7,9 @@ class ChartUI extends Component {
     const { textLabels, onToggleTextLabels } = this.props;
     return (
       <div className="chart-ui">
-        <button onClick={onToggleTextLabels}>Toggle labels</button>
+        <Button onClick={onToggleTextLabels} theme="dark">
+          Toggle labels
+        </Button>
       </div>
     );
   }
