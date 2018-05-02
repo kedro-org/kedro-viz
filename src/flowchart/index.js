@@ -146,6 +146,7 @@ class FlowChart extends Component {
     );
 
     const nodes = this.inner.selectAll('.node');
+    const edges = this.inner.selectAll('.edgePath');
 
     nodes
       .on('mouseover', () => {
@@ -153,7 +154,8 @@ class FlowChart extends Component {
       })
       .on('mouseout', () => {
         this.tooltip.classed('tooltip--visible', false);
-        nodes.classed('node--highlighted', false);
+        nodes.classed('node--highlighted', false).classed('node--faded', false);
+        edges.classed('edgePath--faded', false);
       })
       .on('mousemove', d => {
         const node = graph.node(d);
@@ -168,9 +170,14 @@ class FlowChart extends Component {
           )
           .style('transform', `translate(${x}px, ${clientY}px)`);
         const linkedNodes = this.getLinkedNodes(d).map(d => d.id);
-        nodes.classed(
-          'node--highlighted',
-          dd => linkedNodes.includes(+dd) || dd == d
+        nodes
+          .classed(
+            'node--highlighted',
+            dd => linkedNodes.includes(+dd) || dd === d
+          )
+          .classed('node--faded', dd => !linkedNodes.includes(+dd) && dd !== d);
+        edges.classed('edgePath--faded', ({ v, w }) =>
+          [v, w].some(dd => !linkedNodes.includes(+dd) && dd !== d)
         );
       });
   }

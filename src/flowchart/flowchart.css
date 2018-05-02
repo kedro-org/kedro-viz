@@ -5,7 +5,7 @@
   display: block; }
   .flowchart__graph .node circle,
   .flowchart__graph .node rect {
-    fill: rgba(23, 32, 38, 0.9);
+    fill: #2e4b5c;
     stroke: rgba(0, 0, 0, 0.15);
     stroke-width: 1px;
     transition: all ease 0.1s; }
@@ -19,16 +19,22 @@
       fill: white; }
   .flowchart__graph .node--highlighted circle,
   .flowchart__graph .node--highlighted rect {
-    fill: rgba(61, 86, 102, 0.9);
+    fill: #3f667e;
     stroke: #fff;
-    stroke-width: 2px; }
+    stroke-width: 1.5px; }
   .flowchart__graph .node--highlighted .label {
     opacity: 1; }
+  .flowchart__graph .node--faded circle,
+  .flowchart__graph .node--faded rect,
+  .flowchart__graph .node--faded .label {
+    opacity: 0.3; }
   .flowchart__graph .edgePath > path {
     stroke: #dde0e1;
     stroke-width: 1.5px; }
   .flowchart__graph .edgePath marker path {
     fill: #dde0e1; }
+  .flowchart__graph .edgePath--faded path {
+    opacity: 0.1; }
 
 .flowchart__tooltip {
   position: absolute;
