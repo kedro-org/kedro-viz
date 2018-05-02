@@ -44,7 +44,7 @@
 
 .flowchart__tooltip {
   position: absolute;
-  top: -70px;
+  top: -80px;
   left: -20px;
   padding: 12px 20px;
   background: rgba(23, 32, 38, 0.9);
@@ -79,3 +79,5 @@
   .flowchart__tooltip small {
     display: block;
     font-size: 10px; }
+  body.menu-visible .flowchart__tooltip {
+    display: none; }

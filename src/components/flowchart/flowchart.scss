@@ -80,7 +80,7 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
 
 .flowchart__tooltip {
   position: absolute;
-  top: -70px;
+  top: -80px;
   left: -20px;
   padding: 12px 20px;
   background: $c_tooltipBg;
@@ -125,5 +125,9 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
   small {
     display: block;
     font-size: 10px;
+  }
+
+  body.menu-visible & {
+    display: none;
   }
 }
