@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ChartUI from '../chart-ui';
 import FlowChart from '../flowchart';
-import generateRandomData from '../utils/randomData';
+import generateRandomData from '../../utils/randomData';
 import './app.css';
 
 class App extends Component {
