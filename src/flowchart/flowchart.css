@@ -18,9 +18,12 @@
 .flowchart__graph {
   display: block;
   font-size: 14px; }
-  .flowchart__graph .node rect {
+  .flowchart__graph .node {
     stroke: rgba(0, 0, 0, 0.15);
     stroke-width: 1px; }
+  .flowchart__graph .node--highlighted {
+    stroke: rgba(255, 255, 255, 0.8);
+    stroke-width: 3px; }
   .flowchart__graph .edgePath > path {
     stroke: #dde0e1;
     stroke-width: 1.5px; }

@@ -29,9 +29,13 @@ $c_tooltipBg: rgba(mix(#1d2f3a, #111, 50), 0.9);
   display: block;
   font-size: 14px;
 
-  .node rect {
+  .node {
     stroke: rgba(#000, 0.15);
     stroke-width: 1px;
+  }
+  .node--highlighted {
+    stroke: rgba(#fff, 0.8);
+    stroke-width: 3px;
   }
 
   .edgePath > path {

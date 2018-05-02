@@ -105,6 +105,27 @@ class FlowChart extends Component {
     });
   }
 
+  getLinkedNodes(nodeID) {
+    const { links } = this.data;
+    const linkedNodes = [];
+
+    (function getParents(id) {
+      links.filter(d => d.target.id === id).forEach(d => {
+        linkedNodes.push(d.source);
+        getParents(d.source.id);
+      });
+    })(+nodeID);
+
+    (function getChildren(id) {
+      links.filter(d => d.source.id === id).forEach(d => {
+        linkedNodes.push(d.target);
+        getChildren(d.target.id);
+      });
+    })(+nodeID);
+
+    return linkedNodes;
+  }
+
   drawChart(isUpdate) {
     const { textLabels } = this.state;
     const { graph, render } = this.dagreD3;
@@ -130,29 +151,34 @@ class FlowChart extends Component {
       zoomIdentity.translate(translateX, translateY).scale(zoomScale)
     );
 
-    if (!textLabels) {
-      this.inner
-        .selectAll('.node')
-        .on('mouseover', () => {
-          this.tooltip.classed('tooltip--visible', true);
-        })
-        .on('mouseout', () => {
-          this.tooltip.classed('tooltip--visible', false);
-        })
-        .on('mousemove', d => {
-          const node = graph.node(d);
-          const { clientX, clientY } = event;
-          const isRight = clientX > this.width / 2;
-          const x = isRight ? clientX - this.width : clientX;
-          this.tooltip
-            .classed('tooltip--visible', true)
-            .classed('tooltip--right', isRight)
-            .html(
-              `<b>${node.data.name}</b><small>${node.data.layer.name}</small>`
-            )
-            .style('transform', `translate(${x}px, ${clientY}px)`);
-        });
-    }
+    const nodes = this.inner.selectAll('.node');
+
+    nodes
+      .on('mouseover', () => {
+        this.tooltip.classed('tooltip--visible', true);
+      })
+      .on('mouseout', () => {
+        this.tooltip.classed('tooltip--visible', false);
+        nodes.classed('node--highlighted', false);
+      })
+      .on('mousemove', d => {
+        const node = graph.node(d);
+        const { clientX, clientY } = event;
+        const isRight = clientX > this.width / 2;
+        const x = isRight ? clientX - this.width : clientX;
+        this.tooltip
+          .classed('tooltip--visible', true)
+          .classed('tooltip--right', isRight)
+          .html(
+            `<b>${node.data.name}</b><small>${node.data.layer.name}</small>`
+          )
+          .style('transform', `translate(${x}px, ${clientY}px)`);
+        const linkedNodes = this.getLinkedNodes(d).map(d => d.id);
+        nodes.classed(
+          'node--highlighted',
+          dd => linkedNodes.includes(+dd) || dd == d
+        );
+      });
   }
 
   render() {
