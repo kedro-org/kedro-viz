@@ -1,36 +1,39 @@
-@media (max-width: 2000px) {
+@media (min-width: 480px) {
   body.menu-visible {
-    transform: translateX(200px);
+    transform: translateX(100px);
     overflow: hidden; } }
 
-@media (max-width: 1440px) {
+@media (min-width: 1100px) {
   body.menu-visible {
-    transform: translateX(100px); } }
+    transform: translateX(200px); } }
 
 .chart-ui {
   padding: 30px;
   position: fixed;
   left: 0;
   top: 0;
-  width: 400px;
-  max-width: 100%;
   height: 100%;
   min-height: 100vh;
-  transform: translateX(-400px);
   transition: all ease 0.3s;
-  z-index: 20; }
-  @media (max-width: 1440px) {
+  z-index: 20;
+  width: 100%;
+  transform: translateX(-100%); }
+  @media (min-width: 480px) {
     .chart-ui {
       width: 240px;
       transform: translateX(-240px); } }
+  @media (min-width: 1100px) {
+    .chart-ui {
+      width: 400px;
+      transform: translateX(-400px); } }
   .chart-ui--visible {
     transform: translateX(0); }
-    @media (max-width: 2000px) {
-      .chart-ui--visible {
-        transform: translateX(-200px); } }
-    @media (max-width: 1440px) {
+    @media (min-width: 480px) {
       .chart-ui--visible {
         transform: translateX(-100px); } }
+    @media (min-width: 1100px) {
+      .chart-ui--visible {
+        transform: translateX(-200px); } }
   .cbn-theme--light .chart-ui {
     background: #fff;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -57,6 +60,9 @@
   position: absolute;
   top: 30px;
   right: -60px; }
+  @media (max-width: 480px) {
+    body.menu-visible .chart-ui__menu {
+      right: 30px; } }
 
 .cbn-theme--light .menu-icon {
   fill: #333; }
