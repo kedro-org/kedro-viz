@@ -6,26 +6,6 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
   position: relative;
 }
 
-.flowchart__ui {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-
-  button {
-    background: #eee;
-    color: #333;
-    border: none;
-    padding: 10px 12px;
-    font-size: 16px;
-    cursor: pointer;
-
-    &:hover,
-    &:focus {
-      background: #fff;
-    }
-  }
-}
-
 .flowchart__graph {
   display: block;
 
@@ -42,7 +22,13 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
   .label {
     transition: all ease 0.1s;
     opacity: 0.8;
+
+    img {
+      display: block;
+    }
+
     text {
+      pointer-events: none;
       fill: white;
     }
   }

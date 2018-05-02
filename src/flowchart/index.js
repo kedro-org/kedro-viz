@@ -4,7 +4,6 @@ import { curveBasis } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import DagreD3 from 'dagre-d3';
-import generateRandomData from '../utils/randomData';
 import database from './database.svg';
 import './flowchart.css';
 
@@ -13,11 +12,7 @@ const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text
 class FlowChart extends Component {
   constructor(props) {
     super(props);
-    this.data = generateRandomData();
     this.dagreD3 = {};
-    this.state = {
-      textLabels: false
-    };
     this.setChartHeight = this.setChartHeight.bind(this);
   }
 
@@ -37,6 +32,10 @@ class FlowChart extends Component {
     document.removeEventListener('resize', this.setChartHeight);
   }
 
+  componentWillReceiveProps() {
+    this.drawChart(true);
+  }
+
   setChartHeight() {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
@@ -44,21 +43,20 @@ class FlowChart extends Component {
   }
 
   setScales() {
+    const { layers } = this.props.data;
     this.scale = {
       colour: scaleOrdinal()
-        .domain(this.data.layers.map(d => d.id))
+        .domain(layers.map(d => d.id))
         .range(
-          this.data.layers.map(
-            (d, i) => `hsl(${i * (360 / this.data.layers.length)}, 50%, 70%)`
-          )
+          layers.map((d, i) => `hsl(${i * (360 / layers.length)}, 50%, 70%)`)
         )
     };
   }
   setupChart() {
     this.dagreD3.graph = new DagreD3.graphlib.Graph({ compound: true })
       .setGraph({
-        marginx: 50,
-        marginy: 50
+        marginx: 40,
+        marginy: 40
       })
       .setDefaultEdgeLabel(() => ({}));
 
@@ -78,11 +76,10 @@ class FlowChart extends Component {
 
   // Update node and link data
   updata() {
-    const { textLabels } = this.state;
+    const { data, textLabels } = this.props;
     const { graph } = this.dagreD3;
-    const { nodes, links } = this.data;
 
-    nodes.forEach(d => {
+    data.nodes.forEach(d => {
       graph.setNode(d.id, {
         data: d,
         labelType: textLabels ? null : 'html',
@@ -94,7 +91,7 @@ class FlowChart extends Component {
       });
     });
 
-    links.forEach(d => {
+    data.links.forEach(d => {
       graph.setEdge(d.source.id, d.target.id, {
         arrowhead: 'vee',
         curve: curveBasis
@@ -103,7 +100,7 @@ class FlowChart extends Component {
   }
 
   getLinkedNodes(nodeID) {
-    const { links } = this.data;
+    const { links } = this.props.data;
     const linkedNodes = [];
 
     (function getParents(id) {
@@ -124,7 +121,7 @@ class FlowChart extends Component {
   }
 
   drawChart(isUpdate) {
-    const { textLabels } = this.state;
+    const { textLabels } = this.props;
     const { graph, render } = this.dagreD3;
     this.updata();
 
@@ -181,16 +178,6 @@ class FlowChart extends Component {
   render() {
     return (
       <div className="flowchart">
-        <div className="flowchart__ui">
-          <button
-            onClick={() => {
-              this.setState({ textLabels: !this.state.textLabels }, () => {
-                this.drawChart(true);
-              });
-            }}>
-            Toggle labels
-          </button>
-        </div>
         <svg
           className="flowchart__graph"
           ref={el => (this._svg = el)}

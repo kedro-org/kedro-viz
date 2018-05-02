@@ -1,0 +1,13 @@
+.chart-ui {
+  position: absolute;
+  top: 20px;
+  right: 20px; }
+  .chart-ui button {
+    background: #eee;
+    color: #333;
+    border: none;
+    padding: 10px 12px;
+    font-size: 16px;
+    cursor: pointer; }
+    .chart-ui button:hover, .chart-ui button:focus {
+      background: #fff; }
