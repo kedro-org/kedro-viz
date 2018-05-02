@@ -9,22 +9,22 @@ class App extends Component {
     super(props);
     this.data = generateRandomData();
     this.state = {
-      textLabels: false
+      textLabels: false,
+      theme: 'dark'
     };
   }
 
   render() {
-    const { textLabels } = this.state;
+    const { textLabels, theme } = this.state;
 
     return (
       <div className="App">
         <FlowChart textLabels={textLabels} data={this.data} />
         <ChartUI
           textLabels={textLabels}
-          onToggleTextLabels={() => {
-            this.setState({
-              textLabels: !textLabels
-            });
+          theme={theme}
+          onToggleTextLabels={textLabels => {
+            this.setState({ textLabels });
           }}
         />
       </div>
