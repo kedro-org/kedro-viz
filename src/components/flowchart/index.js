@@ -32,7 +32,7 @@ class FlowChart extends Component {
     document.removeEventListener('resize', this.setChartHeight);
   }
 
-  componentWillReceiveProps() {
+  componentDidUpdate() {
     this.drawChart(true);
   }
 
