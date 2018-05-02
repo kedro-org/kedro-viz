@@ -10,10 +10,16 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
   display: block;
 
   .node {
-    circle,
-    rect {
+    circle {
       fill: lighten($c_bg, 10%);
       stroke: rgba(#000, 0.15);
+    }
+    rect {
+      fill: darken($c_bg, 2%);
+      stroke: darken($c_bg, 3%);
+    }
+    circle,
+    rect {
       stroke-width: 1px;
       transition: all ease 0.1s;
     }
@@ -34,11 +40,15 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
   }
 
   .node--highlighted {
-    circle,
-    rect {
+    circle {
       fill: lighten($c_bg, 20%);
-      stroke: #fff;
       stroke-width: 1.5px;
+      stroke: #fff;
+    }
+
+    rect {
+      fill: darken($c_bg, 4%);
+      stroke: darken($c_bg, 5%);
     }
 
     .label {

@@ -3,10 +3,14 @@
 
 .flowchart__graph {
   display: block; }
+  .flowchart__graph .node circle {
+    fill: #2e4b5c;
+    stroke: rgba(0, 0, 0, 0.15); }
+  .flowchart__graph .node rect {
+    fill: #1a2933;
+    stroke: #182730; }
   .flowchart__graph .node circle,
   .flowchart__graph .node rect {
-    fill: #2e4b5c;
-    stroke: rgba(0, 0, 0, 0.15);
     stroke-width: 1px;
     transition: all ease 0.1s; }
   .flowchart__graph .label {
@@ -17,11 +21,13 @@
     .flowchart__graph .label text {
       pointer-events: none;
       fill: white; }
-  .flowchart__graph .node--highlighted circle,
-  .flowchart__graph .node--highlighted rect {
+  .flowchart__graph .node--highlighted circle {
     fill: #3f667e;
-    stroke: #fff;
-    stroke-width: 1.5px; }
+    stroke-width: 1.5px;
+    stroke: #fff; }
+  .flowchart__graph .node--highlighted rect {
+    fill: #16242c;
+    stroke: #152129; }
   .flowchart__graph .node--highlighted .label {
     opacity: 1; }
   .flowchart__graph .node--faded circle,
