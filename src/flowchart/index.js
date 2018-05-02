@@ -8,6 +8,8 @@ import generateRandomData from '../utils/randomData';
 import database from './database.svg';
 import './flowchart.css';
 
+const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
+
 class FlowChart extends Component {
   constructor(props) {
     super(props);
@@ -83,17 +85,12 @@ class FlowChart extends Component {
     nodes.forEach(d => {
       graph.setNode(d.id, {
         data: d,
-        labelType: 'html',
+        labelType: textLabels ? null : 'html',
         label: textLabels
-          ? d.name
-          : `<img
-              src="${database}"
-              width="25"
-              height="25"
-              transform="translateY(4px)"
-              alt="${d.id}" />`,
-        shape: textLabels ? 'rect' : 'circle',
-        style: `fill: ${this.scale.colour(d.layer.id)}`
+          ? shorten(d.name, 30)
+          : `<img src="${database}" width=18 height=18 alt="${d.id}" />`,
+        shape: textLabels ? 'rect' : 'circle'
+        // style: `fill: ${this.scale.colour(d.layer.id)}`
       });
     });
 

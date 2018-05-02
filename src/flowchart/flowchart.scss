@@ -1,5 +1,6 @@
-$c_edge: mix(#1d2f3a, #fff, 15);
-$c_tooltipBg: rgba(mix(#1d2f3a, #111, 50), 0.9);
+$c_bg: #1d2f3a;
+$c_edge: mix($c_bg, #fff, 15);
+$c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
 
 .flowchart {
   position: relative;
@@ -27,15 +28,36 @@ $c_tooltipBg: rgba(mix(#1d2f3a, #111, 50), 0.9);
 
 .flowchart__graph {
   display: block;
-  font-size: 14px;
 
   .node {
-    stroke: rgba(#000, 0.15);
-    stroke-width: 1px;
+    circle,
+    rect {
+      fill: $c_tooltipBg;
+      stroke: rgba(#000, 0.15);
+      stroke-width: 1px;
+      transition: all ease 0.1s;
+    }
   }
+
+  .label {
+    transition: all ease 0.1s;
+    opacity: 0.8;
+    text {
+      fill: white;
+    }
+  }
+
   .node--highlighted {
-    stroke: rgba(#fff, 0.8);
-    stroke-width: 3px;
+    circle,
+    rect {
+      fill: lighten($c_tooltipBg, 20%);
+      stroke: #fff;
+      stroke-width: 2px;
+    }
+
+    .label {
+      opacity: 1;
+    }
   }
 
   .edgePath > path {
