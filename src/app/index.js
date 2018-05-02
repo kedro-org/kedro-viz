@@ -14,6 +14,12 @@ class App extends Component {
     };
   }
 
+  componentWillMount() {
+    // Setup transitions for theme change and menu toggle, but only after mounting
+    document.body.style.transition =
+      'background ease 0.2s, transform ease 0.4s';
+  }
+
   render() {
     const { textLabels, theme } = this.state;
 

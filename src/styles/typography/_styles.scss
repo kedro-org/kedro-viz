@@ -1,0 +1,132 @@
+@import '../variables';
+@import 'extends';
+
+html, body {
+  -webkit-font-smoothing: antialiased;
+  // color: $color-text-default;
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 2rem;
+  letter-spacing: 0.1px;
+  font-size: 62.5%; // ...of browser default font size. This is usually 16px, so 62.5% normally equals 10px
+}
+
+h1 {
+  @extend %type--display-1;
+}
+
+h2 {
+  @extend %type--display-2;
+}
+
+h3 {
+  @extend %type--display-3;
+}
+
+h4 {
+  @extend %type--headline;
+}
+
+h5 {
+  @extend %type--title;
+}
+
+p, td {
+  @extend %type--body-1;
+  margin: 0 0 20px;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+h1, h2, h3, h4, h5 {
+  margin: $rem-base 0;
+}
+
+label, .label {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  font-size: 1.3rem;
+  letter-spacing: 0.1px;
+  line-height: 1;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+
+  &:visited {
+    color: inherit;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+
+}
+
+input, select, button {
+  @extend %type--body-2;
+}
+
+select, button {
+  @extend %type--body-2;
+}
+
+.type--light {
+  @extend %type--light;
+}
+
+.type--regular {
+  @extend %type--regular;
+}
+
+.type--semibold {
+  @extend %type--semibold;
+}
+
+/* Fonts */
+.type--display-1 {
+  @extend %type--display-1;
+}
+
+.type--display-2 {
+  @extend %type--display-2;
+}
+
+.type--display-3 {
+  @extend %type--display-3;
+}
+
+.type--headline {
+  @extend %type--headline;
+}
+
+.type--title {
+  @extend %type--title;
+}
+
+.type--subhead-1 {
+  @extend %type--subhead-1;
+}
+
+.type--subhead-2 {
+  @extend %type--subhead-2;
+}
+
+.type--body-1 {
+  @extend %type--body-1;
+}
+
+.type--body-2 {
+  @extend %type--body-2;
+}
+
+.type--tiny {
+  @extend %type--tiny;
+}

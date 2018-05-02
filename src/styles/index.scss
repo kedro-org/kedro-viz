@@ -1,0 +1,202 @@
+@import 'variables';
+@import 'mixins';
+@import 'extends';
+@import 'typography/extends';
+@import 'typography/styles';
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.4rem;
+  background: $color-bg-dark;
+
+  &.cbn-theme--light {
+    background: $color-bg-light;
+    color: #333;
+  }
+
+  &.cbn-theme--dark {
+    background: $color-bg-dark;
+    color: #fff;
+  }
+}
+
+.container {
+  position: relative;
+  overflow: scroll;
+}
+
+.wrapper {
+  width: 95%;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.content a {
+  color: inherit;
+  text-decoration: none;
+
+  .cbn-theme--light & {
+    border-bottom: 1px solid rgba(#333, 0.4);
+  }
+
+  .cbn-theme--dark & {
+    border-bottom: 1px solid rgba(white, 0.4);
+  }
+
+  &:hover {
+    text-decoration: none;
+    border-bottom: none;
+
+    .cbn-theme--light & {
+      background: rgba(black, 0.05);
+    }
+
+    .cbn-theme--dark & {
+      background: rgba(white, 0.05);
+    }
+  }
+}
+
+//--- Fixes for Carbon components ---//
+
+// Don't let the radio button circles collapse
+.cbn-switch-radio__box {
+  min-width: 20px;
+}
+
+// Change radio button focus outline to blue
+.cbn-theme--dark,
+.cbn-theme--light {
+  .cbn-switch__input:focus + .cbn-switch-radio__label .cbn-switch-radio__box {
+    box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.6);
+  }
+}
+
+//--- Reusable site-wide styles --//
+
+// Icon buttons
+.icon-button {
+  background: none;
+  border: none;
+  padding: 4px;
+  margin: 0;
+  box-shadow: none;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 3.1rem;
+  height: 3.1rem;
+  transition: all ease 0.1s;
+  transform: scale(1.3);
+
+  &:hover {
+    transform: scale(1.5);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.6);
+  }
+}
+
+// Tooltips
+[data-title] {
+  position: relative;
+  cursor: default;
+
+  &::before {
+    content: attr(data-title);
+    margin-bottom: 5px;
+    padding: 4px 10px;
+    background: #333;
+    color: white;
+    min-width: 34px;
+    text-align: center;
+    z-index: 9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .cbn-theme--dark & {
+      background: #fafafa;
+      color: #333;
+    }
+  }
+
+  &::after {
+    content: '';
+    margin-left: 10px;
+    margin-bottom: -1px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px 6px 0 6px;
+    border-color: #333 transparent transparent transparent;
+    z-index: 10;
+
+    .cbn-theme--dark & {
+      border-top-color: #fafafa;
+    }
+  }
+
+  &::before,
+  &::after {
+    position: absolute;
+    pointer-events: none;
+    transition: all ease 0.1s;
+    opacity: 0;
+    left: 15%;
+    transform: translateY(5px);
+    bottom: 100%;
+  }
+
+  &:hover::before,
+  &:hover::after {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.wide-tooltip[data-title]:before {
+  text-align: left;
+  min-width: 290px;
+  padding: 5px 10px;
+}
+
+.right-tooltip[data-title] {
+  &:before,
+  &:after {
+    left: auto;
+    right: 15%;
+  }
+
+  &:after {
+    margin-left: auto;
+    margin-right: 10px;
+  }
+}
+
+// Dialog modals
+.dialog {
+  padding: 20px 30px;
+  border: 1px solid;
+
+  .cbn-theme--light & {
+    background: $color-bg-light;
+    border-color: white;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .cbn-theme--dark & {
+    background: darken($color-bg-dark, 3%);
+    border-color: $color-bg-dark;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+}
+
+::backdrop {
+  background: rgba(black, 0.5);
+}

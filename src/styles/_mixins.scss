@@ -1,0 +1,16 @@
+@mixin clearfix {
+  &:before,
+  &:after {
+    content: '';
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+@mixin flexColumns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

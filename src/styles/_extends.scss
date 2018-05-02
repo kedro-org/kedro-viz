@@ -1,0 +1,50 @@
+%tooltip {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 300px;
+  max-width: 80%;
+  padding: 6px 15px;
+  background: #333;
+  color: white;
+  opacity: 0;
+  transition: opacity ease 0.1s;
+  pointer-events: none;
+  z-index: 9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  &.tooltip--visible {
+    opacity: 1;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -9px;
+    left: 10px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 10px 0 10px;
+    border-color: #333 transparent transparent;
+  }
+
+  &.tooltip--right {
+    left: auto;
+    right: -40px;
+
+    &::before {
+      left: auto;
+      right: 10px;
+    }
+  }
+
+  .cbn-theme--dark & {
+    background: #fafafa;
+    color: #333;
+
+    &::before {
+      border-top-color: #fafafa;
+    }
+  }
+}
