@@ -68,8 +68,7 @@ class ChartUI extends Component {
     const { visibleNav } = this.state;
     const {
       data,
-      onHighlightNodes,
-      onToggleNodes,
+      onNodeUpdate,
       onToggleTextLabels,
       textLabels,
       theme
@@ -108,17 +107,17 @@ class ChartUI extends Component {
             <li
               key={node.id}
               onMouseEnter={() => {
-                onHighlightNodes(node.id, true);
+                onNodeUpdate(node.id, 'highlighted', true);
               }}
               onMouseLeave={() => {
-                onHighlightNodes(node.id, false);
+                onNodeUpdate(node.id, 'highlighted', false);
               }}>
               <Checkbox
                 checked={!node.disabled}
                 label={shorten(node.name, 30)}
                 name={node.name}
                 onChange={(e, { checked }) => {
-                  onToggleNodes(node.id, !checked);
+                  onNodeUpdate(node.id, 'disabled', !checked);
                 }}
                 theme={theme}
               />

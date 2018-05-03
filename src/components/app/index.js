@@ -20,10 +20,10 @@ class App extends Component {
       'background ease 0.2s, transform ease 0.4s';
   }
 
-  onHighlightNodes(nodeID, highlighted) {
+  onNodeUpdate(nodeID, property, value) {
     const { data } = this.state;
     const nodes = data.nodes.map(node => {
-      node.highlighted = node.id === nodeID;
+      node[property] = value && node.id === nodeID;
       return node;
     });
     this.setState({
@@ -31,32 +31,20 @@ class App extends Component {
     });
   }
 
-  onToggleNodes(nodeID, disabled) {
-    const { data } = this.state;
-    const nodes = data.nodes.map(node => {
-      if (node.id === nodeID) {
-        node.disabled = disabled;
-      }
-      return node;
-    });
-    this.setState({
-      data: Object.assign({}, data, { nodes })
-    });
+  onToggleTextLabels(textLabels) {
+    this.setState({ textLabels });
   }
 
   render() {
     const { data, textLabels, theme } = this.state;
 
     return (
-      <div className="App">
+      <div className="app">
         <FlowChart data={data} textLabels={textLabels} />
         <ChartUI
           data={data}
-          onHighlightNodes={this.onHighlightNodes.bind(this)}
-          onToggleTextLabels={textLabels => {
-            this.setState({ textLabels });
-          }}
-          onToggleNodes={this.onToggleNodes.bind(this)}
+          onNodeUpdate={this.onNodeUpdate.bind(this)}
+          onToggleTextLabels={this.onToggleTextLabels.bind(this)}
           textLabels={textLabels}
           theme={theme}
         />

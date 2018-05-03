@@ -69,6 +69,10 @@ body.menu-visible {
       background: rgba(#fff, 0.02);
     }
 
+    &:hover {
+      background: rgba(#fff, 0.1);
+    }
+
     .cbn-switch {
       margin: 0;
 

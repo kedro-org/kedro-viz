@@ -34,12 +34,13 @@
   .flowchart__graph .node--faded rect,
   .flowchart__graph .node--faded .label {
     opacity: 0.3; }
-  .flowchart__graph .edgePath > path {
+  .flowchart__graph .edge > path {
+    fill: none;
     stroke: #dde0e1;
     stroke-width: 1.5px; }
-  .flowchart__graph .edgePath marker path {
+  .flowchart__graph .edge marker path {
     fill: #dde0e1; }
-  .flowchart__graph .edgePath--faded path {
+  .flowchart__graph .edge--faded path {
     opacity: 0.1; }
 
 .flowchart__tooltip {

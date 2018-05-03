@@ -64,16 +64,17 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
     }
   }
 
-  .edgePath > path {
+  .edge > path {
+    fill: none;
     stroke: $c_edge;
     stroke-width: 1.5px;
   }
 
-  .edgePath marker path {
+  .edge marker path {
     fill: $c_edge;
   }
 
-  .edgePath--faded path {
+  .edge--faded path {
     opacity: 0.1;
   }
 }

@@ -49,6 +49,8 @@
     max-height: calc(100vh - 150px); }
   .chart-ui li:nth-child(even) {
     background: rgba(255, 255, 255, 0.02); }
+  .chart-ui li:hover {
+    background: rgba(255, 255, 255, 0.1); }
   .chart-ui li .cbn-switch {
     margin: 0; }
     .chart-ui li .cbn-switch label {
