@@ -122,16 +122,23 @@ class FlowChart extends Component {
   drawChart() {
     const data = this.getLayout();
 
+    // const delay = (d, i) => 600 + i * 20;
+
+    // Create selections
+    const edges = this.el.edges
+      .selectAll('.edge')
+      .data(data.edges, d => [d.source.id, d.target.id].join('-'));
+
+    const nodes = this.el.nodes.selectAll('.node').data(data.nodes, d => d.id);
+
+    const tt = this.toggleTooltip(nodes, edges);
+
     // Create edges
 
     const lineShape = line()
       .x(d => d.x)
       .y(d => d.y)
       .curve(curveBasis);
-
-    const edges = this.el.edges
-      .selectAll('.edge')
-      .data(data.edges, d => [d.source.id, d.target.id].join('-'));
 
     edges
       .enter()
@@ -149,49 +156,12 @@ class FlowChart extends Component {
 
     // Create nodes
 
-    const { width, height } = this.graph.graph();
-    const delay = (d, i) => 600 + i * 20;
-
-    const nodes = this.el.nodes.selectAll('.node').data(data.nodes, d => d.id);
-
     const updateNodes = nodes =>
       nodes
         .classed('node--highlighted', d => d.highlighted)
-        .on('mouseover', () => {
-          this.el.tooltip.classed('tooltip--visible', true);
-        })
-        .on('mouseout', () => {
-          this.el.tooltip.classed('tooltip--visible', false);
-          nodes
-            .classed('node--highlighted', false)
-            .classed('node--faded', false);
-          edges.classed('edge--faded', false);
-        })
-        .on('mousemove', d => {
-          const { clientX, clientY } = event;
-          const isRight = clientX > this.width / 2;
-          const x = isRight ? clientX - this.width : clientX;
-          this.el.tooltip
-            .classed('tooltip--visible', true)
-            .classed('tooltip--right', isRight)
-            .html(`<b>${d.name}</b><small>${d.layer.name}</small>`)
-            .style('transform', `translate(${x}px, ${clientY}px)`);
-          const linkedNodes = this.getLinkedNodes(d.id);
-          nodes
-            .classed(
-              'node--highlighted',
-              dd => linkedNodes.includes(dd.id) || dd.id === d.id
-            )
-            .classed(
-              'node--faded',
-              dd => !linkedNodes.includes(+dd.id) && dd.id !== d.id
-            );
-          edges.classed('edge--faded', ({ source, target }) =>
-            [source.id, target.id].some(
-              dd => !linkedNodes.includes(+dd) && dd !== d.id
-            )
-          );
-        });
+        .on('mouseover', tt.show)
+        .on('mousemove', tt.show)
+        .on('mouseout', tt.hide);
 
     const enterNodes = nodes
       .enter()
@@ -224,6 +194,45 @@ class FlowChart extends Component {
       .attr('transform', d => `translate(${d.x}, ${d.y})`);
 
     nodes.exit().remove();
+  }
+
+  toggleTooltip(nodes, edges) {
+    return {
+      show: d => {
+        const { clientX, clientY } = event;
+        const isRight = clientX > this.width / 2;
+        const x = isRight ? clientX - this.width : clientX;
+
+        const linkedNodes = this.getLinkedNodes(d.id);
+
+        this.el.tooltip
+          .classed('tooltip--visible', true)
+          .classed('tooltip--right', isRight)
+          .html(`<b>${d.name}</b><small>${d.layer.name}</small>`)
+          .style('transform', `translate(${x}px, ${clientY}px)`);
+
+        nodes
+          .classed(
+            'node--highlighted',
+            dd => linkedNodes.includes(dd.id) || dd.id === d.id
+          )
+          .classed(
+            'node--faded',
+            dd => !linkedNodes.includes(+dd.id) && dd.id !== d.id
+          );
+
+        edges.classed('edge--faded', ({ source, target }) =>
+          [source.id, target.id].some(
+            dd => !linkedNodes.includes(+dd) && dd !== d.id
+          )
+        );
+      },
+
+      hide: () => {
+        nodes.classed('node--highlighted', false).classed('node--faded', false);
+        this.el.tooltip.classed('tooltip--visible', false);
+      }
+    };
   }
 
   getLinkedNodes(nodeID) {

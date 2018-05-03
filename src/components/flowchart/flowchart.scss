@@ -29,10 +29,6 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
     transition: all ease 0.1s;
     opacity: 0.8;
 
-    img {
-      display: block;
-    }
-
     text {
       pointer-events: none;
       fill: white;
