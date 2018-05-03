@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { Icon, Toggle } from '@quantumblack/carbon-ui-components';
+import { Checkbox, Icon, Toggle } from '@quantumblack/carbon-ui-components';
 import './chart-ui.css';
+const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
 
 class ChartUI extends Component {
   constructor(props) {
@@ -28,6 +29,11 @@ class ChartUI extends Component {
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
+  // TODO remove this
+  componentDidMount() {
+    this.toggleNav();
+  }
+
   handleDocumentClick(e) {
     if (this.state.visibleNav && !this.nav.contains(e.target)) {
       this.closeNav();
@@ -45,7 +51,7 @@ class ChartUI extends Component {
     document.body.classList.toggle('menu-visible', visible);
   }
 
-  toggleNav(e) {
+  toggleNav() {
     const visibleNav = !this.state.visibleNav;
     this.setState({ visibleNav });
     this.toggleBodyClass(visibleNav);
@@ -60,7 +66,15 @@ class ChartUI extends Component {
 
   render() {
     const { visibleNav } = this.state;
-    const { onToggleTextLabels, textLabels, theme } = this.props;
+    const {
+      data,
+      onHighlightNodes,
+      onToggleNodes,
+      onToggleTextLabels,
+      textLabels,
+      theme
+    } = this.props;
+
     return (
       <nav
         className={classnames('chart-ui', { 'chart-ui--visible': visibleNav })}
@@ -89,6 +103,28 @@ class ChartUI extends Component {
           value={textLabels}
           theme={theme}
         />
+        <ul>
+          {data.nodes.map(node => (
+            <li
+              key={node.id}
+              onMouseEnter={() => {
+                onHighlightNodes(node.id, true);
+              }}
+              onMouseLeave={() => {
+                onHighlightNodes(node.id, false);
+              }}>
+              <Checkbox
+                checked={!node.disabled}
+                label={shorten(node.name, 30)}
+                name={node.name}
+                onChange={(e, { checked }) => {
+                  onToggleNodes(node.id, !checked);
+                }}
+                theme={theme}
+              />
+            </li>
+          ))}
+        </ul>
       </nav>
     );
   }

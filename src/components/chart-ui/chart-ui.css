@@ -43,10 +43,16 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); }
   .chart-ui ul {
-    padding: 40px 15px;
-    text-align: right; }
-  .chart-ui li {
-    margin: 15px 0; }
+    margin: 30px 0;
+    padding: 0;
+    overflow: auto;
+    max-height: calc(100vh - 150px); }
+  .chart-ui li:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02); }
+  .chart-ui li .cbn-switch {
+    margin: 0; }
+    .chart-ui li .cbn-switch label {
+      padding: 10px 15px; }
   .chart-ui a {
     font-size: 1.8rem;
     line-height: 1.5;

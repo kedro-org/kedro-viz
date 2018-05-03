@@ -7,8 +7,8 @@ import './app.css';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.data = generateRandomData();
     this.state = {
+      data: generateRandomData(),
       textLabels: false,
       theme: 'dark'
     };
@@ -20,18 +20,45 @@ class App extends Component {
       'background ease 0.2s, transform ease 0.4s';
   }
 
+  onHighlightNodes(nodeID, highlighted) {
+    const { data } = this.state;
+    const nodes = data.nodes.map(node => {
+      node.highlighted = node.id === nodeID;
+      return node;
+    });
+    this.setState({
+      data: Object.assign({}, data, { nodes })
+    });
+  }
+
+  onToggleNodes(nodeID, disabled) {
+    const { data } = this.state;
+    const nodes = data.nodes.map(node => {
+      if (node.id === nodeID) {
+        node.disabled = disabled;
+      }
+      return node;
+    });
+    this.setState({
+      data: Object.assign({}, data, { nodes })
+    });
+  }
+
   render() {
-    const { textLabels, theme } = this.state;
+    const { data, textLabels, theme } = this.state;
 
     return (
       <div className="App">
-        <FlowChart textLabels={textLabels} data={this.data} />
+        <FlowChart data={data} textLabels={textLabels} />
         <ChartUI
-          textLabels={textLabels}
-          theme={theme}
+          data={data}
+          onHighlightNodes={this.onHighlightNodes.bind(this)}
           onToggleTextLabels={textLabels => {
             this.setState({ textLabels });
           }}
+          onToggleNodes={this.onToggleNodes.bind(this)}
+          textLabels={textLabels}
+          theme={theme}
         />
       </div>
     );

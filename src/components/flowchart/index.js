@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { select, event } from 'd3-selection';
 import { curveBasis } from 'd3-shape';
-import { scaleOrdinal } from 'd3-scale';
+// import { scaleOrdinal } from 'd3-scale';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import DagreD3 from 'dagre-d3';
 import database from './database.svg';
@@ -23,17 +23,24 @@ class FlowChart extends Component {
 
     this.setChartHeight();
     window.addEventListener('resize', this.setChartHeight);
-    this.setScales();
+    // this.setScales();
     this.setupChart();
-    this.drawChart(false);
+    this.updata();
+    this.renderChart(false, true);
+    this.drawChart();
   }
 
   componentWillUnmount() {
     document.removeEventListener('resize', this.setChartHeight);
   }
 
-  componentDidUpdate() {
-    this.drawChart(true);
+  componentDidUpdate(newProps) {
+    const resetZoom = newProps.textLabels !== this.props.textLabels;
+    // this.setScales();
+    this.setupChart();
+    this.updata();
+    this.renderChart(true, resetZoom);
+    this.drawChart();
   }
 
   setChartHeight() {
@@ -42,24 +49,24 @@ class FlowChart extends Component {
     this.svg.attr('width', this.width).attr('height', this.height);
   }
 
-  setScales() {
-    const { layers } = this.props.data;
-    this.scale = {
-      colour: scaleOrdinal()
-        .domain(layers.map(d => d.id))
-        .range(
-          layers.map((d, i) => `hsl(${i * (360 / layers.length)}, 50%, 70%)`)
-        )
-    };
-  }
+  // setScales() {
+  //   const { layers } = this.props.data;
+  //   this.scale = {
+  //     colour: scaleOrdinal()
+  //       .domain(layers.map(d => d.id))
+  //       .range(
+  //         layers.map((d, i) => `hsl(${i * (360 / layers.length)}, 50%, 70%)`)
+  //       )
+  //   };
+  // }
 
   setupChart() {
-    this.dagreD3.graph = new DagreD3.graphlib.Graph({ compound: true })
-      .setGraph({
-        marginx: 40,
-        marginy: 40
-      })
-      .setDefaultEdgeLabel(() => ({}));
+    this.dagreD3.graph = new DagreD3.graphlib.Graph({
+      compound: true
+    }).setGraph({
+      marginx: 40,
+      marginy: 40
+    });
 
     // Create the renderer
     this.dagreD3.render = new DagreD3.render();
@@ -71,8 +78,8 @@ class FlowChart extends Component {
     this.svg.call(this.zoomBehaviour);
 
     // Add transition animations
-    this.dagreD3.graph.graph().transition = selection =>
-      selection.transition().duration(500);
+    // this.dagreD3.graph.graph().transition = selection =>
+    //   selection.transition().duration(500);
   }
 
   // Update node and link data
@@ -80,24 +87,27 @@ class FlowChart extends Component {
     const { data, textLabels } = this.props;
     const { graph } = this.dagreD3;
 
-    data.nodes.forEach(d => {
+    data.nodes.filter(d => !d.disabled).forEach(d => {
       graph.setNode(d.id, {
         data: d,
         labelType: textLabels ? null : 'html',
         label: textLabels
           ? shorten(d.name, 30)
           : `<img src="${database}" width=18 height=18 alt="${d.id}" />`,
-        shape: textLabels ? 'rect' : 'circle'
+        shape: textLabels ? 'rect' : 'circle',
+        style: d.highlighted ? `stroke: white` : null
         // style: `fill: ${this.scale.colour(d.layer.id)}`
       });
     });
 
-    data.links.forEach(d => {
-      graph.setEdge(d.source.id, d.target.id, {
-        arrowhead: 'vee',
-        curve: curveBasis
+    data.links
+      .filter(d => !d.source.disabled && !d.target.disabled)
+      .forEach(d => {
+        graph.setEdge(d.source.id, d.target.id, {
+          arrowhead: 'vee',
+          curve: curveBasis
+        });
       });
-    });
   }
 
   getLinkedNodes(nodeID) {
@@ -121,35 +131,45 @@ class FlowChart extends Component {
     return linkedNodes;
   }
 
-  drawChart(isUpdate) {
-    const { textLabels } = this.props;
+  renderChart(isUpdate, resetZoom) {
     const { graph, render } = this.dagreD3;
-    this.updata();
 
     // Reset zoom before rendering HTML nodes to force them to scale properly
     // when appending to the DOM
-    if (isUpdate) {
+    if (isUpdate && resetZoom) {
       this.svg.call(this.zoomBehaviour.transform, zoomIdentity.scale(1));
     }
 
     // Run the renderer. This is what draws the final graph.
     this.inner.call(render, graph);
 
-    // Zoom and scale to fit
-    const { width, height } = graph.graph();
-    const zoomScale = Math.min(this.width / width, this.height / height);
-    const translateX = this.width / 2 - width * zoomScale / 2;
-    const translateY = this.height / 2 - height * zoomScale / 2;
-    const svgZoom = isUpdate ? this.svg.transition().duration(500) : this.svg;
-    svgZoom.call(
-      this.zoomBehaviour.transform,
-      zoomIdentity.translate(translateX, translateY).scale(zoomScale)
-    );
+    if (resetZoom) {
+      // Zoom and scale to fit
+      const { width, height } = graph.graph();
+      const zoomScale = Math.min(this.width / width, this.height / height);
+      const translateX = this.width / 2 - width * zoomScale / 2;
+      const translateY = this.height / 2 - height * zoomScale / 2;
+      const svgZoom = isUpdate ? this.svg.transition().duration(500) : this.svg;
+      svgZoom.call(
+        this.zoomBehaviour.transform,
+        zoomIdentity.translate(translateX, translateY).scale(zoomScale)
+      );
+    }
+  }
+
+  drawChart() {
+    const { graph } = this.dagreD3;
 
     const nodes = this.inner.selectAll('.node');
     const edges = this.inner.selectAll('.edgePath');
 
     nodes
+      // .classed('node--highlighted', d => graph.node(d).data.highlighted)
+      .on('click', d => {
+        graph.removeNode(d);
+        this.renderChart(true, false);
+        this.drawChart();
+      })
       .on('mouseover', () => {
         this.tooltip.classed('tooltip--visible', true);
       })
