@@ -53,26 +53,22 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
   }
 
   .node--faded {
-    circle,
-    rect,
-    .label {
-      opacity: 0.3;
-    }
+    opacity: 0.3;
   }
 
-  .edge > path {
+  .edge path {
     fill: none;
     stroke: $c_edge;
     stroke-width: 1.5px;
   }
 
-  .edge marker path {
-    fill: $c_edge;
-  }
-
-  .edge--faded path {
+  .edge--faded {
     opacity: 0.1;
   }
+}
+
+.flowchart__arrowhead {
+  fill: $c_edge;
 }
 
 .flowchart__tooltip {

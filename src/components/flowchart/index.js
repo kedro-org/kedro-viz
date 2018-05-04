@@ -21,8 +21,8 @@ class FlowChart extends Component {
     this.el = {
       svg: select(this._svg),
       inner: select(this._gInner),
-      edges: select(this._gEdges),
-      nodes: select(this._gNodes),
+      edgeGroup: select(this._gEdges),
+      nodeGroup: select(this._gNodes),
       tooltip: select(this._tooltip)
     };
 
@@ -100,7 +100,11 @@ class FlowChart extends Component {
         .nodes()
         .map(d => this.graph.node(d))
         .filter(d => d.x && d.y),
-      edges: this.graph.edges().map(d => this.graph.edge(d))
+      edges: this.graph.edges().map(d => {
+        const edge = this.graph.edge(d);
+        edge.id = [edge.source.id, edge.target.id].join('-');
+        return edge;
+      })
     };
   }
 
@@ -125,34 +129,55 @@ class FlowChart extends Component {
     // const delay = (d, i) => 600 + i * 20;
 
     // Create selections
-    const edges = this.el.edges
+    this.el.edges = this.el.edgeGroup
       .selectAll('.edge')
-      .data(data.edges, d => [d.source.id, d.target.id].join('-'));
+      .data(data.edges, d => d.id);
 
-    const nodes = this.el.nodes.selectAll('.node').data(data.nodes, d => d.id);
+    this.el.nodes = this.el.nodeGroup
+      .selectAll('.node')
+      .data(data.nodes, d => d.id);
 
-    const tt = this.toggleTooltip(nodes, edges);
+    const tt = this.toggleTooltip();
 
-    // Create edges
+    // Create arrowhead marker
+    this.el.edgeGroup
+      .append('defs')
+      .append('marker')
+      .attr('id', 'arrowhead')
+      .attr('class', 'flowchart__arrowhead')
+      .attr('viewBox', '0 0 10 10')
+      .attr('refX', 7)
+      .attr('refY', 5)
+      .attr('markerUnits', 'strokeWidth')
+      .attr('markerWidth', 8)
+      .attr('markerHeight', 6)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M 0 0 L 10 5 L 0 10 L 4 5 z');
 
+    // Set up line shape function
     const lineShape = line()
       .x(d => d.x)
       .y(d => d.y)
       .curve(curveBasis);
 
-    edges
+    // Create edges
+    const enterEdges = this.el.edges
       .enter()
       .append('g')
-      .attr('class', 'edge')
+      .attr('class', 'edge');
+
+    enterEdges
       .append('path')
+      .attr('marker-end', d => `url(#arrowhead)`)
       .attr('d', d => lineShape(d.points));
 
-    edges
+    this.el.edges
       .select('path')
       .transition()
       .attr('d', d => lineShape(d.points));
 
-    edges.exit().remove();
+    this.el.edges.exit().remove();
 
     // Create nodes
 
@@ -163,7 +188,7 @@ class FlowChart extends Component {
         .on('mousemove', tt.show)
         .on('mouseout', tt.hide);
 
-    const enterNodes = nodes
+    const enterNodes = this.el.nodes
       .enter()
       .append('g')
       .attr('class', 'node');
@@ -188,15 +213,16 @@ class FlowChart extends Component {
       .attr('y', -9)
       .attr('alt', d => d.name);
 
-    nodes
+    this.el.nodes
       .call(updateNodes)
       .transition()
       .attr('transform', d => `translate(${d.x}, ${d.y})`);
 
-    nodes.exit().remove();
+    this.el.nodes.exit().remove();
   }
 
-  toggleTooltip(nodes, edges) {
+  toggleTooltip() {
+    const { nodes, edges, tooltip } = this.el;
     return {
       show: d => {
         const { clientX, clientY } = event;
@@ -205,7 +231,7 @@ class FlowChart extends Component {
 
         const linkedNodes = this.getLinkedNodes(d.id);
 
-        this.el.tooltip
+        tooltip
           .classed('tooltip--visible', true)
           .classed('tooltip--right', isRight)
           .html(`<b>${d.name}</b><small>${d.layer.name}</small>`)
@@ -229,8 +255,9 @@ class FlowChart extends Component {
       },
 
       hide: () => {
+        edges.classed('edge--faded', false);
         nodes.classed('node--highlighted', false).classed('node--faded', false);
-        this.el.tooltip.classed('tooltip--visible', false);
+        tooltip.classed('tooltip--visible', false);
       }
     };
   }

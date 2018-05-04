@@ -28,18 +28,17 @@
     stroke: #152129; }
   .flowchart__graph .node--highlighted .label {
     opacity: 1; }
-  .flowchart__graph .node--faded circle,
-  .flowchart__graph .node--faded rect,
-  .flowchart__graph .node--faded .label {
+  .flowchart__graph .node--faded {
     opacity: 0.3; }
-  .flowchart__graph .edge > path {
+  .flowchart__graph .edge path {
     fill: none;
     stroke: #dde0e1;
     stroke-width: 1.5px; }
-  .flowchart__graph .edge marker path {
-    fill: #dde0e1; }
-  .flowchart__graph .edge--faded path {
+  .flowchart__graph .edge--faded {
     opacity: 0.1; }
+
+.flowchart__arrowhead {
+  fill: #dde0e1; }
 
 .flowchart__tooltip {
   position: absolute;

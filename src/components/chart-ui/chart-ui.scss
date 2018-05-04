@@ -65,6 +65,8 @@ body.menu-visible {
   }
 
   li {
+    min-width: 320px; // TODO improve this on small screens
+
     &:nth-child(even) {
       background: rgba(#fff, 0.02);
     }
