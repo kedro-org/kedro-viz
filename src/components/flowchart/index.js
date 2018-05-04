@@ -74,7 +74,7 @@ class FlowChart extends Component {
         this.graph.setNode(d.id, {
           ...d,
           label: d.name,
-          width: 50,
+          width: textLabels ? d.name.length * 7 + 40 : 50,
           height: 50
         });
       }
@@ -115,7 +115,7 @@ class FlowChart extends Component {
     const translateX = this.width / 2 - width * zoomScale / 2;
     const translateY = this.height / 2 - height * zoomScale / 2;
     const svgZoom = isUpdate
-      ? this.el.svg.transition().duration(500)
+      ? this.el.svg.transition().duration(300)
       : this.el.svg;
     svgZoom.call(
       this.zoomBehaviour.transform,
@@ -124,9 +124,8 @@ class FlowChart extends Component {
   }
 
   drawChart() {
+    const { textLabels } = this.props;
     const data = this.getLayout();
-
-    // const delay = (d, i) => 600 + i * 20;
 
     // Create selections
     this.el.edges = this.el.edgeGroup
@@ -172,35 +171,20 @@ class FlowChart extends Component {
       .attr('marker-end', d => `url(#arrowhead)`)
       .attr('d', d => lineShape(d.points));
 
+    this.el.edges.exit().remove();
+
+    this.el.edges = this.el.edges.merge(enterEdges);
+
     this.el.edges
       .select('path')
       .transition()
       .attr('d', d => lineShape(d.points));
 
-    this.el.edges.exit().remove();
-
     // Create nodes
-
-    const updateNodes = nodes =>
-      nodes
-        .classed('node--highlighted', d => d.highlighted)
-        .on('mouseover', tt.show)
-        .on('mousemove', tt.show)
-        .on('mouseout', tt.hide);
-
     const enterNodes = this.el.nodes
       .enter()
       .append('g')
       .attr('class', 'node');
-
-    enterNodes
-      .attr('opacity', 0)
-      .attr('transform', d => `translate(${d.x}, ${d.y})`)
-      .call(updateNodes)
-      // .transition()
-      // .delay(delay)
-      // .duration(800)
-      .attr('opacity', 1);
 
     enterNodes.append('circle').attr('r', 25);
 
@@ -213,18 +197,39 @@ class FlowChart extends Component {
       .attr('y', -9)
       .attr('alt', d => d.name);
 
-    this.el.nodes
-      .call(updateNodes)
-      .transition()
-      .attr('transform', d => `translate(${d.x}, ${d.y})`);
+    enterNodes.append('rect');
+
+    enterNodes
+      .append('text')
+      .text(d => d.name)
+      .attr('text-anchor', 'middle')
+      .attr('dy', 5);
 
     this.el.nodes.exit().remove();
+
+    this.el.nodes = this.el.nodes
+      .merge(enterNodes)
+      .classed('node--icon', !textLabels)
+      .classed('node--text', textLabels)
+      .classed('node--highlighted', d => d.highlighted)
+      .on('mouseover', tt.show)
+      .on('mousemove', tt.show)
+      .on('mouseout', tt.hide);
+
+    this.el.nodes
+      .transition()
+      .attr('transform', d => `translate(${d.x}, ${d.y})`)
+      .select('rect')
+      .attr('width', d => d.width - 5)
+      .attr('height', d => d.height - 5)
+      .attr('x', d => (d.width - 5) / -2)
+      .attr('y', d => (d.height - 5) / -2);
   }
 
   toggleTooltip() {
-    const { nodes, edges, tooltip } = this.el;
     return {
       show: d => {
+        const { nodes, edges, tooltip } = this.el;
         const { clientX, clientY } = event;
         const isRight = clientX > this.width / 2;
         const x = isRight ? clientX - this.width : clientX;
@@ -255,6 +260,7 @@ class FlowChart extends Component {
       },
 
       hide: () => {
+        const { nodes, edges, tooltip } = this.el;
         edges.classed('edge--faded', false);
         nodes.classed('node--highlighted', false).classed('node--faded', false);
         tooltip.classed('tooltip--visible', false);

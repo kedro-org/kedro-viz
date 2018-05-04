@@ -10,28 +10,38 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
   display: block;
 
   .node {
+    text {
+      fill: rgba(white, 0.8);
+      pointer-events: none;
+      transition: all ease 0.1s;
+    }
+
     circle {
       fill: lighten($c_bg, 10%);
       stroke: rgba(#000, 0.15);
+      stroke-width: 1px;
+      transition: all ease 0.1s;
     }
+
     rect {
       fill: darken($c_bg, 2%);
       stroke: darken($c_bg, 3%);
-    }
-    circle,
-    rect {
       stroke-width: 1px;
       transition: all ease 0.1s;
     }
   }
 
-  .label {
-    transition: all ease 0.1s;
-    opacity: 0.8;
+  .node--icon {
+    text,
+    rect {
+      opacity: 0;
+    }
+  }
 
-    text {
-      pointer-events: none;
-      fill: white;
+  .node--text {
+    image,
+    circle {
+      opacity: 0;
     }
   }
 
@@ -47,8 +57,8 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
       stroke: darken($c_bg, 5%);
     }
 
-    .label {
-      opacity: 1;
+    text {
+      fill: white;
     }
   }
 
