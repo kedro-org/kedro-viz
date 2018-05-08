@@ -321,23 +321,16 @@ class FlowChart extends Component {
     const { nodes, edges } = this.el;
 
     return {
-      show: d => {
-        const linkedNodes = this.getLinkedNodes(d.id);
+      show: ({ id }) => {
+        const linkedNodes = this.getLinkedNodes(id);
+        const nodeIsLinked = d => linkedNodes.includes(d.id) || d.id === id;
 
         nodes
-          .classed(
-            'node--active',
-            dd => linkedNodes.includes(dd.id) || dd.id === d.id
-          )
-          .classed(
-            'node--faded',
-            dd => !linkedNodes.includes(+dd.id) && dd.id !== d.id
-          );
+          .classed('node--active', nodeIsLinked)
+          .classed('node--faded', d => !nodeIsLinked(d));
 
         edges.classed('edge--faded', ({ source, target }) =>
-          [source.id, target.id].some(
-            dd => !linkedNodes.includes(+dd) && dd !== d.id
-          )
+          [source, target].some(d => !nodeIsLinked(d))
         );
       },
 
