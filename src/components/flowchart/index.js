@@ -78,7 +78,7 @@ class FlowChart extends Component {
       }
     });
 
-    data.links.forEach(d => {
+    data.edges.forEach(d => {
       if (!d.source.disabled && !d.target.disabled) {
         this.graph.setEdge(d.source.id, d.target.id, {
           source: d.source,
@@ -290,18 +290,18 @@ class FlowChart extends Component {
   }
 
   getLinkedNodes(nodeID) {
-    const { links } = this.props.data;
+    const { edges } = this.props.data;
     const linkedNodes = [];
 
     (function getParents(id) {
-      links.filter(d => d.target.id === id).forEach(d => {
+      edges.filter(d => d.target.id === id).forEach(d => {
         linkedNodes.push(d.source.id);
         getParents(d.source.id);
       });
     })(+nodeID);
 
     (function getChildren(id) {
-      links.filter(d => d.source.id === id).forEach(d => {
+      edges.filter(d => d.source.id === id).forEach(d => {
         linkedNodes.push(d.target.id);
         getChildren(d.target.id);
       });
