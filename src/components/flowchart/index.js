@@ -8,7 +8,11 @@ import dagre from 'dagre';
 import database from './database.svg';
 import './flowchart.css';
 
-const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
+/**
+ * Get unique, reproducible ID for each edge, based on its nodes
+ * @param {Object} edge - An edge datum
+ */
+const edgeID = edge => [edge.source.id, edge.target.id].join('-');
 
 class FlowChart extends Component {
   constructor(props) {
@@ -28,18 +32,27 @@ class FlowChart extends Component {
 
     this.setChartHeight();
     window.addEventListener('resize', this.setChartHeight);
-    this.setupChart();
+    this.initZoomBehaviour();
+    this.getLayout();
     this.drawChart();
     this.zoomChart();
+    this.checkNodeCount();
   }
 
   componentWillUnmount() {
     document.removeEventListener('resize', this.setChartHeight);
   }
 
-  componentDidUpdate(newProps) {
+  componentDidUpdate(prevProps) {
+    const rezoom = prevProps.textLabels !== this.props.textLabels;
+
+    if (rezoom || this.checkNodeCount()) {
+      this.getLayout();
+    }
+
     this.drawChart();
-    if (newProps.textLabels !== this.props.textLabels) {
+
+    if (rezoom) {
       this.zoomChart(true);
     }
   }
@@ -50,15 +63,18 @@ class FlowChart extends Component {
     this.el.svg.attr('width', this.width).attr('height', this.height);
   }
 
-  setupChart() {
-    // Initialize zoom behaviour
+  initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
       this.el.inner.attr('transform', event.transform);
     });
     this.el.svg.call(this.zoomBehaviour);
   }
 
-  // Update node and link data
+  /**
+   * Calculate node/edge positoning, using dagre layout algorithm.
+   * This is expensive and should only be run if the layout needs changing,
+   * but not when just highlighting active nodes.
+   */
   getLayout() {
     const { data, textLabels } = this.props;
 
@@ -90,22 +106,44 @@ class FlowChart extends Component {
     // Run Dagre layout to calculate X/Y positioning
     dagre.layout(this.graph);
 
-    // Map to data arrays
-    return {
+    // Map to objects
+    this.layout = {
       nodes: this.graph
         .nodes()
         .map(d => this.graph.node(d))
-        .filter(d => d.x && d.y),
-      edges: this.graph.edges().map(d => {
+        .reduce((nodes, node) => {
+          nodes[node.id] = node;
+          return nodes;
+        }, {}),
+
+      edges: this.graph.edges().reduce((edges, d) => {
         const edge = this.graph.edge(d);
-        edge.id = [edge.source.id, edge.target.id].join('-');
-        return edge;
-      })
+        edge.id = edgeID(edge);
+        edges[edge.id] = edge;
+        return edges;
+      }, {})
     };
   }
 
+  /**
+   * Keep a count of the number of nodes on screen,
+   * and return true if the number of visible nodes has changed,
+   * indicating that the dagre layout should be updated
+   */
+  checkNodeCount() {
+    const newNodeCount = this.props.data.nodes.filter(d => !d.disabled).length;
+    if (newNodeCount !== this.nodeCount) {
+      this.nodeCount = newNodeCount;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Zoom and scale to fit
+   * @param {Boolean} isUpdate - Whether chart is updating and should be animated
+   */
   zoomChart(isUpdate) {
-    // Zoom and scale to fit
     const { width, height } = this.graph.graph();
     const zoomScale = Math.min(this.width / width, this.height / height);
     const translateX = this.width / 2 - width * zoomScale / 2;
@@ -119,9 +157,30 @@ class FlowChart extends Component {
     );
   }
 
+  /**
+   * Combine dagre layout with updated data from props
+   */
+  prepareData() {
+    const { edges, nodes } = this.props.data;
+
+    return {
+      edges: edges
+        .filter(d => !d.source.disabled && !d.target.disabled)
+        .map(d => ({
+          ...this.layout.edges[edgeID(d)],
+          ...d
+        })),
+
+      nodes: nodes.filter(d => !d.disabled).map(d => ({
+        ...this.layout.nodes[d.id],
+        ...d
+      }))
+    };
+  }
+
   drawChart() {
     const { onNodeUpdate, textLabels } = this.props;
-    const data = this.getLayout();
+    const data = this.prepareData();
 
     // Create selections
     this.el.edges = this.el.edgeGroup
