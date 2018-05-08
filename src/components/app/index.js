@@ -23,7 +23,9 @@ class App extends Component {
   onNodeUpdate(nodeID, property, value) {
     const { data } = this.state;
     const nodes = data.nodes.map(node => {
-      node[property] = value && node.id === nodeID;
+      if (node.id === nodeID) {
+        node[property] = value;
+      }
       return node;
     });
     this.setState({
