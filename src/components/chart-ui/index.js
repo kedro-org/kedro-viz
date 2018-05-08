@@ -106,14 +106,14 @@ class ChartUI extends Component {
           {data.nodes.map(node => (
             <li
               className={classnames('chart-ui__node', {
-                'chart-ui__node--active': node.highlighted
+                'chart-ui__node--active': node.active
               })}
               key={node.id}
               onMouseEnter={() => {
-                onNodeUpdate(node.id, 'highlighted', true);
+                onNodeUpdate(node.id, 'active', true);
               }}
               onMouseLeave={() => {
-                onNodeUpdate(node.id, 'highlighted', false);
+                onNodeUpdate(node.id, 'active', false);
               }}>
               <Checkbox
                 checked={!node.disabled}

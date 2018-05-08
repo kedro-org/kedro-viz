@@ -23,14 +23,14 @@
   .flowchart__graph .node--text image,
   .flowchart__graph .node--text circle {
     opacity: 0; }
-  .flowchart__graph .node--highlighted circle {
+  .flowchart__graph .node--active circle {
     fill: #3f667e;
     stroke-width: 1.5px;
     stroke: #fff; }
-  .flowchart__graph .node--highlighted rect {
+  .flowchart__graph .node--active rect {
     fill: #16242c;
     stroke: #152129; }
-  .flowchart__graph .node--highlighted text {
+  .flowchart__graph .node--active text {
     fill: white; }
   .flowchart__graph .node--faded {
     opacity: 0.3; }

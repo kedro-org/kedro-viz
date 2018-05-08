@@ -45,7 +45,7 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
     }
   }
 
-  .node--highlighted {
+  .node--active {
     circle {
       fill: lighten($c_bg, 20%);
       stroke-width: 1.5px;

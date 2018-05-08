@@ -68,9 +68,7 @@ class FlowChart extends Component {
     });
 
     data.nodes.forEach(d => {
-      if (d.disabled) {
-        // this.graph.removeNode(d.id);
-      } else {
+      if (!d.disabled) {
         this.graph.setNode(d.id, {
           ...d,
           label: d.name,
@@ -81,9 +79,7 @@ class FlowChart extends Component {
     });
 
     data.links.forEach(d => {
-      if (d.source.disabled || d.target.disabled) {
-        // this.graph.removeEdge(d.source.id, d.target.id);
-      } else {
+      if (!d.source.disabled && !d.target.disabled) {
         this.graph.setEdge(d.source.id, d.target.id, {
           source: d.source,
           target: d.target
@@ -209,9 +205,9 @@ class FlowChart extends Component {
       .merge(enterNodes)
       .classed('node--icon', !textLabels)
       .classed('node--text', textLabels)
-      .classed('node--highlighted', d => d.highlighted)
+      .classed('node--active', d => d.active)
       .on('mouseover', d => {
-        onNodeUpdate(d.id, 'highlighted', true);
+        onNodeUpdate(d.id, 'active', true);
         this.tooltip().show(d);
         this.linkedNodes().show(d);
       })
@@ -219,7 +215,7 @@ class FlowChart extends Component {
         this.tooltip().show(d);
       })
       .on('mouseout', d => {
-        onNodeUpdate(d.id, 'highlighted', false);
+        onNodeUpdate(d.id, 'active', false);
         this.linkedNodes().hide(d);
         this.tooltip().hide(d);
       });
@@ -271,7 +267,7 @@ class FlowChart extends Component {
 
         nodes
           .classed(
-            'node--highlighted',
+            'node--active',
             dd => linkedNodes.includes(dd.id) || dd.id === d.id
           )
           .classed(
@@ -288,7 +284,7 @@ class FlowChart extends Component {
 
       hide: () => {
         edges.classed('edge--faded', false);
-        nodes.classed('node--highlighted', false).classed('node--faded', false);
+        nodes.classed('node--active', false).classed('node--faded', false);
       }
     };
   }
