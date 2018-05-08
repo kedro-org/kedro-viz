@@ -124,7 +124,7 @@ class FlowChart extends Component {
   }
 
   drawChart() {
-    const { textLabels } = this.props;
+    const { onNodeUpdate, textLabels } = this.props;
     const data = this.getLayout();
 
     // Create selections
@@ -135,8 +135,6 @@ class FlowChart extends Component {
     this.el.nodes = this.el.nodeGroup
       .selectAll('.node')
       .data(data.nodes, d => d.id);
-
-    const tt = this.toggleTooltip();
 
     // Create arrowhead marker
     this.el.edgeGroup
@@ -212,9 +210,19 @@ class FlowChart extends Component {
       .classed('node--icon', !textLabels)
       .classed('node--text', textLabels)
       .classed('node--highlighted', d => d.highlighted)
-      .on('mouseover', tt.show)
-      .on('mousemove', tt.show)
-      .on('mouseout', tt.hide);
+      .on('mouseover', d => {
+        onNodeUpdate(d.id, 'highlighted', true);
+        this.tooltip().show(d);
+        this.linkedNodes().show(d);
+      })
+      .on('mousemove', d => {
+        this.tooltip().show(d);
+      })
+      .on('mouseout', d => {
+        onNodeUpdate(d.id, 'highlighted', false);
+        this.linkedNodes().hide(d);
+        this.tooltip().hide(d);
+      });
 
     this.el.nodes
       .transition()
@@ -226,21 +234,40 @@ class FlowChart extends Component {
       .attr('y', d => (d.height - 5) / -2);
   }
 
-  toggleTooltip() {
+  /**
+   * Provide methods to show/hide the tooltip
+   */
+  tooltip() {
+    const { tooltip } = this.el;
+
     return {
       show: d => {
-        const { nodes, edges, tooltip } = this.el;
         const { clientX, clientY } = event;
         const isRight = clientX > this.width / 2;
         const x = isRight ? clientX - this.width : clientX;
-
-        const linkedNodes = this.getLinkedNodes(d.id);
-
         tooltip
           .classed('tooltip--visible', true)
           .classed('tooltip--right', isRight)
           .html(`<b>${d.name}</b><small>${d.layer.name}</small>`)
           .style('transform', `translate(${x}px, ${clientY}px)`);
+      },
+
+      hide: () => {
+        tooltip.classed('tooltip--visible', false);
+      }
+    };
+  }
+
+  /**
+   * Provide methods to highlight linked nodes on hover,
+   * and fade non-linked nodes
+   */
+  linkedNodes() {
+    const { nodes, edges } = this.el;
+
+    return {
+      show: d => {
+        const linkedNodes = this.getLinkedNodes(d.id);
 
         nodes
           .classed(
@@ -260,10 +287,8 @@ class FlowChart extends Component {
       },
 
       hide: () => {
-        const { nodes, edges, tooltip } = this.el;
         edges.classed('edge--faded', false);
         nodes.classed('node--highlighted', false).classed('node--faded', false);
-        tooltip.classed('tooltip--visible', false);
       }
     };
   }

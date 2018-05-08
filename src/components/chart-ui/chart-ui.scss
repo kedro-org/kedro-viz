@@ -56,46 +56,18 @@ body.menu-visible {
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   }
+  // a {
+  //   font-size: 1.8rem;
+  //   line-height: 1.5;
+  //   color: inherit;
+  //   border: none;
 
-  ul {
-    margin: 30px 0;
-    padding: 0;
-    overflow: auto;
-    max-height: calc(100vh - 150px);
-  }
-
-  li {
-    min-width: 320px; // TODO improve this on small screens
-
-    &:nth-child(even) {
-      background: rgba(#fff, 0.02);
-    }
-
-    &:hover {
-      background: rgba(#fff, 0.1);
-    }
-
-    .cbn-switch {
-      margin: 0;
-
-      label {
-        padding: 10px 15px;
-      }
-    }
-  }
-
-  a {
-    font-size: 1.8rem;
-    line-height: 1.5;
-    color: inherit;
-    border: none;
-
-    &:hover,
-    &:focus {
-      text-decoration: underline;
-      background: none;
-    }
-  }
+  //   &:hover,
+  //   &:focus {
+  //     text-decoration: underline;
+  //     background: none;
+  //   }
+  // }
 }
 
 .chart-ui__menu {
@@ -122,4 +94,32 @@ body.menu-visible {
 
 .cbn-toggle {
   width: 140px;
+}
+
+.chart-ui__node-list {
+  margin: 30px 0;
+  padding: 0;
+  overflow: auto;
+  max-height: calc(100vh - 150px);
+}
+
+.chart-ui__node {
+  min-width: 320px; // TODO improve this on small screens
+
+  &:nth-child(even) {
+    background: rgba(#fff, 0.02);
+  }
+
+  &:hover,
+  &--active {
+    background: rgba(#fff, 0.1);
+  }
+
+  .cbn-switch {
+    margin: 0;
+
+    label {
+      padding: 10px 15px;
+    }
+  }
 }

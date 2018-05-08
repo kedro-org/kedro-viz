@@ -102,9 +102,12 @@ class ChartUI extends Component {
           value={textLabels}
           theme={theme}
         />
-        <ul>
+        <ul className="chart-ui__node-list">
           {data.nodes.map(node => (
             <li
+              className={classnames('chart-ui__node', {
+                'chart-ui__node--active': node.highlighted
+              })}
               key={node.id}
               onMouseEnter={() => {
                 onNodeUpdate(node.id, 'highlighted', true);

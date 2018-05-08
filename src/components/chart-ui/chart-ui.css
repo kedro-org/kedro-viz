@@ -42,29 +42,6 @@
     background: #111f2a;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); }
-  .chart-ui ul {
-    margin: 30px 0;
-    padding: 0;
-    overflow: auto;
-    max-height: calc(100vh - 150px); }
-  .chart-ui li {
-    min-width: 320px; }
-    .chart-ui li:nth-child(even) {
-      background: rgba(255, 255, 255, 0.02); }
-    .chart-ui li:hover {
-      background: rgba(255, 255, 255, 0.1); }
-    .chart-ui li .cbn-switch {
-      margin: 0; }
-      .chart-ui li .cbn-switch label {
-        padding: 10px 15px; }
-  .chart-ui a {
-    font-size: 1.8rem;
-    line-height: 1.5;
-    color: inherit;
-    border: none; }
-    .chart-ui a:hover, .chart-ui a:focus {
-      text-decoration: underline;
-      background: none; }
 
 .chart-ui__menu {
   position: absolute;
@@ -82,3 +59,20 @@
 
 .cbn-toggle {
   width: 140px; }
+
+.chart-ui__node-list {
+  margin: 30px 0;
+  padding: 0;
+  overflow: auto;
+  max-height: calc(100vh - 150px); }
+
+.chart-ui__node {
+  min-width: 320px; }
+  .chart-ui__node:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02); }
+  .chart-ui__node:hover, .chart-ui__node--active {
+    background: rgba(255, 255, 255, 0.1); }
+  .chart-ui__node .cbn-switch {
+    margin: 0; }
+    .chart-ui__node .cbn-switch label {
+      padding: 10px 15px; }

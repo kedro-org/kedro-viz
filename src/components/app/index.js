@@ -40,7 +40,11 @@ class App extends Component {
 
     return (
       <div className="app">
-        <FlowChart data={data} textLabels={textLabels} />
+        <FlowChart
+          data={data}
+          onNodeUpdate={this.onNodeUpdate.bind(this)}
+          textLabels={textLabels}
+        />
         <ChartUI
           data={data}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
