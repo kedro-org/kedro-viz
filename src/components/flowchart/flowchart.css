@@ -81,5 +81,17 @@
   .flowchart__tooltip small {
     display: block;
     font-size: 10px; }
-  body.menu-visible .flowchart__tooltip {
-    display: none; }
+  @media (min-width: 480px) {
+    body.menu-visible .flowchart__tooltip {
+      left: -120px; } }
+  @media (min-width: 1100px) {
+    body.menu-visible .flowchart__tooltip {
+      left: -220px; } }
+  body.menu-visible .flowchart__tooltip.tooltip--right {
+    left: auto; }
+    @media (min-width: 480px) {
+      body.menu-visible .flowchart__tooltip.tooltip--right {
+        right: 80px; } }
+    @media (min-width: 1100px) {
+      body.menu-visible .flowchart__tooltip.tooltip--right {
+        right: 180px; } }
