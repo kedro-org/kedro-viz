@@ -1,8 +1,6 @@
 @import '../../styles/typography/extends';
 @import '../../styles/variables';
 
-$nav-width: 400px;
-
 body.menu-visible {
   @media (min-width: $breakpoint-small) {
     transform: translateX($nav-width / 4);

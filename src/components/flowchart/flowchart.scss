@@ -1,6 +1,4 @@
-$c_bg: #1d2f3a;
-$c_edge: mix($c_bg, #fff, 15);
-$c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
+@import '../../styles/variables';
 
 .flowchart {
   position: relative;
@@ -17,15 +15,15 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
     }
 
     circle {
-      fill: lighten($c_bg, 10%);
+      fill: lighten($color-bg-dark, 10%);
       stroke: rgba(#000, 0.15);
       stroke-width: 1px;
       transition: all ease 0.1s;
     }
 
     rect {
-      fill: darken($c_bg, 2%);
-      stroke: darken($c_bg, 3%);
+      fill: darken($color-bg-dark, 2%);
+      stroke: darken($color-bg-dark, 3%);
       stroke-width: 1px;
       transition: all ease 0.1s;
     }
@@ -47,14 +45,14 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
 
   .node--active {
     circle {
-      fill: lighten($c_bg, 20%);
+      fill: lighten($color-bg-dark, 20%);
       stroke-width: 1.5px;
       stroke: #fff;
     }
 
     rect {
-      fill: darken($c_bg, 4%);
-      stroke: darken($c_bg, 5%);
+      fill: darken($color-bg-dark, 4%);
+      stroke: darken($color-bg-dark, 5%);
     }
 
     text {
@@ -68,7 +66,7 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
 
   .edge path {
     fill: none;
-    stroke: $c_edge;
+    stroke: $color-edge;
     stroke-width: 1.5px;
   }
 
@@ -78,7 +76,7 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
 }
 
 .flowchart__arrowhead {
-  fill: $c_edge;
+  fill: $color-edge;
 }
 
 .flowchart__tooltip {
@@ -86,7 +84,7 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
   top: -80px;
   left: -20px;
   padding: 12px 20px;
-  background: $c_tooltipBg;
+  background: $color-tooltip-bg;
   color: white;
   opacity: 0;
   transition: opacity ease 0.1s;
@@ -117,7 +115,7 @@ $c_tooltipBg: rgba(mix($c_bg, #111, 50), 0.9);
     height: 0;
     border-style: solid;
     border-width: 10px 10px 0 10px;
-    border-color: $c_tooltipBg transparent transparent;
+    border-color: $color-tooltip-bg transparent transparent;
   }
 
   b {
