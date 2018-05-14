@@ -228,22 +228,6 @@ class FlowChart extends Component {
       .selectAll('.node')
       .data(data.nodes, d => d.id);
 
-    // Create arrowhead marker
-    this.el.edgeGroup
-      .append('defs')
-      .append('marker')
-      .attr('id', 'arrowhead')
-      .attr('class', 'flowchart__arrowhead')
-      .attr('viewBox', '0 0 10 10')
-      .attr('refX', 7)
-      .attr('refY', 5)
-      .attr('markerUnits', 'strokeWidth')
-      .attr('markerWidth', 8)
-      .attr('markerHeight', 6)
-      .attr('orient', 'auto')
-      .append('path')
-      .attr('d', 'M 0 0 L 10 5 L 0 10 L 4 5 z');
-
     // Set up line shape function
     const lineShape = line()
       .x(d => d.x)
@@ -417,6 +401,20 @@ class FlowChart extends Component {
     return (
       <div className="flowchart">
         <svg className="flowchart__graph" ref={el => (this._svg = el)}>
+          <defs>
+            <marker
+              id="arrowhead"
+              className="flowchart__arrowhead"
+              viewBox="0 0 10 10"
+              refX="7"
+              refY="5"
+              markerUnits="strokeWidth"
+              markerWidth="8"
+              markerHeight="6"
+              orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
+            </marker>
+          </defs>
           <g ref={el => (this._gInner = el)}>
             <g className="flowchart__edges" ref={el => (this._gEdges = el)} />
             <g className="flowchart__nodes" ref={el => (this._gNodes = el)} />
