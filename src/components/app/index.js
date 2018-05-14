@@ -10,6 +10,7 @@ class App extends Component {
     this.state = {
       data: generateRandomData(),
       textLabels: false,
+      view: 'combined',
       theme: 'dark'
     };
   }
@@ -18,6 +19,12 @@ class App extends Component {
     // Setup transitions for theme change and menu toggle, but only after mounting
     document.body.style.transition =
       'background ease 0.2s, transform ease 0.4s';
+  }
+
+  onChangeView(e, { value }) {
+    this.setState({
+      view: value
+    });
   }
 
   onNodeUpdate(nodeID, property, value) {
@@ -38,7 +45,7 @@ class App extends Component {
   }
 
   render() {
-    const { data, textLabels, theme } = this.state;
+    const { data, textLabels, theme, view } = this.state;
 
     return (
       <div className="app">
@@ -46,9 +53,11 @@ class App extends Component {
           data={data}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
           textLabels={textLabels}
+          view={view}
         />
         <ChartUI
           data={data}
+          onChangeView={this.onChangeView.bind(this)}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
           onToggleTextLabels={this.onToggleTextLabels.bind(this)}
           textLabels={textLabels}

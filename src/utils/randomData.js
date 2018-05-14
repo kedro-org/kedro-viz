@@ -1,4 +1,4 @@
-const NODE_COUNT = 40;
+const NODE_COUNT = 30;
 
 const getArray = n => Array.from(Array(n).keys());
 
@@ -23,15 +23,18 @@ const generateRandomData = () => {
     'Model Output'
   ].map((name, id) => ({ id, name }));
 
-  const nodes = getArray(NODE_COUNT).map((id, i, arr) => ({
+  const makeNode = type => id => ({
     id,
     name: randomName(Math.ceil(Math.random() * 10)),
-    layer: getRandom(layers)
-  }));
+    layer: getRandom(layers),
+    type
+  });
 
-  const edges = nodes.map((source, i) => {
+  let nodes = getArray(NODE_COUNT).map(makeNode('data'));
+
+  let edges = nodes.map((source, i) => {
     const targets = nodes.filter(
-      dd => dd.id !== source.id && dd.layer.id > source.layer.id
+      d => d.id !== source.id && d.layer.id > source.layer.id
     );
     if (targets.length) {
       return {
@@ -41,8 +44,48 @@ const generateRandomData = () => {
     }
     return {
       target: source,
-      source: getRandom(nodes.filter(dd => source.id !== dd.id))
+      source: getRandom(nodes.filter(d => source.id !== d.id))
     };
+  });
+
+  edges.forEach(edge => {
+    if (Math.random() > 0.5) {
+      // Half the time, if there is already a node linking to that dataset,
+      // join to its node
+      const matchingEdge = edges.find(
+        d => d.target.id === edge.target.id && d.source.type === 'task'
+      );
+      if (matchingEdge) {
+        edges.push({
+          source: edge.source,
+          target: matchingEdge.source
+        });
+        return;
+      }
+    }
+    const midWayNode = makeNode('task')(nodes.length);
+    nodes.push(midWayNode);
+    edges.push({
+      source: edge.source,
+      target: midWayNode
+    });
+    edges.push({
+      source: midWayNode,
+      target: edge.target
+    });
+  });
+
+  edges.forEach(d => {
+    if (d.source.type === 'task') {
+      edges.forEach(dd => {
+        if (dd.target.type === 'task' && dd.source.id === d.target.id) {
+          edges.push({
+            source: d.source,
+            target: dd.target
+          });
+        }
+      });
+    }
   });
 
   return {

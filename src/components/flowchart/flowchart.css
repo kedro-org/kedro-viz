@@ -3,43 +3,61 @@
 
 .flowchart__graph {
   display: block; }
-  .flowchart__graph .node text {
-    fill: rgba(255, 255, 255, 0.8);
-    pointer-events: none;
-    transition: all ease 0.1s; }
-  .flowchart__graph .node circle {
-    fill: #2e4b5c;
-    stroke: rgba(0, 0, 0, 0.15);
-    stroke-width: 1px;
-    transition: all ease 0.1s; }
-  .flowchart__graph .node rect {
-    fill: #1a2933;
-    stroke: #182730;
-    stroke-width: 1px;
-    transition: all ease 0.1s; }
-  .flowchart__graph .node--icon text,
-  .flowchart__graph .node--icon rect {
-    opacity: 0; }
-  .flowchart__graph .node--text image,
-  .flowchart__graph .node--text circle {
-    opacity: 0; }
-  .flowchart__graph .node--active circle {
-    fill: #3f667e;
-    stroke-width: 1.5px;
-    stroke: #fff; }
-  .flowchart__graph .node--active rect {
-    fill: #16242c;
-    stroke: #152129; }
-  .flowchart__graph .node--active text {
-    fill: white; }
-  .flowchart__graph .node--faded {
-    opacity: 0.3; }
-  .flowchart__graph .edge path {
-    fill: none;
-    stroke: #dde0e1;
-    stroke-width: 1.5px; }
-  .flowchart__graph .edge--faded {
-    opacity: 0.1; }
+
+.node text {
+  fill: rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+  transition: all ease 0.1s; }
+
+.node--icon circle,
+.node--icon rect {
+  fill: #2e4b5c;
+  stroke: rgba(0, 0, 0, 0.15);
+  stroke-width: 1px;
+  transition: all ease 0.1s; }
+
+.node--text rect {
+  fill: #1a2933;
+  stroke: #182730;
+  stroke-width: 1px;
+  transition: all ease 0.1s; }
+
+.node--icon text {
+  opacity: 0; }
+
+.node--icon.node--data rect {
+  opacity: 0; }
+
+.node--icon.node--task circle {
+  opacity: 0; }
+
+.node--text image,
+.node--text circle {
+  opacity: 0; }
+
+.node--active.node--icon circle,
+.node--active.node--icon rect {
+  fill: #3f667e;
+  stroke-width: 1.5px;
+  stroke: #fff; }
+
+.node--active.node--text rect {
+  fill: #16242c;
+  stroke: #152129; }
+
+.node--active text {
+  fill: white; }
+
+.node--faded {
+  opacity: 0.3; }
+
+.edge path {
+  fill: none;
+  stroke: #dde0e1;
+  stroke-width: 1.5px; }
+
+.edge--faded {
+  opacity: 0.1; }
 
 .flowchart__arrowhead {
   fill: #dde0e1; }

@@ -66,6 +66,10 @@ body.menu-visible {
   //     background: none;
   //   }
   // }
+
+  .cbn-toggle {
+    width: 140px;
+  }
 }
 
 .chart-ui__menu {
@@ -90,12 +94,16 @@ body.menu-visible {
   }
 }
 
-.cbn-toggle {
-  width: 140px;
+.chart-ui__view {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 30px 0;
+  padding-right: 30px;
 }
 
 .chart-ui__node-list {
-  margin: 30px 0;
+  margin: 30px -15px;
   padding: 0;
   overflow: auto;
   max-height: calc(100vh - 150px);

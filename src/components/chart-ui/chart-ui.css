@@ -42,6 +42,8 @@
     background: #111f2a;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); }
+  .chart-ui .cbn-toggle {
+    width: 140px; }
 
 .chart-ui__menu {
   position: absolute;
@@ -57,11 +59,15 @@
 .cbn-theme--dark .menu-icon {
   fill: #fff; }
 
-.cbn-toggle {
-  width: 140px; }
+.chart-ui__view {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 30px 0;
+  padding-right: 30px; }
 
 .chart-ui__node-list {
-  margin: 30px 0;
+  margin: 30px -15px;
   padding: 0;
   overflow: auto;
   max-height: calc(100vh - 150px); }

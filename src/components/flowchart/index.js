@@ -5,7 +5,8 @@ import { curveBasis, line } from 'd3-shape';
 // import { scaleOrdinal } from 'd3-scale';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import dagre from 'dagre';
-import database from './database.svg';
+import imgCog from './cog.svg';
+import imgDatabase from './database.svg';
 import './flowchart.css';
 
 /**
@@ -45,14 +46,15 @@ class FlowChart extends Component {
 
   componentDidUpdate(prevProps) {
     const rezoom = prevProps.textLabels !== this.props.textLabels;
+    const updateView = prevProps.view !== this.props.view;
 
-    if (rezoom || this.checkNodeCount()) {
+    if (rezoom || updateView || this.checkNodeCount()) {
       this.getLayout();
     }
 
     this.drawChart();
 
-    if (rezoom) {
+    if (rezoom || updateView) {
       this.zoomChart(true);
     }
   }
@@ -84,23 +86,25 @@ class FlowChart extends Component {
     });
 
     data.nodes.forEach(d => {
-      if (!d.disabled) {
-        this.graph.setNode(d.id, {
-          ...d,
-          label: d.name,
-          width: textLabels ? d.name.length * 7 + 40 : 50,
-          height: 50
-        });
+      if (!this.filter().node(d)) {
+        return;
       }
+      this.graph.setNode(d.id, {
+        ...d,
+        label: d.name,
+        width: textLabels ? d.name.length * 7 + 40 : 50,
+        height: 50
+      });
     });
 
     data.edges.forEach(d => {
-      if (!d.source.disabled && !d.target.disabled) {
-        this.graph.setEdge(d.source.id, d.target.id, {
-          source: d.source,
-          target: d.target
-        });
+      if (!this.filter().edge(d)) {
+        return;
       }
+      this.graph.setEdge(d.source.id, d.target.id, {
+        source: d.source,
+        target: d.target
+      });
     });
 
     // Run Dagre layout to calculate X/Y positioning
@@ -157,21 +161,41 @@ class FlowChart extends Component {
     );
   }
 
+  filter() {
+    return {
+      edge: d => {
+        if (d.source.disabled || d.target.disabled) {
+          return false;
+        }
+        const { view } = this.props;
+        if (view === 'combined') {
+          return d.source.type !== d.target.type;
+        }
+        return view === d.source.type && view === d.target.type;
+      },
+      node: d => {
+        if (d.disabled) {
+          return false;
+        }
+        const { view } = this.props;
+        return view === 'combined' || view === d.type;
+      }
+    };
+  }
+
   /**
    * Combine dagre layout with updated data from props
    */
   prepareData() {
-    const { edges, nodes } = this.props.data;
+    const { data } = this.props;
 
     return {
-      edges: edges
-        .filter(d => !d.source.disabled && !d.target.disabled)
-        .map(d => ({
-          ...this.layout.edges[edgeID(d)],
-          ...d
-        })),
+      edges: data.edges.filter(this.filter().edge).map(d => ({
+        ...this.layout.edges[edgeID(d)],
+        ...d
+      })),
 
-      nodes: nodes.filter(d => !d.disabled).map(d => ({
+      nodes: data.nodes.filter(this.filter().node).map(d => ({
         ...this.layout.nodes[d.id],
         ...d
       }))
@@ -241,16 +265,16 @@ class FlowChart extends Component {
 
     enterNodes.append('circle').attr('r', 25);
 
+    enterNodes.append('rect');
+
     enterNodes
       .append('image')
-      .attr('xlink:href', database)
+      .attr('xlink:href', d => (d.type === 'data' ? imgDatabase : imgCog))
       .attr('width', 18)
       .attr('height', 18)
       .attr('x', -9)
       .attr('y', -9)
       .attr('alt', d => d.name);
-
-    enterNodes.append('rect');
 
     enterNodes
       .append('text')
@@ -262,6 +286,8 @@ class FlowChart extends Component {
 
     this.el.nodes = this.el.nodes
       .merge(enterNodes)
+      .classed('node--data', d => d.type === 'data')
+      .classed('node--task', d => d.type === 'task')
       .classed('node--icon', !textLabels)
       .classed('node--text', textLabels)
       .classed('node--active', d => d.active)

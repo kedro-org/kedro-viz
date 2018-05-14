@@ -6,73 +6,94 @@
 
 .flowchart__graph {
   display: block;
+}
 
-  .node {
-    text {
-      fill: rgba(white, 0.8);
-      pointer-events: none;
-      transition: all ease 0.1s;
-    }
+.node {
+  text {
+    fill: rgba(white, 0.8);
+    pointer-events: none;
+    transition: all ease 0.1s;
+  }
+}
 
-    circle {
-      fill: lighten($color-bg-dark, 10%);
-      stroke: rgba(#000, 0.15);
-      stroke-width: 1px;
-      transition: all ease 0.1s;
-    }
+.node--icon {
+  circle,
+  rect {
+    fill: lighten($color-bg-dark, 10%);
+    stroke: rgba(#000, 0.15);
+    stroke-width: 1px;
+    transition: all ease 0.1s;
+  }
+}
 
-    rect {
-      fill: darken($color-bg-dark, 2%);
-      stroke: darken($color-bg-dark, 3%);
-      stroke-width: 1px;
-      transition: all ease 0.1s;
-    }
+.node--text {
+  rect {
+    fill: darken($color-bg-dark, 2%);
+    stroke: darken($color-bg-dark, 3%);
+    stroke-width: 1px;
+    transition: all ease 0.1s;
+  }
+}
+
+.node--icon {
+  text {
+    opacity: 0;
   }
 
-  .node--icon {
-    text,
+  &.node--data {
     rect {
       opacity: 0;
     }
   }
 
-  .node--text {
-    image,
+  &.node--task {
     circle {
       opacity: 0;
     }
   }
+}
 
-  .node--active {
-    circle {
+.node--text {
+  image,
+  circle {
+    opacity: 0;
+  }
+}
+
+.node--active {
+  &.node--icon {
+    circle,
+    rect {
       fill: lighten($color-bg-dark, 20%);
       stroke-width: 1.5px;
       stroke: #fff;
     }
+  }
 
+  &.node--text {
     rect {
       fill: darken($color-bg-dark, 4%);
       stroke: darken($color-bg-dark, 5%);
     }
-
-    text {
-      fill: white;
-    }
   }
 
-  .node--faded {
-    opacity: 0.3;
+  text {
+    fill: white;
   }
+}
 
-  .edge path {
-    fill: none;
-    stroke: $color-edge;
-    stroke-width: 1.5px;
-  }
+.node--faded {
+  opacity: 0.3;
+}
 
-  .edge--faded {
-    opacity: 0.1;
-  }
+.edge path {
+  fill: none;
+  stroke: $color-edge;
+  stroke-width: 1.5px;
+}
+
+.edge--faded {
+  opacity: 0.1;
 }
 
 .flowchart__arrowhead {

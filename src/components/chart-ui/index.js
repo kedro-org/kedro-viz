@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { Checkbox, Icon, Toggle } from '@quantumblack/carbon-ui-components';
+import {
+  Checkbox,
+  Icon,
+  RadioButton,
+  Toggle
+} from '@quantumblack/carbon-ui-components';
 import './chart-ui.css';
 const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
 
@@ -68,6 +73,7 @@ class ChartUI extends Component {
     const { visibleNav } = this.state;
     const {
       data,
+      onChangeView,
       onNodeUpdate,
       onToggleTextLabels,
       textLabels,
@@ -102,6 +108,38 @@ class ChartUI extends Component {
           value={textLabels}
           theme={theme}
         />
+        <ul className="chart-ui__view">
+          <li>
+            <RadioButton
+              checked={true}
+              label="Combined"
+              name="view"
+              onChange={onChangeView}
+              value="combined"
+              theme={theme}
+            />
+          </li>
+          <li>
+            <RadioButton
+              checked={false}
+              label="Data"
+              name="view"
+              onChange={onChangeView}
+              value="data"
+              theme={theme}
+            />
+          </li>
+          <li>
+            <RadioButton
+              checked={false}
+              label="Task"
+              name="view"
+              onChange={onChangeView}
+              value="task"
+              theme={theme}
+            />
+          </li>
+        </ul>
         <ul className="chart-ui__node-list">
           {data.nodes.map(node => (
             <li
