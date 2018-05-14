@@ -312,7 +312,8 @@ class FlowChart extends Component {
       .attr('width', d => d.width - 5)
       .attr('height', d => d.height - 5)
       .attr('x', d => (d.width - 5) / -2)
-      .attr('y', d => (d.height - 5) / -2);
+      .attr('y', d => (d.height - 5) / -2)
+      .attr('rx', d => (d.type === 'data' ? d.height / 2 : 0));
   }
 
   /**
