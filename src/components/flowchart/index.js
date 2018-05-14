@@ -275,19 +275,22 @@ class FlowChart extends Component {
     const enterNodes = this.el.nodes
       .enter()
       .append('g')
-      .attr('class', 'node');
+      .attr('class', 'node')
+      .attr('transform', d => `translate(${d.x}, ${d.y})`);
 
     enterNodes.append('circle').attr('r', 25);
 
     enterNodes.append('rect');
 
+    const imageSize = d => Math.round(d.height * 0.36);
+
     enterNodes
       .append('image')
       .attr('xlink:href', d => (d.type === 'data' ? imgDatabase : imgCog))
-      .attr('width', 18)
-      .attr('height', 18)
-      .attr('x', -9)
-      .attr('y', -9)
+      .attr('width', imageSize)
+      .attr('height', imageSize)
+      .attr('x', d => imageSize(d) / -2)
+      .attr('y', d => imageSize(d) / -2)
       .attr('alt', d => d.name);
 
     enterNodes
