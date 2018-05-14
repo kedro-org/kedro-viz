@@ -85,15 +85,26 @@ class FlowChart extends Component {
       marginy: 40
     });
 
+    // Temporarily append text element to the DOM, to measure its width
+    const textWidth = (name, padding) => {
+      const text = this.el.nodeGroup.append('text').text(name);
+      const bbox = text.node().getBBox();
+      text.remove();
+      return bbox.width + padding;
+    };
+
     data.nodes.forEach(d => {
       if (!this.filter().node(d)) {
         return;
       }
+
+      const nodeWidth = d.type === 'data' ? 50 : 40;
+
       this.graph.setNode(d.id, {
         ...d,
         label: d.name,
-        width: textLabels ? d.name.length * 7 + 40 : 50,
-        height: 50
+        width: textLabels ? textWidth(d.name, nodeWidth) : nodeWidth,
+        height: nodeWidth
       });
     });
 
