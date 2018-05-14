@@ -347,10 +347,14 @@ class FlowChart extends Component {
         const { clientX, clientY } = event;
         const isRight = clientX > this.width / 2;
         const x = isRight ? clientX - this.width : clientX;
+        let label = `<b>${d.name}</b>`;
+        if (d.layer) {
+          label += `<small>${d.layer.name}</small>`;
+        }
         tooltip
           .classed('tooltip--visible', true)
           .classed('tooltip--right', isRight)
-          .html(`<b>${d.name}</b><small>${d.layer.name}</small>`)
+          .html(label)
           .style('transform', `translate(${x}px, ${clientY}px)`);
       },
 
