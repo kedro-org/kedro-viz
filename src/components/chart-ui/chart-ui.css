@@ -1,11 +1,7 @@
 @media (min-width: 480px) {
   body.menu-visible {
-    transform: translateX(100px);
+    transform: translateX(200px);
     overflow: hidden; } }
-
-@media (min-width: 1100px) {
-  body.menu-visible {
-    transform: translateX(200px); } }
 
 .chart-ui {
   padding: 30px;
@@ -20,18 +16,11 @@
   transform: translateX(-100%); }
   @media (min-width: 480px) {
     .chart-ui {
-      width: 240px;
-      transform: translateX(-240px); } }
-  @media (min-width: 1100px) {
-    .chart-ui {
       width: 400px;
       transform: translateX(-400px); } }
   .chart-ui--visible {
     transform: translateX(0); }
     @media (min-width: 480px) {
-      .chart-ui--visible {
-        transform: translateX(-100px); } }
-    @media (min-width: 1100px) {
       .chart-ui--visible {
         transform: translateX(-200px); } }
   .cbn-theme--light .chart-ui {

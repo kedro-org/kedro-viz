@@ -1,13 +1,10 @@
 @import '../../styles/typography/extends';
 @import '../../styles/variables';
 
-body.menu-visible {
-  @media (min-width: $breakpoint-small) {
-    transform: translateX($nav-width / 4);
-    overflow: hidden;
-  }
-  @media (min-width: $breakpoint-large) {
+@media (min-width: $breakpoint-small) {
+  body.menu-visible {
     transform: translateX($nav-width / 2);
+    overflow: hidden;
   }
 }
 
@@ -24,21 +21,14 @@ body.menu-visible {
   transform: translateX(-100%);
 
   @media (min-width: $breakpoint-small) {
-    width: $nav-width * 0.6;
-    transform: translateX(-$nav-width * 0.6);
-  }
-
-  @media (min-width: $breakpoint-large) {
     width: $nav-width;
     transform: translateX(-$nav-width);
   }
 
   &--visible {
     transform: translateX(0);
+
     @media (min-width: $breakpoint-small) {
-      transform: translateX(-$nav-width / 4);
-    }
-    @media (min-width: $breakpoint-large) {
       transform: translateX(-$nav-width / 2);
     }
   }
