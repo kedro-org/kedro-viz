@@ -15,7 +15,7 @@ import './flowchart.css';
  */
 const edgeID = edge => [edge.source.id, edge.target.id].join('-');
 
-const DURATION = 777;
+const DURATION = 666;
 
 class FlowChart extends Component {
   constructor(props) {
@@ -238,20 +238,28 @@ class FlowChart extends Component {
     const enterEdges = this.el.edges
       .enter()
       .append('g')
-      .attr('class', 'edge');
+      .attr('class', 'edge')
+      .attr('opacity', 0);
 
-    enterEdges
-      .append('path')
-      .attr('marker-end', d => `url(#arrowhead)`)
-      .attr('d', d => lineShape(d.points));
+    enterEdges.append('path').attr('marker-end', d => `url(#arrowhead)`);
 
-    this.el.edges.exit().remove();
+    this.el.edges
+      .exit()
+      .transition('exit-edges')
+      .duration(DURATION)
+      .attr('opacity', 0)
+      .remove();
 
     this.el.edges = this.el.edges.merge(enterEdges);
 
     this.el.edges
+      .transition('show-edges')
+      .duration(DURATION)
+      .attr('opacity', 1);
+
+    this.el.edges
       .select('path')
-      .transition()
+      .transition('update-edges')
       .duration(DURATION)
       .attr('d', d => lineShape(d.points));
 
@@ -259,8 +267,11 @@ class FlowChart extends Component {
     const enterNodes = this.el.nodes
       .enter()
       .append('g')
-      .attr('class', 'node')
-      .attr('transform', d => `translate(${d.x}, ${d.y})`);
+      .attr('class', 'node');
+
+    enterNodes
+      .attr('transform', d => `translate(${d.x}, ${d.y})`)
+      .attr('opacity', 0);
 
     enterNodes.append('circle').attr('r', 25);
 
@@ -283,7 +294,12 @@ class FlowChart extends Component {
       .attr('text-anchor', 'middle')
       .attr('dy', 5);
 
-    this.el.nodes.exit().remove();
+    this.el.nodes
+      .exit()
+      .transition('exit-nodes')
+      .duration(DURATION)
+      .attr('opacity', 0)
+      .remove();
 
     this.el.nodes = this.el.nodes
       .merge(enterNodes)
@@ -307,8 +323,9 @@ class FlowChart extends Component {
       });
 
     this.el.nodes
-      .transition()
+      .transition('update-nodes')
       .duration(DURATION)
+      .attr('opacity', 1)
       .attr('transform', d => `translate(${d.x}, ${d.y})`);
 
     this.el.nodes
