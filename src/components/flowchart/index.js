@@ -15,6 +15,8 @@ import './flowchart.css';
  */
 const edgeID = edge => [edge.source.id, edge.target.id].join('-');
 
+const DURATION = 777;
+
 class FlowChart extends Component {
   constructor(props) {
     super(props);
@@ -164,7 +166,7 @@ class FlowChart extends Component {
     const translateX = this.width / 2 - width * zoomScale / 2;
     const translateY = this.height / 2 - height * zoomScale / 2;
     const svgZoom = isUpdate
-      ? this.el.svg.transition().duration(300)
+      ? this.el.svg.transition().duration(DURATION)
       : this.el.svg;
     svgZoom.call(
       this.zoomBehaviour.transform,
@@ -266,6 +268,7 @@ class FlowChart extends Component {
     this.el.edges
       .select('path')
       .transition()
+      .duration(DURATION)
       .attr('d', d => lineShape(d.points));
 
     // Create nodes
@@ -318,7 +321,10 @@ class FlowChart extends Component {
 
     this.el.nodes
       .transition()
-      .attr('transform', d => `translate(${d.x}, ${d.y})`)
+      .duration(DURATION)
+      .attr('transform', d => `translate(${d.x}, ${d.y})`);
+
+    this.el.nodes
       .select('rect')
       .attr('width', d => d.width - 5)
       .attr('height', d => d.height - 5)
