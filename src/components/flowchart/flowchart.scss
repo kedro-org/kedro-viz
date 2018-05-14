@@ -11,6 +11,7 @@
 .node {
   text {
     fill: rgba(white, 0.8);
+    font-weight: bold;
     pointer-events: none;
     transition: all ease 0.1s;
   }
@@ -32,6 +33,13 @@
     stroke: darken($color-bg-dark, 3%);
     stroke-width: 1px;
     transition: all ease 0.1s;
+  }
+
+  &.node--data {
+    rect {
+      stroke: mix(white, $color-bg-dark, 30%);
+      stroke-width: 2px;
+    }
   }
 }
 
@@ -73,7 +81,8 @@
   &.node--text {
     rect {
       fill: darken($color-bg-dark, 4%);
-      stroke: darken($color-bg-dark, 5%);
+      stroke: mix(white, $color-bg-dark, 70%);
+      stroke-width: 2px;
     }
   }
 
