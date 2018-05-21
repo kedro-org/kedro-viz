@@ -34,11 +34,6 @@ class ChartUI extends Component {
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  // TODO remove this
-  componentDidMount() {
-    this.toggleNav();
-  }
-
   handleDocumentClick(e) {
     if (this.state.visibleNav && !this.nav.contains(e.target)) {
       this.closeNav();

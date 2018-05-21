@@ -49,14 +49,16 @@ class FlowChart extends Component {
   componentDidUpdate(prevProps) {
     const rezoom = prevProps.textLabels !== this.props.textLabels;
     const updateView = prevProps.view !== this.props.view;
+    const updateNodeCount = this.checkNodeCount();
+    const update = rezoom || updateView || updateNodeCount;
 
-    if (rezoom || updateView || this.checkNodeCount()) {
+    if (update) {
       this.getLayout();
     }
 
     this.drawChart();
 
-    if (rezoom || updateView) {
+    if (update) {
       this.zoomChart(true);
     }
   }
@@ -394,22 +396,24 @@ class FlowChart extends Component {
   }
 
   getLinkedNodes(nodeID) {
-    const { edges } = this.props.data;
     const linkedNodes = [];
+    const edges = this.props.data.edges.filter(
+      d => d.source.type !== d.target.type
+    );
 
     (function getParents(id) {
       edges.filter(d => d.target.id === id).forEach(d => {
         linkedNodes.push(d.source.id);
         getParents(d.source.id);
       });
-    })(+nodeID);
+    })(nodeID);
 
     (function getChildren(id) {
       edges.filter(d => d.source.id === id).forEach(d => {
         linkedNodes.push(d.target.id);
         getChildren(d.target.id);
       });
-    })(+nodeID);
+    })(nodeID);
 
     return linkedNodes;
   }

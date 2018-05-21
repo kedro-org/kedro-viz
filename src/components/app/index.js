@@ -1,18 +1,29 @@
 import React, { Component } from 'react';
 import ChartUI from '../chart-ui';
 import FlowChart from '../flowchart';
+import fetchData from '../../utils/fetch-data';
 import generateRandomData from '../../utils/randomData';
+import config from '../../config';
 import './app.css';
+
+const { env } = config;
 
 class App extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      data: generateRandomData(),
+      data: env === 'test' ? generateRandomData() : null,
       textLabels: false,
       view: 'combined',
       theme: 'dark'
     };
+
+    if (env !== 'test') {
+      fetchData().then(data => {
+        this.setState({ data });
+      });
+    }
   }
 
   componentWillMount() {
@@ -46,6 +57,10 @@ class App extends Component {
 
   render() {
     const { data, textLabels, theme, view } = this.state;
+
+    if (!data) {
+      return null;
+    }
 
     return (
       <div className="app">
