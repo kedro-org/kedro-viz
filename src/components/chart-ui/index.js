@@ -70,7 +70,9 @@ class ChartUI extends Component {
       data,
       onChangeView,
       onNodeUpdate,
+      onToggleParameters,
       onToggleTextLabels,
+      parameters,
       textLabels,
       theme
     } = this.props;
@@ -97,12 +99,6 @@ class ChartUI extends Component {
             </svg>
           )}
         </button>
-        <Toggle
-          onChange={(e, { value }) => onToggleTextLabels(Boolean(value))}
-          label="Labels"
-          value={textLabels}
-          theme={theme}
-        />
         <ul className="chart-ui__view">
           <li>
             <RadioButton
@@ -135,6 +131,20 @@ class ChartUI extends Component {
             />
           </li>
         </ul>
+        <Toggle
+          onChange={(e, { value }) => onToggleTextLabels(Boolean(value))}
+          label="Labels"
+          value={textLabels}
+          checked={textLabels}
+          theme={theme}
+        />
+        <Toggle
+          onChange={(e, { value }) => onToggleParameters(Boolean(value))}
+          label="Parameters"
+          value={parameters}
+          checked={parameters}
+          theme={theme}
+        />
         <ul className="chart-ui__node-list">
           {data.nodes.map(node => (
             <li

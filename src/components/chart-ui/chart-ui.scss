@@ -9,7 +9,7 @@
 }
 
 .chart-ui {
-  padding: 30px;
+  padding: 10px 30px;
   position: fixed;
   left: 0;
   top: 0;
@@ -58,7 +58,8 @@
   // }
 
   .cbn-toggle {
-    width: 140px;
+    width: 180px;
+    margin: 30px 0;
   }
 }
 
@@ -96,7 +97,7 @@
   margin: 30px -15px;
   padding: 0;
   overflow: auto;
-  max-height: calc(100vh - 150px);
+  max-height: calc(100vh - 240px);
 }
 
 .chart-ui__node {

@@ -4,7 +4,7 @@
     overflow: hidden; } }
 
 .chart-ui {
-  padding: 30px;
+  padding: 10px 30px;
   position: fixed;
   left: 0;
   top: 0;
@@ -32,7 +32,8 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); }
   .chart-ui .cbn-toggle {
-    width: 140px; }
+    width: 180px;
+    margin: 30px 0; }
 
 .chart-ui__menu {
   position: absolute;
@@ -59,7 +60,7 @@
   margin: 30px -15px;
   padding: 0;
   overflow: auto;
-  max-height: calc(100vh - 150px); }
+  max-height: calc(100vh - 240px); }
 
 .chart-ui__node {
   min-width: 320px; }
