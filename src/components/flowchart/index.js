@@ -5,6 +5,7 @@ import { curveBasis, line } from 'd3-shape';
 // import { scaleOrdinal } from 'd3-scale';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import dagre from 'dagre';
+import linkedNodes from './linked-nodes';
 import imgCog from './cog.svg';
 import imgDatabase from './database.svg';
 import './flowchart.css';
@@ -326,14 +327,14 @@ class FlowChart extends Component {
       .on('mouseover', d => {
         onNodeUpdate(d.id, 'active', true);
         this.tooltip().show(d);
-        this.linkedNodes().show(d);
+        linkedNodes(this).show(d);
       })
       .on('mousemove', d => {
         this.tooltip().show(d);
       })
       .on('mouseout', d => {
         onNodeUpdate(d.id, 'active', false);
-        this.linkedNodes().hide(d);
+        linkedNodes(this).hide(d);
         this.tooltip().hide(d);
       });
 
@@ -378,57 +379,6 @@ class FlowChart extends Component {
         tooltip.classed('tooltip--visible', false);
       }
     };
-  }
-
-  /**
-   * Provide methods to highlight linked nodes on hover,
-   * and fade non-linked nodes
-   */
-  linkedNodes() {
-    const { nodes, edges } = this.el;
-
-    return {
-      show: ({ id }) => {
-        const linkedNodes = this.getLinkedNodes(id);
-        const nodeIsLinked = d => linkedNodes.includes(d.id) || d.id === id;
-
-        nodes
-          .classed('node--active', nodeIsLinked)
-          .classed('node--faded', d => !nodeIsLinked(d));
-
-        edges.classed('edge--faded', ({ source, target }) =>
-          [source, target].some(d => !nodeIsLinked(d))
-        );
-      },
-
-      hide: () => {
-        edges.classed('edge--faded', false);
-        nodes.classed('node--active', false).classed('node--faded', false);
-      }
-    };
-  }
-
-  getLinkedNodes(nodeID) {
-    const linkedNodes = [];
-    const edges = this.props.data.edges.filter(
-      d => d.source.type !== d.target.type
-    );
-
-    (function getParents(id) {
-      edges.filter(d => d.target.id === id).forEach(d => {
-        linkedNodes.push(d.source.id);
-        getParents(d.source.id);
-      });
-    })(nodeID);
-
-    (function getChildren(id) {
-      edges.filter(d => d.source.id === id).forEach(d => {
-        linkedNodes.push(d.target.id);
-        getChildren(d.target.id);
-      });
-    })(nodeID);
-
-    return linkedNodes;
   }
 
   render() {
