@@ -6,6 +6,7 @@ import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import dagre from 'dagre';
 import linkedNodes from './linked-nodes';
+import tooltip from './tooltip';
 import imgCog from './cog.svg';
 import imgDatabase from './database.svg';
 import './flowchart.css';
@@ -326,16 +327,16 @@ class FlowChart extends Component {
       .classed('node--active', d => d.active)
       .on('mouseover', d => {
         onNodeUpdate(d.id, 'active', true);
-        this.tooltip().show(d);
+        tooltip(this).show(d);
         linkedNodes(this).show(d);
       })
       .on('mousemove', d => {
-        this.tooltip().show(d);
+        tooltip(this).show(d);
       })
       .on('mouseout', d => {
         onNodeUpdate(d.id, 'active', false);
         linkedNodes(this).hide(d);
-        this.tooltip().hide(d);
+        tooltip(this).hide(d);
       });
 
     this.el.nodes
@@ -351,34 +352,6 @@ class FlowChart extends Component {
       .attr('x', d => (d.width - 5) / -2)
       .attr('y', d => (d.height - 5) / -2)
       .attr('rx', d => (d.type === 'data' ? d.height / 2 : 0));
-  }
-
-  /**
-   * Provide methods to show/hide the tooltip
-   */
-  tooltip() {
-    const { tooltip } = this.el;
-
-    return {
-      show: d => {
-        const { clientX, clientY } = event;
-        const isRight = clientX > this.width / 2;
-        const x = isRight ? clientX - this.width : clientX;
-        let label = `<b>${d.name}</b>`;
-        if (d.layer) {
-          label += `<small>${d.layer.name}</small>`;
-        }
-        tooltip
-          .classed('tooltip--visible', true)
-          .classed('tooltip--right', isRight)
-          .html(label)
-          .style('transform', `translate(${x}px, ${clientY}px)`);
-      },
-
-      hide: () => {
-        tooltip.classed('tooltip--visible', false);
-      }
-    };
   }
 
   render() {
