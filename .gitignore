@@ -1,7 +1,8 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
-# data
+# JSON viz data (generated from logs)
 /public/data
+/public/logs
 
 # dependencies
 /node_modules

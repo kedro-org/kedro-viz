@@ -118,6 +118,6 @@ const formatData = raw => {
 /**
  * Load JSON using d3-fetch
  */
-const fetchData = () => json('/data/data.json').then(formatData);
+const fetchData = () => json('/logs/nodes.json').then(formatData);
 
 export default fetchData;
