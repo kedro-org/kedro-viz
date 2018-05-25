@@ -14,7 +14,7 @@ class App extends Component {
 
     this.state = {
       data: env === 'test' ? generateRandomData() : null,
-      parameters: false,
+      parameters: true,
       textLabels: false,
       view: 'combined',
       theme: 'dark'
@@ -53,7 +53,17 @@ class App extends Component {
   }
 
   onToggleParameters(parameters) {
-    this.setState({ parameters });
+    const { data } = this.state;
+    const nodes = data.nodes.map(node => {
+      if (node.id.includes('param')) {
+        node.disabled = !parameters;
+      }
+      return node;
+    });
+    this.setState({
+      data: Object.assign({}, data, { nodes }),
+      parameters
+    });
   }
 
   onToggleTextLabels(textLabels) {
@@ -69,13 +79,6 @@ class App extends Component {
 
     return (
       <div className="app">
-        <FlowChart
-          data={data}
-          onNodeUpdate={this.onNodeUpdate.bind(this)}
-          parameters={parameters}
-          textLabels={textLabels}
-          view={view}
-        />
         <ChartUI
           data={data}
           onChangeView={this.onChangeView.bind(this)}
@@ -85,6 +88,14 @@ class App extends Component {
           parameters={parameters}
           textLabels={textLabels}
           theme={theme}
+          view={view}
+        />
+        <FlowChart
+          data={data}
+          onNodeUpdate={this.onNodeUpdate.bind(this)}
+          parameters={parameters}
+          textLabels={textLabels}
+          view={view}
         />
       </div>
     );

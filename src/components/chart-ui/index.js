@@ -74,7 +74,8 @@ class ChartUI extends Component {
       onToggleTextLabels,
       parameters,
       textLabels,
-      theme
+      theme,
+      view
     } = this.props;
 
     return (
@@ -102,7 +103,7 @@ class ChartUI extends Component {
         <ul className="chart-ui__view">
           <li>
             <RadioButton
-              checked={true}
+              checked={view === 'combined'}
               label="Combined"
               name="view"
               onChange={onChangeView}
@@ -112,7 +113,7 @@ class ChartUI extends Component {
           </li>
           <li>
             <RadioButton
-              checked={false}
+              checked={view === 'data'}
               label="Data"
               name="view"
               onChange={onChangeView}
@@ -122,7 +123,7 @@ class ChartUI extends Component {
           </li>
           <li>
             <RadioButton
-              checked={false}
+              checked={view === 'task'}
               label="Task"
               name="view"
               onChange={onChangeView}
