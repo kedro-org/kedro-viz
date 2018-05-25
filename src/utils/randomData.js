@@ -10,7 +10,7 @@ const loremIpsum = 'lorem ipsum dolor sit amet consectetur adipiscing elit vesti
 
 const randomName = n =>
   getArray(n)
-    .map(() => loremIpsum[getRandom(loremIpsum).length])
+    .map(() => getRandom(loremIpsum))
     .join('_');
 
 const generateRandomData = () => {
@@ -23,12 +23,18 @@ const generateRandomData = () => {
     'Model Output'
   ].map((name, id) => ({ id, name }));
 
-  const makeNode = type => id => ({
-    id,
-    name: randomName(Math.ceil(Math.random() * 10)),
-    layer: getRandom(layers),
-    type
-  });
+  const makeNode = type => id => {
+    let r = randomName(Math.ceil(Math.random() * 10));
+    if (Math.random() < 0.05) {
+      r = 'parameters_' + r;
+    }
+    return {
+      id: r + '-' + id,
+      name: r.replace(/_/g, ' '),
+      layer: getRandom(layers),
+      type
+    };
+  };
 
   let nodes = getArray(NODE_COUNT).map(makeNode('data'));
 
