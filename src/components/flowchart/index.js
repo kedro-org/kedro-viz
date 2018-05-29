@@ -51,9 +51,8 @@ class FlowChart extends Component {
   componentDidUpdate(prevProps) {
     const rezoom = prevProps.textLabels !== this.props.textLabels;
     const updateView = prevProps.view !== this.props.view;
-    const updateParams = prevProps.parameters !== this.props.parameters;
     const updateNodeCount = this.checkNodeCount();
-    const update = rezoom || updateView || updateParams || updateNodeCount;
+    const update = rezoom || updateView || updateNodeCount;
 
     if (update) {
       this.getLayout();
@@ -180,15 +179,10 @@ class FlowChart extends Component {
   }
 
   filter() {
-    const param = d => d.id.includes('param');
-
     return {
       edge: d => {
         const { parameters, view } = this.props;
         if (d.source.disabled || d.target.disabled) {
-          return false;
-        }
-        if (!parameters && (param(d.source) || param(d.target))) {
           return false;
         }
         if (view === 'combined') {
@@ -199,9 +193,6 @@ class FlowChart extends Component {
       node: d => {
         const { parameters, view } = this.props;
         if (d.disabled) {
-          return false;
-        }
-        if (!parameters && param(d)) {
           return false;
         }
         return view === 'combined' || view === d.type;
