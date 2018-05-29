@@ -5,7 +5,12 @@
  */
 const getLinkedNodes = (data, nodeID) => {
   const linkedNodes = [];
-  const edges = data.edges.filter(d => d.source.type !== d.target.type);
+  const edges = data.edges.filter(
+    d =>
+      d.source.type !== d.target.type &&
+      !d.source.disabled &&
+      !d.target.disabled
+  );
 
   (function getParents(id) {
     edges.filter(d => d.target.id === id).forEach(d => {
