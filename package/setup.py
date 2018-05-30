@@ -1,4 +1,3 @@
-import glob
 import json
 from os import path
 
@@ -7,8 +6,13 @@ from setuptools import setup, find_packages
 name = 'carbonviz'
 here = path.abspath(path.dirname(__file__))
 
-files = map(lambda x: x.replace("carbonviz/", "", 1),
-            glob.glob('carbonviz/build/**/*', recursive=True))
+import os
+
+jsbuild = [os.path.join(dirpath, f)
+           for dirpath, dirnames, files in os.walk('carbonviz/build/')
+           for f in files]
+
+files = map(lambda x: x.replace("carbonviz/", "", 1), jsbuild)
 
 with open(path.join(here, path.pardir, 'package.json')) as data:
     obj = json.load(data)
