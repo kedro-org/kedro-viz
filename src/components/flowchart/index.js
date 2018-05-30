@@ -181,7 +181,7 @@ class FlowChart extends Component {
   filter() {
     return {
       edge: d => {
-        const { parameters, view } = this.props;
+        const { view } = this.props;
         if (d.source.disabled || d.target.disabled) {
           return false;
         }
@@ -191,7 +191,7 @@ class FlowChart extends Component {
         return view === d.source.type && view === d.target.type;
       },
       node: d => {
-        const { parameters, view } = this.props;
+        const { view } = this.props;
         if (d.disabled) {
           return false;
         }
