@@ -9,7 +9,7 @@ here = path.abspath(path.dirname(__file__))
 import os
 
 jsbuild = [os.path.join(dirpath, f)
-           for dirpath, dirnames, files in os.walk('carbonviz/build/')
+           for dirpath, dirnames, files in os.walk('carbonviz/html/')
            for f in files]
 
 files = map(lambda x: x.replace("carbonviz/", "", 1), jsbuild)
