@@ -30,3 +30,4 @@ dist/
 .idea/
 __pycache__/
 
+package/*/html/
