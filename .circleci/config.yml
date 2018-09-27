@@ -34,7 +34,7 @@ jobs:
           command: npm run build
       - run:
           name: Copy build to package
-          command: cp -R build package/carbonviz/html
+          command: cp -R build package/kernelviz/html
       - run:
           name: Configure distutils with pypi-qb
           command: |

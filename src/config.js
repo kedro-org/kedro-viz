@@ -8,7 +8,7 @@ if (process.env.REACT_APP_ENV) {
 
 const config = {
   env,
-  localStorageName: `CarbonAIPipelineViz_${env}`
+  localStorageName: `KernelAIPipelineViz_${env}`
 };
 
 export default config;
