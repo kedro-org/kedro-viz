@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ChartUI from '../chart-ui';
+import ChartWrapper from '../chart-wrapper';
 import FlowChart from '../flowchart';
 import fetchData from '../../utils/fetch-data';
 import generateRandomData from '../../utils/randomData';
@@ -25,12 +25,6 @@ class App extends Component {
         this.setState({ data });
       });
     }
-  }
-
-  componentWillMount() {
-    // Setup transitions for theme change and menu toggle, but only after mounting
-    document.body.style.transition =
-      'background ease 0.2s, transform ease 0.4s';
   }
 
   onChangeView(e, { value }) {
@@ -78,18 +72,16 @@ class App extends Component {
     }
 
     return (
-      <div className="app">
-        <ChartUI
-          data={data}
-          onChangeView={this.onChangeView.bind(this)}
-          onNodeUpdate={this.onNodeUpdate.bind(this)}
-          onToggleParameters={this.onToggleParameters.bind(this)}
-          onToggleTextLabels={this.onToggleTextLabels.bind(this)}
-          parameters={parameters}
-          textLabels={textLabels}
-          theme={theme}
-          view={view}
-        />
+      <ChartWrapper
+        data={data}
+        onChangeView={this.onChangeView.bind(this)}
+        onNodeUpdate={this.onNodeUpdate.bind(this)}
+        onToggleParameters={this.onToggleParameters.bind(this)}
+        onToggleTextLabels={this.onToggleTextLabels.bind(this)}
+        parameters={parameters}
+        textLabels={textLabels}
+        theme={theme}
+        view={view}>
         <FlowChart
           data={data}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
@@ -97,7 +89,7 @@ class App extends Component {
           textLabels={textLabels}
           view={view}
         />
-      </div>
+      </ChartWrapper>
     );
   }
 }
