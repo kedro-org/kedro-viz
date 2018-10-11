@@ -3,13 +3,45 @@ import classnames from 'classnames';
 import {
   Checkbox,
   RadioButton,
-  Toggle
+  Toggle,
+  Button
 } from '@quantumblack/carbon-ui-components';
 import './chart-ui.css';
 
 const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
 
 class ChartUI extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+    };
+
+    this.syncStudioData = this.syncStudioData.bind(this);
+  }
+
+  syncStudioData() {
+    const url = 'https://dev.qbstudioai.com/api/public/kernelai';
+    const token = '';
+
+    fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          message: 'testing1',
+          schema: {
+            foo: 'bar'
+          }
+      })
+    })
+    .then((d) => { alert('👐 Jazz hands 👐');  return d;})
+    .then(console.log)
+  }
+
   render() {
     const {
       data,
@@ -96,6 +128,7 @@ class ChartUI extends Component {
             </li>
           ))}
         </ul>
+        <Button theme={theme} onClick={this.syncStudioData}>Upload Snapshot to StudioAI</Button>
       </div>
     );
   }
