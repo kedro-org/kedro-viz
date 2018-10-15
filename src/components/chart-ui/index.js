@@ -21,25 +21,25 @@ class ChartUI extends Component {
   }
 
   syncStudioData() {
+    const message = window.prompt('Please enter a snapshot description');
     const url = 'https://dev.qbstudioai.com/api/public/kernelai';
     const token = '';
-
-    fetch(url, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-          message: 'testing1',
-          schema: {
-            foo: 'bar'
-          }
+  
+    if (message) {
+      fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            message,
+            schema: JSON.stringify(this.props.data.raw)
+        })
       })
-    })
-    .then((d) => { alert('👐 Jazz hands 👐');  return d;})
-    .then(console.log)
+      .then(console.log)
+    }
   }
 
   render() {
