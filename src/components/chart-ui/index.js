@@ -55,7 +55,10 @@ class ChartUI extends Component {
             schema: JSON.stringify(this.props.data.raw)
         })
       })
-      .then(console.log)
+      .then(response => {
+        alert(response.ok ? 'Your data snapshot has been synced successfully!' : 'Upload failed :(')
+        console.log(response);
+      })
     }
   }
 
