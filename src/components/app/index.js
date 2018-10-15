@@ -4,6 +4,8 @@ import FlowChart from '../flowchart';
 import fetchData from '../../utils/fetch-data';
 import generateRandomData from '../../utils/randomData';
 import config from '../../config';
+import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
+import '../../styles/index.css';
 import './app.css';
 
 const { env } = config;
