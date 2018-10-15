@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ChartWrapper from '../chart-wrapper';
 import FlowChart from '../flowchart';
 import fetchData from '../../utils/fetch-data';
@@ -23,7 +24,7 @@ class App extends Component {
     };
 
     if (env !== 'test') {
-      fetchData().then(data => {
+      fetchData(this.props.path).then(data => {
         this.setState({ data });
       });
     }
@@ -95,5 +96,16 @@ class App extends Component {
     );
   }
 }
+
+App.propTypes = {
+  path: PropTypes.string,
+};
+
+App.defaultProps = {
+  /**
+   * Data location
+   */
+  path: '/logs/nodes.json',
+};
 
 export default App;
