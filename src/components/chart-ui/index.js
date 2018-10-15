@@ -6,6 +6,7 @@ import {
   Toggle,
   Button
 } from '@quantumblack/carbon-ui-components';
+import config from '../../config';
 import './chart-ui.css';
 
 const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
@@ -20,10 +21,26 @@ class ChartUI extends Component {
     this.syncStudioData = this.syncStudioData.bind(this);
   }
 
+  getStudioToken() {
+    const store = window.localStorage;
+    const storeKey = `${config.localStorageName}_token`;
+    let token = store.getItem(storeKey);
+
+    if (!token) {
+      token = process.env.REACT_APP_STUDIO_TOKEN
+        || window.prompt('Please enter a StudioAI project token');
+      if (token) {
+        store.setItem(storeKey, token);
+      }
+    }
+
+    return token;
+  }
+
   syncStudioData() {
+    const token = this.getStudioToken();
     const message = window.prompt('Please enter a snapshot description');
     const url = 'https://dev.qbstudioai.com/api/public/kernelai';
-    const token = '';
   
     if (message) {
       fetch(url, {
