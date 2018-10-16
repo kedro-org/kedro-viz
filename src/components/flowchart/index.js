@@ -22,7 +22,7 @@ const DURATION = 666;
 class FlowChart extends Component {
   constructor(props) {
     super(props);
-    this.setChartHeight = this.setChartHeight.bind(this);
+    this.resizeChart = this.resizeChart.bind(this);
   }
 
   componentDidMount() {
@@ -36,16 +36,16 @@ class FlowChart extends Component {
     };
 
     this.setChartHeight();
-    window.addEventListener('resize', this.setChartHeight);
     this.initZoomBehaviour();
     this.getLayout();
     this.drawChart();
     this.zoomChart();
     this.checkNodeCount();
+    window.addEventListener('resize', this.resizeChart);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('resize', this.setChartHeight);
+    document.removeEventListener('resize', this.resizeChart);
   }
 
   componentDidUpdate(prevProps) {
@@ -72,6 +72,13 @@ class FlowChart extends Component {
     this.width = width;
     this.height = height;
     this.el.svg.attr('width', width).attr('height', height);
+  }
+
+  resizeChart() {
+    this.setChartHeight();
+    this.getLayout();
+    this.drawChart();
+    this.zoomChart(true);
   }
 
   initZoomBehaviour() {
