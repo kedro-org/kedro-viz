@@ -81,6 +81,7 @@ class App extends Component {
       })}>
         <ChartWrapper
           {...this.state}
+          allowUploads={this.props.allowUploads}
           onChangeView={this.onChangeView.bind(this)}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
           onToggleParameters={this.onToggleParameters.bind(this)}
@@ -100,13 +101,18 @@ class App extends Component {
 
 App.propTypes = {
   path: PropTypes.string,
+  allowUploads: PropTypes.bool,
 };
 
 App.defaultProps = {
   /**
-   * Data location
+   * Data file location
    */
   path: '/logs/nodes.json',
+  /**
+   * Show/hide button to upload data snapshots to StudioAI
+   */
+  allowUploads: true,
 };
 
 export default App;

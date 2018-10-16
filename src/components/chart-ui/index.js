@@ -64,6 +64,7 @@ class ChartUI extends Component {
 
   render() {
     const {
+      allowUploads,
       data,
       onChangeView,
       onNodeUpdate,
@@ -148,7 +149,9 @@ class ChartUI extends Component {
             </li>
           ))}
         </ul>
-        <Button theme={theme} onClick={this.syncStudioData}>Upload Snapshot to StudioAI</Button>
+        { allowUploads && (
+          <Button theme={theme} onClick={this.syncStudioData}>Upload Snapshot to StudioAI</Button>
+        )}
       </div>
     );
   }
