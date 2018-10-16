@@ -58,19 +58,16 @@ class ChartWrappper extends Component {
     const { children, theme } = this.props;
 
     return (
-      <div
-        className={classnames('chart-wrapper', {
-          'cbn-theme--dark': theme === 'dark',
-          'cbn-theme--light': theme === 'light',
-          'chart-wrapper--menu-visible': visibleNav
-        })}>
+      <div className={classnames('pipeline-wrapper', {
+        'pipeline-wrapper--menu-visible': visibleNav
+      })}>
         <nav
-          className={classnames('chart-sidebar', { 'chart-sidebar--visible': visibleNav })}
+          className={classnames('pipeline-sidebar', { 'pipeline-sidebar--visible': visibleNav })}
           ref={el => {
             this.nav = el;
           }}>
           <button
-            className="chart-sidebar__menu icon-button"
+            className="pipeline-sidebar__menu icon-button"
             onClick={this.toggleNav.bind(this)}>
             { visibleNav ? (
               <Icon type="close" title="Close" theme={theme} />

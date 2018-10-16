@@ -76,8 +76,8 @@ class ChartUI extends Component {
     } = this.props;
 
     return (
-      <div className="chart-ui">
-        <ul className="chart-ui__view">
+      <div className="pipeline-ui">
+        <ul className="pipeline-ui__view">
           <li>
             <RadioButton
               checked={view === 'combined'}
@@ -123,11 +123,11 @@ class ChartUI extends Component {
           checked={parameters}
           theme={theme}
         />
-        <ul className="chart-ui__node-list">
+        <ul className="pipeline-ui__node-list">
           {data.nodes.map(node => (
             <li
-              className={classnames('chart-ui__node', {
-                'chart-ui__node--active': node.active
+              className={classnames('pipeline-ui__node', {
+                'pipeline-ui__node--active': node.active
               })}
               key={node.id}
               onMouseEnter={() => {

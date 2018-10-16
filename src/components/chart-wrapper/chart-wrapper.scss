@@ -1,13 +1,9 @@
-@import '../../styles/typography/extends';
 @import '../../styles/variables';
 
 @media (min-width: $breakpoint-small) {
-  body {
-    overflow: hidden;
-  }
-
-  .chart-wrapper {
+  .pipeline-wrapper {
     transition: background ease 0.2s, transform ease 0.4s;
+    transform: translateX(0);
 
     &--menu-visible {
       transform: translateX($nav-width / 2);
@@ -15,13 +11,15 @@
   }
 }
 
-.chart-sidebar {
-  padding: 10px 30px;
+.pipeline-wrapper {
+  height: 100%;
+}
+
+.pipeline-sidebar {
   position: fixed;
   left: 0;
   top: 0;
   height: 100%;
-  min-height: 100vh;
   transition: all ease 0.3s;
   z-index: 20;
   width: 100%;
@@ -51,26 +49,9 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   }
-  // a {
-  //   font-size: 1.8rem;
-  //   line-height: 1.5;
-  //   color: inherit;
-  //   border: none;
-
-  //   &:hover,
-  //   &:focus {
-  //     text-decoration: underline;
-  //     background: none;
-  //   }
-  // }
-
-  .cbn-toggle {
-    width: 180px;
-    margin: 30px 0;
-  }
 }
 
-.chart-sidebar__menu {
+.pipeline-sidebar__menu {
   position: absolute;
   top: 30px;
   right: -60px;
@@ -91,39 +72,3 @@
     fill: #fff;
   }
 }
-
-// .chart-sidebar__view {
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: space-between;
-//   margin: 30px 0;
-//   padding-right: 30px;
-// }
-
-// .chart-sidebar__node-list {
-//   margin: 30px -15px;
-//   padding: 0;
-//   overflow: auto;
-//   max-height: calc(100vh - 330px);
-// }
-
-// .chart-sidebar__node {
-//   min-width: 320px; // TODO improve this on small screens
-
-//   &:nth-child(even) {
-//     background: rgba(#fff, 0.02);
-//   }
-
-//   &:hover,
-//   &--active {
-//     background: rgba(#fff, 0.1);
-//   }
-
-//   .cbn-switch {
-//     margin: 0;
-
-//     label {
-//       padding: 10px 15px;
-//     }
-//   }
-// }

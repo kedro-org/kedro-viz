@@ -1,25 +1,37 @@
 @import '../../styles/typography/extends';
 @import '../../styles/variables';
 
-.chart-ui {
+.pipeline-ui {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  height: 100%;
 }
 
-.chart-ui__view {
+.pipeline-ui__view {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 30px 0;
   padding-right: 30px;
+  flex: none;
 }
 
-.chart-ui__node-list {
-  margin: 30px -15px;
+.pipeline-ui .cbn-toggle {
+  width: 180px;
+  flex: none;
+  margin-top: 30px;
+}
+
+.pipeline-ui__node-list {
+  margin: 30px -15px 0;
+  // margin: 0 -15px;
   padding: 0;
   overflow: auto;
-  max-height: calc(100vh - 330px);
+  // flex-shrink: 0;
+  // max-height: calc(100vh - 330px);
 }
 
-.chart-ui__node {
+.pipeline-ui__node {
   min-width: 320px; // TODO improve this on small screens
 
   &:nth-child(even) {
@@ -38,4 +50,9 @@
       padding: 10px 15px;
     }
   }
+}
+
+.pipeline-ui .cbn-button {
+  flex: none;
+  margin-top: 30px;
 }

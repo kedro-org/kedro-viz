@@ -1,23 +1,37 @@
-.chart-ui__view {
+.pipeline-ui {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  height: 100%; }
+
+.pipeline-ui__view {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 30px 0;
-  padding-right: 30px; }
+  padding-right: 30px;
+  flex: none; }
 
-.chart-ui__node-list {
-  margin: 30px -15px;
+.pipeline-ui .cbn-toggle {
+  width: 180px;
+  flex: none;
+  margin-top: 30px; }
+
+.pipeline-ui__node-list {
+  margin: 30px -15px 0;
   padding: 0;
-  overflow: auto;
-  max-height: calc(100vh - 330px); }
+  overflow: auto; }
 
-.chart-ui__node {
+.pipeline-ui__node {
   min-width: 320px; }
-  .chart-ui__node:nth-child(even) {
+  .pipeline-ui__node:nth-child(even) {
     background: rgba(255, 255, 255, 0.02); }
-  .chart-ui__node:hover, .chart-ui__node--active {
+  .pipeline-ui__node:hover, .pipeline-ui__node--active {
     background: rgba(255, 255, 255, 0.1); }
-  .chart-ui__node .cbn-switch {
+  .pipeline-ui__node .cbn-switch {
     margin: 0; }
-    .chart-ui__node .cbn-switch label {
+    .pipeline-ui__node .cbn-switch label {
       padding: 10px 15px; }
+
+.pipeline-ui .cbn-button {
+  flex: none;
+  margin-top: 30px; }

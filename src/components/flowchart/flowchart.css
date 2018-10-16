@@ -1,7 +1,8 @@
-.flowchart {
-  position: relative; }
+.pipeline-flowchart {
+  position: relative;
+  height: 100%; }
 
-.flowchart__graph {
+.pipeline-flowchart__graph {
   display: block; }
 
 .node text {
@@ -65,12 +66,12 @@
 .edge--faded {
   opacity: 0.1; }
 
-.flowchart__arrowhead {
+.pipeline-flowchart__arrowhead {
   fill: #dde0e1; }
 
-.flowchart__tooltip {
+.pipeline-flowchart__tooltip {
   position: absolute;
-  top: -80px;
+  top: -60px;
   left: -20px;
   padding: 12px 20px;
   background: rgba(23, 32, 38, 0.9);
@@ -80,15 +81,15 @@
   pointer-events: none;
   z-index: 9;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
-  .flowchart__tooltip.tooltip--visible {
+  .pipeline-flowchart__tooltip.tooltip--visible {
     opacity: 1; }
-  .flowchart__tooltip.tooltip--right {
+  .pipeline-flowchart__tooltip.tooltip--right {
     left: auto;
     right: -20px; }
-    .flowchart__tooltip.tooltip--right::before {
+    .pipeline-flowchart__tooltip.tooltip--right::before {
       left: auto;
       right: 10px; }
-  .flowchart__tooltip::before {
+  .pipeline-flowchart__tooltip::before {
     content: '';
     position: absolute;
     bottom: -10px;
@@ -98,24 +99,24 @@
     border-style: solid;
     border-width: 10px 10px 0 10px;
     border-color: rgba(23, 32, 38, 0.9) transparent transparent; }
-  .flowchart__tooltip b {
+  .pipeline-flowchart__tooltip b {
     display: block;
     font-size: 15px;
     margin-bottom: 3px; }
-  .flowchart__tooltip small {
+  .pipeline-flowchart__tooltip small {
     display: block;
     font-size: 10px; }
   @media (min-width: 480px) {
-    body.menu-visible .flowchart__tooltip {
+    body.menu-visible .pipeline-flowchart__tooltip {
       left: -120px; } }
   @media (min-width: 1100px) {
-    body.menu-visible .flowchart__tooltip {
+    body.menu-visible .pipeline-flowchart__tooltip {
       left: -220px; } }
-  body.menu-visible .flowchart__tooltip.tooltip--right {
+  body.menu-visible .pipeline-flowchart__tooltip.tooltip--right {
     left: auto; }
     @media (min-width: 480px) {
-      body.menu-visible .flowchart__tooltip.tooltip--right {
+      body.menu-visible .pipeline-flowchart__tooltip.tooltip--right {
         right: 80px; } }
     @media (min-width: 1100px) {
-      body.menu-visible .flowchart__tooltip.tooltip--right {
+      body.menu-visible .pipeline-flowchart__tooltip.tooltip--right {
         right: 180px; } }
