@@ -25,6 +25,11 @@
   width: 100%;
   transform: translateX(-100%);
 
+  .pipeline-ui {
+    visibility: hidden;
+    transition: visibility 0s;
+  }
+
   @media (min-width: $breakpoint-small) {
     width: $nav-width;
     transform: translateX(-$nav-width);
@@ -35,6 +40,11 @@
 
     @media (min-width: $breakpoint-small) {
       transform: translateX(-$nav-width / 2);
+    }
+
+    .pipeline-ui {
+      visibility: visible;
+      transition: visibility 0.3s;
     }
   }
 
