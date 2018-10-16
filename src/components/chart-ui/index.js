@@ -27,8 +27,7 @@ class ChartUI extends Component {
     let token = store.getItem(storeKey);
 
     if (!token) {
-      token = process.env.REACT_APP_STUDIO_TOKEN
-        || window.prompt('Please enter a StudioAI project token');
+      token = window.prompt('Please enter a StudioAI project token');
       if (token) {
         store.setItem(storeKey, token);
       }
@@ -38,10 +37,12 @@ class ChartUI extends Component {
   }
 
   syncStudioData() {
-    const token = this.getStudioToken();
-    const message = window.prompt('Please enter a snapshot description');
     const url = 'https://dev.qbstudioai.com/api/public/kernelai';
-  
+    const token = this.getStudioToken();
+    if (!token) {
+      return;
+    }
+    const message = window.prompt('Please enter a snapshot description');
     if (message) {
       fetch(url, {
         method: 'POST',
