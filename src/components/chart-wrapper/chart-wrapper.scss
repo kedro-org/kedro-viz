@@ -1,0 +1,84 @@
+@import '../../styles/variables';
+
+@media (min-width: $breakpoint-small) {
+  .pipeline-wrapper {
+    transition: background ease 0.2s, transform ease 0.4s;
+    transform: translateX(0);
+
+    &--menu-visible {
+      transform: translateX($nav-width / 2);
+    }
+  }
+}
+
+.pipeline-wrapper {
+  height: 100%;
+}
+
+.pipeline-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  transition: all ease 0.3s;
+  z-index: 20;
+  width: 100%;
+  transform: translateX(-100%);
+
+  .pipeline-ui {
+    visibility: hidden;
+    transition: visibility 0s;
+  }
+
+  @media (min-width: $breakpoint-small) {
+    width: $nav-width;
+    transform: translateX(-$nav-width);
+  }
+
+  &--visible {
+    transform: translateX(0);
+
+    @media (min-width: $breakpoint-small) {
+      transform: translateX(-$nav-width / 2);
+    }
+
+    .pipeline-ui {
+      visibility: visible;
+      transition: visibility 0.3s;
+    }
+  }
+
+  .cbn-theme--light & {
+    background: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
+  }
+
+  .cbn-theme--dark & {
+    background: $color-header-dark;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.pipeline-sidebar__menu {
+  position: absolute;
+  top: 30px;
+  right: -60px;
+
+  @media (max-width: $breakpoint-small) {
+    body.menu-visible & {
+      right: 30px;
+    }
+  }
+}
+
+.menu-icon {
+  .cbn-theme--light & {
+    fill: #333;
+  }
+
+  .cbn-theme--dark & {
+    fill: #fff;
+  }
+}

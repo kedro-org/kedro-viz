@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import {
   Checkbox,
-  Icon,
   RadioButton,
-  Toggle
+  Toggle,
+  Button
 } from '@quantumblack/carbon-ui-components';
+import config from '../../config';
 import './chart-ui.css';
+
 const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
 
 class ChartUI extends Component {
@@ -14,59 +16,56 @@ class ChartUI extends Component {
     super(props);
 
     this.state = {
-      visibleNav: false
     };
 
-    // Pre-bind these methods to prevent the 'removeEventListener and bind(this) gotcha'
-    // (See https://gist.github.com/Restuta/e400a555ba24daa396cc)
-    this.handleDocumentClick = this.handleDocumentClick.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.closeNav = this.closeNav.bind(this);
+    this.syncStudioData = this.syncStudioData.bind(this);
   }
 
-  componentWillMount() {
-    document.addEventListener('click', this.handleDocumentClick, false);
-    document.addEventListener('keydown', this.handleKeyDown);
-  }
+  getStudioToken() {
+    const store = window.localStorage;
+    const storeKey = `${config.localStorageName}_token`;
+    let token = store.getItem(storeKey);
 
-  componentWillUnmount() {
-    document.removeEventListener('click', this.handleDocumentClick, false);
-    document.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  handleDocumentClick(e) {
-    if (this.state.visibleNav && !this.nav.contains(e.target)) {
-      this.closeNav();
+    if (!token) {
+      token = window.prompt('Please enter a StudioAI project token');
+      if (token) {
+        store.setItem(storeKey, token);
+      }
     }
+
+    return token;
   }
 
-  handleKeyDown(e) {
-    const ESCAPE_KEY = 27;
-    if (e.keyCode === ESCAPE_KEY) {
-      this.closeNav();
+  syncStudioData() {
+    const url = 'https://dev.qbstudioai.com/api/public/kernelai';
+    const token = this.getStudioToken();
+    if (!token) {
+      return;
     }
-  }
-
-  toggleBodyClass(visible) {
-    document.body.classList.toggle('menu-visible', visible);
-  }
-
-  toggleNav() {
-    const visibleNav = !this.state.visibleNav;
-    this.setState({ visibleNav });
-    this.toggleBodyClass(visibleNav);
-  }
-
-  closeNav(target) {
-    this.toggleBodyClass(false);
-    this.setState({
-      visibleNav: false
-    });
+    const message = window.prompt('Please enter a snapshot description');
+    if (message) {
+      fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            message,
+            schema: JSON.stringify(this.props.data.raw)
+        })
+      })
+      .then(response => {
+        alert(response.ok ? 'Your data snapshot has been synced successfully!' : 'Upload failed :(')
+        console.log(response);
+      })
+    }
   }
 
   render() {
-    const { visibleNav } = this.state;
     const {
+      allowUploads,
       data,
       onChangeView,
       onNodeUpdate,
@@ -79,28 +78,8 @@ class ChartUI extends Component {
     } = this.props;
 
     return (
-      <nav
-        className={classnames('chart-ui', { 'chart-ui--visible': visibleNav })}
-        ref={el => {
-          this.nav = el;
-        }}>
-        <button
-          className="chart-ui__menu icon-button"
-          onClick={this.toggleNav.bind(this)}
-          ref={el => {
-            this.menuButton = el;
-          }}>
-          {visibleNav ? (
-            <Icon type="close" title="Close" theme={theme} />
-          ) : (
-            <svg className="menu-icon" viewBox="0 0 24 24">
-              <rect x="2" y="5" width="20" height="2" />
-              <rect x="2" y="11" width="20" height="2" />
-              <rect x="2" y="17" width="20" height="2" />
-            </svg>
-          )}
-        </button>
-        <ul className="chart-ui__view">
+      <div className="pipeline-ui">
+        <ul className="pipeline-ui__view">
           <li>
             <RadioButton
               checked={view === 'combined'}
@@ -146,11 +125,11 @@ class ChartUI extends Component {
           checked={parameters}
           theme={theme}
         />
-        <ul className="chart-ui__node-list">
+        <ul className="pipeline-ui__node-list">
           {data.nodes.map(node => (
             <li
-              className={classnames('chart-ui__node', {
-                'chart-ui__node--active': node.active
+              className={classnames('pipeline-ui__node', {
+                'pipeline-ui__node--active': node.active
               })}
               key={node.id}
               onMouseEnter={() => {
@@ -171,7 +150,10 @@ class ChartUI extends Component {
             </li>
           ))}
         </ul>
-      </nav>
+        { allowUploads && (
+          <Button theme={theme} onClick={this.syncStudioData}>Upload Snapshot to StudioAI</Button>
+        )}
+      </div>
     );
   }
 }

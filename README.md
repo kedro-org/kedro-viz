@@ -1,3 +1,15 @@
+# Kernel Pipeline Viz
+
+This project creates a data visualisation of a Kernel AI pipeline. It's designed to be used in a couple of different ways:
+
+1. **Standalone application**
+  Run `npm run build` to generate a production build as a full-page app. The built app will be placed in the `/build` directory. Data for the chart should be placed in `/public/logs/nodes.json`. This directory is gitignored.
+
+2. **React component**
+  Run `npm run lib` to generate a React component that can be imported into other applications. The built component will be placed in the `/lib` directory. This can then be published to npm (The `lib` script is run automatically as a `prepublish` script).
+
+## Create-React-App
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>

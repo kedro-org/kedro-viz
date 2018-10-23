@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import ChartUI from '../chart-ui';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import ChartWrapper from '../chart-wrapper';
 import FlowChart from '../flowchart';
 import fetchData from '../../utils/fetch-data';
 import generateRandomData from '../../utils/randomData';
 import config from '../../config';
+import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 import './app.css';
 
 const { env } = config;
@@ -21,16 +24,10 @@ class App extends Component {
     };
 
     if (env !== 'test') {
-      fetchData().then(data => {
+      fetchData(this.props.path).then(data => {
         this.setState({ data });
       });
     }
-  }
-
-  componentWillMount() {
-    // Setup transitions for theme change and menu toggle, but only after mounting
-    document.body.style.transition =
-      'background ease 0.2s, transform ease 0.4s';
   }
 
   onChangeView(e, { value }) {
@@ -78,28 +75,44 @@ class App extends Component {
     }
 
     return (
-      <div className="app">
-        <ChartUI
-          data={data}
+      <div className={classnames('kernel-pipeline', {
+        'cbn-theme--dark': theme === 'dark',
+        'cbn-theme--light': theme === 'light',
+      })}>
+        <ChartWrapper
+          {...this.state}
+          allowUploads={this.props.allowUploads}
           onChangeView={this.onChangeView.bind(this)}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
           onToggleParameters={this.onToggleParameters.bind(this)}
-          onToggleTextLabels={this.onToggleTextLabels.bind(this)}
-          parameters={parameters}
-          textLabels={textLabels}
-          theme={theme}
-          view={view}
-        />
-        <FlowChart
-          data={data}
-          onNodeUpdate={this.onNodeUpdate.bind(this)}
-          parameters={parameters}
-          textLabels={textLabels}
-          view={view}
-        />
+          onToggleTextLabels={this.onToggleTextLabels.bind(this)}>
+          <FlowChart
+            data={data}
+            onNodeUpdate={this.onNodeUpdate.bind(this)}
+            parameters={parameters}
+            textLabels={textLabels}
+            view={view}
+          />
+        </ChartWrapper>
       </div>
     );
   }
 }
+
+App.propTypes = {
+  path: PropTypes.string,
+  allowUploads: PropTypes.bool,
+};
+
+App.defaultProps = {
+  /**
+   * Data file location
+   */
+  path: '/logs/nodes.json',
+  /**
+   * Show/hide button to upload data snapshots to StudioAI
+   */
+  allowUploads: true,
+};
 
 export default App;

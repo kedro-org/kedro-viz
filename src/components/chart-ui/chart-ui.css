@@ -1,74 +1,37 @@
-@media (min-width: 480px) {
-  body.menu-visible {
-    transform: translateX(200px);
-    overflow: hidden; } }
+.pipeline-ui {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  height: 100%; }
 
-.chart-ui {
-  padding: 10px 30px;
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100%;
-  min-height: 100vh;
-  transition: all ease 0.3s;
-  z-index: 20;
-  width: 100%;
-  transform: translateX(-100%); }
-  @media (min-width: 480px) {
-    .chart-ui {
-      width: 400px;
-      transform: translateX(-400px); } }
-  .chart-ui--visible {
-    transform: translateX(0); }
-    @media (min-width: 480px) {
-      .chart-ui--visible {
-        transform: translateX(-200px); } }
-  .cbn-theme--light .chart-ui {
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.03); }
-  .cbn-theme--dark .chart-ui {
-    background: #111f2a;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); }
-  .chart-ui .cbn-toggle {
-    width: 180px;
-    margin: 30px 0; }
-
-.chart-ui__menu {
-  position: absolute;
-  top: 30px;
-  right: -60px; }
-  @media (max-width: 480px) {
-    body.menu-visible .chart-ui__menu {
-      right: 30px; } }
-
-.cbn-theme--light .menu-icon {
-  fill: #333; }
-
-.cbn-theme--dark .menu-icon {
-  fill: #fff; }
-
-.chart-ui__view {
+.pipeline-ui__view {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 30px 0;
-  padding-right: 30px; }
+  padding-right: 30px;
+  flex: none; }
 
-.chart-ui__node-list {
-  margin: 30px -15px;
+.pipeline-ui .cbn-toggle {
+  width: 180px;
+  flex: none;
+  margin-top: 30px; }
+
+.pipeline-ui__node-list {
+  margin: 30px -15px 0;
   padding: 0;
-  overflow: auto;
-  max-height: calc(100vh - 240px); }
+  overflow: auto; }
 
-.chart-ui__node {
+.pipeline-ui__node {
   min-width: 320px; }
-  .chart-ui__node:nth-child(even) {
+  .pipeline-ui__node:nth-child(even) {
     background: rgba(255, 255, 255, 0.02); }
-  .chart-ui__node:hover, .chart-ui__node--active {
+  .pipeline-ui__node:hover, .pipeline-ui__node--active {
     background: rgba(255, 255, 255, 0.1); }
-  .chart-ui__node .cbn-switch {
+  .pipeline-ui__node .cbn-switch {
     margin: 0; }
-    .chart-ui__node .cbn-switch label {
+    .pipeline-ui__node .cbn-switch label {
       padding: 10px 15px; }
+
+.pipeline-ui .cbn-button {
+  flex: none;
+  margin-top: 30px; }

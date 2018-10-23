@@ -1,10 +1,11 @@
 @import '../../styles/variables';
 
-.flowchart {
+.pipeline-flowchart {
   position: relative;
+  height: 100%;
 }
 
-.flowchart__graph {
+.pipeline-flowchart__graph {
   display: block;
 }
 
@@ -105,13 +106,13 @@
   opacity: 0.1;
 }
 
-.flowchart__arrowhead {
+.pipeline-flowchart__arrowhead {
   fill: $color-edge;
 }
 
-.flowchart__tooltip {
+.pipeline-flowchart__tooltip {
   position: absolute;
-  top: -80px;
+  top: -60px;
   left: -20px;
   padding: 12px 20px;
   background: $color-tooltip-bg;

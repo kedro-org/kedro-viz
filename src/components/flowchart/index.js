@@ -22,7 +22,7 @@ const DURATION = 666;
 class FlowChart extends Component {
   constructor(props) {
     super(props);
-    this.setChartHeight = this.setChartHeight.bind(this);
+    this.resizeChart = this.resizeChart.bind(this);
   }
 
   componentDidMount() {
@@ -36,16 +36,16 @@ class FlowChart extends Component {
     };
 
     this.setChartHeight();
-    window.addEventListener('resize', this.setChartHeight);
     this.initZoomBehaviour();
     this.getLayout();
     this.drawChart();
     this.zoomChart();
     this.checkNodeCount();
+    window.addEventListener('resize', this.resizeChart);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('resize', this.setChartHeight);
+    document.removeEventListener('resize', this.resizeChart);
   }
 
   componentDidUpdate(prevProps) {
@@ -66,9 +66,19 @@ class FlowChart extends Component {
   }
 
   setChartHeight() {
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
-    this.el.svg.attr('width', this.width).attr('height', this.height);
+    const { x, y, width, height } = this._container.getBoundingClientRect();
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.el.svg.attr('width', width).attr('height', height);
+  }
+
+  resizeChart() {
+    this.setChartHeight();
+    this.getLayout();
+    this.drawChart();
+    this.zoomChart(true);
   }
 
   initZoomBehaviour() {
@@ -347,12 +357,12 @@ class FlowChart extends Component {
 
   render() {
     return (
-      <div className="flowchart">
-        <svg className="flowchart__graph" ref={el => (this._svg = el)}>
+      <div className="pipeline-flowchart" ref={el => (this._container = el)}>
+        <svg className="pipeline-flowchart__graph" ref={el => (this._svg = el)}>
           <defs>
             <marker
               id="arrowhead"
-              className="flowchart__arrowhead"
+              className="pipeline-flowchart__arrowhead"
               viewBox="0 0 10 10"
               refX="7"
               refY="5"
@@ -364,11 +374,11 @@ class FlowChart extends Component {
             </marker>
           </defs>
           <g ref={el => (this._gInner = el)}>
-            <g className="flowchart__edges" ref={el => (this._gEdges = el)} />
-            <g className="flowchart__nodes" ref={el => (this._gNodes = el)} />
+            <g className="pipeline-flowchart__edges" ref={el => (this._gEdges = el)} />
+            <g className="pipeline-flowchart__nodes" ref={el => (this._gNodes = el)} />
           </g>
         </svg>
-        <div className="flowchart__tooltip" ref={el => (this._tooltip = el)} />
+        <div className="pipeline-flowchart__tooltip" ref={el => (this._tooltip = el)} />
       </div>
     );
   }

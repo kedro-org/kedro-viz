@@ -117,7 +117,8 @@ const formatData = raw => {
 
 /**
  * Load JSON using d3-fetch
+ * {string} path Location of data to load
  */
-const fetchData = () => json('/logs/nodes.json').then(formatData);
+const fetchData = path => json(path).then(formatData);
 
 export default fetchData;

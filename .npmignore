@@ -15,7 +15,7 @@
 
 # production
 build/
-lib/
+src/
 
 # misc
 .DS_Store
