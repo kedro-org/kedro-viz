@@ -15,7 +15,7 @@
 .cbn-theme--light .cbn-switch__input:focus + .cbn-switch-radio__label .cbn-switch-radio__box {
   box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.6); }
 
-.icon-button {
+.pipeline-icon-button {
   background: none;
   border: none;
   padding: 4px;
@@ -27,8 +27,8 @@
   height: 3.1rem;
   transition: all ease 0.1s;
   transform: scale(1.3); }
-  .icon-button:hover {
+  .pipeline-icon-button:hover {
     transform: scale(1.5); }
-  .icon-button:focus {
+  .pipeline-icon-button:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.6); }

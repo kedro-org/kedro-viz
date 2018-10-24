@@ -67,7 +67,7 @@ class ChartWrappper extends Component {
             this.nav = el;
           }}>
           <button
-            className="pipeline-sidebar__menu icon-button"
+            className="pipeline-sidebar__menu pipeline-icon-button"
             onClick={this.toggleNav.bind(this)}>
             { visibleNav ? (
               <Icon type="close" title="Close" theme={theme} />
