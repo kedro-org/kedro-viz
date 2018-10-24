@@ -4,7 +4,7 @@
   "private": true,
   "main": "lib/components/app/index.js",
   "dependencies": {
-    "@quantumblack/carbon-ui-components": "^1.2.4",
+    "@quantumblack/carbon-ui-components": "^2.0.0",
     "autoprefixer": "7.1.6",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",
