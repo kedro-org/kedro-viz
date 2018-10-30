@@ -63,7 +63,7 @@
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
     "watch-lib": "babel src --out-dir lib --copy-files --watch",
     "lib": "npm run build-css && babel src --out-dir lib --copy-files",
-    "prepublish": "npm run lib",
+    "prepublishOnly": "npm run lib",
     "test": "node scripts/test.js --env=jsdom"
   },
   "devDependencies": {
