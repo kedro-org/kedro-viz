@@ -7,6 +7,7 @@ if (process.env.REACT_APP_ENV) {
 }
 
 const config = {
+  dataPath: '/logs/nodes.json',
   env,
   localStorageName: `KernelAIPipelineViz_${env}`
 };

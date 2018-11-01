@@ -1,11 +1,13 @@
-import { json } from 'd3-fetch';
-
 /**
  * Format raw data into a usable structure
  * @param {Object} raw - The parsed data straight from the JSON file
  * @return {Object} The node, edge and raw data for the chart
  */
 const formatData = raw => {
+  if (!raw || raw.nodes) {
+    return raw;
+  }
+
   const nodes = [];
   const edges = [];
 
@@ -115,10 +117,4 @@ const formatData = raw => {
   };
 };
 
-/**
- * Load JSON using d3-fetch
- * {string} path Location of data to load
- */
-const fetchData = path => json(path).then(formatData);
-
-export default fetchData;
+export default formatData;
