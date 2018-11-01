@@ -108,16 +108,10 @@
     display: block;
     font-size: 10px; }
   @media (min-width: 480px) {
-    body.menu-visible .pipeline-flowchart__tooltip {
-      left: -120px; } }
-  @media (min-width: 1100px) {
-    body.menu-visible .pipeline-flowchart__tooltip {
+    .pipeline-wrapper--menu-visible .pipeline-flowchart__tooltip {
       left: -220px; } }
-  body.menu-visible .pipeline-flowchart__tooltip.tooltip--right {
+  .pipeline-wrapper--menu-visible .pipeline-flowchart__tooltip.tooltip--right {
     left: auto; }
     @media (min-width: 480px) {
-      body.menu-visible .pipeline-flowchart__tooltip.tooltip--right {
-        right: 80px; } }
-    @media (min-width: 1100px) {
-      body.menu-visible .pipeline-flowchart__tooltip.tooltip--right {
+      .pipeline-wrapper--menu-visible .pipeline-flowchart__tooltip.tooltip--right {
         right: 180px; } }
