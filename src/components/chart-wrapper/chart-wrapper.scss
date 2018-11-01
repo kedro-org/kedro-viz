@@ -12,7 +12,9 @@
 }
 
 .pipeline-wrapper {
-  height: 100%;
+  &, & > div {
+    height: 100%;
+  }
 }
 
 .pipeline-sidebar {
