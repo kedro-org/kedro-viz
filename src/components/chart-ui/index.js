@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import {
+  Button,
   Checkbox,
+  Input,
+  Modal,
   RadioButton,
   Toggle,
-  Button
 } from '@quantumblack/carbon-ui-components';
 import config from '../../config';
 import './chart-ui.css';
@@ -16,6 +18,7 @@ class ChartUI extends Component {
     super(props);
 
     this.state = {
+      showModal: false,
     };
 
     this.syncStudioData = this.syncStudioData.bind(this);
@@ -151,7 +154,31 @@ class ChartUI extends Component {
           ))}
         </ul>
         { allowUploads && (
-          <Button theme={theme} onClick={this.syncStudioData}>Upload Snapshot to StudioAI</Button>
+          <React.Fragment>
+            <Button theme={theme} onClick={this.syncStudioData}>Upload Snapshot to StudioAI</Button>
+            {/* <Modal
+              title='Warning!'
+              message='Are you sure you want to delete the current item? You cannot undo this action.'
+              buttonLabel='Confirm Deletion'
+              visible={this.state.showModal} /> */}
+            <Modal
+              title='Custom Modal'>
+              <Input
+                label='Token'
+                onChange={console.log('Input changed')}
+                theme={theme}
+                value='Grass can be green11'
+                placeholder='StudioAI project token' />
+              <Input
+                label='Description'
+                onChange={console.log('Input changed')}
+                theme={theme}
+                value='Grass can be green'
+                placeholder='Snapshot description' />
+              <Button size='small' type='secondary'>Cancel</Button>
+              <Button size='small'>OK</Button>
+            </Modal>
+          </React.Fragment>
         )}
       </div>
     );
