@@ -15,7 +15,7 @@
     "test": "node scripts/test.js --env=jsdom"
   },
   "dependencies": {
-    "@quantumblack/carbon-ui-components": "^2.0.0",
+    "@quantumblack/carbon-ui-components": "^2.1.0",
     "autoprefixer": "7.1.6",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",
