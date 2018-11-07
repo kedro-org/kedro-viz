@@ -84,13 +84,15 @@ class App extends Component {
           onNodeUpdate={this.onNodeUpdate.bind(this)}
           onToggleParameters={this.onToggleParameters.bind(this)}
           onToggleTextLabels={this.onToggleTextLabels.bind(this)}>
-          <FlowChart
-            data={data}
-            onNodeUpdate={this.onNodeUpdate.bind(this)}
-            parameters={parameters}
-            textLabels={textLabels}
-            view={view}
-          />
+          { Boolean(data.nodes.length) && (
+            <FlowChart
+              data={data}
+              onNodeUpdate={this.onNodeUpdate.bind(this)}
+              parameters={parameters}
+              textLabels={textLabels}
+              view={view}
+            />
+          ) }
         </ChartWrapper>
       </div>
     );
