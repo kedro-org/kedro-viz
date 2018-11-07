@@ -24,20 +24,21 @@ class ChartUI extends Component {
   getStudioToken() {
     const store = window.localStorage;
     const storeKey = `${config.localStorageName}_token`;
-    let token = store.getItem(storeKey);
+    const storeToken = store.getItem(storeKey);
+    const tokenMessage = storeToken ? `Your stored StudioAI token is ${storeToken}. Enter a new one below or click cancel to keep the previous one.` : 'Please enter a StudioAI project token';
+    const newToken = window.prompt(tokenMessage);
 
-    if (!token) {
-      token = window.prompt('Please enter a StudioAI project token');
-      if (token) {
-        store.setItem(storeKey, token);
-      }
+    if (newToken) {
+      store.setItem(storeKey, newToken);
     }
 
-    return token;
+    return newToken || storeToken;
   }
 
   syncStudioData() {
-    const url = 'https://dev.qbstudioai.com/api/public/kernelai';
+    const url = process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3000/public/kernelai'
+      : 'https://dev.qbstudioai.com/api/public/kernelai';
     const token = this.getStudioToken();
     if (!token) {
       return;
