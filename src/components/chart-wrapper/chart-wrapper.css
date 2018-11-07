@@ -5,7 +5,7 @@
     .pipeline-wrapper--menu-visible {
       transform: translateX(200px); } }
 
-.pipeline-wrapper {
+.pipeline-wrapper, .pipeline-wrapper > div {
   height: 100%; }
 
 .pipeline-sidebar {

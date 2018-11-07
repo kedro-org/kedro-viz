@@ -14,25 +14,16 @@ class ChartWrappper extends Component {
 
     // Pre-bind these methods to prevent the 'removeEventListener and bind(this) gotcha'
     // (See https://gist.github.com/Restuta/e400a555ba24daa396cc)
-    this.handleDocumentClick = this.handleDocumentClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.closeNav = this.closeNav.bind(this);
   }
 
   componentWillMount() {
-    document.addEventListener('click', this.handleDocumentClick, false);
     document.addEventListener('keydown', this.handleKeyDown);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('click', this.handleDocumentClick, false);
     document.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  handleDocumentClick(e) {
-    if (this.state.visibleNav && !this.nav.contains(e.target)) {
-      this.closeNav();
-    }
   }
 
   handleKeyDown(e) {
@@ -67,7 +58,7 @@ class ChartWrappper extends Component {
             this.nav = el;
           }}>
           <button
-            className="pipeline-sidebar__menu icon-button"
+            className="pipeline-sidebar__menu pipeline-icon-button"
             onClick={this.toggleNav.bind(this)}>
             { visibleNav ? (
               <Icon type="close" title="Close" theme={theme} />
@@ -81,7 +72,9 @@ class ChartWrappper extends Component {
           </button>
           <ChartUI {...this.props} />
         </nav>
-        { children }
+        <div onClick={this.closeNav}>
+          { children }
+        </div>
       </div>
     );
   }

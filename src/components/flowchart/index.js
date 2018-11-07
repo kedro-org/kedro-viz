@@ -378,7 +378,7 @@ class FlowChart extends Component {
             <g className="pipeline-flowchart__nodes" ref={el => (this._gNodes = el)} />
           </g>
         </svg>
-        <div className="pipeline-flowchart__tooltip" ref={el => (this._tooltip = el)} />
+        <div className="pipeline-flowchart__tooltip carbon" ref={el => (this._tooltip = el)} />
       </div>
     );
   }

@@ -3,29 +3,27 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import ChartWrapper from '../chart-wrapper';
 import FlowChart from '../flowchart';
-import fetchData from '../../utils/fetch-data';
-import generateRandomData from '../../utils/randomData';
-import config from '../../config';
+import formatData from '../../utils/format-data';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 import './app.css';
-
-const { env } = config;
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: env === 'test' ? generateRandomData() : null,
+      data: formatData(props.data),
       parameters: true,
       textLabels: false,
       view: 'combined',
       theme: 'dark'
     };
+  }
 
-    if (env !== 'test') {
-      fetchData(this.props.path).then(data => {
-        this.setState({ data });
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data) {
+      this.setState({
+        data: formatData(this.props.data)
       });
     }
   }
@@ -86,13 +84,15 @@ class App extends Component {
           onNodeUpdate={this.onNodeUpdate.bind(this)}
           onToggleParameters={this.onToggleParameters.bind(this)}
           onToggleTextLabels={this.onToggleTextLabels.bind(this)}>
-          <FlowChart
-            data={data}
-            onNodeUpdate={this.onNodeUpdate.bind(this)}
-            parameters={parameters}
-            textLabels={textLabels}
-            view={view}
-          />
+          { Boolean(data.nodes.length) && (
+            <FlowChart
+              data={data}
+              onNodeUpdate={this.onNodeUpdate.bind(this)}
+              parameters={parameters}
+              textLabels={textLabels}
+              view={view}
+            />
+          ) }
         </ChartWrapper>
       </div>
     );
@@ -100,15 +100,15 @@ class App extends Component {
 }
 
 App.propTypes = {
-  path: PropTypes.string,
+  data: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array
+  ]),
   allowUploads: PropTypes.bool,
 };
 
 App.defaultProps = {
-  /**
-   * Data file location
-   */
-  path: '/logs/nodes.json',
+  data: null,
   /**
    * Show/hide button to upload data snapshots to StudioAI
    */

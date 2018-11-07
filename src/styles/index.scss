@@ -1,4 +1,7 @@
 // Styles that don't get included in the exported package:
+body {
+  margin: 0;
+}
 
 .kernel-pipeline {
   height: 100vh;
