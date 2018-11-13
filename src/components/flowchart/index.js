@@ -357,7 +357,7 @@ class FlowChart extends Component {
 
   render() {
     return (
-      <div className="pipeline-flowchart" ref={el => (this._container = el)}>
+      <div className="pipeline-flowchart carbon" ref={el => (this._container = el)}>
         <svg className="pipeline-flowchart__graph" ref={el => (this._svg = el)}>
           <defs>
             <marker
