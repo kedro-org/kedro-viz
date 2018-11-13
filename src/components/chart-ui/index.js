@@ -36,16 +36,13 @@ class ChartUI extends Component {
   }
 
   syncStudioData() {
-    const url = process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000/public/kernelai'
-      : 'https://dev.qbstudioai.com/api/public/kernelai';
     const token = this.getStudioToken();
     if (!token) {
       return;
     }
     const message = window.prompt('Please enter a snapshot description');
     if (message) {
-      fetch(url, {
+      fetch(config.syncEndpoint, {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -57,9 +54,18 @@ class ChartUI extends Component {
             schema: JSON.stringify(this.props.data.raw)
         })
       })
-      .then(response => {
-        alert(response.ok ? 'Your data snapshot has been synced successfully!' : 'Upload failed :(')
+      .then((response) => {
         console.log(response);
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response;
+      })
+      .then(() => {
+        alert('Your data snapshot has been synced successfully!');
+      })
+      .catch(status => {
+        alert(`Upload failed: ${status}`);
       })
     }
   }
