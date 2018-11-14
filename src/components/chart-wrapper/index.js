@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Icon } from '@quantumblack/carbon-ui-components';
 import ChartUI from '../chart-ui';
+import FlowChart from '../flowchart';
 import './chart-wrapper.css';
 
 class ChartWrappper extends Component {
@@ -46,7 +47,8 @@ class ChartWrappper extends Component {
 
   render() {
     const { visibleNav } = this.state;
-    const { children, theme } = this.props;
+    const { chartParams, theme } = this.props;
+    const chartHasData = Boolean(chartParams.data.nodes.length);
 
     return (
       <div className={classnames('pipeline-wrapper', {
@@ -73,7 +75,9 @@ class ChartWrappper extends Component {
           <ChartUI {...this.props} />
         </nav>
         <div onClick={this.closeNav}>
-          { children }
+          { chartHasData && (
+            <FlowChart {...chartParams} visibleNav={visibleNav} />
+          ) }
         </div>
       </div>
     );

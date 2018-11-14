@@ -27,27 +27,25 @@ class ChartUI extends Component {
   getStudioToken() {
     const store = window.localStorage;
     const storeKey = `${config.localStorageName}_token`;
-    let token = store.getItem(storeKey);
+    const storeToken = store.getItem(storeKey);
+    const tokenMessage = storeToken ? `Your stored StudioAI token is ${storeToken}. Enter a new one below or click cancel to keep the previous one.` : 'Please enter a StudioAI project token';
+    const newToken = window.prompt(tokenMessage);
 
-    if (!token) {
-      token = window.prompt('Please enter a StudioAI project token');
-      if (token) {
-        store.setItem(storeKey, token);
-      }
+    if (newToken) {
+      store.setItem(storeKey, newToken);
     }
 
-    return token;
+    return newToken || storeToken;
   }
 
   syncStudioData() {
-    const url = 'https://dev.qbstudioai.com/api/public/kernelai';
     const token = this.getStudioToken();
     if (!token) {
       return;
     }
     const message = window.prompt('Please enter a snapshot description');
     if (message) {
-      fetch(url, {
+      fetch(config.syncEndpoint, {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -59,9 +57,18 @@ class ChartUI extends Component {
             schema: JSON.stringify(this.props.data.raw)
         })
       })
-      .then(response => {
-        alert(response.ok ? 'Your data snapshot has been synced successfully!' : 'Upload failed :(')
+      .then((response) => {
         console.log(response);
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response;
+      })
+      .then(() => {
+        alert('Your data snapshot has been synced successfully!');
+      })
+      .catch(status => {
+        alert(`Upload failed: ${status}`);
       })
     }
   }

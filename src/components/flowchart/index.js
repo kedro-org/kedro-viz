@@ -67,7 +67,8 @@ class FlowChart extends Component {
 
   setChartHeight() {
     const { x, y, width, height } = this._container.getBoundingClientRect();
-    this.x = x;
+    const navOffset = this.props.visibleNav ? 200 : 0;
+    this.x = x - navOffset;
     this.y = y;
     this.width = width;
     this.height = height;
@@ -357,7 +358,7 @@ class FlowChart extends Component {
 
   render() {
     return (
-      <div className="pipeline-flowchart" ref={el => (this._container = el)}>
+      <div className="pipeline-flowchart carbon" ref={el => (this._container = el)}>
         <svg className="pipeline-flowchart__graph" ref={el => (this._svg = el)}>
           <defs>
             <marker
