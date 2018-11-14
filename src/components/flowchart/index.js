@@ -67,7 +67,8 @@ class FlowChart extends Component {
 
   setChartHeight() {
     const { x, y, width, height } = this._container.getBoundingClientRect();
-    this.x = x;
+    const navOffset = this.props.visibleNav ? 200 : 0;
+    this.x = x - navOffset;
     this.y = y;
     this.width = width;
     this.height = height;

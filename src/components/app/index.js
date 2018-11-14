@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import ChartWrapper from '../chart-wrapper';
-import FlowChart from '../flowchart';
 import formatData from '../../utils/format-data';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 import './app.css';
@@ -83,17 +82,14 @@ class App extends Component {
           onChangeView={this.onChangeView.bind(this)}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
           onToggleParameters={this.onToggleParameters.bind(this)}
-          onToggleTextLabels={this.onToggleTextLabels.bind(this)}>
-          { Boolean(data.nodes.length) && (
-            <FlowChart
-              data={data}
-              onNodeUpdate={this.onNodeUpdate.bind(this)}
-              parameters={parameters}
-              textLabels={textLabels}
-              view={view}
-            />
-          ) }
-        </ChartWrapper>
+          onToggleTextLabels={this.onToggleTextLabels.bind(this)}
+          chartParams={{
+            data,
+            onNodeUpdate: this.onNodeUpdate.bind(this),
+            parameters,
+            textLabels,
+            view,
+          }} />
       </div>
     );
   }
