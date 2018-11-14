@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import {
-  Button,
   Checkbox,
-  Input,
-  Modal,
   RadioButton,
   Toggle,
 } from '@quantumblack/carbon-ui-components';
-import config from '../../config';
+import UploadSnapshot from '../upload-snapshot';
 import './chart-ui.css';
 
 const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
@@ -18,59 +15,7 @@ class ChartUI extends Component {
     super(props);
 
     this.state = {
-      showModal: false,
     };
-
-    this.syncStudioData = this.syncStudioData.bind(this);
-  }
-
-  getStudioToken() {
-    const store = window.localStorage;
-    const storeKey = `${config.localStorageName}_token`;
-    const storeToken = store.getItem(storeKey);
-    const tokenMessage = storeToken ? `Your stored StudioAI token is ${storeToken}. Enter a new one below or click cancel to keep the previous one.` : 'Please enter a StudioAI project token';
-    const newToken = window.prompt(tokenMessage);
-
-    if (newToken) {
-      store.setItem(storeKey, newToken);
-    }
-
-    return newToken || storeToken;
-  }
-
-  syncStudioData() {
-    const token = this.getStudioToken();
-    if (!token) {
-      return;
-    }
-    const message = window.prompt('Please enter a snapshot description');
-    if (message) {
-      fetch(config.syncEndpoint, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            message,
-            schema: JSON.stringify(this.props.data.raw)
-        })
-      })
-      .then((response) => {
-        console.log(response);
-        if (!response.ok) {
-          throw Error(response.statusText);
-        }
-        return response;
-      })
-      .then(() => {
-        alert('Your data snapshot has been synced successfully!');
-      })
-      .catch(status => {
-        alert(`Upload failed: ${status}`);
-      })
-    }
   }
 
   render() {
@@ -160,33 +105,10 @@ class ChartUI extends Component {
             </li>
           ))}
         </ul>
-        { allowUploads && (
-          <React.Fragment>
-            <Button theme={theme} onClick={this.syncStudioData}>Upload Snapshot to StudioAI</Button>
-            {/* <Modal
-              title='Warning!'
-              message='Are you sure you want to delete the current item? You cannot undo this action.'
-              buttonLabel='Confirm Deletion'
-              visible={this.state.showModal} /> */}
-            <Modal
-              title='Custom Modal'>
-              <Input
-                label='Token'
-                onChange={console.log('Input changed')}
-                theme={theme}
-                value='Grass can be green11'
-                placeholder='StudioAI project token' />
-              <Input
-                label='Description'
-                onChange={console.log('Input changed')}
-                theme={theme}
-                value='Grass can be green'
-                placeholder='Snapshot description' />
-              <Button size='small' type='secondary'>Cancel</Button>
-              <Button size='small'>OK</Button>
-            </Modal>
-          </React.Fragment>
-        )}
+        <UploadSnapshot
+          allowUploads={allowUploads}
+          data={data}
+          theme={theme} />
       </div>
     );
   }
