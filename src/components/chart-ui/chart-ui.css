@@ -33,7 +33,3 @@
     margin: 0; }
     .pipeline-ui__node .cbn-switch label {
       padding: 10px 15px; }
-
-.pipeline-ui .cbn-button {
-  flex: none;
-  margin-top: 30px; }
