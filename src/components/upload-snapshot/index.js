@@ -59,7 +59,7 @@ class UploadSnapshot extends Component {
       this.setState({
         loading: false,
         showForm: false,
-        status: '✅ Your data snapshot has been synced successfully!'
+        status: 'Your pipeline snapshot has been uploaded successfully!'
       });
       store.set(token);
     })
@@ -90,7 +90,7 @@ class UploadSnapshot extends Component {
     const isValid = message && token;
     if (!isValid) {
       this.setState({
-        status: '⚠️ Please supply a value for both fields.'
+        status: '⚠️ Please supply a value for both fields'
       });
     }
     return isValid;
@@ -158,7 +158,7 @@ class UploadSnapshot extends Component {
                       onChange={(e, { value }) => {
                         this.setState({ message: value });
                       }}
-                      placeholder='A description of your Snapshot'
+                      placeholder='A description of your snapshot'
                       required />
                   </div>
                   <div className="pipeline-form-row">
