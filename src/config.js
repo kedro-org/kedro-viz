@@ -15,7 +15,7 @@ switch (env) {
     syncEndpoint = 'https://dev.qbstudioai.com/api/public/kernelai';
     break;
   default:
-    syncEndpoint = 'http://studio.quantumblack.com/api/public/kernelai';
+    syncEndpoint = 'https://studio.quantumblack.com/api/public/kernelai';
 }
 
 const config = {
