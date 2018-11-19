@@ -4,17 +4,17 @@ import config from '../../config';
 import generateRandomData from '../../utils/randomData';
 import App from '../app';
 
-const { dataPath, env } = config;
+const { dataPath, dataSource } = config;
 
 class LoadData extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: env === 'test' ? generateRandomData() : null
+      data: dataSource === 'random' ? generateRandomData() : null
     };
 
-    if (env !== 'test') {
+    if (dataSource !== 'random') {
       json(dataPath).then(data => {
         this.setState({ data });
       });
