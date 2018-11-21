@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs } from '@quantumblack/carbon-ui-components';
 import ChartUI from '../chart-ui';
+import History from '../history';
 import './sidebar-tabs.css';
 
 const tabData = [
@@ -12,7 +13,7 @@ const tabData = [
   {
     text: 'History',
     href: '#history',
-    content: ({ history }) => <ul>{history.map(d => <li key={d.message}>{d.message}</li>)}</ul>
+    content: History
   }
 ];
 
