@@ -78,6 +78,7 @@ class App extends Component {
       })}>
         <ChartWrapper
           {...this.state}
+          history={this.props.history}
           allowUploads={this.props.allowUploads}
           onChangeView={this.onChangeView.bind(this)}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
