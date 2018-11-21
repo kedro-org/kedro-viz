@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from '@quantumblack/carbon-ui-components';
 import ChartUI from '../chart-ui';
-import './chart-tabs.css';
+import './sidebar-tabs.css';
 
 const tabData = [
   {
@@ -16,7 +16,7 @@ const tabData = [
   }
 ];
 
-class ChartTabs extends React.Component {
+class SidebarTabs extends React.Component {
   constructor(props) {
     super(props);
 
@@ -73,4 +73,4 @@ class ChartTabs extends React.Component {
   }
 }
 
-export default ChartTabs;
+export default SidebarTabs;

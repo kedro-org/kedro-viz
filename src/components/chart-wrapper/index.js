@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Icon } from '@quantumblack/carbon-ui-components';
-import ChartTabs from '../chart-tabs';
+import SidebarTabs from '../sidebar-tabs';
 import FlowChart from '../flowchart';
 import './chart-wrapper.css';
 
@@ -72,7 +72,7 @@ class ChartWrappper extends Component {
               </svg>
             )}
           </button>
-          <ChartTabs {...this.props} />
+          <SidebarTabs {...this.props} />
         </nav>
         <div onClick={this.closeNav}>
           { chartHasData && (
