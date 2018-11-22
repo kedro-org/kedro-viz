@@ -1,107 +1,39 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import ChartWrapper from '../chart-wrapper';
+import Store from '../store';
 import formatData from '../../utils/format-data';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 import './app.css';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
+const App = (props) => {
+  const { data } = props; 
 
-    this.state = {
-      data: formatData(props.data),
-      parameters: true,
-      textLabels: false,
-      view: 'combined',
-      theme: 'dark'
-    };
+  if (!data) {
+    return null;
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.data !== this.props.data) {
-      this.setState({
-        data: formatData(this.props.data)
-      });
-    }
-  }
-
-  onChangeView(e, { value }) {
-    this.setState({
-      view: value
-    });
-  }
-
-  onNodeUpdate(nodeID, property, value) {
-    const { data } = this.state;
-    const nodes = data.nodes.map(node => {
-      if (node.id === nodeID) {
-        node[property] = value;
+  const formattedData = data
+    .map(pipeline => Object.assign(
+      {},
+      pipeline,
+      {
+        created_ts: +pipeline.created_ts,
+        ...formatData(pipeline.json_schema)
       }
-      return node;
-    });
-    this.setState({
-      data: Object.assign({}, data, { nodes })
-    });
-  }
+    ))
+    .sort((a, b) => b.created_ts - a.created_ts);
 
-  onToggleParameters(parameters) {
-    const { data } = this.state;
-    const nodes = data.nodes.map(node => {
-      if (node.id.includes('param')) {
-        node.disabled = !parameters;
-      }
-      return node;
-    });
-    this.setState({
-      data: Object.assign({}, data, { nodes }),
-      parameters
-    });
-  }
-
-  onToggleTextLabels(textLabels) {
-    this.setState({ textLabels });
-  }
-
-  render() {
-    const { data, parameters, textLabels, theme, view } = this.state;
-
-    if (!data) {
-      return null;
-    }
-
-    return (
-      <div className={classnames('kernel-pipeline', {
-        'cbn-theme--dark': theme === 'dark',
-        'cbn-theme--light': theme === 'light',
-      })}>
-        <ChartWrapper
-          {...this.state}
-          history={this.props.history}
-          allowUploads={this.props.allowUploads}
-          onChangeView={this.onChangeView.bind(this)}
-          onNodeUpdate={this.onNodeUpdate.bind(this)}
-          onToggleParameters={this.onToggleParameters.bind(this)}
-          onToggleTextLabels={this.onToggleTextLabels.bind(this)}
-          chartParams={{
-            data,
-            onNodeUpdate: this.onNodeUpdate.bind(this),
-            parameters,
-            textLabels,
-            view,
-          }} />
-      </div>
-    );
-  }
+  return (
+    <Store
+      {...props}
+      data={formattedData} />
+  );
 }
 
 App.propTypes = {
-  data: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  data: PropTypes.array,
   allowUploads: PropTypes.bool,
+  showHistory: PropTypes.bool,
 };
 
 App.defaultProps = {
@@ -110,6 +42,7 @@ App.defaultProps = {
    * Show/hide button to upload data snapshots to StudioAI
    */
   allowUploads: true,
+  showHistory: false,
 };
 
 export default App;

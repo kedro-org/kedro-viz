@@ -7,19 +7,19 @@ const time = datetime => {
   return `${d.toDateString()} ${d.toLocaleTimeString()}`;
 }
 
-const History = ({ data, history, theme }) => (
+const History = ({ activeData, data, onChangeActivePipeline, theme }) => (
   <ul className='pipeline-history'>
-    { history.map(d =>
+    { data.map(d =>
       <li key={d.created_ts}>
         <RadioButton
-          checked={'data.created_ts' === d.created_ts}
+          checked={activeData.created_ts === d.created_ts}
           label={(
             <span className='pipeline-history__label'>
               <b>{ d.message }</b> <span>{ time(+d.created_ts) }</span>
             </span>
           )}
-          name={`history-${d.created_ts}`}
-          onChange={console.log}
+          name='history'
+          onChange={() => onChangeActivePipeline(d)}
           value={d.created_ts}
           theme={theme} />
       </li>

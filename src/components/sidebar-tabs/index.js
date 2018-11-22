@@ -37,7 +37,7 @@ class SidebarTabs extends React.Component {
   render() {
     const { selectedIndex } = this.state;
 
-    if (!this.props.history) {
+    if (!this.props.showHistory) {
       return (
         <div className='pipeline-tabs'>
           <div className='pipeline-tabs_tab'>

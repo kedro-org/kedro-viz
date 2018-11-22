@@ -112,7 +112,6 @@ class UploadSnapshot extends Component {
     }
 
     return (
-      
       <div className="pipeline-upload">
         <Button theme={theme} onClick={this.showModal}>Upload Snapshot to StudioAI</Button>
         { modalVisible && (

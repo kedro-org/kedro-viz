@@ -1,3 +1,14 @@
+.kernel-pipeline {
+  font-size: 10px;
+  height: 100%;
+  overflow: hidden; }
+  .kernel-pipeline.cbn-theme--light {
+    background: #f9f9f9;
+    color: #333; }
+  .kernel-pipeline.cbn-theme--dark {
+    background: #1d2f3a;
+    color: #fff; }
+
 @media (min-width: 480px) {
   .pipeline-wrapper {
     transition: background ease 0.2s, transform ease 0.4s;
