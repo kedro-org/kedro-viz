@@ -7,8 +7,8 @@ class Store extends Component {
     super(props);
 
     this.state = {
-      activeData: props.data[0],
-      data: props.data,
+      activePipelineData: props.data[0],
+      pipelineData: props.data,
       parameters: true,
       textLabels: false,
       view: 'combined',
@@ -20,8 +20,8 @@ class Store extends Component {
     const newData = this.props.data;
     if (prevProps.data !== newData) {
       this.setState({
-        activeData: newData[0],
-        data: newData,
+        activePipelineData: newData[0],
+        pipelineData: newData,
       });
     }
   }
@@ -33,28 +33,28 @@ class Store extends Component {
   }
 
   onNodeUpdate(nodeID, property, value) {
-    const { activeData } = this.state;
-    const nodes = activeData.nodes.map(node => {
+    const { activePipelineData } = this.state;
+    const nodes = activePipelineData.nodes.map(node => {
       if (node.id === nodeID) {
         node[property] = value;
       }
       return node;
     });
     this.setState({
-      activeData: Object.assign({}, activeData, { nodes })
+      activePipelineData: Object.assign({}, activePipelineData, { nodes })
     });
   }
 
   onToggleParameters(parameters) {
-    const { data } = this.state;
-    const nodes = data.nodes.map(node => {
+    const { activePipelineData } = this.state;
+    const nodes = activePipelineData.nodes.map(node => {
       if (node.id.includes('param')) {
         node.disabled = !parameters;
       }
       return node;
     });
     this.setState({
-      data: Object.assign({}, data, { nodes }),
+      activePipelineData: Object.assign({}, activePipelineData, { nodes }),
       parameters
     });
   }
@@ -63,14 +63,14 @@ class Store extends Component {
     this.setState({ textLabels });
   }
 
-  onChangeActivePipeline(activeData) {
-    this.setState({ activeData });
+  onChangeActivePipeline(activePipelineData) {
+    this.setState({ activePipelineData });
   }
 
   render() {
-    const { activeData, data, parameters, textLabels, view } = this.state;
+    const { activePipelineData, pipelineData, parameters, textLabels, view } = this.state;
 
-    if (!data) {
+    if (!pipelineData) {
       return null;
     }
 
@@ -84,7 +84,7 @@ class Store extends Component {
         onToggleParameters={this.onToggleParameters.bind(this)}
         onToggleTextLabels={this.onToggleTextLabels.bind(this)}
         chartParams={{
-          data: activeData,
+          data: activePipelineData,
           onNodeUpdate: this.onNodeUpdate.bind(this),
           parameters,
           textLabels,

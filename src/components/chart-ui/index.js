@@ -12,7 +12,7 @@ const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text
 
 const ChartUI = ({
   allowUploads,
-  activeData,
+  activePipelineData,
   onChangeView,
   onNodeUpdate,
   onToggleParameters,
@@ -70,7 +70,7 @@ const ChartUI = ({
       theme={theme}
     />
     <ul className="pipeline-ui__node-list">
-      {activeData.nodes.map(node => (
+      {activePipelineData.nodes.map(node => (
         <li
           className={classnames('pipeline-ui__node', {
             'pipeline-ui__node--active': node.active
@@ -96,7 +96,7 @@ const ChartUI = ({
     </ul>
     <UploadSnapshot
       allowUploads={allowUploads}
-      data={activeData}
+      data={activePipelineData}
       theme={theme} />
   </div>
 );
