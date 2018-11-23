@@ -45,7 +45,7 @@ class UploadSnapshot extends Component {
       },
       body: JSON.stringify({
           message,
-          schema: JSON.stringify(this.props.data.raw)
+          schema: JSON.stringify(this.props.data.json_schema)
       })
     })
     .then((response) => {
