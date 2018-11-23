@@ -48,7 +48,8 @@ class ChartWrappper extends Component {
   render() {
     const { visibleNav } = this.state;
     const { chartParams, theme } = this.props;
-    const chartHasData = Boolean(chartParams.data.nodes.length);
+    const { nodes } = chartParams.data;
+    const chartHasData = nodes && Boolean(nodes.length);
 
     return (
       <div className={classnames('kernel-pipeline', {

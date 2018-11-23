@@ -69,31 +69,33 @@ const ChartUI = ({
       checked={parameters}
       theme={theme}
     />
-    <ul className="pipeline-ui__node-list">
-      {activePipelineData.nodes.map(node => (
-        <li
-          className={classnames('pipeline-ui__node', {
-            'pipeline-ui__node--active': node.active
-          })}
-          key={node.id}
-          onMouseEnter={() => {
-            onNodeUpdate(node.id, 'active', true);
-          }}
-          onMouseLeave={() => {
-            onNodeUpdate(node.id, 'active', false);
-          }}>
-          <Checkbox
-            checked={!node.disabled}
-            label={shorten(node.name, 30)}
-            name={node.name}
-            onChange={(e, { checked }) => {
-              onNodeUpdate(node.id, 'disabled', !checked);
+    { activePipelineData.nodes && (
+      <ul className="pipeline-ui__node-list">
+        { activePipelineData.nodes.map(node => (
+          <li
+            className={classnames('pipeline-ui__node', {
+              'pipeline-ui__node--active': node.active
+            })}
+            key={node.id}
+            onMouseEnter={() => {
+              onNodeUpdate(node.id, 'active', true);
             }}
-            theme={theme}
-          />
-        </li>
-      ))}
-    </ul>
+            onMouseLeave={() => {
+              onNodeUpdate(node.id, 'active', false);
+            }}>
+            <Checkbox
+              checked={!node.disabled}
+              label={shorten(node.name, 30)}
+              name={node.name}
+              onChange={(e, { checked }) => {
+                onNodeUpdate(node.id, 'disabled', !checked);
+              }}
+              theme={theme}
+            />
+          </li>
+        ))}
+      </ul>
+    )}
     <UploadSnapshot
       allowUploads={allowUploads}
       data={activePipelineData}
