@@ -16,13 +16,7 @@ class LoadData extends React.Component {
     if (dataSource !== 'random') {
       json(dataPath).then(json_schema => {
         this.setState({
-          data: [
-            {
-              message: 'nodes.json data',
-              created_ts: new Date().getTime().toString(),
-              json_schema
-            }
-          ]
+          data: [{ json_schema }]
         });
       });
     }
