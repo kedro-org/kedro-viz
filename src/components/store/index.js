@@ -98,9 +98,11 @@ class Store extends Component {
 
 Store.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
-    json_schema: PropTypes.string.isRequired,
+    nodes: PropTypes.array.isRequired,
+    edges: PropTypes.array.isRequired,
+    json_schema: PropTypes.array,
     message: PropTypes.string,
-    created_ts: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
+    created_ts: PropTypes.number,
   })),
   allowUploads: PropTypes.bool,
   showHistory: PropTypes.bool,

@@ -30,7 +30,7 @@ const App = (props) => {
 
 App.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
-    json_schema: PropTypes.string.isRequired,
+    json_schema: PropTypes.array.isRequired,
     message: PropTypes.string,
     created_ts: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
   })),
