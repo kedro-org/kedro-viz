@@ -8,8 +8,9 @@ if (process.env.REACT_APP_DATA_SOURCE) {
   dataSource = 'json';
 }
 
+const endpointName = process.env.REACT_APP_ENDPOINT || 'prod';
 let syncEndpoint;
-switch (process.env.REACT_APP_ENDPOINT) {
+switch (endpointName) {
   case 'test':
     syncEndpoint = 'http://localhost:3000/public/kernelai';
     break;
@@ -24,7 +25,7 @@ const config = {
   dataPath: '/logs/nodes.json',
   dataSource,
   syncEndpoint,
-  localStorageName: `KernelAIPipelineViz_${syncEndpoint}`
+  localStorageName: `KernelAIPipelineViz_${endpointName}`
 };
 
 export default config;
