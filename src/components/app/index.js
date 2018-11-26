@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Store from '../store';
 import formatData from '../../utils/format-data';
-import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
-import './app.css';
 
 const App = (props) => {
   const { data } = props; 

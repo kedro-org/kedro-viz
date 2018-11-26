@@ -1,9 +1,13 @@
 import React from 'react';
 import { json } from 'd3-fetch';
 import config from '../../config';
+import getRandomData from '../../utils/randomData';
 import App from '../app';
+import Store from '../store';
 
 const { dataPath, dataSource } = config;
+
+const useRandomData = dataSource === 'random';
 
 class LoadData extends React.Component {
   constructor(props) {
@@ -13,7 +17,11 @@ class LoadData extends React.Component {
       data: null
     };
 
-    if (dataSource !== 'random') {
+    if (useRandomData) {
+      this.state.data = [
+        getRandomData()
+      ];
+    } else {
       json(dataPath).then(json_schema => {
         this.setState({
           data: [{ json_schema }]
@@ -23,9 +31,27 @@ class LoadData extends React.Component {
   }
 
   render() {
-    return this.state.data && (
-      <App data={this.state.data} />
-    )
+    const { data } = this.state;
+
+    if (!data) {
+      return null;
+    }
+
+    if (useRandomData) {
+      return (
+        <Store
+          allowUploads={true}
+          showHistory={false}
+          data={data} />
+      );
+    }
+
+    return (
+      <App
+        allowUploads={true}
+        showHistory={false}
+        data={data} />
+    );
   }
 }
 
