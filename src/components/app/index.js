@@ -29,17 +29,27 @@ const App = (props) => {
 }
 
 App.propTypes = {
-  data: PropTypes.array,
+  data: PropTypes.arrayOf(PropTypes.shape({
+    json_schema: PropTypes.string.isRequired,
+    message: PropTypes.string,
+    created_ts: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
+  })),
   allowUploads: PropTypes.bool,
   showHistory: PropTypes.bool,
 };
 
 App.defaultProps = {
+  /**
+   * Data array containing Pipeline snapshot objects
+   */
   data: null,
   /**
    * Show/hide button to upload data snapshots to StudioAI
    */
   allowUploads: true,
+  /**
+   * Show/hide snapshot history tab in sidebar
+   */
   showHistory: false,
 };
 
