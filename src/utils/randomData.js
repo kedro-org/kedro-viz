@@ -2,16 +2,18 @@ const NODE_COUNT = 30;
 
 const getArray = n => Array.from(Array(n).keys());
 
-const getRandom = range => range[Math.floor(Math.random() * range.length)];
+const randomNumber = n => Math.floor(Math.random() * n);
+
+const getRandom = range => range[randomNumber(range.length)];
 
 const loremIpsum = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
   ' '
 );
 
-const randomName = n =>
+const randomName = (n, join = '_') =>
   getArray(n)
     .map(() => getRandom(loremIpsum))
-    .join('_');
+    .join(join);
 
 const generateRandomData = () => {
   const layers = [
@@ -95,10 +97,16 @@ const generateRandomData = () => {
   });
 
   return {
+    message: randomName(5, ' '),
+    created_ts: new Date().getTime() - randomNumber(9999999999),
     layers,
     nodes,
     edges
   };
 };
+
+export const generateRandomDataArray = (n = 30) =>
+  getArray(randomNumber(n) + 1)
+    .map(generateRandomData);
 
 export default generateRandomData;

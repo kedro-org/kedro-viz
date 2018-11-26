@@ -1,7 +1,7 @@
 import React from 'react';
 import { json } from 'd3-fetch';
 import config from '../../config';
-import getRandomData from '../../utils/randomData';
+import { generateRandomDataArray } from '../../utils/randomData';
 import App from '../app';
 import Store from '../store';
 
@@ -18,9 +18,7 @@ class LoadData extends React.Component {
     };
 
     if (useRandomData) {
-      this.state.data = [
-        getRandomData()
-      ];
+      this.state.data = generateRandomDataArray();
     } else {
       json(dataPath).then(json_schema => {
         this.setState({
