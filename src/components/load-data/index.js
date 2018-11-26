@@ -1,28 +1,55 @@
 import React from 'react';
 import { json } from 'd3-fetch';
 import config from '../../config';
-import generateRandomData from '../../utils/randomData';
+import { generateRandomDataArray } from '../../utils/randomData';
 import App from '../app';
+import Store from '../store';
 
-const { dataPath, env } = config;
+const { dataPath, dataSource } = config;
+
+const useRandomData = dataSource === 'random';
 
 class LoadData extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: env === 'test' ? generateRandomData() : null
+      data: null
     };
 
-    if (env !== 'test') {
-      json(dataPath).then(data => {
-        this.setState({ data });
+    if (useRandomData) {
+      this.state.data = generateRandomDataArray();
+    } else {
+      json(dataPath).then(json_schema => {
+        this.setState({
+          data: [{ json_schema }]
+        });
       });
     }
   }
 
   render() {
-    return <App data={this.state.data} />
+    const { data } = this.state;
+
+    if (!data) {
+      return null;
+    }
+
+    if (useRandomData) {
+      return (
+        <Store
+          allowUploads={true}
+          showHistory={false}
+          data={data} />
+      );
+    }
+
+    return (
+      <App
+        allowUploads={true}
+        showHistory={false}
+        data={data} />
+    );
   }
 }
 

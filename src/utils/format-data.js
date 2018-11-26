@@ -111,7 +111,6 @@ const formatData = raw => {
   });
 
   return {
-    raw,
     nodes,
     edges
   };

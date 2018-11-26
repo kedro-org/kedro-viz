@@ -1,7 +1,6 @@
 .pipeline-ui {
   display: flex;
   flex-direction: column;
-  padding: 30px;
   height: 100%; }
 
 .pipeline-ui__view {
@@ -20,6 +19,7 @@
 
 .pipeline-ui__node-list {
   margin: 30px -15px 0;
+  list-style: none;
   padding: 0;
   overflow: auto; }
 

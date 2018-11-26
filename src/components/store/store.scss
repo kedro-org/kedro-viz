@@ -1,21 +1,5 @@
 @import '../../styles/variables';
 
-.kernel-pipeline {
-  font-size: 10px;
-  height: 100%;
-  overflow: hidden;
-
-  &.cbn-theme--light {
-    background: $color-bg-light;
-    color: #333;
-  }
-
-  &.cbn-theme--dark {
-    background: $color-bg-dark;
-    color: #fff;
-  }
-}
-
 //--- Fixes and overrides for Carbon components ---//
 
 // Don't let the radio button circles collapse

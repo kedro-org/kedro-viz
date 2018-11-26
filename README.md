@@ -1,6 +1,16 @@
 # Kernel Pipeline Viz
 
-This project creates a data visualisation of a Kernel AI pipeline. It's designed to be used in a couple of different ways:
+This project creates a data visualisation of a Kernel AI pipeline.
+
+## Development
+
+Run `npm start` to begin development on a local server. To use as an imported package, run `npm run watch-lib` which will auto-update the compiled lib directory when watched files are changed.
+
+The project uses a couple of environment variables to allow you to configure data sources and endpoints. You can set them when starting up the dev server, e.g. `ENDPOINT=test DATA=random npm start` will set the data upload endpoint to localhost:3000, and serve randomly-generated data for the pipeline. The ENDPOINT options are 'test' for localhost, 'staging' for dev.qbstudioai.com, and the default is production. DATA can be set to 'random' for procedurally-generated data (refreshed on each page-load), else the default is 'json' which draws from `/public/logs/nodes.json`. To understand better how this works, check `/src/config.js` and the scripts in `package.json`.
+
+## Production
+
+This project is designed to be used in a couple of different ways:
 
 1. **Standalone application**
   Run `npm run build` to generate a production build as a full-page app. The built app will be placed in the `/build` directory. Data for the chart should be placed in `/public/logs/nodes.json`. This directory is gitignored.
@@ -8,7 +18,7 @@ This project creates a data visualisation of a Kernel AI pipeline. It's designed
 2. **React component**
   Run `npm run lib` to generate a React component that can be imported into other applications. The built component will be placed in the `/lib` directory. This can then be published to npm (The `lib` script is run automatically as a `prepublish` script).
 
-## Create-React-App
+# Create-React-App
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 

@@ -1,0 +1,24 @@
+@import '../../styles/extends';
+@import '../../styles/variables';
+
+.pipeline-history {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pipeline-history__label {
+  margin: 5px 0;
+
+  b {
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+
+  span {
+    display: block;
+    font-size: 0.8em;
+  }
+}
