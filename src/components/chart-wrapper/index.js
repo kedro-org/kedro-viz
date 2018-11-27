@@ -48,7 +48,7 @@ class ChartWrappper extends Component {
 
   render() {
     const { visibleNav } = this.state;
-    const { chartParams, theme } = this.props;
+    const { chartParams, theme, showHistory } = this.props;
     const { nodes } = chartParams.data;
     const chartHasData = nodes && Boolean(nodes.length);
 
@@ -86,7 +86,7 @@ class ChartWrappper extends Component {
             ) }
           </div>
         </div>
-        { chartHasData && (
+        { showHistory && (
               <Description pipelineData={this.props.pipelineData} 
                      activePipelineData={this.props.activePipelineData}/>
         ) }
