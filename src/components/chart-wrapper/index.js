@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { Icon } from '@quantumblack/carbon-ui-components';
 import SidebarTabs from '../sidebar-tabs';
 import FlowChart from '../flowchart';
+import Description from '../description';
 import './chart-wrapper.css';
 
 class ChartWrappper extends Component {
@@ -85,6 +86,9 @@ class ChartWrappper extends Component {
             ) }
           </div>
         </div>
+        { chartHasData && (
+              <Description pipelineData={this.props.pipelineData}/>
+        ) }
       </div>
     );
   }
