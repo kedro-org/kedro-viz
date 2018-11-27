@@ -7,7 +7,7 @@
 .snapshot-description p {
   font-size: 1.6em;
   color: rgba(249, 249, 249, 0.55);
-  margin: 3px 0px; }
+  margin: 3px 0; }
 
 .snapshot-description b {
   color: rgba(249, 249, 249, 0.85); }
@@ -15,5 +15,5 @@
 .snapshot-description span {
   background: rgba(249, 249, 249, 0.85);
   margin-left: 10px;
-  padding: 0px 7px 2px;
-  color: black; }
+  padding: 0 7px 2px;
+  color: #111f2a; }
