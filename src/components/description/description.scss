@@ -1,0 +1,25 @@
+@import '../../styles/variables';
+
+.snapshot-description {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    text-align: right;
+}
+
+.snapshot-description p {
+    font-size: 1.6em;
+    color: rgba($color-bg-light, 0.55);
+    margin: 3px 0;
+}
+
+.snapshot-description b {
+    color: rgba($color-bg-light, 0.85);
+}
+
+.snapshot-description span {
+    background: rgba($color-bg-light, 0.85);
+    margin-left: 10px;
+    padding: 0 7px 2px;
+    color: $color-header-dark;
+}

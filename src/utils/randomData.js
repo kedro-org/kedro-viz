@@ -107,6 +107,7 @@ const generateRandomData = () => {
 
 export const generateRandomDataArray = (n = 30) =>
   getArray(randomNumber(n) + 1)
-    .map(generateRandomData);
+    .map(generateRandomData)
+    .sort((a, b) => b.created_ts - a.created_ts);
 
 export default generateRandomData;
