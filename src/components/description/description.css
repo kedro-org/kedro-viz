@@ -1,23 +1,19 @@
 .snapshot-description {
-    position: fixed;
-    top: 20px;
-    right: 40px;
-    text-align: right;
-}
+  position: fixed;
+  top: 20px;
+  right: 40px;
+  text-align: right; }
 
 .snapshot-description p {
-    font-size: 1.6em;
-    color: rgba(255, 255, 255, 0.55);
-    margin: 3px 0px;
-}
+  font-size: 1.6em;
+  color: rgba(249, 249, 249, 0.55);
+  margin: 3px 0px; }
 
 .snapshot-description b {
-    color: rgba(255, 255, 255, 0.85);
-}
+  color: rgba(249, 249, 249, 0.85); }
 
 .snapshot-description span {
-    background:rgba(255, 255, 255, 0.85);
-    margin-left: 10px;
-    padding: 0px 7px 2px;
-    color: rgb(0,0,0);
-}
+  background: rgba(249, 249, 249, 0.85);
+  margin-left: 10px;
+  padding: 0px 7px 2px;
+  color: black; }
