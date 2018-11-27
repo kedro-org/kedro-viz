@@ -1,16 +1,14 @@
 .snapshot-description {
     position: fixed;
-
-    top: 0;
-    right: 0;
+    top: 20px;
+    right: 40px;
     text-align: right;
-
-    margin-right: 10px;
 }
 
 .snapshot-description p {
-    font-size: 1.4em;
+    font-size: 1.6em;
     color: rgba(255, 255, 255, 0.55);
+    margin: 3px 0px;
 }
 
 .snapshot-description b {
