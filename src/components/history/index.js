@@ -1,11 +1,7 @@
 import React from 'react';
 import { RadioButton } from '@quantumblack/carbon-ui-components';
 import './history.css';
-
-const time = datetime => {
-  const d = new Date(datetime);
-  return `${d.toDateString()} ${d.toLocaleTimeString()}`;
-}
+import formatTime from '../../utils/format-time';
 
 const History = ({ activePipelineData, pipelineData, onChangeActivePipeline, theme }) => (
   <ul className='pipeline-history'>
@@ -15,7 +11,7 @@ const History = ({ activePipelineData, pipelineData, onChangeActivePipeline, the
           checked={activePipelineData.created_ts === d.created_ts}
           label={(
             <span className='pipeline-history__label'>
-              <b>{ d.message }</b> <span>{ time(+d.created_ts) }</span>
+              <b>{ d.message }</b> <span>{ formatTime(+d.created_ts) }</span>
             </span>
           )}
           name='history'
