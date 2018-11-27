@@ -105,6 +105,7 @@ const generateRandomData = () => {
   }));
 
   return {
+    kernel_ai_schema_id: randomNumber(999999999999999),
     message: randomName(5, ' '),
     created_ts: new Date().getTime() - randomNumber(9999999999),
     layers,

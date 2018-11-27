@@ -26,6 +26,14 @@ class LoadData extends React.Component {
         });
       });
     }
+
+    this.onDeleteSnapshot = this.onDeleteSnapshot.bind(this);
+  }
+
+  onDeleteSnapshot(id) {
+    this.setState({
+      data: this.state.data.filter(d => d.kernel_ai_schema_id !== id)
+    });
   }
 
   render() {
@@ -39,7 +47,9 @@ class LoadData extends React.Component {
       return (
         <Store
           allowUploads={true}
-          showHistory={false}
+          showHistory={true}
+          allowHistoryDeletion={true}
+          onDeleteSnapshot={this.onDeleteSnapshot}
           data={data} />
       );
     }

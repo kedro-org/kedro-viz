@@ -1,5 +1,5 @@
 import React from 'react';
-import { RadioButton } from '@quantumblack/carbon-ui-components';
+import { Icon, RadioButton } from '@quantumblack/carbon-ui-components';
 import './history.css';
 
 const time = datetime => {
@@ -7,10 +7,16 @@ const time = datetime => {
   return `${d.toDateString()} ${d.toLocaleTimeString()}`;
 }
 
-const History = ({ activePipelineData, pipelineData, onChangeActivePipeline, theme }) => (
+const History = ({
+  activePipelineData,
+  pipelineData,
+  onChangeActivePipeline,
+  onDeleteSnapshot,
+  theme
+}) => (
   <ul className='pipeline-history'>
     { pipelineData.map(d =>
-      <li key={d.created_ts}>
+      <li className='pipeline-history__row' key={d.created_ts}>
         <RadioButton
           checked={activePipelineData.created_ts === d.created_ts}
           label={(
@@ -22,6 +28,13 @@ const History = ({ activePipelineData, pipelineData, onChangeActivePipeline, the
           onChange={() => onChangeActivePipeline(d)}
           value={d.created_ts}
           theme={theme} />
+        <button
+          className='pipeline-history__delete'
+          title='Delete snapshot'
+          aria-label='Delete snapshot'
+          onClick={() => onDeleteSnapshot(d.kernel_ai_schema_id)}>
+          <Icon type="close" title="Close" theme={theme} />
+        </button>
       </li>
     ) }
   </ul>
