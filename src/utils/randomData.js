@@ -96,10 +96,19 @@ const generateRandomData = () => {
     }
   });
 
+  const json_schema = nodes.filter(d => d.type === 'task').map(node => ({
+    inputs: edges.filter(d => d.target.id === node.id)
+      .map(d => d.source.id),
+    name: node.id,
+    outputs: edges.filter(d => d.source.id === node.id)
+      .map(d => d.target.id),
+  }));
+
   return {
     message: randomName(5, ' '),
     created_ts: new Date().getTime() - randomNumber(9999999999),
     layers,
+    json_schema,
     nodes,
     edges
   };
