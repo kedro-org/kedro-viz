@@ -87,7 +87,8 @@ class ChartWrappper extends Component {
           </div>
         </div>
         { chartHasData && (
-              <Description pipelineData={this.props.pipelineData}/>
+              <Description pipelineData={this.props.pipelineData} 
+                     activePipelineData={this.props.activePipelineData}/>
         ) }
       </div>
     );
