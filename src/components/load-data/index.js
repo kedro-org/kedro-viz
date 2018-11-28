@@ -43,7 +43,7 @@ class LoadData extends React.Component {
       return (
         <Store
           allowUploads={true}
-          showHistory={false}
+          showHistory={true}
           data={data} />
       );
     }
