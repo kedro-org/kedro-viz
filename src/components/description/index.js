@@ -7,7 +7,7 @@ const Description = ({ pipelineData, activePipelineData }) => {
 
   return (
     <div className='snapshot-description carbon'>
-        <p>Sync’d on: <b>{ formatTime(+activePipelineData.created_ts) }</b>
+        <p>Uploaded on: <b>{ formatTime(+activePipelineData.created_ts) }</b>
           {activePipelineData.created_ts !== latestSync.created_ts && (
             <span>outdated</span>
           ) }
