@@ -9,6 +9,7 @@ const time = datetime => {
 
 const History = ({
   activePipelineData,
+  allowHistoryDeletion,
   pipelineData,
   onChangeActivePipeline,
   onDeleteSnapshot,
@@ -28,13 +29,15 @@ const History = ({
           onChange={() => onChangeActivePipeline(d)}
           value={d.created_ts}
           theme={theme} />
-        <button
-          className='pipeline-history__delete'
-          title='Delete snapshot'
-          aria-label='Delete snapshot'
-          onClick={() => onDeleteSnapshot(d.kernel_ai_schema_id)}>
-          <Icon type="close" title="Close" theme={theme} />
-        </button>
+        { allowHistoryDeletion && (
+          <button
+            className='pipeline-history__delete'
+            title='Delete snapshot'
+            aria-label='Delete snapshot'
+            onClick={() => onDeleteSnapshot(d.kernel_ai_schema_id)}>
+            <Icon type="close" title="Close" theme={theme} />
+          </button>
+        ) }
       </li>
     ) }
   </ul>
