@@ -20,11 +20,15 @@ class LoadData extends React.Component {
     if (useRandomData) {
       this.state.data = generateRandomDataArray();
     } else {
-      json(dataPath).then(json_schema => {
-        this.setState({
-          data: [{ json_schema }]
+      json(dataPath)
+        .then(json_schema => {
+          this.setState({
+            data: [{ json_schema }]
+          });
+        })
+        .catch(() => {
+          console.error(`Unable to load pipeline data. Please check that you have placed a file at ${dataPath}`)
         });
-      });
     }
 
     this.onDeleteSnapshot = this.onDeleteSnapshot.bind(this);

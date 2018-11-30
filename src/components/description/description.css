@@ -1,0 +1,17 @@
+.snapshot-description {
+  position: absolute;
+  top: 20px;
+  right: 26px;
+  text-align: right; }
+  .snapshot-description p {
+    font-size: 1.6em;
+    color: rgba(249, 249, 249, 0.55);
+    margin: 3px 0; }
+  .snapshot-description b {
+    font-weight: 600;
+    color: rgba(249, 249, 249, 0.85); }
+  .snapshot-description span {
+    background: #f9f9f9;
+    margin-left: 10px;
+    padding: 0 7px 2px;
+    color: #111f2a; }
