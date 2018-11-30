@@ -106,6 +106,8 @@ Store.propTypes = {
   })),
   allowUploads: PropTypes.bool,
   showHistory: PropTypes.bool,
+  allowHistoryDeletion: PropTypes.bool,
+  onDeleteSnapshot: PropTypes.func,
 };
 
 Store.defaultProps = {
@@ -121,6 +123,14 @@ Store.defaultProps = {
    * Show/hide snapshot history tab in sidebar
    */
   showHistory: false,
+  /**
+   * Allow users to delete a snapshot from the history tab
+   */
+  allowHistoryDeletion: false,
+  /**
+   * Callback on deletion of a snapshot from the history tab
+   */
+  onDeleteSnapshot: () => {},
 };
 
 export default Store;

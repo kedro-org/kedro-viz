@@ -30,6 +30,14 @@ class LoadData extends React.Component {
           console.error(`Unable to load pipeline data. Please check that you have placed a file at ${dataPath}`)
         });
     }
+
+    this.onDeleteSnapshot = this.onDeleteSnapshot.bind(this);
+  }
+
+  onDeleteSnapshot(id) {
+    this.setState({
+      data: this.state.data.filter(d => d.kernel_ai_schema_id !== id)
+    });
   }
 
   render() {
@@ -44,6 +52,8 @@ class LoadData extends React.Component {
         <Store
           allowUploads={true}
           showHistory={true}
+          allowHistoryDeletion={true}
+          onDeleteSnapshot={this.onDeleteSnapshot}
           data={data} />
       );
     }
