@@ -3,6 +3,9 @@
 # environment variables
 .env
 
+# CSS
+/src/**/*.css
+
 # JSON viz data (generated from logs)
 /public/data
 /public/logs
