@@ -84,12 +84,12 @@ class ChartWrappper extends Component {
             { chartHasData && (
               <FlowChart {...chartParams} visibleNav={visibleNav} />
             ) }
+            { showHistory && (
+              <Description pipelineData={this.props.pipelineData} 
+                    activePipelineData={this.props.activePipelineData}/>
+            ) }
           </div>
         </div>
-        { showHistory && (
-              <Description pipelineData={this.props.pipelineData} 
-                     activePipelineData={this.props.activePipelineData}/>
-        ) }
       </div>
     );
   }
