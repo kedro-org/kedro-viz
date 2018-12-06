@@ -2,9 +2,11 @@
 @import '../../styles/variables';
 
 .pipeline-history {
-  margin: 0;
-  padding: 0;
+  margin: 30px -15px 0;
+  padding: 0 15px;
   list-style: none;
+  overflow: auto;
+  height: 100%;
 }
 
 .pipeline-history__row {

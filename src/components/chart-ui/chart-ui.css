@@ -19,8 +19,8 @@
 
 .pipeline-ui__node-list {
   margin: 30px -15px 0;
-  list-style: none;
   padding: 0;
+  list-style: none;
   overflow: auto; }
 
 .pipeline-ui__node {

@@ -25,11 +25,9 @@
 
 .pipeline-ui__node-list {
   margin: 30px -15px 0;
-  list-style: none;
   padding: 0;
+  list-style: none;
   overflow: auto;
-  // flex-shrink: 0;
-  // max-height: calc(100vh - 330px);
 }
 
 .pipeline-ui__node {
