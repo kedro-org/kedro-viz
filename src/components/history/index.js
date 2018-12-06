@@ -1,6 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
-import { Icon, RadioButton } from '@quantumblack/carbon-ui-components';
+import { RadioButton } from '@quantumblack/carbon-ui-components';
+import deleteIcon from './delete.svg';
 import './history.css';
 import formatTime from '../../utils/format-time';
 
@@ -39,7 +40,7 @@ const History = ({
             title='Delete snapshot'
             aria-label='Delete snapshot'
             onClick={() => onDeleteSnapshot(d.kernel_ai_schema_id)}>
-            <Icon type="close" title="Close" theme={theme} />
+            <img src={deleteIcon} width='24' height='24' alt='Delete icon' />
           </button>
         ) }
       </li>
