@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import { Icon, RadioButton } from '@quantumblack/carbon-ui-components';
 import './history.css';
 import formatTime from '../../utils/format-time';
@@ -13,7 +14,14 @@ const History = ({
 }) => (
   <ul className='pipeline-history'>
     { pipelineData.map(d =>
-      <li className='pipeline-history__row' key={d.created_ts}>
+      <li
+        className={classnames(
+          'pipeline-history__row',
+          {
+            'pipeline-history__row--active': activePipelineData.created_ts === d.created_ts
+          }
+        )}
+        key={d.created_ts}>
         <RadioButton
           checked={activePipelineData.created_ts === d.created_ts}
           label={(
