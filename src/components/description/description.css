@@ -2,11 +2,16 @@
   position: absolute;
   top: 20px;
   right: 26px;
-  text-align: right; }
+  text-align: right;
+  max-width: 70%;
+  max-width: calc(100% - 200px); }
   .snapshot-description p {
     font-size: 1.6em;
     color: rgba(249, 249, 249, 0.55);
-    margin: 3px 0; }
+    margin: 3px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; }
   .snapshot-description b {
     font-weight: 600;
     color: rgba(249, 249, 249, 0.85); }
