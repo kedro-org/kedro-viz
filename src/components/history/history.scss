@@ -59,13 +59,17 @@
   cursor: pointer;
   width: 30px;
   height: 30px;
-  margin: 0 10px 0 15px;
+  margin: 0 25px 0 15px;
   text-align: center;
   transition: opacity ease 0.1s;
   opacity: 0;
 
-  .pipeline-history__row--active &,
   .pipeline-history__row:hover & {
+    opacity: 0.3;
+  }
+
+  .pipeline-history__row--active &,
+  .pipeline-history__row--active:hover & {
     opacity: 0.55;
   }
 
