@@ -23,6 +23,8 @@ class FlowChart extends Component {
   constructor(props) {
     super(props);
     this.resizeChart = this.resizeChart.bind(this);
+    this.filterEdge = this.filterEdge.bind(this);
+    this.filterNode = this.filterNode.bind(this);
   }
 
   componentDidMount() {
@@ -111,7 +113,7 @@ class FlowChart extends Component {
     };
 
     data.nodes.forEach(d => {
-      if (!this.filter().node(d)) {
+      if (!this.filterNode(d)) {
         return;
       }
 
@@ -126,7 +128,7 @@ class FlowChart extends Component {
     });
 
     data.edges.forEach(d => {
-      if (!this.filter().edge(d)) {
+      if (!this.filterEdge(d)) {
         return;
       }
       this.graph.setEdge(d.source.id, d.target.id, {
@@ -189,26 +191,23 @@ class FlowChart extends Component {
     );
   }
 
-  filter() {
-    return {
-      edge: d => {
-        const { view } = this.props;
-        if (d.source.disabled || d.target.disabled) {
-          return false;
-        }
-        if (view === 'combined') {
-          return d.source.type !== d.target.type;
-        }
-        return view === d.source.type && view === d.target.type;
-      },
-      node: d => {
-        const { view } = this.props;
-        if (d.disabled) {
-          return false;
-        }
-        return view === 'combined' || view === d.type;
-      }
-    };
+  filterEdge(d) {
+    const { view } = this.props;
+    if (d.source.disabled || d.target.disabled) {
+      return false;
+    }
+    if (view === 'combined') {
+      return d.source.type !== d.target.type;
+    }
+    return view === d.source.type && view === d.target.type;
+  }
+
+  filterNode(d) {
+    const { view } = this.props;
+    if (d.disabled) {
+      return false;
+    }
+    return view === 'combined' || view === d.type;
   }
 
   /**
@@ -218,12 +217,12 @@ class FlowChart extends Component {
     const { data } = this.props;
 
     return {
-      edges: data.edges.filter(this.filter().edge).map(d => ({
+      edges: data.edges.filter(this.filterEdge).map(d => ({
         ...this.layout.edges[edgeID(d)],
         ...d
       })),
 
-      nodes: data.nodes.filter(this.filter().node).map(d => ({
+      nodes: data.nodes.filter(this.filterNode).map(d => ({
         ...this.layout.nodes[d.id],
         ...d
       }))
@@ -276,10 +275,6 @@ class FlowChart extends Component {
       .select('path')
       .transition('update-edges')
       .duration(DURATION)
-      .each(d => {
-        if (lineShape(d.points).includes('NaN'))
-          console.log(d, lineShape(d.points));
-      })
       .attr('d', d => lineShape(d.points));
 
     // Create nodes
