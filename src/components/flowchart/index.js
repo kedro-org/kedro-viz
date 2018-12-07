@@ -51,20 +51,24 @@ class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const rezoom = prevProps.textLabels !== this.props.textLabels;
-    const updateView = prevProps.view !== this.props.view;
-    const updateNodeCount = this.checkNodeCount();
-    const update = rezoom || updateView || updateNodeCount;
+    const doRedraw = this.shouldRedrawLayout(prevProps);
 
-    if (update) {
+    if (doRedraw) {
       this.getLayout();
     }
 
     this.drawChart();
 
-    if (update) {
+    if (doRedraw) {
       this.zoomChart(true);
     }
+  }
+
+  shouldRedrawLayout(prevProps) {
+    const rezoom = prevProps.textLabels !== this.props.textLabels;
+    const updateView = prevProps.view !== this.props.view;
+    const updateSnapshot = prevProps.data.kernel_ai_schema_id !== this.props.data.kernel_ai_schema_id;
+    return rezoom || updateView || updateSnapshot || this.checkNodeCount();
   }
 
   setChartHeight() {
