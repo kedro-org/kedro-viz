@@ -7,6 +7,7 @@ import {
 } from '@quantumblack/carbon-ui-components';
 import UploadSnapshot from '../upload-snapshot';
 import './chart-ui.css';
+import { Scrollbars } from 'react-custom-scrollbars'
 
 const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
 
@@ -70,31 +71,36 @@ const ChartUI = ({
       theme={theme}
     />
     { activePipelineData.nodes && (
-      <ul className="pipeline-ui__node-list">
-        { activePipelineData.nodes.map(node => (
-          <li
-            className={classnames('pipeline-ui__node', {
-              'pipeline-ui__node--active': node.active
-            })}
-            key={node.id}
-            onMouseEnter={() => {
-              onNodeUpdate(node.id, 'active', true);
-            }}
-            onMouseLeave={() => {
-              onNodeUpdate(node.id, 'active', false);
-            }}>
-            <Checkbox
-              checked={!node.disabled}
-              label={shorten(node.name, 30)}
-              name={node.name}
-              onChange={(e, { checked }) => {
-                onNodeUpdate(node.id, 'disabled', !checked);
+      <Scrollbars
+        autoHide
+        hideTracksWhenNotNeeded
+      >
+        <ul className="pipeline-ui__node-list">
+          { activePipelineData.nodes.map(node => (
+            <li
+              className={classnames('pipeline-ui__node', {
+                'pipeline-ui__node--active': node.active
+              })}
+              key={node.id}
+              onMouseEnter={() => {
+                onNodeUpdate(node.id, 'active', true);
               }}
-              theme={theme}
-            />
-          </li>
-        ))}
-      </ul>
+              onMouseLeave={() => {
+                onNodeUpdate(node.id, 'active', false);
+              }}>
+              <Checkbox
+                checked={!node.disabled}
+                label={shorten(node.name, 30)}
+                name={node.name}
+                onChange={(e, { checked }) => {
+                  onNodeUpdate(node.id, 'disabled', !checked);
+                }}
+                theme={theme}
+              />
+            </li>
+          ))}
+        </ul>
+      </Scrollbars>
     )}
     <UploadSnapshot
       allowUploads={allowUploads}
