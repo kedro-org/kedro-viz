@@ -275,7 +275,7 @@ class FlowChart extends Component {
       .select('path')
       .transition('update-edges')
       .duration(DURATION)
-      .attr('d', d => lineShape(d.points));
+      .attr('d', d => d.points && lineShape(d.points));
 
     // Create nodes
     const enterNodes = this.el.nodes
