@@ -3,6 +3,10 @@ import './description.css';
 import formatTime from '../../utils/format-time';
 
 const Description = ({ pipelineData, activePipelineData }) => {
+  if (!pipelineData || !activePipelineData) {
+    return null
+  }
+
   const latestSync = pipelineData[0];
 
   return (
