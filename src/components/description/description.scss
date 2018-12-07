@@ -5,11 +5,16 @@
     top: 20px;
     right: 26px;
     text-align: right;
+    max-width: 70%;
+    max-width: calc(100% - 200px);
 
     p {
         font-size: 1.6em;
         color: rgba($color-bg-light, 0.55);
         margin: 3px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     b {
