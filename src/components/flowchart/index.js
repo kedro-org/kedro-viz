@@ -47,7 +47,7 @@ class FlowChart extends Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('resize', this.resizeChart);
+    window.removeEventListener('resize', this.resizeChart);
   }
 
   componentDidUpdate(prevProps) {
