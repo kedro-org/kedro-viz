@@ -23,6 +23,8 @@ class FlowChart extends Component {
   constructor(props) {
     super(props);
     this.resizeChart = this.resizeChart.bind(this);
+    this.filterEdge = this.filterEdge.bind(this);
+    this.filterNode = this.filterNode.bind(this);
   }
 
   componentDidMount() {
@@ -45,26 +47,42 @@ class FlowChart extends Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('resize', this.resizeChart);
+    window.removeEventListener('resize', this.resizeChart);
   }
 
   componentDidUpdate(prevProps) {
-    const rezoom = prevProps.textLabels !== this.props.textLabels;
-    const updateView = prevProps.view !== this.props.view;
-    const updateNodeCount = this.checkNodeCount();
-    const update = rezoom || updateView || updateNodeCount;
+    const doRedraw = this.shouldRedrawLayout(prevProps);
 
-    if (update) {
+    if (doRedraw) {
       this.getLayout();
     }
 
     this.drawChart();
 
-    if (update) {
+    if (doRedraw) {
       this.zoomChart(true);
     }
   }
 
+  /**
+   * Determine whether the chart's Dagre layout should be recalculated,
+   * when receiving new props. Layout is time-consuming so we don't want to
+   * run it unless we absolutely have to. This should only happen if the view,
+   * text labels, snapshot data, or visible number of nodes have changed.
+   * @param {Object} prevProps Previous component props
+   * @return {Boolean} True if new layout is required
+   */
+  shouldRedrawLayout(prevProps) {
+    const rezoom = prevProps.textLabels !== this.props.textLabels;
+    const updateView = prevProps.view !== this.props.view;
+    const updateSnapshot = prevProps.data.kernel_ai_schema_id !== this.props.data.kernel_ai_schema_id;
+    return rezoom || updateView || updateSnapshot || this.checkNodeCount();
+  }
+
+  /**
+   * Configure globals for the container dimensions,
+   * and apply them to the chart SVG
+   */
   setChartHeight() {
     const { x, y, width, height } = this._container.getBoundingClientRect();
     const navOffset = this.props.visibleNav ? 200 : 0;
@@ -75,6 +93,9 @@ class FlowChart extends Component {
     this.el.svg.attr('width', width).attr('height', height);
   }
 
+  /**
+   * Handle window resize
+   */
   resizeChart() {
     this.setChartHeight();
     this.getLayout();
@@ -82,6 +103,9 @@ class FlowChart extends Component {
     this.zoomChart(true);
   }
 
+  /**
+   * Setup D3 zoom behaviour on component mount
+   */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
       this.el.inner.attr('transform', event.transform);
@@ -111,7 +135,7 @@ class FlowChart extends Component {
     };
 
     data.nodes.forEach(d => {
-      if (!this.filter().node(d)) {
+      if (!this.filterNode(d)) {
         return;
       }
 
@@ -126,7 +150,7 @@ class FlowChart extends Component {
     });
 
     data.edges.forEach(d => {
-      if (!this.filter().edge(d)) {
+      if (!this.filterEdge(d)) {
         return;
       }
       this.graph.setEdge(d.source.id, d.target.id, {
@@ -189,26 +213,33 @@ class FlowChart extends Component {
     );
   }
 
-  filter() {
-    return {
-      edge: d => {
-        const { view } = this.props;
-        if (d.source.disabled || d.target.disabled) {
-          return false;
-        }
-        if (view === 'combined') {
-          return d.source.type !== d.target.type;
-        }
-        return view === d.source.type && view === d.target.type;
-      },
-      node: d => {
-        const { view } = this.props;
-        if (d.disabled) {
-          return false;
-        }
-        return view === 'combined' || view === d.type;
-      }
-    };
+  /**
+   * Determine whether an edge should be rendered
+   * @param {Object} d An edge datum
+   * @return {Boolean} True if visible (i.e. not disabled, and relevant view)
+   */
+  filterEdge(d) {
+    const { view } = this.props;
+    if (d.source.disabled || d.target.disabled) {
+      return false;
+    }
+    if (view === 'combined') {
+      return d.source.type !== d.target.type;
+    }
+    return view === d.source.type && view === d.target.type;
+  }
+
+  /**
+   * Determine whether a node should be rendered
+   * @param {Object} d A node datum
+   * @return {Boolean} True if visible (i.e. not disabled, and relevant view)
+   */
+  filterNode(d) {
+    const { view } = this.props;
+    if (d.disabled) {
+      return false;
+    }
+    return view === 'combined' || view === d.type;
   }
 
   /**
@@ -218,18 +249,21 @@ class FlowChart extends Component {
     const { data } = this.props;
 
     return {
-      edges: data.edges.filter(this.filter().edge).map(d => ({
+      edges: data.edges.filter(this.filterEdge).map(d => ({
         ...this.layout.edges[edgeID(d)],
         ...d
       })),
 
-      nodes: data.nodes.filter(this.filter().node).map(d => ({
+      nodes: data.nodes.filter(this.filterNode).map(d => ({
         ...this.layout.nodes[d.id],
         ...d
       }))
     };
   }
 
+  /**
+   * Render chart to the DOM with D3
+   */
   drawChart() {
     const { onNodeUpdate, textLabels } = this.props;
     const data = this.prepareData();
@@ -276,11 +310,7 @@ class FlowChart extends Component {
       .select('path')
       .transition('update-edges')
       .duration(DURATION)
-      .each(d => {
-        if (lineShape(d.points).includes('NaN'))
-          console.log(d, lineShape(d.points));
-      })
-      .attr('d', d => lineShape(d.points));
+      .attr('d', d => d.points && lineShape(d.points));
 
     // Create nodes
     const enterNodes = this.el.nodes
@@ -356,6 +386,9 @@ class FlowChart extends Component {
       .attr('rx', d => (d.type === 'data' ? d.height / 2 : 0));
   }
 
+  /**
+   * Render React elements
+   */
   render() {
     return (
       <div className="pipeline-flowchart carbon" ref={el => (this._container = el)}>
