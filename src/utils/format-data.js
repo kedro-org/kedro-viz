@@ -1,11 +1,23 @@
 /**
+ * Check whether data is in expected format
+ * @param {Object} data - The parsed data input
+ * @return {Boolean} True if valid for formatting
+ */
+const validateInput = data => {
+  const { isArray } = Array;
+  return isArray(data) && data.every(d => (
+    isArray(d.inputs) && isArray(d.outputs) && typeof d.name === 'string' 
+  ));
+}
+
+/**
  * Format raw data into a usable structure
- * @param {Object} raw - The parsed data straight from the JSON file
+ * @param {Object} raw - The parsed data straight from the JSON
  * @return {Object} The node, edge and raw data for the chart
  */
 const formatData = raw => {
-  if (!raw || raw.nodes) {
-    return raw;
+  if (!validateInput(raw)) {
+    return {};
   }
 
   const nodes = [];
