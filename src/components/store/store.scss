@@ -5,7 +5,7 @@
 .kernel-pipeline {
   // Prevent Chrome 71 focus scroll bug in Studio, by containing the
   // visually-hidden mixin in a wrapper to prevent it escaping and somehow
-  //  messing up the overflow:hiddenscroll positioning.
+  // messing up the overflow:hidden scroll positioning.
   .cbn-switch {
     position: relative;
   }
