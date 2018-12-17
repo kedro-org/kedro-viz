@@ -6,7 +6,14 @@ This project creates a data visualisation of a Kernel AI pipeline.
 
 Run `npm start` to begin development on a local server. To use as an imported package, run `npm run watch-lib` which will auto-update the compiled lib directory when watched files are changed.
 
-The project uses a couple of environment variables to allow you to configure data sources and endpoints. You can set them when starting up the dev server, e.g. `ENDPOINT=test DATA=random npm start` will set the data upload endpoint to localhost:3000, and serve randomly-generated data for the pipeline. The ENDPOINT options are 'test' for localhost, 'staging' for dev.qbstudioai.com, and the default is production. DATA can be set to 'random' for procedurally-generated data (refreshed on each page-load), else the default is 'json' which draws from `/public/logs/nodes.json`. To understand better how this works, check `/src/config.js` and the scripts in `package.json`.
+The project uses a couple of environment variables to allow you to configure data sources and endpoints. You can set them when starting up the dev server, e.g. `ENDPOINT=local DATA=random npm start` will set the data upload endpoint to localhost:3000, and serve randomly-generated data for the pipeline. The ENDPOINT options are:
+
+- `ENDPOINT=local` --> localhost
+- `ENDPOINT=dev` --> dev.qbstudioai.com
+- `ENDPOINT=uat` --> uat.qbstudioai.com
+- default --> studio.quantumblack.com
+
+DATA can be set to 'random' for procedurally-generated data (refreshed on each page-load), else the default is 'json' which draws from `/public/logs/nodes.json`. To understand better how this works, check `/src/config.js` and the scripts in `package.json`.
 
 ## Production
 

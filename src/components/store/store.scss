@@ -2,16 +2,25 @@
 
 //--- Fixes and overrides for Carbon components ---//
 
-// Don't let the radio button circles collapse
-.cbn-switch-radio__box {
-  min-width: 20px;
-}
+.kernel-pipeline {
+  // Prevent Chrome 71 focus scroll bug in Studio, by containing the
+  // visually-hidden mixin in a wrapper to prevent it escaping and somehow
+  // messing up the overflow:hidden scroll positioning.
+  .cbn-switch {
+    position: relative;
+  }
 
-// Change radio button focus outline to blue
-.cbn-theme--dark,
-.cbn-theme--light {
-  .cbn-switch__input:focus + .cbn-switch-radio__label .cbn-switch-radio__box {
-    box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.6);
+  // Don't let the radio button circles collapse
+  .cbn-switch-radio__box {
+    min-width: 20px;
+  }
+
+  // Change radio button focus outline to blue
+  &.cbn-theme--dark,
+  &.cbn-theme--light {
+    .cbn-switch__input:focus + .cbn-switch-radio__label .cbn-switch-radio__box {
+      box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.6);
+    }
   }
 }
 

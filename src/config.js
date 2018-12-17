@@ -11,11 +11,14 @@ if (process.env.REACT_APP_DATA_SOURCE) {
 const endpointName = process.env.REACT_APP_ENDPOINT || 'prod';
 let syncEndpoint;
 switch (endpointName) {
-  case 'test':
+  case 'local':
     syncEndpoint = 'http://localhost:3000/public/kernelai';
     break;
-  case 'staging':
+  case 'dev':
     syncEndpoint = 'https://dev.qbstudioai.com/api/public/kernelai';
+    break;
+  case 'uat':
+    syncEndpoint = 'https://uat.qbstudioai.com/api/public/kernelai';
     break;
   default:
     syncEndpoint = 'https://studio.quantumblack.com/api/public/kernelai';

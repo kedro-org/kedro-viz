@@ -22,7 +22,7 @@ const ChartUI = ({
   textLabels,
   theme,
   view
-}) => (
+}) => activePipelineData ? (
   <div className="pipeline-ui">
     <ul className="pipeline-ui__view">
       <li>
@@ -107,6 +107,6 @@ const ChartUI = ({
       data={activePipelineData}
       theme={theme} />
   </div>
-);
+) : null;
 
 export default ChartUI;

@@ -49,8 +49,8 @@ class ChartWrappper extends Component {
   render() {
     const { visibleNav } = this.state;
     const { chartParams, theme, showHistory } = this.props;
-    const { nodes } = chartParams.data;
-    const chartHasData = nodes && Boolean(nodes.length);
+    const { data } = chartParams;
+    const chartHasData = Boolean(data && data.nodes && data.nodes.length);
 
     return (
       <div className={classnames('kernel-pipeline', {
@@ -84,12 +84,12 @@ class ChartWrappper extends Component {
             { chartHasData && (
               <FlowChart {...chartParams} visibleNav={visibleNav} />
             ) }
+            { showHistory && (
+              <Description pipelineData={this.props.pipelineData} 
+                    activePipelineData={this.props.activePipelineData}/>
+            ) }
           </div>
         </div>
-        { showHistory && (
-              <Description pipelineData={this.props.pipelineData} 
-                     activePipelineData={this.props.activePipelineData}/>
-        ) }
       </div>
     );
   }

@@ -100,9 +100,10 @@ Store.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
     nodes: PropTypes.array.isRequired,
     edges: PropTypes.array.isRequired,
-    json_schema: PropTypes.array,
-    message: PropTypes.string,
-    created_ts: PropTypes.number,
+    json_schema: PropTypes.array.isRequired,
+    message: PropTypes.string.isRequired,
+    created_ts: PropTypes.number.isRequired,
+    kernel_ai_schema_id: PropTypes.number.isRequired,
   })),
   allowUploads: PropTypes.bool,
   showHistory: PropTypes.bool,
