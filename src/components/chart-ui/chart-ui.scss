@@ -23,8 +23,12 @@
   margin-top: 30px;
 }
 
-.pipeline-ui__node-list {
+.pipeline-ui__node-list-container {
   margin: 30px -15px 0;
+}
+
+.pipeline-ui__node-list {
+  margin: 0;
   padding: 0;
   list-style: none;
 }

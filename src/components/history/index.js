@@ -15,6 +15,8 @@ const History = ({
   theme
 }) => (
   <Scrollbars
+    className='pipeline-history-container'
+    style={{ width: 'auto' }}
     autoHide
     hideTracksWhenNotNeeded
   >

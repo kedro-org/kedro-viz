@@ -72,6 +72,8 @@ const ChartUI = ({
     />
     { activePipelineData.nodes && (
       <Scrollbars
+        className='pipeline-ui__node-list-container'
+        style={{ width: 'auto' }}
         autoHide
         hideTracksWhenNotNeeded
       >
