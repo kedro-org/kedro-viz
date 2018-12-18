@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ChartWrapper from '../chart-wrapper';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
-import './store.css';
 
 class Store extends Component {
   constructor(props) {
@@ -101,9 +100,9 @@ Store.propTypes = {
     nodes: PropTypes.array.isRequired,
     edges: PropTypes.array.isRequired,
     json_schema: PropTypes.array.isRequired,
-    message: PropTypes.string.isRequired,
+    message: PropTypes.string,
     created_ts: PropTypes.number.isRequired,
-    kernel_ai_schema_id: PropTypes.number.isRequired,
+    kernel_ai_schema_id: PropTypes.number,
   })),
   allowUploads: PropTypes.bool,
   showHistory: PropTypes.bool,

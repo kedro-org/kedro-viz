@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Store from '../store';
 import formatData from '../../utils/format-data';
+import './app.css';
 
 const App = (props) => {
   const { data } = props; 
