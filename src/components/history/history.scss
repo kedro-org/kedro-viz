@@ -43,6 +43,9 @@
     font-size: 1.1em;
     margin-bottom: 2px;
     font-weight: 600;
+    word-break: break-all; // Fallback
+    word-break: break-word; // Non-standard preferred fallback for WebKit
+    hyphens: auto; // Desired result but poor support
   }
 
   span {
