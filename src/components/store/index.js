@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ChartWrapper from '../chart-wrapper';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
-import './store.css';
 
 class Store extends Component {
   constructor(props) {
