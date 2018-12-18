@@ -1,12 +1,14 @@
 @import '../../styles/extends';
 @import '../../styles/variables';
 
-.pipeline-history {
+.pipeline-history-container {
   margin: -15px -30px 30px;
+}
+
+.pipeline-history {
+  margin: 0;
   padding: 0;
   list-style: none;
-  overflow: auto;
-  height: 100%;
   border-top: 1px solid rgba(white, 0.06);
 }
 
@@ -41,6 +43,9 @@
     font-size: 1.1em;
     margin-bottom: 2px;
     font-weight: 600;
+    word-break: break-all; // Fallback
+    word-break: break-word; // Non-standard preferred fallback for WebKit
+    hyphens: auto; // Desired result but poor support
   }
 
   span {
