@@ -11,6 +11,8 @@
     "watch-lib": "babel src --out-dir lib --copy-files --watch",
     "lib": "npm run build-css && babel src --out-dir lib --copy-files",
     "prepublishOnly": "npm run lib",
+    "version:update": "./bin/publish-build.sh",
+    "version:get": "echo \"Current version is \"$(./bin/config.sh version)",
     "test": "node scripts/test.js --env=jsdom"
   },
   "dependencies": {
