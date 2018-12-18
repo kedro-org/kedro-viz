@@ -42,12 +42,21 @@ class Snapshot {
     this.nodes = this.getNodes();
   }
 
+  /**
+   * Generate a name for each node.
+   * Put 'parameters_' in front of 1 in 20.
+   */
   getRandomNodeName() {
     const params = Math.random() < PARAMETERS_FREQUENCY ? 'parameters_' : '';
     const name = getRandomName(randomNumber(10));
     return params + name;
   }
 
+  /**
+   * Generate a list of nodes
+   * @param {number} count The number of nodes to generate
+   * @param {Function} getLayer A callback to create a random layer number
+   */
   generateNodeList(count, getLayer) {
     return getArray(count)
       .map(this.getRandomNodeName)
@@ -58,6 +67,9 @@ class Snapshot {
       }));
   }
 
+  /**
+   * Get lists of both data and task nodes
+   */
   getNodes() {
     return {
       data: this.generateNodeList(
@@ -71,6 +83,10 @@ class Snapshot {
     };
   }
 
+  /**
+   * Get connected data nodes for each task node
+   * @param {Function} condition Determine order of precedence
+   */
   getConnectedNodes(condition) {
     return getArray(this.CONNECTION_COUNT)
       .map(() => getRandomMatch(this.nodes.data, condition))
@@ -79,6 +95,9 @@ class Snapshot {
       .filter(unique);
   }
 
+  /**
+   * Get a complete JSON schema
+   */
   getSchema() {
     return this.nodes.task.map(node => ({
       inputs: this.getConnectedNodes(d => d.layer < node.layer),
@@ -87,6 +106,10 @@ class Snapshot {
     }));
   }
 
+  /**
+   * Generate the full snapshot datum, including ID, timestamp,
+   * random message and JSON schema
+   */
   getDatum() {
     return {
       kernel_ai_schema_id: randomNumber(999999999999999),
