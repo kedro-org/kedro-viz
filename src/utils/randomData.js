@@ -32,57 +32,74 @@ const getRandomName = (n, join = '_') => getArray(n)
 // Filter duplicate values from an array
 const unique = (d, i, arr) => arr.indexOf(d) === i;
 
-//--- Specific data-generation functions ---//
+/**
+ * Generate a random pipeline snapshot dataset
+ */
+class Snapshot {
+  constructor() {
+    this.LAYER_COUNT = randomNumber(MAX_LAYER_COUNT);
+    this.CONNECTION_COUNT = randomNumber(MAX_CONNECTED_NODES);
+    this.nodes = this.getNodes();
+  }
 
-const getRandomNodeName = () => {
-  const params = Math.random() < PARAMETERS_FREQUENCY ? 'parameters_' : '';
-  const name = getRandomName(randomNumber(10));
-  return params + name;
-}
+  getRandomNodeName() {
+    const params = Math.random() < PARAMETERS_FREQUENCY ? 'parameters_' : '';
+    const name = getRandomName(randomNumber(10));
+    return params + name;
+  }
 
-// Create a single node
-const makeNode = getLayer => id => ({
-  id,
-  layer: getLayer()
-});
+  generateNodeList(count, getLayer) {
+    return getArray(count)
+      .map(this.getRandomNodeName)
+      .filter(unique)
+      .map(id => ({
+        id,
+        layer: getLayer()
+      }));
+  }
 
-const generateRandomSnapshot = () => {
-  const LAYER_COUNT = randomNumber(MAX_LAYER_COUNT);
-  const CONNECTION_COUNT = randomNumber(MAX_CONNECTED_NODES);
+  getNodes() {
+    return {
+      data: this.generateNodeList(
+        DATA_NODE_COUNT,
+        () => randomIndex(this.LAYER_COUNT + 1)
+      ),
+      task: this.generateNodeList(
+        TASK_NODE_COUNT,
+        () => randomIndex(this.LAYER_COUNT) + 0.5
+      ),
+    };
+  }
 
-  const dataNodes = getArray(DATA_NODE_COUNT)
-    .map(getRandomNodeName)
-    .filter(unique)
-    .map(makeNode(() => randomIndex(LAYER_COUNT + 1)));
+  getConnectedNodes(condition) {
+    return getArray(this.CONNECTION_COUNT)
+      .map(() => getRandomMatch(this.nodes.data, condition))
+      .filter(Boolean)
+      .map(d => d.id)
+      .filter(unique);
+  }
 
-  const taskNodes = getArray(TASK_NODE_COUNT)
-    .map(getRandomNodeName)
-    .filter(unique)
-    .map(makeNode(() => randomIndex(LAYER_COUNT) + 0.5));
+  getSchema() {
+    return this.nodes.task.map(node => ({
+      inputs: this.getConnectedNodes(d => d.layer < node.layer),
+      name: node.id,
+      outputs: this.getConnectedNodes(d => d.layer > node.layer)
+    }));
+  }
 
-  const getConnectedNodes = condition => getArray(CONNECTION_COUNT)
-    .map(() => getRandomMatch(dataNodes, condition))
-    .filter(Boolean)
-    .map(d => d.id)
-    .filter(unique);
-
-  const json_schema = taskNodes.map(node => ({
-    inputs: getConnectedNodes(d => d.layer < node.layer),
-    name: node.id,
-    outputs: getConnectedNodes(d => d.layer > node.layer)
-  }));
-
-  return {
-    kernel_ai_schema_id: randomNumber(999999999999999),
-    message: getRandomName(randomNumber(15), ' '),
-    created_ts: new Date().getTime() - randomNumber(9999999999),
-    json_schema
-  };
+  getDatum() {
+    return {
+      kernel_ai_schema_id: randomNumber(999999999999999),
+      message: getRandomName(randomNumber(15), ' '),
+      created_ts: new Date().getTime() - randomNumber(9999999999),
+      json_schema: this.getSchema()
+    };
+  }
 };
 
 const generateRandomHistory = (n = 40) =>
   getArray(randomNumber(n))
-    .map(generateRandomSnapshot)
+    .map(() => new Snapshot().getDatum())
     .sort((a, b) => b.created_ts - a.created_ts);
 
 export default generateRandomHistory;
