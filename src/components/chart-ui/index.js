@@ -7,7 +7,7 @@ import {
 } from '@quantumblack/carbon-ui-components';
 import UploadSnapshot from '../upload-snapshot';
 import './chart-ui.css';
-import { Scrollbars } from 'react-custom-scrollbars'
+import { Scrollbars } from 'react-custom-scrollbars';
 
 const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
 

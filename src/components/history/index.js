@@ -4,7 +4,7 @@ import { RadioButton } from '@quantumblack/carbon-ui-components';
 import deleteIcon from './delete.svg';
 import './history.css';
 import formatTime from '../../utils/format-time';
-import { Scrollbars } from 'react-custom-scrollbars'
+import { Scrollbars } from 'react-custom-scrollbars';
 
 const History = ({
   activePipelineData,
