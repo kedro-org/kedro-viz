@@ -1,123 +1,88 @@
-const NODE_COUNT = 30;
+//--- Config variables ---//
 
+const DATA_NODE_COUNT = 30;
+const TASK_NODE_COUNT = 10;
+const MAX_LAYER_COUNT = 20;
+const MAX_CONNECTED_NODES = 4;
+const PARAMETERS_FREQUENCY = 0.05;
+const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(' ');
+
+//--- Utility functions ---//
+
+// Get a random array of numbers
 const getArray = n => Array.from(Array(n).keys());
 
-const randomNumber = n => Math.floor(Math.random() * n);
+// Get a random number between 0 to n-1, inclusive
+const randomIndex = n => Math.floor(Math.random() * n);
 
-const getRandom = range => range[randomNumber(range.length)];
+// Get a random number between 1 to n, inclusive
+const randomNumber = n => Math.ceil(Math.random() * n);
 
-const loremIpsum = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
-  ' '
-);
+// Get a random datum from an array
+const getRandom = range => range[randomIndex(range.length)];
 
-const randomName = (n, join = '_') =>
-  getArray(n)
-    .map(() => getRandom(loremIpsum))
-    .join(join);
+// Get a random datum from an array that matches a filter condition
+const getRandomMatch = (array, condition) => getRandom(array.filter(condition));
 
-const generateRandomData = () => {
-  const layers = [
-    'Raw',
-    'Intermediate',
-    'Primary',
-    'Feature',
-    'Model Input',
-    'Model Output'
-  ].map((name, id) => ({ id, name }));
+// Generate a random name
+const getRandomName = (n, join = '_') => getArray(n)
+  .map(() => getRandom(LOREM_IPSUM))
+  .join(join);
 
-  const makeNode = type => id => {
-    let r = randomName(Math.ceil(Math.random() * 10));
-    if (Math.random() < 0.05) {
-      r = 'parameters_' + r;
-    }
-    return {
-      id: r + '-' + id,
-      name: r.replace(/_/g, ' '),
-      layer: getRandom(layers),
-      type
-    };
-  };
+// Filter duplicate values from an array
+const unique = (d, i, arr) => arr.indexOf(d) === i;
 
-  let nodes = getArray(NODE_COUNT).map(makeNode('data'));
+//--- Specific data-generation functions ---//
 
-  let edges = nodes.map((source, i) => {
-    const targets = nodes.filter(
-      d => d.id !== source.id && d.layer.id > source.layer.id
-    );
-    if (targets.length) {
-      return {
-        source,
-        target: getRandom(targets)
-      };
-    }
-    return {
-      target: source,
-      source: getRandom(nodes.filter(d => source.id !== d.id))
-    };
-  });
+const getRandomNodeName = () => {
+  const params = Math.random() < PARAMETERS_FREQUENCY ? 'parameters_' : '';
+  const name = getRandomName(randomNumber(10));
+  return params + name;
+}
 
-  edges.forEach(edge => {
-    if (Math.random() > 0.5) {
-      // Half the time, if there is already a node linking to that dataset,
-      // join to its node
-      const matchingEdge = edges.find(
-        d => d.target.id === edge.target.id && d.source.type === 'task'
-      );
-      if (matchingEdge) {
-        edges.push({
-          source: edge.source,
-          target: matchingEdge.source
-        });
-        return;
-      }
-    }
-    const midWayNode = makeNode('task')(nodes.length);
-    nodes.push(midWayNode);
-    edges.push({
-      source: edge.source,
-      target: midWayNode
-    });
-    edges.push({
-      source: midWayNode,
-      target: edge.target
-    });
-  });
+// Create a single node
+const makeNode = getLayer => id => ({
+  id,
+  layer: getLayer()
+});
 
-  edges.forEach(d => {
-    if (d.source.type === 'task') {
-      edges.forEach(dd => {
-        if (dd.target.type === 'task' && dd.source.id === d.target.id) {
-          edges.push({
-            source: d.source,
-            target: dd.target
-          });
-        }
-      });
-    }
-  });
+const generateRandomSnapshot = () => {
+  const LAYER_COUNT = randomNumber(MAX_LAYER_COUNT);
+  const CONNECTION_COUNT = randomNumber(MAX_CONNECTED_NODES);
 
-  const json_schema = nodes.filter(d => d.type === 'task').map(node => ({
-    inputs: edges.filter(d => d.target.id === node.id)
-      .map(d => d.source.id),
+  const dataNodes = getArray(DATA_NODE_COUNT)
+    .map(getRandomNodeName)
+    .filter(unique)
+    .map(makeNode(() => randomIndex(LAYER_COUNT + 1)));
+
+  const taskNodes = getArray(TASK_NODE_COUNT)
+    .map(getRandomNodeName)
+    .filter(unique)
+    .map(makeNode(() => randomIndex(LAYER_COUNT) + 0.5));
+
+  const getConnectedNodes = condition => getArray(CONNECTION_COUNT)
+    .map(() => getRandomMatch(dataNodes, condition))
+    .filter(Boolean)
+    .map(d => d.id)
+    .filter(unique);
+
+  const json_schema = taskNodes.map(node => ({
+    inputs: getConnectedNodes(d => d.layer < node.layer),
     name: node.id,
-    outputs: edges.filter(d => d.source.id === node.id)
-      .map(d => d.target.id),
+    outputs: getConnectedNodes(d => d.layer > node.layer)
   }));
 
   return {
     kernel_ai_schema_id: randomNumber(999999999999999),
-    message: randomName(randomNumber(15), ' '),
+    message: getRandomName(randomNumber(15), ' '),
     created_ts: new Date().getTime() - randomNumber(9999999999),
-    layers,
-    json_schema,
-    nodes,
-    edges
+    json_schema
   };
 };
 
-export const generateRandomDataArray = (n = 30) =>
-  getArray(randomNumber(n) + 1)
-    .map(generateRandomData)
+const generateRandomHistory = (n = 40) =>
+  getArray(randomNumber(n))
+    .map(generateRandomSnapshot)
     .sort((a, b) => b.created_ts - a.created_ts);
 
-export default generateRandomData;
+export default generateRandomHistory;

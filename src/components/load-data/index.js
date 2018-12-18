@@ -1,9 +1,8 @@
 import React from 'react';
 import { json } from 'd3-fetch';
 import config from '../../config';
-import { generateRandomDataArray } from '../../utils/randomData';
+import getRandomHistory from '../../utils/randomData';
 import App from '../app';
-import Store from '../store';
 
 const { dataPath, dataSource } = config;
 
@@ -18,7 +17,7 @@ class LoadData extends React.Component {
     };
 
     if (useRandomData) {
-      this.state.data = generateRandomDataArray();
+      this.state.data = getRandomHistory();
     } else {
       json(dataPath)
         .then(json_schema => {
@@ -43,27 +42,14 @@ class LoadData extends React.Component {
   render() {
     const { data } = this.state;
 
-    if (!data) {
-      return null;
-    }
-
-    if (useRandomData) {
-      return (
-        <Store
-          allowUploads={true}
-          showHistory={true}
-          allowHistoryDeletion={true}
-          onDeleteSnapshot={this.onDeleteSnapshot}
-          data={data} />
-      );
-    }
-
-    return (
+    return data ? (
       <App
         allowUploads={true}
-        showHistory={false}
+        showHistory={useRandomData}
+        allowHistoryDeletion={useRandomData}
+        onDeleteSnapshot={this.onDeleteSnapshot}
         data={data} />
-    );
+    ) : null;
   }
 }
 
