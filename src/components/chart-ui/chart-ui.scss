@@ -41,7 +41,7 @@
   }
 
   &:hover,
-  &--active {
+  &.pipeline-ui__node--active {
     background: rgba(#fff, 0.1);
   }
 
