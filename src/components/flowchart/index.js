@@ -377,15 +377,15 @@ class FlowChart extends Component {
       .on('mouseover', d => {
         onNodeUpdate(d.id, 'active', true);
         tooltip.show(this, d);
-        linkedNodes(this).show(d);
+        linkedNodes.show(this.props.data, this.el, d.id);
       })
       .on('mousemove', d => {
         tooltip.show(this, d);
       })
       .on('mouseout', d => {
         onNodeUpdate(d.id, 'active', false);
-        linkedNodes(this).hide(d);
-        tooltip.hide(this);
+        linkedNodes.hide(this.el);
+        tooltip.hide(this.el);
       });
 
     this.el.nodes

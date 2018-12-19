@@ -22,8 +22,8 @@ const tooltip = {
       .style('transform', `translate(${translate.x}px, ${translate.y}px)`);
   },
 
-  hide: ({ el }) => {
-    el.tooltip.classed('tooltip--visible', false);
+  hide: ({ tooltip }) => {
+    tooltip.classed('tooltip--visible', false);
   }
 };
 
