@@ -5,8 +5,13 @@
     top: 20px;
     right: 26px;
     text-align: right;
-    max-width: 70%;
-    max-width: calc(100% - 200px);
+    max-width: 100%;
+    transition: max-width ease 0.4s;
+
+    &--menu-visible {
+        max-width: 70%;
+        max-width: calc(100% - 450px);
+    }
 
     p {
         font-size: 1.6em;

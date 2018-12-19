@@ -160,17 +160,4 @@
     display: block;
     font-size: 10px;
   }
-
-  .pipeline-wrapper--menu-visible & {
-    @media (min-width: $breakpoint-small) {
-      left: -($nav-width / 2) - 20px;
-    }
-
-    &.tooltip--right {
-      left: auto;
-      @media (min-width: $breakpoint-small) {
-        right: ($nav-width / 2) - 20px;
-      }
-    }
-  }
 }

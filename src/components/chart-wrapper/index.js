@@ -11,7 +11,7 @@ class ChartWrappper extends Component {
     super(props);
 
     this.state = {
-      visibleNav: false
+      visibleNav: true
     };
 
     // Pre-bind these methods to prevent the 'removeEventListener and bind(this) gotcha'
@@ -57,38 +57,40 @@ class ChartWrappper extends Component {
         'cbn-theme--dark': theme === 'dark',
         'cbn-theme--light': theme === 'light',
       })}>
+        <nav
+          className={classnames('pipeline-sidebar', {
+            'pipeline-sidebar--visible': visibleNav
+          })}
+          ref={el => {
+            this.nav = el;
+          }}>
+          <button
+            className="pipeline-sidebar__menu pipeline-icon-button"
+            onClick={this.toggleNav.bind(this)}>
+            { visibleNav ? (
+              <Icon type="close" title="Close" theme={theme} />
+            ) : (
+              <svg className="menu-icon" viewBox="0 0 24 24">
+                <rect x="2" y="5" width="20" height="2" />
+                <rect x="2" y="11" width="20" height="2" />
+                <rect x="2" y="17" width="20" height="2" />
+              </svg>
+            )}
+          </button>
+          <SidebarTabs {...this.props} />
+        </nav>
+        { showHistory && (
+          <Description
+            visibleNav={visibleNav}
+            pipelineData={this.props.pipelineData} 
+            activePipelineData={this.props.activePipelineData} />
+        ) }
         <div className={classnames('pipeline-wrapper', {
           'pipeline-wrapper--menu-visible': visibleNav
         })}>
-          <nav
-            className={classnames('pipeline-sidebar', { 'pipeline-sidebar--visible': visibleNav })}
-            ref={el => {
-              this.nav = el;
-            }}>
-            <button
-              className="pipeline-sidebar__menu pipeline-icon-button"
-              onClick={this.toggleNav.bind(this)}>
-              { visibleNav ? (
-                <Icon type="close" title="Close" theme={theme} />
-              ) : (
-                <svg className="menu-icon" viewBox="0 0 24 24">
-                  <rect x="2" y="5" width="20" height="2" />
-                  <rect x="2" y="11" width="20" height="2" />
-                  <rect x="2" y="17" width="20" height="2" />
-                </svg>
-              )}
-            </button>
-            <SidebarTabs {...this.props} />
-          </nav>
-          <div onClick={this.closeNav}>
-            { chartHasData && (
-              <FlowChart {...chartParams} visibleNav={visibleNav} />
-            ) }
-            { showHistory && (
-              <Description pipelineData={this.props.pipelineData} 
-                    activePipelineData={this.props.activePipelineData}/>
-            ) }
-          </div>
+          { chartHasData && (
+            <FlowChart {...chartParams} visibleNav={visibleNav} />
+          ) }
         </div>
       </div>
     );
