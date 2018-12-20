@@ -119,6 +119,7 @@ class FlowChart extends Component {
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
+      tooltip.hide(this.el);
       this.el.inner.attr('transform', event.transform);
     });
     this.el.svg.call(this.zoomBehaviour);

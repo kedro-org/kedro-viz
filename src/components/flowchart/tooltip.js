@@ -5,11 +5,12 @@ import { event } from 'd3-selection';
  */
 const tooltip = {
   show: ({ el, navOffset, width, x, y }, d) => {
-    const { clientX, clientY } = event;
-    const isRight = (clientX - navOffset) > width / 2;
+    const offset = event.target.getBoundingClientRect();
+    const isRight = (offset.x - navOffset) > width / 2;
+    const xOffset = isRight ? offset.x - (width + navOffset) : offset.x;
     const translate = {
-      x: (isRight ? clientX - (width + navOffset) : clientX) - x,
-      y: clientY - y,
+      x: (xOffset - x) + (offset.width / 2),
+      y: offset.y - y,
     };
     let label = `<b>${d.name}</b>`;
     if (d.layer) {
