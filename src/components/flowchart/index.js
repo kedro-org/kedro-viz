@@ -95,13 +95,14 @@ class FlowChart extends Component {
     const { x, y, width, height } = this._container.getBoundingClientRect();
     this.x = x;
     this.y = y;
-    this.width = width - this.getNavOffset();
+    this.width = width - this.getNavOffset(width);
     this.height = height;
     this.el.svg.attr('width', width).attr('height', height);
   }
 
-  getNavOffset() {
-    return this.navOffset = this.props.visibleNav ? 400 : 0;
+  getNavOffset(width = this.width) {
+    const navWidth = width > 480 ? 400 : 0;
+    return this.navOffset = this.props.visibleNav ? navWidth : 0;
   }
 
   /**
