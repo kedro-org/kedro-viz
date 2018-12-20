@@ -8,6 +8,7 @@
   height: 100%;
 
   .cbn-tabs {
+    position: static; // override nav button without using z-index
     padding: 30px 30px 20px;
   }
 

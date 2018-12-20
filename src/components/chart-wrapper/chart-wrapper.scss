@@ -1,6 +1,7 @@
 @import '../../styles/variables';
 
 .kernel-pipeline {
+  position: relative;
   font-size: 10px;
   height: 100%;
   overflow: hidden;
@@ -66,16 +67,17 @@
   }
 }
 
-.pipeline-sidebar__menu {
+.pipeline-sidebar__show-menu {
   position: absolute;
-  top: 30px;
-  right: -60px;
+  top: 20px;
+  left: 20px;
+  transition: all ease 0.4s;
+}
 
-  @media (max-width: $breakpoint-small) {
-    body.menu-visible & {
-      right: 30px;
-    }
-  }
+.pipeline-sidebar__hide-menu {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
 .menu-icon {

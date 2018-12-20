@@ -57,6 +57,16 @@ class ChartWrappper extends Component {
         'cbn-theme--dark': theme === 'dark',
         'cbn-theme--light': theme === 'light',
       })}>
+        <button
+          aria-label="Show menu"
+          className="pipeline-sidebar__show-menu pipeline-icon-button"
+          onClick={this.toggleNav.bind(this)}>
+          <svg className="menu-icon" viewBox="0 0 24 24">
+            <rect x="2" y="5" width="20" height="2" />
+            <rect x="2" y="11" width="20" height="2" />
+            <rect x="2" y="17" width="20" height="2" />
+          </svg>
+        </button>
         <nav
           className={classnames('pipeline-sidebar', {
             'pipeline-sidebar--visible': visibleNav
@@ -65,17 +75,10 @@ class ChartWrappper extends Component {
             this.nav = el;
           }}>
           <button
-            className="pipeline-sidebar__menu pipeline-icon-button"
+            aria-label="Hide menu"
+            className="pipeline-sidebar__hide-menu pipeline-icon-button"
             onClick={this.toggleNav.bind(this)}>
-            { visibleNav ? (
-              <Icon type="close" title="Close" theme={theme} />
-            ) : (
-              <svg className="menu-icon" viewBox="0 0 24 24">
-                <rect x="2" y="5" width="20" height="2" />
-                <rect x="2" y="11" width="20" height="2" />
-                <rect x="2" y="17" width="20" height="2" />
-              </svg>
-            )}
+            <Icon type="close" title="Close" theme={theme} />
           </button>
           <SidebarTabs {...this.props} />
         </nav>
