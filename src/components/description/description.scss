@@ -2,15 +2,16 @@
 
 .snapshot-description {
   position: absolute;
-  top: 20px;
-  right: 26px;
+  top: 0;
+  right: 0;
+  padding: 20px 26px 0;
   text-align: right;
-  max-width: 100%;
+  max-width: 90%;
   transition: max-width ease 0.4s;
   
   &--menu-visible {
     max-width: 70%;
-    max-width: calc(100% - 450px);
+    max-width: calc(100% - 400px);
   }
   
   p {
