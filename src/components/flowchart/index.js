@@ -359,7 +359,7 @@ class FlowChart extends Component {
       .append('text')
       .text(d => d.name)
       .attr('text-anchor', 'middle')
-      .attr('dy', 5);
+      .attr('dy', 4);
 
     this.el.nodes
       .exit()
