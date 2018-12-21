@@ -14,12 +14,7 @@ const History = ({
   onDeleteSnapshot,
   theme
 }) => (
-  <Scrollbars
-    className='pipeline-history-container'
-    style={{ width: 'auto' }}
-    autoHide
-    hideTracksWhenNotNeeded
-  >
+  <Scrollbars autoHide hideTracksWhenNotNeeded>
     <ul className='pipeline-history'>
       { pipelineData.map(d =>
         <li
