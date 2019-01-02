@@ -3,13 +3,14 @@ import { event } from 'd3-selection';
 /**
  * Provide methods to show/hide the tooltip
  */
-const tooltip = ({ el, width, x, y }) => ({
-  show: d => {
-    const { clientX, clientY } = event;
-    const isRight = clientX > width / 2;
+const tooltip = {
+  show: ({ el, navOffset, width, x, y }, d) => {
+    const offset = event.target.getBoundingClientRect();
+    const isRight = (offset.x - navOffset) > width / 2;
+    const xOffset = isRight ? offset.x - (width + navOffset) : offset.x;
     const translate = {
-      x: (isRight ? clientX - width : clientX) - x,
-      y: clientY - y,
+      x: (xOffset - x) + (offset.width / 2),
+      y: offset.y - y,
     };
     let label = `<b>${d.name}</b>`;
     if (d.layer) {
@@ -22,9 +23,9 @@ const tooltip = ({ el, width, x, y }) => ({
       .style('transform', `translate(${translate.x}px, ${translate.y}px)`);
   },
 
-  hide: () => {
-    el.tooltip.classed('tooltip--visible', false);
+  hide: ({ tooltip }) => {
+    tooltip.classed('tooltip--visible', false);
   }
-});
+};
 
 export default tooltip;

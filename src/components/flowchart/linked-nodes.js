@@ -33,28 +33,24 @@ const getLinkedNodes = (data, nodeID) => {
  * Provide methods to highlight linked nodes on hover,
  * and fade non-linked nodes
  */
-const linkedNodes = ({ props, el }) => {
-  const { nodes, edges } = el;
+const linkedNodes = {
+  show: (data, { edges, nodes }, id) => {
+    const linkedNodes = getLinkedNodes(data, id);
+    const nodeIsLinked = d => linkedNodes.includes(d.id) || d.id === id;
 
-  return {
-    show: ({ id }) => {
-      const linkedNodes = getLinkedNodes(props.data, id);
-      const nodeIsLinked = d => linkedNodes.includes(d.id) || d.id === id;
+    nodes
+      .classed('node--active', nodeIsLinked)
+      .classed('node--faded', d => !nodeIsLinked(d));
 
-      nodes
-        .classed('node--active', nodeIsLinked)
-        .classed('node--faded', d => !nodeIsLinked(d));
+    edges.classed('edge--faded', ({ source, target }) =>
+      [source, target].some(d => !nodeIsLinked(d))
+    );
+  },
 
-      edges.classed('edge--faded', ({ source, target }) =>
-        [source, target].some(d => !nodeIsLinked(d))
-      );
-    },
-
-    hide: () => {
-      edges.classed('edge--faded', false);
-      nodes.classed('node--active', false).classed('node--faded', false);
-    }
-  };
+  hide: ({ edges, nodes }) => {
+    edges.classed('edge--faded', false);
+    nodes.classed('node--active', false).classed('node--faded', false);
+  }
 };
 
 export default linkedNodes;

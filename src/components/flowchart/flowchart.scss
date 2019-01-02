@@ -1,7 +1,6 @@
 @import '../../styles/variables';
 
 .pipeline-flowchart {
-  position: relative;
   height: 100%;
 }
 
@@ -10,11 +9,17 @@
 }
 
 .node {
+  image, text {
+    pointer-events: none;
+  }
+
   text {
     fill: rgba(white, 0.8);
     font-weight: bold;
     pointer-events: none;
     transition: all ease 0.1s;
+    font-weight: 600;
+    pointer-events: none;
   }
 }
 
@@ -52,12 +57,14 @@
   &.node--data {
     rect {
       opacity: 0;
+      pointer-events: none;
     }
   }
 
   &.node--task {
     circle {
       opacity: 0;
+      pointer-events: none;
     }
   }
 }
@@ -66,6 +73,7 @@
   image,
   circle {
     opacity: 0;
+    pointer-events: none;
   }
 }
 
@@ -159,18 +167,5 @@
   small {
     display: block;
     font-size: 10px;
-  }
-
-  .pipeline-wrapper--menu-visible & {
-    @media (min-width: $breakpoint-small) {
-      left: -($nav-width / 2) - 20px;
-    }
-
-    &.tooltip--right {
-      left: auto;
-      @media (min-width: $breakpoint-small) {
-        right: ($nav-width / 2) - 20px;
-      }
-    }
   }
 }

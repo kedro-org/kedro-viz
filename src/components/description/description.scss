@@ -1,32 +1,38 @@
 @import '../../styles/variables';
 
 .snapshot-description {
-    position: absolute;
-    top: 20px;
-    right: 26px;
-    text-align: right;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 20px 26px 0;
+  text-align: right;
+  max-width: 90%;
+  transition: max-width ease 0.4s;
+  
+  &--menu-visible {
     max-width: 70%;
-    max-width: calc(100% - 200px);
-
-    p {
-        font-size: 1.6em;
-        color: rgba($color-bg-light, 0.55);
-        margin: 3px 0;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    b {
-        font-weight: 600;
-        color: rgba($color-bg-light, 0.85);
-    }
-
-    span {
-        background: $color-bg-light;
-        margin-left: 10px;
-        padding: 0 7px 2px;
-        color: $color-header-dark;
-    }
+    max-width: calc(100% - 400px);
+  }
+  
+  p {
+    font-size: 1.6em;
+    color: rgba($color-bg-light, 0.55);
+    margin: 3px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  
+  b {
+    font-weight: 600;
+    color: rgba($color-bg-light, 0.85);
+  }
+  
+  span {
+    background: $color-bg-light;
+    margin-left: 10px;
+    padding: 0 7px 2px;
+    color: $color-header-dark;
+  }
 }
 

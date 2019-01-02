@@ -17,7 +17,7 @@ import './flowchart.css';
  */
 const edgeID = edge => [edge.source.id, edge.target.id].join('-');
 
-const DURATION = 666;
+const DURATION = 700;
 
 class FlowChart extends Component {
   constructor(props) {
@@ -32,6 +32,7 @@ class FlowChart extends Component {
     this.el = {
       svg: select(this._svg),
       inner: select(this._gInner),
+      wrapper: select(this._gWrapper),
       edgeGroup: select(this._gEdges),
       nodeGroup: select(this._gNodes),
       tooltip: select(this._tooltip)
@@ -53,6 +54,10 @@ class FlowChart extends Component {
   componentDidUpdate(prevProps) {
     const doRedraw = this.shouldRedrawLayout(prevProps);
 
+    if (prevProps.visibleNav !== this.props.visibleNav) {
+      this.setChartHeight();
+    }
+
     if (doRedraw) {
       this.getLayout();
     }
@@ -73,10 +78,13 @@ class FlowChart extends Component {
    * @return {Boolean} True if new layout is required
    */
   shouldRedrawLayout(prevProps) {
-    const rezoom = prevProps.textLabels !== this.props.textLabels;
-    const updateView = prevProps.view !== this.props.view;
-    const updateSnapshot = prevProps.data.kernel_ai_schema_id !== this.props.data.kernel_ai_schema_id;
-    return rezoom || updateView || updateSnapshot || this.checkNodeCount();
+    return [
+      () => prevProps.textLabels !== this.props.textLabels,
+      () => prevProps.view !== this.props.view,
+      () => prevProps.visibleNav !== this.props.visibleNav,
+      () => prevProps.data.kernel_ai_schema_id !== this.props.data.kernel_ai_schema_id,
+      () => this.checkNodeCount()
+    ].some(d => d());
   }
 
   /**
@@ -85,12 +93,16 @@ class FlowChart extends Component {
    */
   setChartHeight() {
     const { x, y, width, height } = this._container.getBoundingClientRect();
-    const navOffset = this.props.visibleNav ? 200 : 0;
-    this.x = x - navOffset;
+    this.x = x;
     this.y = y;
-    this.width = width;
+    this.width = width - this.getNavOffset(width);
     this.height = height;
     this.el.svg.attr('width', width).attr('height', height);
+  }
+
+  getNavOffset(width = this.width) {
+    const navWidth = width > 480 ? 400 : 0;
+    return this.navOffset = this.props.visibleNav ? navWidth : 0;
   }
 
   /**
@@ -108,6 +120,7 @@ class FlowChart extends Component {
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
+      tooltip.hide(this.el);
       this.el.inner.attr('transform', event.transform);
     });
     this.el.svg.call(this.zoomBehaviour);
@@ -268,6 +281,12 @@ class FlowChart extends Component {
     const { onNodeUpdate, textLabels } = this.props;
     const data = this.prepareData();
 
+    // Transition the wrapper
+    this.el.wrapper
+      .transition('wrapper-navoffset')
+      .duration(DURATION)
+      .attr('transform', d => `translate(${this.navOffset}, 0)`);
+
     // Create selections
     this.el.edges = this.el.edgeGroup
       .selectAll('.edge')
@@ -341,7 +360,7 @@ class FlowChart extends Component {
       .append('text')
       .text(d => d.name)
       .attr('text-anchor', 'middle')
-      .attr('dy', 5);
+      .attr('dy', 4);
 
     this.el.nodes
       .exit()
@@ -359,16 +378,16 @@ class FlowChart extends Component {
       .classed('node--active', d => d.active)
       .on('mouseover', d => {
         onNodeUpdate(d.id, 'active', true);
-        tooltip(this).show(d);
-        linkedNodes(this).show(d);
+        tooltip.show(this, d);
+        linkedNodes.show(this.props.data, this.el, d.id);
       })
       .on('mousemove', d => {
-        tooltip(this).show(d);
+        tooltip.show(this, d);
       })
       .on('mouseout', d => {
         onNodeUpdate(d.id, 'active', false);
-        linkedNodes(this).hide(d);
-        tooltip(this).hide(d);
+        linkedNodes.hide(this.el);
+        tooltip.hide(this.el);
       });
 
     this.el.nodes
@@ -407,9 +426,11 @@ class FlowChart extends Component {
               <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
             </marker>
           </defs>
-          <g ref={el => (this._gInner = el)}>
-            <g className="pipeline-flowchart__edges" ref={el => (this._gEdges = el)} />
-            <g className="pipeline-flowchart__nodes" ref={el => (this._gNodes = el)} />
+          <g ref={el => (this._gWrapper = el)}>
+            <g ref={el => (this._gInner = el)}>
+              <g className="pipeline-flowchart__edges" ref={el => (this._gEdges = el)} />
+              <g className="pipeline-flowchart__nodes" ref={el => (this._gNodes = el)} />
+            </g>
           </g>
         </svg>
         <div className="pipeline-flowchart__tooltip carbon" ref={el => (this._tooltip = el)} />
