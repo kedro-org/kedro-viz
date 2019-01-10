@@ -8,16 +8,11 @@ const Description = ({ pipelineData, activePipelineData, visibleNav }) => {
     return null
   }
 
-  const latestSync = pipelineData[0];
-
   return (
     <div className={classnames('snapshot-description carbon', {
       'snapshot-description--menu-visible': visibleNav
     })}>
       <p>Uploaded on: <b>{ formatTime(+activePipelineData.created_ts) }</b>
-        { activePipelineData.created_ts !== latestSync.created_ts && (
-          <span>outdated</span>
-        ) }
       </p>
       <p>Title: <b>{ activePipelineData.message }</b></p>
     </div>
