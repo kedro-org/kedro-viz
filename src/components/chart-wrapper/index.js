@@ -66,7 +66,10 @@ class ChartWrappper extends Component {
           }}>
           <button
             aria-label="Hide menu"
-            className="pipeline-sidebar__hide-menu pipeline-icon-button"
+            className={classnames('pipeline-sidebar__hide-menu pipeline-icon-button', {
+              'pipeline-sidebar__hide-menu--offset': !showHistory,
+              'pipeline-sidebar__hide-menu--visible': visibleNav,
+            })}
             onClick={this.toggleNav.bind(this)}>
             <Icon type="close" title="Close" theme={theme} />
           </button>
