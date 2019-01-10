@@ -78,6 +78,18 @@
   position: absolute;
   top: 20px;
   right: 20px;
+  visibility: hidden;
+  opacity: 0;
+  transition: all ease 0.4s;
+
+  &--offset {
+    right: -50px;
+  }
+
+  &--visible {
+    visibility: visible;
+    opacity: 1;
+  }
 }
 
 .menu-icon {
