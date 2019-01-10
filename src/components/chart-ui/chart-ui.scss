@@ -23,35 +23,3 @@
   flex: none;
   margin-top: 30px;
 }
-
-.pipeline-ui__node-list-container {
-  margin: 30px -15px 0;
-  min-height: 150px;
-}
-
-.pipeline-ui__node-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.pipeline-ui__node {
-  min-width: 320px; // TODO improve this on small screens
-
-  &:nth-child(even) {
-    background: rgba(#fff, 0.02);
-  }
-
-  &:hover,
-  &.pipeline-ui__node--active {
-    background: rgba(#fff, 0.1);
-  }
-
-  .cbn-switch {
-    margin: 0;
-
-    label {
-      padding: 10px 15px;
-    }
-  }
-}
