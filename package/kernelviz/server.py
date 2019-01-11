@@ -2,6 +2,7 @@ import getopt
 import json
 import sys
 from os.path import dirname, join, abspath, exists
+import webbrowser
 
 from flask import Flask, jsonify
 
@@ -37,8 +38,11 @@ def nodes():
 
 def main():
     global port, logdir
+    browser = True
     try:
-        opts, _ = getopt.getopt(sys.argv[1:], "h", ["logdir=", "port="])
+        opts, _ = getopt.getopt(
+            sys.argv[1:], "h", ["logdir=", "port=", "no-browser"]
+        )
     except getopt.GetoptError:
         print('{} --logdir <log-directory> --port <web-server-port>'
               .format(sys.argv[0]))
@@ -59,7 +63,11 @@ def main():
             port = int(arg)
         elif opt == "--logdir":
             logdir = abspath(arg)
+        elif opt == "--no-browser":
+            browser = False
 
+    if browser:
+        webbrowser.open_new("http://127.0.0.1:%d/" % port)
     app.run(port=port)
 
 
