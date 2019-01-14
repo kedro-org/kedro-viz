@@ -13,7 +13,7 @@ const ChartUI = ({
   activePipelineData,
   onChangeView,
   onNodeUpdate,
-  onToggleParameters,
+  onToggleMatchedName,
   onToggleTextLabels,
   parameters,
   textLabels,
@@ -62,7 +62,7 @@ const ChartUI = ({
         theme={theme}
       />
       <Toggle
-        onChange={(e, { value }) => onToggleParameters(Boolean(value))}
+        onChange={(e, { value }) => onToggleMatchedName('param', Boolean(value))}
         label="Parameters"
         value={parameters}
         checked={parameters}

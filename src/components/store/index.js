@@ -46,17 +46,17 @@ class Store extends Component {
     });
   }
 
-  onToggleParameters(parameters) {
+  onToggleMatchedName(text, value) {
     const { activePipelineData } = this.state;
     const nodes = activePipelineData.nodes.map(node => {
-      if (node.id.includes('param')) {
-        node.disabled = !parameters;
+      if (node.id.includes(text)) {
+        node.disabled = !value;
       }
       return node;
     });
     this.setState({
       activePipelineData: Object.assign({}, activePipelineData, { nodes }),
-      parameters
+      parameters: value
     });
   }
 
@@ -82,7 +82,7 @@ class Store extends Component {
         onChangeActivePipeline={this.onChangeActivePipeline.bind(this)}
         onChangeView={this.onChangeView.bind(this)}
         onNodeUpdate={this.onNodeUpdate.bind(this)}
-        onToggleParameters={this.onToggleParameters.bind(this)}
+        onToggleMatchedName={this.onToggleMatchedName.bind(this)}
         onToggleTextLabels={this.onToggleTextLabels.bind(this)}
         chartParams={{
           data: activePipelineData,
