@@ -2,41 +2,22 @@
 @import '../../styles/variables';
 
 .pipeline-node-list-search {
-  margin: 30px 0 15px;
-  // .cbn-search,
-  // .cbn-searchbar,
-  // .cbn-search-results
-  // {
-  //   height: 100%;
-  // }
-  // .cbn-search-results__wrapper
-  // {
-  //   height: 100% !important;
-  //   max-height: 100% !important;
-  // }
+  background: $color-bg-dark-alt;
+  padding: 14px 12px 12px;
 
   .cbn-searchbar,
   .cbn-input-wrapper {
     width: 100%;
   }
-  // .cbn-searchbar {
-  //   display: flex;
-  //   flex-direction: column;
-  //   flex: 1 auto;
-  // }
-
-  // .cbn-search-results__list {
-  //   margin: 0;
-  // }
 }
 
 .pipeline-node-list-scrollbars {
-  // margin: 0 -12px;
   min-height: 150px;
+  background: $color-bg-dark-alt;
 }
 
 .pipeline-node-list {
-  margin: 0;
+  margin: 0 12px;
   padding: 0;
   list-style: none;
 }

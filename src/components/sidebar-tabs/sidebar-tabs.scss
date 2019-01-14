@@ -4,12 +4,11 @@
 .pipeline-tabs {
   display: flex;
   flex-direction: column;
-  padding-bottom: 30px;
   height: 100%;
 
   .cbn-tabs {
     position: static; // override nav button without using z-index
-    padding: 30px 30px 20px;
+    padding: 24px;
   }
 
   .cbn-tabs__list {

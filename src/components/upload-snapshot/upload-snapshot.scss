@@ -3,10 +3,12 @@
 
 .pipeline-upload .cbn-button {
   flex: none;
-  margin: 30px 2px 2px;
+  margin: 2px;
 }
 
 .pipeline-upload {
+  padding: 24px;
+
   .cbn-modal {
     width: 100vw;
     height: 100vh;
