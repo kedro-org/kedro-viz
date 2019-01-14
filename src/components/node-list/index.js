@@ -8,26 +8,11 @@ import {
 import './node-list.css';
 import { Scrollbars } from 'react-custom-scrollbars';
 
-/**
- * Add a new highlightedLabel field to each of the results
- * @return {object} The results array with a new field added
- */
-const highlightMatch = (results, value) => results.map(result => ({
-  highlightedLabel: utils.getHighlightedText(
-    result.name,
-    value
-  ),
-  ...result
-}));
-
-/**
- * Return only the results that match the search text
- * @param {string} value
- */
-const filterResults = (results, value) => {
-  const valueRegex = value ? new RegExp(utils.escapeRegExp(value), 'gi') : '';
-  return results.filter(({ name }) => name.match(valueRegex));
-};
+const {
+  escapeRegExp,
+  getHighlightedText,
+  handleKeyEvent,
+} = utils;
 
 class NodeList extends React.Component {
   constructor(props) {
@@ -35,21 +20,69 @@ class NodeList extends React.Component {
     this.state = {
       searchValue: ''
     };
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.updateSearchValue = this.updateSearchValue.bind(this);
+  }
+
+  /**
+   * Add a new highlightedLabel field to each of the results
+   * @param {object} results
+   * @return {object} The results array with a new field added
+   */
+  highlightMatch(results) {
+    return results.map(result => ({
+      highlightedLabel: getHighlightedText(
+        result.name,
+        this.state.searchValue
+      ),
+      ...result
+    }));
+  }
+
+  /**
+   * Return only the results that match the search text
+   * @param {object} results
+   */
+  filterResults(results) {
+    const { searchValue } = this.state;
+    const valueRegex = searchValue ? new RegExp(escapeRegExp(searchValue), 'gi') : '';
+    return results.filter(({ name }) => name.match(valueRegex));
+  }
+
+  /**
+   * Listen for keyboard events, and trigger relevant actions
+   * @param {number} keyCode The key event keycode
+   */
+  handleKeyDown(event) {
+    handleKeyEvent(event.keyCode, {
+      escape: this.updateSearchValue.bind(this, '')
+    });
+  }
+
+  /**
+   * Apply the new search filter text to the component state
+   * @param {string} searchValue The term being searched
+   */
+  updateSearchValue(searchValue) {
+    this.setState({
+      searchValue
+    });
   }
 
   render() {
     const { nodes, onUpdate, theme } = this.props;
     const { searchValue } = this.state;
-    const filteredNodes = filterResults(nodes, searchValue);
-    const formattedNodes = highlightMatch(filteredNodes, searchValue);
+    const formattedNodes = this.highlightMatch(
+      this.filterResults(nodes)
+    );
 
     return (
       <React.Fragment>
-        <div className='pipeline-node-list-search'>
+        <div
+          className='pipeline-node-list-search'
+          onKeyDown={this.handleKeyDown}>
           <SearchBar
-            onChange={searchValue => {
-              this.setState({ searchValue });
-            }}
+            onChange={this.updateSearchValue}
             value={searchValue} />
         </div>
         <Scrollbars
