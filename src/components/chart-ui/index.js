@@ -46,7 +46,7 @@ const ChartUI = ({
         <li>
           <RadioButton
             checked={view === 'task'}
-            label="Task"
+            label="Node"
             name="view"
             onChange={onChangeView}
             value="task"
