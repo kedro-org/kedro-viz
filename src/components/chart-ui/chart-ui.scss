@@ -8,13 +8,17 @@
 }
 
 .pipeline-ui__view {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex: none;
   list-style: none;
-  padding: 12px 24px;
+  padding: 24px;
   margin: 0;
+
+  .cbn-switch {
+    margin-bottom: 20px;
+  }
+
+  > li:last-child .cbn-switch {
+    margin-bottom: 0;
+  }
 }
 
 .pipeline-ui .cbn-toggle {
