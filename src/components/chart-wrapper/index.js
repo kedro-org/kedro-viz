@@ -16,23 +16,7 @@ class ChartWrappper extends Component {
 
     // Pre-bind these methods to prevent the 'removeEventListener and bind(this) gotcha'
     // (See https://gist.github.com/Restuta/e400a555ba24daa396cc)
-    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.closeNav = this.closeNav.bind(this);
-  }
-
-  componentWillMount() {
-    document.addEventListener('keydown', this.handleKeyDown);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  handleKeyDown(e) {
-    const ESCAPE_KEY = 27;
-    if (e.keyCode === ESCAPE_KEY) {
-      this.closeNav();
-    }
   }
 
   toggleNav() {
