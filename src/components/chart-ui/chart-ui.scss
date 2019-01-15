@@ -4,54 +4,25 @@
 .pipeline-ui {
   display: flex;
   flex-direction: column;
-  padding: 30px 30px 0;
   height: 100%;
 }
 
 .pipeline-ui__view {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex: none;
   list-style: none;
-  padding: 0 30px 0 0;
+  padding: 24px;
   margin: 0;
+
+  .cbn-switch {
+    margin-bottom: 20px;
+  }
+
+  > li:last-child .cbn-switch {
+    margin-bottom: 0;
+  }
 }
 
 .pipeline-ui .cbn-toggle {
-  width: 180px;
+  width: 230px;
   flex: none;
-  margin-top: 30px;
-}
-
-.pipeline-ui__node-list-container {
-  margin: 30px -15px 0;
-  min-height: 150px;
-}
-
-.pipeline-ui__node-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.pipeline-ui__node {
-  min-width: 320px; // TODO improve this on small screens
-
-  &:nth-child(even) {
-    background: rgba(#fff, 0.02);
-  }
-
-  &:hover,
-  &.pipeline-ui__node--active {
-    background: rgba(#fff, 0.1);
-  }
-
-  .cbn-switch {
-    margin: 0;
-
-    label {
-      padding: 10px 15px;
-    }
-  }
+  padding: 12px 24px;
 }

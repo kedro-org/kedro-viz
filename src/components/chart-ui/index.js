@@ -1,15 +1,12 @@
 import React from 'react';
-import classnames from 'classnames';
 import {
-  Checkbox,
   RadioButton,
   Toggle,
 } from '@quantumblack/carbon-ui-components';
+import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
 import './chart-ui.css';
 import { Scrollbars } from 'react-custom-scrollbars';
-
-const shorten = (text, n) => (text.length > n ? text.substr(0, n) + '…' : text);
 
 const ChartUI = ({
   allowUploads,
@@ -49,7 +46,7 @@ const ChartUI = ({
         <li>
           <RadioButton
             checked={view === 'task'}
-            label="Task"
+            label="Node"
             name="view"
             onChange={onChangeView}
             value="task"
@@ -72,38 +69,11 @@ const ChartUI = ({
         theme={theme}
       />
       { activePipelineData.nodes && (
-        <Scrollbars
-          className='pipeline-ui__node-list-container'
-          style={{ width: 'auto' }}
-          autoHide
-          hideTracksWhenNotNeeded>
-          <ul className="pipeline-ui__node-list">
-            { activePipelineData.nodes.map(node => (
-              <li
-                className={classnames('pipeline-ui__node', {
-                  'pipeline-ui__node--active': node.active
-                })}
-                key={node.id}
-                onMouseEnter={() => {
-                  onNodeUpdate(node.id, 'active', true);
-                }}
-                onMouseLeave={() => {
-                  onNodeUpdate(node.id, 'active', false);
-                }}>
-                <Checkbox
-                  checked={!node.disabled}
-                  label={shorten(node.name, 30)}
-                  name={node.name}
-                  onChange={(e, { checked }) => {
-                    onNodeUpdate(node.id, 'disabled', !checked);
-                  }}
-                  theme={theme}
-                />
-              </li>
-            ))}
-          </ul>
-        </Scrollbars>
-      )}
+        <NodeList
+          nodes={activePipelineData.nodes}
+          onUpdate={onNodeUpdate}
+          theme={theme} />
+      ) }
       <UploadSnapshot
         allowUploads={allowUploads}
         data={activePipelineData}
