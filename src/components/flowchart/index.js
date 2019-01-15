@@ -201,11 +201,11 @@ class FlowChart extends Component {
    */
   checkNodeCount() {
     const newNodeCount = this.props.data.nodes.filter(d => !d.disabled).length;
-    if (newNodeCount !== this.nodeCount) {
-      this.nodeCount = newNodeCount;
-      return true;
+    if (newNodeCount === this.nodeCount || newNodeCount === 0) {
+      return false;
     }
-    return false;
+    this.nodeCount = newNodeCount;
+    return true;
   }
 
   /**
