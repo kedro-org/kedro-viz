@@ -40,13 +40,22 @@ class NodeList extends React.Component {
   }
 
   /**
+   * Check whether a name matches the search text
+   * @param {string} name
+   * @param {string} searchValue
+   */
+  nameMatchesSearch(name, searchValue) {
+    const valueRegex = searchValue ? new RegExp(escapeRegExp(searchValue), 'gi') : '';
+    return name.match(valueRegex);
+  }
+
+  /**
    * Return only the results that match the search text
    * @param {object} results
    */
   filterResults(results) {
     const { searchValue } = this.state;
-    const valueRegex = searchValue ? new RegExp(escapeRegExp(searchValue), 'gi') : '';
-    return results.filter(({ name }) => name.match(valueRegex));
+    return results.filter(({ name }) => this.nameMatchesSearch(name, searchValue));
   }
 
   /**
@@ -69,8 +78,16 @@ class NodeList extends React.Component {
     });
   }
 
+  toggleAllNodes(disabled) {
+    this.props.onNodeUpdate(
+      name => this.nameMatchesSearch(name, this.state.searchValue),
+      'disabled',
+      disabled
+    );
+  }
+
   render() {
-    const { nodes, onUpdate, theme } = this.props;
+    const { nodes, onNodeUpdate, theme } = this.props;
     const { searchValue } = this.state;
     const formattedNodes = this.highlightMatch(
       this.filterResults(nodes)
@@ -99,10 +116,10 @@ class NodeList extends React.Component {
                 })}
                 title={node.name}
                 onMouseEnter={() => {
-                  onUpdate(node.id, 'active', true);
+                  onNodeUpdate(id => id === node.id, 'active', true);
                 }}
                 onMouseLeave={() => {
-                  onUpdate(node.id, 'active', false);
+                  onNodeUpdate(id => id === node.id, 'active', false);
                 }}>
                 <Checkbox
                   checked={!node.disabled}
@@ -111,7 +128,7 @@ class NodeList extends React.Component {
                   }} />}
                   name={node.name}
                   onChange={(e, { checked }) => {
-                    onUpdate(node.id, 'disabled', !checked);
+                    onNodeUpdate(id => id === node.id, 'disabled', !checked);
                   }}
                   theme={theme}
                 />
