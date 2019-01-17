@@ -16,6 +16,51 @@
   background: $color-bg-dark-alt;
 }
 
+.pipeline-node-list__toggle-title {
+  margin: 0 24px 12px;
+}
+
+.pipeline-node-list__toggle-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 12px 24px;
+  padding: 12px 0;
+  border-top: 1px solid #081c28;
+  border-bottom: 1px solid #081c28;
+}
+
+.pipeline-node-list__toggle {
+  background: none;
+  padding: 3px 0 2px;
+  box-shadow: none;
+  border: none;
+  color: inherit;
+  font-size: 1.6em;
+  cursor: pointer;
+  opacity: 0.8;
+  outline: none;
+  border-bottom: 1px solid transparent;
+
+  &:focus {
+    border-bottom: 1px solid rgba(white, 0.5);
+  }
+
+  &:hover,
+  &:focus {
+    opacity: 1;
+  }
+}
+
+.pipeline-node-list__icon {
+  margin: 0 4px -6px -6px;
+  fill: white;
+
+  &--uncheck {
+    transform: scale(0.75);
+  }
+}
+
 .pipeline-node-list {
   margin: 0 12px;
   padding: 0;
