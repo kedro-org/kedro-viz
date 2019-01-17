@@ -35,10 +35,8 @@ class Store extends Component {
 
   onNodeUpdate(testID, property, value, parameters) {
     const { activePipelineData } = this.state;
-    // activePipelineData.nodes.filter(node => testID(node.id)
     const nodes = activePipelineData.nodes.map(node => {
       if (testID(node.id)) {
-        console.log(node.id);
         node[property] = value;
       }
       return node;
