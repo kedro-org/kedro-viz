@@ -44,9 +44,9 @@ class NodeList extends React.Component {
    * @param {string} name
    * @param {string} searchValue
    */
-  nameMatchesSearch(name, searchValue) {
+  nodeMatchesSearch(node, searchValue) {
     const valueRegex = searchValue ? new RegExp(escapeRegExp(searchValue), 'gi') : '';
-    return name.match(valueRegex);
+    return node.name.match(valueRegex);
   }
 
   /**
@@ -54,8 +54,7 @@ class NodeList extends React.Component {
    * @param {object} results
    */
   filterResults(results) {
-    const { searchValue } = this.state;
-    return results.filter(({ name }) => this.nameMatchesSearch(name, searchValue));
+    return results.filter(node => this.nodeMatchesSearch(node, this.state.searchValue));
   }
 
   /**
@@ -80,7 +79,7 @@ class NodeList extends React.Component {
 
   toggleAllNodes(disabled) {
     this.props.onNodeUpdate(
-      name => this.nameMatchesSearch(name, this.state.searchValue),
+      name => this.nodeMatchesSearch(name, this.state.searchValue),
       'disabled',
       disabled
     );
@@ -143,10 +142,10 @@ class NodeList extends React.Component {
                 })}
                 title={node.name}
                 onMouseEnter={() => {
-                  onNodeUpdate(id => id === node.id, 'active', true);
+                  onNodeUpdate(d => d.id === node.id, 'active', true);
                 }}
                 onMouseLeave={() => {
-                  onNodeUpdate(id => id === node.id, 'active', false);
+                  onNodeUpdate(d => d.id === node.id, 'active', false);
                 }}>
                 <Checkbox
                   checked={!node.disabled}
@@ -155,7 +154,7 @@ class NodeList extends React.Component {
                   }} />}
                   name={node.name}
                   onChange={(e, { checked }) => {
-                    onNodeUpdate(id => id === node.id, 'disabled', !checked);
+                    onNodeUpdate(d => d.id === node.id, 'disabled', !checked);
                   }}
                   theme={theme}
                 />

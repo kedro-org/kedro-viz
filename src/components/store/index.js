@@ -33,10 +33,10 @@ class Store extends Component {
     });
   }
 
-  onNodeUpdate(testID, property, value, parameters) {
+  onNodeUpdate(matchNode, property, value, parameters) {
     const { activePipelineData } = this.state;
     const nodes = activePipelineData.nodes.map(node => {
-      if (testID(node.id)) {
+      if (matchNode(node)) {
         node[property] = value;
       }
       return node;

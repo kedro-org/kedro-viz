@@ -377,7 +377,7 @@ class FlowChart extends Component {
       .classed('node--text', textLabels)
       .classed('node--active', d => d.active)
       .on('mouseover', d => {
-        onNodeUpdate(id => id === d.id, 'active', true);
+        onNodeUpdate(dd => dd.id === d.id, 'active', true);
         tooltip.show(this, d);
         linkedNodes.show(this.props.data, this.el, d.id);
       })
@@ -385,7 +385,7 @@ class FlowChart extends Component {
         tooltip.show(this, d);
       })
       .on('mouseout', d => {
-        onNodeUpdate(id => id === d.id, 'active', false);
+        onNodeUpdate(dd => dd.id === d.id, 'active', false);
         linkedNodes.hide(this.el);
         tooltip.hide(this.el);
       });
