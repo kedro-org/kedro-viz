@@ -11,8 +11,8 @@ const tabData = [
     content: ChartUI
   },
   {
-    text: 'History',
-    href: '#history',
+    text: 'Snapshots',
+    href: '#snapshots',
     content: History
   }
 ];
