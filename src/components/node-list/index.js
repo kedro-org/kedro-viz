@@ -40,13 +40,21 @@ class NodeList extends React.Component {
   }
 
   /**
+   * Check whether a name matches the search text
+   * @param {string} name
+   * @param {string} searchValue
+   */
+  nodeMatchesSearch(node, searchValue) {
+    const valueRegex = searchValue ? new RegExp(escapeRegExp(searchValue), 'gi') : '';
+    return node.name.match(valueRegex);
+  }
+
+  /**
    * Return only the results that match the search text
    * @param {object} results
    */
   filterResults(results) {
-    const { searchValue } = this.state;
-    const valueRegex = searchValue ? new RegExp(escapeRegExp(searchValue), 'gi') : '';
-    return results.filter(({ name }) => name.match(valueRegex));
+    return results.filter(node => this.nodeMatchesSearch(node, this.state.searchValue));
   }
 
   /**
@@ -69,8 +77,16 @@ class NodeList extends React.Component {
     });
   }
 
+  toggleAllNodes(disabled) {
+    this.props.onNodeUpdate(
+      name => this.nodeMatchesSearch(name, this.state.searchValue),
+      'disabled',
+      disabled
+    );
+  }
+
   render() {
-    const { nodes, onUpdate, theme } = this.props;
+    const { nodes, onNodeUpdate, theme } = this.props;
     const { searchValue } = this.state;
     const formattedNodes = this.highlightMatch(
       this.filterResults(nodes)
@@ -90,6 +106,33 @@ class NodeList extends React.Component {
           style={{ width: 'auto' }}
           autoHide
           hideTracksWhenNotNeeded>
+          <div className='carbon'>
+            <h2 className='pipeline-node-list__toggle-title'>Nodes</h2>
+            <div className='pipeline-node-list__toggle-container'>
+              <button
+                onClick={this.toggleAllNodes.bind(this, false)}
+                className='pipeline-node-list__toggle'>
+                <svg
+                  className='pipeline-node-list__icon pipeline-node-list__icon--check'
+                  width='24'
+                  height='24'>
+                  <polygon points='9.923 14.362 7.385 11.944 6 13.263 7.33384369 14.5336026 9.923 17 18 9.32 16.615 8' />
+                </svg>
+                Check all
+              </button>
+              <button
+                onClick={this.toggleAllNodes.bind(this, true)}
+                className='pipeline-node-list__toggle'>
+                <svg
+                  className='pipeline-node-list__icon pipeline-node-list__icon--uncheck'
+                  width='24'
+                  height='24'>
+                  <path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' />
+                </svg>
+                Uncheck all
+              </button>
+            </div>
+          </div>
           <ul className='pipeline-node-list'>
             { formattedNodes.map(node => (
               <li
@@ -99,10 +142,10 @@ class NodeList extends React.Component {
                 })}
                 title={node.name}
                 onMouseEnter={() => {
-                  onUpdate(node.id, 'active', true);
+                  onNodeUpdate(d => d.id === node.id, 'active', true);
                 }}
                 onMouseLeave={() => {
-                  onUpdate(node.id, 'active', false);
+                  onNodeUpdate(d => d.id === node.id, 'active', false);
                 }}>
                 <Checkbox
                   checked={!node.disabled}
@@ -111,7 +154,7 @@ class NodeList extends React.Component {
                   }} />}
                   name={node.name}
                   onChange={(e, { checked }) => {
-                    onUpdate(node.id, 'disabled', !checked);
+                    onNodeUpdate(d => d.id === node.id, 'disabled', !checked);
                   }}
                   theme={theme}
                 />

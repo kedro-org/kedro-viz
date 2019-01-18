@@ -4,6 +4,10 @@
 .pipeline-upload .cbn-button {
   flex: none;
   margin: 2px;
+  display: block;
+}
+.pipeline-upload .cbn-button__btn {
+  width: 100%;
 }
 
 .pipeline-upload {

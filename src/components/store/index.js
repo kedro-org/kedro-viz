@@ -33,10 +33,17 @@ class Store extends Component {
     });
   }
 
-  onNodeUpdate(nodeID, property, value) {
+  /**
+   * Update a specific property for all of the nodes when a condition is met
+   * @param {Function} matchNode Conditional. Returns true if node should be updated.
+   * @param {string} property The node prop to be updated
+   * @param {any} value The new value for the updated node property
+   * @param {Boolean} parameters True if the parameters state should be updated
+   */
+  onNodeUpdate(matchNode, property, value, parameters) {
     const { activePipelineData } = this.state;
     const nodes = activePipelineData.nodes.map(node => {
-      if (node.id === nodeID) {
+      if (matchNode(node)) {
         node[property] = value;
       }
       return node;
@@ -44,20 +51,11 @@ class Store extends Component {
     this.setState({
       activePipelineData: Object.assign({}, activePipelineData, { nodes })
     });
-  }
-
-  onToggleParameters(parameters) {
-    const { activePipelineData } = this.state;
-    const nodes = activePipelineData.nodes.map(node => {
-      if (node.id.includes('param')) {
-        node.disabled = !parameters;
-      }
-      return node;
-    });
-    this.setState({
-      activePipelineData: Object.assign({}, activePipelineData, { nodes }),
-      parameters
-    });
+    if (parameters) {
+      this.setState({
+        parameters: !value
+      });
+    }
   }
 
   onToggleTextLabels(textLabels) {
@@ -82,7 +80,6 @@ class Store extends Component {
         onChangeActivePipeline={this.onChangeActivePipeline.bind(this)}
         onChangeView={this.onChangeView.bind(this)}
         onNodeUpdate={this.onNodeUpdate.bind(this)}
-        onToggleParameters={this.onToggleParameters.bind(this)}
         onToggleTextLabels={this.onToggleTextLabels.bind(this)}
         chartParams={{
           data: activePipelineData,

@@ -201,11 +201,13 @@ class FlowChart extends Component {
    */
   checkNodeCount() {
     const newNodeCount = this.props.data.nodes.filter(d => !d.disabled).length;
-    if (newNodeCount !== this.nodeCount) {
-      this.nodeCount = newNodeCount;
-      return true;
+    // Don't update node if count hasn't changed (to avoid unnecessary redraws),
+    // or if count is zero (to prevent errors)
+    if (newNodeCount === this.nodeCount || newNodeCount === 0) {
+      return false;
     }
-    return false;
+    this.nodeCount = newNodeCount;
+    return true;
   }
 
   /**
@@ -377,7 +379,7 @@ class FlowChart extends Component {
       .classed('node--text', textLabels)
       .classed('node--active', d => d.active)
       .on('mouseover', d => {
-        onNodeUpdate(d.id, 'active', true);
+        onNodeUpdate(dd => dd.id === d.id, 'active', true);
         tooltip.show(this, d);
         linkedNodes.show(this.props.data, this.el, d.id);
       })
@@ -385,7 +387,7 @@ class FlowChart extends Component {
         tooltip.show(this, d);
       })
       .on('mouseout', d => {
-        onNodeUpdate(d.id, 'active', false);
+        onNodeUpdate(dd => dd.id === d.id, 'active', false);
         linkedNodes.hide(this.el);
         tooltip.hide(this.el);
       });
