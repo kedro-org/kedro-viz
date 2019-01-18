@@ -201,6 +201,8 @@ class FlowChart extends Component {
    */
   checkNodeCount() {
     const newNodeCount = this.props.data.nodes.filter(d => !d.disabled).length;
+    // Don't update node if count hasn't changed (to avoid unnecessary redraws),
+    // or if count is zero (to prevent errors)
     if (newNodeCount === this.nodeCount || newNodeCount === 0) {
       return false;
     }
