@@ -62,7 +62,7 @@ const ChartUI = ({
       />
       <Toggle
         onChange={(e, { value }) => onNodeUpdate(
-          name => name.includes('param'),
+          node => node.name.includes('param'),
           'disabled',
           !Boolean(value),
           true
