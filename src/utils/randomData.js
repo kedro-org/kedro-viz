@@ -2,8 +2,9 @@
 
 const DATA_NODE_COUNT = 30;
 const TASK_NODE_COUNT = 10;
-const MAX_LAYER_COUNT = 20;
 const MAX_CONNECTED_NODES = 4;
+const MAX_LAYER_COUNT = 20;
+const MAX_TAG_COUNT = 20;
 const PARAMETERS_FREQUENCY = 0.05;
 const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(' ');
 
@@ -37,9 +38,11 @@ const unique = (d, i, arr) => arr.indexOf(d) === i;
  */
 class Snapshot {
   constructor() {
-    this.LAYER_COUNT = randomNumber(MAX_LAYER_COUNT);
     this.CONNECTION_COUNT = randomNumber(MAX_CONNECTED_NODES);
+    this.LAYER_COUNT = randomNumber(MAX_LAYER_COUNT);
+    this.TAG_COUNT = randomNumber(MAX_TAG_COUNT);
     this.nodes = this.getNodes();
+    this.tags = this.generateTags();
   }
 
   /**
@@ -84,6 +87,24 @@ class Snapshot {
   }
 
   /**
+   * Generate a random list of tags
+   */
+  generateTags() {
+    return getArray(this.TAG_COUNT)
+      .map(() => getRandomName(randomNumber(5)))
+      .filter(unique);
+  }
+
+  /**
+   * Select a random number of tags from the list of tags
+   */
+  getRandomTags() {
+    return getArray(randomNumber(this.TAG_COUNT))
+      .map(() => this.tags[randomIndex(this.tags.length)])
+      .filter(unique);
+  }
+
+  /**
    * Get connected data nodes for each task node
    * @param {Function} condition Determine order of precedence
    */
@@ -102,6 +123,7 @@ class Snapshot {
     return this.nodes.task.map(node => ({
       inputs: this.getConnectedNodes(d => d.layer < node.layer),
       name: node.id,
+      tags: this.getRandomTags(),
       outputs: this.getConnectedNodes(d => d.layer > node.layer)
     }));
   }
