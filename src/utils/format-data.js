@@ -24,18 +24,6 @@ const formatData = raw => {
   const edges = [];
 
   /**
-   * Create a new nicely-formatted node object
-   * @param {string} id - Underscore-separated node id
-   * @param {string} type - 'data' or 'task'
-   * @return {Object} The node datum
-   */
-  const formatNode = (id, type) => ({
-    id,
-    name: id.replace(/_/g, ' '),
-    type
-  });
-
-  /**
    * Get a reference to the formatted node datum
    * @param {string} id - Underscore-separated node id
    */
@@ -43,14 +31,19 @@ const formatData = raw => {
 
   /**
    * Add a new node if it doesn't already exist
-   * @param {string} type - 'data' or 'task'
    * @param {string} id - Underscore-separated node id
+   * @param {string} type - 'data' or 'task'
+   * @param {Array} tags - List of associated tags
    */
-  const addNode = type => id => {
-    if (findNode(id)) {
+  const addNode = (name, type, tags) => {
+    if (findNode(name)) {
       return;
     }
-    nodes.push(formatNode(id, type));
+    nodes.push(Object.assign({
+      id: name,
+      name: name.replace(/_/g, ' '),
+      type
+    }, tags ? { tags } : null));
   };
 
   /**
@@ -67,9 +60,9 @@ const formatData = raw => {
    * @param {Object} node
    */
   const createNodes = node => {
-    addNode('task')(node.name);
-    node.inputs.forEach(addNode('data'));
-    node.outputs.forEach(addNode('data'));
+    addNode(node.name, 'task', node.tags);
+    node.inputs.forEach(name => addNode(name, 'data'));
+    node.outputs.forEach(name => addNode(name, 'data'));
   };
 
   /**
