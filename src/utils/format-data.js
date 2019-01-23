@@ -115,9 +115,26 @@ const formatData = raw => {
     return 0;
   });
 
+  // Generate a formatted list of tags from node data
+  const tags = nodes.reduce((tags, node) => {
+    if (!node.tags) {
+      return tags;
+    }
+    const nodeTags = node.tags.reduce((nodeTags, tag) => (
+      tags.includes(tag) ? nodeTags : nodeTags.concat(tag)
+    ), []);
+    return tags.concat(nodeTags);
+  }, [])
+  .map(tag => ({
+    id: tag,
+    name: tag.replace(/_/g, ' '),
+    disabled: false
+  }));
+
   return {
     nodes,
-    edges
+    edges,
+    tags
   };
 };
 
