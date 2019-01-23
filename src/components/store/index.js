@@ -58,6 +58,28 @@ class Store extends Component {
     }
   }
 
+  /**
+   * Update a specific property for all of the tags when a condition is met
+   * @param {Function} matchTag Conditional. Returns true if tag should be updated.
+   * @param {string} property The tag prop to be updated
+   * @param {any} value The new value for the updated tag property
+   */
+  onTagUpdate(matchTag, property, value) {
+    const { activePipelineData } = this.state;
+    const tags = activePipelineData.tags.map(tag => {
+      if (matchTag(tag)) {
+        tag[property] = value;
+      }
+      return tag;
+    });
+    this.setState({
+      activePipelineData: Object.assign({}, activePipelineData, { tags })
+    });
+    // const visibleTags = tags.filter(tag => !tag.disabled);
+    // const showNode = node => node.tags.some(tag => visibleTags.includes(tag));
+    // this.onNodeUpdate(showNode, 'disabled', )
+  }
+
   onToggleTextLabels(textLabels) {
     this.setState({ textLabels });
   }
@@ -80,6 +102,7 @@ class Store extends Component {
         onChangeActivePipeline={this.onChangeActivePipeline.bind(this)}
         onChangeView={this.onChangeView.bind(this)}
         onNodeUpdate={this.onNodeUpdate.bind(this)}
+        onTagUpdate={this.onTagUpdate.bind(this)}
         onToggleTextLabels={this.onToggleTextLabels.bind(this)}
         chartParams={{
           data: activePipelineData,
