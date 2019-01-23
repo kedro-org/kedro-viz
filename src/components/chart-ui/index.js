@@ -1,5 +1,7 @@
 import React from 'react';
 import {
+  Checkbox,
+  Dropdown,
   RadioButton,
   Toggle,
 } from '@quantumblack/carbon-ui-components';
@@ -14,6 +16,7 @@ const ChartUI = ({
   onChangeView,
   onNodeUpdate,
   onToggleTextLabels,
+  onTagUpdate,
   parameters,
   textLabels,
   theme,
@@ -72,6 +75,26 @@ const ChartUI = ({
         checked={parameters}
         theme={theme}
       />
+    { activePipelineData.tags && (
+      <Dropdown theme={theme} width={null} defaultText="Tags (all)">
+        <React.Fragment>
+          <ul className="pipeline-ui__tag-list">
+            { activePipelineData.tags.map(tag => (
+              <li key={`tag-${tag.id}`} className="cbn-menu-option">
+                <Checkbox
+                  checked={!tag.disabled}
+                  label={<span>{tag.name}</span>}
+                  name={tag.name}
+                  onChange={(e, { checked }) => {
+                    onTagUpdate(d => d.id === tag.id, 'disabled', !checked);
+                  }}
+                  theme={theme} />
+              </li>
+            )) }
+          </ul>
+        </React.Fragment>
+      </Dropdown>
+    )}
       { activePipelineData.nodes && (
         <NodeList
           nodes={activePipelineData.nodes}
