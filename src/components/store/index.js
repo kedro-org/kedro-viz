@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Provider } from 'react-redux';
+import store from '../../store';
 import ChartWrapper from '../chart-wrapper';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 
@@ -74,20 +76,24 @@ class Store extends Component {
     }
 
     return (
-      <ChartWrapper
-        {...this.props}
-        {...this.state}
-        onChangeActivePipeline={this.onChangeActivePipeline.bind(this)}
-        onChangeView={this.onChangeView.bind(this)}
-        onNodeUpdate={this.onNodeUpdate.bind(this)}
-        onToggleTextLabels={this.onToggleTextLabels.bind(this)}
-        chartParams={{
-          data: activePipelineData,
-          onNodeUpdate: this.onNodeUpdate.bind(this),
-          parameters,
-          textLabels,
-          view,
-        }} />
+      <Provider store={store({
+        count: 5
+      })}>
+        <ChartWrapper
+          {...this.props}
+          {...this.state}
+          onChangeActivePipeline={this.onChangeActivePipeline.bind(this)}
+          onChangeView={this.onChangeView.bind(this)}
+          onNodeUpdate={this.onNodeUpdate.bind(this)}
+          onToggleTextLabels={this.onToggleTextLabels.bind(this)}
+          chartParams={{
+            data: activePipelineData,
+            onNodeUpdate: this.onNodeUpdate.bind(this),
+            parameters,
+            textLabels,
+            view,
+          }} />
+      </Provider>
     );
   }
 }
