@@ -13,21 +13,11 @@ class ChartWrappper extends Component {
     this.state = {
       visibleNav: true
     };
-
-    // Pre-bind these methods to prevent the 'removeEventListener and bind(this) gotcha'
-    // (See https://gist.github.com/Restuta/e400a555ba24daa396cc)
-    this.closeNav = this.closeNav.bind(this);
   }
 
   toggleNav() {
     const visibleNav = !this.state.visibleNav;
     this.setState({ visibleNav });
-  }
-
-  closeNav() {
-    this.setState({
-      visibleNav: false
-    });
   }
 
   render() {
