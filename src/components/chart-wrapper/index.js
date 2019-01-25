@@ -39,6 +39,7 @@ class ChartWrappper extends Component {
   render() {
     const { visibleNav } = this.state;
     const { chartParams, theme, showHistory } = this.props;
+    const chartHasData = this.chartHasData();
 
     return (
       <div className={classnames('kernel-pipeline', {
@@ -63,15 +64,13 @@ class ChartWrappper extends Component {
           </button>
           <SidebarTabs {...this.props} />
         </nav>
-        { showHistory && (
-          <Description
-            visibleNav={visibleNav}
-            activePipelineData={this.props.activePipelineData} />
+        { (chartHasData && showHistory) && (
+          <Description visibleNav={visibleNav} />
         ) }
         <div className={classnames('pipeline-wrapper', {
           'pipeline-wrapper--menu-visible': visibleNav
         })}>
-          { this.chartHasData() && (
+          { chartHasData && (
             <FlowChart {...chartParams} visibleNav={visibleNav} />
           ) }
         </div>
