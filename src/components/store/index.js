@@ -79,7 +79,6 @@ class Store extends Component {
     }
 
     const initialState = {
-      count: 5,
       activePipelineData: data[0],
       pipelineData: data,
       parameters: true,

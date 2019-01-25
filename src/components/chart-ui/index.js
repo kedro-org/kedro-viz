@@ -24,15 +24,6 @@ const ChartUI = ({
 }) => activePipelineData ? (
   <Scrollbars autoHide hideTracksWhenNotNeeded>
     <div className="pipeline-ui">
-      {/* TODO remove this */}
-      count: { count }
-      <button onClick={e => {
-        dispatch({ type: 'INCREMENT' });
-      }}>+</button>
-      <button onClick={e => {
-        dispatch({ type: 'DECREMENT' });
-      }}>-</button>
-      {/* TODO remove this ^ */}
       <ul className="pipeline-ui__view">
         <li>
           <RadioButton
@@ -99,7 +90,6 @@ const ChartUI = ({
 ) : null;
 
 const mapStateToProps = (state) => ({
-  count: state.count
 });
 
 export default connect(mapStateToProps)(ChartUI);
