@@ -64,30 +64,39 @@ class Store extends Component {
     this.setState({ textLabels });
   }
 
-  onChangeActivePipeline(activePipelineData) {
-    this.setState({ activePipelineData });
-  }
-
   render() {
-    const { activePipelineData, pipelineData, parameters, textLabels, view } = this.state;
+    const { data } = this.props;
+    const {
+      activePipelineData,
+      pipelineData,
+      parameters,
+      textLabels,
+      view
+    } = this.state;
 
     if (!pipelineData) {
       return null;
     }
 
+    const initialState = {
+      count: 5,
+      activePipelineData: data[0],
+      pipelineData: data,
+      parameters: true,
+      textLabels: false,
+      view: 'combined',
+      theme: 'dark'
+    };
+
     return (
-      <Provider store={store({
-        count: 5
-      })}>
+      <Provider store={store(initialState)}>
         <ChartWrapper
           {...this.props}
           {...this.state}
-          onChangeActivePipeline={this.onChangeActivePipeline.bind(this)}
           onChangeView={this.onChangeView.bind(this)}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
           onToggleTextLabels={this.onToggleTextLabels.bind(this)}
           chartParams={{
-            data: activePipelineData,
             onNodeUpdate: this.onNodeUpdate.bind(this),
             parameters,
             textLabels,

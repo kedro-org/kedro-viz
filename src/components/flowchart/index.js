@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
@@ -441,4 +442,8 @@ class FlowChart extends Component {
   }
 }
 
-export default FlowChart;
+const mapStateToProps = state => ({
+  data: state.activePipelineData
+});
+
+export default connect(mapStateToProps)(FlowChart);

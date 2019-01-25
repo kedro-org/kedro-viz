@@ -1,6 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { RadioButton } from '@quantumblack/carbon-ui-components';
+import { changeActivePipeline } from '../../actions';
 import deleteIcon from './delete.svg';
 import './history.css';
 import formatTime from '../../utils/format-time';
@@ -9,8 +11,8 @@ import { Scrollbars } from 'react-custom-scrollbars';
 const History = ({
   activePipelineData,
   allowHistoryDeletion,
+  dispatch,
   pipelineData,
-  onChangeActivePipeline,
   onDeleteSnapshot,
   theme
 }) => (
@@ -33,7 +35,7 @@ const History = ({
               </span>
             )}
             name='history'
-            onChange={() => onChangeActivePipeline(d)}
+            onChange={() => dispatch(changeActivePipeline(d))}
             value={d.created_ts}
             theme={theme} />
           { allowHistoryDeletion && (
@@ -51,4 +53,9 @@ const History = ({
   </Scrollbars>
 )
 
-export default History;
+const mapStateToProps = state => ({
+  activePipelineData: state.activePipelineData,
+  pipelineData: state.pipelineData,
+});
+
+export default connect(mapStateToProps)(History);

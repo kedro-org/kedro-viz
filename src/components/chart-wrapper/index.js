@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { Icon } from '@quantumblack/carbon-ui-components';
 import SidebarTabs from '../sidebar-tabs';
@@ -30,11 +31,14 @@ class ChartWrappper extends Component {
     });
   }
 
+  chartHasData() {
+    const data = this.props.activePipelineData;
+    return Boolean(data && data.nodes && data.nodes.length);
+  }
+
   render() {
     const { visibleNav } = this.state;
     const { chartParams, theme, showHistory } = this.props;
-    const { data } = chartParams;
-    const chartHasData = Boolean(data && data.nodes && data.nodes.length);
 
     return (
       <div className={classnames('kernel-pipeline', {
@@ -62,13 +66,12 @@ class ChartWrappper extends Component {
         { showHistory && (
           <Description
             visibleNav={visibleNav}
-            pipelineData={this.props.pipelineData} 
             activePipelineData={this.props.activePipelineData} />
         ) }
         <div className={classnames('pipeline-wrapper', {
           'pipeline-wrapper--menu-visible': visibleNav
         })}>
-          { chartHasData && (
+          { this.chartHasData() && (
             <FlowChart {...chartParams} visibleNav={visibleNav} />
           ) }
         </div>
@@ -87,4 +90,8 @@ class ChartWrappper extends Component {
   }
 }
 
-export default ChartWrappper;
+const mapStateToProps = (state) => ({
+  activePipelineData: state.activePipelineData
+});
+
+export default connect(mapStateToProps)(ChartWrappper);
