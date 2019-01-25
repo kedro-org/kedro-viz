@@ -3,8 +3,8 @@ import './description.css';
 import classnames from 'classnames';
 import formatTime from '../../utils/format-time';
 
-const Description = ({ pipelineData, activePipelineData, visibleNav }) => {
-  if (!pipelineData || !activePipelineData) {
+const Description = ({ activePipelineData, visibleNav }) => {
+  if (!activePipelineData) {
     return null
   }
 
