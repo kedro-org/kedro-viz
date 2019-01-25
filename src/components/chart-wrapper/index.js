@@ -67,9 +67,7 @@ class ChartWrappper extends Component {
         { (chartHasData && showHistory) && (
           <Description visibleNav={visibleNav} />
         ) }
-        <div className={classnames('pipeline-wrapper', {
-          'pipeline-wrapper--menu-visible': visibleNav
-        })}>
+        <div className='pipeline-wrapper'>
           { chartHasData && (
             <FlowChart {...chartParams} visibleNav={visibleNav} />
           ) }
