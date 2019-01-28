@@ -29,12 +29,6 @@ class Store extends Component {
     }
   }
 
-  onChangeView(e, { value }) {
-    this.setState({
-      view: value
-    });
-  }
-
   /**
    * Update a specific property for all of the nodes when a condition is met
    * @param {Function} matchNode Conditional. Returns true if node should be updated.
@@ -68,8 +62,7 @@ class Store extends Component {
     const { data } = this.props;
     const {
       parameters,
-      textLabels,
-      view
+      textLabels
     } = this.state;
 
     if (!data) {
@@ -90,14 +83,12 @@ class Store extends Component {
         <ChartWrapper
           {...this.props}
           {...this.state}
-          onChangeView={this.onChangeView.bind(this)}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
           onToggleTextLabels={this.onToggleTextLabels.bind(this)}
           chartParams={{
             onNodeUpdate: this.onNodeUpdate.bind(this),
             parameters,
-            textLabels,
-            view,
+            textLabels
           }} />
       </Provider>
     );

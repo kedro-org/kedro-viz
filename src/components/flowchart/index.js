@@ -443,7 +443,8 @@ class FlowChart extends Component {
 }
 
 const mapStateToProps = state => ({
-  data: state.activePipelineData
+  data: state.activePipelineData,
+  view: state.view
 });
 
 export default connect(mapStateToProps)(FlowChart);

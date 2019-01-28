@@ -4,6 +4,7 @@ import {
   RadioButton,
   Toggle,
 } from '@quantumblack/carbon-ui-components';
+import { changeView } from '../../actions';
 import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
 import './chart-ui.css';
@@ -12,9 +13,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 const ChartUI = ({
   allowUploads,
   activePipelineData,
-  count,
   dispatch,
-  onChangeView,
   onNodeUpdate,
   onToggleTextLabels,
   parameters,
@@ -30,7 +29,9 @@ const ChartUI = ({
             checked={view === 'combined'}
             label="Combined"
             name="view"
-            onChange={onChangeView}
+            onChange={(e, { value }) => {
+              dispatch(changeView(value));
+            }}
             value="combined"
             theme={theme}
           />
@@ -40,7 +41,9 @@ const ChartUI = ({
             checked={view === 'data'}
             label="Data"
             name="view"
-            onChange={onChangeView}
+            onChange={(e, { value }) => {
+              dispatch(changeView(value));
+            }}
             value="data"
             theme={theme}
           />
@@ -50,7 +53,9 @@ const ChartUI = ({
             checked={view === 'task'}
             label="Node"
             name="view"
-            onChange={onChangeView}
+            onChange={(e, { value }) => {
+              dispatch(changeView(value));
+            }}
             value="task"
             theme={theme}
           />
@@ -90,6 +95,7 @@ const ChartUI = ({
 ) : null;
 
 const mapStateToProps = (state) => ({
+  view: state.view
 });
 
 export default connect(mapStateToProps)(ChartUI);
