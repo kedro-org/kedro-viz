@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Store from '../store';
+import { Provider } from 'react-redux';
+import store from '../../store';
+import ChartWrapper from '../chart-wrapper';
 import formatData from '../../utils/format-data';
+import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 import './app.css';
 
 const App = (props) => {
@@ -22,10 +25,19 @@ const App = (props) => {
     ))
     .sort((a, b) => b.created_ts - a.created_ts);
 
+  const initialState = {
+    activePipelineData: formattedData[0],
+    pipelineData: formattedData,
+    parameters: true,
+    textLabels: false,
+    view: 'combined',
+    theme: 'dark'
+  };
+
   return (
-    <Store
-      {...props}
-      data={formattedData} />
+    <Provider store={store(initialState)}>
+      <ChartWrapper {...props} />
+    </Provider>
   );
 }
 
