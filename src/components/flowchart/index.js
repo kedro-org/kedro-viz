@@ -179,16 +179,13 @@ class FlowChart extends Component {
 
     // Map to objects
     this.layout = {
-      nodes: this.graph
-        .nodes()
-        .map(d => this.graph.node(d))
-        .reduce((nodes, node) => {
-          nodes[node.id] = node;
-          return nodes;
-        }, {}),
+      nodes: this.graph.nodes().reduce((nodes, id) => {
+        nodes[id] = this.graph.node(id);
+        return nodes;
+      }, {}),
 
-      edges: this.graph.edges().reduce((edges, d) => {
-        const edge = this.graph.edge(d);
+      edges: this.graph.edges().reduce((edges, id) => {
+        const edge = this.graph.edge(id);
         edge.id = edgeID(edge);
         edges[edge.id] = edge;
         return edges;
