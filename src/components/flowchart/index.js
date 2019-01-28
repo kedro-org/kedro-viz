@@ -447,7 +447,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  toggleNodeActive: (node, isActive) => () => {
+  toggleNodeActive: (node, isActive) => {
     dispatch(updateNodeProperties(d => d.id === node.id, 'active', isActive));
   }
 });
