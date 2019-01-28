@@ -67,14 +67,12 @@ class Store extends Component {
   render() {
     const { data } = this.props;
     const {
-      activePipelineData,
-      pipelineData,
       parameters,
       textLabels,
       view
     } = this.state;
 
-    if (!pipelineData) {
+    if (!data) {
       return null;
     }
 
