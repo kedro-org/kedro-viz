@@ -34,9 +34,8 @@ class Store extends Component {
    * @param {Function} matchNode Conditional. Returns true if node should be updated.
    * @param {string} property The node prop to be updated
    * @param {any} value The new value for the updated node property
-   * @param {Boolean} parameters True if the parameters state should be updated
    */
-  onNodeUpdate(matchNode, property, value, parameters) {
+  onNodeUpdate(matchNode, property, value) {
     const { activePipelineData } = this.state;
     const nodes = activePipelineData.nodes.map(node => {
       if (matchNode(node)) {
@@ -47,18 +46,10 @@ class Store extends Component {
     this.setState({
       activePipelineData: Object.assign({}, activePipelineData, { nodes })
     });
-    if (parameters) {
-      this.setState({
-        parameters: !value
-      });
-    }
   }
 
   render() {
     const { data } = this.props;
-    const {
-      parameters,
-    } = this.state;
 
     if (!data) {
       return null;
@@ -80,8 +71,7 @@ class Store extends Component {
           {...this.state}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
           chartParams={{
-            onNodeUpdate: this.onNodeUpdate.bind(this),
-            parameters,
+            onNodeUpdate: this.onNodeUpdate.bind(this)
           }} />
       </Provider>
     );

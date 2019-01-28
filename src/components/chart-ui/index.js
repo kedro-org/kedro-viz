@@ -6,6 +6,7 @@ import {
 } from '@quantumblack/carbon-ui-components';
 import {
   changeView,
+  toggleParameters,
   toggleTextLabels,
 } from '../../actions';
 import NodeList from '../node-list';
@@ -71,12 +72,14 @@ const ChartUI = ({
         theme={theme}
       />
       <Toggle
-        onChange={(e, { value }) => onNodeUpdate(
-          node => node.name.includes('param'),
-          'disabled',
-          !Boolean(value),
-          true
-        )}
+        onChange={(e, { value }) => {
+          onNodeUpdate(
+            node => node.name.includes('param'),
+            'disabled',
+            !Boolean(value)
+          );
+          dispatch(toggleParameters(value));
+        }}
         label="Parameters"
         value={parameters}
         checked={parameters}
@@ -98,6 +101,7 @@ const ChartUI = ({
 
 const mapStateToProps = (state) => ({
   textLabels: state.textLabels,
+  parameters: state.parameters,
   view: state.view
 });
 

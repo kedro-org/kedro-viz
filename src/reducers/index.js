@@ -1,11 +1,16 @@
 import {
   CHANGE_ACTIVE_PIPELINE,
-  TOGGLE_TEXT_LABELS,
   CHANGE_VIEW,
+  TOGGLE_PARAMETERS,
+  TOGGLE_TEXT_LABELS,
 } from '../actions';
 
 function reducer(state = {}, action) {
   switch (action.type) {
+    case CHANGE_ACTIVE_PIPELINE:
+      return Object.assign({}, state, {
+        activePipelineData: action.pipeline
+      });
     case CHANGE_VIEW:
       return Object.assign({}, state, {
         view: action.view,
@@ -14,9 +19,9 @@ function reducer(state = {}, action) {
       return Object.assign({}, state, {
         textLabels: action.textLabels,
       });
-    case CHANGE_ACTIVE_PIPELINE:
+    case TOGGLE_PARAMETERS:
       return Object.assign({}, state, {
-        activePipelineData: action.pipeline
+        parameters: action.parameters,
       });
     default:
       return state;
