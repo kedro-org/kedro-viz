@@ -56,6 +56,7 @@ const History = ({
 const mapStateToProps = state => ({
   activePipelineData: state.activePipelineData,
   pipelineData: state.pipelineData,
+  theme: state.theme,
 });
 
 export default connect(mapStateToProps)(History);

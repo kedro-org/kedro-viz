@@ -38,7 +38,7 @@ class ChartWrappper extends Component {
 
   render() {
     const { visibleNav } = this.state;
-    const { chartParams, theme, showHistory } = this.props;
+    const { theme, showHistory } = this.props;
     const chartHasData = this.chartHasData();
 
     return (
@@ -69,7 +69,7 @@ class ChartWrappper extends Component {
         ) }
         <div className='pipeline-wrapper'>
           { chartHasData && (
-            <FlowChart {...chartParams} visibleNav={visibleNav} />
+            <FlowChart visibleNav={visibleNav} />
           ) }
         </div>
         <button
@@ -88,7 +88,8 @@ class ChartWrappper extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  activePipelineData: state.activePipelineData
+  activePipelineData: state.activePipelineData,
+  theme: state.theme
 });
 
 export default connect(mapStateToProps)(ChartWrappper);

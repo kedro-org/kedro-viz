@@ -7,7 +7,7 @@ import {
 import {
   changeView,
   toggleParameters,
-  toggleTextLabels,
+  toggleTextLabels
 } from '../../actions';
 import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
@@ -18,7 +18,8 @@ const ChartUI = ({
   allowUploads,
   activePipelineData,
   dispatch,
-  onNodeUpdate,
+  onToggleParameters,
+  onChangeView,
   parameters,
   textLabels,
   theme,
@@ -32,9 +33,7 @@ const ChartUI = ({
             checked={view === 'combined'}
             label="Combined"
             name="view"
-            onChange={(e, { value }) => {
-              dispatch(changeView(value));
-            }}
+            onChange={onChangeView}
             value="combined"
             theme={theme}
           />
@@ -44,9 +43,7 @@ const ChartUI = ({
             checked={view === 'data'}
             label="Data"
             name="view"
-            onChange={(e, { value }) => {
-              dispatch(changeView(value));
-            }}
+            onChange={onChangeView}
             value="data"
             theme={theme}
           />
@@ -56,9 +53,7 @@ const ChartUI = ({
             checked={view === 'task'}
             label="Node"
             name="view"
-            onChange={(e, { value }) => {
-              dispatch(changeView(value));
-            }}
+            onChange={onChangeView}
             value="task"
             theme={theme}
           />
@@ -72,24 +67,14 @@ const ChartUI = ({
         theme={theme}
       />
       <Toggle
-        onChange={(e, { value }) => {
-          onNodeUpdate(
-            node => node.name.includes('param'),
-            'disabled',
-            !Boolean(value)
-          );
-          dispatch(toggleParameters(value));
-        }}
+        onChange={onToggleParameters}
         label="Parameters"
         value={parameters}
         checked={parameters}
         theme={theme}
       />
       { activePipelineData.nodes && (
-        <NodeList
-          nodes={activePipelineData.nodes}
-          onNodeUpdate={onNodeUpdate}
-          theme={theme} />
+        <NodeList />
       ) }
       <UploadSnapshot
         allowUploads={allowUploads}
@@ -105,4 +90,13 @@ const mapStateToProps = (state) => ({
   view: state.view
 });
 
-export default connect(mapStateToProps)(ChartUI);
+const mapDispatchToProps = (dispatch) => ({
+  onChangeView: (e, { value }) => {
+    dispatch(changeView(value));
+  },
+  onToggleParameters: (e, { value }) => {
+    dispatch(toggleParameters(value));
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChartUI);

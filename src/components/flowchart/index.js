@@ -6,6 +6,7 @@ import { curveBasis, line } from 'd3-shape';
 // import { scaleOrdinal } from 'd3-scale';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import dagre from 'dagre';
+import { updateNodeProperties } from '../../actions';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
 import imgCog from './cog.svg';
@@ -281,7 +282,7 @@ class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { onNodeUpdate, textLabels } = this.props;
+    const { toggleNodeActive, textLabels } = this.props;
     const data = this.prepareData();
 
     // Transition the wrapper
@@ -380,7 +381,7 @@ class FlowChart extends Component {
       .classed('node--text', textLabels)
       .classed('node--active', d => d.active)
       .on('mouseover', d => {
-        onNodeUpdate(dd => dd.id === d.id, 'active', true);
+        toggleNodeActive(d, true);
         tooltip.show(this, d);
         linkedNodes.show(this.props.data, this.el, d.id);
       })
@@ -388,7 +389,7 @@ class FlowChart extends Component {
         tooltip.show(this, d);
       })
       .on('mouseout', d => {
-        onNodeUpdate(dd => dd.id === d.id, 'active', false);
+        toggleNodeActive(d, false);
         linkedNodes.hide(this.el);
         tooltip.hide(this.el);
       });
@@ -448,4 +449,10 @@ const mapStateToProps = state => ({
   view: state.view
 });
 
-export default connect(mapStateToProps)(FlowChart);
+const mapDispatchToProps = dispatch => ({
+  toggleNodeActive: (node, isActive) => () => {
+    dispatch(updateNodeProperties(d => d.id === node.id, 'active', isActive));
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FlowChart);

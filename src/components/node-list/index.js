@@ -1,12 +1,14 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import {
   SearchBar,
   Checkbox,
   utils,
 } from '@quantumblack/carbon-ui-components';
-import './node-list.css';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { updateNodeProperties } from '../../actions';
+import './node-list.css';
 
 const {
   escapeRegExp,
@@ -77,16 +79,22 @@ class NodeList extends React.Component {
     });
   }
 
-  toggleAllNodes(disabled) {
-    this.props.onNodeUpdate(
-      name => this.nodeMatchesSearch(name, this.state.searchValue),
-      'disabled',
-      disabled
-    );
-  }
+  // toggleAllNodes(disabled) {
+  //   this.props.dispatch(updateNodeProperties(
+  //     name => this.nodeMatchesSearch(name, this.state.searchValue),
+  //     'disabled',
+  //     disabled
+  //   ));
+  // }
 
   render() {
-    const { nodes, onNodeUpdate, theme } = this.props;
+    const {
+      toggleAllNodes,
+      toggleNodeActive,
+      toggleNodeDisabled,
+      nodes,
+      theme
+    } = this.props;
     const { searchValue } = this.state;
     const formattedNodes = this.highlightMatch(
       this.filterResults(nodes)
@@ -110,7 +118,7 @@ class NodeList extends React.Component {
             <h2 className='pipeline-node-list__toggle-title'>Nodes</h2>
             <div className='pipeline-node-list__toggle-container'>
               <button
-                onClick={this.toggleAllNodes.bind(this, false)}
+                onClick={() => toggleAllNodes(this, false)}
                 className='pipeline-node-list__toggle'>
                 <svg
                   className='pipeline-node-list__icon pipeline-node-list__icon--check'
@@ -121,7 +129,7 @@ class NodeList extends React.Component {
                 Check all
               </button>
               <button
-                onClick={this.toggleAllNodes.bind(this, true)}
+                onClick={() => toggleAllNodes(this, true)}
                 className='pipeline-node-list__toggle'>
                 <svg
                   className='pipeline-node-list__icon pipeline-node-list__icon--uncheck'
@@ -141,21 +149,15 @@ class NodeList extends React.Component {
                   'pipeline-node--active': node.active
                 })}
                 title={node.name}
-                onMouseEnter={() => {
-                  onNodeUpdate(d => d.id === node.id, 'active', true);
-                }}
-                onMouseLeave={() => {
-                  onNodeUpdate(d => d.id === node.id, 'active', false);
-                }}>
+                onMouseEnter={toggleNodeActive(node, true)}
+                onMouseLeave={toggleNodeActive(node, false)}>
                 <Checkbox
                   checked={!node.disabled}
                   label={<span dangerouslySetInnerHTML={{
                     __html: node.highlightedLabel
                   }} />}
                   name={node.name}
-                  onChange={(e, { checked }) => {
-                    onNodeUpdate(d => d.id === node.id, 'disabled', !checked);
-                  }}
+                  onChange={toggleNodeDisabled(node)}
                   theme={theme}
                 />
               </li>
@@ -167,4 +169,25 @@ class NodeList extends React.Component {
   }
 }
 
-export default NodeList;
+const mapStateToProps = state => ({
+  nodes: state.activePipelineData.nodes,
+  theme: state.theme,
+});
+
+const mapDispatchToProps = dispatch => ({
+  toggleNodeActive: (node, isActive) => () => {
+    dispatch(updateNodeProperties(d => d.id === node.id, 'active', isActive));
+  },
+  toggleNodeDisabled: node => (e, { checked }) => {
+    dispatch(updateNodeProperties(d => d.id === node.id, 'disabled', !checked));
+  },
+  toggleAllNodes: (self, disabled) => {
+    dispatch(updateNodeProperties(
+      name => self.nodeMatchesSearch(name, self.state.searchValue),
+      'disabled',
+      disabled
+    ));
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NodeList);

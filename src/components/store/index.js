@@ -6,47 +6,15 @@ import ChartWrapper from '../chart-wrapper';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 
 class Store extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      activePipelineData: props.data[0],
-      pipelineData: props.data,
-      parameters: true,
-      textLabels: false,
-      view: 'combined',
-      theme: 'dark'
-    };
-  }
-
-  componentDidUpdate(prevProps) {
-    const newData = this.props.data;
-    if (prevProps.data !== newData) {
-      this.setState({
-        activePipelineData: newData[0],
-        pipelineData: newData,
-      });
-    }
-  }
-
-  /**
-   * Update a specific property for all of the nodes when a condition is met
-   * @param {Function} matchNode Conditional. Returns true if node should be updated.
-   * @param {string} property The node prop to be updated
-   * @param {any} value The new value for the updated node property
-   */
-  onNodeUpdate(matchNode, property, value) {
-    const { activePipelineData } = this.state;
-    const nodes = activePipelineData.nodes.map(node => {
-      if (matchNode(node)) {
-        node[property] = value;
-      }
-      return node;
-    });
-    this.setState({
-      activePipelineData: Object.assign({}, activePipelineData, { nodes })
-    });
-  }
+  // componentDidUpdate(prevProps) {
+  //   const newData = this.props.data;
+  //   if (prevProps.data !== newData) {
+  //     this.setState({
+  //       activePipelineData: newData[0],
+  //       pipelineData: newData,
+  //     });
+  //   }
+  // }
 
   render() {
     const { data } = this.props;
@@ -66,13 +34,7 @@ class Store extends Component {
 
     return (
       <Provider store={store(initialState)}>
-        <ChartWrapper
-          {...this.props}
-          {...this.state}
-          onNodeUpdate={this.onNodeUpdate.bind(this)}
-          chartParams={{
-            onNodeUpdate: this.onNodeUpdate.bind(this)
-          }} />
+        <ChartWrapper {...this.props} />
       </Provider>
     );
   }

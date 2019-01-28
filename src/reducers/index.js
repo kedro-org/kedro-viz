@@ -3,7 +3,9 @@ import {
   CHANGE_VIEW,
   TOGGLE_PARAMETERS,
   TOGGLE_TEXT_LABELS,
+  UPDATE_NODE_PROPERTIES,
 } from '../actions';
+import updateNodeProperties from './updateNodeProperties';
 
 function reducer(state = {}, action) {
   switch (action.type) {
@@ -21,7 +23,20 @@ function reducer(state = {}, action) {
       });
     case TOGGLE_PARAMETERS:
       return Object.assign({}, state, {
+        activePipelineData: updateNodeProperties({
+          pipelineData: state.activePipelineData,
+          matchNode: node => node.name.includes('param'),
+          property: 'disabled',
+          value: !action.parameters
+        }),
         parameters: action.parameters,
+      });
+    case UPDATE_NODE_PROPERTIES:
+      return Object.assign({}, state, {
+        activePipelineData: updateNodeProperties({
+          pipelineData: state.activePipelineData,
+          ...action
+        })
       });
     default:
       return state;
