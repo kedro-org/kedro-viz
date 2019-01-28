@@ -54,15 +54,10 @@ class Store extends Component {
     }
   }
 
-  onToggleTextLabels(textLabels) {
-    this.setState({ textLabels });
-  }
-
   render() {
     const { data } = this.props;
     const {
       parameters,
-      textLabels
     } = this.state;
 
     if (!data) {
@@ -84,11 +79,9 @@ class Store extends Component {
           {...this.props}
           {...this.state}
           onNodeUpdate={this.onNodeUpdate.bind(this)}
-          onToggleTextLabels={this.onToggleTextLabels.bind(this)}
           chartParams={{
             onNodeUpdate: this.onNodeUpdate.bind(this),
             parameters,
-            textLabels
           }} />
       </Provider>
     );

@@ -4,7 +4,10 @@ import {
   RadioButton,
   Toggle,
 } from '@quantumblack/carbon-ui-components';
-import { changeView } from '../../actions';
+import {
+  changeView,
+  toggleTextLabels,
+} from '../../actions';
 import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
 import './chart-ui.css';
@@ -15,7 +18,6 @@ const ChartUI = ({
   activePipelineData,
   dispatch,
   onNodeUpdate,
-  onToggleTextLabels,
   parameters,
   textLabels,
   theme,
@@ -62,7 +64,7 @@ const ChartUI = ({
         </li>
       </ul>
       <Toggle
-        onChange={(e, { value }) => onToggleTextLabels(Boolean(value))}
+        onChange={(e, { value }) => dispatch(toggleTextLabels(Boolean(value)))}
         label="Labels"
         value={textLabels}
         checked={textLabels}
@@ -95,6 +97,7 @@ const ChartUI = ({
 ) : null;
 
 const mapStateToProps = (state) => ({
+  textLabels: state.textLabels,
   view: state.view
 });
 
