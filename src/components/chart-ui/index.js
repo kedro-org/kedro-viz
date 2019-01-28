@@ -17,8 +17,8 @@ import { Scrollbars } from 'react-custom-scrollbars';
 const ChartUI = ({
   allowUploads,
   activePipelineData,
-  dispatch,
   onToggleParameters,
+  onToggleTextLabels,
   onChangeView,
   parameters,
   textLabels,
@@ -60,7 +60,7 @@ const ChartUI = ({
         </li>
       </ul>
       <Toggle
-        onChange={(e, { value }) => dispatch(toggleTextLabels(Boolean(value)))}
+        onChange={onToggleTextLabels}
         label="Labels"
         value={textLabels}
         checked={textLabels}
@@ -99,6 +99,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   onToggleParameters: (e, { value }) => {
     dispatch(toggleParameters(value));
+  },
+  onToggleTextLabels: (e, { value }) => {
+    dispatch(toggleTextLabels(Boolean(value)))
   }
 });
 
