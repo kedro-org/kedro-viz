@@ -79,14 +79,6 @@ class NodeList extends React.Component {
     });
   }
 
-  // toggleAllNodes(disabled) {
-  //   this.props.dispatch(updateNodeProperties(
-  //     name => this.nodeMatchesSearch(name, this.state.searchValue),
-  //     'disabled',
-  //     disabled
-  //   ));
-  // }
-
   render() {
     const {
       toggleAllNodes,
