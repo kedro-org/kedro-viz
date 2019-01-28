@@ -55,7 +55,9 @@ const History = ({
 
 const mapStateToProps = state => ({
   activePipelineData: state.activePipelineData,
+  allowHistoryDeletion: state.allowHistoryDeletion,
   pipelineData: state.pipelineData,
+  onDeleteSnapshot: state.onDeleteSnapshot,
   theme: state.theme,
 });
 

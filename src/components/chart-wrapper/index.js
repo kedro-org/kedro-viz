@@ -62,7 +62,7 @@ class ChartWrappper extends Component {
             onClick={this.toggleNav.bind(this)}>
             <Icon type="close" title="Close" theme={theme} />
           </button>
-          <SidebarTabs {...this.props} />
+          <SidebarTabs />
         </nav>
         { (chartHasData && showHistory) && (
           <Description visibleNav={visibleNav} />
@@ -89,6 +89,7 @@ class ChartWrappper extends Component {
 
 const mapStateToProps = (state) => ({
   activePipelineData: state.activePipelineData,
+  showHistory: state.showHistory,
   theme: state.theme
 });
 

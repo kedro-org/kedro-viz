@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Tabs } from '@quantumblack/carbon-ui-components';
 import ChartUI from '../chart-ui';
 import History from '../history';
@@ -41,7 +42,7 @@ class SidebarTabs extends React.Component {
       return (
         <div className='pipeline-tabs'>
           <div className='pipeline-tabs_tab'>
-            <ChartUI {...this.props} />
+            <ChartUI />
           </div>
         </div>
       );
@@ -65,7 +66,7 @@ class SidebarTabs extends React.Component {
               key={tab.text}
               style={{ display: selectedIndex === i ? 'block' : 'none' }}
               tabIndex='-1'>
-              <tab.content {...this.props} />
+              <tab.content />
             </div>
           ))
         }
@@ -74,4 +75,8 @@ class SidebarTabs extends React.Component {
   }
 }
 
-export default SidebarTabs;
+const mapStateToProps = (state) => ({
+  showHistory: state.showHistory,
+});
+
+export default connect(mapStateToProps)(SidebarTabs);

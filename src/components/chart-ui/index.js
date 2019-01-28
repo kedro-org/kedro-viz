@@ -85,8 +85,11 @@ const ChartUI = ({
 ) : null;
 
 const mapStateToProps = (state) => ({
-  textLabels: state.textLabels,
+  activePipelineData: state.activePipelineData,
+  allowUploads: state.allowUploads,
   parameters: state.parameters,
+  textLabels: state.textLabels,
+  theme: state.theme,
   view: state.view
 });
 

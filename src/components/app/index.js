@@ -14,18 +14,14 @@ const App = (props) => {
     return null;
   }
 
-  const formattedData = data
-    .map(pipeline => Object.assign(
-      {},
-      pipeline,
-      {
-        created_ts: +pipeline.created_ts,
-        ...formatData(pipeline.json_schema)
-      }
-    ))
+  const formattedData = data.map(pipeline => Object.assign({}, pipeline, {
+      created_ts: +pipeline.created_ts,
+      ...formatData(pipeline.json_schema)
+    }))
     .sort((a, b) => b.created_ts - a.created_ts);
 
   const initialState = {
+    ...props,
     activePipelineData: formattedData[0],
     pipelineData: formattedData,
     parameters: true,
@@ -36,7 +32,7 @@ const App = (props) => {
 
   return (
     <Provider store={store(initialState)}>
-      <ChartWrapper {...props} />
+      <ChartWrapper />
     </Provider>
   );
 }
