@@ -4,11 +4,9 @@ Tests for Kernelviz server
 
 import json
 import os.path
-import subprocess
 from unittest import mock
 
 import pytest
-import ipdb
 
 import kernelviz
 import kernelviz.server as kv_server
@@ -40,7 +38,6 @@ def test_set_port():
 @mock.patch("sys.argv", ("", "--logdir=/tmp"))
 @mock.patch("kernelviz.server.exists")
 def test_set_logdir(mock_path_exists):
-    org_logdir = os.path.join(os.path.dirname(__file__), "logs")
     kernelviz.server.main()
     mock_path_exists.return_value = True
     assert kernelviz.server.logdir == "/tmp"
@@ -52,7 +49,6 @@ def test_no_browser(mock_path_exists):
     mock_path_exists.return_value = True
     kernelviz.server.main()
     assert not kernelviz.server.webbrowser.open_new.called
-
 
 
 # Test endpoints
