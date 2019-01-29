@@ -18,13 +18,11 @@ function reducer(state = {}, action) {
       return Object.assign({}, state, {
         view: action.view,
       });
-    case RESET_SNAPSHOT_DATA: {
-      debugger;
+    case RESET_SNAPSHOT_DATA: 
       return Object.assign({}, state, {
         activePipelineData: action.snapshots[0],
         pipelineData: action.snapshots,
       });
-    }
     case TOGGLE_TEXT_LABELS:
       return Object.assign({}, state, {
         textLabels: action.textLabels,
