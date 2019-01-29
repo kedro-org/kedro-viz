@@ -23,11 +23,11 @@ jobs:
           name: Install python3 dependencies
           command: sudo pip3 install -U "pip>=10.0, <11.0" "setuptools>=38.0, <39.0" wheel
       - run:
-          name: Run python tests
-          command: make pytest
-      - run:
           name: Install Node dependencies
           command: npm install
+      - run:
+          name: Run python tests
+          command: make pytest
       - save_cache:
           paths:
             - node_modules
