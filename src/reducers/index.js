@@ -1,6 +1,7 @@
 import {
   CHANGE_ACTIVE_PIPELINE,
   CHANGE_VIEW,
+  RESET_SNAPSHOT_DATA,
   TOGGLE_PARAMETERS,
   TOGGLE_TEXT_LABELS,
   UPDATE_NODE_PROPERTIES,
@@ -17,6 +18,13 @@ function reducer(state = {}, action) {
       return Object.assign({}, state, {
         view: action.view,
       });
+    case RESET_SNAPSHOT_DATA: {
+      debugger;
+      return Object.assign({}, state, {
+        activePipelineData: action.snapshots[0],
+        pipelineData: action.snapshots,
+      });
+    }
     case TOGGLE_TEXT_LABELS:
       return Object.assign({}, state, {
         textLabels: action.textLabels,

@@ -2,39 +2,48 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import store from '../../store';
+import { resetSnapshotData } from '../../actions';
 import ChartWrapper from '../chart-wrapper';
 import formatData from '../../utils/format-data';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 import './app.css';
 
-const App = (props) => {
-  const { data } = props; 
+class App extends React.Component {
+  constructor(props) {
+    super(props);
 
-  if (!data) {
-    return null;
+    const formattedData = props.data.map(pipeline => Object.assign({}, pipeline, {
+        created_ts: +pipeline.created_ts,
+        ...formatData(pipeline.json_schema)
+      }))
+      .sort((a, b) => b.created_ts - a.created_ts);
+
+    const initialState = {
+      ...this.props,
+      activePipelineData: formattedData[0],
+      pipelineData: formattedData,
+      parameters: true,
+      textLabels: false,
+      view: 'combined',
+      theme: 'dark'
+    };
+    this.store = store(initialState);
   }
 
-  const formattedData = data.map(pipeline => Object.assign({}, pipeline, {
-      created_ts: +pipeline.created_ts,
-      ...formatData(pipeline.json_schema)
-    }))
-    .sort((a, b) => b.created_ts - a.created_ts);
+  componentDidUpdate(prevProps) {
+    const newData = this.props.data;
+    if (JSON.stringify(prevProps.data) !== JSON.stringify(newData)) {
+      this.store.dispatch(resetSnapshotData(newData));
+    }
+  }
 
-  const initialState = {
-    ...props,
-    activePipelineData: formattedData[0],
-    pipelineData: formattedData,
-    parameters: true,
-    textLabels: false,
-    view: 'combined',
-    theme: 'dark'
-  };
-
-  return (
-    <Provider store={store(initialState)}>
-      <ChartWrapper />
-    </Provider>
-  );
+  render () {
+    return this.props.data ? (
+      <Provider store={this.store}>
+        <ChartWrapper />
+      </Provider>
+    ) : null;
+  }
 }
 
 App.propTypes = {
