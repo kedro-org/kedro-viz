@@ -39,14 +39,12 @@ def test_set_port():
 @mock.patch("kernelviz.server.exists")
 def test_set_logdir(mock_path_exists):
     kernelviz.server.main()
-    mock_path_exists.return_value = True
     assert kernelviz.server.logdir == "/tmp"
 
 
 @mock.patch("sys.argv", ("", "--logdir=/tmp", "--no-browser"))
 @mock.patch("kernelviz.server.exists")
 def test_no_browser(mock_path_exists):
-    mock_path_exists.return_value = True
     kernelviz.server.main()
     assert not kernelviz.server.webbrowser.open_new.called
 
