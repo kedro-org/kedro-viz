@@ -4,8 +4,7 @@ clean:
 	rm -rf package/build
 	rm -rf package/dist
 	rm -rf package/kernelviz.egg-info
-	rm -rf package/.eggs
-	rm -rf package/.pytest_cache
+	find package/ | grep -E "(__pycache__|\.pytest_cache|\.eggs|\.pyc|\.pyo$\)"  | xargs rm -rfv
 
 package-all:
 	cd package && python setup.py bdist_wheel
