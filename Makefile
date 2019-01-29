@@ -16,6 +16,6 @@ build: clean
 	cp -R build package/kernelviz/html
 
 
-make test: clean
+make pytest: build
 	cd package && python setup.py install
-	cd package && pytests --verbose
+	cd package && pytest --verbose
