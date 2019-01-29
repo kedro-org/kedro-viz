@@ -27,7 +27,7 @@ jobs:
           command: npm install
       - run:
           name: Run python tests
-          command: make pytest
+          command: sudo make pytest
       - save_cache:
           paths:
             - node_modules
