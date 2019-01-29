@@ -61,3 +61,4 @@ workflows:
             branches:
               only:
                 - master
+                - add_python_tests
