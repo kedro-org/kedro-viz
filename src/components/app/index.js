@@ -12,17 +12,27 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    const formattedData = this.formatData(props.data);
+    const pipelineData = this.formatData(props.data);
+    const {
+      allowHistoryDeletion,
+      allowUploads,
+      onDeleteSnapshot,
+      showHistory,
+    } = props;
 
     const initialState = {
-      ...this.props,
-      activePipelineData: formattedData[0],
-      pipelineData: formattedData,
+      activePipelineData: pipelineData[0],
+      allowHistoryDeletion,
+      allowUploads,
+      onDeleteSnapshot,
+      pipelineData,
       parameters: true,
+      showHistory,
       textLabels: false,
       view: 'combined',
-      theme: 'dark'
+      theme: 'dark',
     };
+  
     this.store = store(initialState);
   }
 
