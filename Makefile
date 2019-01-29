@@ -4,6 +4,8 @@ clean:
 	rm -rf package/build
 	rm -rf package/dist
 	rm -rf package/kernelviz.egg-info
+	rm -rf package/.eggs
+	rm -rf package/.pytest_cache
 
 package-all:
 	cd package && python setup.py bdist_wheel
@@ -16,5 +18,4 @@ build: clean
 	cp -R build package/kernelviz/html
 
 make pytest: build
-	cd package && python3 setup.py install
-	cd package && pytest --verbose
+	cd package && python3 setup.py test

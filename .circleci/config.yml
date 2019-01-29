@@ -27,7 +27,10 @@ jobs:
           command: npm install
       - run:
           name: Run python tests
-          command: sudo make pytest
+          command: make pytest
+      - run:
+          name: Cleanup
+          command: make clean
       - save_cache:
           paths:
             - node_modules
