@@ -12,12 +12,19 @@ const updateNodeProperties = ({
   value
 }) => {
   const nodes = pipelineData.nodes.map(node => {
+    const newNode = {};
     if (matchNode(node)) {
-      node[property] = value;
+      newNode[property] = value;
     }
-    return node;
+    return Object.assign({}, node, newNode);
   });
-  return Object.assign({}, pipelineData, { nodes });
+  const edges = pipelineData.edges.map(edge => {
+    return {
+      source: nodes.find(d => d.id === edge.source.id),
+      target: nodes.find(d => d.id === edge.target.id)
+    };
+  });
+  return Object.assign({}, pipelineData, { nodes, edges });
 }
 
 export default updateNodeProperties
