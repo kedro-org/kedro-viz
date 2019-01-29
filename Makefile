@@ -14,3 +14,8 @@ run:
 build: clean
 	npm run build
 	cp -R build package/kernelviz/html
+
+
+make test: clean
+	cd package && python setup.py install
+	cd package && pytests --verbose

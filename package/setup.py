@@ -28,7 +28,8 @@ setup(
         'kernelviz': list(files)
     },
     install_requires=[
-        'Flask>=1.0, <2.0'
+        'Flask>=1.0, <2.0',
+        'pytest==4.1.1'
     ],
     author='QuantumBlack',
     author_email='feedback@quantumblack.com',
