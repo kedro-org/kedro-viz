@@ -12,11 +12,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    const formattedData = props.data.map(pipeline => Object.assign({}, pipeline, {
-        created_ts: +pipeline.created_ts,
-        ...formatData(pipeline.json_schema)
-      }))
-      .sort((a, b) => b.created_ts - a.created_ts);
+    const formattedData = this.formatData(props.data);
 
     const initialState = {
       ...this.props,
@@ -33,8 +29,16 @@ class App extends React.Component {
   componentDidUpdate(prevProps) {
     const newData = this.props.data;
     if (JSON.stringify(prevProps.data) !== JSON.stringify(newData)) {
-      this.store.dispatch(resetSnapshotData(newData));
+      this.store.dispatch(resetSnapshotData(this.formatData(newData)));
     }
+  }
+
+  formatData(data) {
+    return data.map(pipeline => Object.assign({}, pipeline, {
+        created_ts: +pipeline.created_ts,
+        ...formatData(pipeline.json_schema)
+      }))
+      .sort((a, b) => b.created_ts - a.created_ts);
   }
 
   render () {
