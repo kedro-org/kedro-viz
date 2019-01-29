@@ -51,9 +51,9 @@ jobs:
             repository: https://quantumblack.jfrog.io/quantumblack/api/pypi/pypi-qb
             username: ${ENV_QB_ARTIFACTORY_USER}
             password: ${ENV_QB_ARTIFACTORY_PASSWORD}" > ~/.pypirc
-            #       - deploy:
-            #           name: Publish to pypi-qb
-            #           command: cd package && python3 setup.py bdist_wheel upload -r pypi-qb
+      - deploy:
+          name: Publish to pypi-qb
+          command: cd package && python3 setup.py bdist_wheel upload -r pypi-qb
 
 workflows:
   version: 2
@@ -64,4 +64,3 @@ workflows:
             branches:
               only:
                 - master
-                - add_python_tests
