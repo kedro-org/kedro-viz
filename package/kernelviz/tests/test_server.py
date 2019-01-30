@@ -21,6 +21,10 @@ def setup_function(function):
     mock.patch("kernelviz.server.app.run").start()
 
 
+def teardown_function(function):
+    mock.patch.stopall()
+
+
 @pytest.fixture
 def client():
     client = kv_server.app.test_client()
