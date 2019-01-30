@@ -53,14 +53,13 @@ jobs:
             password: ${ENV_QB_ARTIFACTORY_PASSWORD}" > ~/.pypirc
       - deploy:
           name: Publish to pypi-qb
-          command: cd package && python3 setup.py bdist_wheel upload -r pypi-qb
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              cd package && python3 setup.py bdist_wheel upload -r pypi-qb
+            fi
 
 workflows:
   version: 2
   publish:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - master
+      - build
