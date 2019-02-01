@@ -38,7 +38,9 @@ class App extends React.Component {
 
   componentDidUpdate(prevProps) {
     const newData = this.props.data;
-    if (JSON.stringify(prevProps.data) !== JSON.stringify(newData)) {
+    const dataID = snapshots => snapshots.map(d => d.message).join('');
+
+    if (dataID(prevProps.data) !== dataID(newData)) {
       this.store.dispatch(resetSnapshotData(this.formatData(newData)));
     }
   }
