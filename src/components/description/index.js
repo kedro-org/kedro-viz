@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import './description.css';
+import './description.scss';
 import classnames from 'classnames';
 import formatTime from '../../utils/format-time';
 

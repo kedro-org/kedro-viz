@@ -11,7 +11,7 @@ import {
 } from '../../actions';
 import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
-import './chart-ui.css';
+import './chart-ui.scss';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 const ChartUI = ({

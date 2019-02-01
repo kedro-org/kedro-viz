@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { RadioButton } from '@quantumblack/carbon-ui-components';
 import { changeActivePipeline } from '../../actions';
 import deleteIcon from './delete.svg';
-import './history.css';
+import './history.scss';
 import formatTime from '../../utils/format-time';
 import { Scrollbars } from 'react-custom-scrollbars';
 

@@ -5,7 +5,7 @@ import { Icon } from '@quantumblack/carbon-ui-components';
 import SidebarTabs from '../sidebar-tabs';
 import FlowChart from '../flowchart';
 import Description from '../description';
-import './chart-wrapper.css';
+import './chart-wrapper.scss';
 
 class ChartWrappper extends Component {
   constructor(props) {

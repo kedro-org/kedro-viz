@@ -6,7 +6,7 @@ import { resetSnapshotData } from '../../actions';
 import ChartWrapper from '../chart-wrapper';
 import formatData from '../../utils/format-data';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
-import './app.css';
+import './app.scss';
 
 class App extends React.Component {
   constructor(props) {

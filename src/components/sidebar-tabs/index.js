@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Tabs } from '@quantumblack/carbon-ui-components';
 import ChartUI from '../chart-ui';
 import History from '../history';
-import './sidebar-tabs.css';
+import './sidebar-tabs.scss';
 
 const tabData = [
   {
