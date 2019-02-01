@@ -35,7 +35,7 @@ const History = ({
               </span>
             )}
             name='history'
-            onChange={onChangeActivePipeline}
+            onChange={() => onChangeActivePipeline(snapshot)}
             value={snapshot.created_ts}
             theme={theme} />
           { allowHistoryDeletion && (
@@ -43,7 +43,7 @@ const History = ({
               className='pipeline-history__delete'
               title='Delete snapshot'
               aria-label='Delete snapshot'
-              onClick={onDeleteSnapshot(snapshot)}>
+              onClick={() => onDeleteSnapshot(snapshot)}>
               <img src={deleteIcon} width='24' height='24' alt='Delete icon' />
             </button>
           ) }
@@ -64,7 +64,7 @@ const mapDispatchToProps = dispatch => ({
   onChangeActivePipeline: snapshot => dispatch(
     changeActivePipeline(snapshot)
   ),
-  onDeleteSnapshot: snapshot => () => dispatch(
+  onDeleteSnapshot: snapshot => dispatch(
     deleteSnapshot(snapshot.kernel_ai_schema_id)
   ),
 });
