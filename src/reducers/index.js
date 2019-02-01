@@ -40,7 +40,7 @@ function reducer(state = {}, action) {
     case TOGGLE_PARAMETERS:
       return Object.assign({}, state, {
         activePipelineData: updateNodeProperties({
-          pipelineData: state.activePipelineData,
+          snapshot: state.activePipelineData,
           matchNode: node => node.name.includes('param'),
           property: 'disabled',
           value: !action.parameters
@@ -50,7 +50,7 @@ function reducer(state = {}, action) {
     case UPDATE_NODE_PROPERTIES:
       return Object.assign({}, state, {
         activePipelineData: updateNodeProperties({
-          pipelineData: state.activePipelineData,
+          snapshot: state.activePipelineData,
           ...action
         })
       });
