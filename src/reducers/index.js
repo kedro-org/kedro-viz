@@ -1,6 +1,7 @@
 import {
   CHANGE_ACTIVE_PIPELINE,
   CHANGE_VIEW,
+  DELETE_SNAPSHOT,
   RESET_SNAPSHOT_DATA,
   TOGGLE_PARAMETERS,
   TOGGLE_TEXT_LABELS,
@@ -18,6 +19,15 @@ function reducer(state = {}, action) {
       return Object.assign({}, state, {
         view: action.view,
       });
+    case DELETE_SNAPSHOT: {
+      if (state.onDeleteSnapshot) {
+        state.onDeleteSnapshot(action.id);
+        return state;
+      }
+      return Object.assign({}, state, {
+        pipelineData: state.pipelineData.filter(d => d.kernel_ai_schema_id !== action.id)
+      });
+    }
     case RESET_SNAPSHOT_DATA: 
       return Object.assign({}, state, {
         activePipelineData: action.snapshots[0],

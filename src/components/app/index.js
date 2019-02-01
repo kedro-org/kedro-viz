@@ -5,6 +5,9 @@ import store from '../../store';
 import { resetSnapshotData } from '../../actions';
 import ChartWrapper from '../chart-wrapper';
 import formatData from '../../utils/format-data';
+import { json } from 'd3-fetch';
+import config from '../../config';
+import getRandomHistory from '../../utils/randomData';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 import './app.scss';
 
@@ -12,7 +15,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    const pipelineData = this.formatData(props.data);
+    const pipelineData = this.loadData(props.data);
     const {
       allowHistoryDeletion,
       allowUploads,
@@ -45,12 +48,39 @@ class App extends React.Component {
     }
   }
 
+  loadData(data) {
+    switch (data) {
+      case 'random':
+        return this.formatData(getRandomHistory());
+      case 'json':
+        return this.loadJsonData();
+      default:
+        return this.formatData(data);
+    }
+  }
+
   formatData(data) {
+    if (!Array.isArray(data)) {
+      return [];
+    }
     return data.map(pipeline => Object.assign({}, pipeline, {
         created_ts: +pipeline.created_ts,
         ...formatData(pipeline.json_schema)
       }))
       .sort((a, b) => b.created_ts - a.created_ts);
+  }
+
+  loadJsonData() {
+    const { dataPath } = config;
+    json(dataPath)
+      .then(json_schema => this.formatData([{ json_schema }]))
+      .then(formattedData => {
+        this.store.dispatch(resetSnapshotData(formattedData));
+      })
+      .catch(() => {
+        console.error(`Unable to load pipeline data. Please check that you have placed a file at ${dataPath}`)
+      });
+    return [];
   }
 
   render () {
@@ -63,11 +93,14 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.shape({
-    json_schema: PropTypes.array.isRequired,
-    message: PropTypes.string,
-    created_ts: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
-  })),
+  data: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.shape({
+      json_schema: PropTypes.array.isRequired,
+      message: PropTypes.string,
+      created_ts: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
+    }))
+  ]),
   allowUploads: PropTypes.bool,
   showHistory: PropTypes.bool,
   allowHistoryDeletion: PropTypes.bool,
@@ -94,7 +127,7 @@ App.defaultProps = {
   /**
    * Callback on deletion of a snapshot from the history tab
    */
-  onDeleteSnapshot: () => {},
+  onDeleteSnapshot: null,
 };
 
 export default App;

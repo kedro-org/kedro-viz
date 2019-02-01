@@ -1,5 +1,6 @@
 export const CHANGE_ACTIVE_PIPELINE = 'CHANGE_ACTIVE_PIPELINE';
 export const CHANGE_VIEW = 'CHANGE_VIEW';
+export const DELETE_SNAPSHOT = 'DELETE_SNAPSHOT';
 export const RESET_SNAPSHOT_DATA = 'RESET_SNAPSHOT_DATA';
 export const TOGGLE_PARAMETERS = 'TOGGLE_PARAMETERS';
 export const TOGGLE_TEXT_LABELS = 'TOGGLE_TEXT_LABELS';
@@ -16,6 +17,13 @@ export function changeView(view) {
   return {
     type: CHANGE_VIEW,
     view
+  };
+}
+
+export function deleteSnapshot(id) {
+  return {
+    type: DELETE_SNAPSHOT,
+    id
   };
 }
 

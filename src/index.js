@@ -1,8 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import registerServiceWorker from './utils/registerServiceWorker';
-import LoadData from './components/load-data';
+import App from './components/app';
+import config from './config';
 import './styles/index.scss';
 
-ReactDOM.render(<LoadData />, document.getElementById('root'));
+const { dataSource } = config;
+const useRandomData = dataSource === 'random';
+
+ReactDOM.render(
+  <App
+    allowHistoryDeletion={useRandomData}
+    allowUploads={true}
+    data={dataSource}
+    showHistory={useRandomData} />,
+  document.getElementById('root')
+);
 registerServiceWorker();
