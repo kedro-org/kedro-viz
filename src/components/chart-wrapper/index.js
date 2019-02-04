@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { Icon } from '@quantumblack/carbon-ui-components';
 import SidebarTabs from '../sidebar-tabs';
 import FlowChart from '../flowchart';
 import Description from '../description';
-import './chart-wrapper.css';
+import './chart-wrapper.scss';
 
 class ChartWrappper extends Component {
   constructor(props) {
@@ -20,28 +21,27 @@ class ChartWrappper extends Component {
     this.setState({ visibleNav });
   }
 
+  chartHasData() {
+    const data = this.props.activePipelineData;
+    return Boolean(data && data.nodes && data.nodes.length);
+  }
+
   render() {
     const { visibleNav } = this.state;
-    const { chartParams, theme, showHistory } = this.props;
-    const { data } = chartParams;
-    const chartHasData = Boolean(data && data.nodes && data.nodes.length);
+    const { theme, showHistory } = this.props;
+    const chartHasData = this.chartHasData();
 
     return (
       <div className={classnames('kernel-pipeline', {
         'cbn-theme--dark': theme === 'dark',
         'cbn-theme--light': theme === 'light',
       })}>
-        { showHistory && (
-          <Description
-            visibleNav={visibleNav}
-            pipelineData={this.props.pipelineData} 
-            activePipelineData={this.props.activePipelineData} />
+        { (chartHasData && showHistory) && (
+          <Description visibleNav={visibleNav} />
         ) }
-        <div className={classnames('pipeline-wrapper', {
-          'pipeline-wrapper--menu-visible': visibleNav
-        })}>
+        <div className='pipeline-wrapper'>
           { chartHasData && (
-            <FlowChart {...chartParams} visibleNav={visibleNav} />
+            <FlowChart visibleNav={visibleNav} />
           ) }
         </div>
         <button
@@ -70,11 +70,17 @@ class ChartWrappper extends Component {
             onClick={this.toggleNav.bind(this)}>
             <Icon type="close" title="Close" theme={theme} />
           </button>
-          <SidebarTabs {...this.props} />
+          <SidebarTabs />
         </nav>
       </div>
     );
   }
 }
 
-export default ChartWrappper;
+const mapStateToProps = (state) => ({
+  activePipelineData: state.activePipelineData,
+  showHistory: state.showHistory,
+  theme: state.theme
+});
+
+export default connect(mapStateToProps)(ChartWrappper);

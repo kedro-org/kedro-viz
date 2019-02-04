@@ -1,19 +1,25 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
   RadioButton,
   Toggle,
 } from '@quantumblack/carbon-ui-components';
+import {
+  changeView,
+  toggleParameters,
+  toggleTextLabels
+} from '../../actions';
 import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
-import './chart-ui.css';
+import './chart-ui.scss';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 const ChartUI = ({
   allowUploads,
   activePipelineData,
-  onChangeView,
-  onNodeUpdate,
+  onToggleParameters,
   onToggleTextLabels,
+  onChangeView,
   parameters,
   textLabels,
   theme,
@@ -54,29 +60,21 @@ const ChartUI = ({
         </li>
       </ul>
       <Toggle
-        onChange={(e, { value }) => onToggleTextLabels(Boolean(value))}
+        onChange={onToggleTextLabels}
         label="Labels"
         value={textLabels}
         checked={textLabels}
         theme={theme}
       />
       <Toggle
-        onChange={(e, { value }) => onNodeUpdate(
-          node => node.name.includes('param'),
-          'disabled',
-          !Boolean(value),
-          true
-        )}
+        onChange={onToggleParameters}
         label="Parameters"
         value={parameters}
         checked={parameters}
         theme={theme}
       />
       { activePipelineData.nodes && (
-        <NodeList
-          nodes={activePipelineData.nodes}
-          onNodeUpdate={onNodeUpdate}
-          theme={theme} />
+        <NodeList />
       ) }
       <UploadSnapshot
         allowUploads={allowUploads}
@@ -86,4 +84,25 @@ const ChartUI = ({
   </Scrollbars>
 ) : null;
 
-export default ChartUI;
+const mapStateToProps = (state) => ({
+  activePipelineData: state.activePipelineData,
+  allowUploads: state.allowUploads,
+  parameters: state.parameters,
+  textLabels: state.textLabels,
+  theme: state.theme,
+  view: state.view
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onChangeView: (e, { value }) => {
+    dispatch(changeView(value));
+  },
+  onToggleParameters: (e, { value }) => {
+    dispatch(toggleParameters(value));
+  },
+  onToggleTextLabels: (e, { value }) => {
+    dispatch(toggleTextLabels(Boolean(value)))
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChartUI);
