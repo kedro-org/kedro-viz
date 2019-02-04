@@ -9,8 +9,8 @@ import dagre from 'dagre';
 import { updateNodeProperties } from '../../actions';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
-import imgCog from './cog.svg';
-import imgDatabase from './database.svg';
+import databaseIcon from './database-icon.js';
+import cogIcon from './cog-icon';
 import './flowchart.scss';
 
 /**
@@ -346,16 +346,8 @@ class FlowChart extends Component {
 
     enterNodes.append('rect');
 
-    const imageSize = d => Math.round(d.height * 0.36);
-
     enterNodes
-      .append('image')
-      .attr('xlink:href', d => (d.type === 'data' ? imgDatabase : imgCog))
-      .attr('width', imageSize)
-      .attr('height', imageSize)
-      .attr('x', d => imageSize(d) / -2)
-      .attr('y', d => imageSize(d) / -2)
-      .attr('alt', d => d.name);
+      .append(d => d.type === 'data' ? databaseIcon() : cogIcon())
 
     enterNodes
       .append('text')
