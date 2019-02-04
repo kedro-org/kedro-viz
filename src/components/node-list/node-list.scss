@@ -18,6 +18,8 @@
 
 .pipeline-node-list__toggle-title {
   margin: 0 24px 12px;
+  font-size: 1.8em;
+  font-weight: 600;
 }
 
 .pipeline-node-list__toggle-container {
@@ -86,11 +88,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: calc(100% - 35px);
-        // color: rgba(white, 0.7);
 
         b {
           opacity: 0.3;
-          // color: white;
         }
       }
     }

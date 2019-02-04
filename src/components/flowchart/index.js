@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 // import { scaleOrdinal } from 'd3-scale';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import dagre from 'dagre';
+import { updateNodeProperties } from '../../actions';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
 import imgCog from './cog.svg';
 import imgDatabase from './database.svg';
-import './flowchart.css';
+import './flowchart.scss';
 
 /**
  * Get unique, reproducible ID for each edge, based on its nodes
@@ -177,16 +179,13 @@ class FlowChart extends Component {
 
     // Map to objects
     this.layout = {
-      nodes: this.graph
-        .nodes()
-        .map(d => this.graph.node(d))
-        .reduce((nodes, node) => {
-          nodes[node.id] = node;
-          return nodes;
-        }, {}),
+      nodes: this.graph.nodes().reduce((nodes, id) => {
+        nodes[id] = this.graph.node(id);
+        return nodes;
+      }, {}),
 
-      edges: this.graph.edges().reduce((edges, d) => {
-        const edge = this.graph.edge(d);
+      edges: this.graph.edges().reduce((edges, id) => {
+        const edge = this.graph.edge(id);
         edge.id = edgeID(edge);
         edges[edge.id] = edge;
         return edges;
@@ -280,7 +279,7 @@ class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { onNodeUpdate, textLabels } = this.props;
+    const { toggleNodeActive, textLabels } = this.props;
     const data = this.prepareData();
 
     // Transition the wrapper
@@ -379,7 +378,7 @@ class FlowChart extends Component {
       .classed('node--text', textLabels)
       .classed('node--active', d => d.active)
       .on('mouseover', d => {
-        onNodeUpdate(dd => dd.id === d.id, 'active', true);
+        toggleNodeActive(d, true);
         tooltip.show(this, d);
         linkedNodes.show(this.props.data, this.el, d.id);
       })
@@ -387,7 +386,7 @@ class FlowChart extends Component {
         tooltip.show(this, d);
       })
       .on('mouseout', d => {
-        onNodeUpdate(dd => dd.id === d.id, 'active', false);
+        toggleNodeActive(d, false);
         linkedNodes.hide(this.el);
         tooltip.hide(this.el);
       });
@@ -441,4 +440,16 @@ class FlowChart extends Component {
   }
 }
 
-export default FlowChart;
+const mapStateToProps = state => ({
+  data: state.activePipelineData,
+  textLabels: state.textLabels,
+  view: state.view
+});
+
+const mapDispatchToProps = dispatch => ({
+  toggleNodeActive: (node, isActive) => {
+    dispatch(updateNodeProperties(d => d.id === node.id, 'active', isActive));
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FlowChart);

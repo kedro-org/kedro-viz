@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { Icon } from '@quantumblack/carbon-ui-components';
 import SidebarTabs from '../sidebar-tabs';
 import FlowChart from '../flowchart';
 import Description from '../description';
-import './chart-wrapper.css';
+import './chart-wrapper.scss';
 
 class ChartWrappper extends Component {
   constructor(props) {
@@ -13,10 +14,6 @@ class ChartWrappper extends Component {
     this.state = {
       visibleNav: true
     };
-
-    // Pre-bind these methods to prevent the 'removeEventListener and bind(this) gotcha'
-    // (See https://gist.github.com/Restuta/e400a555ba24daa396cc)
-    this.closeNav = this.closeNav.bind(this);
   }
 
   toggleNav() {
@@ -24,23 +21,39 @@ class ChartWrappper extends Component {
     this.setState({ visibleNav });
   }
 
-  closeNav() {
-    this.setState({
-      visibleNav: false
-    });
+  chartHasData() {
+    const data = this.props.activePipelineData;
+    return Boolean(data && data.nodes && data.nodes.length);
   }
 
   render() {
     const { visibleNav } = this.state;
-    const { chartParams, theme, showHistory } = this.props;
-    const { data } = chartParams;
-    const chartHasData = Boolean(data && data.nodes && data.nodes.length);
+    const { theme, showHistory } = this.props;
+    const chartHasData = this.chartHasData();
 
     return (
       <div className={classnames('kernel-pipeline', {
         'cbn-theme--dark': theme === 'dark',
         'cbn-theme--light': theme === 'light',
       })}>
+        { (chartHasData && showHistory) && (
+          <Description visibleNav={visibleNav} />
+        ) }
+        <div className='pipeline-wrapper'>
+          { chartHasData && (
+            <FlowChart visibleNav={visibleNav} />
+          ) }
+        </div>
+        <button
+          aria-label="Show menu"
+          className="pipeline-sidebar__show-menu pipeline-icon-button"
+          onClick={this.toggleNav.bind(this)}>
+          <svg className="menu-icon" viewBox="0 0 24 24">
+            <rect x="2" y="5" width="20" height="2" />
+            <rect x="2" y="11" width="20" height="2" />
+            <rect x="2" y="17" width="20" height="2" />
+          </svg>
+        </button>
         <nav
           className={classnames('pipeline-sidebar', {
             'pipeline-sidebar--visible': visibleNav
@@ -57,34 +70,17 @@ class ChartWrappper extends Component {
             onClick={this.toggleNav.bind(this)}>
             <Icon type="close" title="Close" theme={theme} />
           </button>
-          <SidebarTabs {...this.props} />
+          <SidebarTabs />
         </nav>
-        { showHistory && (
-          <Description
-            visibleNav={visibleNav}
-            pipelineData={this.props.pipelineData} 
-            activePipelineData={this.props.activePipelineData} />
-        ) }
-        <div className={classnames('pipeline-wrapper', {
-          'pipeline-wrapper--menu-visible': visibleNav
-        })}>
-          { chartHasData && (
-            <FlowChart {...chartParams} visibleNav={visibleNav} />
-          ) }
-        </div>
-        <button
-          aria-label="Show menu"
-          className="pipeline-sidebar__show-menu pipeline-icon-button"
-          onClick={this.toggleNav.bind(this)}>
-          <svg className="menu-icon" viewBox="0 0 24 24">
-            <rect x="2" y="5" width="20" height="2" />
-            <rect x="2" y="11" width="20" height="2" />
-            <rect x="2" y="17" width="20" height="2" />
-          </svg>
-        </button>
       </div>
     );
   }
 }
 
-export default ChartWrappper;
+const mapStateToProps = (state) => ({
+  activePipelineData: state.activePipelineData,
+  showHistory: state.showHistory,
+  theme: state.theme
+});
+
+export default connect(mapStateToProps)(ChartWrappper);
