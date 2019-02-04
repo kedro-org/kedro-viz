@@ -107,7 +107,7 @@ class NodeList extends React.Component {
           autoHide
           hideTracksWhenNotNeeded>
           <div className='carbon'>
-            <h2 className='pipeline-node-list__toggle-title'>Nodes</h2>
+            <h2 className='pipeline-node-list__toggle-title'>All Elements</h2>
             <div className='pipeline-node-list__toggle-container'>
               <button
                 onClick={() => toggleAllNodes(this, false)}
