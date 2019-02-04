@@ -15,43 +15,53 @@ const History = ({
   onDeleteSnapshot,
   pipelineData,
   theme
-}) => (
-  <Scrollbars autoHide hideTracksWhenNotNeeded>
-    <ul className='pipeline-history'>
-      { pipelineData.map(snapshot =>
-        <li
-          className={classnames(
-            'pipeline-history__row',
-            {
-              'pipeline-history__row--active': activePipelineData.created_ts === snapshot.created_ts
-            }
-          )}
-          key={snapshot.created_ts}>
-          <RadioButton
-            checked={activePipelineData.created_ts === snapshot.created_ts}
-            label={(
-              <span className='pipeline-history__label'>
-                <b>{ snapshot.message }</b> <span>{ formatTime(+snapshot.created_ts) }</span>
-              </span>
+}) => {
+  /**
+   * Check snapshot equality with active snapshot
+   * @param {Object} snapshot A snapshot
+   * @return {Boolean} True if snapshot IDs match
+   */
+  const isActive = snapshot =>
+    activePipelineData.kernel_ai_schema_id === snapshot.kernel_ai_schema_id;
+
+  return (
+    <Scrollbars autoHide hideTracksWhenNotNeeded>
+      <ul className='pipeline-history'>
+        { pipelineData.map(snapshot =>
+          <li
+            className={classnames(
+              'pipeline-history__row',
+              {
+                'pipeline-history__row--active': isActive(snapshot)
+              }
             )}
-            name='history'
-            onChange={() => onChangeActivePipeline(snapshot)}
-            value={snapshot.created_ts}
-            theme={theme} />
-          { allowHistoryDeletion && (
-            <button
-              className='pipeline-history__delete'
-              title='Delete snapshot'
-              aria-label='Delete snapshot'
-              onClick={() => onDeleteSnapshot(snapshot)}>
-              <img src={deleteIcon} width='24' height='24' alt='Delete icon' />
-            </button>
-          ) }
-        </li>
-      ) }
-    </ul>
-  </Scrollbars>
-)
+            key={snapshot.created_ts}>
+            <RadioButton
+              checked={isActive(snapshot)}
+              label={(
+                <span className='pipeline-history__label'>
+                  <b>{ snapshot.message }</b> <span>{ formatTime(+snapshot.created_ts) }</span>
+                </span>
+              )}
+              name='history'
+              onChange={() => onChangeActivePipeline(snapshot)}
+              value={snapshot.created_ts}
+              theme={theme} />
+            { allowHistoryDeletion && (
+              <button
+                className='pipeline-history__delete'
+                title='Delete snapshot'
+                aria-label='Delete snapshot'
+                onClick={() => onDeleteSnapshot(snapshot)}>
+                <img src={deleteIcon} width='24' height='24' alt='Delete icon' />
+              </button>
+            ) }
+          </li>
+        ) }
+      </ul>
+    </Scrollbars>
+  );
+};
 
 const mapStateToProps = state => ({
   activePipelineData: state.activePipelineData,
