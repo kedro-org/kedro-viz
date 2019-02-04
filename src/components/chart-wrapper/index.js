@@ -13,21 +13,11 @@ class ChartWrappper extends Component {
     this.state = {
       visibleNav: true
     };
-
-    // Pre-bind these methods to prevent the 'removeEventListener and bind(this) gotcha'
-    // (See https://gist.github.com/Restuta/e400a555ba24daa396cc)
-    this.closeNav = this.closeNav.bind(this);
   }
 
   toggleNav() {
     const visibleNav = !this.state.visibleNav;
     this.setState({ visibleNav });
-  }
-
-  closeNav() {
-    this.setState({
-      visibleNav: false
-    });
   }
 
   render() {
@@ -41,24 +31,6 @@ class ChartWrappper extends Component {
         'cbn-theme--dark': theme === 'dark',
         'cbn-theme--light': theme === 'light',
       })}>
-        <nav
-          className={classnames('pipeline-sidebar', {
-            'pipeline-sidebar--visible': visibleNav
-          })}
-          ref={el => {
-            this.nav = el;
-          }}>
-          <button
-            aria-label="Hide menu"
-            className={classnames('pipeline-sidebar__hide-menu pipeline-icon-button', {
-              'pipeline-sidebar__hide-menu--offset': !showHistory,
-              'pipeline-sidebar__hide-menu--visible': visibleNav,
-            })}
-            onClick={this.toggleNav.bind(this)}>
-            <Icon type="close" title="Close" theme={theme} />
-          </button>
-          <SidebarTabs {...this.props} />
-        </nav>
         { showHistory && (
           <Description
             visibleNav={visibleNav}
@@ -82,6 +54,24 @@ class ChartWrappper extends Component {
             <rect x="2" y="17" width="20" height="2" />
           </svg>
         </button>
+        <nav
+          className={classnames('pipeline-sidebar', {
+            'pipeline-sidebar--visible': visibleNav
+          })}
+          ref={el => {
+            this.nav = el;
+          }}>
+          <button
+            aria-label="Hide menu"
+            className={classnames('pipeline-sidebar__hide-menu pipeline-icon-button', {
+              'pipeline-sidebar__hide-menu--offset': !showHistory,
+              'pipeline-sidebar__hide-menu--visible': visibleNav,
+            })}
+            onClick={this.toggleNav.bind(this)}>
+            <Icon type="close" title="Close" theme={theme} />
+          </button>
+          <SidebarTabs {...this.props} />
+        </nav>
       </div>
     );
   }
