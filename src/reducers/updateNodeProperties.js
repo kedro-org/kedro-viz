@@ -1,6 +1,6 @@
 /**
  * Loop through the list of nodes and edges for the active snapshot,
- * and update a specified property for each to a specied value,
+ * and update a specified property for each to a specified value,
  * if and only if they match a provided selector rule
  * @param {Object} snapshot Active pipeline data
  * @param {Function} matchNode Conditional. Returns true if node should be updated
