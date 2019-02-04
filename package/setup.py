@@ -31,7 +31,7 @@ setup(
         'Flask>=1.0, <2.0'
     ],
     setup_requires=['pytest-runner==4.2'],
-    tests_require=['pytest==4.1.1'],
+    tests_require=['pytest==4.2.0'],
     author='QuantumBlack',
     author_email='feedback@quantumblack.com',
     entry_points={
