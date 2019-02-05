@@ -9,7 +9,7 @@ import dagre from 'dagre';
 import { updateNodeProperties } from '../../actions';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
-import databaseIcon from './database-icon.js';
+import databaseIcon from './database-icon';
 import cogIcon from './cog-icon';
 import './flowchart.scss';
 
@@ -347,7 +347,7 @@ class FlowChart extends Component {
     enterNodes.append('rect');
 
     enterNodes
-      .append(d => d.type === 'data' ? databaseIcon() : cogIcon())
+      .append(d => d.type === 'data' ? databaseIcon(d) : cogIcon(d))
 
     enterNodes
       .append('text')

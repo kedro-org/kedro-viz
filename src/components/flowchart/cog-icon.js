@@ -4,15 +4,17 @@ import { select, event } from 'd3-selection';
  * Cog icon, needs to be created like this to support exports
  * in studio ai (which struggles with xlink-hrefs)
  */
-export default () => {
+export default d => {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+
+  const imageSize = d => Math.round(d.height * 0.36);
 
   const g = select(svg)
     .attr('viewBox', '0 0 268.76 268.76')
-    .attr('width', '18px')
-    .attr('height', '18px')
-    .attr('x', `${18 / -2}px`)
-    .attr('y', `${18 / -2}px`)
+    .attr('width', imageSize(d))
+    .attr('height', imageSize(d))
+    .attr('x', imageSize(d) / -2)
+    .attr('y', imageSize(d) / -2)
     .append('g')
     .attr('fill', '#fff');
 
