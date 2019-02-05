@@ -45,13 +45,8 @@ function reducer(state = {}, action) {
       });
 
     case TOGGLE_TAG: {
-      const tags = state.activePipelineData.tags.map(tag => {
-        const newTag = Object.assign({}, tag);
-        if (tag.id === action.tagID) {
-          newTag.disabled = action.disabled;
-        }
-        return newTag;
-      });
+      const tags = Object.assign({}, state.activePipelineData.tags);
+      tags[action.tagID] = !action.disabled;
       return Object.assign({}, state, {
         activePipelineData: Object.assign({}, state.activePipelineData, { tags })
       });

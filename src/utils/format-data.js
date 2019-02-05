@@ -116,20 +116,17 @@ const formatData = raw => {
   });
 
   // Generate a formatted list of tags from node data
-  const tags = nodes.reduce((tags, node) => {
+  const tags = nodes.reduce((tagList, node) => {
     if (!node.tags) {
-      return tags;
+      return tagList;
     }
-    const nodeTags = node.tags.reduce((nodeTags, tag) => (
-      tags.includes(tag) ? nodeTags : nodeTags.concat(tag)
-    ), []);
-    return tags.concat(nodeTags);
-  }, [])
-  .map(tag => ({
-    id: tag,
-    name: tag.replace(/_/g, ' '),
-    disabled: false
-  }));
+    node.tags.forEach(tagID => {
+      if (!tagList[tagID]) {
+        tagList[tagID] = true;
+      }
+    });
+    return tagList;
+  }, {});
 
   return {
     nodes,
