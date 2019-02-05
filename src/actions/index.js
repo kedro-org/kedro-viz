@@ -78,6 +78,21 @@ export function toggleTextLabels(textLabels) {
   };
 }
 
+export const TOGGLE_TAG = 'TOGGLE_TAG';
+
+/**
+ * Toggle a tag on/off
+ * @param {string} tagID Tag id
+ * @param {Boolean} disabled True if tag is disabled
+ */
+export function toggleTag(tagID, disabled) {
+  return {
+    type: TOGGLE_TAG,
+    tagID,
+    disabled
+  };
+}
+
 export const UPDATE_NODE_PROPERTIES = 'UPDATE_NODE_PROPERTIES';
 
 /**

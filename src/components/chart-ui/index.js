@@ -9,6 +9,7 @@ import {
 import {
   changeView,
   toggleParameters,
+  toggleTag,
   toggleTextLabels
 } from '../../actions';
 import NodeList from '../node-list';
@@ -21,7 +22,7 @@ const ChartUI = ({
   activePipelineData,
   onToggleParameters,
   onToggleTextLabels,
-  onTagUpdate,
+  onToggleTag,
   onChangeView,
   parameters,
   textLabels,
@@ -85,10 +86,8 @@ const ChartUI = ({
                 <Checkbox
                   checked={!tag.disabled}
                   label={<span>{tag.name}</span>}
-                  name={tag.name}
-                  onChange={(e, { checked }) => {
-                    onTagUpdate(d => d.id === tag.id, 'disabled', !checked);
-                  }}
+                  name={tag.id}
+                  onChange={onToggleTag(tag.id)}
                   theme={theme} />
               </li>
             )) }
@@ -122,6 +121,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   onToggleParameters: (e, { value }) => {
     dispatch(toggleParameters(value));
+  },
+  onToggleTag: tagID => (e, { checked }) => {
+    dispatch(toggleTag(tagID, !checked));
   },
   onToggleTextLabels: (e, { value }) => {
     dispatch(toggleTextLabels(Boolean(value)))
