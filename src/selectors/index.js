@@ -24,8 +24,14 @@ export const getNodes = createSelector(
 export const getEdges = createSelector(
   [getPipelines, getActivePipeline],
   (pipelines, activePipeline) => {
-    const { edges } = pipelines.snapshots[activePipeline];
-    return edges.allIds.map(id => edges.data[id]);
+    const { nodes, edges } = pipelines.snapshots[activePipeline];
+    return edges.allIds.map(id => {
+      const { source, target } = edges.data[id];
+      return {
+        source: nodes.data[source],
+        target: nodes.data[target],
+      };
+    });
   }
 );
 

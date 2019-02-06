@@ -14,7 +14,7 @@ const validateInput = data => {
  * Get unique, reproducible ID for each edge, based on its nodes
  * @param {Object} edge - An edge datum
  */
-export const edgeID = edge => [edge.source.id, edge.target.id].join('-');
+export const edgeID = edge => [edge.source, edge.target].join('-');
 
 /**
  * Format raw data for a single snapshot into a usable structure
@@ -66,7 +66,10 @@ const formatSnapshotData = raw => {
    * @param {Object} target - Child node
    */
   const addEdge = (source, target) => {
-    const edge = { source, target };
+    const edge = {
+      source: source.id,
+      target: target.id
+    };
     const id = edgeID(edge);
     edges.data[id] = edge;
     edges.allIds.push(id);
