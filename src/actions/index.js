@@ -1,13 +1,13 @@
-export const CHANGE_ACTIVE_PIPELINE = 'CHANGE_ACTIVE_PIPELINE';
+export const CHANGE_ACTIVE_SNAPSHOT = 'CHANGE_ACTIVE_SNAPSHOT';
 
 /**
  * Change which pipeline snapshot is active.
- * @param {Object} pipeline A single snapshot datum
+ * @param {string} snapshotID A single snapshot ID
  */
-export function changeActivePipeline(pipeline) {
+export function changeActiveSnapshot(snapshotID) {
   return {
-    type: CHANGE_ACTIVE_PIPELINE,
-    pipeline
+    type: CHANGE_ACTIVE_SNAPSHOT,
+    snapshotID
   };
 }
 
@@ -29,7 +29,7 @@ export const DELETE_SNAPSHOT = 'DELETE_SNAPSHOT';
 /**
  * Select a snapshot and delete it. If handler is passed via App
  * 'onDeleteSnapshot' prop then use that, else use native method.
- * @param {number} id Snapshot kernel_ai_schema_id
+ * @param {number} id Snapshot id
  */
 export function deleteSnapshot(id) {
   return {

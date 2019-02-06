@@ -12,7 +12,7 @@ import {
   toggleTag,
   toggleTextLabels
 } from '../../actions';
-import { getTags } from '../../selectors';
+import { getActivePipelineData, getTags } from '../../selectors';
 import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
 import './chart-ui.scss';
@@ -83,7 +83,9 @@ const ChartUI = ({
         <React.Fragment>
           <ul className="pipeline-ui__tag-list">
             { tags.map(tag => (
-              <li key={`tag-${tag.id}`} className="cbn-menu-option">
+              <li
+                key={`tag-${tag.id}`}
+                className="pipeline-ui__tag-list-item cbn-menu-option">
                 <Checkbox
                   checked={!tag.disabled}
                   label={<span>{tag.name}</span>}
@@ -107,7 +109,7 @@ const ChartUI = ({
 ) : null;
 
 const mapStateToProps = (state) => ({
-  activePipelineData: state.activePipelineData,
+  activePipelineData: getActivePipelineData(state),
   allowUploads: state.allowUploads,
   parameters: state.parameters,
   tags: getTags(state),

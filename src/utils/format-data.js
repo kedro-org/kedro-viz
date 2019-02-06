@@ -11,11 +11,11 @@ const validateInput = data => {
 }
 
 /**
- * Format raw data into a usable structure
+ * Format raw data for a single snapshot into a usable structure
  * @param {Object} raw - The parsed data straight from the JSON
  * @return {Object} The node, edge and raw data for the chart
  */
-const formatData = raw => {
+const formatSnapshotData = raw => {
   if (!validateInput(raw)) {
     return {};
   }
@@ -135,4 +135,43 @@ const formatData = raw => {
   };
 };
 
-export default formatData;
+/**
+ * Format the full list of snapshot data
+ * @param {Array} data 
+ * @eturn {Object} 
+ */
+const formatSnapshots = (data) => {
+  if (!Array.isArray(data)) {
+    return {};
+  }
+
+  const formattedData = data.map(({
+    json_schema,
+    kernel_ai_schema_id,
+    created_ts,
+    ...pipeline
+  }) => Object.assign({}, pipeline, {
+    id: String(kernel_ai_schema_id),
+    timestamp: Number(created_ts),
+    ...formatSnapshotData(json_schema)
+  }));
+
+  const snapshots = formattedData.reduce((snapshots, snapshot) => {
+    snapshots[snapshot.id] = snapshot;
+    return snapshots;
+  }, {});
+
+  const allIds = formattedData
+    .sort((a, b) => b.created_ts - a.created_ts)
+    .map(d => d.id);
+
+  const id = allIds.join('');
+  
+  return {
+    id,
+    snapshots,
+    allIds
+  };
+};
+
+export default formatSnapshots;

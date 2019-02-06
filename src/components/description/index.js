@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import './description.scss';
 import classnames from 'classnames';
+import { getActivePipelineData } from '../../selectors';
+import './description.scss';
 import formatTime from '../../utils/format-time';
 
 const Description = ({ timestamp, message, visibleNav }) => (
@@ -14,9 +15,12 @@ const Description = ({ timestamp, message, visibleNav }) => (
   </div>
 );
 
-const mapStateToProps = (state) => ({
-  timestamp: state.activePipelineData.created_ts,
-  message: state.activePipelineData.message
-});
+const mapStateToProps = (state) => {
+  const { timestamp, message } = getActivePipelineData(state);
+  return {
+    timestamp,
+    message
+  };
+};
 
 export default connect(mapStateToProps)(Description);

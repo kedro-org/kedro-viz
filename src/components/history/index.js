@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { RadioButton } from '@quantumblack/carbon-ui-components';
-import { changeActivePipeline, deleteSnapshot } from '../../actions';
+import { changeActiveSnapshot, deleteSnapshot } from '../../actions';
+import { getActivePipelineData, getPipelineData } from '../../selectors';
 import deleteIcon from './delete.svg';
 import './history.scss';
 import formatTime from '../../utils/format-time';
@@ -11,7 +12,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 const History = ({
   activePipelineData,
   allowHistoryDeletion,
-  onChangeActivePipeline,
+  onChangeActiveSnapshot,
   onDeleteSnapshot,
   pipelineData,
   theme
@@ -21,8 +22,7 @@ const History = ({
    * @param {Object} snapshot A snapshot
    * @return {Boolean} True if snapshot IDs match
    */
-  const isActive = snapshot =>
-    activePipelineData.kernel_ai_schema_id === snapshot.kernel_ai_schema_id;
+  const isActive = snapshot => activePipelineData.id === snapshot.id;
 
   return (
     <Scrollbars autoHide hideTracksWhenNotNeeded>
@@ -35,17 +35,17 @@ const History = ({
                 'pipeline-history__row--active': isActive(snapshot)
               }
             )}
-            key={snapshot.created_ts}>
+            key={snapshot.id}>
             <RadioButton
               checked={isActive(snapshot)}
               label={(
                 <span className='pipeline-history__label'>
-                  <b>{ snapshot.message }</b> <span>{ formatTime(+snapshot.created_ts) }</span>
+                  <b>{ snapshot.message }</b> <span>{ formatTime(+snapshot.timestamp) }</span>
                 </span>
               )}
               name='history'
-              onChange={() => onChangeActivePipeline(snapshot)}
-              value={snapshot.created_ts}
+              onChange={() => onChangeActiveSnapshot(snapshot)}
+              value={snapshot.id}
               theme={theme} />
             { allowHistoryDeletion && (
               <button
@@ -64,18 +64,18 @@ const History = ({
 };
 
 const mapStateToProps = state => ({
-  activePipelineData: state.activePipelineData,
+  activePipelineData: getActivePipelineData(state),
   allowHistoryDeletion: state.allowHistoryDeletion,
-  pipelineData: state.pipelineData,
+  pipelineData: getPipelineData(state),
   theme: state.theme,
 });
 
 const mapDispatchToProps = dispatch => ({
-  onChangeActivePipeline: snapshot => dispatch(
-    changeActivePipeline(snapshot)
+  onChangeActiveSnapshot: snapshot => dispatch(
+    changeActiveSnapshot(snapshot.id)
   ),
   onDeleteSnapshot: snapshot => dispatch(
-    deleteSnapshot(snapshot.kernel_ai_schema_id)
+    deleteSnapshot(snapshot.id)
   ),
 });
 

@@ -7,6 +7,7 @@ import {
   utils,
 } from '@quantumblack/carbon-ui-components';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { getActivePipelineData } from '../../selectors';
 import { updateNodeProperties } from '../../actions';
 import './node-list.scss';
 
@@ -162,7 +163,7 @@ class NodeList extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  nodes: state.activePipelineData.nodes,
+  nodes: getActivePipelineData(state).nodes,
   theme: state.theme,
 });
 
@@ -175,7 +176,7 @@ const mapDispatchToProps = dispatch => ({
   },
   toggleAllNodes: (self, disabled) => {
     dispatch(updateNodeProperties(
-      name => self.nodeMatchesSearch(name, self.state.searchValue),
+      node => self.nodeMatchesSearch(node, self.state.searchValue),
       'disabled',
       disabled
     ));
