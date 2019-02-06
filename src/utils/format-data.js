@@ -11,6 +11,12 @@ const validateInput = data => {
 }
 
 /**
+ * Get unique, reproducible ID for each edge, based on its nodes
+ * @param {Object} edge - An edge datum
+ */
+export const edgeID = edge => [edge.source.id, edge.target.id].join('-');
+
+/**
  * Format raw data for a single snapshot into a usable structure
  * @param {Object} raw - The parsed data straight from the JSON
  * @return {Object} The node, edge and raw data for the chart
@@ -20,14 +26,20 @@ const formatSnapshotData = raw => {
     return {};
   }
 
-  const nodes = [];
-  const edges = [];
+  const nodes = {
+    data: {},
+    allIds: [],
+  };
+  const edges = {
+    data: {},
+    allIds: [],
+  };
 
   /**
    * Get a reference to the formatted node datum
    * @param {string} id - Underscore-separated node id
    */
-  const findNode = id => nodes.find(d => d.id === id);
+  const findNode = id => nodes.data[id];
 
   /**
    * Add a new node if it doesn't already exist
@@ -35,15 +47,17 @@ const formatSnapshotData = raw => {
    * @param {string} type - 'data' or 'task'
    * @param {Array} tags - List of associated tags
    */
-  const addNode = (name, type, tags) => {
+  const addNode = (name, type, tags = []) => {
     if (findNode(name)) {
       return;
     }
-    nodes.push(Object.assign({
+    nodes.data[name] = {
       id: name,
       name: name.replace(/_/g, ' '),
-      type
-    }, tags ? { tags } : null));
+      type,
+      tags
+    };
+    nodes.allIds.push(name);
   };
 
   /**
@@ -52,7 +66,10 @@ const formatSnapshotData = raw => {
    * @param {Object} target - Child node
    */
   const addEdge = (source, target) => {
-    edges.push({ source, target });
+    const edge = { source, target };
+    const id = edgeID(edge);
+    edges.data[id] = edge;
+    edges.allIds.push(id);
   };
 
   /**
@@ -98,9 +115,11 @@ const formatSnapshotData = raw => {
   });
 
   // Create links between input task nodes and output task nodes (for task view)
-  edges.forEach(d => {
+  edges.allIds.forEach(sourceID => {
+    const d = edges.data[sourceID];
     if (d.source.type === 'task') {
-      edges.forEach(dd => {
+      edges.allIds.forEach(targetID => {
+        const dd = edges.data[targetID];
         if (dd.target.type === 'task' && dd.source.id === d.target.id) {
           addEdge(d.source, dd.target);
         }
@@ -108,18 +127,9 @@ const formatSnapshotData = raw => {
     }
   });
 
-  // Sort nodes alphabetically
-  nodes.sort((a, b) => {
-    if (a.name < b.name) return -1;
-    if (a.name > b.name) return 1;
-    return 0;
-  });
-
   // Generate a formatted list of tags from node data
-  const tags = nodes.reduce((tagList, node) => {
-    if (!node.tags) {
-      return tagList;
-    }
+  const tags = nodes.allIds.reduce((tagList, nodeID) => {
+    const node = nodes.data[nodeID];
     node.tags.forEach(tagID => {
       if (!tagList[tagID]) {
         tagList[tagID] = true;

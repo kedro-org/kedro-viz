@@ -3,12 +3,13 @@ import {
   CHANGE_VIEW,
   DELETE_SNAPSHOT,
   RESET_SNAPSHOT_DATA,
+  TOGGLE_NODE_ACTIVE,
+  TOGGLE_NODE_DISABLED,
+  TOGGLE_NODES_DISABLED,
   TOGGLE_PARAMETERS,
   TOGGLE_TAG,
   TOGGLE_TEXT_LABELS,
-  UPDATE_NODE_PROPERTIES,
 } from '../actions';
-import updateNodeProperties from './updateNodeProperties';
 
 function reducer(state = {}, action) {
   switch (action.type) {
@@ -50,6 +51,28 @@ function reducer(state = {}, action) {
         pipelineData: action.snapshots,
       });
 
+    case TOGGLE_NODE_ACTIVE: {
+      const pipelineData = Object.assign({}, state.pipelineData);
+      pipelineData.snapshots[state.activePipeline].nodes.data[action.nodeID].active = action.isActive;
+      return Object.assign({}, state, { pipelineData });
+    }
+
+    case TOGGLE_NODE_DISABLED: {
+      const pipelineData = Object.assign({}, state.pipelineData);
+      pipelineData.snapshots[state.activePipeline].nodes.data[action.nodeID].disabled = action.isDisabled;
+      return Object.assign({}, state, { pipelineData });
+    }
+
+    case TOGGLE_NODES_DISABLED: {
+      const pipelineData = Object.assign({}, state.pipelineData);
+      pipelineData.snapshots[state.activePipeline].nodes.allIds
+        .filter(id => action.nodeIDs.includes(id))
+        .forEach(id => {
+          pipelineData.snapshots[state.activePipeline].nodes.data[id].disabled = action.isDisabled;
+        });
+      return Object.assign({}, state, { pipelineData });
+    }
+
     case TOGGLE_TEXT_LABELS:
       return Object.assign({}, state, {
         textLabels: action.textLabels,
@@ -64,26 +87,23 @@ function reducer(state = {}, action) {
 
     case TOGGLE_PARAMETERS: {
       const pipelineData = Object.assign({}, state.pipelineData);
-      pipelineData.snapshots[state.activePipeline] = updateNodeProperties({
-        snapshot: pipelineData.snapshots[state.activePipeline],
-        matchNode: node => node.name.includes('param'),
-        property: 'disabled',
-        value: !action.parameters
-      });
+      pipelineData.snapshots[state.activePipeline].nodes.allIds
+        .filter(id => id.includes('param'))
+        .forEach(id => {
+          pipelineData.snapshots[state.activePipeline].nodes.data[id].disabled = !action.parameters;
+        });
+      // pipelineData.snapshots[state.activePipeline] = updateNodeProperties({
+      //   snapshot: pipelineData.snapshots[state.activePipeline],
+      //   matchNode: node => node.name.includes('param'),
+      //   property: 'disabled',
+      //   value: !action.parameters
+      // });
       return Object.assign({}, state, {
         pipelineData,
         parameters: action.parameters,
       });
     }
 
-    case UPDATE_NODE_PROPERTIES: {
-      const pipelineData = Object.assign({}, state.pipelineData);
-      pipelineData.snapshots[state.activePipeline] = updateNodeProperties({
-        snapshot: pipelineData.snapshots[state.activePipeline],
-        ...action
-      });
-      return Object.assign({}, state, { pipelineData });
-    }
     default:
       return state;
   }

@@ -13,6 +13,22 @@ export const getActivePipelineData = createSelector(
   (pipelines, activePipeline) => pipelines.snapshots[activePipeline]
 );
 
+export const getNodes = createSelector(
+  [getPipelines, getActivePipeline],
+  (pipelines, activePipeline) => {
+    const { nodes } = pipelines.snapshots[activePipeline];
+    return nodes.allIds.sort().map(id => nodes.data[id]);
+  }
+);
+
+export const getEdges = createSelector(
+  [getPipelines, getActivePipeline],
+  (pipelines, activePipeline) => {
+    const { edges } = pipelines.snapshots[activePipeline];
+    return edges.allIds.map(id => edges.data[id]);
+  }
+);
+
 export const getTags = createSelector(
   [getPipelines, getActivePipeline],
   (pipelines, activePipeline) => {

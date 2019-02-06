@@ -26,7 +26,6 @@ class App extends React.Component {
 
     const initialState = {
       activePipeline: pipelineData.allIds[0],
-      activePipelineData: pipelineData.snapshots[pipelineData.allIds[0]],
       allowHistoryDeletion,
       allowUploads,
       onDeleteSnapshot,

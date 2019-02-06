@@ -52,6 +52,51 @@ export function resetSnapshotData(snapshots) {
   };
 }
 
+export const TOGGLE_NODE_ACTIVE = 'TOGGLE_NODE_ACTIVE';
+
+/**
+ * Toggle a node's highlighting on/off
+ * @param {string} nodeID The node's unique identifier
+ * @param {Boolean} isActive Whether the node should be active
+ */
+export function toggleNodeActive(nodeID, isActive) {
+  return {
+    type: TOGGLE_NODE_ACTIVE,
+    nodeID,
+    isActive
+  };
+}
+
+export const TOGGLE_NODE_DISABLED = 'TOGGLE_NODE_DISABLED';
+
+/**
+ * Toggle a node's visibility on/off
+ * @param {string} nodeID The node's unique identifier
+ * @param {Boolean} isDisabled Whether the node should be visible
+ */
+export function toggleNodeDisabled(nodeID, isDisabled) {
+  return {
+    type: TOGGLE_NODE_DISABLED,
+    nodeID,
+    isDisabled
+  };
+}
+
+export const TOGGLE_NODES_DISABLED = 'TOGGLE_NODES_DISABLED';
+
+/**
+ * Toggle a selected group of nodes' visibility on/off
+ * @param {Array} nodeIDs The nodes' unique identifiers
+ * @param {Boolean} isDisabled Whether the node should be visible
+ */
+export function toggleNodesDisabled(nodeIDs, isDisabled) {
+  return {
+    type: TOGGLE_NODES_DISABLED,
+    nodeIDs,
+    isDisabled
+  };
+}
+
 export const TOGGLE_PARAMETERS = 'TOGGLE_PARAMETERS';
 
 /**
@@ -90,24 +135,5 @@ export function toggleTag(tagID, disabled) {
     type: TOGGLE_TAG,
     tagID,
     disabled
-  };
-}
-
-export const UPDATE_NODE_PROPERTIES = 'UPDATE_NODE_PROPERTIES';
-
-/**
- * Loop through the list of nodes and edges for the active snapshot,
- * and update a specified property for each to a specified value,
- * if and only if they match a provided selector rule
- * @param {Function} matchNode Conditional. Returns true if node should be updated
- * @param {string} property The node prop to be updated
- * @param {any} value The new value for the updated node property
- */
-export function updateNodeProperties(matchNode, property, value) {
-  return {
-    type: UPDATE_NODE_PROPERTIES,
-    matchNode,
-    property,
-    value
   };
 }

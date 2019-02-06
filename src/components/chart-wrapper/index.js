@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { Icon } from '@quantumblack/carbon-ui-components';
-import { getActivePipelineData } from '../../selectors';
+import { getNodes } from '../../selectors';
 import SidebarTabs from '../sidebar-tabs';
 import FlowChart from '../flowchart';
 import Description from '../description';
@@ -23,8 +23,8 @@ class ChartWrappper extends Component {
   }
 
   chartHasData() {
-    const data = this.props.activePipelineData;
-    return Boolean(data && data.nodes && data.nodes.length);
+    const { nodes } = this.props;
+    return Boolean(nodes && nodes.length);
   }
 
   render() {
@@ -79,7 +79,7 @@ class ChartWrappper extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  activePipelineData: getActivePipelineData(state),
+  nodes: getNodes(state),
   showHistory: state.showHistory,
   theme: state.theme
 });
