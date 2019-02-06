@@ -16,7 +16,6 @@ class App extends React.Component {
     super(props);
 
     const pipelineData = this.loadData(props.data);
-    console.log(pipelineData, pipelineData.id.length);
 
     const {
       allowHistoryDeletion,

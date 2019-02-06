@@ -164,11 +164,8 @@ const formatSnapshots = (data) => {
   const allIds = formattedData
     .sort((a, b) => b.created_ts - a.created_ts)
     .map(d => d.id);
-
-  const id = allIds.join('');
   
   return {
-    id,
     snapshots,
     allIds
   };
