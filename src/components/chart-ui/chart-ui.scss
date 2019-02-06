@@ -25,6 +25,14 @@
   margin: 0;
   padding: 0;
   list-style: none;
+
+  .pipeline-ui__tag-list-item {
+    padding: 0;
+
+    label {
+      padding: 10px 12px;
+    }
+  }
 }
 
 .pipeline-ui {
