@@ -24,7 +24,7 @@ class UploadSnapshot extends Component {
       modalVisible: false,
       showForm: true,
       status: '',
-      token: store.get()
+      token: store.get() || ''
     };
 
     this.syncStudioData = this.syncStudioData.bind(this);
@@ -111,6 +111,14 @@ class UploadSnapshot extends Component {
       return null;
     }
 
+    /**
+     * Set input status to 'error' (red underline) if status is set
+     * and if the value is falsey (i.e. null/undefined/empty string)
+     * @param {string} value Token or Message string
+     * @return {string|null} Input status
+     */
+    const inputStatus = value => status && (!value ? 'error' : null);
+
     return (
       <div className="pipeline-upload">
         <Button theme={theme} onClick={this.showModal}>Upload Snapshot to StudioAI</Button>
@@ -139,7 +147,7 @@ class UploadSnapshot extends Component {
                       label='StudioAI token'
                       theme={theme}
                       value={token}
-                      status={status && !token.length ? 'error' : null }
+                      status={inputStatus(token)}
                       onChange={(e, { value }) => {
                         this.setState({ token: value });
                       }}
@@ -151,7 +159,7 @@ class UploadSnapshot extends Component {
                       label='Message'
                       theme={theme}
                       value={message}
-                      status={status && !message.length ? 'error' : null }
+                      status={inputStatus(message)}
                       onChange={(e, { value }) => {
                         this.setState({ message: value });
                       }}
