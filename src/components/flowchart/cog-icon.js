@@ -1,4 +1,4 @@
-import { select, event } from 'd3-selection';
+import { select } from 'd3-selection';
 
 /**
  * Cog icon, needs to be created like this to support exports
