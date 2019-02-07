@@ -9,7 +9,7 @@
 }
 
 .node {
-  image, text {
+  svg, text {
     pointer-events: none;
   }
 
@@ -70,7 +70,7 @@
 }
 
 .node--text {
-  image,
+  svg,
   circle {
     opacity: 0;
     pointer-events: none;
