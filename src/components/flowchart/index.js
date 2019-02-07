@@ -45,7 +45,7 @@ class FlowChart extends Component {
     this.getLayout();
     this.drawChart();
     this.zoomChart();
-    this.checkNodeCount();
+    this.updateNodeCount(this.checkNodeCount());
     window.addEventListener('resize', this.resizeChart);
   }
 
@@ -74,19 +74,46 @@ class FlowChart extends Component {
   /**
    * Determine whether the chart's Dagre layout should be recalculated,
    * when receiving new props. Layout is time-consuming so we don't want to
-   * run it unless we absolutely have to. This should only happen if the view,
-   * text labels, snapshot data, or visible number of nodes have changed.
+   * run it unless we absolutely have to.
    * @param {Object} prevProps Previous component props
    * @return {Boolean} True if new layout is required
    */
   shouldRedrawLayout(prevProps) {
-    return [
-      () => prevProps.textLabels !== this.props.textLabels,
-      () => prevProps.view !== this.props.view,
-      () => prevProps.visibleNav !== this.props.visibleNav,
-      () => prevProps.data.kernel_ai_schema_id !== this.props.data.kernel_ai_schema_id,
-      () => this.checkNodeCount()
-    ].some(d => d());
+    const newNodeCount = this.checkNodeCount();
+    let shouldRedraw = false;
+    // Don't redraw if there are no visible nodes
+    if (newNodeCount !== 0) {
+      shouldRedraw = [
+        this.nodeCount !== newNodeCount,
+        prevProps.textLabels !== this.props.textLabels,
+        prevProps.view !== this.props.view,
+        prevProps.visibleNav !== this.props.visibleNav,
+        prevProps.data.kernel_ai_schema_id !== this.props.data.kernel_ai_schema_id,
+      ].some(Boolean);
+    }
+    this.updateNodeCount(newNodeCount);
+    return shouldRedraw;
+  }
+
+  /**
+   * Calculate the number of active nodes
+   */
+  checkNodeCount() {
+    return this.props.data.nodes.filter(d => !d.disabled).length;
+  }
+
+  /**
+   * Keep a count of the number of nodes on screen,
+   * and return true if the number of visible nodes has changed,
+   * indicating that the dagre layout should be updated
+   */
+  updateNodeCount(newNodeCount) {
+    // Don't update node if count hasn't changed (to avoid unnecessary redraws)
+    if (newNodeCount === this.nodeCount) {
+      return false;
+    }
+    this.nodeCount = newNodeCount;
+    return true;
   }
 
   /**
@@ -191,22 +218,6 @@ class FlowChart extends Component {
         return edges;
       }, {})
     };
-  }
-
-  /**
-   * Keep a count of the number of nodes on screen,
-   * and return true if the number of visible nodes has changed,
-   * indicating that the dagre layout should be updated
-   */
-  checkNodeCount() {
-    const newNodeCount = this.props.data.nodes.filter(d => !d.disabled).length;
-    // Don't update node if count hasn't changed (to avoid unnecessary redraws),
-    // or if count is zero (to prevent errors)
-    if (newNodeCount === this.nodeCount || newNodeCount === 0) {
-      return false;
-    }
-    this.nodeCount = newNodeCount;
-    return true;
   }
 
   /**
