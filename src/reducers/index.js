@@ -92,12 +92,6 @@ function reducer(state = {}, action) {
         .forEach(id => {
           pipelineData.snapshots[state.activePipeline].nodes.data[id].disabled = !action.parameters;
         });
-      // pipelineData.snapshots[state.activePipeline] = updateNodeProperties({
-      //   snapshot: pipelineData.snapshots[state.activePipeline],
-      //   matchNode: node => node.name.includes('param'),
-      //   property: 'disabled',
-      //   value: !action.parameters
-      // });
       return Object.assign({}, state, {
         pipelineData,
         parameters: action.parameters,
