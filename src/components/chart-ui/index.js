@@ -27,6 +27,7 @@ const ChartUI = ({
   onChangeView,
   parameters,
   tags,
+  tagLabel,
   textLabels,
   theme,
   view
@@ -79,7 +80,10 @@ const ChartUI = ({
         checked={parameters}
         theme={theme}
       />
-      <Dropdown theme={theme} width={null} defaultText="Tags (all)">
+      <Dropdown
+        theme={theme}
+        width={null}
+        defaultText={tagLabel}>
         <React.Fragment>
           <ul className="pipeline-ui__tag-list">
             { tags.map(tag => (
@@ -108,15 +112,31 @@ const ChartUI = ({
   </Scrollbars>
 ) : null;
 
-const mapStateToProps = (state) => ({
-  activePipelineData: getActivePipelineData(state),
-  allowUploads: state.allowUploads,
-  parameters: state.parameters,
-  tags: getTags(state),
-  textLabels: state.textLabels,
-  theme: state.theme,
-  view: state.view
-});
+/**
+ * Generate the label for the tag dropdown
+ * @param {Array} tags List of tag objects
+ * @return {string} Label text
+ */
+const getTagLabel = tags => {
+  const totalTabCount = tags.length;
+  const activeTabCount = tags.filter(d => !d.disabled).length;
+  const tagCount = activeTabCount < totalTabCount ? `${activeTabCount}/${totalTabCount}` : 'all';
+  return `Tags (${tagCount})`;
+}
+
+const mapStateToProps = (state) => {
+  const tags = getTags(state);
+  return {
+    activePipelineData: getActivePipelineData(state),
+    allowUploads: state.allowUploads,
+    parameters: state.parameters,
+    tags,
+    tagLabel: getTagLabel(tags),
+    textLabels: state.textLabels,
+    theme: state.theme,
+    view: state.view
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   onChangeView: (e, { value }) => {
