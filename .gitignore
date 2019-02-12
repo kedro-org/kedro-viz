@@ -27,6 +27,8 @@ lib/
 .env.test.local
 .env.production.local
 .vscode
+.*.sw*
+package/.eggs/
 
 npm-debug.log*
 yarn-debug.log*

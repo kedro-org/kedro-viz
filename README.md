@@ -1661,6 +1661,23 @@ If you use [Visual Studio Code](https://code.visualstudio.com), there is a [Jest
 
 ![VS Code Jest Preview](https://cloud.githubusercontent.com/assets/49038/20795349/a032308a-b7c8-11e6-9b34-7eeac781003f.png)
 
+
+### Running Python Web Server Tests
+Kernelviz is served by a Flask (Python3) web application. To run tests do the following:
+
+- Create and activate a test python virtual environment:
+```
+python3 -m venv /tmp/test_ve/ && source /tmp/test_ve/bin/activate
+```
+- Execute the tests:
+```
+make pytest
+```
+- To deactivate the python virtual environment run:
+```
+deactivate
+```
+
 ## Debugging Tests
 
 There are various ways to setup a debugger for your Jest tests. We cover debugging in Chrome and [Visual Studio Code](https://code.visualstudio.com/).
