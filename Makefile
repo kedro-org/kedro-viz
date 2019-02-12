@@ -17,5 +17,5 @@ build: clean
 	npm run build
 	cp -R build package/kernelviz/html
 
-make pytest: build
+make test: build
 	cd package && python3 setup.py test
