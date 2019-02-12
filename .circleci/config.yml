@@ -55,7 +55,7 @@ jobs:
           name: Publish to pypi-qb
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              cd package && python3 setup.py bdist_wheel upload -r pypi-qb
+              make publish
             fi
 
 workflows:

@@ -10,6 +10,9 @@ clean:
 package-all:
 	cd package && python setup.py bdist_wheel
 
+publish:
+	cd package && python3 setup.py bdist_wheel upload -r pypi-qb
+
 run:
 	python package/kernelviz/server.py --port 4343 --logdir logs/
 
