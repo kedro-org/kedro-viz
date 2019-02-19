@@ -10,7 +10,7 @@
     "start:css": "npm run build:css && node-sass src/ -o src/ --watch --recursive",
     "start:lib": "npm run lib:copy --watch",
     "lib": "npm run build:css && npm run lib:copy",
-    "lib:copy": "rm -r lib && babel src --out-dir lib --copy-files",
+    "lib:copy": "rm -rf lib && babel src --out-dir lib --copy-files",
     "prepublishOnly": "npm run lib",
     "version:update": "./bin/publish-build.sh",
     "version:get": "echo \"Current version is \"$(./bin/config.sh version)",
