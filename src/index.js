@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import registerServiceWorker from './utils/registerServiceWorker';
 import App from './components/app';
 import config from './config';
-import './styles/index.scss';
+import './styles/index.css';
 
 const { dataSource } = config;
 const useRandomData = dataSource === 'random';
