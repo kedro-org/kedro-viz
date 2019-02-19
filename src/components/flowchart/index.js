@@ -11,7 +11,7 @@ import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
 import databaseIcon from './database-icon';
 import cogIcon from './cog-icon';
-import './flowchart.scss';
+import './flowchart.css';
 
 /**
  * Get unique, reproducible ID for each edge, based on its nodes

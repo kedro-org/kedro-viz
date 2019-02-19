@@ -9,7 +9,7 @@ import { json } from 'd3-fetch';
 import config from '../../config';
 import getRandomHistory from '../../utils/randomData';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
-import './app.scss';
+import './app.css';
 
 class App extends React.Component {
   constructor(props) {

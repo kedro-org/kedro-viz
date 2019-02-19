@@ -8,7 +8,7 @@ import {
 } from '@quantumblack/carbon-ui-components';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { updateNodeProperties } from '../../actions';
-import './node-list.scss';
+import './node-list.css';
 
 const {
   escapeRegExp,

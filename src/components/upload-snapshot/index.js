@@ -6,7 +6,7 @@ import {
   Modal,
 } from '@quantumblack/carbon-ui-components';
 import config from '../../config';
-import './upload-snapshot.scss';
+import './upload-snapshot.css';
 
 const storeKey = `${config.localStorageName}_token`;
 const store = {
