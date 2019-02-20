@@ -143,13 +143,14 @@ class NodeList extends React.Component {
               <li
                 key={node.id}
                 className={classnames('pipeline-node', {
-                  'pipeline-node--active': node.active
+                  'pipeline-node--active': node.active,
+                  'pipeline-node--disabled': node.disabled_tag
                 })}
                 title={node.name}
                 onMouseEnter={onToggleNodeActive(node, true)}
                 onMouseLeave={onToggleNodeActive(node, false)}>
                 <Checkbox
-                  checked={!node.disabled}
+                  checked={!node.disabled_node}
                   label={<span dangerouslySetInnerHTML={{
                     __html: node.highlightedLabel
                   }} />}

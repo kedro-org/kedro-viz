@@ -1,3 +1,4 @@
+import { Map } from 'immutable';
 import {
   CHANGE_ACTIVE_SNAPSHOT,
   CHANGE_VIEW,
@@ -32,44 +33,48 @@ function reducer(state = {}, action) {
         return state;
       }
       // Else, handle it manually:
-      // Remove deleted snapshot data from the list of snapshots,
-      const pipelineData = Object.assign({}, state.pipelineData);
-      delete pipelineData.snapshots[action.id];
-      // and delete the snapshot ID from the list of IDs:
-      pipelineData.allIds = pipelineData.allIds.filter(d => d !== action.id);
+      const pipelineData = Map({
+        snapshots: state.pipelineData.get('snapshots').delete(action.id),
+        allIds: state.pipelineData.get('allIds').filter(d => d !== action.id),
+      });
       // If the deleted pipeline is the active one, then use a new active one
       let { activePipeline } = state;
       if (activePipeline === action.id) {
-        activePipeline = pipelineData.allIds[0];
+        activePipeline = pipelineData.getIn(['allIds', 0]);
       }
       return Object.assign({}, state, { activePipeline, pipelineData });
     }
 
     case RESET_SNAPSHOT_DATA: 
       return Object.assign({}, state, {
-        activePipeline: action.snapshots.allIds[0],
+        activePipeline: action.snapshots.getIn(['allIds', 0]),
         pipelineData: action.snapshots,
       });
 
     case TOGGLE_NODE_ACTIVE: {
-      const pipelineData = Object.assign({}, state.pipelineData);
-      pipelineData.snapshots[state.activePipeline].nodes.data[action.nodeID].active = action.isActive;
+      const pipelineData = state.pipelineData.setIn(
+        ['snapshots', state.activePipeline, 'nodes', 'active', action.nodeID],
+        action.isActive
+      );
       return Object.assign({}, state, { pipelineData });
     }
 
     case TOGGLE_NODE_DISABLED: {
-      const pipelineData = Object.assign({}, state.pipelineData);
-      pipelineData.snapshots[state.activePipeline].nodes.data[action.nodeID].disabled = action.isDisabled;
+      const pipelineData = state.pipelineData.setIn(
+        ['snapshots', state.activePipeline, 'nodes', 'disabled', action.nodeID],
+        action.isDisabled
+      );
       return Object.assign({}, state, { pipelineData });
     }
 
     case TOGGLE_NODES_DISABLED: {
-      const pipelineData = Object.assign({}, state.pipelineData);
-      pipelineData.snapshots[state.activePipeline].nodes.allIds
-        .filter(id => action.nodeIDs.includes(id))
-        .forEach(id => {
-          pipelineData.snapshots[state.activePipeline].nodes.data[id].disabled = action.isDisabled;
-        });
+      const toggleDisabledNodes = disabled =>
+        action.nodeIDs.reduce((newDisabled, id) =>
+          newDisabled.set(id, action.isDisabled), disabled);
+      const pipelineData = state.pipelineData.updateIn(
+        ['snapshots', state.activePipeline, 'nodes', 'disabled'],
+        toggleDisabledNodes
+      );
       return Object.assign({}, state, { pipelineData });
     }
 
@@ -79,19 +84,24 @@ function reducer(state = {}, action) {
       });
 
     case TOGGLE_TAG: {
-      const pipelineData = Object.assign({}, state.pipelineData);
-      const tags = pipelineData.snapshots[state.activePipeline].tags;
-      tags[action.tagID] = !action.disabled;
+      const pipelineData = state.pipelineData.setIn(
+        ['snapshots', state.activePipeline, 'tags', action.tagID],
+        !action.disabled
+      );
       return Object.assign({}, state, { pipelineData });
     }
 
     case TOGGLE_PARAMETERS: {
-      const pipelineData = Object.assign({}, state.pipelineData);
-      pipelineData.snapshots[state.activePipeline].nodes.allIds
-        .filter(id => id.includes('param'))
-        .forEach(id => {
-          pipelineData.snapshots[state.activePipeline].nodes.data[id].disabled = !action.parameters;
-        });
+      const paramIDs = state.pipelineData
+        .getIn(['snapshots', state.activePipeline, 'nodes', 'allIds'])
+        .filter(id => id.includes('param'));
+      const toggleDisabledNodes = disabled =>
+        paramIDs.reduce((newDisabled, id) =>
+          newDisabled.set(id, !action.parameters), disabled);
+      const pipelineData = state.pipelineData.updateIn(
+        ['snapshots', state.activePipeline, 'nodes', 'disabled'],
+        toggleDisabledNodes
+      );
       return Object.assign({}, state, {
         pipelineData,
         parameters: action.parameters,

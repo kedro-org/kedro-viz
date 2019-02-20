@@ -1,3 +1,5 @@
+import { fromJS } from 'immutable';
+
 /**
  * Check whether data is in expected format
  * @param {Object} data - The parsed data input
@@ -27,11 +29,15 @@ const formatSnapshotData = raw => {
   }
 
   const nodes = {
+    active: {},
     data: {},
+    disabled: {},
     allIds: [],
   };
   const edges = {
+    active: {},
     data: {},
+    disabled: {},
     allIds: [],
   };
 
@@ -178,10 +184,10 @@ const formatSnapshots = (data) => {
     .sort((a, b) => b.created_ts - a.created_ts)
     .map(d => d.id);
   
-  return {
+  return fromJS({
     snapshots,
     allIds
-  };
+  });
 };
 
 export default formatSnapshots;

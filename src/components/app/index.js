@@ -16,6 +16,7 @@ class App extends React.Component {
     super(props);
 
     const pipelineData = this.loadData(props.data);
+    const activePipeline = pipelineData.getIn(['allIds', 0]);
 
     const {
       allowHistoryDeletion,
@@ -25,7 +26,7 @@ class App extends React.Component {
     } = props;
 
     const initialState = {
-      activePipeline: pipelineData.allIds[0],
+      activePipeline,
       allowHistoryDeletion,
       allowUploads,
       onDeleteSnapshot,
@@ -55,16 +56,19 @@ class App extends React.Component {
       case 'random':
         return formatSnapshots(getRandomHistory());
       case 'json':
-        return this.loadJsonData();
+        return this.loadJsonData(data);
       default:
         return formatSnapshots(data);
     }
   }
 
-  loadJsonData() {
+  loadJsonData(kernel_ai_schema_id) {
     const { dataPath } = config;
     json(dataPath)
-      .then(json_schema => formatSnapshots([{ json_schema }]))
+      .then(json_schema => formatSnapshots([{
+        json_schema,
+        kernel_ai_schema_id
+      }]))
       .then(formattedData => {
         this.store.dispatch(resetSnapshotData(formattedData));
       })
