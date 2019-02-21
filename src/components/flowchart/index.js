@@ -445,7 +445,6 @@ class FlowChart extends Component {
 }
 
 const mapStateToProps = state => ({
-  data: getActivePipelineData(state),
   dataID: getActivePipelineData(state).id,
   nodes: getNodes(state),
   edges: getEdges(state),
