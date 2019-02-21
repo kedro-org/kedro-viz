@@ -3,18 +3,18 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { RadioButton } from '@quantumblack/carbon-ui-components';
 import { changeActiveSnapshot, deleteSnapshot } from '../../actions';
-import { getActivePipelineData, getPipelineData } from '../../selectors';
+import { getSnapshotHistory } from '../../selectors';
 import deleteIcon from './delete.svg';
 import './history.css';
 import formatTime from '../../utils/format-time';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 const History = ({
-  activePipelineData,
+  activePipeline,
   allowHistoryDeletion,
   onChangeActiveSnapshot,
   onDeleteSnapshot,
-  pipelineData,
+  snapshots,
   theme
 }) => {
   /**
@@ -22,12 +22,12 @@ const History = ({
    * @param {Object} snapshot A snapshot
    * @return {Boolean} True if snapshot IDs match
    */
-  const isActive = snapshot => activePipelineData.id === snapshot.id;
+  const isActive = snapshot => activePipeline === snapshot.id;
 
   return (
     <Scrollbars autoHide hideTracksWhenNotNeeded>
       <ul className='pipeline-history'>
-        { pipelineData.map(snapshot =>
+        { snapshots.map(snapshot =>
           <li
             className={classnames(
               'pipeline-history__row',
@@ -64,9 +64,9 @@ const History = ({
 };
 
 const mapStateToProps = state => ({
-  activePipelineData: getActivePipelineData(state),
+  activePipeline: state.activePipeline,
   allowHistoryDeletion: state.allowHistoryDeletion,
-  pipelineData: getPipelineData(state),
+  snapshots: getSnapshotHistory(state),
   theme: state.theme,
 });
 

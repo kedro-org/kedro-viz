@@ -3,9 +3,16 @@ import { createSelector } from 'reselect';
 const getActivePipeline = state => state.activePipeline;
 const getPipelines = state => state.pipelineData;
 
-export const getPipelineData = createSelector(
+export const getSnapshotHistory = createSelector(
   [getPipelines],
-  (pipelines) => pipelines.get('allIds').map(id => pipelines.getIn(['snapshots', id])).toJS()
+  (pipelines) => pipelines.get('allIds').map(id => {
+    const snapshot = pipelines.getIn(['snapshots', id]);
+    return {
+      id: snapshot.get('id'),
+      message: snapshot.get('message'),
+      timestamp: snapshot.get('timestamp'),
+    };
+  })
 );
 
 export const getActivePipelineData = createSelector(
