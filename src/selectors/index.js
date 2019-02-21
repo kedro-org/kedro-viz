@@ -5,7 +5,7 @@ const getPipelines = state => state.pipelineData;
 
 export const getSnapshotHistory = createSelector(
   [getPipelines],
-  (pipelines) => pipelines.get('allIds').map(id => {
+  (pipelines) => pipelines.get('allIDs').map(id => {
     const snapshot = pipelines.getIn(['snapshots', id]);
     return {
       id: snapshot.get('id'),
@@ -42,12 +42,12 @@ const formatNode = (id, { nodes, tags }) => {
 
 export const getNodes = createSelector(
   [getActivePipelineData],
-  (pipeline) => pipeline.nodes.allIds.sort().map(id => formatNode(id, pipeline))
+  (pipeline) => pipeline.nodes.allIDs.sort().map(id => formatNode(id, pipeline))
 );
 
 export const getEdges = createSelector(
   [getActivePipelineData],
-  (pipeline) => pipeline.edges.allIds.map(id => {
+  (pipeline) => pipeline.edges.allIDs.map(id => {
     const { source, target } = pipeline.edges.data[id];
     return {
       source: formatNode(source, pipeline),
@@ -58,7 +58,7 @@ export const getEdges = createSelector(
 
 export const getTags = createSelector(
   [getActivePipelineData],
-  ({ tags }) => tags.allIds.sort().map(id => ({
+  ({ tags }) => tags.allIDs.sort().map(id => ({
     id,
     name: id.replace(/_/g, ' '),
     active: tags.active[id],

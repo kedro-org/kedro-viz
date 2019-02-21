@@ -32,18 +32,18 @@ const formatSnapshotData = raw => {
     active: {},
     data: {},
     disabled: {},
-    allIds: [],
+    allIDs: [],
   };
   const edges = {
     active: {},
     data: {},
     disabled: {},
-    allIds: [],
+    allIDs: [],
   };
   const tags = {
     active: {},
     disabled: {},
-    allIds: [],
+    allIDs: [],
   };
 
   /**
@@ -68,7 +68,7 @@ const formatSnapshotData = raw => {
       type,
       tags
     };
-    nodes.allIds.push(name);
+    nodes.allIDs.push(name);
   };
 
   /**
@@ -83,7 +83,7 @@ const formatSnapshotData = raw => {
     };
     const id = edgeID(edge);
     edges.data[id] = edge;
-    edges.allIds.push(id);
+    edges.allIDs.push(id);
   };
 
   /**
@@ -129,10 +129,10 @@ const formatSnapshotData = raw => {
   });
 
   // Create links between input task nodes and output task nodes (for task view)
-  edges.allIds.forEach(sourceID => {
+  edges.allIDs.forEach(sourceID => {
     const d = edges.data[sourceID];
     if (d.source.type === 'task') {
-      edges.allIds.forEach(targetID => {
+      edges.allIDs.forEach(targetID => {
         const dd = edges.data[targetID];
         if (dd.target.type === 'task' && dd.source.id === d.target.id) {
           addEdge(d.source, dd.target);
@@ -142,10 +142,10 @@ const formatSnapshotData = raw => {
   });
 
   // Generate a formatted list of tags from node data
-  nodes.allIds.forEach(nodeID => {
+  nodes.allIDs.forEach(nodeID => {
     nodes.data[nodeID].tags.forEach(tagID => {
-      if (!tags.allIds.includes(tagID)) {
-        tags.allIds.push(tagID);
+      if (!tags.allIDs.includes(tagID)) {
+        tags.allIDs.push(tagID);
       }
     });
   });
@@ -183,13 +183,13 @@ const formatSnapshots = (data) => {
     return snapshots;
   }, {});
 
-  const allIds = formattedData
+  const allIDs = formattedData
     .sort((a, b) => b.created_ts - a.created_ts)
     .map(d => d.id);
   
   return fromJS({
     snapshots,
-    allIds
+    allIDs
   });
 };
 

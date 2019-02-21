@@ -16,7 +16,7 @@ class App extends React.Component {
     super(props);
 
     const pipelineData = this.loadData(props.data);
-    const activePipeline = pipelineData.getIn(['allIds', 0]);
+    const activePipeline = pipelineData.getIn(['allIDs', 0]);
 
     const {
       allowHistoryDeletion,

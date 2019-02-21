@@ -36,19 +36,19 @@ function reducer(state = {}, action) {
       // Else, handle it manually:
       const pipelineData = Map({
         snapshots: state.pipelineData.get('snapshots').delete(action.id),
-        allIds: state.pipelineData.get('allIds').filter(d => d !== action.id),
+        allIDs: state.pipelineData.get('allIDs').filter(d => d !== action.id),
       });
       // If the deleted pipeline is the active one, then use a new active one
       let { activePipeline } = state;
       if (activePipeline === action.id) {
-        activePipeline = pipelineData.getIn(['allIds', 0]);
+        activePipeline = pipelineData.getIn(['allIDs', 0]);
       }
       return Object.assign({}, state, { activePipeline, pipelineData });
     }
 
     case RESET_SNAPSHOT_DATA: 
       return Object.assign({}, state, {
-        activePipeline: action.snapshots.getIn(['allIds', 0]),
+        activePipeline: action.snapshots.getIn(['allIDs', 0]),
         pipelineData: action.snapshots,
       });
 
@@ -102,7 +102,7 @@ function reducer(state = {}, action) {
 
     case TOGGLE_PARAMETERS: {
       const paramIDs = state.pipelineData
-        .getIn(['snapshots', state.activePipeline, 'nodes', 'allIds'])
+        .getIn(['snapshots', state.activePipeline, 'nodes', 'allIDs'])
         .filter(id => id.includes('param'));
       const toggleDisabledNodes = disabled =>
         paramIDs.reduce((newDisabled, id) =>
