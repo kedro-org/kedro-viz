@@ -1,4 +1,4 @@
-# Kernel Pipeline Viz
+f# Kernel Pipeline Viz
 
 This project creates a data visualisation of a Kernel AI pipeline.
 
@@ -43,4 +43,29 @@ This project is designed to be used in a couple of different ways:
 2. **React component**
   Run `npm run lib` to generate a React component that can be imported into other applications. The built component will be placed in the `/lib` directory. This can then be published to npm (The `lib` script is run automatically as a `prepublish` script).
 
-  Note: Because NPM isn't
+  Note: Because the QuantumBlack NPM package is currently set to private, this repo temporarily hosts compiled code from the `build` branch, so that it can be retrieved from projects that do not have access to the NPM package.
+
+## Testing
+
+This app uses [Jest](https://jestjs.io/) as its JavaScript test runner. To run tests, run
+```
+npm run test
+```
+See the [Create-React-App docs](https://github.com/facebook/create-react-app) for further information on JS testing.
+
+### Python web server tests
+
+When used in production with KernelAI, the standalone viz is served via a Flask (Python3) web application. You can run Python tests as follows:
+
+1. Create and activate a test python virtual environment:
+    ```
+    python3 -m venv /tmp/test_ve/ && source /tmp/test_ve/bin/activate
+    ```
+2. Execute the tests:
+    ```
+    make pytest
+    ```
+3. Deactivate the python virtual environment:
+    ```
+    deactivate
+    ```

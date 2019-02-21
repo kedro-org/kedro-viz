@@ -10,9 +10,9 @@ import { toggleNodeActive } from '../../actions';
 import { getActivePipelineData, getNodes, getEdges } from '../../selectors';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
-import imgCog from './cog.svg';
-import imgDatabase from './database.svg';
-import './flowchart.scss';
+import databaseIcon from './database-icon';
+import cogIcon from './cog-icon';
+import './flowchart.css';
 
 /**
  * Get unique, reproducible ID for each edge, based on its nodes
@@ -46,7 +46,7 @@ class FlowChart extends Component {
     this.getLayout();
     this.drawChart();
     this.zoomChart();
-    this.checkNodeCount();
+    this.updateNodeCount(this.checkNodeCount());
     window.addEventListener('resize', this.resizeChart);
   }
 
@@ -75,19 +75,46 @@ class FlowChart extends Component {
   /**
    * Determine whether the chart's Dagre layout should be recalculated,
    * when receiving new props. Layout is time-consuming so we don't want to
-   * run it unless we absolutely have to. This should only happen if the view,
-   * text labels, snapshot data, or visible number of nodes have changed.
+   * run it unless we absolutely have to.
    * @param {Object} prevProps Previous component props
    * @return {Boolean} True if new layout is required
    */
   shouldRedrawLayout(prevProps) {
-    return [
-      () => prevProps.textLabels !== this.props.textLabels,
-      () => prevProps.view !== this.props.view,
-      () => prevProps.visibleNav !== this.props.visibleNav,
-      () => prevProps.dataID !== this.props.dataID,
-      () => this.checkNodeCount()
-    ].some(d => d());
+    const newNodeCount = this.checkNodeCount();
+    let shouldRedraw = false;
+    // Don't redraw if there are no visible nodes
+    if (newNodeCount !== 0) {
+      shouldRedraw = [
+        this.nodeCount !== newNodeCount,
+        prevProps.textLabels !== this.props.textLabels,
+        prevProps.view !== this.props.view,
+        prevProps.visibleNav !== this.props.visibleNav,
+        prevProps.dataID !== this.props.dataID,
+      ].some(Boolean);
+    }
+    this.updateNodeCount(newNodeCount);
+    return shouldRedraw;
+  }
+
+  /**
+   * Calculate the number of active nodes
+   */
+  checkNodeCount() {
+    return this.props.nodes.filter(d => !d.disabled).length;
+  }
+
+  /**
+   * Keep a count of the number of nodes on screen,
+   * and return true if the number of visible nodes has changed,
+   * indicating that the dagre layout should be updated
+   */
+  updateNodeCount(newNodeCount) {
+    // Don't update node if count hasn't changed (to avoid unnecessary redraws)
+    if (newNodeCount === this.nodeCount) {
+      return false;
+    }
+    this.nodeCount = newNodeCount;
+    return true;
   }
 
   /**
@@ -192,22 +219,6 @@ class FlowChart extends Component {
         return edges;
       }, {})
     };
-  }
-
-  /**
-   * Keep a count of the number of nodes on screen,
-   * and return true if the number of visible nodes has changed,
-   * indicating that the dagre layout should be updated
-   */
-  checkNodeCount() {
-    const newNodeCount = this.props.nodes.filter(d => !d.disabled).length;
-    // Don't update node if count hasn't changed (to avoid unnecessary redraws),
-    // or if count is zero (to prevent errors)
-    if (newNodeCount === this.nodeCount || newNodeCount === 0) {
-      return false;
-    }
-    this.nodeCount = newNodeCount;
-    return true;
   }
 
   /**
@@ -347,16 +358,8 @@ class FlowChart extends Component {
 
     enterNodes.append('rect');
 
-    const imageSize = d => Math.round(d.height * 0.36);
-
     enterNodes
-      .append('image')
-      .attr('xlink:href', d => (d.type === 'data' ? imgDatabase : imgCog))
-      .attr('width', imageSize)
-      .attr('height', imageSize)
-      .attr('x', d => imageSize(d) / -2)
-      .attr('y', d => imageSize(d) / -2)
-      .attr('alt', d => d.name);
+      .append(d => d.type === 'data' ? databaseIcon(d) : cogIcon(d))
 
     enterNodes
       .append('text')

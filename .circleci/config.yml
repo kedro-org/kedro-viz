@@ -25,6 +25,12 @@ jobs:
       - run:
           name: Install Node dependencies
           command: npm install
+      - run:
+          name: Run python tests
+          command: make pytest
+      - run:
+          name: Cleanup
+          command: make clean
       - save_cache:
           paths:
             - node_modules
@@ -47,14 +53,13 @@ jobs:
             password: ${ENV_QB_ARTIFACTORY_PASSWORD}" > ~/.pypirc
       - deploy:
           name: Publish to pypi-qb
-          command: cd package && python3 setup.py bdist_wheel upload -r pypi-qb
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              make publish
+            fi
 
 workflows:
   version: 2
   publish:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - master
+      - build

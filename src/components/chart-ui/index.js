@@ -16,7 +16,7 @@ import {
 import { getActivePipelineData, getTags } from '../../selectors';
 import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
-import './chart-ui.scss';
+import './chart-ui.css';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 const ChartUI = ({

@@ -13,7 +13,7 @@ import {
   toggleNodeDisabled,
   toggleNodesDisabled
 } from '../../actions';
-import './node-list.scss';
+import './node-list.css';
 
 const {
   escapeRegExp,

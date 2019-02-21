@@ -6,7 +6,7 @@ import { getNodes } from '../../selectors';
 import SidebarTabs from '../sidebar-tabs';
 import FlowChart from '../flowchart';
 import Description from '../description';
-import './chart-wrapper.scss';
+import './chart-wrapper.css';
 
 class ChartWrappper extends Component {
   constructor(props) {

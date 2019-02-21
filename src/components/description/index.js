@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { getActivePipelineData } from '../../selectors';
-import './description.scss';
+import './description.css';
 import formatTime from '../../utils/format-time';
 
 const Description = ({ timestamp, message, visibleNav }) => (
