@@ -7,7 +7,7 @@ import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import dagre from 'dagre';
 import { toggleNodeActive } from '../../actions';
-import { getActivePipelineData, getNodes, getEdges } from '../../selectors';
+import { getNodes, getEdges } from '../../selectors';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
 import databaseIcon from './database-icon';
@@ -89,7 +89,7 @@ class FlowChart extends Component {
         prevProps.textLabels !== this.props.textLabels,
         prevProps.view !== this.props.view,
         prevProps.visibleNav !== this.props.visibleNav,
-        prevProps.dataID !== this.props.dataID,
+        prevProps.activePipeline !== this.props.activePipeline,
       ].some(Boolean);
     }
     this.updateNodeCount(newNodeCount);
@@ -445,7 +445,7 @@ class FlowChart extends Component {
 }
 
 const mapStateToProps = state => ({
-  dataID: getActivePipelineData(state).id,
+  activePipeline: state.activePipeline,
   nodes: getNodes(state),
   edges: getEdges(state),
   textLabels: state.textLabels,
