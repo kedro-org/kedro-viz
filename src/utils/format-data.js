@@ -29,28 +29,26 @@ const formatSnapshotData = raw => {
   }
 
   const nodes = {
+    allIDs: [],
     active: {},
     data: {},
     disabled: {},
-    allIDs: [],
+    type: {},
+    tags: {},
   };
   const edges = {
+    allIDs: [],
     active: {},
     data: {},
+    sources: {},
+    targets: {},
     disabled: {},
-    allIDs: [],
   };
   const tags = {
+    allIDs: [],
     active: {},
     disabled: {},
-    allIDs: [],
   };
-
-  /**
-   * Get a reference to the formatted node datum
-   * @param {string} id - Underscore-separated node id
-   */
-  const findNode = id => nodes.data[id];
 
   /**
    * Add a new node if it doesn't already exist
@@ -59,16 +57,12 @@ const formatSnapshotData = raw => {
    * @param {Array} tags - List of associated tags
    */
   const addNode = (name, type, tags = []) => {
-    if (findNode(name)) {
+    if (nodes.allIDs.includes(name)) {
       return;
     }
-    nodes.data[name] = {
-      id: name,
-      name: name.replace(/_/g, ' '),
-      type,
-      tags
-    };
     nodes.allIDs.push(name);
+    nodes.tags[name] = tags;
+    nodes.type[name] = type;
   };
 
   /**
@@ -77,12 +71,10 @@ const formatSnapshotData = raw => {
    * @param {Object} target - Child node
    */
   const addEdge = (source, target) => {
-    const edge = {
-      source: source.id,
-      target: target.id
-    };
+    const edge = { source, target };
     const id = edgeID(edge);
-    edges.data[id] = edge;
+    edges.sources[id] = source;
+    edges.targets[id] = target;
     edges.allIDs.push(id);
   };
 
@@ -103,22 +95,19 @@ const formatSnapshotData = raw => {
    * @param {Array} outputs - A list of data nodes linked to from this task
    */
   const createEdges = ({ name, inputs, outputs }) => {
-    const node = findNode(name);
-
-    inputs.forEach(d => {
+    inputs.forEach(source => {
       // Create link between input data nodes and task node (for combined view)
-      const source = findNode(d);
-      addEdge(source, node);
+      addEdge(source, name);
 
       // Create link between input data nodes and output data nodes (for data view)
       outputs.forEach(target => {
-        addEdge(source, findNode(target));
+        addEdge(source, target);
       });
     });
 
     // Create link between task node and output data nodes (for combined view)
     outputs.forEach(target => {
-      addEdge(node, findNode(target));
+      addEdge(name, target);
     });
   };
 
@@ -129,13 +118,13 @@ const formatSnapshotData = raw => {
   });
 
   // Create links between input task nodes and output task nodes (for task view)
-  edges.allIDs.forEach(sourceID => {
-    const d = edges.data[sourceID];
-    if (d.source.type === 'task') {
-      edges.allIDs.forEach(targetID => {
-        const dd = edges.data[targetID];
-        if (dd.target.type === 'task' && dd.source.id === d.target.id) {
-          addEdge(d.source, dd.target);
+  edges.allIDs.forEach(d => {
+    const sourceNode = edges.sources[d];
+    if (nodes.type[sourceNode] === 'task') {
+      edges.allIDs.forEach(dd => {
+        const targetNode = edges.targets[dd];
+        if (nodes.type[targetNode] === 'task' && edges.sources[dd] === edges.targets[d]) {
+          addEdge(sourceNode, targetNode);
         }
       });
     }
@@ -143,7 +132,7 @@ const formatSnapshotData = raw => {
 
   // Generate a formatted list of tags from node data
   nodes.allIDs.forEach(nodeID => {
-    nodes.data[nodeID].tags.forEach(tagID => {
+    nodes.tags[nodeID].forEach(tagID => {
       if (!tags.allIDs.includes(tagID)) {
         tags.allIDs.push(tagID);
       }

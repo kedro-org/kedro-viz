@@ -27,17 +27,25 @@ export const getActivePipelineData = createSelector(
  * @param {Object} tags List of tags with their disabled state
  */
 const formatNode = (id, { nodes, tags }) => {
-  const { data, active, disabled } = nodes;
-  const node = data[id];
-  // Set active status if the node is specifically highlighted, and/or via an associated tag
-  node.active_node = active[id];
-  node.active_tag = node.tags.length && node.tags.some(tag => tags.active[tag]);
-  node.active = Boolean(node.active_node || node.active_tag);
-  // Set disabled status if the node is specifically hidden, and/or via an associated tag
-  node.disabled_node = disabled[id];
-  node.disabled_tag = node.tags.length && node.tags.every(tag => tags.disabled[tag]);
-  node.disabled = Boolean(node.disabled_node || node.disabled_tag);
-  return node;
+  const nodeTags = nodes.tags[id];
+    // Set active status if the node is specifically highlighted, and/or via an associated tag
+  const active_node = nodes.active[id];
+  const active_tag = nodeTags.some(tag => tags.active[tag]);
+    // Set disabled status if the node is specifically hidden, and/or via an associated tag
+  const disabled_node = nodes.disabled[id];
+  const disabled_tag = nodeTags.length && nodeTags.every(tag => tags.disabled[tag]);
+  return {
+    id,
+    name: id.replace(/_/g, ' '),
+    tags: nodes.tags[id],
+    type: nodes.type[id],
+    active_node,
+    active_tag,
+    active: Boolean(active_node || active_tag),
+    disabled_node,
+    disabled_tag,
+    disabled: Boolean(disabled_node || disabled_tag),
+  };
 };
 
 export const getNodes = createSelector(
@@ -48,7 +56,9 @@ export const getNodes = createSelector(
 export const getEdges = createSelector(
   [getActivePipelineData],
   (pipeline) => pipeline.edges.allIDs.map(id => {
-    const { source, target } = pipeline.edges.data[id];
+    // const { source, target } = pipeline.edges.data[id];
+    const source = pipeline.edges.sources[id];
+    const target = pipeline.edges.targets[id];
     return {
       source: formatNode(source, pipeline),
       target: formatNode(target, pipeline),
