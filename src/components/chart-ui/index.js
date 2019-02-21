@@ -10,6 +10,7 @@ import {
   changeView,
   toggleParameters,
   toggleTag,
+  toggleTagActive,
   toggleTextLabels
 } from '../../actions';
 import { getActivePipelineData, getTags } from '../../selectors';
@@ -21,6 +22,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 const ChartUI = ({
   allowUploads,
   activePipelineData,
+  onToggleTagActive,
   onToggleParameters,
   onToggleTextLabels,
   onToggleTag,
@@ -89,7 +91,9 @@ const ChartUI = ({
             { tags.map(tag => (
               <li
                 key={`tag-${tag.id}`}
-                className="pipeline-ui__tag-list-item cbn-menu-option">
+                className="pipeline-ui__tag-list-item cbn-menu-option"
+                onMouseEnter={onToggleTagActive(tag, true)}
+                onMouseLeave={onToggleTagActive(tag, false)}>
                 <Checkbox
                   checked={!tag.disabled}
                   label={<span>{tag.name}</span>}
@@ -141,6 +145,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   onChangeView: (e, { value }) => {
     dispatch(changeView(value));
+  },
+  onToggleTagActive: (tag, isActive) => () => {
+    dispatch(toggleTagActive(tag.id, isActive));
   },
   onToggleParameters: (e, { value }) => {
     dispatch(toggleParameters(value));

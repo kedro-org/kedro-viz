@@ -40,6 +40,11 @@ const formatSnapshotData = raw => {
     disabled: {},
     allIds: [],
   };
+  const tags = {
+    active: {},
+    disabled: {},
+    allIds: [],
+  };
 
   /**
    * Get a reference to the formatted node datum
@@ -137,15 +142,13 @@ const formatSnapshotData = raw => {
   });
 
   // Generate a formatted list of tags from node data
-  const tags = nodes.allIds.reduce((tagList, nodeID) => {
-    const node = nodes.data[nodeID];
-    node.tags.forEach(tagID => {
-      if (!tagList[tagID]) {
-        tagList[tagID] = true;
+  nodes.allIds.forEach(nodeID => {
+    nodes.data[nodeID].tags.forEach(tagID => {
+      if (!tags.allIds.includes(tagID)) {
+        tags.allIds.push(tagID);
       }
     });
-    return tagList;
-  }, {});
+  });
 
   return {
     nodes,

@@ -8,7 +8,8 @@ import {
   TOGGLE_NODE_DISABLED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_PARAMETERS,
-  TOGGLE_TAG,
+  TOGGLE_TAG_ACTIVE,
+  TOGGLE_TAG_DISABLED,
   TOGGLE_TEXT_LABELS,
 } from '../actions';
 
@@ -83,10 +84,18 @@ function reducer(state = {}, action) {
         textLabels: action.textLabels,
       });
 
-    case TOGGLE_TAG: {
+    case TOGGLE_TAG_ACTIVE: {
       const pipelineData = state.pipelineData.setIn(
-        ['snapshots', state.activePipeline, 'tags', action.tagID],
-        !action.disabled
+        ['snapshots', state.activePipeline, 'tags', 'active', action.tagID],
+        action.active
+      );
+      return Object.assign({}, state, { pipelineData });
+    }
+
+    case TOGGLE_TAG_DISABLED: {
+      const pipelineData = state.pipelineData.setIn(
+        ['snapshots', state.activePipeline, 'tags', 'disabled', action.tagID],
+        action.disabled
       );
       return Object.assign({}, state, { pipelineData });
     }

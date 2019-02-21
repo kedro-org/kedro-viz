@@ -22,9 +22,13 @@ export const getActivePipelineData = createSelector(
 const formatNode = (id, { nodes, tags }) => {
   const { data, active, disabled } = nodes;
   const node = data[id];
-  node.active = active[id];
+  // Set active status if the node is specifically highlighted, and/or via an associated tag
+  node.active_node = active[id];
+  node.active_tag = node.tags.length && node.tags.some(tag => tags.active[tag]);
+  node.active = Boolean(node.active_node || node.active_tag);
+  // Set disabled status if the node is specifically hidden, and/or via an associated tag
   node.disabled_node = disabled[id];
-  node.disabled_tag = node.tags.length && !node.tags.some(tag => tags[tag]);
+  node.disabled_tag = node.tags.length && node.tags.every(tag => tags.disabled[tag]);
   node.disabled = Boolean(node.disabled_node || node.disabled_tag);
   return node;
 };
@@ -47,9 +51,10 @@ export const getEdges = createSelector(
 
 export const getTags = createSelector(
   [getActivePipelineData],
-  ({ tags }) => Object.keys(tags).sort().map(tagID => ({
-    id: tagID,
-    name: tagID.replace(/_/g, ' '),
-    disabled: !tags[tagID]
+  ({ tags }) => tags.allIds.sort().map(id => ({
+    id,
+    name: id.replace(/_/g, ' '),
+    active: tags.active[id],
+    disabled: tags.disabled[id],
   }))
 );

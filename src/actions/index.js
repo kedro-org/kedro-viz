@@ -123,7 +123,22 @@ export function toggleTextLabels(textLabels) {
   };
 }
 
-export const TOGGLE_TAG = 'TOGGLE_TAG';
+export const TOGGLE_TAG_ACTIVE = 'TOGGLE_TAG_ACTIVE';
+
+/**
+ * Toggle a tag's highlighting on/off
+ * @param {string} tagID Tag id
+ * @param {Boolean} active True if tag is active
+ */
+export function toggleTagActive(tagID, active) {
+  return {
+    type: TOGGLE_TAG_ACTIVE,
+    tagID,
+    active
+  };
+}
+
+export const TOGGLE_TAG_DISABLED = 'TOGGLE_TAG_DISABLED';
 
 /**
  * Toggle a tag on/off
@@ -132,7 +147,7 @@ export const TOGGLE_TAG = 'TOGGLE_TAG';
  */
 export function toggleTag(tagID, disabled) {
   return {
-    type: TOGGLE_TAG,
+    type: TOGGLE_TAG_DISABLED,
     tagID,
     disabled
   };
