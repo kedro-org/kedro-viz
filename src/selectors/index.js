@@ -56,22 +56,10 @@ export const getNodes = createSelector(
 export const getEdges = createSelector(
   [getActivePipelineData],
   (pipeline) => pipeline.edges.allIDs.map(id => {
-    // const { source, target } = pipeline.edges.data[id];
-    const source = pipeline.edges.sources[id];
-    const target = pipeline.edges.targets[id];
+    const { sources, targets } = pipeline.edges;
     return {
-      source: formatNode(source, pipeline),
-      target: formatNode(target, pipeline),
+      source: formatNode(sources[id], pipeline),
+      target: formatNode(targets[id], pipeline),
     };
   })
-);
-
-export const getTags = createSelector(
-  [getActivePipelineData],
-  ({ tags }) => tags.allIDs.sort().map(id => ({
-    id,
-    name: id.replace(/_/g, ' '),
-    active: tags.active[id],
-    disabled: tags.disabled[id],
-  }))
 );

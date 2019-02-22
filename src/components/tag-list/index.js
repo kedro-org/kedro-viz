@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Checkbox, Dropdown } from '@quantumblack/carbon-ui-components';
 import { toggleTagActive, toggleTagDisabled } from '../../actions';
-import { getTags } from '../../selectors';
+import { getTags, getTagLabel } from '../../selectors/tags';
 import './tag-list.css';
 
 const TagList = ({
@@ -39,26 +39,11 @@ const TagList = ({
   </div>
 );
 
-/**
- * Generate the label for the tag dropdown
- * @param {Array} tags List of tag objects
- * @return {string} Label text
- */
-const getTagLabel = tags => {
-  const totalTabCount = tags.length;
-  const activeTabCount = tags.filter(d => !d.disabled).length;
-  const tagCount = activeTabCount < totalTabCount ? `${activeTabCount}/${totalTabCount}` : 'all';
-  return `Tags (${tagCount})`;
-}
-
-const mapStateToProps = (state) => {
-  const tags = getTags(state);
-  return {
-    tags,
-    tagLabel: getTagLabel(tags),
-    theme: state.theme
-  };
-};
+const mapStateToProps = (state) => ({
+  tags: getTags(state),
+  tagLabel: getTagLabel(state),
+  theme: state.theme
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onToggleTagActive: (tag, isActive) => () => {
