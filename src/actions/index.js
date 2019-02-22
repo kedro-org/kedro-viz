@@ -145,7 +145,7 @@ export const TOGGLE_TAG_DISABLED = 'TOGGLE_TAG_DISABLED';
  * @param {string} tagID Tag id
  * @param {Boolean} disabled True if tag is disabled
  */
-export function toggleTag(tagID, disabled) {
+export function toggleTagDisabled(tagID, disabled) {
   return {
     type: TOGGLE_TAG_DISABLED,
     tagID,

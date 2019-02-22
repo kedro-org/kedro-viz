@@ -1,19 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  Checkbox,
-  Dropdown,
   RadioButton,
   Toggle,
 } from '@quantumblack/carbon-ui-components';
 import {
   changeView,
   toggleParameters,
-  toggleTag,
-  toggleTagActive,
   toggleTextLabels
 } from '../../actions';
-import { getActivePipelineData, getTags } from '../../selectors';
+import { getActivePipelineData } from '../../selectors';
+import TagList from '../tag-list';
 import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
 import './chart-ui.css';
@@ -22,14 +19,10 @@ import { Scrollbars } from 'react-custom-scrollbars';
 const ChartUI = ({
   allowUploads,
   activePipelineData,
-  onToggleTagActive,
   onToggleParameters,
   onToggleTextLabels,
-  onToggleTag,
   onChangeView,
   parameters,
-  tags,
-  tagLabel,
   textLabels,
   theme,
   view
@@ -82,29 +75,7 @@ const ChartUI = ({
         checked={parameters}
         theme={theme}
       />
-      <Dropdown
-        theme={theme}
-        width={null}
-        defaultText={tagLabel}>
-        <React.Fragment>
-          <ul className="pipeline-ui__tag-list">
-            { tags.map(tag => (
-              <li
-                key={`tag-${tag.id}`}
-                className="pipeline-ui__tag-list-item cbn-menu-option"
-                onMouseEnter={onToggleTagActive(tag, true)}
-                onMouseLeave={onToggleTagActive(tag, false)}>
-                <Checkbox
-                  checked={!tag.disabled}
-                  label={<span>{tag.name}</span>}
-                  name={tag.id}
-                  onChange={onToggleTag(tag.id)}
-                  theme={theme} />
-              </li>
-            )) }
-          </ul>
-        </React.Fragment>
-      </Dropdown>
+      <TagList />
       { activePipelineData.nodes && (
         <NodeList />
       ) }
@@ -116,26 +87,11 @@ const ChartUI = ({
   </Scrollbars>
 ) : null;
 
-/**
- * Generate the label for the tag dropdown
- * @param {Array} tags List of tag objects
- * @return {string} Label text
- */
-const getTagLabel = tags => {
-  const totalTabCount = tags.length;
-  const activeTabCount = tags.filter(d => !d.disabled).length;
-  const tagCount = activeTabCount < totalTabCount ? `${activeTabCount}/${totalTabCount}` : 'all';
-  return `Tags (${tagCount})`;
-}
-
 const mapStateToProps = (state) => {
-  const tags = getTags(state);
   return {
     activePipelineData: getActivePipelineData(state),
     allowUploads: state.allowUploads,
     parameters: state.parameters,
-    tags,
-    tagLabel: getTagLabel(tags),
     textLabels: state.textLabels,
     theme: state.theme,
     view: state.view
@@ -146,14 +102,8 @@ const mapDispatchToProps = (dispatch) => ({
   onChangeView: (e, { value }) => {
     dispatch(changeView(value));
   },
-  onToggleTagActive: (tag, isActive) => () => {
-    dispatch(toggleTagActive(tag.id, isActive));
-  },
   onToggleParameters: (e, { value }) => {
     dispatch(toggleParameters(value));
-  },
-  onToggleTag: tagID => (e, { checked }) => {
-    dispatch(toggleTag(tagID, !checked));
   },
   onToggleTextLabels: (e, { value }) => {
     dispatch(toggleTextLabels(Boolean(value)))
