@@ -1,6 +1,11 @@
 import { createSelector } from 'reselect';
 import { getActivePipelineData } from './index';
 
+/**
+ * Retrieve the formatted list of tags
+ * @param {Object} pipeline Active pipeline data
+ * @return {Array} Tag data list
+ */
 export const getTags = createSelector(
   [getActivePipelineData],
   ({ tags }) => tags.allIDs.sort().map(id => ({
@@ -12,16 +17,14 @@ export const getTags = createSelector(
 );
 
 /**
- * Generate the label for the tag dropdown
+ * Get the total and visible number of tags
  * @param {Array} tags List of tag objects
- * @return {string} Label text
+ * @return {Object} total / visible tags
  */
-export const getTagLabel = createSelector(
+export const getTagCount = createSelector(
   [getTags],
-  tags => {
-    const totalTabCount = tags.length;
-    const activeTabCount = tags.filter(d => !d.disabled).length;
-    const tagCount = activeTabCount < totalTabCount ? `${activeTabCount}/${totalTabCount}` : 'all';
-    return `Tags (${tagCount})`;
-  }
+  tags => ({
+    total: tags.length,
+    visible: tags.filter(d => !d.disabled).length,
+  })
 );

@@ -152,3 +152,18 @@ export function toggleTagDisabled(tagID, disabled) {
     disabled
   };
 }
+
+export const TOGGLE_TAGS_DISABLED = 'TOGGLE_TAGS_DISABLED';
+
+/**
+ * Toggle a group of tags on/off
+ * @param {string} tagIDs Tag id
+ * @param {Boolean} disabled True if tag is disabled
+ */
+export function toggleTagsDisabled(tagIDs, disabled) {
+  return {
+    type: TOGGLE_TAGS_DISABLED,
+    tagIDs,
+    disabled
+  };
+}
