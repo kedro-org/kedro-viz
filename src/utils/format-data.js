@@ -47,7 +47,7 @@ const formatSnapshotData = raw => {
   const tags = {
     allIDs: [],
     active: {},
-    disabled: {},
+    enabled: {},
   };
 
   /**

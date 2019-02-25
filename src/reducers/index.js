@@ -9,8 +9,8 @@ import {
   TOGGLE_NODES_DISABLED,
   TOGGLE_PARAMETERS,
   TOGGLE_TAG_ACTIVE,
-  TOGGLE_TAG_DISABLED,
-  TOGGLE_TAGS_DISABLED,
+  TOGGLE_TAG_FILTER,
+  // TOGGLE_TAGS_DISABLED,
   TOGGLE_TEXT_LABELS,
 } from '../actions';
 
@@ -93,24 +93,10 @@ function reducer(state = {}, action) {
       return Object.assign({}, state, { pipelineData });
     }
 
-    case TOGGLE_TAG_DISABLED: {
-      const pipelineData = state.pipelineData.setIn(
-        ['snapshots', state.activePipeline, 'tags', 'disabled', action.tagID],
-        action.disabled
-      );
-      return Object.assign({}, state, { pipelineData });
-    }
-
-    case TOGGLE_TAGS_DISABLED: {
-      const pipelineData = state.pipelineData.updateIn(
-        ['snapshots', state.activePipeline, 'tags', 'disabled'],
-        disabled => {
-          let newDisabled = disabled;
-          action.tagIDs.forEach(id => {
-            newDisabled = newDisabled.set(id, action.disabled);
-          });
-          return newDisabled;
-        }
+    case TOGGLE_TAG_FILTER: {
+      let pipelineData = state.pipelineData.setIn(
+        ['snapshots', state.activePipeline, 'tags', 'enabled', action.tagID],
+        action.enabled
       );
       return Object.assign({}, state, { pipelineData });
     }

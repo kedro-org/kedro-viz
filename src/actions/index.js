@@ -138,32 +138,17 @@ export function toggleTagActive(tagID, active) {
   };
 }
 
-export const TOGGLE_TAG_DISABLED = 'TOGGLE_TAG_DISABLED';
+export const TOGGLE_TAG_FILTER = 'TOGGLE_TAG_FILTER';
 
 /**
  * Toggle a tag on/off
  * @param {string} tagID Tag id
- * @param {Boolean} disabled True if tag is disabled
+ * @param {Boolean} enabled True if tag is enabled
  */
-export function toggleTagDisabled(tagID, disabled) {
+export function toggleTagFilter(tagID, enabled) {
   return {
-    type: TOGGLE_TAG_DISABLED,
+    type: TOGGLE_TAG_FILTER,
     tagID,
-    disabled
-  };
-}
-
-export const TOGGLE_TAGS_DISABLED = 'TOGGLE_TAGS_DISABLED';
-
-/**
- * Toggle a group of tags on/off
- * @param {string} tagIDs Tag id
- * @param {Boolean} disabled True if tag is disabled
- */
-export function toggleTagsDisabled(tagIDs, disabled) {
-  return {
-    type: TOGGLE_TAGS_DISABLED,
-    tagIDs,
-    disabled
+    enabled
   };
 }

@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { formatNode } from './nodes';
 
 const getActivePipeline = state => state.activePipeline;
 const getPipelines = state => state.pipelineData;
@@ -15,51 +16,46 @@ export const getSnapshotHistory = createSelector(
   })
 );
 
-export const getActivePipelineData = createSelector(
+export const getRawActivePipeline = createSelector(
   [getPipelines, getActivePipeline],
-  (pipelines, activePipeline) => pipelines.getIn(['snapshots', activePipeline]).toJS()
+  (pipelines, activePipeline) => pipelines.getIn(['snapshots', activePipeline])
 );
 
-/**
- * Get a node ID and return a single formatted node for use in the app
- * @param {string} id The unique reference for a given node
- * @param {Objects} nodes Complete set of data referring to the node list
- * @param {Object} tags List of tags with their disabled state
- */
-const formatNode = (id, { nodes, tags }) => {
-  const nodeTags = nodes.tags[id];
-    // Set active status if the node is specifically highlighted, and/or via an associated tag
-  const active_node = nodes.active[id];
-  const active_tag = nodeTags.some(tag => tags.active[tag]);
-    // Set disabled status if the node is specifically hidden, and/or via an associated tag
-  const disabled_node = nodes.disabled[id];
-  const disabled_tag = nodeTags.length && nodeTags.every(tag => tags.disabled[tag]);
-  return {
-    id,
-    name: id.replace(/_/g, ' '),
-    tags: nodes.tags[id],
-    type: nodes.type[id],
-    active_node,
-    active_tag,
-    active: Boolean(active_node || active_tag),
-    disabled_node,
-    disabled_tag,
-    disabled: Boolean(disabled_node || disabled_tag),
-  };
-};
+export const getActivePipelineData = createSelector(
+  [getRawActivePipeline],
+  activePipeline => activePipeline.toJS()
+);
+
+const getEnabledTagCount = createSelector(
+  [getRawActivePipeline],
+  (pipeline) => pipeline.getIn(['tags', 'enabled']).filter(Boolean).size
+);
+
+export const getFormattedNodes = createSelector(
+  [getActivePipelineData, getEnabledTagCount],
+  (pipeline, enabledTagCount) => {
+    const nodes = {};
+    pipeline.nodes.allIDs.forEach(id => {
+      nodes[id] = formatNode(id, pipeline, enabledTagCount);
+    });
+    return nodes;
+  }
+);
 
 export const getNodes = createSelector(
-  [getActivePipelineData],
-  (pipeline) => pipeline.nodes.allIDs.sort().map(id => formatNode(id, pipeline))
+  [getActivePipelineData, getFormattedNodes],
+  (pipeline, nodes) => pipeline.nodes.allIDs.sort().map(id => nodes[id])
 );
 
 export const getEdges = createSelector(
-  [getActivePipelineData],
-  (pipeline) => pipeline.edges.allIDs.map(id => {
+  [getActivePipelineData, getFormattedNodes],
+  (pipeline, nodes) => {
     const { sources, targets } = pipeline.edges;
-    return {
-      source: formatNode(sources[id], pipeline),
-      target: formatNode(targets[id], pipeline),
-    };
-  })
+    return pipeline.edges.allIDs.map(id => {
+      return {
+        source: nodes[sources[id]],
+        target: nodes[targets[id]],
+      };
+    })
+  }
 );

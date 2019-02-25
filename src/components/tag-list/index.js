@@ -1,14 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Checkbox, Dropdown } from '@quantumblack/carbon-ui-components';
-import { toggleTagActive, toggleTagDisabled, toggleTagsDisabled } from '../../actions';
+import { toggleTagActive, toggleTagFilter } from '../../actions';
 import { getTags, getTagCount } from '../../selectors/tags';
 import './tag-list.css';
 
 const TagList = ({
   tagCount,
   onToggleTagActive,
-  onToggleTagDisabled,
+  onToggleTagFilter,
   tags,
   tagLabel,
   theme
@@ -27,10 +27,10 @@ const TagList = ({
               onMouseEnter={onToggleTagActive(tag, true)}
               onMouseLeave={onToggleTagActive(tag, false)}>
               <Checkbox
-                checked={tagCount.visible === tagCount.total ? false : !tag.disabled}
+                checked={tag.enabled}
                 label={<span>{tag.name}</span>}
                 name={tag.id}
-                onChange={onToggleTagDisabled(tag.id, tags, tagCount)}
+                onChange={onToggleTagFilter(tag.id)}
                 theme={theme} />
             </li>
           )) }
@@ -43,8 +43,8 @@ const TagList = ({
 const mapStateToProps = (state) => {
   const tags = getTags(state);
   const tagCount = getTagCount(state);
-  const { total, visible } = tagCount;
-  const tagLabelText = visible < total ? `${visible}/${total}` : 'all';
+  const { enabled, total } = tagCount;
+  const tagLabelText = enabled === 0 ? 'all' : `${enabled}/${total}`;
   const tagLabel = `Tags (${tagLabelText})`;
   return {
     tagCount,
@@ -58,15 +58,8 @@ const mapDispatchToProps = (dispatch) => ({
   onToggleTagActive: (tag, isActive) => () => {
     dispatch(toggleTagActive(tag.id, isActive));
   },
-  onToggleTagDisabled: (tagID, tags, { total, visible }) => (e, { checked }) => {
-    const tagIDs = tags.map(d => d.id);
-    if (visible === total) {
-      dispatch(toggleTagsDisabled(tagIDs.filter(id => id !== tagID), true));
-    } else if (visible === 0 || (visible === 1 && tags.find(d => !d.disabled).id === tagID)) {
-      dispatch(toggleTagsDisabled(tagIDs, false));
-    } else {
-      dispatch(toggleTagDisabled(tagID, !checked));
-    }
+  onToggleTagFilter: tagID => (e, { checked }) => {
+    dispatch(toggleTagFilter(tagID, checked));
   }
 });
 
