@@ -26,8 +26,6 @@ class FlowChart extends Component {
   constructor(props) {
     super(props);
     this.resizeChart = this.resizeChart.bind(this);
-    this.filterEdge = this.filterEdge.bind(this);
-    this.filterNode = this.filterNode.bind(this);
   }
 
   componentDidMount() {
@@ -178,7 +176,7 @@ class FlowChart extends Component {
     };
 
     nodes.forEach(d => {
-      if (!this.filterNode(d)) {
+      if (d.disabled) {
         return;
       }
 
@@ -193,7 +191,7 @@ class FlowChart extends Component {
     });
 
     edges.forEach(d => {
-      if (!this.filterEdge(d)) {
+      if (d.source.disabled || d.target.disabled) {
         return;
       }
       this.graph.setEdge(d.source.id, d.target.id, {
@@ -240,47 +238,19 @@ class FlowChart extends Component {
   }
 
   /**
-   * Determine whether an edge should be rendered
-   * @param {Object} d An edge datum
-   * @return {Boolean} True if visible (i.e. not disabled, and relevant view)
-   */
-  filterEdge(d) {
-    const { view } = this.props;
-    if (d.source.disabled || d.target.disabled) {
-      return false;
-    }
-    if (view === 'combined') {
-      return d.source.type !== d.target.type;
-    }
-    return view === d.source.type && view === d.target.type;
-  }
-
-  /**
-   * Determine whether a node should be rendered
-   * @param {Object} d A node datum
-   * @return {Boolean} True if visible (i.e. not disabled, and relevant view)
-   */
-  filterNode(d) {
-    const { view } = this.props;
-    if (d.disabled) {
-      return false;
-    }
-    return view === 'combined' || view === d.type;
-  }
-
-  /**
    * Combine dagre layout with updated data from props
    */
   prepareData() {
     const { nodes, edges } = this.props;
 
     return {
-      edges: edges.filter(this.filterEdge).map(d => ({
-        ...this.layout.edges[edgeID(d)],
-        ...d
-      })),
+      edges: edges.filter(d => !d.source.disabled && !d.target.disabled)
+        .map(d => ({
+          ...this.layout.edges[edgeID(d)],
+          ...d
+        })),
 
-      nodes: nodes.filter(this.filterNode).map(d => ({
+      nodes: nodes.filter(d => !d.disabled).map(d => ({
         ...this.layout.nodes[d.id],
         ...d
       }))

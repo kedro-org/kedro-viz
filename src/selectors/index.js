@@ -3,6 +3,7 @@ import { formatNode } from './nodes';
 
 const getActivePipeline = state => state.activePipeline;
 const getPipelines = state => state.pipelineData;
+const getView = state => state.view;
 
 export const getSnapshotHistory = createSelector(
   [getPipelines],
@@ -32,11 +33,11 @@ const getEnabledTagCount = createSelector(
 );
 
 export const getFormattedNodes = createSelector(
-  [getActivePipelineData, getEnabledTagCount],
-  (pipeline, enabledTagCount) => {
+  [getActivePipelineData, getEnabledTagCount, getView],
+  (pipeline, enabledTagCount, view) => {
     const nodes = {};
     pipeline.nodes.allIDs.forEach(id => {
-      nodes[id] = formatNode(id, pipeline, enabledTagCount);
+      nodes[id] = formatNode(id, pipeline, enabledTagCount, view);
     });
     return nodes;
   }
