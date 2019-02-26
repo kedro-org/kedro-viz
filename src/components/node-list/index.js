@@ -144,7 +144,7 @@ class NodeList extends React.Component {
                 key={node.id}
                 className={classnames('pipeline-node', {
                   'pipeline-node--active': node.active,
-                  'pipeline-node--disabled': node.disabled_tag
+                  'pipeline-node--disabled': node.disabled_tag || node.disabled_view
                 })}
                 title={node.name}
                 onMouseEnter={onToggleNodeActive(node, true)}
