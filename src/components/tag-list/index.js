@@ -10,14 +10,13 @@ const TagList = ({
   onToggleTagActive,
   onToggleTagFilter,
   tags,
-  tagLabel,
   theme
 }) => (
   <div className="pipeline-tags">
     <Dropdown
       theme={theme}
       width={null}
-      defaultText={tagLabel}>
+      defaultText={`Tag filters (${tagCount.enabled}/${tagCount.total})`}>
       <React.Fragment>
         <ul className="pipeline-tags__tag-list">
           { tags.map(tag => (
@@ -43,13 +42,9 @@ const TagList = ({
 const mapStateToProps = (state) => {
   const tags = getTags(state);
   const tagCount = getTagCount(state);
-  const { enabled, total } = tagCount;
-  const tagLabelText = enabled === 0 ? 'all' : `${enabled}/${total}`;
-  const tagLabel = `Tags (${tagLabelText})`;
   return {
     tagCount,
     tags,
-    tagLabel,
     theme: state.theme,
   };
 };
