@@ -5,6 +5,9 @@ const getActivePipeline = state => state.activePipeline;
 const getPipelines = state => state.pipelineData;
 const getView = state => state.view;
 
+/**
+ * Retrieve list of snapshots used in History tab
+ */
 export const getSnapshotHistory = createSelector(
   [getPipelines],
   (pipelines) => pipelines.get('allIDs').map(id => {
@@ -17,21 +20,34 @@ export const getSnapshotHistory = createSelector(
   })
 );
 
+/**
+ * Retrieve active pipeline data in Immutable object format
+ */
 export const getRawActivePipeline = createSelector(
   [getPipelines, getActivePipeline],
   (pipelines, activePipeline) => pipelines.getIn(['snapshots', activePipeline])
 );
 
+/**
+ * Retrieve active pipeline data converted back into regular JS
+ */
 export const getActivePipelineData = createSelector(
   [getRawActivePipeline],
   activePipeline => activePipeline.toJS()
 );
 
+/**
+ * Retrieve the total number of tags that have been enabled
+ */
 const getEnabledTagCount = createSelector(
   [getRawActivePipeline],
   (pipeline) => pipeline.getIn(['tags', 'enabled']).filter(Boolean).size
 );
 
+/**
+ * Retrieve the set of nodes as an object,
+ * but reformatted for use in nodes and edges selectors
+ */
 export const getFormattedNodes = createSelector(
   [getActivePipelineData, getEnabledTagCount, getView],
   (pipeline, enabledTagCount, view) => {
@@ -43,19 +59,44 @@ export const getFormattedNodes = createSelector(
   }
 );
 
+/**
+ * Get formatted nodes as an array
+ */
 export const getNodes = createSelector(
   [getActivePipelineData, getFormattedNodes],
   (pipeline, nodes) => pipeline.nodes.allIDs.sort().map(id => nodes[id])
 );
 
+/**
+ * Determine whether an edge should be disabled
+ * @param {Object} source Node ID for the preceding node
+ * @param {Object} target Node ID for the succeeding node
+ * @param {string} view Current view setting (combined, task, data)
+ */
+const edgeDisabled = (source, target, view) => {
+  if (source.disabled || target.disabled) {
+    return true;
+  }
+  if (view === 'combined') {
+    return source.type === target.type;
+  }
+  return view !== source.type || view !== target.type;
+}
+
+/**
+ * Format edges and return them as an array
+ */
 export const getEdges = createSelector(
-  [getActivePipelineData, getFormattedNodes],
-  (pipeline, nodes) => {
+  [getActivePipelineData, getFormattedNodes, getView],
+  (pipeline, nodes, view) => {
     const { sources, targets } = pipeline.edges;
     return pipeline.edges.allIDs.map(id => {
+      const source = nodes[sources[id]];
+      const target = nodes[targets[id]];
       return {
-        source: nodes[sources[id]],
-        target: nodes[targets[id]],
+        disabled: edgeDisabled(source, target, view),
+        source,
+        target,
       };
     })
   }

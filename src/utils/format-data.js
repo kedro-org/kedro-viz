@@ -33,6 +33,7 @@ const formatSnapshotData = raw => {
     active: {},
     data: {},
     disabled: {},
+    links: {},
     type: {},
     tags: {},
   };
@@ -61,6 +62,7 @@ const formatSnapshotData = raw => {
       return;
     }
     nodes.allIDs.push(name);
+    nodes.links[name] = [];
     nodes.tags[name] = tags;
     nodes.type[name] = type;
   };
@@ -117,14 +119,39 @@ const formatSnapshotData = raw => {
     createEdges(node);
   });
 
-  // Create links between input task nodes and output task nodes (for task view)
+  /**
+   * Add list of linked nodes to each node
+   * @param {Object} edge Edge datum
+   */
+  const getLinkedNodes = ({ source, target }) => {
+    if (nodes.type[source] === nodes.type[target]) {
+      return;
+    }
+    const addLink = (a, b) => {
+      if (!nodes.links[a].includes(b)) {
+        nodes.links[a].push(b);
+      }
+    };
+    addLink(source, target);
+    addLink(target, source);
+  };
+
   edges.allIDs.forEach(d => {
-    const sourceNode = edges.sources[d];
-    if (nodes.type[sourceNode] === 'task') {
+    const d1 = {
+      source: edges.sources[d],
+      target: edges.targets[d],
+    };
+    getLinkedNodes(d1);
+
+    // Create links between input task nodes and output task nodes (for task view)
+    if (nodes.type[d1.source] === 'task') {
       edges.allIDs.forEach(dd => {
-        const targetNode = edges.targets[dd];
-        if (nodes.type[targetNode] === 'task' && edges.sources[dd] === edges.targets[d]) {
-          addEdge(sourceNode, targetNode);
+        const d2 = {
+          source: edges.sources[dd],
+          target: edges.targets[dd],
+        };
+        if (nodes.type[d2.target] === 'task' && d2.source === edges.targets[d]) {
+          addEdge(d1.source, d2.target);
         }
       });
     }

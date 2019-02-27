@@ -191,7 +191,7 @@ class FlowChart extends Component {
     });
 
     edges.forEach(d => {
-      if (d.source.disabled || d.target.disabled) {
+      if (d.disabled) {
         return;
       }
       this.graph.setEdge(d.source.id, d.target.id, {
@@ -244,11 +244,10 @@ class FlowChart extends Component {
     const { nodes, edges } = this.props;
 
     return {
-      edges: edges.filter(d => !d.source.disabled && !d.target.disabled)
-        .map(d => ({
-          ...this.layout.edges[edgeID(d)],
-          ...d
-        })),
+      edges: edges.filter(d => !d.disabled).map(d => ({
+        ...this.layout.edges[edgeID(d)],
+        ...d
+      })),
 
       nodes: nodes.filter(d => !d.disabled).map(d => ({
         ...this.layout.nodes[d.id],
