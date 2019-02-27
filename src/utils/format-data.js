@@ -33,7 +33,6 @@ const formatSnapshotData = raw => {
     active: {},
     data: {},
     disabled: {},
-    links: {},
     type: {},
     tags: {},
   };
@@ -62,7 +61,6 @@ const formatSnapshotData = raw => {
       return;
     }
     nodes.allIDs.push(name);
-    nodes.links[name] = [];
     nodes.tags[name] = tags;
     nodes.type[name] = type;
   };
@@ -120,20 +118,29 @@ const formatSnapshotData = raw => {
   });
 
   /**
+   * Copy tags from task to data node, and filter duplicates
+   * @param {string} a Node ID
+   * @param {string} b Node ID
+   */
+  const copyTags = (a, b) => {
+    nodes.tags[a] = nodes.tags[a]
+      .concat(nodes.tags[b])
+      .filter((d, i, arr) => arr.indexOf(d) === i);
+  };
+
+  /**
    * Add list of linked nodes to each node
    * @param {Object} edge Edge datum
    */
-  const getLinkedNodes = ({ source, target }) => {
+  const getLinkedNodeTags = ({ source, target }) => {
     if (nodes.type[source] === nodes.type[target]) {
       return;
     }
-    const addLink = (a, b) => {
-      if (!nodes.links[a].includes(b)) {
-        nodes.links[a].push(b);
-      }
-    };
-    addLink(source, target);
-    addLink(target, source);
+    if (nodes.type[source] === 'task') {
+      copyTags(target, source);
+    } else {
+      copyTags(source, target);
+    }
   };
 
   edges.allIDs.forEach(d => {
@@ -141,7 +148,7 @@ const formatSnapshotData = raw => {
       source: edges.sources[d],
       target: edges.targets[d],
     };
-    getLinkedNodes(d1);
+    getLinkedNodeTags(d1);
 
     // Create links between input task nodes and output task nodes (for task view)
     if (nodes.type[d1.source] === 'task') {

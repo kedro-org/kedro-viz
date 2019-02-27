@@ -30,11 +30,6 @@ export const formatNode = (nodeID, pipeline, enabledTagCount, view) => {
     if (nodes.tags[nodeID].length) {
       // Hide task nodes that don't have at least one tag filter enabled
       return !nodes.tags[nodeID].some(tag => tags.enabled[tag]);
-    } else if (nodes.type[nodeID] === 'data') {
-      // Hide data nodes that aren't linked to one of the visible task nodes
-      return !nodes.links[nodeID].some(linkedNode => 
-        nodes.tags[linkedNode].some(tag => tags.enabled[tag])
-      );
     }
     return true;
   };
@@ -58,7 +53,6 @@ export const formatNode = (nodeID, pipeline, enabledTagCount, view) => {
   return {
     id: nodeID,
     name: nodeID.replace(/_/g, ' '),
-    links: pipeline.nodes.links[nodeID],
     tags: pipeline.nodes.tags[nodeID],
     type: pipeline.nodes.type[nodeID],
     active: nodeIsActive(),
