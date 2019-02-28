@@ -6,6 +6,7 @@ import webbrowser
 
 from flask import Flask, jsonify
 
+host = '127.0.0.1'
 port = 4141
 logdir = abspath("logs")
 FNAME = 'pipeline.log'
@@ -37,11 +38,11 @@ def nodes():
 
 
 def main():
-    global port, logdir
+    global host, port, logdir
     browser = True
     try:
         opts, _ = getopt.getopt(
-            sys.argv[1:], "h", ["logdir=", "port=", "no-browser"]
+            sys.argv[1:], "h", ["logdir=", "host=", "port=", "no-browser"]
         )
     except getopt.GetoptError:
         print('{} --logdir <log-directory> --port <web-server-port>'
@@ -61,6 +62,8 @@ def main():
             sys.exit(2)
         elif opt == "--port":
             port = int(arg)
+        elif opt == "--host":
+            host = arg
         elif opt == "--logdir":
             logdir = abspath(arg)
         elif opt == "--no-browser":
@@ -68,7 +71,7 @@ def main():
 
     if browser:
         webbrowser.open_new("http://127.0.0.1:%d/" % port)
-    app.run(port=port)
+    app.run(host=host, port=port)
 
 
 if __name__ == '__main__':
