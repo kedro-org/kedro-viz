@@ -75,7 +75,7 @@ class App extends React.Component {
       .catch(() => {
         console.error(`Unable to load pipeline data. Please check that you have placed a file at ${dataPath}`)
       });
-    return [];
+    return formatSnapshots([]);
   }
 
   render () {

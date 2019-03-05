@@ -5,7 +5,12 @@ import { getActivePipelineData } from '../../selectors';
 import './description.css';
 import formatTime from '../../utils/format-time';
 
-const Description = ({ timestamp, message, visibleNav }) => (
+const Description = ({
+  message,
+  showHistory,
+  timestamp,
+  visibleNav,
+}) => showHistory && (
   <div className={classnames('snapshot-description carbon', {
     'snapshot-description--menu-visible': visibleNav
   })}>
@@ -18,8 +23,9 @@ const Description = ({ timestamp, message, visibleNav }) => (
 const mapStateToProps = (state) => {
   const { timestamp, message } = getActivePipelineData(state);
   return {
+    message,
+    showHistory: state.showHistory,
     timestamp,
-    message
   };
 };
 

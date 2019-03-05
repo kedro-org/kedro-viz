@@ -33,7 +33,7 @@ export const getRawActivePipeline = createSelector(
  */
 export const getActivePipelineData = createSelector(
   [getRawActivePipeline],
-  activePipeline => activePipeline.toJS()
+  activePipeline => activePipeline ? activePipeline.toJS() : null
 );
 
 /**
@@ -41,7 +41,7 @@ export const getActivePipelineData = createSelector(
  */
 const getEnabledTagCount = createSelector(
   [getRawActivePipeline],
-  (pipeline) => pipeline.getIn(['tags', 'enabled']).filter(Boolean).size
+  (pipeline) => pipeline ? pipeline.getIn(['tags', 'enabled']).filter(Boolean).size : null
 );
 
 /**
@@ -51,6 +51,9 @@ const getEnabledTagCount = createSelector(
 export const getFormattedNodes = createSelector(
   [getActivePipelineData, getEnabledTagCount, getView],
   (pipeline, enabledTagCount, view) => {
+    if (!pipeline) {
+      return null;
+    }
     const nodes = {};
     pipeline.nodes.allIDs.forEach(id => {
       nodes[id] = formatNode(id, pipeline, enabledTagCount, view);
@@ -64,7 +67,8 @@ export const getFormattedNodes = createSelector(
  */
 export const getNodes = createSelector(
   [getActivePipelineData, getFormattedNodes],
-  (pipeline, nodes) => pipeline.nodes.allIDs.sort().map(id => nodes[id])
+  (pipeline, nodes) =>
+    pipeline ? pipeline.nodes.allIDs.sort().map(id => nodes[id]) : null
 );
 
 /**

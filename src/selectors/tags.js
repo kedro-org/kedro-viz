@@ -20,12 +20,12 @@ export const getPipelineTags = createSelector(
  */
 export const getTags = createSelector(
   [getPipelineTags],
-  tags => tags.allIDs.sort().map(id => ({
+  tags => tags ? tags.allIDs.sort().map(id => ({
     id,
     name: id.replace(/_/g, ' '),
     active: tags.active[id],
     enabled: Boolean(tags.enabled[id]),
-  }))
+  })) : null
 );
 
 /**

@@ -22,28 +22,19 @@ class ChartWrappper extends Component {
     this.setState({ visibleNav });
   }
 
-  chartHasData() {
-    const { nodes } = this.props;
-    return Boolean(nodes && nodes.length);
-  }
-
   render() {
     const { visibleNav } = this.state;
-    const { theme, showHistory } = this.props;
-    const chartHasData = this.chartHasData();
+    const { nodes, theme, showHistory } = this.props;
+    const hasData = Boolean(nodes && nodes.length);
 
-    return (
+    return hasData && (
       <div className={classnames('kernel-pipeline', {
         'cbn-theme--dark': theme === 'dark',
         'cbn-theme--light': theme === 'light',
       })}>
-        { (chartHasData && showHistory) && (
-          <Description visibleNav={visibleNav} />
-        ) }
+        <Description visibleNav={visibleNav} />
         <div className='pipeline-wrapper'>
-          { chartHasData && (
-            <FlowChart visibleNav={visibleNav} />
-          ) }
+          <FlowChart visibleNav={visibleNav} />
         </div>
         <button
           aria-label="Show menu"
