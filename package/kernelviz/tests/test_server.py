@@ -8,8 +8,7 @@ from unittest import mock
 
 import pytest
 
-import kernelviz
-import kernelviz.server as kv_server
+import kernelviz.server
 
 
 PIPELINE_LOG = "logs/pipeline.log"
@@ -28,7 +27,7 @@ def teardown_function(function):
 @pytest.fixture
 def client():
     """Create Flask test client as a test fixture"""
-    client = kv_server.app.test_client()
+    client = kernelviz.server.app.test_client()
     return client
 
 
@@ -37,7 +36,16 @@ def test_set_port():
     """Check that port argument is correctly handled"""
     kernelviz.server.main()
     assert kernelviz.server.port == 3131
-    kernelviz.server.app.run.assert_called_with(port=3131)
+    kernelviz.server.app.run.assert_called_with(host="127.0.0.1", port=3131)
+    assert kernelviz.server.webbrowser.open_new.called
+
+
+@mock.patch("sys.argv", ("", "--host=0.0.0.0", "--port=8000"))
+def test_set_ip():
+    """Check that host argument is correctly handled"""
+    kernelviz.server.main()
+    assert kernelviz.server.host == "0.0.0.0"
+    kernelviz.server.app.run.assert_called_with(host="0.0.0.0", port=8000)
     assert kernelviz.server.webbrowser.open_new.called
 
 
