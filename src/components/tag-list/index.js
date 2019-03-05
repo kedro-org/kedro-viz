@@ -18,22 +18,28 @@ const TagList = ({
       width={null}
       defaultText={`Tag filters (${tagCount.enabled}/${tagCount.total})`}>
       <React.Fragment>
-        <ul className="pipeline-tags__tag-list">
-          { tags.map(tag => (
-            <li
-              key={`tag-${tag.id}`}
-              className="pipeline-tags__tag-list-item cbn-menu-option"
-              onMouseEnter={onToggleTagActive(tag, true)}
-              onMouseLeave={onToggleTagActive(tag, false)}>
-              <Checkbox
-                checked={tag.enabled}
-                label={<span>{tag.name}</span>}
-                name={tag.id}
-                onChange={onToggleTagFilter(tag.id)}
-                theme={theme} />
-            </li>
-          )) }
-        </ul>
+        { tagCount.total > 0 ? (
+          <ul className="pipeline-tags__tag-list">
+            { tags.map(tag => (
+              <li
+                key={`tag-${tag.id}`}
+                className="pipeline-tags__tag-list-item cbn-menu-option"
+                onMouseEnter={onToggleTagActive(tag, true)}
+                onMouseLeave={onToggleTagActive(tag, false)}>
+                <Checkbox
+                  checked={tag.enabled}
+                  label={<span>{tag.name}</span>}
+                  name={tag.id}
+                  onChange={onToggleTagFilter(tag.id)}
+                  theme={theme} />
+              </li>
+            )) }
+          </ul>
+        ) : (
+          <div className="pipeline-tags__empty cbn-menu-option">
+            There are no tags used in this pipeline.
+          </div>
+        ) }
       </React.Fragment>
     </Dropdown>
   </div>
