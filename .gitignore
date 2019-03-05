@@ -28,6 +28,7 @@ lib/
 .env.production.local
 .vscode
 .*.sw*
+*~
 package/.eggs/
 
 npm-debug.log*
