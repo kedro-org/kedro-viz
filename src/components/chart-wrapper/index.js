@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { Icon } from '@quantumblack/carbon-ui-components';
-import { getNodes } from '../../selectors';
 import SidebarTabs from '../sidebar-tabs';
 import FlowChart from '../flowchart';
 import Description from '../description';
@@ -24,10 +23,9 @@ class ChartWrappper extends Component {
 
   render() {
     const { visibleNav } = this.state;
-    const { nodes, theme, showHistory } = this.props;
-    const hasData = Boolean(nodes && nodes.length);
+    const { theme, showHistory } = this.props;
 
-    return hasData && (
+    return (
       <div className={classnames('kernel-pipeline', {
         'cbn-theme--dark': theme === 'dark',
         'cbn-theme--light': theme === 'light',
@@ -70,7 +68,6 @@ class ChartWrappper extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  nodes: getNodes(state),
   showHistory: state.showHistory,
   theme: state.theme
 });

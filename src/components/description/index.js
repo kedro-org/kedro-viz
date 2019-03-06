@@ -10,7 +10,7 @@ const Description = ({
   showHistory,
   timestamp,
   visibleNav,
-}) => showHistory && (
+}) => showHistory ? (
   <div className={classnames('snapshot-description carbon', {
     'snapshot-description--menu-visible': visibleNav
   })}>
@@ -18,13 +18,13 @@ const Description = ({
     </p>
     <p>Title: <b>{ message }</b></p>
   </div>
-);
+) : null;
 
 const mapStateToProps = (state) => {
   const { timestamp, message } = getActivePipelineData(state);
   return {
     message,
-    showHistory: state.showHistory,
+    showHistory: message && state.showHistory,
     timestamp,
   };
 };

@@ -26,7 +26,7 @@ const ChartUI = ({
   textLabels,
   theme,
   view
-}) => activePipelineData ? (
+}) => activePipelineData.nodes ? (
   <Scrollbars autoHide hideTracksWhenNotNeeded>
     <div className="pipeline-ui">
       <ul className="pipeline-ui__view">

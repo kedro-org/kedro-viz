@@ -98,7 +98,8 @@ class FlowChart extends Component {
    * Calculate the number of active nodes
    */
   checkNodeCount() {
-    return this.props.nodes.filter(d => !d.disabled).length;
+    const { nodes } = this.props;
+    return nodes ? nodes.filter(d => !d.disabled).length : 0;
   }
 
   /**
@@ -175,7 +176,7 @@ class FlowChart extends Component {
       return bbox.width + padding;
     };
 
-    nodes.forEach(d => {
+    nodes && nodes.forEach(d => {
       if (d.disabled) {
         return;
       }
@@ -190,7 +191,7 @@ class FlowChart extends Component {
       });
     });
 
-    edges.forEach(d => {
+    edges && edges.forEach(d => {
       if (d.disabled) {
         return;
       }
@@ -228,9 +229,11 @@ class FlowChart extends Component {
     const zoomScale = Math.min(this.width / width, this.height / height);
     const translateX = this.width / 2 - width * zoomScale / 2;
     const translateY = this.height / 2 - height * zoomScale / 2;
-    const svgZoom = isUpdate
-      ? this.el.svg.transition().duration(DURATION)
-      : this.el.svg;
+    if (isNaN(translateX) || isNaN(translateY)) {
+      return;
+    }
+    const { svg } = this.el;
+    const svgZoom = isUpdate ? svg.transition().duration(DURATION) : svg;
     svgZoom.call(
       this.zoomBehaviour.transform,
       zoomIdentity.translate(translateX, translateY).scale(zoomScale)
@@ -244,15 +247,15 @@ class FlowChart extends Component {
     const { nodes, edges } = this.props;
 
     return {
-      edges: edges.filter(d => !d.disabled).map(d => ({
+      edges: edges ? edges.filter(d => !d.disabled).map(d => ({
         ...this.layout.edges[edgeID(d)],
         ...d
-      })),
+      })): [],
 
-      nodes: nodes.filter(d => !d.disabled).map(d => ({
+      nodes: nodes ? nodes.filter(d => !d.disabled).map(d => ({
         ...this.layout.nodes[d.id],
         ...d
-      }))
+      })): [],
     };
   }
 

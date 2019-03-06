@@ -35,8 +35,11 @@ export const getTags = createSelector(
  */
 export const getTagCount = createSelector(
   [getTags],
-  tags => ({
+  tags => tags ? {
     total: tags.length,
     enabled: tags.filter(d => d.enabled).length,
-  })
+  } : {
+    total: null,
+    enabled: null,
+  }
 );

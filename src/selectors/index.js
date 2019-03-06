@@ -33,7 +33,15 @@ export const getRawActivePipeline = createSelector(
  */
 export const getActivePipelineData = createSelector(
   [getRawActivePipeline],
-  activePipeline => activePipeline ? activePipeline.toJS() : null
+  activePipeline => activePipeline ? activePipeline.toJS() : {
+    message: null,
+    id: null,
+    timestamp: null,
+    json_schema: null,
+    nodes: null,
+    edges: null,
+    tags: null
+  }
 );
 
 /**
@@ -41,7 +49,10 @@ export const getActivePipelineData = createSelector(
  */
 const getEnabledTagCount = createSelector(
   [getRawActivePipeline],
-  (pipeline) => pipeline ? pipeline.getIn(['tags', 'enabled']).filter(Boolean).size : null
+  (pipeline) => {
+    const enabledTags = pipeline && pipeline.getIn(['tags', 'enabled']);
+    return enabledTags ? enabledTags.filter(Boolean).size : null;
+  }
 );
 
 /**
@@ -51,7 +62,7 @@ const getEnabledTagCount = createSelector(
 export const getFormattedNodes = createSelector(
   [getActivePipelineData, getEnabledTagCount, getView],
   (pipeline, enabledTagCount, view) => {
-    if (!pipeline) {
+    if (!pipeline.nodes) {
       return null;
     }
     const nodes = {};
@@ -68,7 +79,7 @@ export const getFormattedNodes = createSelector(
 export const getNodes = createSelector(
   [getActivePipelineData, getFormattedNodes],
   (pipeline, nodes) =>
-    pipeline ? pipeline.nodes.allIDs.sort().map(id => nodes[id]) : null
+    pipeline.nodes ? pipeline.nodes.allIDs.sort().map(id => nodes[id]) : null
 );
 
 /**
@@ -93,6 +104,9 @@ const edgeDisabled = (source, target, view) => {
 export const getEdges = createSelector(
   [getActivePipelineData, getFormattedNodes, getView],
   (pipeline, nodes, view) => {
+    if (!pipeline.edges) {
+      return null;
+    }
     const { sources, targets } = pipeline.edges;
     return pipeline.edges.allIDs.map(id => {
       const source = nodes[sources[id]];
