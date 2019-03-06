@@ -24,10 +24,6 @@ export const edgeID = edge => [edge.source, edge.target].join('-');
  * @return {Object} The node, edge and raw data for the chart
  */
 const formatSnapshotData = raw => {
-  if (!validateInput(raw)) {
-    return {};
-  }
-
   const nodes = {
     allIDs: [],
     active: {},
@@ -111,12 +107,6 @@ const formatSnapshotData = raw => {
     });
   };
 
-  // Iterate through the raw data and create formatted nodes and edges
-  raw.forEach(node => {
-    createNodes(node);
-    createEdges(node);
-  });
-
   /**
    * Copy tags from task to data node, and filter duplicates
    * @param {string} a Node ID
@@ -143,35 +133,61 @@ const formatSnapshotData = raw => {
     }
   };
 
-  edges.allIDs.forEach(d => {
-    const d1 = {
-      source: edges.sources[d],
-      target: edges.targets[d],
-    };
-    getLinkedNodeTags(d1);
+  /**
+   * Iterate through the raw data and create initial set formatted nodes and edges
+   */
+  const generatePreliminaryData = () => {
+    raw.forEach(node => {
+      createNodes(node);
+      createEdges(node);
+    });
+  };
+  
+  /**
+   * Get links between tagged nodes, and between task nodes
+   */
+  const generateAdditionalLinks = () => {
+    edges.allIDs.forEach(d => {
+      const d1 = {
+        source: edges.sources[d],
+        target: edges.targets[d],
+      };
+      getLinkedNodeTags(d1);
 
-    // Create links between input task nodes and output task nodes (for task view)
-    if (nodes.type[d1.source] === 'task') {
-      edges.allIDs.forEach(dd => {
-        const d2 = {
-          source: edges.sources[dd],
-          target: edges.targets[dd],
-        };
-        if (nodes.type[d2.target] === 'task' && d2.source === edges.targets[d]) {
-          addEdge(d1.source, d2.target);
-        }
-      });
-    }
-  });
-
-  // Generate a formatted list of tags from node data
-  nodes.allIDs.forEach(nodeID => {
-    nodes.tags[nodeID].forEach(tagID => {
-      if (!tags.allIDs.includes(tagID)) {
-        tags.allIDs.push(tagID);
+      // Create links between input task nodes and output task nodes (for task view)
+      if (nodes.type[d1.source] === 'task') {
+        edges.allIDs.forEach(dd => {
+          const d2 = {
+            source: edges.sources[dd],
+            target: edges.targets[dd],
+          };
+          if (nodes.type[d2.target] === 'task' && d2.source === edges.targets[d]) {
+            addEdge(d1.source, d2.target);
+          }
+        });
       }
     });
-  });
+  };
+
+  /**
+   * Generate a formatted list of tags from node data
+   */
+  const generateTags = () => {
+    nodes.allIDs.forEach(nodeID => {
+      nodes.tags[nodeID].forEach(tagID => {
+        if (!tags.allIDs.includes(tagID)) {
+          tags.allIDs.push(tagID);
+        }
+      });
+    });
+  }
+
+  // Begin formatting
+  if (validateInput(raw)) {
+    generatePreliminaryData();
+    generateAdditionalLinks();
+    generateTags();
+  }
 
   return {
     nodes,
