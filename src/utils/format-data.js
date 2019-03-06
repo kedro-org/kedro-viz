@@ -214,6 +214,7 @@ const formatSnapshots = (data) => {
   }) => Object.assign({}, pipeline, {
     id: String(kernel_ai_schema_id),
     timestamp: Number(created_ts),
+    json_schema,
     ...formatSnapshotData(json_schema)
   }));
 
