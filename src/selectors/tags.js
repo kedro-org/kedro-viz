@@ -20,12 +20,19 @@ export const getPipelineTags = createSelector(
  */
 export const getTags = createSelector(
   [getPipelineTags],
-  tags => tags ? tags.allIDs.sort().map(id => ({
-    id,
-    name: id.replace(/_/g, ' '),
-    active: tags.active[id],
-    enabled: Boolean(tags.enabled[id]),
-  })) : null
+  tags => {
+    if (tags) {
+      return tags.allIDs
+        .sort()
+        .map(id => ({
+          id,
+          name: id.replace(/_/g, ' '),
+          active: tags.active[id],
+          enabled: Boolean(tags.enabled[id]),
+        }));
+    }
+    return null;
+  }
 );
 
 /**
@@ -35,11 +42,16 @@ export const getTags = createSelector(
  */
 export const getTagCount = createSelector(
   [getTags],
-  tags => tags ? {
-    total: tags.length,
-    enabled: tags.filter(d => d.enabled).length,
-  } : {
-    total: null,
-    enabled: null,
+  tags => {
+    if (tags) {
+      return {
+        total: tags.length,
+        enabled: tags.filter(d => d.enabled).length,
+      };
+    }
+    return {
+      total: null,
+      enabled: null,
+    };
   }
 );

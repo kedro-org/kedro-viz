@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
-// import { scaleOrdinal } from 'd3-scale';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import dagre from 'dagre';
 import { toggleNodeActive } from '../../actions';

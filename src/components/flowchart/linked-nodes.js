@@ -12,17 +12,21 @@ const getLinkedNodes = (edges, nodeID) => {
   );
 
   (function getParents(id) {
-    visibleEdges.filter(d => d.target.id === id).forEach(d => {
-      linkedNodes.push(d.source.id);
-      getParents(d.source.id);
-    });
+    visibleEdges
+      .filter(d => d.target.id === id)
+      .forEach(d => {
+        linkedNodes.push(d.source.id);
+        getParents(d.source.id);
+      });
   })(nodeID);
 
   (function getChildren(id) {
-    visibleEdges.filter(d => d.source.id === id).forEach(d => {
-      linkedNodes.push(d.target.id);
-      getChildren(d.target.id);
-    });
+    visibleEdges
+      .filter(d => d.source.id === id)
+      .forEach(d => {
+        linkedNodes.push(d.target.id);
+        getChildren(d.target.id);
+      });
   })(nodeID);
 
   return linkedNodes;

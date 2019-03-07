@@ -9,6 +9,15 @@ import './history.css';
 import formatTime from '../../utils/format-time';
 import { Scrollbars } from 'react-custom-scrollbars';
 
+/**
+ * Display a scrollable list of snapshots
+ * @param {string} activePipeline UID for the current snapshot
+ * @param {Boolean} allowHistoryDeletion If true, display delete buttons
+ * @param {Function} onChangeActiveSnapshot Handle switching the activePipeline
+ * @param {Function} onDeleteSnapshot Handle deleting a snapshot from the list
+ * @param {Array} snapshots List of snapshots
+ * @param {string} theme CarbonUI light/dark theme
+ */
 const History = ({
   activePipeline,
   allowHistoryDeletion,

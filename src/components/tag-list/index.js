@@ -5,6 +5,14 @@ import { toggleTagActive, toggleTagFilter } from '../../actions';
 import { getTags, getTagCount } from '../../selectors/tags';
 import './tag-list.css';
 
+/**
+ * A Dropdown displaying a list of tags with checkboxes to toggle them on/off
+ * @param {Object} tagCount Number of enabled and active tags
+ * @param {Function} onToggleTagActive Handle toggling a tag's active state
+ * @param {Function} onToggleTagFilter Handle toggling a tag's enabled state
+ * @param {Array} tags List of tags for given pipline
+ * @param {string} theme CarbonUI light/dark theme
+ */
 const TagList = ({
   tagCount,
   onToggleTagActive,
