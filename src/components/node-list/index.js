@@ -21,6 +21,9 @@ const {
   handleKeyEvent,
 } = utils;
 
+/**
+ * Scrollable list of toggleable nodes, with search & filter functionality
+ */
 class NodeList extends React.Component {
   constructor(props) {
     super(props);

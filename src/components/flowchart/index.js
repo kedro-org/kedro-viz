@@ -21,6 +21,9 @@ const edgeID = edge => [edge.source.id, edge.target.id].join('-');
 
 const DURATION = 700;
 
+/**
+ * Display a flowchart for the current snapshot, mostly rendered with D3
+ */
 class FlowChart extends Component {
   constructor(props) {
     super(props);

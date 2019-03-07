@@ -11,6 +11,9 @@ import getRandomHistory from '../../utils/randomData';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 import './app.css';
 
+/**
+ * Main wrapper component. Handles store, and loads/formats snapshot data
+ */
 class App extends React.Component {
   constructor(props) {
     super(props);

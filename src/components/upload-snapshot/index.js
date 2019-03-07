@@ -16,6 +16,9 @@ const store = {
   set: token => window.localStorage.setItem(storeKey, token),
 };
 
+/**
+ * Upload button and form, to allow the current snapshot to be synced to Studio
+ */
 class UploadSnapshot extends Component {
   constructor(props) {
     super(props);
