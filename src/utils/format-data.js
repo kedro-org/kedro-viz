@@ -27,7 +27,6 @@ const formatSnapshotData = raw => {
   const nodes = {
     allIDs: [],
     active: {},
-    data: {},
     disabled: {},
     type: {},
     tags: {},
@@ -35,7 +34,6 @@ const formatSnapshotData = raw => {
   const edges = {
     allIDs: [],
     active: {},
-    data: {},
     sources: {},
     targets: {},
     disabled: {},
@@ -232,7 +230,7 @@ const formatSnapshots = (data) => {
     .map(d => d.id);
   
   return fromJS({
-    schemas, 
+    schemas,
     snapshots,
     allIDs
   });
