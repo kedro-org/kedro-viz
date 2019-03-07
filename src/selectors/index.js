@@ -37,10 +37,24 @@ export const getActivePipelineData = createSelector(
     message: null,
     id: null,
     timestamp: null,
-    json_schema: null,
     nodes: null,
     edges: null,
     tags: null
+  }
+);
+
+/**
+ * Return the raw unformatted data schema for the active snapshot
+ */
+export const getActiveSchema = createSelector(
+  [getActivePipeline, getPipelines],
+  (activePipeline, pipelines) => {
+    if (activePipeline) {
+      return JSON.stringify(
+        pipelines.getIn(['schemas', activePipeline]).toJS()
+      );
+    }
+    return '[]';
   }
 );
 

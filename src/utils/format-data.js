@@ -206,6 +206,11 @@ const formatSnapshots = (data) => {
     return {};
   }
 
+  const schemas = data.reduce((obj, d) => {
+    obj[d.kernel_ai_schema_id] = d.json_schema;
+    return obj;
+  }, {});
+
   const formattedData = data.map(({
     json_schema,
     kernel_ai_schema_id,
@@ -214,7 +219,6 @@ const formatSnapshots = (data) => {
   }) => Object.assign({}, pipeline, {
     id: String(kernel_ai_schema_id),
     timestamp: Number(created_ts),
-    json_schema,
     ...formatSnapshotData(json_schema)
   }));
 
@@ -224,10 +228,11 @@ const formatSnapshots = (data) => {
   }, {});
 
   const allIDs = formattedData
-    .sort((a, b) => b.created_ts - a.created_ts)
+    .sort((a, b) => b.timestamp - a.timestamp)
     .map(d => d.id);
   
   return fromJS({
+    schemas, 
     snapshots,
     allIDs
   });
