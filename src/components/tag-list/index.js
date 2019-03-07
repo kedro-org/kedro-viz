@@ -23,6 +23,7 @@ const TagList = ({
             { tags.map(tag => (
               <li
                 key={`tag-${tag.id}`}
+                title={tag.name}
                 className="pipeline-tags__tag-list-item cbn-menu-option"
                 onMouseEnter={onToggleTagActive(tag, true)}
                 onMouseLeave={onToggleTagActive(tag, false)}>
