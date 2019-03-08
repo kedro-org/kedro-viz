@@ -1,7 +1,15 @@
+import {
+  getArray,
+  randomIndex,
+  randomNumber,
+  getRandomMatch,
+  getRandomName,
+  unique,
+} from './index';
+
 //--- Config variables ---//
 
 const DATA_NODE_COUNT = 30;
-const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(' ');
 const MAX_CONNECTED_NODES = 4;
 const MAX_LAYER_COUNT = 20;
 const MAX_MESSAGE_WORD_LENGTH = 15;
@@ -11,31 +19,6 @@ const MAX_TAG_COUNT = 20;
 const MAX_TIMESTAMP_OFFSET = 9999999999;
 const PARAMETERS_FREQUENCY = 0.05;
 const TASK_NODE_COUNT = 10;
-
-//--- Utility functions ---//
-
-// Get a random array of numbers
-const getArray = n => Array.from(Array(n).keys());
-
-// Get a random number between 0 to n-1, inclusive
-const randomIndex = n => Math.floor(Math.random() * n);
-
-// Get a random number between 1 to n, inclusive
-const randomNumber = n => Math.ceil(Math.random() * n);
-
-// Get a random datum from an array
-const getRandom = range => range[randomIndex(range.length)];
-
-// Get a random datum from an array that matches a filter condition
-const getRandomMatch = (array, condition) => getRandom(array.filter(condition));
-
-// Generate a random name
-const getRandomName = (n, join = '_') => getArray(n)
-  .map(() => getRandom(LOREM_IPSUM))
-  .join(join);
-
-// Filter duplicate values from an array
-const unique = (d, i, arr) => arr.indexOf(d) === i;
 
 /**
  * Generate a random pipeline snapshot dataset
