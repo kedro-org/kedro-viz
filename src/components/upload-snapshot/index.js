@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
 import {
   Button,
   Input,
   Modal,
 } from '@quantumblack/carbon-ui-components';
+import { getActiveSchema } from '../../selectors';
 import config from '../../config';
 import './upload-snapshot.css';
 
@@ -14,6 +16,9 @@ const store = {
   set: token => window.localStorage.setItem(storeKey, token),
 };
 
+/**
+ * Upload button and form, to allow the current snapshot to be synced to Studio
+ */
 class UploadSnapshot extends Component {
   constructor(props) {
     super(props);
@@ -45,7 +50,7 @@ class UploadSnapshot extends Component {
       },
       body: JSON.stringify({
           message,
-          schema: JSON.stringify(this.props.data.json_schema)
+          schema: this.props.json_schema
       })
     })
     .then((response) => {
@@ -182,4 +187,12 @@ class UploadSnapshot extends Component {
   }
 }
 
-export default UploadSnapshot;
+const mapStateToProps = (state) => {
+  return {
+    json_schema: getActiveSchema(state),
+    allowUploads: state.allowUploads,
+    theme: state.theme
+  };
+};
+
+export default connect(mapStateToProps, null)(UploadSnapshot);

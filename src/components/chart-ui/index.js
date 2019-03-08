@@ -9,14 +9,26 @@ import {
   toggleParameters,
   toggleTextLabels
 } from '../../actions';
+import { getNodes } from '../../selectors';
+import TagList from '../tag-list';
 import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
 import './chart-ui.css';
 import { Scrollbars } from 'react-custom-scrollbars';
 
+/**
+ * Main contols for filtering the chart data
+ * @param {Array} nodes List of nodes
+ * @param {Function} onToggleParameters Handle toggling parameters on/off
+ * @param {Function} onToggleTextLabels Handle toggling text labels on/off
+ * @param {Function} onChangeView Handle changing view between combined/task/data
+ * @param {Boolean} parameters Whether parameters are displayed
+ * @param {Boolean} textLabels Whether text labels are displayed
+ * @param {string} theme CarbonUI light/dark theme
+ * @param {string} view Which node types are displayed: combined/task/data
+ */
 const ChartUI = ({
-  allowUploads,
-  activePipelineData,
+  nodes,
   onToggleParameters,
   onToggleTextLabels,
   onChangeView,
@@ -24,7 +36,7 @@ const ChartUI = ({
   textLabels,
   theme,
   view
-}) => activePipelineData ? (
+}) => nodes ? (
   <Scrollbars autoHide hideTracksWhenNotNeeded>
     <div className="pipeline-ui">
       <ul className="pipeline-ui__view">
@@ -73,25 +85,22 @@ const ChartUI = ({
         checked={parameters}
         theme={theme}
       />
-      { activePipelineData.nodes && (
-        <NodeList />
-      ) }
-      <UploadSnapshot
-        allowUploads={allowUploads}
-        data={activePipelineData}
-        theme={theme} />
+      <TagList />
+      <NodeList />
+      <UploadSnapshot />
     </div>
   </Scrollbars>
 ) : null;
 
-const mapStateToProps = (state) => ({
-  activePipelineData: state.activePipelineData,
-  allowUploads: state.allowUploads,
-  parameters: state.parameters,
-  textLabels: state.textLabels,
-  theme: state.theme,
-  view: state.view
-});
+const mapStateToProps = (state) => {
+  return {
+    nodes: getNodes(state),
+    parameters: state.parameters,
+    textLabels: state.textLabels,
+    theme: state.theme,
+    view: state.view
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   onChangeView: (e, { value }) => {

@@ -1,11 +1,16 @@
 //--- Config variables ---//
 
 const DATA_NODE_COUNT = 30;
-const TASK_NODE_COUNT = 10;
-const MAX_LAYER_COUNT = 20;
-const MAX_CONNECTED_NODES = 4;
-const PARAMETERS_FREQUENCY = 0.05;
 const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(' ');
+const MAX_CONNECTED_NODES = 4;
+const MAX_LAYER_COUNT = 20;
+const MAX_MESSAGE_WORD_LENGTH = 15;
+const MAX_NODE_TAG_COUNT = 5;
+const MAX_SNAPSHOT_COUNT = 40;
+const MAX_TAG_COUNT = 20;
+const MAX_TIMESTAMP_OFFSET = 9999999999;
+const PARAMETERS_FREQUENCY = 0.05;
+const TASK_NODE_COUNT = 10;
 
 //--- Utility functions ---//
 
@@ -37,9 +42,11 @@ const unique = (d, i, arr) => arr.indexOf(d) === i;
  */
 class Snapshot {
   constructor() {
-    this.LAYER_COUNT = randomNumber(MAX_LAYER_COUNT);
     this.CONNECTION_COUNT = randomNumber(MAX_CONNECTED_NODES);
+    this.LAYER_COUNT = randomNumber(MAX_LAYER_COUNT);
+    this.TAG_COUNT = randomNumber(MAX_TAG_COUNT);
     this.nodes = this.getNodes();
+    this.tags = this.generateTags();
   }
 
   /**
@@ -84,6 +91,24 @@ class Snapshot {
   }
 
   /**
+   * Generate a random list of tags
+   */
+  generateTags() {
+    return getArray(this.TAG_COUNT)
+      .map(() => getRandomName(randomNumber(MAX_NODE_TAG_COUNT)))
+      .filter(unique);
+  }
+
+  /**
+   * Select a random number of tags from the list of tags
+   */
+  getRandomTags() {
+    return getArray(randomNumber(this.TAG_COUNT))
+      .map(() => this.tags[randomIndex(this.tags.length)])
+      .filter(unique);
+  }
+
+  /**
    * Get connected data nodes for each task node
    * @param {Function} condition Determine order of precedence
    */
@@ -102,6 +127,7 @@ class Snapshot {
     return this.nodes.task.map(node => ({
       inputs: this.getConnectedNodes(d => d.layer < node.layer),
       name: node.id,
+      tags: this.getRandomTags(),
       outputs: this.getConnectedNodes(d => d.layer > node.layer)
     }));
   }
@@ -113,15 +139,15 @@ class Snapshot {
   getDatum() {
     return {
       kernel_ai_schema_id: randomNumber(999999999999999),
-      message: getRandomName(randomNumber(15), ' '),
-      created_ts: new Date().getTime() - randomNumber(9999999999),
+      message: getRandomName(randomNumber(MAX_MESSAGE_WORD_LENGTH), ' '),
+      created_ts: new Date().getTime() - randomNumber(MAX_TIMESTAMP_OFFSET),
       json_schema: this.getSchema()
     };
   }
 };
 
-const generateRandomHistory = (n = 40) =>
-  getArray(randomNumber(n))
+const generateRandomHistory = () =>
+  getArray(randomNumber(MAX_SNAPSHOT_COUNT))
     .map(() => new Snapshot().getDatum())
     .sort((a, b) => b.created_ts - a.created_ts);
 

@@ -7,7 +7,12 @@ import {
   utils,
 } from '@quantumblack/carbon-ui-components';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { updateNodeProperties } from '../../actions';
+import { getNodes } from '../../selectors';
+import {
+  toggleNodeActive,
+  toggleNodeDisabled,
+  toggleNodesDisabled
+} from '../../actions';
 import './node-list.css';
 
 const {
@@ -16,6 +21,9 @@ const {
   handleKeyEvent,
 } = utils;
 
+/**
+ * Scrollable list of toggleable nodes, with search & filter functionality
+ */
 class NodeList extends React.Component {
   constructor(props) {
     super(props);
@@ -81,9 +89,9 @@ class NodeList extends React.Component {
 
   render() {
     const {
-      toggleAllNodes,
-      toggleNodeActive,
-      toggleNodeDisabled,
+      onToggleAllNodes,
+      onToggleNodeActive,
+      onToggleNodeDisabled,
       nodes,
       theme
     } = this.props;
@@ -110,7 +118,7 @@ class NodeList extends React.Component {
             <h2 className='pipeline-node-list__toggle-title'>All Elements</h2>
             <div className='pipeline-node-list__toggle-container'>
               <button
-                onClick={() => toggleAllNodes(this, false)}
+                onClick={() => onToggleAllNodes(formattedNodes, false)}
                 className='pipeline-node-list__toggle'>
                 <svg
                   className='pipeline-node-list__icon pipeline-node-list__icon--check'
@@ -121,7 +129,7 @@ class NodeList extends React.Component {
                 Check all
               </button>
               <button
-                onClick={() => toggleAllNodes(this, true)}
+                onClick={() => onToggleAllNodes(formattedNodes, true)}
                 className='pipeline-node-list__toggle'>
                 <svg
                   className='pipeline-node-list__icon pipeline-node-list__icon--uncheck'
@@ -138,18 +146,19 @@ class NodeList extends React.Component {
               <li
                 key={node.id}
                 className={classnames('pipeline-node', {
-                  'pipeline-node--active': node.active
+                  'pipeline-node--active': node.active,
+                  'pipeline-node--disabled': node.disabled_tag || node.disabled_view
                 })}
                 title={node.name}
-                onMouseEnter={toggleNodeActive(node, true)}
-                onMouseLeave={toggleNodeActive(node, false)}>
+                onMouseEnter={onToggleNodeActive(node, true)}
+                onMouseLeave={onToggleNodeActive(node, false)}>
                 <Checkbox
-                  checked={!node.disabled}
+                  checked={!node.disabled_node}
                   label={<span dangerouslySetInnerHTML={{
                     __html: node.highlightedLabel
                   }} />}
                   name={node.name}
-                  onChange={toggleNodeDisabled(node)}
+                  onChange={onToggleNodeDisabled(node)}
                   theme={theme}
                 />
               </li>
@@ -162,23 +171,19 @@ class NodeList extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  nodes: state.activePipelineData.nodes,
+  nodes: getNodes(state),
   theme: state.theme,
 });
 
 const mapDispatchToProps = dispatch => ({
-  toggleNodeActive: (node, isActive) => () => {
-    dispatch(updateNodeProperties(d => d.id === node.id, 'active', isActive));
+  onToggleNodeActive: (node, isActive) => () => {
+    dispatch(toggleNodeActive(node.id, isActive));
   },
-  toggleNodeDisabled: node => (e, { checked }) => {
-    dispatch(updateNodeProperties(d => d.id === node.id, 'disabled', !checked));
+  onToggleNodeDisabled: node => (e, { checked }) => {
+    dispatch(toggleNodeDisabled(node.id, !checked));
   },
-  toggleAllNodes: (self, disabled) => {
-    dispatch(updateNodeProperties(
-      name => self.nodeMatchesSearch(name, self.state.searchValue),
-      'disabled',
-      disabled
-    ));
+  onToggleAllNodes: (formattedNodes, disabled) => {
+    dispatch(toggleNodesDisabled(formattedNodes.map(node => node.id), disabled));
   }
 });
 

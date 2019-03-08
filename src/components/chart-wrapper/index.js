@@ -7,6 +7,9 @@ import FlowChart from '../flowchart';
 import Description from '../description';
 import './chart-wrapper.css';
 
+/**
+ * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
+ */
 class ChartWrappper extends Component {
   constructor(props) {
     super(props);
@@ -21,28 +24,18 @@ class ChartWrappper extends Component {
     this.setState({ visibleNav });
   }
 
-  chartHasData() {
-    const data = this.props.activePipelineData;
-    return Boolean(data && data.nodes && data.nodes.length);
-  }
-
   render() {
     const { visibleNav } = this.state;
     const { theme, showHistory } = this.props;
-    const chartHasData = this.chartHasData();
 
     return (
       <div className={classnames('kernel-pipeline', {
         'cbn-theme--dark': theme === 'dark',
         'cbn-theme--light': theme === 'light',
       })}>
-        { (chartHasData && showHistory) && (
-          <Description visibleNav={visibleNav} />
-        ) }
+        <Description visibleNav={visibleNav} />
         <div className='pipeline-wrapper'>
-          { chartHasData && (
-            <FlowChart visibleNav={visibleNav} />
-          ) }
+          <FlowChart visibleNav={visibleNav} />
         </div>
         <button
           aria-label="Show menu"
@@ -78,7 +71,6 @@ class ChartWrappper extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  activePipelineData: state.activePipelineData,
   showHistory: state.showHistory,
   theme: state.theme
 });

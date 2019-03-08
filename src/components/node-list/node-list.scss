@@ -70,10 +70,7 @@
 }
 
 .pipeline-node {
-  &:hover,
-  &.pipeline-node--active {
-    background: rgba(#fff, 0.1);
-  }
+  transition: opacity ease 0.4s;
 
   .cbn-switch {
     margin: 0;
@@ -95,4 +92,14 @@
       }
     }
   }
+}
+
+.pipeline-node:hover,
+.pipeline-node--active {
+  background: rgba(#fff, 0.1);
+}
+
+.pipeline-node--disabled {
+  opacity: 0.2;
+  pointer-events: none;
 }

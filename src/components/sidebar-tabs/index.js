@@ -18,6 +18,10 @@ const tabData = [
   }
 ];
 
+/**
+ * Tabs in the sidebar nav for the UI and History sections.
+ * History tab is optional: If hidden, hide tabs too.
+ */
 class SidebarTabs extends React.Component {
   constructor(props) {
     super(props);

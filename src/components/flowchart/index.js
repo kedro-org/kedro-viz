@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
-// import { scaleOrdinal } from 'd3-scale';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import dagre from 'dagre';
-import { updateNodeProperties } from '../../actions';
+import { toggleNodeActive } from '../../actions';
+import { getNodes, getEdges } from '../../selectors';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
 import databaseIcon from './database-icon';
@@ -21,12 +21,13 @@ const edgeID = edge => [edge.source.id, edge.target.id].join('-');
 
 const DURATION = 700;
 
+/**
+ * Display a flowchart for the current snapshot, mostly rendered with D3
+ */
 class FlowChart extends Component {
   constructor(props) {
     super(props);
     this.resizeChart = this.resizeChart.bind(this);
-    this.filterEdge = this.filterEdge.bind(this);
-    this.filterNode = this.filterNode.bind(this);
   }
 
   componentDidMount() {
@@ -88,7 +89,7 @@ class FlowChart extends Component {
         prevProps.textLabels !== this.props.textLabels,
         prevProps.view !== this.props.view,
         prevProps.visibleNav !== this.props.visibleNav,
-        prevProps.data.kernel_ai_schema_id !== this.props.data.kernel_ai_schema_id,
+        prevProps.activePipeline !== this.props.activePipeline,
       ].some(Boolean);
     }
     this.updateNodeCount(newNodeCount);
@@ -99,7 +100,8 @@ class FlowChart extends Component {
    * Calculate the number of active nodes
    */
   checkNodeCount() {
-    return this.props.data.nodes.filter(d => !d.disabled).length;
+    const { nodes } = this.props;
+    return nodes ? nodes.filter(d => !d.disabled).length : 0;
   }
 
   /**
@@ -161,7 +163,7 @@ class FlowChart extends Component {
    * but not when just highlighting active nodes.
    */
   getLayout() {
-    const { data, textLabels } = this.props;
+    const { nodes, edges, textLabels } = this.props;
 
     this.graph = new dagre.graphlib.Graph().setGraph({
       marginx: 40,
@@ -176,8 +178,8 @@ class FlowChart extends Component {
       return bbox.width + padding;
     };
 
-    data.nodes.forEach(d => {
-      if (!this.filterNode(d)) {
+    nodes && nodes.forEach(d => {
+      if (d.disabled) {
         return;
       }
 
@@ -191,8 +193,8 @@ class FlowChart extends Component {
       });
     });
 
-    data.edges.forEach(d => {
-      if (!this.filterEdge(d)) {
+    edges && edges.forEach(d => {
+      if (d.disabled) {
         return;
       }
       this.graph.setEdge(d.source.id, d.target.id, {
@@ -229,9 +231,11 @@ class FlowChart extends Component {
     const zoomScale = Math.min(this.width / width, this.height / height);
     const translateX = this.width / 2 - width * zoomScale / 2;
     const translateY = this.height / 2 - height * zoomScale / 2;
-    const svgZoom = isUpdate
-      ? this.el.svg.transition().duration(DURATION)
-      : this.el.svg;
+    if (isNaN(translateX) || isNaN(translateY)) {
+      return;
+    }
+    const { svg } = this.el;
+    const svgZoom = isUpdate ? svg.transition().duration(DURATION) : svg;
     svgZoom.call(
       this.zoomBehaviour.transform,
       zoomIdentity.translate(translateX, translateY).scale(zoomScale)
@@ -239,50 +243,21 @@ class FlowChart extends Component {
   }
 
   /**
-   * Determine whether an edge should be rendered
-   * @param {Object} d An edge datum
-   * @return {Boolean} True if visible (i.e. not disabled, and relevant view)
-   */
-  filterEdge(d) {
-    const { view } = this.props;
-    if (d.source.disabled || d.target.disabled) {
-      return false;
-    }
-    if (view === 'combined') {
-      return d.source.type !== d.target.type;
-    }
-    return view === d.source.type && view === d.target.type;
-  }
-
-  /**
-   * Determine whether a node should be rendered
-   * @param {Object} d A node datum
-   * @return {Boolean} True if visible (i.e. not disabled, and relevant view)
-   */
-  filterNode(d) {
-    const { view } = this.props;
-    if (d.disabled) {
-      return false;
-    }
-    return view === 'combined' || view === d.type;
-  }
-
-  /**
    * Combine dagre layout with updated data from props
    */
   prepareData() {
-    const { data } = this.props;
+    const { nodes, edges } = this.props;
 
     return {
-      edges: data.edges.filter(this.filterEdge).map(d => ({
+      edges: edges ? edges.filter(d => !d.disabled).map(d => ({
         ...this.layout.edges[edgeID(d)],
         ...d
-      })),
+      })): [],
 
-      nodes: data.nodes.filter(this.filterNode).map(d => ({
+      nodes: nodes ? nodes.filter(d => !d.disabled).map(d => ({
         ...this.layout.nodes[d.id],
         ...d
-      }))
+      })): [],
     };
   }
 
@@ -290,8 +265,8 @@ class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { toggleNodeActive, textLabels } = this.props;
-    const data = this.prepareData();
+    const { onToggleNodeActive, textLabels } = this.props;
+    const { nodes, edges } = this.prepareData();
 
     // Transition the wrapper
     this.el.wrapper
@@ -302,11 +277,11 @@ class FlowChart extends Component {
     // Create selections
     this.el.edges = this.el.edgeGroup
       .selectAll('.edge')
-      .data(data.edges, d => d.id);
+      .data(edges, d => d.id);
 
     this.el.nodes = this.el.nodeGroup
       .selectAll('.node')
-      .data(data.nodes, d => d.id);
+      .data(nodes, d => d.id);
 
     // Set up line shape function
     const lineShape = line()
@@ -381,15 +356,15 @@ class FlowChart extends Component {
       .classed('node--text', textLabels)
       .classed('node--active', d => d.active)
       .on('mouseover', d => {
-        toggleNodeActive(d, true);
+        onToggleNodeActive(d, true);
         tooltip.show(this, d);
-        linkedNodes.show(this.props.data, this.el, d.id);
+        linkedNodes.show(this.props.edges, this.el, d.id);
       })
       .on('mousemove', d => {
         tooltip.show(this, d);
       })
       .on('mouseout', d => {
-        toggleNodeActive(d, false);
+        onToggleNodeActive(d, false);
         linkedNodes.hide(this.el);
         tooltip.hide(this.el);
       });
@@ -444,14 +419,16 @@ class FlowChart extends Component {
 }
 
 const mapStateToProps = state => ({
-  data: state.activePipelineData,
+  activePipeline: state.activePipeline,
+  nodes: getNodes(state),
+  edges: getEdges(state),
   textLabels: state.textLabels,
   view: state.view
 });
 
 const mapDispatchToProps = dispatch => ({
-  toggleNodeActive: (node, isActive) => {
-    dispatch(updateNodeProperties(d => d.id === node.id, 'active', isActive));
+  onToggleNodeActive: (node, isActive) => {
+    dispatch(toggleNodeActive(node.id, isActive));
   }
 });
 

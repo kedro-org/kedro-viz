@@ -1,29 +1,32 @@
 /**
  * Recursively search through the edges data for ancestor and descendant nodes
- * @param {Object} data
+ * @param {Array} edges
  * @param {string} nodeID
  */
-const getLinkedNodes = (data, nodeID) => {
+const getLinkedNodes = (edges, nodeID) => {
   const linkedNodes = [];
-  const edges = data.edges.filter(
-    d =>
-      d.source.type !== d.target.type &&
-      !d.source.disabled &&
-      !d.target.disabled
+  const visibleEdges = edges.filter(d =>
+    d.source.type !== d.target.type &&
+    !d.source.disabled &&
+    !d.target.disabled
   );
 
   (function getParents(id) {
-    edges.filter(d => d.target.id === id).forEach(d => {
-      linkedNodes.push(d.source.id);
-      getParents(d.source.id);
-    });
+    visibleEdges
+      .filter(d => d.target.id === id)
+      .forEach(d => {
+        linkedNodes.push(d.source.id);
+        getParents(d.source.id);
+      });
   })(nodeID);
 
   (function getChildren(id) {
-    edges.filter(d => d.source.id === id).forEach(d => {
-      linkedNodes.push(d.target.id);
-      getChildren(d.target.id);
-    });
+    visibleEdges
+      .filter(d => d.source.id === id)
+      .forEach(d => {
+        linkedNodes.push(d.target.id);
+        getChildren(d.target.id);
+      });
   })(nodeID);
 
   return linkedNodes;
@@ -34,15 +37,15 @@ const getLinkedNodes = (data, nodeID) => {
  * and fade non-linked nodes
  */
 const linkedNodes = {
-  show: (data, { edges, nodes }, id) => {
-    const linkedNodes = getLinkedNodes(data, id);
+  show: (edges, el, id) => {
+    const linkedNodes = getLinkedNodes(edges, id);
     const nodeIsLinked = d => linkedNodes.includes(d.id) || d.id === id;
 
-    nodes
+    el.nodes
       .classed('node--active', nodeIsLinked)
       .classed('node--faded', d => !nodeIsLinked(d));
 
-    edges.classed('edge--faded', ({ source, target }) =>
+    el.edges.classed('edge--faded', ({ source, target }) =>
       [source, target].some(d => !nodeIsLinked(d))
     );
   },

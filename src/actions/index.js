@@ -1,13 +1,13 @@
-export const CHANGE_ACTIVE_PIPELINE = 'CHANGE_ACTIVE_PIPELINE';
+export const CHANGE_ACTIVE_SNAPSHOT = 'CHANGE_ACTIVE_SNAPSHOT';
 
 /**
  * Change which pipeline snapshot is active.
- * @param {Object} pipeline A single snapshot datum
+ * @param {string} snapshotID A single snapshot ID
  */
-export function changeActivePipeline(pipeline) {
+export function changeActiveSnapshot(snapshotID) {
   return {
-    type: CHANGE_ACTIVE_PIPELINE,
-    pipeline
+    type: CHANGE_ACTIVE_SNAPSHOT,
+    snapshotID
   };
 }
 
@@ -29,7 +29,7 @@ export const DELETE_SNAPSHOT = 'DELETE_SNAPSHOT';
 /**
  * Select a snapshot and delete it. If handler is passed via App
  * 'onDeleteSnapshot' prop then use that, else use native method.
- * @param {number} id Snapshot kernel_ai_schema_id
+ * @param {number} id Snapshot id
  */
 export function deleteSnapshot(id) {
   return {
@@ -49,6 +49,51 @@ export function resetSnapshotData(snapshots) {
   return {
     type: RESET_SNAPSHOT_DATA,
     snapshots
+  };
+}
+
+export const TOGGLE_NODE_ACTIVE = 'TOGGLE_NODE_ACTIVE';
+
+/**
+ * Toggle a node's highlighting on/off
+ * @param {string} nodeID The node's unique identifier
+ * @param {Boolean} isActive Whether the node should be active
+ */
+export function toggleNodeActive(nodeID, isActive) {
+  return {
+    type: TOGGLE_NODE_ACTIVE,
+    nodeID,
+    isActive
+  };
+}
+
+export const TOGGLE_NODE_DISABLED = 'TOGGLE_NODE_DISABLED';
+
+/**
+ * Toggle a node's visibility on/off
+ * @param {string} nodeID The node's unique identifier
+ * @param {Boolean} isDisabled Whether the node should be visible
+ */
+export function toggleNodeDisabled(nodeID, isDisabled) {
+  return {
+    type: TOGGLE_NODE_DISABLED,
+    nodeID,
+    isDisabled
+  };
+}
+
+export const TOGGLE_NODES_DISABLED = 'TOGGLE_NODES_DISABLED';
+
+/**
+ * Toggle a selected group of nodes' visibility on/off
+ * @param {Array} nodeIDs The nodes' unique identifiers
+ * @param {Boolean} isDisabled Whether the node should be visible
+ */
+export function toggleNodesDisabled(nodeIDs, isDisabled) {
+  return {
+    type: TOGGLE_NODES_DISABLED,
+    nodeIDs,
+    isDisabled
   };
 }
 
@@ -78,21 +123,32 @@ export function toggleTextLabels(textLabels) {
   };
 }
 
-export const UPDATE_NODE_PROPERTIES = 'UPDATE_NODE_PROPERTIES';
+export const TOGGLE_TAG_ACTIVE = 'TOGGLE_TAG_ACTIVE';
 
 /**
- * Loop through the list of nodes and edges for the active snapshot,
- * and update a specified property for each to a specified value,
- * if and only if they match a provided selector rule
- * @param {Function} matchNode Conditional. Returns true if node should be updated
- * @param {string} property The node prop to be updated
- * @param {any} value The new value for the updated node property
+ * Toggle a tag's highlighting on/off
+ * @param {string} tagID Tag id
+ * @param {Boolean} active True if tag is active
  */
-export function updateNodeProperties(matchNode, property, value) {
+export function toggleTagActive(tagID, active) {
   return {
-    type: UPDATE_NODE_PROPERTIES,
-    matchNode,
-    property,
-    value
+    type: TOGGLE_TAG_ACTIVE,
+    tagID,
+    active
+  };
+}
+
+export const TOGGLE_TAG_FILTER = 'TOGGLE_TAG_FILTER';
+
+/**
+ * Toggle a tag on/off
+ * @param {string} tagID Tag id
+ * @param {Boolean} enabled True if tag is enabled
+ */
+export function toggleTagFilter(tagID, enabled) {
+  return {
+    type: TOGGLE_TAG_FILTER,
+    tagID,
+    enabled
   };
 }
