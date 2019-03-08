@@ -27,7 +27,6 @@
     "d3-transition": "^1.1.1",
     "d3-zoom": "^1.7.1",
     "dagre": "^0.8.2",
-    "immutable": "^4.0.0-rc.12",
     "react": "^16.6.1",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.6.1",

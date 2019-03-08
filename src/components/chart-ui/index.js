@@ -9,7 +9,6 @@ import {
   toggleParameters,
   toggleTextLabels
 } from '../../actions';
-import { getNodes } from '../../selectors';
 import TagList from '../tag-list';
 import NodeList from '../node-list';
 import UploadSnapshot from '../upload-snapshot';
@@ -18,7 +17,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 /**
  * Main contols for filtering the chart data
- * @param {Array} nodes List of nodes
+ * @param {Boolean} hasData Whether the chart data has been loaded
  * @param {Function} onToggleParameters Handle toggling parameters on/off
  * @param {Function} onToggleTextLabels Handle toggling text labels on/off
  * @param {Function} onChangeView Handle changing view between combined/task/data
@@ -28,7 +27,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
  * @param {string} view Which node types are displayed: combined/task/data
  */
 const ChartUI = ({
-  nodes,
+  hasData,
   onToggleParameters,
   onToggleTextLabels,
   onChangeView,
@@ -36,7 +35,7 @@ const ChartUI = ({
   textLabels,
   theme,
   view
-}) => nodes ? (
+}) => hasData ? (
   <Scrollbars autoHide hideTracksWhenNotNeeded>
     <div className="pipeline-ui">
       <ul className="pipeline-ui__view">
@@ -92,15 +91,13 @@ const ChartUI = ({
   </Scrollbars>
 ) : null;
 
-const mapStateToProps = (state) => {
-  return {
-    nodes: getNodes(state),
-    parameters: state.parameters,
-    textLabels: state.textLabels,
-    theme: state.theme,
-    view: state.view
-  };
-};
+const mapStateToProps = (state) => ({
+  hasData: Boolean(state.snapshotIDs),
+  parameters: state.parameters,
+  textLabels: state.textLabels,
+  theme: state.theme,
+  view: state.view
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onChangeView: (e, { value }) => {

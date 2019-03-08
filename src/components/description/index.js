@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { getActivePipelineData } from '../../selectors';
+import { getActiveSnapshotMessage, getActiveSnapshotTimestamp } from '../../selectors';
 import './description.css';
 import formatTime from '../../utils/format-time';
 
@@ -29,11 +29,11 @@ const Description = ({
 ) : null;
 
 const mapStateToProps = (state) => {
-  const { timestamp, message } = getActivePipelineData(state);
+  const message = getActiveSnapshotMessage(state);
   return {
     message,
     showDescription: message && state.showHistory,
-    timestamp,
+    timestamp: getActiveSnapshotTimestamp(state),
   };
 };
 

@@ -6,13 +6,13 @@ import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import dagre from 'dagre';
 import { toggleNodeActive } from '../../actions';
-import { getNodes, getEdges } from '../../selectors';
+import { getNodes } from '../../selectors/nodes';
+import { getEdges } from '../../selectors/edges';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
 import databaseIcon from './database-icon';
 import cogIcon from './cog-icon';
 import './flowchart.css';
-
 /**
  * Get unique, reproducible ID for each edge, based on its nodes
  * @param {Object} edge - An edge datum
@@ -89,7 +89,7 @@ class FlowChart extends Component {
         prevProps.textLabels !== this.props.textLabels,
         prevProps.view !== this.props.view,
         prevProps.visibleNav !== this.props.visibleNav,
-        prevProps.activePipeline !== this.props.activePipeline,
+        prevProps.activeSnapshot !== this.props.activeSnapshot,
       ].some(Boolean);
     }
     this.updateNodeCount(newNodeCount);
@@ -419,9 +419,9 @@ class FlowChart extends Component {
 }
 
 const mapStateToProps = state => ({
-  activePipeline: state.activePipeline,
-  nodes: getNodes(state),
+  activeSnapshot: state.activeSnapshot,
   edges: getEdges(state),
+  nodes: getNodes(state),
   textLabels: state.textLabels,
   view: state.view
 });

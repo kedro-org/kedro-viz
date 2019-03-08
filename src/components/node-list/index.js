@@ -7,7 +7,7 @@ import {
   utils,
 } from '@quantumblack/carbon-ui-components';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { getNodes } from '../../selectors';
+import { getNodes } from '../../selectors/nodes';
 import {
   toggleNodeActive,
   toggleNodeDisabled,

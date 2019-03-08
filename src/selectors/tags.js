@@ -1,16 +1,17 @@
 import { createSelector } from 'reselect';
-import { getActivePipelineData } from './index';
+
+const getActiveSnapshot = state => state.activeSnapshot;
+const getSnapshotTags = state => state.snapshotTags;
+const getTagName = state => state.tagName;
+const getTagActive = state => state.tagActive;
+const getTagEnabled = state => state.tagEnabled;
 
 /**
- * Retrieve the unformatted list of tags
- * @param {Object} pipeline Active pipeline data
- * @return {Array} Tag data list
+ * Get a list of tags for the active snapshot
  */
-export const getPipelineTags = createSelector(
-  [getActivePipelineData],
-  (pipeline) => {
-    return pipeline.tags
-  }
+export const getActiveSnapshotTags = createSelector(
+  [getActiveSnapshot, getSnapshotTags],
+  (activeSnapshot, snapshotTags) => snapshotTags[activeSnapshot]
 );
 
 /**
@@ -19,20 +20,15 @@ export const getPipelineTags = createSelector(
  * @return {Array} Tag data list
  */
 export const getTags = createSelector(
-  [getPipelineTags],
-  tags => {
-    if (tags) {
-      return tags.allIDs
-        .sort()
-        .map(id => ({
-          id,
-          name: id.replace(/_/g, ' '),
-          active: tags.active[id],
-          enabled: Boolean(tags.enabled[id]),
-        }));
-    }
-    return null;
-  }
+  [getActiveSnapshotTags, getTagName, getTagActive, getTagEnabled],
+  (activeSnapshotTags, tagName, tagActive, tagEnabled) => activeSnapshotTags
+    .map(id => ({
+      id,
+      name: tagName[id],
+      active: tagActive[id],
+      enabled: tagEnabled[id],
+    }))
+    .sort((a, b) => b.name - a.name)
 );
 
 /**
@@ -41,17 +37,9 @@ export const getTags = createSelector(
  * @return {Object} total / enabled tags
  */
 export const getTagCount = createSelector(
-  [getTags],
-  tags => {
-    if (tags) {
-      return {
-        total: tags.length,
-        enabled: tags.filter(d => d.enabled).length,
-      };
-    }
-    return {
-      total: null,
-      enabled: null,
-    };
-  }
+  [getActiveSnapshotTags, getTagEnabled],
+  (activeSnapshotTags, tagEnabled) => ({
+    total: activeSnapshotTags.length,
+    enabled: activeSnapshotTags.filter(id => tagEnabled[id]).length,
+  })
 );
