@@ -123,9 +123,9 @@ class FlowChart extends Component {
    * and apply them to the chart SVG
    */
   setChartHeight() {
-    const { x, y, width, height } = this._container.getBoundingClientRect();
-    this.x = x;
-    this.y = y;
+    const { left, top, width, height } = this._container.getBoundingClientRect();
+    this.x = left;
+    this.y = top;
     this.width = width - this.getNavOffset(width);
     this.height = height;
     this.el.svg.attr('width', width).attr('height', height);

@@ -6,11 +6,11 @@ import { event } from 'd3-selection';
 const tooltip = {
   show: ({ el, navOffset, width, x, y }, d) => {
     const offset = event.target.getBoundingClientRect();
-    const isRight = (offset.x - navOffset) > width / 2;
-    const xOffset = isRight ? offset.x - (width + navOffset) : offset.x;
+    const isRight = (offset.left - navOffset) > width / 2;
+    const xOffset = isRight ? offset.left - (width + navOffset) : offset.left;
     const translate = {
       x: (xOffset - x) + (offset.width / 2),
-      y: offset.y - y,
+      y: offset.top - y,
     };
     let label = `<b>${d.name}</b>`;
     if (d.layer) {
