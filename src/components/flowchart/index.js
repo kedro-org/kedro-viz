@@ -11,11 +11,6 @@ import tooltip from './tooltip';
 import databaseIcon from './database-icon';
 import cogIcon from './cog-icon';
 import './flowchart.css';
-/**
- * Get unique, reproducible ID for each edge, based on its nodes
- * @param {Object} edge - An edge datum
- */
-const edgeID = edge => [edge.source.id, edge.target.id].join('-');
 
 const DURATION = 700;
 
@@ -25,7 +20,7 @@ const DURATION = 700;
 class FlowChart extends Component {
   constructor(props) {
     super(props);
-    this.resizeChart = this.resizeChart.bind(this);
+    this.handleWindowResize = this.handleWindowResize.bind(this);
   }
 
   componentDidMount() {
@@ -39,27 +34,21 @@ class FlowChart extends Component {
       tooltip: select(this._tooltip)
     };
 
-    this.setChartHeight();
+    this.updateChartSize();
     this.initZoomBehaviour();
     this.drawChart();
     this.zoomChart();
-    window.addEventListener('resize', this.resizeChart);
+    window.addEventListener('resize', this.handleWindowResize);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.resizeChart);
+    window.removeEventListener('resize', this.handleWindowResize);
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.visibleNav !== this.props.visibleNav) {
-      this.setChartHeight();
-    }
-
+  componentDidUpdate() {
+    this.updateChartSize();
     this.drawChart();
-
-    if (prevProps.layout !== this.props.layout) {
-      this.zoomChart(true);
-    }
+    this.zoomChart(true);
   }
 
   /**
@@ -83,8 +72,8 @@ class FlowChart extends Component {
   /**
    * Handle window resize
    */
-  resizeChart() {
-    this.setChartHeight();
+  handleWindowResize() {
+    this.updateChartSize();
     this.drawChart();
     this.zoomChart(true);
   }
