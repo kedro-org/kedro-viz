@@ -26,8 +26,8 @@ export const getTags = createSelector(
     .map(id => ({
       id,
       name: tagName[id],
-      active: tagActive[id],
-      enabled: tagEnabled[id],
+      active: Boolean(tagActive[id]),
+      enabled: Boolean(tagEnabled[id]),
     }))
 );
 
