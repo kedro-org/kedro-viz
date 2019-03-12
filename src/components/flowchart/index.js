@@ -61,14 +61,16 @@ class FlowChart extends Component {
    */
   updateChartSize() {
     const { left, top, width, height } = this._container.getBoundingClientRect();
-    const chartSize = {
+    const navOffset = this.getNavOffset(width);
+    this.props.onUpdateChartSize({
       x: left,
       y: top,
-      width: width - this.getNavOffset(width),
+      outerWidth: width,
+      outerHeight: height,
+      width: width - navOffset,
       height,
-    };
-    this.props.onUpdateChartSize(chartSize);
-    this.el.svg.attr('width', width).attr('height', height);
+      navOffset,
+    });
   }
 
   getNavOffset(width) {
@@ -81,8 +83,6 @@ class FlowChart extends Component {
    */
   handleWindowResize() {
     this.updateChartSize();
-    this.drawChart();
-    this.zoomChart();
   }
 
   /**
@@ -116,7 +116,11 @@ class FlowChart extends Component {
   drawChart() {
     const { chartSize, layout, onToggleNodeActive, textLabels } = this.props;
     const { nodes, edges } = layout;
-    const navOffset = this.getNavOffset(chartSize.width);
+    const navOffset = this.getNavOffset(chartSize.outerWidth);
+
+    // Update SVG dimensions
+    this.el.svg.attr('width', chartSize.outerWidth)
+      .attr('height', chartSize.outerHeight);
 
     // Animate the wrapper translation when nav is toggled
     this.el.wrapper
