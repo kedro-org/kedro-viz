@@ -116,9 +116,9 @@ class FlowChart extends Component {
   drawChart() {
     const { chartSize, layout, onToggleNodeActive, textLabels } = this.props;
     const { nodes, edges } = layout;
+    const navOffset = this.getNavOffset(chartSize.width);
 
     // Animate the wrapper translation when nav is toggled
-    const navOffset = this.getNavOffset(chartSize.width);
     this.el.wrapper
       .transition('wrapper-navoffset')
       .duration(DURATION)
@@ -127,11 +127,11 @@ class FlowChart extends Component {
     // Create selections
     this.el.edges = this.el.edgeGroup
       .selectAll('.edge')
-      .data(edges, d => d.id);
+      .data(edges, edge => edge.id);
 
     this.el.nodes = this.el.nodeGroup
       .selectAll('.node')
-      .data(nodes, d => d.id);
+      .data(nodes, node => node.id);
 
     // Set up line shape function
     const lineShape = line()
@@ -166,7 +166,7 @@ class FlowChart extends Component {
       .select('path')
       .transition('update-edges')
       .duration(DURATION)
-      .attr('d', d => d.points && lineShape(d.points));
+      .attr('d', edge => edge.points && lineShape(edge.points));
 
     // Create nodes
     const enterNodes = this.el.nodes
@@ -175,7 +175,7 @@ class FlowChart extends Component {
       .attr('class', 'node');
 
     enterNodes
-      .attr('transform', d => `translate(${d.x}, ${d.y})`)
+      .attr('transform', node => `translate(${node.x}, ${node.y})`)
       .attr('opacity', 0);
 
     enterNodes.append('circle').attr('r', 25);
@@ -183,11 +183,11 @@ class FlowChart extends Component {
     enterNodes.append('rect');
 
     enterNodes
-      .append(d => d.type === 'data' ? databaseIcon(d) : cogIcon(d))
+      .append(node => node.type === 'data' ? databaseIcon(node) : cogIcon(node))
 
     enterNodes
       .append('text')
-      .text(d => d.name)
+      .text(node => node.name)
       .attr('text-anchor', 'middle')
       .attr('dy', 4);
 
@@ -198,23 +198,35 @@ class FlowChart extends Component {
       .attr('opacity', 0)
       .remove();
 
+    const tooltipProps = {
+      ...chartSize,
+      navOffset,
+      tooltip: this.el.tooltip,
+    };
+
+    const linkedNodeProps = {
+      el: this.el,
+      edges,
+      nodes,
+    };
+
     this.el.nodes = this.el.nodes
       .merge(enterNodes)
-      .classed('node--data', d => d.type === 'data')
-      .classed('node--task', d => d.type === 'task')
+      .classed('node--data', node => node.type === 'data')
+      .classed('node--task', node => node.type === 'task')
       .classed('node--icon', !textLabels)
       .classed('node--text', textLabels)
-      .classed('node--active', d => d.active)
-      .on('mouseover', d => {
-        onToggleNodeActive(d, true);
-        tooltip.show(this, d);
-        linkedNodes.show(this.props.layout.edges, this.el, d.id);
+      .classed('node--active', node => node.active)
+      .on('mouseover', node => {
+        onToggleNodeActive(node, true);
+        tooltip.show(tooltipProps, node);
+        linkedNodes.show(linkedNodeProps, node.id);
       })
-      .on('mousemove', d => {
-        tooltip.show(this, d);
+      .on('mousemove', node => {
+        tooltip.show(tooltipProps, node);
       })
-      .on('mouseout', d => {
-        onToggleNodeActive(d, false);
+      .on('mouseout', node => {
+        onToggleNodeActive(node, false);
         linkedNodes.hide(this.el);
         tooltip.hide(this.el);
       });
@@ -223,15 +235,15 @@ class FlowChart extends Component {
       .transition('update-nodes')
       .duration(DURATION)
       .attr('opacity', 1)
-      .attr('transform', d => `translate(${d.x}, ${d.y})`);
+      .attr('transform', node => `translate(${node.x}, ${node.y})`);
 
     this.el.nodes
       .select('rect')
-      .attr('width', d => d.width - 5)
-      .attr('height', d => d.height - 5)
-      .attr('x', d => (d.width - 5) / -2)
-      .attr('y', d => (d.height - 5) / -2)
-      .attr('rx', d => (d.type === 'data' ? d.height / 2 : 0));
+      .attr('width', node => node.width - 5)
+      .attr('height', node => node.height - 5)
+      .attr('x', node => (node.width - 5) / -2)
+      .attr('y', node => (node.height - 5) / -2)
+      .attr('rx', node => (node.type === 'data' ? node.height / 2 : 0));
   }
 
   /**
