@@ -35,10 +35,11 @@ class Snapshot {
   /**
    * Generate a name for each node.
    * Put 'parameters_' in front of 1 in 20.
+   * @param {number} paramFreq How often nodes should include 'parameters' in their name
    */
-  getRandomNodeName() {
-    const params = Math.random() < PARAMETERS_FREQUENCY ? 'parameters_' : '';
+  getRandomNodeName(paramFreq) {
     const name = getRandomName(randomNumber(10));
+    const params = Math.random() < paramFreq ? 'parameters_' : '';
     return params + name;
   }
 
@@ -46,10 +47,11 @@ class Snapshot {
    * Generate a list of nodes
    * @param {number} count The number of nodes to generate
    * @param {Function} getLayer A callback to create a random layer number
+   * @param {number} paramFreq How often nodes should include 'parameters' in their name
    */
-  generateNodeList(count, getLayer) {
+  generateNodeList(count, getLayer, paramFreq) {
     return getArray(count)
-      .map(this.getRandomNodeName)
+      .map(() => this.getRandomNodeName(paramFreq))
       .filter(unique)
       .map(id => ({
         id,
@@ -64,11 +66,13 @@ class Snapshot {
     return {
       data: this.generateNodeList(
         DATA_NODE_COUNT,
-        () => randomIndex(this.LAYER_COUNT + 1)
+        () => randomIndex(this.LAYER_COUNT + 1),
+        PARAMETERS_FREQUENCY
       ),
       task: this.generateNodeList(
         TASK_NODE_COUNT,
-        () => randomIndex(this.LAYER_COUNT) + 0.5
+        () => randomIndex(this.LAYER_COUNT) + 0.5,
+        0
       ),
     };
   }
