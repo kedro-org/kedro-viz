@@ -41,5 +41,5 @@ export const getActiveSnapshotTimestamp = createSelector(
  */
 export const getActiveSchema = createSelector(
   [getActiveSnapshot, getSnapshotSchema],
-  (activeSnapshot, snapshotSchemas) => snapshotSchemas[activeSnapshot]
+  (activeSnapshot, snapshotSchemas) => JSON.stringify(snapshotSchemas[activeSnapshot])
 );
