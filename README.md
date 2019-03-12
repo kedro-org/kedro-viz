@@ -1,4 +1,4 @@
-f# Kernel Pipeline Viz
+# Kernel Pipeline Viz
 
 This project creates a data visualisation of a Kernel AI pipeline.
 
