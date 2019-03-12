@@ -22,13 +22,13 @@ export const getActiveSnapshotTags = createSelector(
 export const getTags = createSelector(
   [getActiveSnapshotTags, getTagName, getTagActive, getTagEnabled],
   (activeSnapshotTags, tagName, tagActive, tagEnabled) => activeSnapshotTags
+    .sort()
     .map(id => ({
       id,
       name: tagName[id],
       active: tagActive[id],
       enabled: tagEnabled[id],
     }))
-    .sort((a, b) => b.name - a.name)
 );
 
 /**

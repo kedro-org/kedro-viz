@@ -134,16 +134,18 @@ export const getNodes = createSelector(
     nodeDisabledNode,
     nodeDisabledTag,
     nodeDisabledView,
-  ) => activeSnapshotNodes.map(id => ({
-    id,
-    name: nodeName[id],
-    type: nodeType[id],
-    active: nodeActive[id],
-    disabled: nodeDisabled[id],
-    disabled_node: nodeDisabledNode[id],
-    disabled_tag: nodeDisabledTag[id],
-    disabled_view: nodeDisabledView[id],
-  }))
+  ) => activeSnapshotNodes
+    .sort()
+    .map(id => ({
+      id,
+      name: nodeName[id],
+      type: nodeType[id],
+      active: nodeActive[id],
+      disabled: nodeDisabled[id],
+      disabled_node: nodeDisabledNode[id],
+      disabled_tag: nodeDisabledTag[id],
+      disabled_view: nodeDisabledView[id],
+    }))
 );
 
 
