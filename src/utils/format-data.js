@@ -107,8 +107,8 @@ const formatSnapshots = (data) => {
         return;
       }
       snapshotEdges[snapshotID].push(id);
-      edgeSources[id] = source;
-      edgeTargets[id] = target;
+      edgeSources[id] = getNodeID(snapshotID, source);
+      edgeTargets[id] = getNodeID(snapshotID, target);
     };
 
     /**
@@ -276,7 +276,7 @@ const formatSnapshots = (data) => {
     tagEnabled: {},
   };
   // console.log(
-  //   snapshots.tagEnabled.toJS()
+  //   snapshots.nodeType
   // );
   // debugger
 

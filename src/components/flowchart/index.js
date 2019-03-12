@@ -4,10 +4,8 @@ import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
-import dagre from 'dagre';
 import { toggleNodeActive } from '../../actions';
-import { getNodes } from '../../selectors/nodes';
-import { getEdges } from '../../selectors/edges';
+import { getGraph, getLayout } from '../../selectors/layout';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
 import databaseIcon from './database-icon';
@@ -43,10 +41,8 @@ class FlowChart extends Component {
 
     this.setChartHeight();
     this.initZoomBehaviour();
-    this.getLayout();
     this.drawChart();
     this.zoomChart();
-    this.updateNodeCount(this.checkNodeCount());
     window.addEventListener('resize', this.resizeChart);
   }
 
@@ -55,67 +51,15 @@ class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const doRedraw = this.shouldRedrawLayout(prevProps);
-
     if (prevProps.visibleNav !== this.props.visibleNav) {
       this.setChartHeight();
     }
 
-    if (doRedraw) {
-      this.getLayout();
-    }
-
     this.drawChart();
 
-    if (doRedraw) {
+    if (prevProps.layout !== this.props.layout) {
       this.zoomChart(true);
     }
-  }
-
-  /**
-   * Determine whether the chart's Dagre layout should be recalculated,
-   * when receiving new props. Layout is time-consuming so we don't want to
-   * run it unless we absolutely have to.
-   * @param {Object} prevProps Previous component props
-   * @return {Boolean} True if new layout is required
-   */
-  shouldRedrawLayout(prevProps) {
-    const newNodeCount = this.checkNodeCount();
-    let shouldRedraw = false;
-    // Don't redraw if there are no visible nodes
-    if (newNodeCount !== 0) {
-      shouldRedraw = [
-        this.nodeCount !== newNodeCount,
-        prevProps.textLabels !== this.props.textLabels,
-        prevProps.view !== this.props.view,
-        prevProps.visibleNav !== this.props.visibleNav,
-        prevProps.activeSnapshot !== this.props.activeSnapshot,
-      ].some(Boolean);
-    }
-    this.updateNodeCount(newNodeCount);
-    return shouldRedraw;
-  }
-
-  /**
-   * Calculate the number of active nodes
-   */
-  checkNodeCount() {
-    const { nodes } = this.props;
-    return nodes ? nodes.filter(d => !d.disabled).length : 0;
-  }
-
-  /**
-   * Keep a count of the number of nodes on screen,
-   * and return true if the number of visible nodes has changed,
-   * indicating that the dagre layout should be updated
-   */
-  updateNodeCount(newNodeCount) {
-    // Don't update node if count hasn't changed (to avoid unnecessary redraws)
-    if (newNodeCount === this.nodeCount) {
-      return false;
-    }
-    this.nodeCount = newNodeCount;
-    return true;
   }
 
   /**
@@ -141,7 +85,6 @@ class FlowChart extends Component {
    */
   resizeChart() {
     this.setChartHeight();
-    this.getLayout();
     this.drawChart();
     this.zoomChart(true);
   }
@@ -158,76 +101,11 @@ class FlowChart extends Component {
   }
 
   /**
-   * Calculate node/edge positoning, using dagre layout algorithm.
-   * This is expensive and should only be run if the layout needs changing,
-   * but not when just highlighting active nodes.
-   */
-  getLayout() {
-    const { nodes, edges, textLabels } = this.props;
-
-    this.graph = new dagre.graphlib.Graph().setGraph({
-      marginx: 40,
-      marginy: 40
-    });
-
-    // Temporarily append text element to the DOM, to measure its width
-    const textWidth = (name, padding) => {
-      const text = this.el.nodeGroup.append('text').text(name);
-      const bbox = text.node().getBBox();
-      text.remove();
-      return bbox.width + padding;
-    };
-
-    nodes && nodes.forEach(d => {
-      if (d.disabled) {
-        return;
-      }
-
-      const nodeWidth = d.type === 'data' ? 50 : 40;
-
-      this.graph.setNode(d.id, {
-        ...d,
-        label: d.name,
-        width: textLabels ? textWidth(d.name, nodeWidth) : nodeWidth,
-        height: nodeWidth
-      });
-    });
-
-    edges && edges.forEach(d => {
-      if (d.disabled) {
-        return;
-      }
-      this.graph.setEdge(d.source.id, d.target.id, {
-        source: d.source,
-        target: d.target
-      });
-    });
-
-    // Run Dagre layout to calculate X/Y positioning
-    dagre.layout(this.graph);
-
-    // Map to objects
-    this.layout = {
-      nodes: this.graph.nodes().reduce((nodes, id) => {
-        nodes[id] = this.graph.node(id);
-        return nodes;
-      }, {}),
-
-      edges: this.graph.edges().reduce((edges, id) => {
-        const edge = this.graph.edge(id);
-        edge.id = edgeID(edge);
-        edges[edge.id] = edge;
-        return edges;
-      }, {})
-    };
-  }
-
-  /**
    * Zoom and scale to fit
    * @param {Boolean} isUpdate - Whether chart is updating and should be animated
    */
   zoomChart(isUpdate) {
-    const { width, height } = this.graph.graph();
+    const { width, height } = this.props.graph.graph();
     const zoomScale = Math.min(this.width / width, this.height / height);
     const translateX = this.width / 2 - width * zoomScale / 2;
     const translateY = this.height / 2 - height * zoomScale / 2;
@@ -243,30 +121,11 @@ class FlowChart extends Component {
   }
 
   /**
-   * Combine dagre layout with updated data from props
-   */
-  prepareData() {
-    const { nodes, edges } = this.props;
-
-    return {
-      edges: edges ? edges.filter(d => !d.disabled).map(d => ({
-        ...this.layout.edges[edgeID(d)],
-        ...d
-      })): [],
-
-      nodes: nodes ? nodes.filter(d => !d.disabled).map(d => ({
-        ...this.layout.nodes[d.id],
-        ...d
-      })): [],
-    };
-  }
-
-  /**
    * Render chart to the DOM with D3
    */
   drawChart() {
     const { onToggleNodeActive, textLabels } = this.props;
-    const { nodes, edges } = this.prepareData();
+    const { nodes, edges } = this.props.layout;
 
     // Transition the wrapper
     this.el.wrapper
@@ -358,7 +217,7 @@ class FlowChart extends Component {
       .on('mouseover', d => {
         onToggleNodeActive(d, true);
         tooltip.show(this, d);
-        linkedNodes.show(this.props.edges, this.el, d.id);
+        linkedNodes.show(this.props.layout.edges, this.el, d.id);
       })
       .on('mousemove', d => {
         tooltip.show(this, d);
@@ -408,7 +267,10 @@ class FlowChart extends Component {
           <g ref={el => (this._gWrapper = el)}>
             <g ref={el => (this._gInner = el)}>
               <g className="pipeline-flowchart__edges" ref={el => (this._gEdges = el)} />
-              <g className="pipeline-flowchart__nodes" ref={el => (this._gNodes = el)} />
+              <g
+                id="nodes"
+                className="pipeline-flowchart__nodes"
+                ref={el => (this._gNodes = el)} />
             </g>
           </g>
         </svg>
@@ -420,8 +282,8 @@ class FlowChart extends Component {
 
 const mapStateToProps = state => ({
   activeSnapshot: state.activeSnapshot,
-  edges: getEdges(state),
-  nodes: getNodes(state),
+  graph: getGraph(state),
+  layout: getLayout(state),
   textLabels: state.textLabels,
   view: state.view
 });

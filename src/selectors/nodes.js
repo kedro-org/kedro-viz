@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
+import { getTagCount } from './tags';
 
 const getView = state => state.view;
 const getActiveSnapshot = state => state.activeSnapshot;
@@ -21,33 +22,22 @@ export const getActiveSnapshotNodes = createSelector(
 );
 
 /**
- * Retrieve the total number of tags that have been enabled
- */
-export const getEnabledTagCount = createSelector(
-  [getActiveSnapshot, getTagEnabled],
-  (activeSnapshot, tagEnabled) => {
-    const enabledTags = tagEnabled[activeSnapshot];
-    return enabledTags ? enabledTags.filter(Boolean).length : null;
-  }
-);
-
-/**
  * Calculate whether nodes should be disabled based on their tags
  */
 export const getNodeDisabledTag = createSelector(
   [
     getActiveSnapshotNodes,
     getTagEnabled,
-    getEnabledTagCount,
+    getTagCount,
     getNodeTags,
   ],
   (
     activeSnapshotNodes,
     tagEnabled,
-    enabledTagCount,
+    tagCount,
     nodeTags,
   ) => arrayToObject(activeSnapshotNodes, (nodeID) => {
-    if (enabledTagCount === 0) {
+    if (tagCount.enabled === 0) {
       return false;
     }
     if (nodeTags[nodeID].length) {
@@ -122,12 +112,13 @@ export const getNodeActive = createSelector(
 );
 
 /**
- * Get formatted nodes as an array
+ * Returns formatted nodes as an array, with all relevant properties
  */
 export const getNodes = createSelector(
   [
     getActiveSnapshotNodes,
     getNodeName,
+    getNodeType,
     getNodeActive,
     getNodeDisabled,
     getNodeDisabledNode,
@@ -137,6 +128,7 @@ export const getNodes = createSelector(
   (
     activeSnapshotNodes,
     nodeName,
+    nodeType,
     nodeActive,
     nodeDisabled,
     nodeDisabledNode,
@@ -145,10 +137,35 @@ export const getNodes = createSelector(
   ) => activeSnapshotNodes.map(id => ({
     id,
     name: nodeName[id],
+    type: nodeType[id],
     active: nodeActive[id],
     disabled: nodeDisabled[id],
     disabled_node: nodeDisabledNode[id],
     disabled_tag: nodeDisabledTag[id],
     disabled_view: nodeDisabledView[id],
   }))
+);
+
+
+/**
+ * Returns only visible nodes as an array, but without any extra properties
+ * that are unnecessary for the chart layout calculation
+ */
+export const getVisibleNodes = createSelector(
+  [
+    getActiveSnapshotNodes,
+    getNodeName,
+    getNodeDisabled,
+  ],
+  (
+    activeSnapshotNodes,
+    nodeName,
+    nodeDisabled,
+  ) => activeSnapshotNodes
+    .filter(id => !nodeDisabled[id])
+    .map(id => ({
+      id,
+      name: nodeName[id],
+      disabled: nodeDisabled[id],
+    }))
 );

@@ -102,8 +102,17 @@ export const getEdges = createSelector(
     edgeSources,
     edgeTargets,
   ) => activeSnapshotEdges.map(edgeID => ({
+    id: edgeID,
     disabled: edgeDisabled[edgeID],
     source: edgeSources[edgeID],
     target: edgeTargets[edgeID],
   }))
+);
+
+/**
+ * Get only the visible edges
+ */
+export const getVisibleEdges = createSelector(
+  [getEdges],
+  edges => edges.filter(edge => !edge.disabled)
 );
