@@ -12,14 +12,10 @@ const tooltip = {
       x: (xOffset - x) + (offset.width / 2),
       y: offset.top - y,
     };
-    let label = `<b>${d.name}</b>`;
-    if (d.layer) {
-      label += `<small>${d.layer.name}</small>`;
-    }
     el.tooltip
       .classed('tooltip--visible', true)
       .classed('tooltip--right', isRight)
-      .html(label)
+      .html(`<b>${d.name}</b>`)
       .style('transform', `translate(${translate.x}px, ${translate.y}px)`);
   },
 
