@@ -78,6 +78,20 @@ function reducer(state = {}, action) {
       });
     }
 
+    case TOGGLE_PARAMETERS: {
+      const paramIDs = state.snapshotNodes[state.activeSnapshot]
+        .filter(id => state.nodeName[id].includes('param'));
+      return Object.assign({}, state, {
+        nodeDisabled: paramIDs.reduce(
+          (disabled, id) => Object.assign({}, disabled, {
+            [id]: !action.parameters
+          }),
+          state.nodeDisabled
+        ),
+        parameters: action.parameters,
+      });
+    }
+
     case TOGGLE_TEXT_LABELS:
       return Object.assign({}, state, {
         textLabels: action.textLabels,
@@ -96,20 +110,6 @@ function reducer(state = {}, action) {
         tagEnabled: Object.assign({}, state.tagEnabled, {
           [action.tagID]: action.enabled
         })
-      });
-    }
-
-    case TOGGLE_PARAMETERS: {
-      const paramIDs = state.snapshotNodes[state.activeSnapshot]
-        .filter(id => state.nodeName[id].includes('param'));
-      return Object.assign({}, state, {
-        nodeDisabled: paramIDs.reduce(
-          (disabled, id) => Object.assign({}, disabled, {
-            [id]: !action.parameters
-          }),
-          state.nodeDisabled
-        ),
-        parameters: action.parameters,
       });
     }
 
