@@ -10,6 +10,7 @@ import {
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
   TOGGLE_TEXT_LABELS,
+  UPDATE_CHART_SIZE,
 } from '../actions';
 
 function reducer(state = {}, action) {
@@ -110,6 +111,12 @@ function reducer(state = {}, action) {
           state.nodeDisabled
         ),
         parameters: action.parameters,
+      });
+    }
+
+    case UPDATE_CHART_SIZE: {
+      return Object.assign({}, state, {
+        chartSize: action.chartSize,
       });
     }
 

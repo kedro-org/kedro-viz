@@ -4,8 +4,8 @@ import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
-import { toggleNodeActive } from '../../actions';
-import { getGraph, getLayout } from '../../selectors/layout';
+import { toggleNodeActive, updateChartSize } from '../../actions';
+import { getGraph, getLayout, getZoomPosition } from '../../selectors/layout';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
 import databaseIcon from './database-icon';
@@ -45,28 +45,35 @@ class FlowChart extends Component {
     window.removeEventListener('resize', this.handleWindowResize);
   }
 
-  componentDidUpdate() {
-    this.updateChartSize();
+  componentDidUpdate(prevProps) {
+    if (prevProps.visibleNav !== this.props.visibleNav) {
+      this.updateChartSize();
+    }
+    if (prevProps.zoom !== this.props.zoom) {
+      this.zoomChart();
+    }
     this.drawChart();
-    this.zoomChart(true);
   }
 
   /**
    * Configure globals for the container dimensions,
    * and apply them to the chart SVG
    */
-  setChartHeight() {
+  updateChartSize() {
     const { left, top, width, height } = this._container.getBoundingClientRect();
-    this.x = left;
-    this.y = top;
-    this.width = width - this.getNavOffset(width);
-    this.height = height;
+    const chartSize = {
+      x: left,
+      y: top,
+      width: width - this.getNavOffset(width),
+      height,
+    };
+    this.props.onUpdateChartSize(chartSize);
     this.el.svg.attr('width', width).attr('height', height);
   }
 
-  getNavOffset(width = this.width) {
+  getNavOffset(width) {
     const navWidth = width > 480 ? 400 : 0;
-    return this.navOffset = this.props.visibleNav ? navWidth : 0;
+    return this.props.visibleNav ? navWidth : 0;
   }
 
   /**
@@ -75,7 +82,7 @@ class FlowChart extends Component {
   handleWindowResize() {
     this.updateChartSize();
     this.drawChart();
-    this.zoomChart(true);
+    this.zoomChart();
   }
 
   /**
@@ -91,36 +98,31 @@ class FlowChart extends Component {
 
   /**
    * Zoom and scale to fit
-   * @param {Boolean} isUpdate - Whether chart is updating and should be animated
    */
-  zoomChart(isUpdate) {
-    const { width, height } = this.props.graph.graph();
-    const zoomScale = Math.min(this.width / width, this.height / height);
-    const translateX = this.width / 2 - width * zoomScale / 2;
-    const translateY = this.height / 2 - height * zoomScale / 2;
-    if (isNaN(translateX) || isNaN(translateY)) {
-      return;
-    }
-    const { svg } = this.el;
-    const svgZoom = isUpdate ? svg.transition().duration(DURATION) : svg;
-    svgZoom.call(
-      this.zoomBehaviour.transform,
-      zoomIdentity.translate(translateX, translateY).scale(zoomScale)
-    );
+  zoomChart() {
+    const { scale, translateX, translateY } = this.props.zoom;
+    this.el.svg
+      .transition()
+      .duration(DURATION)
+      .call(
+        this.zoomBehaviour.transform,
+        zoomIdentity.translate(translateX, translateY).scale(scale)
+      );
   }
 
   /**
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { onToggleNodeActive, textLabels } = this.props;
-    const { nodes, edges } = this.props.layout;
+    const { chartSize, layout, onToggleNodeActive, textLabels } = this.props;
+    const { nodes, edges } = layout;
 
-    // Transition the wrapper
+    // Animate the wrapper translation when nav is toggled
+    const navOffset = this.getNavOffset(chartSize.width);
     this.el.wrapper
       .transition('wrapper-navoffset')
       .duration(DURATION)
-      .attr('transform', d => `translate(${this.navOffset}, 0)`);
+      .attr('transform', () => `translate(${navOffset}, 0)`);
 
     // Create selections
     this.el.edges = this.el.edgeGroup
@@ -269,17 +271,22 @@ class FlowChart extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   activeSnapshot: state.activeSnapshot,
+  chartSize: state.chartSize,
   graph: getGraph(state),
   layout: getLayout(state),
   textLabels: state.textLabels,
-  view: state.view
+  view: state.view,
+  zoom: getZoomPosition(state)
 });
 
 const mapDispatchToProps = dispatch => ({
   onToggleNodeActive: (node, isActive) => {
     dispatch(toggleNodeActive(node.id, isActive));
+  },
+  onUpdateChartSize: (chartSize) => {
+    dispatch(updateChartSize(chartSize));
   }
 });
 

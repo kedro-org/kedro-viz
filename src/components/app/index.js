@@ -33,6 +33,7 @@ class App extends React.Component {
       activeSnapshot,
       allowHistoryDeletion,
       allowUploads,
+      chartSize: {},
       onDeleteSnapshot,
       parameters: true,
       showHistory,

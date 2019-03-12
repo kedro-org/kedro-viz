@@ -6,6 +6,7 @@ import { getVisibleEdges } from './edges';
 
 const getTextLabels = state => state.textLabels;
 const getNodeType = state => state.nodeType;
+const getChartSize = state => state.chartSize;
 
 /**
  * Calculate chart layout with Dagre.js.
@@ -72,4 +73,28 @@ export const getLayout = createSelector(
       })),
     edges: graph.edges().map(edge => graph.edge(edge)),
   })
+);
+
+/**
+ * Get chart zoom translation/scale,
+ * by comparing native graph width/height to container width/height
+ */
+export const getZoomPosition = createSelector(
+  [getGraph, getChartSize],
+  (graph, container) => {
+    if (!Object.entries(container).length) {
+      return {
+        scale: 1,
+        translateX: 0,
+        translateY: 0,
+      };
+    }
+    const { width, height } = graph.graph();
+    const scale = Math.min(container.width / width, container.height / height);
+    return {
+      scale,
+      translateX: container.width / 2 - width * scale / 2,
+      translateY: container.height / 2 - height * scale / 2,
+    };
+  }
 );
