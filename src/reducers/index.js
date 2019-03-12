@@ -101,8 +101,7 @@ function reducer(state = {}, action) {
 
     case TOGGLE_PARAMETERS: {
       const paramIDs = state.snapshotNodes[state.activeSnapshot]
-        .map(id => state.nodeName[id])
-        .filter(id => id.includes('param'));
+        .filter(id => state.nodeName[id].includes('param'));
       return Object.assign({}, state, {
         nodeDisabled: paramIDs.reduce(
           (disabled, id) => Object.assign({}, disabled, {
