@@ -50,6 +50,7 @@ const formatSnapshots = (data) => {
   const snapshotEdges = {};
   const snapshotTags = {};
   // Nodes
+  const nodeID = {};
   const nodeName = {};
   const nodeType = {};
   const nodeTags = {};
@@ -82,6 +83,7 @@ const formatSnapshots = (data) => {
         return;
       }
       snapshotNodes[snapshotID].push(id);
+      nodeID[id] = name;
       nodeName[id] = name.replace(/_/g, ' ');
       nodeType[id] = type;
       if (!nodeTags[id]) {
@@ -207,8 +209,8 @@ const formatSnapshots = (data) => {
               source: edgeSources[dd],
               target: edgeTargets[dd],
             };
-            if (nodeType[d2.target] === 'task' && d2.source === edgeTargets[d]) {
-              addEdge(d1.source, d2.target);
+            if (nodeType[d2.target] === 'task' && d2.source === d1.target) {
+              addEdge(nodeID[d1.source], nodeID[d2.target]);
             }
           });
         }
