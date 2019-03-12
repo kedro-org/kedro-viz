@@ -51,19 +51,13 @@ const formatSnapshots = (data) => {
   const snapshotTags = {};
   // Nodes
   const nodeName = {};
-  // const nodeActive = {};
-  // const nodeDisabled = {};
   const nodeType = {};
   const nodeTags = {};
   // Edges
-  // const edgeActive = {};
   const edgeSources = {};
   const edgeTargets = {};
-  // const edgeDisabled = {};
   // Tags
   const tagName = {};
-  // const tagActive = {};
-  // const tagEnabled = {};
 
   /**
    * Format raw data for a single snapshot into a usable structure
@@ -275,10 +269,6 @@ const formatSnapshots = (data) => {
     tagActive: {},
     tagEnabled: {},
   };
-  // console.log(
-  //   snapshots.nodeType
-  // );
-  // debugger
 
   return snapshots;
 };
