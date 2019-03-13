@@ -18,7 +18,7 @@ const getTagEnabled = state => state.tagEnabled;
  */
 export const getActiveSnapshotNodes = createSelector(
   [getActiveSnapshot, getSnapshotNodes],
-  (activeSnapshot, snapshotNodes) => snapshotNodes[activeSnapshot]
+  (activeSnapshot, snapshotNodes) => snapshotNodes[activeSnapshot] || []
 );
 
 /**

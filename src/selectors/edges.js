@@ -14,7 +14,7 @@ const getEdgeTargets = state => state.edgeTargets;
  */
 export const getActiveSnapshotEdges = createSelector(
   [getActiveSnapshot, getSnapshotEdges],
-  (activeSnapshot, snapshotEdges) => snapshotEdges[activeSnapshot]
+  (activeSnapshot, snapshotEdges) => snapshotEdges[activeSnapshot] || []
 );
 
 /**
