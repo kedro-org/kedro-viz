@@ -82,19 +82,29 @@ export const getLayout = createSelector(
 export const getZoomPosition = createSelector(
   [getGraph, getChartSize],
   (graph, container) => {
-    if (!Object.entries(container).length) {
+    const chart = graph.graph();
+    const validDimensions = [
+      container.width,
+      container.height,
+      chart.width,
+      chart.height,
+    ].every(n => !isNaN(n) && Number.isFinite(n));
+    
+    if (validDimensions) {
+      const scale = Math.min(
+        container.width / chart.width,
+        container.height / chart.height
+      );
       return {
-        scale: 1,
-        translateX: 0,
-        translateY: 0,
+        scale,
+        translateX: container.width / 2 - chart.width * scale / 2,
+        translateY: container.height / 2 - chart.height * scale / 2,
       };
     }
-    const { width, height } = graph.graph();
-    const scale = Math.min(container.width / width, container.height / height);
     return {
-      scale,
-      translateX: container.width / 2 - width * scale / 2,
-      translateY: container.height / 2 - height * scale / 2,
+      scale: 1,
+      translateX: 0,
+      translateY: 0,
     };
   }
 );
