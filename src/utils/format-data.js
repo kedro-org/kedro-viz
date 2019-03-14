@@ -13,16 +13,21 @@ const validateInput = data => {
 /**
  * Get unique, reproducible ID for each node
  * @param {string} snapshot - Unique snapshot ID
- * @param {Object} nodeID - An edge ID
+ * @param {string} nodeName - The original name for the node
+ * @param {string} nodeType - The node's type
  */
-export const getNodeID = (snapshotID, nodeID) => `${snapshotID}/${nodeID}`;
+export const getNodeID = (snapshotID, nodeName, nodeType) =>
+  `${snapshotID}/${nodeName}-${nodeType}`;
 
 /**
  * Get unique, reproducible ID for each edge, based on its nodes
  * @param {string} snapshotID - Unique snapshot ID
- * @param {Object} edge - An edge datum
+ * @param {Object} source - Name and type of the source node
+ * @param {Object} target - Name and type of the target node
  */
-export const getEdgeID = (snapshotID, edge) => `${snapshotID}/${edge.source}-${edge.target}`;
+export const getEdgeID = (snapshotID, source, target) => [source, target]
+  .map((node) => getNodeID(snapshotID, node.name, node.type))
+  .join('|');
 
 /**
  * Get unique, reproducible ID for each tag
@@ -78,7 +83,7 @@ const formatSnapshots = (data) => {
      * @param {Array} tags - List of associated tags
      */
     const addNode = (name, type, tags = []) => {
-      const id = getNodeID(snapshotID, name);
+      const id = getNodeID(snapshotID, name, type);
       if (nodeName[id]) {
         return;
       }
@@ -98,13 +103,13 @@ const formatSnapshots = (data) => {
      * @param {Object} target - Child node
      */
     const addEdge = (source, target) => {
-      const id = getEdgeID(snapshotID, { source, target });
+      const id = getEdgeID(snapshotID, source, target);
       if (snapshotEdges[snapshotID].includes(id)) {
         return;
       }
       snapshotEdges[snapshotID].push(id);
-      edgeSources[id] = getNodeID(snapshotID, source);
-      edgeTargets[id] = getNodeID(snapshotID, target);
+      edgeSources[id] = getNodeID(snapshotID, source.name, source.type);
+      edgeTargets[id] = getNodeID(snapshotID, target.name, target.type);
     };
 
     /**
@@ -141,17 +146,26 @@ const formatSnapshots = (data) => {
     const createEdges = ({ name, inputs, outputs }) => {
       inputs.forEach(source => {
         // Create link between input data nodes and task node (for combined view)
-        addEdge(source, name);
+        addEdge(
+          { name: source, type: 'data' },
+          { name: name, type: 'task' },
+        );
 
         // Create link between input data nodes and output data nodes (for data view)
         outputs.forEach(target => {
-          addEdge(source, target);
+          addEdge(
+            { name: source, type: 'data' },
+            { name: target, type: 'data' },
+          );
         });
       });
 
       // Create link between task node and output data nodes (for combined view)
       outputs.forEach(target => {
-        addEdge(name, target);
+        addEdge(
+          { name: name, type: 'task' },
+          { name: target, type: 'data' },
+        );
       });
     };
 
@@ -210,7 +224,10 @@ const formatSnapshots = (data) => {
               target: edgeTargets[dd],
             };
             if (nodeType[d2.target] === 'task' && d2.source === d1.target) {
-              addEdge(nodeID[d1.source], nodeID[d2.target]);
+              addEdge(
+                { name: nodeID[d1.source], type: 'task' },
+                { name: nodeID[d2.target], type: 'task' },
+              );
             }
           });
         }
