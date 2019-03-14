@@ -25,7 +25,7 @@ switch (endpointName) {
 }
 
 const config = {
-  dataPath: '/logs/nodes.json',
+  dataPath: './logs/nodes.json',
   dataSource,
   syncEndpoint,
   localStorageName: `KernelAIPipelineViz_${endpointName}`
