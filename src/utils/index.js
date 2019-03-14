@@ -14,10 +14,10 @@ export const arrayToObject = (array, callback) => {
 };
 
 /**
- * Get a random array of numbers
+ * Get an array of numbers
  * @param {number} n Length of the array
  */
-export const getArray = n => Array.from(Array(n).keys());
+export const getNumberArray = n => Array.from(Array(n).keys());
 
 /**
  * Get a random number between 0 to n-1, inclusive
@@ -51,7 +51,7 @@ const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vest
  * @param {number} n Number of words in the name
  * @param {string} join The character(s) used to join each word
  */
-export const getRandomName = (n, join = '_') => getArray(n)
+export const getRandomName = (n, join = '_') => getNumberArray(n)
   .map(() => getRandom(LOREM_IPSUM))
   .join(join);
 

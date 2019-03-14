@@ -1,5 +1,5 @@
 import {
-  getArray,
+  getNumberArray,
   randomIndex,
   randomNumber,
   getRandomMatch,
@@ -50,7 +50,7 @@ class Snapshot {
    * @param {number} paramFreq How often nodes should include 'parameters' in their name
    */
   generateNodeList(count, getLayer, paramFreq) {
-    return getArray(count)
+    return getNumberArray(count)
       .map(() => this.getRandomNodeName(paramFreq))
       .filter(unique)
       .map(id => ({
@@ -81,7 +81,7 @@ class Snapshot {
    * Generate a random list of tags
    */
   generateTags() {
-    return getArray(this.TAG_COUNT)
+    return getNumberArray(this.TAG_COUNT)
       .map(() => getRandomName(randomNumber(MAX_NODE_TAG_COUNT)))
       .filter(unique);
   }
@@ -90,7 +90,7 @@ class Snapshot {
    * Select a random number of tags from the list of tags
    */
   getRandomTags() {
-    return getArray(randomNumber(this.TAG_COUNT))
+    return getNumberArray(randomNumber(this.TAG_COUNT))
       .map(() => this.tags[randomIndex(this.tags.length)])
       .filter(unique);
   }
@@ -100,7 +100,7 @@ class Snapshot {
    * @param {Function} condition Determine order of precedence
    */
   getConnectedNodes(condition) {
-    return getArray(this.CONNECTION_COUNT)
+    return getNumberArray(this.CONNECTION_COUNT)
       .map(() => getRandomMatch(this.nodes.data, condition))
       .filter(Boolean)
       .map(d => d.id)
@@ -134,7 +134,7 @@ class Snapshot {
 };
 
 const generateRandomHistory = () =>
-  getArray(randomNumber(MAX_SNAPSHOT_COUNT))
+  getNumberArray(randomNumber(MAX_SNAPSHOT_COUNT))
     .map(() => new Snapshot().getDatum())
     .sort((a, b) => b.created_ts - a.created_ts);
 
