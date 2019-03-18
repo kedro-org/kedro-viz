@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kernel-pipeline-viz",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "main": "lib/components/app/index.js",
   "homepage": ".",
   "scripts": {
