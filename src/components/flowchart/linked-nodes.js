@@ -5,27 +5,20 @@
  */
 const getLinkedNodes = (edges, nodeID) => {
   const linkedNodes = [];
-  const visibleEdges = edges.filter(d =>
-    d.source.type !== d.target.type &&
-    !d.source.disabled &&
-    !d.target.disabled
-  );
 
   (function getParents(id) {
-    visibleEdges
-      .filter(d => d.target.id === id)
+    edges.filter(d => d.target === id)
       .forEach(d => {
-        linkedNodes.push(d.source.id);
-        getParents(d.source.id);
+        linkedNodes.push(d.source);
+        getParents(d.source);
       });
   })(nodeID);
 
   (function getChildren(id) {
-    visibleEdges
-      .filter(d => d.source.id === id)
+    edges.filter(d => d.source === id)
       .forEach(d => {
-        linkedNodes.push(d.target.id);
-        getChildren(d.target.id);
+        linkedNodes.push(d.target);
+        getChildren(d.target);
       });
   })(nodeID);
 
@@ -37,16 +30,16 @@ const getLinkedNodes = (edges, nodeID) => {
  * and fade non-linked nodes
  */
 const linkedNodes = {
-  show: (edges, el, id) => {
+  show: ({ edges, el }, id) => {
     const linkedNodes = getLinkedNodes(edges, id);
-    const nodeIsLinked = d => linkedNodes.includes(d.id) || d.id === id;
+    const nodeIsLinked = nodeID => linkedNodes.includes(nodeID) || nodeID === id;
 
     el.nodes
-      .classed('node--active', nodeIsLinked)
-      .classed('node--faded', d => !nodeIsLinked(d));
+      .classed('node--active', node => nodeIsLinked(node.id))
+      .classed('node--faded', node => !nodeIsLinked(node.id));
 
     el.edges.classed('edge--faded', ({ source, target }) =>
-      [source, target].some(d => !nodeIsLinked(d))
+      [source, target].some(nodeID => !nodeIsLinked(nodeID))
     );
   },
 

@@ -4,20 +4,13 @@ import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
-import dagre from 'dagre';
-import { toggleNodeActive } from '../../actions';
-import { getNodes, getEdges } from '../../selectors';
+import { toggleNodeActive, updateChartSize } from '../../actions';
+import { getGraph, getLayout, getZoomPosition } from '../../selectors/layout';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
 import databaseIcon from './database-icon';
 import cogIcon from './cog-icon';
 import './flowchart.css';
-
-/**
- * Get unique, reproducible ID for each edge, based on its nodes
- * @param {Object} edge - An edge datum
- */
-const edgeID = edge => [edge.source.id, edge.target.id].join('-');
 
 const DURATION = 700;
 
@@ -27,7 +20,7 @@ const DURATION = 700;
 class FlowChart extends Component {
   constructor(props) {
     super(props);
-    this.resizeChart = this.resizeChart.bind(this);
+    this.handleWindowResize = this.handleWindowResize.bind(this);
   }
 
   componentDidMount() {
@@ -41,109 +34,55 @@ class FlowChart extends Component {
       tooltip: select(this._tooltip)
     };
 
-    this.setChartHeight();
+    this.updateChartSize();
     this.initZoomBehaviour();
-    this.getLayout();
     this.drawChart();
     this.zoomChart();
-    this.updateNodeCount(this.checkNodeCount());
-    window.addEventListener('resize', this.resizeChart);
+    window.addEventListener('resize', this.handleWindowResize);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.resizeChart);
+    window.removeEventListener('resize', this.handleWindowResize);
   }
 
   componentDidUpdate(prevProps) {
-    const doRedraw = this.shouldRedrawLayout(prevProps);
-
     if (prevProps.visibleNav !== this.props.visibleNav) {
-      this.setChartHeight();
+      this.updateChartSize();
     }
-
-    if (doRedraw) {
-      this.getLayout();
+    if (prevProps.zoom !== this.props.zoom) {
+      this.zoomChart();
     }
-
     this.drawChart();
-
-    if (doRedraw) {
-      this.zoomChart(true);
-    }
-  }
-
-  /**
-   * Determine whether the chart's Dagre layout should be recalculated,
-   * when receiving new props. Layout is time-consuming so we don't want to
-   * run it unless we absolutely have to.
-   * @param {Object} prevProps Previous component props
-   * @return {Boolean} True if new layout is required
-   */
-  shouldRedrawLayout(prevProps) {
-    const newNodeCount = this.checkNodeCount();
-    let shouldRedraw = false;
-    // Don't redraw if there are no visible nodes
-    if (newNodeCount !== 0) {
-      shouldRedraw = [
-        this.nodeCount !== newNodeCount,
-        prevProps.textLabels !== this.props.textLabels,
-        prevProps.view !== this.props.view,
-        prevProps.visibleNav !== this.props.visibleNav,
-        prevProps.activePipeline !== this.props.activePipeline,
-      ].some(Boolean);
-    }
-    this.updateNodeCount(newNodeCount);
-    return shouldRedraw;
-  }
-
-  /**
-   * Calculate the number of active nodes
-   */
-  checkNodeCount() {
-    const { nodes } = this.props;
-    return nodes ? nodes.filter(d => !d.disabled).length : 0;
-  }
-
-  /**
-   * Keep a count of the number of nodes on screen,
-   * and return true if the number of visible nodes has changed,
-   * indicating that the dagre layout should be updated
-   */
-  updateNodeCount(newNodeCount) {
-    // Don't update node if count hasn't changed (to avoid unnecessary redraws)
-    if (newNodeCount === this.nodeCount) {
-      return false;
-    }
-    this.nodeCount = newNodeCount;
-    return true;
   }
 
   /**
    * Configure globals for the container dimensions,
    * and apply them to the chart SVG
    */
-  setChartHeight() {
+  updateChartSize() {
     const { left, top, width, height } = this._container.getBoundingClientRect();
-    this.x = left;
-    this.y = top;
-    this.width = width - this.getNavOffset(width);
-    this.height = height;
-    this.el.svg.attr('width', width).attr('height', height);
+    const navOffset = this.getNavOffset(width);
+    this.props.onUpdateChartSize({
+      x: left,
+      y: top,
+      outerWidth: width,
+      outerHeight: height,
+      width: width - navOffset,
+      height,
+      navOffset,
+    });
   }
 
-  getNavOffset(width = this.width) {
-    const navWidth = width > 480 ? 400 : 0;
-    return this.navOffset = this.props.visibleNav ? navWidth : 0;
+  getNavOffset(width) {
+    const navWidth = width > 480 ? 300 : 0;
+    return this.props.visibleNav ? navWidth : 0;
   }
 
   /**
    * Handle window resize
    */
-  resizeChart() {
-    this.setChartHeight();
-    this.getLayout();
-    this.drawChart();
-    this.zoomChart(true);
+  handleWindowResize() {
+    this.updateChartSize();
   }
 
   /**
@@ -158,130 +97,45 @@ class FlowChart extends Component {
   }
 
   /**
-   * Calculate node/edge positoning, using dagre layout algorithm.
-   * This is expensive and should only be run if the layout needs changing,
-   * but not when just highlighting active nodes.
-   */
-  getLayout() {
-    const { nodes, edges, textLabels } = this.props;
-
-    this.graph = new dagre.graphlib.Graph().setGraph({
-      marginx: 40,
-      marginy: 40
-    });
-
-    // Temporarily append text element to the DOM, to measure its width
-    const textWidth = (name, padding) => {
-      const text = this.el.nodeGroup.append('text').text(name);
-      const bbox = text.node().getBBox();
-      text.remove();
-      return bbox.width + padding;
-    };
-
-    nodes && nodes.forEach(d => {
-      if (d.disabled) {
-        return;
-      }
-
-      const nodeWidth = d.type === 'data' ? 50 : 40;
-
-      this.graph.setNode(d.id, {
-        ...d,
-        label: d.name,
-        width: textLabels ? textWidth(d.name, nodeWidth) : nodeWidth,
-        height: nodeWidth
-      });
-    });
-
-    edges && edges.forEach(d => {
-      if (d.disabled) {
-        return;
-      }
-      this.graph.setEdge(d.source.id, d.target.id, {
-        source: d.source,
-        target: d.target
-      });
-    });
-
-    // Run Dagre layout to calculate X/Y positioning
-    dagre.layout(this.graph);
-
-    // Map to objects
-    this.layout = {
-      nodes: this.graph.nodes().reduce((nodes, id) => {
-        nodes[id] = this.graph.node(id);
-        return nodes;
-      }, {}),
-
-      edges: this.graph.edges().reduce((edges, id) => {
-        const edge = this.graph.edge(id);
-        edge.id = edgeID(edge);
-        edges[edge.id] = edge;
-        return edges;
-      }, {})
-    };
-  }
-
-  /**
    * Zoom and scale to fit
-   * @param {Boolean} isUpdate - Whether chart is updating and should be animated
    */
-  zoomChart(isUpdate) {
-    const { width, height } = this.graph.graph();
-    const zoomScale = Math.min(this.width / width, this.height / height);
-    const translateX = this.width / 2 - width * zoomScale / 2;
-    const translateY = this.height / 2 - height * zoomScale / 2;
-    if (isNaN(translateX) || isNaN(translateY)) {
-      return;
-    }
-    const { svg } = this.el;
-    const svgZoom = isUpdate ? svg.transition().duration(DURATION) : svg;
-    svgZoom.call(
-      this.zoomBehaviour.transform,
-      zoomIdentity.translate(translateX, translateY).scale(zoomScale)
-    );
-  }
-
-  /**
-   * Combine dagre layout with updated data from props
-   */
-  prepareData() {
-    const { nodes, edges } = this.props;
-
-    return {
-      edges: edges ? edges.filter(d => !d.disabled).map(d => ({
-        ...this.layout.edges[edgeID(d)],
-        ...d
-      })): [],
-
-      nodes: nodes ? nodes.filter(d => !d.disabled).map(d => ({
-        ...this.layout.nodes[d.id],
-        ...d
-      })): [],
-    };
+  zoomChart() {
+    const { scale, translateX, translateY } = this.props.zoom;
+    this.el.svg
+      .transition()
+      .duration(DURATION)
+      .call(
+        this.zoomBehaviour.transform,
+        zoomIdentity.translate(translateX, translateY).scale(scale)
+      );
   }
 
   /**
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { onToggleNodeActive, textLabels } = this.props;
-    const { nodes, edges } = this.prepareData();
+    const { chartSize, layout, onToggleNodeActive, textLabels } = this.props;
+    const { nodes, edges } = layout;
+    const navOffset = this.getNavOffset(chartSize.outerWidth);
 
-    // Transition the wrapper
+    // Update SVG dimensions
+    this.el.svg.attr('width', chartSize.outerWidth)
+      .attr('height', chartSize.outerHeight);
+
+    // Animate the wrapper translation when nav is toggled
     this.el.wrapper
       .transition('wrapper-navoffset')
       .duration(DURATION)
-      .attr('transform', d => `translate(${this.navOffset}, 0)`);
+      .attr('transform', () => `translate(${navOffset}, 0)`);
 
     // Create selections
     this.el.edges = this.el.edgeGroup
       .selectAll('.edge')
-      .data(edges, d => d.id);
+      .data(edges, edge => edge.id);
 
     this.el.nodes = this.el.nodeGroup
       .selectAll('.node')
-      .data(nodes, d => d.id);
+      .data(nodes, node => node.id);
 
     // Set up line shape function
     const lineShape = line()
@@ -316,7 +170,7 @@ class FlowChart extends Component {
       .select('path')
       .transition('update-edges')
       .duration(DURATION)
-      .attr('d', d => d.points && lineShape(d.points));
+      .attr('d', edge => edge.points && lineShape(edge.points));
 
     // Create nodes
     const enterNodes = this.el.nodes
@@ -325,7 +179,7 @@ class FlowChart extends Component {
       .attr('class', 'node');
 
     enterNodes
-      .attr('transform', d => `translate(${d.x}, ${d.y})`)
+      .attr('transform', node => `translate(${node.x}, ${node.y})`)
       .attr('opacity', 0);
 
     enterNodes.append('circle').attr('r', 25);
@@ -333,11 +187,11 @@ class FlowChart extends Component {
     enterNodes.append('rect');
 
     enterNodes
-      .append(d => d.type === 'data' ? databaseIcon(d) : cogIcon(d))
+      .append(node => node.type === 'data' ? databaseIcon(node) : cogIcon(node))
 
     enterNodes
       .append('text')
-      .text(d => d.name)
+      .text(node => node.name)
       .attr('text-anchor', 'middle')
       .attr('dy', 4);
 
@@ -348,23 +202,35 @@ class FlowChart extends Component {
       .attr('opacity', 0)
       .remove();
 
+    const tooltipProps = {
+      ...chartSize,
+      navOffset,
+      tooltip: this.el.tooltip,
+    };
+
+    const linkedNodeProps = {
+      el: this.el,
+      edges,
+      nodes,
+    };
+
     this.el.nodes = this.el.nodes
       .merge(enterNodes)
-      .classed('node--data', d => d.type === 'data')
-      .classed('node--task', d => d.type === 'task')
+      .classed('node--data', node => node.type === 'data')
+      .classed('node--task', node => node.type === 'task')
       .classed('node--icon', !textLabels)
       .classed('node--text', textLabels)
-      .classed('node--active', d => d.active)
-      .on('mouseover', d => {
-        onToggleNodeActive(d, true);
-        tooltip.show(this, d);
-        linkedNodes.show(this.props.edges, this.el, d.id);
+      .classed('node--active', node => node.active)
+      .on('mouseover', node => {
+        onToggleNodeActive(node, true);
+        tooltip.show(tooltipProps, node);
+        linkedNodes.show(linkedNodeProps, node.id);
       })
-      .on('mousemove', d => {
-        tooltip.show(this, d);
+      .on('mousemove', node => {
+        tooltip.show(tooltipProps, node);
       })
-      .on('mouseout', d => {
-        onToggleNodeActive(d, false);
+      .on('mouseout', node => {
+        onToggleNodeActive(node, false);
         linkedNodes.hide(this.el);
         tooltip.hide(this.el);
       });
@@ -373,15 +239,15 @@ class FlowChart extends Component {
       .transition('update-nodes')
       .duration(DURATION)
       .attr('opacity', 1)
-      .attr('transform', d => `translate(${d.x}, ${d.y})`);
+      .attr('transform', node => `translate(${node.x}, ${node.y})`);
 
     this.el.nodes
       .select('rect')
-      .attr('width', d => d.width - 5)
-      .attr('height', d => d.height - 5)
-      .attr('x', d => (d.width - 5) / -2)
-      .attr('y', d => (d.height - 5) / -2)
-      .attr('rx', d => (d.type === 'data' ? d.height / 2 : 0));
+      .attr('width', node => node.width - 5)
+      .attr('height', node => node.height - 5)
+      .attr('x', node => (node.width - 5) / -2)
+      .attr('y', node => (node.height - 5) / -2)
+      .attr('rx', node => (node.type === 'data' ? node.height / 2 : 0));
   }
 
   /**
@@ -408,7 +274,10 @@ class FlowChart extends Component {
           <g ref={el => (this._gWrapper = el)}>
             <g ref={el => (this._gInner = el)}>
               <g className="pipeline-flowchart__edges" ref={el => (this._gEdges = el)} />
-              <g className="pipeline-flowchart__nodes" ref={el => (this._gNodes = el)} />
+              <g
+                id="nodes"
+                className="pipeline-flowchart__nodes"
+                ref={el => (this._gNodes = el)} />
             </g>
           </g>
         </svg>
@@ -418,17 +287,22 @@ class FlowChart extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  activePipeline: state.activePipeline,
-  nodes: getNodes(state),
-  edges: getEdges(state),
+const mapStateToProps = (state) => ({
+  activeSnapshot: state.activeSnapshot,
+  chartSize: state.chartSize,
+  graph: getGraph(state),
+  layout: getLayout(state),
   textLabels: state.textLabels,
-  view: state.view
+  view: state.view,
+  zoom: getZoomPosition(state)
 });
 
 const mapDispatchToProps = dispatch => ({
   onToggleNodeActive: (node, isActive) => {
     dispatch(toggleNodeActive(node.id, isActive));
+  },
+  onUpdateChartSize: (chartSize) => {
+    dispatch(updateChartSize(chartSize));
   }
 });
 

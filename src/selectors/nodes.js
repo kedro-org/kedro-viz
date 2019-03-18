@@ -1,61 +1,173 @@
+import { createSelector } from 'reselect';
+import { arrayToObject } from '../utils';
+import { getTagCount } from './tags';
+
+const getView = state => state.view;
+const getActiveSnapshot = state => state.activeSnapshot;
+const getSnapshotNodes = state => state.snapshotNodes;
+const getNodeName = state => state.nodeName;
+const getNodeActiveNode = state => state.nodeActive;
+const getNodeDisabledNode = state => state.nodeDisabled;
+const getNodeTags = state => state.nodeTags;
+const getNodeType = state => state.nodeType;
+const getTagActive = state => state.tagActive;
+const getTagEnabled = state => state.tagEnabled;
+
 /**
- * Get a node ID and return a single formatted node for use in the app
- * @param {string} id The unique reference for a given node
- * @param {Object} pipeline Active pipeline datum
- * @param {number} enabledTagCount Number of active tag filters
- * @param {string} view Active view (combined/data/task)
- * @return {Object} A single node datum
+ * Get a list of nodes for the active snapshot
  */
-export const formatNode = (nodeID, pipeline, enabledTagCount, view) => {
-  const { nodes, tags } = pipeline;
+export const getActiveSnapshotNodes = createSelector(
+  [getActiveSnapshot, getSnapshotNodes],
+  (activeSnapshot, snapshotNodes) => snapshotNodes[activeSnapshot] || []
+);
+
+/**
+ * Calculate whether nodes should be disabled based on their tags
+ */
+export const getNodeDisabledTag = createSelector(
+  [
+    getActiveSnapshotNodes,
+    getTagEnabled,
+    getTagCount,
+    getNodeTags,
+  ],
+  (
+    activeSnapshotNodes,
+    tagEnabled,
+    tagCount,
+    nodeTags,
+  ) => arrayToObject(activeSnapshotNodes, (nodeID) => {
+    if (tagCount.enabled === 0) {
+      return false;
+    }
+    if (nodeTags[nodeID].length) {
+      // Hide task nodes that don't have at least one tag filter enabled
+      return !nodeTags[nodeID].some(tag => tagEnabled[tag]);
+    }
+    return true;
+  })
+);
+
+/**
+ * Calculate whether nodes should be disabled based on the view
+ */
+export const getNodeDisabledView = createSelector(
+  [
+    getActiveSnapshotNodes,
+    getNodeType,
+    getView,
+  ],
+  (
+    activeSnapshotNodes,
+    nodeType,
+    view,
+  ) => arrayToObject(activeSnapshotNodes, (nodeID) =>
+    view !== 'combined' && view !== nodeType[nodeID]
+  )
+);
+
+
+/**
+ * Set disabled status if the node is specifically hidden, and/or via a tag/view
+ */
+export const getNodeDisabled = createSelector(
+  [
+    getActiveSnapshotNodes,
+    getNodeDisabledNode,
+    getNodeDisabledTag,
+    getNodeDisabledView
+  ],
+  (
+    activeSnapshotNodes,
+    nodeDisabledNode,
+    nodeDisabledTag,
+    nodeDisabledView,
+  ) => arrayToObject(activeSnapshotNodes, (id) => Boolean(
+    nodeDisabledNode[id] || nodeDisabledTag[id] || nodeDisabledView[id]
+  ))
+);
+
 
   /**
    * Set active status if the node is specifically highlighted, and/or via an associated tag
    * @return {Boolean} True if active
    */
-  const nodeIsActive = () => {
-    const active_node = Boolean(nodes.active[nodeID]);
-    const active_tag = nodes.tags[nodeID].some(tag => tags.active[tag]);
-    return Boolean(active_node || active_tag);
-  };
+export const getNodeActive = createSelector(
+  [
+    getActiveSnapshotNodes,
+    getNodeActiveNode,
+    getNodeTags,
+    getTagActive,
+  ],
+  (
+    activeSnapshotNodes,
+    nodeActiveNode,
+    nodeTags,
+    tagActive,
+  ) => arrayToObject(activeSnapshotNodes, (nodeID) => {
+    const activeViaNode = nodeActiveNode[nodeID];
+    const activeViaTag = nodeTags[nodeID].some(tag => tagActive[tag]);
+    return Boolean(activeViaNode || activeViaTag);
+  })
+);
 
-  /**
-   * Determine whether a node should be disabled based on its associated tags
-   * @return {Boolean} True if disabled
-   */
-  const nodeTagIsDisabled = () => {
-    if (enabledTagCount === 0) {
-      return false;
-    }
-    if (nodes.tags[nodeID].length) {
-      // Hide task nodes that don't have at least one tag filter enabled
-      return !nodes.tags[nodeID].some(tag => tags.enabled[tag]);
-    }
-    return true;
-  };
+/**
+ * Returns formatted nodes as an array, with all relevant properties
+ */
+export const getNodes = createSelector(
+  [
+    getActiveSnapshotNodes,
+    getNodeName,
+    getNodeType,
+    getNodeActive,
+    getNodeDisabled,
+    getNodeDisabledNode,
+    getNodeDisabledTag,
+    getNodeDisabledView,
+  ],
+  (
+    activeSnapshotNodes,
+    nodeName,
+    nodeType,
+    nodeActive,
+    nodeDisabled,
+    nodeDisabledNode,
+    nodeDisabledTag,
+    nodeDisabledView,
+  ) => activeSnapshotNodes
+    .sort()
+    .map(id => ({
+      id,
+      name: nodeName[id],
+      type: nodeType[id],
+      active: nodeActive[id],
+      disabled: nodeDisabled[id],
+      disabled_node: nodeDisabledNode[id],
+      disabled_tag: nodeDisabledTag[id],
+      disabled_view: nodeDisabledView[id],
+    }))
+);
 
-  /**
-   * Set disabled status if the node is specifically hidden, and/or via a tag/view
-   * @return {Object} Show whether disabled via node/tag/view, and the combined value
-   */
-  const nodeIsDisabled = () => {
-    const disabled_node = Boolean(nodes.disabled[nodeID]);
-    const disabled_tag = nodeTagIsDisabled();
-    const disabled_view = view !== 'combined' && view !== nodes.type[nodeID];
-    return {
-      disabled_node,
-      disabled_tag,
-      disabled_view,
-      disabled: Boolean(disabled_node || disabled_tag || disabled_view),
-    };
-  };
 
-  return {
-    id: nodeID,
-    name: nodeID.replace(/_/g, ' '),
-    tags: pipeline.nodes.tags[nodeID],
-    type: pipeline.nodes.type[nodeID],
-    active: nodeIsActive(),
-    ...nodeIsDisabled(),
-  };
-};
+/**
+ * Returns only visible nodes as an array, but without any extra properties
+ * that are unnecessary for the chart layout calculation
+ */
+export const getVisibleNodes = createSelector(
+  [
+    getActiveSnapshotNodes,
+    getNodeName,
+    getNodeDisabled,
+  ],
+  (
+    activeSnapshotNodes,
+    nodeName,
+    nodeDisabled,
+  ) => activeSnapshotNodes
+    .filter(id => !nodeDisabled[id])
+    .map(id => ({
+      id,
+      name: nodeName[id],
+      disabled: nodeDisabled[id],
+    }))
+);

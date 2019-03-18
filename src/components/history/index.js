@@ -11,15 +11,15 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 /**
  * Display a scrollable list of snapshots
- * @param {string} activePipeline UID for the current snapshot
+ * @param {string} activeSnapshot UID for the current snapshot
  * @param {Boolean} allowHistoryDeletion If true, display delete buttons
- * @param {Function} onChangeActiveSnapshot Handle switching the activePipeline
+ * @param {Function} onChangeActiveSnapshot Handle switching the activeSnapshot
  * @param {Function} onDeleteSnapshot Handle deleting a snapshot from the list
  * @param {Array} snapshots List of snapshots
  * @param {string} theme CarbonUI light/dark theme
  */
 const History = ({
-  activePipeline,
+  activeSnapshot,
   allowHistoryDeletion,
   onChangeActiveSnapshot,
   onDeleteSnapshot,
@@ -31,7 +31,7 @@ const History = ({
    * @param {Object} snapshot A snapshot
    * @return {Boolean} True if snapshot IDs match
    */
-  const isActive = snapshot => activePipeline === snapshot.id;
+  const isActive = snapshot => activeSnapshot === snapshot.id;
 
   return (
     <Scrollbars autoHide hideTracksWhenNotNeeded>
@@ -73,7 +73,7 @@ const History = ({
 };
 
 const mapStateToProps = state => ({
-  activePipeline: state.activePipeline,
+  activeSnapshot: state.activeSnapshot,
   allowHistoryDeletion: state.allowHistoryDeletion,
   snapshots: getSnapshotHistory(state),
   theme: state.theme,

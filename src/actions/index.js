@@ -152,3 +152,16 @@ export function toggleTagFilter(tagID, enabled) {
     enabled
   };
 }
+
+export const UPDATE_CHART_SIZE = 'UPDATE_CHART_SIZE';
+
+/**
+ * Store the chart size, based on the window
+ * @param {Object} chartSize getBoundingClientRect value
+ */
+export function updateChartSize(chartSize) {
+  return {
+    type: UPDATE_CHART_SIZE,
+    chartSize
+  };
+}

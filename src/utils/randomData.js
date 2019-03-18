@@ -1,7 +1,15 @@
+import {
+  getNumberArray,
+  randomIndex,
+  randomNumber,
+  getRandomMatch,
+  getRandomName,
+  unique,
+} from './index';
+
 //--- Config variables ---//
 
 const DATA_NODE_COUNT = 30;
-const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(' ');
 const MAX_CONNECTED_NODES = 4;
 const MAX_LAYER_COUNT = 20;
 const MAX_MESSAGE_WORD_LENGTH = 15;
@@ -11,31 +19,6 @@ const MAX_TAG_COUNT = 20;
 const MAX_TIMESTAMP_OFFSET = 9999999999;
 const PARAMETERS_FREQUENCY = 0.05;
 const TASK_NODE_COUNT = 10;
-
-//--- Utility functions ---//
-
-// Get a random array of numbers
-const getArray = n => Array.from(Array(n).keys());
-
-// Get a random number between 0 to n-1, inclusive
-const randomIndex = n => Math.floor(Math.random() * n);
-
-// Get a random number between 1 to n, inclusive
-const randomNumber = n => Math.ceil(Math.random() * n);
-
-// Get a random datum from an array
-const getRandom = range => range[randomIndex(range.length)];
-
-// Get a random datum from an array that matches a filter condition
-const getRandomMatch = (array, condition) => getRandom(array.filter(condition));
-
-// Generate a random name
-const getRandomName = (n, join = '_') => getArray(n)
-  .map(() => getRandom(LOREM_IPSUM))
-  .join(join);
-
-// Filter duplicate values from an array
-const unique = (d, i, arr) => arr.indexOf(d) === i;
 
 /**
  * Generate a random pipeline snapshot dataset
@@ -52,10 +35,11 @@ class Snapshot {
   /**
    * Generate a name for each node.
    * Put 'parameters_' in front of 1 in 20.
+   * @param {number} paramFreq How often nodes should include 'parameters' in their name
    */
-  getRandomNodeName() {
-    const params = Math.random() < PARAMETERS_FREQUENCY ? 'parameters_' : '';
+  getRandomNodeName(paramFreq) {
     const name = getRandomName(randomNumber(10));
+    const params = Math.random() < paramFreq ? 'parameters_' : '';
     return params + name;
   }
 
@@ -63,10 +47,11 @@ class Snapshot {
    * Generate a list of nodes
    * @param {number} count The number of nodes to generate
    * @param {Function} getLayer A callback to create a random layer number
+   * @param {number} paramFreq How often nodes should include 'parameters' in their name
    */
-  generateNodeList(count, getLayer) {
-    return getArray(count)
-      .map(this.getRandomNodeName)
+  generateNodeList(count, getLayer, paramFreq) {
+    return getNumberArray(count)
+      .map(() => this.getRandomNodeName(paramFreq))
       .filter(unique)
       .map(id => ({
         id,
@@ -81,11 +66,13 @@ class Snapshot {
     return {
       data: this.generateNodeList(
         DATA_NODE_COUNT,
-        () => randomIndex(this.LAYER_COUNT + 1)
+        () => randomIndex(this.LAYER_COUNT + 1),
+        PARAMETERS_FREQUENCY
       ),
       task: this.generateNodeList(
         TASK_NODE_COUNT,
-        () => randomIndex(this.LAYER_COUNT) + 0.5
+        () => randomIndex(this.LAYER_COUNT) + 0.5,
+        0
       ),
     };
   }
@@ -94,7 +81,7 @@ class Snapshot {
    * Generate a random list of tags
    */
   generateTags() {
-    return getArray(this.TAG_COUNT)
+    return getNumberArray(this.TAG_COUNT)
       .map(() => getRandomName(randomNumber(MAX_NODE_TAG_COUNT)))
       .filter(unique);
   }
@@ -103,7 +90,7 @@ class Snapshot {
    * Select a random number of tags from the list of tags
    */
   getRandomTags() {
-    return getArray(randomNumber(this.TAG_COUNT))
+    return getNumberArray(randomNumber(this.TAG_COUNT))
       .map(() => this.tags[randomIndex(this.tags.length)])
       .filter(unique);
   }
@@ -113,7 +100,7 @@ class Snapshot {
    * @param {Function} condition Determine order of precedence
    */
   getConnectedNodes(condition) {
-    return getArray(this.CONNECTION_COUNT)
+    return getNumberArray(this.CONNECTION_COUNT)
       .map(() => getRandomMatch(this.nodes.data, condition))
       .filter(Boolean)
       .map(d => d.id)
@@ -147,7 +134,7 @@ class Snapshot {
 };
 
 const generateRandomHistory = () =>
-  getArray(randomNumber(MAX_SNAPSHOT_COUNT))
+  getNumberArray(randomNumber(MAX_SNAPSHOT_COUNT))
     .map(() => new Snapshot().getDatum())
     .sort((a, b) => b.created_ts - a.created_ts);
 

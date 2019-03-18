@@ -19,7 +19,7 @@ class App extends React.Component {
     super(props);
 
     const pipelineData = this.loadData(props.data);
-    const activePipeline = pipelineData.getIn(['allIDs', 0]);
+    const activeSnapshot = pipelineData.snapshotIDs[0];
 
     const {
       allowHistoryDeletion,
@@ -29,11 +29,12 @@ class App extends React.Component {
     } = props;
 
     const initialState = {
-      activePipeline,
+      ...pipelineData,
+      activeSnapshot,
       allowHistoryDeletion,
       allowUploads,
+      chartSize: {},
       onDeleteSnapshot,
-      pipelineData,
       parameters: true,
       showHistory,
       textLabels: false,
