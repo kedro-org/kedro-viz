@@ -26,6 +26,9 @@ jobs:
           name: Install Node dependencies
           command: npm ci
       - run:
+          name: Run Eslint
+          command: npm run lint
+      - run:
           name: Run python tests
           command: make pytest
       - run:

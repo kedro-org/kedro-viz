@@ -60,7 +60,12 @@ class FlowChart extends Component {
    * and apply them to the chart SVG
    */
   updateChartSize() {
-    const { left, top, width, height } = this._container.getBoundingClientRect();
+    const {
+      left,
+      top,
+      width,
+      height
+    } = this._container.getBoundingClientRect();
     const navOffset = this.getNavOffset(width);
     this.props.onUpdateChartSize({
       x: left,
@@ -69,7 +74,7 @@ class FlowChart extends Component {
       outerHeight: height,
       width: width - navOffset,
       height,
-      navOffset,
+      navOffset
     });
   }
 
@@ -119,7 +124,8 @@ class FlowChart extends Component {
     const navOffset = this.getNavOffset(chartSize.outerWidth);
 
     // Update SVG dimensions
-    this.el.svg.attr('width', chartSize.outerWidth)
+    this.el.svg
+      .attr('width', chartSize.outerWidth)
       .attr('height', chartSize.outerHeight);
 
     // Animate the wrapper translation when nav is toggled
@@ -186,8 +192,9 @@ class FlowChart extends Component {
 
     enterNodes.append('rect');
 
-    enterNodes
-      .append(node => node.type === 'data' ? databaseIcon(node) : cogIcon(node))
+    enterNodes.append(node =>
+      node.type === 'data' ? databaseIcon(node) : cogIcon(node)
+    );
 
     enterNodes
       .append('text')
@@ -205,13 +212,13 @@ class FlowChart extends Component {
     const tooltipProps = {
       ...chartSize,
       navOffset,
-      tooltip: this.el.tooltip,
+      tooltip: this.el.tooltip
     };
 
     const linkedNodeProps = {
       el: this.el,
       edges,
-      nodes,
+      nodes
     };
 
     this.el.nodes = this.el.nodes
@@ -255,7 +262,9 @@ class FlowChart extends Component {
    */
   render() {
     return (
-      <div className="pipeline-flowchart carbon" ref={el => (this._container = el)}>
+      <div
+        className="pipeline-flowchart carbon"
+        ref={el => (this._container = el)}>
         <svg className="pipeline-flowchart__graph" ref={el => (this._svg = el)}>
           <defs>
             <marker
@@ -273,21 +282,28 @@ class FlowChart extends Component {
           </defs>
           <g ref={el => (this._gWrapper = el)}>
             <g ref={el => (this._gInner = el)}>
-              <g className="pipeline-flowchart__edges" ref={el => (this._gEdges = el)} />
+              <g
+                className="pipeline-flowchart__edges"
+                ref={el => (this._gEdges = el)}
+              />
               <g
                 id="nodes"
                 className="pipeline-flowchart__nodes"
-                ref={el => (this._gNodes = el)} />
+                ref={el => (this._gNodes = el)}
+              />
             </g>
           </g>
         </svg>
-        <div className="pipeline-flowchart__tooltip carbon" ref={el => (this._tooltip = el)} />
+        <div
+          className="pipeline-flowchart__tooltip carbon"
+          ref={el => (this._tooltip = el)}
+        />
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   activeSnapshot: state.activeSnapshot,
   chartSize: state.chartSize,
   graph: getGraph(state),
@@ -301,9 +317,12 @@ const mapDispatchToProps = dispatch => ({
   onToggleNodeActive: (node, isActive) => {
     dispatch(toggleNodeActive(node.id, isActive));
   },
-  onUpdateChartSize: (chartSize) => {
+  onUpdateChartSize: chartSize => {
     dispatch(updateChartSize(chartSize));
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(FlowChart);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(FlowChart);

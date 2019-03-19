@@ -19,7 +19,8 @@
     background: rgba(white, 0.02);
   }
 
-  &--active, &--active:hover {
+  &--active,
+  &--active:hover {
     background: rgba(white, 0.04);
   }
 
@@ -74,7 +75,8 @@
     opacity: 0.55;
   }
 
-  .pipeline-history__row &:hover, .pipeline-history__row &:focus {
+  .pipeline-history__row &:hover,
+  .pipeline-history__row &:focus {
     opacity: 0.85;
   }
 

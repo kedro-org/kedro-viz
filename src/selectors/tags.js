@@ -21,13 +21,12 @@ export const getActiveSnapshotTags = createSelector(
  */
 export const getTags = createSelector(
   [getActiveSnapshotTags, getTagName, getTagActive, getTagEnabled],
-  (activeSnapshotTags, tagName, tagActive, tagEnabled) => activeSnapshotTags
-    .sort()
-    .map(id => ({
+  (activeSnapshotTags, tagName, tagActive, tagEnabled) =>
+    activeSnapshotTags.sort().map(id => ({
       id,
       name: tagName[id],
       active: Boolean(tagActive[id]),
-      enabled: Boolean(tagEnabled[id]),
+      enabled: Boolean(tagEnabled[id])
     }))
 );
 
@@ -40,6 +39,6 @@ export const getTagCount = createSelector(
   [getActiveSnapshotTags, getTagEnabled],
   (activeSnapshotTags, tagEnabled) => ({
     total: activeSnapshotTags.length,
-    enabled: activeSnapshotTags.filter(id => tagEnabled[id]).length,
+    enabled: activeSnapshotTags.filter(id => tagEnabled[id]).length
   })
 );

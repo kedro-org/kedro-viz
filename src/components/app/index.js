@@ -25,7 +25,7 @@ class App extends React.Component {
       allowHistoryDeletion,
       allowUploads,
       onDeleteSnapshot,
-      showHistory,
+      showHistory
     } = props;
 
     const initialState = {
@@ -39,16 +39,17 @@ class App extends React.Component {
       showHistory,
       textLabels: false,
       view: 'combined',
-      theme: 'dark',
+      theme: 'dark'
     };
-  
+
     this.store = store(initialState);
   }
 
   componentDidUpdate(prevProps) {
     const newData = this.props.data;
     const dataID = snapshots =>
-      Array.isArray(snapshots) && snapshots.map(d => d.kernel_ai_schema_id).join('');
+      Array.isArray(snapshots) &&
+      snapshots.map(d => d.kernel_ai_schema_id).join('');
 
     if (dataID(prevProps.data) !== dataID(newData)) {
       this.store.dispatch(resetSnapshotData(formatSnapshots(newData)));
@@ -69,20 +70,26 @@ class App extends React.Component {
   loadJsonData(kernel_ai_schema_id) {
     const { dataPath } = config;
     json(dataPath)
-      .then(json_schema => formatSnapshots([{
-        json_schema,
-        kernel_ai_schema_id
-      }]))
+      .then(json_schema =>
+        formatSnapshots([
+          {
+            json_schema,
+            kernel_ai_schema_id
+          }
+        ])
+      )
       .then(formattedData => {
         this.store.dispatch(resetSnapshotData(formattedData));
       })
       .catch(() => {
-        console.error(`Unable to load pipeline data. Please check that you have placed a file at ${dataPath}`)
+        console.error(
+          `Unable to load pipeline data. Please check that you have placed a file at ${dataPath}`
+        );
       });
     return formatSnapshots([]);
   }
 
-  render () {
+  render() {
     return this.props.data ? (
       <Provider store={this.store}>
         <ChartWrapper />
@@ -96,15 +103,20 @@ App.propTypes = {
   allowUploads: PropTypes.bool,
   data: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.arrayOf(PropTypes.shape({
-      created_ts: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
-      json_schema: PropTypes.array.isRequired,
-      kernel_ai_schema_id: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
-      message: PropTypes.string,
-    }))
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        created_ts: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        json_schema: PropTypes.array.isRequired,
+        kernel_ai_schema_id: PropTypes.oneOfType([
+          PropTypes.string,
+          PropTypes.number
+        ]),
+        message: PropTypes.string
+      })
+    )
   ]),
   onDeleteSnapshot: PropTypes.func,
-  showHistory: PropTypes.bool,
+  showHistory: PropTypes.bool
 };
 
 App.defaultProps = {
@@ -127,7 +139,7 @@ App.defaultProps = {
   /**
    * Callback on deletion of a snapshot from the history tab
    */
-  onDeleteSnapshot: null,
+  onDeleteSnapshot: null
 };
 
 export default App;

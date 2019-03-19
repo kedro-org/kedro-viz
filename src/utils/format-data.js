@@ -5,10 +5,13 @@
  */
 const validateInput = data => {
   const { isArray } = Array;
-  return isArray(data) && data.every(d => (
-    isArray(d.inputs) && isArray(d.outputs) && typeof d.name === 'string' 
-  ));
-}
+  return (
+    isArray(data) &&
+    data.every(
+      d => isArray(d.inputs) && isArray(d.outputs) && typeof d.name === 'string'
+    )
+  );
+};
 
 /**
  * Get unique, reproducible ID for each node
@@ -25,9 +28,10 @@ export const getNodeID = (snapshotID, nodeName, nodeType) =>
  * @param {Object} source - Name and type of the source node
  * @param {Object} target - Name and type of the target node
  */
-export const getEdgeID = (snapshotID, source, target) => [source, target]
-  .map((node) => getNodeID(snapshotID, node.name, node.type))
-  .join('|');
+export const getEdgeID = (snapshotID, source, target) =>
+  [source, target]
+    .map(node => getNodeID(snapshotID, node.name, node.type))
+    .join('|');
 
 /**
  * Get unique, reproducible ID for each tag
@@ -38,10 +42,10 @@ export const getTagID = (snapshotID, tagID) => `${snapshotID}/${tagID}`;
 
 /**
  * Format the full list of snapshot data
- * @param {Array} data 
- * @eturn {Object} 
+ * @param {Array} data
+ * @eturn {Object}
  */
-const formatSnapshots = (data) => {
+const formatSnapshots = data => {
   if (!Array.isArray(data)) {
     return {};
   }
@@ -146,26 +150,20 @@ const formatSnapshots = (data) => {
     const createEdges = ({ name, inputs, outputs }) => {
       inputs.forEach(source => {
         // Create link between input data nodes and task node (for combined view)
-        addEdge(
-          { name: source, type: 'data' },
-          { name: name, type: 'task' },
-        );
+        addEdge({ name: source, type: 'data' }, { name: name, type: 'task' });
 
         // Create link between input data nodes and output data nodes (for data view)
         outputs.forEach(target => {
           addEdge(
             { name: source, type: 'data' },
-            { name: target, type: 'data' },
+            { name: target, type: 'data' }
           );
         });
       });
 
       // Create link between task node and output data nodes (for combined view)
       outputs.forEach(target => {
-        addEdge(
-          { name: name, type: 'task' },
-          { name: target, type: 'data' },
-        );
+        addEdge({ name: name, type: 'task' }, { name: target, type: 'data' });
       });
     };
 
@@ -204,7 +202,7 @@ const formatSnapshots = (data) => {
         createEdges(node);
       });
     };
-    
+
     /**
      * Get links between tagged nodes, and between task nodes
      */
@@ -212,7 +210,7 @@ const formatSnapshots = (data) => {
       snapshotEdges[snapshotID].forEach(d => {
         const d1 = {
           source: edgeSources[d],
-          target: edgeTargets[d],
+          target: edgeTargets[d]
         };
         getLinkedNodeTags(d1);
 
@@ -221,12 +219,12 @@ const formatSnapshots = (data) => {
           snapshotEdges[snapshotID].forEach(dd => {
             const d2 = {
               source: edgeSources[dd],
-              target: edgeTargets[dd],
+              target: edgeTargets[dd]
             };
             if (nodeType[d2.target] === 'task' && d2.source === d1.target) {
               addEdge(
                 { name: nodeID[d1.source], type: 'task' },
-                { name: nodeID[d2.target], type: 'task' },
+                { name: nodeID[d2.target], type: 'task' }
               );
             }
           });
@@ -248,7 +246,7 @@ const formatSnapshots = (data) => {
           }
         });
       });
-    }
+    };
 
     // Begin formatting
     if (validateInput(rawSnapshot)) {
@@ -266,9 +264,11 @@ const formatSnapshots = (data) => {
     snapshotMessage[id] = d.message;
     formatSnapshotData(id, d.json_schema);
   });
-  
+
   const snapshots = {
-    snapshotIDs: snapshotIDs.sort((a, b) => snapshotTimestamp[b] - snapshotTimestamp[a]),
+    snapshotIDs: snapshotIDs.sort(
+      (a, b) => snapshotTimestamp[b] - snapshotTimestamp[a]
+    ),
     snapshotSchema: snapshotSchema,
     snapshotMessage: snapshotMessage,
     snapshotTimestamp: snapshotTimestamp,
@@ -286,7 +286,7 @@ const formatSnapshots = (data) => {
     edgeDisabled: {},
     tagName: tagName,
     tagActive: {},
-    tagEnabled: {},
+    tagEnabled: {}
   };
 
   return snapshots;

@@ -4,7 +4,7 @@ import {
   randomNumber,
   getRandomMatch,
   getRandomName,
-  unique,
+  unique
 } from './index';
 
 //--- Config variables ---//
@@ -73,7 +73,7 @@ class Snapshot {
         TASK_NODE_COUNT,
         () => randomIndex(this.LAYER_COUNT) + 0.5,
         0
-      ),
+      )
     };
   }
 
@@ -131,7 +131,7 @@ class Snapshot {
       json_schema: this.getSchema()
     };
   }
-};
+}
 
 const generateRandomHistory = () =>
   getNumberArray(randomNumber(MAX_SNAPSHOT_COUNT))

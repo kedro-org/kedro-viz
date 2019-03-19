@@ -44,43 +44,46 @@ class SidebarTabs extends React.Component {
 
     if (!this.props.showHistory) {
       return (
-        <div className='pipeline-tabs'>
-          <div className='pipeline-tabs_tab'>
+        <div className="pipeline-tabs">
+          <div className="pipeline-tabs_tab">
             <ChartUI />
           </div>
         </div>
       );
     }
-  
+
     return (
-      <div className='pipeline-tabs' ref={el => { this.tabs = el; }}>
+      <div
+        className="pipeline-tabs"
+        ref={el => {
+          this.tabs = el;
+        }}>
         <Tabs
           onSelect={this._selectedTabChanged}
           selectedIndex={selectedIndex}
-          size='small'
+          size="small"
           tabs={tabData}
-          theme='light' />
-        {
-          tabData.map((tab, i) => (
-            <div
-              className='pipeline-tabs_tab'
-              aria-labelledby={`tab-${tab.text.toLowerCase()}`}
-              hidden={selectedIndex !== i}
-              id={tab.text.toLowerCase()}
-              key={tab.text}
-              style={{ display: selectedIndex === i ? 'block' : 'none' }}
-              tabIndex='-1'>
-              <tab.content />
-            </div>
-          ))
-        }
+          theme="light"
+        />
+        {tabData.map((tab, i) => (
+          <div
+            className="pipeline-tabs_tab"
+            aria-labelledby={`tab-${tab.text.toLowerCase()}`}
+            hidden={selectedIndex !== i}
+            id={tab.text.toLowerCase()}
+            key={tab.text}
+            style={{ display: selectedIndex === i ? 'block' : 'none' }}
+            tabIndex="-1">
+            <tab.content />
+          </div>
+        ))}
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
-  showHistory: state.showHistory,
+const mapStateToProps = state => ({
+  showHistory: state.showHistory
 });
 
 export default connect(mapStateToProps)(SidebarTabs);

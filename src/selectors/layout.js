@@ -17,7 +17,6 @@ const getChartSize = state => state.chartSize;
 export const getGraph = createSelector(
   [getVisibleNodes, getVisibleEdges, getTextLabels],
   (nodes, edges, textLabels) => {
-
     const graph = new dagre.graphlib.Graph().setGraph({
       marginx: 40,
       marginy: 40
@@ -32,11 +31,11 @@ export const getGraph = createSelector(
       return bbox.width + padding;
     };
 
-    const getNodeSize = (node) => {
+    const getNodeSize = node => {
       const boxSize = node.type === 'data' ? 50 : 40;
       return {
         height: boxSize,
-        width: textLabels ? textWidth(node.name, boxSize) : boxSize,
+        width: textLabels ? textWidth(node.name, boxSize) : boxSize
       };
     };
 
@@ -44,7 +43,7 @@ export const getGraph = createSelector(
       graph.setNode(node.id, {
         ...node,
         ...getNodeSize(node),
-        label: node.name,
+        label: node.name
       });
     });
 
@@ -66,12 +65,13 @@ export const getGraph = createSelector(
 export const getLayout = createSelector(
   [getGraph, getNodeType, getNodeActive],
   (graph, nodeType, nodeActive) => ({
-    nodes: graph.nodes()
-      .map(node => Object.assign({}, graph.node(node), {
+    nodes: graph.nodes().map(node =>
+      Object.assign({}, graph.node(node), {
         type: nodeType[node],
-        active: nodeActive[node],
-      })),
-    edges: graph.edges().map(edge => graph.edge(edge)),
+        active: nodeActive[node]
+      })
+    ),
+    edges: graph.edges().map(edge => graph.edge(edge))
   })
 );
 
@@ -87,9 +87,9 @@ export const getZoomPosition = createSelector(
       container.width,
       container.height,
       chart.width,
-      chart.height,
+      chart.height
     ].every(n => !isNaN(n) && Number.isFinite(n));
-    
+
     if (validDimensions) {
       const scale = Math.min(
         container.width / chart.width,
@@ -97,14 +97,14 @@ export const getZoomPosition = createSelector(
       );
       return {
         scale,
-        translateX: container.width / 2 - chart.width * scale / 2,
-        translateY: container.height / 2 - chart.height * scale / 2,
+        translateX: container.width / 2 - (chart.width * scale) / 2,
+        translateY: container.height / 2 - (chart.height * scale) / 2
       };
     }
     return {
       scale: 1,
       translateX: 0,
-      translateY: 0,
+      translateY: 0
     };
   }
 );

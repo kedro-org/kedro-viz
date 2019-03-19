@@ -2,12 +2,12 @@
 
 /**
  * Loop through an array and output to an object
- * @param {Array} array 
- * @param {Function} callback 
+ * @param {Array} array
+ * @param {Function} callback
  */
 export const arrayToObject = (array, callback) => {
   const newObject = {};
-  array.forEach((key) => {
+  array.forEach(key => {
     newObject[key] = callback(key);
   });
   return newObject;
@@ -42,18 +42,22 @@ export const getRandom = range => range[randomIndex(range.length)];
  * @param {Array} array The array to select a random item from
  * @param {Function} condition Filter check
  */
-export const getRandomMatch = (array, condition) => getRandom(array.filter(condition));
+export const getRandomMatch = (array, condition) =>
+  getRandom(array.filter(condition));
 
-const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(' ');
+const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
+  ' '
+);
 
 /**
  * Generate a random latin name
  * @param {number} n Number of words in the name
  * @param {string} join The character(s) used to join each word
  */
-export const getRandomName = (n, join = '_') => getNumberArray(n)
-  .map(() => getRandom(LOREM_IPSUM))
-  .join(join);
+export const getRandomName = (n, join = '_') =>
+  getNumberArray(n)
+    .map(() => getRandom(LOREM_IPSUM))
+    .join(join);
 
 /**
  * Filter duplicate values from an array
