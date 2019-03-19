@@ -13,7 +13,8 @@ ReactDOM.render(
     allowHistoryDeletion={useRandomData}
     allowUploads={true}
     data={dataSource}
-    showHistory={useRandomData} />,
+    showHistory={useRandomData}
+  />,
   document.getElementById('root')
 );
 registerServiceWorker();

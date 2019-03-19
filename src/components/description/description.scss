@@ -8,12 +8,12 @@
   text-align: right;
   max-width: 90%;
   transition: max-width ease 0.4s;
-  
+
   &--menu-visible {
     max-width: 70%;
     max-width: calc(100% - 400px);
   }
-  
+
   p {
     font-size: 1.6em;
     color: rgba($color-bg-light, 0.55);
@@ -22,10 +22,9 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  
+
   b {
     font-weight: 600;
     color: rgba($color-bg-light, 0.85);
   }
 }
-

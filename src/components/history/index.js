@@ -35,38 +35,42 @@ const History = ({
 
   return (
     <Scrollbars autoHide hideTracksWhenNotNeeded>
-      <ul className='pipeline-history'>
-        { snapshots.map(snapshot =>
+      <ul className="pipeline-history">
+        {snapshots.map(snapshot => (
           <li
-            className={classnames(
-              'pipeline-history__row',
-              {
-                'pipeline-history__row--active': isActive(snapshot)
-              }
-            )}
+            className={classnames('pipeline-history__row', {
+              'pipeline-history__row--active': isActive(snapshot)
+            })}
             key={snapshot.id}>
             <RadioButton
               checked={isActive(snapshot)}
-              label={(
-                <span className='pipeline-history__label'>
-                  <b>{ snapshot.message }</b> <span>{ formatTime(+snapshot.timestamp) }</span>
+              label={
+                <span className="pipeline-history__label">
+                  <b>{snapshot.message}</b>{' '}
+                  <span>{formatTime(+snapshot.timestamp)}</span>
                 </span>
-              )}
-              name='history'
+              }
+              name="history"
               onChange={() => onChangeActiveSnapshot(snapshot)}
               value={snapshot.id}
-              theme={theme} />
-            { allowHistoryDeletion && (
+              theme={theme}
+            />
+            {allowHistoryDeletion && (
               <button
-                className='pipeline-history__delete'
-                title='Delete snapshot'
-                aria-label='Delete snapshot'
+                className="pipeline-history__delete"
+                title="Delete snapshot"
+                aria-label="Delete snapshot"
                 onClick={() => onDeleteSnapshot(snapshot)}>
-                <img src={deleteIcon} width='24' height='24' alt='Delete icon' />
+                <img
+                  src={deleteIcon}
+                  width="24"
+                  height="24"
+                  alt="Delete icon"
+                />
               </button>
-            ) }
+            )}
           </li>
-        ) }
+        ))}
       </ul>
     </Scrollbars>
   );
@@ -76,16 +80,16 @@ const mapStateToProps = state => ({
   activeSnapshot: state.activeSnapshot,
   allowHistoryDeletion: state.allowHistoryDeletion,
   snapshots: getSnapshotHistory(state),
-  theme: state.theme,
+  theme: state.theme
 });
 
 const mapDispatchToProps = dispatch => ({
-  onChangeActiveSnapshot: snapshot => dispatch(
-    changeActiveSnapshot(snapshot.id)
-  ),
-  onDeleteSnapshot: snapshot => dispatch(
-    deleteSnapshot(snapshot.id)
-  ),
+  onChangeActiveSnapshot: snapshot =>
+    dispatch(changeActiveSnapshot(snapshot.id)),
+  onDeleteSnapshot: snapshot => dispatch(deleteSnapshot(snapshot.id))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(History);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(History);

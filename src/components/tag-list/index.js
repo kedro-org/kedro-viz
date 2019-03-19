@@ -26,9 +26,9 @@ const TagList = ({
       width={null}
       defaultText={`Tag filters (${tagCount.enabled}/${tagCount.total})`}>
       <React.Fragment>
-        { tagCount.total > 0 ? (
+        {tagCount.total > 0 ? (
           <ul className="pipeline-tags__tag-list">
-            { tags.map(tag => (
+            {tags.map(tag => (
               <li
                 key={`tag-${tag.id}`}
                 title={tag.name}
@@ -40,31 +40,32 @@ const TagList = ({
                   label={<span>{tag.name}</span>}
                   name={tag.id}
                   onChange={onToggleTagFilter(tag.id)}
-                  theme={theme} />
+                  theme={theme}
+                />
               </li>
-            )) }
+            ))}
           </ul>
         ) : (
           <div className="pipeline-tags__empty cbn-menu-option">
             There are no tags used in this pipeline.
           </div>
-        ) }
+        )}
       </React.Fragment>
     </Dropdown>
   </div>
 );
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const tags = getTags(state);
   const tagCount = getTagCount(state);
   return {
     tagCount,
     tags,
-    theme: state.theme,
+    theme: state.theme
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   onToggleTagActive: (tag, isActive) => () => {
     dispatch(toggleTagActive(tag.id, isActive));
   },
@@ -73,4 +74,7 @@ const mapDispatchToProps = (dispatch) => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TagList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TagList);

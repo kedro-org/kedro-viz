@@ -7,7 +7,8 @@ const getLinkedNodes = (edges, nodeID) => {
   const linkedNodes = [];
 
   (function getParents(id) {
-    edges.filter(d => d.target === id)
+    edges
+      .filter(d => d.target === id)
       .forEach(d => {
         linkedNodes.push(d.source);
         getParents(d.source);
@@ -15,7 +16,8 @@ const getLinkedNodes = (edges, nodeID) => {
   })(nodeID);
 
   (function getChildren(id) {
-    edges.filter(d => d.source === id)
+    edges
+      .filter(d => d.source === id)
       .forEach(d => {
         linkedNodes.push(d.target);
         getChildren(d.target);
@@ -32,7 +34,8 @@ const getLinkedNodes = (edges, nodeID) => {
 const linkedNodes = {
   show: ({ edges, el }, id) => {
     const linkedNodes = getLinkedNodes(edges, id);
-    const nodeIsLinked = nodeID => linkedNodes.includes(nodeID) || nodeID === id;
+    const nodeIsLinked = nodeID =>
+      linkedNodes.includes(nodeID) || nodeID === id;
 
     el.nodes
       .classed('node--active', node => nodeIsLinked(node.id))

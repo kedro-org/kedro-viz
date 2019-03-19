@@ -11,13 +11,14 @@ const getSnapshotTimestamp = state => state.snapshotTimestamp;
  */
 export const getSnapshotHistory = createSelector(
   [getSnapshotIDs, getSnapshotMessage, getSnapshotTimestamp],
-  (snapshotIDs, snapshotMessages, snapshotTimestamps) => snapshotIDs.map(id => {
-    return {
-      id,
-      message: snapshotMessages[id],
-      timestamp: snapshotTimestamps[id],
-    };
-  })
+  (snapshotIDs, snapshotMessages, snapshotTimestamps) =>
+    snapshotIDs.map(id => {
+      return {
+        id,
+        message: snapshotMessages[id],
+        timestamp: snapshotTimestamps[id]
+      };
+    })
 );
 
 /**
@@ -41,5 +42,6 @@ export const getActiveSnapshotTimestamp = createSelector(
  */
 export const getActiveSchema = createSelector(
   [getActiveSnapshot, getSnapshotSchema],
-  (activeSnapshot, snapshotSchemas) => JSON.stringify(snapshotSchemas[activeSnapshot])
+  (activeSnapshot, snapshotSchemas) =>
+    JSON.stringify(snapshotSchemas[activeSnapshot])
 );

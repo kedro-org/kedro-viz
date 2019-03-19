@@ -29,12 +29,13 @@ class ChartWrappper extends Component {
     const { theme, showHistory } = this.props;
 
     return (
-      <div className={classnames('kernel-pipeline', {
-        'cbn-theme--dark': theme === 'dark',
-        'cbn-theme--light': theme === 'light',
-      })}>
+      <div
+        className={classnames('kernel-pipeline', {
+          'cbn-theme--dark': theme === 'dark',
+          'cbn-theme--light': theme === 'light'
+        })}>
         <Description visibleNav={visibleNav} />
-        <div className='pipeline-wrapper'>
+        <div className="pipeline-wrapper">
           <FlowChart visibleNav={visibleNav} />
         </div>
         <button
@@ -56,10 +57,13 @@ class ChartWrappper extends Component {
           }}>
           <button
             aria-label="Hide menu"
-            className={classnames('pipeline-sidebar__hide-menu pipeline-icon-button', {
-              'pipeline-sidebar__hide-menu--offset': !showHistory,
-              'pipeline-sidebar__hide-menu--visible': visibleNav,
-            })}
+            className={classnames(
+              'pipeline-sidebar__hide-menu pipeline-icon-button',
+              {
+                'pipeline-sidebar__hide-menu--offset': !showHistory,
+                'pipeline-sidebar__hide-menu--visible': visibleNav
+              }
+            )}
             onClick={this.toggleNav.bind(this)}>
             <Icon type="close" title="Close" theme={theme} />
           </button>
@@ -70,7 +74,7 @@ class ChartWrappper extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   showHistory: state.showHistory,
   theme: state.theme
 });

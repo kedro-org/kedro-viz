@@ -10,12 +10,11 @@ import {
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
   TOGGLE_TEXT_LABELS,
-  UPDATE_CHART_SIZE,
+  UPDATE_CHART_SIZE
 } from '../actions';
 
 function reducer(state = {}, action) {
   switch (action.type) {
-
     case CHANGE_ACTIVE_SNAPSHOT:
       return Object.assign({}, state, {
         activeSnapshot: action.snapshotID
@@ -23,7 +22,7 @@ function reducer(state = {}, action) {
 
     case CHANGE_VIEW:
       return Object.assign({}, state, {
-        view: action.view,
+        view: action.view
       });
 
     case DELETE_SNAPSHOT: {
@@ -42,11 +41,11 @@ function reducer(state = {}, action) {
       }
       return Object.assign({}, state, {
         activeSnapshot,
-        snapshotIDs,
+        snapshotIDs
       });
     }
 
-    case RESET_SNAPSHOT_DATA: 
+    case RESET_SNAPSHOT_DATA:
       return Object.assign({}, state, action.snapshots, {
         activeSnapshot: action.snapshots.snapshotIDs[0]
       });
@@ -70,31 +69,34 @@ function reducer(state = {}, action) {
     case TOGGLE_NODES_DISABLED: {
       return Object.assign({}, state, {
         nodeDisabled: action.nodeIDs.reduce(
-          (disabled, id) => Object.assign({}, disabled, {
-            [id]: action.isDisabled
-          }),
+          (disabled, id) =>
+            Object.assign({}, disabled, {
+              [id]: action.isDisabled
+            }),
           state.nodeDisabled
         )
       });
     }
 
     case TOGGLE_PARAMETERS: {
-      const paramIDs = state.snapshotNodes[state.activeSnapshot]
-        .filter(id => state.nodeName[id].includes('param'));
+      const paramIDs = state.snapshotNodes[state.activeSnapshot].filter(id =>
+        state.nodeName[id].includes('param')
+      );
       return Object.assign({}, state, {
         nodeDisabled: paramIDs.reduce(
-          (disabled, id) => Object.assign({}, disabled, {
-            [id]: !action.parameters
-          }),
+          (disabled, id) =>
+            Object.assign({}, disabled, {
+              [id]: !action.parameters
+            }),
           state.nodeDisabled
         ),
-        parameters: action.parameters,
+        parameters: action.parameters
       });
     }
 
     case TOGGLE_TEXT_LABELS:
       return Object.assign({}, state, {
-        textLabels: action.textLabels,
+        textLabels: action.textLabels
       });
 
     case TOGGLE_TAG_ACTIVE: {
@@ -115,7 +117,7 @@ function reducer(state = {}, action) {
 
     case UPDATE_CHART_SIZE: {
       return Object.assign({}, state, {
-        chartSize: action.chartSize,
+        chartSize: action.chartSize
       });
     }
 
