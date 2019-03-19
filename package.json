@@ -12,6 +12,7 @@
     "start:lib": "npm run lib:copy --watch",
     "lib": "npm run build:css && npm run lib:copy",
     "lib:copy": "rm -rf lib && babel src --out-dir lib --copy-files",
+    "lint": "eslint src/ --fix",
     "prepublishOnly": "npm run lib",
     "version:update": "./bin/publish-build.sh",
     "version:get": "echo \"Current version is \"$(./bin/config.sh version)",
@@ -52,6 +53,7 @@
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --single-quote --write",
+      "eslint src/ --fix",
       "git add"
     ]
   },
