@@ -62,6 +62,9 @@ class App extends React.Component {
         return formatSnapshots(getRandomHistory());
       case 'json':
         return this.loadJsonData(data);
+      case null:
+        console.error('No data supplied');
+        return formatSnapshots([]);
       default:
         return formatSnapshots(data);
     }
