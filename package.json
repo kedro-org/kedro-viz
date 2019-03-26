@@ -17,6 +17,7 @@
     "version:update": "./bin/publish-build.sh",
     "version:get": "echo \"Current version is \"$(./bin/config.sh version)",
     "test": "react-scripts test --env=jsdom",
+    "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject"
   },
   "dependencies": {
