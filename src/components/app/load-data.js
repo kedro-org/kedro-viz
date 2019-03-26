@@ -11,8 +11,7 @@ const loadData = (data, onResetStoreData) => {
       loadJsonData(data).then(onResetStoreData);
       return formatSnapshots([]);
     case null:
-      console.error('No data supplied');
-      return formatSnapshots([]);
+      throw new Error('No data was provided to App component via props');
     default:
       return formatSnapshots(data);
   }
