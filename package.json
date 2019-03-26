@@ -20,7 +20,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@quantumblack/carbon-ui-components": "github:quantumblack/asset-carbon-ui-components#3ac3f34b802018fdb20adb799552d190c66189cd",
+    "@quantumblack/carbon-ui-components": "github:quantumblack/asset-carbon-ui-components#2b9a10da4ff419ed78eea90569dbe389d5400043",
     "classnames": "^2.2.5",
     "d3-fetch": "^1.1.0",
     "d3-scale": "^2.0.0",

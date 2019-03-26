@@ -177,7 +177,7 @@ class UploadSnapshot extends Component {
                         'pipeline-loading--visible': loading
                       })}
                     />
-                    <Button>Upload</Button>
+                    <Button type="submit">Upload</Button>
                   </div>
                 </React.Fragment>
               )}
