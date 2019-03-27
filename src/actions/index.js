@@ -29,7 +29,7 @@ export const DELETE_SNAPSHOT = 'DELETE_SNAPSHOT';
 /**
  * Select a snapshot and delete it. If handler is passed via App
  * 'onDeleteSnapshot' prop then use that, else use native method.
- * @param {number} id Snapshot id
+ * @param {string} id Snapshot id
  */
 export function deleteSnapshot(id) {
   return {
