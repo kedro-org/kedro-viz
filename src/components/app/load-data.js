@@ -1,6 +1,6 @@
 import { json } from 'd3-fetch';
 import config from '../../config';
-import getRandomHistory from '../../utils/randomData';
+import getRandomHistory from '../../utils/random-data';
 import formatSnapshots from '../../utils/format-data';
 
 const loadData = (data, onResetStoreData) => {
