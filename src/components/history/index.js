@@ -6,7 +6,7 @@ import { changeActiveSnapshot, deleteSnapshot } from '../../actions';
 import { getSnapshotHistory } from '../../selectors';
 import deleteIcon from './delete.svg';
 import './history.css';
-import formatTime from '../../utils/format-time';
+import { formatTime } from '../../utils';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 /**

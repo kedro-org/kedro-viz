@@ -6,7 +6,7 @@ import {
   getActiveSnapshotTimestamp
 } from '../../selectors';
 import './description.css';
-import formatTime from '../../utils/format-time';
+import { formatTime } from '../../utils';
 
 /**
  * Title/description for the current active snapshot.

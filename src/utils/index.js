@@ -66,3 +66,13 @@ export const getRandomName = (n, join = '_') =>
  * @param {Array} arr The array to remove duplicate values from
  */
 export const unique = (d, i, arr) => arr.indexOf(d) === i;
+
+/**
+ * Format a UNIX timestamp into a human-readable string
+ * @param {number|string} datetime A UNIX timestamp
+ * @returns {string} The date and time but prettier
+ */
+export const formatTime = datetime => {
+  const d = new Date(datetime);
+  return `${d.toDateString()} ${d.toLocaleTimeString()}`;
+};
