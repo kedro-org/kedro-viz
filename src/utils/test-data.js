@@ -1,3 +1,5 @@
+import formatSnapshots from './format-data';
+
 export const fakeData = [
   {
     created_ts: '1551452832000',
@@ -12,3 +14,5 @@ export const fakeData = [
     ]
   }
 ];
+
+export const fakeState = formatSnapshots(fakeData);
