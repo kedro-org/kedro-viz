@@ -16,6 +16,17 @@ describe('App', () => {
     it('when being passed data as a prop', () => {
       shallow(<App data={fakeData} />);
     });
+
+    it('when enabling history, history deletion, and uploads', () => {
+      shallow(
+        <App
+          allowHistoryDeletion={true}
+          allowUploads={true}
+          data="random"
+          showHistory={true}
+        />
+      );
+    });
   });
 
   describe('updates the store', () => {
