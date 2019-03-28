@@ -1,4 +1,3 @@
-// Use 'test' or 'prod' for data environment values:
 let dataSource;
 if (process.env.REACT_APP_DATA_SOURCE) {
   dataSource = process.env.REACT_APP_DATA_SOURCE;
