@@ -16,14 +16,19 @@ import { formatTime } from '../../utils';
  * @param {number} timestamp Numeric upload datetime for the current snapshot.
  * @param {Boolean} visibleNav Whether the sidebar nav is visible. Affects styling.
  */
-const Description = ({ message, showDescription, timestamp, visibleNav }) =>
+export const Description = ({
+  message,
+  showDescription,
+  timestamp,
+  visibleNav
+}) =>
   showDescription ? (
     <div
       className={classnames('snapshot-description carbon', {
         'snapshot-description--menu-visible': visibleNav
       })}>
       <p>
-        Uploaded on: <b>{formatTime(+timestamp)}</b>
+        Uploaded on: <b>{formatTime(timestamp)}</b>
       </p>
       <p>
         Title: <b>{message}</b>
@@ -31,7 +36,7 @@ const Description = ({ message, showDescription, timestamp, visibleNav }) =>
     </div>
   ) : null;
 
-const mapStateToProps = state => {
+export const mapStateToProps = state => {
   const message = getActiveSnapshotMessage(state);
   return {
     message,
