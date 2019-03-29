@@ -21,16 +21,29 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const newData = this.props.data;
+    if (this.dataWasUpdated(prevProps.data, this.props.data)) {
+      this.store.dispatch(resetSnapshotData(formatSnapshots(this.props.data)));
+    }
+  }
+
+  /**
+   * Quickly determine whether snapshots have been updated
+   * @param {Object} prevData Previous data prop
+   * @param {Object} newData New data prop
+   */
+  dataWasUpdated(prevData, newData) {
+    // Check just the schema IDs of incoming data updates
     const dataID = snapshots =>
       Array.isArray(snapshots) &&
       snapshots.map(d => d.kernel_ai_schema_id).join('');
 
-    if (dataID(prevProps.data) !== dataID(newData)) {
-      this.store.dispatch(resetSnapshotData(formatSnapshots(newData)));
-    }
+    return dataID(prevData) !== dataID(newData);
   }
 
+  /**
+   * Dispatch an action to update the store with all new snapshot data
+   * @param {Object} formattedData The formatted snapshots
+   */
   resetStoreData(formattedData) {
     this.store.dispatch(resetSnapshotData(formattedData));
   }
