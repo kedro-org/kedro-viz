@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import store from '../../store';
 import { resetSnapshotData } from '../../actions';
-import ChartWrapper from '../chart-wrapper';
+import Wrapper from '../wrapper';
 import formatSnapshots from '../../utils/format-data';
 import { getInitialState, loadData } from './load-data';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
@@ -51,7 +51,7 @@ class App extends React.Component {
   render() {
     return this.props.data ? (
       <Provider store={this.store}>
-        <ChartWrapper />
+        <Wrapper />
       </Provider>
     ) : null;
   }

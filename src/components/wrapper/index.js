@@ -5,12 +5,12 @@ import { Icon } from '@quantumblack/carbon-ui-components';
 import SidebarTabs from '../sidebar-tabs';
 import FlowChart from '../flowchart';
 import Description from '../description';
-import './chart-wrapper.css';
+import './wrapper.css';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-class ChartWrappper extends Component {
+class Wrappper extends Component {
   constructor(props) {
     super(props);
 
@@ -79,4 +79,4 @@ const mapStateToProps = state => ({
   theme: state.theme
 });
 
-export default connect(mapStateToProps)(ChartWrappper);
+export default connect(mapStateToProps)(Wrappper);
