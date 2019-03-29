@@ -11,7 +11,8 @@ export const mockData = [
       {
         inputs: ['Lorem', 'ipsum', 'dolor', 'sit', 'amet'],
         name: 'consectetur',
-        outputs: ['Aliquam', 'eu', 'accumsan', 'mauris']
+        outputs: ['Aliquam', 'eu', 'accumsan', 'mauris'],
+        tags: ['Nulla', 'pulvinar', 'enim', 'consectetur', 'volutpat']
       }
     ]
   }
