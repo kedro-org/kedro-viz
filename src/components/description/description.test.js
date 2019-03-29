@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { Description, mapStateToProps } from './index';
-import { mockState } from '../../utils/test-data';
+import { mockState } from '../../utils/data.mock';
 import {
   getActiveSnapshotMessage,
   getActiveSnapshotTimestamp

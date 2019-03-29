@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import App from './index';
-import { mockData } from '../../utils/test-data';
+import { mockData } from '../../utils/data.mock';
 
 describe('App', () => {
   describe('renders without crashing', () => {

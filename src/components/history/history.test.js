@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { History, mapStateToProps, mapDispatchToProps } from './index';
-import { mockState } from '../../utils/test-data';
+import { mockState } from '../../utils/data.mock';
 import { getSnapshotHistory } from '../../selectors';
 
 function setup() {
