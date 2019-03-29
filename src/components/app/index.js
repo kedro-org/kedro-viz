@@ -5,7 +5,7 @@ import store from '../../store';
 import { resetSnapshotData } from '../../actions';
 import ChartWrapper from '../chart-wrapper';
 import formatSnapshots from '../../utils/format-data';
-import loadData from './load-data';
+import { getInitialState, loadData } from './load-data';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 import './app.css';
 
@@ -15,31 +15,8 @@ import './app.css';
 class App extends React.Component {
   constructor(props) {
     super(props);
-
     const pipelineData = loadData(props.data, this.resetStoreData.bind(this));
-    const activeSnapshot = pipelineData.snapshotIDs[0];
-
-    const {
-      allowHistoryDeletion,
-      allowUploads,
-      onDeleteSnapshot,
-      showHistory
-    } = props;
-
-    const initialState = {
-      ...pipelineData,
-      activeSnapshot,
-      allowHistoryDeletion,
-      allowUploads,
-      chartSize: {},
-      onDeleteSnapshot,
-      parameters: true,
-      showHistory,
-      textLabels: false,
-      view: 'combined',
-      theme: 'dark'
-    };
-
+    const initialState = getInitialState(pipelineData, props);
     this.store = store(initialState);
   }
 
