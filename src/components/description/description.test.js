@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { Description, mapStateToProps } from './index';
-import { fakeState } from '../../utils/test-data';
+import { mockState } from '../../utils/test-data';
 import {
   getActiveSnapshotMessage,
   getActiveSnapshotTimestamp
@@ -9,9 +9,9 @@ import {
 
 function setup() {
   const props = {
-    message: getActiveSnapshotMessage(fakeState),
+    message: getActiveSnapshotMessage(mockState),
     showDescription: true,
-    timestamp: getActiveSnapshotTimestamp(fakeState),
+    timestamp: getActiveSnapshotTimestamp(mockState),
     visibleNav: true
   };
 
@@ -34,12 +34,12 @@ describe('Description', () => {
   });
 
   it('maps state to props', () => {
-    const message = getActiveSnapshotMessage(fakeState);
+    const message = getActiveSnapshotMessage(mockState);
     const expectedResult = {
       message,
-      showDescription: message && fakeState.showHistory,
-      timestamp: getActiveSnapshotTimestamp(fakeState)
+      showDescription: message && mockState.showHistory,
+      timestamp: getActiveSnapshotTimestamp(mockState)
     };
-    expect(mapStateToProps(fakeState)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState)).toEqual(expectedResult);
   });
 });

@@ -1,6 +1,7 @@
 import formatSnapshots from './format-data';
 
-export const fakeData = [
+// Example data for use in tests
+export const mockData = [
   {
     created_ts: '1551452832000',
     kernel_ai_schema_id: '310750827599783',
@@ -15,4 +16,5 @@ export const fakeData = [
   }
 ];
 
-export const fakeState = formatSnapshots(fakeData);
+// Example state object for use in tests of redux-enabled components
+export const mockState = formatSnapshots(mockData);

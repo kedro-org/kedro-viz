@@ -1,4 +1,4 @@
-import { fakeData } from '../utils/test-data';
+import { mockData } from '../utils/test-data';
 import {
   CHANGE_ACTIVE_SNAPSHOT,
   CHANGE_VIEW,
@@ -55,7 +55,7 @@ describe('actions', () => {
   });
 
   it('should create an action to reset snapshot data', () => {
-    const snapshots = fakeData;
+    const snapshots = mockData;
     const expectedAction = {
       type: RESET_SNAPSHOT_DATA,
       snapshots

@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { History, mapStateToProps, mapDispatchToProps } from './index';
-import { fakeState } from '../../utils/test-data';
+import { mockState } from '../../utils/test-data';
 import { getSnapshotHistory } from '../../selectors';
 
 function setup() {
@@ -10,7 +10,7 @@ function setup() {
     allowHistoryDeletion: true,
     onChangeActiveSnapshot: jest.fn(),
     onDeleteSnapshot: jest.fn(),
-    snapshots: getSnapshotHistory(fakeState),
+    snapshots: getSnapshotHistory(mockState),
     theme: 'light'
   };
 
@@ -46,12 +46,12 @@ describe('History', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
-      activeSnapshot: fakeState.activeSnapshot,
-      allowHistoryDeletion: fakeState.allowHistoryDeletion,
-      snapshots: getSnapshotHistory(fakeState),
-      theme: fakeState.theme
+      activeSnapshot: mockState.activeSnapshot,
+      allowHistoryDeletion: mockState.allowHistoryDeletion,
+      snapshots: getSnapshotHistory(mockState),
+      theme: mockState.theme
     };
-    expect(mapStateToProps(fakeState)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import App from './index';
-import { fakeData } from '../../utils/test-data';
+import { mockData } from '../../utils/test-data';
 
 describe('App', () => {
   describe('renders without crashing', () => {
@@ -14,7 +14,7 @@ describe('App', () => {
     });
 
     it('when being passed data as a prop', () => {
-      shallow(<App data={fakeData} />);
+      shallow(<App data={mockData} />);
     });
 
     it('when enabling history, history deletion, and uploads', () => {
@@ -34,14 +34,14 @@ describe('App', () => {
       wrapper.instance().store.getState().snapshotIDs;
 
     it('when data prop is set on first load', () => {
-      const wrapper = shallow(<App data={fakeData} />);
+      const wrapper = shallow(<App data={mockData} />);
       expect(getSnapshotIDs(wrapper)).toHaveLength(1);
     });
 
     it('when data prop is updated', () => {
-      const wrapper = shallow(<App data={fakeData} />);
-      const newFakeData = fakeData.concat(fakeData[0]);
-      wrapper.setProps({ data: newFakeData });
+      const wrapper = shallow(<App data={mockData} />);
+      const newMockData = Object.assign([], mockData.concat(mockData[0]));
+      wrapper.setProps({ data: newMockData });
       expect(getSnapshotIDs(wrapper)).toHaveLength(2);
     });
   });
