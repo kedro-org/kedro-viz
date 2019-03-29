@@ -1,4 +1,5 @@
 import formatSnapshots from './format-data';
+import { getInitialState } from '../components/app/load-data';
 
 // Example data for use in tests
 export const mockData = [
@@ -17,4 +18,9 @@ export const mockData = [
 ];
 
 // Example state object for use in tests of redux-enabled components
-export const mockState = formatSnapshots(mockData);
+export const mockState = getInitialState(formatSnapshots(mockData), {
+  allowHistoryDeletion: true,
+  allowUploads: true,
+  onDeleteSnapshot: true,
+  showHistory: true
+});
