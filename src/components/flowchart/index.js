@@ -5,7 +5,7 @@ import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { toggleNodeActive, updateChartSize } from '../../actions';
-import { getGraph, getLayout, getZoomPosition } from '../../selectors/layout';
+import { getLayout, getZoomPosition } from '../../selectors/layout';
 import linkedNodes from './linked-nodes';
 import tooltip from './tooltip';
 import databaseIcon from './database-icon';
@@ -306,7 +306,6 @@ class FlowChart extends Component {
 const mapStateToProps = state => ({
   activeSnapshot: state.activeSnapshot,
   chartSize: state.chartSize,
-  graph: getGraph(state),
   layout: getLayout(state),
   textLabels: state.textLabels,
   view: state.view,
