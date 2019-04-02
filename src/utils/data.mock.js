@@ -15,6 +15,24 @@ export const mockData = [
         tags: ['Nulla', 'pulvinar', 'enim', 'consectetur', 'volutpat']
       }
     ]
+  },
+  {
+    created_ts: '1551452123456',
+    kernel_ai_schema_id: '123456789012345',
+    message: 'List of animal names',
+    json_schema: [
+      {
+        inputs: ['cat', 'dog'],
+        name: 'salmon',
+        outputs: ['pig', 'horse', 'sheep'],
+        tags: ['huge', 'small']
+      },
+      {
+        inputs: ['cat', 'weasel', 'elephant', 'bear'],
+        name: 'shark',
+        outputs: ['sheep', 'pig', 'giraffe']
+      }
+    ]
   }
 ];
 

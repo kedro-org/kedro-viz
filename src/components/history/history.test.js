@@ -32,7 +32,9 @@ describe('History', () => {
     const { wrapper, props } = setup();
     expect(props.onChangeActiveSnapshot.mock.calls.length).toBe(0);
     wrapper
-      .find('li:not(.pipeline-history__row--active) input')
+      .find('li:not(.pipeline-history__row--active)')
+      .first()
+      .find('input')
       .simulate('change');
     expect(props.onChangeActiveSnapshot.mock.calls.length).toBe(1);
   });
@@ -40,7 +42,10 @@ describe('History', () => {
   it('deletes a snapshot', () => {
     const { wrapper, props } = setup();
     expect(props.onDeleteSnapshot.mock.calls.length).toBe(0);
-    wrapper.find('.pipeline-history__delete').simulate('click');
+    wrapper
+      .find('.pipeline-history__delete')
+      .first()
+      .simulate('click');
     expect(props.onDeleteSnapshot.mock.calls.length).toBe(1);
   });
 

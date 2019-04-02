@@ -35,14 +35,14 @@ describe('App', () => {
 
     it('when data prop is set on first load', () => {
       const wrapper = shallow(<App data={mockData} />);
-      expect(getSnapshotIDs(wrapper)).toHaveLength(1);
+      expect(getSnapshotIDs(wrapper)).toHaveLength(mockData.length);
     });
 
     it('when data prop is updated', () => {
       const wrapper = shallow(<App data={mockData} />);
       const newMockData = Object.assign([], mockData.concat(mockData[0]));
       wrapper.setProps({ data: newMockData });
-      expect(getSnapshotIDs(wrapper)).toHaveLength(2);
+      expect(getSnapshotIDs(wrapper)).toHaveLength(newMockData.length);
     });
   });
 
