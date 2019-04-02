@@ -17,7 +17,7 @@ export const mockData = [
     ]
   },
   {
-    created_ts: '1551452123456',
+    created_ts: '9999999999999',
     kernel_ai_schema_id: '123456789012345',
     message: 'List of animal names',
     json_schema: [

@@ -113,7 +113,7 @@ export const getNodes = createSelector(
       type: nodeType[id],
       active: nodeActive[id],
       disabled: nodeDisabled[id],
-      disabled_node: nodeDisabledNode[id],
+      disabled_node: Boolean(nodeDisabledNode[id]),
       disabled_tag: nodeDisabledTag[id],
       disabled_view: nodeDisabledView[id]
     }))
