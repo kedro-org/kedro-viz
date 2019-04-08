@@ -31,6 +31,11 @@ export const mockData = [
         inputs: ['cat', 'weasel', 'elephant', 'bear'],
         name: 'shark',
         outputs: ['sheep', 'pig', 'giraffe']
+      },
+      {
+        inputs: ['pig'],
+        name: 'trout',
+        outputs: ['whale']
       }
     ]
   }
