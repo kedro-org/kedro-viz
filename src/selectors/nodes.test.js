@@ -16,6 +16,14 @@ import {
 } from '../actions';
 import reducer from '../reducers';
 
+const testObjectStructure = nodeObject => {
+  expect(nodeObject).toEqual(expect.any(Object));
+  expect(Object.keys(nodeObject)).toEqual(getActiveSnapshotNodes(mockState));
+  expect(Object.values(nodeObject)).toEqual(
+    expect.arrayContaining([expect.any(Boolean)])
+  );
+};
+
 describe('Selectors', () => {
   describe('getActiveSnapshotNodes', () => {
     it('retrieves a list of nodes for the active snapshot', () => {
@@ -38,15 +46,8 @@ describe('Selectors', () => {
   });
 
   describe('getNodeDisabledTag', () => {
-    it('calculates whether nodes should be disabled based on their tags', () => {
-      const nodeDisabled = getNodeDisabledTag(mockState);
-      expect(nodeDisabled).toEqual(expect.any(Object));
-      expect(Object.keys(nodeDisabled)).toEqual(
-        expect.arrayContaining([expect.any(String)])
-      );
-      expect(Object.values(nodeDisabled)).toEqual(
-        expect.arrayContaining([expect.any(Boolean)])
-      );
+    it('returns a set of key/value pairs of node IDs and Booleans', () => {
+      testObjectStructure(getNodeDisabledTag(mockState));
     });
 
     it('does not disable a node if all tags are disabled', () => {
@@ -78,15 +79,8 @@ describe('Selectors', () => {
   });
 
   describe('getNodeDisabledView', () => {
-    it('calculates whether nodes should be disabled based on the view', () => {
-      const nodeDisabled = getNodeDisabledView(mockState);
-      expect(nodeDisabled).toEqual(expect.any(Object));
-      expect(Object.keys(nodeDisabled)).toEqual(
-        expect.arrayContaining([expect.any(String)])
-      );
-      expect(Object.values(nodeDisabled)).toEqual(
-        expect.arrayContaining([expect.any(Boolean)])
-      );
+    it('returns a set of key/value pairs of node IDs and Booleans', () => {
+      testObjectStructure(getNodeDisabledView(mockState));
     });
 
     it('shows all nodes when view is set to combined', () => {
@@ -129,28 +123,14 @@ describe('Selectors', () => {
   });
 
   describe('getNodeDisabled', () => {
-    it('returns whether a node is disabled', () => {
-      const nodeDisabled = getNodeDisabled(mockState);
-      expect(nodeDisabled).toEqual(expect.any(Object));
-      expect(Object.keys(nodeDisabled)).toEqual(
-        expect.arrayContaining([expect.any(String)])
-      );
-      expect(Object.values(nodeDisabled)).toEqual(
-        Object.values(nodeDisabled).map(() => false)
-      );
+    it('returns a set of key/value pairs of node IDs and Booleans', () => {
+      testObjectStructure(getNodeDisabled(mockState));
     });
   });
 
   describe('getNodeActive', () => {
-    it('returns whether a node is active', () => {
-      const nodeActive = getNodeActive(mockState);
-      expect(nodeActive).toEqual(expect.any(Object));
-      expect(Object.keys(nodeActive)).toEqual(
-        expect.arrayContaining([expect.any(String)])
-      );
-      expect(Object.values(nodeActive)).toEqual(
-        Object.values(nodeActive).map(() => false)
-      );
+    it('returns a set of key/value pairs of node IDs and Booleans', () => {
+      testObjectStructure(getNodeActive(mockState));
     });
 
     it('returns true only when a given node is set to active', () => {
@@ -192,7 +172,6 @@ describe('Selectors', () => {
 
   describe('getVisibleNodes', () => {
     it('returns visible nodes as an array', () => {
-      const visibleNodes = getVisibleNodes(mockState);
       expect(getVisibleNodes(mockState)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
