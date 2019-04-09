@@ -17,7 +17,7 @@ const DURATION = 700;
 /**
  * Display a flowchart for the current snapshot, mostly rendered with D3
  */
-class FlowChart extends Component {
+export class FlowChart extends Component {
   constructor(props) {
     super(props);
     this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -303,7 +303,7 @@ class FlowChart extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+export const mapStateToProps = state => ({
   activeSnapshot: state.activeSnapshot,
   chartSize: state.chartSize,
   layout: getLayout(state),
@@ -312,7 +312,7 @@ const mapStateToProps = state => ({
   zoom: getZoomPosition(state)
 });
 
-const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = dispatch => ({
   onToggleNodeActive: (node, isActive) => {
     dispatch(toggleNodeActive(node.id, isActive));
   },
