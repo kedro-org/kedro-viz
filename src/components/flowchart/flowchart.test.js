@@ -6,7 +6,7 @@ import { mockState } from '../../utils/data.mock';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import { getActiveSnapshotNodes } from '../../selectors/nodes';
 
-function setup() {
+function setup(visibleNav = true) {
   const props = {
     activeSnapshot: mockState.activeSnapshot,
     chartSize: mockState.chartSize,
@@ -15,6 +15,7 @@ function setup() {
     onUpdateChartSize: jest.fn(),
     textLabels: mockState.textLabels,
     view: mockState.view,
+    visibleNav,
     zoom: getZoomPosition(mockState)
   };
 
@@ -41,6 +42,45 @@ describe('FlowChart', () => {
     const mockNodeNames = mockNodes.map(d => mockState.nodeName[d]);
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
+  });
+
+  it('resizes the chart if the window resizes', () => {
+    const map = {};
+    window.addEventListener = jest.fn((event, cb) => {
+      map[event] = cb;
+    });
+    const { wrapper } = setup();
+    const spy = jest.spyOn(wrapper.instance(), 'updateChartSize');
+    map.resize();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  describe('getNavOffset', () => {
+    it("sets nav offset to zero if nav isn't visible", () => {
+      const instance = setup(false).wrapper.instance();
+      expect(instance.getNavOffset(1000)).toEqual(0);
+    });
+
+    it('sets nav offset to zero on mobile', () => {
+      const instance = setup(true).wrapper.instance();
+      expect(instance.getNavOffset(480)).toEqual(0);
+      expect(instance.getNavOffset(320)).toEqual(0);
+    });
+
+    it('reduces the chart width by 300 if the nav is visible on wider screens', () => {
+      const instance = setup(true).wrapper.instance();
+      expect(instance.getNavOffset(1000)).toEqual(300);
+      expect(instance.getNavOffset(500)).toEqual(300);
+    });
+  });
+
+  it('removes the resize event listener on unmount', () => {
+    const { wrapper } = setup();
+    const spy = jest.spyOn(wrapper.instance(), 'componentWillUnmount');
+    const spy2 = jest.spyOn(wrapper.instance(), 'updateChartSize');
+    wrapper.unmount();
+    expect(spy).toHaveBeenCalled();
+    expect(spy2).not.toHaveBeenCalled();
   });
 
   it('maps state to props', () => {
