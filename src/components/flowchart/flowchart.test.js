@@ -75,10 +75,22 @@ describe('FlowChart', () => {
   });
 
   it('removes the resize event listener on unmount', () => {
+    const map = {};
+    window.addEventListener = jest.fn((event, cb) => {
+      map[event] = cb;
+    });
+    window.removeEventListener = jest.fn(event => {
+      delete map[event];
+    });
     const { wrapper } = setup();
     const spy = jest.spyOn(wrapper.instance(), 'componentWillUnmount');
     const spy2 = jest.spyOn(wrapper.instance(), 'updateChartSize');
+    expect(map.resize).toBeDefined();
     wrapper.unmount();
+    expect(map.resize).toBeUndefined();
+    if (map.resize) {
+      map.resize();
+    }
     expect(spy).toHaveBeenCalled();
     expect(spy2).not.toHaveBeenCalled();
   });
