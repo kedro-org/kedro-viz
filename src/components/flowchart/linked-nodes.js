@@ -32,10 +32,15 @@ const getLinkedNodes = (edges, nodeID) => {
  * and fade non-linked nodes
  */
 const linkedNodes = {
-  show: ({ edges, el }, id) => {
-    const linkedNodes = getLinkedNodes(edges, id);
-    const nodeIsLinked = nodeID =>
-      linkedNodes.includes(nodeID) || nodeID === id;
+  /**
+   * Show linked nodes and fade unlinked nodes
+   * @param {Object} p.edges List of edge objects
+   * @param {Object} p.el D3 element selections
+   * @param {String} p.nodeID A node's unique ID
+   */
+  show: ({ edges, el, nodeID }) => {
+    const linkedNodes = getLinkedNodes(edges, nodeID);
+    const nodeIsLinked = id => linkedNodes.includes(id) || nodeID === id;
 
     el.nodes
       .classed('node--active', node => nodeIsLinked(node.id))
@@ -46,6 +51,11 @@ const linkedNodes = {
     );
   },
 
+  /**
+   * Reset nodes and edges to normal
+   * @param {Object} p.edges D3 edge element selection
+   * @param {Object} p.nodes D3 node element selection
+   */
   hide: ({ edges, nodes }) => {
     edges.classed('edge--faded', false);
     nodes.classed('node--active', false).classed('node--faded', false);

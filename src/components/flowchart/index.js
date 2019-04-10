@@ -21,6 +21,8 @@ export class FlowChart extends Component {
   constructor(props) {
     super(props);
     this.handleWindowResize = this.handleWindowResize.bind(this);
+    this.handleNodeMouseOver = this.handleNodeMouseOver.bind(this);
+    this.handleNodeMouseOut = this.handleNodeMouseOut.bind(this);
   }
 
   componentDidMount() {
@@ -119,7 +121,7 @@ export class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { chartSize, layout, onToggleNodeActive, textLabels } = this.props;
+    const { chartSize, layout, textLabels } = this.props;
     const { nodes, edges } = layout;
     const navOffset = this.getNavOffset(chartSize.outerWidth);
 
@@ -209,18 +211,6 @@ export class FlowChart extends Component {
       .attr('opacity', 0)
       .remove();
 
-    const tooltipProps = {
-      ...chartSize,
-      navOffset,
-      tooltip: this.el.tooltip
-    };
-
-    const linkedNodeProps = {
-      el: this.el,
-      edges,
-      nodes
-    };
-
     this.el.nodes = this.el.nodes
       .merge(enterNodes)
       .classed('node--data', node => node.type === 'data')
@@ -228,19 +218,8 @@ export class FlowChart extends Component {
       .classed('node--icon', !textLabels)
       .classed('node--text', textLabels)
       .classed('node--active', node => node.active)
-      .on('mouseover', node => {
-        onToggleNodeActive(node, true);
-        tooltip.show(tooltipProps, node);
-        linkedNodes.show(linkedNodeProps, node.id);
-      })
-      .on('mousemove', node => {
-        tooltip.show(tooltipProps, node);
-      })
-      .on('mouseout', node => {
-        onToggleNodeActive(node, false);
-        linkedNodes.hide(this.el);
-        tooltip.hide(this.el);
-      });
+      .on('mouseover', this.handleNodeMouseOver)
+      .on('mouseout', this.handleNodeMouseOut);
 
     this.el.nodes
       .transition('update-nodes')
@@ -255,6 +234,39 @@ export class FlowChart extends Component {
       .attr('x', node => (node.width - 5) / -2)
       .attr('y', node => (node.height - 5) / -2)
       .attr('rx', node => (node.type === 'data' ? node.height / 2 : 0));
+  }
+
+  /**
+   * Event handler for toggling a node's active state,
+   * showing tooltip, and highlighting linked nodes
+   * @param {Object} node Datum for a single node
+   */
+  handleNodeMouseOver(node) {
+    const { chartSize, layout, onToggleNodeActive } = this.props;
+    onToggleNodeActive(node, true);
+    tooltip.show({
+      chartSize,
+      eventOffset: event.target.getBoundingClientRect(),
+      navOffset: this.getNavOffset(chartSize.outerWidth),
+      node,
+      tooltip: this.el.tooltip
+    });
+    linkedNodes.show({
+      el: this.el,
+      nodeID: node.id,
+      ...layout
+    });
+  }
+
+  /**
+   * Event handler for toggling a node's active state,
+   * hiding tooltip, and dimming linked nodes
+   * @param {Object} node Datum for a single node
+   */
+  handleNodeMouseOut(node) {
+    this.props.onToggleNodeActive(node, false);
+    linkedNodes.hide(this.el);
+    tooltip.hide(this.el);
   }
 
   /**
