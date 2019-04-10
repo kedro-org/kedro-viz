@@ -55,25 +55,6 @@ describe('FlowChart', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  describe('getNavOffset', () => {
-    it("sets nav offset to zero if nav isn't visible", () => {
-      const instance = setup(false).wrapper.instance();
-      expect(instance.getNavOffset(1000)).toEqual(0);
-    });
-
-    it('sets nav offset to zero on mobile', () => {
-      const instance = setup(true).wrapper.instance();
-      expect(instance.getNavOffset(480)).toEqual(0);
-      expect(instance.getNavOffset(320)).toEqual(0);
-    });
-
-    it('reduces the chart width by 300 if the nav is visible on wider screens', () => {
-      const instance = setup(true).wrapper.instance();
-      expect(instance.getNavOffset(1000)).toEqual(300);
-      expect(instance.getNavOffset(500)).toEqual(300);
-    });
-  });
-
   it('removes the resize event listener on unmount', () => {
     const map = {};
     window.addEventListener = jest.fn((event, cb) => {
@@ -93,6 +74,25 @@ describe('FlowChart', () => {
     }
     expect(spy).toHaveBeenCalled();
     expect(spy2).not.toHaveBeenCalled();
+  });
+
+  describe('getNavOffset', () => {
+    it("sets nav offset to zero if nav isn't visible", () => {
+      const instance = setup(false).wrapper.instance();
+      expect(instance.getNavOffset(1000)).toEqual(0);
+    });
+
+    it('sets nav offset to zero on mobile', () => {
+      const instance = setup(true).wrapper.instance();
+      expect(instance.getNavOffset(480)).toEqual(0);
+      expect(instance.getNavOffset(320)).toEqual(0);
+    });
+
+    it('reduces the chart width by 300 if the nav is visible on wider screens', () => {
+      const instance = setup(true).wrapper.instance();
+      expect(instance.getNavOffset(1000)).toEqual(300);
+      expect(instance.getNavOffset(500)).toEqual(300);
+    });
   });
 
   it('maps state to props', () => {
