@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
@@ -7,7 +8,6 @@ import { zoom, zoomIdentity } from 'd3-zoom';
 import { toggleNodeActive, updateChartSize } from '../../actions';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import linkedNodes from './linked-nodes';
-import tooltip from './tooltip';
 import databaseIcon from './database-icon';
 import cogIcon from './cog-icon';
 import './flowchart.css';
@@ -20,6 +20,13 @@ const DURATION = 700;
 export class FlowChart extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      tooltipVisible: false,
+      tooltipIsRight: false,
+      tooltipText: null,
+      tooltipX: 0,
+      tooltipY: 0
+    };
     this.handleWindowResize = this.handleWindowResize.bind(this);
     this.handleNodeMouseOver = this.handleNodeMouseOver.bind(this);
     this.handleNodeMouseOut = this.handleNodeMouseOut.bind(this);
@@ -32,8 +39,7 @@ export class FlowChart extends Component {
       inner: select(this._gInner),
       wrapper: select(this._gWrapper),
       edgeGroup: select(this._gEdges),
-      nodeGroup: select(this._gNodes),
-      tooltip: select(this._tooltip)
+      nodeGroup: select(this._gNodes)
     };
 
     this.updateChartSize();
@@ -97,7 +103,7 @@ export class FlowChart extends Component {
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
-      tooltip.hide(this.el);
+      this.hideTooltip();
       this.el.inner.attr('transform', event.transform);
     });
     this.el.svg.call(this.zoomBehaviour);
@@ -242,15 +248,9 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeMouseOver(node) {
-    const { chartSize, layout, onToggleNodeActive } = this.props;
+    const { layout, onToggleNodeActive } = this.props;
     onToggleNodeActive(node, true);
-    tooltip.show({
-      chartSize,
-      eventOffset: event.target.getBoundingClientRect(),
-      navOffset: this.getNavOffset(chartSize.outerWidth),
-      node,
-      tooltip: this.el.tooltip
-    });
+    this.showTooltip(event, node);
     linkedNodes.show({
       el: this.el,
       nodeID: node.id,
@@ -266,13 +266,51 @@ export class FlowChart extends Component {
   handleNodeMouseOut(node) {
     this.props.onToggleNodeActive(node, false);
     linkedNodes.hide(this.el);
-    tooltip.hide(this.el);
+    this.hideTooltip();
+  }
+
+  /**
+   * Show, fill and and position the tooltip
+   * @param {Object} event Mouse event obj
+   * @param {Object} node A node datum
+   */
+  showTooltip(event, node) {
+    const { chartSize } = this.props;
+    const eventOffset = event.target.getBoundingClientRect();
+    const navOffset = this.getNavOffset(chartSize.outerWidth);
+    const isRight = eventOffset.left - navOffset > chartSize.width / 2;
+    const xOffset = isRight
+      ? eventOffset.left - (chartSize.width + navOffset)
+      : eventOffset.left;
+    this.setState({
+      tooltipVisible: true,
+      tooltipIsRight: isRight,
+      tooltipText: node.name,
+      tooltipX: xOffset - chartSize.x + eventOffset.width / 2,
+      tooltipY: eventOffset.top - chartSize.y
+    });
+  }
+
+  /**
+   * Hide the tooltip
+   */
+  hideTooltip() {
+    this.setState({
+      tooltipVisible: false
+    });
   }
 
   /**
    * Render React elements
    */
   render() {
+    const {
+      tooltipVisible,
+      tooltipIsRight,
+      tooltipText,
+      tooltipX,
+      tooltipY
+    } = this.state;
     return (
       <div
         className="pipeline-flowchart carbon"
@@ -307,9 +345,13 @@ export class FlowChart extends Component {
           </g>
         </svg>
         <div
-          className="pipeline-flowchart__tooltip carbon"
-          ref={el => (this._tooltip = el)}
-        />
+          className={classnames('pipeline-flowchart__tooltip carbon', {
+            'tooltip--visible': tooltipVisible,
+            'tooltip--right': tooltipIsRight
+          })}
+          style={{ transform: `translate(${tooltipX}px, ${tooltipY}px)` }}>
+          <span>{tooltipText}</span>
+        </div>
       </div>
     );
   }
