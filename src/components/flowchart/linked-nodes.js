@@ -3,7 +3,7 @@
  * @param {Array} edges
  * @param {string} nodeID
  */
-const getLinkedNodes = (edges, nodeID) => {
+export const getLinkedNodes = (edges, nodeID) => {
   const linkedNodes = [];
 
   (function getParents(id) {
