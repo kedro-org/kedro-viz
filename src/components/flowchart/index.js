@@ -250,7 +250,7 @@ export class FlowChart extends Component {
   handleNodeMouseOver(node) {
     const { layout, onToggleNodeActive } = this.props;
     onToggleNodeActive(node, true);
-    this.showTooltip(event, node);
+    this.showTooltip(node);
     linkedNodes.show({
       el: this.el,
       nodeID: node.id,
@@ -271,10 +271,9 @@ export class FlowChart extends Component {
 
   /**
    * Show, fill and and position the tooltip
-   * @param {Object} event Mouse event obj
    * @param {Object} node A node datum
    */
-  showTooltip(event, node) {
+  showTooltip(node) {
     const { chartSize } = this.props;
     const eventOffset = event.target.getBoundingClientRect();
     const navOffset = this.getNavOffset(chartSize.outerWidth);
