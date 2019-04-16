@@ -62,46 +62,89 @@ describe('FlowChart', () => {
     expect(nodeList().length).toBe(nodes.length);
   });
 
-  it('toggles all nodes when clicking the check/uncheck all buttons', () => {
+  describe('check/uncheck buttons', () => {
     const wrapper = setup();
     // Re-find elements from root each time to see updates
     const search = () => wrapper.find('.cbn-input__field');
     const inputProps = () =>
       wrapper.find('.cbn-switch__input').map(d => d.props());
+    const toggleAll = check =>
+      wrapper
+        .find('.pipeline-node-list__toggle')
+        .at(check ? 0 : 1)
+        .simulate('click');
     // Get search text value and filtered nodes
     const searchText = nodes[0].name;
     const expectedResult = nodes.filter(d => d.name.includes(searchText));
-    // Enter search text
-    search().simulate('change', { target: { value: searchText } });
-    // Check that all search input value and node list have been updated
-    expect(inputProps().every(d => d.checked === true)).toBe(true);
-    // Uncheck all visible rows
-    const uncheckAll = wrapper.find('.pipeline-node-list__toggle').at(1);
-    uncheckAll.simulate('click');
-    // All filtered rows should be shown
-    expect(inputProps().length).toBe(expectedResult.length);
-    // All visible rows should now be unchecked
-    expect(inputProps().every(d => d.checked === false)).toBe(true);
-    // Clear the search form so that all rows are now visible
-    search().simulate('change', { target: { value: '' } });
-    // All rows should now be visible
-    expect(inputProps().length).toBe(nodes.length);
-    // Not all rows should be checked
-    expect(inputProps().every(d => d.checked === false)).toBe(false);
-    // Previously-visible rows should now be unchecked
-    expect(inputProps().filter(d => d.checked === false).length).toBe(
-      expectedResult.length
-    );
-    // Previously-hidden rows should still be checked
-    expect(inputProps().filter(d => d.checked === true).length).toBe(
-      nodes.length - expectedResult.length
-    );
-    // Recheck all visible rows to show all again
-    const checkAll = wrapper.find('.pipeline-node-list__toggle').at(0);
-    checkAll.simulate('click');
-    expect(inputProps().filter(d => d.checked === true).length).toBe(
-      nodes.length
-    );
+
+    it('disables every row when clicking uncheck all', () => {
+      toggleAll(false);
+      expect(inputProps().every(d => d.checked === false)).toBe(true);
+    });
+
+    it('enables every row when clicking check all', () => {
+      toggleAll(false);
+      toggleAll(true);
+      expect(inputProps().every(d => d.checked === true)).toBe(true);
+    });
+
+    describe('toggle only visible nodes when searching', () => {
+      beforeAll(() => {
+        // Reset node checked state
+        toggleAll(true);
+        // Enter search text
+        search().simulate('change', { target: { value: searchText } });
+        // Disable visible nodes
+        toggleAll(false);
+        // All visible rows should now be unchecked
+        expect(inputProps().every(d => d.checked === false)).toBe(true);
+        // Clear the search form so that all rows are now visible
+        search().simulate('change', { target: { value: '' } });
+      });
+
+      test('All rows should now be visible', () => {
+        expect(inputProps().length).toBe(nodes.length);
+      });
+
+      test('Not all rows should be checked', () => {
+        expect(inputProps().every(d => d.checked === false)).toBe(false);
+      });
+
+      test('Not all rows should be unchecked', () => {
+        expect(inputProps().every(d => d.checked === true)).toBe(false);
+      });
+
+      test('Previously-visible rows should now be unchecked', () => {
+        expect(
+          inputProps()
+            .filter(d => d.checked === false)
+            .map(d => d.name)
+        ).toEqual(expectedResult.map(d => d.name));
+      });
+
+      test('Previously-hidden rows should still be checked', () => {
+        expect(
+          inputProps()
+            .filter(d => d.checked === true)
+            .map(d => d.name)
+        ).toEqual(
+          nodes.filter(d => !d.name.includes(searchText)).map(d => d.name)
+        );
+      });
+
+      test('Toggling all the nodes back on checks all nodes', () => {
+        toggleAll(true);
+        expect(
+          inputProps()
+            .filter(d => d.checked === true)
+            .map(d => d.name)
+        ).toEqual(nodes.map(d => d.name));
+      });
+    });
+
+    afterAll(() => {
+      wrapper.unmount();
+    });
   });
 
   it('maps state to props', () => {
