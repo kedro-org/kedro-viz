@@ -20,8 +20,14 @@ describe('FlowChart', () => {
     expect(nodeList.length).toBe(nodes.length);
   });
 
-  it('filters the node list when entering search text', () => {
+  describe('search filter', () => {
     const wrapper = setup();
+    const searches = [
+      getNodes(mockState)[0].name,
+      'a',
+      'aaaaaaaaaaaaaaaaa',
+      ''
+    ];
     const testSearch = searchText => {
       const search = () => wrapper.find('.cbn-input__field');
       search().simulate('change', { target: { value: searchText } });
@@ -30,10 +36,10 @@ describe('FlowChart', () => {
       expect(search().props().value).toBe(searchText);
       expect(nodeList.length).toBe(expectedResult.length);
     };
-    testSearch(getNodes(mockState)[0].name);
-    testSearch('a');
-    testSearch('aaaaaaaaaaaaaaaaa');
-    testSearch('');
+    test.each(searches)(
+      'filters the node list when entering the search text "%s"',
+      testSearch
+    );
   });
 
   it('clears the search filter input and resets the list when hitting the Escape key', () => {
