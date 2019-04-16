@@ -1,5 +1,8 @@
-import formatSnapshots from './format-data';
+import React from 'react';
+import { Provider } from 'react-redux';
+import store from '../store';
 import { getInitialState } from '../components/app/load-data';
+import formatSnapshots from './format-data';
 
 // Example data for use in tests
 export const mockData = [
@@ -48,3 +51,9 @@ export const mockState = getInitialState(formatSnapshots(mockData), {
   onDeleteSnapshot: true,
   showHistory: true
 });
+
+export const mockStore = store(mockState);
+
+export const MockProvider = ({ children }) => (
+  <Provider store={mockStore}>{children}</Provider>
+);
