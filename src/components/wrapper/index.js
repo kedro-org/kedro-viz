@@ -51,10 +51,7 @@ export class Wrapper extends Component {
         <nav
           className={classnames('pipeline-sidebar', {
             'pipeline-sidebar--visible': visibleNav
-          })}
-          ref={el => {
-            this.nav = el;
-          }}>
+          })}>
           <button
             aria-label="Hide menu"
             className={classnames(
