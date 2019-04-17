@@ -16,8 +16,10 @@ const setup = () =>
 describe('FlowChart', () => {
   it('renders without crashing', () => {
     const wrapper = setup();
-    const nodeList = wrapper.find('.pipeline-node');
-    expect(nodeList.length).toBe(nodes.length);
+    const search = wrapper.find('.pipeline-node-list-search');
+    const nodeList = wrapper.find('.pipeline-node-list');
+    expect(search.length).toBe(1);
+    expect(nodeList.length).toBe(1);
   });
 
   describe('search filter', () => {
@@ -28,6 +30,7 @@ describe('FlowChart', () => {
       'aaaaaaaaaaaaaaaaa',
       ''
     ];
+
     const testSearch = searchText => {
       const search = () => wrapper.find('.cbn-input__field');
       search().simulate('change', { target: { value: searchText } });
@@ -36,30 +39,31 @@ describe('FlowChart', () => {
       expect(search().props().value).toBe(searchText);
       expect(nodeList.length).toBe(expectedResult.length);
     };
+
     test.each(searches)(
       'filters the node list when entering the search text "%s"',
       testSearch
     );
-  });
 
-  it('clears the search filter input and resets the list when hitting the Escape key', () => {
-    const wrapper = setup();
-    const searchWrapper = wrapper.find('.pipeline-node-list-search');
-    // Re-find elements from root each time to see updates
-    const search = () => wrapper.find('.cbn-input__field');
-    const nodeList = () => wrapper.find('.pipeline-node');
-    const searchText = nodes[0].name;
-    // Enter search text
-    search().simulate('change', { target: { value: searchText } });
-    // Check that search input value and node list have been updated
-    expect(search().props().value).toBe(searchText);
-    const expectedResult = nodes.filter(d => d.name.includes(searchText));
-    expect(nodeList().length).toBe(expectedResult.length);
-    // Clear the list with escape key
-    searchWrapper.simulate('keydown', { keyCode: 27 });
-    // Check that search input value and node list have been reset
-    expect(search().props().value).toBe('');
-    expect(nodeList().length).toBe(nodes.length);
+    it('clears the search filter input and resets the list when hitting the Escape key', () => {
+      const wrapper = setup();
+      const searchWrapper = wrapper.find('.pipeline-node-list-search');
+      // Re-find elements from root each time to see updates
+      const search = () => wrapper.find('.cbn-input__field');
+      const nodeList = () => wrapper.find('.pipeline-node');
+      const searchText = nodes[0].name;
+      // Enter search text
+      search().simulate('change', { target: { value: searchText } });
+      // Check that search input value and node list have been updated
+      expect(search().props().value).toBe(searchText);
+      const expectedResult = nodes.filter(d => d.name.includes(searchText));
+      expect(nodeList().length).toBe(expectedResult.length);
+      // Clear the list with escape key
+      searchWrapper.simulate('keydown', { keyCode: 27 });
+      // Check that search input value and node list have been reset
+      expect(search().props().value).toBe('');
+      expect(nodeList().length).toBe(nodes.length);
+    });
   });
 
   describe('check/uncheck buttons', () => {
@@ -144,6 +148,44 @@ describe('FlowChart', () => {
 
     afterAll(() => {
       wrapper.unmount();
+    });
+  });
+
+  describe('node list', () => {
+    it('renders the correct number of rows', () => {
+      const wrapper = setup();
+      const nodeList = wrapper.find('.pipeline-node');
+      expect(nodeList.length).toBe(nodes.length);
+    });
+  });
+
+  describe('node list item', () => {
+    const wrapper = setup();
+    const nodeRow = () => wrapper.find('.pipeline-node').first();
+
+    it('handles mouseenter events', () => {
+      nodeRow().simulate('mouseenter');
+      expect(nodeRow().hasClass('pipeline-node--active')).toBe(true);
+    });
+
+    it('handles mouseleave events', () => {
+      nodeRow().simulate('mouseleave');
+      expect(nodeRow().hasClass('pipeline-node--active')).toBe(false);
+    });
+  });
+
+  describe('node list item checkbox', () => {
+    const wrapper = setup();
+    const checkbox = () => wrapper.find('.cbn-switch__input').first();
+
+    it('handles toggle off event', () => {
+      checkbox().simulate('change', { target: { checked: false } });
+      expect(checkbox().props().checked).toBe(false);
+    });
+
+    it('handles toggle on event', () => {
+      checkbox().simulate('change', { target: { checked: true } });
+      expect(checkbox().props().checked).toBe(true);
     });
   });
 
