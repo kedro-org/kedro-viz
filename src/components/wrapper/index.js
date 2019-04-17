@@ -10,7 +10,7 @@ import './wrapper.css';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-class Wrappper extends Component {
+export class Wrapper extends Component {
   constructor(props) {
     super(props);
 
@@ -74,9 +74,9 @@ class Wrappper extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+export const mapStateToProps = state => ({
   showHistory: state.showHistory,
   theme: state.theme
 });
 
-export default connect(mapStateToProps)(Wrappper);
+export default connect(mapStateToProps)(Wrapper);
