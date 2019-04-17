@@ -103,8 +103,8 @@ export class FlowChart extends Component {
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
-      this.hideTooltip();
       this.el.inner.attr('transform', event.transform);
+      this.hideTooltip();
     });
     this.el.svg.call(this.zoomBehaviour);
   }
@@ -294,9 +294,11 @@ export class FlowChart extends Component {
    * Hide the tooltip
    */
   hideTooltip() {
-    this.setState({
-      tooltipVisible: false
-    });
+    if (this.state.tooltipVisible) {
+      this.setState({
+        tooltipVisible: false
+      });
+    }
   }
 
   /**
