@@ -22,7 +22,7 @@ const tabData = [
  * Tabs in the sidebar nav for the UI and History sections.
  * History tab is optional: If hidden, hide tabs too.
  */
-class SidebarTabs extends React.Component {
+export class SidebarTabs extends React.Component {
   constructor(props) {
     super(props);
 
@@ -30,10 +30,10 @@ class SidebarTabs extends React.Component {
       selectedIndex: 0
     };
 
-    this._selectedTabChanged = this._selectedTabChanged.bind(this);
+    this.selectedTabChanged = this.selectedTabChanged.bind(this);
   }
 
-  _selectedTabChanged(e, { selectedIndex, href }) {
+  selectedTabChanged(e, { selectedIndex, href }) {
     this.setState({ selectedIndex }, () => {
       this.tabs.querySelector(href).focus();
     });
@@ -59,7 +59,7 @@ class SidebarTabs extends React.Component {
           this.tabs = el;
         }}>
         <Tabs
-          onSelect={this._selectedTabChanged}
+          onSelect={this.selectedTabChanged}
           selectedIndex={selectedIndex}
           size="small"
           tabs={tabData}
@@ -82,7 +82,7 @@ class SidebarTabs extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
+export const mapStateToProps = state => ({
   showHistory: state.showHistory
 });
 
