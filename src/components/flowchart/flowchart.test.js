@@ -1,41 +1,31 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import $ from 'cheerio';
-import { FlowChart, mapStateToProps, mapDispatchToProps } from './index';
-import { mockState } from '../../utils/data.mock';
+import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
+import { mockState, setup } from '../../utils/data.mock';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import { getActiveSnapshotNodes } from '../../selectors/nodes';
 
-function setup(visibleNav = true) {
-  const props = {
-    activeSnapshot: mockState.activeSnapshot,
-    chartSize: mockState.chartSize,
-    layout: getLayout(mockState),
-    onToggleNodeActive: jest.fn(),
-    onUpdateChartSize: jest.fn(),
-    textLabels: mockState.textLabels,
-    view: mockState.view,
-    visibleNav,
-    zoom: getZoomPosition(mockState)
-  };
-
-  const wrapper = mount(<FlowChart {...props} />);
-
-  return {
-    props,
-    wrapper
-  };
-}
+const props = {
+  activeSnapshot: mockState.activeSnapshot,
+  chartSize: mockState.chartSize,
+  layout: getLayout(mockState),
+  onToggleNodeActive: jest.fn(),
+  onUpdateChartSize: jest.fn(),
+  textLabels: mockState.textLabels,
+  view: mockState.view,
+  visibleNav: true,
+  zoom: getZoomPosition(mockState)
+};
 
 describe('FlowChart', () => {
   it('renders without crashing', () => {
-    const svg = setup().wrapper.find('svg');
+    const svg = setup.mount(<FlowChart />).find('svg');
     expect(svg.length).toEqual(1);
     expect(svg.hasClass('pipeline-flowchart__graph')).toBe(true);
   });
 
   it('renders nodes with D3', () => {
-    const { wrapper } = setup();
+    const wrapper = setup.mount(<FlowChart />);
     const nodes = wrapper.render().find('.node');
     const nodeNames = nodes.map((i, el) => $(el).text()).get();
     const mockNodes = getActiveSnapshotNodes(mockState);
@@ -49,8 +39,11 @@ describe('FlowChart', () => {
     window.addEventListener = jest.fn((event, cb) => {
       map[event] = cb;
     });
-    const { wrapper } = setup();
-    const spy = jest.spyOn(wrapper.instance(), 'updateChartSize');
+    const wrapper = setup.mount(<FlowChart />);
+    const spy = jest.spyOn(
+      wrapper.find('FlowChart').instance(),
+      'updateChartSize'
+    );
     map.resize();
     expect(spy).toHaveBeenCalled();
   });
@@ -63,9 +56,10 @@ describe('FlowChart', () => {
     window.removeEventListener = jest.fn(event => {
       delete map[event];
     });
-    const { wrapper } = setup();
-    const spy = jest.spyOn(wrapper.instance(), 'componentWillUnmount');
-    const spy2 = jest.spyOn(wrapper.instance(), 'updateChartSize');
+    const wrapper = setup.mount(<FlowChart />);
+    const instance = wrapper.find('FlowChart').instance();
+    const spy = jest.spyOn(instance, 'componentWillUnmount');
+    const spy2 = jest.spyOn(instance, 'updateChartSize');
     expect(map.resize).toBeDefined();
     wrapper.unmount();
     expect(map.resize).toBeUndefined();
@@ -77,21 +71,38 @@ describe('FlowChart', () => {
   });
 
   describe('getNavOffset', () => {
-    it("sets nav offset to zero if nav isn't visible", () => {
-      const instance = setup(false).wrapper.instance();
-      expect(instance.getNavOffset(1000)).toEqual(0);
+    describe('if nav is visible', () => {
+      it('reduces the chart width by 300 on wider screens', () => {
+        const wrapper = setup.mount(<FlowChart visibleNav={true} />);
+        const instance = wrapper.find('FlowChart').instance();
+        expect(instance.getNavOffset(1000)).toEqual(300);
+        expect(instance.getNavOffset(500)).toEqual(300);
+      });
+
+      it('sets nav offset to zero on mobile', () => {
+        const instance = setup
+          .mount(<FlowChart visibleNav={true} />)
+          .find('FlowChart')
+          .instance();
+        expect(instance.getNavOffset(480)).toEqual(0);
+        expect(instance.getNavOffset(320)).toEqual(0);
+      });
     });
 
-    it('sets nav offset to zero on mobile', () => {
-      const instance = setup(true).wrapper.instance();
-      expect(instance.getNavOffset(480)).toEqual(0);
-      expect(instance.getNavOffset(320)).toEqual(0);
-    });
+    describe('if nav is hidden', () => {
+      const instance = setup
+        .mount(<FlowChart visibleNav={false} />)
+        .find('FlowChart')
+        .instance();
 
-    it('reduces the chart width by 300 if the nav is visible on wider screens', () => {
-      const instance = setup(true).wrapper.instance();
-      expect(instance.getNavOffset(1000)).toEqual(300);
-      expect(instance.getNavOffset(500)).toEqual(300);
+      it('sets nav offset to zero on desktop', () => {
+        expect(instance.getNavOffset(1000)).toEqual(0);
+      });
+
+      it('sets nav offset to zero on mobile', () => {
+        expect(instance.getNavOffset(480)).toEqual(0);
+        expect(instance.getNavOffset(320)).toEqual(0);
+      });
     });
   });
 
