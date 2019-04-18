@@ -13,7 +13,7 @@ import './tag-list.css';
  * @param {Array} tags List of tags for given pipline
  * @param {string} theme CarbonUI light/dark theme
  */
-const TagList = ({
+export const TagList = ({
   tagCount,
   onToggleTagActive,
   onToggleTagFilter,
@@ -33,13 +33,15 @@ const TagList = ({
                 key={`tag-${tag.id}`}
                 title={tag.name}
                 className="pipeline-tags__tag-list-item cbn-menu-option"
-                onMouseEnter={onToggleTagActive(tag, true)}
-                onMouseLeave={onToggleTagActive(tag, false)}>
+                onMouseEnter={() => onToggleTagActive(tag.id, true)}
+                onMouseLeave={() => onToggleTagActive(tag.id, false)}>
                 <Checkbox
                   checked={tag.enabled}
                   label={<span>{tag.name}</span>}
                   name={tag.id}
-                  onChange={onToggleTagFilter(tag.id)}
+                  onChange={(e, { checked }) =>
+                    onToggleTagFilter(tag.id, checked)
+                  }
                   theme={theme}
                 />
               </li>
@@ -55,7 +57,7 @@ const TagList = ({
   </div>
 );
 
-const mapStateToProps = state => {
+export const mapStateToProps = state => {
   const tags = getTags(state);
   const tagCount = getTagCount(state);
   return {
@@ -65,12 +67,12 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  onToggleTagActive: (tag, isActive) => () => {
-    dispatch(toggleTagActive(tag.id, isActive));
+export const mapDispatchToProps = dispatch => ({
+  onToggleTagActive: (tagID, active) => {
+    dispatch(toggleTagActive(tagID, active));
   },
-  onToggleTagFilter: tagID => (e, { checked }) => {
-    dispatch(toggleTagFilter(tagID, checked));
+  onToggleTagFilter: (tagID, enabled) => {
+    dispatch(toggleTagFilter(tagID, enabled));
   }
 });
 
