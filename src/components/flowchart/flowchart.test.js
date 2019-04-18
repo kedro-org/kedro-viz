@@ -2,20 +2,7 @@ import React from 'react';
 import $ from 'cheerio';
 import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/data.mock';
-import { getLayout, getZoomPosition } from '../../selectors/layout';
 import { getActiveSnapshotNodes } from '../../selectors/nodes';
-
-const props = {
-  activeSnapshot: mockState.activeSnapshot,
-  chartSize: mockState.chartSize,
-  layout: getLayout(mockState),
-  onToggleNodeActive: jest.fn(),
-  onUpdateChartSize: jest.fn(),
-  textLabels: mockState.textLabels,
-  view: mockState.view,
-  visibleNav: true,
-  zoom: getZoomPosition(mockState)
-};
 
 describe('FlowChart', () => {
   it('renders without crashing', () => {
