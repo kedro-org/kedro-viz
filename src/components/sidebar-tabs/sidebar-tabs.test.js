@@ -1,30 +1,19 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
 import SidebarTabs, {
   SidebarTabs as UnconnectedSidebarTabs,
   mapStateToProps
 } from './index';
-import { mockState, MockProvider } from '../../utils/data.mock';
-
-const setupShallow = (showHistory = true) =>
-  shallow(<UnconnectedSidebarTabs showHistory={showHistory} />);
-
-const setupMount = () =>
-  mount(
-    <MockProvider>
-      <SidebarTabs />
-    </MockProvider>
-  );
+import { mockState, setup } from '../../utils/data.mock';
 
 describe('SidebarTabs', () => {
   it('renders without crashing', () => {
-    const wrapper = setupShallow();
+    const wrapper = setup.shallow(UnconnectedSidebarTabs);
     const container = wrapper.find('.pipeline-tabs');
     expect(container.length).toBe(1);
   });
 
   describe('showHistory is true', () => {
-    const wrapper = setupShallow();
+    const wrapper = setup.shallow(UnconnectedSidebarTabs, mockState);
 
     it('renders both UI and History tabs', () => {
       expect(wrapper.find('.pipeline-tabs_tab').length).toBe(2);
@@ -36,7 +25,9 @@ describe('SidebarTabs', () => {
   });
 
   describe('showHistory is false', () => {
-    const wrapper = setupShallow(false);
+    const wrapper = setup.shallow(UnconnectedSidebarTabs, {
+      showHistory: false
+    });
 
     it('renders just the UI tab', () => {
       expect(wrapper.find('.pipeline-tabs_tab').length).toBe(1);
@@ -45,7 +36,7 @@ describe('SidebarTabs', () => {
   });
 
   it('toggles the tabs on click', () => {
-    const wrapper = setupMount();
+    const wrapper = setup.mount(<SidebarTabs />);
     expect(wrapper.find('#snapshots').props().hidden).toBe(true);
     wrapper
       .find('.cbn-tabs')

@@ -1,21 +1,13 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import NodeList, { mapStateToProps, mapDispatchToProps } from './index';
-import { mockState, MockProvider } from '../../utils/data.mock';
+import { mockState, setup } from '../../utils/data.mock';
 import { getNodes } from '../../selectors/nodes';
 
 const nodes = getNodes(mockState);
 
-const setup = () =>
-  mount(
-    <MockProvider>
-      <NodeList />
-    </MockProvider>
-  );
-
 describe('FlowChart', () => {
   it('renders without crashing', () => {
-    const wrapper = setup();
+    const wrapper = setup.mount(<NodeList />);
     const search = wrapper.find('.pipeline-node-list-search');
     const nodeList = wrapper.find('.pipeline-node-list');
     expect(search.length).toBe(1);
@@ -23,7 +15,7 @@ describe('FlowChart', () => {
   });
 
   describe('search filter', () => {
-    const wrapper = setup();
+    const wrapper = setup.mount(<NodeList />);
     const searches = [
       getNodes(mockState)[0].name,
       'a',
@@ -46,7 +38,7 @@ describe('FlowChart', () => {
     );
 
     it('clears the search filter input and resets the list when hitting the Escape key', () => {
-      const wrapper = setup();
+      const wrapper = setup.mount(<NodeList />);
       const searchWrapper = wrapper.find('.pipeline-node-list-search');
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.cbn-input__field');
@@ -67,7 +59,7 @@ describe('FlowChart', () => {
   });
 
   describe('check/uncheck buttons', () => {
-    const wrapper = setup();
+    const wrapper = setup.mount(<NodeList />);
     // Re-find elements from root each time to see updates
     const search = () => wrapper.find('.cbn-input__field');
     const inputProps = () =>
@@ -153,14 +145,14 @@ describe('FlowChart', () => {
 
   describe('node list', () => {
     it('renders the correct number of rows', () => {
-      const wrapper = setup();
+      const wrapper = setup.mount(<NodeList />);
       const nodeList = wrapper.find('.pipeline-node');
       expect(nodeList.length).toBe(nodes.length);
     });
   });
 
   describe('node list item', () => {
-    const wrapper = setup();
+    const wrapper = setup.mount(<NodeList />);
     const nodeRow = () => wrapper.find('.pipeline-node').first();
 
     it('handles mouseenter events', () => {
@@ -175,7 +167,7 @@ describe('FlowChart', () => {
   });
 
   describe('node list item checkbox', () => {
-    const wrapper = setup();
+    const wrapper = setup.mount(<NodeList />);
     const checkbox = () => wrapper.find('.cbn-switch__input').first();
 
     it('handles toggle off event', () => {

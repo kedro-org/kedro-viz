@@ -1,28 +1,20 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
 import ChartUI, {
   ChartUI as UnconnectedChartUI,
   mapStateToProps,
   mapDispatchToProps
 } from './index';
-import { MockProvider, mockState } from '../../utils/data.mock';
-
-const setup = () =>
-  mount(
-    <MockProvider>
-      <ChartUI />
-    </MockProvider>
-  );
+import { mockState, setup } from '../../utils/data.mock';
 
 describe('ChartUI', () => {
   it('renders without crashing', () => {
-    const wrapper = setup();
+    const wrapper = setup.mount(<ChartUI />);
     const ui = wrapper.find('.pipeline-ui');
     expect(ui.length).toBe(1);
   });
 
   it('returns null when hasData is false', () => {
-    const wrapper = shallow(<UnconnectedChartUI hasData={false} />);
+    const wrapper = setup.shallow(UnconnectedChartUI, { hasData: false });
     expect(wrapper.html()).toBe(null);
   });
 
