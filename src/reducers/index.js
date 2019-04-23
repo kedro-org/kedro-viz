@@ -33,7 +33,7 @@ function reducer(state = {}, action) {
         return state;
       }
       // Else, handle it manually:
-      const snapshotIDs = delete state.snapshotIDs[action.id];
+      const snapshotIDs = state.snapshotIDs.filter(id => id !== action.id);
       // If the deleted pipeline is the active one, then use a new active one
       let { activeSnapshot } = state;
       if (activeSnapshot === action.id) {
