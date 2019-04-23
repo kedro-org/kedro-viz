@@ -53,7 +53,6 @@ export const mockData = [
 export const mockState = getInitialState(formatSnapshots(mockData), {
   allowHistoryDeletion: true,
   allowUploads: true,
-  onDeleteSnapshot: true,
   showHistory: true
 });
 
