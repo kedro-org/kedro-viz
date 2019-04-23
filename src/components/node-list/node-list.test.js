@@ -3,9 +3,7 @@ import NodeList, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/data.mock';
 import { getNodes } from '../../selectors/nodes';
 
-const nodes = getNodes(mockState);
-
-describe('FlowChart', () => {
+describe('NodeList', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<NodeList />);
     const search = wrapper.find('.pipeline-node-list-search');
@@ -23,18 +21,19 @@ describe('FlowChart', () => {
       ''
     ];
 
-    const testSearch = searchText => {
-      const search = () => wrapper.find('.cbn-input__field');
-      search().simulate('change', { target: { value: searchText } });
-      const nodeList = wrapper.find('.pipeline-node');
-      const expectedResult = nodes.filter(d => d.name.includes(searchText));
-      expect(search().props().value).toBe(searchText);
-      expect(nodeList.length).toBe(expectedResult.length);
-    };
-
     test.each(searches)(
       'filters the node list when entering the search text "%s"',
-      testSearch
+      searchText => {
+        const search = () => wrapper.find('.cbn-input__field');
+        search().simulate('change', { target: { value: searchText } });
+        const nodeList = wrapper.find('.pipeline-node');
+        const nodes = getNodes(mockState);
+        const expectedResult = nodes.filter(node =>
+          node.name.includes(searchText)
+        );
+        expect(search().props().value).toBe(searchText);
+        expect(nodeList.length).toBe(expectedResult.length);
+      }
     );
 
     it('clears the search filter input and resets the list when hitting the Escape key', () => {
@@ -43,12 +42,15 @@ describe('FlowChart', () => {
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.cbn-input__field');
       const nodeList = () => wrapper.find('.pipeline-node');
+      const nodes = getNodes(mockState);
       const searchText = nodes[0].name;
       // Enter search text
       search().simulate('change', { target: { value: searchText } });
       // Check that search input value and node list have been updated
       expect(search().props().value).toBe(searchText);
-      const expectedResult = nodes.filter(d => d.name.includes(searchText));
+      const expectedResult = nodes.filter(node =>
+        node.name.includes(searchText)
+      );
       expect(nodeList().length).toBe(expectedResult.length);
       // Clear the list with escape key
       searchWrapper.simulate('keydown', { keyCode: 27 });
@@ -62,38 +64,39 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(<NodeList />);
     // Re-find elements from root each time to see updates
     const search = () => wrapper.find('.cbn-input__field');
-    const inputProps = () =>
-      wrapper.find('.cbn-switch__input').map(d => d.props());
-    const toggleAll = check =>
+    const input = () => wrapper.find('.cbn-switch__input');
+    const inputProps = () => input().map(input => input.props());
+    const toggleAllNodes = check =>
       wrapper
         .find('.pipeline-node-list__toggle')
         .at(check ? 0 : 1)
         .simulate('click');
     // Get search text value and filtered nodes
+    const nodes = getNodes(mockState);
     const searchText = nodes[0].name;
-    const expectedResult = nodes.filter(d => d.name.includes(searchText));
+    const expectedResult = nodes.filter(node => node.name.includes(searchText));
 
     it('disables every row when clicking uncheck all', () => {
-      toggleAll(false);
-      expect(inputProps().every(d => d.checked === false)).toBe(true);
+      toggleAllNodes(false);
+      expect(inputProps().every(input => input.checked === false)).toBe(true);
     });
 
     it('enables every row when clicking check all', () => {
-      toggleAll(false);
-      toggleAll(true);
-      expect(inputProps().every(d => d.checked === true)).toBe(true);
+      toggleAllNodes(false);
+      toggleAllNodes(true);
+      expect(inputProps().every(input => input.checked === true)).toBe(true);
     });
 
     describe('toggle only visible nodes when searching', () => {
       beforeAll(() => {
         // Reset node checked state
-        toggleAll(true);
+        toggleAllNodes(true);
         // Enter search text
         search().simulate('change', { target: { value: searchText } });
         // Disable visible nodes
-        toggleAll(false);
+        toggleAllNodes(false);
         // All visible rows should now be unchecked
-        expect(inputProps().every(d => d.checked === false)).toBe(true);
+        expect(inputProps().every(input => input.checked === false)).toBe(true);
         // Clear the search form so that all rows are now visible
         search().simulate('change', { target: { value: '' } });
       });
@@ -103,38 +106,42 @@ describe('FlowChart', () => {
       });
 
       test('Not all rows should be checked', () => {
-        expect(inputProps().every(d => d.checked === false)).toBe(false);
+        expect(inputProps().every(input => input.checked === false)).toBe(
+          false
+        );
       });
 
       test('Not all rows should be unchecked', () => {
-        expect(inputProps().every(d => d.checked === true)).toBe(false);
+        expect(inputProps().every(input => input.checked === true)).toBe(false);
       });
 
       test('Previously-visible rows should now be unchecked', () => {
         expect(
           inputProps()
-            .filter(d => d.checked === false)
-            .map(d => d.name)
-        ).toEqual(expectedResult.map(d => d.name));
+            .filter(input => input.checked === false)
+            .map(input => input.name)
+        ).toEqual(expectedResult.map(node => node.name));
       });
 
       test('Previously-hidden rows should still be checked', () => {
         expect(
           inputProps()
-            .filter(d => d.checked === true)
-            .map(d => d.name)
+            .filter(input => input.checked === true)
+            .map(input => input.name)
         ).toEqual(
-          nodes.filter(d => !d.name.includes(searchText)).map(d => d.name)
+          nodes
+            .filter(node => !node.name.includes(searchText))
+            .map(node => node.name)
         );
       });
 
       test('Toggling all the nodes back on checks all nodes', () => {
-        toggleAll(true);
+        toggleAllNodes(true);
         expect(
           inputProps()
-            .filter(d => d.checked === true)
-            .map(d => d.name)
-        ).toEqual(nodes.map(d => d.name));
+            .filter(input => input.checked === true)
+            .map(input => input.name)
+        ).toEqual(nodes.map(node => node.name));
       });
     });
 
@@ -147,6 +154,7 @@ describe('FlowChart', () => {
     it('renders the correct number of rows', () => {
       const wrapper = setup.mount(<NodeList />);
       const nodeList = wrapper.find('.pipeline-node');
+      const nodes = getNodes(mockState);
       expect(nodeList.length).toBe(nodes.length);
     });
   });
@@ -219,7 +227,7 @@ describe('FlowChart', () => {
     const nodes = getNodes(mockState);
     mapDispatchToProps(dispatch).onToggleAllNodes(nodes, true);
     expect(dispatch.mock.calls[2][0]).toEqual({
-      nodeIDs: nodes.map(d => d.id),
+      nodeIDs: nodes.map(node => node.id),
       isDisabled: true,
       type: 'TOGGLE_NODES_DISABLED'
     });
