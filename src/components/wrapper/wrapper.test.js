@@ -14,7 +14,7 @@ describe('Wrapper', () => {
   it('sets a class based on the theme', () => {
     const wrapper = setup.shallow(Wrapper, mockProps);
     const container = wrapper.find('.kernel-pipeline');
-    const { theme } = mockState;
+    const { theme } = wrapper.instance().props;
     expect(container.hasClass(`cbn-theme--light`)).toBe(theme === 'light');
     expect(container.hasClass(`cbn-theme--dark`)).toBe(theme === 'dark');
   });
