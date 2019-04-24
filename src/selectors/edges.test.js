@@ -11,14 +11,6 @@ import { getActiveSnapshotNodes } from './nodes';
 import { changeView, toggleNodeDisabled } from '../actions';
 import reducer from '../reducers';
 
-const testObjectStructure = edgeObject => {
-  expect(edgeObject).toEqual(expect.any(Object));
-  expect(Object.keys(edgeObject)).toEqual(getActiveSnapshotEdges(mockState));
-  expect(Object.values(edgeObject)).toEqual(
-    expect.arrayContaining([expect.any(Boolean)])
-  );
-};
-
 describe('Selectors', () => {
   describe('getActiveSnapshotEdges', () => {
     it('gets a list of edges for the active snapshot', () => {
@@ -41,8 +33,22 @@ describe('Selectors', () => {
   });
 
   describe('getEdgeDisabledNode', () => {
-    it('returns a set of key/value pairs of edge IDs and Booleans', () => {
-      testObjectStructure(getEdgeDisabledNode(mockState));
+    it('returns an object', () => {
+      expect(getEdgeDisabledNode(mockState)).toEqual(expect.any(Object));
+    });
+
+    it("returns an object whose keys match the active snapshot's edges", () => {
+      expect(Object.keys(getEdgeDisabledNode(mockState))).toEqual(
+        getActiveSnapshotEdges(mockState)
+      );
+    });
+
+    it('returns an object whose values are all Booleans', () => {
+      expect(
+        Object.values(getEdgeDisabledNode(mockState)).every(
+          value => typeof value === 'boolean'
+        )
+      ).toBe(true);
     });
 
     it('does not disable an edge if no nodes are disabled', () => {
@@ -80,8 +86,22 @@ describe('Selectors', () => {
   });
 
   describe('getEdgeDisabledView', () => {
-    it('returns a set of key/value pairs of edge IDs and Booleans', () => {
-      testObjectStructure(getEdgeDisabledView(mockState));
+    it('returns an object', () => {
+      expect(getEdgeDisabledView(mockState)).toEqual(expect.any(Object));
+    });
+
+    it("returns an object whose keys match the active snapshot's edges", () => {
+      expect(Object.keys(getEdgeDisabledView(mockState))).toEqual(
+        getActiveSnapshotEdges(mockState)
+      );
+    });
+
+    it('returns an object whose values are all Booleans', () => {
+      expect(
+        Object.values(getEdgeDisabledView(mockState)).every(
+          value => typeof value === 'boolean'
+        )
+      ).toBe(true);
     });
 
     describe('when view is set to combined', () => {
@@ -151,8 +171,22 @@ describe('Selectors', () => {
   });
 
   describe('getEdgeDisabled', () => {
-    it('returns a set of key/value pairs of edge IDs and Booleans', () => {
-      testObjectStructure(getEdgeDisabled(mockState));
+    it('returns an object', () => {
+      expect(getEdgeDisabled(mockState)).toEqual(expect.any(Object));
+    });
+
+    it("returns an object whose keys match the active snapshot's edges", () => {
+      expect(Object.keys(getEdgeDisabled(mockState))).toEqual(
+        getActiveSnapshotEdges(mockState)
+      );
+    });
+
+    it('returns an object whose values are all Booleans', () => {
+      expect(
+        Object.values(getEdgeDisabled(mockState)).every(
+          value => typeof value === 'boolean'
+        )
+      ).toBe(true);
     });
   });
 
