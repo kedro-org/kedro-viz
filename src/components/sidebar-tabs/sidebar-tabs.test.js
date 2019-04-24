@@ -39,8 +39,7 @@ describe('SidebarTabs', () => {
     const wrapper = setup.mount(<SidebarTabs />);
     expect(wrapper.find('#snapshots').props().hidden).toBe(true);
     wrapper
-      .find('.cbn-tabs')
-      .find('a')
+      .find('.cbn-tabs a')
       .at(1)
       .simulate('click');
     expect(wrapper.find('#snapshots').props().hidden).toBe(false);
