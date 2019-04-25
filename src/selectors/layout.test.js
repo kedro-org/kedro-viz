@@ -22,9 +22,8 @@ describe('Selectors', () => {
 
     it('returns a complete list of node and edge IDs', () => {
       expect(graph.nodes()).toEqual(getVisibleNodes(mockState).map(d => d.id));
-      expect(graph.edges().map(edge => graph.edge(edge).id)).toEqual(
-        getVisibleEdges(mockState).map(d => d.id)
-      );
+      const edgeIDs = graph.edges().map(edge => graph.edge(edge).id);
+      expect(edgeIDs).toEqual(getVisibleEdges(mockState).map(d => d.id));
     });
   });
 

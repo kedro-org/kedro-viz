@@ -52,10 +52,8 @@ describe('Selectors', () => {
     });
 
     it('does not disable an edge if no nodes are disabled', () => {
-      const edgeDisabled = getEdgeDisabledNode(mockState);
-      expect(Object.values(edgeDisabled)).toEqual(
-        Object.values(edgeDisabled).map(() => false)
-      );
+      const edgeDisabledValues = Object.values(getEdgeDisabledNode(mockState));
+      expect(edgeDisabledValues).toEqual(edgeDisabledValues.map(() => false));
     });
 
     const nodeID = getActiveSnapshotNodes(mockState)[0];

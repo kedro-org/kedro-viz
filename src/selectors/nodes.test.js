@@ -16,13 +16,13 @@ import {
 } from '../actions';
 import reducer from '../reducers';
 
-const testObjectStructure = nodeObject => {
-  expect(nodeObject).toEqual(expect.any(Object));
-  expect(Object.keys(nodeObject)).toEqual(getActiveSnapshotNodes(mockState));
-  expect(Object.values(nodeObject)).toEqual(
-    expect.arrayContaining([expect.any(Boolean)])
-  );
-};
+// const testObjectStructure = nodeObject => {
+//   expect(nodeObject).toEqual(expect.any(Object));
+//   expect(Object.keys(nodeObject)).toEqual(getActiveSnapshotNodes(mockState));
+//   expect(Object.values(nodeObject)).toEqual(
+//     expect.arrayContaining([expect.any(Boolean)])
+//   );
+// };
 
 describe('Selectors', () => {
   describe('getActiveSnapshotNodes', () => {
@@ -46,8 +46,22 @@ describe('Selectors', () => {
   });
 
   describe('getNodeDisabledTag', () => {
-    it('returns a set of key/value pairs of node IDs and Booleans', () => {
-      testObjectStructure(getNodeDisabledTag(mockState));
+    it('returns an object', () => {
+      expect(getNodeDisabledTag(mockState)).toEqual(expect.any(Object));
+    });
+
+    it("returns an object whose keys match the active snapshot's nodes", () => {
+      expect(Object.keys(getNodeDisabledTag(mockState))).toEqual(
+        getActiveSnapshotNodes(mockState)
+      );
+    });
+
+    it('returns an object whose values are all Booleans', () => {
+      expect(
+        Object.values(getNodeDisabledTag(mockState)).every(
+          value => typeof value === 'boolean'
+        )
+      ).toBe(true);
     });
 
     it('does not disable a node if all tags are disabled', () => {
@@ -64,11 +78,13 @@ describe('Selectors', () => {
         id => mockState.nodeType[id] === 'task'
       );
       // Choose a node that has some tags (and which should be enabled)
-      const enabledNodeID = taskNodes.find(id => nodeTags[id].length);
+      const hasTags = id => Boolean(nodeTags[id].length);
+      const enabledNodeID = taskNodes.find(hasTags);
       // Choose a node that has no tags (and which should be disabled)
-      const disabledNodeID = taskNodes.find(id => !nodeTags[id].length);
-      const enabledNodeTags = nodeTags[enabledNodeID];
+      const hasNoTags = id => !Boolean(nodeTags[id].length);
+      const disabledNodeID = taskNodes.find(hasNoTags);
       // Update the state to enable one of the tags for that node
+      const enabledNodeTags = nodeTags[enabledNodeID];
       const newMockState = reducer(
         mockState,
         toggleTagFilter(enabledNodeTags[0], true)
@@ -79,8 +95,22 @@ describe('Selectors', () => {
   });
 
   describe('getNodeDisabledView', () => {
-    it('returns a set of key/value pairs of node IDs and Booleans', () => {
-      testObjectStructure(getNodeDisabledView(mockState));
+    it('returns an object', () => {
+      expect(getNodeDisabledView(mockState)).toEqual(expect.any(Object));
+    });
+
+    it("returns an object whose keys match the active snapshot's nodes", () => {
+      expect(Object.keys(getNodeDisabledView(mockState))).toEqual(
+        getActiveSnapshotNodes(mockState)
+      );
+    });
+
+    it('returns an object whose values are all Booleans', () => {
+      expect(
+        Object.values(getNodeDisabledView(mockState)).every(
+          value => typeof value === 'boolean'
+        )
+      ).toBe(true);
     });
 
     it('shows all nodes when view is set to combined', () => {
@@ -123,14 +153,42 @@ describe('Selectors', () => {
   });
 
   describe('getNodeDisabled', () => {
-    it('returns a set of key/value pairs of node IDs and Booleans', () => {
-      testObjectStructure(getNodeDisabled(mockState));
+    it('returns an object', () => {
+      expect(getNodeDisabled(mockState)).toEqual(expect.any(Object));
+    });
+
+    it("returns an object whose keys match the active snapshot's nodes", () => {
+      expect(Object.keys(getNodeDisabled(mockState))).toEqual(
+        getActiveSnapshotNodes(mockState)
+      );
+    });
+
+    it('returns an object whose values are all Booleans', () => {
+      expect(
+        Object.values(getNodeDisabled(mockState)).every(
+          value => typeof value === 'boolean'
+        )
+      ).toBe(true);
     });
   });
 
   describe('getNodeActive', () => {
-    it('returns a set of key/value pairs of node IDs and Booleans', () => {
-      testObjectStructure(getNodeActive(mockState));
+    it('returns an object', () => {
+      expect(getNodeActive(mockState)).toEqual(expect.any(Object));
+    });
+
+    it("returns an object whose keys match the active snapshot's nodes", () => {
+      expect(Object.keys(getNodeActive(mockState))).toEqual(
+        getActiveSnapshotNodes(mockState)
+      );
+    });
+
+    it('returns an object whose values are all Booleans', () => {
+      expect(
+        Object.values(getNodeActive(mockState)).every(
+          value => typeof value === 'boolean'
+        )
+      ).toBe(true);
     });
 
     it('returns true only when a given node is set to active', () => {
@@ -166,7 +224,6 @@ describe('Selectors', () => {
       const nodeIDs = getNodes(mockState).map(d => d.id);
       const activeNodeIDs = getActiveSnapshotNodes(mockState).sort();
       expect(nodeIDs).toEqual(activeNodeIDs);
-      expect(nodeIDs.reverse()).not.toEqual(activeNodeIDs);
     });
   });
 
