@@ -29,10 +29,10 @@ jobs:
           name: Run Eslint
           command: npm run lint
       - run:
-          name: Run tests
-          command: npm test
+          name: Run JavaScript tests
+          command: npm run build:css && npm test
       - run:
-          name: Run python tests
+          name: Run Python tests
           command: make pytest
       - run:
           name: Cleanup
