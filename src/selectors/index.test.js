@@ -37,11 +37,7 @@ describe('Selectors', () => {
     it('retrieves the raw unformatted data schema for the active snapshot', () => {
       const schema = getActiveSchema(mockState);
       expect(schema).toEqual(expect.any(String));
-      try {
-        expect(JSON.parse(schema)).toEqual(expect.any(Object));
-      } catch (e) {
-        expect(e).toEqual('Error: Invalid JSON data');
-      }
+      expect(JSON.parse(schema)).toEqual(expect.any(Object));
     });
   });
 });
