@@ -17,10 +17,12 @@
     "version:update": "./bin/publish-build.sh",
     "version:get": "echo \"Current version is \"$(./bin/config.sh version)",
     "test": "react-scripts test --env=jsdom",
+    "test:coverage": "npm test -- --coverage",
+    "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@quantumblack/carbon-ui-components": "^2.1.0",
+    "@quantumblack/carbon-ui-components": "^3.0.0",
     "classnames": "^2.2.5",
     "d3-fetch": "^1.1.0",
     "d3-scale": "^2.0.0",
@@ -33,12 +35,16 @@
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.6.1",
     "react-redux": "^6.0.0",
-    "react-scripts": "^2.1.3",
+    "react-scripts": "^2.1.8",
+    "react-test-renderer": "^16.8.5",
     "redux": "^4.0.1",
     "reselect": "^4.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.11.2",
     "husky": "^1.3.1",
     "lint-staged": "^8.1.5",
     "node-sass": "^4.11.0",
@@ -53,6 +59,9 @@
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --single-quote --write",
+      "git add"
+    ],
+    "src/**/*.{js,jsx,ts,tsx,json}": [
       "eslint src/ --fix",
       "git add"
     ]

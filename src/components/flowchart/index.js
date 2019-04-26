@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { toggleNodeActive, updateChartSize } from '../../actions';
-import { getGraph, getLayout, getZoomPosition } from '../../selectors/layout';
+import { getLayout, getZoomPosition } from '../../selectors/layout';
 import linkedNodes from './linked-nodes';
-import tooltip from './tooltip';
 import databaseIcon from './database-icon';
 import cogIcon from './cog-icon';
 import './flowchart.css';
@@ -17,10 +17,19 @@ const DURATION = 700;
 /**
  * Display a flowchart for the current snapshot, mostly rendered with D3
  */
-class FlowChart extends Component {
+export class FlowChart extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      tooltipVisible: false,
+      tooltipIsRight: false,
+      tooltipText: null,
+      tooltipX: 0,
+      tooltipY: 0
+    };
     this.handleWindowResize = this.handleWindowResize.bind(this);
+    this.handleNodeMouseOver = this.handleNodeMouseOver.bind(this);
+    this.handleNodeMouseOut = this.handleNodeMouseOut.bind(this);
   }
 
   componentDidMount() {
@@ -30,8 +39,7 @@ class FlowChart extends Component {
       inner: select(this._gInner),
       wrapper: select(this._gWrapper),
       edgeGroup: select(this._gEdges),
-      nodeGroup: select(this._gNodes),
-      tooltip: select(this._tooltip)
+      nodeGroup: select(this._gNodes)
     };
 
     this.updateChartSize();
@@ -95,8 +103,8 @@ class FlowChart extends Component {
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
-      tooltip.hide(this.el);
       this.el.inner.attr('transform', event.transform);
+      this.hideTooltip();
     });
     this.el.svg.call(this.zoomBehaviour);
   }
@@ -119,7 +127,7 @@ class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { chartSize, layout, onToggleNodeActive, textLabels } = this.props;
+    const { chartSize, layout, textLabels } = this.props;
     const { nodes, edges } = layout;
     const navOffset = this.getNavOffset(chartSize.outerWidth);
 
@@ -209,18 +217,6 @@ class FlowChart extends Component {
       .attr('opacity', 0)
       .remove();
 
-    const tooltipProps = {
-      ...chartSize,
-      navOffset,
-      tooltip: this.el.tooltip
-    };
-
-    const linkedNodeProps = {
-      el: this.el,
-      edges,
-      nodes
-    };
-
     this.el.nodes = this.el.nodes
       .merge(enterNodes)
       .classed('node--data', node => node.type === 'data')
@@ -228,19 +224,8 @@ class FlowChart extends Component {
       .classed('node--icon', !textLabels)
       .classed('node--text', textLabels)
       .classed('node--active', node => node.active)
-      .on('mouseover', node => {
-        onToggleNodeActive(node, true);
-        tooltip.show(tooltipProps, node);
-        linkedNodes.show(linkedNodeProps, node.id);
-      })
-      .on('mousemove', node => {
-        tooltip.show(tooltipProps, node);
-      })
-      .on('mouseout', node => {
-        onToggleNodeActive(node, false);
-        linkedNodes.hide(this.el);
-        tooltip.hide(this.el);
-      });
+      .on('mouseover', this.handleNodeMouseOver)
+      .on('mouseout', this.handleNodeMouseOut);
 
     this.el.nodes
       .transition('update-nodes')
@@ -258,9 +243,75 @@ class FlowChart extends Component {
   }
 
   /**
+   * Event handler for toggling a node's active state,
+   * showing tooltip, and highlighting linked nodes
+   * @param {Object} node Datum for a single node
+   */
+  handleNodeMouseOver(node) {
+    const { layout, onToggleNodeActive } = this.props;
+    onToggleNodeActive(node, true);
+    this.showTooltip(node);
+    linkedNodes.show({
+      el: this.el,
+      nodeID: node.id,
+      ...layout
+    });
+  }
+
+  /**
+   * Event handler for toggling a node's active state,
+   * hiding tooltip, and dimming linked nodes
+   * @param {Object} node Datum for a single node
+   */
+  handleNodeMouseOut(node) {
+    this.props.onToggleNodeActive(node, false);
+    linkedNodes.hide(this.el);
+    this.hideTooltip();
+  }
+
+  /**
+   * Show, fill and and position the tooltip
+   * @param {Object} node A node datum
+   */
+  showTooltip(node) {
+    const { chartSize } = this.props;
+    const eventOffset = event.target.getBoundingClientRect();
+    const navOffset = this.getNavOffset(chartSize.outerWidth);
+    const isRight = eventOffset.left - navOffset > chartSize.width / 2;
+    const xOffset = isRight
+      ? eventOffset.left - (chartSize.width + navOffset)
+      : eventOffset.left;
+    this.setState({
+      tooltipVisible: true,
+      tooltipIsRight: isRight,
+      tooltipText: node.name,
+      tooltipX: xOffset - chartSize.x + eventOffset.width / 2,
+      tooltipY: eventOffset.top - chartSize.y
+    });
+  }
+
+  /**
+   * Hide the tooltip
+   */
+  hideTooltip() {
+    if (this.state.tooltipVisible) {
+      this.setState({
+        tooltipVisible: false
+      });
+    }
+  }
+
+  /**
    * Render React elements
    */
   render() {
+    const {
+      tooltipVisible,
+      tooltipIsRight,
+      tooltipText,
+      tooltipX,
+      tooltipY
+    } = this.state;
     return (
       <div
         className="pipeline-flowchart carbon"
@@ -295,25 +346,28 @@ class FlowChart extends Component {
           </g>
         </svg>
         <div
-          className="pipeline-flowchart__tooltip carbon"
-          ref={el => (this._tooltip = el)}
-        />
+          className={classnames('pipeline-flowchart__tooltip carbon', {
+            'tooltip--visible': tooltipVisible,
+            'tooltip--right': tooltipIsRight
+          })}
+          style={{ transform: `translate(${tooltipX}px, ${tooltipY}px)` }}>
+          <span>{tooltipText}</span>
+        </div>
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({
+export const mapStateToProps = state => ({
   activeSnapshot: state.activeSnapshot,
   chartSize: state.chartSize,
-  graph: getGraph(state),
   layout: getLayout(state),
   textLabels: state.textLabels,
   view: state.view,
   zoom: getZoomPosition(state)
 });
 
-const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = dispatch => ({
   onToggleNodeActive: (node, isActive) => {
     dispatch(toggleNodeActive(node.id, isActive));
   },

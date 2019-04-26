@@ -140,8 +140,8 @@ class NodeList extends React.Component {
                     node.disabled_tag || node.disabled_view
                 })}
                 title={node.name}
-                onMouseEnter={onToggleNodeActive(node, true)}
-                onMouseLeave={onToggleNodeActive(node, false)}>
+                onMouseEnter={() => onToggleNodeActive(node, true)}
+                onMouseLeave={() => onToggleNodeActive(node, false)}>
                 <Checkbox
                   checked={!node.disabled_node}
                   label={
@@ -152,7 +152,9 @@ class NodeList extends React.Component {
                     />
                   }
                   name={node.name}
-                  onChange={onToggleNodeDisabled(node)}
+                  onChange={(e, { checked }) =>
+                    onToggleNodeDisabled(node, !checked)
+                  }
                   theme={theme}
                 />
               </li>
@@ -164,17 +166,17 @@ class NodeList extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
+export const mapStateToProps = state => ({
   nodes: getNodes(state),
   theme: state.theme
 });
 
-const mapDispatchToProps = dispatch => ({
-  onToggleNodeActive: (node, isActive) => () => {
+export const mapDispatchToProps = dispatch => ({
+  onToggleNodeActive: (node, isActive) => {
     dispatch(toggleNodeActive(node.id, isActive));
   },
-  onToggleNodeDisabled: node => (e, { checked }) => {
-    dispatch(toggleNodeDisabled(node.id, !checked));
+  onToggleNodeDisabled: (node, isDisabled) => {
+    dispatch(toggleNodeDisabled(node.id, isDisabled));
   },
   onToggleAllNodes: (formattedNodes, disabled) => {
     dispatch(

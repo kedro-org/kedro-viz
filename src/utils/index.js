@@ -14,6 +14,16 @@ export const arrayToObject = (array, callback) => {
 };
 
 /**
+ * Format a UNIX timestamp into a human-readable string
+ * @param {number|string} datetime A UNIX timestamp
+ * @returns {string} The date and time but prettier
+ */
+export const formatTime = datetime => {
+  const d = new Date(+datetime);
+  return `${d.toDateString()} ${d.toLocaleTimeString()}`;
+};
+
+/**
  * Get an array of numbers
  * @param {number} n Length of the array
  */

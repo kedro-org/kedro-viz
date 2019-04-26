@@ -19,7 +19,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
  * @param {string} theme CarbonUI light/dark theme
  * @param {string} view Which node types are displayed: combined/task/data
  */
-const ChartUI = ({
+export const ChartUI = ({
   hasData,
   onToggleParameters,
   onToggleTextLabels,
@@ -85,7 +85,7 @@ const ChartUI = ({
     </Scrollbars>
   ) : null;
 
-const mapStateToProps = state => ({
+export const mapStateToProps = state => ({
   hasData: Boolean(state.snapshotIDs.length),
   parameters: state.parameters,
   textLabels: state.textLabels,
@@ -93,7 +93,7 @@ const mapStateToProps = state => ({
   view: state.view
 });
 
-const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = dispatch => ({
   onChangeView: (e, { value }) => {
     dispatch(changeView(value));
   },

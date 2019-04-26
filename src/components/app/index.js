@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import { json } from 'd3-fetch';
 import store from '../../store';
 import { resetSnapshotData } from '../../actions';
-import ChartWrapper from '../chart-wrapper';
+import Wrapper from '../wrapper';
 import formatSnapshots from '../../utils/format-data';
-import config from '../../config';
-import getRandomHistory from '../../utils/randomData';
+import { getInitialState, loadData } from './load-data';
 import '@quantumblack/carbon-ui-components/dist/carbon-ui.min.css';
 import './app.css';
 
@@ -17,82 +15,43 @@ import './app.css';
 class App extends React.Component {
   constructor(props) {
     super(props);
-
-    const pipelineData = this.loadData(props.data);
-    const activeSnapshot = pipelineData.snapshotIDs[0];
-
-    const {
-      allowHistoryDeletion,
-      allowUploads,
-      onDeleteSnapshot,
-      showHistory
-    } = props;
-
-    const initialState = {
-      ...pipelineData,
-      activeSnapshot,
-      allowHistoryDeletion,
-      allowUploads,
-      chartSize: {},
-      onDeleteSnapshot,
-      parameters: true,
-      showHistory,
-      textLabels: false,
-      view: 'combined',
-      theme: 'dark'
-    };
-
+    const pipelineData = loadData(props.data, this.resetStoreData.bind(this));
+    const initialState = getInitialState(pipelineData, props);
     this.store = store(initialState);
   }
 
   componentDidUpdate(prevProps) {
-    const newData = this.props.data;
+    if (this.dataWasUpdated(prevProps.data, this.props.data)) {
+      this.store.dispatch(resetSnapshotData(formatSnapshots(this.props.data)));
+    }
+  }
+
+  /**
+   * Quickly determine whether snapshots have been updated
+   * @param {Object} prevData Previous data prop
+   * @param {Object} newData New data prop
+   */
+  dataWasUpdated(prevData, newData) {
+    // Check just the schema IDs of incoming data updates
     const dataID = snapshots =>
       Array.isArray(snapshots) &&
       snapshots.map(d => d.kernel_ai_schema_id).join('');
 
-    if (dataID(prevProps.data) !== dataID(newData)) {
-      this.store.dispatch(resetSnapshotData(formatSnapshots(newData)));
-    }
+    return dataID(prevData) !== dataID(newData);
   }
 
-  loadData(data) {
-    switch (data) {
-      case 'random':
-        return formatSnapshots(getRandomHistory());
-      case 'json':
-        return this.loadJsonData(data);
-      default:
-        return formatSnapshots(data);
-    }
-  }
-
-  loadJsonData(kernel_ai_schema_id) {
-    const { dataPath } = config;
-    json(dataPath)
-      .then(json_schema =>
-        formatSnapshots([
-          {
-            json_schema,
-            kernel_ai_schema_id
-          }
-        ])
-      )
-      .then(formattedData => {
-        this.store.dispatch(resetSnapshotData(formattedData));
-      })
-      .catch(() => {
-        console.error(
-          `Unable to load pipeline data. Please check that you have placed a file at ${dataPath}`
-        );
-      });
-    return formatSnapshots([]);
+  /**
+   * Dispatch an action to update the store with all new snapshot data
+   * @param {Object} formattedData The formatted snapshots
+   */
+  resetStoreData(formattedData) {
+    this.store.dispatch(resetSnapshotData(formattedData));
   }
 
   render() {
     return this.props.data ? (
       <Provider store={this.store}>
-        <ChartWrapper />
+        <Wrapper />
       </Provider>
     ) : null;
   }

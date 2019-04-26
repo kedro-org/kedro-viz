@@ -127,13 +127,15 @@
   background: $color-tooltip-bg;
   color: white;
   opacity: 0;
-  transition: opacity ease 0.1s;
+  visibility: hidden;
+  transition: opacity ease 0.1s, visibility ease 0.1s;
   pointer-events: none;
   z-index: 9;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &.tooltip--visible {
     opacity: 1;
+    visibility: visible;
   }
 
   &.tooltip--right {
@@ -158,10 +160,7 @@
     border-color: $color-tooltip-bg transparent transparent;
   }
 
-  b {
-    display: block;
-    font-size: 15px;
-    margin-bottom: 3px;
-    font-weight: normal;
+  span {
+    font-size: 1.5em;
   }
 }

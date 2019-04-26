@@ -6,7 +6,7 @@ import { changeActiveSnapshot, deleteSnapshot } from '../../actions';
 import { getSnapshotHistory } from '../../selectors';
 import deleteIcon from './delete.svg';
 import './history.css';
-import formatTime from '../../utils/format-time';
+import { formatTime } from '../../utils';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 /**
@@ -18,7 +18,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
  * @param {Array} snapshots List of snapshots
  * @param {string} theme CarbonUI light/dark theme
  */
-const History = ({
+export const History = ({
   activeSnapshot,
   allowHistoryDeletion,
   onChangeActiveSnapshot,
@@ -76,14 +76,14 @@ const History = ({
   );
 };
 
-const mapStateToProps = state => ({
+export const mapStateToProps = state => ({
   activeSnapshot: state.activeSnapshot,
   allowHistoryDeletion: state.allowHistoryDeletion,
   snapshots: getSnapshotHistory(state),
   theme: state.theme
 });
 
-const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = dispatch => ({
   onChangeActiveSnapshot: snapshot =>
     dispatch(changeActiveSnapshot(snapshot.id)),
   onDeleteSnapshot: snapshot => dispatch(deleteSnapshot(snapshot.id))

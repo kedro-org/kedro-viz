@@ -5,12 +5,12 @@ import { Icon } from '@quantumblack/carbon-ui-components';
 import SidebarTabs from '../sidebar-tabs';
 import FlowChart from '../flowchart';
 import Description from '../description';
-import './chart-wrapper.css';
+import './wrapper.css';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-class ChartWrappper extends Component {
+export class Wrapper extends Component {
   constructor(props) {
     super(props);
 
@@ -51,10 +51,7 @@ class ChartWrappper extends Component {
         <nav
           className={classnames('pipeline-sidebar', {
             'pipeline-sidebar--visible': visibleNav
-          })}
-          ref={el => {
-            this.nav = el;
-          }}>
+          })}>
           <button
             aria-label="Hide menu"
             className={classnames(
@@ -74,9 +71,9 @@ class ChartWrappper extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+export const mapStateToProps = state => ({
   showHistory: state.showHistory,
   theme: state.theme
 });
 
-export default connect(mapStateToProps)(ChartWrappper);
+export default connect(mapStateToProps)(Wrapper);
