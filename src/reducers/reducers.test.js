@@ -2,7 +2,6 @@
 import { mockData, mockState } from '../utils/data.mock';
 import reducer from './index';
 import * as action from '../actions';
-import { getInitialState } from '../components/app/load-data';
 import formatData from '../utils/format-data';
 
 describe('Reducer', () => {
@@ -112,6 +111,52 @@ describe('Reducer', () => {
       expect(Object.keys(newState.snapshotNodes)).toEqual([
         mockData[0].kernel_ai_schema_id
       ]);
+    });
+  });
+
+  describe('TOGGLE_NODE_ACTIVE', () => {
+    it('should toggle the given node active', () => {
+      const newState = reducer(mockState, {
+        type: action.TOGGLE_NODE_ACTIVE,
+        nodeID: '123',
+        isActive: true
+      });
+      expect(newState.nodeActive).toEqual({ 123: true });
+    });
+  });
+
+  describe('TOGGLE_NODE_DISABLED', () => {
+    it('should toggle the given node disabled', () => {
+      const newState = reducer(mockState, {
+        type: action.TOGGLE_NODE_DISABLED,
+        nodeID: '456',
+        isDisabled: true
+      });
+      expect(newState.nodeDisabled).toEqual({ 456: true });
+    });
+  });
+
+  describe('TOGGLE_NODES_DISABLED', () => {
+    it('should toggle the given nodes disabled', () => {
+      const newState = reducer(mockState, {
+        type: action.TOGGLE_NODES_DISABLED,
+        nodeIDs: ['123', '456'],
+        isDisabled: true
+      });
+      expect(newState.nodeDisabled).toEqual({ 123: true, 456: true });
+    });
+  });
+
+  describe('TOGGLE_PARAMETERS', () => {
+    it("should disable any nodes with 'param' in their titles", () => {
+      const newState = reducer(mockState, {
+        type: action.TOGGLE_PARAMETERS,
+        parameters: false
+      });
+      expect(newState.nodeDisabled).toEqual({
+        '123456789012345/parameters-data': true,
+        '123456789012345/parameters_rabbit-data': true
+      });
     });
   });
 });
