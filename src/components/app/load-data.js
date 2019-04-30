@@ -53,7 +53,7 @@ export const loadData = (data, onLoadData) => {
  * Asynchronously load, parse and format data from json file using D3
  */
 export const loadJsonData = () => {
-  const { dataPath } = config;
+  const { dataPath } = config();
   return json(dataPath)
     .then(json_schema => formatSnapshots([{ json_schema }]))
     .catch(() => {

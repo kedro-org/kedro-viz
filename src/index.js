@@ -4,7 +4,7 @@ import App from './components/app';
 import config from './config';
 import './styles/index.css';
 
-const { dataSource } = config;
+const { dataSource } = config();
 const useRandomData = dataSource === 'random';
 
 ReactDOM.render(

@@ -3,9 +3,10 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { Button, Input, Modal } from '@quantumblack/carbon-ui-components';
 import { getActiveSchema } from '../../selectors';
-import config from '../../config';
+import getConfig from '../../config';
 import './upload-snapshot.css';
 
+const config = getConfig();
 const storeKey = `${config.localStorageName}_token`;
 const store = {
   get: () => window.localStorage.getItem(storeKey),

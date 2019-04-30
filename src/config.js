@@ -1,25 +1,42 @@
-let dataSource;
-if (process.env.REACT_APP_DATA_SOURCE) {
-  dataSource = process.env.REACT_APP_DATA_SOURCE;
-} else if (window.location.host.match(/qb\.com/g)) {
-  dataSource = 'random';
-} else {
-  dataSource = 'json';
-}
-
-const endpointName = process.env.REACT_APP_ENDPOINT || 'prod';
-const endpoints = {
-  local: 'http://localhost:3000/public/kernelai',
-  dev: 'https://dev.qbstudioai.com/api/public/kernelai',
-  uat: 'https://uat.qbstudioai.com/api/public/kernelai',
-  prod: 'https://studio.quantumblack.com/api/public/kernelai'
+/**
+ * Set a flag to signal what data source the app should use,
+ * based on an environent variable
+ */
+const getDataSource = () => {
+  return process.env.REACT_APP_DATA_SOURCE || 'json';
 };
 
-const config = {
-  dataPath: './logs/nodes.json',
-  dataSource,
-  syncEndpoint: endpoints[endpointName] || endpoints.prod,
-  localStorageName: `KernelAIPipelineViz_${endpointName}`
+/**
+ * Set the URL that the upload button should deploy to,
+ * based on an environent variable
+ */
+const getEndpoint = () => {
+  const endpointName = process.env.REACT_APP_ENDPOINT || 'prod';
+  const endpoints = {
+    local: 'http://localhost:3000/public/kernelai',
+    dev: 'https://dev.qbstudioai.com/api/public/kernelai',
+    uat: 'https://uat.qbstudioai.com/api/public/kernelai',
+    prod: 'https://studio.quantumblack.com/api/public/kernelai'
+  };
+
+  return {
+    name: endpointName,
+    url: endpoints[endpointName] || endpoints.prod
+  };
+};
+
+/**
+ * Generate a configuration object for use across the application
+ */
+const config = () => {
+  const endpoint = getEndpoint();
+
+  return {
+    dataPath: './logs/nodes.json',
+    dataSource: getDataSource(),
+    syncEndpoint: endpoint.url,
+    localStorageName: `KernelAIPipelineViz_${endpoint.name}`
+  };
 };
 
 export default config;
