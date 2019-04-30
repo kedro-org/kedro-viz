@@ -80,7 +80,7 @@ This project is designed to be used in a couple of different ways:
 
 ## Testing
 
-This app uses [Jest](https://jestjs.io/) as its JavaScript test runner. To run tests, run the following:
+This app uses [Jest](https://jestjs.io/) as its JavaScript test runner, which you can invoke as follows:
 
 ```bash
 npm run test
