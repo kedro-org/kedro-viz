@@ -159,4 +159,54 @@ describe('Reducer', () => {
       });
     });
   });
+
+  describe('TOGGLE_TEXT_LABELS', () => {
+    it('should toggle the value of textLabels', () => {
+      const newState = reducer(mockState, {
+        type: action.TOGGLE_TEXT_LABELS,
+        textLabels: true
+      });
+      expect(mockState.textLabels).toBe(false);
+      expect(newState.textLabels).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_TAG_ACTIVE', () => {
+    it('should toggle the given tag active', () => {
+      const newState = reducer(mockState, {
+        type: action.TOGGLE_TAG_ACTIVE,
+        tagID: 'huge',
+        active: true
+      });
+      expect(newState.tagActive).toEqual({ huge: true });
+    });
+  });
+
+  describe('TOGGLE_TAG_FILTER', () => {
+    it('should disable a given tag', () => {
+      const newState = reducer(mockState, {
+        type: action.TOGGLE_TAG_FILTER,
+        tagID: 'small',
+        enabled: true
+      });
+      expect(newState.tagEnabled).toEqual({ small: true });
+    });
+  });
+
+  describe('UPDATE_CHART_SIZE', () => {
+    it("should update the chart's dimensions", () => {
+      const newState = reducer(mockState, {
+        type: action.UPDATE_CHART_SIZE,
+        chartSize: document.body.getBoundingClientRect()
+      });
+      expect(newState.chartSize).toEqual({
+        bottom: expect.any(Number),
+        height: expect.any(Number),
+        left: expect.any(Number),
+        right: expect.any(Number),
+        top: expect.any(Number),
+        width: expect.any(Number)
+      });
+    });
+  });
 });
