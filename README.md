@@ -1,8 +1,39 @@
-# Kernel Pipeline Viz
+# Kedro-Viz
 
-This project creates a data visualisation of a Kernel AI pipeline.
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python Version](https://img.shields.io/pypi/pyversions/kedro-viz.svg)](https://pypi.org/project/kedro-viz/)
+[![PyPI version](https://badge.fury.io/py/kedro-viz.svg)](https://pypi.org/project/kedro-viz/)
+[![npm version](https://badge.fury.io/js/kedro-viz.svg)](https://badge.fury.io/js/kedro-viz)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black)
+
+Kedro-Viz shows you how your [Kedro](https://github.com/quantumblacklabs/kedro) data pipelines are structured. Kedro-Viz changes how you look at your workflow.
+
+With Kedro-Viz you can:
+- See how your datasets and Python functions (nodes) are resolved in [Kedro](https://github.com/quantumblacklabs/kedro) so that you can understand how your data pipeline is built
+- Visualise sub-piplines with tags to get a clearer picture when you have lots of datasets and nodes
+- Search for nodes and datasets
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). For more complete documentation about Create React App, visit the [Github Repository](https://github.com/facebook/create-react-app) and [project website](https://facebook.github.io/create-react-app/).
+
+![Kedro-Viz Pipeline Visualisation](https://github.com/quantumblacklabs/kedro-viz/blob/master/img/pipeline_visualisation.png)
+
+## How do I install Kedro-Viz?
+
+`kedro_viz` can be installed as a Python plugin. To install it:
+
+```bash
+pip install kedro_viz
+```
+
+## How do I use Kedro-Viz?
+
+The Kedro-Viz plugin adds a `kedro-viz` CLI command. Run this command to visualise your pipeline.  
+
+### Prerequisites
+
+The following conditions must be true visualise your pipeline:
+* Your project directory must be available to the Kedro-Viz plugin.
+* You must be using a Kedro project structure with a completed Data Catalog, nodes and pipeline structure.
 
 ## Development
 
@@ -55,7 +86,7 @@ See the [Create-React-App docs](https://github.com/facebook/create-react-app) fo
 
 ### Python web server tests
 
-When used in production with KernelAI, the standalone viz is served via a Flask (Python3) web application. You can run Python tests as follows:
+When used in production with Kedro, the standalone viz is served via a Flask (Python3) web application. You can run Python tests as follows:
 
 1. Create and activate a test python virtual environment:
     ```
@@ -69,3 +100,7 @@ When used in production with KernelAI, the standalone viz is served via a Flask 
     ```
     deactivate
     ```
+
+## What licence do you use?
+
+Kedro-Viz is licensed under the [Apache 2.0](https://github.com/quantumblacklabs/kedro-viz/blob/master/LICENSE.md) License.
