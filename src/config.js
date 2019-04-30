@@ -1,12 +1,4 @@
 /**
- * Set a flag to signal what data source the app should use,
- * based on an environent variable
- */
-const getDataSource = () => {
-  return process.env.REACT_APP_DATA_SOURCE || 'json';
-};
-
-/**
  * Set the URL that the upload button should deploy to,
  * based on an environent variable
  */
@@ -33,7 +25,7 @@ const config = () => {
 
   return {
     dataPath: './logs/nodes.json',
-    dataSource: getDataSource(),
+    dataSource: process.env.REACT_APP_DATA_SOURCE || 'json',
     syncEndpoint: endpoint.url,
     localStorageName: `KernelAIPipelineViz_${endpoint.name}`
   };
