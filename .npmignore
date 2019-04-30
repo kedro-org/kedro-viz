@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+*.test.js
+*.mock.js
 
 # production
 build/
