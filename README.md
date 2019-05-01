@@ -6,7 +6,7 @@
 [![npm version](https://badge.fury.io/js/%40quantumblacklabs%2Fkedro-viz.svg)](https://badge.fury.io/js/%40quantumblacklabs%2Fkedro-viz)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-Kedro-Viz changes how you look at your workflow by showing you how your [Kedro](https://github.com/quantumblacklabs/kedro) data pipelines are structured.
+Kedro-Viz changes how you look at your workflow, by showing you how your [Kedro](https://github.com/quantumblacklabs/kedro) data pipelines are structured.
 
 With Kedro-Viz you can:
 
