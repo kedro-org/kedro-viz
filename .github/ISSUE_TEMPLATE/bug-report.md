@@ -34,14 +34,13 @@ Tell us what happens instead
 ```
 
 ## Your Environment
-Include as many relevant details about the environment you experienced the bug in
+Include as many relevant details as possible about the environment you experienced the bug in:
 
-* Kedro version used:
-* Python version used:
+* Web browser system and version:
 * Operating system and version:
+* NodeJS version used (if relevant):
+* Kedro version used (if relevant):
+* Python version used (if relevant):
 
 ## Checklist
-Include labels so that we can categorise your issue
-
-- [ ] Add a "Component" label to the issue
-- [ ] Add a "Priority" label to the issue
+- [ ] Include labels so that we can categorise your issue
