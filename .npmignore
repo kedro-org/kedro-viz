@@ -10,6 +10,9 @@
 # dependencies
 /node_modules
 
+# images
+img/
+
 # testing
 /coverage
 
