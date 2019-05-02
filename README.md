@@ -10,25 +10,12 @@ Run `npm start` to begin development on a local server. To use as an imported pa
 
 ### Environment variables
 
-The project uses a couple of environment variables to allow you to configure data sources and endpoints. You can set them when starting up the dev server, e.g. `ENDPOINT=local DATA=random npm start` will set the data upload endpoint to localhost:3000, and serve randomly-generated data for the pipeline. This is usually the most useful setting for local development.
-
-To understand better how the environment variables work, check `/src/config.js` and the scripts in `package.json`.
-
-**Snapshot upload endpoint options**
-
-There are four different ENDPOINT environment variable options. By default, it will upload to production. The different options are as follows:
-
-- `ENDPOINT=local npm start` --> Upload snapshots to **localhost:3000**
-- `ENDPOINT=dev npm start` --> Upload snapshots to **dev.qbstudioai.com**
-- `ENDPOINT=uat npm start` --> Upload snapshots to **uat.qbstudioai.com**
-- `npm start` --> Upload snapshots to **studio.quantumblack.com**
-
-**Data import options**
+The project uses an environment variable to allow you to configure the data source. You can set it when starting up the dev server, e.g. `DATA=random npm start` will serve randomly-generated data. This is usually the most useful setting for local development.
 
 By default, the app (when run locally), will upload data from a local file, which must be added manually at `/public/logs/nodes.json`.
 However the DATA environment variable can be set to 'random' for procedurally-generated data (refreshed on each page-load). When random data is enabled, certain other features like snapshot history are also enabled even in standalone app mode, to help with testing.
 
-So to recap:
+In other words:
 
 - `DATA=random npm start` --> randomly-generated data
 - `npm start` --> Data loaded from `/public/logs/nodes.json`

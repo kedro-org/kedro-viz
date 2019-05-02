@@ -10,7 +10,6 @@ const useRandomData = dataSource === 'random';
 ReactDOM.render(
   <App
     allowHistoryDeletion={useRandomData}
-    allowUploads={true}
     data={dataSource}
     showHistory={useRandomData}
   />,

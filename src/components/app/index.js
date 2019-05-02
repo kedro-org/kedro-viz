@@ -59,7 +59,6 @@ class App extends React.Component {
 
 App.propTypes = {
   allowHistoryDeletion: PropTypes.bool,
-  allowUploads: PropTypes.bool,
   data: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(
@@ -83,10 +82,6 @@ App.defaultProps = {
    * Data array containing Pipeline snapshot objects
    */
   data: null,
-  /**
-   * Show/hide button to upload data snapshots to StudioAI
-   */
-  allowUploads: true,
   /**
    * Show/hide snapshot history tab in sidebar
    */
