@@ -1,8 +1,7 @@
 import { select } from 'd3-selection';
 
 /**
- * Databse icon, needs to be created like this to support exports
- * in studio ai (which struggles with xlink-hrefs)
+ * Database icon, needs to be created like this to support image exports
  */
 export default d => {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');

@@ -3,7 +3,7 @@
 //--- Fixes and overrides for Carbon components ---//
 
 .kernel-pipeline {
-  // Prevent Chrome 71 focus scroll bug in Studio, by containing the
+  // Prevent Chrome 71 focus scroll bug, by containing the
   // visually-hidden mixin in a wrapper to prevent it escaping and somehow
   // messing up the overflow:hidden scroll positioning.
   .cbn-switch {
