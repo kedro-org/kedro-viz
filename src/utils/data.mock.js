@@ -28,7 +28,7 @@ export const mockData = [
     message: 'List of animal names',
     json_schema: [
       {
-        inputs: ['cat', 'dog'],
+        inputs: ['cat', 'dog', 'parameters', 'parameters_rabbit'],
         name: 'salmon',
         outputs: ['pig', 'horse', 'sheep'],
         tags: ['huge', 'small']
