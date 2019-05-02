@@ -55,7 +55,17 @@ The following conditions must be true in order to visualise your pipeline:
 
 ## Development
 
-Run `npm start` to begin development on a local server. To use as an imported package, run `npm run watch-lib` which will auto-update the compiled lib directory when watched files are changed.
+First, clone this repo and install dependencies (`npm i`). To begin development on a local server, use
+
+```bash
+npm start
+```
+
+This will serve the app at [localhost:4141](http://localhost:4141/), and watch the `/src` folders. It will also update the `/lib` directory, which contains a Babel-compiled copy of the source. This directory is exported to NPM, and is used when importing as a React component into another application. It is updated automatically on save, in case you need to test/debug this locally (e.g. with `npm link`). You can also update it manually:
+
+```bash
+npm run lib
+```
 
 ### Environment variables
 
