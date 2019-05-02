@@ -18,7 +18,9 @@ This project was bootstrapped with Create React App, for which, more complete do
 
 ![Kedro-Viz Pipeline Visualisation](https://github.com/quantumblacklabs/kedro-viz/blob/master/img/pipeline_visualisation.png)
 
-## How do I install Kedro-Viz?
+## How do I install and use Kedro-Viz?
+
+### Kedro Python plugin
 
 Kedro-Viz is available as a Python plugin named `kedro_viz`. To install it:
 
@@ -26,9 +28,23 @@ Kedro-Viz is available as a Python plugin named `kedro_viz`. To install it:
 pip install kedro_viz
 ```
 
-## How do I use Kedro-Viz?
+The plugin adds a `kedro-viz` CLI command. Run this command to visualise your pipeline.
 
-The Kedro-Viz plugin adds a `kedro-viz` CLI command. Run this command to visualise your pipeline.
+### JavaScript React Component
+
+Kedro-Viz is also available as an npm package named [@quantumblack/kedro-viz](https://www.npmjs.com/package/@quantumblack/kedro-viz). To install it:
+
+```bash
+npm install @quantumblack/kedro-viz
+```
+
+Then include it in your React application:
+
+```javascript
+import KernelViz from '@quantumblack/kedro-viz';
+
+const MyApp = () => <KernelViz data={json} />;
+```
 
 ### Prerequisites
 
