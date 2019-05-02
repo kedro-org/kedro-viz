@@ -28,14 +28,14 @@ pip install kedro_viz
 
 ## How do I use Kedro-Viz?
 
-The Kedro-Viz plugin adds a `kedro-viz` CLI command. Run this command to visualise your pipeline.  
+The Kedro-Viz plugin adds a `kedro-viz` CLI command. Run this command to visualise your pipeline.
 
 ### Prerequisites
 
 The following conditions must be true in order to visualise your pipeline:
 
-* Your project directory must be available to the Kedro-Viz plugin.
-* You must be using a Kedro project structure with a completed Data Catalog, nodes and pipeline structure.
+- Your project directory must be available to the Kedro-Viz plugin.
+- You must be using a Kedro project structure with a completed Data Catalog, nodes and pipeline structure.
 
 ## Development
 
@@ -71,19 +71,33 @@ So to recap:
 This project is designed to be used in a couple of different ways:
 
 1. **Standalone application**
-  Run `npm run build` to generate a production build as a full-page app. The built app will be placed in the `/build` directory. Data for the chart should be placed in `/public/logs/nodes.json` because this directory is marked `gitignore`.
+   Run `npm run build` to generate a production build as a full-page app. The built app will be placed in the `/build` directory. Data for the chart should be placed in `/public/logs/nodes.json` because this directory is marked `gitignore`.
 
 2. **React component**
-  Run `npm run lib` to generate a React component that can be imported into other applications. The built component will be placed in the `/lib` directory. This can then be published to npm (The `lib` script is run automatically as a `prepublish` script).
+   Run `npm run lib` to generate a React component that can be imported into other applications. The built component will be placed in the `/lib` directory. This can then be published to npm (The `lib` script is run automatically as a `prepublish` script).
 
-  Note: Because the QuantumBlack NPM package is currently set to private, this repo temporarily hosts compiled code from the `build` branch, so that it can be retrieved from projects that do not have access to the NPM package.
+Note: Because the QuantumBlack NPM package is currently set to private, this repo temporarily hosts compiled code from the `build` branch, so that it can be retrieved from projects that do not have access to the NPM package.
 
 ## Testing
 
-This app uses [Jest](https://jestjs.io/) as its JavaScript test runner, which you can invoke as follows:
+### JavaScript application tests
+
+This app uses [Jest](https://jestjs.io/) and [Enzyme](https://airbnb.io/enzyme/) to run JavaScript tests, which you can invoke as follows:
 
 ```bash
-npm run test
+npm test
+```
+
+You can also [inspect and debug tests](https://facebook.github.io/create-react-app/docs/debugging-tests):
+
+```bash
+npm run test:debug
+```
+
+And [check test coverage](https://facebook.github.io/create-react-app/docs/running-tests#coverage-reporting):
+
+```bash
+npm run test:coverage
 ```
 
 See the [Create-React-App docs](https://github.com/facebook/create-react-app) for further information on JS testing.
@@ -94,19 +108,21 @@ When used in production with Kedro, the standalone viz is served via a Flask (Py
 
 1. Create and activate a test python virtual environment:
 
-    ```bash
-    python3 -m venv /tmp/test_ve/ && source /tmp/test_ve/bin/activate
-    ```
+   ```bash
+   python3 -m venv /tmp/test_ve/ && source /tmp/test_ve/bin/activate
+   ```
+
 2. Execute the tests:
 
-    ```bash
-    make pytest
-    ```
+   ```bash
+   make pytest
+   ```
+
 3. Deactivate the python virtual environment:
 
-    ```bash
-    deactivate
-    ```
+   ```bash
+   deactivate
+   ```
 
 ## What licence do you use?
 
