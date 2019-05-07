@@ -25,10 +25,10 @@ This project was bootstrapped with Create React App, for which, more complete do
 Kedro-Viz is available as a Python plugin named `kedro_viz`. To install it:
 
 ```bash
-pip install kedro_viz
+pip install kedro-viz
 ```
 
-The plugin adds a `kedro-viz` CLI command. Run this command to visualise your pipeline.
+The plugin adds a `kedro viz` CLI command. Run this command to visualise your pipeline.
 
 ### JavaScript React Component
 
