@@ -16,7 +16,7 @@ With Kedro-Viz you can:
 
 This project was bootstrapped with Create React App, for which, more complete documentation is available on [Github](https://github.com/facebook/create-react-app) and the [project website](https://facebook.github.io/create-react-app/).
 
-![Kedro-Viz Pipeline Visualisation](https://github.com/quantumblacklabs/kedro-viz/blob/master/img/pipeline_visualisation.png)
+![Kedro-Viz Pipeline Visualisation](.github/pipeline_visualisation.png?raw=true)
 
 ## How do I install and use Kedro-Viz?
 

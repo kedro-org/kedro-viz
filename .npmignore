@@ -10,8 +10,8 @@
 # dependencies
 /node_modules
 
-# images
-img/
+# documentation and related assets
+.github
 
 # testing
 /coverage
