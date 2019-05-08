@@ -41,9 +41,9 @@ npm install @quantumblack/kedro-viz
 Then include it in your React application:
 
 ```javascript
-import KernelViz from '@quantumblack/kedro-viz';
+import KedroViz from '@quantumblack/kedro-viz';
 
-const MyApp = () => <KernelViz data={json} />;
+const MyApp = () => <KedroViz data={json} />;
 ```
 
 ### Prerequisites
