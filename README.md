@@ -61,7 +61,7 @@ First, clone this repo and install dependencies (`npm i`). To begin development 
 npm start
 ```
 
-This will serve the app at [localhost:4141](http://localhost:4141/), and watch the `/src` folders. It will also update the `/lib` directory, which contains a Babel-compiled copy of the source. This directory is exported to NPM, and is used when importing as a React component into another application. It is updated automatically on save, in case you need to test/debug this locally (e.g. with `npm link`). You can also update it manually:
+This will serve the app at [localhost:4141](http://localhost:4141/), and watch the `/src` folders. It will also update the `/lib` directory, which contains a Babel-compiled copy of the source. This directory is exported to npm, and is used when importing as a React component into another application. It is updated automatically on save, in case you need to test/debug this locally (e.g. with `npm link`). You can also update it manually:
 
 ```bash
 npm run lib
@@ -102,7 +102,7 @@ This project is designed to be used in a couple of different ways:
 2. **React component**
    Run `npm run lib` to generate a React component that can be imported into other applications. The built component will be placed in the `/lib` directory. This can then be published to npm (The `lib` script is run automatically as a `prepublish` script).
 
-Note: Because the QuantumBlack NPM package is currently set to private, this repo temporarily hosts compiled code from the `build` branch, so that it can be retrieved from projects that do not have access to the NPM package.
+Note: Because the QuantumBlack npm package is currently set to private, this repo temporarily hosts compiled code from the `build` branch, so that it can be retrieved from projects that do not have access to the npm package.
 
 ## Testing
 
