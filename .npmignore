@@ -10,6 +10,9 @@
 # dependencies
 /node_modules
 
+# documentation and related assets
+.github
+
 # testing
 /coverage
 *.test.js
