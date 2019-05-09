@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kernel-pipeline-viz",
-  "version": "0.8.0",
+  "version": "0.8.2",
   "main": "lib/components/app/index.js",
   "homepage": ".",
   "scripts": {
@@ -9,7 +9,7 @@
     "start": "REACT_APP_DATA_SOURCE=$DATA npm-run-all -p start:css start:app start:lib",
     "start:app": "PORT=4141 react-scripts start",
     "start:css": "npm run build:css && node-sass src/ -o src/ --watch --recursive",
-    "start:lib": "npm run lib:copy --watch",
+    "start:lib": "rm -rf lib && babel src --out-dir lib --copy-files --watch",
     "lib": "npm run build:css && npm run lib:copy",
     "lib:copy": "rm -rf lib && babel src --out-dir lib --copy-files",
     "lint": "eslint src/ --fix",

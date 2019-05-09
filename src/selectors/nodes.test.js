@@ -16,14 +16,6 @@ import {
 } from '../actions';
 import reducer from '../reducers';
 
-// const testObjectStructure = nodeObject => {
-//   expect(nodeObject).toEqual(expect.any(Object));
-//   expect(Object.keys(nodeObject)).toEqual(getActiveSnapshotNodes(mockState));
-//   expect(Object.values(nodeObject)).toEqual(
-//     expect.arrayContaining([expect.any(Boolean)])
-//   );
-// };
-
 describe('Selectors', () => {
   describe('getActiveSnapshotNodes', () => {
     it('retrieves a list of nodes for the active snapshot', () => {
