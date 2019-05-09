@@ -2,6 +2,9 @@
   "name": "@quantumblack/kernel-pipeline-viz",
   "version": "0.8.2",
   "main": "lib/components/app/index.js",
+  "files": [
+    "lib"
+  ],
   "homepage": ".",
   "scripts": {
     "build": "npm run build:css && react-scripts build",
