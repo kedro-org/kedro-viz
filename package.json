@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run build:css && react-scripts build",
     "build:css": "node-sass src/ -o src/",
-    "start": "REACT_APP_DATA_SOURCE=$DATA REACT_APP_ENDPOINT=$ENDPOINT npm-run-all -p start:css start:app start:lib",
+    "start": "REACT_APP_DATA_SOURCE=$DATA npm-run-all -p start:css start:app start:lib",
     "start:app": "PORT=4141 react-scripts start",
     "start:css": "npm run build:css && node-sass src/ -o src/ --watch --recursive",
     "start:lib": "rm -rf lib && babel src --out-dir lib --copy-files --watch",

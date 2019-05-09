@@ -17,14 +17,9 @@ describe('App', () => {
       shallow(<App data={mockData} />);
     });
 
-    it('when enabling history, history deletion, and uploads', () => {
+    it('when enabling history and history deletion', () => {
       shallow(
-        <App
-          allowHistoryDeletion={true}
-          allowUploads={true}
-          data="random"
-          showHistory={true}
-        />
+        <App allowHistoryDeletion={true} data="random" showHistory={true} />
       );
     });
   });

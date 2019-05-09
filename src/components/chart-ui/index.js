@@ -4,7 +4,6 @@ import { RadioButton, Toggle } from '@quantumblack/carbon-ui-components';
 import { changeView, toggleParameters, toggleTextLabels } from '../../actions';
 import TagList from '../tag-list';
 import NodeList from '../node-list';
-import UploadSnapshot from '../upload-snapshot';
 import './chart-ui.css';
 import { Scrollbars } from 'react-custom-scrollbars';
 
@@ -80,7 +79,6 @@ export const ChartUI = ({
         />
         <TagList />
         <NodeList />
-        <UploadSnapshot />
       </div>
     </Scrollbars>
   ) : null;

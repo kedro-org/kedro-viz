@@ -8,8 +8,7 @@ import { zoom, zoomIdentity } from 'd3-zoom';
 import { toggleNodeActive, updateChartSize } from '../../actions';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import linkedNodes from './linked-nodes';
-import databaseIcon from './database-icon';
-import cogIcon from './cog-icon';
+import icon from './icon';
 import './flowchart.css';
 
 const DURATION = 700;
@@ -200,9 +199,7 @@ export class FlowChart extends Component {
 
     enterNodes.append('rect');
 
-    enterNodes.append(node =>
-      node.type === 'data' ? databaseIcon(node) : cogIcon(node)
-    );
+    enterNodes.append(icon);
 
     enterNodes
       .append('text')

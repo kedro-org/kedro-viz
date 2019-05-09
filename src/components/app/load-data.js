@@ -8,18 +8,16 @@ import formatSnapshots from '../../utils/format-data';
  * @param {Object}   pipelineData Formatted pipeline data
  * @param {Object}   props App component props
  * @param {Boolean}  props.allowHistoryDeletion Whether to allow snapshots to be deleted
- * @param {Boolean}  props.allowUploads Whether to allow snapshots to be uploaded
  * @param {Function} props.onDeleteSnapshot Event handler for deleting snapshots
  * @param {Boolean}  props.showHistory Whether to show History panel
  */
 export const getInitialState = (
   pipelineData,
-  { allowHistoryDeletion, allowUploads, onDeleteSnapshot, showHistory }
+  { allowHistoryDeletion, onDeleteSnapshot, showHistory }
 ) => ({
   ...pipelineData,
   activeSnapshot: pipelineData.snapshotIDs[0],
   allowHistoryDeletion,
-  allowUploads,
   chartSize: {},
   onDeleteSnapshot,
   parameters: true,
