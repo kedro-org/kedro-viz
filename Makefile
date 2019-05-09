@@ -1,9 +1,9 @@
 clean:
 	rm -rf build
-	rm -rf package/kernelviz/html
+	rm -rf package/kedroviz/html
 	rm -rf package/build
 	rm -rf package/dist
-	rm -rf package/kernelviz.egg-info
+	rm -rf package/kedroviz.egg-info
 	find package/ | grep -E "(__pycache__|\.pytest_cache|\.eggs|\.pyc|\.pyo$\)"\
 		| xargs rm -rf
 
@@ -14,11 +14,11 @@ publish:
 	cd package && python3 setup.py bdist_wheel upload -r pypi-qb
 
 run:
-	python package/kernelviz/server.py --port 4343 --logdir logs/
+	python package/kedroviz/server.py --port 4343 --logdir logs/
 
 build: clean
 	npm run build
-	cp -R build package/kernelviz/html
+	cp -R build package/kedroviz/html
 
 make pytest: build
 	cd package && python3 setup.py test

@@ -1,3 +1,3 @@
 if __name__ == '__main__':
-    from kernelviz import server
+    from kedroviz import server
     server.main()

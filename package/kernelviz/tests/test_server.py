@@ -1,5 +1,5 @@
 """
-Tests for Kernelviz server
+Tests for Kedroviz server
 """
 
 import json
@@ -8,16 +8,16 @@ from unittest import mock
 
 import pytest
 
-import kernelviz.server
+import kedroviz.server
 
 
 PIPELINE_LOG = "logs/pipeline.log"
 
 
 def setup_function(function):
-    kernelviz.server.logdir = os.path.join(os.path.dirname(__file__), "logs")
-    mock.patch("kernelviz.server.webbrowser").start()
-    mock.patch("kernelviz.server.app.run").start()
+    kedroviz.server.logdir = os.path.join(os.path.dirname(__file__), "logs")
+    mock.patch("kedroviz.server.webbrowser").start()
+    mock.patch("kedroviz.server.app.run").start()
 
 
 def teardown_function(function):
@@ -27,45 +27,45 @@ def teardown_function(function):
 @pytest.fixture
 def client():
     """Create Flask test client as a test fixture"""
-    client = kernelviz.server.app.test_client()
+    client = kedroviz.server.app.test_client()
     return client
 
 
 @mock.patch("sys.argv", ("", "--port=3131"))
 def test_set_port():
     """Check that port argument is correctly handled"""
-    kernelviz.server.main()
-    assert kernelviz.server.port == 3131
-    kernelviz.server.app.run.assert_called_with(host="127.0.0.1", port=3131)
-    assert kernelviz.server.webbrowser.open_new.called
+    kedroviz.server.main()
+    assert kedroviz.server.port == 3131
+    kedroviz.server.app.run.assert_called_with(host="127.0.0.1", port=3131)
+    assert kedroviz.server.webbrowser.open_new.called
 
 
 @mock.patch("sys.argv", ("", "--host=0.0.0.0", "--port=8000"))
 def test_set_ip():
     """Check that host argument is correctly handled"""
-    kernelviz.server.main()
-    assert kernelviz.server.host == "0.0.0.0"
-    kernelviz.server.app.run.assert_called_with(host="0.0.0.0", port=8000)
-    assert kernelviz.server.webbrowser.open_new.called
+    kedroviz.server.main()
+    assert kedroviz.server.host == "0.0.0.0"
+    kedroviz.server.app.run.assert_called_with(host="0.0.0.0", port=8000)
+    assert kedroviz.server.webbrowser.open_new.called
 
 
 @mock.patch("sys.argv", ("", "--logdir=/tmp"))
-@mock.patch("kernelviz.server.exists")
+@mock.patch("kedroviz.server.exists")
 def test_set_logdir(mock_path_exists):
     """Check that logdir argument is correctly handled"""
-    kernelviz.server.main()
-    assert kernelviz.server.logdir == "/tmp"
+    kedroviz.server.main()
+    assert kedroviz.server.logdir == "/tmp"
 
 
 @mock.patch("sys.argv", ("", "--logdir=/tmp", "--no-browser"))
-@mock.patch("kernelviz.server.exists")
+@mock.patch("kedroviz.server.exists")
 def test_no_browser(mock_path_exists):
     """
     Check that call to open browser is not performed when `--no-browser`
     argument is specified
     """
-    kernelviz.server.main()
-    assert not kernelviz.server.webbrowser.open_new.called
+    kedroviz.server.main()
+    assert not kedroviz.server.webbrowser.open_new.called
 
 
 # Test endpoints
@@ -74,7 +74,7 @@ def test_root_endpoint(client):
     """Test `/` endoint is functional"""
     response = client.get('/')
     assert response.status_code == 200
-    assert "KernelAI Pipeline Viz" in response.data.decode()
+    assert "Kedro Viz" in response.data.decode()
 
 
 def test_nodes_endpoint(client):
