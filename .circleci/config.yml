@@ -46,7 +46,7 @@ jobs:
           command: npm run build
       - run:
           name: Copy build to package
-          command: cp -R build package/kernelviz/html
+          command: cp -R build package/kedroviz/html
       - run:
           name: Configure distutils with pypi-qb
           command: |

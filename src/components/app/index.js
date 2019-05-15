@@ -34,8 +34,7 @@ class App extends React.Component {
   dataWasUpdated(prevData, newData) {
     // Check just the schema IDs of incoming data updates
     const dataID = snapshots =>
-      Array.isArray(snapshots) &&
-      snapshots.map(d => d.kernel_ai_schema_id).join('');
+      Array.isArray(snapshots) && snapshots.map(d => d.schema_id).join('');
 
     return dataID(prevData) !== dataID(newData);
   }
@@ -65,10 +64,7 @@ App.propTypes = {
       PropTypes.shape({
         created_ts: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         json_schema: PropTypes.array.isRequired,
-        kernel_ai_schema_id: PropTypes.oneOfType([
-          PropTypes.string,
-          PropTypes.number
-        ]),
+        schema_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         message: PropTypes.string
       })
     )

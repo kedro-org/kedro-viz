@@ -7,13 +7,13 @@ const mockProps = { showHistory, theme };
 describe('Wrapper', () => {
   it('renders without crashing', () => {
     const wrapper = setup.shallow(Wrapper, mockProps);
-    const container = wrapper.find('.kernel-pipeline');
+    const container = wrapper.find('.kedro-pipeline');
     expect(container.length).toBe(1);
   });
 
   it('sets a class based on the theme', () => {
     const wrapper = setup.shallow(Wrapper, mockProps);
-    const container = wrapper.find('.kernel-pipeline');
+    const container = wrapper.find('.kedro-pipeline');
     const { theme } = wrapper.instance().props;
     expect(container.hasClass(`cbn-theme--light`)).toBe(theme === 'light');
     expect(container.hasClass(`cbn-theme--dark`)).toBe(theme === 'dark');

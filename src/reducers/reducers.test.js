@@ -107,9 +107,9 @@ describe('Reducer', () => {
         snapshots: formatData([mockData[0]])
       });
       expect(newState.snapshotIDs).toEqual([mockState.snapshotIDs[1]]);
-      expect(newState.activeSnapshot).toBe(mockData[0].kernel_ai_schema_id);
+      expect(newState.activeSnapshot).toBe(mockData[0].schema_id);
       expect(Object.keys(newState.snapshotNodes)).toEqual([
-        mockData[0].kernel_ai_schema_id
+        mockData[0].schema_id
       ]);
     });
   });

@@ -257,7 +257,7 @@ const formatSnapshots = data => {
   };
 
   data.forEach(d => {
-    const id = String(d.kernel_ai_schema_id);
+    const id = String(d.schema_id);
     snapshotIDs.push(id);
     snapshotSchema[id] = d.json_schema;
     snapshotTimestamp[id] = Number(d.created_ts);

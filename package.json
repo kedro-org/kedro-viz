@@ -1,5 +1,5 @@
 {
-  "name": "@quantumblack/kernel-pipeline-viz",
+  "name": "@quantumblack/kedro-viz",
   "version": "0.8.2",
   "main": "lib/components/app/index.js",
   "homepage": ".",
@@ -14,8 +14,6 @@
     "lib:copy": "rm -rf lib && babel src --out-dir lib --copy-files",
     "lint": "eslint src/ --fix",
     "prepublishOnly": "npm run lib",
-    "version:update": "./bin/publish-build.sh",
-    "version:get": "echo \"Current version is \"$(./bin/config.sh version)",
     "test": "react-scripts test --env=jsdom",
     "test:coverage": "npm test -- --coverage",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",

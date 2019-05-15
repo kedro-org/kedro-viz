@@ -11,7 +11,7 @@ import formatSnapshots from './format-data';
 export const mockData = [
   {
     created_ts: '1551452832000',
-    kernel_ai_schema_id: '310750827599783',
+    schema_id: '310750827599783',
     message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     json_schema: [
       {
@@ -24,7 +24,7 @@ export const mockData = [
   },
   {
     created_ts: '9999999999999',
-    kernel_ai_schema_id: '123456789012345',
+    schema_id: '123456789012345',
     message: 'List of animal names',
     json_schema: [
       {

@@ -30,7 +30,7 @@ export class Wrapper extends Component {
 
     return (
       <div
-        className={classnames('kernel-pipeline', {
+        className={classnames('kedro-pipeline', {
           'cbn-theme--dark': theme === 'dark',
           'cbn-theme--light': theme === 'light'
         })}>

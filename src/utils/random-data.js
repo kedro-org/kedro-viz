@@ -125,7 +125,7 @@ class Snapshot {
    */
   getDatum() {
     return {
-      kernel_ai_schema_id: randomNumber(999999999999999),
+      schema_id: randomNumber(999999999999999),
       message: getRandomName(randomNumber(MAX_MESSAGE_WORD_LENGTH), ' '),
       created_ts: new Date().getTime() - randomNumber(MAX_TIMESTAMP_OFFSET),
       json_schema: this.getSchema()
