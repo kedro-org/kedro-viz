@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 ## Description
-Short description of the problem here
+Short description of the problem here.
 
 ## Context
 How has this bug affected you? What were you trying to accomplish?
@@ -20,10 +20,10 @@ How has this bug affected you? What were you trying to accomplish?
 3. [and so on...]
 
 ## Expected Result
-Tell us what should happen
+Tell us what should happen.
 
 ## Actual Result
-Tell us what happens instead
+Tell us what happens instead.
 
 ```
 -- If you received an error, place it here.
