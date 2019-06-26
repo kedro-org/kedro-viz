@@ -21,7 +21,7 @@ def root():
 
 
 @app.route("/logs/nodes.json")
-def nodes():
+def nodes_old():
     """Serve the pipeline data."""
     pipeline = get_project_context("create_pipeline")()
     return jsonify(
@@ -35,6 +35,48 @@ def nodes():
             for n in pipeline.nodes
         ]
     )
+
+
+@app.route("/api/nodes.json")
+def nodes_json():
+    """Serve the pipeline data."""
+    pipeline = get_project_context("create_pipeline")()
+
+    nodes = []
+    edges = []
+    namespaces = set()
+
+    for node in pipeline.nodes:
+        task_id = "task/" + node.name
+        nodes.append(
+            {
+                "type": "task",
+                "id": task_id,
+                "name": node.short_name,
+                "full_name": str(node),
+                "tags": list(node.tags),
+            }
+        )
+        for data_set in node.inputs:
+            namespace = data_set.split("@")[0]
+            edges.append({"source": "data/" + namespace, "target": task_id})
+            namespaces.add(namespace)
+        for data_set in node.outputs:
+            namespace = data_set.split("@")[0]
+            edges.append({"source": task_id, "target": "data/" + namespace})
+            namespaces.add(namespace)
+
+    for namespace in sorted(namespaces):
+        nodes.append(
+            {
+                "type": "data",
+                "id": "data/" + namespace,
+                "name": namespace,
+                "full_name": namespace,
+            }
+        )
+
+    return jsonify({"snapshots": [{"nodes": nodes, "edges": edges}]})
 
 
 @click.group(name="Kedro-Viz")

@@ -10,12 +10,9 @@ from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
 
-EXPECTED_PIPELINE_DATA = [
+EXPECTED_PIPELINE_DATA_OLD = [
     {
-        "name": (
-            "split_data([example_iris_data,parameters]) -> "
-            "[example_test_x,example_test_y,example_train_x,example_train_y@spark]"
-        ),
+        "name": ("split"),
         "inputs": ["parameters", "example_iris_data"],
         "outputs": [
             "example_train_y",
@@ -26,27 +23,143 @@ EXPECTED_PIPELINE_DATA = [
         "tags": [],
     },
     {
-        "name": (
-            "train_model([example_train_x,example_train_y@pandas,parameters]) -> "
-            "[example_model]"
-        ),
+        "name": ("train"),
         "inputs": ["example_train_y", "example_train_x", "parameters"],
         "outputs": ["example_model"],
         "tags": [],
     },
     {
-        "name": "predict([example_model,example_test_x]) -> [example_predictions]",
+        "name": "predict",
         "inputs": ["example_test_x", "example_model"],
         "outputs": ["example_predictions"],
         "tags": [],
     },
     {
-        "name": "report_accuracy([example_predictions,example_test_y]) -> None",
+        "name": "report",
         "inputs": ["example_predictions", "example_test_y"],
         "outputs": [],
         "tags": [],
     },
 ]
+
+
+EXPECTED_PIPELINE_DATA = {
+    "snapshots": [
+        {
+            "edges": [
+                {"source": "data/parameters", "target": "task/split"},
+                {"source": "data/example_iris_data", "target": "task/split"},
+                {"source": "task/split", "target": "data/example_train_y"},
+                {"source": "task/split", "target": "data/example_train_x"},
+                {"source": "task/split", "target": "data/example_test_y"},
+                {"source": "task/split", "target": "data/example_test_x"},
+                {"source": "data/example_train_y", "target": "task/train"},
+                {"source": "data/example_train_x", "target": "task/train"},
+                {"source": "data/parameters", "target": "task/train"},
+                {"source": "task/train", "target": "data/example_model"},
+                {"source": "data/example_test_x", "target": "task/predict"},
+                {"source": "data/example_model", "target": "task/predict"},
+                {"source": "task/predict", "target": "data/example_predictions"},
+                {"source": "data/example_predictions", "target": "task/report"},
+                {"source": "data/example_test_y", "target": "task/report"},
+            ],
+            "nodes": [
+                {
+                    "full_name": (
+                        "split: "
+                        "split_data([example_iris_data,parameters]) -> "
+                        "[example_test_x,example_test_y,example_train_x,example_train_y@spark]"
+                    ),
+                    "id": "task/split",
+                    "name": "split",
+                    "tags": [],
+                    "type": "task",
+                },
+                {
+                    "full_name": (
+                        "train: "
+                        "train_model([example_train_x,example_train_y@pandas,parameters]) -> "
+                        "[example_model]"
+                    ),
+                    "id": "task/train",
+                    "name": "train",
+                    "tags": [],
+                    "type": "task",
+                },
+                {
+                    "full_name": (
+                        "predict: "
+                        "predict([example_model,example_test_x]) -> "
+                        "[example_predictions]"
+                    ),
+                    "id": "task/predict",
+                    "name": "predict",
+                    "tags": [],
+                    "type": "task",
+                },
+                {
+                    "full_name": (
+                        "report: "
+                        "report_accuracy([example_predictions,example_test_y]) -> "
+                        "None"
+                    ),
+                    "id": "task/report",
+                    "name": "report",
+                    "tags": [],
+                    "type": "task",
+                },
+                {
+                    "full_name": "example_iris_data",
+                    "id": "data/example_iris_data",
+                    "name": "example_iris_data",
+                    "type": "data",
+                },
+                {
+                    "full_name": "example_model",
+                    "id": "data/example_model",
+                    "name": "example_model",
+                    "type": "data",
+                },
+                {
+                    "full_name": "example_predictions",
+                    "id": "data/example_predictions",
+                    "name": "example_predictions",
+                    "type": "data",
+                },
+                {
+                    "full_name": "example_test_x",
+                    "id": "data/example_test_x",
+                    "name": "example_test_x",
+                    "type": "data",
+                },
+                {
+                    "full_name": "example_test_y",
+                    "id": "data/example_test_y",
+                    "name": "example_test_y",
+                    "type": "data",
+                },
+                {
+                    "full_name": "example_train_x",
+                    "id": "data/example_train_x",
+                    "name": "example_train_x",
+                    "type": "data",
+                },
+                {
+                    "full_name": "example_train_y",
+                    "id": "data/example_train_y",
+                    "name": "example_train_y",
+                    "type": "data",
+                },
+                {
+                    "full_name": "parameters",
+                    "id": "data/parameters",
+                    "name": "parameters",
+                    "type": "data",
+                },
+            ],
+        }
+    ]
+}
 
 
 def create_pipeline():
@@ -73,14 +186,26 @@ def create_pipeline():
                     "example_test_y",
                     "example_test_x",
                 ],
+                name="split",
             ),
             node(
                 train_model,
                 ["example_train_y@pandas", "example_train_x", "parameters"],
                 ["example_model"],
+                name="train",
             ),
-            node(predict, ["example_test_x", "example_model"], ["example_predictions"]),
-            node(report_accuracy, ["example_predictions", "example_test_y"], []),
+            node(
+                predict,
+                ["example_test_x", "example_model"],
+                ["example_predictions"],
+                name="predict",
+            ),
+            node(
+                report_accuracy,
+                ["example_predictions", "example_test_y"],
+                [],
+                name="report",
+            ),
         ]
     )
 
@@ -146,9 +271,17 @@ def test_root_endpoint(client):
     assert "Kedro Viz" in response.data.decode()
 
 
-def test_nodes_endpoint(client):
+def test_old_nodes_endpoint(client):
     """Test `/log/nodes.json` endoint is functional and returns a valid JSON"""
     response = client.get("/logs/nodes.json")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data == EXPECTED_PIPELINE_DATA_OLD
+
+
+def test_nodes_endpoint(client):
+    """Test `/api/nodes.json` endoint is functional and returns a valid JSON"""
+    response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == EXPECTED_PIPELINE_DATA
