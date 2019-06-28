@@ -1,8 +1,8 @@
 """ Kedro-Viz plugin and webserver """
 
 import webbrowser
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 import click
 from flask import Flask, jsonify
@@ -41,6 +41,12 @@ def nodes_old():
 @app.route("/api/nodes.json")
 def nodes_json():
     """Serve the pipeline data."""
+
+    def pretty_name(name):
+        name = name.replace("-", " ").replace("_", " ")
+        parts = [n[0].upper() + n[1:] for n in name.split()]
+        return " ".join(parts)
+
     pipeline = get_project_context("create_pipeline")()
 
     nodes = []
@@ -74,7 +80,7 @@ def nodes_json():
             {
                 "type": "data",
                 "id": "data/" + namespace,
-                "name": namespace,
+                "name": pretty_name(namespace),
                 "full_name": namespace,
                 "tags": sorted(tags),
             }
@@ -82,7 +88,7 @@ def nodes_json():
 
     tags = []
     for tag in sorted(all_tags):
-        tags.append({"id": tag, "name": tag})
+        tags.append({"id": tag, "name": pretty_name(tag)})
 
     return jsonify({"snapshots": [{"nodes": nodes, "edges": edges, "tags": tags}]})
 
