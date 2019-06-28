@@ -81,7 +81,7 @@ def nodes_json():
         )
 
     tags = []
-    for tag in all_tags:
+    for tag in sorted(all_tags):
         tags.append({"id": tag, "name": tag})
 
     return jsonify({"snapshots": [{"nodes": nodes, "edges": edges, "tags": tags}]})

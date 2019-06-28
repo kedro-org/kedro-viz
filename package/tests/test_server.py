@@ -26,13 +26,13 @@ EXPECTED_PIPELINE_DATA_OLD = [
         "name": "train",
         "inputs": ["example_train_y", "example_train_x", "parameters"],
         "outputs": ["example_model"],
-        "tags": [],
+        "tags": ["bob"],
     },
     {
         "name": "predict",
         "inputs": ["example_test_x", "example_model"],
         "outputs": ["example_predictions"],
-        "tags": [],
+        "tags": ["fred"],
     },
     {
         "name": "report_accuracy([example_predictions,example_test_y]) -> None",
@@ -89,7 +89,7 @@ EXPECTED_PIPELINE_DATA = {
                     ),
                     "id": "task/train",
                     "name": "train",
-                    "tags": [],
+                    "tags": ["bob"],
                     "type": "task",
                 },
                 {
@@ -100,7 +100,7 @@ EXPECTED_PIPELINE_DATA = {
                     ),
                     "id": "task/predict",
                     "name": "predict",
-                    "tags": [],
+                    "tags": ["fred"],
                     "type": "task",
                 },
                 {
@@ -127,21 +127,21 @@ EXPECTED_PIPELINE_DATA = {
                     "full_name": "example_model",
                     "id": "data/example_model",
                     "name": "example_model",
-                    "tags": [],
+                    "tags": ["bob", "fred"],
                     "type": "data",
                 },
                 {
                     "full_name": "example_predictions",
                     "id": "data/example_predictions",
                     "name": "example_predictions",
-                    "tags": [],
+                    "tags": ["fred"],
                     "type": "data",
                 },
                 {
                     "full_name": "example_test_x",
                     "id": "data/example_test_x",
                     "name": "example_test_x",
-                    "tags": [],
+                    "tags": ["fred"],
                     "type": "data",
                 },
                 {
@@ -155,25 +155,25 @@ EXPECTED_PIPELINE_DATA = {
                     "full_name": "example_train_x",
                     "id": "data/example_train_x",
                     "name": "example_train_x",
-                    "tags": [],
+                    "tags": ["bob"],
                     "type": "data",
                 },
                 {
                     "full_name": "example_train_y",
                     "id": "data/example_train_y",
                     "name": "example_train_y",
-                    "tags": [],
+                    "tags": ["bob"],
                     "type": "data",
                 },
                 {
                     "full_name": "parameters",
                     "id": "data/parameters",
                     "name": "parameters",
-                    "tags": [],
+                    "tags": ["bob"],
                     "type": "data",
                 },
             ],
-            "tags": [],
+            "tags": [{"id": "bob", "name": "bob"}, {"id": "fred", "name": "fred"}],
         }
     ]
 }
@@ -210,12 +210,14 @@ def create_pipeline():
                 ["example_train_y@pandas", "example_train_x", "parameters"],
                 ["example_model"],
                 name="train",
+                tags=["bob"],
             ),
             node(
                 predict,
                 ["example_test_x", "example_model"],
                 ["example_predictions"],
                 name="predict",
+                tags=["fred"],
             ),
             node(report_accuracy, ["example_predictions", "example_test_y"], []),
         ]
