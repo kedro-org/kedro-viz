@@ -2,6 +2,7 @@
 
 import webbrowser
 from pathlib import Path
+from collections import defaultdict
 
 import click
 from flask import Flask, jsonify
@@ -44,7 +45,8 @@ def nodes_json():
 
     nodes = []
     edges = []
-    namespaces = set()
+    namespace_tags = defaultdict(set)
+    all_tags = set()
 
     for node in pipeline.nodes:
         task_id = "task/" + node.name
@@ -54,29 +56,35 @@ def nodes_json():
                 "id": task_id,
                 "name": node.short_name,
                 "full_name": str(node),
-                "tags": list(node.tags),
+                "tags": sorted(node.tags),
             }
         )
+        all_tags.update(node.tags)
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
             edges.append({"source": "data/" + namespace, "target": task_id})
-            namespaces.add(namespace)
+            namespace_tags[namespace].update(node.tags)
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
             edges.append({"source": task_id, "target": "data/" + namespace})
-            namespaces.add(namespace)
+            namespace_tags[namespace].update(node.tags)
 
-    for namespace in sorted(namespaces):
+    for namespace, tags in sorted(namespace_tags.items()):
         nodes.append(
             {
                 "type": "data",
                 "id": "data/" + namespace,
                 "name": namespace,
                 "full_name": namespace,
+                "tags": sorted(tags),
             }
         )
 
-    return jsonify({"snapshots": [{"nodes": nodes, "edges": edges}]})
+    tags = []
+    for tag in all_tags:
+        tags.append({"id": tag, "name": tag})
+
+    return jsonify({"snapshots": [{"nodes": nodes, "edges": edges, "tags": tags}]})
 
 
 @click.group(name="Kedro-Viz")
