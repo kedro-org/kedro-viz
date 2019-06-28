@@ -12,7 +12,7 @@ from kedro_viz import server
 
 EXPECTED_PIPELINE_DATA_OLD = [
     {
-        "name": ("split"),
+        "name": "split",
         "inputs": ["parameters", "example_iris_data"],
         "outputs": [
             "example_train_y",
@@ -23,7 +23,7 @@ EXPECTED_PIPELINE_DATA_OLD = [
         "tags": [],
     },
     {
-        "name": ("train"),
+        "name": "train",
         "inputs": ["example_train_y", "example_train_x", "parameters"],
         "outputs": ["example_model"],
         "tags": [],
@@ -35,7 +35,7 @@ EXPECTED_PIPELINE_DATA_OLD = [
         "tags": [],
     },
     {
-        "name": "report",
+        "name": "report_accuracy([example_predictions,example_test_y]) -> None",
         "inputs": ["example_predictions", "example_test_y"],
         "outputs": [],
         "tags": [],
@@ -60,8 +60,14 @@ EXPECTED_PIPELINE_DATA = {
                 {"source": "data/example_test_x", "target": "task/predict"},
                 {"source": "data/example_model", "target": "task/predict"},
                 {"source": "task/predict", "target": "data/example_predictions"},
-                {"source": "data/example_predictions", "target": "task/report"},
-                {"source": "data/example_test_y", "target": "task/report"},
+                {
+                    "source": "data/example_predictions",
+                    "target": "task/report_accuracy([example_predictions,example_test_y]) -> None",
+                },
+                {
+                    "source": "data/example_test_y",
+                    "target": "task/report_accuracy([example_predictions,example_test_y]) -> None",
+                },
             ],
             "nodes": [
                 {
@@ -99,12 +105,14 @@ EXPECTED_PIPELINE_DATA = {
                 },
                 {
                     "full_name": (
-                        "report: "
                         "report_accuracy([example_predictions,example_test_y]) -> "
                         "None"
                     ),
-                    "id": "task/report",
-                    "name": "report",
+                    "id": (
+                        "task/report_accuracy([example_predictions,example_test_y]) -> "
+                        "None"
+                    ),
+                    "name": "report_accuracy",
                     "tags": [],
                     "type": "task",
                 },
@@ -209,12 +217,7 @@ def create_pipeline():
                 ["example_predictions"],
                 name="predict",
             ),
-            node(
-                report_accuracy,
-                ["example_predictions", "example_test_y"],
-                [],
-                name="report",
-            ),
+            node(report_accuracy, ["example_predictions", "example_test_y"], []),
         ]
     )
 
