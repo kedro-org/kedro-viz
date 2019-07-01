@@ -31,10 +31,13 @@ def git_stage_init_file():
 
 
 def main(argv):
+    if len(argv) != 2:
+        print("Error... please specify an appropriate version number!")
+        return 1
     version = argv[1]
     update_viz_version(version)
     git_stage_init_file()
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    sys.exit(main(sys.argv))
