@@ -31,3 +31,6 @@ pylint:
 	pylint -j 0 --disable=missing-docstring,redefined-outer-name,no-self-use,invalid-name,too-few-public-methods,no-member package/tests
 	pylint -j 0 --disable=missing-docstring,no-name-in-module package/features
 	flake8 package
+
+version:
+	python3 utils/release/viz_versioning.py $(VIZ_VERSION)
