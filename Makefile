@@ -34,3 +34,4 @@ pylint:
 
 version:
 	python3 utils/release/viz_versioning.py $(VIZ_VERSION)
+	npm version $(VIZ_VERSION)
