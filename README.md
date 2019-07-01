@@ -89,6 +89,13 @@ The version number for KedroViz is defined in 2 places:
 
 These need to be maintained at the same version number.
 
+The `Makefile` contains a `version` target which accepts the `VIZ_VERSION`
+argument or environmental variable which will update both at the same time e.g.:
+
+```bash
+make version VIZ_VERSION=1.0.5
+```
+
 ## What licence do you use?
 
 Kedro-Viz is licensed under the [Apache 2.0](https://github.com/quantumblacklabs/kedro-viz/blob/master/LICENSE.md) License.
