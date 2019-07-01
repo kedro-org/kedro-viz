@@ -28,4 +28,4 @@
 
 """ Kedro plugin for vizualising a Kedro pipeline """
 
-__version__ = "100.100.100"
+__version__ = "1.0.0"
