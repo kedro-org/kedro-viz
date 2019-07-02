@@ -7,21 +7,21 @@ export const getLinkedNodes = (edges, nodeID) => {
   const linkedNodes = [];
 
   (function getParents(id) {
-    edges
-      .filter(d => d.target === id)
-      .forEach(d => {
+    edges.forEach(d => {
+      if (d.target === id) {
         linkedNodes.push(d.source);
         getParents(d.source);
-      });
+      }
+    });
   })(nodeID);
 
   (function getChildren(id) {
-    edges
-      .filter(d => d.source === id)
-      .forEach(d => {
+    edges.forEach(d => {
+      if (d.source === id) {
         linkedNodes.push(d.target);
         getChildren(d.target);
-      });
+      }
+    });
   })(nodeID);
 
   return linkedNodes;
