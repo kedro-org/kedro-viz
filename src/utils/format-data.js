@@ -89,7 +89,7 @@ const formatSnapshots = data => {
       nodeName[id] = name;
       nodeFullName[id] = full_name;
       nodeType[id] = type;
-      nodeTags[id] = tags;
+      nodeTags[id] = tags.map(tagID => getTagID(snapshotID, tagID));
     };
 
     /**
