@@ -82,6 +82,10 @@ jobs:
       - run:
           name: Package app
           command: make package
+      - run:
+          name: Check for legal compliance
+          command: |
+            make legal
   build_36:
     <<: *DEFAULT
     environment:
@@ -114,13 +118,13 @@ jobs:
           name: Check python package licenses
           command: |
             pip install pip-licenses
-            chmod +x /home/circleci/project/license_checker/python_license_checker.py
-            /home/circleci/project/license_checker/python_license_checker.py
+            chmod +x /home/circleci/project/tools/python_license_checker.py
+            /home/circleci/project/tools/python_license_checker.py
       - run:
           name: Check npm package licenses
           command: |
-            chmod +x /home/circleci/project/license_checker/npm_license_checker.py
-            /home/circleci/project/license_checker/npm_license_checker.py
+            chmod +x /home/circleci/project/tools/npm_license_checker.py
+            /home/circleci/project/tools/npm_license_checker.py
 workflows:
   version: 2
   build:
