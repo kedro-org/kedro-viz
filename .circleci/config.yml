@@ -82,6 +82,10 @@ jobs:
       - run:
           name: Package app
           command: make package
+      - run:
+          name: Check for legal compliance
+          command: |
+            make legal
   build_36:
     <<: *DEFAULT
     environment:
