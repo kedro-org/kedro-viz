@@ -2,7 +2,6 @@ import { json } from 'd3-fetch';
 import config from '../../config';
 import getRandomHistory from '../../utils/random-data';
 import formatSnapshots from '../../utils/format-data';
-import mockData from '../../utils/data.mock';
 import { loadState } from '../../utils';
 
 /**
