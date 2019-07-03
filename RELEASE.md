@@ -1,4 +1,4 @@
-# Release 1.0.1:
+# Release 0.9.0:
 
 The initial release of Kedro-Viz.
 
