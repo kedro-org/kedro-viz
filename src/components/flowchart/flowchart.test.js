@@ -1,7 +1,7 @@
 import React from 'react';
 import $ from 'cheerio';
 import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
-import { mockState, setup } from '../../utils/data.mock';
+import { mockState, setup } from '../../utils/state.mock';
 import { getActiveSnapshotNodes } from '../../selectors/nodes';
 
 describe('FlowChart', () => {

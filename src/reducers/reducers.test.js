@@ -1,5 +1,5 @@
-// import { toggleTagFilter } from '../actions';
-import { mockData, mockState } from '../utils/data.mock';
+import mockData from '../utils/data.mock';
+import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import * as action from '../actions';
 import formatData from '../utils/format-data';
@@ -104,12 +104,12 @@ describe('Reducer', () => {
     it('should reset the snapshots', () => {
       const newState = reducer(mockState, {
         type: action.RESET_SNAPSHOT_DATA,
-        snapshots: formatData([mockData[0]])
+        snapshots: formatData({ snapshots: [mockData.snapshots[0]] })
       });
       expect(newState.snapshotIDs).toEqual([mockState.snapshotIDs[1]]);
-      expect(newState.activeSnapshot).toBe(mockData[0].schema_id);
+      expect(newState.activeSnapshot).toBe(mockData.snapshots[0].schema_id);
       expect(Object.keys(newState.snapshotNodes)).toEqual([
-        mockData[0].schema_id
+        mockData.snapshots[0].schema_id
       ]);
     });
   });
@@ -154,8 +154,8 @@ describe('Reducer', () => {
         parameters: false
       });
       expect(newState.nodeDisabled).toEqual({
-        '123456789012345/parameters-data': true,
-        '123456789012345/parameters_rabbit-data': true
+        '123456789012345/data/parameters': true,
+        '123456789012345/data/parameters_rabbit': true
       });
     });
   });

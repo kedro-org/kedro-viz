@@ -1,10 +1,9 @@
-import { mockState } from '../utils/data.mock';
+import { mockState } from '../utils/state.mock';
 import {
   getActiveSnapshotEdges,
   getEdgeDisabledNode,
   getEdgeDisabledView,
   getEdgeDisabled,
-  getEdges,
   getVisibleEdges
 } from './edges';
 import { getActiveSnapshotNodes } from './nodes';
@@ -188,24 +187,10 @@ describe('Selectors', () => {
     });
   });
 
-  describe('getEdges', () => {
-    it('returns formatted edges as an array', () => {
-      expect(getEdges(mockState)).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            id: expect.any(String),
-            source: expect.any(String),
-            target: expect.any(String),
-            disabled: expect.any(Boolean)
-          })
-        ])
-      );
-    });
-  });
-
   describe('getVisibleEdges', () => {
     it('gets only the visible edges', () => {
-      expect(getVisibleEdges(mockState).map(d => d.disabled)).toEqual(
+      const edgeDisabled = getEdgeDisabled(mockState);
+      expect(getVisibleEdges(mockState).map(d => edgeDisabled[d.id])).toEqual(
         expect.arrayContaining([false])
       );
     });

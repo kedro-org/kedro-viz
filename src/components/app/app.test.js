@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import App from './index';
-import { mockData } from '../../utils/data.mock';
+import mockData from '../../utils/data.mock';
 
 describe('App', () => {
   describe('renders without crashing', () => {
@@ -30,14 +30,18 @@ describe('App', () => {
 
     it('when data prop is set on first load', () => {
       const wrapper = shallow(<App data={mockData} />);
-      expect(getSnapshotIDs(wrapper)).toHaveLength(mockData.length);
+      expect(getSnapshotIDs(wrapper)).toHaveLength(mockData.snapshots.length);
     });
 
     it('when data prop is updated', () => {
       const wrapper = shallow(<App data={mockData} />);
-      const newMockData = Object.assign([], mockData.concat(mockData[0]));
+      const newMockData = Object.assign({}, mockData, {
+        snapshots: [...mockData.snapshots, mockData.snapshots[0]]
+      });
       wrapper.setProps({ data: newMockData });
-      expect(getSnapshotIDs(wrapper)).toHaveLength(newMockData.length);
+      expect(getSnapshotIDs(wrapper)).toHaveLength(
+        newMockData.snapshots.length
+      );
     });
   });
 

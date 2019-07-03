@@ -1,4 +1,4 @@
-import { mockState } from '../utils/data.mock';
+import { mockState } from '../utils/state.mock';
 import {
   prepareTextContainer,
   getNodeWidth,
@@ -86,7 +86,6 @@ describe('Selectors', () => {
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
-            disabled: expect.any(Boolean),
             source: expect.any(String),
             target: expect.any(String),
             points: expect.arrayContaining([

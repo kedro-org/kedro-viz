@@ -33,7 +33,7 @@ class App extends React.Component {
    */
   dataWasUpdated(prevData, newData) {
     // Check just the schema IDs of incoming data updates
-    const dataID = snapshots =>
+    const dataID = ({ snapshots }) =>
       Array.isArray(snapshots) && snapshots.map(d => d.schema_id).join('');
 
     return dataID(prevData) !== dataID(newData);
@@ -60,14 +60,17 @@ App.propTypes = {
   allowHistoryDeletion: PropTypes.bool,
   data: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.arrayOf(
-      PropTypes.shape({
-        created_ts: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        json_schema: PropTypes.array.isRequired,
-        schema_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        message: PropTypes.string
-      })
-    )
+    PropTypes.shape({
+      snapshots: PropTypes.arrayOf(
+        PropTypes.shape({
+          created_ts: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+          edges: PropTypes.array.isRequired,
+          message: PropTypes.string,
+          nodes: PropTypes.array.isRequired,
+          tags: PropTypes.array
+        })
+      )
+    })
   ]),
   onDeleteSnapshot: PropTypes.func,
   showHistory: PropTypes.bool

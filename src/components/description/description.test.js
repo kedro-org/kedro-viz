@@ -1,5 +1,5 @@
 import { Description, mapStateToProps } from './index';
-import { mockState, setup } from '../../utils/data.mock';
+import { mockState, setup } from '../../utils/state.mock';
 import {
   getActiveSnapshotMessage,
   getActiveSnapshotTimestamp

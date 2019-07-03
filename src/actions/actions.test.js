@@ -1,4 +1,4 @@
-import { mockData } from '../utils/data.mock';
+import mockData from '../utils/data.mock';
 import {
   CHANGE_ACTIVE_SNAPSHOT,
   CHANGE_VIEW,
