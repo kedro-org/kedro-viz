@@ -1,4 +1,20 @@
-# Release 0.9.0:
+# Release 1.0.1:
+
+## Major features and improvements
+
+- Add a Make script to automate version updates and tagging across both JS and Python files
+- Add tool to automatically check whether legal headers are present on Python scripts
+
+## Bug fixes and other changes
+
+- Fix broken CSS in the Tags drop-down menu
+- Remove smart quotes and replace them with regular quotes, to avoid "Non-ASCII character" errors when building the Sphinx docs.
+
+## Thanks for supporting contributions
+
+[Richard Westenra](https://github.com/richardwestenra), [Nasef Khan](https://github.com/nakhan98), [Kiyohito Kunii](https://github.com/921kiyo), and [Gordon Wrigley](https://github.com/tolomea)
+
+# Release 1.0.0:
 
 The initial release of Kedro-Viz.
 
