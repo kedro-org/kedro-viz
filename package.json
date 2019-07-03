@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "main": "lib/components/app/index.js",
   "files": [
     "lib"
@@ -76,3 +76,4 @@
     "not op_mini all"
   ]
 }
+
