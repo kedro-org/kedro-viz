@@ -90,8 +90,9 @@ The version number for KedroViz is defined in 3 places:
 
 These need to be maintained at the same version number.
 
-The `Makefile` contains a `version` target which accepts the `VERSION`
-argument or environmental variable which will update both at the same time e.g.:
+The `Makefile` contains a `version` target which accepts the `VERSION` argument
+or environmental variable which will update all the files at the same time
+e.g.:
 
 ```bash
 make version VERSION=1.0.5
