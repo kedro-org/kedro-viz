@@ -82,22 +82,6 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
    Kedro-Viz can be used as a React component that can be imported into other applications. Publishing the package will run `npm run lib`, which compiles the source code in `/src`, and places it in the `/lib` directory.
 
-## Note for Developers
-The version number for KedroViz is defined in 3 places:
-- `package.json`
-- `package-lock.json`
-- `package/kedro_viz/__init__.py`
-
-These need to be maintained at the same version number.
-
-The `Makefile` contains a `version` target which accepts the `VERSION` argument
-or environmental variable which will update all the files at the same time
-e.g.:
-
-```bash
-make version VERSION=1.0.5
-```
-
 ## What licence do you use?
 
 Kedro-Viz is licensed under the [Apache 2.0](https://github.com/quantumblacklabs/kedro-viz/blob/master/LICENSE.md) License.

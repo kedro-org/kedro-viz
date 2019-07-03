@@ -139,3 +139,18 @@ make pytest
 ```bash
 make e2e-tests
 ```
+
+## Preparing a release
+
+The version number for Kedro-Viz is defined in three places, which all need to be maintained at the same version number:
+
+- `package.json`
+- `package-lock.json`
+- `package/kedro_viz/__init__.py`
+
+The `Makefile` contains a `version` target which accepts the `VERSION` argument
+or environmental variable, which will update all the files at the same time. To update the version and prepare a new release, first check that the release notes are up to date, then run the following command:
+
+```bash
+make version VERSION=1.0.5
+```
