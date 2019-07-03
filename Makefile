@@ -33,7 +33,7 @@ pylint:
 	flake8 package
 
 version:
-	python3 tools/viz_versioning.py $(VIZ_VERSION)
+	python3 tools/versioning.py $(VERSION)
 
 legal:
 	python tools/license_and_headers.py
