@@ -1,3 +1,15 @@
+# Release 1.0.2:
+
+## Bug fixes and other changes
+
+- Fix a minor bug in how zoom centering was handled when the sidebar is open
+- Make the Makefile easier to read
+- Fix some minor issues with Readme images and badges
+
+## Thanks for supporting contributions
+
+[Richard Westenra](https://github.com/richardwestenra), [Gordon Wrigley](https://github.com/tolomea), [Ottis Kelleghan](https://github.com/ottis), and [Kiyohito Kunii](https://github.com/921kiyo)
+
 # Release 1.0.1:
 
 ## Major features and improvements
