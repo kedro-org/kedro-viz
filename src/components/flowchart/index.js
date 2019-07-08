@@ -135,13 +135,8 @@ export class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { chartSize, layout, textLabels } = this.props;
+    const { layout, textLabels } = this.props;
     const { nodes, edges } = layout;
-
-    // Update SVG dimensions
-    this.el.svg
-      .attr('width', chartSize.outerWidth)
-      .attr('height', chartSize.outerHeight);
 
     // Create selections
     this.el.edges = this.el.edgeGroup
@@ -304,6 +299,7 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
+    const { outerWidth, outerHeight } = this.props.chartSize;
     const {
       tooltipVisible,
       tooltipIsRight,
@@ -311,9 +307,14 @@ export class FlowChart extends Component {
       tooltipX,
       tooltipY
     } = this.state;
+
     return (
       <div className="pipeline-flowchart kedro" ref={this.containerRef}>
-        <svg className="pipeline-flowchart__graph" ref={this.svgRef}>
+        <svg
+          className="pipeline-flowchart__graph"
+          width={outerWidth}
+          height={outerHeight}
+          ref={this.svgRef}>
           <defs>
             <marker
               id="arrowhead"
