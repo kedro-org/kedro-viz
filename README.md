@@ -17,7 +17,7 @@ With Kedro-Viz you can:
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), for which more complete documentation is available on the [project website](https://facebook.github.io/create-react-app/).
 
 <figure class="image">
-  <img src=".github/img/pipeline_visualisation.png?raw=true)" alt="Kedro-Viz Pipeline Visualisation">
+  <img src="https://github.com/quantumblacklabs/kedro-viz/blob/master/.github/img/pipeline_visualisation.png?raw=true" alt="Kedro-Viz Pipeline Visualisation">
   <figcaption style="text-align: center">Example of Kedro-Viz Pipeline Visualisation</figcaption>
 </figure>
 
@@ -42,7 +42,7 @@ pip install kedro-viz
 
 This will install `kedro` as a dependency, and add `kedro viz` as an additional CLI command.
 
-![Kedro CLI command](.github/img/kedro_cli_example.png?raw=true)
+![Kedro CLI command](https://github.com/quantumblacklabs/kedro-viz/blob/master/.github/img/kedro_cli_example.png?raw=true)
 
 To visualise your pipeline, go to your project root directory and install the project-specific dependencies by running:
 
