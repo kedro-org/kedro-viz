@@ -93,8 +93,12 @@ export class FlowChart extends Component {
   }
 
   getNavOffset(width) {
-    const navWidth = width > 480 ? 300 : 0;
-    return this.props.visibleNav ? navWidth : 0;
+    const navWidth = 300; // from _variables.scss
+    const breakpointSmall = 480; // from _variables.scss
+    if (this.props.visibleNav && width > breakpointSmall) {
+      return navWidth;
+    }
+    return 0;
   }
 
   /**
