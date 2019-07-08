@@ -122,6 +122,7 @@ EXPECTED_PIPELINE_DATA = {
                     "name": "Example Iris Data",
                     "tags": [],
                     "type": "data",
+                    "is_parameters": False,
                 },
                 {
                     "full_name": "example_model",
@@ -129,6 +130,7 @@ EXPECTED_PIPELINE_DATA = {
                     "name": "Example Model",
                     "tags": ["bob", "fred"],
                     "type": "data",
+                    "is_parameters": False,
                 },
                 {
                     "full_name": "example_predictions",
@@ -136,6 +138,7 @@ EXPECTED_PIPELINE_DATA = {
                     "name": "Example Predictions",
                     "tags": ["fred"],
                     "type": "data",
+                    "is_parameters": False,
                 },
                 {
                     "full_name": "example_test_x",
@@ -143,6 +146,7 @@ EXPECTED_PIPELINE_DATA = {
                     "name": "Example Test X",
                     "tags": ["fred"],
                     "type": "data",
+                    "is_parameters": False,
                 },
                 {
                     "full_name": "example_test_y",
@@ -150,6 +154,7 @@ EXPECTED_PIPELINE_DATA = {
                     "name": "Example Test Y",
                     "tags": [],
                     "type": "data",
+                    "is_parameters": False,
                 },
                 {
                     "full_name": "example_train_x",
@@ -157,6 +162,7 @@ EXPECTED_PIPELINE_DATA = {
                     "name": "Example Train X",
                     "tags": ["bob"],
                     "type": "data",
+                    "is_parameters": False,
                 },
                 {
                     "full_name": "example_train_y",
@@ -164,13 +170,15 @@ EXPECTED_PIPELINE_DATA = {
                     "name": "Example Train Y",
                     "tags": ["bob"],
                     "type": "data",
+                    "is_parameters": False,
                 },
                 {
                     "full_name": "parameters",
                     "id": "data/parameters",
                     "name": "Parameters",
                     "tags": ["bob"],
-                    "type": "parameters",
+                    "type": "data",
+                    "is_parameters": True,
                 },
             ],
             "tags": [{"id": "bob", "name": "Bob"}, {"id": "fred", "name": "Fred"}],
