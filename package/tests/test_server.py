@@ -112,7 +112,7 @@ EXPECTED_PIPELINE_DATA = {
                         "task/report_accuracy([example_predictions,example_test_y]) -> "
                         "None"
                     ),
-                    "name": "report_accuracy",
+                    "name": "Report Accuracy",
                     "tags": [],
                     "type": "task",
                 },
