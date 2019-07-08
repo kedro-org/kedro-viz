@@ -69,6 +69,10 @@ const formatSnapshots = data => {
    * @return {Object} The node, edge and raw data for the chart
    */
   const formatSnapshotData = (snapshotID, rawSnapshot) => {
+    if (!validateInput(rawSnapshot)) {
+      return;
+    }
+
     snapshotNodes[snapshotID] = [];
     snapshotEdges[snapshotID] = [];
     snapshotTags[snapshotID] = [];
@@ -118,11 +122,9 @@ const formatSnapshots = data => {
     };
 
     // Begin formatting
-    if (validateInput(rawSnapshot)) {
-      rawSnapshot.nodes.forEach(addNode);
-      rawSnapshot.edges.forEach(addEdge);
-      rawSnapshot.tags.forEach(addTag);
-    }
+    rawSnapshot.nodes.forEach(addNode);
+    rawSnapshot.edges.forEach(addEdge);
+    rawSnapshot.tags.forEach(addTag);
   };
 
   data.snapshots.forEach(snapshot => {
