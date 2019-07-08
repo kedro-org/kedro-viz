@@ -1,9 +1,9 @@
 # Kedro-Viz
 
+[![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)
+[![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-3da639.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python Version](https://img.shields.io/pypi/pyversions/kedro-viz.svg?color=blue)](https://pypi.org/project/kedro-viz/)
-[![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
-[![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblacklabs%2Fkedro-viz)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 Kedro-Viz shows you how your [Kedro](https://github.com/quantumblacklabs/kedro) data pipelines are structured.
@@ -14,12 +14,9 @@ With Kedro-Viz you can:
 - Get a clear picture when you have lots of datasets and nodes by using tags to visualise sub-pipelines
 - Search for nodes and datasets
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), for which more complete documentation is available on the [project website](https://facebook.github.io/create-react-app/).
+![Kedro-Viz Pipeline Visualisation](https://github.com/quantumblacklabs/kedro-viz/blob/master/.github/img/pipeline_visualisation.png?raw=true)
 
-<figure class="image">
-  <img src=".github/img/pipeline_visualisation.png?raw=true)" alt="Kedro-Viz Pipeline Visualisation">
-  <figcaption style="text-align: center">Example of Kedro-Viz Pipeline Visualisation</figcaption>
-</figure>
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), for which more complete documentation is available on the [project website](https://facebook.github.io/create-react-app/).
 
 ## How do I install and use Kedro-Viz?
 
@@ -42,7 +39,7 @@ pip install kedro-viz
 
 This will install `kedro` as a dependency, and add `kedro viz` as an additional CLI command.
 
-![Kedro CLI command](.github/img/kedro_cli_example.png?raw=true)
+![Kedro CLI command](https://github.com/quantumblacklabs/kedro-viz/blob/master/.github/img/kedro_cli_example.png?raw=true)
 
 To visualise your pipeline, go to your project root directory and install the project-specific dependencies by running:
 
