@@ -35,7 +35,6 @@ export class FlowChart extends Component {
     // Select d3 elements
     this.el = {
       svg: select(this._svg),
-      inner: select(this._gInner),
       wrapper: select(this._gWrapper),
       edgeGroup: select(this._gEdges),
       nodeGroup: select(this._gNodes)
@@ -102,7 +101,7 @@ export class FlowChart extends Component {
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
-      this.el.inner.attr('transform', event.transform);
+      this.el.wrapper.attr('transform', event.transform);
       this.hideTooltip();
     });
     this.el.svg.call(this.zoomBehaviour);
@@ -112,13 +111,15 @@ export class FlowChart extends Component {
    * Zoom and scale to fit
    */
   zoomChart() {
-    const { scale, translateX, translateY } = this.props.zoom;
+    const { chartSize, zoom } = this.props;
+    const { scale, translateX, translateY } = zoom;
+    const navOffset = this.getNavOffset(chartSize.outerWidth);
     this.el.svg
       .transition()
       .duration(DURATION)
       .call(
         this.zoomBehaviour.transform,
-        zoomIdentity.translate(translateX, translateY).scale(scale)
+        zoomIdentity.translate(translateX + navOffset, translateY).scale(scale)
       );
   }
 
@@ -128,18 +129,11 @@ export class FlowChart extends Component {
   drawChart() {
     const { chartSize, layout, textLabels } = this.props;
     const { nodes, edges } = layout;
-    const navOffset = this.getNavOffset(chartSize.outerWidth);
 
     // Update SVG dimensions
     this.el.svg
       .attr('width', chartSize.outerWidth)
       .attr('height', chartSize.outerHeight);
-
-    // Animate the wrapper translation when nav is toggled
-    this.el.wrapper
-      .transition('wrapper-navoffset')
-      .duration(DURATION)
-      .attr('transform', () => `translate(${navOffset}, 0)`);
 
     // Create selections
     this.el.edges = this.el.edgeGroup
@@ -329,17 +323,15 @@ export class FlowChart extends Component {
             </marker>
           </defs>
           <g ref={el => (this._gWrapper = el)}>
-            <g ref={el => (this._gInner = el)}>
-              <g
-                className="pipeline-flowchart__edges"
-                ref={el => (this._gEdges = el)}
-              />
-              <g
-                id="nodes"
-                className="pipeline-flowchart__nodes"
-                ref={el => (this._gNodes = el)}
-              />
-            </g>
+            <g
+              className="pipeline-flowchart__edges"
+              ref={el => (this._gEdges = el)}
+            />
+            <g
+              id="nodes"
+              className="pipeline-flowchart__nodes"
+              ref={el => (this._gNodes = el)}
+            />
           </g>
         </svg>
         <div
