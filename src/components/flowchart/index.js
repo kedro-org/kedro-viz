@@ -19,6 +19,7 @@ const DURATION = 700;
 export class FlowChart extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       tooltipVisible: false,
       tooltipIsRight: false,
@@ -26,19 +27,25 @@ export class FlowChart extends Component {
       tooltipX: 0,
       tooltipY: 0
     };
+
+    this.containerRef = React.createRef();
+    this.svgRef = React.createRef();
+    this.wrapperRef = React.createRef();
+    this.edgesRef = React.createRef();
+    this.nodesRef = React.createRef();
+
     this.handleWindowResize = this.handleWindowResize.bind(this);
     this.handleNodeMouseOver = this.handleNodeMouseOver.bind(this);
     this.handleNodeMouseOut = this.handleNodeMouseOut.bind(this);
   }
 
   componentDidMount() {
-    // Select d3 elements
+    // Create D3 element selectors
     this.el = {
-      svg: select(this._svg),
-      inner: select(this._gInner),
-      wrapper: select(this._gWrapper),
-      edgeGroup: select(this._gEdges),
-      nodeGroup: select(this._gNodes)
+      svg: select(this.svgRef.current),
+      wrapper: select(this.wrapperRef.current),
+      edgeGroup: select(this.edgesRef.current),
+      nodeGroup: select(this.nodesRef.current)
     };
 
     this.updateChartSize();
@@ -72,7 +79,7 @@ export class FlowChart extends Component {
       top,
       width,
       height
-    } = this._container.getBoundingClientRect();
+    } = this.containerRef.current.getBoundingClientRect();
     const navOffset = this.getNavOffset(width);
     this.props.onUpdateChartSize({
       x: left,
@@ -86,8 +93,12 @@ export class FlowChart extends Component {
   }
 
   getNavOffset(width) {
-    const navWidth = width > 480 ? 300 : 0;
-    return this.props.visibleNav ? navWidth : 0;
+    const navWidth = 300; // from _variables.scss
+    const breakpointSmall = 480; // from _variables.scss
+    if (this.props.visibleNav && width > breakpointSmall) {
+      return navWidth;
+    }
+    return 0;
   }
 
   /**
@@ -102,7 +113,7 @@ export class FlowChart extends Component {
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
-      this.el.inner.attr('transform', event.transform);
+      this.el.wrapper.attr('transform', event.transform);
       this.hideTooltip();
     });
     this.el.svg.call(this.zoomBehaviour);
@@ -112,13 +123,15 @@ export class FlowChart extends Component {
    * Zoom and scale to fit
    */
   zoomChart() {
-    const { scale, translateX, translateY } = this.props.zoom;
+    const { chartSize, zoom } = this.props;
+    const { scale, translateX, translateY } = zoom;
+    const navOffset = this.getNavOffset(chartSize.outerWidth);
     this.el.svg
       .transition()
       .duration(DURATION)
       .call(
         this.zoomBehaviour.transform,
-        zoomIdentity.translate(translateX, translateY).scale(scale)
+        zoomIdentity.translate(translateX + navOffset, translateY).scale(scale)
       );
   }
 
@@ -126,20 +139,8 @@ export class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { chartSize, layout, textLabels } = this.props;
+    const { layout, textLabels } = this.props;
     const { nodes, edges } = layout;
-    const navOffset = this.getNavOffset(chartSize.outerWidth);
-
-    // Update SVG dimensions
-    this.el.svg
-      .attr('width', chartSize.outerWidth)
-      .attr('height', chartSize.outerHeight);
-
-    // Animate the wrapper translation when nav is toggled
-    this.el.wrapper
-      .transition('wrapper-navoffset')
-      .duration(DURATION)
-      .attr('transform', () => `translate(${navOffset}, 0)`);
 
     // Create selections
     this.el.edges = this.el.edgeGroup
@@ -302,6 +303,7 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
+    const { outerWidth, outerHeight } = this.props.chartSize;
     const {
       tooltipVisible,
       tooltipIsRight,
@@ -309,11 +311,14 @@ export class FlowChart extends Component {
       tooltipX,
       tooltipY
     } = this.state;
+
     return (
-      <div
-        className="pipeline-flowchart kedro"
-        ref={el => (this._container = el)}>
-        <svg className="pipeline-flowchart__graph" ref={el => (this._svg = el)}>
+      <div className="pipeline-flowchart kedro" ref={this.containerRef}>
+        <svg
+          className="pipeline-flowchart__graph"
+          width={outerWidth}
+          height={outerHeight}
+          ref={this.svgRef}>
           <defs>
             <marker
               id="arrowhead"
@@ -328,18 +333,13 @@ export class FlowChart extends Component {
               <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
             </marker>
           </defs>
-          <g ref={el => (this._gWrapper = el)}>
-            <g ref={el => (this._gInner = el)}>
-              <g
-                className="pipeline-flowchart__edges"
-                ref={el => (this._gEdges = el)}
-              />
-              <g
-                id="nodes"
-                className="pipeline-flowchart__nodes"
-                ref={el => (this._gNodes = el)}
-              />
-            </g>
+          <g ref={this.wrapperRef}>
+            <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
+            <g
+              id="nodes"
+              className="pipeline-flowchart__nodes"
+              ref={this.nodesRef}
+            />
           </g>
         </svg>
         <div
