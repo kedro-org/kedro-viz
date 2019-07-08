@@ -19,6 +19,7 @@ const DURATION = 700;
 export class FlowChart extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       tooltipVisible: false,
       tooltipIsRight: false,
@@ -26,18 +27,25 @@ export class FlowChart extends Component {
       tooltipX: 0,
       tooltipY: 0
     };
+
+    this.containerRef = React.createRef();
+    this.svgRef = React.createRef();
+    this.wrapperRef = React.createRef();
+    this.edgesRef = React.createRef();
+    this.nodesRef = React.createRef();
+
     this.handleWindowResize = this.handleWindowResize.bind(this);
     this.handleNodeMouseOver = this.handleNodeMouseOver.bind(this);
     this.handleNodeMouseOut = this.handleNodeMouseOut.bind(this);
   }
 
   componentDidMount() {
-    // Select d3 elements
+    // Create D3 element selectors
     this.el = {
-      svg: select(this._svg),
-      wrapper: select(this._gWrapper),
-      edgeGroup: select(this._gEdges),
-      nodeGroup: select(this._gNodes)
+      svg: select(this.svgRef.current),
+      wrapper: select(this.wrapperRef.current),
+      edgeGroup: select(this.edgesRef.current),
+      nodeGroup: select(this.nodesRef.current)
     };
 
     this.updateChartSize();
@@ -71,7 +79,7 @@ export class FlowChart extends Component {
       top,
       width,
       height
-    } = this._container.getBoundingClientRect();
+    } = this.containerRef.current.getBoundingClientRect();
     const navOffset = this.getNavOffset(width);
     this.props.onUpdateChartSize({
       x: left,
@@ -304,10 +312,8 @@ export class FlowChart extends Component {
       tooltipY
     } = this.state;
     return (
-      <div
-        className="pipeline-flowchart kedro"
-        ref={el => (this._container = el)}>
-        <svg className="pipeline-flowchart__graph" ref={el => (this._svg = el)}>
+      <div className="pipeline-flowchart kedro" ref={this.containerRef}>
+        <svg className="pipeline-flowchart__graph" ref={this.svgRef}>
           <defs>
             <marker
               id="arrowhead"
@@ -322,15 +328,12 @@ export class FlowChart extends Component {
               <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
             </marker>
           </defs>
-          <g ref={el => (this._gWrapper = el)}>
-            <g
-              className="pipeline-flowchart__edges"
-              ref={el => (this._gEdges = el)}
-            />
+          <g ref={this.wrapperRef}>
+            <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
             <g
               id="nodes"
               className="pipeline-flowchart__nodes"
-              ref={el => (this._gNodes = el)}
+              ref={this.nodesRef}
             />
           </g>
         </svg>
