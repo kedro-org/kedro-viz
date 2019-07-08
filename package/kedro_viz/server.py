@@ -78,7 +78,7 @@ def nodes_json():
     for namespace, tags in sorted(namespace_tags.items()):
         nodes.append(
             {
-                "type": "data",
+                "type": "parameters" if "param" in namespace.lower() else "data",
                 "id": "data/" + namespace,
                 "name": pretty_name(namespace),
                 "full_name": namespace,

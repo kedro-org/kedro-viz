@@ -170,7 +170,7 @@ EXPECTED_PIPELINE_DATA = {
                     "id": "data/parameters",
                     "name": "Parameters",
                     "tags": ["bob"],
-                    "type": "data",
+                    "type": "parameters",
                 },
             ],
             "tags": [{"id": "bob", "name": "Bob"}, {"id": "fred", "name": "Fred"}],
