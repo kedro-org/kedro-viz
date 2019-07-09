@@ -88,10 +88,8 @@ export const addNewEdge = (source, target, { edgeIDs, sources, targets }) => {
  */
 export const findTransitiveEdges = (
   activeSnapshotEdges,
-  edgeSources,
-  edgeTargets,
-  nodeDisabled,
-  transitiveEdges
+  transitiveEdges,
+  { edgeSources, edgeTargets, nodeDisabled }
 ) => {
   /**
    * Recursively walk through the graph, stepping over disabled nodes,
@@ -149,13 +147,11 @@ export const getTransitiveEdges = createSelector(
     // that end in a terminus can never be transitive.
     activeSnapshotNodes.forEach(nodeID => {
       if (!nodeDisabled[nodeID]) {
-        findTransitiveEdges(
-          activeSnapshotEdges,
+        findTransitiveEdges(activeSnapshotEdges, transitiveEdges, {
           edgeSources,
           edgeTargets,
-          nodeDisabled,
-          transitiveEdges
-        )([nodeID]);
+          nodeDisabled
+        })([nodeID]);
       }
     });
     return transitiveEdges;

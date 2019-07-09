@@ -4,6 +4,9 @@ import {
   getEdgeDisabledNode,
   getEdgeDisabledView,
   getEdgeDisabled,
+  addNewEdge,
+  findTransitiveEdges,
+  getTransitiveEdges,
   getVisibleEdges
 } from './edges';
 import { getActiveSnapshotNodes } from './nodes';
@@ -187,11 +190,177 @@ describe('Selectors', () => {
     });
   });
 
+  describe('addNewEdge', () => {
+    const transitiveEdges = {};
+    beforeEach(() => {
+      transitiveEdges.edgeIDs = [];
+      transitiveEdges.sources = {};
+      transitiveEdges.targets = {};
+    });
+
+    it('Adds a new edge to the list of edge IDs', () => {
+      addNewEdge('foo', 'bar', transitiveEdges);
+      expect(transitiveEdges.edgeIDs).toEqual(['foo|bar']);
+    });
+
+    it('Adds a new source to the sources dictionary', () => {
+      addNewEdge('source_name', 'target', transitiveEdges);
+      expect(transitiveEdges.sources).toEqual({
+        'source_name|target': 'source_name'
+      });
+    });
+
+    it('Adds a new target to the targets dictionary', () => {
+      addNewEdge('source', 'target name', transitiveEdges);
+      expect(transitiveEdges.targets).toEqual({
+        'source|target name': 'target name'
+      });
+    });
+  });
+
+  describe('findTransitiveEdges', () => {
+    const activeSnapshotEdges = getActiveSnapshotEdges(mockState);
+    const edge = activeSnapshotEdges[0];
+    const source = mockState.edgeSources[edge];
+    const disabledNode = mockState.edgeTargets[edge];
+    const transitiveEdges = {};
+
+    beforeEach(() => {
+      transitiveEdges.edgeIDs = [];
+      transitiveEdges.sources = {};
+      transitiveEdges.targets = {};
+    });
+
+    describe('if all edges are enabled', () => {
+      it('creates no transitive edges', () => {
+        findTransitiveEdges(activeSnapshotEdges, transitiveEdges, mockState)([
+          'dog'
+        ]);
+        expect(transitiveEdges.edgeIDs).toEqual([]);
+      });
+    });
+
+    describe('if a task node is disabled', () => {
+      // Create an altered state with a disabled node
+      beforeEach(() => {
+        const alteredMockState = reducer(
+          mockState,
+          toggleNodeDisabled(disabledNode, true)
+        );
+        findTransitiveEdges(
+          activeSnapshotEdges,
+          transitiveEdges,
+          alteredMockState
+        )([source]);
+      });
+
+      it('creates transitive edges matching the source node', () => {
+        expect(transitiveEdges.edgeIDs).toEqual(
+          expect.arrayContaining([expect.stringContaining(source)])
+        );
+      });
+
+      it('does not create transitive edges that do not contain the source node', () => {
+        expect(transitiveEdges.edgeIDs).not.toEqual(
+          expect.arrayContaining([expect.not.stringContaining(source)])
+        );
+      });
+    });
+  });
+
+  describe('getTransitiveEdges', () => {
+    const { edgeSources, edgeTargets } = mockState;
+    // Find a node which has multiple inputs and outputs, which we can disable
+    const disabledNode = getActiveSnapshotNodes(mockState).find(node => {
+      const hasMultipleConnections = edgeNodes =>
+        Object.values(edgeNodes).filter(edge => edge === node).length > 1;
+      return (
+        hasMultipleConnections(edgeSources) &&
+        hasMultipleConnections(edgeTargets)
+      );
+    });
+    const sourceEdge = getActiveSnapshotEdges(mockState).find(
+      edge => edgeTargets[edge] === disabledNode
+    );
+    const source = edgeSources[sourceEdge];
+
+    describe('if all edges are enabled', () => {
+      it('creates no transitive edges', () => {
+        expect(getTransitiveEdges(mockState)).toEqual({
+          edgeIDs: [],
+          sources: {},
+          targets: {}
+        });
+      });
+    });
+
+    describe('if a task node is disabled', () => {
+      // Create an altered state with a disabled node
+      let alteredMockState;
+      beforeEach(() => {
+        alteredMockState = reducer(
+          mockState,
+          toggleNodeDisabled(disabledNode, true)
+        );
+      });
+
+      it('creates transitive edges matching the source node', () => {
+        expect(getTransitiveEdges(alteredMockState).edgeIDs).toEqual(
+          expect.arrayContaining([expect.stringContaining(source)])
+        );
+      });
+
+      it('creates transitive edges not matching the source node', () => {
+        expect(getTransitiveEdges(alteredMockState).edgeIDs).toEqual(
+          expect.arrayContaining([expect.not.stringContaining(source)])
+        );
+      });
+
+      it('does not create transitive edges that contain the disabled node', () => {
+        expect(getTransitiveEdges(alteredMockState).edgeIDs).not.toEqual(
+          expect.arrayContaining([expect.stringContaining(disabledNode)])
+        );
+      });
+    });
+  });
+
   describe('getVisibleEdges', () => {
     it('gets only the visible edges', () => {
       const edgeDisabled = getEdgeDisabled(mockState);
       expect(getVisibleEdges(mockState).map(d => edgeDisabled[d.id])).toEqual(
         expect.arrayContaining([false])
+      );
+    });
+
+    it('formats the edges into an array of objects', () => {
+      expect(getVisibleEdges(mockState)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: expect.any(String),
+            source: expect.any(String),
+            target: expect.any(String)
+          })
+        ])
+      );
+    });
+
+    it('includes transitive edges when necessary', () => {
+      const { edgeSources, edgeTargets } = mockState;
+      // Find a node which has multiple inputs and outputs, which we can disable
+      const disabledNode = getActiveSnapshotNodes(mockState).find(node => {
+        const hasMultipleConnections = edgeNodes =>
+          Object.values(edgeNodes).filter(edge => edge === node).length > 1;
+        return (
+          hasMultipleConnections(edgeSources) &&
+          hasMultipleConnections(edgeTargets)
+        );
+      });
+      const alteredMockState = reducer(
+        mockState,
+        toggleNodeDisabled(disabledNode, true)
+      );
+      expect(getVisibleEdges(alteredMockState).length).toBeGreaterThan(
+        getVisibleEdges(mockState).length
       );
     });
   });
