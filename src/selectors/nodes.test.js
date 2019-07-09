@@ -212,9 +212,14 @@ describe('Selectors', () => {
       );
     });
 
-    it('returns nodes sorted by ID', () => {
+    it('returns nodes sorted by name', () => {
+      const { nodeName } = mockState;
       const nodeIDs = getNodes(mockState).map(d => d.id);
-      const activeNodeIDs = getActiveSnapshotNodes(mockState).sort();
+      const activeNodeIDs = getActiveSnapshotNodes(mockState).sort((a, b) => {
+        if (nodeName[a] < nodeName[b]) return -1;
+        if (nodeName[a] > nodeName[b]) return 1;
+        return 0;
+      });
       expect(nodeIDs).toEqual(activeNodeIDs);
     });
   });
