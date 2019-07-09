@@ -198,23 +198,29 @@ describe('Selectors', () => {
       transitiveEdges.targets = {};
     });
 
-    it('Adds a new edge to the list of edge IDs', () => {
+    it('adds a new edge to the list of edge IDs', () => {
       addNewEdge('foo', 'bar', transitiveEdges);
       expect(transitiveEdges.edgeIDs).toEqual(['foo|bar']);
     });
 
-    it('Adds a new source to the sources dictionary', () => {
+    it('adds a new source to the sources dictionary', () => {
       addNewEdge('source_name', 'target', transitiveEdges);
       expect(transitiveEdges.sources).toEqual({
         'source_name|target': 'source_name'
       });
     });
 
-    it('Adds a new target to the targets dictionary', () => {
+    it('adds a new target to the targets dictionary', () => {
       addNewEdge('source', 'target name', transitiveEdges);
       expect(transitiveEdges.targets).toEqual({
         'source|target name': 'target name'
       });
+    });
+
+    it('does not add a new edge if it already exists', () => {
+      addNewEdge('foo', 'bar', transitiveEdges);
+      addNewEdge('foo', 'bar', transitiveEdges);
+      expect(transitiveEdges.edgeIDs).toEqual(['foo|bar']);
     });
   });
 
