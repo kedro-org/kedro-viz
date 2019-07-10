@@ -57,6 +57,7 @@ class Snapshot {
       .map(id => ({
         id: `${type}/${id}`,
         name: id.replace(/_/g, ' '),
+        is_parameters: id.includes('param'),
         type,
         layer: getLayer()
       }));
@@ -118,12 +119,7 @@ class Snapshot {
   getSchema() {
     let nodes = this.nodes.task
       .concat(this.nodes.data)
-      .map(({ id, name, type }) => ({
-        id,
-        type,
-        name,
-        tags: this.getRandomTags()
-      }));
+      .map(node => ({ ...node, tags: this.getRandomTags() }));
 
     const edges = [];
     this.nodes.task.forEach(node => {
