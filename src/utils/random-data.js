@@ -2,7 +2,7 @@ import {
   getNumberArray,
   randomIndex,
   randomNumber,
-  getRandomMatch,
+  getRandom,
   getRandomName,
   unique
 } from './index';
@@ -107,7 +107,7 @@ class Snapshot {
    */
   getConnectedNodes(condition) {
     return getNumberArray(this.CONNECTION_COUNT)
-      .map(() => getRandomMatch(this.nodes.data, condition))
+      .map(() => getRandom(this.nodes.data.filter(condition)))
       .filter(Boolean)
       .map(d => d.id)
       .filter(unique);

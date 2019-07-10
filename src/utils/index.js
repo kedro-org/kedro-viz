@@ -49,14 +49,6 @@ export const randomNumber = n => Math.ceil(Math.random() * n);
  */
 export const getRandom = range => range[randomIndex(range.length)];
 
-/**
- * Get a random datum from an array that matches a filter condition
- * @param {Array} array The array to select a random item from
- * @param {Function} condition Filter check
- */
-export const getRandomMatch = (array, condition) =>
-  getRandom(array.filter(condition));
-
 const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
   ' '
 );
