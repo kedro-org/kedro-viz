@@ -68,6 +68,7 @@ export default {
         {
           tags: ['Nulla', 'pulvinar', 'enim', 'consectetur', 'volutpat'],
           id: 'task/consectetur',
+          is_parameters: false,
           type: 'task',
           full_name: 'consectetur',
           name: 'consectetur'
@@ -75,6 +76,7 @@ export default {
         {
           tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
           id: 'data/mauris',
+          is_parameters: false,
           type: 'data',
           full_name: 'mauris',
           name: 'mauris'
@@ -82,6 +84,7 @@ export default {
         {
           tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
           id: 'data/Lorem',
+          is_parameters: false,
           type: 'data',
           full_name: 'Lorem',
           name: 'Lorem'
@@ -89,6 +92,7 @@ export default {
         {
           tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
           id: 'data/dolor',
+          is_parameters: false,
           type: 'data',
           full_name: 'dolor',
           name: 'dolor'
@@ -96,6 +100,7 @@ export default {
         {
           tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
           id: 'data/eu',
+          is_parameters: false,
           type: 'data',
           full_name: 'eu',
           name: 'eu'
@@ -103,6 +108,7 @@ export default {
         {
           tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
           id: 'data/accumsan',
+          is_parameters: false,
           type: 'data',
           full_name: 'accumsan',
           name: 'accumsan'
@@ -110,6 +116,7 @@ export default {
         {
           tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
           id: 'data/ipsum',
+          is_parameters: false,
           type: 'data',
           full_name: 'ipsum',
           name: 'ipsum'
@@ -117,6 +124,7 @@ export default {
         {
           tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
           id: 'data/sit',
+          is_parameters: false,
           type: 'data',
           full_name: 'sit',
           name: 'sit'
@@ -124,6 +132,7 @@ export default {
         {
           tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
           id: 'data/Aliquam',
+          is_parameters: false,
           type: 'data',
           full_name: 'Aliquam',
           name: 'Aliquam'
@@ -131,6 +140,7 @@ export default {
         {
           tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
           id: 'data/amet',
+          is_parameters: false,
           type: 'data',
           full_name: 'amet',
           name: 'amet'
@@ -157,6 +167,7 @@ export default {
           name: 'salmon',
           full_name: 'salmon',
           tags: ['huge', 'small'],
+          is_parameters: false,
           type: 'task'
         },
         {
@@ -164,6 +175,7 @@ export default {
           name: 'shark',
           full_name: 'shark',
           tags: [],
+          is_parameters: false,
           type: 'task'
         },
         {
@@ -171,6 +183,7 @@ export default {
           name: 'trout',
           full_name: 'trout',
           tags: [],
+          is_parameters: false,
           type: 'task'
         },
         {
@@ -178,6 +191,7 @@ export default {
           name: 'whale',
           full_name: 'whale',
           tags: [],
+          is_parameters: false,
           type: 'data'
         },
         {
@@ -185,6 +199,7 @@ export default {
           name: 'dog',
           full_name: 'dog',
           tags: ['small', 'huge'],
+          is_parameters: false,
           type: 'data'
         },
         {
@@ -192,6 +207,7 @@ export default {
           name: 'cat',
           full_name: 'cat',
           tags: ['small', 'huge'],
+          is_parameters: false,
           type: 'data'
         },
         {
@@ -199,6 +215,7 @@ export default {
           name: 'parameters_rabbit',
           full_name: 'parameters_rabbit',
           tags: ['small', 'huge'],
+          is_parameters: true,
           type: 'data'
         },
         {
@@ -206,6 +223,7 @@ export default {
           name: 'parameters',
           full_name: 'parameters',
           tags: ['small', 'huge'],
+          is_parameters: true,
           type: 'data'
         },
         {
@@ -213,6 +231,7 @@ export default {
           name: 'sheep',
           full_name: 'sheep',
           tags: ['small', 'huge'],
+          is_parameters: false,
           type: 'data'
         },
         {
@@ -220,6 +239,7 @@ export default {
           name: 'horse',
           full_name: 'horse',
           tags: ['small', 'huge'],
+          is_parameters: false,
           type: 'data'
         },
         {
@@ -227,6 +247,7 @@ export default {
           name: 'weasel',
           full_name: 'weasel',
           tags: [],
+          is_parameters: false,
           type: 'data'
         },
         {
@@ -234,6 +255,7 @@ export default {
           name: 'elephant',
           full_name: 'elephant',
           tags: [],
+          is_parameters: false,
           type: 'data'
         },
         {
@@ -241,6 +263,7 @@ export default {
           name: 'bear',
           full_name: 'bear',
           tags: [],
+          is_parameters: false,
           type: 'data'
         },
         {
@@ -248,6 +271,7 @@ export default {
           name: 'giraffe',
           full_name: 'giraffe',
           tags: [],
+          is_parameters: false,
           type: 'data'
         },
         {
@@ -255,6 +279,7 @@ export default {
           name: 'pig',
           full_name: 'pig',
           tags: ['small', 'huge'],
+          is_parameters: false,
           type: 'data'
         }
       ],

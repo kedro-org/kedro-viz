@@ -55,6 +55,7 @@ const formatSnapshots = data => {
   const nodeName = {};
   const nodeFullName = {};
   const nodeType = {};
+  const nodeIsParam = {};
   const nodeTags = {};
   // Edges
   const edgeSources = {};
@@ -83,17 +84,20 @@ const formatSnapshots = data => {
      * @param {string} type - 'data' or 'task'
      * @param {Array} tags - List of associated tags
      */
-    const addNode = ({ name, type, tags = [], full_name, ...node }) => {
+    const addNode = node => {
       const id = getNodeID(snapshotID, node.id);
       if (nodeName[id]) {
         return;
       }
       snapshotNodes[snapshotID].push(id);
       nodeID[id] = id;
-      nodeName[id] = name;
-      nodeFullName[id] = full_name;
-      nodeType[id] = type;
-      nodeTags[id] = tags.map(tagID => getTagID(snapshotID, tagID));
+      nodeName[id] = node.name;
+      nodeFullName[id] = node.full_name;
+      nodeType[id] = node.type;
+      nodeIsParam[id] = Boolean(node.is_parameters);
+      nodeTags[id] = (node.tags || []).map(tagID =>
+        getTagID(snapshotID, tagID)
+      );
     };
 
     /**
@@ -151,6 +155,7 @@ const formatSnapshots = data => {
     nodeActive: {},
     nodeDisabled: {},
     nodeType,
+    nodeIsParam,
     nodeTags,
     edgeActive: {},
     edgeSources,

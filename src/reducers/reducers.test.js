@@ -2,6 +2,7 @@ import mockData from '../utils/data.mock';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import * as action from '../actions';
+import { getActiveSnapshotNodes } from '../selectors/nodes';
 import formatData from '../utils/format-data';
 
 describe('Reducer', () => {
@@ -148,15 +149,23 @@ describe('Reducer', () => {
   });
 
   describe('TOGGLE_PARAMETERS', () => {
-    it("should disable any nodes with 'param' in their titles", () => {
-      const newState = reducer(mockState, {
-        type: action.TOGGLE_PARAMETERS,
-        parameters: false
-      });
-      expect(newState.nodeDisabled).toEqual({
-        '123456789012345/data/parameters': true,
-        '123456789012345/data/parameters_rabbit': true
-      });
+    const newState = reducer(mockState, {
+      type: action.TOGGLE_PARAMETERS,
+      parameters: false
+    });
+    const { nodeDisabled, nodeIsParam } = newState;
+    const activeSnapshotNodes = getActiveSnapshotNodes(newState);
+
+    it('should disable any nodes where is_parameters is true', () => {
+      const paramNodes = activeSnapshotNodes.filter(node => nodeIsParam[node]);
+      expect(paramNodes.every(key => nodeDisabled[key])).toBe(true);
+    });
+
+    it('should not disable any nodes where is_parameters is false', () => {
+      const nonParamNodes = activeSnapshotNodes.filter(
+        node => !nodeIsParam[node]
+      );
+      expect(nonParamNodes.every(key => !nodeDisabled[key])).toBe(true);
     });
   });
 
