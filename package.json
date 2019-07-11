@@ -18,7 +18,7 @@
     "lib:copy": "babel src --out-dir lib --copy-files",
     "lib:prune": "find lib -type f -name '*.test.*' -delete && find lib -type f -name '*.scss' -delete",
     "lint": "eslint src/ --fix",
-    "prepublishOnly": "npm run lib",
+    "prepublishOnly": "npm-run-all -p test:coverage lint build lib",
     "test": "react-scripts test --env=jsdom",
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
