@@ -10,35 +10,18 @@ from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
 
-EXPECTED_PIPELINE_DATA_OLD = [
+EXPECTED_PIPELINE_DATA_DEPRECATED = [
     {
-        "name": "split",
-        "inputs": ["parameters", "example_iris_data"],
-        "outputs": [
-            "example_train_y",
-            "example_train_x",
-            "example_test_y",
-            "example_test_x",
-        ],
+        "name": "func([bob_in,parameters]) -> [bob_out]",
+        "inputs": ["bob_in", "parameters"],
+        "outputs": ["bob_out"],
         "tags": [],
     },
     {
-        "name": "train",
-        "inputs": ["example_train_y", "example_train_x", "parameters"],
-        "outputs": ["example_model"],
+        "name": "my_node",
+        "inputs": ["fred_in", "parameters"],
+        "outputs": ["fred_out"],
         "tags": ["bob"],
-    },
-    {
-        "name": "predict",
-        "inputs": ["example_test_x", "example_model"],
-        "outputs": ["example_predictions"],
-        "tags": ["fred"],
-    },
-    {
-        "name": "report_accuracy([example_predictions,example_test_y]) -> None",
-        "inputs": ["example_predictions", "example_test_y"],
-        "outputs": [],
-        "tags": [],
     },
 ]
 
@@ -47,187 +30,100 @@ EXPECTED_PIPELINE_DATA = {
     "snapshots": [
         {
             "edges": [
-                {"source": "data/parameters", "target": "task/split"},
-                {"source": "data/example_iris_data", "target": "task/split"},
-                {"source": "task/split", "target": "data/example_train_y"},
-                {"source": "task/split", "target": "data/example_train_x"},
-                {"source": "task/split", "target": "data/example_test_y"},
-                {"source": "task/split", "target": "data/example_test_x"},
-                {"source": "data/example_train_y", "target": "task/train"},
-                {"source": "data/example_train_x", "target": "task/train"},
-                {"source": "data/parameters", "target": "task/train"},
-                {"source": "task/train", "target": "data/example_model"},
-                {"source": "data/example_test_x", "target": "task/predict"},
-                {"source": "data/example_model", "target": "task/predict"},
-                {"source": "task/predict", "target": "data/example_predictions"},
                 {
-                    "source": "data/example_predictions",
-                    "target": "task/report_accuracy([example_predictions,example_test_y]) -> None",
+                    "target": "task/func([bob_in,parameters]) -> [bob_out]",
+                    "source": "data/bob_in",
                 },
                 {
-                    "source": "data/example_test_y",
-                    "target": "task/report_accuracy([example_predictions,example_test_y]) -> None",
+                    "target": "task/func([bob_in,parameters]) -> [bob_out]",
+                    "source": "data/parameters",
                 },
+                {
+                    "target": "data/bob_out",
+                    "source": "task/func([bob_in,parameters]) -> [bob_out]",
+                },
+                {"target": "task/my_node", "source": "data/fred_in"},
+                {"target": "task/my_node", "source": "data/parameters"},
+                {"target": "data/fred_out", "source": "task/my_node"},
             ],
             "nodes": [
                 {
-                    "full_name": (
-                        "split: "
-                        "split_data([example_iris_data,parameters]) -> "
-                        "[example_test_x,example_test_y,example_train_x,example_train_y@spark]"
-                    ),
-                    "id": "task/split",
-                    "name": "split",
-                    "tags": [],
+                    "name": "Func",
                     "type": "task",
+                    "id": "task/func([bob_in,parameters]) -> [bob_out]",
+                    "full_name": "func([bob_in,parameters]) -> [bob_out]",
+                    "tags": [],
                 },
                 {
-                    "full_name": (
-                        "train: "
-                        "train_model([example_train_x,example_train_y@pandas,parameters]) -> "
-                        "[example_model]"
-                    ),
-                    "id": "task/train",
-                    "name": "train",
+                    "name": "my_node",
+                    "type": "task",
+                    "id": "task/my_node",
+                    "full_name": "my_node: func([fred_in@pandas,parameters]) -> [fred_out@pandas]",
                     "tags": ["bob"],
-                    "type": "task",
                 },
                 {
-                    "full_name": (
-                        "predict: "
-                        "predict([example_model,example_test_x]) -> "
-                        "[example_predictions]"
-                    ),
-                    "id": "task/predict",
-                    "name": "predict",
-                    "tags": ["fred"],
-                    "type": "task",
-                },
-                {
-                    "full_name": (
-                        "report_accuracy([example_predictions,example_test_y]) -> "
-                        "None"
-                    ),
-                    "id": (
-                        "task/report_accuracy([example_predictions,example_test_y]) -> "
-                        "None"
-                    ),
-                    "name": "Report Accuracy",
+                    "is_parameters": False,
+                    "name": "Bob In",
                     "tags": [],
-                    "type": "task",
+                    "id": "data/bob_in",
+                    "full_name": "bob_in",
+                    "type": "data",
                 },
                 {
-                    "full_name": "example_iris_data",
-                    "id": "data/example_iris_data",
-                    "name": "Example Iris Data",
+                    "is_parameters": False,
+                    "name": "Bob Out",
                     "tags": [],
+                    "id": "data/bob_out",
+                    "full_name": "bob_out",
                     "type": "data",
-                    "is_parameters": False,
                 },
                 {
-                    "full_name": "example_model",
-                    "id": "data/example_model",
-                    "name": "Example Model",
-                    "tags": ["bob", "fred"],
-                    "type": "data",
                     "is_parameters": False,
-                },
-                {
-                    "full_name": "example_predictions",
-                    "id": "data/example_predictions",
-                    "name": "Example Predictions",
-                    "tags": ["fred"],
-                    "type": "data",
-                    "is_parameters": False,
-                },
-                {
-                    "full_name": "example_test_x",
-                    "id": "data/example_test_x",
-                    "name": "Example Test X",
-                    "tags": ["fred"],
-                    "type": "data",
-                    "is_parameters": False,
-                },
-                {
-                    "full_name": "example_test_y",
-                    "id": "data/example_test_y",
-                    "name": "Example Test Y",
-                    "tags": [],
-                    "type": "data",
-                    "is_parameters": False,
-                },
-                {
-                    "full_name": "example_train_x",
-                    "id": "data/example_train_x",
-                    "name": "Example Train X",
+                    "name": "Fred In",
                     "tags": ["bob"],
+                    "id": "data/fred_in",
+                    "full_name": "fred_in",
                     "type": "data",
-                    "is_parameters": False,
                 },
                 {
-                    "full_name": "example_train_y",
-                    "id": "data/example_train_y",
-                    "name": "Example Train Y",
+                    "is_parameters": False,
+                    "name": "Fred Out",
                     "tags": ["bob"],
+                    "id": "data/fred_out",
+                    "full_name": "fred_out",
                     "type": "data",
-                    "is_parameters": False,
                 },
                 {
-                    "full_name": "parameters",
-                    "id": "data/parameters",
+                    "is_parameters": True,
                     "name": "Parameters",
                     "tags": ["bob"],
+                    "id": "data/parameters",
+                    "full_name": "parameters",
                     "type": "data",
-                    "is_parameters": True,
                 },
             ],
-            "tags": [{"id": "bob", "name": "Bob"}, {"id": "fred", "name": "Fred"}],
+            "tags": [{"name": "Bob", "id": "bob"}],
         }
     ]
 }
 
 
 def create_pipeline():
-    def split_data(a, b):  # pylint: disable=unused-argument
-        return 1, 2, 3, 4
-
-    def train_model(a, b, c):  # pylint: disable=unused-argument
-        return 1
-
-    def predict(a, b):  # pylint: disable=unused-argument
-        return 1
-
-    def report_accuracy(a, b):  # pylint: disable=unused-argument
-        return None
+    def func(a, b):  # pylint: disable=unused-argument
+        return a
 
     return Pipeline(
         [
+            # unnamed node with no tags and basic io
+            node(func, ["bob_in", "parameters"], ["bob_out"]),
+            # named node with tags and transcoding
             node(
-                split_data,
-                ["parameters", "example_iris_data"],
-                [
-                    "example_train_y@spark",
-                    "example_train_x",
-                    "example_test_y",
-                    "example_test_x",
-                ],
-                name="split",
-            ),
-            node(
-                train_model,
-                ["example_train_y@pandas", "example_train_x", "parameters"],
-                ["example_model"],
-                name="train",
+                func,
+                ["fred_in@pandas", "parameters"],
+                ["fred_out@pandas"],
+                name="my_node",
                 tags=["bob"],
             ),
-            node(
-                predict,
-                ["example_test_x", "example_model"],
-                ["example_predictions"],
-                name="predict",
-                tags=["fred"],
-            ),
-            node(report_accuracy, ["example_predictions", "example_test_y"], []),
         ]
     )
 
@@ -293,12 +189,12 @@ def test_root_endpoint(client):
     assert "Kedro Viz" in response.data.decode()
 
 
-def test_old_nodes_endpoint(client):
+def test_deprecated_nodes_endpoint(client):
     """Test `/log/nodes.json` endoint is functional and returns a valid JSON"""
     response = client.get("/logs/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data == EXPECTED_PIPELINE_DATA_OLD
+    assert data == EXPECTED_PIPELINE_DATA_DEPRECATED
 
 
 def test_nodes_endpoint(client):

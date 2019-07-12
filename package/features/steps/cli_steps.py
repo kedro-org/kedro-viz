@@ -102,6 +102,6 @@ def _check_service_up(context):
 
     try:
         assert context.result.poll() is None
-        assert "example_iris_data" in data_json[0]["inputs"]
+        assert "example_iris_data" in data_json[2]["inputs"]
     finally:
         context.result.terminate()
