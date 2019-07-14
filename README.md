@@ -55,6 +55,16 @@ Finally, run the following command from the project directory to visualise your 
 kedro viz
 ```
 
+This command will run kedro_viz.server on `http://127.0.0.1:4141/` which cannot be accessed from another machine. 
+If you are using a remote server machine or a docker container, run the following command instead.
+
+```bash
+kedro viz --host 0.0.0.0
+```
+
+You can change the port with ```--port``` option if needed.
+
+
 ### As a JavaScript React component
 
 Kedro-Viz is also available as an npm package named [@quantumblack/kedro-viz](https://www.npmjs.com/package/@quantumblack/kedro-viz). To install it:
