@@ -5,7 +5,6 @@ import {
   randomIndex,
   randomNumber,
   getRandom,
-  getRandomMatch,
   getRandomName,
   unique
 } from './index';
@@ -106,20 +105,6 @@ describe('utils', () => {
     it('gets a random string from an array', () => {
       const arr = getNumberArray(20).map(String);
       expect(arr).toContain(getRandom(arr));
-    });
-  });
-
-  describe('getRandomMatch', () => {
-    it('gets a random number from an array that meets a condition', () => {
-      const arr = getNumberArray(10);
-      expect(getRandomMatch(arr, n => n === 1)).toEqual(1);
-    });
-  });
-
-  describe('getRandomMatch', () => {
-    it('gets a random number from an array that meets a condition', () => {
-      const arr = getNumberArray(10);
-      expect(getRandomMatch(arr, n => n === 1)).toEqual(1);
     });
   });
 

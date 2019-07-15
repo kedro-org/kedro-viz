@@ -85,7 +85,7 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
 1. **Standalone application**
 
-   Run `npm run build` to generate a production build as a full-page app. The built app will be placed in the `/build` directory. Data for the chart should be placed in `/public/logs/nodes.json` because this directory is marked `gitignore`.
+   Run `npm run build` to generate a production build as a full-page app. The built app will be placed in the `/build` directory. Data for the chart should be placed in `/public/api/nodes.json` because this directory is marked `gitignore`.
 
 2. **React component**
 

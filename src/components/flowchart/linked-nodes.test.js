@@ -1,6 +1,6 @@
 import { getLinkedNodes } from './linked-nodes';
 import { getLayout } from '../../selectors/layout';
-import { mockState } from '../../utils/data.mock';
+import { mockState } from '../../utils/state.mock';
 
 describe('getLinkedNodes function', () => {
   it('should search through edges for ancestor and descendant nodes', () => {

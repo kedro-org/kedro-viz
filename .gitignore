@@ -6,9 +6,10 @@
 # CSS
 /src/**/*.css
 
-# JSON viz data (generated from logs)
+# JSON viz data
 /public/data
 /public/logs
+/public/api
 
 # dependencies
 /node_modules

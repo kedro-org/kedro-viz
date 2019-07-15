@@ -4,7 +4,7 @@ import TagList, {
   mapStateToProps,
   mapDispatchToProps
 } from './index';
-import { mockState, setup } from '../../utils/data.mock';
+import { mockState, setup } from '../../utils/state.mock';
 
 describe('TagList', () => {
   it('renders without crashing', () => {

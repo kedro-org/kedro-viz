@@ -3,7 +3,7 @@ import SidebarTabs, {
   SidebarTabs as UnconnectedSidebarTabs,
   mapStateToProps
 } from './index';
-import { mockState, setup } from '../../utils/data.mock';
+import { mockState, setup } from '../../utils/state.mock';
 
 describe('SidebarTabs', () => {
   it('renders without crashing', () => {

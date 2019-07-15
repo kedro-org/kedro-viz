@@ -2,6 +2,7 @@ import { json } from 'd3-fetch';
 import config from '../../config';
 import getRandomHistory from '../../utils/random-data';
 import formatSnapshots from '../../utils/format-data';
+import mockData from '../../utils/data.mock';
 import { loadState } from '../../utils';
 
 /**
@@ -48,9 +49,11 @@ export const loadData = (data, onLoadData) => {
   switch (data) {
     case 'random':
       return formatSnapshots(getRandomHistory());
+    case 'mock':
+      return formatSnapshots(mockData);
     case 'json':
       loadJsonData().then(onLoadData);
-      return formatSnapshots([]);
+      return formatSnapshots({ snapshots: [] });
     case null:
       throw new Error('No data was provided to App component via props');
     default:
@@ -64,10 +67,10 @@ export const loadData = (data, onLoadData) => {
 export const loadJsonData = () => {
   const { dataPath } = config();
   return json(dataPath)
-    .then(json_schema => formatSnapshots([{ json_schema }]))
     .catch(() => {
       throw new Error(
         `Unable to load pipeline data. Please check that you have placed a file at ${dataPath}`
       );
-    });
+    })
+    .then(formatSnapshots);
 };

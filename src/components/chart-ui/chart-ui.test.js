@@ -4,7 +4,7 @@ import ChartUI, {
   mapStateToProps,
   mapDispatchToProps
 } from './index';
-import { mockState, setup } from '../../utils/data.mock';
+import { mockState, setup } from '../../utils/state.mock';
 
 describe('ChartUI', () => {
   it('renders without crashing', () => {
