@@ -1,0 +1,25 @@
+*                                       @richardwestenra
+
+src/                                    @richardwestenra
+public/                                 @richardwestenra
+Makefile                                @tolomea @nakhan98
+tools/                                  @tolomea @nakhan98 @921kiyo
+package/                                @tolomea @nakhan98 @921kiyo
+.circleci/                              @tolomea @nakhan98
+
+*.js                                    @richardwestenra
+*.json                                  @richardwestenra
+*.scss                                  @richardwestenra
+*.py                                    @tolomea
+*.md                                    @yetudada
+
+.babelrc                                @richardwestenra
+.eslintrc.json                          @richardwestenra
+.prettierrc                             @richardwestenra
+.gitignore                              @richardwestenra
+CODEOWNERS                              @richardwestenra @yetudada
+CONTRIBUTING.md                         @richardwestenra @yetudada
+README.md                               @richardwestenra @yetudada
+RELEASE.md                              @richardwestenra @yetudada
+legal_header.txt                        @yetudada
+LICENSE.md                              @yetudada
