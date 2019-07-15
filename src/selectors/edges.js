@@ -66,7 +66,7 @@ export const getEdgeDisabled = createSelector(
 );
 
 /**
- * Create a new transitive edge fromn the first and last edge in the path
+ * Create a new transitive edge from the first and last edge in the path
  * @param {string} target Node ID for the new edge
  * @param {string} source Node ID for the new edge
  * @param {object} transitiveEdges Store of existing edges
