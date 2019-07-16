@@ -33,20 +33,21 @@ from collections import defaultdict
 from pathlib import Path
 
 import click
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from kedro.cli import get_project_context
 
 app = Flask(  # pylint: disable=invalid-name
-    __name__,
-    static_folder=str(Path(__file__).parent.absolute() / "html"),
-    static_url_path="",
+    __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
 )
 
 
 @app.route("/")
-def root():
-    """Serve the index file."""
-    return app.send_static_file("index.html")
+@app.route("/<path:subpath>")
+def root(subpath="index.html"):
+    """Serve the non static html and js etc"""
+    return send_from_directory(
+        str(Path(__file__).parent.absolute() / "html"), subpath, cache_timeout=0
+    )
 
 
 @app.route("/logs/nodes.json")
