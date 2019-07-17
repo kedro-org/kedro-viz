@@ -35,7 +35,7 @@ install:
   - python -m pip install -U pip
   - choco install make
   - make install-pip-setuptools
-  - pip install -r test_requirements.txt -U
+  - cd package && pip install -r test_requirements.txt -U
 
 build: false
 
