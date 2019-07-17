@@ -37,37 +37,21 @@ from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
 
-EXPECTED_PIPELINE_DATA_DEPRECATED = [
-    {
-        "name": "func([bob_in,parameters]) -> [bob_out]",
-        "inputs": ["bob_in", "parameters"],
-        "outputs": ["bob_out"],
-        "tags": [],
-    },
-    {
-        "name": "my_node",
-        "inputs": ["fred_in", "parameters"],
-        "outputs": ["fred_out"],
-        "tags": ["bob"],
-    },
-]
-
-
 EXPECTED_PIPELINE_DATA = {
     "snapshots": [
         {
             "edges": [
                 {
-                    "target": "task/func([bob_in,parameters]) -> [bob_out]",
+                    "target": "task/func([bob_in,parameters])->[bob_out]",
                     "source": "data/bob_in",
                 },
                 {
-                    "target": "task/func([bob_in,parameters]) -> [bob_out]",
+                    "target": "task/func([bob_in,parameters])->[bob_out]",
                     "source": "data/parameters",
                 },
                 {
                     "target": "data/bob_out",
-                    "source": "task/func([bob_in,parameters]) -> [bob_out]",
+                    "source": "task/func([bob_in,parameters])->[bob_out]",
                 },
                 {"target": "task/my_node", "source": "data/fred_in"},
                 {"target": "task/my_node", "source": "data/parameters"},
@@ -77,7 +61,7 @@ EXPECTED_PIPELINE_DATA = {
                 {
                     "name": "Func",
                     "type": "task",
-                    "id": "task/func([bob_in,parameters]) -> [bob_out]",
+                    "id": "task/func([bob_in,parameters])->[bob_out]",
                     "full_name": "func([bob_in,parameters]) -> [bob_out]",
                     "tags": [],
                 },
@@ -206,22 +190,11 @@ def test_no_browser(cli_runner):
     assert server.webbrowser.open_new.called
 
 
-# Test endpoints
-
-
 def test_root_endpoint(client):
     """Test `/` endoint is functional"""
     response = client.get("/")
     assert response.status_code == 200
     assert "Kedro Viz" in response.data.decode()
-
-
-def test_deprecated_nodes_endpoint(client):
-    """Test `/log/nodes.json` endoint is functional and returns a valid JSON"""
-    response = client.get("/logs/nodes.json")
-    assert response.status_code == 200
-    data = json.loads(response.data.decode())
-    assert data == EXPECTED_PIPELINE_DATA_DEPRECATED
 
 
 def test_nodes_endpoint(client):

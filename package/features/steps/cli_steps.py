@@ -98,10 +98,10 @@ def _check_service_up(context):
     Args:
         context (behave.runner.Context): Test context
     """
-    data_json = json.loads(download_url("http://localhost:4141/logs/nodes.json"))
+    data_json = json.loads(download_url("http://localhost:4141/api/nodes.json"))
 
     try:
         assert context.result.poll() is None
-        assert "example_iris_data" in data_json[2]["inputs"]
+        assert data_json["snapshots"][0]["nodes"][0]["name"] == "Predict"
     finally:
         context.result.terminate()
