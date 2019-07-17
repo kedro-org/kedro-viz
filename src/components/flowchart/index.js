@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import 'd3-transition';
+import { interpolatePath } from 'd3-interpolate-path';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
@@ -184,7 +185,11 @@ export class FlowChart extends Component {
       .select('path')
       .transition('update-edges')
       .duration(DURATION)
-      .attr('d', edge => edge.points && lineShape(edge.points));
+      .attrTween('d', function(edge) {
+        const current = edge.points && lineShape(edge.points);
+        const previous = select(this).attr('d') || current;
+        return interpolatePath(previous, current);
+      });
 
     // Create nodes
     const enterNodes = this.el.nodes
