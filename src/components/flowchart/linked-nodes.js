@@ -4,12 +4,14 @@
  * @param {string} nodeID
  */
 export const getLinkedNodes = (edges, nodeID) => {
-  const linkedNodes = [];
+  const linkedNodes = {
+    [nodeID]: true
+  };
 
   (function getParents(id) {
     edges.forEach(d => {
       if (d.target === id) {
-        linkedNodes.push(d.source);
+        linkedNodes[d.source] = true;
         getParents(d.source);
       }
     });
@@ -18,7 +20,7 @@ export const getLinkedNodes = (edges, nodeID) => {
   (function getChildren(id) {
     edges.forEach(d => {
       if (d.source === id) {
-        linkedNodes.push(d.target);
+        linkedNodes[d.target] = true;
         getChildren(d.target);
       }
     });
@@ -40,7 +42,7 @@ const linkedNodes = {
    */
   show: ({ edges, el, nodeID }) => {
     const linkedNodes = getLinkedNodes(edges, nodeID);
-    const nodeIsLinked = id => linkedNodes.includes(id) || nodeID === id;
+    const nodeIsLinked = id => linkedNodes[id];
 
     el.nodes
       .classed('node--highlight', node => nodeIsLinked(node.id))
