@@ -8,23 +8,20 @@ export const getLinkedNodes = (edges, nodeID) => {
     [nodeID]: true
   };
 
-  (function getParents(id) {
-    edges.forEach(d => {
-      if (d.target === id) {
-        linkedNodes[d.source] = true;
-        getParents(d.source);
-      }
-    });
-  })(nodeID);
+  const traverseGraph = (prev, next) => {
+    (function walk(id) {
+      edges.forEach(edge => {
+        if (edge[prev] === id) {
+          linkedNodes[edge[next]] = true;
+          walk(edge[next]);
+        }
+      });
+    })(nodeID);
+  };
 
-  (function getChildren(id) {
-    edges.forEach(d => {
-      if (d.source === id) {
-        linkedNodes[d.target] = true;
-        getChildren(d.target);
-      }
-    });
-  })(nodeID);
+  const direction = ['source', 'target'];
+  traverseGraph.apply(null, direction);
+  traverseGraph.apply(null, direction.reverse());
 
   return linkedNodes;
 };
