@@ -9,7 +9,7 @@ import { toggleNodeActive, updateChartSize } from '../../actions';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import linkedNodes from './linked-nodes';
 import icon from './icon';
-import './flowchart.css';
+import './styles/flowchart.css';
 
 const DURATION = 700;
 

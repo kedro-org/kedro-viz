@@ -43,7 +43,7 @@ const linkedNodes = {
     const nodeIsLinked = id => linkedNodes.includes(id) || nodeID === id;
 
     el.nodes
-      .classed('node--active', node => nodeIsLinked(node.id))
+      .classed('node--highlight', node => nodeIsLinked(node.id))
       .classed('node--faded', node => !nodeIsLinked(node.id));
 
     el.edges.classed('edge--faded', ({ source, target }) =>
@@ -58,7 +58,7 @@ const linkedNodes = {
    */
   hide: ({ edges, nodes }) => {
     edges.classed('edge--faded', false);
-    nodes.classed('node--active', false).classed('node--faded', false);
+    nodes.classed('node--highlight', false).classed('node--faded', false);
   }
 };
 

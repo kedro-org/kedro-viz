@@ -1,0 +1,63 @@
+@import './variables';
+
+.pipeline-flowchart__tooltip {
+  position: absolute;
+  top: -60px;
+  left: -20px;
+  padding: 12px 20px;
+  color: white;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity ease 0.1s, visibility ease 0.1s;
+  pointer-events: none;
+  z-index: 9;
+
+  .kui-theme--light & {
+    background: $tooltip-bg-light;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .kui-theme--dark & {
+    background: $tooltip-bg-dark;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  &.tooltip--visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &.tooltip--right {
+    left: auto;
+    right: -20px;
+
+    &::before {
+      left: auto;
+      right: 10px;
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 10px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 10px 0 10px;
+    border-color: transparent;
+
+    .kui-theme--light & {
+      border-top-color: $tooltip-bg-light;
+    }
+
+    .kui-theme--dark & {
+      border-top-color: $tooltip-bg-dark;
+    }
+  }
+
+  span {
+    font-size: 1.5em;
+  }
+}
