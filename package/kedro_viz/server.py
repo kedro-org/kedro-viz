@@ -50,23 +50,6 @@ def root(subpath="index.html"):
     )
 
 
-@app.route("/logs/nodes.json")
-def nodes_deprecated():
-    """Serve the pipeline data."""
-    pipeline = get_project_context("create_pipeline")()
-    return jsonify(
-        [
-            {
-                "name": n.name,
-                "inputs": [ds.split("@")[0] for ds in n.inputs],
-                "outputs": [ds.split("@")[0] for ds in n.outputs],
-                "tags": list(n.tags),
-            }
-            for n in sorted(pipeline.nodes)
-        ]
-    )
-
-
 @app.route("/api/nodes.json")
 def nodes_json():
     """Serve the pipeline data."""
@@ -84,7 +67,7 @@ def nodes_json():
     all_tags = set()
 
     for node in sorted(pipeline.nodes):
-        task_id = "task/" + node.name
+        task_id = "task/" + node.name.replace(" ", "")
         nodes.append(
             {
                 "type": "task",
