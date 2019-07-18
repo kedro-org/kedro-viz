@@ -72,7 +72,7 @@ def nodes_json():
             {
                 "type": "task",
                 "id": task_id,
-                "name": node.short_name,
+                "name": getattr(node, "short_name", node.name),
                 "full_name": str(node),
                 "tags": sorted(node.tags),
             }
