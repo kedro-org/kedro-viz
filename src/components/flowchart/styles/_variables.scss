@@ -15,7 +15,7 @@ $node-iconbg-fill-light-active: darken($color-text-light, 10%);
 // Node icon background stroke light
 $node-iconbg-stroke-light: lighten($color-text-light, 6%);
 $node-iconbg-stroke-light-highlight: darken($color-text-light, 4%);
-$node-iconbg-stroke-light-active: darken($color-text-light, 20%);
+$node-iconbg-stroke-light-active: darken($color-text-light, 50%);
 
 // Node icon background fill dark
 $node-iconbg-fill-dark: lighten($color-bg-dark, 10%);
@@ -35,7 +35,7 @@ $node-labeltext-fill-active: white;
 // Node label background fill light
 $node-labelbg-fill-light: lighten($color-text-light, 6%);
 $node-labelbg-fill-light-highlight: darken($color-text-light, 6%);
-$node-labelbg-fill-light-active: darken($color-text-light, 6%);
+$node-labelbg-fill-light-active: darken($color-text-light, 10%);
 
 // Node label background stroke light
 $node-labelbg-stroke-light: lighten($color-text-light, 2%);
