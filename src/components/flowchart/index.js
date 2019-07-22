@@ -44,6 +44,7 @@ export class FlowChart extends Component {
     this.handleChartClick = this.handleChartClick.bind(this);
     this.handleNodeMouseOver = this.handleNodeMouseOver.bind(this);
     this.handleNodeMouseOut = this.handleNodeMouseOut.bind(this);
+    this.handleNodeKeyDown = this.handleNodeKeyDown.bind(this);
   }
 
   componentDidMount() {
@@ -206,6 +207,7 @@ export class FlowChart extends Component {
     const enterNodes = this.el.nodes
       .enter()
       .append('g')
+      .attr('tabindex', '0')
       .attr('class', 'node');
 
     enterNodes
@@ -242,7 +244,10 @@ export class FlowChart extends Component {
       .classed('node--faded', ifFocused(node => !linkedNodes[node.id]))
       .on('click', this.handleNodeClick)
       .on('mouseover', this.handleNodeMouseOver)
-      .on('mouseout', this.handleNodeMouseOut);
+      .on('mouseout', this.handleNodeMouseOut)
+      .on('focus', this.handleNodeMouseOver)
+      .on('blur', this.handleNodeMouseOut)
+      .on('keydown', this.handleNodeKeyDown);
 
     this.el.nodes
       .transition('update-nodes')
@@ -260,8 +265,7 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Event handler for toggling a node's active state,
-   * showing tooltip, and highlighting linked nodes
+   * Enable a node's focus state and highlight linked nodes
    * @param {Object} node Datum for a single node
    */
   handleNodeClick(node) {
@@ -271,9 +275,7 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Event handler for toggling a node's active state,
-   * showing tooltip, and highlighting linked nodes
-   * @param {Object} node Datum for a single node
+   * Remove a node's focus state and dim linked nodes
    */
   handleChartClick() {
     this.props.onToggleNodeFocused(null);
@@ -281,8 +283,7 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Event handler for toggling a node's active state,
-   * showing tooltip, and highlighting linked nodes
+   * Enable a node's active state, show tooltip, and highlight linked nodes
    * @param {Object} node Datum for a single node
    */
   handleNodeMouseOver(node) {
@@ -295,8 +296,7 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Event handler for toggling a node's active state,
-   * hiding tooltip, and dimming linked nodes
+   * Remove a node's active state, hide tooltip, and dim linked nodes
    * @param {Object} node Datum for a single node
    */
   handleNodeMouseOut(node) {
@@ -305,31 +305,23 @@ export class FlowChart extends Component {
     if (!this.state.nodeFocusActive) {
       this.props.onToggleNodeFocused(null);
     }
-    // linkedNodes.hide(this.el);
   }
 
   /**
-   * Event handler for toggling a node's active state,
-   * showing tooltip, and highlighting linked nodes
+   * Handle keydown event when a node is focused
    * @param {Object} node Datum for a single node
    */
-  // makeNodeActive(node) {
-  //   const { layout } = this.props;
-  //   linkedNodes.show({
-  //     el: this.el,
-  //     nodeID: node.id,
-  //     ...this.props.layout
-  //   });
-  // }
-
-  /**
-   * Event handler for toggling a node's active state,
-   * hiding tooltip, and dimming linked nodes
-   * @param {Object} node Datum for a single node
-   */
-  // makeNodeNotActive(node) {
-  //   linkedNodes.hide(this.el);
-  // }
+  handleNodeKeyDown(node) {
+    const ENTER = 13;
+    const ESCAPE = 27;
+    if (event.keyCode === ENTER) {
+      this.handleNodeClick(node);
+    }
+    if (event.keyCode === ESCAPE) {
+      this.handleChartClick();
+      this.handleNodeMouseOut(node);
+    }
+  }
 
   /**
    * Show, fill and and position the tooltip
