@@ -1,11 +1,12 @@
 import { createSelector } from 'reselect';
 
 const getActiveSnapshot = state => state.activeSnapshot;
-const getSnapshotNodes = state => state.snapshotNodes;
 const getSnapshotIDs = state => state.snapshotIDs;
 const getSnapshotSchema = state => state.snapshotSchema;
 const getSnapshotMessage = state => state.snapshotMessage;
 const getSnapshotTimestamp = state => state.snapshotTimestamp;
+const getSnapshotNodes = state => state.snapshotNodes;
+const getSnapshotEdges = state => state.snapshotEdges;
 
 /**
  * Retrieve list of snapshots used in History tab
@@ -53,4 +54,12 @@ export const getActiveSchema = createSelector(
 export const getActiveSnapshotNodes = createSelector(
   [getActiveSnapshot, getSnapshotNodes],
   (activeSnapshot, snapshotNodes) => snapshotNodes[activeSnapshot] || []
+);
+
+/**
+ * Get a list of edges for the active snapshot
+ */
+export const getActiveSnapshotEdges = createSelector(
+  [getActiveSnapshot, getSnapshotEdges],
+  (activeSnapshot, snapshotEdges) => snapshotEdges[activeSnapshot] || []
 );

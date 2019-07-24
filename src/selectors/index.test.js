@@ -4,7 +4,8 @@ import {
   getActiveSnapshotMessage,
   getActiveSnapshotTimestamp,
   getActiveSchema,
-  getActiveSnapshotNodes
+  getActiveSnapshotNodes,
+  getActiveSnapshotEdges
 } from './index';
 
 describe('Selectors', () => {
@@ -59,6 +60,26 @@ describe('Selectors', () => {
         activeSnapshot: undefined
       });
       expect(getActiveSnapshotNodes(newMockState)).toEqual([]);
+    });
+  });
+
+  describe('getActiveSnapshotEdges', () => {
+    it('gets a list of edges for the active snapshot', () => {
+      expect(getActiveSnapshotEdges(mockState)).toEqual(
+        expect.arrayContaining([expect.any(String)])
+      );
+    });
+
+    it('returns an empty array if snapshotEdges is empty', () => {
+      const newMockState = Object.assign({}, mockState, { snapshotEdges: {} });
+      expect(getActiveSnapshotEdges(newMockState)).toEqual([]);
+    });
+
+    it('returns an empty array if activeSnapshot is undefined', () => {
+      const newMockState = Object.assign({}, mockState, {
+        activeSnapshot: undefined
+      });
+      expect(getActiveSnapshotEdges(newMockState)).toEqual([]);
     });
   });
 });

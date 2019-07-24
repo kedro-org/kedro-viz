@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getActiveSnapshotEdges } from './edges';
+import { getActiveSnapshotEdges } from './index';
 
 const getEdgeSources = state => state.edgeSources;
 const getEdgeTargets = state => state.edgeTargets;
