@@ -80,7 +80,7 @@ def before_all(context):
 
     # install this plugin by resolving the requirements using pip-compile
     # from pip-tools due to this bug in pip: https://github.com/pypa/pip/issues/988
-    call([context.python, "-m", "pip", "install", "-U", "pip", "pip-tools"])
+    call([context.python, "-m", "pip", "install", "-U", "pip<19.2", "pip-tools"])
     pip_compile = str(bin_dir / "pip-compile")
     with tempfile.TemporaryDirectory() as tmpdirname:
         reqs = Path("requirements.txt").read_text()
