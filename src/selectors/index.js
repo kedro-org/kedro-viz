@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 
 const getActiveSnapshot = state => state.activeSnapshot;
+const getSnapshotNodes = state => state.snapshotNodes;
 const getSnapshotIDs = state => state.snapshotIDs;
 const getSnapshotSchema = state => state.snapshotSchema;
 const getSnapshotMessage = state => state.snapshotMessage;
@@ -44,4 +45,12 @@ export const getActiveSchema = createSelector(
   [getActiveSnapshot, getSnapshotSchema],
   (activeSnapshot, snapshotSchemas) =>
     JSON.stringify(snapshotSchemas[activeSnapshot])
+);
+
+/**
+ * Get a list of nodes for the active snapshot
+ */
+export const getActiveSnapshotNodes = createSelector(
+  [getActiveSnapshot, getSnapshotNodes],
+  (activeSnapshot, snapshotNodes) => snapshotNodes[activeSnapshot] || []
 );

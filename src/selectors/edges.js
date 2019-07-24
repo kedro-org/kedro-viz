@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
-import { getActiveSnapshotNodes, getNodeDisabled } from './nodes';
+import { getActiveSnapshotNodes } from './index';
+import { getNodeDisabled } from './nodes';
 
 const getView = state => state.view;
 const getActiveSnapshot = state => state.activeSnapshot;

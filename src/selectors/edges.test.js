@@ -1,4 +1,5 @@
 import { mockState } from '../utils/state.mock';
+import { getActiveSnapshotNodes } from './index';
 import {
   getActiveSnapshotEdges,
   getEdgeDisabledNode,
@@ -9,7 +10,6 @@ import {
   getTransitiveEdges,
   getVisibleEdges
 } from './edges';
-import { getActiveSnapshotNodes } from './nodes';
 import { changeView, toggleNodeDisabled } from '../actions';
 import reducer from '../reducers';
 
