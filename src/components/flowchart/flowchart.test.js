@@ -2,7 +2,7 @@ import React from 'react';
 import $ from 'cheerio';
 import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
-import { getActiveSnapshotNodes } from '../../selectors/index';
+import { getActiveSnapshotNodes } from '../../selectors';
 
 describe('FlowChart', () => {
   it('renders without crashing', () => {
