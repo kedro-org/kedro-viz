@@ -39,13 +39,6 @@ export class FlowChart extends Component {
     this.wrapperRef = React.createRef();
     this.edgesRef = React.createRef();
     this.nodesRef = React.createRef();
-
-    this.handleWindowResize = this.handleWindowResize.bind(this);
-    this.handleNodeClick = this.handleNodeClick.bind(this);
-    this.handleChartClick = this.handleChartClick.bind(this);
-    this.handleNodeMouseOver = this.handleNodeMouseOver.bind(this);
-    this.handleNodeMouseOut = this.handleNodeMouseOut.bind(this);
-    this.handleNodeKeyDown = this.handleNodeKeyDown.bind(this);
   }
 
   componentDidMount() {
@@ -113,9 +106,9 @@ export class FlowChart extends Component {
   /**
    * Handle window resize
    */
-  handleWindowResize() {
+  handleWindowResize = () => {
     this.updateChartSize();
-  }
+  };
 
   /**
    * Setup D3 zoom behaviour on component mount
@@ -273,50 +266,50 @@ export class FlowChart extends Component {
    * Enable a node's focus state and highlight linked nodes
    * @param {Object} node Datum for a single node
    */
-  handleNodeClick(node) {
+  handleNodeClick = node => {
     this.props.onToggleNodeFocused(node.id);
     this.setState({ nodeFocusActive: true });
     event.stopPropagation();
-  }
+  };
 
   /**
    * Remove a node's focus state and dim linked nodes
    */
-  handleChartClick() {
+  handleChartClick = () => {
     this.props.onToggleNodeFocused(null);
     this.setState({ nodeFocusActive: false });
-  }
+  };
 
   /**
    * Enable a node's active state, show tooltip, and highlight linked nodes
    * @param {Object} node Datum for a single node
    */
-  handleNodeMouseOver(node) {
+  handleNodeMouseOver = node => {
     const { onToggleNodeActive, onToggleNodeFocused } = this.props;
     onToggleNodeActive(node, true);
     this.showTooltip(node);
     if (!this.state.nodeFocusActive) {
       onToggleNodeFocused(node.id);
     }
-  }
+  };
 
   /**
    * Remove a node's active state, hide tooltip, and dim linked nodes
    * @param {Object} node Datum for a single node
    */
-  handleNodeMouseOut(node) {
+  handleNodeMouseOut = node => {
     this.props.onToggleNodeActive(node, false);
     this.hideTooltip();
     if (!this.state.nodeFocusActive) {
       this.props.onToggleNodeFocused(null);
     }
-  }
+  };
 
   /**
    * Handle keydown event when a node is focused
    * @param {Object} node Datum for a single node
    */
-  handleNodeKeyDown(node) {
+  handleNodeKeyDown = node => {
     const ENTER = 13;
     const ESCAPE = 27;
     if (event.keyCode === ENTER) {
@@ -326,7 +319,7 @@ export class FlowChart extends Component {
       this.handleChartClick();
       this.handleNodeMouseOut(node);
     }
-  }
+  };
 
   /**
    * Show, fill and and position the tooltip
