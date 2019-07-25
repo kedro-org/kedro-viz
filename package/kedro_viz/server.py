@@ -33,36 +33,20 @@ from collections import defaultdict
 from pathlib import Path
 
 import click
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from kedro.cli import get_project_context
 
 app = Flask(  # pylint: disable=invalid-name
-    __name__,
-    static_folder=str(Path(__file__).parent.absolute() / "html"),
-    static_url_path="",
+    __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
 )
 
 
 @app.route("/")
-def root():
-    """Serve the index file."""
-    return app.send_static_file("index.html")
-
-
-@app.route("/logs/nodes.json")
-def nodes_deprecated():
-    """Serve the pipeline data."""
-    pipeline = get_project_context("create_pipeline")()
-    return jsonify(
-        [
-            {
-                "name": n.name,
-                "inputs": [ds.split("@")[0] for ds in n.inputs],
-                "outputs": [ds.split("@")[0] for ds in n.outputs],
-                "tags": list(n.tags),
-            }
-            for n in sorted(pipeline.nodes)
-        ]
+@app.route("/<path:subpath>")
+def root(subpath="index.html"):
+    """Serve the non static html and js etc"""
+    return send_from_directory(
+        str(Path(__file__).parent.absolute() / "html"), subpath, cache_timeout=0
     )
 
 
@@ -83,12 +67,12 @@ def nodes_json():
     all_tags = set()
 
     for node in sorted(pipeline.nodes):
-        task_id = "task/" + node.name
+        task_id = "task/" + node.name.replace(" ", "")
         nodes.append(
             {
                 "type": "task",
                 "id": task_id,
-                "name": node.short_name,
+                "name": getattr(node, "short_name", node.name),
                 "full_name": str(node),
                 "tags": sorted(node.tags),
             }
