@@ -2,10 +2,8 @@
 
 .node--text {
   text {
-    font-weight: bold;
-    pointer-events: none;
-    transition: all ease 0.1s;
     font-weight: 600;
+    transition: all ease 0.1s;
     pointer-events: none;
 
     .kui-theme--light & {
