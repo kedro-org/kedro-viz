@@ -133,7 +133,7 @@ jobs:
             chmod +x /home/circleci/project/tools/npm_license_checker.py
             /home/circleci/project/tools/npm_license_checker.py
 
-  deploy-prod-docs:
+  deploy_demo:
     <<: *DEFAULT
     steps:
       - checkout
@@ -174,7 +174,7 @@ workflows:
           filters:
             branches:
               ignore: gh-pages
-      - deploy-prod-docs:
+      - deploy_demo:
           requires:
               - build_35
               - build_36
