@@ -85,7 +85,6 @@ def exec_viz_command(context, command):
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
     """Check that kedro-viz is up and responding to requests"""
-
     wait_for(
         _check_service_up, expected_result=None, print_error=False, context=context
     )
@@ -99,9 +98,8 @@ def _check_service_up(context):
         context (behave.runner.Context): Test context
     """
     data_json = json.loads(download_url("http://localhost:4141/api/nodes.json"))
-
     try:
         assert context.result.poll() is None
-        assert data_json["snapshots"][0]["nodes"][0]["name"] == "Predict"
+        assert data_json["snapshots"][0]["nodes"][0]["name"] == "predict"
     finally:
         context.result.terminate()
