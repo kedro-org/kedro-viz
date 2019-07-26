@@ -180,6 +180,6 @@ workflows:
               - build_36
               - build_37
               - license_checker
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
