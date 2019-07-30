@@ -84,7 +84,6 @@ def before_all(context):
     pip_compile = str(bin_dir / "pip-compile")
     with tempfile.TemporaryDirectory() as tmpdirname:
         reqs = Path("requirements.txt").read_text()
-        reqs = reqs.replace("kedro", "git+https://github.com/quantumblacklabs/kedro")
         complied_reqs = Path(tmpdirname) / "requirements.txt"
         complied_reqs.write_text(reqs)
         call([pip_compile, str(complied_reqs)])

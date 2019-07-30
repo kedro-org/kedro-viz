@@ -5,13 +5,13 @@ import config from './config';
 import './styles/index.css';
 
 const { dataSource } = config();
-const useRandomData = dataSource === 'random';
+const showHistory = dataSource === 'random' || dataSource === 'mock';
 
 ReactDOM.render(
   <App
-    allowHistoryDeletion={useRandomData}
+    allowHistoryDeletion={showHistory}
     data={dataSource}
-    showHistory={useRandomData}
+    showHistory={showHistory}
   />,
   document.getElementById('root')
 );

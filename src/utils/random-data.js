@@ -2,7 +2,7 @@ import {
   getNumberArray,
   randomIndex,
   randomNumber,
-  getRandomMatch,
+  getRandom,
   getRandomName,
   unique
 } from './index';
@@ -48,13 +48,17 @@ class Snapshot {
    * @param {number} count The number of nodes to generate
    * @param {Function} getLayer A callback to create a random layer number
    * @param {number} paramFreq How often nodes should include 'parameters' in their name
+   * @param {string} type
    */
-  generateNodeList(count, getLayer, paramFreq) {
+  generateNodeList(count, getLayer, paramFreq, type) {
     return getNumberArray(count)
       .map(() => this.getRandomNodeName(paramFreq))
       .filter(unique)
       .map(id => ({
-        id,
+        id: `${type}/${id}`,
+        name: id.replace(/_/g, ' '),
+        is_parameters: id.includes('param'),
+        type,
         layer: getLayer()
       }));
   }
@@ -67,12 +71,14 @@ class Snapshot {
       data: this.generateNodeList(
         DATA_NODE_COUNT,
         () => randomIndex(this.LAYER_COUNT + 1),
-        PARAMETERS_FREQUENCY
+        PARAMETERS_FREQUENCY,
+        'data'
       ),
       task: this.generateNodeList(
         TASK_NODE_COUNT,
         () => randomIndex(this.LAYER_COUNT) + 0.5,
-        0
+        0,
+        'task'
       )
     };
   }
@@ -101,7 +107,7 @@ class Snapshot {
    */
   getConnectedNodes(condition) {
     return getNumberArray(this.CONNECTION_COUNT)
-      .map(() => getRandomMatch(this.nodes.data, condition))
+      .map(() => getRandom(this.nodes.data.filter(condition)))
       .filter(Boolean)
       .map(d => d.id)
       .filter(unique);
@@ -111,12 +117,44 @@ class Snapshot {
    * Get a complete JSON schema
    */
   getSchema() {
-    return this.nodes.task.map(node => ({
-      inputs: this.getConnectedNodes(d => d.layer < node.layer),
-      name: node.id,
-      tags: this.getRandomTags(),
-      outputs: this.getConnectedNodes(d => d.layer > node.layer)
-    }));
+    let nodes = this.nodes.task
+      .concat(this.nodes.data)
+      .map(node => ({ ...node, tags: this.getRandomTags() }));
+
+    const edges = [];
+    this.nodes.task.forEach(node => {
+      this.getConnectedNodes(d => d.layer < node.layer).forEach(target => {
+        edges.push({
+          source: node.id,
+          target
+        });
+      });
+      this.getConnectedNodes(d => d.layer > node.layer).forEach(source => {
+        edges.push({
+          source,
+          target: node.id
+        });
+      });
+    });
+
+    // Remove unconnected nodes
+    nodes = nodes.filter(
+      node =>
+        edges.findIndex(
+          edge => node.id === edge.source || node.id === edge.target
+        ) !== -1
+    );
+
+    const tags = nodes
+      .reduce((tags, node) => tags.concat(node.tags), [])
+      .filter(unique)
+      .map(tag => ({ name: tag, id: tag }));
+
+    return {
+      nodes,
+      edges,
+      tags
+    };
   }
 
   /**
@@ -128,14 +166,15 @@ class Snapshot {
       schema_id: randomNumber(999999999999999),
       message: getRandomName(randomNumber(MAX_MESSAGE_WORD_LENGTH), ' '),
       created_ts: new Date().getTime() - randomNumber(MAX_TIMESTAMP_OFFSET),
-      json_schema: this.getSchema()
+      ...this.getSchema()
     };
   }
 }
 
-const generateRandomHistory = () =>
-  getNumberArray(randomNumber(MAX_SNAPSHOT_COUNT))
+const generateRandomHistory = () => ({
+  snapshots: getNumberArray(randomNumber(MAX_SNAPSHOT_COUNT))
     .map(() => new Snapshot().getDatum())
-    .sort((a, b) => b.created_ts - a.created_ts);
+    .sort((a, b) => b.created_ts - a.created_ts)
+});
 
 export default generateRandomHistory;

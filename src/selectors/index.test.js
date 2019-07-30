@@ -1,4 +1,4 @@
-import { mockState } from '../utils/data.mock';
+import { mockState } from '../utils/state.mock';
 import {
   getSnapshotHistory,
   getActiveSnapshotMessage,

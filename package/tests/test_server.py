@@ -37,77 +37,104 @@ from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
 
-EXPECTED_PIPELINE_DATA = [
-    {
-        "name": (
-            "split_data([example_iris_data,parameters]) -> "
-            "[example_test_x,example_test_y,example_train_x,example_train_y@spark]"
-        ),
-        "inputs": ["parameters", "example_iris_data"],
-        "outputs": [
-            "example_train_y",
-            "example_train_x",
-            "example_test_y",
-            "example_test_x",
-        ],
-        "tags": [],
-    },
-    {
-        "name": (
-            "train_model([example_train_x,example_train_y@pandas,parameters]) -> "
-            "[example_model]"
-        ),
-        "inputs": ["example_train_y", "example_train_x", "parameters"],
-        "outputs": ["example_model"],
-        "tags": [],
-    },
-    {
-        "name": "predict([example_model,example_test_x]) -> [example_predictions]",
-        "inputs": ["example_test_x", "example_model"],
-        "outputs": ["example_predictions"],
-        "tags": [],
-    },
-    {
-        "name": "report_accuracy([example_predictions,example_test_y]) -> None",
-        "inputs": ["example_predictions", "example_test_y"],
-        "outputs": [],
-        "tags": [],
-    },
-]
+EXPECTED_PIPELINE_DATA = {
+    "snapshots": [
+        {
+            "edges": [
+                {
+                    "target": "task/func([bob_in,parameters])->[bob_out]",
+                    "source": "data/bob_in",
+                },
+                {
+                    "target": "task/func([bob_in,parameters])->[bob_out]",
+                    "source": "data/parameters",
+                },
+                {
+                    "target": "data/bob_out",
+                    "source": "task/func([bob_in,parameters])->[bob_out]",
+                },
+                {"target": "task/my_node", "source": "data/fred_in"},
+                {"target": "task/my_node", "source": "data/parameters"},
+                {"target": "data/fred_out", "source": "task/my_node"},
+            ],
+            "nodes": [
+                {
+                    "name": "Func",
+                    "type": "task",
+                    "id": "task/func([bob_in,parameters])->[bob_out]",
+                    "full_name": "func([bob_in,parameters]) -> [bob_out]",
+                    "tags": [],
+                },
+                {
+                    "name": "my_node",
+                    "type": "task",
+                    "id": "task/my_node",
+                    "full_name": "my_node: func([fred_in@pandas,parameters]) -> [fred_out@pandas]",
+                    "tags": ["bob"],
+                },
+                {
+                    "is_parameters": False,
+                    "name": "Bob In",
+                    "tags": [],
+                    "id": "data/bob_in",
+                    "full_name": "bob_in",
+                    "type": "data",
+                },
+                {
+                    "is_parameters": False,
+                    "name": "Bob Out",
+                    "tags": [],
+                    "id": "data/bob_out",
+                    "full_name": "bob_out",
+                    "type": "data",
+                },
+                {
+                    "is_parameters": False,
+                    "name": "Fred In",
+                    "tags": ["bob"],
+                    "id": "data/fred_in",
+                    "full_name": "fred_in",
+                    "type": "data",
+                },
+                {
+                    "is_parameters": False,
+                    "name": "Fred Out",
+                    "tags": ["bob"],
+                    "id": "data/fred_out",
+                    "full_name": "fred_out",
+                    "type": "data",
+                },
+                {
+                    "is_parameters": True,
+                    "name": "Parameters",
+                    "tags": ["bob"],
+                    "id": "data/parameters",
+                    "full_name": "parameters",
+                    "type": "data",
+                },
+            ],
+            "tags": [{"name": "Bob", "id": "bob"}],
+        }
+    ]
+}
 
 
 def create_pipeline():
-    def split_data(a, b):  # pylint: disable=unused-argument
-        return 1, 2, 3, 4
-
-    def train_model(a, b, c):  # pylint: disable=unused-argument
-        return 1
-
-    def predict(a, b):  # pylint: disable=unused-argument
-        return 1
-
-    def report_accuracy(a, b):  # pylint: disable=unused-argument
-        return None
+    def func(a, b):  # pylint: disable=unused-argument
+        return a
 
     return Pipeline(
         [
+            # unnamed node with no tags and basic io
+            node(func, ["bob_in", "parameters"], ["bob_out"]),
+            # named node with tags and transcoding
             node(
-                split_data,
-                ["parameters", "example_iris_data"],
-                [
-                    "example_train_y@spark",
-                    "example_train_x",
-                    "example_test_y",
-                    "example_test_x",
-                ],
+                func,
+                ["fred_in@pandas", "parameters"],
+                ["fred_out@pandas"],
+                name="my_node",
+                tags=["bob"],
             ),
-            node(
-                train_model,
-                ["example_train_y@pandas", "example_train_x", "parameters"],
-                ["example_model"],
-            ),
-            node(predict, ["example_test_x", "example_model"], ["example_predictions"]),
-            node(report_accuracy, ["example_predictions", "example_test_y"], []),
         ]
     )
 
@@ -163,9 +190,6 @@ def test_no_browser(cli_runner):
     assert server.webbrowser.open_new.called
 
 
-# Test endpoints
-
-
 def test_root_endpoint(client):
     """Test `/` endoint is functional"""
     response = client.get("/")
@@ -174,8 +198,8 @@ def test_root_endpoint(client):
 
 
 def test_nodes_endpoint(client):
-    """Test `/log/nodes.json` endoint is functional and returns a valid JSON"""
-    response = client.get("/logs/nodes.json")
+    """Test `/api/nodes.json` endoint is functional and returns a valid JSON"""
+    response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == EXPECTED_PIPELINE_DATA

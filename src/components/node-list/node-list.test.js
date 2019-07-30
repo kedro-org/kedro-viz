@@ -1,6 +1,6 @@
 import React from 'react';
 import NodeList, { mapStateToProps, mapDispatchToProps } from './index';
-import { mockState, setup } from '../../utils/data.mock';
+import { mockState, setup } from '../../utils/state.mock';
 import { getNodes } from '../../selectors/nodes';
 
 describe('NodeList', () => {

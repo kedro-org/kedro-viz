@@ -1,5 +1,5 @@
 import { Wrapper, mapStateToProps } from './index';
-import { mockState, setup } from '../../utils/data.mock';
+import { mockState, setup } from '../../utils/state.mock';
 
 const { showHistory, theme } = mockState;
 const mockProps = { showHistory, theme };
