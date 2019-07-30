@@ -1,0 +1,84 @@
+@import './variables';
+
+.node--text {
+  text {
+    font-weight: 600;
+    transition: all ease 0.1s;
+    pointer-events: none;
+
+    .kui-theme--light & {
+      fill: $node-labeltext-fill-light;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-labeltext-fill-dark;
+    }
+  }
+
+  rect {
+    stroke-width: 1px;
+    transition: all ease 0.1s;
+
+    .kui-theme--light & {
+      fill: $node-labelbg-fill-light;
+      stroke: $node-labelbg-stroke-light;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-labelbg-fill-dark;
+      stroke: $node-labelbg-stroke-dark;
+    }
+  }
+
+  &.node--data {
+    rect {
+      stroke-width: 2px;
+    }
+  }
+
+  &.node--highlight {
+    text {
+      fill: $node-labeltext-fill-active;
+    }
+
+    rect {
+      stroke-width: 2px;
+
+      .kui-theme--light & {
+        fill: $node-labelbg-fill-light-highlight;
+        stroke: $node-labelbg-stroke-light-highlight;
+      }
+
+      .kui-theme--dark & {
+        fill: $node-labelbg-fill-dark-highlight;
+        stroke: $node-labelbg-stroke-dark-highlight;
+      }
+    }
+  }
+
+  &.node--active {
+    text {
+      fill: $node-labeltext-fill-active;
+    }
+
+    rect {
+      stroke-width: 2px;
+
+      .kui-theme--light & {
+        fill: $node-labelbg-fill-light-active;
+        stroke: $node-labelbg-stroke-light-active;
+      }
+
+      .kui-theme--dark & {
+        fill: $node-labelbg-fill-dark-active;
+        stroke: $node-labelbg-stroke-dark-active;
+      }
+    }
+  }
+
+  svg,
+  circle {
+    opacity: 0;
+    pointer-events: none;
+  }
+}

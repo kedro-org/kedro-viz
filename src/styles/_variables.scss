@@ -25,17 +25,12 @@ $color-bg-light: white;
 $color-bg-light-alt: #f0f0f0;
 $color-header-light: #f9f9f9;
 $color-line-light: #ddd;
-$color-edge-light: mix($color-bg-light, black, 60);
-$color-tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
 // Dark theme:
 $color-text-dark: white;
 $color-bg-dark: #1d2f3a;
 $color-bg-dark-alt: #122531;
 $color-header-dark: #111f2a;
 $color-line-dark: #081c28;
-$color-edge-dark: mix($color-bg-dark, white, 15);
-$color-tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
-
 //-- typography --//
 $rem-base: 10px;
 $font-base: 10px;

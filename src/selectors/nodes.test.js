@@ -1,6 +1,6 @@
 import { mockState } from '../utils/state.mock';
+import { getActiveSnapshotNodes } from './index';
 import {
-  getActiveSnapshotNodes,
   getNodeDisabledTag,
   getNodeDisabledView,
   getNodeDisabled,
@@ -17,26 +17,6 @@ import {
 import reducer from '../reducers';
 
 describe('Selectors', () => {
-  describe('getActiveSnapshotNodes', () => {
-    it('retrieves a list of nodes for the active snapshot', () => {
-      expect(getActiveSnapshotNodes(mockState)).toEqual(
-        expect.arrayContaining([expect.any(String)])
-      );
-    });
-
-    it('returns an empty array if snapshotNodes is empty', () => {
-      const newMockState = Object.assign({}, mockState, { snapshotNodes: {} });
-      expect(getActiveSnapshotNodes(newMockState)).toEqual([]);
-    });
-
-    it('returns an empty array if activeSnapshot is undefined', () => {
-      const newMockState = Object.assign({}, mockState, {
-        activeSnapshot: undefined
-      });
-      expect(getActiveSnapshotNodes(newMockState)).toEqual([]);
-    });
-  });
-
   describe('getNodeDisabledTag', () => {
     it('returns an object', () => {
       expect(getNodeDisabledTag(mockState)).toEqual(expect.any(Object));

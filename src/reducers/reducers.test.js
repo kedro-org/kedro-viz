@@ -2,7 +2,7 @@ import mockData from '../utils/data.mock';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import * as action from '../actions';
-import { getActiveSnapshotNodes } from '../selectors/nodes';
+import { getActiveSnapshotNodes } from '../selectors';
 import formatData from '../utils/format-data';
 
 describe('Reducer', () => {

@@ -1,0 +1,28 @@
+@import './variables';
+
+.edge path {
+  fill: none;
+  stroke-width: 1.5px;
+
+  .kui-theme--light & {
+    stroke: $edge-light;
+  }
+
+  .kui-theme--dark & {
+    stroke: $edge-dark;
+  }
+}
+
+.edge--faded {
+  opacity: 0.1;
+}
+
+.pipeline-flowchart__arrowhead {
+  .kui-theme--light & {
+    fill: $edge-light;
+  }
+
+  .kui-theme--dark & {
+    fill: $edge-dark;
+  }
+}

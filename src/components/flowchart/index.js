@@ -6,11 +6,15 @@ import { interpolatePath } from 'd3-interpolate-path';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
-import { toggleNodeActive, updateChartSize } from '../../actions';
+import {
+  toggleNodeActive,
+  toggleNodeFocused,
+  updateChartSize
+} from '../../actions';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
-import linkedNodes from './linked-nodes';
+import { getLinkedNodes } from '../../selectors/linked-nodes';
 import icon from './icon';
-import './flowchart.css';
+import './styles/flowchart.css';
 
 const DURATION = 700;
 
@@ -22,6 +26,7 @@ export class FlowChart extends Component {
     super(props);
 
     this.state = {
+      nodeFocusActive: false,
       tooltipVisible: false,
       tooltipIsRight: false,
       tooltipText: null,
@@ -34,10 +39,6 @@ export class FlowChart extends Component {
     this.wrapperRef = React.createRef();
     this.edgesRef = React.createRef();
     this.nodesRef = React.createRef();
-
-    this.handleWindowResize = this.handleWindowResize.bind(this);
-    this.handleNodeMouseOver = this.handleNodeMouseOver.bind(this);
-    this.handleNodeMouseOut = this.handleNodeMouseOut.bind(this);
   }
 
   componentDidMount() {
@@ -105,9 +106,9 @@ export class FlowChart extends Component {
   /**
    * Handle window resize
    */
-  handleWindowResize() {
+  handleWindowResize = () => {
     this.updateChartSize();
-  }
+  };
 
   /**
    * Setup D3 zoom behaviour on component mount
@@ -140,8 +141,11 @@ export class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { layout, textLabels } = this.props;
+    const { focusedNode, layout, linkedNodes, textLabels } = this.props;
     const { nodes, edges } = layout;
+
+    // Only apply callback if focusedNode is truthy
+    const ifFocused = callback => (focusedNode ? callback : false);
 
     // Create selections
     this.el.edges = this.el.edgeGroup
@@ -177,6 +181,12 @@ export class FlowChart extends Component {
     this.el.edges = this.el.edges.merge(enterEdges);
 
     this.el.edges
+      .classed(
+        'edge--faded',
+        ifFocused(
+          ({ source, target }) => !linkedNodes[source] || !linkedNodes[target]
+        )
+      )
       .transition('show-edges')
       .duration(DURATION)
       .attr('opacity', 1);
@@ -195,6 +205,7 @@ export class FlowChart extends Component {
     const enterNodes = this.el.nodes
       .enter()
       .append('g')
+      .attr('tabindex', '0')
       .attr('class', 'node');
 
     enterNodes
@@ -227,8 +238,14 @@ export class FlowChart extends Component {
       .classed('node--icon', !textLabels)
       .classed('node--text', textLabels)
       .classed('node--active', node => node.active)
+      .classed('node--highlight', ifFocused(node => linkedNodes[node.id]))
+      .classed('node--faded', ifFocused(node => !linkedNodes[node.id]))
+      .on('click', this.handleNodeClick)
       .on('mouseover', this.handleNodeMouseOver)
-      .on('mouseout', this.handleNodeMouseOut);
+      .on('mouseout', this.handleNodeMouseOut)
+      .on('focus', this.handleNodeMouseOver)
+      .on('blur', this.handleNodeMouseOut)
+      .on('keydown', this.handleNodeKeyDown);
 
     this.el.nodes
       .transition('update-nodes')
@@ -246,31 +263,63 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Event handler for toggling a node's active state,
-   * showing tooltip, and highlighting linked nodes
+   * Enable a node's focus state and highlight linked nodes
    * @param {Object} node Datum for a single node
    */
-  handleNodeMouseOver(node) {
-    const { layout, onToggleNodeActive } = this.props;
-    onToggleNodeActive(node, true);
-    this.showTooltip(node);
-    linkedNodes.show({
-      el: this.el,
-      nodeID: node.id,
-      ...layout
-    });
-  }
+  handleNodeClick = node => {
+    this.props.onToggleNodeFocused(node.id);
+    this.setState({ nodeFocusActive: true });
+    event.stopPropagation();
+  };
 
   /**
-   * Event handler for toggling a node's active state,
-   * hiding tooltip, and dimming linked nodes
+   * Remove a node's focus state and dim linked nodes
+   */
+  handleChartClick = () => {
+    this.props.onToggleNodeFocused(null);
+    this.setState({ nodeFocusActive: false });
+  };
+
+  /**
+   * Enable a node's active state, show tooltip, and highlight linked nodes
    * @param {Object} node Datum for a single node
    */
-  handleNodeMouseOut(node) {
+  handleNodeMouseOver = node => {
+    const { onToggleNodeActive, onToggleNodeFocused } = this.props;
+    onToggleNodeActive(node, true);
+    this.showTooltip(node);
+    if (!this.state.nodeFocusActive) {
+      onToggleNodeFocused(node.id);
+    }
+  };
+
+  /**
+   * Remove a node's active state, hide tooltip, and dim linked nodes
+   * @param {Object} node Datum for a single node
+   */
+  handleNodeMouseOut = node => {
     this.props.onToggleNodeActive(node, false);
-    linkedNodes.hide(this.el);
     this.hideTooltip();
-  }
+    if (!this.state.nodeFocusActive) {
+      this.props.onToggleNodeFocused(null);
+    }
+  };
+
+  /**
+   * Handle keydown event when a node is focused
+   * @param {Object} node Datum for a single node
+   */
+  handleNodeKeyDown = node => {
+    const ENTER = 13;
+    const ESCAPE = 27;
+    if (event.keyCode === ENTER) {
+      this.handleNodeClick(node);
+    }
+    if (event.keyCode === ESCAPE) {
+      this.handleChartClick();
+      this.handleNodeMouseOut(node);
+    }
+  };
 
   /**
    * Show, fill and and position the tooltip
@@ -318,7 +367,10 @@ export class FlowChart extends Component {
     } = this.state;
 
     return (
-      <div className="pipeline-flowchart kedro" ref={this.containerRef}>
+      <div
+        className="pipeline-flowchart kedro"
+        ref={this.containerRef}
+        onClick={this.handleChartClick}>
         <svg
           className="pipeline-flowchart__graph"
           width={outerWidth}
@@ -364,6 +416,8 @@ export const mapStateToProps = state => ({
   activeSnapshot: state.activeSnapshot,
   chartSize: state.chartSize,
   layout: getLayout(state),
+  linkedNodes: getLinkedNodes(state),
+  focusedNode: state.nodeFocused,
   textLabels: state.textLabels,
   view: state.view,
   zoom: getZoomPosition(state)
@@ -372,6 +426,9 @@ export const mapStateToProps = state => ({
 export const mapDispatchToProps = dispatch => ({
   onToggleNodeActive: (node, isActive) => {
     dispatch(toggleNodeActive(node.id, isActive));
+  },
+  onToggleNodeFocused: nodeFocused => {
+    dispatch(toggleNodeFocused(nodeFocused));
   },
   onUpdateChartSize: chartSize => {
     dispatch(updateChartSize(chartSize));

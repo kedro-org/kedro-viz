@@ -5,6 +5,7 @@ import {
   RESET_SNAPSHOT_DATA,
   TOGGLE_NODE_ACTIVE,
   TOGGLE_NODE_DISABLED,
+  TOGGLE_NODE_FOCUSED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_PARAMETERS,
   TOGGLE_TAG_ACTIVE,
@@ -64,6 +65,12 @@ function reducer(state = {}, action) {
         nodeDisabled: Object.assign({}, state.nodeDisabled, {
           [action.nodeID]: action.isDisabled
         })
+      });
+    }
+
+    case TOGGLE_NODE_FOCUSED: {
+      return Object.assign({}, state, {
+        nodeFocused: action.nodeFocused
       });
     }
 
