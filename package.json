@@ -44,7 +44,7 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "snyk": "^1.193.2"
+    "snyk": "^1.204.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
