@@ -9,7 +9,7 @@ jobs:
       - image: circleci/node:10.15
     working_directory: ~/repo
     environment:
-      CONDA_ENV_PY_VERSION: 3.5.2
+      CONDA_ENV_PY_VERSION: 3.5.4
     steps:
       - checkout
       # Download and cache dependencies
@@ -28,7 +28,7 @@ jobs:
             sudo rm -rf .pyenv/ /opt/circleci/.pyenv/
             # Download and install miniconda
             curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh  > miniconda.sh
-            sudo bash miniconda.sh -b -p $HOME/miniconda
+            bash miniconda.sh -b -p $HOME/miniconda
             # Create an anaconda virtualenv for python ${CONDA_ENV_PY_VERSION} and make that the default python interpreter
             echo ". /home/circleci/miniconda/etc/profile.d/conda.sh" >> $BASH_ENV
             echo "conda deactivate; conda activate kedro-viz" >> $BASH_ENV
@@ -103,7 +103,7 @@ jobs:
           name: Create conda environment
           command: |
             curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh  > miniconda.sh
-            sudo bash miniconda.sh -b -p $HOME/miniconda
+            bash miniconda.sh -b -p $HOME/miniconda
             echo ". /home/circleci/miniconda/etc/profile.d/conda.sh" >> $BASH_ENV
             echo "conda deactivate; conda activate license_checker" >> $BASH_ENV
             . /home/circleci/miniconda/etc/profile.d/conda.sh
