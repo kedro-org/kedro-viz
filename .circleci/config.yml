@@ -97,37 +97,6 @@ jobs:
     <<: *DEFAULT
     environment:
       CONDA_ENV_PY_VERSION: 3.7
-  license_checker:
-    docker:
-      - image: circleci/node:10.15
-    steps:
-      - checkout
-      - run:
-          name: Create conda environment
-          command: |
-            curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh  > miniconda.sh
-            bash miniconda.sh -b -p $HOME/miniconda
-            echo ". /home/circleci/miniconda/etc/profile.d/conda.sh" >> $BASH_ENV
-            echo "conda deactivate; conda activate license_checker" >> $BASH_ENV
-            . /home/circleci/miniconda/etc/profile.d/conda.sh
-            conda create --name=license_checker python=3.6 -y
-            source $BASH_ENV
-      - run:
-          name: Install Kedro-Viz
-          command: |
-            npm ci
-            make install
-      - run:
-          name: Check python package licenses
-          command: |
-            pip install pip-licenses
-            chmod +x /home/circleci/project/tools/python_license_checker.py
-            /home/circleci/project/tools/python_license_checker.py
-      - run:
-          name: Check npm package licenses
-          command: |
-            chmod +x /home/circleci/project/tools/npm_license_checker.py
-            /home/circleci/project/tools/npm_license_checker.py
 workflows:
   version: 2
   build:
@@ -135,4 +104,3 @@ workflows:
       - build_35
       - build_36
       - build_37
-      - license_checker
