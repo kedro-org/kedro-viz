@@ -1,0 +1,80 @@
+@import './variables';
+
+.node--icon {
+  circle,
+  rect {
+    stroke-width: 1px;
+    transition: all ease 0.1s;
+
+    .kui-theme--light & {
+      fill: $node-iconbg-fill-light;
+      stroke: $node-iconbg-stroke-light;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-iconbg-fill-dark;
+      stroke: $node-iconbg-stroke-dark;
+    }
+  }
+
+  &.node--highlight {
+    circle,
+    rect {
+      stroke-width: 1px;
+
+      .kui-theme--light & {
+        fill: $node-iconbg-fill-light-highlight;
+        stroke: $node-iconbg-stroke-light-highlight;
+      }
+
+      .kui-theme--dark & {
+        fill: $node-iconbg-fill-dark-highlight;
+        stroke: $node-iconbg-stroke-dark-highlight;
+      }
+    }
+  }
+
+  &.node--active {
+    circle,
+    rect {
+      stroke-width: 1.5px;
+
+      .kui-theme--light & {
+        fill: $node-iconbg-fill-light-active;
+        stroke: $node-iconbg-stroke-light-active;
+      }
+
+      .kui-theme--dark & {
+        fill: $node-iconbg-fill-dark-active;
+        stroke: $node-iconbg-stroke-dark-active;
+      }
+    }
+  }
+
+  text {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &.node--data {
+    rect {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  &.node--task {
+    circle {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+}
+
+.node__icon {
+  pointer-events: none;
+}
+
+.node__icon__fill {
+  fill: $node-icon-fill;
+}
