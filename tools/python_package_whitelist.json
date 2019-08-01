@@ -1,9 +1,0 @@
-{
-    "click": "UNKNOWN",
-    "docutils": "public domain, Python, 2-Clause BSD, GPL 3 (see COPYING.txt)",
-    "python-dateutil": "Dual License",
-    "chardet": "LGPL",
-    "kedro": null,
-    "kedro-viz": null,
-    "certifi": "MPL-2.0"
-}
