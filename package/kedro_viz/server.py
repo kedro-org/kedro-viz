@@ -66,7 +66,7 @@ def nodes_json():
     namespace_tags = defaultdict(set)
     all_tags = set()
 
-    for node in sorted(pipeline.nodes):
+    for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = "task/" + node.name.replace(" ", "")
         nodes.append(
             {
