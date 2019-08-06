@@ -79,7 +79,7 @@ utils:
   save_cache: &save_cache
       paths:
         - node_modules
-      key: v1-dependencies-{{ checksum "package.json" }}
+      key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
 
   build_application: &build_application
       name: Build application
