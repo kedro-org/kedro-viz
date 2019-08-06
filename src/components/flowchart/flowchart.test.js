@@ -2,7 +2,7 @@ import React from 'react';
 import $ from 'cheerio';
 import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
-import { getActiveSnapshotNodes } from '../../selectors/nodes';
+import { getActiveSnapshotNodes } from '../../selectors';
 
 describe('FlowChart', () => {
   it('renders without crashing', () => {
@@ -101,6 +101,8 @@ describe('FlowChart', () => {
         edges: expect.any(Array),
         nodes: expect.any(Array)
       }),
+      linkedNodes: expect.any(Object),
+      focusedNode: null,
       textLabels: expect.any(Boolean),
       view: expect.stringMatching(/combined|data|text/),
       zoom: expect.objectContaining({

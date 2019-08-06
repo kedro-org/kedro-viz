@@ -154,6 +154,7 @@ const formatSnapshots = data => {
     nodeFullName,
     nodeActive: {},
     nodeDisabled: {},
+    nodeFocused: null,
     nodeType,
     nodeIsParam,
     nodeTags,

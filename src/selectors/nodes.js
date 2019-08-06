@@ -1,10 +1,9 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
+import { getActiveSnapshotNodes } from './index';
 import { getTagCount } from './tags';
 
 const getView = state => state.view;
-const getActiveSnapshot = state => state.activeSnapshot;
-const getSnapshotNodes = state => state.snapshotNodes;
 const getNodeName = state => state.nodeName;
 const getNodeActiveNode = state => state.nodeActive;
 const getNodeDisabledNode = state => state.nodeDisabled;
@@ -12,14 +11,6 @@ const getNodeTags = state => state.nodeTags;
 const getNodeType = state => state.nodeType;
 const getTagActive = state => state.tagActive;
 const getTagEnabled = state => state.tagEnabled;
-
-/**
- * Get a list of nodes for the active snapshot
- */
-export const getActiveSnapshotNodes = createSelector(
-  [getActiveSnapshot, getSnapshotNodes],
-  (activeSnapshot, snapshotNodes) => snapshotNodes[activeSnapshot] || []
-);
 
 /**
  * Calculate whether nodes should be disabled based on their tags

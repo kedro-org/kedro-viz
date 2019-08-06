@@ -1,21 +1,12 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
-import { getActiveSnapshotNodes, getNodeDisabled } from './nodes';
+import { getActiveSnapshotNodes, getActiveSnapshotEdges } from './index';
+import { getNodeDisabled } from './nodes';
 
 const getView = state => state.view;
-const getActiveSnapshot = state => state.activeSnapshot;
 const getNodeType = state => state.nodeType;
-const getSnapshotEdges = state => state.snapshotEdges;
 const getEdgeSources = state => state.edgeSources;
 const getEdgeTargets = state => state.edgeTargets;
-
-/**
- * Get a list of edges for the active snapshot
- */
-export const getActiveSnapshotEdges = createSelector(
-  [getActiveSnapshot, getSnapshotEdges],
-  (activeSnapshot, snapshotEdges) => snapshotEdges[activeSnapshot] || []
-);
 
 /**
  * Calculate whether edges should be disabled based on their source/target nodes

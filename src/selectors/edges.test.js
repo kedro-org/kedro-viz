@@ -1,6 +1,6 @@
 import { mockState } from '../utils/state.mock';
+import { getActiveSnapshotNodes, getActiveSnapshotEdges } from './index';
 import {
-  getActiveSnapshotEdges,
   getEdgeDisabledNode,
   getEdgeDisabledView,
   getEdgeDisabled,
@@ -9,31 +9,10 @@ import {
   getTransitiveEdges,
   getVisibleEdges
 } from './edges';
-import { getActiveSnapshotNodes } from './nodes';
 import { changeView, toggleNodeDisabled } from '../actions';
 import reducer from '../reducers';
 
 describe('Selectors', () => {
-  describe('getActiveSnapshotEdges', () => {
-    it('gets a list of edges for the active snapshot', () => {
-      expect(getActiveSnapshotEdges(mockState)).toEqual(
-        expect.arrayContaining([expect.any(String)])
-      );
-    });
-
-    it('returns an empty array if snapshotEdges is empty', () => {
-      const newMockState = Object.assign({}, mockState, { snapshotEdges: {} });
-      expect(getActiveSnapshotEdges(newMockState)).toEqual([]);
-    });
-
-    it('returns an empty array if activeSnapshot is undefined', () => {
-      const newMockState = Object.assign({}, mockState, {
-        activeSnapshot: undefined
-      });
-      expect(getActiveSnapshotEdges(newMockState)).toEqual([]);
-    });
-  });
-
   describe('getEdgeDisabledNode', () => {
     it('returns an object', () => {
       expect(getEdgeDisabledNode(mockState)).toEqual(expect.any(Object));

@@ -82,6 +82,19 @@ export function toggleNodeDisabled(nodeID, isDisabled) {
   };
 }
 
+export const TOGGLE_NODE_FOCUSED = 'TOGGLE_NODE_FOCUSED';
+
+/**
+ * Update the value of the currently-focused node
+ * @param {string|null} nodeFocused The node's unique identifier
+ */
+export function toggleNodeFocused(nodeFocused) {
+  return {
+    type: TOGGLE_NODE_FOCUSED,
+    nodeFocused
+  };
+}
+
 export const TOGGLE_NODES_DISABLED = 'TOGGLE_NODES_DISABLED';
 
 /**
