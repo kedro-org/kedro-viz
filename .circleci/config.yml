@@ -178,6 +178,6 @@ workflows:
               - build_35
               - build_36
               - build_37
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
