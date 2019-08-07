@@ -106,7 +106,7 @@ utils:
         git config --global user.name CircleCIBot
         git init
         git add -A
-        git commit -m 'Demo build'
+        git commit -m 'Demo build [ci skip]'
         git remote add origin https://github.com/quantumblacklabs/kedro-viz.git
         git push origin master:gh-pages --force
 
