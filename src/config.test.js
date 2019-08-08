@@ -25,8 +25,13 @@ describe('config', () => {
     expect(config().dataSource).toBe('json');
   });
 
-  it('should return the given datasource if set', () => {
+  it('should return "json" as the datasource if the given source is unknown', () => {
     process.env.REACT_APP_DATA_SOURCE = 'qwertyuiop';
-    expect(config().dataSource).toBe('qwertyuiop');
+    expect(config().dataSource).toBe('json');
+  });
+
+  it('should return the given datasource if set', () => {
+    process.env.REACT_APP_DATA_SOURCE = 'random';
+    expect(config().dataSource).toBe('random');
   });
 });

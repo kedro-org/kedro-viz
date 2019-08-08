@@ -1,2 +1,2 @@
 Flask>=1.0, <2.0
-kedro
+kedro>=0.14.0
