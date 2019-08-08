@@ -1,3 +1,20 @@
+# Upcoming release:
+Add release notes for the upcoming release here.
+
+# Release 2.1.0:
+
+## Major features and improvements
+- Toggle linked-node active state on click (#20)
+
+## Bug fixes and other changes
+
+- Pin pip version to be less than 19.2 (#24)
+- Unpin pip version (#25)
+- Fix infosec vulnerability in LoDash (#16)
+- Remove license checkers (#28)
+- Make Viz backwards-compatible with Kedro 0.14.0 (#30)
+- Automatically deploy demo builds to Github Pages (#26)
+
 # Release 2.0.0:
 
 ## Major features and improvements
