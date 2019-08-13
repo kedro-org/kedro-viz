@@ -161,18 +161,9 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_35:
-          filters:
-            branches:
-              ignore: gh-pages
-      - build_36:
-          filters:
-            branches:
-              ignore: gh-pages
-      - build_37:
-          filters:
-            branches:
-              ignore: gh-pages
+      - build_35
+      - build_36
+      - build_37
       - deploy_demo:
           requires:
               - build_35
