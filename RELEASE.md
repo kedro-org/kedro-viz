@@ -3,6 +3,7 @@ Add release notes for the upcoming release here.
 
 ## Bug fixes and other changes
 - Don't ignore gh-pages branch in CircleCI (#33)
+- Document the React props and data format (#34)
 
 # Release 2.1.0:
 
