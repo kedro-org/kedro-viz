@@ -81,9 +81,13 @@
   visibility: hidden;
   opacity: 0;
   transition: all ease 0.4s;
+  z-index: 1;
 
-  &--offset {
-    right: -50px;
+  @media (min-width: $breakpoint-small) {
+    &--offset {
+      right: -50px;
+      z-index: auto;
+    }
   }
 
   &--visible {
