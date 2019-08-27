@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'what-input';
 import App from './components/app';
 import config from './config';
 import './styles/index.css';

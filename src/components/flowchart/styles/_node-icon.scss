@@ -48,6 +48,11 @@
         fill: $node-iconbg-fill-dark-active;
         stroke: $node-iconbg-stroke-dark-active;
       }
+
+      [data-whatintent='keyboard'] & {
+        stroke-width: 3.5px;
+        stroke: $color-link;
+      }
     }
   }
 

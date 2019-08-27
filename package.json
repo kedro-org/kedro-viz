@@ -29,12 +29,12 @@
     "@quantumblack/kedro-ui": "^1.0.2",
     "classnames": "^2.2.6",
     "d3-fetch": "^1.1.2",
+    "d3-interpolate-path": "^2.1.0",
     "d3-scale": "^3.0.0",
     "d3-selection": "^1.4.0",
     "d3-shape": "^1.3.5",
     "d3-transition": "^1.2.0",
     "d3-zoom": "^1.7.3",
-    "d3-interpolate-path": "^2.1.0",
     "dagre": "^0.8.4",
     "react": "^16.8.6",
     "react-custom-scrollbars": "^4.2.1",
@@ -44,7 +44,8 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "snyk": "^1.204.0"
+    "snyk": "^1.204.0",
+    "what-input": "^5.2.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
