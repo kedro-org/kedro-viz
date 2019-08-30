@@ -100,3 +100,5 @@ As a JavaScript React component, the project is designed to be used in two diffe
 ## What licence do you use?
 
 Kedro-Viz is licensed under the [Apache 2.0](https://github.com/quantumblacklabs/kedro-viz/blob/master/LICENSE.md) License.
+
+<p align="center">↑↑↓↓←→←→BA</p>
