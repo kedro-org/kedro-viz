@@ -1,0 +1,116 @@
+.easter-theme {
+  overflow: hidden;
+
+  .kedro-pipeline {
+    animation: rainbow 2s infinite linear;
+  }
+
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-bottom: 200vmax solid rgba(white, 0.25);
+    top: -10vh;
+    z-index: 300;
+    pointer-events: none;
+    filter: blur(15px) sepia(10%);
+  }
+  &:before {
+    left: 0;
+    transform-origin: 0 0;
+    border-right: 80vmax solid transparent;
+    animation: spotlight-left 3s infinite alternate ease;
+  }
+  &:after {
+    right: 0;
+    transform-origin: 80vmax 0;
+    border-left: 80vmax solid transparent;
+    animation: spotlight-right 3.5s infinite alternate ease;
+  }
+}
+
+@keyframes spotlight-left {
+  from {
+    transform: rotate(-5deg);
+  }
+  to {
+    transform: rotate(-40deg);
+  }
+}
+
+@keyframes spotlight-right {
+  from {
+    transform: rotate(5deg);
+  }
+  to {
+    transform: rotate(40deg);
+  }
+}
+
+@keyframes rainbow {
+  from {
+    filter: saturate(10) hue-rotate(0deg);
+  }
+  to {
+    filter: saturate(10) hue-rotate(360deg);
+  }
+}
+
+.easter-egg {
+  animation: stroll 2.55319148936s linear 0s infinite;
+
+  img {
+    width: 40vw;
+    height: auto;
+    position: fixed;
+    left: 0px;
+    bottom: -3.4vw;
+    margin-left: -20vw;
+    z-index: 200;
+    // beat: 188 bpm. speed obtained by (120/188)*2
+    animation: brody 1.27659574468s linear 0s infinite;
+    transform-origin: 50% 100%;
+    pointer-events: none;
+  }
+}
+
+@keyframes stroll {
+  0% {
+    transform: translateX(-10vw);
+  }
+  100% {
+    transform: translateX(110vw);
+  }
+}
+
+@keyframes brody {
+  0% {
+    transform: rotate(10deg);
+  }
+  20% {
+    transform: rotate(10deg);
+  }
+  25% {
+    transform: rotate(0deg) translateY(-10px);
+  }
+  45% {
+    transform: rotate(0deg) translateY(-10px);
+  }
+  50% {
+    transform: rotate(-10deg);
+  }
+  70% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(0deg) translateY(-10px);
+  }
+  95% {
+    transform: rotate(0deg) translateY(-10px);
+  }
+  100% {
+    transform: rotate(10deg);
+  }
+}
