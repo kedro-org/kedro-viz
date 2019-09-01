@@ -23,7 +23,8 @@
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
-    "snyk-protect": "snyk protect"
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@quantumblack/kedro-ui": "^1.0.2",
@@ -44,7 +45,7 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "snyk": "^1.204.0"
+    "snyk": "^1.222.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
