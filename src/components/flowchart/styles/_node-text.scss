@@ -73,6 +73,11 @@
         fill: $node-labelbg-fill-dark-active;
         stroke: $node-labelbg-stroke-dark-active;
       }
+
+      [data-whatintent='keyboard'] & {
+        stroke-width: 3.5px;
+        stroke: $color-link;
+      }
     }
   }
 
