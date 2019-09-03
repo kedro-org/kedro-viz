@@ -16,12 +16,6 @@ describe('App', () => {
     it('when being passed data as a prop', () => {
       shallow(<App data={mockData} />);
     });
-
-    it('when enabling history and history deletion', () => {
-      shallow(
-        <App allowHistoryDeletion={true} data="random" showHistory={true} />
-      );
-    });
   });
 
   describe('updates the store', () => {

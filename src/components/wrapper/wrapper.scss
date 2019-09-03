@@ -84,10 +84,8 @@
   z-index: 1;
 
   @media (min-width: $breakpoint-small) {
-    &--offset {
-      right: -50px;
-      z-index: auto;
-    }
+    right: -50px;
+    z-index: auto;
   }
 
   &--visible {

@@ -1,8 +1,8 @@
 import { Wrapper, mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
-const { showHistory, theme } = mockState;
-const mockProps = { showHistory, theme };
+const { theme } = mockState;
+const mockProps = { theme };
 
 describe('Wrapper', () => {
   it('renders without crashing', () => {

@@ -57,7 +57,6 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-  allowHistoryDeletion: PropTypes.bool,
   data: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
@@ -71,28 +70,14 @@ App.propTypes = {
         })
       )
     })
-  ]),
-  onDeleteSnapshot: PropTypes.func,
-  showHistory: PropTypes.bool
+  ])
 };
 
 App.defaultProps = {
   /**
    * Data array containing Pipeline snapshot objects
    */
-  data: null,
-  /**
-   * Show/hide snapshot history tab in sidebar
-   */
-  showHistory: false,
-  /**
-   * Allow users to delete a snapshot from the history tab
-   */
-  allowHistoryDeletion: false,
-  /**
-   * Callback on deletion of a snapshot from the history tab
-   */
-  onDeleteSnapshot: null
+  data: null
 };
 
 export default App;

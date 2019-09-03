@@ -9,14 +9,8 @@ import { loadState } from '../../utils';
  * Configure the redux store's initial state
  * @param {Object}   pipelineData Formatted pipeline data
  * @param {Object}   props App component props
- * @param {Boolean}  props.allowHistoryDeletion Whether to allow snapshots to be deleted
- * @param {Function} props.onDeleteSnapshot Event handler for deleting snapshots
- * @param {Boolean}  props.showHistory Whether to show History panel
  */
-export const getInitialState = (
-  pipelineData,
-  { allowHistoryDeletion, onDeleteSnapshot, showHistory }
-) => {
+export const getInitialState = pipelineData => {
   // Load properties from localStorage if defined, else use defaults
   const {
     parameters = true,
@@ -28,11 +22,8 @@ export const getInitialState = (
   return {
     ...pipelineData,
     activeSnapshot: pipelineData.snapshotIDs[0],
-    allowHistoryDeletion,
     chartSize: {},
-    onDeleteSnapshot,
     parameters,
-    showHistory,
     textLabels,
     view,
     theme

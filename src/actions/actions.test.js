@@ -15,7 +15,6 @@ import {
   UPDATE_CHART_SIZE,
   changeActiveSnapshot,
   changeView,
-  deleteSnapshot,
   resetSnapshotData,
   toggleNodeActive,
   toggleNodeDisabled,
@@ -45,15 +44,6 @@ describe('actions', () => {
       view
     };
     expect(changeView(view)).toEqual(expectedAction);
-  });
-
-  it('should create an action to delete a snapshot', () => {
-    const id = '123567890';
-    const expectedAction = {
-      type: DELETE_SNAPSHOT,
-      id
-    };
-    expect(deleteSnapshot(id)).toEqual(expectedAction);
   });
 
   it('should create an action to reset snapshot data', () => {

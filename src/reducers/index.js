@@ -1,7 +1,6 @@
 import {
   CHANGE_ACTIVE_SNAPSHOT,
   CHANGE_VIEW,
-  DELETE_SNAPSHOT,
   RESET_SNAPSHOT_DATA,
   TOGGLE_NODE_ACTIVE,
   TOGGLE_NODE_DISABLED,
@@ -26,26 +25,6 @@ function reducer(state = {}, action) {
       return Object.assign({}, state, {
         view: action.view
       });
-
-    case DELETE_SNAPSHOT: {
-      // If snapshot deletion logic is handled upstream via an event handler prop,
-      // then use that instead:
-      if (state.onDeleteSnapshot) {
-        state.onDeleteSnapshot(action.id);
-        return state;
-      }
-      // Else, handle it manually:
-      const snapshotIDs = state.snapshotIDs.filter(id => id !== action.id);
-      // If the deleted pipeline is the active one, then use a new active one
-      let { activeSnapshot } = state;
-      if (activeSnapshot === action.id) {
-        activeSnapshot = state.snapshotIDs[0];
-      }
-      return Object.assign({}, state, {
-        activeSnapshot,
-        snapshotIDs
-      });
-    }
 
     case RESET_SNAPSHOT_DATA:
       return Object.assign({}, state, action.snapshots, {

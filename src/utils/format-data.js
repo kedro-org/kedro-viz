@@ -69,8 +69,8 @@ const formatSnapshots = data => {
    * @param {Object} raw - The parsed data straight from the JSON
    * @return {Object} The node, edge and raw data for the chart
    */
-  const formatSnapshotData = (snapshotID, rawSnapshot) => {
-    if (!validateInput(rawSnapshot)) {
+  const formatData = (snapshotID, rawData) => {
+    if (!validateInput(rawData)) {
       return;
     }
 
@@ -126,19 +126,19 @@ const formatSnapshots = data => {
     };
 
     // Begin formatting
-    rawSnapshot.nodes.forEach(addNode);
-    rawSnapshot.edges.forEach(addEdge);
-    rawSnapshot.tags.forEach(addTag);
+    rawData.nodes.forEach(addNode);
+    rawData.edges.forEach(addEdge);
+    rawData.tags.forEach(addTag);
   };
 
-  data.snapshots.forEach(snapshot => {
-    const id = String(snapshot.schema_id || '');
-    snapshotIDs.push(id);
-    snapshotSchema[id] = snapshot;
-    snapshotTimestamp[id] = Number(snapshot.created_ts);
-    snapshotMessage[id] = snapshot.message;
-    formatSnapshotData(id, snapshot);
-  });
+  const datum = data.snapshots ? data.snapshots[0] : data;
+
+  const id = String(datum.schema_id || '');
+  snapshotIDs.push(id);
+  snapshotSchema[id] = datum;
+  snapshotTimestamp[id] = Number(datum.created_ts);
+  snapshotMessage[id] = datum.message;
+  formatData(id, datum);
 
   const snapshots = {
     snapshotIDs: snapshotIDs.sort(

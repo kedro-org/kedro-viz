@@ -53,45 +53,6 @@ describe('Reducer', () => {
     });
   });
 
-  describe('DELETE_SNAPSHOT', () => {
-    it('should return the original state when snapshot ID is not found', () => {
-      expect(
-        reducer(mockState, {
-          type: action.DELETE_SNAPSHOT,
-          snapshotID: 'qwertyuiop'
-        })
-      ).toEqual(mockState);
-    });
-
-    it('should run state.onDeleteSnapshot if available', () => {
-      const state = {
-        onDeleteSnapshot: jest.fn()
-      };
-      expect(state.onDeleteSnapshot.mock.calls.length).toBe(0);
-      expect(
-        reducer(state, {
-          type: action.DELETE_SNAPSHOT,
-          snapshotID: 'qwertyuiop'
-        })
-      ).toEqual(state);
-      expect(state.onDeleteSnapshot.mock.calls.length).toBe(1);
-    });
-
-    it('should delete one of the snapshots if state.onDeleteSnapshot does not exist', () => {
-      const snapshotID = mockState.snapshotIDs[0];
-      const newState = reducer(mockState, {
-        type: action.DELETE_SNAPSHOT,
-        id: snapshotID
-      });
-      expect(newState.snapshotIDs).toEqual(
-        mockState.snapshotIDs.filter(id => id !== snapshotID)
-      );
-      expect(newState.snapshotIDs.length).toBe(
-        mockState.snapshotIDs.length - 1
-      );
-    });
-  });
-
   describe('RESET_SNAPSHOT_DATA', () => {
     it('should return the same snapshot data when given the same input', () => {
       expect(

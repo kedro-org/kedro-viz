@@ -24,20 +24,6 @@ export function changeView(view) {
   };
 }
 
-export const DELETE_SNAPSHOT = 'DELETE_SNAPSHOT';
-
-/**
- * Select a snapshot and delete it. If handler is passed via App
- * 'onDeleteSnapshot' prop then use that, else use native method.
- * @param {string} id Snapshot id
- */
-export function deleteSnapshot(id) {
-  return {
-    type: DELETE_SNAPSHOT,
-    id
-  };
-}
-
 export const RESET_SNAPSHOT_DATA = 'RESET_SNAPSHOT_DATA';
 
 /**

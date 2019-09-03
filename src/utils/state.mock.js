@@ -9,10 +9,7 @@ import mockData from './data.mock';
 /**
  * Example state object for use in tests of redux-enabled components
  */
-export const mockState = getInitialState(formatSnapshots(mockData), {
-  allowHistoryDeletion: true,
-  showHistory: true
-});
+export const mockState = getInitialState(formatSnapshots(mockData));
 
 // Redux store based on mock data
 export const mockStore = store(mockState);
