@@ -56,31 +56,25 @@
 
 .pipeline-node-list__toggle {
   background: none;
-  padding: 2px 0 1px;
+  padding: 1px 6px 2px;
+  margin: -1px -6px -2px;
   box-shadow: none;
   border: none;
   color: inherit;
   font-size: 1.6em;
   cursor: pointer;
   opacity: 0.8;
-  outline: none;
-  border-bottom: 1px solid transparent;
 
   &:focus {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
+    opacity: 1;
+    outline: 4px solid $color-link;
 
-    .kui-theme--light & {
-      border-bottom-color: rgba(black, 0.5);
-    }
-
-    .kui-theme--dark & {
-      border-bottom-color: rgba(white, 0.5);
+    [data-whatintent='mouse'] & {
+      outline: none;
     }
   }
 
-  &:hover,
-  &:focus {
+  &:hover {
     opacity: 1;
   }
 }
