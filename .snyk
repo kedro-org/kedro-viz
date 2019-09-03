@@ -5,20 +5,20 @@ ignore:
   'snyk:lic:npm:mdn-data:MPL-2.0':
     - react-scripts > @svgr/webpack > @svgr/plugin-svgo > svgo > css-tree > mdn-data:
         reason: 'False positive: mdn-data is actually on a CC0-1.0 license'
-        expires: '2019-08-29T11:59:59.883Z'
+        expires: '2020-08-29T11:59:59.883Z'
     - react-scripts > @svgr/webpack > @svgr/plugin-svgo > svgo > csso > css-tree > mdn-data:
         reason: 'False positive: mdn-data is actually on a CC0-1.0 license'
-        expires: '2019-08-29T11:59:59.884Z'
+        expires: '2020-08-29T11:59:59.884Z'
     - react-scripts > optimize-css-assets-webpack-plugin > cssnano > cssnano-preset-default > postcss-svgo > svgo > css-tree > mdn-data:
         reason: 'False positive: mdn-data is actually on a CC0-1.0 license'
-        expires: '2019-08-29T11:59:59.884Z'
+        expires: '2020-08-29T11:59:59.884Z'
     - react-scripts > optimize-css-assets-webpack-plugin > cssnano > cssnano-preset-default > postcss-svgo > svgo > csso > css-tree > mdn-data:
         reason: 'False positive: mdn-data is actually on a CC0-1.0 license'
-        expires: '2019-08-29T11:59:59.884Z'
+        expires: '2020-08-29T11:59:59.884Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-LODASH-450202:
     - react-scripts > html-webpack-plugin > lodash:
-        patched: '2019-07-30T11:48:08.238Z'
+        patched: '2020-07-30T11:48:08.238Z'
     - '@quantumblack/kedro-ui > lodash':
-        patched: '2019-07-30T11:48:08.238Z'
+        patched: '2020-07-30T11:48:08.238Z'

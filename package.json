@@ -45,7 +45,7 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "snyk": "^1.204.0",
+    "snyk": "^1.222.1",
     "what-input": "^5.2.3"
   },
   "devDependencies": {
