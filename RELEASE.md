@@ -1,6 +1,17 @@
 # Upcoming release:
 Add release notes for the upcoming release here.
 
+# Release 2.1.1:
+
+## Bug fixes and other changes
+- Don't ignore gh-pages branch in CircleCI (#33)
+- Document the React props and data format (#34)
+- Fix closing of the navbar on smaller screens (#35)
+- Use What Input? to set obvious keyboard focus state (#36)
+- Add Konami code easter egg (#37)
+- Extend snyk patch expiry duration to 1 year (#39)
+- Fix react dependency issues (#40)
+
 # Release 2.1.0:
 
 ## Major features and improvements

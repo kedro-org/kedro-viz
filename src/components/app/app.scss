@@ -15,11 +15,44 @@
     min-width: 20px;
   }
 
-  // Change radio button focus outline to blue
+  // Change Kedro-UI focus outlines to blue
   &.kui-theme--dark,
   &.kui-theme--light {
     .kui-switch__input:focus + .kui-switch-radio__label .kui-switch-radio__box {
-      box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.6);
+      box-shadow: 0 0 0 4px $color-link;
+
+      [data-whatinput='mouse'] & {
+        box-shadow: none;
+      }
+    }
+
+    .kui-input--focused,
+    .kui-dropdown__label:focus,
+    .kui-switch__input:focus
+      + .kui-switch-checkbox__label
+      .kui-switch-checkbox__box {
+      outline: 4px solid $color-link;
+
+      [data-whatintent='mouse'] & {
+        outline-color: transparent;
+      }
+    }
+
+    .kui-switch__input + .kui-toggle__switch {
+      border: 7px solid transparent;
+      margin: -7px;
+      background-color: transparent;
+      outline-width: 4px;
+      transition: outline-color 0.1s;
+      user-select: none;
+    }
+    .kui-switch__input:active + .kui-toggle__switch,
+    .kui-switch__input:focus + .kui-toggle__switch {
+      outline-color: $color-link;
+
+      [data-whatinput='mouse'] & {
+        outline-color: transparent;
+      }
     }
   }
 
@@ -52,6 +85,10 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.6);
+    box-shadow: 0 0 0 3px $color-link;
+
+    [data-whatinput='mouse'] & {
+      box-shadow: none;
+    }
   }
 }
