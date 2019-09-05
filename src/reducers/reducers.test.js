@@ -10,35 +10,6 @@ describe('Reducer', () => {
     expect(reducer(undefined, {})).toEqual({});
   });
 
-  describe('CHANGE_ACTIVE_SNAPSHOT', () => {
-    it('should change the active snapshot when the initial state is unset', () => {
-      expect(
-        reducer(
-          {},
-          {
-            type: action.CHANGE_ACTIVE_SNAPSHOT,
-            snapshotID: '123'
-          }
-        )
-      ).toEqual({
-        activeSnapshot: '123'
-      });
-    });
-
-    it('should change the active snapshot when the full state is supplied', () => {
-      expect(
-        reducer(mockState, {
-          type: action.CHANGE_ACTIVE_SNAPSHOT,
-          snapshotID: '0987654321'
-        })
-      ).toEqual(
-        Object.assign({}, mockState, {
-          activeSnapshot: '0987654321'
-        })
-      );
-    });
-  });
-
   describe('CHANGE_VIEW', () => {
     it('should change the view', () => {
       expect(

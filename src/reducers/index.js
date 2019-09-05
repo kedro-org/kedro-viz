@@ -1,5 +1,4 @@
 import {
-  CHANGE_ACTIVE_SNAPSHOT,
   CHANGE_VIEW,
   RESET_SNAPSHOT_DATA,
   TOGGLE_NODE_ACTIVE,
@@ -16,11 +15,6 @@ import {
 
 function reducer(state = {}, action) {
   switch (action.type) {
-    case CHANGE_ACTIVE_SNAPSHOT:
-      return Object.assign({}, state, {
-        activeSnapshot: action.snapshotID
-      });
-
     case CHANGE_VIEW:
       return Object.assign({}, state, {
         view: action.view

@@ -1,16 +1,3 @@
-export const CHANGE_ACTIVE_SNAPSHOT = 'CHANGE_ACTIVE_SNAPSHOT';
-
-/**
- * Change which pipeline snapshot is active.
- * @param {string} snapshotID A single snapshot ID
- */
-export function changeActiveSnapshot(snapshotID) {
-  return {
-    type: CHANGE_ACTIVE_SNAPSHOT,
-    snapshotID
-  };
-}
-
 export const CHANGE_VIEW = 'CHANGE_VIEW';
 
 /**

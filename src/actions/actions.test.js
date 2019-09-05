@@ -1,8 +1,6 @@
 import mockData from '../utils/data.mock';
 import {
-  CHANGE_ACTIVE_SNAPSHOT,
   CHANGE_VIEW,
-  DELETE_SNAPSHOT,
   RESET_SNAPSHOT_DATA,
   TOGGLE_NODE_ACTIVE,
   TOGGLE_NODE_DISABLED,
@@ -13,7 +11,6 @@ import {
   TOGGLE_THEME,
   TOGGLE_TEXT_LABELS,
   UPDATE_CHART_SIZE,
-  changeActiveSnapshot,
   changeView,
   resetSnapshotData,
   toggleNodeActive,
@@ -28,15 +25,6 @@ import {
 } from '../actions';
 
 describe('actions', () => {
-  it('should create an action to change the active snapshot', () => {
-    const snapshotID = '1234567890';
-    const expectedAction = {
-      type: CHANGE_ACTIVE_SNAPSHOT,
-      snapshotID
-    };
-    expect(changeActiveSnapshot(snapshotID)).toEqual(expectedAction);
-  });
-
   it('should create an action to change the view', () => {
     const view = 'combined';
     const expectedAction = {
