@@ -1,27 +1,11 @@
 import { createSelector } from 'reselect';
 
 const getActiveSnapshot = state => state.activeSnapshot;
-const getSnapshotIDs = state => state.snapshotIDs;
 const getSnapshotSchema = state => state.snapshotSchema;
 const getSnapshotMessage = state => state.snapshotMessage;
 const getSnapshotTimestamp = state => state.snapshotTimestamp;
 const getSnapshotNodes = state => state.snapshotNodes;
 const getSnapshotEdges = state => state.snapshotEdges;
-
-/**
- * Retrieve list of snapshots used in History tab
- */
-export const getSnapshotHistory = createSelector(
-  [getSnapshotIDs, getSnapshotMessage, getSnapshotTimestamp],
-  (snapshotIDs, snapshotMessages, snapshotTimestamps) =>
-    snapshotIDs.map(id => {
-      return {
-        id,
-        message: snapshotMessages[id],
-        timestamp: snapshotTimestamps[id]
-      };
-    })
-);
 
 /**
  * Get the message for the active snapshot

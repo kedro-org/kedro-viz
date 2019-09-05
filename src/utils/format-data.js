@@ -38,7 +38,7 @@ export const getTagID = (snapshotID, tagID) => `${snapshotID}/${tagID}`;
  * @eturn {Object}
  */
 const formatSnapshots = data => {
-  if (!Array.isArray(data.snapshots)) {
+  if (!validateInput(data) && !Array.isArray(data.snapshots)) {
     return {};
   }
 
@@ -133,12 +133,14 @@ const formatSnapshots = data => {
 
   const datum = data.snapshots ? data.snapshots[0] : data;
 
-  const id = String(datum.schema_id || '');
-  snapshotIDs.push(id);
-  snapshotSchema[id] = datum;
-  snapshotTimestamp[id] = Number(datum.created_ts);
-  snapshotMessage[id] = datum.message;
-  formatData(id, datum);
+  if (datum) {
+    const id = String(datum.schema_id || '');
+    snapshotIDs.push(id);
+    snapshotSchema[id] = datum;
+    snapshotTimestamp[id] = Number(datum.created_ts);
+    snapshotMessage[id] = datum.message;
+    formatData(id, datum);
+  }
 
   const snapshots = {
     snapshotIDs: snapshotIDs.sort(

@@ -1,6 +1,5 @@
 import { mockState } from '../utils/state.mock';
 import {
-  getSnapshotHistory,
   getActiveSnapshotMessage,
   getActiveSnapshotTimestamp,
   getActiveSchema,
@@ -9,20 +8,6 @@ import {
 } from './index';
 
 describe('Selectors', () => {
-  describe('getSnapshotHistory', () => {
-    it('retrieves a list of snapshots used in the History tab', () => {
-      expect(getSnapshotHistory(mockState)).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            id: expect.any(String),
-            message: expect.any(String),
-            timestamp: expect.any(Number)
-          })
-        ])
-      );
-    });
-  });
-
   describe('getActiveSnapshotMessage', () => {
     it('retrieves the message for the active snapshot', () => {
       expect(getActiveSnapshotMessage(mockState)).toEqual(expect.any(String));

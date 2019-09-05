@@ -1,6 +1,6 @@
 import { json } from 'd3-fetch';
 import config from '../../config';
-import getRandomHistory from '../../utils/random-data';
+import getRandomPipeline from '../../utils/random-data';
 import formatSnapshots from '../../utils/format-data';
 import mockData from '../../utils/data.mock';
 import { loadState } from '../../utils';
@@ -39,7 +39,7 @@ export const getInitialState = pipelineData => {
 export const loadData = (data, onLoadData) => {
   switch (data) {
     case 'random':
-      return formatSnapshots(getRandomHistory());
+      return formatSnapshots(getRandomPipeline());
     case 'mock':
       return formatSnapshots(mockData);
     case 'json':

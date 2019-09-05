@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import store from '../../store';
 import { resetSnapshotData } from '../../actions';
 import Wrapper from '../wrapper';
-import formatSnapshots from '../../utils/format-data';
+import formatData from '../../utils/format-data';
 import { getInitialState, loadData } from './load-data';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
 import './app.css';
@@ -22,21 +22,17 @@ class App extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.dataWasUpdated(prevProps.data, this.props.data)) {
-      this.store.dispatch(resetSnapshotData(formatSnapshots(this.props.data)));
+      this.store.dispatch(resetSnapshotData(formatData(this.props.data)));
     }
   }
 
   /**
-   * Quickly determine whether snapshots have been updated
+   * Quickly determine whether the snapshot has been updated
    * @param {Object} prevData Previous data prop
    * @param {Object} newData New data prop
    */
   dataWasUpdated(prevData, newData) {
-    // Check just the schema IDs of incoming data updates
-    const dataID = ({ snapshots }) =>
-      Array.isArray(snapshots) && snapshots.map(d => d.schema_id).join('');
-
-    return dataID(prevData) !== dataID(newData);
+    return prevData.schema_id !== newData.schema_id;
   }
 
   /**
