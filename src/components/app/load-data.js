@@ -40,8 +40,10 @@ export const loadData = (data, onLoadData) => {
   switch (data) {
     case 'random':
       return formatSnapshots(getRandomPipeline());
-    case 'mock':
-      return formatSnapshots(mockData);
+    case 'lorem':
+      return formatSnapshots(mockData.lorem);
+    case 'animals':
+      return formatSnapshots(mockData.animals);
     case 'json':
       loadJsonData().then(onLoadData);
       return formatSnapshots({ snapshots: [] });

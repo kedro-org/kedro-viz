@@ -35,7 +35,7 @@ describe('actions', () => {
   });
 
   it('should create an action to reset snapshot data', () => {
-    const snapshots = mockData;
+    const snapshots = mockData.animals;
     const expectedAction = {
       type: RESET_SNAPSHOT_DATA,
       snapshots

@@ -68,7 +68,8 @@ Kedro-Viz uses an environment variable to configure the data source. You can set
 In other words, to run the app in development mode on a local server, use one of the following:
 
 - `DATA=random npm start` --> Serve randomly-generated data
-- `DATA=mock npm start` --> Serve example test data, from `/src/utils/data.mock.js`
+- `DATA=animals npm start` --> Serve example test data, from `/src/utils/data.mock.js`
+- `DATA=lorem npm start` --> Serve example test data, from `/src/utils/data.mock.js`
 - `npm start` --> Serve data loaded from `/public/logs/nodes.json`
 
 This will serve the app at [localhost:4141](http://localhost:4141/), and watch files in `/src` for changes. It will also update the `/lib` directory, which contains a Babel-compiled copy of the source. This directory is exported to `npm`, and is used when importing as a React component into another application. It is updated automatically on save in case you need to test/debug it locally (e.g. with `npm link`). You can also update it manually, by running

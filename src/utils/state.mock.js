@@ -7,12 +7,14 @@ import formatSnapshots from './format-data';
 import mockData from './data.mock';
 
 /**
- * Example state object for use in tests of redux-enabled components
+ * Example state objects for use in tests of redux-enabled components
  */
-export const mockState = getInitialState(formatSnapshots(mockData));
+export const mockState = getInitialState(formatSnapshots(mockData.lorem));
+export const mockState2 = getInitialState(formatSnapshots(mockData.animals));
 
-// Redux store based on mock data
+// Redux stores based on mock data
 export const mockStore = store(mockState);
+export const mockStore2 = store(mockState2);
 
 /**
  * React-Redux Provider wrapper for testing connected components

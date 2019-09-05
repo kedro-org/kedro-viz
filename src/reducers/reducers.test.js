@@ -29,7 +29,7 @@ describe('Reducer', () => {
       expect(
         reducer(mockState, {
           type: action.RESET_SNAPSHOT_DATA,
-          snapshots: formatData(mockData)
+          snapshots: formatData(mockData.lorem)
         })
       ).toEqual(mockState);
     });
@@ -37,12 +37,12 @@ describe('Reducer', () => {
     it('should reset the snapshots', () => {
       const newState = reducer(mockState, {
         type: action.RESET_SNAPSHOT_DATA,
-        snapshots: formatData({ snapshots: [mockData.snapshots[0]] })
+        snapshots: formatData(mockData.lorem)
       });
       expect(newState.snapshotIDs).toEqual([mockState.snapshotIDs[1]]);
-      expect(newState.activeSnapshot).toBe(mockData.snapshots[0].schema_id);
+      expect(newState.activeSnapshot).toBe(mockData.lorem.schema_id);
       expect(Object.keys(newState.snapshotNodes)).toEqual([
-        mockData.snapshots[0].schema_id
+        mockData.lorem.schema_id
       ]);
     });
   });

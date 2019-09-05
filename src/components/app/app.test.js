@@ -14,7 +14,7 @@ describe('App', () => {
     });
 
     it('when being passed data as a prop', () => {
-      shallow(<App data={mockData} />);
+      shallow(<App data={mockData.lorem} />);
     });
   });
 
