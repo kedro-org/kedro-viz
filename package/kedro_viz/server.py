@@ -103,7 +103,7 @@ def nodes_json():
     for tag in sorted(all_tags):
         tags.append({"id": tag, "name": pretty_name(tag)})
 
-    return jsonify({"snapshots": [{"nodes": nodes, "edges": edges, "tags": tags}]})
+    return jsonify({"nodes": nodes, "edges": edges, "tags": tags})
 
 
 @click.group(name="Kedro-Viz")
