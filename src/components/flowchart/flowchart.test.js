@@ -15,8 +15,8 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(<FlowChart />);
     const nodes = wrapper.render().find('.node');
     const nodeNames = nodes.map((i, el) => $(el).text()).get();
-    const mockNodes = getActiveSnapshotNodes(mockState);
-    const mockNodeNames = mockNodes.map(d => mockState.nodeName[d]);
+    const mockNodes = getActiveSnapshotNodes(mockState.lorem);
+    const mockNodeNames = mockNodes.map(d => mockState.lorem.nodeName[d]);
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
   });
@@ -111,7 +111,7 @@ describe('FlowChart', () => {
         translateY: expect.any(Number)
       })
     };
-    expect(mapStateToProps(mockState)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {

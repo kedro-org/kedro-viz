@@ -1,4 +1,4 @@
-import { mockState, mockState2 } from '../utils/state.mock';
+import { mockState } from '../utils/state.mock';
 import { getActiveSnapshotNodes } from './index';
 import {
   getNodeDisabledTag,
@@ -19,35 +19,35 @@ import reducer from '../reducers';
 describe('Selectors', () => {
   describe('getNodeDisabledTag', () => {
     it('returns an object', () => {
-      expect(getNodeDisabledTag(mockState)).toEqual(expect.any(Object));
+      expect(getNodeDisabledTag(mockState.lorem)).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the active snapshot's nodes", () => {
-      expect(Object.keys(getNodeDisabledTag(mockState))).toEqual(
-        getActiveSnapshotNodes(mockState)
+      expect(Object.keys(getNodeDisabledTag(mockState.lorem))).toEqual(
+        getActiveSnapshotNodes(mockState.lorem)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getNodeDisabledTag(mockState)).every(
+        Object.values(getNodeDisabledTag(mockState.lorem)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
     });
 
     it('does not disable a node if all tags are disabled', () => {
-      const nodeDisabled = getNodeDisabledTag(mockState);
+      const nodeDisabled = getNodeDisabledTag(mockState.lorem);
       expect(Object.values(nodeDisabled)).toEqual(
         Object.values(nodeDisabled).map(() => false)
       );
     });
 
     it('disables a node only if all of its tags are disabled', () => {
-      const { nodeTags } = mockState2;
+      const { nodeTags } = mockState.animals;
       // Get list of task nodes from the active snapshot
-      const taskNodes = getActiveSnapshotNodes(mockState2).filter(
-        id => mockState2.nodeType[id] === 'task'
+      const taskNodes = getActiveSnapshotNodes(mockState.animals).filter(
+        id => mockState.animals.nodeType[id] === 'task'
       );
       // Choose a node that has some tags (and which should be enabled)
       const hasTags = id => Boolean(nodeTags[id].length);
@@ -58,7 +58,7 @@ describe('Selectors', () => {
       // Update the state to enable one of the tags for that node
       const enabledNodeTags = nodeTags[enabledNodeID];
       const newMockState = reducer(
-        mockState2,
+        mockState.animals,
         toggleTagFilter(enabledNodeTags[0], true)
       );
       expect(getNodeDisabledTag(newMockState)[enabledNodeID]).toEqual(false);
@@ -68,25 +68,25 @@ describe('Selectors', () => {
 
   describe('getNodeDisabledView', () => {
     it('returns an object', () => {
-      expect(getNodeDisabledView(mockState)).toEqual(expect.any(Object));
+      expect(getNodeDisabledView(mockState.lorem)).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the active snapshot's nodes", () => {
-      expect(Object.keys(getNodeDisabledView(mockState))).toEqual(
-        getActiveSnapshotNodes(mockState)
+      expect(Object.keys(getNodeDisabledView(mockState.lorem))).toEqual(
+        getActiveSnapshotNodes(mockState.lorem)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getNodeDisabledView(mockState)).every(
+        Object.values(getNodeDisabledView(mockState.lorem)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
     });
 
     it('shows all nodes when view is set to combined', () => {
-      const newMockState = reducer(mockState, changeView('combined'));
+      const newMockState = reducer(mockState.lorem, changeView('combined'));
       const nodeDisabled = getNodeDisabledView(newMockState);
       expect(Object.values(nodeDisabled)).toEqual(
         Object.values(nodeDisabled).map(() => false)
@@ -94,7 +94,7 @@ describe('Selectors', () => {
     });
 
     it('disables only task nodes when view is set to data', () => {
-      const newMockState = reducer(mockState, changeView('data'));
+      const newMockState = reducer(mockState.lorem, changeView('data'));
       const nodeDisabled = getNodeDisabledView(newMockState);
       const nodes = getActiveSnapshotNodes(newMockState);
       const { nodeType } = newMockState;
@@ -109,7 +109,7 @@ describe('Selectors', () => {
     });
 
     it('disables only data nodes when view is set to task', () => {
-      const newMockState = reducer(mockState, changeView('task'));
+      const newMockState = reducer(mockState.lorem, changeView('task'));
       const nodeDisabled = getNodeDisabledView(newMockState);
       const nodes = getActiveSnapshotNodes(newMockState);
       const { nodeType } = newMockState;
@@ -126,18 +126,18 @@ describe('Selectors', () => {
 
   describe('getNodeDisabled', () => {
     it('returns an object', () => {
-      expect(getNodeDisabled(mockState)).toEqual(expect.any(Object));
+      expect(getNodeDisabled(mockState.lorem)).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the active snapshot's nodes", () => {
-      expect(Object.keys(getNodeDisabled(mockState))).toEqual(
-        getActiveSnapshotNodes(mockState)
+      expect(Object.keys(getNodeDisabled(mockState.lorem))).toEqual(
+        getActiveSnapshotNodes(mockState.lorem)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getNodeDisabled(mockState)).every(
+        Object.values(getNodeDisabled(mockState.lorem)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
@@ -146,28 +146,31 @@ describe('Selectors', () => {
 
   describe('getNodeActive', () => {
     it('returns an object', () => {
-      expect(getNodeActive(mockState)).toEqual(expect.any(Object));
+      expect(getNodeActive(mockState.lorem)).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the active snapshot's nodes", () => {
-      expect(Object.keys(getNodeActive(mockState))).toEqual(
-        getActiveSnapshotNodes(mockState)
+      expect(Object.keys(getNodeActive(mockState.lorem))).toEqual(
+        getActiveSnapshotNodes(mockState.lorem)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getNodeActive(mockState)).every(
+        Object.values(getNodeActive(mockState.lorem)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
     });
 
     it('returns true only when a given node is set to active', () => {
-      const nodes = getActiveSnapshotNodes(mockState);
+      const nodes = getActiveSnapshotNodes(mockState.lorem);
       const nodeID = nodes[0];
       const inactiveNodes = nodes.filter(id => id !== nodeID);
-      const newMockState = reducer(mockState, toggleNodeActive(nodeID, true));
+      const newMockState = reducer(
+        mockState.lorem,
+        toggleNodeActive(nodeID, true)
+      );
       const nodeActive = getNodeActive(newMockState);
       expect(nodeActive[nodeID]).toEqual(true);
       expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
@@ -176,7 +179,7 @@ describe('Selectors', () => {
 
   describe('getNodes', () => {
     it('returns formatted nodes as an array', () => {
-      expect(getNodes(mockState)).toEqual(
+      expect(getNodes(mockState.lorem)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
@@ -193,20 +196,22 @@ describe('Selectors', () => {
     });
 
     it('returns nodes sorted by name', () => {
-      const { nodeName } = mockState;
-      const nodeIDs = getNodes(mockState).map(d => d.id);
-      const activeNodeIDs = getActiveSnapshotNodes(mockState).sort((a, b) => {
-        if (nodeName[a] < nodeName[b]) return -1;
-        if (nodeName[a] > nodeName[b]) return 1;
-        return 0;
-      });
+      const { nodeName } = mockState.lorem;
+      const nodeIDs = getNodes(mockState.lorem).map(d => d.id);
+      const activeNodeIDs = getActiveSnapshotNodes(mockState.lorem).sort(
+        (a, b) => {
+          if (nodeName[a] < nodeName[b]) return -1;
+          if (nodeName[a] > nodeName[b]) return 1;
+          return 0;
+        }
+      );
       expect(nodeIDs).toEqual(activeNodeIDs);
     });
   });
 
   describe('getVisibleNodes', () => {
     it('returns visible nodes as an array', () => {
-      expect(getVisibleNodes(mockState)).toEqual(
+      expect(getVisibleNodes(mockState.lorem)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
@@ -218,9 +223,12 @@ describe('Selectors', () => {
     });
 
     it('returns only visible nodes', () => {
-      const nodes = getActiveSnapshotNodes(mockState);
+      const nodes = getActiveSnapshotNodes(mockState.lorem);
       const nodeID = nodes[0];
-      const newMockState = reducer(mockState, toggleNodeDisabled(nodeID, true));
+      const newMockState = reducer(
+        mockState.lorem,
+        toggleNodeDisabled(nodeID, true)
+      );
       const visibleNodeIDs = getVisibleNodes(newMockState).map(d => d.id);
       expect(visibleNodeIDs).toEqual(nodes.filter(id => id !== nodeID));
       expect(visibleNodeIDs.includes(nodeID)).toEqual(false);

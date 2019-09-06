@@ -3,8 +3,8 @@ import { getActiveSnapshotTags, getTags, getTagCount } from './tags';
 import { toggleTagFilter } from '../actions';
 import reducer from '../reducers';
 
-const activeSnapshotTags = getActiveSnapshotTags(mockState);
-const tags = getTags(mockState);
+const activeSnapshotTags = getActiveSnapshotTags(mockState.lorem);
+const tags = getTags(mockState.lorem);
 
 describe('Selectors', () => {
   describe('getActiveSnapshotTags', () => {
@@ -15,12 +15,14 @@ describe('Selectors', () => {
     });
 
     it('returns an empty array if snapshotTags is empty', () => {
-      const newMockState = Object.assign({}, mockState, { snapshotTags: {} });
+      const newMockState = Object.assign({}, mockState.lorem, {
+        snapshotTags: {}
+      });
       expect(getActiveSnapshotTags(newMockState)).toEqual([]);
     });
 
     it('returns an empty array if activeSnapshot is undefined', () => {
-      const newMockState = Object.assign({}, mockState, {
+      const newMockState = Object.assign({}, mockState.lorem, {
         activeSnapshot: undefined
       });
       expect(getActiveSnapshotTags(newMockState)).toEqual([]);
@@ -48,12 +50,12 @@ describe('Selectors', () => {
 
   describe('getTagCount', () => {
     const newMockState = reducer(
-      mockState,
+      mockState.lorem,
       toggleTagFilter(activeSnapshotTags[0], true)
     );
 
     it('retrieves the total and enabled number of tags', () => {
-      expect(getTagCount(mockState)).toEqual(
+      expect(getTagCount(mockState.lorem)).toEqual(
         expect.objectContaining({
           enabled: 0,
           total: activeSnapshotTags.length

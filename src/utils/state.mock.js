@@ -9,19 +9,23 @@ import mockData from './data.mock';
 /**
  * Example state objects for use in tests of redux-enabled components
  */
-export const mockState = getInitialState(formatSnapshots(mockData.lorem));
-export const mockState2 = getInitialState(formatSnapshots(mockData.animals));
+export const mockState = {
+  lorem: getInitialState(formatSnapshots(mockData.lorem)),
+  animals: getInitialState(formatSnapshots(mockData.animals))
+};
 
 // Redux stores based on mock data
-export const mockStore = store(mockState);
-export const mockStore2 = store(mockState2);
+export const mockStore = {
+  lorem: store(mockState.lorem),
+  animals: store(mockState.animals)
+};
 
 /**
  * React-Redux Provider wrapper for testing connected components
  * @param {Object} children A React component
  * @param {Object} state Redux state object for creating the store
  */
-export const MockProvider = ({ children, state = mockState }) => (
+export const MockProvider = ({ children, state = mockState.lorem }) => (
   <Provider store={store(state)}>{children}</Provider>
 );
 

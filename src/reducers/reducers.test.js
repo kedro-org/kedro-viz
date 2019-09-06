@@ -27,19 +27,19 @@ describe('Reducer', () => {
   describe('RESET_SNAPSHOT_DATA', () => {
     it('should return the same snapshot data when given the same input', () => {
       expect(
-        reducer(mockState, {
+        reducer(mockState.lorem, {
           type: action.RESET_SNAPSHOT_DATA,
           snapshots: formatData(mockData.lorem)
         })
-      ).toEqual(mockState);
+      ).toEqual(mockState.lorem);
     });
 
     it('should reset the snapshots', () => {
-      const newState = reducer(mockState, {
+      const newState = reducer(mockState.lorem, {
         type: action.RESET_SNAPSHOT_DATA,
         snapshots: formatData(mockData.lorem)
       });
-      expect(newState.snapshotIDs).toEqual([mockState.snapshotIDs[0]]);
+      expect(newState.snapshotIDs).toEqual([mockState.lorem.snapshotIDs[0]]);
       expect(newState.activeSnapshot).toBe(mockData.lorem.schema_id);
       expect(Object.keys(newState.snapshotNodes)).toEqual([
         mockData.lorem.schema_id
@@ -49,7 +49,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_NODE_ACTIVE', () => {
     it('should toggle the given node active', () => {
-      const newState = reducer(mockState, {
+      const newState = reducer(mockState.lorem, {
         type: action.TOGGLE_NODE_ACTIVE,
         nodeID: 'abc123',
         isActive: true
@@ -60,7 +60,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_NODE_DISABLED', () => {
     it('should toggle the given node disabled', () => {
-      const newState = reducer(mockState, {
+      const newState = reducer(mockState.lorem, {
         type: action.TOGGLE_NODE_DISABLED,
         nodeID: 'abc456',
         isDisabled: true
@@ -71,7 +71,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_NODES_DISABLED', () => {
     it('should toggle the given nodes disabled', () => {
-      const newState = reducer(mockState, {
+      const newState = reducer(mockState.lorem, {
         type: action.TOGGLE_NODES_DISABLED,
         nodeIDs: ['123', 'abc'],
         isDisabled: true
@@ -81,7 +81,7 @@ describe('Reducer', () => {
   });
 
   describe('TOGGLE_PARAMETERS', () => {
-    const newState = reducer(mockState, {
+    const newState = reducer(mockState.lorem, {
       type: action.TOGGLE_PARAMETERS,
       parameters: false
     });
@@ -103,18 +103,18 @@ describe('Reducer', () => {
 
   describe('TOGGLE_TEXT_LABELS', () => {
     it('should toggle the value of textLabels', () => {
-      const newState = reducer(mockState, {
+      const newState = reducer(mockState.lorem, {
         type: action.TOGGLE_TEXT_LABELS,
         textLabels: true
       });
-      expect(mockState.textLabels).toBe(false);
+      expect(mockState.lorem.textLabels).toBe(false);
       expect(newState.textLabels).toBe(true);
     });
   });
 
   describe('TOGGLE_TAG_ACTIVE', () => {
     it('should toggle the given tag active', () => {
-      const newState = reducer(mockState, {
+      const newState = reducer(mockState.lorem, {
         type: action.TOGGLE_TAG_ACTIVE,
         tagID: 'huge',
         active: true
@@ -125,7 +125,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_TAG_FILTER', () => {
     it('should disable a given tag', () => {
-      const newState = reducer(mockState, {
+      const newState = reducer(mockState.lorem, {
         type: action.TOGGLE_TAG_FILTER,
         tagID: 'small',
         enabled: true
@@ -136,7 +136,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_THEME', () => {
     it('should toggle the theme to light', () => {
-      const newState = reducer(mockState, {
+      const newState = reducer(mockState.lorem, {
         type: action.TOGGLE_THEME,
         theme: 'light'
       });
@@ -146,7 +146,7 @@ describe('Reducer', () => {
 
   describe('UPDATE_CHART_SIZE', () => {
     it("should update the chart's dimensions", () => {
-      const newState = reducer(mockState, {
+      const newState = reducer(mockState.lorem, {
         type: action.UPDATE_CHART_SIZE,
         chartSize: document.body.getBoundingClientRect()
       });
