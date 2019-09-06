@@ -1,37 +1,7 @@
 import { mockState } from '../utils/state.mock';
-import {
-  getActiveSnapshotMessage,
-  getActiveSnapshotTimestamp,
-  getActiveSchema,
-  getActiveSnapshotNodes,
-  getActiveSnapshotEdges
-} from './index';
+import { getActiveSnapshotNodes, getActiveSnapshotEdges } from './index';
 
 describe('Selectors', () => {
-  describe('getActiveSnapshotMessage', () => {
-    it('retrieves the message for the active snapshot', () => {
-      expect(getActiveSnapshotMessage(mockState.lorem)).toEqual(
-        expect.any(String)
-      );
-    });
-  });
-
-  describe('getActiveSnapshotTimestamp', () => {
-    it('retrieves the timestamp for the active snapshot', () => {
-      expect(getActiveSnapshotTimestamp(mockState.lorem)).toEqual(
-        expect.any(Number)
-      );
-    });
-  });
-
-  describe('getActiveSchema', () => {
-    it('retrieves the raw unformatted data schema for the active snapshot', () => {
-      const schema = getActiveSchema(mockState.lorem);
-      expect(schema).toEqual(expect.any(String));
-      expect(JSON.parse(schema)).toEqual(expect.any(Object));
-    });
-  });
-
   describe('getActiveSnapshotNodes', () => {
     it('retrieves a list of nodes for the active snapshot', () => {
       expect(getActiveSnapshotNodes(mockState.lorem)).toEqual(

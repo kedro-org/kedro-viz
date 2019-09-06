@@ -44,9 +44,6 @@ const formatSnapshots = data => {
 
   // Snapshots
   const snapshotIDs = [];
-  const snapshotSchema = {};
-  const snapshotMessage = {};
-  const snapshotTimestamp = {};
   const snapshotNodes = {};
   const snapshotEdges = {};
   const snapshotTags = {};
@@ -136,19 +133,11 @@ const formatSnapshots = data => {
   if (datum) {
     const id = String(datum.schema_id || '');
     snapshotIDs.push(id);
-    snapshotSchema[id] = datum;
-    snapshotTimestamp[id] = Number(datum.created_ts);
-    snapshotMessage[id] = datum.message;
     formatData(id, datum);
   }
 
   const snapshots = {
-    snapshotIDs: snapshotIDs.sort(
-      (a, b) => snapshotTimestamp[b] - snapshotTimestamp[a]
-    ),
-    snapshotSchema,
-    snapshotMessage,
-    snapshotTimestamp,
+    snapshotIDs: snapshotIDs,
     snapshotNodes,
     snapshotEdges,
     snapshotTags,
