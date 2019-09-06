@@ -39,7 +39,7 @@ describe('Reducer', () => {
         type: action.RESET_SNAPSHOT_DATA,
         snapshots: formatData(mockData.lorem)
       });
-      expect(newState.snapshotIDs).toEqual([mockState.snapshotIDs[1]]);
+      expect(newState.snapshotIDs).toEqual([mockState.snapshotIDs[0]]);
       expect(newState.activeSnapshot).toBe(mockData.lorem.schema_id);
       expect(Object.keys(newState.snapshotNodes)).toEqual([
         mockData.lorem.schema_id

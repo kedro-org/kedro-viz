@@ -1,4 +1,4 @@
-import { mockState } from '../utils/state.mock';
+import { mockState, mockState2 } from '../utils/state.mock';
 import { getActiveSnapshotNodes } from './index';
 import {
   getNodeDisabledTag,
@@ -44,10 +44,10 @@ describe('Selectors', () => {
     });
 
     it('disables a node only if all of its tags are disabled', () => {
-      const { nodeTags } = mockState;
+      const { nodeTags } = mockState2;
       // Get list of task nodes from the active snapshot
-      const taskNodes = getActiveSnapshotNodes(mockState).filter(
-        id => mockState.nodeType[id] === 'task'
+      const taskNodes = getActiveSnapshotNodes(mockState2).filter(
+        id => mockState2.nodeType[id] === 'task'
       );
       // Choose a node that has some tags (and which should be enabled)
       const hasTags = id => Boolean(nodeTags[id].length);
@@ -58,7 +58,7 @@ describe('Selectors', () => {
       // Update the state to enable one of the tags for that node
       const enabledNodeTags = nodeTags[enabledNodeID];
       const newMockState = reducer(
-        mockState,
+        mockState2,
         toggleTagFilter(enabledNodeTags[0], true)
       );
       expect(getNodeDisabledTag(newMockState)[enabledNodeID]).toEqual(false);
