@@ -25,20 +25,20 @@ describe('Reducer', () => {
     });
   });
 
-  describe('RESET_SNAPSHOT_DATA', () => {
-    it('should return the same snapshot data when given the same input', () => {
+  describe('RESET_DATA', () => {
+    it('should return the same data when given the same input', () => {
       expect(
         reducer(mockState.lorem, {
-          type: action.RESET_SNAPSHOT_DATA,
-          snapshots: formatData(mockData.lorem)
+          type: action.RESET_DATA,
+          data: formatData(mockData.lorem)
         })
       ).toEqual(mockState.lorem);
     });
 
-    it('should reset the snapshots', () => {
+    it('should reset the state with new data', () => {
       const newState = reducer(mockState.lorem, {
-        type: action.RESET_SNAPSHOT_DATA,
-        snapshots: formatData(mockData.animals)
+        type: action.RESET_DATA,
+        data: formatData(mockData.animals)
       });
       expect(newState).toEqual(mockState.animals);
     });

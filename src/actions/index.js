@@ -11,17 +11,16 @@ export function changeView(view) {
   };
 }
 
-export const RESET_SNAPSHOT_DATA = 'RESET_SNAPSHOT_DATA';
+export const RESET_DATA = 'RESET_DATA';
 
 /**
- * Overwrite the existing data store when receiving
- * new snapshot data from upstream
- * @param {Array} snapshots List of snapshot objects
+ * Overwrite the existing data store when receiving new data from upstream
+ * @param {Object} data New pipeline state data
  */
-export function resetSnapshotData(snapshots) {
+export function resetData(data) {
   return {
-    type: RESET_SNAPSHOT_DATA,
-    snapshots
+    type: RESET_DATA,
+    data
   };
 }
 

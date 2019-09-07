@@ -1,6 +1,6 @@
 import {
   CHANGE_VIEW,
-  RESET_SNAPSHOT_DATA,
+  RESET_DATA,
   TOGGLE_NODE_ACTIVE,
   TOGGLE_NODE_DISABLED,
   TOGGLE_NODE_FOCUSED,
@@ -20,8 +20,8 @@ function reducer(state = {}, action) {
         view: action.view
       });
 
-    case RESET_SNAPSHOT_DATA:
-      return Object.assign({}, state, action.snapshots);
+    case RESET_DATA:
+      return Object.assign({}, state, action.data);
 
     case TOGGLE_NODE_ACTIVE: {
       return Object.assign({}, state, {

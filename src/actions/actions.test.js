@@ -1,7 +1,7 @@
 import mockData from '../utils/data.mock';
 import {
   CHANGE_VIEW,
-  RESET_SNAPSHOT_DATA,
+  RESET_DATA,
   TOGGLE_NODE_ACTIVE,
   TOGGLE_NODE_DISABLED,
   TOGGLE_NODES_DISABLED,
@@ -12,7 +12,7 @@ import {
   TOGGLE_TEXT_LABELS,
   UPDATE_CHART_SIZE,
   changeView,
-  resetSnapshotData,
+  resetData,
   toggleNodeActive,
   toggleNodeDisabled,
   toggleNodesDisabled,
@@ -34,13 +34,13 @@ describe('actions', () => {
     expect(changeView(view)).toEqual(expectedAction);
   });
 
-  it('should create an action to reset snapshot data', () => {
-    const snapshots = mockData.animals;
+  it('should create an action to reset pipeline data', () => {
+    const data = mockData.animals;
     const expectedAction = {
-      type: RESET_SNAPSHOT_DATA,
-      snapshots
+      type: RESET_DATA,
+      data
     };
-    expect(resetSnapshotData(snapshots)).toEqual(expectedAction);
+    expect(resetData(data)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether a node is active', () => {

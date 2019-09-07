@@ -19,7 +19,7 @@ import './styles/flowchart.css';
 const DURATION = 700;
 
 /**
- * Display a flowchart for the current snapshot, mostly rendered with D3
+ * Display a pipeline flowchart, mostly rendered with D3
  */
 export class FlowChart extends Component {
   constructor(props) {
