@@ -26,7 +26,7 @@ describe('TagList', () => {
     );
   });
 
-  it('shows a placeholder message if there are no tags used in the active snapshot', () => {
+  it('shows a placeholder message if there are no tags used in the current pipeline', () => {
     const wrapper = setup.shallow(UnconnectedTagList, {
       tagCount: { total: 0 }
     });

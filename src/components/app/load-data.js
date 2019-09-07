@@ -1,7 +1,7 @@
 import { json } from 'd3-fetch';
 import config from '../../config';
 import getRandomPipeline from '../../utils/random-data';
-import formatSnapshots from '../../utils/format-data';
+import formatData from '../../utils/format-data';
 import mockData from '../../utils/data.mock';
 import { loadState } from '../../utils';
 
@@ -38,18 +38,18 @@ export const getInitialState = pipelineData => {
 export const loadData = (data, onLoadData) => {
   switch (data) {
     case 'random':
-      return formatSnapshots(getRandomPipeline());
+      return formatData(getRandomPipeline());
     case 'lorem':
-      return formatSnapshots(mockData.lorem);
+      return formatData(mockData.lorem);
     case 'animals':
-      return formatSnapshots(mockData.animals);
+      return formatData(mockData.animals);
     case 'json':
       loadJsonData().then(onLoadData);
-      return formatSnapshots({ snapshots: [] });
+      return formatData();
     case null:
       throw new Error('No data was provided to App component via props');
     default:
-      return formatSnapshots(data);
+      return formatData(data);
   }
 };
 
@@ -64,5 +64,5 @@ export const loadJsonData = () => {
         `Unable to load pipeline data. Please check that you have placed a file at ${dataPath}`
       );
     })
-    .then(formatSnapshots);
+    .then(formatData);
 };

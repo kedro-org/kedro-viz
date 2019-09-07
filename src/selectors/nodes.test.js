@@ -23,7 +23,7 @@ describe('Selectors', () => {
       expect(getNodeDisabledTag(mockState.lorem)).toEqual(expect.any(Object));
     });
 
-    it("returns an object whose keys match the active snapshot's nodes", () => {
+    it("returns an object whose keys match the current pipeline's nodes", () => {
       expect(Object.keys(getNodeDisabledTag(mockState.lorem))).toEqual(
         getNodes(mockState.lorem)
       );
@@ -46,7 +46,7 @@ describe('Selectors', () => {
 
     it('disables a node only if all of its tags are disabled', () => {
       const { nodeTags } = mockState.animals;
-      // Get list of task nodes from the active snapshot
+      // Get list of task nodes from the current pipeline
       const taskNodes = getNodes(mockState.animals).filter(
         id => mockState.animals.nodeType[id] === 'task'
       );
@@ -72,7 +72,7 @@ describe('Selectors', () => {
       expect(getNodeDisabledView(mockState.lorem)).toEqual(expect.any(Object));
     });
 
-    it("returns an object whose keys match the active snapshot's nodes", () => {
+    it("returns an object whose keys match the current pipeline's nodes", () => {
       expect(Object.keys(getNodeDisabledView(mockState.lorem))).toEqual(
         getNodes(mockState.lorem)
       );
@@ -130,7 +130,7 @@ describe('Selectors', () => {
       expect(getNodeDisabled(mockState.lorem)).toEqual(expect.any(Object));
     });
 
-    it("returns an object whose keys match the active snapshot's nodes", () => {
+    it("returns an object whose keys match the current pipeline's nodes", () => {
       expect(Object.keys(getNodeDisabled(mockState.lorem))).toEqual(
         getNodes(mockState.lorem)
       );
@@ -150,7 +150,7 @@ describe('Selectors', () => {
       expect(getNodeActive(mockState.lorem)).toEqual(expect.any(Object));
     });
 
-    it("returns an object whose keys match the active snapshot's nodes", () => {
+    it("returns an object whose keys match the current pipeline's nodes", () => {
       expect(Object.keys(getNodeActive(mockState.lorem))).toEqual(
         getNodes(mockState.lorem)
       );

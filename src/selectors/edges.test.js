@@ -20,7 +20,7 @@ describe('Selectors', () => {
       expect(getEdgeDisabledNode(mockState.lorem)).toEqual(expect.any(Object));
     });
 
-    it("returns an object whose keys match the active snapshot's edges", () => {
+    it("returns an object whose keys match the current pipeline's edges", () => {
       expect(Object.keys(getEdgeDisabledNode(mockState.lorem))).toEqual(
         getEdges(mockState.lorem)
       );
@@ -76,7 +76,7 @@ describe('Selectors', () => {
       expect(getEdgeDisabledView(mockState.lorem)).toEqual(expect.any(Object));
     });
 
-    it("returns an object whose keys match the active snapshot's edges", () => {
+    it("returns an object whose keys match the current pipeline's edges", () => {
       expect(Object.keys(getEdgeDisabledView(mockState.lorem))).toEqual(
         getEdges(mockState.lorem)
       );
@@ -161,7 +161,7 @@ describe('Selectors', () => {
       expect(getEdgeDisabled(mockState.lorem)).toEqual(expect.any(Object));
     });
 
-    it("returns an object whose keys match the active snapshot's edges", () => {
+    it("returns an object whose keys match the current pipeline's edges", () => {
       expect(Object.keys(getEdgeDisabled(mockState.lorem))).toEqual(
         getEdges(mockState.lorem)
       );
@@ -211,8 +211,8 @@ describe('Selectors', () => {
   });
 
   describe('findTransitiveEdges', () => {
-    const activeSnapshotEdges = getEdges(mockState.lorem);
-    const edge = activeSnapshotEdges[0];
+    const edges = getEdges(mockState.lorem);
+    const edge = edges[0];
     const source = mockState.lorem.edgeSources[edge];
     const disabledNode = mockState.lorem.edgeTargets[edge];
     const transitiveEdges = {};
@@ -225,11 +225,7 @@ describe('Selectors', () => {
 
     describe('if all edges are enabled', () => {
       it('creates no transitive edges', () => {
-        findTransitiveEdges(
-          activeSnapshotEdges,
-          transitiveEdges,
-          mockState.lorem
-        )(['dog']);
+        findTransitiveEdges(edges, transitiveEdges, mockState.lorem)(['dog']);
         expect(transitiveEdges.edgeIDs).toEqual([]);
       });
     });
@@ -241,11 +237,7 @@ describe('Selectors', () => {
           mockState.lorem,
           toggleNodeDisabled(disabledNode, true)
         );
-        findTransitiveEdges(
-          activeSnapshotEdges,
-          transitiveEdges,
-          alteredMockState
-        )([source]);
+        findTransitiveEdges(edges, transitiveEdges, alteredMockState)([source]);
       });
 
       it('creates transitive edges matching the source node', () => {

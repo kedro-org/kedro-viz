@@ -20,7 +20,7 @@ const PARAMETERS_FREQUENCY = 0.05;
 const TASK_NODE_COUNT = 10;
 
 /**
- * Generate a random pipeline snapshot dataset
+ * Generate a random pipeline dataset
  */
 class Pipeline {
   constructor() {
@@ -157,7 +157,7 @@ class Pipeline {
   }
 
   /**
-   * Generate the full snapshot datum, including ID, timestamp,
+   * Generate the full pipeline datum, including ID, timestamp,
    * random message and JSON schema
    */
   getDatum() {

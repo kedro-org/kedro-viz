@@ -93,9 +93,9 @@ const addTag = state => tag => {
 };
 
 /**
- * Format the full list of snapshot data
+ * Convert the pipeline data into a normalised state object
  * @param {Object} data Raw unformatted data input
- * @return {Object} Formatted state
+ * @return {Object} Formatted, normalised state
  */
 const formatData = data => {
   const state = createPipelineState();

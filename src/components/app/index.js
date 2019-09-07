@@ -22,7 +22,7 @@ class App extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.dataWasUpdated(prevProps.data, this.props.data)) {
-      this.store.dispatch(resetSnapshotData(formatData(this.props.data)));
+      this.resetStoreData(formatData(this.props.data));
     }
   }
 
