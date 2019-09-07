@@ -2,8 +2,9 @@ import mockData from '../utils/data.mock';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import * as action from '../actions';
-import { getActiveSnapshotNodes } from '../selectors';
 import formatData from '../utils/format-data';
+
+const getNodes = state => state.nodes;
 
 describe('Reducer', () => {
   it('should return the initial state', () => {
@@ -37,13 +38,9 @@ describe('Reducer', () => {
     it('should reset the snapshots', () => {
       const newState = reducer(mockState.lorem, {
         type: action.RESET_SNAPSHOT_DATA,
-        snapshots: formatData(mockData.lorem)
+        snapshots: formatData(mockData.animals)
       });
-      expect(newState.snapshotIDs).toEqual([mockState.lorem.snapshotIDs[0]]);
-      expect(newState.activeSnapshot).toBe(mockData.lorem.schema_id);
-      expect(Object.keys(newState.snapshotNodes)).toEqual([
-        mockData.lorem.schema_id
-      ]);
+      expect(newState).toEqual(mockState.animals);
     });
   });
 
@@ -86,17 +83,15 @@ describe('Reducer', () => {
       parameters: false
     });
     const { nodeDisabled, nodeIsParam } = newState;
-    const activeSnapshotNodes = getActiveSnapshotNodes(newState);
+    const nodes = getNodes(newState);
 
     it('should disable any nodes where is_parameters is true', () => {
-      const paramNodes = activeSnapshotNodes.filter(node => nodeIsParam[node]);
+      const paramNodes = nodes.filter(node => nodeIsParam[node]);
       expect(paramNodes.every(key => nodeDisabled[key])).toBe(true);
     });
 
     it('should not disable any nodes where is_parameters is false', () => {
-      const nonParamNodes = activeSnapshotNodes.filter(
-        node => !nodeIsParam[node]
-      );
+      const nonParamNodes = nodes.filter(node => !nodeIsParam[node]);
       expect(nonParamNodes.every(key => !nodeDisabled[key])).toBe(true);
     });
   });

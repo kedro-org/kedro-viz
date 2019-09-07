@@ -19,18 +19,17 @@ describe('App', () => {
   });
 
   describe('updates the store', () => {
-    const getSnapshotIDs = wrapper =>
-      wrapper.instance().store.getState().snapshotIDs;
+    const getSchemaID = wrapper => wrapper.instance().store.getState().id;
 
     it('when data prop is set on first load', () => {
       const wrapper = shallow(<App data={mockData.lorem} />);
-      expect(getSnapshotIDs(wrapper)[0]).toEqual(mockData.lorem.schema_id);
+      expect(getSchemaID(wrapper)).toEqual(mockData.lorem.schema_id);
     });
 
     it('when data prop is updated', () => {
       const wrapper = shallow(<App data={mockData.lorem} />);
       wrapper.setProps({ data: mockData.animals });
-      expect(getSnapshotIDs(wrapper)[0]).toEqual(mockData.animals.schema_id);
+      expect(getSchemaID(wrapper)).toEqual(mockData.animals.schema_id);
     });
   });
 

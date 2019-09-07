@@ -21,9 +21,7 @@ function reducer(state = {}, action) {
       });
 
     case RESET_SNAPSHOT_DATA:
-      return Object.assign({}, state, action.snapshots, {
-        activeSnapshot: action.snapshots.snapshotIDs[0]
-      });
+      return Object.assign({}, state, action.snapshots);
 
     case TOGGLE_NODE_ACTIVE: {
       return Object.assign({}, state, {
@@ -60,9 +58,7 @@ function reducer(state = {}, action) {
     }
 
     case TOGGLE_PARAMETERS: {
-      const paramIDs = state.snapshotNodes[state.activeSnapshot].filter(
-        id => state.nodeIsParam[id]
-      );
+      const paramIDs = state.nodes.filter(id => state.nodeIsParam[id]);
       return Object.assign({}, state, {
         nodeDisabled: paramIDs.reduce(
           (disabled, id) =>

@@ -5,7 +5,7 @@ import Checkbox from '@quantumblack/kedro-ui/lib/components/checkbox';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { getNodes } from '../../selectors/nodes';
+import { getNodeData } from '../../selectors/nodes';
 import {
   toggleNodeActive,
   toggleNodeDisabled,
@@ -173,7 +173,7 @@ class NodeList extends React.Component {
 }
 
 export const mapStateToProps = state => ({
-  nodes: getNodes(state),
+  nodes: getNodeData(state),
   theme: state.theme
 });
 

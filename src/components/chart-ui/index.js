@@ -113,7 +113,7 @@ export const ChartUI = ({
   ) : null;
 
 export const mapStateToProps = state => ({
-  hasData: Boolean(state.snapshotIDs.length),
+  hasData: Boolean(state.nodes.length),
   parameters: state.parameters,
   textLabels: state.textLabels,
   theme: state.theme,

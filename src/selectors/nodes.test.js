@@ -1,11 +1,10 @@
 import { mockState } from '../utils/state.mock';
-import { getActiveSnapshotNodes } from './index';
 import {
   getNodeDisabledTag,
   getNodeDisabledView,
   getNodeDisabled,
   getNodeActive,
-  getNodes,
+  getNodeData,
   getVisibleNodes
 } from './nodes';
 import {
@@ -16,6 +15,8 @@ import {
 } from '../actions';
 import reducer from '../reducers';
 
+const getNodes = state => state.nodes;
+
 describe('Selectors', () => {
   describe('getNodeDisabledTag', () => {
     it('returns an object', () => {
@@ -24,7 +25,7 @@ describe('Selectors', () => {
 
     it("returns an object whose keys match the active snapshot's nodes", () => {
       expect(Object.keys(getNodeDisabledTag(mockState.lorem))).toEqual(
-        getActiveSnapshotNodes(mockState.lorem)
+        getNodes(mockState.lorem)
       );
     });
 
@@ -46,7 +47,7 @@ describe('Selectors', () => {
     it('disables a node only if all of its tags are disabled', () => {
       const { nodeTags } = mockState.animals;
       // Get list of task nodes from the active snapshot
-      const taskNodes = getActiveSnapshotNodes(mockState.animals).filter(
+      const taskNodes = getNodes(mockState.animals).filter(
         id => mockState.animals.nodeType[id] === 'task'
       );
       // Choose a node that has some tags (and which should be enabled)
@@ -73,7 +74,7 @@ describe('Selectors', () => {
 
     it("returns an object whose keys match the active snapshot's nodes", () => {
       expect(Object.keys(getNodeDisabledView(mockState.lorem))).toEqual(
-        getActiveSnapshotNodes(mockState.lorem)
+        getNodes(mockState.lorem)
       );
     });
 
@@ -96,7 +97,7 @@ describe('Selectors', () => {
     it('disables only task nodes when view is set to data', () => {
       const newMockState = reducer(mockState.lorem, changeView('data'));
       const nodeDisabled = getNodeDisabledView(newMockState);
-      const nodes = getActiveSnapshotNodes(newMockState);
+      const nodes = getNodes(newMockState);
       const { nodeType } = newMockState;
       const taskNodes = nodes.filter(id => nodeType[id] === 'task');
       const dataNodes = nodes.filter(id => nodeType[id] === 'data');
@@ -111,7 +112,7 @@ describe('Selectors', () => {
     it('disables only data nodes when view is set to task', () => {
       const newMockState = reducer(mockState.lorem, changeView('task'));
       const nodeDisabled = getNodeDisabledView(newMockState);
-      const nodes = getActiveSnapshotNodes(newMockState);
+      const nodes = getNodes(newMockState);
       const { nodeType } = newMockState;
       const taskNodes = nodes.filter(id => nodeType[id] === 'task');
       const dataNodes = nodes.filter(id => nodeType[id] === 'data');
@@ -131,7 +132,7 @@ describe('Selectors', () => {
 
     it("returns an object whose keys match the active snapshot's nodes", () => {
       expect(Object.keys(getNodeDisabled(mockState.lorem))).toEqual(
-        getActiveSnapshotNodes(mockState.lorem)
+        getNodes(mockState.lorem)
       );
     });
 
@@ -151,7 +152,7 @@ describe('Selectors', () => {
 
     it("returns an object whose keys match the active snapshot's nodes", () => {
       expect(Object.keys(getNodeActive(mockState.lorem))).toEqual(
-        getActiveSnapshotNodes(mockState.lorem)
+        getNodes(mockState.lorem)
       );
     });
 
@@ -164,7 +165,7 @@ describe('Selectors', () => {
     });
 
     it('returns true only when a given node is set to active', () => {
-      const nodes = getActiveSnapshotNodes(mockState.lorem);
+      const nodes = getNodes(mockState.lorem);
       const nodeID = nodes[0];
       const inactiveNodes = nodes.filter(id => id !== nodeID);
       const newMockState = reducer(
@@ -177,9 +178,9 @@ describe('Selectors', () => {
     });
   });
 
-  describe('getNodes', () => {
+  describe('getNodeData', () => {
     it('returns formatted nodes as an array', () => {
-      expect(getNodes(mockState.lorem)).toEqual(
+      expect(getNodeData(mockState.lorem)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
@@ -197,14 +198,12 @@ describe('Selectors', () => {
 
     it('returns nodes sorted by name', () => {
       const { nodeName } = mockState.lorem;
-      const nodeIDs = getNodes(mockState.lorem).map(d => d.id);
-      const activeNodeIDs = getActiveSnapshotNodes(mockState.lorem).sort(
-        (a, b) => {
-          if (nodeName[a] < nodeName[b]) return -1;
-          if (nodeName[a] > nodeName[b]) return 1;
-          return 0;
-        }
-      );
+      const nodeIDs = getNodeData(mockState.lorem).map(d => d.id);
+      const activeNodeIDs = getNodes(mockState.lorem).sort((a, b) => {
+        if (nodeName[a] < nodeName[b]) return -1;
+        if (nodeName[a] > nodeName[b]) return 1;
+        return 0;
+      });
       expect(nodeIDs).toEqual(activeNodeIDs);
     });
   });
@@ -223,7 +222,7 @@ describe('Selectors', () => {
     });
 
     it('returns only visible nodes', () => {
-      const nodes = getActiveSnapshotNodes(mockState.lorem);
+      const nodes = getNodes(mockState.lorem);
       const nodeID = nodes[0];
       const newMockState = reducer(
         mockState.lorem,

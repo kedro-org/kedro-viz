@@ -21,7 +21,6 @@ export const getInitialState = pipelineData => {
 
   return {
     ...pipelineData,
-    activeSnapshot: pipelineData.snapshotIDs[0],
     chartSize: {},
     parameters,
     textLabels,

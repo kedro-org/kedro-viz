@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
-import { getActiveSnapshotEdges } from './index';
 
+const getEdges = state => state.edges;
 const getEdgeSources = state => state.edgeSources;
 const getEdgeTargets = state => state.edgeTargets;
 const getFocusedNode = state => state.nodeFocused;
@@ -11,7 +11,7 @@ const getFocusedNode = state => state.nodeFocused;
  * @param {string} nodeID
  */
 export const getLinkedNodes = createSelector(
-  [getActiveSnapshotEdges, getEdgeSources, getEdgeTargets, getFocusedNode],
+  [getEdges, getEdgeSources, getEdgeTargets, getFocusedNode],
   (edges, edgeSources, edgeTargets, nodeID) => {
     if (!nodeID) {
       return {};

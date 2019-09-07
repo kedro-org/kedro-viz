@@ -1,8 +1,9 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
-import { getActiveSnapshotNodes, getActiveSnapshotEdges } from './index';
 import { getNodeDisabled } from './nodes';
 
+const getNodes = state => state.nodes;
+const getEdges = state => state.edges;
 const getView = state => state.view;
 const getNodeType = state => state.nodeType;
 const getEdgeSources = state => state.edgeSources;
@@ -12,9 +13,9 @@ const getEdgeTargets = state => state.edgeTargets;
  * Calculate whether edges should be disabled based on their source/target nodes
  */
 export const getEdgeDisabledNode = createSelector(
-  [getActiveSnapshotEdges, getNodeDisabled, getEdgeSources, getEdgeTargets],
-  (activeSnapshotEdges, nodeDisabled, edgeSources, edgeTargets) =>
-    arrayToObject(activeSnapshotEdges, edgeID => {
+  [getEdges, getNodeDisabled, getEdgeSources, getEdgeTargets],
+  (edges, nodeDisabled, edgeSources, edgeTargets) =>
+    arrayToObject(edges, edgeID => {
       const source = edgeSources[edgeID];
       const target = edgeTargets[edgeID];
       return nodeDisabled[source] || nodeDisabled[target];
@@ -25,15 +26,9 @@ export const getEdgeDisabledNode = createSelector(
  * Calculate whether edges should be disabled based on the view
  */
 export const getEdgeDisabledView = createSelector(
-  [
-    getActiveSnapshotEdges,
-    getNodeType,
-    getView,
-    getEdgeSources,
-    getEdgeTargets
-  ],
-  (activeSnapshotEdges, nodeType, view, edgeSources, edgeTargets) =>
-    arrayToObject(activeSnapshotEdges, edgeID => {
+  [getEdges, getNodeType, getView, getEdgeSources, getEdgeTargets],
+  (edges, nodeType, view, edgeSources, edgeTargets) =>
+    arrayToObject(edges, edgeID => {
       const source = edgeSources[edgeID];
       const sourceType = nodeType[source];
       const target = edgeTargets[edgeID];
@@ -49,9 +44,9 @@ export const getEdgeDisabledView = createSelector(
  * Determine whether an edge should be disabled
  */
 export const getEdgeDisabled = createSelector(
-  [getActiveSnapshotEdges, getEdgeDisabledNode, getEdgeDisabledView],
-  (activeSnapshotEdges, edgeDisabledNode, edgeDisabledView) =>
-    arrayToObject(activeSnapshotEdges, edgeID =>
+  [getEdges, getEdgeDisabledNode, getEdgeDisabledView],
+  (edges, edgeDisabledNode, edgeDisabledView) =>
+    arrayToObject(edges, edgeID =>
       Boolean(edgeDisabledNode[edgeID] || edgeDisabledView[edgeID])
     )
 );
@@ -78,7 +73,7 @@ export const addNewEdge = (source, target, { edgeIDs, sources, targets }) => {
  * @param {Array} path The route that has been explored so far
  */
 export const findTransitiveEdges = (
-  activeSnapshotEdges,
+  edges,
   transitiveEdges,
   { edgeSources, edgeTargets, nodeDisabled }
 ) => {
@@ -89,7 +84,7 @@ export const findTransitiveEdges = (
    * @param {Array} path The route that has been explored so far
    */
   const edgeGraphWalker = path => {
-    activeSnapshotEdges.forEach(edgeID => {
+    edges.forEach(edgeID => {
       const source = path[path.length - 1];
       // Filter to only edges where the source node is the previous target
       if (edgeSources[edgeID] !== source) {
@@ -114,20 +109,8 @@ export const findTransitiveEdges = (
  * in between them
  */
 export const getTransitiveEdges = createSelector(
-  [
-    getActiveSnapshotNodes,
-    getActiveSnapshotEdges,
-    getNodeDisabled,
-    getEdgeSources,
-    getEdgeTargets
-  ],
-  (
-    activeSnapshotNodes,
-    activeSnapshotEdges,
-    nodeDisabled,
-    edgeSources,
-    edgeTargets
-  ) => {
+  [getNodes, getEdges, getNodeDisabled, getEdgeSources, getEdgeTargets],
+  (nodes, edges, nodeDisabled, edgeSources, edgeTargets) => {
     const transitiveEdges = {
       edgeIDs: [],
       sources: {},
@@ -136,9 +119,9 @@ export const getTransitiveEdges = createSelector(
     // Examine the children of every enabled node. The walk only needs
     // to be run in a single direction (i.e. top down), because links
     // that end in a terminus can never be transitive.
-    activeSnapshotNodes.forEach(nodeID => {
+    nodes.forEach(nodeID => {
       if (!nodeDisabled[nodeID]) {
-        findTransitiveEdges(activeSnapshotEdges, transitiveEdges, {
+        findTransitiveEdges(edges, transitiveEdges, {
           edgeSources,
           edgeTargets,
           nodeDisabled
@@ -155,20 +138,14 @@ export const getTransitiveEdges = createSelector(
  */
 export const getVisibleEdges = createSelector(
   [
-    getActiveSnapshotEdges,
+    getEdges,
     getEdgeDisabled,
     getEdgeSources,
     getEdgeTargets,
     getTransitiveEdges
   ],
-  (
-    activeSnapshotEdges,
-    edgeDisabled,
-    edgeSources,
-    edgeTargets,
-    transitiveEdges
-  ) =>
-    activeSnapshotEdges
+  (edges, edgeDisabled, edgeSources, edgeTargets, transitiveEdges) =>
+    edges
       .filter(id => !edgeDisabled[id])
       .concat(transitiveEdges.edgeIDs)
       .map(id => ({
