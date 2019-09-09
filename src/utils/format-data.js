@@ -25,7 +25,6 @@ const createPipelineState = () => ({
   id: null,
   // Nodes
   nodes: [],
-  nodeID: {},
   nodeName: {},
   nodeFullName: {},
   nodeType: {},
@@ -59,7 +58,6 @@ const addNode = state => node => {
     return;
   }
   state.nodes.push(id);
-  state.nodeID[id] = id;
   state.nodeName[id] = node.name;
   state.nodeFullName[id] = node.full_name;
   state.nodeType[id] = node.type;
