@@ -29,6 +29,7 @@
 """ Kedro-Viz plugin and webserver """
 
 import json
+import sys
 import webbrowser
 from collections import defaultdict
 from pathlib import Path
@@ -137,14 +138,20 @@ def commands():
     help="Whether to open viz interface in the default browser or not. "
     "Defaults to True.",
 )
-@click.option("--load-file", default=None)
-@click.option("--save-file", default=None)
+@click.option("--load-file", default=None, type=click.Path(exists=True, dir_okay=False))
+@click.option(
+    "--save-file", default=None, type=click.Path(dir_okay=False, writable=True)
+)
 def viz(host, port, browser, load_file, save_file):
     """Visualize the pipeline using kedroviz."""
     global data  # pylint: disable=global-statement,invalid-name
 
     if load_file:
         data = json.loads(Path(load_file).read_text())
+        for key in ["nodes", "edges", "tags"]:
+            if key not in data:
+                click.echo("Invalid file, top level key '{}' not found.".format(key))
+                sys.exit(1)
     else:
         data = get_data_from_kedro()
 
