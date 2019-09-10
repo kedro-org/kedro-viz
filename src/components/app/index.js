@@ -21,18 +21,9 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.dataWasUpdated(prevProps.data, this.props.data)) {
+    if (prevProps.data.schema_id !== this.props.data.schema_id) {
       this.resetStoreData(formatData(this.props.data));
     }
-  }
-
-  /**
-   * Quickly determine whether the pipeline data has been updated
-   * @param {Object} prevData Previous data prop
-   * @param {Object} newData New data prop
-   */
-  dataWasUpdated(prevData, newData) {
-    return prevData.schema_id !== newData.schema_id;
   }
 
   /**
