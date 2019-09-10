@@ -38,84 +38,80 @@ from kedro.pipeline import Pipeline, node
 from kedro_viz import server
 
 EXPECTED_PIPELINE_DATA = {
-    "snapshots": [
+    "edges": [
         {
-            "edges": [
-                {
-                    "target": "task/func([bob_in,parameters])->[bob_out]",
-                    "source": "data/bob_in",
-                },
-                {
-                    "target": "task/func([bob_in,parameters])->[bob_out]",
-                    "source": "data/parameters",
-                },
-                {
-                    "target": "data/bob_out",
-                    "source": "task/func([bob_in,parameters])->[bob_out]",
-                },
-                {"target": "task/my_node", "source": "data/fred_in"},
-                {"target": "task/my_node", "source": "data/parameters"},
-                {"target": "data/fred_out", "source": "task/my_node"},
-            ],
-            "nodes": [
-                {
-                    "name": "Func",
-                    "type": "task",
-                    "id": "task/func([bob_in,parameters])->[bob_out]",
-                    "full_name": "func([bob_in,parameters]) -> [bob_out]",
-                    "tags": [],
-                },
-                {
-                    "name": "my_node",
-                    "type": "task",
-                    "id": "task/my_node",
-                    "full_name": "my_node: func([fred_in@pandas,parameters]) -> [fred_out@pandas]",
-                    "tags": ["bob"],
-                },
-                {
-                    "is_parameters": False,
-                    "name": "Bob In",
-                    "tags": [],
-                    "id": "data/bob_in",
-                    "full_name": "bob_in",
-                    "type": "data",
-                },
-                {
-                    "is_parameters": False,
-                    "name": "Bob Out",
-                    "tags": [],
-                    "id": "data/bob_out",
-                    "full_name": "bob_out",
-                    "type": "data",
-                },
-                {
-                    "is_parameters": False,
-                    "name": "Fred In",
-                    "tags": ["bob"],
-                    "id": "data/fred_in",
-                    "full_name": "fred_in",
-                    "type": "data",
-                },
-                {
-                    "is_parameters": False,
-                    "name": "Fred Out",
-                    "tags": ["bob"],
-                    "id": "data/fred_out",
-                    "full_name": "fred_out",
-                    "type": "data",
-                },
-                {
-                    "is_parameters": True,
-                    "name": "Parameters",
-                    "tags": ["bob"],
-                    "id": "data/parameters",
-                    "full_name": "parameters",
-                    "type": "data",
-                },
-            ],
-            "tags": [{"name": "Bob", "id": "bob"}],
-        }
-    ]
+            "target": "task/func([bob_in,parameters])->[bob_out]",
+            "source": "data/bob_in",
+        },
+        {
+            "target": "task/func([bob_in,parameters])->[bob_out]",
+            "source": "data/parameters",
+        },
+        {
+            "target": "data/bob_out",
+            "source": "task/func([bob_in,parameters])->[bob_out]",
+        },
+        {"target": "task/my_node", "source": "data/fred_in"},
+        {"target": "task/my_node", "source": "data/parameters"},
+        {"target": "data/fred_out", "source": "task/my_node"},
+    ],
+    "nodes": [
+        {
+            "name": "Func",
+            "type": "task",
+            "id": "task/func([bob_in,parameters])->[bob_out]",
+            "full_name": "func([bob_in,parameters]) -> [bob_out]",
+            "tags": [],
+        },
+        {
+            "name": "my_node",
+            "type": "task",
+            "id": "task/my_node",
+            "full_name": "my_node: func([fred_in@pandas,parameters]) -> [fred_out@pandas]",
+            "tags": ["bob"],
+        },
+        {
+            "is_parameters": False,
+            "name": "Bob In",
+            "tags": [],
+            "id": "data/bob_in",
+            "full_name": "bob_in",
+            "type": "data",
+        },
+        {
+            "is_parameters": False,
+            "name": "Bob Out",
+            "tags": [],
+            "id": "data/bob_out",
+            "full_name": "bob_out",
+            "type": "data",
+        },
+        {
+            "is_parameters": False,
+            "name": "Fred In",
+            "tags": ["bob"],
+            "id": "data/fred_in",
+            "full_name": "fred_in",
+            "type": "data",
+        },
+        {
+            "is_parameters": False,
+            "name": "Fred Out",
+            "tags": ["bob"],
+            "id": "data/fred_out",
+            "full_name": "fred_out",
+            "type": "data",
+        },
+        {
+            "is_parameters": True,
+            "name": "Parameters",
+            "tags": ["bob"],
+            "id": "data/parameters",
+            "full_name": "parameters",
+            "type": "data",
+        },
+    ],
+    "tags": [{"name": "Bob", "id": "bob"}],
 }
 
 

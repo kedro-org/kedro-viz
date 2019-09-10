@@ -103,7 +103,7 @@ def _check_service_up(context):
     try:
         assert context.result.poll() is None
         assert (
-            data_json["snapshots"][0]["nodes"][0]["full_name"]
+            data_json["nodes"][0]["full_name"]
             == "predict([example_model,example_test_x]) -> [example_predictions]"
         )
     finally:

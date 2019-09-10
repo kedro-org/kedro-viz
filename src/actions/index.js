@@ -1,16 +1,3 @@
-export const CHANGE_ACTIVE_SNAPSHOT = 'CHANGE_ACTIVE_SNAPSHOT';
-
-/**
- * Change which pipeline snapshot is active.
- * @param {string} snapshotID A single snapshot ID
- */
-export function changeActiveSnapshot(snapshotID) {
-  return {
-    type: CHANGE_ACTIVE_SNAPSHOT,
-    snapshotID
-  };
-}
-
 export const CHANGE_VIEW = 'CHANGE_VIEW';
 
 /**
@@ -24,31 +11,16 @@ export function changeView(view) {
   };
 }
 
-export const DELETE_SNAPSHOT = 'DELETE_SNAPSHOT';
+export const RESET_DATA = 'RESET_DATA';
 
 /**
- * Select a snapshot and delete it. If handler is passed via App
- * 'onDeleteSnapshot' prop then use that, else use native method.
- * @param {string} id Snapshot id
+ * Overwrite the existing data store when receiving new data from upstream
+ * @param {Object} data New pipeline state data
  */
-export function deleteSnapshot(id) {
+export function resetData(data) {
   return {
-    type: DELETE_SNAPSHOT,
-    id
-  };
-}
-
-export const RESET_SNAPSHOT_DATA = 'RESET_SNAPSHOT_DATA';
-
-/**
- * Overwrite the existing data store when receiving
- * new snapshot data from upstream
- * @param {Array} snapshots List of snapshot objects
- */
-export function resetSnapshotData(snapshots) {
-  return {
-    type: RESET_SNAPSHOT_DATA,
-    snapshots
+    type: RESET_DATA,
+    data
   };
 }
 

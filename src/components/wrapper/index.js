@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import Icon from '@quantumblack/kedro-ui/lib/components/icon';
-import SidebarTabs from '../sidebar-tabs';
+import ChartUI from '../chart-ui';
 import FlowChart from '../flowchart';
-import Description from '../description';
 import './wrapper.css';
 
 /**
@@ -26,7 +25,7 @@ export class Wrapper extends Component {
 
   render() {
     const { visibleNav } = this.state;
-    const { theme, showHistory } = this.props;
+    const { theme } = this.props;
 
     return (
       <div
@@ -34,7 +33,6 @@ export class Wrapper extends Component {
           'kui-theme--dark': theme === 'dark',
           'kui-theme--light': theme === 'light'
         })}>
-        <Description visibleNav={visibleNav} />
         <div className="pipeline-wrapper">
           <FlowChart visibleNav={visibleNav} />
         </div>
@@ -57,14 +55,13 @@ export class Wrapper extends Component {
             className={classnames(
               'pipeline-sidebar__hide-menu pipeline-icon-button',
               {
-                'pipeline-sidebar__hide-menu--offset': !showHistory,
                 'pipeline-sidebar__hide-menu--visible': visibleNav
               }
             )}
             onClick={this.toggleNav.bind(this)}>
             <Icon type="close" title="Close" theme={theme} />
           </button>
-          <SidebarTabs />
+          <ChartUI />
         </nav>
       </div>
     );
@@ -72,7 +69,6 @@ export class Wrapper extends Component {
 }
 
 export const mapStateToProps = state => ({
-  showHistory: state.showHistory,
   theme: state.theme
 });
 

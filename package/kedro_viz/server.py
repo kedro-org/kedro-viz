@@ -53,7 +53,7 @@ def root(subpath="index.html"):
     )
 
 
-def get_data():
+def get_data_from_kedro():
     def pretty_name(name):
         name = name.replace("-", " ").replace("_", " ")
         parts = [n[0].upper() + n[1:] for n in name.split()]
@@ -103,7 +103,7 @@ def get_data():
     for tag in sorted(all_tags):
         tags.append({"id": tag, "name": pretty_name(tag)})
 
-    return {"snapshots": [{"nodes": nodes, "edges": edges, "tags": tags}]}
+    return {"nodes": nodes, "edges": edges, "tags": tags}
 
 
 @app.route("/api/nodes.json")
@@ -144,7 +144,7 @@ def viz(host, port, browser, load_file, save_file):
     if load_file:
         data = json.loads(Path(load_file).read_text())
     else:
-        data = get_data()
+        data = get_data_from_kedro()
 
     if save_file:
         Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))

@@ -3,26 +3,29 @@ import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
 import store from '../store';
 import { getInitialState } from '../components/app/load-data';
-import formatSnapshots from './format-data';
+import formatData from './format-data';
 import mockData from './data.mock';
 
 /**
- * Example state object for use in tests of redux-enabled components
+ * Example state objects for use in tests of redux-enabled components
  */
-export const mockState = getInitialState(formatSnapshots(mockData), {
-  allowHistoryDeletion: true,
-  showHistory: true
-});
+export const mockState = {
+  lorem: getInitialState(formatData(mockData.lorem)),
+  animals: getInitialState(formatData(mockData.animals))
+};
 
-// Redux store based on mock data
-export const mockStore = store(mockState);
+// Redux stores based on mock data
+export const mockStore = {
+  lorem: store(mockState.lorem),
+  animals: store(mockState.animals)
+};
 
 /**
  * React-Redux Provider wrapper for testing connected components
  * @param {Object} children A React component
  * @param {Object} state Redux state object for creating the store
  */
-export const MockProvider = ({ children, state = mockState }) => (
+export const MockProvider = ({ children, state = mockState.lorem }) => (
   <Provider store={store(state)}>{children}</Provider>
 );
 

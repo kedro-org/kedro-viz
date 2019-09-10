@@ -1,7 +1,7 @@
 import React from 'react';
 import NodeList, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
-import { getNodes } from '../../selectors/nodes';
+import { getNodeData } from '../../selectors/nodes';
 
 describe('NodeList', () => {
   it('renders without crashing', () => {
@@ -15,7 +15,7 @@ describe('NodeList', () => {
   describe('search filter', () => {
     const wrapper = setup.mount(<NodeList />);
     const searches = [
-      getNodes(mockState)[0].name,
+      getNodeData(mockState.lorem)[0].name,
       'a',
       'aaaaaaaaaaaaaaaaa',
       ''
@@ -27,7 +27,7 @@ describe('NodeList', () => {
         const search = () => wrapper.find('.kui-input__field');
         search().simulate('change', { target: { value: searchText } });
         const nodeList = wrapper.find('.pipeline-node');
-        const nodes = getNodes(mockState);
+        const nodes = getNodeData(mockState.lorem);
         const expectedResult = nodes.filter(node =>
           node.name.includes(searchText)
         );
@@ -42,7 +42,7 @@ describe('NodeList', () => {
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.kui-input__field');
       const nodeList = () => wrapper.find('.pipeline-node');
-      const nodes = getNodes(mockState);
+      const nodes = getNodeData(mockState.lorem);
       const searchText = nodes[0].name;
       // Enter search text
       search().simulate('change', { target: { value: searchText } });
@@ -72,7 +72,7 @@ describe('NodeList', () => {
         .at(check ? 0 : 1)
         .simulate('click');
     // Get search text value and filtered nodes
-    const nodes = getNodes(mockState);
+    const nodes = getNodeData(mockState.lorem);
     const searchText = nodes[0].name;
     const expectedResult = nodes.filter(node => node.name.includes(searchText));
 
@@ -154,7 +154,7 @@ describe('NodeList', () => {
     it('renders the correct number of rows', () => {
       const wrapper = setup.mount(<NodeList />);
       const nodeList = wrapper.find('.pipeline-node');
-      const nodes = getNodes(mockState);
+      const nodes = getNodeData(mockState.lorem);
       expect(nodeList.length).toBe(nodes.length);
     });
   });
@@ -205,7 +205,7 @@ describe('NodeList', () => {
       ]),
       theme: expect.stringMatching(/light|dark/)
     };
-    expect(mapStateToProps(mockState)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {
@@ -224,7 +224,7 @@ describe('NodeList', () => {
       type: 'TOGGLE_NODE_DISABLED'
     });
 
-    const nodes = getNodes(mockState);
+    const nodes = getNodeData(mockState.lorem);
     mapDispatchToProps(dispatch).onToggleAllNodes(nodes, true);
     expect(dispatch.mock.calls[2][0]).toEqual({
       nodeIDs: nodes.map(node => node.id),
