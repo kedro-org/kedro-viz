@@ -31,4 +31,4 @@
 __version__ = "2.1.1"
 
 
-from kedro_viz.server import get_data_from_kedro
+from kedro_viz.server import get_data_from_kedro  # noqa

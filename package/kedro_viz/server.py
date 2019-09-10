@@ -28,16 +28,16 @@
 
 """ Kedro-Viz plugin and webserver """
 
+import json
 import webbrowser
 from collections import defaultdict
 from pathlib import Path
-import json
 
 import click
 from flask import Flask, jsonify, send_from_directory
 from kedro.cli import get_project_context
 
-data = None
+data = None  # pylint: disable=invalid-name
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -54,6 +54,8 @@ def root(subpath="index.html"):
 
 
 def get_data_from_kedro():
+    """ Get pipeline data from Kedro and format it appropriately """
+
     def pretty_name(name):
         name = name.replace("-", " ").replace("_", " ")
         parts = [n[0].upper() + n[1:] for n in name.split()]
@@ -139,7 +141,7 @@ def commands():
 @click.option("--save-file", default=None)
 def viz(host, port, browser, load_file, save_file):
     """Visualize the pipeline using kedroviz."""
-    global data
+    global data  # pylint: disable=global-statement,invalid-name
 
     if load_file:
         data = json.loads(Path(load_file).read_text())
