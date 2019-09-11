@@ -14,34 +14,22 @@ describe('App', () => {
     });
 
     it('when being passed data as a prop', () => {
-      shallow(<App data={mockData} />);
-    });
-
-    it('when enabling history and history deletion', () => {
-      shallow(
-        <App allowHistoryDeletion={true} data="random" showHistory={true} />
-      );
+      shallow(<App data={mockData.lorem} />);
     });
   });
 
   describe('updates the store', () => {
-    const getSnapshotIDs = wrapper =>
-      wrapper.instance().store.getState().snapshotIDs;
+    const getSchemaID = wrapper => wrapper.instance().store.getState().id;
 
     it('when data prop is set on first load', () => {
-      const wrapper = shallow(<App data={mockData} />);
-      expect(getSnapshotIDs(wrapper)).toHaveLength(mockData.snapshots.length);
+      const wrapper = shallow(<App data={mockData.lorem} />);
+      expect(getSchemaID(wrapper)).toEqual(mockData.lorem.schema_id);
     });
 
     it('when data prop is updated', () => {
-      const wrapper = shallow(<App data={mockData} />);
-      const newMockData = Object.assign({}, mockData, {
-        snapshots: [...mockData.snapshots, mockData.snapshots[0]]
-      });
-      wrapper.setProps({ data: newMockData });
-      expect(getSnapshotIDs(wrapper)).toHaveLength(
-        newMockData.snapshots.length
-      );
+      const wrapper = shallow(<App data={mockData.lorem} />);
+      wrapper.setProps({ data: mockData.animals });
+      expect(getSchemaID(wrapper)).toEqual(mockData.animals.schema_id);
     });
   });
 

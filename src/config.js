@@ -10,10 +10,15 @@ const getDataSource = () => {
   } else if (REACT_APP_DATA_SOURCE) {
     source = REACT_APP_DATA_SOURCE;
   } else if (window.location.host === 'quantumblacklabs.github.io') {
-    source = 'mock';
+    source = 'animals';
   }
   // Validate against expected results
-  const expectedInput = { mock: true, json: true, random: true };
+  const expectedInput = {
+    lorem: true,
+    animals: true,
+    json: true,
+    random: true
+  };
   return expectedInput[source] ? source : 'json';
 };
 

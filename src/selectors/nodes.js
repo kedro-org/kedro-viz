@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
-import { getActiveSnapshotNodes } from './index';
 import { getTagCount } from './tags';
 
+const getNodes = state => state.nodes;
 const getView = state => state.view;
 const getNodeName = state => state.nodeName;
 const getNodeActiveNode = state => state.nodeActive;
@@ -16,9 +16,9 @@ const getTagEnabled = state => state.tagEnabled;
  * Calculate whether nodes should be disabled based on their tags
  */
 export const getNodeDisabledTag = createSelector(
-  [getActiveSnapshotNodes, getTagEnabled, getTagCount, getNodeTags],
-  (activeSnapshotNodes, tagEnabled, tagCount, nodeTags) =>
-    arrayToObject(activeSnapshotNodes, nodeID => {
+  [getNodes, getTagEnabled, getTagCount, getNodeTags],
+  (nodes, tagEnabled, tagCount, nodeTags) =>
+    arrayToObject(nodes, nodeID => {
       if (tagCount.enabled === 0) {
         return false;
       }
@@ -34,10 +34,10 @@ export const getNodeDisabledTag = createSelector(
  * Calculate whether nodes should be disabled based on the view
  */
 export const getNodeDisabledView = createSelector(
-  [getActiveSnapshotNodes, getNodeType, getView],
-  (activeSnapshotNodes, nodeType, view) =>
+  [getNodes, getNodeType, getView],
+  (nodes, nodeType, view) =>
     arrayToObject(
-      activeSnapshotNodes,
+      nodes,
       nodeID => view !== 'combined' && view !== nodeType[nodeID]
     )
 );
@@ -46,14 +46,9 @@ export const getNodeDisabledView = createSelector(
  * Set disabled status if the node is specifically hidden, and/or via a tag/view
  */
 export const getNodeDisabled = createSelector(
-  [
-    getActiveSnapshotNodes,
-    getNodeDisabledNode,
-    getNodeDisabledTag,
-    getNodeDisabledView
-  ],
-  (activeSnapshotNodes, nodeDisabledNode, nodeDisabledTag, nodeDisabledView) =>
-    arrayToObject(activeSnapshotNodes, id =>
+  [getNodes, getNodeDisabledNode, getNodeDisabledTag, getNodeDisabledView],
+  (nodes, nodeDisabledNode, nodeDisabledTag, nodeDisabledView) =>
+    arrayToObject(nodes, id =>
       Boolean(
         nodeDisabledNode[id] || nodeDisabledTag[id] || nodeDisabledView[id]
       )
@@ -65,9 +60,9 @@ export const getNodeDisabled = createSelector(
  * @return {Boolean} True if active
  */
 export const getNodeActive = createSelector(
-  [getActiveSnapshotNodes, getNodeActiveNode, getNodeTags, getTagActive],
-  (activeSnapshotNodes, nodeActiveNode, nodeTags, tagActive) =>
-    arrayToObject(activeSnapshotNodes, nodeID => {
+  [getNodes, getNodeActiveNode, getNodeTags, getTagActive],
+  (nodes, nodeActiveNode, nodeTags, tagActive) =>
+    arrayToObject(nodes, nodeID => {
       const activeViaNode = nodeActiveNode[nodeID];
       const activeViaTag = nodeTags[nodeID].some(tag => tagActive[tag]);
       return Boolean(activeViaNode || activeViaTag);
@@ -77,9 +72,9 @@ export const getNodeActive = createSelector(
 /**
  * Returns formatted nodes as an array, with all relevant properties
  */
-export const getNodes = createSelector(
+export const getNodeData = createSelector(
   [
-    getActiveSnapshotNodes,
+    getNodes,
     getNodeName,
     getNodeType,
     getNodeActive,
@@ -89,7 +84,7 @@ export const getNodes = createSelector(
     getNodeDisabledView
   ],
   (
-    activeSnapshotNodes,
+    nodes,
     nodeName,
     nodeType,
     nodeActive,
@@ -98,7 +93,7 @@ export const getNodes = createSelector(
     nodeDisabledTag,
     nodeDisabledView
   ) =>
-    activeSnapshotNodes
+    nodes
       .sort((a, b) => {
         if (nodeName[a] < nodeName[b]) return -1;
         if (nodeName[a] > nodeName[b]) return 1;
@@ -121,9 +116,9 @@ export const getNodes = createSelector(
  * that are unnecessary for the chart layout calculation
  */
 export const getVisibleNodes = createSelector(
-  [getActiveSnapshotNodes, getNodeName, getNodeType, getNodeDisabled],
-  (activeSnapshotNodes, nodeName, nodeType, nodeDisabled) =>
-    activeSnapshotNodes
+  [getNodes, getNodeName, getNodeType, getNodeDisabled],
+  (nodes, nodeName, nodeType, nodeDisabled) =>
+    nodes
       .filter(id => !nodeDisabled[id])
       .map(id => ({
         id,

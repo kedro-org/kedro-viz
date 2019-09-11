@@ -19,7 +19,7 @@ import './styles/flowchart.css';
 const DURATION = 700;
 
 /**
- * Display a flowchart for the current snapshot, mostly rendered with D3
+ * Display a pipeline flowchart, mostly rendered with D3
  */
 export class FlowChart extends Component {
   constructor(props) {
@@ -413,7 +413,6 @@ export class FlowChart extends Component {
 }
 
 export const mapStateToProps = state => ({
-  activeSnapshot: state.activeSnapshot,
   chartSize: state.chartSize,
   layout: getLayout(state),
   linkedNodes: getLinkedNodes(state),

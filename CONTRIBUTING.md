@@ -63,12 +63,13 @@ First, clone this repo. Then install dependencies (`npm i`). Now you're ready to
 
 If you want to use a particular dataset, you'll first need to place it in `/public/logs/nodes.json`. Otherwise, you can serve randomly-generated data.
 
-Kedro-Viz uses an environment variable to configure the data source. You can set it when starting up the dev server, e.g. `DATA=random npm start` will serve random procedurally-generated data (refreshed on each page-load). When random or mock data is enabled, certain other features like snapshot history are also enabled by default to help with browser testing. This is usually the most useful setting for local development.
+Kedro-Viz uses an environment variable to configure the data source. You can set it when starting up the dev server, e.g. `DATA=random npm start` will serve random procedurally-generated data (refreshed on each page-load). This is usually the most useful setting for local development.
 
 In other words, to run the app in development mode on a local server, use one of the following:
 
 - `DATA=random npm start` --> Serve randomly-generated data
-- `DATA=mock npm start` --> Serve example test data, from `/src/utils/data.mock.js`
+- `DATA=animals npm start` --> Serve example test data, from `/src/utils/data.mock.js`
+- `DATA=lorem npm start` --> Serve example test data, from `/src/utils/data.mock.js`
 - `npm start` --> Serve data loaded from `/public/logs/nodes.json`
 
 This will serve the app at [localhost:4141](http://localhost:4141/), and watch files in `/src` for changes. It will also update the `/lib` directory, which contains a Babel-compiled copy of the source. This directory is exported to `npm`, and is used when importing as a React component into another application. It is updated automatically on save in case you need to test/debug it locally (e.g. with `npm link`). You can also update it manually, by running

@@ -40,7 +40,7 @@ describe('Selectors', () => {
   });
 
   describe('getGraph', () => {
-    const graph = getGraph(mockState);
+    const graph = getGraph(mockState.lorem);
     it('calculates chart layout and returns a Dagre object', () => {
       expect(graph).toEqual(
         expect.objectContaining({
@@ -54,14 +54,16 @@ describe('Selectors', () => {
     });
 
     it('returns a complete list of node and edge IDs', () => {
-      expect(graph.nodes()).toEqual(getVisibleNodes(mockState).map(d => d.id));
+      expect(graph.nodes()).toEqual(
+        getVisibleNodes(mockState.lorem).map(d => d.id)
+      );
       const edgeIDs = graph.edges().map(edge => graph.edge(edge).id);
-      expect(edgeIDs).toEqual(getVisibleEdges(mockState).map(d => d.id));
+      expect(edgeIDs).toEqual(getVisibleEdges(mockState.lorem).map(d => d.id));
     });
   });
 
   describe('getLayout', () => {
-    const layout = getLayout(mockState);
+    const layout = getLayout(mockState.lorem);
 
     it('returns a properly-formatted list of nodes', () => {
       expect(layout.nodes).toEqual(
@@ -102,7 +104,7 @@ describe('Selectors', () => {
 
   describe('getZoomPosition', () => {
     it('returns a default chart zoom translation/scale if none is specified', () => {
-      expect(getZoomPosition(mockState)).toEqual({
+      expect(getZoomPosition(mockState.lorem)).toEqual({
         scale: 1,
         translateX: 0,
         translateY: 0
@@ -111,7 +113,7 @@ describe('Selectors', () => {
 
     it('returns the updated chart zoom translation/scale if set', () => {
       const newMockState = reducer(
-        mockState,
+        mockState.lorem,
         updateChartSize({ width: 100, height: 100 })
       );
       const newZoomPos = getZoomPosition(newMockState);

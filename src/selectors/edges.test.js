@@ -1,5 +1,4 @@
 import { mockState } from '../utils/state.mock';
-import { getActiveSnapshotNodes, getActiveSnapshotEdges } from './index';
 import {
   getEdgeDisabledNode,
   getEdgeDisabledView,
@@ -12,35 +11,43 @@ import {
 import { changeView, toggleNodeDisabled } from '../actions';
 import reducer from '../reducers';
 
+const getNodes = state => state.nodes;
+const getEdges = state => state.edges;
+
 describe('Selectors', () => {
   describe('getEdgeDisabledNode', () => {
     it('returns an object', () => {
-      expect(getEdgeDisabledNode(mockState)).toEqual(expect.any(Object));
+      expect(getEdgeDisabledNode(mockState.lorem)).toEqual(expect.any(Object));
     });
 
-    it("returns an object whose keys match the active snapshot's edges", () => {
-      expect(Object.keys(getEdgeDisabledNode(mockState))).toEqual(
-        getActiveSnapshotEdges(mockState)
+    it("returns an object whose keys match the current pipeline's edges", () => {
+      expect(Object.keys(getEdgeDisabledNode(mockState.lorem))).toEqual(
+        getEdges(mockState.lorem)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getEdgeDisabledNode(mockState)).every(
+        Object.values(getEdgeDisabledNode(mockState.lorem)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
     });
 
     it('does not disable an edge if no nodes are disabled', () => {
-      const edgeDisabledValues = Object.values(getEdgeDisabledNode(mockState));
+      const edgeDisabledValues = Object.values(
+        getEdgeDisabledNode(mockState.lorem)
+      );
       expect(edgeDisabledValues).toEqual(edgeDisabledValues.map(() => false));
     });
 
-    const nodeID = getActiveSnapshotNodes(mockState)[0];
-    const newMockState = reducer(mockState, toggleNodeDisabled(nodeID, true));
+    const nodeID = getNodes(mockState.lorem)[0];
+    const newMockState = reducer(
+      mockState.lorem,
+      toggleNodeDisabled(nodeID, true)
+    );
     const edgeDisabled = getEdgeDisabledNode(newMockState);
-    const edges = getActiveSnapshotEdges(newMockState);
+    const edges = getEdges(newMockState);
     const { edgeSources, edgeTargets } = newMockState;
 
     it('disables an edge if one of its nodes is disabled', () => {
@@ -66,27 +73,27 @@ describe('Selectors', () => {
 
   describe('getEdgeDisabledView', () => {
     it('returns an object', () => {
-      expect(getEdgeDisabledView(mockState)).toEqual(expect.any(Object));
+      expect(getEdgeDisabledView(mockState.lorem)).toEqual(expect.any(Object));
     });
 
-    it("returns an object whose keys match the active snapshot's edges", () => {
-      expect(Object.keys(getEdgeDisabledView(mockState))).toEqual(
-        getActiveSnapshotEdges(mockState)
+    it("returns an object whose keys match the current pipeline's edges", () => {
+      expect(Object.keys(getEdgeDisabledView(mockState.lorem))).toEqual(
+        getEdges(mockState.lorem)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getEdgeDisabledView(mockState)).every(
+        Object.values(getEdgeDisabledView(mockState.lorem)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
     });
 
     describe('when view is set to combined', () => {
-      const newMockState = reducer(mockState, changeView('combined'));
+      const newMockState = reducer(mockState.lorem, changeView('combined'));
       const edgeDisabled = getEdgeDisabledView(newMockState);
-      const edges = getActiveSnapshotEdges(newMockState);
+      const edges = getEdges(newMockState);
       const { edgeSources, edgeTargets, nodeType } = newMockState;
 
       it('shows only edges connecting nodes of different types', () => {
@@ -111,9 +118,9 @@ describe('Selectors', () => {
     });
 
     describe('when view is set to data', () => {
-      const newMockState = reducer(mockState, changeView('data'));
+      const newMockState = reducer(mockState.lorem, changeView('data'));
       const edgeDisabled = getEdgeDisabledView(newMockState);
-      const edges = getActiveSnapshotEdges(newMockState);
+      const edges = getEdges(newMockState);
       const { edgeSources, edgeTargets, nodeType } = newMockState;
 
       it('shows only edges connecting nodes with type "data"', () => {
@@ -130,9 +137,9 @@ describe('Selectors', () => {
     });
 
     describe('when view is set to task', () => {
-      const newMockState = reducer(mockState, changeView('task'));
+      const newMockState = reducer(mockState.lorem, changeView('task'));
       const edgeDisabled = getEdgeDisabledView(newMockState);
-      const edges = getActiveSnapshotEdges(newMockState);
+      const edges = getEdges(newMockState);
       const { edgeSources, edgeTargets, nodeType } = newMockState;
 
       it('shows only edges connecting nodes with type "task"', () => {
@@ -151,18 +158,18 @@ describe('Selectors', () => {
 
   describe('getEdgeDisabled', () => {
     it('returns an object', () => {
-      expect(getEdgeDisabled(mockState)).toEqual(expect.any(Object));
+      expect(getEdgeDisabled(mockState.lorem)).toEqual(expect.any(Object));
     });
 
-    it("returns an object whose keys match the active snapshot's edges", () => {
-      expect(Object.keys(getEdgeDisabled(mockState))).toEqual(
-        getActiveSnapshotEdges(mockState)
+    it("returns an object whose keys match the current pipeline's edges", () => {
+      expect(Object.keys(getEdgeDisabled(mockState.lorem))).toEqual(
+        getEdges(mockState.lorem)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getEdgeDisabled(mockState)).every(
+        Object.values(getEdgeDisabled(mockState.lorem)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
@@ -204,10 +211,10 @@ describe('Selectors', () => {
   });
 
   describe('findTransitiveEdges', () => {
-    const activeSnapshotEdges = getActiveSnapshotEdges(mockState);
-    const edge = activeSnapshotEdges[0];
-    const source = mockState.edgeSources[edge];
-    const disabledNode = mockState.edgeTargets[edge];
+    const edges = getEdges(mockState.lorem);
+    const edge = edges[0];
+    const source = mockState.lorem.edgeSources[edge];
+    const disabledNode = mockState.lorem.edgeTargets[edge];
     const transitiveEdges = {};
 
     beforeEach(() => {
@@ -218,9 +225,7 @@ describe('Selectors', () => {
 
     describe('if all edges are enabled', () => {
       it('creates no transitive edges', () => {
-        findTransitiveEdges(activeSnapshotEdges, transitiveEdges, mockState)([
-          'dog'
-        ]);
+        findTransitiveEdges(edges, transitiveEdges, mockState.lorem)(['dog']);
         expect(transitiveEdges.edgeIDs).toEqual([]);
       });
     });
@@ -229,14 +234,10 @@ describe('Selectors', () => {
       // Create an altered state with a disabled node
       beforeEach(() => {
         const alteredMockState = reducer(
-          mockState,
+          mockState.lorem,
           toggleNodeDisabled(disabledNode, true)
         );
-        findTransitiveEdges(
-          activeSnapshotEdges,
-          transitiveEdges,
-          alteredMockState
-        )([source]);
+        findTransitiveEdges(edges, transitiveEdges, alteredMockState)([source]);
       });
 
       it('creates transitive edges matching the source node', () => {
@@ -254,9 +255,9 @@ describe('Selectors', () => {
   });
 
   describe('getTransitiveEdges', () => {
-    const { edgeSources, edgeTargets } = mockState;
+    const { edgeSources, edgeTargets } = mockState.lorem;
     // Find a node which has multiple inputs and outputs, which we can disable
-    const disabledNode = getActiveSnapshotNodes(mockState).find(node => {
+    const disabledNode = getNodes(mockState.lorem).find(node => {
       const hasMultipleConnections = edgeNodes =>
         Object.values(edgeNodes).filter(edge => edge === node).length > 1;
       return (
@@ -264,14 +265,14 @@ describe('Selectors', () => {
         hasMultipleConnections(edgeTargets)
       );
     });
-    const sourceEdge = getActiveSnapshotEdges(mockState).find(
+    const sourceEdge = getEdges(mockState.lorem).find(
       edge => edgeTargets[edge] === disabledNode
     );
     const source = edgeSources[sourceEdge];
 
     describe('if all edges are enabled', () => {
       it('creates no transitive edges', () => {
-        expect(getTransitiveEdges(mockState)).toEqual({
+        expect(getTransitiveEdges(mockState.lorem)).toEqual({
           edgeIDs: [],
           sources: {},
           targets: {}
@@ -284,7 +285,7 @@ describe('Selectors', () => {
       let alteredMockState;
       beforeEach(() => {
         alteredMockState = reducer(
-          mockState,
+          mockState.lorem,
           toggleNodeDisabled(disabledNode, true)
         );
       });
@@ -311,14 +312,14 @@ describe('Selectors', () => {
 
   describe('getVisibleEdges', () => {
     it('gets only the visible edges', () => {
-      const edgeDisabled = getEdgeDisabled(mockState);
-      expect(getVisibleEdges(mockState).map(d => edgeDisabled[d.id])).toEqual(
-        expect.arrayContaining([false])
-      );
+      const edgeDisabled = getEdgeDisabled(mockState.lorem);
+      expect(
+        getVisibleEdges(mockState.lorem).map(d => edgeDisabled[d.id])
+      ).toEqual(expect.arrayContaining([false]));
     });
 
     it('formats the edges into an array of objects', () => {
-      expect(getVisibleEdges(mockState)).toEqual(
+      expect(getVisibleEdges(mockState.lorem)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
@@ -330,9 +331,9 @@ describe('Selectors', () => {
     });
 
     it('includes transitive edges when necessary', () => {
-      const { edgeSources, edgeTargets } = mockState;
+      const { edgeSources, edgeTargets } = mockState.lorem;
       // Find a node which has multiple inputs and outputs, which we can disable
-      const disabledNode = getActiveSnapshotNodes(mockState).find(node => {
+      const disabledNode = getNodes(mockState.lorem).find(node => {
         const hasMultipleConnections = edgeNodes =>
           Object.values(edgeNodes).filter(edge => edge === node).length > 1;
         return (
@@ -341,11 +342,11 @@ describe('Selectors', () => {
         );
       });
       const alteredMockState = reducer(
-        mockState,
+        mockState.lorem,
         toggleNodeDisabled(disabledNode, true)
       );
       expect(getVisibleEdges(alteredMockState).length).toBeGreaterThan(
-        getVisibleEdges(mockState).length
+        getVisibleEdges(mockState.lorem).length
       );
     });
   });

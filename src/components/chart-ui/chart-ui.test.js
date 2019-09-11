@@ -26,7 +26,7 @@ describe('ChartUI', () => {
       theme: expect.stringMatching(/light|dark/),
       view: expect.stringMatching(/combined|data|task/)
     };
-    expect(mapStateToProps(mockState)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {

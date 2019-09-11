@@ -1,8 +1,8 @@
 import { Wrapper, mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
-const { showHistory, theme } = mockState;
-const mockProps = { showHistory, theme };
+const { theme } = mockState.lorem;
+const mockProps = { theme };
 
 describe('Wrapper', () => {
   it('renders without crashing', () => {
@@ -35,6 +35,6 @@ describe('Wrapper', () => {
   });
 
   it('maps state to props', () => {
-    expect(mapStateToProps(mockState)).toEqual(mockProps);
+    expect(mapStateToProps(mockState.lorem)).toEqual(mockProps);
   });
 });

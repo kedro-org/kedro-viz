@@ -26,7 +26,7 @@ describe('TagList', () => {
     );
   });
 
-  it('shows a placeholder message if there are no tags used in the active snapshot', () => {
+  it('shows a placeholder message if there are no tags used in the current pipeline', () => {
     const wrapper = setup.shallow(UnconnectedTagList, {
       tagCount: { total: 0 }
     });
@@ -94,13 +94,13 @@ describe('TagList', () => {
   });
 
   it('maps state to props', () => {
-    expect(mapStateToProps(mockState)).toEqual({
+    expect(mapStateToProps(mockState.lorem)).toEqual({
       tagCount: {
         total: expect.any(Number),
         enabled: expect.any(Number)
       },
       tags: expect.any(Array),
-      theme: mockState.theme
+      theme: mockState.lorem.theme
     });
   });
 
