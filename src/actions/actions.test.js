@@ -1,4 +1,4 @@
-import mockData from '../utils/data.mock';
+import animals from '../utils/data/animals.mock';
 import {
   CHANGE_VIEW,
   RESET_DATA,
@@ -35,12 +35,11 @@ describe('actions', () => {
   });
 
   it('should create an action to reset pipeline data', () => {
-    const data = mockData.animals;
     const expectedAction = {
       type: RESET_DATA,
-      data
+      data: animals
     };
-    expect(resetData(data)).toEqual(expectedAction);
+    expect(resetData(animals)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether a node is active', () => {
