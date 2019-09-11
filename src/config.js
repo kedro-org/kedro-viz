@@ -1,5 +1,6 @@
 /**
  * Determine which data source to use
+ * @return {string} Data source type key
  */
 const getDataSource = () => {
   let source;
@@ -10,16 +11,29 @@ const getDataSource = () => {
   } else if (REACT_APP_DATA_SOURCE) {
     source = REACT_APP_DATA_SOURCE;
   } else if (window.location.host === 'quantumblacklabs.github.io') {
-    source = 'animals';
+    source = 'demo';
   }
-  // Validate against expected results
-  const expectedInput = {
-    lorem: true,
-    animals: true,
-    json: true,
-    random: true
-  };
-  return expectedInput[source] ? source : 'json';
+  return validateDataSource(source);
+};
+
+/**
+ * Validate against expected results
+ * @param {string} source Input type key
+ * @return {string} Data source type key
+ */
+const validateDataSource = source => {
+  const expectedInput = ['lorem', 'animals', 'demo', 'json', 'random'];
+  if (expectedInput.includes(source)) {
+    return source;
+  }
+  if (source) {
+    throw new Error(
+      `Unexpected data source value '${source}'. Your input should be one of the following values: ${expectedInput.join(
+        ', '
+      )}.`
+    );
+  }
+  return 'json';
 };
 
 /**

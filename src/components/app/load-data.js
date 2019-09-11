@@ -2,7 +2,7 @@ import { json } from 'd3-fetch';
 import config from '../../config';
 import getRandomPipeline from '../../utils/random-data';
 import formatData from '../../utils/format-data';
-import mockData from '../../utils/data.mock';
+import { lorem, animals, demo } from '../../utils/data.mock';
 import { loadState } from '../../utils';
 
 /**
@@ -40,9 +40,11 @@ export const loadData = (data, onLoadData) => {
     case 'random':
       return formatData(getRandomPipeline());
     case 'lorem':
-      return formatData(mockData.lorem);
+      return formatData(lorem);
     case 'animals':
-      return formatData(mockData.animals);
+      return formatData(animals);
+    case 'demo':
+      return formatData(demo);
     case 'json':
       loadJsonData().then(onLoadData);
       return formatData();
