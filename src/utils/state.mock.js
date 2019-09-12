@@ -4,14 +4,15 @@ import { mount, shallow } from 'enzyme';
 import store from '../store';
 import { getInitialState } from '../components/app/load-data';
 import formatData from './format-data';
-import mockData from './data.mock';
+import animals from './data/animals.mock';
+import loremIpsum from './data/lorem-ipsum.mock';
 
 /**
  * Example state objects for use in tests of redux-enabled components
  */
 export const mockState = {
-  lorem: getInitialState(formatData(mockData.lorem)),
-  animals: getInitialState(formatData(mockData.animals))
+  lorem: getInitialState(formatData(loremIpsum)),
+  animals: getInitialState(formatData(animals))
 };
 
 // Redux stores based on mock data

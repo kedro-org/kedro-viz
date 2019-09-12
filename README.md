@@ -95,7 +95,7 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
    Kedro-Viz can be used as a React component that can be imported into other applications. Publishing the package will run `npm run lib`, which compiles the source code in `/src`, and places it in the `/lib` directory.
 
-   The React component exposes props that can be used to supply data and customise its behaviour. For information about the props, their expected prop-types and default values, see [/src/components/app/index.js](./src/components/app/index.js). For examples of the expected data input format, see the mock data examples in [/src/utils/data.mock.js](./src/utils/data.mock.js), and compare the [resulting demo](https://quantumblacklabs.github.io/kedro-viz/).
+   The React component exposes props that can be used to supply data and customise its behaviour. For information about the props, their expected prop-types and default values, see [/src/components/app/index.js](./src/components/app/index.js). For examples of the expected data input format, see the mock data examples in [/src/utils/data](./src/utils/data), and compare the [resulting demo](https://quantumblacklabs.github.io/kedro-viz/).
 
 ## What licence do you use?
 

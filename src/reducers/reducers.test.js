@@ -1,4 +1,5 @@
-import mockData from '../utils/data.mock';
+import animals from '../utils/data/animals.mock';
+import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import * as action from '../actions';
@@ -30,7 +31,7 @@ describe('Reducer', () => {
       expect(
         reducer(mockState.lorem, {
           type: action.RESET_DATA,
-          data: formatData(mockData.lorem)
+          data: formatData(loremIpsum)
         })
       ).toEqual(mockState.lorem);
     });
@@ -38,7 +39,7 @@ describe('Reducer', () => {
     it('should reset the state with new data', () => {
       const newState = reducer(mockState.lorem, {
         type: action.RESET_DATA,
-        data: formatData(mockData.animals)
+        data: formatData(animals)
       });
       expect(newState).toEqual(mockState.animals);
     });

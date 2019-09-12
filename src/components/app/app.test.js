@@ -1,7 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import App from './index';
-import mockData from '../../utils/data.mock';
+import animals from '../../utils/data/animals.mock';
+import loremIpsum from '../../utils/data/lorem-ipsum.mock';
 
 describe('App', () => {
   describe('renders without crashing', () => {
@@ -14,7 +15,7 @@ describe('App', () => {
     });
 
     it('when being passed data as a prop', () => {
-      shallow(<App data={mockData.lorem} />);
+      shallow(<App data={loremIpsum} />);
     });
   });
 
@@ -22,14 +23,14 @@ describe('App', () => {
     const getSchemaID = wrapper => wrapper.instance().store.getState().id;
 
     it('when data prop is set on first load', () => {
-      const wrapper = shallow(<App data={mockData.lorem} />);
-      expect(getSchemaID(wrapper)).toEqual(mockData.lorem.schema_id);
+      const wrapper = shallow(<App data={loremIpsum} />);
+      expect(getSchemaID(wrapper)).toEqual(loremIpsum.schema_id);
     });
 
     it('when data prop is updated', () => {
-      const wrapper = shallow(<App data={mockData.lorem} />);
-      wrapper.setProps({ data: mockData.animals });
-      expect(getSchemaID(wrapper)).toEqual(mockData.animals.schema_id);
+      const wrapper = shallow(<App data={loremIpsum} />);
+      wrapper.setProps({ data: animals });
+      expect(getSchemaID(wrapper)).toEqual(animals.schema_id);
     });
   });
 
