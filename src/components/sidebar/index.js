@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import Icon from '@quantumblack/kedro-ui/lib/components/icon';
 import ChartUI from '../chart-ui';
+import { ReactComponent as MenuIcon } from './menu-icon.svg';
 import './sidebar.css';
 
 /**
@@ -11,13 +12,9 @@ import './sidebar.css';
 export const ShowMenuButton = ({ onToggle }) => (
   <button
     aria-label="Show menu"
-    className="pipeline-sidebar__show-menu pipeline-icon-button"
+    className="pipeline-sidebar__show-menu pipeline-sidebar__icon-button"
     onClick={onToggle}>
-    <svg className="pipeline-menu-icon" viewBox="0 0 24 24">
-      <rect x="2" y="5" width="20" height="2" />
-      <rect x="2" y="11" width="20" height="2" />
-      <rect x="2" y="17" width="20" height="2" />
-    </svg>
+    <MenuIcon className="pipeline-icon" />
   </button>
 );
 
@@ -30,9 +27,12 @@ export const ShowMenuButton = ({ onToggle }) => (
 export const HideMenuButton = ({ onToggle, theme, visible }) => (
   <button
     aria-label="Hide menu"
-    className={classnames('pipeline-sidebar__hide-menu pipeline-icon-button', {
-      'pipeline-sidebar__hide-menu--visible': visible
-    })}
+    className={classnames(
+      'pipeline-sidebar__hide-menu pipeline-sidebar__icon-button',
+      {
+        'pipeline-sidebar__hide-menu--visible': visible
+      }
+    )}
     onClick={onToggle}>
     <Icon type="close" title="Close" theme={theme} />
   </button>

@@ -22,6 +22,7 @@ describe('ChartUI', () => {
     const expectedResult = {
       hasData: expect.any(Boolean),
       parameters: expect.any(Boolean),
+      textLabels: expect.any(Boolean),
       theme: expect.stringMatching(/light|dark/),
       view: expect.stringMatching(/combined|data|task/)
     };
