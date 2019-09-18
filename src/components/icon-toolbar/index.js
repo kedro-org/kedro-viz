@@ -6,9 +6,6 @@ import { ReactComponent as ThemeIcon } from './theme-icon.svg';
 import { ReactComponent as LabelIcon } from './label-icon.svg';
 import './icon-toolbar.css';
 
-const capitaliseFirstLetter = str =>
-  str.replace(/^\w/, char => char.toUpperCase());
-
 export const ThemeButton = ({ onToggle, theme }) => (
   <button
     className={classnames('pipeline-toggle-theme pipeline-icon-button', {
@@ -23,6 +20,7 @@ export const ThemeButton = ({ onToggle, theme }) => (
 
 export const LabelButton = ({ onToggle, textLabels }) => (
   <button
+    aria-live="polite"
     className={classnames('pipeline-toggle-labels pipeline-icon-button', {
       'pipeline-toggle-theme--show-labels': textLabels
     })}
