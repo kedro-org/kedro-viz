@@ -16,7 +16,7 @@ export const ThemeButton = ({ onToggle, theme }) => (
       'pipeline-toggle-theme--dark': theme === 'dark'
     })}
     onClick={() => onToggle(theme === 'light' ? 'dark' : 'light')}>
-    <span>{capitaliseFirstLetter(theme)} theme</span>
+    <span>Toggle theme</span>
     <ThemeIcon className="pipeline-icon" />
   </button>
 );
@@ -27,7 +27,7 @@ export const LabelButton = ({ onToggle, textLabels }) => (
       'pipeline-toggle-theme--show-labels': textLabels
     })}
     onClick={() => onToggle(!textLabels)}>
-    <span>Text labels {textLabels ? 'visible' : 'hidden'}</span>
+    <span>{textLabels ? 'Hide' : 'Show'} text labels</span>
     <LabelIcon className="pipeline-icon" />
   </button>
 );
