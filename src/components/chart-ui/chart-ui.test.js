@@ -41,11 +41,5 @@ describe('ChartUI', () => {
       parameters: false,
       type: 'TOGGLE_PARAMETERS'
     });
-
-    mapDispatchToProps(dispatch).onToggleTextLabels(null, { value: false });
-    expect(dispatch.mock.calls[2][0]).toEqual({
-      textLabels: false,
-      type: 'TOGGLE_TEXT_LABELS'
-    });
   });
 });
