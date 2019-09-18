@@ -36,12 +36,12 @@ export class Wrapper extends Component {
         <div className="pipeline-wrapper">
           <FlowChart visibleNav={visibleNav} />
         </div>
+        <IconToolbar />
         <Sidebar
           onToggle={this.toggleNav.bind(this)}
           theme={theme}
           visible={visibleNav}
         />
-        <IconToolbar />
       </div>
     );
   }
