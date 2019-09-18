@@ -10,8 +10,7 @@
 }
 
 .pipeline-icon-button {
-  display: flex;
-  float: right;
+  position: relative;
   color: inherit;
   background: none;
   border: none;
@@ -19,9 +18,9 @@
   margin: 0;
   box-shadow: none;
   cursor: pointer;
-  border-radius: 50%;
   font-size: 1.6em;
-  margin-bottom: 0.8em;
+  margin-bottom: 1em;
+  user-select: none;
 
   &:focus {
     outline: 3px solid $color-link;
@@ -32,21 +31,24 @@
   }
 
   span {
+    position: absolute;
+    right: 100%;
     white-space: nowrap;
-    margin-right: 0.7em;
+    padding-right: 0.7em;
     visibility: hidden;
     opacity: 0;
     transform: translateX(1em);
-    transition: all ease 0.2s;
-    pointer-events: none;
+    transition: all ease 0.2s, width 0s;
   }
 
   svg {
+    display: block;
     width: 1.6em;
     height: 1.6em;
   }
 
-  &:hover span {
+  &:hover span,
+  [data-whatinput='keyboard'] &:focus span {
     visibility: visible;
     opacity: 1;
     transform: translateX(0);
