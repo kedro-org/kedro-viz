@@ -8,6 +8,8 @@ import './icon-toolbar.css';
 
 export const ThemeButton = ({ onToggle, theme }) => (
   <button
+    aria-live="polite"
+    aria-label={`Change to ${theme === 'light' ? 'dark' : 'light'} theme`}
     className={classnames('pipeline-toggle-theme pipeline-icon-button', {
       'pipeline-toggle-theme--light': theme === 'light',
       'pipeline-toggle-theme--dark': theme === 'dark'
