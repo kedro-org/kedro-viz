@@ -1,8 +1,8 @@
 # Kedro-Viz
 `develop` | `master`  
 ----------|---------  
-[![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro/tree/develop.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop) | [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master)
-[![Build status](https://ci.appveyor.com/api/projects/status/2u74p5g8fdc45wwh/branch/develop?svg=true)](https://ci.appveyor.com/project/QuantumBlack/kedro-viz/branch/develop) | [![Build status](https://ci.appveyor.com/api/projects/status/2u74p5g8fdc45wwh/branch/master?svg=true)](https://ci.appveyor.com/project/QuantumBlack/kedrov-viz/branch/master)
+[![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop) | [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/lnq4p29fm6sevnvr/branch/develop?svg=true)](https://ci.appveyor.com/project/QuantumBlack/kedro-viz/branch/develop) | [![Build status](https://ci.appveyor.com/api/projects/status/lnq4p29fm6sevnvr/branch/master?svg=true)](https://ci.appveyor.com/project/QuantumBlack/kedro-viz/branch/master)
 
 [![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)
 [![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
