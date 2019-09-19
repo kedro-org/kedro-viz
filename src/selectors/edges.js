@@ -4,8 +4,6 @@ import { getNodeDisabled } from './nodes';
 
 const getNodes = state => state.nodes;
 const getEdges = state => state.edges;
-const getView = state => state.view;
-const getNodeType = state => state.nodeType;
 const getEdgeSources = state => state.edgeSources;
 const getEdgeTargets = state => state.edgeTargets;
 
@@ -23,32 +21,12 @@ export const getEdgeDisabledNode = createSelector(
 );
 
 /**
- * Calculate whether edges should be disabled based on the view
- */
-export const getEdgeDisabledView = createSelector(
-  [getEdges, getNodeType, getView, getEdgeSources, getEdgeTargets],
-  (edges, nodeType, view, edgeSources, edgeTargets) =>
-    arrayToObject(edges, edgeID => {
-      const source = edgeSources[edgeID];
-      const sourceType = nodeType[source];
-      const target = edgeTargets[edgeID];
-      const targetType = nodeType[target];
-      if (view === 'combined') {
-        return sourceType === targetType;
-      }
-      return view !== sourceType || view !== targetType;
-    })
-);
-
-/**
  * Determine whether an edge should be disabled
  */
 export const getEdgeDisabled = createSelector(
-  [getEdges, getEdgeDisabledNode, getEdgeDisabledView],
-  (edges, edgeDisabledNode, edgeDisabledView) =>
-    arrayToObject(edges, edgeID =>
-      Boolean(edgeDisabledNode[edgeID] || edgeDisabledView[edgeID])
-    )
+  [getEdges, getEdgeDisabledNode],
+  (edges, edgeDisabledNode) =>
+    arrayToObject(edges, edgeID => Boolean(edgeDisabledNode[edgeID]))
 );
 
 /**
