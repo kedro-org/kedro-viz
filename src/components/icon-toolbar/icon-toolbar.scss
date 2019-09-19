@@ -1,0 +1,56 @@
+@import '../../styles/variables';
+
+.pipeline-icon-toolbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 20px;
+  list-style: none;
+}
+
+.pipeline-icon-button {
+  position: relative;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 4px;
+  margin: 0;
+  box-shadow: none;
+  cursor: pointer;
+  font-size: 1.6em;
+  margin-bottom: 1em;
+  user-select: none;
+
+  &:focus {
+    outline: 3px solid $color-link;
+
+    [data-whatinput='mouse'] & {
+      outline: none;
+    }
+  }
+
+  span {
+    position: absolute;
+    right: 100%;
+    white-space: nowrap;
+    padding-right: 0.7em;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(1em);
+    transition: all ease 0.2s, width 0s;
+  }
+
+  svg {
+    display: block;
+    width: 1.6em;
+    height: 1.6em;
+  }
+
+  &:hover span,
+  [data-whatinput='keyboard'] &:focus span {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

@@ -2,31 +2,12 @@
 
 //--- Reusable site-wide styles --//
 
-// Icon buttons
-.pipeline-icon-button {
-  background: none;
-  border: none;
-  padding: 4px;
-  margin: 0;
-  box-shadow: none;
-  cursor: pointer;
-  border-radius: 50%;
-  font-size: 1em;
-  width: 3.2em;
-  height: 3.2em;
-  transition: all ease 0.1s;
-  transform: scale(1.3);
-
-  &:hover {
-    transform: scale(1.5);
+.pipeline-icon {
+  .kui-theme--light & {
+    fill: #333;
   }
 
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px $color-link;
-
-    [data-whatinput='mouse'] & {
-      box-shadow: none;
-    }
+  .kui-theme--dark & {
+    fill: #fff;
   }
 }

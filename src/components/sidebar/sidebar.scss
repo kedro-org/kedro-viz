@@ -1,0 +1,103 @@
+@import '../../styles/variables';
+
+.pipeline-sidebar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  transition: transform ease 0.4s;
+  width: 100%;
+  transform: translateX(-100%);
+  padding-top: 12px;
+
+  .pipeline-ui {
+    visibility: hidden;
+    transition: visibility 0s;
+  }
+
+  @media (min-width: $breakpoint-small) {
+    width: $nav-width;
+    transform: translateX(-$nav-width);
+  }
+
+  &--visible {
+    transform: translateX(0);
+
+    @media (min-width: $breakpoint-small) {
+      transform: translateX(0);
+    }
+
+    .pipeline-ui {
+      visibility: visible;
+      transition: visibility 0.3s;
+    }
+  }
+
+  .kui-theme--light & {
+    background: $color-header-light;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.07);
+  }
+
+  .kui-theme--dark & {
+    background: $color-header-dark;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.pipeline-sidebar__show-menu {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  transition: all ease 0.4s;
+}
+
+.pipeline-sidebar__hide-menu {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  visibility: hidden;
+  opacity: 0;
+  transition: all ease 0.4s;
+  z-index: 1;
+
+  @media (min-width: $breakpoint-small) {
+    right: -50px;
+    z-index: auto;
+  }
+
+  &--visible {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+// Icon buttons
+.pipeline-sidebar__icon-button {
+  background: none;
+  border: none;
+  padding: 4px;
+  margin: 0;
+  box-shadow: none;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 1em;
+  width: 3.2em;
+  height: 3.2em;
+  transition: all ease 0.1s;
+  transform: scale(1.3);
+
+  &:hover {
+    transform: scale(1.5);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px $color-link;
+
+    [data-whatinput='mouse'] & {
+      box-shadow: none;
+    }
+  }
+}
