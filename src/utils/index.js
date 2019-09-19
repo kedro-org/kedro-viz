@@ -102,3 +102,17 @@ export const saveState = state => {
     console.error(err);
   }
 };
+
+/**
+ * Detect the operating system's default theme (light/dark) if set.
+ * @param {string} defaultTheme Fallback theme (light/dark)
+ */
+export const detectSystemTheme = defaultTheme => {
+  if (window && window.matchMedia) {
+    const match = ['light', 'dark'].find(
+      theme => window.matchMedia(`(prefers-color-scheme: ${theme})`).matches
+    );
+    return match || defaultTheme;
+  }
+  return defaultTheme;
+};

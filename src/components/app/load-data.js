@@ -5,7 +5,7 @@ import formatData from '../../utils/format-data';
 import loremIpsum from '../../utils/data/lorem-ipsum.mock';
 import animals from '../../utils/data/animals.mock';
 import demo from '../../utils/data/demo.mock';
-import { loadState } from '../../utils';
+import { detectSystemTheme, loadState } from '../../utils';
 
 /**
  * Configure the redux store's initial state
@@ -17,7 +17,7 @@ export const getInitialState = pipelineData => {
   const {
     parameters = true,
     textLabels = false,
-    theme = 'dark',
+    theme = detectSystemTheme('dark'),
     view = 'combined'
   } = loadState();
 
