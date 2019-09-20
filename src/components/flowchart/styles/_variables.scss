@@ -24,7 +24,7 @@ $node-iconbg-fill-dark-active: lighten($color-bg-dark, 20%);
 
 // Node icon background stroke dark
 $node-iconbg-stroke-dark: darken($color-bg-dark, 3%);
-$node-iconbg-stroke-dark-highlight: darken($color-text-dark, 20%);
+$node-iconbg-stroke-dark-highlight: mix($color-text-dark, $color-bg-dark, 30%);
 $node-iconbg-stroke-dark-active: $color-text-dark;
 
 // Node label text
@@ -48,9 +48,9 @@ $node-labelbg-fill-dark-highlight: darken($color-bg-dark, 4%);
 $node-labelbg-fill-dark-active: darken($color-bg-dark, 4%);
 
 // Node label background stroke dark
-$node-labelbg-stroke-dark: darken($color-bg-dark, 3%);
-$node-labelbg-stroke-dark-highlight: mix(white, $color-bg-dark, 50%);
-$node-labelbg-stroke-dark-active: mix(white, $color-bg-dark, 70%);
+$node-labelbg-stroke-dark: mix(white, $color-bg-dark, 10%);
+$node-labelbg-stroke-dark-highlight: mix(white, $color-bg-dark, 20%);
+$node-labelbg-stroke-dark-active: mix(white, $color-bg-dark, 80%);
 
 // Edge
 $edge-light: mix($color-bg-light, black, 60);
