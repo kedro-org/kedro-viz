@@ -245,7 +245,8 @@ export class FlowChart extends Component {
       .on('mouseout', this.handleNodeMouseOut)
       .on('focus', this.handleNodeMouseOver)
       .on('blur', this.handleNodeMouseOut)
-      .on('keydown', this.handleNodeKeyDown);
+      .on('keydown', this.handleNodeKeyDown)
+      .sort((a, b) => a.order - b.order);
 
     this.el.nodes
       .transition('update-nodes')

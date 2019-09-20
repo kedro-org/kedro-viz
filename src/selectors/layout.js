@@ -104,12 +104,14 @@ export const getGraph = createSelector(
 export const getLayout = createSelector(
   [getGraph, getNodeType, getNodeActive],
   (graph, nodeType, nodeActive) => ({
-    nodes: graph.nodes().map(node =>
-      Object.assign({}, graph.node(node), {
+    nodes: graph.nodes().map(node => {
+      const graphNode = graph.node(node);
+      return Object.assign({}, graphNode, {
         type: nodeType[node],
+        order: graphNode.x + graphNode.y * 9999,
         active: nodeActive[node]
-      })
-    ),
+      });
+    }),
     edges: graph.edges().map(edge => graph.edge(edge))
   })
 );
