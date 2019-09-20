@@ -74,7 +74,7 @@
         stroke: $node-labelbg-stroke-dark-active;
       }
 
-      [data-whatintent='keyboard'] & {
+      [data-whatinput='keyboard'] & {
         stroke-width: 3.5px;
         stroke: $color-link;
       }

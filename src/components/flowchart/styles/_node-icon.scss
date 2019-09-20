@@ -49,7 +49,7 @@
         stroke: $node-iconbg-stroke-dark-active;
       }
 
-      [data-whatintent='keyboard'] & {
+      [data-whatinput='keyboard'] & {
         stroke-width: 3.5px;
         stroke: $color-link;
       }
