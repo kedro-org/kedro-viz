@@ -45,14 +45,25 @@ describe('Reducer', () => {
     });
   });
 
-  describe('TOGGLE_NODE_ACTIVE', () => {
+  describe('TOGGLE_NODE_CLICKED', () => {
     it('should toggle the given node active', () => {
+      const nodeClicked = 'abc123';
       const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_NODE_ACTIVE,
-        nodeID: 'abc123',
-        isActive: true
+        type: action.TOGGLE_NODE_CLICKED,
+        nodeClicked
       });
-      expect(newState.nodeActive).toEqual({ abc123: true });
+      expect(newState.nodeClicked).toEqual(nodeClicked);
+    });
+  });
+
+  describe('TOGGLE_NODE_HOVERED', () => {
+    it('should toggle the given node active', () => {
+      const nodeHovered = 'abc123';
+      const newState = reducer(mockState.lorem, {
+        type: action.TOGGLE_NODE_HOVERED,
+        nodeHovered
+      });
+      expect(newState.nodeHovered).toEqual(nodeHovered);
     });
   });
 
