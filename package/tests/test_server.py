@@ -62,7 +62,6 @@ EXPECTED_PIPELINE_DATA = {
             "tags": ["bob"],
         },
         {
-            "is_parameters": False,
             "name": "Bob In",
             "tags": [],
             "id": "7366ec9f",
@@ -70,7 +69,6 @@ EXPECTED_PIPELINE_DATA = {
             "type": "data",
         },
         {
-            "is_parameters": False,
             "name": "Bob Out",
             "tags": [],
             "id": "60e68b8e",
@@ -78,7 +76,6 @@ EXPECTED_PIPELINE_DATA = {
             "type": "data",
         },
         {
-            "is_parameters": False,
             "name": "Fred In",
             "tags": ["bob"],
             "id": "afffac5f",
@@ -86,7 +83,6 @@ EXPECTED_PIPELINE_DATA = {
             "type": "data",
         },
         {
-            "is_parameters": False,
             "name": "Fred Out",
             "tags": ["bob"],
             "id": "37316e3a",
@@ -94,12 +90,11 @@ EXPECTED_PIPELINE_DATA = {
             "type": "data",
         },
         {
-            "is_parameters": True,
             "name": "Parameters",
             "tags": ["bob"],
             "id": "f1f1425b",
             "full_name": "parameters",
-            "type": "data",
+            "type": "parameters",
         },
     ],
     "tags": [{"name": "Bob", "id": "bob"}],

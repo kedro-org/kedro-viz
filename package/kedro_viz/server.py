@@ -96,14 +96,14 @@ def get_data_from_kedro():
             namespace_tags[namespace].update(node.tags)
 
     for namespace, tags in sorted(namespace_tags.items()):
+        is_param = bool("param" in namespace.lower())
         nodes.append(
             {
-                "type": "data",
+                "type": "parameters" if is_param else "data",
                 "id": _hash(namespace),
                 "name": pretty_name(namespace),
                 "full_name": namespace,
                 "tags": sorted(tags),
-                "is_parameters": bool("param" in namespace.lower()),
             }
         )
 
