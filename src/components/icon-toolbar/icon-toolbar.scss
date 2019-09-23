@@ -33,18 +33,13 @@
   span {
     position: absolute;
     right: 100%;
+    top: 0.4em;
     white-space: nowrap;
     padding-right: 0.7em;
     visibility: hidden;
     opacity: 0;
-    transform: translateX(1em);
+    transform: translateX(2em);
     transition: all ease 0.2s, width 0s;
-  }
-
-  svg {
-    display: block;
-    width: 1.6em;
-    height: 1.6em;
   }
 
   &:hover span,
@@ -52,5 +47,11 @@
     visibility: visible;
     opacity: 1;
     transform: translateX(0);
+  }
+
+  svg {
+    display: block;
+    width: 1.4em;
+    height: 1.4em;
   }
 }
