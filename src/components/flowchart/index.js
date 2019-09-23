@@ -245,14 +245,19 @@ export class FlowChart extends Component {
       .on('mouseout', this.handleNodeMouseOut)
       .on('focus', this.handleNodeMouseOver)
       .on('blur', this.handleNodeMouseOut)
-      .on('keydown', this.handleNodeKeyDown)
-      .sort((a, b) => a.order - b.order);
+      .on('keydown', this.handleNodeKeyDown);
 
     this.el.nodes
       .transition('update-nodes')
       .duration(DURATION)
       .attr('opacity', 1)
-      .attr('transform', node => `translate(${node.x}, ${node.y})`);
+      .attr('transform', node => `translate(${node.x}, ${node.y})`)
+      .end()
+      .catch(() => {})
+      .finally(() => {
+        // Sort nodes so tab focus order follows X/Y position
+        this.el.nodes.sort((a, b) => a.order - b.order);
+      });
 
     this.el.nodes
       .select('rect')
