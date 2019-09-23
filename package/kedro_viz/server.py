@@ -76,7 +76,7 @@ def get_data_from_kedro():
                 "type": "task",
                 "id": task_id,
                 "name": getattr(node, "short_name", node.name),
-                "full_name": str(node),
+                "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
             }
         )

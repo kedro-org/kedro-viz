@@ -40,16 +40,16 @@ from kedro_viz import server
 EXPECTED_PIPELINE_DATA = {
     "edges": [
         {
-            "target": "task/func([bob_in,parameters])->[bob_out]",
+            "target": "task/func1([bob_in,parameters])->[bob_out]",
             "source": "data/bob_in",
         },
         {
-            "target": "task/func([bob_in,parameters])->[bob_out]",
+            "target": "task/func1([bob_in,parameters])->[bob_out]",
             "source": "data/parameters",
         },
         {
             "target": "data/bob_out",
-            "source": "task/func([bob_in,parameters])->[bob_out]",
+            "source": "task/func1([bob_in,parameters])->[bob_out]",
         },
         {"target": "task/my_node", "source": "data/fred_in"},
         {"target": "task/my_node", "source": "data/parameters"},
@@ -57,17 +57,17 @@ EXPECTED_PIPELINE_DATA = {
     ],
     "nodes": [
         {
-            "name": "Func",
+            "name": "Func1",
             "type": "task",
-            "id": "task/func([bob_in,parameters])->[bob_out]",
-            "full_name": "func([bob_in,parameters]) -> [bob_out]",
+            "id": "task/func1([bob_in,parameters])->[bob_out]",
+            "full_name": "func1",
             "tags": [],
         },
         {
             "name": "my_node",
             "type": "task",
             "id": "task/my_node",
-            "full_name": "my_node: func([fred_in@pandas,parameters]) -> [fred_out@pandas]",
+            "full_name": "func2",
             "tags": ["bob"],
         },
         {
@@ -116,16 +116,19 @@ EXPECTED_PIPELINE_DATA = {
 
 
 def create_pipeline():
-    def func(a, b):  # pylint: disable=unused-argument
+    def func1(a, b):  # pylint: disable=unused-argument
+        return a
+
+    def func2(a, b):  # pylint: disable=unused-argument
         return a
 
     return Pipeline(
         [
             # unnamed node with no tags and basic io
-            node(func, ["bob_in", "parameters"], ["bob_out"]),
+            node(func1, ["bob_in", "parameters"], ["bob_out"]),
             # named node with tags and transcoding
             node(
-                func,
+                func2,
                 ["fred_in@pandas", "parameters"],
                 ["fred_out@pandas"],
                 name="my_node",
