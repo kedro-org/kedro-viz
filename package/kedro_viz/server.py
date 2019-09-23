@@ -28,12 +28,12 @@
 
 """ Kedro-Viz plugin and webserver """
 
+import hashlib
 import json
 import sys
 import webbrowser
 from collections import defaultdict
 from pathlib import Path
-import hashlib
 
 import click
 from flask import Flask, jsonify, send_from_directory
