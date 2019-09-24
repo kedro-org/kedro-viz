@@ -5,6 +5,7 @@
     font-weight: 600;
     transition: all ease 0.1s;
     pointer-events: none;
+    text-shadow: 0 0 10px rgba(black, 0.5);
 
     .kui-theme--light & {
       fill: $node-labeltext-fill-light;
@@ -20,19 +21,13 @@
     transition: all ease 0.1s;
 
     .kui-theme--light & {
-      fill: $node-labelbg-fill-light;
-      stroke: $node-labelbg-stroke-light;
+      fill: $node-fill-light;
+      stroke: $node-stroke-light;
     }
 
     .kui-theme--dark & {
-      fill: $node-labelbg-fill-dark;
-      stroke: $node-labelbg-stroke-dark;
-    }
-  }
-
-  &.node--data {
-    rect {
-      stroke-width: 2px;
+      fill: $node-fill-dark;
+      stroke: $node-stroke-dark;
     }
   }
 
@@ -42,16 +37,14 @@
     }
 
     rect {
-      stroke-width: 2px;
-
       .kui-theme--light & {
-        fill: $node-labelbg-fill-light-highlight;
-        stroke: $node-labelbg-stroke-light-highlight;
+        fill: $node-fill-light-highlight;
+        stroke: $node-stroke-light-highlight;
       }
 
       .kui-theme--dark & {
-        fill: $node-labelbg-fill-dark-highlight;
-        stroke: $node-labelbg-stroke-dark-highlight;
+        fill: $node-fill-dark-highlight;
+        stroke: $node-stroke-dark-highlight;
       }
     }
   }
@@ -62,16 +55,16 @@
     }
 
     rect {
-      stroke-width: 2px;
+      stroke-width: 3px;
 
       .kui-theme--light & {
-        fill: $node-labelbg-fill-light-active;
-        stroke: $node-labelbg-stroke-light-active;
+        fill: $node-fill-light-active;
+        stroke: $node-stroke-light-active;
       }
 
       .kui-theme--dark & {
-        fill: $node-labelbg-fill-dark-active;
-        stroke: $node-labelbg-stroke-dark-active;
+        fill: $node-fill-dark-active;
+        stroke: $node-stroke-dark-active;
       }
 
       [data-whatinput='keyboard'] & {
