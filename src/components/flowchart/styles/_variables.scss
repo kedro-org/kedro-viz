@@ -8,21 +8,24 @@
 
 // Icon
 
-$node-fill-light: lighten($color-text-light, 10%);
-$node-fill-light-highlight: $color-text-light;
-$node-fill-light-active: darken($color-text-light, 10%);
+$node-icon-fill-light: $color-text-light;
 
-$node-stroke-light: lighten($color-text-light, 6%);
-$node-stroke-light-highlight: darken($color-text-light, 4%);
-$node-stroke-light-active: darken($color-text-light, 50%);
+$node-fill-light: lighten($color-bg-light, 10%);
+$node-fill-light-highlight: lighten($color-bg-light, 13%);
+$node-fill-light-active: lighten($color-bg-light, 20%);
+
+$node-stroke-light: mix($color-text-light, $color-bg-light, 50%);
+$node-stroke-light-highlight: mix($color-text-light, $color-bg-light, 90%);
+$node-stroke-light-active: $color-text-light;
 
 // Label
 
-$node-labeltext-fill-light: rgba($color-text-dark, 0.95);
+$node-labeltext-fill-light: rgba($color-text-light, 0.9);
+$node-labeltext-fill-light-active: $color-text-light;
 
 // Edge
 
-$edge-light: mix($color-bg-light, black, 60);
+$edge-light: mix($color-text-light, $color-bg-light, 75%);
 
 // Tooltip
 
@@ -32,28 +35,25 @@ $tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
 
 // Icon
 
+$node-icon-fill-dark: $color-text-dark;
+
 $node-fill-dark: lighten($color-bg-dark, 10%);
 $node-fill-dark-highlight: lighten($color-bg-dark, 13%);
 $node-fill-dark-active: lighten($color-bg-dark, 20%);
 
 $node-stroke-dark: mix($color-text-dark, $color-bg-dark, 30%);
-$node-stroke-dark-highlight: mix($color-text-dark, $color-bg-dark, 70%);
+$node-stroke-dark-highlight: mix($color-text-dark, $color-bg-dark, 80%);
 $node-stroke-dark-active: $color-text-dark;
 
 // Label
 
 $node-labeltext-fill-dark: rgba($color-text-dark, 0.8);
+$node-labeltext-fill-dark-active: $color-text-dark;
 
 // Edge
 
-$edge-dark: mix($color-bg-dark, white, 15);
+$edge-dark: mix($color-text-dark, $color-bg-dark, 85%);
 
 // Tooltip
 
 $tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
-
-//-------------- BOTH --------------//
-
-$node-icon-fill: $color-text-dark;
-
-$node-labeltext-fill-active: white;

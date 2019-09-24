@@ -5,13 +5,13 @@
     font-weight: 600;
     transition: all ease 0.1s;
     pointer-events: none;
-    text-shadow: 0 0 10px rgba(black, 0.5);
 
     .kui-theme--light & {
       fill: $node-labeltext-fill-light;
     }
 
     .kui-theme--dark & {
+      text-shadow: 0 0 10px rgba(black, 0.5);
       fill: $node-labeltext-fill-dark;
     }
   }
@@ -33,7 +33,13 @@
 
   &.node--highlight {
     text {
-      fill: $node-labeltext-fill-active;
+      .kui-theme--light & {
+        fill: $node-labeltext-fill-light-active;
+      }
+
+      .kui-theme--dark & {
+        fill: $node-labeltext-fill-dark-active;
+      }
     }
 
     rect {
@@ -51,7 +57,13 @@
 
   &.node--active {
     text {
-      fill: $node-labeltext-fill-active;
+      .kui-theme--light & {
+        fill: $node-labeltext-fill-light-active;
+      }
+
+      .kui-theme--dark & {
+        fill: $node-labeltext-fill-dark-active;
+      }
     }
 
     rect {
