@@ -10,6 +10,8 @@
 
 $node-icon-fill-light: $color-text-light;
 
+// Circle/Rect
+
 $node-fill-light: lighten($color-bg-light, 10%);
 $node-fill-light-highlight: lighten($color-bg-light, 13%);
 $node-fill-light-active: lighten($color-bg-light, 20%);
@@ -36,6 +38,8 @@ $tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
 // Icon
 
 $node-icon-fill-dark: $color-text-dark;
+
+// Circle/Rect
 
 $node-fill-dark: lighten($color-bg-dark, 10%);
 $node-fill-dark-highlight: lighten($color-bg-dark, 13%);
