@@ -53,13 +53,16 @@ class Pipeline {
     return getNumberArray(count)
       .map(() => this.getRandomNodeName(paramFreq))
       .filter(unique)
-      .map(id => ({
-        id: `${type}/${id}`,
-        name: id.replace(/_/g, ' '),
-        is_parameters: id.includes('param'),
-        type,
-        layer: getLayer()
-      }));
+      .map(id => {
+        const name = id.replace(/_/g, ' ');
+        return {
+          id: `${type}/${id}`,
+          name,
+          full_name: name,
+          type: id.includes('param') ? 'parameters' : type,
+          layer: getLayer()
+        };
+      });
   }
 
   /**

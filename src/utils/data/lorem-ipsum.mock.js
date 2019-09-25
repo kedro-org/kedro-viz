@@ -66,7 +66,6 @@ export default {
     {
       tags: ['Nulla', 'pulvinar', 'enim', 'consectetur', 'volutpat'],
       id: 'task/consectetur',
-      is_parameters: false,
       type: 'task',
       full_name: 'consectetur',
       name: 'consectetur'
@@ -74,7 +73,6 @@ export default {
     {
       tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
       id: 'data/mauris',
-      is_parameters: false,
       type: 'data',
       full_name: 'mauris',
       name: 'mauris'
@@ -82,7 +80,6 @@ export default {
     {
       tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
       id: 'data/Lorem',
-      is_parameters: false,
       type: 'data',
       full_name: 'Lorem',
       name: 'Lorem'
@@ -90,7 +87,6 @@ export default {
     {
       tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
       id: 'data/dolor',
-      is_parameters: false,
       type: 'data',
       full_name: 'dolor',
       name: 'dolor'
@@ -98,7 +94,6 @@ export default {
     {
       tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
       id: 'data/eu',
-      is_parameters: false,
       type: 'data',
       full_name: 'eu',
       name: 'eu'
@@ -106,7 +101,6 @@ export default {
     {
       tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
       id: 'data/accumsan',
-      is_parameters: false,
       type: 'data',
       full_name: 'accumsan',
       name: 'accumsan'
@@ -114,7 +108,6 @@ export default {
     {
       tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
       id: 'data/ipsum',
-      is_parameters: false,
       type: 'data',
       full_name: 'ipsum',
       name: 'ipsum'
@@ -122,7 +115,6 @@ export default {
     {
       tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
       id: 'data/sit',
-      is_parameters: false,
       type: 'data',
       full_name: 'sit',
       name: 'sit'
@@ -130,7 +122,6 @@ export default {
     {
       tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
       id: 'data/Aliquam',
-      is_parameters: false,
       type: 'data',
       full_name: 'Aliquam',
       name: 'Aliquam'
@@ -138,7 +129,6 @@ export default {
     {
       tags: ['Nulla', 'pulvinar', 'volutpat', 'enim', 'consectetur'],
       id: 'data/amet',
-      is_parameters: false,
       type: 'data',
       full_name: 'amet',
       name: 'amet'

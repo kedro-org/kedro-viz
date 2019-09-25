@@ -459,7 +459,6 @@ export default {
     {
       full_name: 'Interaction Raw',
       id: 'data/Interaction Raw',
-      is_parameters: false,
       name: 'Interaction Raw',
       tags: ['Data Engineering', 'Preprocessing'],
       type: 'data'
@@ -467,7 +466,6 @@ export default {
     {
       full_name: 'Interaction Primary',
       id: 'data/Interaction Primary',
-      is_parameters: false,
       name: 'Interaction Primary',
       tags: ['Data Engineering', 'Preprocessing'],
       type: 'data'
@@ -475,7 +473,6 @@ export default {
     {
       full_name: 'Country Raw',
       id: 'data/Country Raw',
-      is_parameters: false,
       name: 'Country Raw',
       tags: ['Data Engineering', 'Preprocessing'],
       type: 'data'
@@ -483,7 +480,6 @@ export default {
     {
       full_name: 'Country Primary',
       id: 'data/Country Primary',
-      is_parameters: false,
       name: 'Country Primary',
       tags: ['Data Engineering', 'Preprocessing'],
       type: 'data'
@@ -491,7 +487,6 @@ export default {
     {
       full_name: 'Shopper Spend Raw',
       id: 'data/Shopper Spend Raw',
-      is_parameters: false,
       name: 'Shopper Spend Raw',
       tags: ['Data Engineering', 'Preprocessing'],
       type: 'data'
@@ -499,7 +494,6 @@ export default {
     {
       full_name: 'Shopper Spend Primary',
       id: 'data/Shopper Spend Primary',
-      is_parameters: false,
       name: 'Shopper Spend Primary',
       tags: ['Data Engineering', 'Preprocessing'],
       type: 'data'
@@ -507,7 +501,6 @@ export default {
     {
       full_name: 'Interaction Intermediate',
       id: 'data/Interaction Intermediate',
-      is_parameters: false,
       name: 'Interaction Intermediate',
       tags: ['Feature Engineering', 'Data Engineering', 'Preprocessing'],
       type: 'data'
@@ -515,7 +508,6 @@ export default {
     {
       full_name: 'Country Intermediate',
       id: 'data/Country Intermediate',
-      is_parameters: false,
       name: 'Country Intermediate',
       tags: ['Feature Engineering', 'Data Engineering', 'Preprocessing'],
       type: 'data'
@@ -523,7 +515,6 @@ export default {
     {
       full_name: 'Shopper Spend Intermediate',
       id: 'data/Shopper Spend Intermediate',
-      is_parameters: false,
       name: 'Shopper Spend Intermediate',
       tags: ['Feature Engineering', 'Data Engineering', 'Preprocessing'],
       type: 'data'
@@ -531,7 +522,6 @@ export default {
     {
       full_name: 'CRM Predictions',
       id: 'data/CRM Predictions',
-      is_parameters: false,
       name: 'CRM Predictions',
       tags: ['Feature Engineering', 'Data Engineering'],
       type: 'data'
@@ -539,7 +529,6 @@ export default {
     {
       full_name: 'Shopper Spend Features',
       id: 'data/Shopper Spend Features',
-      is_parameters: false,
       name: 'Shopper Spend Features',
       tags: [
         'Model Explaination',
@@ -553,7 +542,6 @@ export default {
     {
       full_name: 'Shopper Churn Features',
       id: 'data/Shopper Churn Features',
-      is_parameters: false,
       name: 'Shopper Churn Features',
       tags: [
         'Model Explaination',
@@ -567,7 +555,6 @@ export default {
     {
       full_name: 'Vendor Master',
       id: 'data/Vendor Master',
-      is_parameters: false,
       name: 'Vendor Master',
       tags: ['Feature Engineering', 'Data Engineering'],
       type: 'data'
@@ -575,7 +562,6 @@ export default {
     {
       full_name: 'Salesforce CRM',
       id: 'data/Salesforce CRM',
-      is_parameters: false,
       name: 'Salesforce CRM',
       tags: ['Feature Engineering', 'Data Engineering'],
       type: 'data'
@@ -583,7 +569,6 @@ export default {
     {
       full_name: 'Vendor Predictions',
       id: 'data/Vendor Predictions',
-      is_parameters: false,
       name: 'Vendor Predictions',
       tags: [
         'Model Training',
@@ -596,7 +581,6 @@ export default {
     {
       full_name: 'Salesforce Accounts',
       id: 'data/Salesforce Accounts',
-      is_parameters: false,
       name: 'Salesforce Accounts',
       tags: ['Feature Engineering', 'Data Engineering'],
       type: 'data'
@@ -604,15 +588,13 @@ export default {
     {
       full_name: 'params: Sales Model',
       id: 'data/params: Sales Model',
-      is_parameters: true,
       name: 'params: Sales Model',
       tags: ['Model Training', 'Data Science'],
-      type: 'data'
+      type: 'parameters'
     },
     {
       full_name: 'Sales Validation Results',
       id: 'data/Sales Validation Results',
-      is_parameters: false,
       name: 'Sales Validation Results',
       tags: ['Model Training', 'Data Science', 'Model Performance Monitoring'],
       type: 'data'
@@ -620,7 +602,6 @@ export default {
     {
       full_name: 'Sales Trained Model',
       id: 'data/Sales Trained Model',
-      is_parameters: false,
       name: 'Sales Trained Model',
       tags: ['Model Training', 'Data Science', 'Model Explaination'],
       type: 'data'
@@ -628,15 +609,13 @@ export default {
     {
       full_name: 'params: Engagement Model',
       id: 'data/params: Engagement Model',
-      is_parameters: true,
       name: 'params: Engagement Model',
       tags: ['Model Training', 'Data Science'],
-      type: 'data'
+      type: 'parameters'
     },
     {
       full_name: 'Engagement Validation Results',
       id: 'data/Engagement Validation Results',
-      is_parameters: false,
       name: 'Engagement Validation Results',
       tags: ['Model Training', 'Data Science', 'Model Performance Monitoring'],
       type: 'data'
@@ -644,7 +623,6 @@ export default {
     {
       full_name: 'Engagement Trained Model',
       id: 'data/Engagement Trained Model',
-      is_parameters: false,
       name: 'Engagement Trained Model',
       tags: ['Model Training', 'Data Science', 'Model Explaination'],
       type: 'data'
@@ -652,7 +630,6 @@ export default {
     {
       full_name: 'Sales Model Explanations',
       id: 'data/Sales Model Explanations',
-      is_parameters: false,
       name: 'Sales Model Explanations',
       tags: [
         'Reporting',
@@ -665,7 +642,6 @@ export default {
     {
       full_name: 'Engagement Model Explanations',
       id: 'data/Engagement Model Explanations',
-      is_parameters: false,
       name: 'Engagement Model Explanations',
       tags: [
         'Reporting',
@@ -678,15 +654,13 @@ export default {
     {
       full_name: 'params: Optimisation',
       id: 'data/params: Optimisation',
-      is_parameters: true,
       name: 'params: Optimisation',
       tags: ['Model Training', 'Data Science', 'Optimisation'],
-      type: 'data'
+      type: 'parameters'
     },
     {
       full_name: 'Digital Analysis',
       id: 'data/Digital Analysis',
-      is_parameters: false,
       name: 'Digital Analysis',
       tags: ['Model Training', 'Data Science', 'Optimisation'],
       type: 'data'
@@ -694,7 +668,6 @@ export default {
     {
       full_name: 'Engagement Recommendations',
       id: 'data/Engagement Recommendations',
-      is_parameters: false,
       name: 'Engagement Recommendations',
       tags: ['Model Training', 'Data Science'],
       type: 'data'
@@ -702,7 +675,6 @@ export default {
     {
       full_name: 'Action Cost Table',
       id: 'data/Action Cost Table',
-      is_parameters: false,
       name: 'Action Cost Table',
       tags: ['Data Science', 'Optimisation'],
       type: 'data'
@@ -710,7 +682,6 @@ export default {
     {
       full_name: 'Multi-Channel Resolutions',
       id: 'data/Multi-Channel Resolutions',
-      is_parameters: false,
       name: 'Multi-Channel Resolutions',
       tags: ['Reporting', 'Data Science', 'Optimisation'],
       type: 'data'
@@ -718,7 +689,6 @@ export default {
     {
       full_name: 'Content Resolutions',
       id: 'data/Content Resolutions',
-      is_parameters: false,
       name: 'Content Resolutions',
       tags: ['Reporting', 'Data Science', 'Optimisation'],
       type: 'data'
@@ -726,7 +696,6 @@ export default {
     {
       full_name: 'Segment Journeys Allocations',
       id: 'data/Segment Journeys Allocations',
-      is_parameters: false,
       name: 'Segment Journeys Allocations',
       tags: ['Reporting', 'Data Science', 'Optimisation'],
       type: 'data'
@@ -734,7 +703,6 @@ export default {
     {
       full_name: 'Upselling Readiness Dashboard Input',
       id: 'data/Upselling Readiness Dashboard Input',
-      is_parameters: false,
       name: 'Upselling Readiness Dashboard Input',
       tags: ['Reporting', 'Data Science'],
       type: 'data'
@@ -742,7 +710,6 @@ export default {
     {
       full_name: 'Lead Scoring Dashboard Input',
       id: 'data/Lead Scoring Dashboard Input',
-      is_parameters: false,
       name: 'Lead Scoring Dashboard Input',
       tags: ['Reporting', 'Data Science'],
       type: 'data'
@@ -750,7 +717,6 @@ export default {
     {
       full_name: 'Lifetime Value Prediction Dashboard Input',
       id: 'data/Lifetime Value Prediction Dashboard Input',
-      is_parameters: false,
       name: 'Lifetime Value Prediction Dashboard Input',
       tags: ['Reporting', 'Data Science'],
       type: 'data'
@@ -758,7 +724,6 @@ export default {
     {
       full_name: 'Digital Sales Dashboard Input',
       id: 'data/Digital Sales Dashboard Input',
-      is_parameters: false,
       name: 'Digital Sales Dashboard Input',
       tags: ['Reporting', 'Data Science'],
       type: 'data'
@@ -766,7 +731,6 @@ export default {
     {
       full_name: 'Vendor Sales Dashboard Input',
       id: 'data/Vendor Sales Dashboard Input',
-      is_parameters: false,
       name: 'Vendor Sales Dashboard Input',
       tags: ['Reporting', 'Data Science'],
       type: 'data'

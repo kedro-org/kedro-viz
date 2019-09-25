@@ -30,7 +30,8 @@
     }
   }
 
-  &.node--data {
+  &.node--data,
+  &.node--parameters {
     rect {
       stroke-width: 2px;
     }
