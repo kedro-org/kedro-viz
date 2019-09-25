@@ -14,7 +14,7 @@
 
   .kui-searchbar,
   .kui-input-wrapper {
-    width: 100%;
+    max-width: none;
   }
 }
 
@@ -62,6 +62,7 @@
   border: none;
   color: inherit;
   font-size: 1.6em;
+  font-family: inherit;
   cursor: pointer;
   opacity: 0.8;
 
