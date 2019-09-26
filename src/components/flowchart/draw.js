@@ -75,8 +75,6 @@ const draw = function() {
     .attr('transform', node => `translate(${node.x}, ${node.y})`)
     .attr('opacity', 0);
 
-  enterNodes.append('circle').attr('r', 25);
-
   enterNodes.append('rect');
 
   enterNodes.append(icon);
@@ -84,8 +82,8 @@ const draw = function() {
   enterNodes
     .append('text')
     .text(node => node.name)
-    .attr('text-anchor', 'middle')
-    .attr('dy', 4);
+    .attr('dy', 3.5)
+    .attr('dx', node => node.textOffset);
 
   this.el.nodes
     .exit()
@@ -130,6 +128,15 @@ const draw = function() {
     .attr('x', node => (node.width - 5) / -2)
     .attr('y', node => (node.height - 5) / -2)
     .attr('rx', node => (node.type === 'data' ? node.height / 2 : 0));
+
+  this.el.nodes
+    .select('.node__icon')
+    .transition('node-icon-offset')
+    .duration(150)
+    .attr('width', node => node.iconSize)
+    .attr('height', node => node.iconSize)
+    .attr('x', node => node.iconOffset)
+    .attr('y', node => node.iconSize / -2);
 };
 
 export default draw;

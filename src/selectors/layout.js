@@ -25,19 +25,18 @@ export const prepareTextContainer = hasTextLabels => {
 /**
  * Temporarily append text element to the DOM, to measure its width
  * @param {string} name Node name
- * @param {number} padding Additional width
  * @param {Object} svg D3 container
  * @return {number} Node width
  */
-export const getNodeWidth = (name, padding, svg) => {
+export const getTextWidth = (name, svg) => {
   if (!svg) {
-    return padding;
+    return 0;
   }
   const text = svg.append('text').text(name);
   const node = text.node();
   const width = node ? node.getBBox().width : 0;
   text.remove();
-  return width + padding;
+  return width;
 };
 
 /**
@@ -47,13 +46,36 @@ export const getNodeWidth = (name, padding, svg) => {
  * @return {Object} width and height
  */
 export const getNodeSize = (node, svg) => {
-  let boxSize = 40;
-  if (!svg && node.type === 'task') {
-    boxSize = 50;
+  const labelsVisible = Boolean(svg);
+  let iconSize = { data: 17, task: 18, parameters: 22 }[node.type];
+  if (labelsVisible) {
+    iconSize = iconSize * 0.75;
   }
+  const padding = labelsVisible
+    ? {
+        x: 16,
+        y: 10
+      }
+    : {
+        x: node.type === 'task' ? 14 : 16,
+        y: node.type === 'task' ? 14 : 16
+      };
+  const textWidth = labelsVisible ? getTextWidth(node.name, svg) : 0;
+  const textGap = labelsVisible ? 6 : 0;
+  const innerWidth = iconSize + textWidth + textGap;
+  const width = innerWidth + padding.x * 2;
+  const textOffset = innerWidth / 2 - textWidth;
+  const iconOffset = -innerWidth / 2;
+
   return {
-    height: boxSize,
-    width: getNodeWidth(node.name, boxSize, svg)
+    height: iconSize + padding.y * 2,
+    iconSize,
+    textWidth,
+    padding,
+    textGap,
+    textOffset,
+    iconOffset,
+    width
   };
 };
 
