@@ -1,10 +1,10 @@
 import {
   CHANGE_VIEW,
   RESET_DATA,
-  TOGGLE_NODE_ACTIVE,
+  TOGGLE_NODE_CLICKED,
   TOGGLE_NODE_DISABLED,
-  TOGGLE_NODE_FOCUSED,
   TOGGLE_NODES_DISABLED,
+  TOGGLE_NODE_HOVERED,
   TOGGLE_PARAMETERS,
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
@@ -23,11 +23,9 @@ function reducer(state = {}, action) {
     case RESET_DATA:
       return Object.assign({}, state, action.data);
 
-    case TOGGLE_NODE_ACTIVE: {
+    case TOGGLE_NODE_CLICKED: {
       return Object.assign({}, state, {
-        nodeActive: Object.assign({}, state.nodeActive, {
-          [action.nodeID]: action.isActive
-        })
+        nodeClicked: action.nodeClicked
       });
     }
 
@@ -36,12 +34,6 @@ function reducer(state = {}, action) {
         nodeDisabled: Object.assign({}, state.nodeDisabled, {
           [action.nodeID]: action.isDisabled
         })
-      });
-    }
-
-    case TOGGLE_NODE_FOCUSED: {
-      return Object.assign({}, state, {
-        nodeFocused: action.nodeFocused
       });
     }
 
@@ -54,6 +46,12 @@ function reducer(state = {}, action) {
             }),
           state.nodeDisabled
         )
+      });
+    }
+
+    case TOGGLE_NODE_HOVERED: {
+      return Object.assign({}, state, {
+        nodeHovered: action.nodeHovered
       });
     }
 

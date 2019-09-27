@@ -9,7 +9,8 @@ import {
 } from './nodes';
 import {
   changeView,
-  toggleNodeActive,
+  toggleNodeClicked,
+  toggleNodeHovered,
   toggleNodeDisabled,
   toggleTagFilter
 } from '../actions';
@@ -164,14 +165,21 @@ describe('Selectors', () => {
       ).toBe(true);
     });
 
-    it('returns true only when a given node is set to active', () => {
+    it('returns true when a given node is clicked', () => {
       const nodes = getNodes(mockState.lorem);
       const nodeID = nodes[0];
       const inactiveNodes = nodes.filter(id => id !== nodeID);
-      const newMockState = reducer(
-        mockState.lorem,
-        toggleNodeActive(nodeID, true)
-      );
+      const newMockState = reducer(mockState.lorem, toggleNodeClicked(nodeID));
+      const nodeActive = getNodeActive(newMockState);
+      expect(nodeActive[nodeID]).toEqual(true);
+      expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
+    });
+
+    it('returns true when a given node is hovered', () => {
+      const nodes = getNodes(mockState.lorem);
+      const nodeID = nodes[0];
+      const inactiveNodes = nodes.filter(id => id !== nodeID);
+      const newMockState = reducer(mockState.lorem, toggleNodeHovered(nodeID));
       const nodeActive = getNodeActive(newMockState);
       expect(nodeActive[nodeID]).toEqual(true);
       expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);

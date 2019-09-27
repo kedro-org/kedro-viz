@@ -7,29 +7,27 @@
     transition: all ease 0.1s;
 
     .kui-theme--light & {
-      fill: $node-iconbg-fill-light;
-      stroke: $node-iconbg-stroke-light;
+      fill: $node-fill-light;
+      stroke: $node-stroke-light;
     }
 
     .kui-theme--dark & {
-      fill: $node-iconbg-fill-dark;
-      stroke: $node-iconbg-stroke-dark;
+      fill: $node-fill-dark;
+      stroke: $node-stroke-dark;
     }
   }
 
   &.node--highlight {
     circle,
     rect {
-      stroke-width: 1px;
-
       .kui-theme--light & {
-        fill: $node-iconbg-fill-light-highlight;
-        stroke: $node-iconbg-stroke-light-highlight;
+        fill: $node-fill-light-highlight;
+        stroke: $node-stroke-light-highlight;
       }
 
       .kui-theme--dark & {
-        fill: $node-iconbg-fill-dark-highlight;
-        stroke: $node-iconbg-stroke-dark-highlight;
+        fill: $node-fill-dark-highlight;
+        stroke: $node-stroke-dark-highlight;
       }
     }
   }
@@ -37,19 +35,19 @@
   &.node--active {
     circle,
     rect {
-      stroke-width: 1.5px;
+      stroke-width: 3px;
 
       .kui-theme--light & {
-        fill: $node-iconbg-fill-light-active;
-        stroke: $node-iconbg-stroke-light-active;
+        fill: $node-fill-light-active;
+        stroke: $node-stroke-light-active;
       }
 
       .kui-theme--dark & {
-        fill: $node-iconbg-fill-dark-active;
-        stroke: $node-iconbg-stroke-dark-active;
+        fill: $node-fill-dark-active;
+        stroke: $node-stroke-dark-active;
       }
 
-      [data-whatintent='keyboard'] & {
+      [data-whatinput='keyboard'] & {
         stroke-width: 3.5px;
         stroke: $color-link;
       }
@@ -81,5 +79,11 @@
 }
 
 .node__icon__fill {
-  fill: $node-icon-fill;
+  .kui-theme--light & {
+    fill: $node-icon-fill-light;
+  }
+
+  .kui-theme--dark & {
+    fill: $node-icon-fill-dark;
+  }
 }

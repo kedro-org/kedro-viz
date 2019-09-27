@@ -2,9 +2,10 @@ import animals from '../utils/data/animals.mock';
 import {
   CHANGE_VIEW,
   RESET_DATA,
-  TOGGLE_NODE_ACTIVE,
+  TOGGLE_NODE_CLICKED,
   TOGGLE_NODE_DISABLED,
   TOGGLE_NODES_DISABLED,
+  TOGGLE_NODE_HOVERED,
   TOGGLE_PARAMETERS,
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
@@ -13,9 +14,10 @@ import {
   UPDATE_CHART_SIZE,
   changeView,
   resetData,
-  toggleNodeActive,
+  toggleNodeClicked,
   toggleNodeDisabled,
   toggleNodesDisabled,
+  toggleNodeHovered,
   toggleParameters,
   toggleTextLabels,
   toggleTagActive,
@@ -42,15 +44,22 @@ describe('actions', () => {
     expect(resetData(animals)).toEqual(expectedAction);
   });
 
-  it('should create an action to toggle whether a node is active', () => {
-    const nodeID = '12367890';
-    const isActive = false;
+  it('should create an action to toggle whether a node has been clicked', () => {
+    const nodeClicked = '12367890';
     const expectedAction = {
-      type: TOGGLE_NODE_ACTIVE,
-      nodeID,
-      isActive
+      type: TOGGLE_NODE_CLICKED,
+      nodeClicked
     };
-    expect(toggleNodeActive(nodeID, isActive)).toEqual(expectedAction);
+    expect(toggleNodeClicked(nodeClicked)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether a node has been clicked', () => {
+    const nodeHovered = '12367890';
+    const expectedAction = {
+      type: TOGGLE_NODE_HOVERED,
+      nodeHovered
+    };
+    expect(toggleNodeHovered(nodeHovered)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether a node is disabled', () => {

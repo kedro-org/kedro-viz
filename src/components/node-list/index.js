@@ -7,7 +7,7 @@ import utils from '@quantumblack/kedro-ui/lib/utils';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { getNodeData } from '../../selectors/nodes';
 import {
-  toggleNodeActive,
+  toggleNodeHovered,
   toggleNodeDisabled,
   toggleNodesDisabled
 } from '../../actions';
@@ -85,7 +85,7 @@ class NodeList extends React.Component {
   render() {
     const {
       onToggleAllNodes,
-      onToggleNodeActive,
+      onToggleNodeHovered,
       onToggleNodeDisabled,
       nodes,
       theme
@@ -146,8 +146,8 @@ class NodeList extends React.Component {
                     node.disabled_tag || node.disabled_view
                 })}
                 title={node.name}
-                onMouseEnter={() => onToggleNodeActive(node, true)}
-                onMouseLeave={() => onToggleNodeActive(node, false)}>
+                onMouseEnter={() => onToggleNodeHovered(node.id)}
+                onMouseLeave={() => onToggleNodeHovered(null)}>
                 <Checkbox
                   checked={!node.disabled_node}
                   label={
@@ -178,8 +178,8 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
-  onToggleNodeActive: (node, isActive) => {
-    dispatch(toggleNodeActive(node.id, isActive));
+  onToggleNodeHovered: nodeID => {
+    dispatch(toggleNodeHovered(nodeID));
   },
   onToggleNodeDisabled: (node, isDisabled) => {
     dispatch(toggleNodeDisabled(node.id, isDisabled));

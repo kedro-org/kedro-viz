@@ -4,58 +4,60 @@
  * List of colour variables for the different parts of the flowchart
  */
 
-// Node icon fill
-$node-icon-fill: $color-text-dark;
+//-------------- LIGHT --------------//
 
-// Node icon background fill light
-$node-iconbg-fill-light: lighten($color-text-light, 10%);
-$node-iconbg-fill-light-highlight: $color-text-light;
-$node-iconbg-fill-light-active: darken($color-text-light, 10%);
+// Icon
 
-// Node icon background stroke light
-$node-iconbg-stroke-light: lighten($color-text-light, 6%);
-$node-iconbg-stroke-light-highlight: darken($color-text-light, 4%);
-$node-iconbg-stroke-light-active: darken($color-text-light, 50%);
+$node-icon-fill-light: $color-text-light;
 
-// Node icon background fill dark
-$node-iconbg-fill-dark: lighten($color-bg-dark, 10%);
-$node-iconbg-fill-dark-highlight: lighten($color-bg-dark, 15%);
-$node-iconbg-fill-dark-active: lighten($color-bg-dark, 20%);
+// Circle/Rect
 
-// Node icon background stroke dark
-$node-iconbg-stroke-dark: darken($color-bg-dark, 3%);
-$node-iconbg-stroke-dark-highlight: darken($color-text-dark, 20%);
-$node-iconbg-stroke-dark-active: $color-text-dark;
+$node-fill-light: lighten($color-bg-light, 10%);
+$node-fill-light-highlight: lighten($color-bg-light, 13%);
+$node-fill-light-active: lighten($color-bg-light, 20%);
 
-// Node label text
-$node-labeltext-fill-light: rgba($color-text-dark, 0.95);
-$node-labeltext-fill-dark: rgba($color-text-dark, 0.8);
-$node-labeltext-fill-active: white;
+$node-stroke-light: mix($color-text-light, $color-bg-light, 50%);
+$node-stroke-light-highlight: mix($color-text-light, $color-bg-light, 90%);
+$node-stroke-light-active: $color-text-light;
 
-// Node label background fill light
-$node-labelbg-fill-light: lighten($color-text-light, 6%);
-$node-labelbg-fill-light-highlight: darken($color-text-light, 6%);
-$node-labelbg-fill-light-active: darken($color-text-light, 10%);
+// Label
 
-// Node label background stroke light
-$node-labelbg-stroke-light: lighten($color-text-light, 2%);
-$node-labelbg-stroke-light-highlight: darken($color-text-light, 12%);
-$node-labelbg-stroke-light-active: darken($color-text-light, 50%);
-
-// Node label background fill dark
-$node-labelbg-fill-dark: darken($color-bg-dark, 2%);
-$node-labelbg-fill-dark-highlight: darken($color-bg-dark, 4%);
-$node-labelbg-fill-dark-active: darken($color-bg-dark, 4%);
-
-// Node label background stroke dark
-$node-labelbg-stroke-dark: darken($color-bg-dark, 3%);
-$node-labelbg-stroke-dark-highlight: mix(white, $color-bg-dark, 50%);
-$node-labelbg-stroke-dark-active: mix(white, $color-bg-dark, 70%);
+$node-labeltext-fill-light: rgba($color-text-light, 0.9);
+$node-labeltext-fill-light-active: $color-text-light;
 
 // Edge
-$edge-light: mix($color-bg-light, black, 60);
-$edge-dark: mix($color-bg-dark, white, 15);
+
+$edge-light: mix($color-text-light, $color-bg-light, 75%);
 
 // Tooltip
+
 $tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
+
+//-------------- DARK --------------//
+
+// Icon
+
+$node-icon-fill-dark: $color-text-dark;
+
+// Circle/Rect
+
+$node-fill-dark: lighten($color-bg-dark, 10%);
+$node-fill-dark-highlight: lighten($color-bg-dark, 13%);
+$node-fill-dark-active: lighten($color-bg-dark, 20%);
+
+$node-stroke-dark: mix($color-text-dark, $color-bg-dark, 30%);
+$node-stroke-dark-highlight: mix($color-text-dark, $color-bg-dark, 80%);
+$node-stroke-dark-active: $color-text-dark;
+
+// Label
+
+$node-labeltext-fill-dark: rgba($color-text-dark, 0.8);
+$node-labeltext-fill-dark-active: $color-text-dark;
+
+// Edge
+
+$edge-dark: mix($color-text-dark, $color-bg-dark, 85%);
+
+// Tooltip
+
 $tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);

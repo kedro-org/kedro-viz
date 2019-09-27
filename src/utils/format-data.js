@@ -30,9 +30,9 @@ const createPipelineState = () => ({
   nodeType: {},
   nodeIsParam: {},
   nodeTags: {},
-  nodeActive: {},
   nodeDisabled: {},
-  nodeFocused: null,
+  nodeClicked: null,
+  nodeHovered: null,
   // Edges
   edges: [],
   edgeSources: {},
