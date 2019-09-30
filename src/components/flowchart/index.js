@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import 'd3-transition';
-import { interpolatePath } from 'd3-interpolate-path';
+// import { interpolatePath } from 'd3-interpolate-path';
 import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
@@ -13,7 +13,8 @@ import {
 } from '../../actions';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
-import icon from './icon';
+import { ReactComponent as DataIcon } from './icon-data.svg';
+import { ReactComponent as TaskIcon } from './icon-task.svg';
 import './styles/flowchart.css';
 
 const DURATION = 700;
@@ -51,7 +52,6 @@ export class FlowChart extends Component {
 
     this.updateChartSize();
     this.initZoomBehaviour();
-    this.drawChart();
     this.zoomChart();
     window.addEventListener('resize', this.handleWindowResize);
   }
@@ -67,7 +67,6 @@ export class FlowChart extends Component {
     if (prevProps.zoom !== this.props.zoom) {
       this.zoomChart();
     }
-    this.drawChart();
   }
 
   /**
@@ -137,137 +136,10 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Render chart to the DOM with D3
-   */
-  drawChart() {
-    const { centralNode, layout, linkedNodes, textLabels } = this.props;
-    const { nodes, edges } = layout;
-
-    // Create selections
-    this.el.edges = this.el.edgeGroup
-      .selectAll('.edge')
-      .data(edges, edge => edge.id);
-
-    this.el.nodes = this.el.nodeGroup
-      .selectAll('.node')
-      .data(nodes, node => node.id);
-
-    // Set up line shape function
-    const lineShape = line()
-      .x(d => d.x)
-      .y(d => d.y)
-      .curve(curveBasis);
-
-    // Create edges
-    const enterEdges = this.el.edges
-      .enter()
-      .append('g')
-      .attr('class', 'edge')
-      .attr('opacity', 0);
-
-    enterEdges.append('path').attr('marker-end', d => `url(#arrowhead)`);
-
-    this.el.edges
-      .exit()
-      .transition('exit-edges')
-      .duration(DURATION)
-      .attr('opacity', 0)
-      .remove();
-
-    this.el.edges = this.el.edges.merge(enterEdges);
-
-    this.el.edges
-      .classed(
-        'edge--faded',
-        ({ source, target }) =>
-          centralNode && (!linkedNodes[source] || !linkedNodes[target])
-      )
-      .transition('show-edges')
-      .duration(DURATION)
-      .attr('opacity', 1);
-
-    this.el.edges
-      .select('path')
-      .transition('update-edges')
-      .duration(DURATION)
-      .attrTween('d', function(edge) {
-        const current = edge.points && lineShape(edge.points);
-        const previous = select(this).attr('d') || current;
-        return interpolatePath(previous, current);
-      });
-
-    // Create nodes
-    const enterNodes = this.el.nodes
-      .enter()
-      .append('g')
-      .attr('tabindex', '0')
-      .attr('class', 'node');
-
-    enterNodes
-      .attr('transform', node => `translate(${node.x}, ${node.y})`)
-      .attr('opacity', 0);
-
-    enterNodes.append('circle').attr('r', 25);
-
-    enterNodes.append('rect');
-
-    enterNodes.append(icon);
-
-    enterNodes
-      .append('text')
-      .text(node => node.name)
-      .attr('text-anchor', 'middle')
-      .attr('dy', 4);
-
-    this.el.nodes
-      .exit()
-      .transition('exit-nodes')
-      .duration(DURATION)
-      .attr('opacity', 0)
-      .remove();
-
-    this.el.nodes = this.el.nodes
-      .merge(enterNodes)
-      .classed('node--data', node => node.type === 'data')
-      .classed('node--task', node => node.type === 'task')
-      .classed('node--icon', !textLabels)
-      .classed('node--text', textLabels)
-      .classed('node--active', node => node.active)
-      .classed('node--highlight', node => centralNode && linkedNodes[node.id])
-      .classed('node--faded', node => centralNode && !linkedNodes[node.id])
-      .on('click', this.handleNodeClick)
-      .on('mouseover', this.handleNodeMouseOver)
-      .on('mouseout', this.handleNodeMouseOut)
-      .on('focus', this.handleNodeMouseOver)
-      .on('blur', this.handleNodeMouseOut)
-      .on('keydown', this.handleNodeKeyDown);
-
-    this.el.nodes
-      .transition('update-nodes')
-      .duration(DURATION)
-      .attr('opacity', 1)
-      .attr('transform', node => `translate(${node.x}, ${node.y})`)
-      .end()
-      .catch(() => {})
-      .finally(() => {
-        // Sort nodes so tab focus order follows X/Y position
-        this.el.nodes.sort((a, b) => a.order - b.order);
-      });
-
-    this.el.nodes
-      .select('rect')
-      .attr('width', node => node.width - 5)
-      .attr('height', node => node.height - 5)
-      .attr('x', node => (node.width - 5) / -2)
-      .attr('y', node => (node.height - 5) / -2)
-      .attr('rx', node => (node.type === 'data' ? node.height / 2 : 0));
-  }
-
-  /**
    * Enable a node's focus state and highlight linked nodes
    * @param {Object} node Datum for a single node
    */
-  handleNodeClick = node => {
+  handleNodeClick = (event, node) => {
     this.props.onToggleNodeClicked(node.id);
     event.stopPropagation();
   };
@@ -283,9 +155,9 @@ export class FlowChart extends Component {
    * Enable a node's active state, show tooltip, and highlight linked nodes
    * @param {Object} node Datum for a single node
    */
-  handleNodeMouseOver = node => {
+  handleNodeMouseOver = (event, node) => {
     this.props.onToggleNodeHovered(node.id);
-    this.showTooltip(node);
+    this.showTooltip(event, node);
   };
 
   /**
@@ -301,11 +173,11 @@ export class FlowChart extends Component {
    * Handle keydown event when a node is focused
    * @param {Object} node Datum for a single node
    */
-  handleNodeKeyDown = node => {
+  handleNodeKeyDown = (event, node) => {
     const ENTER = 13;
     const ESCAPE = 27;
     if (event.keyCode === ENTER) {
-      this.handleNodeClick(node);
+      this.props.onToggleNodeClicked(node.id);
     }
     if (event.keyCode === ESCAPE) {
       this.handleChartClick();
@@ -317,7 +189,7 @@ export class FlowChart extends Component {
    * Show, fill and and position the tooltip
    * @param {Object} node A node datum
    */
-  showTooltip(node) {
+  showTooltip(event, node) {
     const { chartSize } = this.props;
     const eventOffset = event.target.getBoundingClientRect();
     const navOffset = this.getNavOffset(chartSize.outerWidth);
@@ -349,7 +221,15 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { outerWidth, outerHeight } = this.props.chartSize;
+    const {
+      centralNode,
+      chartSize,
+      layout,
+      linkedNodes,
+      textLabels
+    } = this.props;
+    const { outerWidth, outerHeight } = chartSize;
+    const { nodes, edges } = layout;
     const {
       tooltipVisible,
       tooltipIsRight,
@@ -357,6 +237,21 @@ export class FlowChart extends Component {
       tooltipX,
       tooltipY
     } = this.state;
+
+    const icons = {
+      data: DataIcon,
+      task: TaskIcon
+    };
+    const iconSizes = {
+      data: 17,
+      task: 18
+    };
+
+    // Set up line shape function
+    const lineShape = line()
+      .x(d => d.x)
+      .y(d => d.y)
+      .curve(curveBasis);
 
     return (
       <div
@@ -383,12 +278,72 @@ export class FlowChart extends Component {
             </marker>
           </defs>
           <g ref={this.wrapperRef}>
-            <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
+            <g className="pipeline-flowchart__edges" ref={this.edgesRef}>
+              {edges.map(edge => (
+                <g
+                  key={edge.id}
+                  className={classnames('edge', {
+                    'edge--faded':
+                      centralNode &&
+                      (!linkedNodes[edge.source] || !linkedNodes[edge.target])
+                  })}>
+                  <path
+                    markerEnd="url(#arrowhead)"
+                    d={edge.points && lineShape(edge.points)}
+                  />
+                </g>
+              ))}
+            </g>
             <g
               id="nodes"
               className="pipeline-flowchart__nodes"
-              ref={this.nodesRef}
-            />
+              ref={this.nodesRef}>
+              {nodes
+                .sort((a, b) => a.order - b.order)
+                .map(node => {
+                  const Icon = icons[node.type];
+                  return (
+                    <g
+                      key={node.id}
+                      tabIndex="0"
+                      transform={`translate(${node.x}, ${node.y})`}
+                      // opacity={0}
+                      className={classnames('node', {
+                        'node--data': node.type === 'data',
+                        'node--task': node.type === 'task',
+                        'node--icon': !textLabels,
+                        'node--text': textLabels,
+                        'node--active': node.active,
+                        'node--highlight': centralNode && linkedNodes[node.id],
+                        'node--faded': centralNode && !linkedNodes[node.id]
+                      })}
+                      onClick={e => this.handleNodeClick(e, node)}
+                      onMouseOver={e => this.handleNodeMouseOver(e, node)}
+                      onMouseOut={this.handleNodeMouseOut}
+                      onFocus={e => this.handleNodeMouseOver(e, node)}
+                      onBlur={this.handleNodeMouseOut}
+                      onKeyDown={e => this.handleNodeKeyDown(e, node)}>
+                      <rect
+                        width={node.width - 5}
+                        height={node.height - 5}
+                        x={(node.width - 5) / -2}
+                        y={(node.height - 5) / -2}
+                        rx={node.type === 'data' ? node.height / 2 : 0}
+                      />
+                      <text textAnchor="middle" dy="4">
+                        {node.name}
+                      </text>
+                      <Icon
+                        className="node__icon"
+                        width={iconSizes[node.type]}
+                        height={iconSizes[node.type]}
+                        x={iconSizes[node.type] / -2}
+                        y={iconSizes[node.type] / -2}
+                      />
+                    </g>
+                  );
+                })}
+            </g>
           </g>
         </svg>
         <div

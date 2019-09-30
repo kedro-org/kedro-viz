@@ -48,8 +48,8 @@ export const getNodeWidth = (name, padding, svg) => {
  */
 export const getNodeSize = (node, svg) => {
   let boxSize = 40;
-  if (!svg && node.type === 'task') {
-    boxSize = 50;
+  if (!svg) {
+    boxSize = node.type === 'task' ? 50 : 55;
   }
   return {
     height: boxSize,
