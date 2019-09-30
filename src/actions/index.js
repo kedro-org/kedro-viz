@@ -24,6 +24,19 @@ export function resetData(data) {
   };
 }
 
+export const SET_NODE_TEXT_BBOX = 'SET_NODE_TEXT_BBOX';
+
+/**
+ * Update x/y/width/height data for node SVG text elements
+ * @param {Object} nodes Set of Node text SVGRect objects
+ */
+export function setNodeTextBbox(nodes) {
+  return {
+    type: SET_NODE_TEXT_BBOX,
+    nodes
+  };
+}
+
 export const TOGGLE_NODE_CLICKED = 'TOGGLE_NODE_CLICKED';
 
 /**

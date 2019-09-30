@@ -1,6 +1,7 @@
 import {
   CHANGE_VIEW,
   RESET_DATA,
+  SET_NODE_TEXT_BBOX,
   TOGGLE_NODE_CLICKED,
   TOGGLE_NODE_DISABLED,
   TOGGLE_NODES_DISABLED,
@@ -22,6 +23,11 @@ function reducer(state = {}, action) {
 
     case RESET_DATA:
       return Object.assign({}, state, action.data);
+
+    case SET_NODE_TEXT_BBOX:
+      return Object.assign({}, state, {
+        nodeTextBBox: Object.assign({}, state.nodeTextBBox, action.nodes)
+      });
 
     case TOGGLE_NODE_CLICKED: {
       return Object.assign({}, state, {

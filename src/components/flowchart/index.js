@@ -7,10 +7,12 @@ import { select, event } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import {
+  setNodeTextBbox,
   toggleNodeClicked,
   toggleNodeHovered,
   updateChartSize
 } from '../../actions';
+import { getVisibleNodes } from '../../selectors/nodes';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import { ReactComponent as DataIcon } from './icon-data.svg';
@@ -45,11 +47,10 @@ export class FlowChart extends Component {
     // Create D3 element selectors
     this.el = {
       svg: select(this.svgRef.current),
-      wrapper: select(this.wrapperRef.current),
-      edgeGroup: select(this.edgesRef.current),
-      nodeGroup: select(this.nodesRef.current)
+      wrapper: select(this.wrapperRef.current)
     };
 
+    this.getNodeTextSize();
     this.updateChartSize();
     this.initZoomBehaviour();
     this.zoomChart();
@@ -66,6 +67,9 @@ export class FlowChart extends Component {
     }
     if (prevProps.zoom !== this.props.zoom) {
       this.zoomChart();
+    }
+    if (prevProps.visibleNodes !== this.props.visibleNodes) {
+      this.getNodeTextSize();
     }
   }
 
@@ -133,6 +137,24 @@ export class FlowChart extends Component {
         this.zoomBehaviour.transform,
         zoomIdentity.translate(translateX + navOffset, translateY).scale(scale)
       );
+  }
+
+  /**
+   * Get SVG BBox for node text labels, to calculate their width
+   * so that their box wrappers can be sized appropriately
+   */
+  getNodeTextSize() {
+    const newNodeTextBBox = {};
+    this.props.visibleNodes.forEach(node => {
+      if (!this.props.nodeTextBBox[node.id]) {
+        newNodeTextBBox[node.id] = this.nodesRef.current
+          .querySelector(`text[data-id="${node.id}"]`)
+          .getBBox();
+      }
+    });
+    if (Object.keys(newNodeTextBBox).length) {
+      this.props.setTextBbox(newNodeTextBBox);
+    }
   }
 
   /**
@@ -306,7 +328,7 @@ export class FlowChart extends Component {
                     <g
                       key={node.id}
                       tabIndex="0"
-                      transform={`translate(${node.x}, ${node.y})`}
+                      transform={`translate(${node.x || 0}, ${node.y || 0})`}
                       // opacity={0}
                       className={classnames('node', {
                         'node--data': node.type === 'data',
@@ -330,7 +352,7 @@ export class FlowChart extends Component {
                         y={(node.height - 5) / -2}
                         rx={node.type === 'data' ? node.height / 2 : 0}
                       />
-                      <text textAnchor="middle" dy="4">
+                      <text data-id={node.id} textAnchor="middle" dy="4">
                         {node.name}
                       </text>
                       <Icon
@@ -360,16 +382,21 @@ export class FlowChart extends Component {
 }
 
 export const mapStateToProps = state => ({
+  centralNode: getCentralNode(state),
   chartSize: state.chartSize,
   layout: getLayout(state),
   linkedNodes: getLinkedNodes(state),
-  centralNode: getCentralNode(state),
+  nodeTextBBox: state.nodeTextBBox,
   textLabels: state.textLabels,
   view: state.view,
+  visibleNodes: getVisibleNodes(state),
   zoom: getZoomPosition(state)
 });
 
 export const mapDispatchToProps = dispatch => ({
+  setTextBbox: nodes => {
+    dispatch(setNodeTextBbox(nodes));
+  },
   onToggleNodeClicked: nodeClicked => {
     dispatch(toggleNodeClicked(nodeClicked));
   },

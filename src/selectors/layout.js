@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import { select } from 'd3-selection';
 import dagre from 'dagre';
 import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
@@ -7,38 +6,7 @@ import { getVisibleEdges } from './edges';
 const getTextLabels = state => state.textLabels;
 const getNodeType = state => state.nodeType;
 const getChartSize = state => state.chartSize;
-
-/**
- * Add DOM container for checking text widths
- * @param {Boolean} hasTextLabels Whether text labels are
- * @return {object|undefined} D3 element, or nothing
- */
-export const prepareTextContainer = hasTextLabels => {
-  if (!hasTextLabels) {
-    return;
-  }
-  return select('body')
-    .append('svg')
-    .attr('class', 'kedro node');
-};
-
-/**
- * Temporarily append text element to the DOM, to measure its width
- * @param {string} name Node name
- * @param {number} padding Additional width
- * @param {Object} svg D3 container
- * @return {number} Node width
- */
-export const getNodeWidth = (name, padding, svg) => {
-  if (!svg) {
-    return padding;
-  }
-  const text = svg.append('text').text(name);
-  const node = text.node();
-  const width = node ? node.getBBox().width : 0;
-  text.remove();
-  return width + padding;
-};
+const getNodeTextBBox = state => state.nodeTextBBox;
 
 /**
  * Calculate the width and height of a node container
@@ -46,14 +14,20 @@ export const getNodeWidth = (name, padding, svg) => {
  * @param {Object} svg D3 element wrapper
  * @return {Object} width and height
  */
-export const getNodeSize = (node, svg) => {
-  let boxSize = 40;
-  if (!svg) {
-    boxSize = node.type === 'task' ? 50 : 55;
+export const getNodeSize = (node, textLabels, nodeTextBBox) => {
+  if (textLabels) {
+    const boxSize = 40;
+    const bbox = nodeTextBBox[node.id];
+    const textWidth = bbox ? bbox.width : 0;
+    return {
+      height: boxSize,
+      width: textWidth + boxSize
+    };
   }
+  const boxSize = node.type === 'task' ? 50 : 55;
   return {
     height: boxSize,
-    width: getNodeWidth(node.name, boxSize, svg)
+    width: boxSize
   };
 };
 
@@ -64,21 +38,20 @@ export const getNodeSize = (node, svg) => {
  * which don't affect layout.
  */
 export const getGraph = createSelector(
-  [getVisibleNodes, getVisibleEdges, getTextLabels],
-  (nodes, edges, textLabels) => {
+  [getVisibleNodes, getVisibleEdges, getTextLabels, getNodeTextBBox],
+  (nodes, edges, textLabels, nodeTextBBox) => {
     const graph = new dagre.graphlib.Graph().setGraph({
       marginx: 40,
       marginy: 40
     });
 
-    const svg = prepareTextContainer(textLabels);
-
     nodes.forEach(node => {
-      graph.setNode(node.id, {
-        ...node,
-        ...getNodeSize(node, svg),
-        label: node.name
-      });
+      graph.setNode(
+        node.id,
+        Object.assign({}, node, getNodeSize(node, textLabels, nodeTextBBox), {
+          label: node.name
+        })
+      );
     });
 
     edges.forEach(edge => {
@@ -86,11 +59,9 @@ export const getGraph = createSelector(
     });
 
     // Run Dagre layout to calculate X/Y positioning
-    dagre.layout(graph);
-
-    // Tidy up leftover DOM container
-    if (svg) {
-      svg.remove();
+    // but only if text widths have been calculated
+    if (Object.keys(nodeTextBBox).length) {
+      dagre.layout(graph);
     }
 
     return graph;
