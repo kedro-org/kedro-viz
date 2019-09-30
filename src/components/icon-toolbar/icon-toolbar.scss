@@ -14,13 +14,22 @@
   color: inherit;
   background: none;
   border: none;
-  padding: 4px;
+  padding: 0.8em;
   margin: 0;
   box-shadow: none;
   cursor: pointer;
-  font-size: 1.6em;
-  margin-bottom: 1em;
+  margin-bottom: 0.8em;
   user-select: none;
+
+  .kui-theme--light &,
+  .kui-theme--light & span {
+    background: rgba($color-bg-light, 0.9);
+  }
+
+  .kui-theme--dark &,
+  .kui-theme--dark & span {
+    background: rgba($color-bg-dark, 0.9);
+  }
 
   &:focus {
     outline: 3px solid $color-link;
@@ -33,18 +42,14 @@
   span {
     position: absolute;
     right: 100%;
+    font-size: 1.4em;
     white-space: nowrap;
-    padding-right: 0.7em;
+    margin: -0.3em 0;
     visibility: hidden;
     opacity: 0;
-    transform: translateX(1em);
+    transform: translateX(2em);
     transition: all ease 0.2s, width 0s;
-  }
-
-  svg {
-    display: block;
-    width: 1.6em;
-    height: 1.6em;
+    padding: 0.3em 0.4em;
   }
 
   &:hover span,
@@ -52,5 +57,12 @@
     visibility: visible;
     opacity: 1;
     transform: translateX(0);
+  }
+
+  svg {
+    position: relative;
+    display: block;
+    width: 2em;
+    height: 2em;
   }
 }

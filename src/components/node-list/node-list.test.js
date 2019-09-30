@@ -210,11 +210,11 @@ describe('NodeList', () => {
 
   it('maps dispatch to props', () => {
     const dispatch = jest.fn();
-    mapDispatchToProps(dispatch).onToggleNodeActive({ id: '123' }, true);
+    const nodeHovered = '123';
+    mapDispatchToProps(dispatch).onToggleNodeHovered(nodeHovered);
     expect(dispatch.mock.calls[0][0]).toEqual({
-      nodeID: '123',
-      isActive: true,
-      type: 'TOGGLE_NODE_ACTIVE'
+      nodeHovered,
+      type: 'TOGGLE_NODE_HOVERED'
     });
 
     mapDispatchToProps(dispatch).onToggleNodeDisabled({ id: '456' }, false);

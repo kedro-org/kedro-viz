@@ -34,13 +34,13 @@
   }
 
   .kui-theme--light & {
-    background: $color-header-light;
+    background: $color-bg-light-alt;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.07);
   }
 
   .kui-theme--dark & {
-    background: $color-header-dark;
+    background: $color-bg-dark-alt;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   }

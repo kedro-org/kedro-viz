@@ -1,7 +1,9 @@
 //-- Custom --//
+
 $nav-width: 300px;
 
 //-- Breakpoints --//
+
 // Horizontal:
 $breakpoint-xsmall: 320px;
 $breakpoint-small: 480px;
@@ -18,27 +20,31 @@ $breakpoint-4col: 1100px;
 $breakpoint-v-medium: 900px;
 
 //-- Colours --//
+
 $color-primary: #00bfff;
-// Light theme:
+
 $color-text-light: #333;
-$color-bg-light: white;
-$color-bg-light-alt: #f0f0f0;
-$color-header-light: #f9f9f9;
-$color-line-light: #ddd;
-// Dark theme:
+$color-bg-light: #eee;
+$color-bg-light-alt: #fff;
+$color-bg-light-alt2: #f9f9f9;
+$color-line-light: #e0e0e0;
+
 $color-text-dark: white;
-$color-bg-dark: #1d2f3a;
-$color-bg-dark-alt: #122531;
-$color-header-dark: #111f2a;
-$color-line-dark: #081c28;
-$color-link: rgba(#00bfff, 0.85);
+$hue: 205;
+$color-bg-dark: hsl($hue, 32%, 14.5%);
+$color-bg-dark-alt: hsl($hue, 30%, 18%);
+$color-bg-dark-alt2: hsl($hue, 30%, 16%);
+$color-line-dark: hsl($hue, 50%, 12%);
+$color-link: rgba($color-primary, 0.85);
 
 //-- typography --//
+
 $rem-base: 10px;
 $font-base: 10px;
 $line-height-base: 24px;
 
 //-- Layout --//
+
 $padding-unit: $rem-base;
 
 $inspector-width: 290px;
@@ -53,6 +59,7 @@ $nav-height-xlarge: 64px;
 $min-tree-height: 660px;
 
 //-- Controls --//
+
 $toggle-height: 32px;
 $toggle-height-xlarge: 40px;
 

@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
 import { getTagCount } from './tags';
+import { getCentralNode } from './linked-nodes';
 
 const getNodes = state => state.nodes;
 const getView = state => state.view;
 const getNodeName = state => state.nodeName;
-const getNodeActiveNode = state => state.nodeActive;
 const getNodeDisabledNode = state => state.nodeDisabled;
 const getNodeTags = state => state.nodeTags;
 const getNodeType = state => state.nodeType;
@@ -60,12 +60,14 @@ export const getNodeDisabled = createSelector(
  * @return {Boolean} True if active
  */
 export const getNodeActive = createSelector(
-  [getNodes, getNodeActiveNode, getNodeTags, getTagActive],
-  (nodes, nodeActiveNode, nodeTags, tagActive) =>
+  [getNodes, getCentralNode, getNodeTags, getTagActive],
+  (nodes, centralNode, nodeTags, tagActive) =>
     arrayToObject(nodes, nodeID => {
-      const activeViaNode = nodeActiveNode[nodeID];
+      if (nodeID === centralNode) {
+        return true;
+      }
       const activeViaTag = nodeTags[nodeID].some(tag => tagActive[tag]);
-      return Boolean(activeViaNode || activeViaTag);
+      return Boolean(activeViaTag);
     })
 );
 
