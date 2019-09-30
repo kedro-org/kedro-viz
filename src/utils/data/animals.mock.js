@@ -15,7 +15,6 @@ export default {
       name: 'salmon',
       full_name: 'salmon',
       tags: ['huge', 'small'],
-      is_parameters: false,
       type: 'task'
     },
     {
@@ -23,7 +22,6 @@ export default {
       name: 'shark',
       full_name: 'shark',
       tags: [],
-      is_parameters: false,
       type: 'task'
     },
     {
@@ -31,7 +29,6 @@ export default {
       name: 'trout',
       full_name: 'trout',
       tags: [],
-      is_parameters: false,
       type: 'task'
     },
     {
@@ -39,7 +36,6 @@ export default {
       name: 'whale',
       full_name: 'whale',
       tags: [],
-      is_parameters: false,
       type: 'data'
     },
     {
@@ -47,7 +43,6 @@ export default {
       name: 'dog',
       full_name: 'dog',
       tags: ['small', 'huge'],
-      is_parameters: false,
       type: 'data'
     },
     {
@@ -55,7 +50,6 @@ export default {
       name: 'cat',
       full_name: 'cat',
       tags: ['small', 'huge'],
-      is_parameters: false,
       type: 'data'
     },
     {
@@ -63,23 +57,20 @@ export default {
       name: 'parameters_rabbit',
       full_name: 'parameters_rabbit',
       tags: ['small', 'huge'],
-      is_parameters: true,
-      type: 'data'
+      type: 'parameters'
     },
     {
       id: 'data/parameters',
       name: 'parameters',
       full_name: 'parameters',
       tags: ['small', 'huge'],
-      is_parameters: true,
-      type: 'data'
+      type: 'parameters'
     },
     {
       id: 'data/sheep',
       name: 'sheep',
       full_name: 'sheep',
       tags: ['small', 'huge'],
-      is_parameters: false,
       type: 'data'
     },
     {
@@ -87,7 +78,6 @@ export default {
       name: 'horse',
       full_name: 'horse',
       tags: ['small', 'huge'],
-      is_parameters: false,
       type: 'data'
     },
     {
@@ -95,7 +85,6 @@ export default {
       name: 'weasel',
       full_name: 'weasel',
       tags: [],
-      is_parameters: false,
       type: 'data'
     },
     {
@@ -103,7 +92,6 @@ export default {
       name: 'elephant',
       full_name: 'elephant',
       tags: [],
-      is_parameters: false,
       type: 'data'
     },
     {
@@ -111,7 +99,6 @@ export default {
       name: 'bear',
       full_name: 'bear',
       tags: [],
-      is_parameters: false,
       type: 'data'
     },
     {
@@ -119,7 +106,6 @@ export default {
       name: 'giraffe',
       full_name: 'giraffe',
       tags: [],
-      is_parameters: false,
       type: 'data'
     },
     {
@@ -127,7 +113,6 @@ export default {
       name: 'pig',
       full_name: 'pig',
       tags: ['small', 'huge'],
-      is_parameters: false,
       type: 'data'
     }
   ],

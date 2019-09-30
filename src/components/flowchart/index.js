@@ -228,6 +228,7 @@ export class FlowChart extends Component {
 
     this.el.nodes = this.el.nodes
       .merge(enterNodes)
+      .classed('node--parameters', node => node.type === 'parameters')
       .classed('node--data', node => node.type === 'data')
       .classed('node--task', node => node.type === 'task')
       .classed('node--icon', !textLabels)

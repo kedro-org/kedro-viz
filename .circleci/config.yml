@@ -9,7 +9,9 @@ utils:
 
   install_python3: &install_python3
     name: Install python3
-    command: sudo apt install python3 python3-pip
+    command: |
+        sudo apt update
+        sudo apt install python3 python3-pip
 
   install_python_environment: &install_python_environment
       name: Install Python environment

@@ -28,6 +28,7 @@
 
 """ Kedro-Viz plugin and webserver """
 
+import hashlib
 import json
 import sys
 import webbrowser
@@ -54,6 +55,10 @@ def root(subpath="index.html"):
     )
 
 
+def _hash(value):
+    return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
+
+
 def get_data_from_kedro():
     """ Get pipeline data from Kedro and format it appropriately """
 
@@ -70,35 +75,35 @@ def get_data_from_kedro():
     all_tags = set()
 
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
-        task_id = "task/" + node.name.replace(" ", "")
+        task_id = _hash(str(node))
         nodes.append(
             {
                 "type": "task",
                 "id": task_id,
                 "name": getattr(node, "short_name", node.name),
-                "full_name": str(node),
+                "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
             }
         )
         all_tags.update(node.tags)
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
-            edges.append({"source": "data/" + namespace, "target": task_id})
+            edges.append({"source": _hash(namespace), "target": task_id})
             namespace_tags[namespace].update(node.tags)
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
-            edges.append({"source": task_id, "target": "data/" + namespace})
+            edges.append({"source": task_id, "target": _hash(namespace)})
             namespace_tags[namespace].update(node.tags)
 
     for namespace, tags in sorted(namespace_tags.items()):
+        is_param = bool("param" in namespace.lower())
         nodes.append(
             {
-                "type": "data",
-                "id": "data/" + namespace,
+                "type": "parameters" if is_param else "data",
+                "id": _hash(namespace),
                 "name": pretty_name(namespace),
                 "full_name": namespace,
                 "tags": sorted(tags),
-                "is_parameters": bool("param" in namespace.lower()),
             }
         )
 

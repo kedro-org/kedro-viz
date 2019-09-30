@@ -39,76 +39,62 @@ from kedro_viz import server
 
 EXPECTED_PIPELINE_DATA = {
     "edges": [
-        {
-            "target": "task/func([bob_in,parameters])->[bob_out]",
-            "source": "data/bob_in",
-        },
-        {
-            "target": "task/func([bob_in,parameters])->[bob_out]",
-            "source": "data/parameters",
-        },
-        {
-            "target": "data/bob_out",
-            "source": "task/func([bob_in,parameters])->[bob_out]",
-        },
-        {"target": "task/my_node", "source": "data/fred_in"},
-        {"target": "task/my_node", "source": "data/parameters"},
-        {"target": "data/fred_out", "source": "task/my_node"},
+        {"target": "01a6a5cb", "source": "7366ec9f"},
+        {"target": "01a6a5cb", "source": "f1f1425b"},
+        {"target": "60e68b8e", "source": "01a6a5cb"},
+        {"target": "de8434b7", "source": "afffac5f"},
+        {"target": "de8434b7", "source": "f1f1425b"},
+        {"target": "37316e3a", "source": "de8434b7"},
     ],
     "nodes": [
         {
-            "name": "Func",
+            "name": "Func1",
             "type": "task",
-            "id": "task/func([bob_in,parameters])->[bob_out]",
-            "full_name": "func([bob_in,parameters]) -> [bob_out]",
+            "id": "01a6a5cb",
+            "full_name": "func1",
             "tags": [],
         },
         {
             "name": "my_node",
             "type": "task",
-            "id": "task/my_node",
-            "full_name": "my_node: func([fred_in@pandas,parameters]) -> [fred_out@pandas]",
+            "id": "de8434b7",
+            "full_name": "func2",
             "tags": ["bob"],
         },
         {
-            "is_parameters": False,
             "name": "Bob In",
             "tags": [],
-            "id": "data/bob_in",
+            "id": "7366ec9f",
             "full_name": "bob_in",
             "type": "data",
         },
         {
-            "is_parameters": False,
             "name": "Bob Out",
             "tags": [],
-            "id": "data/bob_out",
+            "id": "60e68b8e",
             "full_name": "bob_out",
             "type": "data",
         },
         {
-            "is_parameters": False,
             "name": "Fred In",
             "tags": ["bob"],
-            "id": "data/fred_in",
+            "id": "afffac5f",
             "full_name": "fred_in",
             "type": "data",
         },
         {
-            "is_parameters": False,
             "name": "Fred Out",
             "tags": ["bob"],
-            "id": "data/fred_out",
+            "id": "37316e3a",
             "full_name": "fred_out",
             "type": "data",
         },
         {
-            "is_parameters": True,
             "name": "Parameters",
             "tags": ["bob"],
-            "id": "data/parameters",
+            "id": "f1f1425b",
             "full_name": "parameters",
-            "type": "data",
+            "type": "parameters",
         },
     ],
     "tags": [{"name": "Bob", "id": "bob"}],
@@ -116,16 +102,19 @@ EXPECTED_PIPELINE_DATA = {
 
 
 def create_pipeline():
-    def func(a, b):  # pylint: disable=unused-argument
+    def func1(a, b):  # pylint: disable=unused-argument
+        return a
+
+    def func2(a, b):  # pylint: disable=unused-argument
         return a
 
     return Pipeline(
         [
             # unnamed node with no tags and basic io
-            node(func, ["bob_in", "parameters"], ["bob_out"]),
+            node(func1, ["bob_in", "parameters"], ["bob_out"]),
             # named node with tags and transcoding
             node(
-                func,
+                func2,
                 ["fred_in@pandas", "parameters"],
                 ["fred_out@pandas"],
                 name="my_node",

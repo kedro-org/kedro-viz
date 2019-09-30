@@ -94,16 +94,18 @@ describe('Reducer', () => {
       type: action.TOGGLE_PARAMETERS,
       parameters: false
     });
-    const { nodeDisabled, nodeIsParam } = newState;
+    const { nodeDisabled, nodeType } = newState;
     const nodes = getNodes(newState);
 
-    it('should disable any nodes where is_parameters is true', () => {
-      const paramNodes = nodes.filter(node => nodeIsParam[node]);
+    it('should disable any nodes where node.type === "parameters"', () => {
+      const paramNodes = nodes.filter(node => nodeType[node] === 'parameters');
       expect(paramNodes.every(key => nodeDisabled[key])).toBe(true);
     });
 
-    it('should not disable any nodes where is_parameters is false', () => {
-      const nonParamNodes = nodes.filter(node => !nodeIsParam[node]);
+    it('should not disable any nodes where node.type !=== "parameters"', () => {
+      const nonParamNodes = nodes.filter(
+        node => nodeType[node] !== 'parameters'
+      );
       expect(nonParamNodes.every(key => !nodeDisabled[key])).toBe(true);
     });
   });

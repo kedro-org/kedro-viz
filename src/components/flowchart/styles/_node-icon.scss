@@ -59,7 +59,8 @@
     pointer-events: none;
   }
 
-  &.node--data {
+  &.node--data,
+  &.node--parameters {
     rect {
       opacity: 0;
       pointer-events: none;

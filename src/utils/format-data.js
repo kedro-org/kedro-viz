@@ -61,7 +61,7 @@ const addNode = state => node => {
   state.nodeName[id] = node.name;
   state.nodeFullName[id] = node.full_name;
   state.nodeType[id] = node.type;
-  state.nodeIsParam[id] = Boolean(node.is_parameters);
+  state.nodeIsParam[id] = node.type === 'parameters';
   state.nodeTags[id] = node.tags || [];
 };
 
