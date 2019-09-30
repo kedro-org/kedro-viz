@@ -15,8 +15,7 @@ import {
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
-import { ReactComponent as DataIcon } from './icon-data.svg';
-import { ReactComponent as TaskIcon } from './icon-task.svg';
+import Node from './node';
 import './styles/flowchart.css';
 
 const DURATION = 700;
@@ -260,15 +259,6 @@ export class FlowChart extends Component {
       tooltipY
     } = this.state;
 
-    const icons = {
-      data: DataIcon,
-      task: TaskIcon
-    };
-    const iconSizes = {
-      data: 17,
-      task: 18
-    };
-
     // Set up line shape function
     const lineShape = line()
       .x(d => d.x)
@@ -322,49 +312,19 @@ export class FlowChart extends Component {
               ref={this.nodesRef}>
               {nodes
                 .sort((a, b) => a.order - b.order)
-                .map(node => {
-                  const Icon = icons[node.type];
-                  return (
-                    <g
-                      key={node.id}
-                      tabIndex="0"
-                      transform={`translate(${node.x || 0}, ${node.y || 0})`}
-                      // opacity={0}
-                      className={classnames('node', {
-                        'node--data': node.type === 'data',
-                        'node--task': node.type === 'task',
-                        'node--icon': !textLabels,
-                        'node--text': textLabels,
-                        'node--active': node.active,
-                        'node--highlight': centralNode && linkedNodes[node.id],
-                        'node--faded': centralNode && !linkedNodes[node.id]
-                      })}
-                      onClick={e => this.handleNodeClick(e, node)}
-                      onMouseOver={e => this.handleNodeMouseOver(e, node)}
-                      onMouseOut={this.handleNodeMouseOut}
-                      onFocus={e => this.handleNodeMouseOver(e, node)}
-                      onBlur={this.handleNodeMouseOut}
-                      onKeyDown={e => this.handleNodeKeyDown(e, node)}>
-                      <rect
-                        width={node.width - 5}
-                        height={node.height - 5}
-                        x={(node.width - 5) / -2}
-                        y={(node.height - 5) / -2}
-                        rx={node.type === 'data' ? node.height / 2 : 0}
-                      />
-                      <text data-id={node.id} textAnchor="middle" dy="4">
-                        {node.name}
-                      </text>
-                      <Icon
-                        className="node__icon"
-                        width={iconSizes[node.type]}
-                        height={iconSizes[node.type]}
-                        x={iconSizes[node.type] / -2}
-                        y={iconSizes[node.type] / -2}
-                      />
-                    </g>
-                  );
-                })}
+                .map(node => (
+                  <Node
+                    key={node.id}
+                    node={node}
+                    textLabels={textLabels}
+                    centralNode={centralNode}
+                    linkedNodes={linkedNodes}
+                    handleNodeClick={this.handleNodeClick}
+                    handleNodeMouseOver={this.handleNodeMouseOver}
+                    handleNodeMouseOut={this.handleNodeMouseOut}
+                    handleNodeKeyDown={this.handleNodeKeyDown}
+                  />
+                ))}
             </g>
           </g>
         </svg>
