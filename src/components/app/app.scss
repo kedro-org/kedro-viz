@@ -1,94 +1,13 @@
 @import '../../styles/variables';
 
-//--- Fixes and overrides for Kedro UI components ---//
-
-.kedro-pipeline {
-  // Prevent Chrome 71 focus scroll bug, by containing the
-  // visually-hidden mixin in a wrapper to prevent it escaping and somehow
-  // messing up the overflow:hidden scroll positioning.
-  .kui-switch {
-    position: relative;
-  }
-
-  // Don't let the radio button circles collapse
-  .kui-switch-radio__box {
-    min-width: 20px;
-  }
-
-  // Change Kedro-UI focus outlines to blue
-  &.kui-theme--dark,
-  &.kui-theme--light {
-    .kui-switch__input:focus + .kui-switch-radio__label .kui-switch-radio__box {
-      box-shadow: 0 0 0 4px $color-link;
-
-      [data-whatinput='mouse'] & {
-        box-shadow: none;
-      }
-    }
-
-    .kui-input--focused,
-    .kui-dropdown__label:focus,
-    .kui-switch__input:focus
-      + .kui-switch-checkbox__label
-      .kui-switch-checkbox__box {
-      outline: 4px solid $color-link;
-
-      [data-whatintent='mouse'] & {
-        outline-color: transparent;
-      }
-    }
-
-    .kui-switch__input + .kui-toggle__switch {
-      border: 7px solid transparent;
-      margin: -7px;
-      background-color: transparent;
-      outline-width: 4px;
-      transition: outline-color 0.1s;
-      user-select: none;
-    }
-    .kui-switch__input:active + .kui-toggle__switch,
-    .kui-switch__input:focus + .kui-toggle__switch {
-      outline-color: $color-link;
-
-      [data-whatinput='mouse'] & {
-        outline-color: transparent;
-      }
-    }
-  }
-
-  // Fix KedroUI font-family styling
-  button {
-    font-family: inherit;
-  }
-}
-
 //--- Reusable site-wide styles --//
 
-// Icon buttons
-.pipeline-icon-button {
-  background: none;
-  border: none;
-  padding: 4px;
-  margin: 0;
-  box-shadow: none;
-  cursor: pointer;
-  border-radius: 50%;
-  font-size: 1em;
-  width: 3.2em;
-  height: 3.2em;
-  transition: all ease 0.1s;
-  transform: scale(1.3);
-
-  &:hover {
-    transform: scale(1.5);
+.pipeline-icon {
+  .kui-theme--light & {
+    fill: #333;
   }
 
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px $color-link;
-
-    [data-whatinput='mouse'] & {
-      box-shadow: none;
-    }
+  .kui-theme--dark & {
+    fill: #fff;
   }
 }

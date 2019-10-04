@@ -1,9 +1,20 @@
 import { createSelector } from 'reselect';
-import { getActiveSnapshotEdges } from './index';
 
+const getEdges = state => state.edges;
 const getEdgeSources = state => state.edgeSources;
 const getEdgeTargets = state => state.edgeTargets;
-const getFocusedNode = state => state.nodeFocused;
+const getClickedNode = state => state.nodeClicked;
+const getHoveredNode = state => state.nodeHovered;
+
+/**
+ * Get the node that should be used as the center of the set of linked nodes
+ * @param {Array} edges
+ * @param {string} nodeID
+ */
+export const getCentralNode = createSelector(
+  [getClickedNode, getHoveredNode],
+  (clickedNode, hoveredNode) => clickedNode || hoveredNode
+);
 
 /**
  * Recursively search through the edges data for ancestor and descendant nodes
@@ -11,7 +22,7 @@ const getFocusedNode = state => state.nodeFocused;
  * @param {string} nodeID
  */
 export const getLinkedNodes = createSelector(
-  [getActiveSnapshotEdges, getEdgeSources, getEdgeTargets, getFocusedNode],
+  [getEdges, getEdgeSources, getEdgeTargets, getCentralNode],
   (edges, edgeSources, edgeTargets, nodeID) => {
     if (!nodeID) {
       return {};

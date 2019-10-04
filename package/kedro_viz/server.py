@@ -28,6 +28,9 @@
 
 """ Kedro-Viz plugin and webserver """
 
+import hashlib
+import json
+import sys
 import webbrowser
 from collections import defaultdict
 from pathlib import Path
@@ -35,6 +38,8 @@ from pathlib import Path
 import click
 from flask import Flask, jsonify, send_from_directory
 from kedro.cli import get_project_context
+
+data = None  # pylint: disable=invalid-name
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -50,9 +55,12 @@ def root(subpath="index.html"):
     )
 
 
-@app.route("/api/nodes.json")
-def nodes_json():
-    """Serve the pipeline data."""
+def _hash(value):
+    return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
+
+
+def get_data_from_kedro():
+    """ Get pipeline data from Kedro and format it appropriately """
 
     def pretty_name(name):
         name = name.replace("-", " ").replace("_", " ")
@@ -67,35 +75,35 @@ def nodes_json():
     all_tags = set()
 
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
-        task_id = "task/" + node.name.replace(" ", "")
+        task_id = _hash(str(node))
         nodes.append(
             {
                 "type": "task",
                 "id": task_id,
                 "name": getattr(node, "short_name", node.name),
-                "full_name": str(node),
+                "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
             }
         )
         all_tags.update(node.tags)
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
-            edges.append({"source": "data/" + namespace, "target": task_id})
+            edges.append({"source": _hash(namespace), "target": task_id})
             namespace_tags[namespace].update(node.tags)
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
-            edges.append({"source": task_id, "target": "data/" + namespace})
+            edges.append({"source": task_id, "target": _hash(namespace)})
             namespace_tags[namespace].update(node.tags)
 
     for namespace, tags in sorted(namespace_tags.items()):
+        is_param = bool("param" in namespace.lower())
         nodes.append(
             {
-                "type": "data",
-                "id": "data/" + namespace,
+                "type": "parameters" if is_param else "data",
+                "id": _hash(namespace),
                 "name": pretty_name(namespace),
                 "full_name": namespace,
                 "tags": sorted(tags),
-                "is_parameters": bool("param" in namespace.lower()),
             }
         )
 
@@ -103,7 +111,13 @@ def nodes_json():
     for tag in sorted(all_tags):
         tags.append({"id": tag, "name": pretty_name(tag)})
 
-    return jsonify({"snapshots": [{"nodes": nodes, "edges": edges, "tags": tags}]})
+    return {"nodes": nodes, "edges": edges, "tags": tags}
+
+
+@app.route("/api/nodes.json")
+def nodes_json():
+    """Serve the pipeline data."""
+    return jsonify(data)
 
 
 @click.group(name="Kedro-Viz")
@@ -129,9 +143,26 @@ def commands():
     help="Whether to open viz interface in the default browser or not. "
     "Defaults to True.",
 )
-def viz(host, port, browser):
+@click.option("--load-file", default=None, type=click.Path(exists=True, dir_okay=False))
+@click.option(
+    "--save-file", default=None, type=click.Path(dir_okay=False, writable=True)
+)
+def viz(host, port, browser, load_file, save_file):
     """Visualize the pipeline using kedroviz."""
+    global data  # pylint: disable=global-statement,invalid-name
 
-    if browser:
-        webbrowser.open_new("http://127.0.0.1:{:d}/".format(port))
-    app.run(host=host, port=port)
+    if load_file:
+        data = json.loads(Path(load_file).read_text())
+        for key in ["nodes", "edges", "tags"]:
+            if key not in data:
+                click.echo("Invalid file, top level key '{}' not found.".format(key))
+                sys.exit(1)
+    else:
+        data = get_data_from_kedro()
+
+    if save_file:
+        Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))
+    else:
+        if browser:
+            webbrowser.open_new("http://127.0.0.1:{:d}/".format(port))
+        app.run(host=host, port=port)
