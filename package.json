@@ -40,6 +40,7 @@
     "react-custom-scrollbars": "^4.2.1",
     "react-scripts": "^3.0.1",
     "react-test-renderer": "^16.8.6",
+    "react-transition-group": "^4.3.0",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
     "snyk": "^1.222.1",

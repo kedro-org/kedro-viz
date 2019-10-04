@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import { TransitionGroup } from 'react-transition-group';
 import 'd3-transition';
-// import { interpolatePath } from 'd3-interpolate-path';
 import { select, event } from 'd3-selection';
-import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import {
   setNodeTextBbox,
@@ -16,9 +15,10 @@ import { getVisibleNodes } from '../../selectors/nodes';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import Node from './node';
+import Edge from './edge';
 import './styles/flowchart.css';
 
-const DURATION = 700;
+export const DURATION = 700;
 
 /**
  * Display a pipeline flowchart, mostly rendered with D3
@@ -146,9 +146,12 @@ export class FlowChart extends Component {
     const newNodeTextBBox = {};
     this.props.visibleNodes.forEach(node => {
       if (!this.props.nodeTextBBox[node.id]) {
-        newNodeTextBBox[node.id] = this.nodesRef.current
-          .querySelector(`text[data-id="${node.id}"]`)
-          .getBBox();
+        const text = this.nodesRef.current.querySelector(
+          `text[data-id="${node.id}"]`
+        );
+        if (text) {
+          newNodeTextBBox[node.id] = text.getBBox();
+        }
       }
     });
     if (Object.keys(newNodeTextBBox).length) {
@@ -259,12 +262,6 @@ export class FlowChart extends Component {
       tooltipY
     } = this.state;
 
-    // Set up line shape function
-    const lineShape = line()
-      .x(d => d.x)
-      .y(d => d.y)
-      .curve(curveBasis);
-
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -290,41 +287,39 @@ export class FlowChart extends Component {
             </marker>
           </defs>
           <g ref={this.wrapperRef}>
-            <g className="pipeline-flowchart__edges" ref={this.edgesRef}>
-              {edges.map(edge => (
-                <g
+            <TransitionGroup
+              component="g"
+              className="pipeline-flowchart__edges"
+              ref={this.edgesRef}>
+              {edges.map((edge, i) => (
+                <Edge
+                  index={i}
                   key={edge.id}
-                  className={classnames('edge', {
-                    'edge--faded':
-                      centralNode &&
-                      (!linkedNodes[edge.source] || !linkedNodes[edge.target])
-                  })}>
-                  <path
-                    markerEnd="url(#arrowhead)"
-                    d={edge.points && lineShape(edge.points)}
-                  />
-                </g>
+                  edge={edge}
+                  faded={
+                    centralNode &&
+                    (!linkedNodes[edge.source] || !linkedNodes[edge.target])
+                  }
+                />
               ))}
-            </g>
+            </TransitionGroup>
             <g
               id="nodes"
               className="pipeline-flowchart__nodes"
               ref={this.nodesRef}>
-              {nodes
-                .sort((a, b) => a.order - b.order)
-                .map(node => (
-                  <Node
-                    key={node.id}
-                    node={node}
-                    textLabels={textLabels}
-                    centralNode={centralNode}
-                    linkedNodes={linkedNodes}
-                    handleNodeClick={this.handleNodeClick}
-                    handleNodeMouseOver={this.handleNodeMouseOver}
-                    handleNodeMouseOut={this.handleNodeMouseOut}
-                    handleNodeKeyDown={this.handleNodeKeyDown}
-                  />
-                ))}
+              {nodes.map(node => (
+                <Node
+                  key={node.id}
+                  node={node}
+                  textLabels={textLabels}
+                  highlighted={centralNode && linkedNodes[node.id]}
+                  faded={centralNode && !linkedNodes[node.id]}
+                  handleNodeClick={this.handleNodeClick}
+                  handleNodeMouseOver={this.handleNodeMouseOver}
+                  handleNodeMouseOut={this.handleNodeMouseOut}
+                  handleNodeKeyDown={this.handleNodeKeyDown}
+                />
+              ))}
             </g>
           </g>
         </svg>

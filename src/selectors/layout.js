@@ -69,20 +69,29 @@ export const getGraph = createSelector(
 );
 
 /**
+ * Sort nodes by X/Y coords (with Y taking precedence),
+ * so that their tabindexes are in the correct order for keyboard users
+ * @param {Object} node Datum
+ */
+const nodeTabIndex = node => node.x + node.y * 9999;
+
+/**
  * Reformat data for use on the chart,
  * and recombine with other data that doesn't affect layout
  */
 export const getLayout = createSelector(
   [getGraph, getNodeType, getNodeActive],
   (graph, nodeType, nodeActive) => ({
-    nodes: graph.nodes().map(nodeID => {
-      const node = graph.node(nodeID);
-      return Object.assign({}, node, {
-        type: nodeType[nodeID],
-        order: node.x + node.y * 9999,
-        active: nodeActive[nodeID]
-      });
-    }),
+    nodes: graph
+      .nodes()
+      .map(nodeID => {
+        const node = graph.node(nodeID);
+        return Object.assign({}, node, {
+          type: nodeType[nodeID],
+          active: nodeActive[nodeID]
+        });
+      })
+      .sort((a, b) => nodeTabIndex(a) - nodeTabIndex(b)),
     edges: graph.edges().map(edge => graph.edge(edge))
   })
 );
