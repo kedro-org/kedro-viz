@@ -234,12 +234,12 @@ export class FlowChart extends Component {
     const {
       centralNode,
       chartSize,
-      layout,
+      nodes,
+      edges,
       linkedNodes,
       textLabels
     } = this.props;
     const { outerWidth, outerHeight } = chartSize;
-    const { nodes, edges } = layout;
     const {
       tooltipVisible,
       tooltipIsRight,
@@ -324,7 +324,7 @@ export class FlowChart extends Component {
 export const mapStateToProps = state => ({
   centralNode: getCentralNode(state),
   chartSize: state.chartSize,
-  layout: getLayout(state),
+  ...getLayout(state),
   linkedNodes: getLinkedNodes(state),
   nodeTextBBox: state.nodeTextBBox,
   textLabels: state.textLabels,
