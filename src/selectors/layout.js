@@ -93,7 +93,7 @@ export const getLayout = createSelector(
         });
       })
       .sort((a, b) => nodeTabIndex(a) - nodeTabIndex(b)),
-    edges: graph.edges().map(edge => graph.edge(edge))
+    edges: graph.edges().map(edgeID => Object.assign({}, graph.edge(edgeID)))
   })
 );
 
