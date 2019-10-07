@@ -12,12 +12,12 @@ const getNodeTextBBox = state => state.nodeTextBBox;
  * Calculate the width and height of a node container
  * @param {Object} node Datum object
  * @param {Object} svg D3 element wrapper
+ * @param {Object} bbox SVGRect node dimensions
  * @return {Object} width and height
  */
-export const getNodeSize = (node, textLabels, nodeTextBBox) => {
+export const getNodeSize = (node, textLabels, bbox) => {
   if (textLabels) {
     const boxSize = 40;
-    const bbox = nodeTextBBox[node.id];
     const textWidth = bbox ? bbox.width : 0;
     return {
       height: boxSize,
@@ -46,9 +46,10 @@ export const getGraph = createSelector(
     });
 
     nodes.forEach(node => {
+      const size = getNodeSize(node, textLabels, nodeTextBBox[node.id]);
       graph.setNode(
         node.id,
-        Object.assign({}, node, getNodeSize(node, textLabels, nodeTextBBox), {
+        Object.assign({}, node, size, {
           label: node.name
         })
       );
