@@ -60,8 +60,8 @@ export const getGraph = createSelector(
     });
 
     // Run Dagre layout to calculate X/Y positioning
-    // but only if text widths have been calculated
-    if (Object.keys(nodeTextBBox).length) {
+    // but only if all text widths have been calculated
+    if (nodes.every(node => nodeTextBBox[node.id])) {
       dagre.layout(graph);
     }
 

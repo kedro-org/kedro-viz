@@ -23,6 +23,7 @@ export default ({
   textLabels,
   highlighted,
   faded,
+  getTextBBox,
   handleNodeClick,
   handleNodeMouseOver,
   handleNodeMouseOut,
@@ -30,10 +31,12 @@ export default ({
 }) => {
   const Icon = icons[node.type];
   const gRef = useRef(null);
+  const textRef = useRef(null);
   const [prevNode, setState] = useState(node);
 
   useEffect(() => {
     if (isNaN(node.x) || isNaN(node.y)) {
+      getTextBBox(node.id, textRef);
       return;
     }
     if (isNaN(prevNode.x) && !isNaN(node.x)) {
@@ -86,7 +89,7 @@ export default ({
           y={(node.height - 5) / -2}
           rx={node.type === 'data' ? node.height / 2 : 0}
         />
-        <text data-id={node.id} textAnchor="middle" dy="4">
+        <text ref={textRef} data-id={node.id} textAnchor="middle" dy="4">
           {node.name}
         </text>
         <Icon

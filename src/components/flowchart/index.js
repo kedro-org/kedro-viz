@@ -38,7 +38,7 @@ export class FlowChart extends Component {
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
     this.wrapperRef = React.createRef();
-    this.nodesRef = React.createRef();
+    this.getNodeTextSize = this.getNodeTextSize.bind(this);
   }
 
   componentDidMount() {
@@ -48,7 +48,6 @@ export class FlowChart extends Component {
       wrapper: select(this.wrapperRef.current)
     };
 
-    this.getNodeTextSize();
     this.updateChartSize();
     this.initZoomBehaviour();
     this.zoomChart();
@@ -65,9 +64,6 @@ export class FlowChart extends Component {
     }
     if (prevProps.zoom !== this.props.zoom) {
       this.zoomChart();
-    }
-    if (prevProps.visibleNodes !== this.props.visibleNodes) {
-      this.getNodeTextSize();
     }
   }
 
@@ -141,20 +137,11 @@ export class FlowChart extends Component {
    * Get SVG BBox for node text labels, to calculate their width
    * so that their box wrappers can be sized appropriately
    */
-  getNodeTextSize() {
-    const newNodeTextBBox = {};
-    this.props.visibleNodes.forEach(node => {
-      if (!this.props.nodeTextBBox[node.id]) {
-        const text = this.nodesRef.current.querySelector(
-          `text[data-id="${node.id}"]`
-        );
-        if (text) {
-          newNodeTextBBox[node.id] = text.getBBox();
-        }
-      }
-    });
-    if (Object.keys(newNodeTextBBox).length) {
-      this.props.setTextBbox(newNodeTextBBox);
+  getNodeTextSize(nodeID, nodeTextRef) {
+    if (!this.props.nodeTextBBox[nodeID]) {
+      this.props.setTextBbox({
+        [nodeID]: nodeTextRef.current.getBBox()
+      });
     }
   }
 
@@ -301,25 +288,24 @@ export class FlowChart extends Component {
                 />
               ))}
             </TransitionGroup>
-            <g ref={this.nodesRef}>
-              <TransitionGroup
-                component="g"
-                className="pipeline-flowchart__nodes">
-                {nodes.map(node => (
-                  <Node
-                    key={node.id}
-                    node={node}
-                    textLabels={textLabels}
-                    highlighted={centralNode && linkedNodes[node.id]}
-                    faded={centralNode && !linkedNodes[node.id]}
-                    handleNodeClick={this.handleNodeClick}
-                    handleNodeMouseOver={this.handleNodeMouseOver}
-                    handleNodeMouseOut={this.handleNodeMouseOut}
-                    handleNodeKeyDown={this.handleNodeKeyDown}
-                  />
-                ))}
-              </TransitionGroup>
-            </g>
+            <TransitionGroup
+              component="g"
+              className="pipeline-flowchart__nodes">
+              {nodes.map(node => (
+                <Node
+                  key={node.id}
+                  node={node}
+                  getTextBBox={this.getNodeTextSize}
+                  textLabels={textLabels}
+                  highlighted={centralNode && linkedNodes[node.id]}
+                  faded={centralNode && !linkedNodes[node.id]}
+                  handleNodeClick={this.handleNodeClick}
+                  handleNodeMouseOver={this.handleNodeMouseOver}
+                  handleNodeMouseOut={this.handleNodeMouseOut}
+                  handleNodeKeyDown={this.handleNodeKeyDown}
+                />
+              ))}
+            </TransitionGroup>
           </g>
         </svg>
         <div
