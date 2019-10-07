@@ -18,3 +18,21 @@
 .node--faded {
   opacity: 0.3;
 }
+
+.node-enter {
+  opacity: 0;
+}
+
+.node-enter-active {
+  opacity: 1;
+  transition: opacity 0.9s;
+}
+
+.node-exit {
+  opacity: 1;
+}
+
+.node-exit-active {
+  opacity: 0;
+  transition: opacity 0.9s;
+}

@@ -33,7 +33,11 @@ export default ({
   const [prevNode, setState] = useState(node);
 
   useEffect(() => {
-    if (!node.x || !node.y) {
+    if (isNaN(node.x) || isNaN(node.y)) {
+      return;
+    }
+    if (isNaN(prevNode.x) && !isNaN(node.x)) {
+      setState(node);
       return;
     }
     select(gRef.current)
@@ -49,7 +53,13 @@ export default ({
   }, [node.x, node.y]);
 
   return (
-    <CSSTransition classNames="node" timeout={DURATION} appear in={show}>
+    <CSSTransition
+      classNames="node"
+      timeout={DURATION}
+      mountOnEnter
+      unmountOnExit
+      appear
+      in={show}>
       <g
         ref={gRef}
         tabIndex="0"

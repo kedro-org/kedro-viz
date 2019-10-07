@@ -38,7 +38,6 @@ export class FlowChart extends Component {
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
     this.wrapperRef = React.createRef();
-    this.edgesRef = React.createRef();
     this.nodesRef = React.createRef();
   }
 
@@ -289,8 +288,7 @@ export class FlowChart extends Component {
           <g ref={this.wrapperRef}>
             <TransitionGroup
               component="g"
-              className="pipeline-flowchart__edges"
-              ref={this.edgesRef}>
+              className="pipeline-flowchart__edges">
               {edges.map((edge, i) => (
                 <Edge
                   index={i}
@@ -303,23 +301,24 @@ export class FlowChart extends Component {
                 />
               ))}
             </TransitionGroup>
-            <g
-              id="nodes"
-              className="pipeline-flowchart__nodes"
-              ref={this.nodesRef}>
-              {nodes.map(node => (
-                <Node
-                  key={node.id}
-                  node={node}
-                  textLabels={textLabels}
-                  highlighted={centralNode && linkedNodes[node.id]}
-                  faded={centralNode && !linkedNodes[node.id]}
-                  handleNodeClick={this.handleNodeClick}
-                  handleNodeMouseOver={this.handleNodeMouseOver}
-                  handleNodeMouseOut={this.handleNodeMouseOut}
-                  handleNodeKeyDown={this.handleNodeKeyDown}
-                />
-              ))}
+            <g ref={this.nodesRef}>
+              <TransitionGroup
+                component="g"
+                className="pipeline-flowchart__nodes">
+                {nodes.map(node => (
+                  <Node
+                    key={node.id}
+                    node={node}
+                    textLabels={textLabels}
+                    highlighted={centralNode && linkedNodes[node.id]}
+                    faded={centralNode && !linkedNodes[node.id]}
+                    handleNodeClick={this.handleNodeClick}
+                    handleNodeMouseOver={this.handleNodeMouseOver}
+                    handleNodeMouseOut={this.handleNodeMouseOut}
+                    handleNodeKeyDown={this.handleNodeKeyDown}
+                  />
+                ))}
+              </TransitionGroup>
             </g>
           </g>
         </svg>
