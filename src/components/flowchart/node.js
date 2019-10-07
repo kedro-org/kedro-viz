@@ -40,9 +40,7 @@ export default ({
       .transition('update-node-translate')
       .duration(DURATION)
       .attr('transform', `translate(${node.x}, ${node.y})`)
-      .end()
-      .catch(() => {})
-      .finally(() => {
+      .on('end', () => {
         if (show) {
           setState(node);
         }

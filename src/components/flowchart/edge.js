@@ -29,9 +29,7 @@ export default ({ edge, in: show, faded }) => {
       .transition('update-edge-path')
       .duration(DURATION)
       .attrTween('d', () => interpolatePath(previous, current))
-      .end()
-      .catch(() => {})
-      .finally(() => {
+      .on('end', () => {
         setEdgeState(edge);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
