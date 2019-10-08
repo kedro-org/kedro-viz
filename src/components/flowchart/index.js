@@ -11,7 +11,6 @@ import {
   toggleNodeHovered,
   updateChartSize
 } from '../../actions';
-import { getVisibleNodes } from '../../selectors/nodes';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import Node from './node';
@@ -329,7 +328,6 @@ export const mapStateToProps = state => ({
   nodeTextBBox: state.nodeTextBBox,
   textLabels: state.textLabels,
   view: state.view,
-  visibleNodes: getVisibleNodes(state),
   zoom: getZoomPosition(state)
 });
 
