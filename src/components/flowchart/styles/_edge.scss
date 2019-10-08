@@ -1,21 +1,7 @@
 @import './variables';
 
-.edge-enter {
-  opacity: 0;
-}
-
-.edge-enter-active {
-  opacity: 1;
-  transition: opacity 0.9s;
-}
-
-.edge-exit {
-  opacity: 1;
-}
-
-.edge-exit-active {
-  opacity: 0;
-  transition: opacity 0.9s;
+.edge {
+  transition: opacity 0.4s ease;
 }
 
 .edge-path {

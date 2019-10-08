@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import classnames from 'classnames';
-import { CSSTransition } from 'react-transition-group';
+import { Transition } from 'react-transition-group';
 import 'd3-transition';
 import { interpolatePath } from 'd3-interpolate-path';
 import { select } from 'd3-selection';
@@ -35,24 +35,32 @@ export default ({ edge, in: show, faded }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edge.points]);
 
+  const transitionStyles = {
+    entering: { opacity: 1 },
+    entered: { opacity: 1 },
+    exiting: { opacity: 0 },
+    exited: { opacity: 0 }
+  };
+
   return (
-    <CSSTransition
-      classNames="edge"
-      timeout={DURATION}
-      mountOnEnter
-      unmountOnExit
-      appear
-      in={show}>
-      <g data-id={edge.id}>
-        <path
-          className={classnames('edge-path', {
-            'edge-path--faded': faded
-          })}
-          ref={pathRef}
-          markerEnd="url(#arrowhead)"
-          d={lineShape(prevEdge.points)}
-        />
-      </g>
-    </CSSTransition>
+    <Transition timeout={DURATION} appear in={show}>
+      {state => (
+        <g
+          className="edge"
+          style={{
+            opacity: 0,
+            ...transitionStyles[state]
+          }}>
+          <path
+            className={classnames('edge-path', {
+              'edge-path--faded': faded
+            })}
+            ref={pathRef}
+            markerEnd="url(#arrowhead)"
+            d={lineShape(prevEdge.points)}
+          />
+        </g>
+      )}
+    </Transition>
   );
 };
