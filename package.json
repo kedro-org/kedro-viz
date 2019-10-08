@@ -42,7 +42,7 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "snyk": "^1.222.1",
+    "snyk": "^1.230.5",
     "what-input": "^5.2.3"
   },
   "peerDependencies": {
