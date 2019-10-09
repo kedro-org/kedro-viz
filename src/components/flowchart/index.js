@@ -6,7 +6,6 @@ import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import {
-  setNodeTextBbox,
   toggleNodeClicked,
   toggleNodeHovered,
   updateChartSize
@@ -37,7 +36,6 @@ export class FlowChart extends Component {
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
     this.wrapperRef = React.createRef();
-    this.getNodeTextSize = this.getNodeTextSize.bind(this);
   }
 
   componentDidMount() {
@@ -130,18 +128,6 @@ export class FlowChart extends Component {
         this.zoomBehaviour.transform,
         zoomIdentity.translate(translateX + navOffset, translateY).scale(scale)
       );
-  }
-
-  /**
-   * Get SVG BBox for node text labels, to calculate their width
-   * so that their box wrappers can be sized appropriately
-   */
-  getNodeTextSize(nodeID, nodeTextRef) {
-    if (!this.props.nodeTextBBox[nodeID]) {
-      this.props.setTextBbox({
-        [nodeID]: nodeTextRef.current.getBBox()
-      });
-    }
   }
 
   /**
@@ -294,7 +280,6 @@ export class FlowChart extends Component {
                 <Node
                   key={node.id}
                   node={node}
-                  getTextBBox={this.getNodeTextSize}
                   textLabels={textLabels}
                   highlighted={centralNode && linkedNodes[node.id]}
                   faded={centralNode && !linkedNodes[node.id]}
@@ -325,16 +310,12 @@ export const mapStateToProps = state => ({
   chartSize: state.chartSize,
   ...getLayout(state),
   linkedNodes: getLinkedNodes(state),
-  nodeTextBBox: state.nodeTextBBox,
   textLabels: state.textLabels,
   view: state.view,
   zoom: getZoomPosition(state)
 });
 
 export const mapDispatchToProps = dispatch => ({
-  setTextBbox: nodes => {
-    dispatch(setNodeTextBbox(nodes));
-  },
   onToggleNodeClicked: nodeClicked => {
     dispatch(toggleNodeClicked(nodeClicked));
   },

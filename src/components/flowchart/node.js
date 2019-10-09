@@ -3,6 +3,8 @@ import classnames from 'classnames';
 import { Transition } from 'react-transition-group';
 import 'd3-transition';
 import { select } from 'd3-selection';
+import { useSelector, useDispatch } from 'react-redux';
+import { setNodeTextBbox } from '../../actions';
 import { ReactComponent as DataIcon } from './icon-data.svg';
 import { ReactComponent as TaskIcon } from './icon-task.svg';
 import { DURATION } from './index';
@@ -17,13 +19,12 @@ const iconSizes = {
   task: 18
 };
 
-export default ({
+const Node = ({
   in: show,
   node,
   textLabels,
   highlighted,
   faded,
-  getTextBBox,
   handleNodeClick,
   handleNodeMouseOver,
   handleNodeMouseOut,
@@ -33,10 +34,26 @@ export default ({
   const gRef = useRef(null);
   const textRef = useRef(null);
   const [prevNode, setState] = useState(node);
+  const dispatch = useDispatch();
+  const nodeTextBBox = useSelector(state => state.nodeTextBBox);
+
+  /**
+   * Get SVG BBox for node text labels, to calculate their width
+   * so that their box wrappers can be sized appropriately
+   */
+  const getTextBBox = () => {
+    if (!nodeTextBBox[node.id]) {
+      dispatch(
+        setNodeTextBbox({
+          [node.id]: textRef.current.getBBox()
+        })
+      );
+    }
+  };
 
   useEffect(() => {
+    getTextBBox();
     if (isNaN(node.x) || isNaN(node.y)) {
-      getTextBBox(node.id, textRef);
       return;
     }
     if (isNaN(prevNode.x) && !isNaN(node.x)) {
@@ -110,3 +127,5 @@ export default ({
     </Transition>
   );
 };
+
+export default Node;
