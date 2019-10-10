@@ -31,13 +31,18 @@
 import hashlib
 import json
 import sys
+import threading
 import webbrowser
 from collections import defaultdict
 from pathlib import Path
 
 import click
+import requests
 from flask import Flask, jsonify, send_from_directory
+from IPython.core.display import HTML, display
+
 from kedro.cli import get_project_context
+from kedro_viz.utils import wait_for
 
 data = None  # pylint: disable=invalid-name
 
@@ -59,101 +64,30 @@ def _hash(value):
     return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
 
 
-from time import sleep, time
-from typing import Any, Callable
-
-
-class WaitForException(Exception):
-    pass
-
-
-def wait_for(
-    func: Callable,
-    expected_result: Any = True,
-    timeout_: int = 10,
-    print_error: bool = True,
-    sleep_for: int = 1,
-    **kwargs: Any
-) -> None:
-    """
-    Run specified function until it returns expected result until timeout.
-
-    Args:
-        func (Callable): Specified function
-        expected_result (Any): result that is expected. Defaults to None.
-        timeout_ (int): Time out in seconds. Defaults to 10.
-        print_error (boolean): whether any exceptions raised should be printed.
-            Defaults to False.
-        sleep_for (int): Execute func every specified number of seconds.
-            Defaults to 1.
-        **kwargs: Arguments to be passed to func
-
-    Raises:
-         WaitForException: if func doesn't return expected result within the
-         specified time
-
-    """
-    end = time() + timeout_
-
-    while time() <= end:
-        try:
-            retval = func(**kwargs)
-        except Exception as err:  # pylint: disable=broad-except
-            if print_error:
-                print(err)
-        else:
-            if retval == expected_result:
-                return None
-        sleep(sleep_for)
-
-    raise WaitForException(
-        "func: {}, didn't return {} within specified"
-        " timeout: {}".format(func, expected_result, timeout_)
-    )
-
-
-import requests
-
-
 def _check_viz_up():
     url = "http://127.0.0.1:5000/"
     response = requests.get(url)
-    assert response.status_code == 200
+    return response.status_code == 200
 
 
-import threading
+# pylint: disable=unused-argument
+def run_viz(line=None) -> None:
+    """
+    Line magic function to start kedro viz. It calls a kedro viz in a thread and display it in
+    the Jupyter notebook environment.
 
+    Args:
+        line: line required by line magic interface
 
-# def _check_service_up(context: behave.runner.Context, url: str, string: str):
-#     """Check that a service is running and responding appropriately.
-
-#     Args:
-#         context: Test context.
-#         url: Url that is to be read.
-#         string: The string to be checked.
-
-#     """
-#     response = .get(url, timeout=1.0)
-#     response.raise_for_status()
-
-#     data = response.text
-#     assert string in data
-
-
-def run_viz(line=None):
+    """
     # This needs to be global later
-    x = threading.Thread(target=_call_viz, daemon=True)
-    x.start()
-    sleep(10)
-    # wait_for(func=_check_viz_up())
-    print("hello")
+    viz_thread = threading.Thread(target=_call_viz, daemon=True)
+    viz_thread.start()
+    wait_for(func=_check_viz_up)
     wrapper = """
             <html lang="en"><head></head><body style="width:100; height:100;">
             <iframe src="http://127.0.0.1:5000/?hidenav" height=500 width="100%"></iframe>
             </body></html>"""
-    # return wrapper
-    from IPython.core.display import display, HTML
-
     display(HTML(wrapper))
 
 

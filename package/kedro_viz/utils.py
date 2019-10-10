@@ -25,65 +25,62 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+""" Kedro-Viz helper functions """
 
-"""Common functions for e2e testing.
-"""
-
-import os
-import subprocess
-import tempfile
-import venv
-from pathlib import Path
 from time import sleep, time
 from typing import Any, Callable
 
-import requests
 
-from kedro_viz.utils import wait_for
-
-PIP_INSTALL_SCRIPT = "https://bootstrap.pypa.io/get-pip.py"
-
-
-def download_url(url: str) -> str:
+class WaitForException(Exception):
     """
-    Download and return decoded contents of url
+    WaitForException: if func doesn't return expected result within the
+        specified time
+
+    """
+
+    pass
+
+
+def wait_for(
+    func: Callable,
+    expected_result: Any = True,
+    timeout_: int = 10,
+    print_error: bool = True,
+    sleep_for: int = 1,
+    **kwargs: Any,
+) -> None:
+    """
+    Run specified function until it returns expected result until timeout.
 
     Args:
-        url: Url that is to be read.
+        func (Callable): Specified function
+        expected_result (Any): result that is expected. Defaults to None.
+        timeout_ (int): Time out in seconds. Defaults to 10.
+        print_error (boolean): whether any exceptions raised should be printed.
+            Defaults to False.
+        sleep_for (int): Execute func every specified number of seconds.
+            Defaults to 1.
+        **kwargs: Arguments to be passed to func
 
-    Returns:
-        Decoded data fetched from url.
+    Raises:
+         WaitForException: if func doesn't return expected result within the
+         specified time
 
     """
-    requests.adapters.DEFAULT_RETRIES = 1
-    return requests.get(url).text
+    end = time() + timeout_
 
+    while time() <= end:
+        try:
+            retval = func(**kwargs)
+        except Exception as err:  # pylint: disable=broad-except
+            if print_error:
+                print(err)
+        else:
+            if retval == expected_result:
+                return None
+        sleep(sleep_for)
 
-def create_new_venv() -> str:
-    """
-    Create a new venv
-
-    Note: Due to a bug in Python 3.5.2 pip needs to be manually installed
-
-    Returns:
-        path to created venv
-    """
-    # Create venv
-    venv_dir = tempfile.mkdtemp()
-    venv.main([venv_dir, "--without-pip"])
-
-    if os.name == "posix":
-        python_executable = Path(venv_dir) / "bin" / "python"
-    else:
-        python_executable = Path(venv_dir) / "Scripts" / "python.exe"
-
-    # Download and run pip installer
-    # Windows blocks access unless delete set to False
-    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-        tmp_file.write(download_url(PIP_INSTALL_SCRIPT).encode())
-        tmp_file.flush()
-        os.fsync(tmp_file)
-        subprocess.check_call([str(python_executable), tmp_file.name])
-
-    os.unlink(tmp_file.name)
-    return venv_dir
+    raise WaitForException(
+        "func: {}, didn't return {} within specified"
+        " timeout: {}".format(func, expected_result, timeout_)
+    )
