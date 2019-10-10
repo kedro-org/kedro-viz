@@ -140,7 +140,7 @@ import threading
 #     assert string in data
 
 
-def kedro_viz(line=None):
+def run_viz(line=None):
     # This needs to be global later
     x = threading.Thread(target=_call_viz, daemon=True)
     x.start()
