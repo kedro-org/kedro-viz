@@ -33,8 +33,8 @@ import json
 from unittest import mock
 
 import pytest
-
 from kedro.pipeline import Pipeline, node
+
 from kedro_viz import server
 
 EXPECTED_PIPELINE_DATA = {

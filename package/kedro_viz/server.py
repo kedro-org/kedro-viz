@@ -40,8 +40,8 @@ import click
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-
 from kedro.cli import get_project_context
+
 from kedro_viz.utils import wait_for
 
 data = None  # pylint: disable=invalid-name
