@@ -64,8 +64,8 @@ def _hash(value):
     return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
 
 
-def _check_viz_up():
-    url = "http://127.0.0.1:5000/"
+def _check_viz_up(port):
+    url = "http://127.0.0.1:{}/".format(port)
     response = requests.get(url)
     return response.status_code == 200
 
@@ -81,13 +81,16 @@ def run_viz(line=None) -> None:
 
     """
     # This needs to be global later
-    viz_thread = threading.Thread(target=_call_viz, daemon=True)
+    port = 4141
+    viz_thread = threading.Thread(target=_call_viz, kwargs={"port": port}, daemon=True)
     viz_thread.start()
-    wait_for(func=_check_viz_up)
+    wait_for(func=_check_viz_up, port=port)
     wrapper = """
             <html lang="en"><head></head><body style="width:100; height:100;">
-            <iframe src="http://127.0.0.1:5000/?hidenav" height=500 width="100%"></iframe>
-            </body></html>"""
+            <iframe src="http://127.0.0.1:{}/" height=500 width="100%"></iframe>
+            </body></html>""".format(
+        port
+    )
     display(HTML(wrapper))
 
 
