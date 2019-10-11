@@ -5,6 +5,7 @@ import formatData from '../../utils/format-data';
 import loremIpsum from '../../utils/data/lorem-ipsum.mock';
 import animals from '../../utils/data/animals.mock';
 import demo from '../../utils/data/demo.mock';
+import layers from '../../utils/data/layers.mock';
 import { loadState } from '../../utils';
 
 /**
@@ -47,6 +48,8 @@ export const loadData = (data, onLoadData) => {
       return formatData(animals);
     case 'demo':
       return formatData(demo);
+    case 'layers':
+      return formatData(layers);
     case 'json':
       loadJsonData().then(onLoadData);
       return formatData();

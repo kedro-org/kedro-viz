@@ -164,11 +164,13 @@ class Pipeline {
    * random message and JSON schema
    */
   getDatum() {
+    const schema = this.getSchema();
+    console.log(JSON.stringify(schema));
     return {
       schema_id: randomNumber(999999999999999),
       message: getRandomName(randomNumber(MAX_MESSAGE_WORD_LENGTH), ' '),
       created_ts: new Date().getTime() - randomNumber(MAX_TIMESTAMP_OFFSET),
-      ...this.getSchema()
+      ...schema
     };
   }
 }
