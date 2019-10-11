@@ -329,7 +329,7 @@ export class FlowChart extends Component {
     this.setState({
       tooltipVisible: true,
       tooltipIsRight: isRight,
-      tooltipText: node.name,
+      tooltipText: `Rank ${node.rank}`,
       tooltipX: xOffset - chartSize.x + eventOffset.width / 2,
       tooltipY: eventOffset.top - chartSize.y
     });

@@ -9,6 +9,7 @@ const getNodeName = state => state.nodeName;
 const getNodeDisabledNode = state => state.nodeDisabled;
 const getNodeTags = state => state.nodeTags;
 const getNodeType = state => state.nodeType;
+const getNodeLayer = state => state.nodeLayer;
 const getTagActive = state => state.tagActive;
 const getTagEnabled = state => state.tagEnabled;
 
@@ -118,14 +119,15 @@ export const getNodeData = createSelector(
  * that are unnecessary for the chart layout calculation
  */
 export const getVisibleNodes = createSelector(
-  [getNodes, getNodeName, getNodeType, getNodeDisabled],
-  (nodes, nodeName, nodeType, nodeDisabled) =>
+  [getNodes, getNodeName, getNodeType, getNodeDisabled, getNodeLayer],
+  (nodes, nodeName, nodeType, nodeDisabled, nodeLayer) =>
     nodes
       .filter(id => !nodeDisabled[id])
       .map(id => ({
         id,
         name: nodeName[id],
         type: nodeType[id],
+        rank: nodeLayer[id],
         disabled: nodeDisabled[id]
       }))
 );

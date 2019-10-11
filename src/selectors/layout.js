@@ -67,6 +67,7 @@ export const getGraph = createSelector(
   [getVisibleNodes, getVisibleEdges, getTextLabels],
   (nodes, edges, textLabels) => {
     const graph = new dagre.graphlib.Graph().setGraph({
+      ranker: 'none',
       marginx: 40,
       marginy: 40
     });
