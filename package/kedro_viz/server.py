@@ -71,17 +71,21 @@ def _check_viz_up(port):
 
 
 # pylint: disable=unused-argument
-def run_viz(line=None) -> None:
+def run_viz(port=None, line=None) -> None:
     """
     Line magic function to start kedro viz. It calls a kedro viz in a thread and display it in
     the Jupyter notebook environment.
 
     Args:
-        line: line required by line magic interface
+        port: TCP port that viz will listen to. Defaults to 4141.
+        line: line required by line magic interface.
 
     """
+    if not port:
+        port = 4141
+
     # This needs to be global later
-    port = 4141
+    # port = 4141
     viz_thread = threading.Thread(target=_call_viz, kwargs={"port": port}, daemon=True)
     viz_thread.start()
     wait_for(func=_check_viz_up, port=port)
