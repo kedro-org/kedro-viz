@@ -44,6 +44,8 @@ from kedro.cli import get_project_context
 
 from kedro_viz.utils import wait_for
 
+VIZ_THREADS = {}  # type:Dict[int, threading.Thread]
+
 data = None  # pylint: disable=invalid-name
 
 app = Flask(  # pylint: disable=invalid-name
@@ -84,11 +86,14 @@ def run_viz(port=None, line=None) -> None:
     if not port:
         port = 4141
 
-    # This needs to be global later
-    # port = 4141
-    viz_thread = threading.Thread(target=_call_viz, kwargs={"port": port}, daemon=True)
-    viz_thread.start()
-    wait_for(func=_check_viz_up, port=port)
+    if port not in VIZ_THREADS:
+        viz_thread = threading.Thread(
+            target=_call_viz, kwargs={"port": port}, daemon=True
+        )
+        viz_thread.start()
+        VIZ_THREADS[port] = viz_thread
+        wait_for(func=_check_viz_up, port=port)
+
     wrapper = """
             <html lang="en"><head></head><body style="width:100; height:100;">
             <iframe src="http://127.0.0.1:{}/" height=500 width="100%"></iframe>
