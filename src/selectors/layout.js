@@ -4,6 +4,7 @@ import dagre from 'dagre';
 import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
+const getRanker = state => state.ranker;
 const getTextLabels = state => state.textLabels;
 const getNodeType = state => state.nodeType;
 const getChartSize = state => state.chartSize;
@@ -64,10 +65,10 @@ export const getNodeSize = (node, svg) => {
  * which don't affect layout.
  */
 export const getGraph = createSelector(
-  [getVisibleNodes, getVisibleEdges, getTextLabels],
-  (nodes, edges, textLabels) => {
+  [getVisibleNodes, getVisibleEdges, getTextLabels, getRanker],
+  (nodes, edges, textLabels, ranker) => {
     const graph = new dagre.graphlib.Graph().setGraph({
-      ranker: 'none',
+      ranker,
       marginx: 40,
       marginy: 40
     });

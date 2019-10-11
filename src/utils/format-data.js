@@ -23,6 +23,7 @@ const getEdgeID = (source, target) => [source, target].join('|');
  */
 const createPipelineState = () => ({
   id: null,
+  ranker: 'none',
   // Nodes
   nodes: [],
   nodeName: {},

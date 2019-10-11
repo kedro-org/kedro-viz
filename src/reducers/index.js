@@ -1,5 +1,6 @@
 import {
   CHANGE_VIEW,
+  CHANGE_RANKER,
   RESET_DATA,
   TOGGLE_NODE_CLICKED,
   TOGGLE_NODE_DISABLED,
@@ -18,6 +19,11 @@ function reducer(state = {}, action) {
     case CHANGE_VIEW:
       return Object.assign({}, state, {
         view: action.view
+      });
+
+    case CHANGE_RANKER:
+      return Object.assign({}, state, {
+        ranker: action.ranker
       });
 
     case RESET_DATA:

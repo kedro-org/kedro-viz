@@ -11,6 +11,15 @@ export function changeView(view) {
   };
 }
 
+export const CHANGE_RANKER = 'CHANGE_RANKER';
+
+export function changeRanker(ranker) {
+  return {
+    type: CHANGE_RANKER,
+    ranker
+  };
+}
+
 export const RESET_DATA = 'RESET_DATA';
 
 /**

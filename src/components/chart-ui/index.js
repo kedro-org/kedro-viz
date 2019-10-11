@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import RadioButton from '@quantumblack/kedro-ui/lib/components/radio-button';
 import Toggle from '@quantumblack/kedro-ui/lib/components/toggle';
-import { changeView, toggleParameters } from '../../actions';
+import { changeView, changeRanker, toggleParameters } from '../../actions';
 import TagList from '../tag-list';
 import NodeList from '../node-list';
 import './chart-ui.css';
@@ -23,13 +23,29 @@ export const ChartUI = ({
   hasData,
   onToggleParameters,
   onChangeView,
+  onChangeRanker,
   parameters,
   theme,
-  view
+  view,
+  ranker
 }) =>
   hasData ? (
     <Scrollbars autoHide hideTracksWhenNotNeeded>
       <div className="pipeline-ui">
+        <ul className="pipeline-ui__view">
+          {['none', 'network-simplex', 'tight-tree', 'longest-path'].map(r => (
+            <li key={r}>
+              <RadioButton
+                checked={ranker === r}
+                label={`Ranker: ${r}`}
+                name="ranker"
+                onChange={onChangeRanker}
+                value={r}
+                theme={theme}
+              />
+            </li>
+          ))}
+        </ul>
         <ul className="pipeline-ui__view">
           <li>
             <RadioButton
@@ -79,10 +95,14 @@ export const mapStateToProps = state => ({
   hasData: Boolean(state.nodes.length),
   parameters: state.parameters,
   theme: state.theme,
+  ranker: state.ranker,
   view: state.view
 });
 
 export const mapDispatchToProps = dispatch => ({
+  onChangeRanker: (e, { value }) => {
+    dispatch(changeRanker(value));
+  },
   onChangeView: (e, { value }) => {
     dispatch(changeView(value));
   },
