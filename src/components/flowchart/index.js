@@ -143,6 +143,10 @@ export class FlowChart extends Component {
     const { centralNode, layout, linkedNodes, textLabels } = this.props;
     const { nodes, edges } = layout;
 
+    const maxRank = Math.max(...nodes.map(d => d.rank));
+    const hue = rank => rank * (360 / (maxRank + 1));
+    const rankFill = node => `hsl(${hue(node.rank)}, 60%, 40%)`;
+
     // Create selections
     this.el.edges = this.el.edgeGroup
       .selectAll('.edge')
@@ -207,7 +211,10 @@ export class FlowChart extends Component {
       .attr('transform', node => `translate(${node.x}, ${node.y})`)
       .attr('opacity', 0);
 
-    enterNodes.append('circle').attr('r', 25);
+    enterNodes
+      .append('circle')
+      .attr('r', 25)
+      .style('fill', rankFill);
 
     enterNodes.append('rect');
 
@@ -257,6 +264,7 @@ export class FlowChart extends Component {
 
     this.el.nodes
       .select('rect')
+      .style('fill', rankFill)
       .attr('width', node => node.width - 5)
       .attr('height', node => node.height - 5)
       .attr('x', node => (node.width - 5) / -2)
