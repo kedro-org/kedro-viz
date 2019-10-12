@@ -35,6 +35,7 @@ import threading
 import webbrowser
 from collections import defaultdict
 from pathlib import Path
+from typing import Dict
 
 import click
 import requests
@@ -44,7 +45,7 @@ from kedro.cli import get_project_context
 
 from kedro_viz.utils import wait_for
 
-VIZ_THREADS = {}  # type:Dict[int, threading.Thread]
+VIZ_THREADS = {}  # type: Dict[int, threading.Thread]
 
 data = None  # pylint: disable=invalid-name
 

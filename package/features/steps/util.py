@@ -34,12 +34,8 @@ import subprocess
 import tempfile
 import venv
 from pathlib import Path
-from time import sleep, time
-from typing import Any, Callable
 
 import requests
-
-from kedro_viz.utils import wait_for
 
 PIP_INSTALL_SCRIPT = "https://bootstrap.pypa.io/get-pip.py"
 

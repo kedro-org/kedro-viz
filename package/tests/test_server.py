@@ -188,3 +188,30 @@ def test_nodes_endpoint(client):
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == EXPECTED_PIPELINE_DATA
+
+
+@pytest.fixture(autouse=True)
+def clean_up():
+    server.VIZ_THREADS = {}
+
+
+def test_run_viz(mocker, client):
+    """Test inline magic function"""
+    mocked_thread = mocker.patch(
+        "kedro_viz.server.threading.Thread", return_value=mocker.Mock()
+    )
+    mocked_thread.start = True
+    _ = mocker.patch("kedro_viz.server.wait_for", return_value=None)
+
+    # host = "127.0.0.1"
+    # default_port = 4141
+    server.run_viz()
+
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "Kedro Viz" in response.data.decode()
+    # mocked_thread.start
+
+
+def test_wait_for():
+    pass
