@@ -220,10 +220,10 @@ def test_run_viz(mocker):
     )
     _ = mocker.patch("kedro_viz.server.wait_for")
 
-    host = "127.0.0.1"
     default_port = 4141
     server.run_viz()
 
+    # pylint: disable=protected-access
     mocked_thread.assert_called_with(
         target=server._call_viz, kwargs={"port": default_port}, daemon=True
     )
@@ -234,6 +234,8 @@ def test_run_viz(mocker):
 
     # Running run_viz with a different port should start another thread
     server.run_viz(port=8000)
+
+    # pylint: disable=protected-access
     mocked_thread.assert_called_with(
         target=server._call_viz, kwargs={"port": 8000}, daemon=True
     )

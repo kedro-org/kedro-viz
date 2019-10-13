@@ -30,8 +30,11 @@
 
 import json
 
+import behave
+import requests
 import yaml
 from behave import given, then, when
+from IPython.testing.globalipapp import get_ipython
 
 from features.steps.sh_run import ChildTerminatingPopen, run
 from features.steps.util import download_url
@@ -72,6 +75,32 @@ def create_project_from_config_file(context):
     assert res.returncode == OK_EXIT_CODE
 
 
+@given('I have executed the kedro command "{command}"')
+def exec_kedro_target_checked(context, command):
+    """Execute Kedro command and check the status."""
+    cmd = [context.kedro] + command.split()
+
+    res = run(cmd, env=context.env, cwd=str(context.root_project_dir))
+
+    if res.returncode != OK_EXIT_CODE:
+        print(res.stdout)
+        print(res.stderr)
+        assert False
+
+
+@when('I execute the kedro jupyter command "{command}"')
+def exec_notebook(context, command):
+    """Execute Kedro Jupyter target."""
+    split_command = command.split()
+    cmd = [context.kedro, "jupyter"] + split_command
+
+    # Jupyter notebook forks a child process from a parent process, and
+    # only kills the parent process when it is terminated
+    context.result = ChildTerminatingPopen(
+        cmd, env=context.env, cwd=str(context.root_project_dir)
+    )
+
+
 @when('I execute the kedro viz command "{command}"')
 def exec_viz_command(context, command):
     """Execute Kedro viz command """
@@ -83,16 +112,49 @@ def exec_viz_command(context, command):
     )
 
 
+@when('I execute line magic "{command}"')
+def exec_line_magic(context, command):
+    """Execute line magic function """
+    ip = get_ipython()
+    ip.magic(command)
+
+
+@then("jupyter notebook should run on port {port}")
+def check_jupyter_on_port(context: behave.runner.Context, port: int):
+    """Check that jupyter notebook service is running on specified port.
+
+    Args:
+        context: Test context
+        port: Port to check
+
+    """
+    url = "http://localhost:%d" % int(port)
+    try:
+        wait_for(
+            func=_check_service_up,
+            context=context,
+            url=url,
+            string="Jupyter Notebook",
+            timeout_=15,
+            print_error=True,
+        )
+    finally:
+        context.result.terminate()
+
+
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
     """Check that kedro-viz is up and responding to requests"""
 
     wait_for(
-        _check_service_up, expected_result=None, print_error=False, context=context
+        _check_kedroviz_running,
+        expected_result=None,
+        print_error=False,
+        context=context,
     )
 
 
-def _check_service_up(context):
+def _check_kedroviz_running(context):
     """
     Check that a service is running and responding appropriately
 
@@ -106,3 +168,20 @@ def _check_service_up(context):
         assert data_json["nodes"][0]["full_name"] == "predict"
     finally:
         context.result.terminate()
+
+
+def _check_service_up(context: behave.runner.Context, url: str, string: str):
+    """Check that a service is running and responding appropriately.
+
+    Args:
+        context: Test context.
+        url: Url that is to be read.
+        string: The string to be checked.
+
+    """
+    response = requests.get(url, timeout=1.0)
+    response.raise_for_status()
+
+    data = response.text
+    assert string in data
+    assert context.result.poll() is None
