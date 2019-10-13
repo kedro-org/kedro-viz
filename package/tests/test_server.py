@@ -195,23 +195,32 @@ def clean_up():
     server.VIZ_THREADS = {}
 
 
-def test_run_viz(mocker, client):
+def test_wait_for():
+    pass
+
+
+def test_run_viz(mocker):
     """Test inline magic function"""
     mocked_thread = mocker.patch(
         "kedro_viz.server.threading.Thread", return_value=mocker.Mock()
     )
-    mocked_thread.start = True
-    _ = mocker.patch("kedro_viz.server.wait_for", return_value=None)
+    _ = mocker.patch("kedro_viz.server.wait_for")
 
-    # host = "127.0.0.1"
-    # default_port = 4141
+    host = "127.0.0.1"
+    default_port = 4141
     server.run_viz()
 
-    response = client.get("/")
-    assert response.status_code == 200
-    assert "Kedro Viz" in response.data.decode()
-    # mocked_thread.start
+    mocked_thread.assert_called_with(
+        target=server._call_viz, kwargs={"port": default_port}, daemon=True
+    )
 
+    # Running run_viz with the same port should not trigger another thread
+    server.run_viz()
+    assert mocked_thread.call_count == 1
 
-def test_wait_for():
-    pass
+    # Running run_viz with a different port should start another thread
+    server.run_viz(port=8000)
+    mocked_thread.assert_called_with(
+        target=server._call_viz, kwargs={"port": 8000}, daemon=True
+    )
+    assert mocked_thread.call_count == 2
