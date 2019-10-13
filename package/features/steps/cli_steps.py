@@ -34,7 +34,8 @@ import yaml
 from behave import given, then, when
 
 from features.steps.sh_run import ChildTerminatingPopen, run
-from features.steps.util import download_url, wait_for
+from features.steps.util import download_url
+from kedro_viz.utils import wait_for
 
 OK_EXIT_CODE = 0
 
