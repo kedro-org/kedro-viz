@@ -36,6 +36,7 @@ import pytest
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
+from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
     "edges": [
@@ -196,7 +197,20 @@ def clean_up():
 
 
 def test_wait_for():
-    pass
+    def _sum(x, y):
+        return x + y
+
+    assert not server.wait_for(_sum, 3, x=1, y=2)
+
+    unexpected_result_error = r"didn\'t return 0 within specified timeout"
+    with pytest.raises(WaitForException, match=unexpected_result_error):
+        server.wait_for(_sum, 0, x=1, y=2, timeout_=1)
+
+    # Non-callable should fail
+    non_callable = 1
+    non_callable_error = r"didn\'t return True within specified timeout"
+    with pytest.raises(WaitForException, match=non_callable_error):
+        server.wait_for(non_callable, timeout_=1)
 
 
 def test_run_viz(mocker):
