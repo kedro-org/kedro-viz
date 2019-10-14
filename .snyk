@@ -25,8 +25,12 @@ patch:
   SNYK-JS-HTTPSPROXYAGENT-469131:
     - snyk > proxy-agent > https-proxy-agent:
         patched: '2019-10-04T00:46:16.708Z'
+      '@quantumblack/kedro-ui > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent':
+        patched: '2019-10-14T14:25:57.814Z'
     - snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
         patched: '2019-10-04T00:46:16.708Z'
+      '@quantumblack/kedro-ui > snyk > proxy-agent > https-proxy-agent':
+        patched: '2019-10-14T14:25:57.814Z'
     - '@quantumblack/kedro-ui > snyk > proxy-agent > https-proxy-agent':
         patched: '2019-10-04T00:46:16.708Z'
     - '@quantumblack/kedro-ui > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent':
