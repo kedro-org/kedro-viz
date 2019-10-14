@@ -119,29 +119,6 @@ def exec_line_magic(context, command):
     ip.magic(command)
 
 
-@then("jupyter notebook should run on port {port}")
-def check_jupyter_on_port(context: behave.runner.Context, port: int):
-    """Check that jupyter notebook service is running on specified port.
-
-    Args:
-        context: Test context
-        port: Port to check
-
-    """
-    url = "http://localhost:%d" % int(port)
-    try:
-        wait_for(
-            func=_check_service_up,
-            context=context,
-            url=url,
-            string="Jupyter Notebook",
-            timeout_=15,
-            print_error=True,
-        )
-    finally:
-        context.result.terminate()
-
-
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
     """Check that kedro-viz is up and responding to requests"""
