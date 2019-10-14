@@ -193,6 +193,7 @@ def test_nodes_endpoint(client):
 
 @pytest.fixture(autouse=True)
 def clean_up():
+    # pylint: disable=protected-access
     server._VIZ_THREADS.clear()
 
 
