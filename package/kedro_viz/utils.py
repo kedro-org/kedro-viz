@@ -27,6 +27,7 @@
 # limitations under the License.
 """ Kedro-Viz helper functions """
 
+import logging
 from time import sleep, time
 from typing import Any, Callable
 
@@ -74,7 +75,7 @@ def wait_for(
             retval = func(**kwargs)
         except Exception as err:  # pylint: disable=broad-except
             if print_error:
-                print(err)
+                logging.error(err)
         else:
             if retval == expected_result:
                 return None
