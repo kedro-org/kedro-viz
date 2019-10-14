@@ -80,6 +80,6 @@ setup(
     setup_requires=["pytest-runner==4.2"],
     entry_points={
         "kedro.project_commands": ["kedro-viz = kedro_viz.server:commands"],
-        "kedro.line_magic": ["line = kedro_viz.server:run_viz"],
+        "kedro.line_magic": ["line_magic = kedro_viz.server:run_viz"],
     },
 )
