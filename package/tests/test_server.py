@@ -193,7 +193,7 @@ def test_nodes_endpoint(client):
 
 @pytest.fixture(autouse=True)
 def clean_up():
-    server.VIZ_THREADS.clear()
+    server._VIZ_THREADS.clear()
 
 
 def test_wait_for():
