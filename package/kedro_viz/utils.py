@@ -38,7 +38,6 @@ class WaitForException(Exception):
         specified time
 
     """
-
     pass
 
 
