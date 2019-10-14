@@ -22,3 +22,16 @@ patch:
         patched: '2020-07-30T11:48:08.238Z'
     - '@quantumblack/kedro-ui > lodash':
         patched: '2020-07-30T11:48:08.238Z'
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T00:46:16.708Z'
+      '@quantumblack/kedro-ui > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent':
+        patched: '2019-10-14T14:25:57.814Z'
+    - snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T00:46:16.708Z'
+      '@quantumblack/kedro-ui > snyk > proxy-agent > https-proxy-agent':
+        patched: '2019-10-14T14:25:57.814Z'
+    - '@quantumblack/kedro-ui > snyk > proxy-agent > https-proxy-agent':
+        patched: '2019-10-04T00:46:16.708Z'
+    - '@quantumblack/kedro-ui > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent':
+        patched: '2019-10-04T00:46:16.708Z'

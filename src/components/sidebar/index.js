@@ -8,11 +8,17 @@ import './sidebar.css';
 /**
  * Hamburger menu button
  * @param {Function} props.onToggle Show menu on click
+ * @param {Boolean} props.visible Whether nav is visible
  */
-export const ShowMenuButton = ({ onToggle }) => (
+export const ShowMenuButton = ({ onToggle, visible }) => (
   <button
     aria-label="Show menu"
-    className="pipeline-sidebar__show-menu pipeline-sidebar__icon-button"
+    className={classnames(
+      'pipeline-sidebar__show-menu pipeline-sidebar__icon-button',
+      {
+        'pipeline-sidebar__icon-button--visible': visible
+      }
+    )}
     onClick={onToggle}>
     <MenuIcon className="pipeline-icon" />
   </button>
@@ -30,7 +36,7 @@ export const HideMenuButton = ({ onToggle, theme, visible }) => (
     className={classnames(
       'pipeline-sidebar__hide-menu pipeline-sidebar__icon-button',
       {
-        'pipeline-sidebar__hide-menu--visible': visible
+        'pipeline-sidebar__icon-button--visible': visible
       }
     )}
     onClick={onToggle}>
@@ -44,7 +50,7 @@ export const HideMenuButton = ({ onToggle, theme, visible }) => (
  */
 export const Sidebar = props => (
   <>
-    <ShowMenuButton onToggle={props.onToggle} />
+    <ShowMenuButton onToggle={props.onToggle} visible={!props.visible} />
     <nav
       className={classnames('pipeline-sidebar', {
         'pipeline-sidebar--visible': props.visible
