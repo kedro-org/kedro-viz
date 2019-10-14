@@ -38,6 +38,7 @@ export class FlowChart extends Component {
     this.wrapperRef = React.createRef();
     this.edgesRef = React.createRef();
     this.nodesRef = React.createRef();
+    this.bandsRef = React.createRef();
   }
 
   componentDidMount() {
@@ -46,7 +47,8 @@ export class FlowChart extends Component {
       svg: select(this.svgRef.current),
       wrapper: select(this.wrapperRef.current),
       edgeGroup: select(this.edgesRef.current),
-      nodeGroup: select(this.nodesRef.current)
+      nodeGroup: select(this.nodesRef.current),
+      bandGroup: select(this.bandsRef.current)
     };
 
     this.updateChartSize();
@@ -116,6 +118,7 @@ export class FlowChart extends Component {
     this.zoomBehaviour = zoom().on('zoom', () => {
       this.el.wrapper.attr('transform', event.transform);
       this.hideTooltip();
+      this.drawChart();
     });
     this.el.svg.call(this.zoomBehaviour);
   }
@@ -143,11 +146,51 @@ export class FlowChart extends Component {
     const { centralNode, layout, linkedNodes, textLabels } = this.props;
     const { nodes, edges } = layout;
 
+    const max = Math.pow(2, 25);
+
+    const bandsObj = {};
+    nodes.forEach(node => {
+      if (!bandsObj[node.rank]) {
+        bandsObj[node.rank] = node.y;
+      }
+    });
+    const bands = Object.keys(bandsObj)
+      .map(rank => ({
+        rank,
+        y: bandsObj[rank]
+      }))
+      .map((rank, i, bands) => {
+        let topY;
+        if (bands[i - 1]) {
+          topY = (rank.y + bands[i - 1].y) / 2;
+        } else {
+          topY = -max;
+        }
+        let bottomY;
+        if (bands[i + 1]) {
+          bottomY = (rank.y + bands[i + 1].y) / 2;
+        } else {
+          bottomY = max;
+        }
+        return {
+          rank: rank.rank,
+          topY,
+          bottomY,
+          height: bottomY - topY,
+          y: rank.y
+        };
+      });
+
+    // Node hues
     const maxRank = Math.max(...nodes.map(d => d.rank));
     const hue = rank => rank * (360 / (maxRank + 1));
     const rankFill = node => `hsl(${hue(node.rank)}, 60%, 40%)`;
 
     // Create selections
+    this.el.bands = this.el.bandGroup
+      .selectAll('.band')
+      .data(bands, band => band.rank);
+
     this.el.edges = this.el.edgeGroup
       .selectAll('.edge')
       .data(edges, edge => edge.id);
@@ -161,6 +204,24 @@ export class FlowChart extends Component {
       .x(d => d.x)
       .y(d => d.y)
       .curve(curveBasis);
+
+    // Create edges
+    const enterBands = this.el.bands
+      .enter()
+      .append('rect')
+      .attr('class', 'band');
+
+    this.el.bands.exit().remove();
+
+    this.el.bands = this.el.bands.merge(enterBands);
+
+    this.el.bands
+      .attr('fill', 'white')
+      .attr('opacity', (d, i) => (i % 2 ? 0.03 : 0))
+      .attr('x', max / -2)
+      .attr('y', d => d.topY)
+      .attr('height', d => d.height)
+      .attr('width', max);
 
     // Create edges
     const enterEdges = this.el.edges
@@ -392,6 +453,7 @@ export class FlowChart extends Component {
             </marker>
           </defs>
           <g ref={this.wrapperRef}>
+            <g className="pipeline-flowchart__bands" ref={this.bandsRef} />
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
             <g
               id="nodes"
