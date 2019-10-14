@@ -45,7 +45,7 @@ from kedro.cli import get_project_context
 
 from kedro_viz.utils import wait_for
 
-VIZ_THREADS = {}  # type: Dict[int, threading.Thread]
+_VIZ_THREADS = {}  # type: Dict[int, threading.Thread]
 
 data = None  # pylint: disable=invalid-name
 
@@ -84,15 +84,15 @@ def run_viz(port=None, line=None) -> None:
         line: line required by line magic interface.
 
     """
-    if not port:
+    if not port:  # Default argument doesn't work in Jupyter line magic
         port = 4141
 
-    if port not in VIZ_THREADS:
+    if port not in _VIZ_THREADS:
         viz_thread = threading.Thread(
             target=_call_viz, kwargs={"port": port}, daemon=True
         )
         viz_thread.start()
-        VIZ_THREADS[port] = viz_thread
+        _VIZ_THREADS[port] = viz_thread
         wait_for(func=_check_viz_up, port=port)
 
     wrapper = """

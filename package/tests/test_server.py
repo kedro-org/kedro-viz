@@ -193,7 +193,7 @@ def test_nodes_endpoint(client):
 
 @pytest.fixture(autouse=True)
 def clean_up():
-    server.VIZ_THREADS = {}
+    server._VIZ_THREADS = {}
 
 
 def test_wait_for():
@@ -215,9 +215,7 @@ def test_wait_for():
 
 def test_run_viz(mocker):
     """Test inline magic function"""
-    mocked_thread = mocker.patch(
-        "kedro_viz.server.threading.Thread", return_value=mocker.Mock()
-    )
+    mocked_thread = mocker.patch("kedro_viz.server.threading.Thread")
     _ = mocker.patch("kedro_viz.server.wait_for")
     default_port = 4141
     server.run_viz()
