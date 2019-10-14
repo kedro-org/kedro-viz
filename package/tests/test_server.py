@@ -245,12 +245,13 @@ class TestRunViz:
         Running run_viz with a different port should start another thread
         """
         server.run_viz()
-        server.run_viz(port=8000)
         # pylint: disable=protected-access
-        mocked_thread.assert_called_once_with(
+        mocked_thread.assert_called_with(
             target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
         )
-        mocked_thread.assert_called_once_with(
+        server.run_viz(port=8000)
+        # pylint: disable=protected-access
+        mocked_thread.assert_called_with(
             target=server._call_viz, kwargs={"port": 8000}, daemon=True
         )
         assert mocked_thread.call_count == 2
