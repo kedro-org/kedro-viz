@@ -6,6 +6,7 @@ import { getCentralNode } from './linked-nodes';
 const getNodes = state => state.nodes;
 const getView = state => state.view;
 const getNodeName = state => state.nodeName;
+const getNodeFullName = state => state.nodeFullName;
 const getNodeDisabledNode = state => state.nodeDisabled;
 const getNodeTags = state => state.nodeTags;
 const getNodeType = state => state.nodeType;
@@ -118,14 +119,14 @@ export const getNodeData = createSelector(
  * that are unnecessary for the chart layout calculation
  */
 export const getVisibleNodes = createSelector(
-  [getNodes, getNodeName, getNodeType, getNodeDisabled],
-  (nodes, nodeName, nodeType, nodeDisabled) =>
+  [getNodes, getNodeName, getNodeType, getNodeDisabled, getNodeFullName],
+  (nodes, nodeName, nodeType, nodeDisabled, nodeFullName) =>
     nodes
       .filter(id => !nodeDisabled[id])
       .map(id => ({
         id,
         name: nodeName[id],
         type: nodeType[id],
-        disabled: nodeDisabled[id]
+        fullName: nodeFullName[id]
       }))
 );

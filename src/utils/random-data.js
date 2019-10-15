@@ -58,7 +58,7 @@ class Pipeline {
         return {
           id: `${type}/${id}`,
           name,
-          full_name: name,
+          full_name: `${name} (${name})`,
           type: id.includes('param') ? 'parameters' : type,
           layer: getLayer()
         };
