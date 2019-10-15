@@ -223,7 +223,7 @@ describe('Selectors', () => {
           expect.objectContaining({
             id: expect.any(String),
             name: expect.any(String),
-            disabled: expect.any(Boolean)
+            fullName: expect.any(String)
           })
         ])
       );

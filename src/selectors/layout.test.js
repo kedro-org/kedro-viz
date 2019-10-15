@@ -71,13 +71,13 @@ describe('Selectors', () => {
           expect.objectContaining({
             id: expect.any(String),
             name: expect.any(String),
+            fullName: expect.any(String),
             type: expect.stringMatching(/data|task/),
             height: expect.any(Number),
             width: expect.any(Number),
             x: expect.any(Number),
             y: expect.any(Number),
-            active: expect.any(Boolean),
-            disabled: expect.any(Boolean)
+            active: expect.any(Boolean)
           })
         ])
       );
