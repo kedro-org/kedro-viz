@@ -1,4 +1,3 @@
-import { DURATION } from './index';
 import 'd3-transition';
 import { interpolatePath } from 'd3-interpolate-path';
 import { select } from 'd3-selection';
@@ -39,7 +38,7 @@ const draw = function() {
   this.el.edges
     .exit()
     .transition('exit-edges')
-    .duration(DURATION)
+    .duration(this.DURATION)
     .attr('opacity', 0)
     .remove();
 
@@ -52,13 +51,13 @@ const draw = function() {
         centralNode && (!linkedNodes[source] || !linkedNodes[target])
     )
     .transition('show-edges')
-    .duration(DURATION)
+    .duration(this.DURATION)
     .attr('opacity', 1);
 
   this.el.edges
     .select('path')
     .transition('update-edges')
-    .duration(DURATION)
+    .duration(this.DURATION)
     .attrTween('d', function(edge) {
       const current = edge.points && lineShape(edge.points);
       const previous = select(this).attr('d') || current;
@@ -91,7 +90,7 @@ const draw = function() {
   this.el.nodes
     .exit()
     .transition('exit-nodes')
-    .duration(DURATION)
+    .duration(this.DURATION)
     .attr('opacity', 0)
     .remove();
 
@@ -114,7 +113,7 @@ const draw = function() {
 
   this.el.nodes
     .transition('update-nodes')
-    .duration(DURATION)
+    .duration(this.DURATION)
     .attr('opacity', 1)
     .attr('transform', node => `translate(${node.x}, ${node.y})`)
     .end()

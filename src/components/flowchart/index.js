@@ -14,8 +14,6 @@ import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import draw from './draw';
 import './styles/flowchart.css';
 
-export const DURATION = 700;
-
 /**
  * Display a pipeline flowchart, mostly rendered with D3
  */
@@ -30,6 +28,8 @@ export class FlowChart extends Component {
       tooltipX: 0,
       tooltipY: 0
     };
+
+    this.DURATION = 700;
 
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
@@ -127,7 +127,7 @@ export class FlowChart extends Component {
     const navOffset = this.getNavOffset(chartSize.outerWidth);
     this.el.svg
       .transition()
-      .duration(DURATION)
+      .duration(this.DURATION)
       .call(
         this.zoomBehaviour.transform,
         zoomIdentity.translate(translateX + navOffset, translateY).scale(scale)
