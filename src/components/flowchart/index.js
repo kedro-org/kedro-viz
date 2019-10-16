@@ -39,14 +39,7 @@ export class FlowChart extends Component {
   }
 
   componentDidMount() {
-    // Create D3 element selectors
-    this.el = {
-      svg: select(this.svgRef.current),
-      wrapper: select(this.wrapperRef.current),
-      edgeGroup: select(this.edgesRef.current),
-      nodeGroup: select(this.nodesRef.current)
-    };
-
+    this.selectD3Elements();
     this.updateChartSize();
     this.initZoomBehaviour();
     this.drawChart();
@@ -66,6 +59,18 @@ export class FlowChart extends Component {
       this.zoomChart();
     }
     this.drawChart();
+  }
+
+  /**
+   * Create D3 element selectors
+   */
+  selectD3Elements() {
+    this.el = {
+      svg: select(this.svgRef.current),
+      wrapper: select(this.wrapperRef.current),
+      edgeGroup: select(this.edgesRef.current),
+      nodeGroup: select(this.nodesRef.current)
+    };
   }
 
   /**
