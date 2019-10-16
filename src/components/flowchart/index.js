@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import 'd3-transition';
-import { interpolatePath } from 'd3-interpolate-path';
 import { select, event } from 'd3-selection';
-import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import {
   toggleNodeClicked,
@@ -13,10 +11,8 @@ import {
 } from '../../actions';
 import { getLayout, getZoomPosition } from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
-import icon from './icon';
+import draw from './draw';
 import './styles/flowchart.css';
-
-const DURATION = 700;
 
 /**
  * Display a pipeline flowchart, mostly rendered with D3
@@ -33,6 +29,8 @@ export class FlowChart extends Component {
       tooltipY: 0
     };
 
+    this.DURATION = 700;
+
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
     this.wrapperRef = React.createRef();
@@ -41,14 +39,7 @@ export class FlowChart extends Component {
   }
 
   componentDidMount() {
-    // Create D3 element selectors
-    this.el = {
-      svg: select(this.svgRef.current),
-      wrapper: select(this.wrapperRef.current),
-      edgeGroup: select(this.edgesRef.current),
-      nodeGroup: select(this.nodesRef.current)
-    };
-
+    this.selectD3Elements();
     this.updateChartSize();
     this.initZoomBehaviour();
     this.drawChart();
@@ -68,6 +59,18 @@ export class FlowChart extends Component {
       this.zoomChart();
     }
     this.drawChart();
+  }
+
+  /**
+   * Create D3 element selectors
+   */
+  selectD3Elements() {
+    this.el = {
+      svg: select(this.svgRef.current),
+      wrapper: select(this.wrapperRef.current),
+      edgeGroup: select(this.edgesRef.current),
+      nodeGroup: select(this.nodesRef.current)
+    };
   }
 
   /**
@@ -129,7 +132,7 @@ export class FlowChart extends Component {
     const navOffset = this.getNavOffset(chartSize.outerWidth);
     this.el.svg
       .transition()
-      .duration(DURATION)
+      .duration(this.DURATION)
       .call(
         this.zoomBehaviour.transform,
         zoomIdentity.translate(translateX + navOffset, translateY).scale(scale)
@@ -140,128 +143,7 @@ export class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { centralNode, layout, linkedNodes, textLabels } = this.props;
-    const { nodes, edges } = layout;
-
-    // Create selections
-    this.el.edges = this.el.edgeGroup
-      .selectAll('.edge')
-      .data(edges, edge => edge.id);
-
-    this.el.nodes = this.el.nodeGroup
-      .selectAll('.node')
-      .data(nodes, node => node.id);
-
-    // Set up line shape function
-    const lineShape = line()
-      .x(d => d.x)
-      .y(d => d.y)
-      .curve(curveBasis);
-
-    // Create edges
-    const enterEdges = this.el.edges
-      .enter()
-      .append('g')
-      .attr('class', 'edge')
-      .attr('opacity', 0);
-
-    enterEdges.append('path').attr('marker-end', d => `url(#arrowhead)`);
-
-    this.el.edges
-      .exit()
-      .transition('exit-edges')
-      .duration(DURATION)
-      .attr('opacity', 0)
-      .remove();
-
-    this.el.edges = this.el.edges.merge(enterEdges);
-
-    this.el.edges
-      .classed(
-        'edge--faded',
-        ({ source, target }) =>
-          centralNode && (!linkedNodes[source] || !linkedNodes[target])
-      )
-      .transition('show-edges')
-      .duration(DURATION)
-      .attr('opacity', 1);
-
-    this.el.edges
-      .select('path')
-      .transition('update-edges')
-      .duration(DURATION)
-      .attrTween('d', function(edge) {
-        const current = edge.points && lineShape(edge.points);
-        const previous = select(this).attr('d') || current;
-        return interpolatePath(previous, current);
-      });
-
-    // Create nodes
-    const enterNodes = this.el.nodes
-      .enter()
-      .append('g')
-      .attr('tabindex', '0')
-      .attr('class', 'node');
-
-    enterNodes
-      .attr('transform', node => `translate(${node.x}, ${node.y})`)
-      .attr('opacity', 0);
-
-    enterNodes.append('circle').attr('r', 25);
-
-    enterNodes.append('rect');
-
-    enterNodes.append(icon);
-
-    enterNodes
-      .append('text')
-      .text(node => node.name)
-      .attr('text-anchor', 'middle')
-      .attr('dy', 4);
-
-    this.el.nodes
-      .exit()
-      .transition('exit-nodes')
-      .duration(DURATION)
-      .attr('opacity', 0)
-      .remove();
-
-    this.el.nodes = this.el.nodes
-      .merge(enterNodes)
-      .classed('node--parameters', node => node.type === 'parameters')
-      .classed('node--data', node => node.type === 'data')
-      .classed('node--task', node => node.type === 'task')
-      .classed('node--icon', !textLabels)
-      .classed('node--text', textLabels)
-      .classed('node--active', node => node.active)
-      .classed('node--highlight', node => centralNode && linkedNodes[node.id])
-      .classed('node--faded', node => centralNode && !linkedNodes[node.id])
-      .on('click', this.handleNodeClick)
-      .on('mouseover', this.handleNodeMouseOver)
-      .on('mouseout', this.handleNodeMouseOut)
-      .on('focus', this.handleNodeMouseOver)
-      .on('blur', this.handleNodeMouseOut)
-      .on('keydown', this.handleNodeKeyDown);
-
-    this.el.nodes
-      .transition('update-nodes')
-      .duration(DURATION)
-      .attr('opacity', 1)
-      .attr('transform', node => `translate(${node.x}, ${node.y})`)
-      .end()
-      .catch(() => {})
-      .finally(() => {
-        // Sort nodes so tab focus order follows X/Y position
-        this.el.nodes.sort((a, b) => a.order - b.order);
-      });
-
-    this.el.nodes
-      .select('rect')
-      .attr('width', node => node.width - 5)
-      .attr('height', node => node.height - 5)
-      .attr('x', node => (node.width - 5) / -2)
-      .attr('y', node => (node.height - 5) / -2)
-      .attr('rx', node => (node.type === 'data' ? node.height / 2 : 0));
+    draw.call(this);
   }
 
   /**
