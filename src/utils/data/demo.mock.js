@@ -1,777 +1,777 @@
 export default {
   edges: [
     {
-      source: 'data/Interaction Raw',
-      target: 'task/Load Raw Interaction Data'
+      source: '33920f3a',
+      target: '06c33e94'
     },
     {
-      source: 'task/Load Raw Interaction Data',
-      target: 'data/Interaction Primary'
+      source: '06c33e94',
+      target: '105160a0'
     },
     {
-      source: 'data/Country Raw',
-      target: 'task/Load Raw Country Data'
+      source: '814ef273',
+      target: '0b7e1ac6'
     },
     {
-      source: 'task/Load Raw Country Data',
-      target: 'data/Country Primary'
+      source: '0b7e1ac6',
+      target: '389b5286'
     },
     {
-      source: 'data/Shopper Spend Raw',
-      target: 'task/Load Raw Shopper Spend Data'
+      source: '58450007',
+      target: '22ea294c'
     },
     {
-      source: 'task/Load Raw Shopper Spend Data',
-      target: 'data/Shopper Spend Primary'
+      source: '22ea294c',
+      target: 'bcb40508'
     },
     {
-      source: 'data/Interaction Primary',
-      target: 'task/Preprocess Primary Interaction Data'
+      source: '105160a0',
+      target: 'f1a163c4'
     },
     {
-      source: 'task/Preprocess Primary Interaction Data',
-      target: 'data/Interaction Intermediate'
+      source: 'f1a163c4',
+      target: 'e44a096d'
     },
     {
-      source: 'data/Country Primary',
-      target: 'task/Preprocess Primary Country Data'
+      source: '389b5286',
+      target: 'b2f97396'
     },
     {
-      source: 'task/Preprocess Primary Country Data',
-      target: 'data/Country Intermediate'
+      source: 'b2f97396',
+      target: '8c1dcc36'
     },
     {
-      source: 'data/Shopper Spend Primary',
-      target: 'task/Preprocess Primary Shopper Spend Data'
+      source: 'bcb40508',
+      target: '27bb9dc7'
     },
     {
-      source: 'task/Preprocess Primary Shopper Spend Data',
-      target: 'data/Shopper Spend Intermediate'
+      source: '27bb9dc7',
+      target: '13a964bf'
     },
     {
-      source: 'data/CRM Predictions',
-      target: 'task/Create Shopper Spend Features'
+      source: '842a3580',
+      target: 'fb5bd01d'
     },
     {
-      source: 'data/Interaction Intermediate',
-      target: 'task/Create Shopper Spend Features'
+      source: 'e44a096d',
+      target: 'fb5bd01d'
     },
     {
-      source: 'data/Country Intermediate',
-      target: 'task/Create Shopper Spend Features'
+      source: '8c1dcc36',
+      target: 'fb5bd01d'
     },
     {
-      source: 'data/Shopper Spend Intermediate',
-      target: 'task/Create Shopper Spend Features'
+      source: '13a964bf',
+      target: 'fb5bd01d'
     },
     {
-      source: 'task/Create Shopper Spend Features',
-      target: 'data/Shopper Spend Features'
+      source: 'fb5bd01d',
+      target: '55bd1af4'
     },
     {
-      source: 'data/CRM Predictions',
-      target: 'task/Create Shopper Churn Features'
+      source: '842a3580',
+      target: 'd52422da'
     },
     {
-      source: 'data/Interaction Intermediate',
-      target: 'task/Create Shopper Churn Features'
+      source: 'e44a096d',
+      target: 'd52422da'
     },
     {
-      source: 'data/Country Intermediate',
-      target: 'task/Create Shopper Churn Features'
+      source: '8c1dcc36',
+      target: 'd52422da'
     },
     {
-      source: 'data/Shopper Spend Intermediate',
-      target: 'task/Create Shopper Churn Features'
+      source: '13a964bf',
+      target: 'd52422da'
     },
     {
-      source: 'task/Create Shopper Churn Features',
-      target: 'data/Shopper Churn Features'
+      source: 'd52422da',
+      target: '442c2c34'
     },
     {
-      source: 'data/Vendor Master',
-      target: 'task/Prepare Vendor Input'
+      source: '181c2b7c',
+      target: 'dcbb9652'
     },
     {
-      source: 'data/Salesforce CRM',
-      target: 'task/Prepare Vendor Input'
+      source: '057ade39',
+      target: 'dcbb9652'
     },
     {
-      source: 'task/Prepare Vendor Input',
-      target: 'data/Vendor Predictions'
+      source: 'dcbb9652',
+      target: '7eb64be0'
     },
     {
-      source: 'data/Vendor Master',
-      target: 'task/Prepare CRM Input'
+      source: '181c2b7c',
+      target: 'c4cff5d0'
     },
     {
-      source: 'data/Salesforce Accounts',
-      target: 'task/Prepare CRM Input'
+      source: '42e79d42',
+      target: 'c4cff5d0'
     },
     {
-      source: 'task/Prepare CRM Input',
-      target: 'data/CRM Predictions'
+      source: 'c4cff5d0',
+      target: '842a3580'
     },
     {
-      source: 'data/Vendor Predictions',
-      target: 'task/Predictive Sales Model'
+      source: '7eb64be0',
+      target: '95cfc42d'
     },
     {
-      source: 'data/params: Sales Model',
-      target: 'task/Predictive Sales Model'
+      source: '1b3afcba',
+      target: '95cfc42d'
     },
     {
-      source: 'data/Shopper Spend Features',
-      target: 'task/Predictive Sales Model'
+      source: '55bd1af4',
+      target: '95cfc42d'
     },
     {
-      source: 'task/Predictive Sales Model',
-      target: 'data/Sales Validation Results'
+      source: '95cfc42d',
+      target: '8770a38e'
     },
     {
-      source: 'task/Predictive Sales Model',
-      target: 'data/Sales Trained Model'
+      source: '95cfc42d',
+      target: '1dafa5fb'
     },
     {
-      source: 'data/Shopper Churn Features',
-      target: 'task/Predictive Engagement Model'
+      source: '442c2c34',
+      target: 'ccbee9c5'
     },
     {
-      source: 'data/params: Engagement Model',
-      target: 'task/Predictive Engagement Model'
+      source: '3a60b3a4',
+      target: 'ccbee9c5'
     },
     {
-      source: 'task/Predictive Engagement Model',
-      target: 'data/Engagement Validation Results'
+      source: 'ccbee9c5',
+      target: 'fb4f64bd'
     },
     {
-      source: 'task/Predictive Engagement Model',
-      target: 'data/Engagement Trained Model'
+      source: 'ccbee9c5',
+      target: 'f4f3a276'
     },
     {
-      source: 'data/Sales Trained Model',
-      target: 'task/Sales Model Explainable AI'
+      source: '1dafa5fb',
+      target: '394244dd'
     },
     {
-      source: 'data/Shopper Spend Features',
-      target: 'task/Sales Model Explainable AI'
+      source: '55bd1af4',
+      target: '394244dd'
     },
     {
-      source: 'task/Sales Model Explainable AI',
-      target: 'data/Sales Model Explanations'
+      source: '394244dd',
+      target: '792a14f6'
     },
     {
-      source: 'data/Engagement Trained Model',
-      target: 'task/Engagement Model Explainable AI'
+      source: 'f4f3a276',
+      target: '67257e84'
     },
     {
-      source: 'data/Shopper Churn Features',
-      target: 'task/Engagement Model Explainable AI'
+      source: '442c2c34',
+      target: '67257e84'
     },
     {
-      source: 'task/Engagement Model Explainable AI',
-      target: 'data/Engagement Model Explanations'
+      source: '67257e84',
+      target: '9bd2dc3d'
     },
     {
-      source: 'data/Sales Trained Model',
-      target: 'task/Perform Digital Analysis'
+      source: '1dafa5fb',
+      target: 'f6f50e64'
     },
     {
-      source: 'data/params: Optimisation',
-      target: 'task/Perform Digital Analysis'
+      source: 'dff067eb',
+      target: 'f6f50e64'
     },
     {
-      source: 'data/Shopper Spend Features',
-      target: 'task/Perform Digital Analysis'
+      source: '55bd1af4',
+      target: 'f6f50e64'
     },
     {
-      source: 'task/Perform Digital Analysis',
-      target: 'data/Digital Analysis'
+      source: 'f6f50e64',
+      target: '92f58611'
     },
     {
-      source: 'data/params: Optimisation',
-      target: 'task/Engagement Recommendation Engine'
+      source: 'dff067eb',
+      target: 'e061482b'
     },
     {
-      source: 'data/Engagement Trained Model',
-      target: 'task/Engagement Recommendation Engine'
+      source: 'f4f3a276',
+      target: 'e061482b'
     },
     {
-      source: 'data/Shopper Churn Features',
-      target: 'task/Engagement Recommendation Engine'
+      source: '442c2c34',
+      target: 'e061482b'
     },
     {
-      source: 'task/Engagement Recommendation Engine',
-      target: 'data/Engagement Recommendations'
+      source: 'e061482b',
+      target: 'b2a3a8e5'
     },
     {
-      source: 'data/Sales Model Explanations',
-      target: 'task/Sales Model Performance Monitoring'
+      source: '792a14f6',
+      target: '53b05b01'
     },
     {
-      source: 'data/Sales Validation Results',
-      target: 'task/Sales Model Performance Monitoring'
+      source: '8770a38e',
+      target: '53b05b01'
     },
     {
-      source: 'data/Engagement Validation Results',
-      target: 'task/Engagement Model Performance Monitoring'
+      source: 'fb4f64bd',
+      target: '6d8d326d'
     },
     {
-      source: 'data/Engagement Model Explanations',
-      target: 'task/Engagement Model Performance Monitoring'
+      source: '9bd2dc3d',
+      target: '6d8d326d'
     },
     {
-      source: 'data/params: Optimisation',
-      target: 'task/Multi-Channel Optimisation'
+      source: 'dff067eb',
+      target: '45bda5fd'
     },
     {
-      source: 'data/Action Cost Table',
-      target: 'task/Multi-Channel Optimisation'
+      source: '9aeb6881',
+      target: '45bda5fd'
     },
     {
-      source: 'data/Digital Analysis',
-      target: 'task/Multi-Channel Optimisation'
+      source: '92f58611',
+      target: '45bda5fd'
     },
     {
-      source: 'task/Multi-Channel Optimisation',
-      target: 'data/Multi-Channel Resolutions'
+      source: '45bda5fd',
+      target: '90713d4f'
     },
     {
-      source: 'data/params: Optimisation',
-      target: 'task/Content Optimisation'
+      source: 'dff067eb',
+      target: '211c92c3'
     },
     {
-      source: 'data/Digital Analysis',
-      target: 'task/Content Optimisation'
+      source: '92f58611',
+      target: '211c92c3'
     },
     {
-      source: 'task/Content Optimisation',
-      target: 'data/Content Resolutions'
+      source: '211c92c3',
+      target: '4704ff18'
     },
     {
-      source: 'data/params: Optimisation',
-      target: 'task/Segment Journeys'
+      source: 'dff067eb',
+      target: 'c17b9614'
     },
     {
-      source: 'data/Content Resolutions',
-      target: 'task/Segment Journeys'
+      source: '4704ff18',
+      target: 'c17b9614'
     },
     {
-      source: 'task/Segment Journeys',
-      target: 'data/Segment Journeys Allocations'
+      source: 'c17b9614',
+      target: 'ccd3d45b'
     },
     {
-      source: 'data/Multi-Channel Resolutions',
-      target: 'task/Generate Dashboard Inputs'
+      source: '90713d4f',
+      target: '90461ea7'
     },
     {
-      source: 'data/Segment Journeys Allocations',
-      target: 'task/Generate Dashboard Inputs'
+      source: 'ccd3d45b',
+      target: '90461ea7'
     },
     {
-      source: 'data/Engagement Model Explanations',
-      target: 'task/Generate Dashboard Inputs'
+      source: '9bd2dc3d',
+      target: '90461ea7'
     },
     {
-      source: 'data/Sales Model Explanations',
-      target: 'task/Generate Dashboard Inputs'
+      source: '792a14f6',
+      target: '90461ea7'
     },
     {
-      source: 'data/Content Resolutions',
-      target: 'task/Generate Dashboard Inputs'
+      source: '4704ff18',
+      target: '90461ea7'
     },
     {
-      source: 'task/Generate Dashboard Inputs',
-      target: 'data/Upselling Readiness Dashboard Input'
+      source: '90461ea7',
+      target: '3e3b263a'
     },
     {
-      source: 'task/Generate Dashboard Inputs',
-      target: 'data/Lead Scoring Dashboard Input'
+      source: '90461ea7',
+      target: 'f3e15708'
     },
     {
-      source: 'task/Generate Dashboard Inputs',
-      target: 'data/Lifetime Value Prediction Dashboard Input'
+      source: '90461ea7',
+      target: '83ebce11'
     },
     {
-      source: 'task/Generate Dashboard Inputs',
-      target: 'data/Digital Sales Dashboard Input'
+      source: '90461ea7',
+      target: 'a72d7024'
     },
     {
-      source: 'task/Generate Dashboard Inputs',
-      target: 'data/Vendor Sales Dashboard Input'
+      source: '90461ea7',
+      target: '8dbed427'
     }
   ],
   nodes: [
     {
-      full_name: 'Load Raw Interaction Data',
-      id: 'task/Load Raw Interaction Data',
+      full_name: 'load_raw_interaction_data',
+      id: '06c33e94',
       name: 'Load Raw Interaction Data',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'task'
     },
     {
-      full_name: 'Load Raw Country Data',
-      id: 'task/Load Raw Country Data',
+      full_name: 'load_raw_country_data',
+      id: '0b7e1ac6',
       name: 'Load Raw Country Data',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'task'
     },
     {
-      full_name: 'Load Raw Shopper Spend Data',
-      id: 'task/Load Raw Shopper Spend Data',
+      full_name: 'load_raw_shopper_spend_data',
+      id: '22ea294c',
       name: 'Load Raw Shopper Spend Data',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'task'
     },
     {
-      full_name: 'Preprocess Primary Interaction Data',
-      id: 'task/Preprocess Primary Interaction Data',
+      full_name: 'preprocess_primary_interaction_data',
+      id: 'f1a163c4',
       name: 'Preprocess Primary Interaction Data',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'task'
     },
     {
-      full_name: 'Preprocess Primary Country Data',
-      id: 'task/Preprocess Primary Country Data',
+      full_name: 'preprocess_primary_country_data',
+      id: 'b2f97396',
       name: 'Preprocess Primary Country Data',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'task'
     },
     {
-      full_name: 'Preprocess Primary Shopper Spend Data',
-      id: 'task/Preprocess Primary Shopper Spend Data',
+      full_name: 'preprocess_primary_shopper_spend_data',
+      id: '27bb9dc7',
       name: 'Preprocess Primary Shopper Spend Data',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'task'
     },
     {
-      full_name: 'Create Shopper Spend Features',
-      id: 'task/Create Shopper Spend Features',
+      full_name: 'create_shopper_spend_features',
+      id: 'fb5bd01d',
       name: 'Create Shopper Spend Features',
-      tags: ['Feature Engineering', 'Data Engineering'],
+      tags: ['feature_engineering', 'data_engineering'],
       type: 'task'
     },
     {
-      full_name: 'Create Shopper Churn Features',
-      id: 'task/Create Shopper Churn Features',
+      full_name: 'create_shopper_churn_features',
+      id: 'd52422da',
       name: 'Create Shopper Churn Features',
-      tags: ['Feature Engineering', 'Data Engineering'],
+      tags: ['feature_engineering', 'data_engineering'],
       type: 'task'
     },
     {
-      full_name: 'Prepare Vendor Input',
-      id: 'task/Prepare Vendor Input',
+      full_name: 'prepare_vendor_input',
+      id: 'dcbb9652',
       name: 'Prepare Vendor Input',
-      tags: ['Feature Engineering', 'Data Engineering'],
+      tags: ['feature_engineering', 'data_engineering'],
       type: 'task'
     },
     {
-      full_name: 'Prepare CRM Input',
-      id: 'task/Prepare CRM Input',
+      full_name: 'prepare_crm_input',
+      id: 'c4cff5d0',
       name: 'Prepare CRM Input',
-      tags: ['Feature Engineering', 'Data Engineering'],
+      tags: ['feature_engineering', 'data_engineering'],
       type: 'task'
     },
     {
-      full_name: 'Predictive Sales Model',
-      id: 'task/Predictive Sales Model',
+      full_name: 'predictive_sales_model',
+      id: '95cfc42d',
       name: 'Predictive Sales Model',
-      tags: ['Model Training', 'Data Science'],
+      tags: ['model_training', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Predictive Engagement Model',
-      id: 'task/Predictive Engagement Model',
+      full_name: 'predictive_engagement_model',
+      id: 'ccbee9c5',
       name: 'Predictive Engagement Model',
-      tags: ['Model Training', 'Data Science'],
+      tags: ['model_training', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Sales Model Explainable AI',
-      id: 'task/Sales Model Explainable AI',
+      full_name: 'sales_model_explainable_ai',
+      id: '394244dd',
       name: 'Sales Model Explainable AI',
-      tags: ['Model Explaination', 'Data Science'],
+      tags: ['model_explaination', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Engagement Model Explainable AI',
-      id: 'task/Engagement Model Explainable AI',
+      full_name: 'engagement_model_explainable_ai',
+      id: '67257e84',
       name: 'Engagement Model Explainable AI',
-      tags: ['Model Explaination', 'Data Science'],
+      tags: ['model_explaination', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Perform Digital Analysis',
-      id: 'task/Perform Digital Analysis',
+      full_name: 'perform_digital_analysis',
+      id: 'f6f50e64',
       name: 'Perform Digital Analysis',
-      tags: ['Model Training', 'Data Science'],
+      tags: ['model_training', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Engagement Recommendation Engine',
-      id: 'task/Engagement Recommendation Engine',
+      full_name: 'engagement_recommendation_engine',
+      id: 'e061482b',
       name: 'Engagement Recommendation Engine',
-      tags: ['Model Training', 'Data Science'],
+      tags: ['model_training', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Sales Model Performance Monitoring',
-      id: 'task/Sales Model Performance Monitoring',
+      full_name: 'sales_model_performance_monitoring',
+      id: '53b05b01',
       name: 'Sales Model Performance Monitoring',
-      tags: ['Model Performance Monitoring', 'Data Science'],
+      tags: ['model_performance_monitoring', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Engagement Model Performance Monitoring',
-      id: 'task/Engagement Model Performance Monitoring',
+      full_name: 'engagement_model_performance_monitoring',
+      id: '6d8d326d',
       name: 'Engagement Model Performance Monitoring',
-      tags: ['Model Performance Monitoring', 'Data Science'],
+      tags: ['model_performance_monitoring', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Multi-Channel Optimisation',
-      id: 'task/Multi-Channel Optimisation',
+      full_name: 'multi-channel_optimisation',
+      id: '45bda5fd',
       name: 'Multi-Channel Optimisation',
-      tags: ['Optimisation', 'Data Science'],
+      tags: ['optimisation', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Content Optimisation',
-      id: 'task/Content Optimisation',
+      full_name: 'content_optimisation',
+      id: '211c92c3',
       name: 'Content Optimisation',
-      tags: ['Optimisation', 'Data Science'],
+      tags: ['optimisation', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Segment Journeys',
-      id: 'task/Segment Journeys',
+      full_name: 'segment_journeys',
+      id: 'c17b9614',
       name: 'Segment Journeys',
-      tags: ['Optimisation', 'Data Science'],
+      tags: ['optimisation', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Generate Dashboard Inputs',
-      id: 'task/Generate Dashboard Inputs',
+      full_name: 'generate_dashboard_inputs',
+      id: '90461ea7',
       name: 'Generate Dashboard Inputs',
-      tags: ['Reporting', 'Data Science'],
+      tags: ['reporting', 'data_science'],
       type: 'task'
     },
     {
-      full_name: 'Interaction Raw',
-      id: 'data/Interaction Raw',
+      full_name: 'interaction_raw',
+      id: '33920f3a',
       name: 'Interaction Raw',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'data'
     },
     {
-      full_name: 'Interaction Primary',
-      id: 'data/Interaction Primary',
+      full_name: 'interaction_primary',
+      id: '105160a0',
       name: 'Interaction Primary',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'data'
     },
     {
-      full_name: 'Country Raw',
-      id: 'data/Country Raw',
+      full_name: 'country_raw',
+      id: '814ef273',
       name: 'Country Raw',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'data'
     },
     {
-      full_name: 'Country Primary',
-      id: 'data/Country Primary',
+      full_name: 'country_primary',
+      id: '389b5286',
       name: 'Country Primary',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'data'
     },
     {
-      full_name: 'Shopper Spend Raw',
-      id: 'data/Shopper Spend Raw',
+      full_name: 'shopper_spend_raw',
+      id: '58450007',
       name: 'Shopper Spend Raw',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'data'
     },
     {
-      full_name: 'Shopper Spend Primary',
-      id: 'data/Shopper Spend Primary',
+      full_name: 'shopper_spend_primary',
+      id: 'bcb40508',
       name: 'Shopper Spend Primary',
-      tags: ['Data Engineering', 'Preprocessing'],
+      tags: ['data_engineering', 'preprocessing'],
       type: 'data'
     },
     {
-      full_name: 'Interaction Intermediate',
-      id: 'data/Interaction Intermediate',
+      full_name: 'interaction_intermediate',
+      id: 'e44a096d',
       name: 'Interaction Intermediate',
-      tags: ['Feature Engineering', 'Data Engineering', 'Preprocessing'],
+      tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
       type: 'data'
     },
     {
-      full_name: 'Country Intermediate',
-      id: 'data/Country Intermediate',
+      full_name: 'country_intermediate',
+      id: '8c1dcc36',
       name: 'Country Intermediate',
-      tags: ['Feature Engineering', 'Data Engineering', 'Preprocessing'],
+      tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
       type: 'data'
     },
     {
-      full_name: 'Shopper Spend Intermediate',
-      id: 'data/Shopper Spend Intermediate',
+      full_name: 'shopper_spend_intermediate',
+      id: '13a964bf',
       name: 'Shopper Spend Intermediate',
-      tags: ['Feature Engineering', 'Data Engineering', 'Preprocessing'],
+      tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
       type: 'data'
     },
     {
-      full_name: 'CRM Predictions',
-      id: 'data/CRM Predictions',
+      full_name: 'crm_predictions',
+      id: '842a3580',
       name: 'CRM Predictions',
-      tags: ['Feature Engineering', 'Data Engineering'],
+      tags: ['feature_engineering', 'data_engineering'],
       type: 'data'
     },
     {
-      full_name: 'Shopper Spend Features',
-      id: 'data/Shopper Spend Features',
+      full_name: 'shopper_spend_features',
+      id: '55bd1af4',
       name: 'Shopper Spend Features',
       tags: [
-        'Model Explaination',
-        'Data Science',
-        'Data Engineering',
-        'Model Training',
-        'Feature Engineering'
+        'data_science',
+        'model_training',
+        'model_explaination',
+        'feature_engineering',
+        'data_engineering'
       ],
       type: 'data'
     },
     {
-      full_name: 'Shopper Churn Features',
-      id: 'data/Shopper Churn Features',
+      full_name: 'shopper_churn_features',
+      id: '442c2c34',
       name: 'Shopper Churn Features',
       tags: [
-        'Model Explaination',
-        'Data Science',
-        'Data Engineering',
-        'Model Training',
-        'Feature Engineering'
+        'data_science',
+        'model_training',
+        'model_explaination',
+        'feature_engineering',
+        'data_engineering'
       ],
       type: 'data'
     },
     {
-      full_name: 'Vendor Master',
-      id: 'data/Vendor Master',
+      full_name: 'vendor_master',
+      id: '181c2b7c',
       name: 'Vendor Master',
-      tags: ['Feature Engineering', 'Data Engineering'],
+      tags: ['feature_engineering', 'data_engineering'],
       type: 'data'
     },
     {
-      full_name: 'Salesforce CRM',
-      id: 'data/Salesforce CRM',
+      full_name: 'salesforce_crm',
+      id: '057ade39',
       name: 'Salesforce CRM',
-      tags: ['Feature Engineering', 'Data Engineering'],
+      tags: ['feature_engineering', 'data_engineering'],
       type: 'data'
     },
     {
-      full_name: 'Vendor Predictions',
-      id: 'data/Vendor Predictions',
+      full_name: 'vendor_predictions',
+      id: '7eb64be0',
       name: 'Vendor Predictions',
       tags: [
-        'Model Training',
-        'Feature Engineering',
-        'Data Science',
-        'Data Engineering'
+        'feature_engineering',
+        'data_engineering',
+        'data_science',
+        'model_training'
       ],
       type: 'data'
     },
     {
-      full_name: 'Salesforce Accounts',
-      id: 'data/Salesforce Accounts',
+      full_name: 'salesforce_accounts',
+      id: '42e79d42',
       name: 'Salesforce Accounts',
-      tags: ['Feature Engineering', 'Data Engineering'],
+      tags: ['feature_engineering', 'data_engineering'],
       type: 'data'
     },
     {
-      full_name: 'params: Sales Model',
-      id: 'data/params: Sales Model',
+      full_name: 'params:_sales_model',
+      id: '1b3afcba',
       name: 'params: Sales Model',
-      tags: ['Model Training', 'Data Science'],
+      tags: ['data_science', 'model_training'],
       type: 'parameters'
     },
     {
-      full_name: 'Sales Validation Results',
-      id: 'data/Sales Validation Results',
+      full_name: 'sales_validation_results',
+      id: '8770a38e',
       name: 'Sales Validation Results',
-      tags: ['Model Training', 'Data Science', 'Model Performance Monitoring'],
+      tags: ['model_performance_monitoring', 'data_science', 'model_training'],
       type: 'data'
     },
     {
-      full_name: 'Sales Trained Model',
-      id: 'data/Sales Trained Model',
+      full_name: 'sales_trained_model',
+      id: '1dafa5fb',
       name: 'Sales Trained Model',
-      tags: ['Model Training', 'Data Science', 'Model Explaination'],
+      tags: ['model_explaination', 'data_science', 'model_training'],
       type: 'data'
     },
     {
-      full_name: 'params: Engagement Model',
-      id: 'data/params: Engagement Model',
+      full_name: 'params:_engagement_model',
+      id: '3a60b3a4',
       name: 'params: Engagement Model',
-      tags: ['Model Training', 'Data Science'],
+      tags: ['data_science', 'model_training'],
       type: 'parameters'
     },
     {
-      full_name: 'Engagement Validation Results',
-      id: 'data/Engagement Validation Results',
+      full_name: 'engagement_validation_results',
+      id: 'fb4f64bd',
       name: 'Engagement Validation Results',
-      tags: ['Model Training', 'Data Science', 'Model Performance Monitoring'],
+      tags: ['model_performance_monitoring', 'data_science', 'model_training'],
       type: 'data'
     },
     {
-      full_name: 'Engagement Trained Model',
-      id: 'data/Engagement Trained Model',
+      full_name: 'engagement_trained_model',
+      id: 'f4f3a276',
       name: 'Engagement Trained Model',
-      tags: ['Model Training', 'Data Science', 'Model Explaination'],
+      tags: ['model_explaination', 'data_science', 'model_training'],
       type: 'data'
     },
     {
-      full_name: 'Sales Model Explanations',
-      id: 'data/Sales Model Explanations',
+      full_name: 'sales_model_explanations',
+      id: '792a14f6',
       name: 'Sales Model Explanations',
       tags: [
-        'Reporting',
-        'Model Performance Monitoring',
-        'Data Science',
-        'Model Explaination'
+        'model_explaination',
+        'data_science',
+        'model_performance_monitoring',
+        'reporting'
       ],
       type: 'data'
     },
     {
-      full_name: 'Engagement Model Explanations',
-      id: 'data/Engagement Model Explanations',
+      full_name: 'engagement_model_explanations',
+      id: '9bd2dc3d',
       name: 'Engagement Model Explanations',
       tags: [
-        'Reporting',
-        'Model Performance Monitoring',
-        'Data Science',
-        'Model Explaination'
+        'model_explaination',
+        'data_science',
+        'model_performance_monitoring',
+        'reporting'
       ],
       type: 'data'
     },
     {
-      full_name: 'params: Optimisation',
-      id: 'data/params: Optimisation',
+      full_name: 'params:_optimisation',
+      id: 'dff067eb',
       name: 'params: Optimisation',
-      tags: ['Model Training', 'Data Science', 'Optimisation'],
+      tags: ['data_science', 'model_training', 'optimisation'],
       type: 'parameters'
     },
     {
-      full_name: 'Digital Analysis',
-      id: 'data/Digital Analysis',
+      full_name: 'digital_analysis',
+      id: '92f58611',
       name: 'Digital Analysis',
-      tags: ['Model Training', 'Data Science', 'Optimisation'],
+      tags: ['data_science', 'model_training', 'optimisation'],
       type: 'data'
     },
     {
-      full_name: 'Engagement Recommendations',
-      id: 'data/Engagement Recommendations',
+      full_name: 'engagement_recommendations',
+      id: 'b2a3a8e5',
       name: 'Engagement Recommendations',
-      tags: ['Model Training', 'Data Science'],
+      tags: ['data_science', 'model_training'],
       type: 'data'
     },
     {
-      full_name: 'Action Cost Table',
-      id: 'data/Action Cost Table',
+      full_name: 'action_cost_table',
+      id: '9aeb6881',
       name: 'Action Cost Table',
-      tags: ['Data Science', 'Optimisation'],
+      tags: ['data_science', 'optimisation'],
       type: 'data'
     },
     {
-      full_name: 'Multi-Channel Resolutions',
-      id: 'data/Multi-Channel Resolutions',
+      full_name: 'multi-channel_resolutions',
+      id: '90713d4f',
       name: 'Multi-Channel Resolutions',
-      tags: ['Reporting', 'Data Science', 'Optimisation'],
+      tags: ['reporting', 'data_science', 'optimisation'],
       type: 'data'
     },
     {
-      full_name: 'Content Resolutions',
-      id: 'data/Content Resolutions',
+      full_name: 'content_resolutions',
+      id: '4704ff18',
       name: 'Content Resolutions',
-      tags: ['Reporting', 'Data Science', 'Optimisation'],
+      tags: ['reporting', 'data_science', 'optimisation'],
       type: 'data'
     },
     {
-      full_name: 'Segment Journeys Allocations',
-      id: 'data/Segment Journeys Allocations',
+      full_name: 'segment_journeys_allocations',
+      id: 'ccd3d45b',
       name: 'Segment Journeys Allocations',
-      tags: ['Reporting', 'Data Science', 'Optimisation'],
+      tags: ['reporting', 'data_science', 'optimisation'],
       type: 'data'
     },
     {
-      full_name: 'Upselling Readiness Dashboard Input',
-      id: 'data/Upselling Readiness Dashboard Input',
+      full_name: 'upselling_readiness_dashboard_input',
+      id: '3e3b263a',
       name: 'Upselling Readiness Dashboard Input',
-      tags: ['Reporting', 'Data Science'],
+      tags: ['reporting', 'data_science'],
       type: 'data'
     },
     {
-      full_name: 'Lead Scoring Dashboard Input',
-      id: 'data/Lead Scoring Dashboard Input',
+      full_name: 'lead_scoring_dashboard_input',
+      id: 'f3e15708',
       name: 'Lead Scoring Dashboard Input',
-      tags: ['Reporting', 'Data Science'],
+      tags: ['reporting', 'data_science'],
       type: 'data'
     },
     {
-      full_name: 'Lifetime Value Prediction Dashboard Input',
-      id: 'data/Lifetime Value Prediction Dashboard Input',
+      full_name: 'lifetime_value_prediction_dashboard_input',
+      id: '83ebce11',
       name: 'Lifetime Value Prediction Dashboard Input',
-      tags: ['Reporting', 'Data Science'],
+      tags: ['reporting', 'data_science'],
       type: 'data'
     },
     {
-      full_name: 'Digital Sales Dashboard Input',
-      id: 'data/Digital Sales Dashboard Input',
+      full_name: 'digital_sales_dashboard_input',
+      id: 'a72d7024',
       name: 'Digital Sales Dashboard Input',
-      tags: ['Reporting', 'Data Science'],
+      tags: ['reporting', 'data_science'],
       type: 'data'
     },
     {
-      full_name: 'Vendor Sales Dashboard Input',
-      id: 'data/Vendor Sales Dashboard Input',
+      full_name: 'vendor_sales_dashboard_input',
+      id: '8dbed427',
       name: 'Vendor Sales Dashboard Input',
-      tags: ['Reporting', 'Data Science'],
+      tags: ['reporting', 'data_science'],
       type: 'data'
     }
   ],
   tags: [
     {
-      id: 'Preprocessing',
-      name: 'Preprocessing'
-    },
-    {
-      id: 'Model Explaination',
-      name: 'Model Explaination'
-    },
-    {
-      id: 'Model Performance Monitoring',
+      id: 'model_performance_monitoring',
       name: 'Model Performance Monitoring'
     },
     {
-      id: 'Reporting',
-      name: 'Reporting'
-    },
-    {
-      id: 'Data Science',
+      id: 'data_science',
       name: 'Data Science'
     },
     {
-      id: 'Data Engineering',
-      name: 'Data Engineering'
+      id: 'reporting',
+      name: 'Reporting'
     },
     {
-      id: 'Model Training',
+      id: 'model_training',
       name: 'Model Training'
     },
     {
-      id: 'Feature Engineering',
+      id: 'preprocessing',
+      name: 'Preprocessing'
+    },
+    {
+      id: 'optimisation',
+      name: 'Optimisation'
+    },
+    {
+      id: 'model_explaination',
+      name: 'Model Explaination'
+    },
+    {
+      id: 'feature_engineering',
       name: 'Feature Engineering'
     },
     {
-      id: 'Optimisation',
-      name: 'Optimisation'
+      id: 'data_engineering',
+      name: 'Data Engineering'
     }
   ]
 };
