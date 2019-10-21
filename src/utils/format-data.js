@@ -59,7 +59,7 @@ const addNode = state => node => {
   }
   state.nodes.push(id);
   state.nodeName[id] = node.name;
-  state.nodeFullName[id] = node.full_name;
+  state.nodeFullName[id] = node.full_name || node.name;
   state.nodeType[id] = node.type;
   state.nodeIsParam[id] = node.type === 'parameters';
   state.nodeTags[id] = node.tags || [];
