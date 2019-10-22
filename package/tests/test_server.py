@@ -194,7 +194,7 @@ def test_nodes_endpoint(client):
 @pytest.fixture(autouse=True)
 def clean_up():
     # pylint: disable=protected-access
-    server._VIZ_THREADS.clear()
+    server._VIZ_PROCESSES.clear()
 
 
 def test_wait_for():
@@ -215,44 +215,45 @@ def test_wait_for():
 
 
 @pytest.fixture
-def mocked_thread(mocker):
+def mocked_process(mocker):
     mocker.patch("kedro_viz.server.wait_for")
-    return mocker.patch("kedro_viz.server.threading.Thread")
+    return mocker.patch("kedro_viz.server.multiprocessing.Process")
 
 
 class TestRunViz:
     default_port = 4141
 
-    def test_call_once(self, mocked_thread):
+    def test_call_once(self, mocked_process):
         """Test inline magic function"""
         server.run_viz()
         # pylint: disable=protected-access
-        mocked_thread.assert_called_once_with(
+        mocked_process.assert_called_once_with(
             target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
         )
 
-    def test_call_twice_with_same_port(self, mocked_thread):
-        """Running run_viz with the same port should not trigger another thread
+    def test_call_twice_with_same_port(self, mocked_process):
+        """Running run_viz with the same port should trigger another process
         """
         server.run_viz()
         server.run_viz()
         # pylint: disable=protected-access
-        mocked_thread.assert_called_once_with(
+        mocked_process.assert_called_with(
             target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
         )
+        assert mocked_process.call_count == 2
 
-    def test_call_twice_with_different_port(self, mocked_thread):
+    def test_call_twice_with_different_port(self, mocked_process):
         """
-        Running run_viz with a different port should start another thread
+        Running run_viz with a different port should start another process
         """
         server.run_viz()
         # pylint: disable=protected-access
-        mocked_thread.assert_called_with(
+        mocked_process.assert_called_with(
             target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
         )
         server.run_viz(port=8000)
         # pylint: disable=protected-access
-        mocked_thread.assert_called_with(
+        mocked_process.assert_called_with(
             target=server._call_viz, kwargs={"port": 8000}, daemon=True
         )
-        assert mocked_thread.call_count == 2
+        assert mocked_process.call_count == 2

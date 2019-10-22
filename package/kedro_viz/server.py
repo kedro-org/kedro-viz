@@ -31,7 +31,7 @@
 import hashlib
 import json
 import sys
-import threading
+import multiprocessing
 import webbrowser
 from collections import defaultdict
 from pathlib import Path
@@ -45,7 +45,7 @@ from kedro.cli import get_project_context
 
 from kedro_viz.utils import wait_for
 
-_VIZ_THREADS = {}  # type: Dict[int, threading.Thread]
+_VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
 data = None  # pylint: disable=invalid-name
 
@@ -76,7 +76,7 @@ def _check_viz_up(port):
 # pylint: disable=unused-argument
 def run_viz(port=None, line=None) -> None:
     """
-    Line magic function to start kedro viz. It calls a kedro viz in a thread and display it in
+    Line magic function to start kedro viz. It calls a kedro viz in a process and display it in
     the Jupyter notebook environment.
 
     Args:
@@ -87,13 +87,16 @@ def run_viz(port=None, line=None) -> None:
     if not port:  # Default argument doesn't work in Jupyter line magic
         port = 4141
 
-    if port not in _VIZ_THREADS:
-        viz_thread = threading.Thread(
-            target=_call_viz, kwargs={"port": port}, daemon=True
-        )
-        viz_thread.start()
-        _VIZ_THREADS[port] = viz_thread
-        wait_for(func=_check_viz_up, port=port)
+    if port in _VIZ_PROCESSES:
+        _VIZ_PROCESSES[port].terminate()
+
+    viz_process = multiprocessing.Process(
+        target=_call_viz, daemon=True, kwargs={"port": port}
+    )
+    viz_process.start()
+    _VIZ_PROCESSES[port] = viz_process
+
+    wait_for(func=_check_viz_up, port=port)
 
     wrapper = """
             <html lang="en"><head></head><body style="width:100; height:100;">
