@@ -36,22 +36,28 @@ export const getGraph = createSelector(
 );
 
 /**
- * Reformat data for use on the chart,
+ * Reformat node data for use on the chart,
  * and recombine with other data that doesn't affect layout
  */
-export const getLayout = createSelector(
+export const getLayoutNodes = createSelector(
   [getGraph, getNodeType, getNodeActive],
-  (graph, nodeType, nodeActive) => ({
-    nodes: graph.nodes().map(nodeID => {
+  (graph, nodeType, nodeActive) =>
+    graph.nodes().map(nodeID => {
       const node = graph.node(nodeID);
       return Object.assign({}, node, {
         type: nodeType[nodeID],
         order: node.x + node.y * 9999,
         active: nodeActive[nodeID]
       });
-    }),
-    edges: graph.edges().map(edge => Object.assign({}, graph.edge(edge)))
-  })
+    })
+);
+
+/**
+ * Reformat edge data for use on the chart
+ */
+export const getLayoutEdges = createSelector(
+  [getGraph],
+  graph => graph.edges().map(edge => Object.assign({}, graph.edge(edge)))
 );
 
 /**
