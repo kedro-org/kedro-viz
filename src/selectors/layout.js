@@ -46,36 +46,35 @@ export const getTextWidth = (name, svg) => {
  * @return {Object} width and height
  */
 export const getNodeSize = (node, svg) => {
-  const labelsVisible = Boolean(svg);
-  let iconSize = { data: 17, task: 18, parameters: 22 }[node.type];
-  if (labelsVisible) {
-    iconSize = iconSize * 0.75;
-  }
-  const padding = labelsVisible
-    ? {
-        x: 16,
-        y: 10
-      }
-    : {
-        x: node.type === 'task' ? 14 : 16,
-        y: node.type === 'task' ? 14 : 16
-      };
-  const textWidth = labelsVisible ? getTextWidth(node.name, svg) : 0;
-  const textGap = labelsVisible ? 6 : 0;
+  const showLabels = Boolean(svg);
+  const iconSize = showLabels ? 14 : 24;
+  const getPadding = () => {
+    if (showLabels) {
+      return { x: 16, y: 10 };
+    }
+    if (node.type === 'task') {
+      return { x: 14, y: 14 };
+    }
+    return { x: 16, y: 16 };
+  };
+  const padding = getPadding();
+  const textWidth = showLabels ? getTextWidth(node.name, svg) : 0;
+  const textGap = showLabels ? 4 : 0;
   const innerWidth = iconSize + textWidth + textGap;
+  const height = iconSize + padding.y * 2;
   const width = innerWidth + padding.x * 2;
-  const textOffset = innerWidth / 2 - textWidth;
+  const textOffset = (innerWidth - textWidth) / 2;
   const iconOffset = -innerWidth / 2;
 
   return {
-    height: iconSize + padding.y * 2,
+    width,
+    height,
     iconSize,
     textWidth,
     padding,
     textGap,
     textOffset,
-    iconOffset,
-    width
+    iconOffset
   };
 };
 
