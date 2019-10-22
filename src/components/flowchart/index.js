@@ -288,8 +288,8 @@ export class FlowChart extends Component {
 }
 
 export const mapStateToProps = state => ({
+  ...getLayout(state),
   chartSize: state.chartSize,
-  layout: getLayout(state),
   linkedNodes: getLinkedNodes(state),
   centralNode: getCentralNode(state),
   textLabels: state.textLabels,

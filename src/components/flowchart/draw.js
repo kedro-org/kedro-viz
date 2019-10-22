@@ -8,8 +8,7 @@ import icon from './icon';
  * Render chart to the DOM with D3
  */
 const draw = function() {
-  const { centralNode, linkedNodes, textLabels } = this.props;
-  const { nodes, edges } = this.props.layout;
+  const { nodes, edges, centralNode, linkedNodes, textLabels } = this.props;
 
   // Create selections
   this.el.edges = this.el.edgeGroup
