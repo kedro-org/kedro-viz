@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
 import IconToolbar from '../icon-toolbar';
+import FontLoadChecker from '../font-load-checker';
 import './wrapper.css';
 
 /**
@@ -34,7 +35,9 @@ export class Wrapper extends Component {
           'kui-theme--light': theme === 'light'
         })}>
         <div className="pipeline-wrapper">
-          <FlowChart visibleNav={visibleNav} />
+          <FontLoadChecker>
+            <FlowChart visibleNav={visibleNav} />
+          </FontLoadChecker>
         </div>
         <IconToolbar />
         <Sidebar
