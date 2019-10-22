@@ -30,8 +30,8 @@
 
 import hashlib
 import json
-import sys
 import multiprocessing
+import sys
 import webbrowser
 from collections import defaultdict
 from pathlib import Path
