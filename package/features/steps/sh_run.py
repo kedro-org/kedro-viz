@@ -28,9 +28,7 @@
 
 import shlex
 import subprocess
-from typing import Any, Sequence
-
-import psutil
+from typing import Any
 
 
 def run(cmd: str, split: bool = True, print_output: bool = False, **kwargs: Any) -> int:
@@ -70,39 +68,3 @@ def run(cmd: str, split: bool = True, print_output: bool = False, **kwargs: Any)
     if print_output:
         print(result.stdout)
     return result
-
-
-class ChildTerminatingPopen(subprocess.Popen):
-    """
-    Extend subprocess.Popen class to automatically kill child processes when
-    terminated
-     Note:
-        On GNU/Linux child processes are not killed automatically if the parent
-        dies (so-called orphan processes)
-    """
-
-    def __init__(self, cmd: Sequence[str], **kwargs) -> None:
-        """
-        Initializer pipes stderr and stdout.
-
-        Args:
-            cmd: command to be run.
-            **kwargs: keyword arguments such as env and cwd
-
-        """
-        super(ChildTerminatingPopen, self).__init__(cmd, **kwargs)
-
-    def terminate(self) -> None:
-        """Terminate process and children"""
-        try:
-            proc = psutil.Process(self.pid)
-            procs = [proc] + proc.children(recursive=True)
-        except psutil.NoSuchProcess:
-            pass
-        else:
-            for proc in procs:
-                try:
-                    proc.terminate()
-                except psutil.NoSuchProcess:
-                    pass
-            psutil.wait_procs(procs)

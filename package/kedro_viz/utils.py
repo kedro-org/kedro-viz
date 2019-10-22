@@ -28,8 +28,11 @@
 """ Kedro-Viz helper functions """
 
 import logging
+import subprocess
 from time import sleep, time
-from typing import Any, Callable
+from typing import Any, Callable, Sequence
+
+import psutil
 
 
 class WaitForException(Exception):
@@ -38,6 +41,7 @@ class WaitForException(Exception):
         specified time
 
     """
+
     pass
 
 
@@ -84,3 +88,39 @@ def wait_for(
         "func: {}, didn't return {} within specified"
         " timeout: {}".format(func, expected_result, timeout_)
     )
+
+
+class ChildTerminatingPopen(subprocess.Popen):
+    """
+    Extend subprocess.Popen class to automatically kill child processes when
+    terminated
+     Note:
+        On GNU/Linux child processes are not killed automatically if the parent
+        dies (so-called orphan processes)
+    """
+
+    def __init__(self, cmd: Sequence[str], **kwargs) -> None:
+        """
+        Initializer pipes stderr and stdout.
+
+        Args:
+            cmd: command to be run.
+            **kwargs: keyword arguments such as env and cwd
+
+        """
+        super(ChildTerminatingPopen, self).__init__(cmd, **kwargs)
+
+    def terminate(self) -> None:
+        """Terminate process and children"""
+        try:
+            proc = psutil.Process(self.pid)
+            procs = [proc] + proc.children(recursive=True)
+        except psutil.NoSuchProcess:
+            pass
+        else:
+            for proc in procs:
+                try:
+                    proc.terminate()
+                except psutil.NoSuchProcess:
+                    pass
+            psutil.wait_procs(procs)
