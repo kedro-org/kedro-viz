@@ -123,7 +123,7 @@ export const getNodeData = createSelector(
 export const getNodeTextWidth = createSelector(
   [getNodes, getNodeName],
   (nodes, nodeName) => {
-    const svg = select('body')
+    const svg = select(document.body)
       .append('svg')
       .attr('class', 'kedro node');
     const nodeTextWidth = arrayToObject(nodes, nodeID => {
