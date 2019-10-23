@@ -5,6 +5,9 @@ import {
   getNodeDisabled,
   getNodeActive,
   getNodeData,
+  getNodeTextWidth,
+  getPadding,
+  getNodeSize,
   getVisibleNodes
 } from './nodes';
 import {
@@ -12,7 +15,8 @@ import {
   toggleNodeClicked,
   toggleNodeHovered,
   toggleNodeDisabled,
-  toggleTagFilter
+  toggleTagFilter,
+  toggleTextLabels
 } from '../actions';
 import reducer from '../reducers';
 
@@ -216,6 +220,103 @@ describe('Selectors', () => {
     });
   });
 
+  describe('getNodeTextWidth', () => {
+    it('returns an object whose values are all numbers', () => {
+      expect(
+        Object.values(getNodeTextWidth(mockState.lorem)).every(
+          value => typeof value === 'number'
+        )
+      ).toBe(true);
+    });
+
+    it('returns width=0 if svg getBBox is not supported', () => {
+      expect(
+        Object.values(getNodeTextWidth(mockState.lorem)).every(
+          value => value === 0
+        )
+      ).toBe(true);
+    });
+  });
+
+  describe('getPadding', () => {
+    it('returns an object with numerical x and y properties', () => {
+      expect(getPadding()).toEqual(
+        expect.objectContaining({
+          x: expect.any(Number),
+          y: expect.any(Number)
+        })
+      );
+    });
+
+    it('returns x=16 & y=10 if text labels are enabled', () => {
+      expect(getPadding(true, true).x).toBe(16);
+      expect(getPadding(true, true).y).toBe(10);
+      expect(getPadding(true, false).x).toBe(16);
+      expect(getPadding(true, false).y).toBe(10);
+    });
+
+    it('returns identical x & y values if text labels are disabled', () => {
+      expect(getPadding(false, true).x).toBe(getPadding(false, true).y);
+      expect(getPadding(false, false).x).toBe(getPadding(false, false).y);
+    });
+
+    it('returns smaller padding values for task icons', () => {
+      expect(getPadding(false, true).x).toBeLessThan(
+        getPadding(false, false).x
+      );
+      expect(getPadding(false, true).y).toBeLessThan(
+        getPadding(false, false).y
+      );
+    });
+  });
+
+  describe('getNodeSize', () => {
+    it('returns an object containing objects with numerical properties', () => {
+      expect(getNodeSize(mockState.lorem)).toEqual(expect.any(Object));
+      expect(Object.values(getNodeSize(mockState.lorem))).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            width: expect.any(Number),
+            height: expect.any(Number),
+            textOffset: expect.any(Number),
+            iconOffset: expect.any(Number),
+            iconSize: expect.any(Number)
+          })
+        ])
+      );
+    });
+
+    describe('when text labels are disabled', () => {
+      const newMockState = reducer(mockState.lorem, toggleTextLabels(false));
+
+      it('returns identical width and height', () => {
+        const node0 = Object.values(getNodeSize(newMockState))[0];
+        expect(node0.width).toBe(node0.height);
+      });
+
+      it('returns an iconOffset equal to iconSize/-2', () => {
+        const node0 = Object.values(getNodeSize(newMockState))[0];
+        expect(node0.iconOffset).toBe(node0.iconSize / -2);
+      });
+    });
+
+    describe('when text labels are enabled', () => {
+      const newMockState = reducer(mockState.lorem, toggleTextLabels(true));
+
+      it('returns a width greater than the height', () => {
+        const node0 = Object.values(getNodeSize(newMockState))[0];
+        expect(node0.width).toBeGreaterThan(node0.height);
+      });
+
+      it('returns an iconOffset with a greater magnitude than iconSize / 2', () => {
+        const node0 = Object.values(getNodeSize(newMockState))[0];
+        expect(Math.abs(node0.iconOffset)).toBeGreaterThan(
+          Math.abs(node0.iconSize / 2)
+        );
+      });
+    });
+  });
+
   describe('getVisibleNodes', () => {
     it('returns visible nodes as an array', () => {
       expect(getVisibleNodes(mockState.lorem)).toEqual(
@@ -223,7 +324,14 @@ describe('Selectors', () => {
           expect.objectContaining({
             id: expect.any(String),
             name: expect.any(String),
-            fullName: expect.any(String)
+            fullName: expect.any(String),
+            label: expect.any(String),
+            type: expect.any(String),
+            width: expect.any(Number),
+            height: expect.any(Number),
+            textOffset: expect.any(Number),
+            iconOffset: expect.any(Number),
+            iconSize: expect.any(Number)
           })
         ])
       );

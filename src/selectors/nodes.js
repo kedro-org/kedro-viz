@@ -129,7 +129,7 @@ export const getNodeTextWidth = createSelector(
     const nodeTextWidth = arrayToObject(nodes, nodeID => {
       const text = svg.append('text').text(nodeName[nodeID]);
       const node = text.node();
-      const width = node ? node.getBBox().width : 0;
+      const width = node.getBBox ? node.getBBox().width : 0;
       text.remove();
       return width;
     });
@@ -143,7 +143,7 @@ export const getNodeTextWidth = createSelector(
  * @param {Boolean} showLabels Whether labels are visible
  * @param {Boolean} isTask Whether the node is a task type (vs data/params)
  */
-const getPadding = (showLabels, isTask) => {
+export const getPadding = (showLabels, isTask) => {
   if (showLabels) {
     return { x: 16, y: 10 };
   }
