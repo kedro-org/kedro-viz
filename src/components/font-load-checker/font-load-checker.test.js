@@ -68,12 +68,22 @@ describe('FontLoadChecker', () => {
       expect(wrapper.find('.child').length).toBe(1);
     });
 
-    it('renders children when setTimeout returns', () =>
+    it('renders children when setInterval returns', () =>
       new Promise(resolve => {
         document.fonts.ready = new Promise(() => {}); // Never resolve fonts.ready
         const wrapper = getWrapper();
         expect(wrapper.find('.child').length).toBe(0);
         document.fonts.check = () => true;
+        setTimeout(() => resolve(wrapper), 300);
+      }).then(wrapper => {
+        expect(wrapper.find('.child').length).toBe(1);
+      }));
+
+    it('renders children when setTimeout returns', () =>
+      new Promise(resolve => {
+        document.fonts.ready = new Promise(() => {}); // Never resolve fonts.ready
+        const wrapper = getWrapper();
+        expect(wrapper.find('.child').length).toBe(0);
         setTimeout(() => resolve(wrapper), 1500);
       }).then(wrapper => {
         expect(wrapper.find('.child').length).toBe(1);
