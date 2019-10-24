@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 
-const { fonts } = document;
-const canUseFontFaceSet = Boolean(fonts && fonts.check);
-const fontName = '12px Titillium Web';
-
 /**
  * Prevent chart from displaying until the webfont has loaded,
  * to ensure that text label SVGRect BBox measurements are accurate
  * @param {Object} children React component
  */
 const FontLoadChecker = ({ children }) => {
+  const { fonts } = document;
+  const canUseFontFaceSet = Boolean(fonts && fonts.check);
+  const fontName = '12px Titillium Web';
+
   const [fontLoaded, setLoaded] = useState(
     !canUseFontFaceSet || fonts.check(fontName)
   );
