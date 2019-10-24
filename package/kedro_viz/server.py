@@ -30,14 +30,22 @@
 
 import hashlib
 import json
+import multiprocessing
 import sys
 import webbrowser
 from collections import defaultdict
 from pathlib import Path
+from typing import Dict
 
 import click
+import requests
 from flask import Flask, jsonify, send_from_directory
+from IPython.core.display import HTML, display
 from kedro.cli import get_project_context
+
+from kedro_viz.utils import wait_for
+
+_VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
 data = None  # pylint: disable=invalid-name
 
@@ -57,6 +65,46 @@ def root(subpath="index.html"):
 
 def _hash(value):
     return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
+
+
+def _check_viz_up(port):
+    url = "http://127.0.0.1:{}/".format(port)
+    response = requests.get(url)
+    return response.status_code == 200
+
+
+# pylint: disable=unused-argument
+def run_viz(port=None, line=None) -> None:
+    """
+    Line magic function to start kedro viz. It calls a kedro viz in a process and display it in
+    the Jupyter notebook environment.
+
+    Args:
+        port: TCP port that viz will listen to. Defaults to 4141.
+        line: line required by line magic interface.
+
+    """
+    if not port:  # Default argument doesn't work in Jupyter line magic
+        port = 4141
+
+    if port in _VIZ_PROCESSES:
+        _VIZ_PROCESSES[port].terminate()
+
+    viz_process = multiprocessing.Process(
+        target=_call_viz, daemon=True, kwargs={"port": port}
+    )
+    viz_process.start()
+    _VIZ_PROCESSES[port] = viz_process
+
+    wait_for(func=_check_viz_up, port=port)
+
+    wrapper = """
+            <html lang="en"><head></head><body style="width:100; height:100;">
+            <iframe src="http://127.0.0.1:{}/" height=500 width="100%"></iframe>
+            </body></html>""".format(
+        port
+    )
+    display(HTML(wrapper))
 
 
 def get_data_from_kedro():
@@ -149,6 +197,10 @@ def commands():
 )
 def viz(host, port, browser, load_file, save_file):
     """Visualize the pipeline using kedroviz."""
+    _call_viz(host, port, browser, load_file, save_file)
+
+
+def _call_viz(host=None, port=None, browser=None, load_file=None, save_file=None):
     global data  # pylint: disable=global-statement,invalid-name
 
     if load_file:

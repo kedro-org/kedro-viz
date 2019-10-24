@@ -21,11 +21,11 @@ pytest: build
 	cd package && python3 setup.py test
 
 e2e-tests: build
-	cd package && behave
+	cd package && behave --tags="not @wip"
 
 pylint:
 	cd package && isort
-	pylint -j 0 --disable=unnecessary-pass package/kedro_viz
+	pylint -j 0 --disable=bad-continuation,unnecessary-pass package/kedro_viz
 	pylint -j 0 --disable=missing-docstring,redefined-outer-name,no-self-use,invalid-name,too-few-public-methods,no-member package/tests
 	pylint -j 0 --disable=missing-docstring,no-name-in-module package/features
 	flake8 package

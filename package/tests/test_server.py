@@ -36,6 +36,7 @@ import pytest
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
+from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
     "edges": [
@@ -188,3 +189,71 @@ def test_nodes_endpoint(client):
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == EXPECTED_PIPELINE_DATA
+
+
+@pytest.fixture(autouse=True)
+def clean_up():
+    # pylint: disable=protected-access
+    server._VIZ_PROCESSES.clear()
+
+
+def test_wait_for():
+    def _sum(x, y):
+        return x + y
+
+    assert not server.wait_for(_sum, 3, x=1, y=2)
+
+    unexpected_result_error = r"didn\'t return 0 within specified timeout"
+    with pytest.raises(WaitForException, match=unexpected_result_error):
+        server.wait_for(_sum, 0, x=1, y=2, timeout_=1)
+
+    # Non-callable should fail
+    non_callable = 1
+    non_callable_error = r"didn\'t return True within specified timeout"
+    with pytest.raises(WaitForException, match=non_callable_error):
+        server.wait_for(non_callable, timeout_=1)
+
+
+@pytest.fixture
+def mocked_process(mocker):
+    mocker.patch("kedro_viz.server.wait_for")
+    return mocker.patch("kedro_viz.server.multiprocessing.Process")
+
+
+class TestRunViz:
+    default_port = 4141
+
+    def test_call_once(self, mocked_process):
+        """Test inline magic function"""
+        server.run_viz()
+        # pylint: disable=protected-access
+        mocked_process.assert_called_once_with(
+            target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
+        )
+
+    def test_call_twice_with_same_port(self, mocked_process):
+        """Running run_viz with the same port should trigger another process
+        """
+        server.run_viz()
+        server.run_viz()
+        # pylint: disable=protected-access
+        mocked_process.assert_called_with(
+            target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
+        )
+        assert mocked_process.call_count == 2
+
+    def test_call_twice_with_different_port(self, mocked_process):
+        """
+        Running run_viz with a different port should start another process
+        """
+        server.run_viz()
+        # pylint: disable=protected-access
+        mocked_process.assert_called_with(
+            target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
+        )
+        server.run_viz(port=8000)
+        # pylint: disable=protected-access
+        mocked_process.assert_called_with(
+            target=server._call_viz, kwargs={"port": 8000}, daemon=True
+        )
+        assert mocked_process.call_count == 2
