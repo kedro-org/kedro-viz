@@ -22,12 +22,14 @@ describe('FontLoadChecker', () => {
 
     beforeEach(() => {
       jest.resetModules();
+
       // Force useEffect to run sychronously, because Enzyme doesn't support it yet.
       // via https://blog.carbonfive.com/2019/08/05/shallow-testing-hooks-with-enzyme/
       jest.spyOn(React, 'useEffect').mockImplementation(f => f());
+
       document.fonts = {
         check: () => false,
-        ready: new Promise(response => response())
+        ready: new Promise(() => {})
       };
     });
 
@@ -70,7 +72,6 @@ describe('FontLoadChecker', () => {
 
     it('renders children when setInterval returns', () =>
       new Promise(resolve => {
-        document.fonts.ready = new Promise(() => {}); // Never resolve fonts.ready
         const wrapper = getWrapper();
         expect(wrapper.find('.child').length).toBe(0);
         document.fonts.check = () => true;
@@ -81,7 +82,6 @@ describe('FontLoadChecker', () => {
 
     it('renders children when setTimeout returns', () =>
       new Promise(resolve => {
-        document.fonts.ready = new Promise(() => {}); // Never resolve fonts.ready
         const wrapper = getWrapper();
         expect(wrapper.find('.child').length).toBe(0);
         setTimeout(() => resolve(wrapper), 1500);
