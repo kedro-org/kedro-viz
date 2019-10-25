@@ -1,12 +1,12 @@
 import { getLinkedNodes } from './linked-nodes';
-import { getLayout } from './layout';
+import { getLayoutNodes } from './layout';
 import { mockState } from '../utils/state.mock';
 import { toggleNodeClicked } from '../actions';
 import reducer from '../reducers';
 
 describe('getLinkedNodes function', () => {
   it('should search through edges for ancestor and descendant nodes', () => {
-    const { nodes } = getLayout(mockState.animals);
+    const nodes = getLayoutNodes(mockState.animals);
     const nodeID = nodes.find(d => d.id.includes('salmon')).id;
     const newMockState = reducer(mockState.animals, toggleNodeClicked(nodeID));
     const linkedNodes = getLinkedNodes(newMockState);

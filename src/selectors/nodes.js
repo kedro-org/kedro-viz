@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getTagCount } from './tags';
 import { getCentralNode } from './linked-nodes';
@@ -12,6 +13,7 @@ const getNodeTags = state => state.nodeTags;
 const getNodeType = state => state.nodeType;
 const getTagActive = state => state.tagActive;
 const getTagEnabled = state => state.tagEnabled;
+const getTextLabels = state => state.textLabels;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -115,18 +117,86 @@ export const getNodeData = createSelector(
 );
 
 /**
+ * Temporarily create a new SVG container in the DOM, write a node to it,
+ * measure its width with getBBox, then delete the container and store the value
+ */
+export const getNodeTextWidth = createSelector(
+  [getNodes, getNodeName],
+  (nodes, nodeName) => {
+    const svg = select(document.body)
+      .append('svg')
+      .attr('class', 'kedro node');
+    const nodeTextWidth = arrayToObject(nodes, nodeID => {
+      const text = svg.append('text').text(nodeName[nodeID]);
+      const node = text.node();
+      const width = node.getBBox ? node.getBBox().width : 0;
+      text.remove();
+      return width;
+    });
+    svg.remove();
+    return nodeTextWidth;
+  }
+);
+
+/**
+ * Get the top/bottom and left/right padding for a node
+ * @param {Boolean} showLabels Whether labels are visible
+ * @param {Boolean} isTask Whether the node is a task type (vs data/params)
+ */
+export const getPadding = (showLabels, isTask) => {
+  if (showLabels) {
+    return { x: 16, y: 10 };
+  }
+  if (isTask) {
+    return { x: 14, y: 14 };
+  }
+  return { x: 16, y: 16 };
+};
+
+/**
+ * Calculate node width/height and icon/text positioning
+ */
+export const getNodeSize = createSelector(
+  [getNodes, getNodeTextWidth, getTextLabels, getNodeType],
+  (nodes, nodeTextWidth, textLabels, nodeType) =>
+    arrayToObject(nodes, nodeID => {
+      const iconSize = textLabels ? 14 : 24;
+      const padding = getPadding(textLabels, nodeType[nodeID] === 'task');
+      const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
+      const textGap = textLabels ? 6 : 0;
+      const innerWidth = iconSize + textWidth + textGap;
+      return {
+        width: innerWidth + padding.x * 2,
+        height: iconSize + padding.y * 2,
+        textOffset: (innerWidth - textWidth) / 2,
+        iconOffset: -innerWidth / 2,
+        iconSize
+      };
+    })
+);
+
+/**
  * Returns only visible nodes as an array, but without any extra properties
  * that are unnecessary for the chart layout calculation
  */
 export const getVisibleNodes = createSelector(
-  [getNodes, getNodeName, getNodeType, getNodeDisabled, getNodeFullName],
-  (nodes, nodeName, nodeType, nodeDisabled, nodeFullName) =>
+  [
+    getNodes,
+    getNodeName,
+    getNodeType,
+    getNodeDisabled,
+    getNodeFullName,
+    getNodeSize
+  ],
+  (nodes, nodeName, nodeType, nodeDisabled, nodeFullName, nodeSize) =>
     nodes
       .filter(id => !nodeDisabled[id])
       .map(id => ({
         id,
         name: nodeName[id],
+        label: nodeName[id],
+        fullName: nodeFullName[id],
         type: nodeType[id],
-        fullName: nodeFullName[id]
+        ...nodeSize[id]
       }))
 );

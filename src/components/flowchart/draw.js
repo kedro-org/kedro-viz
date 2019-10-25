@@ -8,8 +8,7 @@ import icon from './icon';
  * Render chart to the DOM with D3
  */
 const draw = function() {
-  const { centralNode, linkedNodes, textLabels } = this.props;
-  const { nodes, edges } = this.props.layout;
+  const { nodes, edges, centralNode, linkedNodes, textLabels } = this.props;
 
   // Create selections
   this.el.edges = this.el.edgeGroup
@@ -75,8 +74,6 @@ const draw = function() {
     .attr('transform', node => `translate(${node.x}, ${node.y})`)
     .attr('opacity', 0);
 
-  enterNodes.append('circle').attr('r', 25);
-
   enterNodes.append('rect');
 
   enterNodes.append(icon);
@@ -85,7 +82,8 @@ const draw = function() {
     .append('text')
     .text(node => node.name)
     .attr('text-anchor', 'middle')
-    .attr('dy', 4);
+    .attr('dy', 3.5)
+    .attr('dx', node => node.textOffset);
 
   this.el.nodes
     .exit()
@@ -129,7 +127,16 @@ const draw = function() {
     .attr('height', node => node.height - 5)
     .attr('x', node => (node.width - 5) / -2)
     .attr('y', node => (node.height - 5) / -2)
-    .attr('rx', node => (node.type === 'data' ? node.height / 2 : 0));
+    .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2));
+
+  this.el.nodes
+    .select('.node__icon')
+    .transition('node-icon-offset')
+    .duration(150)
+    .attr('width', node => node.iconSize)
+    .attr('height', node => node.iconSize)
+    .attr('x', node => node.iconOffset)
+    .attr('y', node => node.iconSize / -2);
 };
 
 export default draw;

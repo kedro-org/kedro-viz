@@ -9,7 +9,11 @@ import {
   toggleNodeHovered,
   updateChartSize
 } from '../../actions';
-import { getLayout, getZoomPosition } from '../../selectors/layout';
+import {
+  getLayoutNodes,
+  getLayoutEdges,
+  getZoomPosition
+} from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import draw from './draw';
 import './styles/flowchart.css';
@@ -288,10 +292,11 @@ export class FlowChart extends Component {
 }
 
 export const mapStateToProps = state => ({
-  chartSize: state.chartSize,
-  layout: getLayout(state),
-  linkedNodes: getLinkedNodes(state),
   centralNode: getCentralNode(state),
+  chartSize: state.chartSize,
+  edges: getLayoutEdges(state),
+  linkedNodes: getLinkedNodes(state),
+  nodes: getLayoutNodes(state),
   textLabels: state.textLabels,
   view: state.view,
   zoom: getZoomPosition(state)

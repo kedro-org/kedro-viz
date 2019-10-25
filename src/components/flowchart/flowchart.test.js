@@ -97,10 +97,8 @@ describe('FlowChart', () => {
   it('maps state to props', () => {
     const expectedResult = {
       chartSize: expect.any(Object),
-      layout: expect.objectContaining({
-        edges: expect.any(Array),
-        nodes: expect.any(Array)
-      }),
+      edges: expect.any(Array),
+      nodes: expect.any(Array),
       linkedNodes: expect.any(Object),
       centralNode: null,
       textLabels: expect.any(Boolean),

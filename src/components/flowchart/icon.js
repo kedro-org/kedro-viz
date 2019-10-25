@@ -20,23 +20,15 @@ const paths = {
  * Inline SVG is required to support image exports
  */
 export default node => {
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const svgNode = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
-  const iconSize = 24;
-
-  const g = select(svg)
+  const svg = select(svgNode)
     .attr('class', 'node__icon')
-    .attr('viewBox', '0 0 24 24')
-    .attr('width', iconSize)
-    .attr('height', iconSize)
-    .attr('x', iconSize / -2)
-    .attr('y', iconSize / -2)
-    .append('g')
-    .attr('class', 'node__icon__fill');
+    .attr('viewBox', '0 0 24 24');
 
   paths[node.type].forEach(path => {
-    g.append('path').attr('d', path);
+    svg.append('path').attr('d', path);
   });
 
-  return svg;
+  return svgNode;
 };
