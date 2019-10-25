@@ -127,7 +127,7 @@ const draw = function() {
     .attr('height', node => node.height - 5)
     .attr('x', node => (node.width - 5) / -2)
     .attr('y', node => (node.height - 5) / -2)
-    .attr('rx', node => (node.type === 'data' ? node.height / 2 : 0));
+    .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2));
 
   this.el.nodes
     .select('.node__icon')
