@@ -1,5 +1,4 @@
-@import './node-icon';
-@import './node-text';
+@import './node';
 @import './edges';
 @import './tooltip';
 
@@ -9,12 +8,4 @@
 
 .pipeline-flowchart__graph {
   display: block;
-}
-
-.node {
-  outline: none;
-}
-
-.node--faded {
-  opacity: 0.3;
 }
