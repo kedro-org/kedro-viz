@@ -34,17 +34,17 @@ export class Wrapper extends Component {
           'kui-theme--dark': theme === 'dark',
           'kui-theme--light': theme === 'light'
         })}>
-        <div className="pipeline-wrapper">
-          <FontLoadChecker>
-            <FlowChart visibleNav={visibleNav} />
-          </FontLoadChecker>
-        </div>
-        <IconToolbar />
         <Sidebar
           onToggle={this.toggleNav.bind(this)}
           theme={theme}
           visible={visibleNav}
         />
+        <IconToolbar />
+        <div className="pipeline-wrapper">
+          <FontLoadChecker>
+            <FlowChart visibleNav={visibleNav} />
+          </FontLoadChecker>
+        </div>
       </div>
     );
   }
