@@ -12,7 +12,7 @@
 
   .pipeline-ui {
     visibility: hidden;
-    transition: visibility 0s;
+    transition: visibility 0.3s;
   }
 
   @media (min-width: $breakpoint-small) {
@@ -29,7 +29,7 @@
 
     .pipeline-ui {
       visibility: visible;
-      transition: visibility 0.3s;
+      transition: visibility 0s;
     }
   }
 
@@ -84,6 +84,7 @@
 
   &--visible {
     visibility: visible;
+    transition: all 0.1s, visibility 0s;
     opacity: 1;
   }
 
