@@ -120,7 +120,7 @@ def get_data_from_kedro(pipeline=None):
         parts = [n[0].upper() + n[1:] for n in name.split()]
         return " ".join(parts)
 
-    if pipeline == None:
+    if pipeline is None:
         pipeline = get_project_context("create_pipeline")()
 
     nodes = []
