@@ -107,15 +107,21 @@ def run_viz(port=None, line=None) -> None:
     display(HTML(wrapper))
 
 
-def get_data_from_kedro():
-    """ Get pipeline data from Kedro and format it appropriately """
+def get_data_from_kedro(pipeline=None):
+    """
+    Get pipeline data from Kedro and format it appropriately 
+
+    Args:
+        pipeline: (optional) Kedro pipeline object, if None pipeline is loaded from context.
+    """
 
     def pretty_name(name):
         name = name.replace("-", " ").replace("_", " ")
         parts = [n[0].upper() + n[1:] for n in name.split()]
         return " ".join(parts)
 
-    pipeline = get_project_context("create_pipeline")()
+    if pipeline == None:
+        pipeline = get_project_context("create_pipeline")()
 
     nodes = []
     edges = []
