@@ -109,7 +109,7 @@ def run_viz(port=None, line=None) -> None:
 
 def get_data_from_kedro(pipeline=None):
     """
-    Get pipeline data from Kedro and format it appropriately 
+    Get pipeline data from Kedro and format it appropriately
 
     Args:
         pipeline: (optional) Kedro pipeline object, if None pipeline is loaded from context.
