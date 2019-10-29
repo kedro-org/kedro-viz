@@ -4,7 +4,7 @@ Add release notes for the upcoming release here.
 # Release 2.1.1:
 
 ## Major features and improvements
-- Added optional pipeline argument to `get_data_from_kedro` (#70)
+- Added optional pipeline argument to `get_data_from_kedro` (#72)
 
 ## Bug fixes and other changes
 - Don't ignore gh-pages branch in CircleCI (#33)
