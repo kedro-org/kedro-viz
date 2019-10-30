@@ -2,7 +2,8 @@ import React from 'react';
 import $ from 'cheerio';
 import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
-import { getActiveSnapshotNodes } from '../../selectors';
+
+const getNodes = state => state.nodes;
 
 describe('FlowChart', () => {
   it('renders without crashing', () => {
@@ -15,8 +16,8 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(<FlowChart />);
     const nodes = wrapper.render().find('.node');
     const nodeNames = nodes.map((i, el) => $(el).text()).get();
-    const mockNodes = getActiveSnapshotNodes(mockState);
-    const mockNodeNames = mockNodes.map(d => mockState.nodeName[d]);
+    const mockNodes = getNodes(mockState.lorem);
+    const mockNodeNames = mockNodes.map(d => mockState.lorem.nodeName[d]);
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
   });
@@ -95,14 +96,11 @@ describe('FlowChart', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
-      activeSnapshot: expect.any(String),
       chartSize: expect.any(Object),
-      layout: expect.objectContaining({
-        edges: expect.any(Array),
-        nodes: expect.any(Array)
-      }),
+      edges: expect.any(Array),
+      nodes: expect.any(Array),
       linkedNodes: expect.any(Object),
-      focusedNode: null,
+      centralNode: null,
       textLabels: expect.any(Boolean),
       view: expect.stringMatching(/combined|data|text/),
       zoom: expect.objectContaining({
@@ -111,22 +109,27 @@ describe('FlowChart', () => {
         translateY: expect.any(Number)
       })
     };
-    expect(mapStateToProps(mockState)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {
     const dispatch = jest.fn();
 
-    mapDispatchToProps(dispatch).onToggleNodeActive({ id: '123' }, true);
+    mapDispatchToProps(dispatch).onToggleNodeClicked('123');
     expect(dispatch.mock.calls[0][0]).toEqual({
-      nodeID: '123',
-      isActive: true,
-      type: 'TOGGLE_NODE_ACTIVE'
+      nodeClicked: '123',
+      type: 'TOGGLE_NODE_CLICKED'
+    });
+
+    mapDispatchToProps(dispatch).onToggleNodeHovered('123');
+    expect(dispatch.mock.calls[1][0]).toEqual({
+      nodeHovered: '123',
+      type: 'TOGGLE_NODE_HOVERED'
     });
 
     const boundingClientRect = { x: 0, y: 0, width: 1000, height: 1000 };
     mapDispatchToProps(dispatch).onUpdateChartSize(boundingClientRect);
-    expect(dispatch.mock.calls[1][0]).toEqual({
+    expect(dispatch.mock.calls[2][0]).toEqual({
       chartSize: boundingClientRect,
       type: 'UPDATE_CHART_SIZE'
     });

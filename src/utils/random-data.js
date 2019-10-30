@@ -14,16 +14,15 @@ const MAX_CONNECTED_NODES = 4;
 const MAX_LAYER_COUNT = 20;
 const MAX_MESSAGE_WORD_LENGTH = 15;
 const MAX_NODE_TAG_COUNT = 5;
-const MAX_SNAPSHOT_COUNT = 40;
 const MAX_TAG_COUNT = 20;
 const MAX_TIMESTAMP_OFFSET = 9999999999;
 const PARAMETERS_FREQUENCY = 0.05;
 const TASK_NODE_COUNT = 10;
 
 /**
- * Generate a random pipeline snapshot dataset
+ * Generate a random pipeline dataset
  */
-class Snapshot {
+class Pipeline {
   constructor() {
     this.CONNECTION_COUNT = randomNumber(MAX_CONNECTED_NODES);
     this.LAYER_COUNT = randomNumber(MAX_LAYER_COUNT);
@@ -54,13 +53,16 @@ class Snapshot {
     return getNumberArray(count)
       .map(() => this.getRandomNodeName(paramFreq))
       .filter(unique)
-      .map(id => ({
-        id: `${type}/${id}`,
-        name: id.replace(/_/g, ' '),
-        is_parameters: id.includes('param'),
-        type,
-        layer: getLayer()
-      }));
+      .map(id => {
+        const name = id.replace(/_/g, ' ');
+        return {
+          id: `${type}/${id}`,
+          name,
+          full_name: `${name} (${name})`,
+          type: id.includes('param') ? 'parameters' : type,
+          layer: getLayer()
+        };
+      });
   }
 
   /**
@@ -158,7 +160,7 @@ class Snapshot {
   }
 
   /**
-   * Generate the full snapshot datum, including ID, timestamp,
+   * Generate the full pipeline datum, including ID, timestamp,
    * random message and JSON schema
    */
   getDatum() {
@@ -171,10 +173,6 @@ class Snapshot {
   }
 }
 
-const generateRandomHistory = () => ({
-  snapshots: getNumberArray(randomNumber(MAX_SNAPSHOT_COUNT))
-    .map(() => new Snapshot().getDatum())
-    .sort((a, b) => b.created_ts - a.created_ts)
-});
+const generateRandomPipeline = () => new Pipeline().getDatum();
 
-export default generateRandomHistory;
+export default generateRandomPipeline;

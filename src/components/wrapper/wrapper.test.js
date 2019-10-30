@@ -1,8 +1,8 @@
 import { Wrapper, mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
-const { showHistory, theme } = mockState;
-const mockProps = { showHistory, theme };
+const { theme } = mockState.lorem;
+const mockProps = { theme };
 
 describe('Wrapper', () => {
   it('renders without crashing', () => {
@@ -19,22 +19,18 @@ describe('Wrapper', () => {
     expect(container.hasClass(`kui-theme--dark`)).toBe(theme === 'dark');
   });
 
-  it('has an open sidebar by default', () => {
+  it('has sidebar visible by default', () => {
     const wrapper = setup.shallow(Wrapper, mockProps);
-    expect(
-      wrapper.find('.pipeline-sidebar').hasClass('pipeline-sidebar--visible')
-    ).toBe(true);
+    expect(wrapper.instance().state.visibleNav).toBe(true);
   });
 
-  it('closes the sidebar when you click the hide button', () => {
+  it('sets visibleNav to false when you run toggleNav', () => {
     const wrapper = setup.shallow(Wrapper, mockProps);
-    wrapper.find('.pipeline-sidebar__hide-menu').simulate('click');
-    expect(
-      wrapper.find('.pipeline-sidebar').hasClass('pipeline-sidebar--visible')
-    ).toBe(false);
+    wrapper.instance().toggleNav();
+    expect(wrapper.instance().state.visibleNav).toBe(false);
   });
 
   it('maps state to props', () => {
-    expect(mapStateToProps(mockState)).toEqual(mockProps);
+    expect(mapStateToProps(mockState.lorem)).toEqual(mockProps);
   });
 });

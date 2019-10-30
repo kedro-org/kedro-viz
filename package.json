@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "main": "lib/components/app/index.js",
   "files": [
     "lib"
@@ -26,7 +26,7 @@
     "snyk-protect": "snyk protect"
   },
   "dependencies": {
-    "@quantumblack/kedro-ui": "^1.0.2",
+    "@quantumblack/kedro-ui": "^1.1.1",
     "classnames": "^2.2.6",
     "d3-fetch": "^1.1.2",
     "d3-interpolate-path": "^2.1.0",
@@ -42,7 +42,7 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "snyk": "^1.222.1",
+    "snyk": "^1.234.2",
     "what-input": "^5.2.3"
   },
   "peerDependencies": {

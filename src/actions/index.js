@@ -1,16 +1,3 @@
-export const CHANGE_ACTIVE_SNAPSHOT = 'CHANGE_ACTIVE_SNAPSHOT';
-
-/**
- * Change which pipeline snapshot is active.
- * @param {string} snapshotID A single snapshot ID
- */
-export function changeActiveSnapshot(snapshotID) {
-  return {
-    type: CHANGE_ACTIVE_SNAPSHOT,
-    snapshotID
-  };
-}
-
 export const CHANGE_VIEW = 'CHANGE_VIEW';
 
 /**
@@ -24,46 +11,29 @@ export function changeView(view) {
   };
 }
 
-export const DELETE_SNAPSHOT = 'DELETE_SNAPSHOT';
+export const RESET_DATA = 'RESET_DATA';
 
 /**
- * Select a snapshot and delete it. If handler is passed via App
- * 'onDeleteSnapshot' prop then use that, else use native method.
- * @param {string} id Snapshot id
+ * Overwrite the existing data store when receiving new data from upstream
+ * @param {Object} data New pipeline state data
  */
-export function deleteSnapshot(id) {
+export function resetData(data) {
   return {
-    type: DELETE_SNAPSHOT,
-    id
+    type: RESET_DATA,
+    data
   };
 }
 
-export const RESET_SNAPSHOT_DATA = 'RESET_SNAPSHOT_DATA';
+export const TOGGLE_NODE_CLICKED = 'TOGGLE_NODE_CLICKED';
 
 /**
- * Overwrite the existing data store when receiving
- * new snapshot data from upstream
- * @param {Array} snapshots List of snapshot objects
+ * Update the value of the currently-active clicked node
+ * @param {string|null} nodeClicked The node's unique identifier
  */
-export function resetSnapshotData(snapshots) {
+export function toggleNodeClicked(nodeClicked) {
   return {
-    type: RESET_SNAPSHOT_DATA,
-    snapshots
-  };
-}
-
-export const TOGGLE_NODE_ACTIVE = 'TOGGLE_NODE_ACTIVE';
-
-/**
- * Toggle a node's highlighting on/off
- * @param {string} nodeID The node's unique identifier
- * @param {Boolean} isActive Whether the node should be active
- */
-export function toggleNodeActive(nodeID, isActive) {
-  return {
-    type: TOGGLE_NODE_ACTIVE,
-    nodeID,
-    isActive
+    type: TOGGLE_NODE_CLICKED,
+    nodeClicked
   };
 }
 
@@ -82,19 +52,6 @@ export function toggleNodeDisabled(nodeID, isDisabled) {
   };
 }
 
-export const TOGGLE_NODE_FOCUSED = 'TOGGLE_NODE_FOCUSED';
-
-/**
- * Update the value of the currently-focused node
- * @param {string|null} nodeFocused The node's unique identifier
- */
-export function toggleNodeFocused(nodeFocused) {
-  return {
-    type: TOGGLE_NODE_FOCUSED,
-    nodeFocused
-  };
-}
-
 export const TOGGLE_NODES_DISABLED = 'TOGGLE_NODES_DISABLED';
 
 /**
@@ -107,6 +64,19 @@ export function toggleNodesDisabled(nodeIDs, isDisabled) {
     type: TOGGLE_NODES_DISABLED,
     nodeIDs,
     isDisabled
+  };
+}
+
+export const TOGGLE_NODE_HOVERED = 'TOGGLE_NODE_HOVERED';
+
+/**
+ * Update the value of the currently-active hovered node
+ * @param {string|null} nodeHovered The node's unique identifier
+ */
+export function toggleNodeHovered(nodeHovered) {
+  return {
+    type: TOGGLE_NODE_HOVERED,
+    nodeHovered
   };
 }
 

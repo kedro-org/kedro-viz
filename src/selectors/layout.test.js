@@ -4,7 +4,8 @@ import {
   getNodeWidth,
   getNodeSize,
   getGraph,
-  getLayout,
+  getLayoutNodes,
+  getLayoutEdges,
   getZoomPosition
 } from './layout';
 import { getVisibleNodes } from './nodes';
@@ -13,34 +14,8 @@ import { updateChartSize } from '../actions';
 import reducer from '../reducers';
 
 describe('Selectors', () => {
-  describe('prepareTextContainer', () => {
-    it('returns undefined if text labels are not enabled', () => {
-      expect(prepareTextContainer(false)).not.toBeDefined();
-    });
-
-    it('returns a D3 selection object if text labels are enabled', () => {
-      expect(prepareTextContainer(true)).toEqual(expect.any(Object));
-    });
-  });
-
-  describe('getNodeWidth', () => {
-    it('returns just the padding if text labels are not enabled', () => {
-      expect(getNodeWidth('qwertyuiop', 123, undefined)).toEqual(123);
-    });
-  });
-
-  describe('getNodeSize', () => {
-    it('returns a height of 40 if node type is data and SVG is undefined', () => {
-      expect(getNodeSize({ type: 'data' }).height).toEqual(40);
-    });
-
-    it('returns a height of 50 if node type is task and SVG is undefined', () => {
-      expect(getNodeSize({ type: 'task' }).height).toEqual(50);
-    });
-  });
-
   describe('getGraph', () => {
-    const graph = getGraph(mockState);
+    const graph = getGraph(mockState.lorem);
     it('calculates chart layout and returns a Dagre object', () => {
       expect(graph).toEqual(
         expect.objectContaining({
@@ -54,35 +29,39 @@ describe('Selectors', () => {
     });
 
     it('returns a complete list of node and edge IDs', () => {
-      expect(graph.nodes()).toEqual(getVisibleNodes(mockState).map(d => d.id));
+      expect(graph.nodes()).toEqual(
+        getVisibleNodes(mockState.lorem).map(d => d.id)
+      );
       const edgeIDs = graph.edges().map(edge => graph.edge(edge).id);
-      expect(edgeIDs).toEqual(getVisibleEdges(mockState).map(d => d.id));
+      expect(edgeIDs).toEqual(getVisibleEdges(mockState.lorem).map(d => d.id));
     });
   });
 
-  describe('getLayout', () => {
-    const layout = getLayout(mockState);
-
+  describe('getLayoutNodes', () => {
     it('returns a properly-formatted list of nodes', () => {
-      expect(layout.nodes).toEqual(
+      const nodes = getLayoutNodes(mockState.lorem);
+      expect(nodes).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
             name: expect.any(String),
+            fullName: expect.any(String),
             type: expect.stringMatching(/data|task/),
             height: expect.any(Number),
             width: expect.any(Number),
             x: expect.any(Number),
             y: expect.any(Number),
-            active: expect.any(Boolean),
-            disabled: expect.any(Boolean)
+            active: expect.any(Boolean)
           })
         ])
       );
     });
+  });
 
+  describe('getLayoutEdges', () => {
     it('returns a properly-formatted list of edges', () => {
-      expect(layout.edges).toEqual(
+      const edges = getLayoutEdges(mockState.lorem);
+      expect(edges).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
@@ -102,7 +81,7 @@ describe('Selectors', () => {
 
   describe('getZoomPosition', () => {
     it('returns a default chart zoom translation/scale if none is specified', () => {
-      expect(getZoomPosition(mockState)).toEqual({
+      expect(getZoomPosition(mockState.lorem)).toEqual({
         scale: 1,
         translateX: 0,
         translateY: 0
@@ -111,7 +90,7 @@ describe('Selectors', () => {
 
     it('returns the updated chart zoom translation/scale if set', () => {
       const newMockState = reducer(
-        mockState,
+        mockState.lorem,
         updateChartSize({ width: 100, height: 100 })
       );
       const newZoomPos = getZoomPosition(newMockState);

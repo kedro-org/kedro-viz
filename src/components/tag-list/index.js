@@ -4,7 +4,7 @@ import Checkbox from '@quantumblack/kedro-ui/lib/components/checkbox';
 import Dropdown from '@quantumblack/kedro-ui/lib/components/dropdown';
 import '@quantumblack/kedro-ui/lib/components/menu-option/menu-option.css';
 import { toggleTagActive, toggleTagFilter } from '../../actions';
-import { getTags, getTagCount } from '../../selectors/tags';
+import { getTagData, getTagCount } from '../../selectors/tags';
 import './tag-list.css';
 
 /**
@@ -60,7 +60,7 @@ export const TagList = ({
 );
 
 export const mapStateToProps = state => {
-  const tags = getTags(state);
+  const tags = getTagData(state);
   const tagCount = getTagCount(state);
   return {
     tagCount,

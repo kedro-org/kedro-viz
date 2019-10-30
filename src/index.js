@@ -7,15 +7,10 @@ import config from './config';
 import './styles/index.css';
 
 const { dataSource } = config();
-const showHistory = dataSource === 'random' || dataSource === 'mock';
 
 ReactDOM.render(
   <>
-    <App
-      allowHistoryDeletion={showHistory}
-      data={dataSource}
-      showHistory={showHistory}
-    />
+    <App data={dataSource} />
     <EasterEgg />
   </>,
   document.getElementById('root')

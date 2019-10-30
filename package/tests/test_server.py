@@ -36,100 +36,86 @@ import pytest
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
+from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
-    "snapshots": [
+    "edges": [
+        {"target": "01a6a5cb", "source": "7366ec9f"},
+        {"target": "01a6a5cb", "source": "f1f1425b"},
+        {"target": "60e68b8e", "source": "01a6a5cb"},
+        {"target": "de8434b7", "source": "afffac5f"},
+        {"target": "de8434b7", "source": "f1f1425b"},
+        {"target": "37316e3a", "source": "de8434b7"},
+    ],
+    "nodes": [
         {
-            "edges": [
-                {
-                    "target": "task/func([bob_in,parameters])->[bob_out]",
-                    "source": "data/bob_in",
-                },
-                {
-                    "target": "task/func([bob_in,parameters])->[bob_out]",
-                    "source": "data/parameters",
-                },
-                {
-                    "target": "data/bob_out",
-                    "source": "task/func([bob_in,parameters])->[bob_out]",
-                },
-                {"target": "task/my_node", "source": "data/fred_in"},
-                {"target": "task/my_node", "source": "data/parameters"},
-                {"target": "data/fred_out", "source": "task/my_node"},
-            ],
-            "nodes": [
-                {
-                    "name": "Func",
-                    "type": "task",
-                    "id": "task/func([bob_in,parameters])->[bob_out]",
-                    "full_name": "func([bob_in,parameters]) -> [bob_out]",
-                    "tags": [],
-                },
-                {
-                    "name": "my_node",
-                    "type": "task",
-                    "id": "task/my_node",
-                    "full_name": "my_node: func([fred_in@pandas,parameters]) -> [fred_out@pandas]",
-                    "tags": ["bob"],
-                },
-                {
-                    "is_parameters": False,
-                    "name": "Bob In",
-                    "tags": [],
-                    "id": "data/bob_in",
-                    "full_name": "bob_in",
-                    "type": "data",
-                },
-                {
-                    "is_parameters": False,
-                    "name": "Bob Out",
-                    "tags": [],
-                    "id": "data/bob_out",
-                    "full_name": "bob_out",
-                    "type": "data",
-                },
-                {
-                    "is_parameters": False,
-                    "name": "Fred In",
-                    "tags": ["bob"],
-                    "id": "data/fred_in",
-                    "full_name": "fred_in",
-                    "type": "data",
-                },
-                {
-                    "is_parameters": False,
-                    "name": "Fred Out",
-                    "tags": ["bob"],
-                    "id": "data/fred_out",
-                    "full_name": "fred_out",
-                    "type": "data",
-                },
-                {
-                    "is_parameters": True,
-                    "name": "Parameters",
-                    "tags": ["bob"],
-                    "id": "data/parameters",
-                    "full_name": "parameters",
-                    "type": "data",
-                },
-            ],
-            "tags": [{"name": "Bob", "id": "bob"}],
-        }
-    ]
+            "name": "Func1",
+            "type": "task",
+            "id": "01a6a5cb",
+            "full_name": "func1",
+            "tags": [],
+        },
+        {
+            "name": "my_node",
+            "type": "task",
+            "id": "de8434b7",
+            "full_name": "func2",
+            "tags": ["bob"],
+        },
+        {
+            "name": "Bob In",
+            "tags": [],
+            "id": "7366ec9f",
+            "full_name": "bob_in",
+            "type": "data",
+        },
+        {
+            "name": "Bob Out",
+            "tags": [],
+            "id": "60e68b8e",
+            "full_name": "bob_out",
+            "type": "data",
+        },
+        {
+            "name": "Fred In",
+            "tags": ["bob"],
+            "id": "afffac5f",
+            "full_name": "fred_in",
+            "type": "data",
+        },
+        {
+            "name": "Fred Out",
+            "tags": ["bob"],
+            "id": "37316e3a",
+            "full_name": "fred_out",
+            "type": "data",
+        },
+        {
+            "name": "Parameters",
+            "tags": ["bob"],
+            "id": "f1f1425b",
+            "full_name": "parameters",
+            "type": "parameters",
+        },
+    ],
+    "tags": [{"name": "Bob", "id": "bob"}],
 }
 
 
 def create_pipeline():
-    def func(a, b):  # pylint: disable=unused-argument
+    def func1(a, b):  # pylint: disable=unused-argument
+        return a
+
+    def func2(a, b):  # pylint: disable=unused-argument
         return a
 
     return Pipeline(
         [
             # unnamed node with no tags and basic io
-            node(func, ["bob_in", "parameters"], ["bob_out"]),
+            node(func1, ["bob_in", "parameters"], ["bob_out"]),
             # named node with tags and transcoding
             node(
-                func,
+                func2,
                 ["fred_in@pandas", "parameters"],
                 ["fred_out@pandas"],
                 name="my_node",
@@ -203,3 +189,71 @@ def test_nodes_endpoint(client):
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == EXPECTED_PIPELINE_DATA
+
+
+@pytest.fixture(autouse=True)
+def clean_up():
+    # pylint: disable=protected-access
+    server._VIZ_PROCESSES.clear()
+
+
+def test_wait_for():
+    def _sum(x, y):
+        return x + y
+
+    assert not server.wait_for(_sum, 3, x=1, y=2)
+
+    unexpected_result_error = r"didn\'t return 0 within specified timeout"
+    with pytest.raises(WaitForException, match=unexpected_result_error):
+        server.wait_for(_sum, 0, x=1, y=2, timeout_=1)
+
+    # Non-callable should fail
+    non_callable = 1
+    non_callable_error = r"didn\'t return True within specified timeout"
+    with pytest.raises(WaitForException, match=non_callable_error):
+        server.wait_for(non_callable, timeout_=1)
+
+
+@pytest.fixture
+def mocked_process(mocker):
+    mocker.patch("kedro_viz.server.wait_for")
+    return mocker.patch("kedro_viz.server.multiprocessing.Process")
+
+
+class TestRunViz:
+    default_port = 4141
+
+    def test_call_once(self, mocked_process):
+        """Test inline magic function"""
+        server.run_viz()
+        # pylint: disable=protected-access
+        mocked_process.assert_called_once_with(
+            target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
+        )
+
+    def test_call_twice_with_same_port(self, mocked_process):
+        """Running run_viz with the same port should trigger another process
+        """
+        server.run_viz()
+        server.run_viz()
+        # pylint: disable=protected-access
+        mocked_process.assert_called_with(
+            target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
+        )
+        assert mocked_process.call_count == 2
+
+    def test_call_twice_with_different_port(self, mocked_process):
+        """
+        Running run_viz with a different port should start another process
+        """
+        server.run_viz()
+        # pylint: disable=protected-access
+        mocked_process.assert_called_with(
+            target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
+        )
+        server.run_viz(port=8000)
+        # pylint: disable=protected-access
+        mocked_process.assert_called_with(
+            target=server._call_viz, kwargs={"port": 8000}, daemon=True
+        )
+        assert mocked_process.call_count == 2

@@ -1,25 +1,23 @@
-import mockData from '../utils/data.mock';
+import animals from '../utils/data/animals.mock';
 import {
-  CHANGE_ACTIVE_SNAPSHOT,
   CHANGE_VIEW,
-  DELETE_SNAPSHOT,
-  RESET_SNAPSHOT_DATA,
-  TOGGLE_NODE_ACTIVE,
+  RESET_DATA,
+  TOGGLE_NODE_CLICKED,
   TOGGLE_NODE_DISABLED,
   TOGGLE_NODES_DISABLED,
+  TOGGLE_NODE_HOVERED,
   TOGGLE_PARAMETERS,
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
   TOGGLE_THEME,
   TOGGLE_TEXT_LABELS,
   UPDATE_CHART_SIZE,
-  changeActiveSnapshot,
   changeView,
-  deleteSnapshot,
-  resetSnapshotData,
-  toggleNodeActive,
+  resetData,
+  toggleNodeClicked,
   toggleNodeDisabled,
   toggleNodesDisabled,
+  toggleNodeHovered,
   toggleParameters,
   toggleTextLabels,
   toggleTagActive,
@@ -29,15 +27,6 @@ import {
 } from '../actions';
 
 describe('actions', () => {
-  it('should create an action to change the active snapshot', () => {
-    const snapshotID = '1234567890';
-    const expectedAction = {
-      type: CHANGE_ACTIVE_SNAPSHOT,
-      snapshotID
-    };
-    expect(changeActiveSnapshot(snapshotID)).toEqual(expectedAction);
-  });
-
   it('should create an action to change the view', () => {
     const view = 'combined';
     const expectedAction = {
@@ -47,33 +36,30 @@ describe('actions', () => {
     expect(changeView(view)).toEqual(expectedAction);
   });
 
-  it('should create an action to delete a snapshot', () => {
-    const id = '123567890';
+  it('should create an action to reset pipeline data', () => {
     const expectedAction = {
-      type: DELETE_SNAPSHOT,
-      id
+      type: RESET_DATA,
+      data: animals
     };
-    expect(deleteSnapshot(id)).toEqual(expectedAction);
+    expect(resetData(animals)).toEqual(expectedAction);
   });
 
-  it('should create an action to reset snapshot data', () => {
-    const snapshots = mockData;
+  it('should create an action to toggle whether a node has been clicked', () => {
+    const nodeClicked = '12367890';
     const expectedAction = {
-      type: RESET_SNAPSHOT_DATA,
-      snapshots
+      type: TOGGLE_NODE_CLICKED,
+      nodeClicked
     };
-    expect(resetSnapshotData(snapshots)).toEqual(expectedAction);
+    expect(toggleNodeClicked(nodeClicked)).toEqual(expectedAction);
   });
 
-  it('should create an action to toggle whether a node is active', () => {
-    const nodeID = '12367890';
-    const isActive = false;
+  it('should create an action to toggle whether a node has been clicked', () => {
+    const nodeHovered = '12367890';
     const expectedAction = {
-      type: TOGGLE_NODE_ACTIVE,
-      nodeID,
-      isActive
+      type: TOGGLE_NODE_HOVERED,
+      nodeHovered
     };
-    expect(toggleNodeActive(nodeID, isActive)).toEqual(expectedAction);
+    expect(toggleNodeHovered(nodeHovered)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether a node is disabled', () => {

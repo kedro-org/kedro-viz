@@ -5,16 +5,16 @@
   padding: 14px 12px 12px;
 
   .kui-theme--light & {
-    background: $color-bg-light-alt;
+    background: $color-bg-light-alt2;
   }
 
   .kui-theme--dark & {
-    background: $color-bg-dark-alt;
+    background: $color-bg-dark-alt2;
   }
 
   .kui-searchbar,
   .kui-input-wrapper {
-    width: 100%;
+    max-width: none;
   }
 }
 
@@ -22,11 +22,11 @@
   min-height: 400px;
 
   .kui-theme--light & {
-    background: $color-bg-light-alt;
+    background: $color-bg-light-alt2;
   }
 
   .kui-theme--dark & {
-    background: $color-bg-dark-alt;
+    background: $color-bg-dark-alt2;
   }
 }
 
@@ -62,6 +62,7 @@
   border: none;
   color: inherit;
   font-size: 1.6em;
+  font-family: inherit;
   cursor: pointer;
   opacity: 0.8;
 

@@ -22,11 +22,10 @@ describe('ChartUI', () => {
     const expectedResult = {
       hasData: expect.any(Boolean),
       parameters: expect.any(Boolean),
-      textLabels: expect.any(Boolean),
       theme: expect.stringMatching(/light|dark/),
       view: expect.stringMatching(/combined|data|task/)
     };
-    expect(mapStateToProps(mockState)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {
@@ -41,12 +40,6 @@ describe('ChartUI', () => {
     expect(dispatch.mock.calls[1][0]).toEqual({
       parameters: false,
       type: 'TOGGLE_PARAMETERS'
-    });
-
-    mapDispatchToProps(dispatch).onToggleTextLabels(null, { value: false });
-    expect(dispatch.mock.calls[2][0]).toEqual({
-      textLabels: false,
-      type: 'TOGGLE_TEXT_LABELS'
     });
   });
 });

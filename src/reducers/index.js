@@ -1,12 +1,10 @@
 import {
-  CHANGE_ACTIVE_SNAPSHOT,
   CHANGE_VIEW,
-  DELETE_SNAPSHOT,
-  RESET_SNAPSHOT_DATA,
-  TOGGLE_NODE_ACTIVE,
+  RESET_DATA,
+  TOGGLE_NODE_CLICKED,
   TOGGLE_NODE_DISABLED,
-  TOGGLE_NODE_FOCUSED,
   TOGGLE_NODES_DISABLED,
+  TOGGLE_NODE_HOVERED,
   TOGGLE_PARAMETERS,
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
@@ -17,46 +15,17 @@ import {
 
 function reducer(state = {}, action) {
   switch (action.type) {
-    case CHANGE_ACTIVE_SNAPSHOT:
-      return Object.assign({}, state, {
-        activeSnapshot: action.snapshotID
-      });
-
     case CHANGE_VIEW:
       return Object.assign({}, state, {
         view: action.view
       });
 
-    case DELETE_SNAPSHOT: {
-      // If snapshot deletion logic is handled upstream via an event handler prop,
-      // then use that instead:
-      if (state.onDeleteSnapshot) {
-        state.onDeleteSnapshot(action.id);
-        return state;
-      }
-      // Else, handle it manually:
-      const snapshotIDs = state.snapshotIDs.filter(id => id !== action.id);
-      // If the deleted pipeline is the active one, then use a new active one
-      let { activeSnapshot } = state;
-      if (activeSnapshot === action.id) {
-        activeSnapshot = state.snapshotIDs[0];
-      }
-      return Object.assign({}, state, {
-        activeSnapshot,
-        snapshotIDs
-      });
-    }
+    case RESET_DATA:
+      return Object.assign({}, state, action.data);
 
-    case RESET_SNAPSHOT_DATA:
-      return Object.assign({}, state, action.snapshots, {
-        activeSnapshot: action.snapshots.snapshotIDs[0]
-      });
-
-    case TOGGLE_NODE_ACTIVE: {
+    case TOGGLE_NODE_CLICKED: {
       return Object.assign({}, state, {
-        nodeActive: Object.assign({}, state.nodeActive, {
-          [action.nodeID]: action.isActive
-        })
+        nodeClicked: action.nodeClicked
       });
     }
 
@@ -65,12 +34,6 @@ function reducer(state = {}, action) {
         nodeDisabled: Object.assign({}, state.nodeDisabled, {
           [action.nodeID]: action.isDisabled
         })
-      });
-    }
-
-    case TOGGLE_NODE_FOCUSED: {
-      return Object.assign({}, state, {
-        nodeFocused: action.nodeFocused
       });
     }
 
@@ -86,10 +49,14 @@ function reducer(state = {}, action) {
       });
     }
 
+    case TOGGLE_NODE_HOVERED: {
+      return Object.assign({}, state, {
+        nodeHovered: action.nodeHovered
+      });
+    }
+
     case TOGGLE_PARAMETERS: {
-      const paramIDs = state.snapshotNodes[state.activeSnapshot].filter(
-        id => state.nodeIsParam[id]
-      );
+      const paramIDs = state.nodes.filter(id => state.nodeIsParam[id]);
       return Object.assign({}, state, {
         nodeDisabled: paramIDs.reduce(
           (disabled, id) =>

@@ -2,15 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import store from '../../store';
-import { resetSnapshotData } from '../../actions';
+import { resetData } from '../../actions';
 import Wrapper from '../wrapper';
-import formatSnapshots from '../../utils/format-data';
+import formatData from '../../utils/format-data';
 import { getInitialState, loadData } from './load-data';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
 import './app.css';
 
 /**
- * Main wrapper component. Handles store, and loads/formats snapshot data
+ * Main wrapper component. Handles store, and loads/formats pipeline data
  */
 class App extends React.Component {
   constructor(props) {
@@ -21,30 +21,17 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.dataWasUpdated(prevProps.data, this.props.data)) {
-      this.store.dispatch(resetSnapshotData(formatSnapshots(this.props.data)));
+    if (prevProps.data.schema_id !== this.props.data.schema_id) {
+      this.resetStoreData(formatData(this.props.data));
     }
   }
 
   /**
-   * Quickly determine whether snapshots have been updated
-   * @param {Object} prevData Previous data prop
-   * @param {Object} newData New data prop
-   */
-  dataWasUpdated(prevData, newData) {
-    // Check just the schema IDs of incoming data updates
-    const dataID = ({ snapshots }) =>
-      Array.isArray(snapshots) && snapshots.map(d => d.schema_id).join('');
-
-    return dataID(prevData) !== dataID(newData);
-  }
-
-  /**
-   * Dispatch an action to update the store with all new snapshot data
-   * @param {Object} formattedData The formatted snapshots
+   * Dispatch an action to update the store with new pipeline data
+   * @param {Object} formattedData Normalised state data
    */
   resetStoreData(formattedData) {
-    this.store.dispatch(resetSnapshotData(formattedData));
+    this.store.dispatch(resetData(formattedData));
   }
 
   render() {
@@ -57,42 +44,23 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-  allowHistoryDeletion: PropTypes.bool,
   data: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
-      snapshots: PropTypes.arrayOf(
-        PropTypes.shape({
-          created_ts: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-          edges: PropTypes.array.isRequired,
-          message: PropTypes.string,
-          nodes: PropTypes.array.isRequired,
-          tags: PropTypes.array
-        })
-      )
+      created_ts: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      edges: PropTypes.array.isRequired,
+      message: PropTypes.string,
+      nodes: PropTypes.array.isRequired,
+      tags: PropTypes.array
     })
-  ]),
-  onDeleteSnapshot: PropTypes.func,
-  showHistory: PropTypes.bool
+  ])
 };
 
 App.defaultProps = {
   /**
-   * Data array containing Pipeline snapshot objects
+   * String (e.g. 'json') or pipeline data
    */
-  data: null,
-  /**
-   * Show/hide snapshot history tab in sidebar
-   */
-  showHistory: false,
-  /**
-   * Allow users to delete a snapshot from the history tab
-   */
-  allowHistoryDeletion: false,
-  /**
-   * Callback on deletion of a snapshot from the history tab
-   */
-  onDeleteSnapshot: null
+  data: null
 };
 
 export default App;
