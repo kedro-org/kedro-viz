@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import Icon from '@quantumblack/kedro-ui/lib/components/icon';
 import ChartUI from '../chart-ui';
-import { ReactComponent as MenuIcon } from './menu-icon.svg';
+import MenuIcon from '../icons/menu';
 import './sidebar.css';
 
 /**
