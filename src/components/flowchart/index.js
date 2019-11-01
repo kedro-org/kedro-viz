@@ -48,11 +48,11 @@ export class FlowChart extends Component {
     this.initZoomBehaviour();
     this.drawChart();
     this.zoomChart();
-    window.addEventListener('resize', this.handleWindowResize);
+    this.addResizeObserver();
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.handleWindowResize);
+    this.removeResizeObserver();
   }
 
   componentDidUpdate(prevProps) {
@@ -107,6 +107,32 @@ export class FlowChart extends Component {
       return navWidth;
     }
     return 0;
+  }
+
+  /**
+   * Add ResizeObserver to listen for any changes in the container's width/height
+   * (with event listener fallback)
+   */
+  addResizeObserver() {
+    if (window.ResizeObserver) {
+      this.resizeObserver =
+        this.resizeObserver ||
+        new window.ResizeObserver(this.handleWindowResize);
+      this.resizeObserver.observe(this.containerRef.current);
+    } else {
+      window.addEventListener('resize', this.handleWindowResize);
+    }
+  }
+
+  /**
+   * Remove ResizeObserver (or event listener fallback) on unmount
+   */
+  removeResizeObserver() {
+    if (window.ResizeObserver) {
+      this.resizeObserver.unobserve(this.containerRef.current);
+    } else {
+      window.removeEventListener('resize', this.handleWindowResize);
+    }
   }
 
   /**
