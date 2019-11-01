@@ -48,7 +48,7 @@ export const HideMenuButton = ({ onToggle, theme, visible }) => (
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {Object} props onToggle, theme, and visible
  */
-export const Sidebar = props => (
+const Sidebar = props => (
   <>
     <ShowMenuButton onToggle={props.onToggle} visible={!props.visible} />
     <nav

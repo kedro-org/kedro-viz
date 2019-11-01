@@ -1,4 +1,4 @@
-import { ShowMenuButton, HideMenuButton, Sidebar } from './index';
+import Sidebar, { ShowMenuButton, HideMenuButton } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
 const mockProps = {
