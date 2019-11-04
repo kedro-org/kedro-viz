@@ -44,6 +44,7 @@ const draw = function() {
   this.el.edges = this.el.edges.merge(enterEdges);
 
   this.el.edges
+    .attr('data-id', edge => edge.id)
     .classed(
       'edge--faded',
       ({ source, target }) =>
@@ -94,6 +95,7 @@ const draw = function() {
 
   this.el.nodes = this.el.nodes
     .merge(enterNodes)
+    .attr('data-id', node => node.id)
     .classed('node--parameters', node => node.type === 'parameters')
     .classed('node--data', node => node.type === 'data')
     .classed('node--task', node => node.type === 'task')
