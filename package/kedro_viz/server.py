@@ -107,13 +107,13 @@ def run_viz(port=None, line=None) -> None:
     display(HTML(wrapper))
 
 
-def get_data_from_kedro(pipeline, catalog=None):
+def get_data_from_kedro(pipeline, catalog):
     """
     Get pipeline data from Kedro and format it appropriately
 
     Args:
         pipeline: Kedro pipeline object
-        catalog: (optional) Kedro catalog object, if None catalog is loaded from context.
+        catalog:  Kedro catalog object
     """
 
     def pretty_name(name):
