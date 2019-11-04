@@ -215,7 +215,8 @@ def _call_viz(host=None, port=None, browser=None, load_file=None, save_file=None
                 sys.exit(1)
     else:
         pipeline = get_project_context("create_pipeline")()
-        data = get_data_from_kedro(pipeline)
+        catalog = None  # currently unused variable for future proofing
+        data = format_pipeline_data(pipeline, catalog)
 
     if save_file:
         Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))
