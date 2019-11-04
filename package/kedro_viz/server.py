@@ -112,7 +112,7 @@ def get_data_from_kedro(pipeline, catalog=None):
     Get pipeline data from Kedro and format it appropriately
 
     Args:
-        pipeline: (optional) Kedro pipeline object, if None pipeline is loaded from context.
+        pipeline: Kedro pipeline object
         catalog: (optional) Kedro catalog object, if None catalog is loaded from context.
     """
 
