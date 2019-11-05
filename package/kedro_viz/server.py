@@ -109,7 +109,7 @@ def run_viz(port=None, line=None) -> None:
 
 def format_pipeline_data(pipeline, catalog):
     """
-    Get pipeline data from Kedro and format it appropriately
+    Format pipeline and catalog data from Kedro for kedro-viz
 
     Args:
         pipeline: Kedro pipeline object
