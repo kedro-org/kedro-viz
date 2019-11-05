@@ -4,7 +4,7 @@ Add release notes for the upcoming release here.
 ## Major features and improvements
 
 - renamed `get_data_from_kedro` to `format_pipeline_data` (#72)
-- Added optional pipeline, and catalog arguments to `format_pipeline_data` (#72)
+- Added pipeline, and catalog arguments to `format_pipeline_data` (#72)
 
 
 # Release 3.0.0:
