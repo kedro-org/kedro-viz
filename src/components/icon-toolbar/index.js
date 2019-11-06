@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleTextLabels, toggleTheme } from '../../actions';
-import { ReactComponent as ThemeIcon } from './theme-icon.svg';
-import { ReactComponent as LabelIcon } from './label-icon.svg';
+import LabelIcon from '../icons/label';
+import ThemeIcon from '../icons/theme';
 import './icon-toolbar.css';
 
 export const ThemeButton = ({ onToggle, theme }) => (

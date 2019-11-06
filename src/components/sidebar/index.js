@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import Icon from '@quantumblack/kedro-ui/lib/components/icon';
 import ChartUI from '../chart-ui';
-import { ReactComponent as MenuIcon } from './menu-icon.svg';
+import MenuIcon from '../icons/menu';
 import './sidebar.css';
 
 /**
@@ -48,7 +48,7 @@ export const HideMenuButton = ({ onToggle, theme, visible }) => (
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {Object} props onToggle, theme, and visible
  */
-export const Sidebar = props => (
+const Sidebar = props => (
   <>
     <ShowMenuButton onToggle={props.onToggle} visible={!props.visible} />
     <nav
