@@ -1,3 +1,5 @@
+python-dateutil==2.8.0 # explicit hard pin to resolve random pip dependency resolution failure,
+# in order to unblock release. This needs to be removed later.
 Flask>=1.0, <2.0
 kedro>=0.14.0
 ipython>=7.0.0, <8.0
