@@ -6,6 +6,14 @@ Add release notes for the upcoming release here.
 - renamed `get_data_from_kedro` to `format_pipeline_data` (#72)
 - Added pipeline, and catalog arguments to `format_pipeline_data` (#72)
 
+# Release 3.0.1:
+
+## Bug fixes and other changes
+
+- Add python-dateutil==2.8.0 to resolve CI errors (#78)
+- Add data-id attributes on nodes and edges (#76)
+- Fix issues with SVG imports when embedded (#75)
+- Allow chart to resize with parent container when embedded (#74)
 
 # Release 3.0.0:
 
