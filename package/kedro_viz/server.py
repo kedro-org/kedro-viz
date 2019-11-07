@@ -215,7 +215,7 @@ def _call_viz(host=None, port=None, browser=None, load_file=None, save_file=None
                 sys.exit(1)
     else:
         pipeline = get_project_context("create_pipeline")()
-        catalog = get_project_context("create_catalog")()
+        catalog = None
         data = format_pipeline_data(pipeline, catalog)
 
     if save_file:
