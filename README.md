@@ -24,7 +24,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## How do I install and use Kedro-Viz?
 
-> For in-depth development and usage notes, see the [Contribution Guidelines](https://github.com/quantumblacklabs/kedro-viz/blob/develop/CONTRIBUTING.md).
+> For in-depth development and usage notes, see the [Contribution Guidelines](https://github.com/quantumblacklabs/kedro-viz/blob/master/CONTRIBUTING.md).
 
 ### As a Kedro Python plugin
 
