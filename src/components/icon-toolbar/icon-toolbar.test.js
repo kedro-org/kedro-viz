@@ -13,7 +13,11 @@ describe('IconToolbar', () => {
   it('maps state to props', () => {
     const expectedResult = {
       textLabels: expect.any(Boolean),
-      theme: expect.stringMatching(/light|dark/)
+      theme: expect.stringMatching(/light|dark/),
+      visible: expect.objectContaining({
+        themeBtn: expect.any(Boolean),
+        labelBtn: expect.any(Boolean)
+      })
     };
     expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
   });
