@@ -53,14 +53,21 @@ App.propTypes = {
       nodes: PropTypes.array.isRequired,
       tags: PropTypes.array
     })
-  ])
+  ]),
+  theme: PropTypes.oneOf(['dark', 'light']),
+  visible: PropTypes.shape({
+    labelBtn: PropTypes.bool,
+    themeBtn: PropTypes.bool
+  })
 };
 
 App.defaultProps = {
   /**
    * String (e.g. 'json') or pipeline data
    */
-  data: null
+  data: null,
+  theme: null,
+  visible: {}
 };
 
 export default App;

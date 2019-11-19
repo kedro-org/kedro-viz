@@ -12,7 +12,7 @@ import { loadState } from '../../utils';
  * @param {Object}   pipelineData Formatted pipeline data
  * @param {Object}   props App component props
  */
-export const getInitialState = pipelineData => {
+export const getInitialState = (pipelineData, props) => {
   // Load properties from localStorage if defined, else use defaults
   const {
     parameters = true,
@@ -21,13 +21,19 @@ export const getInitialState = pipelineData => {
     view = 'combined'
   } = loadState();
 
+  const visible = Object.assign(
+    { labelBtn: true, themeBtn: true },
+    props.visible
+  );
+
   return {
     ...pipelineData,
     chartSize: {},
     parameters,
     textLabels,
     view,
-    theme
+    visible,
+    theme: props.theme || theme
   };
 };
 
