@@ -16,7 +16,7 @@ export const getInitialState = pipelineData => {
   // Load properties from localStorage if defined, else use defaults
   const {
     parameters = true,
-    textLabels = false,
+    textLabels = true,
     theme = 'dark',
     view = 'combined'
   } = loadState();
