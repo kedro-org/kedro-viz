@@ -1,6 +1,9 @@
 import React from 'react';
 import IconToolbar, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
+import { getInitialState } from '../app/load-data';
+import formatData from '../../utils/format-data';
+import loremIpsum from '../../utils/data/lorem-ipsum.mock';
 
 describe('IconToolbar', () => {
   it('renders without crashing', () => {
@@ -8,6 +11,34 @@ describe('IconToolbar', () => {
     expect(wrapper.find('.pipeline-icon-toolbar').length).toBe(1);
     expect(wrapper.find('.pipeline-toggle-theme').length).toBe(1);
     expect(wrapper.find('.pipeline-toggle-labels').length).toBe(1);
+  });
+
+  const getState = visible =>
+    getInitialState(formatData(loremIpsum), {
+      visible
+    });
+
+  it('hides both buttons when visible prop is false for each of them', () => {
+    const wrapper = setup.mount(
+      <IconToolbar />,
+      getState({
+        themeBtn: false,
+        labelBtn: false
+      })
+    );
+    expect(wrapper.find('.pipeline-toggle-theme').length).toBe(0);
+    expect(wrapper.find('.pipeline-toggle-labels').length).toBe(0);
+  });
+
+  it('hides one button when visible prop is false for one of them', () => {
+    const wrapper = setup.mount(
+      <IconToolbar />,
+      getState({
+        labelBtn: false
+      })
+    );
+    expect(wrapper.find('.pipeline-toggle-theme').length).toBe(1);
+    expect(wrapper.find('.pipeline-toggle-labels').length).toBe(0);
   });
 
   it('maps state to props', () => {
