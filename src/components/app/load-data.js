@@ -12,7 +12,7 @@ import { loadState } from '../../utils';
  * @param {Object}   pipelineData Formatted pipeline data
  * @param {Object}   props App component props
  */
-export const getInitialState = (pipelineData, props) => {
+export const getInitialState = (pipelineData, props = {}) => {
   // Load properties from localStorage if defined, else use defaults
   const {
     parameters = true,
