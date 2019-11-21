@@ -31,16 +31,15 @@ describe('load-data', () => {
       });
     });
 
-    it('returns mutated visible state if prop is set', () => {
-      const visible = { themeBtn: false };
-      expect(getInitialState(loremData, { visible })).toMatchObject({
-        visible: { labelBtn: true, themeBtn: false }
-      });
-    });
-
     it('uses prop values instead of defaults if provided', () => {
-      expect(getInitialState(loremData, { theme: 'light' })).toMatchObject({
-        theme: 'light'
+      expect(
+        getInitialState(loremData, {
+          theme: 'light',
+          visible: { themeBtn: false }
+        })
+      ).toMatchObject({
+        theme: 'light',
+        visible: { labelBtn: true, themeBtn: false }
       });
     });
 
