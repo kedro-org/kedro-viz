@@ -64,7 +64,10 @@ describe('load-data', () => {
 
   describe('loadData', () => {
     it('returns the correct dataset when passed a dataset string', () => {
-      expect(loadData('random')).toEqual(expect.any(Object));
+      expect(loadData('random')).toMatchObject({
+        nodes: expect.any(Array),
+        nodeName: expect.any(Object)
+      });
       expect(loadData('lorem')).toEqual(formatData(loremIpsum));
       expect(loadData('animals')).toEqual(formatData(animals));
       expect(loadData('demo')).toEqual(formatData(demo));
