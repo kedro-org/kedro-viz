@@ -1,9 +1,45 @@
 import React from 'react';
-import IconToolbar, { mapStateToProps, mapDispatchToProps } from './index';
+import IconToolbar, {
+  ThemeButton,
+  LabelButton,
+  mapStateToProps,
+  mapDispatchToProps
+} from './index';
 import { mockState, setup } from '../../utils/state.mock';
 import { getInitialState } from '../app/load-data';
 import formatData from '../../utils/format-data';
 import loremIpsum from '../../utils/data/lorem-ipsum.mock';
+
+describe('ThemeButton', () => {
+  it('toggles the theme on button click', () => {
+    let theme = 'dark';
+    const onToggle = t => {
+      theme = t;
+    };
+    const wrapper = setup.shallow(ThemeButton, { theme, onToggle });
+    wrapper.find('button').simulate('click');
+    expect(theme).toBe('light');
+  });
+});
+
+describe('LabelButton', () => {
+  it('toggles labels on button click', () => {
+    let textLabels = false;
+    const onToggle = t => {
+      textLabels = t;
+    };
+    const wrapper = setup.shallow(LabelButton, { textLabels, onToggle });
+    wrapper.find('button').simulate('click');
+    expect(textLabels).toBe(true);
+  });
+
+  it('changes text depending on whether labels are visible', () => {
+    const wrapper1 = setup.shallow(LabelButton, { textLabels: false });
+    expect(wrapper1.find('span').text()).toBe('Show text labels');
+    const wrapper2 = setup.shallow(LabelButton, { textLabels: true });
+    expect(wrapper2.find('span').text()).toBe('Hide text labels');
+  });
+});
 
 describe('IconToolbar', () => {
   it('renders without crashing', () => {
