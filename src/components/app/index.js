@@ -47,9 +47,8 @@ App.propTypes = {
   data: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
-      created_ts: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      schema_id: PropTypes.string,
       edges: PropTypes.array.isRequired,
-      message: PropTypes.string,
       nodes: PropTypes.array.isRequired,
       tags: PropTypes.array
     })

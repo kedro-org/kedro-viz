@@ -58,9 +58,7 @@ If you are just using Kedro-Viz with Kedro as a Python package, you won't need t
   {
     snapshots: [
       {
-        created_ts: '1551452832000',
         schema_id: '310750827599783',
-        message: 'Lorem ipsum dolor sit amet',
         nodes: [...],
         edges: [...],
         tags: [...],

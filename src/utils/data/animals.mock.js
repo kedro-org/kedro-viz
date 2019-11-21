@@ -1,4 +1,5 @@
 export default {
+  schema_id: '09876543210987654321',
   tags: [
     {
       id: 'small',
