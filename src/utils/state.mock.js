@@ -11,8 +11,8 @@ import loremIpsum from './data/lorem-ipsum.mock';
  * Example state objects for use in tests of redux-enabled components
  */
 export const mockState = {
-  lorem: getInitialState(formatData(loremIpsum), {}),
-  animals: getInitialState(formatData(animals), {})
+  lorem: getInitialState(formatData(loremIpsum)),
+  animals: getInitialState(formatData(animals))
 };
 
 // Redux stores based on mock data
