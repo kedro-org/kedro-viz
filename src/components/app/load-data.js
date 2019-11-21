@@ -46,19 +46,25 @@ export const getInitialState = (pipelineData, props = {}) => {
 export const loadData = (data, onLoadData) => {
   switch (data) {
     case 'random':
+      // Use randomly-generated data
       return formatData(getRandomPipeline());
     case 'lorem':
+      // Use data from the 'lorem-ipsum' test dataset
       return formatData(loremIpsum);
     case 'animals':
+      // Use data from the 'animals' test dataset
       return formatData(animals);
     case 'demo':
+      // Use data from the 'demo' test dataset
       return formatData(demo);
     case 'json':
+      // Load data from a local json file (in /public/api/nodes.json)
       loadJsonData().then(onLoadData);
       return formatData();
     case null:
       throw new Error('No data was provided to App component via props');
     default:
+      // Use data provided via component prop
       return formatData(data);
   }
 };

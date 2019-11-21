@@ -45,7 +45,7 @@ class App extends React.Component {
 
 App.propTypes = {
   data: PropTypes.oneOfType([
-    PropTypes.string,
+    PropTypes.oneOf(['random', 'lorem', 'animals', 'demo', 'json']),
     PropTypes.shape({
       schema_id: PropTypes.string,
       edges: PropTypes.array.isRequired,
@@ -62,10 +62,25 @@ App.propTypes = {
 
 App.defaultProps = {
   /**
-   * String (e.g. 'json') or pipeline data
+   * Determines what pipeline data will be displayed on the chart.
+   * You can supply one of the following strings:
+     - 'random': Use randomly-generated data
+     - 'lorem': Use data from the 'lorem-ipsum' test dataset
+     - 'animals': Use data from the 'animals' test dataset
+     - 'demo': Use data from the 'demo' test dataset
+     - 'json': Load data from a local json file (in /public/api/nodes.json)
+   * Alternatively, you can supply an object containing lists of edges, nodes, tags.
+   * See /src/utils/data for examples of the expected data format.
    */
   data: null,
+  /**
+   * Specify the theme: Either 'light' or 'dark'.
+   * If set, this will override the localStorage value.
+   */
   theme: null,
+  /**
+   * Show/hide the icon buttons with { labelBtn:false } and/or { themeBtn:false }
+   */
   visible: {}
 };
 
