@@ -12,14 +12,19 @@ import { loadState } from '../../utils';
  * @param {Object}   pipelineData Formatted pipeline data
  * @param {Object}   props App component props
  */
-export const getInitialState = pipelineData => {
+export const getInitialState = (pipelineData, props = {}) => {
   // Load properties from localStorage if defined, else use defaults
   const {
     parameters = true,
-    textLabels = false,
+    textLabels = true,
     theme = 'dark',
     view = 'combined'
   } = loadState();
+
+  const visible = Object.assign(
+    { labelBtn: true, themeBtn: true },
+    props.visible
+  );
 
   return {
     ...pipelineData,
@@ -27,7 +32,8 @@ export const getInitialState = pipelineData => {
     parameters,
     textLabels,
     view,
-    theme
+    visible,
+    theme: props.theme || theme
   };
 };
 
@@ -40,19 +46,25 @@ export const getInitialState = pipelineData => {
 export const loadData = (data, onLoadData) => {
   switch (data) {
     case 'random':
+      // Use randomly-generated data
       return formatData(getRandomPipeline());
     case 'lorem':
+      // Use data from the 'lorem-ipsum' test dataset
       return formatData(loremIpsum);
     case 'animals':
+      // Use data from the 'animals' test dataset
       return formatData(animals);
     case 'demo':
+      // Use data from the 'demo' test dataset
       return formatData(demo);
     case 'json':
+      // Load data from a local json file (in /public/api/nodes.json)
       loadJsonData().then(onLoadData);
       return formatData();
     case null:
       throw new Error('No data was provided to App component via props');
     default:
+      // Use data provided via component prop
       return formatData(data);
   }
 };

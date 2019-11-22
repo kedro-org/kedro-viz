@@ -116,7 +116,7 @@ describe('Reducer', () => {
         type: action.TOGGLE_TEXT_LABELS,
         textLabels: true
       });
-      expect(mockState.lorem.textLabels).toBe(false);
+      expect(mockState.lorem.textLabels).toBe(true);
       expect(newState.textLabels).toBe(true);
     });
   });

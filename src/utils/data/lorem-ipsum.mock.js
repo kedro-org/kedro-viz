@@ -1,7 +1,5 @@
 export default {
-  created_ts: '1551452832000',
   schema_id: '310750827599783',
-  message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   tags: [
     {
       id: 'Nulla',

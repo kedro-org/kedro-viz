@@ -43,21 +43,27 @@ export const IconToolbar = ({
   onToggleTextLabels,
   onToggleTheme,
   textLabels,
-  theme
+  theme,
+  visible
 }) => (
   <ul className="pipeline-icon-toolbar kedro">
-    <li>
-      <ThemeButton onToggle={onToggleTheme} theme={theme} />
-    </li>
-    <li>
-      <LabelButton onToggle={onToggleTextLabels} textLabels={textLabels} />
-    </li>
+    {visible.themeBtn && (
+      <li>
+        <ThemeButton onToggle={onToggleTheme} theme={theme} />
+      </li>
+    )}
+    {visible.labelBtn && (
+      <li>
+        <LabelButton onToggle={onToggleTextLabels} textLabels={textLabels} />
+      </li>
+    )}
   </ul>
 );
 
 export const mapStateToProps = state => ({
   textLabels: state.textLabels,
-  theme: state.theme
+  theme: state.theme,
+  visible: state.visible
 });
 
 export const mapDispatchToProps = dispatch => ({
