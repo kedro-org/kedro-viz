@@ -61,29 +61,36 @@ export const getLayoutEdges = createSelector(
 );
 
 /**
+ * Get width, height and margin of graph
+ */
+export const getGraphSize = createSelector(
+  [getGraph],
+  graph => graph.graph()
+);
+
+/**
  * Get chart zoom translation/scale,
  * by comparing native graph width/height to container width/height
  */
 export const getZoomPosition = createSelector(
-  [getGraph, getChartSize],
+  [getGraphSize, getChartSize],
   (graph, container) => {
-    const chart = graph.graph();
     const validDimensions = [
       container.width,
       container.height,
-      chart.width,
-      chart.height
+      graph.width,
+      graph.height
     ].every(n => !isNaN(n) && Number.isFinite(n));
 
     if (validDimensions) {
       const scale = Math.min(
-        container.width / chart.width,
-        container.height / chart.height
+        container.width / graph.width,
+        container.height / graph.height
       );
       return {
         scale,
-        translateX: container.width / 2 - (chart.width * scale) / 2,
-        translateY: container.height / 2 - (chart.height * scale) / 2
+        translateX: container.width / 2 - (graph.width * scale) / 2,
+        translateY: container.height / 2 - (graph.height * scale) / 2
       };
     }
     return {

@@ -1,8 +1,5 @@
 import { mockState } from '../utils/state.mock';
 import {
-  prepareTextContainer,
-  getNodeWidth,
-  getNodeSize,
   getGraph,
   getLayoutNodes,
   getLayoutEdges,

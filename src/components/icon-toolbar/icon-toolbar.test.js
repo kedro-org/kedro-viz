@@ -79,6 +79,12 @@ describe('IconToolbar', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
+      graphSize: expect.objectContaining({
+        height: expect.any(Number),
+        width: expect.any(Number),
+        marginx: expect.any(Number),
+        marginy: expect.any(Number)
+      }),
       textLabels: expect.any(Boolean),
       theme: expect.stringMatching(/light|dark/),
       visible: expect.objectContaining({

@@ -43,6 +43,7 @@
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
     "snyk": "^1.234.2",
+    "svg-crowbar": "^0.2.4",
     "what-input": "^5.2.3"
   },
   "peerDependencies": {
