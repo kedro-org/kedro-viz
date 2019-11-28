@@ -5,6 +5,7 @@ import { toggleTextLabels, toggleTheme } from '../../actions';
 import { getGraphSize } from '../../selectors/layout';
 import LabelIcon from '../icons/label';
 import ThemeIcon from '../icons/theme';
+import ExportIcon from '../icons/export';
 import downloadSvg, { downloadPng } from 'svg-crowbar';
 import './icon-toolbar.css';
 
@@ -41,6 +42,21 @@ export const LabelButton = ({ onToggle, textLabels }) => (
     onClick={() => onToggle(!textLabels)}>
     <span>{textLabels ? 'Hide' : 'Show'} text labels</span>
     <LabelIcon className="pipeline-icon" />
+  </button>
+);
+
+/**
+ * Export toggle button component
+ * @param {Function} onToggle Handle toggling text labels on/off
+ * @param {Boolean} textLabels Whether text labels are displayed
+ */
+export const ExportButton = ({ onExport }) => (
+  <button
+    aria-label="Export graph as SVG or PNG"
+    className={classnames('pipeline-export pipeline-icon-button')}
+    onClick={onExport}>
+    <span>Export image</span>
+    <ExportIcon className="pipeline-icon" />
   </button>
 );
 
@@ -97,10 +113,10 @@ export const IconToolbar = ({
       </li>
     )}
     <li>
-      <button onClick={exportGraph(downloadSvg, graphSize)}>SVG</button>
+      <ExportButton onExport={exportGraph(downloadSvg, graphSize)} />
     </li>
     <li>
-      <button onClick={exportGraph(downloadPng, graphSize)}>PNG</button>
+      <ExportButton onExport={exportGraph(downloadPng, graphSize)} />
     </li>
   </ul>
 );
