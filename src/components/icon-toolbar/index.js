@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import Modal from '@quantumblack/kedro-ui/lib/components/modal';
+import Button from '@quantumblack/kedro-ui/lib/components/button';
 import { toggleTextLabels, toggleTheme } from '../../actions';
 import { getGraphSize } from '../../selectors/layout';
 import LabelIcon from '../icons/label';
@@ -67,7 +69,7 @@ export const ExportButton = ({ onExport }) => (
  * @param {number} param.height Graph height
  * @return {Function} onClick handler
  */
-const exportGraph = (download, { width, height }) => () => {
+const exportGraph = (download, { width, height }) => {
   const svg = document.querySelector('#pipeline-graph');
   // Create clone of graph SVG to avoid breaking the original
   const clone = svg.parentNode.appendChild(svg.cloneNode(true));
@@ -100,26 +102,61 @@ export const IconToolbar = ({
   textLabels,
   theme,
   visible
-}) => (
-  <ul className="pipeline-icon-toolbar kedro">
-    {visible.themeBtn && (
-      <li>
-        <ThemeButton onToggle={onToggleTheme} theme={theme} />
-      </li>
-    )}
-    {visible.labelBtn && (
-      <li>
-        <LabelButton onToggle={onToggleTextLabels} textLabels={textLabels} />
-      </li>
-    )}
-    <li>
-      <ExportButton onExport={exportGraph(downloadSvg, graphSize)} />
-    </li>
-    <li>
-      <ExportButton onExport={exportGraph(downloadPng, graphSize)} />
-    </li>
-  </ul>
-);
+}) => {
+  const [isModalVisible, toggleModal] = useState(false);
+
+  return (
+    <>
+      <ul className="pipeline-icon-toolbar kedro">
+        {visible.themeBtn && (
+          <li>
+            <ThemeButton onToggle={onToggleTheme} theme={theme} />
+          </li>
+        )}
+        {visible.labelBtn && (
+          <li>
+            <LabelButton
+              onToggle={onToggleTextLabels}
+              textLabels={textLabels}
+            />
+          </li>
+        )}
+        {visible.exportBtn && (
+          <li>
+            <ExportButton onExport={() => toggleModal(true)} />
+          </li>
+        )}
+      </ul>
+      {visible.exportBtn && (
+        <Modal
+          title="Download pipeline graph as an image"
+          onClose={() => toggleModal(false)}
+          theme={theme}
+          visible={isModalVisible}>
+          <div className="pipeline-icon-modal">
+            <p className="kui-modal__description">Choose preferred format</p>
+            <Button
+              theme={theme}
+              onClick={() => {
+                exportGraph(downloadPng, graphSize);
+                toggleModal(false);
+              }}>
+              PNG
+            </Button>
+            <Button
+              theme={theme}
+              onClick={() => {
+                exportGraph(downloadSvg, graphSize);
+                toggleModal(false);
+              }}>
+              SVG
+            </Button>
+          </div>
+        </Modal>
+      )}
+    </>
+  );
+};
 
 export const mapStateToProps = state => ({
   graphSize: getGraphSize(state),

@@ -22,7 +22,7 @@ export const getInitialState = (pipelineData, props = {}) => {
   } = loadState();
 
   const visible = Object.assign(
-    { labelBtn: true, themeBtn: true },
+    { exportBtn: true, labelBtn: true, themeBtn: true },
     props.visible
   );
 
