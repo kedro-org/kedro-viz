@@ -5,7 +5,7 @@ import IconToolbar, {
   mapDispatchToProps
 } from './index';
 import { mockState, setup } from '../../utils/state.mock';
-import { getInitialState } from '../app/load-data';
+import getInitialState from '../app/initial-state';
 import formatData from '../../utils/format-data';
 import loremIpsum from '../../utils/data/lorem-ipsum.mock';
 
