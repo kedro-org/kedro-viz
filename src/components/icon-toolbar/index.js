@@ -1,66 +1,12 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import Modal from '@quantumblack/kedro-ui/lib/components/modal';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
 import { toggleTextLabels, toggleTheme } from '../../actions';
 import { getGraphSize } from '../../selectors/layout';
-import LabelIcon from '../icons/label';
-import ThemeIcon from '../icons/theme';
-import ExportIcon from '../icons/export';
+import IconButton from './icon-button';
 import downloadSvg, { downloadPng } from 'svg-crowbar';
 import './icon-toolbar.css';
-
-/**
- * Theme toggle button component
- * @param {Function} onToggle Handle toggling theme between light/dark
- * @param {string} theme Kedro UI light/dark theme
- */
-export const ThemeButton = ({ onToggle, theme }) => (
-  <button
-    aria-live="polite"
-    aria-label={`Change to ${theme === 'light' ? 'dark' : 'light'} theme`}
-    className={classnames('pipeline-toggle-theme pipeline-icon-button', {
-      'pipeline-toggle-theme--light': theme === 'light',
-      'pipeline-toggle-theme--dark': theme === 'dark'
-    })}
-    onClick={() => onToggle(theme === 'light' ? 'dark' : 'light')}>
-    <span>Toggle theme</span>
-    <ThemeIcon className="pipeline-icon" />
-  </button>
-);
-
-/**
- * Text Label toggle button component
- * @param {Function} onToggle Handle toggling text labels on/off
- * @param {Boolean} textLabels Whether text labels are displayed
- */
-export const LabelButton = ({ onToggle, textLabels }) => (
-  <button
-    aria-live="polite"
-    className={classnames('pipeline-toggle-labels pipeline-icon-button', {
-      'pipeline-toggle-theme--show-labels': textLabels
-    })}
-    onClick={() => onToggle(!textLabels)}>
-    <span>{textLabels ? 'Hide' : 'Show'} text labels</span>
-    <LabelIcon className="pipeline-icon" />
-  </button>
-);
-
-/**
- * Export toggle button component
- * @param {Function} onToggle Handle toggling text labels on/off
- * @param {Boolean} textLabels Whether text labels are displayed
- */
-export const ExportButton = ({ onExport }) => (
-  <button
-    aria-label="Export graph as SVG or PNG"
-    className={classnames('pipeline-export pipeline-icon-button')}
-    onClick={onExport}>
-    <span>Export image</span>
-    <ExportIcon className="pipeline-icon" />
-  </button>
-);
 
 /**
  * Handle onClick for the SVG/PNG download button
@@ -108,24 +54,28 @@ export const IconToolbar = ({
   return (
     <>
       <ul className="pipeline-icon-toolbar kedro">
-        {visible.themeBtn && (
-          <li>
-            <ThemeButton onToggle={onToggleTheme} theme={theme} />
-          </li>
-        )}
-        {visible.labelBtn && (
-          <li>
-            <LabelButton
-              onToggle={onToggleTextLabels}
-              textLabels={textLabels}
-            />
-          </li>
-        )}
-        {visible.exportBtn && (
-          <li>
-            <ExportButton onExport={() => toggleModal(true)} />
-          </li>
-        )}
+        <IconButton
+          ariaLive="polite"
+          ariaLabel={`Change to ${theme === 'light' ? 'dark' : 'light'} theme`}
+          onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
+          icon="theme"
+          labelText="Toggle theme"
+          visible={visible.themeBtn}
+        />
+        <IconButton
+          ariaLive="polite"
+          onClick={() => onToggleTextLabels(!textLabels)}
+          icon="label"
+          labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
+          visible={visible.labelBtn}
+        />
+        <IconButton
+          ariaLabel="Export graph as SVG or PNG"
+          onClick={() => toggleModal(true)}
+          icon="export"
+          labelText="Export image"
+          visible={visible.exportBtn}
+        />
       </ul>
       {visible.exportBtn && (
         <Modal
