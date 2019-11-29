@@ -15,7 +15,7 @@ import './icon-toolbar.css';
  * @param {number} param.height Graph height
  * @return {Function} onClick handler
  */
-const exportGraph = (download, { width, height }) => {
+export const exportGraph = (download, { width, height }) => {
   const svg = document.querySelector('#pipeline-graph');
   // Create clone of graph SVG to avoid breaking the original
   const clone = svg.parentNode.appendChild(svg.cloneNode(true));
