@@ -4,7 +4,6 @@ import classnames from 'classnames';
 import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
 import IconToolbar from '../icon-toolbar';
-import FontLoadChecker from '../font-load-checker';
 import './wrapper.css';
 
 /**
@@ -26,7 +25,7 @@ export class Wrapper extends Component {
 
   render() {
     const { visibleNav } = this.state;
-    const { theme } = this.props;
+    const { fontLoaded, theme } = this.props;
 
     return (
       <div
@@ -39,11 +38,9 @@ export class Wrapper extends Component {
           theme={theme}
           visible={visibleNav}
         />
-        <IconToolbar />
+        {fontLoaded && <IconToolbar />}
         <div className="pipeline-wrapper">
-          <FontLoadChecker>
-            <FlowChart visibleNav={visibleNav} />
-          </FontLoadChecker>
+          {fontLoaded && <FlowChart visibleNav={visibleNav} />}
         </div>
       </div>
     );
@@ -51,6 +48,7 @@ export class Wrapper extends Component {
 }
 
 export const mapStateToProps = state => ({
+  fontLoaded: state.fontLoaded,
   theme: state.theme
 });
 

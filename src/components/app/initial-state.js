@@ -22,6 +22,7 @@ const getInitialState = (pipelineData, props = {}) => {
   return {
     ...pipelineData,
     chartSize: {},
+    fontLoaded: false,
     parameters,
     textLabels,
     view,
