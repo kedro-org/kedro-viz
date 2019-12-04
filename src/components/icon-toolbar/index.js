@@ -73,25 +73,24 @@ export const IconToolbar = ({
           ariaLabel="Export graph as SVG or PNG"
           onClick={() => toggleModal(true)}
           icon="export"
-          labelText="Export image"
+          labelText="Export visualisation"
           visible={visible.exportBtn}
         />
       </ul>
       {visible.exportBtn && (
         <Modal
-          title="Download pipeline graph as an image"
+          title="Export pipeline visualisation"
           onClose={() => toggleModal(false)}
           theme={theme}
           visible={isModalVisible}>
           <div className="pipeline-icon-modal">
-            <p className="kui-modal__description">Choose preferred format</p>
             <Button
               theme={theme}
               onClick={() => {
                 exportGraph(downloadPng, graphSize);
                 toggleModal(false);
               }}>
-              PNG
+              Download PNG
             </Button>
             <Button
               theme={theme}
@@ -99,7 +98,7 @@ export const IconToolbar = ({
                 exportGraph(downloadSvg, graphSize);
                 toggleModal(false);
               }}>
-              SVG
+              Download SVG
             </Button>
           </div>
         </Modal>
