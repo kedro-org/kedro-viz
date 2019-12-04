@@ -3,12 +3,13 @@ import { UPDATE_FONT_LOADED } from '../../actions';
 /**
  * Prevent chart from displaying until the webfont has loaded,
  * to ensure that text label SVGRect BBox measurements are accurate
+ * @param {Object} store Redux store
+ * @return {Promise} Resolves when font is detected as having loaded, or after 8 seconds
  */
-const checkFontLoaded = store => {
-  const { fonts } = document;
-  const fontName = '10px Titillium Web';
-
-  return new Promise(resolve => {
+const checkFontLoaded = store =>
+  new Promise(resolve => {
+    const { fonts } = document;
+    const fontName = '10px Titillium Web';
     /**
      * Dispatch an event to show the chart
      */
@@ -28,11 +29,9 @@ const checkFontLoaded = store => {
      */
     const checkIfLoaded = () => {
       if (fonts.check(fontName)) {
-        // Add an extra 0.1s delay because Blink returns true too early
+        // Add 0.1s delay because fonts.check often returns true too early
         setTimeout(setLoaded, 100);
-        return true;
       }
-      return false;
     };
 
     /**
@@ -40,29 +39,31 @@ const checkFontLoaded = store => {
      * to the native FontFaceSet event handlers.
      */
     const step = () => {
-      // If it's been 8 seconds since page load then just set to loaded
+      // If it's been 8 seconds since page load then just set loaded=true
       if (performance.now() > 8000) {
         setLoaded();
-      } else if (!checkIfLoaded()) {
+      } else if (fonts.check(fontName)) {
+        // Add 0.1s delay because fonts.check often returns true too early
+        setTimeout(setLoaded, 100);
+      } else {
         requestAnimationFrame(step);
       }
     };
 
-    /**
-     * Add callbacks to detect when font has loaded, and display the chart.
-     * Use both FontFaceSet.ready and FontFaceSet.onloadingdone, as the former often
-     * returns too early, and the latter often doesn't return at all.
-     * Use requestAnimationFrame as a backup. If the font still hasn't loaded after
-     * 8 seconds, then just set loaded to true to avoid running it forever.
-     */
     if (fonts.check(fontName)) {
+      // If the font is already loaded then dispatch immediately
       setLoaded();
     } else {
-      fonts.ready.then(checkIfLoaded);
+      // Add event listenerss to detect when font has loaded, and display the chart.
+      // This uses both FontFaceSet.ready and FontFaceSet.onloadingdone, as the former
+      // often returns too early, and the latter often doesn't return at all.
+      if (fonts.ready) {
+        fonts.ready.then(checkIfLoaded);
+      }
       fonts.onloadingdone = checkIfLoaded;
+      // Use requestAnimationFrame as a fallback for older browsers
       requestAnimationFrame(step);
     }
   });
-};
 
 export default checkFontLoaded;
