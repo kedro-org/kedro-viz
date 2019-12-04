@@ -1,9 +1,5 @@
 import React from 'react';
-import IconToolbar, {
-  exportGraph,
-  mapStateToProps,
-  mapDispatchToProps
-} from './index';
+import IconToolbar, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 import getInitialState from '../app/initial-state';
 import formatData from '../../utils/format-data';
@@ -54,12 +50,6 @@ describe('IconToolbar', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
-      graphSize: expect.objectContaining({
-        height: expect.any(Number),
-        width: expect.any(Number),
-        marginx: expect.any(Number),
-        marginy: expect.any(Number)
-      }),
       textLabels: expect.any(Boolean),
       theme: expect.stringMatching(/light|dark/),
       visible: expect.objectContaining({
@@ -84,25 +74,6 @@ describe('IconToolbar', () => {
     expect(dispatch.mock.calls[1][0]).toEqual({
       theme: 'light',
       type: 'TOGGLE_THEME'
-    });
-  });
-
-  describe('exportGraph', () => {
-    document.body.innerHTML = `
-      <svg id="pipeline-graph">
-        <g id="zoom-wrapper" />
-      </svg>
-    `;
-    const downloadFn = jest.fn();
-    const graphSize = { width: 1000, height: 500 };
-    exportGraph(downloadFn, graphSize);
-
-    it('downloads a screenshot', () => {
-      expect(downloadFn.mock.calls.length).toBe(1);
-    });
-
-    it('erases the cloned SVG node', () => {
-      expect(document.querySelectorAll('svg').length).toBe(1);
     });
   });
 });
