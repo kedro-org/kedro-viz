@@ -22,9 +22,9 @@ export const exportGraph = (download, { width, height }) => {
   clone.querySelector('#zoom-wrapper').removeAttribute('transform');
   // Add webfont
   const style = document.createElement('style');
-  style.innerText =
+  style.innerHTML =
     '@import url(https://fonts.googleapis.com/css?family=Titillium+Web:400);';
-  clone.appendChild(style);
+  clone.prepend(style);
   // Download SVG/PNG
   download(clone, 'kedro-pipeline');
   // Delete cloned SVG
