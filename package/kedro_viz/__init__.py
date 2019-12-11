@@ -31,4 +31,4 @@
 __version__ = "3.0.1"
 
 
-from kedro_viz.server import get_data_from_kedro  # noqa
+from kedro_viz.server import format_pipeline_data  # noqa

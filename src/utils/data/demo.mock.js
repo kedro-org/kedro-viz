@@ -1,4 +1,5 @@
 export default {
+  schema_id: '12345678901234567890',
   edges: [
     {
       source: '33920f3a',
