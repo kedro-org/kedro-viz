@@ -5,7 +5,9 @@ import store from '../../store';
 import { resetData } from '../../actions';
 import Wrapper from '../wrapper';
 import formatData from '../../utils/format-data';
-import { getInitialState, loadData } from './load-data';
+import getInitialState from './initial-state';
+import loadData from './load-data';
+import checkFontLoaded from './check-font-loaded';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
 import './app.css';
 
@@ -18,6 +20,7 @@ class App extends React.Component {
     const pipelineData = loadData(props.data, this.resetStoreData.bind(this));
     const initialState = getInitialState(pipelineData, props);
     this.store = store(initialState);
+    checkFontLoaded(this.store);
   }
 
   componentDidUpdate(prevProps) {

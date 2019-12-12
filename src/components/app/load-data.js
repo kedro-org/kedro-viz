@@ -5,36 +5,19 @@ import formatData from '../../utils/format-data';
 import loremIpsum from '../../utils/data/lorem-ipsum.mock';
 import animals from '../../utils/data/animals.mock';
 import demo from '../../utils/data/demo.mock';
-import { loadState } from '../../utils';
 
 /**
- * Configure the redux store's initial state
- * @param {Object}   pipelineData Formatted pipeline data
- * @param {Object}   props App component props
+ * Asynchronously load, parse and format data from json file using D3
  */
-export const getInitialState = (pipelineData, props = {}) => {
-  // Load properties from localStorage if defined, else use defaults
-  const {
-    parameters = true,
-    textLabels = true,
-    theme = 'dark',
-    view = 'combined'
-  } = loadState();
-
-  const visible = Object.assign(
-    { labelBtn: true, themeBtn: true },
-    props.visible
-  );
-
-  return {
-    ...pipelineData,
-    chartSize: {},
-    parameters,
-    textLabels,
-    view,
-    visible,
-    theme: props.theme || theme
-  };
+const loadJsonData = () => {
+  const { dataPath } = config();
+  return json(dataPath)
+    .catch(() => {
+      throw new Error(
+        `Unable to load pipeline data from ${dataPath}. If you're running Kedro-Viz as a standalone (e.g. for JavaScript development), please check that you have placed a data file at /public${dataPath}.`
+      );
+    })
+    .then(formatData);
 };
 
 /**
@@ -43,7 +26,7 @@ export const getInitialState = (pipelineData, props = {}) => {
  * @param {string|Array} data Either raw data itself, or a 'json'/'random' string
  * @param {Function} onLoadData Callback for adding data to the store once loaded
  */
-export const loadData = (data, onLoadData) => {
+const loadData = (data, onLoadData) => {
   switch (data) {
     case 'random':
       // Use randomly-generated data
@@ -69,16 +52,4 @@ export const loadData = (data, onLoadData) => {
   }
 };
 
-/**
- * Asynchronously load, parse and format data from json file using D3
- */
-export const loadJsonData = () => {
-  const { dataPath } = config();
-  return json(dataPath)
-    .catch(() => {
-      throw new Error(
-        `Unable to load pipeline data from ${dataPath}. If you're running Kedro-Viz as a standalone (e.g. for JavaScript development), please check that you have placed a data file at /public${dataPath}.`
-      );
-    })
-    .then(formatData);
-};
+export default loadData;

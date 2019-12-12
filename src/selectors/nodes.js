@@ -14,6 +14,7 @@ const getNodeType = state => state.nodeType;
 const getTagActive = state => state.tagActive;
 const getTagEnabled = state => state.tagEnabled;
 const getTextLabels = state => state.textLabels;
+const getFontLoaded = state => state.fontLoaded;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -121,7 +122,7 @@ export const getNodeData = createSelector(
  * measure its width with getBBox, then delete the container and store the value
  */
 export const getNodeTextWidth = createSelector(
-  [getNodes, getNodeName],
+  [getNodes, getNodeName, getFontLoaded],
   (nodes, nodeName) => {
     const svg = select(document.body)
       .append('svg')
@@ -130,7 +131,6 @@ export const getNodeTextWidth = createSelector(
       const text = svg.append('text').text(nodeName[nodeID]);
       const node = text.node();
       const width = node.getBBox ? node.getBBox().width : 0;
-      text.remove();
       return width;
     });
     svg.remove();

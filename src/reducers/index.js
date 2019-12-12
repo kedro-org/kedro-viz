@@ -10,7 +10,8 @@ import {
   TOGGLE_TAG_FILTER,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
-  UPDATE_CHART_SIZE
+  UPDATE_CHART_SIZE,
+  UPDATE_FONT_LOADED
 } from '../actions';
 
 function reducer(state = {}, action) {
@@ -99,6 +100,12 @@ function reducer(state = {}, action) {
     case UPDATE_CHART_SIZE: {
       return Object.assign({}, state, {
         chartSize: action.chartSize
+      });
+    }
+
+    case UPDATE_FONT_LOADED: {
+      return Object.assign({}, state, {
+        fontLoaded: action.fontLoaded
       });
     }
 
