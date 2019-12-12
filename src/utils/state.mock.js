@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
 import store from '../store';
-import { getInitialState } from '../components/app/load-data';
+import getInitialState from '../components/app/initial-state';
 import formatData from './format-data';
 import animals from './data/animals.mock';
 import loremIpsum from './data/lorem-ipsum.mock';

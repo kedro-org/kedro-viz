@@ -107,15 +107,19 @@ def run_viz(port=None, line=None) -> None:
     display(HTML(wrapper))
 
 
-def get_data_from_kedro():
-    """ Get pipeline data from Kedro and format it appropriately """
+def format_pipeline_data(pipeline, catalog):
+    """
+    Format pipeline and catalog data from Kedro for kedro-viz
+
+    Args:
+        pipeline: Kedro pipeline object
+        catalog:  Kedro catalog object
+    """
 
     def pretty_name(name):
         name = name.replace("-", " ").replace("_", " ")
         parts = [n[0].upper() + n[1:] for n in name.split()]
         return " ".join(parts)
-
-    pipeline = get_project_context("create_pipeline")()
 
     nodes = []
     edges = []
@@ -210,7 +214,9 @@ def _call_viz(host=None, port=None, browser=None, load_file=None, save_file=None
                 click.echo("Invalid file, top level key '{}' not found.".format(key))
                 sys.exit(1)
     else:
-        data = get_data_from_kedro()
+        pipeline = get_project_context("create_pipeline")()
+        catalog = get_project_context("create_catalog")(None)
+        data = format_pipeline_data(pipeline, catalog)
 
     if save_file:
         Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))

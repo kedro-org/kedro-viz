@@ -277,6 +277,7 @@ export class FlowChart extends Component {
         ref={this.containerRef}
         onClick={this.handleChartClick}>
         <svg
+          id="pipeline-graph"
           className="pipeline-flowchart__graph"
           width={outerWidth}
           height={outerHeight}
@@ -295,7 +296,7 @@ export class FlowChart extends Component {
               <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
             </marker>
           </defs>
-          <g ref={this.wrapperRef}>
+          <g id="zoom-wrapper" ref={this.wrapperRef}>
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
             <g
               id="nodes"

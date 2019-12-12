@@ -5,7 +5,9 @@ import store from '../../store';
 import { resetData } from '../../actions';
 import Wrapper from '../wrapper';
 import formatData from '../../utils/format-data';
-import { getInitialState, loadData } from './load-data';
+import getInitialState from './initial-state';
+import loadData from './load-data';
+import checkFontLoaded from './check-font-loaded';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
 import './app.css';
 
@@ -18,6 +20,7 @@ class App extends React.Component {
     const pipelineData = loadData(props.data, this.resetStoreData.bind(this));
     const initialState = getInitialState(pipelineData, props);
     this.store = store(initialState);
+    checkFontLoaded(this.store);
   }
 
   componentDidUpdate(prevProps) {
@@ -45,22 +48,43 @@ class App extends React.Component {
 
 App.propTypes = {
   data: PropTypes.oneOfType([
-    PropTypes.string,
+    PropTypes.oneOf(['random', 'lorem', 'animals', 'demo', 'json']),
     PropTypes.shape({
-      created_ts: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      schema_id: PropTypes.string,
       edges: PropTypes.array.isRequired,
-      message: PropTypes.string,
       nodes: PropTypes.array.isRequired,
       tags: PropTypes.array
     })
-  ])
+  ]),
+  theme: PropTypes.oneOf(['dark', 'light']),
+  visible: PropTypes.shape({
+    labelBtn: PropTypes.bool,
+    themeBtn: PropTypes.bool
+  })
 };
 
 App.defaultProps = {
   /**
-   * String (e.g. 'json') or pipeline data
+   * Determines what pipeline data will be displayed on the chart.
+   * You can supply one of the following strings:
+     - 'random': Use randomly-generated data
+     - 'lorem': Use data from the 'lorem-ipsum' test dataset
+     - 'animals': Use data from the 'animals' test dataset
+     - 'demo': Use data from the 'demo' test dataset
+     - 'json': Load data from a local json file (in /public/api/nodes.json)
+   * Alternatively, you can supply an object containing lists of edges, nodes, tags.
+   * See /src/utils/data for examples of the expected data format.
    */
-  data: null
+  data: null,
+  /**
+   * Specify the theme: Either 'light' or 'dark'.
+   * If set, this will override the localStorage value.
+   */
+  theme: null,
+  /**
+   * Show/hide the icon buttons with { labelBtn:false } and/or { themeBtn:false }
+   */
+  visible: {}
 };
 
 export default App;

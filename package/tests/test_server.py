@@ -126,8 +126,7 @@ def create_pipeline():
 
 
 def get_project_context(key):
-    assert key == "create_pipeline"
-    return create_pipeline
+    return {"create_pipeline": create_pipeline, "create_catalog": lambda x: None}[key]
 
 
 def setup_function():

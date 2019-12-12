@@ -1,6 +1,11 @@
 # Upcoming release:
 Add release notes for the upcoming release here.
 
+## Major features and improvements
+
+- renamed `get_data_from_kedro` to `format_pipeline_data` (#72)
+- Added pipeline, and catalog arguments to `format_pipeline_data` (#72)
+
 # Release 3.0.1:
 
 ## Bug fixes and other changes
@@ -53,9 +58,7 @@ If you are just using Kedro-Viz with Kedro as a Python package, you won't need t
   {
     snapshots: [
       {
-        created_ts: '1551452832000',
         schema_id: '310750827599783',
-        message: 'Lorem ipsum dolor sit amet',
         nodes: [...],
         edges: [...],
         tags: [...],
@@ -94,6 +97,7 @@ If you are just using Kedro-Viz with Kedro as a Python package, you won't need t
     name: 'consectetur'
   }
   ```
+
 
 # Release 2.1.1:
 

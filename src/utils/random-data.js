@@ -12,10 +12,8 @@ import {
 const DATA_NODE_COUNT = 30;
 const MAX_CONNECTED_NODES = 4;
 const MAX_LAYER_COUNT = 20;
-const MAX_MESSAGE_WORD_LENGTH = 15;
 const MAX_NODE_TAG_COUNT = 5;
 const MAX_TAG_COUNT = 20;
-const MAX_TIMESTAMP_OFFSET = 9999999999;
 const PARAMETERS_FREQUENCY = 0.05;
 const TASK_NODE_COUNT = 10;
 
@@ -160,16 +158,10 @@ class Pipeline {
   }
 
   /**
-   * Generate the full pipeline datum, including ID, timestamp,
-   * random message and JSON schema
+   * Generate the full pipeline datum
    */
   getDatum() {
-    return {
-      schema_id: randomNumber(999999999999999),
-      message: getRandomName(randomNumber(MAX_MESSAGE_WORD_LENGTH), ' '),
-      created_ts: new Date().getTime() - randomNumber(MAX_TIMESTAMP_OFFSET),
-      ...this.getSchema()
-    };
+    return this.getSchema();
   }
 }
 
