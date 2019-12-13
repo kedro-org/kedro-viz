@@ -26,7 +26,7 @@
     "snyk-protect": "snyk protect"
   },
   "dependencies": {
-    "@quantumblack/kedro-ui": "^1.1.1",
+    "@quantumblack/kedro-ui": "^1.1.2",
     "classnames": "^2.2.6",
     "d3-fetch": "^1.1.2",
     "d3-interpolate-path": "^2.1.0",
@@ -42,8 +42,8 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "svg-crowbar": "^0.2.4",
     "snyk": "^1.256.0",
+    "svg-crowbar": "^0.2.4",
     "what-input": "^5.2.3"
   },
   "peerDependencies": {
