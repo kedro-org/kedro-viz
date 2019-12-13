@@ -1,10 +1,24 @@
 # Upcoming release:
+
 Add release notes for the upcoming release here.
+
+# Release 3.1.0:
 
 ## Major features and improvements
 
-- renamed `get_data_from_kedro` to `format_pipeline_data` (#72)
-- Added pipeline, and catalog arguments to `format_pipeline_data` (#72)
+- Allow users to export graph as a transparent SVG/PNG image (#82)
+- Add theme prop and icon button visibility prop (#80)
+- Rename `get_data_from_kedro` to `format_pipeline_data` (#72)
+- Add pipeline and catalog arguments to `format_pipeline_data` (#72)
+
+## Bug fixes and other changes
+
+- Remove Appveyor config file + readme badge (#86)
+- Add explicit dependency on `psutil` (#85)
+- Improve json file-loading error message (#81)
+- Update kedro-ui/react-scripts/dagre/snyk dependencies (#83, #84, #88)
+- Remove leftover traces of the created_ts and message data properties (#80)
+- Change relative links to absolute, to fix docs on npmjs.org (#79)
 
 # Release 3.0.1:
 
