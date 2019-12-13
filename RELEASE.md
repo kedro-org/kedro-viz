@@ -1,5 +1,24 @@
 # Upcoming release:
+
 Add release notes for the upcoming release here.
+
+# Release 3.1.0:
+
+## Major features and improvements
+
+- Allow users to export graph as a transparent SVG/PNG image (#82)
+- Add theme prop and icon button visibility prop (#80)
+- Rename `get_data_from_kedro` to `format_pipeline_data` (#72)
+- Add pipeline and catalog arguments to `format_pipeline_data` (#72)
+
+## Bug fixes and other changes
+
+- Remove Appveyor config file + readme badge (#86)
+- Add explicit dependency on `psutil` (#85)
+- Improve json file-loading error message (#81)
+- Update kedro-ui/react-scripts/dagre/snyk dependencies (#83, #84, #88)
+- Remove leftover traces of the created_ts and message data properties (#80)
+- Change relative links to absolute, to fix docs on npmjs.org (#79)
 
 # Release 3.0.1:
 
@@ -53,9 +72,7 @@ If you are just using Kedro-Viz with Kedro as a Python package, you won't need t
   {
     snapshots: [
       {
-        created_ts: '1551452832000',
         schema_id: '310750827599783',
-        message: 'Lorem ipsum dolor sit amet',
         nodes: [...],
         edges: [...],
         tags: [...],
@@ -94,6 +111,7 @@ If you are just using Kedro-Viz with Kedro as a Python package, you won't need t
     name: 'consectetur'
   }
   ```
+
 
 # Release 2.1.1:
 

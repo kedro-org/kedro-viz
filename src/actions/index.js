@@ -161,3 +161,16 @@ export function updateChartSize(chartSize) {
     chartSize
   };
 }
+
+export const UPDATE_FONT_LOADED = 'UPDATE_FONT_LOADED';
+
+/**
+ * Update whether the webfont has loaded, which should block the chart render
+ * @param {Boolean} fontLoaded Whether the font has loaded
+ */
+export function updateFontLoaded(fontLoaded) {
+  return {
+    type: UPDATE_FONT_LOADED,
+    fontLoaded
+  };
+}
