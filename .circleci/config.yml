@@ -180,8 +180,9 @@ workflows:
           cron: "*/5 * * * *"
           filters:
             branches:
-              only: develop
-
+              only:
+                - develop
+                - master
     jobs:
       - build_35
       - build_36
