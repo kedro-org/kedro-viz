@@ -174,16 +174,27 @@ workflows:
           filters:
             branches:
               only: master
-  # daily_check:
-  #   triggers:
-  #     - schedule:
-  #         cron: "*/5 * * * *"
-  #         filters:
-  #           branches:
-  #             only:
-  #               - develop
-  #               - master
-  #   jobs:
-  #     - build_35
-  #     - build_36
-  #     - build_37
+  daily:
+    triggers:
+      - schedule:
+          cron: "*/5 * * * *"
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+    jobs:
+      - build_35
+      - build_36
+      - build_37
+  # nightly:
+  #     triggers:
+  #       - schedule:
+  #           cron: "0 0 * * *"
+  #           filters:
+  #             branches:
+  #               only:
+  #                 - master
+  #                 - beta
+  #     jobs:
+  #       - coverage
