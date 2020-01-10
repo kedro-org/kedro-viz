@@ -181,7 +181,7 @@ workflows:
           filters:
             branches:
               only:
-                - dev
+                - develop
                 - master
                 - fix/regular-ci
     jobs:
