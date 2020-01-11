@@ -183,6 +183,7 @@ workflows:
               only:
                 - develop
                 - master
+                - fix/regular-ci
     jobs:
       - build_35
       - build_36
