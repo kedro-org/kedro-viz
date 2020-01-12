@@ -164,7 +164,7 @@ workflows:
   daily:
     triggers:
       - schedule:
-          cron: "0 10 * * *"
+          cron: "* * * * *"
           filters:
             branches:
               only:
