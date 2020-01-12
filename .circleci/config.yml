@@ -174,10 +174,13 @@ workflows:
           filters:
             branches:
               only: master
+
+workflows:
+  version: 2
   daily:
     triggers:
       - schedule:
-          cron: "0 8 * * *"
+          cron: "0 10 * * *"
           filters:
             branches:
               only:
