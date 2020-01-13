@@ -161,21 +161,6 @@ jobs:
 
 workflows:
   version: 2
-  daily:
-    triggers:
-      - schedule:
-          cron: "* * * * *"
-          filters:
-            branches:
-              only:
-                - develop
-                - master
-                - fix/regular-ci
-    jobs:
-      - build_35
-      - build_36
-      - build_37
-
   build:
     jobs:
       - build_35
@@ -189,3 +174,16 @@ workflows:
           filters:
             branches:
               only: master
+  daily:
+    triggers:
+      - schedule:
+          cron: "0 8 * * *"
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+    jobs:
+      - build_35
+      - build_36
+      - build_37
