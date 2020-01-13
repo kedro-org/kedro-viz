@@ -177,13 +177,12 @@ workflows:
   daily:
     triggers:
       - schedule:
-          cron: "* * * * *"
+          cron: "0 8 * * *"
           filters:
             branches:
               only:
                 - develop
                 - master
-                - fix/regular-ci
     jobs:
       - build_35
       - build_36
