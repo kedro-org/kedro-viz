@@ -23,8 +23,7 @@
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
-    "snyk-protect": "export NODE_OPTIONS=--max-old-space-size=8192 && snyk protect",
-    "prepare": "npm run snyk-protect"
+    "snyk-protect": "export NODE_OPTIONS=--max-old-space-size=8192 && snyk protect"
   },
   "dependencies": {
     "@quantumblack/kedro-ui": "^1.1.1",
