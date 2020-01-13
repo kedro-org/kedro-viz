@@ -5,7 +5,7 @@ import Checkbox from '@quantumblack/kedro-ui/lib/components/checkbox';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { getNodeData } from '../../selectors/nodes';
+import { getNodeData, getGroupedNodes } from '../../selectors/nodes';
 import {
   toggleNodeHovered,
   toggleNodeDisabled,
@@ -34,10 +34,17 @@ class NodeList extends React.Component {
    * @return {object} The results array with a new field added
    */
   highlightMatch(results) {
-    return results.map(result => ({
-      highlightedLabel: getHighlightedText(result.name, this.state.searchValue),
-      ...result
-    }));
+    const obj = {};
+    Object.keys(results).forEach(key => {
+      obj[key] = results[key].map(result => ({
+        highlightedLabel: getHighlightedText(
+          result.name,
+          this.state.searchValue
+        ),
+        ...result
+      }));
+    });
+    return obj;
   }
 
   /**
@@ -57,9 +64,13 @@ class NodeList extends React.Component {
    * @param {object} results
    */
   filterResults(results) {
-    return results.filter(node =>
-      this.nodeMatchesSearch(node, this.state.searchValue)
-    );
+    const obj = {};
+    Object.keys(results).forEach(key => {
+      obj[key] = results[key].filter(node =>
+        this.nodeMatchesSearch(node, this.state.searchValue)
+      );
+    });
+    return obj;
   }
 
   /**
@@ -87,11 +98,13 @@ class NodeList extends React.Component {
       onToggleAllNodes,
       onToggleNodeHovered,
       onToggleNodeDisabled,
-      nodes,
+      groupedNodes,
       theme
     } = this.props;
     const { searchValue } = this.state;
-    const formattedNodes = this.highlightMatch(this.filterResults(nodes));
+    const formattedNodes = this.highlightMatch(
+      this.filterResults(groupedNodes)
+    );
 
     return (
       <React.Fragment>
@@ -137,32 +150,39 @@ class NodeList extends React.Component {
             </div>
           </div>
           <ul className="pipeline-node-list">
-            {formattedNodes.map(node => (
-              <li
-                key={node.id}
-                className={classnames('pipeline-node', {
-                  'pipeline-node--active': node.active,
-                  'pipeline-node--disabled':
-                    node.disabled_tag || node.disabled_view
-                })}
-                title={node.name}
-                onMouseEnter={() => onToggleNodeHovered(node.id)}
-                onMouseLeave={() => onToggleNodeHovered(null)}>
-                <Checkbox
-                  checked={!node.disabled_node}
-                  label={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: node.highlightedLabel
-                      }}
-                    />
-                  }
-                  name={node.name}
-                  onChange={(e, { checked }) =>
-                    onToggleNodeDisabled(node, !checked)
-                  }
-                  theme={theme}
-                />
+            {Object.keys(formattedNodes).map(key => (
+              <li key={key}>
+                <h3>{key}</h3>
+                <ul className="pipeline-node-list">
+                  {formattedNodes[key].map(node => (
+                    <li
+                      key={node.id}
+                      className={classnames('pipeline-node', {
+                        'pipeline-node--active': node.active,
+                        'pipeline-node--disabled':
+                          node.disabled_tag || node.disabled_view
+                      })}
+                      title={node.name}
+                      onMouseEnter={() => onToggleNodeHovered(node.id)}
+                      onMouseLeave={() => onToggleNodeHovered(null)}>
+                      <Checkbox
+                        checked={!node.disabled_node}
+                        label={
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: node.highlightedLabel
+                            }}
+                          />
+                        }
+                        name={node.name}
+                        onChange={(e, { checked }) =>
+                          onToggleNodeDisabled(node, !checked)
+                        }
+                        theme={theme}
+                      />
+                    </li>
+                  ))}
+                </ul>
               </li>
             ))}
           </ul>
@@ -174,6 +194,7 @@ class NodeList extends React.Component {
 
 export const mapStateToProps = state => ({
   nodes: getNodeData(state),
+  groupedNodes: getGroupedNodes(state),
   theme: state.theme
 });
 

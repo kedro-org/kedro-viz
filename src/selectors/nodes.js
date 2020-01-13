@@ -118,6 +118,22 @@ export const getNodeData = createSelector(
 );
 
 /**
+ * Returns formatted nodes grouped by type
+ */
+export const getGroupedNodes = createSelector(
+  [getNodeData],
+  nodes =>
+    nodes.reduce(function(obj, item) {
+      const key = item.type;
+      if (!obj.hasOwnProperty(key)) {
+        obj[key] = [];
+      }
+      obj[key].push(item);
+      return obj;
+    }, {})
+);
+
+/**
  * Temporarily create a new SVG container in the DOM, write a node to it,
  * measure its width with getBBox, then delete the container and store the value
  */
