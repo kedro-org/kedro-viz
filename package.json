@@ -23,7 +23,7 @@
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
-    "snyk-protect": "snyk protect"
+    "snyk-protect": "export NODE_OPTIONS=--max-old-space-size=8192 && snyk protect"
   },
   "dependencies": {
     "@quantumblack/kedro-ui": "^1.1.2",
@@ -42,7 +42,7 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "snyk": "^1.256.0",
+    "snyk": "^1.258.2",
     "svg-crowbar": "^0.2.4",
     "what-input": "^5.2.3"
   },
