@@ -43,7 +43,16 @@ const createPipelineState = () => ({
   tags: [],
   tagName: {},
   tagActive: {},
-  tagEnabled: {}
+  tagEnabled: {},
+  // Node types
+  types: ['task', 'data', 'parameters'],
+  typeName: {
+    data: 'Datasets',
+    task: 'Nodes',
+    parameters: 'Parameters'
+  },
+  typeDisabled: {},
+  typeActive: {}
 });
 
 /**

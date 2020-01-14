@@ -5,7 +5,7 @@ import Checkbox from '@quantumblack/kedro-ui/lib/components/checkbox';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { getNodeData, getGroupedNodes } from '../../selectors/nodes';
+import { getGroupedNodes } from '../../selectors/nodes';
 import {
   toggleNodeHovered,
   toggleNodeDisabled,
@@ -98,13 +98,13 @@ class NodeList extends React.Component {
       onToggleAllNodes,
       onToggleNodeHovered,
       onToggleNodeDisabled,
-      groupedNodes,
-      theme
+      nodes,
+      theme,
+      types,
+      typeName
     } = this.props;
     const { searchValue } = this.state;
-    const formattedNodes = this.highlightMatch(
-      this.filterResults(groupedNodes)
-    );
+    const formattedNodes = this.highlightMatch(this.filterResults(nodes));
 
     return (
       <React.Fragment>
@@ -150,11 +150,13 @@ class NodeList extends React.Component {
             </div>
           </div>
           <ul className="pipeline-node-list">
-            {Object.keys(formattedNodes).map(key => (
-              <li key={key}>
-                <h3>{key}</h3>
+            {types.map(type => (
+              <li key={type}>
+                <span className="kedro">
+                  <h3>{typeName[type]}</h3>
+                </span>
                 <ul className="pipeline-node-list">
-                  {formattedNodes[key].map(node => (
+                  {formattedNodes[type].map(node => (
                     <li
                       key={node.id}
                       className={classnames('pipeline-node', {
@@ -193,9 +195,10 @@ class NodeList extends React.Component {
 }
 
 export const mapStateToProps = state => ({
-  nodes: getNodeData(state),
-  groupedNodes: getGroupedNodes(state),
-  theme: state.theme
+  nodes: getGroupedNodes(state),
+  theme: state.theme,
+  types: state.types,
+  typeName: state.typeName
 });
 
 export const mapDispatchToProps = dispatch => ({
