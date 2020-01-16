@@ -188,7 +188,7 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
     """
     filepath_json = tmp_path / "test.json"
     data = {"nodes": None, "edges": None, "tags": None}
-    with open(filepath_json, "w") as f:
+    with open(str(filepath_json), "w") as f:
         json.dump(data, f)
 
     result = cli_runner.invoke(
