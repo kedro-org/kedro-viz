@@ -42,7 +42,8 @@ import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
 from kedro.cli import get_project_context
-
+from kedro.context import KedroContextError
+from kedro.cli.utils import KedroCliError
 from kedro_viz.utils import wait_for
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
@@ -214,8 +215,13 @@ def _call_viz(host=None, port=None, browser=None, load_file=None, save_file=None
                 click.echo("Invalid file, top level key '{}' not found.".format(key))
                 sys.exit(1)
     else:
-        pipeline = get_project_context("create_pipeline")()
-        catalog = get_project_context("create_catalog")(None)
+        try:
+            pipeline = get_project_context("create_pipeline")()
+            catalog = get_project_context("create_catalog")(None)
+        except KedroContextError:
+            raise KedroCliError(
+                "Could not find '.kedro.yml'. Make sure that you are inside a Kedro project"
+            )
         data = format_pipeline_data(pipeline, catalog)
 
     if save_file:
