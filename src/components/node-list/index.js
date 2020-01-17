@@ -6,7 +6,13 @@ import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { getGroupedNodes } from '../../selectors/nodes';
-import { toggleNodeHovered, toggleNodesDisabled } from '../../actions';
+import { getNodeTypes } from '../../selectors/node-types';
+import {
+  toggleNodeHovered,
+  toggleNodesDisabled,
+  toggleTypeActive,
+  toggleTypeDisabled
+} from '../../actions';
 import './node-list.css';
 
 const { escapeRegExp, getHighlightedText, handleKeyEvent } = utils;
@@ -104,10 +110,11 @@ class NodeList extends React.Component {
     const {
       onToggleNodeHovered,
       onToggleNodesDisabled,
+      onToggleTypeActive,
+      onToggleTypeDisabled,
       nodes,
       theme,
-      types,
-      typeName
+      types
     } = this.props;
     const { searchValue } = this.state;
     const filteredNodes = this.filterResults(nodes);
@@ -159,18 +166,33 @@ class NodeList extends React.Component {
           </div>
           <ul className="pipeline-node-list">
             {types.map(type => (
-              <li key={type}>
-                <span className="kedro">
-                  <h3>{typeName[type]}</h3>
-                </span>
+              <li key={type.id}>
+                <h3
+                  onMouseEnter={() => onToggleTypeActive(type.id, true)}
+                  onMouseLeave={() => onToggleTypeActive(type.id, false)}
+                  className={classnames('pipeline-node', {
+                    'pipeline-node--active': type.active
+                  })}>
+                  <Checkbox
+                    checked={!type.disabled}
+                    label={type.name}
+                    name={type.name}
+                    onChange={(e, { checked }) => {
+                      onToggleTypeDisabled(type.id, !checked);
+                    }}
+                    theme={theme}
+                  />
+                </h3>
                 <ul className="pipeline-node-list">
-                  {formattedNodes[type].map(node => (
+                  {formattedNodes[type.id].map(node => (
                     <li
                       key={node.id}
                       className={classnames('pipeline-node', {
                         'pipeline-node--active': node.active,
                         'pipeline-node--disabled':
-                          node.disabled_tag || node.disabled_view
+                          node.disabled_tag ||
+                          node.disabled_view ||
+                          type.disabled
                       })}
                       title={node.name}
                       onMouseEnter={() => onToggleNodeHovered(node.id)}
@@ -205,8 +227,7 @@ class NodeList extends React.Component {
 export const mapStateToProps = state => ({
   nodes: getGroupedNodes(state),
   theme: state.theme,
-  types: state.types,
-  typeName: state.typeName
+  types: getNodeTypes(state)
 });
 
 export const mapDispatchToProps = dispatch => ({
@@ -215,6 +236,12 @@ export const mapDispatchToProps = dispatch => ({
   },
   onToggleNodesDisabled: (nodeIDs, disabled) => {
     dispatch(toggleNodesDisabled(nodeIDs, disabled));
+  },
+  onToggleTypeActive: (typeID, active) => {
+    dispatch(toggleTypeActive(typeID, active));
+  },
+  onToggleTypeDisabled: (typeID, disabled) => {
+    dispatch(toggleTypeDisabled(typeID, disabled));
   }
 });
 

@@ -134,6 +134,36 @@ export function toggleTheme(theme) {
   };
 }
 
+export const TOGGLE_TYPE_ACTIVE = 'TOGGLE_TYPE_ACTIVE';
+
+/**
+ * Toggle a node-type's highlighting on/off
+ * @param {string} typeID Type id
+ * @param {Boolean} active True if type is active
+ */
+export function toggleTypeActive(typeID, active) {
+  return {
+    type: TOGGLE_TYPE_ACTIVE,
+    typeID,
+    active
+  };
+}
+
+export const TOGGLE_TYPE_DISABLED = 'TOGGLE_TYPE_DISABLED';
+
+/**
+ * Toggle a node-type's visibility on/off
+ * @param {string} typeID Type id
+ * @param {Boolean} disabled True if type is disabled
+ */
+export function toggleTypeDisabled(typeID, disabled) {
+  return {
+    type: TOGGLE_TYPE_DISABLED,
+    typeID,
+    disabled
+  };
+}
+
 export const UPDATE_CHART_SIZE = 'UPDATE_CHART_SIZE';
 
 /**

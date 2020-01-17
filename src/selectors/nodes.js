@@ -15,6 +15,7 @@ const getTagActive = state => state.tagActive;
 const getTagEnabled = state => state.tagEnabled;
 const getTextLabels = state => state.textLabels;
 const getFontLoaded = state => state.fontLoaded;
+const getTypeDisabled = state => state.typeDisabled;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -47,14 +48,31 @@ export const getNodeDisabledView = createSelector(
 );
 
 /**
- * Set disabled status if the node is specifically hidden, and/or via a tag/view
+ * Set disabled status if the node is specifically hidden, and/or via a tag/view/type
  */
 export const getNodeDisabled = createSelector(
-  [getNodes, getNodeDisabledNode, getNodeDisabledTag, getNodeDisabledView],
-  (nodes, nodeDisabledNode, nodeDisabledTag, nodeDisabledView) =>
+  [
+    getNodes,
+    getNodeDisabledNode,
+    getNodeDisabledTag,
+    getNodeDisabledView,
+    getNodeType,
+    getTypeDisabled
+  ],
+  (
+    nodes,
+    nodeDisabledNode,
+    nodeDisabledTag,
+    nodeDisabledView,
+    nodeType,
+    typeDisabled
+  ) =>
     arrayToObject(nodes, id =>
       Boolean(
-        nodeDisabledNode[id] || nodeDisabledTag[id] || nodeDisabledView[id]
+        nodeDisabledNode[id] ||
+          nodeDisabledTag[id] ||
+          nodeDisabledView[id] ||
+          typeDisabled[nodeType[id]]
       )
     )
 );
