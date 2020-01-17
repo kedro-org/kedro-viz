@@ -132,11 +132,15 @@ def get_project_context(key):
 def setup_function():
     mock.patch("kedro_viz.server.webbrowser").start()
     mock.patch("kedro_viz.server.app.run").start()
-    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
 
 
 def teardown_function():
     mock.patch.stopall()
+
+
+@pytest.fixture
+def patched_get_project_context():
+    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
 
 
 @pytest.fixture
@@ -146,7 +150,8 @@ def client():
     return client
 
 
-def test_set_port(cli_runner):
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_set_port(cli_runner,):
     """Check that port argument is correctly handled"""
     result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     assert result.exit_code == 0, result.output
@@ -154,6 +159,7 @@ def test_set_port(cli_runner):
     assert server.webbrowser.open_new.called_with("http://127.0.0.1:8000/")
 
 
+@pytest.mark.usefixtures("patched_get_project_context")
 def test_set_ip(cli_runner):
     """Check that host argument is correctly handled"""
     result = cli_runner.invoke(server.commands, ["viz", "--host", "0.0.0.0"])
@@ -162,6 +168,7 @@ def test_set_ip(cli_runner):
     assert server.webbrowser.open_new.called_with("http://127.0.0.1:4141/")
 
 
+@pytest.mark.usefixtures("patched_get_project_context")
 def test_no_browser(cli_runner):
     """
     Check that call to open browser is not performed when `--no-browser`
@@ -175,6 +182,30 @@ def test_no_browser(cli_runner):
     assert server.webbrowser.open_new.called
 
 
+def test_load_file_outside_kedro_project(cli_runner, tmp_path):
+    """
+    Check that running viz with `--load-file` flag works outside of a Kedro project
+    """
+    filepath_json = str(tmp_path / "test.json")
+    data = {"nodes": None, "edges": None, "tags": None}
+    with open(filepath_json, "w") as f:
+        json.dump(data, f)
+
+    result = cli_runner.invoke(
+        server.commands, ["viz", "--load-file", filepath_json]
+    )
+    assert result.exit_code == 0, result.output
+
+
+def test_no_load_file(cli_runner):
+    """
+    Check that running viz without `--load-file` flag should fail outside of a Kedro project
+    """
+    result = cli_runner.invoke(server.commands, ["viz"])
+    assert result.exit_code == 1
+    assert "Could not find a Kedro project root." in result.output
+
+
 def test_root_endpoint(client):
     """Test `/` endoint is functional"""
     response = client.get("/")
@@ -182,8 +213,10 @@ def test_root_endpoint(client):
     assert "Kedro Viz" in response.data.decode()
 
 
-def test_nodes_endpoint(client):
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_nodes_endpoint(cli_runner, client):
     """Test `/api/nodes.json` endoint is functional and returns a valid JSON"""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
