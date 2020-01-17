@@ -221,7 +221,9 @@ def _call_viz(host=None, port=None, browser=None, load_file=None, save_file=None
             catalog = get_project_context("create_catalog")(None)
         except KedroContextError:
             raise KedroCliError(
-                "Could not find '.kedro.yml'. Make sure that you are inside a Kedro project"
+                "Could not find a Kedro project root. "
+                "You can run `kedro viz` by either providing `--load-file` flag with a json file "
+                "path for your pipeline, or you are inside a Kedro project"
             )
         data = format_pipeline_data(pipeline, catalog)
 
