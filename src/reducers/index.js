@@ -15,23 +15,25 @@ import {
 } from '../actions';
 
 function reducer(state = {}, action) {
+  const updateState = newState => Object.assign({}, state, newState);
+
   switch (action.type) {
     case CHANGE_VIEW:
-      return Object.assign({}, state, {
+      return updateState({
         view: action.view
       });
 
     case RESET_DATA:
-      return Object.assign({}, state, action.data);
+      return updateState(action.data);
 
     case TOGGLE_NODE_CLICKED: {
-      return Object.assign({}, state, {
+      return updateState({
         nodeClicked: action.nodeClicked
       });
     }
 
     case TOGGLE_NODE_DISABLED: {
-      return Object.assign({}, state, {
+      return updateState({
         nodeDisabled: Object.assign({}, state.nodeDisabled, {
           [action.nodeID]: action.isDisabled
         })
@@ -39,7 +41,7 @@ function reducer(state = {}, action) {
     }
 
     case TOGGLE_NODES_DISABLED: {
-      return Object.assign({}, state, {
+      return updateState({
         nodeDisabled: action.nodeIDs.reduce(
           (disabled, id) =>
             Object.assign({}, disabled, {
@@ -51,14 +53,14 @@ function reducer(state = {}, action) {
     }
 
     case TOGGLE_NODE_HOVERED: {
-      return Object.assign({}, state, {
+      return updateState({
         nodeHovered: action.nodeHovered
       });
     }
 
     case TOGGLE_PARAMETERS: {
       const paramIDs = state.nodes.filter(id => state.nodeIsParam[id]);
-      return Object.assign({}, state, {
+      return updateState({
         nodeDisabled: paramIDs.reduce(
           (disabled, id) =>
             Object.assign({}, disabled, {
@@ -71,12 +73,12 @@ function reducer(state = {}, action) {
     }
 
     case TOGGLE_TEXT_LABELS:
-      return Object.assign({}, state, {
+      return updateState({
         textLabels: action.textLabels
       });
 
     case TOGGLE_TAG_ACTIVE: {
-      return Object.assign({}, state, {
+      return updateState({
         tagActive: Object.assign({}, state.tagActive, {
           [action.tagID]: action.active
         })
@@ -84,7 +86,7 @@ function reducer(state = {}, action) {
     }
 
     case TOGGLE_TAG_FILTER: {
-      return Object.assign({}, state, {
+      return updateState({
         tagEnabled: Object.assign({}, state.tagEnabled, {
           [action.tagID]: action.enabled
         })
@@ -92,19 +94,19 @@ function reducer(state = {}, action) {
     }
 
     case TOGGLE_THEME: {
-      return Object.assign({}, state, {
+      return updateState({
         theme: action.theme
       });
     }
 
     case UPDATE_CHART_SIZE: {
-      return Object.assign({}, state, {
+      return updateState({
         chartSize: action.chartSize
       });
     }
 
     case UPDATE_FONT_LOADED: {
-      return Object.assign({}, state, {
+      return updateState({
         fontLoaded: action.fontLoaded
       });
     }
