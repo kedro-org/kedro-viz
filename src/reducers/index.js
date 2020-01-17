@@ -2,7 +2,6 @@ import {
   CHANGE_VIEW,
   RESET_DATA,
   TOGGLE_NODE_CLICKED,
-  TOGGLE_NODE_DISABLED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED,
   TOGGLE_PARAMETERS,
@@ -32,19 +31,11 @@ function reducer(state = {}, action) {
       });
     }
 
-    case TOGGLE_NODE_DISABLED: {
-      return updateState({
-        nodeDisabled: Object.assign({}, state.nodeDisabled, {
-          [action.nodeID]: action.isDisabled
-        })
-      });
-    }
-
     case TOGGLE_NODES_DISABLED: {
       return updateState({
         nodeDisabled: action.nodeIDs.reduce(
-          (disabled, id) =>
-            Object.assign({}, disabled, {
+          (nodeDisabled, id) =>
+            Object.assign({}, nodeDisabled, {
               [id]: action.isDisabled
             }),
           state.nodeDisabled

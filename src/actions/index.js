@@ -37,21 +37,6 @@ export function toggleNodeClicked(nodeClicked) {
   };
 }
 
-export const TOGGLE_NODE_DISABLED = 'TOGGLE_NODE_DISABLED';
-
-/**
- * Toggle a node's visibility on/off
- * @param {string} nodeID The node's unique identifier
- * @param {Boolean} isDisabled Whether the node should be visible
- */
-export function toggleNodeDisabled(nodeID, isDisabled) {
-  return {
-    type: TOGGLE_NODE_DISABLED,
-    nodeID,
-    isDisabled
-  };
-}
-
 export const TOGGLE_NODES_DISABLED = 'TOGGLE_NODES_DISABLED';
 
 /**

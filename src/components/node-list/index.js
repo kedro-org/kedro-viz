@@ -6,11 +6,7 @@ import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { getGroupedNodes } from '../../selectors/nodes';
-import {
-  toggleNodeHovered,
-  toggleNodeDisabled,
-  toggleNodesDisabled
-} from '../../actions';
+import { toggleNodeHovered, toggleNodesDisabled } from '../../actions';
 import './node-list.css';
 
 const { escapeRegExp, getHighlightedText, handleKeyEvent } = utils;
@@ -61,16 +57,27 @@ class NodeList extends React.Component {
 
   /**
    * Return only the results that match the search text
-   * @param {object} results
+   * @param {object} nodes
    */
-  filterResults(results) {
+  filterResults(nodes) {
     const obj = {};
-    Object.keys(results).forEach(key => {
-      obj[key] = results[key].filter(node =>
+    Object.keys(nodes).forEach(key => {
+      obj[key] = nodes[key].filter(node =>
         this.nodeMatchesSearch(node, this.state.searchValue)
       );
     });
     return obj;
+  }
+
+  /**
+   * Get a list of IDs of the visible nodes
+   * @param {object} filteredNodes
+   */
+  getNodeIDs(filteredNodes) {
+    return Object.keys(filteredNodes).reduce(
+      (nodeIDs, key) => nodeIDs.concat(filteredNodes[key].map(node => node.id)),
+      []
+    );
   }
 
   /**
@@ -95,16 +102,17 @@ class NodeList extends React.Component {
 
   render() {
     const {
-      onToggleAllNodes,
       onToggleNodeHovered,
-      onToggleNodeDisabled,
+      onToggleNodesDisabled,
       nodes,
       theme,
       types,
       typeName
     } = this.props;
     const { searchValue } = this.state;
-    const formattedNodes = this.highlightMatch(this.filterResults(nodes));
+    const filteredNodes = this.filterResults(nodes);
+    const formattedNodes = this.highlightMatch(filteredNodes);
+    const nodeIDs = this.getNodeIDs(filteredNodes);
 
     return (
       <React.Fragment>
@@ -126,7 +134,7 @@ class NodeList extends React.Component {
             <h2 className="pipeline-node-list__toggle-title">All Elements</h2>
             <div className="pipeline-node-list__toggle-container">
               <button
-                onClick={() => onToggleAllNodes(formattedNodes, false)}
+                onClick={() => onToggleNodesDisabled(nodeIDs, false)}
                 className="pipeline-node-list__toggle">
                 <svg
                   className="pipeline-node-list__icon pipeline-node-list__icon--check"
@@ -137,7 +145,7 @@ class NodeList extends React.Component {
                 Check all
               </button>
               <button
-                onClick={() => onToggleAllNodes(formattedNodes, true)}
+                onClick={() => onToggleNodesDisabled(nodeIDs, true)}
                 className="pipeline-node-list__toggle">
                 <svg
                   className="pipeline-node-list__icon pipeline-node-list__icon--uncheck"
@@ -178,7 +186,7 @@ class NodeList extends React.Component {
                         }
                         name={node.name}
                         onChange={(e, { checked }) =>
-                          onToggleNodeDisabled(node, !checked)
+                          onToggleNodesDisabled([node.id], !checked)
                         }
                         theme={theme}
                       />
@@ -205,13 +213,8 @@ export const mapDispatchToProps = dispatch => ({
   onToggleNodeHovered: nodeID => {
     dispatch(toggleNodeHovered(nodeID));
   },
-  onToggleNodeDisabled: (node, isDisabled) => {
-    dispatch(toggleNodeDisabled(node.id, isDisabled));
-  },
-  onToggleAllNodes: (formattedNodes, disabled) => {
-    dispatch(
-      toggleNodesDisabled(formattedNodes.map(node => node.id), disabled)
-    );
+  onToggleNodesDisabled: (nodeIDs, disabled) => {
+    dispatch(toggleNodesDisabled(nodeIDs, disabled));
   }
 });
 
