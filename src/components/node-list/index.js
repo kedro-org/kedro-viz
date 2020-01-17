@@ -165,61 +165,64 @@ class NodeList extends React.Component {
             </div>
           </div>
           <ul className="pipeline-node-list pipeline-node-list--group">
-            {types.map(type => (
-              <li key={type.id}>
-                <h3
-                  onMouseEnter={() => onToggleTypeActive(type.id, true)}
-                  onMouseLeave={() => onToggleTypeActive(type.id, false)}
-                  className={classnames('pipeline-node', {
-                    'pipeline-node--active': type.active
-                  })}>
-                  <Checkbox
-                    checked={!type.disabled}
-                    label={type.name}
-                    name={type.name}
-                    onChange={(e, { checked }) => {
-                      onToggleTypeDisabled(type.id, !checked);
-                    }}
-                    theme={theme}
-                  />
-                </h3>
-                <ul className="pipeline-node-list">
-                  {formattedNodes[type.id].map(node => (
-                    <li
-                      key={node.id}
-                      className={classnames(
-                        'pipeline-node pipeline-node--nest1',
-                        {
-                          'pipeline-node--active': node.active,
-                          'pipeline-node--disabled':
-                            node.disabled_tag ||
-                            node.disabled_view ||
-                            type.disabled
-                        }
-                      )}
-                      title={node.name}
-                      onMouseEnter={() => onToggleNodeHovered(node.id)}
-                      onMouseLeave={() => onToggleNodeHovered(null)}>
+            {types.map(
+              type =>
+                formattedNodes[type.id] && (
+                  <li key={type.id}>
+                    <h3
+                      onMouseEnter={() => onToggleTypeActive(type.id, true)}
+                      onMouseLeave={() => onToggleTypeActive(type.id, false)}
+                      className={classnames('pipeline-node', {
+                        'pipeline-node--active': type.active
+                      })}>
                       <Checkbox
-                        checked={!node.disabled_node}
-                        label={
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: node.highlightedLabel
-                            }}
-                          />
-                        }
-                        name={node.name}
-                        onChange={(e, { checked }) =>
-                          onToggleNodesDisabled([node.id], !checked)
-                        }
+                        checked={!type.disabled}
+                        label={type.name}
+                        name={type.name}
+                        onChange={(e, { checked }) => {
+                          onToggleTypeDisabled(type.id, !checked);
+                        }}
                         theme={theme}
                       />
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
+                    </h3>
+                    <ul className="pipeline-node-list">
+                      {formattedNodes[type.id].map(node => (
+                        <li
+                          key={node.id}
+                          className={classnames(
+                            'pipeline-node pipeline-node--nest1',
+                            {
+                              'pipeline-node--active': node.active,
+                              'pipeline-node--disabled':
+                                node.disabled_tag ||
+                                node.disabled_view ||
+                                type.disabled
+                            }
+                          )}
+                          title={node.name}
+                          onMouseEnter={() => onToggleNodeHovered(node.id)}
+                          onMouseLeave={() => onToggleNodeHovered(null)}>
+                          <Checkbox
+                            checked={!node.disabled_node}
+                            label={
+                              <span
+                                dangerouslySetInnerHTML={{
+                                  __html: node.highlightedLabel
+                                }}
+                              />
+                            }
+                            name={node.name}
+                            onChange={(e, { checked }) =>
+                              onToggleNodesDisabled([node.id], !checked)
+                            }
+                            theme={theme}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                )
+            )}
           </ul>
         </Scrollbars>
       </React.Fragment>
