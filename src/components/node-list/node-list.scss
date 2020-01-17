@@ -98,13 +98,22 @@
 }
 
 .pipeline-node-list {
-  margin: 0 12px;
+  margin: 0;
   padding: 0;
   list-style: none;
+
+  &--group {
+    margin: 0 12px;
+  }
 }
 
 .pipeline-node {
+  margin: 0;
   transition: opacity ease 0.4s;
+
+  &--nest1 {
+    padding-left: 12px;
+  }
 
   .kui-switch {
     margin: 0;

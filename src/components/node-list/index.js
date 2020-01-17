@@ -164,7 +164,7 @@ class NodeList extends React.Component {
               </button>
             </div>
           </div>
-          <ul className="pipeline-node-list">
+          <ul className="pipeline-node-list pipeline-node-list--group">
             {types.map(type => (
               <li key={type.id}>
                 <h3
@@ -187,13 +187,16 @@ class NodeList extends React.Component {
                   {formattedNodes[type.id].map(node => (
                     <li
                       key={node.id}
-                      className={classnames('pipeline-node', {
-                        'pipeline-node--active': node.active,
-                        'pipeline-node--disabled':
-                          node.disabled_tag ||
-                          node.disabled_view ||
-                          type.disabled
-                      })}
+                      className={classnames(
+                        'pipeline-node pipeline-node--nest1',
+                        {
+                          'pipeline-node--active': node.active,
+                          'pipeline-node--disabled':
+                            node.disabled_tag ||
+                            node.disabled_view ||
+                            type.disabled
+                        }
+                      )}
                       title={node.name}
                       onMouseEnter={() => onToggleNodeHovered(node.id)}
                       onMouseLeave={() => onToggleNodeHovered(null)}>
