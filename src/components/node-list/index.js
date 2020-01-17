@@ -108,6 +108,7 @@ class NodeList extends React.Component {
 
   render() {
     const {
+      hasData,
       onToggleNodeHovered,
       onToggleNodesDisabled,
       onToggleTypeActive,
@@ -117,6 +118,9 @@ class NodeList extends React.Component {
       types
     } = this.props;
     const { searchValue } = this.state;
+    if (!hasData) {
+      return null;
+    }
     const filteredNodes = this.filterResults(nodes);
     const formattedNodes = this.highlightMatch(filteredNodes);
     const nodeIDs = this.getNodeIDs(filteredNodes);
@@ -231,6 +235,7 @@ class NodeList extends React.Component {
 }
 
 export const mapStateToProps = state => ({
+  hasData: Boolean(state.nodes.length),
   nodes: getGroupedNodes(state),
   theme: state.theme,
   types: getNodeTypes(state)
