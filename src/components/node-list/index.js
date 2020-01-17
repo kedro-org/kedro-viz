@@ -168,7 +168,7 @@ class NodeList extends React.Component {
               </button>
             </div>
           </div>
-          <ul className="pipeline-node-list pipeline-node-list--group">
+          <ul className="pipeline-node-list">
             {types.map(
               type =>
                 formattedNodes[type.id] && (
@@ -189,7 +189,7 @@ class NodeList extends React.Component {
                         theme={theme}
                       />
                     </h3>
-                    <ul className="pipeline-node-list">
+                    <ul className="pipeline-node-list pipeline-node-list--nest1">
                       {formattedNodes[type.id].map(node => (
                         <li
                           key={node.id}

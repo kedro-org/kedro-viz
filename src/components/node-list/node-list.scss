@@ -98,12 +98,12 @@
 }
 
 .pipeline-node-list {
-  margin: 0;
+  margin: 0 12px;
   padding: 0;
   list-style: none;
 
-  &--group {
-    margin: 0 12px;
+  &--nest1 {
+    margin: 0 0 12px;
   }
 }
 
