@@ -223,7 +223,8 @@ def _call_viz(host=None, port=None, browser=None, load_file=None, save_file=None
             raise KedroCliError(
                 "Could not find a Kedro project root. "
                 "You can run `kedro viz` by either providing `--load-file` flag with a JSON file "
-                "path for your pipeline, or if the current working directory is the root of a Kedro project."
+                "path for your pipeline, or if the current working directory is "
+                "the root of a Kedro project."
             )
         data = format_pipeline_data(pipeline, catalog)
 
