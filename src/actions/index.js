@@ -1,16 +1,3 @@
-export const CHANGE_VIEW = 'CHANGE_VIEW';
-
-/**
- * Change the view mode, which handles how the nodes should be filtered.
- * @param {string} view One of 'combined', 'data', or 'task'
- */
-export function changeView(view) {
-  return {
-    type: CHANGE_VIEW,
-    view
-  };
-}
-
 export const RESET_DATA = 'RESET_DATA';
 
 /**
@@ -62,19 +49,6 @@ export function toggleNodeHovered(nodeHovered) {
   return {
     type: TOGGLE_NODE_HOVERED,
     nodeHovered
-  };
-}
-
-export const TOGGLE_PARAMETERS = 'TOGGLE_PARAMETERS';
-
-/**
- * Toggle whether to show Parameters on/off
- * @param {Boolean} parameters Whether to show Parameters
- */
-export function toggleParameters(parameters) {
-  return {
-    type: TOGGLE_PARAMETERS,
-    parameters
   };
 }
 

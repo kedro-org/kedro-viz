@@ -1,10 +1,8 @@
 import {
-  CHANGE_VIEW,
   RESET_DATA,
   TOGGLE_NODE_CLICKED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED,
-  TOGGLE_PARAMETERS,
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
   TOGGLE_TEXT_LABELS,
@@ -19,11 +17,6 @@ function reducer(state = {}, action) {
   const updateState = newState => Object.assign({}, state, newState);
 
   switch (action.type) {
-    case CHANGE_VIEW:
-      return updateState({
-        view: action.view
-      });
-
     case RESET_DATA:
       return updateState(action.data);
 
@@ -48,20 +41,6 @@ function reducer(state = {}, action) {
     case TOGGLE_NODE_HOVERED: {
       return updateState({
         nodeHovered: action.nodeHovered
-      });
-    }
-
-    case TOGGLE_PARAMETERS: {
-      const paramIDs = state.nodes.filter(id => state.nodeIsParam[id]);
-      return updateState({
-        nodeDisabled: paramIDs.reduce(
-          (disabled, id) =>
-            Object.assign({}, disabled, {
-              [id]: !action.parameters
-            }),
-          state.nodeDisabled
-        ),
-        parameters: action.parameters
       });
     }
 

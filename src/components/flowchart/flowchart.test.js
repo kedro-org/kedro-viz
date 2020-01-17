@@ -102,7 +102,6 @@ describe('FlowChart', () => {
       linkedNodes: expect.any(Object),
       centralNode: null,
       textLabels: expect.any(Boolean),
-      view: expect.stringMatching(/combined|data|text/),
       zoom: expect.objectContaining({
         scale: expect.any(Number),
         translateX: expect.any(Number),

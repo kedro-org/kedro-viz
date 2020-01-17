@@ -17,10 +17,8 @@ describe('getInitialState', () => {
     expect(getInitialState(loremData)).toMatchObject({
       ...loremData,
       chartSize: {},
-      parameters: true,
       textLabels: true,
       theme: 'dark',
-      view: 'combined',
       visible: { labelBtn: true, themeBtn: true }
     });
   });
@@ -39,10 +37,8 @@ describe('getInitialState', () => {
 
   it('uses localstorage values instead of defaults if provided', () => {
     const storeValues = {
-      parameters: false,
       textLabels: false,
-      theme: 'light',
-      view: 'task'
+      theme: 'light'
     };
     saveState(storeValues);
     expect(getInitialState(loremData)).toMatchObject(storeValues);

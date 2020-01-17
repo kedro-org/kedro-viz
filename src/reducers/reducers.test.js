@@ -12,20 +12,6 @@ describe('Reducer', () => {
     expect(reducer(undefined, {})).toEqual({});
   });
 
-  describe('CHANGE_VIEW', () => {
-    it('should change the view', () => {
-      expect(
-        reducer(
-          { view: 'combined' },
-          {
-            type: action.CHANGE_VIEW,
-            view: 'data'
-          }
-        )
-      ).toEqual({ view: 'data' });
-    });
-  });
-
   describe('RESET_DATA', () => {
     it('should return the same data when given the same input', () => {
       expect(
@@ -86,27 +72,6 @@ describe('Reducer', () => {
         isDisabled: true
       });
       expect(newState.nodeDisabled).toEqual({ '123': true, abc: true });
-    });
-  });
-
-  describe('TOGGLE_PARAMETERS', () => {
-    const newState = reducer(mockState.lorem, {
-      type: action.TOGGLE_PARAMETERS,
-      parameters: false
-    });
-    const { nodeDisabled, nodeType } = newState;
-    const nodes = getNodes(newState);
-
-    it('should disable any nodes where node.type === "parameters"', () => {
-      const paramNodes = nodes.filter(node => nodeType[node] === 'parameters');
-      expect(paramNodes.every(key => nodeDisabled[key])).toBe(true);
-    });
-
-    it('should not disable any nodes where node.type !=== "parameters"', () => {
-      const nonParamNodes = nodes.filter(
-        node => nodeType[node] !== 'parameters'
-      );
-      expect(nonParamNodes.every(key => !nodeDisabled[key])).toBe(true);
     });
   });
 

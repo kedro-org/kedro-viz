@@ -1,24 +1,20 @@
 import animals from '../utils/data/animals.mock';
 import {
-  CHANGE_VIEW,
   RESET_DATA,
   TOGGLE_NODE_CLICKED,
   TOGGLE_NODE_DISABLED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED,
-  TOGGLE_PARAMETERS,
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
   TOGGLE_THEME,
   TOGGLE_TEXT_LABELS,
   UPDATE_CHART_SIZE,
-  changeView,
   resetData,
   toggleNodeClicked,
   toggleNodeDisabled,
   toggleNodesDisabled,
   toggleNodeHovered,
-  toggleParameters,
   toggleTextLabels,
   toggleTagActive,
   toggleTheme,
@@ -27,15 +23,6 @@ import {
 } from '../actions';
 
 describe('actions', () => {
-  it('should create an action to change the view', () => {
-    const view = 'combined';
-    const expectedAction = {
-      type: CHANGE_VIEW,
-      view
-    };
-    expect(changeView(view)).toEqual(expectedAction);
-  });
-
   it('should create an action to reset pipeline data', () => {
     const expectedAction = {
       type: RESET_DATA,
@@ -82,15 +69,6 @@ describe('actions', () => {
       isDisabled
     };
     expect(toggleNodesDisabled(nodeIDs, isDisabled)).toEqual(expectedAction);
-  });
-
-  it('should create an action to toggle whether to show Parameters on/off', () => {
-    const parameters = false;
-    const expectedAction = {
-      type: TOGGLE_PARAMETERS,
-      parameters
-    };
-    expect(toggleParameters(parameters)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether to show text labels on/off', () => {

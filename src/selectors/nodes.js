@@ -5,7 +5,6 @@ import { getTagCount } from './tags';
 import { getCentralNode } from './linked-nodes';
 
 const getNodes = state => state.nodes;
-const getView = state => state.view;
 const getNodeName = state => state.nodeName;
 const getNodeFullName = state => state.nodeFullName;
 const getNodeDisabledNode = state => state.nodeDisabled;
@@ -36,18 +35,6 @@ export const getNodeDisabledTag = createSelector(
 );
 
 /**
- * Calculate whether nodes should be disabled based on the view
- */
-export const getNodeDisabledView = createSelector(
-  [getNodes, getNodeType, getView],
-  (nodes, nodeType, view) =>
-    arrayToObject(
-      nodes,
-      nodeID => view !== 'combined' && view !== nodeType[nodeID]
-    )
-);
-
-/**
  * Set disabled status if the node is specifically hidden, and/or via a tag/view/type
  */
 export const getNodeDisabled = createSelector(
@@ -55,23 +42,14 @@ export const getNodeDisabled = createSelector(
     getNodes,
     getNodeDisabledNode,
     getNodeDisabledTag,
-    getNodeDisabledView,
     getNodeType,
     getTypeDisabled
   ],
-  (
-    nodes,
-    nodeDisabledNode,
-    nodeDisabledTag,
-    nodeDisabledView,
-    nodeType,
-    typeDisabled
-  ) =>
+  (nodes, nodeDisabledNode, nodeDisabledTag, nodeType, typeDisabled) =>
     arrayToObject(nodes, id =>
       Boolean(
         nodeDisabledNode[id] ||
           nodeDisabledTag[id] ||
-          nodeDisabledView[id] ||
           typeDisabled[nodeType[id]]
       )
     )
@@ -104,8 +82,7 @@ export const getNodeData = createSelector(
     getNodeActive,
     getNodeDisabled,
     getNodeDisabledNode,
-    getNodeDisabledTag,
-    getNodeDisabledView
+    getNodeDisabledTag
   ],
   (
     nodes,
@@ -114,8 +91,7 @@ export const getNodeData = createSelector(
     nodeActive,
     nodeDisabled,
     nodeDisabledNode,
-    nodeDisabledTag,
-    nodeDisabledView
+    nodeDisabledTag
   ) =>
     nodes
       .sort((a, b) => {
@@ -130,8 +106,7 @@ export const getNodeData = createSelector(
         active: nodeActive[id],
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),
-        disabled_tag: nodeDisabledTag[id],
-        disabled_view: nodeDisabledView[id]
+        disabled_tag: nodeDisabledTag[id]
       }))
 );
 
