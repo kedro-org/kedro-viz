@@ -186,13 +186,13 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
     """
     Check that running viz with `--load-file` flag works outside of a Kedro project
     """
-    filepath_json = tmp_path / "test.json"
+    filepath_json = str(tmp_path / "test.json")
     data = {"nodes": None, "edges": None, "tags": None}
-    with open(str(filepath_json), "w") as f:
+    with open(filepath_json, "w") as f:
         json.dump(data, f)
 
     result = cli_runner.invoke(
-        server.commands, ["viz", "--load-file", "{}".format(str(filepath_json))]
+        server.commands, ["viz", "--load-file", filepath_json]
     )
     assert result.exit_code == 0, result.output
 
