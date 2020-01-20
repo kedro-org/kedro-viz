@@ -101,9 +101,43 @@
   margin: 0 12px;
   padding: 0;
   list-style: none;
+  transition: all ease 0.3s;
 
   &--nest1 {
     margin: 0 0 12px;
+  }
+
+  &--collapsed {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+.pipeline-type-group-toggle {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 1em;
+  margin: 0.3em;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  float: right;
+  position: relative;
+  z-index: 1;
+  transition: transform ease 0.3s;
+
+  &:focus {
+    opacity: 1;
+    outline: 4px solid $color-link;
+
+    [data-whatintent='mouse'] & {
+      outline: none;
+    }
+  }
+
+  &--alt {
+    transform: rotate(180deg);
   }
 }
 

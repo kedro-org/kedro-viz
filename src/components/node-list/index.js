@@ -23,9 +23,12 @@ const { escapeRegExp, getHighlightedText, handleKeyEvent } = utils;
 class NodeList extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      searchValue: ''
+      searchValue: '',
+      typeGroupCollapsed: {}
     };
+
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.updateSearchValue = this.updateSearchValue.bind(this);
   }
@@ -106,6 +109,15 @@ class NodeList extends React.Component {
     });
   }
 
+  toggleTypeGroupCollapsed(typeID) {
+    const { typeGroupCollapsed } = this.state;
+    this.setState({
+      typeGroupCollapsed: Object.assign({}, typeGroupCollapsed, {
+        [typeID]: !typeGroupCollapsed[typeID]
+      })
+    });
+  }
+
   render() {
     const {
       hasData,
@@ -117,7 +129,7 @@ class NodeList extends React.Component {
       theme,
       types
     } = this.props;
-    const { searchValue } = this.state;
+    const { searchValue, typeGroupCollapsed } = this.state;
     if (!hasData) {
       return null;
     }
@@ -179,6 +191,14 @@ class NodeList extends React.Component {
                       className={classnames('pipeline-node', {
                         'pipeline-node--active': type.active
                       })}>
+                      <button
+                        onClick={() => this.toggleTypeGroupCollapsed(type.id)}
+                        className={classnames('pipeline-type-group-toggle', {
+                          'pipeline-type-group-toggle--alt':
+                            typeGroupCollapsed[type.id]
+                        })}>
+                        ▾
+                      </button>
                       <Checkbox
                         checked={!type.disabled}
                         label={type.name}
@@ -189,7 +209,14 @@ class NodeList extends React.Component {
                         theme={theme}
                       />
                     </h3>
-                    <ul className="pipeline-node-list pipeline-node-list--nest1">
+                    <ul
+                      className={classnames(
+                        'pipeline-node-list pipeline-node-list--nest1',
+                        {
+                          'pipeline-node-list--collapsed':
+                            typeGroupCollapsed[type.id]
+                        }
+                      )}>
                       {formattedNodes[type.id].map(node => (
                         <li
                           key={node.id}
