@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { Flipper } from 'react-flip-toolkit';
 import { getGroupedNodes } from '../../selectors/nodes';
 import { getNodeTypes } from '../../selectors/node-types';
 import NodeListToggleAll from './node-list-toggle';
@@ -140,32 +141,34 @@ class NodeList extends React.Component {
           autoHide
           hideTracksWhenNotNeeded>
           <NodeListToggleAll nodeIDs={nodeIDs} />
-          <ul className="pipeline-node-list">
-            {types.map(
-              type =>
-                formattedNodes[type.id] && (
-                  <NodeListGroup
-                    key={type.id}
-                    onToggleTypeGroupCollapsed={this.onToggleTypeGroupCollapsed.bind(
-                      this
-                    )}
-                    type={type}
-                    typeGroupCollapsed={typeGroupCollapsed}>
-                    {formattedNodes[type.id].map(node => (
-                      <NodeListItem
-                        key={node.id}
-                        node={node}
-                        disabled={
-                          node.disabled_tag ||
-                          node.disabled_view ||
-                          type.disabled
-                        }
-                      />
-                    ))}
-                  </NodeListGroup>
-                )
-            )}
-          </ul>
+          <Flipper flipKey={typeGroupCollapsed}>
+            <ul className="pipeline-node-list">
+              {types.map(
+                type =>
+                  formattedNodes[type.id] && (
+                    <NodeListGroup
+                      key={type.id}
+                      onToggleTypeGroupCollapsed={this.onToggleTypeGroupCollapsed.bind(
+                        this
+                      )}
+                      type={type}
+                      typeGroupCollapsed={typeGroupCollapsed}>
+                      {formattedNodes[type.id].map(node => (
+                        <NodeListItem
+                          key={node.id}
+                          node={node}
+                          disabled={
+                            node.disabled_tag ||
+                            node.disabled_view ||
+                            type.disabled
+                          }
+                        />
+                      ))}
+                    </NodeListGroup>
+                  )
+              )}
+            </ul>
+          </Flipper>
         </Scrollbars>
       </React.Fragment>
     );

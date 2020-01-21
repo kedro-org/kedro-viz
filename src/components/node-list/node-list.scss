@@ -101,13 +101,14 @@
   margin: 0 12px;
   padding: 0;
   list-style: none;
-  transition: all ease 0.3s;
+  transition: visibility ease 0.3s, opacity ease 0.3s;
 
   &--nest1 {
     margin: 0 0 12px;
   }
 
   &--collapsed {
+    visibility: hidden;
     height: 0;
     opacity: 0;
   }
@@ -138,7 +139,7 @@
   }
 
   &--alt {
-    transform: rotate(180deg);
+    transform: rotate(-180deg);
   }
 }
 
