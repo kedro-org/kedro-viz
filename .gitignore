@@ -42,3 +42,4 @@ dist/
 __pycache__/
 
 package/*/html/
+package/*.log
