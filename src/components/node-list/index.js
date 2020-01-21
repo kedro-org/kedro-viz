@@ -1,18 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-import Checkbox from '@quantumblack/kedro-ui/lib/components/checkbox';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { getGroupedNodes } from '../../selectors/nodes';
 import { getNodeTypes } from '../../selectors/node-types';
-import {
-  toggleNodeHovered,
-  toggleNodesDisabled,
-  toggleTypeActive,
-  toggleTypeDisabled
-} from '../../actions';
+import NodeListToggleAll from './node-list-toggle';
+import NodeListGroup from './node-list-group';
+import NodeListItem from './node-list-item';
 import './node-list.css';
 
 const { escapeRegExp, getHighlightedText, handleKeyEvent } = utils;
@@ -109,7 +104,7 @@ class NodeList extends React.Component {
     });
   }
 
-  toggleTypeGroupCollapsed(typeID) {
+  onToggleTypeGroupCollapsed(typeID) {
     const { typeGroupCollapsed } = this.state;
     this.setState({
       typeGroupCollapsed: Object.assign({}, typeGroupCollapsed, {
@@ -119,16 +114,7 @@ class NodeList extends React.Component {
   }
 
   render() {
-    const {
-      hasData,
-      onToggleNodeHovered,
-      onToggleNodesDisabled,
-      onToggleTypeActive,
-      onToggleTypeDisabled,
-      nodes,
-      theme,
-      types
-    } = this.props;
+    const { hasData, nodes, theme, types } = this.props;
     const { searchValue, typeGroupCollapsed } = this.state;
     if (!hasData) {
       return null;
@@ -153,105 +139,30 @@ class NodeList extends React.Component {
           style={{ width: 'auto' }}
           autoHide
           hideTracksWhenNotNeeded>
-          <div className="kedro">
-            <h2 className="pipeline-node-list__toggle-title">All Elements</h2>
-            <div className="pipeline-node-list__toggle-container">
-              <button
-                onClick={() => onToggleNodesDisabled(nodeIDs, false)}
-                className="pipeline-node-list__toggle">
-                <svg
-                  className="pipeline-node-list__icon pipeline-node-list__icon--check"
-                  width="24"
-                  height="24">
-                  <polygon points="9.923 14.362 7.385 11.944 6 13.263 7.33384369 14.5336026 9.923 17 18 9.32 16.615 8" />
-                </svg>
-                Check all
-              </button>
-              <button
-                onClick={() => onToggleNodesDisabled(nodeIDs, true)}
-                className="pipeline-node-list__toggle">
-                <svg
-                  className="pipeline-node-list__icon pipeline-node-list__icon--uncheck"
-                  width="24"
-                  height="24">
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                </svg>
-                Uncheck all
-              </button>
-            </div>
-          </div>
+          <NodeListToggleAll nodeIDs={nodeIDs} />
           <ul className="pipeline-node-list">
             {types.map(
               type =>
                 formattedNodes[type.id] && (
-                  <li key={type.id}>
-                    <h3
-                      onMouseEnter={() => onToggleTypeActive(type.id, true)}
-                      onMouseLeave={() => onToggleTypeActive(type.id, false)}
-                      className={classnames('pipeline-node', {
-                        'pipeline-node--active': type.active
-                      })}>
-                      <button
-                        onClick={() => this.toggleTypeGroupCollapsed(type.id)}
-                        className={classnames('pipeline-type-group-toggle', {
-                          'pipeline-type-group-toggle--alt':
-                            typeGroupCollapsed[type.id]
-                        })}>
-                        ▾
-                      </button>
-                      <Checkbox
-                        checked={!type.disabled}
-                        label={type.name}
-                        name={type.name}
-                        onChange={(e, { checked }) => {
-                          onToggleTypeDisabled(type.id, !checked);
-                        }}
-                        theme={theme}
-                      />
-                    </h3>
-                    <ul
-                      className={classnames(
-                        'pipeline-node-list pipeline-node-list--nest1',
-                        {
-                          'pipeline-node-list--collapsed':
-                            typeGroupCollapsed[type.id]
+                  <NodeListGroup
+                    key={type.id}
+                    onToggleTypeGroupCollapsed={this.onToggleTypeGroupCollapsed.bind(
+                      this
+                    )}
+                    type={type}
+                    typeGroupCollapsed={typeGroupCollapsed}>
+                    {formattedNodes[type.id].map(node => (
+                      <NodeListItem
+                        key={node.id}
+                        node={node}
+                        disabled={
+                          node.disabled_tag ||
+                          node.disabled_view ||
+                          type.disabled
                         }
-                      )}>
-                      {formattedNodes[type.id].map(node => (
-                        <li
-                          key={node.id}
-                          className={classnames(
-                            'pipeline-node pipeline-node--nest1',
-                            {
-                              'pipeline-node--active': node.active,
-                              'pipeline-node--disabled':
-                                node.disabled_tag ||
-                                node.disabled_view ||
-                                type.disabled
-                            }
-                          )}
-                          title={node.name}
-                          onMouseEnter={() => onToggleNodeHovered(node.id)}
-                          onMouseLeave={() => onToggleNodeHovered(null)}>
-                          <Checkbox
-                            checked={!node.disabled_node}
-                            label={
-                              <span
-                                dangerouslySetInnerHTML={{
-                                  __html: node.highlightedLabel
-                                }}
-                              />
-                            }
-                            name={node.name}
-                            onChange={(e, { checked }) =>
-                              onToggleNodesDisabled([node.id], !checked)
-                            }
-                            theme={theme}
-                          />
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
+                      />
+                    ))}
+                  </NodeListGroup>
                 )
             )}
           </ul>
@@ -268,22 +179,4 @@ export const mapStateToProps = state => ({
   types: getNodeTypes(state)
 });
 
-export const mapDispatchToProps = dispatch => ({
-  onToggleNodeHovered: nodeID => {
-    dispatch(toggleNodeHovered(nodeID));
-  },
-  onToggleNodesDisabled: (nodeIDs, disabled) => {
-    dispatch(toggleNodesDisabled(nodeIDs, disabled));
-  },
-  onToggleTypeActive: (typeID, active) => {
-    dispatch(toggleTypeActive(typeID, active));
-  },
-  onToggleTypeDisabled: (typeID, disabled) => {
-    dispatch(toggleTypeDisabled(typeID, disabled));
-  }
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NodeList);
+export default connect(mapStateToProps)(NodeList);
