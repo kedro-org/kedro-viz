@@ -41,11 +41,8 @@ import click
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-from kedro import __version__ as version  # pylint: disable=import-error
 from kedro.cli import get_project_context
 from kedro.cli.utils import KedroCliError
-from kedro.context import KedroContextError
-from semver import match
 
 from kedro_viz.utils import wait_for
 
@@ -207,7 +204,7 @@ def commands():
 @click.option(
     "--pipeline",
     type=str,
-    default="__default__",
+    default=None,
     help="Name of the modular pipeline to run."
     "If not set, the project pipeline is run by default",
 )
@@ -235,15 +232,30 @@ def _call_viz(
                 sys.exit(1)
     else:
         try:
-            if match(version, "<0.15.0"):
-                pipeline = get_project_context("create_pipeline")()
-                catalog = get_project_context("create_catalog")(None)
-            else:
-                context = get_project_context()
+            # Kedro 0.15.0+
+            from kedro.context import KedroContextError
+
+            context = get_project_context()
+            try:
+                # Kedro 0.15.2+
                 pipeline = context._get_pipeline(  # pylint: disable=protected-access
                     name=pipeline_name
                 )
-                catalog = context.catalog
+            except NotImplementedError:
+                # Kedro 0.15.0 or 0.15.1
+                if pipeline_name:
+                    raise KedroCliError(
+                        "`--pipeline` flag was provided, but there is no multiple pipelines."
+                        "Please refer to the 'Modular Pipelines' section of "
+                        "the Kedro documentation."
+                    )
+                pipeline = context.pipeline
+
+            catalog = context.catalog
+        except ImportError:
+            # Kedro <0.15.0
+            pipeline = get_project_context("create_pipeline")()
+            catalog = get_project_context("create_catalog")(None)
 
         except KedroContextError:
             raise KedroCliError(

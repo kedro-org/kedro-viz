@@ -103,6 +103,7 @@ EXPECTED_PIPELINE_DATA = {
 
 
 def get_pipeline(name: str = None):
+    name = name or "__default__"
     return {"__default__": create_pipeline(), "another": Pipeline([])}[name]
 
 
@@ -144,6 +145,7 @@ def patched_get_project_context():
         mocked_context = mock.Mock()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.catalog = lambda x: None
+        mocked_context.pipeline = create_pipeline()
         return {
             "create_pipeline": create_pipeline,
             "create_catalog": lambda x: None,
@@ -164,7 +166,6 @@ def client():
 def test_set_port(cli_runner,):
     """Check that port argument is correctly handled"""
     result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-
     assert result.exit_code == 0, result.output
     server.app.run.assert_called_with(host="127.0.0.1", port=8000)
     assert server.webbrowser.open_new.called_with("http://127.0.0.1:8000/")
@@ -230,6 +231,16 @@ def test_nodes_endpoint(cli_runner, client):
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == EXPECTED_PIPELINE_DATA
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_pipeline_flag(cli_runner, client):
+    """Test that running viz with `--pipeline` flag will return a correct pipeline"""
+    cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    response = client.get("/api/nodes.json")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data == {"edges": [], "nodes": [], "tags": []}
 
 
 @pytest.fixture(autouse=True)
