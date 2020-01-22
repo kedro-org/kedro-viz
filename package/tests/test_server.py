@@ -163,7 +163,8 @@ def client():
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_set_port(cli_runner,):
     """Check that port argument is correctly handled"""
-    result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"]
+    result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+
     assert result.exit_code == 0, result.output
     server.app.run.assert_called_with(host="127.0.0.1", port=8000)
     assert server.webbrowser.open_new.called_with("http://127.0.0.1:8000/")
