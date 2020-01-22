@@ -102,6 +102,10 @@ EXPECTED_PIPELINE_DATA = {
 }
 
 
+def get_pipeline(name: str = None):
+    return {"__default__": create_pipeline(), "another": Pipeline([])}[name]
+
+
 def create_pipeline():
     def func1(a, b):  # pylint: disable=unused-argument
         return a
@@ -125,10 +129,6 @@ def create_pipeline():
     )
 
 
-def get_project_context(key):
-    return {"create_pipeline": create_pipeline, "create_catalog": lambda x: None}[key]
-
-
 def setup_function():
     mock.patch("kedro_viz.server.webbrowser").start()
     mock.patch("kedro_viz.server.app.run").start()
@@ -140,6 +140,16 @@ def teardown_function():
 
 @pytest.fixture
 def patched_get_project_context():
+    def get_project_context(key: str = "context"):
+        mocked_context = mock.Mock()
+        mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
+        mocked_context.catalog = lambda x: None
+        return {
+            "create_pipeline": create_pipeline,
+            "create_catalog": lambda x: None,
+            "context": mocked_context,
+        }[key]
+
     mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
 
 
@@ -153,7 +163,7 @@ def client():
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_set_port(cli_runner,):
     """Check that port argument is correctly handled"""
-    result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"]
     assert result.exit_code == 0, result.output
     server.app.run.assert_called_with(host="127.0.0.1", port=8000)
     assert server.webbrowser.open_new.called_with("http://127.0.0.1:8000/")
@@ -191,9 +201,7 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
     with open(filepath_json, "w") as f:
         json.dump(data, f)
 
-    result = cli_runner.invoke(
-        server.commands, ["viz", "--load-file", filepath_json]
-    )
+    result = cli_runner.invoke(server.commands, ["viz", "--load-file", filepath_json])
     assert result.exit_code == 0, result.output
 
 
