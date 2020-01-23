@@ -145,14 +145,14 @@ def patched_get_project_context():
 
 @pytest.fixture
 def client():
-    """Create Flask test client as a test fixture"""
+    """Create Flask test client as a test fixture."""
     client = server.app.test_client()
     return client
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_set_port(cli_runner,):
-    """Check that port argument is correctly handled"""
+    """Check that port argument is correctly handled."""
     result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     assert result.exit_code == 0, result.output
     server.app.run.assert_called_with(host="127.0.0.1", port=8000)
@@ -161,7 +161,7 @@ def test_set_port(cli_runner,):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_set_ip(cli_runner):
-    """Check that host argument is correctly handled"""
+    """Check that host argument is correctly handled."""
     result = cli_runner.invoke(server.commands, ["viz", "--host", "0.0.0.0"])
     assert result.exit_code == 0, result.output
     server.app.run.assert_called_with(host="0.0.0.0", port=4141)
@@ -172,7 +172,7 @@ def test_set_ip(cli_runner):
 def test_no_browser(cli_runner):
     """
     Check that call to open browser is not performed when `--no-browser`
-    argument is specified
+    argument is specified.
     """
     result = cli_runner.invoke(server.commands, ["viz", "--no-browser"])
     assert result.exit_code == 0, result.output
@@ -184,7 +184,7 @@ def test_no_browser(cli_runner):
 
 def test_load_file_outside_kedro_project(cli_runner, tmp_path):
     """
-    Check that running viz with `--load-file` flag works outside of a Kedro project
+    Check that running viz with `--load-file` flag works outside of a Kedro project.
     """
     filepath_json = str(tmp_path / "test.json")
     data = {"nodes": None, "edges": None, "tags": None}
@@ -198,7 +198,7 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_save_file(cli_runner, tmp_path):
     """
-    Check that running with `--save-file` flag saves pipeline JSON in a specified path
+    Check that running with `--save-file` flag saves pipeline JSON file in a specified path.
     """
     save_path = str(tmp_path / "test.json")
 
@@ -225,7 +225,7 @@ def test_no_top_level_key(cli_runner, tmp_path):
 
 def test_no_load_file(cli_runner):
     """
-    Check that running viz without `--load-file` flag should fail outside of a Kedro project
+    Check that running viz without `--load-file` flag should fail outside of a Kedro project.
     """
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 1
@@ -233,7 +233,7 @@ def test_no_load_file(cli_runner):
 
 
 def test_root_endpoint(client):
-    """Test `/` endoint is functional"""
+    """Test `/` endoint is functional."""
     response = client.get("/")
     assert response.status_code == 200
     assert "Kedro Viz" in response.data.decode()
@@ -241,7 +241,7 @@ def test_root_endpoint(client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_nodes_endpoint(cli_runner, client):
-    """Test `/api/nodes.json` endoint is functional and returns a valid JSON"""
+    """Test `/api/nodes.json` endoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
@@ -290,7 +290,7 @@ class TestRunViz:
         )
 
     def test_call_twice_with_same_port(self, mocked_process):
-        """Running run_viz with the same port should trigger another process
+        """Running run_viz with the same port should trigger another process.
         """
         server.run_viz()
         server.run_viz()
@@ -302,7 +302,7 @@ class TestRunViz:
 
     def test_call_twice_with_different_port(self, mocked_process):
         """
-        Running run_viz with a different port should start another process
+        Running run_viz with a different port should start another process.
         """
         server.run_viz()
         # pylint: disable=protected-access
@@ -323,10 +323,10 @@ class TestRunViz:
         requests_mock.get(
             "http://127.0.0.1:8000/", content=b"some output", status_code=200
         )
-        assert server._check_viz_up(8000)
+        assert server._check_viz_up(8000)  # pylint: disable=protected-access
 
     def test_check_viz_up_invalid(self):
         """
         Test should catch the request connection error and returns false.
         """
-        assert not server._check_viz_up(8888)
+        assert not server._check_viz_up(8888)  # pylint: disable=protected-access
