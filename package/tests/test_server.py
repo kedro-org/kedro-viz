@@ -210,7 +210,7 @@ def test_save_file(cli_runner, tmp_path):
     assert json_data == EXPECTED_PIPELINE_DATA
 
 
-def test_no_top_level_key(cli_runner, tmp_path):
+def test_load_file_no_top_level_key(cli_runner, tmp_path):
     """
     Check that top level keys are properly checked.
     """
@@ -327,6 +327,6 @@ class TestRunViz:
 
     def test_check_viz_up_invalid(self):
         """
-        Test should catch the request connection error and returns false.
+        Test should catch the request connection error and returns False.
         """
         assert not server._check_viz_up(8888)  # pylint: disable=protected-access
