@@ -71,7 +71,11 @@ def _hash(value):
 
 def _check_viz_up(port):
     url = "http://127.0.0.1:{}/".format(port)
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except requests.ConnectionError:
+        return False
+
     return response.status_code == 200
 
 
@@ -197,9 +201,17 @@ def commands():
     help="Whether to open viz interface in the default browser or not. "
     "Defaults to True.",
 )
-@click.option("--load-file", default=None, type=click.Path(exists=True, dir_okay=False))
 @click.option(
-    "--save-file", default=None, type=click.Path(dir_okay=False, writable=True)
+    "--load-file",
+    default=None,
+    type=click.Path(exists=True, dir_okay=False),
+    help="Path to load the pipeline JSON file",
+)
+@click.option(
+    "--save-file",
+    default=None,
+    type=click.Path(dir_okay=False, writable=True),
+    help="Path to save the pipeline JSON file",
 )
 def viz(host, port, browser, load_file, save_file):
     """Visualize the pipeline using kedroviz."""

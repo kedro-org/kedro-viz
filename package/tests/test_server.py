@@ -191,10 +191,36 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
     with open(filepath_json, "w") as f:
         json.dump(data, f)
 
-    result = cli_runner.invoke(
-        server.commands, ["viz", "--load-file", filepath_json]
-    )
+    result = cli_runner.invoke(server.commands, ["viz", "--load-file", filepath_json])
     assert result.exit_code == 0, result.output
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_save_file(cli_runner, tmp_path):
+    """
+    Check that running with `--save-file` flag saves pipeline JSON in a specified path
+    """
+    save_path = str(tmp_path / "test.json")
+
+    result = cli_runner.invoke(server.commands, ["viz", "--save-file", save_path])
+    assert result.exit_code == 0, result.output
+
+    with open(save_path, "r") as f:
+        json_data = json.load(f)
+        assert json_data == EXPECTED_PIPELINE_DATA
+
+
+def test_no_top_level_key(cli_runner, tmp_path):
+    """
+    Check that top level keys are properly checked.
+    """
+    filepath_json = str(tmp_path / "test.json")
+    data = {}
+    with open(filepath_json, "w") as f:
+        json.dump(data, f)
+
+    result = cli_runner.invoke(server.commands, ["viz", "--load-file", filepath_json])
+    assert result.output == "Invalid file, top level key 'nodes' not found.\n"
 
 
 def test_no_load_file(cli_runner):
@@ -289,3 +315,18 @@ class TestRunViz:
             target=server._call_viz, kwargs={"port": 8000}, daemon=True
         )
         assert mocked_process.call_count == 2
+
+    def test_check_viz_up(self, requests_mock):
+        """
+        Test the helper function which checks if HTTP GET status code is 200.
+        """
+        requests_mock.get(
+            "http://127.0.0.1:8000/", content=b"some output", status_code=200
+        )
+        assert server._check_viz_up(8000)
+
+    def test_check_viz_up_invalid(self):
+        """
+        Test should catch the request connection error and returns false.
+        """
+        assert not server._check_viz_up(8888)
