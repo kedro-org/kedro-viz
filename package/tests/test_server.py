@@ -207,7 +207,7 @@ def test_save_file(cli_runner, tmp_path):
 
     with open(save_path, "r") as f:
         json_data = json.load(f)
-        assert json_data == EXPECTED_PIPELINE_DATA
+    assert json_data == EXPECTED_PIPELINE_DATA
 
 
 def test_no_top_level_key(cli_runner, tmp_path):
@@ -215,7 +215,7 @@ def test_no_top_level_key(cli_runner, tmp_path):
     Check that top level keys are properly checked.
     """
     filepath_json = str(tmp_path / "test.json")
-    data = {}
+    data = {"fake": "fake"}
     with open(filepath_json, "w") as f:
         json.dump(data, f)
 
