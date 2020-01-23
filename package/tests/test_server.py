@@ -170,8 +170,7 @@ def test_set_ip(cli_runner):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_no_browser(cli_runner):
-    """
-    Check that call to open browser is not performed when `--no-browser`
+    """Check that call to open browser is not performed when `--no-browser`
     argument is specified.
     """
     result = cli_runner.invoke(server.commands, ["viz", "--no-browser"])
@@ -183,8 +182,7 @@ def test_no_browser(cli_runner):
 
 
 def test_load_file_outside_kedro_project(cli_runner, tmp_path):
-    """
-    Check that running viz with `--load-file` flag works outside of a Kedro project.
+    """Check that running viz with `--load-file` flag works outside of a Kedro project.
     """
     filepath_json = str(tmp_path / "test.json")
     data = {"nodes": None, "edges": None, "tags": None}
@@ -197,8 +195,7 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_save_file(cli_runner, tmp_path):
-    """
-    Check that running with `--save-file` flag saves pipeline JSON file in a specified path.
+    """Check that running with `--save-file` flag saves pipeline JSON file in a specified path.
     """
     save_path = str(tmp_path / "test.json")
 
@@ -211,9 +208,7 @@ def test_save_file(cli_runner, tmp_path):
 
 
 def test_load_file_no_top_level_key(cli_runner, tmp_path):
-    """
-    Check that top level keys are properly checked.
-    """
+    """Check that top level keys are properly checked."""
     filepath_json = str(tmp_path / "test.json")
     data = {"fake": "fake"}
     with open(filepath_json, "w") as f:
@@ -224,8 +219,7 @@ def test_load_file_no_top_level_key(cli_runner, tmp_path):
 
 
 def test_no_load_file(cli_runner):
-    """
-    Check that running viz without `--load-file` flag should fail outside of a Kedro project.
+    """Check that running viz without `--load-file` flag should fail outside of a Kedro project.
     """
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 1
@@ -290,8 +284,7 @@ class TestRunViz:
         )
 
     def test_call_twice_with_same_port(self, mocked_process):
-        """Running run_viz with the same port should trigger another process.
-        """
+        """Running run_viz with the same port should trigger another process."""
         server.run_viz()
         server.run_viz()
         # pylint: disable=protected-access
@@ -301,9 +294,7 @@ class TestRunViz:
         assert mocked_process.call_count == 2
 
     def test_call_twice_with_different_port(self, mocked_process):
-        """
-        Running run_viz with a different port should start another process.
-        """
+        """Running run_viz with a different port should start another process."""
         server.run_viz()
         # pylint: disable=protected-access
         mocked_process.assert_called_with(
@@ -317,16 +308,12 @@ class TestRunViz:
         assert mocked_process.call_count == 2
 
     def test_check_viz_up(self, requests_mock):
-        """
-        Test the helper function which checks if HTTP GET status code is 200.
-        """
+        """Test the helper function which checks if HTTP GET status code is 200."""
         requests_mock.get(
             "http://127.0.0.1:8000/", content=b"some output", status_code=200
         )
         assert server._check_viz_up(8000)  # pylint: disable=protected-access
 
     def test_check_viz_up_invalid(self):
-        """
-        Test should catch the request connection error and returns False.
-        """
+        """Test should catch the request connection error and returns False."""
         assert not server._check_viz_up(8888)  # pylint: disable=protected-access
