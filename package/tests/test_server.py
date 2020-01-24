@@ -265,6 +265,69 @@ def test_pipeline_flag(cli_runner, client):
     assert data == {"edges": [], "nodes": [], "tags": []}
 
 
+def test_pipeline_flag_get_pipeline_not_implemented(cli_runner):
+    """Test that running viz with `--pipeline` flag, but `context._get_pipeline()` is
+        not implemented (e.g Kedro 0.15.0 or 0.15.1)."""
+
+    def get_project_context(key: str = "context"):
+        def get_pipeline(name: str = None):
+            raise NotImplementedError
+
+        mocked_context = mock.Mock()
+        mocked_context._get_pipeline = get_pipeline
+        mocked_context.pipeline = create_pipeline()
+        return {
+            "create_pipeline": create_pipeline,
+            "create_catalog": lambda x: None,
+            "context": mocked_context,
+        }[key]
+
+    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    assert (
+        "`--pipeline` flag was provided, but there is no multiple pipelines."
+        in result.output
+    )
+
+
+def test_get_pipeline_not_implemented(cli_runner):
+    """Test that running viz, but `context._get_pipeline()` is
+    not implemented (e.g Kedro 0.15.0 or 0.15.1), and it falls back to `context.pipeline`."""
+
+    def get_project_context(key: str = "context"):
+        def get_pipeline(name: str = None):
+            raise NotImplementedError
+
+        mocked_context = mock.Mock()
+        mocked_context._get_pipeline = get_pipeline
+        mocked_context.catalog = lambda x: None
+        mocked_context.pipeline = create_pipeline()
+        return {
+            "create_pipeline": create_pipeline,
+            "create_catalog": lambda x: None,
+            "context": mocked_context,
+        }[key]
+
+    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    result = cli_runner.invoke(server.commands, "viz")
+    assert result.exit_code == 0, result.output
+
+
+def test_viz_before_context_exists(cli_runner):
+    """Test that running viz if `KedroContext` class does not exit (Kedro <15.0)."""
+
+    def get_project_context(key: str = "context"):
+        if key == "context":
+            raise ImportError
+        return {"create_pipeline": create_pipeline, "create_catalog": lambda x: None}[
+            key
+        ]
+
+    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    result = cli_runner.invoke(server.commands, "viz")
+    assert result.exit_code == 0, result.output
+
+
 @pytest.fixture(autouse=True)
 def clean_up():
     # pylint: disable=protected-access
