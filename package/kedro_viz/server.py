@@ -218,7 +218,7 @@ def commands():
     type=str,
     default=None,
     help="Name of the modular pipeline to run."
-    "If not set, the project pipeline is run by default",
+    "If not set, the default pipeline is visualized",
 )
 def viz(host, port, browser, load_file, save_file, pipeline):
     """Visualize the pipeline using kedroviz."""
@@ -258,8 +258,6 @@ def _call_viz(
                 if pipeline_name:
                     raise KedroCliError(
                         "`--pipeline` flag was provided, but there is no multiple pipelines."
-                        "Please refer to the 'Modular Pipelines' section of "
-                        "the Kedro documentation."
                     )
                 pipeline = context.pipeline
 
