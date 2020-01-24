@@ -274,7 +274,7 @@ def test_pipeline_flag_get_pipeline_not_implemented(cli_runner):
             raise NotImplementedError
 
         mocked_context = mock.Mock()
-        mocked_context._get_pipeline = get_pipeline
+        mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.pipeline = create_pipeline()
         return {
             "create_pipeline": create_pipeline,
@@ -299,7 +299,7 @@ def test_get_pipeline_not_implemented(cli_runner):
             raise NotImplementedError
 
         mocked_context = mock.Mock()
-        mocked_context._get_pipeline = get_pipeline
+        mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.catalog = lambda x: None
         mocked_context.pipeline = create_pipeline()
         return {
