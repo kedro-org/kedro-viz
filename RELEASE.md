@@ -1,8 +1,9 @@
 # Release 3.1.2:
 
 ## Major features and improvements
-- Promote viz from project specific commands to global commands.
-- Enable `kedro viz --load-file` outside of a Kedro project.
+- Promoted viz from project specific commands to global commands.
+- Enabled `kedro viz --load-file` outside of a Kedro project.
+- Added `--pipeline` flag to visualise non-default pipeline.
 
 ## Bug fixes and other changes
 
