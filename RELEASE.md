@@ -3,7 +3,7 @@
 ## Major features and improvements
 - Promoted viz from project specific commands to global commands.
 - Enabled `kedro viz --load-file` outside of a Kedro project.
-- Added `--pipeline` flag to visualize modular pipeline.
+- Added `--pipeline` option to visualize modular pipeline.
 
 ## Bug fixes and other changes
 
