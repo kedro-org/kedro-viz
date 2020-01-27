@@ -331,7 +331,7 @@ def test_get_pipeline_not_implemented(cli_runner):
 
 
 def test_viz_before_context_exists(cli_runner):
-    """Test that running viz if `KedroContext` class does not exit (Kedro <15.0)."""
+    """Test that running viz when `KedroContext` class does not exit (Kedro <15.0)."""
 
     def get_project_context(key: str = "context"):
         if key == "context":
@@ -346,8 +346,8 @@ def test_viz_before_context_exists(cli_runner):
 
 
 def test_viz_before_context_exists_invalid(cli_runner):
-    """Test that running viz if `KedroContext` class does not exit (Kedro <15.0),
-    and it is outside of a Kedro project root"""
+    """Test that running viz when `KedroContext` class does not exit (Kedro <15.0),
+    and it is outside of a Kedro project root."""
 
     def get_project_context(key: str = "context"):
         if key == "context":
