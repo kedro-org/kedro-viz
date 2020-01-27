@@ -243,6 +243,13 @@ def _call_viz(
                 click.echo("Invalid file, top level key '{}' not found.".format(key))
                 sys.exit(1)
     else:
+        error_project_root = (
+            "Could not find a Kedro project root. "
+            "You can run `kedro viz` by either providing `--load-file` flag with a JSON file "
+            "path for your pipeline, or if the current working directory is "
+            "the root of a Kedro project."
+        )
+
         try:
             # Kedro 0.15.0+
             from kedro.context import KedroContextError
@@ -253,27 +260,26 @@ def _call_viz(
                 pipeline = context._get_pipeline(  # pylint: disable=protected-access
                     name=pipeline_name
                 )
-            except NotImplementedError:
-                # Kedro 0.15.0 or 0.15.1
+            except (KeyError, NotImplementedError):
+                # Kedro 0.15.0, 0.15.1 or invalid key
                 if pipeline_name:
                     raise KedroCliError(
-                        "`--pipeline` flag was provided, but there is no multiple pipelines."
+                        "`--pipeline` flag was provided, but the specified pipeline {} "
+                        "was not found. ".format(pipeline_name)
                     )
                 pipeline = context.pipeline
 
             catalog = context.catalog
         except ImportError:
             # Kedro <0.15.0
-            pipeline = get_project_context("create_pipeline")()
-            catalog = get_project_context("create_catalog")(None)
-
+            try:
+                pipeline = get_project_context("create_pipeline")()
+                catalog = get_project_context("create_catalog")(None)
+            except KeyError:
+                raise KedroCliError(error_project_root)
         except KedroContextError:
-            raise KedroCliError(
-                "Could not find a Kedro project root. "
-                "You can run `kedro viz` by either providing `--load-file` flag with a JSON file "
-                "path for your pipeline, or if the current working directory is "
-                "the root of a Kedro project."
-            )
+            raise KedroCliError(error_project_root)
+
         data = format_pipeline_data(pipeline, catalog)
 
     if save_file:

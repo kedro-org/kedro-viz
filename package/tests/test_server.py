@@ -257,12 +257,26 @@ def test_nodes_endpoint(cli_runner, client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_pipeline_flag(cli_runner, client):
-    """Test that running viz with `--pipeline` flag will return a correct pipeline"""
+    """Test that running viz with `--pipeline` flag will return a correct pipeline."""
     cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == {"edges": [], "nodes": [], "tags": []}
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_pipeline_flag_non_existent(cli_runner):
+    """Test that running viz with `--pipeline` flag but the pipeline does not exist."""
+    pipeline_name = "nonexistent"
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", pipeline_name])
+
+    assert (
+        "`--pipeline` flag was provided, but the specified pipeline {} was not found.".format(
+            pipeline_name
+        )
+        in result.output
+    )
 
 
 def test_pipeline_flag_get_pipeline_not_implemented(cli_runner):
@@ -283,9 +297,12 @@ def test_pipeline_flag_get_pipeline_not_implemented(cli_runner):
         }[key]
 
     mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
-    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    pipeline_name = "another"
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", pipeline_name])
     assert (
-        "`--pipeline` flag was provided, but there is no multiple pipelines."
+        "`--pipeline` flag was provided, but the specified pipeline {} was not found.".format(
+            pipeline_name
+        )
         in result.output
     )
 
@@ -326,6 +343,20 @@ def test_viz_before_context_exists(cli_runner):
     mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
     result = cli_runner.invoke(server.commands, "viz")
     assert result.exit_code == 0, result.output
+
+
+def test_viz_before_context_exists_invalid(cli_runner):
+    """Test that running viz if `KedroContext` class does not exit (Kedro <15.0),
+    and it is outside of a Kedro project root"""
+
+    def get_project_context(key: str = "context"):
+        if key == "context":
+            raise ImportError
+        raise KeyError
+
+    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    result = cli_runner.invoke(server.commands, "viz")
+    assert "Could not find a Kedro project root." in result.output
 
 
 @pytest.fixture(autouse=True)
