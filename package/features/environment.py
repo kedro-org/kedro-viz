@@ -78,17 +78,6 @@ def before_all(context):
     path = [str(bin_dir)] + path
     context.env["PATH"] = path_sep.join(path)
 
-    # install this plugin by resolving the requirements using pip-compile
-    # from pip-tools due to this bug in pip: https://github.com/pypa/pip/issues/988
-    call([context.python, "-m", "pip", "install", "-U", "pip", "pip-tools"])
-    pip_compile = str(bin_dir / "pip-compile")
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        reqs = Path("requirements.txt").read_text()
-        complied_reqs = Path(tmpdirname) / "requirements.txt"
-        complied_reqs.write_text(reqs)
-        call([pip_compile, str(complied_reqs)])
-        call([context.pip, "install", "-r", str(complied_reqs)])
-
     for wheel_path in glob.glob("dist/*.whl"):
         os.remove(wheel_path)
     call([context.python, "setup.py", "clean", "--all", "bdist_wheel"])

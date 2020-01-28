@@ -88,6 +88,15 @@ def exec_kedro_target_checked(context, command):
         assert False
 
 
+@given('I have installed kedro version "{version}"')
+def exec_kedro_target_checked(context, version):
+    """Execute Kedro command and check the status."""
+    if version == "latest":
+        call([context.pip, "install", "-U", "kedro"])
+    else:
+        call([context.pip, "install", "`kedro=={}`".format(version)])
+
+
 @when('I execute the kedro jupyter command "{command}"')
 def exec_notebook(context, command):
     """Execute Kedro Jupyter target."""
