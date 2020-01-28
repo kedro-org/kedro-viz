@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { Flipper } from 'react-flip-toolkit';
+import { loadState, saveState } from '../../utils';
 import NodeListGroup from './node-list-group';
 import NodeListItem from './node-list-item';
 
+const storedState = loadState();
+
 const NodeListGroups = ({ nodes, types }) => {
-  const [collapsed, setCollapsed] = useState({});
+  const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
 
   const onToggleCollapsed = typeID => {
-    const newCollapsed = Object.assign({}, collapsed, {
+    const groupsCollapsed = Object.assign({}, collapsed, {
       [typeID]: !collapsed[typeID]
     });
-    setCollapsed(newCollapsed);
+    setCollapsed(groupsCollapsed);
+    saveState({ groupsCollapsed });
   };
 
   const renderTypeGroup = type => (
