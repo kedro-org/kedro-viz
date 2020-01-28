@@ -9,14 +9,14 @@ const NodeListGroup = ({
   children,
   onToggleTypeActive,
   onToggleTypeDisabled,
-  onToggleTypeGroupCollapsed,
+  onToggleCollapsed,
   theme,
   type,
-  typeGroupCollapsed
+  collapsed
 }) => (
-  <Flipped flipId={`${type.id}-card`}>
+  <Flipped flipId={type.id}>
     <li>
-      <Flipped inverseFlipId={`${type.id}-card`} scale>
+      <Flipped inverseFlipId={type.id} scale>
         <div>
           <h3
             onMouseEnter={() => onToggleTypeActive(type.id, true)}
@@ -25,9 +25,9 @@ const NodeListGroup = ({
               'pipeline-node--active': type.active
             })}>
             <button
-              onClick={() => onToggleTypeGroupCollapsed(type.id)}
+              onClick={() => onToggleCollapsed(type.id)}
               className={classnames('pipeline-type-group-toggle', {
-                'pipeline-type-group-toggle--alt': typeGroupCollapsed[type.id]
+                'pipeline-type-group-toggle--alt': collapsed[type.id]
               })}>
               ▾
             </button>
@@ -45,7 +45,7 @@ const NodeListGroup = ({
             className={classnames(
               'pipeline-node-list pipeline-node-list--nest1',
               {
-                'pipeline-node-list--collapsed': typeGroupCollapsed[type.id]
+                'pipeline-node-list--collapsed': collapsed[type.id]
               }
             )}>
             {children}
