@@ -17,27 +17,30 @@ const NodeListGroups = ({ nodes, types }) => {
     saveState({ groupsCollapsed });
   };
 
-  const renderTypeGroup = type => (
-    <NodeListGroup
-      key={type.id}
-      onToggleCollapsed={onToggleCollapsed}
-      type={type}
-      collapsed={collapsed}>
-      {nodes[type.id].map(node => (
-        <NodeListItem
-          key={node.id}
-          node={node}
-          disabled={node.disabled_tag || node.disabled_view || type.disabled}
-        />
-      ))}
-    </NodeListGroup>
-  );
+  const renderTypeGroup = type => {
+    if (!nodes[type.id]) {
+      return null;
+    }
+    return (
+      <NodeListGroup
+        key={type.id}
+        onToggleCollapsed={onToggleCollapsed}
+        type={type}
+        collapsed={collapsed}>
+        {nodes[type.id].map(node => (
+          <NodeListItem
+            key={node.id}
+            node={node}
+            disabled={node.disabled_tag || node.disabled_view || type.disabled}
+          />
+        ))}
+      </NodeListGroup>
+    );
+  };
 
   return (
     <Flipper flipKey={collapsed}>
-      <ul className="pipeline-node-list">
-        {types.map(type => nodes[type.id] && renderTypeGroup(type))}
-      </ul>
+      <ul className="pipeline-node-list">{types.map(renderTypeGroup)}</ul>
     </Flipper>
   );
 };
