@@ -227,7 +227,7 @@ def test_load_file_no_top_level_key(cli_runner, tmp_path):
         json.dump(data, f)
 
     result = cli_runner.invoke(server.commands, ["viz", "--load-file", filepath_json])
-    assert result.output == "Invalid file, top level key 'nodes' not found.\n"
+    assert "Invalid file, top level key 'nodes' not found." in result.output
 
 
 def test_no_load_file(cli_runner):

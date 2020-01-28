@@ -31,7 +31,6 @@
 import hashlib
 import json
 import multiprocessing
-import sys
 import webbrowser
 from collections import defaultdict
 from pathlib import Path
@@ -52,6 +51,13 @@ data = None  # pylint: disable=invalid-name
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
+)
+
+ERROR_PROJECT_ROOT = (
+    "Could not find a Kedro project root. "
+    "You can run `kedro viz` by either providing `--load-file` flag with a JSON file "
+    "path for your pipeline, or if the current working directory is "
+    "the root of a Kedro project."
 )
 
 
@@ -110,6 +116,17 @@ def run_viz(port=None, line=None) -> None:
         port
     )
     display(HTML(wrapper))
+
+
+def _load_from_file(load_file: str) -> dict:
+    global data  # pylint: disable=global-statement,invalid-name
+    data = json.loads(Path(load_file).read_text())
+    for key in ["nodes", "edges", "tags"]:
+        if key not in data:
+            raise KedroCliError(
+                "Invalid file, top level key '{}' not found.".format(key)
+            )
+    return data
 
 
 def format_pipeline_data(pipeline, catalog):
@@ -237,19 +254,8 @@ def _call_viz(
     global data  # pylint: disable=global-statement,invalid-name
 
     if load_file:
-        data = json.loads(Path(load_file).read_text())
-        for key in ["nodes", "edges", "tags"]:
-            if key not in data:
-                click.echo("Invalid file, top level key '{}' not found.".format(key))
-                sys.exit(1)
+        data = _load_from_file(load_file)
     else:
-        error_project_root = (
-            "Could not find a Kedro project root. "
-            "You can run `kedro viz` by either providing `--load-file` flag with a JSON file "
-            "path for your pipeline, or if the current working directory is "
-            "the root of a Kedro project."
-        )
-
         try:
             # Kedro 0.15.0+
             from kedro.context import KedroContextError
@@ -276,9 +282,9 @@ def _call_viz(
                 pipeline = get_project_context("create_pipeline")()
                 catalog = get_project_context("create_catalog")(None)
             except KeyError:
-                raise KedroCliError(error_project_root)
+                raise KedroCliError(ERROR_PROJECT_ROOT)
         except KedroContextError:
-            raise KedroCliError(error_project_root)
+            raise KedroCliError(ERROR_PROJECT_ROOT)
 
         data = format_pipeline_data(pipeline, catalog)
 
