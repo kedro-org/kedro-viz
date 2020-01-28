@@ -104,7 +104,10 @@ EXPECTED_PIPELINE_DATA = {
 
 def get_pipeline(name: str = None):
     name = name or "__default__"
-    return {"__default__": create_pipeline(), "another": Pipeline([])}[name]
+    try:
+        return {"__default__": create_pipeline(), "another": Pipeline([])}[name]
+    except Exception:
+        raise KeyError("Failed to find the pipeline.")
 
 
 def create_pipeline():
@@ -235,7 +238,7 @@ def test_no_load_file(cli_runner):
     """
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 1
-    assert "Could not find a Kedro project root." in result.output
+    assert "Could not find '.kedro.yml'" in result.output
 
 
 def test_root_endpoint(client):
@@ -270,25 +273,18 @@ def test_pipeline_flag_non_existent(cli_runner):
     """Test that running viz with `--pipeline` flag but the pipeline does not exist."""
     pipeline_name = "nonexistent"
     result = cli_runner.invoke(server.commands, ["viz", "--pipeline", pipeline_name])
-
-    assert (
-        "`--pipeline` flag was provided, but the specified pipeline {} was not found.".format(
-            pipeline_name
-        )
-        in result.output
-    )
+    assert "Failed to find the pipeline." in result.output
 
 
-def test_pipeline_flag_get_pipeline_not_implemented(cli_runner):
-    """Test that running viz with `--pipeline` flag, but `context._get_pipeline()` is
-        not implemented (e.g Kedro 0.15.0 or 0.15.1)."""
+def test_pipeline_flag_get_pipeline_non_existent(cli_runner):
+    """Test that running viz with `--pipeline` flag, but `context._get_pipeline()` does not exist
+    (e.g Kedro 0.15.0 or 0.15.1)."""
 
     def get_project_context(key: str = "context"):
-        def get_pipeline(name: str = None):
-            raise NotImplementedError
-
         mocked_context = mock.Mock()
-        mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
+        del (
+            mocked_context._get_pipeline
+        )  # delete `_get_pipeline` attribute from the mock object
         mocked_context.pipeline = create_pipeline()
         return {
             "create_pipeline": create_pipeline,
@@ -299,6 +295,7 @@ def test_pipeline_flag_get_pipeline_not_implemented(cli_runner):
     mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
     pipeline_name = "another"
     result = cli_runner.invoke(server.commands, ["viz", "--pipeline", pipeline_name])
+
     assert (
         "`--pipeline` flag was provided, but the specified pipeline {} was not found.".format(
             pipeline_name
@@ -335,7 +332,7 @@ def test_viz_before_context_exists(cli_runner):
 
     def get_project_context(key: str = "context"):
         if key == "context":
-            raise ImportError
+            raise KeyError
         return {"create_pipeline": create_pipeline, "create_catalog": lambda x: None}[
             key
         ]
@@ -350,12 +347,11 @@ def test_viz_before_context_exists_invalid(cli_runner):
     and it is outside of a Kedro project root."""
 
     def get_project_context(key: str = "context"):
-        if key == "context":
-            raise ImportError
         raise KeyError
 
     mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
     result = cli_runner.invoke(server.commands, "viz")
+
     assert "Could not find a Kedro project root." in result.output
 
 

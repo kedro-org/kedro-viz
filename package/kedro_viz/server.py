@@ -129,6 +129,20 @@ def _load_from_file(load_file: str) -> dict:
     return data
 
 
+def _get_pipeline_from_context(context, pipeline_name):
+    if pipeline_name and hasattr(context, "_get_pipeline"):
+        # Kedro >=0.15.2
+        return context._get_pipeline(  # pylint: disable=protected-access
+            name=pipeline_name
+        )
+    if pipeline_name:
+        raise KedroCliError(
+            "`--pipeline` flag was provided, but the specified pipeline {} "
+            "was not found. ".format(pipeline_name)
+        )
+    return context.pipeline
+
+
 def format_pipeline_data(pipeline, catalog):
     """
     Format pipeline and catalog data from Kedro for kedro-viz
@@ -239,7 +253,12 @@ def commands():
 )
 def viz(host, port, browser, load_file, save_file, pipeline):
     """Visualize the pipeline using kedroviz."""
-    _call_viz(host, port, browser, load_file, save_file, pipeline)
+    try:
+        _call_viz(host, port, browser, load_file, save_file, pipeline)
+    except KedroCliError:
+        raise
+    except Exception as ex:
+        raise KedroCliError(str(ex))
 
 
 # pylint: disable=too-many-arguments
@@ -257,34 +276,17 @@ def _call_viz(
         data = _load_from_file(load_file)
     else:
         try:
-            # Kedro 0.15.0+
-            from kedro.context import KedroContextError
-
-            context = get_project_context()
-            try:
-                # Kedro 0.15.2+
-                pipeline = context._get_pipeline(  # pylint: disable=protected-access
-                    name=pipeline_name
-                )
-            except (KeyError, NotImplementedError):
-                # Kedro 0.15.0, 0.15.1 or invalid key
-                if pipeline_name:
-                    raise KedroCliError(
-                        "`--pipeline` flag was provided, but the specified pipeline {} "
-                        "was not found. ".format(pipeline_name)
-                    )
-                pipeline = context.pipeline
-
-            catalog = context.catalog
-        except ImportError:
+            context = get_project_context("context")
+        except KeyError:
             # Kedro <0.15.0
             try:
                 pipeline = get_project_context("create_pipeline")()
                 catalog = get_project_context("create_catalog")(None)
             except KeyError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
-        except KedroContextError:
-            raise KedroCliError(ERROR_PROJECT_ROOT)
+        else:
+            pipeline = _get_pipeline_from_context(context, pipeline_name)
+            catalog = context.catalog
 
         data = format_pipeline_data(pipeline, catalog)
 
