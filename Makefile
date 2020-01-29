@@ -21,7 +21,7 @@ pytest: build
 	cd package && python3 setup.py test
 
 e2e-tests: build
-	cd package && behave --tags="not @wip"
+	cd package && behave
 
 pylint:
 	cd package && isort
