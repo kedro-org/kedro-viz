@@ -5,7 +5,7 @@ import { Flipped } from 'react-flip-toolkit';
 import Checkbox from '@quantumblack/kedro-ui/lib/components/checkbox';
 import { toggleTypeDisabled } from '../../actions';
 
-const NodeListGroup = ({
+export const NodeListGroup = ({
   children,
   onToggleTypeDisabled,
   onToggleCollapsed,
