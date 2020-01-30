@@ -109,7 +109,7 @@ export const getNodeData = createSelector(
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),
         disabled_tag: nodeDisabledTag[id],
-        disabled_type: typeDisabled[nodeType[id]]
+        disabled_type: Boolean(typeDisabled[nodeType[id]])
       }))
 );
 

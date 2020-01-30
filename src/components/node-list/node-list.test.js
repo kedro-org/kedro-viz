@@ -1,5 +1,5 @@
 import React from 'react';
-import NodeList, { mapStateToProps, mapDispatchToProps } from './index';
+import NodeList, { mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
 
@@ -9,7 +9,7 @@ describe('NodeList', () => {
     const search = wrapper.find('.pipeline-node-list-search');
     const nodeList = wrapper.find('.pipeline-node-list');
     expect(search.length).toBe(1);
-    expect(nodeList.length).toBe(1);
+    expect(nodeList.length).toBeGreaterThan(0);
   });
 
   describe('search filter', () => {
@@ -26,7 +26,7 @@ describe('NodeList', () => {
       searchText => {
         const search = () => wrapper.find('.kui-input__field');
         search().simulate('change', { target: { value: searchText } });
-        const nodeList = wrapper.find('.pipeline-node');
+        const nodeList = wrapper.find('.pipeline-node--nested');
         const nodes = getNodeData(mockState.lorem);
         const expectedResult = nodes.filter(node =>
           node.name.includes(searchText)
@@ -41,7 +41,7 @@ describe('NodeList', () => {
       const searchWrapper = wrapper.find('.pipeline-node-list-search');
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.kui-input__field');
-      const nodeList = () => wrapper.find('.pipeline-node');
+      const nodeList = () => wrapper.find('.pipeline-node--nested');
       const nodes = getNodeData(mockState.lorem);
       const searchText = nodes[0].name;
       // Enter search text
@@ -64,7 +64,8 @@ describe('NodeList', () => {
     const wrapper = setup.mount(<NodeList />);
     // Re-find elements from root each time to see updates
     const search = () => wrapper.find('.kui-input__field');
-    const input = () => wrapper.find('.kui-switch__input');
+    const input = () =>
+      wrapper.find('.pipeline-node--nested').find('.kui-switch__input');
     const inputProps = () => input().map(input => input.props());
     const toggleAllNodes = check =>
       wrapper
@@ -120,7 +121,8 @@ describe('NodeList', () => {
           inputProps()
             .filter(input => input.checked === false)
             .map(input => input.name)
-        ).toEqual(expectedResult.map(node => node.name));
+            .sort()
+        ).toEqual(expectedResult.map(node => node.name).sort());
       });
 
       test('Previously-hidden rows should still be checked', () => {
@@ -128,10 +130,12 @@ describe('NodeList', () => {
           inputProps()
             .filter(input => input.checked === true)
             .map(input => input.name)
+            .sort()
         ).toEqual(
           nodes
             .filter(node => !node.name.includes(searchText))
             .map(node => node.name)
+            .sort()
         );
       });
 
@@ -141,7 +145,8 @@ describe('NodeList', () => {
           inputProps()
             .filter(input => input.checked === true)
             .map(input => input.name)
-        ).toEqual(nodes.map(node => node.name));
+            .sort()
+        ).toEqual(nodes.map(node => node.name).sort());
       });
     });
 
@@ -153,7 +158,7 @@ describe('NodeList', () => {
   describe('node list', () => {
     it('renders the correct number of rows', () => {
       const wrapper = setup.mount(<NodeList />);
-      const nodeList = wrapper.find('.pipeline-node');
+      const nodeList = wrapper.find('.pipeline-node--nested');
       const nodes = getNodeData(mockState.lorem);
       expect(nodeList.length).toBe(nodes.length);
     });
@@ -161,7 +166,7 @@ describe('NodeList', () => {
 
   describe('node list item', () => {
     const wrapper = setup.mount(<NodeList />);
-    const nodeRow = () => wrapper.find('.pipeline-node').first();
+    const nodeRow = () => wrapper.find('.pipeline-node--nested').first();
 
     it('handles mouseenter events', () => {
       nodeRow().simulate('mouseenter');
@@ -190,46 +195,33 @@ describe('NodeList', () => {
   });
 
   it('maps state to props', () => {
+    const nodeList = expect.arrayContaining([
+      expect.objectContaining({
+        active: expect.any(Boolean),
+        disabled: expect.any(Boolean),
+        disabled_node: expect.any(Boolean),
+        disabled_tag: expect.any(Boolean),
+        disabled_type: expect.any(Boolean),
+        id: expect.any(String),
+        name: expect.any(String),
+        type: expect.any(String)
+      })
+    ]);
     const expectedResult = {
-      nodes: expect.arrayContaining([
+      hasData: expect.any(Boolean),
+      theme: expect.stringMatching(/light|dark/),
+      nodes: expect.objectContaining({
+        data: nodeList,
+        task: nodeList
+      }),
+      types: expect.arrayContaining([
         expect.objectContaining({
-          active: expect.any(Boolean),
           disabled: expect.any(Boolean),
-          disabled_node: expect.any(Boolean),
-          disabled_tag: expect.any(Boolean),
-          disabled_view: expect.any(Boolean),
           id: expect.any(String),
-          name: expect.any(String),
-          type: expect.any(String)
+          name: expect.any(String)
         })
-      ]),
-      theme: expect.stringMatching(/light|dark/)
+      ])
     };
     expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
-  });
-
-  it('maps dispatch to props', () => {
-    const dispatch = jest.fn();
-    const nodeHovered = '123';
-    mapDispatchToProps(dispatch).onToggleNodeHovered(nodeHovered);
-    expect(dispatch.mock.calls[0][0]).toEqual({
-      nodeHovered,
-      type: 'TOGGLE_NODE_HOVERED'
-    });
-
-    mapDispatchToProps(dispatch).onToggleNodeDisabled({ id: '456' }, false);
-    expect(dispatch.mock.calls[1][0]).toEqual({
-      nodeID: '456',
-      isDisabled: false,
-      type: 'TOGGLE_NODE_DISABLED'
-    });
-
-    const nodes = getNodeData(mockState.lorem);
-    mapDispatchToProps(dispatch).onToggleAllNodes(nodes, true);
-    expect(dispatch.mock.calls[2][0]).toEqual({
-      nodeIDs: nodes.map(node => node.id),
-      isDisabled: true,
-      type: 'TOGGLE_NODES_DISABLED'
-    });
   });
 });
