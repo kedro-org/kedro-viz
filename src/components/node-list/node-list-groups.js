@@ -26,7 +26,7 @@ const NodeListGroups = ({ nodes, types }) => {
         key={type.id}
         onToggleCollapsed={onToggleCollapsed}
         type={type}
-        collapsed={collapsed}>
+        collapsed={collapsed[type.id]}>
         {nodes[type.id].map(node => (
           <NodeListItem
             key={node.id}

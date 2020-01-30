@@ -25,9 +25,12 @@ const NodeListGroup = ({
               'pipeline-node--active': type.active
             })}>
             <button
+              aria-label={`${
+                collapsed ? 'Show' : 'Hide'
+              } ${type.name.toLowerCase()}`}
               onClick={() => onToggleCollapsed(type.id)}
               className={classnames('pipeline-type-group-toggle', {
-                'pipeline-type-group-toggle--alt': collapsed[type.id]
+                'pipeline-type-group-toggle--alt': collapsed
               })}>
               ▾
             </button>
@@ -45,7 +48,7 @@ const NodeListGroup = ({
             className={classnames(
               'pipeline-node-list pipeline-node-list--nest1',
               {
-                'pipeline-node-list--collapsed': collapsed[type.id]
+                'pipeline-node-list--collapsed': collapsed
               }
             )}>
             {children}
