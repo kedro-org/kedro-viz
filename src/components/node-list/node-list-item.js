@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Checkbox from '@quantumblack/kedro-ui/lib/components/checkbox';
 import { toggleNodeHovered, toggleNodesDisabled } from '../../actions';
 
-const NodeListItem = ({
+export const NodeListItem = ({
   onToggleNodesDisabled,
   onToggleNodeHovered,
   node,
