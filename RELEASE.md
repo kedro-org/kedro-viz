@@ -10,6 +10,7 @@
 
 ## Major features and improvements
 
+**BREAKING CHANGE:**  Kedro<0.15.0 no longer works with this version of Kedro-Viz(#72)
 - Allow users to export graph as a transparent SVG/PNG image (#82)
 - Add theme prop and icon button visibility prop (#80)
 - Rename `get_data_from_kedro` to `format_pipeline_data` (#72)
