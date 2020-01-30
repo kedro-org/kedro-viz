@@ -12,7 +12,7 @@ const NodeListItem = ({
   disabled
 }) => (
   <li
-    className={classnames('pipeline-node pipeline-node--nest1', {
+    className={classnames('pipeline-node pipeline-node--nested', {
       'pipeline-node--active': node.active,
       'pipeline-node--disabled': disabled
     })}

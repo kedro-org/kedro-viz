@@ -46,7 +46,7 @@ const NodeListGroup = ({
           </h3>
           <ul
             className={classnames(
-              'pipeline-node-list pipeline-node-list--nest1',
+              'pipeline-node-list pipeline-node-list--nested',
               {
                 'pipeline-node-list--collapsed': collapsed
               }

@@ -103,7 +103,7 @@
   list-style: none;
   transition: visibility ease 0.3s, opacity ease 0.3s;
 
-  &--nest1 {
+  &--nested {
     margin: 0 0 12px;
   }
 
@@ -147,7 +147,7 @@
   margin: 0;
   transition: opacity ease 0.4s;
 
-  &--nest1 {
+  &--nested {
     padding-left: 12px;
   }
 
