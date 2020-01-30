@@ -7,7 +7,6 @@ import {
   TOGGLE_TAG_FILTER,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
-  TOGGLE_TYPE_ACTIVE,
   TOGGLE_TYPE_DISABLED,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED
@@ -68,14 +67,6 @@ function reducer(state = {}, action) {
     case TOGGLE_THEME: {
       return updateState({
         theme: action.theme
-      });
-    }
-
-    case TOGGLE_TYPE_ACTIVE: {
-      return updateState({
-        typeActive: Object.assign({}, state.typeActive, {
-          [action.typeID]: action.active
-        })
       });
     }
 

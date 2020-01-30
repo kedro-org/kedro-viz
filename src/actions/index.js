@@ -108,21 +108,6 @@ export function toggleTheme(theme) {
   };
 }
 
-export const TOGGLE_TYPE_ACTIVE = 'TOGGLE_TYPE_ACTIVE';
-
-/**
- * Toggle a node-type's highlighting on/off
- * @param {string} typeID Type id
- * @param {Boolean} active True if type is active
- */
-export function toggleTypeActive(typeID, active) {
-  return {
-    type: TOGGLE_TYPE_ACTIVE,
-    typeID,
-    active
-  };
-}
-
 export const TOGGLE_TYPE_DISABLED = 'TOGGLE_TYPE_DISABLED';
 
 /**

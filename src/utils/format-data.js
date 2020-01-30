@@ -51,7 +51,6 @@ const createPipelineState = () => ({
     task: 'Nodes',
     parameters: 'Parameters'
   },
-  typeActive: {},
   typeDisabled: {}
 });
 
