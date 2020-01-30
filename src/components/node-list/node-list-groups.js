@@ -28,11 +28,7 @@ const NodeListGroups = ({ nodes, types }) => {
         type={type}
         collapsed={collapsed[type.id]}>
         {nodes[type.id].map(node => (
-          <NodeListItem
-            key={node.id}
-            node={node}
-            disabled={node.disabled_tag || node.disabled_view || type.disabled}
-          />
+          <NodeListItem key={node.id} node={node} />
         ))}
       </NodeListGroup>
     );

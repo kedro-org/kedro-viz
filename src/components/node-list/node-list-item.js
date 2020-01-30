@@ -8,13 +8,12 @@ const NodeListItem = ({
   onToggleNodesDisabled,
   onToggleNodeHovered,
   node,
-  theme,
-  disabled
+  theme
 }) => (
   <li
     className={classnames('pipeline-node pipeline-node--nested', {
       'pipeline-node--active': node.active,
-      'pipeline-node--disabled': disabled
+      'pipeline-node--disabled': node.disabled_tag || node.disabled_type
     })}
     title={node.name}
     onMouseEnter={() => onToggleNodeHovered(node.id)}
