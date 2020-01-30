@@ -32,7 +32,30 @@ const draw = function() {
     .attr('class', 'edge')
     .attr('opacity', 0);
 
-  enterEdges.append('path').attr('marker-end', d => `url(#arrowhead)`);
+  enterEdges
+    .append('path') //.attr('marker-end', 'url(#arrowhead)')
+    .attr('id', edge => 'curve_' + edge.id);
+
+  // this.el.edges.exit();
+
+  const labelEdges = this.el.edges
+    .enter()
+    .append('text')
+    .attr('x', 0)
+    .attr('dy', -3.5)
+    .append('textPath')
+    .attr('font-weight', 'bold')
+    .attr('font-size', '8px')
+    .attr('text-anchor', 'middle')
+    .attr('startOffset', '50%')
+    .attr('xlink:href', edge => '#curve_' + edge.id)
+    .text(edge => {
+      for (let n = 0; n < nodes.length; n++) {
+        if (nodes[n].id === edge.target) {
+          return nodes[n].size ? nodes[n].size.toLocaleString() : '';
+        }
+      }
+    });
 
   this.el.edges
     .exit()
@@ -42,6 +65,7 @@ const draw = function() {
     .remove();
 
   this.el.edges = this.el.edges.merge(enterEdges);
+  this.el.edges = this.el.edges.merge(labelEdges);
 
   this.el.edges
     .attr('data-id', edge => edge.id)
@@ -59,6 +83,9 @@ const draw = function() {
     .transition('update-edges')
     .duration(this.DURATION)
     .attrTween('d', function(edge) {
+      if (edge.points[0].x > edge.points[2].x) {
+        edge.points.reverse();
+      }
       const current = edge.points && lineShape(edge.points);
       const previous = select(this).attr('d') || current;
       return interpolatePath(previous, current);
@@ -75,7 +102,7 @@ const draw = function() {
     .attr('transform', node => `translate(${node.x}, ${node.y})`)
     .attr('opacity', 0);
 
-  enterNodes.append('rect');
+  enterNodes.append('rect').classed('sized', node => !!node.size);
 
   enterNodes.append(icon);
 
@@ -125,10 +152,18 @@ const draw = function() {
 
   this.el.nodes
     .select('rect')
-    .attr('width', node => node.width - 5)
-    .attr('height', node => node.height - 5)
-    .attr('x', node => (node.width - 5) / -2)
-    .attr('y', node => (node.height - 5) / -2)
+    .attr('width', node =>
+      node.size ? Math.log(node.size) * 6 : node.width - 5
+    )
+    .attr('height', node =>
+      node.size ? Math.log(node.size) * 6 : node.height - 5
+    )
+    .attr('x', node =>
+      node.size ? Math.log(node.size) * -3 : (node.width - 5) / -2
+    )
+    .attr('y', node =>
+      node.size ? Math.log(node.size) * -3 : (node.height - 5) / -2
+    )
     .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2));
 
   this.el.nodes

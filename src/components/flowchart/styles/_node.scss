@@ -22,6 +22,10 @@
     stroke-width: 1px;
     transition: all ease 0.1s;
 
+    &.sized {
+      rx: 50%;
+    }
+
     .kui-theme--light & {
       fill: $node-fill-light;
       stroke: $node-stroke-light;

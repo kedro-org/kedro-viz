@@ -28,6 +28,7 @@ const createPipelineState = () => ({
   nodeName: {},
   nodeFullName: {},
   nodeType: {},
+  nodeRadius: {},
   nodeIsParam: {},
   nodeTags: {},
   nodeDisabled: {},
@@ -61,6 +62,7 @@ const addNode = state => node => {
   state.nodeName[id] = node.name;
   state.nodeFullName[id] = node.full_name || node.name;
   state.nodeType[id] = node.type;
+  state.nodeRadius[id] = node.size;
   state.nodeIsParam[id] = node.type === 'parameters';
   state.nodeTags[id] = node.tags || [];
 };
