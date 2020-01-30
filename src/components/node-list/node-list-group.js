@@ -21,9 +21,18 @@ const NodeListGroup = ({
           <h3
             onMouseEnter={() => onToggleTypeActive(type.id, true)}
             onMouseLeave={() => onToggleTypeActive(type.id, false)}
-            className={classnames('pipeline-node', {
+            className={classnames('pipeline-node pipeline-node--heading', {
               'pipeline-node--active': type.active
             })}>
+            <Checkbox
+              checked={!type.disabled}
+              label={type.name}
+              name={type.name}
+              onChange={(e, { checked }) => {
+                onToggleTypeDisabled(type.id, !checked);
+              }}
+              theme={theme}
+            />
             <button
               aria-label={`${
                 collapsed ? 'Show' : 'Hide'
@@ -34,15 +43,6 @@ const NodeListGroup = ({
               })}>
               ▾
             </button>
-            <Checkbox
-              checked={!type.disabled}
-              label={type.name}
-              name={type.name}
-              onChange={(e, { checked }) => {
-                onToggleTypeDisabled(type.id, !checked);
-              }}
-              theme={theme}
-            />
           </h3>
           <ul
             className={classnames(

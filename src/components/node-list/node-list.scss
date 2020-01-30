@@ -115,27 +115,38 @@
 }
 
 .pipeline-type-group-toggle {
+  $size: 30px;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  width: $size;
+  height: $size;
+  line-height: 1em;
+  text-align: center;
+  z-index: 1;
+  padding: 0;
+  margin: -$size/2 0 0;
+  border-radius: 50%;
+  font-size: 1.5em;
   background: none;
   border: none;
   box-shadow: none;
-  padding: 0.5em;
-  margin: 0.3em;
-  font-size: 1.3em;
   color: inherit;
   font-family: inherit;
   cursor: pointer;
-  float: right;
-  position: relative;
-  z-index: 1;
   transition: transform ease 0.3s;
 
   &:focus {
-    opacity: 1;
-    outline: 4px solid $color-link;
+    outline: none;
 
-    [data-whatintent='mouse'] & {
-      outline: none;
+    [data-whatintent='keyboard'] & {
+      box-shadow: 0 0 0 3px $color-link inset;
     }
+  }
+
+  &:hover {
+    box-shadow: 0 0 0 1px rgba(#fff, 0.03) inset;
+    background: rgba(#fff, 0.1);
   }
 
   &--alt {
@@ -146,6 +157,10 @@
 .pipeline-node {
   margin: 0;
   transition: opacity ease 0.4s;
+
+  &--heading {
+    position: relative;
+  }
 
   &--nested {
     padding-left: 12px;
