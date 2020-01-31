@@ -93,10 +93,9 @@ def install_kedro(context, version):
     """Execute Kedro command and check the status."""
     if version == "latest":
         cmd = [context.pip, "install", "-U", "kedro"]
-        res = run(cmd, env=context.env)
     else:
-        cmd = [context.pip, "install", "-U", version]
-        res = run(cmd, env=context.env)
+        cmd = [context.pip, "install", "kedro=={}".format(version)]
+    res = run(cmd, env=context.env)
 
     if res.returncode != OK_EXIT_CODE:
         print(res.stdout)
