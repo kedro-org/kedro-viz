@@ -219,14 +219,7 @@ describe('NodeList', () => {
       nodes: expect.objectContaining({
         data: nodeList,
         task: nodeList
-      }),
-      types: expect.arrayContaining([
-        expect.objectContaining({
-          disabled: expect.any(Boolean),
-          id: expect.any(String),
-          name: expect.any(String)
-        })
-      ])
+      })
     };
     expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
   });

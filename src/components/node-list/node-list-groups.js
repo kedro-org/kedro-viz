@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { Flipper } from 'react-flip-toolkit';
 import { loadState, saveState } from '../../utils';
+import { getNodeTypes } from '../../selectors/node-types';
 import NodeListGroup from './node-list-group';
 import NodeListItem from './node-list-item';
 
@@ -41,4 +43,8 @@ const NodeListGroups = ({ nodes, types }) => {
   );
 };
 
-export default NodeListGroups;
+export const mapStateToProps = state => ({
+  types: getNodeTypes(state)
+});
+
+export default connect(mapStateToProps)(NodeListGroups);

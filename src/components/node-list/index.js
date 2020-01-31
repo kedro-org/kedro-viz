@@ -4,7 +4,6 @@ import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { getGroupedNodes } from '../../selectors/nodes';
-import { getNodeTypes } from '../../selectors/node-types';
 import NodeListToggleAll from './node-list-toggle';
 import NodeListGroups from './node-list-groups';
 import './node-list.css';
@@ -103,7 +102,7 @@ class NodeList extends React.Component {
   }
 
   render() {
-    const { hasData, nodes, theme, types } = this.props;
+    const { hasData, nodes, theme } = this.props;
     const { searchValue } = this.state;
     if (!hasData) {
       return null;
@@ -129,7 +128,7 @@ class NodeList extends React.Component {
           autoHide
           hideTracksWhenNotNeeded>
           <NodeListToggleAll nodeIDs={nodeIDs} />
-          <NodeListGroups nodes={formattedNodes} types={types} />
+          <NodeListGroups nodes={formattedNodes} />
         </Scrollbars>
       </React.Fragment>
     );
@@ -139,8 +138,7 @@ class NodeList extends React.Component {
 export const mapStateToProps = state => ({
   hasData: Boolean(state.nodes.length),
   nodes: getGroupedNodes(state),
-  theme: state.theme,
-  types: getNodeTypes(state)
+  theme: state.theme
 });
 
 export default connect(mapStateToProps)(NodeList);
