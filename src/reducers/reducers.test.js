@@ -5,8 +5,6 @@ import reducer from './index';
 import * as action from '../actions';
 import formatData from '../utils/format-data';
 
-const getNodes = state => state.nodes;
-
 describe('Reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {})).toEqual({});
@@ -50,17 +48,6 @@ describe('Reducer', () => {
         nodeHovered
       });
       expect(newState.nodeHovered).toEqual(nodeHovered);
-    });
-  });
-
-  describe('TOGGLE_NODE_DISABLED', () => {
-    it('should toggle the given node disabled', () => {
-      const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_NODE_DISABLED,
-        nodeID: 'abc456',
-        isDisabled: true
-      });
-      expect(newState.nodeDisabled).toEqual({ abc456: true });
     });
   });
 
@@ -118,6 +105,17 @@ describe('Reducer', () => {
     });
   });
 
+  describe('TOGGLE_TYPE_DISABLED', () => {
+    it('should toggle whether a type is disabled', () => {
+      const newState = reducer(mockState.lorem, {
+        type: action.TOGGLE_TYPE_DISABLED,
+        typeID: '123',
+        disabled: true
+      });
+      expect(newState.typeDisabled).toEqual({ 123: true });
+    });
+  });
+
   describe('UPDATE_CHART_SIZE', () => {
     it("should update the chart's dimensions", () => {
       const newState = reducer(mockState.lorem, {
@@ -132,6 +130,16 @@ describe('Reducer', () => {
         top: expect.any(Number),
         width: expect.any(Number)
       });
+    });
+  });
+
+  describe('UPDATE_FONT_LOADED', () => {
+    it('should update the state when the webfont is loaded', () => {
+      const newState = reducer(mockState.lorem, {
+        type: action.UPDATE_FONT_LOADED,
+        fontLoaded: true
+      });
+      expect(newState.fontLoaded).toBe(true);
     });
   });
 });
