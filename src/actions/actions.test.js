@@ -2,24 +2,26 @@ import animals from '../utils/data/animals.mock';
 import {
   RESET_DATA,
   TOGGLE_NODE_CLICKED,
-  TOGGLE_NODE_DISABLED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED,
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
   TOGGLE_THEME,
+  TOGGLE_TYPE_DISABLED,
   TOGGLE_TEXT_LABELS,
   UPDATE_CHART_SIZE,
+  UPDATE_FONT_LOADED,
   resetData,
   toggleNodeClicked,
-  toggleNodeDisabled,
   toggleNodesDisabled,
   toggleNodeHovered,
   toggleTextLabels,
   toggleTagActive,
   toggleTheme,
+  toggleTypeDisabled,
   toggleTagFilter,
-  updateChartSize
+  updateChartSize,
+  updateFontLoaded
 } from '../actions';
 
 describe('actions', () => {
@@ -47,17 +49,6 @@ describe('actions', () => {
       nodeHovered
     };
     expect(toggleNodeHovered(nodeHovered)).toEqual(expectedAction);
-  });
-
-  it('should create an action to toggle whether a node is disabled', () => {
-    const nodeID = '12367890';
-    const isDisabled = true;
-    const expectedAction = {
-      type: TOGGLE_NODE_DISABLED,
-      nodeID,
-      isDisabled
-    };
-    expect(toggleNodeDisabled(nodeID, isDisabled)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether somes nodes are disabled', () => {
@@ -111,6 +102,17 @@ describe('actions', () => {
     expect(toggleTheme(theme)).toEqual(expectedAction);
   });
 
+  it('should create an action to toggle whether a type is disabled', () => {
+    const typeID = '123';
+    const disabled = true;
+    const expectedAction = {
+      type: TOGGLE_TYPE_DISABLED,
+      typeID,
+      disabled
+    };
+    expect(toggleTypeDisabled(typeID, disabled)).toEqual(expectedAction);
+  });
+
   it('should create an action to update the chart size', () => {
     const chartSize = {
       x: 10,
@@ -126,5 +128,14 @@ describe('actions', () => {
       chartSize
     };
     expect(updateChartSize(chartSize)).toEqual(expectedAction);
+  });
+
+  it('should create an action to update the state when the webfont has loaded', () => {
+    const fontLoaded = true;
+    const expectedAction = {
+      type: UPDATE_FONT_LOADED,
+      fontLoaded
+    };
+    expect(updateFontLoaded(fontLoaded)).toEqual(expectedAction);
   });
 });
