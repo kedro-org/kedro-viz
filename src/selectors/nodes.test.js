@@ -12,7 +12,7 @@ import {
 import {
   toggleNodeClicked,
   toggleNodeHovered,
-  toggleNodeDisabled,
+  toggleNodesDisabled,
   toggleTagFilter,
   toggleTextLabels
 } from '../actions';
@@ -281,7 +281,7 @@ describe('Selectors', () => {
       const nodeID = nodes[0];
       const newMockState = reducer(
         mockState.lorem,
-        toggleNodeDisabled(nodeID, true)
+        toggleNodesDisabled([nodeID], true)
       );
       const visibleNodeIDs = getVisibleNodes(newMockState).map(d => d.id);
       expect(visibleNodeIDs).toEqual(nodes.filter(id => id !== nodeID));

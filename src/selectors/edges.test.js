@@ -7,7 +7,7 @@ import {
   getTransitiveEdges,
   getVisibleEdges
 } from './edges';
-import { toggleNodeDisabled } from '../actions';
+import { toggleNodesDisabled } from '../actions';
 import reducer from '../reducers';
 
 const getNodes = state => state.nodes;
@@ -43,7 +43,7 @@ describe('Selectors', () => {
     const nodeID = getNodes(mockState.lorem)[0];
     const newMockState = reducer(
       mockState.lorem,
-      toggleNodeDisabled(nodeID, true)
+      toggleNodesDisabled([nodeID], true)
     );
     const edgeDisabled = getEdgeDisabledNode(newMockState);
     const edges = getEdges(newMockState);
@@ -149,7 +149,7 @@ describe('Selectors', () => {
       beforeEach(() => {
         const alteredMockState = reducer(
           mockState.lorem,
-          toggleNodeDisabled(disabledNode, true)
+          toggleNodesDisabled([disabledNode], true)
         );
         findTransitiveEdges(edges, transitiveEdges, alteredMockState)([source]);
       });
@@ -200,7 +200,7 @@ describe('Selectors', () => {
       beforeEach(() => {
         alteredMockState = reducer(
           mockState.lorem,
-          toggleNodeDisabled(disabledNode, true)
+          toggleNodesDisabled([disabledNode], true)
         );
       });
 
@@ -257,7 +257,7 @@ describe('Selectors', () => {
       });
       const alteredMockState = reducer(
         mockState.lorem,
-        toggleNodeDisabled(disabledNode, true)
+        toggleNodesDisabled([disabledNode], true)
       );
       expect(getVisibleEdges(alteredMockState).length).toBeGreaterThan(
         getVisibleEdges(mockState.lorem).length
