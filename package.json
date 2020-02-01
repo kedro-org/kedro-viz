@@ -42,7 +42,7 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "snyk": "^1.278.2",
+    "snyk": "^1.290.1",
     "svg-crowbar": "^0.2.4",
     "what-input": "^5.2.3"
   },
