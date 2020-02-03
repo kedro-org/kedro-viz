@@ -144,7 +144,9 @@ def teardown_function():
 
 @pytest.fixture
 def patched_get_project_context():
-    def get_project_context(key: str = "context"):
+    def get_project_context(
+        key: str = "context", **kwargs  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
         mocked_context = mock.Mock()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.catalog = lambda x: None
@@ -280,7 +282,9 @@ def test_pipeline_flag_get_pipeline_non_existent(cli_runner):
     """Test that running viz with `--pipeline` flag, but `context._get_pipeline()` does not exist
     (e.g Kedro 0.15.0 or 0.15.1)."""
 
-    def get_project_context(key: str = "context"):
+    def get_project_context(
+        key: str = "context", **kwargs  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
         mocked_context = mock.Mock()
         del (
             mocked_context._get_pipeline
@@ -308,7 +312,9 @@ def test_get_pipeline_not_implemented(cli_runner):
     """Test that running viz, but `context._get_pipeline()` is
     not implemented (e.g Kedro 0.15.0 or 0.15.1), and it falls back to `context.pipeline`."""
 
-    def get_project_context(key: str = "context"):
+    def get_project_context(
+        key: str = "context", **kwargs  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
         def get_pipeline(name: str = None):
             raise NotImplementedError
 
@@ -330,12 +336,24 @@ def test_get_pipeline_not_implemented(cli_runner):
 def test_viz_before_context_exists(cli_runner):
     """Test that running viz when `KedroContext` class does not exit (Kedro <15.0)."""
 
-    def get_project_context(key: str = "context"):
+    def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
+        return lambda x: None
+
+    def get_config(
+        project_path: str, env: str = None  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
+        return "config"
+
+    def get_project_context(
+        key: str = "context", **kwargs  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
         if key == "context":
             raise KeyError
-        return {"create_pipeline": create_pipeline, "create_catalog": lambda x: None}[
-            key
-        ]
+        return {
+            "create_pipeline": create_pipeline,
+            "create_catalog": create_catalog,
+            "get_config": get_config,
+        }[key]
 
     mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
     result = cli_runner.invoke(server.commands, "viz")
@@ -346,7 +364,7 @@ def test_viz_before_context_exists_invalid(cli_runner):
     """Test that running viz when `KedroContext` class does not exit (Kedro <15.0),
     and it is outside of a Kedro project root."""
 
-    def get_project_context(key: str = "context"):
+    def get_project_context(key: str = "context", **kwargs):
         raise KeyError
 
     mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()

@@ -4,6 +4,7 @@
 - Promoted viz from project specific commands to global commands (#91)
 - Enabled `kedro viz --load-file` outside of a Kedro project (#91)
 - Added `--pipeline` option to visualize modular pipeline (#93)
+- Added `--env` option to pass configuration environment (#93)
 
 ## Bug fixes and other changes
 
@@ -11,7 +12,6 @@
 
 ## Major features and improvements
 
-**BREAKING CHANGE:**  Kedro<0.15.0 no longer works with this version of Kedro-Viz(#72)
 - Allow users to export graph as a transparent SVG/PNG image (#82)
 - Add theme prop and icon button visibility prop (#80)
 - Rename `get_data_from_kedro` to `format_pipeline_data` (#72)

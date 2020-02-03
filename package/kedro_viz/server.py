@@ -251,10 +251,20 @@ def commands():
     help="Name of the modular pipeline to run."
     "If not set, the default pipeline is visualized",
 )
-def viz(host, port, browser, load_file, save_file, pipeline):
+@click.option(
+    "--env",
+    "-e",
+    type=str,
+    default=None,
+    multiple=False,
+    envvar="KEDRO_ENV",
+    help="Run the pipeline in a configured environment. If not specified, "
+    "pipeline will run using environment `local`.",
+)
+def viz(host, port, browser, load_file, save_file, pipeline, env):
     """Visualize the pipeline using kedroviz."""
     try:
-        _call_viz(host, port, browser, load_file, save_file, pipeline)
+        _call_viz(host, port, browser, load_file, save_file, pipeline, env)
     except KedroCliError:
         raise
     except Exception as ex:
@@ -269,6 +279,7 @@ def _call_viz(
     load_file=None,
     save_file=None,
     pipeline_name=None,
+    env=None,
 ):
     global data  # pylint: disable=global-statement,invalid-name
 
@@ -276,12 +287,17 @@ def _call_viz(
         data = _load_from_file(load_file)
     else:
         try:
-            context = get_project_context("context")
-        except KeyError:
+            context = get_project_context("context", env=env)
+        # In Kedro<0.15.0, `get_project_context` does not have **kwargs,
+        # so `env=env` fails with TypeError.
+        except (KeyError, TypeError):
             # Kedro <0.15.0
             try:
                 pipeline = get_project_context("create_pipeline")()
-                catalog = get_project_context("create_catalog")(None)
+                get_config = get_project_context("get_config")
+                conf = get_config(Path.cwd(), env)
+                create_catalog = get_project_context("create_catalog")
+                catalog = create_catalog(config=conf)
             except KeyError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
         else:
