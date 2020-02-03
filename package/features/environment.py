@@ -39,7 +39,7 @@ from features.steps.sh_run import run
 from features.steps.util import create_new_venv
 
 
-def before_all(context):
+def before_all(context):  # pylint: disable=unused-argument
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
