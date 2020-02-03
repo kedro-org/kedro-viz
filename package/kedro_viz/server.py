@@ -258,8 +258,8 @@ def commands():
     default=None,
     multiple=False,
     envvar="KEDRO_ENV",
-    help="Run the pipeline in a configured environment. If not specified, "
-    "pipeline will run using environment `local`.",
+    help="Kedro configuration environment. If not specified, "
+    "catalog config in `local` will be used",
 )
 def viz(host, port, browser, load_file, save_file, pipeline, env):
     """Visualize the pipeline using kedroviz."""
@@ -289,7 +289,7 @@ def _call_viz(
         try:
             context = get_project_context("context", env=env)
         # In Kedro<0.15.0, `get_project_context` does not have **kwargs,
-        # so `env=env` fails with TypeError.
+        # so `env=env` fails with TypeError. Or it fails with `context` keyword with KeyError.
         except (KeyError, TypeError):
             # Kedro <0.15.0
             try:

@@ -121,6 +121,7 @@ def exec_viz_command(context, command):
     """Execute Kedro viz command """
     split_command = command.split()
     make_cmd = [context.kedro] + split_command
+
     context.result = ChildTerminatingPopen(
         make_cmd + ["--no-browser"], env=context.env, cwd=str(context.root_project_dir)
     )
@@ -136,6 +137,7 @@ def exec_line_magic(context, command):
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
     """Check that kedro-viz is up and responding to requests"""
+
     wait_for(
         _check_kedroviz_running,
         expected_result=None,

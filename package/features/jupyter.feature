@@ -34,6 +34,7 @@
 #         And I have run a non-interactive kedro new
 #         And I have executed the kedro command "install"
 
+#     @wip
 #     Scenario: Execute viz in a notebook cell
 #         When I execute the kedro jupyter command "notebook --no-browser"
 #         When I execute line magic "run_viz"
