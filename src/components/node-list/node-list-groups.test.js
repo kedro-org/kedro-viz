@@ -11,10 +11,10 @@ describe('NodeListGroups', () => {
     const wrapper = setup.mount(<NodeListGroups nodes={nodes} types={types} />);
     const nodeList = () => wrapper.find('.pipeline-node-list--nested').first();
     const toggle = () => wrapper.find('.pipeline-type-group-toggle').first();
-    expect(nodeList().hasClass('pipeline-node-list--collapsed')).toBe(false);
+    expect(nodeList().length).toBe(1);
     expect(toggle().hasClass('pipeline-type-group-toggle--alt')).toBe(false);
     toggle().simulate('click');
-    expect(nodeList().hasClass('pipeline-node-list--collapsed')).toBe(true);
+    expect(nodeList().length).toBe(1);
     expect(toggle().hasClass('pipeline-type-group-toggle--alt')).toBe(true);
   });
 
