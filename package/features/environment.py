@@ -39,19 +39,11 @@ from features.steps.sh_run import run
 from features.steps.util import create_new_venv
 
 
-def before_all(context):  # pylint: disable=unused-argument
+def before_scenario(context, feature):  # pylint: disable=unused-argument
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
 
-
-def after_all(context):
-    if "E2E_VENV" not in os.environ:
-        rmtree(str(context.venv_dir))
-
-
-def before_scenario(context, feature):
-    # pylint: disable=unused-argument
     def call(cmd, verbose=False):
         res = run(cmd, env=context.env)
         if res.returncode or verbose:
@@ -98,6 +90,8 @@ def before_scenario(context, feature):
 def after_scenario(context, feature):
     # pylint: disable=unused-argument
     rmtree(str(context.temp_dir))
+    if "E2E_VENV" not in os.environ:
+        rmtree(str(context.venv_dir))
 
 
 def rmtree(top):
