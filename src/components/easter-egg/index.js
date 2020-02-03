@@ -17,7 +17,7 @@ class EasterEgg extends React.Component {
     this.state = {
       play: false
     };
-    if (typeof jest == 'undefined') {
+    if (typeof jest === 'undefined') {
       console.info('Konami code is supported');
     }
 
