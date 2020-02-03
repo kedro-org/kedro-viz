@@ -34,61 +34,10 @@ import subprocess
 import tempfile
 import venv
 from pathlib import Path
-from time import sleep, time
-from typing import Any, Callable
 
 import requests
 
 PIP_INSTALL_SCRIPT = "https://bootstrap.pypa.io/get-pip.py"
-
-
-class WaitForException(Exception):
-    pass
-
-
-def wait_for(
-    func: Callable,
-    expected_result: Any = True,
-    timeout_: int = 10,
-    print_error: bool = True,
-    sleep_for: int = 1,
-    **kwargs: Any
-) -> None:
-    """
-    Run specified function until it returns expected result until timeout.
-
-    Args:
-        func (Callable): Specified function
-        expected_result (Any): result that is expected. Defaults to None.
-        timeout_ (int): Time out in seconds. Defaults to 10.
-        print_error (boolean): whether any exceptions raised should be printed.
-            Defaults to False.
-        sleep_for (int): Execute func every specified number of seconds.
-            Defaults to 1.
-        **kwargs: Arguments to be passed to func
-
-    Raises:
-         WaitForException: if func doesn't return expected result within the
-         specified time
-
-    """
-    end = time() + timeout_
-
-    while time() <= end:
-        try:
-            retval = func(**kwargs)
-        except Exception as err:  # pylint: disable=broad-except
-            if print_error:
-                print(err)
-        else:
-            if retval == expected_result:
-                return None
-        sleep(sleep_for)
-
-    raise WaitForException(
-        "func: {}, didn't return {} within specified"
-        " timeout: {}".format(func, expected_result, timeout_)
-    )
 
 
 def download_url(url: str) -> str:

@@ -30,9 +30,9 @@ const createPipelineState = () => ({
   nodeType: {},
   nodeIsParam: {},
   nodeTags: {},
-  nodeActive: {},
   nodeDisabled: {},
-  nodeFocused: null,
+  nodeClicked: null,
+  nodeHovered: null,
   // Edges
   edges: [],
   edgeSources: {},
@@ -59,9 +59,9 @@ const addNode = state => node => {
   }
   state.nodes.push(id);
   state.nodeName[id] = node.name;
-  state.nodeFullName[id] = node.full_name;
+  state.nodeFullName[id] = node.full_name || node.name;
   state.nodeType[id] = node.type;
-  state.nodeIsParam[id] = Boolean(node.is_parameters);
+  state.nodeIsParam[id] = node.type === 'parameters';
   state.nodeTags[id] = node.tags || [];
 };
 

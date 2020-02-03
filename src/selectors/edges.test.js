@@ -1,14 +1,13 @@
 import { mockState } from '../utils/state.mock';
 import {
   getEdgeDisabledNode,
-  getEdgeDisabledView,
   getEdgeDisabled,
   addNewEdge,
   findTransitiveEdges,
   getTransitiveEdges,
   getVisibleEdges
 } from './edges';
-import { changeView, toggleNodeDisabled } from '../actions';
+import { toggleNodeDisabled } from '../actions';
 import reducer from '../reducers';
 
 const getNodes = state => state.nodes;
@@ -68,91 +67,6 @@ describe('Selectors', () => {
         id => edgeSources[id] !== nodeID && edgeTargets[id] !== nodeID
       );
       expect(enabledEdges).toEqual(enabledEdgesMock);
-    });
-  });
-
-  describe('getEdgeDisabledView', () => {
-    it('returns an object', () => {
-      expect(getEdgeDisabledView(mockState.lorem)).toEqual(expect.any(Object));
-    });
-
-    it("returns an object whose keys match the current pipeline's edges", () => {
-      expect(Object.keys(getEdgeDisabledView(mockState.lorem))).toEqual(
-        getEdges(mockState.lorem)
-      );
-    });
-
-    it('returns an object whose values are all Booleans', () => {
-      expect(
-        Object.values(getEdgeDisabledView(mockState.lorem)).every(
-          value => typeof value === 'boolean'
-        )
-      ).toBe(true);
-    });
-
-    describe('when view is set to combined', () => {
-      const newMockState = reducer(mockState.lorem, changeView('combined'));
-      const edgeDisabled = getEdgeDisabledView(newMockState);
-      const edges = getEdges(newMockState);
-      const { edgeSources, edgeTargets, nodeType } = newMockState;
-
-      it('shows only edges connecting nodes of different types', () => {
-        const enabledEdges = Object.keys(edgeDisabled).filter(
-          id => !edgeDisabled[id]
-        );
-        const enabledEdgesMock = edges.filter(
-          id => nodeType[edgeSources[id]] !== nodeType[edgeTargets[id]]
-        );
-        expect(enabledEdges).toEqual(enabledEdgesMock);
-      });
-
-      it('hides only edges connecting nodes of the same type', () => {
-        const disabledEdges = Object.keys(edgeDisabled).filter(
-          id => edgeDisabled[id]
-        );
-        const disabledEdgesMock = edges.filter(
-          id => nodeType[edgeSources[id]] === nodeType[edgeTargets[id]]
-        );
-        expect(disabledEdges).toEqual(disabledEdgesMock);
-      });
-    });
-
-    describe('when view is set to data', () => {
-      const newMockState = reducer(mockState.lorem, changeView('data'));
-      const edgeDisabled = getEdgeDisabledView(newMockState);
-      const edges = getEdges(newMockState);
-      const { edgeSources, edgeTargets, nodeType } = newMockState;
-
-      it('shows only edges connecting nodes with type "data"', () => {
-        const enabledEdges = Object.keys(edgeDisabled).filter(
-          id => !edgeDisabled[id]
-        );
-        const enabledEdgesMock = edges.filter(
-          id =>
-            nodeType[edgeSources[id]] === 'data' &&
-            nodeType[edgeTargets[id]] === 'data'
-        );
-        expect(enabledEdges).toEqual(enabledEdgesMock);
-      });
-    });
-
-    describe('when view is set to task', () => {
-      const newMockState = reducer(mockState.lorem, changeView('task'));
-      const edgeDisabled = getEdgeDisabledView(newMockState);
-      const edges = getEdges(newMockState);
-      const { edgeSources, edgeTargets, nodeType } = newMockState;
-
-      it('shows only edges connecting nodes with type "task"', () => {
-        const enabledEdges = Object.keys(edgeDisabled).filter(
-          id => !edgeDisabled[id]
-        );
-        const enabledEdgesMock = edges.filter(
-          id =>
-            nodeType[edgeSources[id]] === 'task' &&
-            nodeType[edgeTargets[id]] === 'task'
-        );
-        expect(enabledEdges).toEqual(enabledEdgesMock);
-      });
     });
   });
 

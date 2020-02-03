@@ -45,14 +45,25 @@ describe('Reducer', () => {
     });
   });
 
-  describe('TOGGLE_NODE_ACTIVE', () => {
+  describe('TOGGLE_NODE_CLICKED', () => {
     it('should toggle the given node active', () => {
+      const nodeClicked = 'abc123';
       const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_NODE_ACTIVE,
-        nodeID: 'abc123',
-        isActive: true
+        type: action.TOGGLE_NODE_CLICKED,
+        nodeClicked
       });
-      expect(newState.nodeActive).toEqual({ abc123: true });
+      expect(newState.nodeClicked).toEqual(nodeClicked);
+    });
+  });
+
+  describe('TOGGLE_NODE_HOVERED', () => {
+    it('should toggle the given node active', () => {
+      const nodeHovered = 'abc123';
+      const newState = reducer(mockState.lorem, {
+        type: action.TOGGLE_NODE_HOVERED,
+        nodeHovered
+      });
+      expect(newState.nodeHovered).toEqual(nodeHovered);
     });
   });
 
@@ -83,16 +94,18 @@ describe('Reducer', () => {
       type: action.TOGGLE_PARAMETERS,
       parameters: false
     });
-    const { nodeDisabled, nodeIsParam } = newState;
+    const { nodeDisabled, nodeType } = newState;
     const nodes = getNodes(newState);
 
-    it('should disable any nodes where is_parameters is true', () => {
-      const paramNodes = nodes.filter(node => nodeIsParam[node]);
+    it('should disable any nodes where node.type === "parameters"', () => {
+      const paramNodes = nodes.filter(node => nodeType[node] === 'parameters');
       expect(paramNodes.every(key => nodeDisabled[key])).toBe(true);
     });
 
-    it('should not disable any nodes where is_parameters is false', () => {
-      const nonParamNodes = nodes.filter(node => !nodeIsParam[node]);
+    it('should not disable any nodes where node.type !=== "parameters"', () => {
+      const nonParamNodes = nodes.filter(
+        node => nodeType[node] !== 'parameters'
+      );
       expect(nonParamNodes.every(key => !nodeDisabled[key])).toBe(true);
     });
   });
@@ -103,7 +116,7 @@ describe('Reducer', () => {
         type: action.TOGGLE_TEXT_LABELS,
         textLabels: true
       });
-      expect(mockState.lorem.textLabels).toBe(false);
+      expect(mockState.lorem.textLabels).toBe(true);
       expect(newState.textLabels).toBe(true);
     });
   });
