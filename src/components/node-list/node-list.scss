@@ -101,16 +101,34 @@
   margin: 0 12px;
   padding: 0;
   list-style: none;
-  transition: visibility ease 0.3s, opacity ease 0.3s;
+
+  .kui-theme--light & {
+    background: $color-bg-light-alt2;
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-alt2;
+  }
 
   &--nested {
     margin: 0 0 12px;
   }
 
-  &--collapsed {
-    visibility: hidden;
-    height: 0;
+  &--fade-in {
+    animation: fadeIn 0.4s forwards;
+  }
+
+  &--fade-out {
+    animation: fadeIn 0.4s backwards reverse;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
     opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 

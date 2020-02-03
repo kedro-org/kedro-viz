@@ -38,15 +38,27 @@ export const NodeListGroup = ({
               ▾
             </button>
           </h3>
-          <ul
-            className={classnames(
-              'pipeline-node-list pipeline-node-list--nested',
-              {
-                'pipeline-node-list--collapsed': collapsed
-              }
-            )}>
-            {children}
-          </ul>
+          <Flipped
+            flipId={`${type.id}-children`}
+            onAppear={el => {
+              el.classList.add('pipeline-node-list--fade-in');
+              el.onanimationend = () => {
+                el.style.opacity = 1;
+                el.classList.remove('pipeline-node-list--fade-in');
+              };
+            }}
+            onExit={(el, i, removeElement) => {
+              el.style.opacity = 0;
+              el.classList.add('pipeline-node-list--fade-out');
+              el.onanimationend = removeElement;
+            }}
+            opacity>
+            {collapsed ? null : (
+              <ul className="pipeline-node-list pipeline-node-list--nested">
+                {children}
+              </ul>
+            )}
+          </Flipped>
         </div>
       </Flipped>
     </li>
