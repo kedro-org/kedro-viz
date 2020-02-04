@@ -1,7 +1,6 @@
 import React from 'react';
 import NodeList, { mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
-import loadData from '../app/load-data';
 import { getNodeData } from '../../selectors/nodes';
 
 describe('NodeList', () => {
@@ -11,11 +10,6 @@ describe('NodeList', () => {
     const nodeList = wrapper.find('.pipeline-node-list');
     expect(search.length).toBe(1);
     expect(nodeList.length).toBeGreaterThan(0);
-  });
-
-  it('renders null if hasData is falsey', () => {
-    const wrapper = setup.mount(<NodeList />, loadData([]));
-    expect(wrapper.html()).toBeFalsy();
   });
 
   describe('search filter', () => {
@@ -214,7 +208,6 @@ describe('NodeList', () => {
       })
     ]);
     const expectedResult = {
-      hasData: expect.any(Boolean),
       theme: expect.stringMatching(/light|dark/),
       nodes: expect.objectContaining({
         data: nodeList,

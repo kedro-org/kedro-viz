@@ -107,11 +107,6 @@ class NodeList extends React.Component {
   }
 
   render() {
-    const { hasData, theme } = this.props;
-    const { searchValue } = this.state;
-    if (!hasData) {
-      return null;
-    }
     const filteredNodes = this.filterNodes();
     const formattedNodes = this.highlightMatch(filteredNodes);
     const nodeIDs = this.getNodeIDs(filteredNodes);
@@ -123,8 +118,8 @@ class NodeList extends React.Component {
           onKeyDown={this.handleKeyDown}>
           <SearchBar
             onChange={this.updateSearchValue}
-            value={searchValue}
-            theme={theme}
+            value={this.state.searchValue}
+            theme={this.props.theme}
           />
         </div>
         <Scrollbars
@@ -141,7 +136,6 @@ class NodeList extends React.Component {
 }
 
 export const mapStateToProps = state => ({
-  hasData: Boolean(state.nodes.length),
   nodes: getGroupedNodes(state),
   theme: state.theme
 });
