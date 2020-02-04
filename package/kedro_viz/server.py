@@ -40,9 +40,11 @@ import click
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
+from semver import match
+
+import kedro
 from kedro.cli import get_project_context
 from kedro.cli.utils import KedroCliError
-
 from kedro_viz.utils import wait_for
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
@@ -58,6 +60,13 @@ ERROR_PROJECT_ROOT = (
     "You can run `kedro viz` by either providing `--load-file` flag with a JSON file "
     "path for your pipeline, or if the current working directory is "
     "the root of a Kedro project."
+)
+
+ERROR_PIPELINE_FLAG_NOT_SUPPORTED = (
+    "`--pipeline` "
+    "flag was provided, but it is not supported in your Kedro version {}".format(
+        kedro.__version__
+    )
 )
 
 
@@ -130,16 +139,29 @@ def _load_from_file(load_file: str) -> dict:
 
 
 def _get_pipeline_from_context(context, pipeline_name):
-    if pipeline_name and hasattr(context, "_get_pipeline"):
-        # Kedro >=0.15.2
-        return context._get_pipeline(  # pylint: disable=protected-access
-            name=pipeline_name
-        )
-    if pipeline_name:
-        raise KedroCliError(
-            "`--pipeline` flag was provided, but the context does not support the named pipelines"
-        )
+    if match(kedro.__version__, ">=0.15.2"):
+        if pipeline_name:
+            return context._get_pipeline(  # pylint: disable=protected-access
+                name=pipeline_name
+            )
+    else:  # Kedro 0.15.0 or 0.15.1
+        if pipeline_name:
+            raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
     return context.pipeline
+
+
+def _get_pipline_catalog_from_kedro14(env, pipeline_name):
+    if pipeline_name:
+        raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
+    try:
+        pipeline = get_project_context("create_pipeline")()
+        get_config = get_project_context("get_config")
+        conf = get_config(str(Path.cwd()), env)
+        create_catalog = get_project_context("create_catalog")
+        catalog = create_catalog(config=conf)
+        return pipeline, catalog
+    except KeyError:
+        raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
 def format_pipeline_data(pipeline, catalog):
@@ -285,23 +307,13 @@ def _call_viz(
     if load_file:
         data = _load_from_file(load_file)
     else:
-        try:
+        if match(kedro.__version__, ">=0.15.0"):
             context = get_project_context("context", env=env)
-        # In Kedro<0.15.0, `get_project_context` does not have **kwargs,
-        # so `env=env` fails with TypeError. Or it fails with `context` keyword with KeyError.
-        except (KeyError, TypeError):
-            # Kedro <0.15.0
-            try:
-                pipeline = get_project_context("create_pipeline")()
-                get_config = get_project_context("get_config")
-                conf = get_config(str(Path.cwd()), env)
-                create_catalog = get_project_context("create_catalog")
-                catalog = create_catalog(config=conf)
-            except KeyError:
-                raise KedroCliError(ERROR_PROJECT_ROOT)
-        else:
             pipeline = _get_pipeline_from_context(context, pipeline_name)
             catalog = context.catalog
+        else:
+            # Kedro 0.14.*
+            pipeline, catalog = _get_pipline_catalog_from_kedro14(env, pipeline_name)
 
         data = format_pipeline_data(pipeline, catalog)
 
