@@ -79,6 +79,25 @@ def before_scenario(context, feature):  # pylint: disable=unused-argument
     # Activate environment
     context.env["PATH"] = path_sep.join(path)
 
+    # install this plugin by resolving the requirements using pip-compile
+    # from pip-tools due to this bug in pip: https://github.com/pypa/pip/issues/988
+    call([context.python, "-m", "pip", "install", "-U", "pip", "pip-tools"])
+    pip_compile = str(bin_dir / "pip-compile")
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        reqs = Path("requirements.txt").read_text()
+        original_requirements = Path(tmpdirname) / "original_requirements.txt"
+        original_requirements.write_text(reqs)
+        compiled_reqs = Path(tmpdirname) / "compiled_requirements.txt"
+        call(
+            [
+                pip_compile,
+                "--output-file",
+                str(compiled_reqs),
+                str(original_requirements),
+            ]
+        )
+        call([context.pip, "install", "-r", str(compiled_reqs)])
+
     for wheel_path in glob.glob("dist/*.whl"):
         os.remove(wheel_path)
     call([context.python, "setup.py", "clean", "--all", "bdist_wheel"])
