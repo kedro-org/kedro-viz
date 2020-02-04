@@ -240,7 +240,7 @@ def test_no_load_file(cli_runner):
     """
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 1
-    assert "Could not find '.kedro.yml'" in result.output
+    assert "Could not find a Kedro project root." in result.output
 
 
 def test_root_endpoint(client):

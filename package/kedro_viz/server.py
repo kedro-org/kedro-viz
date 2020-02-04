@@ -41,8 +41,8 @@ import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-from kedro.cli import get_project_context
-from kedro.cli.utils import KedroCliError
+from kedro.cli import get_project_context  # pylint: disable=ungrouped-imports
+from kedro.cli.utils import KedroCliError  # pylint: disable=ungrouped-imports
 from semver import match
 
 from kedro_viz.utils import wait_for
@@ -308,12 +308,15 @@ def _call_viz(
         data = _load_from_file(load_file)
     else:
         if match(kedro.__version__, ">=0.15.0"):
+            from kedro.context import KedroContextError
+
             try:
                 context = get_project_context("context", env=env)
-                pipeline = _get_pipeline_from_context(context, pipeline_name)
-                catalog = context.catalog
-            except KeyError:
+            except KedroContextError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
+            pipeline = _get_pipeline_from_context(context, pipeline_name)
+            catalog = context.catalog
+
         else:
             # Kedro 0.14.*
             pipeline, catalog = _get_pipline_catalog_from_kedro14(env, pipeline_name)
