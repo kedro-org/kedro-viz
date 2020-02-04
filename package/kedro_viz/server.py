@@ -248,7 +248,7 @@ def commands():
     "--pipeline",
     type=str,
     default=None,
-    help="Name of the modular pipeline to run."
+    help="Name of the modular pipeline to run. "
     "If not set, the default pipeline is visualized",
 )
 @click.option(
