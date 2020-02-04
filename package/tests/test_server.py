@@ -33,8 +33,9 @@ import json
 from unittest import mock
 
 import pytest
-from kedro.pipeline import Pipeline, node
 from kedro.context import KedroContextError
+from kedro.pipeline import Pipeline, node
+
 from kedro_viz import server
 from kedro_viz.utils import WaitForException
 
@@ -318,9 +319,6 @@ def test_viz_kedro15_invalid(cli_runner):
 
     mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
     result = cli_runner.invoke(server.commands, "viz")
-    import pdb
-
-    # pdb.set_trace()
     assert "Could not find a Kedro project root." in result.output
 
 
@@ -382,7 +380,6 @@ def test_viz_kedro14_invalid(cli_runner):
 
     mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
     result = cli_runner.invoke(server.commands, "viz")
-
     assert "Could not find a Kedro project root." in result.output
 
 
