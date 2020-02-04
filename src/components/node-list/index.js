@@ -26,59 +26,64 @@ class NodeList extends React.Component {
   }
 
   /**
-   * Add a new highlightedLabel field to each of the results
-   * @param {object} results
-   * @return {object} The results array with a new field added
+   * Add a new highlightedLabel field to each of the node objects
+   * @param {object} nodes Grouped lists of nodes
+   * @return {object} The grouped nodes with highlightedLabel fields added
    */
-  highlightMatch(results) {
-    const obj = {};
-    Object.keys(results).forEach(key => {
-      obj[key] = results[key].map(result => ({
-        highlightedLabel: getHighlightedText(
-          result.name,
-          this.state.searchValue
-        ),
-        ...result
-      }));
+  highlightMatch(nodes) {
+    const { searchValue } = this.state;
+    const addHighlightedLabel = node => ({
+      highlightedLabel: getHighlightedText(node.name, searchValue),
+      ...node
     });
-    return obj;
+    const addLabelsToNodes = (newNodes, type) => ({
+      ...newNodes,
+      [type]: nodes[type].map(addHighlightedLabel)
+    });
+
+    return Object.keys(nodes).reduce(addLabelsToNodes, {});
   }
 
   /**
    * Check whether a name matches the search text
    * @param {string} name
    * @param {string} searchValue
+   * @return {boolean} True if match
    */
   nodeMatchesSearch(node, searchValue) {
     const valueRegex = searchValue
       ? new RegExp(escapeRegExp(searchValue), 'gi')
       : '';
-    return node.name.match(valueRegex);
+    return Boolean(node.name.match(valueRegex));
   }
 
   /**
    * Return only the results that match the search text
-   * @param {object} nodes
+   * @return {object} Grouped nodes
    */
-  filterResults(nodes) {
-    const obj = {};
-    Object.keys(nodes).forEach(key => {
-      obj[key] = nodes[key].filter(node =>
-        this.nodeMatchesSearch(node, this.state.searchValue)
-      );
+  filterNodes() {
+    const { nodes } = this.props;
+    const { searchValue } = this.state;
+    const filterNodeLists = (newNodes, type) => ({
+      ...newNodes,
+      [type]: filterNodesByType(type)
     });
-    return obj;
+    const filterNodesByType = type =>
+      nodes[type].filter(node => this.nodeMatchesSearch(node, searchValue));
+
+    return Object.keys(nodes).reduce(filterNodeLists, {});
   }
 
   /**
    * Get a list of IDs of the visible nodes
-   * @param {object} filteredNodes
+   * @param {object} nodes Grouped nodes
+   * @return {array} List of node IDs
    */
-  getNodeIDs(filteredNodes) {
-    return Object.keys(filteredNodes).reduce(
-      (nodeIDs, key) => nodeIDs.concat(filteredNodes[key].map(node => node.id)),
-      []
-    );
+  getNodeIDs(nodes) {
+    const getNodeIDs = type => nodes[type].map(node => node.id);
+    const concatNodeIDs = (nodeIDs, type) => nodeIDs.concat(getNodeIDs(type));
+
+    return Object.keys(nodes).reduce(concatNodeIDs, []);
   }
 
   /**
@@ -102,12 +107,12 @@ class NodeList extends React.Component {
   }
 
   render() {
-    const { hasData, nodes, theme } = this.props;
+    const { hasData, theme } = this.props;
     const { searchValue } = this.state;
     if (!hasData) {
       return null;
     }
-    const filteredNodes = this.filterResults(nodes);
+    const filteredNodes = this.filterNodes();
     const formattedNodes = this.highlightMatch(filteredNodes);
     const nodeIDs = this.getNodeIDs(filteredNodes);
 
