@@ -312,9 +312,9 @@ def _call_viz(
 
             try:
                 context = get_project_context("context", env=env)
+                pipeline = _get_pipeline_from_context(context, pipeline_name)
             except KedroContextError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
-            pipeline = _get_pipeline_from_context(context, pipeline_name)
             catalog = context.catalog
 
         else:
