@@ -64,7 +64,7 @@ ERROR_PROJECT_ROOT = (
 
 ERROR_PIPELINE_FLAG_NOT_SUPPORTED = (
     "`--pipeline` "
-    "flag was provided, but it is not supported in your Kedro version {}".format(
+    "flag was provided, but it is not supported in Kedro version {}".format(
         kedro.__version__
     )
 )
