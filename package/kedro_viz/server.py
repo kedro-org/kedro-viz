@@ -137,8 +137,7 @@ def _get_pipeline_from_context(context, pipeline_name):
         )
     if pipeline_name:
         raise KedroCliError(
-            "`--pipeline` flag was provided, but the specified pipeline {} "
-            "was not found. ".format(pipeline_name)
+            "`--pipeline` flag was provided, but the context does not support the named pipelines"
         )
     return context.pipeline
 

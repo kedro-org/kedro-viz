@@ -300,12 +300,7 @@ def test_pipeline_flag_get_pipeline_non_existent(cli_runner):
     pipeline_name = "another"
     result = cli_runner.invoke(server.commands, ["viz", "--pipeline", pipeline_name])
 
-    assert (
-        "`--pipeline` flag was provided, but the specified pipeline {} was not found.".format(
-            pipeline_name
-        )
-        in result.output
-    )
+    assert "`--pipeline` flag was provided, but the context does not support the named pipelines."
 
 
 def test_get_pipeline_not_implemented(cli_runner):
