@@ -295,7 +295,7 @@ def _call_viz(
             try:
                 pipeline = get_project_context("create_pipeline")()
                 get_config = get_project_context("get_config")
-                conf = get_config(Path.cwd(), env)
+                conf = get_config(str(Path.cwd()), env)
                 create_catalog = get_project_context("create_catalog")
                 catalog = create_catalog(config=conf)
             except KeyError:
