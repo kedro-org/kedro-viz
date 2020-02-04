@@ -160,7 +160,7 @@ def _get_pipline_catalog_from_kedro14(env, pipeline_name):
         create_catalog = get_project_context("create_catalog")
         catalog = create_catalog(config=conf)
         return pipeline, catalog
-    except KeyError:
+    except (ImportError, KeyError):
         raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
