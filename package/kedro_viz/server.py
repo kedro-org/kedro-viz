@@ -37,14 +37,14 @@ from pathlib import Path
 from typing import Dict
 
 import click
+import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-from semver import match
-
-import kedro
 from kedro.cli import get_project_context
 from kedro.cli.utils import KedroCliError
+from semver import match
+
 from kedro_viz.utils import wait_for
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
@@ -308,9 +308,12 @@ def _call_viz(
         data = _load_from_file(load_file)
     else:
         if match(kedro.__version__, ">=0.15.0"):
-            context = get_project_context("context", env=env)
-            pipeline = _get_pipeline_from_context(context, pipeline_name)
-            catalog = context.catalog
+            try:
+                context = get_project_context("context", env=env)
+                pipeline = _get_pipeline_from_context(context, pipeline_name)
+                catalog = context.catalog
+            except KeyError:
+                raise KedroCliError(ERROR_PROJECT_ROOT)
         else:
             # Kedro 0.14.*
             pipeline, catalog = _get_pipline_catalog_from_kedro14(env, pipeline_name)
