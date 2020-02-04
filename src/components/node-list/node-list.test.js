@@ -1,9 +1,31 @@
 import React from 'react';
-import NodeList, { mapStateToProps } from './index';
+import NodeList, { getNodeIDs, mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
 
 describe('NodeList', () => {
+  describe('getNodeIDs', () => {
+    const generateNodes = (type, count) =>
+      Array.from(new Array(count)).map((d, i) => ({
+        id: type + i
+      }));
+
+    const nodes = {
+      data: generateNodes('data', 10),
+      task: generateNodes('task', 10),
+      parameters: generateNodes('parameters', 10)
+    };
+
+    it('returns a list of node IDs', () => {
+      const nodeIDs = getNodeIDs(nodes);
+      expect(nodeIDs).toHaveLength(30);
+      expect(nodeIDs).toEqual(expect.arrayContaining([expect.any(String)]));
+      expect(nodeIDs).toContain('data0');
+      expect(nodeIDs).toContain('task1');
+      expect(nodeIDs).toContain('parameters1');
+    });
+  });
+
   it('renders without crashing', () => {
     const wrapper = setup.mount(<NodeList />);
     const search = wrapper.find('.pipeline-node-list-search');

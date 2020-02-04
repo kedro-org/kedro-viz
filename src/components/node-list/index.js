@@ -11,6 +11,18 @@ import './node-list.css';
 const { escapeRegExp, getHighlightedText, handleKeyEvent } = utils;
 
 /**
+ * Get a list of IDs of the visible nodes
+ * @param {object} nodes Grouped nodes
+ * @return {array} List of node IDs
+ */
+export const getNodeIDs = nodes => {
+  const getNodeIDs = type => nodes[type].map(node => node.id);
+  const concatNodeIDs = (nodeIDs, type) => nodeIDs.concat(getNodeIDs(type));
+
+  return Object.keys(nodes).reduce(concatNodeIDs, []);
+};
+
+/**
  * Scrollable list of toggleable nodes, with search & filter functionality
  */
 class NodeList extends React.Component {
@@ -75,18 +87,6 @@ class NodeList extends React.Component {
   }
 
   /**
-   * Get a list of IDs of the visible nodes
-   * @param {object} nodes Grouped nodes
-   * @return {array} List of node IDs
-   */
-  getNodeIDs(nodes) {
-    const getNodeIDs = type => nodes[type].map(node => node.id);
-    const concatNodeIDs = (nodeIDs, type) => nodeIDs.concat(getNodeIDs(type));
-
-    return Object.keys(nodes).reduce(concatNodeIDs, []);
-  }
-
-  /**
    * Listen for keyboard events, and trigger relevant actions
    * @param {number} keyCode The key event keycode
    */
@@ -109,7 +109,7 @@ class NodeList extends React.Component {
   render() {
     const filteredNodes = this.filterNodes();
     const formattedNodes = this.highlightMatch(filteredNodes);
-    const nodeIDs = this.getNodeIDs(filteredNodes);
+    const nodeIDs = getNodeIDs(filteredNodes);
 
     return (
       <React.Fragment>
