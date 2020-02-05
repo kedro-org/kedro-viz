@@ -348,7 +348,7 @@ def test_viz_kedro14(cli_runner):
 
 @mock.patch("kedro.__version__", "0.14.0")
 def test_viz_kedro14_pipeline_flag(cli_runner):
-    """Test that running viz with `--pipeline` flag in Kedro 0.14.0."""
+    """Test that running viz with `--pipeline` flag in Kedro 0.14.0 is not supported."""
 
     def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
         return lambda x: None
@@ -373,7 +373,7 @@ def test_viz_kedro14_pipeline_flag(cli_runner):
 @mock.patch("kedro.__version__", "0.14.0")
 def test_viz_kedro14_invalid(cli_runner):
     """Test that running viz in Kedro 0.14.0,
-    and it is outside of a Kedro project root."""
+    while outside of a Kedro project is not supported."""
 
     def get_project_context(key: str, **kwargs):
         raise KeyError
