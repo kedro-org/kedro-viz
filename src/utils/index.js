@@ -96,7 +96,8 @@ export const loadState = () => {
 export const saveState = state => {
   const { localStorageName } = config();
   try {
-    const serializedState = JSON.stringify(state);
+    const newState = Object.assign(loadState(), state);
+    const serializedState = JSON.stringify(newState);
     window.localStorage.setItem(localStorageName, serializedState);
   } catch (err) {
     console.error(err);

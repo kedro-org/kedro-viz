@@ -1,7 +1,6 @@
 import { mockState } from '../utils/state.mock';
 import {
   getNodeDisabledTag,
-  getNodeDisabledView,
   getNodeDisabled,
   getNodeActive,
   getNodeData,
@@ -11,10 +10,9 @@ import {
   getVisibleNodes
 } from './nodes';
 import {
-  changeView,
   toggleNodeClicked,
   toggleNodeHovered,
-  toggleNodeDisabled,
+  toggleNodesDisabled,
   toggleTagFilter,
   toggleTextLabels
 } from '../actions';
@@ -69,64 +67,6 @@ describe('Selectors', () => {
       );
       expect(getNodeDisabledTag(newMockState)[enabledNodeID]).toEqual(false);
       expect(getNodeDisabledTag(newMockState)[disabledNodeID]).toEqual(true);
-    });
-  });
-
-  describe('getNodeDisabledView', () => {
-    it('returns an object', () => {
-      expect(getNodeDisabledView(mockState.lorem)).toEqual(expect.any(Object));
-    });
-
-    it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(getNodeDisabledView(mockState.lorem))).toEqual(
-        getNodes(mockState.lorem)
-      );
-    });
-
-    it('returns an object whose values are all Booleans', () => {
-      expect(
-        Object.values(getNodeDisabledView(mockState.lorem)).every(
-          value => typeof value === 'boolean'
-        )
-      ).toBe(true);
-    });
-
-    it('shows all nodes when view is set to combined', () => {
-      const newMockState = reducer(mockState.lorem, changeView('combined'));
-      const nodeDisabled = getNodeDisabledView(newMockState);
-      expect(Object.values(nodeDisabled)).toEqual(
-        Object.values(nodeDisabled).map(() => false)
-      );
-    });
-
-    it('disables only task nodes when view is set to data', () => {
-      const newMockState = reducer(mockState.lorem, changeView('data'));
-      const nodeDisabled = getNodeDisabledView(newMockState);
-      const nodes = getNodes(newMockState);
-      const { nodeType } = newMockState;
-      const taskNodes = nodes.filter(id => nodeType[id] === 'task');
-      const dataNodes = nodes.filter(id => nodeType[id] === 'data');
-      expect(taskNodes.map(id => nodeDisabled[id])).toEqual(
-        taskNodes.map(() => true)
-      );
-      expect(dataNodes.map(id => nodeDisabled[id])).toEqual(
-        dataNodes.map(() => false)
-      );
-    });
-
-    it('disables only data nodes when view is set to task', () => {
-      const newMockState = reducer(mockState.lorem, changeView('task'));
-      const nodeDisabled = getNodeDisabledView(newMockState);
-      const nodes = getNodes(newMockState);
-      const { nodeType } = newMockState;
-      const taskNodes = nodes.filter(id => nodeType[id] === 'task');
-      const dataNodes = nodes.filter(id => nodeType[id] === 'data');
-      expect(taskNodes.map(id => nodeDisabled[id])).toEqual(
-        taskNodes.map(() => false)
-      );
-      expect(dataNodes.map(id => nodeDisabled[id])).toEqual(
-        dataNodes.map(() => true)
-      );
     });
   });
 
@@ -201,8 +141,7 @@ describe('Selectors', () => {
             active: expect.any(Boolean),
             disabled: expect.any(Boolean),
             disabled_node: expect.any(Boolean),
-            disabled_tag: expect.any(Boolean),
-            disabled_view: expect.any(Boolean)
+            disabled_tag: expect.any(Boolean)
           })
         ])
       );
@@ -342,7 +281,7 @@ describe('Selectors', () => {
       const nodeID = nodes[0];
       const newMockState = reducer(
         mockState.lorem,
-        toggleNodeDisabled(nodeID, true)
+        toggleNodesDisabled([nodeID], true)
       );
       const visibleNodeIDs = getVisibleNodes(newMockState).map(d => d.id);
       expect(visibleNodeIDs).toEqual(nodes.filter(id => id !== nodeID));

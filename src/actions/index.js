@@ -1,16 +1,3 @@
-export const CHANGE_VIEW = 'CHANGE_VIEW';
-
-/**
- * Change the view mode, which handles how the nodes should be filtered.
- * @param {string} view One of 'combined', 'data', or 'task'
- */
-export function changeView(view) {
-  return {
-    type: CHANGE_VIEW,
-    view
-  };
-}
-
 export const RESET_DATA = 'RESET_DATA';
 
 /**
@@ -34,21 +21,6 @@ export function toggleNodeClicked(nodeClicked) {
   return {
     type: TOGGLE_NODE_CLICKED,
     nodeClicked
-  };
-}
-
-export const TOGGLE_NODE_DISABLED = 'TOGGLE_NODE_DISABLED';
-
-/**
- * Toggle a node's visibility on/off
- * @param {string} nodeID The node's unique identifier
- * @param {Boolean} isDisabled Whether the node should be visible
- */
-export function toggleNodeDisabled(nodeID, isDisabled) {
-  return {
-    type: TOGGLE_NODE_DISABLED,
-    nodeID,
-    isDisabled
   };
 }
 
@@ -77,19 +49,6 @@ export function toggleNodeHovered(nodeHovered) {
   return {
     type: TOGGLE_NODE_HOVERED,
     nodeHovered
-  };
-}
-
-export const TOGGLE_PARAMETERS = 'TOGGLE_PARAMETERS';
-
-/**
- * Toggle whether to show Parameters on/off
- * @param {Boolean} parameters Whether to show Parameters
- */
-export function toggleParameters(parameters) {
-  return {
-    type: TOGGLE_PARAMETERS,
-    parameters
   };
 }
 
@@ -146,6 +105,21 @@ export function toggleTheme(theme) {
   return {
     type: TOGGLE_THEME,
     theme
+  };
+}
+
+export const TOGGLE_TYPE_DISABLED = 'TOGGLE_TYPE_DISABLED';
+
+/**
+ * Toggle a node-type's visibility on/off
+ * @param {string} typeID Type id
+ * @param {Boolean} disabled True if type is disabled
+ */
+export function toggleTypeDisabled(typeID, disabled) {
+  return {
+    type: TOGGLE_TYPE_DISABLED,
+    typeID,
+    disabled
   };
 }
 

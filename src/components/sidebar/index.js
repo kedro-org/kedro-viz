@@ -1,7 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 import Icon from '@quantumblack/kedro-ui/lib/components/icon';
-import ChartUI from '../chart-ui';
+import TagList from '../tag-list';
+import NodeList from '../node-list';
 import MenuIcon from '../icons/menu';
 import './sidebar.css';
 
@@ -56,7 +57,10 @@ const Sidebar = props => (
         'pipeline-sidebar--visible': props.visible
       })}>
       <HideMenuButton {...props} />
-      <ChartUI />
+      <div className="pipeline-ui">
+        <TagList />
+        <NodeList />
+      </div>
     </nav>
   </>
 );
