@@ -150,7 +150,7 @@ def _get_pipeline_from_context(context, pipeline_name):
     return context.pipeline
 
 
-def _get_pipline_catalog_from_kedro14(env, pipeline_name):
+def _get_pipeline_catalog_from_kedro14(env, pipeline_name):
     if pipeline_name:
         raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
     try:
@@ -319,7 +319,7 @@ def _call_viz(
 
         else:
             # Kedro 0.14.*
-            pipeline, catalog = _get_pipline_catalog_from_kedro14(env, pipeline_name)
+            pipeline, catalog = _get_pipeline_catalog_from_kedro14(env, pipeline_name)
 
         data = format_pipeline_data(pipeline, catalog)
 
