@@ -65,7 +65,12 @@
     "prettier": "1.17.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-redux": "^6.0.1"
+    "react-redux": "^6.0.1",
+    "stylelint": "^13.0.0",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-order": "^4.0.0",
+    "stylelint-prettier": "^1.1.2"
   },
   "husky": {
     "hooks": {
@@ -76,6 +81,9 @@
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --single-quote --write",
       "git add"
+    ],
+    "src/**/*.{scss}": [
+      "stylelint"
     ],
     "src/**/*.{js,jsx,ts,tsx,json}": [
       "eslint src/ --fix",
