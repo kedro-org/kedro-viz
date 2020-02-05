@@ -1,6 +1,10 @@
-# Release 3.1.2:
+# Upcoming release:
+
+<!-- Add release notes for the upcoming release here, under the
+'Major features and improvements' and/or 'Bug fixes and other changes' headings: -->
 
 ## Major features and improvements
+
 - Promote viz from project specific commands to global commands.
 - Enable `kedro viz --load-file` outside of a Kedro project.
 
