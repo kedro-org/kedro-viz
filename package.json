@@ -82,9 +82,6 @@
       "prettier --single-quote --write",
       "git add"
     ],
-    "src/**/*.{scss}": [
-      "stylelint"
-    ],
     "src/**/*.{js,jsx,ts,tsx,json}": [
       "eslint src/ --fix",
       "git add"
