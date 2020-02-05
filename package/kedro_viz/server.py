@@ -56,17 +56,14 @@ app = Flask(  # pylint: disable=invalid-name
 )
 
 ERROR_PROJECT_ROOT = (
-    "Could not find a Kedro project root. "
-    "You can run `kedro viz` by either providing `--load-file` flag with a JSON file "
-    "path for your pipeline, or if the current working directory is "
-    "the root of a Kedro project."
+    "Could not find a Kedro project root. You can run `kedro viz` by either providing "
+    "`--load-file` flag with a filepath to a JSON pipeline representation, "
+    "or if the current working directory is the root of a Kedro project."
 )
 
 ERROR_PIPELINE_FLAG_NOT_SUPPORTED = (
-    "`--pipeline` "
-    "flag was provided, but it is not supported in Kedro version {}".format(
-        kedro.__version__
-    )
+    "`--pipeline` flag was provided, but it is not supported "
+    "in Kedro version {}".format(kedro.__version__)
 )
 
 
