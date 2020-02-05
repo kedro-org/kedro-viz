@@ -137,13 +137,12 @@ def _load_from_file(load_file: str) -> dict:
 
 def _get_pipeline_from_context(context, pipeline_name):
     if match(kedro.__version__, ">=0.15.2"):
-        if pipeline_name:
-            return context._get_pipeline(  # pylint: disable=protected-access
-                name=pipeline_name
-            )
-    else:  # Kedro 0.15.0 or 0.15.1
-        if pipeline_name:
-            raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
+        return context._get_pipeline(  # pylint: disable=protected-access
+            name=pipeline_name
+        )
+    # Kedro 0.15.0 or 0.15.1
+    if pipeline_name:
+        raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
     return context.pipeline
 
 
