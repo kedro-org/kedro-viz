@@ -66,6 +66,12 @@
   }
 }
 
+.pipeline-ui {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 // Icon buttons
 .pipeline-sidebar__icon-button {
   background: none;

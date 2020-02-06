@@ -5,7 +5,6 @@ import { getTagCount } from './tags';
 import { getCentralNode } from './linked-nodes';
 
 const getNodes = state => state.nodes;
-const getView = state => state.view;
 const getNodeName = state => state.nodeName;
 const getNodeFullName = state => state.nodeFullName;
 const getNodeDisabledNode = state => state.nodeDisabled;
@@ -15,6 +14,7 @@ const getTagActive = state => state.tagActive;
 const getTagEnabled = state => state.tagEnabled;
 const getTextLabels = state => state.textLabels;
 const getFontLoaded = state => state.fontLoaded;
+const getTypeDisabled = state => state.typeDisabled;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -35,26 +35,22 @@ export const getNodeDisabledTag = createSelector(
 );
 
 /**
- * Calculate whether nodes should be disabled based on the view
- */
-export const getNodeDisabledView = createSelector(
-  [getNodes, getNodeType, getView],
-  (nodes, nodeType, view) =>
-    arrayToObject(
-      nodes,
-      nodeID => view !== 'combined' && view !== nodeType[nodeID]
-    )
-);
-
-/**
- * Set disabled status if the node is specifically hidden, and/or via a tag/view
+ * Set disabled status if the node is specifically hidden, and/or via a tag/view/type
  */
 export const getNodeDisabled = createSelector(
-  [getNodes, getNodeDisabledNode, getNodeDisabledTag, getNodeDisabledView],
-  (nodes, nodeDisabledNode, nodeDisabledTag, nodeDisabledView) =>
+  [
+    getNodes,
+    getNodeDisabledNode,
+    getNodeDisabledTag,
+    getNodeType,
+    getTypeDisabled
+  ],
+  (nodes, nodeDisabledNode, nodeDisabledTag, nodeType, typeDisabled) =>
     arrayToObject(nodes, id =>
       Boolean(
-        nodeDisabledNode[id] || nodeDisabledTag[id] || nodeDisabledView[id]
+        nodeDisabledNode[id] ||
+          nodeDisabledTag[id] ||
+          typeDisabled[nodeType[id]]
       )
     )
 );
@@ -87,7 +83,7 @@ export const getNodeData = createSelector(
     getNodeDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
-    getNodeDisabledView
+    getTypeDisabled
   ],
   (
     nodes,
@@ -97,7 +93,7 @@ export const getNodeData = createSelector(
     nodeDisabled,
     nodeDisabledNode,
     nodeDisabledTag,
-    nodeDisabledView
+    typeDisabled
   ) =>
     nodes
       .sort((a, b) => {
@@ -113,8 +109,24 @@ export const getNodeData = createSelector(
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),
         disabled_tag: nodeDisabledTag[id],
-        disabled_view: nodeDisabledView[id]
+        disabled_type: Boolean(typeDisabled[nodeType[id]])
       }))
+);
+
+/**
+ * Returns formatted nodes grouped by type
+ */
+export const getGroupedNodes = createSelector(
+  [getNodeData],
+  nodes =>
+    nodes.reduce(function(obj, item) {
+      const key = item.type;
+      if (!obj.hasOwnProperty(key)) {
+        obj[key] = [];
+      }
+      obj[key].push(item);
+      return obj;
+    }, {})
 );
 
 /**
