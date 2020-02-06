@@ -32,7 +32,6 @@
 
 .pipeline-node-list__toggle-title {
   margin: 0 24px 12px;
-
   font-weight: 600;
   font-size: 1.8em;
 }
@@ -58,11 +57,9 @@
 .pipeline-node-list__toggle {
   margin: -1px -6px -2px;
   padding: 1px 6px 2px;
-
   color: inherit;
   font-size: 1.6em;
   font-family: inherit;
-
   background: none;
   border: none;
   box-shadow: none;
@@ -85,7 +82,6 @@
 
 .pipeline-node-list__icon {
   margin: 0 4px -6px -6px;
-
   fill: white;
 
   .kui-theme--light & {
@@ -104,7 +100,6 @@
 .pipeline-node-list {
   margin: 0 12px;
   padding: 0;
-
   list-style: none;
 
   .kui-theme--light & {
@@ -143,24 +138,20 @@
   top: 50%;
   right: 5px;
   z-index: 1;
-
   width: $size;
   height: $size;
   margin: -$size/2 0 0;
   padding: 0;
-
   color: inherit;
   font-size: 1.5em;
   font-family: inherit;
   line-height: 1em;
   text-align: center;
-
   background: none;
   border: none;
   border-radius: 50%;
   box-shadow: none;
   cursor: pointer;
-
   transition: transform ease 0.3s;
 
   &:focus {
@@ -183,7 +174,6 @@
 
 .pipeline-node {
   margin: 0;
-
   transition: opacity ease 0.4s;
 
   &--heading {
@@ -200,13 +190,11 @@
     label {
       max-width: 100%;
       padding: 12px;
-
       text-align: left;
 
       span {
         max-width: calc(100% - 35px);
         overflow: hidden;
-
         white-space: nowrap;
         text-overflow: ellipsis;
 
@@ -225,6 +213,5 @@
 
 .pipeline-node--disabled {
   opacity: 0.2;
-
   pointer-events: none;
 }

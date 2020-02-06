@@ -10,30 +10,23 @@
     position: absolute;
     top: -10vh;
     z-index: 300;
-
     width: 0;
     height: 0;
-
     border-bottom: 200vmax solid rgba(white, 0.25);
     filter: blur(15px) sepia(10%);
-
     content: '';
     pointer-events: none;
   }
   &:before {
     left: 0;
-
     border-right: 80vmax solid transparent;
     transform-origin: 0 0;
-
     animation: spotlight-left 3s infinite alternate ease;
   }
   &:after {
     right: 0;
-
     border-left: 80vmax solid transparent;
     transform-origin: 80vmax 0;
-
     animation: spotlight-right 3.5s infinite alternate ease;
   }
 }
@@ -73,15 +66,12 @@
     bottom: -3.4vw;
     left: 0px;
     z-index: 200;
-
     width: 40vw;
     height: auto;
     margin-left: -20vw;
-
     transform-origin: 50% 100%;
     // beat: 188 bpm. speed obtained by (120/188)*2
     animation: brody 1.27659574468s linear 0s infinite;
-
     pointer-events: none;
   }
 }

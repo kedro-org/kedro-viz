@@ -5,9 +5,7 @@
 
   text {
     font-weight: 600;
-
     transition: all ease 0.1s;
-
     pointer-events: none;
 
     .kui-theme--light & {
@@ -16,14 +14,12 @@
 
     .kui-theme--dark & {
       text-shadow: 0 0 10px rgba(black, 0.5);
-
       fill: $node-labeltext-fill-dark;
     }
   }
 
   rect {
     stroke-width: 1px;
-
     transition: all ease 0.1s;
 
     .kui-theme--light & {
@@ -88,7 +84,6 @@
 
     [data-whatinput='keyboard'] & {
       stroke-width: 3.5px;
-
       stroke: $color-link;
     }
   }
@@ -101,7 +96,6 @@
 .node--icon {
   text {
     opacity: 0;
-
     pointer-events: none;
   }
 }

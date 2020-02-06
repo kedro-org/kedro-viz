@@ -2,21 +2,17 @@
 
 .kedro-pipeline {
   position: relative;
-
   height: 100%;
   overflow: hidden;
-
   font-size: 10px;
 
   &.kui-theme--light {
     color: #333;
-
     background: $color-bg-light;
   }
 
   &.kui-theme--dark {
     color: #fff;
-
     background: $color-bg-dark;
   }
 }

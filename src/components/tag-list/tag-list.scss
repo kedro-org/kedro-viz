@@ -16,7 +16,6 @@
         span {
           max-width: calc(100% - 35px);
           overflow: hidden;
-
           white-space: nowrap;
           text-overflow: ellipsis;
         }
@@ -28,7 +27,6 @@
 .pipeline-tags__tag-list {
   margin: 0;
   padding: 0;
-
   list-style: none;
 
   // Nested to force override of default Kedro UI styles
