@@ -17,7 +17,9 @@
     "lib:clear": "rm -rf lib",
     "lib:copy": "babel src --out-dir lib --copy-files",
     "lib:prune": "find lib -type f -name '*.test.*' -delete && find lib -type f -name '*.scss' -delete",
-    "lint": "eslint src/ --fix",
+    "lint": "npm-run-all -p lint:js lint:scss",
+    "lint:js": "eslint src/ --fix",
+    "lint:scss": "stylelint 'src/**/*.scss' --fix",
     "prepublishOnly": "npm-run-all -p test:coverage lint build lib",
     "test": "react-scripts test --env=jsdom",
     "test:coverage": "npm test -- --coverage --watchAll=false",
@@ -65,7 +67,12 @@
     "prettier": "1.17.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-redux": "^6.0.1"
+    "react-redux": "^6.0.1",
+    "stylelint": "^13.0.0",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-order": "^4.0.0",
+    "stylelint-prettier": "^1.1.2"
   },
   "husky": {
     "hooks": {
@@ -73,6 +80,10 @@
     }
   },
   "lint-staged": {
+    "src/**/*.scss": [
+      "stylelint --fix",
+      "git add"
+    ],
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --single-quote --write",
       "git add"

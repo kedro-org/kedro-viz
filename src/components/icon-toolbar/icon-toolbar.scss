@@ -11,14 +11,14 @@
 
 .pipeline-icon-button {
   position: relative;
+  margin: 0;
+  margin-bottom: 0.8em;
+  padding: 0.8em;
   color: inherit;
   background: none;
   border: none;
-  padding: 0.8em;
-  margin: 0;
   box-shadow: none;
   cursor: pointer;
-  margin-bottom: 0.8em;
   user-select: none;
 
   .kui-theme--light &,
@@ -42,21 +42,21 @@
   span {
     position: absolute;
     right: 100%;
+    margin: -0.3em 0;
+    padding: 0.3em 0.4em;
     font-size: 1.4em;
     white-space: nowrap;
-    margin: -0.3em 0;
+    transform: translateX(2em);
     visibility: hidden;
     opacity: 0;
-    transform: translateX(2em);
     transition: all ease 0.2s, width 0s;
-    padding: 0.3em 0.4em;
   }
 
   &:hover span,
   [data-whatinput='keyboard'] &:focus span {
+    transform: translateX(0);
     visibility: visible;
     opacity: 1;
-    transform: translateX(0);
   }
 
   svg {

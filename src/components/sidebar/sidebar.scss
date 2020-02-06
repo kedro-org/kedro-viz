@@ -2,14 +2,14 @@
 
 .pipeline-sidebar {
   position: absolute;
-  left: 0;
   top: 0;
-  height: 100%;
-  transition: transform ease 0.4s;
-  width: 100%;
-  transform: translateX(-100%);
-  padding-top: 12px;
+  left: 0;
   z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding-top: 12px;
+  transform: translateX(-100%);
+  transition: transform ease 0.4s;
 
   .pipeline-ui {
     visibility: hidden;
@@ -74,25 +74,25 @@
 
 // Icon buttons
 .pipeline-sidebar__icon-button {
-  background: none;
-  border: none;
-  padding: 4px;
-  margin: 0;
-  box-shadow: none;
-  cursor: pointer;
-  border-radius: 50%;
-  font-size: 1em;
   width: 3.2em;
   height: 3.2em;
-  transition: all ease 0.1s;
+  margin: 0;
+  padding: 4px;
+  font-size: 1em;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
   transform: scale(1.3);
   visibility: hidden;
+  cursor: pointer;
   opacity: 0;
+  transition: all ease 0.1s;
 
   &--visible {
     visibility: visible;
-    transition: all 0.1s, visibility 0s;
     opacity: 1;
+    transition: all 0.1s, visibility 0s;
   }
 
   &:hover {

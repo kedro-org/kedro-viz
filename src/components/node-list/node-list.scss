@@ -32,8 +32,8 @@
 
 .pipeline-node-list__toggle-title {
   margin: 0 24px 12px;
-  font-size: 1.8em;
   font-weight: 600;
+  font-size: 1.8em;
 }
 
 .pipeline-node-list__toggle-container {
@@ -55,20 +55,20 @@
 }
 
 .pipeline-node-list__toggle {
-  background: none;
-  padding: 1px 6px 2px;
   margin: -1px -6px -2px;
-  box-shadow: none;
-  border: none;
+  padding: 1px 6px 2px;
   color: inherit;
   font-size: 1.6em;
   font-family: inherit;
+  background: none;
+  border: none;
+  box-shadow: none;
   cursor: pointer;
   opacity: 0.8;
 
   &:focus {
-    opacity: 1;
     outline: 4px solid $color-link;
+    opacity: 1;
 
     [data-whatintent='mouse'] & {
       outline: none;
@@ -135,22 +135,22 @@
 .pipeline-type-group-toggle {
   $size: 30px;
   position: absolute;
-  right: 5px;
   top: 50%;
+  right: 5px;
+  z-index: 1;
   width: $size;
   height: $size;
+  margin: -$size/2 0 0;
+  padding: 0;
+  color: inherit;
+  font-size: 1.5em;
+  font-family: inherit;
   line-height: 1em;
   text-align: center;
-  z-index: 1;
-  padding: 0;
-  margin: -$size/2 0 0;
-  border-radius: 50%;
-  font-size: 1.5em;
   background: none;
   border: none;
+  border-radius: 50%;
   box-shadow: none;
-  color: inherit;
-  font-family: inherit;
   cursor: pointer;
   transition: transform ease 0.3s;
 
@@ -163,8 +163,8 @@
   }
 
   &:hover {
-    box-shadow: 0 0 0 1px rgba(#fff, 0.03) inset;
     background: rgba(#fff, 0.1);
+    box-shadow: 0 0 0 1px rgba(#fff, 0.03) inset;
   }
 
   &--alt {
@@ -193,10 +193,10 @@
       text-align: left;
 
       span {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
         max-width: calc(100% - 35px);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
 
         b {
           opacity: 0.3;
