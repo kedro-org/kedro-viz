@@ -84,11 +84,8 @@ def before_scenario(context, feature):  # pylint: disable=unused-argument
     call([context.python, "-m", "pip", "install", "-U", "pip", "pip-tools"])
     pip_compile = str(bin_dir / "pip-compile")
     with tempfile.TemporaryDirectory() as tmpdirname:
-        reqs = Path("requirements.txt").read_text()
-        original_reqs = Path(tmpdirname) / "original_requirements.txt"
-        original_reqs.write_text(reqs)
         compiled_reqs = Path(tmpdirname) / "compiled_requirements.txt"
-        call([pip_compile, "--output-file", str(compiled_reqs), str(original_reqs)])
+        call([pip_compile, "--output-file", str(compiled_reqs), "requirements.txt"])
         call([context.pip, "install", "-r", str(compiled_reqs)])
 
     for wheel_path in glob.glob("dist/*.whl"):
