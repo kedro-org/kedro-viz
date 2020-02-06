@@ -37,7 +37,6 @@ Feature: Viz plugin in new project
         When I execute the kedro viz command "viz"
         Then kedro-viz should start successfully
 
-    # `load_context` function was in Kedro 0.14.3, but not KedroContext class
     Scenario: Execute viz with Kedro 0.14.3
         Given I have installed kedro version "0.14.3"
         And I have run a non-interactive kedro new
