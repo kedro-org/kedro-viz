@@ -17,7 +17,9 @@ class EasterEgg extends React.Component {
     this.state = {
       play: false
     };
-    console.info('Konami code is supported');
+    if (typeof jest === 'undefined') {
+      console.info('Konami code is supported');
+    }
 
     this.audio = new Audio(mp3);
     this.audio.loop = true;

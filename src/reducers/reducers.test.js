@@ -5,25 +5,9 @@ import reducer from './index';
 import * as action from '../actions';
 import formatData from '../utils/format-data';
 
-const getNodes = state => state.nodes;
-
 describe('Reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {})).toEqual({});
-  });
-
-  describe('CHANGE_VIEW', () => {
-    it('should change the view', () => {
-      expect(
-        reducer(
-          { view: 'combined' },
-          {
-            type: action.CHANGE_VIEW,
-            view: 'data'
-          }
-        )
-      ).toEqual({ view: 'data' });
-    });
   });
 
   describe('RESET_DATA', () => {
@@ -67,17 +51,6 @@ describe('Reducer', () => {
     });
   });
 
-  describe('TOGGLE_NODE_DISABLED', () => {
-    it('should toggle the given node disabled', () => {
-      const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_NODE_DISABLED,
-        nodeID: 'abc456',
-        isDisabled: true
-      });
-      expect(newState.nodeDisabled).toEqual({ abc456: true });
-    });
-  });
-
   describe('TOGGLE_NODES_DISABLED', () => {
     it('should toggle the given nodes disabled', () => {
       const newState = reducer(mockState.lorem, {
@@ -86,27 +59,6 @@ describe('Reducer', () => {
         isDisabled: true
       });
       expect(newState.nodeDisabled).toEqual({ '123': true, abc: true });
-    });
-  });
-
-  describe('TOGGLE_PARAMETERS', () => {
-    const newState = reducer(mockState.lorem, {
-      type: action.TOGGLE_PARAMETERS,
-      parameters: false
-    });
-    const { nodeDisabled, nodeType } = newState;
-    const nodes = getNodes(newState);
-
-    it('should disable any nodes where node.type === "parameters"', () => {
-      const paramNodes = nodes.filter(node => nodeType[node] === 'parameters');
-      expect(paramNodes.every(key => nodeDisabled[key])).toBe(true);
-    });
-
-    it('should not disable any nodes where node.type !=== "parameters"', () => {
-      const nonParamNodes = nodes.filter(
-        node => nodeType[node] !== 'parameters'
-      );
-      expect(nonParamNodes.every(key => !nodeDisabled[key])).toBe(true);
     });
   });
 
@@ -153,6 +105,17 @@ describe('Reducer', () => {
     });
   });
 
+  describe('TOGGLE_TYPE_DISABLED', () => {
+    it('should toggle whether a type is disabled', () => {
+      const newState = reducer(mockState.lorem, {
+        type: action.TOGGLE_TYPE_DISABLED,
+        typeID: '123',
+        disabled: true
+      });
+      expect(newState.typeDisabled).toEqual({ 123: true });
+    });
+  });
+
   describe('UPDATE_CHART_SIZE', () => {
     it("should update the chart's dimensions", () => {
       const newState = reducer(mockState.lorem, {
@@ -167,6 +130,16 @@ describe('Reducer', () => {
         top: expect.any(Number),
         width: expect.any(Number)
       });
+    });
+  });
+
+  describe('UPDATE_FONT_LOADED', () => {
+    it('should update the state when the webfont is loaded', () => {
+      const newState = reducer(mockState.lorem, {
+        type: action.UPDATE_FONT_LOADED,
+        fontLoaded: true
+      });
+      expect(newState.fontLoaded).toBe(true);
     });
   });
 });

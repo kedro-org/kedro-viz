@@ -1,8 +1,10 @@
-# Upcoming release:
+<!-- Add release notes for the upcoming release here, under the
+'Major features and improvements' and/or 'Bug fixes and other changes' headings: -->
 
 ## Major features and improvements
-- Promoted viz from project specific commands to global commands (#91)
-- Enabled `kedro viz --load-file` outside of a Kedro project (#91)
+
+- Promote viz from project specific commands to global commands.
+- Enable `kedro viz --load-file` outside of a Kedro project.
 - Added `--pipeline` option to visualize modular pipeline (#93)
 - Added `--env` option to pass configuration environment (#93)
 

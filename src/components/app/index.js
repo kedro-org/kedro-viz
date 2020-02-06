@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import store from '../../store';
 import { resetData } from '../../actions';
 import Wrapper from '../wrapper';
-import formatData from '../../utils/format-data';
 import getInitialState from './initial-state';
 import loadData from './load-data';
 import checkFontLoaded from './check-font-loaded';
@@ -25,7 +24,7 @@ class App extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.data.schema_id !== this.props.data.schema_id) {
-      this.resetStoreData(formatData(this.props.data));
+      this.resetStoreData(loadData(this.props.data));
     }
   }
 

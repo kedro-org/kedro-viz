@@ -45,6 +45,7 @@ const loadData = (data, onLoadData) => {
       loadJsonData().then(onLoadData);
       return formatData();
     case null:
+    case undefined:
       throw new Error('No data was provided to App component via props');
     default:
       // Use data provided via component prop

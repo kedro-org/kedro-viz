@@ -101,10 +101,88 @@
   margin: 0 12px;
   padding: 0;
   list-style: none;
+
+  .kui-theme--light & {
+    background: $color-bg-light-alt2;
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-alt2;
+  }
+
+  &--nested {
+    margin: 0 0 12px;
+  }
+
+  &--fade-in {
+    animation: fadeIn 0.4s forwards;
+  }
+
+  &--fade-out {
+    animation: fadeIn 0.4s backwards reverse;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.pipeline-type-group-toggle {
+  $size: 30px;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  width: $size;
+  height: $size;
+  line-height: 1em;
+  text-align: center;
+  z-index: 1;
+  padding: 0;
+  margin: -$size/2 0 0;
+  border-radius: 50%;
+  font-size: 1.5em;
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform ease 0.3s;
+
+  &:focus {
+    outline: none;
+
+    [data-whatintent='keyboard'] & {
+      box-shadow: 0 0 0 3px $color-link inset;
+    }
+  }
+
+  &:hover {
+    box-shadow: 0 0 0 1px rgba(#fff, 0.03) inset;
+    background: rgba(#fff, 0.1);
+  }
+
+  &--alt {
+    transform: rotate(-180deg);
+  }
 }
 
 .pipeline-node {
+  margin: 0;
   transition: opacity ease 0.4s;
+
+  &--heading {
+    position: relative;
+  }
+
+  &--nested {
+    padding-left: 12px;
+  }
 
   .kui-switch {
     margin: 0;

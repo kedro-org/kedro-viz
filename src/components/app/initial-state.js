@@ -7,12 +7,7 @@ import { loadState } from '../../utils';
  */
 const getInitialState = (pipelineData, props = {}) => {
   // Load properties from localStorage if defined, else use defaults
-  const {
-    parameters = true,
-    textLabels = true,
-    theme = 'dark',
-    view = 'combined'
-  } = loadState();
+  const { textLabels = true, theme = 'dark', typeDisabled = {} } = loadState();
 
   const visible = Object.assign(
     { exportBtn: true, labelBtn: true, themeBtn: true },
@@ -23,11 +18,10 @@ const getInitialState = (pipelineData, props = {}) => {
     ...pipelineData,
     chartSize: {},
     fontLoaded: false,
-    parameters,
     textLabels,
-    view,
     visible,
-    theme: props.theme || theme
+    theme: props.theme || theme,
+    typeDisabled
   };
 };
 
