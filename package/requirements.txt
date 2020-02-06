@@ -2,6 +2,7 @@ python-dateutil==2.8.0 # explicit hard pin to resolve random pip dependency reso
 # in order to unblock release.
 # botocore requires <2.8.1, whereas pandas requires >=2.6.0. Pip dependency resolution ramdomly
 # picks either and sometimes fails. This pinning needs to be removed later.
+semver>=2.0.0,<3.0.0
 Flask>=1.0, <2.0
-kedro>=0.15.0
+kedro>=0.14.0
 ipython>=7.0.0, <8.0

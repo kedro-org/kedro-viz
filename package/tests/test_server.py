@@ -33,6 +33,7 @@ import json
 from unittest import mock
 
 import pytest
+from kedro.context import KedroContextError
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
@@ -102,6 +103,14 @@ EXPECTED_PIPELINE_DATA = {
 }
 
 
+def get_pipeline(name: str = None):
+    name = name or "__default__"
+    try:
+        return {"__default__": create_pipeline(), "another": Pipeline([])}[name]
+    except Exception:
+        raise KeyError("Failed to find the pipeline.")
+
+
 def create_pipeline():
     def func1(a, b):  # pylint: disable=unused-argument
         return a
@@ -125,10 +134,6 @@ def create_pipeline():
     )
 
 
-def get_project_context(key):
-    return {"create_pipeline": create_pipeline, "create_catalog": lambda x: None}[key]
-
-
 def setup_function():
     mock.patch("kedro_viz.server.webbrowser").start()
     mock.patch("kedro_viz.server.app.run").start()
@@ -140,6 +145,19 @@ def teardown_function():
 
 @pytest.fixture
 def patched_get_project_context():
+    def get_project_context(
+        key: str = "context", **kwargs  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
+        mocked_context = mock.Mock()
+        mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
+        mocked_context.catalog = lambda x: None
+        mocked_context.pipeline = create_pipeline()
+        return {
+            "create_pipeline": create_pipeline,
+            "create_catalog": lambda x: None,
+            "context": mocked_context,
+        }[key]
+
     mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
 
 
@@ -215,7 +233,7 @@ def test_load_file_no_top_level_key(cli_runner, tmp_path):
         json.dump(data, f)
 
     result = cli_runner.invoke(server.commands, ["viz", "--load-file", filepath_json])
-    assert result.output == "Invalid file, top level key 'nodes' not found.\n"
+    assert "Invalid file, top level key 'nodes' not found." in result.output
 
 
 def test_no_load_file(cli_runner):
@@ -241,6 +259,121 @@ def test_nodes_endpoint(cli_runner, client):
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == EXPECTED_PIPELINE_DATA
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_pipeline_flag(cli_runner, client):
+    """Test that running viz with `--pipeline` flag will return a correct pipeline."""
+    cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    response = client.get("/api/nodes.json")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data == {"edges": [], "nodes": [], "tags": []}
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_pipeline_flag_non_existent(cli_runner):
+    """Test that running viz with `--pipeline` flag but the pipeline does not exist."""
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "nonexistent"])
+    assert "Failed to find the pipeline." in result.output
+
+
+@mock.patch("kedro.__version__", "0.15.0")
+def test_viz_kedro15(cli_runner):
+    """Test that running viz in Kedro 0.15.0."""
+
+    def get_project_context(
+        key: str = "context", **kwargs  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
+        mocked_context = mock.Mock()
+        mocked_context.pipeline = create_pipeline()
+        return {"context": mocked_context}[key]
+
+    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    result = cli_runner.invoke(server.commands, "viz")
+    assert result.exit_code == 0, result.output
+
+
+@mock.patch("kedro.__version__", "0.15.0")
+def test_viz_kedro15_pipeline_flag(cli_runner):
+    """Test that running viz with `--pipeline` flag in Kedro 0.15.0."""
+
+    def get_project_context(
+        key: str = "context", **kwargs  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
+        return {"context": mock.Mock()}[key]
+
+    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    assert "`--pipeline` flag was provided" in result.output
+
+
+@mock.patch("kedro.__version__", "0.15.0")
+def test_viz_kedro15_invalid(cli_runner):
+    """Test that running viz in Kedro 0.15.0,
+    and it is outside of a Kedro project root."""
+    mock.patch(
+        "kedro_viz.server.get_project_context", side_effect=KedroContextError
+    ).start()
+    result = cli_runner.invoke(server.commands, "viz")
+    assert "Could not find a Kedro project root." in result.output
+
+
+@mock.patch("kedro.__version__", "0.14.0")
+def test_viz_kedro14(cli_runner):
+    """Test that running viz in Kedro 0.14.0."""
+
+    def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
+        return lambda x: None
+
+    def get_config(
+        project_path: str, env: str = None  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
+        return "config"
+
+    def get_project_context(key: str):
+        return {
+            "create_pipeline": create_pipeline,
+            "create_catalog": create_catalog,
+            "get_config": get_config,
+        }[key]
+
+    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    result = cli_runner.invoke(server.commands, "viz")
+    assert result.exit_code == 0, result.output
+
+
+@mock.patch("kedro.__version__", "0.14.0")
+def test_viz_kedro14_pipeline_flag(cli_runner):
+    """Test that running viz with `--pipeline` flag in Kedro 0.14.0 is not supported."""
+
+    def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
+        return lambda x: None
+
+    def get_config(
+        project_path: str, env: str = None  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
+        return "config"
+
+    def get_project_context(key: str):
+        return {
+            "create_pipeline": create_pipeline,
+            "create_catalog": create_catalog,
+            "get_config": get_config,
+        }[key]
+
+    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    assert "`--pipeline` flag was provided" in result.output
+
+
+@mock.patch("kedro.__version__", "0.14.0")
+def test_viz_kedro14_invalid(cli_runner):
+    """Test that running viz in Kedro 0.14.0,
+    while outside of a Kedro project is not supported."""
+    mock.patch("kedro_viz.server.get_project_context", side_effect=KeyError).start()
+    result = cli_runner.invoke(server.commands, "viz")
+    assert "Could not find a Kedro project root." in result.output
 
 
 @pytest.fixture(autouse=True)
