@@ -1,6 +1,6 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
-import { saveState } from '../utils';
+import { saveState } from './helpers';
 
 export default function configureStore(initialState) {
   const store = createStore(reducer, initialState);

@@ -1,6 +1,6 @@
 import getInitialState from './initial-state';
 import loadData from './load-data';
-import { saveState } from '../../utils';
+import { saveState } from './helpers';
 
 describe('getInitialState', () => {
   const loremData = loadData('lorem');

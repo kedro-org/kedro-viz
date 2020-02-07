@@ -1,4 +1,4 @@
-import { UPDATE_FONT_LOADED } from '../../actions';
+import { UPDATE_FONT_LOADED } from '../actions';
 
 /**
  * Prevent chart from displaying until the webfont has loaded,

@@ -4,9 +4,9 @@ import { Provider } from 'react-redux';
 import store from '../../store';
 import { resetData } from '../../actions';
 import Wrapper from '../wrapper';
-import getInitialState from './initial-state';
-import loadData from './load-data';
-import checkFontLoaded from './check-font-loaded';
+import getInitialState from '../../store/initial-state';
+import loadData from '../../store/load-data';
+import checkFontLoaded from '../../store/check-font-loaded';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
 import './app.css';
 

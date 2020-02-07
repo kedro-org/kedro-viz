@@ -1,10 +1,10 @@
 import { json } from 'd3-fetch';
-import config from '../../config';
-import getRandomPipeline from '../../utils/random-data';
-import formatData from '../../utils/format-data';
-import loremIpsum from '../../utils/data/lorem-ipsum.mock';
-import animals from '../../utils/data/animals.mock';
-import demo from '../../utils/data/demo.mock';
+import config from '../config';
+import getRandomPipeline from '../utils/random-data';
+import formatData from '../utils/format-data';
+import loremIpsum from '../utils/data/lorem-ipsum.mock';
+import animals from '../utils/data/animals.mock';
+import demo from '../utils/data/demo.mock';
 
 /**
  * Asynchronously load, parse and format data from json file using D3

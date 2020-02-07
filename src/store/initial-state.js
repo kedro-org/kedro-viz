@@ -1,4 +1,4 @@
-import { loadState } from '../../utils';
+import { loadState } from './helpers';
 
 /**
  * Configure the redux store's initial state

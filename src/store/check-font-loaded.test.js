@@ -1,4 +1,4 @@
-import configureStore from '../../store';
+import configureStore from './index';
 import getInitialState from './initial-state';
 import loadData from './load-data';
 import checkFontLoaded from './check-font-loaded';
