@@ -101,7 +101,7 @@ const addTag = state => tag => {
 /**
  * Convert the pipeline data into a normalised state object
  * @param {Object} data Raw unformatted data input
- * @return {Object} Formatted, normalised state
+ * @return {Object} Formatted, normalized state
  */
 const formatData = data => {
   const state = createPipelineState();

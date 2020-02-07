@@ -2,7 +2,7 @@ import React from 'react';
 import IconToolbar, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 import getInitialState from '../../store/initial-state';
-import formatData from '../../store/format-data';
+import normalizeData from '../../store/normalize-data';
 import loremIpsum from '../../utils/data/lorem-ipsum.mock';
 
 describe('IconToolbar', () => {
@@ -12,7 +12,7 @@ describe('IconToolbar', () => {
   });
 
   const getState = visible =>
-    getInitialState(formatData(loremIpsum), {
+    getInitialState(normalizeData(loremIpsum), {
       visible
     });
 

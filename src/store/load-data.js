@@ -1,7 +1,7 @@
 import { json } from 'd3-fetch';
 import config from '../config';
 import getRandomPipeline from '../utils/random-data';
-import formatData from './format-data';
+import normalizeData from './normalize-data';
 import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import animals from '../utils/data/animals.mock';
 import demo from '../utils/data/demo.mock';
@@ -17,7 +17,7 @@ const loadJsonData = () => {
         `Unable to load pipeline data from ${dataPath}. If you're running Kedro-Viz as a standalone (e.g. for JavaScript development), please check that you have placed a data file at /public${dataPath}.`
       );
     })
-    .then(formatData);
+    .then(normalizeData);
 };
 
 /**
@@ -30,26 +30,26 @@ const loadData = (data, onLoadData) => {
   switch (data) {
     case 'random':
       // Use randomly-generated data
-      return formatData(getRandomPipeline());
+      return normalizeData(getRandomPipeline());
     case 'lorem':
       // Use data from the 'lorem-ipsum' test dataset
-      return formatData(loremIpsum);
+      return normalizeData(loremIpsum);
     case 'animals':
       // Use data from the 'animals' test dataset
-      return formatData(animals);
+      return normalizeData(animals);
     case 'demo':
       // Use data from the 'demo' test dataset
-      return formatData(demo);
+      return normalizeData(demo);
     case 'json':
       // Load data from a local json file (in /public/api/nodes.json)
       loadJsonData().then(onLoadData);
-      return formatData();
+      return normalizeData();
     case null:
     case undefined:
       throw new Error('No data was provided to App component via props');
     default:
       // Use data provided via component prop
-      return formatData(data);
+      return normalizeData(data);
   }
 };
 

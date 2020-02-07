@@ -1,5 +1,5 @@
 import loadData from './load-data';
-import formatData from './format-data';
+import normalizeData from './normalize-data';
 import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import animals from '../utils/data/animals.mock';
 import demo from '../utils/data/demo.mock';
@@ -10,8 +10,8 @@ describe('loadData', () => {
       nodes: expect.any(Array),
       nodeName: expect.any(Object)
     });
-    expect(loadData('lorem')).toEqual(formatData(loremIpsum));
-    expect(loadData('animals')).toEqual(formatData(animals));
-    expect(loadData('demo')).toEqual(formatData(demo));
+    expect(loadData('lorem')).toEqual(normalizeData(loremIpsum));
+    expect(loadData('animals')).toEqual(normalizeData(animals));
+    expect(loadData('demo')).toEqual(normalizeData(demo));
   });
 });
