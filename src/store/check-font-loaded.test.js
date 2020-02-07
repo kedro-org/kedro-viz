@@ -1,16 +1,16 @@
-import configureStore from './index';
+import { createStore } from 'redux';
+import reducer from '../reducers';
 import getInitialState from './initial-state';
 import loadData from './load-data';
 import checkFontLoaded from './check-font-loaded';
 
 describe('checkFontLoaded', () => {
   const OLD_FONTS = document.fonts;
-  let initialState;
   let store;
 
   beforeEach(() => {
-    initialState = getInitialState(loadData('lorem'));
-    store = configureStore(initialState);
+    const initialState = getInitialState(loadData('lorem'));
+    store = createStore(reducer, initialState);
     jest.resetModules();
     document.fonts = {
       check: () => false,
