@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import store from '../../store';
+import configureStore from '../../store';
 import { resetData } from '../../actions';
 import Wrapper from '../wrapper';
 import getInitialState from '../../store/initial-state';
@@ -17,7 +17,7 @@ class App extends React.Component {
     super(props);
     const pipelineData = loadData(props.data, this.resetStoreData.bind(this));
     const initialState = getInitialState(pipelineData, props);
-    this.store = store(initialState);
+    this.store = configureStore(initialState);
   }
 
   componentDidUpdate(prevProps) {
