@@ -2,7 +2,7 @@ import React from 'react';
 import IconToolbar, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 import getInitialState from '../../store/initial-state';
-import formatData from '../../utils/format-data';
+import formatData from '../../store/format-data';
 import loremIpsum from '../../utils/data/lorem-ipsum.mock';
 
 describe('IconToolbar', () => {

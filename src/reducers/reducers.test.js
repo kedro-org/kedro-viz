@@ -3,7 +3,7 @@ import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import * as action from '../actions';
-import formatData from '../utils/format-data';
+import formatData from '../store/format-data';
 
 describe('Reducer', () => {
   it('should return the initial state', () => {

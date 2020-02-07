@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
 import store from '../store';
 import getInitialState from '../store/initial-state';
-import formatData from './format-data';
+import formatData from '../store/format-data';
 import animals from './data/animals.mock';
 import loremIpsum from './data/lorem-ipsum.mock';
 
