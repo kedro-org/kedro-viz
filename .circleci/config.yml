@@ -65,6 +65,11 @@ utils:
     command: |
       make pylint
 
+  run_secret_scan: &run_secret_scan
+    name: Run secret scan
+    command: |
+      make secret-scan
+
   run_python_tests: &run_python_tests
     name: Run Python tests
     command: make pytest
@@ -131,6 +136,7 @@ jobs:
       - run: *run_javascript_tests
       - run: *test_lib_transpilation
       - run: *run_pylint_and_flake8
+      - run: *run_secret_scan
       - run: *run_python_tests
       - run: *run_e2e_tests
       - run: *cleanup
