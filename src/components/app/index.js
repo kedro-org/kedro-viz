@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import configureStore from '../../store';
 import { resetData } from '../../actions';
 import Wrapper from '../wrapper';
-import getInitialState from '../../store/initial-state';
 import loadData from '../../store/load-data';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
 import './app.css';
@@ -15,23 +14,21 @@ import './app.css';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    const pipelineData = loadData(props.data, this.resetStoreData.bind(this));
-    const initialState = getInitialState(pipelineData, props);
-    this.store = configureStore(initialState);
+    this.store = configureStore(props);
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.data.schema_id !== this.props.data.schema_id) {
-      this.resetStoreData(loadData(this.props.data));
+      this.resetStoreData();
     }
   }
 
   /**
    * Dispatch an action to update the store with new pipeline data
-   * @param {Object} formattedData Normalised state data
    */
-  resetStoreData(formattedData) {
-    this.store.dispatch(resetData(formattedData));
+  resetStoreData() {
+    const normalizedData = loadData(this.props.data);
+    this.store.dispatch(resetData(normalizedData));
   }
 
   render() {
