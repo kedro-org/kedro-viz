@@ -154,10 +154,9 @@ def _check_kedroviz_running(context):
         context (behave.runner.Context): Test context
     """
     data_json = json.loads(download_url("http://localhost:4141/api/nodes.json"))
-
     try:
         assert context.result.poll() is None
-        assert data_json["nodes"][0]["full_name"] == "predict"
+        assert "predict" in data_json["nodes"][0]["full_name"]
     finally:
         context.result.terminate()
 

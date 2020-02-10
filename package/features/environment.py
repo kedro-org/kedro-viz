@@ -39,7 +39,7 @@ from features.steps.sh_run import run
 from features.steps.util import create_new_venv
 
 
-def before_all(context):
+def before_scenario(context, feature):  # pylint: disable=unused-argument
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
@@ -76,6 +76,7 @@ def before_all(context):
     path = [p for p in path if not (Path(p).parent / "pyvenv.cfg").is_file()]
     path = [p for p in path if not (Path(p).parent / "conda-meta").is_dir()]
     path = [str(bin_dir)] + path
+    # Activate environment
     context.env["PATH"] = path_sep.join(path)
 
     # install this plugin by resolving the requirements using pip-compile
@@ -83,32 +84,23 @@ def before_all(context):
     call([context.python, "-m", "pip", "install", "-U", "pip", "pip-tools"])
     pip_compile = str(bin_dir / "pip-compile")
     with tempfile.TemporaryDirectory() as tmpdirname:
-        reqs = Path("requirements.txt").read_text()
-        complied_reqs = Path(tmpdirname) / "requirements.txt"
-        complied_reqs.write_text(reqs)
-        call([pip_compile, str(complied_reqs)])
-        call([context.pip, "install", "-r", str(complied_reqs)])
+        compiled_reqs = Path(tmpdirname) / "compiled_requirements.txt"
+        call([pip_compile, "--output-file", str(compiled_reqs), "requirements.txt"])
+        call([context.pip, "install", "-r", str(compiled_reqs)])
 
     for wheel_path in glob.glob("dist/*.whl"):
         os.remove(wheel_path)
     call([context.python, "setup.py", "clean", "--all", "bdist_wheel"])
 
     call([context.pip, "install", "-U"] + glob.glob("dist/*.whl"))
-
-
-def after_all(context):
-    if "E2E_VENV" not in os.environ:
-        rmtree(str(context.venv_dir))
-
-
-def before_scenario(context, feature):
-    # pylint: disable=unused-argument
     context.temp_dir = Path(tempfile.mkdtemp())
 
 
 def after_scenario(context, feature):
     # pylint: disable=unused-argument
     rmtree(str(context.temp_dir))
+    if "E2E_VENV" not in os.environ:
+        rmtree(str(context.venv_dir))
 
 
 def rmtree(top):
