@@ -10,6 +10,7 @@
 
 ## Bug fixes and other changes
 - Fixed the backward-compatibility with Kedro 0.14.* (#93)
+- Updated README to list all available CLI options (#105)
 
 # Release 3.1.0:
 
