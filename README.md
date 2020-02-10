@@ -60,27 +60,16 @@ kedro viz
 
 This command will run kedro_viz.server on `http://127.0.0.1:4141/` which cannot be accessed from another machine.
 
-Kedro-Viz has a number of options to customise running the visualisation. Here is a list of CLI arguments supported
-| CLI command                                     | Description                                                      | Multiple options allowed? |
-| ----------------------------------------------- | ---------------------------------------------------------------- | ------------------------- |
-| `kedro run --pipeline de`                       | Run the whole pipeline by its name                               | No                        |
-| `kedro run --node debug_me --node debug_me_too` | Run only nodes with specified names                              | Yes                       |
-| `kedro run --from-nodes node1,node2`            | A list of node names which should be used as a starting point    | No                        |
-| `kedro run --to-nodes node3,node4`              | A list of node names which should be used as an end point        | No                        |
-| `kedro run --from-inputs dataset1,dataset2`     | A list of dataset names which should be used as a starting point | No                        |
-| `kedro run --tag some_tag1 --tag some_tag2`     | Run only nodes which have any of these tags attached             | Yes                       |
-
-You can also combine these options together, so the command `kedro run --from-nodes split --to-nodes predict,report` will run all the nodes from `split` to `predict` and `report`.
-
-
-
-If you are using a remote server machine or a docker container, run the following command instead.
-
-```bash
-kedro viz --host 0.0.0.0
-```
-
-You can change the port with ```--port``` option if needed.
+Kedro-Viz has a number of options to customise running the visualisation. Here is a list of CLI arguments supported:
+| CLI command              | Description                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------ |
+| `--host`                 | Host that viz will listen to. Defaults to 127.0.0.1.                                       |
+| `--port`                 | TCP port that viz will listen to. Defaults to 4141.                                        |
+| `--browser/--no-browser` | Whether to open viz interface in the default browser or not.                               |
+| `--load-file`            | Path to load the pipeline JSON file                                                        |
+| `--save-file`            | Path to save the pipeline JSON file                                                        |
+| `--pipeline`             | Name of the modular pipeline to visualise. If not set, the default pipeline is visualised. |
+| `--env`                  | Kedro configuration environment. If not specified, catalog config in `local` will be used. |
 
 
 ### As a JavaScript React component
