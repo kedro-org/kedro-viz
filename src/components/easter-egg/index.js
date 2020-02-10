@@ -23,7 +23,7 @@ class EasterEgg extends React.Component {
 
     this.audio = new Audio(mp3);
     this.audio.loop = true;
-    this._handleKeyDown = this._handleKeyDown.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   /**
@@ -31,31 +31,31 @@ class EasterEgg extends React.Component {
    */
   componentDidMount() {
     const konami = new KonamiCode();
-    konami.listen(this._toggleState.bind(this));
-    window.addEventListener('keydown', this._handleKeyDown);
+    konami.listen(this.toggleState.bind(this));
+    document.addEventListener('keydown', this.handleKeyDown);
   }
 
   /**
    * Triggered when component state updates
    */
   componentDidUpdate() {
-    this._toggleAudio();
-    this._toggleCSS();
+    this.toggleAudio();
+    this.toggleCSS();
   }
 
   /**
    * Called just before component is removed from the view
    */
   componentWillUnmount() {
-    window.removeEventListener('keydown', this._handleKeyDown);
-    document.body.classList.remove('easter');
+    document.removeEventListener('keydown', this.handleKeyDown);
+    document.body.classList.remove('easter-theme');
   }
 
   /**
    * Handle keyboard interaction
    * @param {Event} e
    */
-  _handleKeyDown(e) {
+  handleKeyDown(e) {
     const escape = e.keyCode === 27;
     if (escape && this.state.play) {
       this.setState({
@@ -67,14 +67,14 @@ class EasterEgg extends React.Component {
   /**
    * Toggle play state on/off
    */
-  _toggleState() {
+  toggleState() {
     this.setState({ play: !this.state.play });
   }
 
   /**
    * Play/Pause the mp3
    */
-  _toggleAudio() {
+  toggleAudio() {
     if (this.state.play) {
       this.audio.play();
     } else {
@@ -85,7 +85,7 @@ class EasterEgg extends React.Component {
   /**
    * Play/Pause the mp3
    */
-  _toggleCSS() {
+  toggleCSS() {
     if (this.state.play) {
       document.body.classList.add('easter-theme');
     } else {
