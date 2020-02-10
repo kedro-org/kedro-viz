@@ -69,7 +69,7 @@ Kedro-Viz has a number of options to customise running the visualisation. Here i
 | `--load-file`            | Path to load the pipeline JSON file                                                        |
 | `--save-file`            | Path to save the pipeline JSON file                                                        |
 | `--pipeline`             | Name of the modular pipeline to visualise. If not set, the default pipeline is visualised. |
-| `--env`                  | Kedro configuration environment. If not specified, catalog config in `local` will be used. |
+| `--env`, `-e`            | Kedro configuration environment. If not specified, catalog config in `local` will be used. |
 
 
 ### As a JavaScript React component
