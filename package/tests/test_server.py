@@ -134,7 +134,7 @@ def create_pipeline():
 
 
 @pytest.fixture(autouse=True)
-def start_app(mocker):
+def start_server(mocker):
     mocker.patch("kedro_viz.server.webbrowser")
     mocker.patch("kedro_viz.server.app.run")
 
