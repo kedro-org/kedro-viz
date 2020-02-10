@@ -31,8 +31,10 @@
 import hashlib
 import json
 import multiprocessing
+import socket
 import webbrowser
 from collections import defaultdict
+from contextlib import closing
 from pathlib import Path
 from typing import Dict
 
@@ -101,10 +103,10 @@ def run_viz(port=None, line=None) -> None:
         line: line required by line magic interface.
 
     """
-    if not port:  # Default argument doesn't work in Jupyter line magic
-        port = 4141
+    port = port or 4141  # Default argument doesn't work in Jupyter line magic
+    port = _allocate_port(start_at=port)
 
-    if port in _VIZ_PROCESSES:
+    if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
 
     viz_process = multiprocessing.Process(
@@ -122,6 +124,25 @@ def run_viz(port=None, line=None) -> None:
         port
     )
     display(HTML(wrapper))
+
+
+def _allocate_port(start_at: int, end_at: int = 65535) -> int:
+    acceptable_ports = range(start_at, end_at + 1)
+
+    viz_ports = _VIZ_PROCESSES.keys() & set(acceptable_ports)
+    if viz_ports:  # reuse one of already allocated ports
+        return sorted(viz_ports)[0]
+
+    socket.setdefaulttimeout(2.0)  # seconds
+    for port in acceptable_ports:  # iterate through all acceptable ports
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+            if sock.connect_ex(("127.0.0.1", port)) != 0:  # port is available
+                return port
+
+    raise ValueError(
+        "Cannot allocate an open TCP port for Kedro-Viz in a range "
+        "from {} to {}".format(start_at, end_at)
+    )
 
 
 def _load_from_file(load_file: str) -> dict:

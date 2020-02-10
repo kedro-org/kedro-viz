@@ -30,6 +30,7 @@ Tests for Kedro-Viz server
 """
 
 import json
+import re
 from unittest import mock
 
 import pytest
@@ -37,6 +38,7 @@ from kedro.context import KedroContextError
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
+from kedro_viz.server import _allocate_port
 from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
@@ -450,3 +452,15 @@ class TestRunViz:
     def test_check_viz_up_invalid(self):
         """Test should catch the request connection error and returns False."""
         assert not server._check_viz_up(8888)  # pylint: disable=protected-access
+
+
+@pytest.mark.parametrize(
+    "kwargs", [{"start_at": 5, "end_at": 4}, {"start_at": 65536}, {"start_at": 4141}]
+)
+def test_allocate_port_error(kwargs, mocker):
+    mock_socket = mocker.patch("socket.socket")
+    mock_socket.return_value.connect_ex.return_value = 0
+
+    pattern = "Cannot allocate an open TCP port for Kedro-Viz"
+    with pytest.raises(ValueError, match=re.escape(pattern)):
+        _allocate_port(**kwargs)
