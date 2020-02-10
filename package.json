@@ -23,6 +23,7 @@
     "prepublishOnly": "npm-run-all -p test:coverage lint build lib",
     "test": "react-scripts test --env=jsdom",
     "test:coverage": "npm test -- --coverage --watchAll=false",
+    "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
     "snyk-protect": "export NODE_OPTIONS=--max-old-space-size=8192 && snyk protect"
