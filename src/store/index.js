@@ -12,7 +12,9 @@ export default function configureStore(props) {
    * @param {Object} normalizedData Normalised state data
    */
   const resetStoreData = normalizedData => {
-    store.dispatch(resetData(normalizedData));
+    if (store) {
+      store.dispatch(resetData(normalizedData));
+    }
   };
 
   const pipelineData = loadData(props.data, resetStoreData);
