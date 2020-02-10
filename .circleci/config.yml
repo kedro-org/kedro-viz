@@ -54,7 +54,7 @@ utils:
 
   run_javascript_tests: &run_javascript_tests
     name: Run JavaScript tests
-    command: npm run build:css && npm test
+    command: npm run build:css && npm run test:ci
 
   test_lib_transpilation: &test_lib_transpilation
     name: Test lib transpilation
@@ -183,7 +183,7 @@ workflows:
   daily:
     triggers:
       - schedule:
-          cron: "0 1 * * *"
+          cron: '0 1 * * *'
           filters:
             branches:
               only:
