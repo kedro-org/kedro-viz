@@ -13,6 +13,7 @@
 ## Bug fixes and other changes
 - Fixed the backward-compatibility with Kedro 0.14.* (#93)
 - Updated README to list all available CLI options (#105)
+- `%run_viz` magic now dynamically allocates the first available port to Viz process starting from 4141 (#109)
 
 # Release 3.1.0:
 

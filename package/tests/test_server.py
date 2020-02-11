@@ -30,12 +30,14 @@ Tests for Kedro-Viz server
 """
 
 import json
+import re
 
 import pytest
 from kedro.context import KedroContextError
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
+from kedro_viz.server import _allocate_port
 from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
@@ -444,3 +446,65 @@ class TestRunViz:
     def test_check_viz_up_invalid(self):
         """Test should catch the request connection error and returns False."""
         assert not server._check_viz_up(8888)  # pylint: disable=protected-access
+
+
+class TestAllocatePort:
+    @pytest.mark.parametrize(
+        "viz_processes,kwargs,expected_port",
+        [
+            ([4321], {"start_at": 4141}, 4321),
+            ([4140, 4141], {"start_at": 4140}, 4140),
+            ([4140, 4141], {"start_at": 4141}, 4141),
+            ([4140], {"start_at": 4141}, 4141),
+            ([4140, 4141], {"start_at": 1, "end_at": 4141}, 4140),
+            ([4140, 4141], {"start_at": 4141, "end_at": 4141}, 4141),
+            ([65535], {"start_at": 1}, 65535),
+        ],
+    )
+    def test_allocate_from_viz_processes(
+        self, mocker, viz_processes, kwargs, expected_port
+    ):
+        """Test allocation of the port from the one that was already captured
+        in _VIZ_PROCESSES"""
+        mocker.patch.dict(
+            "kedro_viz.server._VIZ_PROCESSES", {k: None for k in viz_processes}
+        )
+
+        allocated_port = _allocate_port(**kwargs)
+        assert allocated_port == expected_port
+
+    @pytest.mark.parametrize(
+        "kwargs,expected_port",
+        [
+            ({"start_at": 4141}, 4142),
+            ({"start_at": 80}, 80),
+            ({"start_at": 82, "end_at": 82}, 82),
+            ({"start_at": 83, "end_at": 84}, 84),
+        ],
+    )
+    def test_allocate_from_available_ports(self, mocker, kwargs, expected_port):
+        """Test allocation of one of unoccupied ports"""
+
+        def _mock_even_port_available(host_and_port):
+            # Mock availability of every even port number
+            port = host_and_port[1]
+            return 1 - port % 2
+
+        mock_socket = mocker.patch("socket.socket")
+        mock_socket.return_value.connect_ex.side_effect = _mock_even_port_available
+
+        allocated_port = _allocate_port(**kwargs)
+        assert allocated_port == expected_port
+
+    @pytest.mark.parametrize(
+        "kwargs",
+        [{"start_at": 5, "end_at": 4}, {"start_at": 65536}, {"start_at": 4141}],
+    )
+    def test_allocation_error(self, kwargs, mocker):
+        """Test an error when no TCP port can be allocated from the given range"""
+        mock_socket = mocker.patch("socket.socket")
+        mock_socket.return_value.connect_ex.return_value = 0  # any port is unavailable
+
+        pattern = "Cannot allocate an open TCP port for Kedro-Viz"
+        with pytest.raises(ValueError, match=re.escape(pattern)):
+            _allocate_port(**kwargs)
