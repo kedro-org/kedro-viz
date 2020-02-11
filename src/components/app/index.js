@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import configureStore from '../../store';
-import { resetData } from '../../actions';
+import { resetData, updateFontLoaded } from '../../actions';
+import checkFontLoaded from '../../utils/check-font-loaded';
 import Wrapper from '../wrapper';
 import loadData from '../../store/load-data';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
@@ -15,6 +16,12 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.store = configureStore(props);
+  }
+
+  componentDidMount() {
+    checkFontLoaded().then(() => {
+      this.store.dispatch(updateFontLoaded(true));
+    });
   }
 
   componentDidUpdate(prevProps) {

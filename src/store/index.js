@@ -1,10 +1,9 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
-import { resetData, updateFontLoaded } from '../actions';
+import { resetData } from '../actions';
 import getInitialState from './initial-state';
 import loadData from './load-data';
 import { saveState } from './helpers';
-import checkFontLoaded from '../utils/check-font-loaded';
 
 export default function configureStore(props) {
   /**
@@ -25,10 +24,6 @@ export default function configureStore(props) {
   store.subscribe(() => {
     const { textLabels, theme, typeDisabled } = store.getState();
     saveState({ textLabels, theme, typeDisabled });
-  });
-
-  checkFontLoaded().then(() => {
-    store.dispatch(updateFontLoaded(true));
   });
 
   return store;
