@@ -1,7 +1,7 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
-import getInitialState from './initial-state';
-import loadData from './load-data';
+import getInitialState from '../store/initial-state';
+import loadData from '../store/load-data';
 import checkFontLoaded from './check-font-loaded';
 
 describe('checkFontLoaded', () => {

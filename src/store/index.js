@@ -4,7 +4,7 @@ import { resetData } from '../actions';
 import getInitialState from './initial-state';
 import loadData from './load-data';
 import { saveState } from './helpers';
-import checkFontLoaded from './check-font-loaded';
+import checkFontLoaded from '../utils/check-font-loaded';
 
 export default function configureStore(props) {
   /**
