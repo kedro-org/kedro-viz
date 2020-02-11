@@ -6,6 +6,10 @@
 
 <!-- What have you changed? Consider adding a screenshot or GIF. -->
 
+## QA notes
+
+<!-- How has the expected behaviour changed? What testing strategies have you used? -->
+
 ## Legal notice
 
 - [ ] I acknowledge and agree that, by checking this box and clicking "Submit Pull Request":
