@@ -60,7 +60,7 @@ kedro viz
 
 This command will run kedro_viz.server on `http://127.0.0.1:4141/` which cannot be accessed from another machine.
 
-Kedro-Viz has a number of options to customise running the visualisation. Here is a list of CLI arguments supported:
+Kedro-Viz has a number of options to customise running the visualisation:
 | CLI command              | Description                                                                                                                                                                            |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--host`                 | Host that viz will listen to. Defaults to 127.0.0.1.                                                                                                                                   |
