@@ -30,6 +30,9 @@ pylint:
 	pylint -j 0 --disable=missing-docstring,no-name-in-module package/features
 	flake8 package
 
+secret-scan:
+	trufflehog --max_depth 1 --exclude_path trufflehog-ignore.txt .
+
 version:
 	python3 tools/versioning.py $(VERSION)
 
