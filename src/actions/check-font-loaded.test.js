@@ -1,7 +1,6 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
-import getInitialState from '../store/initial-state';
-import loadData from '../store/load-data';
+import { mockState } from '../utils/state.mock';
 import checkFontLoaded from './check-font-loaded';
 import { updateFontLoaded } from '.';
 
@@ -14,8 +13,7 @@ describe('checkFontLoaded', () => {
   };
 
   beforeEach(() => {
-    const initialState = getInitialState(loadData('lorem'));
-    store = createStore(reducer, initialState);
+    store = createStore(reducer, mockState.lorem);
     jest.resetModules();
     document.fonts = {
       check: () => false,
