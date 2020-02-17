@@ -1,31 +1,45 @@
-import getInitialState from './initial-state';
-import loadData from './load-data';
+import getInitialState, { getPipelineData } from './initial-state';
 import { saveState } from './helpers';
+import loremIpsum from '../utils/data/lorem-ipsum.mock';
+import animals from '../utils/data/animals.mock';
+import demo from '../utils/data/demo.mock';
+
+describe('getPipelineData', () => {
+  it('returns the correct dataset when passed a dataset string', () => {
+    expect(getPipelineData('random')).toMatchObject({
+      nodes: expect.any(Array),
+      edges: expect.any(Array),
+      tags: expect.any(Array)
+    });
+    expect(getPipelineData('random')).not.toMatchObject({
+      nodeName: expect.any(Object)
+    });
+    expect(getPipelineData('lorem')).toEqual(loremIpsum);
+    expect(getPipelineData('animals')).toEqual(animals);
+    expect(getPipelineData('demo')).toEqual(demo);
+  });
+});
 
 describe('getInitialState', () => {
-  const loremData = loadData('lorem');
+  const props = { data: 'lorem' };
 
   it('returns an object', () => {
-    expect(getInitialState(loremData)).toEqual(expect.any(Object));
-  });
-
-  it('does not require the second argument', () => {
-    expect(getInitialState(loremData)).toEqual(getInitialState(loremData, {}));
+    expect(getInitialState(props)).toEqual(expect.any(Object));
   });
 
   it('returns full initial state', () => {
-    expect(getInitialState(loremData)).toMatchObject({
-      ...loremData,
+    expect(getInitialState(props)).toMatchObject({
       chartSize: {},
       textLabels: true,
       theme: 'dark',
-      visible: { labelBtn: true, themeBtn: true }
+      visible: { exportBtn: true, labelBtn: true, themeBtn: true }
     });
   });
 
   it('uses prop values instead of defaults if provided', () => {
     expect(
-      getInitialState(loremData, {
+      getInitialState({
+        ...props,
         theme: 'light',
         visible: { themeBtn: false }
       })
@@ -41,12 +55,12 @@ describe('getInitialState', () => {
       theme: 'light'
     };
     saveState(storeValues);
-    expect(getInitialState(loremData)).toMatchObject(storeValues);
+    expect(getInitialState(props)).toMatchObject(storeValues);
   });
 
   it('uses prop values instead of localstorage if provided', () => {
     saveState({ theme: 'light' });
-    expect(getInitialState(loremData, { theme: 'dark' })).toMatchObject({
+    expect(getInitialState({ ...props, theme: 'dark' })).toMatchObject({
       theme: 'dark'
     });
   });

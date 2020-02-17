@@ -3,16 +3,13 @@ import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
 import configureStore from '../store';
 import getInitialState from '../store/initial-state';
-import normalizeData from '../store/normalize-data';
-import lorem from './data/lorem-ipsum.mock';
-import animals from './data/animals.mock';
 
 /**
  * Example state objects for use in tests of redux-enabled components
  */
 export const mockState = {
-  lorem: getInitialState(normalizeData(lorem)),
-  animals: getInitialState(normalizeData(animals))
+  lorem: getInitialState({ data: 'lorem' }),
+  animals: getInitialState({ data: 'animals' })
 };
 
 /**
@@ -24,12 +21,12 @@ export const setup = {
    * @param {Object} children React component(s)
    * @param {Object} props Store initialisation props
    */
-  mount: (children, props = {}) =>
-    mount(
-      <Provider store={configureStore({ data: lorem, ...props })}>
-        {children}
-      </Provider>
-    ),
+  mount: (children, props = {}) => {
+    const initialState = getInitialState({ ...props, data: 'lorem' });
+    return mount(
+      <Provider store={configureStore(initialState)}>{children}</Provider>
+    );
+  },
   /**
    * Render a pure React component in a shallow wrapper
    * @param {Object} Component A React component
