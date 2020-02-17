@@ -3,7 +3,7 @@ import reducer from '../reducers';
 import getInitialState from '../store/initial-state';
 import loadData from '../store/load-data';
 import checkFontLoaded from './check-font-loaded';
-import { updateFontLoaded } from '../actions';
+import { updateFontLoaded } from '.';
 
 describe('checkFontLoaded', () => {
   const OLD_FONTS = document.fonts;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import configureStore from '../../store';
 import { resetData, updateFontLoaded } from '../../actions';
-import checkFontLoaded from '../../utils/check-font-loaded';
+import checkFontLoaded from '../../actions/check-font-loaded';
 import Wrapper from '../wrapper';
 import getInitialState from '../../store/initial-state';
 import loadData from '../../store/load-data';
