@@ -5,36 +5,60 @@ import configureStore from '../../store';
 import { resetData, updateFontLoaded } from '../../actions';
 import checkFontLoaded from '../../utils/check-font-loaded';
 import Wrapper from '../wrapper';
+import getInitialState from '../../store/initial-state';
 import loadData from '../../store/load-data';
+import normalizeData from '../../store/normalize-data';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
 import './app.css';
 
 /**
- * Main wrapper component. Handles store, and loads/formats pipeline data
+ * Main wrapper component. Intialises the Redux store
  */
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.store = configureStore(props);
+    const initialState = getInitialState(props);
+    this.store = configureStore(initialState);
   }
 
   componentDidMount() {
+    this.asyncLoadJsonData();
+    this.checkWebFontLoading();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.data.schema_id !== this.props.data.schema_id) {
+      this.updatePipelineData();
+    }
+  }
+
+  /**
+   * Load data asynchronously from a JSON file then update the store
+   */
+  asyncLoadJsonData() {
+    if (this.props.data === 'json') {
+      loadData()
+        .then(normalizeData)
+        .then(data => {
+          this.store.dispatch(resetData(data));
+        });
+    }
+  }
+
+  /**
+   * Dispatch an action once the webfont has loaded
+   */
+  checkWebFontLoading() {
     checkFontLoaded().then(() => {
       this.store.dispatch(updateFontLoaded(true));
     });
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.data.schema_id !== this.props.data.schema_id) {
-      this.resetStoreData();
-    }
-  }
-
   /**
    * Dispatch an action to update the store with new pipeline data
    */
-  resetStoreData() {
-    const normalizedData = loadData(this.props.data);
+  updatePipelineData() {
+    const normalizedData = normalizeData(this.props.data);
     this.store.dispatch(resetData(normalizedData));
   }
 
