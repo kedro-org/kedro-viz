@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
 
-const getTags = state => state.tags;
-const getTagName = state => state.tagName;
-const getTagActive = state => state.tagActive;
-const getTagEnabled = state => state.tagEnabled;
+const getTagIDs = state => state.tag.ids;
+const getTagName = state => state.tag.name;
+const getTagActive = state => state.tag.active;
+const getTagEnabled = state => state.tag.enabled;
 
 /**
  * Retrieve the formatted list of tag filters
@@ -11,7 +11,7 @@ const getTagEnabled = state => state.tagEnabled;
  * @return {Array} Tag data list
  */
 export const getTagData = createSelector(
-  [getTags, getTagName, getTagActive, getTagEnabled],
+  [getTagIDs, getTagName, getTagActive, getTagEnabled],
   (tags, tagName, tagActive, tagEnabled) =>
     tags.sort().map(id => ({
       id,
@@ -27,7 +27,7 @@ export const getTagData = createSelector(
  * @return {Object} total / enabled tags
  */
 export const getTagCount = createSelector(
-  [getTags, getTagEnabled],
+  [getTagIDs, getTagEnabled],
   (tags, tagEnabled) => ({
     total: tags.length,
     enabled: tags.filter(id => tagEnabled[id]).length

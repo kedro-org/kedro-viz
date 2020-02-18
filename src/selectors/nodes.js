@@ -4,25 +4,25 @@ import { arrayToObject } from '../utils';
 import { getTagCount } from './tags';
 import { getCentralNode } from './linked-nodes';
 
-const getNodes = state => state.nodes;
-const getNodeName = state => state.nodeName;
-const getNodeFullName = state => state.nodeFullName;
-const getNodeDisabledNode = state => state.nodeDisabled;
-const getNodeTags = state => state.nodeTags;
-const getNodeType = state => state.nodeType;
-const getTagActive = state => state.tagActive;
-const getTagEnabled = state => state.tagEnabled;
+const getNodeIDs = state => state.node.ids;
+const getNodeName = state => state.node.name;
+const getNodeFullName = state => state.node.fullName;
+const getNodeDisabledNode = state => state.node.disabled;
+const getNodeTags = state => state.node.tags;
+const getNodeType = state => state.node.type;
+const getTagActive = state => state.tag.active;
+const getTagEnabled = state => state.tag.enabled;
 const getTextLabels = state => state.textLabels;
 const getFontLoaded = state => state.fontLoaded;
-const getTypeDisabled = state => state.typeDisabled;
+const getNodeTypeDisabled = state => state.nodeType.disabled;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
  */
 export const getNodeDisabledTag = createSelector(
-  [getNodes, getTagEnabled, getTagCount, getNodeTags],
-  (nodes, tagEnabled, tagCount, nodeTags) =>
-    arrayToObject(nodes, nodeID => {
+  [getNodeIDs, getTagEnabled, getTagCount, getNodeTags],
+  (nodeIDs, tagEnabled, tagCount, nodeTags) =>
+    arrayToObject(nodeIDs, nodeID => {
       if (tagCount.enabled === 0) {
         return false;
       }
@@ -39,14 +39,14 @@ export const getNodeDisabledTag = createSelector(
  */
 export const getNodeDisabled = createSelector(
   [
-    getNodes,
+    getNodeIDs,
     getNodeDisabledNode,
     getNodeDisabledTag,
     getNodeType,
-    getTypeDisabled
+    getNodeTypeDisabled
   ],
-  (nodes, nodeDisabledNode, nodeDisabledTag, nodeType, typeDisabled) =>
-    arrayToObject(nodes, id =>
+  (nodeIDs, nodeDisabledNode, nodeDisabledTag, nodeType, typeDisabled) =>
+    arrayToObject(nodeIDs, id =>
       Boolean(
         nodeDisabledNode[id] ||
           nodeDisabledTag[id] ||
@@ -60,9 +60,9 @@ export const getNodeDisabled = createSelector(
  * @return {Boolean} True if active
  */
 export const getNodeActive = createSelector(
-  [getNodes, getCentralNode, getNodeTags, getTagActive],
-  (nodes, centralNode, nodeTags, tagActive) =>
-    arrayToObject(nodes, nodeID => {
+  [getNodeIDs, getCentralNode, getNodeTags, getTagActive],
+  (nodeIDs, centralNode, nodeTags, tagActive) =>
+    arrayToObject(nodeIDs, nodeID => {
       if (nodeID === centralNode) {
         return true;
       }
@@ -76,17 +76,17 @@ export const getNodeActive = createSelector(
  */
 export const getNodeData = createSelector(
   [
-    getNodes,
+    getNodeIDs,
     getNodeName,
     getNodeType,
     getNodeActive,
     getNodeDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
-    getTypeDisabled
+    getNodeTypeDisabled
   ],
   (
-    nodes,
+    nodeIDs,
     nodeName,
     nodeType,
     nodeActive,
@@ -95,7 +95,7 @@ export const getNodeData = createSelector(
     nodeDisabledTag,
     typeDisabled
   ) =>
-    nodes
+    nodeIDs
       .sort((a, b) => {
         if (nodeName[a] < nodeName[b]) return -1;
         if (nodeName[a] > nodeName[b]) return 1;
@@ -134,12 +134,12 @@ export const getGroupedNodes = createSelector(
  * measure its width with getBBox, then delete the container and store the value
  */
 export const getNodeTextWidth = createSelector(
-  [getNodes, getNodeName, getFontLoaded],
-  (nodes, nodeName) => {
+  [getNodeIDs, getNodeName, getFontLoaded],
+  (nodeIDs, nodeName) => {
     const svg = select(document.body)
       .append('svg')
       .attr('class', 'kedro node');
-    const nodeTextWidth = arrayToObject(nodes, nodeID => {
+    const nodeTextWidth = arrayToObject(nodeIDs, nodeID => {
       const text = svg.append('text').text(nodeName[nodeID]);
       const node = text.node();
       const width = node.getBBox ? node.getBBox().width : 0;
@@ -169,9 +169,9 @@ export const getPadding = (showLabels, isTask) => {
  * Calculate node width/height and icon/text positioning
  */
 export const getNodeSize = createSelector(
-  [getNodes, getNodeTextWidth, getTextLabels, getNodeType],
-  (nodes, nodeTextWidth, textLabels, nodeType) =>
-    arrayToObject(nodes, nodeID => {
+  [getNodeIDs, getNodeTextWidth, getTextLabels, getNodeType],
+  (nodeIDs, nodeTextWidth, textLabels, nodeType) =>
+    arrayToObject(nodeIDs, nodeID => {
       const iconSize = textLabels ? 14 : 24;
       const padding = getPadding(textLabels, nodeType[nodeID] === 'task');
       const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
@@ -193,15 +193,15 @@ export const getNodeSize = createSelector(
  */
 export const getVisibleNodes = createSelector(
   [
-    getNodes,
+    getNodeIDs,
     getNodeName,
     getNodeType,
     getNodeDisabled,
     getNodeFullName,
     getNodeSize
   ],
-  (nodes, nodeName, nodeType, nodeDisabled, nodeFullName, nodeSize) =>
-    nodes
+  (nodeIDs, nodeName, nodeType, nodeDisabled, nodeFullName, nodeSize) =>
+    nodeIDs
       .filter(id => !nodeDisabled[id])
       .map(id => ({
         id,

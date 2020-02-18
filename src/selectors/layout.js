@@ -3,7 +3,7 @@ import dagre from 'dagre';
 import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
-const getNodeType = state => state.nodeType;
+const getNodeType = state => state.node.type;
 const getChartSize = state => state.chartSize;
 
 /**

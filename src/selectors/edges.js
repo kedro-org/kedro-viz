@@ -2,16 +2,16 @@ import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
 import { getNodeDisabled } from './nodes';
 
-const getNodes = state => state.nodes;
-const getEdges = state => state.edges;
-const getEdgeSources = state => state.edgeSources;
-const getEdgeTargets = state => state.edgeTargets;
+const getNodeIDs = state => state.node.ids;
+const getEdgeIDs = state => state.edge.ids;
+const getEdgeSources = state => state.edge.sources;
+const getEdgeTargets = state => state.edge.targets;
 
 /**
  * Calculate whether edges should be disabled based on their source/target nodes
  */
 export const getEdgeDisabledNode = createSelector(
-  [getEdges, getNodeDisabled, getEdgeSources, getEdgeTargets],
+  [getEdgeIDs, getNodeDisabled, getEdgeSources, getEdgeTargets],
   (edges, nodeDisabled, edgeSources, edgeTargets) =>
     arrayToObject(edges, edgeID => {
       const source = edgeSources[edgeID];
@@ -24,7 +24,7 @@ export const getEdgeDisabledNode = createSelector(
  * Determine whether an edge should be disabled
  */
 export const getEdgeDisabled = createSelector(
-  [getEdges, getEdgeDisabledNode],
+  [getEdgeIDs, getEdgeDisabledNode],
   (edges, edgeDisabledNode) =>
     arrayToObject(edges, edgeID => Boolean(edgeDisabledNode[edgeID]))
 );
@@ -87,7 +87,7 @@ export const findTransitiveEdges = (
  * in between them
  */
 export const getTransitiveEdges = createSelector(
-  [getNodes, getEdges, getNodeDisabled, getEdgeSources, getEdgeTargets],
+  [getNodeIDs, getEdgeIDs, getNodeDisabled, getEdgeSources, getEdgeTargets],
   (nodes, edges, nodeDisabled, edgeSources, edgeTargets) => {
     const transitiveEdges = {
       edgeIDs: [],
@@ -116,7 +116,7 @@ export const getTransitiveEdges = createSelector(
  */
 export const getVisibleEdges = createSelector(
   [
-    getEdges,
+    getEdgeIDs,
     getEdgeDisabled,
     getEdgeSources,
     getEdgeTargets,
