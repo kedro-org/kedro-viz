@@ -30,13 +30,14 @@ Tests for Kedro-Viz server
 """
 
 import json
-from unittest import mock
+import re
 
 import pytest
 from kedro.context import KedroContextError
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
+from kedro_viz.server import _allocate_port
 from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
@@ -134,21 +135,18 @@ def create_pipeline():
     )
 
 
-def setup_function():
-    mock.patch("kedro_viz.server.webbrowser").start()
-    mock.patch("kedro_viz.server.app.run").start()
-
-
-def teardown_function():
-    mock.patch.stopall()
+@pytest.fixture(autouse=True)
+def start_server(mocker):
+    mocker.patch("kedro_viz.server.webbrowser")
+    mocker.patch("kedro_viz.server.app.run")
 
 
 @pytest.fixture
-def patched_get_project_context():
+def patched_get_project_context(mocker):
     def get_project_context(
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
     ):  # pylint: disable=unused-argument
-        mocked_context = mock.Mock()
+        mocked_context = mocker.Mock()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.catalog = lambda x: None
         mocked_context.pipeline = create_pipeline()
@@ -158,7 +156,7 @@ def patched_get_project_context():
             "context": mocked_context,
         }[key]
 
-    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
 
 
 @pytest.fixture
@@ -278,50 +276,48 @@ def test_pipeline_flag_non_existent(cli_runner):
     assert "Failed to find the pipeline." in result.output
 
 
-@mock.patch("kedro.__version__", "0.15.0")
-def test_viz_kedro15(cli_runner):
+def test_viz_kedro15(mocker, cli_runner):
     """Test that running viz in Kedro 0.15.0."""
+    mocker.patch("kedro.__version__", "0.15.0")
 
     def get_project_context(
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
     ):  # pylint: disable=unused-argument
-        mocked_context = mock.Mock()
+        mocked_context = mocker.Mock()
         mocked_context.pipeline = create_pipeline()
         return {"context": mocked_context}[key]
 
-    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
     result = cli_runner.invoke(server.commands, "viz")
     assert result.exit_code == 0, result.output
 
 
-@mock.patch("kedro.__version__", "0.15.0")
-def test_viz_kedro15_pipeline_flag(cli_runner):
+def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
     """Test that running viz with `--pipeline` flag in Kedro 0.15.0."""
+    mocker.patch("kedro.__version__", "0.15.0")
 
     def get_project_context(
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
     ):  # pylint: disable=unused-argument
-        return {"context": mock.Mock()}[key]
+        return {"context": mocker.Mock()}[key]
 
-    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
     result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
     assert "`--pipeline` flag was provided" in result.output
 
 
-@mock.patch("kedro.__version__", "0.15.0")
-def test_viz_kedro15_invalid(cli_runner):
+def test_viz_kedro15_invalid(mocker, cli_runner):
     """Test that running viz in Kedro 0.15.0,
     and it is outside of a Kedro project root."""
-    mock.patch(
-        "kedro_viz.server.get_project_context", side_effect=KedroContextError
-    ).start()
+    mocker.patch("kedro.__version__", "0.15.0")
+    mocker.patch("kedro_viz.server.get_project_context", side_effect=KedroContextError)
     result = cli_runner.invoke(server.commands, "viz")
     assert "Could not find a Kedro project root." in result.output
 
 
-@mock.patch("kedro.__version__", "0.14.0")
-def test_viz_kedro14(cli_runner):
+def test_viz_kedro14(mocker, cli_runner):
     """Test that running viz in Kedro 0.14.0."""
+    mocker.patch("kedro.__version__", "0.14.0")
 
     def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
         return lambda x: None
@@ -338,14 +334,14 @@ def test_viz_kedro14(cli_runner):
             "get_config": get_config,
         }[key]
 
-    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
     result = cli_runner.invoke(server.commands, "viz")
     assert result.exit_code == 0, result.output
 
 
-@mock.patch("kedro.__version__", "0.14.0")
-def test_viz_kedro14_pipeline_flag(cli_runner):
+def test_viz_kedro14_pipeline_flag(mocker, cli_runner):
     """Test that running viz with `--pipeline` flag in Kedro 0.14.0 is not supported."""
+    mocker.patch("kedro.__version__", "0.14.0")
 
     def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
         return lambda x: None
@@ -362,16 +358,16 @@ def test_viz_kedro14_pipeline_flag(cli_runner):
             "get_config": get_config,
         }[key]
 
-    mock.patch("kedro_viz.server.get_project_context", new=get_project_context).start()
+    mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
     result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
     assert "`--pipeline` flag was provided" in result.output
 
 
-@mock.patch("kedro.__version__", "0.14.0")
-def test_viz_kedro14_invalid(cli_runner):
+def test_viz_kedro14_invalid(mocker, cli_runner):
     """Test that running viz in Kedro 0.14.0,
     while outside of a Kedro project is not supported."""
-    mock.patch("kedro_viz.server.get_project_context", side_effect=KeyError).start()
+    mocker.patch("kedro.__version__", "0.14.0")
+    mocker.patch("kedro_viz.server.get_project_context", side_effect=KeyError)
     result = cli_runner.invoke(server.commands, "viz")
     assert "Could not find a Kedro project root." in result.output
 
@@ -450,3 +446,65 @@ class TestRunViz:
     def test_check_viz_up_invalid(self):
         """Test should catch the request connection error and returns False."""
         assert not server._check_viz_up(8888)  # pylint: disable=protected-access
+
+
+class TestAllocatePort:
+    @pytest.mark.parametrize(
+        "viz_processes,kwargs,expected_port",
+        [
+            ([4321], {"start_at": 4141}, 4321),
+            ([4140, 4141], {"start_at": 4140}, 4140),
+            ([4140, 4141], {"start_at": 4141}, 4141),
+            ([4140], {"start_at": 4141}, 4141),
+            ([4140, 4141], {"start_at": 1, "end_at": 4141}, 4140),
+            ([4140, 4141], {"start_at": 4141, "end_at": 4141}, 4141),
+            ([65535], {"start_at": 1}, 65535),
+        ],
+    )
+    def test_allocate_from_viz_processes(
+        self, mocker, viz_processes, kwargs, expected_port
+    ):
+        """Test allocation of the port from the one that was already captured
+        in _VIZ_PROCESSES"""
+        mocker.patch.dict(
+            "kedro_viz.server._VIZ_PROCESSES", {k: None for k in viz_processes}
+        )
+
+        allocated_port = _allocate_port(**kwargs)
+        assert allocated_port == expected_port
+
+    @pytest.mark.parametrize(
+        "kwargs,expected_port",
+        [
+            ({"start_at": 4141}, 4142),
+            ({"start_at": 80}, 80),
+            ({"start_at": 82, "end_at": 82}, 82),
+            ({"start_at": 83, "end_at": 84}, 84),
+        ],
+    )
+    def test_allocate_from_available_ports(self, mocker, kwargs, expected_port):
+        """Test allocation of one of unoccupied ports"""
+
+        def _mock_even_port_available(host_and_port):
+            # Mock availability of every even port number
+            port = host_and_port[1]
+            return 1 - port % 2
+
+        mock_socket = mocker.patch("socket.socket")
+        mock_socket.return_value.connect_ex.side_effect = _mock_even_port_available
+
+        allocated_port = _allocate_port(**kwargs)
+        assert allocated_port == expected_port
+
+    @pytest.mark.parametrize(
+        "kwargs",
+        [{"start_at": 5, "end_at": 4}, {"start_at": 65536}, {"start_at": 4141}],
+    )
+    def test_allocation_error(self, kwargs, mocker):
+        """Test an error when no TCP port can be allocated from the given range"""
+        mock_socket = mocker.patch("socket.socket")
+        mock_socket.return_value.connect_ex.return_value = 0  # any port is unavailable
+
+        pattern = "Cannot allocate an open TCP port for Kedro-Viz"
+        with pytest.raises(ValueError, match=re.escape(pattern)):
+            _allocate_port(**kwargs)
