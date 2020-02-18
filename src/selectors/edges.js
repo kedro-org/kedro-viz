@@ -72,14 +72,17 @@ export const getTransitiveEdges = createSelector(
       });
     };
 
-    // Examine the children of every enabled node. The walk only needs
-    // to be run in a single direction (i.e. top down), because links
-    // that end in a terminus can never be transitive.
-    nodeIDs.forEach(nodeID => {
-      if (!nodeDisabled[nodeID]) {
-        walkGraphEdges([nodeID]);
-      }
-    });
+    // Only run walk if some nodes are disabled
+    if (nodeIDs.some(nodeID => nodeDisabled[nodeID])) {
+      // Examine the children of every enabled node. The walk only needs
+      // to be run in a single direction (i.e. top down), because links
+      // that end in a terminus can never be transitive.
+      nodeIDs.forEach(nodeID => {
+        if (!nodeDisabled[nodeID]) {
+          walkGraphEdges([nodeID]);
+        }
+      });
+    }
 
     return transitiveEdges;
   }
