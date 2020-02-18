@@ -3,7 +3,7 @@ import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import * as action from '../actions';
-import formatData from '../utils/format-data';
+import normalizeData from '../store/normalize-data';
 
 describe('Reducer', () => {
   it('should return the initial state', () => {
@@ -15,7 +15,7 @@ describe('Reducer', () => {
       expect(
         reducer(mockState.lorem, {
           type: action.RESET_DATA,
-          data: formatData(loremIpsum)
+          data: normalizeData(loremIpsum)
         })
       ).toEqual(mockState.lorem);
     });
@@ -23,7 +23,7 @@ describe('Reducer', () => {
     it('should reset the state with new data', () => {
       const newState = reducer(mockState.lorem, {
         type: action.RESET_DATA,
-        data: formatData(animals)
+        data: normalizeData(animals)
       });
       expect(newState).toEqual(mockState.animals);
     });

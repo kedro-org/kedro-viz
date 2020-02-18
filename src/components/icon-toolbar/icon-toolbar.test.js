@@ -1,9 +1,6 @@
 import React from 'react';
 import IconToolbar, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
-import getInitialState from '../app/initial-state';
-import formatData from '../../utils/format-data';
-import loremIpsum from '../../utils/data/lorem-ipsum.mock';
 
 describe('IconToolbar', () => {
   it('renders without crashing', () => {
@@ -11,30 +8,21 @@ describe('IconToolbar', () => {
     expect(wrapper.find('.pipeline-icon-button').length).toBe(3);
   });
 
-  const getState = visible =>
-    getInitialState(formatData(loremIpsum), {
-      visible
-    });
-
   it('hides both buttons when visible prop is false for each of them', () => {
-    const wrapper = setup.mount(
-      <IconToolbar />,
-      getState({
-        themeBtn: false,
-        labelBtn: false,
-        exportBtn: false
-      })
-    );
+    const visible = {
+      themeBtn: false,
+      labelBtn: false,
+      exportBtn: false
+    };
+    const wrapper = setup.mount(<IconToolbar />, { visible });
     expect(wrapper.find('.pipeline-icon-button').length).toBe(0);
   });
 
   it('hides one button when visible prop is false for one of them', () => {
-    const wrapper = setup.mount(
-      <IconToolbar />,
-      getState({
-        labelBtn: false
-      })
-    );
+    const visible = {
+      labelBtn: false
+    };
+    const wrapper = setup.mount(<IconToolbar />, { visible });
     expect(wrapper.find('.pipeline-icon-button').length).toBe(2);
   });
 

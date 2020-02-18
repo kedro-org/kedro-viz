@@ -1,3 +1,4 @@
+import { getInitialPipelineState } from '../store/initial-state';
 /**
  * Check whether data is in expected format
  * @param {Object} data - The parsed data input
@@ -16,43 +17,6 @@ const validateInput = data => {
  * @param {Object} target - Name and type of the target node
  */
 const getEdgeID = (source, target) => [source, target].join('|');
-
-/**
- * Generate a new default pipeline state instance
- * @return {Object} Initial state
- */
-const createPipelineState = () => ({
-  id: null,
-  // Nodes
-  nodes: [],
-  nodeName: {},
-  nodeFullName: {},
-  nodeType: {},
-  nodeIsParam: {},
-  nodeTags: {},
-  nodeDisabled: {},
-  nodeClicked: null,
-  nodeHovered: null,
-  // Edges
-  edges: [],
-  edgeSources: {},
-  edgeTargets: {},
-  edgeActive: {},
-  edgeDisabled: {},
-  // Tags
-  tags: [],
-  tagName: {},
-  tagActive: {},
-  tagEnabled: {},
-  // Node types
-  types: ['task', 'data', 'parameters'],
-  typeName: {
-    data: 'Datasets',
-    task: 'Nodes',
-    parameters: 'Parameters'
-  },
-  typeDisabled: {}
-});
 
 /**
  * Add a new node if it doesn't already exist
@@ -101,10 +65,10 @@ const addTag = state => tag => {
 /**
  * Convert the pipeline data into a normalised state object
  * @param {Object} data Raw unformatted data input
- * @return {Object} Formatted, normalised state
+ * @return {Object} Formatted, normalized state
  */
 const formatData = data => {
-  const state = createPipelineState();
+  const state = getInitialPipelineState();
 
   if (validateInput(data)) {
     state.id = data.schema_id;

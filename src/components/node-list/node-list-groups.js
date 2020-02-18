@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Flipper } from 'react-flip-toolkit';
-import { loadState, saveState } from '../../utils';
+import { loadState, saveState } from '../../store/helpers';
 import { getNodeTypes } from '../../selectors/node-types';
 import NodeListGroup from './node-list-group';
 import NodeListItem from './node-list-item';

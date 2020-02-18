@@ -1,16 +1,19 @@
-import configureStore from '../../store';
-import getInitialState from './initial-state';
-import loadData from './load-data';
+import { createStore } from 'redux';
+import reducer from '../reducers';
+import { mockState } from '../utils/state.mock';
 import checkFontLoaded from './check-font-loaded';
+import { updateFontLoaded } from '.';
 
 describe('checkFontLoaded', () => {
   const OLD_FONTS = document.fonts;
-  let initialState;
   let store;
 
+  const setLoaded = () => {
+    store.dispatch(updateFontLoaded(true));
+  };
+
   beforeEach(() => {
-    initialState = getInitialState(loadData('lorem'));
-    store = configureStore(initialState);
+    store = createStore(reducer, mockState.lorem);
     jest.resetModules();
     document.fonts = {
       check: () => false,
@@ -23,25 +26,29 @@ describe('checkFontLoaded', () => {
   });
 
   describe('if document.fonts is not supported', () => {
-    it('sets fontLoaded to true immediately', () => {
+    it('sets fontLoaded to true', () => {
       document.fonts = undefined;
-      expect(store.getState().fontLoaded).toBe(false);
-      checkFontLoaded(store);
-      expect(store.getState().fontLoaded).toBe(true);
+      return checkFontLoaded()
+        .then(setLoaded)
+        .then(() => {
+          expect(store.getState().fontLoaded).toBe(true);
+        });
     });
   });
 
   describe('if document.fonts is supported', () => {
     it("sets fontLoaded to false when the font hasn't loaded yet", () => {
-      checkFontLoaded(store);
+      checkFontLoaded().then(setLoaded);
       expect(store.getState().fontLoaded).toBe(false);
     });
 
     it('sets fontLoaded to true once the font has loaded', () => {
       document.fonts.check = () => true;
-      return checkFontLoaded(store).then(() => {
-        expect(store.getState().fontLoaded).toBe(true);
-      });
+      return checkFontLoaded()
+        .then(setLoaded)
+        .then(() => {
+          expect(store.getState().fontLoaded).toBe(true);
+        });
     });
 
     it('sets fontLoaded to true when document.fonts.ready returns', () => {
@@ -51,15 +58,16 @@ describe('checkFontLoaded', () => {
           resolve();
         }, 500);
       });
-      return Promise.all([checkFontLoaded(store), document.fonts.ready]).then(
-        () => {
-          expect(store.getState().fontLoaded).toBe(true);
-        }
-      );
+      return Promise.all([
+        checkFontLoaded().then(setLoaded),
+        document.fonts.ready
+      ]).then(() => {
+        expect(store.getState().fontLoaded).toBe(true);
+      });
     });
 
     it('sets fontLoaded to true when document.fonts.onloadingdone returns', () => {
-      const check = checkFontLoaded(store);
+      const check = checkFontLoaded().then(setLoaded);
       document.fonts.check = () => true;
       document.fonts.onloadingdone();
       return check.then(() => {
@@ -74,13 +82,15 @@ describe('checkFontLoaded', () => {
           resolve();
         }, 500);
       });
-      return Promise.all([checkFontLoaded(store), timeout]).then(() => {
-        expect(store.getState().fontLoaded).toBe(true);
-      });
+      return Promise.all([checkFontLoaded().then(setLoaded), timeout]).then(
+        () => {
+          expect(store.getState().fontLoaded).toBe(true);
+        }
+      );
     });
 
     it('sets fontLoaded to true regardless once >8 seconds have passed', () => {
-      const check = checkFontLoaded(store);
+      const check = checkFontLoaded().then(setLoaded);
       performance.now = () => 9999; // hurry up
       return check.then(() => {
         expect(store.getState().fontLoaded).toBe(true);
