@@ -41,14 +41,14 @@ function resetDataReducer(state = {}, action) {
 }
 
 const combinedReducer = combineReducers({
-  id: (state = null) => state,
-  edge: (state = {}) => state,
-  visible: (state = {}) => state,
-  chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
-  fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
   node,
   nodeType,
   tag,
+  edge: (state = {}) => state,
+  id: (state = null) => state,
+  visible: (state = {}) => state,
+  chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
+  fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
   textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),
   theme: createReducer(TOGGLE_THEME, 'theme', 'dark')
 });
