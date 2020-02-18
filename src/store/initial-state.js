@@ -66,9 +66,7 @@ export const getInitialPipelineState = () => ({
   edge: {
     ids: [],
     sources: {},
-    targets: {},
-    active: {},
-    disabled: {}
+    targets: {}
   },
   tag: {
     ids: [],

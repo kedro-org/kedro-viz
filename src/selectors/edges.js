@@ -8,25 +8,16 @@ const getEdgeSources = state => state.edge.sources;
 const getEdgeTargets = state => state.edge.targets;
 
 /**
- * Calculate whether edges should be disabled based on their source/target nodes
- */
-export const getEdgeDisabledNode = createSelector(
-  [getEdgeIDs, getNodeDisabled, getEdgeSources, getEdgeTargets],
-  (edges, nodeDisabled, edgeSources, edgeTargets) =>
-    arrayToObject(edges, edgeID => {
-      const source = edgeSources[edgeID];
-      const target = edgeTargets[edgeID];
-      return nodeDisabled[source] || nodeDisabled[target];
-    })
-);
-
-/**
- * Determine whether an edge should be disabled
+ * Determine whether an edge should be disabled based on their source/target nodes
  */
 export const getEdgeDisabled = createSelector(
-  [getEdgeIDs, getEdgeDisabledNode],
-  (edges, edgeDisabledNode) =>
-    arrayToObject(edges, edgeID => Boolean(edgeDisabledNode[edgeID]))
+  [getEdgeIDs, getNodeDisabled, getEdgeSources, getEdgeTargets],
+  (edgeIDs, nodeDisabled, edgeSources, edgeTargets) =>
+    arrayToObject(edgeIDs, edgeID => {
+      const source = edgeSources[edgeID];
+      const target = edgeTargets[edgeID];
+      return Boolean(nodeDisabled[source] || nodeDisabled[target]);
+    })
 );
 
 /**
@@ -45,67 +36,51 @@ export const addNewEdge = (source, target, { edgeIDs, sources, targets }) => {
 };
 
 /**
- * Recursively walk through the graph, stepping over disabled nodes,
- * generating a list of nodes visited so far, and create transitive edges
- * for each path that visits disabled nodes between enabled nodes.
- * @param {Array} path The route that has been explored so far
- */
-export const findTransitiveEdges = (
-  edges,
-  transitiveEdges,
-  { edgeSources, edgeTargets, nodeDisabled }
-) => {
-  /**
-   * Recursively walk through the graph, stepping over disabled nodes,
-   * generating a list of nodes visited so far, and create transitive edges
-   * for each path that visits disabled nodes between enabled nodes.
-   * @param {Array} path The route that has been explored so far
-   */
-  const edgeGraphWalker = path => {
-    edges.forEach(edgeID => {
-      const source = path[path.length - 1];
-      // Filter to only edges where the source node is the previous target
-      if (edgeSources[edgeID] !== source) {
-        return;
-      }
-      const target = edgeTargets[edgeID];
-      if (nodeDisabled[target]) {
-        // If target node is disabled then keep walking the graph
-        edgeGraphWalker(path.concat(target));
-      } else if (path.length > 1) {
-        // Else only create a new edge if there would be 3 or more nodes in the path
-        addNewEdge(path[0], target, transitiveEdges);
-      }
-    });
-  };
-
-  return edgeGraphWalker;
-};
-
-/**
  * Create new edges to connect nodes which have a disabled node (or nodes)
  * in between them
  */
 export const getTransitiveEdges = createSelector(
   [getNodeIDs, getEdgeIDs, getNodeDisabled, getEdgeSources, getEdgeTargets],
-  (nodes, edges, nodeDisabled, edgeSources, edgeTargets) => {
+  (nodeIDs, edgeIDs, nodeDisabled, edgeSources, edgeTargets) => {
     const transitiveEdges = {
       edgeIDs: [],
       sources: {},
       targets: {}
     };
+
+    /**
+     * Recursively walk through the graph, stepping over disabled nodes,
+     * generating a list of nodes visited so far, and create transitive edges
+     * for each path that visits disabled nodes between enabled nodes.
+     * @param {Array} path The route that has been explored so far
+     */
+    const walkGraphEdges = path => {
+      edgeIDs.forEach(edgeID => {
+        const source = path[path.length - 1];
+        // Filter to only edges where the source node is the previous target
+        if (edgeSources[edgeID] !== source) {
+          return;
+        }
+        const target = edgeTargets[edgeID];
+        if (nodeDisabled[target]) {
+          // If target node is disabled then keep walking the graph
+          walkGraphEdges(path.concat(target));
+        } else if (path.length > 1) {
+          // Else only create a new edge if there would be 3 or more nodes in the path
+          addNewEdge(path[0], target, transitiveEdges);
+        }
+      });
+    };
+
     // Examine the children of every enabled node. The walk only needs
     // to be run in a single direction (i.e. top down), because links
     // that end in a terminus can never be transitive.
-    nodes.forEach(nodeID => {
+    nodeIDs.forEach(nodeID => {
       if (!nodeDisabled[nodeID]) {
-        findTransitiveEdges(edges, transitiveEdges, {
-          edgeSources,
-          edgeTargets,
-          nodeDisabled
-        })([nodeID]);
+        walkGraphEdges([nodeID]);
       }
     });
+
     return transitiveEdges;
   }
 );
@@ -122,8 +97,8 @@ export const getVisibleEdges = createSelector(
     getEdgeTargets,
     getTransitiveEdges
   ],
-  (edges, edgeDisabled, edgeSources, edgeTargets, transitiveEdges) =>
-    edges
+  (edgeIDs, edgeDisabled, edgeSources, edgeTargets, transitiveEdges) =>
+    edgeIDs
       .filter(id => !edgeDisabled[id])
       .concat(transitiveEdges.edgeIDs)
       .map(id => ({
