@@ -6,7 +6,7 @@ function tagReducer(tagState = {}, action) {
   switch (action.type) {
     case TOGGLE_TAG_ACTIVE: {
       return updateState({
-        tagActive: Object.assign({}, tagState.tagActive, {
+        active: Object.assign({}, tagState.active, {
           [action.tagID]: action.active
         })
       });
@@ -14,7 +14,7 @@ function tagReducer(tagState = {}, action) {
 
     case TOGGLE_TAG_FILTER: {
       return updateState({
-        tagEnabled: Object.assign({}, tagState.tagEnabled, {
+        enabled: Object.assign({}, tagState.enabled, {
           [action.tagID]: action.enabled
         })
       });
