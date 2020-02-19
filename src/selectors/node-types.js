@@ -1,14 +1,14 @@
 import { createSelector } from 'reselect';
 
-const getTypes = state => state.types;
-const getTypeName = state => state.typeName;
-const getTypeDisabled = state => state.typeDisabled;
+const getNodeTypeIDs = state => state.nodeType.ids;
+const getNodeTypeName = state => state.nodeType.name;
+const getNodeTypeDisabled = state => state.nodeType.disabled;
 
 /**
  * Get formatted list of node type objects
  */
 export const getNodeTypes = createSelector(
-  [getTypes, getTypeName, getTypeDisabled],
+  [getNodeTypeIDs, getNodeTypeName, getNodeTypeDisabled],
   (types, typeName, typeDisabled) =>
     types.map(id => ({
       id,

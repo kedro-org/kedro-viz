@@ -18,7 +18,10 @@ import {
 } from '../actions';
 import reducer from '../reducers';
 
-const getNodes = state => state.nodes;
+const getNodeIDs = state => state.node.ids;
+const getNodeName = state => state.node.name;
+const getNodeTags = state => state.node.tags;
+const getNodeType = state => state.node.type;
 
 describe('Selectors', () => {
   describe('getNodeDisabledTag', () => {
@@ -28,7 +31,7 @@ describe('Selectors', () => {
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
       expect(Object.keys(getNodeDisabledTag(mockState.lorem))).toEqual(
-        getNodes(mockState.lorem)
+        getNodeIDs(mockState.lorem)
       );
     });
 
@@ -48,10 +51,10 @@ describe('Selectors', () => {
     });
 
     it('disables a node only if all of its tags are disabled', () => {
-      const { nodeTags } = mockState.animals;
+      const nodeTags = getNodeTags(mockState.animals);
       // Get list of task nodes from the current pipeline
-      const taskNodes = getNodes(mockState.animals).filter(
-        id => mockState.animals.nodeType[id] === 'task'
+      const taskNodes = getNodeIDs(mockState.animals).filter(
+        id => getNodeType(mockState.animals)[id] === 'task'
       );
       // Choose a node that has some tags (and which should be enabled)
       const hasTags = id => Boolean(nodeTags[id].length);
@@ -77,7 +80,7 @@ describe('Selectors', () => {
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
       expect(Object.keys(getNodeDisabled(mockState.lorem))).toEqual(
-        getNodes(mockState.lorem)
+        getNodeIDs(mockState.lorem)
       );
     });
 
@@ -97,7 +100,7 @@ describe('Selectors', () => {
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
       expect(Object.keys(getNodeActive(mockState.lorem))).toEqual(
-        getNodes(mockState.lorem)
+        getNodeIDs(mockState.lorem)
       );
     });
 
@@ -110,7 +113,7 @@ describe('Selectors', () => {
     });
 
     it('returns true when a given node is clicked', () => {
-      const nodes = getNodes(mockState.lorem);
+      const nodes = getNodeIDs(mockState.lorem);
       const nodeID = nodes[0];
       const inactiveNodes = nodes.filter(id => id !== nodeID);
       const newMockState = reducer(mockState.lorem, toggleNodeClicked(nodeID));
@@ -120,7 +123,7 @@ describe('Selectors', () => {
     });
 
     it('returns true when a given node is hovered', () => {
-      const nodes = getNodes(mockState.lorem);
+      const nodes = getNodeIDs(mockState.lorem);
       const nodeID = nodes[0];
       const inactiveNodes = nodes.filter(id => id !== nodeID);
       const newMockState = reducer(mockState.lorem, toggleNodeHovered(nodeID));
@@ -148,9 +151,9 @@ describe('Selectors', () => {
     });
 
     it('returns nodes sorted by name', () => {
-      const { nodeName } = mockState.lorem;
+      const nodeName = getNodeName(mockState.lorem);
       const nodeIDs = getNodeData(mockState.lorem).map(d => d.id);
-      const activeNodeIDs = getNodes(mockState.lorem).sort((a, b) => {
+      const activeNodeIDs = getNodeIDs(mockState.lorem).sort((a, b) => {
         if (nodeName[a] < nodeName[b]) return -1;
         if (nodeName[a] > nodeName[b]) return 1;
         return 0;
@@ -277,7 +280,7 @@ describe('Selectors', () => {
     });
 
     it('returns only visible nodes', () => {
-      const nodes = getNodes(mockState.lorem);
+      const nodes = getNodeIDs(mockState.lorem);
       const nodeID = nodes[0];
       const newMockState = reducer(
         mockState.lorem,

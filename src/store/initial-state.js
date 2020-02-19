@@ -43,35 +43,37 @@ export const getPipelineData = data => {
  */
 export const getInitialPipelineState = () => ({
   id: null,
-  // Nodes
-  nodes: [],
-  nodeName: {},
-  nodeFullName: {},
-  nodeType: {},
-  nodeIsParam: {},
-  nodeTags: {},
-  nodeDisabled: {},
-  nodeClicked: null,
-  nodeHovered: null,
-  // Edges
-  edges: [],
-  edgeSources: {},
-  edgeTargets: {},
-  edgeActive: {},
-  edgeDisabled: {},
-  // Tags
-  tags: [],
-  tagName: {},
-  tagActive: {},
-  tagEnabled: {},
-  // Node types
-  types: ['task', 'data', 'parameters'],
-  typeName: {
-    data: 'Datasets',
-    task: 'Nodes',
-    parameters: 'Parameters'
+  node: {
+    ids: [],
+    name: {},
+    fullName: {},
+    type: {},
+    isParam: {},
+    tags: {},
+    disabled: {},
+    clicked: null,
+    hovered: null
   },
-  typeDisabled: {}
+  nodeType: {
+    ids: ['task', 'data', 'parameters'],
+    name: {
+      data: 'Datasets',
+      task: 'Nodes',
+      parameters: 'Parameters'
+    },
+    disabled: {}
+  },
+  edge: {
+    ids: [],
+    sources: {},
+    targets: {}
+  },
+  tag: {
+    ids: [],
+    name: {},
+    active: {},
+    enabled: {}
+  }
 });
 
 /**
@@ -84,7 +86,7 @@ const getInitialState = (props = {}) => {
 
   // Load properties from localStorage if defined, else use defaults
   const localStorageState = loadState();
-  const { textLabels = true, typeDisabled = {} } = localStorageState;
+  const { textLabels = true, nodeTypeDisabled } = localStorageState;
   const theme = props.theme || localStorageState.theme || 'dark';
 
   const visible = Object.assign(
@@ -92,14 +94,17 @@ const getInitialState = (props = {}) => {
     props.visible
   );
 
+  if (nodeTypeDisabled) {
+    pipelineData.nodeType.disabled = nodeTypeDisabled;
+  }
+
   return {
     ...pipelineData,
     chartSize: {},
     fontLoaded: false,
     textLabels,
     visible,
-    theme,
-    typeDisabled
+    theme
   };
 };
 

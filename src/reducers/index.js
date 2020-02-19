@@ -1,98 +1,59 @@
+import { combineReducers } from 'redux';
+import node from './nodes';
+import tag from './tags';
+import nodeType from './node-type';
 import {
   RESET_DATA,
-  TOGGLE_NODE_CLICKED,
-  TOGGLE_NODES_DISABLED,
-  TOGGLE_NODE_HOVERED,
-  TOGGLE_TAG_ACTIVE,
-  TOGGLE_TAG_FILTER,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
-  TOGGLE_TYPE_DISABLED,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED
 } from '../actions';
 
-function reducer(state = {}, action) {
-  const updateState = newState => Object.assign({}, state, newState);
-
-  switch (action.type) {
-    case RESET_DATA:
-      return updateState(action.data);
-
-    case TOGGLE_NODE_CLICKED: {
-      return updateState({
-        nodeClicked: action.nodeClicked
-      });
-    }
-
-    case TOGGLE_NODES_DISABLED: {
-      return updateState({
-        nodeDisabled: action.nodeIDs.reduce(
-          (nodeDisabled, id) =>
-            Object.assign({}, nodeDisabled, {
-              [id]: action.isDisabled
-            }),
-          state.nodeDisabled
-        )
-      });
-    }
-
-    case TOGGLE_NODE_HOVERED: {
-      return updateState({
-        nodeHovered: action.nodeHovered
-      });
-    }
-
-    case TOGGLE_TEXT_LABELS:
-      return updateState({
-        textLabels: action.textLabels
-      });
-
-    case TOGGLE_TAG_ACTIVE: {
-      return updateState({
-        tagActive: Object.assign({}, state.tagActive, {
-          [action.tagID]: action.active
-        })
-      });
-    }
-
-    case TOGGLE_TAG_FILTER: {
-      return updateState({
-        tagEnabled: Object.assign({}, state.tagEnabled, {
-          [action.tagID]: action.enabled
-        })
-      });
-    }
-
-    case TOGGLE_THEME: {
-      return updateState({
-        theme: action.theme
-      });
-    }
-
-    case TOGGLE_TYPE_DISABLED: {
-      return updateState({
-        typeDisabled: Object.assign({}, state.typeDisabled, {
-          [action.typeID]: action.disabled
-        })
-      });
-    }
-
-    case UPDATE_CHART_SIZE: {
-      return updateState({
-        chartSize: action.chartSize
-      });
-    }
-
-    case UPDATE_FONT_LOADED: {
-      return updateState({
-        fontLoaded: action.fontLoaded
-      });
-    }
-
-    default:
-      return state;
+/**
+ * Create a generic reducer
+ * @param {string} type Action type
+ * @param {string} key Action payload key
+ * @param {*} initialState Default state
+ * @return {*} Updated state
+ */
+const createReducer = (type, key, initialState) => (
+  state = initialState,
+  action
+) => {
+  if (action.type === type) {
+    return action[key];
   }
+  return state;
+};
+
+/**
+ * Reset/update application-wide data
+ * @param {Object} state Complete app state
+ * @param {Object} action Redux action
+ * @return {Object} Updated(?) state
+ */
+function resetDataReducer(state = {}, action) {
+  if (action.type === RESET_DATA) {
+    return Object.assign({}, state, action.data);
+  }
+  return state;
 }
 
-export default reducer;
+const combinedReducer = combineReducers({
+  node,
+  nodeType,
+  tag,
+  edge: (state = {}) => state,
+  id: (state = null) => state,
+  visible: (state = {}) => state,
+  chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
+  fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
+  textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),
+  theme: createReducer(TOGGLE_THEME, 'theme', 'dark')
+});
+
+const rootReducer = (state, action) =>
+  resetDataReducer(combinedReducer(state, action), action);
+
+export default rootReducer;

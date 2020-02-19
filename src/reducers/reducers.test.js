@@ -6,8 +6,8 @@ import * as action from '../actions';
 import normalizeData from '../store/normalize-data';
 
 describe('Reducer', () => {
-  it('should return the initial state', () => {
-    expect(reducer(undefined, {})).toEqual({});
+  it('should return an Object', () => {
+    expect(reducer(undefined, {})).toEqual(expect.any(Object));
   });
 
   describe('RESET_DATA', () => {
@@ -36,7 +36,7 @@ describe('Reducer', () => {
         type: action.TOGGLE_NODE_CLICKED,
         nodeClicked
       });
-      expect(newState.nodeClicked).toEqual(nodeClicked);
+      expect(newState.node.clicked).toEqual(nodeClicked);
     });
   });
 
@@ -47,7 +47,7 @@ describe('Reducer', () => {
         type: action.TOGGLE_NODE_HOVERED,
         nodeHovered
       });
-      expect(newState.nodeHovered).toEqual(nodeHovered);
+      expect(newState.node.hovered).toEqual(nodeHovered);
     });
   });
 
@@ -58,7 +58,7 @@ describe('Reducer', () => {
         nodeIDs: ['123', 'abc'],
         isDisabled: true
       });
-      expect(newState.nodeDisabled).toEqual({ '123': true, abc: true });
+      expect(newState.node.disabled).toEqual({ '123': true, abc: true });
     });
   });
 
@@ -80,7 +80,7 @@ describe('Reducer', () => {
         tagID: 'huge',
         active: true
       });
-      expect(newState.tagActive).toEqual({ huge: true });
+      expect(newState.tag.active).toEqual({ huge: true });
     });
   });
 
@@ -91,7 +91,7 @@ describe('Reducer', () => {
         tagID: 'small',
         enabled: true
       });
-      expect(newState.tagEnabled).toEqual({ small: true });
+      expect(newState.tag.enabled).toEqual({ small: true });
     });
   });
 
@@ -112,7 +112,7 @@ describe('Reducer', () => {
         typeID: '123',
         disabled: true
       });
-      expect(newState.typeDisabled).toEqual({ 123: true });
+      expect(newState.nodeType.disabled).toEqual({ 123: true });
     });
   });
 

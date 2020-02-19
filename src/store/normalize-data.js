@@ -26,15 +26,15 @@ const getEdgeID = (source, target) => [source, target].join('|');
  */
 const addNode = state => node => {
   const { id } = node;
-  if (state.nodeName[id]) {
+  if (state.node.name[id]) {
     return;
   }
-  state.nodes.push(id);
-  state.nodeName[id] = node.name;
-  state.nodeFullName[id] = node.full_name || node.name;
-  state.nodeType[id] = node.type;
-  state.nodeIsParam[id] = node.type === 'parameters';
-  state.nodeTags[id] = node.tags || [];
+  state.node.ids.push(id);
+  state.node.name[id] = node.name;
+  state.node.fullName[id] = node.full_name || node.name;
+  state.node.type[id] = node.type;
+  state.node.isParam[id] = node.type === 'parameters';
+  state.node.tags[id] = node.tags || [];
 };
 
 /**
@@ -44,12 +44,12 @@ const addNode = state => node => {
  */
 const addEdge = state => ({ source, target }) => {
   const id = getEdgeID(source, target);
-  if (state.edges.includes(id)) {
+  if (state.edge.ids.includes(id)) {
     return;
   }
-  state.edges.push(id);
-  state.edgeSources[id] = source;
-  state.edgeTargets[id] = target;
+  state.edge.ids.push(id);
+  state.edge.sources[id] = source;
+  state.edge.targets[id] = target;
 };
 
 /**
@@ -58,8 +58,8 @@ const addEdge = state => ({ source, target }) => {
  */
 const addTag = state => tag => {
   const { id } = tag;
-  state.tags.push(id);
-  state.tagName[id] = tag.name;
+  state.tag.ids.push(id);
+  state.tag.name[id] = tag.name;
 };
 
 /**
@@ -71,7 +71,9 @@ const formatData = data => {
   const state = getInitialPipelineState();
 
   if (validateInput(data)) {
-    state.id = data.schema_id;
+    if (data.schema_id) {
+      state.id = data.schema_id;
+    }
     data.nodes.forEach(addNode(state));
     data.edges.forEach(addEdge(state));
     data.tags.forEach(addTag(state));
