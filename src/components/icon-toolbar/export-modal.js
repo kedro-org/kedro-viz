@@ -7,12 +7,13 @@ import downloadSvg, { downloadPng } from 'svg-crowbar';
 
 /**
  * Handle onClick for the SVG/PNG download button
+ * @param {Function} download SVG-crowbar function to download SVG or PNG
  * @param {string} format Must be 'svg' or 'png'
  * @param {number} param.width Graph width
  * @param {number} param.height Graph height
  * @return {Function} onClick handler
  */
-export const exportGraph = (format, { width, height }) => {
+export const exportGraph = (download, format, { width, height }) => {
   const svg = document.querySelector('#pipeline-graph');
   // Create clone of graph SVG to avoid breaking the original
   const clone = svg.parentNode.appendChild(svg.cloneNode(true));
@@ -45,11 +46,8 @@ export const exportGraph = (format, { width, height }) => {
   clone.prepend(style);
 
   // Download SVG/PNG
-  const download = {
-    png: downloadPng,
-    svg: downloadSvg
-  };
-  download[format](clone, 'kedro-pipeline');
+  download(clone, 'kedro-pipeline');
+
   // Delete cloned SVG
   svg.parentNode.removeChild(clone);
 };
@@ -67,7 +65,7 @@ const ExportModal = ({ graphSize, theme, toggleModal, visible }) => (
       <Button
         theme={theme}
         onClick={() => {
-          exportGraph('png', graphSize);
+          exportGraph(downloadPng, 'png', graphSize);
           toggleModal(false);
         }}>
         Download PNG
@@ -75,7 +73,7 @@ const ExportModal = ({ graphSize, theme, toggleModal, visible }) => (
       <Button
         theme={theme}
         onClick={() => {
-          exportGraph('svg', graphSize);
+          exportGraph(downloadSvg, 'svg', graphSize);
           toggleModal(false);
         }}>
         Download SVG
