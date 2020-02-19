@@ -1,28 +1,31 @@
 import animals from '../utils/data/animals.mock';
 import {
   RESET_DATA,
-  TOGGLE_NODE_CLICKED,
-  TOGGLE_NODES_DISABLED,
-  TOGGLE_NODE_HOVERED,
-  TOGGLE_TAG_ACTIVE,
-  TOGGLE_TAG_FILTER,
-  TOGGLE_THEME,
-  TOGGLE_TYPE_DISABLED,
   TOGGLE_TEXT_LABELS,
+  TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
   resetData,
-  toggleNodeClicked,
-  toggleNodesDisabled,
-  toggleNodeHovered,
   toggleTextLabels,
-  toggleTagActive,
   toggleTheme,
-  toggleTypeDisabled,
-  toggleTagFilter,
   updateChartSize,
   updateFontLoaded
 } from '../actions';
+import {
+  TOGGLE_NODE_CLICKED,
+  TOGGLE_NODES_DISABLED,
+  TOGGLE_NODE_HOVERED,
+  toggleNodeClicked,
+  toggleNodesDisabled,
+  toggleNodeHovered
+} from '../actions/nodes';
+import {
+  TOGGLE_TAG_ACTIVE,
+  TOGGLE_TAG_FILTER,
+  toggleTagActive,
+  toggleTagFilter
+} from '../actions/tags';
+import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
 describe('actions', () => {
   it('should create an action to reset pipeline data', () => {

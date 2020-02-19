@@ -9,13 +9,13 @@ import {
   getNodeSize,
   getVisibleNodes
 } from './nodes';
+import { toggleTextLabels } from '../actions';
 import {
   toggleNodeClicked,
   toggleNodeHovered,
-  toggleNodesDisabled,
-  toggleTagFilter,
-  toggleTextLabels
-} from '../actions';
+  toggleNodesDisabled
+} from '../actions/nodes';
+import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
 
 const getNodeIDs = state => state.node.ids;

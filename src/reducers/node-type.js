@@ -1,4 +1,4 @@
-import { TOGGLE_TYPE_DISABLED } from '../actions';
+import { TOGGLE_TYPE_DISABLED } from '../actions/node-type';
 
 function nodeTypeReducer(nodeTypeState = {}, action) {
   switch (action.type) {

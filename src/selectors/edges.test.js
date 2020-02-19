@@ -5,7 +5,7 @@ import {
   getTransitiveEdges,
   getVisibleEdges
 } from './edges';
-import { toggleNodesDisabled } from '../actions';
+import { toggleNodesDisabled } from '../actions/nodes';
 import reducer from '../reducers';
 
 const getNodeIDs = state => state.node.ids;

@@ -2,7 +2,7 @@ import {
   TOGGLE_NODE_CLICKED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED
-} from '../actions';
+} from '../actions/nodes';
 
 function nodeReducer(nodeState = {}, action) {
   const updateState = newState => Object.assign({}, nodeState, newState);
