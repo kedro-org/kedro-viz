@@ -1,25 +1,62 @@
 # Upcoming release:
 
-<!-- Add release notes for the upcoming release here, under the
-'Major features and improvements' and/or 'Bug fixes and other changes' headings: -->
+<!--
+Use the sections below to add notes for the next release.
+
+Please follow the established format:
+- Keep each note concise - ideally commit title length
+- Use present tense (e.g. 'Add new feature')
+- Include the ID number for the related PR (or PRs) in parentheses
+-->
 
 ## Major features and improvements
 
-- Promote viz from project specific commands to global commands.
-- Enable `kedro viz --load-file` outside of a Kedro project.
-- Added `--pipeline` option to visualize modular pipeline (#93)
-- Added `--env` option to pass configuration environment (#93)
+<!-- Add release notes for the upcoming release here -->
 
 ## Bug fixes and other changes
-- Fixed the backward-compatibility with Kedro 0.14.* (#93)
-- Updated README to list all available CLI options (#105)
-- `%run_viz` magic now dynamically allocates the first available port to Viz process starting from 4141 (#109)
+
+<!-- Add release notes for the upcoming release here -->
+
+# Release 3.2.0:
+
+## Major features and improvements
+
+- Dynamically allocate port number for the viz subprocess created by `%run_viz` if 4141 is taken (#109)
+- Redesign sidebar list to group nodes by type (#96)
+- Add `--pipeline` option to visualize modular pipeline (#93)
+- Add `--env` option to pass configuration environment (#93)
+- Fix backward-compatibility with Kedro 0.14.* (#93)
+- Promote Kedro Viz commands from project specific to global commands (#91)
+- Allow users to run `kedro viz --load-file` outside of a Kedro project (#91)
+
+## Bug fixes and other changes
+
+- Fix PNG exports (#117)
+- Refactor JS actions (#115)
+- Update & move CODEOWNERS (#116)
+- Update year in license header (#114)
+- Refactor JS reducers and state shape (#113)
+- Fix Trufflehog secret scan by pinning gitdb2 (#112)
+- Add "upcoming release" header back in RELEASE.md (#110)
+- Fix Jest+CircleCI test memory errors (#108)
+- Improve JavaScript test coverage (#107)
+- Refactor JS store (#106)
+- Update README to list all available CLI options (#105)
+- Use mocker instead of mock in Python unit tests (#104)
+- Lint and format Sass with Stylelint (#103)
+- Add e2e-tests to check backward-compatibility for Kedro 0.15.0 and latest (#99)
+- Add secret scan CircleCI step (#98)
+- Update CLI screenshot in README (#95)
+- Increase Python test coverage to 100% (#94)
+- Update CI config for daily run (#90)
+- Snyk fix for vulnerabilities (#87, #92, #101)
+- Update the PR template (#46, #111)
 
 # Release 3.1.0:
 
 ## Major features and improvements
 
-- **BREAKING CHANGE:**  Kedro<0.15.0 no longer works with this version of Kedro-Viz (#72)
+- **BREAKING CHANGE:** Kedro<0.15.0 no longer works with this version of Kedro-Viz (#72)
 - Allow users to export graph as a transparent SVG/PNG image (#82)
 - Add theme prop and icon button visibility prop (#80)
 - Rename `get_data_from_kedro` to `format_pipeline_data` (#72)
