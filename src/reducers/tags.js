@@ -1,4 +1,4 @@
-import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions';
+import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
 
 function tagReducer(tagState = {}, action) {
   const updateState = newState => Object.assign({}, tagState, newState);

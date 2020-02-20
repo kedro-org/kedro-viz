@@ -2,8 +2,21 @@ import animals from '../utils/data/animals.mock';
 import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
-import * as action from '../actions';
 import normalizeData from '../store/normalize-data';
+import {
+  RESET_DATA,
+  TOGGLE_TEXT_LABELS,
+  TOGGLE_THEME,
+  UPDATE_CHART_SIZE,
+  UPDATE_FONT_LOADED
+} from '../actions';
+import {
+  TOGGLE_NODE_CLICKED,
+  TOGGLE_NODES_DISABLED,
+  TOGGLE_NODE_HOVERED
+} from '../actions/nodes';
+import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
+import { TOGGLE_TYPE_DISABLED } from '../actions/node-type';
 
 describe('Reducer', () => {
   it('should return an Object', () => {
@@ -14,7 +27,7 @@ describe('Reducer', () => {
     it('should return the same data when given the same input', () => {
       expect(
         reducer(mockState.lorem, {
-          type: action.RESET_DATA,
+          type: RESET_DATA,
           data: normalizeData(loremIpsum)
         })
       ).toEqual(mockState.lorem);
@@ -22,7 +35,7 @@ describe('Reducer', () => {
 
     it('should reset the state with new data', () => {
       const newState = reducer(mockState.lorem, {
-        type: action.RESET_DATA,
+        type: RESET_DATA,
         data: normalizeData(animals)
       });
       expect(newState).toEqual(mockState.animals);
@@ -33,7 +46,7 @@ describe('Reducer', () => {
     it('should toggle the given node active', () => {
       const nodeClicked = 'abc123';
       const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_NODE_CLICKED,
+        type: TOGGLE_NODE_CLICKED,
         nodeClicked
       });
       expect(newState.node.clicked).toEqual(nodeClicked);
@@ -44,7 +57,7 @@ describe('Reducer', () => {
     it('should toggle the given node active', () => {
       const nodeHovered = 'abc123';
       const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_NODE_HOVERED,
+        type: TOGGLE_NODE_HOVERED,
         nodeHovered
       });
       expect(newState.node.hovered).toEqual(nodeHovered);
@@ -54,7 +67,7 @@ describe('Reducer', () => {
   describe('TOGGLE_NODES_DISABLED', () => {
     it('should toggle the given nodes disabled', () => {
       const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_NODES_DISABLED,
+        type: TOGGLE_NODES_DISABLED,
         nodeIDs: ['123', 'abc'],
         isDisabled: true
       });
@@ -65,7 +78,7 @@ describe('Reducer', () => {
   describe('TOGGLE_TEXT_LABELS', () => {
     it('should toggle the value of textLabels', () => {
       const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_TEXT_LABELS,
+        type: TOGGLE_TEXT_LABELS,
         textLabels: true
       });
       expect(mockState.lorem.textLabels).toBe(true);
@@ -76,7 +89,7 @@ describe('Reducer', () => {
   describe('TOGGLE_TAG_ACTIVE', () => {
     it('should toggle the given tag active', () => {
       const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_TAG_ACTIVE,
+        type: TOGGLE_TAG_ACTIVE,
         tagID: 'huge',
         active: true
       });
@@ -87,7 +100,7 @@ describe('Reducer', () => {
   describe('TOGGLE_TAG_FILTER', () => {
     it('should disable a given tag', () => {
       const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_TAG_FILTER,
+        type: TOGGLE_TAG_FILTER,
         tagID: 'small',
         enabled: true
       });
@@ -98,7 +111,7 @@ describe('Reducer', () => {
   describe('TOGGLE_THEME', () => {
     it('should toggle the theme to light', () => {
       const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_THEME,
+        type: TOGGLE_THEME,
         theme: 'light'
       });
       expect(newState.theme).toBe('light');
@@ -108,7 +121,7 @@ describe('Reducer', () => {
   describe('TOGGLE_TYPE_DISABLED', () => {
     it('should toggle whether a type is disabled', () => {
       const newState = reducer(mockState.lorem, {
-        type: action.TOGGLE_TYPE_DISABLED,
+        type: TOGGLE_TYPE_DISABLED,
         typeID: '123',
         disabled: true
       });
@@ -119,7 +132,7 @@ describe('Reducer', () => {
   describe('UPDATE_CHART_SIZE', () => {
     it("should update the chart's dimensions", () => {
       const newState = reducer(mockState.lorem, {
-        type: action.UPDATE_CHART_SIZE,
+        type: UPDATE_CHART_SIZE,
         chartSize: document.body.getBoundingClientRect()
       });
       expect(newState.chartSize).toEqual({
@@ -136,7 +149,7 @@ describe('Reducer', () => {
   describe('UPDATE_FONT_LOADED', () => {
     it('should update the state when the webfont is loaded', () => {
       const newState = reducer(mockState.lorem, {
-        type: action.UPDATE_FONT_LOADED,
+        type: UPDATE_FONT_LOADED,
         fontLoaded: true
       });
       expect(newState.fontLoaded).toBe(true);

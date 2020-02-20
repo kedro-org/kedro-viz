@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { Flipped } from 'react-flip-toolkit';
 import Checkbox from '@quantumblack/kedro-ui/lib/components/checkbox';
-import { toggleTypeDisabled } from '../../actions';
+import { toggleTypeDisabled } from '../../actions/node-type';
 
 export const NodeListGroup = ({
   children,

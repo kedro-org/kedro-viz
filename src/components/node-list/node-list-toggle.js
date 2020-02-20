@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { toggleNodesDisabled } from '../../actions';
+import { toggleNodesDisabled } from '../../actions/nodes';
 
 const NodeListToggleAll = ({ onToggleNodesDisabled, nodeIDs }) => (
   <div className="kedro">

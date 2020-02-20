@@ -1,7 +1,7 @@
 import { getLinkedNodes } from './linked-nodes';
 import { getLayoutNodes } from './layout';
 import { mockState } from '../utils/state.mock';
-import { toggleNodeClicked } from '../actions';
+import { toggleNodeClicked } from '../actions/nodes';
 import reducer from '../reducers';
 
 describe('getLinkedNodes function', () => {
