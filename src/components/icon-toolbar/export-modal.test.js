@@ -22,16 +22,25 @@ describe('IconToolbar', () => {
   });
 
   describe('exportGraph', () => {
-    document.body.innerHTML = `
-      <svg id="pipeline-graph">
-        <g id="zoom-wrapper" />
-      </svg>
-    `;
-    const downloadFn = jest.fn();
     const graphSize = { width: 1000, height: 500 };
-    exportGraph(downloadFn, graphSize);
 
-    it('downloads a screenshot', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <svg id="pipeline-graph">
+          <g id="zoom-wrapper" />
+        </svg>
+      `;
+    });
+
+    it('downloads an SVG', () => {
+      const downloadFn = jest.fn();
+      exportGraph(downloadFn, 'svg', graphSize);
+      expect(downloadFn.mock.calls.length).toBe(1);
+    });
+
+    it('downloads a PNG', () => {
+      const downloadFn = jest.fn();
+      exportGraph(downloadFn, 'png', graphSize);
       expect(downloadFn.mock.calls.length).toBe(1);
     });
 
