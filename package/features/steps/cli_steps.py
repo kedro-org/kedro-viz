@@ -1,4 +1,4 @@
-# Copyright 2018-2019 QuantumBlack Visual Analytics Limited
+# Copyright 2020 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -88,6 +88,21 @@ def exec_kedro_target_checked(context, command):
         assert False
 
 
+@given('I have installed kedro version "{version}"')
+def install_kedro(context, version):
+    """Execute Kedro command and check the status."""
+    if version == "latest":
+        cmd = [context.pip, "install", "-U", "kedro"]
+    else:
+        cmd = [context.pip, "install", "kedro=={}".format(version)]
+    res = run(cmd, env=context.env)
+
+    if res.returncode != OK_EXIT_CODE:
+        print(res.stdout)
+        print(res.stderr)
+        assert False
+
+
 @when('I execute the kedro jupyter command "{command}"')
 def exec_notebook(context, command):
     """Execute Kedro Jupyter target."""
@@ -139,10 +154,9 @@ def _check_kedroviz_running(context):
         context (behave.runner.Context): Test context
     """
     data_json = json.loads(download_url("http://localhost:4141/api/nodes.json"))
-
     try:
         assert context.result.poll() is None
-        assert data_json["nodes"][0]["full_name"] == "predict"
+        assert "predict" in data_json["nodes"][0]["full_name"]
     finally:
         context.result.terminate()
 

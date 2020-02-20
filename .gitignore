@@ -42,3 +42,15 @@ dist/
 __pycache__/
 
 package/*/html/
+package/*.log
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/

@@ -3,7 +3,8 @@ import $ from 'cheerio';
 import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
-const getNodes = state => state.nodes;
+const getNodeIDs = state => state.node.ids;
+const getNodeName = state => state.node.name;
 
 describe('FlowChart', () => {
   it('renders without crashing', () => {
@@ -16,8 +17,8 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(<FlowChart />);
     const nodes = wrapper.render().find('.node');
     const nodeNames = nodes.map((i, el) => $(el).text()).get();
-    const mockNodes = getNodes(mockState.lorem);
-    const mockNodeNames = mockNodes.map(d => mockState.lorem.nodeName[d]);
+    const mockNodes = getNodeIDs(mockState.lorem);
+    const mockNodeNames = mockNodes.map(d => getNodeName(mockState.lorem)[d]);
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
   });
@@ -102,7 +103,6 @@ describe('FlowChart', () => {
       linkedNodes: expect.any(Object),
       centralNode: null,
       textLabels: expect.any(Boolean),
-      view: expect.stringMatching(/combined|data|text/),
       zoom: expect.objectContaining({
         scale: expect.any(Number),
         translateX: expect.any(Number),

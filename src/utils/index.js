@@ -1,5 +1,3 @@
-import config from '../config';
-
 //--- Useful JS utility functions ---//
 
 /**
@@ -70,35 +68,3 @@ export const getRandomName = (n, join = '_') =>
  * @param {Array} arr The array to remove duplicate values from
  */
 export const unique = (d, i, arr) => arr.indexOf(d) === i;
-
-/**
- * Retrieve state data from localStorage
- * @return {Object} State
- */
-export const loadState = () => {
-  const { localStorageName } = config();
-  try {
-    const serializedState = window.localStorage.getItem(localStorageName);
-    if (serializedState === null) {
-      return {};
-    }
-    return JSON.parse(serializedState);
-  } catch (err) {
-    console.error(err);
-    return {};
-  }
-};
-
-/**
- * Save updated state to localStorage
- * @param {Object} state New state object
- */
-export const saveState = state => {
-  const { localStorageName } = config();
-  try {
-    const serializedState = JSON.stringify(state);
-    window.localStorage.setItem(localStorageName, serializedState);
-  } catch (err) {
-    console.error(err);
-  }
-};

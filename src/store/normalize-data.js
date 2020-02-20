@@ -1,3 +1,4 @@
+import { getInitialPipelineState } from '../store/initial-state';
 /**
  * Check whether data is in expected format
  * @param {Object} data - The parsed data input
@@ -18,35 +19,6 @@ const validateInput = data => {
 const getEdgeID = (source, target) => [source, target].join('|');
 
 /**
- * Generate a new default pipeline state instance
- * @return {Object} Initial state
- */
-const createPipelineState = () => ({
-  id: null,
-  // Nodes
-  nodes: [],
-  nodeName: {},
-  nodeFullName: {},
-  nodeType: {},
-  nodeIsParam: {},
-  nodeTags: {},
-  nodeDisabled: {},
-  nodeClicked: null,
-  nodeHovered: null,
-  // Edges
-  edges: [],
-  edgeSources: {},
-  edgeTargets: {},
-  edgeActive: {},
-  edgeDisabled: {},
-  // Tags
-  tags: [],
-  tagName: {},
-  tagActive: {},
-  tagEnabled: {}
-});
-
-/**
  * Add a new node if it doesn't already exist
  * @param {string} name - Default node name
  * @param {string} type - 'data' or 'task'
@@ -54,15 +26,15 @@ const createPipelineState = () => ({
  */
 const addNode = state => node => {
   const { id } = node;
-  if (state.nodeName[id]) {
+  if (state.node.name[id]) {
     return;
   }
-  state.nodes.push(id);
-  state.nodeName[id] = node.name;
-  state.nodeFullName[id] = node.full_name || node.name;
-  state.nodeType[id] = node.type;
-  state.nodeIsParam[id] = node.type === 'parameters';
-  state.nodeTags[id] = node.tags || [];
+  state.node.ids.push(id);
+  state.node.name[id] = node.name;
+  state.node.fullName[id] = node.full_name || node.name;
+  state.node.type[id] = node.type;
+  state.node.isParam[id] = node.type === 'parameters';
+  state.node.tags[id] = node.tags || [];
 };
 
 /**
@@ -72,12 +44,12 @@ const addNode = state => node => {
  */
 const addEdge = state => ({ source, target }) => {
   const id = getEdgeID(source, target);
-  if (state.edges.includes(id)) {
+  if (state.edge.ids.includes(id)) {
     return;
   }
-  state.edges.push(id);
-  state.edgeSources[id] = source;
-  state.edgeTargets[id] = target;
+  state.edge.ids.push(id);
+  state.edge.sources[id] = source;
+  state.edge.targets[id] = target;
 };
 
 /**
@@ -86,20 +58,22 @@ const addEdge = state => ({ source, target }) => {
  */
 const addTag = state => tag => {
   const { id } = tag;
-  state.tags.push(id);
-  state.tagName[id] = tag.name;
+  state.tag.ids.push(id);
+  state.tag.name[id] = tag.name;
 };
 
 /**
  * Convert the pipeline data into a normalised state object
  * @param {Object} data Raw unformatted data input
- * @return {Object} Formatted, normalised state
+ * @return {Object} Formatted, normalized state
  */
 const formatData = data => {
-  const state = createPipelineState();
+  const state = getInitialPipelineState();
 
   if (validateInput(data)) {
-    state.id = data.schema_id;
+    if (data.schema_id) {
+      state.id = data.schema_id;
+    }
     data.nodes.forEach(addNode(state));
     data.edges.forEach(addEdge(state));
     data.tags.forEach(addTag(state));

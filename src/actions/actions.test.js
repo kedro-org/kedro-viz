@@ -1,41 +1,33 @@
 import animals from '../utils/data/animals.mock';
 import {
-  CHANGE_VIEW,
   RESET_DATA,
+  TOGGLE_TEXT_LABELS,
+  TOGGLE_THEME,
+  UPDATE_CHART_SIZE,
+  UPDATE_FONT_LOADED,
+  resetData,
+  toggleTextLabels,
+  toggleTheme,
+  updateChartSize,
+  updateFontLoaded
+} from '../actions';
+import {
   TOGGLE_NODE_CLICKED,
-  TOGGLE_NODE_DISABLED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED,
-  TOGGLE_PARAMETERS,
+  toggleNodeClicked,
+  toggleNodesDisabled,
+  toggleNodeHovered
+} from '../actions/nodes';
+import {
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
-  TOGGLE_THEME,
-  TOGGLE_TEXT_LABELS,
-  UPDATE_CHART_SIZE,
-  changeView,
-  resetData,
-  toggleNodeClicked,
-  toggleNodeDisabled,
-  toggleNodesDisabled,
-  toggleNodeHovered,
-  toggleParameters,
-  toggleTextLabels,
   toggleTagActive,
-  toggleTheme,
-  toggleTagFilter,
-  updateChartSize
-} from '../actions';
+  toggleTagFilter
+} from '../actions/tags';
+import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
 describe('actions', () => {
-  it('should create an action to change the view', () => {
-    const view = 'combined';
-    const expectedAction = {
-      type: CHANGE_VIEW,
-      view
-    };
-    expect(changeView(view)).toEqual(expectedAction);
-  });
-
   it('should create an action to reset pipeline data', () => {
     const expectedAction = {
       type: RESET_DATA,
@@ -62,17 +54,6 @@ describe('actions', () => {
     expect(toggleNodeHovered(nodeHovered)).toEqual(expectedAction);
   });
 
-  it('should create an action to toggle whether a node is disabled', () => {
-    const nodeID = '12367890';
-    const isDisabled = true;
-    const expectedAction = {
-      type: TOGGLE_NODE_DISABLED,
-      nodeID,
-      isDisabled
-    };
-    expect(toggleNodeDisabled(nodeID, isDisabled)).toEqual(expectedAction);
-  });
-
   it('should create an action to toggle whether somes nodes are disabled', () => {
     const nodeIDs = ['12367890', '0987654321', 'qwertyuiop'];
     const isDisabled = false;
@@ -82,15 +63,6 @@ describe('actions', () => {
       isDisabled
     };
     expect(toggleNodesDisabled(nodeIDs, isDisabled)).toEqual(expectedAction);
-  });
-
-  it('should create an action to toggle whether to show Parameters on/off', () => {
-    const parameters = false;
-    const expectedAction = {
-      type: TOGGLE_PARAMETERS,
-      parameters
-    };
-    expect(toggleParameters(parameters)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether to show text labels on/off', () => {
@@ -133,6 +105,17 @@ describe('actions', () => {
     expect(toggleTheme(theme)).toEqual(expectedAction);
   });
 
+  it('should create an action to toggle whether a type is disabled', () => {
+    const typeID = '123';
+    const disabled = true;
+    const expectedAction = {
+      type: TOGGLE_TYPE_DISABLED,
+      typeID,
+      disabled
+    };
+    expect(toggleTypeDisabled(typeID, disabled)).toEqual(expectedAction);
+  });
+
   it('should create an action to update the chart size', () => {
     const chartSize = {
       x: 10,
@@ -148,5 +131,14 @@ describe('actions', () => {
       chartSize
     };
     expect(updateChartSize(chartSize)).toEqual(expectedAction);
+  });
+
+  it('should create an action to update the state when the webfont has loaded', () => {
+    const fontLoaded = true;
+    const expectedAction = {
+      type: UPDATE_FONT_LOADED,
+      fontLoaded
+    };
+    expect(updateFontLoaded(fontLoaded)).toEqual(expectedAction);
   });
 });

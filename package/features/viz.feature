@@ -1,4 +1,4 @@
-# Copyright 2018-2019 QuantumBlack Visual Analytics Limited
+# Copyright 2020 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,12 +28,29 @@
 
 
 Feature: Viz plugin in new project
-
     Background:
         Given I have prepared a config file with example code
+
+    Scenario: Execute viz with Kedro 0.14.0
+        Given I have installed kedro version "0.14.0"
         And I have run a non-interactive kedro new
+        When I execute the kedro viz command "viz"
+        Then kedro-viz should start successfully
 
+    Scenario: Execute viz with Kedro 0.14.3
+        Given I have installed kedro version "0.14.3"
+        And I have run a non-interactive kedro new
+        When I execute the kedro viz command "viz"
+        Then kedro-viz should start successfully
 
-    Scenario: Execute viz target
+    Scenario: Execute viz with Kedro 0.15.0
+        Given I have installed kedro version "0.15.0"
+        And I have run a non-interactive kedro new
+        When I execute the kedro viz command "viz"
+        Then kedro-viz should start successfully
+
+    Scenario: Execute viz with latest Kedro
+        Given I have installed kedro version "latest"
+        And I have run a non-interactive kedro new
         When I execute the kedro viz command "viz"
         Then kedro-viz should start successfully

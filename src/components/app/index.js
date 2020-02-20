@@ -1,40 +1,65 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import store from '../../store';
-import { resetData } from '../../actions';
+import configureStore from '../../store';
+import { resetData, updateFontLoaded } from '../../actions';
+import checkFontLoaded from '../../actions/check-font-loaded';
 import Wrapper from '../wrapper';
-import formatData from '../../utils/format-data';
-import getInitialState from './initial-state';
-import loadData from './load-data';
-import checkFontLoaded from './check-font-loaded';
+import getInitialState from '../../store/initial-state';
+import loadData from '../../store/load-data';
+import normalizeData from '../../store/normalize-data';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
 import './app.css';
 
 /**
- * Main wrapper component. Handles store, and loads/formats pipeline data
+ * Main wrapper component. Intialises the Redux store
  */
 class App extends React.Component {
   constructor(props) {
     super(props);
-    const pipelineData = loadData(props.data, this.resetStoreData.bind(this));
-    const initialState = getInitialState(pipelineData, props);
-    this.store = store(initialState);
-    checkFontLoaded(this.store);
+    const initialState = getInitialState(props);
+    this.store = configureStore(initialState);
+  }
+
+  componentDidMount() {
+    this.asyncLoadJsonData();
+    this.checkWebFontLoading();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.data.schema_id !== this.props.data.schema_id) {
-      this.resetStoreData(formatData(this.props.data));
+      this.updatePipelineData();
     }
   }
 
   /**
-   * Dispatch an action to update the store with new pipeline data
-   * @param {Object} formattedData Normalised state data
+   * Load data asynchronously from a JSON file then update the store
    */
-  resetStoreData(formattedData) {
-    this.store.dispatch(resetData(formattedData));
+  asyncLoadJsonData() {
+    if (this.props.data === 'json') {
+      loadData()
+        .then(normalizeData)
+        .then(data => {
+          this.store.dispatch(resetData(data));
+        });
+    }
+  }
+
+  /**
+   * Dispatch an action once the webfont has loaded
+   */
+  checkWebFontLoading() {
+    checkFontLoaded().then(() => {
+      this.store.dispatch(updateFontLoaded(true));
+    });
+  }
+
+  /**
+   * Dispatch an action to update the store with new pipeline data
+   */
+  updatePipelineData() {
+    const normalizedData = normalizeData(this.props.data);
+    this.store.dispatch(resetData(normalizedData));
   }
 
   render() {

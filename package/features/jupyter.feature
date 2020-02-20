@@ -1,4 +1,4 @@
-# Copyright 2018-2019 QuantumBlack Visual Analytics Limited
+# Copyright 2020 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,15 +27,15 @@
 # limitations under the License.
 
 
-Feature: Running viz in Jupyter notebook
+# Feature: Running viz in Jupyter notebook
 
-    Background:
-        Given I have prepared a config file with example code
-        And I have run a non-interactive kedro new
-        And I have executed the kedro command "install"
+#     Background:
+#         Given I have prepared a config file with example code
+#         And I have run a non-interactive kedro new
+#         And I have executed the kedro command "install"
 
-    @wip
-    Scenario: Execute viz in a notebook cell
-        When I execute the kedro jupyter command "notebook --no-browser"
-        When I execute line magic "run_viz"
-        Then kedro-viz should start successfully
+#     @wip
+#     Scenario: Execute viz in a notebook cell
+#         When I execute the kedro jupyter command "notebook --no-browser"
+#         When I execute line magic "run_viz"
+#         Then kedro-viz should start successfully

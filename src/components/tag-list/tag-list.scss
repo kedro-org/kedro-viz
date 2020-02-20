@@ -7,17 +7,17 @@
     margin: 12px;
 
     .kui-switch {
-      margin: 0;
       width: 100%;
+      margin: 0;
 
       label {
         max-width: 100%;
 
         span {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
           max-width: calc(100% - 35px);
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
     }

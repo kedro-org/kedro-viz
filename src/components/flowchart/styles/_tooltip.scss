@@ -4,13 +4,13 @@
   position: absolute;
   top: -60px;
   left: -20px;
+  z-index: 9;
   padding: 12px 20px;
   color: white;
-  opacity: 0;
   visibility: hidden;
+  opacity: 0;
   transition: opacity ease 0.1s, visibility ease 0.1s;
   pointer-events: none;
-  z-index: 9;
 
   .kui-theme--light & {
     background: $tooltip-bg-light;
@@ -23,30 +23,30 @@
   }
 
   &.tooltip--visible {
-    opacity: 1;
     visibility: visible;
+    opacity: 1;
   }
 
   &.tooltip--right {
-    left: auto;
     right: -20px;
+    left: auto;
 
     &::before {
-      left: auto;
       right: 10px;
+      left: auto;
     }
   }
 
   &::before {
-    content: '';
     position: absolute;
     bottom: -10px;
     left: 10px;
     width: 0;
     height: 0;
+    border-color: transparent;
     border-style: solid;
     border-width: 10px 10px 0 10px;
-    border-color: transparent;
+    content: '';
 
     .kui-theme--light & {
       border-top-color: $tooltip-bg-light;

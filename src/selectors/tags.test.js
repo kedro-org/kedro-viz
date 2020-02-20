@@ -3,8 +3,8 @@ import { getTagData, getTagCount } from './tags';
 import { toggleTagFilter } from '../actions';
 import reducer from '../reducers';
 
-const getTags = state => state.tags;
-const tags = getTags(mockState.lorem);
+const getTagIDs = state => state.tag.ids;
+const tagIDs = getTagIDs(mockState.lorem);
 const tagData = getTagData(mockState.lorem);
 
 describe('Selectors', () => {
@@ -23,21 +23,21 @@ describe('Selectors', () => {
     });
 
     it('retrieves a list of tags sorted by ID name', () => {
-      expect(tagData.map(d => d.id)).toEqual(tags.sort());
+      expect(tagData.map(d => d.id)).toEqual(tagIDs.sort());
     });
   });
 
   describe('getTagCount', () => {
     const newMockState = reducer(
       mockState.lorem,
-      toggleTagFilter(tags[0], true)
+      toggleTagFilter(tagIDs[0], true)
     );
 
     it('retrieves the total and enabled number of tags', () => {
       expect(getTagCount(mockState.lorem)).toEqual(
         expect.objectContaining({
           enabled: 0,
-          total: tags.length
+          total: tagIDs.length
         })
       );
     });
@@ -46,7 +46,7 @@ describe('Selectors', () => {
       expect(getTagCount(newMockState)).toEqual(
         expect.objectContaining({
           enabled: 1,
-          total: tags.length
+          total: tagIDs.length
         })
       );
     });

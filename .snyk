@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.5
+version: v1.14.0
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'snyk:lic:npm:mdn-data:MPL-2.0':
@@ -25,13 +25,18 @@ patch:
   SNYK-JS-HTTPSPROXYAGENT-469131:
     - snyk > proxy-agent > https-proxy-agent:
         patched: '2019-10-04T00:46:16.708Z'
-      '@quantumblack/kedro-ui > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent':
-        patched: '2019-10-14T14:25:57.814Z'
     - snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
         patched: '2019-10-04T00:46:16.708Z'
-      '@quantumblack/kedro-ui > snyk > proxy-agent > https-proxy-agent':
-        patched: '2019-10-14T14:25:57.814Z'
     - '@quantumblack/kedro-ui > snyk > proxy-agent > https-proxy-agent':
         patched: '2019-10-04T00:46:16.708Z'
     - '@quantumblack/kedro-ui > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent':
         patched: '2019-10-04T00:46:16.708Z'
+    - '@quantumblack/kedro-ui > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent':
+        patched: '2019-10-14T14:25:57.814Z'
+    - '@quantumblack/kedro-ui > snyk > proxy-agent > https-proxy-agent':
+        patched: '2019-10-14T14:25:57.814Z'
+  SNYK-JS-TREEKILL-536781:
+    - snyk > snyk-sbt-plugin > tree-kill:
+        patched: '2019-12-12T00:44:17.874Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-sbt-plugin > tree-kill':
+        patched: '2019-12-12T00:44:17.874Z'

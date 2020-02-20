@@ -8,25 +8,46 @@ import downloadSvg, { downloadPng } from 'svg-crowbar';
 /**
  * Handle onClick for the SVG/PNG download button
  * @param {Function} download SVG-crowbar function to download SVG or PNG
+ * @param {string} format Must be 'svg' or 'png'
  * @param {number} param.width Graph width
  * @param {number} param.height Graph height
  * @return {Function} onClick handler
  */
-export const exportGraph = (download, { width, height }) => {
+export const exportGraph = (download, format, { width, height }) => {
   const svg = document.querySelector('#pipeline-graph');
   // Create clone of graph SVG to avoid breaking the original
   const clone = svg.parentNode.appendChild(svg.cloneNode(true));
+
   // Reset zoom/translate
+  clone.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  clone.querySelector('#zoom-wrapper').removeAttribute('transform');
+
+  // Impose a maximum size on PNGs because otherwise they break when downloading
+  if (format === 'png') {
+    const maxWidth = 5000;
+    width = Math.min(width, maxWidth);
+    height = Math.min(height, maxWidth * (height / width));
+  }
   clone.setAttribute('width', width);
   clone.setAttribute('height', height);
-  clone.querySelector('#zoom-wrapper').removeAttribute('transform');
-  // Add webfont
+
   const style = document.createElement('style');
-  style.innerHTML =
-    '@import url(https://fonts.googleapis.com/css?family=Titillium+Web:400);';
+  if (format === 'svg') {
+    // Add webfont
+    style.innerHTML =
+      '@import url(https://fonts.googleapis.com/css?family=Titillium+Web:400);';
+  } else {
+    // Add websafe fallback font
+    style.innerHTML = `.kedro {
+      font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;
+      letter-spacing: -0.4px;
+    }`;
+  }
   clone.prepend(style);
+
   // Download SVG/PNG
   download(clone, 'kedro-pipeline');
+
   // Delete cloned SVG
   svg.parentNode.removeChild(clone);
 };
@@ -44,7 +65,7 @@ const ExportModal = ({ graphSize, theme, toggleModal, visible }) => (
       <Button
         theme={theme}
         onClick={() => {
-          exportGraph(downloadPng, graphSize);
+          exportGraph(downloadPng, 'png', graphSize);
           toggleModal(false);
         }}>
         Download PNG
@@ -52,7 +73,7 @@ const ExportModal = ({ graphSize, theme, toggleModal, visible }) => (
       <Button
         theme={theme}
         onClick={() => {
-          exportGraph(downloadSvg, graphSize);
+          exportGraph(downloadSvg, 'svg', graphSize);
           toggleModal(false);
         }}>
         Download SVG

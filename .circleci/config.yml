@@ -10,107 +10,112 @@ utils:
   install_python3: &install_python3
     name: Install python3
     command: |
-        sudo apt update
-        sudo apt install python3 python3-pip
+      sudo apt update
+      sudo apt install python3 python3-pip
 
   install_python_environment: &install_python_environment
-      name: Install Python environment
-      command: |
-        # Get rid of pyenv stuff
-        sudo rm -rf .pyenv/ /opt/circleci/.pyenv/
-        # Download and install miniconda
-        curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh  > miniconda.sh
-        bash miniconda.sh -b -p $HOME/miniconda
-        # Create an anaconda virtualenv for python ${CONDA_ENV_PY_VERSION} and make that the default python interpreter
-        echo ". /home/circleci/miniconda/etc/profile.d/conda.sh" >> $BASH_ENV
-        echo "conda deactivate; conda activate kedro-viz" >> $BASH_ENV
-        . /home/circleci/miniconda/etc/profile.d/conda.sh
-        conda create --name kedro-viz python=${CONDA_ENV_PY_VERSION} -y
-        source $BASH_ENV
+    name: Install Python environment
+    command: |
+      # Get rid of pyenv stuff
+      sudo rm -rf .pyenv/ /opt/circleci/.pyenv/
+      # Download and install miniconda
+      curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh  > miniconda.sh
+      bash miniconda.sh -b -p $HOME/miniconda
+      # Create an anaconda virtualenv for python ${CONDA_ENV_PY_VERSION} and make that the default python interpreter
+      echo ". /home/circleci/miniconda/etc/profile.d/conda.sh" >> $BASH_ENV
+      echo "conda deactivate; conda activate kedro-viz" >> $BASH_ENV
+      . /home/circleci/miniconda/etc/profile.d/conda.sh
+      conda create --name kedro-viz python=${CONDA_ENV_PY_VERSION} -y
+      source $BASH_ENV
 
   install_pip_dependencies: &install_pip_dependencies
-      name: Install Pip dependencies
-      command: |
-        python -m pip install -U pip setuptools wheel
-        pip install git+https://github.com/quantumblacklabs/kedro
-        cd package && pip install -r requirements.txt -U
-        pip install -r test_requirements.txt -U
-        cd ..
+    name: Install Pip dependencies
+    command: |
+      python -m pip install -U pip setuptools wheel
+      pip install git+https://github.com/quantumblacklabs/kedro
+      cd package && pip install -r requirements.txt -U
+      pip install -r test_requirements.txt -U
+      cd ..
 
   echo_package_versions: &echo_package_versions
-      name: Echo package versions
-      command: |
-          python -V
-          pip -V
-          kedro -V
+    name: Echo package versions
+    command: |
+      python -V
+      pip -V
+      kedro -V
 
   install_node_dependencies: &install_node_dependencies
-      name: Install Node dependencies
-      command: npm ci
+    name: Install Node dependencies
+    command: npm ci
 
   run_eslint: &run_eslint
-      name: Run Eslint
-      command: npm run lint
+    name: Run Eslint
+    command: npm run lint
 
   run_javascript_tests: &run_javascript_tests
-      name: Run JavaScript tests
-      command: npm run build:css && npm test
+    name: Run JavaScript tests
+    command: npm run build:css && npm run test:ci
 
   test_lib_transpilation: &test_lib_transpilation
-      name: Test lib transpilation
-      command: npm run lib
+    name: Test lib transpilation
+    command: npm run lib
 
   run_pylint_and_flake8: &run_pylint_and_flake8
-      name: Run pylint and flake8
-      command: |
-        make pylint
+    name: Run pylint and flake8
+    command: |
+      make pylint
+
+  run_secret_scan: &run_secret_scan
+    name: Run secret scan
+    command: |
+      make secret-scan
 
   run_python_tests: &run_python_tests
-      name: Run Python tests
-      command: make pytest
+    name: Run Python tests
+    command: make pytest
 
   run_e2e_tests: &run_e2e_tests
-      name: Run all end to end tests
-      command: |
-        make e2e-tests
+    name: Run all end to end tests
+    command: |
+      make e2e-tests
 
   cleanup: &cleanup
-      name: Cleanup
-      command: make clean
+    name: Cleanup
+    command: make clean
 
   save_cache: &save_cache
-      paths:
-        - node_modules
-      key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
+    paths:
+      - node_modules
+    key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
 
   build_application: &build_application
-      name: Build application
-      command: npm run build
+    name: Build application
+    command: npm run build
 
   package_app: &package_app
-      name: Package app
-      command: make package
+    name: Package app
+    command: make package
 
   check_legal_compliance: &check_legal_compliance
-      name: Check for legal compliance
-      command: |
-        make legal
+    name: Check for legal compliance
+    command: |
+      make legal
 
   add_ssh_keys: &add_ssh_keys
-      fingerprints:
-        - c0:c0:57:5c:f9:c0:ce:fb:56:d4:1c:52:50:47:df:c7
+    fingerprints:
+      - c0:c0:57:5c:f9:c0:ce:fb:56:d4:1c:52:50:47:df:c7
 
   deploy_gh_pages: &deploy_gh_pages
-      name: Deploy to GitHub Pages
-      command: |
-        cd build
-        git config --global user.email circleci@circleci.com
-        git config --global user.name CircleCIBot
-        git init
-        git add -A
-        git commit -m 'Demo build [ci skip]'
-        git remote add origin https://github.com/quantumblacklabs/kedro-viz.git
-        git push origin master:gh-pages --force
+    name: Deploy to GitHub Pages
+    command: |
+      cd build
+      git config --global user.email circleci@circleci.com
+      git config --global user.name CircleCIBot
+      git init
+      git add -A
+      git commit -m 'Demo build [ci skip]'
+      git remote add origin https://github.com/quantumblacklabs/kedro-viz.git
+      git push origin master:gh-pages --force
 
 jobs:
   build_35: &DEFAULT
@@ -118,7 +123,7 @@ jobs:
       - image: circleci/node:10.15
     working_directory: ~/repo
     environment:
-      CONDA_ENV_PY_VERSION: "3.5"
+      CONDA_ENV_PY_VERSION: '3.5'
     steps:
       - checkout
       - restore_cache: *restore_cache
@@ -131,6 +136,7 @@ jobs:
       - run: *run_javascript_tests
       - run: *test_lib_transpilation
       - run: *run_pylint_and_flake8
+      - run: *run_secret_scan
       - run: *run_python_tests
       - run: *run_e2e_tests
       - run: *cleanup
@@ -142,12 +148,12 @@ jobs:
   build_36:
     <<: *DEFAULT
     environment:
-      CONDA_ENV_PY_VERSION: "3.6"
+      CONDA_ENV_PY_VERSION: '3.6'
 
   build_37:
     <<: *DEFAULT
     environment:
-      CONDA_ENV_PY_VERSION: "3.7"
+      CONDA_ENV_PY_VERSION: '3.7'
 
   deploy_demo:
     <<: *DEFAULT
@@ -168,9 +174,22 @@ workflows:
       - build_37
       - deploy_demo:
           requires:
-              - build_35
-              - build_36
-              - build_37
+            - build_35
+            - build_36
+            - build_37
           filters:
             branches:
               only: master
+  daily:
+    triggers:
+      - schedule:
+          cron: '0 1 * * *'
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+    jobs:
+      - build_35
+      - build_36
+      - build_37

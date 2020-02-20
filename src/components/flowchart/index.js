@@ -4,11 +4,8 @@ import classnames from 'classnames';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { zoom, zoomIdentity } from 'd3-zoom';
-import {
-  toggleNodeClicked,
-  toggleNodeHovered,
-  updateChartSize
-} from '../../actions';
+import { updateChartSize } from '../../actions';
+import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import {
   getLayoutNodes,
   getLayoutEdges,

@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "main": "lib/components/app/index.js",
   "files": [
     "lib"
@@ -17,13 +17,16 @@
     "lib:clear": "rm -rf lib",
     "lib:copy": "babel src --out-dir lib --copy-files",
     "lib:prune": "find lib -type f -name '*.test.*' -delete && find lib -type f -name '*.scss' -delete",
-    "lint": "eslint src/ --fix",
+    "lint": "npm-run-all -p lint:js lint:scss",
+    "lint:js": "eslint src/ --fix",
+    "lint:scss": "stylelint 'src/**/*.scss' --fix",
     "prepublishOnly": "npm-run-all -p test:coverage lint build lib",
     "test": "react-scripts test --env=jsdom",
     "test:coverage": "npm test -- --coverage --watchAll=false",
+    "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
-    "snyk-protect": "snyk protect"
+    "snyk-protect": "export NODE_OPTIONS=--max-old-space-size=8192 && snyk protect"
   },
   "dependencies": {
     "@quantumblack/kedro-ui": "^1.1.2",
@@ -38,11 +41,12 @@
     "dagre": "^0.8.5",
     "konami-code": "^0.2.1",
     "react-custom-scrollbars": "^4.2.1",
+    "react-flip-toolkit": "^7.0.7",
     "react-scripts": "^3.3.0",
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "snyk": "^1.256.0",
+    "snyk": "^1.290.1",
     "svg-crowbar": "^0.2.4",
     "what-input": "^5.2.3"
   },
@@ -64,7 +68,12 @@
     "prettier": "1.17.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-redux": "^6.0.1"
+    "react-redux": "^6.0.1",
+    "stylelint": "^13.0.0",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-order": "^4.0.0",
+    "stylelint-prettier": "^1.1.2"
   },
   "husky": {
     "hooks": {
@@ -72,6 +81,10 @@
     }
   },
   "lint-staged": {
+    "src/**/*.scss": [
+      "stylelint --fix",
+      "git add"
+    ],
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --single-quote --write",
       "git add"
