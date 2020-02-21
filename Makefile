@@ -25,10 +25,13 @@ e2e-tests: build
 
 pylint:
 	cd package && isort
-	pylint -j 0 --disable=unnecessary-pass package/kedro_viz
-	pylint -j 0 --disable=missing-docstring,redefined-outer-name,no-self-use,invalid-name,too-few-public-methods,no-member package/tests
+	pylint -j 0 --disable=bad-continuation,unnecessary-pass package/kedro_viz
+	pylint -j 0 --disable=bad-continuation,missing-docstring,redefined-outer-name,no-self-use,invalid-name,too-few-public-methods,no-member package/tests
 	pylint -j 0 --disable=missing-docstring,no-name-in-module package/features
 	flake8 package
+
+secret-scan:
+	trufflehog --max_depth 1 --exclude_path trufflehog-ignore.txt .
 
 version:
 	python3 tools/versioning.py $(VERSION)

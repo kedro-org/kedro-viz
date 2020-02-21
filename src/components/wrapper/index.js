@@ -25,7 +25,7 @@ export class Wrapper extends Component {
 
   render() {
     const { visibleNav } = this.state;
-    const { theme } = this.props;
+    const { fontLoaded, theme } = this.props;
 
     return (
       <div
@@ -33,21 +33,22 @@ export class Wrapper extends Component {
           'kui-theme--dark': theme === 'dark',
           'kui-theme--light': theme === 'light'
         })}>
-        <div className="pipeline-wrapper">
-          <FlowChart visibleNav={visibleNav} />
-        </div>
-        <IconToolbar />
         <Sidebar
           onToggle={this.toggleNav.bind(this)}
           theme={theme}
           visible={visibleNav}
         />
+        {fontLoaded && <IconToolbar />}
+        <div className="pipeline-wrapper">
+          {fontLoaded && <FlowChart visibleNav={visibleNav} />}
+        </div>
       </div>
     );
   }
 }
 
 export const mapStateToProps = state => ({
+  fontLoaded: state.fontLoaded,
   theme: state.theme
 });
 

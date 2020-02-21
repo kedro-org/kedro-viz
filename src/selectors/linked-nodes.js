@@ -1,10 +1,10 @@
 import { createSelector } from 'reselect';
 
-const getEdges = state => state.edges;
-const getEdgeSources = state => state.edgeSources;
-const getEdgeTargets = state => state.edgeTargets;
-const getClickedNode = state => state.nodeClicked;
-const getHoveredNode = state => state.nodeHovered;
+const getEdgeIDs = state => state.edge.ids;
+const getEdgeSources = state => state.edge.sources;
+const getEdgeTargets = state => state.edge.targets;
+const getClickedNode = state => state.node.clicked;
+const getHoveredNode = state => state.node.hovered;
 
 /**
  * Get the node that should be used as the center of the set of linked nodes
@@ -22,7 +22,7 @@ export const getCentralNode = createSelector(
  * @param {string} nodeID
  */
 export const getLinkedNodes = createSelector(
-  [getEdges, getEdgeSources, getEdgeTargets, getCentralNode],
+  [getEdgeIDs, getEdgeSources, getEdgeTargets, getCentralNode],
   (edges, edgeSources, edgeTargets, nodeID) => {
     if (!nodeID) {
       return {};

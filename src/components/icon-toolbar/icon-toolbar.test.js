@@ -5,15 +5,46 @@ import { mockState, setup } from '../../utils/state.mock';
 describe('IconToolbar', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<IconToolbar />);
-    expect(wrapper.find('.pipeline-icon-toolbar').length).toBe(1);
-    expect(wrapper.find('.pipeline-toggle-theme').length).toBe(1);
-    expect(wrapper.find('.pipeline-toggle-labels').length).toBe(1);
+    expect(wrapper.find('.pipeline-icon-button').length).toBe(3);
+  });
+
+  it('hides both buttons when visible prop is false for each of them', () => {
+    const visible = {
+      themeBtn: false,
+      labelBtn: false,
+      exportBtn: false
+    };
+    const wrapper = setup.mount(<IconToolbar />, { visible });
+    expect(wrapper.find('.pipeline-icon-button').length).toBe(0);
+  });
+
+  it('hides one button when visible prop is false for one of them', () => {
+    const visible = {
+      labelBtn: false
+    };
+    const wrapper = setup.mount(<IconToolbar />, { visible });
+    expect(wrapper.find('.pipeline-icon-button').length).toBe(2);
+  });
+
+  it('shows the export modal on export button click', () => {
+    const wrapper = setup.mount(<IconToolbar />);
+    expect(wrapper.find('Modal').props().visible).toBe(false);
+    wrapper
+      .find({ icon: 'export' })
+      .find('button')
+      .simulate('click');
+    expect(wrapper.find('Modal').props().visible).toBe(true);
   });
 
   it('maps state to props', () => {
     const expectedResult = {
       textLabels: expect.any(Boolean),
-      theme: expect.stringMatching(/light|dark/)
+      theme: expect.stringMatching(/light|dark/),
+      visible: expect.objectContaining({
+        themeBtn: expect.any(Boolean),
+        labelBtn: expect.any(Boolean),
+        exportBtn: expect.any(Boolean)
+      })
     };
     expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
   });

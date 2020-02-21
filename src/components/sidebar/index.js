@@ -1,8 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
 import Icon from '@quantumblack/kedro-ui/lib/components/icon';
-import ChartUI from '../chart-ui';
-import { ReactComponent as MenuIcon } from './menu-icon.svg';
+import TagList from '../tag-list';
+import NodeList from '../node-list';
+import MenuIcon from '../icons/menu';
+// import { changeRanker } from '../../actions';
 import './sidebar.css';
 
 /**
@@ -48,7 +50,7 @@ export const HideMenuButton = ({ onToggle, theme, visible }) => (
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {Object} props onToggle, theme, and visible
  */
-export const Sidebar = props => (
+const Sidebar = props => (
   <>
     <ShowMenuButton onToggle={props.onToggle} visible={!props.visible} />
     <nav
@@ -56,7 +58,24 @@ export const Sidebar = props => (
         'pipeline-sidebar--visible': props.visible
       })}>
       <HideMenuButton {...props} />
-      <ChartUI />
+      <div className="pipeline-ui">
+        {/* <ul className="pipeline-ui__view">
+          {['none', 'network-simplex', 'tight-tree', 'longest-path'].map(r => (
+            <li key={r}>
+              <RadioButton
+                checked={ranker === r}
+                label={`Ranker: ${r}`}
+                name="ranker"
+                onChange={onChangeRanker}
+                value={r}
+                theme={theme}
+              />
+            </li>
+          ))}
+        </ul> */}
+        <TagList />
+        <NodeList />
+      </div>
     </nav>
   </>
 );

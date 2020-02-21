@@ -1,8 +1,7 @@
 # Kedro-Viz
-`develop` | `master`  
-----------|---------  
-[![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop) | [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master)
-[![Build status](https://ci.appveyor.com/api/projects/status/lnq4p29fm6sevnvr/branch/develop?svg=true)](https://ci.appveyor.com/project/QuantumBlack/kedro-viz/branch/develop) | [![Build status](https://ci.appveyor.com/api/projects/status/lnq4p29fm6sevnvr/branch/master?svg=true)](https://ci.appveyor.com/project/QuantumBlack/kedro-viz/branch/master)
+| `develop`                                                                                                                                                        | `master`                                                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop) | [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master) |
 
 [![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)
 [![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
@@ -24,7 +23,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## How do I install and use Kedro-Viz?
 
-> For in-depth development and usage notes, see the [Contribution Guidelines](./CONTRIBUTING.md).
+> For in-depth development and usage notes, see the [Contribution Guidelines](https://github.com/quantumblacklabs/kedro-viz/blob/master/CONTRIBUTING.md).
 
 ### As a Kedro Python plugin
 
@@ -60,13 +59,17 @@ kedro viz
 ```
 
 This command will run kedro_viz.server on `http://127.0.0.1:4141/` which cannot be accessed from another machine.
-If you are using a remote server machine or a docker container, run the following command instead.
 
-```bash
-kedro viz --host 0.0.0.0
-```
-
-You can change the port with ```--port``` option if needed.
+Kedro-Viz has a number of options to customise running the visualisation:
+| CLI command              | Description                                                                                                                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--host`                 | Host that viz will listen to. Defaults to 127.0.0.1.                                                                                                                                   |
+| `--port`                 | TCP port that viz will listen to. Defaults to 4141.                                                                                                                                    |
+| `--browser/--no-browser` | Whether to open viz interface in the default browser or not.                                                                                                                           |
+| `--load-file`            | Path to load the pipeline JSON file                                                                                                                                                    |
+| `--save-file`            | Path to save the pipeline JSON file                                                                                                                                                    |
+| `--pipeline`             | Name of the [modular pipeline](https://kedro.readthedocs.io/en/latest/04_user_guide/06_pipelines.html#modular-pipelines) to visualise. If not set, the default pipeline is visualised. |
+| `--env`, `-e`            | Kedro configuration environment. If not specified, catalog config in `local` will be used.                                                                                             |
 
 
 ### As a JavaScript React component
@@ -95,7 +98,7 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
    Kedro-Viz can be used as a React component that can be imported into other applications. Publishing the package will run `npm run lib`, which compiles the source code in `/src`, and places it in the `/lib` directory.
 
-   The React component exposes props that can be used to supply data and customise its behaviour. For information about the props, their expected prop-types and default values, see [/src/components/app/index.js](./src/components/app/index.js). For examples of the expected data input format, see the mock data examples in [/src/utils/data](./src/utils/data), and compare the [resulting demo](https://quantumblacklabs.github.io/kedro-viz/).
+   The React component exposes props that can be used to supply data and customise its behaviour. For information about the props, their expected prop-types and default values, see [/src/components/app/index.js](https://github.com/quantumblacklabs/kedro-viz/blob/master/src/components/app/index.js). For examples of the expected data input format, see the mock data examples in [/src/utils/data](https://github.com/quantumblacklabs/kedro-viz/tree/master/src/utils/data), and compare the [resulting demo](https://quantumblacklabs.github.io/kedro-viz/).
 
 ## What licence do you use?
 

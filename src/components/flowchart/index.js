@@ -2,21 +2,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import 'd3-transition';
-import { interpolatePath } from 'd3-interpolate-path';
 import { select, event } from 'd3-selection';
-import { curveBasis, line } from 'd3-shape';
 import { zoom, zoomIdentity } from 'd3-zoom';
+import { updateChartSize } from '../../actions';
+import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import {
-  toggleNodeClicked,
-  toggleNodeHovered,
-  updateChartSize
-} from '../../actions';
-import { getLayout, getZoomPosition } from '../../selectors/layout';
+  getLayoutNodes,
+  getLayoutEdges,
+  getZoomPosition
+} from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
-import icon from './icon';
+import draw from './draw';
 import './styles/flowchart.css';
-
-const DURATION = 700;
 
 /**
  * Display a pipeline flowchart, mostly rendered with D3
@@ -33,6 +30,8 @@ export class FlowChart extends Component {
       tooltipY: 0
     };
 
+    this.DURATION = 700;
+
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
     this.wrapperRef = React.createRef();
@@ -42,24 +41,16 @@ export class FlowChart extends Component {
   }
 
   componentDidMount() {
-    // Create D3 element selectors
-    this.el = {
-      svg: select(this.svgRef.current),
-      wrapper: select(this.wrapperRef.current),
-      edgeGroup: select(this.edgesRef.current),
-      nodeGroup: select(this.nodesRef.current),
-      bandGroup: select(this.bandsRef.current)
-    };
-
+    this.selectD3Elements();
     this.updateChartSize();
     this.initZoomBehaviour();
     this.drawChart();
     this.zoomChart();
-    window.addEventListener('resize', this.handleWindowResize);
+    this.addResizeObserver();
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.handleWindowResize);
+    this.removeResizeObserver();
   }
 
   componentDidUpdate(prevProps) {
@@ -70,6 +61,19 @@ export class FlowChart extends Component {
       this.zoomChart();
     }
     this.drawChart();
+  }
+
+  /**
+   * Create D3 element selectors
+   */
+  selectD3Elements() {
+    this.el = {
+      svg: select(this.svgRef.current),
+      wrapper: select(this.wrapperRef.current),
+      edgeGroup: select(this.edgesRef.current),
+      nodeGroup: select(this.nodesRef.current),
+      bandGroup: select(this.bandsRef.current)
+    };
   }
 
   /**
@@ -105,6 +109,32 @@ export class FlowChart extends Component {
   }
 
   /**
+   * Add ResizeObserver to listen for any changes in the container's width/height
+   * (with event listener fallback)
+   */
+  addResizeObserver() {
+    if (window.ResizeObserver) {
+      this.resizeObserver =
+        this.resizeObserver ||
+        new window.ResizeObserver(this.handleWindowResize);
+      this.resizeObserver.observe(this.containerRef.current);
+    } else {
+      window.addEventListener('resize', this.handleWindowResize);
+    }
+  }
+
+  /**
+   * Remove ResizeObserver (or event listener fallback) on unmount
+   */
+  removeResizeObserver() {
+    if (window.ResizeObserver) {
+      this.resizeObserver.unobserve(this.containerRef.current);
+    } else {
+      window.removeEventListener('resize', this.handleWindowResize);
+    }
+  }
+
+  /**
    * Handle window resize
    */
   handleWindowResize = () => {
@@ -132,7 +162,7 @@ export class FlowChart extends Component {
     const navOffset = this.getNavOffset(chartSize.outerWidth);
     this.el.svg
       .transition()
-      .duration(DURATION)
+      .duration(this.DURATION)
       .call(
         this.zoomBehaviour.transform,
         zoomIdentity.translate(translateX + navOffset, translateY).scale(scale)
@@ -143,194 +173,7 @@ export class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    const { centralNode, layout, linkedNodes, textLabels } = this.props;
-    const { nodes, edges } = layout;
-
-    const max = Math.pow(2, 25);
-
-    const bandsObj = {};
-    nodes.forEach(node => {
-      if (!bandsObj[node.rank]) {
-        bandsObj[node.rank] = node.y;
-      }
-    });
-    const bands = Object.keys(bandsObj)
-      .map(rank => ({
-        rank,
-        y: bandsObj[rank]
-      }))
-      .map((rank, i, bands) => {
-        let topY;
-        if (bands[i - 1]) {
-          topY = (rank.y + bands[i - 1].y) / 2;
-        } else {
-          topY = -max;
-        }
-        let bottomY;
-        if (bands[i + 1]) {
-          bottomY = (rank.y + bands[i + 1].y) / 2;
-        } else {
-          bottomY = max;
-        }
-        return {
-          rank: rank.rank,
-          topY,
-          bottomY,
-          height: bottomY - topY,
-          y: rank.y
-        };
-      });
-
-    // Node hues
-    const maxRank = Math.max(...nodes.map(d => d.rank));
-    const hue = rank => rank * (360 / (maxRank + 1));
-    const rankFill = node => `hsl(${hue(node.rank)}, 60%, 40%)`;
-
-    // Create selections
-    this.el.bands = this.el.bandGroup
-      .selectAll('.band')
-      .data(bands, band => band.rank);
-
-    this.el.edges = this.el.edgeGroup
-      .selectAll('.edge')
-      .data(edges, edge => edge.id);
-
-    this.el.nodes = this.el.nodeGroup
-      .selectAll('.node')
-      .data(nodes, node => node.id);
-
-    // Set up line shape function
-    const lineShape = line()
-      .x(d => d.x)
-      .y(d => d.y)
-      .curve(curveBasis);
-
-    // Create edges
-    const enterBands = this.el.bands
-      .enter()
-      .append('rect')
-      .attr('class', 'band');
-
-    this.el.bands.exit().remove();
-
-    this.el.bands = this.el.bands.merge(enterBands);
-
-    this.el.bands
-      .attr('fill', 'white')
-      .attr('opacity', (d, i) => (i % 2 ? 0.03 : 0))
-      .attr('x', max / -2)
-      .attr('y', d => d.topY)
-      .attr('height', d => d.height)
-      .attr('width', max);
-
-    // Create edges
-    const enterEdges = this.el.edges
-      .enter()
-      .append('g')
-      .attr('class', 'edge')
-      .attr('opacity', 0);
-
-    enterEdges.append('path').attr('marker-end', d => `url(#arrowhead)`);
-
-    this.el.edges
-      .exit()
-      .transition('exit-edges')
-      .duration(DURATION)
-      .attr('opacity', 0)
-      .remove();
-
-    this.el.edges = this.el.edges.merge(enterEdges);
-
-    this.el.edges
-      .classed(
-        'edge--faded',
-        ({ source, target }) =>
-          centralNode && (!linkedNodes[source] || !linkedNodes[target])
-      )
-      .transition('show-edges')
-      .duration(DURATION)
-      .attr('opacity', 1);
-
-    this.el.edges
-      .select('path')
-      .transition('update-edges')
-      .duration(DURATION)
-      .attrTween('d', function(edge) {
-        const current = edge.points && lineShape(edge.points);
-        const previous = select(this).attr('d') || current;
-        return interpolatePath(previous, current);
-      });
-
-    // Create nodes
-    const enterNodes = this.el.nodes
-      .enter()
-      .append('g')
-      .attr('tabindex', '0')
-      .attr('class', 'node');
-
-    enterNodes
-      .attr('transform', node => `translate(${node.x}, ${node.y})`)
-      .attr('opacity', 0);
-
-    enterNodes
-      .append('circle')
-      .attr('r', 25)
-      .style('fill', rankFill);
-
-    enterNodes.append('rect');
-
-    enterNodes.append(icon);
-
-    enterNodes
-      .append('text')
-      .text(node => node.name)
-      .attr('text-anchor', 'middle')
-      .attr('dy', 4);
-
-    this.el.nodes
-      .exit()
-      .transition('exit-nodes')
-      .duration(DURATION)
-      .attr('opacity', 0)
-      .remove();
-
-    this.el.nodes = this.el.nodes
-      .merge(enterNodes)
-      .classed('node--parameters', node => node.type === 'parameters')
-      .classed('node--data', node => node.type === 'data')
-      .classed('node--task', node => node.type === 'task')
-      .classed('node--icon', !textLabels)
-      .classed('node--text', textLabels)
-      .classed('node--active', node => node.active)
-      .classed('node--highlight', node => centralNode && linkedNodes[node.id])
-      .classed('node--faded', node => centralNode && !linkedNodes[node.id])
-      .on('click', this.handleNodeClick)
-      .on('mouseover', this.handleNodeMouseOver)
-      .on('mouseout', this.handleNodeMouseOut)
-      .on('focus', this.handleNodeMouseOver)
-      .on('blur', this.handleNodeMouseOut)
-      .on('keydown', this.handleNodeKeyDown);
-
-    this.el.nodes
-      .transition('update-nodes')
-      .duration(DURATION)
-      .attr('opacity', 1)
-      .attr('transform', node => `translate(${node.x}, ${node.y})`)
-      .end()
-      .catch(() => {})
-      .finally(() => {
-        // Sort nodes so tab focus order follows X/Y position
-        this.el.nodes.sort((a, b) => a.order - b.order);
-      });
-
-    this.el.nodes
-      .select('rect')
-      .style('fill', rankFill)
-      .attr('width', node => node.width - 5)
-      .attr('height', node => node.height - 5)
-      .attr('x', node => (node.width - 5) / -2)
-      .attr('y', node => (node.height - 5) / -2)
-      .attr('rx', node => (node.type === 'data' ? node.height / 2 : 0));
+    draw.call(this);
   }
 
   /**
@@ -434,6 +277,7 @@ export class FlowChart extends Component {
         ref={this.containerRef}
         onClick={this.handleChartClick}>
         <svg
+          id="pipeline-graph"
           className="pipeline-flowchart__graph"
           width={outerWidth}
           height={outerHeight}
@@ -452,7 +296,7 @@ export class FlowChart extends Component {
               <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
             </marker>
           </defs>
-          <g ref={this.wrapperRef}>
+          <g id="zoom-wrapper" ref={this.wrapperRef}>
             <g className="pipeline-flowchart__bands" ref={this.bandsRef} />
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
             <g
@@ -476,10 +320,11 @@ export class FlowChart extends Component {
 }
 
 export const mapStateToProps = state => ({
-  chartSize: state.chartSize,
-  layout: getLayout(state),
-  linkedNodes: getLinkedNodes(state),
   centralNode: getCentralNode(state),
+  chartSize: state.chartSize,
+  edges: getLayoutEdges(state),
+  linkedNodes: getLinkedNodes(state),
+  nodes: getLayoutNodes(state),
   textLabels: state.textLabels,
   view: state.view,
   zoom: getZoomPosition(state)

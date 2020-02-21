@@ -1,4 +1,5 @@
-import { ShowMenuButton, HideMenuButton, Sidebar } from './index';
+import React from 'react';
+import Sidebar, { ShowMenuButton, HideMenuButton } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
 const mockProps = {
@@ -9,7 +10,7 @@ const mockProps = {
 
 describe('ShowMenuButton', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.shallow(ShowMenuButton, mockProps);
+    const wrapper = setup.mount(<ShowMenuButton {...mockProps} />);
     const container = wrapper.find('button');
     expect(container.length).toBe(1);
   });

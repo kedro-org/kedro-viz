@@ -1,4 +1,4 @@
-# Copyright 2018-2019 QuantumBlack Visual Analytics Limited
+# Copyright 2020 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -78,5 +78,8 @@ setup(
     package_data={"kedro_viz": list(files)},
     zip_safe=False,
     setup_requires=["pytest-runner==4.2"],
-    entry_points={"kedro.project_commands": ["kedro-viz = kedro_viz.server:commands"]},
+    entry_points={
+        "kedro.global_commands": ["kedro-viz = kedro_viz.server:commands"],
+        "kedro.line_magic": ["line_magic = kedro_viz.server:run_viz"],
+    },
 )

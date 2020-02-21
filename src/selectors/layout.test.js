@@ -1,10 +1,8 @@
 import { mockState } from '../utils/state.mock';
 import {
-  prepareTextContainer,
-  getNodeWidth,
-  getNodeSize,
   getGraph,
-  getLayout,
+  getLayoutNodes,
+  getLayoutEdges,
   getZoomPosition
 } from './layout';
 import { getVisibleNodes } from './nodes';
@@ -13,32 +11,6 @@ import { updateChartSize } from '../actions';
 import reducer from '../reducers';
 
 describe('Selectors', () => {
-  describe('prepareTextContainer', () => {
-    it('returns undefined if text labels are not enabled', () => {
-      expect(prepareTextContainer(false)).not.toBeDefined();
-    });
-
-    it('returns a D3 selection object if text labels are enabled', () => {
-      expect(prepareTextContainer(true)).toEqual(expect.any(Object));
-    });
-  });
-
-  describe('getNodeWidth', () => {
-    it('returns just the padding if text labels are not enabled', () => {
-      expect(getNodeWidth('qwertyuiop', 123, undefined)).toEqual(123);
-    });
-  });
-
-  describe('getNodeSize', () => {
-    it('returns a height of 40 if node type is data and SVG is undefined', () => {
-      expect(getNodeSize({ type: 'data' }).height).toEqual(40);
-    });
-
-    it('returns a height of 50 if node type is task and SVG is undefined', () => {
-      expect(getNodeSize({ type: 'task' }).height).toEqual(50);
-    });
-  });
-
   describe('getGraph', () => {
     const graph = getGraph(mockState.lorem);
     it('calculates chart layout and returns a Dagre object', () => {
@@ -62,29 +34,31 @@ describe('Selectors', () => {
     });
   });
 
-  describe('getLayout', () => {
-    const layout = getLayout(mockState.lorem);
-
+  describe('getLayoutNodes', () => {
     it('returns a properly-formatted list of nodes', () => {
-      expect(layout.nodes).toEqual(
+      const nodes = getLayoutNodes(mockState.lorem);
+      expect(nodes).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
             name: expect.any(String),
+            fullName: expect.any(String),
             type: expect.stringMatching(/data|task/),
             height: expect.any(Number),
             width: expect.any(Number),
             x: expect.any(Number),
             y: expect.any(Number),
-            active: expect.any(Boolean),
-            disabled: expect.any(Boolean)
+            active: expect.any(Boolean)
           })
         ])
       );
     });
+  });
 
+  describe('getLayoutEdges', () => {
     it('returns a properly-formatted list of edges', () => {
-      expect(layout.edges).toEqual(
+      const edges = getLayoutEdges(mockState.lorem);
+      expect(edges).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
