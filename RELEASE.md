@@ -18,7 +18,7 @@ Please follow the established format:
 <!-- Add release notes for the upcoming release here -->
 
 ## Thanks for supporting contributions
-[Ana Potje] (https://github.com/ANA-POTJE)
+[Ana Potje](https://github.com/ANA-POTJE)
 
 # Release 3.2.0:
 
