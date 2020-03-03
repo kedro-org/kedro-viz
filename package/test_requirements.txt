@@ -9,5 +9,4 @@ pytest-mock>=1.7.1,<2.0
 requests-mock>=1.6.0, <2.0
 flake8>=3.5, <4.0
 isort
-trufflehog>=2.0.99, <3.0
-gitdb2==2.0.6 # pinned trufflehog dependency to make trufflehog work again
+trufflehog>=2.1.0, <3.0
