@@ -135,11 +135,6 @@ const draw = function() {
     .attr('transform', node => `translate(${node.x}, ${node.y})`)
     .attr('opacity', 0);
 
-  enterNodes
-    .append('circle')
-    .attr('r', 25)
-    .style('fill', rankFill);
-
   enterNodes.append('rect');
 
   enterNodes.append(icon);
