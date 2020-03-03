@@ -4,7 +4,7 @@ import Icon from '@quantumblack/kedro-ui/lib/components/icon';
 import TagList from '../tag-list';
 import NodeList from '../node-list';
 import MenuIcon from '../icons/menu';
-// import { changeRanker } from '../../actions';
+import RankerToggle from './ranker-toggle';
 import './sidebar.css';
 
 /**
@@ -59,20 +59,7 @@ const Sidebar = props => (
       })}>
       <HideMenuButton {...props} />
       <div className="pipeline-ui">
-        {/* <ul className="pipeline-ui__view">
-          {['none', 'network-simplex', 'tight-tree', 'longest-path'].map(r => (
-            <li key={r}>
-              <RadioButton
-                checked={ranker === r}
-                label={`Ranker: ${r}`}
-                name="ranker"
-                onChange={onChangeRanker}
-                value={r}
-                theme={theme}
-              />
-            </li>
-          ))}
-        </ul> */}
+        <RankerToggle />
         <TagList />
         <NodeList />
       </div>
