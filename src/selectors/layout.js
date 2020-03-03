@@ -111,38 +111,24 @@ export const getBands = createSelector(
   nodes => {
     const max = Math.pow(2, 25);
 
-    const bandsObj = {};
+    const bandY = {};
     nodes.forEach(node => {
-      if (!bandsObj[node.rank]) {
-        bandsObj[node.rank] = node.y;
+      if (!bandY[node.rank]) {
+        bandY[node.rank] = node.y;
       }
     });
 
-    return Object.keys(bandsObj)
-      .map(rank => ({
+    return Object.keys(bandY).map((rank, i) => {
+      const neighbourY = bandY[i - 1] || bandY[i + 1];
+      const height = Math.abs(bandY[i] - neighbourY);
+
+      return {
         rank,
-        y: bandsObj[rank]
-      }))
-      .map((rank, i, bands) => {
-        let topY;
-        if (bands[i - 1]) {
-          topY = (rank.y + bands[i - 1].y) / 2;
-        } else {
-          topY = rank.y * 2 - max;
-        }
-        let bottomY;
-        if (bands[i + 1]) {
-          bottomY = (rank.y + bands[i + 1].y) / 2;
-        } else {
-          bottomY = rank.y * 2 + max;
-        }
-        return {
-          rank: rank.rank,
-          x: max / -2,
-          y: topY,
-          width: max,
-          height: bottomY - topY
-        };
-      });
+        x: max / -2,
+        y: bandY[i] - height / 2,
+        width: max,
+        height
+      };
+    });
   }
 );
