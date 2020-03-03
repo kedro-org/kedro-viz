@@ -160,6 +160,9 @@ export class FlowChart extends Component {
     const { chartSize, zoom } = this.props;
     const { scale, translateX, translateY } = zoom;
     const navOffset = this.getNavOffset(chartSize.outerWidth);
+    this.zoomBehaviour.scaleExtent([scale, 1]);
+    // TODO make translation extent work :(
+    // .translateExtent([[-translateX - navOffset, 0], [Infinity, Infinity]]);
     this.el.svg
       .transition()
       .duration(this.DURATION)
