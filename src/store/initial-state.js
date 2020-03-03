@@ -4,7 +4,7 @@ import normalizeData from './normalize-data';
 import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import animals from '../utils/data/animals.mock';
 import demo from '../utils/data/demo.mock';
-import layers from '../../utils/data/layers.mock';
+import layers from '../utils/data/layers.mock';
 
 /**
  * Determine where data should be loaded from (i.e. async from JSON,
@@ -108,6 +108,7 @@ const getInitialState = (props = {}) => {
     chartSize: {},
     fontLoaded: false,
     textLabels,
+    ranker: ['none', 'network-simplex', 'tight-tree', 'longest-path'][0],
     visible,
     theme
   };
