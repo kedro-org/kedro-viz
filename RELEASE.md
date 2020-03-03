@@ -17,6 +17,12 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+## Thanks for supporting contributions
+[Ana Potje] (https://github.com/ANA-POTJE)
+
+
+[Deepyaman Datta](https://github.com/deepyaman)
+
 # Release 3.2.0:
 
 ## Major features and improvements
