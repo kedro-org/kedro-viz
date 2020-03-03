@@ -9,3 +9,13 @@
 .pipeline-flowchart__graph {
   display: block;
 }
+
+.band {
+  opacity: 0;
+  transition: opacity ease 0.2s;
+  fill: rgba(white, 0.1);
+
+  &:hover {
+    opacity: 1;
+  }
+}

@@ -80,8 +80,6 @@ const draw = function() {
   this.el.bands = this.el.bands.merge(enterBands);
 
   this.el.bands
-    .attr('fill', 'white')
-    .attr('opacity', (d, i) => (i % 2 ? 0.03 : 0))
     .attr('x', max / -2)
     .attr('y', d => d.topY)
     .attr('height', d => d.height)
