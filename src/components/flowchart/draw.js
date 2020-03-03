@@ -7,46 +7,16 @@ import icon from './icon';
 /**
  * Render chart to the DOM with D3
  */
-const draw = function() {
-  const { nodes, edges, centralNode, linkedNodes, textLabels } = this.props;
-
-  const max = Math.pow(2, 25);
-
-  const bandsObj = {};
-  nodes.forEach(node => {
-    if (!bandsObj[node.rank]) {
-      bandsObj[node.rank] = node.y;
-    }
-  });
-  const bands = Object.keys(bandsObj)
-    .map(rank => ({
-      rank,
-      y: bandsObj[rank]
-    }))
-    .map((rank, i, bands) => {
-      let topY;
-      if (bands[i - 1]) {
-        topY = (rank.y + bands[i - 1].y) / 2;
-      } else {
-        topY = -max;
-      }
-      let bottomY;
-      if (bands[i + 1]) {
-        bottomY = (rank.y + bands[i + 1].y) / 2;
-      } else {
-        bottomY = max;
-      }
-      return {
-        rank: rank.rank,
-        topY,
-        bottomY,
-        height: bottomY - topY,
-        y: rank.y
-      };
-    });
-
-  // Node hues
-  const maxRank = Math.max(...nodes.map(d => d.rank));
+const draw = function({
+  bands,
+  nodes,
+  edges,
+  centralNode,
+  linkedNodes,
+  textLabels
+}) {
+  // Rank hue scale
+  const maxRank = Math.max(...bands.map(d => d.rank));
   const hue = rank => rank * (360 / (maxRank + 1));
   const rankFill = node => `hsl(${hue(node.rank)}, 60%, 40%)`;
 
@@ -80,10 +50,11 @@ const draw = function() {
   this.el.bands = this.el.bands.merge(enterBands);
 
   this.el.bands
-    .attr('x', max / -2)
-    .attr('y', d => d.topY)
+    .attr('fill', rankFill)
+    .attr('x', d => d.x)
+    .attr('y', d => d.y)
     .attr('height', d => d.height)
-    .attr('width', max);
+    .attr('width', d => d.width);
 
   // Create edges
   const enterEdges = this.el.edges

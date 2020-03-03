@@ -102,3 +102,47 @@ export const getZoomPosition = createSelector(
     };
   }
 );
+
+/**
+ * Get band positions
+ */
+export const getBands = createSelector(
+  [getLayoutNodes],
+  nodes => {
+    const max = Math.pow(2, 25);
+
+    const bandsObj = {};
+    nodes.forEach(node => {
+      if (!bandsObj[node.rank]) {
+        bandsObj[node.rank] = node.y;
+      }
+    });
+
+    return Object.keys(bandsObj)
+      .map(rank => ({
+        rank,
+        y: bandsObj[rank]
+      }))
+      .map((rank, i, bands) => {
+        let topY;
+        if (bands[i - 1]) {
+          topY = (rank.y + bands[i - 1].y) / 2;
+        } else {
+          topY = rank.y * 2 - max;
+        }
+        let bottomY;
+        if (bands[i + 1]) {
+          bottomY = (rank.y + bands[i + 1].y) / 2;
+        } else {
+          bottomY = rank.y * 2 + max;
+        }
+        return {
+          rank: rank.rank,
+          x: max / -2,
+          y: topY,
+          width: max,
+          height: bottomY - topY
+        };
+      });
+  }
+);

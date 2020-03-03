@@ -7,6 +7,7 @@ import { zoom, zoomIdentity } from 'd3-zoom';
 import { updateChartSize } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import {
+  getBands,
   getLayoutNodes,
   getLayoutEdges,
   getZoomPosition
@@ -176,7 +177,7 @@ export class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    draw.call(this);
+    draw.call(this, this.props);
   }
 
   /**
@@ -323,6 +324,7 @@ export class FlowChart extends Component {
 }
 
 export const mapStateToProps = state => ({
+  bands: getBands(state),
   centralNode: getCentralNode(state),
   chartSize: state.chartSize,
   edges: getLayoutEdges(state),
