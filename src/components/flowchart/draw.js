@@ -25,6 +25,10 @@ const draw = function({
     .selectAll('.band')
     .data(bands, band => band.rank);
 
+  this.el.bandNames = this.el.bandNameGroup
+    .selectAll('.band-name')
+    .data(bands, band => band.rank);
+
   this.el.edges = this.el.edgeGroup
     .selectAll('.edge')
     .data(edges, edge => edge.id);
@@ -55,6 +59,22 @@ const draw = function({
     .attr('y', d => d.y)
     .attr('height', d => d.height)
     .attr('width', d => d.width);
+
+  // Create bandNames
+  const enterBandNames = this.el.bandNames
+    .enter()
+    .append('text')
+    .attr('class', 'band-name');
+
+  this.el.bandNames.exit().remove();
+
+  this.el.bandNames = this.el.bandNames.merge(enterBandNames);
+
+  this.el.bandNames
+    .text(d => d.name)
+    .attr('dy', -10)
+    .attr('dx', -10)
+    .attr('text-anchor', 'end');
 
   // Create edges
   const enterEdges = this.el.edges

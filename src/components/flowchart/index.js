@@ -39,6 +39,7 @@ export class FlowChart extends Component {
     this.edgesRef = React.createRef();
     this.nodesRef = React.createRef();
     this.bandsRef = React.createRef();
+    this.bandNamesRef = React.createRef();
   }
 
   componentDidMount() {
@@ -73,7 +74,8 @@ export class FlowChart extends Component {
       wrapper: select(this.wrapperRef.current),
       edgeGroup: select(this.edgesRef.current),
       nodeGroup: select(this.nodesRef.current),
-      bandGroup: select(this.bandsRef.current)
+      bandGroup: select(this.bandsRef.current),
+      bandNameGroup: select(this.bandNamesRef.current)
     };
   }
 
@@ -100,6 +102,7 @@ export class FlowChart extends Component {
     });
   }
 
+  // TODO make this into a selector, with an action/reducer to set `visibleNav`
   getNavOffset(width) {
     const navWidth = 300; // from _variables.scss
     const breakpointSmall = 480; // from _variables.scss
@@ -148,6 +151,12 @@ export class FlowChart extends Component {
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
       this.el.wrapper.attr('transform', event.transform);
+      this.el.bandNames.attr('transform', d => {
+        const { k, y } = event.transform;
+        const tx = this.props.chartSize.outerWidth;
+        const ty = y + d.y * k;
+        return `translate(${tx} ${ty}) rotate(-90)`;
+      });
       this.hideTooltip();
       this.drawChart();
     });
@@ -245,7 +254,7 @@ export class FlowChart extends Component {
     this.setState({
       tooltipVisible: true,
       tooltipIsRight: isRight,
-      tooltipText: `Rank ${node.rank}`,
+      tooltipText: `${node.fullName} (Rank ${node.rank})`,
       tooltipX: xOffset - chartSize.x + eventOffset.width / 2,
       tooltipY: eventOffset.top - chartSize.y
     });
@@ -266,7 +275,7 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { outerWidth, outerHeight } = this.props.chartSize;
+    const { outerWidth = 0, outerHeight = 0 } = this.props.chartSize;
     const {
       tooltipVisible,
       tooltipIsRight,
@@ -307,6 +316,15 @@ export class FlowChart extends Component {
               id="nodes"
               className="pipeline-flowchart__nodes"
               ref={this.nodesRef}
+            />
+          </g>
+          <g className="pipeline-flowchart__band-names" ref={this.bandNamesRef}>
+            <rect
+              className="band-names-bg"
+              x={outerWidth - 30}
+              y={0}
+              width={30}
+              height={outerHeight}
             />
           </g>
         </svg>

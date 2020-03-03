@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import dagre from 'dagre';
 import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
+import { LOREM_IPSUM } from '../utils';
 
 const getRanker = state => state.ranker;
 const getNodeType = state => state.node.type;
@@ -18,6 +19,7 @@ export const getGraph = createSelector(
   (nodes, edges, ranker) => {
     const graph = new dagre.graphlib.Graph().setGraph({
       ranker,
+      ranksep: 200,
       marginx: 40,
       marginy: 40
     });
@@ -109,7 +111,7 @@ export const getZoomPosition = createSelector(
 export const getBands = createSelector(
   [getLayoutNodes],
   nodes => {
-    const max = Math.pow(2, 25);
+    const max = Math.pow(2, 15);
 
     const bandY = {};
     nodes.forEach(node => {
@@ -124,6 +126,7 @@ export const getBands = createSelector(
 
       return {
         rank,
+        name: LOREM_IPSUM[i],
         x: max / -2,
         y: bandY[i] - height / 2,
         width: max,
