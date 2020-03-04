@@ -106,29 +106,29 @@ export const getZoomPosition = createSelector(
 );
 
 /**
- * Get band positions
+ * Get layer positions
  */
-export const getBands = createSelector(
+export const getLayers = createSelector(
   [getLayoutNodes],
   nodes => {
     const max = Math.pow(2, 15);
 
-    const bandY = {};
+    const layerY = {};
     nodes.forEach(node => {
-      if (!bandY[node.rank]) {
-        bandY[node.rank] = node.y;
+      if (!layerY[node.rank]) {
+        layerY[node.rank] = node.y;
       }
     });
 
-    return Object.keys(bandY).map((rank, i) => {
-      const neighbourY = bandY[i - 1] || bandY[i + 1];
-      const height = Math.abs(bandY[i] - neighbourY);
+    return Object.keys(layerY).map((rank, i) => {
+      const neighbourY = layerY[i - 1] || layerY[i + 1];
+      const height = Math.abs(layerY[i] - neighbourY);
 
       return {
         rank,
         name: LOREM_IPSUM[i],
         x: max / -2,
-        y: bandY[i] - height / 2,
+        y: layerY[i] - height / 2,
         width: max,
         height
       };

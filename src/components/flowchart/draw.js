@@ -8,7 +8,7 @@ import icon from './icon';
  * Render chart to the DOM with D3
  */
 const draw = function({
-  bands,
+  layers,
   nodes,
   edges,
   centralNode,
@@ -16,18 +16,18 @@ const draw = function({
   textLabels
 }) {
   // Rank hue scale
-  const maxRank = Math.max(...bands.map(d => d.rank));
+  const maxRank = Math.max(...layers.map(d => d.rank));
   const hue = rank => rank * (360 / (maxRank + 1));
   const rankFill = node => `hsl(${hue(node.rank)}, 60%, 40%)`;
 
   // Create selections
-  this.el.bands = this.el.bandGroup
-    .selectAll('.band')
-    .data(bands, band => band.rank);
+  this.el.layers = this.el.layerGroup
+    .selectAll('.layer')
+    .data(layers, layer => layer.rank);
 
-  this.el.bandNames = this.el.bandNameGroup
-    .selectAll('.band-name')
-    .data(bands, band => band.rank);
+  this.el.layerNames = this.el.layerNameGroup
+    .selectAll('.layer-name')
+    .data(layers, layer => layer.rank);
 
   this.el.edges = this.el.edgeGroup
     .selectAll('.edge')
@@ -43,33 +43,33 @@ const draw = function({
     .y(d => d.y)
     .curve(curveBasis);
 
-  // Create bands
-  const enterBands = this.el.bands
+  // Create layers
+  const enterLayers = this.el.layers
     .enter()
     .append('rect')
-    .attr('class', 'band');
+    .attr('class', 'layer');
 
-  this.el.bands.exit().remove();
+  this.el.layers.exit().remove();
 
-  this.el.bands = this.el.bands.merge(enterBands);
+  this.el.layers = this.el.layers.merge(enterLayers);
 
-  this.el.bands
+  this.el.layers
     .attr('x', d => d.x)
     .attr('y', d => d.y)
     .attr('height', d => d.height)
     .attr('width', d => d.width);
 
-  // Create bandNames
-  const enterBandNames = this.el.bandNames
+  // Create layerNames
+  const enterLayerNames = this.el.layerNames
     .enter()
     .append('text')
-    .attr('class', 'band-name');
+    .attr('class', 'layer-name');
 
-  this.el.bandNames.exit().remove();
+  this.el.layerNames.exit().remove();
 
-  this.el.bandNames = this.el.bandNames.merge(enterBandNames);
+  this.el.layerNames = this.el.layerNames.merge(enterLayerNames);
 
-  this.el.bandNames
+  this.el.layerNames
     .text(d => d.name)
     .attr('dy', -10)
     .attr('dx', -10)

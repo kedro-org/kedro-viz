@@ -10,7 +10,7 @@
   display: block;
 }
 
-.band {
+.layer {
   opacity: 0;
   transition: opacity ease 0.5s;
   fill: rgba(white, 0.1);
@@ -20,12 +20,12 @@
   }
 }
 
-.band-names-bg {
+.layer-names-bg {
   pointer-events: none;
   fill: rgba(white, 0.1);
 }
 
-.band-name {
+.layer-name {
   font-weight: bold;
   font-size: 13px;
   pointer-events: none;

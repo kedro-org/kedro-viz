@@ -7,7 +7,7 @@ import { zoom, zoomIdentity } from 'd3-zoom';
 import { updateChartSize } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import {
-  getBands,
+  getLayers,
   getLayoutNodes,
   getLayoutEdges,
   getZoomPosition
@@ -38,8 +38,8 @@ export class FlowChart extends Component {
     this.wrapperRef = React.createRef();
     this.edgesRef = React.createRef();
     this.nodesRef = React.createRef();
-    this.bandsRef = React.createRef();
-    this.bandNamesRef = React.createRef();
+    this.layersRef = React.createRef();
+    this.layerNamesRef = React.createRef();
   }
 
   componentDidMount() {
@@ -74,8 +74,8 @@ export class FlowChart extends Component {
       wrapper: select(this.wrapperRef.current),
       edgeGroup: select(this.edgesRef.current),
       nodeGroup: select(this.nodesRef.current),
-      bandGroup: select(this.bandsRef.current),
-      bandNameGroup: select(this.bandNamesRef.current)
+      layerGroup: select(this.layersRef.current),
+      layerNameGroup: select(this.layerNamesRef.current)
     };
   }
 
@@ -151,7 +151,7 @@ export class FlowChart extends Component {
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
       this.el.wrapper.attr('transform', event.transform);
-      this.el.bandNames.attr('transform', d => {
+      this.el.layerNames.attr('transform', d => {
         const { k, y } = event.transform;
         const tx = this.props.chartSize.outerWidth;
         const ty = y + d.y * k;
@@ -310,7 +310,7 @@ export class FlowChart extends Component {
             </marker>
           </defs>
           <g id="zoom-wrapper" ref={this.wrapperRef}>
-            <g className="pipeline-flowchart__bands" ref={this.bandsRef} />
+            <g className="pipeline-flowchart__layers" ref={this.layersRef} />
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
             <g
               id="nodes"
@@ -318,9 +318,11 @@ export class FlowChart extends Component {
               ref={this.nodesRef}
             />
           </g>
-          <g className="pipeline-flowchart__band-names" ref={this.bandNamesRef}>
+          <g
+            className="pipeline-flowchart__layer-names"
+            ref={this.layerNamesRef}>
             <rect
-              className="band-names-bg"
+              className="layer-names-bg"
               x={outerWidth - 30}
               y={0}
               width={30}
@@ -342,7 +344,7 @@ export class FlowChart extends Component {
 }
 
 export const mapStateToProps = state => ({
-  bands: getBands(state),
+  layers: getLayers(state),
   centralNode: getCentralNode(state),
   chartSize: state.chartSize,
   edges: getLayoutEdges(state),
