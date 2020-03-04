@@ -54,7 +54,6 @@ const draw = function({
   this.el.bands = this.el.bands.merge(enterBands);
 
   this.el.bands
-    .attr('fill', rankFill)
     .attr('x', d => d.x)
     .attr('y', d => d.y)
     .attr('height', d => d.height)

@@ -11,9 +11,8 @@
 }
 
 .band {
-  opacity: 0.2;
   opacity: 0;
-  transition: opacity ease 0.2s;
+  transition: opacity ease 0.5s;
   fill: rgba(white, 0.1);
 
   &:hover {
