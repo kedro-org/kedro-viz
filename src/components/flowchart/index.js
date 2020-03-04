@@ -323,6 +323,7 @@ export const mapStateToProps = state => ({
   nodes: getLayoutNodes(state),
   textLabels: state.textLabels,
   view: state.view,
+  visibleNav: state.visible.sidebar,
   zoom: getZoomPosition(state)
 });
 

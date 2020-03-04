@@ -1,6 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import Icon from '@quantumblack/kedro-ui/lib/components/icon';
+import { toggleSidebar } from '../../actions';
 import TagList from '../tag-list';
 import NodeList from '../node-list';
 import MenuIcon from '../icons/menu';
@@ -17,10 +19,10 @@ export const ShowMenuButton = ({ onToggle, visible }) => (
     className={classnames(
       'pipeline-sidebar__show-menu pipeline-sidebar__icon-button',
       {
-        'pipeline-sidebar__icon-button--visible': visible
+        'pipeline-sidebar__icon-button--visible': !visible
       }
     )}
-    onClick={onToggle}>
+    onClick={() => onToggle(!visible)}>
     <MenuIcon className="pipeline-icon" />
   </button>
 );
@@ -40,7 +42,9 @@ export const HideMenuButton = ({ onToggle, theme, visible }) => (
         'pipeline-sidebar__icon-button--visible': visible
       }
     )}
-    onClick={onToggle}>
+    onClick={() => {
+      onToggle(!visible);
+    }}>
     <Icon type="close" title="Close" theme={theme} />
   </button>
 );
@@ -51,7 +55,7 @@ export const HideMenuButton = ({ onToggle, theme, visible }) => (
  */
 const Sidebar = props => (
   <>
-    <ShowMenuButton onToggle={props.onToggle} visible={!props.visible} />
+    <ShowMenuButton {...props} />
     <nav
       className={classnames('pipeline-sidebar', {
         'pipeline-sidebar--visible': props.visible
@@ -65,4 +69,18 @@ const Sidebar = props => (
   </>
 );
 
-export default Sidebar;
+export const mapStateToProps = state => ({
+  theme: state.theme,
+  visible: state.visible.sidebar
+});
+
+export const mapDispatchToProps = dispatch => ({
+  onToggle: visible => {
+    dispatch(toggleSidebar(visible));
+  }
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Sidebar);
