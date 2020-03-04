@@ -33,7 +33,8 @@ const addNode = state => node => {
   state.node.name[id] = node.name;
   state.node.fullName[id] = node.full_name || node.name;
   state.node.type[id] = node.type;
-  state.node.layer[id] = node.layer;
+  state.node.rank[id] = node.rank;
+  state.node.layer[id] = node.rank;
   state.node.isParam[id] = node.type === 'parameters';
   state.node.tags[id] = node.tags || [];
 };
