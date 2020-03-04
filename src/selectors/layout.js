@@ -4,7 +4,7 @@ import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
 const getNodeType = state => state.node.type;
-const getChartSize = state => state.chartSize;
+const getVisibleSidebar = state => state.visible.sidebar;
 
 /**
  * Calculate chart layout with Dagre.js.
@@ -66,6 +66,39 @@ export const getLayoutEdges = createSelector(
 export const getGraphSize = createSelector(
   [getGraph],
   graph => graph.graph()
+);
+
+/**
+ * Return the displayed width of the sidebar
+ */
+export const getSidebarWidth = (visibleSidebar, outerChartWidth) => {
+  const defaultSidebarWidth = 300; // from _variables.scss
+  const breakpointSmall = 480; // from _variables.scss
+  if (visibleSidebar && outerChartWidth > breakpointSmall) {
+    return defaultSidebarWidth;
+  }
+  return 0;
+};
+
+/**
+ * Convert the DOMRect into an Object, mutate some of the properties,
+ * and add some useful new ones
+ */
+export const getChartSize = createSelector(
+  [getVisibleSidebar, state => state.chartSize],
+  (visibleSidebar, chartSize) => {
+    const { left, top, width, height } = chartSize;
+    const sidebarWidth = getSidebarWidth(visibleSidebar, width);
+    return {
+      left,
+      top,
+      outerWidth: width,
+      outerHeight: height,
+      width: width - sidebarWidth,
+      height,
+      sidebarWidth
+    };
+  }
 );
 
 /**
