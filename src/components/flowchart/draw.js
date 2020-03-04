@@ -15,13 +15,6 @@ const draw = function({
   linkedNodes,
   textLabels
 }) {
-  // Layer hue scale
-  const maxLayer = Math.max(...nodes.map(d => d.layer));
-  const layerFill = node => {
-    const hue = node.layer * (360 / (maxLayer + 1));
-    return `hsl(${hue}, 60%, 40%)`;
-  };
-
   // Create selections
   this.el.layers = this.el.layerGroup
     .selectAll('.layer')
@@ -177,7 +170,6 @@ const draw = function({
 
   this.el.nodes
     .select('rect')
-    .style('fill', layerFill)
     .attr('width', node => node.width - 5)
     .attr('height', node => node.height - 5)
     .attr('x', node => (node.width - 5) / -2)
