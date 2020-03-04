@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import dagre from 'dagre';
 import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
-import { LOREM_IPSUM } from '../utils';
 
 const getRanker = state => state.ranker;
 const getNodeType = state => state.node.type;
@@ -102,36 +101,5 @@ export const getZoomPosition = createSelector(
       translateX: 0,
       translateY: 0
     };
-  }
-);
-
-/**
- * Get layer positions
- */
-export const getLayers = createSelector(
-  [getLayoutNodes],
-  nodes => {
-    const max = Math.pow(2, 15);
-
-    const layerY = {};
-    nodes.forEach(node => {
-      if (!layerY[node.rank]) {
-        layerY[node.rank] = node.y;
-      }
-    });
-
-    return Object.keys(layerY).map((rank, i) => {
-      const neighbourY = layerY[i - 1] || layerY[i + 1];
-      const height = Math.abs(layerY[i] - neighbourY);
-
-      return {
-        rank,
-        name: LOREM_IPSUM[i],
-        x: max / -2,
-        y: layerY[i] - height / 2,
-        width: max,
-        height
-      };
-    });
   }
 );

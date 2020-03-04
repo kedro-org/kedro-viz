@@ -7,11 +7,11 @@ import { zoom, zoomIdentity } from 'd3-zoom';
 import { updateChartSize } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import {
-  getLayers,
   getLayoutNodes,
   getLayoutEdges,
   getZoomPosition
 } from '../../selectors/layout';
+import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import draw from './draw';
 import './styles/flowchart.css';

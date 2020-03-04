@@ -1,0 +1,23 @@
+@import './variables';
+
+.layer {
+  opacity: 0;
+  transition: opacity ease 0.5s;
+  fill: rgba(white, 0.1);
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.layer-names-bg {
+  pointer-events: none;
+  fill: rgba(white, 0.1);
+}
+
+.layer-name {
+  font-weight: bold;
+  font-size: 13px;
+  pointer-events: none;
+  fill: white;
+}
