@@ -1,4 +1,30 @@
 export default {
+  layers: [
+    {
+      id: 0,
+      name: 'Raw'
+    },
+    {
+      id: 1,
+      name: 'Intermediate'
+    },
+    {
+      id: 2,
+      name: 'Primary'
+    },
+    {
+      id: 3,
+      name: 'Feature'
+    },
+    {
+      id: 4,
+      name: 'Model Input'
+    },
+    {
+      id: 5,
+      name: 'Model Output'
+    }
+  ],
   nodes: [
     {
       id: 'task/sed_viverra',
@@ -6,6 +32,7 @@ export default {
       full_name: 'sed viverra',
       type: 'task',
       rank: 3,
+      layer: 1,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -14,6 +41,7 @@ export default {
       full_name: 'neque sit ac elit neque',
       type: 'task',
       rank: 9,
+      layer: 4,
       tags: [
         'adipiscing_dolor',
         'pellentesque_ipsum_dolor_fermentum_pellentesque'
@@ -25,6 +53,7 @@ export default {
       full_name: 'finibus amet rhoncus consectetur vitae libero nulla',
       type: 'task',
       rank: 1,
+      layer: 0,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -33,6 +62,7 @@ export default {
       full_name: 'vestibulum consectetur id',
       type: 'task',
       rank: 8,
+      layer: 3,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -41,6 +71,7 @@ export default {
       full_name: 'vitae',
       type: 'task',
       rank: 6,
+      layer: 2,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -49,6 +80,7 @@ export default {
       full_name: 'nulla consequat dignissim elit adipiscing ac',
       type: 'task',
       rank: 7,
+      layer: 2,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -57,6 +89,7 @@ export default {
       full_name: 'consequat',
       type: 'task',
       rank: 5,
+      layer: 2,
       tags: [
         'pellentesque_ipsum_dolor_fermentum_pellentesque',
         'adipiscing_dolor'
@@ -71,6 +104,7 @@ export default {
         'finibus neque sit fermentum adipiscing dignissim viverra pellentesque quisque ipsum',
       type: 'task',
       rank: 3,
+      layer: 1,
       tags: [
         'pellentesque_ipsum_dolor_fermentum_pellentesque',
         'adipiscing_dolor'
@@ -82,6 +116,7 @@ export default {
       full_name: 'pellentesque amet adipiscing ac libero id consectetur',
       type: 'task',
       rank: 7,
+      layer: 2,
       tags: ['adipiscing_dolor']
     },
     {
@@ -90,6 +125,7 @@ export default {
       full_name: 'sit pellentesque amet lorem',
       type: 'task',
       rank: 4,
+      layer: 1,
       tags: [
         'pellentesque_ipsum_dolor_fermentum_pellentesque',
         'adipiscing_dolor'
@@ -101,6 +137,7 @@ export default {
       full_name: 'diam nulla finibus dignissim viverra viverra',
       type: 'data',
       rank: 1,
+      layer: 0,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -109,6 +146,7 @@ export default {
       full_name: 'neque amet turpis rhoncus dolor nunc sit',
       type: 'data',
       rank: 9,
+      layer: 4,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -117,6 +155,7 @@ export default {
       full_name: 'elit adipiscing fermentum nunc amet consectetur adipiscing',
       type: 'data',
       rank: 0,
+      layer: 0,
       tags: [
         'adipiscing_dolor',
         'pellentesque_ipsum_dolor_fermentum_pellentesque'
@@ -128,6 +167,7 @@ export default {
       full_name: 'parameters convallis amet fermentum sit nulla id ac diam',
       type: 'parameters',
       rank: 3,
+      layer: 1,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -136,6 +176,7 @@ export default {
       full_name: 'condimentum viverra rhoncus sit amet neque diam consequat',
       type: 'data',
       rank: 3,
+      layer: 1,
       tags: ['adipiscing_dolor']
     },
     {
@@ -144,6 +185,7 @@ export default {
       full_name: 'parameters libero',
       type: 'parameters',
       rank: 9,
+      layer: 4,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -152,6 +194,7 @@ export default {
       full_name: 'amet fermentum fermentum amet sed',
       type: 'data',
       rank: 1,
+      layer: 0,
       tags: [
         'adipiscing_dolor',
         'pellentesque_ipsum_dolor_fermentum_pellentesque'
@@ -163,6 +206,7 @@ export default {
       full_name: 'parameters nulla rhoncus',
       type: 'parameters',
       rank: 0,
+      layer: 0,
       tags: [
         'adipiscing_dolor',
         'pellentesque_ipsum_dolor_fermentum_pellentesque'
@@ -174,6 +218,7 @@ export default {
       full_name: 'diam',
       type: 'data',
       rank: 8,
+      layer: 3,
       tags: [
         'adipiscing_dolor',
         'pellentesque_ipsum_dolor_fermentum_pellentesque'
@@ -185,6 +230,7 @@ export default {
       full_name: 'consectetur libero sit diam vestibulum vitae',
       type: 'data',
       rank: 7,
+      layer: 2,
       tags: ['adipiscing_dolor']
     },
     {
@@ -196,6 +242,7 @@ export default {
         'amet rhoncus convallis libero fermentum dignissim amet elit rhoncus',
       type: 'data',
       rank: 8,
+      layer: 3,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -204,6 +251,7 @@ export default {
       full_name: 'neque diam convallis amet consequat',
       type: 'data',
       rank: 2,
+      layer: 0,
       tags: [
         'adipiscing_dolor',
         'pellentesque_ipsum_dolor_fermentum_pellentesque'
@@ -215,6 +263,7 @@ export default {
       full_name: 'vestibulum diam nunc',
       type: 'data',
       rank: 3,
+      layer: 1,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -223,6 +272,7 @@ export default {
       full_name: 'nulla adipiscing ac elit lorem finibus',
       type: 'data',
       rank: 0,
+      layer: 0,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -234,6 +284,7 @@ export default {
         'parameters viverra rhoncus rhoncus condimentum elit fermentum turpis amet quisque sit',
       type: 'parameters',
       rank: 0,
+      layer: 0,
       tags: [
         'adipiscing_dolor',
         'pellentesque_ipsum_dolor_fermentum_pellentesque'
@@ -245,6 +296,7 @@ export default {
       full_name: 'amet',
       type: 'data',
       rank: 4,
+      layer: 1,
       tags: [
         'adipiscing_dolor',
         'pellentesque_ipsum_dolor_fermentum_pellentesque'
@@ -256,6 +308,7 @@ export default {
       full_name: 'sed condimentum diam diam',
       type: 'data',
       rank: 9,
+      layer: 4,
       tags: ['adipiscing_dolor']
     },
     {
@@ -267,6 +320,7 @@ export default {
         'amet pellentesque dolor consequat elit convallis fermentum vitae diam',
       type: 'data',
       rank: 0,
+      layer: 0,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -275,6 +329,7 @@ export default {
       full_name: 'quisque fermentum fermentum diam libero nulla',
       type: 'data',
       rank: 5,
+      layer: 2,
       tags: [
         'pellentesque_ipsum_dolor_fermentum_pellentesque',
         'adipiscing_dolor'
@@ -286,6 +341,7 @@ export default {
       full_name: 'libero sit libero dignissim consequat vestibulum neque',
       type: 'data',
       rank: 8,
+      layer: 3,
       tags: ['adipiscing_dolor']
     },
     {
@@ -294,6 +350,7 @@ export default {
       full_name: 'nunc turpis',
       type: 'data',
       rank: 1,
+      layer: 0,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -301,7 +358,8 @@ export default {
       name: 'amet nunc libero nulla sit',
       full_name: 'amet nunc libero nulla sit',
       type: 'data',
-      rank: 9,
+      rank: 10,
+      layer: 5,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -312,6 +370,7 @@ export default {
         'pellentesque elit neque sed pellentesque condimentum condimentum',
       type: 'data',
       rank: 3,
+      layer: 1,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -320,6 +379,7 @@ export default {
       full_name: 'consequat rhoncus ac ipsum lorem neque vestibulum',
       type: 'data',
       rank: 4,
+      layer: 1,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -331,6 +391,7 @@ export default {
         'vitae libero libero lorem elit adipiscing fermentum fermentum vestibulum id',
       type: 'data',
       rank: 7,
+      layer: 2,
       tags: ['pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -339,6 +400,7 @@ export default {
       full_name: 'convallis convallis',
       type: 'data',
       rank: 6,
+      layer: 2,
       tags: [
         'adipiscing_dolor',
         'pellentesque_ipsum_dolor_fermentum_pellentesque'
@@ -350,6 +412,7 @@ export default {
       full_name: 'neque',
       type: 'data',
       rank: 4,
+      layer: 1,
       tags: [
         'pellentesque_ipsum_dolor_fermentum_pellentesque',
         'adipiscing_dolor'
@@ -361,6 +424,7 @@ export default {
       full_name: 'convallis',
       type: 'data',
       rank: 3,
+      layer: 1,
       tags: [
         'pellentesque_ipsum_dolor_fermentum_pellentesque',
         'adipiscing_dolor'

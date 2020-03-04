@@ -5,6 +5,7 @@ import { getVisibleEdges } from './edges';
 
 const getRanker = state => state.ranker;
 const getNodeType = state => state.node.type;
+const getNodeLayer = state => state.node.layer;
 const getChartSize = state => state.chartSize;
 
 /**
@@ -43,11 +44,12 @@ export const getGraph = createSelector(
  * and recombine with other data that doesn't affect layout
  */
 export const getLayoutNodes = createSelector(
-  [getGraph, getNodeType, getNodeActive],
-  (graph, nodeType, nodeActive) =>
+  [getGraph, getNodeType, getNodeLayer, getNodeActive],
+  (graph, nodeType, nodeLayer, nodeActive) =>
     graph.nodes().map(nodeID => {
       const node = graph.node(nodeID);
       return Object.assign({}, node, {
+        layer: nodeLayer[nodeID],
         type: nodeType[nodeID],
         order: node.x + node.y * 9999,
         active: nodeActive[nodeID]

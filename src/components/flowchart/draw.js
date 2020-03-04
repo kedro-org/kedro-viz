@@ -8,26 +8,28 @@ import icon from './icon';
  * Render chart to the DOM with D3
  */
 const draw = function({
-  layers,
   nodes,
   edges,
+  layers,
   centralNode,
   linkedNodes,
   textLabels
 }) {
-  // Rank hue scale
-  const maxRank = Math.max(...layers.map(d => d.rank));
-  const hue = rank => rank * (360 / (maxRank + 1));
-  const rankFill = node => `hsl(${hue(node.rank)}, 60%, 40%)`;
+  // Layer hue scale
+  const maxLayer = Math.max(...nodes.map(d => d.layer));
+  const layerFill = node => {
+    const hue = node.layer * (360 / (maxLayer + 1));
+    return `hsl(${hue}, 60%, 40%)`;
+  };
 
   // Create selections
   this.el.layers = this.el.layerGroup
     .selectAll('.layer')
-    .data(layers, layer => layer.rank);
+    .data(layers, layer => layer.id);
 
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.layer-name')
-    .data(layers, layer => layer.rank);
+    .data(layers, layer => layer.id);
 
   this.el.edges = this.el.edgeGroup
     .selectAll('.edge')
@@ -175,7 +177,7 @@ const draw = function({
 
   this.el.nodes
     .select('rect')
-    .style('fill', rankFill)
+    .style('fill', layerFill)
     .attr('width', node => node.width - 5)
     .attr('height', node => node.height - 5)
     .attr('x', node => (node.width - 5) / -2)

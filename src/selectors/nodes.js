@@ -11,7 +11,6 @@ const getNodeDisabledNode = state => state.node.disabled;
 const getNodeTags = state => state.node.tags;
 const getNodeType = state => state.node.type;
 const getNodeRank = state => state.node.rank;
-const getNodeLayer = state => state.node.layer;
 const getTagActive = state => state.tag.active;
 const getTagEnabled = state => state.tag.enabled;
 const getTextLabels = state => state.textLabels;
@@ -201,7 +200,6 @@ export const getVisibleNodes = createSelector(
     getNodeDisabled,
     getNodeFullName,
     getNodeSize,
-    getNodeLayer,
     getNodeRank
   ],
   (
@@ -211,7 +209,6 @@ export const getVisibleNodes = createSelector(
     nodeDisabled,
     nodeFullName,
     nodeSize,
-    nodeLayer,
     nodeRank
   ) =>
     nodeIDs
@@ -223,7 +220,6 @@ export const getVisibleNodes = createSelector(
         fullName: nodeFullName[id],
         type: nodeType[id],
         rank: nodeRank[id],
-        layer: nodeLayer[id],
         disabled: nodeDisabled[id],
         ...nodeSize[id]
       }))

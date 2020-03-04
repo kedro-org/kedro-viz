@@ -74,6 +74,10 @@ export const getInitialPipelineState = () => ({
     sources: {},
     targets: {}
   },
+  layer: {
+    ids: [],
+    name: {}
+  },
   tag: {
     ids: [],
     name: {},

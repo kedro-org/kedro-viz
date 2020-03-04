@@ -47,6 +47,7 @@ const combinedReducer = combineReducers({
   tag,
   edge: (state = {}) => state,
   id: (state = null) => state,
+  layer: (state = {}) => state,
   visible: (state = {}) => state,
   chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {
     width: 0,
