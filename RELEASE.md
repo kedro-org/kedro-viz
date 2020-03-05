@@ -16,6 +16,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->
+- Move visibleNav/navWidth calculations into Redux store (#124)
 
 ## Thanks for supporting contributions
 [Ana Potje](https://github.com/ANA-POTJE)
