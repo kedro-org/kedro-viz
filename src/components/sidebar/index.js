@@ -11,7 +11,7 @@ import './sidebar.css';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {Object} props onToggle, theme, and visible
  */
-const Sidebar = props => (
+export const Sidebar = props => (
   <>
     <ShowMenuButton {...props} />
     <nav
@@ -27,12 +27,12 @@ const Sidebar = props => (
   </>
 );
 
-export const mapStateToProps = state => ({
+const mapStateToProps = state => ({
   theme: state.theme,
   visible: state.visible.sidebar
 });
 
-export const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   onToggle: visible => {
     dispatch(toggleSidebar(visible));
   }

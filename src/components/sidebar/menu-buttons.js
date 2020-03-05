@@ -17,7 +17,7 @@ export const ShowMenuButton = ({ onToggle, visible }) => (
         'pipeline-sidebar__icon-button--visible': !visible
       }
     )}
-    onClick={() => onToggle(!visible)}>
+    onClick={() => onToggle(true)}>
     <MenuIcon className="pipeline-icon" />
   </button>
 );
@@ -37,9 +37,7 @@ export const HideMenuButton = ({ onToggle, theme, visible }) => (
         'pipeline-sidebar__icon-button--visible': visible
       }
     )}
-    onClick={() => {
-      onToggle(!visible);
-    }}>
+    onClick={() => onToggle(false)}>
     <Icon type="close" title="Close" theme={theme} />
   </button>
 );

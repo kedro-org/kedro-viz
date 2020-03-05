@@ -54,7 +54,7 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.visibleNav !== this.props.visibleNav) {
+    if (prevProps.visibleSidebar !== this.props.visibleSidebar) {
       this.updateChartSize();
     }
     if (prevProps.zoom !== this.props.zoom) {
@@ -299,8 +299,7 @@ export const mapStateToProps = state => ({
   linkedNodes: getLinkedNodes(state),
   nodes: getLayoutNodes(state),
   textLabels: state.textLabels,
-  view: state.view,
-  visibleNav: state.visible.sidebar,
+  visibleSidebar: state.visible.sidebar,
   zoom: getZoomPosition(state)
 });
 

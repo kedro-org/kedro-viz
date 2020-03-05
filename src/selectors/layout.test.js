@@ -3,6 +3,7 @@ import {
   getGraph,
   getLayoutNodes,
   getLayoutEdges,
+  getSidebarWidth,
   getZoomPosition
 } from './layout';
 import { getVisibleNodes } from './nodes';
@@ -73,6 +74,31 @@ describe('Selectors', () => {
           })
         ])
       );
+    });
+  });
+
+  describe('getSidebarWidth', () => {
+    describe('if sidebar is visible', () => {
+      it('reduces the chart width by 300 on wider screens', () => {
+        expect(getSidebarWidth(true, 1000)).toEqual(300);
+        expect(getSidebarWidth(true, 500)).toEqual(300);
+      });
+
+      it('sets sidebar width to zero on mobile', () => {
+        expect(getSidebarWidth(true, 480)).toEqual(0);
+        expect(getSidebarWidth(true, 320)).toEqual(0);
+      });
+    });
+
+    describe('if sidebar is hidden', () => {
+      it('sets sidebar width to zero on desktop', () => {
+        expect(getSidebarWidth(false, 1000)).toEqual(0);
+      });
+
+      it('sets sidebar width to zero on mobile', () => {
+        expect(getSidebarWidth(false, 480)).toEqual(0);
+        expect(getSidebarWidth(false, 320)).toEqual(0);
+      });
     });
   });
 

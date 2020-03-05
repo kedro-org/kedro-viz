@@ -1,3 +1,4 @@
+import React from 'react';
 import { Wrapper, mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
@@ -17,20 +18,18 @@ describe('Wrapper', () => {
   it('sets a class based on the theme', () => {
     const wrapper = setup.shallow(Wrapper, mockProps);
     const container = wrapper.find('.kedro-pipeline');
-    const { theme } = wrapper.instance().props;
     expect(container.hasClass(`kui-theme--light`)).toBe(theme === 'light');
     expect(container.hasClass(`kui-theme--dark`)).toBe(theme === 'dark');
   });
 
-  it('has sidebar visible by default', () => {
-    const wrapper = setup.shallow(Wrapper, mockProps);
-    expect(wrapper.instance().state.visibleNav).toBe(true);
+  it("doesn't show the chart if fontLoaded is false", () => {
+    const wrapper = setup.mount(<Wrapper fontLoaded={false} />);
+    expect(wrapper.find('FlowChart').exists()).toBe(false);
   });
 
-  it('sets visibleNav to false when you run toggleNav', () => {
-    const wrapper = setup.shallow(Wrapper, mockProps);
-    wrapper.instance().toggleNav();
-    expect(wrapper.instance().state.visibleNav).toBe(false);
+  it('only shows the chart if fontLoaded is true', () => {
+    const wrapper = setup.mount(<Wrapper fontLoaded={true} />);
+    expect(wrapper.find('FlowChart').exists()).toBe(true);
   });
 
   it('maps state to props', () => {
