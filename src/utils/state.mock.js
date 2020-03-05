@@ -22,7 +22,10 @@ export const setup = {
    * @param {Object} props Store initialisation props
    */
   mount: (children, props = {}) => {
-    const initialState = getInitialState({ data: 'lorem', ...props });
+    const initialState = Object.assign(
+      {},
+      getInitialState({ data: 'lorem', ...props }, props)
+    );
     return mount(
       <Provider store={configureStore(initialState)}>{children}</Provider>
     );
