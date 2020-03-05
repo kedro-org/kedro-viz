@@ -74,6 +74,9 @@ export const getGraphSize = createSelector(
 export const getSidebarWidth = (visibleSidebar, outerChartWidth) => {
   const defaultSidebarWidth = 300; // from _variables.scss
   const breakpointSmall = 480; // from _variables.scss
+  if (isNaN(outerChartWidth)) {
+    return;
+  }
   if (visibleSidebar && outerChartWidth > breakpointSmall) {
     return defaultSidebarWidth;
   }
@@ -94,7 +97,7 @@ export const getChartSize = createSelector(
       top,
       outerWidth: width,
       outerHeight: height,
-      width: width - sidebarWidth,
+      width: width ? width - sidebarWidth : width,
       height,
       sidebarWidth
     };

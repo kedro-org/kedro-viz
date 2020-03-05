@@ -1,6 +1,8 @@
 import { mockState } from '../utils/state.mock';
 import {
+  getChartSize,
   getGraph,
+  getGraphSize,
   getLayoutNodes,
   getLayoutEdges,
   getSidebarWidth,
@@ -14,6 +16,7 @@ import reducer from '../reducers';
 describe('Selectors', () => {
   describe('getGraph', () => {
     const graph = getGraph(mockState.lorem);
+
     it('calculates chart layout and returns a Dagre object', () => {
       expect(graph).toEqual(
         expect.objectContaining({
@@ -77,6 +80,20 @@ describe('Selectors', () => {
     });
   });
 
+  describe('getGraphSize', () => {
+    it('returns width, height and margin of the graph', () => {
+      const graphSize = getGraphSize(mockState.lorem);
+      expect(graphSize).toEqual(
+        expect.objectContaining({
+          height: expect.any(Number),
+          marginx: expect.any(Number),
+          marginy: expect.any(Number),
+          width: expect.any(Number)
+        })
+      );
+    });
+  });
+
   describe('getSidebarWidth', () => {
     describe('if sidebar is visible', () => {
       it('reduces the chart width by 300 on wider screens', () => {
@@ -98,6 +115,36 @@ describe('Selectors', () => {
       it('sets sidebar width to zero on mobile', () => {
         expect(getSidebarWidth(false, 480)).toEqual(0);
         expect(getSidebarWidth(false, 320)).toEqual(0);
+      });
+    });
+  });
+
+  describe('getChartSize', () => {
+    it('returns a set of undefined properties if chartSize DOMRect is not supplied', () => {
+      expect(getChartSize(mockState.lorem)).toEqual({
+        height: undefined,
+        left: undefined,
+        outerHeight: undefined,
+        outerWidth: undefined,
+        sidebarWidth: undefined,
+        top: undefined,
+        width: undefined
+      });
+    });
+
+    it('returns a DOMRect converted into an Object, with some extra properties', () => {
+      const newMockState = {
+        ...mockState.lorem,
+        chartSize: { left: 100, top: 100, width: 1000, height: 1000 }
+      };
+      expect(getChartSize(newMockState)).toEqual({
+        height: expect.any(Number),
+        left: expect.any(Number),
+        outerHeight: expect.any(Number),
+        outerWidth: expect.any(Number),
+        sidebarWidth: expect.any(Number),
+        top: expect.any(Number),
+        width: expect.any(Number)
       });
     });
   });
