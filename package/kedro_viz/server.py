@@ -195,46 +195,102 @@ def format_pipeline_data(pipeline, catalog):
 
     nodes = []
     edges = []
-    namespace_tags = defaultdict(set)
-    all_tags = set()
 
-    for node in sorted(pipeline.nodes, key=lambda n: n.name):
-        task_id = _hash(str(node))
-        nodes.append(
-            {
-                "type": "task",
-                "id": task_id,
-                "name": getattr(node, "short_name", node.name),
-                "full_name": getattr(node, "_func_name", str(node)),
-                "tags": sorted(node.tags),
-            }
-        )
-        all_tags.update(node.tags)
+    from toposort import toposort, toposort_flatten
+    from collections import namedtuple
+
+    catalog_metadata = catalog._data_sets
+
+    layer_dependencies = defaultdict(set)
+    datasets_by_layers = defaultdict(set)
+    dependencies = defaultdict(set)
+
+    for node in pipeline.nodes:
+        dependencies[node._func_name].update(node.inputs)
+
+        input_layers = set()
         for data_set in node.inputs:
-            namespace = data_set.split("@")[0]
-            edges.append({"source": _hash(namespace), "target": task_id})
-            namespace_tags[namespace].update(node.tags)
+            if data_set.startswith("param"):
+                continue
+            ds = catalog_metadata.get(data_set)
+            if ds:
+                input_layers.add(ds._layer)
+                datasets_by_layers[ds._layer].add(data_set)
+
         for data_set in node.outputs:
-            namespace = data_set.split("@")[0]
-            edges.append({"source": task_id, "target": _hash(namespace)})
-            namespace_tags[namespace].update(node.tags)
+            dependencies[data_set].update((node._func_name, ))
+            ds = catalog_metadata.get(data_set)
+            if ds:
+                datasets_by_layers[ds._layer].add(data_set)
+                layers = input_layers.difference((ds._layer,))
+                if layers:
+                    layer_dependencies[ds._layer].update(layers)
 
-    for namespace, tags in sorted(namespace_tags.items()):
-        is_param = bool("param" in namespace.lower())
-        nodes.append(
-            {
-                "type": "parameters" if is_param else "data",
-                "id": _hash(namespace),
-                "name": pretty_name(namespace),
-                "full_name": namespace,
-                "tags": sorted(tags),
-            }
-        )
+    sorted_layer_deps = tuple(toposort_flatten(layer_dependencies))
+    artificial_node = namedtuple("ArtificialNode", ["source", "target"])
 
+    artificial_nodes = [
+        artificial_node(sorted_layer_deps[i], sorted_layer_deps[i + 1])
+        for i in range(len(sorted_layer_deps) - 1)
+    ]
+
+    for a_node in artificial_nodes:
+        dependencies[a_node].update(datasets_by_layers[a_node.source])
+        for ds in datasets_by_layers[a_node.target]:
+            dependencies[ds].update((a_node, ))
+
+    sorted_dependencies = list(toposort(dependencies))
+    rank_mapping = {}
+
+    for rank, value in enumerate(sorted_dependencies):
+        for item in value:
+            if item not in artificial_nodes:
+                rank_mapping[item] = rank
+
+    import pprint
+    pprint.pprint(rank_mapping)
+
+
+    # namespace_tags = defaultdict(set)
+    # all_tags = set()
+    #
+    # for node in sorted(pipeline.nodes, key=lambda n: n.name):
+    #     task_id = _hash(str(node))
+    #     nodes.append(
+    #         {
+    #             "type": "task",
+    #             "id": task_id,
+    #             "name": getattr(node, "short_name", node.name),
+    #             "full_name": getattr(node, "_func_name", str(node)),
+    #             "tags": sorted(node.tags),
+    #         }
+    #     )
+    #     all_tags.update(node.tags)
+    #     for data_set in node.inputs:
+    #         namespace = data_set.split("@")[0]
+    #         edges.append({"source": _hash(namespace), "target": task_id})
+    #         namespace_tags[namespace].update(node.tags)
+    #     for data_set in node.outputs:
+    #         namespace = data_set.split("@")[0]
+    #         edges.append({"source": task_id, "target": _hash(namespace)})
+    #         namespace_tags[namespace].update(node.tags)
+    #
+    # for namespace, tags in sorted(namespace_tags.items()):
+    #     is_param = bool("param" in namespace.lower())
+    #     nodes.append(
+    #         {
+    #             "type": "parameters" if is_param else "data",
+    #             "id": _hash(namespace),
+    #             "name": pretty_name(namespace),
+    #             "full_name": namespace,
+    #             "tags": sorted(tags),
+    #         }
+    #     )
+    #
     tags = []
-    for tag in sorted(all_tags):
-        tags.append({"id": tag, "name": pretty_name(tag)})
-
+    # for tag in sorted(all_tags):
+    #     tags.append({"id": tag, "name": pretty_name(tag)})
+    #
     return {"nodes": nodes, "edges": edges, "tags": tags}
 
 
