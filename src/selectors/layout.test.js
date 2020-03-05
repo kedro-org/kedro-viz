@@ -150,15 +150,11 @@ describe('Selectors', () => {
   });
 
   describe('getZoomPosition', () => {
-    it('returns a default chart zoom translation/scale if none is specified', () => {
-      expect(getZoomPosition(mockState.lorem)).toEqual({
-        scale: 1,
-        translateX: 0,
-        translateY: 0
-      });
+    it('returns an empty object if chartSize is unset', () => {
+      expect(getZoomPosition(mockState.lorem)).toEqual({});
     });
 
-    it('returns the updated chart zoom translation/scale if set', () => {
+    it('returns the updated chart zoom translation/scale if chartSize is set', () => {
       const newMockState = reducer(
         mockState.lorem,
         updateChartSize({ width: 100, height: 100 })

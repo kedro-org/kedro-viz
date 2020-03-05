@@ -133,16 +133,13 @@ export class FlowChart extends Component {
    * Zoom and scale to fit
    */
   zoomChart() {
-    const { scale, translateX, translateY } = this.props.zoom;
-    const { sidebarWidth = 0 } = this.props.chartSize;
+    const { scale = 1, translateX = 0, translateY = 0 } = this.props.zoom;
     this.el.svg
       .transition()
       .duration(this.DURATION)
       .call(
         this.zoomBehaviour.transform,
-        zoomIdentity
-          .translate(translateX + sidebarWidth, translateY)
-          .scale(scale)
+        zoomIdentity.translate(translateX, translateY).scale(scale)
       );
   }
 
@@ -208,13 +205,7 @@ export class FlowChart extends Component {
    * @param {Object} node A node datum
    */
   showTooltip(node) {
-    const {
-      left,
-      top,
-      width,
-      outerWidth,
-      sidebarWidth = 0
-    } = this.props.chartSize;
+    const { left, top, width, outerWidth, sidebarWidth } = this.props.chartSize;
     const eventOffset = event.target.getBoundingClientRect();
     const isRight = eventOffset.left - sidebarWidth > width / 2;
     const xOffset = isRight ? eventOffset.left - outerWidth : eventOffset.left;

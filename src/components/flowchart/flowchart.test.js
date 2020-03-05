@@ -68,11 +68,7 @@ describe('FlowChart', () => {
       nodes: expect.any(Array),
       textLabels: expect.any(Boolean),
       visibleSidebar: expect.any(Boolean),
-      zoom: expect.objectContaining({
-        scale: expect.any(Number),
-        translateX: expect.any(Number),
-        translateY: expect.any(Number)
-      })
+      zoom: expect.any(Object)
     };
     expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
   });

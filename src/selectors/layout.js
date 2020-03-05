@@ -74,9 +74,6 @@ export const getGraphSize = createSelector(
 export const getSidebarWidth = (visibleSidebar, outerChartWidth) => {
   const defaultSidebarWidth = 300; // from _variables.scss
   const breakpointSmall = 480; // from _variables.scss
-  if (isNaN(outerChartWidth)) {
-    return;
-  }
   if (visibleSidebar && outerChartWidth > breakpointSmall) {
     return defaultSidebarWidth;
   }
@@ -91,6 +88,9 @@ export const getChartSize = createSelector(
   [getVisibleSidebar, state => state.chartSize],
   (visibleSidebar, chartSize) => {
     const { left, top, width, height } = chartSize;
+    if (!width || !height) {
+      return {};
+    }
     const sidebarWidth = getSidebarWidth(visibleSidebar, width);
     return {
       left,
@@ -110,29 +110,22 @@ export const getChartSize = createSelector(
  */
 export const getZoomPosition = createSelector(
   [getGraphSize, getChartSize],
-  (graph, container) => {
-    const validDimensions = [
-      container.width,
-      container.height,
-      graph.width,
-      graph.height
-    ].every(n => !isNaN(n) && Number.isFinite(n));
-
-    if (validDimensions) {
-      const scale = Math.min(
-        container.width / graph.width,
-        container.height / graph.height
-      );
-      return {
-        scale,
-        translateX: container.width / 2 - (graph.width * scale) / 2,
-        translateY: container.height / 2 - (graph.height * scale) / 2
-      };
+  (graph, chart) => {
+    if (!Object.keys(chart).length) {
+      return {};
     }
+
+    const scale = Math.min(
+      chart.width / graph.width,
+      chart.height / graph.height
+    );
+    const translateX = chart.width / 2 - (graph.width * scale) / 2;
+    const translateY = chart.height / 2 - (graph.height * scale) / 2;
+
     return {
-      scale: 1,
-      translateX: 0,
-      translateY: 0
+      scale,
+      translateX: translateX + chart.sidebarWidth,
+      translateY
     };
   }
 );
