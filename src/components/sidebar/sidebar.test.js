@@ -22,14 +22,18 @@ describe('Sidebar', () => {
   });
 
   it('hides when clicking the hide menu button', () => {
-    const wrapper = setup.mount(<MountSidebar />);
+    const wrapper = setup.mount(<MountSidebar />, {
+      visible: { sidebar: true }
+    });
     wrapper.find('.pipeline-sidebar__hide-menu').simulate('click');
     const sidebar = wrapper.find('.pipeline-sidebar');
     expect(sidebar.hasClass('pipeline-sidebar--visible')).toBe(false);
   });
 
   it('shows when clicking the show menu button', () => {
-    const wrapper = setup.mount(<MountSidebar />);
+    const wrapper = setup.mount(<MountSidebar />, {
+      visible: { sidebar: false }
+    });
     wrapper.find('.pipeline-sidebar__show-menu').simulate('click');
     const sidebar = wrapper.find('.pipeline-sidebar');
     expect(sidebar.hasClass('pipeline-sidebar--visible')).toBe(true);
