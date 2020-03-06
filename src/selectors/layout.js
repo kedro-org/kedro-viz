@@ -3,6 +3,7 @@ import dagre from 'dagre';
 import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
+const getHasLayers = state => Boolean(state.layer.ids.length);
 const getRanker = state => state.ranker;
 const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;
@@ -15,11 +16,11 @@ const getChartSize = state => state.chartSize;
  * which don't affect layout.
  */
 export const getGraph = createSelector(
-  [getVisibleNodes, getVisibleEdges, getRanker],
-  (nodes, edges, ranker) => {
+  [getVisibleNodes, getVisibleEdges, getRanker, getHasLayers],
+  (nodes, edges, ranker, hasLayers) => {
     const graph = new dagre.graphlib.Graph().setGraph({
-      ranker,
-      ranksep: 200,
+      ranker: hasLayers ? ranker : null,
+      ranksep: hasLayers ? 200 : 70,
       marginx: 40,
       marginy: 40
     });

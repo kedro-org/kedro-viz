@@ -113,7 +113,7 @@ const getInitialState = (props = {}) => {
     chartSize: {},
     fontLoaded: false,
     textLabels,
-    ranker: ['none', 'network-simplex', 'tight-tree', 'longest-path'][0],
+    ranker: 'none',
     visible,
     theme
   };

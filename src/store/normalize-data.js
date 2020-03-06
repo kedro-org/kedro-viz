@@ -88,8 +88,12 @@ const formatData = data => {
     }
     data.nodes.forEach(addNode(state));
     data.edges.forEach(addEdge(state));
-    data.tags.forEach(addTag(state));
-    data.layers.forEach(addLayer(state));
+    if (data.tags) {
+      data.tags.forEach(addTag(state));
+    }
+    if (data.layers) {
+      data.layers.forEach(addLayer(state));
+    }
   }
 
   return state;
