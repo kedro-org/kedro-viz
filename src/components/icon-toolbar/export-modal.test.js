@@ -34,13 +34,13 @@ describe('IconToolbar', () => {
 
     it('downloads an SVG', () => {
       const downloadFn = jest.fn();
-      exportGraph(downloadFn, 'svg', graphSize);
+      exportGraph(downloadFn, 'svg', 'dark', graphSize);
       expect(downloadFn.mock.calls.length).toBe(1);
     });
 
     it('downloads a PNG', () => {
       const downloadFn = jest.fn();
-      exportGraph(downloadFn, 'png', graphSize);
+      exportGraph(downloadFn, 'png', 'dark', graphSize);
       expect(downloadFn.mock.calls.length).toBe(1);
     });
 
