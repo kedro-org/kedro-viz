@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import Modal from '@quantumblack/kedro-ui/lib/components/modal';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
 import { getGraphSize } from '../../selectors/layout';
-import downloadSvg, { downloadPng } from 'svg-crowbar';
+const { default: downloadSvg, downloadPng } =
+  typeof window !== 'undefined' && require('svg-crowbar');
 
 /**
  * Handle onClick for the SVG/PNG download button
