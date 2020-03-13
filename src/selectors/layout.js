@@ -97,7 +97,7 @@ export const getChartSize = createSelector(
       top,
       outerWidth: width,
       outerHeight: height,
-      width: width ? width - sidebarWidth : width,
+      width: width - sidebarWidth,
       height,
       sidebarWidth
     };
