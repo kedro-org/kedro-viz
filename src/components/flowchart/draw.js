@@ -5,40 +5,13 @@ import { curveBasis, line } from 'd3-shape';
 import icon from './icon';
 
 /**
- * Render chart to the DOM with D3
+ * Render layer bands
  */
-const draw = function({
-  nodes,
-  edges,
-  layers,
-  centralNode,
-  linkedNodes,
-  textLabels
-}) {
-  // Create selections
+const drawLayers = function() {
   this.el.layers = this.el.layerGroup
     .selectAll('.layer')
-    .data(layers, layer => layer.id);
+    .data(this.props.layers, layer => layer.id);
 
-  this.el.layerNames = this.el.layerNameGroup
-    .selectAll('.layer-name')
-    .data(layers, layer => layer.id);
-
-  this.el.edges = this.el.edgeGroup
-    .selectAll('.edge')
-    .data(edges, edge => edge.id);
-
-  this.el.nodes = this.el.nodeGroup
-    .selectAll('.node')
-    .data(nodes, node => node.id);
-
-  // Set up line shape function
-  const lineShape = line()
-    .x(d => d.x)
-    .y(d => d.y)
-    .curve(curveBasis);
-
-  // Create layers
   const enterLayers = this.el.layers
     .enter()
     .append('rect')
@@ -53,8 +26,16 @@ const draw = function({
     .attr('y', d => d.y)
     .attr('height', d => d.height)
     .attr('width', d => d.width);
+};
 
-  // Create layerNames
+/**
+ * Render layer name labels
+ */
+const drawLayerNames = function() {
+  this.el.layerNames = this.el.layerNameGroup
+    .selectAll('.layer-name')
+    .data(this.props.layers, layer => layer.id);
+
   const enterLayerNames = this.el.layerNames
     .enter()
     .append('text')
@@ -69,47 +50,18 @@ const draw = function({
     .attr('dy', -10)
     .attr('dx', -10)
     .attr('text-anchor', 'end');
+};
 
-  // Create edges
-  const enterEdges = this.el.edges
-    .enter()
-    .append('g')
-    .attr('class', 'edge')
-    .attr('opacity', 0);
+/**
+ * Render node icons and name labels
+ */
+const drawNodes = function() {
+  const { nodes, centralNode, linkedNodes, textLabels } = this.props;
 
-  enterEdges.append('path').attr('marker-end', d => `url(#arrowhead)`);
+  this.el.nodes = this.el.nodeGroup
+    .selectAll('.node')
+    .data(nodes, node => node.id);
 
-  this.el.edges
-    .exit()
-    .transition('exit-edges')
-    .duration(this.DURATION)
-    .attr('opacity', 0)
-    .remove();
-
-  this.el.edges = this.el.edges.merge(enterEdges);
-
-  this.el.edges
-    .attr('data-id', edge => edge.id)
-    .classed(
-      'edge--faded',
-      ({ source, target }) =>
-        centralNode && (!linkedNodes[source] || !linkedNodes[target])
-    )
-    .transition('show-edges')
-    .duration(this.DURATION)
-    .attr('opacity', 1);
-
-  this.el.edges
-    .select('path')
-    .transition('update-edges')
-    .duration(this.DURATION)
-    .attrTween('d', function(edge) {
-      const current = edge.points && lineShape(edge.points);
-      const previous = select(this).attr('d') || current;
-      return interpolatePath(previous, current);
-    });
-
-  // Create nodes
   const enterNodes = this.el.nodes
     .enter()
     .append('g')
@@ -184,6 +136,72 @@ const draw = function({
     .attr('height', node => node.iconSize)
     .attr('x', node => node.iconOffset)
     .attr('y', node => node.iconSize / -2);
+};
+
+/**
+ * Render edge lines
+ */
+const drawEdges = function() {
+  const { edges, centralNode, linkedNodes } = this.props;
+
+  this.el.edges = this.el.edgeGroup
+    .selectAll('.edge')
+    .data(edges, edge => edge.id);
+
+  // Set up line shape function
+  const lineShape = line()
+    .x(d => d.x)
+    .y(d => d.y)
+    .curve(curveBasis);
+
+  // Create edges
+  const enterEdges = this.el.edges
+    .enter()
+    .append('g')
+    .attr('class', 'edge')
+    .attr('opacity', 0);
+
+  enterEdges.append('path').attr('marker-end', d => `url(#arrowhead)`);
+
+  this.el.edges
+    .exit()
+    .transition('exit-edges')
+    .duration(this.DURATION)
+    .attr('opacity', 0)
+    .remove();
+
+  this.el.edges = this.el.edges.merge(enterEdges);
+
+  this.el.edges
+    .attr('data-id', edge => edge.id)
+    .classed(
+      'edge--faded',
+      ({ source, target }) =>
+        centralNode && (!linkedNodes[source] || !linkedNodes[target])
+    )
+    .transition('show-edges')
+    .duration(this.DURATION)
+    .attr('opacity', 1);
+
+  this.el.edges
+    .select('path')
+    .transition('update-edges')
+    .duration(this.DURATION)
+    .attrTween('d', function(edge) {
+      const current = edge.points && lineShape(edge.points);
+      const previous = select(this).attr('d') || current;
+      return interpolatePath(previous, current);
+    });
+};
+
+/**
+ * Render chart to the DOM with D3
+ */
+const draw = function() {
+  drawLayers.call(this);
+  drawLayerNames.call(this);
+  drawEdges.call(this);
+  drawNodes.call(this);
 };
 
 export default draw;
