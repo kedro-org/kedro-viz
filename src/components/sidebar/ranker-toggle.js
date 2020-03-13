@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import RadioButton from '@quantumblack/kedro-ui/lib/components/radio-button';
 import { changeRanker } from '../../actions';
 
+// TODO delete this file
+
 const RankerToggle = ({ ranker, onChangeRanker, theme }) => (
   <div style={{ padding: '12px 24px' }}>
     {['none', 'network-simplex', 'tight-tree', 'longest-path'].map(r => (

@@ -58,7 +58,7 @@ const combinedReducer = combineReducers({
   fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
   textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),
   theme: createReducer(TOGGLE_THEME, 'theme', 'dark'),
-  ranker: createReducer(CHANGE_RANKER, 'ranker', 'none')
+  ranker: createReducer(CHANGE_RANKER, 'ranker', 'none') // TODO remove this
 });
 
 const rootReducer = (state, action) =>

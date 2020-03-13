@@ -1,3 +1,4 @@
+// TODO remove this action
 export const CHANGE_RANKER = 'CHANGE_RANKER';
 
 export function changeRanker(ranker) {

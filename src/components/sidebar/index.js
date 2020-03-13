@@ -4,7 +4,7 @@ import Icon from '@quantumblack/kedro-ui/lib/components/icon';
 import TagList from '../tag-list';
 import NodeList from '../node-list';
 import MenuIcon from '../icons/menu';
-import RankerToggle from './ranker-toggle';
+import RankerToggle from './ranker-toggle'; // TODO delete this component
 import './sidebar.css';
 
 /**

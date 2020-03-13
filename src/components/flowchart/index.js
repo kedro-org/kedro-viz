@@ -254,6 +254,8 @@ export class FlowChart extends Component {
     this.setState({
       tooltipVisible: true,
       tooltipIsRight: isRight,
+      // TODO revert tooltipText back to node.fullName:
+      // tooltipText: node.fullName,
       tooltipText: `${node.fullName} (Rank ${node.rank}, Layer: ${node.layer})`,
       tooltipX: xOffset - chartSize.x + eventOffset.width / 2,
       tooltipY: eventOffset.top - chartSize.y
