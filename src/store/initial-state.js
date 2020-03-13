@@ -90,7 +90,12 @@ const getInitialState = (props = {}) => {
   const theme = props.theme || localStorageState.theme || 'dark';
 
   const visible = Object.assign(
-    { exportBtn: true, labelBtn: true, themeBtn: true },
+    {
+      exportBtn: true,
+      labelBtn: true,
+      themeBtn: true,
+      sidebar: true
+    },
     props.visible
   );
 

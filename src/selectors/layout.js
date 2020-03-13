@@ -4,7 +4,7 @@ import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
 const getNodeType = state => state.node.type;
-const getChartSize = state => state.chartSize;
+const getVisibleSidebar = state => state.visible.sidebar;
 
 /**
  * Calculate chart layout with Dagre.js.
@@ -69,34 +69,63 @@ export const getGraphSize = createSelector(
 );
 
 /**
+ * Return the displayed width of the sidebar
+ */
+export const getSidebarWidth = (visibleSidebar, outerChartWidth) => {
+  const defaultSidebarWidth = 300; // from _variables.scss
+  const breakpointSmall = 480; // from _variables.scss
+  if (visibleSidebar && outerChartWidth > breakpointSmall) {
+    return defaultSidebarWidth;
+  }
+  return 0;
+};
+
+/**
+ * Convert the DOMRect into an Object, mutate some of the properties,
+ * and add some useful new ones
+ */
+export const getChartSize = createSelector(
+  [getVisibleSidebar, state => state.chartSize],
+  (visibleSidebar, chartSize) => {
+    const { left, top, width, height } = chartSize;
+    if (!width || !height) {
+      return {};
+    }
+    const sidebarWidth = getSidebarWidth(visibleSidebar, width);
+    return {
+      left,
+      top,
+      outerWidth: width,
+      outerHeight: height,
+      width: width - sidebarWidth,
+      height,
+      sidebarWidth
+    };
+  }
+);
+
+/**
  * Get chart zoom translation/scale,
  * by comparing native graph width/height to container width/height
  */
 export const getZoomPosition = createSelector(
   [getGraphSize, getChartSize],
-  (graph, container) => {
-    const validDimensions = [
-      container.width,
-      container.height,
-      graph.width,
-      graph.height
-    ].every(n => !isNaN(n) && Number.isFinite(n));
-
-    if (validDimensions) {
-      const scale = Math.min(
-        container.width / graph.width,
-        container.height / graph.height
-      );
-      return {
-        scale,
-        translateX: container.width / 2 - (graph.width * scale) / 2,
-        translateY: container.height / 2 - (graph.height * scale) / 2
-      };
+  (graph, chart) => {
+    if (!Object.keys(chart).length) {
+      return {};
     }
+
+    const scale = Math.min(
+      chart.width / graph.width,
+      chart.height / graph.height
+    );
+    const translateX = chart.width / 2 - (graph.width * scale) / 2;
+    const translateY = chart.height / 2 - (graph.height * scale) / 2;
+
     return {
-      scale: 1,
-      translateX: 0,
-      translateY: 0
+      scale,
+      translateX: translateX + chart.sidebarWidth,
+      translateY
     };
   }
 );

@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import node from './nodes';
 import tag from './tags';
 import nodeType from './node-type';
+import visible from './visible';
 import {
   RESET_DATA,
   TOGGLE_TEXT_LABELS,
@@ -44,9 +45,9 @@ const combinedReducer = combineReducers({
   node,
   nodeType,
   tag,
+  visible,
   edge: (state = {}) => state,
   id: (state = null) => state,
-  visible: (state = {}) => state,
   chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
   fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
   textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),

@@ -39,6 +39,19 @@ export function toggleTagFilter(tagID, enabled) {
   };
 }
 
+export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
+
+/**
+ * Toggle sidebar visible/hidden
+ * @param {boolean} visible Whether sidebar nav is shown
+ */
+export function toggleSidebar(visible) {
+  return {
+    type: TOGGLE_SIDEBAR,
+    visible
+  };
+}
+
 export const TOGGLE_THEME = 'TOGGLE_THEME';
 
 /**

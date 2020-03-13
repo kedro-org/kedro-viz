@@ -7,6 +7,7 @@ import { zoom, zoomIdentity } from 'd3-zoom';
 import { updateChartSize } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import {
+  getChartSize,
   getLayoutNodes,
   getLayoutEdges,
   getZoomPosition
@@ -53,7 +54,7 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.visibleNav !== this.props.visibleNav) {
+    if (prevProps.visibleSidebar !== this.props.visibleSidebar) {
       this.updateChartSize();
     }
     if (prevProps.zoom !== this.props.zoom) {
@@ -79,31 +80,9 @@ export class FlowChart extends Component {
    * and apply them to the chart SVG
    */
   updateChartSize() {
-    const {
-      left,
-      top,
-      width,
-      height
-    } = this.containerRef.current.getBoundingClientRect();
-    const navOffset = this.getNavOffset(width);
-    this.props.onUpdateChartSize({
-      x: left,
-      y: top,
-      outerWidth: width,
-      outerHeight: height,
-      width: width - navOffset,
-      height,
-      navOffset
-    });
-  }
-
-  getNavOffset(width) {
-    const navWidth = 300; // from _variables.scss
-    const breakpointSmall = 480; // from _variables.scss
-    if (this.props.visibleNav && width > breakpointSmall) {
-      return navWidth;
-    }
-    return 0;
+    this.props.onUpdateChartSize(
+      this.containerRef.current.getBoundingClientRect()
+    );
   }
 
   /**
@@ -154,15 +133,13 @@ export class FlowChart extends Component {
    * Zoom and scale to fit
    */
   zoomChart() {
-    const { chartSize, zoom } = this.props;
-    const { scale, translateX, translateY } = zoom;
-    const navOffset = this.getNavOffset(chartSize.outerWidth);
+    const { scale = 1, translateX = 0, translateY = 0 } = this.props.zoom;
     this.el.svg
       .transition()
       .duration(this.DURATION)
       .call(
         this.zoomBehaviour.transform,
-        zoomIdentity.translate(translateX + navOffset, translateY).scale(scale)
+        zoomIdentity.translate(translateX, translateY).scale(scale)
       );
   }
 
@@ -228,19 +205,16 @@ export class FlowChart extends Component {
    * @param {Object} node A node datum
    */
   showTooltip(node) {
-    const { chartSize } = this.props;
+    const { left, top, width, outerWidth, sidebarWidth } = this.props.chartSize;
     const eventOffset = event.target.getBoundingClientRect();
-    const navOffset = this.getNavOffset(chartSize.outerWidth);
-    const isRight = eventOffset.left - navOffset > chartSize.width / 2;
-    const xOffset = isRight
-      ? eventOffset.left - (chartSize.width + navOffset)
-      : eventOffset.left;
+    const isRight = eventOffset.left - sidebarWidth > width / 2;
+    const xOffset = isRight ? eventOffset.left - outerWidth : eventOffset.left;
     this.setState({
       tooltipVisible: true,
       tooltipIsRight: isRight,
       tooltipText: node.fullName,
-      tooltipX: xOffset - chartSize.x + eventOffset.width / 2,
-      tooltipY: eventOffset.top - chartSize.y
+      tooltipX: xOffset - left + eventOffset.width / 2,
+      tooltipY: eventOffset.top - top
     });
   }
 
@@ -317,12 +291,12 @@ export class FlowChart extends Component {
 
 export const mapStateToProps = state => ({
   centralNode: getCentralNode(state),
-  chartSize: state.chartSize,
+  chartSize: getChartSize(state),
   edges: getLayoutEdges(state),
   linkedNodes: getLinkedNodes(state),
   nodes: getLayoutNodes(state),
   textLabels: state.textLabels,
-  view: state.view,
+  visibleSidebar: state.visible.sidebar,
   zoom: getZoomPosition(state)
 });
 

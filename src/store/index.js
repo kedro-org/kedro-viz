@@ -11,8 +11,13 @@ export default function configureStore(initialState) {
   const store = createStore(reducer, initialState);
 
   store.subscribe(() => {
-    const { textLabels, theme, nodeType } = store.getState();
-    saveState({ textLabels, theme, nodeTypeDisabled: nodeType.disabled });
+    const { textLabels, theme, nodeType, visibleSidebar } = store.getState();
+    saveState({
+      textLabels,
+      theme,
+      nodeTypeDisabled: nodeType.disabled,
+      visibleSidebar
+    });
   });
 
   return store;
