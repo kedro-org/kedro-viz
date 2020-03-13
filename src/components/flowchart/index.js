@@ -136,7 +136,6 @@ export class FlowChart extends Component {
         return `translate(${tx} ${ty}) rotate(-90)`;
       });
       this.hideTooltip();
-      this.drawChart();
     });
     this.el.svg.call(this.zoomBehaviour);
   }
