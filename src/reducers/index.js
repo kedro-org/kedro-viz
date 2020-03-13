@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import node from './nodes';
 import tag from './tags';
 import nodeType from './node-type';
+import visible from './visible';
 import {
   CHANGE_RANKER,
   RESET_DATA,
@@ -45,16 +46,11 @@ const combinedReducer = combineReducers({
   node,
   nodeType,
   tag,
+  visible,
   edge: (state = {}) => state,
   id: (state = null) => state,
   layer: (state = {}) => state,
-  visible: (state = {}) => state,
-  chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {
-    width: 0,
-    outerWidth: 0,
-    height: 0,
-    outerHeight: 0
-  }),
+  chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
   fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
   textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),
   theme: createReducer(TOGGLE_THEME, 'theme', 'dark'),
