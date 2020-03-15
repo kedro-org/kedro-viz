@@ -110,7 +110,7 @@ def run_viz(port=None, line=None) -> None:
         _VIZ_PROCESSES[port].terminate()
 
     viz_process = multiprocessing.Process(
-        target=_call_viz, daemon=True, kwargs={"port": port}
+        target=call_viz, daemon=True, kwargs={"port": port}
     )
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
@@ -300,7 +300,7 @@ def commands():
 def viz(host, port, browser, load_file, save_file, pipeline, env):
     """Visualize the pipeline using kedroviz."""
     try:
-        _call_viz(host, port, browser, load_file, save_file, pipeline, env)
+        call_viz(host, port, browser, load_file, save_file, pipeline, env)
     except KedroCliError:
         raise
     except Exception as ex:
@@ -308,7 +308,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env):
 
 
 # pylint: disable=too-many-arguments
-def _call_viz(
+def call_viz(
     host=None,
     port=None,
     browser=None,
