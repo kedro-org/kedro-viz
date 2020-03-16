@@ -293,15 +293,8 @@ export class FlowChart extends Component {
           </g>
           <g
             className="pipeline-flowchart__layer-names"
-            ref={this.layerNamesRef}>
-            <rect
-              className="layer-names-bg"
-              x={outerWidth - 30}
-              y={0}
-              width={30}
-              height={outerHeight}
-            />
-          </g>
+            ref={this.layerNamesRef}
+          />
         </svg>
         <div
           className={classnames('pipeline-flowchart__tooltip kedro', {
