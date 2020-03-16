@@ -47,9 +47,8 @@ const drawLayerNames = function() {
 
   this.el.layerNames
     .text(d => d.name)
-    .attr('dy', -10)
-    .attr('dx', -10)
-    .attr('text-anchor', 'end');
+    .attr('dy', 5)
+    .attr('dx', 15);
 };
 
 /**

@@ -131,9 +131,9 @@ export class FlowChart extends Component {
       this.el.wrapper.attr('transform', event.transform);
       this.el.layerNames.attr('transform', d => {
         const { k, y } = event.transform;
-        const tx = this.props.chartSize.outerWidth;
-        const ty = y + d.y * k;
-        return `translate(${tx} ${ty}) rotate(-90)`;
+        const tx = this.props.chartSize.sidebarWidth;
+        const ty = y + (d.y + d.height / 2) * k;
+        return `translate(${tx} ${ty})`;
       });
       this.hideTooltip();
     });
