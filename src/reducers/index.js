@@ -4,7 +4,6 @@ import tag from './tags';
 import nodeType from './node-type';
 import visible from './visible';
 import {
-  CHANGE_RANKER,
   RESET_DATA,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
@@ -53,8 +52,7 @@ const combinedReducer = combineReducers({
   chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
   fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
   textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),
-  theme: createReducer(TOGGLE_THEME, 'theme', 'dark'),
-  ranker: createReducer(CHANGE_RANKER, 'ranker', 'none') // TODO remove this
+  theme: createReducer(TOGGLE_THEME, 'theme', 'dark')
 });
 
 const rootReducer = (state, action) =>

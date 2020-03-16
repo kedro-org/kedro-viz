@@ -119,7 +119,6 @@ const getInitialState = (props = {}) => {
     chartSize: {},
     fontLoaded: false,
     textLabels,
-    ranker: 'none',
     visible,
     theme
   };

@@ -5,7 +5,6 @@ import { toggleSidebar } from '../../actions';
 import TagList from '../tag-list';
 import NodeList from '../node-list';
 import { ShowMenuButton, HideMenuButton } from './menu-buttons';
-import RankerToggle from './ranker-toggle'; // TODO delete this component
 import './sidebar.css';
 
 /**
@@ -21,7 +20,6 @@ export const Sidebar = props => (
       })}>
       <HideMenuButton {...props} />
       <div className="pipeline-ui">
-        <RankerToggle />
         <TagList />
         <NodeList />
       </div>

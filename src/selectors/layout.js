@@ -5,7 +5,6 @@ import { getVisibleEdges } from './edges';
 
 const getHasLayers = state =>
   state.visible.layers && Boolean(state.layer.ids.length);
-const getRanker = state => state.ranker;
 const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;
 const getVisibleSidebar = state => state.visible.sidebar;
@@ -17,8 +16,9 @@ const getVisibleSidebar = state => state.visible.sidebar;
  * which don't affect layout.
  */
 export const getGraph = createSelector(
-  [getVisibleNodes, getVisibleEdges, getRanker, getHasLayers],
-  (nodes, edges, ranker, hasLayers) => {
+  [getVisibleNodes, getVisibleEdges, getHasLayers],
+  (nodes, edges, hasLayers) => {
+    const ranker = hasLayers ? 'none' : null;
     const graph = new dagre.graphlib.Graph().setGraph({
       ranker: hasLayers ? ranker : null,
       ranksep: hasLayers ? 200 : 70,
