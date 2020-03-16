@@ -35,12 +35,18 @@ export const getLayers = createSelector(
       return { y, height };
     };
 
-    return layerIDs.map(id => ({
-      id,
-      name: layerName[id],
-      x: WIDTH / -2,
-      width: WIDTH,
-      ...calculateYPos(id)
-    }));
+    const layers = [];
+    for (const id of layerIDs) {
+      if (layerY[id]) {
+        layers.push({
+          id,
+          name: layerName[id],
+          x: WIDTH / -2,
+          width: WIDTH,
+          ...calculateYPos(id)
+        });
+      }
+    }
+    return layers;
   }
 );
