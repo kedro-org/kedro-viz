@@ -129,11 +129,13 @@ export class FlowChart extends Component {
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
       this.el.wrapper.attr('transform', event.transform);
-      this.el.layerNames.attr('transform', d => {
-        const { k, y } = event.transform;
-        const ty = y + (d.y + d.height / 2) * k;
-        return `translate(0 ${ty})`;
-      });
+      const { k, y } = event.transform;
+      this.el.layerNames
+        .style('height', d => `${d.height * k}px`)
+        .style('transform', d => {
+          const ty = y + d.y * k;
+          return `translateY(${ty}px)`;
+        });
       this.hideTooltip();
     });
     this.el.svg.call(this.zoomBehaviour);
@@ -291,11 +293,11 @@ export class FlowChart extends Component {
               ref={this.nodesRef}
             />
           </g>
-          <g
-            className="pipeline-flowchart__layer-names"
-            ref={this.layerNamesRef}
-          />
         </svg>
+        <ul
+          className="pipeline-flowchart__layer-names"
+          ref={this.layerNamesRef}
+        />
         <div
           className={classnames('pipeline-flowchart__tooltip kedro', {
             'tooltip--visible': tooltipVisible,

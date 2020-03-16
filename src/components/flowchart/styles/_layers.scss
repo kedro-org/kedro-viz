@@ -10,14 +10,25 @@
   }
 }
 
-.layer-names-bg {
+.pipeline-flowchart__layer-names {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   pointer-events: none;
-  fill: rgba(white, 0.1);
 }
 
 .layer-name {
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  width: 130px;
+  padding-left: 15px;
   font-weight: bold;
-  font-size: 16px;
-  pointer-events: none;
-  fill: white;
+  font-size: 1.6em;
+  white-space: nowrap;
+  background: linear-gradient(to right, $color-bg-dark, transparent);
 }

@@ -40,35 +40,35 @@ const drawLayerNames = function() {
     visibleLayers
   } = this.props;
 
+  this.el.layerNameGroup
+    .transition('layer-names-sidebar-width')
+    .duration(this.DURATION)
+    .style('transform', `translateX(${sidebarWidth}px)`);
+
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.layer-name')
     .data(visibleLayers ? layers : [], layer => layer.id);
 
   const enterLayerNames = this.el.layerNames
     .enter()
-    .append('text')
+    .append('li')
     .attr('class', 'layer-name')
-    .attr('opacity', 0)
+    .style('opacity', 0)
     .transition('enter-layer-names')
     .duration(this.DURATION)
-    .attr('opacity', 1);
+    .style('opacity', 1);
 
   this.el.layerNames
     .exit()
-    .attr('opacity', 1)
+    .style('opacity', 1)
     .transition('exit-layer-names')
     .duration(this.DURATION)
-    .attr('opacity', 0)
+    .style('opacity', 0)
     .remove();
 
   this.el.layerNames = this.el.layerNames.merge(enterLayerNames);
 
-  this.el.layerNames
-    .text(d => d.name)
-    .attr('dy', 5)
-    .transition('layer-names-sidebar-width')
-    .duration(this.DURATION)
-    .attr('dx', sidebarWidth + 15);
+  this.el.layerNames.text(d => d.name).attr('dy', 5);
 };
 
 /**
