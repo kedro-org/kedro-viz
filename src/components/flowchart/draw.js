@@ -8,7 +8,7 @@ import icon from './icon';
  * Render layer bands
  */
 const drawLayers = function() {
-  const { visibleLayers, layers } = this.props;
+  const { layers, visibleLayers } = this.props;
 
   this.el.layers = this.el.layerGroup
     .selectAll('.layer')
@@ -34,7 +34,11 @@ const drawLayers = function() {
  * Render layer name labels
  */
 const drawLayerNames = function() {
-  const { visibleLayers, layers } = this.props;
+  const {
+    chartSize: { sidebarWidth = 0 },
+    layers,
+    visibleLayers
+  } = this.props;
 
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.layer-name')
@@ -62,7 +66,9 @@ const drawLayerNames = function() {
   this.el.layerNames
     .text(d => d.name)
     .attr('dy', 5)
-    .attr('dx', 15);
+    .transition('layer-names-sidebar-width')
+    .duration(this.DURATION)
+    .attr('dx', sidebarWidth + 15);
 };
 
 /**
