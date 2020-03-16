@@ -22,6 +22,10 @@ export const getLayers = createSelector(
       return layerY;
     }, {});
 
+    /**
+     * Determine the y position and height of a layer band
+     * @param {number} id
+     */
     const calculateYPos = id => {
       const yMin = Math.min(...layerY[id]);
       const yMax = Math.max(...layerY[id]);
