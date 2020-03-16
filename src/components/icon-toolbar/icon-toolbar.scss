@@ -59,6 +59,11 @@
     opacity: 1;
   }
 
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.2;
+  }
+
   svg {
     position: relative;
     display: block;

@@ -8,9 +8,11 @@ import icon from './icon';
  * Render layer bands
  */
 const drawLayers = function() {
+  const { visibleLayers, layers } = this.props;
+
   this.el.layers = this.el.layerGroup
     .selectAll('.layer')
-    .data(this.props.layers, layer => layer.id);
+    .data(visibleLayers ? layers : [], layer => layer.id);
 
   const enterLayers = this.el.layers
     .enter()
@@ -32,16 +34,28 @@ const drawLayers = function() {
  * Render layer name labels
  */
 const drawLayerNames = function() {
+  const { visibleLayers, layers } = this.props;
+
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.layer-name')
-    .data(this.props.layers, layer => layer.id);
+    .data(visibleLayers ? layers : [], layer => layer.id);
 
   const enterLayerNames = this.el.layerNames
     .enter()
     .append('text')
-    .attr('class', 'layer-name');
+    .attr('class', 'layer-name')
+    .attr('opacity', 0)
+    .transition('enter-layer-names')
+    .duration(this.DURATION)
+    .attr('opacity', 1);
 
-  this.el.layerNames.exit().remove();
+  this.el.layerNames
+    .exit()
+    .attr('opacity', 1)
+    .transition('exit-layer-names')
+    .duration(this.DURATION)
+    .attr('opacity', 0)
+    .remove();
 
   this.el.layerNames = this.el.layerNames.merge(enterLayerNames);
 

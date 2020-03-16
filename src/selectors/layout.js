@@ -3,7 +3,8 @@ import dagre from 'dagre';
 import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
-const getHasLayers = state => Boolean(state.layer.ids.length);
+const getHasLayers = state =>
+  state.visible.layers && Boolean(state.layer.ids.length);
 const getRanker = state => state.ranker;
 const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;

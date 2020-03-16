@@ -103,6 +103,7 @@ const getInitialState = (props = {}) => {
     {
       exportBtn: true,
       labelBtn: true,
+      layers: true,
       themeBtn: true,
       sidebar: true
     },

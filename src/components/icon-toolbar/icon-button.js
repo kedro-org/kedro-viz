@@ -18,6 +18,7 @@ const icons = {
 const IconButton = ({
   ariaLabel,
   ariaLive,
+  disabled,
   icon,
   labelText,
   onClick,
@@ -31,6 +32,7 @@ const IconButton = ({
         aria-label={ariaLabel}
         aria-live={ariaLive}
         className="pipeline-icon-button"
+        disabled={disabled}
         onClick={onClick}>
         <span>{labelText}</span>
         <Icon className="pipeline-icon" />
@@ -42,6 +44,7 @@ const IconButton = ({
 IconButton.propTypes = {
   ariaLabel: PropTypes.string,
   ariaLive: PropTypes.string,
+  disabled: PropTypes.bool,
   icon: PropTypes.string,
   labelText: PropTypes.string,
   onClick: PropTypes.func,
@@ -51,6 +54,7 @@ IconButton.propTypes = {
 IconButton.defaultProps = {
   ariaLabel: null,
   ariaLive: null,
+  disabled: false,
   icon: 'label',
   labelText: null,
   onClick: null,
