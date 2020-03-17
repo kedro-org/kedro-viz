@@ -52,6 +52,14 @@ export const getNodeDisabled = createSelector(
 );
 
 /**
+ * Get a list of just the IDs for the remaining visible nodes
+ */
+export const getVisibleNodeIDs = createSelector(
+  [getNodeIDs, getNodeDisabled],
+  (nodeIDs, nodeDisabled) => nodeIDs.filter(id => !nodeDisabled[id])
+);
+
+/**
  * Determine whether an edge should be disabled based on their source/target nodes
  */
 export const getEdgeDisabled = createSelector(

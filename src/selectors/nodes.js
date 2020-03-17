@@ -1,8 +1,13 @@
 import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
-import { getNodeDisabled, getNodeDisabledTag } from './disabled';
+import {
+  getNodeDisabled,
+  getNodeDisabledTag,
+  getVisibleNodeIDs
+} from './disabled';
 import { getCentralNode } from './linked-nodes';
+import { getNodeRank } from './ranks';
 
 const getNodeIDs = state => state.node.ids;
 const getNodeName = state => state.node.name;
@@ -154,33 +159,23 @@ export const getNodeSize = createSelector(
  */
 export const getVisibleNodes = createSelector(
   [
-    getNodeIDs,
+    getVisibleNodeIDs,
     getNodeName,
     getNodeType,
-    getNodeDisabled,
     getNodeFullName,
     getNodeSize,
-    getNodeLayer
+    getNodeLayer,
+    getNodeRank
   ],
-  (
-    nodeIDs,
-    nodeName,
-    nodeType,
-    nodeDisabled,
-    nodeFullName,
-    nodeSize,
-    nodeLayer
-  ) =>
-    nodeIDs
-      .filter(id => !nodeDisabled[id])
-      .map(id => ({
-        id,
-        name: nodeName[id],
-        label: nodeName[id],
-        fullName: nodeFullName[id],
-        type: nodeType[id],
-        layer: nodeLayer[id],
-        disabled: nodeDisabled[id],
-        ...nodeSize[id]
-      }))
+  (nodeIDs, nodeName, nodeType, nodeFullName, nodeSize, nodeLayer, nodeRank) =>
+    nodeIDs.map(id => ({
+      id,
+      name: nodeName[id],
+      label: nodeName[id],
+      fullName: nodeFullName[id],
+      type: nodeType[id],
+      layer: nodeLayer[id],
+      rank: nodeRank[id],
+      ...nodeSize[id]
+    }))
 );
