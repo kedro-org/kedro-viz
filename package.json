@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@quantumblack/kedro-ui": "^1.1.2",
+    "batching-toposort": "^1.2.0",
     "classnames": "^2.2.6",
     "d3-fetch": "^1.1.2",
     "d3-interpolate-path": "^2.1.0",
