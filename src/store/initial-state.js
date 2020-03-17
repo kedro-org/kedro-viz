@@ -54,7 +54,6 @@ export const getInitialPipelineState = () => ({
     type: {},
     isParam: {},
     tags: {},
-    rank: {},
     layer: {},
     disabled: {},
     clicked: null,
