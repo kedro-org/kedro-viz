@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
-import { getTagCount } from './tags';
+import { getNodeDisabled, getNodeDisabledTag } from './disabled';
 import { getCentralNode } from './linked-nodes';
 
 const getNodeIDs = state => state.node.ids;
@@ -12,49 +12,9 @@ const getNodeTags = state => state.node.tags;
 const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;
 const getTagActive = state => state.tag.active;
-const getTagEnabled = state => state.tag.enabled;
 const getTextLabels = state => state.textLabels;
 const getFontLoaded = state => state.fontLoaded;
 const getNodeTypeDisabled = state => state.nodeType.disabled;
-
-/**
- * Calculate whether nodes should be disabled based on their tags
- */
-export const getNodeDisabledTag = createSelector(
-  [getNodeIDs, getTagEnabled, getTagCount, getNodeTags],
-  (nodeIDs, tagEnabled, tagCount, nodeTags) =>
-    arrayToObject(nodeIDs, nodeID => {
-      if (tagCount.enabled === 0) {
-        return false;
-      }
-      if (nodeTags[nodeID].length) {
-        // Hide task nodes that don't have at least one tag filter enabled
-        return !nodeTags[nodeID].some(tag => tagEnabled[tag]);
-      }
-      return true;
-    })
-);
-
-/**
- * Set disabled status if the node is specifically hidden, and/or via a tag/view/type
- */
-export const getNodeDisabled = createSelector(
-  [
-    getNodeIDs,
-    getNodeDisabledNode,
-    getNodeDisabledTag,
-    getNodeType,
-    getNodeTypeDisabled
-  ],
-  (nodeIDs, nodeDisabledNode, nodeDisabledTag, nodeType, typeDisabled) =>
-    arrayToObject(nodeIDs, id =>
-      Boolean(
-        nodeDisabledNode[id] ||
-          nodeDisabledTag[id] ||
-          typeDisabled[nodeType[id]]
-      )
-    )
-);
 
 /**
  * Set active status if the node is specifically highlighted, and/or via an associated tag
