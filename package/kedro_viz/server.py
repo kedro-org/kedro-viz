@@ -50,6 +50,7 @@ from semver import match
 from kedro_viz.utils import wait_for
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
+CONF_ROOT = "conf"
 
 data = None  # pylint: disable=invalid-name
 
@@ -320,6 +321,18 @@ def _call_viz(
     global data  # pylint: disable=global-statement,invalid-name
 
     if load_file:
+        import logging.config
+        from kedro.config import ConfigLoader
+
+        project_path = Path.cwd().expanduser().resolve()
+        conf_paths = [
+            str(project_path / CONF_ROOT / "base"),
+            str(project_path / CONF_ROOT / (env or "local")),
+        ]
+        config_loader = ConfigLoader(conf_paths)
+        conf_logging = config_loader.get("logging*", "logging*/**")
+        logging.config.dictConfig(conf_logging)
+
         data = _load_from_file(load_file)
     else:
         if match(kedro.__version__, ">=0.15.0"):
