@@ -118,8 +118,16 @@ export const getChartSize = createSelector(
 export const getZoomPosition = createSelector(
   [getGraphSize, getChartSize],
   (graph, chart) => {
-    if (!Object.keys(chart).length) {
-      return {};
+    if (
+      !Object.keys(chart).length ||
+      !Number.isFinite(graph.width) ||
+      !Number.isFinite(graph.width)
+    ) {
+      return {
+        scale: 1,
+        translateX: 0,
+        translateY: 0
+      };
     }
 
     const scale = Math.min(
