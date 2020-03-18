@@ -11,6 +11,8 @@ const getNodeTypeDisabled = state => state.nodeType.disabled;
 const getEdgeIDs = state => state.edge.ids;
 const getEdgeSources = state => state.edge.sources;
 const getEdgeTargets = state => state.edge.targets;
+const getLayerIDs = state => state.layer.ids;
+const getNodeLayer = state => state.node.layer;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -57,6 +59,20 @@ export const getNodeDisabled = createSelector(
 export const getVisibleNodeIDs = createSelector(
   [getNodeIDs, getNodeDisabled],
   (nodeIDs, nodeDisabled) => nodeIDs.filter(id => !nodeDisabled[id])
+);
+
+/**
+ * Get a list of just the IDs for the remaining visible layers
+ */
+export const getVisibleLayerIDs = createSelector(
+  [getVisibleNodeIDs, getNodeLayer, getLayerIDs],
+  (nodeIDs, nodeLayer, layerIDs) => {
+    const visibleLayerIDs = {};
+    for (const nodeID of nodeIDs) {
+      visibleLayerIDs[nodeLayer[nodeID]] = true;
+    }
+    return layerIDs.filter(layerID => visibleLayerIDs[layerID]);
+  }
 );
 
 /**

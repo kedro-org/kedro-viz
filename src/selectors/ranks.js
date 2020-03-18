@@ -1,17 +1,16 @@
 import { createSelector } from 'reselect';
 import batchingToposort from 'batching-toposort';
-import { getVisibleNodeIDs } from './disabled';
+import { getVisibleNodeIDs, getVisibleLayerIDs } from './disabled';
 import { getVisibleEdges } from './edges';
 
-const getLayerIDs = state => state.layer.ids;
 const getNodeLayer = state => state.node.layer;
 
 /**
  * Get list of visible nodes for each visible layer
  */
 export const getLayerNodes = createSelector(
-  [getVisibleNodeIDs, getNodeLayer, getLayerIDs],
-  (nodeIDs, nodeLayer, layerIDs) => {
+  [getVisibleNodeIDs, getVisibleLayerIDs, getNodeLayer],
+  (nodeIDs, layerIDs, nodeLayer) => {
     // Create object containing a list of every node for each layer
     const layerNodes = {};
     for (const nodeID of nodeIDs) {
@@ -22,15 +21,8 @@ export const getLayerNodes = createSelector(
       layerNodes[layer].push(nodeID);
     }
 
-    // Convert into an ordered list, and filter out the unused layers
-    const visibleLayerNodes = [];
-    for (const layerID of layerIDs) {
-      if (layerNodes[layerID]) {
-        visibleLayerNodes.push(layerNodes[layerID]);
-      }
-    }
-
-    return visibleLayerNodes;
+    // Convert to a nested array of layers of nodes
+    return layerIDs.map(layerID => layerNodes[layerID]);
   }
 );
 
