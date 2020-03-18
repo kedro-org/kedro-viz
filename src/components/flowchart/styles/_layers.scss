@@ -3,7 +3,14 @@
 .layer {
   opacity: 0;
   transition: opacity ease 0.5s;
-  fill: rgba(white, 0.1);
+
+  .kui-theme--dark & {
+    fill: rgba(white, 0.1);
+  }
+
+  .kui-theme--light & {
+    fill: rgba(black, 0.1);
+  }
 
   &:hover {
     opacity: 1;
@@ -30,5 +37,12 @@
   font-weight: bold;
   font-size: 1.6em;
   white-space: nowrap;
-  background: linear-gradient(to right, $color-bg-dark, transparent);
+
+  .kui-theme--dark & {
+    background: linear-gradient(to right, $color-bg-dark, transparent);
+  }
+
+  .kui-theme--light & {
+    background: linear-gradient(to right, $color-bg-light, transparent);
+  }
 }
