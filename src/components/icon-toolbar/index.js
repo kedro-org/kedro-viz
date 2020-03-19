@@ -51,6 +51,7 @@ export const IconToolbar = ({
         <IconButton
           ariaLabel={`Turn data layers ${visible.layers ? 'off' : 'on'}`}
           onClick={() => onToggleLayers(!visible.layers)}
+          icon="layers"
           labelText="Toggle layers"
           disabled={disableLayerBtn}
         />
