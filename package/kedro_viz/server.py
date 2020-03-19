@@ -308,7 +308,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env):
         raise KedroCliError(str(ex))
 
 
-# pylint: disable=too-many-arguments,too-many-locals
+# pylint: disable=too-many-arguments
 def _call_viz(
     host=None,
     port=None,
@@ -321,16 +321,10 @@ def _call_viz(
     global data  # pylint: disable=global-statement,invalid-name
 
     if load_file:
-        import logging.config
-        from kedro.config import ConfigLoader
-
-        project_path = Path.cwd().expanduser().resolve()
-        conf_paths = [
-            str(project_path / CONF_ROOT / "base"),
-            str(project_path / CONF_ROOT / (env or "local")),
-        ]
-        conf_logging = ConfigLoader(conf_paths).get("logging*", "logging*/**")
-        logging.config.dictConfig(conf_logging)
+        import logging
+        # Remove all handlers for root logger
+        root_logger = logging.getLogger()
+        root_logger.handlers[:] = []
 
         data = _load_from_file(load_file)
     else:
