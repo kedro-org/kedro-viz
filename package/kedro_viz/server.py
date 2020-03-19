@@ -318,7 +318,7 @@ def _call_viz(
     pipeline_name=None,
     env=None,
 ):
-    global data  # pylint: disable=global-statement,invalid-name
+    global data  # pylint: disable=global-statement,invalid-name,too-many-locals
 
     if load_file:
         import logging.config
@@ -329,8 +329,7 @@ def _call_viz(
             str(project_path / CONF_ROOT / "base"),
             str(project_path / CONF_ROOT / (env or "local")),
         ]
-        config_loader = ConfigLoader(conf_paths)
-        conf_logging = config_loader.get("logging*", "logging*/**")
+        conf_logging = ConfigLoader(conf_paths).get("logging*", "logging*/**")
         logging.config.dictConfig(conf_logging)
 
         data = _load_from_file(load_file)
