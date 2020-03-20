@@ -320,6 +320,11 @@ def _call_viz(
     global data  # pylint: disable=global-statement,invalid-name
 
     if load_file:
+        import logging
+        # Remove all handlers for root logger
+        root_logger = logging.getLogger()
+        root_logger.handlers = []
+
         data = _load_from_file(load_file)
     else:
         if match(kedro.__version__, ">=0.15.0"):
