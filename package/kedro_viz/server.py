@@ -50,7 +50,6 @@ from semver import match
 from kedro_viz.utils import wait_for
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
-CONF_ROOT = "conf"
 
 data = None  # pylint: disable=invalid-name
 
