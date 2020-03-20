@@ -323,7 +323,7 @@ def _call_viz(
         import logging
         # Remove all handlers for root logger
         root_logger = logging.getLogger()
-        root_logger.handlers[:] = []
+        root_logger.handlers = []
 
         data = _load_from_file(load_file)
     else:
