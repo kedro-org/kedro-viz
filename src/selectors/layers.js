@@ -1,8 +1,6 @@
 import { createSelector } from 'reselect';
-import { getLayoutNodes } from './layout';
+import { getLayoutNodes, getGraphSize } from './layout';
 import { getVisibleLayerIDs } from './disabled';
-
-const WIDTH = Math.pow(2, 18);
 
 const getLayerName = state => state.layer.name;
 
@@ -10,8 +8,8 @@ const getLayerName = state => state.layer.name;
  * Get layer positions
  */
 export const getLayers = createSelector(
-  [getLayoutNodes, getVisibleLayerIDs, getLayerName],
-  (nodes, layerIDs, layerName) => {
+  [getLayoutNodes, getVisibleLayerIDs, getLayerName, getGraphSize],
+  (nodes, layerIDs, layerName, { width }) => {
     // Get list of layer Y positions from nodes
     const layerY = nodes.reduce((layerY, node) => {
       if (!layerY[node.layer]) {
@@ -44,8 +42,8 @@ export const getLayers = createSelector(
       return {
         id,
         name: layerName[id],
-        x: WIDTH / -2,
-        width: WIDTH,
+        x: -width / 2,
+        width: width * 2,
         ...calculateYPos(id, prevID, nextID)
       };
     });

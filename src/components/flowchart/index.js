@@ -8,6 +8,7 @@ import { updateChartSize } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import {
   getChartSize,
+  getGraphSize,
   getLayoutNodes,
   getLayoutEdges,
   getZoomPosition
@@ -128,14 +129,31 @@ export class FlowChart extends Component {
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
+      const { k: scale, y } = event.transform;
+      const { sidebarWidth } = this.props.chartSize;
+      const { width, height } = this.props.graphSize;
+
+      // Limit zoom translate extent: This needs to be recalculated on zoom
+      // as it needs access to the current scale to correctly multiply the
+      // sidebarWidth by the scale to offset it properly
+      const margin = 100;
+      this.zoomBehaviour.translateExtent([
+        [-sidebarWidth / scale - margin, -margin],
+        [width + margin, height + margin]
+      ]);
+
+      // Transform the <g> that wraps the chart
       this.el.wrapper.attr('transform', event.transform);
-      const { k, y } = event.transform;
+
+      // Update layer label y positions
       this.el.layerNames
-        .style('height', d => `${d.height * k}px`)
+        .style('height', d => `${d.height * scale}px`)
         .style('transform', d => {
-          const ty = y + d.y * k;
+          const ty = y + d.y * scale;
           return `translateY(${ty}px)`;
         });
+
+      // Hide the tooltip so it doesn't get misaligned to its node
       this.hideTooltip();
     });
     this.el.svg.call(this.zoomBehaviour);
@@ -146,9 +164,11 @@ export class FlowChart extends Component {
    */
   zoomChart() {
     const { scale = 1, translateX = 0, translateY = 0 } = this.props.zoom;
-    this.zoomBehaviour.scaleExtent([scale, 1]);
-    // TODO make translation extent work :(
-    // .translateExtent([[-translateX, 0], [Infinity, Infinity]]);
+
+    // // Limit zoom scale extent
+    this.zoomBehaviour.scaleExtent([scale * 0.8, 1]);
+
+    // Auto zoom to fit the chart nicely on the page
     this.el.svg
       .transition()
       .duration(this.DURATION)
@@ -315,6 +335,7 @@ export const mapStateToProps = state => ({
   layers: getLayers(state),
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
+  graphSize: getGraphSize(state),
   edges: getLayoutEdges(state),
   linkedNodes: getLinkedNodes(state),
   nodes: getLayoutNodes(state),
