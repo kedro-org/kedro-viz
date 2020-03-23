@@ -5,6 +5,8 @@ import reducer from './index';
 import normalizeData from '../store/normalize-data';
 import {
   RESET_DATA,
+  TOGGLE_LAYERS,
+  TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
@@ -126,6 +128,26 @@ describe('Reducer', () => {
         disabled: true
       });
       expect(newState.nodeType.disabled).toEqual({ 123: true });
+    });
+  });
+
+  describe('TOGGLE_LAYERS', () => {
+    it('should toggle whether layers are shown', () => {
+      const newState = reducer(mockState.layers, {
+        type: TOGGLE_LAYERS,
+        visible: false
+      });
+      expect(newState.visible.layers).toEqual(false);
+    });
+  });
+
+  describe('TOGGLE_SIDEBAR', () => {
+    it('should toggle whether the sidebar is open', () => {
+      const newState = reducer(mockState.lorem, {
+        type: TOGGLE_SIDEBAR,
+        visible: false
+      });
+      expect(newState.visible.sidebar).toEqual(false);
     });
   });
 
