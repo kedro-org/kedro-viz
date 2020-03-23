@@ -4,6 +4,7 @@ import { getVisibleNodeIDs, getVisibleLayerIDs } from './disabled';
 import { getVisibleEdges } from './edges';
 
 const getNodeLayer = state => state.node.layer;
+const getLayersVisible = state => state.visible.layers;
 
 /**
  * Get list of visible nodes for each visible layer
@@ -31,8 +32,12 @@ export const getLayerNodes = createSelector(
  * by toposorting while taking layers into account
  */
 export const getNodeRank = createSelector(
-  [getVisibleNodeIDs, getVisibleEdges, getLayerNodes],
-  (nodeIDs, edges, layerNodes) => {
+  [getVisibleNodeIDs, getVisibleEdges, getLayerNodes, getLayersVisible],
+  (nodeIDs, edges, layerNodes, layersVisible) => {
+    if (!layersVisible) {
+      return {};
+    }
+
     // For each node, create a list of nodes that depend on that node
     const nodeDeps = {};
 
