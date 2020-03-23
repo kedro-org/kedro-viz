@@ -102,7 +102,7 @@ const getInitialState = (props = {}) => {
     {
       exportBtn: true,
       labelBtn: true,
-      layers: true,
+      layers: Boolean(pipelineData.layer.ids.length),
       themeBtn: true,
       sidebar: true
     },
