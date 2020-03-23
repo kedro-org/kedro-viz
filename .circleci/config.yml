@@ -70,6 +70,11 @@ utils:
     command: |
       make secret-scan
 
+  run_security_scan: &run_security_scan
+    name: Run security scan
+    command: |
+      make security-scan
+
   run_python_tests: &run_python_tests
     name: Run Python tests
     command: make pytest
@@ -137,6 +142,7 @@ jobs:
       - run: *test_lib_transpilation
       - run: *run_pylint_and_flake8
       - run: *run_secret_scan
+      - run: *run_security_scan
       - run: *run_python_tests
       - run: *run_e2e_tests
       - run: *cleanup
