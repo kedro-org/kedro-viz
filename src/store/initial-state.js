@@ -101,6 +101,7 @@ const getInitialState = (props = {}) => {
   const visible = Object.assign(
     {
       labelBtn: true,
+      layerBtn: true,
       layers: Boolean(pipelineData.layer.ids.length),
       exportBtn: true,
       sidebar: true,

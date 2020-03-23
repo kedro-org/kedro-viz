@@ -54,6 +54,7 @@ export const IconToolbar = ({
           icon="layers"
           labelText="Toggle layers"
           disabled={disableLayerBtn}
+          visible={visible.layerBtn}
         />
       </ul>
       {visible.exportBtn && (
