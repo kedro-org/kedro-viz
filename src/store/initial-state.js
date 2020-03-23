@@ -100,12 +100,13 @@ const getInitialState = (props = {}) => {
 
   const visible = Object.assign(
     {
-      exportBtn: true,
       labelBtn: true,
       layers: Boolean(pipelineData.layer.ids.length),
-      themeBtn: true,
-      sidebar: true
+      exportBtn: true,
+      sidebar: true,
+      themeBtn: true
     },
+    localStorageState.visible,
     props.visible
   );
 
