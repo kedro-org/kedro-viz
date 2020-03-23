@@ -32,7 +32,12 @@ describe('getInitialState', () => {
       chartSize: {},
       textLabels: true,
       theme: 'dark',
-      visible: { exportBtn: true, labelBtn: true, themeBtn: true }
+      visible: {
+        exportBtn: true,
+        labelBtn: true,
+        layerBtn: true,
+        themeBtn: true
+      }
     });
   });
 

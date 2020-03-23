@@ -5,13 +5,14 @@ import { mockState, setup } from '../../utils/state.mock';
 describe('IconToolbar', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<IconToolbar />);
-    expect(wrapper.find('.pipeline-icon-button').length).toBe(3);
+    expect(wrapper.find('.pipeline-icon-button').length).toBe(4);
   });
 
   it('hides both buttons when visible prop is false for each of them', () => {
     const visible = {
       themeBtn: false,
       labelBtn: false,
+      layerBtn: false,
       exportBtn: false
     };
     const wrapper = setup.mount(<IconToolbar />, { visible });
@@ -23,7 +24,7 @@ describe('IconToolbar', () => {
       labelBtn: false
     };
     const wrapper = setup.mount(<IconToolbar />, { visible });
-    expect(wrapper.find('.pipeline-icon-button').length).toBe(2);
+    expect(wrapper.find('.pipeline-icon-button').length).toBe(3);
   });
 
   it('shows the export modal on export button click', () => {
@@ -38,12 +39,16 @@ describe('IconToolbar', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
+      disableLayerBtn: expect.any(Boolean),
       textLabels: expect.any(Boolean),
       theme: expect.stringMatching(/light|dark/),
       visible: expect.objectContaining({
-        themeBtn: expect.any(Boolean),
+        exportBtn: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
-        exportBtn: expect.any(Boolean)
+        layerBtn: expect.any(Boolean),
+        layers: expect.any(Boolean),
+        themeBtn: expect.any(Boolean),
+        sidebar: expect.any(Boolean)
       })
     };
     expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
