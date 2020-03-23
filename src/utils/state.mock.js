@@ -8,6 +8,7 @@ import getInitialState from '../store/initial-state';
  * Example state objects for use in tests of redux-enabled components
  */
 export const mockState = {
+  layers: getInitialState({ data: 'layers' }),
   lorem: getInitialState({ data: 'lorem' }),
   animals: getInitialState({ data: 'animals' })
 };
