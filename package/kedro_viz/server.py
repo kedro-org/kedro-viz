@@ -328,7 +328,7 @@ def _call_viz(
         data = _load_from_file(load_file)
     else:
         if match(kedro.__version__, ">=0.15.0"):
-            from kedro.context import (  # pylint: disable=import-error,import-outside-toplevel
+            from kedro.context import (  # pylint: disable=import-outside-toplevel
                 KedroContextError,
             )
 
