@@ -62,13 +62,15 @@ utils:
 
   run_pylint_and_flake8: &run_pylint_and_flake8
     name: Run pylint and flake8
-    command: |
-      make pylint
+    command: make pylint
 
   run_secret_scan: &run_secret_scan
     name: Run secret scan
-    command: |
-      make secret-scan
+    command: make secret-scan
+
+  run_security_scan: &run_security_scan
+    name: Run security scan
+    command: make security-scan
 
   run_python_tests: &run_python_tests
     name: Run Python tests
@@ -76,8 +78,7 @@ utils:
 
   run_e2e_tests: &run_e2e_tests
     name: Run all end to end tests
-    command: |
-      make e2e-tests
+    command: make e2e-tests
 
   cleanup: &cleanup
     name: Cleanup
@@ -98,8 +99,7 @@ utils:
 
   check_legal_compliance: &check_legal_compliance
     name: Check for legal compliance
-    command: |
-      make legal
+    command: make legal
 
   add_ssh_keys: &add_ssh_keys
     fingerprints:
@@ -137,6 +137,7 @@ jobs:
       - run: *test_lib_transpilation
       - run: *run_pylint_and_flake8
       - run: *run_secret_scan
+      - run: *run_security_scan
       - run: *run_python_tests
       - run: *run_e2e_tests
       - run: *cleanup
