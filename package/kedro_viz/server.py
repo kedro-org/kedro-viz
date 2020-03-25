@@ -349,7 +349,7 @@ def _call_viz(
     if save_file:
         Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))
     else:
-        is_localhost = host == "127.0.0.1"
+        is_localhost = host in ("127.0.0.1", "localhost", "0.0.0.0")
         if browser and is_localhost:
             webbrowser.open_new("http://{}:{:d}/".format(host, port))
         app.run(host=host, port=port)
