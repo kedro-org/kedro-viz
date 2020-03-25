@@ -197,6 +197,19 @@ def test_no_browser(cli_runner):
     assert server.webbrowser.open_new.called
 
 
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_no_browser_if_not_localhost(cli_runner):
+    """Check that call to open browser is not performed when host
+    is not the local host.
+    """
+    result = cli_runner.invoke(server.commands, ["viz", "--browser", "--host", "123.1.2.3"])
+    assert result.exit_code == 0, result.output
+    assert not server.webbrowser.open_new.called
+    result = cli_runner.invoke(server.commands, ["viz", "--host", "123.1.2.3"])
+    assert result.exit_code == 0, result.output
+    assert not server.webbrowser.open_new.called
+
+
 def test_load_file_outside_kedro_project(cli_runner, tmp_path):
     """Check that running viz with `--load-file` flag works outside of a Kedro project.
     """
