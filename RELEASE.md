@@ -17,7 +17,8 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 - Move visibleNav/navWidth calculations into Redux store (#124)
-- `kedro viz --load-file=XX` stopped emitting log files 
+- `kedro viz --load-file=XX` stopped emitting log files
+- Web browser will only be opened if the host corresponds to the localhost 
 
 ## Thanks for supporting contributions
 [Ana Potje](https://github.com/ANA-POTJE)
