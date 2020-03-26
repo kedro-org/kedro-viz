@@ -267,7 +267,7 @@ def commands():
     "--browser/--no-browser",
     default=True,
     help="Whether to open viz interface in the default browser or not. "
-    "Defaults to True.",
+    "Browser will only be opened if host is localhost. Defaults to True.",
 )
 @click.option(
     "--load-file",
