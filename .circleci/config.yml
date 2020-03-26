@@ -118,12 +118,12 @@ utils:
       git push origin master:gh-pages --force
 
 jobs:
-  build_35: &DEFAULT
+  build_36: &DEFAULT
     docker:
       - image: circleci/node:10.15
     working_directory: ~/repo
     environment:
-      CONDA_ENV_PY_VERSION: '3.5'
+      CONDA_ENV_PY_VERSION: "3.6"
     steps:
       - checkout
       - restore_cache: *restore_cache
@@ -146,15 +146,10 @@ jobs:
       - run: *package_app
       - run: *check_legal_compliance
 
-  build_36:
-    <<: *DEFAULT
-    environment:
-      CONDA_ENV_PY_VERSION: '3.6'
-
   build_37:
     <<: *DEFAULT
     environment:
-      CONDA_ENV_PY_VERSION: '3.7'
+      CONDA_ENV_PY_VERSION: "3.7"
 
   deploy_demo:
     <<: *DEFAULT
@@ -170,12 +165,10 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_35
       - build_36
       - build_37
       - deploy_demo:
           requires:
-            - build_35
             - build_36
             - build_37
           filters:
@@ -184,13 +177,12 @@ workflows:
   daily:
     triggers:
       - schedule:
-          cron: '0 1 * * *'
+          cron: "0 1 * * *"
           filters:
             branches:
               only:
                 - develop
                 - master
     jobs:
-      - build_35
       - build_36
       - build_37
