@@ -16,10 +16,12 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->
+- Drop support for Python 3.5 (#138)
+- Add logger configuration when loading pipeline from JSON (#133)
 - Move visibleNav/navWidth calculations into Redux store (#124)
-- `kedro viz --load-file=XX` stopped emitting log files 
 
 ## Thanks for supporting contributions
+
 [Ana Potje](https://github.com/ANA-POTJE)
 
 # Release 3.2.0:
