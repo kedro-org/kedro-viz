@@ -19,7 +19,6 @@ Please follow the established format:
 - Drop support for Python 3.5 (#138)
 - Add logger configuration when loading pipeline from JSON (#133)
 - Move visibleNav/navWidth calculations into Redux store (#124)
-- `kedro viz --load-file=XX` stopped emitting log files
 - Web browser will only be opened if the host corresponds to the localhost 
 
 ## Thanks for supporting contributions
