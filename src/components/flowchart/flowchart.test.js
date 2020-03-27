@@ -64,6 +64,7 @@ describe('FlowChart', () => {
       centralNode: null,
       chartSize: expect.any(Object),
       edges: expect.any(Array),
+      graphSize: expect.any(Object),
       linkedNodes: expect.any(Object),
       nodes: expect.any(Array),
       textLabels: expect.any(Boolean),

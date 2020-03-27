@@ -8,6 +8,7 @@ import { updateChartSize } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import {
   getChartSize,
+  getGraphSize,
   getLayoutNodes,
   getLayoutEdges,
   getZoomPosition
@@ -123,7 +124,23 @@ export class FlowChart extends Component {
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
+      const { k: scale } = event.transform;
+      const { sidebarWidth } = this.props.chartSize;
+      const { width, height } = this.props.graphSize;
+
+      // Limit zoom translate extent: This needs to be recalculated on zoom
+      // as it needs access to the current scale to correctly multiply the
+      // sidebarWidth by the scale to offset it properly
+      const margin = 200;
+      this.zoomBehaviour.translateExtent([
+        [-sidebarWidth / scale - margin, -margin],
+        [width + margin, height + margin]
+      ]);
+
+      // Transform the <g> that wraps the chart
       this.el.wrapper.attr('transform', event.transform);
+
+      // Hide the tooltip so it doesn't get misaligned to its node
       this.hideTooltip();
     });
     this.el.svg.call(this.zoomBehaviour);
@@ -134,6 +151,11 @@ export class FlowChart extends Component {
    */
   zoomChart() {
     const { scale = 1, translateX = 0, translateY = 0 } = this.props.zoom;
+
+    // Limit zoom scale extent
+    this.zoomBehaviour.scaleExtent([scale * 0.8, 1]);
+
+    // Auto zoom to fit the chart nicely on the page
     this.el.svg
       .transition()
       .duration(this.DURATION)
@@ -293,6 +315,7 @@ export const mapStateToProps = state => ({
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
   edges: getLayoutEdges(state),
+  graphSize: getGraphSize(state),
   linkedNodes: getLinkedNodes(state),
   nodes: getLayoutNodes(state),
   textLabels: state.textLabels,
