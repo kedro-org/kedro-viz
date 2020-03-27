@@ -172,7 +172,7 @@ def test_set_port(cli_runner,):
     result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     assert result.exit_code == 0, result.output
     server.app.run.assert_called_with(host="127.0.0.1", port=8000)
-    assert server.webbrowser.open_new.called_with("http://127.0.0.1:8000/")
+    server.webbrowser.open_new.assert_called_with("http://127.0.0.1:8000/")
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -181,7 +181,7 @@ def test_set_ip(cli_runner):
     result = cli_runner.invoke(server.commands, ["viz", "--host", "0.0.0.0"])
     assert result.exit_code == 0, result.output
     server.app.run.assert_called_with(host="0.0.0.0", port=4141)
-    assert server.webbrowser.open_new.called_with("http://127.0.0.1:4141/")
+    server.webbrowser.open_new.assert_called_with("http://0.0.0.0:4141/")
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -194,7 +194,20 @@ def test_no_browser(cli_runner):
     assert not server.webbrowser.open_new.called
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 0, result.output
-    assert server.webbrowser.open_new.called
+    assert server.webbrowser.open_new.call_count == 1
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_no_browser_if_not_localhost(cli_runner):
+    """Check that call to open browser is not performed when host
+    is not the local host.
+    """
+    result = cli_runner.invoke(server.commands, ["viz", "--browser", "--host", "123.1.2.3"])
+    assert result.exit_code == 0, result.output
+    assert not server.webbrowser.open_new.called
+    result = cli_runner.invoke(server.commands, ["viz", "--host", "123.1.2.3"])
+    assert result.exit_code == 0, result.output
+    assert not server.webbrowser.open_new.call_count
 
 
 def test_load_file_outside_kedro_project(cli_runner, tmp_path):
