@@ -33,6 +33,9 @@ pylint:
 secret-scan:
 	trufflehog --max_depth 1 --exclude_path trufflehog-ignore.txt .
 
+security-scan:
+	bandit -ll -q -r kedro_viz
+
 version:
 	python3 tools/versioning.py $(VERSION)
 

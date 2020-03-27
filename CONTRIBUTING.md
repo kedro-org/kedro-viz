@@ -43,7 +43,7 @@ Working on your first pull request? You can learn how from these resources:
 
 - Aim for cross-platform compatibility on Windows, macOS and Linux, and support recent versions of major browsers
 - We use [SemVer](https://semver.org/) for versioning
-- Our code is designed to be compatible with Python 3.5 onwards
+- Our code is designed to be compatible with Python 3.6 onwards
 - We use [Anaconda](https://www.anaconda.com/distribution/) as a preferred virtual environment
 - We use [PEP 8 conventions](https://www.python.org/dev/peps/pep-0008/) for all Python code
 - We use [Google docstrings](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for code comments

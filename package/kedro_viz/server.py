@@ -30,6 +30,7 @@
 
 import hashlib
 import json
+import logging
 import multiprocessing
 import socket
 import webbrowser
@@ -320,9 +321,14 @@ def _call_viz(
     global data  # pylint: disable=global-statement,invalid-name
 
     if load_file:
+        # Remove all handlers for root logger
+        root_logger = logging.getLogger()
+        root_logger.handlers = []
+
         data = _load_from_file(load_file)
     else:
         if match(kedro.__version__, ">=0.15.0"):
+            # pylint: disable=import-outside-toplevel
             from kedro.context import KedroContextError
 
             try:
