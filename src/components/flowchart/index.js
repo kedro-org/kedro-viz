@@ -182,7 +182,7 @@ export class FlowChart extends Component {
    * Render chart to the DOM with D3
    */
   drawChart() {
-    draw.call(this, this.props);
+    draw.call(this);
   }
 
   /**
