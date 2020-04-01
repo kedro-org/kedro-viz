@@ -172,7 +172,7 @@ export const getNodeSize = createSelector(
   [getNodeIDs, getNodeTextWidth, getTextLabels, getNodeType],
   (nodeIDs, nodeTextWidth, textLabels, nodeType) =>
     arrayToObject(nodeIDs, nodeID => {
-      const iconSize = textLabels ? 14 : 24;
+      const iconSize = textLabels ? 24 : 30;
       const padding = getPadding(textLabels, nodeType[nodeID] === 'task');
       const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
       const textGap = textLabels ? 6 : 0;
