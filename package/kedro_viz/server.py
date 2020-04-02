@@ -267,7 +267,7 @@ def commands():
     "--browser/--no-browser",
     default=True,
     help="Whether to open viz interface in the default browser or not. "
-    "Defaults to True.",
+    "Browser will only be opened if host is localhost. Defaults to True.",
 )
 @click.option(
     "--load-file",
@@ -349,6 +349,7 @@ def _call_viz(
     if save_file:
         Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))
     else:
-        if browser:
-            webbrowser.open_new("http://127.0.0.1:{:d}/".format(port))
+        is_localhost = host in ("127.0.0.1", "localhost", "0.0.0.0")
+        if browser and is_localhost:
+            webbrowser.open_new("http://{}:{:d}/".format(host, port))
         app.run(host=host, port=port)
