@@ -190,25 +190,38 @@ describe('Selectors', () => {
       );
     });
 
-    it('returns x=16 & y=10 if text labels are enabled', () => {
-      expect(getPadding(true, true).x).toBe(16);
-      expect(getPadding(true, true).y).toBe(10);
-      expect(getPadding(true, false).x).toBe(16);
-      expect(getPadding(true, false).y).toBe(10);
+    describe('if text labels are enabled', () => {
+      it('returns x=16 & y=10 for task icons', () => {
+        expect(getPadding(true, true)).toEqual({ x: 16, y: 10 });
+      });
+
+      it('returns x=20 & y=10 for database icons', () => {
+        expect(getPadding(true, false)).toEqual({ x: 20, y: 10 });
+      });
     });
 
-    it('returns identical x & y values if text labels are disabled', () => {
-      expect(getPadding(false, true).x).toBe(getPadding(false, true).y);
-      expect(getPadding(false, false).x).toBe(getPadding(false, false).y);
-    });
+    describe('if text labels are disabled', () => {
+      it('returns x=16 & y=10 for task icons', () => {
+        expect(getPadding(false, true)).toEqual({ x: 14, y: 14 });
+      });
 
-    it('returns smaller padding values for task icons', () => {
-      expect(getPadding(false, true).x).toBeLessThan(
-        getPadding(false, false).x
-      );
-      expect(getPadding(false, true).y).toBeLessThan(
-        getPadding(false, false).y
-      );
+      it('returns x=20 & y=10 for database icons', () => {
+        expect(getPadding(false, false)).toEqual({ x: 16, y: 16 });
+      });
+
+      it('returns identical x & y values', () => {
+        expect(getPadding(false, true).x).toBe(getPadding(false, true).y);
+        expect(getPadding(false, false).x).toBe(getPadding(false, false).y);
+      });
+
+      it('returns smaller padding values for task icons than database icons', () => {
+        expect(getPadding(false, true).x).toBeLessThan(
+          getPadding(false, false).x
+        );
+        expect(getPadding(false, true).y).toBeLessThan(
+          getPadding(false, false).y
+        );
+      });
     });
   });
 
