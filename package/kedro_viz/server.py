@@ -33,6 +33,7 @@ import json
 import logging
 import multiprocessing
 import socket
+import traceback
 import webbrowser
 from collections import defaultdict
 from contextlib import closing
@@ -305,6 +306,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env):
     except KedroCliError:
         raise
     except Exception as ex:
+        traceback.print_exc()
         raise KedroCliError(str(ex))
 
 
