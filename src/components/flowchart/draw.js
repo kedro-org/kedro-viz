@@ -32,7 +32,7 @@ const drawNodes = function() {
     .append('text')
     .text(node => node.name)
     .attr('text-anchor', 'middle')
-    .attr('dy', 3.5)
+    .attr('dy', 5)
     .attr('dx', node => node.textOffset);
 
   this.el.nodes
