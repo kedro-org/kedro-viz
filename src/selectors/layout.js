@@ -3,7 +3,7 @@ import dagre from 'dagre';
 import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
-const getHasLayers = state =>
+const getHasVisibleLayers = state =>
   state.visible.layers && Boolean(state.layer.ids.length);
 const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;
@@ -16,12 +16,12 @@ const getVisibleSidebar = state => state.visible.sidebar;
  * which don't affect layout.
  */
 export const getGraph = createSelector(
-  [getVisibleNodes, getVisibleEdges, getHasLayers],
-  (nodes, edges, hasLayers) => {
-    const ranker = hasLayers ? 'none' : null;
+  [getVisibleNodes, getVisibleEdges, getHasVisibleLayers],
+  (nodes, edges, hasVisibleLayers) => {
+    const ranker = hasVisibleLayers ? 'none' : null;
     const graph = new dagre.graphlib.Graph().setGraph({
-      ranker: hasLayers ? ranker : null,
-      ranksep: hasLayers ? 200 : 70,
+      ranker: hasVisibleLayers ? ranker : null,
+      ranksep: hasVisibleLayers ? 200 : 70,
       marginx: 40,
       marginy: 40
     });
