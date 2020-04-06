@@ -35,25 +35,33 @@ describe('Selectors', () => {
       ).toBe(true);
     });
 
-    it('does not disable a node if all tags are disabled', () => {
+    it('does not disable any nodes if all tags filters are inactive', () => {
       const nodeDisabled = getNodeDisabledTag(mockState.lorem);
       expect(Object.values(nodeDisabled)).toEqual(
         Object.values(nodeDisabled).map(() => false)
       );
     });
 
-    it('disables a node only if all of its tags are disabled', () => {
+    it('disables a node with no tags if a tag filter is active', () => {
+      const tag = mockState.animals.tag.ids[0];
       const nodeTags = getNodeTags(mockState.animals);
-      // Get list of task nodes from the current pipeline
-      const taskNodes = getNodeIDs(mockState.animals).filter(
-        id => getNodeType(mockState.animals)[id] === 'task'
-      );
-      // Choose a node that has some tags (and which should be enabled)
-      const hasTags = id => Boolean(nodeTags[id].length);
-      const enabledNodeID = taskNodes.find(hasTags);
       // Choose a node that has no tags (and which should be disabled)
       const hasNoTags = id => !Boolean(nodeTags[id].length);
-      const disabledNodeID = taskNodes.find(hasNoTags);
+      const disabledNodeID = getNodeIDs(mockState.animals).find(hasNoTags);
+      // Update the state to enable one of the tags for that node
+      const newMockState = reducer(
+        mockState.animals,
+        toggleTagFilter(tag, true)
+      );
+      expect(getNodeDisabledTag(newMockState)[disabledNodeID]).toEqual(true);
+    });
+
+    it('does not disable a node if only one of its several tag filters are active', () => {
+      const nodeTags = getNodeTags(mockState.animals);
+      // Choose a node that has > 1 tag
+      const enabledNodeID = getNodeIDs(mockState.animals).find(
+        id => nodeTags[id].length > 1
+      );
       // Update the state to enable one of the tags for that node
       const enabledNodeTags = nodeTags[enabledNodeID];
       const newMockState = reducer(
@@ -61,7 +69,21 @@ describe('Selectors', () => {
         toggleTagFilter(enabledNodeTags[0], true)
       );
       expect(getNodeDisabledTag(newMockState)[enabledNodeID]).toEqual(false);
-      expect(getNodeDisabledTag(newMockState)[disabledNodeID]).toEqual(true);
+    });
+
+    it('does not disable a node if all of its several tag filters are active', () => {
+      const nodeTags = getNodeTags(mockState.animals);
+      // Choose a node that has > 1 tag
+      const enabledNodeID = getNodeIDs(mockState.animals).find(
+        id => nodeTags[id].length > 1
+      );
+      // Update the state to activate all of the tag filters for that node
+      const enabledNodeTags = nodeTags[enabledNodeID];
+      const newMockState = enabledNodeTags.reduce(
+        (state, tag) => reducer(state, toggleTagFilter(tag, true)),
+        mockState.animals
+      );
+      expect(getNodeDisabledTag(newMockState)[enabledNodeID]).toEqual(false);
     });
   });
 
