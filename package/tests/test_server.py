@@ -389,7 +389,7 @@ def test_viz_kedro14_invalid(mocker, cli_runner):
 
 def test_viz_stacktrace(mocker, cli_runner):
     """Test that in the case of a generic exception,
-    the stacktrace is printer."""
+    the stacktrace is printed."""
     mocker.patch("kedro_viz.server._call_viz", side_effect=ValueError)
     result = cli_runner.invoke(server.commands, "viz")
 
