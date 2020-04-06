@@ -8,13 +8,13 @@ describe('Selectors', () => {
       expect(getLayers(mockState.layers)).toEqual(expect.any(Array));
     });
 
-    it("returns an array whose IDS match the current pipeline's layer IDs, in the same order", () => {
+    it("returns an array whose IDs match the current pipeline's layer IDs, in the same order", () => {
       expect(getLayers(mockState.layers).map(d => d.id)).toEqual(
         mockState.layers.layer.ids
       );
     });
 
-    it('calculates the y positions and height for each layer', () => {
+    it('returns numeric y/height properties for each layer object', () => {
       expect(getLayers(mockState.layers)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
