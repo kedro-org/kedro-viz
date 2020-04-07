@@ -157,7 +157,10 @@ export const getNodeTextWidth = createSelector(
  */
 export const getPadding = (showLabels, isTask) => {
   if (showLabels) {
-    return { x: 16, y: 10 };
+    if (isTask) {
+      return { x: 16, y: 10 };
+    }
+    return { x: 20, y: 10 };
   }
   if (isTask) {
     return { x: 14, y: 14 };
@@ -172,7 +175,7 @@ export const getNodeSize = createSelector(
   [getNodeIDs, getNodeTextWidth, getTextLabels, getNodeType],
   (nodeIDs, nodeTextWidth, textLabels, nodeType) =>
     arrayToObject(nodeIDs, nodeID => {
-      const iconSize = textLabels ? 14 : 24;
+      const iconSize = textLabels ? 24 : 28;
       const padding = getPadding(textLabels, nodeType[nodeID] === 'task');
       const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
       const textGap = textLabels ? 6 : 0;
