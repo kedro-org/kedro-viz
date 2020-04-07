@@ -18,6 +18,10 @@ const getVisibleSidebar = state => state.visible.sidebar;
 export const getGraph = createSelector(
   [getVisibleNodes, getVisibleEdges, getHasVisibleLayers],
   (nodes, edges, hasVisibleLayers) => {
+    if (!nodes.length || !edges.length) {
+      return;
+    }
+
     const ranker = hasVisibleLayers ? 'none' : null;
     const graph = new dagre.graphlib.Graph().setGraph({
       ranker: hasVisibleLayers ? ranker : null,
@@ -48,15 +52,17 @@ export const getGraph = createSelector(
 export const getLayoutNodes = createSelector(
   [getGraph, getNodeType, getNodeLayer, getNodeActive],
   (graph, nodeType, nodeLayer, nodeActive) =>
-    graph.nodes().map(nodeID => {
-      const node = graph.node(nodeID);
-      return Object.assign({}, node, {
-        layer: nodeLayer[nodeID],
-        type: nodeType[nodeID],
-        order: node.x + node.y * 9999,
-        active: nodeActive[nodeID]
-      });
-    })
+    graph
+      ? graph.nodes().map(nodeID => {
+          const node = graph.node(nodeID);
+          return Object.assign({}, node, {
+            layer: nodeLayer[nodeID],
+            type: nodeType[nodeID],
+            order: node.x + node.y * 9999,
+            active: nodeActive[nodeID]
+          });
+        })
+      : []
 );
 
 /**
@@ -64,7 +70,8 @@ export const getLayoutNodes = createSelector(
  */
 export const getLayoutEdges = createSelector(
   [getGraph],
-  graph => graph.edges().map(edge => Object.assign({}, graph.edge(edge)))
+  graph =>
+    graph ? graph.edges().map(edge => Object.assign({}, graph.edge(edge))) : []
 );
 
 /**
@@ -72,7 +79,7 @@ export const getLayoutEdges = createSelector(
  */
 export const getGraphSize = createSelector(
   [getGraph],
-  graph => graph.graph()
+  graph => (graph ? graph.graph() : {})
 );
 
 /**
@@ -118,11 +125,7 @@ export const getChartSize = createSelector(
 export const getZoomPosition = createSelector(
   [getGraphSize, getChartSize],
   (graph, chart) => {
-    if (
-      !Object.keys(chart).length ||
-      !Number.isFinite(graph.width) ||
-      !Number.isFinite(graph.width)
-    ) {
+    if (!chart.width || !graph.width) {
       return {
         scale: 1,
         translateX: 0,
