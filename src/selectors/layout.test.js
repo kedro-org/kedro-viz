@@ -161,7 +161,7 @@ describe('Selectors', () => {
       expect(getZoomPosition(mockState.lorem)).toEqual(defaultZoom);
     });
 
-    it('returns default values if graph width/height is infinite (i.e. when no nodes are visible)', () => {
+    it('returns default values when no nodes are visible', () => {
       const newMockState = reducer(
         getInitialState({ data: [] }),
         updateChartSize({ width: 100, height: 100 })
