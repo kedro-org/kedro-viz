@@ -11,6 +11,7 @@ import {
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 import { updateChartSize } from '../actions';
+import getInitialState from '../store/initial-state';
 import reducer from '../reducers';
 
 describe('Selectors', () => {
@@ -150,8 +151,22 @@ describe('Selectors', () => {
   });
 
   describe('getZoomPosition', () => {
-    it('returns an empty object if chartSize is unset', () => {
-      expect(getZoomPosition(mockState.lorem)).toEqual({});
+    const defaultZoom = {
+      scale: 1,
+      translateX: 0,
+      translateY: 0
+    };
+
+    it('returns default values if chartSize is unset', () => {
+      expect(getZoomPosition(mockState.lorem)).toEqual(defaultZoom);
+    });
+
+    it('returns default values when no nodes are visible', () => {
+      const newMockState = reducer(
+        getInitialState({ data: [] }),
+        updateChartSize({ width: 100, height: 100 })
+      );
+      expect(getZoomPosition(newMockState)).toEqual(defaultZoom);
     });
 
     it('returns the updated chart zoom translation/scale if chartSize is set', () => {

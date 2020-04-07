@@ -11,6 +11,19 @@ export function resetData(data) {
   };
 }
 
+export const TOGGLE_LAYERS = 'TOGGLE_LAYERS';
+
+/**
+ * Toggle whether to show layers on/off
+ * @param {Boolean} layers True if text labels are to be shown
+ */
+export function toggleLayers(visible) {
+  return {
+    type: TOGGLE_LAYERS,
+    visible
+  };
+}
+
 export const TOGGLE_TEXT_LABELS = 'TOGGLE_TEXT_LABELS';
 
 /**

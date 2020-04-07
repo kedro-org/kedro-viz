@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { toggleTextLabels, toggleTheme } from '../../actions';
+import { toggleLayers, toggleTextLabels, toggleTheme } from '../../actions';
 import IconButton from './icon-button';
 import ExportModal from './export-modal';
 import './icon-toolbar.css';
@@ -13,6 +13,8 @@ import './icon-toolbar.css';
  * @param {string} theme Kedro UI light/dark theme
  */
 export const IconToolbar = ({
+  disableLayerBtn,
+  onToggleLayers,
   onToggleTextLabels,
   onToggleTheme,
   textLabels,
@@ -46,6 +48,14 @@ export const IconToolbar = ({
           labelText="Export visualisation"
           visible={visible.exportBtn}
         />
+        <IconButton
+          ariaLabel={`Turn data layers ${visible.layers ? 'off' : 'on'}`}
+          onClick={() => onToggleLayers(!visible.layers)}
+          icon="layers"
+          labelText="Toggle layers"
+          disabled={disableLayerBtn}
+          visible={visible.layerBtn}
+        />
       </ul>
       {visible.exportBtn && (
         <ExportModal visible={isModalVisible} toggleModal={toggleModal} />
@@ -55,12 +65,16 @@ export const IconToolbar = ({
 };
 
 export const mapStateToProps = state => ({
+  disableLayerBtn: !state.layer.ids.length,
   textLabels: state.textLabels,
   theme: state.theme,
   visible: state.visible
 });
 
 export const mapDispatchToProps = dispatch => ({
+  onToggleLayers: value => {
+    dispatch(toggleLayers(Boolean(value)));
+  },
   onToggleTextLabels: value => {
     dispatch(toggleTextLabels(Boolean(value)));
   },

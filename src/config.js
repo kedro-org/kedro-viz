@@ -28,7 +28,14 @@ const getDataSource = () => {
  * @return {string} Data source type key
  */
 const validateDataSource = source => {
-  const expectedInput = ['lorem', 'animals', 'demo', 'json', 'random'];
+  const expectedInput = [
+    'lorem',
+    'animals',
+    'demo',
+    'layers',
+    'json',
+    'random'
+  ];
   if (expectedInput.includes(source)) {
     return source;
   }

@@ -5,6 +5,73 @@ import { curveBasis, line } from 'd3-shape';
 import icon from './icon';
 
 /**
+ * Render layer bands
+ */
+const drawLayers = function() {
+  const { layers, visibleLayers } = this.props;
+
+  this.el.layers = this.el.layerGroup
+    .selectAll('.layer')
+    .data(visibleLayers ? layers : [], layer => layer.id);
+
+  const enterLayers = this.el.layers
+    .enter()
+    .append('rect')
+    .attr('class', 'layer');
+
+  this.el.layers.exit().remove();
+
+  this.el.layers = this.el.layers.merge(enterLayers);
+
+  this.el.layers
+    .attr('x', d => d.x)
+    .attr('y', d => d.y)
+    .attr('height', d => d.height)
+    .attr('width', d => d.width);
+};
+
+/**
+ * Render layer name labels
+ */
+const drawLayerNames = function() {
+  const {
+    chartSize: { sidebarWidth = 0 },
+    layers,
+    visibleLayers
+  } = this.props;
+
+  this.el.layerNameGroup
+    .transition('layer-names-sidebar-width')
+    .duration(this.DURATION)
+    .style('transform', `translateX(${sidebarWidth}px)`);
+
+  this.el.layerNames = this.el.layerNameGroup
+    .selectAll('.layer-name')
+    .data(visibleLayers ? layers : [], layer => layer.id);
+
+  const enterLayerNames = this.el.layerNames
+    .enter()
+    .append('li')
+    .attr('class', 'layer-name')
+    .style('opacity', 0)
+    .transition('enter-layer-names')
+    .duration(this.DURATION)
+    .style('opacity', 1);
+
+  this.el.layerNames
+    .exit()
+    .style('opacity', 1)
+    .transition('exit-layer-names')
+    .duration(this.DURATION)
+    .style('opacity', 0)
+    .remove();
+
+  this.el.layerNames = this.el.layerNames.merge(enterLayerNames);
+
+  this.el.layerNames.text(d => d.name).attr('dy', 5);
+};
+
+/**
  * Render node icons and name labels
  */
 const drawNodes = function() {
@@ -150,6 +217,8 @@ const drawEdges = function() {
  * Render chart to the DOM with D3
  */
 const draw = function() {
+  drawLayers.call(this);
+  drawLayerNames.call(this);
   drawEdges.call(this);
   drawNodes.call(this);
 };

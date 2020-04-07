@@ -12,6 +12,7 @@ import {
 const DATA_NODE_COUNT = 30;
 const MAX_CONNECTED_NODES = 4;
 const MAX_LAYER_COUNT = 20;
+const MIN_LAYER_COUNT = 5;
 const MAX_NODE_TAG_COUNT = 5;
 const MAX_TAG_COUNT = 20;
 const PARAMETERS_FREQUENCY = 0.05;
@@ -23,7 +24,8 @@ const TASK_NODE_COUNT = 10;
 class Pipeline {
   constructor() {
     this.CONNECTION_COUNT = randomNumber(MAX_CONNECTED_NODES);
-    this.LAYER_COUNT = randomNumber(MAX_LAYER_COUNT);
+    this.LAYER_COUNT =
+      randomNumber(MAX_LAYER_COUNT - MIN_LAYER_COUNT) + MIN_LAYER_COUNT;
     this.TAG_COUNT = randomNumber(MAX_TAG_COUNT);
     this.nodes = this.getNodes();
     this.tags = this.generateTags();
@@ -43,11 +45,10 @@ class Pipeline {
   /**
    * Generate a list of nodes
    * @param {number} count The number of nodes to generate
-   * @param {Function} getLayer A callback to create a random layer number
    * @param {number} paramFreq How often nodes should include 'parameters' in their name
    * @param {string} type
    */
-  generateNodeList(count, getLayer, paramFreq, type) {
+  generateNodeList(count, paramFreq, type) {
     return getNumberArray(count)
       .map(() => this.getRandomNodeName(paramFreq))
       .filter(unique)
@@ -58,7 +59,7 @@ class Pipeline {
           name,
           full_name: `${name} (${name})`,
           type: id.includes('param') ? 'parameters' : type,
-          layer: getLayer()
+          layer: this.getLayer(type)
         };
       });
   }
@@ -70,17 +71,16 @@ class Pipeline {
     return {
       data: this.generateNodeList(
         DATA_NODE_COUNT,
-        () => randomIndex(this.LAYER_COUNT + 1),
         PARAMETERS_FREQUENCY,
         'data'
       ),
-      task: this.generateNodeList(
-        TASK_NODE_COUNT,
-        () => randomIndex(this.LAYER_COUNT) + 0.5,
-        0,
-        'task'
-      )
+      task: this.generateNodeList(TASK_NODE_COUNT, 0, 'task')
     };
+  }
+
+  getLayer(type) {
+    const increment = { data: 1, task: 0.5 };
+    return this.LAYER_COUNT - randomIndex(this.LAYER_COUNT + increment[type]);
   }
 
   /**
@@ -123,13 +123,13 @@ class Pipeline {
 
     const edges = [];
     this.nodes.task.forEach(node => {
-      this.getConnectedNodes(d => d.layer < node.layer).forEach(target => {
+      this.getConnectedNodes(d => d.layer > node.layer).forEach(target => {
         edges.push({
           source: node.id,
           target
         });
       });
-      this.getConnectedNodes(d => d.layer > node.layer).forEach(source => {
+      this.getConnectedNodes(d => d.layer < node.layer).forEach(source => {
         edges.push({
           source,
           target: node.id

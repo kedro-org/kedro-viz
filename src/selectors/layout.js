@@ -3,7 +3,10 @@ import dagre from 'dagre';
 import { getNodeActive, getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
+const getHasVisibleLayers = state =>
+  state.visible.layers && Boolean(state.layer.ids.length);
 const getNodeType = state => state.node.type;
+const getNodeLayer = state => state.node.layer;
 const getVisibleSidebar = state => state.visible.sidebar;
 
 /**
@@ -13,9 +16,16 @@ const getVisibleSidebar = state => state.visible.sidebar;
  * which don't affect layout.
  */
 export const getGraph = createSelector(
-  [getVisibleNodes, getVisibleEdges],
-  (nodes, edges) => {
+  [getVisibleNodes, getVisibleEdges, getHasVisibleLayers],
+  (nodes, edges, hasVisibleLayers) => {
+    if (!nodes.length || !edges.length) {
+      return;
+    }
+
+    const ranker = hasVisibleLayers ? 'none' : null;
     const graph = new dagre.graphlib.Graph().setGraph({
+      ranker: hasVisibleLayers ? ranker : null,
+      ranksep: hasVisibleLayers ? 200 : 70,
       marginx: 40,
       marginy: 40
     });
@@ -40,16 +50,19 @@ export const getGraph = createSelector(
  * and recombine with other data that doesn't affect layout
  */
 export const getLayoutNodes = createSelector(
-  [getGraph, getNodeType, getNodeActive],
-  (graph, nodeType, nodeActive) =>
-    graph.nodes().map(nodeID => {
-      const node = graph.node(nodeID);
-      return Object.assign({}, node, {
-        type: nodeType[nodeID],
-        order: node.x + node.y * 9999,
-        active: nodeActive[nodeID]
-      });
-    })
+  [getGraph, getNodeType, getNodeLayer, getNodeActive],
+  (graph, nodeType, nodeLayer, nodeActive) =>
+    graph
+      ? graph.nodes().map(nodeID => {
+          const node = graph.node(nodeID);
+          return Object.assign({}, node, {
+            layer: nodeLayer[nodeID],
+            type: nodeType[nodeID],
+            order: node.x + node.y * 9999,
+            active: nodeActive[nodeID]
+          });
+        })
+      : []
 );
 
 /**
@@ -57,7 +70,8 @@ export const getLayoutNodes = createSelector(
  */
 export const getLayoutEdges = createSelector(
   [getGraph],
-  graph => graph.edges().map(edge => Object.assign({}, graph.edge(edge)))
+  graph =>
+    graph ? graph.edges().map(edge => Object.assign({}, graph.edge(edge))) : []
 );
 
 /**
@@ -65,7 +79,7 @@ export const getLayoutEdges = createSelector(
  */
 export const getGraphSize = createSelector(
   [getGraph],
-  graph => graph.graph()
+  graph => (graph ? graph.graph() : {})
 );
 
 /**
@@ -111,8 +125,12 @@ export const getChartSize = createSelector(
 export const getZoomPosition = createSelector(
   [getGraphSize, getChartSize],
   (graph, chart) => {
-    if (!Object.keys(chart).length) {
-      return {};
+    if (!chart.width || !graph.width) {
+      return {
+        scale: 1,
+        translateX: 0,
+        translateY: 0
+      };
     }
 
     const scale = Math.min(

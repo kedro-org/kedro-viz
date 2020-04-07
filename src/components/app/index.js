@@ -73,7 +73,7 @@ class App extends React.Component {
 
 App.propTypes = {
   data: PropTypes.oneOfType([
-    PropTypes.oneOf(['random', 'lorem', 'animals', 'demo', 'json']),
+    PropTypes.oneOf(['random', 'lorem', 'animals', 'demo', 'json', 'layers']),
     PropTypes.shape({
       schema_id: PropTypes.string,
       edges: PropTypes.array.isRequired,
@@ -84,6 +84,10 @@ App.propTypes = {
   theme: PropTypes.oneOf(['dark', 'light']),
   visible: PropTypes.shape({
     labelBtn: PropTypes.bool,
+    layerBtn: PropTypes.bool,
+    layers: PropTypes.bool,
+    exportBtn: PropTypes.bool,
+    sidebar: PropTypes.bool,
     themeBtn: PropTypes.bool
   })
 };
