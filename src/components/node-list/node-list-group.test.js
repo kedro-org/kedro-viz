@@ -42,7 +42,7 @@ describe('NodeListGroup', () => {
   it('hides children when collapsed class is used', () => {
     const type = getNodeTypes(mockState.lorem)[0];
     const wrapper = setup.mount(<NodeListGroup type={type} collapsed={true} />);
-    expect(wrapper.find('.pipeline-node-list--nested').length).toEqual(0);
+    expect(wrapper.find('.pipeline-nodelist--nested').length).toEqual(0);
   });
 
   it('maps state to props', () => {

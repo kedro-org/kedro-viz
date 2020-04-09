@@ -1,53 +1,60 @@
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import Checkbox from '@quantumblack/kedro-ui/lib/components/checkbox';
-import { toggleNodeHovered, toggleNodesDisabled } from '../../actions/nodes';
+import NodeIcon from '../icons/node-icon';
+import InvisibleIcon from '../icons/invisible';
 
 export const NodeListItem = ({
-  onToggleNodesDisabled,
-  onToggleNodeHovered,
-  node,
-  theme
+  active,
+  checked,
+  children,
+  disabled,
+  label,
+  name,
+  onMouseEnter,
+  onMouseLeave,
+  onChange,
+  type
 }) => (
-  <li
-    className={classnames('pipeline-node pipeline-node--nested', {
-      'pipeline-node--active': node.active,
-      'pipeline-node--disabled': node.disabled_tag || node.disabled_type
+  <label
+    className={classnames('pipeline-nodelist__item kedro', {
+      'pipeline-nodelist__item--nested': !children,
+      'pipeline-nodelist__item--active': active,
+      'pipeline-nodelist__item--unchecked': !checked,
+      'pipeline-nodelist__item--disabled': disabled
     })}
-    title={node.name}
-    onMouseEnter={() => onToggleNodeHovered(node.id)}
-    onMouseLeave={() => onToggleNodeHovered(null)}>
-    <Checkbox
-      checked={!node.disabled_node}
-      label={
-        <span
-          dangerouslySetInnerHTML={{
-            __html: node.highlightedLabel
-          }}
-        />
-      }
-      name={node.name}
-      onChange={(e, { checked }) => onToggleNodesDisabled([node.id], !checked)}
-      theme={theme}
+    title={children ? null : name}
+    onMouseEnter={onMouseEnter}
+    onMouseLeave={onMouseLeave}>
+    {children}
+    <NodeIcon
+      className={classnames(
+        'pipeline-nodelist__item__icon pipeline-nodelist__item__icon--type',
+        {
+          'pipeline-nodelist__item__icon--type--nested': !children
+        }
+      )}
+      type={type}
     />
-  </li>
+    <input
+      className="pipeline-nodelist__item__checkbox"
+      type="checkbox"
+      checked={checked}
+      name={name}
+      onChange={onChange}
+    />
+    <span
+      className="pipeline-nodelist__item__label"
+      dangerouslySetInnerHTML={{ __html: label }}
+    />
+    <InvisibleIcon
+      className={classnames(
+        'pipeline-nodelist__item__icon pipeline-nodelist__item__icon--invisible',
+        {
+          'pipeline-nodelist__item__icon--invisible--checked': checked
+        }
+      )}
+    />
+  </label>
 );
 
-export const mapStateToProps = state => ({
-  theme: state.theme
-});
-
-export const mapDispatchToProps = dispatch => ({
-  onToggleNodeHovered: nodeID => {
-    dispatch(toggleNodeHovered(nodeID));
-  },
-  onToggleNodesDisabled: (nodeIDs, disabled) => {
-    dispatch(toggleNodesDisabled(nodeIDs, disabled));
-  }
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NodeListItem);
+export default NodeListItem;

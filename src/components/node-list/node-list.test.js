@@ -28,8 +28,8 @@ describe('NodeList', () => {
 
   it('renders without crashing', () => {
     const wrapper = setup.mount(<NodeList />);
-    const search = wrapper.find('.pipeline-node-list-search');
-    const nodeList = wrapper.find('.pipeline-node-list');
+    const search = wrapper.find('.pipeline-nodelist-search');
+    const nodeList = wrapper.find('.pipeline-nodelist');
     expect(search.length).toBe(1);
     expect(nodeList.length).toBeGreaterThan(0);
   });
@@ -60,7 +60,7 @@ describe('NodeList', () => {
 
     it('clears the search filter input and resets the list when hitting the Escape key', () => {
       const wrapper = setup.mount(<NodeList />);
-      const searchWrapper = wrapper.find('.pipeline-node-list-search');
+      const searchWrapper = wrapper.find('.pipeline-nodelist-search');
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.kui-input__field');
       const nodeList = () => wrapper.find('.pipeline-node--nested');
@@ -91,7 +91,7 @@ describe('NodeList', () => {
     const inputProps = () => input().map(input => input.props());
     const toggleAllNodes = check =>
       wrapper
-        .find('.pipeline-node-list__toggle')
+        .find('.pipeline-nodelist__toggle')
         .at(check ? 0 : 1)
         .simulate('click');
     // Get search text value and filtered nodes

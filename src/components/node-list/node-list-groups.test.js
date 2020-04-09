@@ -9,7 +9,7 @@ describe('NodeListGroups', () => {
     const nodes = getGroupedNodes(mockState.lorem);
     const types = getNodeTypes(mockState.lorem);
     const wrapper = setup.mount(<NodeListGroups nodes={nodes} types={types} />);
-    const nodeList = () => wrapper.find('.pipeline-node-list--nested').first();
+    const nodeList = () => wrapper.find('.pipeline-nodelist--nested').first();
     const toggle = () => wrapper.find('.pipeline-type-group-toggle').first();
     expect(nodeList().length).toBe(1);
     expect(toggle().hasClass('pipeline-type-group-toggle--alt')).toBe(false);
