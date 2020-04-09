@@ -77,6 +77,7 @@ App.propTypes = {
     PropTypes.shape({
       schema_id: PropTypes.string,
       edges: PropTypes.array.isRequired,
+      layers: PropTypes.array,
       nodes: PropTypes.array.isRequired,
       tags: PropTypes.array
     })
