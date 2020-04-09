@@ -1,6 +1,7 @@
 @import './variables';
 
 .edge path {
+  pointer-events: none;
   fill: none;
   stroke-width: 1.5px;
 

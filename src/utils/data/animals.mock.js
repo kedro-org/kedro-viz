@@ -6,6 +6,10 @@ export default {
       name: 'small'
     },
     {
+      id: 'medium',
+      name: 'medium'
+    },
+    {
       id: 'huge',
       name: 'huge'
     }
@@ -15,105 +19,105 @@ export default {
       id: 'task/salmon',
       name: 'salmon',
       full_name: 'salmon',
-      tags: ['huge', 'small'],
+      tags: ['small'],
       type: 'task'
     },
     {
       id: 'task/shark',
       name: 'shark',
       full_name: 'shark',
-      tags: [],
+      tags: ['medium', 'huge'],
       type: 'task'
     },
     {
       id: 'task/trout',
       name: 'trout',
       full_name: 'trout',
-      tags: [],
+      tags: ['small'],
       type: 'task'
     },
     {
       id: 'data/whale',
       name: 'whale',
       full_name: 'whale',
-      tags: [],
+      tags: ['huge'],
       type: 'data'
     },
     {
       id: 'data/dog',
       name: 'dog',
       full_name: 'dog',
-      tags: ['small', 'huge'],
+      tags: ['small', 'medium'],
       type: 'data'
     },
     {
       id: 'data/cat',
       name: 'cat',
       full_name: 'cat',
-      tags: ['small', 'huge'],
+      tags: ['small', 'medium', 'huge'],
       type: 'data'
     },
     {
       id: 'data/parameters_rabbit',
       name: 'parameters_rabbit',
       full_name: 'parameters_rabbit',
-      tags: ['small', 'huge'],
+      tags: ['small'],
       type: 'parameters'
     },
     {
       id: 'data/parameters',
       name: 'parameters',
       full_name: 'parameters',
-      tags: ['small', 'huge'],
+      tags: [],
       type: 'parameters'
     },
     {
       id: 'data/sheep',
       name: 'sheep',
       full_name: 'sheep',
-      tags: ['small', 'huge'],
+      tags: ['medium'],
       type: 'data'
     },
     {
       id: 'data/horse',
       name: 'horse',
       full_name: 'horse',
-      tags: ['small', 'huge'],
+      tags: ['huge'],
       type: 'data'
     },
     {
       id: 'data/weasel',
       name: 'weasel',
       full_name: 'weasel',
-      tags: [],
+      tags: ['small'],
       type: 'data'
     },
     {
       id: 'data/elephant',
       name: 'elephant',
       full_name: 'elephant',
-      tags: [],
+      tags: ['huge'],
       type: 'data'
     },
     {
       id: 'data/bear',
       name: 'bear',
       full_name: 'bear',
-      tags: [],
+      tags: ['huge'],
       type: 'data'
     },
     {
       id: 'data/giraffe',
       name: 'giraffe',
       full_name: 'giraffe',
-      tags: [],
+      tags: ['huge'],
       type: 'data'
     },
     {
       id: 'data/pig',
       name: 'pig',
       full_name: 'pig',
-      tags: ['small', 'huge'],
+      tags: ['medium'],
       type: 'data'
     }
   ],

@@ -11,12 +11,12 @@ export default function configureStore(initialState) {
   const store = createStore(reducer, initialState);
 
   store.subscribe(() => {
-    const { textLabels, theme, nodeType, visibleSidebar } = store.getState();
+    const { textLabels, theme, nodeType, visible } = store.getState();
     saveState({
       textLabels,
       theme,
       nodeTypeDisabled: nodeType.disabled,
-      visibleSidebar
+      visible
     });
   });
 

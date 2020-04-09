@@ -1,24 +1,10 @@
 import { createSelector } from 'reselect';
-import { arrayToObject } from '../utils';
-import { getNodeDisabled } from './nodes';
+import { getNodeDisabled, getEdgeDisabled } from './disabled';
 
 const getNodeIDs = state => state.node.ids;
 const getEdgeIDs = state => state.edge.ids;
 const getEdgeSources = state => state.edge.sources;
 const getEdgeTargets = state => state.edge.targets;
-
-/**
- * Determine whether an edge should be disabled based on their source/target nodes
- */
-export const getEdgeDisabled = createSelector(
-  [getEdgeIDs, getNodeDisabled, getEdgeSources, getEdgeTargets],
-  (edgeIDs, nodeDisabled, edgeSources, edgeTargets) =>
-    arrayToObject(edgeIDs, edgeID => {
-      const source = edgeSources[edgeID];
-      const target = edgeTargets[edgeID];
-      return Boolean(nodeDisabled[source] || nodeDisabled[target]);
-    })
-);
 
 /**
  * Create a new transitive edge from the first and last edge in the path

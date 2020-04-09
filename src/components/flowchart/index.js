@@ -13,6 +13,7 @@ import {
   getLayoutEdges,
   getZoomPosition
 } from '../../selectors/layout';
+import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import draw from './draw';
 import './styles/flowchart.css';
@@ -39,6 +40,8 @@ export class FlowChart extends Component {
     this.wrapperRef = React.createRef();
     this.edgesRef = React.createRef();
     this.nodesRef = React.createRef();
+    this.layersRef = React.createRef();
+    this.layerNamesRef = React.createRef();
   }
 
   componentDidMount() {
@@ -72,7 +75,9 @@ export class FlowChart extends Component {
       svg: select(this.svgRef.current),
       wrapper: select(this.wrapperRef.current),
       edgeGroup: select(this.edgesRef.current),
-      nodeGroup: select(this.nodesRef.current)
+      nodeGroup: select(this.nodesRef.current),
+      layerGroup: select(this.layersRef.current),
+      layerNameGroup: select(this.layerNamesRef.current)
     };
   }
 
@@ -124,7 +129,7 @@ export class FlowChart extends Component {
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
-      const { k: scale } = event.transform;
+      const { k: scale, y } = event.transform;
       const { sidebarWidth } = this.props.chartSize;
       const { width, height } = this.props.graphSize;
 
@@ -139,6 +144,14 @@ export class FlowChart extends Component {
 
       // Transform the <g> that wraps the chart
       this.el.wrapper.attr('transform', event.transform);
+
+      // Update layer label y positions
+      this.el.layerNames
+        .style('height', d => `${d.height * scale}px`)
+        .style('transform', d => {
+          const ty = y + d.y * scale;
+          return `translateY(${ty}px)`;
+        });
 
       // Hide the tooltip so it doesn't get misaligned to its node
       this.hideTooltip();
@@ -255,7 +268,7 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { outerWidth, outerHeight } = this.props.chartSize;
+    const { outerWidth = 0, outerHeight = 0 } = this.props.chartSize;
     const {
       tooltipVisible,
       tooltipIsRight,
@@ -290,6 +303,7 @@ export class FlowChart extends Component {
             </marker>
           </defs>
           <g id="zoom-wrapper" ref={this.wrapperRef}>
+            <g className="pipeline-flowchart__layers" ref={this.layersRef} />
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
             <g
               id="nodes"
@@ -298,6 +312,10 @@ export class FlowChart extends Component {
             />
           </g>
         </svg>
+        <ul
+          className="pipeline-flowchart__layer-names"
+          ref={this.layerNamesRef}
+        />
         <div
           className={classnames('pipeline-flowchart__tooltip kedro', {
             'tooltip--visible': tooltipVisible,
@@ -316,9 +334,11 @@ export const mapStateToProps = state => ({
   chartSize: getChartSize(state),
   edges: getLayoutEdges(state),
   graphSize: getGraphSize(state),
+  layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
   nodes: getLayoutNodes(state),
   textLabels: state.textLabels,
+  visibleLayers: state.visible.layers,
   visibleSidebar: state.visible.sidebar,
   zoom: getZoomPosition(state)
 });

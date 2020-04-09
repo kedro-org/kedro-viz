@@ -1,11 +1,15 @@
 import animals from '../utils/data/animals.mock';
 import {
   RESET_DATA,
+  TOGGLE_LAYERS,
+  TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
   resetData,
+  toggleLayers,
+  toggleSidebar,
   toggleTextLabels,
   toggleTheme,
   updateChartSize,
@@ -34,6 +38,24 @@ describe('actions', () => {
       data: animals
     };
     expect(resetData(animals)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether to show layers', () => {
+    const visible = false;
+    const expectedAction = {
+      type: TOGGLE_LAYERS,
+      visible
+    };
+    expect(toggleLayers(visible)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether the sidebar is open', () => {
+    const visible = false;
+    const expectedAction = {
+      type: TOGGLE_SIDEBAR,
+      visible
+    };
+    expect(toggleSidebar(visible)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether a node has been clicked', () => {

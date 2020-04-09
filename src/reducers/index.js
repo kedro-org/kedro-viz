@@ -48,6 +48,7 @@ const combinedReducer = combineReducers({
   visible,
   edge: (state = {}) => state,
   id: (state = null) => state,
+  layer: (state = {}) => state,
   chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
   fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
   textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),

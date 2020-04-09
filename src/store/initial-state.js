@@ -4,6 +4,7 @@ import normalizeData from './normalize-data';
 import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import animals from '../utils/data/animals.mock';
 import demo from '../utils/data/demo.mock';
+import layers from '../utils/data/layers.mock';
 
 /**
  * Determine where data should be loaded from (i.e. async from JSON,
@@ -25,6 +26,9 @@ export const getPipelineData = data => {
     case 'demo':
       // Use data from the 'demo' test dataset
       return demo;
+    case 'layers':
+      // Use data from the 'layers' test dataset
+      return layers;
     case 'json':
       // Return empty state, as data will be loaded asynchronously later
       return null;
@@ -50,6 +54,7 @@ export const getInitialPipelineState = () => ({
     type: {},
     isParam: {},
     tags: {},
+    layer: {},
     disabled: {},
     clicked: null,
     hovered: null
@@ -67,6 +72,10 @@ export const getInitialPipelineState = () => ({
     ids: [],
     sources: {},
     targets: {}
+  },
+  layer: {
+    ids: [],
+    name: {}
   },
   tag: {
     ids: [],
@@ -91,11 +100,14 @@ const getInitialState = (props = {}) => {
 
   const visible = Object.assign(
     {
-      exportBtn: true,
       labelBtn: true,
-      themeBtn: true,
-      sidebar: true
+      layerBtn: true,
+      layers: Boolean(pipelineData.layer.ids.length),
+      exportBtn: true,
+      sidebar: true,
+      themeBtn: true
     },
+    localStorageState.visible,
     props.visible
   );
 
