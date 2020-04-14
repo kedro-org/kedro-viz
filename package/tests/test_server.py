@@ -35,7 +35,7 @@ import re
 
 import pytest
 from kedro.context import KedroContextError
-from kedro.extras.datasets.pandas import CSVDataSet
+from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 
@@ -553,9 +553,9 @@ def pipeline():
 @pytest.fixture
 def catalog():
     data_sets = {
-        "bob_in": CSVDataSet("raw.csv", layer="raw"),
+        "bob_in": PickleDataSet("raw.csv", layer="raw"),
         "paras:value": MemoryDataSet("value"),
-        "result": CSVDataSet("final.csv", layer="final"),
+        "result": PickleDataSet("final.csv", layer="final"),
     }
 
     return DataCatalog(data_sets=data_sets)
