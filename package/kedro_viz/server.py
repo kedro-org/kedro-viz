@@ -180,6 +180,7 @@ def _get_pipeline_catalog_from_kedro14(env):
         raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
+# pylint: disable=too-many-locals
 def format_pipeline_data(pipeline, catalog):
     """
     Format pipeline and catalog data from Kedro for kedro-viz
@@ -202,7 +203,7 @@ def format_pipeline_data(pipeline, catalog):
 
     data_set_to_layer_map = {
         ds_name: getattr(ds_obj, "_layer", None)
-        for ds_name, ds_obj in catalog._data_sets.items()
+        for ds_name, ds_obj in catalog._data_sets.items()  # pylint: disable=protected-access
     }
 
     all_layers = sorted(set(layer for layer in data_set_to_layer_map.values() if layer))
