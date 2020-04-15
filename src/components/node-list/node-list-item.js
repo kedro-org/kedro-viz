@@ -1,6 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import NodeIcon from '../icons/node-icon';
+import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 
 export const NodeListItem = ({
@@ -19,7 +20,6 @@ export const NodeListItem = ({
     className={classnames('pipeline-nodelist__item kedro', {
       'pipeline-nodelist__item--nested': !children,
       'pipeline-nodelist__item--active': active,
-      'pipeline-nodelist__item--unchecked': !checked,
       'pipeline-nodelist__item--disabled': disabled
     })}
     title={children ? null : name}
@@ -30,6 +30,7 @@ export const NodeListItem = ({
       className={classnames(
         'pipeline-nodelist__item__icon pipeline-nodelist__item__icon--type',
         {
+          'pipeline-nodelist__item__icon--type--unchecked': !checked,
           'pipeline-nodelist__item__icon--type--nested': !children
         }
       )}
@@ -43,17 +44,16 @@ export const NodeListItem = ({
       onChange={onChange}
     />
     <span
-      className="pipeline-nodelist__item__label"
+      className={classnames('pipeline-nodelist__item__label', {
+        'pipeline-nodelist__item__label--unchecked': !checked
+      })}
       dangerouslySetInnerHTML={{ __html: label }}
     />
-    <InvisibleIcon
-      className={classnames(
-        'pipeline-nodelist__item__icon pipeline-nodelist__item__icon--invisible',
-        {
-          'pipeline-nodelist__item__icon--invisible--checked': checked
-        }
-      )}
-    />
+    {checked ? (
+      <VisibleIcon className="pipeline-nodelist__item__icon pipeline-nodelist__item__icon--visibility" />
+    ) : (
+      <InvisibleIcon className="pipeline-nodelist__item__icon pipeline-nodelist__item__icon--visibility" />
+    )}
   </label>
 );
 
