@@ -5,16 +5,14 @@
             "id": "71527409",
             "name": "Func1",
             "full_name": "func1",
-            "tags": [],
-            "layer": null
+            "tags": []
         },
         {
             "type": "task",
             "id": "3751475c",
             "name": "Func2",
             "full_name": "func2",
-            "tags": [],
-            "layer": 0
+            "tags": []
         },
         {
             "type": "data",
@@ -22,7 +20,7 @@
             "name": "Bob In",
             "full_name": "bob_in",
             "tags": [],
-            "layer": 1
+            "layer": "raw"
         },
         {
             "type": "data",
@@ -46,7 +44,7 @@
             "name": "Result",
             "full_name": "result",
             "tags": [],
-            "layer": 0
+            "layer": "final"
         }
     ],
     "edges": [
@@ -71,15 +69,5 @@
             "target": "37a5301a"
         }
     ],
-    "tags": [],
-    "layers": [
-        {
-            "id": 0,
-            "name": "final"
-        },
-        {
-            "id": 1,
-            "name": "raw"
-        }
-    ]
+    "tags": []
 }

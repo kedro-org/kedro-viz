@@ -203,15 +203,21 @@ def format_pipeline_data(pipeline, catalog):
 
     data_set_to_layer_map = {
         ds_name: getattr(ds_obj, "_layer", None)
-        for ds_name, ds_obj in catalog._data_sets.items()  # pylint: disable=protected-access
+        for ds_name, ds_obj in catalog._data_sets.items()
     }
-
-    all_layers = sorted(set(layer for layer in data_set_to_layer_map.values() if layer))
 
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
         all_tags.update(node.tags)
-        node_layer_id = None
+        nodes.append(
+            {
+                "type": "task",
+                "id": task_id,
+                "name": getattr(node, "short_name", node.name),
+                "full_name": getattr(node, "_func_name", str(node)),
+                "tags": sorted(node.tags),
+            }
+        )
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
@@ -221,28 +227,11 @@ def format_pipeline_data(pipeline, catalog):
 
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
-            layer = data_set_to_layer_map.get(data_set)
-            namespace_to_layer[namespace] = layer
-            if layer and node_layer_id is None:
-                node_layer_id = all_layers.index(layer)
+            namespace_to_layer[namespace] = data_set_to_layer_map.get(data_set)
             edges.append({"source": task_id, "target": _hash(namespace)})
             namespace_tags[namespace].update(node.tags)
 
-        nodes.append(
-            {
-                "type": "task",
-                "id": task_id,
-                "name": getattr(node, "short_name", node.name),
-                "full_name": getattr(node, "_func_name", str(node)),
-                "tags": sorted(node.tags),
-                "layer": node_layer_id,
-            }
-        )
-
     for namespace, tags in sorted(namespace_tags.items()):
-        layer = namespace_to_layer[namespace]
-        layer_id = all_layers.index(layer) if layer else None
-
         is_param = bool("param" in namespace.lower())
         nodes.append(
             {
@@ -251,7 +240,7 @@ def format_pipeline_data(pipeline, catalog):
                 "name": pretty_name(namespace),
                 "full_name": namespace,
                 "tags": sorted(tags),
-                "layer": layer_id,
+                "layer": namespace_to_layer[namespace],
             }
         )
 
@@ -259,9 +248,7 @@ def format_pipeline_data(pipeline, catalog):
     for tag in sorted(all_tags):
         tags.append({"id": tag, "name": pretty_name(tag)})
 
-    layers = [{"id": idx, "name": value} for idx, value in enumerate(all_layers)]
-
-    return {"nodes": nodes, "edges": edges, "tags": tags, "layers": layers}
+    return {"nodes": nodes, "edges": edges, "tags": tags}
 
 
 @app.route("/api/nodes.json")

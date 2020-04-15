@@ -52,13 +52,11 @@ EXPECTED_PIPELINE_DATA = {
         {"target": "de8434b7", "source": "f1f1425b"},
         {"target": "37316e3a", "source": "de8434b7"},
     ],
-    "layers": [],
     "nodes": [
         {
             "name": "Func1",
             "type": "task",
             "id": "01a6a5cb",
-            "layer": None,
             "full_name": "func1",
             "tags": [],
         },
@@ -66,7 +64,6 @@ EXPECTED_PIPELINE_DATA = {
             "name": "my_node",
             "type": "task",
             "id": "de8434b7",
-            "layer": None,
             "full_name": "func2",
             "tags": ["bob"],
         },
@@ -290,7 +287,7 @@ def test_pipeline_flag(cli_runner, client):
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data == {"edges": [], "nodes": [], "tags": [], "layers": []}
+    assert data == {"edges": [], "nodes": [], "tags": []}
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
