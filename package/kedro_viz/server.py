@@ -203,7 +203,7 @@ def format_pipeline_data(pipeline, catalog):
 
     data_set_to_layer_map = {
         ds_name: getattr(ds_obj, "_layer", None)
-        for ds_name, ds_obj in catalog._data_sets.items()
+        for ds_name, ds_obj in catalog._data_sets.items()  # pylint: disable=protected-access
     }
 
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
