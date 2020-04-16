@@ -277,7 +277,7 @@ export default {
       full_name:
         'amet pellentesque dolor consequat elit convallis fermentum vitae diam',
       type: 'data',
-      layer: 'Raw',
+      layer: null,
       tags: ['raw', 'pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
@@ -331,7 +331,7 @@ export default {
       name: 'consequat rhoncus ac ipsum lorem neque vestibulum',
       full_name: 'consequat rhoncus ac ipsum lorem neque vestibulum',
       type: 'data',
-      layer: 'Intermediate',
+      layer: null,
       tags: ['intermediate', 'pellentesque_ipsum_dolor_fermentum_pellentesque']
     },
     {
