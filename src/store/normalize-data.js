@@ -1,4 +1,5 @@
 import { getInitialPipelineState } from '../store/initial-state';
+import batchingToposort from 'batching-toposort';
 /**
  * Check whether data is in expected format
  * @param {Object} data - The parsed data input
@@ -64,16 +65,6 @@ const addTag = state => tag => {
 };
 
 /**
- * Add a new Layer if it doesn't already exist
- * @param {Object} layer - Layer object
- */
-const addLayer = state => layer => {
-  const { id, name } = layer;
-  state.layer.ids.push(id);
-  state.layer.name[id] = name;
-};
-
-/**
  * Convert the pipeline data into a normalised state object
  * @param {Object} data Raw unformatted data input
  * @return {Object} Formatted, normalized state
@@ -85,13 +76,35 @@ const formatData = data => {
     if (data.schema_id) {
       state.id = data.schema_id;
     }
-    data.nodes.forEach(addNode(state));
-    data.edges.forEach(addEdge(state));
+
+    // add nodes and edges to state while building a node dependencies matrix for toposort
+    const nodeDeps = {};
+    const nodeIdsMap = {};
+    for (const node of data.nodes) {
+      addNode(state)(node);
+      nodeDeps[node.id] = [];
+      nodeIdsMap[node.id] = node;
+    }
+    for (const edge of data.edges) {
+      addEdge(state)(edge);
+      nodeDeps[edge.source].push(edge.target);
+    }
+    const toposortedNodes = batchingToposort(nodeDeps);
+    const toposortedLayers = [];
+    for (const nodesGroup of toposortedNodes) {
+      for (const nodeId of nodesGroup) {
+        const node = nodeIdsMap[nodeId];
+        if (node.layer !== null && !toposortedLayers.includes(node.layer)) {
+          toposortedLayers.push(node.layer);
+        }
+      }
+    }
+
     if (data.tags) {
       data.tags.forEach(addTag(state));
     }
-    if (data.layers) {
-      data.layers.forEach(addLayer(state));
+    if (toposortedLayers) {
+      state.layer.ids = toposortedLayers;
     }
   }
 
