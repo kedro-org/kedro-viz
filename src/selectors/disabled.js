@@ -67,7 +67,6 @@ export const getVisibleNodeIDs = createSelector(
 export const getVisibleLayerIDs = createSelector(
   [getVisibleNodeIDs, getNodeLayer, getLayerIDs],
   (nodeIDs, nodeLayer, layerIDs) => {
-    console.log(layerIDs);
     const visibleLayerIDs = {};
     for (const nodeID of nodeIDs) {
       visibleLayerIDs[nodeLayer[nodeID]] = true;
