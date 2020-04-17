@@ -38,7 +38,6 @@ import webbrowser
 from collections import defaultdict
 from contextlib import closing
 from pathlib import Path
-from typing import Dict
 
 import click
 import kedro
@@ -48,6 +47,7 @@ from IPython.core.display import HTML, display
 from kedro.cli import get_project_context  # pylint: disable=ungrouped-imports
 from kedro.cli.utils import KedroCliError  # pylint: disable=ungrouped-imports
 from semver import match
+from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
 
@@ -199,6 +199,7 @@ def format_pipeline_data(pipeline, catalog):
     edges = []
     namespace_tags = defaultdict(set)
     all_tags = set()
+    layer_dependencies = defaultdict(set)
 
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
@@ -212,14 +213,23 @@ def format_pipeline_data(pipeline, catalog):
             }
         )
         all_tags.update(node.tags)
+        input_layer = None
+        output_layer = None
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
             edges.append({"source": _hash(namespace), "target": task_id})
             namespace_tags[namespace].update(node.tags)
+            input_layer = getattr(data_set, "_layer", None)
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
             edges.append({"source": task_id, "target": _hash(namespace)})
             namespace_tags[namespace].update(node.tags)
+            output_layer = getattr(data_set, "_layer", None)
+
+        # if a node transition from one layer (input) to another layer (output)
+        # we add input layer as a dependency of output layer in the layer dependency matrix
+        if input_layer and output_layer and (input_layer != output_layer):
+            layer_dependencies[input_layer].add(output_layer)
 
     for namespace, tags in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
@@ -237,7 +247,8 @@ def format_pipeline_data(pipeline, catalog):
     for tag in sorted(all_tags):
         tags.append({"id": tag, "name": pretty_name(tag)})
 
-    return {"nodes": nodes, "edges": edges, "tags": tags}
+    layers = toposort_flatten(layer_dependencies)
+    return {"nodes": nodes, "edges": edges, "tags": tags, "layers": layers}
 
 
 @app.route("/api/nodes.json")

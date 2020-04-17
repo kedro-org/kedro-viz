@@ -1,5 +1,4 @@
 import { getInitialPipelineState } from '../store/initial-state';
-import batchingToposort from 'batching-toposort';
 /**
  * Check whether data is in expected format
  * @param {Object} data - The parsed data input
@@ -76,35 +75,13 @@ const formatData = data => {
     if (data.schema_id) {
       state.id = data.schema_id;
     }
-
-    // add nodes and edges to state while building a node dependencies matrix for toposort
-    const nodeDeps = {};
-    const nodeIdsMap = {};
-    for (const node of data.nodes) {
-      addNode(state)(node);
-      nodeDeps[node.id] = [];
-      nodeIdsMap[node.id] = node;
-    }
-    for (const edge of data.edges) {
-      addEdge(state)(edge);
-      nodeDeps[edge.source].push(edge.target);
-    }
-    const toposortedNodes = batchingToposort(nodeDeps);
-    const toposortedLayers = [];
-    for (const nodesGroup of toposortedNodes) {
-      for (const nodeId of nodesGroup) {
-        const node = nodeIdsMap[nodeId];
-        if (node.layer !== null && !toposortedLayers.includes(node.layer)) {
-          toposortedLayers.push(node.layer);
-        }
-      }
-    }
-
+    data.nodes.forEach(addNode(state));
+    data.edges.forEach(addEdge(state));
     if (data.tags) {
       data.tags.forEach(addTag(state));
     }
-    if (toposortedLayers) {
-      state.layer.ids = toposortedLayers;
+    if (data.layers) {
+      state.layer.ids = data.layers;
     }
   }
 

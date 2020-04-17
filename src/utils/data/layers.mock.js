@@ -1,4 +1,5 @@
 export default {
+  layers: ['Raw', 'Intermediate', 'Feature', 'Model Input', 'Model Output'],
   nodes: [
     {
       id: 'task/sed_viverra',
