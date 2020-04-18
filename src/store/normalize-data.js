@@ -64,16 +64,6 @@ const addTag = state => tag => {
 };
 
 /**
- * Add a new Layer if it doesn't already exist
- * @param {Object} layer - Layer object
- */
-const addLayer = state => layer => {
-  const { id, name } = layer;
-  state.layer.ids.push(id);
-  state.layer.name[id] = name;
-};
-
-/**
  * Convert the pipeline data into a normalised state object
  * @param {Object} data Raw unformatted data input
  * @return {Object} Formatted, normalized state
@@ -91,7 +81,7 @@ const formatData = data => {
       data.tags.forEach(addTag(state));
     }
     if (data.layers) {
-      data.layers.forEach(addLayer(state));
+      state.layer.ids = data.layers;
     }
   }
 
