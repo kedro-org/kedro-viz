@@ -42,6 +42,7 @@ from kedro.pipeline import Pipeline, node
 from kedro_viz import server
 from kedro_viz.server import _allocate_port, format_pipeline_data
 from kedro_viz.utils import WaitForException
+from toposort import CircularDependencyError
 
 from package.kedro_viz.server import _sort_layers
 
@@ -652,3 +653,18 @@ def test_format_pipeline_data(pipeline, catalog):
 ])
 def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
     assert _sort_layers(nodes, node_dependencies) == expected, graph_schema
+
+
+def test_sort_layers_should_raise_on_cyclic_layers():
+    # node_1(layer=raw) -> node_2(layer=int) -> node_3(layer=raw)
+    nodes = {
+        "node_1": {"id": "node_1", "layer": "raw"},
+        "node_2": {"id": "node_2", "layer": "int"},
+        "node_3": {"id": "node_3", "layer": "raw"},
+    }
+    node_dependencies = {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": set()}
+    with pytest.raises(
+        CircularDependencyError,
+        match="Circular dependencies exist among these items: {'int':{'raw'}, 'raw':{'int'}}"
+    ):
+        _sort_layers(nodes, node_dependencies)
