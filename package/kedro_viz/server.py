@@ -199,13 +199,14 @@ def _sort_layers(
 
     The algorithm is as follows:
         * For every node, find all layers that depends on it in a depth-first search (dfs).
-        * While traversing, build up a dictionary of {node_id -> set(layers)} for the node
+        * While traversing, build up a dictionary of {node_id -> layers} for the node
         that has already been visited.
-        * Turn the final {node_id -> layers} into a {layer -> set(layers)} to represent the layers'
-        dependencies, in which the key is a layer and the values are the parents of that layer.
-        * Feed this layer dependencies dictionary to ``toposort`` and return the sorted values.
-        * Raise ValueError if tha layers cannot be sorted topologically (i.e. there is a cycle
-        among the layers)
+        * Turn the final {node_id -> layers} into a {layer -> layers} to represent the layers'
+        dependencies. Note: the key is a layer and the values are the parents of that layer,
+        just because that's the format toposort requires.
+        * Feed this layers dictionary to ``toposort`` and return the sorted values.
+        * Raise CircularDependencyError if the layers cannot be sorted topologically,
+        i.e. there are cycles among the layers.
 
     Args:
         nodes: A dictionary of {node_id -> node} represents the nodes in the graph.
@@ -237,16 +238,17 @@ def _sort_layers(
             return node_layers[node_id]
 
         node_layers[node_id] = set()
-        for child_node_id in node_dependencies[node_id]:
-            child_node = nodes[child_node_id]
+        for dependent_node_id in node_dependencies[node_id]:
+            dependent_node = nodes[dependent_node_id]
 
-            # add the direct layer's of the child node as a dependent layer of the current node
-            child_node_layer = child_node.get("layer")
-            if child_node_layer is not None:
-                node_layers[node_id].add(child_node_layer)
+            # add the direct layer of the dependent node as a dependent layer of the current node_id
+            dependent_layer = dependent_node.get("layer")
+            if dependent_layer is not None:
+                node_layers[node_id].add(dependent_layer)
 
-            # add the dependent layers of the child node as dependent layers of the current node
-            node_layers[node_id].update(find_dependent_layers(child_node_id))
+            # also add the dependent layers of the dependent node as
+            # dependent layers of the current node_id.
+            node_layers[node_id].update(find_dependent_layers(dependent_node_id))
 
         return node_layers[node_id]
 
