@@ -37,7 +37,7 @@ import webbrowser
 from collections import defaultdict
 from contextlib import closing
 from pathlib import Path
-from typing import Dict, List, Any, Set
+from typing import Dict, List, Set
 
 import click
 import kedro
@@ -47,9 +47,9 @@ from IPython.core.display import HTML, display
 from kedro.cli import get_project_context  # pylint: disable=ungrouped-imports
 from kedro.cli.utils import KedroCliError  # pylint: disable=ungrouped-imports
 from semver import match
+from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
-from toposort import toposort_flatten
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
@@ -287,6 +287,8 @@ def format_pipeline_data(pipeline, catalog):
 
     # keep tracking of node_id -> node data in the graph
     nodes = {}
+    # keep track of a sorted list of nodes to returned to the client
+    sorted_nodes = []
     # keep track of node_id -> set(child_node_ids) for layers sorting
     node_dependencies = defaultdict(set)
     # keep track of edges in the graph: [{source_node_id -> target_node_id}]
@@ -302,7 +304,7 @@ def format_pipeline_data(pipeline, catalog):
         for ds_name, ds_obj in catalog._data_sets.items()  # pylint: disable=protected-access
     }
 
-    for node in pipeline.nodes:
+    for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
         all_tags.update(node.tags)
         nodes[task_id] = {
@@ -312,6 +314,7 @@ def format_pipeline_data(pipeline, catalog):
             "full_name": getattr(node, "_func_name", str(node)),
             "tags": sorted(node.tags),
         }
+        sorted_nodes.append(nodes[task_id])
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
@@ -340,13 +343,14 @@ def format_pipeline_data(pipeline, catalog):
             "tags": sorted(tags),
             "layer": namespace_to_layer[namespace],
         }
+        sorted_nodes.append(nodes[node_id])
 
     tags = []
     for tag in sorted(all_tags):
         tags.append({"id": tag, "name": pretty_name(tag)})
 
     return {
-        "nodes": list(sorted(nodes.values(), key=lambda n: n["name"])),
+        "nodes": sorted_nodes,
         "edges": edges,
         "tags": tags,
         "layers": _sort_layers(nodes, node_dependencies)

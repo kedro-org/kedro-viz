@@ -38,13 +38,11 @@ from kedro.context import KedroContextError
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
-
-from kedro_viz import server
-from kedro_viz.server import _allocate_port, format_pipeline_data
-from kedro_viz.utils import WaitForException
 from toposort import CircularDependencyError
 
-from package.kedro_viz.server import _sort_layers
+from kedro_viz import server
+from kedro_viz.server import _allocate_port, _sort_layers, format_pipeline_data
+from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
     "edges": [
@@ -112,6 +110,7 @@ EXPECTED_PIPELINE_DATA = {
         },
     ],
     "tags": [{"name": "Bob", "id": "bob"}],
+    "layers": [],
 }
 
 
@@ -290,7 +289,7 @@ def test_pipeline_flag(cli_runner, client):
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data == {"edges": [], "nodes": [], "tags": []}
+    assert data == {"edges": [], "layers": [], "nodes": [], "tags": []}
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
