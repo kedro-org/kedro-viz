@@ -235,16 +235,14 @@ def _sort_layers(nodes: Dict[str, Dict], node_dependencies: Dict[str, Set[str]])
             return node_layers[node_id]
 
         node_layers[node_id] = set()
+
+        # for each dependent node of the given node_id,
+        # mark its layer and all layers that depend on it as dependent layers of the given node_id.
         for dependent_node_id in node_dependencies[node_id]:
             dependent_node = nodes[dependent_node_id]
-
-            # add the direct layer of the dependent node as a dependent layer of the current node_id
             dependent_layer = dependent_node.get("layer")
             if dependent_layer is not None:
                 node_layers[node_id].add(dependent_layer)
-
-            # also add the dependent layers of the dependent node as
-            # dependent layers of the current node_id.
             node_layers[node_id].update(find_dependent_layers(dependent_node_id))
 
         return node_layers[node_id]
