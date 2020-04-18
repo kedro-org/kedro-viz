@@ -36,6 +36,9 @@ describe('Selectors', () => {
 
       expect(
         nodes.every(node => {
+          if (node.layer === null) {
+            return true;
+          }
           const i = layerIDs.indexOf(node.layer);
           const prevLayer = layersObj[layerIDs[i - 1]];
           const thisLayer = layersObj[node.layer];
