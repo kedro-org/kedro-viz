@@ -37,7 +37,7 @@ import webbrowser
 from collections import defaultdict
 from contextlib import closing
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Any, Set
 
 import click
 import kedro
@@ -49,6 +49,7 @@ from kedro.cli.utils import KedroCliError  # pylint: disable=ungrouped-imports
 from semver import match
 
 from kedro_viz.utils import wait_for
+from toposort import toposort_flatten
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
@@ -180,6 +181,95 @@ def _get_pipeline_catalog_from_kedro14(env):
         raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
+def _sort_layers(
+    nodes: Dict[str, Dict],
+    node_dependencies: Dict[str, Set[str]],
+) -> List[str]:
+    """Given a DAG represented by a dictionary of nodes, some of which have a `layer` attribute,
+    along with their dependencies, return the list of all layers sorted according to
+    the nodes' topological order, i.e. a layer should appear before another layer in the list
+    if its node is a dependency of the other layer's node, directly or indirectly.
+
+    For example, given the following graph:
+        node1(layer=a) -> node2 -> node4 -> node6(layer=d)
+                            |                   ^
+                            v                   |
+                          node3(layer=b) -> node5(layer=c)
+    The layers ordering should be: [a, b, c, d]
+
+    The algorithm is as follows:
+        * For every node, find all layers that depends on it in a depth-first search (dfs).
+        * While traversing, build up a dictionary of {node_id -> set(layers)} for the node
+        that has already been visited.
+        * Turn the final {node_id -> layers} into a {layer -> set(layers)} to represent the layers'
+        dependencies, in which the key is a layer and the values are the parents of that layer.
+        * Feed this layer dependencies dictionary to ``toposort`` and return the sorted values.
+        * Raise ValueError if tha layers cannot be sorted topologically (i.e. there is a cycle
+        among the layers)
+
+    Args:
+        nodes: A dictionary of {node_id -> node} represents the nodes in the graph.
+            A node's schema is:
+                {
+                    "type": str,
+                    "id": str,
+                    "name": str,
+                    "layer": Optional[str]
+                    ...
+                }
+        node_dependencies: A dictionary of {node_id -> set(child_node_ids)}
+            represents the direct dependencies between nodes in the graph.
+
+    Returns:
+        The list of layers sorted based on topological order.
+
+    Raises:
+        CircularDependencyError: When the layers have cyclic dependencies.
+    """
+    node_layers = {}  # map node_id to the layers that depend on it
+
+    def find_dependent_layers(node_id: str) -> Set[str]:
+        """For the given node_id, find all layers that depend on it in a depth-first manner.
+        Build up the node_layers dependency dictionary while traversing so each node is visited
+        only once.
+        """
+        if node_id in node_layers:
+            return node_layers[node_id]
+
+        node_layers[node_id] = set()
+        for child_node_id in node_dependencies[node_id]:
+            child_node = nodes[child_node_id]
+
+            # add the direct layer's of the child node as a dependent layer of the current node
+            child_node_layer = child_node.get("layer")
+            if child_node_layer is not None:
+                node_layers[node_id].add(child_node_layer)
+
+            # add the dependent layers of the child node as dependent layers of the current node
+            node_layers[node_id].update(find_dependent_layers(child_node_id))
+
+        return node_layers[node_id]
+
+    # populate node_layers dependencies
+    for node_id in nodes:
+        find_dependent_layers(node_id)
+
+    # compute the layer dependencies dictionary based on the node_layers dependencies,
+    # represented as {layer -> set(parent_layers)}
+    layer_dependencies = defaultdict(set)
+    for node_id, dependent_layers in node_layers.items():
+        node_layer = nodes[node_id].get("layer")
+
+        # add the node's layer as a parent layer for all dependent layers
+        if node_layer is not None:
+            for layer in dependent_layers:
+                layer_dependencies[layer].add(node_layer)
+
+    # toposort the layer_dependencies to find the layer order.
+    # Note that for string, toposort_flatten will default to alphabetical order for tie-break.
+    return toposort_flatten(layer_dependencies)
+
+
 # pylint: disable=too-many-locals
 def format_pipeline_data(pipeline, catalog):
     """
@@ -195,60 +285,72 @@ def format_pipeline_data(pipeline, catalog):
         parts = [n[0].upper() + n[1:] for n in name.split()]
         return " ".join(parts)
 
-    nodes = []
+    # keep tracking of node_id -> node data in the graph
+    nodes = {}
+    # keep track of node_id -> set(child_node_ids) for layers sorting
+    node_dependencies = defaultdict(set)
+    # keep track of edges in the graph: [{source_node_id -> target_node_id}]
     edges = []
+    # keep_track of {data_set_namespace -> set(tags)}
     namespace_tags = defaultdict(set)
-    all_tags = set()
+    # keep track of {data_set_namespace -> layer it belongs to}
     namespace_to_layer = {}
+    all_tags = set()
 
     data_set_to_layer_map = {
         ds_name: getattr(ds_obj, "_layer", None)
         for ds_name, ds_obj in catalog._data_sets.items()  # pylint: disable=protected-access
     }
 
-    for node in sorted(pipeline.nodes, key=lambda n: n.name):
+    for node in pipeline.nodes:
         task_id = _hash(str(node))
         all_tags.update(node.tags)
-        nodes.append(
-            {
-                "type": "task",
-                "id": task_id,
-                "name": getattr(node, "short_name", node.name),
-                "full_name": getattr(node, "_func_name", str(node)),
-                "tags": sorted(node.tags),
-            }
-        )
+        nodes[task_id] = {
+            "type": "task",
+            "id": task_id,
+            "name": getattr(node, "short_name", node.name),
+            "full_name": getattr(node, "_func_name", str(node)),
+            "tags": sorted(node.tags),
+        }
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
+            namespace_id = _hash(namespace)
             namespace_to_layer[namespace] = data_set_to_layer_map.get(data_set)
-            edges.append({"source": _hash(namespace), "target": task_id})
+            edges.append({"source": namespace_id, "target": task_id})
             namespace_tags[namespace].update(node.tags)
+            node_dependencies[namespace_id].add(task_id)
 
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
+            namespace_id = _hash(namespace)
             namespace_to_layer[namespace] = data_set_to_layer_map.get(data_set)
-            edges.append({"source": task_id, "target": _hash(namespace)})
+            edges.append({"source": task_id, "target": namespace_id})
             namespace_tags[namespace].update(node.tags)
+            node_dependencies[task_id].add(namespace_id)
 
     for namespace, tags in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
-        nodes.append(
-            {
-                "type": "parameters" if is_param else "data",
-                "id": _hash(namespace),
-                "name": pretty_name(namespace),
-                "full_name": namespace,
-                "tags": sorted(tags),
-                "layer": namespace_to_layer[namespace],
-            }
-        )
+        node_id = _hash(namespace)
+        nodes[node_id] = {
+            "type": "parameters" if is_param else "data",
+            "id": node_id,
+            "name": pretty_name(namespace),
+            "full_name": namespace,
+            "tags": sorted(tags),
+            "layer": namespace_to_layer[namespace],
+        }
 
     tags = []
     for tag in sorted(all_tags):
         tags.append({"id": tag, "name": pretty_name(tag)})
 
-    return {"nodes": nodes, "edges": edges, "tags": tags}
+    return {
+        "nodes": list(sorted(nodes.values(), key=lambda n: n["name"])),
+        "edges": edges,
+        "tags": tags,
+        "layers": _sort_layers(nodes, node_dependencies)
+    }
 
 
 @app.route("/api/nodes.json")

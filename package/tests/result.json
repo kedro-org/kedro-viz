@@ -1,20 +1,6 @@
 {
     "nodes": [
         {
-            "type": "task",
-            "id": "71527409",
-            "name": "Func1",
-            "full_name": "func1",
-            "tags": []
-        },
-        {
-            "type": "task",
-            "id": "3751475c",
-            "name": "Func2",
-            "full_name": "func2",
-            "tags": []
-        },
-        {
             "type": "data",
             "id": "7366ec9f",
             "name": "Bob In",
@@ -29,6 +15,20 @@
             "full_name": "bob_out",
             "tags": [],
             "layer": null
+        },
+        {
+            "type": "task",
+            "id": "71527409",
+            "name": "Func1",
+            "full_name": "func1",
+            "tags": []
+        },
+        {
+            "type": "task",
+            "id": "3751475c",
+            "name": "Func2",
+            "full_name": "func2",
+            "tags": []
         },
         {
             "type": "parameters",
@@ -69,5 +69,6 @@
             "target": "37a5301a"
         }
     ],
+    "layers": ["raw", "final"],
     "tags": []
 }
