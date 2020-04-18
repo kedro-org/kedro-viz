@@ -181,10 +181,7 @@ def _get_pipeline_catalog_from_kedro14(env):
         raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
-def _sort_layers(
-    nodes: Dict[str, Dict],
-    node_dependencies: Dict[str, Set[str]],
-) -> List[str]:
+def _sort_layers(nodes: Dict[str, Dict], node_dependencies: Dict[str, Set[str]]) -> List[str]:
     """Given a DAG represented by a dictionary of nodes, some of which have a `layer` attribute,
     along with their dependencies, return the list of all layers sorted according to
     the nodes' topological order, i.e. a layer should appear before another layer in the list
