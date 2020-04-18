@@ -346,9 +346,7 @@ def format_pipeline_data(pipeline, catalog):
         sorted_nodes.append(nodes[node_id])
 
     # sort tags
-    tags = []
-    for tag in sorted(all_tags):
-        tags.append({"id": tag, "name": pretty_name(tag)})
+    tags = [{"id": tag, "name": pretty_name(tag)} for tag in sorted(all_tags)]
 
     # sort layers
     sorted_layers = _sort_layers(nodes, node_dependencies)
