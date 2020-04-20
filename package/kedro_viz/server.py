@@ -257,12 +257,11 @@ def _sort_layers(nodes: Dict[str, Dict], node_dependencies: Dict[str, Set[str]])
     for node_id, dependent_layers in node_layers.items():
         node_layer = nodes[node_id].get("layer")
 
-        # add the node's layer as a parent layer for all dependent layers
+        # add the node's layer as a parent layer for all dependent layers.
+        # Even if a dependent layer is the same as the node's layer, i.e. a layer is marked
+        # as its own parent, toposort still works so we don't need to check for that explicitly.
         if node_layer is not None:
             for layer in dependent_layers:
-                # no need to check if a dependent layer is different from the current node layer,
-                # as toposort will still work correctly
-                # even if a layer is marked as a dependency of itself
                 layer_dependencies[layer].add(node_layer)
 
     # toposort the layer_dependencies to find the layer order.
