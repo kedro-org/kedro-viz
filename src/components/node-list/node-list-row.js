@@ -9,52 +9,77 @@ export const NodeListRow = ({
   checked,
   children,
   disabled,
+  id,
   label,
   name,
   onMouseEnter,
   onMouseLeave,
   onChange,
+  onClick,
   type
-}) => (
-  <label
-    className={classnames('pipeline-nodelist__item kedro', {
-      'pipeline-nodelist__item--nested': !children,
-      'pipeline-nodelist__item--active': active,
-      'pipeline-nodelist__item--disabled': disabled
-    })}
-    title={children ? null : name}
-    onMouseEnter={onMouseEnter}
-    onMouseLeave={onMouseLeave}>
-    {children}
-    <NodeIcon
-      className={classnames(
-        'pipeline-nodelist__item__icon pipeline-nodelist__item__icon--type',
-        {
-          'pipeline-nodelist__item__icon--type--unchecked': !checked,
-          'pipeline-nodelist__item__icon--type--nested': !children
-        }
-      )}
-      type={type}
-    />
-    <input
-      className="pipeline-nodelist__item__checkbox"
-      type="checkbox"
-      checked={checked}
-      name={name}
-      onChange={onChange}
-    />
-    <span
-      className={classnames('pipeline-nodelist__item__label', {
-        'pipeline-nodelist__item__label--unchecked': !checked
+}) => {
+  const VisibilityIcon = checked ? VisibleIcon : InvisibleIcon;
+
+  return (
+    <div
+      className={classnames('pipeline-nodelist__row kedro', {
+        'pipeline-nodelist__row--active': active,
+        'pipeline-nodelist__row--disabled': disabled
       })}
-      dangerouslySetInnerHTML={{ __html: label }}
-    />
-    {checked ? (
-      <VisibleIcon className="pipeline-nodelist__item__icon pipeline-nodelist__item__icon--visibility" />
-    ) : (
-      <InvisibleIcon className="pipeline-nodelist__item__icon pipeline-nodelist__item__icon--visibility" />
-    )}
-  </label>
-);
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}>
+      <button
+        onClick={onClick}
+        onFocus={onMouseEnter}
+        onBlur={onMouseLeave}
+        disabled={disabled}
+        className={classnames('pipeline-nodelist__row__text', {
+          'pipeline-nodelist__row__text--active': active,
+          'pipeline-nodelist__row__text--unchecked': !checked
+        })}
+        title={children ? null : name}>
+        <NodeIcon
+          className={classnames(
+            'pipeline-nodelist__row__type-icon pipeline-nodelist__row__icon',
+            {
+              'pipeline-nodelist__row__type-icon--unchecked': !checked,
+              'pipeline-nodelist__row__type-icon--nested': !children
+            }
+          )}
+          type={type}
+        />
+        <span
+          className={classnames('pipeline-nodelist__row__label', {
+            'pipeline-nodelist__row__label--active': active,
+            'pipeline-nodelist__row__label--disabled': disabled,
+            'pipeline-nodelist__row__label--unchecked': !checked
+          })}
+          dangerouslySetInnerHTML={{ __html: label }}
+        />
+      </button>
+      {children}
+      <input
+        id={id}
+        className="pipeline-nodelist__row__checkbox"
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        name={name}
+        onChange={onChange}
+      />
+      <label
+        htmlFor={id}
+        className={classnames('pipeline-nodelist__row__visibility-icon', {
+          'pipeline-nodelist__row__visibility-icon--unchecked': !checked,
+          'pipeline-nodelist__row__visibility-icon--disabled': disabled
+        })}>
+        <VisibilityIcon
+          aria-label={name}
+          className="pipeline-nodelist__row__icon"
+        />
+      </label>
+    </div>
+  );
+};
 
 export default NodeListRow;
