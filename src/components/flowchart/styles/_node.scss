@@ -1,7 +1,14 @@
 @import './variables';
 
 .node {
-  outline: none;
+  &:focus {
+    outline: none;
+
+    [data-whatinput='keyboard'] & rect {
+      stroke-width: 3.5px;
+      stroke: $color-link;
+    }
+  }
 
   text {
     font-weight: 600;
@@ -81,11 +88,6 @@
     .kui-theme--dark & {
       fill: $node-fill-dark-active;
       stroke: $node-stroke-dark-active;
-    }
-
-    [data-whatinput='keyboard'] & {
-      stroke-width: 3.5px;
-      stroke: $color-link;
     }
   }
 }
