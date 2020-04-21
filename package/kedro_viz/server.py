@@ -181,6 +181,7 @@ def _get_pipeline_catalog_from_kedro14(env):
         raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
+# pylint: disable=too-many-locals
 def format_pipeline_data(pipeline, catalog):
     """
     Format pipeline and catalog data from Kedro for kedro-viz
@@ -199,9 +200,16 @@ def format_pipeline_data(pipeline, catalog):
     edges = []
     namespace_tags = defaultdict(set)
     all_tags = set()
+    namespace_to_layer = {}
+
+    dataset_to_layer = {
+        ds_name: getattr(ds_obj, "_layer", None)
+        for ds_name, ds_obj in catalog._data_sets.items()  # pylint: disable=protected-access
+    }
 
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
+        all_tags.update(node.tags)
         nodes.append(
             {
                 "type": "task",
@@ -211,13 +219,16 @@ def format_pipeline_data(pipeline, catalog):
                 "tags": sorted(node.tags),
             }
         )
-        all_tags.update(node.tags)
+
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
+            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
             edges.append({"source": _hash(namespace), "target": task_id})
             namespace_tags[namespace].update(node.tags)
+
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
+            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
             edges.append({"source": task_id, "target": _hash(namespace)})
             namespace_tags[namespace].update(node.tags)
 
@@ -230,6 +241,7 @@ def format_pipeline_data(pipeline, catalog):
                 "name": pretty_name(namespace),
                 "full_name": namespace,
                 "tags": sorted(tags),
+                "layer": namespace_to_layer[namespace],
             }
         )
 

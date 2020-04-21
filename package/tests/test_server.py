@@ -31,13 +31,16 @@ Tests for Kedro-Viz server
 
 import json
 import re
+from pathlib import Path
 
 import pytest
 from kedro.context import KedroContextError
+from kedro.extras.datasets.pickle import PickleDataSet
+from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz import server
-from kedro_viz.server import _allocate_port
+from kedro_viz.server import _allocate_port, format_pipeline_data
 from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
@@ -68,6 +71,7 @@ EXPECTED_PIPELINE_DATA = {
             "name": "Bob In",
             "tags": [],
             "id": "7366ec9f",
+            "layer": None,
             "full_name": "bob_in",
             "type": "data",
         },
@@ -75,6 +79,7 @@ EXPECTED_PIPELINE_DATA = {
             "name": "Bob Out",
             "tags": [],
             "id": "60e68b8e",
+            "layer": None,
             "full_name": "bob_out",
             "type": "data",
         },
@@ -82,6 +87,7 @@ EXPECTED_PIPELINE_DATA = {
             "name": "Fred In",
             "tags": ["bob"],
             "id": "afffac5f",
+            "layer": None,
             "full_name": "fred_in",
             "type": "data",
         },
@@ -89,6 +95,7 @@ EXPECTED_PIPELINE_DATA = {
             "name": "Fred Out",
             "tags": ["bob"],
             "id": "37316e3a",
+            "layer": None,
             "full_name": "fred_out",
             "type": "data",
         },
@@ -96,6 +103,7 @@ EXPECTED_PIPELINE_DATA = {
             "name": "Parameters",
             "tags": ["bob"],
             "id": "f1f1425b",
+            "layer": None,
             "full_name": "parameters",
             "type": "parameters",
         },
@@ -148,7 +156,7 @@ def patched_get_project_context(mocker):
     ):  # pylint: disable=unused-argument
         mocked_context = mocker.Mock()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
-        mocked_context.catalog = lambda x: None
+        mocked_context.catalog = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
         return {
             "create_pipeline": create_pipeline,
@@ -298,7 +306,7 @@ def test_viz_kedro15(mocker, cli_runner):
     def get_project_context(
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
     ):  # pylint: disable=unused-argument
-        mocked_context = mocker.Mock()
+        mocked_context = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
         return {"context": mocked_context}[key]
 
@@ -335,7 +343,7 @@ def test_viz_kedro14(mocker, cli_runner):
     mocker.patch("kedro.__version__", "0.14.0")
 
     def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
-        return lambda x: None
+        return mocker.MagicMock()
 
     def get_config(
         project_path: str, env: str = None  # pylint: disable=bad-continuation
@@ -533,3 +541,37 @@ class TestAllocatePort:
         pattern = "Cannot allocate an open TCP port for Kedro-Viz"
         with pytest.raises(ValueError, match=re.escape(pattern)):
             _allocate_port(**kwargs)
+
+
+@pytest.fixture
+def pipeline():
+    def func1(a, b):  # pylint: disable=unused-argument
+        return a
+
+    def func2(a):  # pylint: disable=unused-argument
+        return a
+
+    return Pipeline(
+        [
+            node(func1, ["bob_in", "params:value"], "bob_out"),
+            node(func2, "bob_out", "result"),
+        ]
+    )
+
+
+@pytest.fixture
+def catalog():
+    data_sets = {
+        "bob_in": PickleDataSet("raw.csv", layer="raw"),
+        "paras:value": MemoryDataSet("value"),
+        "result": PickleDataSet("final.csv", layer="final"),
+    }
+
+    return DataCatalog(data_sets=data_sets)
+
+
+def test_format_pipeline_data(pipeline, catalog):
+    result = format_pipeline_data(pipeline, catalog)
+    result_file_path = Path(__file__).parent / "result.json"
+    json_data = json.loads(result_file_path.read_text())
+    assert json_data == result
