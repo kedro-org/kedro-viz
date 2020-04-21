@@ -40,14 +40,14 @@ from pathlib import Path
 from typing import Dict
 
 import click
-import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-from kedro.cli import get_project_context  # pylint: disable=ungrouped-imports
-from kedro.cli.utils import KedroCliError  # pylint: disable=ungrouped-imports
 from semver import match
 
+import kedro
+from kedro.cli import get_project_context  # pylint: disable=ungrouped-imports
+from kedro.cli.utils import KedroCliError  # pylint: disable=ungrouped-imports
 from kedro_viz.utils import wait_for
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
@@ -201,7 +201,7 @@ def format_pipeline_data(pipeline, catalog):
     all_tags = set()
     namespace_to_layer = {}
 
-    data_set_to_layer_map = {
+    dataset_to_layer = {
         ds_name: getattr(ds_obj, "_layer", None)
         for ds_name, ds_obj in catalog._data_sets.items()  # pylint: disable=protected-access
     }
@@ -221,13 +221,13 @@ def format_pipeline_data(pipeline, catalog):
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
-            namespace_to_layer[namespace] = data_set_to_layer_map.get(data_set)
+            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
             edges.append({"source": _hash(namespace), "target": task_id})
             namespace_tags[namespace].update(node.tags)
 
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
-            namespace_to_layer[namespace] = data_set_to_layer_map.get(data_set)
+            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
             edges.append({"source": task_id, "target": _hash(namespace)})
             namespace_tags[namespace].update(node.tags)
 

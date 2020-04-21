@@ -30,15 +30,15 @@ Tests for Kedro-Viz server
 """
 
 import json
-import os
 import re
+from pathlib import Path
 
 import pytest
+
 from kedro.context import KedroContextError
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
-
 from kedro_viz import server
 from kedro_viz.server import _allocate_port, format_pipeline_data
 from kedro_viz.utils import WaitForException
@@ -560,7 +560,6 @@ def catalog():
 
 def test_format_pipeline_data(pipeline, catalog):
     result = format_pipeline_data(pipeline, catalog)
-    result_file_path = os.path.join(os.path.dirname(__file__), "result.json")
-    with open(result_file_path, "r") as f:
-        json_data = json.load(f)
+    result_file_path = Path(__file__).parent / "result.json"
+    json_data = json.loads(result_file_path.read_text())
     assert json_data == result
