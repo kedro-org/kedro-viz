@@ -217,7 +217,7 @@ def _sort_layers(nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]) -> L
                     "layer": Optional[str]
                     ...
                 }
-        dependencies: A dictionary of {node_id -> set(child_node_ids)}
+        dependencies: A dictionary of {node_id -> set(child_ids)}
             represents the direct dependencies between nodes in the graph.
 
     Returns:
