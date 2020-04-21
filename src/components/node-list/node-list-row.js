@@ -4,7 +4,7 @@ import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 
-export const NodeListItem = ({
+export const NodeListRow = ({
   active,
   checked,
   children,
@@ -57,4 +57,4 @@ export const NodeListItem = ({
   </label>
 );
 
-export default NodeListItem;
+export default NodeListRow;

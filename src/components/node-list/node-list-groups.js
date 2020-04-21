@@ -4,12 +4,17 @@ import { Flipper } from 'react-flip-toolkit';
 import { loadState, saveState } from '../../store/helpers';
 import { getNodeTypes } from '../../selectors/node-types';
 import NodeListGroup from './node-list-group';
-import NodeListItem from './node-list-item';
-import { toggleNodeHovered, toggleNodesDisabled } from '../../actions/nodes';
+import NodeListRow from './node-list-row';
+import {
+  toggleNodeClicked,
+  toggleNodeHovered,
+  toggleNodesDisabled
+} from '../../actions/nodes';
 
 const storedState = loadState();
 
 const NodeListGroups = ({
+  onToggleNodeClicked,
   onToggleNodesDisabled,
   onToggleNodeHovered,
   nodes,
@@ -38,12 +43,14 @@ const NodeListGroups = ({
         <ul className="pipeline-nodelist pipeline-nodelist--nested">
           {nodes[type.id].map(node => (
             <li key={node.id}>
-              <NodeListItem
+              <NodeListRow
                 active={node.active}
                 checked={!node.disabled_node}
                 disabled={node.disabled_tag || node.disabled_type}
+                id={node.id}
                 label={node.highlightedLabel}
                 name={node.name}
+                onClick={() => onToggleNodeClicked(node.id)}
                 onMouseEnter={() => onToggleNodeHovered(node.id)}
                 onMouseLeave={() => onToggleNodeHovered(null)}
                 onChange={e => {
@@ -70,6 +77,9 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
+  onToggleNodeClicked: nodeID => {
+    dispatch(toggleNodeClicked(nodeID));
+  },
   onToggleNodeHovered: nodeID => {
     dispatch(toggleNodeHovered(nodeID));
   },

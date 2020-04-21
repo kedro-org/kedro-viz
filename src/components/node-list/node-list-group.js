@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { Flipped } from 'react-flip-toolkit';
-import NodeListItem from './node-list-item';
+import NodeListRow from './node-list-row';
 import { toggleTypeDisabled } from '../../actions/node-type';
 
 export const NodeListGroup = ({
@@ -18,16 +18,18 @@ export const NodeListGroup = ({
       <Flipped inverseFlipId={type.id} scale>
         <div>
           <h3 className="pipeline-nodelist__heading">
-            <NodeListItem
+            <NodeListRow
               active={null}
               checked={!type.disabled}
               disabled={null}
+              id={type.id}
               label={type.name}
               name={type.name}
+              onClick={null}
               onMouseEnter={null}
               onMouseLeave={null}
-              onChange={(e, { checked }) => {
-                onToggleTypeDisabled(type.id, !checked);
+              onChange={e => {
+                onToggleTypeDisabled(type.id, !e.target.checked);
               }}
               type={type.id}>
               <button
@@ -39,7 +41,7 @@ export const NodeListGroup = ({
                   'pipeline-type-group-toggle--alt': collapsed
                 })}
               />
-            </NodeListItem>
+            </NodeListRow>
           </h3>
           <Flipped
             flipId={`${type.id}-children`}

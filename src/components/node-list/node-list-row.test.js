@@ -1,9 +1,9 @@
 import React from 'react';
 import {
-  NodeListItem,
+  NodeListRow,
   mapStateToProps,
   mapDispatchToProps
-} from './node-list-item';
+} from './node-list-row';
 import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
 describe('NodeListGroup', () => {
@@ -11,7 +11,7 @@ describe('NodeListGroup', () => {
     const node = getNodeData(mockState.lorem)[0];
     const dispatch = jest.fn();
     const wrapper = setup.mount(
-      <NodeListItem
+      <NodeListRow
         node={node}
         disabled={node.disabled}
         onToggleNodeHovered={dispatch}
@@ -31,7 +31,7 @@ describe('NodeListGroup', () => {
 
     it('uses active class if active', () => {
       const activeNode = Object.assign({}, node, { active: true });
-      const activeNodeWrapper = setup.mount(<NodeListItem node={activeNode} />);
+      const activeNodeWrapper = setup.mount(<NodeListRow node={activeNode} />);
       expect(
         activeNodeWrapper
           .find('.pipeline-node')
@@ -42,7 +42,7 @@ describe('NodeListGroup', () => {
     it('uses disabled class if disabled (via type/tag only)', () => {
       const disabledNode = Object.assign({}, node, { disabled_type: true });
       const disabledNodeWrapper = setup.mount(
-        <NodeListItem node={disabledNode} />
+        <NodeListRow node={disabledNode} />
       );
       expect(
         disabledNodeWrapper
@@ -56,7 +56,7 @@ describe('NodeListGroup', () => {
     const node = getNodeData(mockState.lorem)[0];
     const dispatch = jest.fn();
     const wrapper = setup.mount(
-      <NodeListItem
+      <NodeListRow
         node={node}
         disabled={node.disabled}
         onToggleNodesDisabled={dispatch}
