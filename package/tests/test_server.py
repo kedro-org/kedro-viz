@@ -34,11 +34,11 @@ import re
 from pathlib import Path
 
 import pytest
-
 from kedro.context import KedroContextError
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
+
 from kedro_viz import server
 from kedro_viz.server import _allocate_port, format_pipeline_data
 from kedro_viz.utils import WaitForException
