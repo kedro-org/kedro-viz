@@ -43,13 +43,14 @@ from typing import Dict, List, Set
 import click
 import kedro
 import requests
-from IPython.core.display import HTML, display
 from flask import Flask, jsonify, send_from_directory
+from IPython.core.display import HTML, display
 from kedro.cli import get_project_context  # pylint: disable=ungrouped-imports
 from kedro.cli.utils import KedroCliError  # pylint: disable=ungrouped-imports
-from kedro_viz.utils import wait_for
 from semver import match
 from toposort import toposort_flatten
+
+from kedro_viz.utils import wait_for
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 

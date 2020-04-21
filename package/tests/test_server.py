@@ -38,10 +38,11 @@ from kedro.context import KedroContextError
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
+from toposort import CircularDependencyError
+
 from kedro_viz import server
 from kedro_viz.server import _allocate_port, _sort_layers, format_pipeline_data
 from kedro_viz.utils import WaitForException
-from toposort import CircularDependencyError
 
 EXPECTED_PIPELINE_DATA = {
     "edges": [
