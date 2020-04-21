@@ -43,14 +43,13 @@ from typing import Dict, List, Set
 import click
 import kedro
 import requests
-from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
+from flask import Flask, jsonify, send_from_directory
 from kedro.cli import get_project_context  # pylint: disable=ungrouped-imports
 from kedro.cli.utils import KedroCliError  # pylint: disable=ungrouped-imports
+from kedro_viz.utils import wait_for
 from semver import match
 from toposort import toposort_flatten
-
-from kedro_viz.utils import wait_for
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
@@ -182,7 +181,7 @@ def _get_pipeline_catalog_from_kedro14(env):
         raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
-def _sort_layers(nodes: Dict[str, Dict], node_dependencies: Dict[str, Set[str]]) -> List[str]:
+def _sort_layers(nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]) -> List[str]:
     """Given a DAG represented by a dictionary of nodes, some of which have a `layer` attribute,
     along with their dependencies, return the list of all layers sorted according to
     the nodes' topological order, i.e. a layer should appear before another layer in the list
@@ -195,8 +194,10 @@ def _sort_layers(nodes: Dict[str, Dict], node_dependencies: Dict[str, Set[str]])
                           node3(layer=b) -> node5(layer=c)
     The layers ordering should be: [a, b, c, d]
 
-    The algorithm is as follows:
-        * For every node, find all layers that depends on it in a depth-first search (dfs).
+    In theory, this is a problem of finding the
+    [transitive closure](https://en.wikipedia.org/wiki/Transitive_closure) in a graph of layers
+    and then toposort them. The algorithm below follows a repeated depth-first search approach:
+        * For every node, find all layers that depends on it in a depth-first search.
         * While traversing, build up a dictionary of {node_id -> layers} for the node
         that has already been visited.
         * Turn the final {node_id -> layers} into a {layer -> layers} to represent the layers'
@@ -216,7 +217,7 @@ def _sort_layers(nodes: Dict[str, Dict], node_dependencies: Dict[str, Set[str]])
                     "layer": Optional[str]
                     ...
                 }
-        node_dependencies: A dictionary of {node_id -> set(child_node_ids)}
+        dependencies: A dictionary of {node_id -> set(child_node_ids)}
             represents the direct dependencies between nodes in the graph.
 
     Returns:
@@ -227,42 +228,45 @@ def _sort_layers(nodes: Dict[str, Dict], node_dependencies: Dict[str, Set[str]])
     """
     node_layers = {}  # map node_id to the layers that depend on it
 
-    def find_dependent_layers(node_id: str) -> Set[str]:
+    def find_child_layers(node_id: str) -> Set[str]:
         """For the given node_id, find all layers that depend on it in a depth-first manner.
         Build up the node_layers dependency dictionary while traversing so each node is visited
         only once.
+        Note: Python's default recursive depth limit is 1000, which means this algorithm won't
+        work for pipeline with more than 1000 nodes. However, we can rewrite this using stack if
+        we run into this limit in practice.
         """
         if node_id in node_layers:
             return node_layers[node_id]
 
         node_layers[node_id] = set()
 
-        # for each dependent node of the given node_id,
-        # mark its layer and all layers that depend on it as dependent layers of the given node_id.
-        for dependent_node_id in node_dependencies[node_id]:
-            dependent_node = nodes[dependent_node_id]
-            dependent_layer = dependent_node.get("layer")
-            if dependent_layer is not None:
-                node_layers[node_id].add(dependent_layer)
-            node_layers[node_id].update(find_dependent_layers(dependent_node_id))
+        # for each child node of the given node_id,
+        # mark its layer and all layers that depend on it as child layers of the given node_id.
+        for child_node_id in dependencies[node_id]:
+            child_node = nodes[child_node_id]
+            child_layer = child_node.get("layer")
+            if child_layer is not None:
+                node_layers[node_id].add(child_layer)
+            node_layers[node_id].update(find_child_layers(child_node_id))
 
         return node_layers[node_id]
 
     # populate node_layers dependencies
     for node_id in nodes:
-        find_dependent_layers(node_id)
+        find_child_layers(node_id)
 
     # compute the layer dependencies dictionary based on the node_layers dependencies,
     # represented as {layer -> set(parent_layers)}
     layer_dependencies = defaultdict(set)
-    for node_id, dependent_layers in node_layers.items():
+    for node_id, child_layers in node_layers.items():
         node_layer = nodes[node_id].get("layer")
 
-        # add the node's layer as a parent layer for all dependent layers.
-        # Even if a dependent layer is the same as the node's layer, i.e. a layer is marked
+        # add the node's layer as a parent layer for all child layers.
+        # Even if a child layer is the same as the node's layer, i.e. a layer is marked
         # as its own parent, toposort still works so we don't need to check for that explicitly.
         if node_layer is not None:
-            for layer in dependent_layers:
+            for layer in child_layers:
                 layer_dependencies[layer].add(node_layer)
 
     # toposort the layer_dependencies to find the layer order.
