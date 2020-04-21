@@ -40,14 +40,14 @@ from pathlib import Path
 from typing import Dict
 
 import click
+import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-from semver import match
-
-import kedro
 from kedro.cli import get_project_context  # pylint: disable=ungrouped-imports
 from kedro.cli.utils import KedroCliError  # pylint: disable=ungrouped-imports
+from semver import match
+
 from kedro_viz.utils import wait_for
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
