@@ -32,6 +32,7 @@ Tests for Kedro-Viz server
 import json
 import os
 import re
+from pathlib import Path
 
 import pytest
 from kedro.context import KedroContextError
@@ -212,7 +213,9 @@ def test_no_browser_if_not_localhost(cli_runner):
     """Check that call to open browser is not performed when host
     is not the local host.
     """
-    result = cli_runner.invoke(server.commands, ["viz", "--browser", "--host", "123.1.2.3"])
+    result = cli_runner.invoke(
+        server.commands, ["viz", "--browser", "--host", "123.1.2.3"]
+    )
     assert result.exit_code == 0, result.output
     assert not server.webbrowser.open_new.called
     result = cli_runner.invoke(server.commands, ["viz", "--host", "123.1.2.3"])
@@ -395,6 +398,16 @@ def test_viz_kedro14_invalid(mocker, cli_runner):
     assert "Could not find a Kedro project root." in result.output
 
 
+def test_viz_stacktrace(mocker, cli_runner):
+    """Test that in the case of a generic exception,
+    the stacktrace is printed."""
+    mocker.patch("kedro_viz.server._call_viz", side_effect=ValueError)
+    result = cli_runner.invoke(server.commands, "viz")
+
+    assert "Traceback (most recent call last):" in result.output
+    assert "ValueError" in result.output
+
+
 @pytest.fixture(autouse=True)
 def clean_up():
     # pylint: disable=protected-access
@@ -562,9 +575,8 @@ def catalog():
 
 def test_format_pipeline_data(pipeline, catalog):
     result = format_pipeline_data(pipeline, catalog)
-    result_file_path = os.path.join(os.path.dirname(__file__), "result.json")
-    with open(result_file_path, "r") as f:
-        json_data = json.load(f)
+    result_file_path = Path(__file__).parent / "result.json"
+    json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
 

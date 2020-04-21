@@ -19,7 +19,8 @@ Please follow the established format:
 - Drop support for Python 3.5 (#138)
 - Add logger configuration when loading pipeline from JSON (#133)
 - Move visibleNav/navWidth calculations into Redux store (#124)
-- Web browser will only be opened if the host corresponds to the localhost 
+- Web browser will only be opened if the host corresponds to the localhost (#136)
+- Print the stack trace when encountering a generic exception (#142)
 
 ## Thanks for supporting contributions
 

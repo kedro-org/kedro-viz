@@ -33,6 +33,7 @@ import json
 import logging
 import multiprocessing
 import socket
+import traceback
 import webbrowser
 from collections import defaultdict
 from contextlib import closing
@@ -297,8 +298,9 @@ def format_pipeline_data(pipeline, catalog):
     # keep track of {data_set_namespace -> layer it belongs to}
     namespace_to_layer = {}
     all_tags = set()
+    namespace_to_layer = {}
 
-    data_set_to_layer_map = {
+    dataset_to_layer = {
         ds_name: getattr(ds_obj, "_layer", None)
         for ds_name, ds_obj in catalog._data_sets.items()  # pylint: disable=protected-access
     }
@@ -317,16 +319,16 @@ def format_pipeline_data(pipeline, catalog):
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
+            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
             namespace_id = _hash(namespace)
-            namespace_to_layer[namespace] = data_set_to_layer_map.get(data_set)
             edges.append({"source": namespace_id, "target": task_id})
             namespace_tags[namespace].update(node.tags)
             node_dependencies[namespace_id].add(task_id)
 
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
+            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
             namespace_id = _hash(namespace)
-            namespace_to_layer[namespace] = data_set_to_layer_map.get(data_set)
             edges.append({"source": task_id, "target": namespace_id})
             namespace_tags[namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
@@ -424,6 +426,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env):
     except KedroCliError:
         raise
     except Exception as ex:
+        traceback.print_exc()
         raise KedroCliError(str(ex))
 
 
