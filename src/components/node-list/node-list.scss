@@ -8,6 +8,8 @@ $row-padding-y: 0.8em;
 $row-padding-x: 1.2em;
 $row-icon-margin: 0.5em;
 $row-icon-size: 2.4em;
+$visibility-icon-padding: 0.3em;
+$visibility-icon-size: 2.4em + $visibility-icon-padding * 2;
 $row-offset-left: $row-padding-x + $toggle-size + $toggle-margin-right;
 $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
 
@@ -297,10 +299,10 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
 }
 
 .pipeline-nodelist__row__visibility-icon {
-  $icon-padding: 0.3em;
-  width: $row-icon-size + $icon-padding * 2;
-  height: $row-icon-size + $icon-padding * 2;
-  padding: $icon-padding;
+  width: $visibility-icon-size;
+  height: $visibility-icon-size;
+  margin: -$visibility-icon-padding;
+  padding: $visibility-icon-padding;
   border-radius: 50%;
   opacity: 0;
   transition: opacity ease 0.2s;
