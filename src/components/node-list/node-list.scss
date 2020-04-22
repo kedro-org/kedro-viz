@@ -42,17 +42,21 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
   }
 }
 
-.pipeline-nodelist__toggle-title {
-  margin: 0 24px 12px;
+.pipeline-nodelist__toggle {
+  margin: 0 24px;
+}
+
+.pipeline-nodelist__toggle__title {
+  margin: 0 0 12px;
   font-weight: 600;
   font-size: 1.8em;
 }
 
-.pipeline-nodelist__toggle-container {
+.pipeline-nodelist__toggle__row {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 12px 24px;
+  margin: 12px 0;
   padding: 10px 0;
 
   .kui-theme--light & {
@@ -66,7 +70,7 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
   }
 }
 
-.pipeline-nodelist__toggle {
+.pipeline-nodelist__toggle__button {
   margin: -1px -6px -2px;
   padding: 1px 6px 2px;
   color: inherit;
@@ -92,7 +96,7 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
   }
 }
 
-.pipeline-nodelist__icon {
+.pipeline-nodelist__toggle__icon {
   margin: 0 4px -6px -6px;
   fill: white;
 
