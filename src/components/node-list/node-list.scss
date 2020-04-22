@@ -122,8 +122,6 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
     @extend %nolist;
   }
 
-  margin: 0 12px;
-
   .kui-theme--light & {
     background: $color-bg-light-alt2;
   }
@@ -133,7 +131,7 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
   }
 
   &--nested {
-    margin: 0 0 12px;
+    margin: 0 0 1.2em;
   }
 
   &--fade-in {
