@@ -58,24 +58,24 @@ export const NodeListRow = ({
         />
       </button>
       {children}
-      <input
-        id={id}
-        className="pipeline-nodelist__row__checkbox"
-        type="checkbox"
-        checked={checked}
-        disabled={disabled}
-        name={name}
-        onChange={onChange}
-      />
-      <label
-        htmlFor={id}
-        className={classnames('pipeline-nodelist__row__visibility-icon', {
-          'pipeline-nodelist__row__visibility-icon--unchecked': !checked,
-          'pipeline-nodelist__row__visibility-icon--disabled': disabled
-        })}>
+      <label htmlFor={id} className="pipeline-nodelist__row__visibility">
+        <input
+          id={id}
+          className="pipeline-nodelist__row__checkbox"
+          type="checkbox"
+          checked={checked}
+          disabled={disabled}
+          name={name}
+          onChange={onChange}
+        />
         <VisibilityIcon
           aria-label={name}
-          className="pipeline-nodelist__row__icon"
+          className={classnames(
+            'pipeline-nodelist__row__icon pipeline-nodelist__row__visibility-icon',
+            {
+              'pipeline-nodelist__row__visibility-icon--unchecked': !checked
+            }
+          )}
         />
       </label>
     </div>

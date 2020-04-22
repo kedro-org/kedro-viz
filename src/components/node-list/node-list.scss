@@ -236,7 +236,8 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
     opacity: 0;
   }
 
-  .pipeline-nodelist__row:hover & {
+  .pipeline-nodelist__row:hover &,
+  [data-whatintent='keyboard'] .pipeline-nodelist__row__text:focus & {
     opacity: 1;
 
     &--unchecked {
@@ -289,25 +290,28 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
   }
 }
 
-.pipeline-nodelist__row__visibility-icon {
+.pipeline-nodelist__row__visibility {
   position: absolute;
   right: $row-padding-x;
-  padding: 0.3em;
-  border-radius: 50%;
   cursor: pointer;
+}
 
-  svg {
-    opacity: 0;
-    transition: opacity ease 0.2s;
-  }
+.pipeline-nodelist__row__visibility-icon {
+  $icon-padding: 0.3em;
+  width: $row-icon-size + $icon-padding * 2;
+  height: $row-icon-size + $icon-padding * 2;
+  padding: $icon-padding;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity ease 0.2s;
 
-  &--unchecked svg,
-  .pipeline-nodelist__row__text:focus + input + & svg,
-  .pipeline-nodelist__row:hover & svg {
+  &--unchecked,
+  .pipeline-nodelist__row__text:focus + label &,
+  .pipeline-nodelist__row:hover & {
     opacity: 0.55;
   }
 
-  .pipeline-nodelist__row &:hover svg {
+  .pipeline-nodelist__row:hover &:hover {
     opacity: 1;
   }
 
@@ -317,10 +321,7 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
 
     [data-whatintent='keyboard'] & {
       box-shadow: 0 0 0 3px $color-link inset;
-
-      svg {
-        opacity: 1;
-      }
+      opacity: 1;
     }
   }
 }
