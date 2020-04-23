@@ -307,7 +307,6 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
 .pipeline-nodelist__row__visibility-icon {
   width: $visibility-icon-size;
   height: $visibility-icon-size;
-  margin: -$visibility-icon-padding;
   padding: $visibility-icon-padding;
   border-radius: 50%;
   opacity: 0;
