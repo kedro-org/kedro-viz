@@ -166,8 +166,12 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
   display: flex;
   align-items: center;
 
-  &:hover,
-  &--active {
+  &:hover {
+    background: rgba(#fff, 0.05);
+  }
+
+  &--active,
+  &--active:hover {
     background: rgba(#fff, 0.1);
   }
 
