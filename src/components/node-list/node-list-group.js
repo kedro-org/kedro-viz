@@ -9,7 +9,6 @@ export const NodeListGroup = ({
   children,
   onToggleTypeDisabled,
   onToggleCollapsed,
-  theme,
   type,
   collapsed
 }) => (
@@ -66,17 +65,10 @@ export const NodeListGroup = ({
   </Flipped>
 );
 
-export const mapStateToProps = state => ({
-  theme: state.theme
-});
-
 export const mapDispatchToProps = dispatch => ({
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));
   }
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NodeListGroup);
+export default connect(mapDispatchToProps)(NodeListGroup);
