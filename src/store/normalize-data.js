@@ -68,9 +68,10 @@ const addTag = state => tag => {
  * @param {Object} layer - Layer object
  */
 const addLayer = state => layer => {
-  const { id, name } = layer;
-  state.layer.ids.push(id);
-  state.layer.name[id] = name;
+  // using layer name as both layerId and name.
+  // It futureproofs it if we need a separate layer ID in the future.
+  state.layer.ids.push(layer);
+  state.layer.name[layer] = layer;
 };
 
 /**
