@@ -36,6 +36,7 @@ describe('Selectors', () => {
 
       expect(
         nodes.every(node => {
+          // we don't need to check y/height positions if the layer isn't there.
           if (node.layer === null) {
             return true;
           }
