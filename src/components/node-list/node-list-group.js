@@ -71,4 +71,7 @@ export const mapDispatchToProps = dispatch => ({
   }
 });
 
-export default connect(mapDispatchToProps)(NodeListGroup);
+export default connect(
+  null,
+  mapDispatchToProps
+)(NodeListGroup);
