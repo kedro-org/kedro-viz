@@ -3,7 +3,7 @@ import { paths } from '../icons/node-icon';
 
 /**
  * Generate cog/database icon.
- * Inline SVG is requåired to support image exports
+ * Inline SVG is required to support image exports
  */
 export default node => {
   const svgNode = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
