@@ -22,7 +22,12 @@ describe('IconToolbar', () => {
   });
 
   describe('exportGraph', () => {
-    const graphSize = { width: 1000, height: 500 };
+    const graphSize = {
+      width: 1000,
+      height: 500,
+      marginx: 40,
+      marginy: 40
+    };
 
     beforeEach(() => {
       document.body.innerHTML = `
