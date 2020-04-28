@@ -2,7 +2,6 @@ import React from 'react';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { connect } from 'react-redux';
-const { handleKeyEvent } = utils;
 
 /**
  * Handle Node List Search
@@ -10,13 +9,13 @@ const { handleKeyEvent } = utils;
  * @param {string} searchValue Search text
  * @param {string} theme Light/dark theme for Kedro-UI component
  */
-const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
+export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
   /**
    * Listen for keyboard events, and trigger relevant actions
    * @param {number} keyCode The key event keycode
    */
   const handleKeyDown = event => {
-    handleKeyEvent(event.keyCode, {
+    utils.handleKeyEvent(event.keyCode, {
       escape: onUpdateSearchValue.bind(this, '')
     });
   };
