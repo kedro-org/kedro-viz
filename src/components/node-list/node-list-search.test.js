@@ -1,4 +1,3 @@
-import React from 'react';
 import { NodeListSearch, mapStateToProps } from './node-list-search';
 import { mockState, setup } from '../../utils/state.mock';
 
