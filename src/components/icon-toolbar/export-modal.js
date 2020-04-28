@@ -11,17 +11,18 @@ const { default: downloadSvg, downloadPng } =
  * @param {Function} download SVG-crowbar function to download SVG or PNG
  * @param {string} format Must be 'svg' or 'png'
  * @param {string} theme light/dark theme
- * @param {number} param.width Graph width
- * @param {number} param.height Graph height
+ * @param {Object} graphSize Graph width/height/margin
  * @return {Function} onClick handler
  */
-export const exportGraph = (download, format, theme, { width, height }) => {
-  const svg = document.querySelector('#pipeline-graph');
+export const exportGraph = (download, format, theme, graphSize) => {
   // Create clone of graph SVG to avoid breaking the original
+  const svg = document.querySelector('#pipeline-graph');
   const clone = svg.parentNode.appendChild(svg.cloneNode(true));
   clone.classList.add('kedro', `kui-theme--${theme}`);
 
   // Reset zoom/translate
+  let width = graphSize.width + graphSize.marginx * 2;
+  let height = graphSize.height + graphSize.marginy * 2;
   clone.setAttribute('viewBox', `0 0 ${width} ${height}`);
   clone.querySelector('#zoom-wrapper').removeAttribute('transform');
 
