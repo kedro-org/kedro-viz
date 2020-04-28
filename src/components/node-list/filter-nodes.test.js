@@ -1,37 +1,44 @@
-import getFormattedNodes, { getNodeIDs } from './filter-nodes';
+import getFormattedNodes, { getNodeIDs, highlightMatch } from './filter-nodes';
 import { mockState } from '../../utils/state.mock';
 import { getGroupedNodes } from '../../selectors/nodes';
+
+const ungroupNodes = groupedNodes =>
+  Object.keys(groupedNodes).reduce(
+    (names, key) => names.concat(groupedNodes[key]),
+    []
+  );
 
 describe('filter-nodes', () => {
   describe('getFormattedNodes', () => {
     const nodes = getGroupedNodes(mockState.lorem);
     const searchTerm = 'e';
     const { formattedNodes, nodeIDs } = getFormattedNodes(nodes, searchTerm);
-    const nodeList = Object.keys(formattedNodes).reduce(
-      (names, key) => names.concat(formattedNodes[key]),
-      []
-    );
+    const nodeList = ungroupNodes(formattedNodes);
 
-    test.each(nodeList.map(node => node.name))(
-      `node name "%s" contains search term "${searchTerm}"`,
-      name => {
-        expect(name).toEqual(expect.stringMatching(searchTerm));
-      }
-    );
+    describe('formattedNodes', () => {
+      test.each(nodeList.map(node => node.name))(
+        `node name "%s" contains search term "${searchTerm}"`,
+        name => {
+          expect(name).toEqual(expect.stringMatching(searchTerm));
+        }
+      );
 
-    test.each(nodeList.map(node => node.highlightedLabel))(
-      `node label "%s" contains highlighted search term "<b>${searchTerm}</b>"`,
-      name => {
-        expect(name).toEqual(expect.stringMatching(`<b>${searchTerm}</b>`));
-      }
-    );
+      test.each(nodeList.map(node => node.highlightedLabel))(
+        `node label "%s" contains highlighted search term "<b>${searchTerm}</b>"`,
+        name => {
+          expect(name).toEqual(expect.stringMatching(`<b>${searchTerm}</b>`));
+        }
+      );
+    });
 
-    test.each(nodeIDs)(
-      `node ID "%s" contains search term "${searchTerm}"`,
-      nodeID => {
-        expect(nodeID).toEqual(expect.stringMatching(searchTerm));
-      }
-    );
+    describe('nodeIDs', () => {
+      test.each(nodeIDs)(
+        `node ID "%s" contains search term "${searchTerm}"`,
+        nodeID => {
+          expect(nodeID).toEqual(expect.stringMatching(searchTerm));
+        }
+      );
+    });
   });
 
   describe('getNodeIDs', () => {
@@ -53,6 +60,37 @@ describe('filter-nodes', () => {
       expect(nodeIDs).toContain('data0');
       expect(nodeIDs).toContain('task1');
       expect(nodeIDs).toContain('parameters1');
+    });
+  });
+
+  describe('highlightMatch', () => {
+    const nodes = getGroupedNodes(mockState.lorem);
+    const searchTerm = 'e';
+    const formattedNodes = highlightMatch(nodes, searchTerm);
+    const nodeList = ungroupNodes(formattedNodes);
+
+    describe(`nodes which match the search term "${searchTerm}"`, () => {
+      const matchingNodeList = nodeList.filter(node =>
+        node.name.includes(searchTerm)
+      );
+      test.each(matchingNodeList.map(node => node.highlightedLabel))(
+        `node label "%s" contains highlighted search term "<b>${searchTerm}</b>"`,
+        name => {
+          expect(name).toEqual(expect.stringMatching(`<b>${searchTerm}</b>`));
+        }
+      );
+    });
+
+    describe(`nodes which do not match the search term "${searchTerm}"`, () => {
+      const notMatchingNodeList = nodeList.filter(
+        node => !node.name.includes(searchTerm)
+      );
+      test.each(notMatchingNodeList.map(node => node.highlightedLabel))(
+        `node label "%s" does not contain "<b>"`,
+        name => {
+          expect(name).not.toEqual(expect.stringMatching(`<b>`));
+        }
+      );
     });
   });
 });
