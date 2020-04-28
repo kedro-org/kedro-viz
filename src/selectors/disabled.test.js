@@ -13,7 +13,6 @@ const getEdgeIDs = state => state.edge.ids;
 const getEdgeSources = state => state.edge.sources;
 const getEdgeTargets = state => state.edge.targets;
 const getNodeTags = state => state.node.tags;
-const getNodeType = state => state.node.type;
 
 describe('Selectors', () => {
   describe('getNodeDisabledTag', () => {

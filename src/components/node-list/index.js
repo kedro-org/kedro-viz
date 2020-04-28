@@ -114,7 +114,7 @@ class NodeList extends React.Component {
     return (
       <React.Fragment>
         <div
-          className="pipeline-node-list-search"
+          className="pipeline-nodelist-search"
           onKeyDown={this.handleKeyDown}>
           <SearchBar
             onChange={this.updateSearchValue}
@@ -123,7 +123,7 @@ class NodeList extends React.Component {
           />
         </div>
         <Scrollbars
-          className="pipeline-node-list-scrollbars"
+          className="pipeline-nodelist-scrollbars"
           style={{ width: 'auto' }}
           autoHide
           hideTracksWhenNotNeeded>

@@ -28,8 +28,8 @@ describe('NodeList', () => {
 
   it('renders without crashing', () => {
     const wrapper = setup.mount(<NodeList />);
-    const search = wrapper.find('.pipeline-node-list-search');
-    const nodeList = wrapper.find('.pipeline-node-list');
+    const search = wrapper.find('.pipeline-nodelist-search');
+    const nodeList = wrapper.find('.pipeline-nodelist');
     expect(search.length).toBe(1);
     expect(nodeList.length).toBeGreaterThan(0);
   });
@@ -48,7 +48,9 @@ describe('NodeList', () => {
       searchText => {
         const search = () => wrapper.find('.kui-input__field');
         search().simulate('change', { target: { value: searchText } });
-        const nodeList = wrapper.find('.pipeline-node--nested');
+        const nodeList = wrapper.find(
+          '.pipeline-nodelist--nested .pipeline-nodelist__row'
+        );
         const nodes = getNodeData(mockState.lorem);
         const expectedResult = nodes.filter(node =>
           node.name.includes(searchText)
@@ -60,10 +62,11 @@ describe('NodeList', () => {
 
     it('clears the search filter input and resets the list when hitting the Escape key', () => {
       const wrapper = setup.mount(<NodeList />);
-      const searchWrapper = wrapper.find('.pipeline-node-list-search');
+      const searchWrapper = wrapper.find('.pipeline-nodelist-search');
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.kui-input__field');
-      const nodeList = () => wrapper.find('.pipeline-node--nested');
+      const nodeList = () =>
+        wrapper.find('.pipeline-nodelist--nested .pipeline-nodelist__row');
       const nodes = getNodeData(mockState.lorem);
       const searchText = nodes[0].name;
       // Enter search text
@@ -87,11 +90,13 @@ describe('NodeList', () => {
     // Re-find elements from root each time to see updates
     const search = () => wrapper.find('.kui-input__field');
     const input = () =>
-      wrapper.find('.pipeline-node--nested').find('.kui-switch__input');
+      wrapper
+        .find('.pipeline-nodelist--nested .pipeline-nodelist__row')
+        .find('input');
     const inputProps = () => input().map(input => input.props());
     const toggleAllNodes = check =>
       wrapper
-        .find('.pipeline-node-list__toggle')
+        .find('.pipeline-nodelist__toggle__button')
         .at(check ? 0 : 1)
         .simulate('click');
     // Get search text value and filtered nodes
@@ -180,7 +185,9 @@ describe('NodeList', () => {
   describe('node list', () => {
     it('renders the correct number of rows', () => {
       const wrapper = setup.mount(<NodeList />);
-      const nodeList = wrapper.find('.pipeline-node--nested');
+      const nodeList = wrapper.find(
+        '.pipeline-nodelist--nested .pipeline-nodelist__row'
+      );
       const nodes = getNodeData(mockState.lorem);
       expect(nodeList.length).toBe(nodes.length);
     });
@@ -188,22 +195,28 @@ describe('NodeList', () => {
 
   describe('node list item', () => {
     const wrapper = setup.mount(<NodeList />);
-    const nodeRow = () => wrapper.find('.pipeline-node--nested').first();
+    const nodeRow = () =>
+      wrapper
+        .find('.pipeline-nodelist--nested .pipeline-nodelist__row')
+        .first();
 
     it('handles mouseenter events', () => {
       nodeRow().simulate('mouseenter');
-      expect(nodeRow().hasClass('pipeline-node--active')).toBe(true);
+      expect(nodeRow().hasClass('pipeline-nodelist__row--active')).toBe(true);
     });
 
     it('handles mouseleave events', () => {
       nodeRow().simulate('mouseleave');
-      expect(nodeRow().hasClass('pipeline-node--active')).toBe(false);
+      expect(nodeRow().hasClass('pipeline-nodelist__row--active')).toBe(false);
     });
   });
 
   describe('node list item checkbox', () => {
     const wrapper = setup.mount(<NodeList />);
-    const checkbox = () => wrapper.find('.kui-switch__input').first();
+    const checkbox = () =>
+      wrapper
+        .find('.pipeline-nodelist--nested .pipeline-nodelist__row input')
+        .first();
 
     it('handles toggle off event', () => {
       checkbox().simulate('change', { target: { checked: false } });
