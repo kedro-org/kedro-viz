@@ -1,6 +1,39 @@
-import { getNodeIDs } from './filter-nodes';
+import getFormattedNodes, { getNodeIDs } from './filter-nodes';
+import { mockState } from '../../utils/state.mock';
+import { getGroupedNodes } from '../../selectors/nodes';
 
 describe('filter-nodes', () => {
+  describe('getFormattedNodes', () => {
+    const nodes = getGroupedNodes(mockState.lorem);
+    const searchTerm = 'e';
+    const { formattedNodes, nodeIDs } = getFormattedNodes(nodes, searchTerm);
+    const nodeList = Object.keys(formattedNodes).reduce(
+      (names, key) => names.concat(formattedNodes[key]),
+      []
+    );
+
+    test.each(nodeList.map(node => node.name))(
+      `node name "%s" contains search term "${searchTerm}"`,
+      name => {
+        expect(name).toEqual(expect.stringMatching(searchTerm));
+      }
+    );
+
+    test.each(nodeList.map(node => node.highlightedLabel))(
+      `node label "%s" contains highlighted search term "<b>${searchTerm}</b>"`,
+      name => {
+        expect(name).toEqual(expect.stringMatching(`<b>${searchTerm}</b>`));
+      }
+    );
+
+    test.each(nodeIDs)(
+      `node ID "%s" contains search term "${searchTerm}"`,
+      nodeID => {
+        expect(nodeID).toEqual(expect.stringMatching(searchTerm));
+      }
+    );
+  });
+
   describe('getNodeIDs', () => {
     const generateNodes = (type, count) =>
       Array.from(new Array(count)).map((d, i) => ({
