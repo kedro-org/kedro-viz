@@ -1,7 +1,8 @@
 import getFormattedNodes, {
   getNodeIDs,
   highlightMatch,
-  nodeMatchesSearch
+  nodeMatchesSearch,
+  filterNodes
 } from './filter-nodes';
 import { mockState } from '../../utils/state.mock';
 import { getGroupedNodes } from '../../selectors/nodes';
@@ -68,7 +69,7 @@ describe('filter-nodes', () => {
   });
 
   describe('highlightMatch', () => {
-    const nodes = getGroupedNodes(mockState.lorem);
+    const nodes = getGroupedNodes(mockState.animals);
     const searchTerm = 'e';
     const formattedNodes = highlightMatch(nodes, searchTerm);
     const nodeList = ungroupNodes(formattedNodes);
@@ -79,8 +80,8 @@ describe('filter-nodes', () => {
       );
       test.each(matchingNodeList.map(node => node.highlightedLabel))(
         `node label "%s" contains highlighted search term "<b>${searchTerm}</b>"`,
-        name => {
-          expect(name).toEqual(expect.stringMatching(`<b>${searchTerm}</b>`));
+        label => {
+          expect(label).toEqual(expect.stringMatching(`<b>${searchTerm}</b>`));
         }
       );
     });
@@ -91,8 +92,8 @@ describe('filter-nodes', () => {
       );
       test.each(notMatchingNodeList.map(node => node.highlightedLabel))(
         `node label "%s" does not contain "<b>"`,
-        name => {
-          expect(name).not.toEqual(expect.stringMatching(`<b>`));
+        label => {
+          expect(label).not.toEqual(expect.stringMatching(`<b>`));
         }
       );
     });
@@ -118,6 +119,36 @@ describe('filter-nodes', () => {
       expect(nodeMatchesSearch(node, 'qwe ')).toBe(false);
       expect(nodeMatchesSearch(node, ' ')).toBe(false);
       expect(nodeMatchesSearch(node, '_')).toBe(false);
+    });
+  });
+
+  describe('filterNodes', () => {
+    const nodes = getGroupedNodes(mockState.animals);
+    const searchTerm = 'a';
+    const filteredNodes = filterNodes(nodes, searchTerm);
+    const nodeList = ungroupNodes(filteredNodes);
+    const notMatchingNodeList = ungroupNodes(nodes).filter(
+      node => !node.name.includes(searchTerm)
+    );
+
+    describe('nodes which match the search term', () => {
+      test.each(nodeList.map(node => node.name))(
+        `node name "%s" should contain search term "${searchTerm}"`,
+        name => {
+          expect(name).toEqual(expect.stringMatching(searchTerm));
+        }
+      );
+    });
+
+    describe('nodes which do not match the search term', () => {
+      test.each(notMatchingNodeList.map(node => node.id))(
+        `filtered node list should not contain a node with id "%s"`,
+        nodeID => {
+          expect(nodeList.map(node => node.id)).not.toContain(
+            expect.stringMatching(searchTerm)
+          );
+        }
+      );
     });
   });
 });
