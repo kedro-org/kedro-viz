@@ -1,4 +1,8 @@
-import getFormattedNodes, { getNodeIDs, highlightMatch } from './filter-nodes';
+import getFormattedNodes, {
+  getNodeIDs,
+  highlightMatch,
+  nodeMatchesSearch
+} from './filter-nodes';
 import { mockState } from '../../utils/state.mock';
 import { getGroupedNodes } from '../../selectors/nodes';
 
@@ -91,6 +95,29 @@ describe('filter-nodes', () => {
           expect(name).not.toEqual(expect.stringMatching(`<b>`));
         }
       );
+    });
+  });
+
+  describe('nodeMatchesSearch', () => {
+    const node = { name: 'qwertyuiop' };
+
+    it('returns true if the node name matches the search', () => {
+      expect(nodeMatchesSearch(node, 'qwertyuiop')).toBe(true);
+      expect(nodeMatchesSearch(node, 'qwe')).toBe(true);
+      expect(nodeMatchesSearch(node, 'p')).toBe(true);
+    });
+
+    it('returns true if the search is falsey', () => {
+      expect(nodeMatchesSearch(node, '')).toBe(true);
+      expect(nodeMatchesSearch(node, null)).toBe(true);
+      expect(nodeMatchesSearch(node, undefined)).toBe(true);
+    });
+
+    it('returns false if the node name does not match the search', () => {
+      expect(nodeMatchesSearch(node, 'a')).toBe(false);
+      expect(nodeMatchesSearch(node, 'qwe ')).toBe(false);
+      expect(nodeMatchesSearch(node, ' ')).toBe(false);
+      expect(nodeMatchesSearch(node, '_')).toBe(false);
     });
   });
 });
