@@ -53,7 +53,7 @@ const validateDataSource = source => {
  * Generate a configuration object for use across the application
  */
 const config = () => ({
-  dataPath: '/api/nodes.json',
+  dataPath: './api/nodes.json',
   dataSource: getDataSource(),
   localStorageName: 'KedroViz'
 });

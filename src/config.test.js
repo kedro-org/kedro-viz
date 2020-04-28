@@ -21,6 +21,10 @@ describe('config', () => {
     });
   });
 
+  it('should return a relative dataPath', () => {
+    expect(config().dataPath.substr(0, 2)).toEqual('./');
+  });
+
   it('should return "json" as the datasource if undefined', () => {
     expect(config().dataSource).toBe('json');
   });
