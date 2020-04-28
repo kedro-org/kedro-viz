@@ -1,0 +1,20 @@
+@import '../../../styles/extends';
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+@import './variables';
+@import './search';
+@import './toggle';
+@import './group';
+@import './row';
+
+.pipeline-nodelist-scrollbars {
+  min-height: 400px;
+
+  .kui-theme--light & {
+    background: $color-bg-light-alt2;
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-alt2;
+  }
+}

@@ -1,0 +1,88 @@
+%nolist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pipeline-nodelist {
+  @extend %nolist;
+
+  li {
+    @extend %nolist;
+  }
+
+  .kui-theme--light & {
+    background: $color-bg-light-alt2;
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-alt2;
+  }
+
+  &--nested {
+    margin: 0 0 1.2em;
+  }
+
+  &--fade-in {
+    animation: fadeIn 0.4s forwards;
+  }
+
+  &--fade-out {
+    animation: fadeIn 0.4s backwards reverse;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.pipeline-nodelist__heading {
+  margin: 0;
+}
+
+.pipeline-type-group-toggle {
+  position: absolute;
+  left: $row-padding-x;
+  width: $toggle-size;
+  height: $toggle-size;
+  margin-right: $toggle-margin-right;
+  padding: 0;
+  color: inherit;
+  font-family: inherit;
+  line-height: 1em;
+  text-align: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform ease 0.3s;
+
+  &:focus {
+    outline: none;
+
+    [data-whatintent='keyboard'] & {
+      box-shadow: 0 0 0 3px $color-link inset;
+    }
+  }
+
+  &:before {
+    font-size: 1.5em;
+    content: '▾';
+  }
+
+  &:hover {
+    background: rgba(#fff, 0.1);
+    box-shadow: 0 0 0 1px rgba(#fff, 0.03) inset;
+  }
+
+  &--alt {
+    transform: rotate(-180deg);
+  }
+}

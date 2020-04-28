@@ -6,7 +6,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { getGroupedNodes } from '../../selectors/nodes';
 import NodeListToggleAll from './node-list-toggle';
 import NodeListGroups from './node-list-groups';
-import './node-list.css';
+import './styles/node-list.css';
 
 const { escapeRegExp, getHighlightedText, handleKeyEvent } = utils;
 
