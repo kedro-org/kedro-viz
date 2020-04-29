@@ -23,6 +23,7 @@ describe('NodeListGroups', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
+      nodeActive: expect.any(Object),
       types: expect.arrayContaining([
         expect.objectContaining({
           disabled: expect.any(Boolean),

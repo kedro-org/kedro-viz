@@ -52,8 +52,7 @@ describe('Selectors', () => {
             height: expect.any(Number),
             width: expect.any(Number),
             x: expect.any(Number),
-            y: expect.any(Number),
-            active: expect.any(Boolean)
+            y: expect.any(Number)
           })
         ])
       );

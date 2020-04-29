@@ -6,6 +6,7 @@ import { select, event } from 'd3-selection';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { updateChartSize } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
+import { getNodeActive } from '../../selectors/nodes';
 import {
   getChartSize,
   getGraphSize,
@@ -337,6 +338,7 @@ export const mapStateToProps = state => ({
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
   nodes: getLayoutNodes(state),
+  nodeActive: getNodeActive(state),
   textLabels: state.textLabels,
   visibleLayers: state.visible.layers,
   visibleSidebar: state.visible.sidebar,

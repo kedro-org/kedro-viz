@@ -67,7 +67,6 @@ describe('Selectors', () => {
             id: expect.any(String),
             name: expect.any(String),
             type: expect.stringMatching(/data|task/),
-            active: expect.any(Boolean),
             disabled: expect.any(Boolean),
             disabled_node: expect.any(Boolean),
             disabled_tag: expect.any(Boolean)
@@ -79,12 +78,12 @@ describe('Selectors', () => {
     it('returns nodes sorted by name', () => {
       const nodeName = getNodeName(mockState.lorem);
       const nodeIDs = getNodeData(mockState.lorem).map(d => d.id);
-      const activeNodeIDs = getNodeIDs(mockState.lorem).sort((a, b) => {
+      const visibleNodeIDs = getNodeIDs(mockState.lorem).sort((a, b) => {
         if (nodeName[a] < nodeName[b]) return -1;
         if (nodeName[a] > nodeName[b]) return 1;
         return 0;
       });
-      expect(nodeIDs).toEqual(activeNodeIDs);
+      expect(nodeIDs).toEqual(visibleNodeIDs);
     });
   });
 

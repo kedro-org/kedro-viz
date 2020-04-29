@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import dagre from 'dagre';
-import { getNodeActive, getVisibleNodes } from './nodes';
+import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
 const getHasVisibleLayers = state =>
@@ -50,16 +50,15 @@ export const getGraph = createSelector(
  * and recombine with other data that doesn't affect layout
  */
 export const getLayoutNodes = createSelector(
-  [getGraph, getNodeType, getNodeLayer, getNodeActive],
-  (graph, nodeType, nodeLayer, nodeActive) =>
+  [getGraph, getNodeType, getNodeLayer],
+  (graph, nodeType, nodeLayer) =>
     graph
       ? graph.nodes().map(nodeID => {
           const node = graph.node(nodeID);
           return Object.assign({}, node, {
             layer: nodeLayer[nodeID],
             type: nodeType[nodeID],
-            order: node.x + node.y * 9999,
-            active: nodeActive[nodeID]
+            order: node.x + node.y * 9999
           });
         })
       : []
