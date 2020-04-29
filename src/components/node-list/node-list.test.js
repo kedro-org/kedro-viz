@@ -210,7 +210,6 @@ describe('NodeList', () => {
   it('maps state to props', () => {
     const nodeList = expect.arrayContaining([
       expect.objectContaining({
-        active: expect.any(Boolean),
         disabled: expect.any(Boolean),
         disabled_node: expect.any(Boolean),
         disabled_tag: expect.any(Boolean),

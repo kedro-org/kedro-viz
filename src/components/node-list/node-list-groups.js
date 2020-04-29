@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Flipper } from 'react-flip-toolkit';
 import { loadState, saveState } from '../../store/helpers';
+import { getNodeActive } from '../../selectors/nodes';
 import { getNodeTypes } from '../../selectors/node-types';
 import NodeListGroup from './node-list-group';
 import NodeListRow from './node-list-row';
@@ -18,6 +19,7 @@ const NodeListGroups = ({
   onToggleNodesDisabled,
   onToggleNodeHovered,
   nodes,
+  nodeActive,
   types
 }) => {
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
@@ -44,7 +46,7 @@ const NodeListGroups = ({
           {nodes[type.id].map(node => (
             <li key={node.id}>
               <NodeListRow
-                active={node.active}
+                active={nodeActive[node.id]}
                 checked={!node.disabled_node}
                 disabled={node.disabled_tag || node.disabled_type}
                 id={node.id}
@@ -73,6 +75,7 @@ const NodeListGroups = ({
 };
 
 export const mapStateToProps = state => ({
+  nodeActive: getNodeActive(state),
   types: getNodeTypes(state)
 });
 

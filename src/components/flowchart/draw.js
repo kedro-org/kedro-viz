@@ -75,7 +75,13 @@ const drawLayerNames = function() {
  * Render node icons and name labels
  */
 const drawNodes = function() {
-  const { nodes, centralNode, linkedNodes, textLabels } = this.props;
+  const {
+    nodes,
+    nodeActive,
+    centralNode,
+    linkedNodes,
+    textLabels
+  } = this.props;
 
   this.el.nodes = this.el.nodeGroup
     .selectAll('.node')
@@ -117,7 +123,7 @@ const drawNodes = function() {
     .classed('node--task', node => node.type === 'task')
     .classed('node--icon', !textLabels)
     .classed('node--text', textLabels)
-    .classed('node--active', node => node.active)
+    .classed('node--active', node => nodeActive[node.id])
     .classed('node--highlight', node => centralNode && linkedNodes[node.id])
     .classed('node--faded', node => centralNode && !linkedNodes[node.id])
     .on('click', this.handleNodeClick)
