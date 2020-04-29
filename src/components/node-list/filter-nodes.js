@@ -1,3 +1,4 @@
+import { createSelector } from 'reselect';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 const { escapeRegExp, getHighlightedText } = utils;
 
@@ -68,13 +69,16 @@ export const filterNodes = (nodes, searchValue) => {
  * @param {string} searchValue Search term
  * @return {object} Grouped nodes, and node IDs
  */
-const getFilteredNodes = (nodes, searchValue) => {
-  const filteredNodes = filterNodes(nodes, searchValue);
+const getFilteredNodes = createSelector(
+  [state => state.nodes, state => state.searchValue],
+  (nodes, searchValue) => {
+    const filteredNodes = filterNodes(nodes, searchValue);
 
-  return {
-    filteredNodes: highlightMatch(filteredNodes, searchValue),
-    nodeIDs: getNodeIDs(filteredNodes)
-  };
-};
+    return {
+      filteredNodes: highlightMatch(filteredNodes, searchValue),
+      nodeIDs: getNodeIDs(filteredNodes)
+    };
+  }
+);
 
 export default getFilteredNodes;

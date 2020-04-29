@@ -13,7 +13,7 @@ import './styles/node-list.css';
  */
 const NodeList = ({ nodes }) => {
   const [searchValue, updateSearchValue] = useState('');
-  const { filteredNodes, nodeIDs } = getFilteredNodes(nodes, searchValue);
+  const { filteredNodes, nodeIDs } = getFilteredNodes({ nodes, searchValue });
 
   return (
     <React.Fragment>
