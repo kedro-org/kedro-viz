@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { toggleNodesDisabled } from '../../actions/nodes';
 
-const NodeListToggleAll = ({ onToggleNodesDisabled, nodeIDs }) => (
+export const NodeListToggleAll = ({ onToggleNodesDisabled, nodeIDs }) => (
   <div className="kedro pipeline-nodelist__toggle">
     <h2 className="pipeline-nodelist__toggle__title">All Elements</h2>
     <div className="pipeline-nodelist__toggle__row">

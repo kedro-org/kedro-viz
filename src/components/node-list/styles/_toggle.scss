@@ -1,0 +1,70 @@
+.pipeline-nodelist__toggle {
+  margin: 0 24px;
+}
+
+.pipeline-nodelist__toggle__title {
+  margin: 0 0 12px;
+  font-weight: 600;
+  font-size: 1.8em;
+}
+
+.pipeline-nodelist__toggle__row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 12px 0;
+  padding: 10px 0;
+
+  .kui-theme--light & {
+    border-top: 1px solid $color-line-light;
+    border-bottom: 1px solid $color-line-light;
+  }
+
+  .kui-theme--dark & {
+    border-top: 1px solid $color-line-dark;
+    border-bottom: 1px solid $color-line-dark;
+  }
+}
+
+.pipeline-nodelist__toggle__button {
+  margin: -1px -6px -2px;
+  padding: 1px 6px 2px;
+  color: inherit;
+  font-size: 1.6em;
+  font-family: inherit;
+  background: none;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  opacity: 0.8;
+
+  &:focus {
+    outline: 4px solid $color-link;
+    opacity: 1;
+
+    [data-whatintent='mouse'] & {
+      outline: none;
+    }
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.pipeline-nodelist__toggle__icon {
+  margin: 0 4px -6px -6px;
+  fill: white;
+
+  .kui-theme--light & {
+    fill: rgba(black, 0.9);
+  }
+
+  .kui-theme--dark & {
+    fill: white;
+  }
+
+  &--uncheck {
+    transform: scale(0.75);
+  }
+}

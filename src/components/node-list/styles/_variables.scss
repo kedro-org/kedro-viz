@@ -1,0 +1,10 @@
+$toggle-size: 2.4em;
+$toggle-margin-right: 0.8em;
+$row-padding-y: 0.8em;
+$row-padding-x: 1.2em;
+$row-icon-margin: 0.5em;
+$row-icon-size: 2.4em;
+$visibility-icon-padding: 0.3em;
+$visibility-icon-size: 2.4em + $visibility-icon-padding * 2;
+$row-offset-left: $row-padding-x + $toggle-size + $toggle-margin-right;
+$row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;

@@ -1,0 +1,134 @@
+.pipeline-nodelist__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: rgba(#fff, 0.05);
+  }
+
+  &--active,
+  &--active:hover {
+    background: rgba(#fff, 0.1);
+  }
+
+  &--disabled {
+    pointer-events: none;
+  }
+}
+
+.pipeline-nodelist__row__icon {
+  display: block;
+  flex-shrink: 0;
+  width: $row-icon-size;
+  height: $row-icon-size;
+  transition: opacity ease 0.1s;
+
+  .kui-theme--light & {
+    fill: $color-text-light;
+  }
+
+  .kui-theme--dark & {
+    fill: $color-text-dark;
+  }
+}
+
+.pipeline-nodelist__row__type-icon {
+  margin-right: $row-icon-margin;
+
+  &--nested {
+    opacity: 0;
+  }
+
+  .pipeline-nodelist__row:hover &,
+  [data-whatintent='keyboard'] .pipeline-nodelist__row__text:focus & {
+    opacity: 1;
+
+    &--unchecked {
+      opacity: 0.55;
+    }
+  }
+}
+
+.pipeline-nodelist__row__text {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: $row-padding-y $row-offset-right $row-padding-y $row-offset-left;
+  color: inherit;
+  font-size: inherit;
+  text-align: inherit;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  transition: opacity ease 0.1s;
+
+  &:focus {
+    outline: 4px solid $color-link;
+
+    [data-whatintent='mouse'] & {
+      outline: none;
+    }
+  }
+}
+
+.pipeline-nodelist__row__checkbox {
+  @include screenReaderOnly;
+}
+
+.pipeline-nodelist__row__label {
+  overflow: hidden;
+  font-size: 1.6em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &--disabled,
+  &--unchecked {
+    opacity: 0.55;
+  }
+
+  b {
+    font-weight: normal;
+    opacity: 0.3;
+  }
+}
+
+.pipeline-nodelist__row__visibility {
+  position: absolute;
+  right: $row-padding-x;
+  cursor: pointer;
+}
+
+.pipeline-nodelist__row__visibility-icon {
+  width: $visibility-icon-size;
+  height: $visibility-icon-size;
+  padding: $visibility-icon-padding;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity ease 0.2s;
+
+  &--unchecked,
+  .pipeline-nodelist__row__text:focus + label &,
+  .pipeline-nodelist__row:hover & {
+    opacity: 0.55;
+  }
+
+  .pipeline-nodelist__row:hover &:hover {
+    opacity: 1;
+  }
+
+  .pipeline-nodelist__row__checkbox:focus + & {
+    outline: none;
+    transition: box-shadow ease 0.2s;
+
+    [data-whatintent='keyboard'] & {
+      box-shadow: 0 0 0 3px $color-link inset;
+      opacity: 1;
+    }
+  }
+}
+
+.pipeline-nodelist__row__checkbox {
+  @include screenReaderOnly;
+}
