@@ -17,10 +17,10 @@ describe('filter-nodes', () => {
   describe('getFilteredNodes', () => {
     const nodes = getGroupedNodes(mockState.lorem);
     const searchTerm = 'e';
-    const { formattedNodes, nodeIDs } = getFilteredNodes(nodes, searchTerm);
-    const nodeList = ungroupNodes(formattedNodes);
+    const { filteredNodes, nodeIDs } = getFilteredNodes(nodes, searchTerm);
+    const nodeList = ungroupNodes(filteredNodes);
 
-    describe('formattedNodes', () => {
+    describe('filteredNodes', () => {
       test.each(nodeList.map(node => node.name))(
         `node name "%s" contains search term "${searchTerm}"`,
         name => {
