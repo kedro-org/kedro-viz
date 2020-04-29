@@ -63,18 +63,18 @@ export const filterNodes = (nodes, searchValue) => {
 };
 
 /**
- * Return highlighted/formatted nodes, and filtered node IDs
+ * Return filtered/highlighted nodes, and filtered node IDs
  * @param {object} nodes Grouped lists of nodes
  * @param {string} searchValue Search term
  * @return {object} Grouped nodes, and node IDs
  */
-const getFormattedNodes = (nodes, searchValue) => {
+const getFilteredNodes = (nodes, searchValue) => {
   const filteredNodes = filterNodes(nodes, searchValue);
 
   return {
-    formattedNodes: highlightMatch(filteredNodes, searchValue),
+    filteredNodes: highlightMatch(filteredNodes, searchValue),
     nodeIDs: getNodeIDs(filteredNodes)
   };
 };
 
-export default getFormattedNodes;
+export default getFilteredNodes;

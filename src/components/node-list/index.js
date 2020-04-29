@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { getGroupedNodes } from '../../selectors/nodes';
-import getFormattedNodes from './filter-nodes';
+import getFilteredNodes from './filter-nodes';
 import NodeListSearch from './node-list-search';
 import NodeListToggleAll from './node-list-toggle';
 import NodeListGroups from './node-list-groups';
@@ -13,7 +13,7 @@ import './styles/node-list.css';
  */
 const NodeList = ({ nodes }) => {
   const [searchValue, updateSearchValue] = useState('');
-  const { formattedNodes, nodeIDs } = getFormattedNodes(nodes, searchValue);
+  const { filteredNodes, nodeIDs } = getFilteredNodes(nodes, searchValue);
 
   return (
     <React.Fragment>
@@ -27,7 +27,7 @@ const NodeList = ({ nodes }) => {
         autoHide
         hideTracksWhenNotNeeded>
         <NodeListToggleAll nodeIDs={nodeIDs} />
-        <NodeListGroups nodes={formattedNodes} />
+        <NodeListGroups nodes={filteredNodes} />
       </Scrollbars>
     </React.Fragment>
   );

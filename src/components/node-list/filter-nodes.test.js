@@ -1,4 +1,4 @@
-import getFormattedNodes, {
+import getFilteredNodes, {
   getNodeIDs,
   highlightMatch,
   nodeMatchesSearch,
@@ -14,10 +14,10 @@ const ungroupNodes = groupedNodes =>
   );
 
 describe('filter-nodes', () => {
-  describe('getFormattedNodes', () => {
+  describe('getFilteredNodes', () => {
     const nodes = getGroupedNodes(mockState.lorem);
     const searchTerm = 'e';
-    const { formattedNodes, nodeIDs } = getFormattedNodes(nodes, searchTerm);
+    const { formattedNodes, nodeIDs } = getFilteredNodes(nodes, searchTerm);
     const nodeList = ungroupNodes(formattedNodes);
 
     describe('formattedNodes', () => {
