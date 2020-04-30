@@ -20,6 +20,7 @@ const NodeListGroups = ({
   onToggleNodeHovered,
   nodes,
   nodeActive,
+  selectedNode,
   types
 }) => {
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
@@ -58,6 +59,7 @@ const NodeListGroups = ({
                 onChange={e => {
                   onToggleNodesDisabled([node.id], !e.target.checked);
                 }}
+                selected={node.id === selectedNode}
                 type={node.type}
               />
             </li>
@@ -76,6 +78,7 @@ const NodeListGroups = ({
 
 export const mapStateToProps = state => ({
   nodeActive: getNodeActive(state),
+  selectedNode: state.node.clicked,
   types: getNodeTypes(state)
 });
 

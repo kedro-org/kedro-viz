@@ -42,7 +42,9 @@
   }
 }
 
-.node--highlight {
+.node--highlight,
+.node--active,
+.node--selected {
   text {
     .kui-theme--light & {
       fill: $node-labeltext-fill-light-active;
@@ -52,8 +54,12 @@
       fill: $node-labeltext-fill-dark-active;
     }
   }
+}
 
+.node--active {
   rect {
+    stroke-width: 2px;
+
     .kui-theme--light & {
       fill: $node-fill-light-highlight;
       stroke: $node-stroke-light-highlight;
@@ -66,17 +72,7 @@
   }
 }
 
-.node--active {
-  text {
-    .kui-theme--light & {
-      fill: $node-labeltext-fill-light-active;
-    }
-
-    .kui-theme--dark & {
-      fill: $node-labeltext-fill-dark-active;
-    }
-  }
-
+.node--selected {
   rect {
     stroke-width: 3px;
 

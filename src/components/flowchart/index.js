@@ -339,6 +339,7 @@ export const mapStateToProps = state => ({
   linkedNodes: getLinkedNodes(state),
   nodes: getLayoutNodes(state),
   nodeActive: getNodeActive(state),
+  selectedNode: state.node.clicked,
   textLabels: state.textLabels,
   visibleLayers: state.visible.layers,
   visibleSidebar: state.visible.sidebar,

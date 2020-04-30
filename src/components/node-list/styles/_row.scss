@@ -8,9 +8,10 @@
     background: rgba(#fff, 0.05);
   }
 
-  &--active,
-  &--active:hover {
-    background: rgba(#fff, 0.1);
+  &--selected,
+  // additional selector required to increase specificity to override previous rule:
+  &--button#{&}--selected {
+    background: rgba(#fff, 0.12);
   }
 
   &--disabled {
@@ -42,6 +43,8 @@
   }
 
   .pipeline-nodelist__row:hover &,
+  .pipeline-nodelist__row--active &,
+  .pipeline-nodelist__row--selected &,
   [data-whatintent='keyboard'] .pipeline-nodelist__row__text:focus & {
     opacity: 1;
 

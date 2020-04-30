@@ -16,6 +16,7 @@ const NodeListRow = ({
   onMouseLeave,
   onChange,
   onClick,
+  selected,
   type
 }) => {
   const VisibilityIcon = checked ? VisibleIcon : InvisibleIcon;
@@ -26,6 +27,7 @@ const NodeListRow = ({
       className={classnames('pipeline-nodelist__row kedro', {
         'pipeline-nodelist__row--button': Boolean(onClick),
         'pipeline-nodelist__row--active': active,
+        'pipeline-nodelist__row--selected': selected,
         'pipeline-nodelist__row--disabled': disabled
       })}
       onMouseEnter={onMouseEnter}
