@@ -19,6 +19,7 @@ const NodeListRow = ({
   type
 }) => {
   const VisibilityIcon = checked ? VisibleIcon : InvisibleIcon;
+  const TextElement = onClick ? 'button' : 'div';
 
   return (
     <div
@@ -28,7 +29,7 @@ const NodeListRow = ({
       })}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}>
-      <button
+      <TextElement
         onClick={onClick}
         onFocus={onMouseEnter}
         onBlur={onMouseLeave}
@@ -56,7 +57,7 @@ const NodeListRow = ({
           })}
           dangerouslySetInnerHTML={{ __html: label }}
         />
-      </button>
+      </TextElement>
       {children}
       <label htmlFor={id} className="pipeline-nodelist__row__visibility">
         <input
