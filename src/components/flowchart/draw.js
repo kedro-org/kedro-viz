@@ -79,8 +79,8 @@ const drawNodes = function() {
     centralNode,
     linkedNodes,
     nodeActive,
+    nodeSelected,
     nodes,
-    selectedNode,
     textLabels
   } = this.props;
 
@@ -125,7 +125,7 @@ const drawNodes = function() {
     .classed('node--icon', !textLabels)
     .classed('node--text', textLabels)
     .classed('node--active', node => nodeActive[node.id])
-    .classed('node--selected', node => node.id === selectedNode)
+    .classed('node--selected', node => nodeSelected[node.id])
     .classed('node--highlight', node => centralNode && linkedNodes[node.id])
     .classed('node--faded', node => centralNode && !linkedNodes[node.id])
     .on('click', this.handleNodeClick)

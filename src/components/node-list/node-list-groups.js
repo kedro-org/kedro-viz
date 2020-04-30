@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Flipper } from 'react-flip-toolkit';
 import { loadState, saveState } from '../../store/helpers';
-import { getNodeActive } from '../../selectors/nodes';
+import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { getNodeTypes } from '../../selectors/node-types';
 import NodeListGroup from './node-list-group';
 import NodeListRow from './node-list-row';
@@ -20,7 +20,7 @@ const NodeListGroups = ({
   onToggleNodeHovered,
   nodes,
   nodeActive,
-  selectedNode,
+  nodeSelected,
   types
 }) => {
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
@@ -59,7 +59,7 @@ const NodeListGroups = ({
                 onChange={e => {
                   onToggleNodesDisabled([node.id], !e.target.checked);
                 }}
-                selected={node.id === selectedNode}
+                selected={nodeSelected[node.id]}
                 type={node.type}
               />
             </li>
@@ -78,7 +78,7 @@ const NodeListGroups = ({
 
 export const mapStateToProps = state => ({
   nodeActive: getNodeActive(state),
-  selectedNode: state.node.clicked,
+  nodeSelected: getNodeSelected(state),
   types: getNodeTypes(state)
 });
 

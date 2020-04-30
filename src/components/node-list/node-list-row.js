@@ -20,23 +20,24 @@ const NodeListRow = ({
   type
 }) => {
   const VisibilityIcon = checked ? VisibleIcon : InvisibleIcon;
-  const TextElement = onClick ? 'button' : 'div';
+  const useButton = Boolean(onClick && !disabled && checked);
+  const Text = useButton ? 'button' : 'div';
 
   return (
     <div
       className={classnames('pipeline-nodelist__row kedro', {
-        'pipeline-nodelist__row--button': Boolean(onClick),
+        'pipeline-nodelist__row--button': useButton,
         'pipeline-nodelist__row--active': active,
         'pipeline-nodelist__row--selected': selected,
         'pipeline-nodelist__row--disabled': disabled
       })}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}>
-      <TextElement
+      onMouseEnter={useButton ? onMouseEnter : null}
+      onMouseLeave={useButton ? onMouseLeave : null}>
+      <Text
         className="pipeline-nodelist__row__text"
-        onClick={onClick}
-        onFocus={onMouseEnter}
-        onBlur={onMouseLeave}
+        onClick={useButton ? onClick : null}
+        onFocus={useButton ? onMouseEnter : null}
+        onBlur={useButton ? onMouseLeave : null}
         disabled={disabled}
         title={children ? null : name}>
         <NodeIcon
@@ -55,7 +56,7 @@ const NodeListRow = ({
           })}
           dangerouslySetInnerHTML={{ __html: label }}
         />
-      </TextElement>
+      </Text>
       {children}
       <label htmlFor={id} className="pipeline-nodelist__row__visibility">
         <input
