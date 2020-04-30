@@ -5,13 +5,13 @@
   transition: background-color ease $row-transition;
 
   &--active,
-  &--button:hover {
+  &--visible:hover {
     background: rgba(#fff, 0.05);
   }
 
   &--selected,
   // additional selector required to increase specificity to override previous rule:
-  &--button#{&}--selected {
+  &--visible#{&}--selected {
     background: rgba(#fff, 0.12);
   }
 
