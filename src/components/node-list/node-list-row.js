@@ -49,9 +49,7 @@ const NodeListRow = ({
         />
         <span
           className={classnames('pipeline-nodelist__row__label', {
-            'pipeline-nodelist__row__label--active': active,
-            'pipeline-nodelist__row__label--disabled': disabled,
-            'pipeline-nodelist__row__label--unchecked': !checked
+            'pipeline-nodelist__row__label--faded': disabled || !checked
           })}
           dangerouslySetInnerHTML={{ __html: label }}
         />

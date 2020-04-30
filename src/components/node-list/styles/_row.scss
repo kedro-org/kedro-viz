@@ -84,8 +84,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 
-  &--disabled,
-  &--unchecked {
+  &--faded {
     opacity: 0.55;
   }
 
