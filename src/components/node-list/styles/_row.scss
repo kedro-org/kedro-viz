@@ -3,7 +3,8 @@
   display: flex;
   align-items: center;
 
-  &:hover {
+  &--active,
+  &--button:hover {
     background: rgba(#fff, 0.05);
   }
 
