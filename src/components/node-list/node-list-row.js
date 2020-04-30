@@ -30,14 +30,11 @@ const NodeListRow = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}>
       <TextElement
+        className="pipeline-nodelist__row__text"
         onClick={onClick}
         onFocus={onMouseEnter}
         onBlur={onMouseLeave}
         disabled={disabled}
-        className={classnames('pipeline-nodelist__row__text', {
-          'pipeline-nodelist__row__text--active': active,
-          'pipeline-nodelist__row__text--unchecked': !checked
-        })}
         title={children ? null : name}>
         <NodeIcon
           className={classnames(
