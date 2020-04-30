@@ -49,7 +49,7 @@
   [data-whatintent='keyboard'] .pipeline-nodelist__row__text:focus & {
     opacity: 1;
 
-    &--unchecked {
+    &--faded {
       opacity: 0.55;
     }
   }

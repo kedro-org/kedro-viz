@@ -21,6 +21,7 @@ const NodeListRow = ({
 }) => {
   const VisibilityIcon = checked ? VisibleIcon : InvisibleIcon;
   const visible = Boolean(onClick && !disabled && checked);
+  const faded = disabled || !checked;
 
   return (
     <div
@@ -43,7 +44,7 @@ const NodeListRow = ({
           className={classnames(
             'pipeline-nodelist__row__type-icon pipeline-nodelist__row__icon',
             {
-              'pipeline-nodelist__row__type-icon--unchecked': !checked,
+              'pipeline-nodelist__row__type-icon--faded': faded,
               'pipeline-nodelist__row__type-icon--nested': !children
             }
           )}
@@ -51,7 +52,7 @@ const NodeListRow = ({
         />
         <span
           className={classnames('pipeline-nodelist__row__label', {
-            'pipeline-nodelist__row__label--faded': disabled || !checked
+            'pipeline-nodelist__row__label--faded': faded
           })}
           dangerouslySetInnerHTML={{ __html: label }}
         />
