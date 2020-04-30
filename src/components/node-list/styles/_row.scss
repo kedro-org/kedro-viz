@@ -2,6 +2,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  transition: background-color ease $row-transition;
 
   &--active,
   &--button:hover {
@@ -24,7 +25,7 @@
   flex-shrink: 0;
   width: $row-icon-size;
   height: $row-icon-size;
-  transition: opacity ease 0.1s;
+  transition: opacity ease $row-transition;
 
   .kui-theme--light & {
     fill: $color-text-light;
@@ -66,7 +67,7 @@
   border: none;
   border-radius: 0;
   box-shadow: none;
-  transition: opacity ease 0.1s;
+  transition: opacity ease $row-transition;
 
   &:focus {
     outline: 4px solid $color-link;
@@ -86,6 +87,7 @@
   font-size: 1.6em;
   white-space: nowrap;
   text-overflow: ellipsis;
+  transition: opacity ease $row-transition;
 
   &--faded {
     opacity: 0.55;
@@ -109,7 +111,6 @@
   padding: $visibility-icon-padding;
   border-radius: 50%;
   opacity: 0;
-  transition: opacity ease 0.2s;
 
   &--unchecked,
   .pipeline-nodelist__row__text:focus + label &,
@@ -123,7 +124,6 @@
 
   .pipeline-nodelist__row__checkbox:focus + & {
     outline: none;
-    transition: box-shadow ease 0.2s;
 
     [data-whatintent='keyboard'] & {
       box-shadow: 0 0 0 3px $color-link inset;
