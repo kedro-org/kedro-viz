@@ -6,13 +6,25 @@
 
   &--active,
   &--visible:hover {
-    background: rgba(#fff, 0.05);
+    .kui-theme--light & {
+      background-color: darken($color-bg-light-alt2, 4%);
+    }
+
+    .kui-theme--dark & {
+      background-color: lighten($color-bg-dark-alt2, 4%);
+    }
   }
 
   &--selected,
   // additional selector required to increase specificity to override previous rule:
   &--visible#{&}--selected {
-    background: rgba(#fff, 0.12);
+    .kui-theme--light & {
+      background-color: darken($color-bg-light-alt2, 10%);
+    }
+
+    .kui-theme--dark & {
+      background-color: lighten($color-bg-dark-alt2, 10%);
+    }
   }
 
   &--disabled {
