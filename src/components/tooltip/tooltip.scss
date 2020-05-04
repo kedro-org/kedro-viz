@@ -1,6 +1,9 @@
-@import './variables';
+@import '../../styles/variables';
 
-.pipeline-flowchart__tooltip {
+$tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
+$tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
+
+.pipeline-tooltip {
   position: absolute;
   top: -10px;
   left: -20px;
@@ -11,19 +14,14 @@
   transition: opacity ease 0.1s, visibility ease 0.1s;
   pointer-events: none;
 
-  &.tooltip--visible {
+  &--visible {
     visibility: visible;
     opacity: 1;
   }
 
-  &.tooltip--right {
+  &--right {
     right: -20px;
     left: auto;
-
-    &::before {
-      right: 10px;
-      left: auto;
-    }
   }
 
   &::before {
@@ -46,28 +44,33 @@
     }
   }
 
-  div {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    max-width: 50vw;
-    padding: 12px 20px;
-    color: white;
-    font-size: 1.5em;
-    overflow-wrap: break-word;
+  &--right::before {
+    right: 10px;
+    left: auto;
+  }
+}
 
-    .kui-theme--light & {
-      background: $tooltip-bg-light;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
+.pipeline-tooltip__text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  max-width: 50vw;
+  padding: 12px 20px;
+  color: white;
+  font-size: 1.5em;
+  overflow-wrap: break-word;
 
-    .kui-theme--dark & {
-      background: $tooltip-bg-dark;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
+  .kui-theme--light & {
+    background: $tooltip-bg-light;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
-  &.tooltip--right div {
+  .kui-theme--dark & {
+    background: $tooltip-bg-dark;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .pipeline-tooltip--right & {
     right: 0;
     left: auto;
   }

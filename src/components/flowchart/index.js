@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { zoom, zoomIdentity } from 'd3-zoom';
@@ -17,16 +16,8 @@ import {
 import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import draw from './draw';
+import Tooltip from '../tooltip';
 import './styles/flowchart.css';
-
-const zeroWidthSpace = String.fromCharCode(0x200b);
-/**
- * Force tooltip text to break on special characters
- * @param {string} text Any text with special characters
- * @return {string} text
- */
-const insertZeroWidthSpace = text =>
-  text.replace(/(\W)/g, `${zeroWidthSpace}$1${zeroWidthSpace}`);
 
 /**
  * Display a pipeline flowchart, mostly rendered with D3
@@ -36,11 +27,7 @@ export class FlowChart extends Component {
     super(props);
 
     this.state = {
-      tooltipVisible: false,
-      tooltipIsRight: false,
-      tooltipText: null,
-      tooltipX: 0,
-      tooltipY: 0
+      tooltip: {}
     };
 
     this.DURATION = 700;
@@ -250,16 +237,13 @@ export class FlowChart extends Component {
    * @param {Object} node A node datum
    */
   showTooltip(node) {
-    const { left, top, width, outerWidth, sidebarWidth } = this.props.chartSize;
-    const eventOffset = event.target.getBoundingClientRect();
-    const isRight = eventOffset.left - sidebarWidth > width / 2;
-    const xOffset = isRight ? eventOffset.left - outerWidth : eventOffset.left;
     this.setState({
-      tooltipVisible: true,
-      tooltipIsRight: isRight,
-      tooltipText: insertZeroWidthSpace(node.fullName),
-      tooltipX: xOffset - left + eventOffset.width / 2,
-      tooltipY: eventOffset.top - top
+      tooltip: {
+        chartSize: this.props.chartSize,
+        targetRect: event.target.getBoundingClientRect(),
+        text: node.fullName,
+        visible: true
+      }
     });
   }
 
@@ -267,9 +251,12 @@ export class FlowChart extends Component {
    * Hide the tooltip
    */
   hideTooltip() {
-    if (this.state.tooltipVisible) {
+    if (this.state.tooltip.visible) {
       this.setState({
-        tooltipVisible: false
+        tooltip: {
+          ...this.state.tooltip,
+          visible: false
+        }
       });
     }
   }
@@ -279,13 +266,6 @@ export class FlowChart extends Component {
    */
   render() {
     const { outerWidth = 0, outerHeight = 0 } = this.props.chartSize;
-    const {
-      tooltipVisible,
-      tooltipIsRight,
-      tooltipText,
-      tooltipX,
-      tooltipY
-    } = this.state;
 
     return (
       <div
@@ -326,14 +306,7 @@ export class FlowChart extends Component {
           className="pipeline-flowchart__layer-names"
           ref={this.layerNamesRef}
         />
-        <div
-          className={classnames('pipeline-flowchart__tooltip', {
-            'tooltip--visible': tooltipVisible,
-            'tooltip--right': tooltipIsRight
-          })}
-          style={{ transform: `translate(${tooltipX}px, ${tooltipY}px)` }}>
-          <div>{tooltipText}</div>
-        </div>
+        <Tooltip {...this.state.tooltip} />
       </div>
     );
   }
