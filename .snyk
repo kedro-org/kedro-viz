@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.14.0
+version: v1.14.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'snyk:lic:npm:mdn-data:MPL-2.0':
@@ -40,3 +40,88 @@ patch:
         patched: '2019-12-12T00:44:17.874Z'
     - '@quantumblack/kedro-ui > snyk > snyk-sbt-plugin > tree-kill':
         patched: '2019-12-12T00:44:17.874Z'
+  SNYK-JS-LODASH-567746:
+    - snyk > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - dagre > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - dagre > graphlib > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - snyk > @snyk/dep-graph > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - snyk > inquirer > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - snyk > snyk-config > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - snyk > snyk-mvn-plugin > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - snyk > snyk-nodejs-lockfile-parser > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - snyk > snyk-nuget-plugin > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > @babel/core > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > eslint > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > eslint-plugin-flowtype > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > html-webpack-plugin > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > webpack-manifest-plugin > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - snyk > @snyk/dep-graph > graphlib > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > @snyk/dep-graph > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > inquirer > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-config > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-mvn-plugin > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-nodejs-lockfile-parser > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - snyk > snyk-nuget-plugin > dotnet-deps-parser > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-nuget-plugin > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - snyk > snyk-php-plugin > @snyk/composer-lockfile-parser > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > @svgr/webpack > @babel/core > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > babel-preset-react-app > @babel/core > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > eslint > inquirer > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > eslint > table > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > optimize-css-assets-webpack-plugin > last-call-webpack-plugin > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > react-dev-utils > inquirer > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > webpack-dev-server > http-proxy-middleware > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > @snyk/dep-graph > graphlib > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - snyk > @snyk/snyk-cocoapods-plugin > @snyk/cocoapods-lockfile-parser > @snyk/ruby-semver > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-nuget-plugin > dotnet-deps-parser > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-php-plugin > @snyk/composer-lockfile-parser > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > @svgr/webpack > @babel/preset-env > @babel/plugin-transform-block-scoping > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > webpack-dev-server > portfinder > async > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - '@quantumblack/kedro-ui > snyk > @snyk/snyk-cocoapods-plugin > @snyk/cocoapods-lockfile-parser > @snyk/ruby-semver > lodash':
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > @svgr/webpack > @babel/preset-env > @babel/plugin-transform-modules-amd > @babel/helper-module-transforms > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > @svgr/webpack > @babel/preset-env > @babel/plugin-proposal-unicode-property-regex > @babel/helper-create-regexp-features-plugin > @babel/helper-regex > lodash:
+        patched: '2020-05-01T06:43:24.842Z'
+    - react-scripts > jest > jest-cli > @jest/core > @jest/reporters > jest-runtime > jest-config > jest-environment-jsdom > jsdom > request-promise-native > request-promise-core > lodash:
+        patched: '2020-05-01T06:43:24.842Z'

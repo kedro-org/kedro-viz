@@ -26,7 +26,8 @@
     "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
-    "snyk-protect": "export NODE_OPTIONS=--max-old-space-size=8192 && snyk protect"
+    "snyk-protect": "export NODE_OPTIONS=--max-old-space-size=8192 && snyk protect",
+    "snyk-test": "snyk test -prune-repeated-subdependencies"
   },
   "dependencies": {
     "@quantumblack/kedro-ui": "^1.1.2",
@@ -47,7 +48,7 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
-    "snyk": "^1.290.1",
+    "snyk": "^1.316.1",
     "svg-crowbar": "^0.3.1",
     "what-input": "^5.2.3"
   },
