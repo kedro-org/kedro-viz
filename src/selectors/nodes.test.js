@@ -1,6 +1,7 @@
 import { mockState } from '../utils/state.mock';
 import {
   getNodeActive,
+  getNodeSelected,
   getNodeData,
   getNodeTextWidth,
   getPadding,
@@ -20,32 +21,20 @@ const getNodeName = state => state.node.name;
 
 describe('Selectors', () => {
   describe('getNodeActive', () => {
+    const nodeActive = getNodeActive(mockState.lorem);
+
     it('returns an object', () => {
-      expect(getNodeActive(mockState.lorem)).toEqual(expect.any(Object));
+      expect(nodeActive).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(getNodeActive(mockState.lorem))).toEqual(
-        getNodeIDs(mockState.lorem)
-      );
+      expect(Object.keys(nodeActive)).toEqual(getNodeIDs(mockState.lorem));
     });
 
     it('returns an object whose values are all Booleans', () => {
-      expect(
-        Object.values(getNodeActive(mockState.lorem)).every(
-          value => typeof value === 'boolean'
-        )
-      ).toBe(true);
-    });
-
-    it('returns true when a given node is clicked', () => {
-      const nodes = getNodeIDs(mockState.lorem);
-      const nodeID = nodes[0];
-      const inactiveNodes = nodes.filter(id => id !== nodeID);
-      const newMockState = reducer(mockState.lorem, toggleNodeClicked(nodeID));
-      const nodeActive = getNodeActive(newMockState);
-      expect(nodeActive[nodeID]).toEqual(true);
-      expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
+      expect(Object.values(nodeActive)).toEqual(
+        expect.arrayContaining([expect.any(Boolean)])
+      );
     });
 
     it('returns true when a given node is hovered', () => {
@@ -54,6 +43,34 @@ describe('Selectors', () => {
       const inactiveNodes = nodes.filter(id => id !== nodeID);
       const newMockState = reducer(mockState.lorem, toggleNodeHovered(nodeID));
       const nodeActive = getNodeActive(newMockState);
+      expect(nodeActive[nodeID]).toEqual(true);
+      expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
+    });
+  });
+
+  describe('getNodeSelected', () => {
+    const nodeSelected = getNodeSelected(mockState.lorem);
+
+    it('returns an object', () => {
+      expect(nodeSelected).toEqual(expect.any(Object));
+    });
+
+    it("returns an object whose keys match the current pipeline's nodes", () => {
+      expect(Object.keys(nodeSelected)).toEqual(getNodeIDs(mockState.lorem));
+    });
+
+    it('returns an object whose values are all Booleans', () => {
+      expect(Object.values(nodeSelected)).toEqual(
+        expect.arrayContaining([expect.any(Boolean)])
+      );
+    });
+
+    it('returns true when a given node is clicked', () => {
+      const nodes = getNodeIDs(mockState.lorem);
+      const nodeID = nodes[0];
+      const inactiveNodes = nodes.filter(id => id !== nodeID);
+      const newMockState = reducer(mockState.lorem, toggleNodeClicked(nodeID));
+      const nodeActive = getNodeSelected(newMockState);
       expect(nodeActive[nodeID]).toEqual(true);
       expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
     });

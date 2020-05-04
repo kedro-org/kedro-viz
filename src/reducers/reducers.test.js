@@ -75,6 +75,23 @@ describe('Reducer', () => {
       });
       expect(newState.node.disabled).toEqual({ '123': true, abc: true });
     });
+
+    it('should set nodeClicked to null if the selected node is being disabled', () => {
+      const nodeID = 'abc123';
+      const clickNodeAction = {
+        type: TOGGLE_NODE_CLICKED,
+        nodeClicked: nodeID
+      };
+      const clickedState = reducer(mockState.lorem, clickNodeAction);
+      expect(clickedState.node.clicked).toEqual(nodeID);
+      const disableNodeAction = {
+        type: TOGGLE_NODES_DISABLED,
+        nodeIDs: [nodeID],
+        isDisabled: true
+      };
+      const disabledState = reducer(clickedState, disableNodeAction);
+      expect(disabledState.node.clicked).toEqual(null);
+    });
   });
 
   describe('TOGGLE_TEXT_LABELS', () => {

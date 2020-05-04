@@ -16,6 +16,9 @@ function nodeReducer(nodeState = {}, action) {
 
     case TOGGLE_NODES_DISABLED: {
       return updateState({
+        clicked: action.nodeIDs.includes(nodeState.clicked)
+          ? null
+          : nodeState.clicked,
         disabled: action.nodeIDs.reduce(
           (disabled, id) =>
             Object.assign({}, disabled, {

@@ -2,14 +2,29 @@
   position: relative;
   display: flex;
   align-items: center;
-
-  &:hover {
-    background: rgba(#fff, 0.05);
-  }
+  transition: background-color ease $row-transition;
 
   &--active,
-  &--active:hover {
-    background: rgba(#fff, 0.1);
+  &--visible:hover {
+    .kui-theme--light & {
+      background-color: darken($color-bg-light-alt2, 4%);
+    }
+
+    .kui-theme--dark & {
+      background-color: lighten($color-bg-dark-alt2, 4%);
+    }
+  }
+
+  &--selected,
+  // additional selector required to increase specificity to override previous rule:
+  &--visible#{&}--selected {
+    .kui-theme--light & {
+      background-color: darken($color-bg-light-alt2, 10%);
+    }
+
+    .kui-theme--dark & {
+      background-color: lighten($color-bg-dark-alt2, 10%);
+    }
   }
 
   &--disabled {
@@ -22,7 +37,7 @@
   flex-shrink: 0;
   width: $row-icon-size;
   height: $row-icon-size;
-  transition: opacity ease 0.1s;
+  transition: opacity ease $row-transition;
 
   .kui-theme--light & {
     fill: $color-text-light;
@@ -41,10 +56,12 @@
   }
 
   .pipeline-nodelist__row:hover &,
+  .pipeline-nodelist__row--active &,
+  .pipeline-nodelist__row--selected &,
   [data-whatintent='keyboard'] .pipeline-nodelist__row__text:focus & {
     opacity: 1;
 
-    &--unchecked {
+    &--faded {
       opacity: 0.55;
     }
   }
@@ -57,12 +74,15 @@
   padding: $row-padding-y $row-offset-right $row-padding-y $row-offset-left;
   color: inherit;
   font-size: inherit;
+  font-family: inherit;
+  letter-spacing: inherit;
   text-align: inherit;
   background: none;
   border: none;
   border-radius: 0;
   box-shadow: none;
-  transition: opacity ease 0.1s;
+  cursor: default;
+  transition: opacity ease $row-transition;
 
   &:focus {
     outline: 4px solid $color-link;
@@ -82,9 +102,9 @@
   font-size: 1.6em;
   white-space: nowrap;
   text-overflow: ellipsis;
+  transition: opacity ease $row-transition;
 
-  &--disabled,
-  &--unchecked {
+  &--faded {
     opacity: 0.55;
   }
 
@@ -106,7 +126,6 @@
   padding: $visibility-icon-padding;
   border-radius: 50%;
   opacity: 0;
-  transition: opacity ease 0.2s;
 
   &--unchecked,
   .pipeline-nodelist__row__text:focus + label &,
@@ -120,7 +139,6 @@
 
   .pipeline-nodelist__row__checkbox:focus + & {
     outline: none;
-    transition: box-shadow ease 0.2s;
 
     [data-whatintent='keyboard'] & {
       box-shadow: 0 0 0 3px $color-link inset;

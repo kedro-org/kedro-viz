@@ -6,7 +6,6 @@ import {
   getNodeDisabledTag,
   getVisibleNodeIDs
 } from './disabled';
-import { getCentralNode } from './linked-nodes';
 import { getNodeRank } from './ranks';
 
 const getNodeIDs = state => state.node.ids;
@@ -16,6 +15,8 @@ const getNodeDisabledNode = state => state.node.disabled;
 const getNodeTags = state => state.node.tags;
 const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;
+const getHoveredNode = state => state.node.hovered;
+const getClickedNode = state => state.node.clicked;
 const getTagActive = state => state.tag.active;
 const getTextLabels = state => state.textLabels;
 const getFontLoaded = state => state.fontLoaded;
@@ -23,18 +24,29 @@ const getNodeTypeDisabled = state => state.nodeType.disabled;
 
 /**
  * Set active status if the node is specifically highlighted, and/or via an associated tag
- * @return {Boolean} True if active
  */
 export const getNodeActive = createSelector(
-  [getNodeIDs, getCentralNode, getNodeTags, getTagActive],
-  (nodeIDs, centralNode, nodeTags, tagActive) =>
+  [getNodeIDs, getHoveredNode, getNodeTags, getTagActive],
+  (nodeIDs, hoveredNode, nodeTags, tagActive) =>
     arrayToObject(nodeIDs, nodeID => {
-      if (nodeID === centralNode) {
+      if (nodeID === hoveredNode) {
         return true;
       }
       const activeViaTag = nodeTags[nodeID].some(tag => tagActive[tag]);
       return Boolean(activeViaTag);
     })
+);
+
+/**
+ * Set selected status if the node is clicked
+ */
+export const getNodeSelected = createSelector(
+  [getNodeIDs, getClickedNode, getNodeDisabled],
+  (nodeIDs, clickedNode, nodeDisabled) =>
+    arrayToObject(
+      nodeIDs,
+      nodeID => nodeID === clickedNode && !nodeDisabled[nodeID]
+    )
 );
 
 /**

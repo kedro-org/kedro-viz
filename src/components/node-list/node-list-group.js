@@ -18,15 +18,10 @@ export const NodeListGroup = ({
         <div>
           <h3 className="pipeline-nodelist__heading">
             <NodeListRow
-              active={null}
               checked={!type.disabled}
-              disabled={null}
               id={type.id}
               label={type.name}
               name={type.name}
-              onClick={null}
-              onMouseEnter={null}
-              onMouseLeave={null}
               onChange={e => {
                 onToggleTypeDisabled(type.id, !e.target.checked);
               }}

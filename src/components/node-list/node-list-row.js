@@ -16,33 +16,35 @@ const NodeListRow = ({
   onMouseLeave,
   onChange,
   onClick,
+  selected,
   type
 }) => {
   const VisibilityIcon = checked ? VisibleIcon : InvisibleIcon;
+  const visible = Boolean(onClick && !disabled && checked);
+  const faded = disabled || !checked;
 
   return (
     <div
       className={classnames('pipeline-nodelist__row kedro', {
+        'pipeline-nodelist__row--visible': visible,
         'pipeline-nodelist__row--active': active,
+        'pipeline-nodelist__row--selected': selected,
         'pipeline-nodelist__row--disabled': disabled
       })}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}>
+      onMouseEnter={visible ? onMouseEnter : null}
+      onMouseLeave={visible ? onMouseLeave : null}>
       <button
+        className="pipeline-nodelist__row__text"
         onClick={onClick}
         onFocus={onMouseEnter}
         onBlur={onMouseLeave}
-        disabled={disabled}
-        className={classnames('pipeline-nodelist__row__text', {
-          'pipeline-nodelist__row__text--active': active,
-          'pipeline-nodelist__row__text--unchecked': !checked
-        })}
+        disabled={!visible}
         title={children ? null : name}>
         <NodeIcon
           className={classnames(
             'pipeline-nodelist__row__type-icon pipeline-nodelist__row__icon',
             {
-              'pipeline-nodelist__row__type-icon--unchecked': !checked,
+              'pipeline-nodelist__row__type-icon--faded': faded,
               'pipeline-nodelist__row__type-icon--nested': !children
             }
           )}
@@ -50,9 +52,7 @@ const NodeListRow = ({
         />
         <span
           className={classnames('pipeline-nodelist__row__label', {
-            'pipeline-nodelist__row__label--active': active,
-            'pipeline-nodelist__row__label--disabled': disabled,
-            'pipeline-nodelist__row__label--unchecked': !checked
+            'pipeline-nodelist__row__label--faded': faded
           })}
           dangerouslySetInnerHTML={{ __html: label }}
         />
