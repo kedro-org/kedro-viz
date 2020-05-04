@@ -19,6 +19,15 @@ import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import draw from './draw';
 import './styles/flowchart.css';
 
+const zeroWidthSpace = String.fromCharCode(0x200b);
+/**
+ * Force tooltip text to break on special characters
+ * @param {string} text Any text with special characters
+ * @return {string} text
+ */
+const insertZeroWidthSpace = text =>
+  text.replace(/(\W)/g, `${zeroWidthSpace}$1${zeroWidthSpace}`);
+
 /**
  * Display a pipeline flowchart, mostly rendered with D3
  */
@@ -248,7 +257,7 @@ export class FlowChart extends Component {
     this.setState({
       tooltipVisible: true,
       tooltipIsRight: isRight,
-      tooltipText: node.fullName,
+      tooltipText: insertZeroWidthSpace(node.fullName),
       tooltipX: xOffset - left + eventOffset.width / 2,
       tooltipY: eventOffset.top - top
     });
@@ -318,12 +327,12 @@ export class FlowChart extends Component {
           ref={this.layerNamesRef}
         />
         <div
-          className={classnames('pipeline-flowchart__tooltip kedro', {
+          className={classnames('pipeline-flowchart__tooltip', {
             'tooltip--visible': tooltipVisible,
             'tooltip--right': tooltipIsRight
           })}
           style={{ transform: `translate(${tooltipX}px, ${tooltipY}px)` }}>
-          <span>{tooltipText}</span>
+          <div>{tooltipText}</div>
         </div>
       </div>
     );

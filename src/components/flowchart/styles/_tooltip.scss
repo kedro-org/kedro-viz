@@ -2,25 +2,14 @@
 
 .pipeline-flowchart__tooltip {
   position: absolute;
-  top: -60px;
+  top: -10px;
   left: -20px;
   z-index: 9;
-  padding: 12px 20px;
-  color: white;
+  width: 100vw;
   visibility: hidden;
   opacity: 0;
   transition: opacity ease 0.1s, visibility ease 0.1s;
   pointer-events: none;
-
-  .kui-theme--light & {
-    background: $tooltip-bg-light;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
-
-  .kui-theme--dark & {
-    background: $tooltip-bg-dark;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
 
   &.tooltip--visible {
     visibility: visible;
@@ -57,7 +46,29 @@
     }
   }
 
-  span {
+  div {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    max-width: 50vw;
+    padding: 12px 20px;
+    color: white;
     font-size: 1.5em;
+    overflow-wrap: break-word;
+
+    .kui-theme--light & {
+      background: $tooltip-bg-light;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .kui-theme--dark & {
+      background: $tooltip-bg-dark;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &.tooltip--right div {
+    right: 0;
+    left: auto;
   }
 }
