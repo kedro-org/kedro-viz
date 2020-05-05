@@ -562,18 +562,42 @@ def pipeline():
 
 
 @pytest.fixture
-def catalog():
+def old_catalog_with_layers():
     data_sets = {
-        "bob_in": PickleDataSet("raw.csv", layer="raw"),
+        "bob_in": PickleDataSet("raw.csv"),
         "paras:value": MemoryDataSet("value"),
-        "result": PickleDataSet("final.csv", layer="final"),
+        "result": PickleDataSet("final.csv"),
     }
+    setattr(data_sets["bob_in"], "_layer", "raw")
+    setattr(data_sets["result"], "_layer", "final")
 
     return DataCatalog(data_sets=data_sets)
 
 
-def test_format_pipeline_data(pipeline, catalog):
-    result = format_pipeline_data(pipeline, catalog)
+@pytest.fixture
+def new_catalog_with_layers():
+    data_sets = {
+        "bob_in": PickleDataSet("raw.csv"),
+        "paras:value": MemoryDataSet("value"),
+        "result": PickleDataSet("final.csv"),
+    }
+    layers = {"raw": {"bob_in"}, "final": {"result"}}
+
+    catalog = DataCatalog(data_sets=data_sets)
+    setattr(catalog, "layers", layers)
+
+    return catalog
+
+
+def test_format_pipeline_data_legacy(pipeline, old_catalog_with_layers):
+    result = format_pipeline_data(pipeline, old_catalog_with_layers)
+    result_file_path = Path(__file__).parent / "result.json"
+    json_data = json.loads(result_file_path.read_text())
+    assert json_data == result
+
+
+def test_format_pipeline_data(pipeline, new_catalog_with_layers):
+    result = format_pipeline_data(pipeline, new_catalog_with_layers)
     result_file_path = Path(__file__).parent / "result.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
