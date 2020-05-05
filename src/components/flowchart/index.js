@@ -239,7 +239,6 @@ export class FlowChart extends Component {
   showTooltip(node) {
     this.setState({
       tooltip: {
-        chartSize: this.props.chartSize,
         targetRect: event.target.getBoundingClientRect(),
         text: node.fullName,
         visible: true
@@ -265,7 +264,8 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { outerWidth = 0, outerHeight = 0 } = this.props.chartSize;
+    const { chartSize } = this.props;
+    const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
     return (
       <div
@@ -306,7 +306,7 @@ export class FlowChart extends Component {
           className="pipeline-flowchart__layer-names"
           ref={this.layerNamesRef}
         />
-        <Tooltip {...this.state.tooltip} />
+        <Tooltip chartSize={chartSize} {...this.state.tooltip} />
       </div>
     );
   }
