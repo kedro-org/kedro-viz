@@ -9,8 +9,8 @@ const zeroWidthSpace = String.fromCharCode(0x200b);
  * @param {string} text Any text with special characters
  * @return {string} text
  */
-const insertZeroWidthSpace = text =>
-  text.replace(/(\W)/g, `${zeroWidthSpace}$1${zeroWidthSpace}`);
+export const insertZeroWidthSpace = text =>
+  text.replace(/([^\w\s]|[_])/g, `${zeroWidthSpace}$1${zeroWidthSpace}`);
 
 /**
  * Display flowchart node tooltip
