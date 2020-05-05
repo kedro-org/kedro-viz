@@ -473,7 +473,7 @@ def _call_viz(
                 pipeline = _get_pipeline_from_context(context, pipeline_name)
             except KedroContextError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
-            catalog = context.old_catalog_with_layers
+            catalog = context.catalog
 
         else:
             # Kedro 0.14.*

@@ -158,7 +158,7 @@ def patched_get_project_context(mocker):
     ):  # pylint: disable=unused-argument
         mocked_context = mocker.Mock()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
-        mocked_context.old_catalog_with_layers = mocker.MagicMock()
+        mocked_context.catalog = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
         return {
             "create_pipeline": create_pipeline,
