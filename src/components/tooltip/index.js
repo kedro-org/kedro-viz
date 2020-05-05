@@ -20,17 +20,20 @@ const insertZeroWidthSpace = text =>
  * @param {string} text Tooltip display label
  */
 const Tooltip = ({ chartSize, targetRect, visible, text }) => {
-  const { left, top, width, outerWidth, sidebarWidth } = chartSize;
+  const { left, top, width, height, outerWidth, sidebarWidth } = chartSize;
   const isRight = targetRect.left - sidebarWidth > width / 2;
+  const isTop = targetRect.top < height / 2;
   const xOffset = isRight ? targetRect.left - outerWidth : targetRect.left;
+  const yOffset = isTop ? targetRect.top + targetRect.height : targetRect.top;
   const x = xOffset - left + targetRect.width / 2;
-  const y = targetRect.top - top;
+  const y = yOffset - top;
 
   return (
     <div
       className={classnames('pipeline-tooltip', {
         'pipeline-tooltip--visible': visible,
-        'pipeline-tooltip--right': isRight
+        'pipeline-tooltip--right': isRight,
+        'pipeline-tooltip--top': isTop
       })}
       style={{ transform: `translate(${x}px, ${y}px)` }}>
       <div className="pipeline-tooltip__text">{insertZeroWidthSpace(text)}</div>

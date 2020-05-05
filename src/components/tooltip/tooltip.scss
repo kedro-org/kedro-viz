@@ -2,11 +2,14 @@
 
 $tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
 $tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
+$x: 20px;
+$y: 10px;
+$t: 10px;
 
 .pipeline-tooltip {
   position: absolute;
-  top: -10px;
-  left: -20px;
+  top: -$y;
+  left: -$x;
   z-index: 9;
   width: 100vw;
   visibility: hidden;
@@ -20,19 +23,23 @@ $tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
   }
 
   &--right {
-    right: -20px;
+    right: -$x;
     left: auto;
+  }
+
+  &--top {
+    top: $y;
   }
 
   &::before {
     position: absolute;
-    bottom: -10px;
-    left: 10px;
+    bottom: -$y;
+    left: $x/2;
     width: 0;
     height: 0;
     border-color: transparent;
     border-style: solid;
-    border-width: 10px 10px 0 10px;
+    border-width: $t $t 0 $t;
     content: '';
 
     .kui-theme--light & {
@@ -45,8 +52,23 @@ $tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
   }
 
   &--right::before {
-    right: 10px;
+    right: $x/2;
     left: auto;
+  }
+
+  &--top::before {
+    top: -$y;
+    bottom: auto;
+    border-width: 0 $t $t $t;
+    border-top-color: transparent;
+
+    .kui-theme--light & {
+      border-bottom-color: $tooltip-bg-light;
+    }
+
+    .kui-theme--dark & {
+      border-bottom-color: $tooltip-bg-dark;
+    }
   }
 }
 
@@ -73,5 +95,10 @@ $tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
   .pipeline-tooltip--right & {
     right: 0;
     left: auto;
+  }
+
+  .pipeline-tooltip--top & {
+    top: 0;
+    bottom: auto;
   }
 }
