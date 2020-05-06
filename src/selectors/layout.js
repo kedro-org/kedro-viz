@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import dagre from 'dagre';
+import graph from '../utils/graph';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
@@ -15,7 +16,7 @@ const getVisibleSidebar = state => state.visible.sidebar;
  * as possible, and keep it separate from other properties (like node.active)
  * which don't affect layout.
  */
-export const getGraph = createSelector(
+export const getGraphDagre = createSelector(
   [getVisibleNodes, getVisibleEdges, getHasVisibleLayers],
   (nodes, edges, hasVisibleLayers) => {
     if (!nodes.length || !edges.length) {
@@ -43,6 +44,12 @@ export const getGraph = createSelector(
 
     return graph;
   }
+);
+
+// export const getGraph = getGraphDagre;
+export const getGraph = createSelector(
+  [getVisibleNodes, getVisibleEdges],
+  graph
 );
 
 /**
