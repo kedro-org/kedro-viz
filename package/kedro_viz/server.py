@@ -277,6 +277,9 @@ def _sort_layers(nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]) -> L
 
 def _construct_layer_mapping(catalog):
     if hasattr(catalog, "layers"):  # kedro>=0.16.0
+        if catalog.layers is None:
+            return {ds_name: None for ds_name in catalog._data_sets}   # pylint: disable=protected-access
+
         dataset_to_layer = {}
         for layer, dataset_names in catalog.layers.items():
             dataset_to_layer.update({dataset_name: layer for dataset_name in dataset_names})

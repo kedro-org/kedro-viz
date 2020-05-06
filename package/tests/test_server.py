@@ -570,8 +570,13 @@ def old_catalog_with_layers():
     }
     setattr(data_sets["bob_in"], "_layer", "raw")
     setattr(data_sets["result"], "_layer", "final")
+    catalog = DataCatalog(data_sets=data_sets)
+    try:
+        catalog.__dict__.pop("layers")
+    except KeyError:
+        pass
 
-    return DataCatalog(data_sets=data_sets)
+    return catalog
 
 
 @pytest.fixture
@@ -601,6 +606,12 @@ def test_format_pipeline_data(pipeline, new_catalog_with_layers):
     result_file_path = Path(__file__).parent / "result.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
+
+
+def test_format_pipeline_data_no_layers(pipeline, new_catalog_with_layers):
+    setattr(new_catalog_with_layers, "layers", None)
+    result = format_pipeline_data(pipeline, new_catalog_with_layers)
+    assert result["layers"] == []
 
 
 @pytest.mark.parametrize("graph_schema,nodes,node_dependencies,expected", [
