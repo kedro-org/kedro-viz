@@ -76,7 +76,7 @@ $t: 10px;
   position: absolute;
   bottom: 0;
   left: 0;
-  max-width: 50vw;
+  max-width: calc(50vw - 150px);
   padding: 12px 20px;
   color: white;
   font-size: 1.5em;
