@@ -2,85 +2,52 @@ import {
   getNumberArray,
   randomIndex,
   randomNumber,
-  getRandom,
+  randomNumberBetween,
   getRandomName,
   unique
 } from './index';
 
 //--- Config variables ---//
 
-const DATA_NODE_COUNT = 30;
-const MAX_CONNECTED_NODES = 4;
+const MIN_CONNECTED_NODES = 1;
+const MAX_CONNECTED_NODES = 2;
 const MAX_RANK_COUNT = 20;
 const MIN_RANK_COUNT = 5;
+const MAX_RANK_NODE_COUNT = 10;
+const MIN_RANK_NODE_COUNT = 1;
 const MAX_NODE_TAG_COUNT = 5;
 const MAX_TAG_COUNT = 20;
 const PARAMETERS_FREQUENCY = 0.05;
-const TASK_NODE_COUNT = 10;
+const LAYERS = [
+  'Raw',
+  'Intermediate',
+  'Primary',
+  'Feature',
+  'Model Input',
+  'Model Output'
+];
 
 /**
  * Generate a random pipeline dataset
  */
 class Pipeline {
   constructor() {
-    this.CONNECTION_COUNT = randomNumber(MAX_CONNECTED_NODES);
-    this.RANK_COUNT =
-      randomNumber(MAX_RANK_COUNT - MIN_RANK_COUNT) + MIN_RANK_COUNT;
+    this.RANK_COUNT = this.getRankCount();
     this.TAG_COUNT = randomNumber(MAX_TAG_COUNT);
-    this.nodes = this.getNodes();
     this.tags = this.generateTags();
+    this.nodes = this.generateNodes();
+    this.edges = this.generateEdges();
+    this.nodes = this.filterUnconnectedNodes();
+    this.tags = this.filterUnusedTags();
   }
 
-  /**
-   * Generate a name for each node.
-   * Put 'parameters_' in front of 1 in 20.
-   * @param {number} paramFreq How often nodes should include 'parameters' in their name
-   */
-  getRandomNodeName(paramFreq) {
-    const name = getRandomName(randomNumber(10));
-    const params = Math.random() < paramFreq ? 'parameters_' : '';
-    return params + name;
-  }
-
-  /**
-   * Generate a list of nodes
-   * @param {number} count The number of nodes to generate
-   * @param {number} paramFreq How often nodes should include 'parameters' in their name
-   * @param {string} type
-   */
-  generateNodeList(count, paramFreq, type) {
-    return getNumberArray(count)
-      .map(() => this.getRandomNodeName(paramFreq))
-      .filter(unique)
-      .map(id => {
-        const name = id.replace(/_/g, ' ');
-        return {
-          id: `${type}/${id}`,
-          name,
-          full_name: `${name} (${name})`,
-          type: id.includes('param') ? 'parameters' : type,
-          rank: this.getRank(type)
-        };
-      });
-  }
-
-  /**
-   * Get lists of both data and task nodes
-   */
-  getNodes() {
-    return {
-      data: this.generateNodeList(
-        DATA_NODE_COUNT,
-        PARAMETERS_FREQUENCY,
-        'data'
-      ),
-      task: this.generateNodeList(TASK_NODE_COUNT, 0, 'task')
-    };
-  }
-
-  getRank(type) {
-    const increment = { data: 1, task: 0.5 };
-    return this.RANK_COUNT - randomIndex(this.RANK_COUNT + increment[type]);
+  getRankCount() {
+    let rankCount = randomNumberBetween(MIN_RANK_COUNT, MAX_RANK_COUNT);
+    // Ensure odd numbers only, so that we start and end with a data node
+    if (!rankCount % 2) {
+      rankCount += 1;
+    }
+    return rankCount;
   }
 
   /**
@@ -93,6 +60,66 @@ class Pipeline {
   }
 
   /**
+   * Create list of nodes
+   */
+  generateNodes() {
+    const nodes = [];
+    for (let rank = 0; rank < this.RANK_COUNT; rank++) {
+      const rankNodeCount = this.getRankNodeCount(rank);
+      const type = this.getType(rank);
+
+      for (let i = 0; i < rankNodeCount; i++) {
+        const node = this.createNode(i, rank, type);
+        nodes.push(node);
+      }
+    }
+    return nodes;
+  }
+
+  getRankNodeCount(rank) {
+    const max = MAX_RANK_NODE_COUNT;
+    const min = MIN_RANK_NODE_COUNT;
+    const p = (this.RANK_COUNT - rank) / this.RANK_COUNT;
+    return randomNumber(p * (max - min) + min);
+  }
+
+  getType(rank) {
+    if (rank % 2) {
+      return 'task';
+    }
+    if (Math.random() < PARAMETERS_FREQUENCY) {
+      return 'parameters';
+    }
+    return 'data';
+  }
+
+  createNode(i, rank, type) {
+    const name = this.getNodeName(type);
+    const node = {
+      id: `${type}/${name}(${rank}-${i})`,
+      name,
+      full_name: getRandomName(randomNumber(40)),
+      type,
+      rank,
+      layer: this.getLayer(rank)
+    };
+    if (type === 'data') {
+      node.tags = this.getRandomTags();
+    }
+    return node;
+  }
+
+  getNodeName(type) {
+    const name = getRandomName(randomNumber(10), ' ');
+    return type === 'parameters' ? `parameters_${name}` : name;
+  }
+
+  getLayer(rank) {
+    const index = Math.floor((rank / this.RANK_COUNT) * LAYERS.length);
+    return LAYERS[index];
+  }
+
+  /**
    * Select a random number of tags from the list of tags
    */
   getRandomTags() {
@@ -101,70 +128,87 @@ class Pipeline {
       .filter(unique);
   }
 
+  generateEdges() {
+    const edges = [];
+    const dataNodes = this.nodes.filter(node => node.type === 'data');
+    const taskNodes = this.nodes.filter(node => node.type !== 'data');
+
+    taskNodes.forEach(node => {
+      const ancestors = dataNodes.filter(d => d.rank < node.rank);
+      this.getRandomNodes(ancestors).forEach(source => {
+        edges.push({
+          source: source.id,
+          target: node.id
+        });
+      });
+
+      const descendants = dataNodes.filter(d => d.rank > node.rank);
+      this.getRandomNodes(descendants).forEach(target => {
+        edges.push({
+          source: node.id,
+          target: target.id
+        });
+      });
+    });
+
+    return edges;
+  }
+
   /**
-   * Get connected data nodes for each task node
-   * @param {Function} condition Determine order of precedence
+   * Get a random list of nodes to link to
+   * algorithm via https://stackoverflow.com/a/19270021/1651713
+   * @param {array} nodes List of nodes from which to choose
    */
-  getConnectedNodes(condition) {
-    return getNumberArray(this.CONNECTION_COUNT)
-      .map(() => getRandom(this.nodes.data.filter(condition)))
-      .filter(Boolean)
-      .map(d => d.id)
-      .filter(unique);
+  getRandomNodes(nodes) {
+    let len = nodes.length;
+    let connections = randomNumberBetween(
+      MIN_CONNECTED_NODES,
+      MAX_CONNECTED_NODES
+    );
+    if (connections > len) {
+      return nodes;
+    }
+    const result = new Array(connections);
+    const taken = new Array(len);
+    while (connections--) {
+      var x = Math.floor(Math.random() * len);
+      result[connections] = nodes[x in taken ? taken[x] : x];
+      taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
+  }
+
+  // Select only nodes that are connected to others
+  filterUnconnectedNodes() {
+    const findMatchingEdge = node => edge =>
+      node.id === edge.source || node.id === edge.target;
+
+    return this.nodes.filter(
+      node => this.edges.findIndex(findMatchingEdge(node)) !== -1
+    );
+  }
+
+  // Select only used tags
+  filterUnusedTags() {
+    return this.nodes
+      .reduce((tags, node) => (node.tags ? tags.concat(node.tags) : tags), [])
+      .filter(unique)
+      .map(tag => ({ name: tag, id: tag }));
   }
 
   /**
    * Get a complete JSON schema
    */
   getSchema() {
-    let nodes = this.nodes.task
-      .concat(this.nodes.data)
-      .map(node => ({ ...node, tags: this.getRandomTags() }));
-
-    const edges = [];
-    this.nodes.task.forEach(node => {
-      this.getConnectedNodes(d => d.rank > node.rank).forEach(target => {
-        edges.push({
-          source: node.id,
-          target
-        });
-      });
-      this.getConnectedNodes(d => d.rank < node.rank).forEach(source => {
-        edges.push({
-          source,
-          target: node.id
-        });
-      });
-    });
-
-    // Remove unconnected nodes
-    nodes = nodes.filter(
-      node =>
-        edges.findIndex(
-          edge => node.id === edge.source || node.id === edge.target
-        ) !== -1
-    );
-
-    const tags = nodes
-      .reduce((tags, node) => tags.concat(node.tags), [])
-      .filter(unique)
-      .map(tag => ({ name: tag, id: tag }));
-
     return {
-      nodes,
-      edges,
-      tags
+      layers: LAYERS,
+      nodes: this.nodes,
+      edges: this.edges,
+      tags: this.tags
     };
-  }
-
-  /**
-   * Generate the full pipeline datum
-   */
-  getDatum() {
-    return this.getSchema();
   }
 }
 
-const generateRandomPipeline = () => new Pipeline().getDatum();
+const generateRandomPipeline = () => new Pipeline().getSchema();
 
 export default generateRandomPipeline;

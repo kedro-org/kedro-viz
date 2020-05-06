@@ -42,6 +42,13 @@ export const randomIndex = n => Math.floor(Math.random() * n);
 export const randomNumber = n => Math.ceil(Math.random() * n);
 
 /**
+ * Get a random number between min and max, inclusive
+ * @param {number} (min) Min number
+ * @param {number} (max) Max number
+ */
+export const randomNumberBetween = (min, max) => randomNumber(max - min) + min;
+
+/**
  * Get a random datum from an array
  * @param {Array} range The array to select a random item from
  */
