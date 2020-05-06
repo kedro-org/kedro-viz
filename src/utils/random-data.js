@@ -11,8 +11,8 @@ import {
 
 const DATA_NODE_COUNT = 30;
 const MAX_CONNECTED_NODES = 4;
-const MAX_LAYER_COUNT = 20;
-const MIN_LAYER_COUNT = 5;
+const MAX_RANK_COUNT = 20;
+const MIN_RANK_COUNT = 5;
 const MAX_NODE_TAG_COUNT = 5;
 const MAX_TAG_COUNT = 20;
 const PARAMETERS_FREQUENCY = 0.05;
@@ -24,8 +24,8 @@ const TASK_NODE_COUNT = 10;
 class Pipeline {
   constructor() {
     this.CONNECTION_COUNT = randomNumber(MAX_CONNECTED_NODES);
-    this.LAYER_COUNT =
-      randomNumber(MAX_LAYER_COUNT - MIN_LAYER_COUNT) + MIN_LAYER_COUNT;
+    this.RANK_COUNT =
+      randomNumber(MAX_RANK_COUNT - MIN_RANK_COUNT) + MIN_RANK_COUNT;
     this.TAG_COUNT = randomNumber(MAX_TAG_COUNT);
     this.nodes = this.getNodes();
     this.tags = this.generateTags();
@@ -59,7 +59,7 @@ class Pipeline {
           name,
           full_name: `${name} (${name})`,
           type: id.includes('param') ? 'parameters' : type,
-          layer: this.getLayer(type)
+          rank: this.getRank(type)
         };
       });
   }
@@ -78,9 +78,9 @@ class Pipeline {
     };
   }
 
-  getLayer(type) {
+  getRank(type) {
     const increment = { data: 1, task: 0.5 };
-    return this.LAYER_COUNT - randomIndex(this.LAYER_COUNT + increment[type]);
+    return this.RANK_COUNT - randomIndex(this.RANK_COUNT + increment[type]);
   }
 
   /**
@@ -123,13 +123,13 @@ class Pipeline {
 
     const edges = [];
     this.nodes.task.forEach(node => {
-      this.getConnectedNodes(d => d.layer > node.layer).forEach(target => {
+      this.getConnectedNodes(d => d.rank > node.rank).forEach(target => {
         edges.push({
           source: node.id,
           target
         });
       });
-      this.getConnectedNodes(d => d.layer < node.layer).forEach(source => {
+      this.getConnectedNodes(d => d.rank < node.rank).forEach(source => {
         edges.push({
           source,
           target: node.id
