@@ -4,6 +4,7 @@ import {
   getNumberArray,
   randomIndex,
   randomNumber,
+  randomNumberBetween,
   getRandom,
   getRandomName,
   unique
@@ -93,6 +94,27 @@ describe('utils', () => {
 
     it('returns a number greater than zero', () => {
       expect(randomNumber(2)).toBeGreaterThan(0);
+    });
+  });
+
+  describe('randomNumberBetween', () => {
+    const min = 5;
+    const max = 10;
+    it('returns a number', () => {
+      expect(typeof randomNumberBetween(min, max)).toEqual('number');
+    });
+
+    it('returns an integer', () => {
+      const n = randomNumberBetween(min, max);
+      expect(Math.round(n)).toEqual(n);
+    });
+
+    it('returns a number less or equal to the max number passed', () => {
+      expect(randomNumberBetween(min, max)).toBeLessThan(max + 1);
+    });
+
+    it('returns a number greater or equal to the min number passed', () => {
+      expect(randomNumberBetween(min, max)).toBeGreaterThan(min - 1);
     });
   });
 
