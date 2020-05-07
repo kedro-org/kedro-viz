@@ -74,25 +74,29 @@ describe('Tooltip', () => {
 });
 
 describe('insertZeroWidthSpace', () => {
-  it('wraps special characters with zero-width spaces', () => {
-    expect(insertZeroWidthSpace('-').length).toBe(3);
-    expect(insertZeroWidthSpace('_').length).toBe(3);
-    expect(insertZeroWidthSpace('[').length).toBe(3);
-    expect(insertZeroWidthSpace(']').length).toBe(3);
-    expect(insertZeroWidthSpace('/').length).toBe(3);
-    expect(insertZeroWidthSpace(':').length).toBe(3);
-    expect(insertZeroWidthSpace('\\').length).toBe(3);
+  describe('special characters', () => {
+    const z = String.fromCharCode(0x200b);
+    const wrap = text => z + text + z;
+    const characters = '-_[]/:\\!@£$%^&*()'.split('');
+    test.each(characters)('wraps %s with a zero-width space', d => {
+      expect(insertZeroWidthSpace(d)).toBe(wrap(d));
+      expect(insertZeroWidthSpace(d).length).toBe(3);
+    });
   });
 
-  it('does not wrap alphanumeric characters', () => {
-    expect(insertZeroWidthSpace('a').length).toBe(1);
-    expect(insertZeroWidthSpace('aBc123').length).toBe(6);
+  describe('alphanumeric characters', () => {
+    const characters = ['a', 'B', '123', 'aBc123', '0', ''];
+    test.each(characters)('does not wrap %s with a zero-width space', d => {
+      expect(insertZeroWidthSpace(d)).toBe(d);
+      expect(insertZeroWidthSpace(d).length).toBe(d.length);
+    });
   });
 
-  it('does not wrap spaces', () => {
-    expect(insertZeroWidthSpace(' ').length).toBe(1);
-    expect(insertZeroWidthSpace('\t').length).toBe(1);
-    expect(insertZeroWidthSpace('a b').length).toBe(3);
-    expect(insertZeroWidthSpace(' a ').length).toBe(3);
+  describe('spaces', () => {
+    const characters = [' ', '\t', '\n', 'a b', ' a '];
+    test.each(characters)('does not wrap %s with a zero-width space', d => {
+      expect(insertZeroWidthSpace(d)).toBe(d);
+      expect(insertZeroWidthSpace(d).length).toBe(d.length);
+    });
   });
 });
