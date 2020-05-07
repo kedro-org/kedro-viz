@@ -234,7 +234,7 @@ class Pipeline {
       node.id === edge.source || node.id === edge.target;
 
     return this.nodes.filter(
-      node => this.edges.findIndex(findMatchingEdge(node)) < 0
+      node => this.edges.findIndex(findMatchingEdge(node)) >= 0
     );
   }
 
