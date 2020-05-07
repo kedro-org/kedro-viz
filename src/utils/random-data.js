@@ -39,6 +39,11 @@ class Pipeline {
     this.edges = this.generateEdges();
   }
 
+  /**
+   * Get the number of ranks (i.e. horizontal bands)
+   * Odd ranks are data, even are task
+   * @returns {number} Rank count total
+   */
   getRankCount() {
     let rankCount = randomNumberBetween(MIN_RANK_COUNT, MAX_RANK_COUNT);
     // Ensure odd numbers only, so that we start and end with a data node
@@ -50,6 +55,7 @@ class Pipeline {
 
   /**
    * Generate a random list of tags
+   * @returns {array} Tag name strings
    */
   generateTags() {
     return getNumberArray(this.tagCount)
@@ -59,6 +65,7 @@ class Pipeline {
 
   /**
    * Create list of nodes
+   * @returns {array} List of node objects
    */
   generateNodes() {
     const nodes = [];
@@ -74,6 +81,11 @@ class Pipeline {
     return nodes;
   }
 
+  /**
+   * Randomly calculate the number of nodes in a rank
+   * @param {number} rank Rank number
+   * @returns {number} rank node count
+   */
   getRankNodeCount(rank) {
     const max = MAX_RANK_NODE_COUNT;
     const min = MIN_RANK_NODE_COUNT;
@@ -81,6 +93,11 @@ class Pipeline {
     return randomNumber(p * (max - min) + min);
   }
 
+  /**
+   * Determine a node's type based on its rank
+   * @param {number} rank Rank number
+   * @returns {string} Node type (task/data/parameters)
+   */
   getType(rank) {
     if (rank % 2) {
       return 'task';
@@ -91,6 +108,13 @@ class Pipeline {
     return 'data';
   }
 
+  /**
+   * Create a node datum object
+   * @param {number} i Node index within its rank
+   * @param {number} rank Rank index
+   * @param {number} type
+   * @returns {object} Node object
+   */
   createNode(i, rank, type) {
     const name = this.getNodeName(type);
     const node = {
@@ -107,11 +131,21 @@ class Pipeline {
     return node;
   }
 
+  /**
+   * Create a new node name of up to 10 words
+   * @param {string} Node type (task/data/parameters)
+   * @returns {string} Node name
+   */
   getNodeName(type) {
     const name = getRandomName(randomNumber(10), ' ');
-    return type === 'parameters' ? `parameters_${name}` : name;
+    return type === 'parameters' ? `Parameters ${name}` : name;
   }
 
+  /**
+   * Get the layer for a give node based on its rank
+   * @param {number} rank Rank index
+   * @returns {string} Layer name
+   */
   getLayer(rank) {
     const index = Math.floor((rank / this.rankCount) * LAYERS.length);
     return LAYERS[index];
@@ -119,6 +153,7 @@ class Pipeline {
 
   /**
    * Select a random number of tags from the list of tags
+   * @returns {array} List of tags
    */
   getRandomTags() {
     return getNumberArray(randomNumber(this.tagCount))
@@ -126,6 +161,10 @@ class Pipeline {
       .filter(unique);
   }
 
+  /**
+   * Create list of edges
+   * @returns {array} Edge objects
+   */
   generateEdges() {
     const edges = [];
     const dataNodes = this.nodes.filter(node => node.type === 'data');
@@ -156,6 +195,7 @@ class Pipeline {
    * Get a random list of nodes to link to
    * algorithm via https://stackoverflow.com/a/19270021/1651713
    * @param {array} nodes List of nodes from which to choose
+   * @returns {array} Randomly-selected nodes
    */
   getRandomNodes(nodes) {
     let len = nodes.length;
@@ -176,7 +216,10 @@ class Pipeline {
     return result;
   }
 
-  // Select only nodes that are connected to others
+  /**
+   * Select only nodes that are connected to others
+   * @returns {object} Filtered nodes
+   */
   filterUnconnectedNodes() {
     const findMatchingEdge = node => edge =>
       node.id === edge.source || node.id === edge.target;
@@ -186,7 +229,10 @@ class Pipeline {
     );
   }
 
-  // Select only used tags
+  /**
+   * Select only used tags
+   * @returns {object} Filtered tags
+   */
   filterUnusedTags() {
     return this.nodes
       .reduce((tags, node) => (node.tags ? tags.concat(node.tags) : tags), [])
@@ -196,6 +242,7 @@ class Pipeline {
 
   /**
    * Get a complete JSON schema
+   * @returns {object} Pipeline schema
    */
   getSchema() {
     return {
