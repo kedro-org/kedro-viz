@@ -1,7 +1,9 @@
 import {
+  arrayToObject,
   getNumberArray,
   randomNumber,
   randomNumberBetween,
+  getRandom,
   getRandomName,
   getRandomSelection,
   unique
@@ -11,7 +13,7 @@ import {
 
 const MIN_CONNECTED_NODES = 1;
 const MAX_CONNECTED_NODES = 2;
-const MAX_RANK_COUNT = 20;
+const MAX_RANK_COUNT = 40;
 const MIN_RANK_COUNT = 5;
 const MAX_RANK_NODE_COUNT = 10;
 const MIN_RANK_NODE_COUNT = 1;
@@ -33,6 +35,7 @@ const LAYERS = [
 class Pipeline {
   constructor() {
     this.rankCount = this.getRankCount();
+    this.rankLayers = this.getRankLayers();
     this.tags = this.generateTags();
     this.nodes = this.generateNodes();
     this.edges = this.generateEdges();
@@ -50,6 +53,28 @@ class Pipeline {
       rankCount += 1;
     }
     return rankCount;
+  }
+
+  /**
+   * Randomly determine the layer for each rank
+   * @returns {object} Layers by rank
+   */
+  getRankLayers() {
+    const layerSize = arrayToObject(LAYERS, () => 0);
+    // Randomly decide the number of ranks in each layer
+    for (let i = 0; i < this.rankCount; i++) {
+      layerSize[getRandom(LAYERS)]++;
+    }
+    // Assign layers to ranks based on layerSize
+    const rankLayers = {};
+    for (let rank = 0, layer = 0; rank < this.rankCount; rank++) {
+      while (layerSize[LAYERS[layer]] < 1) {
+        layer++;
+      }
+      rankLayers[rank] = LAYERS[layer];
+      layerSize[LAYERS[layer]]--;
+    }
+    return rankLayers;
   }
 
   /**
@@ -123,7 +148,7 @@ class Pipeline {
       full_name: getRandomName(randomNumber(40)),
       type,
       rank,
-      layer: this.getLayer(rank),
+      layer: this.rankLayers[rank],
       tags: this.getRandomTags()
     };
     return node;
@@ -137,16 +162,6 @@ class Pipeline {
   getNodeName(type) {
     const name = getRandomName(randomNumber(10), ' ');
     return type === 'parameters' ? `Parameters ${name}` : name;
-  }
-
-  /**
-   * Get the layer for a give node based on its rank
-   * @param {number} rank Rank index
-   * @returns {string} Layer name
-   */
-  getLayer(rank) {
-    const index = Math.floor((rank / this.rankCount) * LAYERS.length);
-    return LAYERS[index];
   }
 
   /**
