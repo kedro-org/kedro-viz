@@ -32,8 +32,8 @@ const LAYERS = [
  */
 class Pipeline {
   constructor() {
-    this.RANK_COUNT = this.getRankCount();
-    this.TAG_COUNT = randomNumber(MAX_TAG_COUNT);
+    this.rankCount = this.getRankCount();
+    this.tagCount = randomNumber(MAX_TAG_COUNT);
     this.tags = this.generateTags();
     this.nodes = this.generateNodes();
     this.edges = this.generateEdges();
@@ -54,7 +54,7 @@ class Pipeline {
    * Generate a random list of tags
    */
   generateTags() {
-    return getNumberArray(this.TAG_COUNT)
+    return getNumberArray(this.tagCount)
       .map(() => getRandomName(randomNumber(MAX_NODE_TAG_COUNT)))
       .filter(unique);
   }
@@ -64,7 +64,7 @@ class Pipeline {
    */
   generateNodes() {
     const nodes = [];
-    for (let rank = 0; rank < this.RANK_COUNT; rank++) {
+    for (let rank = 0; rank < this.rankCount; rank++) {
       const rankNodeCount = this.getRankNodeCount(rank);
       const type = this.getType(rank);
 
@@ -79,7 +79,7 @@ class Pipeline {
   getRankNodeCount(rank) {
     const max = MAX_RANK_NODE_COUNT;
     const min = MIN_RANK_NODE_COUNT;
-    const p = (this.RANK_COUNT - rank) / this.RANK_COUNT;
+    const p = (this.rankCount - rank) / this.rankCount;
     return randomNumber(p * (max - min) + min);
   }
 
@@ -115,7 +115,7 @@ class Pipeline {
   }
 
   getLayer(rank) {
-    const index = Math.floor((rank / this.RANK_COUNT) * LAYERS.length);
+    const index = Math.floor((rank / this.rankCount) * LAYERS.length);
     return LAYERS[index];
   }
 
@@ -123,7 +123,7 @@ class Pipeline {
    * Select a random number of tags from the list of tags
    */
   getRandomTags() {
-    return getNumberArray(randomNumber(this.TAG_COUNT))
+    return getNumberArray(randomNumber(this.tagCount))
       .map(() => this.tags[randomIndex(this.tags.length)])
       .filter(unique);
   }
