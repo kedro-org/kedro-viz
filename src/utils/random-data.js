@@ -12,7 +12,7 @@ import {
 //--- Config variables ---//
 
 const MIN_CONNECTED_NODES = 1;
-const MAX_CONNECTED_NODES = 2;
+const MAX_CONNECTED_NODES = 3;
 const MAX_RANK_COUNT = 40;
 const MIN_RANK_COUNT = 5;
 const MAX_RANK_NODE_COUNT = 10;
@@ -180,22 +180,32 @@ class Pipeline {
     const edges = [];
     const dataNodes = this.nodes.filter(node => node.type === 'data');
     const taskNodes = this.nodes.filter(node => node.type !== 'data');
+    const remainingEdgeCount = arrayToObject(
+      dataNodes.map(node => node.id),
+      () => MAX_CONNECTED_NODES
+    );
 
     taskNodes.forEach(node => {
-      const ancestors = dataNodes.filter(d => d.rank < node.rank);
+      const ancestors = dataNodes.filter(
+        d => d.rank < node.rank && remainingEdgeCount[d.id]
+      );
       this.getRandomNodes(ancestors).forEach(source => {
         edges.push({
           source: source.id,
           target: node.id
         });
+        remainingEdgeCount[source.id]--;
       });
 
-      const descendants = dataNodes.filter(d => d.rank > node.rank);
+      const descendants = dataNodes.filter(
+        d => d.rank > node.rank && remainingEdgeCount[d.id]
+      );
       this.getRandomNodes(descendants).forEach(target => {
         edges.push({
           source: node.id,
           target: target.id
         });
+        remainingEdgeCount[target.id]--;
       });
     });
 
@@ -224,7 +234,7 @@ class Pipeline {
       node.id === edge.source || node.id === edge.target;
 
     return this.nodes.filter(
-      node => this.edges.findIndex(findMatchingEdge(node)) !== -1
+      node => this.edges.findIndex(findMatchingEdge(node)) < 0
     );
   }
 
