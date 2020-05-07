@@ -69,6 +69,27 @@ export const getRandomName = (n, join = '_') =>
     .join(join);
 
 /**
+ * Randomly select a certain number (n) of items from an array (arr).
+ * via https://stackoverflow.com/a/19270021/1651713
+ * @param {array} arr List from which to choose
+ * @param {number} n Number of items to select
+ */
+export const getRandomSelection = (arr, n) => {
+  const result = new Array(n);
+  let len = arr.length;
+  const taken = new Array(len);
+  if (n > len) {
+    return arr;
+  }
+  while (n--) {
+    var x = Math.floor(Math.random() * len);
+    result[n] = arr[x in taken ? taken[x] : x];
+    taken[x] = --len in taken ? taken[len] : len;
+  }
+  return result;
+};
+
+/**
  * Filter duplicate values from an array
  * @param {any} d Datum
  * @param {number} i Index

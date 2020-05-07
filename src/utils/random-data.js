@@ -1,9 +1,9 @@
 import {
   getNumberArray,
-  randomIndex,
   randomNumber,
   randomNumberBetween,
   getRandomName,
+  getRandomSelection,
   unique
 } from './index';
 
@@ -33,7 +33,6 @@ const LAYERS = [
 class Pipeline {
   constructor() {
     this.rankCount = this.getRankCount();
-    this.tagCount = randomNumber(MAX_TAG_COUNT);
     this.tags = this.generateTags();
     this.nodes = this.generateNodes();
     this.edges = this.generateEdges();
@@ -58,7 +57,8 @@ class Pipeline {
    * @returns {array} Tag name strings
    */
   generateTags() {
-    return getNumberArray(this.tagCount)
+    const tagCount = randomNumber(MAX_TAG_COUNT);
+    return getNumberArray(tagCount)
       .map(() => getRandomName(randomNumber(MAX_NODE_TAG_COUNT)))
       .filter(unique);
   }
@@ -123,11 +123,9 @@ class Pipeline {
       full_name: getRandomName(randomNumber(40)),
       type,
       rank,
-      layer: this.getLayer(rank)
+      layer: this.getLayer(rank),
+      tags: this.getRandomTags()
     };
-    if (type === 'data') {
-      node.tags = this.getRandomTags();
-    }
     return node;
   }
 
@@ -156,9 +154,7 @@ class Pipeline {
    * @returns {array} List of tags
    */
   getRandomTags() {
-    return getNumberArray(randomNumber(this.tagCount))
-      .map(() => this.tags[randomIndex(this.tags.length)])
-      .filter(unique);
+    return getRandomSelection(this.tags, randomNumber(this.tags.length));
   }
 
   /**
@@ -193,27 +189,15 @@ class Pipeline {
 
   /**
    * Get a random list of nodes to link to
-   * algorithm via https://stackoverflow.com/a/19270021/1651713
    * @param {array} nodes List of nodes from which to choose
    * @returns {array} Randomly-selected nodes
    */
   getRandomNodes(nodes) {
-    let len = nodes.length;
-    let connections = randomNumberBetween(
+    const connections = randomNumberBetween(
       MIN_CONNECTED_NODES,
       MAX_CONNECTED_NODES
     );
-    if (connections > len) {
-      return nodes;
-    }
-    const result = new Array(connections);
-    const taken = new Array(len);
-    while (connections--) {
-      var x = Math.floor(Math.random() * len);
-      result[connections] = nodes[x in taken ? taken[x] : x];
-      taken[x] = --len in taken ? taken[len] : len;
-    }
-    return result;
+    return getRandomSelection(nodes, connections);
   }
 
   /**

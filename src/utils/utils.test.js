@@ -7,6 +7,7 @@ import {
   randomNumberBetween,
   getRandom,
   getRandomName,
+  getRandomSelection,
   unique
 } from './index';
 
@@ -141,6 +142,33 @@ describe('utils', () => {
 
     it('returns the right number of space-separated words', () => {
       expect(getRandomName(50, ' ').split(' ')).toHaveLength(50);
+    });
+  });
+
+  describe('getRandomSelection', () => {
+    const arr = [1, 2, 3, 4, 5];
+
+    it('returns an array', () => {
+      expect(getRandomSelection(arr, 1)).toEqual(
+        expect.arrayContaining([expect.any(Number)])
+      );
+    });
+
+    it('returns an array of length n', () => {
+      expect(getRandomSelection(arr, 2)).toHaveLength(2);
+    });
+
+    it('returns the original array if n is greater than the array length', () => {
+      expect(getRandomSelection(arr, 10)).toEqual(arr);
+    });
+
+    it('returns an array of items that were all contained in the original dataset', () => {
+      expect(getRandomSelection(arr, 4).every(d => arr.includes(d))).toBe(true);
+    });
+
+    it('does not return duplicates', () => {
+      const result = getRandomSelection(arr, 4);
+      expect(result).toEqual(result.filter(unique));
     });
   });
 
