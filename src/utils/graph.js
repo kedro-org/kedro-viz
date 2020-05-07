@@ -1,8 +1,5 @@
 import * as kiwi from 'kiwi.js';
 
-const isEq = kiwi.Operator.Eq;
-const isGe = kiwi.Operator.Ge;
-
 const graph = (nodes, edges) => {
   if (!nodes.length || !edges.length) {
     return;
@@ -23,10 +20,29 @@ const graph = (nodes, edges) => {
     edge.targetNode.sources.push(edge);
   }
 
-  const layerRows = layout(nodes, edges, 1500, 16, 110);
-  routing(nodes, edges, layerRows, 26, 28, 35, 40, 8, 4, 5, 20);
+  const layerRows = layout({
+    nodes,
+    edges,
+    basisX: 1500,
+    spaceX: 16,
+    spaceY: 110
+  });
 
-  const size = sizeOf(nodes, 100);
+  routing({
+    nodes,
+    edges,
+    layerRows,
+    spaceX: 26,
+    spaceY: 28,
+    tension: 0,
+    minNodeGap: 40,
+    stemUnit: 8,
+    stemMinSource: 5,
+    stemMinTarget: 5,
+    stemMax: 20
+  });
+
+  const size = bounds(nodes, 100);
 
   return {
     graph: () => size,
@@ -36,6 +52,20 @@ const graph = (nodes, edges) => {
     edge: id => offsetEdge(edges.find(edge => edge.id === id), size.min)
   };
 };
+
+const equalTo = kiwi.Operator.Eq;
+const greaterThan = kiwi.Operator.Ge;
+
+const nodeLeft = node => node.x - node.width * 0.5;
+const nodeRight = node => node.x + node.width * 0.5;
+const nodeTop = node => node.y - node.height * 0.5;
+const nodeBottom = node => node.y + node.height * 0.5;
+
+const subtract = (a, b) => a - b;
+const equals = (a, b) => a === b;
+const distance1d = (a, b) => Math.abs(a - b);
+const angle = (pointA, pointB) =>
+  Math.atan2(pointA.y - pointB.y, pointA.x - pointB.x);
 
 const offsetNode = (node, offset) => ({
   ...node,
@@ -47,15 +77,6 @@ const offsetEdge = (edge, offset) => ({
   ...edge,
   points: edge.points.map(p => ({ x: p.x - offset.x, y: p.y - offset.y }))
 });
-
-const subtract = (a, b) => a - b;
-
-const equals = (a, b) => a === b;
-
-const distance1d = (a, b) => Math.abs(a - b);
-
-const angle = (pointA, pointB) =>
-  Math.atan2(pointA.y - pointB.y, pointA.x - pointB.x);
 
 const nearestOnLine = (x, y, ax, ay, bx, by) => {
   const deltaX = bx - ax;
@@ -80,7 +101,7 @@ const nearestOnLine = (x, y, ax, ay, bx, by) => {
   };
 };
 
-const sizeOf = (nodes, padding) => {
+const bounds = (nodes, padding) => {
   const size = {
     marginx: padding,
     marginy: padding,
@@ -104,35 +125,41 @@ const sizeOf = (nodes, padding) => {
   return size;
 };
 
+const constrain = (solver, ...args) => {
+  const constraint = new kiwi.Constraint(...args);
+  solver.addConstraint(constraint);
+  return constraint;
+};
+
 const solve = (constraints, iterations) => {
   for (let i = 0; i < iterations; i += 1) {
     for (const co of constraints) {
       const delta = (co.delta || subtract)(co.a[co.key], co.b[co.key], co);
-      const distance = (co.dist || distance1d)(co.a[co.key], co.b[co.key], co);
+      const distance = (co.distance || distance1d)(
+        co.a[co.key],
+        co.b[co.key],
+        co
+      );
       const target = co.target(co.a[co.key], co.b[co.key], co, delta, distance);
 
       if (!(co.operator || equals)(distance, target, delta)) {
-        const fix = (co.strength ? co.strength() : 1) * (delta - target);
+        const resolve = (co.strength ? co.strength(co) : 1) * (delta - target);
+
         let weightA = co.weightA ? co.weightA() : 1;
         let weightB = co.weightB ? co.weightB() : 1;
 
         weightA = weightA / (weightA + weightB);
         weightB = 1 - weightA;
-        co.a[co.key] -= weightA * fix;
-        co.b[co.key] += weightB * fix;
+
+        co.a[co.key] -= weightA * resolve;
+        co.b[co.key] += weightB * resolve;
       }
     }
   }
 };
 
-const layout = (nodes, edges, spacing, spacingX, spacingY) => {
+const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
   const solver = new kiwi.Solver();
-
-  const constrain = (...args) => {
-    const constraint = new kiwi.Constraint(...args);
-    solver.addConstraint(constraint);
-    return constraint;
-  };
 
   for (const node of nodes) {
     node.x = 0;
@@ -142,7 +169,12 @@ const layout = (nodes, edges, spacing, spacingX, spacingY) => {
   }
 
   for (const edge of edges) {
-    constrain(edge.targetNode.Y.minus(edge.sourceNode.Y), isGe, spacingY);
+    constrain(
+      solver,
+      edge.targetNode.Y.minus(edge.sourceNode.Y),
+      greaterThan,
+      spaceY
+    );
   }
 
   solver.updateVariables();
@@ -165,14 +197,19 @@ const layout = (nodes, edges, spacing, spacingX, spacingY) => {
     }
   }
 
-  const crossing = [];
-  const crossingOperator = (dist, target, delta) =>
+  const crossingConstraints = [];
+  const parallelConstraints = [];
+  const singleConstraints = [];
+  const doubleConstraints = [];
+  const separationConstraints = [];
+
+  const crossingOperator = (distance, target, delta) =>
     target >= 0 ? delta >= target : delta <= target;
-  const crossingStrength = () => 1 / spacing;
-  const crossingTarget = (a, b, co) => {
+  const crossingStrength = co => 1 / co.basisX;
+  const crossingTarget = (ax, bx, co) => {
     const sourceDelta = co.edgeA.sourceNode.x - co.edgeB.sourceNode.x;
     const targetDelta = co.edgeA.targetNode.x - co.edgeB.targetNode.x;
-    return sourceDelta + targetDelta < 0 ? -spacing : spacing;
+    return sourceDelta + targetDelta < 0 ? -co.basisX : co.basisX;
   };
 
   for (let i = 0; i < edges.length; i += 1) {
@@ -182,98 +219,84 @@ const layout = (nodes, edges, spacing, spacingX, spacingY) => {
       const edgeB = edges[j];
 
       if (edgeA.source !== edgeB.source && edgeA.target !== edgeB.target) {
-        crossing.push({
-          edgeA,
-          edgeB,
-          key: 'x',
-          a: edgeA.sourceNode,
-          b: edgeB.sourceNode,
+        const crossingConstraint = {
           target: crossingTarget,
           operator: crossingOperator,
-          strength: crossingStrength
-        });
+          strength: crossingStrength,
+          key: 'x',
+          edgeA,
+          edgeB,
+          basisX
+        };
 
-        crossing.push({
-          edgeA,
-          edgeB,
-          key: 'x',
-          a: edgeA.targetNode,
-          b: edgeB.targetNode,
-          target: crossingTarget,
-          operator: crossingOperator,
-          strength: crossingStrength
-        });
+        crossingConstraints.push(
+          {
+            ...crossingConstraint,
+            a: edgeA.sourceNode,
+            b: edgeB.sourceNode
+          },
+          {
+            ...crossingConstraint,
+            a: edgeA.targetNode,
+            b: edgeB.targetNode
+          }
+        );
       }
     }
   }
 
-  const parallel = [];
-  const singles = [];
-  const doubles = [];
-
   for (const edge of edges) {
-    const cons = {
+    const edgeConstraint = {
       a: edge.sourceNode,
       b: edge.targetNode,
       key: 'x',
       target: () => 0,
-      operator: (a, b) => a === b,
-      strength: () =>
-        1 /
-        Math.max(
-          1,
-          0.5 *
-            (edge.sourceNode.targets.length + edge.targetNode.sources.length)
-        )
+      strength: co =>
+        1 / Math.max(1, 0.5 * (co.a.targets.length + co.b.sources.length))
     };
 
-    parallel.push(cons);
+    parallelConstraints.push(edgeConstraint);
 
     if (
       edge.sourceNode.targets.length === 1 ||
       edge.targetNode.sources.length === 1
     ) {
-      singles.push(cons);
+      singleConstraints.push(edgeConstraint);
     }
 
     if (
       edge.sourceNode.targets.length === 1 &&
       edge.targetNode.sources.length === 1
     ) {
-      doubles.push(cons);
+      doubleConstraints.push(edgeConstraint);
     }
   }
 
-  let separation = [];
-
   for (let i = 0; i < 20; i += 1) {
-    solve(crossing, 1);
-    solve(parallel, 1);
-    solve(singles, 10);
-    solve(doubles, 10);
+    solve(crossingConstraints, 1);
+    solve(parallelConstraints, 1);
+    solve(singleConstraints, 10);
+    solve(doubleConstraints, 10);
 
-    separation.length = 0;
+    separationConstraints.length = 0;
 
     for (let l = 0; l < layerRows.length; l += 1) {
       const layerNodes = layerRows[l];
       layerNodes.sort((a, b) => a.x - b.x);
 
-      for (let i = 0; i < layerNodes.length - 1; i += 1) {
-        separation.push({
-          a: layerNodes[i],
-          b: layerNodes[i + 1],
+      for (let j = 0; j < layerNodes.length - 1; j += 1) {
+        separationConstraints.push({
+          a: layerNodes[j],
+          b: layerNodes[j + 1],
           key: 'x',
-          target: () =>
-            -spacingX -
-            layerNodes[i].width * 0.5 -
-            layerNodes[i + 1].width * 0.5,
-          operator: (a, b, c) => c <= b,
+          target: (ax, bx, co) => -spaceX - co.a.width * 0.5 - co.b.width * 0.5,
+          operator: (distance, target, delta) => delta <= target,
           strength: () => 1
         });
       }
     }
 
-    solve(separation, 10);
+    solve(separationConstraints, 10);
   }
 
   const layerDensity = {};
@@ -293,12 +316,14 @@ const layout = (nodes, edges, spacing, spacingX, spacingY) => {
 
   for (let l = 0; l < layerRows.length; l += 1) {
     const layerNodes = layerRows[l];
+
     for (let i = 0; i < layerNodes.length - 1; i += 1) {
       constrain(
+        solver,
         layerNodes[i + 1].X.minus(layerNodes[i].X),
-        isGe,
+        greaterThan,
         Math.max(
-          spacingX + layerNodes[i].width * 0.5 + layerNodes[i + 1].width * 0.5,
+          spaceX + layerNodes[i].width * 0.5 + layerNodes[i + 1].width * 0.5,
           0.8 * (layerNodes[i + 1].x - layerNodes[i].x)
         )
       );
@@ -306,12 +331,19 @@ const layout = (nodes, edges, spacing, spacingX, spacingY) => {
   }
 
   for (const edge of edges) {
-    const sep =
-      spacingY + layerDensity[edge.sourceNode.layer] * spacingY * 0.85;
-    constrain(edge.targetNode.Y.minus(edge.sourceNode.Y), isGe, sep);
+    const separationY =
+      spaceY + layerDensity[edge.sourceNode.layer] * spaceY * 0.85;
+
     constrain(
+      solver,
+      edge.targetNode.Y.minus(edge.sourceNode.Y),
+      greaterThan,
+      separationY
+    );
+    constrain(
+      solver,
       edge.sourceNode.X.minus(edge.targetNode.X),
-      isEq,
+      equalTo,
       0,
       kiwi.Strength.strong
     );
@@ -320,26 +352,26 @@ const layout = (nodes, edges, spacing, spacingX, spacingY) => {
   solver.updateVariables();
 
   for (const node of nodes) {
-    node.y = node.Y.value();
     node.x = node.X.value();
+    node.y = node.Y.value();
   }
 
   return layerRows;
 };
 
-const routing = (
+const routing = ({
   nodes,
   edges,
   layerRows,
   spaceX,
-  offsetY,
-  tensionK,
-  minGap,
+  spaceY,
+  tension,
+  minNodeGap,
   stemUnit,
   stemMinSource,
   stemMinTarget,
   stemMax
-) => {
+}) => {
   for (const node of nodes) {
     node.targets.sort(
       (a, b) => angle(node, b.targetNode) - angle(node, a.targetNode)
@@ -353,104 +385,107 @@ const routing = (
     const source = edge.sourceNode;
     const target = edge.targetNode;
 
-    const sourceSep = Math.min(
+    const sourceSeparation = Math.min(
       (0.75 * source.width) / source.targets.length,
       6
     );
-    const targetSep = Math.min(
+    const targetSeparation = Math.min(
       (0.75 * target.width) / target.sources.length,
       10
     );
 
-    const edgeDist =
+    const sourceEdgeDistance =
       source.targets.indexOf(edge) - (source.targets.length - 1) * 0.5;
-    const targetEdgeDist =
+    const targetEdgeDistance =
       target.sources.indexOf(edge) - (target.sources.length - 1) * 0.5;
 
-    const sourceOffsetX = sourceSep * edgeDist;
-    const targetOffsetX = targetSep * targetEdgeDist;
+    const sourceOffsetX = sourceSeparation * sourceEdgeDistance;
+    const targetOffsetX = targetSeparation * targetEdgeDistance;
 
-    const start = { x: source.x + sourceOffsetX, y: source.y };
-    const end = { x: target.x + targetOffsetX, y: target.y };
+    const startPoint = { x: source.x + sourceOffsetX, y: source.y };
+    const endPoint = { x: target.x + targetOffsetX, y: target.y };
+    let currentPoint = startPoint;
 
-    const points = [];
-    let current = start;
+    edge.points = [];
 
     for (let l = source.layer + 1; l < target.layer; l += 1) {
-      let nearest = null;
-      let nearestDist = Infinity;
+      const firstNode = layerRows[l][0];
+      let upperPoint = null;
+      let nearestDistance = Infinity;
 
-      const first = layerRows[l][0];
-      const ts =
-        tensionK / Math.sqrt((current.y - end.y) * (current.y - end.y));
       const row = [
-        { ...first, x: Number.MIN_SAFE_INTEGER },
+        { ...firstNode, x: Number.MIN_SAFE_INTEGER },
         ...layerRows[l],
-        { ...first, x: Number.MAX_SAFE_INTEGER }
+        { ...firstNode, x: Number.MAX_SAFE_INTEGER }
       ];
 
       for (let i = 0; i < row.length - 1; i += 1) {
         const node = row[i];
-        const next = row[i + 1];
+        const nextNode = row[i + 1];
+        const nodeGap = nodeLeft(nextNode) - nodeRight(node);
 
-        if (next.x - next.width * 0.5 - (node.x + node.width * 0.5) < minGap)
-          continue;
+        if (nodeGap < minNodeGap) continue;
 
-        const gradient = (end.x - current.x) / (end.y - current.y) || 1;
-        const tension =
-          ts *
-          (0.5 * (nearest ? nearest.gradient : gradient) + 0.5 * gradient) *
-          (node.y - node.height * 0.5 - offsetY - current.y);
-        const spaceXX = Math.min(
-          spaceX,
-          (next.x - next.width * 0.5 - (node.x + node.width * 0.5)) * 0.5
+        const gradient =
+          (endPoint.x - currentPoint.x) / (endPoint.y - currentPoint.y) || 1;
+        const smoothGradient =
+          (currentPoint.gradient || gradient) * 0.5 + gradient * 0.5;
+        const offsetX = Math.min(spaceX, nodeGap * 0.5);
+        const offsetY = nodeTop(node) - spaceY - currentPoint.y;
+
+        const tensionForce =
+          tension / Math.pow(distance1d(node.y, endPoint.y), 2);
+        const tensionOffset = tensionForce * smoothGradient * offsetY;
+
+        const candidatePoint = nearestOnLine(
+          currentPoint.x + tensionOffset,
+          currentPoint.y,
+          nodeRight(node) + offsetX,
+          nodeTop(node) - spaceY,
+          nodeLeft(nextNode) - offsetX,
+          nodeTop(nextNode) - spaceY
         );
-        const pc = nearestOnLine(
-          current.x + tension,
-          current.y,
-          node.x + node.width * 0.5 + spaceXX,
-          node.y - node.height * 0.5 - offsetY,
-          next.x - spaceXX - next.width * 0.5,
-          next.y - next.height * 0.5 - offsetY
-        );
-        const dist =
-          (current.x - pc.x) * (current.x - pc.x) +
-          (current.y - pc.y) * (current.y - pc.y);
 
-        if (dist < nearestDist) {
-          nearestDist = dist;
-          nearest = pc;
-          nearest.gradient = gradient;
+        const distance =
+          (currentPoint.x - candidatePoint.x) *
+            (currentPoint.x - candidatePoint.x) +
+          (currentPoint.y - candidatePoint.y) *
+            (currentPoint.y - candidatePoint.y);
+
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          upperPoint = candidatePoint;
+          upperPoint.gradient = gradient;
         }
       }
 
-      const gradient = (end.x - nearest.x) / (end.y - nearest.y) || 1;
-      const oy = first.height + 2 * offsetY;
-      const ts2 =
-        tensionK / Math.sqrt((nearest.y - end.y) * (nearest.y - end.y));
-      const tension = ts2 * (0.5 * nearest.gradient + 0.5 * gradient) * oy;
-      const nearest2 = nearestOnLine(
-        nearest.x + tension,
-        nearest.y,
-        nearest.ax,
-        nearest.ay + oy,
-        nearest.bx,
-        nearest.by + oy
+      const gradient =
+        (endPoint.x - upperPoint.x) / (endPoint.y - upperPoint.y) || 1;
+      const smoothGradient = upperPoint.gradient * 0.5 + gradient * 0.5;
+      const offsetY = firstNode.height + 2 * spaceY;
+
+      const tensionForce =
+        tension / Math.pow(distance1d(upperPoint.y, endPoint.y), 2);
+      const tensionOffset = tensionForce * smoothGradient * offsetY;
+
+      const lowerPoint = nearestOnLine(
+        upperPoint.x + tensionOffset,
+        upperPoint.y,
+        upperPoint.ax,
+        upperPoint.ay + offsetY,
+        upperPoint.bx,
+        upperPoint.by + offsetY
       );
-      const dy = (l - source.layer) / (target.layer - source.layer);
-      const offsetX = sourceOffsetX * (1 - dy) * 1 + targetOffsetX * dy * 0;
 
-      points.push({
-        x: nearest.x + offsetX,
-        y: nearest.y,
-        gradient: nearest.gradient
-      });
-      points.push({ x: nearest2.x + offsetX, y: nearest2.y, gradient });
+      edge.points.push({ x: upperPoint.x + sourceOffsetX, y: upperPoint.y });
+      edge.points.push({ x: lowerPoint.x + sourceOffsetX, y: lowerPoint.y });
 
-      current = { x: nearest2.x, y: nearest2.y };
+      currentPoint = {
+        x: lowerPoint.x,
+        y: lowerPoint.y,
+        gradient: smoothGradient
+      };
     }
-
-    edge.points = points;
   }
 
   for (const node of nodes) {
@@ -470,65 +505,64 @@ const routing = (
     const source = edge.sourceNode;
     const target = edge.targetNode;
 
-    const sourceSep = Math.min(
+    const sourceSeparation = Math.min(
       (0.75 * source.width) / source.targets.length,
       6
     );
-    const targetSep = Math.min(
+    const targetSeparation = Math.min(
       (0.75 * target.width) / target.sources.length,
       10
     );
 
-    const edgeDist =
+    const sourceEdgeDistance =
       source.targets.indexOf(edge) - (source.targets.length - 1) * 0.5;
-    const targetEdgeDist =
+    const targetEdgeDistance =
       target.sources.indexOf(edge) - (target.sources.length - 1) * 0.5;
 
-    const sourceOffsetX = sourceSep * edgeDist;
-    const targetOffsetX = targetSep * targetEdgeDist;
+    const sourceOffsetX = sourceSeparation * sourceEdgeDistance;
+    const targetOffsetX = targetSeparation * targetEdgeDistance;
 
-    const startOffY =
+    const sourceOffsetY =
       stemUnit *
       source.targets.length *
-      (1 - Math.abs(edgeDist) / source.targets.length);
-    const endOffY =
+      (1 - Math.abs(sourceEdgeDistance) / source.targets.length);
+
+    const targetOffsetY =
       stemUnit *
       target.sources.length *
-      (1 - Math.abs(targetEdgeDist) / target.sources.length);
+      (1 - Math.abs(targetEdgeDistance) / target.sources.length);
 
-    const startPoints = [
-      { x: source.x + sourceOffsetX, y: source.y + source.height * 0.5 },
+    const sourcePoints = [
+      {
+        x: source.x + sourceOffsetX,
+        y: source.y + source.height * 0.5
+      },
       {
         x: source.x + sourceOffsetX,
         y: source.y + source.height * 0.5 + stemMinSource
       },
       {
         x: source.x + sourceOffsetX,
-        y:
-          source.y +
-          source.height * 0.5 +
-          stemMinSource +
-          Math.min(startOffY, stemMax)
+        y: nodeBottom(source) + stemMinSource + Math.min(sourceOffsetY, stemMax)
       }
     ];
 
-    const endPoints = [
+    const targetPoints = [
       {
         x: target.x + targetOffsetX,
-        y:
-          target.y -
-          source.height * 0.5 -
-          stemMinTarget -
-          Math.min(endOffY, stemMax)
+        y: nodeTop(target) - stemMinTarget - Math.min(targetOffsetY, stemMax)
       },
       {
         x: target.x + targetOffsetX,
-        y: target.y - source.height * 0.5 - stemMinTarget
+        y: nodeTop(target) - stemMinTarget
       },
-      { x: target.x + targetOffsetX, y: target.y - source.height * 0.5 }
+      {
+        x: target.x + targetOffsetX,
+        y: nodeTop(target)
+      }
     ];
 
-    edge.points = [...startPoints, ...edge.points, ...endPoints];
+    edge.points = [...sourcePoints, ...edge.points, ...targetPoints];
   }
 };
 
