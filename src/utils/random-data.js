@@ -37,8 +37,6 @@ class Pipeline {
     this.tags = this.generateTags();
     this.nodes = this.generateNodes();
     this.edges = this.generateEdges();
-    this.nodes = this.filterUnconnectedNodes();
-    this.tags = this.filterUnusedTags();
   }
 
   getRankCount() {
@@ -201,10 +199,10 @@ class Pipeline {
    */
   getSchema() {
     return {
-      layers: LAYERS,
-      nodes: this.nodes,
       edges: this.edges,
-      tags: this.tags
+      layers: LAYERS,
+      nodes: this.filterUnconnectedNodes(),
+      tags: this.filterUnusedTags()
     };
   }
 }
