@@ -8,15 +8,14 @@ const getDataSource = () => {
   let source;
   const qs = hasWindow && window.location.search.match(/data=(\w+)/);
   const { REACT_APP_DATA_SOURCE } = process.env;
+  const isDemo =
+    hasWindow && window.location.host === 'quantumblacklabs.github.io';
 
   if (qs) {
     source = encodeURIComponent(qs[1]);
   } else if (REACT_APP_DATA_SOURCE) {
     source = REACT_APP_DATA_SOURCE;
-  } else if (
-    hasWindow &&
-    window.location.host === 'quantumblacklabs.github.io'
-  ) {
+  } else if (isDemo) {
     source = 'demo';
   }
   return validateDataSource(source);

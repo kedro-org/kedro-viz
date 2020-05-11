@@ -4,8 +4,10 @@ import {
   getNumberArray,
   randomIndex,
   randomNumber,
+  randomNumberBetween,
   getRandom,
   getRandomName,
+  getRandomSelection,
   unique
 } from './index';
 
@@ -96,6 +98,27 @@ describe('utils', () => {
     });
   });
 
+  describe('randomNumberBetween', () => {
+    const min = 5;
+    const max = 10;
+    it('returns a number', () => {
+      expect(typeof randomNumberBetween(min, max)).toEqual('number');
+    });
+
+    it('returns an integer', () => {
+      const n = randomNumberBetween(min, max);
+      expect(Math.round(n)).toEqual(n);
+    });
+
+    it('returns a number less or equal to the max number passed', () => {
+      expect(randomNumberBetween(min, max)).toBeLessThan(max + 1);
+    });
+
+    it('returns a number greater or equal to the min number passed', () => {
+      expect(randomNumberBetween(min, max)).toBeGreaterThan(min - 1);
+    });
+  });
+
   describe('getRandom', () => {
     it('gets a random number from an array', () => {
       const arr = getNumberArray(10);
@@ -119,6 +142,33 @@ describe('utils', () => {
 
     it('returns the right number of space-separated words', () => {
       expect(getRandomName(50, ' ').split(' ')).toHaveLength(50);
+    });
+  });
+
+  describe('getRandomSelection', () => {
+    const arr = [1, 2, 3, 4, 5];
+
+    it('returns an array', () => {
+      expect(getRandomSelection(arr, 1)).toEqual(
+        expect.arrayContaining([expect.any(Number)])
+      );
+    });
+
+    it('returns an array of length n', () => {
+      expect(getRandomSelection(arr, 2)).toHaveLength(2);
+    });
+
+    it('returns the original array if n is greater than the array length', () => {
+      expect(getRandomSelection(arr, 10)).toEqual(arr);
+    });
+
+    it('returns an array of items that were all contained in the original dataset', () => {
+      expect(getRandomSelection(arr, 4).every(d => arr.includes(d))).toBe(true);
+    });
+
+    it('does not return duplicates', () => {
+      const result = getRandomSelection(arr, 4);
+      expect(result).toEqual(result.filter(unique));
     });
   });
 
