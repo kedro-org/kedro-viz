@@ -1,0 +1,104 @@
+@import '../../styles/variables';
+
+$tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
+$tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
+$x: 20px;
+$y: 10px;
+$t: 10px;
+
+.pipeline-tooltip {
+  position: absolute;
+  top: -$y;
+  left: -$x;
+  z-index: 9;
+  width: 100vw;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity ease 0.1s, visibility ease 0.1s;
+  pointer-events: none;
+
+  &--visible {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  &--right {
+    right: -$x;
+    left: auto;
+  }
+
+  &--top {
+    top: $y;
+  }
+
+  &::before {
+    position: absolute;
+    bottom: -$y;
+    left: $x/2;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: $t $t 0 $t;
+    content: '';
+
+    .kui-theme--light & {
+      border-top-color: $tooltip-bg-light;
+    }
+
+    .kui-theme--dark & {
+      border-top-color: $tooltip-bg-dark;
+    }
+  }
+
+  &--right::before {
+    right: $x/2;
+    left: auto;
+  }
+
+  &--top::before {
+    top: -$y;
+    bottom: auto;
+    border-width: 0 $t $t $t;
+    border-top-color: transparent;
+
+    .kui-theme--light & {
+      border-bottom-color: $tooltip-bg-light;
+    }
+
+    .kui-theme--dark & {
+      border-bottom-color: $tooltip-bg-dark;
+    }
+  }
+}
+
+.pipeline-tooltip__text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  max-width: calc(50vw - 150px);
+  padding: 12px 20px;
+  color: white;
+  font-size: 1.5em;
+  overflow-wrap: break-word;
+
+  .kui-theme--light & {
+    background: $tooltip-bg-light;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .kui-theme--dark & {
+    background: $tooltip-bg-dark;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .pipeline-tooltip--right & {
+    right: 0;
+    left: auto;
+  }
+
+  .pipeline-tooltip--top & {
+    top: 0;
+    bottom: auto;
+  }
+}
