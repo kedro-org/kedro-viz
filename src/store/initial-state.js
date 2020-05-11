@@ -1,5 +1,4 @@
 import { loadState } from './helpers';
-import getRandomPipeline from '../utils/random-data';
 import normalizeData from './normalize-data';
 import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import animals from '../utils/data/animals.mock';
@@ -14,9 +13,6 @@ import layers from '../utils/data/layers.mock';
  */
 export const getPipelineData = data => {
   switch (data) {
-    case 'random':
-      // Use randomly-generated data
-      return getRandomPipeline();
     case 'lorem':
       // Use data from the 'lorem-ipsum' test dataset
       return loremIpsum;
@@ -32,6 +28,10 @@ export const getPipelineData = data => {
     case 'json':
       // Return empty state, as data will be loaded asynchronously later
       return null;
+    case 'random':
+      throw new Error(
+        "The random data should already have replaced the 'random' string in 'data-source.js', so if you see this error then something has gone horribly wrong."
+      );
     case null:
     case undefined:
       throw new Error('No data was provided to App component via props');

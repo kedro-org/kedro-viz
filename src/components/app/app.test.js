@@ -1,13 +1,14 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import App from './index';
+import getRandomPipeline from '../../utils/random-data';
 import animals from '../../utils/data/animals.mock';
 import loremIpsum from '../../utils/data/lorem-ipsum.mock';
 
 describe('App', () => {
   describe('renders without crashing', () => {
     it('when loading random data', () => {
-      shallow(<App data="random" />);
+      shallow(<App data={getRandomPipeline()} />);
     });
 
     it('when loading json data', () => {
