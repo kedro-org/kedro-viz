@@ -1,6 +1,9 @@
 //-- Custom --//
 
-$nav-width: 300px;
+// Also set in src/config.js:
+$sidebar-width-open: 400px;
+$sidebar-width-closed: 70px;
+$sidebar-ui-width: $sidebar-width-open - $sidebar-width-closed;
 
 //-- Breakpoints --//
 

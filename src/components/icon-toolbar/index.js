@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { toggleLayers, toggleTextLabels, toggleTheme } from '../../actions';
+import {
+  toggleLayers,
+  toggleSidebar,
+  toggleTextLabels,
+  toggleTheme
+} from '../../actions';
 import IconButton from './icon-button';
 import ExportModal from './export-modal';
 import './icon-toolbar.css';
@@ -15,6 +20,7 @@ import './icon-toolbar.css';
 export const IconToolbar = ({
   disableLayerBtn,
   onToggleLayers,
+  onToggleSidebar,
   onToggleTextLabels,
   onToggleTheme,
   textLabels,
@@ -26,6 +32,12 @@ export const IconToolbar = ({
   return (
     <>
       <ul className="pipeline-icon-toolbar kedro">
+        <IconButton
+          ariaLabel={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
+          onClick={() => onToggleSidebar(!visible.sidebar)}
+          icon="menu"
+          labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
+        />
         <IconButton
           ariaLive="polite"
           ariaLabel={`Change to ${theme === 'light' ? 'dark' : 'light'} theme`}
@@ -74,6 +86,9 @@ export const mapStateToProps = state => ({
 export const mapDispatchToProps = dispatch => ({
   onToggleLayers: value => {
     dispatch(toggleLayers(Boolean(value)));
+  },
+  onToggleSidebar: visible => {
+    dispatch(toggleSidebar(visible));
   },
   onToggleTextLabels: value => {
     dispatch(toggleTextLabels(Boolean(value)));

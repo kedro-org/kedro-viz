@@ -1,5 +1,6 @@
 import Tooltip, { insertZeroWidthSpace } from './index';
 import { setup } from '../../utils/state.mock';
+import { sidebarWidth } from '../../config';
 
 const mockProps = {
   chartSize: {
@@ -7,7 +8,7 @@ const mockProps = {
     left: 0,
     outerHeight: 766,
     outerWidth: 1198,
-    sidebarWidth: 300,
+    sidebarWidth: sidebarWidth.open,
     top: 0,
     width: 898
   },

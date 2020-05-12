@@ -2,12 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import LabelIcon from '../icons/label';
 import LayersIcon from '../icons/layers';
+import MenuIcon from '../icons/menu';
 import ThemeIcon from '../icons/theme';
 import ExportIcon from '../icons/export';
 
 const icons = {
   label: LabelIcon,
   layers: LayersIcon,
+  menu: MenuIcon,
   theme: ThemeIcon,
   export: ExportIcon
 };

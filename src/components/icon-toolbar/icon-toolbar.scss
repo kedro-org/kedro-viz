@@ -1,35 +1,37 @@
 @import '../../styles/variables';
 
 .pipeline-icon-toolbar {
-  position: absolute;
-  top: 0;
-  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: $sidebar-width-closed;
+  height: 100%;
   margin: 0;
-  padding: 20px;
+  padding: 2em 0;
   list-style: none;
+
+  .kui-theme--light & {
+    background: $color-bg-light-alt2;
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-alt2;
+  }
+
+  li:not(:last-child) {
+    margin-bottom: 1em;
+  }
 }
 
 .pipeline-icon-button {
   position: relative;
-  margin: 0;
-  margin-bottom: 0.8em;
-  padding: 0.8em;
+  padding: 1em;
   color: inherit;
   background: none;
   border: none;
   box-shadow: none;
   cursor: pointer;
   user-select: none;
-
-  .kui-theme--light &,
-  .kui-theme--light & span {
-    background: rgba($color-bg-light, 0.9);
-  }
-
-  .kui-theme--dark &,
-  .kui-theme--dark & span {
-    background: rgba($color-bg-dark, 0.9);
-  }
 
   &:focus {
     outline: 3px solid $color-link;
@@ -41,15 +43,25 @@
 
   span {
     position: absolute;
-    right: 100%;
+    left: 100%;
     margin: -0.3em 0;
     padding: 0.3em 0.4em;
     font-size: 1.4em;
     white-space: nowrap;
-    transform: translateX(2em);
+    transform: translateX(-1em);
     visibility: hidden;
     opacity: 0;
     transition: all ease 0.2s, width 0s;
+
+    .kui-theme--light & {
+      color: $color-text-dark;
+      background: rgba($color-text-light, 0.9);
+    }
+
+    .kui-theme--dark & {
+      color: $color-text-light;
+      background: rgba($color-text-dark, 0.9);
+    }
   }
 
   &:hover span,
