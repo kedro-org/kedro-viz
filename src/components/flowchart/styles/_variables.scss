@@ -29,10 +29,6 @@ $node-labeltext-fill-light-active: $color-text-light;
 
 $edge-light: mix($color-text-light, $color-bg-light, 75%);
 
-// Tooltip
-
-$tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
-
 //-------------- DARK --------------//
 
 // Icon
@@ -57,7 +53,3 @@ $node-labeltext-fill-dark-active: $color-text-dark;
 // Edge
 
 $edge-dark: mix($color-text-dark, $color-bg-dark, 85%);
-
-// Tooltip
-
-$tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);

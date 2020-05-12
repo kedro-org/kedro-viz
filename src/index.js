@@ -3,14 +3,12 @@ import ReactDOM from 'react-dom';
 import 'what-input';
 import App from './components/app';
 import EasterEgg from './components/easter-egg';
-import config from './config';
+import getDataSource from './utils/data-source';
 import './styles/index.css';
-
-const { dataSource } = config();
 
 ReactDOM.render(
   <>
-    <App data={dataSource} />
+    <App data={getDataSource()} />
     <EasterEgg />
   </>,
   document.getElementById('root')
