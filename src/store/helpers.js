@@ -1,4 +1,4 @@
-import config from '../config';
+import { localStorageName } from '../config';
 
 const noWindow = typeof window === 'undefined';
 
@@ -7,7 +7,6 @@ const noWindow = typeof window === 'undefined';
  * @return {Object} State
  */
 export const loadState = () => {
-  const { localStorageName } = config();
   if (noWindow) {
     return {};
   }
@@ -28,7 +27,6 @@ export const loadState = () => {
  * @param {Object} state New state object
  */
 export const saveState = state => {
-  const { localStorageName } = config();
   if (noWindow) {
     return;
   }
