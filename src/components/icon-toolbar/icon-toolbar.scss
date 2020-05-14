@@ -57,7 +57,7 @@
     transition: all ease 0.2s, width 0s;
 
     &::before {
-      $t: 5px;
+      $t: 7px;
 
       position: absolute;
       top: calc(50% - #{$t});
