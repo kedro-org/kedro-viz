@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
+import ExportModal from '../export-modal';
 import './wrapper.css';
 
 /**
@@ -16,6 +17,7 @@ export const Wrapper = ({ fontLoaded, theme }) => (
     })}>
     <Sidebar />
     <div className="pipeline-wrapper">{fontLoaded && <FlowChart />}</div>
+    <ExportModal />
   </div>
 );
 
