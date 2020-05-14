@@ -105,8 +105,8 @@ describe('Selectors', () => {
       });
 
       it(`sets sidebar width to ${closed} on mobile`, () => {
-        expect(getSidebarWidth(true, 480)).toEqual(0);
-        expect(getSidebarWidth(true, 320)).toEqual(0);
+        expect(getSidebarWidth(true, 480)).toEqual(closed);
+        expect(getSidebarWidth(true, 320)).toEqual(closed);
       });
     });
 
