@@ -1,5 +1,5 @@
 import React from 'react';
-import ExportModal, { exportGraph, mapStateToProps } from './export-modal';
+import ExportModal, { exportGraph, mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('IconToolbar', () => {

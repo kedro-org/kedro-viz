@@ -7,7 +7,7 @@ import {
   toggleTheme
 } from '../../actions';
 import IconButton from './icon-button';
-import ExportModal from './export-modal';
+import ExportModal from '../export-modal';
 import './icon-toolbar.css';
 
 /**
