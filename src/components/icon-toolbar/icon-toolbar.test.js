@@ -5,10 +5,10 @@ import { mockState, setup } from '../../utils/state.mock';
 describe('IconToolbar', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<IconToolbar />);
-    expect(wrapper.find('.pipeline-icon-button').length).toBe(4);
+    expect(wrapper.find('.pipeline-icon-button').length).toBe(5);
   });
 
-  it('hides both buttons when visible prop is false for each of them', () => {
+  it('hides all buttons (except menu button) when visible prop is false for each of them', () => {
     const visible = {
       themeBtn: false,
       labelBtn: false,
@@ -16,7 +16,7 @@ describe('IconToolbar', () => {
       exportBtn: false
     };
     const wrapper = setup.mount(<IconToolbar />, { visible });
-    expect(wrapper.find('.pipeline-icon-button').length).toBe(0);
+    expect(wrapper.find('.pipeline-icon-button').length).toBe(1);
   });
 
   it('hides one button when visible prop is false for one of them', () => {
@@ -24,7 +24,7 @@ describe('IconToolbar', () => {
       labelBtn: false
     };
     const wrapper = setup.mount(<IconToolbar />, { visible });
-    expect(wrapper.find('.pipeline-icon-button').length).toBe(3);
+    expect(wrapper.find('.pipeline-icon-button').length).toBe(4);
   });
 
   it('shows the export modal on export button click', () => {
