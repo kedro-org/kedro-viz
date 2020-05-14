@@ -1,6 +1,6 @@
 import * as kiwi from 'kiwi.js';
 
-const graph = (nodes, edges) => {
+export default (nodes, edges) => {
   if (!nodes.length || !edges.length) {
     return;
   }
@@ -53,19 +53,26 @@ const graph = (nodes, edges) => {
   };
 };
 
+const compare = (a, b, ...args) => {
+  const delta = typeof a === 'string' ? a.localeCompare(b) : a - b;
+  return delta !== 0 || args.length === 0 ? delta : compare(...args);
+};
+
+const halfPI = Math.PI * 0.5;
 const equalTo = kiwi.Operator.Eq;
 const greaterThan = kiwi.Operator.Ge;
+const subtract = (a, b) => a - b;
+const equals = (a, b) => a === b;
+const clamp = (value, min, max) =>
+  value < min ? min : value > max ? max : value;
+const snap = (value, unit) => Math.round(value / unit) * unit;
+const distance1d = (a, b) => Math.abs(a - b);
+const angle = (a, b) => Math.atan2(a.y - b.y, a.x - b.x);
 
 const nodeLeft = node => node.x - node.width * 0.5;
 const nodeRight = node => node.x + node.width * 0.5;
 const nodeTop = node => node.y - node.height * 0.5;
 const nodeBottom = node => node.y + node.height * 0.5;
-
-const subtract = (a, b) => a - b;
-const equals = (a, b) => a === b;
-const distance1d = (a, b) => Math.abs(a - b);
-const angle = (pointA, pointB) =>
-  Math.atan2(pointA.y - pointB.y, pointA.x - pointB.x);
 
 const offsetNode = (node, offset) => ({
   ...node,
@@ -79,21 +86,14 @@ const offsetEdge = (edge, offset) => ({
 });
 
 const nearestOnLine = (x, y, ax, ay, bx, by) => {
-  const deltaX = bx - ax;
-  const deltaY = by - ay;
-  let position =
-    ((x - ax) * deltaX + (y - ay) * deltaY) /
-    (deltaX * deltaX + deltaY * deltaY || 1);
-
-  if (position > 1) {
-    position = 1;
-  } else if (position < 0) {
-    position = 0;
-  }
+  const dx = bx - ax;
+  const dy = by - ay;
+  const position = ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy || 1);
+  const positionClamped = clamp(position, 0, 1);
 
   return {
-    x: ax + position * deltaX,
-    y: ay + position * deltaY,
+    x: ax + dx * positionClamped,
+    y: ay + dy * positionClamped,
     ax,
     ay,
     bx,
@@ -122,7 +122,38 @@ const bounds = (nodes, padding) => {
   size.height = size.max.y - size.min.y + 2 * padding;
   size.min.x -= padding;
   size.min.y -= padding;
+
   return size;
+};
+
+const layerDensity = edges => {
+  const layers = {};
+
+  for (const edge of edges) {
+    const dense = Math.abs(
+      (angle(edge.targetNode, edge.sourceNode) - halfPI) / Math.PI
+    );
+
+    const sourceLayer = edge.sourceNode.layer;
+    const targetLayer = edge.targetNode.layer - 1;
+
+    layers[sourceLayer] = layers[sourceLayer] || [0, 0];
+    layers[sourceLayer][0] += dense;
+    layers[sourceLayer][1] += 1;
+
+    if (targetLayer !== sourceLayer) {
+      layers[targetLayer] = layers[targetLayer] || [0, 0];
+      layers[targetLayer][0] += dense;
+      layers[targetLayer][1] += 1;
+    }
+  }
+
+  for (const layer in layers) {
+    const average = layers[layer][0] / (layers[layer][1] || 1);
+    layers[layer] = Math.pow(1 + average, 2) - 1;
+  }
+
+  return Object.values(layers);
 };
 
 const constrain = (solver, ...args) => {
@@ -159,7 +190,7 @@ const solve = (constraints, iterations) => {
 };
 
 const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
-  const solver = new kiwi.Solver();
+  let solver = new kiwi.Solver();
 
   for (const node of nodes) {
     node.x = 0;
@@ -299,20 +330,7 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
     solve(separationConstraints, 10);
   }
 
-  const layerDensity = {};
-
-  for (const edge of edges) {
-    const layer = edge.sourceNode.layer;
-    layerDensity[layer] = layerDensity[layer] || [0, 0];
-    layerDensity[layer][0] += Math.abs(
-      angle(edge.targetNode, edge.sourceNode) - Math.PI * 0.5
-    );
-    layerDensity[layer][1] += 1;
-  }
-
-  for (const layer in layerDensity) {
-    layerDensity[layer] = layerDensity[layer][0] / layerDensity[layer][1];
-  }
+  solver = new kiwi.Solver();
 
   for (let l = 0; l < layerRows.length; l += 1) {
     const layerNodes = layerRows[l];
@@ -322,24 +340,18 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
         solver,
         layerNodes[i + 1].X.minus(layerNodes[i].X),
         greaterThan,
-        Math.max(
-          spaceX + layerNodes[i].width * 0.5 + layerNodes[i + 1].width * 0.5,
-          0.8 * (layerNodes[i + 1].x - layerNodes[i].x)
+        snap(
+          Math.max(
+            spaceX + layerNodes[i].width * 0.5 + layerNodes[i + 1].width * 0.5,
+            0.8 * (layerNodes[i + 1].x - layerNodes[i].x)
+          ),
+          spaceX
         )
       );
     }
   }
 
   for (const edge of edges) {
-    const separationY =
-      spaceY + layerDensity[edge.sourceNode.layer] * spaceY * 0.85;
-
-    constrain(
-      solver,
-      edge.targetNode.Y.minus(edge.sourceNode.Y),
-      greaterThan,
-      separationY
-    );
     constrain(
       solver,
       edge.sourceNode.X.minus(edge.targetNode.X),
@@ -354,6 +366,19 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
   for (const node of nodes) {
     node.x = node.X.value();
     node.y = node.Y.value();
+  }
+
+  const densities = layerDensity(edges);
+  let densityOffset = 0;
+
+  for (let i = 0; i < densities.length; i += 1) {
+    const density = densities[i];
+    const separationY = snap(density * spaceY, Math.round(spaceY * 0.5));
+    densityOffset += separationY;
+
+    for (const node of layerRows[i + 1]) {
+      node.y += densityOffset;
+    }
   }
 
   return layerRows;
@@ -373,11 +398,23 @@ const routing = ({
   stemMax
 }) => {
   for (const node of nodes) {
-    node.targets.sort(
-      (a, b) => angle(node, b.targetNode) - angle(node, a.targetNode)
-    );
-    node.sources.sort(
-      (a, b) => angle(node, a.sourceNode) - angle(node, b.sourceNode)
+    node.targets.sort((a, b) =>
+      compare(
+        Math.atan2(
+          b.sourceNode.y - b.targetNode.y,
+          b.sourceNode.x - b.targetNode.x !== 0
+            ? b.sourceNode.x - b.targetNode.x
+            : (b.targetNode.layer % 2 === 0 ? -1 : 1) *
+                Math.pow(b.targetNode.layer - b.sourceNode.layer, 3)
+        ),
+        Math.atan2(
+          a.sourceNode.y - a.targetNode.y,
+          a.sourceNode.x - a.targetNode.x !== 0
+            ? a.sourceNode.x - a.targetNode.x
+            : (a.targetNode.layer % 2 === 0 ? -1 : 1) *
+                Math.pow(a.targetNode.layer - a.sourceNode.layer, 3)
+        )
+      )
     );
   }
 
@@ -410,7 +447,7 @@ const routing = ({
 
     for (let l = source.layer + 1; l < target.layer; l += 1) {
       const firstNode = layerRows[l][0];
-      let upperPoint = null;
+      let upperPoint = firstNode;
       let nearestDistance = Infinity;
 
       const row = [
@@ -446,11 +483,7 @@ const routing = ({
           nodeTop(nextNode) - spaceY
         );
 
-        const distance =
-          (currentPoint.x - candidatePoint.x) *
-            (currentPoint.x - candidatePoint.x) +
-          (currentPoint.y - candidatePoint.y) *
-            (currentPoint.y - candidatePoint.y);
+        const distance = distance1d(currentPoint.x, candidatePoint.x);
 
         if (distance < nearestDistance) {
           nearestDistance = distance;
@@ -489,15 +522,17 @@ const routing = ({
   }
 
   for (const node of nodes) {
-    node.targets.sort(
-      (a, b) =>
-        angle(node, b.points[0] || b.targetNode) -
-        angle(node, a.points[0] || a.targetNode)
+    node.targets.sort((a, b) =>
+      compare(
+        angle(b.sourceNode, b.points[0] || b.targetNode),
+        angle(a.sourceNode, a.points[0] || a.targetNode)
+      )
     );
-    node.sources.sort(
-      (a, b) =>
-        angle(node, a.points[a.points.length - 1] || a.sourceNode) -
-        angle(node, b.points[b.points.length - 1] || b.sourceNode)
+    node.sources.sort((a, b) =>
+      compare(
+        angle(a.points[a.points.length - 1] || a.sourceNode, a.targetNode),
+        angle(b.points[b.points.length - 1] || b.sourceNode, b.targetNode)
+      )
     );
   }
 
@@ -565,5 +600,3 @@ const routing = ({
     edge.points = [...sourcePoints, ...edge.points, ...targetPoints];
   }
 };
-
-export default graph;
