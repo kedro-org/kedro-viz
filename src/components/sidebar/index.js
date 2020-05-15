@@ -16,11 +16,11 @@ export const Sidebar = ({ visible }) => (
       className={classnames('pipeline-sidebar', {
         'pipeline-sidebar--visible': visible
       })}>
-      <IconToolbar />
       <div className="pipeline-ui">
         <TagList />
         <NodeList />
       </div>
+      <IconToolbar />
     </div>
   </>
 );
