@@ -35,10 +35,10 @@ const IconButton = ({
       <button
         aria-label={ariaLabel}
         aria-live={ariaLive}
-        className="pipeline-icon-button"
+        className="pipeline-icon-toolbar__button"
         disabled={disabled}
         onClick={onClick}>
-        <span>{labelText}</span>
+        <span className="pipeline-icon-toolbar__label">{labelText}</span>
         <Icon className="pipeline-icon" />
       </button>
     </li>
