@@ -11,7 +11,6 @@ import './export-modal.css';
  * Kedro-UI modal to allow users to choose between SVG/PNG export formats
  */
 const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
-  console.log(onToggle);
   if (!visible.exportBtn) {
     return null;
   }
