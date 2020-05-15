@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import {
   toggleExportModal,
@@ -32,6 +33,9 @@ export const IconToolbar = ({
     <ul className="pipeline-icon-toolbar kedro">
       <IconButton
         ariaLabel={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
+        className={classnames('pipeline-menu-button', {
+          'pipeline-menu-button--inverse': !visible.sidebar
+        })}
         onClick={() => onToggleSidebar(!visible.sidebar)}
         icon="menu"
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}

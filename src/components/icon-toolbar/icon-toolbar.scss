@@ -67,7 +67,7 @@
   transform: translateX(-1em);
   visibility: hidden;
   opacity: 0;
-  transition: all ease 0.2s, width 0s;
+  transition: all ease 0.2s;
 
   .pipeline-icon-toolbar__button:hover &,
   [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {
@@ -97,4 +97,12 @@
       border-right-color: $color-tooltip-bg-dark;
     }
   }
+}
+
+.pipeline-menu-button svg {
+  transition: transform ease 0.4s;
+}
+
+.pipeline-menu-button--inverse svg {
+  transform: rotate(-180deg);
 }
