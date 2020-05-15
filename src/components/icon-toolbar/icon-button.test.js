@@ -12,7 +12,7 @@ describe('IconButton', () => {
       visible: true
     });
     expect(wrapper.find('li').length).toBe(1);
-    expect(wrapper.find('.pipeline-icon-button').length).toBe(1);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
   });
 
   it('calls a function on click', () => {
@@ -26,6 +26,6 @@ describe('IconButton', () => {
   it('hides when visibility is false', () => {
     const wrapper = setup.shallow(IconButton, { visible: false });
     expect(wrapper.find('li').length).toBe(0);
-    expect(wrapper.find('.pipeline-icon-button').length).toBe(0);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(0);
   });
 });
