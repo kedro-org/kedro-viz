@@ -33,25 +33,6 @@
   }
 }
 
-.pipeline-sidebar__show-menu {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  transition: all ease 0.4s;
-}
-
-.pipeline-sidebar__hide-menu {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1;
-
-  @media (min-width: $breakpoint-small) {
-    right: -50px;
-    z-index: auto;
-  }
-}
-
 .pipeline-ui {
   display: flex;
   flex-direction: column;
