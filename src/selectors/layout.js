@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import dagre from 'dagre';
-import graph from '../utils/graph';
+import graph from '../utils/graph/';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 
@@ -46,11 +46,22 @@ export const getGraphDagre = createSelector(
   }
 );
 
-// export const getGraph = getGraphDagre;
-export const getGraph = createSelector(
+export const getGraphExperimental = createSelector(
   [getVisibleNodes, getVisibleEdges],
   graph
 );
+
+export const getGraph = (...args) => {
+  const useExperimental =
+    typeof window !== 'undefined' &&
+    window.location.search.indexOf('exp') !== -1;
+
+  if (useExperimental) {
+    return getGraphExperimental(...args);
+  }
+
+  return getGraphDagre(...args);
+};
 
 /**
  * Reformat node data for use on the chart,
