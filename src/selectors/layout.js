@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import dagre from 'dagre';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
+import { sidebarBreakpoint, sidebarWidth } from '../config';
 
 const getHasVisibleLayers = state =>
   state.visible.layers && Boolean(state.layer.ids.length);
@@ -85,12 +86,10 @@ export const getGraphSize = createSelector(
  * Return the displayed width of the sidebar
  */
 export const getSidebarWidth = (visibleSidebar, outerChartWidth) => {
-  const defaultSidebarWidth = 300; // from _variables.scss
-  const breakpointSmall = 480; // from _variables.scss
-  if (visibleSidebar && outerChartWidth > breakpointSmall) {
-    return defaultSidebarWidth;
+  if (visibleSidebar && outerChartWidth > sidebarBreakpoint) {
+    return sidebarWidth.open;
   }
-  return 0;
+  return sidebarWidth.closed;
 };
 
 /**

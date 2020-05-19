@@ -2,6 +2,7 @@ import animals from '../utils/data/animals.mock';
 import {
   RESET_DATA,
   TOGGLE_LAYERS,
+  TOGGLE_EXPORT_MODAL,
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
@@ -9,6 +10,7 @@ import {
   UPDATE_FONT_LOADED,
   resetData,
   toggleLayers,
+  toggleExportModal,
   toggleSidebar,
   toggleTextLabels,
   toggleTheme,
@@ -47,6 +49,15 @@ describe('actions', () => {
       visible
     };
     expect(toggleLayers(visible)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether to show the export modal', () => {
+    const visible = false;
+    const expectedAction = {
+      type: TOGGLE_EXPORT_MODAL,
+      visible
+    };
+    expect(toggleExportModal(visible)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether the sidebar is open', () => {

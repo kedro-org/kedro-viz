@@ -1,3 +1,5 @@
+@import './variables';
+
 //-- Weights --//
 %type--light {
   font-weight: 300;
@@ -68,4 +70,20 @@
   font-size: 1rem;
   line-height: 1.2rem;
   letter-spacing: 0.1px;
+}
+
+//-- Other --//
+
+%tooltip {
+  color: white;
+
+  .kui-theme--light & {
+    background: $color-tooltip-bg-light;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .kui-theme--dark & {
+    background: $color-tooltip-bg-dark;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
 }

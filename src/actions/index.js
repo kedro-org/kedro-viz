@@ -15,11 +15,24 @@ export const TOGGLE_LAYERS = 'TOGGLE_LAYERS';
 
 /**
  * Toggle whether to show layers on/off
- * @param {Boolean} layers True if text labels are to be shown
+ * @param {Boolean} visible True if layers are to be shown
  */
 export function toggleLayers(visible) {
   return {
     type: TOGGLE_LAYERS,
+    visible
+  };
+}
+
+export const TOGGLE_EXPORT_MODAL = 'TOGGLE_EXPORT_MODAL';
+
+/**
+ * Toggle whether to show the export modal
+ * @param {Boolean} visible True if the modal is to be shown
+ */
+export function toggleExportModal(visible) {
+  return {
+    type: TOGGLE_EXPORT_MODAL,
     visible
   };
 }

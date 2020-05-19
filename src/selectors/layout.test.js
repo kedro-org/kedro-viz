@@ -13,6 +13,7 @@ import { getVisibleEdges } from './edges';
 import { updateChartSize } from '../actions';
 import getInitialState from '../store/initial-state';
 import reducer from '../reducers';
+import { sidebarBreakpoint, sidebarWidth } from '../config';
 
 describe('Selectors', () => {
   describe('getGraph', () => {
@@ -95,26 +96,28 @@ describe('Selectors', () => {
   });
 
   describe('getSidebarWidth', () => {
+    const { open, closed } = sidebarWidth;
+
     describe('if sidebar is visible', () => {
-      it('reduces the chart width by 300 on wider screens', () => {
-        expect(getSidebarWidth(true, 1000)).toEqual(300);
-        expect(getSidebarWidth(true, 500)).toEqual(300);
+      it(`reduces the chart width by ${open} on screens wider than ${sidebarBreakpoint}`, () => {
+        expect(getSidebarWidth(true, 1200)).toEqual(open);
+        expect(getSidebarWidth(true, 900)).toEqual(open);
       });
 
-      it('sets sidebar width to zero on mobile', () => {
-        expect(getSidebarWidth(true, 480)).toEqual(0);
-        expect(getSidebarWidth(true, 320)).toEqual(0);
+      it(`sets sidebar width to ${closed} on screens smaller than ${sidebarBreakpoint}`, () => {
+        expect(getSidebarWidth(true, 480)).toEqual(closed);
+        expect(getSidebarWidth(true, 320)).toEqual(closed);
       });
     });
 
     describe('if sidebar is hidden', () => {
-      it('sets sidebar width to zero on desktop', () => {
-        expect(getSidebarWidth(false, 1000)).toEqual(0);
+      it(`sets sidebar width to ${closed} on screens wider than ${sidebarBreakpoint}`, () => {
+        expect(getSidebarWidth(false, 1000)).toEqual(closed);
       });
 
-      it('sets sidebar width to zero on mobile', () => {
-        expect(getSidebarWidth(false, 480)).toEqual(0);
-        expect(getSidebarWidth(false, 320)).toEqual(0);
+      it(`sets sidebar width to ${closed} on screens smaller than ${sidebarBreakpoint}`, () => {
+        expect(getSidebarWidth(false, 480)).toEqual(closed);
+        expect(getSidebarWidth(false, 320)).toEqual(closed);
       });
     });
   });

@@ -1,20 +1,21 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import Modal from '@quantumblack/kedro-ui/lib/components/modal';
-import Button from '@quantumblack/kedro-ui/lib/components/button';
-import { getGraphSize } from '../../selectors/layout';
 const { default: downloadSvg, downloadPng } =
   typeof window !== 'undefined' && require('svg-crowbar');
 
 /**
  * Handle onClick for the SVG/PNG download button
- * @param {Function} download SVG-crowbar function to download SVG or PNG
  * @param {string} format Must be 'svg' or 'png'
  * @param {string} theme light/dark theme
  * @param {Object} graphSize Graph width/height/margin
+ * @param {function} mockFn Mock testing function stand-in for svg-crowbar
  * @return {Function} onClick handler
  */
-export const exportGraph = (download, format, theme, graphSize) => {
+const exportGraph = ({ format, theme, graphSize, mockFn }) => {
+  const downloadFormats = {
+    png: downloadPng,
+    svg: downloadSvg
+  };
+  const download = mockFn || downloadFormats[format];
+
   // Create clone of graph SVG to avoid breaking the original
   const svg = document.querySelector('#pipeline-graph');
   const clone = svg.parentNode.appendChild(svg.cloneNode(true));
@@ -56,39 +57,4 @@ export const exportGraph = (download, format, theme, graphSize) => {
   svg.parentNode.removeChild(clone);
 };
 
-/**
- * Kedro-UI modal to allow users to choose between SVG/PNG export formats
- */
-const ExportModal = ({ graphSize, theme, toggleModal, visible }) => (
-  <Modal
-    title="Export pipeline visualisation"
-    onClose={() => toggleModal(false)}
-    theme={theme}
-    visible={visible}>
-    <div className="pipeline-icon-modal">
-      <Button
-        theme={theme}
-        onClick={() => {
-          exportGraph(downloadPng, 'png', theme, graphSize);
-          toggleModal(false);
-        }}>
-        Download PNG
-      </Button>
-      <Button
-        theme={theme}
-        onClick={() => {
-          exportGraph(downloadSvg, 'svg', theme, graphSize);
-          toggleModal(false);
-        }}>
-        Download SVG
-      </Button>
-    </div>
-  </Modal>
-);
-
-export const mapStateToProps = state => ({
-  graphSize: getGraphSize(state),
-  theme: state.theme
-});
-
-export default connect(mapStateToProps)(ExportModal);
+export default exportGraph;

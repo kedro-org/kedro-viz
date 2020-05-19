@@ -1,44 +1,32 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { toggleSidebar } from '../../actions';
 import TagList from '../tag-list';
 import NodeList from '../node-list';
-import { ShowMenuButton, HideMenuButton } from './menu-buttons';
+import IconToolbar from '../icon-toolbar';
 import './sidebar.css';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
- * @param {Object} props onToggle, theme, and visible
+ * @param {Object} props visible
  */
-export const Sidebar = props => (
+export const Sidebar = ({ visible }) => (
   <>
-    <ShowMenuButton {...props} />
-    <nav
+    <div
       className={classnames('pipeline-sidebar', {
-        'pipeline-sidebar--visible': props.visible
+        'pipeline-sidebar--visible': visible
       })}>
-      <HideMenuButton {...props} />
       <div className="pipeline-ui">
         <TagList />
         <NodeList />
       </div>
-    </nav>
+      <IconToolbar />
+    </div>
   </>
 );
 
 const mapStateToProps = state => ({
-  theme: state.theme,
   visible: state.visible.sidebar
 });
 
-const mapDispatchToProps = dispatch => ({
-  onToggle: visible => {
-    dispatch(toggleSidebar(visible));
-  }
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Sidebar);
+export default connect(mapStateToProps)(Sidebar);

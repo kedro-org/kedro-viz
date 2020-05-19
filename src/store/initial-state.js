@@ -104,6 +104,7 @@ const getInitialState = (props = {}) => {
       layerBtn: true,
       layers: Boolean(pipelineData.layer.ids.length),
       exportBtn: true,
+      exportModal: false,
       sidebar: true,
       themeBtn: true
     },

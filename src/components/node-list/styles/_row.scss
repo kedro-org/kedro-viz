@@ -7,11 +7,11 @@
   &--active,
   &--visible:hover {
     .kui-theme--light & {
-      background-color: darken($color-bg-light-alt2, 4%);
+      background-color: darken($color-bg-light-alt, 3%);
     }
 
     .kui-theme--dark & {
-      background-color: lighten($color-bg-dark-alt2, 4%);
+      background-color: lighten($color-bg-dark-alt, 3%);
     }
   }
 
@@ -19,11 +19,11 @@
   // additional selector required to increase specificity to override previous rule:
   &--visible#{&}--selected {
     .kui-theme--light & {
-      background-color: darken($color-bg-light-alt2, 10%);
+      background-color: darken($color-bg-light-alt, 8%);
     }
 
     .kui-theme--dark & {
-      background-color: lighten($color-bg-dark-alt2, 10%);
+      background-color: lighten($color-bg-dark-alt, 8%);
     }
   }
 
@@ -85,10 +85,11 @@
   transition: opacity ease $row-transition;
 
   &:focus {
-    outline: 4px solid $color-link;
+    outline: none;
+    box-shadow: 0 0 0 4px $color-link inset;
 
     [data-whatintent='mouse'] & {
-      outline: none;
+      box-shadow: none;
     }
   }
 }

@@ -1,6 +1,9 @@
 //-- Custom --//
 
-$nav-width: 300px;
+// Also set in src/config.js:
+$sidebar-width-open: 400px;
+$sidebar-width-closed: 70px;
+$sidebar-breakpoint: 700px;
 
 //-- Breakpoints --//
 
@@ -22,20 +25,24 @@ $breakpoint-v-medium: 900px;
 //-- Colours --//
 
 $color-primary: #00bfff;
+$color-link: rgba($color-primary, 0.85);
 
+// Light:
 $color-text-light: #333;
 $color-bg-light: #eee;
 $color-bg-light-alt: #fff;
-$color-bg-light-alt2: #f9f9f9;
+$color-bg-light-alt2: mix($color-bg-light, $color-bg-light-alt);
 $color-line-light: #e0e0e0;
+$color-tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
 
-$color-text-dark: white;
+// Dark:
 $hue: 205;
+$color-text-dark: white;
 $color-bg-dark: hsl($hue, 30%, 14.5%);
-$color-bg-dark-alt: hsl($hue, 30%, 18%);
-$color-bg-dark-alt2: hsl($hue, 30%, 16%);
+$color-bg-dark-alt: hsl($hue, 30%, 17%);
+$color-bg-dark-alt2: mix($color-bg-dark, $color-bg-dark-alt);
 $color-line-dark: hsl($hue, 50%, 12%);
-$color-link: rgba($color-primary, 0.85);
+$color-tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
 
 //-- typography --//
 

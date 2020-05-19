@@ -11,14 +11,6 @@
     @extend %nolist;
   }
 
-  .kui-theme--light & {
-    background: $color-bg-light-alt2;
-  }
-
-  .kui-theme--dark & {
-    background: $color-bg-dark-alt2;
-  }
-
   &--nested {
     margin: 0 0 1.2em;
   }

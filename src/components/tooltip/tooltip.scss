@@ -1,15 +1,14 @@
 @import '../../styles/variables';
+@import '../../styles/extends';
 
-$tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
-$tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
-$x: 20px;
-$y: 10px;
-$t: 10px;
+$x-offset: 20px;
+$y-offset: 10px;
+$triangle-size: 10px;
 
 .pipeline-tooltip {
   position: absolute;
-  top: -$y;
-  left: -$x;
+  top: -$y-offset;
+  left: -$x-offset;
   z-index: 9;
   width: 100vw;
   visibility: hidden;
@@ -23,74 +22,65 @@ $t: 10px;
   }
 
   &--right {
-    right: -$x;
+    right: -$x-offset;
     left: auto;
   }
 
   &--top {
-    top: $y;
+    top: $y-offset;
   }
 
   &::before {
     position: absolute;
-    bottom: -$y;
-    left: $x/2;
+    bottom: -$y-offset;
+    left: $x-offset / 2;
     width: 0;
     height: 0;
     border-color: transparent;
     border-style: solid;
-    border-width: $t $t 0 $t;
+    border-width: $triangle-size $triangle-size 0 $triangle-size;
     content: '';
 
     .kui-theme--light & {
-      border-top-color: $tooltip-bg-light;
+      border-top-color: $color-tooltip-bg-light;
     }
 
     .kui-theme--dark & {
-      border-top-color: $tooltip-bg-dark;
+      border-top-color: $color-tooltip-bg-dark;
     }
   }
 
   &--right::before {
-    right: $x/2;
+    right: $x-offset / 2;
     left: auto;
   }
 
   &--top::before {
-    top: -$y;
+    top: -$y-offset;
     bottom: auto;
-    border-width: 0 $t $t $t;
+    border-width: 0 $triangle-size $triangle-size $triangle-size;
     border-top-color: transparent;
 
     .kui-theme--light & {
-      border-bottom-color: $tooltip-bg-light;
+      border-bottom-color: $color-tooltip-bg-light;
     }
 
     .kui-theme--dark & {
-      border-bottom-color: $tooltip-bg-dark;
+      border-bottom-color: $color-tooltip-bg-dark;
     }
   }
 }
 
 .pipeline-tooltip__text {
+  @extend %tooltip;
+
   position: absolute;
   bottom: 0;
   left: 0;
   max-width: calc(50vw - 150px);
   padding: 12px 20px;
-  color: white;
   font-size: 1.5em;
   overflow-wrap: break-word;
-
-  .kui-theme--light & {
-    background: $tooltip-bg-light;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
-
-  .kui-theme--dark & {
-    background: $tooltip-bg-dark;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
 
   .pipeline-tooltip--right & {
     right: 0;
