@@ -1,14 +1,14 @@
 @import '../../styles/variables';
 @import '../../styles/extends';
 
-$x: 20px;
-$y: 10px;
-$t: 10px;
+$x-offset: 20px;
+$y-offset: 10px;
+$triangle-size: 10px;
 
 .pipeline-tooltip {
   position: absolute;
-  top: -$y;
-  left: -$x;
+  top: -$y-offset;
+  left: -$x-offset;
   z-index: 9;
   width: 100vw;
   visibility: hidden;
@@ -22,23 +22,23 @@ $t: 10px;
   }
 
   &--right {
-    right: -$x;
+    right: -$x-offset;
     left: auto;
   }
 
   &--top {
-    top: $y;
+    top: $y-offset;
   }
 
   &::before {
     position: absolute;
-    bottom: -$y;
-    left: $x/2;
+    bottom: -$y-offset;
+    left: $x-offset / 2;
     width: 0;
     height: 0;
     border-color: transparent;
     border-style: solid;
-    border-width: $t $t 0 $t;
+    border-width: $triangle-size $triangle-size 0 $triangle-size;
     content: '';
 
     .kui-theme--light & {
@@ -51,14 +51,14 @@ $t: 10px;
   }
 
   &--right::before {
-    right: $x/2;
+    right: $x-offset / 2;
     left: auto;
   }
 
   &--top::before {
-    top: -$y;
+    top: -$y-offset;
     bottom: auto;
-    border-width: 0 $t $t $t;
+    border-width: 0 $triangle-size $triangle-size $triangle-size;
     border-top-color: transparent;
 
     .kui-theme--light & {

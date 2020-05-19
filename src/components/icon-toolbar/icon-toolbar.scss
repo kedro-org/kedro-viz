@@ -77,16 +77,16 @@
   }
 
   &::before {
-    $t: 7px;
+    $triangle-size: 7px;
 
     position: absolute;
-    top: calc(50% - #{$t});
-    left: -$t;
+    top: calc(50% - #{$triangle-size});
+    left: -$triangle-size;
     width: 0;
     height: 0;
     border-color: transparent;
     border-style: solid;
-    border-width: $t $t $t 0;
+    border-width: $triangle-size $triangle-size $triangle-size 0;
     content: '';
 
     .kui-theme--light & {
