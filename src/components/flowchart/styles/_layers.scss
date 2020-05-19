@@ -21,22 +21,12 @@
   position: absolute;
   top: 0;
   left: 0;
+  width: 130px;
+  height: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
   pointer-events: none;
-}
-
-.layer-name {
-  position: absolute;
-  top: 0;
-  display: flex;
-  align-items: center;
-  width: 130px;
-  padding-left: 15px;
-  font-weight: bold;
-  font-size: 1.6em;
-  white-space: nowrap;
 
   .kui-theme--dark & {
     background: linear-gradient(to right, $color-bg-dark, transparent);
@@ -45,4 +35,16 @@
   .kui-theme--light & {
     background: linear-gradient(to right, $color-bg-light, transparent);
   }
+}
+
+.layer-name {
+  position: absolute;
+  top: -10px;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  padding-left: 15px;
+  font-weight: bold;
+  font-size: 1.6em;
+  white-space: nowrap;
 }

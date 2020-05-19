@@ -143,12 +143,12 @@ export class FlowChart extends Component {
       this.el.wrapper.attr('transform', event.transform);
 
       // Update layer label y positions
-      this.el.layerNames
-        .style('height', d => `${d.height * scale}px`)
-        .style('transform', d => {
-          const ty = y + d.y * scale;
+      if (this.el.layerNames) {
+        this.el.layerNames.style('transform', d => {
+          const ty = y + (d.y + d.height / 2) * scale;
           return `translateY(${ty}px)`;
         });
+      }
 
       // Hide the tooltip so it doesn't get misaligned to its node
       this.hideTooltip();
