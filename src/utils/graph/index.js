@@ -16,7 +16,9 @@ const defaultOptions = {
     stemUnit: 8,
     stemMinSource: 5,
     stemMinTarget: 5,
-    stemMax: 20
+    stemMax: 20,
+    stemSpaceSource: 6,
+    stemSpaceTarget: 10
   }
 };
 
@@ -40,14 +42,13 @@ export default (nodes, edges, options = defaultOptions) => {
     edge.targetNode.sources.push(edge);
   }
 
-  const layerRows = layout({ nodes, edges, ...options.layout });
-
-  routing({ nodes, edges, layerRows, ...options.routing });
+  layout({ nodes, edges, ...options.layout });
+  routing({ nodes, edges, ...options.routing });
 
   const size = bounds(nodes, 100);
 
   return {
-    graph: () => size,
+    graph: () => ({ ...size }),
     nodes: () => nodes.map(node => node.id),
     edges: () => edges.map(edge => edge.id),
     node: id => offsetNode(nodes.find(node => node.id === id), size.min),

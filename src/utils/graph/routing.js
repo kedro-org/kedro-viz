@@ -1,3 +1,5 @@
+import { groupByRow } from './layout';
+
 import {
   compare,
   distance1d,
@@ -12,7 +14,6 @@ import {
 const routing = ({
   nodes,
   edges,
-  layerRows,
   spaceX,
   spaceY,
   tension,
@@ -20,8 +21,12 @@ const routing = ({
   stemUnit,
   stemMinSource,
   stemMinTarget,
-  stemMax
+  stemMax,
+  stemSpaceSource,
+  stemSpaceTarget
 }) => {
+  const rows = groupByRow(nodes);
+
   for (const node of nodes) {
     node.targets.sort((a, b) =>
       compare(
@@ -29,15 +34,15 @@ const routing = ({
           b.sourceNode.y - b.targetNode.y,
           b.sourceNode.x - b.targetNode.x !== 0
             ? b.sourceNode.x - b.targetNode.x
-            : (b.targetNode.layer % 2 === 0 ? -1 : 1) *
-                Math.pow(b.targetNode.layer - b.sourceNode.layer, 3)
+            : (b.targetNode.row % 2 === 0 ? -1 : 1) *
+                Math.pow(b.targetNode.row - b.sourceNode.row, 3)
         ),
         Math.atan2(
           a.sourceNode.y - a.targetNode.y,
           a.sourceNode.x - a.targetNode.x !== 0
             ? a.sourceNode.x - a.targetNode.x
-            : (a.targetNode.layer % 2 === 0 ? -1 : 1) *
-                Math.pow(a.targetNode.layer - a.sourceNode.layer, 3)
+            : (a.targetNode.row % 2 === 0 ? -1 : 1) *
+                Math.pow(a.targetNode.row - a.sourceNode.row, 3)
         )
       )
     );
@@ -48,12 +53,13 @@ const routing = ({
     const target = edge.targetNode;
 
     const sourceSeparation = Math.min(
-      (0.75 * source.width) / source.targets.length,
-      6
+      (source.width - stemSpaceSource) / source.targets.length,
+      stemSpaceSource
     );
+
     const targetSeparation = Math.min(
-      (0.75 * target.width) / target.sources.length,
-      10
+      (target.width - stemSpaceTarget) / target.sources.length,
+      stemSpaceTarget
     );
 
     const sourceEdgeDistance =
@@ -70,20 +76,20 @@ const routing = ({
 
     edge.points = [];
 
-    for (let l = source.layer + 1; l < target.layer; l += 1) {
-      const firstNode = layerRows[l][0];
-      let upperPoint = firstNode;
+    for (let l = source.row + 1; l < target.row; l += 1) {
+      const firstNode = rows[l][0];
+      let upperPoint = { x: nodeLeft(firstNode) - spaceX, y: firstNode.y };
       let nearestDistance = Infinity;
 
-      const row = [
+      const rowExtended = [
         { ...firstNode, x: Number.MIN_SAFE_INTEGER },
-        ...layerRows[l],
+        ...rows[l],
         { ...firstNode, x: Number.MAX_SAFE_INTEGER }
       ];
 
-      for (let i = 0; i < row.length - 1; i += 1) {
-        const node = row[i];
-        const nextNode = row[i + 1];
+      for (let i = 0; i < rowExtended.length - 1; i += 1) {
+        const node = rowExtended[i];
+        const nextNode = rowExtended[i + 1];
         const nodeGap = nodeLeft(nextNode) - nodeRight(node);
 
         if (nodeGap < minNodeGap) continue;
@@ -166,12 +172,13 @@ const routing = ({
     const target = edge.targetNode;
 
     const sourceSeparation = Math.min(
-      (0.75 * source.width) / source.targets.length,
-      6
+      (source.width - stemSpaceSource) / source.targets.length,
+      stemSpaceSource
     );
+
     const targetSeparation = Math.min(
-      (0.75 * target.width) / target.sources.length,
-      10
+      (target.width - stemSpaceTarget) / target.sources.length,
+      stemSpaceTarget
     );
 
     const sourceEdgeDistance =
@@ -195,11 +202,11 @@ const routing = ({
     const sourcePoints = [
       {
         x: source.x + sourceOffsetX,
-        y: source.y + source.height * 0.5
+        y: nodeBottom(source)
       },
       {
         x: source.x + sourceOffsetX,
-        y: source.y + source.height * 0.5 + stemMinSource
+        y: nodeBottom(source) + stemMinSource
       },
       {
         x: source.x + sourceOffsetX,

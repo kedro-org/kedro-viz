@@ -1,13 +1,20 @@
 import { halfPI, snap, angle } from './common';
-import { greaterThan, solve, equalTo } from './solver';
+import { solve, greaterThan, equalTo } from './solver';
 
 const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
+  const crossingConstraints = [];
+  const parallelConstraints = [];
+  const parallelSingleConstraints = [];
+  const parallelDoubleConstraints = [];
+  const separationConstraints = [];
+  const snapConstraints = [];
+
   for (const node of nodes) {
     node.x = 0;
     node.y = 0;
   }
 
-  const layerConstraints = edges.map(edge => ({
+  const rowConstraints = edges.map(edge => ({
     a: edge.targetNode,
     b: edge.sourceNode,
     key: 'y',
@@ -18,31 +25,9 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
     required: true
   }));
 
-  solve(layerConstraints, 1, true);
+  solve(rowConstraints, 1, true);
 
-  const layers = {};
-
-  for (const node of nodes) {
-    layers[node.y] = layers[node.y] || [];
-    layers[node.y].push(node);
-  }
-
-  const keys = Object.keys(layers);
-  keys.sort((a, b) => a - b);
-
-  const layerRows = keys.map(key => layers[key]);
-  for (let i = 0; i < layerRows.length; i += 1) {
-    for (const node of layerRows[i]) {
-      node.layer = i;
-    }
-  }
-
-  const crossingConstraints = [];
-  const parallelConstraints = [];
-  const parallelSingleConstraints = [];
-  const parallelDoubleConstraints = [];
-  const separationConstraints = [];
-  const snapConstraints = [];
+  const rows = groupByRow(nodes);
 
   for (let i = 0; i < edges.length; i += 1) {
     const edgeA = edges[i];
@@ -117,14 +102,14 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
 
     separationConstraints.length = 0;
 
-    for (let l = 0; l < layerRows.length; l += 1) {
-      const layerNodes = layerRows[l];
-      layerNodes.sort((a, b) => a.x - b.x);
+    for (let l = 0; l < rows.length; l += 1) {
+      const rowNodes = rows[l];
+      rowNodes.sort((a, b) => a.x - b.x);
 
-      for (let j = 0; j < layerNodes.length - 1; j += 1) {
+      for (let j = 0; j < rowNodes.length - 1; j += 1) {
         separationConstraints.push({
-          a: layerNodes[j],
-          b: layerNodes[j + 1],
+          a: rowNodes[j],
+          b: rowNodes[j + 1],
           key: 'x',
           operator: (distance, target, delta) => delta <= target,
           target: (ax, bx, co) => -spaceX - co.a.width * 0.5 - co.b.width * 0.5,
@@ -138,21 +123,21 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
     solve(separationConstraints, 10);
   }
 
-  for (let l = 0; l < layerRows.length; l += 1) {
-    const layerNodes = layerRows[l];
+  for (let l = 0; l < rows.length; l += 1) {
+    const rowNodes = rows[l];
 
-    for (let i = 0; i < layerNodes.length - 1; i += 1) {
+    for (let i = 0; i < rowNodes.length - 1; i += 1) {
       const snapSeparation = snap(
         Math.max(
-          spaceX + layerNodes[i].width * 0.5 + layerNodes[i + 1].width * 0.5,
-          0.8 * (layerNodes[i + 1].x - layerNodes[i].x)
+          spaceX + rowNodes[i].width * 0.5 + rowNodes[i + 1].width * 0.5,
+          0.8 * (rowNodes[i + 1].x - rowNodes[i].x)
         ),
         spaceX
       );
 
       snapConstraints.push({
-        a: layerNodes[i + 1],
-        b: layerNodes[i],
+        a: rowNodes[i + 1],
+        b: rowNodes[i],
         key: 'x',
         operator: greaterThan,
         target: () => snapSeparation,
@@ -165,20 +150,9 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
 
   solve([...snapConstraints, ...parallelConstraints], 1, true);
 
-  const densities = layerDensity(edges);
-  let densityOffsetY = 0;
+  expandDenseRows(edges, rows, spaceY);
 
-  for (let i = 0; i < densities.length; i += 1) {
-    const density = densities[i];
-    const offsetY = snap(density * spaceY, Math.round(spaceY * 0.25));
-    densityOffsetY += offsetY;
-
-    for (const node of layerRows[i + 1]) {
-      node.y += densityOffsetY;
-    }
-  }
-
-  return layerRows;
+  return rows;
 };
 
 const crossingStrength = co => 1 / co.basisX;
@@ -192,32 +166,70 @@ const crossingTarget = (ax, bx, co) => {
   return sourceDelta + targetDelta < 0 ? -co.basisX : co.basisX;
 };
 
-const layerDensity = edges => {
-  const layers = {};
+const groupByRow = nodes => {
+  const rows = {};
+
+  for (const node of nodes) {
+    rows[node.y] = rows[node.y] || [];
+    rows[node.y].push(node);
+  }
+
+  const rowNumbers = Object.keys(rows);
+  rowNumbers.sort((a, b) => a - b);
+
+  const sortedRows = rowNumbers.map(key => rows[key]);
+  for (let i = 0; i < sortedRows.length; i += 1) {
+    sortedRows[i].sort((a, b) => a.x - b.x);
+
+    for (const node of sortedRows[i]) {
+      node.row = i;
+    }
+  }
+
+  return sortedRows;
+};
+
+const expandDenseRows = (edges, rows, spaceY) => {
+  const densities = rowDensity(edges);
+  let currentOffsetY = 0;
+
+  for (let i = 0; i < densities.length; i += 1) {
+    const density = densities[i];
+    const offsetY = snap(density * spaceY, Math.round(spaceY * 0.25));
+    currentOffsetY += offsetY;
+
+    for (const node of rows[i + 1]) {
+      node.y += currentOffsetY;
+    }
+  }
+};
+
+const rowDensity = edges => {
+  const rows = {};
 
   for (const edge of edges) {
     const dense =
       Math.abs(angle(edge.targetNode, edge.sourceNode) - halfPI) / halfPI;
 
-    const sourceLayer = edge.sourceNode.layer;
-    const targetLayer = edge.targetNode.layer - 1;
+    const sourceRow = edge.sourceNode.row;
+    const targetRow = edge.targetNode.row - 1;
 
-    layers[sourceLayer] = layers[sourceLayer] || [0, 0];
-    layers[sourceLayer][0] += dense;
-    layers[sourceLayer][1] += 1;
+    rows[sourceRow] = rows[sourceRow] || [0, 0];
+    rows[sourceRow][0] += dense;
+    rows[sourceRow][1] += 1;
 
-    if (targetLayer !== sourceLayer) {
-      layers[targetLayer] = layers[targetLayer] || [0, 0];
-      layers[targetLayer][0] += dense;
-      layers[targetLayer][1] += 1;
+    if (targetRow !== sourceRow) {
+      rows[targetRow] = rows[targetRow] || [0, 0];
+      rows[targetRow][0] += dense;
+      rows[targetRow][1] += 1;
     }
   }
 
-  for (const layer in layers) {
-    layers[layer] = layers[layer][0] / (layers[layer][1] || 1);
+  for (const row in rows) {
+    rows[row] = rows[row][0] / (rows[row][1] || 1);
   }
 
-  return Object.values(layers);
+  return Object.values(rows);
 };
 
-export { layout };
+export { layout, groupByRow };
