@@ -53,8 +53,9 @@
 }
 
 .pipeline-nodelist__toggle__icon {
+  width: 24px;
+  height: auto;
   margin: 0 4px -6px -6px;
-  fill: white;
 
   .kui-theme--light & {
     fill: rgba(black, 0.9);
@@ -62,9 +63,5 @@
 
   .kui-theme--dark & {
     fill: white;
-  }
-
-  &--uncheck {
-    transform: scale(0.75);
   }
 }
