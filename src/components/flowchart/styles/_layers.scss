@@ -5,11 +5,11 @@
   transition: opacity ease 0.5s;
 
   .kui-theme--dark & {
-    fill: rgba(white, 0.05);
+    fill: $layer-dark;
   }
 
   .kui-theme--light & {
-    fill: rgba(black, 0.05);
+    fill: $layer-light;
   }
 
   &:hover {

@@ -24,6 +24,10 @@ $node-labeltext-fill-light: $color-text-light;
 
 $edge-light: #989898;
 
+// Layer
+
+$layer-light: $color-bg-light-2;
+
 //-------------- DARK --------------//
 
 // Icon
@@ -43,3 +47,7 @@ $node-labeltext-fill-dark: $color-text-dark;
 // Edge
 
 $edge-dark: #545454;
+
+// Layer
+
+$layer-dark: mix($color-bg-dark-1, $color-bg-dark-2);
