@@ -20,10 +20,10 @@
 
 .pipeline-flowchart__arrowhead {
   .kui-theme--light & {
-    fill: $edge-light;
+    fill: $edge-arrowhead-light;
   }
 
   .kui-theme--dark & {
-    fill: $edge-dark;
+    fill: $edge-arrowhead-dark;
   }
 }
