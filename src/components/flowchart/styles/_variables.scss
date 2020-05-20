@@ -12,13 +12,9 @@ $node-icon-fill-light: $color-text-light;
 
 // Circle/Rect
 
-$node-fill-light: lighten($color-bg-light-1, 10%);
-$node-fill-light-active: lighten($color-bg-light-1, 13%);
-$node-fill-light-selected: lighten($color-bg-light-1, 20%);
-
-$node-stroke-light: mix($color-text-light, $color-bg-light-1, 50%);
-$node-stroke-light-active: mix($color-text-light, $color-bg-light-1, 90%);
-$node-stroke-light-selected: $color-text-light;
+$node-fill-light: #f0f1f3;
+$node-fill-light-active: #c6e6fb;
+$node-fill-light-selected: #aad8ff;
 
 // Label
 
@@ -26,7 +22,7 @@ $node-labeltext-fill-light: $color-text-light;
 
 // Edge
 
-$edge-light: mix($color-text-light, $color-bg-light-1, 75%);
+$edge-light: #989898;
 
 //-------------- DARK --------------//
 
@@ -36,13 +32,9 @@ $node-icon-fill-dark: $color-text-dark;
 
 // Circle/Rect
 
-$node-fill-dark: lighten($color-bg-dark-1, 10%);
-$node-fill-dark-active: lighten($color-bg-dark-1, 13%);
-$node-fill-dark-selected: lighten($color-bg-dark-1, 20%);
-
-$node-stroke-dark: mix($color-text-dark, $color-bg-dark-1, 30%);
-$node-stroke-dark-active: mix($color-text-dark, $color-bg-dark-1, 80%);
-$node-stroke-dark-selected: $color-text-dark;
+$node-fill-dark: #2a3b46;
+$node-fill-dark-active: #124066;
+$node-fill-dark-selected: #004d8c;
 
 // Label
 
@@ -50,4 +42,4 @@ $node-labeltext-fill-dark: $color-text-dark;
 
 // Edge
 
-$edge-dark: mix($color-text-dark, $color-bg-dark-1, 85%);
+$edge-dark: #545454;
