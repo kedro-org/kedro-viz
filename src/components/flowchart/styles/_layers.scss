@@ -29,11 +29,11 @@
   pointer-events: none;
 
   .kui-theme--dark & {
-    background: linear-gradient(to right, $color-bg-dark, transparent);
+    background: linear-gradient(to right, $color-bg-dark-1, transparent);
   }
 
   .kui-theme--light & {
-    background: linear-gradient(to right, $color-bg-light, transparent);
+    background: linear-gradient(to right, $color-bg-light-1, transparent);
   }
 }
 

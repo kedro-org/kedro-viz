@@ -126,7 +126,6 @@ const drawNodes = function() {
     .classed('node--text', textLabels)
     .classed('node--active', node => nodeActive[node.id])
     .classed('node--selected', node => nodeSelected[node.id])
-    .classed('node--highlight', node => centralNode && linkedNodes[node.id])
     .classed('node--faded', node => centralNode && !linkedNodes[node.id])
     .on('click', this.handleNodeClick)
     .on('mouseover', this.handleNodeMouseOver)
