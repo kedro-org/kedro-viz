@@ -42,11 +42,11 @@ $triangle-size: 10px;
     content: '';
 
     .kui-theme--light & {
-      border-top-color: $color-tooltip-bg-light;
+      border-top-color: $color-bg-light-alt;
     }
 
     .kui-theme--dark & {
-      border-top-color: $color-tooltip-bg-dark;
+      border-top-color: $color-bg-dark-alt;
     }
   }
 
@@ -62,11 +62,11 @@ $triangle-size: 10px;
     border-top-color: transparent;
 
     .kui-theme--light & {
-      border-bottom-color: $color-tooltip-bg-light;
+      border-bottom-color: $color-bg-light-alt;
     }
 
     .kui-theme--dark & {
-      border-bottom-color: $color-tooltip-bg-dark;
+      border-bottom-color: $color-bg-dark-alt;
     }
   }
 }

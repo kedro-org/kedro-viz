@@ -90,11 +90,11 @@
     content: '';
 
     .kui-theme--light & {
-      border-right-color: $color-tooltip-bg-light;
+      border-right-color: $color-bg-light-alt;
     }
 
     .kui-theme--dark & {
-      border-right-color: $color-tooltip-bg-dark;
+      border-right-color: $color-bg-dark-alt;
     }
   }
 }
