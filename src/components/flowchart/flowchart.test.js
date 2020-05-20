@@ -15,7 +15,7 @@ describe('FlowChart', () => {
 
   it('renders nodes with D3', () => {
     const wrapper = setup.mount(<FlowChart />);
-    const nodes = wrapper.render().find('.node');
+    const nodes = wrapper.render().find('.pipeline-node');
     const nodeNames = nodes.map((i, el) => $(el).text()).get();
     const mockNodes = getNodeIDs(mockState.lorem);
     const mockNodeNames = mockNodes.map(d => getNodeName(mockState.lorem)[d]);
