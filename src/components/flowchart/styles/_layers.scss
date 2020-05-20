@@ -26,7 +26,13 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  opacity: 0;
+  transition: opacity ease 0.7s;
   pointer-events: none;
+
+  &--visible {
+    opacity: 1;
+  }
 
   .kui-theme--dark & {
     background: linear-gradient(to right, $color-bg-dark-1, transparent);

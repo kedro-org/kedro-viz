@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { zoom, zoomIdentity } from 'd3-zoom';
@@ -264,7 +265,7 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { chartSize } = this.props;
+    const { chartSize, visibleLayers } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
     return (
@@ -303,7 +304,9 @@ export class FlowChart extends Component {
           </g>
         </svg>
         <ul
-          className="pipeline-flowchart__layer-names"
+          className={classnames('pipeline-flowchart__layer-names', {
+            'pipeline-flowchart__layer-names--visible': visibleLayers
+          })}
           ref={this.layerNamesRef}
         />
         <Tooltip chartSize={chartSize} {...this.state.tooltip} />
