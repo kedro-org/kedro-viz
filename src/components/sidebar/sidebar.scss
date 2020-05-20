@@ -17,6 +17,10 @@
     transform: translateX(-$sidebar-ui-width);
   }
 
+  @media print {
+    display: none;
+  }
+
   &--visible {
     transform: translateX(0);
   }

@@ -9,6 +9,10 @@
   &.kui-theme--light {
     color: #333;
     background: $color-bg-light-1;
+
+    @media print {
+      background: none;
+    }
   }
 
   &.kui-theme--dark {

@@ -48,11 +48,11 @@ export class FlowChart extends Component {
     this.initZoomBehaviour();
     this.drawChart();
     this.zoomChart();
-    this.addResizeObserver();
+    this.addGlobalEventListeners();
   }
 
   componentWillUnmount() {
-    this.removeResizeObserver();
+    this.removeGlobalEventListeners();
   }
 
   componentDidUpdate(prevProps) {
@@ -90,10 +90,11 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Add ResizeObserver to listen for any changes in the container's width/height
-   * (with event listener fallback)
+   * Add window event listeners on mount
    */
-  addResizeObserver() {
+  addGlobalEventListeners() {
+    // Add ResizeObserver to listen for any changes in the container's width/height
+    // (with event listener fallback)
     if (window.ResizeObserver) {
       this.resizeObserver =
         this.resizeObserver ||
@@ -102,17 +103,24 @@ export class FlowChart extends Component {
     } else {
       window.addEventListener('resize', this.handleWindowResize);
     }
+    // Print event listeners
+    window.addEventListener('beforeprint', this.handleBeforePrint);
+    window.addEventListener('afterprint', this.handleAfterPrint);
   }
 
   /**
-   * Remove ResizeObserver (or event listener fallback) on unmount
+   * Remove window event listeners on unmount
    */
-  removeResizeObserver() {
+  removeGlobalEventListeners() {
+    // ResizeObserver
     if (window.ResizeObserver) {
       this.resizeObserver.unobserve(this.containerRef.current);
     } else {
       window.removeEventListener('resize', this.handleWindowResize);
     }
+    // Print event listeners
+    window.removeEventListener('beforeprint', this.handleBeforePrint);
+    window.removeEventListener('afterprint', this.handleAfterPrint);
   }
 
   /**
@@ -120,6 +128,23 @@ export class FlowChart extends Component {
    */
   handleWindowResize = () => {
     this.updateChartSize();
+  };
+
+  /**
+   * Add viewBox on window print so that the SVG can be scaled to fit
+   */
+  handleBeforePrint = () => {
+    const gs = this.props.graphSize;
+    const width = gs.width + gs.marginx * 2;
+    const height = gs.height + gs.marginy * 2;
+    this.el.svg.attr('viewBox', `0 0 ${width} ${height}`);
+  };
+
+  /**
+   * Remove viewBox once printing is done
+   */
+  handleAfterPrint = () => {
+    this.el.svg.attr('viewBox', null);
   };
 
   /**

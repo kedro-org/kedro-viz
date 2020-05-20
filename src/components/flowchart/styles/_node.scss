@@ -30,8 +30,22 @@
     stroke-width: 0;
     stroke: $color-primary;
 
+    @mixin printAndExport {
+      fill: $node-fill-light-export;
+      stroke-width: 1px;
+      stroke: $node-stroke-light-export;
+    }
+
     .kui-theme--light & {
       fill: $node-fill-light;
+
+      @media print {
+        @include printAndExport;
+      }
+    }
+
+    .pipeline-graph--export.kui-theme--light & {
+      @include printAndExport;
     }
 
     .kui-theme--dark & {

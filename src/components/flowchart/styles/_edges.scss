@@ -7,6 +7,14 @@
 
   .kui-theme--light & {
     stroke: $edge-light;
+
+    @media print {
+      stroke: $edge-light-export;
+    }
+  }
+
+  .pipeline-graph--export.kui-theme--light & {
+    stroke: $edge-light-export;
   }
 
   .kui-theme--dark & {
@@ -21,6 +29,14 @@
 .pipeline-flowchart__arrowhead {
   .kui-theme--light & {
     fill: $edge-arrowhead-light;
+
+    @media print {
+      fill: $edge-light-export;
+    }
+  }
+
+  .pipeline-graph--export.kui-theme--light & {
+    fill: $edge-light-export;
   }
 
   .kui-theme--dark & {

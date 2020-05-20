@@ -15,6 +15,14 @@
   &:hover {
     opacity: 1;
   }
+
+  .pipeline-graph--export & {
+    display: none;
+  }
+
+  @media print {
+    display: none;
+  }
 }
 
 .pipeline-flowchart__layer-names {
@@ -40,6 +48,10 @@
 
   .kui-theme--light & {
     background: linear-gradient(to right, $color-bg-light-1, transparent);
+  }
+
+  @media print {
+    display: none;
   }
 }
 
