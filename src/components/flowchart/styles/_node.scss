@@ -1,6 +1,6 @@
 @import './variables';
 
-.node {
+.pipeline-node {
   &:focus {
     outline: none;
 
@@ -40,7 +40,7 @@
   }
 }
 
-.node--active {
+.pipeline-node--active {
   rect {
     .kui-theme--light & {
       fill: $node-fill-light-active;
@@ -52,7 +52,7 @@
   }
 }
 
-.node--selected {
+.pipeline-node--selected {
   rect {
     stroke-width: 2px;
 
@@ -66,18 +66,18 @@
   }
 }
 
-.node--faded {
+.pipeline-node--faded {
   opacity: 0.3;
 }
 
-.node--icon {
+.pipeline-node--icon {
   text {
     opacity: 0;
     pointer-events: none;
   }
 }
 
-.node__icon {
+.pipeline-node__icon {
   pointer-events: none;
 
   .kui-theme--light & {

@@ -1,6 +1,6 @@
 @import './variables';
 
-.edge path {
+.pipeline-edge path {
   pointer-events: none;
   fill: none;
   stroke-width: 1.5px;
@@ -14,7 +14,7 @@
   }
 }
 
-.edge--faded {
+.pipeline-edge--faded {
   opacity: 0.1;
 }
 

@@ -1,6 +1,6 @@
 @import './variables';
 
-.layer {
+.pipeline-layer {
   opacity: 0;
   transition: opacity ease 0.5s;
 
@@ -43,7 +43,7 @@
   }
 }
 
-.layer-name {
+.pipeline-layer-name {
   position: absolute;
   top: -10px;
   display: flex;

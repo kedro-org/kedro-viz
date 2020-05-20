@@ -281,7 +281,7 @@ export class FlowChart extends Component {
           ref={this.svgRef}>
           <defs>
             <marker
-              id="arrowhead"
+              id="pipeline-arrowhead"
               className="pipeline-flowchart__arrowhead"
               viewBox="0 0 10 10"
               refX="7"
