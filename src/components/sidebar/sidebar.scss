@@ -41,7 +41,7 @@
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
-  padding-top: 12px;
+  padding-top: $sidebar-padding;
   visibility: hidden;
   transition: visibility 0.3s;
 
