@@ -37,12 +37,22 @@ const NodeListGroups = ({
 
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
 
+  // Collapse/expand node group
   const onToggleCollapsed = typeID => {
     const groupsCollapsed = Object.assign({}, collapsed, {
       [typeID]: !collapsed[typeID]
     });
     setCollapsed(groupsCollapsed);
     saveState({ groupsCollapsed });
+  };
+
+  // Toggle node selection depending on whether it's already selected
+  const handleNodeSelection = nodeID => {
+    if (nodeSelected[nodeID]) {
+      onToggleNodeClicked(null);
+    } else {
+      onToggleNodeClicked(nodeID);
+    }
   };
 
   const renderTypeGroup = type => {
@@ -65,7 +75,7 @@ const NodeListGroups = ({
                 id={node.id}
                 label={node.highlightedLabel}
                 name={node.name}
-                onClick={() => onToggleNodeClicked(node.id)}
+                onClick={() => handleNodeSelection(node.id)}
                 onMouseEnter={() => onToggleNodeHovered(node.id)}
                 onMouseLeave={() => onToggleNodeHovered(null)}
                 onChange={e => {
