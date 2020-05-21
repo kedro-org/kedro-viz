@@ -43,14 +43,14 @@ from typing import Dict, List, Set
 import click
 import kedro
 import requests
-import semver
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
+from semver import VersionInfo
 from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
 
-KEDRO_VERSION = semver.VersionInfo.parse(kedro.__version__)
+KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
 if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli import get_project_context
