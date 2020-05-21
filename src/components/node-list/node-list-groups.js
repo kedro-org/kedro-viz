@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Flipper } from 'react-flip-toolkit';
+import utils from '@quantumblack/kedro-ui/lib/utils';
 import { loadState, saveState } from '../../store/helpers';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { getNodeTypes } from '../../selectors/node-types';
@@ -23,6 +24,17 @@ const NodeListGroups = ({
   nodeSelected,
   types
 }) => {
+  // Deselect node on Escape key
+  const handleKeyDown = event => {
+    utils.handleKeyEvent(event.keyCode, {
+      escape: () => onToggleNodeClicked(null)
+    });
+  };
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
+
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
 
   const onToggleCollapsed = typeID => {
