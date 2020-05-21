@@ -147,6 +147,7 @@ def check_kedroviz_up(context):
         expected_result=None,
         print_error=False,
         context=context,
+        timeout_=30,
     )
 
 
