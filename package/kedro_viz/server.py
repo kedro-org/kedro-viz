@@ -57,7 +57,7 @@ if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli.utils import KedroCliError
 else:
     from kedro.cli import get_project_context  # pragma: no cover
-    from kedro.cli.utils import KedroCliError  # pragmaL no cover
+    from kedro.cli.utils import KedroCliError  # pragma: no cover
 
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
