@@ -34,8 +34,8 @@ import re
 from pathlib import Path
 
 import pytest
-from kedro.context import KedroContextError
 from kedro.extras.datasets.pickle import PickleDataSet
+from kedro.framework.context import KedroContextError
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from toposort import CircularDependencyError
