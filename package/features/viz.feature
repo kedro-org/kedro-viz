@@ -34,21 +34,18 @@ Feature: Viz plugin in new project
     Scenario: Execute viz with Kedro 0.14.0
         Given I have installed kedro version "0.14.0"
         And I have run a non-interactive kedro new
-        And I have executed the kedro command "install"
         When I execute the kedro viz command "viz"
         Then kedro-viz should start successfully
 
     Scenario: Execute viz with Kedro 0.14.3
         Given I have installed kedro version "0.14.3"
         And I have run a non-interactive kedro new
-        And I have executed the kedro command "install"
         When I execute the kedro viz command "viz"
         Then kedro-viz should start successfully
 
     Scenario: Execute viz with Kedro 0.15.0
         Given I have installed kedro version "0.15.0"
         And I have run a non-interactive kedro new
-        And I have executed the kedro command "install"
         When I execute the kedro viz command "viz"
         Then kedro-viz should start successfully
 
@@ -56,6 +53,5 @@ Feature: Viz plugin in new project
         Given I have installed kedro version "latest"
         And I have run a non-interactive kedro new
         And I have executed the kedro command "install"
-        # otherwise try pip install -r src/requirements.txt
         When I execute the kedro viz command "viz"
         Then kedro-viz should start successfully
