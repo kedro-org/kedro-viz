@@ -21,23 +21,19 @@
     transition: all ease 0.1s;
     stroke-width: 1px;
 
-    @mixin printAndExport {
-      fill: $node-fill-light-export;
-      stroke-width: 1px;
-      stroke: $node-stroke-light-export;
-    }
-
     .kui-theme--light & {
       fill: $node-fill-light-default;
       stroke: $node-stroke-light-default;
 
       @media print {
-        @include printAndExport;
+        fill: $node-fill-light-export;
+        stroke: $node-stroke-light-export;
       }
     }
 
     .pipeline-graph--export.kui-theme--light & {
-      @include printAndExport;
+      fill: $node-fill-light-export;
+      stroke: $node-stroke-light-export;
     }
 
     .kui-theme--dark & {
