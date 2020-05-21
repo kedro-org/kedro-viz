@@ -43,11 +43,19 @@
   }
 
   .kui-theme--dark & {
-    background: linear-gradient(to right, $color-bg-dark-1, transparent);
+    background: linear-gradient(
+      to right,
+      $color-bg-dark-1,
+      rgba($color-bg-dark-1, 0)
+    );
   }
 
   .kui-theme--light & {
-    background: linear-gradient(to right, $color-bg-light-1, transparent);
+    background: linear-gradient(
+      to right,
+      $color-bg-light-1,
+      rgba($color-bg-light-1, 0)
+    );
   }
 
   @media print {
