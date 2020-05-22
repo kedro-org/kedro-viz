@@ -38,6 +38,7 @@ from kedro.context import KedroContextError
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
+from semver import VersionInfo
 from toposort import CircularDependencyError
 
 from kedro_viz import server
@@ -303,7 +304,7 @@ def test_pipeline_flag_non_existent(cli_runner):
 
 def test_viz_kedro15(mocker, cli_runner):
     """Test that running viz in Kedro 0.15.0."""
-    mocker.patch("kedro.__version__", "0.15.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
 
     def get_project_context(
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
@@ -319,7 +320,7 @@ def test_viz_kedro15(mocker, cli_runner):
 
 def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
     """Test that running viz with `--pipeline` flag in Kedro 0.15.0."""
-    mocker.patch("kedro.__version__", "0.15.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
 
     def get_project_context(
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
@@ -334,7 +335,7 @@ def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
 def test_viz_kedro15_invalid(mocker, cli_runner):
     """Test that running viz in Kedro 0.15.0,
     and it is outside of a Kedro project root."""
-    mocker.patch("kedro.__version__", "0.15.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
     mocker.patch("kedro_viz.server.get_project_context", side_effect=KedroContextError)
     result = cli_runner.invoke(server.commands, "viz")
     assert "Could not find a Kedro project root." in result.output
@@ -342,7 +343,7 @@ def test_viz_kedro15_invalid(mocker, cli_runner):
 
 def test_viz_kedro14(mocker, cli_runner):
     """Test that running viz in Kedro 0.14.0."""
-    mocker.patch("kedro.__version__", "0.14.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.14.0"))
 
     def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
         return mocker.MagicMock()
@@ -366,7 +367,7 @@ def test_viz_kedro14(mocker, cli_runner):
 
 def test_viz_kedro14_pipeline_flag(mocker, cli_runner):
     """Test that running viz with `--pipeline` flag in Kedro 0.14.0 is not supported."""
-    mocker.patch("kedro.__version__", "0.14.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.14.0"))
 
     def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
         return lambda x: None
@@ -391,7 +392,7 @@ def test_viz_kedro14_pipeline_flag(mocker, cli_runner):
 def test_viz_kedro14_invalid(mocker, cli_runner):
     """Test that running viz in Kedro 0.14.0,
     while outside of a Kedro project is not supported."""
-    mocker.patch("kedro.__version__", "0.14.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.14.0"))
     mocker.patch("kedro_viz.server.get_project_context", side_effect=KeyError)
     result = cli_runner.invoke(server.commands, "viz")
     assert "Could not find a Kedro project root." in result.output

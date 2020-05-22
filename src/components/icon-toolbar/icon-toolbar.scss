@@ -12,11 +12,11 @@
   list-style: none;
 
   .kui-theme--light & {
-    background: $color-bg-light-alt2;
+    background: $color-bg-light-2;
   }
 
   .kui-theme--dark & {
-    background: $color-bg-dark-alt2;
+    background: $color-bg-dark-2;
   }
 }
 
@@ -90,11 +90,11 @@
     content: '';
 
     .kui-theme--light & {
-      border-right-color: $color-tooltip-bg-light;
+      border-right-color: $color-bg-light-alt;
     }
 
     .kui-theme--dark & {
-      border-right-color: $color-tooltip-bg-dark;
+      border-right-color: $color-bg-dark-alt;
     }
   }
 }
