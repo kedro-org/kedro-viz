@@ -71,7 +71,11 @@ def create_config_file_with_example(context):
 def create_project_from_config_file(context):
     """Behave step to run kedro new given the config I previously created.
     """
-    res = run([context.kedro, "new", "-c", str(context.config_file)], env=context.env)
+    res = run(
+        [context.kedro, "new", "-c", str(context.config_file)],
+        env=context.env,
+        cwd=str(context.temp_dir)
+    )
     assert res.returncode == OK_EXIT_CODE
 
 
@@ -143,6 +147,7 @@ def check_kedroviz_up(context):
         expected_result=None,
         print_error=False,
         context=context,
+        timeout_=30,
     )
 
 
