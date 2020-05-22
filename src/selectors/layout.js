@@ -1,8 +1,10 @@
 import { createSelector } from 'reselect';
 import dagre from 'dagre';
 import graph from '../utils/graph/';
+import { getFlags } from './flags';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
+import { getVisibleLayerIDs } from './disabled';
 
 const getHasVisibleLayers = state =>
   state.visible.layers && Boolean(state.layer.ids.length);
@@ -16,52 +18,49 @@ const getVisibleSidebar = state => state.visible.sidebar;
  * as possible, and keep it separate from other properties (like node.active)
  * which don't affect layout.
  */
-export const getGraphDagre = createSelector(
-  [getVisibleNodes, getVisibleEdges, getHasVisibleLayers],
-  (nodes, edges, hasVisibleLayers) => {
-    if (!nodes.length || !edges.length) {
-      return;
+export const graphDagre = (nodes, edges, hasVisibleLayers) => {
+  if (!nodes.length || !edges.length) {
+    return;
+  }
+
+  const ranker = hasVisibleLayers ? 'none' : null;
+  const graph = new dagre.graphlib.Graph().setGraph({
+    ranker: hasVisibleLayers ? ranker : null,
+    ranksep: hasVisibleLayers ? 200 : 70,
+    marginx: 40,
+    marginy: 40
+  });
+
+  nodes.forEach(node => {
+    graph.setNode(node.id, node);
+  });
+
+  edges.forEach(edge => {
+    graph.setEdge(edge.source, edge.target, edge);
+  });
+
+  // Run Dagre layout to calculate X/Y positioning
+  dagre.layout(graph);
+
+  return graph;
+};
+
+export const getGraph = createSelector(
+  [
+    getVisibleNodes,
+    getVisibleEdges,
+    getVisibleLayerIDs,
+    getHasVisibleLayers,
+    getFlags
+  ],
+  (nodes, edges, layers, showLayers, flags) => {
+    if (flags.newgraph) {
+      return graph(nodes, edges, showLayers && layers);
     }
 
-    const ranker = hasVisibleLayers ? 'none' : null;
-    const graph = new dagre.graphlib.Graph().setGraph({
-      ranker: hasVisibleLayers ? ranker : null,
-      ranksep: hasVisibleLayers ? 200 : 70,
-      marginx: 40,
-      marginy: 40
-    });
-
-    nodes.forEach(node => {
-      graph.setNode(node.id, node);
-    });
-
-    edges.forEach(edge => {
-      graph.setEdge(edge.source, edge.target, edge);
-    });
-
-    // Run Dagre layout to calculate X/Y positioning
-    dagre.layout(graph);
-
-    return graph;
+    return graphDagre(nodes, edges, showLayers);
   }
 );
-
-export const getGraphExperimental = createSelector(
-  [getVisibleNodes, getVisibleEdges],
-  graph
-);
-
-export const getGraph = (...args) => {
-  const useExperimental =
-    typeof window !== 'undefined' &&
-    window.location.search.indexOf('exp') !== -1;
-
-  if (useExperimental) {
-    return getGraphExperimental(...args);
-  }
-
-  return getGraphDagre(...args);
-};
 
 /**
  * Reformat node data for use on the chart,
