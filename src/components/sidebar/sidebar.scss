@@ -17,6 +17,10 @@
     transform: translateX(-$sidebar-ui-width);
   }
 
+  @media print {
+    display: none;
+  }
+
   &--visible {
     transform: translateX(0);
   }
@@ -37,7 +41,7 @@
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
-  padding-top: 12px;
+  padding-top: $sidebar-padding;
   visibility: hidden;
   transition: visibility 0.3s;
 
@@ -47,10 +51,10 @@
   }
 
   .kui-theme--light & {
-    background: $color-bg-light-alt;
+    background: $color-bg-light-3;
   }
 
   .kui-theme--dark & {
-    background: $color-bg-dark-alt;
+    background: $color-bg-dark-3;
   }
 }

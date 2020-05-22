@@ -7,11 +7,11 @@
   &--active,
   &--visible:hover {
     .kui-theme--light & {
-      background-color: darken($color-bg-light-alt, 3%);
+      background-color: $row-active-light;
     }
 
     .kui-theme--dark & {
-      background-color: lighten($color-bg-dark-alt, 3%);
+      background-color: $row-active-dark;
     }
   }
 
@@ -19,11 +19,11 @@
   // additional selector required to increase specificity to override previous rule:
   &--visible#{&}--selected {
     .kui-theme--light & {
-      background-color: darken($color-bg-light-alt, 8%);
+      background-color: $row-selected-light;
     }
 
     .kui-theme--dark & {
-      background-color: lighten($color-bg-dark-alt, 8%);
+      background-color: $row-selected-dark;
     }
   }
 

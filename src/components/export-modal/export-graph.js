@@ -19,7 +19,7 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
   // Create clone of graph SVG to avoid breaking the original
   const svg = document.querySelector('#pipeline-graph');
   const clone = svg.parentNode.appendChild(svg.cloneNode(true));
-  clone.classList.add('kedro', `kui-theme--${theme}`);
+  clone.classList.add('kedro', `kui-theme--${theme}`, 'pipeline-graph--export');
 
   // Reset zoom/translate
   let width = graphSize.width + graphSize.marginx * 2;

@@ -3,7 +3,7 @@
 }
 
 .pipeline-nodelist__toggle__title {
-  margin: 0 0 12px;
+  margin: 0;
   font-weight: 600;
   font-size: 1.8em;
 }
@@ -12,17 +12,17 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 12px 0;
+  margin: $sidebar-padding 0;
   padding: 10px 0;
+  border-style: solid;
+  border-width: 1px 0;
 
   .kui-theme--light & {
-    border-top: 1px solid $color-line-light;
-    border-bottom: 1px solid $color-line-light;
+    border-color: $color-bg-light-2 transparent;
   }
 
   .kui-theme--dark & {
-    border-top: 1px solid $color-line-dark;
-    border-bottom: 1px solid $color-line-dark;
+    border-color: $color-bg-dark-2 transparent;
   }
 }
 

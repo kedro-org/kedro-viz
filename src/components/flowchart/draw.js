@@ -11,13 +11,13 @@ const drawLayers = function() {
   const { layers, visibleLayers } = this.props;
 
   this.el.layers = this.el.layerGroup
-    .selectAll('.layer')
+    .selectAll('.pipeline-layer')
     .data(visibleLayers ? layers : [], layer => layer.id);
 
   const enterLayers = this.el.layers
     .enter()
     .append('rect')
-    .attr('class', 'layer');
+    .attr('class', 'pipeline-layer');
 
   this.el.layers.exit().remove();
 
@@ -46,13 +46,13 @@ const drawLayerNames = function() {
     .style('transform', `translateX(${sidebarWidth}px)`);
 
   this.el.layerNames = this.el.layerNameGroup
-    .selectAll('.layer-name')
+    .selectAll('.pipeline-layer-name')
     .data(visibleLayers ? layers : [], layer => layer.id);
 
   const enterLayerNames = this.el.layerNames
     .enter()
     .append('li')
-    .attr('class', 'layer-name')
+    .attr('class', 'pipeline-layer-name')
     .style('opacity', 0)
     .transition('enter-layer-names')
     .duration(this.DURATION)
@@ -85,14 +85,14 @@ const drawNodes = function() {
   } = this.props;
 
   this.el.nodes = this.el.nodeGroup
-    .selectAll('.node')
+    .selectAll('.pipeline-node')
     .data(nodes, node => node.id);
 
   const enterNodes = this.el.nodes
     .enter()
     .append('g')
     .attr('tabindex', '0')
-    .attr('class', 'node');
+    .attr('class', 'pipeline-node');
 
   enterNodes
     .attr('transform', node => `translate(${node.x}, ${node.y})`)
@@ -119,15 +119,17 @@ const drawNodes = function() {
   this.el.nodes = this.el.nodes
     .merge(enterNodes)
     .attr('data-id', node => node.id)
-    .classed('node--parameters', node => node.type === 'parameters')
-    .classed('node--data', node => node.type === 'data')
-    .classed('node--task', node => node.type === 'task')
-    .classed('node--icon', !textLabels)
-    .classed('node--text', textLabels)
-    .classed('node--active', node => nodeActive[node.id])
-    .classed('node--selected', node => nodeSelected[node.id])
-    .classed('node--highlight', node => centralNode && linkedNodes[node.id])
-    .classed('node--faded', node => centralNode && !linkedNodes[node.id])
+    .classed('pipeline-node--parameters', node => node.type === 'parameters')
+    .classed('pipeline-node--data', node => node.type === 'data')
+    .classed('pipeline-node--task', node => node.type === 'task')
+    .classed('pipeline-node--icon', !textLabels)
+    .classed('pipeline-node--text', textLabels)
+    .classed('pipeline-node--active', node => nodeActive[node.id])
+    .classed('pipeline-node--selected', node => nodeSelected[node.id])
+    .classed(
+      'pipeline-node--faded',
+      node => centralNode && !linkedNodes[node.id]
+    )
     .on('click', this.handleNodeClick)
     .on('mouseover', this.handleNodeMouseOver)
     .on('mouseout', this.handleNodeMouseOut)
@@ -156,7 +158,7 @@ const drawNodes = function() {
     .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2));
 
   this.el.nodes
-    .select('.node__icon')
+    .select('.pipeline-node__icon')
     .transition('node-icon-offset')
     .duration(150)
     .attr('width', node => node.iconSize)
@@ -172,7 +174,7 @@ const drawEdges = function() {
   const { edges, centralNode, linkedNodes } = this.props;
 
   this.el.edges = this.el.edgeGroup
-    .selectAll('.edge')
+    .selectAll('.pipeline-edge')
     .data(edges, edge => edge.id);
 
   // Set up line shape function
@@ -185,10 +187,10 @@ const drawEdges = function() {
   const enterEdges = this.el.edges
     .enter()
     .append('g')
-    .attr('class', 'edge')
+    .attr('class', 'pipeline-edge')
     .attr('opacity', 0);
 
-  enterEdges.append('path').attr('marker-end', d => `url(#arrowhead)`);
+  enterEdges.append('path').attr('marker-end', d => `url(#pipeline-arrowhead)`);
 
   this.el.edges
     .exit()
@@ -202,7 +204,7 @@ const drawEdges = function() {
   this.el.edges
     .attr('data-id', edge => edge.id)
     .classed(
-      'edge--faded',
+      'pipeline-edge--faded',
       ({ source, target }) =>
         centralNode && (!linkedNodes[source] || !linkedNodes[target])
     )

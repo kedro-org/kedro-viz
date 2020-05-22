@@ -1,19 +1,27 @@
 @import './variables';
 
-.layer {
+.pipeline-layer {
   opacity: 0;
   transition: opacity ease 0.5s;
 
   .kui-theme--dark & {
-    fill: rgba(white, 0.05);
+    fill: $layer-dark;
   }
 
   .kui-theme--light & {
-    fill: rgba(black, 0.05);
+    fill: $layer-light;
   }
 
   &:hover {
     opacity: 1;
+  }
+
+  .pipeline-graph--export & {
+    display: none;
+  }
+
+  @media print {
+    display: none;
   }
 }
 
@@ -26,18 +34,36 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  opacity: 0;
+  transition: opacity ease 0.7s;
   pointer-events: none;
 
+  &--visible {
+    opacity: 1;
+  }
+
   .kui-theme--dark & {
-    background: linear-gradient(to right, $color-bg-dark, transparent);
+    background: linear-gradient(
+      to right,
+      $color-bg-dark-1,
+      rgba($color-bg-dark-1, 0)
+    );
   }
 
   .kui-theme--light & {
-    background: linear-gradient(to right, $color-bg-light, transparent);
+    background: linear-gradient(
+      to right,
+      $color-bg-light-1,
+      rgba($color-bg-light-1, 0)
+    );
+  }
+
+  @media print {
+    display: none;
   }
 }
 
-.layer-name {
+.pipeline-layer-name {
   position: absolute;
   top: -10px;
   display: flex;

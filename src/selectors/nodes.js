@@ -113,7 +113,7 @@ export const getNodeTextWidth = createSelector(
   (nodeIDs, nodeName) => {
     const svg = select(document.body)
       .append('svg')
-      .attr('class', 'kedro node');
+      .attr('class', 'kedro pipeline-node');
     const nodeTextWidth = arrayToObject(nodeIDs, nodeID => {
       const text = svg.append('text').text(nodeName[nodeID]);
       const node = text.node();
