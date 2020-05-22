@@ -20,7 +20,7 @@
     "lint": "npm-run-all -p lint:js lint:scss",
     "lint:js": "eslint src/ --fix",
     "lint:scss": "stylelint 'src/**/*.scss' --fix",
-    "prepublishOnly": "npm-run-all -p test:coverage lint build lib",
+    "prepublishOnly": "npm-run-all -p test:ci lint build lib",
     "test": "react-scripts test --env=jsdom",
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
