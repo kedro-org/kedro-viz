@@ -32,6 +32,7 @@ import glob
 import os
 import shutil
 import stat
+import sys
 import tempfile
 from pathlib import Path
 
@@ -39,10 +40,21 @@ from features.steps.sh_run import run
 from features.steps.util import create_new_venv
 
 
-def before_scenario(context, feature):  # pylint: disable=unused-argument
+def should_exclude_scenario(scenario):
+    # -- RUNTIME DECISION LOGIC: Will exclude
+    #  * Scenario: Alice
+    #  * Scenario: Alice in Wonderland
+    #  * Scenario: Bob and Alice2
+    pre_16_scenario = any(key in scenario.name for key in ["0.14", "0.15"])
+    return sys.version_info == (3.8) and pre_16_scenario
+
+
+def before_scenario(context, feature, scenario):  # pylint: disable=unused-argument
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
+    if should_exclude_scenario(scenario):
+        scenario.skip()
 
     def call(cmd, verbose=False):
         res = run(cmd, env=context.env)
