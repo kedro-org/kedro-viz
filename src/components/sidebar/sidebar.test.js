@@ -1,6 +1,5 @@
 import React from 'react';
 import MountSidebar, { Sidebar } from './index';
-import { ShowMenuButton, HideMenuButton } from './menu-buttons';
 import { mockState, setup } from '../../utils/state.mock';
 
 const mockProps = {
@@ -25,7 +24,7 @@ describe('Sidebar', () => {
     const wrapper = setup.mount(<MountSidebar />, {
       visible: { sidebar: true }
     });
-    wrapper.find('.pipeline-sidebar__hide-menu').simulate('click');
+    wrapper.find('button[aria-label="Hide menu"]').simulate('click');
     const sidebar = wrapper.find('.pipeline-sidebar');
     expect(sidebar.hasClass('pipeline-sidebar--visible')).toBe(false);
   });
@@ -34,24 +33,8 @@ describe('Sidebar', () => {
     const wrapper = setup.mount(<MountSidebar />, {
       visible: { sidebar: false }
     });
-    wrapper.find('.pipeline-sidebar__show-menu').simulate('click');
+    wrapper.find('button[aria-label="Show menu"]').simulate('click');
     const sidebar = wrapper.find('.pipeline-sidebar');
     expect(sidebar.hasClass('pipeline-sidebar--visible')).toBe(true);
-  });
-});
-
-describe('ShowMenuButton', () => {
-  it('renders without crashing', () => {
-    const wrapper = setup.mount(<ShowMenuButton {...mockProps} />);
-    const container = wrapper.find('button');
-    expect(container.length).toBe(1);
-  });
-});
-
-describe('HideMenuButton', () => {
-  it('renders without crashing', () => {
-    const wrapper = setup.shallow(HideMenuButton, mockProps);
-    const container = wrapper.find('button');
-    expect(container.length).toBe(1);
   });
 });

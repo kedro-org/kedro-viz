@@ -2,8 +2,6 @@ import React from 'react';
 
 export default ({ className }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <rect x="2" y="5" width="20" height="2" />
-    <rect x="2" y="11" width="20" height="2" />
-    <rect x="2" y="17" width="20" height="2" />
+    <path d="M15.3 3.3l1.4 1.4L9.4 12l7.3 7.3-1.4 1.4L6.6 12z" />
   </svg>
 );

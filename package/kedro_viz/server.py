@@ -45,12 +45,20 @@ import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-from kedro.cli import get_project_context  # pylint: disable=ungrouped-imports
-from kedro.cli.utils import KedroCliError  # pylint: disable=ungrouped-imports
-from semver import match
+from semver import VersionInfo
 from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
+
+KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
+
+if KEDRO_VERSION.match(">=0.16.0"):
+    from kedro.framework.cli import get_project_context
+    from kedro.framework.cli.utils import KedroCliError
+else:
+    from kedro.cli import get_project_context  # pragma: no cover
+    from kedro.cli.utils import KedroCliError  # pragma: no cover
+
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
@@ -160,7 +168,7 @@ def _load_from_file(load_file: str) -> dict:
 
 
 def _get_pipeline_from_context(context, pipeline_name):
-    if match(kedro.__version__, ">=0.15.2"):
+    if KEDRO_VERSION.match(">=0.15.2"):
         return context._get_pipeline(  # pylint: disable=protected-access
             name=pipeline_name
         )
@@ -467,9 +475,12 @@ def _call_viz(
 
         data = _load_from_file(load_file)
     else:
-        if match(kedro.__version__, ">=0.15.0"):
+        if KEDRO_VERSION.match(">=0.15.0"):
             # pylint: disable=import-outside-toplevel
-            from kedro.context import KedroContextError
+            if KEDRO_VERSION.match(">=0.16.0"):
+                from kedro.framework.context import KedroContextError
+            else:
+                from kedro.context import KedroContextError
 
             try:
                 context = get_project_context("context", env=env)

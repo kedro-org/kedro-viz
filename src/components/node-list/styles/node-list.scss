@@ -9,12 +9,4 @@
 
 .pipeline-nodelist-scrollbars {
   min-height: 400px;
-
-  .kui-theme--light & {
-    background: $color-bg-light-alt2;
-  }
-
-  .kui-theme--dark & {
-    background: $color-bg-dark-alt2;
-  }
 }

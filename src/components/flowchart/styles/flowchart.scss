@@ -8,4 +8,17 @@
 
 .pipeline-flowchart__graph {
   display: block;
+
+  &.pipeline-graph--export.kui-theme--dark {
+    background: $color-bg-dark-1;
+  }
+
+  @media print {
+    width: 100%;
+    height: auto;
+
+    #zoom-wrapper {
+      transform: inherit;
+    }
+  }
 }

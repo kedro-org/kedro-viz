@@ -1,106 +1,29 @@
-//-- Custom --//
-
-$nav-width: 300px;
-
-//-- Breakpoints --//
-
-// Horizontal:
-$breakpoint-xsmall: 320px;
-$breakpoint-small: 480px;
-$breakpoint-medium: 750px;
-$breakpoint-large: 1100px;
-$breakpoint-xlarge: 1440px;
-$breakpoint-xxlarge: 1700px;
-$breakpoint-xxxlarge: 1920px;
-// Column-based:
-$breakpoint-2col: $breakpoint-small;
-$breakpoint-3col: 800px;
-$breakpoint-4col: 1100px;
-// Vertical:
-$breakpoint-v-medium: 900px;
-
 //-- Colours --//
 
-$color-primary: #00bfff;
-
-$color-text-light: #333;
-$color-bg-light: #eee;
-$color-bg-light-alt: #fff;
-$color-bg-light-alt2: #f9f9f9;
-$color-line-light: #e0e0e0;
-
-$color-text-dark: white;
-$hue: 205;
-$color-bg-dark: hsl($hue, 30%, 14.5%);
-$color-bg-dark-alt: hsl($hue, 30%, 18%);
-$color-bg-dark-alt2: hsl($hue, 30%, 16%);
-$color-line-dark: hsl($hue, 50%, 12%);
+$color-primary: #00b0f5;
 $color-link: rgba($color-primary, 0.85);
 
-//-- typography --//
+// Light:
+$color-text-light: rgba(black, 0.85);
+$color-text-light-alt: rgba(white, 0.85);
+$color-bg-light-1: #ccd1d6;
+$color-bg-light-2: #e6e8eb;
+$color-bg-light-3: #f0f1f3;
+$color-bg-light-alt: #242525;
 
-$rem-base: 10px;
-$font-base: 10px;
-$line-height-base: 24px;
+// Dark:
+$color-text-dark: rgba(white, 0.85);
+$color-text-dark-alt: rgba(black, 0.85);
+$color-bg-dark-1: #001521;
+$color-bg-dark-2: #122531;
+$color-bg-dark-3: #1d303b;
+$color-bg-dark-alt: white;
 
 //-- Layout --//
 
-$padding-unit: $rem-base;
+$sidebar-padding: 1.8em;
 
-$inspector-width: 290px;
-$inspector-width-2: 360px;
-$inspector-width-3: 420px;
-
-$inspector-gutter: 20px;
-
-$nav-height: 48px;
-$nav-height-xlarge: 64px;
-
-$min-tree-height: 660px;
-
-//-- Controls --//
-
-$toggle-height: 32px;
-$toggle-height-xlarge: 40px;
-
-//-- Easing Functions --//
-
-//-- Cubic--//
-$easeInCubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
-$easeOutCubic: cubic-bezier(0.215, 0.61, 0.355, 1);
-$easeInOutCubic: cubic-bezier(0.645, 0.045, 0.355, 1);
-
-//-- Circ--//
-$easeInCirc: cubic-bezier(0.6, 0.04, 0.98, 0.335);
-$easeOutCirc: cubic-bezier(0.075, 0.82, 0.165, 1);
-$easeInOutCirc: cubic-bezier(0.785, 0.135, 0.15, 0.86);
-
-//-- Expo--//
-$easeInExpo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
-$easeOutExpo: cubic-bezier(0.19, 1, 0.22, 1);
-$easeInOutExpo: cubic-bezier(1, 0, 0, 1);
-
-//-- Quad--//
-$easeInQuad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
-$easeOutQuad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-$easeInOutQuad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
-
-//-- Quart--//
-$easeInQuart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
-$easeOutQuart: cubic-bezier(0.165, 0.84, 0.44, 1);
-$easeInOutQuart: cubic-bezier(0.77, 0, 0.175, 1);
-
-//-- Quint--//
-$easeInQuint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
-$easeOutQuint: cubic-bezier(0.23, 1, 0.32, 1);
-$easeInOutQuint: cubic-bezier(0.86, 0, 0.07, 1);
-
-//-- Sine--//
-$easeInSine: cubic-bezier(0.47, 0, 0.745, 0.715);
-$easeOutSine: cubic-bezier(0.39, 0.575, 0.565, 1);
-$easeInOutSine: cubic-bezier(0.445, 0.05, 0.55, 0.95);
-
-//-- Back--//
-$easeInBack: cubic-bezier(0.6, -0.28, 0.735, 0.045);
-$easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-$easeInOutBack: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+// Also set in src/config.js:
+$sidebar-width-open: 400px;
+$sidebar-width-closed: 60px;
+$sidebar-breakpoint: 700px;

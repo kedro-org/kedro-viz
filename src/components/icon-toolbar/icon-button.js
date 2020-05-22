@@ -1,13 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import LabelIcon from '../icons/label';
 import LayersIcon from '../icons/layers';
+import MenuIcon from '../icons/menu';
 import ThemeIcon from '../icons/theme';
 import ExportIcon from '../icons/export';
 
 const icons = {
   label: LabelIcon,
   layers: LayersIcon,
+  menu: MenuIcon,
   theme: ThemeIcon,
   export: ExportIcon
 };
@@ -20,6 +23,7 @@ const icons = {
 const IconButton = ({
   ariaLabel,
   ariaLive,
+  className,
   disabled,
   icon,
   labelText,
@@ -33,10 +37,10 @@ const IconButton = ({
       <button
         aria-label={ariaLabel}
         aria-live={ariaLive}
-        className="pipeline-icon-button"
+        className={classnames('pipeline-icon-toolbar__button', className)}
         disabled={disabled}
         onClick={onClick}>
-        <span>{labelText}</span>
+        <span className="pipeline-icon-toolbar__label">{labelText}</span>
         <Icon className="pipeline-icon" />
       </button>
     </li>

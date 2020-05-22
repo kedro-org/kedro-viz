@@ -1,15 +1,6 @@
 @import './variables';
 
-.node {
-  &:focus {
-    outline: none;
-
-    [data-whatinput='keyboard'] & rect {
-      stroke-width: 3.5px;
-      stroke: $color-link;
-    }
-  }
-
+.pipeline-node {
   text {
     font-weight: 600;
     font-size: 1.4em;
@@ -21,61 +12,48 @@
     }
 
     .kui-theme--dark & {
-      text-shadow: 0 0 10px rgba(black, 0.5);
+      text-shadow: 0 0 6px black;
       fill: $node-labeltext-fill-dark;
     }
   }
 
   rect {
-    stroke-width: 1px;
     transition: all ease 0.1s;
+    stroke-width: 1px;
 
     .kui-theme--light & {
-      fill: $node-fill-light;
-      stroke: $node-stroke-light;
+      fill: $node-fill-light-default;
+      stroke: $node-stroke-light-default;
+
+      @media print {
+        fill: $node-fill-light-export;
+        stroke: $node-stroke-light-export;
+      }
+    }
+
+    .pipeline-graph--export.kui-theme--light & {
+      fill: $node-fill-light-export;
+      stroke: $node-stroke-light-export;
     }
 
     .kui-theme--dark & {
-      fill: $node-fill-dark;
-      stroke: $node-stroke-dark;
+      fill: $node-fill-dark-default;
+      stroke: $node-stroke-dark-default;
+    }
+  }
+
+  &:focus {
+    outline: none;
+
+    [data-whatinput='keyboard'] & rect {
+      stroke: $color-primary;
+      stroke-width: 3.5px;
     }
   }
 }
 
-.node--highlight,
-.node--active,
-.node--selected {
-  text {
-    .kui-theme--light & {
-      fill: $node-labeltext-fill-light-active;
-    }
-
-    .kui-theme--dark & {
-      fill: $node-labeltext-fill-dark-active;
-    }
-  }
-}
-
-.node--active {
+.pipeline-node--active {
   rect {
-    stroke-width: 2px;
-
-    .kui-theme--light & {
-      fill: $node-fill-light-highlight;
-      stroke: $node-stroke-light-highlight;
-    }
-
-    .kui-theme--dark & {
-      fill: $node-fill-dark-highlight;
-      stroke: $node-stroke-dark-highlight;
-    }
-  }
-}
-
-.node--selected {
-  rect {
-    stroke-width: 3px;
-
     .kui-theme--light & {
       fill: $node-fill-light-active;
       stroke: $node-stroke-light-active;
@@ -88,18 +66,34 @@
   }
 }
 
-.node--faded {
+.pipeline-node--selected {
+  rect {
+    stroke-width: 2px;
+
+    .kui-theme--light & {
+      fill: $node-fill-light-selected;
+      stroke: $node-stroke-light-selected;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-fill-dark-selected;
+      stroke: $node-stroke-dark-selected;
+    }
+  }
+}
+
+.pipeline-node--faded {
   opacity: 0.3;
 }
 
-.node--icon {
+.pipeline-node--icon {
   text {
     opacity: 0;
     pointer-events: none;
   }
 }
 
-.node__icon {
+.pipeline-node__icon {
   pointer-events: none;
 
   .kui-theme--light & {
