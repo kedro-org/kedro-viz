@@ -1,7 +1,8 @@
-import { halfPI, snap, angle } from './common';
-import { solve, greaterThan, equalTo } from './solver';
+import { halfPI, snap, angle, compare } from './common';
+import { solve, greaterOrEqual, equalTo } from './solver';
 
-const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
+const layout = ({ nodes, edges, layers, basisX, spaceX, spaceY }) => {
+  const layerConstraints = [];
   const crossingConstraints = [];
   const parallelConstraints = [];
   const parallelSingleConstraints = [];
@@ -18,16 +19,66 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
     a: edge.targetNode,
     b: edge.sourceNode,
     key: 'y',
-    operator: greaterThan,
+    operator: greaterOrEqual,
     target: () => spaceY,
     weightA: () => 0,
     weightB: () => 1,
     required: true
   }));
 
-  solve(rowConstraints, 1, true);
+  if (layers) {
+    const layerNames = Object.values(layers);
+    let layerNodes = nodes.filter(node => node.layer === layerNames[0]);
+
+    for (let i = 0; i < layerNames.length - 1; i += 1) {
+      const layer = layerNames[i];
+      const nextLayer = layerNames[i + 1];
+      const nextLayerNodes = nodes.filter(node => node.layer === nextLayer);
+      const layerNode = { id: layer, x: 0, y: 0 };
+
+      for (const node of layerNodes) {
+        layerConstraints.push({
+          a: layerNode,
+          b: node,
+          key: 'y',
+          operator: greaterOrEqual,
+          target: () => spaceY,
+          weightA: () => 0,
+          weightB: () => 1,
+          required: true
+        });
+      }
+
+      for (const node of nextLayerNodes) {
+        layerConstraints.push({
+          a: node,
+          b: layerNode,
+          key: 'y',
+          operator: greaterOrEqual,
+          target: () => 0,
+          weightA: () => 0,
+          weightB: () => 1,
+          required: true
+        });
+      }
+
+      layerNodes = nextLayerNodes;
+    }
+  }
+
+  solve([...rowConstraints, ...layerConstraints], 1, true);
 
   const rows = groupByRow(nodes);
+
+  const crossingConstraint = {
+    basisX,
+    key: 'x',
+    operator: crossingOperator,
+    target: crossingTarget,
+    strength: crossingStrength,
+    weightA: () => 0.5,
+    weightB: () => 0.5
+  };
 
   for (let i = 0; i < edges.length; i += 1) {
     const edgeA = edges[i];
@@ -35,31 +86,24 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
     for (let j = i + 1; j < edges.length; j += 1) {
       const edgeB = edges[j];
 
-      if (edgeA.source !== edgeB.source && edgeA.target !== edgeB.target) {
-        const crossingConstraint = {
+      if (edgeA.source !== edgeB.source) {
+        crossingConstraints.push({
+          ...crossingConstraint,
+          a: edgeA.sourceNode,
+          b: edgeB.sourceNode,
           edgeA,
-          edgeB,
-          basisX,
-          key: 'x',
-          operator: crossingOperator,
-          target: crossingTarget,
-          strength: crossingStrength,
-          weightA: () => 0.5,
-          weightB: () => 0.5
-        };
+          edgeB
+        });
+      }
 
-        crossingConstraints.push(
-          {
-            ...crossingConstraint,
-            a: edgeA.sourceNode,
-            b: edgeB.sourceNode
-          },
-          {
-            ...crossingConstraint,
-            a: edgeA.targetNode,
-            b: edgeB.targetNode
-          }
-        );
+      if (edgeA.target !== edgeB.target) {
+        crossingConstraints.push({
+          ...crossingConstraint,
+          a: edgeA.targetNode,
+          b: edgeB.targetNode,
+          edgeA,
+          edgeB
+        });
       }
     }
   }
@@ -104,7 +148,7 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
 
     for (let l = 0; l < rows.length; l += 1) {
       const rowNodes = rows[l];
-      rowNodes.sort((a, b) => a.x - b.x);
+      rowNodes.sort((a, b) => compare(a.x, b.x, a.id, b.id));
 
       for (let j = 0; j < rowNodes.length - 1; j += 1) {
         separationConstraints.push({
@@ -139,7 +183,7 @@ const layout = ({ nodes, edges, basisX, spaceX, spaceY }) => {
         a: rowNodes[i + 1],
         b: rowNodes[i],
         key: 'x',
-        operator: greaterThan,
+        operator: greaterOrEqual,
         target: () => snapSeparation,
         weightA: () => 0,
         weightB: () => 1,
@@ -179,7 +223,7 @@ const groupByRow = nodes => {
 
   const sortedRows = rowNumbers.map(key => rows[key]);
   for (let i = 0; i < sortedRows.length; i += 1) {
-    sortedRows[i].sort((a, b) => a.x - b.x);
+    sortedRows[i].sort((a, b) => compare(a.x, b.x, a.id, b.id));
 
     for (const node of sortedRows[i]) {
       node.row = i;

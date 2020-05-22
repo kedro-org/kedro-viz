@@ -22,7 +22,7 @@ const defaultOptions = {
   }
 };
 
-export default (nodes, edges, options = defaultOptions) => {
+export default (nodes, edges, layers, options = defaultOptions) => {
   if (!nodes.length || !edges.length) {
     return;
   }
@@ -42,8 +42,8 @@ export default (nodes, edges, options = defaultOptions) => {
     edge.targetNode.sources.push(edge);
   }
 
-  layout({ nodes, edges, ...options.layout });
-  routing({ nodes, edges, ...options.routing });
+  layout({ nodes, edges, layers, ...options.layout });
+  routing({ nodes, edges, layers, ...options.routing });
 
   const size = bounds(nodes, 100);
 

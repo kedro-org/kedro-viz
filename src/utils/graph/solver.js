@@ -5,11 +5,11 @@ import { distance1d } from './common';
 const key = (obj, key) => obj.id + '_' + key;
 const subtract = (a, b) => a - b;
 const equalTo = (a, b) => a === b;
-const greaterThan = (a, b) => a > b;
+const greaterOrEqual = (a, b) => a >= b;
 
 const toStrictOperator = operator => {
   if (operator === equalTo) return kiwi.Operator.Eq;
-  if (operator === greaterThan) return kiwi.Operator.Ge;
+  if (operator === greaterOrEqual) return kiwi.Operator.Ge;
 };
 
 const solve = (constraints, iterations = 1, strict = false) => {
@@ -76,4 +76,4 @@ const solveStrict = constraints => {
   }
 };
 
-export { equalTo, greaterThan, solve };
+export { equalTo, greaterOrEqual, solve };
