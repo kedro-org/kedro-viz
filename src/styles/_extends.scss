@@ -75,15 +75,15 @@
 //-- Other --//
 
 %tooltip {
-  color: white;
-
   .kui-theme--light & {
-    background: $color-tooltip-bg-light;
+    color: $color-text-light-alt;
+    background: $color-bg-light-alt;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
   .kui-theme--dark & {
-    background: $color-tooltip-bg-dark;
+    color: $color-text-dark-alt;
+    background: $color-bg-dark-alt;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 }
