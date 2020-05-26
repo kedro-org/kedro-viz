@@ -12,7 +12,7 @@ Please follow the established format:
 ## Major features and improvements
 
 <!-- Add release notes for the upcoming release here -->
-
+- Add support for Python 3.8 (#173)
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->

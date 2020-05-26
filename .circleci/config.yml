@@ -151,6 +151,11 @@ jobs:
     environment:
       CONDA_ENV_PY_VERSION: "3.7"
 
+  build_38:
+    <<: *DEFAULT
+    environment:
+      CONDA_ENV_PY_VERSION: "3.8"
+
   deploy_demo:
     <<: *DEFAULT
     steps:
@@ -167,10 +172,12 @@ workflows:
     jobs:
       - build_36
       - build_37
+      - build_38
       - deploy_demo:
           requires:
             - build_36
             - build_37
+            - build_38
           filters:
             branches:
               only: master
@@ -186,3 +193,4 @@ workflows:
     jobs:
       - build_36
       - build_37
+      - build_38
