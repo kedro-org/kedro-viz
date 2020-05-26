@@ -1,48 +1,10 @@
-/**
- * Determine which data source to use
- * @return {string} Data source type key
- */
-const getDataSource = () => {
-  let source;
-  const qs = window.location.search.match(/data=(\w+)/);
-  const { REACT_APP_DATA_SOURCE } = process.env;
-  if (qs) {
-    source = encodeURIComponent(qs[1]);
-  } else if (REACT_APP_DATA_SOURCE) {
-    source = REACT_APP_DATA_SOURCE;
-  } else if (window.location.host === 'quantumblacklabs.github.io') {
-    source = 'demo';
-  }
-  return validateDataSource(source);
+export const dataPath = './api/nodes.json';
+
+export const localStorageName = 'KedroViz';
+
+// Also set in src/styles/_variables.scss:
+export const sidebarBreakpoint = 700;
+export const sidebarWidth = {
+  open: 400,
+  closed: 60
 };
-
-/**
- * Validate against expected results
- * @param {string} source Input type key
- * @return {string} Data source type key
- */
-const validateDataSource = source => {
-  const expectedInput = ['lorem', 'animals', 'demo', 'json', 'random'];
-  if (expectedInput.includes(source)) {
-    return source;
-  }
-  if (source) {
-    throw new Error(
-      `Unexpected data source value '${source}'. Your input should be one of the following values: ${expectedInput.join(
-        ', '
-      )}.`
-    );
-  }
-  return 'json';
-};
-
-/**
- * Generate a configuration object for use across the application
- */
-const config = () => ({
-  dataPath: '/api/nodes.json',
-  dataSource: getDataSource(),
-  localStorageName: 'KedroViz'
-});
-
-export default config;

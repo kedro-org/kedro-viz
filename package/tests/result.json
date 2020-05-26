@@ -1,0 +1,74 @@
+{
+    "layers": ["raw", "final"],
+    "nodes": [
+        {
+            "type": "task",
+            "id": "71527409",
+            "name": "Func1",
+            "full_name": "func1",
+            "tags": []
+        },
+        {
+            "type": "task",
+            "id": "3751475c",
+            "name": "Func2",
+            "full_name": "func2",
+            "tags": []
+        },
+        {
+            "type": "data",
+            "id": "7366ec9f",
+            "name": "Bob In",
+            "full_name": "bob_in",
+            "tags": [],
+            "layer": "raw"
+        },
+        {
+            "type": "data",
+            "id": "60e68b8e",
+            "name": "Bob Out",
+            "full_name": "bob_out",
+            "tags": [],
+            "layer": null
+        },
+        {
+            "type": "parameters",
+            "id": "755dc08f",
+            "name": "Params:value",
+            "full_name": "params:value",
+            "tags": [],
+            "layer": null
+        },
+        {
+            "type": "data",
+            "id": "37a5301a",
+            "name": "Result",
+            "full_name": "result",
+            "tags": [],
+            "layer": "final"
+        }
+    ],
+    "edges": [
+        {
+            "source": "7366ec9f",
+            "target": "71527409"
+        },
+        {
+            "source": "755dc08f",
+            "target": "71527409"
+        },
+        {
+            "source": "71527409",
+            "target": "60e68b8e"
+        },
+        {
+            "source": "60e68b8e",
+            "target": "3751475c"
+        },
+        {
+            "source": "3751475c",
+            "target": "37a5301a"
+        }
+    ],
+    "tags": []
+}

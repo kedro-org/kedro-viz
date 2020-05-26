@@ -10,28 +10,33 @@
 
 $node-icon-fill-light: $color-text-light;
 
-// Circle/Rect
+// Node bg
 
-$node-fill-light: lighten($color-bg-light, 10%);
-$node-fill-light-highlight: lighten($color-bg-light, 13%);
-$node-fill-light-active: lighten($color-bg-light, 20%);
-
-$node-stroke-light: mix($color-text-light, $color-bg-light, 50%);
-$node-stroke-light-highlight: mix($color-text-light, $color-bg-light, 90%);
-$node-stroke-light-active: $color-text-light;
+$node-fill-light-default: #f0f1f3;
+$node-stroke-light-default: #c6cace;
+$node-fill-light-active: #c6e6fb;
+$node-stroke-light-active: #b2cada;
+$node-fill-light-selected: #aad8ff;
+$node-stroke-light-selected: $color-primary;
 
 // Label
 
-$node-labeltext-fill-light: rgba($color-text-light, 0.9);
-$node-labeltext-fill-light-active: $color-text-light;
+$node-labeltext-fill-light: $color-text-light;
 
 // Edge
 
-$edge-light: mix($color-text-light, $color-bg-light, 75%);
+$edge-light: #888;
+$edge-arrowhead-light: #2a3b46;
 
-// Tooltip
+// Layer
 
-$tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
+$layer-light: mix($color-bg-light-1, $color-bg-light-2);
+
+// Print/export styling
+
+$node-fill-light-export: #f0f1f3;
+$node-stroke-light-export: #6b6a6b;
+$edge-light-export: #686768;
 
 //-------------- DARK --------------//
 
@@ -39,25 +44,24 @@ $tooltip-bg-light: rgba(darken($color-text-light, 5%), 0.9);
 
 $node-icon-fill-dark: $color-text-dark;
 
-// Circle/Rect
+// Node bg
 
-$node-fill-dark: lighten($color-bg-dark, 10%);
-$node-fill-dark-highlight: lighten($color-bg-dark, 13%);
-$node-fill-dark-active: lighten($color-bg-dark, 20%);
-
-$node-stroke-dark: mix($color-text-dark, $color-bg-dark, 30%);
-$node-stroke-dark-highlight: mix($color-text-dark, $color-bg-dark, 80%);
-$node-stroke-dark-active: $color-text-dark;
+$node-fill-dark-default: #2a3b46;
+$node-stroke-dark-default: #354854;
+$node-fill-dark-active: #124066;
+$node-stroke-dark-active: #234f73;
+$node-fill-dark-selected: #004d8c;
+$node-stroke-dark-selected: $color-primary;
 
 // Label
 
-$node-labeltext-fill-dark: rgba($color-text-dark, 0.8);
-$node-labeltext-fill-dark-active: $color-text-dark;
+$node-labeltext-fill-dark: $color-text-dark;
 
 // Edge
 
-$edge-dark: mix($color-text-dark, $color-bg-dark, 85%);
+$edge-dark: #666;
+$edge-arrowhead-dark: #cacaca;
 
-// Tooltip
+// Layer
 
-$tooltip-bg-dark: rgba(mix($color-bg-dark, #111, 50), 0.9);
+$layer-dark: mix($color-bg-dark-1, $color-bg-dark-2);

@@ -1,74 +1,108 @@
 @import '../../styles/variables';
+@import '../../styles/extends';
 
 .pipeline-icon-toolbar {
-  position: absolute;
-  top: 0;
-  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: $sidebar-width-closed;
+  height: 100%;
   margin: 0;
-  padding: 20px;
+  padding: 1em 0;
   list-style: none;
+
+  .kui-theme--light & {
+    background: $color-bg-light-2;
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-2;
+  }
 }
 
-.pipeline-icon-button {
+.pipeline-icon-toolbar__button {
   position: relative;
-  margin: 0;
-  margin-bottom: 0.8em;
-  padding: 0.8em;
+  width: $sidebar-width-closed;
+  height: $sidebar-width-closed;
+  padding: 0;
   color: inherit;
+  text-align: center;
+  vertical-align: middle;
   background: none;
   border: none;
   box-shadow: none;
   cursor: pointer;
   user-select: none;
 
-  .kui-theme--light &,
-  .kui-theme--light & span {
-    background: rgba($color-bg-light, 0.9);
-  }
-
-  .kui-theme--dark &,
-  .kui-theme--dark & span {
-    background: rgba($color-bg-dark, 0.9);
-  }
-
   &:focus {
-    outline: 3px solid $color-link;
+    outline: none;
 
-    [data-whatinput='mouse'] & {
-      outline: none;
+    [data-whatinput='keyboard'] & {
+      outline: 3px solid $color-link;
     }
   }
 
-  span {
-    position: absolute;
-    right: 100%;
-    margin: -0.3em 0;
-    padding: 0.3em 0.4em;
-    font-size: 1.4em;
-    white-space: nowrap;
-    transform: translateX(2em);
-    visibility: hidden;
-    opacity: 0;
-    transition: all ease 0.2s, width 0s;
-  }
-
-  &:hover span,
-  [data-whatinput='keyboard'] &:focus span {
-    transform: translateX(0);
-    visibility: visible;
-    opacity: 1;
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.2;
   }
 
   svg {
-    position: relative;
-    display: block;
     width: 2em;
     height: 2em;
   }
 }
 
-.pipeline-icon-modal {
-  .kui-button {
-    margin: 0 10px;
+.pipeline-icon-toolbar__label {
+  @extend %tooltip;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -1.2em;
+  margin-left: 1.6em;
+  padding: 0.5em 0.7em;
+  font-size: 1.4em;
+  white-space: nowrap;
+  transform: translateX(-1em);
+  visibility: hidden;
+  opacity: 0;
+  transition: all ease 0.2s;
+
+  .pipeline-icon-toolbar__button:hover &,
+  [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {
+    transform: translateX(0);
+    visibility: visible;
+    opacity: 1;
   }
+
+  &::before {
+    $triangle-size: 7px;
+
+    position: absolute;
+    top: calc(50% - #{$triangle-size});
+    left: -$triangle-size;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: $triangle-size $triangle-size $triangle-size 0;
+    content: '';
+
+    .kui-theme--light & {
+      border-right-color: $color-bg-light-alt;
+    }
+
+    .kui-theme--dark & {
+      border-right-color: $color-bg-dark-alt;
+    }
+  }
+}
+
+.pipeline-menu-button svg {
+  transition: transform ease 0.4s;
+}
+
+.pipeline-menu-button--inverse svg {
+  transform: rotate(-180deg);
 }

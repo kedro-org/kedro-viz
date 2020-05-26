@@ -1,11 +1,15 @@
-import config from '../config';
+import { localStorageName } from '../config';
+
+const noWindow = typeof window === 'undefined';
 
 /**
  * Retrieve state data from localStorage
  * @return {Object} State
  */
 export const loadState = () => {
-  const { localStorageName } = config();
+  if (noWindow) {
+    return {};
+  }
   try {
     const serializedState = window.localStorage.getItem(localStorageName);
     if (serializedState === null) {
@@ -23,7 +27,9 @@ export const loadState = () => {
  * @param {Object} state New state object
  */
 export const saveState = state => {
-  const { localStorageName } = config();
+  if (noWindow) {
+    return;
+  }
   try {
     const newState = Object.assign(loadState(), state);
     const serializedState = JSON.stringify(newState);

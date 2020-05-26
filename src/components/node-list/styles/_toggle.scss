@@ -1,0 +1,67 @@
+.pipeline-nodelist__toggle {
+  margin: 0 24px;
+}
+
+.pipeline-nodelist__toggle__title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.8em;
+}
+
+.pipeline-nodelist__toggle__row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: $sidebar-padding 0;
+  padding: 10px 0;
+  border-style: solid;
+  border-width: 1px 0;
+
+  .kui-theme--light & {
+    border-color: $color-bg-light-2 transparent;
+  }
+
+  .kui-theme--dark & {
+    border-color: $color-bg-dark-2 transparent;
+  }
+}
+
+.pipeline-nodelist__toggle__button {
+  margin: -1px -6px -2px;
+  padding: 1px 6px 2px;
+  color: inherit;
+  font-size: 1.6em;
+  font-family: inherit;
+  background: none;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  opacity: 0.8;
+
+  &:focus {
+    outline: 4px solid $color-link;
+    opacity: 1;
+
+    [data-whatintent='mouse'] & {
+      outline: none;
+    }
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.pipeline-nodelist__toggle__icon {
+  width: 24px;
+  height: auto;
+  margin: 0 4px -6px -6px;
+
+  .kui-theme--light & {
+    fill: rgba(black, 0.9);
+  }
+
+  .kui-theme--dark & {
+    fill: white;
+  }
+}

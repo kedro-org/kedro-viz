@@ -15,7 +15,7 @@ describe('FlowChart', () => {
 
   it('renders nodes with D3', () => {
     const wrapper = setup.mount(<FlowChart />);
-    const nodes = wrapper.render().find('.node');
+    const nodes = wrapper.render().find('.pipeline-node');
     const nodeNames = nodes.map((i, el) => $(el).text()).get();
     const mockNodes = getNodeIDs(mockState.lorem);
     const mockNodeNames = mockNodes.map(d => getNodeName(mockState.lorem)[d]);
@@ -59,55 +59,21 @@ describe('FlowChart', () => {
     expect(spy2).not.toHaveBeenCalled();
   });
 
-  describe('getNavOffset', () => {
-    describe('if nav is visible', () => {
-      it('reduces the chart width by 300 on wider screens', () => {
-        const wrapper = setup.mount(<FlowChart visibleNav={true} />);
-        const instance = wrapper.find('FlowChart').instance();
-        expect(instance.getNavOffset(1000)).toEqual(300);
-        expect(instance.getNavOffset(500)).toEqual(300);
-      });
-
-      it('sets nav offset to zero on mobile', () => {
-        const instance = setup
-          .mount(<FlowChart visibleNav={true} />)
-          .find('FlowChart')
-          .instance();
-        expect(instance.getNavOffset(480)).toEqual(0);
-        expect(instance.getNavOffset(320)).toEqual(0);
-      });
-    });
-
-    describe('if nav is hidden', () => {
-      const instance = setup
-        .mount(<FlowChart visibleNav={false} />)
-        .find('FlowChart')
-        .instance();
-
-      it('sets nav offset to zero on desktop', () => {
-        expect(instance.getNavOffset(1000)).toEqual(0);
-      });
-
-      it('sets nav offset to zero on mobile', () => {
-        expect(instance.getNavOffset(480)).toEqual(0);
-        expect(instance.getNavOffset(320)).toEqual(0);
-      });
-    });
-  });
-
   it('maps state to props', () => {
     const expectedResult = {
+      centralNode: null,
       chartSize: expect.any(Object),
       edges: expect.any(Array),
-      nodes: expect.any(Array),
+      graphSize: expect.any(Object),
+      layers: expect.any(Array),
       linkedNodes: expect.any(Object),
-      centralNode: null,
+      nodeActive: expect.any(Object),
+      nodeSelected: expect.any(Object),
+      nodes: expect.any(Array),
       textLabels: expect.any(Boolean),
-      zoom: expect.objectContaining({
-        scale: expect.any(Number),
-        translateX: expect.any(Number),
-        translateY: expect.any(Number)
-      })
+      visibleLayers: expect.any(Boolean),
+      visibleSidebar: expect.any(Boolean),
+      zoom: expect.any(Object)
     };
     expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
   });

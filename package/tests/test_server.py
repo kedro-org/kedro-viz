@@ -31,13 +31,18 @@ Tests for Kedro-Viz server
 
 import json
 import re
+from pathlib import Path
 
 import pytest
 from kedro.context import KedroContextError
+from kedro.extras.datasets.pickle import PickleDataSet
+from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
+from semver import VersionInfo
+from toposort import CircularDependencyError
 
 from kedro_viz import server
-from kedro_viz.server import _allocate_port
+from kedro_viz.server import _allocate_port, _sort_layers, format_pipeline_data
 from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
@@ -68,6 +73,7 @@ EXPECTED_PIPELINE_DATA = {
             "name": "Bob In",
             "tags": [],
             "id": "7366ec9f",
+            "layer": None,
             "full_name": "bob_in",
             "type": "data",
         },
@@ -75,6 +81,7 @@ EXPECTED_PIPELINE_DATA = {
             "name": "Bob Out",
             "tags": [],
             "id": "60e68b8e",
+            "layer": None,
             "full_name": "bob_out",
             "type": "data",
         },
@@ -82,6 +89,7 @@ EXPECTED_PIPELINE_DATA = {
             "name": "Fred In",
             "tags": ["bob"],
             "id": "afffac5f",
+            "layer": None,
             "full_name": "fred_in",
             "type": "data",
         },
@@ -89,6 +97,7 @@ EXPECTED_PIPELINE_DATA = {
             "name": "Fred Out",
             "tags": ["bob"],
             "id": "37316e3a",
+            "layer": None,
             "full_name": "fred_out",
             "type": "data",
         },
@@ -96,11 +105,13 @@ EXPECTED_PIPELINE_DATA = {
             "name": "Parameters",
             "tags": ["bob"],
             "id": "f1f1425b",
+            "layer": None,
             "full_name": "parameters",
             "type": "parameters",
         },
     ],
     "tags": [{"name": "Bob", "id": "bob"}],
+    "layers": [],
 }
 
 
@@ -148,7 +159,7 @@ def patched_get_project_context(mocker):
     ):  # pylint: disable=unused-argument
         mocked_context = mocker.Mock()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
-        mocked_context.catalog = lambda x: None
+        mocked_context.catalog = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
         return {
             "create_pipeline": create_pipeline,
@@ -172,7 +183,7 @@ def test_set_port(cli_runner,):
     result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     assert result.exit_code == 0, result.output
     server.app.run.assert_called_with(host="127.0.0.1", port=8000)
-    assert server.webbrowser.open_new.called_with("http://127.0.0.1:8000/")
+    server.webbrowser.open_new.assert_called_with("http://127.0.0.1:8000/")
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -181,7 +192,7 @@ def test_set_ip(cli_runner):
     result = cli_runner.invoke(server.commands, ["viz", "--host", "0.0.0.0"])
     assert result.exit_code == 0, result.output
     server.app.run.assert_called_with(host="0.0.0.0", port=4141)
-    assert server.webbrowser.open_new.called_with("http://127.0.0.1:4141/")
+    server.webbrowser.open_new.assert_called_with("http://0.0.0.0:4141/")
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -194,7 +205,22 @@ def test_no_browser(cli_runner):
     assert not server.webbrowser.open_new.called
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 0, result.output
-    assert server.webbrowser.open_new.called
+    assert server.webbrowser.open_new.call_count == 1
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_no_browser_if_not_localhost(cli_runner):
+    """Check that call to open browser is not performed when host
+    is not the local host.
+    """
+    result = cli_runner.invoke(
+        server.commands, ["viz", "--browser", "--host", "123.1.2.3"]
+    )
+    assert result.exit_code == 0, result.output
+    assert not server.webbrowser.open_new.called
+    result = cli_runner.invoke(server.commands, ["viz", "--host", "123.1.2.3"])
+    assert result.exit_code == 0, result.output
+    assert not server.webbrowser.open_new.call_count
 
 
 def test_load_file_outside_kedro_project(cli_runner, tmp_path):
@@ -266,7 +292,7 @@ def test_pipeline_flag(cli_runner, client):
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data == {"edges": [], "nodes": [], "tags": []}
+    assert data == {"edges": [], "layers": [], "nodes": [], "tags": []}
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -278,12 +304,12 @@ def test_pipeline_flag_non_existent(cli_runner):
 
 def test_viz_kedro15(mocker, cli_runner):
     """Test that running viz in Kedro 0.15.0."""
-    mocker.patch("kedro.__version__", "0.15.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
 
     def get_project_context(
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
     ):  # pylint: disable=unused-argument
-        mocked_context = mocker.Mock()
+        mocked_context = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
         return {"context": mocked_context}[key]
 
@@ -294,7 +320,7 @@ def test_viz_kedro15(mocker, cli_runner):
 
 def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
     """Test that running viz with `--pipeline` flag in Kedro 0.15.0."""
-    mocker.patch("kedro.__version__", "0.15.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
 
     def get_project_context(
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
@@ -309,7 +335,7 @@ def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
 def test_viz_kedro15_invalid(mocker, cli_runner):
     """Test that running viz in Kedro 0.15.0,
     and it is outside of a Kedro project root."""
-    mocker.patch("kedro.__version__", "0.15.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
     mocker.patch("kedro_viz.server.get_project_context", side_effect=KedroContextError)
     result = cli_runner.invoke(server.commands, "viz")
     assert "Could not find a Kedro project root." in result.output
@@ -317,10 +343,10 @@ def test_viz_kedro15_invalid(mocker, cli_runner):
 
 def test_viz_kedro14(mocker, cli_runner):
     """Test that running viz in Kedro 0.14.0."""
-    mocker.patch("kedro.__version__", "0.14.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.14.0"))
 
     def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
-        return lambda x: None
+        return mocker.MagicMock()
 
     def get_config(
         project_path: str, env: str = None  # pylint: disable=bad-continuation
@@ -341,7 +367,7 @@ def test_viz_kedro14(mocker, cli_runner):
 
 def test_viz_kedro14_pipeline_flag(mocker, cli_runner):
     """Test that running viz with `--pipeline` flag in Kedro 0.14.0 is not supported."""
-    mocker.patch("kedro.__version__", "0.14.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.14.0"))
 
     def create_catalog(config):  # pylint: disable=unused-argument,bad-continuation
         return lambda x: None
@@ -366,10 +392,20 @@ def test_viz_kedro14_pipeline_flag(mocker, cli_runner):
 def test_viz_kedro14_invalid(mocker, cli_runner):
     """Test that running viz in Kedro 0.14.0,
     while outside of a Kedro project is not supported."""
-    mocker.patch("kedro.__version__", "0.14.0")
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.14.0"))
     mocker.patch("kedro_viz.server.get_project_context", side_effect=KeyError)
     result = cli_runner.invoke(server.commands, "viz")
     assert "Could not find a Kedro project root." in result.output
+
+
+def test_viz_stacktrace(mocker, cli_runner):
+    """Test that in the case of a generic exception,
+    the stacktrace is printed."""
+    mocker.patch("kedro_viz.server._call_viz", side_effect=ValueError)
+    result = cli_runner.invoke(server.commands, "viz")
+
+    assert "Traceback (most recent call last):" in result.output
+    assert "ValueError" in result.output
 
 
 @pytest.fixture(autouse=True)
@@ -508,3 +544,173 @@ class TestAllocatePort:
         pattern = "Cannot allocate an open TCP port for Kedro-Viz"
         with pytest.raises(ValueError, match=re.escape(pattern)):
             _allocate_port(**kwargs)
+
+
+@pytest.fixture
+def pipeline():
+    def func1(a, b):  # pylint: disable=unused-argument
+        return a
+
+    def func2(a):  # pylint: disable=unused-argument
+        return a
+
+    return Pipeline(
+        [
+            node(func1, ["bob_in", "params:value"], "bob_out"),
+            node(func2, "bob_out", "result"),
+        ]
+    )
+
+
+@pytest.fixture
+def old_catalog_with_layers():
+    data_sets = {
+        "bob_in": PickleDataSet("raw.csv"),
+        "paras:value": MemoryDataSet("value"),
+        "result": PickleDataSet("final.csv"),
+    }
+    setattr(data_sets["bob_in"], "_layer", "raw")
+    setattr(data_sets["result"], "_layer", "final")
+    catalog = DataCatalog(data_sets=data_sets)
+    try:
+        catalog.__dict__.pop("layers")
+    except KeyError:
+        pass
+
+    return catalog
+
+
+@pytest.fixture
+def new_catalog_with_layers():
+    data_sets = {
+        "bob_in": PickleDataSet("raw.csv"),
+        "paras:value": MemoryDataSet("value"),
+        "result": PickleDataSet("final.csv"),
+    }
+    layers = {"raw": {"bob_in"}, "final": {"result"}}
+
+    catalog = DataCatalog(data_sets=data_sets)
+    setattr(catalog, "layers", layers)
+
+    return catalog
+
+
+def test_format_pipeline_data_legacy(pipeline, old_catalog_with_layers):
+    result = format_pipeline_data(pipeline, old_catalog_with_layers)
+    result_file_path = Path(__file__).parent / "result.json"
+    json_data = json.loads(result_file_path.read_text())
+    assert json_data == result
+
+
+def test_format_pipeline_data(pipeline, new_catalog_with_layers):
+    result = format_pipeline_data(pipeline, new_catalog_with_layers)
+    result_file_path = Path(__file__).parent / "result.json"
+    json_data = json.loads(result_file_path.read_text())
+    assert json_data == result
+
+
+def test_format_pipeline_data_no_layers(pipeline, new_catalog_with_layers):
+    setattr(new_catalog_with_layers, "layers", None)
+    result = format_pipeline_data(pipeline, new_catalog_with_layers)
+    assert result["layers"] == []
+
+
+@pytest.mark.parametrize("graph_schema,nodes,node_dependencies,expected", [
+    (
+        # direct dependency
+        "node_1(layer=raw) -> node_2(layer=int)",
+        {"node_1": {"id": "node_1", "layer": "raw"}, "node_2": {"id": "node_2", "layer": "int"}},
+        {"node_1": {"node_2"}, "node_2": set()},
+        ["raw", "int"]
+    ),
+    (
+        # more than 1 node in a layer
+        "node_1 -> node_2(layer=raw) -> node_3(layer=raw) -> node_4(layer=int)",
+        {"node_1": {"id": "node_1"}, "node_2": {"id": "node_2", "layer": "raw"},
+         "node_3": {"id": "node_3", "layer": "raw"}, "node_4": {"id": "node_4", "layer": "int"}},
+        {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": {"node_4"}, "node_4": set()},
+        ["raw", "int"]
+    ),
+    (
+        # indirect dependency
+        "node_1(layer=raw) -> node_2 -> node_3(layer=int)",
+        {"node_1": {"id": "node_1", "layer": "raw"}, "node_2": {"id": "node_2"},
+         "node_3": {"id": "node_3", "layer": "int"}},
+        {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": set()},
+        ["raw", "int"]
+    ),
+    (
+        # fan-in dependency
+        """
+        node_1(layer=raw) -> node_2 -> node_3(layer=int) -> node_6(layer=feature)
+        node_4(layer=int) -> node_5 -----------------------------^
+        """,
+        {"node_1": {"id": "node_1", "layer": "raw"}, "node_2": {"id": "node_2"},
+         "node_3": {"id": "node_3", "layer": "int"}, "node_4": {"id": "node_4", "layer": "int"},
+         "node_5": {"id": "node_5"}, "node_6": {"id": "node_6", "layer": "feature"}},
+        {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": {"node_6"}, "node_4": {"node_5"},
+         "node_5": {"node_6"}, "node_6": set()},
+        ["raw", "int", "feature"]
+    ),
+    (
+        # fan-out dependency: note that model_input comes after feature here based on
+        # alphabetical order since they have no dependency relationship.
+        """
+        node_1(layer=raw) -> node_2 -> node_3(layer=int) -> node_6 -> node_7(layer=feature)
+                |----------> node_4(layer=int) -> node_5(layer=model_input)
+        """,
+        {"node_1": {"id": "node_1", "layer": "raw"}, "node_2": {"id": "node_2"},
+         "node_3": {"id": "node_3", "layer": "int"}, "node_4": {"id": "node_4", "layer": "int"},
+         "node_5": {"id": "node_5", "layer": "model_input"},
+         "node_6": {"id": "node_6"}, "node_7": {"id": "node_7", "layer": "feature"}},
+        {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": {"node_6"},
+         "node_4": {"node_5"}, "node_5": set(), "node_6": {"node_7"}, "node_7": set()},
+        ["raw", "int", "feature", "model_input"]
+    ),
+    (
+        # fan-out-fan-in dependency
+        """
+        node_1(layer=raw) -> node_2 -> node_3(layer=int) -> node_6 -> node_7(layer=feature)
+                |----------> node_4(layer=int) -> node_5(layer=model_input) --^
+        """,
+        {"node_1": {"id": "node_1", "layer": "raw"}, "node_2": {"id": "node_2"},
+         "node_3": {"id": "node_3", "layer": "int"}, "node_4": {"id": "node_4", "layer": "int"},
+         "node_5": {"id": "node_5", "layer": "model_input"},
+         "node_6": {"id": "node_6"},
+         "node_7": {"id": "node_7", "layer": "feature"}},
+        {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": {"node_6"},
+         "node_4": {"node_5"}, "node_5": {"node_7"}, "node_6": {"node_7"}, "node_7": set()},
+        ["raw", "int", "model_input", "feature"]
+    ),
+    (
+        # disjoint dependency: when two groups of layers have no direct dependencies,
+        # their order is determined by topological order first and alphabetical order second,
+        # which is the default of the toposort library. In the example below, toposort the layers
+        # will give [{c, d}, {b, a}], so it will be come [c, d, a, b] when flattened.
+        """
+        node_1(layer=c) -> node_2(layer=a)
+        node_3(layer=d) -> node_4(layer=b)
+        """,
+        {"node_1": {"id": "node_1", "layer": "c"}, "node_2": {"id": "node_2", "layer": "a"},
+         "node_3": {"id": "node_3", "layer": "d"}, "node_4": {"id": "node_4", "layer": "b"}},
+        {"node_1": {"node_2"}, "node_2": {}, "node_3": {"node_4"}, "node_4": {}},
+        ["c", "d", "a", "b"]
+    )
+])
+def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
+    assert _sort_layers(nodes, node_dependencies) == expected, graph_schema
+
+
+def test_sort_layers_should_raise_on_cyclic_layers():
+    # node_1(layer=raw) -> node_2(layer=int) -> node_3(layer=raw)
+    nodes = {
+        "node_1": {"id": "node_1", "layer": "raw"},
+        "node_2": {"id": "node_2", "layer": "int"},
+        "node_3": {"id": "node_3", "layer": "raw"},
+    }
+    node_dependencies = {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": set()}
+    with pytest.raises(
+        CircularDependencyError,
+        match="Circular dependencies exist among these items: {'int':{'raw'}, 'raw':{'int'}}"
+    ):
+        _sort_layers(nodes, node_dependencies)

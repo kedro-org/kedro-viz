@@ -42,12 +42,19 @@ export const randomIndex = n => Math.floor(Math.random() * n);
 export const randomNumber = n => Math.ceil(Math.random() * n);
 
 /**
+ * Get a random number between min and max, inclusive
+ * @param {number} (min) Min number
+ * @param {number} (max) Max number
+ */
+export const randomNumberBetween = (min, max) => randomNumber(max - min) + min;
+
+/**
  * Get a random datum from an array
  * @param {Array} range The array to select a random item from
  */
 export const getRandom = range => range[randomIndex(range.length)];
 
-const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
+export const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
   ' '
 );
 
@@ -60,6 +67,27 @@ export const getRandomName = (n, join = '_') =>
   getNumberArray(n)
     .map(() => getRandom(LOREM_IPSUM))
     .join(join);
+
+/**
+ * Randomly select a certain number (n) of items from an array (arr).
+ * via https://stackoverflow.com/a/19270021/1651713
+ * @param {array} arr List from which to choose
+ * @param {number} n Number of items to select
+ */
+export const getRandomSelection = (arr, n) => {
+  const result = new Array(n);
+  let len = arr.length;
+  const taken = new Array(len);
+  if (n > len) {
+    return arr;
+  }
+  while (n--) {
+    var x = Math.floor(Math.random() * len);
+    result[n] = arr[x in taken ? taken[x] : x];
+    taken[x] = --len in taken ? taken[len] : len;
+  }
+  return result;
+};
 
 /**
  * Filter duplicate values from an array

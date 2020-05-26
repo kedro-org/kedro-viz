@@ -8,6 +8,7 @@ import getInitialState from '../store/initial-state';
  * Example state objects for use in tests of redux-enabled components
  */
 export const mockState = {
+  layers: getInitialState({ data: 'layers' }),
   lorem: getInitialState({ data: 'lorem' }),
   animals: getInitialState({ data: 'animals' })
 };
@@ -22,7 +23,10 @@ export const setup = {
    * @param {Object} props Store initialisation props
    */
   mount: (children, props = {}) => {
-    const initialState = getInitialState({ ...props, data: 'lorem' });
+    const initialState = Object.assign(
+      {},
+      getInitialState({ data: 'lorem', ...props }, props)
+    );
     return mount(
       <Provider store={configureStore(initialState)}>{children}</Provider>
     );

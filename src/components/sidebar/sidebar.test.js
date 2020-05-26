@@ -1,5 +1,5 @@
 import React from 'react';
-import Sidebar, { ShowMenuButton, HideMenuButton } from './index';
+import MountSidebar, { Sidebar } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
 const mockProps = {
@@ -8,22 +8,6 @@ const mockProps = {
   visible: true
 };
 
-describe('ShowMenuButton', () => {
-  it('renders without crashing', () => {
-    const wrapper = setup.mount(<ShowMenuButton {...mockProps} />);
-    const container = wrapper.find('button');
-    expect(container.length).toBe(1);
-  });
-});
-
-describe('HideMenuButton', () => {
-  it('renders without crashing', () => {
-    const wrapper = setup.shallow(HideMenuButton, mockProps);
-    const container = wrapper.find('button');
-    expect(container.length).toBe(1);
-  });
-});
-
 describe('Sidebar', () => {
   it('renders without crashing', () => {
     const wrapper = setup.shallow(Sidebar, mockProps);
@@ -31,10 +15,26 @@ describe('Sidebar', () => {
     expect(container.length).toBe(1);
   });
 
-  it('has an open sidebar by default', () => {
-    const wrapper = setup.shallow(Sidebar, mockProps);
-    expect(
-      wrapper.find('.pipeline-sidebar').hasClass('pipeline-sidebar--visible')
-    ).toBe(true);
+  it('is open by default', () => {
+    const sidebar = setup.shallow(Sidebar, mockProps).find('.pipeline-sidebar');
+    expect(sidebar.hasClass('pipeline-sidebar--visible')).toBe(true);
+  });
+
+  it('hides when clicking the hide menu button', () => {
+    const wrapper = setup.mount(<MountSidebar />, {
+      visible: { sidebar: true }
+    });
+    wrapper.find('button[aria-label="Hide menu"]').simulate('click');
+    const sidebar = wrapper.find('.pipeline-sidebar');
+    expect(sidebar.hasClass('pipeline-sidebar--visible')).toBe(false);
+  });
+
+  it('shows when clicking the show menu button', () => {
+    const wrapper = setup.mount(<MountSidebar />, {
+      visible: { sidebar: false }
+    });
+    wrapper.find('button[aria-label="Show menu"]').simulate('click');
+    const sidebar = wrapper.find('.pipeline-sidebar');
+    expect(sidebar.hasClass('pipeline-sidebar--visible')).toBe(true);
   });
 });

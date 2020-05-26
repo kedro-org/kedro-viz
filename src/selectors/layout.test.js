@@ -1,18 +1,24 @@
 import { mockState } from '../utils/state.mock';
 import {
+  getChartSize,
   getGraph,
+  getGraphSize,
   getLayoutNodes,
   getLayoutEdges,
+  getSidebarWidth,
   getZoomPosition
 } from './layout';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 import { updateChartSize } from '../actions';
+import getInitialState from '../store/initial-state';
 import reducer from '../reducers';
+import { sidebarBreakpoint, sidebarWidth } from '../config';
 
 describe('Selectors', () => {
   describe('getGraph', () => {
     const graph = getGraph(mockState.lorem);
+
     it('calculates chart layout and returns a Dagre object', () => {
       expect(graph).toEqual(
         expect.objectContaining({
@@ -47,8 +53,7 @@ describe('Selectors', () => {
             height: expect.any(Number),
             width: expect.any(Number),
             x: expect.any(Number),
-            y: expect.any(Number),
-            active: expect.any(Boolean)
+            y: expect.any(Number)
           })
         ])
       );
@@ -76,16 +81,97 @@ describe('Selectors', () => {
     });
   });
 
-  describe('getZoomPosition', () => {
-    it('returns a default chart zoom translation/scale if none is specified', () => {
-      expect(getZoomPosition(mockState.lorem)).toEqual({
-        scale: 1,
-        translateX: 0,
-        translateY: 0
+  describe('getGraphSize', () => {
+    it('returns width, height and margin of the graph', () => {
+      const graphSize = getGraphSize(mockState.lorem);
+      expect(graphSize).toEqual(
+        expect.objectContaining({
+          height: expect.any(Number),
+          marginx: expect.any(Number),
+          marginy: expect.any(Number),
+          width: expect.any(Number)
+        })
+      );
+    });
+  });
+
+  describe('getSidebarWidth', () => {
+    const { open, closed } = sidebarWidth;
+
+    describe('if sidebar is visible', () => {
+      it(`reduces the chart width by ${open} on screens wider than ${sidebarBreakpoint}`, () => {
+        expect(getSidebarWidth(true, 1200)).toEqual(open);
+        expect(getSidebarWidth(true, 900)).toEqual(open);
+      });
+
+      it(`sets sidebar width to ${closed} on screens smaller than ${sidebarBreakpoint}`, () => {
+        expect(getSidebarWidth(true, 480)).toEqual(closed);
+        expect(getSidebarWidth(true, 320)).toEqual(closed);
       });
     });
 
-    it('returns the updated chart zoom translation/scale if set', () => {
+    describe('if sidebar is hidden', () => {
+      it(`sets sidebar width to ${closed} on screens wider than ${sidebarBreakpoint}`, () => {
+        expect(getSidebarWidth(false, 1000)).toEqual(closed);
+      });
+
+      it(`sets sidebar width to ${closed} on screens smaller than ${sidebarBreakpoint}`, () => {
+        expect(getSidebarWidth(false, 480)).toEqual(closed);
+        expect(getSidebarWidth(false, 320)).toEqual(closed);
+      });
+    });
+  });
+
+  describe('getChartSize', () => {
+    it('returns a set of undefined properties if chartSize DOMRect is not supplied', () => {
+      expect(getChartSize(mockState.lorem)).toEqual({
+        height: undefined,
+        left: undefined,
+        outerHeight: undefined,
+        outerWidth: undefined,
+        sidebarWidth: undefined,
+        top: undefined,
+        width: undefined
+      });
+    });
+
+    it('returns a DOMRect converted into an Object, with some extra properties', () => {
+      const newMockState = {
+        ...mockState.lorem,
+        chartSize: { left: 100, top: 100, width: 1000, height: 1000 }
+      };
+      expect(getChartSize(newMockState)).toEqual({
+        height: expect.any(Number),
+        left: expect.any(Number),
+        outerHeight: expect.any(Number),
+        outerWidth: expect.any(Number),
+        sidebarWidth: expect.any(Number),
+        top: expect.any(Number),
+        width: expect.any(Number)
+      });
+    });
+  });
+
+  describe('getZoomPosition', () => {
+    const defaultZoom = {
+      scale: 1,
+      translateX: 0,
+      translateY: 0
+    };
+
+    it('returns default values if chartSize is unset', () => {
+      expect(getZoomPosition(mockState.lorem)).toEqual(defaultZoom);
+    });
+
+    it('returns default values when no nodes are visible', () => {
+      const newMockState = reducer(
+        getInitialState({ data: [] }),
+        updateChartSize({ width: 100, height: 100 })
+      );
+      expect(getZoomPosition(newMockState)).toEqual(defaultZoom);
+    });
+
+    it('returns the updated chart zoom translation/scale if chartSize is set', () => {
       const newMockState = reducer(
         mockState.lorem,
         updateChartSize({ width: 100, height: 100 })

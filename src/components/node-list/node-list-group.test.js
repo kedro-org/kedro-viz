@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  NodeListGroup,
-  mapStateToProps,
-  mapDispatchToProps
-} from './node-list-group';
+import { NodeListGroup, mapDispatchToProps } from './node-list-group';
 import { mockState, setup } from '../../utils/state.mock';
 import { getNodeTypes } from '../../selectors/node-types';
 
@@ -24,7 +20,7 @@ describe('NodeListGroup', () => {
     const wrapper = setup.mount(
       <NodeListGroup type={type} onToggleTypeDisabled={dispatch} />
     );
-    const checkbox = () => wrapper.find('.kui-switch__input');
+    const checkbox = () => wrapper.find('input');
     checkbox().simulate('change', { target: { checked: false } });
     expect(dispatch.mock.calls.length).toEqual(1);
   });
@@ -42,14 +38,7 @@ describe('NodeListGroup', () => {
   it('hides children when collapsed class is used', () => {
     const type = getNodeTypes(mockState.lorem)[0];
     const wrapper = setup.mount(<NodeListGroup type={type} collapsed={true} />);
-    expect(wrapper.find('.pipeline-node-list--nested').length).toEqual(0);
-  });
-
-  it('maps state to props', () => {
-    const expectedResult = {
-      theme: expect.stringMatching(/light|dark/)
-    };
-    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
+    expect(wrapper.find('.pipeline-nodelist--nested').length).toEqual(0);
   });
 
   it('maps dispatch to props', () => {

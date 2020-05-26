@@ -11,6 +11,32 @@ export function resetData(data) {
   };
 }
 
+export const TOGGLE_LAYERS = 'TOGGLE_LAYERS';
+
+/**
+ * Toggle whether to show layers on/off
+ * @param {Boolean} visible True if layers are to be shown
+ */
+export function toggleLayers(visible) {
+  return {
+    type: TOGGLE_LAYERS,
+    visible
+  };
+}
+
+export const TOGGLE_EXPORT_MODAL = 'TOGGLE_EXPORT_MODAL';
+
+/**
+ * Toggle whether to show the export modal
+ * @param {Boolean} visible True if the modal is to be shown
+ */
+export function toggleExportModal(visible) {
+  return {
+    type: TOGGLE_EXPORT_MODAL,
+    visible
+  };
+}
+
 export const TOGGLE_TEXT_LABELS = 'TOGGLE_TEXT_LABELS';
 
 /**
@@ -36,6 +62,19 @@ export function toggleTagFilter(tagID, enabled) {
     type: TOGGLE_TAG_FILTER,
     tagID,
     enabled
+  };
+}
+
+export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
+
+/**
+ * Toggle sidebar visible/hidden
+ * @param {boolean} visible Whether sidebar nav is shown
+ */
+export function toggleSidebar(visible) {
+  return {
+    type: TOGGLE_SIDEBAR,
+    visible
   };
 }
 

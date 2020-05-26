@@ -62,13 +62,15 @@ utils:
 
   run_pylint_and_flake8: &run_pylint_and_flake8
     name: Run pylint and flake8
-    command: |
-      make pylint
+    command: make pylint
 
   run_secret_scan: &run_secret_scan
     name: Run secret scan
-    command: |
-      make secret-scan
+    command: make secret-scan
+
+  run_security_scan: &run_security_scan
+    name: Run security scan
+    command: make security-scan
 
   run_python_tests: &run_python_tests
     name: Run Python tests
@@ -76,8 +78,7 @@ utils:
 
   run_e2e_tests: &run_e2e_tests
     name: Run all end to end tests
-    command: |
-      make e2e-tests
+    command: make e2e-tests
 
   cleanup: &cleanup
     name: Cleanup
@@ -98,8 +99,7 @@ utils:
 
   check_legal_compliance: &check_legal_compliance
     name: Check for legal compliance
-    command: |
-      make legal
+    command: make legal
 
   add_ssh_keys: &add_ssh_keys
     fingerprints:
@@ -118,12 +118,12 @@ utils:
       git push origin master:gh-pages --force
 
 jobs:
-  build_35: &DEFAULT
+  build_36: &DEFAULT
     docker:
       - image: circleci/node:10.15
     working_directory: ~/repo
     environment:
-      CONDA_ENV_PY_VERSION: '3.5'
+      CONDA_ENV_PY_VERSION: "3.6"
     steps:
       - checkout
       - restore_cache: *restore_cache
@@ -137,6 +137,7 @@ jobs:
       - run: *test_lib_transpilation
       - run: *run_pylint_and_flake8
       - run: *run_secret_scan
+      - run: *run_security_scan
       - run: *run_python_tests
       - run: *run_e2e_tests
       - run: *cleanup
@@ -145,15 +146,15 @@ jobs:
       - run: *package_app
       - run: *check_legal_compliance
 
-  build_36:
-    <<: *DEFAULT
-    environment:
-      CONDA_ENV_PY_VERSION: '3.6'
-
   build_37:
     <<: *DEFAULT
     environment:
-      CONDA_ENV_PY_VERSION: '3.7'
+      CONDA_ENV_PY_VERSION: "3.7"
+
+  build_38:
+    <<: *DEFAULT
+    environment:
+      CONDA_ENV_PY_VERSION: "3.8"
 
   deploy_demo:
     <<: *DEFAULT
@@ -169,27 +170,27 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_35
       - build_36
       - build_37
+      - build_38
       - deploy_demo:
           requires:
-            - build_35
             - build_36
             - build_37
+            - build_38
           filters:
             branches:
               only: master
   daily:
     triggers:
       - schedule:
-          cron: '0 1 * * *'
+          cron: "0 1 * * *"
           filters:
             branches:
               only:
                 - develop
                 - master
     jobs:
-      - build_35
       - build_36
       - build_37
+      - build_38

@@ -1,9 +1,9 @@
 import { loadState } from './helpers';
-import getRandomPipeline from '../utils/random-data';
 import normalizeData from './normalize-data';
 import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import animals from '../utils/data/animals.mock';
 import demo from '../utils/data/demo.mock';
+import layers from '../utils/data/layers.mock';
 
 /**
  * Determine where data should be loaded from (i.e. async from JSON,
@@ -13,9 +13,6 @@ import demo from '../utils/data/demo.mock';
  */
 export const getPipelineData = data => {
   switch (data) {
-    case 'random':
-      // Use randomly-generated data
-      return getRandomPipeline();
     case 'lorem':
       // Use data from the 'lorem-ipsum' test dataset
       return loremIpsum;
@@ -25,9 +22,16 @@ export const getPipelineData = data => {
     case 'demo':
       // Use data from the 'demo' test dataset
       return demo;
+    case 'layers':
+      // Use data from the 'layers' test dataset
+      return layers;
     case 'json':
       // Return empty state, as data will be loaded asynchronously later
       return null;
+    case 'random':
+      throw new Error(
+        "The random data should already have replaced the 'random' string in 'data-source.js', so if you see this error then something has gone horribly wrong."
+      );
     case null:
     case undefined:
       throw new Error('No data was provided to App component via props');
@@ -50,6 +54,7 @@ export const getInitialPipelineState = () => ({
     type: {},
     isParam: {},
     tags: {},
+    layer: {},
     disabled: {},
     clicked: null,
     hovered: null
@@ -67,6 +72,10 @@ export const getInitialPipelineState = () => ({
     ids: [],
     sources: {},
     targets: {}
+  },
+  layer: {
+    ids: [],
+    name: {}
   },
   tag: {
     ids: [],
@@ -90,7 +99,16 @@ const getInitialState = (props = {}) => {
   const theme = props.theme || localStorageState.theme || 'dark';
 
   const visible = Object.assign(
-    { exportBtn: true, labelBtn: true, themeBtn: true },
+    {
+      labelBtn: true,
+      layerBtn: true,
+      layers: Boolean(pipelineData.layer.ids.length),
+      exportBtn: true,
+      exportModal: false,
+      sidebar: true,
+      themeBtn: true
+    },
+    localStorageState.visible,
     props.visible
   );
 

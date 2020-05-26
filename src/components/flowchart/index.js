@@ -6,13 +6,18 @@ import { select, event } from 'd3-selection';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { updateChartSize } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
+import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import {
+  getChartSize,
+  getGraphSize,
   getLayoutNodes,
   getLayoutEdges,
   getZoomPosition
 } from '../../selectors/layout';
+import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import draw from './draw';
+import Tooltip from '../tooltip';
 import './styles/flowchart.css';
 
 /**
@@ -23,11 +28,7 @@ export class FlowChart extends Component {
     super(props);
 
     this.state = {
-      tooltipVisible: false,
-      tooltipIsRight: false,
-      tooltipText: null,
-      tooltipX: 0,
-      tooltipY: 0
+      tooltip: {}
     };
 
     this.DURATION = 700;
@@ -37,6 +38,8 @@ export class FlowChart extends Component {
     this.wrapperRef = React.createRef();
     this.edgesRef = React.createRef();
     this.nodesRef = React.createRef();
+    this.layersRef = React.createRef();
+    this.layerNamesRef = React.createRef();
   }
 
   componentDidMount() {
@@ -45,15 +48,15 @@ export class FlowChart extends Component {
     this.initZoomBehaviour();
     this.drawChart();
     this.zoomChart();
-    this.addResizeObserver();
+    this.addGlobalEventListeners();
   }
 
   componentWillUnmount() {
-    this.removeResizeObserver();
+    this.removeGlobalEventListeners();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.visibleNav !== this.props.visibleNav) {
+    if (prevProps.visibleSidebar !== this.props.visibleSidebar) {
       this.updateChartSize();
     }
     if (prevProps.zoom !== this.props.zoom) {
@@ -70,7 +73,9 @@ export class FlowChart extends Component {
       svg: select(this.svgRef.current),
       wrapper: select(this.wrapperRef.current),
       edgeGroup: select(this.edgesRef.current),
-      nodeGroup: select(this.nodesRef.current)
+      nodeGroup: select(this.nodesRef.current),
+      layerGroup: select(this.layersRef.current),
+      layerNameGroup: select(this.layerNamesRef.current)
     };
   }
 
@@ -79,38 +84,17 @@ export class FlowChart extends Component {
    * and apply them to the chart SVG
    */
   updateChartSize() {
-    const {
-      left,
-      top,
-      width,
-      height
-    } = this.containerRef.current.getBoundingClientRect();
-    const navOffset = this.getNavOffset(width);
-    this.props.onUpdateChartSize({
-      x: left,
-      y: top,
-      outerWidth: width,
-      outerHeight: height,
-      width: width - navOffset,
-      height,
-      navOffset
-    });
-  }
-
-  getNavOffset(width) {
-    const navWidth = 300; // from _variables.scss
-    const breakpointSmall = 480; // from _variables.scss
-    if (this.props.visibleNav && width > breakpointSmall) {
-      return navWidth;
-    }
-    return 0;
+    this.props.onUpdateChartSize(
+      this.containerRef.current.getBoundingClientRect()
+    );
   }
 
   /**
-   * Add ResizeObserver to listen for any changes in the container's width/height
-   * (with event listener fallback)
+   * Add window event listeners on mount
    */
-  addResizeObserver() {
+  addGlobalEventListeners() {
+    // Add ResizeObserver to listen for any changes in the container's width/height
+    // (with event listener fallback)
     if (window.ResizeObserver) {
       this.resizeObserver =
         this.resizeObserver ||
@@ -119,17 +103,24 @@ export class FlowChart extends Component {
     } else {
       window.addEventListener('resize', this.handleWindowResize);
     }
+    // Print event listeners
+    window.addEventListener('beforeprint', this.handleBeforePrint);
+    window.addEventListener('afterprint', this.handleAfterPrint);
   }
 
   /**
-   * Remove ResizeObserver (or event listener fallback) on unmount
+   * Remove window event listeners on unmount
    */
-  removeResizeObserver() {
+  removeGlobalEventListeners() {
+    // ResizeObserver
     if (window.ResizeObserver) {
       this.resizeObserver.unobserve(this.containerRef.current);
     } else {
       window.removeEventListener('resize', this.handleWindowResize);
     }
+    // Print event listeners
+    window.removeEventListener('beforeprint', this.handleBeforePrint);
+    window.removeEventListener('afterprint', this.handleAfterPrint);
   }
 
   /**
@@ -140,11 +131,52 @@ export class FlowChart extends Component {
   };
 
   /**
+   * Add viewBox on window print so that the SVG can be scaled to fit
+   */
+  handleBeforePrint = () => {
+    const gs = this.props.graphSize;
+    const width = gs.width + gs.marginx * 2;
+    const height = gs.height + gs.marginy * 2;
+    this.el.svg.attr('viewBox', `0 0 ${width} ${height}`);
+  };
+
+  /**
+   * Remove viewBox once printing is done
+   */
+  handleAfterPrint = () => {
+    this.el.svg.attr('viewBox', null);
+  };
+
+  /**
    * Setup D3 zoom behaviour on component mount
    */
   initZoomBehaviour() {
     this.zoomBehaviour = zoom().on('zoom', () => {
+      const { k: scale, y } = event.transform;
+      const { sidebarWidth } = this.props.chartSize;
+      const { width, height } = this.props.graphSize;
+
+      // Limit zoom translate extent: This needs to be recalculated on zoom
+      // as it needs access to the current scale to correctly multiply the
+      // sidebarWidth by the scale to offset it properly
+      const margin = 500;
+      this.zoomBehaviour.translateExtent([
+        [-sidebarWidth / scale - margin, -margin],
+        [width + margin, height + margin]
+      ]);
+
+      // Transform the <g> that wraps the chart
       this.el.wrapper.attr('transform', event.transform);
+
+      // Update layer label y positions
+      if (this.el.layerNames) {
+        this.el.layerNames.style('transform', d => {
+          const ty = y + (d.y + d.height / 2) * scale;
+          return `translateY(${ty}px)`;
+        });
+      }
+
+      // Hide the tooltip so it doesn't get misaligned to its node
       this.hideTooltip();
     });
     this.el.svg.call(this.zoomBehaviour);
@@ -154,15 +186,18 @@ export class FlowChart extends Component {
    * Zoom and scale to fit
    */
   zoomChart() {
-    const { chartSize, zoom } = this.props;
-    const { scale, translateX, translateY } = zoom;
-    const navOffset = this.getNavOffset(chartSize.outerWidth);
+    const { scale = 1, translateX = 0, translateY = 0 } = this.props.zoom;
+
+    // Limit zoom scale extent
+    this.zoomBehaviour.scaleExtent([scale * 0.8, 2]);
+
+    // Auto zoom to fit the chart nicely on the page
     this.el.svg
       .transition()
       .duration(this.DURATION)
       .call(
         this.zoomBehaviour.transform,
-        zoomIdentity.translate(translateX + navOffset, translateY).scale(scale)
+        zoomIdentity.translate(translateX, translateY).scale(scale)
       );
   }
 
@@ -228,19 +263,12 @@ export class FlowChart extends Component {
    * @param {Object} node A node datum
    */
   showTooltip(node) {
-    const { chartSize } = this.props;
-    const eventOffset = event.target.getBoundingClientRect();
-    const navOffset = this.getNavOffset(chartSize.outerWidth);
-    const isRight = eventOffset.left - navOffset > chartSize.width / 2;
-    const xOffset = isRight
-      ? eventOffset.left - (chartSize.width + navOffset)
-      : eventOffset.left;
     this.setState({
-      tooltipVisible: true,
-      tooltipIsRight: isRight,
-      tooltipText: node.fullName,
-      tooltipX: xOffset - chartSize.x + eventOffset.width / 2,
-      tooltipY: eventOffset.top - chartSize.y
+      tooltip: {
+        targetRect: event.target.getBoundingClientRect(),
+        text: node.fullName,
+        visible: true
+      }
     });
   }
 
@@ -248,9 +276,12 @@ export class FlowChart extends Component {
    * Hide the tooltip
    */
   hideTooltip() {
-    if (this.state.tooltipVisible) {
+    if (this.state.tooltip.visible) {
       this.setState({
-        tooltipVisible: false
+        tooltip: {
+          ...this.state.tooltip,
+          visible: false
+        }
       });
     }
   }
@@ -259,14 +290,8 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { outerWidth, outerHeight } = this.props.chartSize;
-    const {
-      tooltipVisible,
-      tooltipIsRight,
-      tooltipText,
-      tooltipX,
-      tooltipY
-    } = this.state;
+    const { chartSize, visibleLayers } = this.props;
+    const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
     return (
       <div
@@ -281,7 +306,7 @@ export class FlowChart extends Component {
           ref={this.svgRef}>
           <defs>
             <marker
-              id="arrowhead"
+              id="pipeline-arrowhead"
               className="pipeline-flowchart__arrowhead"
               viewBox="0 0 10 10"
               refX="7"
@@ -294,6 +319,7 @@ export class FlowChart extends Component {
             </marker>
           </defs>
           <g id="zoom-wrapper" ref={this.wrapperRef}>
+            <g className="pipeline-flowchart__layers" ref={this.layersRef} />
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
             <g
               id="nodes"
@@ -302,14 +328,13 @@ export class FlowChart extends Component {
             />
           </g>
         </svg>
-        <div
-          className={classnames('pipeline-flowchart__tooltip kedro', {
-            'tooltip--visible': tooltipVisible,
-            'tooltip--right': tooltipIsRight
+        <ul
+          className={classnames('pipeline-flowchart__layer-names', {
+            'pipeline-flowchart__layer-names--visible': visibleLayers
           })}
-          style={{ transform: `translate(${tooltipX}px, ${tooltipY}px)` }}>
-          <span>{tooltipText}</span>
-        </div>
+          ref={this.layerNamesRef}
+        />
+        <Tooltip chartSize={chartSize} {...this.state.tooltip} />
       </div>
     );
   }
@@ -317,12 +342,17 @@ export class FlowChart extends Component {
 
 export const mapStateToProps = state => ({
   centralNode: getCentralNode(state),
-  chartSize: state.chartSize,
+  chartSize: getChartSize(state),
   edges: getLayoutEdges(state),
+  graphSize: getGraphSize(state),
+  layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
   nodes: getLayoutNodes(state),
+  nodeActive: getNodeActive(state),
+  nodeSelected: getNodeSelected(state),
   textLabels: state.textLabels,
-  view: state.view,
+  visibleLayers: state.visible.layers,
+  visibleSidebar: state.visible.sidebar,
   zoom: getZoomPosition(state)
 });
 

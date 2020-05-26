@@ -1,10 +1,6 @@
 import { mockState } from '../utils/state.mock';
-import {
-  getEdgeDisabled,
-  addNewEdge,
-  getTransitiveEdges,
-  getVisibleEdges
-} from './edges';
+import { getEdgeDisabled } from './disabled';
+import { addNewEdge, getTransitiveEdges, getVisibleEdges } from './edges';
 import { toggleNodesDisabled } from '../actions/nodes';
 import reducer from '../reducers';
 
@@ -14,83 +10,6 @@ const getEdgeSources = state => state.edge.sources;
 const getEdgeTargets = state => state.edge.targets;
 
 describe('Selectors', () => {
-  describe('getEdgeDisabled', () => {
-    const nodeID = getNodeIDs(mockState.lorem)[0];
-    const newMockState = reducer(
-      mockState.lorem,
-      toggleNodesDisabled([nodeID], true)
-    );
-    const edgeDisabled = getEdgeDisabled(newMockState);
-    const edges = getEdgeIDs(newMockState);
-
-    it('returns an object', () => {
-      expect(getEdgeDisabled(mockState.lorem)).toEqual(expect.any(Object));
-    });
-
-    it("returns an object whose keys match the current pipeline's edges", () => {
-      expect(Object.keys(getEdgeDisabled(mockState.lorem))).toEqual(
-        getEdgeIDs(mockState.lorem)
-      );
-    });
-
-    it('returns an object whose values are all Booleans', () => {
-      expect(
-        Object.values(getEdgeDisabled(mockState.lorem)).every(
-          value => typeof value === 'boolean'
-        )
-      ).toBe(true);
-    });
-
-    it('does not disable an edge if no nodes are disabled', () => {
-      const edgeDisabledValues = Object.values(
-        getEdgeDisabled(mockState.lorem)
-      );
-      expect(edgeDisabledValues).toEqual(edgeDisabledValues.map(() => false));
-    });
-
-    it('disables an edge if one of its nodes is disabled', () => {
-      const disabledEdges = Object.keys(edgeDisabled).filter(
-        id => edgeDisabled[id]
-      );
-      const disabledEdgesMock = edges.filter(
-        id =>
-          getEdgeSources(newMockState)[id] === nodeID ||
-          getEdgeTargets(newMockState)[id] === nodeID
-      );
-      expect(disabledEdges).toEqual(disabledEdgesMock);
-    });
-
-    it('does not disable an edge if none of its nodes are disabled', () => {
-      const enabledEdges = Object.keys(edgeDisabled).filter(
-        id => !edgeDisabled[id]
-      );
-      const enabledEdgesMock = edges.filter(
-        id =>
-          getEdgeSources(newMockState)[id] !== nodeID &&
-          getEdgeTargets(newMockState)[id] !== nodeID
-      );
-      expect(enabledEdges).toEqual(enabledEdgesMock);
-    });
-
-    it('returns an object', () => {
-      expect(getEdgeDisabled(mockState.lorem)).toEqual(expect.any(Object));
-    });
-
-    it("returns an object whose keys match the current pipeline's edges", () => {
-      expect(Object.keys(getEdgeDisabled(mockState.lorem))).toEqual(
-        getEdgeIDs(mockState.lorem)
-      );
-    });
-
-    it('returns an object whose values are all Booleans', () => {
-      expect(
-        Object.values(getEdgeDisabled(mockState.lorem)).every(
-          value => typeof value === 'boolean'
-        )
-      ).toBe(true);
-    });
-  });
-
   describe('addNewEdge', () => {
     const transitiveEdges = {};
     beforeEach(() => {

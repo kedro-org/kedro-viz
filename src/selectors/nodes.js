@@ -1,8 +1,12 @@
 import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
-import { getTagCount } from './tags';
-import { getCentralNode } from './linked-nodes';
+import {
+  getNodeDisabled,
+  getNodeDisabledTag,
+  getVisibleNodeIDs
+} from './disabled';
+import { getNodeRank } from './ranks';
 
 const getNodeIDs = state => state.node.ids;
 const getNodeName = state => state.node.name;
@@ -10,65 +14,39 @@ const getNodeFullName = state => state.node.fullName;
 const getNodeDisabledNode = state => state.node.disabled;
 const getNodeTags = state => state.node.tags;
 const getNodeType = state => state.node.type;
+const getNodeLayer = state => state.node.layer;
+const getHoveredNode = state => state.node.hovered;
+const getClickedNode = state => state.node.clicked;
 const getTagActive = state => state.tag.active;
-const getTagEnabled = state => state.tag.enabled;
 const getTextLabels = state => state.textLabels;
 const getFontLoaded = state => state.fontLoaded;
 const getNodeTypeDisabled = state => state.nodeType.disabled;
 
 /**
- * Calculate whether nodes should be disabled based on their tags
- */
-export const getNodeDisabledTag = createSelector(
-  [getNodeIDs, getTagEnabled, getTagCount, getNodeTags],
-  (nodeIDs, tagEnabled, tagCount, nodeTags) =>
-    arrayToObject(nodeIDs, nodeID => {
-      if (tagCount.enabled === 0) {
-        return false;
-      }
-      if (nodeTags[nodeID].length) {
-        // Hide task nodes that don't have at least one tag filter enabled
-        return !nodeTags[nodeID].some(tag => tagEnabled[tag]);
-      }
-      return true;
-    })
-);
-
-/**
- * Set disabled status if the node is specifically hidden, and/or via a tag/view/type
- */
-export const getNodeDisabled = createSelector(
-  [
-    getNodeIDs,
-    getNodeDisabledNode,
-    getNodeDisabledTag,
-    getNodeType,
-    getNodeTypeDisabled
-  ],
-  (nodeIDs, nodeDisabledNode, nodeDisabledTag, nodeType, typeDisabled) =>
-    arrayToObject(nodeIDs, id =>
-      Boolean(
-        nodeDisabledNode[id] ||
-          nodeDisabledTag[id] ||
-          typeDisabled[nodeType[id]]
-      )
-    )
-);
-
-/**
  * Set active status if the node is specifically highlighted, and/or via an associated tag
- * @return {Boolean} True if active
  */
 export const getNodeActive = createSelector(
-  [getNodeIDs, getCentralNode, getNodeTags, getTagActive],
-  (nodeIDs, centralNode, nodeTags, tagActive) =>
+  [getNodeIDs, getHoveredNode, getNodeTags, getTagActive],
+  (nodeIDs, hoveredNode, nodeTags, tagActive) =>
     arrayToObject(nodeIDs, nodeID => {
-      if (nodeID === centralNode) {
+      if (nodeID === hoveredNode) {
         return true;
       }
       const activeViaTag = nodeTags[nodeID].some(tag => tagActive[tag]);
       return Boolean(activeViaTag);
     })
+);
+
+/**
+ * Set selected status if the node is clicked
+ */
+export const getNodeSelected = createSelector(
+  [getNodeIDs, getClickedNode, getNodeDisabled],
+  (nodeIDs, clickedNode, nodeDisabled) =>
+    arrayToObject(
+      nodeIDs,
+      nodeID => nodeID === clickedNode && !nodeDisabled[nodeID]
+    )
 );
 
 /**
@@ -79,7 +57,6 @@ export const getNodeData = createSelector(
     getNodeIDs,
     getNodeName,
     getNodeType,
-    getNodeActive,
     getNodeDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
@@ -89,7 +66,6 @@ export const getNodeData = createSelector(
     nodeIDs,
     nodeName,
     nodeType,
-    nodeActive,
     nodeDisabled,
     nodeDisabledNode,
     nodeDisabledTag,
@@ -105,7 +81,6 @@ export const getNodeData = createSelector(
         id,
         name: nodeName[id],
         type: nodeType[id],
-        active: nodeActive[id],
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),
         disabled_tag: nodeDisabledTag[id],
@@ -138,7 +113,7 @@ export const getNodeTextWidth = createSelector(
   (nodeIDs, nodeName) => {
     const svg = select(document.body)
       .append('svg')
-      .attr('class', 'kedro node');
+      .attr('class', 'kedro pipeline-node');
     const nodeTextWidth = arrayToObject(nodeIDs, nodeID => {
       const text = svg.append('text').text(nodeName[nodeID]);
       const node = text.node();
@@ -157,7 +132,10 @@ export const getNodeTextWidth = createSelector(
  */
 export const getPadding = (showLabels, isTask) => {
   if (showLabels) {
-    return { x: 16, y: 10 };
+    if (isTask) {
+      return { x: 16, y: 10 };
+    }
+    return { x: 20, y: 10 };
   }
   if (isTask) {
     return { x: 14, y: 14 };
@@ -172,7 +150,7 @@ export const getNodeSize = createSelector(
   [getNodeIDs, getNodeTextWidth, getTextLabels, getNodeType],
   (nodeIDs, nodeTextWidth, textLabels, nodeType) =>
     arrayToObject(nodeIDs, nodeID => {
-      const iconSize = textLabels ? 14 : 24;
+      const iconSize = textLabels ? 24 : 28;
       const padding = getPadding(textLabels, nodeType[nodeID] === 'task');
       const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
       const textGap = textLabels ? 6 : 0;
@@ -193,22 +171,23 @@ export const getNodeSize = createSelector(
  */
 export const getVisibleNodes = createSelector(
   [
-    getNodeIDs,
+    getVisibleNodeIDs,
     getNodeName,
     getNodeType,
-    getNodeDisabled,
     getNodeFullName,
-    getNodeSize
+    getNodeSize,
+    getNodeLayer,
+    getNodeRank
   ],
-  (nodeIDs, nodeName, nodeType, nodeDisabled, nodeFullName, nodeSize) =>
-    nodeIDs
-      .filter(id => !nodeDisabled[id])
-      .map(id => ({
-        id,
-        name: nodeName[id],
-        label: nodeName[id],
-        fullName: nodeFullName[id],
-        type: nodeType[id],
-        ...nodeSize[id]
-      }))
+  (nodeIDs, nodeName, nodeType, nodeFullName, nodeSize, nodeLayer, nodeRank) =>
+    nodeIDs.map(id => ({
+      id,
+      name: nodeName[id],
+      label: nodeName[id],
+      fullName: nodeFullName[id],
+      type: nodeType[id],
+      layer: nodeLayer[id],
+      rank: nodeRank[id],
+      ...nodeSize[id]
+    }))
 );

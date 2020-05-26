@@ -1,8 +1,7 @@
 import { mockState } from '../utils/state.mock';
 import {
-  getNodeDisabledTag,
-  getNodeDisabled,
   getNodeActive,
+  getNodeSelected,
   getNodeData,
   getNodeTextWidth,
   getPadding,
@@ -15,111 +14,27 @@ import {
   toggleNodeHovered,
   toggleNodesDisabled
 } from '../actions/nodes';
-import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
 
 const getNodeIDs = state => state.node.ids;
 const getNodeName = state => state.node.name;
-const getNodeTags = state => state.node.tags;
-const getNodeType = state => state.node.type;
 
 describe('Selectors', () => {
-  describe('getNodeDisabledTag', () => {
-    it('returns an object', () => {
-      expect(getNodeDisabledTag(mockState.lorem)).toEqual(expect.any(Object));
-    });
-
-    it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(getNodeDisabledTag(mockState.lorem))).toEqual(
-        getNodeIDs(mockState.lorem)
-      );
-    });
-
-    it('returns an object whose values are all Booleans', () => {
-      expect(
-        Object.values(getNodeDisabledTag(mockState.lorem)).every(
-          value => typeof value === 'boolean'
-        )
-      ).toBe(true);
-    });
-
-    it('does not disable a node if all tags are disabled', () => {
-      const nodeDisabled = getNodeDisabledTag(mockState.lorem);
-      expect(Object.values(nodeDisabled)).toEqual(
-        Object.values(nodeDisabled).map(() => false)
-      );
-    });
-
-    it('disables a node only if all of its tags are disabled', () => {
-      const nodeTags = getNodeTags(mockState.animals);
-      // Get list of task nodes from the current pipeline
-      const taskNodes = getNodeIDs(mockState.animals).filter(
-        id => getNodeType(mockState.animals)[id] === 'task'
-      );
-      // Choose a node that has some tags (and which should be enabled)
-      const hasTags = id => Boolean(nodeTags[id].length);
-      const enabledNodeID = taskNodes.find(hasTags);
-      // Choose a node that has no tags (and which should be disabled)
-      const hasNoTags = id => !Boolean(nodeTags[id].length);
-      const disabledNodeID = taskNodes.find(hasNoTags);
-      // Update the state to enable one of the tags for that node
-      const enabledNodeTags = nodeTags[enabledNodeID];
-      const newMockState = reducer(
-        mockState.animals,
-        toggleTagFilter(enabledNodeTags[0], true)
-      );
-      expect(getNodeDisabledTag(newMockState)[enabledNodeID]).toEqual(false);
-      expect(getNodeDisabledTag(newMockState)[disabledNodeID]).toEqual(true);
-    });
-  });
-
-  describe('getNodeDisabled', () => {
-    it('returns an object', () => {
-      expect(getNodeDisabled(mockState.lorem)).toEqual(expect.any(Object));
-    });
-
-    it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(getNodeDisabled(mockState.lorem))).toEqual(
-        getNodeIDs(mockState.lorem)
-      );
-    });
-
-    it('returns an object whose values are all Booleans', () => {
-      expect(
-        Object.values(getNodeDisabled(mockState.lorem)).every(
-          value => typeof value === 'boolean'
-        )
-      ).toBe(true);
-    });
-  });
-
   describe('getNodeActive', () => {
+    const nodeActive = getNodeActive(mockState.lorem);
+
     it('returns an object', () => {
-      expect(getNodeActive(mockState.lorem)).toEqual(expect.any(Object));
+      expect(nodeActive).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(getNodeActive(mockState.lorem))).toEqual(
-        getNodeIDs(mockState.lorem)
-      );
+      expect(Object.keys(nodeActive)).toEqual(getNodeIDs(mockState.lorem));
     });
 
     it('returns an object whose values are all Booleans', () => {
-      expect(
-        Object.values(getNodeActive(mockState.lorem)).every(
-          value => typeof value === 'boolean'
-        )
-      ).toBe(true);
-    });
-
-    it('returns true when a given node is clicked', () => {
-      const nodes = getNodeIDs(mockState.lorem);
-      const nodeID = nodes[0];
-      const inactiveNodes = nodes.filter(id => id !== nodeID);
-      const newMockState = reducer(mockState.lorem, toggleNodeClicked(nodeID));
-      const nodeActive = getNodeActive(newMockState);
-      expect(nodeActive[nodeID]).toEqual(true);
-      expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
+      expect(Object.values(nodeActive)).toEqual(
+        expect.arrayContaining([expect.any(Boolean)])
+      );
     });
 
     it('returns true when a given node is hovered', () => {
@@ -133,6 +48,34 @@ describe('Selectors', () => {
     });
   });
 
+  describe('getNodeSelected', () => {
+    const nodeSelected = getNodeSelected(mockState.lorem);
+
+    it('returns an object', () => {
+      expect(nodeSelected).toEqual(expect.any(Object));
+    });
+
+    it("returns an object whose keys match the current pipeline's nodes", () => {
+      expect(Object.keys(nodeSelected)).toEqual(getNodeIDs(mockState.lorem));
+    });
+
+    it('returns an object whose values are all Booleans', () => {
+      expect(Object.values(nodeSelected)).toEqual(
+        expect.arrayContaining([expect.any(Boolean)])
+      );
+    });
+
+    it('returns true when a given node is clicked', () => {
+      const nodes = getNodeIDs(mockState.lorem);
+      const nodeID = nodes[0];
+      const inactiveNodes = nodes.filter(id => id !== nodeID);
+      const newMockState = reducer(mockState.lorem, toggleNodeClicked(nodeID));
+      const nodeActive = getNodeSelected(newMockState);
+      expect(nodeActive[nodeID]).toEqual(true);
+      expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
+    });
+  });
+
   describe('getNodeData', () => {
     it('returns formatted nodes as an array', () => {
       expect(getNodeData(mockState.lorem)).toEqual(
@@ -141,7 +84,6 @@ describe('Selectors', () => {
             id: expect.any(String),
             name: expect.any(String),
             type: expect.stringMatching(/data|task/),
-            active: expect.any(Boolean),
             disabled: expect.any(Boolean),
             disabled_node: expect.any(Boolean),
             disabled_tag: expect.any(Boolean)
@@ -153,12 +95,12 @@ describe('Selectors', () => {
     it('returns nodes sorted by name', () => {
       const nodeName = getNodeName(mockState.lorem);
       const nodeIDs = getNodeData(mockState.lorem).map(d => d.id);
-      const activeNodeIDs = getNodeIDs(mockState.lorem).sort((a, b) => {
+      const visibleNodeIDs = getNodeIDs(mockState.lorem).sort((a, b) => {
         if (nodeName[a] < nodeName[b]) return -1;
         if (nodeName[a] > nodeName[b]) return 1;
         return 0;
       });
-      expect(nodeIDs).toEqual(activeNodeIDs);
+      expect(nodeIDs).toEqual(visibleNodeIDs);
     });
   });
 
@@ -190,25 +132,38 @@ describe('Selectors', () => {
       );
     });
 
-    it('returns x=16 & y=10 if text labels are enabled', () => {
-      expect(getPadding(true, true).x).toBe(16);
-      expect(getPadding(true, true).y).toBe(10);
-      expect(getPadding(true, false).x).toBe(16);
-      expect(getPadding(true, false).y).toBe(10);
+    describe('if text labels are enabled', () => {
+      it('returns x=16 & y=10 for task icons', () => {
+        expect(getPadding(true, true)).toEqual({ x: 16, y: 10 });
+      });
+
+      it('returns x=20 & y=10 for database icons', () => {
+        expect(getPadding(true, false)).toEqual({ x: 20, y: 10 });
+      });
     });
 
-    it('returns identical x & y values if text labels are disabled', () => {
-      expect(getPadding(false, true).x).toBe(getPadding(false, true).y);
-      expect(getPadding(false, false).x).toBe(getPadding(false, false).y);
-    });
+    describe('if text labels are disabled', () => {
+      it('returns x=16 & y=10 for task icons', () => {
+        expect(getPadding(false, true)).toEqual({ x: 14, y: 14 });
+      });
 
-    it('returns smaller padding values for task icons', () => {
-      expect(getPadding(false, true).x).toBeLessThan(
-        getPadding(false, false).x
-      );
-      expect(getPadding(false, true).y).toBeLessThan(
-        getPadding(false, false).y
-      );
+      it('returns x=20 & y=10 for database icons', () => {
+        expect(getPadding(false, false)).toEqual({ x: 16, y: 16 });
+      });
+
+      it('returns identical x & y values', () => {
+        expect(getPadding(false, true).x).toBe(getPadding(false, true).y);
+        expect(getPadding(false, false).x).toBe(getPadding(false, false).y);
+      });
+
+      it('returns smaller padding values for task icons than database icons', () => {
+        expect(getPadding(false, true).x).toBeLessThan(
+          getPadding(false, false).x
+        );
+        expect(getPadding(false, true).y).toBeLessThan(
+          getPadding(false, false).y
+        );
+      });
     });
   });
 

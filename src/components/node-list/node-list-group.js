@@ -2,72 +2,65 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { Flipped } from 'react-flip-toolkit';
-import Checkbox from '@quantumblack/kedro-ui/lib/components/checkbox';
+import NodeListRow from './node-list-row';
 import { toggleTypeDisabled } from '../../actions/node-type';
 
 export const NodeListGroup = ({
   children,
+  collapsed,
   onToggleTypeDisabled,
   onToggleCollapsed,
-  theme,
-  type,
-  collapsed
+  type
 }) => (
   <Flipped flipId={type.id}>
     <li>
       <Flipped inverseFlipId={type.id} scale>
         <div>
-          <h3 className="pipeline-node pipeline-node--heading">
-            <Checkbox
+          <h3 className="pipeline-nodelist__heading">
+            <NodeListRow
               checked={!type.disabled}
-              label={type.name}
+              id={type.id}
+              label={`${type.name} <i>(${type.nodeCount.visible}/${
+                type.nodeCount.total
+              })</i>`}
               name={type.name}
-              onChange={(e, { checked }) => {
-                onToggleTypeDisabled(type.id, !checked);
+              onChange={e => {
+                onToggleTypeDisabled(type.id, !e.target.checked);
               }}
-              theme={theme}
-            />
-            <button
-              aria-label={`${
-                collapsed ? 'Show' : 'Hide'
-              } ${type.name.toLowerCase()}`}
-              onClick={() => onToggleCollapsed(type.id)}
-              className={classnames('pipeline-type-group-toggle', {
-                'pipeline-type-group-toggle--alt': collapsed
-              })}>
-              ▾
-            </button>
+              type={type.id}>
+              <button
+                aria-label={`${
+                  collapsed ? 'Show' : 'Hide'
+                } ${type.name.toLowerCase()}`}
+                onClick={() => onToggleCollapsed(type.id)}
+                className={classnames('pipeline-type-group-toggle', {
+                  'pipeline-type-group-toggle--alt': collapsed
+                })}
+              />
+            </NodeListRow>
           </h3>
           <Flipped
             flipId={`${type.id}-children`}
             onAppear={el => {
-              el.classList.add('pipeline-node-list--fade-in');
+              el.classList.add('pipeline-nodelist--fade-in');
               el.onanimationend = () => {
                 el.style.opacity = 1;
-                el.classList.remove('pipeline-node-list--fade-in');
+                el.classList.remove('pipeline-nodelist--fade-in');
               };
             }}
             onExit={(el, i, removeElement) => {
               el.style.opacity = 0;
-              el.classList.add('pipeline-node-list--fade-out');
+              el.classList.add('pipeline-nodelist--fade-out');
               el.onanimationend = removeElement;
             }}
             opacity>
-            {collapsed ? null : (
-              <ul className="pipeline-node-list pipeline-node-list--nested">
-                {children}
-              </ul>
-            )}
+            {collapsed ? null : children}
           </Flipped>
         </div>
       </Flipped>
     </li>
   </Flipped>
 );
-
-export const mapStateToProps = state => ({
-  theme: state.theme
-});
 
 export const mapDispatchToProps = dispatch => ({
   onToggleTypeDisabled: (typeID, disabled) => {
@@ -76,6 +69,6 @@ export const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(NodeListGroup);

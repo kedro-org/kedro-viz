@@ -1,0 +1,76 @@
+@import './variables';
+
+.pipeline-layer {
+  opacity: 0;
+  transition: opacity ease 0.5s;
+
+  .kui-theme--dark & {
+    fill: $layer-dark;
+  }
+
+  .kui-theme--light & {
+    fill: $layer-light;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .pipeline-graph--export & {
+    display: none;
+  }
+
+  @media print {
+    display: none;
+  }
+}
+
+.pipeline-flowchart__layer-names {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 130px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  opacity: 0;
+  transition: opacity ease 0.7s;
+  pointer-events: none;
+
+  &--visible {
+    opacity: 1;
+  }
+
+  .kui-theme--dark & {
+    background: linear-gradient(
+      to right,
+      $color-bg-dark-1,
+      rgba($color-bg-dark-1, 0)
+    );
+  }
+
+  .kui-theme--light & {
+    background: linear-gradient(
+      to right,
+      $color-bg-light-1,
+      rgba($color-bg-light-1, 0)
+    );
+  }
+
+  @media print {
+    display: none;
+  }
+}
+
+.pipeline-layer-name {
+  position: absolute;
+  top: -10px;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  padding-left: 15px;
+  font-weight: bold;
+  font-size: 1.6em;
+  white-space: nowrap;
+}

@@ -32,6 +32,7 @@ import glob
 import os
 import shutil
 import stat
+import sys
 import tempfile
 from pathlib import Path
 
@@ -39,10 +40,17 @@ from features.steps.sh_run import run
 from features.steps.util import create_new_venv
 
 
-def before_scenario(context, feature):  # pylint: disable=unused-argument
+def _should_exclude_scenario(scenario):
+    pre_16_scenario = any(key in scenario.name for key in ["0.14", "0.15"])
+    return sys.version_info >= (3, 8) and pre_16_scenario
+
+
+def before_scenario(context, scenario):  # pylint: disable=unused-argument
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
+    if _should_exclude_scenario(scenario):
+        scenario.skip()
 
     def call(cmd, verbose=False):
         res = run(cmd, env=context.env)
@@ -96,7 +104,7 @@ def before_scenario(context, feature):  # pylint: disable=unused-argument
     context.temp_dir = Path(tempfile.mkdtemp())
 
 
-def after_scenario(context, feature):
+def after_scenario(context, scenario):
     # pylint: disable=unused-argument
     rmtree(str(context.temp_dir))
     if "E2E_VENV" not in os.environ:

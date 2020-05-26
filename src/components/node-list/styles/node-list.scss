@@ -1,0 +1,12 @@
+@import '../../../styles/extends';
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+@import './variables';
+@import './search';
+@import './toggle';
+@import './group';
+@import './row';
+
+.pipeline-nodelist-scrollbars {
+  min-height: 400px;
+}

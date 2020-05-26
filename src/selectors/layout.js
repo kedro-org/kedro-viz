@@ -1,10 +1,14 @@
 import { createSelector } from 'reselect';
 import dagre from 'dagre';
-import { getNodeActive, getVisibleNodes } from './nodes';
+import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
+import { sidebarBreakpoint, sidebarWidth } from '../config';
 
+const getHasVisibleLayers = state =>
+  state.visible.layers && Boolean(state.layer.ids.length);
 const getNodeType = state => state.node.type;
-const getChartSize = state => state.chartSize;
+const getNodeLayer = state => state.node.layer;
+const getVisibleSidebar = state => state.visible.sidebar;
 
 /**
  * Calculate chart layout with Dagre.js.
@@ -13,9 +17,16 @@ const getChartSize = state => state.chartSize;
  * which don't affect layout.
  */
 export const getGraph = createSelector(
-  [getVisibleNodes, getVisibleEdges],
-  (nodes, edges) => {
+  [getVisibleNodes, getVisibleEdges, getHasVisibleLayers],
+  (nodes, edges, hasVisibleLayers) => {
+    if (!nodes.length || !edges.length) {
+      return;
+    }
+
+    const ranker = hasVisibleLayers ? 'none' : null;
     const graph = new dagre.graphlib.Graph().setGraph({
+      ranker: hasVisibleLayers ? ranker : null,
+      ranksep: hasVisibleLayers ? 200 : 70,
       marginx: 40,
       marginy: 40
     });
@@ -40,16 +51,18 @@ export const getGraph = createSelector(
  * and recombine with other data that doesn't affect layout
  */
 export const getLayoutNodes = createSelector(
-  [getGraph, getNodeType, getNodeActive],
-  (graph, nodeType, nodeActive) =>
-    graph.nodes().map(nodeID => {
-      const node = graph.node(nodeID);
-      return Object.assign({}, node, {
-        type: nodeType[nodeID],
-        order: node.x + node.y * 9999,
-        active: nodeActive[nodeID]
-      });
-    })
+  [getGraph, getNodeType, getNodeLayer],
+  (graph, nodeType, nodeLayer) =>
+    graph
+      ? graph.nodes().map(nodeID => {
+          const node = graph.node(nodeID);
+          return Object.assign({}, node, {
+            layer: nodeLayer[nodeID],
+            type: nodeType[nodeID],
+            order: node.x + node.y * 9999
+          });
+        })
+      : []
 );
 
 /**
@@ -57,7 +70,8 @@ export const getLayoutNodes = createSelector(
  */
 export const getLayoutEdges = createSelector(
   [getGraph],
-  graph => graph.edges().map(edge => Object.assign({}, graph.edge(edge)))
+  graph =>
+    graph ? graph.edges().map(edge => Object.assign({}, graph.edge(edge))) : []
 );
 
 /**
@@ -65,7 +79,41 @@ export const getLayoutEdges = createSelector(
  */
 export const getGraphSize = createSelector(
   [getGraph],
-  graph => graph.graph()
+  graph => (graph ? graph.graph() : {})
+);
+
+/**
+ * Return the displayed width of the sidebar
+ */
+export const getSidebarWidth = (visibleSidebar, outerChartWidth) => {
+  if (visibleSidebar && outerChartWidth > sidebarBreakpoint) {
+    return sidebarWidth.open;
+  }
+  return sidebarWidth.closed;
+};
+
+/**
+ * Convert the DOMRect into an Object, mutate some of the properties,
+ * and add some useful new ones
+ */
+export const getChartSize = createSelector(
+  [getVisibleSidebar, state => state.chartSize],
+  (visibleSidebar, chartSize) => {
+    const { left, top, width, height } = chartSize;
+    if (!width || !height) {
+      return {};
+    }
+    const sidebarWidth = getSidebarWidth(visibleSidebar, width);
+    return {
+      left,
+      top,
+      outerWidth: width,
+      outerHeight: height,
+      width: width - sidebarWidth,
+      height,
+      sidebarWidth
+    };
+  }
 );
 
 /**
@@ -74,29 +122,26 @@ export const getGraphSize = createSelector(
  */
 export const getZoomPosition = createSelector(
   [getGraphSize, getChartSize],
-  (graph, container) => {
-    const validDimensions = [
-      container.width,
-      container.height,
-      graph.width,
-      graph.height
-    ].every(n => !isNaN(n) && Number.isFinite(n));
-
-    if (validDimensions) {
-      const scale = Math.min(
-        container.width / graph.width,
-        container.height / graph.height
-      );
+  (graph, chart) => {
+    if (!chart.width || !graph.width) {
       return {
-        scale,
-        translateX: container.width / 2 - (graph.width * scale) / 2,
-        translateY: container.height / 2 - (graph.height * scale) / 2
+        scale: 1,
+        translateX: 0,
+        translateY: 0
       };
     }
+
+    const scale = Math.min(
+      chart.width / graph.width,
+      chart.height / graph.height
+    );
+    const translateX = chart.width / 2 - (graph.width * scale) / 2;
+    const translateY = chart.height / 2 - (graph.height * scale) / 2;
+
     return {
-      scale: 1,
-      translateX: 0,
-      translateY: 0
+      scale,
+      translateX: translateX + chart.sidebarWidth,
+      translateY
     };
   }
 );

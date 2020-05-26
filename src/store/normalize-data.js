@@ -33,6 +33,7 @@ const addNode = state => node => {
   state.node.name[id] = node.name;
   state.node.fullName[id] = node.full_name || node.name;
   state.node.type[id] = node.type;
+  state.node.layer[id] = node.layer;
   state.node.isParam[id] = node.type === 'parameters';
   state.node.tags[id] = node.tags || [];
 };
@@ -54,12 +55,23 @@ const addEdge = state => ({ source, target }) => {
 
 /**
  * Add a new Tag if it doesn't already exist
- * @param {string} name - Default node name
+ * @param {Object} tag - Tag object
  */
 const addTag = state => tag => {
   const { id } = tag;
   state.tag.ids.push(id);
   state.tag.name[id] = tag.name;
+};
+
+/**
+ * Add a new Layer if it doesn't already exist
+ * @param {Object} layer - Layer object
+ */
+const addLayer = state => layer => {
+  // using layer name as both layerId and name.
+  // It futureproofs it if we need a separate layer ID in the future.
+  state.layer.ids.push(layer);
+  state.layer.name[layer] = layer;
 };
 
 /**
@@ -76,7 +88,12 @@ const formatData = data => {
     }
     data.nodes.forEach(addNode(state));
     data.edges.forEach(addEdge(state));
-    data.tags.forEach(addTag(state));
+    if (data.tags) {
+      data.tags.forEach(addTag(state));
+    }
+    if (data.layers) {
+      data.layers.forEach(addLayer(state));
+    }
   }
 
   return state;
