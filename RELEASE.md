@@ -12,15 +12,41 @@ Please follow the established format:
 ## Major features and improvements
 
 <!-- Add release notes for the upcoming release here -->
-- Add support for Python 3.8 (#173)
+
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->
-- Drop support for Python 3.5 (#138)
-- Add logger configuration when loading pipeline from JSON (#133)
-- Move visibleNav/navWidth calculations into Redux store (#124)
-- Web browser will only be opened if the host corresponds to the localhost (#136)
+
+# Release 3.3.0:
+
+## Major features and improvements
+
+- **BREAKING CHANGE:** Drop support for Python 3.5 (#138)
+- Add support for Python 3.8 (#173)
+- Add data engineering layers (#129, #145, #146, #148, #157, #161)
+- Redesign sidebar node-list and node selected states (#144, #152, #153, #155, #162, #164, #171)
+- Update overall colour scheme, and improve print/export styles (#169)
+- Move icon stack column to right edge of the main sidebar (#167)
+- Wrap tooltip names & invert tooltip in top half of screen (#158)
+- Limit zoom scale/translate extent (#137, #174)
+
+## Bug fixes and other changes
+
+- Fix deprecation warnings when running kedro viz from Kedro 0.16 (#170)
+- Remove the need to transition layer height on zoom (#166)
+- Refactor config.js & move random-data import (#163)
+- Fix bug where exported PNG was cut off (#151)
+- Make dataPath relative again (#149)
+- Remove dateutil hardpinning in requirements.txt (#143)
 - Print the stack trace when encountering a generic exception (#142)
+- Web browser will only be opened if the host corresponds to localhost (#136)
+- Upgrade pylint to 2.4 (#135)
+- Add bandit for security scanning as a pre-commit hook (#134)
+- Add logger configuration when loading pipeline from JSON (#133)
+- Update svg-crowbar to reduce exported SVG filesize (#127)
+- Guard global window references to fix SSR (#126)
+- Move visibleNav/navWidth calculations into Redux store (#124)
+- Remove truffleHog pinned dependency (#122)
 
 ## Thanks for supporting contributions
 
