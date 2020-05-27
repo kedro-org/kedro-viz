@@ -1,13 +1,12 @@
+import { arrayToObject, unique } from './index';
 import {
-  arrayToObject,
   getNumberArray,
   randomNumber,
   randomNumberBetween,
   getRandom,
   getRandomName,
-  getRandomSelection,
-  unique
-} from './index';
+  getRandomSelection
+} from './random-utils';
 
 //--- Config variables ---//
 
