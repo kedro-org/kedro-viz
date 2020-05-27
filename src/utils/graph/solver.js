@@ -2,21 +2,77 @@ import * as kiwi from 'kiwi.js';
 
 import { distance1d } from './common';
 
+/**
+ * Combines the given object's id and key to create a new key
+ * @param {number} obj An object with `id` property
+ * @param {number} key An identifier string
+ * @returns {string} The combined key
+ */
 const key = (obj, key) => obj.id + '_' + key;
-const subtract = (a, b) => a - b;
-const equalTo = (a, b) => a === b;
-const greaterOrEqual = (a, b) => a >= b;
 
+/**
+ * Returns the value `a - b`
+ * @param {number} a The first number
+ * @param {number} b The second number
+ * @returns {number} The result
+ */
+const subtract = (a, b) => a - b;
+
+/**
+ * Given a `solver` operator function, returns the equivalent kiwi.js operator if defined
+ * @param {function} operator The operator function
+ * @returns {object|undefined} The kiwi.js operator
+ */
 const toStrictOperator = operator => {
   if (operator === equalTo) return kiwi.Operator.Eq;
   if (operator === greaterOrEqual) return kiwi.Operator.Ge;
 };
 
-const solve = (constraints, iterations = 1, strict = false) => {
+/**
+ * Returns `true` if `a === b` otherwise `false`
+ * @param {number} a The first value
+ * @param {number} b The second value
+ * @returns {boolean} The result
+ */
+export const equalTo = (a, b) => a === b;
+
+/**
+ * Returns `true` if `a >= b` otherwise `false`
+ * @param {number} a The first number
+ * @param {number} b The second number
+ * @returns {boolean} The result
+ */
+export const greaterOrEqual = (a, b) => a >= b;
+
+/**
+ * Applies the given constraints to the objects in-place.
+ * If `strict` is set, limitations apply but an exact solution is attempted,
+ * otherwise a solution is approximated iteratively
+ * @param {array} constraints The constraints to apply
+ * @param {object} constraint.a The first object to constrain
+ * @param {object} constraint.b The second object to constrain
+ * @param {string} constraint.key The property name on `a` and `b` to constrain
+ * @param {boolean=true} constraint.required Whether the constraint must be satisfied during strict solving
+ * @param {function=} constraint.delta A signed difference function given `a` and `b`. Default `subtract`
+ * @param {function=} constraint.distance An absolute distance function given `a` and `b`. Default `distance1d`
+ * @param {function=} constraint.target A target difference for `a` and `b`. Default `() => 0`
+ * @param {function=} constraint.weightA The amount to adjust `a[key]`. Default `() => 1`
+ * @param {function=} constraint.weightB The amount to adjust `b[key]`. Default `() => 1`
+ * @param {number=1} iterations The number of iterations
+ * @param {boolean=false} strict
+ */
+export const solve = (constraints, iterations = 1, strict = false) => {
   if (strict) return solveStrict(constraints);
   return solveLoose(constraints, iterations);
 };
 
+/**
+ * Applies the given constraints to the objects in-place.
+ * Constraint targets and operators can be static or dynamic.
+ * A solution is approximated iteratively
+ * @param {array} constraints The constraints. See docs for `solve`
+ * @param {number} iterations The number of iterations
+ */
 const solveLoose = (constraints, iterations) => {
   for (let i = 0; i < iterations; i += 1) {
     for (const co of constraints) {
@@ -44,6 +100,12 @@ const solveLoose = (constraints, iterations) => {
   }
 };
 
+/**
+ * Applies the given constraints to the objects in-place.
+ * Constraint targets and operators must be static, `delta` is always subtract.
+ * A solution is found exactly if possible, otherwise throws an error
+ * @param {array} constraints The constraints. See docs for `solve`
+ */
 const solveStrict = constraints => {
   const solver = new kiwi.Solver();
   const variables = {};
@@ -75,5 +137,3 @@ const solveStrict = constraints => {
     co.b[co.key] = variables[key(co.b, co.key)].value();
   }
 };
-
-export { equalTo, greaterOrEqual, solve };

@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import dagre from 'dagre';
-import graph from '../utils/graph/';
-import { getFlags } from './flags';
+import { graph } from '../utils/graph/';
+import { getCurrentFlags } from './flags';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 import { getVisibleLayerIDs } from './disabled';
@@ -12,6 +12,28 @@ const getHasVisibleLayers = state =>
 const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;
 const getVisibleSidebar = state => state.visible.sidebar;
+
+/**
+ * Calculate chart layout. Algorithm used is dependent on flags
+ */
+export const getGraph = createSelector(
+  [
+    getVisibleNodes,
+    getVisibleEdges,
+    getVisibleLayerIDs,
+    getHasVisibleLayers,
+    getCurrentFlags
+  ],
+  (nodes, edges, layers, showLayers, flags) => {
+    // Use experimental graph rendering if flag enabled.
+    if (flags.newgraph) {
+      return graph(nodes, edges, showLayers && layers);
+    }
+
+    // Otherwise use dagre to render.
+    return graphDagre(nodes, edges, showLayers);
+  }
+);
 
 /**
  * Calculate chart layout with Dagre.js.
@@ -45,23 +67,6 @@ export const graphDagre = (nodes, edges, hasVisibleLayers) => {
 
   return graph;
 };
-
-export const getGraph = createSelector(
-  [
-    getVisibleNodes,
-    getVisibleEdges,
-    getVisibleLayerIDs,
-    getHasVisibleLayers,
-    getFlags
-  ],
-  (nodes, edges, layers, showLayers, flags) => {
-    if (flags.newgraph) {
-      return graph(nodes, edges, showLayers && layers);
-    }
-
-    return graphDagre(nodes, edges, showLayers);
-  }
-);
 
 /**
  * Reformat node data for use on the chart,

@@ -11,8 +11,7 @@ const defaultOptions = {
   routing: {
     spaceX: 26,
     spaceY: 28,
-    tension: 0,
-    minNodeGap: 40,
+    minPassageGap: 40,
     stemUnit: 8,
     stemMinSource: 5,
     stemMinTarget: 5,
@@ -22,13 +21,25 @@ const defaultOptions = {
   }
 };
 
-export default (nodes, edges, layers, options = defaultOptions) => {
+/**
+ * Generates a diagram of the given DAG.
+ * Input nodes and edges are updated in-place.
+ * Results are stored as `x, y` properties on nodes
+ * and `points` properties on edges.
+ * @param {array} nodes The input nodes
+ * @param {array} edges The input edges
+ * @param {object=} layers The node layers if specified
+ * @param {object=} options The graph options
+ * @returns {object} The generated graph
+ */
+export const graph = (nodes, edges, layers, options = defaultOptions) => {
   if (!nodes.length || !edges.length) {
     return;
   }
 
   const nodeById = {};
 
+  // Add edge links to nodes
   for (const node of nodes) {
     nodeById[node.id] = node;
     node.targets = [];
@@ -56,6 +67,12 @@ export default (nodes, edges, layers, options = defaultOptions) => {
   };
 };
 
+/**
+ * Finds the region bounding the given nodes
+ * @param {array} nodes The input nodes
+ * @param {number} padding Additional padding around the bounds
+ * @returns {object} The bounds
+ */
 const bounds = (nodes, padding) => {
   const size = {
     marginx: padding,

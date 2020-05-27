@@ -11,13 +11,30 @@ import {
   nodeBottom
 } from './common';
 
-const routing = ({
+/**
+ * Finds positions for the given edges relative to their nodes.
+ * Input nodes and edges are updated in-place.
+ * Results are stored in the `points` property on edges.
+ * @param {object} params The layout parameters
+ * @param {array} params.nodes The input nodes
+ * @param {array} params.edges The input edges
+ * @param {number} params.spaceX The minimum gap between a node and passing edges in X
+ * @param {number} params.spaceY The minimum gap between a node and passing edges in Y
+ * @param {number} params.minPassageGap The minimum gap between two nodes in which an edge can pass in X
+ * @param {number} params.stemUnit The unit length for edge stems at anchors
+ * @param {number} params.stemMax The maximum length of edge stems at anchors
+ * @param {number} params.stemMinSource The minimum length for edge stems at source anchors
+ * @param {number} params.stemMinTarget The minimum length for edge stems at target anchors
+ * @param {number} params.stemSpaceSource The ideal spacing between edge stems at source anchors
+ * @param {number} params.stemSpaceTarget The ideal spacing between edge stems at target anchors
+ * @returns {void}
+ */
+export const routing = ({
   nodes,
   edges,
   spaceX,
   spaceY,
-  tension,
-  minNodeGap,
+  minPassageGap,
   stemUnit,
   stemMinSource,
   stemMinTarget,
@@ -25,9 +42,13 @@ const routing = ({
   stemSpaceSource,
   stemSpaceTarget
 }) => {
+  // Find the rows formed by nodes
   const rows = groupByRow(nodes);
 
+  // For each node
   for (const node of nodes) {
+    // Sort the node's target edges by the angle between source and target nodes
+    // Break ties by alternating increasing X offsets per row
     node.targets.sort((a, b) =>
       compare(
         Math.atan2(
@@ -48,65 +69,58 @@ const routing = ({
     );
   }
 
+  // For each edge
   for (const edge of edges) {
     const source = edge.sourceNode;
     const target = edge.targetNode;
 
+    // Initialise result container
+    edge.points = [];
+
+    // Find the ideal gap between edge source anchors
     const sourceSeparation = Math.min(
       (source.width - stemSpaceSource) / source.targets.length,
       stemSpaceSource
     );
 
-    const targetSeparation = Math.min(
-      (target.width - stemSpaceTarget) / target.sources.length,
-      stemSpaceTarget
-    );
-
     const sourceEdgeDistance =
       source.targets.indexOf(edge) - (source.targets.length - 1) * 0.5;
-    const targetEdgeDistance =
-      target.sources.indexOf(edge) - (target.sources.length - 1) * 0.5;
 
     const sourceOffsetX = sourceSeparation * sourceEdgeDistance;
-    const targetOffsetX = targetSeparation * targetEdgeDistance;
 
+    // Start at source node offset
     const startPoint = { x: source.x + sourceOffsetX, y: source.y };
-    const endPoint = { x: target.x + targetOffsetX, y: target.y };
     let currentPoint = startPoint;
 
-    edge.points = [];
-
+    // For each row between the source and target rows exclusive
     for (let l = source.row + 1; l < target.row; l += 1) {
       const firstNode = rows[l][0];
-      let upperPoint = { x: nodeLeft(firstNode) - spaceX, y: firstNode.y };
+
+      // Initialise search for next point
+      let nearestPoint = { x: nodeLeft(firstNode) - spaceX, y: firstNode.y };
       let nearestDistance = Infinity;
 
+      // Extend the row 'to infinity' on each side in X
       const rowExtended = [
         { ...firstNode, x: Number.MIN_SAFE_INTEGER },
         ...rows[l],
         { ...firstNode, x: Number.MAX_SAFE_INTEGER }
       ];
 
+      // For each gap between each nodes on the row
       for (let i = 0; i < rowExtended.length - 1; i += 1) {
         const node = rowExtended[i];
         const nextNode = rowExtended[i + 1];
         const nodeGap = nodeLeft(nextNode) - nodeRight(node);
 
-        if (nodeGap < minNodeGap) continue;
+        // Avoid routing through small gaps, increase bundling
+        if (nodeGap < minPassageGap) continue;
 
-        const gradient =
-          (endPoint.x - currentPoint.x) / (endPoint.y - currentPoint.y) || 1;
-        const smoothGradient =
-          (currentPoint.gradient || gradient) * 0.5 + gradient * 0.5;
         const offsetX = Math.min(spaceX, nodeGap * 0.5);
-        const offsetY = nodeTop(node) - spaceY - currentPoint.y;
 
-        const tensionForce =
-          tension / Math.pow(distance1d(node.y, endPoint.y), 2);
-        const tensionOffset = tensionForce * smoothGradient * offsetY;
-
+        // Find the next potential point. Include offset to reduce overlapping edges
         const candidatePoint = nearestOnLine(
-          currentPoint.x + tensionOffset,
+          currentPoint.x,
           currentPoint.y,
           nodeRight(node) + offsetX,
           nodeTop(node) - spaceY,
@@ -116,49 +130,46 @@ const routing = ({
 
         const distance = distance1d(currentPoint.x, candidatePoint.x);
 
+        // Early out if diverging
+        if (distance > nearestDistance) {
+          break;
+        }
+
+        // Keep the nearest point
         if (distance < nearestDistance) {
           nearestDistance = distance;
-          upperPoint = candidatePoint;
-          upperPoint.gradient = gradient;
+          nearestPoint = candidatePoint;
         }
       }
 
-      const gradient =
-        (endPoint.x - upperPoint.x) / (endPoint.y - upperPoint.y) || 1;
-      const smoothGradient = upperPoint.gradient * 0.5 + gradient * 0.5;
-      const offsetY = firstNode.height + 2 * spaceY;
-
-      const tensionForce =
-        tension / Math.pow(distance1d(upperPoint.y, endPoint.y), 2);
-      const tensionOffset = tensionForce * smoothGradient * offsetY;
-
-      const lowerPoint = nearestOnLine(
-        upperPoint.x + tensionOffset,
-        upperPoint.y,
-        upperPoint.ax,
-        upperPoint.ay + offsetY,
-        upperPoint.bx,
-        upperPoint.by + offsetY
-      );
-
-      edge.points.push({ x: upperPoint.x + sourceOffsetX, y: upperPoint.y });
-      edge.points.push({ x: lowerPoint.x + sourceOffsetX, y: lowerPoint.y });
+      // Pass the node at nearest point
+      const offsetY = firstNode.height + spaceY * 2;
+      edge.points.push({
+        x: nearestPoint.x + sourceOffsetX,
+        y: nearestPoint.y
+      });
+      edge.points.push({
+        x: nearestPoint.x + sourceOffsetX,
+        y: nearestPoint.y + offsetY
+      });
 
       currentPoint = {
-        x: lowerPoint.x,
-        y: lowerPoint.y,
-        gradient: smoothGradient
+        x: nearestPoint.x,
+        y: nearestPoint.y + offsetY
       };
     }
   }
 
+  // For each node
   for (const node of nodes) {
+    // Sort the node's outgoing edges by the starting angle of the edge path
     node.targets.sort((a, b) =>
       compare(
         angle(b.sourceNode, b.points[0] || b.targetNode),
         angle(a.sourceNode, a.points[0] || a.targetNode)
       )
     );
+    // Sort the node's incoming edges by the ending angle of the edge path
     node.sources.sort((a, b) =>
       compare(
         angle(a.points[a.points.length - 1] || a.sourceNode, a.targetNode),
@@ -167,10 +178,12 @@ const routing = ({
     );
   }
 
+  // For each edge
   for (const edge of edges) {
     const source = edge.sourceNode;
     const target = edge.targetNode;
 
+    // Find the ideal gap between edge source and target anchors
     const sourceSeparation = Math.min(
       (source.width - stemSpaceSource) / source.targets.length,
       stemSpaceSource
@@ -189,6 +202,7 @@ const routing = ({
     const sourceOffsetX = sourceSeparation * sourceEdgeDistance;
     const targetOffsetX = targetSeparation * targetEdgeDistance;
 
+    // Decrease stem length outwards from the middle stem
     const sourceOffsetY =
       stemUnit *
       source.targets.length *
@@ -199,7 +213,8 @@ const routing = ({
       target.sources.length *
       (1 - Math.abs(targetEdgeDistance) / target.sources.length);
 
-    const sourcePoints = [
+    // Build the source stem for the edge
+    const sourceStem = [
       {
         x: source.x + sourceOffsetX,
         y: nodeBottom(source)
@@ -214,7 +229,8 @@ const routing = ({
       }
     ];
 
-    const targetPoints = [
+    // Build the target stem for the edge
+    const targetStem = [
       {
         x: target.x + targetOffsetX,
         y: nodeTop(target) - stemMinTarget - Math.min(targetOffsetY, stemMax)
@@ -229,8 +245,7 @@ const routing = ({
       }
     ];
 
-    edge.points = [...sourcePoints, ...edge.points, ...targetPoints];
+    // Combine the complete edge path
+    edge.points = [...sourceStem, ...edge.points, ...targetStem];
   }
 };
-
-export { routing };
