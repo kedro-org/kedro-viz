@@ -1,3 +1,4 @@
+import seedrandom from 'seedrandom';
 import { arrayToObject, unique } from './index';
 import {
   getNumberArray,
@@ -5,7 +6,8 @@ import {
   randomNumberBetween,
   getRandom,
   getRandomName,
-  getRandomSelection
+  getRandomSelection,
+  generateHash
 } from './random-utils';
 
 //--- Config variables ---//
@@ -33,11 +35,36 @@ const LAYERS = [
  */
 class Pipeline {
   constructor() {
+    this.seedRandomData();
     this.rankCount = this.getRankCount();
     this.rankLayers = this.getRankLayers();
     this.tags = this.generateTags();
     this.nodes = this.generateNodes();
     this.edges = this.generateEdges();
+  }
+
+  /**
+   * Seed data with a random hash, allowing it to be reproduced.
+   * If the URL searchParams contain a 'seed' key then use its value,
+   * else create a new one, and make it available via the console.
+   */
+  seedRandomData() {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const url = new URL(window.location);
+    let seed = url.searchParams.get('seed');
+    if (!seed) {
+      seed = generateHash(30);
+      url.searchParams.set('seed', seed);
+    }
+    if (typeof jest === 'undefined') {
+      console.info(
+        `%cRandom data seed: ${seed}\nTo reuse this layout, visit ${url.toString()}`,
+        'font-weight: bold'
+      );
+    }
+    seedrandom(seed, { global: true });
   }
 
   /**

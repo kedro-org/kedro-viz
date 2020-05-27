@@ -63,3 +63,19 @@ export const getRandomSelection = (arr, n) => {
   }
   return result;
 };
+
+/**
+ * Generate a pseudo-random UUID
+ * via https://stackoverflow.com/a/1349426/1651713
+ * @param {number} length Hash/ID length
+ * @return string
+ */
+export const generateHash = length => {
+  const result = [];
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < length; i++) {
+    result.push(characters.charAt(randomIndex(characters.length)));
+  }
+  return result.join('');
+};

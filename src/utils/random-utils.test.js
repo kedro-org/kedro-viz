@@ -126,4 +126,15 @@ describe('utils', () => {
       expect(result).toEqual(result.filter(unique));
     });
   });
+
+  describe('generateHash', () => {
+    it('returns a string', () => {
+      expect(generateHash(10)).toEqual(expect.any(String));
+    });
+
+    it('returns a string of length n', () => {
+      const length = 100;
+      expect(generateHash(length)).toHaveLength(length);
+    });
+  });
 });
