@@ -76,7 +76,7 @@
     opacity: 1;
   }
 
-  &::before {
+  &::after {
     $triangle-size: 7px;
 
     position: absolute;
