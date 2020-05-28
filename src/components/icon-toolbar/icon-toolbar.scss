@@ -44,7 +44,10 @@
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.2;
+
+    svg {
+      opacity: 0.2;
+    }
   }
 
   svg {
