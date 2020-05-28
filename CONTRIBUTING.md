@@ -98,12 +98,12 @@ Randomly-generated data can be seeded with a hash string, which will allow you t
 
 We use a branching model that helps us keep track of branches in a logical, consistent way. All branches should have the hyphen-separated convention of: `<type-of-change>/<short-description-of-change>` e.g. `feature/awesome-new-feature`
 
-| Types of changes | Description                                                                 |
-| ---------------- | --------------------------------------------------------------------------- |
-| `docs`           | Changes to the documentation of the plugin                                  |
-| `feature`        | Non-breaking change which adds functionality                                |
-| `fix`            | Non-breaking change which fixes an issue                                    |
-| `tests`          | Changes to project unit (`tests/`) and / or integration (`features/`) tests |
+| Types of changes | Description |
+| ---------------- | ----------- |
+| `docs`    | Changes to the documentation of the plugin |
+| `feature` | Non-breaking change which adds functionality |
+| `fix`     | Non-breaking change which fixes an issue |
+| `tests`   | Changes to project unit (`tests/`) and / or integration (`features/`) tests |
 
 ## Plugin contribution process
 
