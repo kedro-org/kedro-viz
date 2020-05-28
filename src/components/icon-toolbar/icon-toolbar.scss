@@ -81,7 +81,7 @@
 
     position: absolute;
     top: calc(50% - #{$triangle-size});
-    left: -$triangle-size;
+    left: -$triangle-size + 0.5;
     width: 0;
     height: 0;
     border-color: transparent;
