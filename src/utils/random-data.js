@@ -12,8 +12,8 @@ import {
 
 const MIN_CONNECTED_NODES = 1;
 const MAX_CONNECTED_NODES = 3;
-const MAX_RANK_COUNT = 50;
-const MIN_RANK_COUNT = 30;
+const MAX_RANK_COUNT = 40;
+const MIN_RANK_COUNT = 5;
 const MAX_RANK_NODE_COUNT = 10;
 const MIN_RANK_NODE_COUNT = 1;
 const MAX_NODE_TAG_COUNT = 5;
