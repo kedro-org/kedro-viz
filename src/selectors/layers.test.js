@@ -34,24 +34,30 @@ describe('Selectors', () => {
         return layers;
       }, {});
 
-      expect(
-        nodes.every(node => {
-          // we don't need to check y/height positions if the layer isn't there.
-          if (node.layer === null) {
-            return true;
-          }
-          const i = layerIDs.indexOf(node.layer);
-          const prevLayer = layersObj[layerIDs[i - 1]];
-          const thisLayer = layersObj[node.layer];
-          const nextLayer = layersObj[layerIDs[i + 1]];
-          return (
-            (!prevLayer || node.y > prevLayer.y + prevLayer.height) &&
-            node.y > thisLayer.y &&
-            node.y + node.height < thisLayer.y + thisLayer.height &&
-            (!nextLayer || node.y + node.height < nextLayer.y)
-          );
-        })
-      ).toBe(true);
+      nodes.forEach(node => {
+        // we don't need to check y/height positions if the layer isn't there.
+        if (node.layer === null) {
+          return;
+        }
+
+        const i = layerIDs.indexOf(node.layer);
+        const prevLayer = layersObj[layerIDs[i - 1]];
+        const thisLayer = layersObj[node.layer];
+        const nextLayer = layersObj[layerIDs[i + 1]];
+
+        if (prevLayer) {
+          expect(node.y).toBeGreaterThanOrEqual(prevLayer.y + prevLayer.height);
+        }
+
+        expect(node.y).toBeGreaterThanOrEqual(thisLayer.y);
+        expect(node.y + node.height).toBeLessThanOrEqual(
+          thisLayer.y + thisLayer.height
+        );
+
+        if (nextLayer) {
+          expect(node.y + node.height).toBeLessThanOrEqual(nextLayer.y);
+        }
+      });
     });
   });
 });

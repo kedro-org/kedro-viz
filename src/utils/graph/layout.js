@@ -1,4 +1,4 @@
-import { halfPI, snap, angle, compare } from './common';
+import { halfPI, snap, angle, compare, groupByRow } from './common';
 import { solve, greaterOrEqual, equalTo } from './solver';
 
 /**
@@ -253,39 +253,6 @@ export const layout = ({ nodes, edges, layers, basisX, spaceX, spaceY }) => {
 
   // Add additional spacing in Y for rows with many crossing edges
   expandDenseRows(edges, rows, spaceY);
-};
-
-/**
- * Finds the rows formed by nodes given the their positions in Y.
- * The result is sorted in X and Y.
- * Adds a `row` property to each node in-place
- * @param {array} nodes The input nodes
- * @returns {array} The sorted rows of nodes
- */
-export const groupByRow = nodes => {
-  const rows = {};
-
-  // Create rows using node Y values
-  for (const node of nodes) {
-    rows[node.y] = rows[node.y] || [];
-    rows[node.y].push(node);
-  }
-
-  // Sort the set of rows accounting for keys being strings
-  const rowNumbers = Object.keys(rows).map(row => parseFloat(row));
-  rowNumbers.sort((a, b) => a - b);
-
-  // Sort rows in order of X position if set. Break ties with ids for stability
-  const sortedRows = rowNumbers.map(row => rows[row]);
-  for (let i = 0; i < sortedRows.length; i += 1) {
-    sortedRows[i].sort((a, b) => compare(a.x, b.x, a.id, b.id));
-
-    for (const node of sortedRows[i]) {
-      node.row = i;
-    }
-  }
-
-  return sortedRows;
 };
 
 /**

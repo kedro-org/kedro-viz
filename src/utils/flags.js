@@ -23,17 +23,19 @@ export const Flags = {
    */
   defaults: () =>
     Flags.names().reduce(
-      (result, flag) => Object.assign(result, { [flag]: flag.default }),
+      (result, flag) =>
+        Object.assign(result, { [flag]: flagsConfig[flag].default }),
       {}
     )
 };
 
 /**
- * Returns an object with flags as set in the current URL using `enable` and `disable` parameters
+ * Returns an object with flags as set in given or current URL using `enable` and `disable` parameters
+ * @param {string=} url The URL (optional, default current location)
  * @returns {object} An object with flags and their values
  */
-export const getFlagsFromUrl = () => {
-  const urlParams = new URL(document.location).searchParams;
+export const getFlagsFromUrl = url => {
+  const urlParams = new URL(url || document.location).searchParams;
   const enableNames = (urlParams.get('enable') || '').split(/\W/g);
   const disableNames = (urlParams.get('disable') || '').split(/\W/g);
   const flags = {};
@@ -51,7 +53,7 @@ export const getFlagsFromUrl = () => {
 
 /**
  * Returns a user info message describing the status of all defined flags
- * @param {object} flagsEnabled An object mapping of current flag's status
+ * @param {object} flagsEnabled An object mapping of flag status
  * @returns {string} The info message
  */
 export const getFlagsMessage = flagsEnabled => {
@@ -69,7 +71,8 @@ export const getFlagsMessage = flagsEnabled => {
       info += `\n${statusIcon} ${icon} "${name}" · ${description} · ${status}`;
     });
 
-    info += `\n\nSee docs for more info 📖`;
+    info += `\n\nSee docs on flags for more info 📖`;
+    info += `\nhttps://github.com/quantumblacklabs/kedro-viz#flags`;
 
     return info;
   }

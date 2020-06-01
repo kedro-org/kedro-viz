@@ -25,12 +25,25 @@ export const getGraph = createSelector(
     getCurrentFlags
   ],
   (nodes, edges, layers, showLayers, flags) => {
-    // Use experimental graph rendering if flag enabled.
-    if (flags.newgraph) {
-      return graph(nodes, edges, showLayers && layers);
+    if (!nodes.length || !edges.length) {
+      return;
     }
 
-    // Otherwise use dagre to render.
+    // Use experimental graph rendering if flag enabled
+    if (flags.newgraph) {
+      const result = graph(nodes, edges, showLayers && layers);
+
+      return {
+        graph: () => ({ ...result.size, marginx: 100, marginy: 100 }),
+        nodes: () => result.nodes.map(node => node.id),
+        edges: () => result.edges.map(edge => edge.id),
+        node: id => result.nodes.find(node => node.id === id),
+        edge: id => result.edges.find(edge => edge.id === id),
+        newgraph: true
+      };
+    }
+
+    // Otherwise use dagre to render
     return graphDagre(nodes, edges, showLayers);
   }
 );
@@ -42,10 +55,6 @@ export const getGraph = createSelector(
  * which don't affect layout.
  */
 export const graphDagre = (nodes, edges, hasVisibleLayers) => {
-  if (!nodes.length || !edges.length) {
-    return;
-  }
-
   const ranker = hasVisibleLayers ? 'none' : null;
   const graph = new dagre.graphlib.Graph().setGraph({
     ranker: hasVisibleLayers ? ranker : null,

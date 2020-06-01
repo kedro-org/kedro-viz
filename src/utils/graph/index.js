@@ -6,7 +6,8 @@ const defaultOptions = {
   layout: {
     spaceX: 16,
     spaceY: 110,
-    basisX: 1500
+    basisX: 1500,
+    padding: 100
   },
   routing: {
     spaceX: 26,
@@ -33,13 +34,31 @@ const defaultOptions = {
  * @returns {object} The generated graph
  */
 export const graph = (nodes, edges, layers, options = defaultOptions) => {
-  if (!nodes.length || !edges.length) {
-    return;
-  }
+  addEdgeLinks(nodes, edges);
 
+  layout({ nodes, edges, layers, ...options.layout });
+  routing({ nodes, edges, layers, ...options.routing });
+
+  const size = bounds(nodes, options.layout.padding);
+  nodes.forEach(node => offsetNode(node, size.min));
+  edges.forEach(edge => offsetEdge(edge, size.min));
+
+  return {
+    nodes,
+    edges,
+    layers,
+    size
+  };
+};
+
+/**
+ * Adds lists of source edges and target edges to each node in-place
+ * @param {array} nodes The input nodes
+ * @param {array} edges The input edges
+ */
+const addEdgeLinks = (nodes, edges) => {
   const nodeById = {};
 
-  // Add edge links to nodes
   for (const node of nodes) {
     nodeById[node.id] = node;
     node.targets = [];
@@ -52,19 +71,6 @@ export const graph = (nodes, edges, layers, options = defaultOptions) => {
     edge.sourceNode.targets.push(edge);
     edge.targetNode.sources.push(edge);
   }
-
-  layout({ nodes, edges, layers, ...options.layout });
-  routing({ nodes, edges, layers, ...options.routing });
-
-  const size = bounds(nodes, 100);
-
-  return {
-    graph: () => ({ ...size }),
-    nodes: () => nodes.map(node => node.id),
-    edges: () => edges.map(edge => edge.id),
-    node: id => offsetNode(nodes.find(node => node.id === id), size.min),
-    edge: id => offsetEdge(edges.find(edge => edge.id === id), size.min)
-  };
 };
 
 /**
@@ -75,8 +81,6 @@ export const graph = (nodes, edges, layers, options = defaultOptions) => {
  */
 const bounds = (nodes, padding) => {
   const size = {
-    marginx: padding,
-    marginy: padding,
     min: { x: Infinity, y: Infinity },
     max: { x: -Infinity, y: -Infinity }
   };

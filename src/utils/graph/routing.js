@@ -1,10 +1,9 @@
-import { groupByRow } from './layout';
-
 import {
   compare,
   distance1d,
   angle,
   nearestOnLine,
+  groupByRow,
   nodeLeft,
   nodeRight,
   nodeTop,

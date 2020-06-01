@@ -40,7 +40,7 @@ class App extends React.Component {
   announceFlags(flags) {
     const message = getFlagsMessage(flags);
 
-    if (message) {
+    if (message && typeof jest === 'undefined') {
       console.info(message);
     }
   }

@@ -8,7 +8,11 @@ import { distance1d } from './common';
  * @param {number} key An identifier string
  * @returns {string} The combined key
  */
-const key = (obj, key) => obj.id + '_' + key;
+const key = (obj, key) => {
+  if (typeof obj.id === 'undefined')
+    throw `Object is missing property 'id' required for key.`;
+  return obj.id + '_' + key;
+};
 
 /**
  * Returns the value `a - b`
@@ -16,7 +20,7 @@ const key = (obj, key) => obj.id + '_' + key;
  * @param {number} b The second number
  * @returns {number} The result
  */
-const subtract = (a, b) => a - b;
+export const subtract = (a, b) => a - b;
 
 /**
  * Given a `solver` operator function, returns the equivalent kiwi.js operator if defined
@@ -102,7 +106,10 @@ const solveLoose = (constraints, iterations) => {
 
 /**
  * Applies the given constraints to the objects in-place.
- * Constraint targets and operators must be static, `delta` is always subtract.
+ * Limitations:
+ *  - Constraint targets and operators must be static
+ *  - `delta` is always subtract
+ *  - `distance` is always subtract (i.e. signed)
  * A solution is found exactly if possible, otherwise throws an error
  * @param {array} constraints The constraints. See docs for `solve`
  */
