@@ -1,14 +1,6 @@
 import seedrandom from 'seedrandom';
 import { arrayToObject, unique } from './index';
-import {
-  getNumberArray,
-  randomNumber,
-  randomNumberBetween,
-  getRandom,
-  getRandomName,
-  getRandomSelection,
-  generateHash
-} from './random-utils';
+import setupUtils from './random-utils';
 
 //--- Config variables ---//
 
@@ -35,12 +27,28 @@ const LAYERS = [
  */
 class Pipeline {
   constructor() {
-    this.seedRandomData();
+    this.setupRandomUtils();
     this.rankCount = this.getRankCount();
     this.rankLayers = this.getRankLayers();
     this.tags = this.generateTags();
     this.nodes = this.generateNodes();
     this.edges = this.generateEdges();
+  }
+
+  /**
+   * Intitialise helper utils with seeded rng
+   */
+  setupRandomUtils() {
+    const random = this.seedRandomData();
+    const utils = setupUtils(random);
+    this.getNumberArray = utils.getNumberArray;
+    this.randomIndex = utils.randomIndex;
+    this.randomNumber = utils.randomNumber;
+    this.randomNumberBetween = utils.randomNumberBetween;
+    this.getRandom = utils.getRandom;
+    this.getRandomName = utils.getRandomName;
+    this.getRandomSelection = utils.getRandomSelection;
+    this.generateHash = utils.generateHash;
   }
 
   /**
@@ -55,7 +63,7 @@ class Pipeline {
     const url = new URL(window.location);
     let seed = url.searchParams.get('seed');
     if (!seed) {
-      seed = generateHash(30);
+      seed = setupUtils().generateHash(30);
       url.searchParams.set('seed', seed);
     }
     if (typeof jest === 'undefined') {
@@ -64,7 +72,7 @@ class Pipeline {
         'font-weight: bold'
       );
     }
-    seedrandom(seed, { global: true });
+    return seedrandom(seed);
   }
 
   /**
@@ -73,7 +81,7 @@ class Pipeline {
    * @returns {number} Rank count total
    */
   getRankCount() {
-    let rankCount = randomNumberBetween(MIN_RANK_COUNT, MAX_RANK_COUNT);
+    let rankCount = this.randomNumberBetween(MIN_RANK_COUNT, MAX_RANK_COUNT);
     // Ensure odd numbers only, so that we start and end with a data node
     if (!rankCount % 2) {
       rankCount += 1;
@@ -89,7 +97,7 @@ class Pipeline {
     const layerSize = arrayToObject(LAYERS, () => 0);
     // Randomly decide the number of ranks in each layer
     for (let i = 0; i < this.rankCount; i++) {
-      layerSize[getRandom(LAYERS)]++;
+      layerSize[this.getRandom(LAYERS)]++;
     }
     // Assign layers to ranks based on layerSize
     const rankLayers = {};
@@ -108,9 +116,9 @@ class Pipeline {
    * @returns {array} Tag name strings
    */
   generateTags() {
-    const tagCount = randomNumber(MAX_TAG_COUNT);
-    return getNumberArray(tagCount)
-      .map(() => getRandomName(randomNumber(MAX_NODE_TAG_COUNT)))
+    const tagCount = this.randomNumber(MAX_TAG_COUNT);
+    return this.getNumberArray(tagCount)
+      .map(() => this.getRandomName(this.randomNumber(MAX_NODE_TAG_COUNT)))
       .filter(unique);
   }
 
@@ -141,7 +149,7 @@ class Pipeline {
     const max = MAX_RANK_NODE_COUNT;
     const min = MIN_RANK_NODE_COUNT;
     const p = (this.rankCount - rank) / this.rankCount;
-    return randomNumber(p * (max - min) + min);
+    return this.randomNumber(p * (max - min) + min);
   }
 
   /**
@@ -171,7 +179,7 @@ class Pipeline {
     const node = {
       id: `${type}/${name}(${rank}-${i})`,
       name,
-      full_name: getRandomName(randomNumber(40)),
+      full_name: this.getRandomName(this.randomNumber(40)),
       type,
       rank,
       layer: this.rankLayers[rank],
@@ -186,7 +194,7 @@ class Pipeline {
    * @returns {string} Node name
    */
   getNodeName(type) {
-    const name = getRandomName(randomNumber(10), ' ');
+    const name = this.getRandomName(this.randomNumber(10), ' ');
     return type === 'parameters' ? `Parameters ${name}` : name;
   }
 
@@ -195,7 +203,10 @@ class Pipeline {
    * @returns {array} List of tags
    */
   getRandomTags() {
-    return getRandomSelection(this.tags, randomNumber(this.tags.length));
+    return this.getRandomSelection(
+      this.tags,
+      this.randomNumber(this.tags.length)
+    );
   }
 
   /**
@@ -244,11 +255,11 @@ class Pipeline {
    * @returns {array} Randomly-selected nodes
    */
   getRandomNodes(nodes) {
-    const connections = randomNumberBetween(
+    const connections = this.randomNumberBetween(
       MIN_CONNECTED_NODES,
       MAX_CONNECTED_NODES
     );
-    return getRandomSelection(nodes, connections);
+    return this.getRandomSelection(nodes, connections);
   }
 
   /**
