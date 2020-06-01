@@ -1,18 +1,16 @@
 import { unique } from './index';
-import setupRandomUtils from './random-utils';
+import {
+  getNumberArray,
+  randomIndex,
+  randomNumber,
+  randomNumberBetween,
+  getRandom,
+  getRandomName,
+  getRandomSelection,
+  generateHash
+} from './random-utils';
 
 describe('utils', () => {
-  const {
-    getNumberArray,
-    randomIndex,
-    randomNumber,
-    randomNumberBetween,
-    getRandom,
-    getRandomName,
-    getRandomSelection,
-    generateHash
-  } = setupRandomUtils();
-
   describe('getNumberArray', () => {
     it('returns an array of numbers with length equal to the input value', () => {
       expect(getNumberArray(10)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
