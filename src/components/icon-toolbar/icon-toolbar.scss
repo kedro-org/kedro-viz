@@ -44,7 +44,10 @@
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.2;
+
+    svg {
+      opacity: 0.2;
+    }
   }
 
   svg {
@@ -76,12 +79,12 @@
     opacity: 1;
   }
 
-  &::before {
+  &::after {
     $triangle-size: 7px;
 
     position: absolute;
     top: calc(50% - #{$triangle-size});
-    left: -$triangle-size;
+    left: -$triangle-size + 0.5;
     width: 0;
     height: 0;
     border-color: transparent;
