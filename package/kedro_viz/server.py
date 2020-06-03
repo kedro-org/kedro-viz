@@ -499,10 +499,7 @@ def _call_viz(
                 if project_path is not None:
                     context = get_project_context("context", project_path=project_path, env=env)
                 else:
-                    print(">>>>>>> GET HERE")
-                    print(get_project_context)
                     context = get_project_context("context", env=env)
-                print(context)
                 pipeline = _get_pipeline_from_context(context, pipeline_name)
             except KedroContextError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
