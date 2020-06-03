@@ -42,13 +42,13 @@ from pathlib import Path
 from typing import Dict, List, Set
 
 import click
+import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
 from semver import VersionInfo
 from toposort import toposort_flatten
 
-import kedro
 from kedro_viz.utils import wait_for
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
