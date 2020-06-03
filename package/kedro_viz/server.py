@@ -125,15 +125,13 @@ def run_viz(port=None, line=None, local_ns=None) -> None:
         _VIZ_PROCESSES[port].terminate()
 
     if local_ns is not None and 'project_path' in local_ns:
-        viz_process = multiprocessing.Process(
-            target=partial(_call_viz, project_path=local_ns['project_path']),
-            daemon=True,
-            kwargs={"port": port}
-        )
+        target = partial(_call_viz, project_path=local_ns['project_path'])
     else:
-        viz_process = multiprocessing.Process(
-            target=_call_viz, daemon=True, kwargs={"port": port}
-        )
+        target = _call_viz
+
+    viz_process = multiprocessing.Process(
+        target=target, daemon=True, kwargs={"port": port}
+    )
 
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
