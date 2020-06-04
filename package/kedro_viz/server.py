@@ -124,8 +124,8 @@ def run_viz(port=None, line=None, local_ns=None) -> None:
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
 
-    if local_ns is not None and 'project_path' in local_ns:
-        target = partial(_call_viz, project_path=local_ns['project_path'])
+    if local_ns is not None and "project_path" in local_ns:
+        target = partial(_call_viz, project_path=local_ns["project_path"])
     else:
         target = _call_viz
 
