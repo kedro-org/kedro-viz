@@ -159,7 +159,7 @@ export class FlowChart extends Component {
       // Limit zoom translate extent: This needs to be recalculated on zoom
       // as it needs access to the current scale to correctly multiply the
       // sidebarWidth by the scale to offset it properly
-      const margin = 200;
+      const margin = 500;
       this.zoomBehaviour.translateExtent([
         [-sidebarWidth / scale - margin, -margin],
         [width + margin, height + margin]
@@ -189,7 +189,7 @@ export class FlowChart extends Component {
     const { scale = 1, translateX = 0, translateY = 0 } = this.props.zoom;
 
     // Limit zoom scale extent
-    this.zoomBehaviour.scaleExtent([scale * 0.8, 1]);
+    this.zoomBehaviour.scaleExtent([scale * 0.8, 2]);
 
     // Auto zoom to fit the chart nicely on the page
     this.el.svg

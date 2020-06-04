@@ -1,3 +1,7 @@
+.easter-theme .pipeline-flowchart {
+  animation: spin3d 4s infinite alternate linear;
+}
+
 .easter-theme {
   overflow: hidden;
 
@@ -73,6 +77,15 @@
     // beat: 188 bpm. speed obtained by (120/188)*2
     animation: brody 1.27659574468s linear 0s infinite;
     pointer-events: none;
+  }
+}
+
+@keyframes spin3d {
+  0% {
+    transform: perspective(400px) rotateY(20deg) rotateX(10deg);
+  }
+  100% {
+    transform: perspective(400px) rotateY(-20deg) rotateX(10deg);
   }
 }
 
