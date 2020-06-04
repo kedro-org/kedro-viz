@@ -9,6 +9,7 @@ const getHasVisibleLayers = state =>
 const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;
 const getVisibleSidebar = state => state.visible.sidebar;
+const getFontLoaded = state => state.fontLoaded;
 
 /**
  * Calculate chart layout with Dagre.js.
@@ -17,9 +18,9 @@ const getVisibleSidebar = state => state.visible.sidebar;
  * which don't affect layout.
  */
 export const getGraph = createSelector(
-  [getVisibleNodes, getVisibleEdges, getHasVisibleLayers],
-  (nodes, edges, hasVisibleLayers) => {
-    if (!nodes.length || !edges.length) {
+  [getVisibleNodes, getVisibleEdges, getHasVisibleLayers, getFontLoaded],
+  (nodes, edges, hasVisibleLayers, fontLoaded) => {
+    if (!fontLoaded || !nodes.length || !edges.length) {
       return;
     }
 
