@@ -1,6 +1,7 @@
 import { arrayToObject, unique } from './index';
 import {
   getNumberArray,
+  randomIndex,
   randomNumber,
   randomNumberBetween,
   getRandom,
@@ -10,10 +11,10 @@ import {
 
 //--- Config variables ---//
 
-const MIN_CONNECTED_NODES = 1;
-const MAX_CONNECTED_NODES = 3;
-const MAX_RANK_COUNT = 40;
-const MIN_RANK_COUNT = 5;
+const MAX_EDGE_COUNT = 120;
+const MIN_EDGE_COUNT = 30;
+const MAX_RANK_COUNT = 30;
+const MIN_RANK_COUNT = 10;
 const MAX_RANK_NODE_COUNT = 10;
 const MIN_RANK_NODE_COUNT = 1;
 const MAX_NODE_TAG_COUNT = 5;
@@ -176,52 +177,36 @@ class Pipeline {
    * @returns {array} Edge objects
    */
   generateEdges() {
+    const nodesByRank = [...this.nodes];
+    nodesByRank.sort((a, b) => a.rank - b.rank);
+
     const edges = [];
-    const dataNodes = this.nodes.filter(node => node.type === 'data');
-    const taskNodes = this.nodes.filter(node => node.type !== 'data');
-    const remainingEdgeCount = arrayToObject(
-      dataNodes.map(node => node.id),
-      () => MAX_CONNECTED_NODES
-    );
+    const maxEdgeCount = randomNumberBetween(MIN_EDGE_COUNT, MAX_EDGE_COUNT);
 
-    taskNodes.forEach(node => {
-      const ancestors = dataNodes.filter(
-        d => d.rank < node.rank && remainingEdgeCount[d.id]
-      );
-      this.getRandomNodes(ancestors).forEach(source => {
-        edges.push({
-          source: source.id,
-          target: node.id
-        });
-        remainingEdgeCount[source.id]--;
-      });
+    for (let i = 0; i < maxEdgeCount; i += 1) {
+      const sourceIndex = randomIndex(nodesByRank.length);
+      const source = nodesByRank[sourceIndex];
 
-      const descendants = dataNodes.filter(
-        d => d.rank > node.rank && remainingEdgeCount[d.id]
+      const nextRankFirstIndex = nodesByRank.findIndex(
+        (node, index) => index > sourceIndex && node.rank > source.rank
       );
-      this.getRandomNodes(descendants).forEach(target => {
-        edges.push({
-          source: node.id,
-          target: target.id
-        });
-        remainingEdgeCount[target.id]--;
+
+      if (nextRankFirstIndex === -1) continue;
+
+      const successorCount = nodesByRank.length - nextRankFirstIndex - 1;
+      const randomSuccessor = Math.round(
+        Math.min(1 / Math.random(), successorCount)
+      );
+      const targetIndex = nextRankFirstIndex + randomSuccessor;
+      const target = nodesByRank[targetIndex];
+
+      edges.push({
+        source: source.id,
+        target: target.id
       });
-    });
+    }
 
     return edges;
-  }
-
-  /**
-   * Get a random list of nodes to link to
-   * @param {array} nodes List of nodes from which to choose
-   * @returns {array} Randomly-selected nodes
-   */
-  getRandomNodes(nodes) {
-    const connections = randomNumberBetween(
-      MIN_CONNECTED_NODES,
-      MAX_CONNECTED_NODES
-    );
-    return getRandomSelection(nodes, connections);
   }
 
   /**
