@@ -44,7 +44,7 @@ export const getSeedFromURL = () => {
 
 // Set up seeded random number generator:
 const seed = getSeedFromURL();
-const random = seedrandom(seed);
+export const random = seedrandom(seed);
 
 /**
  * Get an array of numbers

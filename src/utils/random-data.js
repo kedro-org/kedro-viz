@@ -1,6 +1,7 @@
 import { arrayToObject, unique } from './index';
 import {
   getNumberArray,
+  random,
   randomIndex,
   randomNumber,
   randomNumberBetween,
@@ -127,7 +128,7 @@ class Pipeline {
     if (rank % 2) {
       return 'task';
     }
-    if (Math.random() < PARAMETERS_FREQUENCY) {
+    if (random() < PARAMETERS_FREQUENCY) {
       return 'parameters';
     }
     return 'data';
@@ -195,7 +196,7 @@ class Pipeline {
 
       const successorCount = nodesByRank.length - nextRankFirstIndex - 1;
       const randomSuccessor = Math.round(
-        Math.min(1 / Math.random(), successorCount)
+        Math.min(1 / random(), successorCount)
       );
       const targetIndex = nextRankFirstIndex + randomSuccessor;
       const target = nodesByRank[targetIndex];
