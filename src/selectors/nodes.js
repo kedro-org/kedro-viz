@@ -114,15 +114,20 @@ export const getNodeTextWidth = createSelector(
     if (!fontLoaded) {
       return {};
     }
+    const nodeTextWidth = {};
     const svg = select(document.body)
       .append('svg')
       .attr('class', 'kedro pipeline-node');
-    const nodeTextWidth = arrayToObject(nodeIDs, nodeID => {
-      const text = svg.append('text').text(nodeName[nodeID]);
-      const node = text.node();
-      const width = node.getBBox ? node.getBBox().width : 0;
-      return width;
-    });
+    svg
+      .selectAll('text')
+      .data(nodeIDs)
+      .enter()
+      .append('text')
+      .text(nodeID => nodeName[nodeID])
+      .each(function(nodeID) {
+        const width = this.getBBox ? this.getBBox().width : 0;
+        nodeTextWidth[nodeID] = width;
+      });
     svg.remove();
     return nodeTextWidth;
   }
