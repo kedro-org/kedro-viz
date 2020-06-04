@@ -10,7 +10,7 @@ import { distance1d } from './common';
  */
 const key = (obj, key) => {
   if (typeof obj.id === 'undefined')
-    throw `Object is missing property 'id' required for key.`;
+    throw new Error(`Object is missing property 'id' required for key.`);
   return obj.id + '_' + key;
 };
 
