@@ -11,9 +11,9 @@ import {
 
 //--- Config variables ---//
 
-const MAX_EDGE_COUNT = 120;
-const MIN_EDGE_COUNT = 30;
-const MAX_RANK_COUNT = 30;
+const MAX_EDGE_COUNT = 150;
+const MIN_EDGE_COUNT = 50;
+const MAX_RANK_COUNT = 50;
 const MIN_RANK_COUNT = 10;
 const MAX_RANK_NODE_COUNT = 10;
 const MIN_RANK_NODE_COUNT = 1;
