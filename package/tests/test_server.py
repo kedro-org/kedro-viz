@@ -25,12 +25,14 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# pylint: disable=protected-access
 """
 Tests for Kedro-Viz server
 """
 
 import json
 import re
+from functools import partial
 from pathlib import Path
 
 import pytest
@@ -167,7 +169,7 @@ def patched_get_project_context(mocker):
             "context": mocked_context,
         }[key]
 
-    mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
+    return mocker.patch("kedro_viz.server.get_project_context", side_effect=get_project_context)
 
 
 @pytest.fixture
@@ -206,6 +208,14 @@ def test_no_browser(cli_runner):
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 0, result.output
     assert server.webbrowser.open_new.call_count == 1
+
+
+def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_get_project_context):
+    cli_runner.invoke(server.commands, ["viz", "--no-browser"])
+    patched_get_project_context.assert_called_once_with(
+        "context",
+        env=None
+    )
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -410,7 +420,6 @@ def test_viz_stacktrace(mocker, cli_runner):
 
 @pytest.fixture(autouse=True)
 def clean_up():
-    # pylint: disable=protected-access
     server._VIZ_PROCESSES.clear()
 
 
@@ -437,13 +446,31 @@ def mocked_process(mocker):
     return mocker.patch("kedro_viz.server.multiprocessing.Process")
 
 
+class TestCallViz:
+
+    def test_call_viz_without_project_path(self, patched_get_project_context):
+        server._call_viz()
+        patched_get_project_context.assert_called_once_with(
+            "context",
+            env=None
+        )
+
+    def test_call_viz_with_project_path(self, patched_get_project_context):
+        mocked_project_path = Path("/tmp")
+        server._call_viz(project_path=mocked_project_path)
+        patched_get_project_context.assert_called_once_with(
+            "context",
+            project_path=mocked_project_path,
+            env=None
+        )
+
+
 class TestRunViz:
     default_port = 4141
 
     def test_call_once(self, mocked_process):
         """Test inline magic function"""
         server.run_viz()
-        # pylint: disable=protected-access
         mocked_process.assert_called_once_with(
             target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
         )
@@ -452,7 +479,6 @@ class TestRunViz:
         """Running run_viz with the same port should trigger another process."""
         server.run_viz()
         server.run_viz()
-        # pylint: disable=protected-access
         mocked_process.assert_called_with(
             target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
         )
@@ -461,12 +487,10 @@ class TestRunViz:
     def test_call_twice_with_different_port(self, mocked_process):
         """Running run_viz with a different port should start another process."""
         server.run_viz()
-        # pylint: disable=protected-access
         mocked_process.assert_called_with(
             target=server._call_viz, kwargs={"port": self.default_port}, daemon=True
         )
         server.run_viz(port=8000)
-        # pylint: disable=protected-access
         mocked_process.assert_called_with(
             target=server._call_viz, kwargs={"port": 8000}, daemon=True
         )
@@ -477,11 +501,28 @@ class TestRunViz:
         requests_mock.get(
             "http://127.0.0.1:8000/", content=b"some output", status_code=200
         )
-        assert server._check_viz_up(8000)  # pylint: disable=protected-access
+        assert server._check_viz_up(8000)
 
     def test_check_viz_up_invalid(self):
         """Test should catch the request connection error and returns False."""
-        assert not server._check_viz_up(8888)  # pylint: disable=protected-access
+        assert not server._check_viz_up(8888)
+
+    def test_call_with_local_ns(self, mocked_process):
+        mocked_project_path = Path("/tmp")
+        mocked_local_ns = {"project_path": mocked_project_path}
+
+        server.run_viz(local_ns=mocked_local_ns)
+
+        # we can't use assert_called_once_with because it doesn't work with functools.partial
+        # so we are comparing the call args one by one
+        assert len(mocked_process.mock_calls) == 2  # 1 for the constructor, 1 to start the process
+        mocked_call_kwargs = mocked_process.call_args_list[0][1]
+
+        expected_target = partial(server._call_viz, project_path=mocked_project_path)
+        assert mocked_call_kwargs["target"].func == expected_target.func \
+            and mocked_call_kwargs["target"].args == expected_target.args \
+            and mocked_call_kwargs["target"].keywords == expected_target.keywords
+        assert mocked_call_kwargs["daemon"] is True
 
 
 class TestAllocatePort:

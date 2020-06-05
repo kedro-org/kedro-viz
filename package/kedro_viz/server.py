@@ -37,6 +37,7 @@ import traceback
 import webbrowser
 from collections import defaultdict
 from contextlib import closing
+from functools import partial
 from pathlib import Path
 from typing import Dict, List, Set
 
@@ -104,7 +105,7 @@ def _check_viz_up(port):
 
 
 # pylint: disable=unused-argument
-def run_viz(port=None, line=None) -> None:
+def run_viz(port=None, line=None, local_ns=None) -> None:
     """
     Line magic function to start kedro viz. It calls a kedro viz in a process and display it in
     the Jupyter notebook environment.
@@ -112,6 +113,9 @@ def run_viz(port=None, line=None) -> None:
     Args:
         port: TCP port that viz will listen to. Defaults to 4141.
         line: line required by line magic interface.
+        local_ns: Local namespace with local variables of the scope where the line magic is invoked.
+            For more details, please visit:
+            https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
     """
     port = port or 4141  # Default argument doesn't work in Jupyter line magic
@@ -120,9 +124,15 @@ def run_viz(port=None, line=None) -> None:
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
 
+    if local_ns is not None and "project_path" in local_ns:
+        target = partial(_call_viz, project_path=local_ns["project_path"])
+    else:
+        target = _call_viz
+
     viz_process = multiprocessing.Process(
-        target=_call_viz, daemon=True, kwargs={"port": port}
+        target=target, daemon=True, kwargs={"port": port}
     )
+
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
 
@@ -456,7 +466,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env):
         raise KedroCliError(str(ex))
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,too-many-branches
 def _call_viz(
     host=None,
     port=None,
@@ -465,6 +475,7 @@ def _call_viz(
     save_file=None,
     pipeline_name=None,
     env=None,
+    project_path=None
 ):
     global data  # pylint: disable=global-statement,invalid-name
 
@@ -483,7 +494,10 @@ def _call_viz(
                 from kedro.context import KedroContextError
 
             try:
-                context = get_project_context("context", env=env)
+                if project_path is not None:
+                    context = get_project_context("context", project_path=project_path, env=env)
+                else:
+                    context = get_project_context("context", env=env)
                 pipeline = _get_pipeline_from_context(context, pipeline_name)
             except KedroContextError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
