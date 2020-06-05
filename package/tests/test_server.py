@@ -169,7 +169,9 @@ def patched_get_project_context(mocker):
             "context": mocked_context,
         }[key]
 
-    return mocker.patch("kedro_viz.server.get_project_context", side_effect=get_project_context)
+    return mocker.patch(
+        "kedro_viz.server.get_project_context", side_effect=get_project_context
+    )
 
 
 @pytest.fixture
@@ -210,12 +212,11 @@ def test_no_browser(cli_runner):
     assert server.webbrowser.open_new.call_count == 1
 
 
-def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_get_project_context):
+def test_viz_does_not_need_to_specify_project_path(
+    cli_runner, patched_get_project_context
+):
     cli_runner.invoke(server.commands, ["viz", "--no-browser"])
-    patched_get_project_context.assert_called_once_with(
-        "context",
-        env=None
-    )
+    patched_get_project_context.assert_called_once_with("context", env=None)
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -447,21 +448,15 @@ def mocked_process(mocker):
 
 
 class TestCallViz:
-
     def test_call_viz_without_project_path(self, patched_get_project_context):
         server._call_viz()
-        patched_get_project_context.assert_called_once_with(
-            "context",
-            env=None
-        )
+        patched_get_project_context.assert_called_once_with("context", env=None)
 
     def test_call_viz_with_project_path(self, patched_get_project_context):
         mocked_project_path = Path("/tmp")
         server._call_viz(project_path=mocked_project_path)
         patched_get_project_context.assert_called_once_with(
-            "context",
-            project_path=mocked_project_path,
-            env=None
+            "context", project_path=mocked_project_path, env=None
         )
 
 
@@ -515,13 +510,17 @@ class TestRunViz:
 
         # we can't use assert_called_once_with because it doesn't work with functools.partial
         # so we are comparing the call args one by one
-        assert len(mocked_process.mock_calls) == 2  # 1 for the constructor, 1 to start the process
+        assert (
+            len(mocked_process.mock_calls) == 2
+        )  # 1 for the constructor, 1 to start the process
         mocked_call_kwargs = mocked_process.call_args_list[0][1]
 
         expected_target = partial(server._call_viz, project_path=mocked_project_path)
-        assert mocked_call_kwargs["target"].func == expected_target.func \
-            and mocked_call_kwargs["target"].args == expected_target.args \
+        assert (
+            mocked_call_kwargs["target"].func == expected_target.func
+            and mocked_call_kwargs["target"].args == expected_target.args
             and mocked_call_kwargs["target"].keywords == expected_target.keywords
+        )
         assert mocked_call_kwargs["daemon"] is True
 
 

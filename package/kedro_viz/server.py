@@ -479,7 +479,7 @@ def _call_viz(
     save_file=None,
     pipeline_name=None,
     env=None,
-    project_path=None
+    project_path=None,
 ):
     global data  # pylint: disable=global-statement,invalid-name
 
@@ -499,7 +499,9 @@ def _call_viz(
 
             try:
                 if project_path is not None:
-                    context = get_project_context("context", project_path=project_path, env=env)
+                    context = get_project_context(
+                        "context", project_path=project_path, env=env
+                    )
                 else:
                     context = get_project_context("context", env=env)
                 pipeline = _get_pipeline_from_context(context, pipeline_name)
