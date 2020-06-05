@@ -79,7 +79,11 @@ npm run lib
 
 #### Data sources
 
-Kedro-Viz uses unique identifiers to configure the data source. You can configure the data source by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. You can also set it with an environment variable when starting up the dev server, e.g. `DATA=random npm start`.
+Kedro-Viz uses a unique identifier to determine the data source. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
+
+```bash
+DATA=random npm start
+```
 
 There are several different data sources available. By default in production, the app asynchronously loads JSON from the `/api/nodes.json` endpoint, and you can replicate this in development by placing a dataset at `/public/api/nodes.json`. Alternatively, you can use one of the mock unit-testing/demo datasets, or pseudo-random data procedurally-generated on page load, which is often useful for local development.
 
@@ -92,7 +96,7 @@ There are several different data sources available. By default in production, th
 | `animals` | `/src/utils/data/animals.mock.js` |
 | `layers` | `/src/utils/data/layers.mock.js` |
 
-Randomly-generated data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. When using randomly-generated data without a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
+Randomly-generated data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
 
 ### Branching conventions
 
