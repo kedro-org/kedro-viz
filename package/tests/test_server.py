@@ -163,6 +163,7 @@ def patched_get_project_context(mocker):
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.catalog = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
+        mocked_context._hook_manager.hook.after_pipeline_formatted = (lambda formatted_pipeline: None)
         return {
             "create_pipeline": create_pipeline,
             "create_catalog": lambda x: None,
@@ -234,7 +235,7 @@ def test_no_browser_if_not_localhost(cli_runner):
     assert result.exit_code == 0, result.output
     assert not server.webbrowser.open_new.call_count
 
-
+@pytest.mark.usefixtures("patched_get_project_context")
 def test_load_file_outside_kedro_project(cli_runner, tmp_path):
     """Check that running viz with `--load-file` flag works outside of a Kedro project.
     """
