@@ -487,8 +487,9 @@ def _call_viz(
         data = _load_from_file(load_file)
     else:
         if KEDRO_VERSION.match(">=0.15.0"):
-            pipeline = _get_pipeline_from_context(_get_context(project_path, env), pipeline_name)
-            catalog = _get_context(project_path, env).catalog
+            context = _get_context(project_path, env)
+            pipeline = _get_pipeline_from_context(context, pipeline_name)
+            catalog = context.catalog
         else:
             # Kedro 0.14.*
             if pipeline_name:
@@ -497,8 +498,10 @@ def _call_viz(
 
         data = format_pipeline_data(pipeline, catalog)
 
-    enhanced_data = _get_context(project_path, env)._hook_manager\
-        .hook.after_pipeline_formatted(formatted_pipeline=data)  # pylint: disable=protected-access
+    enhanced_data = None
+    if KEDRO_VERSION.match(">=0.16.0"):
+        enhanced_data = _get_context(project_path, env)._hook_manager\
+            .hook.after_pipeline_formatted(formatted_pipeline=data)  # pylint: disable=protected-access
 
     if save_file:
         if enhanced_data:

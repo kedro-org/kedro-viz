@@ -212,10 +212,12 @@ def test_no_browser(cli_runner):
 
 def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_get_project_context):
     cli_runner.invoke(server.commands, ["viz", "--no-browser"])
-    patched_get_project_context.assert_called_once_with(
+    patched_get_project_context.assert_called_with(
         "context",
         env=None
     )
+
+    assert patched_get_project_context.call_count == 2
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -450,19 +452,21 @@ class TestCallViz:
 
     def test_call_viz_without_project_path(self, patched_get_project_context):
         server._call_viz()
-        patched_get_project_context.assert_called_once_with(
+        patched_get_project_context.assert_called_with(
             "context",
             env=None
         )
+        assert patched_get_project_context.call_count == 2
 
     def test_call_viz_with_project_path(self, patched_get_project_context):
         mocked_project_path = Path("/tmp")
         server._call_viz(project_path=mocked_project_path)
-        patched_get_project_context.assert_called_once_with(
+        patched_get_project_context.assert_called_with(
             "context",
             project_path=mocked_project_path,
             env=None
         )
+        assert patched_get_project_context.call_count == 2
 
 
 class TestRunViz:
