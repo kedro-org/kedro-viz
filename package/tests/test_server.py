@@ -163,7 +163,8 @@ def patched_get_project_context(mocker):
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.catalog = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
-        mocked_context._hook_manager.hook.after_pipeline_formatted = (lambda formatted_pipeline: None)
+        mocked_context._hook_manager.hook.after_pipeline_formatted = \
+            (lambda formatted_pipeline: None)
         return {
             "create_pipeline": create_pipeline,
             "create_catalog": lambda x: None,
