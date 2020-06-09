@@ -487,22 +487,8 @@ def _call_viz(
         data = _load_from_file(load_file)
     else:
         if KEDRO_VERSION.match(">=0.15.0"):
-            # pylint: disable=import-outside-toplevel
-            if KEDRO_VERSION.match(">=0.16.0"):
-                from kedro.framework.context import KedroContextError
-            else:
-                from kedro.context import KedroContextError
-
-            try:
-                if project_path is not None:
-                    context = get_project_context("context", project_path=project_path, env=env)
-                else:
-                    context = get_project_context("context", env=env)
-                pipeline = _get_pipeline_from_context(context, pipeline_name)
-            except KedroContextError:
-                raise KedroCliError(ERROR_PROJECT_ROOT)
-            catalog = context.catalog
-
+            pipeline = _get_pipeline_from_context(_get_context(project_path, env), pipeline_name)
+            catalog = _get_context(project_path, env).catalog
         else:
             # Kedro 0.14.*
             if pipeline_name:
@@ -511,10 +497,30 @@ def _call_viz(
 
         data = format_pipeline_data(pipeline, catalog)
 
+    enhanced_data = _get_context(project_path, env)._hook_manager\
+        .hook.after_pipeline_formatted(formatted_pipeline=data)  # pylint: disable=protected-access
+
     if save_file:
+        if enhanced_data:
+            data = enhanced_data
         Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))
     else:
         is_localhost = host in ("127.0.0.1", "localhost", "0.0.0.0")
         if browser and is_localhost:
             webbrowser.open_new("http://{}:{:d}/".format(host, port))
         app.run(host=host, port=port)
+
+
+def _get_context(project_path=None, env=None):
+    # pylint: disable=import-outside-toplevel
+    if KEDRO_VERSION.match(">=0.16.0"):
+        from kedro.framework.context import KedroContextError
+    else:
+        from kedro.context import KedroContextError
+
+    try:
+        if project_path is not None:
+            return get_project_context("context", project_path=project_path, env=env)
+        return get_project_context("context", env=env)
+    except KedroContextError:
+        raise KedroCliError(ERROR_PROJECT_ROOT)
