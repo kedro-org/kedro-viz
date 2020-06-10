@@ -264,6 +264,46 @@ def test_save_file(cli_runner, tmp_path):
     assert json_data == EXPECTED_PIPELINE_DATA
 
 
+def test_save_enhanced_file(cli_runner, tmp_path, mocker):
+    """Check that running with `--save-file` flag saves pipeline JSON file in a specified path.
+    """
+    enhanced_data = {
+            "name": "Enhanced",
+            "tags": ["bob"],
+            "id": "37316e3a",
+            "layer": None,
+            "full_name": "fred_out",
+            "type": "data",
+            "validation": "my_path.html"
+        }
+
+    def get_project_context(
+            key: str = "context", **kwargs  # pylint: disable=bad-continuation
+    ):  # pylint: disable=unused-argument
+        mocked_context = mocker.Mock()
+        mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
+        mocked_context.catalog = mocker.MagicMock()
+        mocked_context.pipeline = create_pipeline()
+        mocked_context._hook_manager.hook.after_pipeline_formatted = \
+            (lambda formatted_pipeline: enhanced_data)
+        return {
+            "create_pipeline": create_pipeline,
+            "create_catalog": lambda x: None,
+            "context": mocked_context,
+        }[key]
+
+    mocker.patch("kedro_viz.server.get_project_context", side_effect=get_project_context)
+
+    save_path = str(tmp_path / "test.json")
+
+    result = cli_runner.invoke(server.commands, ["viz", "--save-file", save_path])
+    assert result.exit_code == 0, result.output
+
+    with open(save_path, "r") as f:
+        json_data = json.load(f)
+    assert json_data == enhanced_data
+
+
 def test_load_file_no_top_level_key(cli_runner, tmp_path):
     """Check that top level keys are properly checked."""
     filepath_json = str(tmp_path / "test.json")
