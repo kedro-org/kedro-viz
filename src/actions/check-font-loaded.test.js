@@ -13,7 +13,8 @@ describe('checkFontLoaded', () => {
   };
 
   beforeEach(() => {
-    store = createStore(reducer, mockState.lorem);
+    const state = reducer(mockState.lorem, updateFontLoaded(false));
+    store = createStore(reducer, state);
     jest.resetModules();
     document.fonts = {
       check: () => false,
