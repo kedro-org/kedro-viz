@@ -268,14 +268,14 @@ def test_save_enhanced_file(cli_runner, tmp_path, mocker):
     """Check that running with `--save-file` flag saves pipeline JSON file in a specified path.
     """
     enhanced_data = {
-            "name": "Enhanced",
-            "tags": ["bob"],
-            "id": "37316e3a",
-            "layer": None,
-            "full_name": "fred_out",
-            "type": "data",
-            "validation": "my_path.html"
-        }
+        "name": "Enhanced",
+        "tags": ["bob"],
+        "id": "37316e3a",
+        "layer": None,
+        "full_name": "fred_out",
+        "type": "data",
+        "validation": "my_path.html"
+    }
 
     def get_project_context(
             key: str = "context", **kwargs  # pylint: disable=bad-continuation
