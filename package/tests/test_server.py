@@ -327,12 +327,13 @@ def test_pipeline_flag(cli_runner, client):
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
+
     assert data == {
         "edges": [],
-        "nodes": [],
-        "tags": [],
         "layers": [],
+        "nodes": [],
         "pipelines": [{"id": "another", "name": "Another"}],
+        "tags": [],
     }
 
 

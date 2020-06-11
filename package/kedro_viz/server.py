@@ -182,7 +182,7 @@ def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]
         pipelines = context._get_pipelines()  # pylint: disable=protected-access
         if pipeline_name:
             pipelines = {
-                "__default__": context._get_pipeline(  # pylint: disable=protected-access
+                pipeline_name: context._get_pipeline(  # pylint: disable=protected-access
                     name=pipeline_name
                 )
             }
