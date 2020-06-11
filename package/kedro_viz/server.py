@@ -118,7 +118,7 @@ def run_viz(port=None, line=None, local_ns=None) -> None:
             https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
     """
-    port = port or 4141  # Default argument doesn't work in Jupyter line magic
+    port = port or 4141  # Default argument doesn't work in Jupyter line magic.
     port = _allocate_port(start_at=port)
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
@@ -200,7 +200,9 @@ def _get_pipeline_catalog_from_kedro14(env):
         raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
-def _sort_layers(nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]) -> List[str]:
+def _sort_layers(
+    nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]
+) -> List[str]:
     """Given a DAG represented by a dictionary of nodes, some of which have a `layer` attribute,
     along with their dependencies, return the list of all layers sorted according to
     the nodes' topological order, i.e. a layer should appear before another layer in the list
@@ -296,11 +298,15 @@ def _sort_layers(nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]) -> L
 def _construct_layer_mapping(catalog):
     if hasattr(catalog, "layers"):  # kedro>=0.16.0
         if catalog.layers is None:
-            return {ds_name: None for ds_name in catalog._data_sets}   # pylint: disable=protected-access
+            return {
+                ds_name: None for ds_name in catalog._data_sets
+            }  # pylint: disable=protected-access
 
         dataset_to_layer = {}
         for layer, dataset_names in catalog.layers.items():
-            dataset_to_layer.update({dataset_name: layer for dataset_name in dataset_names})
+            dataset_to_layer.update(
+                {dataset_name: layer for dataset_name in dataset_names}
+            )
     else:
         dataset_to_layer = {
             ds_name: getattr(ds_obj, "_layer", None)
@@ -392,7 +398,7 @@ def format_pipeline_data(pipeline, catalog):
         "nodes": sorted_nodes,
         "edges": edges,
         "tags": sorted_tags,
-        "layers": sorted_layers
+        "layers": sorted_layers,
     }
 
 
@@ -475,7 +481,7 @@ def _call_viz(
     save_file=None,
     pipeline_name=None,
     env=None,
-    project_path=None
+    project_path=None,
 ):
     global data  # pylint: disable=global-statement,invalid-name
 
@@ -495,7 +501,9 @@ def _call_viz(
 
             try:
                 if project_path is not None:
-                    context = get_project_context("context", project_path=project_path, env=env)
+                    context = get_project_context(
+                        "context", project_path=project_path, env=env
+                    )
                 else:
                     context = get_project_context("context", env=env)
                 pipeline = _get_pipeline_from_context(context, pipeline_name)
