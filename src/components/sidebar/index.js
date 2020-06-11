@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import TagList from '../tag-list';
 import NodeList from '../node-list';
 import IconToolbar from '../icon-toolbar';
+import MiniMap from '../minimap';
 import './sidebar.css';
 
 /**
@@ -21,6 +22,14 @@ export const Sidebar = ({ visible }) => (
         <NodeList />
       </div>
       <IconToolbar />
+      <div className="minimap-container">
+        <MiniMap
+          mapSize={{
+            width: 240,
+            height: 160
+          }}
+        />
+      </div>
     </div>
   </>
 );

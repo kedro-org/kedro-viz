@@ -1,0 +1,18 @@
+@import './node';
+
+.pipeline-minimap__graph {
+  display: block;
+}
+
+.pipeline-minimap__viewport {
+  fill: none;
+  stroke-width: 1px;
+
+  .kui-theme--light & {
+    stroke: #fff;
+  }
+
+  .kui-theme--dark & {
+    stroke: #4b4e50;
+  }
+}

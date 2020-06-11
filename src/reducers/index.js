@@ -8,6 +8,7 @@ import {
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
+  UPDATE_ZOOM,
   UPDATE_FONT_LOADED
 } from '../actions';
 
@@ -50,6 +51,7 @@ const combinedReducer = combineReducers({
   id: (state = null) => state,
   layer: (state = {}) => state,
   chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
+  zoom: createReducer(UPDATE_ZOOM, 'zoom', {}),
   fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
   textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),
   theme: createReducer(TOGGLE_THEME, 'theme', 'dark')

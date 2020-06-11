@@ -1,0 +1,41 @@
+@import './variables';
+
+.pipeline-node {
+  rect {
+    .kui-theme--light & {
+      fill: $node-fill-light-default;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-fill-dark-default;
+    }
+  }
+}
+
+.pipeline-node--active {
+  rect {
+    .kui-theme--light & {
+      fill: $node-fill-light-active;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-fill-dark-active;
+    }
+  }
+}
+
+.pipeline-node--selected {
+  rect {
+    .kui-theme--light & {
+      fill: $node-fill-light-selected;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-fill-dark-selected;
+    }
+  }
+}
+
+.pipeline-node--faded {
+  opacity: 0.3;
+}

@@ -58,3 +58,18 @@
     background: $color-bg-dark-3;
   }
 }
+
+.minimap-container {
+  position: absolute;
+  top: 100%;
+  left: 100%;
+  transform: translateY(-100%);
+
+  .kui-theme--light & {
+    background: #a5adb6;
+  }
+
+  .kui-theme--dark & {
+    background: #121416;
+  }
+}

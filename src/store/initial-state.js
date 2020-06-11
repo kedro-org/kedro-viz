@@ -119,6 +119,7 @@ const getInitialState = (props = {}) => {
   return {
     ...pipelineData,
     chartSize: {},
+    zoom: {},
     fontLoaded: false,
     textLabels,
     visible,

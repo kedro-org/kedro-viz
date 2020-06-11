@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
-import { zoom, zoomIdentity } from 'd3-zoom';
-import { updateChartSize } from '../../actions';
+import { zoom, zoomIdentity, zoomTransform } from 'd3-zoom';
+import { updateChartSize, updateZoom } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import {
@@ -59,10 +59,19 @@ export class FlowChart extends Component {
     if (prevProps.visibleSidebar !== this.props.visibleSidebar) {
       this.updateChartSize();
     }
-    if (prevProps.zoom !== this.props.zoom) {
+
+    this.drawChart();
+
+    if (
+      prevProps.edges !== this.props.edges ||
+      prevProps.nodes !== this.props.nodes ||
+      prevProps.layers !== this.props.layers ||
+      prevProps.textLabels !== this.props.textLabels ||
+      prevProps.chartSize.width !== this.props.chartSize.width ||
+      prevProps.chartSize.height !== this.props.chartSize.height
+    ) {
       this.zoomChart();
     }
-    this.drawChart();
   }
 
   /**
@@ -151,19 +160,8 @@ export class FlowChart extends Component {
    * Setup D3 zoom behaviour on component mount
    */
   initZoomBehaviour() {
-    this.zoomBehaviour = zoom().on('zoom', () => {
-      const { k: scale, y } = event.transform;
-      const { sidebarWidth } = this.props.chartSize;
-      const { width, height } = this.props.graphSize;
-
-      // Limit zoom translate extent: This needs to be recalculated on zoom
-      // as it needs access to the current scale to correctly multiply the
-      // sidebarWidth by the scale to offset it properly
-      const margin = 500;
-      this.zoomBehaviour.translateExtent([
-        [-sidebarWidth / scale - margin, -margin],
-        [width + margin, height + margin]
-      ]);
+    this.zoomBehaviour = zoom().on('zoom', (datum, index, groups) => {
+      const { k: scale, x, y } = event.transform;
 
       // Transform the <g> that wraps the chart
       this.el.wrapper.attr('transform', event.transform);
@@ -178,7 +176,11 @@ export class FlowChart extends Component {
 
       // Hide the tooltip so it doesn't get misaligned to its node
       this.hideTooltip();
+
+      // Update zoom state
+      this.props.onUpdateZoom({ scale, x, y });
     });
+
     this.el.svg.call(this.zoomBehaviour);
   }
 
@@ -191,14 +193,25 @@ export class FlowChart extends Component {
     // Limit zoom scale extent
     this.zoomBehaviour.scaleExtent([scale * 0.8, 2]);
 
-    // Auto zoom to fit the chart nicely on the page
-    this.el.svg
-      .transition()
-      .duration(this.DURATION)
-      .call(
+    // Get current zoom transform
+    const { k, x, y } = zoomTransform(this.wrapperRef.current);
+
+    if (k === 1 && x === 0 && y === 0) {
+      // Immediately apply zoom if this is the first change
+      this.el.svg.call(
         this.zoomBehaviour.transform,
         zoomIdentity.translate(translateX, translateY).scale(scale)
       );
+    } else {
+      // Auto zoom to fit the chart nicely on the page
+      this.el.svg
+        .transition()
+        .duration(this.DURATION)
+        .call(
+          this.zoomBehaviour.transform,
+          zoomIdentity.translate(translateX, translateY).scale(scale)
+        );
+    }
   }
 
   /**
@@ -365,6 +378,9 @@ export const mapDispatchToProps = dispatch => ({
   },
   onUpdateChartSize: chartSize => {
     dispatch(updateChartSize(chartSize));
+  },
+  onUpdateZoom: transform => {
+    dispatch(updateZoom(transform));
   }
 });
 

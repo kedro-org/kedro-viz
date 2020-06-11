@@ -118,6 +118,16 @@ export const getChartSize = createSelector(
 );
 
 /**
+ * Gets the current chart zoom
+ */
+export const getChartZoom = createSelector(
+  [state => state.zoom],
+  zoom => ({
+    ...zoom
+  })
+);
+
+/**
  * Get chart zoom translation/scale,
  * by comparing native graph width/height to container width/height
  */

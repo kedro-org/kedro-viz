@@ -104,6 +104,19 @@ export function updateChartSize(chartSize) {
   };
 }
 
+export const UPDATE_ZOOM = 'UPDATE_ZOOM';
+
+/**
+ * Store the zoom
+ * @param {Object} zoom The zoom transform
+ */
+export function updateZoom(zoom) {
+  return {
+    type: UPDATE_ZOOM,
+    zoom
+  };
+}
+
 export const UPDATE_FONT_LOADED = 'UPDATE_FONT_LOADED';
 
 /**
