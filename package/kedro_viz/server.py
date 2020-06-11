@@ -182,8 +182,10 @@ def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]
         pipelines = context._get_pipelines()  # pylint: disable=protected-access
         if pipeline_name:
             pipelines = {
-                "__default__": context._get_pipeline(name=pipeline_name)
-            }  # pylint: disable=protected-access
+                "__default__": context._get_pipeline(  # pylint: disable=protected-access
+                    name=pipeline_name
+                )
+            }
         return pipelines
 
     # Kedro 0.15.0 or 0.15.1
@@ -303,8 +305,9 @@ def _construct_layer_mapping(catalog):
     if hasattr(catalog, "layers"):  # kedro>=0.16.0
         if catalog.layers is None:
             return {
-                ds_name: None for ds_name in catalog._data_sets
-            }  # pylint: disable=protected-access
+                ds_name: None
+                for ds_name in catalog._data_sets  # pylint: disable=protected-access
+            }
 
         dataset_to_layer = {}
         for layer, dataset_names in catalog.layers.items():
