@@ -356,7 +356,7 @@ def format_pipeline_data(pipelines, catalog) -> Dict[str, list]:
 
     dataset_to_layer = _construct_layer_mapping(catalog)
     for pipeline_key, pipeline in pipelines.items():
-        pipelines_nodes.append({"id": pipeline_key, "name": pipeline_key})
+        pipelines_nodes.append({"id": pipeline_key, "name": pretty_name(pipeline_key)})
         for node in sorted(pipeline.nodes, key=lambda n: n.name):
             task_id = _hash(str(node))
             all_tags.update(node.tags)
