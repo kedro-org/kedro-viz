@@ -501,7 +501,7 @@ def _call_viz(
     enhanced_data = None
     if KEDRO_VERSION.match(">=0.16.0"):
         enhanced_data = _get_context(project_path, env)._hook_manager\
-            .hook.after_pipeline_formatted(formatted_pipeline=data)  # pylint: disable=protected-access
+            .hook.after_api_data_ready(api_data=data)  # pylint: disable=protected-access
 
     if save_file:
         if enhanced_data:

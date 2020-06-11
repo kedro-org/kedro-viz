@@ -163,8 +163,8 @@ def patched_get_project_context(mocker):
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.catalog = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
-        mocked_context._hook_manager.hook.after_pipeline_formatted = \
-            (lambda formatted_pipeline: None)
+        mocked_context._hook_manager.hook.after_api_data_ready = \
+            (lambda api_data: None)
         return {
             "create_pipeline": create_pipeline,
             "create_catalog": lambda x: None,
@@ -284,8 +284,8 @@ def test_save_enhanced_file(cli_runner, tmp_path, mocker):
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.catalog = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
-        mocked_context._hook_manager.hook.after_pipeline_formatted = \
-            (lambda formatted_pipeline: enhanced_data)
+        mocked_context._hook_manager.hook.after_api_data_ready = \
+            (lambda api_data: enhanced_data)
         return {
             "create_pipeline": create_pipeline,
             "create_catalog": lambda x: None,

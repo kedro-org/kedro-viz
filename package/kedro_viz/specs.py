@@ -40,12 +40,12 @@ class VizSpecs:
     """Namespace that defines all specifications for Kedro viz related hooks."""
 
     @hook_spec
-    def after_pipeline_formatted(self, formatted_pipeline: Dict[str, Any]) -> Dict[str, Any]:
+    def after_api_data_ready(self, api_data: Dict[str, Any]) -> Dict[str, Any]:
         """Hook to be invoked after the Pipeline object has been formatted into a dictionary
         that will be shown by Kedro Viz.
 
         Args:
-            formatted_pipeline: the pipeline dictionary produces by format_pipeline_data.
+            api_data: the pipeline dictionary produced by format_pipeline_data.
 
         Returns:
             A dictionary containing the original pipeline data as well as any additional information
