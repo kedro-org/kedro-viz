@@ -177,15 +177,19 @@ def _load_from_file(load_file: str) -> dict:
     return data
 
 
-def _get_pipeline_from_context(context, pipeline_name):
+def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]:
     if KEDRO_VERSION.match(">=0.15.2"):
-        return context._get_pipeline(  # pylint: disable=protected-access
-            name=pipeline_name
-        )
+        pipelines = context._get_pipelines()  # pylint: disable=protected-access
+        if pipeline_name:
+            pipelines = {
+                "__default__": context._get_pipeline(name=pipeline_name)
+            }  # pylint: disable=protected-access
+        return pipelines
+
     # Kedro 0.15.0 or 0.15.1
     if pipeline_name:
         raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
-    return context.pipeline
+    return {"__default__": context.pipeline}
 
 
 def _get_pipeline_catalog_from_kedro14(env):
@@ -195,12 +199,14 @@ def _get_pipeline_catalog_from_kedro14(env):
         conf = get_config(str(Path.cwd()), env)
         create_catalog = get_project_context("create_catalog")
         catalog = create_catalog(config=conf)
-        return pipeline, catalog
+        return {"__default__": pipeline}, catalog
     except (ImportError, KeyError):
         raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
-def _sort_layers(nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]) -> List[str]:
+def _sort_layers(
+    nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]
+) -> List[str]:
     """Given a DAG represented by a dictionary of nodes, some of which have a `layer` attribute,
     along with their dependencies, return the list of all layers sorted according to
     the nodes' topological order, i.e. a layer should appear before another layer in the list
@@ -296,11 +302,15 @@ def _sort_layers(nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]) -> L
 def _construct_layer_mapping(catalog):
     if hasattr(catalog, "layers"):  # kedro>=0.16.0
         if catalog.layers is None:
-            return {ds_name: None for ds_name in catalog._data_sets}   # pylint: disable=protected-access
+            return {
+                ds_name: None for ds_name in catalog._data_sets
+            }  # pylint: disable=protected-access
 
         dataset_to_layer = {}
         for layer, dataset_names in catalog.layers.items():
-            dataset_to_layer.update({dataset_name: layer for dataset_name in dataset_names})
+            dataset_to_layer.update(
+                {dataset_name: layer for dataset_name in dataset_names}
+            )
     else:
         dataset_to_layer = {
             ds_name: getattr(ds_obj, "_layer", None)
@@ -311,13 +321,17 @@ def _construct_layer_mapping(catalog):
 
 
 # pylint: disable=too-many-locals
-def format_pipeline_data(pipeline, catalog):
+def format_pipeline_data(pipelines, catalog) -> Dict[str, list]:
     """
     Format pipeline and catalog data from Kedro for kedro-viz
 
     Args:
-        pipeline: Kedro pipeline object
-        catalog:  Kedro catalog object
+        pipelines: Dictionary of Kedro pipeline objects.
+        catalog:  Kedro catalog object.
+
+    Returns:
+        Dictionary of nodes, edges, tags and layers list.
+
     """
 
     def pretty_name(name):
@@ -325,6 +339,7 @@ def format_pipeline_data(pipeline, catalog):
         parts = [n[0].upper() + n[1:] for n in name.split()]
         return " ".join(parts)
 
+    pipelines_nodes = []
     # keep tracking of node_id -> node data in the graph
     nodes = {}
     # keep track of a sorted list of nodes to returned to the client
@@ -340,59 +355,64 @@ def format_pipeline_data(pipeline, catalog):
     all_tags = set()
 
     dataset_to_layer = _construct_layer_mapping(catalog)
+    for pipeline_key, pipeline in pipelines.items():
+        pipelines_nodes.append({"id": pipeline_key, "name": pipeline_key})
+        for node in sorted(pipeline.nodes, key=lambda n: n.name):
+            task_id = _hash(str(node))
+            all_tags.update(node.tags)
+            nodes[task_id] = {
+                "type": "task",
+                "id": task_id,
+                "name": getattr(node, "short_name", node.name),
+                "full_name": getattr(node, "_func_name", str(node)),
+                "tags": sorted(node.tags),
+                "pipeline": pipeline_key,
+            }
+            sorted_nodes.append(nodes[task_id])
 
-    for node in sorted(pipeline.nodes, key=lambda n: n.name):
-        task_id = _hash(str(node))
-        all_tags.update(node.tags)
-        nodes[task_id] = {
-            "type": "task",
-            "id": task_id,
-            "name": getattr(node, "short_name", node.name),
-            "full_name": getattr(node, "_func_name", str(node)),
-            "tags": sorted(node.tags),
-        }
-        sorted_nodes.append(nodes[task_id])
+            for data_set in node.inputs:
+                namespace = data_set.split("@")[0]
+                namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
+                namespace_id = _hash(namespace)
+                edges.append({"source": namespace_id, "target": task_id})
+                namespace_tags[namespace].update(node.tags)
+                node_dependencies[namespace_id].add(task_id)
 
-        for data_set in node.inputs:
-            namespace = data_set.split("@")[0]
-            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
-            namespace_id = _hash(namespace)
-            edges.append({"source": namespace_id, "target": task_id})
-            namespace_tags[namespace].update(node.tags)
-            node_dependencies[namespace_id].add(task_id)
+            for data_set in node.outputs:
+                namespace = data_set.split("@")[0]
+                namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
+                namespace_id = _hash(namespace)
+                edges.append({"source": task_id, "target": namespace_id})
+                namespace_tags[namespace].update(node.tags)
+                node_dependencies[task_id].add(namespace_id)
 
-        for data_set in node.outputs:
-            namespace = data_set.split("@")[0]
-            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
-            namespace_id = _hash(namespace)
-            edges.append({"source": task_id, "target": namespace_id})
-            namespace_tags[namespace].update(node.tags)
-            node_dependencies[task_id].add(namespace_id)
+        for namespace, tags in sorted(namespace_tags.items()):
+            is_param = bool("param" in namespace.lower())
+            node_id = _hash(namespace)
+            nodes[node_id] = {
+                "type": "parameters" if is_param else "data",
+                "id": node_id,
+                "name": pretty_name(namespace),
+                "full_name": namespace,
+                "tags": sorted(tags),
+                "layer": namespace_to_layer[namespace],
+            }
+            sorted_nodes.append(nodes[node_id])
 
-    for namespace, tags in sorted(namespace_tags.items()):
-        is_param = bool("param" in namespace.lower())
-        node_id = _hash(namespace)
-        nodes[node_id] = {
-            "type": "parameters" if is_param else "data",
-            "id": node_id,
-            "name": pretty_name(namespace),
-            "full_name": namespace,
-            "tags": sorted(tags),
-            "layer": namespace_to_layer[namespace],
-        }
-        sorted_nodes.append(nodes[node_id])
+        # sort tags
+        sorted_tags = [
+            {"id": tag, "name": pretty_name(tag)} for tag in sorted(all_tags)
+        ]
 
-    # sort tags
-    sorted_tags = [{"id": tag, "name": pretty_name(tag)} for tag in sorted(all_tags)]
-
-    # sort layers
-    sorted_layers = _sort_layers(nodes, node_dependencies)
+        # sort layers
+        sorted_layers = _sort_layers(nodes, node_dependencies)
 
     return {
+        "pipelines": pipelines_nodes,
         "nodes": sorted_nodes,
         "edges": edges,
         "tags": sorted_tags,
-        "layers": sorted_layers
+        "layers": sorted_layers,
     }
 
 
@@ -475,7 +495,7 @@ def _call_viz(
     save_file=None,
     pipeline_name=None,
     env=None,
-    project_path=None
+    project_path=None,
 ):
     global data  # pylint: disable=global-statement,invalid-name
 
@@ -495,10 +515,12 @@ def _call_viz(
 
             try:
                 if project_path is not None:
-                    context = get_project_context("context", project_path=project_path, env=env)
+                    context = get_project_context(
+                        "context", project_path=project_path, env=env
+                    )
                 else:
                     context = get_project_context("context", env=env)
-                pipeline = _get_pipeline_from_context(context, pipeline_name)
+                pipelines = _get_pipelines_from_context(context, pipeline_name)
             except KedroContextError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
             catalog = context.catalog
@@ -507,9 +529,9 @@ def _call_viz(
             # Kedro 0.14.*
             if pipeline_name:
                 raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
-            pipeline, catalog = _get_pipeline_catalog_from_kedro14(env)
+            pipelines, catalog = _get_pipeline_catalog_from_kedro14(env)
 
-        data = format_pipeline_data(pipeline, catalog)
+        data = format_pipeline_data(pipelines, catalog)
 
     if save_file:
         Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))
