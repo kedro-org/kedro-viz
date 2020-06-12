@@ -33,7 +33,7 @@ const IconButton = ({
   const Icon = icons[icon];
 
   return visible ? (
-    <li>
+    <li className={className && `${className}-container`}>
       <button
         aria-label={ariaLabel}
         aria-live={ariaLive}

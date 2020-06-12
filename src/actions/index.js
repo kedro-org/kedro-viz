@@ -129,3 +129,16 @@ export function updateFontLoaded(fontLoaded) {
     fontLoaded
   };
 }
+
+export const TOGGLE_MINIMAP = 'TOGGLE_MINIMAP';
+
+/**
+ * Toggle mini map
+ * @param {string} visible Visibility status
+ */
+export function toggleMiniMap(visible) {
+  return {
+    type: TOGGLE_MINIMAP,
+    visible
+  };
+}

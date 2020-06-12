@@ -37,6 +37,8 @@
 }
 
 .pipeline-ui {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -59,17 +61,22 @@
   }
 }
 
-.minimap-container {
+.pipeline-minimap-container {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 2px);
   left: 100%;
-  transform: translateY(-100%);
+  transform: translate(-100%, -100%);
+  transition: transform 300ms ease 300ms;
+
+  &--visible {
+    transform: translate(0, -100%);
+  }
 
   .kui-theme--light & {
     background: #a5adb6;
   }
 
   .kui-theme--dark & {
-    background: #121416;
+    background: #010f17;
   }
 }

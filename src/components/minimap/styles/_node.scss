@@ -1,6 +1,6 @@
 @import './variables';
 
-.pipeline-node {
+.pipeline-minimap-node {
   rect {
     .kui-theme--light & {
       fill: $node-fill-light-default;
@@ -12,7 +12,7 @@
   }
 }
 
-.pipeline-node--active {
+.pipeline-minimap-node--active {
   rect {
     .kui-theme--light & {
       fill: $node-fill-light-active;
@@ -24,7 +24,7 @@
   }
 }
 
-.pipeline-node--selected {
+.pipeline-minimap-node--selected {
   rect {
     .kui-theme--light & {
       fill: $node-fill-light-selected;
@@ -36,6 +36,6 @@
   }
 }
 
-.pipeline-node--faded {
+.pipeline-minimap-node--faded {
   opacity: 0.3;
 }

@@ -38,13 +38,13 @@ const drawNodes = function() {
   } = this.props;
 
   this.el.nodes = this.el.nodeGroup
-    .selectAll('.pipeline-node')
+    .selectAll('.pipeline-minimap-node')
     .data(nodes, node => node.id);
 
   const enterNodes = this.el.nodes
     .enter()
     .append('g')
-    .attr('class', 'pipeline-node');
+    .attr('class', 'pipeline-minimap-node');
 
   enterNodes
     .attr('transform', node => `translate(${node.x}, ${node.y})`)
@@ -62,10 +62,10 @@ const drawNodes = function() {
   this.el.nodes = this.el.nodes
     .merge(enterNodes)
     .attr('data-id', node => node.id)
-    .classed('pipeline-node--active', node => nodeActive[node.id])
-    .classed('pipeline-node--selected', node => nodeSelected[node.id])
+    .classed('pipeline-minimap-node--active', node => nodeActive[node.id])
+    .classed('pipeline-minimap-node--selected', node => nodeSelected[node.id])
     .classed(
-      'pipeline-node--faded',
+      'pipeline-minimap-node--faded',
       node => centralNode && !linkedNodes[node.id]
     );
 

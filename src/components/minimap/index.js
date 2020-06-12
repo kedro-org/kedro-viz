@@ -22,8 +22,8 @@ export class MiniMap extends Component {
   constructor(props) {
     super(props);
 
-    this.DURATION = 700;
-    this.SCALE = 0.9;
+    this.DURATION = 400;
+    this.SCALE = 0.85;
 
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
@@ -35,20 +35,23 @@ export class MiniMap extends Component {
   componentDidMount() {
     this.selectD3Elements();
     this.initZoomBehaviour();
-    this.drawMap();
-    this.zoomMap();
   }
 
   componentDidUpdate(prevProps) {
-    this.drawMap();
+    const { nodes, textLabels, mapSize, visible } = this.props;
 
-    if (
-      prevProps.nodes !== this.props.nodes ||
-      prevProps.textLabels !== this.props.textLabels ||
-      prevProps.mapSize.width !== this.props.mapSize.width ||
-      prevProps.mapSize.height !== this.props.mapSize.height
-    ) {
-      this.zoomMap();
+    if (visible) {
+      this.drawMap();
+
+      if (
+        prevProps.visible !== visible ||
+        prevProps.nodes !== nodes ||
+        prevProps.textLabels !== textLabels ||
+        prevProps.mapSize.width !== mapSize.width ||
+        prevProps.mapSize.height !== mapSize.height
+      ) {
+        this.zoomMap();
+      }
     }
   }
 
@@ -146,7 +149,7 @@ export class MiniMap extends Component {
    * Render React elements
    */
   render() {
-    const { width = 100, height = 100 } = this.props.mapSize;
+    const { width, height } = this.props.mapSize;
 
     return (
       <div className="pipeline-minimap kedro" ref={this.containerRef}>
@@ -170,7 +173,23 @@ export class MiniMap extends Component {
   }
 }
 
+const getMapSize = state => {
+  const size = getGraphSize(state);
+  const chartSize = getChartSize(state);
+  const width = Math.max(
+    120,
+    Math.min(80 + size.width * 0.1, chartSize.width * 0.2)
+  );
+  const height = Math.max(
+    120,
+    Math.min(20 + size.height * 0.1, chartSize.height * 0.2)
+  );
+  return { width: width || 0, height: height || 0 };
+};
+
 export const mapStateToProps = state => ({
+  visible: state.visible.miniMap,
+  mapSize: getMapSize(state),
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),

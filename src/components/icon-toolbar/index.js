@@ -6,7 +6,8 @@ import {
   toggleLayers,
   toggleSidebar,
   toggleTextLabels,
-  toggleTheme
+  toggleTheme,
+  toggleMiniMap
 } from '../../actions';
 import IconButton from './icon-button';
 import './icon-toolbar.css';
@@ -25,6 +26,7 @@ export const IconToolbar = ({
   onToggleSidebar,
   onToggleTextLabels,
   onToggleTheme,
+  onToggleMiniMap,
   textLabels,
   theme,
   visible
@@ -70,6 +72,14 @@ export const IconToolbar = ({
         disabled={disableLayerBtn}
         visible={visible.layerBtn}
       />
+      <IconButton
+        className={'pipeline-minimap-button'}
+        ariaLabel={`Turn minimap ${visible.miniMap ? 'off' : 'on'}`}
+        onClick={() => onToggleMiniMap(!visible.miniMap)}
+        icon="layers"
+        labelText={`${visible.miniMap ? 'Hide' : 'Show'} minimap`}
+        visible={visible.miniMapBtn}
+      />
     </ul>
   </>
 );
@@ -96,6 +106,9 @@ export const mapDispatchToProps = dispatch => ({
   },
   onToggleTheme: value => {
     dispatch(toggleTheme(value));
+  },
+  onToggleMiniMap: value => {
+    dispatch(toggleMiniMap(value));
   }
 });
 
