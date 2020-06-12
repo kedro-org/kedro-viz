@@ -57,8 +57,8 @@ if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli import get_project_context
     from kedro.framework.cli.utils import KedroCliError
 else:
-    from kedro.cli import get_project_context
-    from kedro.cli.utils import KedroCliError
+    from kedro.cli import get_project_context  # pragma: no cover
+    from kedro.cli.utils import KedroCliError  # pragma: no cover
 
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
@@ -342,28 +342,29 @@ def format_pipeline_data(pipelines, catalog) -> Dict[str, list]:
         parts = [n[0].upper() + n[1:] for n in name.split()]
         return " ".join(parts)
 
-    pipelines_nodes = []
-    # keep tracking of node_id -> node data in the graph
-    nodes = {}
+    # keep tracking of pipelines in the graph {pipeline_key -> {pipeline_id, pipeline_name}}
+    all_pipelines = []
     # keep track of a sorted list of nodes to returned to the client
-    sorted_nodes = []
+    all_nodes = []
     # keep track of edges in the graph: [{source_node_id -> target_node_id}]
-    edges = []
-
-    # keep track of {data_set_namespace -> layer it belongs to}
-    namespace_to_layer = {}
+    all_edges = []
+    # keep track of tags in the graph
     all_tags = set()
-
+    # keep track of layers in the graph
     all_layers = []
 
     dataset_to_layer = _construct_layer_mapping(catalog)
     for pipeline_key, pipeline in pipelines.items():
+        # keep tracking of node_id -> node data in the graph
+        nodes = {}
         # keep track of node_id -> set(child_node_ids) for layers sorting
         node_dependencies = defaultdict(set)
         # keep_track of {data_set_namespace -> set(tags)}
         namespace_tags = defaultdict(set)
-        pipelines_nodes.append({"id": pipeline_key, "name": pretty_name(pipeline_key)})
+        # keep track of {data_set_namespace -> layer it belongs to}
+        namespace_to_layer = {}
 
+        all_pipelines.append({"id": pipeline_key, "name": pretty_name(pipeline_key)})
         for node in sorted(pipeline.nodes, key=lambda n: n.name):
             task_id = _hash(str(node))
             all_tags.update(node.tags)
@@ -375,13 +376,13 @@ def format_pipeline_data(pipelines, catalog) -> Dict[str, list]:
                 "tags": sorted(node.tags),
                 "pipeline": pipeline_key,
             }
-            sorted_nodes.append(nodes[task_id])
+            all_nodes.append(nodes[task_id])
 
             for data_set in node.inputs:
                 namespace = data_set.split("@")[0]
                 namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
                 namespace_id = _hash(namespace)
-                edges.append({"source": namespace_id, "target": task_id})
+                all_edges.append({"source": namespace_id, "target": task_id})
                 namespace_tags[namespace].update(node.tags)
                 node_dependencies[namespace_id].add(task_id)
 
@@ -389,7 +390,7 @@ def format_pipeline_data(pipelines, catalog) -> Dict[str, list]:
                 namespace = data_set.split("@")[0]
                 namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
                 namespace_id = _hash(namespace)
-                edges.append({"source": task_id, "target": namespace_id})
+                all_edges.append({"source": task_id, "target": namespace_id})
                 namespace_tags[namespace].update(node.tags)
                 node_dependencies[task_id].add(namespace_id)
 
@@ -406,21 +407,19 @@ def format_pipeline_data(pipelines, catalog) -> Dict[str, list]:
                 "layer": namespace_to_layer[namespace],
                 "pipeline": pipeline_key,
             }
-            sorted_nodes.append(nodes[node_id])
-
-        # sort tags
-        sorted_tags = [
-            {"id": tag, "name": pretty_name(tag)} for tag in sorted(all_tags)
-        ]
+            all_nodes.append(nodes[node_id])
 
         # sort layers
         sorted_layers = _sort_layers(nodes, node_dependencies)
         all_layers += sorted_layers
 
+    # sort tags
+    sorted_tags = [{"id": tag, "name": pretty_name(tag)} for tag in sorted(all_tags)]
+
     return {
-        "pipelines": pipelines_nodes,
-        "nodes": sorted_nodes,
-        "edges": edges,
+        "pipelines": all_pipelines,
+        "nodes": all_nodes,
+        "edges": all_edges,
         "tags": sorted_tags,
         "layers": list(set(all_layers)),
     }
