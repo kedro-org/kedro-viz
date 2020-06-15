@@ -16,6 +16,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 * Fix `%run_viz` line magic to display kedro viz inside Jupyter notebook, previously broken for kedro 0.16.0/0.16.1. Note that the fix needs `kedro>=0.16.2` to take effect.
+* Expose information for multiple pipelines in "nodes.json" (#192)
 
 # Release 3.3.0:
 
