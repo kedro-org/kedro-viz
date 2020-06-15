@@ -37,6 +37,7 @@ from pathlib import Path
 
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
+from kedro.framework.context import KedroContextError
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from semver import VersionInfo
@@ -345,9 +346,6 @@ def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
 def test_viz_kedro15_invalid(mocker, cli_runner):
     """Test that running viz in Kedro 0.15.0,
     and it is outside of a Kedro project root."""
-    from kedro.context import (  # pylint: disable=import-outside-toplevel
-        KedroContextError,
-    )
 
     mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
     mocker.patch("kedro_viz.server.get_project_context", side_effect=KedroContextError)
