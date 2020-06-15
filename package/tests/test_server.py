@@ -36,8 +36,8 @@ from functools import partial
 from pathlib import Path
 
 import pytest
-from kedro.framework.context import KedroContextError
 from kedro.extras.datasets.pickle import PickleDataSet
+from kedro.framework.context import KedroContextError
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from semver import VersionInfo
@@ -776,8 +776,8 @@ def test_format_pipeline_data_no_layers(pipeline, new_catalog_with_layers):
         (
             # disjoint dependency: when two groups of layers have no direct dependencies,
             # their order is determined by topological order first and alphabetical order second,
-            # which is the default of the toposort library. In the example below, toposort the layers
-            # will give [{c, d}, {b, a}], so it will be come [c, d, a, b] when flattened.
+            # which is the default of the toposort library. In the example below, toposort the
+            # layers will give [{c, d}, {b, a}], so it will be come [c, d, a, b] when flattened.
             """
         node_1(layer=c) -> node_2(layer=a)
         node_3(layer=d) -> node_4(layer=b)
