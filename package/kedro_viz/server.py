@@ -57,7 +57,10 @@ if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli import get_project_context
     from kedro.framework.cli.utils import KedroCliError
 else:
+    # pylint: disable=no-name-in-module,import-error
     from kedro.cli import get_project_context  # pragma: no cover
+
+    # pylint: disable=no-name-in-module,import-error
     from kedro.cli.utils import KedroCliError  # pragma: no cover
 
 
@@ -118,7 +121,7 @@ def run_viz(port=None, line=None, local_ns=None) -> None:
             https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
     """
-    port = port or 4141  # Default argument doesn't work in Jupyter line magic
+    port = port or 4141  # Default argument doesn't work in Jupyter line magic.
     port = _allocate_port(start_at=port)
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
@@ -422,6 +425,7 @@ def format_pipeline_data(pipelines, catalog) -> Dict[str, list]:
         "edges": all_edges,
         "tags": sorted_tags,
         "layers": list(set(all_layers)),
+        "layers": sorted_layers,
     }
 
 
@@ -520,7 +524,9 @@ def _call_viz(
             if KEDRO_VERSION.match(">=0.16.0"):
                 from kedro.framework.context import KedroContextError
             else:
-                from kedro.context import KedroContextError
+                from kedro.context import (  # pylint: disable=no-name-in-module,import-error
+                    KedroContextError,
+                )
 
             try:
                 if project_path is not None:
