@@ -425,7 +425,6 @@ def format_pipeline_data(pipelines, catalog) -> Dict[str, list]:
         "edges": all_edges,
         "tags": sorted_tags,
         "layers": list(set(all_layers)),
-        "layers": sorted_layers,
     }
 
 
