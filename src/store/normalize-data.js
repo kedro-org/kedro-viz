@@ -36,11 +36,14 @@ const addNode = state => node => {
   state.node.layer[id] = node.layer;
   state.node.isParam[id] = node.type === 'parameters';
   state.node.tags[id] = node.tags || [];
-  state.node.hooks[id] = Object.fromEntries(
-    Object.entries(node).filter(
-      ([name]) => ['validation_report', 'profiling_report'].indexOf(name) !== -1
+  state.node.hooks[id] = {
+    kedroGe: Object.fromEntries(
+      Object.entries(node).filter(
+        ([name]) =>
+          ['validation_report', 'profiling_report'].indexOf(name) !== -1
+      )
     )
-  );
+  };
 };
 
 /**

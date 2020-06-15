@@ -157,7 +157,7 @@ const drawNodes = function() {
     .attr('y', node => (node.height - 5) / -2)
     .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2))
     .attr('style', node =>
-      Object.keys(node.hooks).length ? 'fill: red;' : null
+      Object.keys(node.hooks.kedroGe).length ? 'fill: red;' : null
     )
     .attr('id', node => node.id);
 

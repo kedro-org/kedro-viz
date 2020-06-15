@@ -268,13 +268,13 @@ export class FlowChart extends Component {
     const node = Object.values(nodes).filter(
       ({ id }) => id === event.target.id
     )[0];
-
-    if (node) {
+    const geHooks = node.hooks.kedroGe;
+    if (node && geHooks) {
       this.setState({
         ...this.state,
         contextMenu: {
           targetRect: event.target.getBoundingClientRect(),
-          hooks: node.hooks,
+          hooks: geHooks,
           visible: true
         }
       });
