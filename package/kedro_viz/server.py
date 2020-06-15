@@ -405,10 +405,8 @@ def nodes_json():
 @app.route("/api/ge/")
 def load_ge_docs():
     """Serve kedro great expectations html docs."""
-    path = request.args.get('path')
-    with open(path, 'r') as f:
-        data = f.read()
-        return data
+    with open(request.args.get('path'), 'r') as f:
+        return f.read()
 
 
 @click.group(name="Kedro-Viz")
