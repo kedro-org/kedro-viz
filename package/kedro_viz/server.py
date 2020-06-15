@@ -301,10 +301,7 @@ def _sort_layers(
 def _construct_layer_mapping(catalog):
     if hasattr(catalog, "layers"):  # kedro>=0.16.0
         if catalog.layers is None:
-            return {
-                ds_name: None
-                for ds_name in catalog._data_sets  # pylint: disable=protected-access
-            }
+            return {ds_name: None for ds_name in getattr(catalog, "_data_sets")}
 
         dataset_to_layer = {}
         for layer, dataset_names in catalog.layers.items():
