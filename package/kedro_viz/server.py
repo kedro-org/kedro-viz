@@ -303,8 +303,9 @@ def _construct_layer_mapping(catalog):
     if hasattr(catalog, "layers"):  # kedro>=0.16.0
         if catalog.layers is None:
             return {
-                ds_name: None for ds_name in catalog._data_sets
-            }  # pylint: disable=protected-access
+                ds_name: None
+                for ds_name in catalog._data_sets  # pylint: disable=protected-access
+            }
 
         dataset_to_layer = {}
         for layer, dataset_names in catalog.layers.items():
@@ -501,7 +502,9 @@ def _call_viz(
             if KEDRO_VERSION.match(">=0.16.0"):
                 from kedro.framework.context import KedroContextError
             else:
-                from kedro.context import KedroContextError
+                from kedro.context import (  # pylint: disable=no-name-in-module,import-error
+                    KedroContextError,
+                )
 
             try:
                 if project_path is not None:
