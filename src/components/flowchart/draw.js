@@ -155,7 +155,14 @@ const drawNodes = function() {
     .attr('height', node => node.height - 5)
     .attr('x', node => (node.width - 5) / -2)
     .attr('y', node => (node.height - 5) / -2)
-    .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2));
+    .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2))
+    .attr('style', node =>
+      Object.keys(node.hooks).length ? 'fill: red;' : null
+    )
+    .attr('id', node => node.id);
+  // .attr('oncontextmenu', node => Object.keys(node.hooks).length? `javascript:this.showContextMenu();return false;`: null);
+
+  // oncontextmenu="javascript:alert('success!');return false;"
 
   this.el.nodes
     .select('.pipeline-node__icon')

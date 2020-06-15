@@ -44,7 +44,7 @@ from typing import Dict, List, Set
 import click
 import kedro
 import requests
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 from IPython.core.display import HTML, display
 from semver import VersionInfo
 from toposort import toposort_flatten
@@ -400,6 +400,15 @@ def format_pipeline_data(pipeline, catalog):
 def nodes_json():
     """Serve the pipeline data."""
     return jsonify(data)
+
+
+@app.route("/api/ge/")
+def load_ge_docs():
+    """Serve kedro great expectations html docs."""
+    path = request.args.get('path')
+    with open(path, 'r') as f:
+        data = f.read()
+        return data
 
 
 @click.group(name="Kedro-Viz")

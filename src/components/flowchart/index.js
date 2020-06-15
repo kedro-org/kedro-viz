@@ -19,6 +19,7 @@ import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import draw from './draw';
 import Tooltip from '../tooltip';
 import './styles/flowchart.css';
+import ContextMenu from '../context-menu';
 
 /**
  * Display a pipeline flowchart, mostly rendered with D3
@@ -28,7 +29,8 @@ export class FlowChart extends Component {
     super(props);
 
     this.state = {
-      tooltip: {}
+      tooltip: {},
+      contextMenu: {}
     };
 
     this.DURATION = 700;
@@ -106,6 +108,7 @@ export class FlowChart extends Component {
     // Print event listeners
     window.addEventListener('beforeprint', this.handleBeforePrint);
     window.addEventListener('afterprint', this.handleAfterPrint);
+    document.addEventListener('click', this.hideContextMenu.bind(this));
   }
 
   /**
@@ -121,6 +124,8 @@ export class FlowChart extends Component {
     // Print event listeners
     window.removeEventListener('beforeprint', this.handleBeforePrint);
     window.removeEventListener('afterprint', this.handleAfterPrint);
+    document.addEventListener('mousedown', this.handleAfterPrint);
+    document.addEventListener('click', this.hideContextMenu);
   }
 
   /**
@@ -258,12 +263,42 @@ export class FlowChart extends Component {
     }
   };
 
+  handleContextMenu = event => {
+    const { nodes } = this.props;
+    const node = Object.values(nodes).filter(
+      ({ id }) => id === event.target.id
+    )[0];
+
+    if (node) {
+      this.setState({
+        ...this.state,
+        contextMenu: {
+          targetRect: event.target.getBoundingClientRect(),
+          hooks: node.hooks,
+          visible: true
+        }
+      });
+      event.stopPropagation();
+      event.preventDefault();
+    }
+
+    return false;
+  };
+
+  hideContextMenu() {
+    this.setState({
+      ...this.state,
+      contextMenu: { visible: false }
+    });
+  }
+
   /**
    * Show, fill and and position the tooltip
    * @param {Object} node A node datum
    */
   showTooltip(node) {
     this.setState({
+      ...this.state,
       tooltip: {
         targetRect: event.target.getBoundingClientRect(),
         text: node.fullName,
@@ -278,6 +313,7 @@ export class FlowChart extends Component {
   hideTooltip() {
     if (this.state.tooltip.visible) {
       this.setState({
+        ...this.state,
         tooltip: {
           ...this.state.tooltip,
           visible: false
@@ -290,6 +326,7 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
+    // eslint-disable-next-line
     const { chartSize, visibleLayers } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
@@ -297,7 +334,8 @@ export class FlowChart extends Component {
       <div
         className="pipeline-flowchart kedro"
         ref={this.containerRef}
-        onClick={this.handleChartClick}>
+        onClick={this.handleChartClick}
+        onContextMenu={this.handleContextMenu}>
         <svg
           id="pipeline-graph"
           className="pipeline-flowchart__graph"
@@ -335,6 +373,7 @@ export class FlowChart extends Component {
           ref={this.layerNamesRef}
         />
         <Tooltip chartSize={chartSize} {...this.state.tooltip} />
+        <ContextMenu chartSize={chartSize} {...this.state.contextMenu} />
       </div>
     );
   }

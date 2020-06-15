@@ -42,6 +42,7 @@
     "d3-zoom": "^1.7.3",
     "dagre": "git+https://github.com/richardwestenra/dagre.git#manual-ranking",
     "konami-code": "^0.2.1",
+    "react-contextmenu": "^2.14.0",
     "react-custom-scrollbars": "^4.2.1",
     "react-flip-toolkit": "^7.0.7",
     "react-scripts": "^3.3.0",

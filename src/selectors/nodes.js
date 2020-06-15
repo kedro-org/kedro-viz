@@ -17,6 +17,7 @@ const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;
 const getHoveredNode = state => state.node.hovered;
 const getClickedNode = state => state.node.clicked;
+const getNodeHooks = state => state.node.hooks;
 const getTagActive = state => state.tag.active;
 const getTextLabels = state => state.textLabels;
 const getFontLoaded = state => state.fontLoaded;
@@ -177,9 +178,19 @@ export const getVisibleNodes = createSelector(
     getNodeFullName,
     getNodeSize,
     getNodeLayer,
-    getNodeRank
+    getNodeRank,
+    getNodeHooks
   ],
-  (nodeIDs, nodeName, nodeType, nodeFullName, nodeSize, nodeLayer, nodeRank) =>
+  (
+    nodeIDs,
+    nodeName,
+    nodeType,
+    nodeFullName,
+    nodeSize,
+    nodeLayer,
+    nodeRank,
+    nodeHooks
+  ) =>
     nodeIDs.map(id => ({
       id,
       name: nodeName[id],
@@ -188,6 +199,7 @@ export const getVisibleNodes = createSelector(
       type: nodeType[id],
       layer: nodeLayer[id],
       rank: nodeRank[id],
+      hooks: nodeHooks[id],
       ...nodeSize[id]
     }))
 );

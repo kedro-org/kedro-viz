@@ -56,6 +56,7 @@ export const getInitialPipelineState = () => ({
     tags: {},
     layer: {},
     disabled: {},
+    hooks: {},
     clicked: null,
     hovered: null
   },
