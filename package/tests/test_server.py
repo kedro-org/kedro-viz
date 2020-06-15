@@ -345,7 +345,7 @@ def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
 def test_viz_kedro15_invalid(mocker, cli_runner):
     """Test that running viz in Kedro 0.15.0,
     and it is outside of a Kedro project root."""
-    from kedro.context import (  # pylint: disable=import-outside-toplevel,no-name-in-module,import-error
+    from kedro.framework.context import (  # pylint: disable=import-outside-toplevel,no-name-in-module,import-error
         KedroContextError,
     )
 
