@@ -326,7 +326,6 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    // eslint-disable-next-line
     const { chartSize, visibleLayers } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 

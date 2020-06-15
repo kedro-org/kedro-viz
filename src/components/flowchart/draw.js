@@ -160,9 +160,6 @@ const drawNodes = function() {
       Object.keys(node.hooks).length ? 'fill: red;' : null
     )
     .attr('id', node => node.id);
-  // .attr('oncontextmenu', node => Object.keys(node.hooks).length? `javascript:this.showContextMenu();return false;`: null);
-
-  // oncontextmenu="javascript:alert('success!');return false;"
 
   this.el.nodes
     .select('.pipeline-node__icon')
