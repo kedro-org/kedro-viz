@@ -402,7 +402,7 @@ def format_pipeline_data(
     dataset_to_layer = _construct_layer_mapping(catalog)
 
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
-        task_id = _hash(str(node))
+        task_id = _hash(str(node) + pipeline_key)
         all_tags.update(node.tags)
         all_nodes[task_id] = {
             "type": "task",
@@ -417,7 +417,7 @@ def format_pipeline_data(
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
             namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
-            namespace_id = _hash(namespace)
+            namespace_id = _hash(namespace + pipeline_key)
             edges.append({"source": namespace_id, "target": task_id})
             namespace_tags[namespace].update(node.tags)
             node_dependencies[namespace_id].add(task_id)
@@ -425,14 +425,14 @@ def format_pipeline_data(
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
             namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
-            namespace_id = _hash(namespace)
+            namespace_id = _hash(namespace + pipeline_key)
             edges.append({"source": task_id, "target": namespace_id})
             namespace_tags[namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
 
     for namespace, tags in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
-        node_id = _hash(namespace)
+        node_id = _hash(namespace + pipeline_key)
         all_nodes[node_id] = {
             "type": "parameters" if is_param else "data",
             "id": node_id,
