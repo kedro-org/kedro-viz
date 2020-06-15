@@ -43,7 +43,7 @@ from semver import VersionInfo
 from toposort import CircularDependencyError
 
 from kedro_viz import server
-from kedro_viz.server import _allocate_port, _sort_layers, format_pipeline_data
+from kedro_viz.server import _allocate_port, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
@@ -672,23 +672,23 @@ def new_catalog_with_layers():
     return catalog
 
 
-def test_format_pipeline_data_legacy(pipeline, old_catalog_with_layers):
-    result = format_pipeline_data(pipeline, old_catalog_with_layers)
+def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers):
+    result = format_pipelines_data(pipeline, old_catalog_with_layers)
     result_file_path = Path(__file__).parent / "result.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
 
-def test_format_pipeline_data(pipeline, new_catalog_with_layers):
-    result = format_pipeline_data(pipeline, new_catalog_with_layers)
+def test_format_pipelines_data(pipeline, new_catalog_with_layers):
+    result = format_pipelines_data(pipeline, new_catalog_with_layers)
     result_file_path = Path(__file__).parent / "result.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
 
-def test_format_pipeline_data_no_layers(pipeline, new_catalog_with_layers):
+def test_format_pipelines_data_no_layers(pipeline, new_catalog_with_layers):
     setattr(new_catalog_with_layers, "layers", None)
-    result = format_pipeline_data(pipeline, new_catalog_with_layers)
+    result = format_pipelines_data(pipeline, new_catalog_with_layers)
     assert result["layers"] == []
 
 
