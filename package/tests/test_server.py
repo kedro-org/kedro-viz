@@ -36,7 +36,6 @@ from functools import partial
 from pathlib import Path
 
 import pytest
-from kedro.context import KedroContextError
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
@@ -169,7 +168,9 @@ def patched_get_project_context(mocker):
             "context": mocked_context,
         }[key]
 
-    return mocker.patch("kedro_viz.server.get_project_context", side_effect=get_project_context)
+    return mocker.patch(
+        "kedro_viz.server.get_project_context", side_effect=get_project_context
+    )
 
 
 @pytest.fixture
@@ -210,12 +211,11 @@ def test_no_browser(cli_runner):
     assert server.webbrowser.open_new.call_count == 1
 
 
-def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_get_project_context):
+def test_viz_does_not_need_to_specify_project_path(
+    cli_runner, patched_get_project_context
+):
     cli_runner.invoke(server.commands, ["viz", "--no-browser"])
-    patched_get_project_context.assert_called_once_with(
-        "context",
-        env=None
-    )
+    patched_get_project_context.assert_called_once_with("context", env=None)
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -345,8 +345,13 @@ def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
 def test_viz_kedro15_invalid(mocker, cli_runner):
     """Test that running viz in Kedro 0.15.0,
     and it is outside of a Kedro project root."""
+    from kedro.context import (  # pylint: disable=import-outside-toplevel,no-name-in-module,import-error
+        KedroContextError,
+    )
+
     mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
     mocker.patch("kedro_viz.server.get_project_context", side_effect=KedroContextError)
+
     result = cli_runner.invoke(server.commands, "viz")
     assert "Could not find a Kedro project root." in result.output
 
@@ -447,21 +452,15 @@ def mocked_process(mocker):
 
 
 class TestCallViz:
-
     def test_call_viz_without_project_path(self, patched_get_project_context):
         server._call_viz()
-        patched_get_project_context.assert_called_once_with(
-            "context",
-            env=None
-        )
+        patched_get_project_context.assert_called_once_with("context", env=None)
 
     def test_call_viz_with_project_path(self, patched_get_project_context):
         mocked_project_path = Path("/tmp")
         server._call_viz(project_path=mocked_project_path)
         patched_get_project_context.assert_called_once_with(
-            "context",
-            project_path=mocked_project_path,
-            env=None
+            "context", project_path=mocked_project_path, env=None
         )
 
 
@@ -515,13 +514,17 @@ class TestRunViz:
 
         # we can't use assert_called_once_with because it doesn't work with functools.partial
         # so we are comparing the call args one by one
-        assert len(mocked_process.mock_calls) == 2  # 1 for the constructor, 1 to start the process
+        assert (
+            len(mocked_process.mock_calls) == 2
+        )  # 1 for the constructor, 1 to start the process
         mocked_call_kwargs = mocked_process.call_args_list[0][1]
 
         expected_target = partial(server._call_viz, project_path=mocked_project_path)
-        assert mocked_call_kwargs["target"].func == expected_target.func \
-            and mocked_call_kwargs["target"].args == expected_target.args \
+        assert (
+            mocked_call_kwargs["target"].func == expected_target.func
+            and mocked_call_kwargs["target"].args == expected_target.args
             and mocked_call_kwargs["target"].keywords == expected_target.keywords
+        )
         assert mocked_call_kwargs["daemon"] is True
 
 
@@ -656,88 +659,144 @@ def test_format_pipeline_data_no_layers(pipeline, new_catalog_with_layers):
     assert result["layers"] == []
 
 
-@pytest.mark.parametrize("graph_schema,nodes,node_dependencies,expected", [
-    (
-        # direct dependency
-        "node_1(layer=raw) -> node_2(layer=int)",
-        {"node_1": {"id": "node_1", "layer": "raw"}, "node_2": {"id": "node_2", "layer": "int"}},
-        {"node_1": {"node_2"}, "node_2": set()},
-        ["raw", "int"]
-    ),
-    (
-        # more than 1 node in a layer
-        "node_1 -> node_2(layer=raw) -> node_3(layer=raw) -> node_4(layer=int)",
-        {"node_1": {"id": "node_1"}, "node_2": {"id": "node_2", "layer": "raw"},
-         "node_3": {"id": "node_3", "layer": "raw"}, "node_4": {"id": "node_4", "layer": "int"}},
-        {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": {"node_4"}, "node_4": set()},
-        ["raw", "int"]
-    ),
-    (
-        # indirect dependency
-        "node_1(layer=raw) -> node_2 -> node_3(layer=int)",
-        {"node_1": {"id": "node_1", "layer": "raw"}, "node_2": {"id": "node_2"},
-         "node_3": {"id": "node_3", "layer": "int"}},
-        {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": set()},
-        ["raw", "int"]
-    ),
-    (
-        # fan-in dependency
-        """
+@pytest.mark.parametrize(
+    "graph_schema,nodes,node_dependencies,expected",
+    [
+        (
+            # direct dependency
+            "node_1(layer=raw) -> node_2(layer=int)",
+            {
+                "node_1": {"id": "node_1", "layer": "raw"},
+                "node_2": {"id": "node_2", "layer": "int"},
+            },
+            {"node_1": {"node_2"}, "node_2": set()},
+            ["raw", "int"],
+        ),
+        (
+            # more than 1 node in a layer
+            "node_1 -> node_2(layer=raw) -> node_3(layer=raw) -> node_4(layer=int)",
+            {
+                "node_1": {"id": "node_1"},
+                "node_2": {"id": "node_2", "layer": "raw"},
+                "node_3": {"id": "node_3", "layer": "raw"},
+                "node_4": {"id": "node_4", "layer": "int"},
+            },
+            {
+                "node_1": {"node_2"},
+                "node_2": {"node_3"},
+                "node_3": {"node_4"},
+                "node_4": set(),
+            },
+            ["raw", "int"],
+        ),
+        (
+            # indirect dependency
+            "node_1(layer=raw) -> node_2 -> node_3(layer=int)",
+            {
+                "node_1": {"id": "node_1", "layer": "raw"},
+                "node_2": {"id": "node_2"},
+                "node_3": {"id": "node_3", "layer": "int"},
+            },
+            {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": set()},
+            ["raw", "int"],
+        ),
+        (
+            # fan-in dependency
+            """
         node_1(layer=raw) -> node_2 -> node_3(layer=int) -> node_6(layer=feature)
         node_4(layer=int) -> node_5 -----------------------------^
         """,
-        {"node_1": {"id": "node_1", "layer": "raw"}, "node_2": {"id": "node_2"},
-         "node_3": {"id": "node_3", "layer": "int"}, "node_4": {"id": "node_4", "layer": "int"},
-         "node_5": {"id": "node_5"}, "node_6": {"id": "node_6", "layer": "feature"}},
-        {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": {"node_6"}, "node_4": {"node_5"},
-         "node_5": {"node_6"}, "node_6": set()},
-        ["raw", "int", "feature"]
-    ),
-    (
-        # fan-out dependency: note that model_input comes after feature here based on
-        # alphabetical order since they have no dependency relationship.
-        """
+            {
+                "node_1": {"id": "node_1", "layer": "raw"},
+                "node_2": {"id": "node_2"},
+                "node_3": {"id": "node_3", "layer": "int"},
+                "node_4": {"id": "node_4", "layer": "int"},
+                "node_5": {"id": "node_5"},
+                "node_6": {"id": "node_6", "layer": "feature"},
+            },
+            {
+                "node_1": {"node_2"},
+                "node_2": {"node_3"},
+                "node_3": {"node_6"},
+                "node_4": {"node_5"},
+                "node_5": {"node_6"},
+                "node_6": set(),
+            },
+            ["raw", "int", "feature"],
+        ),
+        (
+            # fan-out dependency: note that model_input comes after feature here based on
+            # alphabetical order since they have no dependency relationship.
+            """
         node_1(layer=raw) -> node_2 -> node_3(layer=int) -> node_6 -> node_7(layer=feature)
                 |----------> node_4(layer=int) -> node_5(layer=model_input)
         """,
-        {"node_1": {"id": "node_1", "layer": "raw"}, "node_2": {"id": "node_2"},
-         "node_3": {"id": "node_3", "layer": "int"}, "node_4": {"id": "node_4", "layer": "int"},
-         "node_5": {"id": "node_5", "layer": "model_input"},
-         "node_6": {"id": "node_6"}, "node_7": {"id": "node_7", "layer": "feature"}},
-        {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": {"node_6"},
-         "node_4": {"node_5"}, "node_5": set(), "node_6": {"node_7"}, "node_7": set()},
-        ["raw", "int", "feature", "model_input"]
-    ),
-    (
-        # fan-out-fan-in dependency
-        """
+            {
+                "node_1": {"id": "node_1", "layer": "raw"},
+                "node_2": {"id": "node_2"},
+                "node_3": {"id": "node_3", "layer": "int"},
+                "node_4": {"id": "node_4", "layer": "int"},
+                "node_5": {"id": "node_5", "layer": "model_input"},
+                "node_6": {"id": "node_6"},
+                "node_7": {"id": "node_7", "layer": "feature"},
+            },
+            {
+                "node_1": {"node_2"},
+                "node_2": {"node_3"},
+                "node_3": {"node_6"},
+                "node_4": {"node_5"},
+                "node_5": set(),
+                "node_6": {"node_7"},
+                "node_7": set(),
+            },
+            ["raw", "int", "feature", "model_input"],
+        ),
+        (
+            # fan-out-fan-in dependency
+            """
         node_1(layer=raw) -> node_2 -> node_3(layer=int) -> node_6 -> node_7(layer=feature)
                 |----------> node_4(layer=int) -> node_5(layer=model_input) --^
         """,
-        {"node_1": {"id": "node_1", "layer": "raw"}, "node_2": {"id": "node_2"},
-         "node_3": {"id": "node_3", "layer": "int"}, "node_4": {"id": "node_4", "layer": "int"},
-         "node_5": {"id": "node_5", "layer": "model_input"},
-         "node_6": {"id": "node_6"},
-         "node_7": {"id": "node_7", "layer": "feature"}},
-        {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": {"node_6"},
-         "node_4": {"node_5"}, "node_5": {"node_7"}, "node_6": {"node_7"}, "node_7": set()},
-        ["raw", "int", "model_input", "feature"]
-    ),
-    (
-        # disjoint dependency: when two groups of layers have no direct dependencies,
-        # their order is determined by topological order first and alphabetical order second,
-        # which is the default of the toposort library. In the example below, toposort the layers
-        # will give [{c, d}, {b, a}], so it will be come [c, d, a, b] when flattened.
-        """
+            {
+                "node_1": {"id": "node_1", "layer": "raw"},
+                "node_2": {"id": "node_2"},
+                "node_3": {"id": "node_3", "layer": "int"},
+                "node_4": {"id": "node_4", "layer": "int"},
+                "node_5": {"id": "node_5", "layer": "model_input"},
+                "node_6": {"id": "node_6"},
+                "node_7": {"id": "node_7", "layer": "feature"},
+            },
+            {
+                "node_1": {"node_2"},
+                "node_2": {"node_3"},
+                "node_3": {"node_6"},
+                "node_4": {"node_5"},
+                "node_5": {"node_7"},
+                "node_6": {"node_7"},
+                "node_7": set(),
+            },
+            ["raw", "int", "model_input", "feature"],
+        ),
+        (
+            # disjoint dependency: when two groups of layers have no direct dependencies,
+            # their order is determined by topological order first and alphabetical order second,
+            # which is the default of the toposort library. In the example below, toposort the
+            # layers will give [{c, d}, {b, a}], so it will be come [c, d, a, b] when flattened.
+            """
         node_1(layer=c) -> node_2(layer=a)
         node_3(layer=d) -> node_4(layer=b)
         """,
-        {"node_1": {"id": "node_1", "layer": "c"}, "node_2": {"id": "node_2", "layer": "a"},
-         "node_3": {"id": "node_3", "layer": "d"}, "node_4": {"id": "node_4", "layer": "b"}},
-        {"node_1": {"node_2"}, "node_2": {}, "node_3": {"node_4"}, "node_4": {}},
-        ["c", "d", "a", "b"]
-    )
-])
+            {
+                "node_1": {"id": "node_1", "layer": "c"},
+                "node_2": {"id": "node_2", "layer": "a"},
+                "node_3": {"id": "node_3", "layer": "d"},
+                "node_4": {"id": "node_4", "layer": "b"},
+            },
+            {"node_1": {"node_2"}, "node_2": {}, "node_3": {"node_4"}, "node_4": {}},
+            ["c", "d", "a", "b"],
+        ),
+    ],
+)
 def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
     assert _sort_layers(nodes, node_dependencies) == expected, graph_schema
 
@@ -752,6 +811,6 @@ def test_sort_layers_should_raise_on_cyclic_layers():
     node_dependencies = {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": set()}
     with pytest.raises(
         CircularDependencyError,
-        match="Circular dependencies exist among these items: {'int':{'raw'}, 'raw':{'int'}}"
+        match="Circular dependencies exist among these items: {'int':{'raw'}, 'raw':{'int'}}",
     ):
         _sort_layers(nodes, node_dependencies)
