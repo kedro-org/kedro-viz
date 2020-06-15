@@ -57,13 +57,11 @@ if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli import get_project_context
     from kedro.framework.cli.utils import KedroCliError
 else:
+    # pylint: disable=no-name-in-module,import-error # pragma: no cover
+    from kedro.cli import get_project_context
 
-    from kedro.cli import (  # pylint: disable=no-name-in-module,import-error # pragma: no cover
-        get_project_context,
-    )
-    from kedro.cli.utils import (  # pylint: disable=no-name-in-module,import-error # pragma: no cover
-        KedroCliError,
-    )
+    # pylint: disable=no-name-in-module,import-error # pragma: no cover
+    from kedro.cli.utils import KedroCliError
 
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
