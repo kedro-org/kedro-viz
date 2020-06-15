@@ -57,7 +57,9 @@ if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli import get_project_context
     from kedro.framework.cli.utils import KedroCliError
 else:
-    from kedro.cli import get_project_context  # pragma: no cover
+    from kedro.cli import (
+        get_project_context,  # pylint: disable=no-name-in-module,import-error pragma: no cover
+    )
     from kedro.cli.utils import KedroCliError  # pragma: no cover
 
 
