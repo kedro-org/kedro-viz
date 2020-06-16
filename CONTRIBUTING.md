@@ -79,7 +79,7 @@ npm run lib
 
 #### Data sources
 
-Kedro-Viz uses a unique identifier to determine the data source. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
+Kedro-Viz uses an unique identifier to determine the data source. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
 
 ```bash
 DATA=random npm start
