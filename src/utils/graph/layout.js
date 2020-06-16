@@ -169,19 +169,16 @@ export const layout = ({
 
     parallelConstraints.push(parallelConstraint);
 
+    const sourceHasOneTarget = edge.sourceNode.targets.length === 1;
+    const targetHasOneSource = edge.targetNode.sources.length === 1;
+
     // Collect edges connected to single-degree nodes at either end
-    if (
-      edge.sourceNode.targets.length === 1 ||
-      edge.targetNode.sources.length === 1
-    ) {
+    if (sourceHasOneTarget || targetHasOneSource) {
       parallelSingleConstraints.push(parallelConstraint);
     }
 
     // Collect edges connected to single-degree at both ends
-    if (
-      edge.sourceNode.targets.length === 1 &&
-      edge.targetNode.sources.length === 1
-    ) {
+    if (sourceHasOneTarget && targetHasOneSource) {
       parallelDoubleConstraints.push(parallelConstraint);
     }
   }
