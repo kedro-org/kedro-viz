@@ -37,6 +37,7 @@ import traceback
 import webbrowser
 from collections import defaultdict
 from contextlib import closing
+from functools import partial
 from pathlib import Path
 from typing import Dict, List, Set
 
@@ -56,7 +57,10 @@ if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli import get_project_context
     from kedro.framework.cli.utils import KedroCliError
 else:
+    # pylint: disable=no-name-in-module,import-error
     from kedro.cli import get_project_context  # pragma: no cover
+
+    # pylint: disable=no-name-in-module,import-error
     from kedro.cli.utils import KedroCliError  # pragma: no cover
 
 
@@ -104,7 +108,7 @@ def _check_viz_up(port):
 
 
 # pylint: disable=unused-argument
-def run_viz(port=None, line=None) -> None:
+def run_viz(port=None, line=None, local_ns=None) -> None:
     """
     Line magic function to start kedro viz. It calls a kedro viz in a process and display it in
     the Jupyter notebook environment.
@@ -112,17 +116,26 @@ def run_viz(port=None, line=None) -> None:
     Args:
         port: TCP port that viz will listen to. Defaults to 4141.
         line: line required by line magic interface.
+        local_ns: Local namespace with local variables of the scope where the line magic is invoked.
+            For more details, please visit:
+            https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
     """
-    port = port or 4141  # Default argument doesn't work in Jupyter line magic
+    port = port or 4141  # Default argument doesn't work in Jupyter line magic.
     port = _allocate_port(start_at=port)
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
 
+    if local_ns is not None and "project_path" in local_ns:
+        target = partial(_call_viz, project_path=local_ns["project_path"])
+    else:
+        target = _call_viz
+
     viz_process = multiprocessing.Process(
-        target=_call_viz, daemon=True, kwargs={"port": port}
+        target=target, daemon=True, kwargs={"port": port}
     )
+
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
 
@@ -190,7 +203,9 @@ def _get_pipeline_catalog_from_kedro14(env):
         raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
-def _sort_layers(nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]) -> List[str]:
+def _sort_layers(
+    nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]
+) -> List[str]:
     """Given a DAG represented by a dictionary of nodes, some of which have a `layer` attribute,
     along with their dependencies, return the list of all layers sorted according to
     the nodes' topological order, i.e. a layer should appear before another layer in the list
@@ -286,11 +301,13 @@ def _sort_layers(nodes: Dict[str, Dict], dependencies: Dict[str, Set[str]]) -> L
 def _construct_layer_mapping(catalog):
     if hasattr(catalog, "layers"):  # kedro>=0.16.0
         if catalog.layers is None:
-            return {ds_name: None for ds_name in catalog._data_sets}   # pylint: disable=protected-access
+            return {ds_name: None for ds_name in getattr(catalog, "_data_sets")}
 
         dataset_to_layer = {}
         for layer, dataset_names in catalog.layers.items():
-            dataset_to_layer.update({dataset_name: layer for dataset_name in dataset_names})
+            dataset_to_layer.update(
+                {dataset_name: layer for dataset_name in dataset_names}
+            )
     else:
         dataset_to_layer = {
             ds_name: getattr(ds_obj, "_layer", None)
@@ -382,7 +399,7 @@ def format_pipeline_data(pipeline, catalog):
         "nodes": sorted_nodes,
         "edges": edges,
         "tags": sorted_tags,
-        "layers": sorted_layers
+        "layers": sorted_layers,
     }
 
 
@@ -456,7 +473,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env):
         raise KedroCliError(str(ex))
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,too-many-branches
 def _call_viz(
     host=None,
     port=None,
@@ -465,6 +482,7 @@ def _call_viz(
     save_file=None,
     pipeline_name=None,
     env=None,
+    project_path=None,
 ):
     global data  # pylint: disable=global-statement,invalid-name
 
@@ -480,10 +498,17 @@ def _call_viz(
             if KEDRO_VERSION.match(">=0.16.0"):
                 from kedro.framework.context import KedroContextError
             else:
-                from kedro.context import KedroContextError
+                from kedro.context import (  # pylint: disable=no-name-in-module,import-error
+                    KedroContextError,
+                )
 
             try:
-                context = get_project_context("context", env=env)
+                if project_path is not None:
+                    context = get_project_context(
+                        "context", project_path=project_path, env=env
+                    )
+                else:
+                    context = get_project_context("context", env=env)
                 pipeline = _get_pipeline_from_context(context, pipeline_name)
             except KedroContextError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)

@@ -1,13 +1,13 @@
+import { arrayToObject, unique } from './index';
 import {
-  arrayToObject,
   getNumberArray,
+  random,
   randomNumber,
   randomNumberBetween,
   getRandom,
   getRandomName,
-  getRandomSelection,
-  unique
-} from './index';
+  getRandomSelection
+} from './random-utils';
 
 //--- Config variables ---//
 
@@ -127,7 +127,7 @@ class Pipeline {
     if (rank % 2) {
       return 'task';
     }
-    if (Math.random() < PARAMETERS_FREQUENCY) {
+    if (random() < PARAMETERS_FREQUENCY) {
       return 'parameters';
     }
     return 'data';

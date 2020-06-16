@@ -1,6 +1,6 @@
 # Kedro-Viz
-| `develop`                                                                                                                                                        | `master`                                                                                                                                                       |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `develop` | `master`|
+| --------- | ------- |
 | [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop) | [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master) |
 
 [![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)
@@ -17,7 +17,7 @@ With Kedro-Viz you can:
 - Get a clear picture when you have lots of datasets and nodes by using tags to visualise sub-pipelines
 - Search for nodes and datasets
 
-![Kedro-Viz Pipeline Visualisation](https://github.com/quantumblacklabs/kedro-viz/blob/master/.github/img/pipeline_visualisation.png?raw=true)
+![Kedro-Viz Pipeline Visualisation](https://github.com/quantumblacklabs/kedro-viz/blob/develop/.github/img/pipeline_visualisation.png?raw=true)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), for which more complete documentation is available on the [project website](https://facebook.github.io/create-react-app/).
 
@@ -61,15 +61,15 @@ kedro viz
 This command will run kedro_viz.server on `http://127.0.0.1:4141/` which cannot be accessed from another machine.
 
 Kedro-Viz has a number of options to customise running the visualisation:
-| CLI command              | Description                                                                                                                                                                            |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--host`                 | Host that viz will listen to. Defaults to 127.0.0.1.                                                                                                                                   |
-| `--port`                 | TCP port that viz will listen to. Defaults to 4141.                                                                                                                                    |
-| `--browser/--no-browser` | Whether to open viz interface in the default browser or not.                                                                                                                           |
-| `--load-file`            | Path to load the pipeline JSON file                                                                                                                                                    |
-| `--save-file`            | Path to save the pipeline JSON file                                                                                                                                                    |
-| `--pipeline`             | Name of the [modular pipeline](https://kedro.readthedocs.io/en/latest/04_user_guide/06_pipelines.html#modular-pipelines) to visualise. If not set, the default pipeline is visualised. |
-| `--env`, `-e`            | Kedro configuration environment. If not specified, catalog config in `local` will be used.                                                                                             |
+| CLI command | Description |
+| ----------- | ----------- |
+| `--host` | Host that viz will listen to. Defaults to 127.0.0.1. |
+| `--port` | TCP port that viz will listen to. Defaults to 4141. |
+| `--browser/--no-browser` | Whether to open viz interface in the default browser or not. |
+| `--load-file` | Path to load the pipeline JSON file |
+| `--save-file` | Path to save the pipeline JSON file |
+| `--pipeline` | Name of the [modular pipeline](https://kedro.readthedocs.io/en/latest/04_user_guide/06_pipelines.html#modular-pipelines) to visualise. If not set, the default pipeline is visualised. |
+| `--env`, `-e` | Kedro configuration environment. If not specified, catalog config in `local` will be used. |
 
 
 ### As a JavaScript React component

@@ -10,6 +10,10 @@ const getLayerName = state => state.layer.name;
 export const getLayers = createSelector(
   [getLayoutNodes, getVisibleLayerIDs, getLayerName, getGraphSize],
   (nodes, layerIDs, layerName, { width }) => {
+    if (!nodes.length) {
+      return [];
+    }
+
     // Get list of layer Y positions from nodes
     const layerY = nodes.reduce((layerY, node) => {
       if (!layerY[node.layer]) {

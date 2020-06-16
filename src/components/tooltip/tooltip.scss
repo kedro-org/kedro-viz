@@ -30,9 +30,9 @@ $triangle-size: 10px;
     top: $y-offset;
   }
 
-  &::before {
+  &::after {
     position: absolute;
-    bottom: -$y-offset;
+    bottom: -$y-offset + 0.5;
     left: $x-offset / 2;
     width: 0;
     height: 0;
@@ -50,13 +50,13 @@ $triangle-size: 10px;
     }
   }
 
-  &--right::before {
+  &--right::after {
     right: $x-offset / 2;
     left: auto;
   }
 
-  &--top::before {
-    top: -$y-offset;
+  &--top::after {
+    top: -$y-offset + 0.5;
     bottom: auto;
     border-width: 0 $triangle-size $triangle-size $triangle-size;
     border-top-color: transparent;
