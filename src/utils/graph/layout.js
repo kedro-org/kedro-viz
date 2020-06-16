@@ -13,6 +13,7 @@ import { solve, greaterOrEqual, equalTo } from './solver';
  * @param {number} params.spaceX The minimum gap between nodes in X
  * @param {number} params.spaceY The minimum gap between nodes in Y
  * @param {number} params.layerSpaceY The additional gap between nodes in Y between layers
+ * @param {number} params.iterations The number of solver iterations to perform
  * @returns {void}
  */
 export const layout = ({
@@ -22,7 +23,8 @@ export const layout = ({
   basisX,
   spaceX,
   spaceY,
-  layerSpaceY
+  layerSpaceY,
+  iterations
 }) => {
   const layerConstraints = [];
   const crossingConstraints = [];
@@ -185,7 +187,9 @@ export const layout = ({
   }
 
   // Solving loop for constraints in X
-  for (let i = 0; i < 20; i += 1) {
+  const halfIterations = Math.ceil(iterations * 0.5);
+
+  for (let i = 0; i < iterations; i += 1) {
     // Minimise crossing
     solve(crossingConstraints, 1);
 
@@ -193,8 +197,8 @@ export const layout = ({
     solve(parallelConstraints, 1);
 
     // Minimise edge length specifically for low-degree edges more strongly
-    solve(parallelSingleConstraints, 10);
-    solve(parallelDoubleConstraints, 10);
+    solve(parallelSingleConstraints, halfIterations);
+    solve(parallelDoubleConstraints, halfIterations);
 
     // Clear separation constraints from previous iteration
     separationConstraints.length = 0;
@@ -222,7 +226,7 @@ export const layout = ({
     }
 
     // Minimise node separation overlap
-    solve(separationConstraints, 10);
+    solve(separationConstraints, halfIterations);
   }
 
   // For each row already sorted in X

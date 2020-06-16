@@ -47,23 +47,10 @@ export const routing = ({
   // For each node
   for (const node of nodes) {
     // Sort the node's target edges by the angle between source and target nodes
-    // Break ties by alternating increasing X offsets per row
     node.targets.sort((a, b) =>
       compare(
-        Math.atan2(
-          b.sourceNode.y - b.targetNode.y,
-          b.sourceNode.x - b.targetNode.x !== 0
-            ? b.sourceNode.x - b.targetNode.x
-            : (b.targetNode.row % 2 === 0 ? -1 : 1) *
-                Math.pow(b.targetNode.row - b.sourceNode.row, 3)
-        ),
-        Math.atan2(
-          a.sourceNode.y - a.targetNode.y,
-          a.sourceNode.x - a.targetNode.x !== 0
-            ? a.sourceNode.x - a.targetNode.x
-            : (a.targetNode.row % 2 === 0 ? -1 : 1) *
-                Math.pow(a.targetNode.row - a.sourceNode.row, 3)
-        )
+        angle(b.sourceNode, b.targetNode),
+        angle(a.sourceNode, a.targetNode)
       )
     );
   }

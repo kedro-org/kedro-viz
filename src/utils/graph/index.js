@@ -8,7 +8,8 @@ const defaultOptions = {
     spaceY: 110,
     layerSpaceY: 55,
     basisX: 1500,
-    padding: 100
+    padding: 100,
+    iterations: 20
   },
   routing: {
     spaceX: 26,
