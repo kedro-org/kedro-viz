@@ -6,6 +6,7 @@ const defaultOptions = {
   layout: {
     spaceX: 16,
     spaceY: 110,
+    layerSpaceY: 55,
     basisX: 1500,
     padding: 100
   },

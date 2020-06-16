@@ -12,9 +12,18 @@ import { solve, greaterOrEqual, equalTo } from './solver';
  * @param {number} params.basisX The basis relating diagram width in X
  * @param {number} params.spaceX The minimum gap between nodes in X
  * @param {number} params.spaceY The minimum gap between nodes in Y
+ * @param {number} params.layerSpaceY The additional gap between nodes in Y between layers
  * @returns {void}
  */
-export const layout = ({ nodes, edges, layers, basisX, spaceX, spaceY }) => {
+export const layout = ({
+  nodes,
+  edges,
+  layers,
+  basisX,
+  spaceX,
+  spaceY,
+  layerSpaceY
+}) => {
   const layerConstraints = [];
   const crossingConstraints = [];
   const parallelConstraints = [];
@@ -43,6 +52,7 @@ export const layout = ({ nodes, edges, layers, basisX, spaceX, spaceY }) => {
   // Constraints in Y separating nodes into layers if specified
   if (layers) {
     const layerNames = Object.values(layers);
+    const layerSpace = (spaceY + layerSpaceY) * 0.5;
     let layerNodes = nodes.filter(node => node.layer === layerNames[0]);
 
     // For each defined layer
@@ -61,7 +71,7 @@ export const layout = ({ nodes, edges, layers, basisX, spaceX, spaceY }) => {
           b: node,
           key: 'y',
           operator: greaterOrEqual,
-          target: () => spaceY,
+          target: () => layerSpace,
           weightA: () => 0,
           weightB: () => 1,
           required: true
@@ -75,7 +85,7 @@ export const layout = ({ nodes, edges, layers, basisX, spaceX, spaceY }) => {
           b: layerNode,
           key: 'y',
           operator: greaterOrEqual,
-          target: () => 0,
+          target: () => layerSpace,
           weightA: () => 0,
           weightB: () => 1,
           required: true
