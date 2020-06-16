@@ -1,6 +1,7 @@
 import { arrayToObject, unique } from './index';
 import {
   getNumberArray,
+  random,
   randomNumber,
   randomNumberBetween,
   getRandom,
@@ -126,7 +127,7 @@ class Pipeline {
     if (rank % 2) {
       return 'task';
     }
-    if (Math.random() < PARAMETERS_FREQUENCY) {
+    if (random() < PARAMETERS_FREQUENCY) {
       return 'parameters';
     }
     return 'data';
