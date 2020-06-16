@@ -30,22 +30,18 @@ export const Flags = {
 };
 
 /**
- * Returns an object with flags as set in given or current URL using `enable` and `disable` parameters
+ * Returns an object with flags as set in given or current URL
  * @param {string=} url The URL (optional, default current location)
  * @returns {object} An object with flags and their values
  */
 export const getFlagsFromUrl = url => {
   const urlParams = new URL(url || document.location).searchParams;
-  const enableNames = (urlParams.get('enable') || '').split(/\W/g);
-  const disableNames = (urlParams.get('disable') || '').split(/\W/g);
   const flags = {};
 
-  enableNames.forEach(name =>
-    Flags.isDefined(name) ? (flags[name] = true) : null
-  );
-
-  disableNames.forEach(name =>
-    Flags.isDefined(name) ? (flags[name] = false) : null
+  [...urlParams].forEach(([name, value]) =>
+    Flags.isDefined(name)
+      ? (flags[name] = value === 'true' || value === '1')
+      : null
   );
 
   return flags;

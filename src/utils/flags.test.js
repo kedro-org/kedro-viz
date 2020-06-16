@@ -17,7 +17,13 @@ jest.mock('../config', () => ({
 describe('flags', () => {
   it('getFlagsFromUrl enables flags', () => {
     expect(
-      getFlagsFromUrl(`https://localhost:4141/?enable=${testFlagName}`)
+      getFlagsFromUrl(`https://localhost:4141/?${testFlagName}=true`)
+    ).toEqual({
+      [testFlagName]: true
+    });
+
+    expect(
+      getFlagsFromUrl(`https://localhost:4141/?${testFlagName}=1`)
     ).toEqual({
       [testFlagName]: true
     });
@@ -25,7 +31,13 @@ describe('flags', () => {
 
   it('getFlagsFromUrl disables flags', () => {
     expect(
-      getFlagsFromUrl(`https://localhost:4141/?disable=${testFlagName}`)
+      getFlagsFromUrl(`https://localhost:4141/?${testFlagName}=false`)
+    ).toEqual({
+      [testFlagName]: false
+    });
+
+    expect(
+      getFlagsFromUrl(`https://localhost:4141/?${testFlagName}=0`)
     ).toEqual({
       [testFlagName]: false
     });
