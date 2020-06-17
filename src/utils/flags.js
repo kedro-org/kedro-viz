@@ -40,7 +40,7 @@ export const getFlagsFromUrl = url => {
 
   [...urlParams].forEach(([name, value]) =>
     Flags.isDefined(name)
-      ? (flags[name] = value === 'true' || value === '1')
+      ? (flags[name] = value === 'true' || value === '1' || value === '')
       : null
   );
 

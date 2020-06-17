@@ -27,6 +27,10 @@ describe('flags', () => {
     ).toEqual({
       [testFlagName]: true
     });
+
+    expect(getFlagsFromUrl(`https://localhost:4141/?${testFlagName}`)).toEqual({
+      [testFlagName]: true
+    });
   });
 
   it('getFlagsFromUrl disables flags', () => {
