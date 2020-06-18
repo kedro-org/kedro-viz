@@ -129,7 +129,7 @@ export const routing = ({
       }
 
       // Pass the node at nearest point
-      const offsetY = firstNode.height + spaceY * 2;
+      const offsetY = firstNode.height + spaceY;
       edge.points.push({
         x: nearestPoint.x + sourceOffsetX,
         y: nearestPoint.y
@@ -231,7 +231,22 @@ export const routing = ({
       }
     ];
 
-    // Combine the complete edge path
-    edge.points = [...sourceStem, ...edge.points, ...targetStem];
+    // Combine all points
+    const points = [...sourceStem, ...edge.points, ...targetStem];
+
+    // Fix any invalid points caused by invalid layouts
+    let pointYMax = points[0].y;
+
+    for (const point of points) {
+      // Ensure increasing Y values for each point
+      if (point.y < pointYMax) {
+        point.y = pointYMax;
+      } else {
+        pointYMax = point.y;
+      }
+    }
+
+    // Assign finished points to edge
+    edge.points = points;
   }
 };
