@@ -17,6 +17,21 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+# Release 3.3.1:
+
+## Bug fixes and other changes
+
+- Apply the Black formatter to back-end Python code  (#193)
+- Bump websocket-extensions from 0.1.3 to 0.1.4 (#190)
+- Autoformat Python code using Black (#188)
+- Stop layout calculation from running twice on page-load, and optimise getNodeTextWidth selector performance (#186)
+- Fix `%run_viz` line magic to display kedro viz inside Jupyter notebook, previously broken for kedro 0.16.0/0.16.1. Note that the fix needs `kedro>=0.16.2` to take effect. (#184)
+- Fix three minor tooltip triangle styling bugs (#182)
+- Update readme/contributing docs (#181, #196)
+- Update the semver requirement version (#180)
+- Seed randomly-generated data with UUIDs, to allow random layouts to be replicated for testing purposes (#178, #197)
+- Update pipeline visualisation screenshot in Readme (#177)
+
 # Release 3.3.0:
 
 ## Major features and improvements

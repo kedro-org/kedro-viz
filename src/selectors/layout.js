@@ -12,6 +12,7 @@ const getHasVisibleLayers = state =>
 const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;
 const getVisibleSidebar = state => state.visible.sidebar;
+const getFontLoaded = state => state.fontLoaded;
 
 /**
  * Calculate chart layout. Algorithm used is dependent on flags
@@ -22,10 +23,11 @@ export const getGraph = createSelector(
     getVisibleEdges,
     getVisibleLayerIDs,
     getHasVisibleLayers,
-    getCurrentFlags
+    getCurrentFlags,
+    getFontLoaded
   ],
-  (nodes, edges, layers, showLayers, flags) => {
-    if (!nodes.length || !edges.length) {
+  (nodes, edges, layers, showLayers, flags, fontLoaded) => {
+    if (!fontLoaded || !nodes.length || !edges.length) {
       return;
     }
 

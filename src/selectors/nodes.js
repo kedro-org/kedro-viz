@@ -110,16 +110,24 @@ export const getGroupedNodes = createSelector(
  */
 export const getNodeTextWidth = createSelector(
   [getNodeIDs, getNodeName, getFontLoaded],
-  (nodeIDs, nodeName) => {
+  (nodeIDs, nodeName, fontLoaded) => {
+    if (!fontLoaded) {
+      return {};
+    }
+    const nodeTextWidth = {};
     const svg = select(document.body)
       .append('svg')
       .attr('class', 'kedro pipeline-node');
-    const nodeTextWidth = arrayToObject(nodeIDs, nodeID => {
-      const text = svg.append('text').text(nodeName[nodeID]);
-      const node = text.node();
-      const width = node.getBBox ? node.getBBox().width : 0;
-      return width;
-    });
+    svg
+      .selectAll('text')
+      .data(nodeIDs)
+      .enter()
+      .append('text')
+      .text(nodeID => nodeName[nodeID])
+      .each(function(nodeID) {
+        const width = this.getBBox ? this.getBBox().width : 0;
+        nodeTextWidth[nodeID] = width;
+      });
     svg.remove();
     return nodeTextWidth;
   }
@@ -147,9 +155,12 @@ export const getPadding = (showLabels, isTask) => {
  * Calculate node width/height and icon/text positioning
  */
 export const getNodeSize = createSelector(
-  [getNodeIDs, getNodeTextWidth, getTextLabels, getNodeType],
-  (nodeIDs, nodeTextWidth, textLabels, nodeType) =>
-    arrayToObject(nodeIDs, nodeID => {
+  [getNodeIDs, getNodeTextWidth, getTextLabels, getNodeType, getFontLoaded],
+  (nodeIDs, nodeTextWidth, textLabels, nodeType, fontLoaded) => {
+    if (!fontLoaded) {
+      return {};
+    }
+    return arrayToObject(nodeIDs, nodeID => {
       const iconSize = textLabels ? 24 : 28;
       const padding = getPadding(textLabels, nodeType[nodeID] === 'task');
       const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
@@ -162,7 +173,8 @@ export const getNodeSize = createSelector(
         iconOffset: -innerWidth / 2,
         iconSize
       };
-    })
+    });
+  }
 );
 
 /**
@@ -177,17 +189,29 @@ export const getVisibleNodes = createSelector(
     getNodeFullName,
     getNodeSize,
     getNodeLayer,
-    getNodeRank
+    getNodeRank,
+    getFontLoaded
   ],
-  (nodeIDs, nodeName, nodeType, nodeFullName, nodeSize, nodeLayer, nodeRank) =>
-    nodeIDs.map(id => ({
-      id,
-      name: nodeName[id],
-      label: nodeName[id],
-      fullName: nodeFullName[id],
-      type: nodeType[id],
-      layer: nodeLayer[id],
-      rank: nodeRank[id],
-      ...nodeSize[id]
-    }))
+  (
+    nodeIDs,
+    nodeName,
+    nodeType,
+    nodeFullName,
+    nodeSize,
+    nodeLayer,
+    nodeRank,
+    fontLoaded
+  ) =>
+    fontLoaded
+      ? nodeIDs.map(id => ({
+          id,
+          name: nodeName[id],
+          label: nodeName[id],
+          fullName: nodeFullName[id],
+          type: nodeType[id],
+          layer: nodeLayer[id],
+          rank: nodeRank[id],
+          ...nodeSize[id]
+        }))
+      : []
 );

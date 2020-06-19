@@ -59,35 +59,55 @@ def count_truthy(elements: List[Any]) -> int:
 
 ### JavaScript Development
 
-First, clone this repo. Then install dependencies (`npm i`). Now you're ready to begin development.
+First clone this repo, then download and install dependencies:
 
-If you want to use a particular dataset, you'll first need to place it in `/public/logs/nodes.json`. Otherwise, you can serve randomly-generated data.
+```bash
+npm install
+```
 
-Kedro-Viz uses an environment variable to configure the data source. You can set it when starting up the dev server, e.g. `DATA=random npm start` will serve random procedurally-generated data (refreshed on each page-load). This is usually the most useful setting for local development.
+Now you're ready to begin development. Start the development server:
 
-In other words, to run the app in development mode on a local server, use one of the following:
+```bash
+npm start
+```
 
-- `DATA=random npm start` --> Serve randomly-generated data
-- `DATA=animals npm start` --> Serve example test data, from `/src/utils/data.mock.js`
-- `DATA=lorem npm start` --> Serve example test data, from `/src/utils/data.mock.js`
-- `npm start` --> Serve data loaded from `/public/logs/nodes.json`
-
-This will serve the app at [localhost:4141](http://localhost:4141/), and watch files in `/src` for changes. It will also update the `/lib` directory, which contains a Babel-compiled copy of the source. This directory is exported to `npm`, and is used when importing as a React component into another application. It is updated automatically on save in case you need to test/debug it locally (e.g. with `npm link`). You can also update it manually, by running
+This will serve the app at [localhost:4141](http://localhost:4141/), and watch files in `/src` for changes. It will also update the `/lib` directory, which contains a Babel-compiled copy of the source. This directory is exported to `npm`, and is used when importing as a React component into another application. It is updated automatically when you save in case you need to test/debug it locally (e.g. with `npm link`). You can also update it manually, by running
 
 ```bash
 npm run lib
 ```
 
+#### Data sources
+
+Kedro-Viz uses an unique identifier to determine the data source. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
+
+```bash
+DATA=random npm start
+```
+
+There are several different data sources available. By default in production, the app asynchronously loads JSON from the `/api/nodes.json` endpoint, and you can replicate this in development by placing a dataset at `/public/api/nodes.json`. Alternatively, you can use one of the mock unit-testing/demo datasets, or pseudo-random data procedurally-generated on page load, which is often useful for local development.
+
+| Identifier | Data source |
+|------------|-------------|
+| `json` (default) | `/public/api/nodes.json` |
+| `random` | Randomly-generated data |
+| `demo` | `/src/utils/data/demo.mock.js` |
+| `lorem` | `/src/utils/data/lorem-ipsum.mock.js` |
+| `animals` | `/src/utils/data/animals.mock.js` |
+| `layers` | `/src/utils/data/layers.mock.js` |
+
+Randomly-generated data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
+
 ### Branching conventions
 
 We use a branching model that helps us keep track of branches in a logical, consistent way. All branches should have the hyphen-separated convention of: `<type-of-change>/<short-description-of-change>` e.g. `feature/awesome-new-feature`
 
-| Types of changes | Description                                                                 |
-| ---------------- | --------------------------------------------------------------------------- |
-| `docs`           | Changes to the documentation of the plugin                                  |
-| `feature`        | Non-breaking change which adds functionality                                |
-| `fix`            | Non-breaking change which fixes an issue                                    |
-| `tests`          | Changes to project unit (`tests/`) and / or integration (`features/`) tests |
+| Types of changes | Description |
+| ---------------- | ----------- |
+| `docs`    | Changes to the documentation of the plugin |
+| `feature` | Non-breaking change which adds functionality |
+| `fix`     | Non-breaking change which fixes an issue |
+| `tests`   | Changes to project unit (`tests/`) and / or integration (`features/`) tests |
 
 ## Plugin contribution process
 
