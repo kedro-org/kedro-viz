@@ -55,13 +55,15 @@ export const layout = ({
   if (layers) {
     const layerNames = Object.values(layers);
     const layerSpace = (spaceY + layerSpaceY) * 0.5;
-    let layerNodes = nodes.filter(node => node.layer === layerNames[0]);
+    let layerNodes = nodes.filter(node => node.nearestLayer === layerNames[0]);
 
     // For each defined layer
     for (let i = 0; i < layerNames.length - 1; i += 1) {
       const layer = layerNames[i];
       const nextLayer = layerNames[i + 1];
-      const nextLayerNodes = nodes.filter(node => node.layer === nextLayer);
+      const nextLayerNodes = nodes.filter(
+        node => node.nearestLayer === nextLayer
+      );
 
       // Create a temporary intermediary 'node'
       const layerNode = { id: layer, x: 0, y: 0 };
@@ -75,8 +77,7 @@ export const layout = ({
           operator: greaterOrEqual,
           target: () => layerSpace,
           weightA: () => 0,
-          weightB: () => 1,
-          required: true
+          weightB: () => 1
         });
       }
 
@@ -89,8 +90,7 @@ export const layout = ({
           operator: greaterOrEqual,
           target: () => layerSpace,
           weightA: () => 0,
-          weightB: () => 1,
-          required: true
+          weightB: () => 1
         });
       }
 

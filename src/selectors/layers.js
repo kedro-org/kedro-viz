@@ -13,14 +13,17 @@ export const getLayers = createSelector(
     const bounds = {};
 
     for (const node of nodes) {
-      const bound =
-        bounds[node.layer] || (bounds[node.layer] = [Infinity, -Infinity]);
-      if (node.y - node.height < bound[0]) bound[0] = node.y - node.height;
-      if (node.y + node.height > bound[1]) bound[1] = node.y + node.height;
+      const layer = node.nearestLayer || node.layer;
+
+      if (layer) {
+        const bound = bounds[layer] || (bounds[layer] = [Infinity, -Infinity]);
+        if (node.y - node.height < bound[0]) bound[0] = node.y - node.height;
+        if (node.y + node.height > bound[1]) bound[1] = node.y + node.height;
+      }
     }
 
     return layerIDs.map((id, i) => {
-      const currentBound = bounds[id];
+      const currentBound = bounds[id] || [0, 0];
       const prevBound = bounds[layerIDs[i - 1]] || [
         currentBound[0],
         currentBound[0]
@@ -38,7 +41,7 @@ export const getLayers = createSelector(
         x: -width / 2,
         y: start,
         width: width * 2,
-        height: end - start
+        height: Math.max(end - start, 0)
       };
     });
   }
