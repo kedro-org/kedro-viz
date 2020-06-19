@@ -100,6 +100,24 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
    The React component exposes props that can be used to supply data and customise its behaviour. For information about the props, their expected prop-types and default values, see [/src/components/app/index.js](https://github.com/quantumblacklabs/kedro-viz/blob/master/src/components/app/index.js). For examples of the expected data input format, see the mock data examples in [/src/utils/data](https://github.com/quantumblacklabs/kedro-viz/tree/master/src/utils/data), and compare the [resulting demo](https://quantumblacklabs.github.io/kedro-viz/).
 
+## Flags
+
+The following flags are available in the latest release to toggle experimental features:
+
+- `newgraph` - Improved graphing algorithm (default `false`).
+
+### Setting flags
+
+To enable or disable a flagged feature, add the flag as a parameter with the value `true` or `false` to the end of the URL in your browser when running Kedro-Viz, e.g.
+
+`http://localhost:4141/?data=demo&newgraph=true`
+
+This provided setting will then persist for all sessions on your machine, until it is otherwise changed.
+
+### Viewing flags
+
+See the message in your browser's console for info regarding the available flags and their values as currently set on your machine.
+
 ## What licence do you use?
 
 Kedro-Viz is licensed under the [Apache 2.0](https://github.com/quantumblacklabs/kedro-viz/blob/master/LICENSE.md) License.
