@@ -102,9 +102,9 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
 ## Flags
 
-The following flags are available in the latest release to toggle experimental features:
+The following flags are available to toggle experimental features:
 
-- `newgraph` - Improved graphing algorithm (default `false`).
+- `newgraph` - From release v3.3.2. Improved graphing algorithm (default `false`).
 
 ### Setting flags
 
@@ -112,11 +112,11 @@ To enable or disable a flagged feature, add the flag as a parameter with the val
 
 `http://localhost:4141/?data=demo&newgraph=true`
 
-This provided setting will then persist for all sessions on your machine, until it is otherwise changed.
+The setting you provide persists for all sessions on your machine, until you change it.
 
 ### Viewing flags
 
-See the message in your browser's console for info regarding the available flags and their values as currently set on your machine.
+Kedro-Viz will log a message in your browser's [developer console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#The_JavaScript_console) regarding the available flags and their values as currently set on your machine.
 
 ## What licence do you use?
 
