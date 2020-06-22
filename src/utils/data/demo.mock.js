@@ -446,7 +446,7 @@ export default {
       id: '53b05b01',
       name: 'Sales Model Performance Monitoring',
       tags: ['model_performance_monitoring', 'data_science'],
-      layer: 'Model Output',
+      layer: 'Reporting',
       type: 'task'
     },
     {
@@ -454,7 +454,7 @@ export default {
       id: '6d8d326d',
       name: 'Engagement Model Performance Monitoring',
       tags: ['model_performance_monitoring', 'data_science'],
-      layer: 'Model Output',
+      layer: 'Reporting',
       type: 'task'
     },
     {
