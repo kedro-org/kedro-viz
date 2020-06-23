@@ -103,7 +103,7 @@ utils:
 
   add_ssh_keys: &add_ssh_keys
     fingerprints:
-      - c0:c0:57:5c:f9:c0:ce:fb:56:d4:1c:52:50:47:df:c7
+      - 9a:fe:61:f4:d6:c2:c1:58:75:c9:72:56:6e:53:fd:8b
 
   deploy_gh_pages: &deploy_gh_pages
     name: Deploy to GitHub Pages
