@@ -5,17 +5,17 @@ import { getLayoutNodes } from './layout';
 describe('Selectors', () => {
   describe('getLayers', () => {
     it('returns an array', () => {
-      expect(getLayers(mockState.demo)).toEqual(expect.any(Array));
+      expect(getLayers(mockState.animals)).toEqual(expect.any(Array));
     });
 
     it("returns an array whose IDs match the current pipeline's layer IDs, in the same order", () => {
-      expect(getLayers(mockState.demo).map(d => d.id)).toEqual(
-        mockState.demo.layer.ids
+      expect(getLayers(mockState.animals).map(d => d.id)).toEqual(
+        mockState.animals.layer.ids
       );
     });
 
     it('returns numeric y/height properties for each layer object', () => {
-      expect(getLayers(mockState.demo)).toEqual(
+      expect(getLayers(mockState.animals)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             y: expect.any(Number),
@@ -26,8 +26,8 @@ describe('Selectors', () => {
     });
 
     it("calculates appropriate y/height positions for each layer corresponding to each layer's nodes", () => {
-      const nodes = getLayoutNodes(mockState.demo);
-      const layers = getLayers(mockState.demo);
+      const nodes = getLayoutNodes(mockState.animals);
+      const layers = getLayers(mockState.animals);
       const layerIDs = layers.map(layer => layer.id);
       const layersObj = layers.reduce((layers, layer) => {
         layers[layer.id] = layer;

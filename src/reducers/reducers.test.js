@@ -1,5 +1,4 @@
 import animals from '../utils/data/animals.mock';
-import demo from '../utils/data/demo.mock';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import normalizeData from '../store/normalize-data';
@@ -28,11 +27,11 @@ describe('Reducer', () => {
   describe('RESET_DATA', () => {
     it('should return the same data when given the same input', () => {
       expect(
-        reducer(mockState.demo, {
+        reducer(mockState.animals, {
           type: RESET_DATA,
-          data: normalizeData(demo)
+          data: normalizeData(animals)
         })
-      ).toEqual(mockState.demo);
+      ).toEqual(mockState.animals);
     });
 
     it('should reset the state with new data', () => {
@@ -47,7 +46,7 @@ describe('Reducer', () => {
   describe('TOGGLE_NODE_CLICKED', () => {
     it('should toggle the given node active', () => {
       const nodeClicked = 'abc123';
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: TOGGLE_NODE_CLICKED,
         nodeClicked
       });
@@ -58,7 +57,7 @@ describe('Reducer', () => {
   describe('TOGGLE_NODE_HOVERED', () => {
     it('should toggle the given node active', () => {
       const nodeHovered = 'abc123';
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: TOGGLE_NODE_HOVERED,
         nodeHovered
       });
@@ -68,7 +67,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_NODES_DISABLED', () => {
     it('should toggle the given nodes disabled', () => {
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: TOGGLE_NODES_DISABLED,
         nodeIDs: ['123', 'abc'],
         isDisabled: true
@@ -82,7 +81,7 @@ describe('Reducer', () => {
         type: TOGGLE_NODE_CLICKED,
         nodeClicked: nodeID
       };
-      const clickedState = reducer(mockState.demo, clickNodeAction);
+      const clickedState = reducer(mockState.animals, clickNodeAction);
       expect(clickedState.node.clicked).toEqual(nodeID);
       const disableNodeAction = {
         type: TOGGLE_NODES_DISABLED,
@@ -96,18 +95,18 @@ describe('Reducer', () => {
 
   describe('TOGGLE_TEXT_LABELS', () => {
     it('should toggle the value of textLabels', () => {
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: TOGGLE_TEXT_LABELS,
         textLabels: true
       });
-      expect(mockState.demo.textLabels).toBe(true);
+      expect(mockState.animals.textLabels).toBe(true);
       expect(newState.textLabels).toBe(true);
     });
   });
 
   describe('TOGGLE_TAG_ACTIVE', () => {
     it('should toggle the given tag active', () => {
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: TOGGLE_TAG_ACTIVE,
         tagID: 'huge',
         active: true
@@ -118,7 +117,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_TAG_FILTER', () => {
     it('should disable a given tag', () => {
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: TOGGLE_TAG_FILTER,
         tagID: 'small',
         enabled: true
@@ -129,7 +128,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_THEME', () => {
     it('should toggle the theme to light', () => {
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: TOGGLE_THEME,
         theme: 'light'
       });
@@ -139,7 +138,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_TYPE_DISABLED', () => {
     it('should toggle whether a type is disabled', () => {
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: TOGGLE_TYPE_DISABLED,
         typeID: '123',
         disabled: true
@@ -150,7 +149,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_LAYERS', () => {
     it('should toggle whether layers are shown', () => {
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: TOGGLE_LAYERS,
         visible: false
       });
@@ -160,7 +159,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_SIDEBAR', () => {
     it('should toggle whether the sidebar is open', () => {
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: TOGGLE_SIDEBAR,
         visible: false
       });
@@ -170,7 +169,7 @@ describe('Reducer', () => {
 
   describe('UPDATE_CHART_SIZE', () => {
     it("should update the chart's dimensions", () => {
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: UPDATE_CHART_SIZE,
         chartSize: document.body.getBoundingClientRect()
       });
@@ -187,7 +186,7 @@ describe('Reducer', () => {
 
   describe('UPDATE_FONT_LOADED', () => {
     it('should update the state when the webfont is loaded', () => {
-      const newState = reducer(mockState.demo, {
+      const newState = reducer(mockState.animals, {
         type: UPDATE_FONT_LOADED,
         fontLoaded: true
       });

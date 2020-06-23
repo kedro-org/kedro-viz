@@ -6,9 +6,7 @@ export default {
     'Primary',
     'Feature',
     'Model Input',
-    'Models',
-    'Model Output',
-    'Reporting'
+    'Model Output'
   ],
   tags: [
     {
@@ -46,7 +44,7 @@ export default {
       name: 'trout',
       full_name: 'trout',
       tags: ['small'],
-      layer: 'Models',
+      layer: 'Model Input',
       type: 'task'
     },
     {
@@ -54,7 +52,7 @@ export default {
       name: 'whale',
       full_name: 'whale',
       tags: ['huge'],
-      layer: 'Reporting',
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -102,7 +100,7 @@ export default {
       name: 'horse',
       full_name: 'horse',
       tags: ['huge'],
-      layer: 'Models',
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -134,7 +132,7 @@ export default {
       name: 'giraffe',
       full_name: 'giraffe',
       tags: ['huge'],
-      layer: 'Models',
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -142,7 +140,7 @@ export default {
       name: 'pig',
       full_name: 'pig',
       tags: ['medium'],
-      layer: 'Primary',
+      layer: 'Feature',
       type: 'data'
     }
   ],
