@@ -1,3 +1,12 @@
+/** @license kiwi.js v1.1.2
+ * #------------------------------------------------------------------------------
+ * # Copyright (c) 2013, Nucleic Development Team & H. Rutjes.
+ * #
+ * # Distributed under the terms of the Modified BSD License.
+ * #
+ * # The full license is in the file COPYING.txt, distributed with this software.
+ * #------------------------------------------------------------------------------
+ **/
 import * as kiwi from 'kiwi.js';
 
 import { distance1d } from './common';
