@@ -20,7 +20,6 @@ const prepareState = (...props) => {
  */
 export const mockState = {
   demo: prepareState({ data: 'demo' }),
-  layers: prepareState({ data: 'layers' }),
   lorem: prepareState({ data: 'lorem' }),
   animals: prepareState({ data: 'animals' })
 };
@@ -37,7 +36,7 @@ export const setup = {
   mount: (children, props = {}) => {
     const initialState = Object.assign(
       {},
-      prepareState({ data: 'lorem', ...props }, props)
+      prepareState({ data: 'animals', ...props }, props)
     );
     return mount(
       <Provider store={configureStore(initialState)}>{children}</Provider>
