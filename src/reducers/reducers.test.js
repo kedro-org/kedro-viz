@@ -150,7 +150,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_LAYERS', () => {
     it('should toggle whether layers are shown', () => {
-      const newState = reducer(mockState.layers, {
+      const newState = reducer(mockState.demo, {
         type: TOGGLE_LAYERS,
         visible: false
       });

@@ -4,14 +4,12 @@ import getRandomPipeline from '../utils/random-data';
 import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import animals from '../utils/data/animals.mock';
 import demo from '../utils/data/demo.mock';
-import layers from '../utils/data/layers.mock';
 
 describe('getPipelineData', () => {
   it('returns the correct dataset when passed a dataset string', () => {
     expect(getPipelineData('lorem')).toEqual(loremIpsum);
     expect(getPipelineData('animals')).toEqual(animals);
     expect(getPipelineData('demo')).toEqual(demo);
-    expect(getPipelineData('layers')).toEqual(layers);
   });
 
   it("returns null when passed 'json'", () => {
