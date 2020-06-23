@@ -4,6 +4,7 @@ import App from './index';
 import getRandomPipeline from '../../utils/random-data';
 import animals from '../../utils/data/animals.mock';
 import loremIpsum from '../../utils/data/lorem-ipsum.mock';
+import { Flags } from '../../utils/flags';
 
 describe('App', () => {
   describe('renders without crashing', () => {
@@ -32,6 +33,14 @@ describe('App', () => {
       const wrapper = shallow(<App data={loremIpsum} />);
       wrapper.setProps({ data: animals });
       expect(getSchemaID(wrapper)).toEqual(animals.schema_id);
+    });
+  });
+
+  describe('feature flags', () => {
+    it('it announces flags', () => {
+      const announceFlags = jest.spyOn(App.prototype, 'announceFlags');
+      shallow(<App data={loremIpsum} />);
+      expect(announceFlags).toHaveBeenCalledWith(Flags.defaults());
     });
   });
 

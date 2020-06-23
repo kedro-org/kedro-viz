@@ -116,3 +116,18 @@ export function updateFontLoaded(fontLoaded) {
     fontLoaded
   };
 }
+
+export const CHANGE_FLAG = 'CHANGE_FLAG';
+
+/**
+ * Change the given feature flag
+ * @param {string} name The flag name
+ * @param {value} value The value to set
+ */
+export function changeFlag(name, value) {
+  return {
+    type: CHANGE_FLAG,
+    name,
+    value
+  };
+}

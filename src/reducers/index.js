@@ -3,6 +3,7 @@ import node from './nodes';
 import tag from './tags';
 import nodeType from './node-type';
 import visible from './visible';
+import flags from './flags';
 import {
   RESET_DATA,
   TOGGLE_TEXT_LABELS,
@@ -46,6 +47,7 @@ const combinedReducer = combineReducers({
   nodeType,
   tag,
   visible,
+  flags,
   edge: (state = {}) => state,
   id: (state = null) => state,
   layer: (state = {}) => state,
