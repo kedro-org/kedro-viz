@@ -21,8 +21,14 @@ export const getLayers = createSelector(
 
       if (layer) {
         const bound = bounds[layer] || (bounds[layer] = [Infinity, -Infinity]);
-        if (node.y - node.height < bound[0]) bound[0] = node.y - node.height;
-        if (node.y + node.height > bound[1]) bound[1] = node.y + node.height;
+
+        if (node.y - node.height < bound[0]) {
+          bound[0] = node.y - node.height;
+        }
+
+        if (node.y + node.height > bound[1]) {
+          bound[1] = node.y + node.height;
+        }
       }
     }
 
