@@ -20,7 +20,6 @@ const prepareState = (...props) => {
  */
 export const mockState = {
   demo: prepareState({ data: 'demo' }),
-  lorem: prepareState({ data: 'lorem' }),
   animals: prepareState({ data: 'animals' })
 };
 

@@ -94,13 +94,13 @@ describe('TagList', () => {
   });
 
   it('maps state to props', () => {
-    expect(mapStateToProps(mockState.lorem)).toEqual({
+    expect(mapStateToProps(mockState.animals)).toEqual({
       tagCount: {
         total: expect.any(Number),
         enabled: expect.any(Number)
       },
       tags: expect.any(Array),
-      theme: mockState.lorem.theme
+      theme: mockState.animals.theme
     });
   });
 

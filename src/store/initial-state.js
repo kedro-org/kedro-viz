@@ -1,6 +1,5 @@
 import { loadState } from './helpers';
 import normalizeData from './normalize-data';
-import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import animals from '../utils/data/animals.mock';
 import demo from '../utils/data/demo.mock';
 
@@ -12,9 +11,6 @@ import demo from '../utils/data/demo.mock';
  */
 export const getPipelineData = data => {
   switch (data) {
-    case 'lorem':
-      // Use data from the 'lorem-ipsum' test dataset
-      return loremIpsum;
     case 'animals':
       // Use data from the 'animals' test dataset
       return animals;

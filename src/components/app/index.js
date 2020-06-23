@@ -73,7 +73,7 @@ class App extends React.Component {
 
 App.propTypes = {
   data: PropTypes.oneOfType([
-    PropTypes.oneOf(['random', 'lorem', 'animals', 'demo', 'json']),
+    PropTypes.oneOf(['random', 'animals', 'demo', 'json']),
     PropTypes.shape({
       schema_id: PropTypes.string,
       edges: PropTypes.array.isRequired,
