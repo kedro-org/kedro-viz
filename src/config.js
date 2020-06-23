@@ -8,3 +8,11 @@ export const sidebarWidth = {
   open: 400,
   closed: 60
 };
+
+export const flags = {
+  newgraph: {
+    description: 'Improved graphing algorithm',
+    default: false,
+    icon: '📈'
+  }
+};

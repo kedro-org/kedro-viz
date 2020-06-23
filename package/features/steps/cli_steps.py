@@ -74,7 +74,7 @@ def create_project_from_config_file(context):
     res = run(
         [context.kedro, "new", "-c", str(context.config_file)],
         env=context.env,
-        cwd=str(context.temp_dir)
+        cwd=str(context.temp_dir),
     )
     assert res.returncode == OK_EXIT_CODE
 

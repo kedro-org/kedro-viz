@@ -4,6 +4,7 @@ import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import normalizeData from '../store/normalize-data';
 import {
+  CHANGE_FLAG,
   RESET_DATA,
   TOGGLE_LAYERS,
   TOGGLE_SIDEBAR,
@@ -192,6 +193,17 @@ describe('Reducer', () => {
         fontLoaded: true
       });
       expect(newState.fontLoaded).toBe(true);
+    });
+  });
+
+  describe('CHANGE_FLAG', () => {
+    it('should update the state when a flag is changed', () => {
+      const newState = reducer(mockState.lorem, {
+        type: CHANGE_FLAG,
+        name: 'testFlag',
+        value: true
+      });
+      expect(newState.flags.testFlag).toBe(true);
     });
   });
 });

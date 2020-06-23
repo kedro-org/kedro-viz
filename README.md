@@ -1,6 +1,6 @@
 # Kedro-Viz
-| `develop`                                                                                                                                                        | `master`                                                                                                                                                       |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `develop` | `master`|
+| --------- | ------- |
 | [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop) | [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master) |
 
 [![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)
@@ -61,15 +61,15 @@ kedro viz
 This command will run kedro_viz.server on `http://127.0.0.1:4141/` which cannot be accessed from another machine.
 
 Kedro-Viz has a number of options to customise running the visualisation:
-| CLI command              | Description                                                                                                                                                                            |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--host`                 | Host that viz will listen to. Defaults to 127.0.0.1.                                                                                                                                   |
-| `--port`                 | TCP port that viz will listen to. Defaults to 4141.                                                                                                                                    |
-| `--browser/--no-browser` | Whether to open viz interface in the default browser or not.                                                                                                                           |
-| `--load-file`            | Path to load the pipeline JSON file                                                                                                                                                    |
-| `--save-file`            | Path to save the pipeline JSON file                                                                                                                                                    |
-| `--pipeline`             | Name of the [modular pipeline](https://kedro.readthedocs.io/en/latest/04_user_guide/06_pipelines.html#modular-pipelines) to visualise. If not set, the default pipeline is visualised. |
-| `--env`, `-e`            | Kedro configuration environment. If not specified, catalog config in `local` will be used.                                                                                             |
+| CLI command | Description |
+| ----------- | ----------- |
+| `--host` | Host that viz will listen to. Defaults to 127.0.0.1. |
+| `--port` | TCP port that viz will listen to. Defaults to 4141. |
+| `--browser/--no-browser` | Whether to open viz interface in the default browser or not. |
+| `--load-file` | Path to load the pipeline JSON file |
+| `--save-file` | Path to save the pipeline JSON file |
+| `--pipeline` | Name of the [modular pipeline](https://kedro.readthedocs.io/en/latest/04_user_guide/06_pipelines.html#modular-pipelines) to visualise. If not set, the default pipeline is visualised. |
+| `--env`, `-e` | Kedro configuration environment. If not specified, catalog config in `local` will be used. |
 
 
 ### As a JavaScript React component
@@ -99,6 +99,24 @@ As a JavaScript React component, the project is designed to be used in two diffe
    Kedro-Viz can be used as a React component that can be imported into other applications. Publishing the package will run `npm run lib`, which compiles the source code in `/src`, and places it in the `/lib` directory.
 
    The React component exposes props that can be used to supply data and customise its behaviour. For information about the props, their expected prop-types and default values, see [/src/components/app/index.js](https://github.com/quantumblacklabs/kedro-viz/blob/master/src/components/app/index.js). For examples of the expected data input format, see the mock data examples in [/src/utils/data](https://github.com/quantumblacklabs/kedro-viz/tree/master/src/utils/data), and compare the [resulting demo](https://quantumblacklabs.github.io/kedro-viz/).
+
+## Flags
+
+The following flags are available to toggle experimental features:
+
+- `newgraph` - From release v3.4.0. Improved graphing algorithm (default `false`).
+
+### Setting flags
+
+To enable or disable a flagged feature, add the flag as a parameter with the value `true` or `false` to the end of the URL in your browser when running Kedro-Viz, e.g.
+
+`http://localhost:4141/?data=demo&newgraph=true`
+
+The setting you provide persists for all sessions on your machine, until you change it.
+
+### Viewing flags
+
+Kedro-Viz will log a message in your browser's [developer console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#The_JavaScript_console) regarding the available flags and their values as currently set on your machine.
 
 ## What licence do you use?
 

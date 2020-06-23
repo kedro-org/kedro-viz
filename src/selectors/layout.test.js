@@ -19,7 +19,16 @@ describe('Selectors', () => {
   describe('getGraph', () => {
     const graph = getGraph(mockState.lorem);
 
-    it('calculates chart layout and returns a Dagre object', () => {
+    it('uses the new algorithm if flag set', () => {
+      const graphNew = getGraph({
+        ...mockState.lorem,
+        flags: { newgraph: true }
+      });
+      expect(graph.newgraph).not.toBeDefined();
+      expect(graphNew.newgraph).toBe(true);
+    });
+
+    it('returns a graph object', () => {
       expect(graph).toEqual(
         expect.objectContaining({
           graph: expect.any(Function),

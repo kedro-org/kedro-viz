@@ -1,5 +1,6 @@
 import animals from '../utils/data/animals.mock';
 import {
+  CHANGE_FLAG,
   RESET_DATA,
   TOGGLE_LAYERS,
   TOGGLE_EXPORT_MODAL,
@@ -8,6 +9,7 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
+  changeFlag,
   resetData,
   toggleLayers,
   toggleExportModal,
@@ -173,5 +175,14 @@ describe('actions', () => {
       fontLoaded
     };
     expect(updateFontLoaded(fontLoaded)).toEqual(expectedAction);
+  });
+
+  it('should create an action to change a flag', () => {
+    const expectedAction = {
+      type: CHANGE_FLAG,
+      name: 'testFlag',
+      value: true
+    };
+    expect(changeFlag('testFlag', true)).toEqual(expectedAction);
   });
 });
