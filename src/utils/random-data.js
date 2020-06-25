@@ -1,3 +1,5 @@
+import batchingToposort from 'batching-toposort';
+
 import { arrayToObject, unique } from './index';
 import {
   getNumberArray,
@@ -19,8 +21,9 @@ const MIN_RANK_COUNT = 10;
 const MAX_RANK_NODE_COUNT = 10;
 const MIN_RANK_NODE_COUNT = 1;
 const MAX_NODE_TAG_COUNT = 5;
+const MIN_NODE_DEGREE = 2;
 const MAX_TAG_COUNT = 20;
-const PARAMETERS_FREQUENCY = 0.05;
+const PARAMETERS_FREQUENCY = 0.2;
 const LAYERS = [
   'Raw',
   'Intermediate',
@@ -40,6 +43,9 @@ class Pipeline {
     this.tags = this.generateTags();
     this.nodes = this.generateNodes();
     this.edges = this.generateEdges();
+
+    this.update();
+    this.finalise();
   }
 
   /**
@@ -97,10 +103,8 @@ class Pipeline {
     const nodes = [];
     for (let rank = 0; rank < this.rankCount; rank++) {
       const rankNodeCount = this.getRankNodeCount(rank);
-      const type = this.getType(rank);
-
       for (let i = 0; i < rankNodeCount; i++) {
-        const node = this.createNode(i, rank, type);
+        const node = this.createNode(i, rank);
         nodes.push(node);
       }
     }
@@ -124,33 +128,36 @@ class Pipeline {
    * @param {number} rank Rank number
    * @returns {string} Node type (task/data/parameters)
    */
-  getType(rank) {
-    if (rank % 2) {
+  getType(node) {
+    if (node.rank % 2) {
       return 'task';
     }
-    if (random() < PARAMETERS_FREQUENCY) {
+
+    if (node._sources.length === 0 && random() < PARAMETERS_FREQUENCY) {
       return 'parameters';
     }
+
     return 'data';
   }
 
   /**
-   * Create a node datum object
+   * Create a node datum object.
    * @param {number} i Node index within its rank
-   * @param {number} rank Rank index
-   * @param {number} type
+   * @param {number} initialRank Rank index
    * @returns {object} Node object
    */
-  createNode(i, rank, type) {
-    const name = this.getNodeName(type);
+  createNode(i, initialRank) {
+    const layer = this.rankLayers[initialRank];
     const node = {
-      id: `${type}/${name}(${rank}-${i})`,
-      name,
-      full_name: getRandomName(randomNumber(40)),
-      type,
-      rank,
-      layer: this.rankLayers[rank],
-      tags: this.getRandomTags()
+      id: `${layer}_${initialRank}_${i}`,
+      name: null,
+      full_name: null,
+      type: null,
+      rank: initialRank,
+      layer: layer,
+      tags: this.getRandomTags(),
+      _sources: [],
+      _targets: []
     };
     return node;
   }
@@ -178,56 +185,86 @@ class Pipeline {
    * @returns {array} Edge objects
    */
   generateEdges() {
-    const nodesByRank = [...this.nodes];
-    nodesByRank.sort((a, b) => a.rank - b.rank);
-
     const edges = [];
     const maxEdgeCount = randomNumberBetween(MIN_EDGE_COUNT, MAX_EDGE_COUNT);
 
+    // Sort nodes rank ascending
+    const nodesByRank = [...this.nodes].sort((a, b) => a.rank - b.rank);
+
+    // Find the position of the first node of the last rank
+    const lastRank = nodesByRank[nodesByRank.length - 1].rank;
+    const lastRankFirstIndex = nodesByRank.findIndex(
+      node => node.rank === lastRank
+    );
+
+    // For the desired amount of edges
     for (let i = 0; i < maxEdgeCount; i += 1) {
-      const sourceIndex = randomIndex(nodesByRank.length);
+      // Choose a random starting node excluding the last rank
+      const sourceIndex = randomIndex(lastRankFirstIndex - 1);
       const source = nodesByRank[sourceIndex];
 
+      // Find the position of the first node of the next rank
       const nextRankFirstIndex = nodesByRank.findIndex(
-        (node, index) => index > sourceIndex && node.rank > source.rank
+        node => node.rank > source.rank
       );
 
-      if (nextRankFirstIndex === -1) continue;
-
+      // Find the remaining count of nodes
       const successorCount = nodesByRank.length - nextRankFirstIndex - 1;
+
+      // Choose random successor starting from next rank, prefer closer ranks
       const randomSuccessor = Math.round(
         Math.min(1 / random(), successorCount)
       );
       const targetIndex = nextRankFirstIndex + randomSuccessor;
       const target = nodesByRank[targetIndex];
 
-      edges.push({
+      // Build the edge
+      const edge = {
         source: source.id,
-        target: target.id
-      });
+        target: target.id,
+        _sourceNode: source,
+        _targetNode: target
+      };
+
+      edges.push(edge);
+
+      // Keep track of edges on nodes for later convenience
+      source._targets.push(edge);
+      target._sources.push(edge);
     }
 
     return edges;
   }
 
   /**
-   * Select only nodes that are connected to others
+   * Select only nodes with at least the minimum required connected nodes
    * @returns {object} Filtered nodes
    */
-  filterUnconnectedNodes() {
-    const findMatchingEdge = node => edge =>
-      node.id === edge.source || node.id === edge.target;
+  activeNodes() {
+    const nodes = {};
 
-    return this.nodes.filter(
-      node => this.edges.findIndex(findMatchingEdge(node)) >= 0
-    );
+    // Gets the total number of edges for the given node
+    const degree = node => node._sources.length + node._targets.length;
+
+    for (const edge of this.edges) {
+      // Keep both nodes if they have enough combined connections
+      if (
+        degree(edge._sourceNode) + degree(edge._targetNode) >
+        MIN_NODE_DEGREE
+      ) {
+        nodes[edge._sourceNode.id] = edge._sourceNode;
+        nodes[edge._targetNode.id] = edge._targetNode;
+      }
+    }
+
+    return Object.values(nodes);
   }
 
   /**
    * Select only used tags
    * @returns {object} Filtered tags
    */
-  filterUnusedTags() {
+  activeTags() {
     return this.nodes
       .reduce((tags, node) => (node.tags ? tags.concat(node.tags) : tags), [])
       .filter(unique)
@@ -235,19 +272,79 @@ class Pipeline {
   }
 
   /**
-   * Get a complete JSON schema
-   * @returns {object} Pipeline schema
+   * Select only used edges
+   * @returns {object} Filtered edges
    */
-  getSchema() {
+  activeEdges() {
+    const nodeExists = id => Boolean(this.nodes.find(node => node.id === id));
+    return this.edges.filter(
+      edge => nodeExists(edge.target) && nodeExists(edge.source)
+    );
+  }
+
+  /**
+   * Updates node properties including rank, type and name based on the current graph
+   */
+  update() {
+    const graph = {};
+
+    for (const node of this.nodes) {
+      graph[node.id] = [];
+    }
+
+    for (const edge of this.edges) {
+      graph[edge.source].push(edge.target);
+    }
+
+    // Use toposort to find actual ranks
+    const sortedNodes = batchingToposort(graph);
+
+    for (let rank = 0; rank < sortedNodes.length; rank++) {
+      for (const id of sortedNodes[rank]) {
+        const node = this.nodes.find(node => node.id === id);
+        node.rank = rank;
+        node.type = this.getType(node);
+        node.name = this.getNodeName(node.type);
+        node.full_name = `${node.layer}_${node.type}_${node.rank}_${
+          node.name
+        }`.replace(/\s/g, '_');
+      }
+    }
+  }
+
+  /**
+   * Removes unused elements and cleans up temporary properties
+   */
+  finalise() {
+    this.nodes = this.activeNodes();
+    this.tags = this.activeTags();
+    this.edges = this.activeEdges();
+
+    for (const node of this.nodes) {
+      delete node._sources;
+      delete node._targets;
+    }
+
+    for (const edge of this.edges) {
+      delete edge._targetNode;
+      delete edge._sourceNode;
+    }
+  }
+
+  /**
+   * Gets the complete pipeline data
+   * @returns {object} The pipeline data
+   */
+  all() {
     return {
       edges: this.edges,
-      layers: LAYERS,
-      nodes: this.filterUnconnectedNodes(),
-      tags: this.filterUnusedTags()
+      nodes: this.nodes,
+      tags: this.tags,
+      layers: LAYERS
     };
   }
 }
 
-const generateRandomPipeline = () => new Pipeline().getSchema();
+const generateRandomPipeline = () => new Pipeline().all();
 
 export default generateRandomPipeline;
