@@ -14,14 +14,14 @@ import {
 
 //--- Config variables ---//
 
-const MAX_EDGE_COUNT = 150;
-const MIN_EDGE_COUNT = 50;
+const MAX_EDGE_COUNT = 200;
+const MIN_EDGE_COUNT = 100;
 const MAX_RANK_COUNT = 50;
 const MIN_RANK_COUNT = 10;
 const MAX_RANK_NODE_COUNT = 10;
 const MIN_RANK_NODE_COUNT = 1;
-const MAX_NODE_TAG_COUNT = 5;
 const MIN_NODE_DEGREE = 2;
+const MAX_NODE_TAG_COUNT = 5;
 const MAX_TAG_COUNT = 20;
 const PARAMETERS_FREQUENCY = 0.2;
 const LAYERS = [
@@ -112,15 +112,11 @@ class Pipeline {
   }
 
   /**
-   * Randomly calculate the number of nodes in a rank
-   * @param {number} rank Rank number
+   * Return a random count of nodes for a rank
    * @returns {number} rank node count
    */
-  getRankNodeCount(rank) {
-    const max = MAX_RANK_NODE_COUNT;
-    const min = MIN_RANK_NODE_COUNT;
-    const p = (this.rankCount - rank) / this.rankCount;
-    return randomNumber(p * (max - min) + min);
+  getRankNodeCount() {
+    return Math.min(MIN_RANK_NODE_COUNT / random(), MAX_RANK_NODE_COUNT);
   }
 
   /**
@@ -186,37 +182,38 @@ class Pipeline {
    */
   generateEdges() {
     const edges = [];
-    const maxEdgeCount = randomNumberBetween(MIN_EDGE_COUNT, MAX_EDGE_COUNT);
+    const edgeCount = randomNumberBetween(MIN_EDGE_COUNT, MAX_EDGE_COUNT);
 
     // Sort nodes rank ascending
-    const nodesByRank = [...this.nodes].sort((a, b) => a.rank - b.rank);
+    const nodesByRank = {};
+    for (const node of this.nodes) {
+      nodesByRank[node.rank] = nodesByRank[node.rank] || [];
+      nodesByRank[node.rank].push(node);
+    }
 
-    // Find the position of the first node of the last rank
-    const lastRank = nodesByRank[nodesByRank.length - 1].rank;
-    const lastRankFirstIndex = nodesByRank.findIndex(
-      node => node.rank === lastRank
-    );
+    // Find the sorted list of node ranks
+    const ranks = Object.keys(nodesByRank)
+      .map(rank => parseFloat(rank))
+      .sort((a, b) => a - b);
 
     // For the desired amount of edges
-    for (let i = 0; i < maxEdgeCount; i += 1) {
-      // Choose a random starting node excluding the last rank
-      const sourceIndex = randomIndex(lastRankFirstIndex - 1);
-      const source = nodesByRank[sourceIndex];
+    for (let i = 0; i < edgeCount; i += 1) {
+      // Choose a random source node excluding the last rank
+      const sourceRankIndex = randomIndex(ranks.length - 1);
+      const sourceRank = ranks[sourceRankIndex];
+      const sourceRankNodes = nodesByRank[sourceRank];
+      const sourceIndex = randomIndex(sourceRankNodes.length);
+      const source = sourceRankNodes[sourceIndex];
 
-      // Find the position of the first node of the next rank
-      const nextRankFirstIndex = nodesByRank.findIndex(
-        node => node.rank > source.rank
-      );
-
-      // Find the remaining count of nodes
-      const successorCount = nodesByRank.length - nextRankFirstIndex - 1;
-
-      // Choose random successor starting from next rank, prefer closer ranks
-      const randomSuccessor = Math.round(
-        Math.min(1 / random(), successorCount)
-      );
-      const targetIndex = nextRankFirstIndex + randomSuccessor;
-      const target = nodesByRank[targetIndex];
+      // Choose a random target node after the source rank
+      const remainingRankCount = ranks.length - 1 - sourceRankIndex;
+      const biasedRandom = Math.round(0.5 / random());
+      const targetRankIndex =
+        sourceRankIndex + Math.min(biasedRandom, remainingRankCount);
+      const targetRank = ranks[targetRankIndex];
+      const targetRankNodes = nodesByRank[targetRank];
+      const targetIndex = randomIndex(targetRankNodes.length);
+      const target = targetRankNodes[targetIndex];
 
       // Build the edge
       const edge = {
