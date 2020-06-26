@@ -4,8 +4,8 @@ import { toggleTagFilter } from '../actions';
 import reducer from '../reducers';
 
 const getTagIDs = state => state.tag.ids;
-const tagIDs = getTagIDs(mockState.lorem);
-const tagData = getTagData(mockState.lorem);
+const tagIDs = getTagIDs(mockState.animals);
+const tagData = getTagData(mockState.animals);
 
 describe('Selectors', () => {
   describe('getTagData', () => {
@@ -29,12 +29,12 @@ describe('Selectors', () => {
 
   describe('getTagCount', () => {
     const newMockState = reducer(
-      mockState.lorem,
+      mockState.animals,
       toggleTagFilter(tagIDs[0], true)
     );
 
     it('retrieves the total and enabled number of tags', () => {
-      expect(getTagCount(mockState.lorem)).toEqual(
+      expect(getTagCount(mockState.animals)).toEqual(
         expect.objectContaining({
           enabled: 0,
           total: tagIDs.length

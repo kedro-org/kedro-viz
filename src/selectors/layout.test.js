@@ -17,11 +17,11 @@ import { sidebarBreakpoint, sidebarWidth } from '../config';
 
 describe('Selectors', () => {
   describe('getGraph', () => {
-    const graph = getGraph(mockState.lorem);
+    const graph = getGraph(mockState.animals);
 
     it('uses the new algorithm if flag set', () => {
       const graphNew = getGraph({
-        ...mockState.lorem,
+        ...mockState.animals,
         flags: { newgraph: true }
       });
       expect(graph.newgraph).not.toBeDefined();
@@ -42,16 +42,18 @@ describe('Selectors', () => {
 
     it('returns a complete list of node and edge IDs', () => {
       expect(graph.nodes()).toEqual(
-        getVisibleNodes(mockState.lorem).map(d => d.id)
+        getVisibleNodes(mockState.animals).map(d => d.id)
       );
       const edgeIDs = graph.edges().map(edge => graph.edge(edge).id);
-      expect(edgeIDs).toEqual(getVisibleEdges(mockState.lorem).map(d => d.id));
+      expect(edgeIDs).toEqual(
+        getVisibleEdges(mockState.animals).map(d => d.id)
+      );
     });
   });
 
   describe('getLayoutNodes', () => {
     it('returns a properly-formatted list of nodes', () => {
-      const nodes = getLayoutNodes(mockState.lorem);
+      const nodes = getLayoutNodes(mockState.animals);
       expect(nodes).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
@@ -71,7 +73,7 @@ describe('Selectors', () => {
 
   describe('getLayoutEdges', () => {
     it('returns a properly-formatted list of edges', () => {
-      const edges = getLayoutEdges(mockState.lorem);
+      const edges = getLayoutEdges(mockState.animals);
       expect(edges).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
@@ -92,7 +94,7 @@ describe('Selectors', () => {
 
   describe('getGraphSize', () => {
     it('returns width, height and margin of the graph', () => {
-      const graphSize = getGraphSize(mockState.lorem);
+      const graphSize = getGraphSize(mockState.animals);
       expect(graphSize).toEqual(
         expect.objectContaining({
           height: expect.any(Number),
@@ -133,7 +135,7 @@ describe('Selectors', () => {
 
   describe('getChartSize', () => {
     it('returns a set of undefined properties if chartSize DOMRect is not supplied', () => {
-      expect(getChartSize(mockState.lorem)).toEqual({
+      expect(getChartSize(mockState.animals)).toEqual({
         height: undefined,
         left: undefined,
         outerHeight: undefined,
@@ -146,7 +148,7 @@ describe('Selectors', () => {
 
     it('returns a DOMRect converted into an Object, with some extra properties', () => {
       const newMockState = {
-        ...mockState.lorem,
+        ...mockState.animals,
         chartSize: { left: 100, top: 100, width: 1000, height: 1000 }
       };
       expect(getChartSize(newMockState)).toEqual({
@@ -169,7 +171,7 @@ describe('Selectors', () => {
     };
 
     it('returns default values if chartSize is unset', () => {
-      expect(getZoomPosition(mockState.lorem)).toEqual(defaultZoom);
+      expect(getZoomPosition(mockState.animals)).toEqual(defaultZoom);
     });
 
     it('returns default values when no nodes are visible', () => {
@@ -182,7 +184,7 @@ describe('Selectors', () => {
 
     it('returns the updated chart zoom translation/scale if chartSize is set', () => {
       const newMockState = reducer(
-        mockState.lorem,
+        mockState.animals,
         updateChartSize({ width: 100, height: 100 })
       );
       const newZoomPos = getZoomPosition(newMockState);

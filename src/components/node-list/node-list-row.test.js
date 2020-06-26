@@ -4,7 +4,7 @@ import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
 
 describe('NodeListRow', () => {
-  const node = getNodeData(mockState.lorem)[0];
+  const node = getNodeData(mockState.animals)[0];
   const setupProps = () => {
     const dispatch = jest.fn();
     const props = {

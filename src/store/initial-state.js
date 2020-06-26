@@ -1,9 +1,7 @@
 import { loadState } from './helpers';
 import normalizeData from './normalize-data';
-import loremIpsum from '../utils/data/lorem-ipsum.mock';
 import animals from '../utils/data/animals.mock';
 import demo from '../utils/data/demo.mock';
-import layers from '../utils/data/layers.mock';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 
 /**
@@ -14,18 +12,12 @@ import { getFlagsFromUrl, Flags } from '../utils/flags';
  */
 export const getPipelineData = data => {
   switch (data) {
-    case 'lorem':
-      // Use data from the 'lorem-ipsum' test dataset
-      return loremIpsum;
     case 'animals':
       // Use data from the 'animals' test dataset
       return animals;
     case 'demo':
       // Use data from the 'demo' test dataset
       return demo;
-    case 'layers':
-      // Use data from the 'layers' test dataset
-      return layers;
     case 'json':
       // Return empty state, as data will be loaded asynchronously later
       return null;

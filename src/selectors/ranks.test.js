@@ -8,16 +8,16 @@ const getNodeLayer = state => state.node.layer;
 describe('Selectors', () => {
   describe('getLayerNodes', () => {
     it('returns an array containing an array of node IDs', () => {
-      expect(getLayerNodes(mockState.layers)).toEqual(
+      expect(getLayerNodes(mockState.animals)).toEqual(
         expect.arrayContaining([expect.arrayContaining([expect.any(String)])])
       );
     });
 
     test('all node IDs are in the correct layer', () => {
-      const layerIDs = getVisibleLayerIDs(mockState.layers);
-      const nodeLayer = getNodeLayer(mockState.layers);
+      const layerIDs = getVisibleLayerIDs(mockState.animals);
+      const nodeLayer = getNodeLayer(mockState.animals);
       expect(
-        getLayerNodes(mockState.layers).every((layerNodeIDs, i) =>
+        getLayerNodes(mockState.animals).every((layerNodeIDs, i) =>
           layerNodeIDs.every(nodeID => nodeLayer[nodeID] === layerIDs[i])
         )
       ).toBe(true);
@@ -25,9 +25,9 @@ describe('Selectors', () => {
   });
 
   describe('getNodeRank', () => {
-    const nodeRank = getNodeRank(mockState.layers);
-    const nodeIDs = getVisibleNodeIDs(mockState.layers);
-    const edges = getVisibleEdges(mockState.layers);
+    const nodeRank = getNodeRank(mockState.animals);
+    const nodeIDs = getVisibleNodeIDs(mockState.animals);
+    const edges = getVisibleEdges(mockState.animals);
 
     it('returns an object', () => {
       expect(nodeRank).toEqual(expect.any(Object));

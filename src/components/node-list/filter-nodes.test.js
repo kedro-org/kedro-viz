@@ -15,7 +15,7 @@ const ungroupNodes = groupedNodes =>
 
 describe('filter-nodes', () => {
   describe('getFilteredNodes', () => {
-    const nodes = getGroupedNodes(mockState.lorem);
+    const nodes = getGroupedNodes(mockState.animals);
     const searchValue = 'e';
     const { filteredNodes, nodeIDs } = getFilteredNodes({ nodes, searchValue });
     const nodeList = ungroupNodes(filteredNodes);

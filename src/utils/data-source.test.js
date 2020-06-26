@@ -25,8 +25,8 @@ describe('getDataSource', () => {
   });
 
   it('should return the given datasource if set', () => {
-    process.env.REACT_APP_DATA_SOURCE = 'lorem';
-    expect(getDataSource()).toBe('lorem');
+    process.env.REACT_APP_DATA_SOURCE = 'animals';
+    expect(getDataSource()).toBe('animals');
   });
 
   it('should return random data if requested', () => {

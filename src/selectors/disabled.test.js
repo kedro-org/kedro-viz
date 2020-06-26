@@ -17,25 +17,25 @@ const getNodeTags = state => state.node.tags;
 describe('Selectors', () => {
   describe('getNodeDisabledTag', () => {
     it('returns an object', () => {
-      expect(getNodeDisabledTag(mockState.lorem)).toEqual(expect.any(Object));
+      expect(getNodeDisabledTag(mockState.animals)).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(getNodeDisabledTag(mockState.lorem))).toEqual(
-        getNodeIDs(mockState.lorem)
+      expect(Object.keys(getNodeDisabledTag(mockState.animals))).toEqual(
+        getNodeIDs(mockState.animals)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getNodeDisabledTag(mockState.lorem)).every(
+        Object.values(getNodeDisabledTag(mockState.animals)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
     });
 
     it('does not disable any nodes if all tags filters are inactive', () => {
-      const nodeDisabled = getNodeDisabledTag(mockState.lorem);
+      const nodeDisabled = getNodeDisabledTag(mockState.animals);
       expect(Object.values(nodeDisabled)).toEqual(
         Object.values(nodeDisabled).map(() => false)
       );
@@ -88,18 +88,18 @@ describe('Selectors', () => {
 
   describe('getNodeDisabled', () => {
     it('returns an object', () => {
-      expect(getNodeDisabled(mockState.lorem)).toEqual(expect.any(Object));
+      expect(getNodeDisabled(mockState.animals)).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(getNodeDisabled(mockState.lorem))).toEqual(
-        getNodeIDs(mockState.lorem)
+      expect(Object.keys(getNodeDisabled(mockState.animals))).toEqual(
+        getNodeIDs(mockState.animals)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getNodeDisabled(mockState.lorem)).every(
+        Object.values(getNodeDisabled(mockState.animals)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
@@ -107,27 +107,27 @@ describe('Selectors', () => {
   });
 
   describe('getEdgeDisabled', () => {
-    const nodeID = getNodeIDs(mockState.lorem)[0];
+    const nodeID = getNodeIDs(mockState.animals)[0];
     const newMockState = reducer(
-      mockState.lorem,
+      mockState.animals,
       toggleNodesDisabled([nodeID], true)
     );
     const edgeDisabled = getEdgeDisabled(newMockState);
     const edges = getEdgeIDs(newMockState);
 
     it('returns an object', () => {
-      expect(getEdgeDisabled(mockState.lorem)).toEqual(expect.any(Object));
+      expect(getEdgeDisabled(mockState.animals)).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the current pipeline's edges", () => {
-      expect(Object.keys(getEdgeDisabled(mockState.lorem))).toEqual(
-        getEdgeIDs(mockState.lorem)
+      expect(Object.keys(getEdgeDisabled(mockState.animals))).toEqual(
+        getEdgeIDs(mockState.animals)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getEdgeDisabled(mockState.lorem)).every(
+        Object.values(getEdgeDisabled(mockState.animals)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
@@ -135,7 +135,7 @@ describe('Selectors', () => {
 
     it('does not disable an edge if no nodes are disabled', () => {
       const edgeDisabledValues = Object.values(
-        getEdgeDisabled(mockState.lorem)
+        getEdgeDisabled(mockState.animals)
       );
       expect(edgeDisabledValues).toEqual(edgeDisabledValues.map(() => false));
     });
@@ -165,18 +165,18 @@ describe('Selectors', () => {
     });
 
     it('returns an object', () => {
-      expect(getEdgeDisabled(mockState.lorem)).toEqual(expect.any(Object));
+      expect(getEdgeDisabled(mockState.animals)).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the current pipeline's edges", () => {
-      expect(Object.keys(getEdgeDisabled(mockState.lorem))).toEqual(
-        getEdgeIDs(mockState.lorem)
+      expect(Object.keys(getEdgeDisabled(mockState.animals))).toEqual(
+        getEdgeIDs(mockState.animals)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getEdgeDisabled(mockState.lorem)).every(
+        Object.values(getEdgeDisabled(mockState.animals)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);

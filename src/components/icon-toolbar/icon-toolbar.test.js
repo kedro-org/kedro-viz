@@ -44,9 +44,9 @@ describe('IconToolbar', () => {
     (icon, callback) => {
       const mockFn = jest.fn();
       const props = {
-        textLabels: mockState.lorem.textLabels,
-        theme: mockState.lorem.theme,
-        visible: mockState.lorem.visible,
+        textLabels: mockState.animals.textLabels,
+        theme: mockState.animals.theme,
+        visible: mockState.animals.visible,
         [callback]: mockFn
       };
       const wrapper = setup.mount(<IconToolbar {...props} />);
@@ -74,7 +74,7 @@ describe('IconToolbar', () => {
         sidebar: expect.any(Boolean)
       })
     };
-    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 
   describe('mapDispatchToProps', () => {
