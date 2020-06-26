@@ -21,7 +21,7 @@ describe('Selectors', () => {
 
     it('uses the new algorithm if flag set', () => {
       const graphNew = getGraph({
-        ...mockState.lorem,
+        ...mockState.animals,
         flags: { newgraph: true }
       });
       expect(graph.newgraph).not.toBeDefined();

@@ -197,7 +197,7 @@ describe('Reducer', () => {
 
   describe('CHANGE_FLAG', () => {
     it('should update the state when a flag is changed', () => {
-      const newState = reducer(mockState.lorem, {
+      const newState = reducer(mockState.animals, {
         type: CHANGE_FLAG,
         name: 'testFlag',
         value: true
