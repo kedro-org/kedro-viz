@@ -2,6 +2,7 @@ import { loadState } from './helpers';
 import normalizeData from './normalize-data';
 import animals from '../utils/data/animals.mock';
 import demo from '../utils/data/demo.mock';
+import { getFlagsFromUrl, Flags } from '../utils/flags';
 
 /**
  * Determine where data should be loaded from (i.e. async from JSON,
@@ -104,6 +105,12 @@ const getInitialState = (props = {}) => {
     props.visible
   );
 
+  const flags = {
+    ...Flags.defaults(),
+    ...localStorageState.flags,
+    ...getFlagsFromUrl()
+  };
+
   if (nodeTypeDisabled) {
     pipelineData.nodeType.disabled = nodeTypeDisabled;
   }
@@ -114,7 +121,8 @@ const getInitialState = (props = {}) => {
     fontLoaded: false,
     textLabels,
     visible,
-    theme
+    theme,
+    flags
   };
 };
 

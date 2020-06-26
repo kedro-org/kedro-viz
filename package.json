@@ -41,6 +41,7 @@
     "d3-transition": "^1.2.0",
     "d3-zoom": "^1.7.3",
     "dagre": "git+https://github.com/richardwestenra/dagre.git#manual-ranking",
+    "kiwi.js": "^1.1.2",
     "konami-code": "^0.2.1",
     "react-custom-scrollbars": "^4.2.1",
     "react-flip-toolkit": "^7.0.7",

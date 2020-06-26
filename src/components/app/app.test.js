@@ -4,6 +4,7 @@ import App from './index';
 import getRandomPipeline from '../../utils/random-data';
 import animals from '../../utils/data/animals.mock';
 import demo from '../../utils/data/demo.mock';
+import { Flags } from '../../utils/flags';
 
 describe('App', () => {
   describe('renders without crashing', () => {
@@ -32,6 +33,14 @@ describe('App', () => {
       const wrapper = shallow(<App data={demo} />);
       wrapper.setProps({ data: animals });
       expect(getSchemaID(wrapper)).toEqual(animals.schema_id);
+    });
+  });
+
+  describe('feature flags', () => {
+    it('it announces flags', () => {
+      const announceFlags = jest.spyOn(App.prototype, 'announceFlags');
+      shallow(<App data={animals} />);
+      expect(announceFlags).toHaveBeenCalledWith(Flags.defaults());
     });
   });
 

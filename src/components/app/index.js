@@ -8,6 +8,7 @@ import Wrapper from '../wrapper';
 import getInitialState from '../../store/initial-state';
 import loadData from '../../store/load-data';
 import normalizeData from '../../store/normalize-data';
+import { getFlagsMessage } from '../../utils/flags';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
 import './app.css';
 
@@ -19,6 +20,7 @@ class App extends React.Component {
     super(props);
     const initialState = getInitialState(props);
     this.store = configureStore(initialState);
+    this.announceFlags(initialState.flags);
   }
 
   componentDidMount() {
@@ -29,6 +31,17 @@ class App extends React.Component {
   componentDidUpdate(prevProps) {
     if (prevProps.data.schema_id !== this.props.data.schema_id) {
       this.updatePipelineData();
+    }
+  }
+
+  /**
+   * Shows a console message regarding the given flags
+   */
+  announceFlags(flags) {
+    const message = getFlagsMessage(flags);
+
+    if (message && typeof jest === 'undefined') {
+      console.info(message);
     }
   }
 
