@@ -177,43 +177,54 @@ class Pipeline {
   }
 
   /**
+   * Gets a map of ranks to lists of nodes at that rank
+   * @returns {array} List of nodes
+   */
+  getNodesByRank() {
+    const nodesByRank = {};
+
+    for (const node of this.nodes) {
+      nodesByRank[node.rank] = nodesByRank[node.rank] || [];
+      nodesByRank[node.rank].push(node);
+    }
+
+    return nodesByRank;
+  }
+
+  /**
    * Create list of edges
    * @returns {array} Edge objects
    */
   generateEdges() {
     const edges = [];
     const edgeCount = randomNumberBetween(MIN_EDGE_COUNT, MAX_EDGE_COUNT);
-
-    // Sort nodes rank ascending
-    const nodesByRank = {};
-    for (const node of this.nodes) {
-      nodesByRank[node.rank] = nodesByRank[node.rank] || [];
-      nodesByRank[node.rank].push(node);
-    }
+    const nodesByRank = this.getNodesByRank();
 
     // Find the sorted list of node ranks
     const ranks = Object.keys(nodesByRank)
       .map(rank => parseFloat(rank))
       .sort((a, b) => a - b);
 
+    // Gets a random node with the given rank index
+    const getRandomNodeAtRank = rankIndex => {
+      const rankValue = ranks[rankIndex];
+      const rankNodes = nodesByRank[rankValue];
+      const rankNodeIndex = randomIndex(rankNodes.length);
+      return rankNodes[rankNodeIndex];
+    };
+
     // For the desired amount of edges
     for (let i = 0; i < edgeCount; i += 1) {
       // Choose a random source node excluding the last rank
       const sourceRankIndex = randomIndex(ranks.length - 1);
-      const sourceRank = ranks[sourceRankIndex];
-      const sourceRankNodes = nodesByRank[sourceRank];
-      const sourceIndex = randomIndex(sourceRankNodes.length);
-      const source = sourceRankNodes[sourceIndex];
+      const source = getRandomNodeAtRank(sourceRankIndex);
 
-      // Choose a random target node after the source rank
+      // Choose a random target node after the source rank prefering nearby
       const remainingRankCount = ranks.length - 1 - sourceRankIndex;
       const biasedRandom = Math.round(0.5 / random());
       const targetRankIndex =
         sourceRankIndex + Math.min(biasedRandom, remainingRankCount);
-      const targetRank = ranks[targetRankIndex];
-      const targetRankNodes = nodesByRank[targetRank];
-      const targetIndex = randomIndex(targetRankNodes.length);
-      const target = targetRankNodes[targetIndex];
+      const target = getRandomNodeAtRank(targetRankIndex);
 
       // Build the edge
       const edge = {
@@ -273,9 +284,13 @@ class Pipeline {
    * @returns {object} Filtered edges
    */
   activeEdges() {
-    const nodeExists = id => Boolean(this.nodes.find(node => node.id === id));
+    const visibleNodes = arrayToObject(
+      this.nodes.map(node => node.id),
+      () => true
+    );
+
     return this.edges.filter(
-      edge => nodeExists(edge.target) && nodeExists(edge.source)
+      edge => visibleNodes[edge.target] && visibleNodes[edge.source]
     );
   }
 
