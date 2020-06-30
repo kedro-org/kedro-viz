@@ -35,7 +35,13 @@ export const Flags = {
  * @returns {object} An object with flags and their values
  */
 export const getFlagsFromUrl = url => {
-  const urlParams = new URL(url || document.location).searchParams;
+  let urlParams;
+  try {
+    urlParams = new URL(url || document.location.href).searchParams;
+  } catch (e) {
+    console.warn('Feature flags are not supported in this browser');
+    return;
+  }
   const flags = {};
 
   [...urlParams].forEach(([name, value]) =>
