@@ -3,7 +3,8 @@ import { shallow } from 'enzyme';
 import App from './index';
 import getRandomPipeline from '../../utils/random-data';
 import animals from '../../utils/data/animals.mock';
-import loremIpsum from '../../utils/data/lorem-ipsum.mock';
+import demo from '../../utils/data/demo.mock';
+import { Flags } from '../../utils/flags';
 
 describe('App', () => {
   describe('renders without crashing', () => {
@@ -16,7 +17,7 @@ describe('App', () => {
     });
 
     it('when being passed data as a prop', () => {
-      shallow(<App data={loremIpsum} />);
+      shallow(<App data={animals} />);
     });
   });
 
@@ -24,14 +25,22 @@ describe('App', () => {
     const getSchemaID = wrapper => wrapper.instance().store.getState().id;
 
     it('when data prop is set on first load', () => {
-      const wrapper = shallow(<App data={loremIpsum} />);
-      expect(getSchemaID(wrapper)).toEqual(loremIpsum.schema_id);
+      const wrapper = shallow(<App data={animals} />);
+      expect(getSchemaID(wrapper)).toEqual(animals.schema_id);
     });
 
     it('when data prop is updated', () => {
-      const wrapper = shallow(<App data={loremIpsum} />);
+      const wrapper = shallow(<App data={demo} />);
       wrapper.setProps({ data: animals });
       expect(getSchemaID(wrapper)).toEqual(animals.schema_id);
+    });
+  });
+
+  describe('feature flags', () => {
+    it('it announces flags', () => {
+      const announceFlags = jest.spyOn(App.prototype, 'announceFlags');
+      shallow(<App data={animals} />);
+      expect(announceFlags).toHaveBeenCalledWith(Flags.defaults());
     });
   });
 

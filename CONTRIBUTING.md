@@ -92,9 +92,7 @@ There are several different data sources available. By default in production, th
 | `json` (default) | `/public/api/nodes.json` |
 | `random` | Randomly-generated data |
 | `demo` | `/src/utils/data/demo.mock.js` |
-| `lorem` | `/src/utils/data/lorem-ipsum.mock.js` |
 | `animals` | `/src/utils/data/animals.mock.js` |
-| `layers` | `/src/utils/data/layers.mock.js` |
 
 Randomly-generated data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
 

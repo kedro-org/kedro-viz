@@ -27,6 +27,6 @@ describe('ExportModal', () => {
         sidebar: expect.any(Boolean)
       })
     };
-    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 });

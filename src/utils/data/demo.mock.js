@@ -1,5 +1,15 @@
 export default {
   schema_id: '12345678901234567890',
+  layers: [
+    'Raw',
+    'Intermediate',
+    'Primary',
+    'Feature',
+    'Model Input',
+    'Models',
+    'Model Output',
+    'Reporting'
+  ],
   edges: [
     {
       source: '33920f3a',
@@ -308,6 +318,7 @@ export default {
       id: '06c33e94',
       name: 'Load Raw Interaction Data',
       tags: ['data_engineering', 'preprocessing'],
+      layer: 'Raw',
       type: 'task'
     },
     {
@@ -315,6 +326,7 @@ export default {
       id: '0b7e1ac6',
       name: 'Load Raw Country Data',
       tags: ['data_engineering', 'preprocessing'],
+      layer: 'Raw',
       type: 'task'
     },
     {
@@ -322,27 +334,31 @@ export default {
       id: '22ea294c',
       name: 'Load Raw Shopper Spend Data',
       tags: ['data_engineering', 'preprocessing'],
+      layer: 'Raw',
       type: 'task'
     },
     {
-      full_name: 'preprocess_primary_interaction_data',
+      full_name: 'preprocess_intermediate_interaction_data',
       id: 'f1a163c4',
-      name: 'Preprocess Primary Interaction Data',
+      name: 'Preprocess Intermediate Interaction Data',
       tags: ['data_engineering', 'preprocessing'],
+      layer: 'Intermediate',
       type: 'task'
     },
     {
-      full_name: 'preprocess_primary_country_data',
+      full_name: 'preprocess_intermediate_country_data',
       id: 'b2f97396',
-      name: 'Preprocess Primary Country Data',
+      name: 'Preprocess Intermediate Country Data',
       tags: ['data_engineering', 'preprocessing'],
+      layer: 'Intermediate',
       type: 'task'
     },
     {
-      full_name: 'preprocess_primary_shopper_spend_data',
+      full_name: 'preprocess_intermediate_shopper_spend_data',
       id: '27bb9dc7',
-      name: 'Preprocess Primary Shopper Spend Data',
+      name: 'Preprocess Intermediate Shopper Spend Data',
       tags: ['data_engineering', 'preprocessing'],
+      layer: 'Intermediate',
       type: 'task'
     },
     {
@@ -350,6 +366,7 @@ export default {
       id: 'fb5bd01d',
       name: 'Create Shopper Spend Features',
       tags: ['feature_engineering', 'data_engineering'],
+      layer: 'Feature',
       type: 'task'
     },
     {
@@ -357,6 +374,7 @@ export default {
       id: 'd52422da',
       name: 'Create Shopper Churn Features',
       tags: ['feature_engineering', 'data_engineering'],
+      layer: 'Feature',
       type: 'task'
     },
     {
@@ -364,6 +382,7 @@ export default {
       id: 'dcbb9652',
       name: 'Prepare Vendor Input',
       tags: ['feature_engineering', 'data_engineering'],
+      layer: 'Intermediate',
       type: 'task'
     },
     {
@@ -371,6 +390,7 @@ export default {
       id: 'c4cff5d0',
       name: 'Prepare CRM Input',
       tags: ['feature_engineering', 'data_engineering'],
+      layer: 'Intermediate',
       type: 'task'
     },
     {
@@ -378,6 +398,7 @@ export default {
       id: '95cfc42d',
       name: 'Predictive Sales Model',
       tags: ['model_training', 'data_science'],
+      layer: 'Model Input',
       type: 'task'
     },
     {
@@ -385,6 +406,7 @@ export default {
       id: 'ccbee9c5',
       name: 'Predictive Engagement Model',
       tags: ['model_training', 'data_science'],
+      layer: 'Model Input',
       type: 'task'
     },
     {
@@ -392,6 +414,7 @@ export default {
       id: '394244dd',
       name: 'Sales Model Explainable AI',
       tags: ['model_explaination', 'data_science'],
+      layer: 'Model Input',
       type: 'task'
     },
     {
@@ -399,6 +422,7 @@ export default {
       id: '67257e84',
       name: 'Engagement Model Explainable AI',
       tags: ['model_explaination', 'data_science'],
+      layer: 'Models',
       type: 'task'
     },
     {
@@ -406,6 +430,7 @@ export default {
       id: 'f6f50e64',
       name: 'Perform Digital Analysis',
       tags: ['model_training', 'data_science'],
+      layer: 'Model Input',
       type: 'task'
     },
     {
@@ -413,6 +438,7 @@ export default {
       id: 'e061482b',
       name: 'Engagement Recommendation Engine',
       tags: ['model_training', 'data_science'],
+      layer: 'Models',
       type: 'task'
     },
     {
@@ -420,6 +446,7 @@ export default {
       id: '53b05b01',
       name: 'Sales Model Performance Monitoring',
       tags: ['model_performance_monitoring', 'data_science'],
+      layer: 'Reporting',
       type: 'task'
     },
     {
@@ -427,6 +454,7 @@ export default {
       id: '6d8d326d',
       name: 'Engagement Model Performance Monitoring',
       tags: ['model_performance_monitoring', 'data_science'],
+      layer: 'Reporting',
       type: 'task'
     },
     {
@@ -434,6 +462,7 @@ export default {
       id: '45bda5fd',
       name: 'Multi-Channel Optimisation',
       tags: ['optimisation', 'data_science'],
+      layer: 'Models',
       type: 'task'
     },
     {
@@ -441,6 +470,7 @@ export default {
       id: '211c92c3',
       name: 'Content Optimisation',
       tags: ['optimisation', 'data_science'],
+      layer: 'Models',
       type: 'task'
     },
     {
@@ -448,6 +478,7 @@ export default {
       id: 'c17b9614',
       name: 'Segment Journeys',
       tags: ['optimisation', 'data_science'],
+      layer: 'Model Output',
       type: 'task'
     },
     {
@@ -455,6 +486,7 @@ export default {
       id: '90461ea7',
       name: 'Generate Dashboard Inputs',
       tags: ['reporting', 'data_science'],
+      layer: 'Reporting',
       type: 'task'
     },
     {
@@ -462,13 +494,15 @@ export default {
       id: '33920f3a',
       name: 'Interaction Raw',
       tags: ['data_engineering', 'preprocessing'],
+      layer: 'Raw',
       type: 'data'
     },
     {
-      full_name: 'interaction_primary',
+      full_name: 'interaction_intermediate',
       id: '105160a0',
-      name: 'Interaction Primary',
+      name: 'Interaction Intermediate',
       tags: ['data_engineering', 'preprocessing'],
+      layer: 'Intermediate',
       type: 'data'
     },
     {
@@ -476,13 +510,15 @@ export default {
       id: '814ef273',
       name: 'Country Raw',
       tags: ['data_engineering', 'preprocessing'],
+      layer: 'Raw',
       type: 'data'
     },
     {
-      full_name: 'country_primary',
+      full_name: 'country_intermediate',
       id: '389b5286',
-      name: 'Country Primary',
+      name: 'Country Intermediate',
       tags: ['data_engineering', 'preprocessing'],
+      layer: 'Intermediate',
       type: 'data'
     },
     {
@@ -490,34 +526,39 @@ export default {
       id: '58450007',
       name: 'Shopper Spend Raw',
       tags: ['data_engineering', 'preprocessing'],
-      type: 'data'
-    },
-    {
-      full_name: 'shopper_spend_primary',
-      id: 'bcb40508',
-      name: 'Shopper Spend Primary',
-      tags: ['data_engineering', 'preprocessing'],
-      type: 'data'
-    },
-    {
-      full_name: 'interaction_intermediate',
-      id: 'e44a096d',
-      name: 'Interaction Intermediate',
-      tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
-      type: 'data'
-    },
-    {
-      full_name: 'country_intermediate',
-      id: '8c1dcc36',
-      name: 'Country Intermediate',
-      tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
+      layer: 'Raw',
       type: 'data'
     },
     {
       full_name: 'shopper_spend_intermediate',
-      id: '13a964bf',
+      id: 'bcb40508',
       name: 'Shopper Spend Intermediate',
+      tags: ['data_engineering', 'preprocessing'],
+      layer: 'Intermediate',
+      type: 'data'
+    },
+    {
+      full_name: 'interaction_primary',
+      id: 'e44a096d',
+      name: 'Interaction Primary',
       tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
+      layer: 'Primary',
+      type: 'data'
+    },
+    {
+      full_name: 'country_primary',
+      id: '8c1dcc36',
+      name: 'Country Primary',
+      tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
+      layer: 'Primary',
+      type: 'data'
+    },
+    {
+      full_name: 'shopper_spend_primary',
+      id: '13a964bf',
+      name: 'Shopper Spend Primary',
+      tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
+      layer: 'Primary',
       type: 'data'
     },
     {
@@ -525,6 +566,7 @@ export default {
       id: '842a3580',
       name: 'CRM Predictions',
       tags: ['feature_engineering', 'data_engineering'],
+      layer: 'Primary',
       type: 'data'
     },
     {
@@ -538,6 +580,7 @@ export default {
         'feature_engineering',
         'data_engineering'
       ],
+      layer: 'Feature',
       type: 'data'
     },
     {
@@ -551,6 +594,7 @@ export default {
         'feature_engineering',
         'data_engineering'
       ],
+      layer: 'Feature',
       type: 'data'
     },
     {
@@ -558,6 +602,7 @@ export default {
       id: '181c2b7c',
       name: 'Vendor Master',
       tags: ['feature_engineering', 'data_engineering'],
+      layer: 'Raw',
       type: 'data'
     },
     {
@@ -565,6 +610,7 @@ export default {
       id: '057ade39',
       name: 'Salesforce CRM',
       tags: ['feature_engineering', 'data_engineering'],
+      layer: 'Raw',
       type: 'data'
     },
     {
@@ -577,6 +623,7 @@ export default {
         'data_science',
         'model_training'
       ],
+      layer: 'Primary',
       type: 'data'
     },
     {
@@ -584,6 +631,7 @@ export default {
       id: '42e79d42',
       name: 'Salesforce Accounts',
       tags: ['feature_engineering', 'data_engineering'],
+      layer: 'Raw',
       type: 'data'
     },
     {
@@ -591,6 +639,7 @@ export default {
       id: '1b3afcba',
       name: 'params: Sales Model',
       tags: ['data_science', 'model_training'],
+      layer: 'Model Input',
       type: 'parameters'
     },
     {
@@ -598,6 +647,7 @@ export default {
       id: '8770a38e',
       name: 'Sales Validation Results',
       tags: ['model_performance_monitoring', 'data_science', 'model_training'],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -605,6 +655,7 @@ export default {
       id: '1dafa5fb',
       name: 'Sales Trained Model',
       tags: ['model_explaination', 'data_science', 'model_training'],
+      layer: 'Model Input',
       type: 'data'
     },
     {
@@ -612,6 +663,7 @@ export default {
       id: '3a60b3a4',
       name: 'params: Engagement Model',
       tags: ['data_science', 'model_training'],
+      layer: 'Model Input',
       type: 'parameters'
     },
     {
@@ -619,6 +671,7 @@ export default {
       id: 'fb4f64bd',
       name: 'Engagement Validation Results',
       tags: ['model_performance_monitoring', 'data_science', 'model_training'],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -626,6 +679,7 @@ export default {
       id: 'f4f3a276',
       name: 'Engagement Trained Model',
       tags: ['model_explaination', 'data_science', 'model_training'],
+      layer: 'Models',
       type: 'data'
     },
     {
@@ -638,6 +692,7 @@ export default {
         'model_performance_monitoring',
         'reporting'
       ],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -650,6 +705,7 @@ export default {
         'model_performance_monitoring',
         'reporting'
       ],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -657,6 +713,7 @@ export default {
       id: 'dff067eb',
       name: 'params: Optimisation',
       tags: ['data_science', 'model_training', 'optimisation'],
+      layer: 'Model Input',
       type: 'parameters'
     },
     {
@@ -664,6 +721,7 @@ export default {
       id: '92f58611',
       name: 'Digital Analysis',
       tags: ['data_science', 'model_training', 'optimisation'],
+      layer: 'Model Input',
       type: 'data'
     },
     {
@@ -671,6 +729,7 @@ export default {
       id: 'b2a3a8e5',
       name: 'Engagement Recommendations',
       tags: ['data_science', 'model_training'],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -678,6 +737,7 @@ export default {
       id: '9aeb6881',
       name: 'Action Cost Table',
       tags: ['data_science', 'optimisation'],
+      layer: 'Raw',
       type: 'data'
     },
     {
@@ -685,6 +745,7 @@ export default {
       id: '90713d4f',
       name: 'Multi-Channel Resolutions',
       tags: ['reporting', 'data_science', 'optimisation'],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -692,6 +753,7 @@ export default {
       id: '4704ff18',
       name: 'Content Resolutions',
       tags: ['reporting', 'data_science', 'optimisation'],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -699,6 +761,7 @@ export default {
       id: 'ccd3d45b',
       name: 'Segment Journeys Allocations',
       tags: ['reporting', 'data_science', 'optimisation'],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -706,6 +769,7 @@ export default {
       id: '3e3b263a',
       name: 'Upselling Readiness Dashboard Input',
       tags: ['reporting', 'data_science'],
+      layer: 'Reporting',
       type: 'data'
     },
     {
@@ -713,6 +777,7 @@ export default {
       id: 'f3e15708',
       name: 'Lead Scoring Dashboard Input',
       tags: ['reporting', 'data_science'],
+      layer: 'Reporting',
       type: 'data'
     },
     {
@@ -720,6 +785,7 @@ export default {
       id: '83ebce11',
       name: 'Lifetime Value Prediction Dashboard Input',
       tags: ['reporting', 'data_science'],
+      layer: 'Reporting',
       type: 'data'
     },
     {
@@ -727,6 +793,7 @@ export default {
       id: 'a72d7024',
       name: 'Digital Sales Dashboard Input',
       tags: ['reporting', 'data_science'],
+      layer: 'Reporting',
       type: 'data'
     },
     {
@@ -734,6 +801,7 @@ export default {
       id: '8dbed427',
       name: 'Vendor Sales Dashboard Input',
       tags: ['reporting', 'data_science'],
+      layer: 'Reporting',
       type: 'data'
     }
   ],

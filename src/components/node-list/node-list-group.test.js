@@ -5,7 +5,7 @@ import { getNodeTypes } from '../../selectors/node-types';
 
 describe('NodeListGroup', () => {
   it('renders children', () => {
-    const type = getNodeTypes(mockState.lorem)[0];
+    const type = getNodeTypes(mockState.animals)[0];
     const wrapper = setup.mount(
       <NodeListGroup type={type}>
         <div className="test-child" />
@@ -15,7 +15,7 @@ describe('NodeListGroup', () => {
   });
 
   it('handles checkbox change events', () => {
-    const type = getNodeTypes(mockState.lorem)[0];
+    const type = getNodeTypes(mockState.animals)[0];
     const dispatch = jest.fn();
     const wrapper = setup.mount(
       <NodeListGroup type={type} onToggleTypeDisabled={dispatch} />
@@ -26,7 +26,7 @@ describe('NodeListGroup', () => {
   });
 
   it('handles collapse button click events', () => {
-    const type = getNodeTypes(mockState.lorem)[0];
+    const type = getNodeTypes(mockState.animals)[0];
     const dispatch = jest.fn();
     const wrapper = setup.mount(
       <NodeListGroup type={type} onToggleCollapsed={dispatch} />
@@ -36,7 +36,7 @@ describe('NodeListGroup', () => {
   });
 
   it('hides children when collapsed class is used', () => {
-    const type = getNodeTypes(mockState.lorem)[0];
+    const type = getNodeTypes(mockState.animals)[0];
     const wrapper = setup.mount(<NodeListGroup type={type} collapsed={true} />);
     expect(wrapper.find('.pipeline-nodelist--nested').length).toEqual(0);
   });

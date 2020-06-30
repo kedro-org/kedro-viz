@@ -9,8 +9,8 @@ import { getNodeData, getGroupedNodes } from '../../selectors/nodes';
 
 describe('NodeListGroups', () => {
   it('handles collapse button click events', () => {
-    const nodes = getGroupedNodes(mockState.lorem);
-    const types = getNodeTypes(mockState.lorem);
+    const nodes = getGroupedNodes(mockState.animals);
+    const types = getNodeTypes(mockState.animals);
     const wrapper = setup.mount(<NodeListGroups nodes={nodes} types={types} />);
     const nodeList = () => wrapper.find('.pipeline-nodelist--nested').first();
     const toggle = () => wrapper.find('.pipeline-type-group-toggle').first();
@@ -33,11 +33,11 @@ describe('NodeListGroups', () => {
         })
       ])
     };
-    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 
   describe('map dispatch to props', () => {
-    const node = getNodeData(mockState.lorem)[0];
+    const node = getNodeData(mockState.animals)[0];
 
     it('toggles clicked nodes', () => {
       const dispatch = jest.fn();
