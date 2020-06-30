@@ -14,41 +14,44 @@ export const getLayers = createSelector(
       return [];
     }
 
-    // Get list of layer Y positions from nodes
-    const layerY = nodes.reduce((layerY, node) => {
-      if (!layerY[node.layer]) {
-        layerY[node.layer] = [];
-      }
-      layerY[node.layer].push(node.y);
-      return layerY;
-    }, {});
+    const bounds = {};
 
-    /**
-     * Determine the y position and height of a layer band
-     * @param {number} id
-     */
-    const calculateYPos = (layerID, prevID, nextID) => {
-      const yMin = Math.min(...layerY[layerID]);
-      const yMax = Math.max(...layerY[layerID]);
-      const prev = layerY[prevID];
-      const next = layerY[nextID];
-      const topYGap = prev && yMin - Math.max(...prev);
-      const bottomYGap = next && Math.min(...next) - yMax;
-      const yGap = (topYGap || bottomYGap) / 2;
-      const y = yMin - yGap;
-      const height = yMax + yGap - y;
-      return { y, height };
-    };
+    for (const node of nodes) {
+      const layer = node.nearestLayer || node.layer;
+
+      if (layer) {
+        const bound = bounds[layer] || (bounds[layer] = [Infinity, -Infinity]);
+
+        if (node.y - node.height < bound[0]) {
+          bound[0] = node.y - node.height;
+        }
+
+        if (node.y + node.height > bound[1]) {
+          bound[1] = node.y + node.height;
+        }
+      }
+    }
 
     return layerIDs.map((id, i) => {
-      const prevID = layerIDs[i - 1];
-      const nextID = layerIDs[i + 1];
+      const currentBound = bounds[id] || [0, 0];
+      const prevBound = bounds[layerIDs[i - 1]] || [
+        currentBound[0],
+        currentBound[0]
+      ];
+      const nextBound = bounds[layerIDs[i + 1]] || [
+        currentBound[1],
+        currentBound[1]
+      ];
+      const start = (prevBound[1] + currentBound[0]) / 2;
+      const end = (currentBound[1] + nextBound[0]) / 2;
+
       return {
         id,
         name: layerName[id],
         x: -width / 2,
+        y: start,
         width: width * 2,
-        ...calculateYPos(id, prevID, nextID)
+        height: Math.max(end - start, 0)
       };
     });
   }

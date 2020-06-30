@@ -19,18 +19,18 @@ import reducer from '../reducers';
 const getNodeIDs = state => state.node.ids;
 const getNodeName = state => state.node.name;
 
-const noFontState = reducer(mockState.lorem, updateFontLoaded(false));
+const noFontState = reducer(mockState.animals, updateFontLoaded(false));
 
 describe('Selectors', () => {
   describe('getNodeActive', () => {
-    const nodeActive = getNodeActive(mockState.lorem);
+    const nodeActive = getNodeActive(mockState.animals);
 
     it('returns an object', () => {
       expect(nodeActive).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(nodeActive)).toEqual(getNodeIDs(mockState.lorem));
+      expect(Object.keys(nodeActive)).toEqual(getNodeIDs(mockState.animals));
     });
 
     it('returns an object whose values are all Booleans', () => {
@@ -40,10 +40,13 @@ describe('Selectors', () => {
     });
 
     it('returns true when a given node is hovered', () => {
-      const nodes = getNodeIDs(mockState.lorem);
+      const nodes = getNodeIDs(mockState.animals);
       const nodeID = nodes[0];
       const inactiveNodes = nodes.filter(id => id !== nodeID);
-      const newMockState = reducer(mockState.lorem, toggleNodeHovered(nodeID));
+      const newMockState = reducer(
+        mockState.animals,
+        toggleNodeHovered(nodeID)
+      );
       const nodeActive = getNodeActive(newMockState);
       expect(nodeActive[nodeID]).toEqual(true);
       expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
@@ -51,14 +54,14 @@ describe('Selectors', () => {
   });
 
   describe('getNodeSelected', () => {
-    const nodeSelected = getNodeSelected(mockState.lorem);
+    const nodeSelected = getNodeSelected(mockState.animals);
 
     it('returns an object', () => {
       expect(nodeSelected).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(nodeSelected)).toEqual(getNodeIDs(mockState.lorem));
+      expect(Object.keys(nodeSelected)).toEqual(getNodeIDs(mockState.animals));
     });
 
     it('returns an object whose values are all Booleans', () => {
@@ -68,10 +71,13 @@ describe('Selectors', () => {
     });
 
     it('returns true when a given node is clicked', () => {
-      const nodes = getNodeIDs(mockState.lorem);
+      const nodes = getNodeIDs(mockState.animals);
       const nodeID = nodes[0];
       const inactiveNodes = nodes.filter(id => id !== nodeID);
-      const newMockState = reducer(mockState.lorem, toggleNodeClicked(nodeID));
+      const newMockState = reducer(
+        mockState.animals,
+        toggleNodeClicked(nodeID)
+      );
       const nodeActive = getNodeSelected(newMockState);
       expect(nodeActive[nodeID]).toEqual(true);
       expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
@@ -80,7 +86,7 @@ describe('Selectors', () => {
 
   describe('getNodeData', () => {
     it('returns formatted nodes as an array', () => {
-      expect(getNodeData(mockState.lorem)).toEqual(
+      expect(getNodeData(mockState.animals)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
@@ -95,9 +101,9 @@ describe('Selectors', () => {
     });
 
     it('returns nodes sorted by name', () => {
-      const nodeName = getNodeName(mockState.lorem);
-      const nodeIDs = getNodeData(mockState.lorem).map(d => d.id);
-      const visibleNodeIDs = getNodeIDs(mockState.lorem).sort((a, b) => {
+      const nodeName = getNodeName(mockState.animals);
+      const nodeIDs = getNodeData(mockState.animals).map(d => d.id);
+      const visibleNodeIDs = getNodeIDs(mockState.animals).sort((a, b) => {
         if (nodeName[a] < nodeName[b]) return -1;
         if (nodeName[a] > nodeName[b]) return 1;
         return 0;
@@ -114,7 +120,7 @@ describe('Selectors', () => {
     });
 
     describe('when fonts have loaded', () => {
-      const nodeTextWidth = getNodeTextWidth(mockState.lorem);
+      const nodeTextWidth = getNodeTextWidth(mockState.animals);
       const values = Object.values(nodeTextWidth);
 
       it('returns an object', () => {
@@ -123,11 +129,11 @@ describe('Selectors', () => {
 
       it('returns an object with nodeIDs for keys', () => {
         const keys = Object.keys(nodeTextWidth);
-        expect(keys.sort()).toEqual(getNodeIDs(mockState.lorem).sort());
+        expect(keys.sort()).toEqual(getNodeIDs(mockState.animals).sort());
       });
 
       it('returns an object whose values are all numbers', () => {
-        expect(values.length).toEqual(getNodeIDs(mockState.lorem).length);
+        expect(values.length).toEqual(getNodeIDs(mockState.animals).length);
         expect(values.every(value => typeof value === 'number')).toBe(true);
       });
 
@@ -191,8 +197,8 @@ describe('Selectors', () => {
 
     describe('when fonts have loaded', () => {
       it('returns an object containing objects with numerical properties', () => {
-        expect(getNodeSize(mockState.lorem)).toEqual(expect.any(Object));
-        expect(Object.values(getNodeSize(mockState.lorem))).toEqual(
+        expect(getNodeSize(mockState.animals)).toEqual(expect.any(Object));
+        expect(Object.values(getNodeSize(mockState.animals))).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
               width: expect.any(Number),
@@ -206,13 +212,16 @@ describe('Selectors', () => {
       });
 
       it('erases the generated SVG node', () => {
-        getNodeSize(mockState.lorem);
+        getNodeSize(mockState.animals);
         const svg = document.querySelectorAll('svg');
         expect(svg.length).toEqual(0);
       });
 
       describe('when text labels are disabled', () => {
-        const newMockState = reducer(mockState.lorem, toggleTextLabels(false));
+        const newMockState = reducer(
+          mockState.animals,
+          toggleTextLabels(false)
+        );
 
         it('returns identical width and height', () => {
           const node0 = Object.values(getNodeSize(newMockState))[0];
@@ -226,7 +235,7 @@ describe('Selectors', () => {
       });
 
       describe('when text labels are enabled', () => {
-        const newMockState = reducer(mockState.lorem, toggleTextLabels(true));
+        const newMockState = reducer(mockState.animals, toggleTextLabels(true));
 
         it('returns a width greater than the height', () => {
           const node0 = Object.values(getNodeSize(newMockState))[0];
@@ -252,7 +261,7 @@ describe('Selectors', () => {
 
     describe('when fonts have loaded', () => {
       it('returns visible nodes as an array', () => {
-        expect(getVisibleNodes(mockState.lorem)).toEqual(
+        expect(getVisibleNodes(mockState.animals)).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
               id: expect.any(String),
@@ -271,10 +280,10 @@ describe('Selectors', () => {
       });
 
       it('returns only visible nodes', () => {
-        const nodes = getNodeIDs(mockState.lorem);
+        const nodes = getNodeIDs(mockState.animals);
         const nodeID = nodes[0];
         const newMockState = reducer(
-          mockState.lorem,
+          mockState.animals,
           toggleNodesDisabled([nodeID], true)
         );
         const visibleNodeIDs = getVisibleNodes(newMockState).map(d => d.id);

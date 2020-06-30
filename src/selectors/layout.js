@@ -1,7 +1,10 @@
 import { createSelector } from 'reselect';
 import dagre from 'dagre';
+import { graph } from '../utils/graph/';
+import { getCurrentFlags } from './flags';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
+import { getVisibleLayerIDs } from './disabled';
 import { sidebarBreakpoint, sidebarWidth } from '../config';
 
 const getHasVisibleLayers = state =>
@@ -12,40 +15,69 @@ const getVisibleSidebar = state => state.visible.sidebar;
 const getFontLoaded = state => state.fontLoaded;
 
 /**
+ * Calculate chart layout. Algorithm used is dependent on flags
+ */
+export const getGraph = createSelector(
+  [
+    getVisibleNodes,
+    getVisibleEdges,
+    getVisibleLayerIDs,
+    getHasVisibleLayers,
+    getCurrentFlags,
+    getFontLoaded
+  ],
+  (nodes, edges, layers, showLayers, flags, fontLoaded) => {
+    if (!fontLoaded || !nodes.length || !edges.length) {
+      return;
+    }
+
+    // Use experimental graph rendering if flag enabled
+    if (flags.newgraph) {
+      const result = graph(nodes, edges, showLayers && layers);
+
+      return {
+        graph: () => ({ ...result.size, marginx: 100, marginy: 100 }),
+        nodes: () => result.nodes.map(node => node.id),
+        edges: () => result.edges.map(edge => edge.id),
+        node: id => result.nodes.find(node => node.id === id),
+        edge: id => result.edges.find(edge => edge.id === id),
+        newgraph: true
+      };
+    }
+
+    // Otherwise use dagre to render
+    return graphDagre(nodes, edges, showLayers);
+  }
+);
+
+/**
  * Calculate chart layout with Dagre.js.
  * This is an extremely expensive operation so we want it to run as infrequently
  * as possible, and keep it separate from other properties (like node.active)
  * which don't affect layout.
  */
-export const getGraph = createSelector(
-  [getVisibleNodes, getVisibleEdges, getHasVisibleLayers, getFontLoaded],
-  (nodes, edges, hasVisibleLayers, fontLoaded) => {
-    if (!fontLoaded || !nodes.length || !edges.length) {
-      return;
-    }
+export const graphDagre = (nodes, edges, hasVisibleLayers) => {
+  const ranker = hasVisibleLayers ? 'none' : null;
+  const graph = new dagre.graphlib.Graph().setGraph({
+    ranker: hasVisibleLayers ? ranker : null,
+    ranksep: hasVisibleLayers ? 200 : 70,
+    marginx: 40,
+    marginy: 40
+  });
 
-    const ranker = hasVisibleLayers ? 'none' : null;
-    const graph = new dagre.graphlib.Graph().setGraph({
-      ranker: hasVisibleLayers ? ranker : null,
-      ranksep: hasVisibleLayers ? 200 : 70,
-      marginx: 40,
-      marginy: 40
-    });
+  nodes.forEach(node => {
+    graph.setNode(node.id, node);
+  });
 
-    nodes.forEach(node => {
-      graph.setNode(node.id, node);
-    });
+  edges.forEach(edge => {
+    graph.setEdge(edge.source, edge.target, edge);
+  });
 
-    edges.forEach(edge => {
-      graph.setEdge(edge.source, edge.target, edge);
-    });
+  // Run Dagre layout to calculate X/Y positioning
+  dagre.layout(graph);
 
-    // Run Dagre layout to calculate X/Y positioning
-    dagre.layout(graph);
-
-    return graph;
-  }
-);
+  return graph;
+};
 
 /**
  * Reformat node data for use on the chart,
