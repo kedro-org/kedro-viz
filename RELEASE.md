@@ -17,6 +17,21 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+# Release 3.4.0
+
+## Major features and improvements
+
+- Add new graphing algorithm (#185)
+- Add feature flags (#185)
+
+## Bug fixes and other changes
+
+- Protect URL constructor/searchParams where browser support is limited. (#201)
+- Consolidate mock datasets and delete unnecessary ones (#200)
+- Update SSH key fingerprint in CircleCI config (#199)
+- Add layers to demo data (#198)
+- Improve random generator variations (#187)
+
 # Release 3.3.1:
 
 ## Bug fixes and other changes
