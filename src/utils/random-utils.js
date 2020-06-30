@@ -27,8 +27,15 @@ export const getSeedFromURL = () => {
   if (typeof window === 'undefined') {
     return;
   }
-  const url = new URL(window.location);
-  let seed = url.searchParams.get('seed');
+  let url;
+  let seed;
+  try {
+    url = new URL(window.location.href);
+    seed = url.searchParams.get('seed');
+  } catch (e) {
+    console.warn('Random data seeding is not supported in this browser');
+    return;
+  }
   if (!seed) {
     seed = generateHash(30);
     url.searchParams.set('seed', seed);
