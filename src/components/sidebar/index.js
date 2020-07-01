@@ -11,7 +11,7 @@ import './sidebar.css';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {Object} props visible
  */
-export const Sidebar = ({ visible, miniMapVisible }) => (
+export const Sidebar = ({ visible }) => (
   <>
     <div
       className={classnames('pipeline-sidebar', {
@@ -22,19 +22,13 @@ export const Sidebar = ({ visible, miniMapVisible }) => (
         <NodeList />
       </div>
       <IconToolbar />
-      <div
-        className={classnames('pipeline-minimap-container', {
-          'pipeline-minimap-container--visible': miniMapVisible
-        })}>
-        <MiniMap />
-      </div>
+      <MiniMap />
     </div>
   </>
 );
 
 const mapStateToProps = state => ({
-  visible: state.visible.sidebar,
-  miniMapVisible: state.visible.miniMap
+  visible: state.visible.sidebar
 });
 
 export default connect(mapStateToProps)(Sidebar);

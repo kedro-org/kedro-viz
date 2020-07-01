@@ -2,12 +2,12 @@
 
 .pipeline-sidebar {
   position: absolute;
-  top: 0;
+  top: -1px; /* Avoids pixel rounding gaps */
+  bottom: -1px;
   left: 0;
   z-index: 1;
   display: flex;
   width: 100%;
-  height: 100%;
   transform: translateX(calc(-100% + #{$sidebar-width-closed}));
   transition: transform ease 0.4s;
 
@@ -58,25 +58,5 @@
 
   .kui-theme--dark & {
     background: $color-bg-dark-3;
-  }
-}
-
-.pipeline-minimap-container {
-  position: absolute;
-  top: calc(100% + 2px);
-  left: 100%;
-  transform: translate(-100%, -100%);
-  transition: transform 300ms ease 300ms;
-
-  &--visible {
-    transform: translate(0, -100%);
-  }
-
-  .kui-theme--light & {
-    background: #a5adb6;
-  }
-
-  .kui-theme--dark & {
-    background: #010f17;
   }
 }
