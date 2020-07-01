@@ -17,8 +17,8 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(<FlowChart />);
     const nodes = wrapper.render().find('.pipeline-node');
     const nodeNames = nodes.map((i, el) => $(el).text()).get();
-    const mockNodes = getNodeIDs(mockState.lorem);
-    const mockNodeNames = mockNodes.map(d => getNodeName(mockState.lorem)[d]);
+    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodeNames = mockNodes.map(d => getNodeName(mockState.animals)[d]);
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
   });
@@ -75,7 +75,7 @@ describe('FlowChart', () => {
       visibleSidebar: expect.any(Boolean),
       zoom: expect.any(Object)
     };
-    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {

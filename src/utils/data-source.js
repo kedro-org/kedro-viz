@@ -9,14 +9,7 @@ const hasWindow = typeof window !== 'undefined';
  * @return {string} Data source type key
  */
 const validateDataSource = source => {
-  const expectedInput = [
-    'lorem',
-    'animals',
-    'demo',
-    'layers',
-    'json',
-    'random'
-  ];
+  const expectedInput = ['animals', 'demo', 'json', 'random'];
   if (expectedInput.includes(source)) {
     // If random, supply random data instead. We're doing this here to avoid
     // including this file unnecessarily in the exported npm package

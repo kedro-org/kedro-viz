@@ -13,7 +13,7 @@ describe('checkFontLoaded', () => {
   };
 
   beforeEach(() => {
-    const state = reducer(mockState.lorem, updateFontLoaded(false));
+    const state = reducer(mockState.animals, updateFontLoaded(false));
     store = createStore(reducer, state);
     jest.resetModules();
     document.fonts = {

@@ -1,5 +1,13 @@
 export default {
   schema_id: '09876543210987654321',
+  layers: [
+    'Raw',
+    'Intermediate',
+    'Primary',
+    'Feature',
+    'Model Input',
+    'Model Output'
+  ],
   tags: [
     {
       id: 'small',
@@ -20,6 +28,7 @@ export default {
       name: 'salmon',
       full_name: 'salmon',
       tags: ['small'],
+      layer: 'Intermediate',
       type: 'task'
     },
     {
@@ -27,6 +36,7 @@ export default {
       name: 'shark',
       full_name: 'shark',
       tags: ['medium', 'huge'],
+      layer: 'Intermediate',
       type: 'task'
     },
     {
@@ -34,6 +44,7 @@ export default {
       name: 'trout',
       full_name: 'trout',
       tags: ['small'],
+      layer: 'Model Input',
       type: 'task'
     },
     {
@@ -41,6 +52,7 @@ export default {
       name: 'whale',
       full_name: 'whale',
       tags: ['huge'],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -48,6 +60,7 @@ export default {
       name: 'dog',
       full_name: 'dog',
       tags: ['small', 'medium'],
+      layer: 'Raw',
       type: 'data'
     },
     {
@@ -55,6 +68,7 @@ export default {
       name: 'cat',
       full_name: 'cat',
       tags: ['small', 'medium', 'huge'],
+      layer: 'Raw',
       type: 'data'
     },
     {
@@ -62,6 +76,7 @@ export default {
       name: 'parameters_rabbit',
       full_name: 'parameters_rabbit',
       tags: ['small'],
+      layer: 'Intermediate',
       type: 'parameters'
     },
     {
@@ -69,6 +84,7 @@ export default {
       name: 'parameters',
       full_name: 'parameters',
       tags: [],
+      layer: 'Intermediate',
       type: 'parameters'
     },
     {
@@ -76,6 +92,7 @@ export default {
       name: 'sheep',
       full_name: 'sheep',
       tags: ['medium'],
+      layer: 'Primary',
       type: 'data'
     },
     {
@@ -83,6 +100,7 @@ export default {
       name: 'horse',
       full_name: 'horse',
       tags: ['huge'],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -90,6 +108,7 @@ export default {
       name: 'weasel',
       full_name: 'weasel',
       tags: ['small'],
+      layer: 'Raw',
       type: 'data'
     },
     {
@@ -97,6 +116,7 @@ export default {
       name: 'elephant',
       full_name: 'elephant',
       tags: ['huge'],
+      layer: 'Raw',
       type: 'data'
     },
     {
@@ -104,6 +124,7 @@ export default {
       name: 'bear',
       full_name: 'bear',
       tags: ['huge'],
+      layer: 'Raw',
       type: 'data'
     },
     {
@@ -111,6 +132,7 @@ export default {
       name: 'giraffe',
       full_name: 'giraffe',
       tags: ['huge'],
+      layer: 'Model Output',
       type: 'data'
     },
     {
@@ -118,6 +140,7 @@ export default {
       name: 'pig',
       full_name: 'pig',
       tags: ['medium'],
+      layer: 'Feature',
       type: 'data'
     }
   ],
