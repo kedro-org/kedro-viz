@@ -1,9 +1,11 @@
 import 'd3-transition';
 
+const viewportMargin = 1;
+
 /**
  * Render viewport region
  */
-const drawViewport = function() {
+export const drawViewport = function() {
   const { chartZoom, chartSize, mapSize } = this.props;
 
   const mapZoom = this.getZoomPosition();
@@ -13,22 +15,26 @@ const drawViewport = function() {
   const x = mapZoom.translateX - chartZoom.x * scale;
   const y = mapZoom.translateY - chartZoom.y * scale;
 
-  const minX = Math.max(x, 1);
-  const minY = Math.max(y, 1);
-  const maxX = Math.min(x + width, mapSize.width - 1);
-  const maxY = Math.min(y + height, mapSize.height - 1);
+  const minX = Math.max(x, viewportMargin);
+  const minY = Math.max(y, viewportMargin);
+  const maxX = Math.min(x + width, mapSize.width - viewportMargin);
+  const maxY = Math.min(y + height, mapSize.height - viewportMargin);
 
   this.el.viewport
-    .attr('x', minX)
-    .attr('y', minY)
-    .attr('width', maxX - minX)
-    .attr('height', maxY - minY);
+    .enter()
+    .attr('x', 0)
+    .attr('y', 0);
+
+  this.el.viewport
+    .attr('transform', `translate(${minX}, ${minY})`)
+    .attr('width', Math.max(0, maxX - minX))
+    .attr('height', Math.max(0, maxY - minY));
 };
 
 /**
  * Render nodes
  */
-const drawNodes = function() {
+export const drawNodes = function() {
   const {
     centralNode,
     linkedNodes,
@@ -36,6 +42,13 @@ const drawNodes = function() {
     nodeSelected,
     nodes
   } = this.props;
+
+  this.el.nodeGroup.enter().attr('opacity', 0);
+
+  this.el.nodeGroup
+    .transition()
+    .duration(this.DURATION)
+    .attr('opacity', 1);
 
   this.el.nodes = this.el.nodeGroup
     .selectAll('.pipeline-minimap-node')
@@ -46,18 +59,9 @@ const drawNodes = function() {
     .append('g')
     .attr('class', 'pipeline-minimap-node');
 
-  enterNodes
-    .attr('transform', node => `translate(${node.x}, ${node.y})`)
-    .attr('opacity', 0);
+  enterNodes.attr('transform', node => `translate(${node.x}, ${node.y})`);
 
   enterNodes.append('rect');
-
-  this.el.nodes
-    .exit()
-    .transition('exit-nodes')
-    .duration(this.DURATION)
-    .attr('opacity', 0)
-    .remove();
 
   this.el.nodes = this.el.nodes
     .merge(enterNodes)
@@ -72,7 +76,6 @@ const drawNodes = function() {
   this.el.nodes
     .transition('update-nodes')
     .duration(this.DURATION)
-    .attr('opacity', 1)
     .attr('transform', node => `translate(${node.x}, ${node.y})`)
     .end()
     .catch(() => {});
@@ -85,14 +88,4 @@ const drawNodes = function() {
     .attr('y', node => (node.height - sizeOffset(node)) / -2);
 };
 
-const sizeOffset = node => (node.type === 'task' ? 0 : 15) - 5;
-
-/**
- * Render chart to the DOM with D3
- */
-const draw = function() {
-  drawViewport.call(this);
-  drawNodes.call(this);
-};
-
-export default draw;
+const sizeOffset = node => (node.type === 'task' ? 5 : 16);

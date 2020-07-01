@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
 import { zoom, zoomIdentity, zoomTransform } from 'd3-zoom';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
+import { updateZoom } from '../../actions';
 import {
   getChartSize,
   getGraphSize,
@@ -12,7 +14,7 @@ import {
   getChartZoom
 } from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
-import draw from './draw';
+import { drawNodes, drawViewport } from './draw';
 import './styles/minimap.css';
 
 /**
@@ -24,6 +26,7 @@ export class MiniMap extends Component {
 
     this.DURATION = 400;
     this.SCALE = 0.85;
+    this.userPanning = false;
 
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
@@ -38,21 +41,49 @@ export class MiniMap extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { nodes, textLabels, mapSize, visible } = this.props;
+    if (this.props.visible) {
+      if (
+        this.changed(
+          [
+            'visible',
+            'nodes',
+            'centralNode',
+            'linkedNodes',
+            'nodesActive',
+            'nodeSelected'
+          ],
+          prevProps,
+          this.props
+        )
+      ) {
+        drawNodes.call(this);
+      }
 
-    if (visible) {
-      this.drawMap();
+      if (this.changed(['visible', 'chartZoom'], prevProps, this.props)) {
+        drawViewport.call(this);
+      }
 
       if (
-        prevProps.visible !== visible ||
-        prevProps.nodes !== nodes ||
-        prevProps.textLabels !== textLabels ||
-        prevProps.mapSize.width !== mapSize.width ||
-        prevProps.mapSize.height !== mapSize.height
+        this.changed(
+          ['visible', 'nodes', 'textLabels'],
+          prevProps,
+          this.props
+        ) ||
+        this.changed(['width', 'height'], prevProps.mapSize, this.props.mapSize)
       ) {
         this.zoomMap();
       }
     }
+  }
+
+  /**
+   * Returns true if any of the given props are different between given objects.
+   * Only shallow changes are detected.
+   */
+  changed(props, objectA, objectB) {
+    return (
+      objectA && objectB && props.some(prop => objectA[prop] !== objectB[prop])
+    );
   }
 
   /**
@@ -71,15 +102,38 @@ export class MiniMap extends Component {
    * Setup D3 zoom behaviour on component mount
    */
   initZoomBehaviour() {
-    this.zoomBehaviour = zoom().on('zoom', () => {
-      // Transform the <g> that wraps the map
-      this.el.wrapper.attr('transform', event.transform);
-    });
+    this.zoomBehaviour = zoom()
+      .on('start', () => {
+        const viewportClicked =
+          event.sourceEvent &&
+          event.sourceEvent.target === this.viewportRef.current;
+        this.userPanning = viewportClicked;
+      })
+      .on('end', () => {
+        this.userPanning = false;
+      })
+      .on('zoom', () => {
+        const isUserInput = Boolean(event.sourceEvent);
 
-    // Ignore all user inputs.
-    this.zoomBehaviour.filter(() => false);
+        if (!isUserInput) {
+          // Transform the <g> that wraps the map
+          this.el.wrapper.attr('transform', event.transform);
+        } else if (this.userPanning) {
+          const { scale, x, y } = this.props.chartZoom;
+          const dx = event.sourceEvent.movementX / event.transform.k;
+          const dy = event.sourceEvent.movementY / event.transform.k;
 
-    this.el.svg.call(this.zoomBehaviour);
+          this.props.onUpdateChartZoom({
+            scale,
+            x: x - dx,
+            y: y - dy,
+            applied: false,
+            transition: false
+          });
+        }
+      });
+
+    this.el.svg.call(this.zoomBehaviour).on('dblclick.zoom', null);
   }
 
   /**
@@ -91,23 +145,23 @@ export class MiniMap extends Component {
       translateX = 0,
       translateY = 0
     } = this.getZoomPosition();
-    const { k, x, y } = zoomTransform(this.wrapperRef.current);
+
+    const { k = 1, x = 0, y = 0 } = zoomTransform(this.wrapperRef.current);
 
     if (k === 1 && x === 0 && y === 0) {
       this.el.svg.call(
         this.zoomBehaviour.transform,
         zoomIdentity.translate(translateX, translateY).scale(scale)
       );
+    } else {
+      this.el.svg
+        .transition()
+        .duration(this.DURATION)
+        .call(
+          this.zoomBehaviour.transform,
+          zoomIdentity.translate(translateX, translateY).scale(scale)
+        );
     }
-
-    // Auto zoom to fit the map nicely on the page
-    this.el.svg
-      .transition()
-      .duration(this.DURATION)
-      .call(
-        this.zoomBehaviour.transform,
-        zoomIdentity.translate(translateX, translateY).scale(scale)
-      );
   }
 
   getZoomPosition() {
@@ -139,52 +193,63 @@ export class MiniMap extends Component {
   }
 
   /**
-   * Render map to the DOM with D3
-   */
-  drawMap() {
-    draw.call(this);
-  }
-
-  /**
    * Render React elements
    */
   render() {
     const { width, height } = this.props.mapSize;
+    const transformStyle = {
+      transform: `translate(calc(-100% + ${width}px), -100%)`
+    };
 
     return (
-      <div className="pipeline-minimap kedro" ref={this.containerRef}>
-        <svg
-          id="pipeline-minimap-graph"
-          className="pipeline-minimap__graph"
-          width={width}
-          height={height}
-          ref={this.svgRef}>
-          <g id="zoom-wrapper" ref={this.wrapperRef}>
-            <g
-              id="minimap-nodes"
-              className="pipeline-minimap__nodes"
-              ref={this.nodesRef}
+      <div
+        className={classnames('pipeline-minimap-container', {
+          'pipeline-minimap-container--visible': this.props.visible
+        })}
+        style={this.props.visible ? transformStyle : {}}>
+        <div className="pipeline-minimap kedro" ref={this.containerRef}>
+          <svg
+            id="pipeline-minimap-graph"
+            className="pipeline-minimap__graph"
+            width={width}
+            height={height}
+            ref={this.svgRef}>
+            <g id="zoom-wrapper" ref={this.wrapperRef}>
+              <g
+                id="minimap-nodes"
+                className="pipeline-minimap__nodes"
+                ref={this.nodesRef}
+              />
+            </g>
+            <rect
+              className="pipeline-minimap__viewport"
+              ref={this.viewportRef}
             />
-          </g>
-          <rect className="pipeline-minimap__viewport" ref={this.viewportRef} />
-        </svg>
+          </svg>
+        </div>
       </div>
     );
   }
 }
 
+const height = 192;
+const maxWidth = 500;
+const minWidthHeightRatio = 0.8;
+const maxWidthChartRatio = 0.2;
+
 const getMapSize = state => {
   const size = getGraphSize(state);
+  const aspect = (size.width || 1) / (size.height || 1);
   const chartSize = getChartSize(state);
+  const chartWidth = chartSize.width || 0;
+
+  // Constrain width to height, or chart size, or maximum value
   const width = Math.max(
-    120,
-    Math.min(80 + size.width * 0.1, chartSize.width * 0.2)
+    height * minWidthHeightRatio,
+    Math.min(height * aspect, chartWidth * maxWidthChartRatio, maxWidth)
   );
-  const height = Math.max(
-    120,
-    Math.min(20 + size.height * 0.1, chartSize.height * 0.2)
-  );
-  return { width: width || 0, height: height || 0 };
+
+  return { width, height };
 };
 
 export const mapStateToProps = state => ({
@@ -202,4 +267,13 @@ export const mapStateToProps = state => ({
   zoom: getZoomPosition(state)
 });
 
-export default connect(mapStateToProps)(MiniMap);
+export const mapDispatchToProps = dispatch => ({
+  onUpdateChartZoom: transform => {
+    dispatch(updateZoom(transform));
+  }
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MiniMap);
