@@ -63,6 +63,7 @@ describe('FlowChart', () => {
     const expectedResult = {
       centralNode: null,
       chartSize: expect.any(Object),
+      chartZoom: expect.any(Object),
       edges: expect.any(Array),
       graphSize: expect.any(Object),
       layers: expect.any(Array),

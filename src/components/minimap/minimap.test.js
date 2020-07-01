@@ -13,13 +13,15 @@ describe('MiniMap', () => {
 
   it('renders nodes with D3', () => {
     const wrapper = setup.mount(<MiniMap />);
-    const nodes = wrapper.render().find('.pipeline-node');
-    const mockNodes = getNodeIDs(mockState.lorem);
+    const nodes = wrapper.render().find('.pipeline-minimap-node');
+    const mockNodes = getNodeIDs(mockState.animals);
     expect(nodes.length).toEqual(mockNodes.length);
   });
 
   it('maps state to props', () => {
     const expectedResult = {
+      visible: expect.any(Boolean),
+      mapSize: expect.any(Object),
       centralNode: null,
       chartSize: expect.any(Object),
       chartZoom: expect.any(Object),
@@ -31,6 +33,6 @@ describe('MiniMap', () => {
       textLabels: expect.any(Boolean),
       zoom: expect.any(Object)
     };
-    expect(mapStateToProps(mockState.lorem)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 });

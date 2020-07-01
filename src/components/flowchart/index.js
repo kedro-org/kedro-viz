@@ -48,6 +48,7 @@ export class FlowChart extends Component {
     this.updateChartSize();
     this.initZoomBehaviour();
     this.addGlobalEventListeners();
+    drawNodes.call(this);
   }
 
   componentWillUnmount() {
@@ -55,28 +56,30 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    const { chartZoom, chartSize } = this.props;
+
     if (this.changed(['visibleSidebar'], prevProps, this.props)) {
       this.updateChartSize();
     }
 
-    if (this.props.chartZoom.applied === false) {
-      if (this.props.chartZoom.reset === true) {
+    if (chartZoom.applied === false) {
+      if (chartZoom.reset === true) {
         this.zoomChart();
       } else {
-        const dx = this.props.chartZoom.x - prevProps.chartZoom.x;
-        const dy = this.props.chartZoom.y - prevProps.chartZoom.y;
+        const dx = chartZoom.x - prevProps.chartZoom.x;
+        const dy = chartZoom.y - prevProps.chartZoom.y;
 
-        if (this.props.chartZoom.transition !== false) {
+        if (chartZoom.transition !== false) {
           this.el.svg
             .transition()
             .ease(t => t)
             .duration(100)
             .call(this.zoomBehaviour.translateBy, dx, dy)
-            .call(this.zoomBehaviour.scaleTo, this.props.chartZoom.scale);
+            .call(this.zoomBehaviour.scaleTo, chartZoom.scale);
         } else {
           this.el.svg
             .call(this.zoomBehaviour.translateBy, dx, dy)
-            .call(this.zoomBehaviour.scaleTo, this.props.chartZoom.scale);
+            .call(this.zoomBehaviour.scaleTo, chartZoom.scale);
         }
       }
     }
@@ -125,11 +128,7 @@ export class FlowChart extends Component {
         prevProps,
         this.props
       ) ||
-      this.changed(
-        ['width', 'height'],
-        prevProps.chartSize,
-        this.props.chartSize
-      )
+      this.changed(['width', 'height'], prevProps.chartSize, chartSize)
     ) {
       this.zoomChart();
     }

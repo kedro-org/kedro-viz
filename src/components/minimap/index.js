@@ -38,6 +38,7 @@ export class MiniMap extends Component {
   componentDidMount() {
     this.selectD3Elements();
     this.initZoomBehaviour();
+    drawNodes.call(this);
   }
 
   componentDidUpdate(prevProps) {
