@@ -6,13 +6,21 @@ import LayersIcon from '../icons/layers';
 import MenuIcon from '../icons/menu';
 import ThemeIcon from '../icons/theme';
 import ExportIcon from '../icons/export';
+import MapIcon from '../icons/map';
+import PlusIcon from '../icons/plus';
+import MinusIcon from '../icons/minus';
+import ResetIcon from '../icons/reset';
 
 const icons = {
   label: LabelIcon,
   layers: LayersIcon,
   menu: MenuIcon,
   theme: ThemeIcon,
-  export: ExportIcon
+  export: ExportIcon,
+  map: MapIcon,
+  plus: PlusIcon,
+  minus: MinusIcon,
+  reset: ResetIcon
 };
 
 /**

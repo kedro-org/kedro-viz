@@ -10,4 +10,18 @@
   .kui-theme--dark & {
     fill: #fff;
   }
+
+  &.pipeline-icon-map,
+  &.pipeline-icon-plus,
+  &.pipeline-icon-minus {
+    .kui-theme--light & {
+      fill: none;
+      stroke: #333;
+    }
+
+    .kui-theme--dark & {
+      fill: none;
+      stroke: #fff;
+    }
+  }
 }
