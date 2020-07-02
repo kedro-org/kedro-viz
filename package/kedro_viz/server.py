@@ -365,11 +365,11 @@ def format_pipelines_data(pipelines, catalog) -> Dict[str, list]:
     sorted_layers = _sort_layers(all_nodes, node_dependencies)
 
     return {
-        "pipelines": all_pipelines,
         "nodes": sorted_nodes,
         "edges": all_edges,
         "tags": sorted_tags,
         "layers": sorted_layers,
+        "pipelines": all_pipelines,
     }
 
 
@@ -411,38 +411,41 @@ def format_pipeline_data(
                 "pipeline": [pipeline_key],
             }
             sorted_nodes.append(all_nodes[task_id])
-
-            for data_set in node.inputs:
-                namespace = data_set.split("@")[0]
-                namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
-                namespace_id = _hash(namespace)
-                edges.append({"source": namespace_id, "target": task_id})
-                namespace_tags[namespace].update(node.tags)
-                node_dependencies[namespace_id].add(task_id)
-
-            for data_set in node.outputs:
-                namespace = data_set.split("@")[0]
-                namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
-                namespace_id = _hash(namespace)
-                edges.append({"source": task_id, "target": namespace_id})
-                namespace_tags[namespace].update(node.tags)
-                node_dependencies[task_id].add(namespace_id)
         else:
             all_nodes[task_id]["pipeline"].append(pipeline_key)
+
+        for data_set in node.inputs:
+            namespace = data_set.split("@")[0]
+            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
+            namespace_id = _hash(namespace)
+            edges.append({"source": namespace_id, "target": task_id})
+            namespace_tags[namespace].update(node.tags)
+            node_dependencies[namespace_id].add(task_id)
+
+        for data_set in node.outputs:
+            namespace = data_set.split("@")[0]
+            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
+            namespace_id = _hash(namespace)
+            edges.append({"source": task_id, "target": namespace_id})
+            namespace_tags[namespace].update(node.tags)
+            node_dependencies[task_id].add(namespace_id)
 
     for namespace, tags in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
-        all_nodes[node_id] = {
-            "type": "parameters" if is_param else "data",
-            "id": node_id,
-            "name": _pretty_name(namespace),
-            "full_name": namespace,
-            "tags": sorted(tags),
-            "layer": namespace_to_layer[namespace],
-            "pipeline": pipeline_key,
-        }
-        sorted_nodes.append(all_nodes[node_id])
+        if node_id not in all_nodes:
+            all_nodes[node_id] = {
+                "type": "parameters" if is_param else "data",
+                "id": node_id,
+                "name": _pretty_name(namespace),
+                "full_name": namespace,
+                "tags": sorted(tags),
+                "layer": namespace_to_layer[namespace],
+                "pipeline": [pipeline_key],
+            }
+            sorted_nodes.append(all_nodes[node_id])
+        else:
+            all_nodes[node_id]["pipeline"].append(pipeline_key)
 
     return sorted_nodes, edges
 
