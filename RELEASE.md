@@ -14,6 +14,7 @@ Please follow the established format:
 <!-- Add release notes for the upcoming release here -->
 
 ## Bug fixes and other changes
+
 <!-- Add release notes for the upcoming release here -->
 * Expose information for multiple pipelines in `nodes.json` (#192)
 
