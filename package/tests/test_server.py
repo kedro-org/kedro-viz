@@ -54,6 +54,11 @@ EXPECTED_PIPELINE_DATA = {
         {"source": "afffac5f", "target": "de8434b7"},
         {"source": "f1f1425b", "target": "de8434b7"},
         {"source": "de8434b7", "target": "37316e3a"},
+        {"source": "7366ec9f", "target": "760f5b5e"},
+        {"source": "f1f1425b", "target": "760f5b5e"},
+        {"source": "760f5b5e", "target": "60e68b8e"},
+        {"source": "60e68b8e", "target": "24d754e7"},
+        {"source": "f1f1425b", "target": "24d754e7"},
     ],
     "layers": [],
     "nodes": [
@@ -61,7 +66,7 @@ EXPECTED_PIPELINE_DATA = {
             "full_name": "func1",
             "id": "01a6a5cb",
             "name": "Func1",
-            "pipeline": ["__default__", "another"],
+            "pipeline": ["__default__"],
             "tags": [],
             "type": "task",
         },
@@ -118,6 +123,14 @@ EXPECTED_PIPELINE_DATA = {
             "tags": ["bob"],
             "type": "parameters",
         },
+        {
+            "full_name": "func",
+            "id": "760f5b5e",
+            "name": "Func",
+            "pipeline": ["another"],
+            "tags": [],
+            "type": "task",
+        },
     ],
     "pipelines": [
         {"id": "__default__", "name": "Default"},
@@ -132,9 +145,17 @@ def func1(a, b):  # pylint: disable=unused-argument
 
 
 def get_pipelines():
+    def func(a, b):  # pylint: disable=unused-argument
+        return a
+
     return {
         "__default__": create_pipeline(),
-        "another": Pipeline([node(func1, ["bob_in", "parameters"], ["bob_out"])]),
+        "another": Pipeline(
+            [
+                node(func, ["bob_in", "parameters"], ["bob_out"]),
+                node(func1, ["bob_out", "parameters"], None),
+            ]
+        ),
     }
 
 
@@ -333,16 +354,16 @@ def test_pipeline_flag(cli_runner, client):
 
     assert data == {
         "edges": [
-            {"source": "7366ec9f", "target": "01a6a5cb"},
-            {"source": "f1f1425b", "target": "01a6a5cb"},
-            {"source": "01a6a5cb", "target": "60e68b8e"},
+            {"source": "7366ec9f", "target": "760f5b5e"},
+            {"source": "f1f1425b", "target": "760f5b5e"},
+            {"source": "760f5b5e", "target": "60e68b8e"},
         ],
         "layers": [],
         "nodes": [
             {
-                "full_name": "func1",
-                "id": "01a6a5cb",
-                "name": "Func1",
+                "full_name": "func",
+                "id": "760f5b5e",
+                "name": "Func",
                 "pipeline": ["another"],
                 "tags": [],
                 "type": "task",
