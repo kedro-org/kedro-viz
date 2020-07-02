@@ -353,7 +353,13 @@ def format_pipelines_data(pipelines, catalog) -> Dict[str, list]:
     for pipeline_key, pipeline in pipelines.items():
         all_pipelines.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
         formated_nodes, edges = format_pipeline_data(
-            pipeline_key, pipeline, catalog, all_nodes, node_dependencies, all_tags
+            pipeline_key,
+            pipeline,
+            catalog,
+            all_nodes,
+            node_dependencies,
+            all_tags,
+            all_edges,
         )
         sorted_nodes += formated_nodes
         all_edges += edges
@@ -375,7 +381,7 @@ def format_pipelines_data(pipelines, catalog) -> Dict[str, list]:
 
 # pylint: disable=too-many-locals,too-many-arguments
 def format_pipeline_data(
-    pipeline_key, pipeline, catalog, all_nodes, node_dependencies, all_tags
+    pipeline_key, pipeline, catalog, all_nodes, node_dependencies, all_tags, all_edges
 ):
     """
     Format pipeline and catalog data from Kedro for kedro-viz
@@ -418,7 +424,9 @@ def format_pipeline_data(
             namespace = data_set.split("@")[0]
             namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
             namespace_id = _hash(namespace)
-            edges.append({"source": namespace_id, "target": task_id})
+            edge = {"source": namespace_id, "target": task_id}
+            if edge not in all_edges:
+                edges.append(edge)
             namespace_tags[namespace].update(node.tags)
             node_dependencies[namespace_id].add(task_id)
 
@@ -426,7 +434,9 @@ def format_pipeline_data(
             namespace = data_set.split("@")[0]
             namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
             namespace_id = _hash(namespace)
-            edges.append({"source": task_id, "target": namespace_id})
+            edge = {"source": task_id, "target": namespace_id}
+            if edge not in all_edges:
+                edges.append(edge)
             namespace_tags[namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
 

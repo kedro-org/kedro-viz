@@ -61,7 +61,7 @@ EXPECTED_PIPELINE_DATA = {
             "full_name": "func1",
             "id": "01a6a5cb",
             "name": "Func1",
-            "pipeline": ["__default__"],
+            "pipeline": ["__default__", "another"],
             "tags": [],
             "type": "task",
         },
@@ -78,7 +78,7 @@ EXPECTED_PIPELINE_DATA = {
             "id": "7366ec9f",
             "layer": None,
             "name": "Bob In",
-            "pipeline": ["__default__"],
+            "pipeline": ["__default__", "another"],
             "tags": [],
             "type": "data",
         },
@@ -87,7 +87,7 @@ EXPECTED_PIPELINE_DATA = {
             "id": "60e68b8e",
             "layer": None,
             "name": "Bob Out",
-            "pipeline": ["__default__"],
+            "pipeline": ["__default__", "another"],
             "tags": [],
             "type": "data",
         },
@@ -114,7 +114,7 @@ EXPECTED_PIPELINE_DATA = {
             "id": "f1f1425b",
             "layer": None,
             "name": "Parameters",
-            "pipeline": ["__default__"],
+            "pipeline": ["__default__", "another"],
             "tags": ["bob"],
             "type": "parameters",
         },
@@ -123,12 +123,19 @@ EXPECTED_PIPELINE_DATA = {
         {"id": "__default__", "name": "Default"},
         {"id": "another", "name": "Another"},
     ],
-    "tags": [{"name": "Bob", "id": "bob"}],
+    "tags": [{"id": "bob", "name": "Bob"}],
 }
 
 
+def func1(a, b):  # pylint: disable=unused-argument
+    return a
+
+
 def get_pipelines():
-    return {"__default__": create_pipeline(), "another": Pipeline([])}
+    return {
+        "__default__": create_pipeline(),
+        "another": Pipeline([node(func1, ["bob_in", "parameters"], ["bob_out"])]),
+    }
 
 
 def get_pipeline(name: str = None):
@@ -142,9 +149,6 @@ def get_pipeline(name: str = None):
 
 
 def create_pipeline():
-    def func1(a, b):  # pylint: disable=unused-argument
-        return a
-
     def func2(a, b):  # pylint: disable=unused-argument
         return a
 
@@ -328,9 +332,49 @@ def test_pipeline_flag(cli_runner, client):
     data = json.loads(response.data.decode())
 
     assert data == {
-        "edges": [],
+        "edges": [
+            {"source": "7366ec9f", "target": "01a6a5cb"},
+            {"source": "f1f1425b", "target": "01a6a5cb"},
+            {"source": "01a6a5cb", "target": "60e68b8e"},
+        ],
         "layers": [],
-        "nodes": [],
+        "nodes": [
+            {
+                "full_name": "func1",
+                "id": "01a6a5cb",
+                "name": "Func1",
+                "pipeline": ["another"],
+                "tags": [],
+                "type": "task",
+            },
+            {
+                "full_name": "bob_in",
+                "id": "7366ec9f",
+                "layer": None,
+                "name": "Bob In",
+                "pipeline": ["another"],
+                "tags": [],
+                "type": "data",
+            },
+            {
+                "full_name": "bob_out",
+                "id": "60e68b8e",
+                "layer": None,
+                "name": "Bob Out",
+                "pipeline": ["another"],
+                "tags": [],
+                "type": "data",
+            },
+            {
+                "full_name": "parameters",
+                "id": "f1f1425b",
+                "layer": None,
+                "name": "Parameters",
+                "pipeline": ["another"],
+                "tags": [],
+                "type": "parameters",
+            },
+        ],
         "pipelines": [{"id": "another", "name": "Another"}],
         "tags": [],
     }
