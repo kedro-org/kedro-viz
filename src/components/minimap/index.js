@@ -42,36 +42,27 @@ export class MiniMap extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    const changed = (...names) => this.changed(names, prevProps, this.props);
+
     if (this.props.visible) {
       if (
-        this.changed(
-          [
-            'visible',
-            'nodes',
-            'centralNode',
-            'linkedNodes',
-            'nodesActive',
-            'nodeSelected'
-          ],
-          prevProps,
-          this.props
+        changed(
+          'visible',
+          'nodes',
+          'centralNode',
+          'linkedNodes',
+          'nodesActive',
+          'nodeSelected'
         )
       ) {
         drawNodes.call(this);
       }
 
-      if (this.changed(['visible', 'chartZoom'], prevProps, this.props)) {
+      if (changed('visible', 'chartZoom')) {
         drawViewport.call(this);
       }
 
-      if (
-        this.changed(
-          ['visible', 'nodes', 'textLabels'],
-          prevProps,
-          this.props
-        ) ||
-        this.changed(['width', 'height'], prevProps.mapSize, this.props.mapSize)
-      ) {
+      if (changed('visible', 'nodes', 'textLabels', 'mapSize')) {
         this.zoomMap();
       }
     }

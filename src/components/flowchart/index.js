@@ -56,9 +56,10 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { chartZoom, chartSize } = this.props;
+    const { chartZoom } = this.props;
+    const changed = (...names) => this.changed(names, prevProps, this.props);
 
-    if (this.changed(['visibleSidebar'], prevProps, this.props)) {
+    if (changed('visibleSidebar')) {
       this.updateChartSize();
     }
 
@@ -84,52 +85,29 @@ export class FlowChart extends Component {
       }
     }
 
-    if (
-      this.changed(
-        ['layers', 'visibleLayers', 'chartSize'],
-        prevProps,
-        this.props
-      )
-    ) {
+    if (changed('layers', 'visibleLayers', 'chartSize')) {
       drawLayers.call(this);
       drawLayerNames.call(this);
     }
 
-    if (
-      this.changed(
-        ['edges', 'centralNode', 'linkedNodes'],
-        prevProps,
-        this.props
-      )
-    ) {
+    if (changed('edges', 'centralNode', 'linkedNodes')) {
       drawEdges.call(this);
     }
 
     if (
-      this.changed(
-        [
-          'nodes',
-          'centralNode',
-          'linkedNodes',
-          'nodeActive',
-          'nodeSelected',
-          'textLabels'
-        ],
-        prevProps,
-        this.props
+      changed(
+        'nodes',
+        'centralNode',
+        'linkedNodes',
+        'nodeActive',
+        'nodeSelected',
+        'textLabels'
       )
     ) {
       drawNodes.call(this);
     }
 
-    if (
-      this.changed(
-        ['edges', 'nodes', 'layers', 'textLabels'],
-        prevProps,
-        this.props
-      ) ||
-      this.changed(['width', 'height'], prevProps.chartSize, chartSize)
-    ) {
+    if (changed('edges', 'nodes', 'layers', 'textLabels', 'chartSize')) {
       this.zoomChart();
     }
   }
