@@ -1,10 +1,4 @@
 {
-    "pipelines": [
-        {
-            "id": "__default__",
-            "name": "Default"
-        }
-    ],
     "nodes": [
         {
             "type": "task",
@@ -12,7 +6,9 @@
             "name": "Func1",
             "full_name": "func1",
             "tags": [],
-            "pipeline": "__default__"
+            "pipeline": [
+                "__default__"
+            ]
         },
         {
             "type": "task",
@@ -20,7 +16,9 @@
             "name": "Func2",
             "full_name": "func2",
             "tags": [],
-            "pipeline": "__default__"
+            "pipeline": [
+                "__default__"
+            ]
         },
         {
             "type": "data",
@@ -29,7 +27,9 @@
             "full_name": "bob_in",
             "tags": [],
             "layer": "raw",
-            "pipeline": "__default__"
+            "pipeline": [
+                "__default__"
+            ]
         },
         {
             "type": "data",
@@ -38,7 +38,9 @@
             "full_name": "bob_out",
             "tags": [],
             "layer": null,
-            "pipeline": "__default__"
+            "pipeline": [
+                "__default__"
+            ]
         },
         {
             "type": "parameters",
@@ -47,7 +49,9 @@
             "full_name": "params:value",
             "tags": [],
             "layer": null,
-            "pipeline": "__default__"
+            "pipeline": [
+                "__default__"
+            ]
         },
         {
             "type": "data",
@@ -56,7 +60,9 @@
             "full_name": "result",
             "tags": [],
             "layer": "final",
-            "pipeline": "__default__"
+            "pipeline": [
+                "__default__"
+            ]
         }
     ],
     "edges": [
@@ -85,5 +91,11 @@
     "layers": [
         "raw",
         "final"
+    ],
+    "pipelines": [
+        {
+            "id": "__default__",
+            "name": "Default"
+        }
     ]
 }
