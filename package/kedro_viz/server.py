@@ -60,7 +60,6 @@ KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
 if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli import get_project_context
-
     from kedro.framework.cli.utils import KedroCliError
 else:
     # pylint: disable=no-name-in-module,import-error
@@ -343,7 +342,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
 
     Args:
         pipelines: Dictionary of Kedro pipeline objects.
-        catalog:  Kedro catalog object.
+        catalog: Kedro catalog object.
 
     Returns:
         Dictionary of pipelines, nodes, edges, tags and layers, and pipelines list.
