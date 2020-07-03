@@ -349,7 +349,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
         Dictionary of pipelines, nodes, edges, tags and layers, and pipelines list.
 
     """
-    all_pipelines = []
+    pipeline_list = []
     # keep tracking of node_id -> node data in the graph
     nodes = {}
     # keep track of node_id -> set(child_node_ids) for layers sorting
@@ -359,7 +359,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
     all_tags = set()
 
     for pipeline_key, pipeline in pipelines.items():
-        all_pipelines.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
+        pipeline_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
         formated_nodes, edges = format_pipeline_data(
             pipeline_key,
             pipeline,
@@ -383,7 +383,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
         "edges": all_edges,
         "tags": sorted_tags,
         "layers": sorted_layers,
-        "pipelines": all_pipelines,
+        "pipelines": pipeline_list,
     }
 
 
