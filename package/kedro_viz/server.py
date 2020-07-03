@@ -350,28 +350,32 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
 
     """
     pipeline_list = []
+    node_list = []
+    edge_list = []
     # keep tracking of node_id -> node data in the graph
     nodes = {}
     # keep track of node_id -> set(child_node_ids) for layers sorting
     node_dependencies = defaultdict(set)
-    edge_list = []
-    node_list = []
     tags = set()
 
     for pipeline_key, pipeline in pipelines.items():
         pipeline_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
-        formated_nodes, edges = format_pipeline_data(
-            pipeline_key, pipeline, catalog, nodes, node_dependencies, tags, edge_list
+        edges = format_pipeline_data(
+            pipeline_key,
+            pipeline,
+            catalog,
+            nodes,
+            node_dependencies,
+            tags,
+            edge_list,
+            node_list,
         )
-        node_list += formated_nodes
         edge_list += edges
 
     # sort tags
     sorted_tags = [{"id": tag, "name": _pretty_name(tag)} for tag in sorted(tags)]
     # sort layers
-
     sorted_layers = _sort_layers(nodes, node_dependencies)
-
     return {
         "nodes": node_list,
         "edges": edge_list,
@@ -390,6 +394,7 @@ def format_pipeline_data(
     node_dependencies: Dict[str, dict],
     tags: Set[str],
     edge_list,
+    node_list,
 ):
     """Format pipeline and catalog data from Kedro for kedro-viz.
 
@@ -405,9 +410,6 @@ def format_pipeline_data(
         List of sorted nodes and edges.
 
     """
-    # keep track of a sorted list of nodes to returned to the client
-    node_list = []
-
     # keep track of edges in the graph: [{source_node_id -> target_node_id}]
     edges = []
     # keep_track of {data_set_namespace -> set(tags)}
@@ -470,7 +472,7 @@ def format_pipeline_data(
         else:
             nodes[node_id]["pipeline"].append(pipeline_key)
 
-    return node_list, edges
+    return edges
 
 
 @app.route("/api/nodes.json")
