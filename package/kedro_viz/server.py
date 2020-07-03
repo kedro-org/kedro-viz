@@ -46,12 +46,15 @@ import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-# pylint: disable=unused-import
-from kedro.io import DataCatalog  # noqa: F401
 from semver import VersionInfo
 from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
+
+from kedro.io import (  # pylint: disable=unused-import,wrong-import-order; noqa: F401
+    DataCatalog,
+)
+
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
@@ -201,7 +204,7 @@ def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]
 
 
 def _get_pipeline_catalog_from_kedro14(
-    env
+    env,
 ) -> Tuple[Dict[str, "Pipeline"], "DataCatalog"]:
     try:
         pipeline = get_project_context("create_pipeline")()
@@ -347,8 +350,8 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
 
     """
     all_pipelines = []
-
-    all_nodes = {}
+    # keep tracking of node_id -> node data in the graph
+    nodes = {}
     # keep track of node_id -> set(child_node_ids) for layers sorting
     node_dependencies = defaultdict(set)
     all_edges = []
@@ -361,7 +364,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
             pipeline_key,
             pipeline,
             catalog,
-            all_nodes,
+            nodes,
             node_dependencies,
             all_tags,
             all_edges,
@@ -373,7 +376,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
     sorted_tags = [{"id": tag, "name": _pretty_name(tag)} for tag in sorted(all_tags)]
     # sort layers
 
-    sorted_layers = _sort_layers(all_nodes, node_dependencies)
+    sorted_layers = _sort_layers(nodes, node_dependencies)
 
     return {
         "nodes": sorted_nodes,
@@ -389,7 +392,7 @@ def format_pipeline_data(
     pipeline_key: str,
     pipeline: "Pipeline",  # noqa: F821
     catalog: "DataCatalog",
-    all_nodes: Dict[str, dict],
+    nodes: Dict[str, dict],
     node_dependencies: Dict[str, dict],
     all_tags: Set[str],
     all_edges,
@@ -400,7 +403,7 @@ def format_pipeline_data(
         pipeline_key: key value of a pipeline object (e.g "__default__").
         pipeline: Kedro pipeline object.
         catalog:  Kedro catalog object.
-        all_nodes: Dictionary of id and node dict.
+        nodes: Dictionary of id and node dict.
         node_dependencies: Dictionary of id and node dependencies.
         all_edges:
 
@@ -408,9 +411,6 @@ def format_pipeline_data(
         List of sorted nodes and edges.
 
     """
-
-    # keep tracking of node_id -> node data in the graph
-    # nodes = {}
     # keep track of a sorted list of nodes to returned to the client
     sorted_nodes = []
 
@@ -426,8 +426,8 @@ def format_pipeline_data(
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
         all_tags.update(node.tags)
-        if task_id not in all_nodes:
-            all_nodes[task_id] = {
+        if task_id not in nodes:
+            nodes[task_id] = {
                 "type": "task",
                 "id": task_id,
                 "name": getattr(node, "short_name", node.name),
@@ -435,9 +435,9 @@ def format_pipeline_data(
                 "tags": sorted(node.tags),
                 "pipeline": [pipeline_key],
             }
-            sorted_nodes.append(all_nodes[task_id])
+            sorted_nodes.append(nodes[task_id])
         else:
-            all_nodes[task_id]["pipeline"].append(pipeline_key)
+            nodes[task_id]["pipeline"].append(pipeline_key)
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
@@ -462,8 +462,8 @@ def format_pipeline_data(
     for namespace, tags in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
-        if node_id not in all_nodes:
-            all_nodes[node_id] = {
+        if node_id not in nodes:
+            nodes[node_id] = {
                 "type": "parameters" if is_param else "data",
                 "id": node_id,
                 "name": _pretty_name(namespace),
@@ -472,9 +472,9 @@ def format_pipeline_data(
                 "layer": namespace_to_layer[namespace],
                 "pipeline": [pipeline_key],
             }
-            sorted_nodes.append(all_nodes[node_id])
+            sorted_nodes.append(nodes[node_id])
         else:
-            all_nodes[node_id]["pipeline"].append(pipeline_key)
+            nodes[node_id]["pipeline"].append(pipeline_key)
 
     return sorted_nodes, edges
 
