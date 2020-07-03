@@ -356,24 +356,18 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
     node_dependencies = defaultdict(set)
     edge_list = []
     node_list = []
-    all_tags = set()
+    tags = set()
 
     for pipeline_key, pipeline in pipelines.items():
         pipeline_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
         formated_nodes, edges = format_pipeline_data(
-            pipeline_key,
-            pipeline,
-            catalog,
-            nodes,
-            node_dependencies,
-            all_tags,
-            edge_list,
+            pipeline_key, pipeline, catalog, nodes, node_dependencies, tags, edge_list
         )
         node_list += formated_nodes
         edge_list += edges
 
     # sort tags
-    sorted_tags = [{"id": tag, "name": _pretty_name(tag)} for tag in sorted(all_tags)]
+    sorted_tags = [{"id": tag, "name": _pretty_name(tag)} for tag in sorted(tags)]
     # sort layers
 
     sorted_layers = _sort_layers(nodes, node_dependencies)
@@ -394,7 +388,7 @@ def format_pipeline_data(
     catalog: "DataCatalog",
     nodes: Dict[str, dict],
     node_dependencies: Dict[str, dict],
-    all_tags: Set[str],
+    tags: Set[str],
     edge_list,
 ):
     """Format pipeline and catalog data from Kedro for kedro-viz.
@@ -425,7 +419,7 @@ def format_pipeline_data(
 
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
-        all_tags.update(node.tags)
+        tags.update(node.tags)
         if task_id not in nodes:
             nodes[task_id] = {
                 "type": "task",
