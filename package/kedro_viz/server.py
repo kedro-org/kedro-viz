@@ -39,7 +39,7 @@ from collections import defaultdict
 from contextlib import closing
 from functools import partial
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Tuple
 
 import click
 import kedro
@@ -197,7 +197,9 @@ def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]
     return {"__default__": context.pipeline}
 
 
-def _get_pipeline_catalog_from_kedro14(env):
+def _get_pipeline_catalog_from_kedro14(
+    env
+) -> Tuple[Dict[str, "Pipeline"], "DataCatalog"]:
     try:
         pipeline = get_project_context("create_pipeline")()
         get_config = get_project_context("get_config")
@@ -323,22 +325,22 @@ def _construct_layer_mapping(catalog):
     return dataset_to_layer
 
 
-def _pretty_name(name):
+def _pretty_name(name: str) -> str:
     name = name.replace("-", " ").replace("_", " ")
     parts = [n[0].upper() + n[1:] for n in name.split()]
     return " ".join(parts)
 
 
-def format_pipelines_data(pipelines, catalog) -> Dict[str, list]:
+def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str, list]:
     """
     Format pipelines and catalog data from Kedro for kedro-viz.
 
     Args:
         pipelines: Dictionary of Kedro pipeline objects.
-        catalog:  Kedro catalog object
+        catalog:  Kedro catalog object.
 
     Returns:
-        Dictionary of pipelines, nodes, edges, tags and layers list.
+        Dictionary of pipelines, nodes, edges, tags and layers, and pipelines list.
 
     """
     all_pipelines = []
