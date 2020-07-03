@@ -51,7 +51,7 @@
     "reselect": "^4.0.0",
     "seedrandom": "^3.0.5",
     "snyk": "^1.316.1",
-    "svg-crowbar": "^0.3.1",
+    "svg-crowbar": "^0.6.0",
     "what-input": "^5.2.3"
   },
   "peerDependencies": {
