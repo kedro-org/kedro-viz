@@ -66,7 +66,7 @@ EXPECTED_PIPELINE_DATA = {
             "full_name": "func1",
             "id": "01a6a5cb",
             "name": "Func1",
-            "pipeline": ["__default__"],
+            "pipeline": ["__default__", "third"],
             "tags": [],
             "type": "task",
         },
@@ -83,7 +83,7 @@ EXPECTED_PIPELINE_DATA = {
             "id": "7366ec9f",
             "layer": None,
             "name": "Bob In",
-            "pipeline": ["__default__", "another"],
+            "pipeline": ["__default__", "second", "third"],
             "tags": [],
             "type": "data",
         },
@@ -92,7 +92,7 @@ EXPECTED_PIPELINE_DATA = {
             "id": "60e68b8e",
             "layer": None,
             "name": "Bob Out",
-            "pipeline": ["__default__", "another"],
+            "pipeline": ["__default__", "second", "third"],
             "tags": [],
             "type": "data",
         },
@@ -119,7 +119,7 @@ EXPECTED_PIPELINE_DATA = {
             "id": "f1f1425b",
             "layer": None,
             "name": "Parameters",
-            "pipeline": ["__default__", "another"],
+            "pipeline": ["__default__", "second", "third"],
             "tags": ["bob"],
             "type": "parameters",
         },
@@ -127,14 +127,23 @@ EXPECTED_PIPELINE_DATA = {
             "full_name": "func",
             "id": "760f5b5e",
             "name": "Func",
-            "pipeline": ["another"],
+            "pipeline": ["second"],
+            "tags": [],
+            "type": "task",
+        },
+        {
+            "full_name": "func1",
+            "id": "24d754e7",
+            "name": "Func1",
+            "pipeline": ["second"],
             "tags": [],
             "type": "task",
         },
     ],
     "pipelines": [
         {"id": "__default__", "name": "Default"},
-        {"id": "another", "name": "Another"},
+        {"id": "second", "name": "Second"},
+        {"id": "third", "name": "Third"},
     ],
     "tags": [{"id": "bob", "name": "Bob"}],
 }
@@ -150,12 +159,13 @@ def get_pipelines():
 
     return {
         "__default__": create_pipeline(),
-        "another": Pipeline(
+        "second": Pipeline(
             [
                 node(func, ["bob_in", "parameters"], ["bob_out"]),
                 node(func1, ["bob_out", "parameters"], None),
             ]
         ),
+        "third": Pipeline([node(func1, ["bob_in", "parameters"], ["bob_out"])]),
     }
 
 
@@ -347,16 +357,17 @@ def test_nodes_endpoint(cli_runner, client):
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_pipeline_flag(cli_runner, client):
     """Test that running viz with `--pipeline` flag will return a correct pipeline."""
-    cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    cli_runner.invoke(server.commands, ["viz", "--pipeline", "second"])
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-
     assert data == {
         "edges": [
             {"source": "7366ec9f", "target": "760f5b5e"},
             {"source": "f1f1425b", "target": "760f5b5e"},
             {"source": "760f5b5e", "target": "60e68b8e"},
+            {"source": "60e68b8e", "target": "24d754e7"},
+            {"source": "f1f1425b", "target": "24d754e7"},
         ],
         "layers": [],
         "nodes": [
@@ -364,7 +375,15 @@ def test_pipeline_flag(cli_runner, client):
                 "full_name": "func",
                 "id": "760f5b5e",
                 "name": "Func",
-                "pipeline": ["another"],
+                "pipeline": ["second"],
+                "tags": [],
+                "type": "task",
+            },
+            {
+                "full_name": "func1",
+                "id": "24d754e7",
+                "name": "Func1",
+                "pipeline": ["second"],
                 "tags": [],
                 "type": "task",
             },
@@ -373,7 +392,7 @@ def test_pipeline_flag(cli_runner, client):
                 "id": "7366ec9f",
                 "layer": None,
                 "name": "Bob In",
-                "pipeline": ["another"],
+                "pipeline": ["second"],
                 "tags": [],
                 "type": "data",
             },
@@ -382,7 +401,7 @@ def test_pipeline_flag(cli_runner, client):
                 "id": "60e68b8e",
                 "layer": None,
                 "name": "Bob Out",
-                "pipeline": ["another"],
+                "pipeline": ["second"],
                 "tags": [],
                 "type": "data",
             },
@@ -391,12 +410,12 @@ def test_pipeline_flag(cli_runner, client):
                 "id": "f1f1425b",
                 "layer": None,
                 "name": "Parameters",
-                "pipeline": ["another"],
+                "pipeline": ["second"],
                 "tags": [],
                 "type": "parameters",
             },
         ],
-        "pipelines": [{"id": "another", "name": "Another"}],
+        "pipelines": [{"id": "second", "name": "Second"}],
         "tags": [],
     }
 
@@ -434,7 +453,7 @@ def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
         return {"context": mocker.Mock()}[key]
 
     mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
-    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "second"])
     assert "`--pipeline` flag was provided" in result.output
 
 
@@ -496,7 +515,7 @@ def test_viz_kedro14_pipeline_flag(mocker, cli_runner):
         }[key]
 
     mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
-    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "second"])
     assert "`--pipeline` flag was provided" in result.output
 
 
