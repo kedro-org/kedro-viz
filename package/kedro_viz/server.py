@@ -452,7 +452,7 @@ def format_pipeline_data(
             namespace_tags[namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
 
-    for namespace, tags in sorted(namespace_tags.items()):
+    for namespace, tag_names in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
         if node_id not in nodes:
@@ -461,7 +461,7 @@ def format_pipeline_data(
                 "id": node_id,
                 "name": _pretty_name(namespace),
                 "full_name": namespace,
-                "tags": sorted(tags),
+                "tags": sorted(tag_names),
                 "layer": namespace_to_layer[namespace],
                 "pipeline": [pipeline_key],
             }
