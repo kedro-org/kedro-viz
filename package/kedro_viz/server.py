@@ -350,7 +350,9 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
 
     """
     pipeline_list = []
+    # keep track of a sorted list of nodes to returned to the client
     node_list = []
+    # keep track of edges in the graph: [{source_node_id -> target_node_id}]
     edge_list = []
     # keep tracking of node_id -> node data in the graph
     nodes = {}
@@ -360,7 +362,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
 
     for pipeline_key, pipeline in pipelines.items():
         pipeline_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
-        edges = format_pipeline_data(
+        format_pipeline_data(
             pipeline_key,
             pipeline,
             catalog,
@@ -370,7 +372,6 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
             edge_list,
             node_list,
         )
-        edge_list += edges
 
     # sort tags
     sorted_tags = [{"id": tag, "name": _pretty_name(tag)} for tag in sorted(tags)]
@@ -393,9 +394,9 @@ def format_pipeline_data(
     nodes: Dict[str, dict],
     node_dependencies: Dict[str, dict],
     tags: Set[str],
-    edge_list,
-    node_list,
-):
+    edge_list: List[dict],
+    node_list: List[dict],
+) -> None:
     """Format pipeline and catalog data from Kedro for kedro-viz.
 
     Args:
@@ -404,14 +405,10 @@ def format_pipeline_data(
         catalog:  Kedro catalog object.
         nodes: Dictionary of id and node dict.
         node_dependencies: Dictionary of id and node dependencies.
-        edge_list:
-
-    Returns:
-        List of sorted nodes and edges.
+        edge_list: List of all edges.
+        node_list: List of all nodes.
 
     """
-    # keep track of edges in the graph: [{source_node_id -> target_node_id}]
-    edges = []
     # keep_track of {data_set_namespace -> set(tags)}
     namespace_tags = defaultdict(set)
     # keep track of {data_set_namespace -> layer it belongs to}
@@ -441,7 +438,7 @@ def format_pipeline_data(
             namespace_id = _hash(namespace)
             edge = {"source": namespace_id, "target": task_id}
             if edge not in edge_list:
-                edges.append(edge)
+                edge_list.append(edge)
             namespace_tags[namespace].update(node.tags)
             node_dependencies[namespace_id].add(task_id)
 
@@ -451,7 +448,7 @@ def format_pipeline_data(
             namespace_id = _hash(namespace)
             edge = {"source": task_id, "target": namespace_id}
             if edge not in edge_list:
-                edges.append(edge)
+                edge_list.append(edge)
             namespace_tags[namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
 
@@ -471,8 +468,6 @@ def format_pipeline_data(
             node_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipeline"].append(pipeline_key)
-
-    return edges
 
 
 @app.route("/api/nodes.json")
