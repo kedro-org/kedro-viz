@@ -25,7 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+# pylint: disable=ungrouped-imports
 """ Kedro-Viz plugin and webserver """
 
 import hashlib
@@ -46,6 +46,8 @@ import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
+# pylint: disable=unused-import
+from kedro.io import DataCatalog  # noqa: F401
 from semver import VersionInfo
 from toposort import toposort_flatten
 
@@ -55,6 +57,7 @@ KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
 if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli import get_project_context
+
     from kedro.framework.cli.utils import KedroCliError
 else:
     # pylint: disable=no-name-in-module,import-error
@@ -383,13 +386,27 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
 
 # pylint: disable=too-many-locals,too-many-arguments
 def format_pipeline_data(
-    pipeline_key, pipeline, catalog, all_nodes, node_dependencies, all_tags, all_edges
+    pipeline_key: str,
+    pipeline: "Pipeline",  # noqa: F821
+    catalog: "DataCatalog",
+    all_nodes: Dict[str, dict],
+    node_dependencies: Dict[str, dict],
+    all_tags: Set[str],
+    all_edges,
 ):
-    """
-    Format pipeline and catalog data from Kedro for kedro-viz
+    """Format pipeline and catalog data from Kedro for kedro-viz.
+
     Args:
-        pipeline: Kedro pipeline object
-        catalog:  Kedro catalog object
+        pipeline_key: key value of a pipeline object (e.g "__default__").
+        pipeline: Kedro pipeline object.
+        catalog:  Kedro catalog object.
+        all_nodes: Dictionary of id and node dict.
+        node_dependencies: Dictionary of id and node dependencies.
+        all_edges:
+
+    Returns:
+        List of sorted nodes and edges.
+
     """
 
     # keep tracking of node_id -> node data in the graph
