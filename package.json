@@ -46,7 +46,7 @@
     "react-custom-scrollbars": "^4.2.1",
     "react-flip-toolkit": "^7.0.7",
     "react-scripts": "^3.3.0",
-    "react-test-renderer": "^16.8.6",
+    "react-test-renderer": "^16.13.1",
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
     "seedrandom": "^3.0.5",
