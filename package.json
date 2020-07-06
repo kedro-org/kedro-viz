@@ -44,7 +44,7 @@
     "kiwi.js": "^1.1.2",
     "konami-code": "^0.2.1",
     "react-custom-scrollbars": "^4.2.1",
-    "react-flip-toolkit": "^7.0.7",
+    "react-flip-toolkit": "^7.0.12",
     "react-scripts": "^3.3.0",
     "react-test-renderer": "^16.13.1",
     "redux": "^4.0.1",
