@@ -50,7 +50,7 @@
     "redux": "^4.0.1",
     "reselect": "^4.0.0",
     "seedrandom": "^3.0.5",
-    "snyk": "^1.316.1",
+    "snyk": "^1.337.0",
     "svg-crowbar": "^0.6.0",
     "what-input": "^5.2.10"
   },
