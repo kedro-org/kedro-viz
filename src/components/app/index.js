@@ -86,7 +86,7 @@ class App extends React.Component {
 
 App.propTypes = {
   data: PropTypes.oneOfType([
-    PropTypes.oneOf(['random', 'animals', 'demo', 'json']),
+    PropTypes.oneOf(['json']),
     PropTypes.shape({
       schema_id: PropTypes.string,
       edges: PropTypes.array.isRequired,
@@ -109,13 +109,10 @@ App.propTypes = {
 App.defaultProps = {
   /**
    * Determines what pipeline data will be displayed on the chart.
-   * You can supply one of the following strings:
-     - 'random': Use randomly-generated data
-     - 'animals': Use data from the 'animals' test dataset
-     - 'demo': Use data from the 'demo' test dataset
-     - 'json': Load data from a local json file (in /public/api/nodes.json)
-   * Alternatively, you can supply an object containing lists of edges, nodes, tags.
+   * You can supply an object containing lists of edges, nodes, tags -
    * See /src/utils/data for examples of the expected data format.
+   * Alternatively, uou can supply the string 'json', which loads data
+   * from a local json file (in /public/api/nodes.json)
    */
   data: null,
   /**

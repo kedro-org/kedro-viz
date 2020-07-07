@@ -1,52 +1,69 @@
 import getRandomPipeline from './random-data';
+import animals from './data/animals.mock';
+import demo from './data/demo.mock';
 
 // Avoid errors when running in a non-browser environment
 const hasWindow = typeof window !== 'undefined';
 
 /**
- * Validate against expected results
- * @param {string} source Input type key
- * @return {string} Data source type key
+ * Determine the data source ID from the URL query string, or an environment
+ * variable from the CLI, or from the URL host, else return undefined.
+ * You can supply one of the following strings:
+   - 'random': Use randomly-generated data
+   - 'animals': Use data from the 'animals' test dataset
+   - 'demo': Use data from the 'demo' test dataset
+   - 'json': Load data from a local json file (in /public/api/nodes.json)
+ * @return {string} Data source identifier
  */
-const validateDataSource = source => {
-  const expectedInput = ['animals', 'demo', 'json', 'random'];
-  if (expectedInput.includes(source)) {
-    // If random, supply random data instead. We're doing this here to avoid
-    // including this file unnecessarily in the exported npm package
-    if (source === 'random') {
-      return getRandomPipeline();
-    }
-    return source;
-  }
-  if (source) {
-    throw new Error(
-      `Unexpected data source value '${source}'. Your input should be one of the following values: ${expectedInput.join(
-        ', '
-      )}.`
-    );
-  }
-  return 'json';
-};
-
-/**
- * Determine which data source to use
- * @return {string} Data source type key
- */
-const getDataSource = () => {
-  let source;
+export const getSourceID = () => {
   const qs = hasWindow && window.location.search.match(/data=(\w+)/);
   const { REACT_APP_DATA_SOURCE } = process.env;
   const isDemo =
     hasWindow && window.location.host === 'quantumblacklabs.github.io';
 
   if (qs) {
-    source = encodeURIComponent(qs[1]);
-  } else if (REACT_APP_DATA_SOURCE) {
-    source = REACT_APP_DATA_SOURCE;
-  } else if (isDemo) {
-    source = 'demo';
+    return encodeURIComponent(qs[1]);
   }
-  return validateDataSource(source);
+  if (REACT_APP_DATA_SOURCE) {
+    return REACT_APP_DATA_SOURCE;
+  }
+  if (isDemo) {
+    return 'demo';
+  }
+  return 'json';
 };
 
-export default getDataSource;
+/**
+ * Either load synchronous pipeline data, or else indicate with a string
+ * that json data should be loaded asynchronously later on.
+ * @param {string} source Data source identifier
+ * @return {object|string} Either raw data itself, or 'json'
+ */
+export const getDataValue = source => {
+  switch (source) {
+    case 'animals':
+      // Use data from the 'animals' test dataset
+      return animals;
+    case 'demo':
+      // Use data from the 'demo' test dataset
+      return demo;
+    case 'random':
+      // Use procedurally-generated data
+      return getRandomPipeline();
+    case 'json':
+      // Load data asynchronously later
+      return source;
+    default:
+      throw new Error(
+        `Unexpected data source value '${source}'. Your input should be one of the following values: 'animals', 'demo', 'json', or 'random'`
+      );
+  }
+};
+
+/**
+ * Determine which data source to use, and return it
+ * @return {object|string} Pipeline data, or 'json'
+ */
+const getPipelineData = () => getDataValue(getSourceID());
+
+export default getPipelineData;
