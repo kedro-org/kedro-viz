@@ -188,8 +188,7 @@ def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]
                     name=pipeline_name
                 )
             }
-        else:
-            return context.pipelines
+        return context.pipelines
 
     # Kedro 0.15.0 or 0.15.1
     if pipeline_name:
@@ -343,11 +342,11 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
         Dictionary of pipelines, nodes, edges, tags and layers, and pipelines list.
 
     """
-    pipeline_list = []
+    pipelines_list = []
     # keep track of a sorted list of nodes to returned to the client
-    node_list = []
+    nodes_list = []
     # keep track of edges in the graph: [{source_node_id -> target_node_id}]
-    edge_list = []
+    edges_list = []
     # keep tracking of node_id -> node data in the graph
     nodes = {}
     # keep track of node_id -> set(child_node_ids) for layers sorting
@@ -355,7 +354,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
     tags = set()
 
     for pipeline_key, pipeline in pipelines.items():
-        pipeline_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
+        pipelines_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
         format_pipeline_data(
             pipeline_key,
             pipeline,
@@ -363,8 +362,8 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
             nodes,
             node_dependencies,
             tags,
-            edge_list,
-            node_list,
+            edges_list,
+            nodes_list,
         )
 
     # sort tags
@@ -372,11 +371,11 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
     # sort layers
     sorted_layers = _sort_layers(nodes, node_dependencies)
     return {
-        "nodes": node_list,
-        "edges": edge_list,
+        "nodes": nodes_list,
+        "edges": edges_list,
         "tags": sorted_tags,
         "layers": sorted_layers,
-        "pipelines": pipeline_list,
+        "pipelines": pipelines_list,
     }
 
 
@@ -388,8 +387,8 @@ def format_pipeline_data(
     nodes: Dict[str, dict],
     node_dependencies: Dict[str, dict],
     tags: Set[str],
-    edge_list: List[dict],
-    node_list: List[dict],
+    edges_list: List[dict],
+    nodes_list: List[dict],
 ) -> None:
     """Format pipeline and catalog data from Kedro for kedro-viz.
 
@@ -399,8 +398,8 @@ def format_pipeline_data(
         catalog:  Kedro catalog object.
         nodes: Dictionary of id and node dict.
         node_dependencies: Dictionary of id and node dependencies.
-        edge_list: List of all edges.
-        node_list: List of all nodes.
+        edges_list: List of all edges.
+        nodes_list: List of all nodes.
 
     """
     # keep_track of {data_set_namespace -> set(tags)}
@@ -422,7 +421,7 @@ def format_pipeline_data(
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
             }
-            node_list.append(nodes[task_id])
+            nodes_list.append(nodes[task_id])
         else:
             nodes[task_id]["pipelines"].append(pipeline_key)
 
@@ -431,8 +430,8 @@ def format_pipeline_data(
             namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
             namespace_id = _hash(namespace)
             edge = {"source": namespace_id, "target": task_id}
-            if edge not in edge_list:
-                edge_list.append(edge)
+            if edge not in edges_list:
+                edges_list.append(edge)
             namespace_tags[namespace].update(node.tags)
             node_dependencies[namespace_id].add(task_id)
 
@@ -441,8 +440,8 @@ def format_pipeline_data(
             namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
             namespace_id = _hash(namespace)
             edge = {"source": task_id, "target": namespace_id}
-            if edge not in edge_list:
-                edge_list.append(edge)
+            if edge not in edges_list:
+                edges_list.append(edge)
             namespace_tags[namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
 
@@ -459,7 +458,7 @@ def format_pipeline_data(
                 "layer": namespace_to_layer[namespace],
                 "pipelines": [pipeline_key],
             }
-            node_list.append(nodes[node_id])
+            nodes_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipelines"].append(pipeline_key)
 
