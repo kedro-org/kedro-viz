@@ -2,9 +2,6 @@ import getRandomPipeline from './random-data';
 import animals from './data/animals.mock';
 import demo from './data/demo.mock';
 
-// Avoid errors when running in a non-browser environment
-const hasWindow = typeof window !== 'undefined';
-
 /**
  * Determine the data source ID from the URL query string, or an environment
  * variable from the CLI, or from the URL host, else return undefined.
@@ -16,10 +13,9 @@ const hasWindow = typeof window !== 'undefined';
  * @return {string} Data source identifier
  */
 export const getSourceID = () => {
-  const qs = hasWindow && window.location.search.match(/data=(\w+)/);
+  const qs = document.location.search.match(/data=(\w+)/);
   const { REACT_APP_DATA_SOURCE } = process.env;
-  const isDemo =
-    hasWindow && window.location.host === 'quantumblacklabs.github.io';
+  const isDemo = document.location.host === 'quantumblacklabs.github.io';
 
   if (qs) {
     return encodeURIComponent(qs[1]);
