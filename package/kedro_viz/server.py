@@ -326,7 +326,7 @@ def _construct_layer_mapping(catalog):
 
 def _pretty_name(name: str) -> str:
     name = name.replace("-", " ").replace("_", " ")
-    parts = [n[0].upper() + n[1:] for n in name.split()]
+    parts = [n.capitalize() for n in name.split()]
     return " ".join(parts)
 
 
