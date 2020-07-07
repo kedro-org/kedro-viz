@@ -425,11 +425,11 @@ def format_pipeline_data(
                 "name": getattr(node, "short_name", node.name),
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
-                "pipeline": [pipeline_key],
+                "pipelines": [pipeline_key],
             }
             node_list.append(nodes[task_id])
         else:
-            nodes[task_id]["pipeline"].append(pipeline_key)
+            nodes[task_id]["pipelines"].append(pipeline_key)
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
@@ -462,11 +462,11 @@ def format_pipeline_data(
                 "full_name": namespace,
                 "tags": sorted(tag_names),
                 "layer": namespace_to_layer[namespace],
-                "pipeline": [pipeline_key],
+                "pipelines": [pipeline_key],
             }
             node_list.append(nodes[node_id])
         else:
-            nodes[node_id]["pipeline"].append(pipeline_key)
+            nodes[node_id]["pipelines"].append(pipeline_key)
 
 
 @app.route("/api/nodes.json")
