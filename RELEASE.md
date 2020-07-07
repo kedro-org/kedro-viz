@@ -16,7 +16,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->
-* Added information for multiple pipelines in `nodes.json` (#192)
+- Add information for multiple pipelines in `nodes.json` (#192)
 
 # Release 3.4.0
 
