@@ -6,7 +6,7 @@
             "name": "Func1",
             "full_name": "func1",
             "tags": [],
-            "pipeline": [
+            "pipelines": [
                 "__default__"
             ]
         },
@@ -16,7 +16,7 @@
             "name": "Func2",
             "full_name": "func2",
             "tags": [],
-            "pipeline": [
+            "pipelines": [
                 "__default__"
             ]
         },
@@ -27,7 +27,7 @@
             "full_name": "bob_in",
             "tags": [],
             "layer": "raw",
-            "pipeline": [
+            "pipelines": [
                 "__default__"
             ]
         },
@@ -38,7 +38,7 @@
             "full_name": "bob_out",
             "tags": [],
             "layer": null,
-            "pipeline": [
+            "pipelines": [
                 "__default__"
             ]
         },
@@ -49,7 +49,7 @@
             "full_name": "params:value",
             "tags": [],
             "layer": null,
-            "pipeline": [
+            "pipelines": [
                 "__default__"
             ]
         },
@@ -60,7 +60,7 @@
             "full_name": "result",
             "tags": [],
             "layer": "final",
-            "pipeline": [
+            "pipelines": [
                 "__default__"
             ]
         }
