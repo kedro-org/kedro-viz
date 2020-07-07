@@ -182,14 +182,14 @@ def _load_from_file(load_file: str) -> dict:
 
 def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]:
     if KEDRO_VERSION.match(">=0.15.2"):
-        pipelines = context._get_pipelines()  # pylint: disable=protected-access
         if pipeline_name:
-            pipelines = {
+            return {
                 pipeline_name: context._get_pipeline(  # pylint: disable=protected-access
                     name=pipeline_name
                 )
             }
-        return pipelines
+        else:
+            return context.pipelines
 
     # Kedro 0.15.0 or 0.15.1
     if pipeline_name:

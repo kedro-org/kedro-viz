@@ -211,7 +211,7 @@ def patched_get_project_context(mocker):
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
     ):  # pylint: disable=unused-argument
         mocked_context = mocker.Mock()
-        mocked_context._get_pipelines = get_pipelines
+        mocked_context.pipelines = get_pipelines()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.catalog = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
