@@ -51,11 +51,6 @@ from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
 
-from kedro.io import (  # pylint: disable=unused-import,wrong-import-order; noqa: F401
-    DataCatalog,
-)
-
-
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
 if KEDRO_VERSION.match(">=0.16.0"):
@@ -389,7 +384,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
 def format_pipeline_data(
     pipeline_key: str,
     pipeline: "Pipeline",  # noqa: F821
-    catalog: "DataCatalog",
+    catalog: "DataCatalog",  # noqa: F821
     nodes: Dict[str, dict],
     node_dependencies: Dict[str, dict],
     tags: Set[str],
