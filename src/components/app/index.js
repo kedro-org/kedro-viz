@@ -6,7 +6,6 @@ import { resetData, updateFontLoaded } from '../../actions';
 import checkFontLoaded from '../../actions/check-font-loaded';
 import Wrapper from '../wrapper';
 import getInitialState from '../../store/initial-state';
-import loadData from '../../store/load-data';
 import normalizeData from '../../store/normalize-data';
 import { getFlagsMessage } from '../../utils/flags';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
@@ -24,12 +23,11 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.asyncLoadJsonData();
     this.checkWebFontLoading();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.data.schema_id !== this.props.data.schema_id) {
+    if (prevProps.data !== this.props.data) {
       this.updatePipelineData();
     }
   }
@@ -42,19 +40,6 @@ class App extends React.Component {
 
     if (message && typeof jest === 'undefined') {
       console.info(message);
-    }
-  }
-
-  /**
-   * Load data asynchronously from a JSON file then update the store
-   */
-  asyncLoadJsonData() {
-    if (this.props.data === 'json') {
-      loadData()
-        .then(normalizeData)
-        .then(data => {
-          this.store.dispatch(resetData(data));
-        });
     }
   }
 
@@ -111,8 +96,8 @@ App.defaultProps = {
    * Determines what pipeline data will be displayed on the chart.
    * You can supply an object containing lists of edges, nodes, tags -
    * See /src/utils/data for examples of the expected data format.
-   * Alternatively, uou can supply the string 'json', which loads data
-   * from a local json file (in /public/api/nodes.json)
+   * Alternatively, the string 'json' indicates that data is being
+   * loaded asynchronously from /public/api/nodes.json
    */
   data: null,
   /**
