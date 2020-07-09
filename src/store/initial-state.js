@@ -40,6 +40,11 @@ export const getPipelineData = data => {
  */
 export const getInitialPipelineState = () => ({
   id: null,
+  pipeline: {
+    ids: [],
+    name: {},
+    active: null
+  },
   node: {
     ids: [],
     name: {},
@@ -49,6 +54,7 @@ export const getInitialPipelineState = () => ({
     tags: {},
     layer: {},
     disabled: {},
+    pipelines: {},
     clicked: null,
     hovered: null
   },

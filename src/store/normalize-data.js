@@ -1,11 +1,26 @@
 import { getInitialPipelineState } from '../store/initial-state';
+import { arrayToObject } from '../utils';
 
 /**
  * Get unique, reproducible ID for each edge, based on its nodes
  * @param {Object} source - Name and type of the source node
  * @param {Object} target - Name and type of the target node
  */
-const getEdgeID = (source, target) => [source, target].join('|');
+const createEdgeID = (source, target) => [source, target].join('|');
+
+/**
+ * Add a new pipeline
+ * @param {string} pipeline.id - Unique ID
+ * @param {string} pipeline.name - Pipeline name
+ */
+const addPipeline = state => pipeline => {
+  const { id } = pipeline;
+  if (state.pipeline.name[id]) {
+    return;
+  }
+  state.pipeline.ids.push(id);
+  state.pipeline.name[id] = pipeline.name;
+};
 
 /**
  * Add a new node if it doesn't already exist
@@ -23,6 +38,9 @@ const addNode = state => node => {
   state.node.fullName[id] = node.full_name || node.name;
   state.node.type[id] = node.type;
   state.node.layer[id] = node.layer;
+  state.node.pipelines[id] = node.pipelines
+    ? arrayToObject(node.pipelines, () => true)
+    : {};
   state.node.isParam[id] = node.type === 'parameters';
   state.node.tags[id] = node.tags || [];
 };
@@ -33,7 +51,7 @@ const addNode = state => node => {
  * @param {Object} target - Child node
  */
 const addEdge = state => ({ source, target }) => {
-  const id = getEdgeID(source, target);
+  const id = createEdgeID(source, target);
   if (state.edge.ids.includes(id)) {
     return;
   }
@@ -89,6 +107,12 @@ const formatData = data => {
   }
   data.nodes.forEach(addNode(state));
   data.edges.forEach(addEdge(state));
+  if (data.pipelines) {
+    data.pipelines.forEach(addPipeline(state));
+    if (state.pipeline.ids.length) {
+      state.pipeline.active = state.pipeline.ids[0];
+    }
+  }
   if (data.tags) {
     data.tags.forEach(addTag(state));
   }
