@@ -3,6 +3,7 @@ import node from './nodes';
 import tag from './tags';
 import nodeType from './node-type';
 import visible from './visible';
+import pipeline from './pipeline';
 import flags from './flags';
 import {
   RESET_DATA,
@@ -44,11 +45,12 @@ function resetDataReducer(state = {}, action) {
 
 const combinedReducer = combineReducers({
   // These props have their own reducers in other files
+  flags,
   node,
   nodeType,
+  pipeline,
   tag,
   visible,
-  flags,
   // These props don't have any actions associated with them
   edge: createReducer({}),
   id: createReducer(null),

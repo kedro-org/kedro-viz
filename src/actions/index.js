@@ -91,6 +91,19 @@ export function toggleTheme(theme) {
   };
 }
 
+export const UPDATE_ACTIVE_PIPELINE = 'UPDATE_ACTIVE_PIPELINE';
+
+/**
+ * Update the actively-selected pipeline
+ * @param {string} pipeline Pipeline ID
+ */
+export function updateActivePipeline(pipeline) {
+  return {
+    type: UPDATE_ACTIVE_PIPELINE,
+    pipeline
+  };
+}
+
 export const UPDATE_CHART_SIZE = 'UPDATE_CHART_SIZE';
 
 /**
