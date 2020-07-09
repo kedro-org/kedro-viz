@@ -1,36 +1,13 @@
-import getInitialState, { getPipelineData } from './initial-state';
+import getInitialState from './initial-state';
 import { saveState } from './helpers';
-import getRandomPipeline from '../utils/random-data';
 import animals from '../utils/data/animals.mock';
-import demo from '../utils/data/demo.mock';
-
-describe('getPipelineData', () => {
-  it('returns the correct dataset when passed a dataset string', () => {
-    expect(getPipelineData('animals')).toEqual(animals);
-    expect(getPipelineData('demo')).toEqual(demo);
-  });
-
-  it("returns null when passed 'json'", () => {
-    expect(getPipelineData('json')).toEqual(null);
-  });
-
-  it('returns original data', () => {
-    const randomPipeline = getRandomPipeline();
-    expect(getPipelineData(randomPipeline)).toEqual(randomPipeline);
-  });
-
-  it('throws an error when passed random', () => {
-    expect(() => getPipelineData('random')).toThrow();
-  });
-
-  it('throws an error when passed null or undefined', () => {
-    expect(() => getPipelineData(null)).toThrow();
-    expect(() => getPipelineData(undefined)).toThrow();
-  });
-});
 
 describe('getInitialState', () => {
-  const props = { data: 'animals' };
+  const props = { data: animals };
+
+  it('throws an error when data prop is empty', () => {
+    expect(() => getInitialState({})).toThrow();
+  });
 
   it('returns an object', () => {
     expect(getInitialState(props)).toEqual(expect.any(Object));

@@ -3,6 +3,8 @@ import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
 import configureStore from '../store';
 import getInitialState from '../store/initial-state';
+import animals from './data/animals.mock';
+import demo from './data/demo.mock';
 import reducer from '../reducers';
 import { updateFontLoaded } from '../actions';
 
@@ -19,8 +21,8 @@ const prepareState = (...props) => {
  * Example state objects for use in tests of redux-enabled components
  */
 export const mockState = {
-  demo: prepareState({ data: 'demo' }),
-  animals: prepareState({ data: 'animals' })
+  demo: prepareState({ data: demo }),
+  animals: prepareState({ data: animals })
 };
 
 /**
@@ -35,7 +37,7 @@ export const setup = {
   mount: (children, props = {}) => {
     const initialState = Object.assign(
       {},
-      prepareState({ data: 'animals', ...props }, props)
+      prepareState({ data: animals, ...props }, props)
     );
     return mount(
       <Provider store={configureStore(initialState)}>{children}</Provider>
