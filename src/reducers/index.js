@@ -24,7 +24,7 @@ const createReducer = (initialState, type, key) => (
   state = initialState,
   action
 ) => {
-  if (action.type === type) {
+  if (typeof key !== 'undefined' && action.type === type) {
     return action[key];
   }
   return state;
