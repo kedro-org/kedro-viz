@@ -2,6 +2,28 @@ import { getInitialPipelineState } from '../store/initial-state';
 import { arrayToObject } from '../utils';
 
 /**
+ * Check whether data is in expected format
+ * @param {Object} data - The parsed data input
+ * @return {Boolean} True if valid for formatting
+ */
+const validateInput = data => {
+  if (!data) {
+    // Data may still be loading, so return initial state
+    return false;
+  }
+  if (!Array.isArray(data.edges) || !Array.isArray(data.nodes)) {
+    if (typeof jest === 'undefined') {
+      console.error(
+        'Invalid data input: Please ensure that your pipeline data includes arrays of nodes and edges',
+        data
+      );
+    }
+    return false;
+  }
+  return true;
+};
+
+/**
  * Get unique, reproducible ID for each edge, based on its nodes
  * @param {Object} source - Name and type of the source node
  * @param {Object} target - Name and type of the target node
@@ -89,16 +111,7 @@ const addLayer = state => layer => {
 const formatData = data => {
   const state = getInitialPipelineState();
 
-  if (!data) {
-    // Data may still be loading, so return initial state
-    return state;
-  }
-
-  if (!Array.isArray(data.edges) || !Array.isArray(data.nodes)) {
-    console.error(
-      'Invalid data input: Please ensure that your pipeline data includes arrays of nodes and edges',
-      data
-    );
+  if (!validateInput(data)) {
     return state;
   }
 
