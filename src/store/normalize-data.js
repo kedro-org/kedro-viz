@@ -104,11 +104,11 @@ const addLayer = state => layer => {
 };
 
 /**
- * Convert the pipeline data into a normalised state object
+ * Convert the pipeline data into a normalized state object
  * @param {Object} data Raw unformatted data input
  * @return {Object} Formatted, normalized state
  */
-const formatData = data => {
+const normalizeData = data => {
   const state = getInitialPipelineState();
 
   if (!validateInput(data)) {
@@ -136,4 +136,4 @@ const formatData = data => {
   return state;
 };
 
-export default formatData;
+export default normalizeData;
