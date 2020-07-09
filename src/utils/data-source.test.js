@@ -37,7 +37,7 @@ describe('getDataValue', () => {
     expect(getDataValue('json')).toEqual('json');
   });
 
-  it("should return random data when passed 'random'", () => {
+  it("should return a dataset object when passed 'random'", () => {
     expect(getDataValue('random')).toEqual(
       expect.objectContaining({
         edges: expect.any(Array),
