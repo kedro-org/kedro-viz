@@ -1,15 +1,4 @@
 import { getInitialPipelineState } from '../store/initial-state';
-/**
- * Check whether data is in expected format
- * @param {Object} data - The parsed data input
- * @return {Boolean} True if valid for formatting
- */
-const validateInput = data => {
-  const { isArray } = Array;
-  return (
-    data && isArray(data.edges) && isArray(data.nodes) && isArray(data.tags)
-  );
-};
 
 /**
  * Get unique, reproducible ID for each edge, based on its nodes
@@ -82,18 +71,29 @@ const addLayer = state => layer => {
 const formatData = data => {
   const state = getInitialPipelineState();
 
-  if (validateInput(data)) {
-    if (data.schema_id) {
-      state.id = data.schema_id;
-    }
-    data.nodes.forEach(addNode(state));
-    data.edges.forEach(addEdge(state));
-    if (data.tags) {
-      data.tags.forEach(addTag(state));
-    }
-    if (data.layers) {
-      data.layers.forEach(addLayer(state));
-    }
+  if (!data) {
+    // Data may still be loading, so return initial state
+    return state;
+  }
+
+  if (!Array.isArray(data.edges) || !Array.isArray(data.nodes)) {
+    console.error(
+      'Invalid data input: Please ensure that your pipeline data includes arrays of nodes and edges',
+      data
+    );
+    return state;
+  }
+
+  if (data.schema_id) {
+    state.id = data.schema_id;
+  }
+  data.nodes.forEach(addNode(state));
+  data.edges.forEach(addEdge(state));
+  if (data.tags) {
+    data.tags.forEach(addTag(state));
+  }
+  if (data.layers) {
+    data.layers.forEach(addLayer(state));
   }
 
   return state;
