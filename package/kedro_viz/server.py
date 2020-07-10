@@ -65,6 +65,8 @@ else:
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
+_DEFAULT_KEY = "__default__"
+
 data = None  # pylint: disable=invalid-name
 
 app = Flask(  # pylint: disable=invalid-name
@@ -192,7 +194,7 @@ def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]
     # Kedro 0.15.0 or 0.15.1
     if pipeline_name:
         raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
-    return {"__default__": context.pipeline}
+    return {_DEFAULT_KEY: context.pipeline}
 
 
 def _get_pipeline_catalog_from_kedro14(
@@ -204,7 +206,7 @@ def _get_pipeline_catalog_from_kedro14(
         conf = get_config(str(Path.cwd()), env)
         create_catalog = get_project_context("create_catalog")
         catalog = create_catalog(config=conf)
-        return {"__default__": pipeline}, catalog
+        return {_DEFAULT_KEY: pipeline}, catalog
     except (ImportError, KeyError):
         raise KedroCliError(ERROR_PROJECT_ROOT)
 
@@ -369,6 +371,13 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
     sorted_tags = [{"id": tag, "name": _pretty_name(tag)} for tag in sorted(tags)]
     # sort layers
     sorted_layers = _sort_layers(nodes, node_dependencies)
+
+    default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
+    if default_pipeline in pipelines_list:
+        # If default pipeline exists, make sure it is the first element in the list.
+        pipelines_list.remove(default_pipeline)
+        pipelines_list.insert(0, default_pipeline)
+
     return {
         "nodes": nodes_list,
         "edges": edges_list,
