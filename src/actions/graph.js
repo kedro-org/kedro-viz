@@ -4,7 +4,7 @@ export const TOGGLE_LOADING = 'TOGGLE_LOADING';
 
 /**
  * Toggle whether to display the loading spinner
- * @param {Object} loading
+ * @param {boolean} loading
  */
 export function toggleLoading(loading) {
   return {
@@ -26,14 +26,19 @@ export function updateGraph(graph) {
   };
 }
 
-export function calculateGraph(input) {
+/**
+ * Async action to calculate graph layout in a web worker
+ * whiled displaying a loading spinner
+ * @param {Object} state Graph calculation arguments
+ */
+export function calculateGraph(state) {
   return function(dispatch) {
     dispatch(toggleLoading(true));
-    const layout = input.flags.newgraph
+    const layout = state.flags.newgraph
       ? worker().graphNew
       : worker().graphDagre;
 
-    return layout(input).then(graph => {
+    return layout(state).then(graph => {
       dispatch(toggleLoading(false));
       return dispatch(updateGraph(graph));
     });
