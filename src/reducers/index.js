@@ -11,6 +11,7 @@ import {
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED
 } from '../actions';
+import { UPDATE_GRAPH, TOGGLE_LOADING } from '../actions/graph';
 
 /**
  * Create a generic reducer
@@ -51,6 +52,8 @@ const combinedReducer = combineReducers({
   edge: (state = {}) => state,
   id: (state = null) => state,
   layer: (state = {}) => state,
+  graph: createReducer(UPDATE_GRAPH, 'graph', null),
+  loading: createReducer(TOGGLE_LOADING, 'loading', false),
   chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
   fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
   textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),
