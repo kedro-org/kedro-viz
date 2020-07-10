@@ -161,7 +161,10 @@ def _check_kedroviz_running(context):
     data_json = json.loads(download_url("http://localhost:4141/api/nodes.json"))
     try:
         assert context.result.poll() is None
-        assert "predict" in data_json["nodes"][0]["full_name"]
+        assert (
+            "example_iris_data"
+            == sorted(data_json["nodes"], key=lambda i: i["full_name"])[0]["full_name"]
+        )
     finally:
         context.result.terminate()
 

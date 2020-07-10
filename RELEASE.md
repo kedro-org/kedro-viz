@@ -16,8 +16,10 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->
+
 - Move data source loading into standalone-app entry point (#215)
 - Allow an argument to be passed to loadJsonData (#215)
+- Add information for multiple pipelines in `nodes.json` (#192)
 
 # Release 3.4.0
 

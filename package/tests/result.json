@@ -1,19 +1,24 @@
 {
-    "layers": ["raw", "final"],
     "nodes": [
         {
             "type": "task",
             "id": "71527409",
             "name": "Func1",
             "full_name": "func1",
-            "tags": []
+            "tags": [],
+            "pipelines": [
+                "__default__"
+            ]
         },
         {
             "type": "task",
             "id": "3751475c",
             "name": "Func2",
             "full_name": "func2",
-            "tags": []
+            "tags": [],
+            "pipelines": [
+                "__default__"
+            ]
         },
         {
             "type": "data",
@@ -21,7 +26,10 @@
             "name": "Bob In",
             "full_name": "bob_in",
             "tags": [],
-            "layer": "raw"
+            "layer": "raw",
+            "pipelines": [
+                "__default__"
+            ]
         },
         {
             "type": "data",
@@ -29,7 +37,10 @@
             "name": "Bob Out",
             "full_name": "bob_out",
             "tags": [],
-            "layer": null
+            "layer": null,
+            "pipelines": [
+                "__default__"
+            ]
         },
         {
             "type": "parameters",
@@ -37,7 +48,10 @@
             "name": "Params:value",
             "full_name": "params:value",
             "tags": [],
-            "layer": null
+            "layer": null,
+            "pipelines": [
+                "__default__"
+            ]
         },
         {
             "type": "data",
@@ -45,7 +59,10 @@
             "name": "Result",
             "full_name": "result",
             "tags": [],
-            "layer": "final"
+            "layer": "final",
+            "pipelines": [
+                "__default__"
+            ]
         }
     ],
     "edges": [
@@ -70,5 +87,15 @@
             "target": "37a5301a"
         }
     ],
-    "tags": []
+    "tags": [],
+    "layers": [
+        "raw",
+        "final"
+    ],
+    "pipelines": [
+        {
+            "id": "__default__",
+            "name": "Default"
+        }
+    ]
 }
