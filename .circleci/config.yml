@@ -199,8 +199,7 @@ commands:
           name: Install Kedro-Viz dependencies
           command: |
             conda activate kedro-viz
-            pip install -r package/requirements.txt -U
-            pip install -r package/test_requirements.txt -U
+              pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions
           command: |
@@ -208,11 +207,20 @@ commands:
             python -V
             pip -V
             kedro -V
+      - run:
+          name: Install 'make' command
+          command: choco install make
+
 
   win_build:
     description: Run build on Windows
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-dependencies-
       - win_setup_conda
       - win_setup_requirements
       - install_node_dependencies
@@ -220,7 +228,7 @@ commands:
           name: Run Python unit tests
           command: |
             conda activate kedro-viz
-            cd package
+            make build
             pytest tests --no-cov
 
 jobs:
