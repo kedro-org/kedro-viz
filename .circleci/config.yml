@@ -215,6 +215,10 @@ commands:
       - checkout
       - win_setup_conda
       - win_setup_requirements
+      - install_node_dependencies
+      - run:
+          name: Run Python unit tests
+          command: conda activate kedro-viz; cd package && pytest tests --no-cov
 
 jobs:
   build_36:
@@ -241,22 +245,19 @@ jobs:
 
   # Windows-related jobs
   win_build_36:
-    executor:
-      name: win/default
+    executor: win/default
     environment:
       CONDA_ENV_PY_VERSION: "3.6"
     steps: [win_build]
 
   win_build_37:
-    executor:
-      name: win/default
+    executor: win/default
     environment:
       CONDA_ENV_PY_VERSION: "3.7"
     steps: [win_build]
 
   win_build_38:
-    executor:
-      name: win/default
+    executor: win/default
     environment:
       CONDA_ENV_PY_VERSION: "3.8"
     steps: [win_build]
