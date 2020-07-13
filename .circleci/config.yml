@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  win: circleci/windows@2.4.0
+
 executors:
   circleci_machine:
     docker:
@@ -30,7 +33,7 @@ commands:
             conda create --name kedro-viz python=${CONDA_ENV_PY_VERSION} -y
             source $BASH_ENV
       - run:
-          name: Install Pip dependencies
+          name: Install Kedro-Viz dependencies
           command: |
             python -m pip install -U pip setuptools wheel
             pip install git+https://github.com/quantumblacklabs/kedro@master
@@ -175,6 +178,44 @@ commands:
       - package_app
       - check_legal_compliance
 
+  # Windows-related commands
+  win_setup_conda:
+    # Miniconda3 is pre-installed on the machine:
+    # https://circleci.com/docs/2.0/hello-world-windows/
+    description: Setup conda
+    steps:
+      - run:
+          name: Initialize conda
+          command: conda init powershell
+      - run:
+          name: Create 'kedro-viz' conda environment
+          command: |
+            conda create --name kedro-viz python=$env:CONDA_ENV_PY_VERSION -y
+
+  win_setup_requirements:
+    description: Install Kedro-Viz dependencies
+    steps:
+      - run:
+          name: Install Kedro-Viz dependencies
+          command: |
+            conda activate kedro-viz
+            pip install -r package/requirements.txt -U
+            pip install -r package/test_requirements.txt -U
+      - run:
+          name: Echo package versions
+          command: |
+            conda activate kedro-viz
+            python -V
+            pip -V
+            kedro -V
+
+  win_build:
+    description: Run build on Windows
+    steps:
+      - checkout
+      - win_setup_conda
+      - win_setup_requirements
+
 jobs:
   build_36:
     executor: circleci_machine
@@ -198,31 +239,59 @@ jobs:
     executor: circleci_machine
     steps: [deploy_gh_pages]
 
+  # Windows-related jobs
+  win_build_36:
+    executor:
+      name: win/default
+    environment:
+      CONDA_ENV_PY_VERSION: "3.6"
+    steps: [win_build]
+
+  win_build_37:
+    executor:
+      name: win/default
+    environment:
+      CONDA_ENV_PY_VERSION: "3.7"
+    steps: [win_build]
+
+  win_build_38:
+    executor:
+      name: win/default
+    environment:
+      CONDA_ENV_PY_VERSION: "3.8"
+    steps: [win_build]
+
 workflows:
   version: 2
   build:
     jobs:
-      - build_36
-      - build_37
-      - build_38
-      - deploy_demo:
-          requires:
-            - build_36
-            - build_37
-            - build_38
-          filters:
-            branches:
-              only: master
-  daily:
-    triggers:
-      - schedule:
-          cron: "0 1 * * *"
-          filters:
-            branches:
-              only:
-                - develop
-                - master
-    jobs:
-      - build_36
-      - build_37
-      - build_38
+#      - build_36
+#      - build_37
+#      - build_38
+      - win_build_36
+      - win_build_37
+      - win_build_38
+#      - deploy_demo:
+#          requires:
+#            - build_36
+#            - build_37
+#            - build_38
+#            - build_36
+#            - build_37
+#            - build_38
+#          filters:
+#            branches:
+#              only: master
+#  daily:
+#    triggers:
+#      - schedule:
+#          cron: "0 1 * * *"
+#          filters:
+#            branches:
+#              only:
+#                - develop
+#                - master
+#    jobs:
+#      - build_36
+#      - build_37
+#      - build_38
