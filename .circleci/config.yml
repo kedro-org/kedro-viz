@@ -229,7 +229,7 @@ commands:
           command: |
             conda activate kedro-viz
             make build
-            pytest tests --no-cov
+            pytest package/tests --no-cov
 
 jobs:
   build_36:
