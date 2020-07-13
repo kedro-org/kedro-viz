@@ -1,5 +1,8 @@
 import worker from '../utils/graph/worker';
 
+let instance = worker();
+let running = false;
+
 export const TOGGLE_LOADING = 'TOGGLE_LOADING';
 
 /**
@@ -34,11 +37,17 @@ export function updateGraph(graph) {
 export function calculateGraph(state) {
   return function(dispatch) {
     dispatch(toggleLoading(true));
+    if (running) {
+      instance.terminate();
+      instance = worker();
+    }
+    running = true;
     const layout = state.flags.newgraph
-      ? worker().graphNew
-      : worker().graphDagre;
+      ? instance.graphNew
+      : instance.graphDagre;
 
     return layout(state).then(graph => {
+      running = false;
       dispatch(toggleLoading(false));
       return dispatch(updateGraph(graph));
     });
