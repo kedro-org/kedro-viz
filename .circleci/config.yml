@@ -216,11 +216,6 @@ commands:
     description: Run build on Windows
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-dependencies-
       - win_setup_conda
       - win_setup_requirements
       - install_node_dependencies
@@ -228,7 +223,7 @@ commands:
           name: Run Python unit tests
           command: |
             conda activate kedro-viz
-            rm -r build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info -ErrorAction Ignore
+            rm -r build, package/dist, package/kedro_viz/html, pip-wheel-metadata, package/kedro_viz.egg-info -ErrorAction Ignore
             npm run build
             cp -R build package/kedro_viz/html
             pytest package/tests --no-cov
