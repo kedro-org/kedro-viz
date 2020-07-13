@@ -218,7 +218,10 @@ commands:
       - install_node_dependencies
       - run:
           name: Run Python unit tests
-          command: conda activate kedro-viz; cd package && pytest tests --no-cov
+          command: |
+            conda activate kedro-viz
+            cd package
+            pytest tests --no-cov
 
 jobs:
   build_36:
