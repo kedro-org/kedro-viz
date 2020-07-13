@@ -228,7 +228,9 @@ commands:
           name: Run Python unit tests
           command: |
             conda activate kedro-viz
-            make build
+            rm -r build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info -ErrorAction Ignore
+            npm run build
+            cp -R build package/kedro_viz/html
             pytest package/tests --no-cov
 
 jobs:
@@ -257,18 +259,21 @@ jobs:
   # Windows-related jobs
   win_build_36:
     executor: win/default
+    working_directory: ~/repo
     environment:
       CONDA_ENV_PY_VERSION: "3.6"
     steps: [win_build]
 
   win_build_37:
     executor: win/default
+    working_directory: ~/repo
     environment:
       CONDA_ENV_PY_VERSION: "3.7"
     steps: [win_build]
 
   win_build_38:
     executor: win/default
+    working_directory: ~/repo
     environment:
       CONDA_ENV_PY_VERSION: "3.8"
     steps: [win_build]
