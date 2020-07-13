@@ -207,10 +207,6 @@ commands:
             python -V
             pip -V
             kedro -V
-      - run:
-          name: Install 'make' command
-          command: choco install make
-
 
   win_build:
     description: Run build on Windows
@@ -227,6 +223,12 @@ commands:
             npm run build
             cp -R build package/kedro_viz/html
             pytest package/tests --no-cov
+      - run:
+          name: Run e2e tests
+          command: |
+            conda activate kedro-viz
+            cd package
+            behave
 
 jobs:
   build_36:
