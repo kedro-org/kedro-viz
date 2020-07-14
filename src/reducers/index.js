@@ -3,6 +3,7 @@ import node from './nodes';
 import tag from './tags';
 import nodeType from './node-type';
 import visible from './visible';
+import pipeline from './pipeline';
 import flags from './flags';
 import {
   RESET_DATA,
@@ -14,16 +15,16 @@ import {
 
 /**
  * Create a generic reducer
+ * @param {*} initialState Default state
  * @param {string} type Action type
  * @param {string} key Action payload key
- * @param {*} initialState Default state
  * @return {*} Updated state
  */
-const createReducer = (type, key, initialState) => (
+const createReducer = (initialState, type, key) => (
   state = initialState,
   action
 ) => {
-  if (action.type === type) {
+  if (typeof key !== 'undefined' && action.type === type) {
     return action[key];
   }
   return state;
@@ -43,18 +44,22 @@ function resetDataReducer(state = {}, action) {
 }
 
 const combinedReducer = combineReducers({
+  // These props have their own reducers in other files
+  flags,
   node,
   nodeType,
+  pipeline,
   tag,
   visible,
-  flags,
-  edge: (state = {}) => state,
-  id: (state = null) => state,
-  layer: (state = {}) => state,
-  chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
-  fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
-  textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),
-  theme: createReducer(TOGGLE_THEME, 'theme', 'dark')
+  // These props don't have any actions associated with them
+  edge: createReducer({}),
+  id: createReducer(null),
+  layer: createReducer({}),
+  // These props have very simple non-nested actions
+  chartSize: createReducer({}, UPDATE_CHART_SIZE, 'chartSize'),
+  fontLoaded: createReducer(false, UPDATE_FONT_LOADED, 'fontLoaded'),
+  textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
+  theme: createReducer('dark', TOGGLE_THEME, 'theme')
 });
 
 const rootReducer = (state, action) =>

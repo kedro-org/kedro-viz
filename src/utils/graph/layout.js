@@ -301,7 +301,7 @@ const rowDensity = edges => {
   const rows = {};
 
   for (const edge of edges) {
-    // Find the normalised angle of the edge source and target nodes, relative to the X axis
+    // Find the normalized angle of the edge source and target nodes, relative to the X axis
     const edgeAngle =
       Math.abs(angle(edge.targetNode, edge.sourceNode) - halfPI) / halfPI;
 
