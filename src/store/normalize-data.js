@@ -8,7 +8,7 @@ import { arrayToObject } from '../utils';
  */
 const validateInput = data => {
   if (!data) {
-    // Data may still be loading, so return initial state
+    // Data may still be loading, or has not been supplied
     return false;
   }
   if (!Array.isArray(data.edges) || !Array.isArray(data.nodes)) {
