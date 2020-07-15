@@ -199,7 +199,9 @@ commands:
           name: Install Kedro-Viz dependencies
           command: |
             conda activate kedro-viz
-              pip install -r package/test_requirements.txt -U
+            python -m pip install -U pip setuptools wheel
+            pip install git+https://github.com/quantumblacklabs/kedro@master
+            pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions
           command: |
