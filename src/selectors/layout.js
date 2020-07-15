@@ -27,7 +27,7 @@ export const getGraphInput = createSelector(
   ],
   (nodes, edges, layers, showLayers, flags, fontLoaded) => {
     if (!fontLoaded || !nodes.length || !edges.length) {
-      return;
+      return null;
     }
     return { nodes, edges, layers, showLayers, flags, fontLoaded };
   }

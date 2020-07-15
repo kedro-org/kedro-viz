@@ -59,13 +59,16 @@ const layoutWorker = createLayoutWorker();
 /**
  * Async action to calculate graph layout in a web worker
  * whiled displaying a loading spinner
- * @param {Object} state Graph calculation arguments
+ * @param {Object} graphState A subset of main state
  * @return {function} A promise that resolves when the calcuation is done
  */
-export function calculateGraph(state) {
+export function calculateGraph(graphState) {
+  if (!graphState) {
+    return updateGraph(graphState);
+  }
   return async function(dispatch) {
     dispatch(toggleLoading(true));
-    const graph = await layoutWorker(state);
+    const graph = await layoutWorker(graphState);
     dispatch(toggleLoading(false));
     return dispatch(updateGraph(graph));
   };
