@@ -10,7 +10,7 @@ import './wrapper.css';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ graph, loading, theme }) => (
+export const Wrapper = ({ loading, theme }) => (
   <div
     className={classnames('kedro-pipeline', {
       'kui-theme--dark': theme === 'dark',
@@ -27,7 +27,6 @@ export const Wrapper = ({ graph, loading, theme }) => (
 
 export const mapStateToProps = state => ({
   loading: state.loading,
-  graph: state.graph,
   theme: state.theme
 });
 
