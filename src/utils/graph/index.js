@@ -11,7 +11,7 @@ export const graphNew = ({ nodes, edges, layers }) => {
   const result = graph(nodes, edges, layers);
   return {
     ...result,
-    graph: { ...result.size, marginx: 100, marginy: 100 },
+    size: { ...result.size, marginx: 100, marginy: 100 },
     newgraph: true
   };
 };
@@ -45,6 +45,6 @@ export const graphDagre = ({ nodes, edges, showLayers }) => {
   return {
     nodes: graph.nodes().map(id => graph.node(id)),
     edges: graph.edges().map(id => graph.edge(id)),
-    graph: graph.graph()
+    size: graph.graph()
   };
 };

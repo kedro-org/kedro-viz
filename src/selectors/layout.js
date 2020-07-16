@@ -64,7 +64,7 @@ export const getLayoutEdges = createSelector(
  */
 export const getGraphSize = createSelector(
   [getGraph],
-  graph => (graph ? graph.graph : {})
+  graph => (graph ? graph.size : {})
 );
 
 /**
