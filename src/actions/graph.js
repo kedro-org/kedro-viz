@@ -1,6 +1,6 @@
 import worker from '../utils/graph/worker';
 
-export const TOGGLE_LOADING = 'TOGGLE_LOADING';
+export const TOGGLE_GRAPH_LOADING = 'TOGGLE_GRAPH_LOADING';
 
 /**
  * Toggle whether to display the loading spinner
@@ -8,8 +8,21 @@ export const TOGGLE_LOADING = 'TOGGLE_LOADING';
  */
 export function toggleLoading(loading) {
   return {
-    type: TOGGLE_LOADING,
+    type: TOGGLE_GRAPH_LOADING,
     loading
+  };
+}
+
+export const UPDATE_GRAPH_LAYOUT = 'UPDATE_GRAPH_LAYOUT';
+
+/**
+ * Update the graph layout object
+ * @param {Object} graph
+ */
+export function updateGraph(graph) {
+  return {
+    type: UPDATE_GRAPH_LAYOUT,
+    graph
   };
 }
 
@@ -38,19 +51,6 @@ function createLayoutWorker() {
       running = false;
       return graph;
     });
-  };
-}
-
-export const UPDATE_GRAPH = 'UPDATE_GRAPH';
-
-/**
- * Update the graph layout object
- * @param {Object} graph
- */
-export function updateGraph(graph) {
-  return {
-    type: UPDATE_GRAPH,
-    graph
   };
 }
 

@@ -40,7 +40,7 @@ export const getGraphInput = createSelector(
 export const getLayoutNodes = createSelector(
   [getGraph, getNodeType, getNodeLayer],
   (graph, nodeType, nodeLayer) =>
-    graph
+    graph.nodes
       ? graph.nodes.map(node => {
           return Object.assign({}, node, {
             layer: nodeLayer[node.id],
@@ -56,7 +56,7 @@ export const getLayoutNodes = createSelector(
  */
 export const getLayoutEdges = createSelector(
   [getGraph],
-  graph => (graph ? graph.edges : [])
+  graph => graph.edges || []
 );
 
 /**
@@ -64,7 +64,7 @@ export const getLayoutEdges = createSelector(
  */
 export const getGraphSize = createSelector(
   [getGraph],
-  graph => (graph ? graph.size : {})
+  graph => graph.size || {}
 );
 
 /**

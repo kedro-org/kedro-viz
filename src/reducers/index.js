@@ -4,6 +4,7 @@ import tag from './tags';
 import nodeType from './node-type';
 import visible from './visible';
 import flags from './flags';
+import graph from './graph';
 import {
   RESET_DATA,
   TOGGLE_TEXT_LABELS,
@@ -11,7 +12,6 @@ import {
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED
 } from '../actions';
-import { UPDATE_GRAPH, TOGGLE_LOADING } from '../actions/graph';
 
 /**
  * Create a generic reducer
@@ -44,16 +44,15 @@ function resetDataReducer(state = {}, action) {
 }
 
 const combinedReducer = combineReducers({
+  flags,
+  graph,
   node,
   nodeType,
   tag,
   visible,
-  flags,
   edge: (state = {}) => state,
   id: (state = null) => state,
   layer: (state = {}) => state,
-  graph: createReducer(UPDATE_GRAPH, 'graph', null),
-  loading: createReducer(TOGGLE_LOADING, 'loading', false),
   chartSize: createReducer(UPDATE_CHART_SIZE, 'chartSize', {}),
   fontLoaded: createReducer(UPDATE_FONT_LOADED, 'fontLoaded', false),
   textLabels: createReducer(TOGGLE_TEXT_LABELS, 'textLabels', true),

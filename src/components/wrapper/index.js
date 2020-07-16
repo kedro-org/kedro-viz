@@ -26,7 +26,7 @@ export const Wrapper = ({ loading, theme }) => (
 );
 
 export const mapStateToProps = state => ({
-  loading: state.loading,
+  loading: state.graph.loading,
   theme: state.theme
 });
 
