@@ -22,11 +22,11 @@ export const graphNew = ({ nodes, edges, layers }) => {
  * as possible, and keep it separate from other properties (like node.active)
  * which don't affect layout.
  */
-export const graphDagre = ({ nodes, edges, showLayers }) => {
-  const ranker = showLayers ? 'none' : null;
+export const graphDagre = ({ nodes, edges, layers }) => {
+  const ranker = layers ? 'none' : null;
   const graph = new dagre.graphlib.Graph().setGraph({
-    ranker: showLayers ? ranker : null,
-    ranksep: showLayers ? 200 : 70,
+    ranker: layers ? ranker : null,
+    ranksep: layers ? 200 : 70,
     marginx: 40,
     marginy: 40
   });

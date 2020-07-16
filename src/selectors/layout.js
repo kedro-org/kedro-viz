@@ -29,7 +29,7 @@ export const getGraphInput = createSelector(
     if (!fontLoaded || !nodes.length || !edges.length) {
       return null;
     }
-    return { nodes, edges, layers, showLayers, flags, fontLoaded };
+    return { nodes, edges, layers: showLayers && layers, flags, fontLoaded };
   }
 );
 
