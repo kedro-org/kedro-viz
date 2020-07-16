@@ -1,14 +1,26 @@
 import { getInitialPipelineState } from '../store/initial-state';
+import { arrayToObject } from '../utils';
+
 /**
  * Check whether data is in expected format
  * @param {Object} data - The parsed data input
  * @return {Boolean} True if valid for formatting
  */
 const validateInput = data => {
-  const { isArray } = Array;
-  return (
-    data && isArray(data.edges) && isArray(data.nodes) && isArray(data.tags)
-  );
+  if (!data) {
+    // Data may still be loading, or has not been supplied
+    return false;
+  }
+  if (!Array.isArray(data.edges) || !Array.isArray(data.nodes)) {
+    if (typeof jest === 'undefined') {
+      console.error(
+        'Invalid data input: Please ensure that your pipeline data includes arrays of nodes and edges',
+        data
+      );
+    }
+    return false;
+  }
+  return true;
 };
 
 /**
@@ -16,7 +28,21 @@ const validateInput = data => {
  * @param {Object} source - Name and type of the source node
  * @param {Object} target - Name and type of the target node
  */
-const getEdgeID = (source, target) => [source, target].join('|');
+const createEdgeID = (source, target) => [source, target].join('|');
+
+/**
+ * Add a new pipeline
+ * @param {string} pipeline.id - Unique ID
+ * @param {string} pipeline.name - Pipeline name
+ */
+const addPipeline = state => pipeline => {
+  const { id } = pipeline;
+  if (state.pipeline.name[id]) {
+    return;
+  }
+  state.pipeline.ids.push(id);
+  state.pipeline.name[id] = pipeline.name;
+};
 
 /**
  * Add a new node if it doesn't already exist
@@ -34,6 +60,9 @@ const addNode = state => node => {
   state.node.fullName[id] = node.full_name || node.name;
   state.node.type[id] = node.type;
   state.node.layer[id] = node.layer;
+  state.node.pipelines[id] = node.pipelines
+    ? arrayToObject(node.pipelines, () => true)
+    : {};
   state.node.isParam[id] = node.type === 'parameters';
   state.node.tags[id] = node.tags || [];
 };
@@ -44,7 +73,7 @@ const addNode = state => node => {
  * @param {Object} target - Child node
  */
 const addEdge = state => ({ source, target }) => {
-  const id = getEdgeID(source, target);
+  const id = createEdgeID(source, target);
   if (state.edge.ids.includes(id)) {
     return;
   }
@@ -75,28 +104,36 @@ const addLayer = state => layer => {
 };
 
 /**
- * Convert the pipeline data into a normalised state object
+ * Convert the pipeline data into a normalized state object
  * @param {Object} data Raw unformatted data input
  * @return {Object} Formatted, normalized state
  */
-const formatData = data => {
+const normalizeData = data => {
   const state = getInitialPipelineState();
 
-  if (validateInput(data)) {
-    if (data.schema_id) {
-      state.id = data.schema_id;
+  if (!validateInput(data)) {
+    return state;
+  }
+
+  if (data.schema_id) {
+    state.id = data.schema_id;
+  }
+  data.nodes.forEach(addNode(state));
+  data.edges.forEach(addEdge(state));
+  if (data.pipelines) {
+    data.pipelines.forEach(addPipeline(state));
+    if (state.pipeline.ids.length) {
+      state.pipeline.active = state.pipeline.ids[0];
     }
-    data.nodes.forEach(addNode(state));
-    data.edges.forEach(addEdge(state));
-    if (data.tags) {
-      data.tags.forEach(addTag(state));
-    }
-    if (data.layers) {
-      data.layers.forEach(addLayer(state));
-    }
+  }
+  if (data.tags) {
+    data.tags.forEach(addTag(state));
+  }
+  if (data.layers) {
+    data.layers.forEach(addLayer(state));
   }
 
   return state;
 };
 
-export default formatData;
+export default normalizeData;

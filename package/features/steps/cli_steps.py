@@ -29,6 +29,7 @@
 """Behave step definitions for the cli_scenarios feature."""
 
 import json
+from time import sleep, time
 
 import behave
 import requests
@@ -90,6 +91,19 @@ def exec_kedro_target_checked(context, command):
         print(res.stdout)
         print(res.stderr)
         assert False
+
+    # Wait for subprocess completion since on Windows it takes some time
+    # to install dependencies in a separate console
+    if "install" in cmd:
+        max_duration = 5 * 60  # 5 minutes
+        end_by = time() + max_duration
+
+        while time() < end_by:
+            result = run([context.pip, "show", "pandas"])
+            if result.returncode == OK_EXIT_CODE:
+                # package found
+                return
+            sleep(1.0)
 
 
 @given('I have installed kedro version "{version}"')
