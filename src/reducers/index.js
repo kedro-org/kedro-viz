@@ -48,7 +48,6 @@ const combinedReducer = combineReducers({
   // These props have their own reducers in other files
   flags,
   graph,
-  flags,
   node,
   nodeType,
   pipeline,
