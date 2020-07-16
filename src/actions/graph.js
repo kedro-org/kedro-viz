@@ -1,4 +1,4 @@
-import worker from '../utils/graph/worker';
+import { graph as worker } from '../utils/worker';
 
 export const TOGGLE_GRAPH_LOADING = 'TOGGLE_GRAPH_LOADING';
 
