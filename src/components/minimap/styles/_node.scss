@@ -15,11 +15,11 @@
 .pipeline-minimap-node--active {
   rect {
     .kui-theme--light & {
-      fill: $node-fill-light-active;
+      fill: #fff;
     }
 
     .kui-theme--dark & {
-      fill: $node-fill-dark-active;
+      fill: #293b46;
     }
   }
 }
@@ -27,15 +27,23 @@
 .pipeline-minimap-node--selected {
   rect {
     .kui-theme--light & {
-      fill: $node-fill-light-selected;
+      fill: #81f4ff;
     }
 
     .kui-theme--dark & {
-      fill: $node-fill-dark-selected;
+      fill: #00b0f5;
     }
   }
 }
 
 .pipeline-minimap-node--faded {
-  opacity: 0.3;
+  rect {
+    .kui-theme--light & {
+      fill: #c3c8ce;
+    }
+
+    .kui-theme--dark & {
+      fill: #0e1b24;
+    }
+  }
 }

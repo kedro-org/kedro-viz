@@ -17,11 +17,11 @@
   transition: transform 300ms ease;
 
   .kui-theme--light & {
-    background: #a5adb6;
+    background: #a6aeb6;
   }
 
   .kui-theme--dark & {
-    background: #030f16;
+    background: #051116;
   }
 }
 
@@ -33,14 +33,14 @@
 
 .pipeline-minimap__viewport {
   cursor: move;
-  fill: rgba(0, 0, 0, 0);
+  fill: rgba(0, 0, 0, 0); /* Solid for pointer events */
   stroke-width: 1px;
 
   .kui-theme--light & {
-    stroke: rgba(255, 255, 255, 0.4);
+    stroke: #d3dee3;
   }
 
   .kui-theme--dark & {
-    stroke: rgba(255, 255, 255, 0.1);
+    stroke: #8e8e90;
   }
 }
