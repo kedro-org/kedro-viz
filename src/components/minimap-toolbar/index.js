@@ -14,6 +14,8 @@ export const MiniMapToolbar = ({
   chartZoom,
   onUpdateChartZoom
 }) => {
+  const { scale, minScale, maxScale } = chartZoom;
+
   return (
     <>
       <ul className="pipeline-minimap-toolbar kedro">
@@ -32,7 +34,7 @@ export const MiniMapToolbar = ({
           ariaLabel={'Zoom in'}
           labelText={'Zoom in'}
           visible={visible.miniMapBtn}
-          disabled={chartZoom.scale >= 2}
+          disabled={scale >= maxScale}
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 1.3))}
         />
         <IconButton
@@ -43,19 +45,20 @@ export const MiniMapToolbar = ({
           ariaLabel={'Zoom out'}
           labelText={'Zoom out'}
           visible={visible.miniMapBtn}
+          disabled={scale <= minScale}
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 0.7))}
         />
         <IconButton
           icon="reset"
           className={'pipeline-minimap-button pipeline-minimap-button--reset'}
-          ariaLabel={'Zoom reset'}
-          labelText={'Zoom reset'}
+          ariaLabel={'Reset zoom'}
+          labelText={'Reset zoom'}
           visible={visible.miniMapBtn}
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 0))}
         />
         <li>
           <span className="pipeline-minimap-toolbar__scale" title="Zoom level">
-            {Math.round(100 * chartZoom.scale)}%
+            {Math.round(100 * chartZoom.scale) || 100}%
           </span>
         </li>
       </ul>
@@ -63,18 +66,12 @@ export const MiniMapToolbar = ({
   );
 };
 
-const scaleZoom = ({ scale, x, y }, factor) => {
-  const rescale = scale * (factor || 1);
-
-  return {
-    applied: false,
-    transition: true,
-    reset: factor === 0,
-    scale: rescale,
-    x,
-    y
-  };
-};
+const scaleZoom = ({ scale }, factor) => ({
+  scale: scale * (factor || 1),
+  applied: false,
+  transition: true,
+  reset: factor === 0
+});
 
 export const mapStateToProps = state => ({
   visible: state.visible,

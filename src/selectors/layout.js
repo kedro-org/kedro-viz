@@ -158,33 +158,3 @@ export const getChartZoom = createSelector(
     ...zoom
   })
 );
-
-/**
- * Get chart zoom translation/scale,
- * by comparing native graph width/height to container width/height
- */
-export const getZoomPosition = createSelector(
-  [getGraphSize, getChartSize],
-  (graph, chart) => {
-    if (!chart.width || !graph.width) {
-      return {
-        scale: 1,
-        translateX: 0,
-        translateY: 0
-      };
-    }
-
-    const scale = Math.min(
-      chart.width / graph.width,
-      chart.height / graph.height
-    );
-    const translateX = chart.width / 2 - (graph.width * scale) / 2;
-    const translateY = chart.height / 2 - (graph.height * scale) / 2;
-
-    return {
-      scale,
-      translateX: translateX + chart.sidebarWidth,
-      translateY
-    };
-  }
-);

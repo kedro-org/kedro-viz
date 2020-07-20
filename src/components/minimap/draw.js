@@ -6,14 +6,8 @@ const viewportMargin = 1;
  * Render viewport region
  */
 export const drawViewport = function() {
-  const { chartZoom, chartSize, mapSize } = this.props;
-
-  const mapZoom = this.getZoomPosition();
-  const scale = mapZoom.scale / chartZoom.scale;
-  const width = (chartSize.width + chartSize.sidebarWidth) * scale;
-  const height = chartSize.height * scale;
-  const x = mapZoom.translateX - chartZoom.x * scale;
-  const y = mapZoom.translateY - chartZoom.y * scale;
+  const { mapSize } = this.props;
+  const { x, y, width, height } = this.getViewport();
 
   const minX = Math.max(x, viewportMargin);
   const minY = Math.max(y, viewportMargin);
@@ -43,13 +37,6 @@ export const drawNodes = function() {
     nodes
   } = this.props;
 
-  this.el.nodeGroup.enter().attr('opacity', 0);
-
-  this.el.nodeGroup
-    .transition()
-    .duration(this.DURATION)
-    .attr('opacity', 1);
-
   this.el.nodes = this.el.nodeGroup
     .selectAll('.pipeline-minimap-node')
     .data(nodes, node => node.id);
@@ -59,9 +46,18 @@ export const drawNodes = function() {
     .append('g')
     .attr('class', 'pipeline-minimap-node');
 
-  enterNodes.attr('transform', node => `translate(${node.x}, ${node.y})`);
+  enterNodes
+    .attr('transform', node => `translate(${node.x}, ${node.y})`)
+    .attr('opacity', 0);
 
   enterNodes.append('rect');
+
+  this.el.nodes
+    .exit()
+    .transition('exit-nodes')
+    .duration(this.DURATION)
+    .attr('opacity', 0)
+    .remove();
 
   this.el.nodes = this.el.nodes
     .merge(enterNodes)
@@ -76,6 +72,7 @@ export const drawNodes = function() {
   this.el.nodes
     .transition('update-nodes')
     .duration(this.DURATION)
+    .attr('opacity', 1)
     .attr('transform', node => `translate(${node.x}, ${node.y})`)
     .end()
     .catch(() => {});

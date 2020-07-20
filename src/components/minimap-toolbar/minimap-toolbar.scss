@@ -7,12 +7,12 @@
   list-style: none;
 
   .pipeline-icon-toolbar__button {
-    height: 38px;
-    transition: background-color 100ms ease 100ms;
+    height: 46px;
+    transition: background-color 300ms ease;
   }
 
   .pipeline-minimap-button--map {
-    height: 44px;
+    height: 46px;
     padding-top: 4px;
   }
 
@@ -30,7 +30,7 @@
 .pipeline-minimap-toolbar__scale {
   display: block;
   width: 100%;
-  padding: 6px 8px 4px;
+  padding: 6px 8px 6px;
   font-weight: bold;
   font-size: 10px;
   text-align: center;
