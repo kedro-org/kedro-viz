@@ -1,6 +1,6 @@
 import 'd3-transition';
 
-const viewportMargin = 1;
+const viewportMargin = 2;
 
 /**
  * Render viewport region
@@ -12,7 +12,7 @@ export const drawViewport = function() {
   const minX = Math.max(x, viewportMargin);
   const minY = Math.max(y, viewportMargin);
   const maxX = Math.min(x + width, mapSize.width - viewportMargin);
-  const maxY = Math.min(y + height, mapSize.height - viewportMargin);
+  const maxY = Math.min(y + height, mapSize.height - viewportMargin * 2);
 
   this.el.viewport
     .enter()
