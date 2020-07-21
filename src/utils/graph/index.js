@@ -45,6 +45,7 @@ export const graphDagre = ({ nodes, edges, layers }) => {
   return {
     nodes: graph.nodes().map(id => graph.node(id)),
     edges: graph.edges().map(id => graph.edge(id)),
-    size: graph.graph()
+    size: graph.graph(),
+    newgraph: false
   };
 };
