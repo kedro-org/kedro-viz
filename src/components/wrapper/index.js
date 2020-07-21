@@ -18,8 +18,8 @@ export const Wrapper = ({ loading, theme }) => (
     })}>
     <Sidebar />
     <div className="pipeline-wrapper">
-      {loading && <LoadingIcon className="pipeline-wrapper__loading" />}
       <FlowChart />
+      <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
     </div>
     <ExportModal />
   </div>
