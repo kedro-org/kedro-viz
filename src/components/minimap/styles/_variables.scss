@@ -6,26 +6,18 @@
 
 //-------------- LIGHT --------------//
 
-// Icon
-
-$node-icon-fill-light: $color-text-light;
-
 // Node bg
 
 $node-fill-light-default: #f0f1f3;
-$node-stroke-light-default: #c6cace;
-$node-fill-light-active: #c6e6fb;
-$node-stroke-light-active: #b2cada;
-$node-fill-light-selected: #aad8ff;
-$node-stroke-light-selected: $color-primary;
+$node-fill-light-active: #fff;
+$node-fill-light-selected: #81f4ff;
+$node-fill-light-faded: #c3c8ce;
 
 //-------------- DARK --------------//
 
 // Node bg
 
 $node-fill-dark-default: #2a3b46;
-$node-stroke-dark-default: #354854;
-$node-fill-dark-active: #124066;
-$node-stroke-dark-active: #234f73;
-$node-fill-dark-selected: #004d8c;
-$node-stroke-dark-selected: $color-primary;
+$node-fill-dark-active: #293b46;
+$node-fill-dark-selected: #00b0f5;
+$node-fill-dark-faded: #0e1b24;
