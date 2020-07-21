@@ -45,7 +45,7 @@ function createLayoutWorker() {
       instance = worker();
     }
     running = true;
-    const layout = chooseLayout(state.flags.newgraph);
+    const layout = chooseLayout(state.newgraph);
 
     return layout(state).then(graph => {
       running = false;

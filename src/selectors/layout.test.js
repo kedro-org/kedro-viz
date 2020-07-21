@@ -22,7 +22,7 @@ describe('Selectors', () => {
           nodes: expect.any(Array),
           edges: expect.any(Array),
           layers: expect.any(Array),
-          flags: expect.any(Object),
+          newgraph: expect.any(Boolean),
           fontLoaded: expect.any(Boolean)
         })
       );
