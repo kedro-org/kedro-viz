@@ -1,53 +1,44 @@
 import { mockState } from '../utils/state.mock';
 import {
   getChartSize,
-  getGraph,
+  getGraphInput,
   getGraphSize,
   getLayoutNodes,
   getLayoutEdges,
   getSidebarWidth,
   getZoomPosition
 } from './layout';
-import { getVisibleNodes } from './nodes';
-import { getVisibleEdges } from './edges';
-import { updateChartSize } from '../actions';
+import { updateChartSize, updateFontLoaded } from '../actions';
+import { toggleNodesDisabled } from '../actions/nodes';
 import getInitialState from '../store/initial-state';
 import reducer from '../reducers';
 import { sidebarBreakpoint, sidebarWidth } from '../config';
 
 describe('Selectors', () => {
-  describe('getGraph', () => {
-    const graph = getGraph(mockState.animals);
-
-    it('uses the new algorithm if flag set', () => {
-      const graphNew = getGraph({
-        ...mockState.animals,
-        flags: { newgraph: true }
-      });
-      expect(graph.newgraph).not.toBeDefined();
-      expect(graphNew.newgraph).toBe(true);
-    });
-
-    it('returns a graph object', () => {
-      expect(graph).toEqual(
+  describe('getGraphInput', () => {
+    it('returns a graph input object', () => {
+      expect(getGraphInput(mockState.animals)).toEqual(
         expect.objectContaining({
-          graph: expect.any(Function),
-          nodes: expect.any(Function),
-          node: expect.any(Function),
-          edges: expect.any(Function),
-          edge: expect.any(Function)
+          nodes: expect.any(Array),
+          edges: expect.any(Array),
+          layers: expect.any(Array),
+          flags: expect.any(Object),
+          fontLoaded: expect.any(Boolean)
         })
       );
     });
 
-    it('returns a complete list of node and edge IDs', () => {
-      expect(graph.nodes()).toEqual(
-        getVisibleNodes(mockState.animals).map(d => d.id)
+    it('returns null if fontLoaded is false', () => {
+      const newMockState = reducer(mockState.animals, updateFontLoaded(false));
+      expect(getGraphInput(newMockState)).toEqual(null);
+    });
+
+    it('returns null if the are no nodes or edges', () => {
+      const newMockState = reducer(
+        mockState.animals,
+        toggleNodesDisabled(mockState.animals.node.ids, true)
       );
-      const edgeIDs = graph.edges().map(edge => graph.edge(edge).id);
-      expect(edgeIDs).toEqual(
-        getVisibleEdges(mockState.animals).map(d => d.id)
-      );
+      expect(getGraphInput(newMockState)).toEqual(null);
     });
   });
 
