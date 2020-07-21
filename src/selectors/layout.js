@@ -14,7 +14,8 @@ const getVisibleSidebar = state => state.visible.sidebar;
 const getFontLoaded = state => state.fontLoaded;
 
 /**
- * Calculate chart layout. Algorithm used is dependent on flags
+ * Select a subset of state that is watched by graph layout calculators
+ * and used to prepare state.graph via async web worker actions
  */
 export const getGraphInput = createSelector(
   [
