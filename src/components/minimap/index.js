@@ -311,7 +311,7 @@ export class MiniMap extends Component {
   render() {
     const { width, height } = this.props.mapSize;
     const transformStyle = {
-      transform: `translate(calc(-100% + ${width + 1}px), -100%)`
+      transform: `translate(calc(-100% + ${width}px), -100%)`
     };
 
     // Add pointer events with back compatibility
