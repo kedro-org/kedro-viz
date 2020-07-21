@@ -85,10 +85,10 @@ export class FlowChart extends Component {
       drawNodes.call(this);
     }
 
-    this.updateZoom(chartZoom);
-
     if (changed('edges', 'nodes', 'layers', 'textLabels', 'chartSize')) {
       this.zoomToFit();
+    } else {
+      this.updateZoom(chartZoom);
     }
   }
 
