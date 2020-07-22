@@ -21,7 +21,9 @@ export const MiniMapToolbar = ({
       <ul className="pipeline-minimap-toolbar kedro">
         <IconButton
           icon="map"
-          className={'pipeline-minimap-button pipeline-minimap-button--map'}
+          className={
+            'pipeline-minimap-button pipeline-icon--stroke pipeline-minimap-button--map'
+          }
           ariaLabel={`Turn minimap ${visible.miniMap ? 'off' : 'on'}`}
           onClick={() => onToggleMiniMap(!visible.miniMap)}
           labelText={`${visible.miniMap ? 'Hide' : 'Show'} minimap`}
@@ -30,7 +32,9 @@ export const MiniMapToolbar = ({
         />
         <IconButton
           icon="plus"
-          className={'pipeline-minimap-button pipeline-minimap-button--zoom-in'}
+          className={
+            'pipeline-minimap-button pipeline-icon--stroke pipeline-minimap-button--zoom-in'
+          }
           ariaLabel={'Zoom in'}
           labelText={'Zoom in'}
           visible={visible.miniMapBtn}
@@ -40,7 +44,7 @@ export const MiniMapToolbar = ({
         <IconButton
           icon="minus"
           className={
-            'pipeline-minimap-button pipeline-minimap-button--zoom-out'
+            'pipeline-minimap-button pipeline-icon--stroke pipeline-minimap-button--zoom-out'
           }
           ariaLabel={'Zoom out'}
           labelText={'Zoom out'}
