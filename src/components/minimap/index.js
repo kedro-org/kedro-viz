@@ -26,6 +26,7 @@ export class MiniMap extends Component {
 
     this.DURATION = 700;
     this.TRANSITION_WAIT = 200;
+    this.ZOOM_RATE = 0.0025;
     this.isPointerDown = false;
     this.isPointerInside = false;
     this.lastTransitionTime = 0;
@@ -192,7 +193,7 @@ export class MiniMap extends Component {
 
     // Change zoom based on wheel velocity
     this.props.onUpdateChartZoom({
-      scale: scale - (event.deltaY || 0) * scale * 0.0025,
+      scale: scale - (event.deltaY || 0) * scale * this.ZOOM_RATE,
       applied: false,
       transition: false
     });

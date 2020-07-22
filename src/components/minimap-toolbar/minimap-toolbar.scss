@@ -11,11 +11,6 @@
     transition: background-color 300ms ease;
   }
 
-  .pipeline-minimap-button--map {
-    height: 46px;
-    padding-top: 4px;
-  }
-
   .pipeline-icon-toolbar__button--active {
     .kui-theme--light & {
       background: $color-bg-light-3;
@@ -25,6 +20,11 @@
       background: $color-bg-dark-3;
     }
   }
+}
+
+.pipeline-minimap-button--map {
+  height: 46px;
+  padding-top: 4px;
 }
 
 .pipeline-minimap-toolbar__scale {
