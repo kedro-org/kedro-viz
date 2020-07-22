@@ -9,7 +9,6 @@ import {
   getZoomPosition
 } from './layout';
 import { updateChartSize, updateFontLoaded } from '../actions';
-import { toggleNodesDisabled } from '../actions/nodes';
 import getInitialState from '../store/initial-state';
 import reducer from '../reducers';
 import { sidebarBreakpoint, sidebarWidth } from '../config';
@@ -30,14 +29,6 @@ describe('Selectors', () => {
 
     it('returns null if fontLoaded is false', () => {
       const newMockState = reducer(mockState.animals, updateFontLoaded(false));
-      expect(getGraphInput(newMockState)).toEqual(null);
-    });
-
-    it('returns null if the are no nodes or edges', () => {
-      const newMockState = reducer(
-        mockState.animals,
-        toggleNodesDisabled(mockState.animals.node.ids, true)
-      );
       expect(getGraphInput(newMockState)).toEqual(null);
     });
   });

@@ -27,7 +27,7 @@ export const getGraphInput = createSelector(
     getFontLoaded
   ],
   (nodes, edges, layers, showLayers, newgraph, fontLoaded) => {
-    if (!fontLoaded || !nodes.length || !edges.length) {
+    if (!fontLoaded) {
       return null;
     }
     return { nodes, edges, layers: showLayers && layers, newgraph, fontLoaded };
@@ -102,6 +102,10 @@ export const getChartSize = createSelector(
   }
 );
 
+// Check that width & height props are present and finite
+const isFinite = n => typeof n !== 'undefined' && Number.isFinite(n);
+const isValid = d => isFinite(d.width) && isFinite(d.height);
+
 /**
  * Get chart zoom translation/scale,
  * by comparing native graph width/height to container width/height
@@ -109,7 +113,7 @@ export const getChartSize = createSelector(
 export const getZoomPosition = createSelector(
   [getGraphSize, getChartSize],
   (graph, chart) => {
-    if (!chart.width || !graph.width) {
+    if (!isValid(graph) || !isValid(chart)) {
       return {
         scale: 1,
         translateX: 0,
