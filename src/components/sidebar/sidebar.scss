@@ -60,3 +60,25 @@
     background: $color-bg-dark-3;
   }
 }
+
+.pipeline-toolbar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: $sidebar-width-closed;
+  height: 100%;
+
+  .kui-theme--light & {
+    background: $color-bg-light-2;
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-2;
+  }
+}
+
+.pipeline-minimap-toolbar {
+  margin-top: auto;
+}
