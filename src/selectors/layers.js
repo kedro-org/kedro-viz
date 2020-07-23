@@ -1,18 +1,19 @@
 import { createSelector } from 'reselect';
-import { getLayoutNodes, getGraphSize } from './layout';
 import { getVisibleLayerIDs } from './disabled';
 
+const getGraph = state => state.graph;
 const getLayerName = state => state.layer.name;
 
 /**
  * Get layer positions
  */
 export const getLayers = createSelector(
-  [getLayoutNodes, getVisibleLayerIDs, getLayerName, getGraphSize],
-  (nodes, layerIDs, layerName, { width, height }) => {
-    if (!nodes.length) {
+  [getGraph, getVisibleLayerIDs, getLayerName],
+  ({ nodes, size }, layerIDs, layerName) => {
+    if (!nodes || !size || !nodes.length) {
       return [];
     }
+    const { width, height } = size;
 
     const bounds = {};
 

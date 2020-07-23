@@ -4,7 +4,7 @@ import { getVisibleEdges } from './edges';
 import { getVisibleLayerIDs } from './disabled';
 import { sidebarBreakpoint, sidebarWidth } from '../config';
 
-const getGraph = state => state.graph;
+const getGraphSize = state => state.graph.size || {};
 const getNewgraphFlag = state => state.flags.newgraph;
 const getHasVisibleLayers = state =>
   state.visible.layers && Boolean(state.layer.ids.length);
@@ -30,30 +30,6 @@ export const getGraphInput = createSelector(
     }
     return { nodes, edges, layers: showLayers && layers, newgraph, fontLoaded };
   }
-);
-
-/**
- * Reformat node data for use on the chart
- */
-export const getLayoutNodes = createSelector(
-  [getGraph],
-  graph => graph.nodes || []
-);
-
-/**
- * Reformat edge data for use on the chart
- */
-export const getLayoutEdges = createSelector(
-  [getGraph],
-  graph => graph.edges || []
-);
-
-/**
- * Get width, height and margin of graph
- */
-export const getGraphSize = createSelector(
-  [getGraph],
-  graph => graph.size || {}
 );
 
 /**

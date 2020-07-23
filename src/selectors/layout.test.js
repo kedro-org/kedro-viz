@@ -2,9 +2,6 @@ import { mockState } from '../utils/state.mock';
 import {
   getChartSize,
   getGraphInput,
-  getGraphSize,
-  getLayoutNodes,
-  getLayoutEdges,
   getSidebarWidth,
   getZoomPosition
 } from './layout';
@@ -30,61 +27,6 @@ describe('Selectors', () => {
     it('returns null if fontLoaded is false', () => {
       const newMockState = reducer(mockState.animals, updateFontLoaded(false));
       expect(getGraphInput(newMockState)).toEqual(null);
-    });
-  });
-
-  describe('getLayoutNodes', () => {
-    it('returns a properly-formatted list of nodes', () => {
-      const nodes = getLayoutNodes(mockState.animals);
-      expect(nodes).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            id: expect.any(String),
-            name: expect.any(String),
-            fullName: expect.any(String),
-            type: expect.stringMatching(/data|task/),
-            height: expect.any(Number),
-            width: expect.any(Number),
-            x: expect.any(Number),
-            y: expect.any(Number)
-          })
-        ])
-      );
-    });
-  });
-
-  describe('getLayoutEdges', () => {
-    it('returns a properly-formatted list of edges', () => {
-      const edges = getLayoutEdges(mockState.animals);
-      expect(edges).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            id: expect.any(String),
-            source: expect.any(String),
-            target: expect.any(String),
-            points: expect.arrayContaining([
-              expect.objectContaining({
-                x: expect.any(Number),
-                y: expect.any(Number)
-              })
-            ])
-          })
-        ])
-      );
-    });
-  });
-
-  describe('getGraphSize', () => {
-    it('returns width, height and margin of the graph', () => {
-      const graphSize = getGraphSize(mockState.animals);
-      expect(graphSize).toEqual(
-        expect.objectContaining({
-          height: expect.any(Number),
-          marginx: expect.any(Number),
-          marginy: expect.any(Number),
-          width: expect.any(Number)
-        })
-      );
     });
   });
 
