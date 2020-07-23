@@ -210,7 +210,7 @@ describe('commmon', () => {
   it('offsetNode returns the node with the position translated in-place', () => {
     const node = { x: 5, y: -10 };
     const result = offsetNode(node, { x: 1, y: 2 });
-    expect(result).toEqual({ x: 4, y: -12 });
+    expect(result).toEqual({ x: 4, y: -12, order: expect.any(Number) });
     expect(result).toBe(node);
   });
 

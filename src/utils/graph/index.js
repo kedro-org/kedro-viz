@@ -43,7 +43,13 @@ export const graphDagre = ({ nodes, edges, layers }) => {
   dagre.layout(graph);
 
   return {
-    nodes: graph.nodes().map(id => graph.node(id)),
+    nodes: graph.nodes().map(id => {
+      const node = graph.node(id);
+      return {
+        ...node,
+        order: node.x + node.y * 9999
+      };
+    }),
     edges: graph.edges().map(id => graph.edge(id)),
     size: graph.graph(),
     newgraph: false

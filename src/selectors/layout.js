@@ -8,8 +8,6 @@ const getGraph = state => state.graph;
 const getNewgraphFlag = state => state.flags.newgraph;
 const getHasVisibleLayers = state =>
   state.visible.layers && Boolean(state.layer.ids.length);
-const getNodeType = state => state.node.type;
-const getNodeLayer = state => state.node.layer;
 const getVisibleSidebar = state => state.visible.sidebar;
 const getFontLoaded = state => state.fontLoaded;
 
@@ -35,21 +33,11 @@ export const getGraphInput = createSelector(
 );
 
 /**
- * Reformat node data for use on the chart,
- * and recombine with other data that doesn't affect layout
+ * Reformat node data for use on the chart
  */
 export const getLayoutNodes = createSelector(
-  [getGraph, getNodeType, getNodeLayer],
-  (graph, nodeType, nodeLayer) =>
-    graph.nodes
-      ? graph.nodes.map(node => {
-          return Object.assign({}, node, {
-            layer: nodeLayer[node.id],
-            type: nodeType[node.id],
-            order: node.x + node.y * 9999
-          });
-        })
-      : []
+  [getGraph],
+  graph => graph.nodes || []
 );
 
 /**
