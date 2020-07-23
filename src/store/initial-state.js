@@ -65,7 +65,11 @@ const getInitialState = (props = {}) => {
 
   // Load properties from localStorage if defined, else use defaults
   const localStorageState = loadState();
-  const { textLabels = true, nodeTypeDisabled } = localStorageState;
+  const {
+    textLabels = true,
+    nodeDisabled,
+    nodeTypeDisabled
+  } = localStorageState;
   const theme = props.theme || localStorageState.theme || 'dark';
 
   const visible = Object.assign(
@@ -87,6 +91,10 @@ const getInitialState = (props = {}) => {
     ...localStorageState.flags,
     ...getFlagsFromUrl()
   };
+
+  if (nodeDisabled) {
+    pipelineData.node.disabled = nodeDisabled;
+  }
 
   if (nodeTypeDisabled) {
     pipelineData.nodeType.disabled = nodeTypeDisabled;
