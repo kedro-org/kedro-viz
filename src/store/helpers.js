@@ -38,3 +38,18 @@ export const saveState = state => {
     console.error(err);
   }
 };
+
+/**
+ * Remove unnecessary keys to prevent them being stored in state forever
+ * @param {object} obj An object containing keys and booleans
+ * @return {object} A new clone object but with the falsey keys removed
+ */
+export const pruneFalseyKeys = obj => {
+  const newObj = {};
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key) && obj[key]) {
+      newObj[key] = obj[key];
+    }
+  }
+  return newObj;
+};

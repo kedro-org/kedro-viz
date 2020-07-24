@@ -1,4 +1,4 @@
-import { getInitialPipelineState } from '../store/initial-state';
+import { createInitialState } from '../store/initial-state';
 import { arrayToObject } from '../utils';
 
 /**
@@ -109,7 +109,7 @@ const addLayer = state => layer => {
  * @return {Object} Formatted, normalized state
  */
 const normalizeData = data => {
-  const state = getInitialPipelineState();
+  const state = createInitialState();
 
   if (!validateInput(data)) {
     return state;

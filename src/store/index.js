@@ -1,6 +1,6 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
-import { saveState } from './helpers';
+import { saveState, pruneFalseyKeys } from './helpers';
 
 /**
  * Configure initial state and create the Redux store
@@ -23,8 +23,12 @@ export default function configureStore(initialState) {
     saveState({
       textLabels,
       theme,
-      nodeDisabled: node.disabled,
-      nodeTypeDisabled: nodeType.disabled,
+      node: {
+        disabled: pruneFalseyKeys(node.disabled)
+      },
+      nodeType: {
+        disabled: nodeType.disabled
+      },
       visible,
       flags
     });

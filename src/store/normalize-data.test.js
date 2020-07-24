@@ -1,8 +1,8 @@
 import normalizeData from './normalize-data';
-import { getInitialPipelineState } from '../store/initial-state';
+import { createInitialState } from '../store/initial-state';
 import animals from '../utils/data/animals.mock';
 
-const initialState = getInitialPipelineState();
+const initialState = createInitialState();
 
 describe('normalizeData', () => {
   it('should return initialState if input is invalid', () => {

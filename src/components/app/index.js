@@ -70,6 +70,13 @@ class App extends React.Component {
 }
 
 App.propTypes = {
+  /**
+   * Determines what pipeline data will be displayed on the chart.
+   * You can supply an object containing lists of edges, nodes, tags -
+   * See /src/utils/data for examples of the expected data format.
+   * Alternatively, the string 'json' indicates that data is being
+   * loaded asynchronously from /public/api/nodes.json
+   */
   data: PropTypes.oneOfType([
     PropTypes.oneOf(['json']),
     PropTypes.shape({
@@ -80,7 +87,14 @@ App.propTypes = {
       tags: PropTypes.array
     })
   ]),
+  /**
+   * Specify the theme: Either 'light' or 'dark'.
+   * If set, this will override the localStorage value.
+   */
   theme: PropTypes.oneOf(['dark', 'light']),
+  /**
+   * Override visibility of various features, e.g. icon buttons
+   */
   visible: PropTypes.shape({
     labelBtn: PropTypes.bool,
     layerBtn: PropTypes.bool,
@@ -89,26 +103,6 @@ App.propTypes = {
     sidebar: PropTypes.bool,
     themeBtn: PropTypes.bool
   })
-};
-
-App.defaultProps = {
-  /**
-   * Determines what pipeline data will be displayed on the chart.
-   * You can supply an object containing lists of edges, nodes, tags -
-   * See /src/utils/data for examples of the expected data format.
-   * Alternatively, the string 'json' indicates that data is being
-   * loaded asynchronously from /public/api/nodes.json
-   */
-  data: null,
-  /**
-   * Specify the theme: Either 'light' or 'dark'.
-   * If set, this will override the localStorage value.
-   */
-  theme: null,
-  /**
-   * Show/hide the icon buttons with { labelBtn:false } and/or { themeBtn:false }
-   */
-  visible: {}
 };
 
 export default App;
