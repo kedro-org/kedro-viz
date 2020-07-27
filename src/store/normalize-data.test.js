@@ -5,12 +5,20 @@ import animals from '../utils/data/animals.mock';
 const initialState = createInitialState();
 
 describe('normalizeData', () => {
+  it('should throw an error when data prop is empty or false', () => {
+    expect(() => normalizeData(undefined)).toThrow();
+    expect(() => normalizeData(null)).toThrow();
+    expect(() => normalizeData(false)).toThrow();
+  });
+
   it('should return initialState if input is invalid', () => {
-    expect(normalizeData(undefined)).toEqual(initialState);
-    expect(normalizeData(null)).toEqual(initialState);
+    expect(() => normalizeData({})).toThrow();
+    expect(() => normalizeData({ nodes: null, edges: {} })).toThrow();
+    expect(() => normalizeData({ nodes: true, edges: 100 })).toThrow();
+  });
+
+  it('should return initialState if input is "json"', () => {
     expect(normalizeData('json')).toEqual(initialState);
-    expect(normalizeData({})).toEqual(initialState);
-    expect(normalizeData({ nodes: null, edges: 100 })).toEqual(initialState);
   });
 
   it('should not add tags if tags are not supplied', () => {

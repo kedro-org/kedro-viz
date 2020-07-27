@@ -92,9 +92,6 @@ const overrideInitialState = (state, props) => {
  * @return {Object} Initial state
  */
 const getInitialState = (props = {}) => {
-  if (!props.data) {
-    throw new Error('No data provided');
-  }
   // Merge prop data and localStorage data into initial state
   const state = deepmerge(normalizeData(props.data), loadState());
   // Add overrides from props etc

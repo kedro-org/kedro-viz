@@ -8,17 +8,19 @@ import { arrayToObject } from '../utils';
  */
 const validateInput = data => {
   if (!data) {
-    // Data may still be loading, or has not been supplied
+    throw new Error('No data provided to Kedro-Viz');
+  }
+  if (data === 'json') {
+    // Data is still loading
     return false;
   }
   if (!Array.isArray(data.edges) || !Array.isArray(data.nodes)) {
     if (typeof jest === 'undefined') {
-      console.error(
-        'Invalid data input: Please ensure that your pipeline data includes arrays of nodes and edges',
-        data
-      );
+      console.error('Invalid Kedro-Viz data:', data);
     }
-    return false;
+    throw new Error(
+      'Invalid Kedro-Viz data input. Please ensure that your pipeline data includes arrays of nodes and edges'
+    );
   }
   return true;
 };
