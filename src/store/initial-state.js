@@ -3,7 +3,10 @@ import { loadState } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 
-// Create new global default pipeline state instance
+/**
+ * Create new global default pipeline state instance
+ * @return {object} state
+ */
 export const createInitialState = () => ({
   id: null,
   pipeline: {
