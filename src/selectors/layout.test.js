@@ -176,7 +176,7 @@ describe('Selectors', () => {
 
     it('returns default values when no nodes are visible', () => {
       const newMockState = reducer(
-        getInitialState({ data: [] }),
+        getInitialState({ data: { edges: [], nodes: [] } }),
         updateChartSize({ width: 100, height: 100 })
       );
       expect(getZoomPosition(newMockState)).toEqual(defaultZoom);
