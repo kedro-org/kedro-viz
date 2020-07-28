@@ -1,4 +1,4 @@
-import { graph as worker } from '../utils/worker';
+import { graph as worker, preventWorkerQueues } from '../utils/worker';
 
 export const TOGGLE_GRAPH_LOADING = 'TOGGLE_GRAPH_LOADING';
 
@@ -27,34 +27,16 @@ export function updateGraph(graph) {
 }
 
 /**
- * Manage the layout worker, avoiding race conditions by terminating running
- * processes and reinitialising the instance
+ * Choose which layout engine to use based on the newgraph flag
+ * @param {Object} instance Worker parent instance
+ * @param {Object} state A subset of main state
+ * @return {function} Promise function
  */
-function createLayoutWorker() {
-  let instance = worker();
-  let running = false;
+const chooseLayout = (instance, state) =>
+  state.newgraph ? instance.graphNew(state) : instance.graphDagre(state);
 
-  // Choose which layout engine to use based on the newgraph flag
-  const chooseLayout = newgraph =>
-    newgraph ? instance.graphNew : instance.graphDagre;
-
-  return state => {
-    if (running) {
-      // If worker is already processing a job, cancel it and restart
-      instance.terminate();
-      instance = worker();
-    }
-    running = true;
-    const layout = chooseLayout(state.newgraph);
-
-    return layout(state).then(graph => {
-      running = false;
-      return graph;
-    });
-  };
-}
-
-const layoutWorker = createLayoutWorker();
+// Prepare new layout worker
+const layoutWorker = preventWorkerQueues(worker, chooseLayout);
 
 /**
  * Async action to calculate graph layout in a web worker
