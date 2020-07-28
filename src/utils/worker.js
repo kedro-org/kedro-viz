@@ -6,8 +6,10 @@
 
 /* eslint-disable import/no-webpack-loader-syntax */
 
+// Check for test environment
 const isTest = typeof jest !== 'undefined';
 
+// Conditionally load task via web worker only in non-test env
 const graphWorker = isTest
   ? require('./graph')
   : require('workerize-loader?inline!./graph');
@@ -15,18 +17,23 @@ const graphWorker = isTest
 /**
  * Emulate a web worker for testing purposes
  */
-const createMockWorker = worker => () => {
-  const mockWorker = {
-    terminate: () => {}
+const createMockWorker = worker => {
+  if (!isTest) {
+    return worker;
+  }
+  return () => {
+    const mockWorker = {
+      terminate: () => {}
+    };
+    Object.keys(worker).forEach(name => {
+      mockWorker[name] = payload =>
+        new Promise(resolve => resolve(worker[name](payload)));
+    });
+    return mockWorker;
   };
-  Object.keys(worker).forEach(name => {
-    mockWorker[name] = payload =>
-      new Promise(resolve => resolve(worker[name](payload)));
-  });
-  return mockWorker;
 };
 
-export const graph = isTest ? createMockWorker(graphWorker) : graphWorker;
+export const graph = createMockWorker(graphWorker);
 
 /**
  * Manage the worker, avoiding race conditions by terminating running
