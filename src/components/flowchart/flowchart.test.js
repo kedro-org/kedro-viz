@@ -73,8 +73,7 @@ describe('FlowChart', () => {
       nodes: expect.any(Array),
       textLabels: expect.any(Boolean),
       visibleLayers: expect.any(Boolean),
-      visibleSidebar: expect.any(Boolean),
-      zoom: expect.any(Object)
+      visibleSidebar: expect.any(Boolean)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });

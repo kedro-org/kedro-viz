@@ -9,7 +9,7 @@ import { mockState, setup } from '../../utils/state.mock';
 describe('PrimaryToolbar', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<ConnectedPrimaryToolbar />);
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(9);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
   });
 
   it('hides all buttons (except menu button) when visible prop is false for each of them', () => {
@@ -20,7 +20,7 @@ describe('PrimaryToolbar', () => {
       exportBtn: false
     };
     const wrapper = setup.mount(<ConnectedPrimaryToolbar />, { visible });
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
   });
 
   it('hides one button when visible prop is false for one of them', () => {
@@ -28,7 +28,7 @@ describe('PrimaryToolbar', () => {
       labelBtn: false
     };
     const wrapper = setup.mount(<ConnectedPrimaryToolbar />, { visible });
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(8);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
   });
 
   const functionCalls = [

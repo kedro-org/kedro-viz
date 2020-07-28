@@ -330,6 +330,11 @@ export class FlowChart extends Component {
     const { k = 1, x = 0, y = 0 } = zoomTransform(this.wrapperRef.current);
     const isFirstZoom = k === 1 && x === 0 && y === 0;
 
+    // Avoid errors during tests due to lack of SVG support
+    if (typeof jest !== 'undefined') {
+      return;
+    }
+
     // Apply transform but only transition after first zoom
     (isFirstZoom
       ? this.el.svg

@@ -30,8 +30,7 @@ describe('MiniMap', () => {
       nodeActive: expect.any(Object),
       nodeSelected: expect.any(Object),
       nodes: expect.any(Array),
-      textLabels: expect.any(Boolean),
-      zoom: expect.any(Object)
+      textLabels: expect.any(Boolean)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
