@@ -1,5 +1,19 @@
 export default {
   schema_id: '09876543210987654321',
+  pipelines: [
+    {
+      id: '__default__',
+      name: 'Default'
+    },
+    {
+      id: 'de',
+      name: 'Data engineering'
+    },
+    {
+      id: 'ds',
+      name: 'Data science'
+    }
+  ],
   layers: [
     'Raw',
     'Intermediate',
@@ -29,6 +43,7 @@ export default {
       full_name: 'salmon',
       tags: ['small'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'de'],
       type: 'task'
     },
     {
@@ -37,6 +52,7 @@ export default {
       full_name: 'shark',
       tags: ['medium', 'huge'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'de'],
       type: 'task'
     },
     {
@@ -45,6 +61,7 @@ export default {
       full_name: 'trout',
       tags: ['small'],
       layer: 'Model Input',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -53,6 +70,7 @@ export default {
       full_name: 'whale',
       tags: ['huge'],
       layer: 'Model Output',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -61,6 +79,7 @@ export default {
       full_name: 'dog',
       tags: ['small', 'medium'],
       layer: 'Raw',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -69,6 +88,7 @@ export default {
       full_name: 'cat',
       tags: ['small', 'medium', 'huge'],
       layer: 'Raw',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -77,6 +97,7 @@ export default {
       full_name: 'parameters_rabbit',
       tags: ['small'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'de'],
       type: 'parameters'
     },
     {
@@ -85,6 +106,7 @@ export default {
       full_name: 'parameters',
       tags: [],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'de'],
       type: 'parameters'
     },
     {
@@ -93,6 +115,7 @@ export default {
       full_name: 'sheep',
       tags: ['medium'],
       layer: 'Primary',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -101,6 +124,7 @@ export default {
       full_name: 'horse',
       tags: ['huge'],
       layer: 'Model Output',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -109,6 +133,7 @@ export default {
       full_name: 'weasel',
       tags: ['small'],
       layer: 'Raw',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -117,6 +142,7 @@ export default {
       full_name: 'elephant',
       tags: ['huge'],
       layer: 'Raw',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -125,6 +151,7 @@ export default {
       full_name: 'bear',
       tags: ['huge'],
       layer: 'Raw',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -133,6 +160,7 @@ export default {
       full_name: 'giraffe',
       tags: ['huge'],
       layer: 'Model Output',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -141,6 +169,7 @@ export default {
       full_name: 'pig',
       tags: ['medium'],
       layer: 'Feature',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     }
   ],

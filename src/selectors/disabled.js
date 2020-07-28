@@ -13,6 +13,22 @@ const getEdgeSources = state => state.edge.sources;
 const getEdgeTargets = state => state.edge.targets;
 const getLayerIDs = state => state.layer.ids;
 const getNodeLayer = state => state.node.layer;
+const getNodePipelines = state => state.node.pipelines;
+const getActivePipeline = state => state.pipeline.active;
+
+/**
+ * Calculate whether nodes should be disabled based on their tags
+ */
+export const getNodeDisabledPipeline = createSelector(
+  [getNodeIDs, getNodePipelines, getActivePipeline],
+  (nodeIDs, nodePipelines, activePipeline) =>
+    arrayToObject(nodeIDs, nodeID => {
+      if (!activePipeline) {
+        return false;
+      }
+      return !nodePipelines[nodeID][activePipeline];
+    })
+);
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -40,16 +56,25 @@ export const getNodeDisabled = createSelector(
     getNodeIDs,
     getNodeDisabledNode,
     getNodeDisabledTag,
+    getNodeDisabledPipeline,
     getNodeType,
     getNodeTypeDisabled
   ],
-  (nodeIDs, nodeDisabledNode, nodeDisabledTag, nodeType, typeDisabled) =>
+  (
+    nodeIDs,
+    nodeDisabledNode,
+    nodeDisabledTag,
+    nodeDisabledPipeline,
+    nodeType,
+    typeDisabled
+  ) =>
     arrayToObject(nodeIDs, id =>
-      Boolean(
-        nodeDisabledNode[id] ||
-          nodeDisabledTag[id] ||
-          typeDisabled[nodeType[id]]
-      )
+      [
+        nodeDisabledNode[id],
+        nodeDisabledTag[id],
+        nodeDisabledPipeline[id],
+        typeDisabled[nodeType[id]]
+      ].some(Boolean)
     )
 );
 

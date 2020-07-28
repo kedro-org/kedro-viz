@@ -24,13 +24,10 @@ export const generateHash = length => {
  * else create a new one, and make it available via the console.
  */
 export const getSeedFromURL = () => {
-  if (typeof window === 'undefined') {
-    return;
-  }
   let url;
   let seed;
   try {
-    url = new URL(window.location.href);
+    url = new URL(document.location.href);
     seed = url.searchParams.get('seed');
   } catch (e) {
     console.warn('Random data seeding is not supported in this browser');

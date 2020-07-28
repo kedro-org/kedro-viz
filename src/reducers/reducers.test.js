@@ -9,6 +9,7 @@ import {
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
+  UPDATE_ACTIVE_PIPELINE,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED
 } from '../actions';
@@ -165,6 +166,17 @@ describe('Reducer', () => {
         visible: false
       });
       expect(newState.visible.sidebar).toEqual(false);
+    });
+  });
+
+  describe('UPDATE_ACTIVE_PIPELINE', () => {
+    it('should update the active pipeline', () => {
+      const pipeline = 'abc123';
+      const newState = reducer(mockState.animals, {
+        type: UPDATE_ACTIVE_PIPELINE,
+        pipeline
+      });
+      expect(newState.pipeline.active).toEqual(pipeline);
     });
   });
 

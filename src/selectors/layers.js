@@ -9,7 +9,7 @@ const getLayerName = state => state.layer.name;
  */
 export const getLayers = createSelector(
   [getLayoutNodes, getVisibleLayerIDs, getLayerName, getGraphSize],
-  (nodes, layerIDs, layerName, { width }) => {
+  (nodes, layerIDs, layerName, { width, height }) => {
     if (!nodes.length) {
       return [];
     }
@@ -44,13 +44,14 @@ export const getLayers = createSelector(
       ];
       const start = (prevBound[1] + currentBound[0]) / 2;
       const end = (currentBound[1] + nextBound[0]) / 2;
+      const rectWidth = Math.max(width, height) * 5;
 
       return {
         id,
         name: layerName[id],
-        x: -width / 2,
+        x: (rectWidth - width) / -2,
         y: start,
-        width: width * 2,
+        width: rectWidth,
         height: Math.max(end - start, 0)
       };
     });

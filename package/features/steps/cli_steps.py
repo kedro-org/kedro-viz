@@ -29,6 +29,7 @@
 """Behave step definitions for the cli_scenarios feature."""
 
 import json
+from time import sleep, time
 
 import behave
 import requests
@@ -90,6 +91,19 @@ def exec_kedro_target_checked(context, command):
         print(res.stdout)
         print(res.stderr)
         assert False
+
+    # Wait for subprocess completion since on Windows it takes some time
+    # to install dependencies in a separate console
+    if "install" in cmd:
+        max_duration = 5 * 60  # 5 minutes
+        end_by = time() + max_duration
+
+        while time() < end_by:
+            result = run([context.pip, "show", "pandas"])
+            if result.returncode == OK_EXIT_CODE:
+                # package found
+                return
+            sleep(1.0)
 
 
 @given('I have installed kedro version "{version}"')
@@ -161,7 +175,10 @@ def _check_kedroviz_running(context):
     data_json = json.loads(download_url("http://localhost:4141/api/nodes.json"))
     try:
         assert context.result.poll() is None
-        assert "predict" in data_json["nodes"][0]["full_name"]
+        assert (
+            "example_iris_data"
+            == sorted(data_json["nodes"], key=lambda i: i["full_name"])[0]["full_name"]
+        )
     finally:
         context.result.terminate()
 

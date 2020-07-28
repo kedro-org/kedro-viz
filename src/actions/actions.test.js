@@ -7,6 +7,7 @@ import {
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
+  UPDATE_ACTIVE_PIPELINE,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
   changeFlag,
@@ -16,6 +17,7 @@ import {
   toggleSidebar,
   toggleTextLabels,
   toggleTheme,
+  updateActivePipeline,
   updateChartSize,
   updateFontLoaded
 } from '../actions';
@@ -149,6 +151,15 @@ describe('actions', () => {
       disabled
     };
     expect(toggleTypeDisabled(typeID, disabled)).toEqual(expectedAction);
+  });
+
+  it('should create an action to update the active pipeline', () => {
+    const pipeline = 'abc123';
+    const expectedAction = {
+      type: UPDATE_ACTIVE_PIPELINE,
+      pipeline
+    };
+    expect(updateActivePipeline(pipeline)).toEqual(expectedAction);
   });
 
   it('should create an action to update the chart size', () => {

@@ -1,5 +1,19 @@
 export default {
   schema_id: '12345678901234567890',
+  pipelines: [
+    {
+      id: '__default__',
+      name: 'Default'
+    },
+    {
+      id: 'de',
+      name: 'Data engineering'
+    },
+    {
+      id: 'ds',
+      name: 'Data science'
+    }
+  ],
   layers: [
     'Raw',
     'Intermediate',
@@ -319,6 +333,7 @@ export default {
       name: 'Load Raw Interaction Data',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Raw',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -327,6 +342,7 @@ export default {
       name: 'Load Raw Country Data',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Raw',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -335,6 +351,7 @@ export default {
       name: 'Load Raw Shopper Spend Data',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Raw',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -343,6 +360,7 @@ export default {
       name: 'Preprocess Intermediate Interaction Data',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -351,6 +369,7 @@ export default {
       name: 'Preprocess Intermediate Country Data',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -359,6 +378,7 @@ export default {
       name: 'Preprocess Intermediate Shopper Spend Data',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -367,6 +387,7 @@ export default {
       name: 'Create Shopper Spend Features',
       tags: ['feature_engineering', 'data_engineering'],
       layer: 'Feature',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -375,6 +396,7 @@ export default {
       name: 'Create Shopper Churn Features',
       tags: ['feature_engineering', 'data_engineering'],
       layer: 'Feature',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -383,6 +405,7 @@ export default {
       name: 'Prepare Vendor Input',
       tags: ['feature_engineering', 'data_engineering'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -391,6 +414,7 @@ export default {
       name: 'Prepare CRM Input',
       tags: ['feature_engineering', 'data_engineering'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -399,6 +423,7 @@ export default {
       name: 'Predictive Sales Model',
       tags: ['model_training', 'data_science'],
       layer: 'Model Input',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -407,6 +432,7 @@ export default {
       name: 'Predictive Engagement Model',
       tags: ['model_training', 'data_science'],
       layer: 'Model Input',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -415,6 +441,7 @@ export default {
       name: 'Sales Model Explainable AI',
       tags: ['model_explaination', 'data_science'],
       layer: 'Model Input',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -423,6 +450,7 @@ export default {
       name: 'Engagement Model Explainable AI',
       tags: ['model_explaination', 'data_science'],
       layer: 'Models',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -431,6 +459,7 @@ export default {
       name: 'Perform Digital Analysis',
       tags: ['model_training', 'data_science'],
       layer: 'Model Input',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -439,6 +468,7 @@ export default {
       name: 'Engagement Recommendation Engine',
       tags: ['model_training', 'data_science'],
       layer: 'Models',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -447,6 +477,7 @@ export default {
       name: 'Sales Model Performance Monitoring',
       tags: ['model_performance_monitoring', 'data_science'],
       layer: 'Reporting',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -455,6 +486,7 @@ export default {
       name: 'Engagement Model Performance Monitoring',
       tags: ['model_performance_monitoring', 'data_science'],
       layer: 'Reporting',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -463,6 +495,7 @@ export default {
       name: 'Multi-Channel Optimisation',
       tags: ['optimisation', 'data_science'],
       layer: 'Models',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -471,6 +504,7 @@ export default {
       name: 'Content Optimisation',
       tags: ['optimisation', 'data_science'],
       layer: 'Models',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -479,6 +513,7 @@ export default {
       name: 'Segment Journeys',
       tags: ['optimisation', 'data_science'],
       layer: 'Model Output',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -487,6 +522,7 @@ export default {
       name: 'Generate Dashboard Inputs',
       tags: ['reporting', 'data_science'],
       layer: 'Reporting',
+      pipelines: ['__default__', 'ds'],
       type: 'task'
     },
     {
@@ -495,6 +531,7 @@ export default {
       name: 'Interaction Raw',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Raw',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -503,6 +540,7 @@ export default {
       name: 'Interaction Intermediate',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -511,6 +549,7 @@ export default {
       name: 'Country Raw',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Raw',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -519,6 +558,7 @@ export default {
       name: 'Country Intermediate',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -527,6 +567,7 @@ export default {
       name: 'Shopper Spend Raw',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Raw',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -535,6 +576,7 @@ export default {
       name: 'Shopper Spend Intermediate',
       tags: ['data_engineering', 'preprocessing'],
       layer: 'Intermediate',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -543,6 +585,7 @@ export default {
       name: 'Interaction Primary',
       tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
       layer: 'Primary',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -551,6 +594,7 @@ export default {
       name: 'Country Primary',
       tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
       layer: 'Primary',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -559,6 +603,7 @@ export default {
       name: 'Shopper Spend Primary',
       tags: ['feature_engineering', 'data_engineering', 'preprocessing'],
       layer: 'Primary',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -567,6 +612,7 @@ export default {
       name: 'CRM Predictions',
       tags: ['feature_engineering', 'data_engineering'],
       layer: 'Primary',
+      pipelines: ['__default__', 'ds'],
       type: 'data'
     },
     {
@@ -581,6 +627,7 @@ export default {
         'data_engineering'
       ],
       layer: 'Feature',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -595,6 +642,7 @@ export default {
         'data_engineering'
       ],
       layer: 'Feature',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -603,6 +651,7 @@ export default {
       name: 'Vendor Master',
       tags: ['feature_engineering', 'data_engineering'],
       layer: 'Raw',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -611,6 +660,7 @@ export default {
       name: 'Salesforce CRM',
       tags: ['feature_engineering', 'data_engineering'],
       layer: 'Raw',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -624,6 +674,7 @@ export default {
         'model_training'
       ],
       layer: 'Primary',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -632,6 +683,7 @@ export default {
       name: 'Salesforce Accounts',
       tags: ['feature_engineering', 'data_engineering'],
       layer: 'Raw',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -640,6 +692,7 @@ export default {
       name: 'params: Sales Model',
       tags: ['data_science', 'model_training'],
       layer: 'Model Input',
+      pipelines: ['__default__', 'de'],
       type: 'parameters'
     },
     {
@@ -648,6 +701,7 @@ export default {
       name: 'Sales Validation Results',
       tags: ['model_performance_monitoring', 'data_science', 'model_training'],
       layer: 'Model Output',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -656,6 +710,7 @@ export default {
       name: 'Sales Trained Model',
       tags: ['model_explaination', 'data_science', 'model_training'],
       layer: 'Model Input',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -664,6 +719,7 @@ export default {
       name: 'params: Engagement Model',
       tags: ['data_science', 'model_training'],
       layer: 'Model Input',
+      pipelines: ['__default__', 'de'],
       type: 'parameters'
     },
     {
@@ -672,6 +728,7 @@ export default {
       name: 'Engagement Validation Results',
       tags: ['model_performance_monitoring', 'data_science', 'model_training'],
       layer: 'Model Output',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -680,6 +737,7 @@ export default {
       name: 'Engagement Trained Model',
       tags: ['model_explaination', 'data_science', 'model_training'],
       layer: 'Models',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -693,6 +751,7 @@ export default {
         'reporting'
       ],
       layer: 'Model Output',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -706,6 +765,7 @@ export default {
         'reporting'
       ],
       layer: 'Model Output',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -714,6 +774,7 @@ export default {
       name: 'params: Optimisation',
       tags: ['data_science', 'model_training', 'optimisation'],
       layer: 'Model Input',
+      pipelines: ['__default__', 'de'],
       type: 'parameters'
     },
     {
@@ -722,6 +783,7 @@ export default {
       name: 'Digital Analysis',
       tags: ['data_science', 'model_training', 'optimisation'],
       layer: 'Model Input',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -730,6 +792,7 @@ export default {
       name: 'Engagement Recommendations',
       tags: ['data_science', 'model_training'],
       layer: 'Model Output',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -738,6 +801,7 @@ export default {
       name: 'Action Cost Table',
       tags: ['data_science', 'optimisation'],
       layer: 'Raw',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -746,6 +810,7 @@ export default {
       name: 'Multi-Channel Resolutions',
       tags: ['reporting', 'data_science', 'optimisation'],
       layer: 'Model Output',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -754,6 +819,7 @@ export default {
       name: 'Content Resolutions',
       tags: ['reporting', 'data_science', 'optimisation'],
       layer: 'Model Output',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -762,6 +828,7 @@ export default {
       name: 'Segment Journeys Allocations',
       tags: ['reporting', 'data_science', 'optimisation'],
       layer: 'Model Output',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -770,6 +837,7 @@ export default {
       name: 'Upselling Readiness Dashboard Input',
       tags: ['reporting', 'data_science'],
       layer: 'Reporting',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -778,6 +846,7 @@ export default {
       name: 'Lead Scoring Dashboard Input',
       tags: ['reporting', 'data_science'],
       layer: 'Reporting',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -786,6 +855,7 @@ export default {
       name: 'Lifetime Value Prediction Dashboard Input',
       tags: ['reporting', 'data_science'],
       layer: 'Reporting',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -794,6 +864,7 @@ export default {
       name: 'Digital Sales Dashboard Input',
       tags: ['reporting', 'data_science'],
       layer: 'Reporting',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     },
     {
@@ -802,6 +873,7 @@ export default {
       name: 'Vendor Sales Dashboard Input',
       tags: ['reporting', 'data_science'],
       layer: 'Reporting',
+      pipelines: ['__default__', 'de'],
       type: 'data'
     }
   ],

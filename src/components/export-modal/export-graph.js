@@ -1,5 +1,4 @@
-const { default: downloadSvg, downloadPng } =
-  typeof window !== 'undefined' && require('svg-crowbar');
+import downloadSvg, { downloadPng } from 'svg-crowbar';
 
 /**
  * Handle onClick for the SVG/PNG download button

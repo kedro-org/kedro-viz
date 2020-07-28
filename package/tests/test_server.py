@@ -43,91 +43,143 @@ from semver import VersionInfo
 from toposort import CircularDependencyError
 
 from kedro_viz import server
-from kedro_viz.server import _allocate_port, _sort_layers, format_pipeline_data
+from kedro_viz.server import _allocate_port, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
 
 EXPECTED_PIPELINE_DATA = {
     "edges": [
-        {"target": "01a6a5cb", "source": "7366ec9f"},
-        {"target": "01a6a5cb", "source": "f1f1425b"},
-        {"target": "60e68b8e", "source": "01a6a5cb"},
-        {"target": "de8434b7", "source": "afffac5f"},
-        {"target": "de8434b7", "source": "f1f1425b"},
-        {"target": "37316e3a", "source": "de8434b7"},
+        {"source": "7366ec9f", "target": "01a6a5cb"},
+        {"source": "f1f1425b", "target": "01a6a5cb"},
+        {"source": "01a6a5cb", "target": "60e68b8e"},
+        {"source": "afffac5f", "target": "de8434b7"},
+        {"source": "f1f1425b", "target": "de8434b7"},
+        {"source": "de8434b7", "target": "37316e3a"},
+        {"source": "7366ec9f", "target": "760f5b5e"},
+        {"source": "f1f1425b", "target": "760f5b5e"},
+        {"source": "760f5b5e", "target": "60e68b8e"},
+        {"source": "60e68b8e", "target": "24d754e7"},
+        {"source": "f1f1425b", "target": "24d754e7"},
     ],
+    "layers": [],
     "nodes": [
         {
-            "name": "Func1",
-            "type": "task",
-            "id": "01a6a5cb",
             "full_name": "func1",
+            "id": "01a6a5cb",
+            "name": "Func1",
+            "pipelines": ["__default__", "third"],
             "tags": [],
-        },
-        {
-            "name": "my_node",
             "type": "task",
-            "id": "de8434b7",
-            "full_name": "func2",
-            "tags": ["bob"],
         },
         {
-            "name": "Bob In",
-            "tags": [],
+            "full_name": "func2",
+            "id": "de8434b7",
+            "name": "my_node",
+            "pipelines": ["__default__"],
+            "tags": ["bob"],
+            "type": "task",
+        },
+        {
+            "full_name": "bob_in",
             "id": "7366ec9f",
             "layer": None,
-            "full_name": "bob_in",
+            "name": "Bob In",
+            "pipelines": ["__default__", "second", "third"],
+            "tags": [],
             "type": "data",
         },
         {
-            "name": "Bob Out",
-            "tags": [],
+            "full_name": "bob_out",
             "id": "60e68b8e",
             "layer": None,
-            "full_name": "bob_out",
+            "name": "Bob Out",
+            "pipelines": ["__default__", "second", "third"],
+            "tags": [],
             "type": "data",
         },
         {
-            "name": "Fred In",
-            "tags": ["bob"],
+            "full_name": "fred_in",
             "id": "afffac5f",
             "layer": None,
-            "full_name": "fred_in",
+            "name": "Fred In",
+            "pipelines": ["__default__"],
+            "tags": ["bob"],
             "type": "data",
         },
         {
-            "name": "Fred Out",
-            "tags": ["bob"],
+            "full_name": "fred_out",
             "id": "37316e3a",
             "layer": None,
-            "full_name": "fred_out",
+            "name": "Fred Out",
+            "pipelines": ["__default__"],
+            "tags": ["bob"],
             "type": "data",
         },
         {
-            "name": "Parameters",
-            "tags": ["bob"],
+            "full_name": "parameters",
             "id": "f1f1425b",
             "layer": None,
-            "full_name": "parameters",
+            "name": "Parameters",
+            "pipelines": ["__default__", "second", "third"],
+            "tags": ["bob"],
             "type": "parameters",
         },
+        {
+            "full_name": "func",
+            "id": "760f5b5e",
+            "name": "Func",
+            "pipelines": ["second"],
+            "tags": [],
+            "type": "task",
+        },
+        {
+            "full_name": "func1",
+            "id": "24d754e7",
+            "name": "Func1",
+            "pipelines": ["second"],
+            "tags": [],
+            "type": "task",
+        },
     ],
-    "tags": [{"name": "Bob", "id": "bob"}],
-    "layers": [],
+    "pipelines": [
+        {"id": "__default__", "name": "Default"},
+        {"id": "second", "name": "Second"},
+        {"id": "third", "name": "Third"},
+    ],
+    "tags": [{"id": "bob", "name": "Bob"}],
 }
+
+
+def func1(a, b):  # pylint: disable=unused-argument
+    return a
+
+
+def get_pipelines():
+    def func(a, b):  # pylint: disable=unused-argument
+        return a
+
+    return {
+        "__default__": create_pipeline(),
+        "second": Pipeline(
+            [
+                node(func, ["bob_in", "parameters"], ["bob_out"]),
+                node(func1, ["bob_out", "parameters"], None),
+            ]
+        ),
+        "third": Pipeline([node(func1, ["bob_in", "parameters"], ["bob_out"])]),
+    }
 
 
 def get_pipeline(name: str = None):
     name = name or "__default__"
+    pipelines = get_pipelines()
+
     try:
-        return {"__default__": create_pipeline(), "another": Pipeline([])}[name]
+        return pipelines[name]
     except Exception:
         raise KeyError("Failed to find the pipeline.")
 
 
 def create_pipeline():
-    def func1(a, b):  # pylint: disable=unused-argument
-        return a
-
     def func2(a, b):  # pylint: disable=unused-argument
         return a
 
@@ -159,6 +211,7 @@ def patched_get_project_context(mocker):
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
     ):  # pylint: disable=unused-argument
         mocked_context = mocker.Mock()
+        mocked_context.pipelines = get_pipelines()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         mocked_context.catalog = mocker.MagicMock()
         mocked_context.pipeline = create_pipeline()
@@ -237,7 +290,13 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
     """Check that running viz with `--load-file` flag works outside of a Kedro project.
     """
     filepath_json = str(tmp_path / "test.json")
-    data = {"nodes": None, "edges": None, "tags": None}
+    data = {
+        "nodes": None,
+        "edges": None,
+        "tags": None,
+        "layers": None,
+        "pipelines": None,
+    }
     with open(filepath_json, "w") as f:
         json.dump(data, f)
 
@@ -298,11 +357,67 @@ def test_nodes_endpoint(cli_runner, client):
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_pipeline_flag(cli_runner, client):
     """Test that running viz with `--pipeline` flag will return a correct pipeline."""
-    cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    cli_runner.invoke(server.commands, ["viz", "--pipeline", "second"])
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data == {"edges": [], "layers": [], "nodes": [], "tags": []}
+    assert data == {
+        "edges": [
+            {"source": "7366ec9f", "target": "760f5b5e"},
+            {"source": "f1f1425b", "target": "760f5b5e"},
+            {"source": "760f5b5e", "target": "60e68b8e"},
+            {"source": "60e68b8e", "target": "24d754e7"},
+            {"source": "f1f1425b", "target": "24d754e7"},
+        ],
+        "layers": [],
+        "nodes": [
+            {
+                "full_name": "func",
+                "id": "760f5b5e",
+                "name": "Func",
+                "pipelines": ["second"],
+                "tags": [],
+                "type": "task",
+            },
+            {
+                "full_name": "func1",
+                "id": "24d754e7",
+                "name": "Func1",
+                "pipelines": ["second"],
+                "tags": [],
+                "type": "task",
+            },
+            {
+                "full_name": "bob_in",
+                "id": "7366ec9f",
+                "layer": None,
+                "name": "Bob In",
+                "pipelines": ["second"],
+                "tags": [],
+                "type": "data",
+            },
+            {
+                "full_name": "bob_out",
+                "id": "60e68b8e",
+                "layer": None,
+                "name": "Bob Out",
+                "pipelines": ["second"],
+                "tags": [],
+                "type": "data",
+            },
+            {
+                "full_name": "parameters",
+                "id": "f1f1425b",
+                "layer": None,
+                "name": "Parameters",
+                "pipelines": ["second"],
+                "tags": [],
+                "type": "parameters",
+            },
+        ],
+        "pipelines": [{"id": "second", "name": "Second"}],
+        "tags": [],
+    }
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -338,7 +453,7 @@ def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
         return {"context": mocker.Mock()}[key]
 
     mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
-    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "second"])
     assert "`--pipeline` flag was provided" in result.output
 
 
@@ -400,7 +515,7 @@ def test_viz_kedro14_pipeline_flag(mocker, cli_runner):
         }[key]
 
     mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
-    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "another"])
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "second"])
     assert "`--pipeline` flag was provided" in result.output
 
 
@@ -598,12 +713,14 @@ def pipeline():
     def func2(a):  # pylint: disable=unused-argument
         return a
 
-    return Pipeline(
-        [
-            node(func1, ["bob_in", "params:value"], "bob_out"),
-            node(func2, "bob_out", "result"),
-        ]
-    )
+    return {
+        "__default__": Pipeline(
+            [
+                node(func1, ["bob_in", "params:value"], "bob_out"),
+                node(func2, "bob_out", "result"),
+            ]
+        )
+    }
 
 
 @pytest.fixture
@@ -639,23 +756,23 @@ def new_catalog_with_layers():
     return catalog
 
 
-def test_format_pipeline_data_legacy(pipeline, old_catalog_with_layers):
-    result = format_pipeline_data(pipeline, old_catalog_with_layers)
+def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers):
+    result = format_pipelines_data(pipeline, old_catalog_with_layers)
     result_file_path = Path(__file__).parent / "result.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
 
-def test_format_pipeline_data(pipeline, new_catalog_with_layers):
-    result = format_pipeline_data(pipeline, new_catalog_with_layers)
+def test_format_pipelines_data(pipeline, new_catalog_with_layers):
+    result = format_pipelines_data(pipeline, new_catalog_with_layers)
     result_file_path = Path(__file__).parent / "result.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
 
-def test_format_pipeline_data_no_layers(pipeline, new_catalog_with_layers):
+def test_format_pipelines_data_no_layers(pipeline, new_catalog_with_layers):
     setattr(new_catalog_with_layers, "layers", None)
-    result = format_pipeline_data(pipeline, new_catalog_with_layers)
+    result = format_pipelines_data(pipeline, new_catalog_with_layers)
     assert result["layers"] == []
 
 
