@@ -5,20 +5,20 @@
   display: block;
   padding: 0;
   list-style: none;
+}
 
-  .pipeline-icon-toolbar__button {
-    height: 46px;
-    transition: background-color 300ms ease;
+.pipeline-minimap-button {
+  height: 46px;
+  transition: background-color 300ms ease;
+}
+
+.pipeline-minimap-button.pipeline-icon-toolbar__button--active {
+  .kui-theme--light & {
+    background: $color-bg-light-3;
   }
 
-  .pipeline-icon-toolbar__button--active {
-    .kui-theme--light & {
-      background: $color-bg-light-3;
-    }
-
-    .kui-theme--dark & {
-      background: $color-bg-dark-3;
-    }
+  .kui-theme--dark & {
+    background: $color-bg-dark-3;
   }
 }
 
