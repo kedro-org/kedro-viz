@@ -1,5 +1,5 @@
 import dagre from 'dagre';
-import { graph } from './newgraph';
+import { graph } from './graph';
 
 /**
  * Calculate chart layout with experimental newgraph algorithm

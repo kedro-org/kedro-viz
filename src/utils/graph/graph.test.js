@@ -2,7 +2,7 @@ import { mockState } from '../state.mock';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getVisibleEdges } from '../../selectors/edges';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
-import { graph } from './newgraph';
+import { graph } from './graph';
 import { solve, greaterOrEqual, equalTo, subtract } from './solver';
 
 import {
