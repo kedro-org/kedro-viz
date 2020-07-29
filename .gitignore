@@ -16,6 +16,7 @@ node_modules
 
 # testing
 /coverage
+kedro-viz.tgz
 
 # production
 build/
