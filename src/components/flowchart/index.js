@@ -8,13 +8,7 @@ import { zoom, zoomIdentity, zoomTransform } from 'd3-zoom';
 import { updateChartSize, updateZoom } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
-import {
-  getChartSize,
-  getGraphSize,
-  getLayoutNodes,
-  getLayoutEdges,
-  getChartZoom
-} from '../../selectors/layout';
+import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
@@ -474,15 +468,20 @@ export class FlowChart extends Component {
   }
 }
 
+// Maintain a single reference to support change detection
+const emptyEdges = [];
+const emptyNodes = [];
+const emptyGraphSize = {};
+
 export const mapStateToProps = state => ({
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
-  edges: getLayoutEdges(state),
-  graphSize: getGraphSize(state),
+  edges: state.graph.edges || emptyEdges,
+  graphSize: state.graph.size || emptyGraphSize,
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
-  nodes: getLayoutNodes(state),
+  nodes: state.graph.nodes || emptyNodes,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   textLabels: state.textLabels,

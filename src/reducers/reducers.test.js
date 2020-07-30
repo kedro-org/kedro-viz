@@ -37,11 +37,17 @@ describe('Reducer', () => {
     });
 
     it('should reset the state with new data', () => {
+      // Exclude graph prop
+      const removeGraph = state => {
+        const stateCopy = Object.assign({}, state);
+        delete stateCopy.graph;
+        return stateCopy;
+      };
       const newState = reducer(mockState.demo, {
         type: RESET_DATA,
         data: normalizeData(animals)
       });
-      expect(newState).toEqual(mockState.animals);
+      expect(removeGraph(newState)).toEqual(removeGraph(mockState.animals));
     });
   });
 

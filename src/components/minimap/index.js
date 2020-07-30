@@ -7,12 +7,7 @@ import { select, event } from 'd3-selection';
 import { zoom, zoomIdentity, zoomTransform } from 'd3-zoom';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { updateZoom } from '../../actions';
-import {
-  getChartSize,
-  getGraphSize,
-  getLayoutNodes,
-  getChartZoom
-} from '../../selectors/layout';
+import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import { drawNodes, drawViewport } from './draw';
 import './styles/minimap.css';
@@ -386,7 +381,7 @@ const pointerEventName = event =>
  * Gets the map sizing that fits the graph in state
  */
 const getMapSize = state => {
-  const size = getGraphSize(state);
+  const size = state.graph.size || {};
   const graphWidth = size.width || 0;
   const graphHeight = size.height || 0;
 
@@ -402,14 +397,18 @@ const getMapSize = state => {
   return { width, height };
 };
 
+// Maintain a single reference to support change detection
+const emptyNodes = [];
+const emptyGraphSize = {};
+
 export const mapStateToProps = state => ({
   visible: state.visible.miniMap,
   mapSize: getMapSize(state),
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
-  graphSize: getGraphSize(state),
-  nodes: getLayoutNodes(state),
+  graphSize: state.graph.size || emptyGraphSize,
+  nodes: state.graph.nodes || emptyNodes,
   linkedNodes: getLinkedNodes(state),
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),

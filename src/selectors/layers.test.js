@@ -1,6 +1,5 @@
 import { mockState } from '../utils/state.mock';
 import { getLayers } from './layers';
-import { getLayoutNodes } from './layout';
 
 describe('Selectors', () => {
   describe('getLayers', () => {
@@ -26,7 +25,7 @@ describe('Selectors', () => {
     });
 
     it("calculates appropriate y/height positions for each layer corresponding to each layer's nodes", () => {
-      const nodes = getLayoutNodes(mockState.animals);
+      const { nodes } = mockState.animals.graph;
       const layers = getLayers(mockState.animals);
       const layerIDs = layers.map(layer => layer.id);
       const layersObj = layers.reduce((layers, layer) => {
