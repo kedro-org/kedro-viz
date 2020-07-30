@@ -24,3 +24,9 @@
 .pipeline-wrapper {
   height: 100%;
 }
+
+.pipeline-wrapper__loading {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}

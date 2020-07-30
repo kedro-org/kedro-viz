@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import Modal from '@quantumblack/kedro-ui/lib/components/modal';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
 import { toggleExportModal } from '../../actions';
-import { getGraphSize } from '../../selectors/layout';
 import exportGraph from './export-graph';
 import './export-modal.css';
 
@@ -43,7 +42,7 @@ const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
 };
 
 export const mapStateToProps = state => ({
-  graphSize: getGraphSize(state),
+  graphSize: state.graph.size || {},
   visible: state.visible,
   theme: state.theme
 });

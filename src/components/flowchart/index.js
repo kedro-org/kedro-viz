@@ -7,13 +7,7 @@ import { zoom, zoomIdentity } from 'd3-zoom';
 import { updateChartSize } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
-import {
-  getChartSize,
-  getGraphSize,
-  getLayoutNodes,
-  getLayoutEdges,
-  getZoomPosition
-} from '../../selectors/layout';
+import { getChartSize, getZoomPosition } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import draw from './draw';
@@ -343,11 +337,11 @@ export class FlowChart extends Component {
 export const mapStateToProps = state => ({
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
-  edges: getLayoutEdges(state),
-  graphSize: getGraphSize(state),
+  edges: state.graph.edges || [],
+  graphSize: state.graph.size || {},
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
-  nodes: getLayoutNodes(state),
+  nodes: state.graph.nodes || [],
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   textLabels: state.textLabels,
