@@ -7,14 +7,31 @@ import animals from './data/animals.mock';
 import demo from './data/demo.mock';
 import reducer from '../reducers';
 import { updateFontLoaded } from '../actions';
+import { getGraphInput } from '../selectors/layout';
+import { updateGraph } from '../actions/graph';
+import { graphNew, graphDagre } from './graph';
 
 /**
- * Initialise state object, setting fontLoaded to true
+ * Prime the state object for the testing environment
+ * by running the asynchronous actions synchronously
  * @param {Object} props
  */
 const prepareState = (...props) => {
-  const state = getInitialState(...props);
-  return reducer(state, updateFontLoaded(true));
+  const initialState = getInitialState(...props);
+  const actions = [
+    // Set fontLoaded = true:
+    () => updateFontLoaded(true),
+    // Precalculate graph layout:
+    state => {
+      const layout = state.flags.newgraph ? graphNew : graphDagre;
+      const graph = layout(getGraphInput(state));
+      return updateGraph(graph);
+    }
+  ];
+  return actions.reduce(
+    (state, action) => reducer(state, action(state)),
+    initialState
+  );
 };
 
 /**

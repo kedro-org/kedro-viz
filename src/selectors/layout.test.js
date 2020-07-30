@@ -1,108 +1,32 @@
 import { mockState } from '../utils/state.mock';
 import {
   getChartSize,
-  getGraph,
-  getGraphSize,
-  getLayoutNodes,
-  getLayoutEdges,
+  getGraphInput,
   getSidebarWidth,
   getZoomPosition
 } from './layout';
-import { getVisibleNodes } from './nodes';
-import { getVisibleEdges } from './edges';
-import { updateChartSize } from '../actions';
+import { updateChartSize, updateFontLoaded } from '../actions';
 import getInitialState from '../store/initial-state';
 import reducer from '../reducers';
 import { sidebarBreakpoint, sidebarWidth } from '../config';
 
 describe('Selectors', () => {
-  describe('getGraph', () => {
-    const graph = getGraph(mockState.animals);
-
-    it('uses the new algorithm if flag set', () => {
-      const graphNew = getGraph({
-        ...mockState.animals,
-        flags: { newgraph: true }
-      });
-      expect(graph.newgraph).not.toBeDefined();
-      expect(graphNew.newgraph).toBe(true);
-    });
-
-    it('returns a graph object', () => {
-      expect(graph).toEqual(
+  describe('getGraphInput', () => {
+    it('returns a graph input object', () => {
+      expect(getGraphInput(mockState.animals)).toEqual(
         expect.objectContaining({
-          graph: expect.any(Function),
-          nodes: expect.any(Function),
-          node: expect.any(Function),
-          edges: expect.any(Function),
-          edge: expect.any(Function)
+          nodes: expect.any(Array),
+          edges: expect.any(Array),
+          layers: expect.any(Array),
+          newgraph: expect.any(Boolean),
+          fontLoaded: expect.any(Boolean)
         })
       );
     });
 
-    it('returns a complete list of node and edge IDs', () => {
-      expect(graph.nodes()).toEqual(
-        getVisibleNodes(mockState.animals).map(d => d.id)
-      );
-      const edgeIDs = graph.edges().map(edge => graph.edge(edge).id);
-      expect(edgeIDs).toEqual(
-        getVisibleEdges(mockState.animals).map(d => d.id)
-      );
-    });
-  });
-
-  describe('getLayoutNodes', () => {
-    it('returns a properly-formatted list of nodes', () => {
-      const nodes = getLayoutNodes(mockState.animals);
-      expect(nodes).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            id: expect.any(String),
-            name: expect.any(String),
-            fullName: expect.any(String),
-            type: expect.stringMatching(/data|task/),
-            height: expect.any(Number),
-            width: expect.any(Number),
-            x: expect.any(Number),
-            y: expect.any(Number)
-          })
-        ])
-      );
-    });
-  });
-
-  describe('getLayoutEdges', () => {
-    it('returns a properly-formatted list of edges', () => {
-      const edges = getLayoutEdges(mockState.animals);
-      expect(edges).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            id: expect.any(String),
-            source: expect.any(String),
-            target: expect.any(String),
-            points: expect.arrayContaining([
-              expect.objectContaining({
-                x: expect.any(Number),
-                y: expect.any(Number)
-              })
-            ])
-          })
-        ])
-      );
-    });
-  });
-
-  describe('getGraphSize', () => {
-    it('returns width, height and margin of the graph', () => {
-      const graphSize = getGraphSize(mockState.animals);
-      expect(graphSize).toEqual(
-        expect.objectContaining({
-          height: expect.any(Number),
-          marginx: expect.any(Number),
-          marginy: expect.any(Number),
-          width: expect.any(Number)
-        })
-      );
+    it('returns null if fontLoaded is false', () => {
+      const newMockState = reducer(mockState.animals, updateFontLoaded(false));
+      expect(getGraphInput(newMockState)).toEqual(null);
     });
   });
 

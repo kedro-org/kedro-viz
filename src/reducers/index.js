@@ -5,6 +5,7 @@ import nodeType from './node-type';
 import visible from './visible';
 import pipeline from './pipeline';
 import flags from './flags';
+import graph from './graph';
 import {
   RESET_DATA,
   TOGGLE_TEXT_LABELS,
@@ -46,6 +47,7 @@ function resetDataReducer(state = {}, action) {
 const combinedReducer = combineReducers({
   // These props have their own reducers in other files
   flags,
+  graph,
   node,
   nodeType,
   pipeline,
