@@ -3,7 +3,7 @@
   "description": "Test installing and importing the Kedro-Viz JS package into another React App",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --open",
+    "start": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

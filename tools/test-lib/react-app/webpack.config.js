@@ -1,3 +1,4 @@
+const openBrowser = require('react-dev-utils/openBrowser');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -7,6 +8,9 @@ module.exports = {
   entry: './index.js',
   devtool: 'inline-source-map',
   devServer: {
+    after: () => {
+      openBrowser && openBrowser('http://localhost:1337');
+    },
     contentBase: path.join(__dirname, 'dist'),
     port: 1337
   },
