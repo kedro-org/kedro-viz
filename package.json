@@ -47,7 +47,7 @@
     "konami-code": "^0.2.1",
     "react-custom-scrollbars": "^4.2.1",
     "react-flip-toolkit": "^7.0.12",
-    "react-scripts": "^3.4.1",
+    "react-redux": "^6.0.1",
     "react-test-renderer": "^16.13.1",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
@@ -60,8 +60,7 @@
   },
   "peerDependencies": {
     "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-redux": "^6.0.1"
+    "react-dom": "^16.8.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -76,7 +75,7 @@
     "prettier": "1.17.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-redux": "^6.0.1",
+    "react-scripts": "^3.4.1",
     "stylelint": "^13.0.0",
     "stylelint-config-prettier": "^8.0.1",
     "stylelint-config-rational-order": "^0.1.2",
