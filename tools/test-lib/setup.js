@@ -11,9 +11,6 @@ const tarball = 'kedro-viz.tgz';
  * to test exporting/importing the packaged npm library
  */
 (async function() {
-  console.log('Updating lib directory…');
-  await exec('npm run lib');
-
   console.log('Packing into tarball…');
   const pack = await exec('npm pack');
   const filename = pack.stdout.trim();
@@ -23,14 +20,14 @@ const tarball = 'kedro-viz.tgz';
   fs.renameSync(filename, `${cwd + tarball}`);
   console.log(`Moved to /${cwd + tarball}`);
 
+  console.log('Deleting node_modules/@quantumblack/kedro-viz…');
+  await exec('rm -rf node_modules/@quantumblack/kedro-viz', { cwd });
+  console.log('Deleted');
+
   console.log('Installing dependencies…');
   execSync(`npm install --no-package-lock`, { cwd });
 
-  console.log('Starting dev server');
-  const start = await exec(`npm start`, { cwd });
-  console.log(start);
-
   console.log('Deleting tarball…');
-  fs.unlinkSync(cwd + tarball);
+  await exec(`rm -f ${tarball}`, { cwd });
   console.log('Deleted');
 })();
