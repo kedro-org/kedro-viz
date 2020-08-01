@@ -49,7 +49,7 @@
     "react-flip-toolkit": "^7.0.12",
     "react-redux": "^6.0.1",
     "react-test-renderer": "^16.13.1",
-    "redux": "^4.0.1",
+    "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "redux-watch": "^1.1.1",
     "reselect": "^4.0.0",
