@@ -28,6 +28,7 @@
 """ Kedro-Viz plugin and webserver """
 
 import hashlib
+import inspect
 import json
 import logging
 import multiprocessing
@@ -428,6 +429,9 @@ def format_pipeline_data(
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
+                "code": inspect.getsource(node._func),
+                "docstring": inspect.getdoc(node._func),
+                "path": inspect.getfile(node._func),
             }
             nodes_list.append(nodes[task_id])
         else:
