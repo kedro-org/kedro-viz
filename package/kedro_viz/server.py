@@ -50,6 +50,7 @@ from semver import VersionInfo
 from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
+from kedro.io.core import DataSetNotFoundError
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
@@ -418,6 +419,7 @@ def format_pipeline_data(
 
     dataset_to_layer = _construct_layer_mapping(catalog)
 
+    # Nodes and edges
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
         tags.update(node.tags)
@@ -457,20 +459,47 @@ def format_pipeline_data(
             namespace_tags[namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
 
+    # Parameters and data
     for namespace, tag_names in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
+
         if node_id not in nodes:
-            nodes[node_id] = {
-                "type": "parameters" if is_param else "data",
-                "id": node_id,
-                "name": _pretty_name(namespace),
-                "full_name": namespace,
-                "tags": sorted(tag_names),
-                "layer": namespace_to_layer[namespace],
-                "pipelines": [pipeline_key],
-            }
-            nodes_list.append(nodes[node_id])
+            if is_param:
+                nodes[node_id] = {
+                    "type": "parameters",
+                    "id": node_id,
+                    "name": _pretty_name(namespace),
+                    "full_name": namespace,
+                    "tags": sorted(tag_names),
+                    "layer": namespace_to_layer[namespace],
+                    "pipelines": [pipeline_key],
+                }
+                nodes_list.append(nodes[node_id])
+            else:
+                metadata = None
+                try:
+                    metadata = catalog._get_dataset(namespace)
+                except (DataSetNotFoundError) as e:
+                    pass
+
+                nodes[node_id] = {
+                    "type": "data",
+                    "id": node_id,
+                    "name": _pretty_name(namespace),
+                    "full_name": namespace,
+                    "tags": sorted(tag_names),
+                    "layer": namespace_to_layer[namespace],
+                    "pipelines": [pipeline_key],
+                    "path": str(metadata._describe()["filepath"]) if metadata else "",
+                    "data_type": metadata.__class__.__name__ if metadata else "",
+                    "entire_def": str(metadata._describe()) if metadata else "",
+                }
+                # if not metadata:
+                #     import pdb
+
+                #     pdb.set_trace()
+                nodes_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipelines"].append(pipeline_key)
 
