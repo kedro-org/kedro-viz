@@ -7,7 +7,7 @@ import icon from './icon';
 /**
  * Render layer bands
  */
-const drawLayers = function() {
+export const drawLayers = function() {
   const { layers, visibleLayers } = this.props;
 
   this.el.layers = this.el.layerGroup
@@ -33,7 +33,7 @@ const drawLayers = function() {
 /**
  * Render layer name labels
  */
-const drawLayerNames = function() {
+export const drawLayerNames = function() {
   const {
     chartSize: { sidebarWidth = 0 },
     layers,
@@ -74,7 +74,7 @@ const drawLayerNames = function() {
 /**
  * Render node icons and name labels
  */
-const drawNodes = function() {
+export const drawNodes = function() {
   const {
     centralNode,
     linkedNodes,
@@ -170,7 +170,7 @@ const drawNodes = function() {
 /**
  * Render edge lines
  */
-const drawEdges = function() {
+export const drawEdges = function() {
   const { edges, centralNode, linkedNodes } = this.props;
 
   this.el.edges = this.el.edgeGroup
@@ -222,15 +222,3 @@ const drawEdges = function() {
       return interpolatePath(previous, current);
     });
 };
-
-/**
- * Render chart to the DOM with D3
- */
-const draw = function() {
-  drawLayers.call(this);
-  drawLayerNames.call(this);
-  drawEdges.call(this);
-  drawNodes.call(this);
-};
-
-export default draw;

@@ -1,12 +1,6 @@
 import { mockState } from '../utils/state.mock';
-import {
-  getChartSize,
-  getGraphInput,
-  getSidebarWidth,
-  getZoomPosition
-} from './layout';
-import { updateChartSize, updateFontLoaded } from '../actions';
-import getInitialState from '../store/initial-state';
+import { getChartSize, getSidebarWidth, getGraphInput } from './layout';
+import { updateFontLoaded } from '../actions';
 import reducer from '../reducers';
 import { sidebarBreakpoint, sidebarWidth } from '../config';
 
@@ -84,44 +78,6 @@ describe('Selectors', () => {
         top: expect.any(Number),
         width: expect.any(Number)
       });
-    });
-  });
-
-  describe('getZoomPosition', () => {
-    const defaultZoom = {
-      scale: 1,
-      translateX: 0,
-      translateY: 0
-    };
-
-    it('returns default values if chartSize is unset', () => {
-      expect(getZoomPosition(mockState.animals)).toEqual(defaultZoom);
-    });
-
-    it('returns default values when no nodes are visible', () => {
-      const newMockState = reducer(
-        getInitialState({ data: [] }),
-        updateChartSize({ width: 100, height: 100 })
-      );
-      expect(getZoomPosition(newMockState)).toEqual(defaultZoom);
-    });
-
-    it('returns the updated chart zoom translation/scale if chartSize is set', () => {
-      const newMockState = reducer(
-        mockState.animals,
-        updateChartSize({ width: 100, height: 100 })
-      );
-      const newZoomPos = getZoomPosition(newMockState);
-      expect(newZoomPos.scale).toEqual(expect.any(Number));
-      expect(newZoomPos.translateX).toEqual(expect.any(Number));
-      expect(newZoomPos.translateY).toEqual(expect.any(Number));
-      expect(newZoomPos).not.toEqual(
-        expect.objectContaining({
-          scale: 1,
-          translateX: 0,
-          translateY: 0
-        })
-      );
     });
   });
 });

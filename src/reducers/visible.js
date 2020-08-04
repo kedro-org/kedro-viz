@@ -1,4 +1,9 @@
-import { TOGGLE_EXPORT_MODAL, TOGGLE_LAYERS, TOGGLE_SIDEBAR } from '../actions';
+import {
+  TOGGLE_EXPORT_MODAL,
+  TOGGLE_LAYERS,
+  TOGGLE_SIDEBAR,
+  TOGGLE_MINIMAP
+} from '../actions';
 
 function visibleReducer(visibleState = {}, action) {
   switch (action.type) {
@@ -17,6 +22,12 @@ function visibleReducer(visibleState = {}, action) {
     case TOGGLE_SIDEBAR: {
       return Object.assign({}, visibleState, {
         sidebar: action.visible
+      });
+    }
+
+    case TOGGLE_MINIMAP: {
+      return Object.assign({}, visibleState, {
+        miniMap: action.visible
       });
     }
 

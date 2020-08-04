@@ -4,7 +4,6 @@ import { getVisibleEdges } from './edges';
 import { getVisibleLayerIDs } from './disabled';
 import { sidebarBreakpoint, sidebarWidth } from '../config';
 
-const getGraphSize = state => state.graph.size || {};
 const getNewgraphFlag = state => state.flags.newgraph;
 const getHasVisibleLayers = state =>
   state.visible.layers && Boolean(state.layer.ids.length);
@@ -66,36 +65,12 @@ export const getChartSize = createSelector(
   }
 );
 
-// Check that width & height props are present and finite
-const isFinite = n => typeof n !== 'undefined' && Number.isFinite(n);
-const isValid = d => isFinite(d.width) && isFinite(d.height);
-
 /**
- * Get chart zoom translation/scale,
- * by comparing native graph width/height to container width/height
+ * Gets the current chart zoom
  */
-export const getZoomPosition = createSelector(
-  [getGraphSize, getChartSize],
-  (graph, chart) => {
-    if (!isValid(graph) || !isValid(chart)) {
-      return {
-        scale: 1,
-        translateX: 0,
-        translateY: 0
-      };
-    }
-
-    const scale = Math.min(
-      chart.width / graph.width,
-      chart.height / graph.height
-    );
-    const translateX = chart.width / 2 - (graph.width * scale) / 2;
-    const translateY = chart.height / 2 - (graph.height * scale) / 2;
-
-    return {
-      scale,
-      translateX: translateX + chart.sidebarWidth,
-      translateY
-    };
-  }
+export const getChartZoom = createSelector(
+  [state => state.zoom],
+  zoom => ({
+    ...zoom
+  })
 );

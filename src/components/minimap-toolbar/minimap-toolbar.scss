@@ -1,0 +1,45 @@
+@import '../../styles/variables';
+@import '../../styles/extends';
+
+.pipeline-minimap-toolbar {
+  display: block;
+  padding: 0;
+  list-style: none;
+}
+
+.pipeline-minimap-button {
+  height: 46px;
+  transition: background-color 300ms ease;
+}
+
+.pipeline-minimap-button.pipeline-icon-toolbar__button--active {
+  .kui-theme--light & {
+    background: $color-bg-light-3;
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-3;
+  }
+}
+
+.pipeline-minimap-button--map {
+  height: 46px;
+  padding-top: 4px;
+}
+
+.pipeline-minimap-toolbar__scale {
+  display: block;
+  width: 100%;
+  padding: 6px 8px 6px;
+  font-weight: bold;
+  font-size: 10px;
+  text-align: center;
+
+  .kui-theme--light & {
+    color: $color-text-dark-alt;
+  }
+
+  .kui-theme--dark & {
+    color: $color-text-dark;
+  }
+}
