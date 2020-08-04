@@ -46,22 +46,21 @@ import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
+from kedro.io.core import DataSetNotFoundError
 from semver import VersionInfo
 from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
-from kedro.io.core import DataSetNotFoundError
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
 if KEDRO_VERSION.match(">=0.16.0"):
+    # pylint: disable=ungrouped-imports
     from kedro.framework.cli import get_project_context
     from kedro.framework.cli.utils import KedroCliError
 else:
-    # pylint: disable=no-name-in-module,import-error
+    # pylint: disable=no-name-in-module,import-error,ungrouped-imports
     from kedro.cli import get_project_context  # pragma: no cover
-
-    # pylint: disable=no-name-in-module,import-error
     from kedro.cli.utils import KedroCliError  # pragma: no cover
 
 
@@ -70,8 +69,8 @@ _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 _DEFAULT_KEY = "__default__"
 
 data = None  # pylint: disable=invalid-name
-pipelines = None
-catalog = None
+_PIPELINES = None
+_CATALOG = None
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -487,54 +486,52 @@ def nodes_json():
 @app.route("/nodes/<string:node_id>")
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
-    global pipelines
-    global catalog
-    print("NODE ID: ", node_id)
-    metadata = {}
-    if pipelines:
-        for pipeline_key, pipeline in pipelines.items():
+    if _PIPELINES:
+        for pipeline_key, pipeline in _PIPELINES.items():
             for node in sorted(pipeline.nodes, key=lambda n: n.name):
                 task_id = _hash(str(node))
                 if node_id == task_id:
                     metadata = {
+                        # pylint: disable=protected-access
                         "code": inspect.getsource(node._func),
+                        # pylint: disable=protected-access
                         "docstring": inspect.getdoc(node._func),
-                        "path": inspect.getfile(node._func),
+                        # pylint: disable=protected-access
+                        "code_location": inspect.getfile(node._func),
                     }
                     return jsonify(metadata)
                 # dataset API
-                for data_set in node.inputs:
-                    namespace = data_set.split("@")[0]
+                for dataset_name in node.inputs:
+                    namespace = dataset_name.split("@")[0]
                     dataset_id = _hash(namespace)
                     if node_id == dataset_id:
-                        try:
-                            dataset_obj = catalog._get_dataset(namespace)
-                        except (DataSetNotFoundError):
-                            return False  # catalog is not defined in catalog.yml
-                        metadata = {
-                            "data_type": dataset_obj.__class__.__name__,
-                            "catalog": str(dataset_obj._describe()),
-                            "path": str(dataset_obj._describe()["filepath"]),
-                        }
-                        return jsonify(metadata)
+                        metadata = _get_dataset_metadata(namespace)
+                        if metadata:
+                            return jsonify(metadata)
 
-                for data_set in node.outputs:
-                    namespace = data_set.split("@")[0]
+                for dataset_name in node.outputs:
+                    namespace = dataset_name.split("@")[0]
                     dataset_id = _hash(namespace)
                     if node_id == dataset_id:
-                        try:
-                            dataset_obj = catalog._get_dataset(namespace)
-                        except (DataSetNotFoundError):
-                            return False  # catalog is not defined in catalog.yml
-                        metadata = {
-                            "data_type": dataset_obj.__class__.__name__,
-                            "catalog": str(dataset_obj._describe()),
-                            "path": str(dataset_obj._describe()["filepath"]),
-                        }
-                        return jsonify(metadata)
-    # task: code, docstring, path
-    # dataset: path, datadataset class name, entire definition of catalog, if exists.
-    return False
+                        metadata = _get_dataset_metadata(namespace)
+                        if metadata:
+                            return jsonify(metadata)
+    return jsonify({})
+
+
+def _get_dataset_metadata(namespace):
+    try:
+        dataset = _CATALOG._get_dataset(namespace)  # pylint: disable=protected-access
+        metadata = {
+            "dataset_type": dataset.__class__.__name__,
+            # pylint: disable=protected-access
+            "dataset_location": str(dataset._describe()["filepath"]),
+        }
+
+    except DataSetNotFoundError:
+        # catalog is not defined in catalog.yml
+        metadata = {}
+    return metadata
 
 
 @click.group(name="Kedro-Viz")
@@ -613,8 +610,8 @@ def _call_viz(
     project_path=None,
 ):
     global data  # pylint: disable=global-statement,invalid-name
-    global pipelines  # pylint: disable=global-statement
-    global catalog  # pylint: disable=global-statement
+    global _PIPELINES  # pylint: disable=global-statement
+    global _CATALOG  # pylint: disable=global-statement
 
     if load_file:
         # Remove all handlers for root logger
@@ -639,18 +636,18 @@ def _call_viz(
                     )
                 else:
                     context = get_project_context("context", env=env)
-                pipelines = _get_pipelines_from_context(context, pipeline_name)
+                _PIPELINES = _get_pipelines_from_context(context, pipeline_name)
             except KedroContextError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
-            catalog = context.catalog
+            _CATALOG = context.catalog
 
         else:
             # Kedro 0.14.*
             if pipeline_name:
                 raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
-            pipelines, catalog = _get_pipeline_catalog_from_kedro14(env)
+            _PIPELINES, catalog = _get_pipeline_catalog_from_kedro14(env)
 
-        data = format_pipelines_data(pipelines, catalog)
+        data = format_pipelines_data(_PIPELINES, _CATALOG)
 
     if save_file:
         Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))
