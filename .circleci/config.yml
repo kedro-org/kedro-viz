@@ -59,11 +59,14 @@ commands:
           name: Test lib transpilation
           command: npm run lib
 
-  setup_lib_import_test:
+  test_lib_import:
     steps:
       - run:
-          name: Prepare lib import test environment
-          command: npm run lib-test:setup
+          name: Test JS library imports
+          command: |
+            npm run lib-test:setup
+            cd tools/test-lib/react-app
+            npm run test:ci
 
   run_eslint:
     steps:
@@ -168,7 +171,7 @@ commands:
       - setup_python_env
       - install_node_dependencies
       - test_lib_transpilation
-      - setup_lib_import_test
+      - test_lib_import
       - run_eslint
       - run_javascript_tests
       - run_pylint_and_flake8
