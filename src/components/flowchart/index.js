@@ -3,14 +3,15 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import 'd3-transition';
 import { select, event } from 'd3-selection';
-import { zoom, zoomIdentity } from 'd3-zoom';
-import { updateChartSize } from '../../actions';
+import { interpolate } from 'd3-interpolate';
+import { zoom, zoomIdentity, zoomTransform } from 'd3-zoom';
+import { updateChartSize, updateZoom } from '../../actions';
 import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
-import { getChartSize, getZoomPosition } from '../../selectors/layout';
+import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
-import draw from './draw';
+import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import Tooltip from '../tooltip';
 import './styles/flowchart.css';
 
@@ -40,9 +41,8 @@ export class FlowChart extends Component {
     this.selectD3Elements();
     this.updateChartSize();
     this.initZoomBehaviour();
-    this.drawChart();
-    this.zoomChart();
     this.addGlobalEventListeners();
+    drawNodes.call(this);
   }
 
   componentWillUnmount() {
@@ -50,13 +50,50 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.visibleSidebar !== this.props.visibleSidebar) {
+    const { chartZoom } = this.props;
+    const changed = (...names) => this.changed(names, prevProps, this.props);
+
+    if (changed('visibleSidebar')) {
       this.updateChartSize();
     }
-    if (prevProps.zoom !== this.props.zoom) {
-      this.zoomChart();
+
+    if (changed('layers', 'visibleLayers', 'chartSize')) {
+      drawLayers.call(this);
+      drawLayerNames.call(this);
     }
-    this.drawChart();
+
+    if (changed('edges', 'centralNode', 'linkedNodes')) {
+      drawEdges.call(this);
+    }
+
+    if (
+      changed(
+        'nodes',
+        'centralNode',
+        'linkedNodes',
+        'nodeActive',
+        'nodeSelected',
+        'textLabels'
+      )
+    ) {
+      drawNodes.call(this);
+    }
+
+    if (changed('edges', 'nodes', 'layers', 'textLabels', 'chartSize')) {
+      this.zoomToFit();
+    } else {
+      this.updateZoom(chartZoom);
+    }
+  }
+
+  /**
+   * Returns true if any of the given props are different between given objects.
+   * Only shallow changes are detected.
+   */
+  changed(props, objectA, objectB) {
+    return (
+      objectA && objectB && props.some(prop => objectA[prop] !== objectB[prop])
+    );
   }
 
   /**
@@ -145,61 +182,158 @@ export class FlowChart extends Component {
    * Setup D3 zoom behaviour on component mount
    */
   initZoomBehaviour() {
-    this.zoomBehaviour = zoom().on('zoom', () => {
-      const { k: scale, y } = event.transform;
-      const { sidebarWidth } = this.props.chartSize;
-      const { width, height } = this.props.graphSize;
+    this.zoomBehaviour = zoom()
+      // Transition using linear interpolation
+      .interpolate(interpolate)
+      // When zoom changes
+      .on('zoom', () => {
+        const { k: scale, x, y } = event.transform;
+        const [
+          minScale = 0,
+          maxScale = Infinity
+        ] = this.zoomBehaviour.scaleExtent();
+        const { sidebarWidth } = this.props.chartSize;
+        const { width = 0, height = 0 } = this.props.graphSize;
 
-      // Limit zoom translate extent: This needs to be recalculated on zoom
-      // as it needs access to the current scale to correctly multiply the
-      // sidebarWidth by the scale to offset it properly
-      const margin = 500;
-      this.zoomBehaviour.translateExtent([
-        [-sidebarWidth / scale - margin, -margin],
-        [width + margin, height + margin]
-      ]);
+        // Limit zoom translate extent: This needs to be recalculated on zoom
+        // as it needs access to the current scale to correctly multiply the
+        // sidebarWidth by the scale to offset it properly
+        const margin = 500;
+        this.zoomBehaviour.translateExtent([
+          [-sidebarWidth / scale - margin, -margin],
+          [width + margin, height + margin]
+        ]);
 
-      // Transform the <g> that wraps the chart
-      this.el.wrapper.attr('transform', event.transform);
+        // Transform the <g> that wraps the chart
+        this.el.wrapper.attr('transform', event.transform);
 
-      // Update layer label y positions
-      if (this.el.layerNames) {
-        this.el.layerNames.style('transform', d => {
-          const ty = y + (d.y + d.height / 2) * scale;
-          return `translateY(${ty}px)`;
+        // Update layer label y positions
+        if (this.el.layerNames) {
+          this.el.layerNames.style('transform', d => {
+            const ty = y + (d.y + d.height / 2) * scale;
+            return `translateY(${ty}px)`;
+          });
+        }
+
+        // Hide the tooltip so it doesn't get misaligned to its node
+        this.hideTooltip();
+
+        // Share the applied zoom state with other components
+        this.props.onUpdateZoom({
+          scale,
+          x,
+          y,
+          applied: true,
+          transition: false,
+          minScale,
+          maxScale
         });
-      }
+      });
 
-      // Hide the tooltip so it doesn't get misaligned to its node
-      this.hideTooltip();
-    });
     this.el.svg.call(this.zoomBehaviour);
   }
 
   /**
-   * Zoom and scale to fit
+   * Applies the given zoom state if necessary
+   * @param {Object} chartZoom The new zoom state
    */
-  zoomChart() {
-    const { scale = 1, translateX = 0, translateY = 0 } = this.props.zoom;
+  updateZoom(chartZoom) {
+    // No change if already applied (i.e. ignores internal updates)
+    if (chartZoom.applied) {
+      return;
+    }
+
+    // If the update is a reset, then just zoom to fit the graph
+    if (chartZoom.reset === true) {
+      this.zoomToFit();
+      return;
+    }
+
+    // Get current zoom transform
+    const zoom = this.zoomBehaviour;
+    const currentTransform = zoomTransform(this.wrapperRef.current);
+    const { k = 1 } = currentTransform;
+
+    // Get the updated zoom components
+    const { scale: targetScale = k, x: targetX, y: targetY } = chartZoom;
+    const transition =
+      chartZoom.transition || typeof chartZoom.transition === 'undefined';
+    const hasTranslation =
+      typeof targetX !== 'undefined' && typeof targetY !== 'undefined';
+
+    // Apply the zoom update immediately at first
+    // Note: only translateTo and scaleTo respect zoom extents
+    // Note: requires three separate calls so can't transition this
+    if (hasTranslation) {
+      // Update position and scale
+      this.el.svg
+        .call(zoom.transform, zoomIdentity)
+        .call(zoom.translateTo, targetX, targetY)
+        .call(zoom.scaleTo, targetScale);
+    } else {
+      // Update scale only
+      this.el.svg.call(zoom.scaleTo, targetScale);
+    }
+
+    // If the update requires a transition
+    if (transition) {
+      // Store the already computed target transform
+      const targetTransform = zoomTransform(this.wrapperRef.current);
+
+      // Revert and transition to target in a single call
+      this.el.svg
+        .call(zoom.transform, currentTransform)
+        .transition('zoom')
+        .duration(200)
+        .call(zoom.transform, targetTransform);
+    }
+  }
+
+  /**
+   * Zoom and scale to fit graph exactly in the viewport
+   */
+  zoomToFit() {
+    const { chartSize, graphSize } = this.props;
+
+    let scale = 1;
+    let translateX = 0;
+    let translateY = 0;
+
+    // Fit the graph exactly in the viewport
+    if (chartSize.width && graphSize.width) {
+      scale = Math.min(
+        chartSize.width / graphSize.width,
+        chartSize.height / graphSize.height
+      );
+
+      translateX =
+        (chartSize.width - graphSize.width * scale) / 2 +
+        chartSize.sidebarWidth;
+      translateY = (chartSize.height - graphSize.height * scale) / 2;
+    }
 
     // Limit zoom scale extent
     this.zoomBehaviour.scaleExtent([scale * 0.8, 2]);
 
-    // Auto zoom to fit the chart nicely on the page
-    this.el.svg
-      .transition()
-      .duration(this.DURATION)
-      .call(
-        this.zoomBehaviour.transform,
-        zoomIdentity.translate(translateX, translateY).scale(scale)
-      );
-  }
+    // Get the target zoom transform
+    const targetTransform = zoomIdentity
+      .translate(translateX, translateY)
+      .scale(scale);
 
-  /**
-   * Render chart to the DOM with D3
-   */
-  drawChart() {
-    draw.call(this);
+    // Get the current zoom transform
+    const { k = 1, x = 0, y = 0 } = zoomTransform(this.wrapperRef.current);
+    const isFirstZoom = k === 1 && x === 0 && y === 0;
+
+    // Avoid errors during tests due to lack of SVG support
+    if (typeof jest !== 'undefined') {
+      return;
+    }
+
+    // Apply transform but only transition after first zoom
+    (isFirstZoom
+      ? this.el.svg
+      : this.el.svg.transition('zoom').duration(this.DURATION)
+    ).call(this.zoomBehaviour.transform, targetTransform);
   }
 
   /**
@@ -334,20 +468,25 @@ export class FlowChart extends Component {
   }
 }
 
+// Maintain a single reference to support change detection
+const emptyEdges = [];
+const emptyNodes = [];
+const emptyGraphSize = {};
+
 export const mapStateToProps = state => ({
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
-  edges: state.graph.edges || [],
-  graphSize: state.graph.size || {},
+  chartZoom: getChartZoom(state),
+  edges: state.graph.edges || emptyEdges,
+  graphSize: state.graph.size || emptyGraphSize,
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
-  nodes: state.graph.nodes || [],
+  nodes: state.graph.nodes || emptyNodes,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   textLabels: state.textLabels,
   visibleLayers: state.visible.layers,
-  visibleSidebar: state.visible.sidebar,
-  zoom: getZoomPosition(state)
+  visibleSidebar: state.visible.sidebar
 });
 
 export const mapDispatchToProps = dispatch => ({
@@ -359,6 +498,9 @@ export const mapDispatchToProps = dispatch => ({
   },
   onUpdateChartSize: chartSize => {
     dispatch(updateChartSize(chartSize));
+  },
+  onUpdateZoom: transform => {
+    dispatch(updateZoom(transform));
   }
 });
 

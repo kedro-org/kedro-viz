@@ -1,0 +1,49 @@
+@import './variables';
+
+.pipeline-minimap-node {
+  rect {
+    .kui-theme--light & {
+      fill: $node-fill-light-default;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-fill-dark-default;
+    }
+  }
+}
+
+.pipeline-minimap-node--active {
+  rect {
+    .kui-theme--light & {
+      fill: $node-fill-light-active;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-fill-dark-active;
+    }
+  }
+}
+
+.pipeline-minimap-node--selected {
+  rect {
+    .kui-theme--light & {
+      fill: $node-fill-light-selected;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-fill-dark-selected;
+    }
+  }
+}
+
+.pipeline-minimap-node--faded {
+  rect {
+    .kui-theme--light & {
+      fill: $node-fill-light-faded;
+    }
+
+    .kui-theme--dark & {
+      fill: $node-fill-dark-faded;
+    }
+  }
+}
