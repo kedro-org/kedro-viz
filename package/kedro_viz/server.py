@@ -70,6 +70,8 @@ _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 _DEFAULT_KEY = "__default__"
 
 data = None  # pylint: disable=invalid-name
+pipelines = None
+catalog = None
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -431,9 +433,6 @@ def format_pipeline_data(
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
-                "code": inspect.getsource(node._func),
-                "docstring": inspect.getdoc(node._func),
-                "path": inspect.getfile(node._func),
             }
             nodes_list.append(nodes[task_id])
         else:
@@ -465,41 +464,16 @@ def format_pipeline_data(
         node_id = _hash(namespace)
 
         if node_id not in nodes:
-            if is_param:
-                nodes[node_id] = {
-                    "type": "parameters",
-                    "id": node_id,
-                    "name": _pretty_name(namespace),
-                    "full_name": namespace,
-                    "tags": sorted(tag_names),
-                    "layer": namespace_to_layer[namespace],
-                    "pipelines": [pipeline_key],
-                }
-                nodes_list.append(nodes[node_id])
-            else:
-                metadata = None
-                try:
-                    metadata = catalog._get_dataset(namespace)
-                except (DataSetNotFoundError) as e:
-                    pass
-
-                nodes[node_id] = {
-                    "type": "data",
-                    "id": node_id,
-                    "name": _pretty_name(namespace),
-                    "full_name": namespace,
-                    "tags": sorted(tag_names),
-                    "layer": namespace_to_layer[namespace],
-                    "pipelines": [pipeline_key],
-                    "path": str(metadata._describe()["filepath"]) if metadata else "",
-                    "data_type": metadata.__class__.__name__ if metadata else "",
-                    "entire_def": str(metadata._describe()) if metadata else "",
-                }
-                # if not metadata:
-                #     import pdb
-
-                #     pdb.set_trace()
-                nodes_list.append(nodes[node_id])
+            nodes[node_id] = {
+                "type": "parameters" if is_param else "data",
+                "id": node_id,
+                "name": _pretty_name(namespace),
+                "full_name": namespace,
+                "tags": sorted(tag_names),
+                "layer": namespace_to_layer[namespace],
+                "pipelines": [pipeline_key],
+            }
+            nodes_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipelines"].append(pipeline_key)
 
@@ -508,6 +482,59 @@ def format_pipeline_data(
 def nodes_json():
     """Serve the pipeline data."""
     return jsonify(data)
+
+
+@app.route("/nodes/<string:node_id>")
+def nodes_metadata(node_id):
+    """Serve the metadata for node and dataset."""
+    global pipelines
+    global catalog
+    print("NODE ID: ", node_id)
+    metadata = {}
+    if pipelines:
+        for pipeline_key, pipeline in pipelines.items():
+            for node in sorted(pipeline.nodes, key=lambda n: n.name):
+                task_id = _hash(str(node))
+                if node_id == task_id:
+                    metadata = {
+                        "code": inspect.getsource(node._func),
+                        "docstring": inspect.getdoc(node._func),
+                        "path": inspect.getfile(node._func),
+                    }
+                    return jsonify(metadata)
+                # dataset API
+                for data_set in node.inputs:
+                    namespace = data_set.split("@")[0]
+                    dataset_id = _hash(namespace)
+                    if node_id == dataset_id:
+                        try:
+                            dataset_obj = catalog._get_dataset(namespace)
+                        except (DataSetNotFoundError):
+                            return False  # catalog is not defined in catalog.yml
+                        metadata = {
+                            "data_type": dataset_obj.__class__.__name__,
+                            "catalog": str(dataset_obj._describe()),
+                            "path": str(dataset_obj._describe()["filepath"]),
+                        }
+                        return jsonify(metadata)
+
+                for data_set in node.outputs:
+                    namespace = data_set.split("@")[0]
+                    dataset_id = _hash(namespace)
+                    if node_id == dataset_id:
+                        try:
+                            dataset_obj = catalog._get_dataset(namespace)
+                        except (DataSetNotFoundError):
+                            return False  # catalog is not defined in catalog.yml
+                        metadata = {
+                            "data_type": dataset_obj.__class__.__name__,
+                            "catalog": str(dataset_obj._describe()),
+                            "path": str(dataset_obj._describe()["filepath"]),
+                        }
+                        return jsonify(metadata)
+    # task: code, docstring, path
+    # dataset: path, datadataset class name, entire definition of catalog, if exists.
+    return False
 
 
 @click.group(name="Kedro-Viz")
@@ -586,6 +613,8 @@ def _call_viz(
     project_path=None,
 ):
     global data  # pylint: disable=global-statement,invalid-name
+    global pipelines  # pylint: disable=global-statement
+    global catalog  # pylint: disable=global-statement
 
     if load_file:
         # Remove all handlers for root logger
