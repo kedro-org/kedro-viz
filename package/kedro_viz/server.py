@@ -46,7 +46,6 @@ import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-from kedro.io.core import DataSetNotFoundError
 from semver import VersionInfo
 from toposort import toposort_flatten
 
@@ -55,12 +54,12 @@ from kedro_viz.utils import wait_for
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
 if KEDRO_VERSION.match(">=0.16.0"):
-    # pylint: disable=ungrouped-imports
     from kedro.framework.cli import get_project_context
     from kedro.framework.cli.utils import KedroCliError
 else:
-    # pylint: disable=no-name-in-module,import-error,ungrouped-imports
+    # pylint: disable=no-name-in-module,import-error
     from kedro.cli import get_project_context  # pragma: no cover
+
     from kedro.cli.utils import KedroCliError  # pragma: no cover
 
 
@@ -487,7 +486,7 @@ def nodes_json():
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
     if _PIPELINES:
-        for pipeline_key, pipeline in _PIPELINES.items():
+        for pipeline in _PIPELINES.values():
             for node in sorted(pipeline.nodes, key=lambda n: n.name):
                 task_id = _hash(str(node))
                 if node_id == task_id:
@@ -504,33 +503,26 @@ def nodes_metadata(node_id):
                 for dataset_name in node.inputs:
                     namespace = dataset_name.split("@")[0]
                     dataset_id = _hash(namespace)
-                    if node_id == dataset_id:
+                    if node_id == dataset_id and _CATALOG.exists(namespace):
                         metadata = _get_dataset_metadata(namespace)
-                        if metadata:
-                            return jsonify(metadata)
+                        return jsonify(metadata)
 
                 for dataset_name in node.outputs:
                     namespace = dataset_name.split("@")[0]
                     dataset_id = _hash(namespace)
-                    if node_id == dataset_id:
+                    if node_id == dataset_id and _CATALOG.exists(namespace):
                         metadata = _get_dataset_metadata(namespace)
-                        if metadata:
-                            return jsonify(metadata)
+                        return jsonify(metadata)
     return jsonify({})
 
 
 def _get_dataset_metadata(namespace):
-    try:
-        dataset = _CATALOG._get_dataset(namespace)  # pylint: disable=protected-access
-        metadata = {
-            "dataset_type": dataset.__class__.__name__,
-            # pylint: disable=protected-access
-            "dataset_location": str(dataset._describe()["filepath"]),
-        }
-
-    except DataSetNotFoundError:
-        # catalog is not defined in catalog.yml
-        metadata = {}
+    dataset = _CATALOG._get_dataset(namespace)  # pylint: disable=protected-access
+    metadata = {
+        "dataset_type": dataset.__class__.__name__,
+        # pylint: disable=protected-access
+        "dataset_location": str(dataset._describe()["filepath"]),
+    }
     return metadata
 
 
