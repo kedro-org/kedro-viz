@@ -66,7 +66,7 @@ _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
 _DEFAULT_KEY = "__default__"
 
-data = None  # pylint: disable=invalid-name
+_DATA = None
 _PIPELINES = None
 _CATALOG = None
 
@@ -172,14 +172,14 @@ def _allocate_port(start_at: int, end_at: int = 65535) -> int:
 
 
 def _load_from_file(load_file: str) -> dict:
-    global data  # pylint: disable=global-statement,invalid-name
-    data = json.loads(Path(load_file).read_text())
+    global _DATA  # pylint: disable=global-statement,invalid-name
+    _DATA = json.loads(Path(load_file).read_text())
     for key in ["nodes", "edges", "tags"]:
-        if key not in data:
+        if key not in _DATA:
             raise KedroCliError(
                 "Invalid file, top level key '{}' not found.".format(key)
             )
-    return data
+    return _DATA
 
 
 def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]:
@@ -459,7 +459,6 @@ def format_pipeline_data(
     for namespace, tag_names in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
-
         if node_id not in nodes:
             nodes[node_id] = {
                 "type": "parameters" if is_param else "data",
@@ -478,7 +477,7 @@ def format_pipeline_data(
 @app.route("/api/nodes.json")
 def nodes_json():
     """Serve the pipeline data."""
-    return jsonify(data)
+    return jsonify(_DATA)
 
 
 @app.route("/nodes/<string:node_id>")
@@ -600,7 +599,7 @@ def _call_viz(
     env=None,
     project_path=None,
 ):
-    global data  # pylint: disable=global-statement,invalid-name
+    global _DATA  # pylint: disable=global-statement,invalid-name
     global _PIPELINES  # pylint: disable=global-statement
     global _CATALOG  # pylint: disable=global-statement
 
@@ -609,7 +608,7 @@ def _call_viz(
         root_logger = logging.getLogger()
         root_logger.handlers = []
 
-        data = _load_from_file(load_file)
+        _DATA = _load_from_file(load_file)
     else:
         if KEDRO_VERSION.match(">=0.15.0"):
             # pylint: disable=import-outside-toplevel
@@ -636,12 +635,12 @@ def _call_viz(
             # Kedro 0.14.*
             if pipeline_name:
                 raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
-            _PIPELINES, catalog = _get_pipeline_catalog_from_kedro14(env)
+            _PIPELINES, _CATALOG = _get_pipeline_catalog_from_kedro14(env)
 
-        data = format_pipelines_data(_PIPELINES, _CATALOG)
+        _DATA = format_pipelines_data(_PIPELINES, _CATALOG)
 
     if save_file:
-        Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))
+        Path(save_file).write_text(json.dumps(_DATA, indent=4, sort_keys=True))
     else:
         is_localhost = host in ("127.0.0.1", "localhost", "0.0.0.0")
         if browser and is_localhost:
