@@ -1,27 +1,6 @@
 @import '../../styles/variables';
 @import '../../styles/extends';
 
-.pipeline-icon-toolbar {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: $sidebar-width-closed;
-  height: 100%;
-  margin: 0;
-  padding: 1em 0;
-  list-style: none;
-
-  .kui-theme--light & {
-    background: $color-bg-light-2;
-  }
-
-  .kui-theme--dark & {
-    background: $color-bg-dark-2;
-  }
-}
-
 .pipeline-icon-toolbar__button {
   position: relative;
   width: $sidebar-width-closed;
@@ -58,7 +37,7 @@
   }
 }
 
-.pipeline-icon-toolbar__label {
+.pipeline-toolbar__label {
   @extend %tooltip;
 
   position: absolute;
@@ -102,16 +81,4 @@
       border-right-color: $color-bg-dark-alt;
     }
   }
-}
-
-.pipeline-menu-button svg {
-  transition: transform ease 0.4s;
-}
-
-.pipeline-menu-button--inverse svg {
-  transform: rotate(-180deg);
-}
-
-.pipeline-minimap-toolbar {
-  margin-top: auto;
 }

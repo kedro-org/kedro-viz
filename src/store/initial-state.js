@@ -62,8 +62,11 @@ export const createInitialState = () => ({
     exportBtn: true,
     exportModal: false,
     sidebar: true,
-    themeBtn: true
-  }
+    themeBtn: true,
+    miniMapBtn: true,
+    miniMap: true
+  },
+  zoom: {}
 });
 
 /**

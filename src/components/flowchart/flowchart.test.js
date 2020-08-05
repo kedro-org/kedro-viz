@@ -63,6 +63,7 @@ describe('FlowChart', () => {
     const expectedResult = {
       centralNode: null,
       chartSize: expect.any(Object),
+      chartZoom: expect.any(Object),
       edges: expect.any(Array),
       graphSize: expect.any(Object),
       layers: expect.any(Array),
@@ -72,8 +73,7 @@ describe('FlowChart', () => {
       nodes: expect.any(Array),
       textLabels: expect.any(Boolean),
       visibleLayers: expect.any(Boolean),
-      visibleSidebar: expect.any(Boolean),
-      zoom: expect.any(Object)
+      visibleSidebar: expect.any(Boolean)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });

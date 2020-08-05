@@ -117,6 +117,19 @@ export function updateChartSize(chartSize) {
   };
 }
 
+export const UPDATE_ZOOM = 'UPDATE_ZOOM';
+
+/**
+ * Store the zoom
+ * @param {Object} zoom The zoom transform
+ */
+export function updateZoom(zoom) {
+  return {
+    type: UPDATE_ZOOM,
+    zoom
+  };
+}
+
 export const UPDATE_FONT_LOADED = 'UPDATE_FONT_LOADED';
 
 /**
@@ -127,6 +140,19 @@ export function updateFontLoaded(fontLoaded) {
   return {
     type: UPDATE_FONT_LOADED,
     fontLoaded
+  };
+}
+
+export const TOGGLE_MINIMAP = 'TOGGLE_MINIMAP';
+
+/**
+ * Toggle mini map
+ * @param {string} visible Visibility status
+ */
+export function toggleMiniMap(visible) {
+  return {
+    type: TOGGLE_MINIMAP,
+    visible
   };
 }
 
