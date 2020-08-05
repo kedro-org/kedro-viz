@@ -67,9 +67,9 @@ _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
 _DEFAULT_KEY = "__default__"
 
-_DATA = None  # type: Dict[str, Dict[str, Union[pipeline_node, AbstractDataSet]]]
+_DATA = None  # type: Dict
 _CATALOG = None  # type: DataCatalog
-_NODES = {}
+_NODES = {}  # type: Dict[str, Dict[str, Union[pipeline_node, AbstractDataSet]]]
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
