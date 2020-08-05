@@ -67,7 +67,7 @@ _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
 _DEFAULT_KEY = "__default__"
 
-_DATA = None  # type: Dict[int, Dict[str, Union[Node, AbstractDataSet]]]
+_DATA = None  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet]]]
 _CATALOG = None  # type: DataCatalog
 _NODES = {}
 
