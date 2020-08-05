@@ -67,8 +67,8 @@ _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 _DEFAULT_KEY = "__default__"
 
 _DATA = None
-_PIPELINES = None
 _CATALOG = None
+_NODES = {}
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -422,6 +422,7 @@ def format_pipeline_data(
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
         tags.update(node.tags)
+        _NODES[task_id] = {"type": "task", "obj": node}
         if task_id not in nodes:
             nodes[task_id] = {
                 "type": "task",
@@ -459,6 +460,11 @@ def format_pipeline_data(
     for namespace, tag_names in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
+        if not is_param and _CATALOG.exists(namespace):
+            # pylint: disable=protected-access
+            dataset = _CATALOG._get_dataset(namespace)
+            _NODES[node_id] = {"type": "data", "obj": dataset}
+
         if node_id not in nodes:
             nodes[node_id] = {
                 "type": "parameters" if is_param else "data",
@@ -483,55 +489,32 @@ def nodes_json():
 @app.route("/api/nodes/<string:node_id>")
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
-    if _PIPELINES:
-        for pipeline in _PIPELINES.values():
-            for node in sorted(pipeline.nodes, key=lambda n: n.name):
-                task_id = _hash(str(node))
-                if node_id == task_id:
-                    metadata = {
-                        # pylint: disable=protected-access
-                        "code": inspect.getsource(node._func),
-                        # pylint: disable=protected-access
-                        "code_location": str(
-                            Path(inspect.getfile(node._func)).expanduser().resolve()
-                        ),
-                    }
-                    # pylint: disable=protected-access
-                    docstring = inspect.getdoc(node._func)
-                    if docstring:
-                        metadata.update({"docstring": docstring})
-                    return jsonify(metadata)
-
-                for dataset_name in node.inputs:
-                    namespace = dataset_name.split("@")[0]
-                    if _is_id_dataset(node_id, namespace):
-                        metadata = _get_dataset_metadata(namespace)
-                        return jsonify(metadata)
-
-                for dataset_name in node.outputs:
-                    namespace = dataset_name.split("@")[0]
-                    if _is_id_dataset(node_id, namespace):
-                        metadata = _get_dataset_metadata(namespace)
-                        return jsonify(metadata)
+    node = _NODES.get(node_id)
+    if node and node.get("type") == "task":
+        task_metadata = {
+            # pylint: disable=protected-access
+            "code": inspect.getsource(node["obj"]._func),
+            # pylint: disable=protected-access
+            "code_location": str(
+                Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
+            ),
+        }
+        # pylint: disable=protected-access
+        docstring = inspect.getdoc(node["obj"]._func)
+        if docstring:
+            task_metadata.update({"docstring": docstring})
+        return jsonify(task_metadata)
+    if node and node.get("type") == "data":
+        dataset = node["obj"]
+        dataset_metadata = {
+            "dataset_type": dataset.__module__,
+            # pylint: disable=protected-access
+            "dataset_location": str(dataset._describe().get("filepath")),
+        }
+        return jsonify(dataset_metadata)
 
     # If type is params or invalid node_id, return an empty JSON.
     return jsonify({})
-
-
-def _is_id_dataset(node_id, namespace):
-    is_param = bool("param" in namespace.lower())
-    dataset_id = _hash(namespace)
-    return not is_param and node_id == dataset_id and _CATALOG.exists(namespace)
-
-
-def _get_dataset_metadata(namespace):
-    dataset = _CATALOG._get_dataset(namespace)  # pylint: disable=protected-access
-    metadata = {
-        "dataset_type": dataset.__module__,
-        # pylint: disable=protected-access
-        "dataset_location": str(dataset._describe().get("filepath")),
-    }
-    return metadata
 
 
 @click.group(name="Kedro-Viz")
@@ -610,7 +593,6 @@ def _call_viz(
     project_path=None,
 ):
     global _DATA  # pylint: disable=global-statement,invalid-name
-    global _PIPELINES  # pylint: disable=global-statement
     global _CATALOG  # pylint: disable=global-statement
 
     if load_file:
@@ -636,7 +618,7 @@ def _call_viz(
                     )
                 else:
                     context = get_project_context("context", env=env)
-                _PIPELINES = _get_pipelines_from_context(context, pipeline_name)
+                pipelines = _get_pipelines_from_context(context, pipeline_name)
             except KedroContextError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
             _CATALOG = context.catalog
@@ -645,9 +627,9 @@ def _call_viz(
             # Kedro 0.14.*
             if pipeline_name:
                 raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
-            _PIPELINES, _CATALOG = _get_pipeline_catalog_from_kedro14(env)
+            pipelines, _CATALOG = _get_pipeline_catalog_from_kedro14(env)
 
-        _DATA = format_pipelines_data(_PIPELINES, _CATALOG)
+        _DATA = format_pipelines_data(pipelines, _CATALOG)
 
     if save_file:
         Path(save_file).write_text(json.dumps(_DATA, indent=4, sort_keys=True))
