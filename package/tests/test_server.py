@@ -301,7 +301,7 @@ def test_node_metadata_endpoint_task_missing_docstring(cli_runner, client):
         Path(inspect.getfile(func)).expanduser().resolve()
     )
 
-    assert not "docstring" in data
+    assert "docstring" not in data
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
