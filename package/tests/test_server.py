@@ -338,7 +338,7 @@ def test_no_load_file(cli_runner):
 
 
 def test_root_endpoint(client):
-    """Test `/` endoint is functional."""
+    """Test `/` endpoint is functional."""
     response = client.get("/")
     assert response.status_code == 200
     assert "Kedro Viz" in response.data.decode()
@@ -346,12 +346,36 @@ def test_root_endpoint(client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_nodes_endpoint(cli_runner, client):
-    """Test `/api/nodes.json` endoint is functional and returns a valid JSON."""
+    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == EXPECTED_PIPELINE_DATA
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_task(cli_runner, client):
+    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
+    pass
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_data(cli_runner, client):
+    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
+    pass
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_params(cli_runner, client):
+    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
+    pass
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_invalid(cli_runner, client):
+    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
+    pass
 
 
 @pytest.mark.usefixtures("patched_get_project_context")

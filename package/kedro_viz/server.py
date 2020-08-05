@@ -492,11 +492,15 @@ def nodes_metadata(node_id):
                         # pylint: disable=protected-access
                         "code": inspect.getsource(node._func),
                         # pylint: disable=protected-access
-                        "docstring": inspect.getdoc(node._func),
-                        # pylint: disable=protected-access
-                        "code_location": inspect.getfile(node._func),
+                        "code_location": str(
+                            Path(inspect.getfile(node._func)).expanduser().resolve()
+                        ),
                     }
+                    # pylint: disable=protected-access
+                    docstring = inspect.getdoc(node._func)
+                    metadata.update({"docstring": docstring})
                     return jsonify(metadata)
+
                 # dataset API
                 for dataset_name in node.inputs:
                     namespace = dataset_name.split("@")[0]
@@ -517,9 +521,9 @@ def nodes_metadata(node_id):
 def _get_dataset_metadata(namespace):
     dataset = _CATALOG._get_dataset(namespace)  # pylint: disable=protected-access
     metadata = {
-        "dataset_type": dataset.__class__.__name__,
+        "dataset_type": dataset.__module__,
         # pylint: disable=protected-access
-        "dataset_location": str(dataset._describe()["filepath"]),
+        "dataset_location": str(dataset._describe().get("filepath")),
     }
     return metadata
 
