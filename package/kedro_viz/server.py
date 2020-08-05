@@ -39,13 +39,15 @@ from collections import defaultdict
 from contextlib import closing
 from functools import partial
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Union
 
 import click
 import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
+from kedro.io import AbstractDataSet, DataCatalog
+from kedro.pipeline import Node
 from semver import VersionInfo
 from toposort import toposort_flatten
 
@@ -58,7 +60,6 @@ if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli.utils import KedroCliError
 else:
     from kedro.cli import get_project_context  # pragma: no cover
-
     from kedro.cli.utils import KedroCliError  # pragma: no cover
 
 
@@ -66,8 +67,8 @@ _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
 _DEFAULT_KEY = "__default__"
 
-_DATA = None
-_CATALOG = None
+_DATA = None  # type: Dict[int, Dict[str, Union[Node, AbstractDataSet]]]
+_CATALOG = None  # type: DataCatalog
 _NODES = {}
 
 app = Flask(  # pylint: disable=invalid-name
