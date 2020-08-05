@@ -34,7 +34,7 @@ import json
 import re
 from functools import partial
 from pathlib import Path
-
+import inspect
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, MemoryDataSet
@@ -150,13 +150,15 @@ EXPECTED_PIPELINE_DATA = {
 
 
 def func1(a, b):  # pylint: disable=unused-argument
+    """Docstring of func1."""
+    return a
+
+
+def func(a, b):  # pylint: disable=unused-argument
     return a
 
 
 def get_pipelines():
-    def func(a, b):  # pylint: disable=unused-argument
-        return a
-
     return {
         "__default__": create_pipeline(),
         "second": Pipeline(
@@ -206,14 +208,25 @@ def start_server(mocker):
 
 
 @pytest.fixture
-def patched_get_project_context(mocker):
+def patched_get_project_context(mocker, tmp_path):
+    class DummyCatalog:
+        def _describe(self):
+            return {"filepath": str(tmp_path)}
+
+        def _get_dataset(self, data_set_name):
+            return PickleDataSet(filepath=str(tmp_path))
+
+        def exists(self, name):
+            dataset = self._get_dataset(name)
+            return dataset.exists()
+
     def get_project_context(
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
     ):  # pylint: disable=unused-argument
         mocked_context = mocker.Mock()
         mocked_context.pipelines = get_pipelines()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
-        mocked_context.catalog = mocker.MagicMock()
+        mocked_context.catalog = DummyCatalog()
         mocked_context.pipeline = create_pipeline()
         return {
             "create_pipeline": create_pipeline,
@@ -356,25 +369,41 @@ def test_nodes_endpoint(cli_runner, client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_task(cli_runner, client):
-    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
-    pass
+    """Test `/nodes/task_id` endpoint is functional and returns a valid JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    task_id = "01a6a5cb"
+    response = client.get(f"/nodes/{task_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data["code"] == inspect.getsource(func1)
+    assert data["code_location"] == str(
+        Path(inspect.getfile(func1)).expanduser().resolve()
+    )
+    assert data["docstring"] == inspect.getdoc(func1)
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
-def test_node_metadata_endpoint_data(cli_runner, client):
-    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
-    pass
+def test_node_metadata_endpoint_data(cli_runner, client, tmp_path):
+    """Test `/nodes/task_id` endpoint is functional and returns a valid JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    data_id = "7366ec9f"
+    response = client.get(f"/nodes/{data_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+
+    assert data["dataset_location"] == str(tmp_path)
+    assert data["dataset_type"] == PickleDataSet.__module__
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_params(cli_runner, client):
-    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
+    """Test `/nodes/param_id` endpoint is functional and returns a valid JSON."""
     pass
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_invalid(cli_runner, client):
-    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
+    """Test `/nodes/invalid_id` endpoint returns an empty JSON."""
     pass
 
 
