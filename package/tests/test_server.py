@@ -288,6 +288,23 @@ def test_node_metadata_endpoint_task(cli_runner, client):
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_task_missing_docstring(cli_runner, client):
+    """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON,
+    but docstring is missing."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    task_id = "760f5b5e"
+    response = client.get(f"/api/nodes/{task_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data["code"] == inspect.getsource(func)
+    assert data["code_location"] == str(
+        Path(inspect.getfile(func)).expanduser().resolve()
+    )
+
+    assert not "docstring" in data
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])

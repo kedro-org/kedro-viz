@@ -504,24 +504,24 @@ def nodes_metadata(node_id):
 
                 for dataset_name in node.inputs:
                     namespace = dataset_name.split("@")[0]
-                    if _is_dataset_metadata(node_id, namespace):
+                    if _is_id_dataset(node_id, namespace):
                         metadata = _get_dataset_metadata(namespace)
                         return jsonify(metadata)
 
                 for dataset_name in node.outputs:
                     namespace = dataset_name.split("@")[0]
-                    if _is_dataset_metadata(node_id, namespace):
+                    if _is_id_dataset(node_id, namespace):
                         metadata = _get_dataset_metadata(namespace)
                         return jsonify(metadata)
 
-    # If type is params or invalid node_id, returns an empty json
+    # If type is params or invalid node_id, return an empty JSON.
     return jsonify({})
 
 
-def _is_dataset_metadata(node_id, namespace):
+def _is_id_dataset(node_id, namespace):
     is_param = bool("param" in namespace.lower())
     dataset_id = _hash(namespace)
-    return node_id == dataset_id and not is_param and _CATALOG.exists(namespace)
+    return not is_param and node_id == dataset_id and _CATALOG.exists(namespace)
 
 
 def _get_dataset_metadata(namespace):
