@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import TagList from '../tag-list';
 import NodeList from '../node-list';
 import IconToolbar from '../icon-toolbar';
 import './sidebar.css';
@@ -17,7 +16,6 @@ export const Sidebar = ({ visible }) => (
         'pipeline-sidebar--visible': visible
       })}>
       <div className="pipeline-ui">
-        <TagList />
         <NodeList />
       </div>
       <IconToolbar />

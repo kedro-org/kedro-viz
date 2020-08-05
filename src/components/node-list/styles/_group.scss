@@ -36,6 +36,10 @@
 
 .pipeline-nodelist__heading {
   margin: 0;
+
+  .pipeline-nodelist__row__label {
+    font-weight: bold;
+  }
 }
 
 .pipeline-type-group-toggle {
@@ -65,8 +69,13 @@
   }
 
   &:before {
+    color: #879197;
     font-size: 1.5em;
     content: '▾';
+  }
+
+  &:hover:before {
+    color: #ffffff;
   }
 
   &:hover {

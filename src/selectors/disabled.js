@@ -34,18 +34,15 @@ export const getNodeDisabledPipeline = createSelector(
  * Calculate whether nodes should be disabled based on their tags
  */
 export const getNodeDisabledTag = createSelector(
-  [getNodeIDs, getTagEnabled, getTagCount, getNodeTags],
-  (nodeIDs, tagEnabled, tagCount, nodeTags) =>
-    arrayToObject(nodeIDs, nodeID => {
-      if (tagCount.enabled === 0) {
-        return false;
-      }
-      if (nodeTags[nodeID].length) {
-        // Hide task nodes that don't have at least one tag filter enabled
-        return !nodeTags[nodeID].some(tag => tagEnabled[tag]);
-      }
-      return true;
-    })
+  [getNodeIDs, getTagEnabled, getNodeTags],
+  (nodeIDs, tagEnabled, nodeTags) => {
+    return arrayToObject(
+      nodeIDs,
+      nodeID =>
+        nodeTags[nodeID].length > 0 &&
+        nodeTags[nodeID].every(tag => tagEnabled[tag] === false)
+    );
+  }
 );
 
 /**

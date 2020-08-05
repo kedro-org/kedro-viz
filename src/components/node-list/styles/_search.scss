@@ -1,8 +1,76 @@
 .pipeline-nodelist-search {
-  padding: $sidebar-padding;
+  position: relative;
+  z-index: 1;
+  padding: 0 $sidebar-padding 6px $sidebar-padding;
+  box-shadow: 0 10px 20px #f0f1f3;
+
+  .kui-theme--dark & {
+    box-shadow: 0 10px 20px #051d27;
+  }
 
   .kui-searchbar,
   .kui-input-wrapper {
     max-width: none;
+  }
+
+  .kui-searchbar .kui-icon {
+    opacity: 1;
+  }
+
+  .kui-theme--light & .kui-searchbar .kui-icon svg {
+    fill: #8e979c;
+  }
+
+  .kui-searchbar.kui-searchbar--focused .kui-icon svg {
+    fill: #c8c8c8;
+  }
+
+  .kui-input {
+    padding: 8px 0 0 0;
+  }
+
+  .kui-input:active:not(.kui-input--disabled),
+  .kui-input:hover:not([disabled]),
+  .kui-input,
+  .kui-input--focused,
+  .kui-input__field {
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  .kui-input__field::placeholder {
+    color: #8e979c;
+    opacity: 1;
+  }
+
+  .kui-input__field:hover::placeholder {
+    color: #d4d4d4;
+    opacity: 1;
+  }
+
+  .kui-input__field:focus::placeholder {
+    color: #fff;
+    opacity: 1;
+  }
+
+  .kui-input__field {
+    margin: 0 0 2px 34px;
+    font-size: 1.65em;
+  }
+
+  .kui-searchbar__iconwrapper .kui-icon {
+    top: 19px;
+    left: 1px;
+  }
+
+  .kui-input__line:before {
+    flex: 1;
+    max-width: none;
+    background-color: #838d92;
+  }
+
+  .kui-input__line:after {
+    display: none;
   }
 }

@@ -47,11 +47,11 @@ const NodeListGroups = ({
   };
 
   // Toggle node selection depending on whether it's already selected
-  const handleNodeSelection = nodeID => {
-    if (nodeSelected[nodeID]) {
+  const handleNodeSelection = node => {
+    if (nodeSelected[node.id]) {
       onToggleNodeClicked(null);
     } else {
-      onToggleNodeClicked(nodeID);
+      onToggleNodeClicked(node.id);
     }
   };
 
@@ -64,6 +64,7 @@ const NodeListGroups = ({
         key={type.id}
         onToggleCollapsed={onToggleCollapsed}
         type={type}
+        childCount={nodes[type.id].length}
         collapsed={collapsed[type.id]}>
         <ul className="pipeline-nodelist pipeline-nodelist--nested">
           {nodes[type.id].map(node => (
@@ -75,10 +76,36 @@ const NodeListGroups = ({
                 id={node.id}
                 label={node.highlightedLabel}
                 name={node.name}
-                onClick={() => handleNodeSelection(node.id)}
-                onMouseEnter={() => onToggleNodeHovered(node.id)}
-                onMouseLeave={() => onToggleNodeHovered(null)}
+                onClick={() => {
+                  if (node.onClick) {
+                    node.onClick(node);
+                    return;
+                  }
+
+                  handleNodeSelection(node);
+                }}
+                onMouseEnter={() => {
+                  if (node.onMouseEnter) {
+                    node.onMouseEnter(node);
+                    return;
+                  }
+
+                  onToggleNodeHovered(node.id);
+                }}
+                onMouseLeave={() => {
+                  if (node.onMouseLeave) {
+                    node.onMouseLeave(node);
+                    return;
+                  }
+
+                  onToggleNodeHovered(null);
+                }}
                 onChange={e => {
+                  if (node.onChange) {
+                    node.onChange(node, !e.target.checked);
+                    return;
+                  }
+
                   onToggleNodesDisabled([node.id], !e.target.checked);
                 }}
                 selected={nodeSelected[node.id]}

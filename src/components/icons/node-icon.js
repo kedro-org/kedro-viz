@@ -13,6 +13,11 @@ export const paths = {
   parameters: [
     'M8 14v1.5h13v2H8V19H6v-1.5H4v-2h2V14z',
     'M18.5 5v1.5H21v2h-2.5V10h-2V8.5H4v-2h12.5V5z'
+  ],
+  // tag icon
+  tag: [
+    'M8 14v1.5h13v2H8V19H6v-1.5H4v-2h2V14z',
+    'M18.5 5v1.5H21v2h-2.5V10h-2V8.5H4v-2h12.5V5z'
   ]
 };
 

@@ -26,6 +26,7 @@ export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
         onChange={onUpdateSearchValue}
         value={searchValue}
         theme={theme}
+        placeholder={'Search'}
       />
     </div>
   );

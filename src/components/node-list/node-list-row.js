@@ -38,7 +38,7 @@ const NodeListRow = ({
         onClick={onClick}
         onFocus={onMouseEnter}
         onBlur={onMouseLeave}
-        disabled={!visible}
+        disabled={disabled}
         title={children ? null : name}>
         <NodeIcon
           className={classnames(

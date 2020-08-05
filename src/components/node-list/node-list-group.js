@@ -10,7 +10,8 @@ export const NodeListGroup = ({
   collapsed,
   onToggleTypeDisabled,
   onToggleCollapsed,
-  type
+  type,
+  childCount
 }) => (
   <Flipped flipId={type.id}>
     <li>
@@ -20,9 +21,7 @@ export const NodeListGroup = ({
             <NodeListRow
               checked={!type.disabled}
               id={type.id}
-              label={`${type.name} <i>(${type.nodeCount.visible}/${
-                type.nodeCount.total
-              })</i>`}
+              label={`${type.name} <i>${childCount}</i>`}
               name={type.name}
               onChange={e => {
                 onToggleTypeDisabled(type.id, !e.target.checked);
