@@ -498,23 +498,36 @@ def nodes_metadata(node_id):
                     }
                     # pylint: disable=protected-access
                     docstring = inspect.getdoc(node._func)
-                    metadata.update({"docstring": docstring})
+                    if docstring:
+                        metadata.update({"docstring": docstring})
                     return jsonify(metadata)
 
                 # dataset API
                 for dataset_name in node.inputs:
                     namespace = dataset_name.split("@")[0]
+                    is_param = bool("param" in namespace.lower())
                     dataset_id = _hash(namespace)
-                    if node_id == dataset_id and _CATALOG.exists(namespace):
+                    if (
+                        node_id == dataset_id
+                        and not is_param
+                        and _CATALOG.exists(namespace)
+                    ):
                         metadata = _get_dataset_metadata(namespace)
                         return jsonify(metadata)
 
                 for dataset_name in node.outputs:
                     namespace = dataset_name.split("@")[0]
+                    is_param = bool("param" in namespace.lower())
                     dataset_id = _hash(namespace)
-                    if node_id == dataset_id and _CATALOG.exists(namespace):
+                    if (
+                        node_id == dataset_id
+                        and not is_param
+                        and _CATALOG.exists(namespace)
+                    ):
                         metadata = _get_dataset_metadata(namespace)
                         return jsonify(metadata)
+
+    # If type is params or invalid node_id, returns an empty json
     return jsonify({})
 
 

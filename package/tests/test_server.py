@@ -30,11 +30,12 @@
 Tests for Kedro-Viz server
 """
 
+import inspect
 import json
 import re
 from functools import partial
 from pathlib import Path
-import inspect
+
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, MemoryDataSet
@@ -46,107 +47,8 @@ from kedro_viz import server
 from kedro_viz.server import _allocate_port, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
 
-EXPECTED_PIPELINE_DATA = {
-    "edges": [
-        {"source": "7366ec9f", "target": "01a6a5cb"},
-        {"source": "f1f1425b", "target": "01a6a5cb"},
-        {"source": "01a6a5cb", "target": "60e68b8e"},
-        {"source": "afffac5f", "target": "de8434b7"},
-        {"source": "f1f1425b", "target": "de8434b7"},
-        {"source": "de8434b7", "target": "37316e3a"},
-        {"source": "7366ec9f", "target": "760f5b5e"},
-        {"source": "f1f1425b", "target": "760f5b5e"},
-        {"source": "760f5b5e", "target": "60e68b8e"},
-        {"source": "60e68b8e", "target": "24d754e7"},
-        {"source": "f1f1425b", "target": "24d754e7"},
-    ],
-    "layers": [],
-    "nodes": [
-        {
-            "full_name": "func1",
-            "id": "01a6a5cb",
-            "name": "Func1",
-            "pipelines": ["__default__", "third"],
-            "tags": [],
-            "type": "task",
-        },
-        {
-            "full_name": "func2",
-            "id": "de8434b7",
-            "name": "my_node",
-            "pipelines": ["__default__"],
-            "tags": ["bob"],
-            "type": "task",
-        },
-        {
-            "full_name": "bob_in",
-            "id": "7366ec9f",
-            "layer": None,
-            "name": "Bob In",
-            "pipelines": ["__default__", "second", "third"],
-            "tags": [],
-            "type": "data",
-        },
-        {
-            "full_name": "bob_out",
-            "id": "60e68b8e",
-            "layer": None,
-            "name": "Bob Out",
-            "pipelines": ["__default__", "second", "third"],
-            "tags": [],
-            "type": "data",
-        },
-        {
-            "full_name": "fred_in",
-            "id": "afffac5f",
-            "layer": None,
-            "name": "Fred In",
-            "pipelines": ["__default__"],
-            "tags": ["bob"],
-            "type": "data",
-        },
-        {
-            "full_name": "fred_out",
-            "id": "37316e3a",
-            "layer": None,
-            "name": "Fred Out",
-            "pipelines": ["__default__"],
-            "tags": ["bob"],
-            "type": "data",
-        },
-        {
-            "full_name": "parameters",
-            "id": "f1f1425b",
-            "layer": None,
-            "name": "Parameters",
-            "pipelines": ["__default__", "second", "third"],
-            "tags": ["bob"],
-            "type": "parameters",
-        },
-        {
-            "full_name": "func",
-            "id": "760f5b5e",
-            "name": "Func",
-            "pipelines": ["second"],
-            "tags": [],
-            "type": "task",
-        },
-        {
-            "full_name": "func1",
-            "id": "24d754e7",
-            "name": "Func1",
-            "pipelines": ["second"],
-            "tags": [],
-            "type": "task",
-        },
-    ],
-    "pipelines": [
-        {"id": "__default__", "name": "Default"},
-        {"id": "second", "name": "Second"},
-        {"id": "third", "name": "Third"},
-    ],
-    "tags": [{"id": "bob", "name": "Bob"}],
-}
+input_json_path = Path(__file__).parent / "input.json"
+EXPECTED_PIPELINE_DATA = json.loads(input_json_path.read_text())
 
 
 def func1(a, b):  # pylint: disable=unused-argument
@@ -209,11 +111,14 @@ def start_server(mocker):
 
 @pytest.fixture
 def patched_get_project_context(mocker, tmp_path):
-    class DummyCatalog:
+    class DummyDataCatalog:
+        def __init__(self):
+            self._data_sets = {}
+
         def _describe(self):
             return {"filepath": str(tmp_path)}
 
-        def _get_dataset(self, data_set_name):
+        def _get_dataset(self, data_set_name):  # pylint: disable=unused-argument
             return PickleDataSet(filepath=str(tmp_path))
 
         def exists(self, name):
@@ -226,7 +131,7 @@ def patched_get_project_context(mocker, tmp_path):
         mocked_context = mocker.Mock()
         mocked_context.pipelines = get_pipelines()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
-        mocked_context.catalog = DummyCatalog()
+        mocked_context.catalog = DummyDataCatalog()
         mocked_context.pipeline = create_pipeline()
         return {
             "create_pipeline": create_pipeline,
@@ -383,11 +288,24 @@ def test_node_metadata_endpoint_task(cli_runner, client):
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
-def test_node_metadata_endpoint_data(cli_runner, client, tmp_path):
-    """Test `/nodes/task_id` endpoint is functional and returns a valid JSON."""
+def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
+    """Test `/nodes/data_id` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    data_id = "7366ec9f"
-    response = client.get(f"/nodes/{data_id}")
+    input_data_id = "7366ec9f"
+    response = client.get(f"/nodes/{input_data_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+
+    assert data["dataset_location"] == str(tmp_path)
+    assert data["dataset_type"] == PickleDataSet.__module__
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
+    """Test `/nodes/data_id` endpoint is functional and returns a valid JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    output_data_id = "60e68b8e"
+    response = client.get(f"/nodes/{output_data_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
 
@@ -397,14 +315,24 @@ def test_node_metadata_endpoint_data(cli_runner, client, tmp_path):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_params(cli_runner, client):
-    """Test `/nodes/param_id` endpoint is functional and returns a valid JSON."""
-    pass
+    """Test `/nodes/param_id` endpoint is functional and returns an empty JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    param_id = "f1f1425b"
+    response = client.get(f"/nodes/{param_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert not data
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_invalid(cli_runner, client):
     """Test `/nodes/invalid_id` endpoint returns an empty JSON."""
-    pass
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    param_id = "invalid"
+    response = client.get(f"/nodes/{param_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert not data
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
