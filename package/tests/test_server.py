@@ -300,7 +300,6 @@ def test_node_metadata_endpoint_task_missing_docstring(cli_runner, client):
     assert data["code_location"] == str(
         Path(inspect.getfile(func)).expanduser().resolve()
     )
-
     assert "docstring" not in data
 
 
@@ -312,7 +311,6 @@ def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     response = client.get(f"/api/nodes/{input_data_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-
     assert data["dataset_location"] == str(tmp_path)
     assert data["dataset_type"] == PickleDataSet.__module__
 
@@ -325,7 +323,6 @@ def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
     response = client.get(f"/api/nodes/{output_data_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-
     assert data["dataset_location"] == str(tmp_path)
     assert data["dataset_type"] == PickleDataSet.__module__
 
