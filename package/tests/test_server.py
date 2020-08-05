@@ -274,10 +274,10 @@ def test_nodes_endpoint(cli_runner, client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_task(cli_runner, client):
-    """Test `/nodes/task_id` endpoint is functional and returns a valid JSON."""
+    """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     task_id = "01a6a5cb"
-    response = client.get(f"/nodes/{task_id}")
+    response = client.get(f"/api/nodes/{task_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["code"] == inspect.getsource(func1)
@@ -289,10 +289,10 @@ def test_node_metadata_endpoint_task(cli_runner, client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
-    """Test `/nodes/data_id` endpoint is functional and returns a valid JSON."""
+    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     input_data_id = "7366ec9f"
-    response = client.get(f"/nodes/{input_data_id}")
+    response = client.get(f"/api/nodes/{input_data_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
 
@@ -302,10 +302,10 @@ def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
-    """Test `/nodes/data_id` endpoint is functional and returns a valid JSON."""
+    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     output_data_id = "60e68b8e"
-    response = client.get(f"/nodes/{output_data_id}")
+    response = client.get(f"/api/nodes/{output_data_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
 
@@ -315,10 +315,10 @@ def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_params(cli_runner, client):
-    """Test `/nodes/param_id` endpoint is functional and returns an empty JSON."""
+    """Test `/api/nodes/param_id` endpoint is functional and returns an empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     param_id = "f1f1425b"
-    response = client.get(f"/nodes/{param_id}")
+    response = client.get(f"/api/nodes/{param_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert not data
@@ -326,10 +326,10 @@ def test_node_metadata_endpoint_params(cli_runner, client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_invalid(cli_runner, client):
-    """Test `/nodes/invalid_id` endpoint returns an empty JSON."""
+    """Test `/api/nodes/invalid_id` endpoint returns an empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     param_id = "invalid"
-    response = client.get(f"/nodes/{param_id}")
+    response = client.get(f"/api/nodes/{param_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert not data

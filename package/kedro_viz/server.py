@@ -480,7 +480,7 @@ def nodes_json():
     return jsonify(_DATA)
 
 
-@app.route("/nodes/<string:node_id>")
+@app.route("/api/nodes/<string:node_id>")
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
     if _PIPELINES:
@@ -502,33 +502,26 @@ def nodes_metadata(node_id):
                         metadata.update({"docstring": docstring})
                     return jsonify(metadata)
 
-                # dataset API
                 for dataset_name in node.inputs:
                     namespace = dataset_name.split("@")[0]
-                    is_param = bool("param" in namespace.lower())
-                    dataset_id = _hash(namespace)
-                    if (
-                        node_id == dataset_id
-                        and not is_param
-                        and _CATALOG.exists(namespace)
-                    ):
+                    if _is_dataset_metadata(node_id, namespace):
                         metadata = _get_dataset_metadata(namespace)
                         return jsonify(metadata)
 
                 for dataset_name in node.outputs:
                     namespace = dataset_name.split("@")[0]
-                    is_param = bool("param" in namespace.lower())
-                    dataset_id = _hash(namespace)
-                    if (
-                        node_id == dataset_id
-                        and not is_param
-                        and _CATALOG.exists(namespace)
-                    ):
+                    if _is_dataset_metadata(node_id, namespace):
                         metadata = _get_dataset_metadata(namespace)
                         return jsonify(metadata)
 
     # If type is params or invalid node_id, returns an empty json
     return jsonify({})
+
+
+def _is_dataset_metadata(node_id, namespace):
+    is_param = bool("param" in namespace.lower())
+    dataset_id = _hash(namespace)
+    return node_id == dataset_id and not is_param and _CATALOG.exists(namespace)
 
 
 def _get_dataset_metadata(namespace):
