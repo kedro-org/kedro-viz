@@ -46,8 +46,8 @@ import kedro
 import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-from kedro.io import AbstractDataSet, DataCatalog
-from kedro.pipeline import Node
+from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
+from kedro.pipeline import node as pipeline_node  # pylint: disable=unused-import
 from semver import VersionInfo
 from toposort import toposort_flatten
 
@@ -67,7 +67,7 @@ _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
 _DEFAULT_KEY = "__default__"
 
-_DATA = None  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet]]]
+_DATA = None  # type: Dict[str, Dict[str, Union[pipeline_node, AbstractDataSet]]]
 _CATALOG = None  # type: DataCatalog
 _NODES = {}
 
@@ -333,13 +333,12 @@ def _pretty_name(name: str) -> str:
     return " ".join(parts)
 
 
-def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str, list]:
+def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
     """
     Format pipelines and catalog data from Kedro for kedro-viz.
 
     Args:
         pipelines: Dictionary of Kedro pipeline objects.
-        catalog: Kedro catalog object.
 
     Returns:
         Dictionary of pipelines, nodes, edges, tags and layers, and pipelines list.
@@ -361,7 +360,6 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
         format_pipeline_data(
             pipeline_key,
             pipeline,
-            catalog,
             nodes,
             node_dependencies,
             tags,
@@ -393,7 +391,6 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
 def format_pipeline_data(
     pipeline_key: str,
     pipeline: "Pipeline",  # noqa: F821
-    catalog: "DataCatalog",  # noqa: F821
     nodes: Dict[str, dict],
     node_dependencies: Dict[str, dict],
     tags: Set[str],
@@ -405,7 +402,6 @@ def format_pipeline_data(
     Args:
         pipeline_key: key value of a pipeline object (e.g "__default__").
         pipeline: Kedro pipeline object.
-        catalog:  Kedro catalog object.
         nodes: Dictionary of id and node dict.
         node_dependencies: Dictionary of id and node dependencies.
         edges_list: List of all edges.
@@ -417,7 +413,7 @@ def format_pipeline_data(
     # keep track of {data_set_namespace -> layer it belongs to}
     namespace_to_layer = {}
 
-    dataset_to_layer = _construct_layer_mapping(catalog)
+    dataset_to_layer = _construct_layer_mapping(_CATALOG)
 
     # Nodes and edges
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
@@ -461,10 +457,13 @@ def format_pipeline_data(
     for namespace, tag_names in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
-        if not is_param and _CATALOG.exists(namespace):
-            # pylint: disable=protected-access
-            dataset = _CATALOG._get_dataset(namespace)
-            _NODES[node_id] = {"type": "data", "obj": dataset}
+        if not is_param:
+            try:
+                # pylint: disable=protected-access
+                dataset = _CATALOG._get_dataset(namespace)
+                _NODES[node_id] = {"type": "data", "obj": dataset}
+            except DataSetNotFoundError:
+                pass
 
         if node_id not in nodes:
             nodes[node_id] = {
@@ -500,6 +499,7 @@ def nodes_metadata(node_id):
                 Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
             ),
         }
+
         # pylint: disable=protected-access
         docstring = inspect.getdoc(node["obj"]._func)
         if docstring:
@@ -630,7 +630,7 @@ def _call_viz(
                 raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
             pipelines, _CATALOG = _get_pipeline_catalog_from_kedro14(env)
 
-        _DATA = format_pipelines_data(pipelines, _CATALOG)
+        _DATA = format_pipelines_data(pipelines)
 
     if save_file:
         Path(save_file).write_text(json.dumps(_DATA, indent=4, sort_keys=True))

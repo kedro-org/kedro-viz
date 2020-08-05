@@ -751,23 +751,26 @@ def new_catalog_with_layers():
     return catalog
 
 
-def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers):
-    result = format_pipelines_data(pipeline, old_catalog_with_layers)
+def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers, mocker):
+    mocker.patch("kedro_viz.server._CATALOG", old_catalog_with_layers)
+    result = format_pipelines_data(pipeline)
     result_file_path = Path(__file__).parent / "result.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
 
-def test_format_pipelines_data(pipeline, new_catalog_with_layers):
-    result = format_pipelines_data(pipeline, new_catalog_with_layers)
+def test_format_pipelines_data(pipeline, new_catalog_with_layers, mocker):
+    mocker.patch("kedro_viz.server._CATALOG", new_catalog_with_layers)
+    result = format_pipelines_data(pipeline)
     result_file_path = Path(__file__).parent / "result.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
 
-def test_format_pipelines_data_no_layers(pipeline, new_catalog_with_layers):
+def test_format_pipelines_data_no_layers(pipeline, new_catalog_with_layers, mocker):
+    mocker.patch("kedro_viz.server._CATALOG", new_catalog_with_layers)
     setattr(new_catalog_with_layers, "layers", None)
-    result = format_pipelines_data(pipeline, new_catalog_with_layers)
+    result = format_pipelines_data(pipeline)
     assert result["layers"] == []
 
 
