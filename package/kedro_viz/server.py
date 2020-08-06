@@ -491,7 +491,7 @@ def nodes_json():
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
     node = _NODES.get(node_id)
-    if node and node["type"] == "task":
+    if node and node.get("type") == "task":
         task_metadata = {"code": inspect.getsource(node["obj"]._func)}
         code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
         code_location = Path(code_full_path).relative_to(Path.cwd().parent)
@@ -500,7 +500,7 @@ def nodes_metadata(node_id):
         if docstring:
             task_metadata["docstring"] = docstring
         return jsonify(task_metadata)
-    if node and node["type"] == "data":
+    if node and node.get("type") == "data":
         dataset = node["obj"]
         dataset_metadata = {
             "dataset_type": dataset.__module__,
