@@ -476,15 +476,11 @@ def _get_dataset_node(node_id, namespace):
     if KEDRO_VERSION.match(">=0.16.0"):
         try:
             dataset = _CATALOG._get_dataset(namespace)
-            _NODES[node_id] = {"type": "data", "obj": dataset}
         except DataSetNotFoundError:
-            _NODES[node_id] = {"type": "data", "obj": None}
+            dataset = None
     else:
         dataset = _CATALOG._data_sets.get(namespace)
-        if dataset:
-            _NODES[node_id] = {"type": "data", "obj": dataset}
-        else:
-            _NODES[node_id] = {"type": "data", "obj": None}
+    _NODES[node_id] = {"type": "data", "obj": dataset}
 
 
 @app.route("/api/nodes.json")
@@ -505,6 +501,7 @@ def nodes_metadata(node_id):
     if node["type"] == "data":
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
+
     # return empty JSON for parameters type
     return jsonify({})
 
