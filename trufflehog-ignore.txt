@@ -1,5 +1,7 @@
 package.json
 package-lock.json
+tools/test-lib/react-app/package.json
+tools/test-lib/react-app/package-lock.json
 RELEASE.md
 README.md
 src/utils/random-utils.js
