@@ -494,7 +494,7 @@ def nodes_metadata(node_id):
     if node and node.get("type") == "task":
         task_metadata = {"code": inspect.getsource(node["obj"]._func)}
         code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
-        code_location = Path(code_full_path).relative_to(Path.cwd().parent)
+        code_location = code_full_path.relative_to(Path.cwd().parent)
         task_metadata["code_location"] = str(code_location)
         docstring = inspect.getdoc(node["obj"]._func)
         if docstring:
