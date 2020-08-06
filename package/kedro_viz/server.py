@@ -504,12 +504,12 @@ def nodes_metadata(node_id):
         # pylint: disable=protected-access
         code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
         code_location = Path(code_full_path).relative_to(Path.cwd().parent)
-        task_metadata.update({"code_location": str(code_location)})
+        task_metadata["code_location"] = str(code_location)
 
         # pylint: disable=protected-access
         docstring = inspect.getdoc(node["obj"]._func)
         if docstring:
-            task_metadata.update({"docstring": docstring})
+            task_metadata["docstring"] = docstring
         return jsonify(task_metadata)
     if node and node.get("type") == "data":
         dataset = node["obj"]
