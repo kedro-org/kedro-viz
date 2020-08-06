@@ -44,7 +44,7 @@ from typing import Dict, List, Set, Tuple, Union
 import click
 import kedro
 import requests
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, abort
 from IPython.core.display import HTML, display
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 from kedro.pipeline.node import Node
@@ -455,7 +455,7 @@ def format_pipeline_data(
         if is_param:
             _NODES[node_id] = {"type": "parameters", "obj": None}
         else:
-            _get_dataset_metadata(node_id, namespace)
+            _get_dataset_node(node_id, namespace)
 
         if node_id not in nodes:
             nodes[node_id] = {
@@ -472,17 +472,19 @@ def format_pipeline_data(
             nodes[node_id]["pipelines"].append(pipeline_key)
 
 
-def _get_dataset_metadata(node_id, namespace):
+def _get_dataset_node(node_id, namespace):
     if KEDRO_VERSION.match(">=0.16.0"):
         try:
             dataset = _CATALOG._get_dataset(namespace)
             _NODES[node_id] = {"type": "data", "obj": dataset}
         except DataSetNotFoundError:
-            pass
+            _NODES[node_id] = {"type": "data", "obj": None}
     else:
         dataset = _CATALOG._data_sets.get(namespace)
         if dataset:
             _NODES[node_id] = {"type": "data", "obj": dataset}
+        else:
+            _NODES[node_id] = {"type": "data", "obj": None}
 
 
 @app.route("/api/nodes.json")
@@ -496,29 +498,51 @@ def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
     node = _NODES.get(node_id)
     if node and node.get("type") == "task":
-        task_metadata = {"code": inspect.getsource(node["obj"]._func)}
-        # Remove the path to the project from the full code location before sending to JSON.
-        # Example:
-        #     'code_full_path':   'path-to-project/project_root/path-to-code/node.py'
-        #     'Path.cwd().parent':'path-to-project/'
-        #     'code_location':    'project_root/path-to-code/node.py''
-        code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
-        code_location = code_full_path.relative_to(Path.cwd().parent)
-        task_metadata["code_location"] = str(code_location)
-        docstring = inspect.getdoc(node["obj"]._func)
-        if docstring:
-            task_metadata["docstring"] = docstring
+        task_metadata = _get_task_metadata(node)
         return jsonify(task_metadata)
     if node and node.get("type") == "data":
-        dataset = node["obj"]
+        dataset_metadata = _get_dataset_metadata(node)
+        return jsonify(dataset_metadata)
+    if node and node.get("type") == "parameters":
+        return jsonify({})
+
+    abort(404, description="Invalid node ID.")
+
+
+def _get_task_metadata(node):
+    """Get a dictionary of task metadata: 'code', 'code_location' and 'docstring'.
+    For 'code_location', remove the path to the project from the full code location
+    before sending to JSON.
+
+    Example:
+        'code_full_path':   'path-to-project/project_root/path-to-code/node.py'
+        'Path.cwd().parent':'path-to-project/'
+        'code_location':    'project_root/path-to-code/node.py''
+
+    """
+    task_metadata = {"code": inspect.getsource(node["obj"]._func)}
+
+    code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
+    code_location = code_full_path.relative_to(Path.cwd().parent)
+    task_metadata["code_location"] = str(code_location)
+
+    docstring = inspect.getdoc(node["obj"]._func)
+    if docstring:
+        task_metadata["docstring"] = docstring
+    return task_metadata
+
+
+def _get_dataset_metadata(node):
+    dataset = node["obj"]
+    if dataset:
         dataset_metadata = {
             "dataset_type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
             "dataset_location": str(dataset._describe().get("filepath")),
         }
-        return jsonify(dataset_metadata)
-
-    # If type is params or invalid node_id, return an empty JSON.
-    return jsonify({})
+    else:
+        # dataset not persisted, so no metadata defined in catalog.yml.
+        dataset_metadata = {}
+    return dataset_metadata
 
 
 @click.group(name="Kedro-Viz")

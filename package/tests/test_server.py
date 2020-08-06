@@ -362,6 +362,21 @@ def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
     )
 
 
+# @pytest.mark.usefixtures("patched_get_project_context")
+# def test_node_metadata_endpoint_data_memory(cli_runner, client, tmp_path):
+#     """Test `/api/nodes/data_id` endpoint is valid, but there is no metadata for dataset."""
+#     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+#     output_data_id = "afffac5f"
+#     response = client.get(f"/api/nodes/{output_data_id}")
+#     assert response.status_code == 200
+#     data = json.loads(response.data.decode())
+#     assert data["dataset_location"] == str(tmp_path)
+#     assert (
+#         data["dataset_type"]
+#         == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
+#     )
+
+
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocker):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON
@@ -416,9 +431,7 @@ def test_node_metadata_endpoint_invalid(cli_runner, client):
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     param_id = "invalid"
     response = client.get(f"/api/nodes/{param_id}")
-    assert response.status_code == 200
-    data = json.loads(response.data.decode())
-    assert not data
+    assert response.status_code == 404
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
