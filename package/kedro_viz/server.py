@@ -47,7 +47,7 @@ import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
-from kedro.pipeline import node as pipeline_node  # pylint: disable=unused-import
+from kedro.pipeline import Node
 from semver import VersionInfo
 from toposort import toposort_flatten
 
@@ -69,7 +69,7 @@ _DEFAULT_KEY = "__default__"
 
 _DATA = None  # type: Dict
 _CATALOG = None  # type: DataCatalog
-_NODES = {}  # type: Dict[str, Dict[str, Union[pipeline_node, AbstractDataSet]]]
+_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet]]]
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
