@@ -497,7 +497,6 @@ def nodes_metadata(node_id):
         }
         # pylint: disable=protected-access
         code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
-
         code_location = Path(code_full_path).relative_to(Path.cwd().parent)
         task_metadata.update({"code_location": str(code_location)})
 
