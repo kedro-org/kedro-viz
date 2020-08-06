@@ -497,16 +497,16 @@ def nodes_json():
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
     node = _NODES.get(node_id)
-    if node and node.get("type") == "task":
+    if not node:
+        abort(404, description="Invalid node ID.")
+    if node["type"] == "task":
         task_metadata = _get_task_metadata(node)
         return jsonify(task_metadata)
-    if node and node.get("type") == "data":
+    if node["type"] == "data":
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
-    if node and node.get("type") == "parameters":
-        return jsonify({})
-
-    abort(404, description="Invalid node ID.")
+    # return empty JSON for parameters type
+    return jsonify({})
 
 
 def _get_task_metadata(node):
