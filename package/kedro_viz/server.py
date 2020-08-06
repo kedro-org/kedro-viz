@@ -47,7 +47,7 @@ import requests
 from flask import Flask, jsonify, send_from_directory
 from IPython.core.display import HTML, display
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
-from kedro.pipeline import Node
+from kedro.pipeline.node import Node
 from semver import VersionInfo
 from toposort import toposort_flatten
 
