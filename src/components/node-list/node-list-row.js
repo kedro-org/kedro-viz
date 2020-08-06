@@ -40,16 +40,18 @@ const NodeListRow = ({
         onBlur={onMouseLeave}
         disabled={disabled}
         title={children ? null : name}>
-        <NodeIcon
-          className={classnames(
-            'pipeline-nodelist__row__type-icon pipeline-nodelist__row__icon',
-            {
-              'pipeline-nodelist__row__type-icon--faded': faded,
-              'pipeline-nodelist__row__type-icon--nested': !children
-            }
-          )}
-          type={type}
-        />
+        {type && (
+          <NodeIcon
+            className={classnames(
+              'pipeline-nodelist__row__type-icon pipeline-nodelist__row__icon',
+              {
+                'pipeline-nodelist__row__type-icon--faded': faded,
+                'pipeline-nodelist__row__type-icon--nested': !children
+              }
+            )}
+            type={type}
+          />
+        )}
         <span
           className={classnames('pipeline-nodelist__row__label', {
             'pipeline-nodelist__row__label--faded': faded

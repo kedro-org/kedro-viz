@@ -56,18 +56,27 @@ const NodeListGroups = ({
   };
 
   const renderTypeGroup = type => {
-    if (!nodes[type.id]) {
+    const nodesOfType = nodes[type.id];
+
+    if (!nodesOfType) {
       return null;
     }
+
+    const firstNodeOfType = nodesOfType[0];
+    const onToggleTypeDisabled = firstNodeOfType
+      ? firstNodeOfType.onToggleTypeDisabled
+      : undefined;
+
     return (
       <NodeListGroup
         key={type.id}
         onToggleCollapsed={onToggleCollapsed}
+        onToggleTypeDisabled={onToggleTypeDisabled}
         type={type}
         childCount={nodes[type.id].length}
         collapsed={collapsed[type.id]}>
         <ul className="pipeline-nodelist pipeline-nodelist--nested">
-          {nodes[type.id].map(node => (
+          {nodesOfType.map(node => (
             <li key={node.id}>
               <NodeListRow
                 active={nodeActive[node.id]}
@@ -76,6 +85,8 @@ const NodeListGroups = ({
                 id={node.id}
                 label={node.highlightedLabel}
                 name={node.name}
+                selected={nodeSelected[node.id]}
+                type={node.type}
                 onClick={() => {
                   if (node.onClick) {
                     node.onClick(node);
@@ -108,8 +119,6 @@ const NodeListGroups = ({
 
                   onToggleNodesDisabled([node.id], !e.target.checked);
                 }}
-                selected={nodeSelected[node.id]}
-                type={node.type}
               />
             </li>
           ))}

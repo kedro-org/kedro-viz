@@ -25,8 +25,7 @@ export const NodeListGroup = ({
               name={type.name}
               onChange={e => {
                 onToggleTypeDisabled(type.id, !e.target.checked);
-              }}
-              type={type.id}>
+              }}>
               <button
                 aria-label={`${
                   collapsed ? 'Show' : 'Hide'
@@ -61,10 +60,12 @@ export const NodeListGroup = ({
   </Flipped>
 );
 
-export const mapDispatchToProps = dispatch => ({
-  onToggleTypeDisabled: (typeID, disabled) => {
-    dispatch(toggleTypeDisabled(typeID, disabled));
-  }
+export const mapDispatchToProps = (dispatch, props) => ({
+  onToggleTypeDisabled:
+    props.onToggleTypeDisabled ||
+    ((typeID, disabled) => {
+      dispatch(toggleTypeDisabled(typeID, disabled));
+    })
 });
 
 export default connect(

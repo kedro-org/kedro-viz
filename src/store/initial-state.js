@@ -27,7 +27,7 @@ export const getInitialPipelineState = () => ({
     hovered: null
   },
   nodeType: {
-    ids: ['task', 'data', 'parameters', 'tag'],
+    ids: ['tag', 'task', 'data', 'parameters'],
     name: {
       data: 'Datasets',
       task: 'Nodes',
