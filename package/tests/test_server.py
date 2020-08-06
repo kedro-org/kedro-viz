@@ -84,12 +84,6 @@ def get_pipeline(name: str = None):
         raise KeyError("Failed to find the pipeline.")
 
 
-def get_config(
-    project_path: str, env: str = None  # pylint: disable=bad-continuation
-):  # pylint: disable=unused-argument
-    return "config"
-
-
 def create_pipeline():
     def func2(a, b):  # pylint: disable=unused-argument
         return a
@@ -147,7 +141,7 @@ def patched_get_project_context(mocker, tmp_path):
             "create_pipeline": create_pipeline,
             "create_catalog": lambda config: dummy_data_catalog,
             "context": mocked_context,
-            "get_config": get_config,
+            "get_config": lambda project_path, env=None: "config",
         }[key]
 
     return mocker.patch(
