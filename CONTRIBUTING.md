@@ -144,7 +144,7 @@ You can simulate how the published package will behave when imported into anothe
 npm run lib-test
 ```
 
-This script uses `npm pack` to package Kedro-Viz as a tarball, then copies it to a boilerplate React app in `/tools/test-lib/react-app` and installs it. Next, the script runs a simple server at `http://localhost:1337` so you can check that everything is working as it should.
+This script uses `npm pack` to package Kedro-Viz as a tarball, then copies it to a boilerplate React app in `/tools/test-lib/react-app` and installs it. Next, the script runs a simple server at `http://localhost:1337`, which will open in the browser so that you can check that everything is working as it should.
 
 You can also run automated tests on this demo app by navigating to this directory and running Jest:
 
