@@ -69,7 +69,7 @@ _DEFAULT_KEY = "__default__"
 
 _DATA = None  # type: Dict
 _CATALOG = None  # type: DataCatalog
-_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet]]]
+_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None]]]
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -452,19 +452,10 @@ def format_pipeline_data(
     for namespace, tag_names in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
-        if not is_param:
-
-            if KEDRO_VERSION.match(">=0.16.0"):
-                try:
-                    dataset = _CATALOG._get_dataset(namespace)
-                    _NODES[node_id] = {"type": "data", "obj": dataset}
-                except DataSetNotFoundError:
-                    pass
-            else:
-                dataset = _CATALOG._data_sets.get(namespace)
-
-                if dataset:
-                    _NODES[node_id] = {"type": "data", "obj": dataset}
+        if is_param:
+            _NODES[node_id] = {"type": "parameters", "obj": None}
+        else:
+            _get_dataset_metadata(node_id, namespace)
 
         if node_id not in nodes:
             nodes[node_id] = {
@@ -479,6 +470,19 @@ def format_pipeline_data(
             nodes_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipelines"].append(pipeline_key)
+
+
+def _get_dataset_metadata(node_id, namespace):
+    if KEDRO_VERSION.match(">=0.16.0"):
+        try:
+            dataset = _CATALOG._get_dataset(namespace)
+            _NODES[node_id] = {"type": "data", "obj": dataset}
+        except DataSetNotFoundError:
+            pass
+    else:
+        dataset = _CATALOG._data_sets.get(namespace)
+        if dataset:
+            _NODES[node_id] = {"type": "data", "obj": dataset}
 
 
 @app.route("/api/nodes.json")
