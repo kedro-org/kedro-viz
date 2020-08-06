@@ -496,7 +496,7 @@ def nodes_json():
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
     node = _NODES.get(node_id)
-    if node and node.get("type") == "task":
+    if node and node["type"] == "task":
         task_metadata = {
             # pylint: disable=protected-access
             "code": inspect.getsource(node["obj"]._func)
@@ -511,7 +511,7 @@ def nodes_metadata(node_id):
         if docstring:
             task_metadata["docstring"] = docstring
         return jsonify(task_metadata)
-    if node and node.get("type") == "data":
+    if node and node["type"] == "data":
         dataset = node["obj"]
         dataset_metadata = {
             "dataset_type": dataset.__module__,
