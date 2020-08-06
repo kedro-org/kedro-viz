@@ -493,12 +493,13 @@ def nodes_metadata(node_id):
     if node and node.get("type") == "task":
         task_metadata = {
             # pylint: disable=protected-access
-            "code": inspect.getsource(node["obj"]._func),
-            # pylint: disable=protected-access
-            "code_location": str(
-                Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
-            ),
+            "code": inspect.getsource(node["obj"]._func)
         }
+        # pylint: disable=protected-access
+        code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
+
+        code_location = Path(code_full_path).relative_to(Path.cwd().parent)
+        task_metadata.update({"code_location": str(code_location)})
 
         # pylint: disable=protected-access
         docstring = inspect.getdoc(node["obj"]._func)

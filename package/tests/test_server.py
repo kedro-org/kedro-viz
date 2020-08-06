@@ -43,6 +43,7 @@ from kedro.pipeline import Pipeline, node
 from semver import VersionInfo
 from toposort import CircularDependencyError
 
+import kedro_viz
 from kedro_viz import server
 from kedro_viz.server import _allocate_port, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
@@ -273,33 +274,51 @@ def test_nodes_endpoint(cli_runner, client):
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
-def test_node_metadata_endpoint_task(cli_runner, client):
+def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON."""
+    project_root = "project_root"
+    code_location = "code_location"
+    mocker.patch.object(
+        kedro_viz.server.Path, "cwd", return_value=tmp_path / project_root
+    )
+    mocker.patch.object(
+        kedro_viz.server.Path,
+        "resolve",
+        return_value=tmp_path / project_root / code_location,
+    )
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     task_id = "01a6a5cb"
     response = client.get(f"/api/nodes/{task_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["code"] == inspect.getsource(func1)
-    assert data["code_location"] == str(
-        Path(inspect.getfile(func1)).expanduser().resolve()
-    )
+    assert data["code_location"] == str(Path(project_root) / code_location)
     assert data["docstring"] == inspect.getdoc(func1)
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
-def test_node_metadata_endpoint_task_missing_docstring(cli_runner, client):
+def test_node_metadata_endpoint_task_missing_docstring(
+    cli_runner, client, mocker, tmp_path
+):
     """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON,
     but docstring is missing."""
+    project_root = "project_root"
+    code_location = "code_location"
+    mocker.patch.object(
+        kedro_viz.server.Path, "cwd", return_value=tmp_path / project_root
+    )
+    mocker.patch.object(
+        kedro_viz.server.Path,
+        "resolve",
+        return_value=tmp_path / project_root / code_location,
+    )
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     task_id = "760f5b5e"
     response = client.get(f"/api/nodes/{task_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["code"] == inspect.getsource(func)
-    assert data["code_location"] == str(
-        Path(inspect.getfile(func)).expanduser().resolve()
-    )
+    assert data["code_location"] == str(Path(project_root) / code_location)
     assert "docstring" not in data
 
 
