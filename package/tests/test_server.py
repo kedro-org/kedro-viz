@@ -114,7 +114,9 @@ def start_server(mocker):
 def patched_get_project_context(mocker, tmp_path):
     class DummyDataCatalog:
         def __init__(self):
-            self._data_sets = {}
+            # This method is for Kedro<0.16.0 since `_get_dataset` method was introduced in 0.16.0.
+            self.dummy_pickle_dataset = PickleDataSet(filepath=str(tmp_path))
+            self._data_sets = {"bob_out": self.dummy_pickle_dataset}
 
         def _describe(self):
             return {"filepath": str(tmp_path)}
@@ -337,6 +339,37 @@ def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    output_data_id = "60e68b8e"
+    response = client.get(f"/api/nodes/{output_data_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data["dataset_location"] == str(tmp_path)
+    assert data["dataset_type"] == PickleDataSet.__module__
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocker):
+    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON
+    with Kedro 0.15.*.
+    """
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    output_data_id = "60e68b8e"
+    response = client.get(f"/api/nodes/{output_data_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+
+    assert data["dataset_location"] == str(tmp_path)
+    assert data["dataset_type"] == PickleDataSet.__module__
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_data_kedro14(cli_runner, client, tmp_path, mocker):
+    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON
+    with Kedro 0.14.*.
+    """
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.14.0"))
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     output_data_id = "60e68b8e"
     response = client.get(f"/api/nodes/{output_data_id}")

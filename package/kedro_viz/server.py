@@ -452,18 +452,24 @@ def format_pipeline_data(
                 edges_list.append(edge)
             namespace_tags[namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
-
     # Parameters and data
     for namespace, tag_names in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
         if not is_param:
-            try:
-                # pylint: disable=protected-access
-                dataset = _CATALOG._get_dataset(namespace)
-                _NODES[node_id] = {"type": "data", "obj": dataset}
-            except DataSetNotFoundError:
-                pass
+
+            if KEDRO_VERSION.match(">=0.16.0"):
+                try:
+                    # pylint: disable=protected-access
+                    dataset = _CATALOG._get_dataset(namespace)
+                    _NODES[node_id] = {"type": "data", "obj": dataset}
+                except DataSetNotFoundError:
+                    pass
+            else:
+                dataset = _CATALOG._data_sets.get(namespace)
+
+                if dataset:
+                    _NODES[node_id] = {"type": "data", "obj": dataset}
 
         if node_id not in nodes:
             nodes[node_id] = {
