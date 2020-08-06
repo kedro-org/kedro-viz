@@ -497,6 +497,11 @@ def nodes_metadata(node_id):
     node = _NODES.get(node_id)
     if node and node.get("type") == "task":
         task_metadata = {"code": inspect.getsource(node["obj"]._func)}
+        # Remove the path to the project from the full code location before sending to JSON.
+        # Example:
+        #     'code_full_path':   'path-to-project/project_root/path-to-code/node.py'
+        #     'Path.cwd().parent':'path-to-project/'
+        #     'code_location':    'project_root/path-to-code/node.py''
         code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
         code_location = code_full_path.relative_to(Path.cwd().parent)
         task_metadata["code_location"] = str(code_location)
