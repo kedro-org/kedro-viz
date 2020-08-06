@@ -26,7 +26,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """ Kedro-Viz plugin and webserver """
-
+# pylint: disable=protected-access
 import hashlib
 import inspect
 import json
@@ -186,11 +186,7 @@ def _load_from_file(load_file: str) -> dict:
 def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]:
     if KEDRO_VERSION.match(">=0.15.2"):
         if pipeline_name:
-            return {
-                pipeline_name: context._get_pipeline(  # pylint: disable=protected-access
-                    name=pipeline_name
-                )
-            }
+            return {pipeline_name: context._get_pipeline(name=pipeline_name)}
         return context.pipelines
 
     # Kedro 0.15.0 or 0.15.1
@@ -321,7 +317,7 @@ def _construct_layer_mapping(catalog):
     else:
         dataset_to_layer = {
             ds_name: getattr(ds_obj, "_layer", None)
-            for ds_name, ds_obj in catalog._data_sets.items()  # pylint: disable=protected-access
+            for ds_name, ds_obj in catalog._data_sets.items()
         }
 
     return dataset_to_layer
@@ -460,7 +456,6 @@ def format_pipeline_data(
 
             if KEDRO_VERSION.match(">=0.16.0"):
                 try:
-                    # pylint: disable=protected-access
                     dataset = _CATALOG._get_dataset(namespace)
                     _NODES[node_id] = {"type": "data", "obj": dataset}
                 except DataSetNotFoundError:
@@ -497,16 +492,10 @@ def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
     node = _NODES.get(node_id)
     if node and node["type"] == "task":
-        task_metadata = {
-            # pylint: disable=protected-access
-            "code": inspect.getsource(node["obj"]._func)
-        }
-        # pylint: disable=protected-access
+        task_metadata = {"code": inspect.getsource(node["obj"]._func)}
         code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
         code_location = Path(code_full_path).relative_to(Path.cwd().parent)
         task_metadata["code_location"] = str(code_location)
-
-        # pylint: disable=protected-access
         docstring = inspect.getdoc(node["obj"]._func)
         if docstring:
             task_metadata["docstring"] = docstring
@@ -515,7 +504,6 @@ def nodes_metadata(node_id):
         dataset = node["obj"]
         dataset_metadata = {
             "dataset_type": dataset.__module__,
-            # pylint: disable=protected-access
             "dataset_location": str(dataset._describe().get("filepath")),
         }
         return jsonify(dataset_metadata)
