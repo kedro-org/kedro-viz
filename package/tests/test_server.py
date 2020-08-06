@@ -341,7 +341,10 @@ def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["dataset_location"] == str(tmp_path)
-    assert data["dataset_type"] == PickleDataSet.__module__
+    assert (
+        data["dataset_type"]
+        == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
+    )
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -353,7 +356,10 @@ def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["dataset_location"] == str(tmp_path)
-    assert data["dataset_type"] == PickleDataSet.__module__
+    assert (
+        data["dataset_type"]
+        == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
+    )
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -369,7 +375,10 @@ def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocke
     data = json.loads(response.data.decode())
 
     assert data["dataset_location"] == str(tmp_path)
-    assert data["dataset_type"] == PickleDataSet.__module__
+    assert (
+        data["dataset_type"]
+        == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
+    )
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -384,7 +393,10 @@ def test_node_metadata_endpoint_data_kedro14(cli_runner, client, tmp_path, mocke
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["dataset_location"] == str(tmp_path)
-    assert data["dataset_type"] == PickleDataSet.__module__
+    assert (
+        data["dataset_type"]
+        == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
+    )
 
 
 @pytest.mark.usefixtures("patched_get_project_context")

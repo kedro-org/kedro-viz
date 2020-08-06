@@ -503,7 +503,7 @@ def nodes_metadata(node_id):
     if node and node.get("type") == "data":
         dataset = node["obj"]
         dataset_metadata = {
-            "dataset_type": dataset.__module__,
+            "dataset_type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
             "dataset_location": str(dataset._describe().get("filepath")),
         }
         return jsonify(dataset_metadata)
