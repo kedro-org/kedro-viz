@@ -38,14 +38,14 @@ from pathlib import Path
 
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
-from kedro.io import DataCatalog, MemoryDataSet
+from kedro.io import DataCatalog, MemoryDataSet, DataSetNotFoundError
 from kedro.pipeline import Pipeline, node
 from semver import VersionInfo
 from toposort import CircularDependencyError
 
 import kedro_viz
 from kedro_viz import server
-from kedro_viz.server import _allocate_port, _sort_layers, format_pipelines_data
+from kedro_viz.server import _allocate_port, _sort_layers, format_pipelines_data, _hash
 from kedro_viz.utils import WaitForException
 
 input_json_path = Path(__file__).parent / "input.json"
@@ -120,15 +120,15 @@ def start_server(mocker):
 def patched_get_project_context(mocker, tmp_path):
     class DummyDataCatalog:
         def __init__(self):
-            # This method is for Kedro<0.16.0 since `_get_dataset` method was introduced in 0.16.0.
-            self.dummy_pickle_dataset = PickleDataSet(filepath=str(tmp_path))
-            self._data_sets = {"bob_out": self.dummy_pickle_dataset}
+            self._data_sets = {"bob_in": PickleDataSet(filepath=str(tmp_path))}
 
         def _describe(self):
             return {"filepath": str(tmp_path)}
 
         def _get_dataset(self, data_set_name):  # pylint: disable=unused-argument
-            return PickleDataSet(filepath=str(tmp_path))
+            if data_set_name not in self._data_sets:
+                raise DataSetNotFoundError
+            return self._data_sets[data_set_name]
 
         def exists(self, name):
             dataset = self._get_dataset(name)
@@ -336,8 +336,7 @@ def test_node_metadata_endpoint_task_missing_docstring(
 def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    input_data_id = "7366ec9f"
-    response = client.get(f"/api/nodes/{input_data_id}")
+    response = client.get(f"/api/nodes/{ _hash('bob_in')}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["dataset_location"] == str(tmp_path)
@@ -349,32 +348,13 @@ def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
-    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""
+    """Test `/api/nodes/data_id` endpoint is functional and returns a valid empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    output_data_id = "60e68b8e"
-    response = client.get(f"/api/nodes/{output_data_id}")
+    # 'bob_out' is not stored in DummyDataCatalog
+    response = client.get(f"/api/nodes/{_hash('bob_out')}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data["dataset_location"] == str(tmp_path)
-    assert (
-        data["dataset_type"]
-        == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
-    )
-
-
-# @pytest.mark.usefixtures("patched_get_project_context")
-# def test_node_metadata_endpoint_data_memory(cli_runner, client, tmp_path):
-#     """Test `/api/nodes/data_id` endpoint is valid, but there is no metadata for dataset."""
-#     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-#     output_data_id = "afffac5f"
-#     response = client.get(f"/api/nodes/{output_data_id}")
-#     assert response.status_code == 200
-#     data = json.loads(response.data.decode())
-#     assert data["dataset_location"] == str(tmp_path)
-#     assert (
-#         data["dataset_type"]
-#         == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
-#     )
+    assert not data
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -384,8 +364,7 @@ def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocke
     """
     mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    output_data_id = "60e68b8e"
-    response = client.get(f"/api/nodes/{output_data_id}")
+    response = client.get(f"/api/nodes/{_hash('bob_in')}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
 
@@ -403,8 +382,7 @@ def test_node_metadata_endpoint_data_kedro14(cli_runner, client, tmp_path, mocke
     """
     mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.14.0"))
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    output_data_id = "60e68b8e"
-    response = client.get(f"/api/nodes/{output_data_id}")
+    response = client.get(f"/api/nodes/{_hash('bob_in')}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["dataset_location"] == str(tmp_path)
