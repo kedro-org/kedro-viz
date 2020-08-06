@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { getGroupedNodes } from '../../selectors/nodes';
-import getFilteredNodes from './filter-nodes';
+import { getFilteredNodes, highlightMatch, filterNodes } from './filter-nodes';
 import NodeListSearch from './node-list-search';
 import NodeListGroups from './node-list-groups';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
@@ -90,6 +90,11 @@ const NodeList = ({
     onToggleTypeDisabled: onToggleTagTypeDisabled
   }));
 
+  const filteredTagNodes = highlightMatch(
+    filterNodes({ tag: tagNodes }, searchValue),
+    searchValue
+  );
+
   const sortByEnabledThenAlpha = (a, b) => {
     const byEnabledTag = Number(a.disabled_tag) - Number(b.disabled_tag);
     const byAlpha = a.name.localeCompare(b.name);
@@ -101,7 +106,7 @@ const NodeList = ({
   }
 
   const allNodes = {
-    ...tagNodes,
+    ...filteredTagNodes,
     ...filteredNodes
   };
 
@@ -117,7 +122,7 @@ const NodeList = ({
         autoHide
         hideTracksWhenNotNeeded>
         <div className="pipeline-nodelist-container">
-          <NodeListGroups nodes={allNodes} />
+          <NodeListGroups nodes={allNodes} searchValue={searchValue} />
         </div>
       </Scrollbars>
     </React.Fragment>

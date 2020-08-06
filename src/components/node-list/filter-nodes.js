@@ -69,7 +69,7 @@ export const filterNodes = (nodes, searchValue) => {
  * @param {string} searchValue Search term
  * @return {object} Grouped nodes, and node IDs
  */
-const getFilteredNodes = createSelector(
+export const getFilteredNodes = createSelector(
   [state => state.nodes, state => state.searchValue],
   (nodes, searchValue) => {
     const filteredNodes = filterNodes(nodes, searchValue);

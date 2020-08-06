@@ -22,7 +22,8 @@ const NodeListGroups = ({
   nodes,
   nodeActive,
   nodeSelected,
-  types
+  types,
+  searchValue
 }) => {
   // Deselect node on Escape key
   const handleKeyDown = event => {
@@ -73,8 +74,8 @@ const NodeListGroups = ({
         onToggleCollapsed={onToggleCollapsed}
         onToggleTypeDisabled={onToggleTypeDisabled}
         type={type}
-        childCount={nodes[type.id].length}
-        collapsed={collapsed[type.id]}>
+        childCount={nodesOfType.length}
+        collapsed={Boolean(searchValue) ? false : collapsed[type.id]}>
         <ul className="pipeline-nodelist pipeline-nodelist--nested">
           {nodesOfType.map(node => (
             <li key={node.id}>
