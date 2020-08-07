@@ -1,5 +1,54 @@
-import { createInitialState } from '../store/initial-state';
 import { arrayToObject } from '../utils';
+
+/**
+ * Create new default pipeline state instance
+ * @return {object} state
+ */
+const createInitialPipelineState = () => ({
+  id: null,
+  pipeline: {
+    ids: [],
+    name: {},
+    active: null
+  },
+  node: {
+    ids: [],
+    name: {},
+    fullName: {},
+    type: {},
+    isParam: {},
+    tags: {},
+    layer: {},
+    disabled: {},
+    pipelines: {},
+    clicked: null,
+    hovered: null
+  },
+  nodeType: {
+    ids: ['task', 'data', 'parameters'],
+    name: {
+      data: 'Datasets',
+      task: 'Nodes',
+      parameters: 'Parameters'
+    },
+    disabled: {}
+  },
+  edge: {
+    ids: [],
+    sources: {},
+    targets: {}
+  },
+  layer: {
+    ids: [],
+    name: {}
+  },
+  tag: {
+    ids: [],
+    name: {},
+    active: {},
+    enabled: {}
+  }
+});
 
 /**
  * Check whether data is in expected format
@@ -111,7 +160,7 @@ const addLayer = state => layer => {
  * @return {Object} Formatted, normalized state
  */
 const normalizeData = data => {
-  const state = createInitialState();
+  const state = createInitialPipelineState();
 
   if (!validateInput(data)) {
     return state;

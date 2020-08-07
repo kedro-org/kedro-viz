@@ -4,57 +4,15 @@ import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 
 /**
- * Create new global default pipeline state instance
+ * Create new default state instance for properties that aren't overridden
+ * when the pipeline is reset with new data via the App component's data prop
  * @return {object} state
  */
 export const createInitialState = () => ({
-  id: null,
-  pipeline: {
-    ids: [],
-    name: {},
-    active: null
-  },
-  node: {
-    ids: [],
-    name: {},
-    fullName: {},
-    type: {},
-    isParam: {},
-    tags: {},
-    layer: {},
-    disabled: {},
-    pipelines: {},
-    clicked: null,
-    hovered: null
-  },
-  nodeType: {
-    ids: ['task', 'data', 'parameters'],
-    name: {
-      data: 'Datasets',
-      task: 'Nodes',
-      parameters: 'Parameters'
-    },
-    disabled: {}
-  },
-  edge: {
-    ids: [],
-    sources: {},
-    targets: {}
-  },
-  layer: {
-    ids: [],
-    name: {}
-  },
-  tag: {
-    ids: [],
-    name: {},
-    active: {},
-    enabled: {}
-  },
   chartSize: {},
+  flags: Flags.defaults(),
   textLabels: true,
   theme: 'dark',
-  flags: Flags.defaults(),
   visible: {
     labelBtn: true,
     layerBtn: true,
@@ -74,7 +32,7 @@ export const createInitialState = () => ({
  * @param {object} state App state
  * @param {object} props Props passed to App component
  */
-const overrideInitialState = (state, props) => {
+export const overrideInitialState = (state, props) => {
   // Override flag defaults with URL values
   state.flags = Object.assign(state.flags, getFlagsFromUrl());
   // Override theme if set in props
@@ -98,10 +56,14 @@ const overrideInitialState = (state, props) => {
  * @return {Object} Initial state
  */
 const getInitialState = (props = {}) => {
-  // Merge prop data and localStorage data into initial state
-  const state = deepmerge(normalizeData(props.data), loadState());
+  // Merge default values with normalised pipeline data and localStorage
+  const initialState = deepmerge(
+    normalizeData(props.data),
+    createInitialState(),
+    loadState()
+  );
   // Add overrides from props etc
-  return overrideInitialState(state, props);
+  return overrideInitialState(initialState, props);
 };
 
 export default getInitialState;
