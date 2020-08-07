@@ -404,6 +404,8 @@ def test_node_metadata_endpoint_invalid(cli_runner, client):
     param_id = "invalid"
     response = client.get(f"/api/nodes/{param_id}")
     assert response.status_code == 404
+    data = json.loads(response.data.decode())
+    assert data["error"] == "404 Not Found: Invalid node ID."
 
 
 @pytest.mark.usefixtures("patched_get_project_context")

@@ -506,6 +506,11 @@ def nodes_metadata(node_id):
     return jsonify({})
 
 
+@app.errorhandler(404)
+def resource_not_found(e):
+    return jsonify(error=str(e)), 404
+
+
 def _get_task_metadata(node):
     """Get a dictionary of task metadata: 'code', 'code_location' and 'docstring'.
     For 'code_location', remove the path to the project from the full code location
