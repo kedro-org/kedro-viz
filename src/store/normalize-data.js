@@ -4,7 +4,7 @@ import { arrayToObject } from '../utils';
  * Create new default pipeline state instance
  * @return {object} state
  */
-const createInitialPipelineState = () => ({
+export const createInitialPipelineState = () => ({
   id: null,
   pipeline: {
     ids: [],

@@ -1,8 +1,7 @@
-import normalizeData from './normalize-data';
-import { createInitialState } from '../store/initial-state';
+import normalizeData, { createInitialPipelineState } from './normalize-data';
 import animals from '../utils/data/animals.mock';
 
-const initialState = createInitialState();
+const initialState = createInitialPipelineState();
 
 describe('normalizeData', () => {
   it('should throw an error when data prop is empty or false', () => {
