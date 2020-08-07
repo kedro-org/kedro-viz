@@ -61,7 +61,6 @@ const NodeList = ({
         onToggleTagFilter(tag.id, false);
       });
 
-      onToggleTagActive(tagClicked.id, false);
       onToggleTagFilter(tagClicked.id, true);
     }
   };

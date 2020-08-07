@@ -17,6 +17,13 @@
     opacity: 1;
   }
 
+  .kui-searchbar .kui-icon--close {
+    top: 55%;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+  }
+
   .kui-theme--light & .kui-searchbar .kui-icon svg {
     fill: #8e979c;
   }
@@ -60,15 +67,15 @@
   }
 
   .kui-theme--light & .kui-input__field::placeholder {
-    color: #8e979c;
+    color: #747b7e;
   }
 
   .kui-theme--light & .kui-input__field:hover::placeholder {
-    fill: #262626;
+    color: #262626;
   }
 
   .kui-theme--light & .kui-input__field:focus::placeholder {
-    fill: #262626;
+    color: #262626;
   }
 
   .kui-input__field {
