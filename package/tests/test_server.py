@@ -30,6 +30,7 @@
 Tests for Kedro-Viz server
 """
 
+import inspect
 import json
 import re
 from functools import partial
@@ -37,126 +38,30 @@ from pathlib import Path
 
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
-from kedro.io import DataCatalog, MemoryDataSet
+from kedro.io import DataCatalog, MemoryDataSet, DataSetNotFoundError
 from kedro.pipeline import Pipeline, node
 from semver import VersionInfo
 from toposort import CircularDependencyError
 
+import kedro_viz
 from kedro_viz import server
-from kedro_viz.server import _allocate_port, _sort_layers, format_pipelines_data
+from kedro_viz.server import _allocate_port, _sort_layers, format_pipelines_data, _hash
 from kedro_viz.utils import WaitForException
 
-EXPECTED_PIPELINE_DATA = {
-    "edges": [
-        {"source": "7366ec9f", "target": "01a6a5cb"},
-        {"source": "f1f1425b", "target": "01a6a5cb"},
-        {"source": "01a6a5cb", "target": "60e68b8e"},
-        {"source": "afffac5f", "target": "de8434b7"},
-        {"source": "f1f1425b", "target": "de8434b7"},
-        {"source": "de8434b7", "target": "37316e3a"},
-        {"source": "7366ec9f", "target": "760f5b5e"},
-        {"source": "f1f1425b", "target": "760f5b5e"},
-        {"source": "760f5b5e", "target": "60e68b8e"},
-        {"source": "60e68b8e", "target": "24d754e7"},
-        {"source": "f1f1425b", "target": "24d754e7"},
-    ],
-    "layers": [],
-    "nodes": [
-        {
-            "full_name": "func1",
-            "id": "01a6a5cb",
-            "name": "Func1",
-            "pipelines": ["__default__", "third"],
-            "tags": [],
-            "type": "task",
-        },
-        {
-            "full_name": "func2",
-            "id": "de8434b7",
-            "name": "my_node",
-            "pipelines": ["__default__"],
-            "tags": ["bob"],
-            "type": "task",
-        },
-        {
-            "full_name": "bob_in",
-            "id": "7366ec9f",
-            "layer": None,
-            "name": "Bob In",
-            "pipelines": ["__default__", "second", "third"],
-            "tags": [],
-            "type": "data",
-        },
-        {
-            "full_name": "bob_out",
-            "id": "60e68b8e",
-            "layer": None,
-            "name": "Bob Out",
-            "pipelines": ["__default__", "second", "third"],
-            "tags": [],
-            "type": "data",
-        },
-        {
-            "full_name": "fred_in",
-            "id": "afffac5f",
-            "layer": None,
-            "name": "Fred In",
-            "pipelines": ["__default__"],
-            "tags": ["bob"],
-            "type": "data",
-        },
-        {
-            "full_name": "fred_out",
-            "id": "37316e3a",
-            "layer": None,
-            "name": "Fred Out",
-            "pipelines": ["__default__"],
-            "tags": ["bob"],
-            "type": "data",
-        },
-        {
-            "full_name": "parameters",
-            "id": "f1f1425b",
-            "layer": None,
-            "name": "Parameters",
-            "pipelines": ["__default__", "second", "third"],
-            "tags": ["bob"],
-            "type": "parameters",
-        },
-        {
-            "full_name": "func",
-            "id": "760f5b5e",
-            "name": "Func",
-            "pipelines": ["second"],
-            "tags": [],
-            "type": "task",
-        },
-        {
-            "full_name": "func1",
-            "id": "24d754e7",
-            "name": "Func1",
-            "pipelines": ["second"],
-            "tags": [],
-            "type": "task",
-        },
-    ],
-    "pipelines": [
-        {"id": "__default__", "name": "Default"},
-        {"id": "second", "name": "Second"},
-        {"id": "third", "name": "Third"},
-    ],
-    "tags": [{"id": "bob", "name": "Bob"}],
-}
+input_json_path = Path(__file__).parent / "input.json"
+EXPECTED_PIPELINE_DATA = json.loads(input_json_path.read_text())
 
 
 def func1(a, b):  # pylint: disable=unused-argument
+    """Docstring of func1."""
+    return a
+
+
+def func(a, b):  # pylint: disable=unused-argument
     return a
 
 
 def get_pipelines():
-    def func(a, b):  # pylint: disable=unused-argument
-        return a
-
     return {
         "__default__": create_pipeline(),
         "second": Pipeline(
@@ -206,19 +111,37 @@ def start_server(mocker):
 
 
 @pytest.fixture
-def patched_get_project_context(mocker):
+def patched_get_project_context(mocker, tmp_path):
+    class DummyDataCatalog:
+        def __init__(self):
+            self._data_sets = {"bob_in": PickleDataSet(filepath=str(tmp_path))}
+
+        def _describe(self):
+            return {"filepath": str(tmp_path)}
+
+        def _get_dataset(self, data_set_name):  # pylint: disable=unused-argument
+            if data_set_name not in self._data_sets:
+                raise DataSetNotFoundError
+            return self._data_sets[data_set_name]
+
+        def exists(self, name):
+            dataset = self._get_dataset(name)
+            return dataset.exists()
+
     def get_project_context(
         key: str = "context", **kwargs  # pylint: disable=bad-continuation
     ):  # pylint: disable=unused-argument
         mocked_context = mocker.Mock()
         mocked_context.pipelines = get_pipelines()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
-        mocked_context.catalog = mocker.MagicMock()
+        dummy_data_catalog = DummyDataCatalog()
+        mocked_context.catalog = dummy_data_catalog
         mocked_context.pipeline = create_pipeline()
         return {
             "create_pipeline": create_pipeline,
-            "create_catalog": lambda x: None,
+            "create_catalog": lambda config: dummy_data_catalog,
             "context": mocked_context,
+            "get_config": lambda project_path, env=None: "config",
         }[key]
 
     return mocker.patch(
@@ -338,7 +261,7 @@ def test_no_load_file(cli_runner):
 
 
 def test_root_endpoint(client):
-    """Test `/` endoint is functional."""
+    """Test `/` endpoint is functional."""
     response = client.get("/")
     assert response.status_code == 200
     assert "Kedro Viz" in response.data.decode()
@@ -346,12 +269,143 @@ def test_root_endpoint(client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_nodes_endpoint(cli_runner, client):
-    """Test `/api/nodes.json` endoint is functional and returns a valid JSON."""
+    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     response = client.get("/api/nodes.json")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == EXPECTED_PIPELINE_DATA
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
+    """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON."""
+    project_root = "project_root"
+    code_location = "code_location"
+    mocker.patch.object(
+        kedro_viz.server.Path, "cwd", return_value=tmp_path / project_root
+    )
+    mocker.patch.object(
+        kedro_viz.server.Path,
+        "resolve",
+        return_value=tmp_path / project_root / code_location,
+    )
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    task_id = "01a6a5cb"
+    response = client.get(f"/api/nodes/{task_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data["code"] == inspect.getsource(func1)
+    assert data["code_location"] == str(Path(project_root) / code_location)
+    assert data["docstring"] == inspect.getdoc(func1)
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_task_missing_docstring(
+    cli_runner, client, mocker, tmp_path
+):
+    """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON,
+    but docstring is missing."""
+    project_root = "project_root"
+    code_location = "code_location"
+    mocker.patch.object(
+        kedro_viz.server.Path, "cwd", return_value=tmp_path / project_root
+    )
+    mocker.patch.object(
+        kedro_viz.server.Path,
+        "resolve",
+        return_value=tmp_path / project_root / code_location,
+    )
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    task_id = "760f5b5e"
+    response = client.get(f"/api/nodes/{task_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data["code"] == inspect.getsource(func)
+    assert data["code_location"] == str(Path(project_root) / code_location)
+    assert "docstring" not in data
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
+    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    response = client.get(f"/api/nodes/{ _hash('bob_in')}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data["dataset_location"] == str(tmp_path)
+    assert (
+        data["dataset_type"]
+        == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
+    )
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
+    """Test `/api/nodes/data_id` endpoint is functional and returns a valid empty JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    # 'bob_out' is not stored in DummyDataCatalog
+    response = client.get(f"/api/nodes/{_hash('bob_out')}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert not data
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocker):
+    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON
+    with Kedro 0.15.*.
+    """
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    response = client.get(f"/api/nodes/{_hash('bob_in')}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+
+    assert data["dataset_location"] == str(tmp_path)
+    assert (
+        data["dataset_type"]
+        == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
+    )
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_data_kedro14(cli_runner, client, tmp_path, mocker):
+    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON
+    with Kedro 0.14.*.
+    """
+    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.14.0"))
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    response = client.get(f"/api/nodes/{_hash('bob_in')}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data["dataset_location"] == str(tmp_path)
+    assert (
+        data["dataset_type"]
+        == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
+    )
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_params(cli_runner, client):
+    """Test `/api/nodes/param_id` endpoint is functional and returns an empty JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    param_id = "f1f1425b"
+    response = client.get(f"/api/nodes/{param_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert not data
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_invalid(cli_runner, client):
+    """Test `/api/nodes/invalid_id` endpoint returns an empty JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    param_id = "invalid"
+    response = client.get(f"/api/nodes/{param_id}")
+    assert response.status_code == 404
+    data = json.loads(response.data.decode())
+    assert data["error"] == "404 Not Found: Invalid node ID."
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -756,23 +810,26 @@ def new_catalog_with_layers():
     return catalog
 
 
-def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers):
-    result = format_pipelines_data(pipeline, old_catalog_with_layers)
+def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers, mocker):
+    mocker.patch("kedro_viz.server._CATALOG", old_catalog_with_layers)
+    result = format_pipelines_data(pipeline)
     result_file_path = Path(__file__).parent / "result.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
 
-def test_format_pipelines_data(pipeline, new_catalog_with_layers):
-    result = format_pipelines_data(pipeline, new_catalog_with_layers)
+def test_format_pipelines_data(pipeline, new_catalog_with_layers, mocker):
+    mocker.patch("kedro_viz.server._CATALOG", new_catalog_with_layers)
+    result = format_pipelines_data(pipeline)
     result_file_path = Path(__file__).parent / "result.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
 
-def test_format_pipelines_data_no_layers(pipeline, new_catalog_with_layers):
+def test_format_pipelines_data_no_layers(pipeline, new_catalog_with_layers, mocker):
+    mocker.patch("kedro_viz.server._CATALOG", new_catalog_with_layers)
     setattr(new_catalog_with_layers, "layers", None)
-    result = format_pipelines_data(pipeline, new_catalog_with_layers)
+    result = format_pipelines_data(pipeline)
     assert result["layers"] == []
 
 

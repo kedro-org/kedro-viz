@@ -26,8 +26,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """ Kedro-Viz plugin and webserver """
-
+# pylint: disable=protected-access
 import hashlib
+import inspect
 import json
 import logging
 import multiprocessing
@@ -38,13 +39,15 @@ from collections import defaultdict
 from contextlib import closing
 from functools import partial
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Union
 
 import click
 import kedro
 import requests
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, abort
 from IPython.core.display import HTML, display
+from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
+from kedro.pipeline.node import Node
 from semver import VersionInfo
 from toposort import toposort_flatten
 
@@ -56,10 +59,7 @@ if KEDRO_VERSION.match(">=0.16.0"):
     from kedro.framework.cli import get_project_context
     from kedro.framework.cli.utils import KedroCliError
 else:
-    # pylint: disable=no-name-in-module,import-error
     from kedro.cli import get_project_context  # pragma: no cover
-
-    # pylint: disable=no-name-in-module,import-error
     from kedro.cli.utils import KedroCliError  # pragma: no cover
 
 
@@ -67,7 +67,9 @@ _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
 _DEFAULT_KEY = "__default__"
 
-data = None  # pylint: disable=invalid-name
+_DATA = None  # type: Dict
+_CATALOG = None  # type: DataCatalog
+_JSON_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None]]]
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -171,24 +173,20 @@ def _allocate_port(start_at: int, end_at: int = 65535) -> int:
 
 
 def _load_from_file(load_file: str) -> dict:
-    global data  # pylint: disable=global-statement,invalid-name
-    data = json.loads(Path(load_file).read_text())
+    global _DATA  # pylint: disable=global-statement,invalid-name
+    _DATA = json.loads(Path(load_file).read_text())
     for key in ["nodes", "edges", "tags"]:
-        if key not in data:
+        if key not in _DATA:
             raise KedroCliError(
                 "Invalid file, top level key '{}' not found.".format(key)
             )
-    return data
+    return _DATA
 
 
 def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]:
     if KEDRO_VERSION.match(">=0.15.2"):
         if pipeline_name:
-            return {
-                pipeline_name: context._get_pipeline(  # pylint: disable=protected-access
-                    name=pipeline_name
-                )
-            }
+            return {pipeline_name: context._get_pipeline(name=pipeline_name)}
         return context.pipelines
 
     # Kedro 0.15.0 or 0.15.1
@@ -306,20 +304,20 @@ def _sort_layers(
     return toposort_flatten(layer_dependencies)
 
 
-def _construct_layer_mapping(catalog):
-    if hasattr(catalog, "layers"):  # kedro>=0.16.0
-        if catalog.layers is None:
-            return {ds_name: None for ds_name in getattr(catalog, "_data_sets")}
+def _construct_layer_mapping():
+    if hasattr(_CATALOG, "layers"):  # kedro>=0.16.0
+        if _CATALOG.layers is None:
+            return {ds_name: None for ds_name in getattr(_CATALOG, "_data_sets")}
 
         dataset_to_layer = {}
-        for layer, dataset_names in catalog.layers.items():
+        for layer, dataset_names in _CATALOG.layers.items():
             dataset_to_layer.update(
                 {dataset_name: layer for dataset_name in dataset_names}
             )
     else:
         dataset_to_layer = {
             ds_name: getattr(ds_obj, "_layer", None)
-            for ds_name, ds_obj in catalog._data_sets.items()  # pylint: disable=protected-access
+            for ds_name, ds_obj in _CATALOG._data_sets.items()
         }
 
     return dataset_to_layer
@@ -331,13 +329,12 @@ def _pretty_name(name: str) -> str:
     return " ".join(parts)
 
 
-def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str, list]:
+def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
     """
     Format pipelines and catalog data from Kedro for kedro-viz.
 
     Args:
         pipelines: Dictionary of Kedro pipeline objects.
-        catalog: Kedro catalog object.
 
     Returns:
         Dictionary of pipelines, nodes, edges, tags and layers, and pipelines list.
@@ -359,7 +356,6 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
         format_pipeline_data(
             pipeline_key,
             pipeline,
-            catalog,
             nodes,
             node_dependencies,
             tags,
@@ -391,7 +387,6 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"], catalog) -> Dict[str
 def format_pipeline_data(
     pipeline_key: str,
     pipeline: "Pipeline",  # noqa: F821
-    catalog: "DataCatalog",  # noqa: F821
     nodes: Dict[str, dict],
     node_dependencies: Dict[str, dict],
     tags: Set[str],
@@ -403,7 +398,6 @@ def format_pipeline_data(
     Args:
         pipeline_key: key value of a pipeline object (e.g "__default__").
         pipeline: Kedro pipeline object.
-        catalog:  Kedro catalog object.
         nodes: Dictionary of id and node dict.
         node_dependencies: Dictionary of id and node dependencies.
         edges_list: List of all edges.
@@ -415,11 +409,13 @@ def format_pipeline_data(
     # keep track of {data_set_namespace -> layer it belongs to}
     namespace_to_layer = {}
 
-    dataset_to_layer = _construct_layer_mapping(catalog)
+    dataset_to_layer = _construct_layer_mapping()
 
+    # Nodes and edges
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
         tags.update(node.tags)
+        _JSON_NODES[task_id] = {"type": "task", "obj": node}
         if task_id not in nodes:
             nodes[task_id] = {
                 "type": "task",
@@ -452,10 +448,18 @@ def format_pipeline_data(
                 edges_list.append(edge)
             namespace_tags[namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
-
+    # Parameters and data
     for namespace, tag_names in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
+
+        node_data = (
+            {"type": "parameters", "obj": None}
+            if is_param
+            else _get_dataset_node(node_id, namespace)
+        )
+        _JSON_NODES[node_id] = node_data
+
         if node_id not in nodes:
             nodes[node_id] = {
                 "type": "parameters" if is_param else "data",
@@ -471,10 +475,79 @@ def format_pipeline_data(
             nodes[node_id]["pipelines"].append(pipeline_key)
 
 
+def _get_dataset_node(node_id, namespace):
+    if KEDRO_VERSION.match(">=0.16.0"):
+        try:
+            dataset = _CATALOG._get_dataset(namespace)
+        except DataSetNotFoundError:
+            dataset = None
+    else:
+        dataset = _CATALOG._data_sets.get(namespace)
+    return {"type": "data", "obj": dataset}
+
+
 @app.route("/api/nodes.json")
 def nodes_json():
     """Serve the pipeline data."""
-    return jsonify(data)
+    return jsonify(_DATA)
+
+
+@app.route("/api/nodes/<string:node_id>")
+def nodes_metadata(node_id):
+    """Serve the metadata for node and dataset."""
+    node = _JSON_NODES.get(node_id)
+    if not node:
+        abort(404, description="Invalid node ID.")
+    if node["type"] == "task":
+        task_metadata = _get_task_metadata(node)
+        return jsonify(task_metadata)
+    if node["type"] == "data":
+        dataset_metadata = _get_dataset_metadata(node)
+        return jsonify(dataset_metadata)
+
+    # return empty JSON for parameters type
+    return jsonify({})
+
+
+@app.errorhandler(404)
+def resource_not_found(e):
+    return jsonify(error=str(e)), 404
+
+
+def _get_task_metadata(node):
+    """Get a dictionary of task metadata: 'code', 'code_location' and 'docstring'.
+    For 'code_location', remove the path to the project from the full code location
+    before sending to JSON.
+
+    Example:
+        'code_full_path':   'path-to-project/project_root/path-to-code/node.py'
+        'Path.cwd().parent':'path-to-project/'
+        'code_location':    'project_root/path-to-code/node.py''
+
+    """
+    task_metadata = {"code": inspect.getsource(node["obj"]._func)}
+
+    code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
+    code_location = code_full_path.relative_to(Path.cwd().parent)
+    task_metadata["code_location"] = str(code_location)
+
+    docstring = inspect.getdoc(node["obj"]._func)
+    if docstring:
+        task_metadata["docstring"] = docstring
+    return task_metadata
+
+
+def _get_dataset_metadata(node):
+    dataset = node["obj"]
+    if dataset:
+        dataset_metadata = {
+            "dataset_type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
+            "dataset_location": str(dataset._describe().get("filepath")),
+        }
+    else:
+        # dataset not persisted, so no metadata defined in catalog.yml.
+        dataset_metadata = {}
+    return dataset_metadata
 
 
 @click.group(name="Kedro-Viz")
@@ -552,14 +625,15 @@ def _call_viz(
     env=None,
     project_path=None,
 ):
-    global data  # pylint: disable=global-statement,invalid-name
+    global _DATA  # pylint: disable=global-statement,invalid-name
+    global _CATALOG  # pylint: disable=global-statement
 
     if load_file:
         # Remove all handlers for root logger
         root_logger = logging.getLogger()
         root_logger.handlers = []
 
-        data = _load_from_file(load_file)
+        _DATA = _load_from_file(load_file)
     else:
         if KEDRO_VERSION.match(">=0.15.0"):
             # pylint: disable=import-outside-toplevel
@@ -580,18 +654,18 @@ def _call_viz(
                 pipelines = _get_pipelines_from_context(context, pipeline_name)
             except KedroContextError:
                 raise KedroCliError(ERROR_PROJECT_ROOT)
-            catalog = context.catalog
+            _CATALOG = context.catalog
 
         else:
             # Kedro 0.14.*
             if pipeline_name:
                 raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
-            pipelines, catalog = _get_pipeline_catalog_from_kedro14(env)
+            pipelines, _CATALOG = _get_pipeline_catalog_from_kedro14(env)
 
-        data = format_pipelines_data(pipelines, catalog)
+        _DATA = format_pipelines_data(pipelines)
 
     if save_file:
-        Path(save_file).write_text(json.dumps(data, indent=4, sort_keys=True))
+        Path(save_file).write_text(json.dumps(_DATA, indent=4, sort_keys=True))
     else:
         is_localhost = host in ("127.0.0.1", "localhost", "0.0.0.0")
         if browser and is_localhost:
