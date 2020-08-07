@@ -452,10 +452,13 @@ def format_pipeline_data(
     for namespace, tag_names in sorted(namespace_tags.items()):
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
-        if is_param:
-            _JSON_NODES[node_id] = {"type": "parameters", "obj": None}
-        else:
-            _get_dataset_node(node_id, namespace)
+
+        node_data = (
+            {"type": "parameters", "obj": None}
+            if is_param
+            else _get_dataset_node(node_id, namespace)
+        )
+        _JSON_NODES[node_id] = node_data
 
         if node_id not in nodes:
             nodes[node_id] = {
@@ -480,7 +483,7 @@ def _get_dataset_node(node_id, namespace):
             dataset = None
     else:
         dataset = _CATALOG._data_sets.get(namespace)
-    _JSON_NODES[node_id] = {"type": "data", "obj": dataset}
+    return {"type": "data", "obj": dataset}
 
 
 @app.route("/api/nodes.json")
