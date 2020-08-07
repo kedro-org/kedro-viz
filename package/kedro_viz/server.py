@@ -69,7 +69,7 @@ _DEFAULT_KEY = "__default__"
 
 _DATA = None  # type: Dict
 _CATALOG = None  # type: DataCatalog
-_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None]]]
+_JSON_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None]]]
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -415,7 +415,7 @@ def format_pipeline_data(
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
         tags.update(node.tags)
-        _NODES[task_id] = {"type": "task", "obj": node}
+        _JSON_NODES[task_id] = {"type": "task", "obj": node}
         if task_id not in nodes:
             nodes[task_id] = {
                 "type": "task",
@@ -453,7 +453,7 @@ def format_pipeline_data(
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
         if is_param:
-            _NODES[node_id] = {"type": "parameters", "obj": None}
+            _JSON_NODES[node_id] = {"type": "parameters", "obj": None}
         else:
             _get_dataset_node(node_id, namespace)
 
@@ -480,7 +480,7 @@ def _get_dataset_node(node_id, namespace):
             dataset = None
     else:
         dataset = _CATALOG._data_sets.get(namespace)
-    _NODES[node_id] = {"type": "data", "obj": dataset}
+    _JSON_NODES[node_id] = {"type": "data", "obj": dataset}
 
 
 @app.route("/api/nodes.json")
@@ -492,7 +492,7 @@ def nodes_json():
 @app.route("/api/nodes/<string:node_id>")
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
-    node = _NODES.get(node_id)
+    node = _JSON_NODES.get(node_id)
     if not node:
         abort(404, description="Invalid node ID.")
     if node["type"] == "task":
