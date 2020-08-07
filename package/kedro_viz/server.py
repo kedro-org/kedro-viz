@@ -304,20 +304,20 @@ def _sort_layers(
     return toposort_flatten(layer_dependencies)
 
 
-def _construct_layer_mapping(catalog):
-    if hasattr(catalog, "layers"):  # kedro>=0.16.0
-        if catalog.layers is None:
-            return {ds_name: None for ds_name in getattr(catalog, "_data_sets")}
+def _construct_layer_mapping():
+    if hasattr(_CATALOG, "layers"):  # kedro>=0.16.0
+        if _CATALOG.layers is None:
+            return {ds_name: None for ds_name in getattr(_CATALOG, "_data_sets")}
 
         dataset_to_layer = {}
-        for layer, dataset_names in catalog.layers.items():
+        for layer, dataset_names in _CATALOG.layers.items():
             dataset_to_layer.update(
                 {dataset_name: layer for dataset_name in dataset_names}
             )
     else:
         dataset_to_layer = {
             ds_name: getattr(ds_obj, "_layer", None)
-            for ds_name, ds_obj in catalog._data_sets.items()
+            for ds_name, ds_obj in _CATALOG._data_sets.items()
         }
 
     return dataset_to_layer
@@ -409,7 +409,7 @@ def format_pipeline_data(
     # keep track of {data_set_namespace -> layer it belongs to}
     namespace_to_layer = {}
 
-    dataset_to_layer = _construct_layer_mapping(_CATALOG)
+    dataset_to_layer = _construct_layer_mapping()
 
     # Nodes and edges
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
