@@ -59,8 +59,8 @@ const getInitialState = (props = {}) => {
   // Merge default values with normalised pipeline data and localStorage
   const initialState = deepmerge(
     normalizeData(props.data),
-    createInitialState(),
-    loadState()
+    // Perform 2 deepmerges seperately because it performs much faster
+    deepmerge(createInitialState(), loadState())
   );
   // Add overrides from props etc
   return overrideInitialState(initialState, props);
