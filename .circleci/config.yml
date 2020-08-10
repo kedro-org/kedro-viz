@@ -53,6 +53,21 @@ commands:
           name: Install Node dependencies
           command: npm ci
 
+  test_lib_transpilation:
+    steps:
+      - run:
+          name: Test lib transpilation
+          command: npm run lib
+
+  test_lib_import:
+    steps:
+      - run:
+          name: Test JS library imports
+          command: |
+            npm run lib-test:setup
+            cd tools/test-lib/react-app
+            npm run test:ci
+
   run_eslint:
     steps:
       - run:
@@ -64,12 +79,6 @@ commands:
       - run:
           name: Run JavaScript tests
           command: npm run build:css && npm run test:ci
-
-  test_lib_transpilation:
-    steps:
-      - run:
-          name: Test lib transpilation
-          command: npm run lib
 
   run_pylint_and_flake8:
     steps:
@@ -161,9 +170,10 @@ commands:
             - v${CACHE_VERSION}-dependencies-
       - setup_python_env
       - install_node_dependencies
+      - test_lib_transpilation
+      - test_lib_import
       - run_eslint
       - run_javascript_tests
-      - test_lib_transpilation
       - run_pylint_and_flake8
       - run_secret_scan
       - run_security_scan

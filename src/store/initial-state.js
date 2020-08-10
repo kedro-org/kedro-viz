@@ -77,7 +77,9 @@ const getInitialState = (props = {}) => {
       exportBtn: true,
       exportModal: false,
       sidebar: true,
-      themeBtn: true
+      themeBtn: true,
+      miniMapBtn: true,
+      miniMap: true
     },
     localStorageState.visible,
     props.visible
@@ -96,6 +98,7 @@ const getInitialState = (props = {}) => {
   return {
     ...pipelineData,
     chartSize: {},
+    zoom: {},
     fontLoaded: false,
     textLabels,
     visible,

@@ -4,7 +4,7 @@
   text {
     font-weight: 600;
     font-size: 1.4em;
-    transition: all ease 0.1s;
+    transition: fill ease 0.1s, text-shadow ease 0.1s, opacity ease 0.1s;
     pointer-events: none;
 
     .kui-theme--light & {
@@ -18,7 +18,7 @@
   }
 
   rect {
-    transition: all ease 0.1s;
+    transition: fill ease 0.1s, stroke ease 0.1s, opacity ease 0.1s;
     stroke-width: 1px;
 
     .kui-theme--light & {

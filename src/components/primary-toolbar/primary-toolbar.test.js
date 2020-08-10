@@ -1,15 +1,15 @@
 import React from 'react';
-import ConnectedIconToolbar, {
-  IconToolbar,
+import ConnectedPrimaryToolbar, {
+  PrimaryToolbar,
   mapStateToProps,
   mapDispatchToProps
 } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
-describe('IconToolbar', () => {
+describe('PrimaryToolbar', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.mount(<ConnectedIconToolbar />);
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(9);
+    const wrapper = setup.mount(<ConnectedPrimaryToolbar />);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
   });
 
   it('hides all buttons (except menu button) when visible prop is false for each of them', () => {
@@ -19,16 +19,16 @@ describe('IconToolbar', () => {
       layerBtn: false,
       exportBtn: false
     };
-    const wrapper = setup.mount(<ConnectedIconToolbar />, { visible });
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
+    const wrapper = setup.mount(<ConnectedPrimaryToolbar />, { visible });
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
   });
 
   it('hides one button when visible prop is false for one of them', () => {
     const visible = {
       labelBtn: false
     };
-    const wrapper = setup.mount(<ConnectedIconToolbar />, { visible });
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(8);
+    const wrapper = setup.mount(<ConnectedPrimaryToolbar />, { visible });
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
   });
 
   const functionCalls = [
@@ -49,7 +49,7 @@ describe('IconToolbar', () => {
         visible: mockState.animals.visible,
         [callback]: mockFn
       };
-      const wrapper = setup.mount(<IconToolbar {...props} />);
+      const wrapper = setup.mount(<PrimaryToolbar {...props} />);
       expect(mockFn.mock.calls.length).toBe(0);
       wrapper
         .find({ icon })

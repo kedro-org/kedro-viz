@@ -2,7 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import NodeList from '../node-list';
-import IconToolbar from '../icon-toolbar';
+import PrimaryToolbar from '../primary-toolbar';
+import MiniMapToolbar from '../minimap-toolbar';
+import MiniMap from '../minimap';
 import './sidebar.css';
 
 /**
@@ -18,7 +20,11 @@ export const Sidebar = ({ visible }) => (
       <div className="pipeline-ui">
         <NodeList />
       </div>
-      <IconToolbar />
+      <nav className="pipeline-toolbar">
+        <PrimaryToolbar />
+        <MiniMapToolbar />
+      </nav>
+      <MiniMap />
     </div>
   </>
 );

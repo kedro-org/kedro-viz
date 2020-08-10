@@ -3,11 +3,45 @@
 //--- Reusable site-wide styles --//
 
 .pipeline-icon {
+  transition: fill 300ms ease, stroke 300ms ease;
+
   .kui-theme--light & {
-    fill: #333;
+    fill: #45444f;
   }
 
   .kui-theme--dark & {
     fill: #8e979c;
+  }
+
+  .kui-theme--light .pipeline-icon-toolbar__button:hover & {
+    fill: #000;
+  }
+
+  .kui-theme--dark .pipeline-icon-toolbar__button:hover & {
+    fill: #fff;
+  }
+}
+
+.pipeline-icon--stroke .pipeline-icon {
+  .kui-theme--light & {
+    fill: none;
+    stroke: #45444f;
+  }
+
+  .kui-theme--dark & {
+    fill: none;
+    stroke: #8e979c;
+  }
+}
+
+.pipeline-icon--stroke:hover .pipeline-icon {
+  .kui-theme--light & {
+    fill: none;
+    stroke: #000;
+  }
+
+  .kui-theme--dark & {
+    fill: none;
+    stroke: #fff;
   }
 }

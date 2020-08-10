@@ -1,4 +1,4 @@
-import IconButton from './icon-button';
+import IconButton from '.';
 import { setup } from '../../utils/state.mock';
 
 describe('IconButton', () => {

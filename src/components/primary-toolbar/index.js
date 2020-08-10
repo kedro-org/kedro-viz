@@ -8,9 +8,8 @@ import {
   toggleTextLabels,
   toggleTheme
 } from '../../actions';
-import IconButton from './icon-button';
-import MiniMapToolbar from '../minimap-toolbar';
-import './icon-toolbar.css';
+import IconButton from '../icon-button';
+import './primary-toolbar.css';
 
 /**
  * Main contols for filtering the chart data
@@ -19,7 +18,7 @@ import './icon-toolbar.css';
  * @param {Boolean} textLabels Whether text labels are displayed
  * @param {string} theme Kedro UI light/dark theme
  */
-export const IconToolbar = ({
+export const PrimaryToolbar = ({
   disableLayerBtn,
   onToggleExportModal,
   onToggleLayers,
@@ -31,7 +30,7 @@ export const IconToolbar = ({
   visible
 }) => (
   <>
-    <ul className="pipeline-icon-toolbar kedro">
+    <ul className="pipeline-primary-toolbar kedro">
       <IconButton
         ariaLabel={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
         className={classnames('pipeline-menu-button', {
@@ -71,7 +70,6 @@ export const IconToolbar = ({
         disabled={disableLayerBtn}
         visible={visible.layerBtn}
       />
-      <MiniMapToolbar />
     </ul>
   </>
 );
@@ -104,4 +102,4 @@ export const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(IconToolbar);
+)(PrimaryToolbar);
