@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Flipper } from 'react-flip-toolkit';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { loadState, saveState } from '../../store/helpers';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
@@ -128,11 +127,7 @@ const NodeListGroups = ({
     );
   };
 
-  return (
-    <Flipper flipKey={collapsed}>
-      <ul className="pipeline-nodelist">{types.map(renderTypeGroup)}</ul>
-    </Flipper>
-  );
+  return <ul className="pipeline-nodelist">{types.map(renderTypeGroup)}</ul>;
 };
 
 export const mapStateToProps = state => ({
