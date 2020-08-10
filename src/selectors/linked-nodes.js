@@ -1,8 +1,6 @@
 import { createSelector } from 'reselect';
+import { getVisibleEdges } from './edges';
 
-const getEdgeIDs = state => state.edge.ids;
-const getEdgeSources = state => state.edge.sources;
-const getEdgeTargets = state => state.edge.targets;
 const getClickedNode = state => state.node.clicked;
 const getHoveredNode = state => state.node.hovered;
 
@@ -17,35 +15,88 @@ export const getCentralNode = createSelector(
 );
 
 /**
- * Recursively search through the edges data for ancestor and descendant nodes
+ * Gets a map of nodeIDs to the visible source edges and target edges
  * @param {Array} edges
+ */
+export const getVisibleEdgesByNode = createSelector(
+  [getVisibleEdges],
+  edges => {
+    const sourceEdges = {};
+    const targetEdges = {};
+
+    for (const edge of edges) {
+      sourceEdges[edge.target] = sourceEdges[edge.target] || [];
+      sourceEdges[edge.target].push(edge);
+    }
+
+    for (const edge of edges) {
+      targetEdges[edge.source] = targetEdges[edge.source] || [];
+      targetEdges[edge.source].push(edge);
+    }
+
+    return { sourceEdges, targetEdges };
+  }
+);
+
+/**
+ * Finds all visible successors for the given nodeID in given direction
+ * @param {string} nodeID
+ * @param {Object} edgesByNode
+ * @param {string} direction
+ * @param {?Array} result
+ * @param {?object} visited
+ * @param {?Array} empty
+ */
+const findLinkedNodes = (
+  nodeId,
+  edgesByNode,
+  direction,
+  result = [],
+  visited = {},
+  empty = []
+) => {
+  if (visited[nodeId]) {
+    return result;
+  }
+
+  visited[nodeId] = true;
+  result.push(nodeId);
+
+  (edgesByNode[nodeId] || empty).forEach(edge =>
+    findLinkedNodes(
+      edge[direction],
+      edgesByNode,
+      direction,
+      result,
+      visited,
+      empty
+    )
+  );
+
+  return result;
+};
+
+/**
+ * Gets all visible ancestors and descendents for the given nodeID
+ * @param {Object} visibleEdgeMaps
  * @param {string} nodeID
  */
 export const getLinkedNodes = createSelector(
-  [getEdgeIDs, getEdgeSources, getEdgeTargets, getCentralNode],
-  (edges, edgeSources, edgeTargets, nodeID) => {
+  [getVisibleEdgesByNode, getCentralNode],
+  ({ sourceEdges, targetEdges }, nodeID) => {
     if (!nodeID) {
       return {};
     }
 
-    const linkedNodes = {
-      [nodeID]: true
-    };
+    const nodeIDs = findLinkedNodes(nodeID, sourceEdges, 'source').concat(
+      findLinkedNodes(nodeID, targetEdges, 'target')
+    );
 
-    const traverseGraph = (prev, next) => {
-      (function walk(id) {
-        edges.forEach(edge => {
-          if (prev[edge] === id) {
-            linkedNodes[next[edge]] = true;
-            walk(next[edge]);
-          }
-        });
-      })(nodeID);
-    };
+    const linkedNodes = {};
 
-    const direction = [edgeSources, edgeTargets];
-    traverseGraph.apply(null, direction);
-    traverseGraph.apply(null, direction.reverse());
+    for (const nodeID of nodeIDs) {
+      linkedNodes[nodeID] = true;
+    }
 
     return linkedNodes;
   }
