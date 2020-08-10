@@ -43,37 +43,34 @@ export const getVisibleEdgesByNode = createSelector(
  * @param {string} nodeID
  * @param {Object} edgesByNode
  * @param {string} direction
- * @param {?Array} result
  * @param {?object} visited
+ * @param {?boolean} isStart
  * @param {?Array} empty
  */
 const findLinkedNodes = (
   nodeId,
   edgesByNode,
   direction,
-  result = [],
   visited = {},
+  isStart = true,
   empty = []
 ) => {
-  if (visited[nodeId]) {
-    return result;
+  if (isStart || !visited[nodeId]) {
+    visited[nodeId] = true;
+
+    (edgesByNode[nodeId] || empty).forEach(edge =>
+      findLinkedNodes(
+        edge[direction],
+        edgesByNode,
+        direction,
+        visited,
+        false,
+        empty
+      )
+    );
   }
 
-  visited[nodeId] = true;
-  result.push(nodeId);
-
-  (edgesByNode[nodeId] || empty).forEach(edge =>
-    findLinkedNodes(
-      edge[direction],
-      edgesByNode,
-      direction,
-      result,
-      visited,
-      empty
-    )
-  );
-
-  return result;
+  return visited;
 };
 
 /**
@@ -88,16 +85,9 @@ export const getLinkedNodes = createSelector(
       return {};
     }
 
-    const nodeIDs = findLinkedNodes(nodeID, sourceEdges, 'source').concat(
-      findLinkedNodes(nodeID, targetEdges, 'target')
-    );
-
     const linkedNodes = {};
-
-    for (const nodeID of nodeIDs) {
-      linkedNodes[nodeID] = true;
-    }
-
+    findLinkedNodes(nodeID, sourceEdges, 'source', linkedNodes);
+    findLinkedNodes(nodeID, targetEdges, 'target', linkedNodes);
     return linkedNodes;
   }
 );
