@@ -28,6 +28,22 @@ export const createInitialState = () => ({
 });
 
 /**
+ * Load values from localStorage and combine with existing state,
+ * but filter out any unused values from localStorage
+ * @param {object} state Initial/extant state
+ * @return {object} Combined state from localStorage
+ */
+export const applyLocalStorage = state => {
+  const localStorageState = loadState();
+  Object.keys(localStorageState).forEach(key => {
+    if (!state[key]) {
+      delete localStorageState[key];
+    }
+  });
+  return deepmerge(state, localStorageState);
+};
+
+/**
  * Add state overrides from props, URL flags, etc
  * @param {object} state App state
  * @param {object} props Props passed to App component
@@ -48,22 +64,6 @@ export const overrideInitialState = (state, props) => {
     state.visible.layers = false;
   }
   return state;
-};
-
-/**
- * Load values from localStorage and combine with existing state,
- * but filter out any unused values from localStorage
- * @param {object} state Initial/extant state
- * @return {object} Combined state from localStorage
- */
-export const applyLocalStorage = state => {
-  const localStorageState = loadState();
-  Object.keys(localStorageState).forEach(key => {
-    if (!state[key]) {
-      delete localStorageState[key];
-    }
-  });
-  return deepmerge(state, localStorageState);
 };
 
 /**
