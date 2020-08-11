@@ -51,16 +51,39 @@ export const overrideInitialState = (state, props) => {
 };
 
 /**
+ * Load values from localStorage, but filter any values that
+ * aren't used in the main redux store
+ * @param {array} keys
+ * @return {object} filtered state from localStorage
+ */
+const getLocalStorageState = keys => {
+  const localStorageState = loadState();
+  const filteredLocalStorageState = {};
+  keys.forEach(key => {
+    if (localStorageState[key]) {
+      filteredLocalStorageState[key] = localStorageState[key];
+    }
+  });
+  return filteredLocalStorageState;
+};
+
+/**
  * Configure the redux store's initial state
  * @param {Object} props App component props
  * @return {Object} Initial state
  */
 const getInitialState = (props = {}) => {
   // Merge default values with normalised pipeline data and localStorage
+  const initialPipelineState = normalizeData(props.data);
+  const initialNonPipelineState = createInitialState();
+  const storeKeys = Object.keys(initialPipelineState).concat(
+    Object.keys(initialNonPipelineState)
+  );
+  const localStorageState = getLocalStorageState(storeKeys);
   const initialState = deepmerge(
-    normalizeData(props.data),
+    initialPipelineState,
     // Perform 2 deepmerges seperately because it performs much faster
-    deepmerge(createInitialState(), loadState())
+    deepmerge(initialNonPipelineState, localStorageState)
   );
   // Add overrides from props etc
   return overrideInitialState(initialState, props);
