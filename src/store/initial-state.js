@@ -44,7 +44,7 @@ export const applyLocalStorage = state => {
 };
 
 /**
- * Add state overrides from props, URL flags, etc
+ * Add custom state overrides from props, URL flags, etc
  * @param {object} state App state
  * @param {object} props Props passed to App component
  */
