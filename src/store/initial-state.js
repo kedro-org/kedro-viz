@@ -51,20 +51,19 @@ export const overrideInitialState = (state, props) => {
 };
 
 /**
- * Load values from localStorage, but filter any values that
- * aren't used in the main redux store
- * @param {array} keys
- * @return {object} filtered state from localStorage
+ * Load values from localStorage and combine with existing state,
+ * but filter out any unused values from localStorage
+ * @param {object} state Initial/extant state
+ * @return {object} Combined state from localStorage
  */
-const getLocalStorageState = keys => {
+export const applyLocalStorage = state => {
   const localStorageState = loadState();
-  const filteredLocalStorageState = {};
-  keys.forEach(key => {
-    if (localStorageState[key]) {
-      filteredLocalStorageState[key] = localStorageState[key];
+  Object.keys(localStorageState).forEach(key => {
+    if (!state[key]) {
+      delete localStorageState[key];
     }
   });
-  return filteredLocalStorageState;
+  return deepmerge(state, localStorageState);
 };
 
 /**
@@ -76,14 +75,10 @@ const getInitialState = (props = {}) => {
   // Merge default values with normalised pipeline data and localStorage
   const initialPipelineState = normalizeData(props.data);
   const initialNonPipelineState = createInitialState();
-  const storeKeys = Object.keys(initialPipelineState).concat(
-    Object.keys(initialNonPipelineState)
-  );
-  const localStorageState = getLocalStorageState(storeKeys);
   const initialState = deepmerge(
-    initialPipelineState,
+    applyLocalStorage(initialPipelineState),
     // Perform 2 deepmerges seperately because it performs much faster
-    deepmerge(initialNonPipelineState, localStorageState)
+    applyLocalStorage(initialNonPipelineState)
   );
   // Add overrides from props etc
   return overrideInitialState(initialState, props);

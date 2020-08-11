@@ -5,7 +5,7 @@ import configureStore from '../../store';
 import { resetData, updateFontLoaded } from '../../actions';
 import checkFontLoaded from '../../actions/check-font-loaded';
 import Wrapper from '../wrapper';
-import getInitialState from '../../store/initial-state';
+import getInitialState, { applyLocalStorage } from '../../store/initial-state';
 import normalizeData from '../../store/normalize-data';
 import { getFlagsMessage } from '../../utils/flags';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
@@ -57,7 +57,8 @@ class App extends React.Component {
    */
   updatePipelineData() {
     const normalizedData = normalizeData(this.props.data);
-    this.store.dispatch(resetData(normalizedData));
+    const newState = applyLocalStorage(normalizedData);
+    this.store.dispatch(resetData(newState));
   }
 
   render() {
