@@ -25,12 +25,16 @@ export const getVisibleEdgesByNode = createSelector(
     const targetEdges = {};
 
     for (const edge of edges) {
-      sourceEdges[edge.target] = sourceEdges[edge.target] || [];
-      sourceEdges[edge.target].push(edge);
-    }
+      if (!sourceEdges[edge.target]) {
+        sourceEdges[edge.target] = [];
+      }
 
-    for (const edge of edges) {
-      targetEdges[edge.source] = targetEdges[edge.source] || [];
+      sourceEdges[edge.target].push(edge);
+
+      if (!targetEdges[edge.source]) {
+        targetEdges[edge.source] = [];
+      }
+
       targetEdges[edge.source].push(edge);
     }
 
