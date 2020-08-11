@@ -48,28 +48,15 @@ export const getVisibleEdgesByNode = createSelector(
  * @param {Object} edgesByNode an object mapping nodeIDs to edges
  * @param {string} direction 'source' or 'target', direction to traverse along each edge
  * @param {object} visited an object for storing all visited node ids
- * @param {?number} depth the current depth so far traversed
  * @returns {object} the supplied `visited` object
  */
-const findLinkedNodes = (
-  nodeID,
-  edgesByNode,
-  direction,
-  visited,
-  depth = 0
-) => {
-  if (depth === 0 || !visited[nodeID]) {
+const findLinkedNodes = (nodeID, edgesByNode, direction, visited) => {
+  if (!visited[nodeID]) {
     visited[nodeID] = true;
 
     if (edgesByNode[nodeID]) {
       edgesByNode[nodeID].forEach(edge =>
-        findLinkedNodes(
-          edge[direction],
-          edgesByNode,
-          direction,
-          visited,
-          depth + 1
-        )
+        findLinkedNodes(edge[direction], edgesByNode, direction, visited)
       );
     }
   }
@@ -91,7 +78,10 @@ export const getLinkedNodes = createSelector(
 
     const linkedNodes = {};
     findLinkedNodes(nodeID, sourceEdges, 'source', linkedNodes);
+
+    linkedNodes[nodeID] = false;
     findLinkedNodes(nodeID, targetEdges, 'target', linkedNodes);
+
     return linkedNodes;
   }
 );
