@@ -58,7 +58,7 @@
     "redux-watch": "^1.1.1",
     "reselect": "^4.0.0",
     "seedrandom": "^3.0.5",
-    "snyk": "^1.362.1",
+    "snyk": "^1.363.0",
     "svg-crowbar": "^0.6.0",
     "what-input": "^5.2.10"
   },
