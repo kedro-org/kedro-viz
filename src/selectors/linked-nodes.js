@@ -15,7 +15,7 @@ export const getCentralNode = createSelector(
 );
 
 /**
- * Gets a map of nodeIDs to the visible source edges and target edges
+ * Gets a map of visible nodeIDs to successors nodeIDs in both directions
  * @param {Array} edges
  */
 export const getVisibleEdgesByNode = createSelector(
@@ -29,13 +29,13 @@ export const getVisibleEdgesByNode = createSelector(
         sourceEdges[edge.target] = [];
       }
 
-      sourceEdges[edge.target].push(edge);
+      sourceEdges[edge.target].push(edge.source);
 
       if (!targetEdges[edge.source]) {
         targetEdges[edge.source] = [];
       }
 
-      targetEdges[edge.source].push(edge);
+      targetEdges[edge.source].push(edge.target);
     }
 
     return { sourceEdges, targetEdges };
@@ -43,20 +43,19 @@ export const getVisibleEdgesByNode = createSelector(
 );
 
 /**
- * Finds all visible successor for the given nodeID in given direction
+ * Finds all visible successor nodeIDs for the given nodeID
  * @param {string} nodeID the starting nodeID
- * @param {Object} edgesByNode an object mapping nodeIDs to edges
- * @param {string} direction 'source' or 'target', direction to traverse along each edge
+ * @param {Object} edgesByNode an object mapping nodeIDs to successor nodeIDs
  * @param {object} visited an object for storing all visited node ids
  * @returns {object} the supplied `visited` object
  */
-const findLinkedNodes = (nodeID, edgesByNode, direction, visited) => {
+const findLinkedNodes = (nodeID, edgesByNode, visited) => {
   if (!visited[nodeID]) {
     visited[nodeID] = true;
 
     if (edgesByNode[nodeID]) {
-      edgesByNode[nodeID].forEach(edge =>
-        findLinkedNodes(edge[direction], edgesByNode, direction, visited)
+      edgesByNode[nodeID].forEach(nodeID =>
+        findLinkedNodes(nodeID, edgesByNode, visited)
       );
     }
   }
@@ -77,10 +76,10 @@ export const getLinkedNodes = createSelector(
     }
 
     const linkedNodes = {};
-    findLinkedNodes(nodeID, sourceEdges, 'source', linkedNodes);
+    findLinkedNodes(nodeID, sourceEdges, linkedNodes);
 
     linkedNodes[nodeID] = false;
-    findLinkedNodes(nodeID, targetEdges, 'target', linkedNodes);
+    findLinkedNodes(nodeID, targetEdges, linkedNodes);
 
     return linkedNodes;
   }
