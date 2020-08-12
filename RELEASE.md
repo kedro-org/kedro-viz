@@ -20,6 +20,7 @@ Please follow the established format:
 - Move data source loading into standalone-app entry point (#215)
 - Allow an argument to be passed to loadJsonData (#215)
 - Add information for multiple pipelines in `nodes.json` (#192)
+- Rename default endpoint from `/api/nodes.json` to `/api/nodes` (#239)
 
 # Release 3.4.0
 
