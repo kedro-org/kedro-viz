@@ -97,7 +97,7 @@ App.defaultProps = {
    * You can supply an object containing lists of edges, nodes, tags -
    * See /src/utils/data for examples of the expected data format.
    * Alternatively, the string 'json' indicates that data is being
-   * loaded asynchronously from /public/api/nodes.json
+   * loaded asynchronously from /public/api/main
    */
   data: null,
   /**
