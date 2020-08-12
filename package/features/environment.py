@@ -34,11 +34,12 @@ import shutil
 import stat
 import sys
 import tempfile
+import venv
 from pathlib import Path
 
 from features.steps.sh_run import run
-from features.steps.util import create_new_venv
 
+_PATHS_TO_REMOVE = set()  # type: Set[Path]
 
 def _should_exclude_scenario(scenario):
     pre_16_scenario = any(key in scenario.name for key in ["0.14", "0.15"])
@@ -101,19 +102,39 @@ def before_scenario(context, scenario):  # pylint: disable=unused-argument
     call([context.python, "setup.py", "clean", "--all", "bdist_wheel"])
 
     call([context.pip, "install", "-U"] + glob.glob("dist/*.whl"))
-    context.temp_dir = Path(tempfile.mkdtemp())
+    # context.temp_dir = Path(tempfile.mkdtemp())
+
+    context.temp_dir = Path(tempfile.mkdtemp()).resolve()
+    _PATHS_TO_REMOVE.add(context.temp_dir)
+
+# def after_scenario(context, scenario):
+#     # pylint: disable=unused-argument
+#     rmtree(str(context.temp_dir))
+#     if "E2E_VENV" not in os.environ:
+#         rmtree(str(context.venv_dir))
+#
+#
+# def rmtree(top):
+#     if os.name != "posix":
+#         for root, _, files in os.walk(top, topdown=False):
+#             for name in files:
+#                 os.chmod(os.path.join(root, name), stat.S_IWUSR)
+#     shutil.rmtree(top)
+
+def after_all(context):
+    for path in _PATHS_TO_REMOVE:
+        # ignore errors when attempting to remove already removed directories
+        shutil.rmtree(path, ignore_errors=True)
 
 
-def after_scenario(context, scenario):
-    # pylint: disable=unused-argument
-    rmtree(str(context.temp_dir))
-    if "E2E_VENV" not in os.environ:
-        rmtree(str(context.venv_dir))
+def create_new_venv() -> str:
+    venv_dir = _create_tmp_dir()
+    venv.main([str(venv_dir)])
+    return venv_dir
 
 
-def rmtree(top):
-    if os.name != "posix":
-        for root, _, files in os.walk(top, topdown=False):
-            for name in files:
-                os.chmod(os.path.join(root, name), stat.S_IWUSR)
-    shutil.rmtree(top)
+def _create_tmp_dir() -> Path:
+    """Create a temp directory and add it to _PATHS_TO_REMOVE"""
+    tmp_dir = Path(tempfile.mkdtemp()).resolve()
+    _PATHS_TO_REMOVE.add(tmp_dir)
+    return tmp_dir
