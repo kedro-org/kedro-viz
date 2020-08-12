@@ -60,7 +60,7 @@ const combinedReducer = combineReducers({
   layer: createReducer({}),
   // These props have very simple non-nested actions
   chartSize: createReducer({}, UPDATE_CHART_SIZE, 'chartSize'),
-  zoom: createReducer({}, UPDATE_ZOOM, 'zoom', {}),
+  zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),
   fontLoaded: createReducer(false, UPDATE_FONT_LOADED, 'fontLoaded'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme')
