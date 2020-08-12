@@ -486,7 +486,7 @@ def _get_dataset_node(node_id, namespace):
     return {"type": "data", "obj": dataset}
 
 
-@app.route("/api/nodes.json")
+@app.route("/api/nodes")
 def nodes_json():
     """Serve the pipeline data."""
     return jsonify(_DATA)
