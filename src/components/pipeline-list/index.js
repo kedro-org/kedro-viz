@@ -26,7 +26,6 @@ export const PipelineList = ({ onUpdateActivePipeline, pipeline, theme }) => {
           <MenuOption
             key={`pipeline-${id}`}
             value={id}
-            selected={id === pipeline.active}
             primaryText={pipeline.name[id]}
           />
         ))}
