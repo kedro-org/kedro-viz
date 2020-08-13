@@ -1,6 +1,6 @@
 import getInitialState, {
   createInitialState,
-  applyLocalStorage,
+  mergeLocalStorage,
   overrideInitialState
 } from './initial-state';
 import { saveState } from './helpers';
@@ -12,7 +12,7 @@ describe('createInitialState', () => {
   });
 });
 
-describe('applyLocalStorage', () => {
+describe('mergeLocalStorage', () => {
   const localStorageValues = {
     textLabels: false,
     theme: 'light'
@@ -28,7 +28,7 @@ describe('applyLocalStorage', () => {
 
   it('overrides state values with localstorage values if provided', () => {
     expect(
-      applyLocalStorage({
+      mergeLocalStorage({
         textLabels: true,
         theme: 'dark'
       })
@@ -40,13 +40,13 @@ describe('applyLocalStorage', () => {
       additional: 1,
       props: '2'
     };
-    expect(applyLocalStorage(extraValues)).toMatchObject(extraValues);
+    expect(mergeLocalStorage(extraValues)).toMatchObject(extraValues);
   });
 
   it('deep-merges nested objects', () => {
     saveState({ foo: { bar: 1, baz: 2 } });
     expect(
-      applyLocalStorage({ quz: 'quux', foo: { bar: 30, foo: 'foo' } })
+      mergeLocalStorage({ quz: 'quux', foo: { bar: 30, foo: 'foo' } })
     ).toMatchObject({ quz: 'quux', foo: { bar: 1, baz: 2, foo: 'foo' } });
   });
 });

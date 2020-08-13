@@ -33,7 +33,7 @@ export const createInitialState = () => ({
  * @param {object} state Initial/extant state
  * @return {object} Combined state from localStorage
  */
-export const applyLocalStorage = state => {
+export const mergeLocalStorage = state => {
   const localStorageState = loadState();
   Object.keys(localStorageState).forEach(key => {
     if (!state[key]) {
@@ -76,9 +76,9 @@ const getInitialState = (props = {}) => {
   const initialPipelineState = normalizeData(props.data);
   const initialNonPipelineState = createInitialState();
   const initialState = deepmerge(
-    applyLocalStorage(initialPipelineState),
+    mergeLocalStorage(initialPipelineState),
     // Perform 2 deepmerges seperately because it performs much faster
-    applyLocalStorage(initialNonPipelineState)
+    mergeLocalStorage(initialNonPipelineState)
   );
   // Add overrides from props etc
   return overrideInitialState(initialState, props);
