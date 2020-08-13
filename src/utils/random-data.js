@@ -24,6 +24,8 @@ const MIN_NODE_DEGREE = 2;
 const MAX_NODE_TAG_COUNT = 5;
 const MAX_TAG_COUNT = 20;
 const PARAMETERS_FREQUENCY = 0.2;
+const MIN_PIPELINES_COUNT = 2;
+const MAX_PIPELINES_COUNT = 15;
 const LAYERS = [
   'Raw',
   'Intermediate',
@@ -38,6 +40,7 @@ const LAYERS = [
  */
 class Pipeline {
   constructor() {
+    this.pipelines = this.generatePipelines();
     this.rankCount = this.getRankCount();
     this.rankLayers = this.getRankLayers();
     this.tags = this.generateTags();
@@ -46,6 +49,22 @@ class Pipeline {
 
     this.update();
     this.finalise();
+  }
+
+  /**
+   * Create the pipelines aray
+   * @returns {number} Rank count total
+   */
+  generatePipelines() {
+    const pipelines = ['Default'];
+    const pipelineCount = randomNumberBetween(
+      MIN_PIPELINES_COUNT,
+      MAX_PIPELINES_COUNT
+    );
+    for (let i = 1; i < pipelineCount; i++) {
+      pipelines.push(getRandomName(randomNumber(4), ' '));
+    }
+    return pipelines.filter(unique);
   }
 
   /**
@@ -151,6 +170,7 @@ class Pipeline {
       type: null,
       rank: initialRank,
       layer: layer,
+      pipelines: this.getNodePipelines(),
       tags: this.getRandomTags(),
       _sources: [],
       _targets: []
@@ -166,6 +186,19 @@ class Pipeline {
   getNodeName(type) {
     const name = getRandomName(randomNumber(10), ' ');
     return type === 'parameters' ? `Parameters ${name}` : name;
+  }
+
+  /**
+   * Create a list of the pipelines that the node will be included in
+   * @returns {array} Node piplines
+   */
+  getNodePipelines() {
+    return this.pipelines.reduce((pipelines, id, i) => {
+      if (i === 0 || randomIndex(2)) {
+        return pipelines.concat(id);
+      }
+      return pipelines;
+    }, []);
   }
 
   /**
@@ -350,9 +383,10 @@ class Pipeline {
   all() {
     return {
       edges: this.edges,
+      layers: LAYERS,
       nodes: this.nodes,
-      tags: this.tags,
-      layers: LAYERS
+      pipelines: this.pipelines.map(name => ({ id: name, name })),
+      tags: this.tags
     };
   }
 }
