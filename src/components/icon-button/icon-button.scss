@@ -51,7 +51,6 @@
   transform: translateX(-1em);
   visibility: hidden;
   opacity: 0;
-  transition: all ease 0.2s;
 
   .pipeline-icon-toolbar__button:hover &,
   [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {

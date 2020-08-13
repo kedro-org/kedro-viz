@@ -2,7 +2,6 @@
   position: relative;
   display: flex;
   align-items: center;
-  transition: background-color ease $row-transition;
 
   &--active,
   &--visible:hover {
@@ -37,7 +36,6 @@
   flex-shrink: 0;
   width: $row-icon-size;
   height: $row-icon-size;
-  transition: opacity ease $row-transition;
 
   .kui-theme--light & {
     fill: $color-text-light;
@@ -112,7 +110,6 @@
   font-size: 1.48em;
   white-space: nowrap;
   text-overflow: ellipsis;
-  transition: opacity ease $row-transition, color ease $row-transition;
 
   .kui-theme--dark & {
     color: #dbddde;
@@ -184,7 +181,6 @@
     background: transparent;
     transform: translate(0, 0);
     opacity: 0;
-    transition: opacity ease 0.1s;
     content: ' ';
     pointer-events: none;
   }
