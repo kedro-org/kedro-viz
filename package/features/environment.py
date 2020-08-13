@@ -33,13 +33,24 @@ import os
 import shutil
 import stat
 import sys
-import tempfile
 import venv
+import tempfile
 from pathlib import Path
 
 from features.steps.sh_run import run
+# from features.steps.util import create_new_venv
 
 _PATHS_TO_REMOVE = set()  # type: Set[Path]
+
+
+def call(cmd, env, verbose=False):
+    res = run(cmd, env=env)
+    if res.returncode or verbose:
+        print(">", " ".join(cmd))
+        print(res.stdout)
+        print(res.stderr)
+    assert res.returncode == 0
+
 
 def _should_exclude_scenario(scenario):
     pre_16_scenario = any(key in scenario.name for key in ["0.14", "0.15"])
@@ -53,20 +64,20 @@ def before_scenario(context, scenario):  # pylint: disable=unused-argument
     if _should_exclude_scenario(scenario):
         scenario.skip()
 
-    def call(cmd, verbose=False):
-        res = run(cmd, env=context.env)
-        if res.returncode or verbose:
-            print(">", " ".join(cmd))
-            print(res.stdout)
-            print(res.stderr)
-        assert res.returncode == 0
-
     # make a venv
     if "E2E_VENV" in os.environ:
         context.venv_dir = Path(os.environ["E2E_VENV"])
     else:
-        context.venv_dir = Path(create_new_venv())
+        kedro_install_venv_dir = _create_new_venv()
+        context.venv_dir = kedro_install_venv_dir
+        context = _setup_context_with_venv(context, kedro_install_venv_dir)
 
+    context.temp_dir = Path(tempfile.mkdtemp()).resolve()
+    _PATHS_TO_REMOVE.add(context.temp_dir)
+
+
+def _setup_context_with_venv(context, venv_dir):
+    context.venv_dir = venv_dir
     # note the locations of some useful stuff
     # this is because exe resolution in supbrocess doens't respect a passed env
     if os.name == "posix":
@@ -75,9 +86,11 @@ def before_scenario(context, scenario):  # pylint: disable=unused-argument
     else:
         bin_dir = context.venv_dir / "Scripts"
         path_sep = ";"
+    context.bin_dir = bin_dir
     context.pip = str(bin_dir / "pip")
     context.python = str(bin_dir / "python")
     context.kedro = str(bin_dir / "kedro")
+    context.requirements_path = Path("requirements.txt").resolve()
 
     # clone the environment, remove any condas and venvs and insert our venv
     context.env = os.environ.copy()
@@ -88,32 +101,63 @@ def before_scenario(context, scenario):  # pylint: disable=unused-argument
     # Activate environment
     context.env["PATH"] = path_sep.join(path)
 
+    call(
+        [
+            context.python,
+            "-m",
+            "pip",
+            "install",
+            "-U",
+            "pip>=20.0",
+            "setuptools>=38.0",
+            "wheel",
+        ],
+        env=context.env,
+    )
+    # install_reqs = (
+    #     Path(
+    #         "kedro/templates/project/{{ cookiecutter.repo_name }}/src/requirements.txt"
+    #     )
+    #         .read_text()
+    #         .splitlines()
+    # )
+    # install_reqs = [req for req in install_reqs if "{" not in req]
+    #
+    # call([context.pip, "install", *install_reqs], env=context.env)
+
     # install this plugin by resolving the requirements using pip-compile
     # from pip-tools due to this bug in pip: https://github.com/pypa/pip/issues/988
-    call([context.python, "-m", "pip", "install", "-U", "pip", "pip-tools"])
+    call([context.python, "-m", "pip", "install", "-U", "pip", "pip-tools"], env=context.env)
     pip_compile = str(bin_dir / "pip-compile")
     with tempfile.TemporaryDirectory() as tmpdirname:
         compiled_reqs = Path(tmpdirname) / "compiled_requirements.txt"
-        call([pip_compile, "--output-file", str(compiled_reqs), "requirements.txt"])
-        call([context.pip, "install", "-r", str(compiled_reqs)])
+        call([pip_compile, "--output-file", str(compiled_reqs), "requirements.txt"], env=context.env)
+        call([context.pip, "install", "-r", str(compiled_reqs)], env=context.env)
 
     for wheel_path in glob.glob("dist/*.whl"):
         os.remove(wheel_path)
-    call([context.python, "setup.py", "clean", "--all", "bdist_wheel"])
+    call([context.python, "setup.py", "clean", "--all", "bdist_wheel"], env=context.env)
 
-    call([context.pip, "install", "-U"] + glob.glob("dist/*.whl"))
-    # context.temp_dir = Path(tempfile.mkdtemp())
+    call([context.pip, "install", "-U"] + glob.glob("dist/*.whl"), env=context.env)
 
-    context.temp_dir = Path(tempfile.mkdtemp()).resolve()
-    _PATHS_TO_REMOVE.add(context.temp_dir)
+    # Create an empty pip.conf file and point pip to it
+    pip_conf_path = context.venv_dir / "pip.conf"
+    pip_conf_path.touch()
+    context.env["PIP_CONFIG_FILE"] = str(pip_conf_path)
 
-# def after_scenario(context, scenario):
-#     # pylint: disable=unused-argument
-#     rmtree(str(context.temp_dir))
-#     if "E2E_VENV" not in os.environ:
-#         rmtree(str(context.venv_dir))
-#
-#
+    return context
+
+
+def after_scenario(context, scenario):
+    # # pylint: disable=unused-argument
+    # rmtree(str(context.temp_dir))
+    # if "E2E_VENV" not in os.environ:
+    #     rmtree(str(context.venv_dir))
+    for path in _PATHS_TO_REMOVE:
+        # ignore errors when attempting to remove already removed directories
+        shutil.rmtree(path, ignore_errors=True)
+
+
 # def rmtree(top):
 #     if os.name != "posix":
 #         for root, _, files in os.walk(top, topdown=False):
@@ -121,13 +165,14 @@ def before_scenario(context, scenario):  # pylint: disable=unused-argument
 #                 os.chmod(os.path.join(root, name), stat.S_IWUSR)
 #     shutil.rmtree(top)
 
-def after_all(context):
-    for path in _PATHS_TO_REMOVE:
-        # ignore errors when attempting to remove already removed directories
-        shutil.rmtree(path, ignore_errors=True)
 
+def _create_new_venv() -> Path:
+    """Create a new venv.
 
-def create_new_venv() -> str:
+    Returns:
+        path to created venv
+    """
+    # Create venv
     venv_dir = _create_tmp_dir()
     venv.main([str(venv_dir)])
     return venv_dir
