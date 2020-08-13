@@ -102,9 +102,7 @@ def _setup_context_with_venv(context, venv_dir):
 
     call(
         [
-            context.python,
-            "-m",
-            "pip",
+            context.pip,
             "install",
             "-U",
             "pip>=20.0",
