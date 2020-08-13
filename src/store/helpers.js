@@ -32,9 +32,29 @@ export const saveState = state => {
   }
   try {
     const newState = Object.assign(loadState(), state);
+    // Remove deprecated key from localStorage to suppress error.
+    // This can be removed in future versions of KedroViz:
+    if (newState.hasOwnProperty('nodeTypeDisabled')) {
+      delete newState.nodeTypeDisabled;
+    }
     const serializedState = JSON.stringify(newState);
     window.localStorage.setItem(localStorageName, serializedState);
   } catch (err) {
     console.error(err);
   }
+};
+
+/**
+ * Remove unnecessary keys to prevent them being stored in state forever
+ * @param {object} obj An object containing keys and booleans
+ * @return {object} A new clone object but with the falsey keys removed
+ */
+export const pruneFalseyKeys = obj => {
+  const newObj = {};
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key) && obj[key]) {
+      newObj[key] = obj[key];
+    }
+  }
+  return newObj;
 };
