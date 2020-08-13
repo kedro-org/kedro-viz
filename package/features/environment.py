@@ -100,8 +100,6 @@ def _setup_context_with_venv(context, venv_dir):
     # Activate environment
     context.env["PATH"] = path_sep.join(path)
 
-    # install this plugin by resolving the requirements using pip-compile
-    # from pip-tools due to this bug in pip: https://github.com/pypa/pip/issues/988
     call(
         [
             context.python,
@@ -112,19 +110,9 @@ def _setup_context_with_venv(context, venv_dir):
             "pip>=20.0",
             "setuptools>=38.0",
             "wheel",
-            "pip-tools",
         ],
         env=context.env,
     )
-
-    pip_compile = str(bin_dir / "pip-compile")
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        compiled_reqs = Path(tmpdirname) / "compiled_requirements.txt"
-        call(
-            [pip_compile, "--output-file", str(compiled_reqs), "requirements.txt"],
-            env=context.env,
-        )
-        call([context.pip, "install", "-r", str(compiled_reqs)], env=context.env)
 
     for wheel_path in glob.glob("dist/*.whl"):
         os.remove(wheel_path)
