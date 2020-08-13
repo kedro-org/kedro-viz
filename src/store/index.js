@@ -4,7 +4,7 @@ import watch from 'redux-watch';
 import reducer from '../reducers';
 import { getGraphInput } from '../selectors/layout';
 import { calculateGraph } from '../actions/graph';
-import { saveState } from './helpers';
+import { saveState, pruneFalseyKeys } from './helpers';
 
 /**
  * Configure initial state and create the Redux store
@@ -22,12 +22,24 @@ export default function configureStore(initialState) {
   );
 
   store.subscribe(() => {
-    const { textLabels, theme, nodeType, visible, flags } = store.getState();
+    const {
+      textLabels,
+      theme,
+      node,
+      nodeType,
+      visible,
+      flags
+    } = store.getState();
 
     saveState({
       textLabels,
       theme,
-      nodeTypeDisabled: nodeType.disabled,
+      node: {
+        disabled: pruneFalseyKeys(node.disabled)
+      },
+      nodeType: {
+        disabled: nodeType.disabled
+      },
       visible,
       flags
     });
