@@ -31,14 +31,12 @@
 import glob
 import os
 import shutil
-import stat
 import sys
-import venv
 import tempfile
+import venv
 from pathlib import Path
 
 from features.steps.sh_run import run
-# from features.steps.util import create_new_venv
 
 _PATHS_TO_REMOVE = set()  # type: Set[Path]
 
@@ -79,7 +77,7 @@ def before_scenario(context, scenario):  # pylint: disable=unused-argument
 def _setup_context_with_venv(context, venv_dir):
     context.venv_dir = venv_dir
     # note the locations of some useful stuff
-    # this is because exe resolution in supbrocess doens't respect a passed env
+    # this is because exe resolution in subprocess doesn't respect a passed env
     if os.name == "posix":
         bin_dir = context.venv_dir / "bin"
         path_sep = ":"
@@ -101,6 +99,8 @@ def _setup_context_with_venv(context, venv_dir):
     # Activate environment
     context.env["PATH"] = path_sep.join(path)
 
+    # install this plugin by resolving the requirements using pip-compile
+    # from pip-tools due to this bug in pip: https://github.com/pypa/pip/issues/988
     call(
         [
             context.python,
@@ -111,27 +111,18 @@ def _setup_context_with_venv(context, venv_dir):
             "pip>=20.0",
             "setuptools>=38.0",
             "wheel",
+            "pip-tools",
         ],
         env=context.env,
     )
-    # install_reqs = (
-    #     Path(
-    #         "kedro/templates/project/{{ cookiecutter.repo_name }}/src/requirements.txt"
-    #     )
-    #         .read_text()
-    #         .splitlines()
-    # )
-    # install_reqs = [req for req in install_reqs if "{" not in req]
-    #
-    # call([context.pip, "install", *install_reqs], env=context.env)
 
-    # install this plugin by resolving the requirements using pip-compile
-    # from pip-tools due to this bug in pip: https://github.com/pypa/pip/issues/988
-    call([context.python, "-m", "pip", "install", "-U", "pip", "pip-tools"], env=context.env)
     pip_compile = str(bin_dir / "pip-compile")
     with tempfile.TemporaryDirectory() as tmpdirname:
         compiled_reqs = Path(tmpdirname) / "compiled_requirements.txt"
-        call([pip_compile, "--output-file", str(compiled_reqs), "requirements.txt"], env=context.env)
+        call(
+            [pip_compile, "--output-file", str(compiled_reqs), "requirements.txt"],
+            env=context.env,
+        )
         call([context.pip, "install", "-r", str(compiled_reqs)], env=context.env)
 
     for wheel_path in glob.glob("dist/*.whl"):
@@ -140,30 +131,13 @@ def _setup_context_with_venv(context, venv_dir):
 
     call([context.pip, "install", "-U"] + glob.glob("dist/*.whl"), env=context.env)
 
-    # Create an empty pip.conf file and point pip to it
-    pip_conf_path = context.venv_dir / "pip.conf"
-    pip_conf_path.touch()
-    context.env["PIP_CONFIG_FILE"] = str(pip_conf_path)
-
     return context
 
 
 def after_scenario(context, scenario):
-    # # pylint: disable=unused-argument
-    # rmtree(str(context.temp_dir))
-    # if "E2E_VENV" not in os.environ:
-    #     rmtree(str(context.venv_dir))
     for path in _PATHS_TO_REMOVE:
         # ignore errors when attempting to remove already removed directories
         shutil.rmtree(path, ignore_errors=True)
-
-
-# def rmtree(top):
-#     if os.name != "posix":
-#         for root, _, files in os.walk(top, topdown=False):
-#             for name in files:
-#                 os.chmod(os.path.join(root, name), stat.S_IWUSR)
-#     shutil.rmtree(top)
 
 
 def _create_new_venv() -> Path:
