@@ -64,12 +64,9 @@ def before_scenario(context, scenario):  # pylint: disable=unused-argument
         scenario.skip()
 
     # make a venv
-    if "E2E_VENV" in os.environ:
-        context.venv_dir = Path(os.environ["E2E_VENV"])
-    else:
-        kedro_install_venv_dir = _create_new_venv()
-        context.venv_dir = kedro_install_venv_dir
-        context = _setup_context_with_venv(context, kedro_install_venv_dir)
+    kedro_install_venv_dir = _create_new_venv()
+    context.venv_dir = kedro_install_venv_dir
+    context = _setup_context_with_venv(context, kedro_install_venv_dir)
 
     context.temp_dir = Path(tempfile.mkdtemp()).resolve()
     _PATHS_TO_REMOVE.add(context.temp_dir)
@@ -102,7 +99,9 @@ def _setup_context_with_venv(context, venv_dir):
 
     call(
         [
-            context.pip,
+            context.python,
+            "-m",
+            "pip",
             "install",
             "-U",
             "pip>=20.0",
@@ -116,7 +115,10 @@ def _setup_context_with_venv(context, venv_dir):
         os.remove(wheel_path)
     call([context.python, "setup.py", "clean", "--all", "bdist_wheel"], env=context.env)
 
-    call([context.pip, "install", "-U"] + glob.glob("dist/*.whl"), env=context.env)
+    call(
+        [context.python, "-m", "pip", "install", "-U"] + glob.glob("dist/*.whl"),
+        env=context.env,
+    )
 
     return context
 
