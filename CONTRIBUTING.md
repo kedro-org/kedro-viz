@@ -85,7 +85,7 @@ Kedro-Viz uses an unique identifier to determine the data source. You can config
 DATA=random npm start
 ```
 
-There are several different data sources available. By default in production, the app asynchronously loads JSON from the `/api/main` endpoint, and you can replicate this in development by placing a dataset at `/public/api/main`. Note that `main` is the name of the json file, but should not have an extension. Alternatively, you can use one of the mock unit-testing/demo datasets, or pseudo-random data procedurally-generated on page load, which is often useful for local development.
+There are several different data sources available. By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a dataset in `/public/api/main`, using `main` as the name of the JSON file, without an extension. Alternatively, you can use one of the mock unit-testing/demo datasets, or pseudo-random data procedurally-generated on page load, which is often useful for local development.
 
 | Identifier | Data source |
 |------------|-------------|
