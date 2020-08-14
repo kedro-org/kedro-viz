@@ -10,9 +10,17 @@ export const NodeListGroup = ({
   onToggleTypeDisabled,
   onToggleCollapsed,
   type,
-  childCount
+  childCount,
+  allChecked
 }) => (
-  <li>
+  <li
+    className={classnames(
+      'pipeline-nodelist__item',
+      `pipeline-nodelist__item--${type.name.toLowerCase()}`,
+      {
+        'pipeline-nodelist__item--all-checked': allChecked
+      }
+    )}>
     <h3 className="pipeline-nodelist__heading">
       <NodeListRow
         checked={!type.disabled}

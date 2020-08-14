@@ -89,7 +89,7 @@
   border-radius: 0;
   box-shadow: none;
   cursor: default;
-  transition: opacity ease $row-transition;
+  user-select: none;
 
   &:focus {
     outline: none;
@@ -113,16 +113,6 @@
 
   .kui-theme--dark & {
     color: #dbddde;
-  }
-
-  .kui-theme--dark .pipeline-nodelist__row:hover & {
-    color: #fff;
-    opacity: 1;
-  }
-
-  .kui-theme--light .pipeline-nodelist__row:hover & {
-    color: #000;
-    opacity: 1;
   }
 
   .kui-theme--dark &--faded {

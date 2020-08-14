@@ -16,7 +16,6 @@ import './styles/node-list.css';
  */
 const NodeList = ({
   nodes,
-  nodeTypeDisabled,
   onToggleTagActive,
   onToggleTagFilter,
   onToggleNodeClicked,
@@ -28,12 +27,29 @@ const NodeList = ({
   const { filteredNodes } = getFilteredNodes({ nodes, searchValue });
 
   const onTagChange = (tag, checked) => {
-    onToggleNodeClicked(null);
-    onToggleTagActive(tag.id, false);
-    onToggleTagFilter(tag.id, !checked);
+    const valuesBefore = Object.values(tagsEnabled).filter(
+      enabled => enabled !== undefined
+    );
+    const valuesAfter = Object.values({ ...tagsEnabled, [tag.id]: !checked });
+    const firstEnabled =
+      valuesBefore.filter(enabled => enabled === false).length === 0;
+    const allDisabled =
+      valuesAfter.filter(enabled => enabled === false).length === tags.length;
+    const someEnabled =
+      valuesAfter.filter(enabled => enabled === false).length !== tags.length;
 
-    if (!checked) {
-      onToggleTypeDisabled('tag', false);
+    tags.forEach(tag => onToggleTagActive(tag.id, false));
+    onToggleNodeClicked(null);
+    onToggleTypeDisabled('tag', !someEnabled);
+
+    if (firstEnabled) {
+      tags.forEach(tag => onToggleTagFilter(tag.id, false));
+      onToggleTagFilter(tag.id, true);
+    } else if (allDisabled) {
+      tags.forEach(tag => onToggleTagFilter(tag.id, true));
+    } else {
+      onToggleTagFilter(tag.id, !checked);
+      onToggleTagActive(tag.id, !checked);
     }
   };
 
@@ -43,26 +59,6 @@ const NodeList = ({
 
   const onTagLeave = tag => {
     onToggleTagActive(tag.id, false);
-  };
-
-  const onTagClick = tagClicked => {
-    const wasEnabled = tagsEnabled[tagClicked.id] === true;
-    onToggleNodeClicked(null);
-    onToggleTypeDisabled('tag', false);
-
-    if (wasEnabled) {
-      tags.forEach(tag => {
-        onToggleTagActive(tag.id, false);
-        onToggleTagFilter(tag.id, undefined);
-      });
-    } else {
-      tags.forEach(tag => {
-        onToggleTagActive(tag.id, false);
-        onToggleTagFilter(tag.id, false);
-      });
-
-      onToggleTagFilter(tagClicked.id, true);
-    }
   };
 
   const onToggleTagTypeDisabled = (type, checked) => {
@@ -82,10 +78,10 @@ const NodeList = ({
     disabled_node: tagsEnabled[tag.id] === false,
     disabled_tag: false,
     disabled_type: false,
+    onClick: () => {},
     onChange: onTagChange,
     onMouseEnter: onTagEnter,
     onMouseLeave: onTagLeave,
-    onClick: onTagClick,
     onToggleTypeDisabled: onToggleTagTypeDisabled
   }));
 
@@ -130,13 +126,11 @@ const NodeList = ({
 
 export const mapStateToProps = state => {
   const tagsEnabled = state.tag.enabled;
-  const nodeTypeDisabled = state.nodeType.disabled;
   const tags = getTagData(state);
   const nodes = getGroupedNodes(state);
   return {
     tags,
     tagsEnabled,
-    nodeTypeDisabled,
     nodes
   };
 };

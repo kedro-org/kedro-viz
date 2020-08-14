@@ -67,6 +67,8 @@ const NodeListGroups = ({
       ? firstNodeOfType.onToggleTypeDisabled
       : undefined;
 
+    const allChecked = nodesOfType.every(node => !node.disabled_node);
+
     return (
       <NodeListGroup
         key={type.id}
@@ -74,6 +76,7 @@ const NodeListGroups = ({
         onToggleTypeDisabled={onToggleTypeDisabled}
         type={type}
         childCount={nodesOfType.length}
+        allChecked={allChecked}
         collapsed={Boolean(searchValue) ? false : collapsed[type.id]}>
         <ul className="pipeline-nodelist pipeline-nodelist--nested">
           {nodesOfType.map(node => (
