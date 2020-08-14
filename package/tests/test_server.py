@@ -269,9 +269,9 @@ def test_root_endpoint(client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_nodes_endpoint(cli_runner, client):
-    """Test `/api/nodes.json` endpoint is functional and returns a valid JSON."""
+    """Test `/api/main` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    response = client.get("/api/nodes.json")
+    response = client.get("/api/main")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == EXPECTED_PIPELINE_DATA
@@ -412,7 +412,7 @@ def test_node_metadata_endpoint_invalid(cli_runner, client):
 def test_pipeline_flag(cli_runner, client):
     """Test that running viz with `--pipeline` flag will return a correct pipeline."""
     cli_runner.invoke(server.commands, ["viz", "--pipeline", "second"])
-    response = client.get("/api/nodes.json")
+    response = client.get("/api/main")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == {

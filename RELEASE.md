@@ -13,6 +13,8 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+- Rename default endpoint from `/api/nodes.json` to `/api/main` (#239)
+
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->

@@ -9,7 +9,7 @@ import demo from './data/demo.mock';
    - 'random': Use randomly-generated data
    - 'animals': Use data from the 'animals' test dataset
    - 'demo': Use data from the 'demo' test dataset
-   - 'json': Load data from a local json file (in /public/api/nodes.json)
+   - 'json': Load data from a local json file (in /public/api/main)
  * @return {string} Data source identifier
  */
 export const getSourceID = () => {
