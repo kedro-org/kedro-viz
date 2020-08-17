@@ -6,7 +6,6 @@ import { getFilteredNodes, highlightMatch, filterNodes } from './filter-nodes';
 import NodeListSearch from './node-list-search';
 import NodeListGroups from './node-list-groups';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
-import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleNodeClicked } from '../../actions/nodes';
 import { getTagData } from '../../selectors/tags';
 import './styles/node-list.css';
@@ -19,7 +18,6 @@ const NodeList = ({
   onToggleTagActive,
   onToggleTagFilter,
   onToggleNodeClicked,
-  onToggleTypeDisabled,
   tags,
   tagsEnabled
 }) => {
@@ -27,26 +25,21 @@ const NodeList = ({
   const { filteredNodes } = getFilteredNodes({ nodes, searchValue });
 
   const onTagChange = (tag, checked) => {
-    const valuesBefore = Object.values(tagsEnabled).filter(
-      enabled => enabled !== undefined
-    );
+    const valuesBefore = Object.values(tagsEnabled);
     const valuesAfter = Object.values({ ...tagsEnabled, [tag.id]: !checked });
     const firstEnabled =
-      valuesBefore.filter(enabled => enabled === false).length === 0;
+      valuesBefore.filter(enabled => enabled !== undefined).length === 0;
     const allDisabled =
       valuesAfter.filter(enabled => enabled === false).length === tags.length;
-    const someEnabled =
-      valuesAfter.filter(enabled => enabled === false).length !== tags.length;
 
     tags.forEach(tag => onToggleTagActive(tag.id, false));
     onToggleNodeClicked(null);
-    onToggleTypeDisabled('tag', !someEnabled);
 
     if (firstEnabled) {
       tags.forEach(tag => onToggleTagFilter(tag.id, false));
       onToggleTagFilter(tag.id, true);
     } else if (allDisabled) {
-      tags.forEach(tag => onToggleTagFilter(tag.id, true));
+      tags.forEach(tag => onToggleTagFilter(tag.id, undefined));
     } else {
       onToggleTagFilter(tag.id, !checked);
       onToggleTagActive(tag.id, !checked);
@@ -61,28 +54,19 @@ const NodeList = ({
     onToggleTagActive(tag.id, false);
   };
 
-  const onToggleTagTypeDisabled = (type, checked) => {
-    onToggleTypeDisabled(type, checked);
-
-    tags.forEach(tag => {
-      onToggleTagActive(tag.id, !checked);
-      onToggleTagFilter(tag.id, !checked);
-    });
-  };
-
   const tagNodes = tags.map(tag => ({
     id: tag.id,
     name: tag.name,
     type: 'tag',
     disabled: false,
+    disabled_unset: typeof tagsEnabled[tag.id] === 'undefined',
     disabled_node: tagsEnabled[tag.id] === false,
     disabled_tag: false,
     disabled_type: false,
     onClick: () => {},
     onChange: onTagChange,
     onMouseEnter: onTagEnter,
-    onMouseLeave: onTagLeave,
-    onToggleTypeDisabled: onToggleTagTypeDisabled
+    onMouseLeave: onTagLeave
   }));
 
   const filteredTagNodes = highlightMatch(
@@ -144,9 +128,6 @@ export const mapDispatchToProps = dispatch => ({
   },
   onToggleNodeClicked: nodeID => {
     dispatch(toggleNodeClicked(nodeID));
-  },
-  onToggleTypeDisabled: (typeID, disabled) => {
-    dispatch(toggleTypeDisabled(typeID, disabled));
   }
 });
 

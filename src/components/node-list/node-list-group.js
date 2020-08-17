@@ -11,14 +11,14 @@ export const NodeListGroup = ({
   onToggleCollapsed,
   type,
   childCount,
-  allChecked
+  allUnset
 }) => (
   <li
     className={classnames(
       'pipeline-nodelist__item',
       `pipeline-nodelist__item--${type.name.toLowerCase()}`,
       {
-        'pipeline-nodelist__item--all-checked': allChecked
+        'pipeline-nodelist__item--all-checked': allUnset
       }
     )}>
     <h3 className="pipeline-nodelist__heading">
