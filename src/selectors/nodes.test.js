@@ -287,7 +287,9 @@ describe('Selectors', () => {
           toggleNodesDisabled([nodeID], true)
         );
         const visibleNodeIDs = getVisibleNodes(newMockState).map(d => d.id);
-        expect(visibleNodeIDs).toEqual(nodes.filter(id => id !== nodeID));
+        expect(visibleNodeIDs.sort()).toEqual(
+          nodes.filter(id => id !== nodeID).sort()
+        );
         expect(visibleNodeIDs.includes(nodeID)).toEqual(false);
       });
     });
