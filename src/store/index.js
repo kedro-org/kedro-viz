@@ -23,23 +23,27 @@ export default function configureStore(initialState) {
 
   store.subscribe(() => {
     const {
-      textLabels,
-      theme,
       node,
       nodeType,
+      pipeline,
+      textLabels,
+      theme,
       visible,
       flags
     } = store.getState();
 
     saveState({
-      textLabels,
-      theme,
       node: {
         disabled: pruneFalseyKeys(node.disabled)
       },
       nodeType: {
         disabled: nodeType.disabled
       },
+      pipeline: {
+        active: pipeline.active
+      },
+      textLabels,
+      theme,
       visible,
       flags
     });

@@ -55,6 +55,10 @@ describe('overrideInitialState', () => {
   const initialState = {
     flags: {},
     theme: 'dark',
+    pipeline: {
+      active: 'four',
+      ids: ['one', 'two', 'three']
+    },
     layer: {
       ids: []
     },
@@ -87,6 +91,14 @@ describe('overrideInitialState', () => {
     expect(overrideInitialState(initialState, {})).toMatchObject({
       visible: {
         layers: false
+      }
+    });
+  });
+
+  it('uses first pipeline in list if stored active pipeline from localStorage is not one of the pipelines in the current list', () => {
+    expect(overrideInitialState(initialState, {})).toMatchObject({
+      pipeline: {
+        active: 'one'
       }
     });
   });

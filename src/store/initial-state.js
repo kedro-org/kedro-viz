@@ -63,6 +63,10 @@ export const overrideInitialState = (state, props) => {
   if (!state.layer.ids.length) {
     state.visible.layers = false;
   }
+  // Use first pipeline in list if active pipeline from localStorage isn't recognised
+  if (!state.pipeline.ids.includes(state.pipeline.active)) {
+    state.pipeline.active = state.pipeline.ids[0] || null;
+  }
   return state;
 };
 
