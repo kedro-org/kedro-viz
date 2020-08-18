@@ -258,7 +258,7 @@ export class MiniMap extends Component {
     let translateY = 0;
 
     // Fit the graph exactly in the viewport
-    if (mapSize.width && graphSize.width) {
+    if (mapSize.width > 0 && graphSize.width > 0) {
       scale = Math.min(
         (mapSize.width - padding) / graphSize.width,
         (mapSize.height - padding) / graphSize.height
@@ -385,16 +385,16 @@ const getMapSize = state => {
   const graphWidth = size.width || 0;
   const graphHeight = size.height || 0;
 
-  // Use minimum size if no graph
-  if (!graphWidth || !graphHeight) {
-    return { width: minWidth, height: height };
+  if (graphWidth > 0 && graphHeight > 0) {
+    // Constrain width
+    const scaledWidth = graphWidth * (height / graphHeight);
+    const width = Math.min(Math.max(scaledWidth, minWidth), maxWidth);
+
+    return { width, height };
   }
 
-  // Constrain width
-  const scaledWidth = graphWidth * (height / graphHeight);
-  const width = Math.min(Math.max(scaledWidth, minWidth), maxWidth);
-
-  return { width, height };
+  // Use minimum size if no graph
+  return { width: minWidth, height: height };
 };
 
 // Maintain a single reference to support change detection
