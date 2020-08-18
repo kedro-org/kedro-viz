@@ -122,6 +122,8 @@ export const compare = (a, b, ...values) => {
 export const offsetNode = (node, offset) => {
   node.x = node.x - offset.x;
   node.y = node.y - offset.y;
+  // Node sort order for tabindex:
+  node.order = node.x + node.y * 9999;
   return node;
 };
 

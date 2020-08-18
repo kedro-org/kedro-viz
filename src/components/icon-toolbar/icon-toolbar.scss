@@ -2,6 +2,8 @@
 @import '../../styles/extends';
 
 .pipeline-icon-toolbar {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -108,4 +110,8 @@
 
 .pipeline-menu-button--inverse svg {
   transform: rotate(-180deg);
+}
+
+.pipeline-minimap-toolbar {
+  margin-top: auto;
 }

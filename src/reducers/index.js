@@ -5,11 +5,13 @@ import nodeType from './node-type';
 import visible from './visible';
 import pipeline from './pipeline';
 import flags from './flags';
+import graph from './graph';
 import {
   RESET_DATA,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
+  UPDATE_ZOOM,
   UPDATE_FONT_LOADED
 } from '../actions';
 
@@ -46,6 +48,7 @@ function resetDataReducer(state = {}, action) {
 const combinedReducer = combineReducers({
   // These props have their own reducers in other files
   flags,
+  graph,
   node,
   nodeType,
   pipeline,
@@ -57,6 +60,7 @@ const combinedReducer = combineReducers({
   layer: createReducer({}),
   // These props have very simple non-nested actions
   chartSize: createReducer({}, UPDATE_CHART_SIZE, 'chartSize'),
+  zoom: createReducer({}, UPDATE_ZOOM, 'zoom', {}),
   fontLoaded: createReducer(false, UPDATE_FONT_LOADED, 'fontLoaded'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme')

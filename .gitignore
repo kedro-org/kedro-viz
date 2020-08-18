@@ -12,10 +12,11 @@
 /public/api
 
 # dependencies
-/node_modules
+node_modules
 
 # testing
 /coverage
+kedro-viz.tgz
 
 # production
 build/

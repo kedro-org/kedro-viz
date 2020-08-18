@@ -9,6 +9,7 @@ import {
   toggleTheme
 } from '../../actions';
 import IconButton from './icon-button';
+import MiniMapToolbar from '../minimap-toolbar';
 import './icon-toolbar.css';
 
 /**
@@ -70,6 +71,7 @@ export const IconToolbar = ({
         disabled={disableLayerBtn}
         visible={visible.layerBtn}
       />
+      <MiniMapToolbar />
     </ul>
   </>
 );

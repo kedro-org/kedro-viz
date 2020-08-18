@@ -29,12 +29,6 @@
 """Common functions for e2e testing.
 """
 
-import os
-import subprocess
-import tempfile
-import venv
-from pathlib import Path
-
 import requests
 
 PIP_INSTALL_SCRIPT = "https://bootstrap.pypa.io/get-pip.py"
@@ -53,33 +47,3 @@ def download_url(url: str) -> str:
     """
     requests.adapters.DEFAULT_RETRIES = 1
     return requests.get(url).text
-
-
-def create_new_venv() -> str:
-    """
-    Create a new venv
-
-    Note: Due to a bug in Python 3.5.2 pip needs to be manually installed
-
-    Returns:
-        path to created venv
-    """
-    # Create venv
-    venv_dir = tempfile.mkdtemp()
-    venv.main([venv_dir, "--without-pip"])
-
-    if os.name == "posix":
-        python_executable = Path(venv_dir) / "bin" / "python"
-    else:
-        python_executable = Path(venv_dir) / "Scripts" / "python.exe"
-
-    # Download and run pip installer
-    # Windows blocks access unless delete set to False
-    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-        tmp_file.write(download_url(PIP_INSTALL_SCRIPT).encode())
-        tmp_file.flush()
-        os.fsync(tmp_file)
-        subprocess.check_call([str(python_executable), tmp_file.name])
-
-    os.unlink(tmp_file.name)
-    return venv_dir

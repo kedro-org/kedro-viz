@@ -4,7 +4,9 @@ import classnames from 'classnames';
 import PipelineList from '../pipeline-list';
 import TagList from '../tag-list';
 import NodeList from '../node-list';
-import IconToolbar from '../icon-toolbar';
+import PrimaryToolbar from '../primary-toolbar';
+import MiniMapToolbar from '../minimap-toolbar';
+import MiniMap from '../minimap';
 import './sidebar.css';
 
 /**
@@ -22,7 +24,11 @@ export const Sidebar = ({ visible }) => (
         <TagList />
         <NodeList />
       </div>
-      <IconToolbar />
+      <nav className="pipeline-toolbar">
+        <PrimaryToolbar />
+        <MiniMapToolbar />
+      </nav>
+      <MiniMap />
     </div>
   </>
 );

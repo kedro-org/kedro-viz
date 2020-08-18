@@ -1,0 +1,17 @@
+@import '../../styles/variables';
+@import '../../styles/extends';
+
+.pipeline-primary-toolbar {
+  display: block;
+  margin: 0;
+  padding: 1em 0;
+  list-style: none;
+}
+
+.pipeline-menu-button svg {
+  transition: transform ease 0.4s;
+}
+
+.pipeline-menu-button--inverse svg {
+  transform: rotate(-180deg);
+}

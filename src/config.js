@@ -1,4 +1,4 @@
-export const dataPath = './api/nodes.json';
+export const dataPath = './api/main';
 export const fullDataPath = `/public${dataPath.substr(1)}`;
 
 export const localStorageName = 'KedroViz';

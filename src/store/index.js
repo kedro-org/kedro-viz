@@ -1,6 +1,10 @@
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import watch from 'redux-watch';
 import reducer from '../reducers';
-import { saveState } from './helpers';
+import { getGraphInput } from '../selectors/layout';
+import { calculateGraph } from '../actions/graph';
+import { saveState, pruneFalseyKeys } from './helpers';
 
 /**
  * Configure initial state and create the Redux store
@@ -8,15 +12,34 @@ import { saveState } from './helpers';
  * @return {Object} Redux store
  */
 export default function configureStore(initialState) {
-  const store = createStore(reducer, initialState);
+  const store = createStore(reducer, initialState, applyMiddleware(thunk));
+
+  let watchGraph = watch(() => getGraphInput(store.getState()));
+  store.subscribe(
+    watchGraph(graphInput => {
+      store.dispatch(calculateGraph(graphInput));
+    })
+  );
 
   store.subscribe(() => {
-    const { textLabels, theme, nodeType, visible, flags } = store.getState();
+    const {
+      textLabels,
+      theme,
+      node,
+      nodeType,
+      visible,
+      flags
+    } = store.getState();
 
     saveState({
       textLabels,
       theme,
-      nodeTypeDisabled: nodeType.disabled,
+      node: {
+        disabled: pruneFalseyKeys(node.disabled)
+      },
+      nodeType: {
+        disabled: nodeType.disabled
+      },
       visible,
       flags
     });

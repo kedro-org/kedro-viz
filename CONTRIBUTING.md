@@ -85,11 +85,11 @@ Kedro-Viz uses an unique identifier to determine the data source. You can config
 DATA=random npm start
 ```
 
-There are several different data sources available. By default in production, the app asynchronously loads JSON from the `/api/nodes.json` endpoint, and you can replicate this in development by placing a dataset at `/public/api/nodes.json`. Alternatively, you can use one of the mock unit-testing/demo datasets, or pseudo-random data procedurally-generated on page load, which is often useful for local development.
+There are several different data sources available. By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a dataset in `/public/api/main`, using `main` as the name of the JSON file, without an extension. Alternatively, you can use one of the mock unit-testing/demo datasets, or pseudo-random data procedurally-generated on page load, which is often useful for local development.
 
 | Identifier | Data source |
 |------------|-------------|
-| `json` (default) | `/public/api/nodes.json` |
+| `json` (default) | `/public/api/main` |
 | `random` | Randomly-generated data |
 | `demo` | `/src/utils/data/demo.mock.js` |
 | `animals` | `/src/utils/data/animals.mock.js` |
@@ -135,6 +135,23 @@ npm run test:coverage
 ```
 
 See the [Create-React-App docs](https://github.com/facebook/create-react-app) for further information on JS testing.
+
+#### Testing package imports
+
+You can simulate how the published package will behave when imported into another JavaScript application by running
+
+```bash
+npm run lib-test
+```
+
+This script uses `npm pack` to package Kedro-Viz as a tarball, then copies it to a boilerplate React app in `/tools/test-lib/react-app` and installs it. Next, the script runs a simple server at `http://localhost:1337`, which will open in the browser so that you can check that everything is working as it should.
+
+You can also run automated tests on this demo app by navigating to this directory and running Jest:
+
+```bash
+cd tools/test-lib/react-app
+npm test
+```
 
 ## Python web server tests
 

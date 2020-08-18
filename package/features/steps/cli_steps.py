@@ -172,7 +172,7 @@ def _check_kedroviz_running(context):
     Args:
         context (behave.runner.Context): Test context
     """
-    data_json = json.loads(download_url("http://localhost:4141/api/nodes.json"))
+    data_json = json.loads(download_url("http://localhost:4141/api/main"))
     try:
         assert context.result.poll() is None
         assert (
