@@ -3,6 +3,7 @@ import {
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED
 } from '../actions/nodes';
+import { UPDATE_ACTIVE_PIPELINE } from '../actions';
 
 function nodeReducer(nodeState = {}, action) {
   const updateState = newState => Object.assign({}, nodeState, newState);
@@ -32,6 +33,13 @@ function nodeReducer(nodeState = {}, action) {
     case TOGGLE_NODE_HOVERED: {
       return updateState({
         hovered: action.nodeHovered
+      });
+    }
+
+    case UPDATE_ACTIVE_PIPELINE: {
+      return updateState({
+        clicked: null,
+        hovered: null
       });
     }
 
