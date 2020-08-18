@@ -31,6 +31,15 @@ export const getNodeDisabledPipeline = createSelector(
 );
 
 /**
+ * Get a list of just the IDs for the active pipeline
+ */
+export const getPipelineNodeIDs = createSelector(
+  [getNodeIDs, getNodeDisabledPipeline],
+  (nodeIDs, nodeDisabledPipeline) =>
+    nodeIDs.filter(nodeID => !nodeDisabledPipeline[nodeID])
+);
+
+/**
  * Calculate whether nodes should be disabled based on their tags
  */
 export const getNodeDisabledTag = createSelector(
@@ -82,7 +91,7 @@ export const getNodeDisabled = createSelector(
  * Get a list of just the IDs for the remaining visible nodes
  */
 export const getVisibleNodeIDs = createSelector(
-  [getNodeIDs, getNodeDisabled],
+  [getPipelineNodeIDs, getNodeDisabled],
   (nodeIDs, nodeDisabled) => nodeIDs.filter(id => !nodeDisabled[id])
 );
 
