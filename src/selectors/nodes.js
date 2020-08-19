@@ -1,10 +1,10 @@
 import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
+import { getPipelineNodeIDs } from './pipeline';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
-  getPipelineNodeIDs,
   getVisibleNodeIDs
 } from './disabled';
 import { getNodeRank } from './ranks';

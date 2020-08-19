@@ -1,5 +1,5 @@
 import { mockState } from '../utils/state.mock';
-import { getPipelineNodeIDs } from './disabled';
+import { getPipelineNodeIDs } from './pipeline';
 import {
   getNodeActive,
   getNodeSelected,
