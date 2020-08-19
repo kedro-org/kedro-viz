@@ -18,6 +18,21 @@ describe('MiniMap', () => {
     expect(nodes.length).toEqual(mockNodes.length);
   });
 
+  it('does not throw an error/warning when no data is displayed', () => {
+    // Setup
+    const originalConsole = console;
+    console.warn = jest.fn();
+    console.error = jest.fn();
+    // Test
+    const emptyData = { data: { nodes: [], edges: [] } };
+    expect(() => setup.mount(<MiniMap />, emptyData)).not.toThrow();
+    expect(console.warn).not.toHaveBeenCalled();
+    expect(console.error).not.toHaveBeenCalled();
+    // Teardown
+    console.warn = originalConsole.warn;
+    console.error = originalConsole.error;
+  });
+
   it('maps state to props', () => {
     const expectedResult = {
       visible: expect.any(Boolean),
