@@ -300,7 +300,7 @@ export class FlowChart extends Component {
     let translateY = 0;
 
     // Fit the graph exactly in the viewport
-    if (chartSize.width && graphSize.width) {
+    if (chartSize.width > 0 && graphSize.width > 0) {
       scale = Math.min(
         chartSize.width / graphSize.width,
         chartSize.height / graphSize.height
