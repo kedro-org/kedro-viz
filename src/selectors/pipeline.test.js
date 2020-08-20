@@ -1,4 +1,5 @@
-import { mockState } from '../utils/state.mock';
+import { mockState, prepareState } from '../utils/state.mock';
+import animals from '../utils/data/animals.mock';
 import {
   getNodeDisabledPipeline,
   getPipelineNodeIDs,
@@ -115,12 +116,17 @@ describe('Selectors', () => {
     });
 
     it('does not contain any tags that are not in the current pipeline', () => {
-      const newMockState = reducer(
-        mockState.animals,
-        updateActivePipeline('de')
-      );
-      // Tag 'huge' is not in pipeline 'de'
-      expect(getPipelineTagIDs(newMockState)).not.toContain('huge');
+      const tag = { id: 'unused_tag' };
+      const node = {
+        id: 'new',
+        tags: [tag.id],
+        pipelines: ['unused_pipeline'] // not included in default pipeline
+      };
+      const data = { ...animals };
+      data.tags = [...data.tags, tag];
+      data.nodes = [...data.nodes, node];
+      const state = prepareState({ data });
+      expect(getPipelineTagIDs(state)).not.toContain(tag.id);
     });
 
     it('returns zero tags for an empty pipeline', () => {
