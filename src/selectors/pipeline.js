@@ -4,7 +4,6 @@ import { arrayToObject } from '../utils';
 const getNodeIDs = state => state.node.ids;
 const getNodePipelines = state => state.node.pipelines;
 const getActivePipeline = state => state.pipeline.active;
-const getTagIDs = state => state.tag.ids;
 const getNodeTags = state => state.node.tags;
 
 /**
@@ -34,17 +33,16 @@ export const getPipelineNodeIDs = createSelector(
  * Get IDs of tags used in the current pipeline
  */
 export const getPipelineTagIDs = createSelector(
-  [getTagIDs, getPipelineNodeIDs, getNodeTags],
-  (tagIDs, nodeIDs, nodeTags) => {
+  [getPipelineNodeIDs, getNodeTags],
+  (nodeIDs, nodeTags) => {
     const visibleTags = {};
-    for (let tagID of tagIDs) {
-      for (let nodeID of nodeIDs) {
-        if (nodeTags[nodeID].includes(tagID)) {
+    nodeIDs.forEach(nodeID => {
+      nodeTags[nodeID].forEach(tagID => {
+        if (!visibleTags[tagID]) {
           visibleTags[tagID] = true;
-          break;
         }
-      }
-    }
-    return tagIDs.filter(tagID => visibleTags[tagID]);
+      });
+    });
+    return Object.keys(visibleTags);
   }
 );
