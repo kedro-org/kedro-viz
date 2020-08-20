@@ -97,6 +97,14 @@ describe('Selectors', () => {
         expect(pipelineNodeIDs).toContain(nodeID);
       });
     });
+
+    it('returns zero nodes for an empty pipeline', () => {
+      const newMockState = reducer(
+        mockState.animals,
+        updateActivePipeline('empty')
+      );
+      expect(getPipelineNodeIDs(newMockState)).toHaveLength(0);
+    });
   });
 
   describe('getPipelineTagIDs', () => {
@@ -107,14 +115,20 @@ describe('Selectors', () => {
     });
 
     it('does not contain any tags that are not in the current pipeline', () => {
-      // Tag 'huge' is not in pipeline 'de'
-      const activePipeline = 'de';
-      const tag = 'huge';
       const newMockState = reducer(
         mockState.animals,
-        updateActivePipeline(activePipeline)
+        updateActivePipeline('de')
       );
-      expect(getPipelineTagIDs(newMockState)).not.toContain(tag);
+      // Tag 'huge' is not in pipeline 'de'
+      expect(getPipelineTagIDs(newMockState)).not.toContain('huge');
+    });
+
+    it('returns zero tags for an empty pipeline', () => {
+      const newMockState = reducer(
+        mockState.animals,
+        updateActivePipeline('empty')
+      );
+      expect(getPipelineTagIDs(newMockState)).toHaveLength(0);
     });
   });
 });

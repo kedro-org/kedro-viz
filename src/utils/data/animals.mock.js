@@ -12,6 +12,10 @@ export default {
     {
       id: 'ds',
       name: 'Data science'
+    },
+    {
+      id: 'empty',
+      name: 'Empty pipeline'
     }
   ],
   layers: [
