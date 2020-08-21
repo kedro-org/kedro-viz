@@ -176,13 +176,27 @@ describe('Reducer', () => {
   });
 
   describe('UPDATE_ACTIVE_PIPELINE', () => {
+    const pipeline = 'abc123';
+    const nodeClicked = '123';
+    const nodeHovered = '456';
+    const pipelineAction = { type: UPDATE_ACTIVE_PIPELINE, pipeline };
+    const clickAction = { type: TOGGLE_NODE_CLICKED, nodeClicked };
+    const hoverAction = { type: TOGGLE_NODE_HOVERED, nodeHovered };
+    const oldState = [clickAction, hoverAction].reduce(
+      reducer,
+      mockState.animals
+    );
+    const newState = reducer(oldState, pipelineAction);
+
     it('should update the active pipeline', () => {
-      const pipeline = 'abc123';
-      const newState = reducer(mockState.animals, {
-        type: UPDATE_ACTIVE_PIPELINE,
-        pipeline
-      });
       expect(newState.pipeline.active).toEqual(pipeline);
+    });
+
+    it('should reset node.clicked and node.hovered', () => {
+      expect(oldState.node.clicked).not.toBe(null);
+      expect(oldState.node.hovered).not.toBe(null);
+      expect(newState.node.clicked).toBe(null);
+      expect(newState.node.hovered).toBe(null);
     });
   });
 

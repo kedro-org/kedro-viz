@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
+import { getPipelineNodeIDs } from './pipeline';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -8,7 +9,6 @@ import {
 } from './disabled';
 import { getNodeRank } from './ranks';
 
-const getNodeIDs = state => state.node.ids;
 const getNodeName = state => state.node.name;
 const getNodeFullName = state => state.node.fullName;
 const getNodeDisabledNode = state => state.node.disabled;
@@ -26,7 +26,7 @@ const getNodeTypeDisabled = state => state.nodeType.disabled;
  * Set active status if the node is specifically highlighted, and/or via an associated tag
  */
 export const getNodeActive = createSelector(
-  [getNodeIDs, getHoveredNode, getNodeTags, getTagActive],
+  [getPipelineNodeIDs, getHoveredNode, getNodeTags, getTagActive],
   (nodeIDs, hoveredNode, nodeTags, tagActive) =>
     arrayToObject(nodeIDs, nodeID => {
       if (nodeID === hoveredNode) {
@@ -41,7 +41,7 @@ export const getNodeActive = createSelector(
  * Set selected status if the node is clicked
  */
 export const getNodeSelected = createSelector(
-  [getNodeIDs, getClickedNode, getNodeDisabled],
+  [getPipelineNodeIDs, getClickedNode, getNodeDisabled],
   (nodeIDs, clickedNode, nodeDisabled) =>
     arrayToObject(
       nodeIDs,
@@ -54,7 +54,7 @@ export const getNodeSelected = createSelector(
  */
 export const getNodeData = createSelector(
   [
-    getNodeIDs,
+    getPipelineNodeIDs,
     getNodeName,
     getNodeType,
     getNodeDisabled,
@@ -109,7 +109,7 @@ export const getGroupedNodes = createSelector(
  * measure its width with getBBox, then delete the container and store the value
  */
 export const getNodeTextWidth = createSelector(
-  [getNodeIDs, getNodeName, getFontLoaded],
+  [getPipelineNodeIDs, getNodeName, getFontLoaded],
   (nodeIDs, nodeName, fontLoaded) => {
     if (!fontLoaded) {
       return {};
@@ -155,7 +155,13 @@ export const getPadding = (showLabels, isTask) => {
  * Calculate node width/height and icon/text positioning
  */
 export const getNodeSize = createSelector(
-  [getNodeIDs, getNodeTextWidth, getTextLabels, getNodeType, getFontLoaded],
+  [
+    getPipelineNodeIDs,
+    getNodeTextWidth,
+    getTextLabels,
+    getNodeType,
+    getFontLoaded
+  ],
   (nodeIDs, nodeTextWidth, textLabels, nodeType, fontLoaded) => {
     if (!fontLoaded) {
       return {};

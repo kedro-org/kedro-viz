@@ -12,6 +12,10 @@ export default {
     {
       id: 'ds',
       name: 'Data science'
+    },
+    {
+      id: 'empty',
+      name: 'Empty pipeline'
     }
   ],
   layers: [
@@ -32,6 +36,10 @@ export default {
       name: 'medium'
     },
     {
+      id: 'large',
+      name: 'large'
+    },
+    {
       id: 'huge',
       name: 'huge'
     }
@@ -50,7 +58,7 @@ export default {
       id: 'task/shark',
       name: 'shark',
       full_name: 'shark',
-      tags: ['medium', 'huge'],
+      tags: ['medium', 'large'],
       layer: 'Intermediate',
       pipelines: ['__default__', 'de'],
       type: 'task'
@@ -68,7 +76,7 @@ export default {
       id: 'data/whale',
       name: 'whale',
       full_name: 'whale',
-      tags: ['huge'],
+      tags: ['large', 'huge'],
       layer: 'Model Output',
       pipelines: ['__default__', 'ds'],
       type: 'data'
@@ -86,7 +94,7 @@ export default {
       id: 'data/cat',
       name: 'cat',
       full_name: 'cat',
-      tags: ['small', 'medium', 'huge'],
+      tags: ['small', 'medium', 'large'],
       layer: 'Raw',
       pipelines: ['__default__', 'de'],
       type: 'data'
@@ -122,7 +130,7 @@ export default {
       id: 'data/horse',
       name: 'horse',
       full_name: 'horse',
-      tags: ['huge'],
+      tags: ['large'],
       layer: 'Model Output',
       pipelines: ['__default__', 'de'],
       type: 'data'
@@ -140,7 +148,7 @@ export default {
       id: 'data/elephant',
       name: 'elephant',
       full_name: 'elephant',
-      tags: ['huge'],
+      tags: ['large'],
       layer: 'Raw',
       pipelines: ['__default__', 'de'],
       type: 'data'
@@ -149,7 +157,7 @@ export default {
       id: 'data/bear',
       name: 'bear',
       full_name: 'bear',
-      tags: ['huge'],
+      tags: ['large'],
       layer: 'Raw',
       pipelines: ['__default__', 'de'],
       type: 'data'
@@ -158,7 +166,7 @@ export default {
       id: 'data/giraffe',
       name: 'giraffe',
       full_name: 'giraffe',
-      tags: ['huge'],
+      tags: ['large'],
       layer: 'Model Output',
       pipelines: ['__default__', 'de'],
       type: 'data'

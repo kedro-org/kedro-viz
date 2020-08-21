@@ -44,44 +44,54 @@ export const mergeLocalStorage = state => {
 };
 
 /**
- * Add custom state overrides from props, URL flags, etc
- * @param {object} state App state
+ * Prepare the pipeline data part of the state. This part is separated so that it
+ * can be reset without overriding user settings.
  * @param {object} props Props passed to App component
  */
-export const overrideInitialState = (state, props) => {
-  // Override flag defaults with URL values
-  state.flags = Object.assign(state.flags, getFlagsFromUrl());
+export const preparePipelineState = props => {
+  // Normalize raw data, and apply saved state from localStorage
+  const state = mergeLocalStorage(normalizeData(props.data));
+  // Turn layers off if there are no layers present:
+  if (!state.layer.ids.length) {
+    state.visible = Object.assign({}, state.visible, { layers: false });
+  }
+  // Use first pipeline in list if active pipeline from localStorage isn't recognised
+  if (!state.pipeline.ids.includes(state.pipeline.active)) {
+    state.pipeline.active = state.pipeline.ids[0] || null;
+  }
+  return state;
+};
+
+/**
+ * Prepare the non-pipeline data part of the state. This part is separated so that it
+ * will persist if the pipeline data is reset.
+ * Merge local storage and add custom state overrides from props etc
+ * @param {object} props Props passed to App component
+ */
+export const prepareNonPipelineState = props => {
+  const state = mergeLocalStorage(createInitialState());
+  // Override flag defaults with URL values (on page load only)
+  state.flags = Object.assign({}, state.flags, getFlagsFromUrl());
   // Override theme if set in props
   if (props.theme) {
     state.theme = props.theme;
   }
   // Override button visibility if set in props
   if (props.visible) {
-    state.visible = Object.assign(state.visible, props.visible);
-  }
-  // Turn layers off if there are no layers present:
-  if (!state.layer.ids.length) {
-    state.visible.layers = false;
+    state.visible = Object.assign({}, state.visible, props.visible);
   }
   return state;
 };
 
 /**
- * Configure the redux store's initial state
+ * Configure the redux store's initial state, by merging default values
+ * with normalised pipeline data and localStorage
  * @param {Object} props App component props
  * @return {Object} Initial state
  */
 const getInitialState = (props = {}) => {
-  // Merge default values with normalised pipeline data and localStorage
-  const initialPipelineState = normalizeData(props.data);
-  const initialNonPipelineState = createInitialState();
-  const initialState = deepmerge(
-    mergeLocalStorage(initialPipelineState),
-    // Perform 2 deepmerges seperately because it performs much faster
-    mergeLocalStorage(initialNonPipelineState)
-  );
-  // Add overrides from props etc
-  return overrideInitialState(initialState, props);
+  // Perform 2 deepmerges seperately because it performs much faster
+  return deepmerge(prepareNonPipelineState(props), preparePipelineState(props));
 };
 
 export default getInitialState;

@@ -16,7 +16,7 @@ import { graphNew, graphDagre } from './graph';
  * by running the asynchronous actions synchronously
  * @param {Object} props
  */
-const prepareState = (...props) => {
+export const prepareState = (...props) => {
   const initialState = getInitialState(...props);
   const actions = [
     // Set fontLoaded = true:

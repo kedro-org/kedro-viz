@@ -1,14 +1,20 @@
 import { mockState } from '../utils/state.mock';
+import { getPipelineNodeIDs } from './pipeline';
 import {
   getNodeActive,
   getNodeSelected,
   getNodeData,
+  getGroupedNodes,
   getNodeTextWidth,
   getPadding,
   getNodeSize,
   getVisibleNodes
 } from './nodes';
-import { toggleTextLabels, updateFontLoaded } from '../actions';
+import {
+  toggleTextLabels,
+  updateActivePipeline,
+  updateFontLoaded
+} from '../actions';
 import {
   toggleNodeClicked,
   toggleNodeHovered,
@@ -18,6 +24,8 @@ import reducer from '../reducers';
 
 const getNodeIDs = state => state.node.ids;
 const getNodeName = state => state.node.name;
+const getNodeType = state => state.node.type;
+const getNodePipelines = state => state.node.pipelines;
 
 const noFontState = reducer(mockState.animals, updateFontLoaded(false));
 
@@ -110,6 +118,62 @@ describe('Selectors', () => {
       });
       expect(nodeIDs).toEqual(visibleNodeIDs);
     });
+
+    describe(`includes all nodes in the active pipeline`, () => {
+      const activePipeline = mockState.animals.pipeline.ids[1];
+      const state = reducer(
+        mockState.animals,
+        updateActivePipeline(activePipeline)
+      );
+      const nodeDataIDs = getNodeData(state).map(d => d.id);
+      const nodePipelines = getNodePipelines(state);
+      const activePipelineNodeIDs = getNodeIDs(state).filter(
+        nodeID => nodePipelines[nodeID][activePipeline]
+      );
+      test.each(activePipelineNodeIDs)(
+        `node %s is included in nodeData`,
+        nodeID => {
+          expect(nodeDataIDs).toContain(nodeID);
+        }
+      );
+    });
+
+    describe(`does not include any nodes that are not in the active pipeline`, () => {
+      const activePipeline = mockState.animals.pipeline.ids[1];
+      const state = reducer(
+        mockState.animals,
+        updateActivePipeline(activePipeline)
+      );
+      const nodeIDs = getNodeData(state).map(d => d.id);
+      const nodePipelines = getNodePipelines(state);
+      test.each(nodeIDs)(
+        `node %s is in active pipeline ${activePipeline}`,
+        nodeID => {
+          const nodeIsInActivePipeline = nodePipelines[nodeID][activePipeline];
+          expect(nodeIsInActivePipeline).toBe(true);
+        }
+      );
+    });
+  });
+
+  describe('getGroupedNodes', () => {
+    const groupedNodes = getGroupedNodes(mockState.animals);
+    const types = mockState.animals.nodeType.ids.sort();
+    const nodeIDs = getPipelineNodeIDs(mockState.animals);
+    const nodeType = getNodeType(mockState.animals);
+
+    it('returns nodes grouped by type ID', () => {
+      expect(Object.keys(groupedNodes)).toEqual(types);
+    });
+
+    test.each(types)(
+      'returns all nodes in the active pipeline for "%s" type',
+      type => {
+        const typeNodes = Object.values(groupedNodes[type]);
+        const typeNodeIDs = nodeIDs.filter(nodeID => nodeType[nodeID] === type);
+        expect(typeNodes.map(d => d.id)).toEqual(typeNodeIDs);
+      }
+    );
   });
 
   describe('getNodeTextWidth', () => {
@@ -287,7 +351,9 @@ describe('Selectors', () => {
           toggleNodesDisabled([nodeID], true)
         );
         const visibleNodeIDs = getVisibleNodes(newMockState).map(d => d.id);
-        expect(visibleNodeIDs).toEqual(nodes.filter(id => id !== nodeID));
+        expect(visibleNodeIDs.sort()).toEqual(
+          nodes.filter(id => id !== nodeID).sort()
+        );
         expect(visibleNodeIDs.includes(nodeID)).toEqual(false);
       });
     });

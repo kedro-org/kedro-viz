@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
 import { getTagCount } from './tags';
+import { getNodeDisabledPipeline, getPipelineNodeIDs } from './pipeline';
 
 const getNodeIDs = state => state.node.ids;
 const getNodeDisabledNode = state => state.node.disabled;
@@ -13,22 +14,6 @@ const getEdgeSources = state => state.edge.sources;
 const getEdgeTargets = state => state.edge.targets;
 const getLayerIDs = state => state.layer.ids;
 const getNodeLayer = state => state.node.layer;
-const getNodePipelines = state => state.node.pipelines;
-const getActivePipeline = state => state.pipeline.active;
-
-/**
- * Calculate whether nodes should be disabled based on their tags
- */
-export const getNodeDisabledPipeline = createSelector(
-  [getNodeIDs, getNodePipelines, getActivePipeline],
-  (nodeIDs, nodePipelines, activePipeline) =>
-    arrayToObject(nodeIDs, nodeID => {
-      if (!activePipeline) {
-        return false;
-      }
-      return !nodePipelines[nodeID][activePipeline];
-    })
-);
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -82,7 +67,7 @@ export const getNodeDisabled = createSelector(
  * Get a list of just the IDs for the remaining visible nodes
  */
 export const getVisibleNodeIDs = createSelector(
-  [getNodeIDs, getNodeDisabled],
+  [getPipelineNodeIDs, getNodeDisabled],
   (nodeIDs, nodeDisabled) => nodeIDs.filter(id => !nodeDisabled[id])
 );
 

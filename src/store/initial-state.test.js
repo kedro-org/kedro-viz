@@ -1,7 +1,8 @@
 import getInitialState, {
   createInitialState,
   mergeLocalStorage,
-  overrideInitialState
+  preparePipelineState,
+  prepareNonPipelineState
 } from './initial-state';
 import { saveState } from './helpers';
 import animals from '../utils/data/animals.mock';
@@ -51,44 +52,49 @@ describe('mergeLocalStorage', () => {
   });
 });
 
-describe('overrideInitialState', () => {
-  const initialState = {
-    flags: {},
-    theme: 'dark',
-    layer: {
-      ids: []
-    },
-    visible: {
-      miniMap: true,
-      sidebar: true
-    }
-  };
+describe('preparePipelineState', () => {
+  it('disables layer button if there are no layers present', () => {
+    const data = Object.assign({}, animals, { layers: undefined });
+    expect(preparePipelineState({ data })).toMatchObject({
+      visible: {
+        layers: false
+      }
+    });
+  });
 
+  it('uses first pipeline in list if stored active pipeline from localStorage is not one of the pipelines in the current list', () => {
+    saveState({ pipeline: { active: 'unknown' } });
+    expect(preparePipelineState({ data: animals })).toMatchObject({
+      pipeline: {
+        active: animals.pipelines[0].id
+      }
+    });
+    window.localStorage.clear();
+  });
+});
+
+describe('prepareNonPipelineState', () => {
   it('overrides flags with values from URL', () => {
     // In this case, location.href is not provided
-    expect(overrideInitialState(initialState, {})).toMatchObject({
+    expect(prepareNonPipelineState({ data: animals })).toMatchObject({
       flags: {}
     });
   });
 
   it('overrides theme with value from prop', () => {
     const props = { theme: 'light' };
-    expect(overrideInitialState(initialState, props)).toMatchObject(props);
+    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
+      props
+    );
   });
 
   it('overrides visible with values from prop', () => {
     const props = {
       visible: { miniMap: true, sidebar: false, themeBtn: false }
     };
-    expect(overrideInitialState(initialState, props)).toMatchObject(props);
-  });
-
-  it('disables layer button if there are no layers present', () => {
-    expect(overrideInitialState(initialState, {})).toMatchObject({
-      visible: {
-        layers: false
-      }
-    });
+    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
+      props
+    );
   });
 });
 
