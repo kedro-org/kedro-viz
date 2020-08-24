@@ -45,7 +45,7 @@ export class MiniMap extends Component {
     this.selectD3Elements();
     this.initZoomBehaviour();
     this.addGlobalEventListeners();
-    drawNodes.call(this);
+    this.update();
   }
 
   componentWillUnmount() {
@@ -56,10 +56,10 @@ export class MiniMap extends Component {
    * Add window event listeners
    */
   addGlobalEventListeners() {
-    document.body.addEventListener('wheel', this.onPointerWheelGlobal, {
+    window.addEventListener('wheel', this.onPointerWheelGlobal, {
       passive: false
     });
-    document.body.addEventListener(
+    window.addEventListener(
       pointerEventName('pointerup'),
       this.onPointerUpGlobal
     );
@@ -69,14 +69,21 @@ export class MiniMap extends Component {
    * Remove window event listeners
    */
   removeGlobalEventListeners() {
-    document.body.removeEventListener('wheel', this.onPointerWheelGlobal);
-    document.body.removeEventListener(
+    window.removeEventListener('wheel', this.onPointerWheelGlobal);
+    window.removeEventListener(
       pointerEventName('pointerup'),
       this.onPointerUpGlobal
     );
   }
 
   componentDidUpdate(prevProps) {
+    this.update(prevProps);
+  }
+
+  /**
+   * Updates drawing and zoom if props have changed
+   */
+  update(prevProps = {}) {
     const { visible, chartZoom } = this.props;
 
     if (visible) {
@@ -366,14 +373,11 @@ const height = 220;
 const minWidth = 218;
 const maxWidth = 1.5 * minWidth;
 
-// Detect if pointer events are supported
-const hasPointerEvents = Boolean(window.PointerEvent);
-
 /**
  * Convert pointer event name to a mouse event name if not supported
  */
 const pointerEventName = event =>
-  hasPointerEvents
+  window.PointerEvent
     ? event
     : event.replace('pointer', 'mouse').replace('Pointer', 'Mouse');
 
@@ -401,7 +405,7 @@ const getMapSize = state => {
 const emptyNodes = [];
 const emptyGraphSize = {};
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state, ownProps) => ({
   visible: state.visible.miniMap,
   mapSize: getMapSize(state),
   centralNode: getCentralNode(state),
@@ -412,13 +416,15 @@ export const mapStateToProps = state => ({
   linkedNodes: getLinkedNodes(state),
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
-  textLabels: state.textLabels
+  textLabels: state.textLabels,
+  ...ownProps
 });
 
-export const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = (dispatch, ownProps) => ({
   onUpdateChartZoom: transform => {
     dispatch(updateZoom(transform));
-  }
+  },
+  ...ownProps
 });
 
 export default connect(

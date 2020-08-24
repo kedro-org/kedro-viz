@@ -1,5 +1,5 @@
 import React from 'react';
-import MiniMap, { mapStateToProps } from './index';
+import MiniMap, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
 const getNodeIDs = state => state.node.ids;
@@ -16,6 +16,92 @@ describe('MiniMap', () => {
     const nodes = wrapper.render().find('.pipeline-minimap-node');
     const mockNodes = getNodeIDs(mockState.animals);
     expect(nodes.length).toEqual(mockNodes.length);
+  });
+
+  it('does not update nodes when not visible', () => {
+    const wrapper = setup.mount(<MiniMap visible={false} />);
+    const nodes = wrapper.render().find('.pipeline-minimap-node');
+    expect(nodes.length).toEqual(0);
+  });
+
+  it('adds and removes global wheel event handler', () => {
+    const windowEvents = {};
+    window.addEventListener = jest.fn(
+      (event, cb) => (windowEvents[event] = cb)
+    );
+    window.removeEventListener = jest.fn(event => delete windowEvents[event]);
+
+    const wrapper = setup.mount(<MiniMap />);
+    expect(() => windowEvents.wheel({ target: null })).not.toThrow();
+    wrapper.unmount();
+    expect(windowEvents.wheel).toBeUndefined();
+  });
+
+  it('adds and removes global pointer event handler when supported', () => {
+    const windowEvents = {};
+    window.addEventListener = jest.fn(
+      (event, cb) => (windowEvents[event] = cb)
+    );
+    window.removeEventListener = jest.fn(event => delete windowEvents[event]);
+    window.PointerEvent = {};
+
+    const wrapper = setup.mount(<MiniMap />);
+    expect(windowEvents.mouseup).toBeUndefined();
+    expect(() => windowEvents.pointerup()).not.toThrow();
+    wrapper.unmount();
+    expect(windowEvents.pointerup).toBeUndefined();
+  });
+
+  it('adds and removes global mouse event handler when pointer events not supported', () => {
+    const windowEvents = {};
+    window.addEventListener = jest.fn(
+      (event, cb) => (windowEvents[event] = cb)
+    );
+    window.removeEventListener = jest.fn(event => delete windowEvents[event]);
+    window.PointerEvent = null;
+
+    const wrapper = setup.mount(<MiniMap />);
+    expect(windowEvents.mouseup).toBeDefined();
+    expect(() => windowEvents.mouseup()).not.toThrow();
+    wrapper.unmount();
+    expect(windowEvents.mouseup).toBeUndefined();
+  });
+
+  it('updates chart zoom x and y when mouse down and mouse moves on minimap', () => {
+    const onUpdateChartZoom = jest.fn();
+    const wrapper = setup.mount(
+      <MiniMap onUpdateChartZoom={onUpdateChartZoom} />
+    );
+    const container = wrapper.find('.pipeline-minimap');
+    const mouseEvent = () => ({ clientX: 5, clientY: 10 });
+    container.simulate('mouseenter', mouseEvent());
+    container.simulate('mousedown', mouseEvent());
+    container.simulate('mousemove', mouseEvent());
+    container.simulate('mouseleave', mouseEvent());
+    expect(onUpdateChartZoom).toHaveBeenLastCalledWith({
+      x: expect.any(Number),
+      y: expect.any(Number),
+      applied: expect.any(Boolean),
+      transition: expect.any(Boolean)
+    });
+  });
+
+  it('updates chart zoom scale when mouse wheel moves on minimap', () => {
+    const onUpdateChartZoom = jest.fn();
+    const wrapper = setup.mount(
+      <MiniMap onUpdateChartZoom={onUpdateChartZoom} />
+    );
+    const container = wrapper.find('.pipeline-minimap');
+    const mouseEvent = () => ({ clientX: 5, clientY: 10 });
+    const wheelEvent = () => ({ deltaY: 1 });
+    container.simulate('mouseenter', mouseEvent());
+    container.simulate('wheel', wheelEvent());
+    container.simulate('mouseleave', mouseEvent());
+    expect(onUpdateChartZoom).toHaveBeenLastCalledWith({
+      scale: expect.any(Number),
+      applied: expect.any(Boolean),
+      transition: expect.any(Boolean)
+    });
   });
 
   it('does not throw an error/warning when no data is displayed', () => {
@@ -48,5 +134,16 @@ describe('MiniMap', () => {
       textLabels: expect.any(Boolean)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+  });
+
+  it('maps dispatch to props', () => {
+    const dispatch = jest.fn();
+    const zoom = {};
+
+    mapDispatchToProps(dispatch).onUpdateChartZoom(zoom);
+    expect(dispatch.mock.calls[0][0]).toEqual({
+      type: 'UPDATE_ZOOM',
+      zoom
+    });
   });
 });
