@@ -24,6 +24,10 @@ const NodeList = ({
   const [searchValue, updateSearchValue] = useState('');
   const { filteredNodes } = getFilteredNodes({ nodes, searchValue });
 
+  const onTagClick = (tag, checked) => onTagChange(tag, checked);
+  const onTagEnter = tag => onToggleTagActive(tag.id, true);
+  const onTagLeave = tag => onToggleTagActive(tag.id, false);
+
   const onTagChange = (tag, checked) => {
     const valuesBefore = Object.values(tagsEnabled);
     const valuesAfter = Object.values({ ...tagsEnabled, [tag.id]: !checked });
@@ -46,24 +50,20 @@ const NodeList = ({
     }
   };
 
-  const onTagEnter = tag => {
-    onToggleTagActive(tag.id, true);
-  };
-
-  const onTagLeave = tag => {
-    onToggleTagActive(tag.id, false);
-  };
-
   const tagNodes = tags.map(tag => ({
     id: tag.id,
     name: tag.name,
     type: 'tag',
+    checked: tagsEnabled[tag.id] !== false,
+    visible: true,
     disabled: false,
     disabled_unset: typeof tagsEnabled[tag.id] === 'undefined',
-    disabled_node: tagsEnabled[tag.id] === false,
+    disabled_node: false,
     disabled_tag: false,
     disabled_type: false,
-    onClick: () => {},
+    visibleIcon: 'indicator',
+    invisibleIcon: 'indicator',
+    onClick: onTagClick,
     onChange: onTagChange,
     onMouseEnter: onTagEnter,
     onMouseLeave: onTagLeave

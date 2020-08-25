@@ -204,7 +204,6 @@
   opacity: 0;
 
   &--unchecked,
-  .pipeline-nodelist__row__text:focus + label &,
   .pipeline-nodelist__row:hover & {
     opacity: 0.55;
   }
@@ -212,14 +211,22 @@
   .pipeline-nodelist__row:hover &:hover {
     opacity: 1;
   }
+}
 
-  .pipeline-nodelist__row__checkbox:focus + & {
-    outline: none;
+.pipeline-nodelist__row__checkbox:focus
+  + .pipeline-nodelist__row__visibility-icon {
+  outline: none;
 
-    [data-whatintent='keyboard'] & {
-      box-shadow: 0 0 0 3px $color-link inset;
-      opacity: 1;
-    }
+  [data-whatintent='keyboard'] & {
+    box-shadow: 0 0 0 3px $color-link inset;
+    opacity: 0.55;
+  }
+}
+
+.pipeline-nodelist__row__checkbox:focus
+  + .pipeline-nodelist__row__visibility-icon--checked {
+  [data-whatintent='keyboard'] & {
+    opacity: 1;
   }
 }
 

@@ -70,18 +70,8 @@
     color: #000;
   }
 
-  .kui-theme--light &:hover {
-    background: rgba(#000, 0.025);
-    box-shadow: 0 0 0 1px rgba(#000, 0.03) inset;
-  }
-
   .kui-theme--dark &:hover:before {
     color: #fff;
-  }
-
-  .kui-theme--dark &:hover {
-    background: rgba(#fff, 0.1);
-    box-shadow: 0 0 0 1px rgba(#fff, 0.03) inset;
   }
 
   &--alt {

@@ -1,28 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import LabelIcon from '../icons/label';
-import LayersIcon from '../icons/layers';
-import MenuIcon from '../icons/menu';
-import ThemeIcon from '../icons/theme';
-import ExportIcon from '../icons/export';
-import MapIcon from '../icons/map';
-import PlusIcon from '../icons/plus';
-import MinusIcon from '../icons/minus';
-import ResetIcon from '../icons/reset';
+import icons from '../icons';
 import './icon-button.css';
-
-const icons = {
-  label: LabelIcon,
-  layers: LayersIcon,
-  menu: MenuIcon,
-  theme: ThemeIcon,
-  export: ExportIcon,
-  map: MapIcon,
-  plus: PlusIcon,
-  minus: MinusIcon,
-  reset: ResetIcon
-};
 
 /**
  * Icon button component

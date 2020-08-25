@@ -1,14 +1,15 @@
 import React from 'react';
 import classnames from 'classnames';
 import NodeIcon from '../icons/node-icon';
-import VisibleIcon from '../icons/visible';
-import InvisibleIcon from '../icons/invisible';
+import icons from '../icons';
 
 const NodeListRow = ({
   active,
   checked,
   children,
   disabled,
+  faded,
+  visible,
   id,
   label,
   name,
@@ -17,11 +18,11 @@ const NodeListRow = ({
   onChange,
   onClick,
   selected,
-  type
+  type,
+  visibleIcon = 'visible',
+  invisibleIcon = 'invisible'
 }) => {
-  const VisibilityIcon = checked ? VisibleIcon : InvisibleIcon;
-  const visible = Boolean(onClick && !disabled && checked);
-  const faded = disabled || !checked;
+  const VisibilityIcon = checked ? icons[visibleIcon] : icons[invisibleIcon];
 
   return (
     <div
@@ -38,7 +39,7 @@ const NodeListRow = ({
         onClick={onClick}
         onFocus={onMouseEnter}
         onBlur={onMouseLeave}
-        disabled={faded}
+        disabled={disabled}
         title={children ? null : name}>
         {type && (
           <NodeIcon
@@ -75,7 +76,8 @@ const NodeListRow = ({
           className={classnames(
             'pipeline-nodelist__row__icon pipeline-nodelist__row__visibility-icon',
             {
-              'pipeline-nodelist__row__visibility-icon--unchecked': !checked
+              'pipeline-nodelist__row__visibility-icon--unchecked': !checked,
+              'pipeline-nodelist__row__visibility-icon--checked': checked
             }
           )}
         />

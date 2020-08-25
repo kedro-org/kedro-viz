@@ -2,10 +2,10 @@
   position: relative;
   z-index: 1;
   padding: 0 $sidebar-padding 6px $sidebar-padding;
-  box-shadow: 0 10px 20px #f0f1f3;
+  box-shadow: 0 14px 18px $color-bg-light-3;
 
   .kui-theme--dark & {
-    box-shadow: 0 10px 20px #051d27;
+    box-shadow: 0 14px 18px $color-bg-dark-3;
   }
 
   .kui-searchbar,

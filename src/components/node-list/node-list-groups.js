@@ -48,7 +48,7 @@ const NodeListGroups = ({
 
   // Toggle node selection depending on whether it's already selected
   const handleNodeSelection = node => {
-    if (nodeSelected[node.id]) {
+    if (node.disabled || nodeSelected[node.id]) {
       onToggleNodeClicked(null);
     } else {
       onToggleNodeClicked(node.id);
@@ -79,52 +79,77 @@ const NodeListGroups = ({
         allUnset={allUnset}
         collapsed={Boolean(searchValue) ? false : collapsed[type.id]}>
         <ul className="pipeline-nodelist pipeline-nodelist--nested">
-          {nodesOfType.map(node => (
-            <li key={node.id}>
-              <NodeListRow
-                active={nodeActive[node.id]}
-                checked={!node.disabled_node}
-                disabled={node.disabled_tag || node.disabled_type}
-                id={node.id}
-                label={node.highlightedLabel}
-                name={node.name}
-                selected={nodeSelected[node.id]}
-                type={node.type}
-                onClick={() => {
-                  if (node.onClick) {
-                    node.onClick(node);
-                    return;
-                  }
+          {nodesOfType.map(node => {
+            const checked =
+              typeof node.checked !== 'undefined'
+                ? node.checked
+                : !node.disabled_node;
+            const disabled = node.disabled_tag || node.disabled_type;
+            const faded = node.disabled_node || disabled;
+            const visible =
+              typeof node.visible !== 'undefined'
+                ? node.visible
+                : !disabled && checked;
 
-                  handleNodeSelection(node);
-                }}
-                onMouseEnter={() => {
-                  if (node.onMouseEnter) {
-                    node.onMouseEnter(node);
-                    return;
-                  }
+            return (
+              <li key={node.id}>
+                <NodeListRow
+                  active={nodeActive[node.id]}
+                  checked={checked}
+                  disabled={disabled}
+                  faded={faded}
+                  visible={visible}
+                  id={node.id}
+                  label={node.highlightedLabel}
+                  name={node.name}
+                  selected={nodeSelected[node.id]}
+                  type={node.type}
+                  visibleIcon={node.visibleIcon}
+                  invisibleIcon={node.invisibleIcon}
+                  onClick={() => {
+                    if (node.onClick) {
+                      node.onClick(node, checked);
+                      return;
+                    }
 
-                  onToggleNodeHovered(node.id);
-                }}
-                onMouseLeave={() => {
-                  if (node.onMouseLeave) {
-                    node.onMouseLeave(node);
-                    return;
-                  }
+                    handleNodeSelection(node);
+                  }}
+                  onMouseEnter={() => {
+                    if (node.onMouseEnter) {
+                      node.onMouseEnter(node);
+                      return;
+                    }
 
-                  onToggleNodeHovered(null);
-                }}
-                onChange={e => {
-                  if (node.onChange) {
-                    node.onChange(node, !e.target.checked);
-                    return;
-                  }
+                    if (visible) {
+                      onToggleNodeHovered(node.id);
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (node.onMouseLeave) {
+                      node.onMouseLeave(node);
+                      return;
+                    }
 
-                  onToggleNodesDisabled([node.id], !e.target.checked);
-                }}
-              />
-            </li>
-          ))}
+                    if (visible) {
+                      onToggleNodeHovered(null);
+                    }
+                  }}
+                  onChange={e => {
+                    if (node.onChange) {
+                      node.onChange(node, !e.target.checked);
+                      return;
+                    }
+
+                    if (!e.target.checked) {
+                      onToggleNodeHovered(null);
+                    }
+
+                    onToggleNodesDisabled([node.id], !e.target.checked);
+                  }}
+                />
+              </li>
+            );
+          })}
         </ul>
       </NodeListGroup>
     );
