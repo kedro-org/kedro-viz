@@ -49,11 +49,6 @@ def git_stage_files():
     subprocess.check_call(["git", "add"] + files_to_stage)
 
 
-def git_tag(version):
-    tag_fmt = TAG_FMT.format(tag=version)
-    subprocess.check_call(["git", "tag", "-a", tag_fmt, "-m", version])
-
-
 def main(argv):
     if len(argv) != 2:
         print("Error... please specify an appropriate version number!")
@@ -63,7 +58,6 @@ def main(argv):
     update_npm_package(version)
     git_stage_files()
     git_commit(version)
-    git_tag(version)
 
 
 if __name__ == "__main__":
