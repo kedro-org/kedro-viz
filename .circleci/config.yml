@@ -154,10 +154,11 @@ commands:
             git config --global user.email circleci@circleci.com
             git config --global user.name CircleCIBot
             git init
+            git checkout -b gh-pages
             git add -A
             git commit -m 'Demo build [ci skip]'
             git remote add origin https://github.com/quantumblacklabs/kedro-viz.git
-            git push origin master:gh-pages --force
+            git push origin gh-pages --force
 
   build:
     description: Run build
@@ -307,7 +308,7 @@ workflows:
             - win_build_38
           filters:
             branches:
-              only: master
+              only: demo
   daily:
     triggers:
       - schedule:
@@ -315,8 +316,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop
-                - master
+                - main
     jobs:
       - build_36
       - build_37
