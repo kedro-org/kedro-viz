@@ -62,7 +62,7 @@
     opacity: 0.2;
   }
 
-  .pipeline-nodelist__row:hover &,
+  .pipeline-nodelist__row--visible:hover &,
   .pipeline-nodelist__row--active &,
   .pipeline-nodelist__row--selected &,
   [data-whatintent='keyboard'] .pipeline-nodelist__row__text:focus & {
