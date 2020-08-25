@@ -110,7 +110,7 @@ We use a branching model that helps us keep track of branches in a logical, cons
 ## Plugin contribution process
 
 1.  Fork the project
-2.  Develop your contribution in a new branch and open a PR against the `develop` branch
+2.  Develop your contribution in a new branch and open a PR against the `main` branch
 3.  Make sure the CI builds are green (have a look at the section [Running checks locally](#running-checks-locally) below)
 4.  Update the PR according to the reviewer's comments
 

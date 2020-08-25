@@ -646,9 +646,9 @@ export default {
       type: 'data'
     },
     {
-      full_name: 'vendor_master',
+      full_name: 'vendor_main',
       id: '181c2b7c',
-      name: 'Vendor Master',
+      name: 'Vendor Main',
       tags: ['feature_engineering', 'data_engineering'],
       layer: 'Raw',
       pipelines: ['__default__', 'de'],

@@ -36,7 +36,7 @@ commands:
           name: Install Kedro-Viz dependencies
           command: |
             python -m pip install -U pip setuptools wheel
-            pip install git+https://github.com/quantumblacklabs/kedro@master
+            pip install git+https://github.com/quantumblacklabs/kedro@main
             cd package && pip install -r requirements.txt -U
             pip install -r test_requirements.txt -U
             cd ..
@@ -210,7 +210,7 @@ commands:
           command: |
             conda activate kedro-viz
             python -m pip install -U pip setuptools wheel
-            pip install git+https://github.com/quantumblacklabs/kedro@master
+            pip install git+https://github.com/quantumblacklabs/kedro@main
             pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions
@@ -307,7 +307,7 @@ workflows:
             - win_build_38
           filters:
             branches:
-              only: master
+              only: demo
   daily:
     triggers:
       - schedule:
@@ -315,8 +315,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop
-                - master
+                - main
     jobs:
       - build_36
       - build_37

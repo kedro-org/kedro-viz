@@ -1,8 +1,6 @@
 # Kedro-Viz
-| `develop` | `master`|
-| --------- | ------- |
-| [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/develop) | [![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/master) |
 
+[![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/main.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/main)
 [![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)
 [![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-3da639.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -17,13 +15,13 @@ With Kedro-Viz you can:
 - Get a clear picture when you have lots of datasets and nodes by using tags to visualise sub-pipelines
 - Search for nodes and datasets
 
-![Kedro-Viz Pipeline Visualisation](https://github.com/quantumblacklabs/kedro-viz/blob/develop/.github/img/pipeline_visualisation.png?raw=true)
+![Kedro-Viz Pipeline Visualisation](https://github.com/quantumblacklabs/kedro-viz/blob/main/.github/img/pipeline_visualisation.png?raw=true)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), for which more complete documentation is available on the [project website](https://facebook.github.io/create-react-app/).
 
 ## How do I install and use Kedro-Viz?
 
-> For in-depth development and usage notes, see the [Contribution Guidelines](https://github.com/quantumblacklabs/kedro-viz/blob/master/CONTRIBUTING.md).
+> For in-depth development and usage notes, see the [Contribution Guidelines](https://github.com/quantumblacklabs/kedro-viz/blob/main/CONTRIBUTING.md).
 
 ### As a Kedro Python plugin
 
@@ -42,7 +40,7 @@ pip install kedro-viz
 
 This will install `kedro` as a dependency, and add `kedro viz` as an additional CLI command.
 
-![Kedro CLI command](https://github.com/quantumblacklabs/kedro-viz/blob/master/.github/img/kedro_cli_example.png?raw=true)
+![Kedro CLI command](https://github.com/quantumblacklabs/kedro-viz/blob/main/.github/img/kedro_cli_example.png?raw=true)
 
 To visualise your pipeline, go to your project root directory and install the project-specific dependencies by running:
 
@@ -98,7 +96,7 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
    Kedro-Viz can be used as a React component that can be imported into other applications. Publishing the package will run `npm run lib`, which compiles the source code in `/src`, and places it in the `/lib` directory.
 
-   The React component exposes props that can be used to supply data and customise its behaviour. For information about the props, their expected prop-types and default values, see [/src/components/app/index.js](https://github.com/quantumblacklabs/kedro-viz/blob/master/src/components/app/index.js). For examples of the expected data input format, see the mock data examples in [/src/utils/data](https://github.com/quantumblacklabs/kedro-viz/tree/master/src/utils/data), and compare the [resulting demo](https://quantumblacklabs.github.io/kedro-viz/).
+   The React component exposes props that can be used to supply data and customise its behaviour. For information about the props, their expected prop-types and default values, see [/src/components/app/index.js](https://github.com/quantumblacklabs/kedro-viz/blob/main/src/components/app/index.js). For examples of the expected data input format, see the mock data examples in [/src/utils/data](https://github.com/quantumblacklabs/kedro-viz/tree/main/src/utils/data), and compare the [resulting demo](https://quantumblacklabs.github.io/kedro-viz/).
 
 ## Flags
 
@@ -120,6 +118,6 @@ Kedro-Viz will log a message in your browser's [developer console](https://devel
 
 ## What licence do you use?
 
-Kedro-Viz is licensed under the [Apache 2.0](https://github.com/quantumblacklabs/kedro-viz/blob/master/LICENSE.md) License.
+Kedro-Viz is licensed under the [Apache 2.0](https://github.com/quantumblacklabs/kedro-viz/blob/main/LICENSE.md) License.
 
 <p align="center">↑↑↓↓←→←→BA</p>
