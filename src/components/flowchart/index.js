@@ -23,7 +23,7 @@ export class FlowChart extends Component {
     super(props);
 
     this.state = {
-      tooltip: {}
+      tooltip: { visible: false }
     };
 
     this.DURATION = 700;
@@ -42,7 +42,13 @@ export class FlowChart extends Component {
     this.updateChartSize();
     this.initZoomBehaviour();
     this.addGlobalEventListeners();
-    drawNodes.call(this);
+    this.update();
+
+    if (this.props.tooltip) {
+      this.showTooltip(null, this.props.tooltip);
+    } else {
+      this.hideTooltip();
+    }
   }
 
   componentWillUnmount() {
@@ -50,6 +56,13 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    this.update(prevProps);
+  }
+
+  /**
+   * Updates drawing and zoom if props have changed
+   */
+  update(prevProps = {}) {
     const { chartZoom } = this.props;
     const changed = (...names) => this.changed(names, prevProps, this.props);
 
@@ -389,13 +402,15 @@ export class FlowChart extends Component {
   /**
    * Show, fill and and position the tooltip
    * @param {Object} node A node datum
+   * @param {?Object} options Options for the tooltip if required
    */
-  showTooltip(node) {
+  showTooltip(node, options = {}) {
     this.setState({
       tooltip: {
-        targetRect: event.target.getBoundingClientRect(),
-        text: node.fullName,
-        visible: true
+        targetRect: event && event.target.getBoundingClientRect(),
+        text: node && node.fullName,
+        visible: true,
+        ...options
       }
     });
   }
@@ -473,7 +488,7 @@ const emptyEdges = [];
 const emptyNodes = [];
 const emptyGraphSize = {};
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state, ownProps) => ({
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
@@ -486,10 +501,11 @@ export const mapStateToProps = state => ({
   nodeSelected: getNodeSelected(state),
   textLabels: state.textLabels,
   visibleLayers: state.visible.layers,
-  visibleSidebar: state.visible.sidebar
+  visibleSidebar: state.visible.sidebar,
+  ...ownProps
 });
 
-export const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = (dispatch, ownProps) => ({
   onToggleNodeClicked: nodeClicked => {
     dispatch(toggleNodeClicked(nodeClicked));
   },
@@ -501,7 +517,8 @@ export const mapDispatchToProps = dispatch => ({
   },
   onUpdateZoom: transform => {
     dispatch(updateZoom(transform));
-  }
+  },
+  ...ownProps
 });
 
 export default connect(
