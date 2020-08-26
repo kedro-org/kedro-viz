@@ -9,7 +9,7 @@
 }
 
 .pipeline-minimap-button {
-  height: 46px;
+  height: $sidebar-width-closed - 14;
   transition: background-color 300ms ease;
 }
 
