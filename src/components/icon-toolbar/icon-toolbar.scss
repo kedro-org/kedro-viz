@@ -22,96 +22,10 @@
   }
 }
 
-.pipeline-icon-toolbar__button {
-  position: relative;
-  width: $sidebar-width-closed;
-  height: $sidebar-width-closed;
-  padding: 0;
-  color: inherit;
-  text-align: center;
-  vertical-align: middle;
-  background: none;
-  border: none;
-  box-shadow: none;
-  cursor: pointer;
-  user-select: none;
-
-  &:focus {
-    outline: none;
-
-    [data-whatinput='keyboard'] & {
-      outline: 3px solid $color-link;
-    }
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-
-    svg {
-      opacity: 0.2;
-    }
-  }
-
-  svg {
-    width: 2em;
-    height: 2em;
-  }
-}
-
-.pipeline-icon-toolbar__label {
-  @extend %tooltip;
-
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -1.2em;
-  margin-left: 1.6em;
-  padding: 0.5em 0.7em;
-  font-size: 1.4em;
-  white-space: nowrap;
-  transform: translateX(-1em);
-  visibility: hidden;
-  opacity: 0;
-  transition: all ease 0.2s;
-
-  .pipeline-icon-toolbar__button:hover &,
-  [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {
-    transform: translateX(0);
-    visibility: visible;
-    opacity: 1;
-  }
-
-  &::after {
-    $triangle-size: 7px;
-
-    position: absolute;
-    top: calc(50% - #{$triangle-size});
-    left: -$triangle-size + 0.5;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    border-width: $triangle-size $triangle-size $triangle-size 0;
-    content: '';
-
-    .kui-theme--light & {
-      border-right-color: $color-bg-light-alt;
-    }
-
-    .kui-theme--dark & {
-      border-right-color: $color-bg-dark-alt;
-    }
-  }
-}
-
 .pipeline-menu-button svg {
   transition: transform ease 0.4s;
 }
 
 .pipeline-menu-button--inverse svg {
   transform: rotate(-180deg);
-}
-
-.pipeline-minimap-toolbar {
-  margin-top: auto;
 }

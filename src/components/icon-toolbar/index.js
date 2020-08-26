@@ -8,7 +8,7 @@ import {
   toggleTextLabels,
   toggleTheme
 } from '../../actions';
-import IconButton from './icon-button';
+import IconButton from '../icon-button';
 import MiniMapToolbar from '../minimap-toolbar';
 import './icon-toolbar.css';
 
