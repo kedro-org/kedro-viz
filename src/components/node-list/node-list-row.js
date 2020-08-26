@@ -30,7 +30,8 @@ const NodeListRow = ({
         'pipeline-nodelist__row--visible': visible,
         'pipeline-nodelist__row--active': active,
         'pipeline-nodelist__row--selected': selected,
-        'pipeline-nodelist__row--disabled': disabled
+        'pipeline-nodelist__row--disabled': disabled,
+        'pipeline-nodelist__row--unchecked': !checked
       })}
       onMouseEnter={visible ? onMouseEnter : null}
       onMouseLeave={visible ? onMouseLeave : null}>

@@ -36,9 +36,23 @@
     display: block;
   }
 
+  .pipeline-nodelist__row--unchecked .pipeline-nodelist__row__text {
+    opacity: 0.55;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
   .pipeline-nodelist--nested
     .pipeline-nodelist__row__visibility-icon--unchecked {
-    opacity: 0.1;
+    .kui-theme--light & {
+      opacity: 0.35;
+    }
+
+    .kui-theme--dark & {
+      opacity: 0.1;
+    }
   }
 
   .pipeline-nodelist--nested .pipeline-nodelist__row__visibility-icon--checked {
@@ -58,6 +72,12 @@
   .pipeline-nodelist--nested
     .pipeline-nodelist__row:hover
     .pipeline-nodelist__row__visibility-icon--unchecked {
-    opacity: 0.35;
+    .kui-theme--light & {
+      opacity: 0.6;
+    }
+
+    .kui-theme--dark & {
+      opacity: 0.35;
+    }
   }
 }
