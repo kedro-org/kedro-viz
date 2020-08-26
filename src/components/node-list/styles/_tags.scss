@@ -43,13 +43,19 @@
     }
   }
 
-  .pipeline-nodelist--nested .pipeline-nodelist__row__visibility-icon--checked {
+  .pipeline-nodelist__row__visibility-icon--checked {
     opacity: 1;
   }
 
   &.pipeline-nodelist__item--all-checked
     .pipeline-nodelist__row__visibility-icon {
     opacity: 0;
+  }
+
+  .pipeline-nodelist__heading > .pipeline-nodelist__row {
+    &:hover .pipeline-nodelist__row__visibility-icon {
+      opacity: 1;
+    }
   }
 
   &.pipeline-nodelist__item--all-checked
