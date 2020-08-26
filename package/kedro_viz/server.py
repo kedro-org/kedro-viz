@@ -488,8 +488,40 @@ def _get_dataset_node(node_id, namespace):
 
 @app.route("/api/main")
 def nodes_json():
-    """Serve the pipeline data. This includes basic node data amongst others edges, tags, and layers."""
+    """Serve the data from all Kedro pipelines in the project.
+    This includes basic node data amongst others edges, tags, and layers.
+    """
     return jsonify(_DATA)
+
+
+@app.route("/api/pipelines/<string:pipeline_id>")
+def pipeline_data(pipeline_id):
+    """Serve the data from a single pipeline in a Kedro project."""
+    current_pipeline = {"id": pipeline_id, "name": _pretty_name(pipeline_id)}
+    pipelines_list = _DATA["pipelines"]
+    pipelines_list.remove(current_pipeline)
+    pipelines_list.insert(0, current_pipeline)
+
+    pipeline_node_ids = set()
+    pipeline_nodes = []
+
+    for node in _DATA["nodes"]:
+        if pipeline_id in node["pipelines"]:
+            pipeline_node_ids.add(node["id"])
+            pipeline_nodes.append(node)
+
+    pipeline_edges = []
+    for edge in _DATA["edges"]:
+        if edge["source"] in pipeline_node_ids and edge["target"] in pipeline_node_ids:
+            pipeline_edges.append(edge)
+
+    return jsonify({
+        "nodes": pipeline_nodes,
+        "edges": pipeline_edges,
+        "tags": _DATA["tags"],
+        "layers": _DATA["layers"],
+        "pipelines": pipelines_list,
+    })
 
 
 @app.route("/api/nodes/<string:node_id>")

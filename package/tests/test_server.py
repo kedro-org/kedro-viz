@@ -278,6 +278,36 @@ def test_nodes_endpoint(cli_runner, client):
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
+def test_pipelines_endpoint(cli_runner, client):
+    """Test `/api/main` endpoint is functional and returns a valid JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    selected_pipeline_id = "third"
+    response = client.get(f"/api/pipelines/{selected_pipeline_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+
+    # make sure the selected pipeline is the first on the list
+    # and the list of all pipelines are returned
+    assert data["pipelines"][0]['id'] == selected_pipeline_id
+    assert {p["name"] for p in data["pipelines"]} == \
+        {p["name"] for p in EXPECTED_PIPELINE_DATA["pipelines"]}
+
+    # make sure all returned nodes belong to the correct pipelines
+    for node in data["nodes"]:
+        assert selected_pipeline_id in node["pipelines"]
+
+    # make sure only edges in the selected pipelines are returned
+    assert data["edges"] == [
+        {'source': '7366ec9f', 'target': '01a6a5cb'},
+        {'source': 'f1f1425b', 'target': '01a6a5cb'},
+        {'source': '01a6a5cb', 'target': '60e68b8e'}
+    ]
+
+    # make sure all tags are returned
+    assert data["tags"] == EXPECTED_PIPELINE_DATA["tags"]
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON."""
     project_root = "project_root"
