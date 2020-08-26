@@ -6,6 +6,7 @@
 @import './toggle';
 @import './group';
 @import './row';
+@import './tags';
 
 .pipeline-nodelist-scrollbars {
   min-height: 400px;
@@ -13,71 +14,4 @@
 
 .pipeline-nodelist-container {
   padding: 10px 0 16px 0;
-}
-
-.pipeline-nodelist__item--tags {
-  .pipeline-nodelist__row__icon {
-    transition: none;
-  }
-
-  .kui-theme--dark & .pipeline-nodelist__row__icon {
-    fill: #00b6de;
-  }
-
-  .kui-theme--light & .pipeline-nodelist__row__icon {
-    fill: #74c3ff;
-  }
-
-  .pipeline-nodelist__row__visibility-icon {
-    display: none;
-  }
-
-  .pipeline-nodelist--nested .pipeline-nodelist__row__visibility-icon {
-    display: block;
-  }
-
-  .pipeline-nodelist__row--unchecked .pipeline-nodelist__row__text {
-    opacity: 0.55;
-
-    &:hover {
-      opacity: 0.9;
-    }
-  }
-
-  .pipeline-nodelist--nested
-    .pipeline-nodelist__row__visibility-icon--unchecked {
-    .kui-theme--light & {
-      opacity: 0.35;
-    }
-
-    .kui-theme--dark & {
-      opacity: 0.1;
-    }
-  }
-
-  .pipeline-nodelist--nested .pipeline-nodelist__row__visibility-icon--checked {
-    opacity: 1;
-  }
-
-  &.pipeline-nodelist__item--all-checked
-    .pipeline-nodelist--nested
-    .pipeline-nodelist__row__visibility-icon {
-    opacity: 0;
-  }
-
-  &.pipeline-nodelist__item--all-checked
-    .pipeline-nodelist--nested
-    .pipeline-nodelist__row:hover
-    .pipeline-nodelist__row__visibility-icon,
-  .pipeline-nodelist--nested
-    .pipeline-nodelist__row:hover
-    .pipeline-nodelist__row__visibility-icon--unchecked {
-    .kui-theme--light & {
-      opacity: 0.6;
-    }
-
-    .kui-theme--dark & {
-      opacity: 0.35;
-    }
-  }
 }
