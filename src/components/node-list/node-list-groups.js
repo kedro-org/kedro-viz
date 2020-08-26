@@ -6,6 +6,8 @@ import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { getNodeTypes } from '../../selectors/node-types';
 import NodeListGroup from './node-list-group';
 import NodeListRow from './node-list-row';
+import { toggleTagFilter } from '../../actions/tags';
+import { toggleTypeDisabled } from '../../actions/node-type';
 import {
   toggleNodeClicked,
   toggleNodeHovered,
@@ -14,10 +16,22 @@ import {
 
 const storedState = loadState();
 
+const getNodeState = node => {
+  const checked =
+    typeof node.checked !== 'undefined' ? node.checked : !node.disabled_node;
+  const disabled = node.disabled_tag || node.disabled_type;
+  const faded = node.disabled_node || disabled;
+  const visible =
+    typeof node.visible !== 'undefined' ? node.visible : !disabled && checked;
+  return { checked, disabled, faded, visible };
+};
+
 const NodeListGroups = ({
+  onToggleTypeDisabled,
   onToggleNodeClicked,
   onToggleNodesDisabled,
   onToggleNodeHovered,
+  onToggleTagFilter,
   nodes,
   nodeActive,
   nodeSelected,
@@ -38,7 +52,7 @@ const NodeListGroups = ({
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
 
   // Collapse/expand node group
-  const onToggleCollapsed = typeID => {
+  const onToggleGroupCollapsed = typeID => {
     const groupsCollapsed = Object.assign({}, collapsed, {
       [typeID]: !collapsed[typeID]
     });
@@ -56,41 +70,40 @@ const NodeListGroups = ({
   };
 
   const renderTypeGroup = type => {
-    const nodesOfType = nodes[type.id];
+    const nodesOfType = nodes[type.id] || [];
+    const groupAllUnset = nodesOfType.every(node => node.disabled_unset);
 
-    if (!nodesOfType) {
-      return null;
+    let groupVisibleIcon;
+    let groupInvisibleIcon;
+    let groupChecked = !type.disabled;
+    let onToggleGroupChecked = onToggleTypeDisabled;
+
+    if (type.id === 'tag') {
+      const groupAllChecked = nodesOfType.every(node => node.checked);
+      onToggleGroupChecked = () => {
+        const allTagsValue = groupAllUnset ? true : undefined;
+        nodesOfType.forEach(tag => onToggleTagFilter(tag.id, allTagsValue));
+      };
+      groupChecked = !groupAllUnset;
+      groupVisibleIcon = groupAllChecked ? 'indicator' : 'indicatorPartial';
+      groupInvisibleIcon = 'indicator';
     }
-
-    const firstNodeOfType = nodesOfType[0];
-    const onToggleTypeDisabled = firstNodeOfType
-      ? firstNodeOfType.onToggleTypeDisabled
-      : undefined;
-
-    const allUnset = nodesOfType.every(node => node.disabled_unset);
 
     return (
       <NodeListGroup
         key={type.id}
-        onToggleCollapsed={onToggleCollapsed}
-        onToggleTypeDisabled={onToggleTypeDisabled}
+        onToggleCollapsed={onToggleGroupCollapsed}
+        onToggleChecked={onToggleGroupChecked}
         type={type}
+        checked={groupChecked}
         childCount={nodesOfType.length}
-        allUnset={allUnset}
+        allUnset={groupAllUnset}
+        visibleIcon={groupVisibleIcon}
+        invisibleIcon={groupInvisibleIcon}
         collapsed={Boolean(searchValue) ? false : collapsed[type.id]}>
         <ul className="pipeline-nodelist pipeline-nodelist--nested">
           {nodesOfType.map(node => {
-            const checked =
-              typeof node.checked !== 'undefined'
-                ? node.checked
-                : !node.disabled_node;
-            const disabled = node.disabled_tag || node.disabled_type;
-            const faded = node.disabled_node || disabled;
-            const visible =
-              typeof node.visible !== 'undefined'
-                ? node.visible
-                : !disabled && checked;
-
+            const { checked, disabled, faded, visible } = getNodeState(node);
             return (
               <li key={node.id}>
                 <NodeListRow
@@ -165,6 +178,12 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
+  onToggleTagFilter: (tagID, enabled) => {
+    dispatch(toggleTagFilter(tagID, enabled));
+  },
+  onToggleTypeDisabled: (typeID, disabled) => {
+    dispatch(toggleTypeDisabled(typeID, disabled));
+  },
   onToggleNodeClicked: nodeID => {
     dispatch(toggleNodeClicked(nodeID));
   },

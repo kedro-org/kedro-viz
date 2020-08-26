@@ -10,21 +10,21 @@
 
   .kui-theme--dark & .pipeline-nodelist__row__icon {
     fill: #00b6de;
+    stroke: #00b6de;
   }
 
   .kui-theme--light & .pipeline-nodelist__row__icon {
     fill: #74c3ff;
+    stroke: #00b6de;
   }
 
-  .pipeline-nodelist__row__visibility-icon {
-    display: none;
+  .pipeline-nodelist__row__visibility-icon--checked {
+    opacity: 0.55;
   }
 
-  .pipeline-nodelist--nested .pipeline-nodelist__row__visibility-icon {
-    display: block;
-  }
-
-  .pipeline-nodelist__row--unchecked .pipeline-nodelist__row__text {
+  .pipeline-nodelist--nested
+    .pipeline-nodelist__row--unchecked
+    .pipeline-nodelist__row__text {
     opacity: 0.55;
 
     &:hover {
@@ -48,7 +48,6 @@
   }
 
   &.pipeline-nodelist__item--all-checked
-    .pipeline-nodelist--nested
     .pipeline-nodelist__row__visibility-icon {
     opacity: 0;
   }

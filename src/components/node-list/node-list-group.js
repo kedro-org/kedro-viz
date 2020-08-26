@@ -1,17 +1,18 @@
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import NodeListRow from './node-list-row';
-import { toggleTypeDisabled } from '../../actions/node-type';
 
 export const NodeListGroup = ({
   children,
   collapsed,
-  onToggleTypeDisabled,
+  onToggleChecked,
   onToggleCollapsed,
   type,
+  checked,
   childCount,
-  allUnset
+  allUnset,
+  visibleIcon,
+  invisibleIcon
 }) => (
   <li
     className={classnames(
@@ -23,12 +24,14 @@ export const NodeListGroup = ({
     )}>
     <h3 className="pipeline-nodelist__heading">
       <NodeListRow
-        checked={!type.disabled}
+        checked={checked}
         id={type.id}
         label={`${type.name} <i>${childCount}</i>`}
         name={type.name}
+        visibleIcon={visibleIcon}
+        invisibleIcon={invisibleIcon}
         onChange={e => {
-          onToggleTypeDisabled(type.id, !e.target.checked);
+          onToggleChecked(type.id, !e.target.checked);
         }}>
         <button
           aria-label={`${
@@ -53,15 +56,4 @@ export const NodeListGroup = ({
   </li>
 );
 
-export const mapDispatchToProps = (dispatch, props) => ({
-  onToggleTypeDisabled:
-    props.onToggleTypeDisabled ||
-    ((typeID, disabled) => {
-      dispatch(toggleTypeDisabled(typeID, disabled));
-    })
-});
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(NodeListGroup);
+export default NodeListGroup;
