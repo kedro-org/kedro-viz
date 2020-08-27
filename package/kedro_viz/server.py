@@ -44,7 +44,7 @@ from typing import Dict, List, Set, Tuple, Union
 import click
 import kedro
 import requests
-from flask import Flask, jsonify, send_from_directory, abort
+from flask import Flask, abort, jsonify, send_from_directory
 from IPython.core.display import HTML, display
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 from kedro.pipeline.node import Node
@@ -515,13 +515,15 @@ def pipeline_data(pipeline_id):
         if edge["source"] in pipeline_node_ids and edge["target"] in pipeline_node_ids:
             pipeline_edges.append(edge)
 
-    return jsonify({
-        "nodes": pipeline_nodes,
-        "edges": pipeline_edges,
-        "tags": _DATA["tags"],
-        "layers": _DATA["layers"],
-        "pipelines": pipelines_list,
-    })
+    return jsonify(
+        {
+            "nodes": pipeline_nodes,
+            "edges": pipeline_edges,
+            "tags": _DATA["tags"],
+            "layers": _DATA["layers"],
+            "pipelines": pipelines_list,
+        }
+    )
 
 
 @app.route("/api/nodes/<string:node_id>")

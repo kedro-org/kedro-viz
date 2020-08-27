@@ -38,14 +38,14 @@ from pathlib import Path
 
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
-from kedro.io import DataCatalog, MemoryDataSet, DataSetNotFoundError
+from kedro.io import DataCatalog, DataSetNotFoundError, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from semver import VersionInfo
 from toposort import CircularDependencyError
 
 import kedro_viz
 from kedro_viz import server
-from kedro_viz.server import _allocate_port, _sort_layers, format_pipelines_data, _hash
+from kedro_viz.server import _allocate_port, _hash, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
 
 input_json_path = Path(__file__).parent / "input.json"
@@ -288,9 +288,10 @@ def test_pipelines_endpoint(cli_runner, client):
 
     # make sure the selected pipeline is the first on the list
     # and the list of all pipelines are returned
-    assert data["pipelines"][0]['id'] == selected_pipeline_id
-    assert {p["name"] for p in data["pipelines"]} == \
-        {p["name"] for p in EXPECTED_PIPELINE_DATA["pipelines"]}
+    assert data["pipelines"][0]["id"] == selected_pipeline_id
+    assert {p["name"] for p in data["pipelines"]} == {
+        p["name"] for p in EXPECTED_PIPELINE_DATA["pipelines"]
+    }
 
     # make sure all returned nodes belong to the correct pipelines
     for node in data["nodes"]:
@@ -298,9 +299,9 @@ def test_pipelines_endpoint(cli_runner, client):
 
     # make sure only edges in the selected pipelines are returned
     assert data["edges"] == [
-        {'source': '7366ec9f', 'target': '01a6a5cb'},
-        {'source': 'f1f1425b', 'target': '01a6a5cb'},
-        {'source': '01a6a5cb', 'target': '60e68b8e'}
+        {"source": "7366ec9f", "target": "01a6a5cb"},
+        {"source": "f1f1425b", "target": "01a6a5cb"},
+        {"source": "01a6a5cb", "target": "60e68b8e"},
     ]
 
     # make sure all tags are returned
