@@ -99,7 +99,6 @@ App.propTypes = {
   visible: PropTypes.shape({
     labelBtn: PropTypes.bool,
     layerBtn: PropTypes.bool,
-    layers: PropTypes.bool,
     exportBtn: PropTypes.bool,
     sidebar: PropTypes.bool,
     themeBtn: PropTypes.bool
