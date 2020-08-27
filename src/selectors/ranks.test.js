@@ -2,6 +2,8 @@ import { mockState } from '../utils/state.mock';
 import { getLayerNodes, getNodeRank } from './ranks';
 import { getVisibleNodeIDs, getVisibleLayerIDs } from './disabled';
 import { getVisibleEdges } from './edges';
+import { toggleLayers } from '../actions';
+import reducer from '../reducers';
 
 const getNodeLayer = state => state.node.layer;
 
@@ -21,6 +23,11 @@ describe('Selectors', () => {
           layerNodeIDs.every(nodeID => nodeLayer[nodeID] === layerIDs[i])
         )
       ).toBe(true);
+    });
+
+    it('returns an empty array if layers are disabled', () => {
+      const newMockState = reducer(mockState.animals, toggleLayers(false));
+      expect(getLayerNodes(newMockState)).toEqual([]);
     });
   });
 
@@ -46,6 +53,11 @@ describe('Selectors', () => {
       expect(
         edges.every(edge => nodeRank[edge.source] < nodeRank[edge.target])
       ).toBe(true);
+    });
+
+    it('returns an empty object if layers are disabled', () => {
+      const newMockState = reducer(mockState.animals, toggleLayers(false));
+      expect(getNodeRank(newMockState)).toEqual({});
     });
   });
 });
