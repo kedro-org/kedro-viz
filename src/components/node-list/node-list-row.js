@@ -6,6 +6,7 @@ import icons from '../icons';
 const NodeListRow = ({
   active,
   checked,
+  unset,
   children,
   disabled,
   faded,
@@ -77,8 +78,9 @@ const NodeListRow = ({
           className={classnames(
             'pipeline-nodelist__row__icon pipeline-nodelist__row__visibility-icon',
             {
+              'pipeline-nodelist__row__visibility-icon--checked': checked,
               'pipeline-nodelist__row__visibility-icon--unchecked': !checked,
-              'pipeline-nodelist__row__visibility-icon--checked': checked
+              'pipeline-nodelist__row__visibility-icon--unset': unset
             }
           )}
         />

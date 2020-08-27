@@ -6,13 +6,13 @@ export default ({ className }) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24">
     <rect
-      x="9"
-      y="10"
-      width="6"
-      height="6"
+      x="8"
+      y="9.5"
+      width="5"
+      height="5"
       rx="1"
       fill="none"
-      strokeWidth="3"
+      strokeWidth="2"
     />
   </svg>
 );

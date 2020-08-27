@@ -71,7 +71,7 @@ const NodeListGroups = ({
 
   const renderTypeGroup = type => {
     const nodesOfType = nodes[type.id] || [];
-    const groupAllUnset = nodesOfType.every(node => node.disabled_unset);
+    const groupAllUnset = nodesOfType.every(node => node.unset);
 
     let groupVisibleIcon;
     let groupInvisibleIcon;
@@ -109,6 +109,7 @@ const NodeListGroups = ({
                 <NodeListRow
                   active={nodeActive[node.id]}
                   checked={checked}
+                  unset={node.unset}
                   disabled={disabled}
                   faded={faded}
                   visible={visible}

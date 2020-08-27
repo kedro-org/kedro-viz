@@ -9,6 +9,7 @@ export const NodeListGroup = ({
   onToggleCollapsed,
   type,
   checked,
+  unset,
   childCount,
   allUnset,
   visibleIcon,
@@ -19,11 +20,12 @@ export const NodeListGroup = ({
       'pipeline-nodelist__item',
       `pipeline-nodelist__item--${type.name.toLowerCase()}`,
       {
-        'pipeline-nodelist__item--all-checked': allUnset
+        'pipeline-nodelist__item--all-unset': allUnset
       }
     )}>
     <h3 className="pipeline-nodelist__heading">
       <NodeListRow
+        unset={unset}
         checked={checked}
         id={type.id}
         label={`${type.name} <i>${childCount}</i>`}
