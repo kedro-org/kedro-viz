@@ -23,10 +23,10 @@ export const graphNew = ({ nodes, edges, layers }) => {
  * which don't affect layout.
  */
 export const graphDagre = ({ nodes, edges, layers }) => {
-  const ranker = layers ? 'none' : null;
+  const hasLayers = Boolean(layers.length);
   const graph = new dagre.graphlib.Graph().setGraph({
-    ranker: layers ? ranker : null,
-    ranksep: layers ? 200 : 70,
+    ranker: hasLayers ? 'none' : null,
+    ranksep: hasLayers ? 200 : 70,
     marginx: 40,
     marginy: 40
   });

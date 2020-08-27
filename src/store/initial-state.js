@@ -16,7 +16,6 @@ export const createInitialState = () => ({
   visible: {
     labelBtn: true,
     layerBtn: true,
-    layers: true,
     exportBtn: true,
     exportModal: false,
     sidebar: true,
@@ -51,10 +50,6 @@ export const mergeLocalStorage = state => {
 export const preparePipelineState = props => {
   // Normalize raw data, and apply saved state from localStorage
   const state = mergeLocalStorage(normalizeData(props.data));
-  // Turn layers off if there are no layers present:
-  if (!state.layer.ids.length) {
-    state.visible = Object.assign({}, state.visible, { layers: false });
-  }
   // Use first pipeline in list if active pipeline from localStorage isn't recognised
   if (!state.pipeline.ids.includes(state.pipeline.active)) {
     state.pipeline.active = state.pipeline.ids[0] || null;

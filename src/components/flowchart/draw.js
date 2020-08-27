@@ -8,11 +8,11 @@ import icon from './icon';
  * Render layer bands
  */
 export const drawLayers = function() {
-  const { layers, visibleLayers } = this.props;
+  const { layers } = this.props;
 
   this.el.layers = this.el.layerGroup
     .selectAll('.pipeline-layer')
-    .data(visibleLayers ? layers : [], layer => layer.id);
+    .data(layers, layer => layer.id);
 
   const enterLayers = this.el.layers
     .enter()
@@ -36,8 +36,7 @@ export const drawLayers = function() {
 export const drawLayerNames = function() {
   const {
     chartSize: { sidebarWidth = 0 },
-    layers,
-    visibleLayers
+    layers
   } = this.props;
 
   this.el.layerNameGroup
@@ -47,7 +46,7 @@ export const drawLayerNames = function() {
 
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.pipeline-layer-name')
-    .data(visibleLayers ? layers : [], layer => layer.id);
+    .data(layers, layer => layer.id);
 
   const enterLayerNames = this.el.layerNames
     .enter()

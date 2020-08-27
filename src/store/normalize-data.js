@@ -40,7 +40,8 @@ export const createInitialPipelineState = () => ({
   },
   layer: {
     ids: [],
-    name: {}
+    name: {},
+    visible: true
   },
   tag: {
     ids: [],

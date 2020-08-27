@@ -9,6 +9,7 @@ import {
   toggleTheme
 } from '../../actions';
 import IconButton from '../icon-button';
+import { getVisibleLayerIDs } from '../../selectors/disabled';
 import './primary-toolbar.css';
 
 /**
@@ -27,7 +28,8 @@ export const PrimaryToolbar = ({
   onToggleTheme,
   textLabels,
   theme,
-  visible
+  visible,
+  visibleLayers
 }) => (
   <>
     <ul className="pipeline-primary-toolbar kedro">
@@ -63,10 +65,10 @@ export const PrimaryToolbar = ({
         visible={visible.exportBtn}
       />
       <IconButton
-        ariaLabel={`Turn data layers ${visible.layers ? 'off' : 'on'}`}
-        onClick={() => onToggleLayers(!visible.layers)}
+        ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
+        onClick={() => onToggleLayers(!visibleLayers)}
         icon="layers"
-        labelText={`${visible.layers ? 'Hide' : 'Show'} layers`}
+        labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
         disabled={disableLayerBtn}
         visible={visible.layerBtn}
       />
@@ -78,7 +80,8 @@ export const mapStateToProps = state => ({
   disableLayerBtn: !state.layer.ids.length,
   textLabels: state.textLabels,
   theme: state.theme,
-  visible: state.visible
+  visible: state.visible,
+  visibleLayers: Boolean(getVisibleLayerIDs(state).length)
 });
 
 export const mapDispatchToProps = dispatch => ({

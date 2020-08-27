@@ -22,30 +22,25 @@ export default function configureStore(initialState) {
   );
 
   store.subscribe(() => {
-    const {
-      node,
-      nodeType,
-      pipeline,
-      textLabels,
-      theme,
-      visible,
-      flags
-    } = store.getState();
-
+    const state = store.getState();
+    // Selectively save state properties to localStorage
     saveState({
       node: {
-        disabled: pruneFalseyKeys(node.disabled)
+        disabled: pruneFalseyKeys(state.node.disabled)
       },
       nodeType: {
-        disabled: nodeType.disabled
+        disabled: state.nodeType.disabled
       },
       pipeline: {
-        active: pipeline.active
+        active: state.pipeline.active
       },
-      textLabels,
-      theme,
-      visible,
-      flags
+      layer: {
+        visible: state.layer.visible
+      },
+      textLabels: state.textLabels,
+      theme: state.theme,
+      visible: state.visible,
+      flag: state.flags
     });
   });
 
