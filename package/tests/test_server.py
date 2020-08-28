@@ -279,19 +279,16 @@ def test_nodes_endpoint(cli_runner, client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_pipelines_endpoint(cli_runner, client):
-    """Test `/api/main` endpoint is functional and returns a valid JSON."""
+    """Test `/api/pipelines` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     selected_pipeline_id = "third"
     response = client.get(f"/api/pipelines/{selected_pipeline_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
 
-    # make sure the selected pipeline is the first on the list
-    # and the list of all pipelines are returned
-    assert data["pipelines"][0]["id"] == selected_pipeline_id
-    assert {p["name"] for p in data["pipelines"]} == {
-        p["name"] for p in EXPECTED_PIPELINE_DATA["pipelines"]
-    }
+    # make sure the list of all pipelines are returned
+    assert data["pipelines"] == EXPECTED_PIPELINE_DATA["pipelines"]
+    assert data["selected_pipeline"]["id"] == selected_pipeline_id
 
     # make sure all returned nodes belong to the correct pipelines
     for node in data["nodes"]:
@@ -501,6 +498,7 @@ def test_pipeline_flag(cli_runner, client):
             },
         ],
         "pipelines": [{"id": "second", "name": "Second"}],
+        'selected_pipeline': {'id': 'second', 'name': 'Second'},
         "tags": [],
     }
 

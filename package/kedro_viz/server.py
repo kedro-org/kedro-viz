@@ -369,10 +369,8 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
     sorted_layers = _sort_layers(nodes, node_dependencies)
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
-    if default_pipeline in pipelines_list:
-        # If default pipeline exists, make sure it is the first element in the list.
-        pipelines_list.remove(default_pipeline)
-        pipelines_list.insert(0, default_pipeline)
+    selected_pipeline = default_pipeline if default_pipeline in pipelines_list \
+        else pipelines_list[0]
 
     return {
         "nodes": nodes_list,
@@ -380,6 +378,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
         "tags": sorted_tags,
         "layers": sorted_layers,
         "pipelines": pipelines_list,
+        "selected_pipeline": selected_pipeline
     }
 
 
@@ -497,11 +496,6 @@ def nodes_json():
 @app.route("/api/pipelines/<string:pipeline_id>")
 def pipeline_data(pipeline_id):
     """Serve the data from a single pipeline in a Kedro project."""
-    current_pipeline = {"id": pipeline_id, "name": _pretty_name(pipeline_id)}
-    pipelines_list = _DATA["pipelines"]
-    pipelines_list.remove(current_pipeline)
-    pipelines_list.insert(0, current_pipeline)
-
     pipeline_node_ids = set()
     pipeline_nodes = []
 
@@ -512,16 +506,18 @@ def pipeline_data(pipeline_id):
 
     pipeline_edges = []
     for edge in _DATA["edges"]:
-        if edge["source"] in pipeline_node_ids and edge["target"] in pipeline_node_ids:
+        if {edge["source"], edge["target"]} <= pipeline_node_ids:
             pipeline_edges.append(edge)
 
+    current_pipeline = {"id": pipeline_id, "name": _pretty_name(pipeline_id)}
     return jsonify(
         {
             "nodes": pipeline_nodes,
             "edges": pipeline_edges,
             "tags": _DATA["tags"],
             "layers": _DATA["layers"],
-            "pipelines": pipelines_list,
+            "pipelines": _DATA["pipelines"],
+            "selected_pipeline": current_pipeline,
         }
     )
 

@@ -177,5 +177,6 @@
             "id": "bob",
             "name": "Bob"
         }
-    ]
+    ],
+    "selected_pipeline": {"id": "__default__", "name": "Default"}
 }
