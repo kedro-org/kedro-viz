@@ -62,7 +62,7 @@ const NodeList = ({
     disabled_tag: false,
     disabled_type: false,
     visibleIcon: 'indicator',
-    invisibleIcon: 'indicator',
+    invisibleIcon: 'indicatorOff',
     onClick: onTagClick,
     onChange: onTagChange,
     onMouseEnter: onTagEnter,

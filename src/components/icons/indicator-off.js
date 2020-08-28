@@ -5,6 +5,14 @@ export default ({ className }) => (
     className={className}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24">
-    <rect x="7.5" y="10.5" width="6" height="2" rx="1" />
+    <rect
+      x="8.5"
+      y="9.5"
+      width="4.5"
+      height="4.5"
+      rx="1"
+      fill="none"
+      strokeWidth="2"
+    />
   </svg>
 );

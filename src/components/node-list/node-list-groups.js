@@ -86,7 +86,7 @@ const NodeListGroups = ({
       };
       groupChecked = !groupAllUnset;
       groupVisibleIcon = groupAllChecked ? 'indicator' : 'indicatorPartial';
-      groupInvisibleIcon = 'indicator';
+      groupInvisibleIcon = 'indicatorOff';
     }
 
     return (
