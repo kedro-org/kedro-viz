@@ -306,6 +306,16 @@ def test_pipelines_endpoint(cli_runner, client):
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
+def test_pipelines_endpoint_invalid_pipeline_id(cli_runner, client):
+    """Test `/api/pipelines/invalid_id` endpoint returns an empty JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    response = client.get(f"/api/pipelines/invalid")
+    assert response.status_code == 404
+    data = json.loads(response.data.decode())
+    assert data["error"] == "404 Not Found: Invalid pipeline ID."
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON."""
     project_root = "project_root"

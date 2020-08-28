@@ -496,6 +496,9 @@ def nodes_json():
 @app.route("/api/pipelines/<string:pipeline_id>")
 def pipeline_data(pipeline_id):
     """Serve the data from a single pipeline in a Kedro project."""
+    if pipeline_id not in _DATA["pipelines"]:
+        abort(404, description="Invalid pipeline ID.")
+
     pipeline_node_ids = set()
     pipeline_nodes = []
 
