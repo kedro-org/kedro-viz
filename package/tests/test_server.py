@@ -291,8 +291,8 @@ def test_pipelines_endpoint(cli_runner, client):
     assert data["selected_pipeline"]["id"] == selected_pipeline_id
 
     # make sure all returned nodes belong to the correct pipelines
-    for node in data["nodes"]:
-        assert selected_pipeline_id in node["pipelines"]
+    for n in data["nodes"]:
+        assert selected_pipeline_id in n["pipelines"]
 
     # make sure only edges in the selected pipelines are returned
     assert data["edges"] == [
