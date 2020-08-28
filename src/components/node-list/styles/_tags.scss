@@ -43,6 +43,13 @@
     opacity: 0.9;
   }
 
+  // Bright row text when all unset
+  &.pipeline-nodelist__item--all-unset
+    .pipeline-nodelist__row--unchecked
+    .pipeline-nodelist__row__text {
+    opacity: 1;
+  }
+
   // Hide all indicators when all unset
   &.pipeline-nodelist__item--all-unset .pipeline-nodelist__row__visibility {
     opacity: 0;
