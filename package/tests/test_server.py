@@ -508,7 +508,7 @@ def test_pipeline_flag(cli_runner, client):
             },
         ],
         "pipelines": [{"id": "second", "name": "Second"}],
-        'selected_pipeline': {'id': 'second', 'name': 'Second'},
+        "selected_pipeline": {"id": "second", "name": "Second"},
         "tags": [],
     }
 

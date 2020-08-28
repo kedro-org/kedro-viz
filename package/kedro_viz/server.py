@@ -369,8 +369,9 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
     sorted_layers = _sort_layers(nodes, node_dependencies)
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
-    selected_pipeline = default_pipeline if default_pipeline in pipelines_list \
-        else pipelines_list[0]
+    selected_pipeline = (
+        default_pipeline if default_pipeline in pipelines_list else pipelines_list[0]
+    )
 
     return {
         "nodes": nodes_list,
@@ -378,7 +379,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
         "tags": sorted_tags,
         "layers": sorted_layers,
         "pipelines": pipelines_list,
-        "selected_pipeline": selected_pipeline
+        "selected_pipeline": selected_pipeline,
     }
 
 
