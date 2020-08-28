@@ -497,7 +497,8 @@ def nodes_json():
 @app.route("/api/pipelines/<string:pipeline_id>")
 def pipeline_data(pipeline_id):
     """Serve the data from a single pipeline in a Kedro project."""
-    if pipeline_id not in _DATA["pipelines"]:
+    current_pipeline = {"id": pipeline_id, "name": _pretty_name(pipeline_id)}
+    if current_pipeline not in _DATA["pipelines"]:
         abort(404, description="Invalid pipeline ID.")
 
     pipeline_node_ids = set()
@@ -513,7 +514,6 @@ def pipeline_data(pipeline_id):
         if {edge["source"], edge["target"]} <= pipeline_node_ids:
             pipeline_edges.append(edge)
 
-    current_pipeline = {"id": pipeline_id, "name": _pretty_name(pipeline_id)}
     return jsonify(
         {
             "nodes": pipeline_nodes,
