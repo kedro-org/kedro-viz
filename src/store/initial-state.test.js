@@ -53,15 +53,6 @@ describe('mergeLocalStorage', () => {
 });
 
 describe('preparePipelineState', () => {
-  it('disables layer button if there are no layers present', () => {
-    const data = Object.assign({}, animals, { layers: undefined });
-    expect(preparePipelineState({ data })).toMatchObject({
-      visible: {
-        layers: false
-      }
-    });
-  });
-
   it('uses first pipeline in list if stored active pipeline from localStorage is not one of the pipelines in the current list', () => {
     saveState({ pipeline: { active: 'unknown' } });
     expect(preparePipelineState({ data: animals })).toMatchObject({

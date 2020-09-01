@@ -70,7 +70,7 @@ export class FlowChart extends Component {
       this.updateChartSize();
     }
 
-    if (changed('layers', 'visibleLayers', 'chartSize')) {
+    if (changed('layers', 'chartSize')) {
       drawLayers.call(this);
       drawLayerNames.call(this);
     }
@@ -433,7 +433,7 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { chartSize, visibleLayers } = this.props;
+    const { chartSize, layers } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
     return (
@@ -473,7 +473,7 @@ export class FlowChart extends Component {
         </svg>
         <ul
           className={classnames('pipeline-flowchart__layer-names', {
-            'pipeline-flowchart__layer-names--visible': visibleLayers
+            'pipeline-flowchart__layer-names--visible': layers.length
           })}
           ref={this.layerNamesRef}
         />
@@ -500,7 +500,6 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   textLabels: state.textLabels,
-  visibleLayers: state.visible.layers,
   visibleSidebar: state.visible.sidebar,
   ...ownProps
 });

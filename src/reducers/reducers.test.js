@@ -161,7 +161,7 @@ describe('Reducer', () => {
         type: TOGGLE_LAYERS,
         visible: false
       });
-      expect(newState.visible.layers).toEqual(false);
+      expect(newState.layer.visible).toEqual(false);
     });
   });
 

@@ -10,7 +10,7 @@ const getLayerName = state => state.layer.name;
 export const getLayers = createSelector(
   [getGraph, getVisibleLayerIDs, getLayerName],
   ({ nodes, size }, layerIDs, layerName) => {
-    if (!nodes || !size || !nodes.length) {
+    if (!nodes || !size || !nodes.length || !layerIDs.length) {
       return [];
     }
     const { width, height } = size;

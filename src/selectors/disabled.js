@@ -13,6 +13,7 @@ const getEdgeIDs = state => state.edge.ids;
 const getEdgeSources = state => state.edge.sources;
 const getEdgeTargets = state => state.edge.targets;
 const getLayerIDs = state => state.layer.ids;
+const getLayersVisible = state => state.layer.visible;
 const getNodeLayer = state => state.node.layer;
 
 /**
@@ -75,8 +76,11 @@ export const getVisibleNodeIDs = createSelector(
  * Get a list of just the IDs for the remaining visible layers
  */
 export const getVisibleLayerIDs = createSelector(
-  [getVisibleNodeIDs, getNodeLayer, getLayerIDs],
-  (nodeIDs, nodeLayer, layerIDs) => {
+  [getVisibleNodeIDs, getNodeLayer, getLayerIDs, getLayersVisible],
+  (nodeIDs, nodeLayer, layerIDs, layersVisible) => {
+    if (!layersVisible) {
+      return [];
+    }
     const visibleLayerIDs = {};
     for (const nodeID of nodeIDs) {
       visibleLayerIDs[nodeLayer[nodeID]] = true;
