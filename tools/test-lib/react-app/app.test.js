@@ -1,7 +1,7 @@
 import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import { LOREM_IPSUM } from '@quantumblack/kedro-viz/lib/utils/random-utils';
+import { LOREM_IPSUM } from '@quantumblack/kedro-viz/lib/esm/utils/random-utils';
 import App, { dataSources } from './app';
 
 configure({ adapter: new Adapter() });

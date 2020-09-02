@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import KedroViz from '@quantumblack/kedro-viz';
-import animals from '@quantumblack/kedro-viz/lib/utils/data/animals.mock';
-import demo from '@quantumblack/kedro-viz/lib/utils/data/demo.mock';
-import getRandomData from '@quantumblack/kedro-viz/lib/utils/random-data';
+import animals from '@quantumblack/kedro-viz/lib/esm/utils/data/animals.mock';
+import demo from '@quantumblack/kedro-viz/lib/esm/utils/data/demo.mock';
+import getRandomData from '@quantumblack/kedro-viz/lib/esm/utils/random-data';
 
 export const dataSources = {
   animals: () => animals,
