@@ -6,6 +6,7 @@ import animals from '../../utils/data/animals.mock';
 import demo from '../../utils/data/demo.mock';
 import { Flags } from '../../utils/flags';
 import { saveState } from '../../store/helpers';
+import { prepareNonPipelineState } from '../../store/initial-state';
 
 describe('App', () => {
   describe('renders without crashing', () => {
@@ -43,6 +44,12 @@ describe('App', () => {
       wrapper.setProps({ data: animals });
       expect(getState(wrapper).node.disabled).toEqual(localState.node.disabled);
       window.localStorage.clear();
+    });
+
+    it('but does not override non-pipeline values', () => {
+      const wrapper = shallow(<App data={demo} />);
+      wrapper.setProps({ data: animals });
+      expect(getState(wrapper)).toMatchObject(prepareNonPipelineState({}));
     });
   });
 

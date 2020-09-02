@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import layer from './layers';
 import node from './nodes';
 import tag from './tags';
 import nodeType from './node-type';
@@ -49,6 +50,7 @@ const combinedReducer = combineReducers({
   // These props have their own reducers in other files
   flags,
   graph,
+  layer,
   node,
   nodeType,
   pipeline,
@@ -57,7 +59,6 @@ const combinedReducer = combineReducers({
   // These props don't have any actions associated with them
   edge: createReducer({}),
   id: createReducer(null),
-  layer: createReducer({}),
   // These props have very simple non-nested actions
   chartSize: createReducer({}, UPDATE_CHART_SIZE, 'chartSize'),
   zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),

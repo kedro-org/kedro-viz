@@ -69,10 +69,10 @@ describe('PrimaryToolbar', () => {
         exportModal: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),
-        layers: expect.any(Boolean),
         themeBtn: expect.any(Boolean),
         sidebar: expect.any(Boolean)
-      })
+      }),
+      visibleLayers: expect.any(Boolean)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });

@@ -114,16 +114,16 @@ describe('FlowChart', () => {
     expect(wrapper.render().find('.pipeline-node--text').length).toBe(0);
   });
 
-  it('shows layers when visibleLayers prop set true', () => {
+  it('shows layers when layers are visible', () => {
     const mockLayers = getLayerIDs(mockState.animals);
-    const wrapper = setup.mount(<FlowChart visibleLayers={true} />);
+    const wrapper = setup.mount(<FlowChart />);
     expect(wrapper.render().find('.pipeline-layer').length).toBe(
       mockLayers.length
     );
   });
 
-  it('hides layers when visibleLayers prop set false', () => {
-    const wrapper = setup.mount(<FlowChart visibleLayers={false} />);
+  it('hides layers when layers.length is 0', () => {
+    const wrapper = setup.mount(<FlowChart layers={[]} />);
     expect(wrapper.render().find('.pipeline-layer').length).toBe(0);
   });
 
@@ -172,7 +172,6 @@ describe('FlowChart', () => {
       nodeSelected: expect.any(Object),
       nodes: expect.any(Array),
       textLabels: expect.any(Boolean),
-      visibleLayers: expect.any(Boolean),
       visibleSidebar: expect.any(Boolean)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);

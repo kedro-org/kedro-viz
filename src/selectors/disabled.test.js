@@ -2,9 +2,12 @@ import { mockState } from '../utils/state.mock';
 import {
   getNodeDisabledTag,
   getNodeDisabled,
-  getEdgeDisabled
+  getEdgeDisabled,
+  getVisibleNodeIDs,
+  getVisibleLayerIDs
 } from './disabled';
 import { toggleNodesDisabled } from '../actions/nodes';
+import { toggleLayers } from '../actions';
 import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
 
@@ -176,6 +179,38 @@ describe('Selectors', () => {
           value => typeof value === 'boolean'
         )
       ).toBe(true);
+    });
+  });
+
+  describe('getVisibleNodeIDs', () => {
+    it('returns an array of node IDs', () => {
+      expect(getVisibleNodeIDs(mockState.animals)).toEqual(
+        mockState.animals.node.ids
+      );
+    });
+  });
+
+  describe('getVisibleLayerIDs', () => {
+    it('returns an array of layer IDs', () => {
+      expect(getVisibleLayerIDs(mockState.animals)).toEqual(
+        mockState.animals.layer.ids
+      );
+    });
+
+    it('returns an empty array if layers are disabled', () => {
+      const newMockState = reducer(mockState.animals, toggleLayers(false));
+      expect(getVisibleLayerIDs(newMockState)).toEqual([]);
+    });
+
+    it('returns an empty array if there are no layers', () => {
+      const newMockState = {
+        ...mockState.animals,
+        layer: {
+          ids: [],
+          visible: true
+        }
+      };
+      expect(getVisibleLayerIDs(newMockState)).toEqual([]);
     });
   });
 });

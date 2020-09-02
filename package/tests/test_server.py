@@ -38,14 +38,14 @@ from pathlib import Path
 
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
-from kedro.io import DataCatalog, MemoryDataSet, DataSetNotFoundError
+from kedro.io import DataCatalog, DataSetNotFoundError, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from semver import VersionInfo
 from toposort import CircularDependencyError
 
 import kedro_viz
 from kedro_viz import server
-from kedro_viz.server import _allocate_port, _sort_layers, format_pipelines_data, _hash
+from kedro_viz.server import _allocate_port, _hash, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
 
 input_json_path = Path(__file__).parent / "input.json"
@@ -278,6 +278,44 @@ def test_nodes_endpoint(cli_runner, client):
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
+def test_pipelines_endpoint(cli_runner, client):
+    """Test `/api/pipelines` endpoint is functional and returns a valid JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    selected_pipeline_id = "third"
+    response = client.get(f"/api/pipelines/{selected_pipeline_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+
+    # make sure the list of all pipelines are returned
+    assert data["pipelines"] == EXPECTED_PIPELINE_DATA["pipelines"]
+    assert data["selected_pipeline"]["id"] == selected_pipeline_id
+
+    # make sure all returned nodes belong to the correct pipelines
+    for n in data["nodes"]:
+        assert selected_pipeline_id in n["pipelines"]
+
+    # make sure only edges in the selected pipelines are returned
+    assert data["edges"] == [
+        {"source": "7366ec9f", "target": "01a6a5cb"},
+        {"source": "f1f1425b", "target": "01a6a5cb"},
+        {"source": "01a6a5cb", "target": "60e68b8e"},
+    ]
+
+    # make sure all tags are returned
+    assert data["tags"] == EXPECTED_PIPELINE_DATA["tags"]
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_pipelines_endpoint_invalid_pipeline_id(cli_runner, client):
+    """Test `/api/pipelines/invalid_id` endpoint returns an empty JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    response = client.get(f"/api/pipelines/invalid")
+    assert response.status_code == 404
+    data = json.loads(response.data.decode())
+    assert data["error"] == "404 Not Found: Invalid pipeline ID."
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON."""
     project_root = "project_root"
@@ -470,6 +508,7 @@ def test_pipeline_flag(cli_runner, client):
             },
         ],
         "pipelines": [{"id": "second", "name": "Second"}],
+        "selected_pipeline": {"id": "second", "name": "Second"},
         "tags": [],
     }
 

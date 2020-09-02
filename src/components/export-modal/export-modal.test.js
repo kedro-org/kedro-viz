@@ -19,12 +19,7 @@ describe('ExportModal', () => {
       theme: expect.stringMatching(/light|dark/),
       visible: expect.objectContaining({
         exportBtn: expect.any(Boolean),
-        exportModal: expect.any(Boolean),
-        labelBtn: expect.any(Boolean),
-        layerBtn: expect.any(Boolean),
-        layers: expect.any(Boolean),
-        themeBtn: expect.any(Boolean),
-        sidebar: expect.any(Boolean)
+        exportModal: expect.any(Boolean)
       })
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);

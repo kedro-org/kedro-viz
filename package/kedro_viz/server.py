@@ -44,7 +44,7 @@ from typing import Dict, List, Set, Tuple, Union
 import click
 import kedro
 import requests
-from flask import Flask, jsonify, send_from_directory, abort
+from flask import Flask, abort, jsonify, send_from_directory
 from IPython.core.display import HTML, display
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 from kedro.pipeline.node import Node
@@ -369,10 +369,9 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
     sorted_layers = _sort_layers(nodes, node_dependencies)
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
-    if default_pipeline in pipelines_list:
-        # If default pipeline exists, make sure it is the first element in the list.
-        pipelines_list.remove(default_pipeline)
-        pipelines_list.insert(0, default_pipeline)
+    selected_pipeline = (
+        default_pipeline if default_pipeline in pipelines_list else pipelines_list[0]
+    )
 
     return {
         "nodes": nodes_list,
@@ -380,6 +379,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
         "tags": sorted_tags,
         "layers": sorted_layers,
         "pipelines": pipelines_list,
+        "selected_pipeline": selected_pipeline,
     }
 
 
@@ -488,8 +488,42 @@ def _get_dataset_node(node_id, namespace):
 
 @app.route("/api/main")
 def nodes_json():
-    """Serve the pipeline data. This includes basic node data amongst others edges, tags, and layers."""
+    """Serve the data from all Kedro pipelines in the project.
+    This includes basic node data amongst others edges, tags, and layers.
+    """
     return jsonify(_DATA)
+
+
+@app.route("/api/pipelines/<string:pipeline_id>")
+def pipeline_data(pipeline_id):
+    """Serve the data from a single pipeline in a Kedro project."""
+    current_pipeline = {"id": pipeline_id, "name": _pretty_name(pipeline_id)}
+    if current_pipeline not in _DATA["pipelines"]:
+        abort(404, description="Invalid pipeline ID.")
+
+    pipeline_node_ids = set()
+    pipeline_nodes = []
+
+    for node in _DATA["nodes"]:
+        if pipeline_id in node["pipelines"]:
+            pipeline_node_ids.add(node["id"])
+            pipeline_nodes.append(node)
+
+    pipeline_edges = []
+    for edge in _DATA["edges"]:
+        if {edge["source"], edge["target"]} <= pipeline_node_ids:
+            pipeline_edges.append(edge)
+
+    return jsonify(
+        {
+            "nodes": pipeline_nodes,
+            "edges": pipeline_edges,
+            "tags": _DATA["tags"],
+            "layers": _DATA["layers"],
+            "pipelines": _DATA["pipelines"],
+            "selected_pipeline": current_pipeline,
+        }
+    )
 
 
 @app.route("/api/nodes/<string:node_id>")
