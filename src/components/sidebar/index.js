@@ -13,14 +13,14 @@ import './sidebar.css';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {Object} props visible
  */
-export const Sidebar = ({ visible }) => (
+export const Sidebar = ({ flags, visible }) => (
   <>
     <div
       className={classnames('pipeline-sidebar', {
         'pipeline-sidebar--visible': visible
       })}>
       <div className="pipeline-ui">
-        <PipelineList />
+        {flags.pipelines && <PipelineList />}
         <TagList />
         <NodeList />
       </div>
@@ -34,6 +34,7 @@ export const Sidebar = ({ visible }) => (
 );
 
 const mapStateToProps = state => ({
+  flags: state.flags,
   visible: state.visible.sidebar
 });
 

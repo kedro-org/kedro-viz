@@ -86,7 +86,16 @@ export const prepareNonPipelineState = props => {
  */
 const getInitialState = (props = {}) => {
   // Perform 2 deepmerges seperately because it performs much faster
-  return deepmerge(prepareNonPipelineState(props), preparePipelineState(props));
+  const state = deepmerge(
+    prepareNonPipelineState(props),
+    preparePipelineState(props)
+  );
+  // Reset active pipeline if pipelines are disabled
+  // TODO: Delete this when removing flags.pipeline
+  if (!state.flags.pipelines) {
+    state.pipeline.active = null;
+  }
+  return state;
 };
 
 export default getInitialState;

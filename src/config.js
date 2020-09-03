@@ -15,5 +15,10 @@ export const flags = {
     description: 'Improved graphing algorithm',
     default: false,
     icon: '📈'
+  },
+  pipelines: {
+    description: 'Select from multiple pipelines',
+    default: false,
+    icon: '🔀'
   }
 };
