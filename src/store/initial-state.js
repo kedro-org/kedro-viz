@@ -34,6 +34,10 @@ export const getInitialPipelineState = () => ({
       parameters: 'Parameters',
       tag: 'Tags'
     },
+    section: {
+      Categories: ['tag'],
+      Elements: ['task', 'data', 'parameters']
+    },
     disabled: {}
   },
   edge: {

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { loadState, saveState } from '../../store/helpers';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
-import { getNodeTypes } from '../../selectors/node-types';
+import { getNodeSections } from '../../selectors/node-types';
 import NodeListGroup from './node-list-group';
 import NodeListRow from './node-list-row';
 import { toggleTagFilter } from '../../actions/tags';
@@ -35,7 +35,7 @@ const NodeListGroups = ({
   nodes,
   nodeActive,
   nodeSelected,
-  types,
+  sections,
   searchValue
 }) => {
   // Deselect node on Escape key
@@ -169,13 +169,24 @@ const NodeListGroups = ({
     );
   };
 
-  return <ul className="pipeline-nodelist">{types.map(renderTypeGroup)}</ul>;
+  return (
+    <>
+      {sections.map(section => (
+        <nav className="pipeline-nodelist-section kedro" key={section.name}>
+          <h4 className="pipeline-nodelist-section__title">{section.name}</h4>
+          <ul className="pipeline-nodelist">
+            {section.types.map(renderTypeGroup)}
+          </ul>
+        </nav>
+      ))}
+    </>
+  );
 };
 
 export const mapStateToProps = state => ({
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
-  types: getNodeTypes(state)
+  sections: getNodeSections(state)
 });
 
 export const mapDispatchToProps = dispatch => ({

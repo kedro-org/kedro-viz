@@ -7,6 +7,7 @@ const getNodeType = state => state.node.type;
 const getNodeTypeIDs = state => state.nodeType.ids;
 const getNodeTypeName = state => state.nodeType.name;
 const getNodeTypeDisabled = state => state.nodeType.disabled;
+const getNodeTypeSections = state => state.nodeType.section;
 
 /**
  * Calculate the total number of nodes (and the number of visible nodes)
@@ -39,4 +40,21 @@ export const getNodeTypes = createSelector(
       disabled: Boolean(typeDisabled[id]),
       nodeCount: typeNodeCount[id]
     }))
+);
+
+/**
+ * Get formatted list of sections
+ */
+export const getNodeSections = createSelector(
+  [getNodeTypeSections, getNodeTypes],
+  (sections, types) => {
+    const result = [];
+    for (const name of Object.keys(sections)) {
+      result.push({
+        name,
+        types: sections[name].map(id => types.find(type => type.id === id))
+      });
+    }
+    return result;
+  }
 );
