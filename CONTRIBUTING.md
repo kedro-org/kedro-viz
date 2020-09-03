@@ -79,13 +79,13 @@ npm run lib
 
 #### Data sources
 
-Kedro-Viz uses an unique identifier to determine the data source. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
+Kedro-Viz uses a unique identifier to determine the data source from one of several available sources. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
 
 ```bash
 DATA=random npm start
 ```
 
-There are several different data sources available. By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a dataset in `/public/api/main`, using `main` as the name of the JSON file, without an extension. Alternatively, you can use one of the mock unit-testing/demo datasets, or pseudo-random data procedurally-generated on page load, which is often useful for local development.
+These are the supported dataset identifiers:
 
 | Identifier | Data source |
 |------------|-------------|
@@ -94,7 +94,11 @@ There are several different data sources available. By default in production, th
 | `demo` | `/src/utils/data/demo.mock.js` |
 | `animals` | `/src/utils/data/animals.mock.js` |
 
-Randomly-generated data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
+By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a JSON dataset in `/public/api/main`, using `main` as the name of the file, [without an extension](https://www.computerhope.com/issues/ch002089.htm). Note that operating systems often add hidden file extensions, so you might need to use a CLI to confirm the filename.
+
+Alternatively, you can synchronously load one of the mock datasets in `/src/utils/data`. The 'animals' dataset is mainly used as mock data for unit testing, while the 'demo' dataset is used on the [public demo](https://quantumblacklabs.github.io/kedro-viz/).
+
+Finally, you can use pseudo-random data, which is procedurally-generated on page load, and is often useful for local development. Random data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
 
 ### Branching conventions
 
