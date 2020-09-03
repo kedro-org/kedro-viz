@@ -92,7 +92,7 @@ const getInitialState = (props = {}) => {
   );
   // Reset active pipeline if pipelines are disabled
   // TODO: Delete this when removing flags.pipeline
-  if (!state.flags.pipeline) {
+  if (!state.flags.pipelines) {
     state.pipeline.active = null;
   }
   return state;
