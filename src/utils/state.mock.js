@@ -10,6 +10,7 @@ import { updateFontLoaded } from '../actions';
 import { getGraphInput } from '../selectors/layout';
 import { updateGraph } from '../actions/graph';
 import { graphNew, graphDagre } from './graph';
+import { saveState } from '../store/helpers';
 
 /**
  * Prime the state object for the testing environment
@@ -17,6 +18,8 @@ import { graphNew, graphDagre } from './graph';
  * @param {Object} props
  */
 export const prepareState = (...props) => {
+  // Set pipeline flag to true:
+  saveState({ flags: { pipelines: true } });
   const initialState = getInitialState(...props);
   const actions = [
     // Set fontLoaded = true:
