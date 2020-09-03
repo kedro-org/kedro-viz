@@ -6,8 +6,15 @@
 .pipeline-nodelist-section__title {
   display: block;
   margin: 12px 0 12px 20px;
-  color: rgba(255, 255, 255, 0.55);
   font-weight: bold;
   font-size: 1.3em;
   user-select: none;
+
+  .kui-theme--dark & {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .kui-theme--light & {
+    color: rgba(0, 0, 0, 0.55);
+  }
 }
