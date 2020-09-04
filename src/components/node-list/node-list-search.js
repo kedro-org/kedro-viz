@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { connect } from 'react-redux';
@@ -10,6 +10,27 @@ import { connect } from 'react-redux';
  * @param {string} theme Light/dark theme for Kedro-UI component
  */
 export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
+  const container = useRef(null);
+
+  /**
+   * Focus search on CMD+F/CTRL+F, but only if not already focused
+   * @param {object} event Keydown event
+   */
+  const handleWindowKeyDown = event => {
+    if (event.keyCode === 70 && (event.ctrlKey || event.metaKey)) {
+      const input = container.current.querySelector('input');
+      if (document.activeElement !== input) {
+        input.focus();
+        event.preventDefault();
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleWindowKeyDown);
+    return () => window.removeEventListener('keydown', handleWindowKeyDown);
+  });
+
   /**
    * Listen for keyboard events, and trigger relevant actions
    * @param {number} keyCode The key event keycode
@@ -21,7 +42,10 @@ export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
   };
 
   return (
-    <div className="pipeline-nodelist-search" onKeyDown={handleKeyDown}>
+    <div
+      ref={container}
+      className="pipeline-nodelist-search"
+      onKeyDown={handleKeyDown}>
       <SearchBar
         onChange={onUpdateSearchValue}
         value={searchValue}
