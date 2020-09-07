@@ -13,11 +13,14 @@ export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
   const container = useRef(null);
 
   /**
-   * Focus search on CMD+F/CTRL+F, but only if not already focused
+   * Focus search on CMD+F/CTRL+F, but only if not already focused, so that if
+   * you hit the shortcut again you will receive the default browser behaviour
    * @param {object} event Keydown event
    */
   const handleWindowKeyDown = event => {
-    if (event.keyCode === 70 && (event.ctrlKey || event.metaKey)) {
+    const isKeyF = event.key === 'f' || event.keyCode === 70;
+    const isKeyCtrlOrCmd = event.ctrlKey || event.metaKey;
+    if (isKeyF && isKeyCtrlOrCmd) {
       const input = container.current.querySelector('input');
       if (document.activeElement !== input) {
         input.focus();
