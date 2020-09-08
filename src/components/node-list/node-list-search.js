@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
-import utils from '@quantumblack/kedro-ui/lib/utils';
 import { connect } from 'react-redux';
 
 /**
@@ -10,18 +9,52 @@ import { connect } from 'react-redux';
  * @param {string} theme Light/dark theme for Kedro-UI component
  */
 export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
+  const container = useRef(null);
+
+  /**
+   * Focus search on CMD+F/CTRL+F, but only if not already focused, so that if
+   * you hit the shortcut again you will receive the default browser behaviour
+   * @param {object} event Keydown event
+   */
+  const handleWindowKeyDown = event => {
+    const isKeyF = event.key === 'f' || event.keyCode === 70;
+    const isKeyCtrlOrCmd = event.ctrlKey || event.metaKey;
+    if (isKeyF && isKeyCtrlOrCmd) {
+      const input = container.current.querySelector('input');
+      if (document.activeElement !== input) {
+        input.focus();
+        event.preventDefault();
+      } else {
+        input.blur();
+      }
+    }
+  };
+
+  /**
+   * Add window keydown event listener on mount, and remove on unmount
+   */
+  useEffect(() => {
+    window.addEventListener('keydown', handleWindowKeyDown);
+    return () => window.removeEventListener('keydown', handleWindowKeyDown);
+  });
+
   /**
    * Listen for keyboard events, and trigger relevant actions
    * @param {number} keyCode The key event keycode
    */
   const handleKeyDown = event => {
-    utils.handleKeyEvent(event.keyCode, {
-      escape: onUpdateSearchValue.bind(this, '')
-    });
+    const isKeyEscape = event.key === 'Escape' || event.keyCode === 27;
+    if (isKeyEscape) {
+      onUpdateSearchValue('');
+      container.current.querySelector('input').blur();
+    }
   };
 
   return (
-    <div className="pipeline-nodelist-search" onKeyDown={handleKeyDown}>
+    <div
+      ref={container}
+      className="pipeline-nodelist-search"
+      onKeyDown={handleKeyDown}>
       <SearchBar
         onChange={onUpdateSearchValue}
         value={searchValue}
