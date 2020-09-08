@@ -10,12 +10,17 @@ describe('NodeListSearch', () => {
     expect(search.length).toBe(1);
   });
 
-  it('handles escape key events', () => {
-    const onUpdateSearchValue = jest.fn();
-    const wrapper = setup.shallow(NodeListSearch, { onUpdateSearchValue });
-    const search = wrapper.find('.pipeline-nodelist-search');
-    search.simulate('keydown', { keyCode: 27 });
-    expect(onUpdateSearchValue.mock.calls.length).toBe(1);
+  it('clears & blurs search bar on pressing escape key', async () => {
+    const props = { searchValue: '', onUpdateSearchValue: jest.fn() };
+    const { container } = render(<NodeListSearch {...props} />);
+    const input = container.querySelector('input');
+    const value = 'foobar';
+    input.focus();
+    fireEvent.change(input, { target: { value } });
+    expect(props.onUpdateSearchValue).toHaveBeenCalledWith(value);
+    fireEvent.keyDown(input, { key: 'Escape', keyCode: 27 });
+    expect(props.onUpdateSearchValue).toHaveBeenLastCalledWith('');
+    expect(input).not.toHaveFocus();
   });
 
   it('focuses when the user types Ctrl+F', () => {

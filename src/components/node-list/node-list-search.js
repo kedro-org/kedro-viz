@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
-import utils from '@quantumblack/kedro-ui/lib/utils';
 import { connect } from 'react-redux';
 
 /**
@@ -44,9 +43,11 @@ export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
    * @param {number} keyCode The key event keycode
    */
   const handleKeyDown = event => {
-    utils.handleKeyEvent(event.keyCode, {
-      escape: onUpdateSearchValue.bind(this, '')
-    });
+    const isKeyEscape = event.key === 'Escape' || event.keyCode === 27;
+    if (isKeyEscape) {
+      onUpdateSearchValue('');
+      container.current.querySelector('input').blur();
+    }
   };
 
   return (
