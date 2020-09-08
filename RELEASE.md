@@ -13,15 +13,39 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
-- Rename default endpoint from `/api/nodes.json` to `/api/main` (#239)
-
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->
 
-- Move data source loading into standalone-app entry point (#215)
-- Allow an argument to be passed to loadJsonData (#215)
-- Add information for multiple pipelines in `nodes.json` (#192)
+# Release 3.5.0
+
+## Major features and improvements
+
+- **BREAKING CHANGE:** Rename default endpoint from `/api/nodes.json` to `/api/main`. This should only affect local JS development. (#239, #259)
+- Add an interactive minimap to the toolbar (#203, #238, #247)
+- Add web worker to make the expensive graph layout calculation into an asynchronous action, to prevent it from blocking other tasks on the main thread. (#217)
+- Focus search bar with Cmd+F/Ctrl+F keyboard shortcuts (#261)
+- Allow an argument to be passed to loadJsonData, for external use if needed (#215)
+- Add support for multiple pipelines. This is a work-in-progress, and is currently disabled by default and hidden behind a flag. (#192, #215, #216, #221, #254)
+- Save disabled state of individual nodes in localStorage (#220)
+- Add automated testing for npm package import (#222)
+- Rename master branch to main ✊🏿 and deprecate develop (#248)
+
+## Bug fixes and other changes
+
+- Fix prepublishOnly task by changing from parallel jobs to sequential (#264)
+- Refactor layer visibility state (#253)
+- Expose an endpoint to query pipeline-specific node  (#252)
+- Reduce toolbar-button height on smaller screens (#251)
+- Delete duplicate icon-button component (#250)
+- Fix mispelling in demo dataset (#249)
+- Improve performance of `getLinkedNodes` (#235)
+- Expose node and dataset metadata in "api/nodes/" endpoint  (#231)
+- Move react-redux from peerDependencies to regular dependencies, and move react-scripts from dependencies to devDependencies (#223)
+- Refactor initial state setup (#220)
+- Enable Windows CI  (#218, #241)
+- Increase width of layer rects (#209)
+- Update various dependency versions via Snyk/Dependabot (#262, #258, #257, #219, #246, #245, #244, #243, #242, #240, #237, #234, #233, #232, #230, #228, #227, #226, #225, #224, #214, #213, #212, #211, #210, #208, #207, #206, #205, #204)
 
 # Release 3.4.0
 
