@@ -25,10 +25,15 @@ export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
       if (document.activeElement !== input) {
         input.focus();
         event.preventDefault();
+      } else {
+        input.blur();
       }
     }
   };
 
+  /**
+   * Add window keydown event listener on mount, and remove on unmount
+   */
   useEffect(() => {
     window.addEventListener('keydown', handleWindowKeyDown);
     return () => window.removeEventListener('keydown', handleWindowKeyDown);

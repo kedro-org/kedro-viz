@@ -41,6 +41,16 @@ describe('NodeListSearch', () => {
     expect(allowsDefaultEvent).toBe(true);
   });
 
+  it('blurs input if already focused', () => {
+    const { container } = render(<NodeListSearch />);
+    const input = container.querySelector('input');
+    const event = { key: 'f', keyCode: 70, metaKey: true };
+    fireEvent.keyDown(container, event);
+    expect(input).toHaveFocus();
+    fireEvent.keyDown(container, event);
+    expect(input).not.toHaveFocus();
+  });
+
   it('maps state to props', () => {
     const expectedResult = {
       theme: expect.any(String)
