@@ -3,30 +3,30 @@
 @import '../../../styles/variables';
 @import './variables';
 
-.pipeline-nodelist__item--tags {
+.pipeline-nodelist__item--is-filter {
   .kui-theme--dark & .pipeline-nodelist__row__visibility-icon {
     &--checked {
-      fill: #00cefc;
-      stroke: #00cefc;
+      fill: $filter-indicator-on-light;
+      stroke: $filter-indicator-on-light;
     }
 
     &--unchecked,
     &--unset {
       fill: none;
-      stroke: #80969c;
+      stroke: $filter-indicator-off-light;
     }
   }
 
   .kui-theme--light & .pipeline-nodelist__row__visibility-icon {
     &--checked {
-      fill: #00cefc;
-      stroke: #00cefc;
+      fill: $filter-indicator-on-dark;
+      stroke: $filter-indicator-on-dark;
     }
 
     &--unchecked,
     &--unset {
       fill: none;
-      stroke: #80969c;
+      stroke: $filter-indicator-off-dark;
     }
   }
 

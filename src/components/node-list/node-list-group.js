@@ -5,20 +5,21 @@ import NodeListRow from './node-list-row';
 export const NodeListGroup = ({
   children,
   collapsed,
-  onToggleChecked,
-  onToggleCollapsed,
   type,
+  kind,
   checked,
   unset,
   childCount,
   allUnset,
   visibleIcon,
-  invisibleIcon
+  invisibleIcon,
+  onToggleChecked,
+  onToggleCollapsed
 }) => (
   <li
     className={classnames(
       'pipeline-nodelist__item',
-      `pipeline-nodelist__item--${type.name.toLowerCase()}`,
+      `pipeline-nodelist__item--is-${kind}`,
       {
         'pipeline-nodelist__item--all-unset': allUnset
       }
