@@ -19,6 +19,7 @@ export const NodeListGroup = ({
   <li
     className={classnames(
       'pipeline-nodelist__item',
+      `pipeline-nodelist__item--type-${type.id}`,
       `pipeline-nodelist__item--is-${kind}`,
       {
         'pipeline-nodelist__item--all-unset': allUnset

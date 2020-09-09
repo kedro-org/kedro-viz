@@ -171,24 +171,15 @@ const NodeListSource = ({
   };
 
   const onTagChange = (tag, checked) => {
-    const valuesBefore = Object.values(tagsEnabled);
     const valuesAfter = Object.values({ ...tagsEnabled, [tag.id]: !checked });
-    const firstEnabled =
-      valuesBefore.filter(enabled => enabled !== undefined).length === 0;
-    const allDisabled =
-      valuesAfter.filter(enabled => enabled === false).length === tags.length;
+    const allDisabled = valuesAfter.every(
+      enabled => typeof enabled === 'undefined' || enabled === false
+    );
 
-    tags.forEach(tag => onToggleTagActive(tag.id, false));
-    onToggleNodeClicked(null);
-
-    if (firstEnabled) {
-      tags.forEach(tag => onToggleTagFilter(tag.id, false));
-      onToggleTagFilter(tag.id, true);
-    } else if (allDisabled) {
+    if (allDisabled) {
       tags.forEach(tag => onToggleTagFilter(tag.id, undefined));
     } else {
       onToggleTagFilter(tag.id, !checked);
-      onToggleTagActive(tag.id, !checked);
     }
   };
 

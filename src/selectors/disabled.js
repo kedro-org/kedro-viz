@@ -35,11 +35,19 @@ export const getNodeDisabledPipeline = createSelector(
 export const getNodeDisabledTag = createSelector(
   [getNodeIDs, getTagEnabled, getNodeTags],
   (nodeIDs, tagEnabled, nodeTags) => {
+    const someEnabled = Object.values(tagEnabled).some(
+      enabled => enabled === true
+    );
     return arrayToObject(
       nodeIDs,
       nodeID =>
-        nodeTags[nodeID].length > 0 &&
-        nodeTags[nodeID].every(tag => tagEnabled[tag] === false)
+        someEnabled &&
+        (nodeTags[nodeID].length === 0 ||
+          nodeTags[nodeID].every(
+            tag =>
+              typeof tagEnabled[tag] === 'undefined' ||
+              tagEnabled[tag] === false
+          ))
     );
   }
 );
