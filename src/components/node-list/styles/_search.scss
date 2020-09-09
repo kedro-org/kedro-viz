@@ -1,11 +1,16 @@
 .pipeline-nodelist-search {
   position: relative;
   z-index: 1;
-  padding: 0 $sidebar-padding 6px $sidebar-padding;
+  margin: 0 -6px;
   box-shadow: 0 14px 18px $color-bg-light-3;
 
   .kui-theme--dark & {
     box-shadow: 0 14px 18px $color-bg-dark-3;
+  }
+
+  .pipeline-nodelist-search-inner {
+    margin-bottom: -6px;
+    padding: 2px $sidebar-padding 6px $sidebar-padding;
   }
 
   .kui-searchbar,
@@ -18,7 +23,7 @@
   }
 
   .kui-searchbar .kui-icon--close {
-    top: 55%;
+    top: 18px;
     right: 2px;
     width: 20px;
     height: 20px;
@@ -37,7 +42,7 @@
   }
 
   .kui-input {
-    padding: 8px 0 0 0;
+    padding: 5px;
   }
 
   .kui-input:active:not(.kui-input--disabled),
@@ -79,13 +84,13 @@
   }
 
   .kui-input__field {
-    margin: 0 0 2px 34px;
+    margin: 0 0 2px 32px;
     font-size: 1.65em;
   }
 
   .kui-searchbar__iconwrapper .kui-icon {
-    top: 19px;
-    left: 1px;
+    top: 16px;
+    left: 6px;
   }
 
   .kui-input__line:before {
