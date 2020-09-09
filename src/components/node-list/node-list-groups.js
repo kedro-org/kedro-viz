@@ -47,7 +47,7 @@ const NodeListGroups = ({
               onToggleCollapsed={onToggleGroupCollapsed}
               onToggleChecked={onToggleGroupChecked}>
               <ul className="pipeline-nodelist pipeline-nodelist--nested">
-                {items[group.id].map(item => (
+                {(items[group.id] || []).map(item => (
                   <li key={item.id}>
                     <NodeListRow
                       id={item.id}

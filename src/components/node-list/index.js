@@ -90,7 +90,7 @@ const NodeListSource = ({
   };
 
   const groups = types.reduce((groups, type) => {
-    const itemsOfType = items[type.id];
+    const itemsOfType = items[type.id] || [];
     const group = (groups[type.id] = {
       type,
       id: type.id,
