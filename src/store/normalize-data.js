@@ -9,6 +9,7 @@ export const createInitialPipelineState = () => ({
   pipeline: {
     ids: [],
     name: {},
+    default: null,
     active: null
   },
   node: {
@@ -175,7 +176,8 @@ const normalizeData = data => {
   if (data.pipelines) {
     data.pipelines.forEach(addPipeline(state));
     if (state.pipeline.ids.length) {
-      state.pipeline.active = state.pipeline.ids[0];
+      state.pipeline.default = data.selected_pipeline || state.pipeline.ids[0];
+      state.pipeline.active = state.pipeline.default;
     }
   }
   if (data.tags) {

@@ -26,7 +26,7 @@ Please follow the established format:
 - Add web worker to make the expensive graph layout calculation into an asynchronous action, to prevent it from blocking other tasks on the main thread. (#217)
 - Focus search bar with Cmd+F/Ctrl+F keyboard shortcuts (#261)
 - Allow an argument to be passed to loadJsonData, for external use if needed (#215)
-- Add support for multiple pipelines. This is a work-in-progress, and is currently disabled by default and hidden behind a flag. (#192, #215, #216, #221, #254)
+- Add support for multiple pipelines. This is a work-in-progress, and is currently disabled by default and hidden behind a flag. (#192, #215, #216, #221, #252, #254)
 - Save disabled state of individual nodes in localStorage (#220)
 - Add automated testing for npm package import (#222)
 - Rename master branch to main ✊🏿 and deprecate develop (#248)
@@ -35,7 +35,6 @@ Please follow the established format:
 
 - Fix prepublishOnly task by changing from parallel jobs to sequential (#264)
 - Refactor layer visibility state (#253)
-- Expose an endpoint to query pipeline-specific node  (#252)
 - Reduce toolbar-button height on smaller screens (#251)
 - Delete duplicate icon-button component (#250)
 - Fix mispelling in demo dataset (#249)

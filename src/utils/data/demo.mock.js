@@ -1,5 +1,6 @@
 export default {
   schema_id: '12345678901234567890',
+  selected_pipeline: '__default__',
   pipelines: [
     {
       id: '__default__',

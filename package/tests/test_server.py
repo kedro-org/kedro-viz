@@ -288,7 +288,7 @@ def test_pipelines_endpoint(cli_runner, client):
 
     # make sure the list of all pipelines are returned
     assert data["pipelines"] == EXPECTED_PIPELINE_DATA["pipelines"]
-    assert data["selected_pipeline"]["id"] == selected_pipeline_id
+    assert data["selected_pipeline"] == selected_pipeline_id
 
     # make sure all returned nodes belong to the correct pipelines
     for n in data["nodes"]:
@@ -508,7 +508,7 @@ def test_pipeline_flag(cli_runner, client):
             },
         ],
         "pipelines": [{"id": "second", "name": "Second"}],
-        "selected_pipeline": {"id": "second", "name": "Second"},
+        "selected_pipeline": "second",
         "tags": [],
     }
 
