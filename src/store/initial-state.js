@@ -52,7 +52,7 @@ export const preparePipelineState = props => {
   const state = mergeLocalStorage(normalizeData(props.data));
   // Use first pipeline in list if active pipeline from localStorage isn't recognised
   if (!state.pipeline.ids.includes(state.pipeline.active)) {
-    state.pipeline.active = state.pipeline.ids[0] || null;
+    state.pipeline.active = state.pipeline.default;
   }
   return state;
 };

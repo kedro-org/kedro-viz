@@ -9,22 +9,24 @@ describe('PipelineList', () => {
     expect(container.length).toBe(1);
   });
 
-  it('should change the active pipeline on clicking a menu option', () => {
-    const wrapper = setup.mount(<PipelineList />);
-    expect(wrapper.find('PipelineList').props().pipeline.active).toBe(
-      '__default__'
-    );
-    wrapper
-      .find('MenuOption')
-      .at(1)
-      .simulate('click');
-    expect(wrapper.find('PipelineList').props().pipeline.active).toBe('de');
-  });
+  const pipelineIDs = mockState.animals.pipeline.ids.map((id, i) => [id, i]);
+  test.each(pipelineIDs)(
+    'should change the active pipeline to %s on clicking menu option %s',
+    (id, i) => {
+      const wrapper = setup.mount(<PipelineList />);
+      wrapper
+        .find('MenuOption')
+        .at(i)
+        .simulate('click');
+      expect(wrapper.find('PipelineList').props().pipeline.active).toBe(id);
+    }
+  );
 
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.animals)).toEqual({
       pipeline: {
         active: expect.any(String),
+        default: expect.any(String),
         name: expect.any(Object),
         ids: expect.any(Array)
       },

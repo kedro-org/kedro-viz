@@ -53,11 +53,11 @@ describe('mergeLocalStorage', () => {
 });
 
 describe('preparePipelineState', () => {
-  it('uses first pipeline in list if stored active pipeline from localStorage is not one of the pipelines in the current list', () => {
+  it('uses default pipeline if stored active pipeline from localStorage is not one of the pipelines in the current list', () => {
     saveState({ pipeline: { active: 'unknown' } });
     expect(preparePipelineState({ data: animals })).toMatchObject({
       pipeline: {
-        active: animals.pipelines[0].id
+        active: animals.selected_pipeline
       }
     });
     window.localStorage.clear();

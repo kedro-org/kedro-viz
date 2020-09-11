@@ -1,10 +1,7 @@
 export default {
   schema_id: '09876543210987654321',
+  selected_pipeline: '__default__',
   pipelines: [
-    {
-      id: '__default__',
-      name: 'Default'
-    },
     {
       id: 'de',
       name: 'Data engineering'
@@ -12,6 +9,10 @@ export default {
     {
       id: 'ds',
       name: 'Data science'
+    },
+    {
+      id: '__default__',
+      name: 'Default'
     },
     {
       id: 'empty',
