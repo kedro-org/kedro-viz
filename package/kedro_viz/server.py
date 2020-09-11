@@ -370,7 +370,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
     selected_pipeline = (
-        default_pipeline if default_pipeline in pipelines_list else pipelines_list[0]
+        default_pipeline["id"] if default_pipeline in pipelines_list else pipelines_list[0]["id"]
     )
 
     return {
@@ -521,7 +521,7 @@ def pipeline_data(pipeline_id):
             "tags": _DATA["tags"],
             "layers": _DATA["layers"],
             "pipelines": _DATA["pipelines"],
-            "selected_pipeline": current_pipeline,
+            "selected_pipeline": current_pipeline["id"],
         }
     )
 

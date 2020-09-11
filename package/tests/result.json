@@ -98,5 +98,5 @@
             "name": "Default"
         }
     ],
-    "selected_pipeline": {"id": "__default__", "name": "Default"}
+    "selected_pipeline": "__default__"
 }
