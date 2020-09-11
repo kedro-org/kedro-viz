@@ -17,6 +17,12 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+# Release 3.5.1
+
+## Bug fixes and other changes
+
+- Fix pipeline selector so that it shows the correct default pipeline (#266)
+
 # Release 3.5.0
 
 ## Major features and improvements
