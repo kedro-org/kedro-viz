@@ -4,7 +4,7 @@
   text {
     font-weight: 600;
     font-size: 1.4em;
-    transition: fill ease 0.1s, text-shadow ease 0.1s, opacity ease 0.1s;
+    transition: fill ease 0.1s, text-shadow ease 0.1s, opacity ease 0.3s 0.2s;
     pointer-events: none;
 
     .kui-theme--light & {
@@ -89,6 +89,7 @@
 .pipeline-node--icon {
   text {
     opacity: 0;
+    transition-delay: 0s;
     pointer-events: none;
   }
 }

@@ -173,6 +173,8 @@ export const drawNodes = function(changed) {
 
     allNodes
       .select('rect')
+      .transition('node-rect')
+      .duration(textLabels ? 200 : 600)
       .attr('width', node => node.width - 5)
       .attr('height', node => node.height - 5)
       .attr('x', node => (node.width - 5) / -2)
@@ -182,7 +184,7 @@ export const drawNodes = function(changed) {
     allNodes
       .select('.pipeline-node__icon')
       .transition('node-icon-offset')
-      .duration(150)
+      .duration(200)
       .attr('width', node => node.iconSize)
       .attr('height', node => node.iconSize)
       .attr('x', node => node.iconOffset)
