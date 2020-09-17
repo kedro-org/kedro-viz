@@ -137,7 +137,7 @@ export const drawNodes = function(changed) {
     exitNodes
       .transition('exit-nodes')
       .duration(this.DURATION)
-      .attr('opacity', 0)
+      .style('opacity', 0)
       .remove();
 
     this.el.nodes = this.el.nodeGroup.selectAll('.pipeline-node');
@@ -226,7 +226,7 @@ export const drawEdges = function(changed) {
     exitEdges
       .transition('exit-edges')
       .duration(this.DURATION)
-      .attr('opacity', 0)
+      .style('opacity', 0)
       .remove();
 
     allEdges
