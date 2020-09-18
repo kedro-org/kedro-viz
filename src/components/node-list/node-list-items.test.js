@@ -3,7 +3,7 @@ import getFilteredNodes, {
   highlightMatch,
   nodeMatchesSearch,
   filterNodes
-} from './filter-nodes';
+} from './node-list-items';
 import { mockState } from '../../utils/state.mock';
 import { getGroupedNodes } from '../../selectors/nodes';
 
@@ -13,7 +13,7 @@ const ungroupNodes = groupedNodes =>
     []
   );
 
-describe('filter-nodes', () => {
+describe('node-list-selectors', () => {
   describe('getFilteredNodes', () => {
     const nodes = getGroupedNodes(mockState.animals);
     const searchValue = 'e';

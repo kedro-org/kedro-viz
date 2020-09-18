@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import NodeList from './node-list';
-import { getFilteredNodes, highlightMatch, filterNodes } from './filter-nodes';
+import { getFilteredItems, getGroups } from './node-list-items';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
+import { getNodeSections, getNodeTypes } from '../../selectors/node-types';
+import { getTagData } from '../../selectors/tags';
 import {
   getGroupedNodes,
   getNodeActive,
   getNodeSelected
 } from '../../selectors/nodes';
-import { getNodeSections, getNodeTypes } from '../../selectors/node-types';
-import { getTagData } from '../../selectors/tags';
 import {
   toggleNodeClicked,
   toggleNodeHovered,
@@ -21,14 +21,8 @@ import './styles/node-list.css';
 
 const isTagType = type => type === 'tag';
 
-const sortByEnabledThenAlpha = (a, b) => {
-  const byEnabledTag = Number(a.disabled_tag) - Number(b.disabled_tag);
-  const byAlpha = a.name.localeCompare(b.name);
-  return byEnabledTag !== 0 ? byEnabledTag : byAlpha;
-};
-
 /**
- * Provides items for the sidebar
+ * Wraps a NodeList component and populates it with tags and nodes
  */
 const NodeListSource = ({
   nodes,
@@ -46,78 +40,19 @@ const NodeListSource = ({
   onToggleTypeDisabled
 }) => {
   const [searchValue, updateSearchValue] = useState('');
-  const { filteredNodes } = getFilteredNodes({ nodes, searchValue });
-  const filteredTags = highlightMatch(
-    filterNodes({ tag: tags }, searchValue),
+  const items = getFilteredItems({
+    nodes,
+    tags,
+    tagsEnabled,
+    nodeActive,
+    nodeSelected,
     searchValue
-  );
-
-  const items = {
-    tag: filteredTags.tag.map(tag => ({
-      ...tag,
-      type: 'tag',
-      visibleIcon: 'indicator',
-      invisibleIcon: 'indicatorOff',
-      active: false,
-      selected: false,
-      faded: false,
-      visible: true,
-      disabled: false,
-      unset: typeof tagsEnabled[tag.id] === 'undefined',
-      checked: tagsEnabled[tag.id] === true
-    })),
-    ...Object.keys(filteredNodes).reduce((result, type) => {
-      result[type] = filteredNodes[type]
-        .sort(sortByEnabledThenAlpha)
-        .map(node => {
-          const checked = !node.disabled_node;
-          const disabled = node.disabled_tag || node.disabled_type;
-          return {
-            ...node,
-            visibleIcon: 'visible',
-            invisibleIcon: 'invisible',
-            active: nodeActive[node.id],
-            selected: nodeSelected[node.id],
-            faded: node.disabled_node || disabled,
-            visible: !disabled && checked,
-            unset: false,
-            checked,
-            disabled
-          };
-        });
-      return result;
-    }, {})
-  };
-
-  const groups = types.reduce((groups, type) => {
-    const itemsOfType = items[type.id] || [];
-    const group = (groups[type.id] = {
-      type,
-      id: type.id,
-      kind: 'toggle',
-      visibleIcon: 'visible',
-      invisibleIcon: 'invisible',
-      checked: !type.disabled,
-      count: itemsOfType.length,
-      allUnset: itemsOfType.every(item => item.unset),
-      allChecked: itemsOfType.every(item => item.checked)
-    });
-
-    if (isTagType(type.id)) {
-      Object.assign(group, {
-        kind: 'filter',
-        checked: !group.allUnset,
-        visibleIcon: group.allChecked ? 'indicator' : 'indicatorPartial',
-        invisibleIcon: 'indicatorOff'
-      });
-    }
-
-    return groups;
-  }, {});
+  });
+  const groups = getGroups({ types, items });
 
   const onItemClick = item => {
     if (isTagType(item.type)) {
-      onTagChange(item, item.checked);
+      onTagItemChange(item, item.checked);
     } else {
       if (item.disabled || nodeSelected[item.id]) {
         onToggleNodeClicked(null);
@@ -129,7 +64,7 @@ const NodeListSource = ({
 
   const onItemChange = (item, checked) => {
     if (isTagType(item.type)) {
-      onTagChange(item, checked);
+      onTagItemChange(item, checked);
     } else {
       if (checked) {
         onToggleNodeHovered(null);
@@ -142,44 +77,43 @@ const NodeListSource = ({
   const onItemMouseEnter = item => {
     if (isTagType(item.type)) {
       onToggleTagActive(item.id, true);
-    } else {
-      if (item.visible) {
-        onToggleNodeHovered(item.id);
-      }
+    } else if (item.visible) {
+      onToggleNodeHovered(item.id);
     }
   };
 
   const onItemMouseLeave = item => {
     if (isTagType(item.type)) {
       onToggleTagActive(item.id, false);
-    } else {
-      if (item.visible) {
-        onToggleNodeHovered(null);
-      }
+    } else if (item.visible) {
+      onToggleNodeHovered(null);
     }
   };
 
   const onToggleGroupChecked = (type, checked) => {
     if (isTagType(type)) {
-      const itemsOfType = items[type] || [];
-      const groupAllUnset = itemsOfType.every(item => item.unset);
-      const allTagsValue = groupAllUnset ? true : undefined;
-      itemsOfType.forEach(tag => onToggleTagFilter(tag.id, allTagsValue));
+      // Filter all tags if at least one tag item set, otherwise enable all tags
+      const tagItems = items[type] || [];
+      const someTagSet = tagItems.some(tagItem => !tagItem.unset);
+      const allTagsValue = someTagSet ? undefined : true;
+      tagItems.forEach(tag => onToggleTagFilter(tag.id, allTagsValue));
     } else {
       onToggleTypeDisabled(type, checked);
     }
   };
 
-  const onTagChange = (tag, checked) => {
-    const valuesAfter = Object.values({ ...tagsEnabled, [tag.id]: !checked });
-    const allDisabled = valuesAfter.every(
-      enabled => typeof enabled === 'undefined' || enabled === false
-    );
+  const onTagItemChange = (tagItem, wasChecked) => {
+    const tagItems = items[tagItem.type] || [];
+    const oneTagChecked =
+      tagItems.filter(tagItem => tagItem.checked).length === 1;
+    const shouldResetTags = wasChecked && oneTagChecked;
 
-    if (allDisabled) {
+    if (shouldResetTags) {
+      // Unset all tags
       tags.forEach(tag => onToggleTagFilter(tag.id, undefined));
     } else {
-      onToggleTagFilter(tag.id, !checked);
+      // Toggle the tag
+      onToggleTagFilter(tagItem.id, !wasChecked);
     }
   };
 
