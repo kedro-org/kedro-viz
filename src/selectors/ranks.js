@@ -4,7 +4,6 @@ import { getVisibleNodeIDs, getVisibleLayerIDs } from './disabled';
 import { getVisibleEdges } from './edges';
 
 const getNodeLayer = state => state.node.layer;
-const getLayersVisible = state => state.visible.layers;
 
 /**
  * Get list of visible nodes for each visible layer
@@ -12,6 +11,9 @@ const getLayersVisible = state => state.visible.layers;
 export const getLayerNodes = createSelector(
   [getVisibleNodeIDs, getVisibleLayerIDs, getNodeLayer],
   (nodeIDs, layerIDs, nodeLayer) => {
+    if (!layerIDs.length) {
+      return [];
+    }
     // Create object containing a list of every node for each layer
     const layerNodes = {};
     for (const nodeID of nodeIDs) {
@@ -32,9 +34,9 @@ export const getLayerNodes = createSelector(
  * by toposorting while taking layers into account
  */
 export const getNodeRank = createSelector(
-  [getVisibleNodeIDs, getVisibleEdges, getLayerNodes, getLayersVisible],
-  (nodeIDs, edges, layerNodes, layersVisible) => {
-    if (!layersVisible) {
+  [getVisibleNodeIDs, getVisibleEdges, getLayerNodes, getVisibleLayerIDs],
+  (nodeIDs, edges, layerNodes, layerIDs) => {
+    if (!layerIDs.length) {
       return {};
     }
 

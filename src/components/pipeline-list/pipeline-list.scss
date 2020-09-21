@@ -1,0 +1,11 @@
+@import '../../styles/extends';
+@import '../../styles/variables';
+
+.pipeline-list {
+  padding-bottom: 1.8em;
+
+  .kui-dropdown {
+    display: block;
+    margin: 0 $sidebar-padding;
+  }
+}

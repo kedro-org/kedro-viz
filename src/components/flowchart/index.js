@@ -23,7 +23,7 @@ export class FlowChart extends Component {
     super(props);
 
     this.state = {
-      tooltip: {}
+      tooltip: { visible: false }
     };
 
     this.DURATION = 700;
@@ -42,7 +42,13 @@ export class FlowChart extends Component {
     this.updateChartSize();
     this.initZoomBehaviour();
     this.addGlobalEventListeners();
-    drawNodes.call(this);
+    this.update();
+
+    if (this.props.tooltip) {
+      this.showTooltip(null, this.props.tooltip);
+    } else {
+      this.hideTooltip();
+    }
   }
 
   componentWillUnmount() {
@@ -50,6 +56,13 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    this.update(prevProps);
+  }
+
+  /**
+   * Updates drawing and zoom if props have changed
+   */
+  update(prevProps = {}) {
     const { chartZoom } = this.props;
     const changed = (...names) => this.changed(names, prevProps, this.props);
 
@@ -57,13 +70,13 @@ export class FlowChart extends Component {
       this.updateChartSize();
     }
 
-    if (changed('layers', 'visibleLayers', 'chartSize')) {
+    if (changed('layers', 'chartSize')) {
       drawLayers.call(this);
       drawLayerNames.call(this);
     }
 
     if (changed('edges', 'centralNode', 'linkedNodes')) {
-      drawEdges.call(this);
+      drawEdges.call(this, changed);
     }
 
     if (
@@ -76,7 +89,7 @@ export class FlowChart extends Component {
         'textLabels'
       )
     ) {
-      drawNodes.call(this);
+      drawNodes.call(this, changed);
     }
 
     if (changed('edges', 'nodes', 'layers', 'textLabels', 'chartSize')) {
@@ -300,7 +313,7 @@ export class FlowChart extends Component {
     let translateY = 0;
 
     // Fit the graph exactly in the viewport
-    if (chartSize.width && graphSize.width) {
+    if (chartSize.width > 0 && graphSize.width > 0) {
       scale = Math.min(
         chartSize.width / graphSize.width,
         chartSize.height / graphSize.height
@@ -389,13 +402,15 @@ export class FlowChart extends Component {
   /**
    * Show, fill and and position the tooltip
    * @param {Object} node A node datum
+   * @param {?Object} options Options for the tooltip if required
    */
-  showTooltip(node) {
+  showTooltip(node, options = {}) {
     this.setState({
       tooltip: {
-        targetRect: event.target.getBoundingClientRect(),
-        text: node.fullName,
-        visible: true
+        targetRect: event && event.target.getBoundingClientRect(),
+        text: node && node.fullName,
+        visible: true,
+        ...options
       }
     });
   }
@@ -418,7 +433,7 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { chartSize, visibleLayers } = this.props;
+    const { chartSize, layers } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
     return (
@@ -458,7 +473,7 @@ export class FlowChart extends Component {
         </svg>
         <ul
           className={classnames('pipeline-flowchart__layer-names', {
-            'pipeline-flowchart__layer-names--visible': visibleLayers
+            'pipeline-flowchart__layer-names--visible': layers.length
           })}
           ref={this.layerNamesRef}
         />
@@ -473,7 +488,7 @@ const emptyEdges = [];
 const emptyNodes = [];
 const emptyGraphSize = {};
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state, ownProps) => ({
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
@@ -485,11 +500,11 @@ export const mapStateToProps = state => ({
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   textLabels: state.textLabels,
-  visibleLayers: state.visible.layers,
-  visibleSidebar: state.visible.sidebar
+  visibleSidebar: state.visible.sidebar,
+  ...ownProps
 });
 
-export const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = (dispatch, ownProps) => ({
   onToggleNodeClicked: nodeClicked => {
     dispatch(toggleNodeClicked(nodeClicked));
   },
@@ -501,7 +516,8 @@ export const mapDispatchToProps = dispatch => ({
   },
   onUpdateZoom: transform => {
     dispatch(updateZoom(transform));
-  }
+  },
+  ...ownProps
 });
 
 export default connect(

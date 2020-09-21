@@ -15,6 +15,10 @@
   cursor: pointer;
   user-select: none;
 
+  @media (max-height: 550px) {
+    height: $sidebar-width-closed - 14;
+  }
+
   &:focus {
     outline: none;
 

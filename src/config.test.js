@@ -3,7 +3,7 @@ import { dataPath, localStorageName } from './config';
 describe('config', () => {
   describe('dataPath', () => {
     it('should return the name of a json file', () => {
-      expect(dataPath).toEqual(expect.stringContaining('.json'));
+      expect(dataPath).toEqual(expect.stringContaining('/main'));
     });
 
     it('should return a relative path', () => {

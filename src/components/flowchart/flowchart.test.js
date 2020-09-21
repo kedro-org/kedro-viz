@@ -5,6 +5,7 @@ import { mockState, setup } from '../../utils/state.mock';
 
 const getNodeIDs = state => state.node.ids;
 const getNodeName = state => state.node.name;
+const getLayerIDs = state => state.layer.ids;
 
 describe('FlowChart', () => {
   it('renders without crashing', () => {
@@ -59,6 +60,105 @@ describe('FlowChart', () => {
     expect(spy2).not.toHaveBeenCalled();
   });
 
+  it('does not throw an error/warning when no data is displayed', () => {
+    // Setup
+    const originalConsole = console;
+    console.warn = jest.fn();
+    console.error = jest.fn();
+    // Test
+    const emptyData = { data: { nodes: [], edges: [] } };
+    expect(() => setup.mount(<FlowChart />, emptyData)).not.toThrow();
+    expect(console.warn).not.toHaveBeenCalled();
+    expect(console.error).not.toHaveBeenCalled();
+    // Teardown
+    console.warn = originalConsole.warn;
+    console.error = originalConsole.error;
+  });
+
+  it('applies selected class to nodes when nodeSelected prop set', () => {
+    const mockNodes = getNodeIDs(mockState.animals);
+    const wrapper = setup.mount(
+      <FlowChart
+        nodeSelected={{
+          [mockNodes[0]]: true,
+          [mockNodes[1]]: true
+        }}
+      />
+    );
+    expect(wrapper.render().find('.pipeline-node--selected').length).toBe(2);
+  });
+
+  it('applies active class to nodes when nodeActive prop set', () => {
+    const mockNodes = getNodeIDs(mockState.animals);
+    const wrapper = setup.mount(
+      <FlowChart
+        nodeActive={{
+          [mockNodes[0]]: true,
+          [mockNodes[1]]: true
+        }}
+      />
+    );
+    expect(wrapper.render().find('.pipeline-node--active').length).toBe(2);
+  });
+
+  it('shows text labels when textLabels prop set true', () => {
+    const mockNodes = getNodeIDs(mockState.animals);
+    const wrapper = setup.mount(<FlowChart textLabels={true} />);
+    expect(wrapper.render().find('.pipeline-node--text').length).toBe(
+      mockNodes.length
+    );
+  });
+
+  it('hides text labels when textLabels prop set false', () => {
+    const wrapper = setup.mount(<FlowChart textLabels={false} />);
+    expect(wrapper.render().find('.pipeline-node--text').length).toBe(0);
+  });
+
+  it('shows layers when layers are visible', () => {
+    const mockLayers = getLayerIDs(mockState.animals);
+    const wrapper = setup.mount(<FlowChart />);
+    expect(wrapper.render().find('.pipeline-layer').length).toBe(
+      mockLayers.length
+    );
+  });
+
+  it('hides layers when layers.length is 0', () => {
+    const wrapper = setup.mount(<FlowChart layers={[]} />);
+    expect(wrapper.render().find('.pipeline-layer').length).toBe(0);
+  });
+
+  it('shows tooltip when tooltip prop set as visible', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        tooltip={{
+          targetRect: { top: 0, left: 0, width: 10, height: 10 },
+          text: 'test tooltip',
+          visible: true
+        }}
+      />
+    );
+
+    const tooltip = wrapper.render().find('.pipeline-tooltip');
+    const tooltipText = wrapper.render().find('.pipeline-tooltip__text');
+    expect(tooltip.hasClass('pipeline-tooltip--visible')).toBe(true);
+    expect(tooltipText.text()).toBe('test tooltip');
+  });
+
+  it('hides tooltip when tooltip prop not set as visible', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        tooltip={{
+          targetRect: { top: 0, left: 0, width: 10, height: 10 },
+          text: 'test tooltip',
+          visible: false
+        }}
+      />
+    );
+
+    const tooltip = wrapper.render().find('.pipeline-tooltip');
+    expect(tooltip.hasClass('pipeline-tooltip--visible')).toBe(false);
+  });
+
   it('maps state to props', () => {
     const expectedResult = {
       centralNode: null,
@@ -72,7 +172,6 @@ describe('FlowChart', () => {
       nodeSelected: expect.any(Object),
       nodes: expect.any(Array),
       textLabels: expect.any(Boolean),
-      visibleLayers: expect.any(Boolean),
       visibleSidebar: expect.any(Boolean)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
@@ -98,6 +197,13 @@ describe('FlowChart', () => {
     expect(dispatch.mock.calls[2][0]).toEqual({
       chartSize: boundingClientRect,
       type: 'UPDATE_CHART_SIZE'
+    });
+
+    const zoom = { scale: 1, x: 0, y: 0 };
+    mapDispatchToProps(dispatch).onUpdateZoom(zoom);
+    expect(dispatch.mock.calls[3][0]).toEqual({
+      zoom,
+      type: 'UPDATE_ZOOM'
     });
   });
 });

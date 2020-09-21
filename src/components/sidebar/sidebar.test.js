@@ -3,6 +3,7 @@ import MountSidebar, { Sidebar } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
 const mockProps = {
+  flags: { pipelines: true },
   theme: mockState.animals.theme,
   onToggle: () => {},
   visible: true

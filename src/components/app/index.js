@@ -5,8 +5,9 @@ import configureStore from '../../store';
 import { resetData, updateFontLoaded } from '../../actions';
 import checkFontLoaded from '../../actions/check-font-loaded';
 import Wrapper from '../wrapper';
-import getInitialState from '../../store/initial-state';
-import normalizeData from '../../store/normalize-data';
+import getInitialState, {
+  preparePipelineState
+} from '../../store/initial-state';
 import { getFlagsMessage } from '../../utils/flags';
 import '@quantumblack/kedro-ui/lib/styles/app.css';
 import './app.css';
@@ -56,8 +57,8 @@ class App extends React.Component {
    * Dispatch an action to update the store with new pipeline data
    */
   updatePipelineData() {
-    const normalizedData = normalizeData(this.props.data);
-    this.store.dispatch(resetData(normalizedData));
+    const newState = preparePipelineState(this.props);
+    this.store.dispatch(resetData(newState));
   }
 
   render() {
@@ -70,6 +71,13 @@ class App extends React.Component {
 }
 
 App.propTypes = {
+  /**
+   * Determines what pipeline data will be displayed on the chart.
+   * You can supply an object containing lists of edges, nodes, tags -
+   * See /src/utils/data for examples of the expected data format.
+   * Alternatively, the string 'json' indicates that data is being
+   * loaded asynchronously from /public/api/nodes.json
+   */
   data: PropTypes.oneOfType([
     PropTypes.oneOf(['json']),
     PropTypes.shape({
@@ -80,35 +88,21 @@ App.propTypes = {
       tags: PropTypes.array
     })
   ]),
-  theme: PropTypes.oneOf(['dark', 'light']),
-  visible: PropTypes.shape({
-    labelBtn: PropTypes.bool,
-    layerBtn: PropTypes.bool,
-    layers: PropTypes.bool,
-    exportBtn: PropTypes.bool,
-    sidebar: PropTypes.bool,
-    themeBtn: PropTypes.bool
-  })
-};
-
-App.defaultProps = {
-  /**
-   * Determines what pipeline data will be displayed on the chart.
-   * You can supply an object containing lists of edges, nodes, tags -
-   * See /src/utils/data for examples of the expected data format.
-   * Alternatively, the string 'json' indicates that data is being
-   * loaded asynchronously from /public/api/nodes.json
-   */
-  data: null,
   /**
    * Specify the theme: Either 'light' or 'dark'.
    * If set, this will override the localStorage value.
    */
-  theme: null,
+  theme: PropTypes.oneOf(['dark', 'light']),
   /**
-   * Show/hide the icon buttons with { labelBtn:false } and/or { themeBtn:false }
+   * Override visibility of various features, e.g. icon buttons
    */
-  visible: {}
+  visible: PropTypes.shape({
+    labelBtn: PropTypes.bool,
+    layerBtn: PropTypes.bool,
+    exportBtn: PropTypes.bool,
+    sidebar: PropTypes.bool,
+    themeBtn: PropTypes.bool
+  })
 };
 
 export default App;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import PipelineList from '../pipeline-list';
 import NodeList from '../node-list';
 import PrimaryToolbar from '../primary-toolbar';
 import MiniMapToolbar from '../minimap-toolbar';
@@ -11,13 +12,14 @@ import './sidebar.css';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {Object} props visible
  */
-export const Sidebar = ({ visible }) => (
+export const Sidebar = ({ flags, visible }) => (
   <>
     <div
       className={classnames('pipeline-sidebar', {
         'pipeline-sidebar--visible': visible
       })}>
       <div className="pipeline-ui">
+        {flags.pipelines && <PipelineList />}
         <NodeList />
       </div>
       <nav className="pipeline-toolbar">
@@ -30,6 +32,7 @@ export const Sidebar = ({ visible }) => (
 );
 
 const mapStateToProps = state => ({
+  flags: state.flags,
   visible: state.visible.sidebar
 });
 

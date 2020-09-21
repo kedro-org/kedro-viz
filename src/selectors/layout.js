@@ -5,8 +5,6 @@ import { getVisibleLayerIDs } from './disabled';
 import { sidebarBreakpoint, sidebarWidth } from '../config';
 
 const getNewgraphFlag = state => state.flags.newgraph;
-const getHasVisibleLayers = state =>
-  state.visible.layers && Boolean(state.layer.ids.length);
 const getVisibleSidebar = state => state.visible.sidebar;
 const getFontLoaded = state => state.fontLoaded;
 
@@ -19,15 +17,14 @@ export const getGraphInput = createSelector(
     getVisibleNodes,
     getVisibleEdges,
     getVisibleLayerIDs,
-    getHasVisibleLayers,
     getNewgraphFlag,
     getFontLoaded
   ],
-  (nodes, edges, layers, showLayers, newgraph, fontLoaded) => {
+  (nodes, edges, layers, newgraph, fontLoaded) => {
     if (!fontLoaded) {
       return null;
     }
-    return { nodes, edges, layers: showLayers && layers, newgraph, fontLoaded };
+    return { nodes, edges, layers, newgraph, fontLoaded };
   }
 );
 

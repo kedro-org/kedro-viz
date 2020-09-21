@@ -1,5 +1,6 @@
 export default {
   schema_id: '12345678901234567890',
+  selected_pipeline: '__default__',
   pipelines: [
     {
       id: '__default__',
@@ -439,7 +440,7 @@ export default {
       full_name: 'sales_model_explainable_ai',
       id: '394244dd',
       name: 'Sales Model Explainable AI',
-      tags: ['model_explaination', 'data_science'],
+      tags: ['model_explanation', 'data_science'],
       layer: 'Model Input',
       pipelines: ['__default__', 'ds'],
       type: 'task'
@@ -448,7 +449,7 @@ export default {
       full_name: 'engagement_model_explainable_ai',
       id: '67257e84',
       name: 'Engagement Model Explainable AI',
-      tags: ['model_explaination', 'data_science'],
+      tags: ['model_explanation', 'data_science'],
       layer: 'Models',
       pipelines: ['__default__', 'ds'],
       type: 'task'
@@ -622,7 +623,7 @@ export default {
       tags: [
         'data_science',
         'model_training',
-        'model_explaination',
+        'model_explanation',
         'feature_engineering',
         'data_engineering'
       ],
@@ -637,7 +638,7 @@ export default {
       tags: [
         'data_science',
         'model_training',
-        'model_explaination',
+        'model_explanation',
         'feature_engineering',
         'data_engineering'
       ],
@@ -646,9 +647,9 @@ export default {
       type: 'data'
     },
     {
-      full_name: 'vendor_master',
+      full_name: 'vendor_main',
       id: '181c2b7c',
-      name: 'Vendor Master',
+      name: 'Vendor Main',
       tags: ['feature_engineering', 'data_engineering'],
       layer: 'Raw',
       pipelines: ['__default__', 'de'],
@@ -708,7 +709,7 @@ export default {
       full_name: 'sales_trained_model',
       id: '1dafa5fb',
       name: 'Sales Trained Model',
-      tags: ['model_explaination', 'data_science', 'model_training'],
+      tags: ['model_explanation', 'data_science', 'model_training'],
       layer: 'Model Input',
       pipelines: ['__default__', 'de'],
       type: 'data'
@@ -735,7 +736,7 @@ export default {
       full_name: 'engagement_trained_model',
       id: 'f4f3a276',
       name: 'Engagement Trained Model',
-      tags: ['model_explaination', 'data_science', 'model_training'],
+      tags: ['model_explanation', 'data_science', 'model_training'],
       layer: 'Models',
       pipelines: ['__default__', 'de'],
       type: 'data'
@@ -745,7 +746,7 @@ export default {
       id: '792a14f6',
       name: 'Sales Model Explanations',
       tags: [
-        'model_explaination',
+        'model_explanation',
         'data_science',
         'model_performance_monitoring',
         'reporting'
@@ -759,7 +760,7 @@ export default {
       id: '9bd2dc3d',
       name: 'Engagement Model Explanations',
       tags: [
-        'model_explaination',
+        'model_explanation',
         'data_science',
         'model_performance_monitoring',
         'reporting'
@@ -903,8 +904,8 @@ export default {
       name: 'Optimisation'
     },
     {
-      id: 'model_explaination',
-      name: 'Model Explaination'
+      id: 'model_explanation',
+      name: 'Model Explanation'
     },
     {
       id: 'feature_engineering',

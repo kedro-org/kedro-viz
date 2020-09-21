@@ -1,14 +1,15 @@
 import { mockState } from '../utils/state.mock';
 import {
-  getNodeDisabledPipeline,
   getNodeDisabledTag,
   getNodeDisabled,
-  getEdgeDisabled
+  getEdgeDisabled,
+  getVisibleNodeIDs,
+  getVisibleLayerIDs
 } from './disabled';
 import { toggleNodesDisabled } from '../actions/nodes';
+import { toggleLayers } from '../actions';
 import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
-import { updateActivePipeline } from '../actions';
 
 const getNodeIDs = state => state.node.ids;
 const getEdgeIDs = state => state.edge.ids;
@@ -17,66 +18,6 @@ const getEdgeTargets = state => state.edge.targets;
 const getNodeTags = state => state.node.tags;
 
 describe('Selectors', () => {
-  describe('getNodeDisabledPipeline', () => {
-    it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(getNodeDisabledPipeline(mockState.animals))).toEqual(
-        getNodeIDs(mockState.animals)
-      );
-    });
-
-    it('returns an object whose values are all Booleans', () => {
-      expect(
-        Object.values(getNodeDisabledPipeline(mockState.animals)).every(
-          value => typeof value === 'boolean'
-        )
-      ).toBe(true);
-    });
-
-    it('does not disable any nodes if there is no active pipeline', () => {
-      const activePipeline = undefined;
-      const newMockState = reducer(
-        mockState.animals,
-        updateActivePipeline(activePipeline)
-      );
-      const nodeDisabledPipeline = getNodeDisabledPipeline(newMockState);
-      expect(
-        mockState.animals.node.ids.every(
-          nodeID => !nodeDisabledPipeline[nodeID]
-        )
-      ).toBe(true);
-    });
-
-    it('does not disable any nodes that are in the active pipeline', () => {
-      const activePipeline = 'ds';
-      const activePipelineNodeIDs = mockState.animals.node.ids.filter(
-        nodeID => mockState.animals.node.pipelines[nodeID][activePipeline]
-      );
-      const newMockState = reducer(
-        mockState.animals,
-        updateActivePipeline(activePipeline)
-      );
-      const nodeDisabledPipeline = getNodeDisabledPipeline(newMockState);
-      expect(
-        activePipelineNodeIDs.every(nodeID => !nodeDisabledPipeline[nodeID])
-      ).toBe(true);
-    });
-
-    it('disables every node that is not in the active pipeline', () => {
-      const activePipeline = 'de';
-      const inactivePipelineNodeIDs = mockState.animals.node.ids.filter(
-        nodeID => !mockState.animals.node.pipelines[nodeID][activePipeline]
-      );
-      const newMockState = reducer(
-        mockState.animals,
-        updateActivePipeline(activePipeline)
-      );
-      const nodeDisabledPipeline = getNodeDisabledPipeline(newMockState);
-      expect(
-        inactivePipelineNodeIDs.every(nodeID => nodeDisabledPipeline[nodeID])
-      ).toBe(true);
-    });
-  });
-
   describe('getNodeDisabledTag', () => {
     it("returns an object whose keys match the current pipeline's nodes", () => {
       expect(Object.keys(getNodeDisabledTag(mockState.animals))).toEqual(
@@ -238,6 +179,38 @@ describe('Selectors', () => {
           value => typeof value === 'boolean'
         )
       ).toBe(true);
+    });
+  });
+
+  describe('getVisibleNodeIDs', () => {
+    it('returns an array of node IDs', () => {
+      expect(getVisibleNodeIDs(mockState.animals)).toEqual(
+        mockState.animals.node.ids
+      );
+    });
+  });
+
+  describe('getVisibleLayerIDs', () => {
+    it('returns an array of layer IDs', () => {
+      expect(getVisibleLayerIDs(mockState.animals)).toEqual(
+        mockState.animals.layer.ids
+      );
+    });
+
+    it('returns an empty array if layers are disabled', () => {
+      const newMockState = reducer(mockState.animals, toggleLayers(false));
+      expect(getVisibleLayerIDs(newMockState)).toEqual([]);
+    });
+
+    it('returns an empty array if there are no layers', () => {
+      const newMockState = {
+        ...mockState.animals,
+        layer: {
+          ids: [],
+          visible: true
+        }
+      };
+      expect(getVisibleLayerIDs(newMockState)).toEqual([]);
     });
   });
 });

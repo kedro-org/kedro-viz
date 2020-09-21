@@ -1,5 +1,61 @@
-import { getInitialPipelineState } from '../store/initial-state';
 import { arrayToObject } from '../utils';
+
+/**
+ * Create new default pipeline state instance
+ * @return {object} state
+ */
+export const createInitialPipelineState = () => ({
+  id: null,
+  pipeline: {
+    ids: [],
+    name: {},
+    default: null,
+    active: null
+  },
+  node: {
+    ids: [],
+    name: {},
+    fullName: {},
+    type: {},
+    isParam: {},
+    tags: {},
+    layer: {},
+    disabled: {},
+    pipelines: {},
+    clicked: null,
+    hovered: null
+  },
+  nodeType: {
+    ids: ['tag', 'task', 'data', 'parameters'],
+    name: {
+      data: 'Datasets',
+      task: 'Nodes',
+      parameters: 'Parameters',
+      tag: 'Tags'
+    },
+    section: {
+      Categories: ['tag'],
+      Elements: ['task', 'data', 'parameters']
+    },
+    disabled: {}
+  },
+  edge: {
+    ids: [],
+    sources: {},
+    targets: {}
+  },
+  layer: {
+    ids: [],
+    name: {},
+    visible: true
+  },
+  tag: {
+    ids: [],
+    name: {},
+    active: {},
+    enabled: {}
+  }
+});
 
 /**
  * Check whether data is in expected format
@@ -8,17 +64,19 @@ import { arrayToObject } from '../utils';
  */
 const validateInput = data => {
   if (!data) {
-    // Data may still be loading, or has not been supplied
+    throw new Error('No data provided to Kedro-Viz');
+  }
+  if (data === 'json') {
+    // Data is still loading
     return false;
   }
   if (!Array.isArray(data.edges) || !Array.isArray(data.nodes)) {
     if (typeof jest === 'undefined') {
-      console.error(
-        'Invalid data input: Please ensure that your pipeline data includes arrays of nodes and edges',
-        data
-      );
+      console.error('Invalid Kedro-Viz data:', data);
     }
-    return false;
+    throw new Error(
+      'Invalid Kedro-Viz data input. Please ensure that your pipeline data includes arrays of nodes and edges'
+    );
   }
   return true;
 };
@@ -109,7 +167,7 @@ const addLayer = state => layer => {
  * @return {Object} Formatted, normalized state
  */
 const normalizeData = data => {
-  const state = getInitialPipelineState();
+  const state = createInitialPipelineState();
 
   if (!validateInput(data)) {
     return state;
@@ -123,7 +181,8 @@ const normalizeData = data => {
   if (data.pipelines) {
     data.pipelines.forEach(addPipeline(state));
     if (state.pipeline.ids.length) {
-      state.pipeline.active = state.pipeline.ids[0];
+      state.pipeline.default = data.selected_pipeline || state.pipeline.ids[0];
+      state.pipeline.active = state.pipeline.default;
     }
   }
   if (data.tags) {
