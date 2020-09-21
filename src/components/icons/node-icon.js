@@ -23,6 +23,4 @@ export default ({ className, type }) =>
         <path key={d} d={d} />
       ))}
     </svg>
-  ) : (
-    <></>
-  );
+  ) : null;
