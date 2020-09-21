@@ -4,6 +4,11 @@ import { select } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import icon from './icon';
 
+const lineShape = line()
+  .x(d => d.x)
+  .y(d => d.y)
+  .curve(curveBasis);
+
 /**
  * Render layer bands
  */
@@ -73,7 +78,7 @@ export const drawLayerNames = function() {
 /**
  * Render node icons and name labels
  */
-export const drawNodes = function() {
+export const drawNodes = function(changed) {
   const {
     centralNode,
     linkedNodes,
@@ -83,141 +88,167 @@ export const drawNodes = function() {
     textLabels
   } = this.props;
 
-  this.el.nodes = this.el.nodeGroup
-    .selectAll('.pipeline-node')
-    .data(nodes, node => node.id);
+  if (changed('nodes')) {
+    this.el.nodes = this.el.nodeGroup
+      .selectAll('.pipeline-node')
+      .data(nodes, node => node.id);
+  }
 
-  const enterNodes = this.el.nodes
-    .enter()
-    .append('g')
-    .attr('tabindex', '0')
-    .attr('class', 'pipeline-node');
+  if (!this.el.nodes) {
+    return;
+  }
 
-  enterNodes
-    .attr('transform', node => `translate(${node.x}, ${node.y})`)
-    .attr('opacity', 0);
+  const enterNodes = this.el.nodes.enter().append('g');
+  const exitNodes = this.el.nodes.exit();
+  const allNodes = this.el.nodes.merge(enterNodes).merge(exitNodes);
 
-  enterNodes.append('rect');
+  if (changed('nodes')) {
+    enterNodes
+      .attr('tabindex', '0')
+      .attr('class', 'pipeline-node')
+      .attr('transform', node => `translate(${node.x}, ${node.y})`)
+      .attr('data-id', node => node.id)
+      .classed('pipeline-node--parameters', node => node.type === 'parameters')
+      .classed('pipeline-node--data', node => node.type === 'data')
+      .classed('pipeline-node--task', node => node.type === 'task')
+      .on('click', this.handleNodeClick)
+      .on('mouseover', this.handleNodeMouseOver)
+      .on('mouseout', this.handleNodeMouseOut)
+      .on('focus', this.handleNodeMouseOver)
+      .on('blur', this.handleNodeMouseOut)
+      .on('keydown', this.handleNodeKeyDown);
 
-  enterNodes.append(icon);
+    enterNodes
+      .attr('opacity', 0)
+      .transition('show-nodes')
+      .duration(this.DURATION)
+      .attr('opacity', 1);
 
-  enterNodes
-    .append('text')
-    .text(node => node.name)
-    .attr('text-anchor', 'middle')
-    .attr('dy', 5)
-    .attr('dx', node => node.textOffset);
+    enterNodes.append('rect');
+    enterNodes.append(icon);
 
-  this.el.nodes
-    .exit()
-    .transition('exit-nodes')
-    .duration(this.DURATION)
-    .attr('opacity', 0)
-    .remove();
+    enterNodes
+      .append('text')
+      .text(node => node.name)
+      .attr('text-anchor', 'middle')
+      .attr('dy', 5)
+      .attr('dx', node => node.textOffset);
 
-  this.el.nodes = this.el.nodes
-    .merge(enterNodes)
-    .attr('data-id', node => node.id)
-    .classed('pipeline-node--parameters', node => node.type === 'parameters')
-    .classed('pipeline-node--data', node => node.type === 'data')
-    .classed('pipeline-node--task', node => node.type === 'task')
-    .classed('pipeline-node--icon', !textLabels)
-    .classed('pipeline-node--text', textLabels)
-    .classed('pipeline-node--active', node => nodeActive[node.id])
-    .classed('pipeline-node--selected', node => nodeSelected[node.id])
-    .classed(
-      'pipeline-node--faded',
-      node => centralNode && !linkedNodes[node.id]
-    )
-    .on('click', this.handleNodeClick)
-    .on('mouseover', this.handleNodeMouseOver)
-    .on('mouseout', this.handleNodeMouseOut)
-    .on('focus', this.handleNodeMouseOver)
-    .on('blur', this.handleNodeMouseOut)
-    .on('keydown', this.handleNodeKeyDown);
+    exitNodes
+      .transition('exit-nodes')
+      .duration(this.DURATION)
+      .style('opacity', 0)
+      .remove();
 
-  this.el.nodes
-    .transition('update-nodes')
-    .duration(this.DURATION)
-    .attr('opacity', 1)
-    .attr('transform', node => `translate(${node.x}, ${node.y})`)
-    .end()
-    .catch(() => {})
-    .finally(() => {
-      // Sort nodes so tab focus order follows X/Y position
-      this.el.nodes.sort((a, b) => a.order - b.order);
-    });
+    this.el.nodes = this.el.nodeGroup.selectAll('.pipeline-node');
+  }
 
-  this.el.nodes
-    .select('rect')
-    .attr('width', node => node.width - 5)
-    .attr('height', node => node.height - 5)
-    .attr('x', node => (node.width - 5) / -2)
-    .attr('y', node => (node.height - 5) / -2)
-    .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2));
+  if (
+    changed('nodes', 'nodeActive', 'nodeSelected', 'centralNode', 'linkedNodes')
+  ) {
+    allNodes
+      .classed('pipeline-node--active', node => nodeActive[node.id])
+      .classed('pipeline-node--selected', node => nodeSelected[node.id])
+      .classed(
+        'pipeline-node--faded',
+        node => centralNode && !linkedNodes[node.id]
+      );
+  }
 
-  this.el.nodes
-    .select('.pipeline-node__icon')
-    .transition('node-icon-offset')
-    .duration(150)
-    .attr('width', node => node.iconSize)
-    .attr('height', node => node.iconSize)
-    .attr('x', node => node.iconOffset)
-    .attr('y', node => node.iconSize / -2);
+  if (changed('nodes', 'textLabels')) {
+    allNodes
+      .classed('pipeline-node--icon', !textLabels)
+      .classed('pipeline-node--text', textLabels);
+
+    allNodes
+      .transition('update-nodes')
+      .duration(this.DURATION)
+      .attr('transform', node => `translate(${node.x}, ${node.y})`)
+      .end()
+      .catch(() => {})
+      .finally(() => {
+        // Sort nodes so tab focus order follows X/Y position
+        allNodes.sort((a, b) => a.order - b.order);
+      });
+
+    allNodes
+      .select('rect')
+      .transition('node-rect')
+      .duration(textLabels ? 200 : 600)
+      .attr('width', node => node.width - 5)
+      .attr('height', node => node.height - 5)
+      .attr('x', node => (node.width - 5) / -2)
+      .attr('y', node => (node.height - 5) / -2)
+      .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2));
+
+    allNodes
+      .select('.pipeline-node__icon')
+      .transition('node-icon-offset')
+      .duration(200)
+      .attr('width', node => node.iconSize)
+      .attr('height', node => node.iconSize)
+      .attr('x', node => node.iconOffset)
+      .attr('y', node => node.iconSize / -2);
+  }
 };
 
 /**
  * Render edge lines
  */
-export const drawEdges = function() {
+export const drawEdges = function(changed) {
   const { edges, centralNode, linkedNodes } = this.props;
 
-  this.el.edges = this.el.edgeGroup
-    .selectAll('.pipeline-edge')
-    .data(edges, edge => edge.id);
+  if (changed('edges')) {
+    this.el.edges = this.el.edgeGroup
+      .selectAll('.pipeline-edge')
+      .data(edges, edge => edge.id);
+  }
 
-  // Set up line shape function
-  const lineShape = line()
-    .x(d => d.x)
-    .y(d => d.y)
-    .curve(curveBasis);
+  if (!this.el.edges) {
+    return;
+  }
 
-  // Create edges
-  const enterEdges = this.el.edges
-    .enter()
-    .append('g')
-    .attr('class', 'pipeline-edge')
-    .attr('opacity', 0);
+  const enterEdges = this.el.edges.enter().append('g');
+  const exitEdges = this.el.edges.exit();
+  const allEdges = this.el.edges.merge(enterEdges).merge(exitEdges);
 
-  enterEdges.append('path').attr('marker-end', d => `url(#pipeline-arrowhead)`);
+  if (changed('edges')) {
+    enterEdges
+      .append('path')
+      .attr('marker-end', d => `url(#pipeline-arrowhead)`);
 
-  this.el.edges
-    .exit()
-    .transition('exit-edges')
-    .duration(this.DURATION)
-    .attr('opacity', 0)
-    .remove();
+    enterEdges.attr('data-id', edge => edge.id).attr('class', 'pipeline-edge');
 
-  this.el.edges = this.el.edges.merge(enterEdges);
+    enterEdges
+      .attr('opacity', 0)
+      .transition('show-edges')
+      .duration(this.DURATION)
+      .attr('opacity', 1);
 
-  this.el.edges
-    .attr('data-id', edge => edge.id)
-    .classed(
+    exitEdges
+      .transition('exit-edges')
+      .duration(this.DURATION)
+      .style('opacity', 0)
+      .remove();
+
+    allEdges
+      .select('path')
+      .transition('update-edges')
+      .duration(this.DURATION)
+      .attrTween('d', function(edge) {
+        const current = edge.points && lineShape(edge.points);
+        const previous = select(this).attr('d') || current;
+        return interpolatePath(previous, current);
+      });
+
+    this.el.edges = this.el.edgeGroup.selectAll('.pipeline-edge');
+  }
+
+  if (changed('edges', 'centralNode', 'linkedNodes')) {
+    allEdges.classed(
       'pipeline-edge--faded',
       ({ source, target }) =>
         centralNode && (!linkedNodes[source] || !linkedNodes[target])
-    )
-    .transition('show-edges')
-    .duration(this.DURATION)
-    .attr('opacity', 1);
-
-  this.el.edges
-    .select('path')
-    .transition('update-edges')
-    .duration(this.DURATION)
-    .attrTween('d', function(edge) {
-      const current = edge.points && lineShape(edge.points);
-      const previous = select(this).attr('d') || current;
-      return interpolatePath(previous, current);
-    });
+    );
+  }
 };

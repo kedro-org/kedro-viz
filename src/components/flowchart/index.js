@@ -76,7 +76,7 @@ export class FlowChart extends Component {
     }
 
     if (changed('edges', 'centralNode', 'linkedNodes')) {
-      drawEdges.call(this);
+      drawEdges.call(this, changed);
     }
 
     if (
@@ -89,7 +89,7 @@ export class FlowChart extends Component {
         'textLabels'
       )
     ) {
-      drawNodes.call(this);
+      drawNodes.call(this, changed);
     }
 
     if (changed('edges', 'nodes', 'layers', 'textLabels', 'chartSize')) {
