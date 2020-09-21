@@ -7,6 +7,7 @@ import visible from './visible';
 import pipeline from './pipeline';
 import flags from './flags';
 import graph from './graph';
+import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 import {
   RESET_DATA,
   TOGGLE_TEXT_LABELS,
@@ -40,7 +41,7 @@ const createReducer = (initialState, type, key) => (
  * @return {Object} Updated(?) state
  */
 function resetDataReducer(state = {}, action) {
-  if (action.type === RESET_DATA) {
+  if (action.type === RESET_DATA || action.type === UPDATE_ACTIVE_PIPELINE) {
     return Object.assign({}, state, action.data);
   }
   return state;
