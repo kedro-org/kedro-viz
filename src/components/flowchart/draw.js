@@ -76,6 +76,17 @@ export const drawLayerNames = function() {
 };
 
 /**
+ * Sets the size and position of the given node rects
+ */
+const updateNodeRects = nodeRects =>
+  nodeRects
+    .attr('width', node => node.width - 5)
+    .attr('height', node => node.height - 5)
+    .attr('x', node => (node.width - 5) / -2)
+    .attr('y', node => (node.height - 5) / -2)
+    .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2));
+
+/**
  * Render node icons and name labels
  */
 export const drawNodes = function(changed) {
@@ -98,6 +109,7 @@ export const drawNodes = function(changed) {
     return;
   }
 
+  const updateNodes = this.el.nodes;
   const enterNodes = this.el.nodes.enter().append('g');
   const exitNodes = this.el.nodes.exit();
   const allNodes = this.el.nodes.merge(enterNodes).merge(exitNodes);
@@ -140,6 +152,9 @@ export const drawNodes = function(changed) {
       .style('opacity', 0)
       .remove();
 
+    // Cancel exit transitions if re-entered
+    updateNodes.transition('exit-nodes').style('opacity', null);
+
     this.el.nodes = this.el.nodeGroup.selectAll('.pipeline-node');
   }
 
@@ -164,22 +179,18 @@ export const drawNodes = function(changed) {
       .transition('update-nodes')
       .duration(this.DURATION)
       .attr('transform', node => `translate(${node.x}, ${node.y})`)
-      .end()
-      .catch(() => {})
-      .finally(() => {
+      .on('end', () => {
         // Sort nodes so tab focus order follows X/Y position
         allNodes.sort((a, b) => a.order - b.order);
       });
 
-    allNodes
+    enterNodes.select('rect').call(updateNodeRects);
+
+    updateNodes
       .select('rect')
       .transition('node-rect')
       .duration(textLabels ? 200 : 600)
-      .attr('width', node => node.width - 5)
-      .attr('height', node => node.height - 5)
-      .attr('x', node => (node.width - 5) / -2)
-      .attr('y', node => (node.height - 5) / -2)
-      .attr('rx', node => (node.type === 'task' ? 0 : node.height / 2));
+      .call(updateNodeRects);
 
     allNodes
       .select('.pipeline-node__icon')
@@ -208,6 +219,7 @@ export const drawEdges = function(changed) {
     return;
   }
 
+  const updateEdges = this.el.edges;
   const enterEdges = this.el.edges.enter().append('g');
   const exitEdges = this.el.edges.exit();
   const allEdges = this.el.edges.merge(enterEdges).merge(exitEdges);
@@ -230,6 +242,9 @@ export const drawEdges = function(changed) {
       .duration(this.DURATION)
       .style('opacity', 0)
       .remove();
+
+    // Cancel exit transitions if re-entered
+    updateEdges.transition('exit-edges').style('opacity', null);
 
     allEdges
       .select('path')
