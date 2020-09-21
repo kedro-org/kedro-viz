@@ -115,6 +115,10 @@ const NodeListSource = ({
       // Toggle the tag
       onToggleTagFilter(tagItem.id, !wasChecked);
     }
+
+    // Reset node selection
+    onToggleNodeClicked(null);
+    onToggleNodeHovered(null);
   };
 
   // Deselect node on Escape key
