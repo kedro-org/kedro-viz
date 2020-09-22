@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import NodeList from './node-list';
-import { getFilteredItems, getGroups } from './node-list-items';
+import { getFilteredItems, getGroups, getSections } from './node-list-items';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
-import { getNodeSections, getNodeTypes } from '../../selectors/node-types';
+import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData } from '../../selectors/tags';
 import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import {
@@ -147,7 +147,7 @@ export const mapStateToProps = state => ({
   tagsEnabled: state.tag.enabled,
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
-  sections: getNodeSections(state),
+  sections: getSections(state),
   types: getNodeTypes(state)
 });
 

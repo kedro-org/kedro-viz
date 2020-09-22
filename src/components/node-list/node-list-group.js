@@ -5,7 +5,8 @@ import NodeListRow from './node-list-row';
 export const NodeListGroup = ({
   children,
   collapsed,
-  type,
+  id,
+  name,
   kind,
   checked,
   unset,
@@ -19,7 +20,7 @@ export const NodeListGroup = ({
   <li
     className={classnames(
       'pipeline-nodelist__item',
-      `pipeline-nodelist__item--type-${type.id}`,
+      `pipeline-nodelist__item--type-${id}`,
       `pipeline-nodelist__item--is-${kind}`,
       {
         'pipeline-nodelist__item--all-unset': allUnset
@@ -29,19 +30,17 @@ export const NodeListGroup = ({
       <NodeListRow
         unset={unset}
         checked={checked}
-        id={type.id}
-        label={`${type.name} <i>${childCount}</i>`}
-        name={type.name}
+        id={id}
+        label={`${name} <i>${childCount}</i>`}
+        name={name}
         visibleIcon={visibleIcon}
         invisibleIcon={invisibleIcon}
         onChange={e => {
-          onToggleChecked(type.id, !e.target.checked);
+          onToggleChecked(id, !e.target.checked);
         }}>
         <button
-          aria-label={`${
-            collapsed ? 'Show' : 'Hide'
-          } ${type.name.toLowerCase()}`}
-          onClick={() => onToggleCollapsed(type.id)}
+          aria-label={`${collapsed ? 'Show' : 'Hide'} ${name.toLowerCase()}`}
+          onClick={() => onToggleCollapsed(id)}
           className={classnames('pipeline-type-group-toggle', {
             'pipeline-type-group-toggle--alt': collapsed
           })}

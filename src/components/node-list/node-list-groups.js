@@ -31,12 +31,13 @@ const NodeListGroups = ({
     <nav className="pipeline-nodelist-section kedro" key={section.name}>
       <h4 className="pipeline-nodelist-section__title">{section.name}</h4>
       <ul className="pipeline-nodelist">
-        {section.types.map(type => {
-          const group = groups[type.id];
+        {section.types.map(typeId => {
+          const group = groups[typeId];
           return (
             <NodeListGroup
-              type={group.type}
               key={group.id}
+              id={group.id}
+              name={group.name}
               kind={group.kind}
               checked={group.checked}
               childCount={group.count}

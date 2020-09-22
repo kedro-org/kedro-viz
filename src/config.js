@@ -22,3 +22,14 @@ export const flags = {
     icon: '🔀'
   }
 };
+
+export const sidebar = {
+  Categories: {
+    Tags: 'tag'
+  },
+  Elements: {
+    Nodes: 'task',
+    Datasets: 'data',
+    Parameters: 'parameters'
+  }
+};

@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
 import { getNodeDisabledPipeline, getPipelineNodeIDs } from './pipeline';
+import { getTagCount } from './tags';
 
 const getNodeIDs = state => state.node.ids;
 const getNodeDisabledNode = state => state.node.disabled;
@@ -19,23 +20,18 @@ const getNodeLayer = state => state.node.layer;
  * Calculate whether nodes should be disabled based on their tags
  */
 export const getNodeDisabledTag = createSelector(
-  [getNodeIDs, getTagEnabled, getNodeTags],
-  (nodeIDs, tagEnabled, nodeTags) => {
-    const someEnabled = Object.values(tagEnabled).some(
-      enabled => enabled === true
-    );
-    return arrayToObject(
-      nodeIDs,
-      nodeID =>
-        someEnabled &&
-        (nodeTags[nodeID].length === 0 ||
-          nodeTags[nodeID].every(
-            tag =>
-              typeof tagEnabled[tag] === 'undefined' ||
-              tagEnabled[tag] === false
-          ))
-    );
-  }
+  [getNodeIDs, getTagEnabled, getTagCount, getNodeTags],
+  (nodeIDs, tagEnabled, tagCount, nodeTags) =>
+    arrayToObject(nodeIDs, nodeID => {
+      if (tagCount.enabled === 0) {
+        return false;
+      }
+      if (nodeTags[nodeID].length) {
+        // Hide task nodes that don't have at least one tag filter enabled
+        return !nodeTags[nodeID].some(tag => tagEnabled[tag]);
+      }
+      return true;
+    })
 );
 
 /**

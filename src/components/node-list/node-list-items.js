@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import utils from '@quantumblack/kedro-ui/lib/utils';
+import { sidebar } from '../../config';
 const { escapeRegExp, getHighlightedText } = utils;
 
 /**
@@ -169,6 +170,68 @@ export const getFilteredNodeItems = createSelector(
 );
 
 /**
+ * Get formatted list of sections
+ * @return {array} List of sections
+ */
+export const getSections = createSelector(() => {
+  const sections = [];
+
+  for (const name of Object.keys(sidebar)) {
+    sections.push({
+      name,
+      types: Object.values(sidebar[name])
+    });
+  }
+
+  return sections;
+});
+
+/**
+ * Returns groups of items per type
+ * @param {array} types List of node types
+ * @param {array} items List of items
+ * @return {array} List of groups
+ */
+export const getGroups = createSelector(
+  [state => state.types, state => state.items],
+  (nodeTypes, items) => {
+    const groups = {};
+    const itemTypes = [...nodeTypes, { id: 'tag' }];
+
+    for (const itemType of itemTypes) {
+      const itemsOfType = items[itemType.id] || [];
+
+      groups[itemType.id] = {
+        type: itemType,
+        id: itemType.id,
+        name: itemType.name,
+        kind: 'toggle',
+        visibleIcon: 'visible',
+        invisibleIcon: 'invisible',
+        checked: !itemType.disabled,
+        count: itemsOfType.length,
+        allUnset: itemsOfType.every(item => item.unset),
+        allChecked: itemsOfType.every(item => item.checked)
+      };
+
+      if (itemType.id === 'tag') {
+        const group = groups[itemType.id];
+
+        Object.assign(group, {
+          name: 'Tags',
+          kind: 'filter',
+          checked: !group.allUnset,
+          visibleIcon: group.allChecked ? 'indicator' : 'indicatorPartial',
+          invisibleIcon: 'indicatorOff'
+        });
+      }
+    }
+
+    return groups;
+  }
+);
+
+/**
  * Returns filtered/highlighted tag and node list items
  * @param {object} filteredTags List of filtered tags
  * @param {object} tagsEnabled Map of enabled tags
@@ -181,42 +244,5 @@ export const getFilteredItems = createSelector(
       ...filteredTagItems,
       ...filteredNodeItems
     };
-  }
-);
-
-/**
- * Returns groups of items per type
- * @param {array} types List of types
- * @param {array} items List of items
- * @return {array} List of groups
- */
-export const getGroups = createSelector(
-  [state => state.types, state => state.items],
-  (types, items) => {
-    return types.reduce((groups, type) => {
-      const itemsOfType = items[type.id] || [];
-      const group = (groups[type.id] = {
-        type,
-        id: type.id,
-        kind: 'toggle',
-        visibleIcon: 'visible',
-        invisibleIcon: 'invisible',
-        checked: !type.disabled,
-        count: itemsOfType.length,
-        allUnset: itemsOfType.every(item => item.unset),
-        allChecked: itemsOfType.every(item => item.checked)
-      });
-
-      if (type.id === 'tag') {
-        Object.assign(group, {
-          kind: 'filter',
-          checked: !group.allUnset,
-          visibleIcon: group.allChecked ? 'indicator' : 'indicatorPartial',
-          invisibleIcon: 'indicatorOff'
-        });
-      }
-
-      return groups;
-    }, {});
   }
 );

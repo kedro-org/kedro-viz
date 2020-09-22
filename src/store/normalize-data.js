@@ -26,16 +26,11 @@ export const createInitialPipelineState = () => ({
     hovered: null
   },
   nodeType: {
-    ids: ['tag', 'task', 'data', 'parameters'],
+    ids: ['task', 'data', 'parameters'],
     name: {
       data: 'Datasets',
       task: 'Nodes',
-      parameters: 'Parameters',
-      tag: 'Tags'
-    },
-    section: {
-      Categories: ['tag'],
-      Elements: ['task', 'data', 'parameters']
+      parameters: 'Parameters'
     },
     disabled: {}
   },
