@@ -16,10 +16,6 @@
   }
 
   .pipeline-nodelist__children {
-    &--open {
-      display: block;
-    }
-
     &--closed {
       display: none;
     }

@@ -8,11 +8,6 @@
     box-shadow: 0 14px 18px $color-bg-dark-3;
   }
 
-  .pipeline-nodelist-search-inner {
-    margin-bottom: -6px;
-    padding: 2px $sidebar-padding 6px $sidebar-padding;
-  }
-
   .kui-searchbar,
   .kui-input-wrapper {
     max-width: none;
@@ -106,4 +101,9 @@
   .kui-input__line:after {
     display: none;
   }
+}
+
+.pipeline-nodelist-search-inner {
+  margin-bottom: -6px;
+  padding: 2px $sidebar-padding 6px $sidebar-padding;
 }
