@@ -139,8 +139,8 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
  * @return {number} Comparison result
  */
 export const getFilteredNodeItems = createSelector(
-  [getFilteredNodes, state => state.nodeActive, state => state.nodeSelected],
-  ({ filteredNodes }, nodeActive, nodeSelected) => {
+  [getFilteredNodes, state => state.nodeSelected],
+  ({ filteredNodes }, nodeSelected) => {
     const result = {};
 
     for (const type of Object.keys(filteredNodes)) {
@@ -152,7 +152,7 @@ export const getFilteredNodeItems = createSelector(
             ...node,
             visibleIcon: 'visible',
             invisibleIcon: 'invisible',
-            active: nodeActive[node.id],
+            active: undefined,
             selected: nodeSelected[node.id],
             faded: node.disabled_node || disabled,
             visible: !disabled && checked,

@@ -1,7 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import NodeIcon from '../icons/node-icon';
 import icons from '../icons';
+import { getNodeActive } from '../../selectors/nodes';
 
 const NodeListRow = ({
   active,
@@ -89,4 +91,12 @@ const NodeListRow = ({
   );
 };
 
-export default NodeListRow;
+export const mapStateToProps = (state, ownProps) => ({
+  active:
+    typeof ownProps.active !== 'undefined'
+      ? ownProps.active
+      : getNodeActive(state)[ownProps.id],
+  ...ownProps
+});
+
+export default connect(mapStateToProps)(NodeListRow);

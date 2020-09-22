@@ -7,11 +7,7 @@ import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { getNodeSections, getNodeTypes } from '../../selectors/node-types';
 import { getTagData } from '../../selectors/tags';
-import {
-  getGroupedNodes,
-  getNodeActive,
-  getNodeSelected
-} from '../../selectors/nodes';
+import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import {
   toggleNodeClicked,
   toggleNodeHovered,
@@ -27,14 +23,13 @@ const isTagType = type => type === 'tag';
 const NodeListSource = ({
   nodes,
   nodeSelected,
-  nodeActive,
   tags,
   tagsEnabled,
   sections,
   types,
   onToggleNodesDisabled,
-  onToggleNodeHovered,
-  onToggleNodeClicked,
+  onToggleNodeSelected,
+  onToggleNodeActive,
   onToggleTagActive,
   onToggleTagFilter,
   onToggleTypeDisabled
@@ -44,7 +39,6 @@ const NodeListSource = ({
     nodes,
     tags,
     tagsEnabled,
-    nodeActive,
     nodeSelected,
     searchValue
   });
@@ -55,9 +49,9 @@ const NodeListSource = ({
       onTagItemChange(item, item.checked);
     } else {
       if (item.disabled || nodeSelected[item.id]) {
-        onToggleNodeClicked(null);
+        onToggleNodeSelected(null);
       } else {
-        onToggleNodeClicked(item.id);
+        onToggleNodeSelected(item.id);
       }
     }
   };
@@ -67,7 +61,7 @@ const NodeListSource = ({
       onTagItemChange(item, checked);
     } else {
       if (checked) {
-        onToggleNodeHovered(null);
+        onToggleNodeActive(null);
       }
 
       onToggleNodesDisabled([item.id], checked);
@@ -78,7 +72,7 @@ const NodeListSource = ({
     if (isTagType(item.type)) {
       onToggleTagActive(item.id, true);
     } else if (item.visible) {
-      onToggleNodeHovered(item.id);
+      onToggleNodeActive(item.id);
     }
   };
 
@@ -86,7 +80,7 @@ const NodeListSource = ({
     if (isTagType(item.type)) {
       onToggleTagActive(item.id, false);
     } else if (item.visible) {
-      onToggleNodeHovered(null);
+      onToggleNodeActive(null);
     }
   };
 
@@ -117,14 +111,14 @@ const NodeListSource = ({
     }
 
     // Reset node selection
-    onToggleNodeClicked(null);
-    onToggleNodeHovered(null);
+    onToggleNodeSelected(null);
+    onToggleNodeActive(null);
   };
 
   // Deselect node on Escape key
   const handleKeyDown = event => {
     utils.handleKeyEvent(event.keyCode, {
-      escape: () => onToggleNodeClicked(null)
+      escape: () => onToggleNodeSelected(null)
     });
   };
   useEffect(() => {
@@ -153,7 +147,6 @@ export const mapStateToProps = state => ({
   tagsEnabled: state.tag.enabled,
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
-  nodeActive: getNodeActive(state),
   sections: getNodeSections(state),
   types: getNodeTypes(state)
 });
@@ -168,10 +161,10 @@ export const mapDispatchToProps = dispatch => ({
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));
   },
-  onToggleNodeClicked: nodeID => {
+  onToggleNodeSelected: nodeID => {
     dispatch(toggleNodeClicked(nodeID));
   },
-  onToggleNodeHovered: nodeID => {
+  onToggleNodeActive: nodeID => {
     dispatch(toggleNodeHovered(nodeID));
   },
   onToggleNodesDisabled: (nodeIDs, disabled) => {
