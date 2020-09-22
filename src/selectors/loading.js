@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
-const getGraphLoading = state => state.graph.loading;
-const getPipelineLoading = state => state.pipeline.loading;
+const getGraphLoading = state => state.loading.graph;
+const getPipelineLoading = state => state.loading.pipeline;
 const getFontLoading = state => !state.fontLoaded;
 
 /**

@@ -13,6 +13,10 @@ export const createInitialState = () => ({
   flags: Flags.defaults(),
   textLabels: true,
   theme: 'dark',
+  loading: {
+    graph: false,
+    pipeline: false
+  },
   visible: {
     labelBtn: true,
     layerBtn: true,

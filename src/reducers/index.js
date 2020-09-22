@@ -1,12 +1,13 @@
 import { combineReducers } from 'redux';
-import layer from './layers';
-import node from './nodes';
-import tag from './tags';
-import nodeType from './node-type';
-import visible from './visible';
-import pipeline from './pipeline';
 import flags from './flags';
 import graph from './graph';
+import layer from './layers';
+import loading from './loading';
+import node from './nodes';
+import nodeType from './node-type';
+import pipeline from './pipeline';
+import tag from './tags';
+import visible from './visible';
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 import {
   RESET_DATA,
@@ -52,6 +53,7 @@ const combinedReducer = combineReducers({
   flags,
   graph,
   layer,
+  loading,
   node,
   nodeType,
   pipeline,

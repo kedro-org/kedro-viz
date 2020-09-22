@@ -10,8 +10,7 @@ export const createInitialPipelineState = () => ({
     ids: [],
     name: {},
     default: null,
-    active: null,
-    loading: false
+    active: null
   },
   node: {
     ids: [],
