@@ -63,9 +63,7 @@
     }
 
     // Show unchecked indicators as solid blue when all unset
-    .pipeline-nodelist__row__visibility-icon--checked,
-    .pipeline-nodelist__row__visibility-icon--unchecked,
-    .pipeline-nodelist__row__visibility-icon--unset {
+    .pipeline-nodelist__row__visibility-icon {
       opacity: 1;
       fill: #00cefc;
       stroke: #00cefc;
@@ -81,17 +79,10 @@
     }
   }
 
-  // Hover states when unchecked or unset
+  // Bright indicator when checked or hovered
+  .pipeline-nodelist__row__visibility-icon--checked,
   .pipeline-nodelist__row__visibility-icon--unchecked:hover,
   .pipeline-nodelist__row__visibility-icon--unset:hover {
-    .kui-theme--light &,
-    .kui-theme--dark & {
-      opacity: 1;
-    }
-  }
-
-  // Bright indicator when checked
-  .pipeline-nodelist__row__visibility-icon--checked {
     .kui-theme--light &,
     .kui-theme--dark & {
       opacity: 1;
