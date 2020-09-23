@@ -24,16 +24,20 @@
     height: 20px;
   }
 
+  .kui-theme--dark & .kui-searchbar .kui-icon svg {
+    fill: rgba($color-light, 0.45);
+  }
+
   .kui-theme--light & .kui-searchbar .kui-icon svg {
-    fill: #8e979c;
+    fill: rgba($color-dark, 0.45);
   }
 
   .kui-theme--dark & .kui-searchbar.kui-searchbar--focused .kui-icon svg {
-    fill: #c8c8c8;
+    fill: rgba($color-light, 0.75);
   }
 
   .kui-theme--light & .kui-searchbar.kui-searchbar--focused .kui-icon svg {
-    fill: #262626;
+    fill: rgba($color-dark, 0.6);
   }
 
   .kui-input {
@@ -55,27 +59,27 @@
   }
 
   .kui-theme--dark & .kui-input__field::placeholder {
-    color: #8e979c;
+    color: rgba($color-light, 0.45);
   }
 
   .kui-theme--dark & .kui-input__field:hover::placeholder {
-    color: #d4d4d4;
+    color: rgba($color-light, 0.65);
   }
 
   .kui-theme--dark & .kui-input__field:focus::placeholder {
-    color: #fff;
+    color: $color-light;
   }
 
   .kui-theme--light & .kui-input__field::placeholder {
-    color: #747b7e;
+    color: rgba($color-dark, 0.55);
   }
 
   .kui-theme--light & .kui-input__field:hover::placeholder {
-    color: #262626;
+    color: rgba($color-dark, 0.75);
   }
 
   .kui-theme--light & .kui-input__field:focus::placeholder {
-    color: #262626;
+    color: rgba($color-dark, 0.9);
   }
 
   .kui-input__field {
@@ -91,11 +95,29 @@
   .kui-input__line:before {
     flex: 1;
     max-width: none;
-    background-color: #838d92;
+  }
+
+  .kui-theme--light & .kui-input__line:before {
+    background-color: rgba($color-dark, 0.3);
+  }
+
+  .kui-theme--light & .kui-searchbar--focused .kui-input__line:before {
+    background-color: rgba($color-dark, 0.55);
+  }
+
+  .kui-theme--dark & .kui-input__line:before {
+    background-color: rgba($color-light, 0.3);
+  }
+
+  .kui-theme--dark & .kui-searchbar--focused .kui-input__line:before {
+    background-color: rgba($color-light, 0.55);
   }
 
   .kui-input__line:not([data-value='']):before {
-    background-color: #3cbef9;
+    .kui-theme--light &,
+    .kui-theme--dark & {
+      background-color: $color-primary;
+    }
   }
 
   .kui-input__line:after {

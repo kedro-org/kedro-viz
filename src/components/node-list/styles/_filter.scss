@@ -65,8 +65,8 @@
     // Show unchecked indicators as solid blue when all unset
     .pipeline-nodelist__row__visibility-icon {
       opacity: 1;
-      fill: #00cefc;
-      stroke: #00cefc;
+      fill: $filter-indicator-on-light;
+      stroke: $filter-indicator-on-light;
     }
   }
 

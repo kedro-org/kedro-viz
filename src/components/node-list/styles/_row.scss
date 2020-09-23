@@ -111,32 +111,36 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 
+  .kui-theme--light & {
+    color: rgba($color-dark, 0.8);
+  }
+
   .kui-theme--dark & {
-    color: #dbddde;
+    color: rgba($color-light, 0.8);
   }
 
   .kui-theme--dark &--faded {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba($color-light, 0.55);
   }
 
   .kui-theme--light &--faded {
-    color: rgba(0, 0, 0, 0.55);
+    color: rgba($color-dark, 0.55);
   }
 
   .kui-theme--dark .pipeline-nodelist__row--disabled & {
-    color: rgba(255, 255, 255, 0.25);
+    color: rgba($color-light, 0.25);
   }
 
   .kui-theme--light .pipeline-nodelist__row--disabled & {
-    color: rgba(0, 0, 0, 0.25);
+    color: rgba($color-dark, 0.25);
   }
 
   .kui-theme--dark & b {
-    color: #00bafb;
+    color: $color-primary;
   }
 
   .kui-theme--light & b {
-    color: #0a6dd0;
+    color: darken($color-primary, 10%);
   }
 
   b {

@@ -6,42 +6,42 @@
   transition: fill 300ms ease, stroke 300ms ease;
 
   .kui-theme--light & {
-    fill: #45444f;
+    fill: rgba($color-dark, 0.7);
   }
 
   .kui-theme--dark & {
-    fill: #abaeb0;
+    fill: rgba($color-light, 0.7);
   }
 
   .kui-theme--light .pipeline-icon-toolbar__button:hover & {
-    fill: #000;
+    fill: $color-dark;
   }
 
   .kui-theme--dark .pipeline-icon-toolbar__button:hover & {
-    fill: #fff;
+    fill: $color-light;
   }
 }
 
 .pipeline-icon--stroke .pipeline-icon {
   .kui-theme--light & {
     fill: none;
-    stroke: #45444f;
+    stroke: rgba($color-dark, 0.7);
   }
 
   .kui-theme--dark & {
     fill: none;
-    stroke: #abaeb0;
+    stroke: rgba($color-light, 0.7);
   }
 }
 
 .pipeline-icon--stroke:hover .pipeline-icon {
   .kui-theme--light & {
     fill: none;
-    stroke: #000;
+    stroke: $color-dark;
   }
 
   .kui-theme--dark & {
     fill: none;
-    stroke: #fff;
+    stroke: $color-light;
   }
 }

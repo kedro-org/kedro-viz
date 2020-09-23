@@ -58,17 +58,24 @@
   }
 
   &:before {
-    color: #879197;
     font-size: 1.5em;
     content: '▾';
   }
 
+  .kui-theme--light &:before {
+    color: rgba($color-dark, 0.55);
+  }
+
+  .kui-theme--dark &:before {
+    color: rgba($color-light, 0.55);
+  }
+
   .kui-theme--light &:hover:before {
-    color: #000;
+    color: $color-dark;
   }
 
   .kui-theme--dark &:hover:before {
-    color: #fff;
+    color: $color-light;
   }
 
   &--alt {

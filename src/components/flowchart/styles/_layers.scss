@@ -75,10 +75,10 @@
   white-space: nowrap;
 
   .kui-theme--dark & {
-    color: #b5bdc2;
+    color: rgba($color-light, 0.65);
   }
 
   .kui-theme--light & {
-    color: #4e5861;
+    color: rgba($color-dark, 0.65);
   }
 }
