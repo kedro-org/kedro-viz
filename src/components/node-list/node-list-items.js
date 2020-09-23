@@ -173,18 +173,12 @@ export const getFilteredNodeItems = createSelector(
  * Get formatted list of sections
  * @return {array} List of sections
  */
-export const getSections = createSelector(() => {
-  const sections = [];
-
-  for (const name of Object.keys(sidebar)) {
-    sections.push({
-      name,
-      types: Object.values(sidebar[name])
-    });
-  }
-
-  return sections;
-});
+export const getSections = createSelector(() =>
+  Object.keys(sidebar).map(name => ({
+    name,
+    types: Object.values(sidebar[name])
+  }))
+);
 
 /**
  * Returns groups of items per type
