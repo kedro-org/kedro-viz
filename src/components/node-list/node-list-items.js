@@ -1,6 +1,11 @@
 import { createSelector } from 'reselect';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { sidebar } from '../../config';
+import IndicatorIcon from '../icons/indicator';
+import IndicatorOffIcon from '../icons/indicator-off';
+import IndicatorPartialIcon from '../icons/indicator-partial';
+import VisibleIcon from '../icons/visible';
+import InvisibleIcon from '../icons/invisible';
 const { escapeRegExp, getHighlightedText } = utils;
 
 /**
@@ -106,8 +111,8 @@ export const getFilteredTagItems = createSelector(
     tag: filteredTags.tag.map(tag => ({
       ...tag,
       type: 'tag',
-      visibleIcon: 'indicator',
-      invisibleIcon: 'indicatorOff',
+      visibleIcon: IndicatorIcon,
+      invisibleIcon: IndicatorOffIcon,
       active: false,
       selected: false,
       faded: false,
@@ -151,8 +156,8 @@ export const getFilteredNodeItems = createSelector(
           const disabled = node.disabled_tag || node.disabled_type;
           return {
             ...node,
-            visibleIcon: 'visible',
-            invisibleIcon: 'invisible',
+            visibleIcon: VisibleIcon,
+            invisibleIcon: InvisibleIcon,
             active: undefined,
             selected: nodeSelected[node.id],
             faded: node.disabled_node || disabled,
@@ -200,8 +205,8 @@ export const getGroups = createSelector(
         id: itemType.id,
         name: itemType.name,
         kind: 'toggle',
-        visibleIcon: 'visible',
-        invisibleIcon: 'invisible',
+        visibleIcon: VisibleIcon,
+        invisibleIcon: InvisibleIcon,
         checked: !itemType.disabled,
         count: itemsOfType.length,
         allUnset: itemsOfType.every(item => item.unset),
@@ -215,8 +220,8 @@ export const getGroups = createSelector(
           name: 'Tags',
           kind: 'filter',
           checked: !group.allUnset,
-          visibleIcon: group.allChecked ? 'indicator' : 'indicatorPartial',
-          invisibleIcon: 'indicatorOff'
+          visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
+          invisibleIcon: IndicatorOffIcon
         });
       }
     }

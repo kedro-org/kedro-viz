@@ -9,6 +9,11 @@ import {
   toggleTheme
 } from '../../actions';
 import IconButton from '../icon-button';
+import MenuIcon from '../icons/menu';
+import ThemeIcon from '../icons/theme';
+import LabelIcon from '../icons/label';
+import ExportIcon from '../icons/export';
+import LayersIcon from '../icons/layers';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import './primary-toolbar.css';
 
@@ -39,35 +44,35 @@ export const PrimaryToolbar = ({
           'pipeline-menu-button--inverse': !visible.sidebar
         })}
         onClick={() => onToggleSidebar(!visible.sidebar)}
-        icon="menu"
+        icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
       />
       <IconButton
         ariaLive="polite"
         ariaLabel={`Change to ${theme === 'light' ? 'dark' : 'light'} theme`}
         onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
-        icon="theme"
+        icon={ThemeIcon}
         labelText="Toggle theme"
         visible={visible.themeBtn}
       />
       <IconButton
         ariaLive="polite"
         onClick={() => onToggleTextLabels(!textLabels)}
-        icon="label"
+        icon={LabelIcon}
         labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
         visible={visible.labelBtn}
       />
       <IconButton
         ariaLabel="Export graph as SVG or PNG"
         onClick={() => onToggleExportModal(true)}
-        icon="export"
+        icon={ExportIcon}
         labelText="Export visualisation"
         visible={visible.exportBtn}
       />
       <IconButton
         ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
         onClick={() => onToggleLayers(!visibleLayers)}
-        icon="layers"
+        icon={LayersIcon}
         labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
         disabled={disableLayerBtn}
         visible={visible.layerBtn}

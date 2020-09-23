@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import NodeIcon from '../icons/node-icon';
-import icons from '../icons';
+import VisibleIcon from '../icons/visible';
+import InvisibleIcon from '../icons/invisible';
 import { getNodeActive } from '../../selectors/nodes';
 
 const NodeListRow = ({
@@ -22,10 +23,10 @@ const NodeListRow = ({
   onClick,
   selected,
   type,
-  visibleIcon = 'visible',
-  invisibleIcon = 'invisible'
+  visibleIcon = VisibleIcon,
+  invisibleIcon = InvisibleIcon
 }) => {
-  const VisibilityIcon = checked ? icons[visibleIcon] : icons[invisibleIcon];
+  const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
 
   return (
     <div

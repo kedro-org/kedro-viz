@@ -3,6 +3,10 @@ import { connect } from 'react-redux';
 import { toggleMiniMap, updateZoom } from '../../actions';
 import { getChartZoom } from '../../selectors/layout';
 import IconButton from '../icon-button';
+import MapIcon from '../icons/map';
+import PlusIcon from '../icons/plus';
+import MinusIcon from '../icons/minus';
+import ResetIcon from '../icons/reset';
 import './minimap-toolbar.css';
 
 /**
@@ -20,7 +24,7 @@ export const MiniMapToolbar = ({
     <>
       <ul className="pipeline-minimap-toolbar kedro">
         <IconButton
-          icon="map"
+          icon={MapIcon}
           className={
             'pipeline-minimap-button pipeline-icon--stroke pipeline-minimap-button--map'
           }
@@ -31,7 +35,7 @@ export const MiniMapToolbar = ({
           active={visible.miniMap}
         />
         <IconButton
-          icon="plus"
+          icon={PlusIcon}
           className={
             'pipeline-minimap-button pipeline-icon--stroke pipeline-minimap-button--zoom-in'
           }
@@ -42,7 +46,7 @@ export const MiniMapToolbar = ({
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 1.3))}
         />
         <IconButton
-          icon="minus"
+          icon={MinusIcon}
           className={
             'pipeline-minimap-button pipeline-icon--stroke pipeline-minimap-button--zoom-out'
           }
@@ -53,7 +57,7 @@ export const MiniMapToolbar = ({
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 0.7))}
         />
         <IconButton
-          icon="reset"
+          icon={ResetIcon}
           className={'pipeline-minimap-button pipeline-minimap-button--reset'}
           ariaLabel={'Reset zoom'}
           labelText={'Reset zoom'}

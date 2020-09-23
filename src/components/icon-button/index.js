@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import icons from '../icons';
 import './icon-button.css';
 
 /**
@@ -20,7 +19,7 @@ const IconButton = ({
   visible,
   active
 }) => {
-  const Icon = icons[icon];
+  const Icon = icon;
 
   return visible ? (
     <li>
@@ -34,7 +33,7 @@ const IconButton = ({
         disabled={disabled}
         onClick={onClick}>
         <span className="pipeline-toolbar__label">{labelText}</span>
-        <Icon className={`pipeline-icon pipeline-icon-${icon}`} />
+        {Icon && <Icon className={'pipeline-icon'} />}
       </button>
     </li>
   ) : null;
@@ -44,7 +43,7 @@ IconButton.propTypes = {
   ariaLabel: PropTypes.string,
   ariaLive: PropTypes.string,
   disabled: PropTypes.bool,
-  icon: PropTypes.string,
+  icon: PropTypes.func,
   labelText: PropTypes.string,
   onClick: PropTypes.func,
   visible: PropTypes.bool,
@@ -55,7 +54,7 @@ IconButton.defaultProps = {
   ariaLabel: null,
   ariaLive: null,
   disabled: false,
-  icon: 'label',
+  icon: null,
   labelText: null,
   onClick: null,
   visible: true,
