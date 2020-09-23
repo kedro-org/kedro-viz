@@ -30,13 +30,6 @@
     }
   }
 
-  // Always show row parent text
-  .pipeline-nodelist__heading
-    > .pipeline-nodelist__row
-    .pipeline-nodelist__row__text {
-    opacity: 1;
-  }
-
   // Fade row text when unchecked
   .pipeline-nodelist__row--unchecked .pipeline-nodelist__row__text {
     opacity: 0.55;
