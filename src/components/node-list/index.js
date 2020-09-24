@@ -55,7 +55,7 @@ const NodeListProvider = ({
     if (isTagType(item.type)) {
       onTagItemChange(item, item.checked);
     } else {
-      if (item.disabled || nodeSelected[item.id]) {
+      if (item.faded || item.selected) {
         onToggleNodeSelected(null);
       } else {
         onToggleNodeSelected(item.id);
