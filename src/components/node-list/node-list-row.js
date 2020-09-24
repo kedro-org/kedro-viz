@@ -93,11 +93,11 @@ const NodeListRow = ({
 };
 
 export const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
   active:
     typeof ownProps.active !== 'undefined'
       ? ownProps.active
-      : getNodeActive(state)[ownProps.id],
-  ...ownProps
+      : getNodeActive(state)[ownProps.id]
 });
 
 export default connect(mapStateToProps)(NodeListRow);
