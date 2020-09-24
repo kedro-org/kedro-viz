@@ -40,9 +40,13 @@ export const PrimaryToolbar = ({
     <ul className="pipeline-primary-toolbar kedro">
       <IconButton
         ariaLabel={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
-        className={classnames('pipeline-menu-button', {
-          'pipeline-menu-button--inverse': !visible.sidebar
-        })}
+        className={classnames(
+          'pipeline-menu-button',
+          'pipeline-menu-button--menu',
+          {
+            'pipeline-menu-button--inverse': !visible.sidebar
+          }
+        )}
         onClick={() => onToggleSidebar(!visible.sidebar)}
         icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
@@ -50,6 +54,7 @@ export const PrimaryToolbar = ({
       <IconButton
         ariaLive="polite"
         ariaLabel={`Change to ${theme === 'light' ? 'dark' : 'light'} theme`}
+        className={'pipeline-menu-button--theme'}
         onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
         icon={ThemeIcon}
         labelText="Toggle theme"
@@ -57,6 +62,7 @@ export const PrimaryToolbar = ({
       />
       <IconButton
         ariaLive="polite"
+        className={'pipeline-menu-button--labels'}
         onClick={() => onToggleTextLabels(!textLabels)}
         icon={LabelIcon}
         labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
@@ -64,6 +70,7 @@ export const PrimaryToolbar = ({
       />
       <IconButton
         ariaLabel="Export graph as SVG or PNG"
+        className={'pipeline-menu-button--export'}
         onClick={() => onToggleExportModal(true)}
         icon={ExportIcon}
         labelText="Export visualisation"
@@ -71,6 +78,7 @@ export const PrimaryToolbar = ({
       />
       <IconButton
         ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
+        className={'pipeline-menu-button--layers'}
         onClick={() => onToggleLayers(!visibleLayers)}
         icon={LayersIcon}
         labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}

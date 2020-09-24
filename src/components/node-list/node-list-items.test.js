@@ -1,4 +1,5 @@
-import getFilteredNodes, {
+import {
+  getFilteredNodes,
   getNodeIDs,
   highlightMatch,
   nodeMatchesSearch,

@@ -235,7 +235,6 @@ describe('NodeList', () => {
         task: nodeList
       }),
       nodeSelected: expect.any(Object),
-      nodeActive: expect.any(Object),
       sections: expect.any(Array),
       types: expect.any(Array)
     });
