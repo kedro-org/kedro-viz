@@ -3,6 +3,9 @@
   display: flex;
   align-items: center;
 
+  // force gpu layers to avoid drawing lag on scroll
+  transform: translate(0, 0);
+
   &--active,
   &--visible:hover {
     .kui-theme--light & {
