@@ -3,10 +3,17 @@ import {
   getNodeIDs,
   highlightMatch,
   nodeMatchesSearch,
-  filterNodes
+  filterNodes,
+  getFilteredTags,
+  getFilteredTagItems,
+  getSections,
+  getGroups,
+  getFilteredItems
 } from './node-list-items';
 import { mockState } from '../../utils/state.mock';
 import { getGroupedNodes } from '../../selectors/nodes';
+import { getNodeTypes } from '../../selectors/node-types';
+import { getTagData } from '../../selectors/tags';
 
 const ungroupNodes = groupedNodes =>
   Object.keys(groupedNodes).reduce(
@@ -43,6 +50,173 @@ describe('node-list-selectors', () => {
         nodeID => {
           expect(nodeID).toEqual(expect.stringMatching(searchValue));
         }
+      );
+    });
+  });
+
+  describe('getFilteredTags', () => {
+    const tags = getTagData(mockState.animals);
+    const searchValue = 'g';
+    const filteredTags = getFilteredTags({ tags, searchValue }).tag;
+
+    it('returns expected number of tags', () => {
+      expect(filteredTags.length).not.toBe(tags.length);
+      expect(filteredTags).toHaveLength(2);
+    });
+
+    test.each(filteredTags.map(tag => tag.name))(
+      `tag name "%s" contains search term "${searchValue}"`,
+      name => {
+        expect(name).toEqual(expect.stringMatching(searchValue));
+      }
+    );
+
+    test.each(filteredTags.map(tag => tag.highlightedLabel))(
+      `tag label "%s" contains highlighted search term "<b>${searchValue}</b>"`,
+      name => {
+        expect(name).toEqual(expect.stringMatching(`<b>${searchValue}</b>`));
+      }
+    );
+  });
+
+  describe('getFilteredTagItems', () => {
+    const tags = getTagData(mockState.animals);
+    const searchValue = 'g';
+    const filteredTagItems = getFilteredTagItems({
+      tags,
+      searchValue,
+      tagsEnabled: {}
+    }).tag;
+
+    const tagItems = expect.arrayContaining([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: expect.any(String),
+        highlightedLabel: expect.any(String),
+        type: expect.any(String),
+        visibleIcon: expect.any(Function),
+        invisibleIcon: expect.any(Function),
+        active: expect.any(Boolean),
+        selected: expect.any(Boolean),
+        faded: expect.any(Boolean),
+        visible: expect.any(Boolean),
+        disabled: expect.any(Boolean),
+        unset: expect.any(Boolean),
+        checked: expect.any(Boolean)
+      })
+    ]);
+
+    it('filters expected number of items', () => {
+      expect(filteredTagItems.length).not.toBe(tags.length);
+      expect(filteredTagItems).toHaveLength(2);
+    });
+
+    it('returns items of the correct format', () => {
+      expect(filteredTagItems).toEqual(tagItems);
+    });
+
+    it('returns items for each tag', () => {
+      filteredTagItems.forEach((tagItem, index) => {
+        expect(tagItem.name).toEqual(tags[index].name);
+        expect(tagItem.id).toEqual(tags[index].id);
+      });
+    });
+  });
+
+  describe('getSections', () => {
+    const sections = getSections();
+
+    const section = expect.arrayContaining([
+      expect.objectContaining({
+        name: expect.any(String),
+        types: expect.any(Array)
+      })
+    ]);
+
+    it('returns sections of the correct format', () => {
+      expect(sections).toEqual(section);
+    });
+  });
+
+  describe('getFilteredItems', () => {
+    const searchValue = 'a';
+
+    const filteredItems = getFilteredItems({
+      nodes: getGroupedNodes(mockState.animals),
+      tags: getTagData(mockState.animals),
+      tagsEnabled: {},
+      nodeSelected: {},
+      searchValue
+    });
+
+    const items = expect.arrayContaining([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: expect.any(String),
+        highlightedLabel: expect.any(String),
+        type: expect.any(String),
+        visibleIcon: expect.any(Function),
+        invisibleIcon: expect.any(Function),
+        faded: expect.any(Boolean),
+        visible: expect.any(Boolean),
+        disabled: expect.any(Boolean),
+        unset: expect.any(Boolean),
+        checked: expect.any(Boolean)
+      })
+    ]);
+
+    it('filters expected number of items', () => {
+      expect(filteredItems.task).toHaveLength(2);
+      expect(filteredItems.data).toHaveLength(6);
+      expect(filteredItems.parameters).toHaveLength(2);
+      expect(filteredItems.tag).toHaveLength(2);
+    });
+
+    it('returns items for each type in the correct format', () => {
+      expect(filteredItems).toEqual(
+        expect.objectContaining({
+          task: items,
+          data: items,
+          parameters: items,
+          tag: items
+        })
+      );
+    });
+  });
+
+  describe('getGroups', () => {
+    const types = getNodeTypes(mockState.animals);
+    const items = getFilteredItems({
+      nodes: getGroupedNodes(mockState.animals),
+      tags: getTagData(mockState.animals),
+      tagsEnabled: {},
+      nodeSelected: {},
+      searchValue: ''
+    });
+
+    const groups = getGroups({ types, items });
+
+    const groupType = expect.objectContaining({
+      id: expect.any(String),
+      name: expect.any(String),
+      type: expect.any(Object),
+      visibleIcon: expect.any(Function),
+      invisibleIcon: expect.any(Function),
+      kind: expect.any(String),
+      count: expect.any(Number),
+      allUnset: expect.any(Boolean),
+      allChecked: expect.any(Boolean),
+      checked: expect.any(Boolean)
+    });
+
+    it('returns groups for each type in the correct format', () => {
+      expect(groups).toEqual(
+        expect.objectContaining({
+          task: groupType,
+          data: groupType,
+          parameters: groupType,
+          tag: groupType
+        })
       );
     });
   });
