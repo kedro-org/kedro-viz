@@ -28,11 +28,12 @@ export const NodeListGroup = ({
     )}>
     <h3 className="pipeline-nodelist__heading">
       <NodeListRow
+        id={id}
+        kind={kind}
+        name={name}
+        label={`${name} <i>${childCount}</i>`}
         unset={unset}
         checked={checked}
-        id={id}
-        label={`${name} <i>${childCount}</i>`}
-        name={name}
         visibleIcon={visibleIcon}
         invisibleIcon={invisibleIcon}
         onChange={e => {

@@ -17,6 +17,7 @@ const NodeListRow = ({
   id,
   label,
   name,
+  kind,
   onMouseEnter,
   onMouseLeave,
   onChange,
@@ -30,18 +31,22 @@ const NodeListRow = ({
 
   return (
     <div
-      className={classnames('pipeline-nodelist__row kedro', {
-        'pipeline-nodelist__row--visible': visible,
-        'pipeline-nodelist__row--active': active,
-        'pipeline-nodelist__row--selected': selected,
-        'pipeline-nodelist__row--disabled': disabled,
-        'pipeline-nodelist__row--unchecked': !checked
-      })}
+      className={classnames(
+        'pipeline-nodelist__row kedro',
+        `pipeline-nodelist__row--is-${kind}`,
+        {
+          'pipeline-nodelist__row--visible': visible,
+          'pipeline-nodelist__row--active': active,
+          'pipeline-nodelist__row--selected': selected,
+          'pipeline-nodelist__row--disabled': disabled,
+          'pipeline-nodelist__row--unchecked': !checked
+        }
+      )}
       title={name}
       onMouseEnter={visible ? onMouseEnter : null}
       onMouseLeave={visible ? onMouseLeave : null}>
       <button
-        className="pipeline-nodelist__row__text"
+        className={`pipeline-nodelist__row__text pipeline-nodelist__row__text--is-${kind}`}
         onClick={onClick}
         onFocus={onMouseEnter}
         onBlur={onMouseLeave}
@@ -67,7 +72,9 @@ const NodeListRow = ({
         />
       </button>
       {children}
-      <label htmlFor={id} className="pipeline-nodelist__row__visibility">
+      <label
+        htmlFor={id}
+        className={`pipeline-nodelist__row__visibility pipeline-nodelist__row__visibility--is-${kind}`}>
         <input
           id={id}
           className="pipeline-nodelist__row__checkbox"
@@ -81,6 +88,7 @@ const NodeListRow = ({
           aria-label={name}
           className={classnames(
             'pipeline-nodelist__row__icon pipeline-nodelist__row__visibility-icon',
+            `pipeline-nodelist__row__visibility-icon--is-${kind}`,
             {
               'pipeline-nodelist__row__visibility-icon--checked': checked,
               'pipeline-nodelist__row__visibility-icon--unchecked': !checked,

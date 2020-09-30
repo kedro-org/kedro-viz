@@ -52,6 +52,7 @@ const NodeListGroups = ({
                   <li key={item.id}>
                     <NodeListRow
                       id={item.id}
+                      kind={group.kind}
                       label={item.highlightedLabel}
                       name={item.name}
                       type={item.type}
