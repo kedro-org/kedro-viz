@@ -37,6 +37,7 @@ const NodeListRow = ({
         'pipeline-nodelist__row--disabled': disabled,
         'pipeline-nodelist__row--unchecked': !checked
       })}
+      title={name}
       onMouseEnter={visible ? onMouseEnter : null}
       onMouseLeave={visible ? onMouseLeave : null}>
       <button
@@ -97,7 +98,7 @@ export const mapStateToProps = (state, ownProps) => ({
   active:
     typeof ownProps.active !== 'undefined'
       ? ownProps.active
-      : getNodeActive(state)[ownProps.id]
+      : getNodeActive(state)[ownProps.id] || false
 });
 
 export default connect(mapStateToProps)(NodeListRow);

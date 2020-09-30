@@ -3,6 +3,7 @@ import NodeList, { mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
+import IndicatorPartialIcon from '../icons/indicator-partial';
 
 describe('NodeList', () => {
   it('renders without crashing', () => {
@@ -160,6 +161,87 @@ describe('NodeList', () => {
 
     afterAll(() => {
       wrapper.unmount();
+    });
+  });
+
+  describe('checkboxes on tag filter items', () => {
+    const checkboxByName = (wrapper, text) =>
+      wrapper.find(`.pipeline-nodelist__row__checkbox[name="${text}"]`);
+
+    const rowByName = (wrapper, text) =>
+      wrapper.find(`.pipeline-nodelist__row[title="${text}"]`);
+
+    const changeRows = (wrapper, names, checked) =>
+      names.forEach(name =>
+        checkboxByName(wrapper, name).simulate('change', {
+          target: { checked }
+        })
+      );
+
+    const enabledElements = wrapper =>
+      wrapper
+        .find('.pipeline-nodelist__item--is-toggle .pipeline-nodelist--nested')
+        .find('.pipeline-nodelist__row:not(.pipeline-nodelist__row--disabled)')
+        .map(row => row.prop('title'));
+
+    const tagItem = wrapper =>
+      wrapper.find('.pipeline-nodelist__item--type-tag');
+
+    const partialIcon = wrapper => tagItem(wrapper).find(IndicatorPartialIcon);
+
+    it('selecting tags enables only elements with given tags', () => {
+      const wrapper = setup.mount(<NodeList />);
+
+      changeRows(wrapper, ['huge'], true);
+      expect(enabledElements(wrapper)).toEqual(['whale']);
+      changeRows(wrapper, ['huge', 'small'], true);
+
+      expect(enabledElements(wrapper)).toEqual([
+        'salmon',
+        'trout',
+        'cat',
+        'dog',
+        'weasel',
+        'whale',
+        'parameters_rabbit'
+      ]);
+    });
+
+    it('adds a class to tag group item when all tags unset', () => {
+      const wrapper = setup.mount(<NodeList />);
+      const unsetClass = 'pipeline-nodelist__item--all-unset';
+
+      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
+      changeRows(wrapper, ['huge'], true);
+      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(false);
+      changeRows(wrapper, ['huge'], false);
+      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
+    });
+
+    it('adds a class to the row when a tag row unchecked', () => {
+      const wrapper = setup.mount(<NodeList />);
+      const uncheckedClass = 'pipeline-nodelist__row--unchecked';
+
+      expect(rowByName(wrapper, 'huge').hasClass(uncheckedClass)).toBe(true);
+      changeRows(wrapper, ['huge'], true);
+      expect(rowByName(wrapper, 'huge').hasClass(uncheckedClass)).toBe(false);
+      changeRows(wrapper, ['huge'], false);
+      expect(rowByName(wrapper, 'huge').hasClass(uncheckedClass)).toBe(true);
+    });
+
+    it('shows as partially selected when at least one but not all tags selected', () => {
+      const wrapper = setup.mount(<NodeList />);
+
+      // No tags selected
+      expect(partialIcon(wrapper)).toHaveLength(0);
+
+      // Some tags selected
+      changeRows(wrapper, ['huge'], true);
+      expect(partialIcon(wrapper)).toHaveLength(1);
+
+      // All tags selected
+      changeRows(wrapper, ['huge', 'large', 'medium', 'small'], true);
+      expect(partialIcon(wrapper)).toHaveLength(0);
     });
   });
 

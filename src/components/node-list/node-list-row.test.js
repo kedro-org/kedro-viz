@@ -1,5 +1,5 @@
 import React from 'react';
-import NodeListRow from './node-list-row';
+import NodeListRow, { mapStateToProps } from './node-list-row';
 import { getNodeData } from '../../selectors/nodes';
 import { setup, mockState } from '../../utils/state.mock';
 
@@ -80,5 +80,12 @@ describe('NodeListRow', () => {
       checkbox().simulate('change', { target: { checked: false } });
       expect(props.onChange.mock.calls.length).toEqual(1);
     });
+  });
+
+  it('maps state to props', () => {
+    const expectedResult = expect.objectContaining({
+      active: expect.any(Boolean)
+    });
+    expect(mapStateToProps(mockState.animals, {})).toEqual(expectedResult);
   });
 });
