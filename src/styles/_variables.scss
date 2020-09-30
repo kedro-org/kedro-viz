@@ -26,7 +26,9 @@ $color-bg-dark-alt: $color-light;
 
 $sidebar-padding: 1.8em;
 
-// Also set in src/config.js:
+// These values are used in both SCSS and JS, and we don't have variable-sharing
+// across Sass and JavaScript, so they're defined in two places. If you update their
+// value here, please also update their corresponding value in src/config.js
 $sidebar-width-open: 400px;
 $sidebar-width-closed: 56px;
 $sidebar-breakpoint: 700px;

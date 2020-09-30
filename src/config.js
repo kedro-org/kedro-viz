@@ -7,7 +7,7 @@ export const localStorageName = 'KedroViz';
 export const sidebarBreakpoint = 700;
 export const sidebarWidth = {
   open: 400,
-  closed: 60
+  closed: 56
 };
 
 export const flags = {
