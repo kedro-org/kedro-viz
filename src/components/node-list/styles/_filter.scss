@@ -3,7 +3,7 @@
 @import '../../../styles/variables';
 @import './variables';
 
-.kui-theme--dark .pipeline-nodelist__row__visibility-icon--is-filter {
+.kui-theme--dark .pipeline-nodelist__row__visibility-icon--kind-filter {
   &.pipeline-nodelist__row__visibility-icon--checked {
     fill: $filter-indicator-on-light;
     stroke: $filter-indicator-on-light;
@@ -16,7 +16,7 @@
   }
 }
 
-.kui-theme--light .pipeline-nodelist__row__visibility-icon--is-filter {
+.kui-theme--light .pipeline-nodelist__row__visibility-icon--kind-filter {
   &.pipeline-nodelist__row__visibility-icon--checked {
     fill: $filter-indicator-on-dark;
     stroke: $filter-indicator-on-dark;
@@ -30,33 +30,33 @@
 }
 
 // Fade row text when unchecked
-.pipeline-nodelist__row--unchecked .pipeline-nodelist__row__text--is-filter {
+.pipeline-nodelist__row--unchecked .pipeline-nodelist__row__text--kind-filter {
   opacity: 0.55;
 }
 
 // Brighter row text when unchecked and hovered
 .pipeline-nodelist__row--unchecked:hover
-  .pipeline-nodelist__row__text--is-filter {
+  .pipeline-nodelist__row__text--kind-filter {
   opacity: 0.8;
 }
 
 // Bright row text when all unset
 .pipeline-nodelist__item--all-unset
   .pipeline-nodelist__row--unchecked
-  .pipeline-nodelist__row__text--is-filter {
+  .pipeline-nodelist__row__text--kind-filter {
   opacity: 1;
 }
 
 // Hide all indicators when all unset
 .pipeline-nodelist__item--all-unset
-  .pipeline-nodelist__row__visibility--is-filter {
+  .pipeline-nodelist__row__visibility--kind-filter {
   opacity: 0;
 }
 
 // Show indicator when all unset and row hovered
 .pipeline-nodelist__item--all-unset
   .pipeline-nodelist__row:hover
-  .pipeline-nodelist__row__visibility--is-filter {
+  .pipeline-nodelist__row__visibility--kind-filter {
   opacity: 0.55;
 
   &:hover {
@@ -67,14 +67,14 @@
 // Show unchecked indicators as solid blue when all unset
 .pipeline-nodelist__item--all-unset
   .pipeline-nodelist__row:hover
-  .pipeline-nodelist__row__visibility-icon--is-filter {
+  .pipeline-nodelist__row__visibility-icon--kind-filter {
   opacity: 1;
   fill: $filter-indicator-on-light;
   stroke: $filter-indicator-on-light;
 }
 
-.kui-theme--light .pipeline-nodelist__row__visibility-icon--is-filter,
-.kui-theme--dark .pipeline-nodelist__row__visibility-icon--is-filter {
+.kui-theme--light .pipeline-nodelist__row__visibility-icon--kind-filter,
+.kui-theme--dark .pipeline-nodelist__row__visibility-icon--kind-filter {
   // Fade indicator when unchecked or unset
   &.pipeline-nodelist__row__visibility-icon--unchecked,
   &.pipeline-nodelist__row__visibility-icon--unset {

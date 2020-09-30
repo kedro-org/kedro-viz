@@ -33,7 +33,7 @@ const NodeListRow = ({
     <div
       className={classnames(
         'pipeline-nodelist__row kedro',
-        `pipeline-nodelist__row--is-${kind}`,
+        `pipeline-nodelist__row--kind-${kind}`,
         {
           'pipeline-nodelist__row--visible': visible,
           'pipeline-nodelist__row--active': active,
@@ -46,7 +46,10 @@ const NodeListRow = ({
       onMouseEnter={visible ? onMouseEnter : null}
       onMouseLeave={visible ? onMouseLeave : null}>
       <button
-        className={`pipeline-nodelist__row__text pipeline-nodelist__row__text--is-${kind}`}
+        className={classnames(
+          'pipeline-nodelist__row__text',
+          `pipeline-nodelist__row__text--kind-${kind}`
+        )}
         onClick={onClick}
         onFocus={onMouseEnter}
         onBlur={onMouseLeave}
@@ -55,10 +58,14 @@ const NodeListRow = ({
         {type && (
           <NodeIcon
             className={classnames(
-              'pipeline-nodelist__row__type-icon pipeline-nodelist__row__icon',
+              'pipeline-nodelist__row__type-icon',
+              'pipeline-nodelist__row__icon',
               {
                 'pipeline-nodelist__row__type-icon--faded': faded,
-                'pipeline-nodelist__row__type-icon--nested': !children
+                'pipeline-nodelist__row__type-icon--disabled': disabled,
+                'pipeline-nodelist__row__type-icon--nested': !children,
+                'pipeline-nodelist__row__type-icon--active': active,
+                'pipeline-nodelist__row__type-icon--selected': selected
               }
             )}
             type={type}
@@ -66,7 +73,8 @@ const NodeListRow = ({
         )}
         <span
           className={classnames('pipeline-nodelist__row__label', {
-            'pipeline-nodelist__row__label--faded': faded
+            'pipeline-nodelist__row__label--faded': faded,
+            'pipeline-nodelist__row__label--disabled': disabled
           })}
           dangerouslySetInnerHTML={{ __html: label }}
         />
@@ -74,7 +82,14 @@ const NodeListRow = ({
       {children}
       <label
         htmlFor={id}
-        className={`pipeline-nodelist__row__visibility pipeline-nodelist__row__visibility--is-${kind}`}>
+        className={classnames(
+          'pipeline-nodelist__row__visibility',
+          `pipeline-nodelist__row__visibility--kind-${kind}`,
+          {
+            'pipeline-nodelist__row__visibility--disabled': disabled,
+            'pipeline-nodelist__row__visibility--selected': selected
+          }
+        )}>
         <input
           id={id}
           className="pipeline-nodelist__row__checkbox"
@@ -87,8 +102,9 @@ const NodeListRow = ({
         <VisibilityIcon
           aria-label={name}
           className={classnames(
-            'pipeline-nodelist__row__icon pipeline-nodelist__row__visibility-icon',
-            `pipeline-nodelist__row__visibility-icon--is-${kind}`,
+            'pipeline-nodelist__row__icon',
+            'pipeline-nodelist__row__visibility-icon',
+            `pipeline-nodelist__row__visibility-icon--kind-${kind}`,
             {
               'pipeline-nodelist__row__visibility-icon--checked': checked,
               'pipeline-nodelist__row__visibility-icon--unchecked': !checked,

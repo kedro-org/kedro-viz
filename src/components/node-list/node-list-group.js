@@ -21,7 +21,7 @@ export const NodeListGroup = ({
     className={classnames(
       'pipeline-nodelist__item',
       `pipeline-nodelist__item--type-${id}`,
-      `pipeline-nodelist__item--is-${kind}`,
+      `pipeline-nodelist__item--kind-${kind}`,
       {
         'pipeline-nodelist__item--all-unset': allUnset
       }

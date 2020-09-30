@@ -48,7 +48,7 @@
     fill: $color-text-dark;
   }
 
-  .pipeline-nodelist__row--disabled & {
+  &--disabled {
     opacity: 0.1;
   }
 }
@@ -65,9 +65,9 @@
     opacity: 0.2;
   }
 
+  &--active,
+  &--selected,
   .pipeline-nodelist__row--visible:hover &,
-  .pipeline-nodelist__row--active &,
-  .pipeline-nodelist__row--selected &,
   [data-whatintent='keyboard'] .pipeline-nodelist__row__text:focus & {
     opacity: 1;
 
@@ -130,11 +130,11 @@
     color: rgba($color-dark, 0.55);
   }
 
-  .kui-theme--dark .pipeline-nodelist__row--disabled & {
+  .kui-theme--dark &--disabled {
     color: rgba($color-light, 0.25);
   }
 
-  .kui-theme--light .pipeline-nodelist__row--disabled & {
+  .kui-theme--light &--disabled {
     color: rgba($color-dark, 0.25);
   }
 
@@ -164,11 +164,11 @@
   cursor: pointer;
 }
 
-.pipeline-nodelist__row--disabled .pipeline-nodelist__row__visibility {
+.pipeline-nodelist__row__visibility--disabled {
   display: none;
 }
 
-.pipeline-nodelist__row .pipeline-nodelist__row__visibility:before {
+.pipeline-nodelist__row__visibility:before {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -182,9 +182,7 @@
   pointer-events: none;
 }
 
-.kui-theme--light
-  .pipeline-nodelist__row
-  .pipeline-nodelist__row__visibility:before {
+.kui-theme--light .pipeline-nodelist__row__visibility:before {
   background: linear-gradient(
     90deg,
     rgba(0, 0, 0, 0) 0%,
@@ -192,9 +190,7 @@
   );
 }
 
-.kui-theme--dark
-  .pipeline-nodelist__row
-  .pipeline-nodelist__row__visibility:before {
+.kui-theme--dark .pipeline-nodelist__row__visibility:before {
   background: linear-gradient(
     90deg,
     rgba(0, 0, 0, 0) 0%,
@@ -202,8 +198,7 @@
   );
 }
 
-.pipeline-nodelist__row.pipeline-nodelist__row--selected
-  .pipeline-nodelist__row__visibility:before {
+.pipeline-nodelist__row__visibility--selected:before {
   opacity: 1;
 }
 

@@ -83,7 +83,9 @@ describe('NodeList', () => {
     const search = () => wrapper.find('.kui-input__field');
     const rows = () =>
       wrapper
-        .find('.pipeline-nodelist__item--is-toggle .pipeline-nodelist--nested')
+        .find(
+          '.pipeline-nodelist__item--kind-toggle .pipeline-nodelist--nested'
+        )
         .find('.pipeline-nodelist__row');
     const rowName = row =>
       row.find('.pipeline-nodelist__row__text').prop('title');
@@ -180,7 +182,9 @@ describe('NodeList', () => {
 
     const enabledElements = wrapper =>
       wrapper
-        .find('.pipeline-nodelist__item--is-toggle .pipeline-nodelist--nested')
+        .find(
+          '.pipeline-nodelist__item--kind-toggle .pipeline-nodelist--nested'
+        )
         .find('.pipeline-nodelist__row:not(.pipeline-nodelist__row--disabled)')
         .map(row => row.prop('title'));
 
