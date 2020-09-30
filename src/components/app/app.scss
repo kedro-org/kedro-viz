@@ -3,45 +3,30 @@
 //--- Reusable site-wide styles --//
 
 .pipeline-icon {
-  transition: fill 300ms ease, stroke 300ms ease;
+  opacity: 0.7;
+  transition: opacity 300ms ease;
 
   .kui-theme--light & {
-    fill: rgba($color-dark, 0.7);
-  }
-
-  .kui-theme--dark & {
-    fill: rgba($color-light, 0.7);
-  }
-
-  .kui-theme--light .pipeline-icon-toolbar__button:hover & {
     fill: $color-dark;
   }
 
-  .kui-theme--dark .pipeline-icon-toolbar__button:hover & {
+  .kui-theme--dark & {
     fill: $color-light;
   }
-}
 
-.pipeline-icon--stroke .pipeline-icon {
-  .kui-theme--light & {
-    fill: none;
-    stroke: rgba($color-dark, 0.7);
-  }
-
-  .kui-theme--dark & {
-    fill: none;
-    stroke: rgba($color-light, 0.7);
+  .pipeline-icon-toolbar__button:hover & {
+    opacity: 1;
   }
 }
 
-.pipeline-icon--stroke:hover .pipeline-icon {
+.pipeline-icon.pipeline-icon--stroke {
+  fill: none;
+
   .kui-theme--light & {
-    fill: none;
     stroke: $color-dark;
   }
 
   .kui-theme--dark & {
-    fill: none;
     stroke: $color-light;
   }
 }
