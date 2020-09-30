@@ -18,7 +18,7 @@ export const flags = {
   },
   pipelines: {
     description: 'Select from multiple pipelines',
-    default: false,
+    default: typeof jest !== undefined,
     icon: '🔀'
   }
 };
