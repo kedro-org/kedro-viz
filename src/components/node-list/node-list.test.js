@@ -180,13 +180,19 @@ describe('NodeList', () => {
         })
       );
 
-    const enabledElements = wrapper =>
+    const elements = wrapper =>
       wrapper
         .find(
           '.pipeline-nodelist__item--kind-toggle .pipeline-nodelist--nested'
         )
-        .find('.pipeline-nodelist__row:not(.pipeline-nodelist__row--disabled)')
-        .map(row => row.prop('title'));
+        .find('.pipeline-nodelist__row')
+        .map(row => [
+          row.prop('title'),
+          !row.hasClass('pipeline-nodelist__row--disabled')
+        ]);
+
+    const elementsEnabled = wrapper =>
+      elements(wrapper).filter(([_, enabled]) => enabled);
 
     const tagItem = wrapper =>
       wrapper.find('.pipeline-nodelist__item--type-tag');
@@ -197,17 +203,45 @@ describe('NodeList', () => {
       const wrapper = setup.mount(<NodeList />);
 
       changeRows(wrapper, ['huge'], true);
-      expect(enabledElements(wrapper)).toEqual(['whale']);
-      changeRows(wrapper, ['huge', 'small'], true);
+      expect(elementsEnabled(wrapper)).toEqual([['whale', true]]);
 
-      expect(enabledElements(wrapper)).toEqual([
-        'salmon',
-        'trout',
-        'cat',
-        'dog',
-        'weasel',
-        'whale',
-        'parameters_rabbit'
+      changeRows(wrapper, ['huge', 'small'], true);
+      expect(elementsEnabled(wrapper)).toEqual([
+        ['salmon', true],
+        ['trout', true],
+        ['cat', true],
+        ['dog', true],
+        ['weasel', true],
+        ['whale', true],
+        ['parameters_rabbit', true]
+      ]);
+    });
+
+    it('selecting a tag sorts elements by enabled first then alphabetical', () => {
+      const wrapper = setup.mount(<NodeList />);
+      changeRows(wrapper, ['medium'], true);
+
+      expect(elements(wrapper)).toEqual([
+        // Nodes (enabled)
+        ['shark', true],
+        // Nodes (disabled)
+        ['salmon', false],
+        ['trout', false],
+        // Datasets (enabled)
+        ['cat', true],
+        ['dog', true],
+        ['pig', true],
+        ['sheep', true],
+        // Datasets (disabled)
+        ['bear', false],
+        ['elephant', false],
+        ['giraffe', false],
+        ['horse', false],
+        ['weasel', false],
+        ['whale', false],
+        // Parameters
+        ['parameters', false],
+        ['parameters_rabbit', false]
       ]);
     });
 
