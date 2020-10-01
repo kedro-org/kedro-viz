@@ -18,8 +18,6 @@ import { saveState } from '../store/helpers';
  * @param {Object} props
  */
 export const prepareState = (...props) => {
-  // Set pipeline flag to true:
-  saveState({ flags: { pipelines: true } });
   const initialState = getInitialState(...props);
   const actions = [
     // Set fontLoaded = true:
