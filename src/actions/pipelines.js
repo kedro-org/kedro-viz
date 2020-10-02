@@ -56,11 +56,6 @@ const requiresSecondRequest = (flags, pipeline) => {
   return pipeline.active !== pipeline.default;
 };
 
-const setActivePipeline = (state, active) =>
-  Object.assign({}, state, {
-    pipeline: Object.assign({}, state.pipeline, { active })
-  });
-
 /**
  * Load pipeline data on initial page-load
  */
@@ -107,7 +102,7 @@ export function loadPipelineData(pipelineID) {
       });
       const data = await loadJsonData(url);
       let newState = preparePipelineState(data);
-      newState = setActivePipeline(newState, pipelineID);
+      newState.pipeline.active = pipelineID;
       dispatch(resetData(newState));
       dispatch(toggleLoading(false));
     } else {
