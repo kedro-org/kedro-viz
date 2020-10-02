@@ -77,11 +77,6 @@ export function loadInitialPipelineData() {
     const url = getUrl('main');
     const data = await loadJsonData(url);
     let newState = preparePipelineState(data);
-    if (!state.flags.pipelines) {
-      // Reset active pipeline if pipelines are disabled
-      // TODO: Delete this when removing flags.pipeline
-      newState = setActivePipeline(newState, null);
-    }
     if (requiresSecondRequest(state.flags, newState.pipeline)) {
       const url = getPipelineUrl(state.pipeline);
       const data = await loadJsonData(url);
