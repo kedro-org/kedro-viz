@@ -8,9 +8,7 @@ export const createInitialPipelineState = () => ({
   id: null,
   pipeline: {
     ids: [],
-    name: {},
-    default: null,
-    active: null
+    name: {}
   },
   node: {
     ids: [],
@@ -163,6 +161,10 @@ const addLayer = state => layer => {
  */
 const normalizeData = data => {
   const state = createInitialPipelineState();
+
+  if (data === 'json') {
+    state.asyncDataSource = true;
+  }
 
   if (!validateInput(data)) {
     return state;

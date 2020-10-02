@@ -41,7 +41,7 @@ const saveStateToLocalStorage = state => {
     textLabels: state.textLabels,
     theme: state.theme,
     visible: state.visible,
-    flag: state.flags
+    flags: state.flags
   });
 };
 

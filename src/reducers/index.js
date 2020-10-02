@@ -8,7 +8,6 @@ import nodeType from './node-type';
 import pipeline from './pipeline';
 import tag from './tags';
 import visible from './visible';
-import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 import {
   RESET_DATA,
   TOGGLE_TEXT_LABELS,
@@ -42,7 +41,7 @@ const createReducer = (initialState, type, key) => (
  * @return {Object} Updated(?) state
  */
 function resetDataReducer(state = {}, action) {
-  if (action.type === RESET_DATA || action.type === UPDATE_ACTIVE_PIPELINE) {
+  if (action.type === RESET_DATA) {
     return Object.assign({}, state, action.data);
   }
   return state;
@@ -60,6 +59,7 @@ const combinedReducer = combineReducers({
   tag,
   visible,
   // These props don't have any actions associated with them
+  asyncDataSource: createReducer(false),
   edge: createReducer({}),
   id: createReducer(null),
   // These props have very simple non-nested actions
@@ -71,6 +71,6 @@ const combinedReducer = combineReducers({
 });
 
 const rootReducer = (state, action) =>
-  resetDataReducer(combinedReducer(state, action), action);
+  combinedReducer(resetDataReducer(state, action), action);
 
 export default rootReducer;

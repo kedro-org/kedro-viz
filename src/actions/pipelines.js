@@ -1,6 +1,7 @@
-import { dataPath } from '../config';
+import { getUrl } from '../config';
 import loadJsonData from '../store/load-data';
 import { preparePipelineState } from '../store/initial-state';
+import { resetData } from './index';
 
 export const UPDATE_ACTIVE_PIPELINE = 'UPDATE_ACTIVE_PIPELINE';
 
@@ -8,11 +9,10 @@ export const UPDATE_ACTIVE_PIPELINE = 'UPDATE_ACTIVE_PIPELINE';
  * Update the actively-selected pipeline
  * @param {string} pipeline Pipeline ID
  */
-export function updateActivePipeline(pipeline, data) {
+export function updateActivePipeline(pipeline) {
   return {
     type: UPDATE_ACTIVE_PIPELINE,
-    pipeline,
-    data
+    pipeline
   };
 }
 
@@ -29,12 +29,68 @@ export function toggleLoading(loading) {
   };
 }
 
-const getUrl = (pipelineID, pipeline) => {
-  if (pipelineID === pipeline.default) {
-    return dataPath;
+/**
+ * Determine where to load data from
+ * @param {object} pipeline
+ * @param {boolean} useMain
+ */
+const getPipelineUrl = pipeline => {
+  if (pipeline.active === pipeline.default) {
+    return getUrl('main');
   }
-  return `./api/pipelines/${pipelineID}`;
+  return getUrl('pipeline', pipeline.active);
 };
+
+/**
+ * Check whether to make another async data request
+ * @param {object} pipeline
+ */
+const requiresSecondRequest = (flags, pipeline) => {
+  // Pipelines are disabled via flags
+  // TODO: Delete this line when removing flags.pipeline
+  if (!flags.pipelines) return false;
+  // Pipelines are not present in the data
+  if (!pipeline.ids.length || !pipeline.default) return false;
+  // There is no active pipeline set
+  if (!pipeline.active) return false;
+  return pipeline.active !== pipeline.default;
+};
+
+const setActivePipeline = (state, active) =>
+  Object.assign({}, state, {
+    pipeline: Object.assign({}, state.pipeline, { active })
+  });
+
+/**
+ * Load pipeline data on initial page-load
+ */
+export function loadInitialPipelineData() {
+  return async function(dispatch, getState) {
+    // Get a copy of the full state from the store
+    const state = getState();
+    // If data is passed synchronously then this process isn't necessary
+    if (!state.asyncDataSource) {
+      return;
+    }
+    // Load main data file
+    dispatch(toggleLoading(true));
+    const url = getUrl('main');
+    const data = await loadJsonData(url);
+    let newState = preparePipelineState(data);
+    if (!state.flags.pipelines) {
+      // Reset active pipeline if pipelines are disabled
+      // TODO: Delete this when removing flags.pipeline
+      newState = setActivePipeline(newState, null);
+    }
+    if (requiresSecondRequest(state.flags, newState.pipeline)) {
+      const url = getPipelineUrl(state.pipeline);
+      const data = await loadJsonData(url);
+      newState = preparePipelineState(data);
+    }
+    dispatch(resetData(newState));
+    dispatch(toggleLoading(false));
+  };
+}
 
 /**
  * Async action to calculate graph layout in a web worker
@@ -44,16 +100,23 @@ const getUrl = (pipelineID, pipeline) => {
  */
 export function loadPipelineData(pipelineID) {
   return async function(dispatch, getState) {
-    const { pipeline } = getState();
-    if (pipelineID === pipeline.active) {
+    const { asyncDataSource, pipeline } = getState();
+    if (pipelineID && pipelineID === pipeline.active) {
       return;
     }
-    dispatch(toggleLoading(true));
-    const url = getUrl(pipelineID, pipeline);
-    const data = await loadJsonData(url);
-    const newState = preparePipelineState({ data });
-    newState.pipeline.active = pipelineID;
-    dispatch(updateActivePipeline(pipelineID, newState));
-    return dispatch(toggleLoading(false));
+    if (asyncDataSource) {
+      dispatch(toggleLoading(true));
+      const url = getPipelineUrl({
+        default: pipeline.default,
+        active: pipelineID
+      });
+      const data = await loadJsonData(url);
+      let newState = preparePipelineState(data);
+      newState = setActivePipeline(newState, pipelineID);
+      dispatch(resetData(newState));
+      dispatch(toggleLoading(false));
+    } else {
+      dispatch(updateActivePipeline(pipelineID));
+    }
   };
 }
