@@ -78,7 +78,7 @@ export const overideInitialState = (state, props) => {
 
   // Use default pipeline if active pipeline from localStorage isn't recognised
   const pipeline = Object.assign({}, state.pipeline);
-  if (!pipeline.active || !pipeline.ids.includes(pipeline.active)) {
+  if (!state.asyncDataSource && !pipeline.ids.includes(pipeline.active)) {
     pipeline.active = state.pipeline.default;
   }
   return Object.assign({}, state, { flags, theme, visible, pipeline });
