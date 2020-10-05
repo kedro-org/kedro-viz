@@ -20,7 +20,7 @@ export const TOGGLE_PIPELINE_LOADING = 'TOGGLE_PIPELINE_LOADING';
 
 /**
  * Toggle whether to display the loading spinner
- * @param {boolean} loading
+ * @param {boolean} loading True if pipeline is still loading
  */
 export function toggleLoading(loading) {
   return {
@@ -31,8 +31,7 @@ export function toggleLoading(loading) {
 
 /**
  * Determine where to load data from
- * @param {object} pipeline
- * @param {boolean} useMain
+ * @param {object} pipeline Pipeline state
  */
 const getPipelineUrl = pipeline => {
   if (pipeline.active === pipeline.default) {
@@ -43,7 +42,7 @@ const getPipelineUrl = pipeline => {
 
 /**
  * Check whether to make another async data request
- * @param {object} pipeline
+ * @param {object} pipeline Pipeline state
  */
 const requiresSecondRequest = (flags, pipeline) => {
   // Pipelines are disabled via flags
@@ -67,19 +66,18 @@ export function loadInitialPipelineData() {
     if (!state.asyncDataSource) {
       return;
     }
-    // Load main data file
+    // Load 'main' data file
     dispatch(toggleLoading(true));
     const url = getUrl('main');
-    const data = await loadJsonData(url);
-    let newState = preparePipelineState(data);
+    let newState = await loadJsonData(url).then(preparePipelineState);
     // Use default pipeline if active pipeline from localStorage isn't recognised
     if (!newState.pipeline.ids.includes(newState.pipeline.active)) {
       newState.pipeline.active = newState.pipeline.default;
     }
+    // If the active pipeline isn't main then request data from new URL
     if (requiresSecondRequest(state.flags, newState.pipeline)) {
       const url = getPipelineUrl(state.pipeline);
-      const data = await loadJsonData(url);
-      newState = preparePipelineState(data);
+      newState = await loadJsonData(url).then(preparePipelineState);
     }
     dispatch(resetData(newState));
     dispatch(toggleLoading(false));
@@ -104,8 +102,7 @@ export function loadPipelineData(pipelineID) {
         default: pipeline.default,
         active: pipelineID
       });
-      const data = await loadJsonData(url);
-      let newState = preparePipelineState(data);
+      const newState = await loadJsonData(url).then(preparePipelineState);
       newState.pipeline.active = pipelineID;
       dispatch(resetData(newState));
       dispatch(toggleLoading(false));
