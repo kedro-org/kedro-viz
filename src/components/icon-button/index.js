@@ -10,6 +10,7 @@ import MapIcon from '../icons/map';
 import PlusIcon from '../icons/plus';
 import MinusIcon from '../icons/minus';
 import ResetIcon from '../icons/reset';
+import CopyIcon from '../icons/copy';
 import './icon-button.css';
 
 const icons = {
@@ -21,7 +22,8 @@ const icons = {
   map: MapIcon,
   plus: PlusIcon,
   minus: MinusIcon,
-  reset: ResetIcon
+  reset: ResetIcon,
+  copy: CopyIcon
 };
 
 /**
@@ -54,7 +56,9 @@ const IconButton = ({
         })}
         disabled={disabled}
         onClick={onClick}>
-        <span className="pipeline-toolbar__label">{labelText}</span>
+        {labelText && (
+          <span className="pipeline-toolbar__label">{labelText}</span>
+        )}
         <Icon className={`pipeline-icon pipeline-icon-${icon}`} />
       </button>
     </li>

@@ -4,6 +4,10 @@ export const fullDataPath = `/public${dataPath.substr(1)}`;
 export const localStorageName = 'KedroViz';
 
 // Also set in src/styles/_variables.scss:
+export const metaSidebarWidth = {
+  open: 400,
+  closed: 0
+};
 export const sidebarBreakpoint = 700;
 export const sidebarWidth = {
   open: 400,
@@ -20,5 +24,10 @@ export const flags = {
     description: 'Select from multiple pipelines',
     default: typeof jest !== undefined,
     icon: '🔀'
+  },
+  metadata: {
+    description: 'Show meta data panel',
+    default: false,
+    icon: '🔮'
   }
 };

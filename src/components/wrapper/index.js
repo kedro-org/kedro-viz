@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
+import MetaData from '../metadata';
 import ExportModal from '../export-modal';
 import LoadingIcon from '../icons/loading';
 import './wrapper.css';
@@ -17,6 +18,7 @@ export const Wrapper = ({ loading, theme }) => (
       'kui-theme--light': theme === 'light'
     })}>
     <Sidebar />
+    <MetaData />
     <div className="pipeline-wrapper">
       <FlowChart />
       <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />

@@ -2,7 +2,8 @@ import { createSelector } from 'reselect';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 import { getVisibleLayerIDs } from './disabled';
-import { sidebarBreakpoint, sidebarWidth } from '../config';
+import { getVisibleMetaSidebar } from '../selectors/metadata';
+import { sidebarBreakpoint, sidebarWidth, metaSidebarWidth } from '../config';
 
 const getNewgraphFlag = state => state.flags.newgraph;
 const getVisibleSidebar = state => state.visible.sidebar;
@@ -39,25 +40,33 @@ export const getSidebarWidth = (visibleSidebar, outerChartWidth) => {
 };
 
 /**
+ * Return the displayed width of the meta sidebar
+ */
+export const getMetaSidebarWidth = visibleMetaSidebar =>
+  visibleMetaSidebar ? metaSidebarWidth.open : metaSidebarWidth.closed;
+
+/**
  * Convert the DOMRect into an Object, mutate some of the properties,
  * and add some useful new ones
  */
 export const getChartSize = createSelector(
-  [getVisibleSidebar, state => state.chartSize],
-  (visibleSidebar, chartSize) => {
+  [getVisibleSidebar, getVisibleMetaSidebar, state => state.chartSize],
+  (visibleSidebar, visibleMetaSidebar, chartSize) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
       return {};
     }
-    const sidebarWidth = getSidebarWidth(visibleSidebar, width);
+    const currentSidebarWidth = getSidebarWidth(visibleSidebar, width);
+    const currentMetaWidth = getMetaSidebarWidth(visibleMetaSidebar);
     return {
       left,
       top,
       outerWidth: width,
       outerHeight: height,
-      width: width - sidebarWidth,
+      width: width - currentSidebarWidth - currentMetaWidth,
       height,
-      sidebarWidth
+      sidebarWidth: currentSidebarWidth,
+      metaSidebarWidth: currentMetaWidth
     };
   }
 );
