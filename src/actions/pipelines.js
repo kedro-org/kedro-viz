@@ -57,6 +57,7 @@ const requiresSecondRequest = (flags, pipeline) => {
 
 /**
  * Load pipeline data on initial page-load
+ * @return {function} A promise that resolves when the data is loaded
  */
 export function loadInitialPipelineData() {
   return async function(dispatch, getState) {
@@ -85,10 +86,9 @@ export function loadInitialPipelineData() {
 }
 
 /**
- * Async action to calculate graph layout in a web worker
- * whiled displaying a loading spinner
- * @param {Object} graphState A subset of main state
- * @return {function} A promise that resolves when the calcuation is done
+ * Change pipeline on selection, loading new data if necessary
+ * @param {string} pipelineID Unique ID for new pipeline
+ * @return {function} A promise that resolves when the data is loaded
  */
 export function loadPipelineData(pipelineID) {
   return async function(dispatch, getState) {
