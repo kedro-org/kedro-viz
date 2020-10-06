@@ -114,7 +114,10 @@ def start_server(mocker):
 def patched_get_project_context(mocker, tmp_path):
     class DummyDataCatalog:
         def __init__(self):
-            self._data_sets = {"bob_in": PickleDataSet(filepath=str(tmp_path))}
+            self._data_sets = {
+                "bob_in": PickleDataSet(filepath=str(tmp_path)),
+                "parameters": MemoryDataSet("value"),
+            }
 
         def _describe(self):
             return {"filepath": str(tmp_path)}
@@ -432,7 +435,7 @@ def test_node_metadata_endpoint_params(cli_runner, client):
     response = client.get(f"/api/nodes/{param_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert not data
+    assert data == {"parameters": "value"}
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -820,7 +823,7 @@ def pipeline():
 def old_catalog_with_layers():
     data_sets = {
         "bob_in": PickleDataSet("raw.csv"),
-        "paras:value": MemoryDataSet("value"),
+        "params:value": MemoryDataSet("value"),
         "result": PickleDataSet("final.csv"),
     }
     setattr(data_sets["bob_in"], "_layer", "raw")
@@ -838,7 +841,7 @@ def old_catalog_with_layers():
 def new_catalog_with_layers():
     data_sets = {
         "bob_in": PickleDataSet("raw.csv"),
-        "paras:value": MemoryDataSet("value"),
+        "params:value": MemoryDataSet("value"),
         "result": PickleDataSet("final.csv"),
     }
     layers = {"raw": {"bob_in"}, "final": {"result"}}

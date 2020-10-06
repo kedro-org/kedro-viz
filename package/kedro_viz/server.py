@@ -545,11 +545,9 @@ def nodes_metadata(node_id):
     if node["type"] == "data":
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
-    if node["type"] == "parameters":
-        parameters_metadata = {"parameters": node["obj"].load()}
-        return jsonify(parameters_metadata)
-    # return empty JSON for parameters type
-    return jsonify({})
+
+    parameters_metadata = {"parameters": node["obj"].load()}
+    return jsonify(parameters_metadata)
 
 
 @app.errorhandler(404)
