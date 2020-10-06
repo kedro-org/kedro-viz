@@ -10,11 +10,8 @@ import {
   getNodeSize,
   getVisibleNodes
 } from './nodes';
-import {
-  toggleTextLabels,
-  updateActivePipeline,
-  updateFontLoaded
-} from '../actions';
+import { toggleTextLabels, updateFontLoaded } from '../actions';
+import { updateActivePipeline } from '../actions/pipelines';
 import {
   toggleNodeClicked,
   toggleNodeHovered,

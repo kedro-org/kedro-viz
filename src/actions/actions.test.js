@@ -7,7 +7,6 @@ import {
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
-  UPDATE_ACTIVE_PIPELINE,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
   changeFlag,
@@ -17,7 +16,6 @@ import {
   toggleSidebar,
   toggleTextLabels,
   toggleTheme,
-  updateActivePipeline,
   updateChartSize,
   updateFontLoaded
 } from '../actions';
@@ -36,6 +34,10 @@ import {
   toggleTagFilter
 } from '../actions/tags';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
+import {
+  UPDATE_ACTIVE_PIPELINE,
+  updateActivePipeline
+} from '../actions/pipelines';
 
 describe('actions', () => {
   it('should create an action to reset pipeline data', () => {

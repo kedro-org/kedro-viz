@@ -2,7 +2,8 @@ import getInitialState, {
   createInitialState,
   mergeLocalStorage,
   preparePipelineState,
-  prepareNonPipelineState
+  prepareNonPipelineState,
+  overideInitialState
 } from './initial-state';
 import { saveState } from './helpers';
 import animals from '../utils/data/animals.mock';
@@ -14,26 +15,19 @@ describe('createInitialState', () => {
 });
 
 describe('mergeLocalStorage', () => {
-  const localStorageValues = {
-    textLabels: false,
-    theme: 'light'
-  };
-
-  beforeEach(() => {
-    saveState(localStorageValues);
-  });
-
-  afterEach(() => {
-    window.localStorage.clear();
-  });
-
   it('overrides state values with localstorage values if provided', () => {
+    const localStorageValues = {
+      textLabels: false,
+      theme: 'light'
+    };
+    saveState(localStorageValues);
     expect(
       mergeLocalStorage({
         textLabels: true,
         theme: 'dark'
       })
     ).toMatchObject(localStorageValues);
+    window.localStorage.clear();
   });
 
   it('does not add values if localStorage keys do not match state values', () => {
@@ -52,40 +46,41 @@ describe('mergeLocalStorage', () => {
   });
 });
 
-describe('preparePipelineState', () => {
-  it('uses default pipeline if stored active pipeline from localStorage is not one of the pipelines in the current list', () => {
-    saveState({ pipeline: { active: 'unknown' } });
-    expect(preparePipelineState({ data: animals })).toMatchObject({
-      pipeline: {
-        active: animals.selected_pipeline
-      }
-    });
-    window.localStorage.clear();
-  });
-});
+describe('preparePipelineState', () => {});
 
-describe('prepareNonPipelineState', () => {
+describe('prepareNonPipelineState', () => {});
+
+describe('overideInitialState', () => {
+  const getState = () =>
+    Object.assign({}, prepareNonPipelineState(), preparePipelineState(animals));
+
   it('overrides flags with values from URL', () => {
     // In this case, location.href is not provided
-    expect(prepareNonPipelineState({ data: animals })).toMatchObject({
+    expect(overideInitialState(getState(), {})).toMatchObject({
       flags: {}
     });
   });
 
   it('overrides theme with value from prop', () => {
     const props = { theme: 'light' };
-    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
-      props
-    );
+    expect(overideInitialState(getState(), props)).toMatchObject(props);
   });
 
   it('overrides visible with values from prop', () => {
     const props = {
       visible: { miniMap: true, sidebar: false, themeBtn: false }
     };
-    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
-      props
-    );
+    expect(overideInitialState(getState(), props)).toMatchObject(props);
+  });
+
+  it('uses default pipeline, when loading data synchronously, if stored active pipeline from localStorage is not one of the pipelines in the current list', () => {
+    saveState({ pipeline: { active: 'unknown' } });
+    expect(overideInitialState(getState(), {})).toMatchObject({
+      pipeline: {
+        active: animals.selected_pipeline
+      }
+    });
+    window.localStorage.clear();
   });
 });
 

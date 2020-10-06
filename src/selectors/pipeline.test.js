@@ -6,7 +6,7 @@ import {
   getPipelineTagIDs
 } from './pipeline';
 import reducer from '../reducers';
-import { updateActivePipeline } from '../actions';
+import { updateActivePipeline } from '../actions/pipelines';
 
 const getNodeIDs = state => state.node.ids;
 const getNodePipelines = state => state.node.pipelines;

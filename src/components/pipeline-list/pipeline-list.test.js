@@ -34,14 +34,9 @@ describe('PipelineList', () => {
     });
   });
 
-  it('maps dispatch to props', () => {
-    const value = '123';
+  it('maps dispatch to props', async () => {
     const dispatch = jest.fn();
-
-    mapDispatchToProps(dispatch).onUpdateActivePipeline({ value });
-    expect(dispatch.mock.calls[0][0]).toEqual({
-      pipeline: value,
-      type: 'UPDATE_ACTIVE_PIPELINE'
-    });
+    mapDispatchToProps(dispatch).onUpdateActivePipeline({ value: '123' });
+    expect(dispatch.mock.calls.length).toEqual(1);
   });
 });

@@ -13,9 +13,9 @@ describe('graph actions', () => {
 
     it('sets loading to true immediately', () => {
       const store = createStore(reducer, mockState.animals);
-      expect(store.getState().graph.loading).not.toBe(true);
+      expect(store.getState().loading.graph).not.toBe(true);
       calculateGraph(getGraphInput(mockState.animals))(store.dispatch);
-      expect(store.getState().graph.loading).toBe(true);
+      expect(store.getState().loading.graph).toBe(true);
     });
 
     it('sets loading to false after finishing calculation', () => {
@@ -23,7 +23,7 @@ describe('graph actions', () => {
       return calculateGraph(getGraphInput(mockState.animals))(
         store.dispatch
       ).then(() => {
-        expect(store.getState().graph.loading).toBe(false);
+        expect(store.getState().loading.graph).toBe(false);
       });
     });
 
@@ -35,7 +35,6 @@ describe('graph actions', () => {
       return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {
         expect(store.getState().graph).toEqual(
           expect.objectContaining({
-            loading: false,
             newgraph: expect.any(Boolean),
             nodes: expect.any(Array),
             edges: expect.any(Array),
