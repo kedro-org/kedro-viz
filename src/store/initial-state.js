@@ -50,7 +50,7 @@ export const mergeLocalStorage = state => {
  * Prepare the pipeline data part of the state by normalizing the raw data,
  * and applying saved state from localStorage. This part is separated so that it
  * can be reset without overriding user settings.
- * @param {object} props Props passed to App component
+ * @param {object} data Data prop passed to App component
  */
 export const preparePipelineState = data =>
   mergeLocalStorage(normalizeData(data));
@@ -59,7 +59,6 @@ export const preparePipelineState = data =>
  * Prepare the non-pipeline data part of the state. This part is separated so that it
  * will persist if the pipeline data is reset.
  * Merge local storage and add custom state overrides from props etc
- * @param {object} props Props passed to App component
  */
 export const prepareNonPipelineState = () =>
   mergeLocalStorage(createInitialState());
@@ -67,6 +66,9 @@ export const prepareNonPipelineState = () =>
 /**
  * Manually override default/localStorage values if their values are set via
  * component props, URL values etc
+ * @param {object} state Computed initial state
+ * @param {object} props Props passed to App component
+ * @return {object} Updated initial state
  */
 export const overideInitialState = (state, props) => {
   // Override with URL values
@@ -86,8 +88,8 @@ export const overideInitialState = (state, props) => {
 /**
  * Configure the redux store's initial state, by merging default values
  * with normalised pipeline data and localStorage
- * @param {Object} props App component props
- * @return {Object} Initial state
+ * @param {object} props App component props
+ * @return {object} Initial state
  */
 const getInitialState = (props = {}) => {
   const initialState = Object.assign(
