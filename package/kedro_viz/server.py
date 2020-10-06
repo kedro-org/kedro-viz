@@ -370,7 +370,9 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
     selected_pipeline = (
-        default_pipeline["id"] if default_pipeline in pipelines_list else pipelines_list[0]["id"]
+        default_pipeline["id"]
+        if default_pipeline in pipelines_list
+        else pipelines_list[0]["id"]
     )
 
     return {
@@ -454,7 +456,7 @@ def format_pipeline_data(
         node_id = _hash(namespace)
 
         node_data = (
-            {"type": "parameters", "obj": None}
+            _get_parameter_node(node_id, namespace)
             if is_param
             else _get_dataset_node(node_id, namespace)
         )
@@ -473,6 +475,11 @@ def format_pipeline_data(
             nodes_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipelines"].append(pipeline_key)
+
+
+def _get_parameter_node(node_id, namespace):
+    parameters = _CATALOG._get_dataset(namespace)
+    return {"type": "parameters", "obj": parameters}
 
 
 def _get_dataset_node(node_id, namespace):
@@ -538,7 +545,9 @@ def nodes_metadata(node_id):
     if node["type"] == "data":
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
-
+    if node["type"] == "parameters":
+        parameters_metadata = {"parameters": node["obj"].load()}
+        return jsonify(parameters_metadata)
     # return empty JSON for parameters type
     return jsonify({})
 
