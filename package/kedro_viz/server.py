@@ -455,12 +455,11 @@ def format_pipeline_data(
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
 
-        node_data = (
-            _get_parameter_node(node_id, namespace)
-            if is_param
-            else _get_dataset_node(node_id, namespace)
-        )
-        _JSON_NODES[node_id] = node_data
+        node_data = _get_dataset_data_params(node_id, namespace)
+        _JSON_NODES[node_id] = {
+            "type": "parameters" if is_param else "data",
+            "obj": node_data,
+        }
 
         if node_id not in nodes:
             nodes[node_id] = {
@@ -477,20 +476,15 @@ def format_pipeline_data(
             nodes[node_id]["pipelines"].append(pipeline_key)
 
 
-def _get_parameter_node(node_id, namespace):
-    parameters = _CATALOG._get_dataset(namespace)
-    return {"type": "parameters", "obj": parameters}
-
-
-def _get_dataset_node(node_id, namespace):
+def _get_dataset_data_params(node_id, namespace):
     if KEDRO_VERSION.match(">=0.16.0"):
         try:
-            dataset = _CATALOG._get_dataset(namespace)
+            node_data = _CATALOG._get_dataset(namespace)
         except DataSetNotFoundError:
-            dataset = None
+            node_data = None
     else:
-        dataset = _CATALOG._data_sets.get(namespace)
-    return {"type": "data", "obj": dataset}
+        node_data = _CATALOG._data_sets.get(namespace)
+    return node_data
 
 
 @app.route("/api/main")
