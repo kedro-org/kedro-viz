@@ -24,7 +24,9 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.store.dispatch(loadInitialPipelineData());
+    if (this.props.data === 'json') {
+      this.store.dispatch(loadInitialPipelineData());
+    }
     this.checkWebFontLoading();
     this.announceFlags(this.store.getState().flags);
   }
