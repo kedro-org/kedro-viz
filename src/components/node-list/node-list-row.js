@@ -83,11 +83,11 @@ const NodeListRow = ({
       <label
         htmlFor={id}
         className={classnames(
-          'pipeline-nodelist__row__visibility',
-          `pipeline-nodelist__row__visibility--kind-${kind}`,
+          'pipeline-row__toggle',
+          `pipeline-row__toggle--kind-${kind}`,
           {
-            'pipeline-nodelist__row__visibility--disabled': disabled,
-            'pipeline-nodelist__row__visibility--selected': selected
+            'pipeline-row__toggle--disabled': disabled,
+            'pipeline-row__toggle--selected': selected
           }
         )}>
         <input
@@ -103,12 +103,12 @@ const NodeListRow = ({
           aria-label={name}
           className={classnames(
             'pipeline-nodelist__row__icon',
-            'pipeline-nodelist__row__visibility-icon',
-            `pipeline-nodelist__row__visibility-icon--kind-${kind}`,
+            'pipeline-row__toggle-icon',
+            `pipeline-row__toggle-icon--kind-${kind}`,
             {
-              'pipeline-nodelist__row__visibility-icon--checked': checked,
-              'pipeline-nodelist__row__visibility-icon--unchecked': !checked,
-              'pipeline-nodelist__row__visibility-icon--unset': unset
+              'pipeline-row__toggle-icon--checked': checked,
+              'pipeline-row__toggle-icon--unchecked': !checked,
+              'pipeline-row__toggle-icon--unset': unset
             }
           )}
         />

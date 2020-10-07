@@ -3,27 +3,27 @@
 @import '../../../styles/variables';
 @import './variables';
 
-.kui-theme--dark .pipeline-nodelist__row__visibility-icon--kind-filter {
-  &.pipeline-nodelist__row__visibility-icon--checked {
+.kui-theme--dark .pipeline-row__toggle-icon--kind-filter {
+  &.pipeline-row__toggle-icon--checked {
     fill: $filter-indicator-on-light;
     stroke: $filter-indicator-on-light;
   }
 
-  &.pipeline-nodelist__row__visibility-icon--unchecked,
-  &.pipeline-nodelist__row__visibility-icon--unset {
+  &.pipeline-row__toggle-icon--unchecked,
+  &.pipeline-row__toggle-icon--unset {
     fill: none;
     stroke: $filter-indicator-off-light;
   }
 }
 
-.kui-theme--light .pipeline-nodelist__row__visibility-icon--kind-filter {
-  &.pipeline-nodelist__row__visibility-icon--checked {
+.kui-theme--light .pipeline-row__toggle-icon--kind-filter {
+  &.pipeline-row__toggle-icon--checked {
     fill: $filter-indicator-on-dark;
     stroke: $filter-indicator-on-dark;
   }
 
-  &.pipeline-nodelist__row__visibility-icon--unchecked,
-  &.pipeline-nodelist__row__visibility-icon--unset {
+  &.pipeline-row__toggle-icon--unchecked,
+  &.pipeline-row__toggle-icon--unset {
     fill: none;
     stroke: $filter-indicator-off-dark;
   }
@@ -48,15 +48,14 @@
 }
 
 // Hide all indicators when all unset
-.pipeline-nodelist__item--all-unset
-  .pipeline-nodelist__row__visibility--kind-filter {
+.pipeline-nodelist__item--all-unset .pipeline-row__toggle--kind-filter {
   opacity: 0;
 }
 
 // Show indicator when all unset and row hovered
 .pipeline-nodelist__item--all-unset
   .pipeline-nodelist__row:hover
-  .pipeline-nodelist__row__visibility--kind-filter {
+  .pipeline-row__toggle--kind-filter {
   opacity: 0.55;
 
   &:hover {
@@ -67,29 +66,29 @@
 // Show unchecked indicators as solid blue when all unset
 .pipeline-nodelist__item--all-unset
   .pipeline-nodelist__row:hover
-  .pipeline-nodelist__row__visibility-icon--kind-filter {
+  .pipeline-row__toggle-icon--kind-filter {
   opacity: 1;
   fill: $filter-indicator-on-light;
   stroke: $filter-indicator-on-light;
 }
 
-.kui-theme--light .pipeline-nodelist__row__visibility-icon--kind-filter,
-.kui-theme--dark .pipeline-nodelist__row__visibility-icon--kind-filter {
+.kui-theme--light .pipeline-row__toggle-icon--kind-filter,
+.kui-theme--dark .pipeline-row__toggle-icon--kind-filter {
   // Fade indicator when unchecked or unset
-  &.pipeline-nodelist__row__visibility-icon--unchecked,
-  &.pipeline-nodelist__row__visibility-icon--unset {
+  &.pipeline-row__toggle-icon--unchecked,
+  &.pipeline-row__toggle-icon--unset {
     opacity: 0.55;
   }
 
   // Bright indicator when checked or hovered
-  &.pipeline-nodelist__row__visibility-icon--checked,
-  &.pipeline-nodelist__row__visibility-icon--unchecked:hover,
-  &.pipeline-nodelist__row__visibility-icon--unset:hover {
+  &.pipeline-row__toggle-icon--checked,
+  &.pipeline-row__toggle-icon--unchecked:hover,
+  &.pipeline-row__toggle-icon--unset:hover {
     opacity: 0.75;
   }
 
   // Hover states when checked
-  &.pipeline-nodelist__row__visibility-icon--checked:hover {
+  &.pipeline-row__toggle-icon--checked:hover {
     opacity: 1;
   }
 }
