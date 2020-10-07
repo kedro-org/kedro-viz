@@ -17,10 +17,10 @@ import { saveState } from '../store/helpers';
  * by running the asynchronous actions synchronously
  * @param {Object} props
  */
-export const prepareState = (...props) => {
+export const prepareState = props => {
   // Set pipeline flag to true:
   saveState({ flags: { pipelines: true } });
-  const initialState = getInitialState(...props);
+  const initialState = getInitialState(props);
   const actions = [
     // Set fontLoaded = true:
     () => updateFontLoaded(true),
