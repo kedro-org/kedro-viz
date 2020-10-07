@@ -19,14 +19,14 @@
   }
 }
 
-.pipeline-icon.pipeline-icon--stroke {
-  fill: none;
-
+.pipeline-icon--stroke {
   .kui-theme--light & {
+    fill: none;
     stroke: $color-dark;
   }
 
   .kui-theme--dark & {
+    fill: none;
     stroke: $color-light;
   }
 }
