@@ -77,7 +77,7 @@ export function loadInitialPipelineData() {
     }
     // If the active pipeline isn't main then request data from new URL
     if (requiresSecondRequest(state.flags, newState.pipeline)) {
-      const url = getPipelineUrl(state.pipeline);
+      const url = getPipelineUrl(newState.pipeline);
       newState = await loadJsonData(url).then(preparePipelineState);
     }
     dispatch(resetData(newState));
