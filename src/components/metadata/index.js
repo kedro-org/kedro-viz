@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/icon-button';
+import MetaDataRow from './metadata-row';
 import {
   getVisibleMetaSidebar,
   getClickedNodeMetaData
@@ -39,77 +40,29 @@ const MetaData = ({ visible, metadata }) => {
               {node.name}
             </h2>
           </div>
-          <div className="pipeline-metadata__row">
-            <h3 className="pipeline-metadata__property">Type:</h3>
-            <code className="pipeline-metadata__value pipeline-metadata__value--token">
-              {node.type}
-            </code>
-          </div>
-          <div className="pipeline-metadata__row">
-            <h3 className="pipeline-metadata__property">Inputs:</h3>
-            {metadata.inputs.length > 0 ? (
-              <ul className="pipeline-metadata__value-list pipeline-metadata__value-list--inline pipeline-metadata__value-list--commas">
-                {metadata.inputs.map(node => (
-                  <li key={node.id}>
-                    <span className="pipeline-metadata__value">
-                      {node.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <span className="pipeline-metadata__value">-</span>
-            )}
-          </div>
-          <div className="pipeline-metadata__row">
-            <h3 className="pipeline-metadata__property">Outputs:</h3>
-            {metadata.outputs.length > 0 ? (
-              <ul className="pipeline-metadata__value-list pipeline-metadata__value-list--inline pipeline-metadata__value-list--commas">
-                {metadata.outputs.map(node => (
-                  <li key={node.id}>
-                    <span className="pipeline-metadata__value">
-                      {node.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <span className="pipeline-metadata__value">-</span>
-            )}
-          </div>
-          <div className="pipeline-metadata__row">
-            <h3 className="pipeline-metadata__property">Tags:</h3>
-            <ul className="pipeline-metadata__value-list pipeline-metadata__value-list--inline">
-              {metadata.tags.map(tag => (
-                <li key={tag}>
-                  <span className="pipeline-metadata__value pipeline-metadata__value--token">
-                    {tag}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="pipeline-metadata__row">
-            <h3 className="pipeline-metadata__property">Pipeline:</h3>
-            <span className="pipeline-metadata__value">
-              {metadata.pipeline}
-            </span>
-          </div>
-          <div className="pipeline-metadata__row">
-            <h3 className="pipeline-metadata__property">Run Command:</h3>
-            <code className="pipeline-metadata__property-toolbox-container">
-              <span className="pipeline-metadata__value pipeline-metadata__value--token pipeline-metadata__run-command-value">
+          <MetaDataRow label="Type:" kind="token">
+            {node.type}
+          </MetaDataRow>
+          <MetaDataRow label="Inputs:" property="name">
+            {metadata.inputs}
+          </MetaDataRow>
+          <MetaDataRow label="Outputs:" property="name">
+            {metadata.outputs}
+          </MetaDataRow>
+          <MetaDataRow label="Tags:" kind="token" commas={false}>
+            {metadata.tags}
+          </MetaDataRow>
+          <MetaDataRow label="Pipeline:">{metadata.pipeline}</MetaDataRow>
+          <MetaDataRow label="Run Command:">
+            <code className="pipeline-metadata__toolbox-container">
+              <span className="pipeline-metadata__value pipeline-metadata__run-command-value pipeline-metadata__value--kind-token">
                 {runCommandText}
               </span>
-              <ul className="pipeline-metadata__property-toolbox">
-                <IconButton
-                  icon="copy"
-                  onClick={onCopyClick}
-                  className="pipeline-metadata__property-toolbox-copy"
-                />
+              <ul className="pipeline-metadata__toolbox">
+                <IconButton icon="copy" onClick={onCopyClick} />
               </ul>
             </code>
-          </div>
+          </MetaDataRow>
         </>
       )}
     </div>

@@ -52,7 +52,7 @@
   line-height: 1.6;
 }
 
-.pipeline-metadata__property {
+.pipeline-metadata__label {
   margin: 0 0 0.8em 0;
   font-weight: normal;
   font-size: 1em;
@@ -91,7 +91,7 @@
   word-break: break-word;
 }
 
-.pipeline-metadata__value--token {
+.pipeline-metadata__value--kind-token {
   display: inline-block;
   padding: 0.18em 0.6em 0.2em 0.6em;
   font-weight: 600;
@@ -131,11 +131,11 @@ $list-inline-spacing: 0.2em;
   content: ', ';
 }
 
-.pipeline-metadata__property-toolbox-container {
+.pipeline-metadata__toolbox-container {
   display: flex;
 }
 
-.pipeline-metadata__property-toolbox {
+.pipeline-metadata__toolbox {
   display: block;
   margin: 0;
   padding: 0;
