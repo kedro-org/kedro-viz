@@ -16,49 +16,6 @@ import {
 
 jest.mock('../store/load-data.js');
 
-// const cases = {
-//   pipelineFlagIsDisabled: isTrue => {},
-//   isFirstLoad: isTrue => {},
-//   isAsync: isTrue => {},
-//   hasPipelinesInDataset: isTrue => {},
-//   hasLocalStorage: isTrue => ({
-//     before: () =>
-//       isTrue &&
-//       saveState({
-//         pipeline: { active: 'de' }
-//       }),
-//     test: state => {
-//       if (isTrue) {
-//         expect(state.active).toBe('de');
-//       } else {
-//         expect(state.active).not.toBe('de');
-//       }
-//     }
-//   }),
-//   isMain: isTrue => {},
-//   hasUnknownActivePipeline: isTrue => ({
-//     before: () =>
-//       isTrue &&
-//       saveState({
-//         pipeline: { active: 'unknown' }
-//       }),
-//     test: state => {
-//       expect(state.active).toBe('__default__');
-//     }
-//   })
-// };
-
-// const caseCount = Object.keys(cases).length;
-// const combinations = [];
-// for (let i = 0; i < Math.pow(2, caseCount); i++) {
-//   const combination = i
-//     .toString(2)
-//     .padStart(caseCount, '0')
-//     .split('')
-//     .map(d => Boolean(+d));
-//   combinations.push(combination);
-// }
-
 describe('pipeline actions', () => {
   describe('updateActivePipeline', () => {
     it('should create an action to update the active pipeline', () => {
@@ -108,7 +65,7 @@ describe('pipeline actions', () => {
       window.deletePipelines = undefined;
     });
 
-    describe('if sync', () => {
+    describe('if loading data synchronously', () => {
       it('should return immediately', () => {
         const store = createStore(reducer, mockState.animals);
         loadInitialPipelineData()(store.dispatch, store.getState);
@@ -116,7 +73,7 @@ describe('pipeline actions', () => {
       });
     });
 
-    describe('if async', () => {
+    describe('if loading data asynchronously', () => {
       it('should set loading to true immediately', () => {
         const store = createStore(reducer, mockState.json);
         expect(store.getState().loading.pipeline).toBe(false);
