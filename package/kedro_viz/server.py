@@ -546,14 +546,14 @@ def nodes_metadata(node_id):
 
     parameters = node["obj"]
     if isinstance(parameters, dict):
-        # In case of `params:` prefix
+        # In case of 'params:' prefix
         parameters_metadata = {
             "parameters": {
                 next(iter(parameters)): next(iter(parameters.values())).load()
             }
         }
         return jsonify(parameters_metadata)
-    # In case of `parameters`
+    # In case of 'parameters'
     parameters_metadata = {"parameters": node["obj"].load()}
     return jsonify(parameters_metadata)
 
