@@ -3,6 +3,7 @@ import { shallow } from 'enzyme';
 import App from './index';
 import getRandomPipeline from '../../utils/random-data';
 import animals from '../../utils/data/animals.mock';
+import input from '../../utils/data/input.json';
 import demo from '../../utils/data/demo.mock';
 import { mockState } from '../../utils/state.mock';
 import { Flags } from '../../utils/flags';
