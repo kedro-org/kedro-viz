@@ -41,6 +41,7 @@ export const prepareState = props => {
  * Example state objects for use in tests of redux-enabled components
  */
 export const mockState = {
+  json: prepareState({ data: 'json' }),
   demo: prepareState({ data: demo }),
   animals: prepareState({ data: animals })
 };
