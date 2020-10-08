@@ -457,7 +457,7 @@ def format_pipeline_data(
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
 
-        node_data = _get_dataset_data_params(node_id, namespace)
+        node_data = _get_dataset_data_params(namespace)
         _JSON_NODES[node_id] = {
             "type": "parameters" if is_param else "data",
             "obj": {namespace.replace("params:", ""): node_data}
@@ -480,7 +480,7 @@ def format_pipeline_data(
             nodes[node_id]["pipelines"].append(pipeline_key)
 
 
-def _get_dataset_data_params(node_id, namespace):
+def _get_dataset_data_params(namespace: str):
     if KEDRO_VERSION.match(">=0.16.0"):
         try:
             node_data = _CATALOG._get_dataset(namespace)
