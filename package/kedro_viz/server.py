@@ -69,7 +69,9 @@ _DEFAULT_KEY = "__default__"
 
 _DATA = None  # type: Dict
 _CATALOG = None  # type: DataCatalog
-_JSON_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None]]]
+_JSON_NODES = (
+    {}
+)  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None, Dict[str, AbstractDataSet]]]]
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -458,7 +460,9 @@ def format_pipeline_data(
         node_data = _get_dataset_data_params(node_id, namespace)
         _JSON_NODES[node_id] = {
             "type": "parameters" if is_param else "data",
-            "obj": node_data,
+            "obj": {namespace.replace("params:", ""): node_data}
+            if is_param and "params:" in namespace
+            else node_data,
         }
 
         if node_id not in nodes:
@@ -540,6 +544,16 @@ def nodes_metadata(node_id):
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
 
+    parameters = node["obj"]
+    if isinstance(parameters, dict):
+        # In case of `params:` prefix
+        parameters_metadata = {
+            "parameters": {
+                next(iter(parameters)): next(iter(parameters.values())).load()
+            }
+        }
+        return jsonify(parameters_metadata)
+    # In case of `parameters`
     parameters_metadata = {"parameters": node["obj"].load()}
     return jsonify(parameters_metadata)
 

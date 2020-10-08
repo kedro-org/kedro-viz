@@ -66,7 +66,7 @@ def get_pipelines():
         "__default__": create_pipeline(),
         "second": Pipeline(
             [
-                node(func, ["bob_in", "parameters"], ["bob_out"]),
+                node(func, ["bob_in", "params:key"], ["bob_out"]),
                 node(func1, ["bob_out", "parameters"], None),
             ]
         ),
@@ -117,6 +117,7 @@ def patched_get_project_context(mocker, tmp_path):
             self._data_sets = {
                 "bob_in": PickleDataSet(filepath=str(tmp_path)),
                 "parameters": MemoryDataSet("value"),
+                "params:key": MemoryDataSet("value"),
             }
 
         def _describe(self):
@@ -358,7 +359,7 @@ def test_node_metadata_endpoint_task_missing_docstring(
         return_value=tmp_path / project_root / code_location,
     )
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    task_id = "760f5b5e"
+    task_id = "0340373e"
     response = client.get(f"/api/nodes/{task_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
@@ -428,7 +429,7 @@ def test_node_metadata_endpoint_data_kedro14(cli_runner, client, tmp_path, mocke
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
-def test_node_metadata_endpoint_params(cli_runner, client):
+def test_node_metadata_endpoint_parameters(cli_runner, client):
     """Test `/api/nodes/param_id` endpoint is functional and returns an empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     param_id = "f1f1425b"
@@ -436,6 +437,17 @@ def test_node_metadata_endpoint_params(cli_runner, client):
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data == {"parameters": "value"}
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_param_prefix(cli_runner, client):
+    """Test `/api/nodes/param_id` with param prefix endpoint is functional and returns an empty JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    param_id = "68bbc660"
+    response = client.get(f"/api/nodes/{param_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data == {"parameters": {"key": "value"}}
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -458,9 +470,9 @@ def test_pipeline_flag(cli_runner, client):
     data = json.loads(response.data.decode())
     assert data == {
         "edges": [
-            {"source": "7366ec9f", "target": "760f5b5e"},
-            {"source": "f1f1425b", "target": "760f5b5e"},
-            {"source": "760f5b5e", "target": "60e68b8e"},
+            {"source": "7366ec9f", "target": "0340373e"},
+            {"source": "68bbc660", "target": "0340373e"},
+            {"source": "0340373e", "target": "60e68b8e"},
             {"source": "60e68b8e", "target": "24d754e7"},
             {"source": "f1f1425b", "target": "24d754e7"},
         ],
@@ -468,7 +480,7 @@ def test_pipeline_flag(cli_runner, client):
         "nodes": [
             {
                 "full_name": "func",
-                "id": "760f5b5e",
+                "id": "0340373e",
                 "name": "Func",
                 "pipelines": ["second"],
                 "tags": [],
@@ -505,6 +517,15 @@ def test_pipeline_flag(cli_runner, client):
                 "id": "f1f1425b",
                 "layer": None,
                 "name": "Parameters",
+                "pipelines": ["second"],
+                "tags": [],
+                "type": "parameters",
+            },
+            {
+                "full_name": "params:key",
+                "id": "68bbc660",
+                "layer": None,
+                "name": "Params:key",
                 "pipelines": ["second"],
                 "tags": [],
                 "type": "parameters",

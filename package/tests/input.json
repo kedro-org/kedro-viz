@@ -26,14 +26,14 @@
         },
         {
             "source": "7366ec9f",
-            "target": "760f5b5e"
+            "target": "0340373e"
         },
         {
-            "source": "f1f1425b",
-            "target": "760f5b5e"
+            "source": "68bbc660",
+            "target": "0340373e"
         },
         {
-            "source": "760f5b5e",
+            "source": "0340373e",
             "target": "60e68b8e"
         },
         {
@@ -139,7 +139,7 @@
         },
         {
             "full_name": "func",
-            "id": "760f5b5e",
+            "id": "0340373e",
             "name": "Func",
             "pipelines": [
                 "second"
@@ -156,6 +156,17 @@
             ],
             "tags": [],
             "type": "task"
+        },
+        {
+            "full_name": "params:key",
+            "id": "68bbc660",
+            "layer": null,
+            "name": "Params:key",
+            "pipelines": [
+                "second"
+            ],
+            "tags": [],
+            "type": "parameters"
         }
     ],
     "pipelines": [
@@ -172,11 +183,11 @@
             "name": "Third"
         }
     ],
+    "selected_pipeline": "__default__",
     "tags": [
         {
             "id": "bob",
             "name": "Bob"
         }
-    ],
-    "selected_pipeline": "__default__"
+    ]
 }
