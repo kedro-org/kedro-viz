@@ -75,6 +75,7 @@ describe('Selectors', () => {
         outerHeight: expect.any(Number),
         outerWidth: expect.any(Number),
         sidebarWidth: expect.any(Number),
+        metaSidebarWidth: expect.any(Number),
         top: expect.any(Number),
         width: expect.any(Number)
       });

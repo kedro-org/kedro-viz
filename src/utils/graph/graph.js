@@ -59,7 +59,7 @@ export const graph = (nodes, edges, layers, options = defaultOptions) => {
  * @param {array} nodes The input nodes
  * @param {array} edges The input edges
  */
-const addEdgeLinks = (nodes, edges) => {
+export const addEdgeLinks = (nodes, edges) => {
   const nodeById = {};
 
   for (const node of nodes) {
