@@ -46,9 +46,25 @@ describe('mergeLocalStorage', () => {
   });
 });
 
-describe('preparePipelineState', () => {});
+describe('preparePipelineState', () => {
+  it('applies localStorage values on top of normalised pipeline data', () => {
+    const localStorageState = { pipeline: { active: 'abc123' } };
+    saveState(localStorageState);
+    const state = preparePipelineState(animals);
+    expect(state.pipeline.active).toEqual(localStorageState.pipeline.active);
+    window.localStorage.clear();
+  });
+});
 
-describe('prepareNonPipelineState', () => {});
+describe('prepareNonPipelineState', () => {
+  it('applies localStorage values on top of initial state', () => {
+    const localStorageState = { theme: 'foo' };
+    saveState(localStorageState);
+    const state = prepareNonPipelineState();
+    expect(state.theme).toEqual(localStorageState.theme);
+    window.localStorage.clear();
+  });
+});
 
 describe('overideInitialState', () => {
   const getState = () =>
