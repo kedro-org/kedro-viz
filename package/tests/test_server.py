@@ -812,7 +812,7 @@ def pipeline():
     return {
         "__default__": Pipeline(
             [
-                node(func1, ["bob_in", "params:value"], "bob_out"),
+                node(func1, ["bob_in", "params:key"], "bob_out"),
                 node(func2, "bob_out", "result"),
             ]
         )
@@ -823,7 +823,7 @@ def pipeline():
 def old_catalog_with_layers():
     data_sets = {
         "bob_in": PickleDataSet("raw.csv"),
-        "params:value": MemoryDataSet("value"),
+        "params:key": MemoryDataSet("value"),
         "result": PickleDataSet("final.csv"),
     }
     setattr(data_sets["bob_in"], "_layer", "raw")
@@ -841,7 +841,7 @@ def old_catalog_with_layers():
 def new_catalog_with_layers():
     data_sets = {
         "bob_in": PickleDataSet("raw.csv"),
-        "params:value": MemoryDataSet("value"),
+        "params:key": MemoryDataSet("value"),
         "result": PickleDataSet("final.csv"),
     }
     layers = {"raw": {"bob_in"}, "final": {"result"}}
