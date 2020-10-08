@@ -9,6 +9,7 @@
   display: flex;
   flex-direction: column;
   width: $sidebar-width-open;
+  padding: 16px 0 24px 0;
   overflow-y: auto;
   transform: translateX(100%);
   transition: transform ease 0.4s;
@@ -46,7 +47,7 @@
 
 .pipeline-metadata__title {
   display: flex;
-  margin: 0.8em 0 0 0;
+  margin: 0;
   font-weight: normal;
   font-size: 1.3em;
   line-height: 1.6;
@@ -146,4 +147,17 @@ $list-inline-spacing: 0.2em;
   display: flex;
   flex-grow: 1;
   align-items: center;
+}
+
+.pipeline-metadata__copy-icon {
+  opacity: 0.55;
+}
+
+.pipeline-metadata__copy-icon:hover {
+  opacity: 1;
+}
+
+.pipeline-metadata__copy-icon:active {
+  transform: translate(0, 1px);
+  opacity: 0.85;
 }
