@@ -33,7 +33,7 @@ export function toggleLoading(loading) {
  * Determine where to load data from
  * @param {object} pipeline Pipeline state
  */
-const getPipelineUrl = pipeline => {
+export const getPipelineUrl = pipeline => {
   if (pipeline.active === pipeline.default) {
     return getUrl('main');
   }
@@ -44,7 +44,7 @@ const getPipelineUrl = pipeline => {
  * Check whether to make another async data request
  * @param {object} pipeline Pipeline state
  */
-const requiresSecondRequest = (flags, pipeline) => {
+export const requiresSecondRequest = (flags, pipeline) => {
   // Pipelines are disabled via flags
   // TODO: Delete this line when removing flags.pipeline
   if (!flags.pipelines) return false;

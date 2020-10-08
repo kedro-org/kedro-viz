@@ -34,10 +34,6 @@ import {
   toggleTagFilter
 } from '../actions/tags';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
-import {
-  UPDATE_ACTIVE_PIPELINE,
-  updateActivePipeline
-} from '../actions/pipelines';
 
 describe('actions', () => {
   it('should create an action to reset pipeline data', () => {
@@ -153,15 +149,6 @@ describe('actions', () => {
       disabled
     };
     expect(toggleTypeDisabled(typeID, disabled)).toEqual(expectedAction);
-  });
-
-  it('should create an action to update the active pipeline', () => {
-    const pipeline = 'abc123';
-    const expectedAction = {
-      type: UPDATE_ACTIVE_PIPELINE,
-      pipeline
-    };
-    expect(updateActivePipeline(pipeline)).toEqual(expectedAction);
   });
 
   it('should create an action to update the chart size', () => {
