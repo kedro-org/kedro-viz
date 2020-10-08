@@ -55,6 +55,34 @@ describe('pipeline actions', () => {
     });
   });
 
+  describe('requiresSecondRequest', () => {
+    it('should return false if the pipelines flag is false', () => {
+      expect(requiresSecondRequest({ pipelines: false }, {})).toBe(false);
+    });
+
+    const flags = { pipelines: true };
+
+    it('should return false if pipelines are not present in the data', () => {
+      const pipeline = { ids: [], active: 'a' };
+      expect(requiresSecondRequest(flags, pipeline)).toBe(false);
+    });
+
+    it('should return false if there is no active pipeline', () => {
+      const pipeline = { ids: ['a', 'b'], default: 'a' };
+      expect(requiresSecondRequest(flags, pipeline)).toBe(false);
+    });
+
+    it('should return false if the default pipeline is active', () => {
+      const pipeline = { ids: ['a', 'b'], default: 'a', active: 'a' };
+      expect(requiresSecondRequest(flags, pipeline)).toBe(false);
+    });
+
+    it('should return true if the default pipeline is not active', () => {
+      const pipeline = { ids: ['a', 'b'], default: 'a', active: 'b' };
+      expect(requiresSecondRequest(flags, pipeline)).toBe(true);
+    });
+  });
+
   describe('loadInitialPipelineData', () => {
     beforeEach(() => {
       jest.resetModules();
