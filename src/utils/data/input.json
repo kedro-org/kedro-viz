@@ -42,205 +42,127 @@
   ],
   "nodes": [
     {
-      "id": "task/salmon",
-      "name": "salmon",
-      "full_name": "salmon",
-      "tags": ["small"],
-      "layer": "Intermediate",
-      "pipelines": ["__default__", "de"],
-      "type": "task"
-    },
-    {
-      "id": "task/shark",
-      "name": "shark",
-      "full_name": "shark",
-      "tags": ["medium", "large"],
-      "layer": "Intermediate",
-      "pipelines": ["__default__", "de"],
-      "type": "task"
-    },
-    {
-      "id": "task/trout",
-      "name": "trout",
-      "full_name": "trout",
-      "tags": ["small"],
-      "layer": "Model Input",
-      "pipelines": ["__default__", "ds"],
-      "type": "task"
-    },
-    {
-      "id": "data/whale",
-      "name": "whale",
-      "full_name": "whale",
-      "tags": ["large", "huge"],
-      "layer": "Model Output",
-      "pipelines": ["__default__", "ds"],
-      "type": "data"
-    },
-    {
-      "id": "data/dog",
-      "name": "dog",
-      "full_name": "dog",
-      "tags": ["small", "medium"],
-      "layer": "Raw",
-      "pipelines": ["__default__", "de"],
-      "type": "data"
-    },
-    {
-      "id": "data/cat",
-      "name": "cat",
-      "full_name": "cat",
-      "tags": ["small", "medium", "large"],
-      "layer": "Raw",
-      "pipelines": ["__default__", "de"],
-      "type": "data"
-    },
-    {
-      "id": "data/parameters_rabbit",
-      "name": "parameters_rabbit",
-      "full_name": "parameters_rabbit",
-      "tags": ["small"],
-      "layer": "Intermediate",
-      "pipelines": ["__default__", "de"],
-      "type": "parameters"
-    },
-    {
-      "id": "data/parameters",
-      "name": "parameters",
-      "full_name": "parameters",
+      "full_name": "func1",
+      "id": "01a6a5cb",
+      "name": "Func1",
+      "pipelines": ["__default__", "third"],
       "tags": [],
-      "layer": "Intermediate",
-      "pipelines": ["__default__", "de"],
+      "type": "task"
+    },
+    {
+      "full_name": "func2",
+      "id": "de8434b7",
+      "name": "my_node",
+      "pipelines": ["__default__"],
+      "tags": ["bob"],
+      "type": "task"
+    },
+    {
+      "full_name": "bob_in",
+      "id": "7366ec9f",
+      "layer": null,
+      "name": "Bob In",
+      "pipelines": ["__default__", "second", "third"],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "full_name": "bob_out",
+      "id": "60e68b8e",
+      "layer": null,
+      "name": "Bob Out",
+      "pipelines": ["__default__", "second", "third"],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "full_name": "fred_in",
+      "id": "afffac5f",
+      "layer": null,
+      "name": "Fred In",
+      "pipelines": ["__default__"],
+      "tags": ["bob"],
+      "type": "data"
+    },
+    {
+      "full_name": "fred_out",
+      "id": "37316e3a",
+      "layer": null,
+      "name": "Fred Out",
+      "pipelines": ["__default__"],
+      "tags": ["bob"],
+      "type": "data"
+    },
+    {
+      "full_name": "parameters",
+      "id": "f1f1425b",
+      "layer": null,
+      "name": "Parameters",
+      "pipelines": ["__default__", "second", "third"],
+      "tags": ["bob"],
       "type": "parameters"
     },
     {
-      "id": "data/sheep",
-      "name": "sheep",
-      "full_name": "sheep",
-      "tags": ["medium"],
-      "layer": "Primary",
-      "pipelines": ["__default__", "de"],
-      "type": "data"
+      "full_name": "func",
+      "id": "760f5b5e",
+      "name": "Func",
+      "pipelines": ["second"],
+      "tags": [],
+      "type": "task"
     },
     {
-      "id": "data/horse",
-      "name": "horse",
-      "full_name": "horse",
-      "tags": ["large"],
-      "layer": "Model Output",
-      "pipelines": ["__default__", "de"],
-      "type": "data"
-    },
-    {
-      "id": "data/weasel",
-      "name": "weasel",
-      "full_name": "weasel",
-      "tags": ["small"],
-      "layer": "Raw",
-      "pipelines": ["__default__", "de"],
-      "type": "data"
-    },
-    {
-      "id": "data/elephant",
-      "name": "elephant",
-      "full_name": "elephant",
-      "tags": ["large"],
-      "layer": "Raw",
-      "pipelines": ["__default__", "de"],
-      "type": "data"
-    },
-    {
-      "id": "data/bear",
-      "name": "bear",
-      "full_name": "bear",
-      "tags": ["large"],
-      "layer": "Raw",
-      "pipelines": ["__default__", "de"],
-      "type": "data"
-    },
-    {
-      "id": "data/giraffe",
-      "name": "giraffe",
-      "full_name": "giraffe",
-      "tags": ["large"],
-      "layer": "Model Output",
-      "pipelines": ["__default__", "de"],
-      "type": "data"
-    },
-    {
-      "id": "data/pig",
-      "name": "pig",
-      "full_name": "pig",
-      "tags": ["medium"],
-      "layer": "Feature",
-      "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "full_name": "func1",
+      "id": "24d754e7",
+      "name": "Func1",
+      "pipelines": ["second"],
+      "tags": [],
+      "type": "task"
     }
   ],
   "edges": [
     {
-      "target": "7366ec9f",
-      "source": "01a6a5cb"
+      "source": "7366ec9f",
+      "target": "01a6a5cb"
     },
     {
-      "target": "task/salmon",
-      "source": "data/dog"
+      "source": "f1f1425b",
+      "target": "01a6a5cb"
     },
     {
-      "target": "task/salmon",
-      "source": "data/parameters"
+      "source": "01a6a5cb",
+      "target": "60e68b8e"
     },
     {
-      "target": "task/salmon",
-      "source": "data/parameters_rabbit"
+      "source": "afffac5f",
+      "target": "de8434b7"
     },
     {
-      "target": "data/pig",
-      "source": "task/salmon"
+      "source": "f1f1425b",
+      "target": "de8434b7"
     },
     {
-      "target": "data/horse",
-      "source": "task/salmon"
+      "source": "de8434b7",
+      "target": "37316e3a"
     },
     {
-      "target": "data/sheep",
-      "source": "task/salmon"
+      "source": "7366ec9f",
+      "target": "760f5b5e"
     },
     {
-      "target": "task/shark",
-      "source": "data/cat"
+      "source": "f1f1425b",
+      "target": "760f5b5e"
     },
     {
-      "target": "task/shark",
-      "source": "data/weasel"
+      "source": "760f5b5e",
+      "target": "60e68b8e"
     },
     {
-      "target": "task/shark",
-      "source": "data/elephant"
+      "source": "60e68b8e",
+      "target": "24d754e7"
     },
     {
-      "target": "task/shark",
-      "source": "data/bear"
-    },
-    {
-      "target": "data/sheep",
-      "source": "task/shark"
-    },
-    {
-      "target": "data/pig",
-      "source": "task/shark"
-    },
-    {
-      "target": "data/giraffe",
-      "source": "task/shark"
-    },
-    {
-      "target": "task/trout",
-      "source": "data/pig"
-    },
-    {
-      "target": "data/whale",
-      "source": "task/trout"
+      "source": "f1f1425b",
+      "target": "24d754e7"
     }
   ]
 }

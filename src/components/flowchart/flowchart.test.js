@@ -76,7 +76,7 @@ describe('FlowChart', () => {
   });
 
   it('applies selected class to nodes when nodeSelected prop set', () => {
-    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodes = getNodeIDs(mockState.input);
     const wrapper = setup.mount(
       <FlowChart
         nodeSelected={{
@@ -89,7 +89,7 @@ describe('FlowChart', () => {
   });
 
   it('applies active class to nodes when nodeActive prop set', () => {
-    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodes = getNodeIDs(mockState.input);
     const wrapper = setup.mount(
       <FlowChart
         nodeActive={{
@@ -102,7 +102,7 @@ describe('FlowChart', () => {
   });
 
   it('shows text labels when textLabels prop set true', () => {
-    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodes = getNodeIDs(mockState.input);
     const wrapper = setup.mount(<FlowChart textLabels={true} />);
     expect(wrapper.render().find('.pipeline-node--text').length).toBe(
       mockNodes.length
@@ -115,7 +115,7 @@ describe('FlowChart', () => {
   });
 
   it('shows layers when layers are visible', () => {
-    const mockLayers = getLayerIDs(mockState.animals);
+    const mockLayers = getLayerIDs(mockState.input);
     const wrapper = setup.mount(<FlowChart />);
     expect(wrapper.render().find('.pipeline-layer').length).toBe(
       mockLayers.length

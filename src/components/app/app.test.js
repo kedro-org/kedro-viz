@@ -2,7 +2,6 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import App from './index';
 import getRandomPipeline from '../../utils/random-data';
-import animals from '../../utils/data/animals.mock';
 import input from '../../utils/data/input.json';
 import demo from '../../utils/data/demo.mock';
 import { mockState } from '../../utils/state.mock';
@@ -21,7 +20,7 @@ describe('App', () => {
     });
 
     it('when being passed data as a prop', () => {
-      shallow(<App data={animals} />);
+      shallow(<App data={input} />);
     });
   });
 
@@ -29,28 +28,28 @@ describe('App', () => {
     const getState = wrapper => wrapper.instance().store.getState();
 
     it('when data prop is set on first load', () => {
-      const wrapper = shallow(<App data={animals} />);
-      expect(getState(wrapper).node).toEqual(mockState.animals.node);
+      const wrapper = shallow(<App data={input} />);
+      expect(getState(wrapper).node).toEqual(mockState.input.node);
     });
 
     it('when data prop is updated', () => {
       const wrapper = shallow(<App data={demo} />);
-      wrapper.setProps({ data: animals });
-      expect(getState(wrapper).node).toEqual(mockState.animals.node);
+      wrapper.setProps({ data: input });
+      expect(getState(wrapper).node).toEqual(mockState.input.node);
     });
 
     it('but does not override localStorage values', () => {
       const localState = { node: { disabled: { foo: true } } };
       saveState(localState);
       const wrapper = shallow(<App data={demo} />);
-      wrapper.setProps({ data: animals });
+      wrapper.setProps({ data: input });
       expect(getState(wrapper).node.disabled).toEqual(localState.node.disabled);
       window.localStorage.clear();
     });
 
     it('but does not override non-pipeline values', () => {
       const wrapper = shallow(<App data={demo} />);
-      wrapper.setProps({ data: animals });
+      wrapper.setProps({ data: input });
       expect(getState(wrapper)).toMatchObject(prepareNonPipelineState({}));
     });
   });
@@ -58,7 +57,7 @@ describe('App', () => {
   describe('feature flags', () => {
     it('it announces flags', () => {
       const announceFlags = jest.spyOn(App.prototype, 'announceFlags');
-      shallow(<App data={animals} />);
+      shallow(<App data={input} />);
       expect(announceFlags).toHaveBeenCalledWith(Flags.defaults());
     });
   });
