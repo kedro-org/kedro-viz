@@ -50,9 +50,7 @@ export const NodeListGroup = ({
     </h3>
 
     <div
-      className={classnames({
-        'pipeline-nodelist__children': true,
-        'pipeline-nodelist__children--open': !collapsed,
+      className={classnames('pipeline-nodelist__children', {
         'pipeline-nodelist__children--closed': collapsed
       })}>
       {children}
