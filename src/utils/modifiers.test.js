@@ -63,4 +63,10 @@ describe('modifiers classname utility', () => {
       'test-name test-name--id-0 test-name--type-mixed test-name--big test-name--no-small test-name--very-big'
     );
   });
+
+  it('returns the classname, modifiers and additional class name string if passed', () => {
+    expect(
+      modifiers('test-name', { big: true }, 'test-name-2 test-name-3')
+    ).toEqual('test-name test-name--big test-name-2 test-name-3');
+  });
 });
