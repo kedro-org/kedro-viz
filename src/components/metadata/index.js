@@ -64,7 +64,7 @@ const MetaData = ({ visible = true, metadata }) => {
                 <ul className="pipeline-metadata__toolbox">
                   <IconButton
                     ariaLabel="Copy run command to clipboard."
-                    className="pipeline-metadata__copy-icon"
+                    className="pipeline-metadata__copy-button"
                     icon="copy"
                     onClick={onCopyClick}
                   />

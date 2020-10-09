@@ -28,10 +28,15 @@ export const getClickedNodeMetaData = createSelector(
     const node = nodes[nodeId];
 
     if (node) {
+      // Note: node.sources node.targets require newgraph enabled
       return {
         node,
-        inputs: node.sources.map(edge => nodes[edge.source]).sort(sortAlpha),
-        outputs: node.targets.map(edge => nodes[edge.target]).sort(sortAlpha),
+        inputs:
+          node.sources &&
+          node.sources.map(edge => nodes[edge.source]).sort(sortAlpha),
+        outputs:
+          node.targets &&
+          node.targets.map(edge => nodes[edge.target]).sort(sortAlpha),
         tags: [...nodeTags[node.id]].sort(sortAlpha),
         pipeline: pipeline.name[pipeline.active],
         runCommand: `kedro run --to-nodes ${node.fullName}`

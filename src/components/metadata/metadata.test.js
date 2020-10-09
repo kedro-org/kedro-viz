@@ -18,23 +18,27 @@ describe('MetaData', () => {
   const textOf = elements => elements.map(element => element.text());
   const rows = wrapper => wrapper.find('.pipeline-metadata__row');
   const title = wrapper => wrapper.find('.pipeline-metadata__title');
+  const rowIcon = row => row.find('svg.pipeline-metadata__icon');
   const rowLabel = row => row.find('.pipeline-metadata__label');
   const rowValue = row => row.find('.pipeline-metadata__value');
   const rowByLabel = (wrapper, label) =>
     rows(wrapper).findWhere(
-      row =>
-        rowLabel(row).length &&
-        rowLabel(row)
-          .text()
-          .trim() === label
+      row => rowLabel(row).length && rowLabel(row).text() === label
     );
+
+  it('shows the node type as an icon', () => {
+    const wrapper = mount({ nodeId: 'task/salmon' });
+    expect(rowIcon(wrapper).hasClass('pipeline-node-icon--type-task')).toBe(
+      true
+    );
+  });
 
   it('shows the node name as the title', () => {
     const wrapper = mount({ nodeId: 'task/salmon' });
     expect(textOf(title(wrapper))).toEqual(['salmon']);
   });
 
-  it('shows the node type', () => {
+  it('shows the node type as text', () => {
     const wrapper = mount({ nodeId: 'task/salmon' });
     const row = rowByLabel(wrapper, 'Type:');
     expect(textOf(rowValue(row))).toEqual(['task']);
@@ -73,5 +77,20 @@ describe('MetaData', () => {
     const wrapper = mount({ nodeId: 'task/salmon' });
     const row = rowByLabel(wrapper, 'Run Command:');
     expect(textOf(rowValue(row))).toEqual(['kedro run --to-nodes salmon']);
+  });
+
+  it('copies run command when button clicked', () => {
+    window.navigator.clipboard = {
+      writeText: jest.fn()
+    };
+
+    const wrapper = mount({ nodeId: 'task/salmon' });
+    const copyButton = wrapper.find('button.pipeline-metadata__copy-button');
+
+    copyButton.simulate('click');
+
+    expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
+      'kedro run --to-nodes salmon'
+    );
   });
 });

@@ -149,15 +149,15 @@ $list-inline-spacing: 0.2em;
   align-items: center;
 }
 
-.pipeline-metadata__copy-icon {
+.pipeline-metadata__copy-button {
   opacity: 0.55;
 }
 
-.pipeline-metadata__copy-icon:hover {
+.pipeline-metadata__copy-button:hover {
   opacity: 1;
 }
 
-.pipeline-metadata__copy-icon:active {
+.pipeline-metadata__copy-button:active {
   transform: translate(0, 1px);
   opacity: 0.85;
 }
