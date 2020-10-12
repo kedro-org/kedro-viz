@@ -84,7 +84,7 @@ describe('NodeList', () => {
     const rows = () =>
       wrapper
         .find(
-          '.pipeline-nodelist__item--kind-toggle .pipeline-nodelist--nested'
+          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist--nested'
         )
         .find('.pipeline-nodelist__row');
     const rowName = row =>
@@ -183,7 +183,7 @@ describe('NodeList', () => {
     const elements = wrapper =>
       wrapper
         .find(
-          '.pipeline-nodelist__item--kind-toggle .pipeline-nodelist--nested'
+          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist--nested'
         )
         .find('.pipeline-nodelist__row')
         .map(row => [
@@ -195,7 +195,7 @@ describe('NodeList', () => {
       elements(wrapper).filter(([_, enabled]) => enabled);
 
     const tagItem = wrapper =>
-      wrapper.find('.pipeline-nodelist__item--type-tag');
+      wrapper.find('.pipeline-nodelist__group--type-tag');
 
     const partialIcon = wrapper => tagItem(wrapper).find(IndicatorPartialIcon);
 
@@ -247,7 +247,7 @@ describe('NodeList', () => {
 
     it('adds a class to tag group item when all tags unset', () => {
       const wrapper = setup.mount(<NodeList />);
-      const unsetClass = 'pipeline-nodelist__item--all-unset';
+      const unsetClass = 'pipeline-nodelist__group--all-unset';
 
       expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
       changeRows(wrapper, ['huge'], true);
@@ -300,7 +300,7 @@ describe('NodeList', () => {
     const nodeRow = () =>
       wrapper
         .find(
-          '.pipeline-nodelist__item--type-task .pipeline-nodelist--nested .pipeline-nodelist__row'
+          '.pipeline-nodelist__group--type-task .pipeline-nodelist--nested .pipeline-nodelist__row'
         )
         .first();
 
@@ -320,7 +320,7 @@ describe('NodeList', () => {
     const checkbox = () =>
       wrapper
         .find(
-          '.pipeline-nodelist__item--type-task .pipeline-nodelist--nested .pipeline-nodelist__row input'
+          '.pipeline-nodelist__group--type-task .pipeline-nodelist--nested .pipeline-nodelist__row input'
         )
         .first();
 

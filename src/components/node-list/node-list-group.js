@@ -22,11 +22,11 @@ export const NodeListGroup = ({
 }) => (
   <Container
     className={classnames(
-      'pipeline-nodelist__item',
-      `pipeline-nodelist__item--type-${id}`,
-      `pipeline-nodelist__item--kind-${kind}`,
+      'pipeline-nodelist__group',
+      `pipeline-nodelist__group--type-${id}`,
+      `pipeline-nodelist__group--kind-${kind}`,
       {
-        'pipeline-nodelist__item--all-unset': allUnset
+        'pipeline-nodelist__group--all-unset': allUnset
       }
     )}>
     <h3 className="pipeline-nodelist__heading">
