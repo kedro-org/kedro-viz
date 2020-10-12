@@ -3,6 +3,9 @@ import classnames from 'classnames';
 import NodeListRow from './node-list-row';
 
 export const NodeListGroup = ({
+  container: Container = 'div',
+  childrenContainer: ChildrenContainer = 'div',
+  childrenClassName,
   children,
   collapsed,
   id,
@@ -17,7 +20,7 @@ export const NodeListGroup = ({
   onToggleChecked,
   onToggleCollapsed
 }) => (
-  <li
+  <Container
     className={classnames(
       'pipeline-nodelist__item',
       `pipeline-nodelist__item--type-${id}`,
@@ -49,13 +52,13 @@ export const NodeListGroup = ({
       </NodeListRow>
     </h3>
 
-    <div
-      className={classnames('pipeline-nodelist__children', {
+    <ChildrenContainer
+      className={classnames(childrenClassName, 'pipeline-nodelist__children', {
         'pipeline-nodelist__children--closed': collapsed
       })}>
       {children}
-    </div>
-  </li>
+    </ChildrenContainer>
+  </Container>
 );
 
 export default NodeListGroup;

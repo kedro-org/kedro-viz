@@ -7,6 +7,7 @@ import InvisibleIcon from '../icons/invisible';
 import { getNodeActive } from '../../selectors/nodes';
 
 const NodeListRow = ({
+  container: Container = 'div',
   active,
   checked,
   unset,
@@ -30,7 +31,7 @@ const NodeListRow = ({
   const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
 
   return (
-    <div
+    <Container
       className={classnames(
         'pipeline-nodelist__row kedro',
         `pipeline-nodelist__row--kind-${kind}`,
@@ -113,7 +114,7 @@ const NodeListRow = ({
           )}
         />
       </label>
-    </div>
+    </Container>
   );
 };
 

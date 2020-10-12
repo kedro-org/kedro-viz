@@ -35,6 +35,9 @@ const NodeListGroups = ({
           const group = groups[typeId];
           return (
             <NodeListGroup
+              container="li"
+              childrenContainer="ul"
+              childrenClassName="pipeline-nodelist pipeline-nodelist--nested"
               key={group.id}
               id={group.id}
               name={group.name}
@@ -47,32 +50,30 @@ const NodeListGroups = ({
               collapsed={Boolean(searchValue) ? false : collapsed[group.id]}
               onToggleCollapsed={onToggleGroupCollapsed}
               onToggleChecked={onToggleGroupChecked}>
-              <ul className="pipeline-nodelist pipeline-nodelist--nested">
-                {(items[group.id] || []).map(item => (
-                  <li key={item.id}>
-                    <NodeListRow
-                      id={item.id}
-                      kind={group.kind}
-                      label={item.highlightedLabel}
-                      name={item.name}
-                      type={item.type}
-                      active={item.active}
-                      checked={item.checked}
-                      disabled={item.disabled}
-                      faded={item.faded}
-                      visible={item.visible}
-                      selected={item.selected}
-                      unset={item.unset}
-                      visibleIcon={item.visibleIcon}
-                      invisibleIcon={item.invisibleIcon}
-                      onClick={() => onItemClick(item)}
-                      onMouseEnter={() => onItemMouseEnter(item)}
-                      onMouseLeave={() => onItemMouseLeave(item)}
-                      onChange={e => onItemChange(item, !e.target.checked)}
-                    />
-                  </li>
-                ))}
-              </ul>
+              {(items[group.id] || []).map(item => (
+                <NodeListRow
+                  container="li"
+                  key={item.id}
+                  id={item.id}
+                  kind={group.kind}
+                  label={item.highlightedLabel}
+                  name={item.name}
+                  type={item.type}
+                  active={item.active}
+                  checked={item.checked}
+                  disabled={item.disabled}
+                  faded={item.faded}
+                  visible={item.visible}
+                  selected={item.selected}
+                  unset={item.unset}
+                  visibleIcon={item.visibleIcon}
+                  invisibleIcon={item.invisibleIcon}
+                  onClick={() => onItemClick(item)}
+                  onMouseEnter={() => onItemMouseEnter(item)}
+                  onMouseLeave={() => onItemMouseLeave(item)}
+                  onChange={e => onItemChange(item, !e.target.checked)}
+                />
+              ))}
             </NodeListGroup>
           );
         })}
