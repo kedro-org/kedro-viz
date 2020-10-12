@@ -31,18 +31,6 @@ Feature: Viz plugin in new project
     Background:
         Given I have prepared a config file with example code
 
-    Scenario: Execute viz with Kedro 0.14.0
-        Given I have installed kedro version "0.14.0"
-        And I have run a non-interactive kedro new
-        When I execute the kedro viz command "viz"
-        Then kedro-viz should start successfully
-
-    Scenario: Execute viz with Kedro 0.14.3
-        Given I have installed kedro version "0.14.3"
-        And I have run a non-interactive kedro new
-        When I execute the kedro viz command "viz"
-        Then kedro-viz should start successfully
-
     Scenario: Execute viz with Kedro 0.15.0
         Given I have installed kedro version "0.15.0"
         And I have run a non-interactive kedro new
