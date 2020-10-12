@@ -15,27 +15,19 @@
     margin: 0 0 1.2em;
   }
 
-  &--fade-in {
-    animation: fadeIn 0.4s forwards;
-  }
-
-  &--fade-out {
-    animation: fadeIn 0.4s backwards reverse;
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
+  .pipeline-nodelist__children {
+    &--closed {
+      display: none;
+    }
   }
 }
 
 .pipeline-nodelist__heading {
   margin: 0;
+
+  .pipeline-nodelist__row__label {
+    font-weight: bold;
+  }
 }
 
 .pipeline-type-group-toggle {
@@ -46,6 +38,7 @@
   margin-right: $toggle-margin-right;
   padding: 0;
   color: inherit;
+  font-size: 1.16em;
   font-family: inherit;
   line-height: 1em;
   text-align: center;
@@ -54,7 +47,7 @@
   border-radius: 50%;
   box-shadow: none;
   cursor: pointer;
-  transition: transform ease 0.3s;
+  transition: transform ease 0.1s;
 
   &:focus {
     outline: none;
@@ -69,9 +62,20 @@
     content: '▾';
   }
 
-  &:hover {
-    background: rgba(#fff, 0.1);
-    box-shadow: 0 0 0 1px rgba(#fff, 0.03) inset;
+  .kui-theme--light &:before {
+    color: rgba($color-dark, 0.55);
+  }
+
+  .kui-theme--dark &:before {
+    color: rgba($color-light, 0.55);
+  }
+
+  .kui-theme--light &:hover:before {
+    color: $color-dark;
+  }
+
+  .kui-theme--dark &:hover:before {
+    color: $color-light;
   }
 
   &--alt {

@@ -32,16 +32,16 @@ describe('PrimaryToolbar', () => {
   });
 
   const functionCalls = [
-    ['menu', 'onToggleSidebar'],
-    ['theme', 'onToggleTheme'],
-    ['label', 'onToggleTextLabels'],
-    ['export', 'onToggleExportModal'],
-    ['layers', 'onToggleLayers']
+    ['.pipeline-menu-button--menu', 'onToggleSidebar'],
+    ['.pipeline-menu-button--theme', 'onToggleTheme'],
+    ['.pipeline-menu-button--labels', 'onToggleTextLabels'],
+    ['.pipeline-menu-button--export', 'onToggleExportModal'],
+    ['.pipeline-menu-button--layers', 'onToggleLayers']
   ];
 
   test.each(functionCalls)(
     'calls %s function on %s button click',
-    (icon, callback) => {
+    (selector, callback) => {
       const mockFn = jest.fn();
       const props = {
         textLabels: mockState.animals.textLabels,
@@ -52,7 +52,7 @@ describe('PrimaryToolbar', () => {
       const wrapper = setup.mount(<PrimaryToolbar {...props} />);
       expect(mockFn.mock.calls.length).toBe(0);
       wrapper
-        .find({ icon })
+        .find(selector)
         .find('button')
         .simulate('click');
       expect(mockFn.mock.calls.length).toBe(1);

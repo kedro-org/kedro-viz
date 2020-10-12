@@ -1,0 +1,94 @@
+@import '../../../styles/extends';
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+@import './variables';
+
+.kui-theme--dark .pipeline-row__toggle-icon--kind-filter {
+  &.pipeline-row__toggle-icon--checked {
+    fill: $filter-indicator-on-light;
+    stroke: $filter-indicator-on-light;
+  }
+
+  &.pipeline-row__toggle-icon--unchecked,
+  &.pipeline-row__toggle-icon--unset {
+    fill: none;
+    stroke: $filter-indicator-off-light;
+  }
+}
+
+.kui-theme--light .pipeline-row__toggle-icon--kind-filter {
+  &.pipeline-row__toggle-icon--checked {
+    fill: $filter-indicator-on-dark;
+    stroke: $filter-indicator-on-dark;
+  }
+
+  &.pipeline-row__toggle-icon--unchecked,
+  &.pipeline-row__toggle-icon--unset {
+    fill: none;
+    stroke: $filter-indicator-off-dark;
+  }
+}
+
+// Fade row text when unchecked
+.pipeline-nodelist__row--unchecked .pipeline-nodelist__row__text--kind-filter {
+  opacity: 0.55;
+}
+
+// Brighter row text when unchecked and hovered
+.pipeline-nodelist__row--unchecked:hover
+  .pipeline-nodelist__row__text--kind-filter {
+  opacity: 0.8;
+}
+
+// Bright row text when all unset
+.pipeline-nodelist__group--all-unset
+  .pipeline-nodelist__row--unchecked
+  .pipeline-nodelist__row__text--kind-filter {
+  opacity: 1;
+}
+
+// Hide all indicators when all unset
+.pipeline-nodelist__group--all-unset .pipeline-row__toggle--kind-filter {
+  opacity: 0;
+}
+
+// Show indicator when all unset and row hovered
+.pipeline-nodelist__group--all-unset
+  .pipeline-nodelist__row:hover
+  .pipeline-row__toggle--kind-filter {
+  opacity: 0.55;
+
+  &:hover {
+    opacity: 0.75;
+  }
+}
+
+// Show unchecked indicators as solid blue when all unset
+.pipeline-nodelist__group--all-unset
+  .pipeline-nodelist__row:hover
+  .pipeline-row__toggle-icon--kind-filter {
+  opacity: 1;
+  fill: $filter-indicator-on-light;
+  stroke: $filter-indicator-on-light;
+}
+
+.kui-theme--light .pipeline-row__toggle-icon--kind-filter,
+.kui-theme--dark .pipeline-row__toggle-icon--kind-filter {
+  // Fade indicator when unchecked or unset
+  &.pipeline-row__toggle-icon--unchecked,
+  &.pipeline-row__toggle-icon--unset {
+    opacity: 0.55;
+  }
+
+  // Bright indicator when checked or hovered
+  &.pipeline-row__toggle-icon--checked,
+  &.pipeline-row__toggle-icon--unchecked:hover,
+  &.pipeline-row__toggle-icon--unset:hover {
+    opacity: 0.75;
+  }
+
+  // Hover states when checked
+  &.pipeline-row__toggle-icon--checked:hover {
+    opacity: 1;
+  }
+}

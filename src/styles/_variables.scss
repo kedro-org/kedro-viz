@@ -1,29 +1,34 @@
 //-- Colours --//
 
+$color-dark: #000;
+$color-light: #fff;
 $color-primary: #00b0f5;
 $color-link: rgba($color-primary, 0.85);
 
 // Light:
-$color-text-light: rgba(black, 0.85);
-$color-text-light-alt: rgba(white, 0.85);
+$color-text-light: rgba($color-dark, 0.85);
+$color-text-light-alt: rgba($color-light, 0.85);
 $color-bg-light-1: #ccd1d6;
 $color-bg-light-2: #e6e8eb;
 $color-bg-light-3: #f0f1f3;
 $color-bg-light-alt: #242525;
 
 // Dark:
-$color-text-dark: rgba(white, 0.85);
-$color-text-dark-alt: rgba(black, 0.85);
+$color-text-dark: rgba($color-light, 0.85);
+$color-text-dark-alt: rgba($color-dark, 0.85);
 $color-bg-dark-1: #001521;
-$color-bg-dark-2: #122531;
-$color-bg-dark-3: #1d303b;
-$color-bg-dark-alt: white;
+$color-bg-dark-2: #031a26;
+$color-bg-dark-3: #061c28;
+$color-bg-dark-4: #0e2330;
+$color-bg-dark-alt: $color-light;
 
 //-- Layout --//
 
 $sidebar-padding: 1.8em;
 
-// Also set in src/config.js:
+// These values are used in both SCSS and JS, and we don't have variable-sharing
+// across Sass and JavaScript, so they're defined in two places. If you update their
+// value here, please also update their corresponding value in src/config.js
 $sidebar-width-open: 400px;
-$sidebar-width-closed: 60px;
+$sidebar-width-closed: 56px;
 $sidebar-breakpoint: 700px;
