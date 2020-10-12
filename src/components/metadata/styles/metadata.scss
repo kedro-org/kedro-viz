@@ -60,11 +60,11 @@
   user-select: none;
 
   .kui-theme--light & {
-    color: rgba(0, 0, 0, 0.55);
+    color: rgba($color-text-light, 0.55);
   }
 
   .kui-theme--dark & {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba($color-text-dark, 0.55);
   }
 }
 
