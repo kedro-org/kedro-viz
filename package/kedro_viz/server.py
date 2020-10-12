@@ -62,16 +62,13 @@ else:
     from kedro.cli import get_project_context  # pragma: no cover
     from kedro.cli.utils import KedroCliError  # pragma: no cover
 
-
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
 _DEFAULT_KEY = "__default__"
 
 _DATA = None  # type: Dict
 _CATALOG = None  # type: DataCatalog
-_JSON_NODES = (
-    {}
-)  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None, Dict[str, AbstractDataSet]]]]
+_JSON_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None]]
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -457,13 +454,13 @@ def format_pipeline_data(
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
 
-        node_data = _get_dataset_data_params(namespace)
         _JSON_NODES[node_id] = {
             "type": "parameters" if is_param else "data",
-            "obj": {namespace.replace("params:", ""): node_data}
-            if is_param and "params:" in namespace
-            else node_data,
+            "obj": _get_dataset_data_params(namespace),
         }
+        if is_param and namespace != "parameters":
+            # Add "parameter_name" key only for "params:" prefix.
+            _JSON_NODES[node_id]["parameter_name"] = namespace.replace("params:", "")
 
         if node_id not in nodes:
             nodes[node_id] = {
@@ -544,17 +541,14 @@ def nodes_metadata(node_id):
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
 
-    parameters = node["obj"]
-    if isinstance(parameters, dict):
+    if "parameter_name" in node:
         # In case of 'params:' prefix
         parameters_metadata = {
-            "parameters": {
-                next(iter(parameters)): next(iter(parameters.values())).load()
-            }
+            "parameters": {node["parameter_name"]: node["obj"].load()}
         }
-        return jsonify(parameters_metadata)
-    # In case of 'parameters'
-    parameters_metadata = {"parameters": node["obj"].load()}
+    else:
+        # In case of 'parameters'
+        parameters_metadata = {"parameters": node["obj"].load()}
     return jsonify(parameters_metadata)
 
 
