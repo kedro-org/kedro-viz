@@ -32,7 +32,7 @@ const IconButton = ({
         })}
         disabled={disabled}
         onClick={onClick}>
-        {Icon && <Icon className={className} />}
+        {Icon && <Icon className="pipeline-icon" />}
         {labelText && (
           <span className="pipeline-toolbar__label">{labelText}</span>
         )}
