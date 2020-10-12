@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/icon-button';
+import CopyIcon from '../icons/copy';
 import MetaDataRow from './metadata-row';
 import {
   getVisibleMetaSidebar,
@@ -59,23 +60,25 @@ const MetaData = ({ visible = true, metadata }) => {
             {metadata.tags}
           </MetaDataRow>
           <MetaDataRow label="Pipeline:">{metadata.pipeline}</MetaDataRow>
-          <MetaDataRow label="Run Command:">
-            <code className="pipeline-metadata__toolbox-container">
-              <span className="pipeline-metadata__value pipeline-metadata__run-command-value">
-                {runCommandText}
-              </span>
-              {window.navigator.clipboard && (
-                <ul className="pipeline-metadata__toolbox">
-                  <IconButton
-                    ariaLabel="Copy run command to clipboard."
-                    className="pipeline-metadata__copy-button"
-                    icon="copy"
-                    onClick={onCopyClick}
-                  />
-                </ul>
-              )}
-            </code>
-          </MetaDataRow>
+          {runCommandText && (
+            <MetaDataRow label="Run Command:">
+              <code className="pipeline-metadata__toolbox-container">
+                <span className="pipeline-metadata__value pipeline-metadata__run-command-value">
+                  {runCommandText}
+                </span>
+                {window.navigator.clipboard && (
+                  <ul className="pipeline-metadata__toolbox">
+                    <IconButton
+                      ariaLabel="Copy run command to clipboard."
+                      className="pipeline-metadata__copy-button"
+                      icon={CopyIcon}
+                      onClick={onCopyClick}
+                    />
+                  </ul>
+                )}
+              </code>
+            </MetaDataRow>
+          )}
         </>
       )}
     </div>

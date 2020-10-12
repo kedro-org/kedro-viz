@@ -149,7 +149,9 @@ $list-inline-spacing: 0.2em;
   align-items: center;
 }
 
-.pipeline-metadata__copy-button {
+.pipeline-metadata__toolbox .pipeline-metadata__copy-button {
+  width: 1.7em;
+  height: 1.7em;
   opacity: 0.55;
 }
 
