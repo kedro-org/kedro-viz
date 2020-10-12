@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { getClickedNode, getNodesById } from './nodes';
+import { runCommandTemplates } from '../config';
 
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
@@ -13,6 +14,16 @@ export const getVisibleMetaSidebar = createSelector(
   [getClickedNode],
   nodeClicked => Boolean(nodeClicked)
 );
+
+/**
+ * Returns run command for the node, if applicable to the node type
+ * @param {object} node The node
+ * @returns {?string} The run command for the node, if applicable
+ */
+const getRunCommand = node => {
+  const template = runCommandTemplates[node.type];
+  return template ? template(node.fullName) : null;
+};
 
 /**
  * Gets metadata for the currently clicked node if any
@@ -35,7 +46,7 @@ export const getClickedNodeMetaData = createSelector(
           .map(tagId => tagNames[tagId])
           .sort(sortAlpha),
         pipeline: pipeline.name[pipeline.active],
-        runCommand: `kedro run --to-nodes ${node.fullName}`
+        runCommand: getRunCommand(node)
       };
 
       // Note: node.sources node.targets require newgraph enabled

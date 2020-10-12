@@ -31,3 +31,8 @@ export const flags = {
     icon: '🔮'
   }
 };
+
+export const runCommandTemplates = {
+  data: name => `kedro run --to-inputs ${name}`,
+  task: name => `kedro run --to-nodes ${name}`
+};

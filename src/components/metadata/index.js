@@ -14,17 +14,18 @@ import './styles/metadata.css';
  * Shows node meta data
  */
 const MetaData = ({ visible = true, metadata }) => {
-  const [runCommandText, setRunCommandText] = useState();
+  const [showCopied, setShowCopied] = useState(false);
 
-  if (metadata && !runCommandText) {
-    setRunCommandText(metadata.runCommand);
-  }
   const showInputsOutputs = metadata && metadata.node.type !== 'data';
+
+  const runCommandText = !showCopied
+    ? metadata && metadata.runCommand
+    : 'Copied to clipboard.';
 
   const onCopyClick = () => {
     window.navigator.clipboard.writeText(metadata.runCommand);
-    setRunCommandText('Copied to clipboard.');
-    setTimeout(() => setRunCommandText(metadata.runCommand), 2500);
+    setShowCopied(true);
+    setTimeout(() => setShowCopied(false), 2500);
   };
 
   return (
