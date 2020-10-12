@@ -39,7 +39,7 @@ from collections import defaultdict
 from contextlib import closing
 from functools import partial
 from pathlib import Path
-from typing import Dict, List, Set, Tuple, Union
+from typing import Dict, List, Set, Union
 
 import click
 import kedro
