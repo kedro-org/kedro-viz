@@ -541,14 +541,13 @@ def nodes_metadata(node_id):
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
 
+    parameter_values = node["obj"].load()
     if "parameter_name" in node:
         # In case of 'params:' prefix
-        parameters_metadata = {
-            "parameters": {node["parameter_name"]: node["obj"].load()}
-        }
+        parameters_metadata = {"parameters": {node["parameter_name"]: parameter_values}}
     else:
         # In case of 'parameters'
-        parameters_metadata = {"parameters": node["obj"].load()}
+        parameters_metadata = {"parameters": parameter_values}
     return jsonify(parameters_metadata)
 
 
