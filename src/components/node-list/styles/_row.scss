@@ -185,7 +185,7 @@
 .kui-theme--light .pipeline-row__toggle:before {
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0) 0%,
+    rgba($row-selected-light, 0) 0%,
     $row-selected-light 100%
   );
 }
@@ -193,7 +193,7 @@
 .kui-theme--dark .pipeline-row__toggle:before {
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0) 0%,
+    rgba($row-selected-dark, 0) 0%,
     $row-selected-dark 100%
   );
 }
