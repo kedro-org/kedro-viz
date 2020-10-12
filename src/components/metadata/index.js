@@ -19,6 +19,7 @@ const MetaData = ({ visible = true, metadata }) => {
   if (metadata && !runCommandText) {
     setRunCommandText(metadata.runCommand);
   }
+  const showInputsOutputs = metadata && metadata.node.type !== 'data';
 
   const onCopyClick = () => {
     window.navigator.clipboard.writeText(metadata.runCommand);
@@ -45,12 +46,16 @@ const MetaData = ({ visible = true, metadata }) => {
           <MetaDataRow label="Type:" kind="token">
             {metadata.node.type}
           </MetaDataRow>
-          <MetaDataRow label="Inputs:" property="name">
-            {metadata.inputs}
-          </MetaDataRow>
-          <MetaDataRow label="Outputs:" property="name">
-            {metadata.outputs}
-          </MetaDataRow>
+          {showInputsOutputs && (
+            <>
+              <MetaDataRow label="Inputs:" property="name">
+                {metadata.inputs}
+              </MetaDataRow>
+              <MetaDataRow label="Outputs:" property="name">
+                {metadata.outputs}
+              </MetaDataRow>
+            </>
+          )}
           <MetaDataRow label="Tags:" kind="token" commas={false}>
             {metadata.tags}
           </MetaDataRow>
