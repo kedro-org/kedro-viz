@@ -58,10 +58,10 @@
   margin: 0 4px -6px -6px;
 
   .kui-theme--light & {
-    fill: rgba(black, 0.9);
+    fill: rgba($color-dark, 0.9);
   }
 
   .kui-theme--dark & {
-    fill: white;
+    fill: $color-light;
   }
 }

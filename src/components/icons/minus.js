@@ -1,8 +1,9 @@
 import React from 'react';
+import classnames from 'classnames';
 
 export default ({ className }) => (
   <svg
-    className={className}
+    className={classnames(className, 'pipeline-icon--stroke')}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24">
     <path

@@ -2,6 +2,8 @@ import React from 'react';
 import NodeList, { mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
+import { getTagData } from '../../selectors/tags';
+import IndicatorPartialIcon from '../icons/indicator-partial';
 
 describe('NodeList', () => {
   it('renders without crashing', () => {
@@ -30,11 +32,17 @@ describe('NodeList', () => {
           '.pipeline-nodelist--nested .pipeline-nodelist__row'
         );
         const nodes = getNodeData(mockState.animals);
+        const tags = getTagData(mockState.animals);
         const expectedResult = nodes.filter(node =>
           node.name.includes(searchText)
         );
+        const expectedTagResult = tags.filter(tag =>
+          tag.name.includes(searchText)
+        );
         expect(search().props().value).toBe(searchText);
-        expect(nodeList.length).toBe(expectedResult.length);
+        expect(nodeList.length).toBe(
+          expectedResult.length + expectedTagResult.length
+        );
       }
     );
 
@@ -46,6 +54,7 @@ describe('NodeList', () => {
       const nodeList = () =>
         wrapper.find('.pipeline-nodelist--nested .pipeline-nodelist__row');
       const nodes = getNodeData(mockState.animals);
+      const tags = getTagData(mockState.animals);
       const searchText = nodes[0].name;
       // Enter search text
       search().simulate('change', { target: { value: searchText } });
@@ -54,87 +63,84 @@ describe('NodeList', () => {
       const expectedResult = nodes.filter(node =>
         node.name.includes(searchText)
       );
-      expect(nodeList().length).toBe(expectedResult.length);
+      const expectedTagResult = tags.filter(tag =>
+        tag.name.includes(searchText)
+      );
+      expect(nodeList().length).toBe(
+        expectedResult.length + expectedTagResult.length
+      );
       // Clear the list with escape key
       searchWrapper.simulate('keydown', { keyCode: 27 });
       // Check that search input value and node list have been reset
       expect(search().props().value).toBe('');
-      expect(nodeList().length).toBe(nodes.length);
+      expect(nodeList().length).toBe(nodes.length + tags.length);
     });
   });
 
-  describe('check/uncheck buttons', () => {
+  describe('visibility checkboxes on element items', () => {
     const wrapper = setup.mount(<NodeList />);
     // Re-find elements from root each time to see updates
     const search = () => wrapper.find('.kui-input__field');
-    const input = () =>
+    const rows = () =>
       wrapper
-        .find('.pipeline-nodelist--nested .pipeline-nodelist__row')
-        .find('input');
-    const inputProps = () => input().map(input => input.props());
-    const toggleAllNodes = check =>
-      wrapper
-        .find('.pipeline-nodelist__toggle__button')
-        .at(check ? 0 : 1)
-        .simulate('click');
+        .find(
+          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist--nested'
+        )
+        .find('.pipeline-nodelist__row');
+    const rowName = row =>
+      row.find('.pipeline-nodelist__row__text').prop('title');
+    const isRowEnabled = row => row.hasClass('pipeline-nodelist__row--visible');
+    const setShownRowsEnabled = enable =>
+      rows().forEach(row =>
+        row
+          .find('.pipeline-nodelist__row__checkbox')
+          .simulate('change', { target: { checked: enable } })
+      );
     // Get search text value and filtered nodes
     const nodes = getNodeData(mockState.animals);
     const searchText = nodes[0].name;
     const expectedResult = nodes.filter(node => node.name.includes(searchText));
 
-    it('disables every row when clicking uncheck all', () => {
-      toggleAllNodes(false);
-      expect(inputProps().every(input => input.checked === false)).toBe(true);
-    });
-
-    it('enables every row when clicking check all', () => {
-      toggleAllNodes(false);
-      toggleAllNodes(true);
-      expect(inputProps().every(input => input.checked === true)).toBe(true);
-    });
-
-    describe('toggle only visible nodes when searching', () => {
+    describe('toggle only visible rows when searching', () => {
       beforeAll(() => {
         // Reset node checked state
-        toggleAllNodes(true);
+        setShownRowsEnabled(true);
         // Enter search text
         search().simulate('change', { target: { value: searchText } });
-        // Disable visible nodes
-        toggleAllNodes(false);
-        // All visible rows should now be unchecked
-        expect(inputProps().every(input => input.checked === false)).toBe(true);
+        // Disable the found rows
+        setShownRowsEnabled(false);
+        // All visible rows should now be disabled
+        expect(rows().everyWhere(row => !isRowEnabled(row))).toBe(true);
         // Clear the search form so that all rows are now visible
         search().simulate('change', { target: { value: '' } });
       });
 
-      test('All rows should now be visible', () => {
-        expect(inputProps().length).toBe(nodes.length);
+      test('All rows should now be shown', () => {
+        expect(rows().length).toBe(nodes.length);
       });
 
-      test('Not all rows should be checked', () => {
-        expect(inputProps().every(input => input.checked === false)).toBe(
-          false
-        );
+      test('Some rows should not be enabled', () => {
+        expect(rows().someWhere(row => !isRowEnabled(row))).toBe(true);
       });
 
-      test('Not all rows should be unchecked', () => {
-        expect(inputProps().every(input => input.checked === true)).toBe(false);
+      test('Some rows should be enabled', () => {
+        expect(rows().someWhere(row => isRowEnabled(row))).toBe(true);
       });
 
-      test('Previously-visible rows should now be unchecked', () => {
+      test('Previously-visible rows should now be not enabled', () => {
         expect(
-          inputProps()
-            .filter(input => input.checked === false)
-            .map(input => input.name)
+          rows()
+            .filterWhere(row => !isRowEnabled(row))
+            .map(row => rowName(row))
             .sort()
         ).toEqual(expectedResult.map(node => node.name).sort());
       });
 
-      test('Previously-hidden rows should still be checked', () => {
+      test('Previously-hidden rows should still be enabled', () => {
         expect(
-          inputProps()
-            .filter(input => input.checked === true)
-            .map(input => input.name)
+          rows()
+            .filterWhere(row => isRowEnabled(row))
+            .map(row => rowName(row))
             .sort()
         ).toEqual(
           nodes
@@ -144,12 +150,12 @@ describe('NodeList', () => {
         );
       });
 
-      test('Toggling all the nodes back on checks all nodes', () => {
-        toggleAllNodes(true);
+      test('Toggling all the nodes back on enables all nodes', () => {
+        setShownRowsEnabled(true);
         expect(
-          inputProps()
-            .filter(input => input.checked === true)
-            .map(input => input.name)
+          rows()
+            .filterWhere(row => isRowEnabled(row))
+            .map(row => rowName(row))
             .sort()
         ).toEqual(nodes.map(node => node.name).sort());
       });
@@ -160,6 +166,123 @@ describe('NodeList', () => {
     });
   });
 
+  describe('checkboxes on tag filter items', () => {
+    const checkboxByName = (wrapper, text) =>
+      wrapper.find(`.pipeline-nodelist__row__checkbox[name="${text}"]`);
+
+    const rowByName = (wrapper, text) =>
+      wrapper.find(`.pipeline-nodelist__row[title="${text}"]`);
+
+    const changeRows = (wrapper, names, checked) =>
+      names.forEach(name =>
+        checkboxByName(wrapper, name).simulate('change', {
+          target: { checked }
+        })
+      );
+
+    const elements = wrapper =>
+      wrapper
+        .find(
+          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist--nested'
+        )
+        .find('.pipeline-nodelist__row')
+        .map(row => [
+          row.prop('title'),
+          !row.hasClass('pipeline-nodelist__row--disabled')
+        ]);
+
+    const elementsEnabled = wrapper =>
+      elements(wrapper).filter(([_, enabled]) => enabled);
+
+    const tagItem = wrapper =>
+      wrapper.find('.pipeline-nodelist__group--type-tag');
+
+    const partialIcon = wrapper => tagItem(wrapper).find(IndicatorPartialIcon);
+
+    it('selecting tags enables only elements with given tags', () => {
+      const wrapper = setup.mount(<NodeList />);
+
+      changeRows(wrapper, ['huge'], true);
+      expect(elementsEnabled(wrapper)).toEqual([['whale', true]]);
+
+      changeRows(wrapper, ['huge', 'small'], true);
+      expect(elementsEnabled(wrapper)).toEqual([
+        ['salmon', true],
+        ['trout', true],
+        ['cat', true],
+        ['dog', true],
+        ['weasel', true],
+        ['whale', true],
+        ['parameters_rabbit', true]
+      ]);
+    });
+
+    it('selecting a tag sorts elements by enabled first then alphabetical', () => {
+      const wrapper = setup.mount(<NodeList />);
+      changeRows(wrapper, ['medium'], true);
+
+      expect(elements(wrapper)).toEqual([
+        // Nodes (enabled)
+        ['shark', true],
+        // Nodes (disabled)
+        ['salmon', false],
+        ['trout', false],
+        // Datasets (enabled)
+        ['cat', true],
+        ['dog', true],
+        ['pig', true],
+        ['sheep', true],
+        // Datasets (disabled)
+        ['bear', false],
+        ['elephant', false],
+        ['giraffe', false],
+        ['horse', false],
+        ['weasel', false],
+        ['whale', false],
+        // Parameters
+        ['parameters', false],
+        ['parameters_rabbit', false]
+      ]);
+    });
+
+    it('adds a class to tag group item when all tags unset', () => {
+      const wrapper = setup.mount(<NodeList />);
+      const unsetClass = 'pipeline-nodelist__group--all-unset';
+
+      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
+      changeRows(wrapper, ['huge'], true);
+      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(false);
+      changeRows(wrapper, ['huge'], false);
+      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
+    });
+
+    it('adds a class to the row when a tag row unchecked', () => {
+      const wrapper = setup.mount(<NodeList />);
+      const uncheckedClass = 'pipeline-nodelist__row--unchecked';
+
+      expect(rowByName(wrapper, 'huge').hasClass(uncheckedClass)).toBe(true);
+      changeRows(wrapper, ['huge'], true);
+      expect(rowByName(wrapper, 'huge').hasClass(uncheckedClass)).toBe(false);
+      changeRows(wrapper, ['huge'], false);
+      expect(rowByName(wrapper, 'huge').hasClass(uncheckedClass)).toBe(true);
+    });
+
+    it('shows as partially selected when at least one but not all tags selected', () => {
+      const wrapper = setup.mount(<NodeList />);
+
+      // No tags selected
+      expect(partialIcon(wrapper)).toHaveLength(0);
+
+      // Some tags selected
+      changeRows(wrapper, ['huge'], true);
+      expect(partialIcon(wrapper)).toHaveLength(1);
+
+      // All tags selected
+      changeRows(wrapper, ['huge', 'large', 'medium', 'small'], true);
+      expect(partialIcon(wrapper)).toHaveLength(0);
+    });
+  });
+
   describe('node list', () => {
     it('renders the correct number of rows', () => {
       const wrapper = setup.mount(<NodeList />);
@@ -167,15 +290,18 @@ describe('NodeList', () => {
         '.pipeline-nodelist--nested .pipeline-nodelist__row'
       );
       const nodes = getNodeData(mockState.animals);
-      expect(nodeList.length).toBe(nodes.length);
+      const tags = getTagData(mockState.animals);
+      expect(nodeList.length).toBe(nodes.length + tags.length);
     });
   });
 
-  describe('node list item', () => {
+  describe('node list element item', () => {
     const wrapper = setup.mount(<NodeList />);
     const nodeRow = () =>
       wrapper
-        .find('.pipeline-nodelist--nested .pipeline-nodelist__row')
+        .find(
+          '.pipeline-nodelist__group--type-task .pipeline-nodelist--nested .pipeline-nodelist__row'
+        )
         .first();
 
     it('handles mouseenter events', () => {
@@ -189,11 +315,13 @@ describe('NodeList', () => {
     });
   });
 
-  describe('node list item checkbox', () => {
+  describe('node list element item checkbox', () => {
     const wrapper = setup.mount(<NodeList />);
     const checkbox = () =>
       wrapper
-        .find('.pipeline-nodelist--nested .pipeline-nodelist__row input')
+        .find(
+          '.pipeline-nodelist__group--type-task .pipeline-nodelist--nested .pipeline-nodelist__row input'
+        )
         .first();
 
     it('handles toggle off event', () => {
@@ -219,12 +347,17 @@ describe('NodeList', () => {
         type: expect.any(String)
       })
     ]);
-    const expectedResult = {
+    const expectedResult = expect.objectContaining({
+      tags: expect.any(Object),
+      tagsEnabled: expect.any(Object),
       nodes: expect.objectContaining({
         data: nodeList,
         task: nodeList
-      })
-    };
+      }),
+      nodeSelected: expect.any(Object),
+      sections: expect.any(Array),
+      types: expect.any(Array)
+    });
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 });

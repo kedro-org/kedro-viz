@@ -5,7 +5,6 @@ import { arrayToObject } from '../utils';
  * @return {object} state
  */
 export const createInitialPipelineState = () => ({
-  id: null,
   pipeline: {
     ids: [],
     name: {},
@@ -17,7 +16,6 @@ export const createInitialPipelineState = () => ({
     name: {},
     fullName: {},
     type: {},
-    isParam: {},
     tags: {},
     layer: {},
     disabled: {},
@@ -116,7 +114,6 @@ const addNode = state => node => {
   state.node.pipelines[id] = node.pipelines
     ? arrayToObject(node.pipelines, () => true)
     : {};
-  state.node.isParam[id] = node.type === 'parameters';
   state.node.tags[id] = node.tags || [];
 };
 
@@ -168,9 +165,6 @@ const normalizeData = data => {
     return state;
   }
 
-  if (data.schema_id) {
-    state.id = data.schema_id;
-  }
   data.nodes.forEach(addNode(state));
   data.edges.forEach(addEdge(state));
   if (data.pipelines) {

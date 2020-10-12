@@ -13,15 +13,15 @@ describe('MiniMapToolbar', () => {
   });
 
   const functionCalls = [
-    ['map', 'onToggleMiniMap'],
-    ['plus', 'onUpdateChartZoom'],
-    ['minus', 'onUpdateChartZoom'],
-    ['reset', 'onUpdateChartZoom']
+    ['.pipeline-minimap-button--map', 'onToggleMiniMap'],
+    ['.pipeline-minimap-button--zoom-in', 'onUpdateChartZoom'],
+    ['.pipeline-minimap-button--zoom-out', 'onUpdateChartZoom'],
+    ['.pipeline-minimap-button--reset', 'onUpdateChartZoom']
   ];
 
   test.each(functionCalls)(
     'calls %s function on %s button click',
-    (icon, callback) => {
+    (selector, callback) => {
       const mockFn = jest.fn();
       const props = {
         chartZoom: { scale: 1, minScale: 0.5, maxScale: 1.5 },
@@ -31,7 +31,7 @@ describe('MiniMapToolbar', () => {
       const wrapper = setup.mount(<MiniMapToolbar {...props} />);
       expect(mockFn.mock.calls.length).toBe(0);
       wrapper
-        .find({ icon })
+        .find(selector)
         .find('button')
         .simulate('click');
       expect(mockFn.mock.calls.length).toBe(1);

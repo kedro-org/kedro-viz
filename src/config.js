@@ -3,7 +3,9 @@ export const fullDataPath = `/public${dataPath.substr(1)}`;
 
 export const localStorageName = 'KedroViz';
 
-// Also set in src/styles/_variables.scss:
+// These values are used in both SCSS and JS, and we don't have variable-sharing
+// across Sass and JavaScript, so they're defined in two places. If you update their
+// value here, please also update their corresponding value in src/styles/_variables.scss
 export const metaSidebarWidth = {
   open: 400,
   closed: 0
@@ -11,7 +13,7 @@ export const metaSidebarWidth = {
 export const sidebarBreakpoint = 700;
 export const sidebarWidth = {
   open: 400,
-  closed: 60
+  closed: 56
 };
 
 export const flags = {
@@ -29,6 +31,17 @@ export const flags = {
     description: 'Show meta data panel',
     default: false,
     icon: '🔮'
+  }
+};
+
+export const sidebar = {
+  Categories: {
+    Tags: 'tag'
+  },
+  Elements: {
+    Nodes: 'task',
+    Datasets: 'data',
+    Parameters: 'parameters'
   }
 };
 

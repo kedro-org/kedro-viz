@@ -1,64 +1,96 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
+import { getNodeActive } from '../../selectors/nodes';
 
 const NodeListRow = ({
+  container: Container = 'div',
   active,
   checked,
+  unset,
   children,
   disabled,
+  faded,
+  visible,
   id,
   label,
   name,
+  kind,
   onMouseEnter,
   onMouseLeave,
   onChange,
   onClick,
   selected,
-  type
+  type,
+  visibleIcon = VisibleIcon,
+  invisibleIcon = InvisibleIcon
 }) => {
-  const VisibilityIcon = checked ? VisibleIcon : InvisibleIcon;
-  const visible = Boolean(onClick && !disabled && checked);
-  const faded = disabled || !checked;
+  const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
 
   return (
-    <div
-      className={classnames('pipeline-nodelist__row kedro', {
-        'pipeline-nodelist__row--visible': visible,
-        'pipeline-nodelist__row--active': active,
-        'pipeline-nodelist__row--selected': selected,
-        'pipeline-nodelist__row--disabled': disabled
-      })}
+    <Container
+      className={classnames(
+        'pipeline-nodelist__row kedro',
+        `pipeline-nodelist__row--kind-${kind}`,
+        {
+          'pipeline-nodelist__row--visible': visible,
+          'pipeline-nodelist__row--active': active,
+          'pipeline-nodelist__row--selected': selected,
+          'pipeline-nodelist__row--disabled': disabled,
+          'pipeline-nodelist__row--unchecked': !checked
+        }
+      )}
+      title={name}
       onMouseEnter={visible ? onMouseEnter : null}
       onMouseLeave={visible ? onMouseLeave : null}>
       <button
-        className="pipeline-nodelist__row__text"
+        className={classnames(
+          'pipeline-nodelist__row__text',
+          `pipeline-nodelist__row__text--kind-${kind}`
+        )}
         onClick={onClick}
         onFocus={onMouseEnter}
         onBlur={onMouseLeave}
-        disabled={!visible}
+        disabled={disabled}
         title={children ? null : name}>
-        <NodeIcon
-          className={classnames(
-            'pipeline-nodelist__row__type-icon pipeline-nodelist__row__icon',
-            {
-              'pipeline-nodelist__row__type-icon--faded': faded,
-              'pipeline-nodelist__row__type-icon--nested': !children
-            }
-          )}
-          type={type}
-        />
+        {type && (
+          <NodeIcon
+            className={classnames(
+              'pipeline-nodelist__row__type-icon',
+              'pipeline-nodelist__row__icon',
+              {
+                'pipeline-nodelist__row__type-icon--faded': faded,
+                'pipeline-nodelist__row__type-icon--disabled': disabled,
+                'pipeline-nodelist__row__type-icon--nested': !children,
+                'pipeline-nodelist__row__type-icon--active': active,
+                'pipeline-nodelist__row__type-icon--selected': selected
+              }
+            )}
+            type={type}
+          />
+        )}
         <span
           className={classnames('pipeline-nodelist__row__label', {
-            'pipeline-nodelist__row__label--faded': faded
+            'pipeline-nodelist__row__label--faded': faded,
+            'pipeline-nodelist__row__label--disabled': disabled
           })}
           dangerouslySetInnerHTML={{ __html: label }}
         />
       </button>
       {children}
-      <label htmlFor={id} className="pipeline-nodelist__row__visibility">
+      <label
+        htmlFor={id}
+        className={classnames(
+          'pipeline-row__toggle',
+          `pipeline-row__toggle--kind-${kind}`,
+          {
+            'pipeline-row__toggle--disabled': disabled,
+            'pipeline-row__toggle--selected': selected
+          }
+        )}>
         <input
           id={id}
           className="pipeline-nodelist__row__checkbox"
@@ -71,15 +103,27 @@ const NodeListRow = ({
         <VisibilityIcon
           aria-label={name}
           className={classnames(
-            'pipeline-nodelist__row__icon pipeline-nodelist__row__visibility-icon',
+            'pipeline-nodelist__row__icon',
+            'pipeline-row__toggle-icon',
+            `pipeline-row__toggle-icon--kind-${kind}`,
             {
-              'pipeline-nodelist__row__visibility-icon--unchecked': !checked
+              'pipeline-row__toggle-icon--checked': checked,
+              'pipeline-row__toggle-icon--unchecked': !checked,
+              'pipeline-row__toggle-icon--unset': unset
             }
           )}
         />
       </label>
-    </div>
+    </Container>
   );
 };
 
-export default NodeListRow;
+export const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  active:
+    typeof ownProps.active !== 'undefined'
+      ? ownProps.active
+      : getNodeActive(state)[ownProps.id] || false
+});
+
+export default connect(mapStateToProps)(NodeListRow);

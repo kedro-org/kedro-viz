@@ -3,6 +3,10 @@ import { connect } from 'react-redux';
 import { toggleMiniMap, updateZoom } from '../../actions';
 import { getChartZoom } from '../../selectors/layout';
 import IconButton from '../icon-button';
+import MapIcon from '../icons/map';
+import PlusIcon from '../icons/plus';
+import MinusIcon from '../icons/minus';
+import ResetIcon from '../icons/reset';
 import './minimap-toolbar.css';
 
 /**
@@ -20,10 +24,8 @@ export const MiniMapToolbar = ({
     <>
       <ul className="pipeline-minimap-toolbar kedro">
         <IconButton
-          icon="map"
-          className={
-            'pipeline-minimap-button pipeline-icon--stroke pipeline-minimap-button--map'
-          }
+          icon={MapIcon}
+          className={'pipeline-minimap-button pipeline-minimap-button--map'}
           ariaLabel={`Turn minimap ${visible.miniMap ? 'off' : 'on'}`}
           onClick={() => onToggleMiniMap(!visible.miniMap)}
           labelText={`${visible.miniMap ? 'Hide' : 'Show'} minimap`}
@@ -31,10 +33,8 @@ export const MiniMapToolbar = ({
           active={visible.miniMap}
         />
         <IconButton
-          icon="plus"
-          className={
-            'pipeline-minimap-button pipeline-icon--stroke pipeline-minimap-button--zoom-in'
-          }
+          icon={PlusIcon}
+          className={'pipeline-minimap-button pipeline-minimap-button--zoom-in'}
           ariaLabel={'Zoom in'}
           labelText={'Zoom in'}
           visible={visible.miniMapBtn}
@@ -42,9 +42,9 @@ export const MiniMapToolbar = ({
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 1.3))}
         />
         <IconButton
-          icon="minus"
+          icon={MinusIcon}
           className={
-            'pipeline-minimap-button pipeline-icon--stroke pipeline-minimap-button--zoom-out'
+            'pipeline-minimap-button pipeline-minimap-button--zoom-out'
           }
           ariaLabel={'Zoom out'}
           labelText={'Zoom out'}
@@ -53,7 +53,7 @@ export const MiniMapToolbar = ({
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 0.7))}
         />
         <IconButton
-          icon="reset"
+          icon={ResetIcon}
           className={'pipeline-minimap-button pipeline-minimap-button--reset'}
           ariaLabel={'Reset zoom'}
           labelText={'Reset zoom'}
