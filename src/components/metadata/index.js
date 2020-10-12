@@ -17,7 +17,7 @@ import './styles/metadata.css';
 const MetaData = ({ visible = true, metadata }) => {
   const [showCopied, setShowCopied] = useState(false);
 
-  const showInputsOutputs = metadata && metadata.node.type !== 'data';
+  const showInputsOutputs = metadata && metadata.node.type === 'task';
 
   const runCommandText = !showCopied
     ? metadata && metadata.runCommand
