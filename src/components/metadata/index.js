@@ -43,9 +43,7 @@ const MetaData = ({ visible = true, metadata }) => {
               {metadata.node.name}
             </h2>
           </div>
-          <MetaDataRow label="Type:" kind="token">
-            {metadata.node.type}
-          </MetaDataRow>
+          <MetaDataRow label="Type:">{metadata.node.type}</MetaDataRow>
           {showInputsOutputs && (
             <>
               <MetaDataRow label="Inputs:" property="name">
@@ -62,7 +60,7 @@ const MetaData = ({ visible = true, metadata }) => {
           <MetaDataRow label="Pipeline:">{metadata.pipeline}</MetaDataRow>
           <MetaDataRow label="Run Command:">
             <code className="pipeline-metadata__toolbox-container">
-              <span className="pipeline-metadata__value pipeline-metadata__run-command-value pipeline-metadata__value--kind-token">
+              <span className="pipeline-metadata__value pipeline-metadata__run-command-value">
                 {runCommandText}
               </span>
               {window.navigator.clipboard && (
