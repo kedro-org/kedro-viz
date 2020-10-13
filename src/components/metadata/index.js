@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
+import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/icon-button';
 import CopyIcon from '../icons/copy';
@@ -17,10 +17,10 @@ import './styles/metadata.css';
 const MetaData = ({ visible = true, metadata }) => {
   const [showCopied, setShowCopied] = useState(false);
 
-  const showInputsOutputs = metadata && metadata.node.type === 'task';
+  const showInputsOutputs = metadata?.node.type === 'task';
 
   const runCommandText = !showCopied
-    ? metadata && metadata.runCommand
+    ? metadata?.runCommand
     : 'Copied to clipboard.';
 
   const onCopyClick = () => {
@@ -29,57 +29,54 @@ const MetaData = ({ visible = true, metadata }) => {
     setTimeout(() => setShowCopied(false), 2500);
   };
 
+  if (!metadata) {
+    return <div className="pipeline-metadata kedro" />;
+  }
+
   return (
-    <div
-      className={classnames('pipeline-metadata kedro', {
-        'pipeline-metadata--visible': visible
-      })}>
-      {metadata && (
+    <div className={modifiers('pipeline-metadata', { visible }, 'kedro')}>
+      <div className="pipeline-metadata__row">
+        <h2 className="pipeline-metadata__title">
+          <NodeIcon
+            className="pipeline-metadata__icon"
+            type={metadata.node.type}
+          />
+          {metadata.node.name}
+        </h2>
+      </div>
+      <MetaDataRow label="Type:">{metadata.node.type}</MetaDataRow>
+      {showInputsOutputs && (
         <>
-          <div className="pipeline-metadata__row">
-            <h2 className="pipeline-metadata__title">
-              <NodeIcon
-                className="pipeline-metadata__icon"
-                type={metadata.node.type}
-              />
-              {metadata.node.name}
-            </h2>
-          </div>
-          <MetaDataRow label="Type:">{metadata.node.type}</MetaDataRow>
-          {showInputsOutputs && (
-            <>
-              <MetaDataRow label="Inputs:" property="name">
-                {metadata.inputs}
-              </MetaDataRow>
-              <MetaDataRow label="Outputs:" property="name">
-                {metadata.outputs}
-              </MetaDataRow>
-            </>
-          )}
-          <MetaDataRow label="Tags:" kind="token" commas={false}>
-            {metadata.tags}
+          <MetaDataRow label="Inputs:" property="name">
+            {metadata.inputs}
           </MetaDataRow>
-          <MetaDataRow label="Pipeline:">{metadata.pipeline}</MetaDataRow>
-          {runCommandText && (
-            <MetaDataRow label="Run Command:">
-              <code className="pipeline-metadata__toolbox-container">
-                <span className="pipeline-metadata__value pipeline-metadata__run-command-value">
-                  {runCommandText}
-                </span>
-                {window.navigator.clipboard && (
-                  <ul className="pipeline-metadata__toolbox">
-                    <IconButton
-                      ariaLabel="Copy run command to clipboard."
-                      className="pipeline-metadata__copy-button"
-                      icon={CopyIcon}
-                      onClick={onCopyClick}
-                    />
-                  </ul>
-                )}
-              </code>
-            </MetaDataRow>
-          )}
+          <MetaDataRow label="Outputs:" property="name">
+            {metadata.outputs}
+          </MetaDataRow>
         </>
+      )}
+      <MetaDataRow label="Tags:" kind="token" commas={false}>
+        {metadata.tags}
+      </MetaDataRow>
+      <MetaDataRow label="Pipeline:">{metadata.pipeline}</MetaDataRow>
+      {runCommandText && (
+        <MetaDataRow label="Run Command:">
+          <code className="pipeline-metadata__toolbox-container">
+            <span className="pipeline-metadata__value pipeline-metadata__run-command-value">
+              {runCommandText}
+            </span>
+            {window.navigator.clipboard && (
+              <ul className="pipeline-metadata__toolbox">
+                <IconButton
+                  ariaLabel="Copy run command to clipboard."
+                  className="pipeline-metadata__copy-button"
+                  icon={CopyIcon}
+                  onClick={onCopyClick}
+                />
+              </ul>
+            )}
+          </code>
+        </MetaDataRow>
       )}
     </div>
   );
