@@ -45,39 +45,33 @@ const MetaData = ({ visible = true, metadata }) => {
         </h2>
       </div>
       <MetaDataRow label="Type:">{metadata.node.type}</MetaDataRow>
-      {showInputsOutputs && (
-        <>
-          <MetaDataRow label="Inputs:" property="name">
-            {metadata.inputs}
-          </MetaDataRow>
-          <MetaDataRow label="Outputs:" property="name">
-            {metadata.outputs}
-          </MetaDataRow>
-        </>
-      )}
+      <MetaDataRow label="Inputs:" property="name" visible={showInputsOutputs}>
+        {metadata.inputs}
+      </MetaDataRow>
+      <MetaDataRow label="Outputs:" property="name" visible={showInputsOutputs}>
+        {metadata.outputs}
+      </MetaDataRow>
       <MetaDataRow label="Tags:" kind="token" commas={false}>
         {metadata.tags}
       </MetaDataRow>
       <MetaDataRow label="Pipeline:">{metadata.pipeline}</MetaDataRow>
-      {runCommandText && (
-        <MetaDataRow label="Run Command:">
-          <code className="pipeline-metadata__toolbox-container">
-            <span className="pipeline-metadata__value pipeline-metadata__run-command-value">
-              {runCommandText}
-            </span>
-            {window.navigator.clipboard && (
-              <ul className="pipeline-metadata__toolbox">
-                <IconButton
-                  ariaLabel="Copy run command to clipboard."
-                  className="pipeline-metadata__copy-button"
-                  icon={CopyIcon}
-                  onClick={onCopyClick}
-                />
-              </ul>
-            )}
-          </code>
-        </MetaDataRow>
-      )}
+      <MetaDataRow label="Run Command:" visible={Boolean(runCommandText)}>
+        <code className="pipeline-metadata__toolbox-container">
+          <span className="pipeline-metadata__value pipeline-metadata__run-command-value">
+            {runCommandText}
+          </span>
+          {window.navigator.clipboard && (
+            <ul className="pipeline-metadata__toolbox">
+              <IconButton
+                ariaLabel="Copy run command to clipboard."
+                className="pipeline-metadata__copy-button"
+                icon={CopyIcon}
+                onClick={onCopyClick}
+              />
+            </ul>
+          )}
+        </code>
+      </MetaDataRow>
     </div>
   );
 };

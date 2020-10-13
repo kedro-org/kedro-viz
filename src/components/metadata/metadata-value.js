@@ -7,7 +7,7 @@ import './styles/metadata.css';
  */
 const MetaDataValue = ({ value, kind, empty }) => (
   <span className={modifiers('pipeline-metadata__value', { kind })}>
-    {(!value && value !== 0) || value.length === 0 ? empty : value}
+    {!value && value !== 0 ? empty : value}
   </span>
 );
 

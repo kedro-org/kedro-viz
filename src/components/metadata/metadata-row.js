@@ -10,6 +10,7 @@ const MetaDataRow = ({
   label,
   property,
   kind = 'text',
+  visible = true,
   inline = true,
   commas = true,
   empty = '-',
@@ -23,22 +24,26 @@ const MetaDataRow = ({
     );
 
   return (
-    <div className="pipeline-metadata__row">
-      <h3 className="pipeline-metadata__label">{label}</h3>
-      {Array.isArray(children) && children.length > 0 ? (
-        <ul
-          className={modifiers('pipeline-metadata__value-list', {
-            inline,
-            commas
-          })}>
-          {children.map((item, index) => (
-            <li key={index}>{renderValue(property ? item[property] : item)}</li>
-          ))}
-        </ul>
-      ) : (
-        renderValue(children)
-      )}
-    </div>
+    visible && (
+      <div className="pipeline-metadata__row">
+        <h3 className="pipeline-metadata__label">{label}</h3>
+        {Array.isArray(children) && children.length > 0 ? (
+          <ul
+            className={modifiers('pipeline-metadata__value-list', {
+              inline,
+              commas
+            })}>
+            {children.map((item, index) => (
+              <li key={index}>
+                {renderValue(property ? item[property] : item)}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          renderValue(children)
+        )}
+      </div>
+    )
   );
 };
 
