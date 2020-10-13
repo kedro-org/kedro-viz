@@ -16,10 +16,11 @@ export const paths = {
   ]
 };
 
-export default ({ className, type }) => (
-  <svg className={className} viewBox="0 0 24 24">
-    {paths[type].map(d => (
-      <path key={d} d={d} />
-    ))}
-  </svg>
-);
+export default ({ className, type }) =>
+  paths[type] ? (
+    <svg className={className} viewBox="0 0 24 24">
+      {paths[type].map(d => (
+        <path key={d} d={d} />
+      ))}
+    </svg>
+  ) : null;

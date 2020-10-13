@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
-import { getTagCount } from './tags';
 import { getNodeDisabledPipeline, getPipelineNodeIDs } from './pipeline';
+import { getTagCount } from './tags';
 
 const getNodeIDs = state => state.node.ids;
 const getNodeDisabledNode = state => state.node.disabled;

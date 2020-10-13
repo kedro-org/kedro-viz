@@ -7,6 +7,7 @@
   height: $sidebar-width-closed;
   padding: 0;
   color: inherit;
+  font-size: 1.1em;
   text-align: center;
   vertical-align: middle;
   background: none;
@@ -36,8 +37,8 @@
   }
 
   svg {
-    width: 2em;
-    height: 2em;
+    width: 1.8em;
+    height: 1.8em;
   }
 }
 
@@ -55,7 +56,6 @@
   transform: translateX(-1em);
   visibility: hidden;
   opacity: 0;
-  transition: all ease 0.2s;
 
   .pipeline-icon-toolbar__button:hover &,
   [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {

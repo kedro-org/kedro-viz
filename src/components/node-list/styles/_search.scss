@@ -1,8 +1,131 @@
 .pipeline-nodelist-search {
-  padding: $sidebar-padding;
+  position: relative;
+  z-index: 1;
+  margin: 0 -6px;
+  box-shadow: 0 14px 18px $color-bg-light-3;
+
+  .kui-theme--dark & {
+    box-shadow: 0 14px 18px $color-bg-dark-3;
+  }
 
   .kui-searchbar,
   .kui-input-wrapper {
     max-width: none;
   }
+
+  .kui-searchbar .kui-icon {
+    opacity: 1;
+  }
+
+  .kui-searchbar .kui-icon--close {
+    top: 18px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .kui-theme--dark & .kui-searchbar .kui-icon svg {
+    fill: rgba($color-light, 0.45);
+  }
+
+  .kui-theme--light & .kui-searchbar .kui-icon svg {
+    fill: rgba($color-dark, 0.45);
+  }
+
+  .kui-theme--dark & .kui-searchbar.kui-searchbar--focused .kui-icon svg {
+    fill: rgba($color-light, 0.75);
+  }
+
+  .kui-theme--light & .kui-searchbar.kui-searchbar--focused .kui-icon svg {
+    fill: rgba($color-dark, 0.6);
+  }
+
+  .kui-input {
+    padding: 5px;
+  }
+
+  .kui-input:active:not(.kui-input--disabled),
+  .kui-input:hover:not([disabled]),
+  .kui-input,
+  .kui-input--focused,
+  .kui-input__field {
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  .kui-input__field::placeholder {
+    opacity: 1;
+  }
+
+  .kui-theme--dark & .kui-input__field::placeholder {
+    color: rgba($color-light, 0.45);
+  }
+
+  .kui-theme--dark & .kui-input__field:hover::placeholder {
+    color: rgba($color-light, 0.65);
+  }
+
+  .kui-theme--dark & .kui-input__field:focus::placeholder {
+    color: $color-light;
+  }
+
+  .kui-theme--light & .kui-input__field::placeholder {
+    color: rgba($color-dark, 0.55);
+  }
+
+  .kui-theme--light & .kui-input__field:hover::placeholder {
+    color: rgba($color-dark, 0.75);
+  }
+
+  .kui-theme--light & .kui-input__field:focus::placeholder {
+    color: rgba($color-dark, 0.9);
+  }
+
+  .kui-input__field {
+    margin: 0 0 2px 32px;
+    font-size: 1.65em;
+  }
+
+  .kui-searchbar__iconwrapper .kui-icon {
+    top: 16px;
+    left: 6px;
+  }
+
+  .kui-input__line:before {
+    flex: 1;
+    max-width: none;
+  }
+
+  .kui-theme--light & .kui-input__line:before {
+    background-color: rgba($color-dark, 0.3);
+  }
+
+  .kui-theme--light & .kui-searchbar--focused .kui-input__line:before {
+    background-color: rgba($color-dark, 0.55);
+  }
+
+  .kui-theme--dark & .kui-input__line:before {
+    background-color: rgba($color-light, 0.3);
+  }
+
+  .kui-theme--dark & .kui-searchbar--focused .kui-input__line:before {
+    background-color: rgba($color-light, 0.55);
+  }
+
+  .kui-input__line:not([data-value='']):before {
+    .kui-theme--light &,
+    .kui-theme--dark & {
+      background-color: $color-primary;
+    }
+  }
+
+  .kui-input__line:after {
+    display: none;
+  }
+}
+
+.pipeline-nodelist-search-inner {
+  margin-bottom: -6px;
+  padding: 2px $sidebar-padding 6px $sidebar-padding;
 }
