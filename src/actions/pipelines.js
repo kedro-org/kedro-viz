@@ -70,11 +70,9 @@ export function loadInitialPipelineData() {
     // Load 'main' data file
     dispatch(toggleLoading(true));
     const url = getUrl('main');
-    let newState = await loadJsonData(url).then(preparePipelineState);
-    // Use default pipeline if active pipeline from localStorage isn't recognised
-    if (!newState.pipeline.ids.includes(newState.pipeline.active)) {
-      newState.pipeline.active = newState.pipeline.default;
-    }
+    let newState = await loadJsonData(url).then(data =>
+      preparePipelineState(data, true)
+    );
     // If the active pipeline isn't main then request data from new URL
     if (requiresSecondRequest(state.flags, newState.pipeline)) {
       const url = getPipelineUrl(newState.pipeline);
