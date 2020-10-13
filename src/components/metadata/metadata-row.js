@@ -1,47 +1,43 @@
 import React from 'react';
-import modifiers from '../../utils/modifiers';
+import MetaDataList from './metadata-list';
 import MetaDataValue from './metadata-value';
 import './styles/metadata.css';
 
 /**
- * Shows metadata label and value
+ * Shows metadata label and a given single value, or a list of values, or child elements
  */
 const MetaDataRow = ({
   label,
   property,
   kind = 'text',
+  empty = '-',
   visible = true,
   inline = true,
   commas = true,
-  empty = '-',
   children
 }) => {
-  const renderValue = value =>
-    React.isValidElement(value) ? (
-      value
-    ) : (
-      <MetaDataValue value={value} kind={kind} empty={empty} />
-    );
+  const showElements = React.isValidElement(children);
+  const showList = !showElements && Array.isArray(children) && children.length;
+  const showValue = !showList && !showElements;
 
   return (
     visible && (
       <div className="pipeline-metadata__row">
         <h3 className="pipeline-metadata__label">{label}</h3>
-        {Array.isArray(children) && children.length > 0 ? (
-          <ul
-            className={modifiers('pipeline-metadata__value-list', {
-              inline,
-              commas
-            })}>
-            {children.map((item, index) => (
-              <li key={index}>
-                {renderValue(property ? item[property] : item)}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          renderValue(children)
+        {showList && (
+          <MetaDataList
+            property={property}
+            inline={inline}
+            commas={commas}
+            kind={kind}
+            empty={empty}>
+            {children}
+          </MetaDataList>
         )}
+        {showValue && (
+          <MetaDataValue value={children} kind={kind} empty={empty} />
+        )}
+        {showElements && children}
       </div>
     )
   );

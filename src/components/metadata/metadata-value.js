@@ -5,10 +5,17 @@ import './styles/metadata.css';
 /**
  * Shows a metadata value
  */
-const MetaDataValue = ({ value, kind, empty }) => (
-  <span className={modifiers('pipeline-metadata__value', { kind })}>
+const MetaDataValue = ({
+  container: Container = 'span',
+  className,
+  value,
+  kind,
+  empty
+}) => (
+  <Container
+    className={modifiers('pipeline-metadata__value', { kind }, className)}>
     {!value && value !== 0 ? empty : value}
-  </span>
+  </Container>
 );
 
 export default MetaDataValue;

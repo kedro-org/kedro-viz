@@ -5,6 +5,7 @@ import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/icon-button';
 import CopyIcon from '../icons/copy';
 import MetaDataRow from './metadata-row';
+import MetaDataValue from './metadata-value';
 import {
   getVisibleMetaSidebar,
   getClickedNodeMetaData
@@ -17,7 +18,7 @@ import './styles/metadata.css';
 const MetaData = ({ visible = true, metadata }) => {
   const [showCopied, setShowCopied] = useState(false);
 
-  const showInputsOutputs = metadata?.node.type === 'task';
+  const isTaskNode = metadata?.node.type === 'task';
 
   const runCommandText = !showCopied
     ? metadata?.runCommand
@@ -45,10 +46,10 @@ const MetaData = ({ visible = true, metadata }) => {
         </h2>
       </div>
       <MetaDataRow label="Type:">{metadata.node.type}</MetaDataRow>
-      <MetaDataRow label="Inputs:" property="name" visible={showInputsOutputs}>
+      <MetaDataRow label="Inputs:" property="name" visible={isTaskNode}>
         {metadata.inputs}
       </MetaDataRow>
-      <MetaDataRow label="Outputs:" property="name" visible={showInputsOutputs}>
+      <MetaDataRow label="Outputs:" property="name" visible={isTaskNode}>
         {metadata.outputs}
       </MetaDataRow>
       <MetaDataRow label="Tags:" kind="token" commas={false}>
@@ -57,9 +58,10 @@ const MetaData = ({ visible = true, metadata }) => {
       <MetaDataRow label="Pipeline:">{metadata.pipeline}</MetaDataRow>
       <MetaDataRow label="Run Command:" visible={Boolean(runCommandText)}>
         <code className="pipeline-metadata__toolbox-container">
-          <span className="pipeline-metadata__value pipeline-metadata__run-command-value">
-            {runCommandText}
-          </span>
+          <MetaDataValue
+            className="pipeline-metadata__run-command-value"
+            value={runCommandText}
+          />
           {window.navigator.clipboard && (
             <ul className="pipeline-metadata__toolbox">
               <IconButton
