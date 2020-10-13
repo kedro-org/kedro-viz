@@ -51,6 +51,14 @@
   font-weight: normal;
   font-size: 1.3em;
   line-height: 1.6;
+
+  .kui-theme--light & {
+    color: rgba($color-text-light, 0.8);
+  }
+
+  .kui-theme--dark & {
+    color: rgba($color-text-dark, 0.8);
+  }
 }
 
 .pipeline-metadata__label {
@@ -90,6 +98,14 @@
   margin-right: auto;
   line-height: 1.5;
   word-break: break-word;
+
+  .kui-theme--light & {
+    color: rgba($color-text-light, 0.8);
+  }
+
+  .kui-theme--dark & {
+    color: rgba($color-text-dark, 0.8);
+  }
 }
 
 .pipeline-metadata__value--kind-token {
@@ -150,8 +166,8 @@ $list-inline-spacing: 0.2em;
 }
 
 .pipeline-metadata__toolbox .pipeline-metadata__copy-button {
-  width: 1.7em;
-  height: 1.7em;
+  width: 1.65em;
+  height: 1.65em;
   opacity: 0.55;
 }
 
