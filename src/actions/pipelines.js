@@ -3,6 +3,24 @@ import loadJsonData from '../store/load-data';
 import { preparePipelineState } from '../store/initial-state';
 import { resetData } from './index';
 
+/**
+ * This file contains actions that update the active pipeline, and if loading data
+ * asynchronously, they also handle loading this pipeline data from different endpoints.
+ *
+ * Many different cases need to be addressed, including:
+ * 1. Loading data synchronously, or asynchonously.
+ * 2. Loading data and updating the pipeline on first page load, or on user actions.
+ * 3. Whether the dataset has pipelines defined in it, or not.
+ * 4. Whether localStorage has an active pipeline already defined.
+ * 5. If so, whether it exists in the current dataset.
+ * 6. Whether the requested endpoint is the 'main' one, or not.
+ * 7. Whether the pipeline flag is disabled.
+ *
+ * These are mostly handled either within this file, in the preparePipelineState
+ * utility, or in the getNodeDisabledPipeline selector. Please see their tests
+ * for more info about implementation requirements.
+ */
+
 export const UPDATE_ACTIVE_PIPELINE = 'UPDATE_ACTIVE_PIPELINE';
 
 /**
