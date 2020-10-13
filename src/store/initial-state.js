@@ -66,6 +66,7 @@ export const preparePipelineState = (data, applyFixes) => {
   }
   return state;
 };
+
 /**
  * Prepare the non-pipeline data part of the state. This part is separated so that it
  * will persist if the pipeline data is reset.
