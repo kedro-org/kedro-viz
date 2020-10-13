@@ -109,6 +109,12 @@ describe('pipeline actions', () => {
         expect(store.getState().loading.pipeline).toBe(true);
       });
 
+      it('should set loading to false when complete', async () => {
+        const store = createStore(reducer, mockState.json);
+        await loadInitialPipelineData()(store.dispatch, store.getState);
+        expect(store.getState().loading.pipeline).toBe(false);
+      });
+
       it("should reset the active pipeline if its ID isn't included in the list of pipeline IDs", async () => {
         saveState({ pipeline: { active: 'unknown-id' } });
         const store = createStore(reducer, mockState.json);
@@ -154,6 +160,55 @@ describe('pipeline actions', () => {
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().node).toEqual(mockState.animals.node);
+      });
+    });
+  });
+
+  describe('loadPipelineData', () => {
+    it('should do nothing if the pipelineID is already active', () => {
+      const store = createStore(reducer, mockState.animals);
+      const { dispatch, getState, subscribe } = store;
+      const storeListener = jest.fn();
+      subscribe(storeListener);
+      loadPipelineData(getState().pipeline.active)(dispatch, getState);
+      expect(storeListener).toHaveBeenCalledTimes(0);
+    });
+
+    describe('if loading data synchronously', () => {
+      it('updates the active pipeline', () => {
+        const store = createStore(reducer, mockState.animals);
+        const { dispatch, getState, subscribe } = store;
+        const storeListener = jest.fn();
+        const { pipeline } = getState();
+        const newActive = pipeline.ids.find(id => id !== pipeline.active);
+        subscribe(storeListener);
+        loadPipelineData(newActive)(dispatch, getState);
+        expect(storeListener).toHaveBeenCalledTimes(1);
+        expect(getState().pipeline.active).toBe(newActive);
+      });
+    });
+
+    describe('if loading data asynchronously', () => {
+      it('should set loading to true immediately', () => {
+        const store = createStore(reducer, mockState.json);
+        expect(store.getState().loading.pipeline).toBe(false);
+        loadPipelineData('new active id')(store.dispatch, store.getState);
+        expect(store.getState().loading.pipeline).toBe(true);
+      });
+
+      it('should set loading to false when complete', async () => {
+        const store = createStore(reducer, mockState.json);
+        await loadPipelineData('new active id')(store.dispatch, store.getState);
+        expect(store.getState().loading.pipeline).toBe(false);
+      });
+
+      it('should load the new data, reset the state and update the active pipeline', async () => {
+        const store = createStore(reducer, mockState.json);
+        const active = 'new active id';
+        await loadPipelineData(active)(store.dispatch, store.getState);
+        const state = store.getState();
+        expect(state.pipeline.active).toBe(active);
+        expect(state.node).toEqual(mockState.demo.node);
       });
     });
   });
