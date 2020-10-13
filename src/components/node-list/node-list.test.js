@@ -15,7 +15,7 @@ describe('NodeList', () => {
   describe('search filter', () => {
     const wrapper = setup.mount(<NodeList />);
     const searches = [
-      getNodeData(mockState.animals)[0].name,
+      getNodeData(mockState.testData)[0].name,
       'a',
       'aaaaaaaaaaaaaaaaa',
       ''
@@ -29,7 +29,7 @@ describe('NodeList', () => {
         const nodeList = wrapper.find(
           '.pipeline-nodelist--nested .pipeline-nodelist__row'
         );
-        const nodes = getNodeData(mockState.animals);
+        const nodes = getNodeData(mockState.testData);
         const expectedResult = nodes.filter(node =>
           node.name.includes(searchText)
         );
@@ -45,7 +45,7 @@ describe('NodeList', () => {
       const search = () => wrapper.find('.kui-input__field');
       const nodeList = () =>
         wrapper.find('.pipeline-nodelist--nested .pipeline-nodelist__row');
-      const nodes = getNodeData(mockState.animals);
+      const nodes = getNodeData(mockState.testData);
       const searchText = nodes[0].name;
       // Enter search text
       search().simulate('change', { target: { value: searchText } });
@@ -78,7 +78,7 @@ describe('NodeList', () => {
         .at(check ? 0 : 1)
         .simulate('click');
     // Get search text value and filtered nodes
-    const nodes = getNodeData(mockState.animals);
+    const nodes = getNodeData(mockState.testData);
     const searchText = nodes[0].name;
     const expectedResult = nodes.filter(node => node.name.includes(searchText));
 
@@ -166,7 +166,7 @@ describe('NodeList', () => {
       const nodeList = wrapper.find(
         '.pipeline-nodelist--nested .pipeline-nodelist__row'
       );
-      const nodes = getNodeData(mockState.animals);
+      const nodes = getNodeData(mockState.testData);
       expect(nodeList.length).toBe(nodes.length);
     });
   });
@@ -225,6 +225,6 @@ describe('NodeList', () => {
         task: nodeList
       })
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.testData)).toEqual(expectedResult);
   });
 });

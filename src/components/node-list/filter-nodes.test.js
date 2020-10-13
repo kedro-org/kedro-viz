@@ -15,8 +15,8 @@ const ungroupNodes = groupedNodes =>
 
 describe('filter-nodes', () => {
   describe('getFilteredNodes', () => {
-    const nodes = getGroupedNodes(mockState.animals);
-    const searchValue = 'e';
+    const nodes = getGroupedNodes(mockState.testData);
+    let searchValue = 'bear';
     const { filteredNodes, nodeIDs } = getFilteredNodes({ nodes, searchValue });
     const nodeList = ungroupNodes(filteredNodes);
 
@@ -37,6 +37,7 @@ describe('filter-nodes', () => {
     });
 
     describe('nodeIDs', () => {
+      let searchValue = '09f5edeb';
       test.each(nodeIDs)(
         `node ID "%s" contains search term "${searchValue}"`,
         nodeID => {
@@ -69,7 +70,7 @@ describe('filter-nodes', () => {
   });
 
   describe('highlightMatch', () => {
-    const nodes = getGroupedNodes(mockState.animals);
+    const nodes = getGroupedNodes(mockState.testData);
     const searchValue = 'e';
     const formattedNodes = highlightMatch(nodes, searchValue);
     const nodeList = ungroupNodes(formattedNodes);
@@ -123,7 +124,7 @@ describe('filter-nodes', () => {
   });
 
   describe('filterNodes', () => {
-    const nodes = getGroupedNodes(mockState.animals);
+    const nodes = getGroupedNodes(mockState.testData);
     const searchValue = 'a';
     const filteredNodes = filterNodes(nodes, searchValue);
     const nodeList = ungroupNodes(filteredNodes);

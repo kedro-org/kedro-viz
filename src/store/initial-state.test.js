@@ -5,7 +5,7 @@ import getInitialState, {
   prepareNonPipelineState
 } from './initial-state';
 import { saveState } from './helpers';
-import animals from '../utils/data/animals.mock';
+import testData from '../utils/data/test-data.json';
 
 describe('createInitialState', () => {
   it('returns an object', () => {
@@ -55,9 +55,9 @@ describe('mergeLocalStorage', () => {
 describe('preparePipelineState', () => {
   it('uses default pipeline if stored active pipeline from localStorage is not one of the pipelines in the current list', () => {
     saveState({ pipeline: { active: 'unknown' } });
-    expect(preparePipelineState({ data: animals })).toMatchObject({
+    expect(preparePipelineState({ data: testData })).toMatchObject({
       pipeline: {
-        active: animals.selected_pipeline
+        active: testData.selected_pipeline
       }
     });
     window.localStorage.clear();
@@ -67,14 +67,14 @@ describe('preparePipelineState', () => {
 describe('prepareNonPipelineState', () => {
   it('overrides flags with values from URL', () => {
     // In this case, location.href is not provided
-    expect(prepareNonPipelineState({ data: animals })).toMatchObject({
+    expect(prepareNonPipelineState({ data: testData })).toMatchObject({
       flags: {}
     });
   });
 
   it('overrides theme with value from prop', () => {
     const props = { theme: 'light' };
-    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
+    expect(prepareNonPipelineState({ data: testData, ...props })).toMatchObject(
       props
     );
   });
@@ -83,14 +83,14 @@ describe('prepareNonPipelineState', () => {
     const props = {
       visible: { miniMap: true, sidebar: false, themeBtn: false }
     };
-    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
+    expect(prepareNonPipelineState({ data: testData, ...props })).toMatchObject(
       props
     );
   });
 });
 
 describe('getInitialState', () => {
-  const props = { data: animals };
+  const props = { data: testData };
 
   it('throws an error when data prop is empty', () => {
     expect(() => getInitialState({})).toThrow();

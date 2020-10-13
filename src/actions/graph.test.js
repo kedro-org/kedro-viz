@@ -12,15 +12,15 @@ describe('graph actions', () => {
     });
 
     it('sets loading to true immediately', () => {
-      const store = createStore(reducer, mockState.animals);
+      const store = createStore(reducer, mockState.testData);
       expect(store.getState().graph.loading).not.toBe(true);
-      calculateGraph(getGraphInput(mockState.animals))(store.dispatch);
+      calculateGraph(getGraphInput(mockState.testData))(store.dispatch);
       expect(store.getState().graph.loading).toBe(true);
     });
 
     it('sets loading to false after finishing calculation', () => {
-      const store = createStore(reducer, mockState.animals);
-      return calculateGraph(getGraphInput(mockState.animals))(
+      const store = createStore(reducer, mockState.testData);
+      return calculateGraph(getGraphInput(mockState.testData))(
         store.dispatch
       ).then(() => {
         expect(store.getState().graph.loading).toBe(false);
@@ -28,7 +28,7 @@ describe('graph actions', () => {
     });
 
     it('calculates a graph', () => {
-      const state = Object.assign({}, mockState.animals);
+      const state = Object.assign({}, mockState.testData);
       delete state.graph;
       const store = createStore(reducer, state);
       expect(store.getState().graph).toEqual({});
@@ -46,7 +46,7 @@ describe('graph actions', () => {
     });
 
     it('uses newgraph if the flag is set', () => {
-      const state = reducer(mockState.animals, changeFlag('newgraph', true));
+      const state = reducer(mockState.testData, changeFlag('newgraph', true));
       const store = createStore(reducer, state);
       return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {
         expect(store.getState().graph.newgraph).toBe(true);
@@ -54,7 +54,7 @@ describe('graph actions', () => {
     });
 
     it('uses dagre if the flag is not set', () => {
-      const state = reducer(mockState.animals, changeFlag('newgraph', false));
+      const state = reducer(mockState.testData, changeFlag('newgraph', false));
       const store = createStore(reducer, state);
       return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {
         expect(store.getState().graph.newgraph).toBe(false);

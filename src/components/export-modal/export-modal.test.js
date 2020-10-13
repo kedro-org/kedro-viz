@@ -22,6 +22,6 @@ describe('ExportModal', () => {
         exportModal: expect.any(Boolean)
       })
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.testData)).toEqual(expectedResult);
   });
 });
