@@ -1,4 +1,4 @@
-import { getUrl } from '../../config';
+import { getUrl } from '../../utils';
 import animals from '../../utils/data/animals.mock';
 import demo from '../../utils/data/demo.mock';
 

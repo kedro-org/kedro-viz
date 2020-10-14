@@ -1,4 +1,4 @@
-import { getUrl } from '../config';
+import { getUrl } from '../utils';
 import loadJsonData from '../store/load-data';
 import { preparePipelineState } from '../store/initial-state';
 import { resetData } from './index';

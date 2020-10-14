@@ -1,20 +1,4 @@
-/**
- * Determine where to load data from
- * @param {string} type Data type
- * @param {string=} id
- */
-export const getUrl = (type, id) => {
-  const path = ext => `./api/${ext}`;
-  switch (type) {
-    case 'main':
-      return path('main');
-    case 'pipeline':
-      if (!id) throw new Error('No pipeline ID provided');
-      return path(`pipelines/${id}`);
-    default:
-      throw new Error('Unknown URL type');
-  }
-};
+export const pathRoot = './api';
 
 export const localStorageName = 'KedroViz';
 

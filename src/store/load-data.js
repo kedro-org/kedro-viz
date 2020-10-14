@@ -1,5 +1,5 @@
 import { json } from 'd3-fetch';
-import { getUrl } from '../config';
+import { getUrl } from '../utils';
 
 /**
  * Asynchronously load and parse data from json file using d3-fetch
