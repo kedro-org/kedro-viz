@@ -16,6 +16,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->
+- Expose parameter metadata in "api/nodes/" endpoint (#275)
 
 # Release 3.5.1
 

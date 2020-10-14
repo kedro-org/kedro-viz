@@ -62,7 +62,6 @@ else:
     from kedro.cli import get_project_context  # pragma: no cover
     from kedro.cli.utils import KedroCliError  # pragma: no cover
 
-
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
 _DEFAULT_KEY = "__default__"
@@ -370,7 +369,9 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
     selected_pipeline = (
-        default_pipeline["id"] if default_pipeline in pipelines_list else pipelines_list[0]["id"]
+        default_pipeline["id"]
+        if default_pipeline in pipelines_list
+        else pipelines_list[0]["id"]
     )
 
     return {
@@ -453,12 +454,13 @@ def format_pipeline_data(
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
 
-        node_data = (
-            {"type": "parameters", "obj": None}
-            if is_param
-            else _get_dataset_node(node_id, namespace)
-        )
-        _JSON_NODES[node_id] = node_data
+        _JSON_NODES[node_id] = {
+            "type": "parameters" if is_param else "data",
+            "obj": _get_dataset_data_params(namespace),
+        }
+        if is_param and namespace != "parameters":
+            # Add "parameter_name" key only for "params:" prefix.
+            _JSON_NODES[node_id]["parameter_name"] = namespace.replace("params:", "")
 
         if node_id not in nodes:
             nodes[node_id] = {
@@ -475,15 +477,15 @@ def format_pipeline_data(
             nodes[node_id]["pipelines"].append(pipeline_key)
 
 
-def _get_dataset_node(node_id, namespace):
+def _get_dataset_data_params(namespace: str):
     if KEDRO_VERSION.match(">=0.16.0"):
         try:
-            dataset = _CATALOG._get_dataset(namespace)
+            node_data = _CATALOG._get_dataset(namespace)
         except DataSetNotFoundError:
-            dataset = None
+            node_data = None
     else:
-        dataset = _CATALOG._data_sets.get(namespace)
-    return {"type": "data", "obj": dataset}
+        node_data = _CATALOG._data_sets.get(namespace)
+    return node_data
 
 
 @app.route("/api/main")
@@ -539,8 +541,14 @@ def nodes_metadata(node_id):
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
 
-    # return empty JSON for parameters type
-    return jsonify({})
+    parameter_values = node["obj"].load()
+    if "parameter_name" in node:
+        # In case of 'params:' prefix
+        parameters_metadata = {"parameters": {node["parameter_name"]: parameter_values}}
+    else:
+        # In case of 'parameters'
+        parameters_metadata = {"parameters": parameter_values}
+    return jsonify(parameters_metadata)
 
 
 @app.errorhandler(404)
