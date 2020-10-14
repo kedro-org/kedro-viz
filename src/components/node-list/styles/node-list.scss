@@ -4,9 +4,15 @@
 @import './variables';
 @import './search';
 @import './toggle';
+@import './section';
 @import './group';
 @import './row';
+@import './filter';
 
 .pipeline-nodelist-scrollbars {
   min-height: 400px;
+}
+
+.pipeline-nodelist-container {
+  padding: 6px 0 16px 0;
 }

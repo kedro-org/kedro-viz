@@ -69,8 +69,16 @@
   display: flex;
   align-items: center;
   height: 20px;
-  padding-left: 15px;
+  padding-left: 18px;
   font-weight: bold;
   font-size: 1.6em;
   white-space: nowrap;
+
+  .kui-theme--dark & {
+    color: rgba($color-light, 0.65);
+  }
+
+  .kui-theme--light & {
+    color: rgba($color-dark, 0.65);
+  }
 }

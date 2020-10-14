@@ -1,43 +1,49 @@
 import React from 'react';
-import NodeListRow from './node-list-row';
-import { mockState, setup } from '../../utils/state.mock';
+import NodeListRow, { mapStateToProps } from './node-list-row';
 import { getNodeData } from '../../selectors/nodes';
+import { setup, mockState } from '../../utils/state.mock';
 
 describe('NodeListRow', () => {
   const node = getNodeData(mockState.animals)[0];
   const setupProps = () => {
-    const dispatch = jest.fn();
     const props = {
-      active: node.active,
-      checked: !node.disabled_node,
-      disabled: node.disabled_tag || node.disabled_type,
+      active: true,
+      checked: true,
+      disabled: false,
+      faded: false,
+      visible: true,
+      unset: false,
       id: node.id,
       label: node.highlightedLabel,
       name: node.name,
-      onClick: dispatch,
-      onMouseEnter: dispatch,
-      onMouseLeave: dispatch,
-      onChange: dispatch,
+      onClick: jest.fn(),
+      onMouseEnter: jest.fn(),
+      onMouseLeave: jest.fn(),
+      onChange: jest.fn(),
       type: node.type
     };
-    return { dispatch, props };
+    return { props };
   };
+
+  it('renders without throwing', () => {
+    expect(() => setup.mount(<NodeListRow {...setupProps()} />)).not.toThrow();
+  });
 
   describe('node list item', () => {
     it('handles mouseenter events', () => {
-      const { dispatch, props } = setupProps();
+      const { props } = setupProps();
       const wrapper = setup.mount(<NodeListRow {...props} />);
       const nodeRow = () => wrapper.find('.pipeline-nodelist__row');
       nodeRow().simulate('mouseenter');
-      expect(dispatch.mock.calls.length).toEqual(1);
+      expect(props.onMouseEnter.mock.calls.length).toEqual(1);
     });
 
     it('handles mouseleave events', () => {
-      const { dispatch, props } = setupProps();
+      const { props } = setupProps();
       const wrapper = setup.mount(<NodeListRow {...props} />);
       const nodeRow = () => wrapper.find('.pipeline-nodelist__row');
       nodeRow().simulate('mouseleave');
-      expect(dispatch.mock.calls.length).toEqual(1);
+      expect(props.onMouseLeave.mock.calls.length).toEqual(1);
     });
 
     it('uses active class if active', () => {
@@ -66,15 +72,20 @@ describe('NodeListRow', () => {
   });
 
   describe('node list item checkbox', () => {
-    const { dispatch, props } = setupProps();
-    const wrapper = setup.mount(
-      <NodeListRow {...props} onToggleNodesDisabled={dispatch} />
-    );
+    const { props } = setupProps();
+    const wrapper = setup.mount(<NodeListRow {...props} />);
     const checkbox = () => wrapper.find('input');
 
     it('handles toggle event', () => {
       checkbox().simulate('change', { target: { checked: false } });
-      expect(dispatch.mock.calls.length).toEqual(1);
+      expect(props.onChange.mock.calls.length).toEqual(1);
     });
+  });
+
+  it('maps state to props', () => {
+    const expectedResult = expect.objectContaining({
+      active: expect.any(Boolean)
+    });
+    expect(mapStateToProps(mockState.animals, {})).toEqual(expectedResult);
   });
 });

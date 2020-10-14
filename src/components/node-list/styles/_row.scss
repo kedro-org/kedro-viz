@@ -2,7 +2,9 @@
   position: relative;
   display: flex;
   align-items: center;
-  transition: background-color ease $row-transition;
+
+  // force gpu layers to avoid drawing lag on scroll
+  transform: translate(0, 0);
 
   &--active,
   &--visible:hover {
@@ -37,7 +39,6 @@
   flex-shrink: 0;
   width: $row-icon-size;
   height: $row-icon-size;
-  transition: opacity ease $row-transition;
 
   .kui-theme--light & {
     fill: $color-text-light;
@@ -46,18 +47,27 @@
   .kui-theme--dark & {
     fill: $color-text-dark;
   }
+
+  &--disabled {
+    opacity: 0.1;
+  }
 }
 
 .pipeline-nodelist__row__type-icon {
   margin-right: $row-icon-margin;
+  margin-left: -1em;
 
   &--nested {
-    opacity: 0;
+    opacity: 0.3;
   }
 
-  .pipeline-nodelist__row:hover &,
-  .pipeline-nodelist__row--active &,
-  .pipeline-nodelist__row--selected &,
+  &--faded {
+    opacity: 0.2;
+  }
+
+  &--active,
+  &--selected,
+  .pipeline-nodelist__row--visible:hover &,
   [data-whatintent='keyboard'] .pipeline-nodelist__row__text:focus & {
     opacity: 1;
 
@@ -82,7 +92,7 @@
   border-radius: 0;
   box-shadow: none;
   cursor: default;
-  transition: opacity ease $row-transition;
+  user-select: none;
 
   &:focus {
     outline: none;
@@ -100,43 +110,106 @@
 
 .pipeline-nodelist__row__label {
   overflow: hidden;
-  font-size: 1.6em;
+  font-size: 1.48em;
   white-space: nowrap;
   text-overflow: ellipsis;
-  transition: opacity ease $row-transition;
 
-  &--faded {
-    opacity: 0.55;
+  .kui-theme--light & {
+    color: rgba($color-dark, 0.8);
+  }
+
+  .kui-theme--dark & {
+    color: rgba($color-light, 0.8);
+  }
+
+  .kui-theme--dark &--faded {
+    color: rgba($color-light, 0.55);
+  }
+
+  .kui-theme--light &--faded {
+    color: rgba($color-dark, 0.55);
+  }
+
+  .kui-theme--dark &--disabled {
+    color: rgba($color-light, 0.25);
+  }
+
+  .kui-theme--light &--disabled {
+    color: rgba($color-dark, 0.25);
+  }
+
+  .kui-theme--dark & b {
+    color: $color-primary;
+  }
+
+  .kui-theme--light & b {
+    color: darken($color-primary, 10%);
   }
 
   b {
     font-weight: normal;
-    opacity: 0.3;
   }
 
   i {
     display: inline-block;
-    margin-left: 1em;
+    margin-left: 0.45em;
+    font-weight: normal;
     font-style: normal;
-    opacity: 0.55;
   }
 }
 
-.pipeline-nodelist__row__visibility {
+.pipeline-row__toggle {
   position: absolute;
   right: $row-padding-x;
   cursor: pointer;
 }
 
-.pipeline-nodelist__row__visibility-icon {
-  width: $visibility-icon-size;
-  height: $visibility-icon-size;
-  padding: $visibility-icon-padding;
+.pipeline-row__toggle--disabled {
+  display: none;
+}
+
+.pipeline-row__toggle:before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -100px;
+  display: block;
+  width: 100px;
+  background: transparent;
+  transform: translate(0, 0);
+  opacity: 0;
+  content: ' ';
+  pointer-events: none;
+}
+
+.kui-theme--light .pipeline-row__toggle:before {
+  background: linear-gradient(
+    90deg,
+    rgba($row-selected-light, 0) 0%,
+    $row-selected-light 100%
+  );
+}
+
+.kui-theme--dark .pipeline-row__toggle:before {
+  background: linear-gradient(
+    90deg,
+    rgba($row-selected-dark, 0) 0%,
+    $row-selected-dark 100%
+  );
+}
+
+.pipeline-row__toggle--selected:before {
+  opacity: 1;
+}
+
+.pipeline-row__toggle-icon {
+  width: $toggle-icon-size;
+  height: $toggle-icon-size;
+  padding: $toggle-icon-padding;
   border-radius: 50%;
   opacity: 0;
 
   &--unchecked,
-  .pipeline-nodelist__row__text:focus + label &,
   .pipeline-nodelist__row:hover & {
     opacity: 0.55;
   }
@@ -144,14 +217,20 @@
   .pipeline-nodelist__row:hover &:hover {
     opacity: 1;
   }
+}
 
-  .pipeline-nodelist__row__checkbox:focus + & {
-    outline: none;
+.pipeline-nodelist__row__checkbox:focus + .pipeline-row__toggle-icon {
+  outline: none;
 
-    [data-whatintent='keyboard'] & {
-      box-shadow: 0 0 0 3px $color-link inset;
-      opacity: 1;
-    }
+  [data-whatintent='keyboard'] & {
+    box-shadow: 0 0 0 3px $color-link inset;
+    opacity: 0.55;
+  }
+}
+
+.pipeline-nodelist__row__checkbox:focus + .pipeline-row__toggle-icon--checked {
+  [data-whatintent='keyboard'] & {
+    opacity: 1;
   }
 }
 

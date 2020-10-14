@@ -1,5 +1,6 @@
 import IconButton from '.';
 import { setup } from '../../utils/state.mock';
+import MenuIcon from '../icons/menu';
 
 describe('IconButton', () => {
   it('renders without crashing', () => {
@@ -7,7 +8,7 @@ describe('IconButton', () => {
       ariaLive: 'polite',
       ariaLabel: `Change theme`,
       onClick: () => {},
-      icon: 'theme',
+      icon: MenuIcon,
       labelText: 'Toggle theme',
       visible: true
     });

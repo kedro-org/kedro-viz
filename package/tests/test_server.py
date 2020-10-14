@@ -423,6 +423,17 @@ def test_node_metadata_endpoint_parameters(cli_runner, client):
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
+def test_node_metadata_endpoint_parameters(cli_runner, client):
+    """Test `/api/nodes/param_id` endpoint is functional and returns an empty JSON."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    param_id = "68bbc660"
+    response = client.get(f"/api/nodes/{param_id}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data == {"parameters": "value"}
+
+
+@pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_param_prefix(cli_runner, client):
     """Test `/api/nodes/param_id` with param prefix endpoint is functional and returns an empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
