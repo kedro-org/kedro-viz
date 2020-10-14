@@ -18,10 +18,11 @@ $path2-gap: $section-length + $section-gap-2x;
   display: block;
   width: 30px;
   height: auto;
-  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
 
   &--visible {
-    visibility: visible;
+    opacity: 1;
   }
 
   path {
