@@ -48,11 +48,11 @@ export const mergeLocalStorage = state => {
 
 /**
  * Prepare the pipeline data part of the state by normalizing the raw data,
- * and applying saved state from localStorage. This part is separated so that it
- * can be reset without overriding user settings, because it can be run both
- * on initial state load and again later on. The applyFixes part should only ever
- * be run once, on first load. Exactly when it runs depends on whether the data is
- * loaded asynchronously or not.
+ * and applying saved state from localStorage.
+ * This part is separated so that it can be reset without overriding user settings,
+ * because it can be run both on initial state load and again later on.
+ * The applyFixes part should only ever be run once, on first load.
+ * Exactly when it runs depends on whether the data is loaded asynchronously or not.
  * @param {object} data Data prop passed to App component
  * @param {boolean} applyFixes Whether to override initialState
  */
