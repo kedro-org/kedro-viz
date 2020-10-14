@@ -68,9 +68,7 @@ _DEFAULT_KEY = "__default__"
 
 _DATA = None  # type: Dict
 _CATALOG = None  # type: DataCatalog
-_JSON_NODES = (
-    {}
-)  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None, Dict[str, AbstractDataSet]]]]
+_JSON_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None]]]
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
