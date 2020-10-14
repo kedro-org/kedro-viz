@@ -59,8 +59,13 @@ export const getPipelineUrl = pipeline => {
 };
 
 /**
- * Check whether to make another async data request
+ * Check whether to another async data pipeline request is needed on first page-load.
+ * This is typically only required in cases where an active pipeline is present in
+ * localStorage, and it's not the 'main' pipeline endpoint (which is always loaded
+ * first, because it's needed in order to obtain a list of pipelines, in order to
+ * determine whether the active pipeline is included in this list).
  * @param {object} pipeline Pipeline state
+ * @return {boolean} True if another request is needed
  */
 export const requiresSecondRequest = (flags, pipeline) => {
   // Pipelines are disabled via flags
