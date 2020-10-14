@@ -39,27 +39,29 @@ export const getClickedNodeMetaData = createSelector(
   (nodeId, nodes = {}, nodeTags, tagNames, pipeline) => {
     const node = nodes[nodeId];
 
-    if (node) {
-      const metadata = {
-        node,
-        tags: [...nodeTags[node.id]]
-          .map(tagId => tagNames[tagId])
-          .sort(sortAlpha),
-        pipeline: pipeline.name[pipeline.active],
-        runCommand: getRunCommand(node)
-      };
-
-      // Note: node.sources node.targets require newgraph enabled
-      if (node.sources && node.targets) {
-        Object.assign(metadata, {
-          inputs: node.sources.map(edge => nodes[edge.source]).sort(sortAlpha),
-          outputs: node.targets.map(edge => nodes[edge.target]).sort(sortAlpha)
-        });
-      }
-
-      return metadata;
+    if (!node) {
+      return null;
     }
 
-    return null;
+    const metadata = {
+      node,
+      tags: [...nodeTags[node.id]]
+        .map(tagId => tagNames[tagId])
+        .sort(sortAlpha),
+      pipeline: pipeline.name[pipeline.active],
+      runCommand: getRunCommand(node)
+    };
+
+    // Note: node.sources node.targets require newgraph enabled
+    if (node.sources && node.targets) {
+      metadata.inputs = node.sources
+        .map(edge => nodes[edge.source])
+        .sort(sortAlpha);
+      metadata.outputs = node.targets
+        .map(edge => nodes[edge.target])
+        .sort(sortAlpha);
+    }
+
+    return metadata;
   }
 );

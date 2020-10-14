@@ -28,7 +28,7 @@ export const flags = {
     icon: '🔀'
   },
   metadata: {
-    description: 'Show meta data panel',
+    description: 'Show metadata panel',
     default: false,
     icon: '🔮'
   }
