@@ -77,14 +77,12 @@ export const preparePipelineState = (data, applyFixes) => {
 export const prepareNonPipelineState = props => {
   const state = mergeLocalStorage(createInitialState());
 
-  // Override with URL values
-  const flags = Object.assign({}, state.flags, getFlagsFromUrl());
-
-  // Override if set in props
-  const theme = props.theme || state.theme;
-  const visible = Object.assign({}, state.visible, props.visible);
-
-  return Object.assign({}, state, { flags, theme, visible });
+  return {
+    ...state,
+    flags: { ...state.flags, ...getFlagsFromUrl() },
+    theme: props.theme || state.theme,
+    visible: { ...state.visible, ...props.visible }
+  };
 };
 
 /**
@@ -93,11 +91,9 @@ export const prepareNonPipelineState = props => {
  * @param {object} props App component props
  * @return {object} Initial state
  */
-const getInitialState = (props = {}) =>
-  Object.assign(
-    {},
-    prepareNonPipelineState(props),
-    preparePipelineState(props.data, props.data !== 'json')
-  );
+const getInitialState = (props = {}) => ({
+  ...prepareNonPipelineState(props),
+  ...preparePipelineState(props.data, props.data !== 'json')
+});
 
 export default getInitialState;
