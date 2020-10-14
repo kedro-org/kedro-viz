@@ -4,6 +4,7 @@ import App from './index';
 import getRandomPipeline from '../../utils/random-data';
 import animals from '../../utils/data/animals.mock';
 import demo from '../../utils/data/demo.mock';
+import { mockState } from '../../utils/state.mock';
 import { Flags } from '../../utils/flags';
 import { saveState } from '../../store/helpers';
 import { prepareNonPipelineState } from '../../store/initial-state';
@@ -28,13 +29,13 @@ describe('App', () => {
 
     it('when data prop is set on first load', () => {
       const wrapper = shallow(<App data={animals} />);
-      expect(getState(wrapper).id).toEqual(animals.schema_id);
+      expect(getState(wrapper).node).toEqual(mockState.animals.node);
     });
 
     it('when data prop is updated', () => {
       const wrapper = shallow(<App data={demo} />);
       wrapper.setProps({ data: animals });
-      expect(getState(wrapper).id).toEqual(animals.schema_id);
+      expect(getState(wrapper).node).toEqual(mockState.animals.node);
     });
 
     it('but does not override localStorage values', () => {

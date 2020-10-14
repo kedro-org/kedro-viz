@@ -21,6 +21,7 @@ describe('lib-test', () => {
    */
   const testFirstNodeNameMatch = (wrapper, key) => {
     const firstNodeName = wrapper
+      .find('.pipeline-nodelist__group--type-task')
       .find('.pipeline-nodelist--nested')
       .find('NodeListRow')
       .first()

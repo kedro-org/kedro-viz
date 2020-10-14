@@ -1,28 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import LabelIcon from '../icons/label';
-import LayersIcon from '../icons/layers';
-import MenuIcon from '../icons/menu';
-import ThemeIcon from '../icons/theme';
-import ExportIcon from '../icons/export';
-import MapIcon from '../icons/map';
-import PlusIcon from '../icons/plus';
-import MinusIcon from '../icons/minus';
-import ResetIcon from '../icons/reset';
 import './icon-button.css';
-
-const icons = {
-  label: LabelIcon,
-  layers: LayersIcon,
-  menu: MenuIcon,
-  theme: ThemeIcon,
-  export: ExportIcon,
-  map: MapIcon,
-  plus: PlusIcon,
-  minus: MinusIcon,
-  reset: ResetIcon
-};
 
 /**
  * Icon button component
@@ -40,22 +19,21 @@ const IconButton = ({
   visible,
   active
 }) => {
-  const Icon = icons[icon];
+  const Icon = icon;
 
   return visible ? (
     <li>
       <button
         aria-label={ariaLabel}
         aria-live={ariaLive}
-        className={classnames({
-          [className]: true,
+        className={classnames(className, {
           'pipeline-icon-toolbar__button': true,
           'pipeline-icon-toolbar__button--active': active
         })}
         disabled={disabled}
         onClick={onClick}>
         <span className="pipeline-toolbar__label">{labelText}</span>
-        <Icon className={`pipeline-icon pipeline-icon-${icon}`} />
+        {Icon && <Icon className={'pipeline-icon'} />}
       </button>
     </li>
   ) : null;
@@ -65,7 +43,7 @@ IconButton.propTypes = {
   ariaLabel: PropTypes.string,
   ariaLive: PropTypes.string,
   disabled: PropTypes.bool,
-  icon: PropTypes.string,
+  icon: PropTypes.func,
   labelText: PropTypes.string,
   onClick: PropTypes.func,
   visible: PropTypes.bool,
@@ -76,7 +54,7 @@ IconButton.defaultProps = {
   ariaLabel: null,
   ariaLive: null,
   disabled: false,
-  icon: 'label',
+  icon: null,
   labelText: null,
   onClick: null,
   visible: true,
