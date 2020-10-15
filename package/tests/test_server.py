@@ -48,29 +48,30 @@ from kedro_viz import server
 from kedro_viz.server import _allocate_port, _hash, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
 
-input_json_path = Path(__file__).parent / "input.json"
+input_json_path = Path(__file__).parent / "test-data.json"
 EXPECTED_PIPELINE_DATA = json.loads(input_json_path.read_text())
 
 
-def func1(a, b):  # pylint: disable=unused-argument
-    """Docstring of func1."""
-    return a
+def shark(input1, input2, input3, input4):
+    return input1, input3
 
 
-def func(a, b):  # pylint: disable=unused-argument
-    return a
+def salmon(dog, rabbit, parameters, cat):
+    """docstring
+    """
+    return dog, rabbit
+
+
+def trout(pig, sheep):
+    return pig
 
 
 def get_pipelines():
     return {
+        "de": de_pipeline(),
+        "ds": ds_pipeline(),
         "__default__": create_pipeline(),
-        "second": Pipeline(
-            [
-                node(func, ["bob_in", "params:key"], ["bob_out"]),
-                node(func1, ["bob_out", "parameters"], None),
-            ]
-        ),
-        "third": Pipeline([node(func1, ["bob_in", "parameters"], ["bob_out"])]),
+        "empty": Pipeline([]),
     }
 
 
@@ -84,24 +85,55 @@ def get_pipeline(name: str = None):
         raise KeyError("Failed to find the pipeline.")
 
 
-def create_pipeline():
-    def func2(a, b):  # pylint: disable=unused-argument
-        return a
-
-    return Pipeline(
+def ds_pipeline():
+    ds_pipeline = Pipeline(
         [
-            # unnamed node with no tags and basic io
-            node(func1, ["bob_in", "parameters"], ["bob_out"]),
-            # named node with tags and transcoding
             node(
-                func2,
-                ["fred_in@pandas", "parameters"],
-                ["fred_out@pandas"],
-                name="my_node",
-                tags=["bob"],
+                trout,
+                inputs=["pig", "sheep"],
+                outputs=["whale"],
+                name="trout",
+                tags=["small"],
+            )
+        ]
+    )
+    return ds_pipeline
+
+
+def de_pipeline():
+    de_pipeline = Pipeline(
+        [
+            node(
+                shark,
+                inputs=["cat", "weasel", "elephant", "bear"],
+                outputs=["pig", "giraffe"],
+                name="shark",
+                tags=["medium", "large"],
+            ),
+            node(
+                salmon,
+                inputs=["dog@pandas", "params:rabbit", "parameters", "cat"],
+                outputs=["sheep", "horse"],
+                name="salmon",
+                tags=["small"],
             ),
         ]
     )
+    return de_pipeline
+
+
+def create_pipeline():
+    return de_pipeline() + ds_pipeline()
+
+
+@pytest.fixture
+def dummy_layers():
+    return {
+        "raw": {"elephant", "bear", "weasel", "cat", "dog"},
+        "primary": {"sheep"},
+        "feature": {"pig"},
+        "model output": {"horse", "giraffe", "whale"},
+    }
 
 
 @pytest.fixture(autouse=True)
@@ -111,14 +143,15 @@ def start_server(mocker):
 
 
 @pytest.fixture
-def patched_get_project_context(mocker, tmp_path):
+def patched_get_project_context(mocker, tmp_path, dummy_layers):
     class DummyDataCatalog:
-        def __init__(self):
+        def __init__(self, layers):
             self._data_sets = {
-                "bob_in": PickleDataSet(filepath=str(tmp_path)),
+                "cat": PickleDataSet(filepath=str(tmp_path)),
                 "parameters": MemoryDataSet("value"),
-                "params:key": MemoryDataSet("value"),
+                "params:rabbit": MemoryDataSet("value"),
             }
+            self.layers = layers
 
         def _describe(self):
             return {"filepath": str(tmp_path)}
@@ -138,7 +171,7 @@ def patched_get_project_context(mocker, tmp_path):
         mocked_context = mocker.Mock()
         mocked_context.pipelines = get_pipelines()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
-        dummy_data_catalog = DummyDataCatalog()
+        dummy_data_catalog = DummyDataCatalog(dummy_layers)
         mocked_context.catalog = dummy_data_catalog
         mocked_context.pipeline = create_pipeline()
         return {
@@ -285,7 +318,7 @@ def test_nodes_endpoint(cli_runner, client):
 def test_pipelines_endpoint(cli_runner, client):
     """Test `/api/pipelines` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    selected_pipeline_id = "third"
+    selected_pipeline_id = "ds"
     response = client.get(f"/api/pipelines/{selected_pipeline_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
@@ -299,10 +332,11 @@ def test_pipelines_endpoint(cli_runner, client):
         assert selected_pipeline_id in n["pipelines"]
 
     # make sure only edges in the selected pipelines are returned
+
     assert data["edges"] == [
-        {"source": "7366ec9f", "target": "01a6a5cb"},
-        {"source": "f1f1425b", "target": "01a6a5cb"},
-        {"source": "01a6a5cb", "target": "60e68b8e"},
+        {"source": "2cd4ba93", "target": "e27376a9"},
+        {"source": "6525f2e6", "target": "e27376a9"},
+        {"source": "e27376a9", "target": "1769e230"},
     ]
 
     # make sure all tags are returned
@@ -333,13 +367,14 @@ def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
         return_value=tmp_path / project_root / code_location,
     )
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    task_id = "01a6a5cb"
+    task_id = "443cf06a"
     response = client.get(f"/api/nodes/{task_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data["code"] == inspect.getsource(func1)
+
+    assert data["code"] == inspect.getsource(salmon)
     assert data["code_location"] == str(Path(project_root) / code_location)
-    assert data["docstring"] == inspect.getdoc(func1)
+    assert data["docstring"] == inspect.getdoc(salmon)
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -359,11 +394,11 @@ def test_node_metadata_endpoint_task_missing_docstring(
         return_value=tmp_path / project_root / code_location,
     )
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    task_id = "0340373e"
+    task_id = "e27376a9"
     response = client.get(f"/api/nodes/{task_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data["code"] == inspect.getsource(func)
+    assert data["code"] == inspect.getsource(trout)
     assert data["code_location"] == str(Path(project_root) / code_location)
     assert "docstring" not in data
 
@@ -372,7 +407,7 @@ def test_node_metadata_endpoint_task_missing_docstring(
 def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    response = client.get(f"/api/nodes/{ _hash('bob_in')}")
+    response = client.get(f"/api/nodes/{ _hash('cat')}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["dataset_location"] == str(tmp_path)
@@ -387,7 +422,7 @@ def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     # 'bob_out' is not stored in DummyDataCatalog
-    response = client.get(f"/api/nodes/{_hash('bob_out')}")
+    response = client.get(f"/api/nodes/{_hash('pig')}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert not data
@@ -400,7 +435,7 @@ def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocke
     """
     mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    response = client.get(f"/api/nodes/{_hash('bob_in')}")
+    response = client.get(f"/api/nodes/{_hash('cat')}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
 
@@ -426,11 +461,11 @@ def test_node_metadata_endpoint_parameters(cli_runner, client):
 def test_node_metadata_endpoint_param_prefix(cli_runner, client):
     """Test `/api/nodes/param_id` with param prefix endpoint is functional and returns an empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    param_id = "68bbc660"
+    param_id = "c38d4c6a"
     response = client.get(f"/api/nodes/{param_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data == {"parameters": {"key": "value"}}
+    assert data == {"parameters": {"rabbit": "value"}}
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -447,76 +482,58 @@ def test_node_metadata_endpoint_invalid(cli_runner, client):
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_pipeline_flag(cli_runner, client):
     """Test that running viz with `--pipeline` flag will return a correct pipeline."""
-    cli_runner.invoke(server.commands, ["viz", "--pipeline", "second"])
+    cli_runner.invoke(server.commands, ["viz", "--pipeline", "ds"])
     response = client.get("/api/main")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
+
     assert data == {
         "edges": [
-            {"source": "7366ec9f", "target": "0340373e"},
-            {"source": "68bbc660", "target": "0340373e"},
-            {"source": "0340373e", "target": "60e68b8e"},
-            {"source": "60e68b8e", "target": "24d754e7"},
-            {"source": "f1f1425b", "target": "24d754e7"},
+            {"source": "2cd4ba93", "target": "e27376a9"},
+            {"source": "6525f2e6", "target": "e27376a9"},
+            {"source": "e27376a9", "target": "1769e230"},
         ],
-        "layers": [],
+        "layers": ["feature", "primary", "model output"],
         "nodes": [
             {
-                "full_name": "func",
-                "id": "0340373e",
-                "name": "Func",
-                "pipelines": ["second"],
-                "tags": [],
+                "full_name": "trout",
+                "id": "e27376a9",
+                "name": "trout",
+                "pipelines": ["ds"],
+                "tags": ["small"],
                 "type": "task",
             },
             {
-                "full_name": "func1",
-                "id": "24d754e7",
-                "name": "Func1",
-                "pipelines": ["second"],
-                "tags": [],
-                "type": "task",
-            },
-            {
-                "full_name": "bob_in",
-                "id": "7366ec9f",
-                "layer": None,
-                "name": "Bob In",
-                "pipelines": ["second"],
-                "tags": [],
+                "full_name": "pig",
+                "id": "2cd4ba93",
+                "layer": "feature",
+                "name": "Pig",
+                "pipelines": ["ds"],
+                "tags": ["small"],
                 "type": "data",
             },
             {
-                "full_name": "bob_out",
-                "id": "60e68b8e",
-                "layer": None,
-                "name": "Bob Out",
-                "pipelines": ["second"],
-                "tags": [],
+                "full_name": "sheep",
+                "id": "6525f2e6",
+                "layer": "primary",
+                "name": "Sheep",
+                "pipelines": ["ds"],
+                "tags": ["small"],
                 "type": "data",
             },
             {
-                "full_name": "parameters",
-                "id": "f1f1425b",
-                "layer": None,
-                "name": "Parameters",
-                "pipelines": ["second"],
-                "tags": [],
-                "type": "parameters",
-            },
-            {
-                "full_name": "params:key",
-                "id": "68bbc660",
-                "layer": None,
-                "name": "Params:key",
-                "pipelines": ["second"],
-                "tags": [],
-                "type": "parameters",
+                "full_name": "whale",
+                "id": "1769e230",
+                "layer": "model output",
+                "name": "Whale",
+                "pipelines": ["ds"],
+                "tags": ["small"],
+                "type": "data",
             },
         ],
-        "pipelines": [{"id": "second", "name": "Second"}],
-        "selected_pipeline": "second",
-        "tags": [],
+        "pipelines": [{"id": "ds", "name": "Ds"}],
+        "selected_pipeline": "ds",
+        "tags": [{"id": "small", "name": "Small"}],
     }
 
 
@@ -553,7 +570,7 @@ def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
         return {"context": mocker.Mock()}[key]
 
     mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
-    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "second"])
+    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "ds"])
     assert "`--pipeline` flag was provided" in result.output
 
 
@@ -802,7 +819,7 @@ def new_catalog_with_layers():
 def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers, mocker):
     mocker.patch("kedro_viz.server._CATALOG", old_catalog_with_layers)
     result = format_pipelines_data(pipeline)
-    result_file_path = Path(__file__).parent / "result.json"
+    result_file_path = Path(__file__).parent / "test-format.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
@@ -810,7 +827,7 @@ def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers, mocker)
 def test_format_pipelines_data(pipeline, new_catalog_with_layers, mocker):
     mocker.patch("kedro_viz.server._CATALOG", new_catalog_with_layers)
     result = format_pipelines_data(pipeline)
-    result_file_path = Path(__file__).parent / "result.json"
+    result_file_path = Path(__file__).parent / "test-format.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
