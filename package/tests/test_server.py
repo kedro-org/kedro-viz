@@ -59,11 +59,11 @@ def shark(input1, input2, input3, input4):
 def salmon(dog, rabbit, parameters, cat):
     """docstring
     """
-    return input1, input2
+    return dog, rabbit
 
 
 def trout(pig, sheep):
-    return input1
+    return pig
 
 
 def get_pipelines():
