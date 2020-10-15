@@ -61,7 +61,7 @@ class App extends React.Component {
    * Dispatch an action to update the store with new pipeline data
    */
   updatePipelineData() {
-    const newState = preparePipelineState(this.props.data);
+    const newState = preparePipelineState(this.props.data, true);
     this.store.dispatch(resetData(newState));
   }
 
