@@ -48,7 +48,7 @@ from kedro_viz import server
 from kedro_viz.server import _allocate_port, _hash, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
 
-input_json_path = Path(__file__).parent / "input.json"
+input_json_path = Path(__file__).parent / "test-data.json"
 EXPECTED_PIPELINE_DATA = json.loads(input_json_path.read_text())
 
 
@@ -819,7 +819,7 @@ def new_catalog_with_layers():
 def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers, mocker):
     mocker.patch("kedro_viz.server._CATALOG", old_catalog_with_layers)
     result = format_pipelines_data(pipeline)
-    result_file_path = Path(__file__).parent / "result.json"
+    result_file_path = Path(__file__).parent / "test-format.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
@@ -827,7 +827,7 @@ def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers, mocker)
 def test_format_pipelines_data(pipeline, new_catalog_with_layers, mocker):
     mocker.patch("kedro_viz.server._CATALOG", new_catalog_with_layers)
     result = format_pipelines_data(pipeline)
-    result_file_path = Path(__file__).parent / "result.json"
+    result_file_path = Path(__file__).parent / "test-format.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
