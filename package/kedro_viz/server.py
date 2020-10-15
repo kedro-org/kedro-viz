@@ -39,7 +39,7 @@ from collections import defaultdict
 from contextlib import closing
 from functools import partial
 from pathlib import Path
-from typing import Dict, List, Set, Tuple, Union
+from typing import Dict, List, Set, Union
 
 import click
 import kedro
@@ -192,20 +192,6 @@ def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]
     if pipeline_name:
         raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
     return {_DEFAULT_KEY: context.pipeline}
-
-
-def _get_pipeline_catalog_from_kedro14(
-    env,
-) -> Tuple[Dict[str, "Pipeline"], "DataCatalog"]:
-    try:
-        pipeline = get_project_context("create_pipeline")()
-        get_config = get_project_context("get_config")
-        conf = get_config(str(Path.cwd()), env)
-        create_catalog = get_project_context("create_catalog")
-        catalog = create_catalog(config=conf)
-        return {_DEFAULT_KEY: pipeline}, catalog
-    except (ImportError, KeyError):
-        raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
 def _sort_layers(
@@ -677,32 +663,25 @@ def _call_viz(
 
         _DATA = _load_from_file(load_file)
     else:
-        if KEDRO_VERSION.match(">=0.15.0"):
-            # pylint: disable=import-outside-toplevel
-            if KEDRO_VERSION.match(">=0.16.0"):
-                from kedro.framework.context import KedroContextError
-            else:
-                from kedro.context import (  # pylint: disable=no-name-in-module,import-error
-                    KedroContextError,
-                )
-
-            try:
-                if project_path is not None:
-                    context = get_project_context(
-                        "context", project_path=project_path, env=env
-                    )
-                else:
-                    context = get_project_context("context", env=env)
-                pipelines = _get_pipelines_from_context(context, pipeline_name)
-            except KedroContextError:
-                raise KedroCliError(ERROR_PROJECT_ROOT)
-            _CATALOG = context.catalog
-
+        # pylint: disable=import-outside-toplevel
+        if KEDRO_VERSION.match(">=0.16.0"):
+            from kedro.framework.context import KedroContextError
         else:
-            # Kedro 0.14.*
-            if pipeline_name:
-                raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
-            pipelines, _CATALOG = _get_pipeline_catalog_from_kedro14(env)
+            from kedro.context import (  # pylint: disable=no-name-in-module,import-error
+                KedroContextError,
+            )
+
+        try:
+            if project_path is not None:
+                context = get_project_context(
+                    "context", project_path=project_path, env=env
+                )
+            else:
+                context = get_project_context("context", env=env)
+            pipelines = _get_pipelines_from_context(context, pipeline_name)
+        except KedroContextError:
+            raise KedroCliError(ERROR_PROJECT_ROOT)
+        _CATALOG = context.catalog
 
         _DATA = format_pipelines_data(pipelines)
 
