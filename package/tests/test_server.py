@@ -126,7 +126,8 @@ def create_pipeline():
     return de_pipeline() + ds_pipeline()
 
 
-def get_layers():
+@pytest.fixture
+def dummy_layers():
     return {
         "raw": {"elephant", "bear", "weasel", "cat", "dog"},
         "primary": {"sheep"},
@@ -142,7 +143,7 @@ def start_server(mocker):
 
 
 @pytest.fixture
-def patched_get_project_context(mocker, tmp_path):
+def patched_get_project_context(mocker, tmp_path, dummy_layers):
     class DummyDataCatalog:
         def __init__(self, layers):
             self._data_sets = {
@@ -170,7 +171,7 @@ def patched_get_project_context(mocker, tmp_path):
         mocked_context = mocker.Mock()
         mocked_context.pipelines = get_pipelines()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
-        dummy_data_catalog = DummyDataCatalog(get_layers())
+        dummy_data_catalog = DummyDataCatalog(dummy_layers)
         mocked_context.catalog = dummy_data_catalog
         mocked_context.pipeline = create_pipeline()
         return {
