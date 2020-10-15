@@ -3,7 +3,7 @@ import {
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED
 } from '../actions/nodes';
-import { UPDATE_ACTIVE_PIPELINE } from '../actions';
+import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 
 function nodeReducer(nodeState = {}, action) {
   const updateState = newState => Object.assign({}, nodeState, newState);

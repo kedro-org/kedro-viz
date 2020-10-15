@@ -14,26 +14,19 @@ describe('createInitialState', () => {
 });
 
 describe('mergeLocalStorage', () => {
-  const localStorageValues = {
-    textLabels: false,
-    theme: 'light'
-  };
-
-  beforeEach(() => {
-    saveState(localStorageValues);
-  });
-
-  afterEach(() => {
-    window.localStorage.clear();
-  });
-
   it('overrides state values with localstorage values if provided', () => {
+    const localStorageValues = {
+      textLabels: false,
+      theme: 'light'
+    };
+    saveState(localStorageValues);
     expect(
       mergeLocalStorage({
         textLabels: true,
         theme: 'dark'
       })
     ).toMatchObject(localStorageValues);
+    window.localStorage.clear();
   });
 
   it('does not add values if localStorage keys do not match state values', () => {
@@ -53,22 +46,41 @@ describe('mergeLocalStorage', () => {
 });
 
 describe('preparePipelineState', () => {
-  it('uses default pipeline if stored active pipeline from localStorage is not one of the pipelines in the current list', () => {
-    saveState({ pipeline: { active: 'unknown' } });
-    expect(preparePipelineState({ data: animals })).toMatchObject({
-      pipeline: {
-        active: animals.selected_pipeline
-      }
-    });
+  const localStorageState = {
+    node: { disabled: { abc123: true } },
+    pipeline: { active: 'unknown pipeline id' }
+  };
+
+  it('applies localStorage values on top of normalised pipeline data', () => {
+    saveState(localStorageState);
+    expect(preparePipelineState(animals)).toMatchObject(localStorageState);
+    window.localStorage.clear();
+  });
+
+  it('if applyFixes is true and stored active pipeline from localStorage is not one of the pipelines in the current list, uses default pipeline value instead', () => {
+    saveState(localStorageState);
+    const { active } = preparePipelineState(animals, true).pipeline;
+    expect(active).toBe(animals.selected_pipeline);
     window.localStorage.clear();
   });
 });
 
 describe('prepareNonPipelineState', () => {
+  it('applies localStorage values on top of initial state', () => {
+    const localStorageState = { theme: 'foo' };
+    saveState(localStorageState);
+    const state = prepareNonPipelineState({});
+    expect(state.theme).toEqual(localStorageState.theme);
+    window.localStorage.clear();
+  });
+
   it('overrides flags with values from URL', () => {
     // In this case, location.href is not provided
     expect(prepareNonPipelineState({ data: animals })).toMatchObject({
-      flags: {}
+      flags: {
+        newgraph: expect.any(Boolean),
+        pipelines: expect.any(Boolean)
+      }
     });
   });
 

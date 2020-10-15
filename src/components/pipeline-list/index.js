@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Dropdown from '@quantumblack/kedro-ui/lib/components/dropdown';
 import MenuOption from '@quantumblack/kedro-ui/lib/components/menu-option';
-import { updateActivePipeline } from '../../actions';
+import { loadPipelineData } from '../../actions/pipelines';
 import './pipeline-list.css';
 
 /**
@@ -41,7 +41,7 @@ export const mapStateToProps = state => ({
 
 export const mapDispatchToProps = dispatch => ({
   onUpdateActivePipeline: event => {
-    dispatch(updateActivePipeline(event.value));
+    dispatch(loadPipelineData(event.value));
   }
 });
 

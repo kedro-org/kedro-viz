@@ -1,12 +1,13 @@
 import { combineReducers } from 'redux';
-import layer from './layers';
-import node from './nodes';
-import tag from './tags';
-import nodeType from './node-type';
-import visible from './visible';
-import pipeline from './pipeline';
 import flags from './flags';
 import graph from './graph';
+import layer from './layers';
+import loading from './loading';
+import node from './nodes';
+import nodeType from './node-type';
+import pipeline from './pipeline';
+import tag from './tags';
+import visible from './visible';
 import {
   RESET_DATA,
   TOGGLE_TEXT_LABELS,
@@ -51,12 +52,14 @@ const combinedReducer = combineReducers({
   flags,
   graph,
   layer,
+  loading,
   node,
   nodeType,
   pipeline,
   tag,
   visible,
   // These props don't have any actions associated with them
+  asyncDataSource: createReducer(false),
   edge: createReducer({}),
   id: createReducer(null),
   // These props have very simple non-nested actions
@@ -68,6 +71,6 @@ const combinedReducer = combineReducers({
 });
 
 const rootReducer = (state, action) =>
-  resetDataReducer(combinedReducer(state, action), action);
+  combinedReducer(resetDataReducer(state, action), action);
 
 export default rootReducer;

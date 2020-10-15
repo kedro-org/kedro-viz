@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import { render, fireEvent, within } from '@testing-library/react';
 import App from './index';
 import getRandomPipeline from '../../utils/random-data';
 import animals from '../../utils/data/animals.mock';
@@ -10,6 +11,8 @@ import { saveState } from '../../store/helpers';
 import { prepareNonPipelineState } from '../../store/initial-state';
 
 describe('App', () => {
+  const getState = wrapper => wrapper.instance().store.getState();
+
   describe('renders without crashing', () => {
     it('when loading random data', () => {
       shallow(<App data={getRandomPipeline()} />);
@@ -25,8 +28,6 @@ describe('App', () => {
   });
 
   describe('updates the store', () => {
-    const getState = wrapper => wrapper.instance().store.getState();
-
     it('when data prop is set on first load', () => {
       const wrapper = shallow(<App data={animals} />);
       expect(getState(wrapper).node).toEqual(mockState.animals.node);
@@ -66,5 +67,23 @@ describe('App', () => {
     it('when data prop is empty', () => {
       expect(() => shallow(<App />)).toThrow();
     });
+  });
+
+  it("resets the active pipeline when data prop is updated, if the active pipeline is not included in the new dataset's list of pipelines", () => {
+    // Find a pipeline that is in the first dataset but not the second
+    const activePipeline = animals.pipelines.find(
+      pipeline => !demo.pipelines.map(d => d.id).includes(pipeline.id)
+    );
+    const { container, rerender } = render(<App data={animals} />);
+    const pipelineDropdown = container.querySelector('.pipeline-list');
+    const menuOption = within(pipelineDropdown).getByText(activePipeline.name);
+    const pipelineDropdownLabel = pipelineDropdown.querySelector(
+      '.kui-dropdown__label > span:first-child'
+    );
+    expect(pipelineDropdownLabel.innerHTML).toBe('Default');
+    fireEvent.click(menuOption);
+    expect(pipelineDropdownLabel.innerHTML).toBe(activePipeline.name);
+    rerender(<App data={demo} />);
+    expect(pipelineDropdownLabel.innerHTML).toBe('Default');
   });
 });

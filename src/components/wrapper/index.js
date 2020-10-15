@@ -5,6 +5,7 @@ import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
 import ExportModal from '../export-modal';
 import LoadingIcon from '../icons/loading';
+import { isLoading } from '../../selectors/loading';
 import './wrapper.css';
 
 /**
@@ -26,7 +27,7 @@ export const Wrapper = ({ loading, theme }) => (
 );
 
 export const mapStateToProps = state => ({
-  loading: state.graph.loading,
+  loading: isLoading(state),
   theme: state.theme
 });
 

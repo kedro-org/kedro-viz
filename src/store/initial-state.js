@@ -13,6 +13,10 @@ export const createInitialState = () => ({
   flags: Flags.defaults(),
   textLabels: true,
   theme: 'dark',
+  loading: {
+    graph: false,
+    pipeline: false
+  },
   visible: {
     labelBtn: true,
     layerBtn: true,
@@ -43,16 +47,22 @@ export const mergeLocalStorage = state => {
 };
 
 /**
- * Prepare the pipeline data part of the state. This part is separated so that it
- * can be reset without overriding user settings.
- * @param {object} props Props passed to App component
+ * Prepare the pipeline data part of the state by normalizing the raw data,
+ * and applying saved state from localStorage.
+ * This part is separated so that it can be reset without overriding user settings,
+ * because it can be run both on initial state load and again later on.
+ * The applyFixes part should only ever be run once, on first load.
+ * Exactly when it runs depends on whether the data is loaded asynchronously or not.
+ * @param {object} data Data prop passed to App component
+ * @param {boolean} applyFixes Whether to override initialState
  */
-export const preparePipelineState = props => {
-  // Normalize raw data, and apply saved state from localStorage
-  const state = mergeLocalStorage(normalizeData(props.data));
-  // Use first pipeline in list if active pipeline from localStorage isn't recognised
-  if (!state.pipeline.ids.includes(state.pipeline.active)) {
-    state.pipeline.active = state.pipeline.default;
+export const preparePipelineState = (data, applyFixes) => {
+  const state = mergeLocalStorage(normalizeData(data));
+  if (applyFixes) {
+    // Use default pipeline if active pipeline from localStorage isn't recognised
+    if (!state.pipeline.ids.includes(state.pipeline.active)) {
+      state.pipeline.active = state.pipeline.default;
+    }
   }
   return state;
 };
@@ -62,40 +72,28 @@ export const preparePipelineState = props => {
  * will persist if the pipeline data is reset.
  * Merge local storage and add custom state overrides from props etc
  * @param {object} props Props passed to App component
+ * @return {object} Updated initial state
  */
 export const prepareNonPipelineState = props => {
   const state = mergeLocalStorage(createInitialState());
-  // Override flag defaults with URL values (on page load only)
-  state.flags = Object.assign({}, state.flags, getFlagsFromUrl());
-  // Override theme if set in props
-  if (props.theme) {
-    state.theme = props.theme;
-  }
-  // Override button visibility if set in props
-  if (props.visible) {
-    state.visible = Object.assign({}, state.visible, props.visible);
-  }
-  return state;
+
+  return {
+    ...state,
+    flags: { ...state.flags, ...getFlagsFromUrl() },
+    theme: props.theme || state.theme,
+    visible: { ...state.visible, ...props.visible }
+  };
 };
 
 /**
  * Configure the redux store's initial state, by merging default values
  * with normalised pipeline data and localStorage
- * @param {Object} props App component props
- * @return {Object} Initial state
+ * @param {object} props App component props
+ * @return {object} Initial state
  */
-const getInitialState = (props = {}) => {
-  // Perform 2 deepmerges seperately because it performs much faster
-  const state = deepmerge(
-    prepareNonPipelineState(props),
-    preparePipelineState(props)
-  );
-  // Reset active pipeline if pipelines are disabled
-  // TODO: Delete this when removing flags.pipeline
-  if (!state.flags.pipelines) {
-    state.pipeline.active = null;
-  }
-  return state;
-};
+const getInitialState = (props = {}) => ({
+  ...prepareNonPipelineState(props),
+  ...preparePipelineState(props.data, props.data !== 'json')
+});
 
 export default getInitialState;

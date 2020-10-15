@@ -10,15 +10,14 @@ import { updateFontLoaded } from '../actions';
 import { getGraphInput } from '../selectors/layout';
 import { updateGraph } from '../actions/graph';
 import { graphNew, graphDagre } from './graph';
-import { saveState } from '../store/helpers';
 
 /**
  * Prime the state object for the testing environment
  * by running the asynchronous actions synchronously
  * @param {Object} props
  */
-export const prepareState = (...props) => {
-  const initialState = getInitialState(...props);
+export const prepareState = props => {
+  const initialState = getInitialState(props);
   const actions = [
     // Set fontLoaded = true:
     () => updateFontLoaded(true),
@@ -39,6 +38,7 @@ export const prepareState = (...props) => {
  * Example state objects for use in tests of redux-enabled components
  */
 export const mockState = {
+  json: prepareState({ data: 'json' }),
   demo: prepareState({ data: demo }),
   animals: prepareState({ data: animals })
 };
