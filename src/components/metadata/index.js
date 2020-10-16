@@ -19,6 +19,7 @@ const MetaData = ({ visible = true, metadata }) => {
   const [showCopied, setShowCopied] = useState(false);
 
   const isTaskNode = metadata?.node.type === 'task';
+  const isDataNode = metadata?.node.type === 'data';
 
   const runCommandText = !showCopied
     ? metadata?.runCommand
@@ -46,6 +47,16 @@ const MetaData = ({ visible = true, metadata }) => {
         </h2>
       </div>
       <MetaDataRow label="Type:">{metadata.node.type}</MetaDataRow>
+      <MetaDataRow label="File Path:" visible={isDataNode}>
+        {metadata.filePath}
+      </MetaDataRow>
+      <MetaDataRow
+        label={`Parameters (${metadata.parameters.length}):`}
+        visible={isTaskNode}
+        commas={false}
+        inline={false}>
+        {metadata.parameters}
+      </MetaDataRow>
       <MetaDataRow label="Inputs:" property="name" visible={isTaskNode}>
         {metadata.inputs}
       </MetaDataRow>
@@ -73,6 +84,12 @@ const MetaData = ({ visible = true, metadata }) => {
             </ul>
           )}
         </code>
+      </MetaDataRow>
+      <MetaDataRow label="Description (docstring)" visible={isTaskNode}>
+        {metadata.description}
+      </MetaDataRow>
+      <MetaDataRow label="Location of code in Kedro:">
+        {metadata.path}
       </MetaDataRow>
     </div>
   );
