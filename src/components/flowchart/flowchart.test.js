@@ -166,6 +166,7 @@ describe('FlowChart', () => {
       chartZoom: expect.any(Object),
       edges: expect.any(Array),
       graphSize: expect.any(Object),
+      isLoading: expect.any(Boolean),
       layers: expect.any(Array),
       linkedNodes: expect.any(Object),
       nodeActive: expect.any(Object),
