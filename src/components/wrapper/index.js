@@ -17,6 +17,7 @@ export const Wrapper = ({ loading, theme }) => (
       'kui-theme--dark': theme === 'dark',
       'kui-theme--light': theme === 'light'
     })}>
+    <h1 className="pipeline-title">Kedro-Viz</h1>
     <Sidebar />
     <div className="pipeline-wrapper">
       <FlowChart />
