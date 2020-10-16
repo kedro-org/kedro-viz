@@ -4,6 +4,11 @@
 
 .pipeline-flowchart {
   height: 100%;
+
+  &--loading {
+    opacity: 0.3;
+    pointer-events: none;
+  }
 }
 
 .pipeline-flowchart__graph {

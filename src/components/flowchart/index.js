@@ -10,6 +10,7 @@ import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
+import { isLoading } from '../../selectors/loading';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import Tooltip from '../tooltip';
@@ -433,12 +434,14 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { chartSize, layers } = this.props;
+    const { chartSize, isLoading, layers } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
     return (
       <div
-        className="pipeline-flowchart kedro"
+        className={classnames('pipeline-flowchart kedro', {
+          'pipeline-flowchart--loading': isLoading
+        })}
         ref={this.containerRef}
         onClick={this.handleChartClick}>
         <svg
@@ -494,6 +497,7 @@ export const mapStateToProps = (state, ownProps) => ({
   chartZoom: getChartZoom(state),
   edges: state.graph.edges || emptyEdges,
   graphSize: state.graph.size || emptyGraphSize,
+  isLoading: isLoading(state),
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
   nodes: state.graph.nodes || emptyNodes,
