@@ -39,7 +39,7 @@ from collections import defaultdict
 from contextlib import closing
 from functools import partial
 from pathlib import Path
-from typing import Dict, List, Set, Tuple, Union
+from typing import Dict, List, Set, Union
 
 import click
 import kedro
@@ -61,7 +61,6 @@ if KEDRO_VERSION.match(">=0.16.0"):
 else:
     from kedro.cli import get_project_context  # pragma: no cover
     from kedro.cli.utils import KedroCliError  # pragma: no cover
-
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
@@ -193,20 +192,6 @@ def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]
     if pipeline_name:
         raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
     return {_DEFAULT_KEY: context.pipeline}
-
-
-def _get_pipeline_catalog_from_kedro14(
-    env,
-) -> Tuple[Dict[str, "Pipeline"], "DataCatalog"]:
-    try:
-        pipeline = get_project_context("create_pipeline")()
-        get_config = get_project_context("get_config")
-        conf = get_config(str(Path.cwd()), env)
-        create_catalog = get_project_context("create_catalog")
-        catalog = create_catalog(config=conf)
-        return {_DEFAULT_KEY: pipeline}, catalog
-    except (ImportError, KeyError):
-        raise KedroCliError(ERROR_PROJECT_ROOT)
 
 
 def _sort_layers(
@@ -370,7 +355,9 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
     selected_pipeline = (
-        default_pipeline["id"] if default_pipeline in pipelines_list else pipelines_list[0]["id"]
+        default_pipeline["id"]
+        if default_pipeline in pipelines_list
+        else pipelines_list[0]["id"]
     )
 
     return {
@@ -453,12 +440,13 @@ def format_pipeline_data(
         is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
 
-        node_data = (
-            {"type": "parameters", "obj": None}
-            if is_param
-            else _get_dataset_node(node_id, namespace)
-        )
-        _JSON_NODES[node_id] = node_data
+        _JSON_NODES[node_id] = {
+            "type": "parameters" if is_param else "data",
+            "obj": _get_dataset_data_params(namespace),
+        }
+        if is_param and namespace != "parameters":
+            # Add "parameter_name" key only for "params:" prefix.
+            _JSON_NODES[node_id]["parameter_name"] = namespace.replace("params:", "")
 
         if node_id not in nodes:
             nodes[node_id] = {
@@ -475,15 +463,15 @@ def format_pipeline_data(
             nodes[node_id]["pipelines"].append(pipeline_key)
 
 
-def _get_dataset_node(node_id, namespace):
+def _get_dataset_data_params(namespace: str):
     if KEDRO_VERSION.match(">=0.16.0"):
         try:
-            dataset = _CATALOG._get_dataset(namespace)
+            node_data = _CATALOG._get_dataset(namespace)
         except DataSetNotFoundError:
-            dataset = None
+            node_data = None
     else:
-        dataset = _CATALOG._data_sets.get(namespace)
-    return {"type": "data", "obj": dataset}
+        node_data = _CATALOG._data_sets.get(namespace)
+    return node_data
 
 
 @app.route("/api/main")
@@ -539,8 +527,14 @@ def nodes_metadata(node_id):
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
 
-    # return empty JSON for parameters type
-    return jsonify({})
+    parameter_values = node["obj"].load()
+    if "parameter_name" in node:
+        # In case of 'params:' prefix
+        parameters_metadata = {"parameters": {node["parameter_name"]: parameter_values}}
+    else:
+        # In case of 'parameters'
+        parameters_metadata = {"parameters": parameter_values}
+    return jsonify(parameters_metadata)
 
 
 @app.errorhandler(404)
@@ -669,32 +663,25 @@ def _call_viz(
 
         _DATA = _load_from_file(load_file)
     else:
-        if KEDRO_VERSION.match(">=0.15.0"):
-            # pylint: disable=import-outside-toplevel
-            if KEDRO_VERSION.match(">=0.16.0"):
-                from kedro.framework.context import KedroContextError
-            else:
-                from kedro.context import (  # pylint: disable=no-name-in-module,import-error
-                    KedroContextError,
-                )
-
-            try:
-                if project_path is not None:
-                    context = get_project_context(
-                        "context", project_path=project_path, env=env
-                    )
-                else:
-                    context = get_project_context("context", env=env)
-                pipelines = _get_pipelines_from_context(context, pipeline_name)
-            except KedroContextError:
-                raise KedroCliError(ERROR_PROJECT_ROOT)
-            _CATALOG = context.catalog
-
+        # pylint: disable=import-outside-toplevel
+        if KEDRO_VERSION.match(">=0.16.0"):
+            from kedro.framework.context import KedroContextError
         else:
-            # Kedro 0.14.*
-            if pipeline_name:
-                raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
-            pipelines, _CATALOG = _get_pipeline_catalog_from_kedro14(env)
+            from kedro.context import (  # pylint: disable=no-name-in-module,import-error
+                KedroContextError,
+            )
+
+        try:
+            if project_path is not None:
+                context = get_project_context(
+                    "context", project_path=project_path, env=env
+                )
+            else:
+                context = get_project_context("context", env=env)
+            pipelines = _get_pipelines_from_context(context, pipeline_name)
+        except KedroContextError:
+            raise KedroCliError(ERROR_PROJECT_ROOT)
+        _CATALOG = context.catalog
 
         _DATA = format_pipelines_data(pipelines)
 

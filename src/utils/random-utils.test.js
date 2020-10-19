@@ -1,14 +1,13 @@
 import { unique } from './index';
-import {
-  getNumberArray,
+import randomUtils, { getNumberArray, generateHash } from './random-utils';
+const {
   randomIndex,
   randomNumber,
   randomNumberBetween,
   getRandom,
   getRandomName,
-  getRandomSelection,
-  generateHash
-} from './random-utils';
+  getRandomSelection
+} = randomUtils();
 
 describe('utils', () => {
   describe('getNumberArray', () => {

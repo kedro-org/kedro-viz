@@ -1,4 +1,4 @@
-import { UPDATE_ACTIVE_PIPELINE } from '../actions';
+import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 
 function pipelineReducer(pipelineState = {}, action) {
   switch (action.type) {

@@ -1,16 +1,7 @@
 import batchingToposort from 'batching-toposort';
 
 import { arrayToObject, unique } from './index';
-import {
-  getNumberArray,
-  random,
-  randomIndex,
-  randomNumber,
-  randomNumberBetween,
-  getRandom,
-  getRandomName,
-  getRandomSelection
-} from './random-utils';
+import randomUtils, { getNumberArray } from './random-utils';
 
 //--- Config variables ---//
 
@@ -40,6 +31,7 @@ const LAYERS = [
  */
 class Pipeline {
   constructor() {
+    this.utils = randomUtils();
     this.pipelines = this.generatePipelines();
     this.rankCount = this.getRankCount();
     this.rankLayers = this.getRankLayers();
@@ -57,12 +49,12 @@ class Pipeline {
    */
   generatePipelines() {
     const pipelines = ['Default'];
-    const pipelineCount = randomNumberBetween(
+    const pipelineCount = this.utils.randomNumberBetween(
       MIN_PIPELINES_COUNT,
       MAX_PIPELINES_COUNT
     );
     for (let i = 1; i < pipelineCount; i++) {
-      pipelines.push(getRandomName(randomNumber(4), ' '));
+      pipelines.push(this.utils.getRandomName(this.utils.randomNumber(4), ' '));
     }
     return pipelines.filter(unique);
   }
@@ -73,7 +65,10 @@ class Pipeline {
    * @returns {number} Rank count total
    */
   getRankCount() {
-    let rankCount = randomNumberBetween(MIN_RANK_COUNT, MAX_RANK_COUNT);
+    let rankCount = this.utils.randomNumberBetween(
+      MIN_RANK_COUNT,
+      MAX_RANK_COUNT
+    );
     // Ensure odd numbers only, so that we start and end with a data node
     if (!rankCount % 2) {
       rankCount += 1;
@@ -89,7 +84,7 @@ class Pipeline {
     const layerSize = arrayToObject(LAYERS, () => 0);
     // Randomly decide the number of ranks in each layer
     for (let i = 0; i < this.rankCount; i++) {
-      layerSize[getRandom(LAYERS)]++;
+      layerSize[this.utils.getRandom(LAYERS)]++;
     }
     // Assign layers to ranks based on layerSize
     const rankLayers = {};
@@ -108,9 +103,11 @@ class Pipeline {
    * @returns {array} Tag name strings
    */
   generateTags() {
-    const tagCount = randomNumber(MAX_TAG_COUNT);
+    const tagCount = this.utils.randomNumber(MAX_TAG_COUNT);
     return getNumberArray(tagCount)
-      .map(() => getRandomName(randomNumber(MAX_NODE_TAG_COUNT)))
+      .map(() =>
+        this.utils.getRandomName(this.utils.randomNumber(MAX_NODE_TAG_COUNT))
+      )
       .filter(unique);
   }
 
@@ -135,7 +132,10 @@ class Pipeline {
    * @returns {number} rank node count
    */
   getRankNodeCount() {
-    return Math.min(MIN_RANK_NODE_COUNT / random(), MAX_RANK_NODE_COUNT);
+    return Math.min(
+      MIN_RANK_NODE_COUNT / this.utils.random(),
+      MAX_RANK_NODE_COUNT
+    );
   }
 
   /**
@@ -148,7 +148,7 @@ class Pipeline {
       return 'task';
     }
 
-    if (node._sources.length === 0 && random() < PARAMETERS_FREQUENCY) {
+    if (!node._sources.length && this.utils.random() < PARAMETERS_FREQUENCY) {
       return 'parameters';
     }
 
@@ -184,7 +184,7 @@ class Pipeline {
    * @returns {string} Node name
    */
   getNodeName(type) {
-    const name = getRandomName(randomNumber(10), ' ');
+    const name = this.utils.getRandomName(this.utils.randomNumber(10), ' ');
     return type === 'parameters' ? `Parameters ${name}` : name;
   }
 
@@ -194,7 +194,7 @@ class Pipeline {
    */
   getNodePipelines() {
     return this.pipelines.reduce((pipelines, id, i) => {
-      if (i === 0 || randomIndex(2)) {
+      if (i === 0 || this.utils.randomIndex(2)) {
         return pipelines.concat(id);
       }
       return pipelines;
@@ -206,7 +206,10 @@ class Pipeline {
    * @returns {array} List of tags
    */
   getRandomTags() {
-    return getRandomSelection(this.tags, randomNumber(this.tags.length));
+    return this.utils.getRandomSelection(
+      this.tags,
+      this.utils.randomNumber(this.tags.length)
+    );
   }
 
   /**
@@ -230,7 +233,10 @@ class Pipeline {
    */
   generateEdges() {
     const edges = [];
-    const edgeCount = randomNumberBetween(MIN_EDGE_COUNT, MAX_EDGE_COUNT);
+    const edgeCount = this.utils.randomNumberBetween(
+      MIN_EDGE_COUNT,
+      MAX_EDGE_COUNT
+    );
     const nodesByRank = this.getNodesByRank();
 
     // Find the sorted list of node ranks
@@ -242,19 +248,19 @@ class Pipeline {
     const getRandomNodeAtRank = rankIndex => {
       const rankValue = ranks[rankIndex];
       const rankNodes = nodesByRank[rankValue];
-      const rankNodeIndex = randomIndex(rankNodes.length);
+      const rankNodeIndex = this.utils.randomIndex(rankNodes.length);
       return rankNodes[rankNodeIndex];
     };
 
     // For the desired amount of edges
     for (let i = 0; i < edgeCount; i += 1) {
       // Choose a random source node excluding the last rank
-      const sourceRankIndex = randomIndex(ranks.length - 1);
+      const sourceRankIndex = this.utils.randomIndex(ranks.length - 1);
       const source = getRandomNodeAtRank(sourceRankIndex);
 
       // Choose a random target node after the source rank prefering nearby
       const remainingRankCount = ranks.length - 1 - sourceRankIndex;
-      const biasedRandom = Math.round(0.5 / random());
+      const biasedRandom = Math.round(0.5 / this.utils.random());
       const targetRankIndex =
         sourceRankIndex + Math.min(biasedRandom, remainingRankCount);
       const target = getRandomNodeAtRank(targetRankIndex);

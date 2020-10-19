@@ -17,7 +17,10 @@ describe('normalizeData', () => {
   });
 
   it('should return initialState if input is "json"', () => {
-    expect(normalizeData('json')).toEqual(initialState);
+    expect(normalizeData('json')).toEqual({
+      ...initialState,
+      asyncDataSource: true
+    });
   });
 
   it('should not add tags if tags are not supplied', () => {
@@ -41,7 +44,7 @@ describe('normalizeData', () => {
     data.nodes.forEach(node => {
       node.pipelines = [];
     });
-    expect(normalizeData(data).pipeline.active).toBe(null);
+    expect(normalizeData(data).pipeline.active).toBe(undefined);
   });
 
   it('should not add layers if layers are not supplied', () => {

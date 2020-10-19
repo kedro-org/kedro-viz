@@ -2,7 +2,7 @@
     "nodes": [
         {
             "type": "task",
-            "id": "71527409",
+            "id": "b2a701fc",
             "name": "Func1",
             "full_name": "func1",
             "tags": [],
@@ -44,9 +44,9 @@
         },
         {
             "type": "parameters",
-            "id": "755dc08f",
-            "name": "Params:value",
-            "full_name": "params:value",
+            "id": "68bbc660",
+            "name": "Params:key",
+            "full_name": "params:key",
             "tags": [],
             "layer": null,
             "pipelines": [
@@ -68,14 +68,14 @@
     "edges": [
         {
             "source": "7366ec9f",
-            "target": "71527409"
+            "target": "b2a701fc"
         },
         {
-            "source": "755dc08f",
-            "target": "71527409"
+            "source": "68bbc660",
+            "target": "b2a701fc"
         },
         {
-            "source": "71527409",
+            "source": "b2a701fc",
             "target": "60e68b8e"
         },
         {

@@ -22,6 +22,7 @@ describe('Wrapper', () => {
 
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.testData)).toEqual({
+      loading: false,
       theme
     });
   });

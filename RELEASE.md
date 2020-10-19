@@ -10,12 +10,12 @@ Please follow the established format:
 -->
 
 ## Major features and improvements
-
-<!-- Add release notes for the upcoming release here -->
+- Drop Kedro 0.14.* support.
 
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->
+- Expose parameter metadata in "api/nodes/" endpoint (#275)
 
 # Release 3.5.1
 
