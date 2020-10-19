@@ -157,6 +157,7 @@ describe('pipeline actions', () => {
 
       it("shouldn't make a second data request if the dataset doesn't support pipelines", async () => {
         window.deletePipelines = true; // pass option to load-data mock
+
         const { pipeline } = mockState.testData;
         const active = pipeline.ids.find(id => id !== pipeline.default);
         saveState({ pipeline: { active } });
