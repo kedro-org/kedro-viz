@@ -26,7 +26,7 @@ describe('PipelineList', () => {
     expect(mapStateToProps(mockState.animals)).toEqual({
       pipeline: {
         active: expect.any(String),
-        default: expect.any(String),
+        main: expect.any(String),
         name: expect.any(Object),
         ids: expect.any(Array)
       },
