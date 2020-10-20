@@ -25,3 +25,17 @@
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
 }
+
+@mixin sidebarBase {
+  .kui-theme--light & {
+    background: $color-bg-light-3;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.07);
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-2;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+}
