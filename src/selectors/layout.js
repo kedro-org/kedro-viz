@@ -56,17 +56,17 @@ export const getChartSize = createSelector(
     if (!width || !height) {
       return {};
     }
-    const currentSidebarWidth = getSidebarWidth(visibleSidebar, width);
-    const currentMetaWidth = getMetaSidebarWidth(visibleMetaSidebar);
+    const sidebarWidth = getSidebarWidth(visibleSidebar, width);
+    const metaSidebarWidth = getMetaSidebarWidth(visibleMetaSidebar);
     return {
       left,
       top,
       outerWidth: width,
       outerHeight: height,
-      width: width - currentSidebarWidth - currentMetaWidth,
+      width: width - sidebarWidth - metaSidebarWidth,
       height,
-      sidebarWidth: currentSidebarWidth,
-      metaSidebarWidth: currentMetaWidth
+      sidebarWidth,
+      metaSidebarWidth
     };
   }
 );
