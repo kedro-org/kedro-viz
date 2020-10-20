@@ -126,7 +126,7 @@ describe('pipeline actions', () => {
 
       it('should request data from a different dataset if the active pipeline is set', async () => {
         const { pipeline } = mockState.testData;
-        const active = pipeline.ids.find(id => id !== pipeline.main);
+        const active = pipeline.ids.find(id => id == pipeline.main);
         saveState({ pipeline: { active } });
         const store = createStore(reducer, mockState.testData);
         await loadInitialPipelineData()(store.dispatch, store.getState);
