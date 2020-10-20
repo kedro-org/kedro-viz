@@ -52,7 +52,7 @@ export function toggleLoading(loading) {
  * @param {object} pipeline Pipeline state
  */
 export const getPipelineUrl = pipeline => {
-  if (pipeline.active === pipeline.default) {
+  if (pipeline.active === pipeline.main) {
     return getUrl('main');
   }
   return getUrl('pipeline', pipeline.active);
@@ -71,11 +71,11 @@ export const requiresSecondRequest = (flags, pipeline) => {
   // TODO: Delete this line when removing flags.pipeline
   if (!flags.pipelines) return false;
   // Pipelines are not present in the data
-  if (!pipeline.ids.length || !pipeline.default) return false;
+  if (!pipeline.ids.length || !pipeline.main) return false;
   // There is no active pipeline set
   if (!pipeline.active) return false;
   // The active pipeline is not 'main'
-  return pipeline.active !== pipeline.default;
+  return pipeline.active !== pipeline.main;
 };
 
 /**
@@ -122,7 +122,7 @@ export function loadPipelineData(pipelineID) {
     if (asyncDataSource) {
       dispatch(toggleLoading(true));
       const url = getPipelineUrl({
-        default: pipeline.default,
+        main: pipeline.main,
         active: pipelineID
       });
       const newState = await loadJsonData(url).then(preparePipelineState);

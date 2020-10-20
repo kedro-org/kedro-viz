@@ -42,13 +42,13 @@ describe('pipeline actions', () => {
   describe('getPipelineUrl', () => {
     const id = 'abc123';
 
-    it('should return the "main" endpoint URL if active === default', () => {
-      const pipeline = { active: id, default: id };
+    it('should return the "main" endpoint URL if active === main', () => {
+      const pipeline = { active: id, main: id };
       expect(getPipelineUrl(pipeline)).toEqual(expect.stringContaining('main'));
     });
 
-    it('should return the "main" endpoint URL if active !== default', () => {
-      const pipeline = { active: id, default: '__default__' };
+    it('should return a "pipelines" endpoint URL if active !== main', () => {
+      const pipeline = { active: id, main: '__default__' };
       expect(getPipelineUrl(pipeline)).toEqual(
         expect.stringContaining(`pipelines/${id}`)
       );
@@ -68,17 +68,17 @@ describe('pipeline actions', () => {
     });
 
     it('should return false if there is no active pipeline', () => {
-      const pipeline = { ids: ['a', 'b'], default: 'a' };
+      const pipeline = { ids: ['a', 'b'], main: 'a' };
       expect(requiresSecondRequest(flags, pipeline)).toBe(false);
     });
 
-    it('should return false if the default pipeline is active', () => {
-      const pipeline = { ids: ['a', 'b'], default: 'a', active: 'a' };
+    it('should return false if the main pipeline is active', () => {
+      const pipeline = { ids: ['a', 'b'], main: 'a', active: 'a' };
       expect(requiresSecondRequest(flags, pipeline)).toBe(false);
     });
 
-    it('should return true if the default pipeline is not active', () => {
-      const pipeline = { ids: ['a', 'b'], default: 'a', active: 'b' };
+    it('should return true if the main pipeline is not active', () => {
+      const pipeline = { ids: ['a', 'b'], main: 'a', active: 'b' };
       expect(requiresSecondRequest(flags, pipeline)).toBe(true);
     });
   });
@@ -120,13 +120,13 @@ describe('pipeline actions', () => {
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         const state = store.getState();
-        expect(state.pipeline.active).toBe(state.pipeline.default);
+        expect(state.pipeline.active).toBe(state.pipeline.main);
         expect(state.node).toEqual(mockState.animals.node);
       });
 
       it('should request data from a different dataset if the active pipeline is set', async () => {
         const { pipeline } = mockState.animals;
-        const active = pipeline.ids.find(id => id !== pipeline.default);
+        const active = pipeline.ids.find(id => id !== pipeline.main);
         saveState({ pipeline: { active } });
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
@@ -138,13 +138,13 @@ describe('pipeline actions', () => {
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         const state = store.getState();
-        expect(state.pipeline.active).toBe(state.pipeline.default);
+        expect(state.pipeline.active).toBe(state.pipeline.main);
         expect(state.node).toEqual(mockState.animals.node);
       });
 
       it("shouldn't make a second data request if the pipeline flag is false", async () => {
         const { pipeline } = mockState.animals;
-        const active = pipeline.ids.find(id => id !== pipeline.default);
+        const active = pipeline.ids.find(id => id !== pipeline.main);
         saveState({ pipeline: { active } });
         const state = reducer(mockState.json, changeFlag('pipelines', false));
         const store = createStore(reducer, state);
@@ -155,7 +155,7 @@ describe('pipeline actions', () => {
       it("shouldn't make a second data request if the dataset doesn't support pipelines", async () => {
         window.deletePipelines = true; // pass option to load-data mock
         const { pipeline } = mockState.animals;
-        const active = pipeline.ids.find(id => id !== pipeline.default);
+        const active = pipeline.ids.find(id => id !== pipeline.main);
         saveState({ pipeline: { active } });
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
