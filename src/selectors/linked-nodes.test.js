@@ -29,4 +29,14 @@ describe('getLinkedNodes function', () => {
       expect(linkedNodes[id]).toBe(true);
     });
   });
+
+  describe('should not return any linked nodes for non-ancestor/descendant nodes', () => {
+    test.each([
+      ['bear', '09f5edeb'],
+      ['shark', '4f90af66'],
+      ['weasel', '85c4cf64']
+    ])('node %s should be false', (name, id) => {
+      expect(linkedNodes[id]).toBe(undefined);
+    });
+  });
 });
