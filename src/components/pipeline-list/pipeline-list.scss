@@ -6,6 +6,57 @@
 
   .kui-dropdown {
     display: block;
-    margin: 0 $sidebar-padding;
+    border: none;
+
+    &,
+    &:hover {
+      box-shadow: none;
+    }
+  }
+
+  .kui-dropdown__label,
+  .kui-menu-option {
+    height: 70px;
+  }
+
+  .kui-dropdown__label {
+    padding: 0 $sidebar-padding / 1.6; // divide by 1.6em font-size on element
+
+    .kui-theme--light & {
+      background: $color-bg-light-4;
+    }
+
+    .kui-theme--dark & {
+      background: $color-bg-dark-5;
+    }
+  }
+
+  .kui-dropdown__options {
+    border-top: none;
+    box-shadow: none;
+
+    .kui-theme--light & {
+      background: $color-bg-light-2;
+    }
+
+    .kui-theme--dark & {
+      background: $color-bg-dark-1;
+    }
+  }
+
+  .kui-menu-option {
+    padding: 0 $sidebar-padding;
+
+    &--focused,
+    &:focus,
+    &:hover {
+      .kui-theme--light & {
+        background: $color-bg-light-3;
+      }
+
+      .kui-theme--dark & {
+        background: $color-bg-dark-3;
+      }
+    }
   }
 }
