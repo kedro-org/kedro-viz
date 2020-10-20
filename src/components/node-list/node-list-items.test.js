@@ -28,32 +28,19 @@ describe('node-list-selectors', () => {
     const { filteredNodes, nodeIDs } = getFilteredNodes({ nodes, searchValue });
     const nodeList = ungroupNodes(filteredNodes);
 
-    describe('filteredNodes', () => {
-      test.each(nodeList.map(node => node.name))(
-        `node name "%s" contains search term "${searchValue}"`,
-        name => {
-          expect(name).toEqual(expect.stringMatching(searchValue));
-        }
-      );
+    test.each(nodeList.map(node => node.name))(
+      `node name "%s" contains search term "${searchValue}"`,
+      name => {
+        expect(name).toEqual(expect.stringMatching(searchValue));
+      }
+    );
 
-      test.each(nodeList.map(node => node.highlightedLabel))(
-        `node label "%s" contains highlighted search term "<b>${searchValue}</b>"`,
-        name => {
-          expect(name).toEqual(expect.stringMatching(`<b>${searchValue}</b>`));
-        }
-      );
-    });
-
-    describe('nodeIDs', () => {
-      let searchValue = '09f5edeb';
-
-      test.each(nodeIDs)(
-        `node ID "%s" contains search term "${searchValue}"`,
-        nodeID => {
-          expect(nodeID).toEqual(expect.stringMatching(searchValue));
-        }
-      );
-    });
+    test.each(nodeList.map(node => node.highlightedLabel))(
+      `node label "%s" contains highlighted search term "<b>${searchValue}</b>"`,
+      name => {
+        expect(name).toEqual(expect.stringMatching(`<b>${searchValue}</b>`));
+      }
+    );
   });
 
   describe('getFilteredTags', () => {
