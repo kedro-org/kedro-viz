@@ -1,6 +1,8 @@
 import { createSelector } from 'reselect';
-import { getClickedNode, getNodesById } from './nodes';
+import { getGraphNodes } from './nodes';
 import { runCommandTemplates } from '../config';
+
+const getClickedNode = state => state.node.clicked;
 
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
@@ -31,7 +33,7 @@ const getRunCommand = node => {
 export const getClickedNodeMetaData = createSelector(
   [
     getClickedNode,
-    getNodesById,
+    getGraphNodes,
     state => state.node.tags,
     state => state.tag.name,
     state => state.pipeline

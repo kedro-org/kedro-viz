@@ -20,11 +20,19 @@ const getTagActive = state => state.tag.active;
 const getTextLabels = state => state.textLabels;
 const getFontLoaded = state => state.fontLoaded;
 const getNodeTypeDisabled = state => state.nodeType.disabled;
+const getClickedNode = state => state.node.clicked;
 
 /**
- * Gets the currently clicked node if any
+ * Gets a map of nodeIds to graph nodes
  */
-export const getClickedNode = state => state.node.clicked;
+export const getGraphNodes = createSelector(
+  [state => state.graph.nodes],
+  (nodes = []) =>
+    nodes.reduce((result, node) => {
+      result[node.id] = node;
+      return result;
+    }, {})
+);
 
 /**
  * Set active status if the node is specifically highlighted, and/or via an associated tag
@@ -51,18 +59,6 @@ export const getNodeSelected = createSelector(
       nodeIDs,
       nodeID => nodeID === clickedNode && !nodeDisabled[nodeID]
     )
-);
-
-/**
- * Gets a map of nodeIds to nodes
- */
-export const getNodesById = createSelector(
-  [state => state.graph.nodes],
-  (nodes = []) =>
-    nodes.reduce((result, node) => {
-      result[node.id] = node;
-      return result;
-    }, {})
 );
 
 /**
