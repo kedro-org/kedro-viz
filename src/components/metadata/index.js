@@ -27,7 +27,7 @@ const MetaData = ({ visible = true, metadata }) => {
   const onCopyClick = () => {
     window.navigator.clipboard.writeText(metadata.runCommand);
     setShowCopied(true);
-    setTimeout(() => setShowCopied(false), 2500);
+    setTimeout(() => setShowCopied(false), 1500);
   };
 
   if (!metadata) {
