@@ -59,9 +59,9 @@ export const mergeLocalStorage = state => {
 export const preparePipelineState = (data, applyFixes) => {
   const state = mergeLocalStorage(normalizeData(data));
   if (applyFixes) {
-    // Use default pipeline if active pipeline from localStorage isn't recognised
+    // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
-      state.pipeline.active = state.pipeline.default;
+      state.pipeline.active = state.pipeline.main;
     }
   }
   return state;
