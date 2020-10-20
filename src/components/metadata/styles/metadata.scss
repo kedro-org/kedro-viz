@@ -26,16 +26,23 @@
   }
 }
 
+.pipeline-metadata__list {
+  margin: 0;
+}
+
+.pipeline-metadata__title,
+.pipeline-metadata__label,
 .pipeline-metadata__row {
-  margin: 32px 36px;
+  margin: 1.9em 36px;
   font-size: 1.48em;
 }
 
 .pipeline-metadata__title {
   display: flex;
-  margin: 0;
+  margin-top: 1em;
+  margin-bottom: 1em;
   font-weight: normal;
-  font-size: 1.3em;
+  font-size: 1.9em;
   line-height: 1.6;
 
   .kui-theme--light & {
@@ -48,10 +55,21 @@
 }
 
 .pipeline-metadata__label {
-  margin: 0 0 0.8em 0;
+  margin-bottom: 0.7em;
   font-weight: normal;
-  font-size: 1em;
   user-select: none;
+
+  .kui-theme--light & {
+    color: rgba($color-text-light, 0.55);
+  }
+
+  .kui-theme--dark & {
+    color: rgba($color-text-dark, 0.55);
+  }
+}
+
+.pipeline-metadata__row {
+  margin-top: 0.7em;
 
   .kui-theme--light & {
     color: rgba($color-text-light, 0.55);

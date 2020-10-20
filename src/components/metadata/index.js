@@ -36,57 +36,57 @@ const MetaData = ({ visible = true, metadata }) => {
 
   return (
     <div className={modifiers('pipeline-metadata', { visible }, 'kedro')}>
-      <div className="pipeline-metadata__row">
-        <h2 className="pipeline-metadata__title">
-          <NodeIcon
-            className="pipeline-metadata__icon"
-            type={metadata.node.type}
-          />
-          {metadata.node.name}
-        </h2>
-      </div>
-      <MetaDataRow label="Type:" value={metadata.node.type} />
-      <MetaDataRow
-        label="Inputs:"
-        property="name"
-        visible={isTaskNode}
-        value={metadata.inputs}
-      />
-      <MetaDataRow
-        label="Outputs:"
-        property="name"
-        visible={isTaskNode}
-        value={metadata.outputs}
-      />
-      <MetaDataRow
-        label="Tags:"
-        kind="token"
-        commas={false}
-        value={metadata.tags}
-      />
-      <MetaDataRow
-        label="Pipeline:"
-        visible={Boolean(metadata.pipeline)}
-        value={metadata.pipeline}
-      />
-      <MetaDataRow label="Run Command:" visible={Boolean(runCommandText)}>
-        <code className="pipeline-metadata__toolbox-container">
-          <MetaDataValue
-            className="pipeline-metadata__run-command-value"
-            value={runCommandText}
-          />
-          {window.navigator.clipboard && (
-            <ul className="pipeline-metadata__toolbox">
-              <IconButton
-                ariaLabel="Copy run command to clipboard."
-                className="pipeline-metadata__copy-button"
-                icon={CopyIcon}
-                onClick={onCopyClick}
-              />
-            </ul>
-          )}
-        </code>
-      </MetaDataRow>
+      <h2 className="pipeline-metadata__title">
+        <NodeIcon
+          className="pipeline-metadata__icon"
+          type={metadata.node.type}
+        />
+        {metadata.node.name}
+      </h2>
+      <dl className="pipeline-metadata__list">
+        <MetaDataRow label="Type:" value={metadata.node.type} />
+        <MetaDataRow
+          label="Inputs:"
+          property="name"
+          visible={isTaskNode}
+          value={metadata.inputs}
+        />
+        <MetaDataRow
+          label="Outputs:"
+          property="name"
+          visible={isTaskNode}
+          value={metadata.outputs}
+        />
+        <MetaDataRow
+          label="Tags:"
+          kind="token"
+          commas={false}
+          value={metadata.tags}
+        />
+        <MetaDataRow
+          label="Pipeline:"
+          visible={Boolean(metadata.pipeline)}
+          value={metadata.pipeline}
+        />
+        <MetaDataRow label="Run Command:" visible={Boolean(runCommandText)}>
+          <code className="pipeline-metadata__toolbox-container">
+            <MetaDataValue
+              className="pipeline-metadata__run-command-value"
+              value={runCommandText}
+            />
+            {window.navigator.clipboard && (
+              <ul className="pipeline-metadata__toolbox">
+                <IconButton
+                  ariaLabel="Copy run command to clipboard."
+                  className="pipeline-metadata__copy-button"
+                  icon={CopyIcon}
+                  onClick={onCopyClick}
+                />
+              </ul>
+            )}
+          </code>
+        </MetaDataRow>
+      </dl>
     </div>
   );
 };

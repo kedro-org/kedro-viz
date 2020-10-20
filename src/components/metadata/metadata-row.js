@@ -22,21 +22,25 @@ const MetaDataRow = ({
 
   return (
     visible && (
-      <div className="pipeline-metadata__row">
-        <h3 className="pipeline-metadata__label">{label}</h3>
-        {showList && (
-          <MetaDataList
-            property={property}
-            inline={inline}
-            commas={commas}
-            kind={kind}
-            empty={empty}
-            values={value}
-          />
-        )}
-        {showValue && <MetaDataValue value={value} kind={kind} empty={empty} />}
-        {children}
-      </div>
+      <>
+        <dt className="pipeline-metadata__label">{label}</dt>
+        <dd className="pipeline-metadata__row">
+          {showList && (
+            <MetaDataList
+              property={property}
+              inline={inline}
+              commas={commas}
+              kind={kind}
+              empty={empty}
+              values={value}
+            />
+          )}
+          {showValue && (
+            <MetaDataValue value={value} kind={kind} empty={empty} />
+          )}
+          {children}
+        </dd>
+      </>
     )
   );
 };
