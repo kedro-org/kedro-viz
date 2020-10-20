@@ -80,7 +80,7 @@ describe('Selectors', () => {
 
     it('does not disable any nodes if there is no active pipeline', () => {
       const newMockState = reducer(
-        mockState.animals,
+        mockState.testData,
         updateActivePipeline(undefined)
       );
       expect(getNodeDisabledPipeline(newMockState)).toEqual({});
@@ -88,7 +88,7 @@ describe('Selectors', () => {
 
     it('does not disable any nodes if the pipelines flag is false', () => {
       const newMockState = reducer(
-        mockState.animals,
+        mockState.testData,
         changeFlag('pipelines', false)
       );
       expect(getNodeDisabledPipeline(newMockState)).toEqual({});
