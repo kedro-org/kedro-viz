@@ -45,17 +45,30 @@ const MetaData = ({ visible = true, metadata }) => {
           {metadata.node.name}
         </h2>
       </div>
-      <MetaDataRow label="Type:">{metadata.node.type}</MetaDataRow>
-      <MetaDataRow label="Inputs:" property="name" visible={isTaskNode}>
-        {metadata.inputs}
-      </MetaDataRow>
-      <MetaDataRow label="Outputs:" property="name" visible={isTaskNode}>
-        {metadata.outputs}
-      </MetaDataRow>
-      <MetaDataRow label="Tags:" kind="token" commas={false}>
-        {metadata.tags}
-      </MetaDataRow>
-      <MetaDataRow label="Pipeline:">{metadata.pipeline}</MetaDataRow>
+      <MetaDataRow label="Type:" value={metadata.node.type} />
+      <MetaDataRow
+        label="Inputs:"
+        property="name"
+        visible={isTaskNode}
+        value={metadata.inputs}
+      />
+      <MetaDataRow
+        label="Outputs:"
+        property="name"
+        visible={isTaskNode}
+        value={metadata.outputs}
+      />
+      <MetaDataRow
+        label="Tags:"
+        kind="token"
+        commas={false}
+        value={metadata.tags}
+      />
+      <MetaDataRow
+        label="Pipeline:"
+        visible={Boolean(metadata.pipeline)}
+        value={metadata.pipeline}
+      />
       <MetaDataRow label="Run Command:" visible={Boolean(runCommandText)}>
         <code className="pipeline-metadata__toolbox-container">
           <MetaDataValue

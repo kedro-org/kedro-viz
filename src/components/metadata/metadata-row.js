@@ -9,6 +9,7 @@ import './styles/metadata.css';
 const MetaDataRow = ({
   label,
   property,
+  value,
   kind = 'text',
   empty = '-',
   visible = true,
@@ -16,9 +17,8 @@ const MetaDataRow = ({
   commas = true,
   children
 }) => {
-  const showElements = React.isValidElement(children);
-  const showList = !showElements && Array.isArray(children) && children.length;
-  const showValue = !showList && !showElements;
+  const showList = Array.isArray(value) && value.length;
+  const showValue = !showList && typeof value !== 'undefined';
 
   return (
     visible && (
@@ -30,14 +30,12 @@ const MetaDataRow = ({
             inline={inline}
             commas={commas}
             kind={kind}
-            empty={empty}>
-            {children}
-          </MetaDataList>
+            empty={empty}
+            values={value}
+          />
         )}
-        {showValue && (
-          <MetaDataValue value={children} kind={kind} empty={empty} />
-        )}
-        {showElements && children}
+        {showValue && <MetaDataValue value={value} kind={kind} empty={empty} />}
+        {children}
       </div>
     )
   );

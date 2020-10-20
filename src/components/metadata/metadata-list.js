@@ -8,18 +8,18 @@ import './styles/metadata.css';
  */
 const MetaDataList = ({
   property,
+  values = [],
   kind = 'text',
   empty = '-',
   inline = true,
-  commas = true,
-  children
+  commas = true
 }) => (
   <ul
     className={modifiers('pipeline-metadata__value-list', {
       inline,
       commas
     })}>
-    {children.map((item, index) => (
+    {values.map((item, index) => (
       <li key={index}>
         <MetaDataValue
           value={property ? item[property] : item}
