@@ -54,6 +54,10 @@
     box-shadow: none;
   }
 
+  .kui-input--focused {
+    outline-color: $color-primary;
+  }
+
   .kui-input__field::placeholder {
     opacity: 1;
   }
