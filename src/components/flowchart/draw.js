@@ -180,8 +180,12 @@ export const drawNodes = function(changed) {
       .duration(this.DURATION)
       .attr('transform', node => `translate(${node.x}, ${node.y})`)
       .on('end', () => {
-        // Sort nodes so tab focus order follows X/Y position
-        allNodes.sort((a, b) => a.order - b.order);
+        try {
+          // Sort nodes so tab focus order follows X/Y position
+          allNodes.sort((a, b) => a.order - b.order);
+        } catch (ex) {
+          // Avoid rare DOM errors thrown due to timing issues
+        }
       });
 
     enterNodes.select('rect').call(updateNodeRects);
