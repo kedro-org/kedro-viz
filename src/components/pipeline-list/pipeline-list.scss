@@ -22,6 +22,15 @@
   .kui-dropdown__label {
     padding: 0 $sidebar-padding / 1.6; // divide by 1.6em font-size on element
 
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px $color-primary inset;
+
+      [data-whatinput='mouse'] & {
+        box-shadow: none;
+      }
+    }
+
     .kui-theme--light & {
       background: $color-bg-light-4;
     }
