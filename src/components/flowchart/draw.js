@@ -183,7 +183,7 @@ export const drawNodes = function(changed) {
         try {
           // Sort nodes so tab focus order follows X/Y position
           allNodes.sort((a, b) => a.order - b.order);
-        } catch (ex) {
+        } catch (err) {
           // Avoid rare DOM errors thrown due to timing issues
         }
       });
