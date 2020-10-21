@@ -266,8 +266,10 @@ export const drawEdges = function(changed) {
   if (changed('edges', 'centralNode', 'linkedNodes')) {
     allEdges.classed(
       'pipeline-edge--faded',
-      ({ source, target }) =>
-        centralNode && (!linkedNodes[source] || !linkedNodes[target])
+      edge =>
+        edge &&
+        centralNode &&
+        (!linkedNodes[edge.source] || !linkedNodes[edge.target])
     );
   }
 };
