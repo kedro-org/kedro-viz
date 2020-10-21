@@ -45,11 +45,14 @@
   }
 
   .kui-menu-option {
-    padding: 0 $sidebar-padding;
+    padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
+    border-left: 2px solid transparent;
 
     &--focused,
     &:focus,
     &:hover {
+      border-left-color: $color-primary;
+
       .kui-theme--light & {
         background: $color-bg-light-3;
       }
