@@ -245,7 +245,7 @@ export class FlowChart extends Component {
 
     this.el.svg
       .call(this.zoomBehaviour)
-      // Prevent default double click zoom.
+      // Disabled to avoid conflicts with metadata panel triggered zooms
       .on('dblclick.zoom', null);
   }
 
