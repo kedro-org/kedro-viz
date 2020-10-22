@@ -36,6 +36,7 @@ Please follow the established format:
 - Fix bug caused by typo in saveStateToLocalStorage (#271)
 - Fix interrupted chart transitions (#269)
 - Refactor and optimise flowchart performance (#268)
+- Fix chart rendering edge cases and hover styles (#288)
 
 # Release 3.5.1
 
