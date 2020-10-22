@@ -27,8 +27,9 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Continue work-in-progress on the multiple pipeline selection dropdown, which is still hidden behind a flag and disabled by default but is nearly complete. (#270, #273, #285)
+- Continue work-in-progress on the multiple pipeline selection dropdown, which is still hidden behind a flag and disabled by default but is nearly complete. (#270, #273, #285, #289)
 - Continue work on new metadata panel endpoints (#275)
+- Fix chart rendering edge cases and hover styles (#288)
 - Update Python unit tests using the same json file as front-end (#281)
 - Improve lib-test docs (#278)
 - Hide random seed message unless using random data (#280)
@@ -36,7 +37,6 @@ Please follow the established format:
 - Fix bug caused by typo in saveStateToLocalStorage (#271)
 - Fix interrupted chart transitions (#269)
 - Refactor and optimise flowchart performance (#268)
-- Fix chart rendering edge cases and hover styles (#288)
 
 # Release 3.5.1
 
