@@ -24,6 +24,14 @@
   @media print {
     display: none;
   }
+
+  .kui-theme--light & {
+    background: $color-bg-light-3;
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-6;
+  }
 }
 
 .pipeline-metadata__header {
@@ -147,7 +155,7 @@
   }
 
   .kui-theme--dark & {
-    background: $color-bg-dark-4;
+    background: $color-bg-dark-5;
   }
 }
 
