@@ -10,11 +10,12 @@ export const metaSidebarWidth = {
   open: 400,
   closed: 0
 };
-export const sidebarBreakpoint = 700;
 export const sidebarWidth = {
   open: 400,
   closed: 56
 };
+
+export const chartMinWidth = 300;
 
 export const flags = {
   newgraph: {

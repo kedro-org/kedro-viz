@@ -3,7 +3,7 @@ import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 import { getVisibleLayerIDs } from './disabled';
 import { getVisibleMetaSidebar } from '../selectors/metadata';
-import { sidebarBreakpoint, sidebarWidth, metaSidebarWidth } from '../config';
+import { chartMinWidth, sidebarWidth, metaSidebarWidth } from '../config';
 
 const getNewgraphFlag = state => state.flags.newgraph;
 const getVisibleSidebar = state => state.visible.sidebar;
@@ -32,12 +32,8 @@ export const getGraphInput = createSelector(
 /**
  * Return the displayed width of the sidebar
  */
-export const getSidebarWidth = (visibleSidebar, outerChartWidth) => {
-  if (visibleSidebar && outerChartWidth > sidebarBreakpoint) {
-    return sidebarWidth.open;
-  }
-  return sidebarWidth.closed;
-};
+export const getSidebarWidth = visibleSidebar =>
+  visibleSidebar ? sidebarWidth.open : sidebarWidth.closed;
 
 /**
  * Return the displayed width of the meta sidebar
@@ -56,17 +52,26 @@ export const getChartSize = createSelector(
     if (!width || !height) {
       return {};
     }
-    const sidebarWidth = getSidebarWidth(visibleSidebar, width);
+
+    // Get the actual sidebar width
+    const sidebarWidth = getSidebarWidth(visibleSidebar);
     const metaSidebarWidth = getMetaSidebarWidth(visibleMetaSidebar);
+
+    // Find the resulting space for the chart
+    const chartWidth = width - sidebarWidth - metaSidebarWidth;
+
+    // Chart size excludes sidebars when space is small
+    const excludeSidebars = chartWidth < chartMinWidth;
+
     return {
       left,
       top,
       outerWidth: width,
       outerHeight: height,
-      width: width - sidebarWidth - metaSidebarWidth,
       height,
-      sidebarWidth,
-      metaSidebarWidth
+      width: excludeSidebars ? width : chartWidth,
+      sidebarWidth: excludeSidebars ? 0 : sidebarWidth,
+      metaSidebarWidth: excludeSidebars ? 0 : metaSidebarWidth
     };
   }
 );

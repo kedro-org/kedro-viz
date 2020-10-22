@@ -11,13 +11,13 @@
   z-index: 1;
   display: flex;
   width: 100%;
+  min-width: $sidebar-min-width-open;
+  max-width: $sidebar-width-open;
   transform: translateX(calc(-100% + #{$sidebar-width-closed}));
   transition: transform ease 0.4s;
 
-  @media (min-width: $sidebar-breakpoint) {
-    width: $sidebar-width-open;
-    $sidebar-ui-width: $sidebar-width-open - $sidebar-width-closed;
-    transform: translateX(-$sidebar-ui-width);
+  &--visible {
+    transform: translateX(0);
   }
 
   @media print {
