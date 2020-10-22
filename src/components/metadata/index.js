@@ -4,18 +4,20 @@ import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/icon-button';
 import CopyIcon from '../icons/copy';
+import CloseIcon from '../icons/close';
 import MetaDataRow from './metadata-row';
 import MetaDataValue from './metadata-value';
 import {
   getVisibleMetaSidebar,
   getClickedNodeMetaData
 } from '../../selectors/metadata';
+import { toggleNodeClicked } from '../../actions/nodes';
 import './styles/metadata.css';
 
 /**
  * Shows node meta data
  */
-const MetaData = ({ visible = true, metadata }) => {
+const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
   const [showCopied, setShowCopied] = useState(false);
 
   const isTaskNode = metadata?.node.type === 'task';
@@ -30,19 +32,31 @@ const MetaData = ({ visible = true, metadata }) => {
     setTimeout(() => setShowCopied(false), 1500);
   };
 
+  const onCloseClick = () => {
+    // Deselecting a node automatically hides MetaData panel
+    onToggleNodeSelected(null);
+  };
+
   if (!metadata) {
     return <div className="pipeline-metadata kedro" />;
   }
 
   return (
     <div className={modifiers('pipeline-metadata', { visible }, 'kedro')}>
-      <h2 className="pipeline-metadata__title">
+      <div className="pipeline-metadata__header">
         <NodeIcon
           className="pipeline-metadata__icon"
           type={metadata.node.type}
         />
-        {metadata.node.name}
-      </h2>
+        <h2 className="pipeline-metadata__title">{metadata.node.name}</h2>
+        <IconButton
+          container={React.Fragment}
+          ariaLabel="Close Metadata Panel"
+          className="pipeline-metadata__close-button"
+          icon={CloseIcon}
+          onClick={onCloseClick}
+        />
+      </div>
       <dl className="pipeline-metadata__list">
         <MetaDataRow label="Type:" value={metadata.node.type} />
         <MetaDataRow
@@ -97,4 +111,13 @@ export const mapStateToProps = (state, ownProps) => ({
   ...ownProps
 });
 
-export default connect(mapStateToProps)(MetaData);
+export const mapDispatchToProps = dispatch => ({
+  onToggleNodeSelected: nodeID => {
+    dispatch(toggleNodeClicked(nodeID));
+  }
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MetaData);

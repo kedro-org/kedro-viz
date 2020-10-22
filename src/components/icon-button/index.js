@@ -5,10 +5,9 @@ import './icon-button.css';
 
 /**
  * Icon button component
- * @param {Function} onToggle Handle toggling theme between light/dark
- * @param {string} theme Kedro UI light/dark theme
  */
 const IconButton = ({
+  container: Container = 'li',
   ariaLabel,
   ariaLive,
   className,
@@ -22,7 +21,7 @@ const IconButton = ({
   const Icon = icon;
 
   return visible ? (
-    <li>
+    <Container>
       <button
         aria-label={ariaLabel}
         aria-live={ariaLive}
@@ -37,7 +36,7 @@ const IconButton = ({
           <span className="pipeline-toolbar__label">{labelText}</span>
         )}
       </button>
-    </li>
+    </Container>
   ) : null;
 };
 
