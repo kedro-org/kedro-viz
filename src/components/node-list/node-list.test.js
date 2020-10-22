@@ -17,7 +17,7 @@ describe('NodeList', () => {
   describe('search filter', () => {
     const wrapper = setup.mount(<NodeList />);
     const searches = [
-      getNodeData(mockState.testData)[0].name,
+      getNodeData(mockState.animals)[0].name,
       'a',
       'aaaaaaaaaaaaaaaaa',
       ''
@@ -31,8 +31,8 @@ describe('NodeList', () => {
         const nodeList = wrapper.find(
           '.pipeline-nodelist--nested .pipeline-nodelist__row'
         );
-        const nodes = getNodeData(mockState.testData);
-        const tags = getTagData(mockState.testData);
+        const nodes = getNodeData(mockState.animals);
+        const tags = getTagData(mockState.animals);
         const expectedResult = nodes.filter(node =>
           node.name.includes(searchText)
         );
@@ -53,8 +53,8 @@ describe('NodeList', () => {
       const search = () => wrapper.find('.kui-input__field');
       const nodeList = () =>
         wrapper.find('.pipeline-nodelist--nested .pipeline-nodelist__row');
-      const nodes = getNodeData(mockState.testData);
-      const tags = getTagData(mockState.testData);
+      const nodes = getNodeData(mockState.animals);
+      const tags = getTagData(mockState.animals);
       const searchText = nodes[0].name;
       // Enter search text
       search().simulate('change', { target: { value: searchText } });
@@ -97,7 +97,7 @@ describe('NodeList', () => {
           .simulate('change', { target: { checked: enable } })
       );
     // Get search text value and filtered nodes
-    const nodes = getNodeData(mockState.testData);
+    const nodes = getNodeData(mockState.animals);
     const searchText = nodes[0].name;
     const expectedResult = nodes.filter(node => node.name.includes(searchText));
 
@@ -289,8 +289,8 @@ describe('NodeList', () => {
       const nodeList = wrapper.find(
         '.pipeline-nodelist--nested .pipeline-nodelist__row'
       );
-      const nodes = getNodeData(mockState.testData);
-      const tags = getTagData(mockState.testData);
+      const nodes = getNodeData(mockState.animals);
+      const tags = getTagData(mockState.animals);
       expect(nodeList.length).toBe(nodes.length + tags.length);
     });
   });
@@ -358,6 +358,6 @@ describe('NodeList', () => {
       sections: expect.any(Array),
       types: expect.any(Array)
     });
-    expect(mapStateToProps(mockState.testData)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 });

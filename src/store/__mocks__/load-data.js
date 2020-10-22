@@ -1,5 +1,5 @@
 import { getUrl } from '../../utils';
-import testData from '../../utils/data/test-data.json';
+import animals from '../../utils/data/animals.mock.json';
 import demo from '../../utils/data/demo.mock';
 
 /**
@@ -32,9 +32,9 @@ const loadJsonData = async (path = getUrl('main')) => {
   // which should help catch race conditions
   await timeout(50);
 
-  // Use testData dataset in place of 'main' endpoint
+  // Use animals dataset in place of 'main' endpoint
   if (path.includes('main')) {
-    return mockAPIFeatureSupport(testData);
+    return mockAPIFeatureSupport(animals);
   }
 
   // Use demo dataset for 'pipelines' endpoints

@@ -14,7 +14,7 @@ describe('MiniMap', () => {
   it('renders nodes with D3', () => {
     const wrapper = setup.mount(<MiniMap />);
     const nodes = wrapper.render().find('.pipeline-minimap-node');
-    const mockNodes = getNodeIDs(mockState.testData);
+    const mockNodes = getNodeIDs(mockState.animals);
     expect(nodes.length).toEqual(mockNodes.length);
   });
 
@@ -133,7 +133,7 @@ describe('MiniMap', () => {
       nodes: expect.any(Array),
       textLabels: expect.any(Boolean)
     };
-    expect(mapStateToProps(mockState.testData)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {

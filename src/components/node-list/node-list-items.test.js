@@ -23,7 +23,7 @@ const ungroupNodes = groupedNodes =>
 
 describe('node-list-selectors', () => {
   describe('getFilteredNodes', () => {
-    const nodes = getGroupedNodes(mockState.testData);
+    const nodes = getGroupedNodes(mockState.animals);
     let searchValue = 'bear';
     const { filteredNodes, nodeIDs } = getFilteredNodes({ nodes, searchValue });
     const nodeList = ungroupNodes(filteredNodes);
@@ -44,7 +44,7 @@ describe('node-list-selectors', () => {
   });
 
   describe('getFilteredTags', () => {
-    const tags = getTagData(mockState.testData);
+    const tags = getTagData(mockState.animals);
     const searchValue = 'g';
     const filteredTags = getFilteredTags({ tags, searchValue }).tag;
 
@@ -69,7 +69,7 @@ describe('node-list-selectors', () => {
   });
 
   describe('getFilteredTagItems', () => {
-    const tags = getTagData(mockState.testData);
+    const tags = getTagData(mockState.animals);
     const searchValue = 'g';
     const filteredTagItems = getFilteredTagItems({
       tags,
@@ -131,8 +131,8 @@ describe('node-list-selectors', () => {
     const searchValue = 'a';
 
     const filteredItems = getFilteredItems({
-      nodes: getGroupedNodes(mockState.testData),
-      tags: getTagData(mockState.testData),
+      nodes: getGroupedNodes(mockState.animals),
+      tags: getTagData(mockState.animals),
       tagsEnabled: {},
       nodeSelected: {},
       searchValue
@@ -174,10 +174,10 @@ describe('node-list-selectors', () => {
   });
 
   describe('getGroups', () => {
-    const types = getNodeTypes(mockState.testData);
+    const types = getNodeTypes(mockState.animals);
     const items = getFilteredItems({
-      nodes: getGroupedNodes(mockState.testData),
-      tags: getTagData(mockState.testData),
+      nodes: getGroupedNodes(mockState.animals),
+      tags: getTagData(mockState.animals),
       tagsEnabled: {},
       nodeSelected: {},
       searchValue: ''
@@ -233,7 +233,7 @@ describe('node-list-selectors', () => {
   });
 
   describe('highlightMatch', () => {
-    const nodes = getGroupedNodes(mockState.testData);
+    const nodes = getGroupedNodes(mockState.animals);
     const searchValue = 'e';
     const formattedNodes = highlightMatch(nodes, searchValue);
     const nodeList = ungroupNodes(formattedNodes);
@@ -287,7 +287,7 @@ describe('node-list-selectors', () => {
   });
 
   describe('filterNodes', () => {
-    const nodes = getGroupedNodes(mockState.testData);
+    const nodes = getGroupedNodes(mockState.animals);
     const searchValue = 'a';
     const filteredNodes = filterNodes(nodes, searchValue);
     const nodeList = ungroupNodes(filteredNodes);

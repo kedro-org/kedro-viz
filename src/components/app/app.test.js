@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { render, fireEvent, within } from '@testing-library/react';
 import App from './index';
 import getRandomPipeline from '../../utils/random-data';
-import testData from '../../utils/data/test-data.json';
+import animals from '../../utils/data/animals.mock.json';
 import demo from '../../utils/data/demo.mock';
 import { mockState } from '../../utils/state.mock';
 import { Flags } from '../../utils/flags';
@@ -23,34 +23,34 @@ describe('App', () => {
     });
 
     it('when being passed data as a prop', () => {
-      shallow(<App data={testData} />);
+      shallow(<App data={animals} />);
     });
   });
 
   describe('updates the store', () => {
     it('when data prop is set on first load', () => {
-      const wrapper = shallow(<App data={testData} />);
-      expect(getState(wrapper).node).toEqual(mockState.testData.node);
+      const wrapper = shallow(<App data={animals} />);
+      expect(getState(wrapper).node).toEqual(mockState.animals.node);
     });
 
     it('when data prop is updated', () => {
       const wrapper = shallow(<App data={demo} />);
-      wrapper.setProps({ data: testData });
-      expect(getState(wrapper).node).toEqual(mockState.testData.node);
+      wrapper.setProps({ data: animals });
+      expect(getState(wrapper).node).toEqual(mockState.animals.node);
     });
 
     it('but does not override localStorage values', () => {
       const localState = { node: { disabled: { foo: true } } };
       saveState(localState);
       const wrapper = shallow(<App data={demo} />);
-      wrapper.setProps({ data: testData });
+      wrapper.setProps({ data: animals });
       expect(getState(wrapper).node.disabled).toEqual(localState.node.disabled);
       window.localStorage.clear();
     });
 
     it('but does not override non-pipeline values', () => {
       const wrapper = shallow(<App data={demo} />);
-      wrapper.setProps({ data: testData });
+      wrapper.setProps({ data: animals });
       expect(getState(wrapper)).toMatchObject(prepareNonPipelineState({}));
     });
   });
@@ -58,7 +58,7 @@ describe('App', () => {
   describe('feature flags', () => {
     it('it announces flags', () => {
       const announceFlags = jest.spyOn(App.prototype, 'announceFlags');
-      shallow(<App data={testData} />);
+      shallow(<App data={animals} />);
       expect(announceFlags).toHaveBeenCalledWith(Flags.defaults());
     });
   });
@@ -71,10 +71,10 @@ describe('App', () => {
 
   it("resets the active pipeline when data prop is updated, if the active pipeline is not included in the new dataset's list of pipelines", () => {
     // Find a pipeline that is in the first dataset but not the second
-    const activePipeline = testData.pipelines.find(
+    const activePipeline = animals.pipelines.find(
       pipeline => !demo.pipelines.map(d => d.id).includes(pipeline.id)
     );
-    const { container, rerender } = render(<App data={testData} />);
+    const { container, rerender } = render(<App data={animals} />);
     const pipelineDropdown = container.querySelector('.pipeline-list');
     const menuOption = within(pipelineDropdown).getByText(activePipeline.name);
     const pipelineDropdownLabel = pipelineDropdown.querySelector(

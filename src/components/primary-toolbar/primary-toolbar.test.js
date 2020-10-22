@@ -44,9 +44,9 @@ describe('PrimaryToolbar', () => {
     (selector, callback) => {
       const mockFn = jest.fn();
       const props = {
-        textLabels: mockState.testData.textLabels,
-        theme: mockState.testData.theme,
-        visible: mockState.testData.visible,
+        textLabels: mockState.animals.textLabels,
+        theme: mockState.animals.theme,
+        visible: mockState.animals.visible,
         [callback]: mockFn
       };
       const wrapper = setup.mount(<PrimaryToolbar {...props} />);
@@ -74,7 +74,7 @@ describe('PrimaryToolbar', () => {
       }),
       visibleLayers: expect.any(Boolean)
     };
-    expect(mapStateToProps(mockState.testData)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 
   describe('mapDispatchToProps', () => {

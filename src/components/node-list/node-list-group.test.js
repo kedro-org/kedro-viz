@@ -5,14 +5,14 @@ import { setup, mockState } from '../../utils/state.mock';
 
 describe('NodeListGroup', () => {
   it('renders without throwing', () => {
-    const type = getNodeTypes(mockState.testData)[0];
+    const type = getNodeTypes(mockState.animals)[0];
     expect(() =>
       setup.mount(<NodeListGroup id={type.id} name={type.name} />)
     ).not.toThrow();
   });
 
   it('renders children', () => {
-    const type = getNodeTypes(mockState.testData)[0];
+    const type = getNodeTypes(mockState.animals)[0];
     const wrapper = setup.mount(
       <NodeListGroup id={type.id} name={type.name}>
         <div className="test-child" />
@@ -22,7 +22,7 @@ describe('NodeListGroup', () => {
   });
 
   it('handles checkbox change events', () => {
-    const type = getNodeTypes(mockState.testData)[0];
+    const type = getNodeTypes(mockState.animals)[0];
     const onToggleChecked = jest.fn();
     const wrapper = setup.mount(
       <NodeListGroup
@@ -37,7 +37,7 @@ describe('NodeListGroup', () => {
   });
 
   it('handles collapse button click events', () => {
-    const type = getNodeTypes(mockState.testData)[0];
+    const type = getNodeTypes(mockState.animals)[0];
     const onToggleCollapsed = jest.fn();
     const wrapper = setup.mount(
       <NodeListGroup
@@ -51,7 +51,7 @@ describe('NodeListGroup', () => {
   });
 
   it('hides children when collapsed class is used', () => {
-    const type = getNodeTypes(mockState.testData)[0];
+    const type = getNodeTypes(mockState.animals)[0];
     const wrapper = setup.mount(
       <NodeListGroup id={type.id} name={type.name} collapsed={true} />
     );

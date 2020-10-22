@@ -10,31 +10,31 @@ const getNodeLayer = state => state.node.layer;
 describe('Selectors', () => {
   describe('getLayerNodes', () => {
     it('returns an array containing an array of node IDs', () => {
-      expect(getLayerNodes(mockState.testData)).toEqual(
+      expect(getLayerNodes(mockState.animals)).toEqual(
         expect.arrayContaining([expect.arrayContaining([expect.any(String)])])
       );
     });
 
     test('all node IDs are in the correct layer', () => {
-      const layerIDs = getVisibleLayerIDs(mockState.testData);
-      const nodeLayer = getNodeLayer(mockState.testData);
+      const layerIDs = getVisibleLayerIDs(mockState.animals);
+      const nodeLayer = getNodeLayer(mockState.animals);
       expect(
-        getLayerNodes(mockState.testData).every((layerNodeIDs, i) =>
+        getLayerNodes(mockState.animals).every((layerNodeIDs, i) =>
           layerNodeIDs.every(nodeID => nodeLayer[nodeID] === layerIDs[i])
         )
       ).toBe(true);
     });
 
     it('returns an empty array if layers are disabled', () => {
-      const newMockState = reducer(mockState.testData, toggleLayers(false));
+      const newMockState = reducer(mockState.animals, toggleLayers(false));
       expect(getLayerNodes(newMockState)).toEqual([]);
     });
   });
 
   describe('getNodeRank', () => {
-    const nodeRank = getNodeRank(mockState.testData);
-    const nodeIDs = getVisibleNodeIDs(mockState.testData);
-    const edges = getVisibleEdges(mockState.testData);
+    const nodeRank = getNodeRank(mockState.animals);
+    const nodeIDs = getVisibleNodeIDs(mockState.animals);
+    const edges = getVisibleEdges(mockState.animals);
 
     it('returns an object', () => {
       expect(nodeRank).toEqual(expect.any(Object));
@@ -56,7 +56,7 @@ describe('Selectors', () => {
     });
 
     it('returns an empty object if layers are disabled', () => {
-      const newMockState = reducer(mockState.testData, toggleLayers(false));
+      const newMockState = reducer(mockState.animals, toggleLayers(false));
       expect(getNodeRank(newMockState)).toEqual({});
     });
   });

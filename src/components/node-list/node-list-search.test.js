@@ -60,6 +60,6 @@ describe('NodeListSearch', () => {
     const expectedResult = {
       theme: expect.any(String)
     };
-    expect(mapStateToProps(mockState.testData)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 });

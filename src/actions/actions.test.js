@@ -1,4 +1,4 @@
-import testData from '../utils/data/test-data.json';
+import animals from '../utils/data/animals.mock.json';
 import {
   CHANGE_FLAG,
   RESET_DATA,
@@ -39,9 +39,9 @@ describe('actions', () => {
   it('should create an action to reset pipeline data', () => {
     const expectedAction = {
       type: RESET_DATA,
-      data: testData
+      data: animals
     };
-    expect(resetData(testData)).toEqual(expectedAction);
+    expect(resetData(animals)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether to show layers', () => {

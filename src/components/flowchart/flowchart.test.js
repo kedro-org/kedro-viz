@@ -18,10 +18,8 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(<FlowChart />);
     const nodes = wrapper.render().find('.pipeline-node');
     const nodeNames = nodes.map((i, el) => $(el).text()).get();
-    const mockNodes = getNodeIDs(mockState.testData);
-    const mockNodeNames = mockNodes.map(
-      d => getNodeName(mockState.testData)[d]
-    );
+    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodeNames = mockNodes.map(d => getNodeName(mockState.animals)[d]);
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
   });
@@ -78,7 +76,7 @@ describe('FlowChart', () => {
   });
 
   it('applies selected class to nodes when nodeSelected prop set', () => {
-    const mockNodes = getNodeIDs(mockState.testData);
+    const mockNodes = getNodeIDs(mockState.animals);
     const wrapper = setup.mount(
       <FlowChart
         nodeSelected={{
@@ -91,7 +89,7 @@ describe('FlowChart', () => {
   });
 
   it('applies active class to nodes when nodeActive prop set', () => {
-    const mockNodes = getNodeIDs(mockState.testData);
+    const mockNodes = getNodeIDs(mockState.animals);
     const wrapper = setup.mount(
       <FlowChart
         nodeActive={{
@@ -104,7 +102,7 @@ describe('FlowChart', () => {
   });
 
   it('shows text labels when textLabels prop set true', () => {
-    const mockNodes = getNodeIDs(mockState.testData);
+    const mockNodes = getNodeIDs(mockState.animals);
     const wrapper = setup.mount(<FlowChart textLabels={true} />);
     expect(wrapper.render().find('.pipeline-node--text').length).toBe(
       mockNodes.length
@@ -117,7 +115,7 @@ describe('FlowChart', () => {
   });
 
   it('shows layers when layers are visible', () => {
-    const mockLayers = getLayerIDs(mockState.testData);
+    const mockLayers = getLayerIDs(mockState.animals);
     const wrapper = setup.mount(<FlowChart />);
     expect(wrapper.render().find('.pipeline-layer').length).toBe(
       mockLayers.length
@@ -176,7 +174,7 @@ describe('FlowChart', () => {
       textLabels: expect.any(Boolean),
       visibleSidebar: expect.any(Boolean)
     };
-    expect(mapStateToProps(mockState.testData)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {

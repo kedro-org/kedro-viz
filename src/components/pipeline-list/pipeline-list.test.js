@@ -9,7 +9,7 @@ describe('PipelineList', () => {
     expect(container.length).toBe(1);
   });
 
-  const pipelineIDs = mockState.testData.pipeline.ids.map((id, i) => [id, i]);
+  const pipelineIDs = mockState.animals.pipeline.ids.map((id, i) => [id, i]);
   test.each(pipelineIDs)(
     'should change the active pipeline to %s on clicking menu option %s',
     (id, i) => {
@@ -23,14 +23,14 @@ describe('PipelineList', () => {
   );
 
   it('maps state to props', () => {
-    expect(mapStateToProps(mockState.testData)).toEqual({
+    expect(mapStateToProps(mockState.animals)).toEqual({
       pipeline: {
         active: expect.any(String),
         main: expect.any(String),
         name: expect.any(Object),
         ids: expect.any(Array)
       },
-      theme: mockState.testData.theme
+      theme: mockState.animals.theme
     });
   });
 

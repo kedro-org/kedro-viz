@@ -7,8 +7,8 @@ import { getGroups, getSections } from './node-list-items';
 
 describe('NodeListGroups', () => {
   const mockProps = () => {
-    const items = getGroupedNodes(mockState.testData);
-    const types = getNodeTypes(mockState.testData);
+    const items = getGroupedNodes(mockState.animals);
+    const types = getNodeTypes(mockState.animals);
     const sections = getSections();
     const groups = getGroups({ types, items });
     return { items, sections, groups };

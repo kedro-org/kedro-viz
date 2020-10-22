@@ -7,7 +7,7 @@ import { sidebarBreakpoint, sidebarWidth } from '../config';
 describe('Selectors', () => {
   describe('getGraphInput', () => {
     it('returns a graph input object', () => {
-      expect(getGraphInput(mockState.testData)).toEqual(
+      expect(getGraphInput(mockState.animals)).toEqual(
         expect.objectContaining({
           nodes: expect.any(Array),
           edges: expect.any(Array),
@@ -19,7 +19,7 @@ describe('Selectors', () => {
     });
 
     it('returns null if fontLoaded is false', () => {
-      const newMockState = reducer(mockState.testData, updateFontLoaded(false));
+      const newMockState = reducer(mockState.animals, updateFontLoaded(false));
       expect(getGraphInput(newMockState)).toEqual(null);
     });
   });
@@ -53,7 +53,7 @@ describe('Selectors', () => {
 
   describe('getChartSize', () => {
     it('returns a set of undefined properties if chartSize DOMRect is not supplied', () => {
-      expect(getChartSize(mockState.testData)).toEqual({
+      expect(getChartSize(mockState.animals)).toEqual({
         height: undefined,
         left: undefined,
         outerHeight: undefined,
@@ -66,7 +66,7 @@ describe('Selectors', () => {
 
     it('returns a DOMRect converted into an Object, with some extra properties', () => {
       const newMockState = {
-        ...mockState.testData,
+        ...mockState.animals,
         chartSize: { left: 100, top: 100, width: 1000, height: 1000 }
       };
       expect(getChartSize(newMockState)).toEqual({

@@ -5,7 +5,7 @@ import getInitialState, {
   prepareNonPipelineState
 } from './initial-state';
 import { saveState } from './helpers';
-import testData from '../utils/data/test-data.json';
+import animals from '../utils/data/animals.mock.json';
 
 describe('createInitialState', () => {
   it('returns an object', () => {
@@ -53,14 +53,14 @@ describe('preparePipelineState', () => {
 
   it('applies localStorage values on top of normalised pipeline data', () => {
     saveState(localStorageState);
-    expect(preparePipelineState(testData)).toMatchObject(localStorageState);
+    expect(preparePipelineState(animals)).toMatchObject(localStorageState);
     window.localStorage.clear();
   });
 
   it('if applyFixes is true and stored active pipeline from localStorage is not one of the pipelines in the current list, uses default pipeline value instead', () => {
     saveState(localStorageState);
-    const { active } = preparePipelineState(testData, true).pipeline;
-    expect(active).toBe(testData.selected_pipeline);
+    const { active } = preparePipelineState(animals, true).pipeline;
+    expect(active).toBe(animals.selected_pipeline);
     window.localStorage.clear();
   });
 });
@@ -76,7 +76,7 @@ describe('prepareNonPipelineState', () => {
 
   it('overrides flags with values from URL', () => {
     // In this case, location.href is not provided
-    expect(prepareNonPipelineState({ data: testData })).toMatchObject({
+    expect(prepareNonPipelineState({ data: animals })).toMatchObject({
       flags: {
         newgraph: expect.any(Boolean),
         pipelines: expect.any(Boolean)
@@ -86,7 +86,7 @@ describe('prepareNonPipelineState', () => {
 
   it('overrides theme with value from prop', () => {
     const props = { theme: 'light' };
-    expect(prepareNonPipelineState({ data: testData, ...props })).toMatchObject(
+    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
       props
     );
   });
@@ -95,14 +95,14 @@ describe('prepareNonPipelineState', () => {
     const props = {
       visible: { miniMap: true, sidebar: false, themeBtn: false }
     };
-    expect(prepareNonPipelineState({ data: testData, ...props })).toMatchObject(
+    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
       props
     );
   });
 });
 
 describe('getInitialState', () => {
-  const props = { data: testData };
+  const props = { data: animals };
 
   it('throws an error when data prop is empty', () => {
     expect(() => getInitialState({})).toThrow();

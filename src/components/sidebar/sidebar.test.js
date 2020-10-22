@@ -4,7 +4,7 @@ import { mockState, setup } from '../../utils/state.mock';
 
 const mockProps = {
   flags: { pipelines: true },
-  theme: mockState.testData.theme,
+  theme: mockState.animals.theme,
   onToggle: () => {},
   visible: true
 };

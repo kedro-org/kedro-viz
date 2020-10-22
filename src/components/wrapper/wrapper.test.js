@@ -1,7 +1,7 @@
 import { Wrapper, mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
-const { theme } = mockState.testData;
+const { theme } = mockState.animals;
 const mockProps = {
   theme
 };
@@ -21,7 +21,7 @@ describe('Wrapper', () => {
   });
 
   it('maps state to props', () => {
-    expect(mapStateToProps(mockState.testData)).toEqual({
+    expect(mapStateToProps(mockState.animals)).toEqual({
       loading: false,
       theme
     });

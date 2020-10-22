@@ -1,5 +1,5 @@
 import { mockState, prepareState } from '../utils/state.mock';
-import testData from '../utils/data/test-data.json';
+import animals from '../utils/data/animals.mock.json';
 import {
   getNodeDisabledPipeline,
   getPipelineNodeIDs,
@@ -17,14 +17,14 @@ const getTagIDs = state => state.tag.ids;
 describe('Selectors', () => {
   describe('getNodeDisabledPipeline', () => {
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(getNodeDisabledPipeline(mockState.testData))).toEqual(
-        getNodeIDs(mockState.testData)
+      expect(Object.keys(getNodeDisabledPipeline(mockState.animals))).toEqual(
+        getNodeIDs(mockState.animals)
       );
     });
 
     it('returns an object whose values are all Booleans', () => {
       expect(
-        Object.values(getNodeDisabledPipeline(mockState.testData)).every(
+        Object.values(getNodeDisabledPipeline(mockState.animals)).every(
           value => typeof value === 'boolean'
         )
       ).toBe(true);
@@ -33,12 +33,12 @@ describe('Selectors', () => {
     it('does not disable any nodes if there is no active pipeline', () => {
       const activePipeline = undefined;
       const newMockState = reducer(
-        mockState.testData,
+        mockState.animals,
         updateActivePipeline(activePipeline)
       );
       const nodeDisabledPipeline = getNodeDisabledPipeline(newMockState);
       expect(
-        mockState.testData.node.ids.every(
+        mockState.animals.node.ids.every(
           nodeID => !nodeDisabledPipeline[nodeID]
         )
       ).toBe(true);
@@ -46,11 +46,11 @@ describe('Selectors', () => {
 
     it('does not disable any nodes that are in the active pipeline', () => {
       const activePipeline = 'ds';
-      const activePipelineNodeIDs = mockState.testData.node.ids.filter(
-        nodeID => mockState.testData.node.pipelines[nodeID][activePipeline]
+      const activePipelineNodeIDs = mockState.animals.node.ids.filter(
+        nodeID => mockState.animals.node.pipelines[nodeID][activePipeline]
       );
       const newMockState = reducer(
-        mockState.testData,
+        mockState.animals,
         updateActivePipeline(activePipeline)
       );
       const nodeDisabledPipeline = getNodeDisabledPipeline(newMockState);
@@ -61,11 +61,11 @@ describe('Selectors', () => {
 
     it('disables every node that is not in the active pipeline', () => {
       const activePipeline = 'de';
-      const inactivePipelineNodeIDs = mockState.testData.node.ids.filter(
-        nodeID => !mockState.testData.node.pipelines[nodeID][activePipeline]
+      const inactivePipelineNodeIDs = mockState.animals.node.ids.filter(
+        nodeID => !mockState.animals.node.pipelines[nodeID][activePipeline]
       );
       const newMockState = reducer(
-        mockState.testData,
+        mockState.animals,
         updateActivePipeline(activePipeline)
       );
       const nodeDisabledPipeline = getNodeDisabledPipeline(newMockState);
@@ -80,7 +80,7 @@ describe('Selectors', () => {
 
     it('does not disable any nodes if there is no active pipeline', () => {
       const newMockState = reducer(
-        mockState.testData,
+        mockState.animals,
         updateActivePipeline(undefined)
       );
       expect(getNodeDisabledPipeline(newMockState)).toEqual({});
@@ -88,7 +88,7 @@ describe('Selectors', () => {
 
     it('does not disable any nodes if the pipelines flag is false', () => {
       const newMockState = reducer(
-        mockState.testData,
+        mockState.animals,
         changeFlag('pipelines', false)
       );
       expect(getNodeDisabledPipeline(newMockState)).toEqual({});
@@ -96,10 +96,10 @@ describe('Selectors', () => {
   });
 
   describe('getPipelineNodeIDs', () => {
-    const nodeIDs = getNodeIDs(mockState.testData);
-    const pipelineNodeIDs = getPipelineNodeIDs(mockState.testData);
-    const nodePipelines = getNodePipelines(mockState.testData);
-    const activePipeline = getActivePipeline(mockState.testData);
+    const nodeIDs = getNodeIDs(mockState.animals);
+    const pipelineNodeIDs = getPipelineNodeIDs(mockState.animals);
+    const nodePipelines = getNodePipelines(mockState.animals);
+    const activePipeline = getActivePipeline(mockState.animals);
 
     it('returns an array of node IDs', () => {
       expect(pipelineNodeIDs).toEqual(expect.arrayContaining(nodeIDs));
@@ -122,7 +122,7 @@ describe('Selectors', () => {
 
     it('returns zero nodes for an empty pipeline', () => {
       const newMockState = reducer(
-        mockState.testData,
+        mockState.animals,
         updateActivePipeline('empty')
       );
       expect(getPipelineNodeIDs(newMockState)).toHaveLength(0);
@@ -131,8 +131,8 @@ describe('Selectors', () => {
 
   describe('getPipelineTagIDs', () => {
     it('returns an array of tag IDs', () => {
-      expect(getPipelineTagIDs(mockState.testData)).toEqual(
-        expect.arrayContaining(getTagIDs(mockState.testData))
+      expect(getPipelineTagIDs(mockState.animals)).toEqual(
+        expect.arrayContaining(getTagIDs(mockState.animals))
       );
     });
 
@@ -143,7 +143,7 @@ describe('Selectors', () => {
         tags: [tag.id],
         pipelines: ['unused_pipeline'] // not included in default pipeline
       };
-      const data = { ...testData };
+      const data = { ...animals };
       data.tags = [...data.tags, tag];
       data.nodes = [...data.nodes, node];
       const state = prepareState({ data });
@@ -152,7 +152,7 @@ describe('Selectors', () => {
 
     it('returns zero tags for an empty pipeline', () => {
       const newMockState = reducer(
-        mockState.testData,
+        mockState.animals,
         updateActivePipeline('empty')
       );
       expect(getPipelineTagIDs(newMockState)).toHaveLength(0);

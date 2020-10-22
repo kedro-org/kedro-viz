@@ -17,7 +17,7 @@ describe('lib-test', () => {
    * Get the name of the first node in the NodeList, and check that it's
    * included in the list of the node names in the dataset
    * @param {object} wrapper App component mounted by Enzyme
-   * @param {string} key dataSources key: testData/demo/random
+   * @param {string} key dataSources key: animals/demo/random
    */
   const testFirstNodeNameMatch = (wrapper, key) => {
     const firstNodeName = wrapper

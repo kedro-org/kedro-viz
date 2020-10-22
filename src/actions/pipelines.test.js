@@ -95,7 +95,7 @@ describe('pipeline actions', () => {
 
     describe('if loading data synchronously', () => {
       it('should return immediately', () => {
-        const store = createStore(reducer, mockState.testData);
+        const store = createStore(reducer, mockState.animals);
         loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().loading.pipeline).toBe(false);
       });
@@ -117,59 +117,59 @@ describe('pipeline actions', () => {
 
       it("should reset the active pipeline if its ID isn't included in the list of pipeline IDs", async () => {
         saveState({ pipeline: { active: 'unknown-id' } });
-        const store = createStore(reducer, mockState.testData);
+        const store = createStore(reducer, mockState.animals);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         const state = store.getState();
         expect(state.pipeline.active).toBe(state.pipeline.main);
-        expect(state.node).toEqual(mockState.testData.node);
+        expect(state.node).toEqual(mockState.animals.node);
       });
 
       it('should request data from a different dataset if the active pipeline is set', async () => {
-        const { pipeline } = mockState.testData;
+        const { pipeline } = mockState.animals;
         const active = pipeline.ids.find(id => id == pipeline.main);
         saveState({ pipeline: { active } });
-        const store = createStore(reducer, mockState.testData);
+        const store = createStore(reducer, mockState.animals);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().pipeline.active).toBe(active);
-        expect(store.getState().node).toEqual(mockState.testData.node);
+        expect(store.getState().node).toEqual(mockState.animals.node);
       });
 
       it("shouldn't make a second data request if the active pipeline is unset", async () => {
-        const store = createStore(reducer, mockState.testData);
+        const store = createStore(reducer, mockState.animals);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         const state = store.getState();
         expect(state.pipeline.active).toBe(state.pipeline.main);
-        expect(state.node).toEqual(mockState.testData.node);
+        expect(state.node).toEqual(mockState.animals.node);
       });
 
       it("shouldn't make a second data request if the pipeline flag is false", async () => {
-        const { pipeline } = mockState.testData;
+        const { pipeline } = mockState.animals;
         const active = pipeline.ids.find(id => id !== pipeline.main);
         saveState({ pipeline: { active } });
         const state = reducer(
-          mockState.testData,
+          mockState.animals,
           changeFlag('pipelines', false)
         );
         const store = createStore(reducer, state);
         await loadInitialPipelineData()(store.dispatch, store.getState);
-        expect(store.getState().node).toEqual(mockState.testData.node);
+        expect(store.getState().node).toEqual(mockState.animals.node);
       });
 
       it("shouldn't make a second data request if the dataset doesn't support pipelines", async () => {
         window.deletePipelines = true; // pass option to load-data mock
-        const { pipeline } = mockState.testData;
+        const { pipeline } = mockState.animals;
         const active = pipeline.ids.find(id => id !== pipeline.main);
         saveState({ pipeline: { active } });
-        const store = createStore(reducer, mockState.testData);
+        const store = createStore(reducer, mockState.animals);
         await loadInitialPipelineData()(store.dispatch, store.getState);
-        expect(store.getState().node).toEqual(mockState.testData.node);
+        expect(store.getState().node).toEqual(mockState.animals.node);
       });
     });
   });
 
   describe('loadPipelineData', () => {
     it('should do nothing if the pipelineID is already active', () => {
-      const store = createStore(reducer, mockState.testData);
+      const store = createStore(reducer, mockState.animals);
       const { dispatch, getState, subscribe } = store;
       const storeListener = jest.fn();
       subscribe(storeListener);
@@ -179,7 +179,7 @@ describe('pipeline actions', () => {
 
     describe('if loading data synchronously', () => {
       it('updates the active pipeline', () => {
-        const store = createStore(reducer, mockState.testData);
+        const store = createStore(reducer, mockState.animals);
         const { dispatch, getState, subscribe } = store;
         const storeListener = jest.fn();
         const { pipeline } = getState();
