@@ -22,10 +22,6 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
 
   const isTaskNode = metadata?.node.type === 'task';
 
-  const runCommandText = !showCopied
-    ? metadata?.runCommand
-    : 'Copied to clipboard.';
-
   const onCopyClick = () => {
     window.navigator.clipboard.writeText(metadata.runCommand);
     setShowCopied(true);
@@ -82,21 +78,33 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
           visible={Boolean(metadata.pipeline)}
           value={metadata.pipeline}
         />
-        <MetaDataRow label="Run Command:" visible={Boolean(runCommandText)}>
+        <MetaDataRow
+          label="Run Command:"
+          visible={Boolean(metadata.runCommand)}>
           <code className="pipeline-metadata__toolbox-container">
             <MetaDataValue
-              className="pipeline-metadata__run-command-value"
-              value={runCommandText}
+              className={modifiers('pipeline-metadata__run-command-value', {
+                visible: !showCopied
+              })}
+              value={metadata.runCommand}
             />
             {window.navigator.clipboard && (
-              <ul className="pipeline-metadata__toolbox">
-                <IconButton
-                  ariaLabel="Copy run command to clipboard."
-                  className="pipeline-metadata__copy-button"
-                  icon={CopyIcon}
-                  onClick={onCopyClick}
-                />
-              </ul>
+              <>
+                <span
+                  className={modifiers('pipeline-metadata__copy-message', {
+                    visible: showCopied
+                  })}>
+                  Copied to clipboard.
+                </span>
+                <ul className="pipeline-metadata__toolbox">
+                  <IconButton
+                    ariaLabel="Copy run command to clipboard."
+                    className="pipeline-metadata__copy-button"
+                    icon={CopyIcon}
+                    onClick={onCopyClick}
+                  />
+                </ul>
+              </>
             )}
           </code>
         </MetaDataRow>

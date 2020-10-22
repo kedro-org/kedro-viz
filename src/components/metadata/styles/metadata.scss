@@ -179,6 +179,7 @@ $list-inline-spacing: 0.2em;
 }
 
 .pipeline-metadata__toolbox-container {
+  position: relative;
   display: flex;
 }
 
@@ -195,10 +196,32 @@ $list-inline-spacing: 0.2em;
   align-items: center;
 }
 
+.pipeline-metadata__run-command-value--no-visible {
+  opacity: 0;
+}
+
 .pipeline-metadata__toolbox .pipeline-metadata__copy-button {
   width: 1.65em;
   height: 1.65em;
   opacity: 0.55;
+}
+
+.pipeline-metadata__copy-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  .kui-theme--light & {
+    color: rgba($color-text-light, 0.8);
+  }
+
+  .kui-theme--dark & {
+    color: rgba($color-text-dark, 0.8);
+  }
+}
+
+.pipeline-metadata__copy-message--no-visible {
+  display: none;
 }
 
 .pipeline-metadata__copy-button:hover {
