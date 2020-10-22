@@ -28,7 +28,7 @@
 
 """ Kedro plugin for vizualising a Kedro pipeline """
 
-__version__ = "3.5.1"
+__version__ = "3.6.0"
 
 
 from kedro_viz.server import format_pipeline_data  # noqa
