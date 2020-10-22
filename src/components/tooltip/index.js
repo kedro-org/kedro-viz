@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import './tooltip.scss';
+import './tooltip.css';
 
 const zeroWidthSpace = String.fromCharCode(0x200b);
 
