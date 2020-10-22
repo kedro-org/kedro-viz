@@ -117,7 +117,7 @@ describe('pipeline actions', () => {
 
       it("should reset the active pipeline if its ID isn't included in the list of pipeline IDs", async () => {
         saveState({ pipeline: { active: 'unknown-id' } });
-        const store = createStore(reducer, mockState.animals);
+        const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         const state = store.getState();
         expect(state.pipeline.active).toBe(state.pipeline.main);
@@ -126,16 +126,16 @@ describe('pipeline actions', () => {
 
       it('should request data from a different dataset if the active pipeline is set', async () => {
         const { pipeline } = mockState.animals;
-        const active = pipeline.ids.find(id => id == pipeline.main);
+        const active = pipeline.ids.find(id => id !== pipeline.main);
         saveState({ pipeline: { active } });
-        const store = createStore(reducer, mockState.animals);
+        const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().pipeline.active).toBe(active);
-        expect(store.getState().node).toEqual(mockState.animals.node);
+        expect(store.getState().node).toEqual(mockState.demo.node);
       });
 
       it("shouldn't make a second data request if the active pipeline is unset", async () => {
-        const store = createStore(reducer, mockState.animals);
+        const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         const state = store.getState();
         expect(state.pipeline.active).toBe(state.pipeline.main);
@@ -146,10 +146,7 @@ describe('pipeline actions', () => {
         const { pipeline } = mockState.animals;
         const active = pipeline.ids.find(id => id !== pipeline.main);
         saveState({ pipeline: { active } });
-        const state = reducer(
-          mockState.animals,
-          changeFlag('pipelines', false)
-        );
+        const state = reducer(mockState.json, changeFlag('pipelines', false));
         const store = createStore(reducer, state);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().node).toEqual(mockState.animals.node);
@@ -160,7 +157,7 @@ describe('pipeline actions', () => {
         const { pipeline } = mockState.animals;
         const active = pipeline.ids.find(id => id !== pipeline.main);
         saveState({ pipeline: { active } });
-        const store = createStore(reducer, mockState.animals);
+        const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().node).toEqual(mockState.animals.node);
       });
