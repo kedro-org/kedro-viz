@@ -10,6 +10,21 @@ const lineShape = line()
   .curve(curveBasis);
 
 /**
+ * Matches all floating point numbers in a string
+ */
+const matchFloats = /\d+\.\d+/g;
+
+/**
+ * Limits the precision of a float value to one decimal point
+ */
+const toSinglePoint = value => parseFloat(value).toFixed(1);
+
+/**
+ * Limits the precision of a path string to one decimal point
+ */
+const limitPrecision = path => path.replace(matchFloats, toSinglePoint);
+
+/**
  * Render layer bands
  */
 export const drawLayers = function() {
@@ -262,7 +277,8 @@ export const drawEdges = function(changed) {
       .transition('update-edges')
       .duration(this.DURATION)
       .attrTween('d', function(edge) {
-        const current = edge.points && lineShape(edge.points);
+        // Performance: Limit path precision for parsing & render
+        let current = edge.points && limitPrecision(lineShape(edge.points));
         const previous = select(this).attr('d') || current;
         return interpolatePath(previous, current);
       });
