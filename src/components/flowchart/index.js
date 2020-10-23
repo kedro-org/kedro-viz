@@ -220,6 +220,12 @@ export class FlowChart extends Component {
         // Transform the <g> that wraps the chart
         this.el.wrapper.attr('transform', event.transform);
 
+        // Apply animating class to zoom wrapper
+        this.el.wrapper.classed(
+          'pipeline-flowchart__zoom-wrapper--animating',
+          true
+        );
+
         // Update layer label y positions
         if (this.el.layerNames) {
           this.el.layerNames.style('transform', d => {
@@ -241,6 +247,13 @@ export class FlowChart extends Component {
           minScale,
           maxScale
         });
+      })
+      // When zoom ends
+      .on('end', () => {
+        this.el.wrapper.classed(
+          'pipeline-flowchart__zoom-wrapper--animating',
+          false
+        );
       });
 
     this.el.svg.call(this.zoomBehaviour);
@@ -447,21 +460,21 @@ export class FlowChart extends Component {
           width={outerWidth}
           height={outerHeight}
           ref={this.svgRef}>
-          <defs>
-            <marker
-              id="pipeline-arrowhead"
-              className="pipeline-flowchart__arrowhead"
-              viewBox="0 0 10 10"
-              refX="7"
-              refY="5"
-              markerUnits="strokeWidth"
-              markerWidth="8"
-              markerHeight="6"
-              orient="auto">
-              <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
-            </marker>
-          </defs>
           <g id="zoom-wrapper" ref={this.wrapperRef}>
+            <defs>
+              <marker
+                id="pipeline-arrowhead"
+                className="pipeline-flowchart__arrowhead"
+                viewBox="0 0 10 10"
+                refX="7"
+                refY="5"
+                markerUnits="strokeWidth"
+                markerWidth="8"
+                markerHeight="6"
+                orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
+              </marker>
+            </defs>
             <g className="pipeline-flowchart__layers" ref={this.layersRef} />
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
             <g
