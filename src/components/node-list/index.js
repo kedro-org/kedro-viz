@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import NodeList from './node-list';
@@ -28,11 +29,12 @@ const isTagType = type => type === 'tag';
  * Items (third level) e.g. 'Data Engineering', 'Content Optimisation'
  */
 const NodeListProvider = ({
+  isFaded,
   nodes,
   nodeSelected,
+  sections,
   tags,
   tagsEnabled,
-  sections,
   types,
   onToggleNodesDisabled,
   onToggleNodeSelected,
@@ -134,18 +136,23 @@ const NodeListProvider = ({
   });
 
   return (
-    <NodeList
-      items={items}
-      sections={sections}
-      groups={groups}
-      searchValue={searchValue}
-      onUpdateSearchValue={updateSearchValue}
-      onToggleGroupChecked={onToggleGroupChecked}
-      onItemClick={onItemClick}
-      onItemMouseEnter={onItemMouseEnter}
-      onItemMouseLeave={onItemMouseLeave}
-      onItemChange={onItemChange}
-    />
+    <div
+      className={classnames('pipeline-nodelist', {
+        'pipeline-nodelist--fade': isFaded
+      })}>
+      <NodeList
+        items={items}
+        sections={sections}
+        groups={groups}
+        searchValue={searchValue}
+        onUpdateSearchValue={updateSearchValue}
+        onToggleGroupChecked={onToggleGroupChecked}
+        onItemClick={onItemClick}
+        onItemMouseEnter={onItemMouseEnter}
+        onItemMouseLeave={onItemMouseLeave}
+        onItemChange={onItemChange}
+      />
+    </div>
   );
 };
 

@@ -9,6 +9,24 @@
 @import './row';
 @import './filter';
 
+.pipeline-nodelist {
+  flex-grow: 1;
+
+  &--fade {
+    > * {
+      opacity: 0.2;
+    }
+
+    .kui-theme--light & {
+      background: $color-bg-light-2;
+    }
+
+    .kui-theme--dark & {
+      background: $color-bg-dark-2;
+    }
+  }
+}
+
 .pipeline-nodelist-scrollbars {
   min-height: 400px;
 }
