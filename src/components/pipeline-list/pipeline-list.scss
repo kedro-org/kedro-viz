@@ -8,9 +8,12 @@
     display: block;
     border: none;
 
-    &,
-    &:hover {
-      box-shadow: none;
+    .kui-theme--light & {
+      box-shadow: 0 1px 1px rgba(black, 0.03);
+    }
+
+    .kui-theme--dark & {
+      box-shadow: 0 1px 1px rgba(black, 0.1);
     }
   }
 
@@ -42,10 +45,10 @@
 
   .kui-dropdown__options {
     border-top: none;
-    box-shadow: none;
 
     .kui-theme--light & {
       background: $color-bg-light-3;
+      box-shadow: 0 1px 1px rgba(black, 0.03);
     }
 
     .kui-theme--dark & {
