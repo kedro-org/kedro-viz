@@ -173,6 +173,7 @@ export const getNodeSize = createSelector(
       const textGap = textLabels ? 6 : 0;
       const innerWidth = iconSize + textWidth + textGap;
       return {
+        showText: textLabels,
         width: innerWidth + padding.x * 2,
         height: iconSize + padding.y * 2,
         textOffset: (innerWidth - textWidth) / 2,

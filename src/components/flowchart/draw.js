@@ -110,8 +110,7 @@ export const drawNodes = function(changed) {
     linkedNodes,
     nodeActive,
     nodeSelected,
-    nodes,
-    textLabels
+    nodes
   } = this.props;
 
   if (changed('nodes')) {
@@ -161,6 +160,7 @@ export const drawNodes = function(changed) {
 
     enterNodes
       .append('text')
+      .attr('class', 'pipeline-node__text')
       .text(node => node.name)
       .attr('text-anchor', 'middle')
       .attr('dy', 5)
@@ -190,11 +190,7 @@ export const drawNodes = function(changed) {
       );
   }
 
-  if (changed('nodes', 'textLabels')) {
-    allNodes
-      .classed('pipeline-node--icon', !textLabels)
-      .classed('pipeline-node--text', textLabels);
-
+  if (changed('nodes')) {
     allNodes
       .transition('update-nodes')
       .duration(this.DURATION)
@@ -213,19 +209,25 @@ export const drawNodes = function(changed) {
     updateNodes
       .select('rect')
       .transition('node-rect')
-      .duration(textLabels ? 200 : 600)
+      .duration(node => (node.showText ? 200 : 600))
       .call(updateNodeRects);
 
+    // Performance: icon transitions with CSS on GPU
     allNodes
       .select('.pipeline-node__icon')
-      .transition('node-icon-offset')
-      .duration(200)
+      .style('transition-delay', node => (node.showText ? '0ms' : '200ms'))
       .style(
         'transform',
         node =>
           `translate(${node.iconOffset}px, ${-node.iconSize / 2}px) ` +
           `scale(${0.55 * (node.height / node.iconSize)})`
       );
+
+    // Performance: text transitions with CSS on GPU
+    allNodes
+      .select('.pipeline-node__text')
+      .style('transition-delay', node => (node.showText ? '200ms' : '0ms'))
+      .style('opacity', node => (node.showText ? 1 : 0));
   }
 };
 

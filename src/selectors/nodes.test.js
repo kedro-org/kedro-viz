@@ -262,6 +262,7 @@ describe('Selectors', () => {
         expect(Object.values(getNodeSize(mockState.animals))).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
+              showText: expect.any(Boolean),
               width: expect.any(Number),
               height: expect.any(Number),
               textOffset: expect.any(Number),
