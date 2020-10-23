@@ -1,5 +1,5 @@
 import getPipelineData, { getSourceID, getDataValue } from './data-source';
-import animals from './data/animals.mock';
+import animals from './data/animals.mock.json';
 import demo from './data/demo.mock';
 
 describe('getSourceID', () => {
