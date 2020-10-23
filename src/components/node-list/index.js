@@ -137,8 +137,8 @@ const NodeListProvider = ({
 
   return (
     <div
-      className={classnames('pipeline-nodelist-container', {
-        'pipeline-nodelist-container--fade': isFaded
+      className={classnames('pipeline-nodelist', {
+        'pipeline-nodelist--fade': isFaded
       })}>
       <NodeList
         items={items}
