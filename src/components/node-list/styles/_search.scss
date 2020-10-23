@@ -1,5 +1,5 @@
 .pipeline-nodelist-search {
-  position: relative;
+  padding: 2px ($sidebar-padding - 0.6) 0 ($sidebar-padding - 0.6);
 
   .kui-searchbar,
   .kui-input-wrapper {
@@ -121,8 +121,4 @@
   .kui-input__line:after {
     display: none;
   }
-}
-
-.pipeline-nodelist-search-inner {
-  padding: 2px ($sidebar-padding - 0.6) 0 ($sidebar-padding - 0.6);
 }
