@@ -2,7 +2,7 @@ import 'd3-transition';
 import { interpolatePath } from 'd3-interpolate-path';
 import { select } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
-import icon from './icon';
+import { paths as nodeIcons } from '../icons/node-icon';
 
 const lineShape = line()
   .x(d => d.x)
@@ -137,7 +137,12 @@ export const drawNodes = function(changed) {
       .attr('opacity', 1);
 
     enterNodes.append('rect');
-    enterNodes.append(icon);
+
+    // Performance: use a single path per icon
+    enterNodes
+      .append('path')
+      .attr('class', 'pipeline-node__icon')
+      .attr('d', node => nodeIcons[node.type]);
 
     enterNodes
       .append('text')
@@ -200,10 +205,12 @@ export const drawNodes = function(changed) {
       .select('.pipeline-node__icon')
       .transition('node-icon-offset')
       .duration(200)
-      .attr('width', node => node.iconSize)
-      .attr('height', node => node.iconSize)
-      .attr('x', node => node.iconOffset)
-      .attr('y', node => node.iconSize / -2);
+      .style(
+        'transform',
+        node =>
+          `translate(${node.iconOffset}px, ${-node.iconSize / 2}px) ` +
+          `scale(${0.55 * (node.height / node.iconSize)})`
+      );
   }
 };
 

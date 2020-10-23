@@ -141,14 +141,14 @@ export const getNodeTextWidth = createSelector(
 export const getPadding = (showLabels, isTask) => {
   if (showLabels) {
     if (isTask) {
-      return { x: 16, y: 10 };
+      return { x: 12, y: 10 };
     }
     return { x: 20, y: 10 };
   }
   if (isTask) {
     return { x: 14, y: 14 };
   }
-  return { x: 16, y: 16 };
+  return { x: 14, y: 16 };
 };
 
 /**
