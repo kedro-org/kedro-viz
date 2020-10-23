@@ -1,15 +1,5 @@
 .pipeline-nodelist-search {
   position: relative;
-  z-index: 1;
-  margin: 0 -6px;
-
-  .kui-theme--dark & {
-    box-shadow: 0 14px 18px $color-bg-dark-3;
-  }
-
-  .kui-theme--light & {
-    box-shadow: 0 14px 18px $color-bg-light-3;
-  }
 
   .kui-searchbar,
   .kui-input-wrapper {
@@ -134,6 +124,5 @@
 }
 
 .pipeline-nodelist-search-inner {
-  margin-bottom: -6px;
-  padding: 2px $sidebar-padding 6px $sidebar-padding;
+  padding: 2px ($sidebar-padding - 0.6) 0 ($sidebar-padding - 0.6);
 }

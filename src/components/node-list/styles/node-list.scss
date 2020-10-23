@@ -9,7 +9,9 @@
 @import './row';
 @import './filter';
 
-.pipeline-nodelist {
+.pipeline-nodelist-container {
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
   padding-top: 1.8em;
 
@@ -30,8 +32,37 @@
 
 .pipeline-nodelist-scrollbars {
   min-height: 400px;
+
+  &:after {
+    position: absolute;
+    top: 0;
+    right: -1px;
+    left: -1px;
+    height: 20px;
+    content: '';
+
+    .kui-theme--dark & {
+      background: linear-gradient(
+        0deg,
+        rgba($color-bg-dark-3, 0) 0%,
+        rgba($color-bg-dark-3, 1) 100%
+      );
+    }
+
+    .kui-theme--light & {
+      background: linear-gradient(
+        0deg,
+        rgba($color-bg-light-3, 0) 0%,
+        rgba($color-bg-light-3, 1) 100%
+      );
+    }
+  }
 }
 
-.pipeline-nodelist-container {
-  padding: 6px 0 16px 0;
+.pipeline-nodelist-section:first-child {
+  padding-top: 6px;
+}
+
+.pipeline-nodelist-section:last-child {
+  padding-bottom: 16px;
 }
