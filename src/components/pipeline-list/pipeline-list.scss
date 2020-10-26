@@ -67,6 +67,14 @@
     padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
     border-left: 2px solid transparent;
 
+    .kui-theme--light & {
+      border-top: 1px solid rgba(black, 0.06);
+    }
+
+    .kui-theme--dark & {
+      border-bottom: 1px solid rgba(white, 0.06);
+    }
+
     &--focused,
     &:focus,
     &:hover {
