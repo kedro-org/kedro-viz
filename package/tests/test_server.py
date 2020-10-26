@@ -48,7 +48,10 @@ from kedro_viz import server
 from kedro_viz.server import _allocate_port, _hash, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
 
-input_json_path = Path(__file__).parent / "test-data.json"
+input_json_path = (
+    Path(__file__).parents[2] / "src" / "utils" / "data" / "animals.mock.json"
+)
+
 EXPECTED_PIPELINE_DATA = json.loads(input_json_path.read_text())
 
 
