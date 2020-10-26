@@ -136,23 +136,19 @@ const NodeListProvider = ({
   });
 
   return (
-    <div
-      className={classnames('pipeline-nodelist', {
-        'pipeline-nodelist--fade': isFaded
-      })}>
-      <NodeList
-        items={items}
-        sections={sections}
-        groups={groups}
-        searchValue={searchValue}
-        onUpdateSearchValue={updateSearchValue}
-        onToggleGroupChecked={onToggleGroupChecked}
-        onItemClick={onItemClick}
-        onItemMouseEnter={onItemMouseEnter}
-        onItemMouseLeave={onItemMouseLeave}
-        onItemChange={onItemChange}
-      />
-    </div>
+    <NodeList
+      isFaded={isFaded}
+      items={items}
+      sections={sections}
+      groups={groups}
+      searchValue={searchValue}
+      onUpdateSearchValue={updateSearchValue}
+      onToggleGroupChecked={onToggleGroupChecked}
+      onItemClick={onItemClick}
+      onItemMouseEnter={onItemMouseEnter}
+      onItemMouseLeave={onItemMouseLeave}
+      onItemChange={onItemChange}
+    />
   );
 };
 
