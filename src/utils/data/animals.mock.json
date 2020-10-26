@@ -146,7 +146,7 @@
       "full_name": "params:rabbit",
       "id": "c38d4c6a",
       "layer": null,
-      "name": "params:rabbit",
+      "name": "Params:rabbit",
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "parameters"
@@ -182,7 +182,6 @@
       "full_name": "trout",
       "id": "e27376a9",
       "name": "trout",
-      "layer": null,
       "pipelines": ["ds", "__default__"],
       "tags": ["small"],
       "type": "task"
