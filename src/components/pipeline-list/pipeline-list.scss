@@ -49,6 +49,10 @@
   .kui-dropdown__options {
     border-top: none;
 
+    > section {
+      padding: 0;
+    }
+
     .kui-theme--light & {
       background: $color-bg-light-3;
       box-shadow: 0 0 2px rgba(black, 0.1);
