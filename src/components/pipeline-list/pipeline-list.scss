@@ -81,11 +81,11 @@
       border-left-color: $color-primary;
 
       .kui-theme--light & {
-        background: $color-bg-light-4;
+        background: rgba(white, 0.3);
       }
 
       .kui-theme--dark & {
-        background: $color-bg-dark-3;
+        background: rgba(white, 0.03);
       }
     }
   }
