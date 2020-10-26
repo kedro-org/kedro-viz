@@ -19,7 +19,11 @@ export const createInitialPipelineState = () => ({
     disabled: {},
     pipelines: {},
     clicked: null,
-    hovered: null
+    hovered: null,
+    code: {},
+    codeLocation: {},
+    docString: {},
+    parameters: {}
   },
   nodeType: {
     ids: ['task', 'data', 'parameters'],
