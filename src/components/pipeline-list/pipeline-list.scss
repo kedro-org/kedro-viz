@@ -20,6 +20,11 @@
     height: 58px;
   }
 
+  .kui-dropdown__label,
+  .kui-menu-option__content {
+    font-size: 1.8em;
+  }
+
   .kui-dropdown__label {
     padding: 0 $sidebar-padding / 1.6; // divide by 1.6em font-size on element
 
