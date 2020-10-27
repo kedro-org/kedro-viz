@@ -81,8 +81,9 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
         <MetaDataRow
           label="Run Command:"
           visible={Boolean(metadata.runCommand)}>
-          <code className="pipeline-metadata__toolbox-container">
+          <div className="pipeline-metadata__toolbox-container">
             <MetaDataValue
+              container={'code'}
               className={modifiers('pipeline-metadata__run-command-value', {
                 visible: !showCopied
               })}
@@ -106,7 +107,7 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
                 </ul>
               </>
             )}
-          </code>
+          </div>
         </MetaDataRow>
       </dl>
     </div>

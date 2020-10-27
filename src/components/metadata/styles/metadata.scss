@@ -193,6 +193,6 @@ $list-inline-spacing: 0.2em;
 }
 
 .pipeline-metadata__copy-button:active {
-  transform: translate(0, 1px);
+  transform: translateY(1px);
   opacity: 0.85;
 }
