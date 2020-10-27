@@ -17,7 +17,7 @@ const MetaDataRow = ({
   commas = true,
   children
 }) => {
-  const showList = Array.isArray(value) && value.length;
+  const showList = Array.isArray(value);
   const showValue = !showList && typeof value !== 'undefined';
 
   return (

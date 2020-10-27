@@ -13,22 +13,25 @@ const MetaDataList = ({
   empty = '-',
   inline = true,
   commas = true
-}) => (
-  <ul
-    className={modifiers('pipeline-metadata__value-list', {
-      inline,
-      commas
-    })}>
-    {values.map((item, index) => (
-      <li key={index}>
-        <MetaDataValue
-          value={property ? item[property] : item}
-          kind={kind}
-          empty={empty}
-        />
-      </li>
-    ))}
-  </ul>
-);
+}) =>
+  values.length > 0 ? (
+    <ul
+      className={modifiers('pipeline-metadata__value-list', {
+        inline,
+        commas
+      })}>
+      {values.map((item, index) => (
+        <li key={index}>
+          <MetaDataValue
+            value={property ? item[property] : item}
+            kind={kind}
+            empty={empty}
+          />
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <MetaDataValue empty={empty} />
+  );
 
 export default MetaDataList;
