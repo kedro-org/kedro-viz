@@ -4,16 +4,25 @@ import { mockState, setup } from '../../utils/state.mock';
 
 describe('PipelineList', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.mount(<PipelineList />);
+    const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
     const container = wrapper.find('.pipeline-list');
     expect(container.length).toBe(1);
+  });
+
+  it('should call onToggleOpen when opening/closing', () => {
+    const onToggleOpen = jest.fn();
+    const wrapper = setup.mount(<PipelineList onToggleOpen={onToggleOpen} />);
+    wrapper.find('.kui-dropdown__label').simulate('click');
+    expect(onToggleOpen).toHaveBeenLastCalledWith(true);
+    wrapper.find('.kui-dropdown__label').simulate('click');
+    expect(onToggleOpen).toHaveBeenLastCalledWith(false);
   });
 
   const pipelineIDs = mockState.animals.pipeline.ids.map((id, i) => [id, i]);
   test.each(pipelineIDs)(
     'should change the active pipeline to %s on clicking menu option %s',
     (id, i) => {
-      const wrapper = setup.mount(<PipelineList />);
+      const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
       wrapper
         .find('MenuOption')
         .at(i)

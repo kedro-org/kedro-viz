@@ -55,6 +55,6 @@ describe('NodeListGroup', () => {
     const wrapper = setup.mount(
       <NodeListGroup id={type.id} name={type.name} collapsed={true} />
     );
-    expect(wrapper.find('.pipeline-nodelist--nested').length).toEqual(0);
+    expect(wrapper.find('.pipeline-nodelist__list--nested').length).toEqual(0);
   });
 });
