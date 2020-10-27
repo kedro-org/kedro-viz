@@ -82,14 +82,7 @@
   font-size: 1.38em;
   line-height: 1.6;
   word-break: break-word;
-
-  .kui-theme--light & {
-    color: rgba($color-text-light, 0.8);
-  }
-
-  .kui-theme--dark & {
-    color: rgba($color-text-dark, 0.8);
-  }
+  opacity: 0.85;
 }
 
 .pipeline-metadata__list {
@@ -99,27 +92,12 @@
 .pipeline-metadata__label {
   margin-bottom: 0.7em;
   font-weight: normal;
+  opacity: 0.55;
   user-select: none;
-
-  .kui-theme--light & {
-    color: rgba($color-text-light, 0.55);
-  }
-
-  .kui-theme--dark & {
-    color: rgba($color-text-dark, 0.55);
-  }
 }
 
 .pipeline-metadata__row {
   margin-top: 0.7em;
-
-  .kui-theme--light & {
-    color: rgba($color-text-light, 0.55);
-  }
-
-  .kui-theme--dark & {
-    color: rgba($color-text-dark, 0.55);
-  }
 }
 
 .pipeline-metadata__value {
@@ -128,14 +106,7 @@
   margin-right: auto;
   line-height: 1.5;
   word-break: break-word;
-
-  .kui-theme--light & {
-    color: rgba($color-text-light, 0.8);
-  }
-
-  .kui-theme--dark & {
-    color: rgba($color-text-dark, 0.8);
-  }
+  opacity: 0.85;
 }
 
 .pipeline-metadata__value--kind-token {
@@ -210,14 +181,7 @@ $list-inline-spacing: 0.2em;
   position: absolute;
   top: 0;
   left: 0;
-
-  .kui-theme--light & {
-    color: rgba($color-text-light, 0.8);
-  }
-
-  .kui-theme--dark & {
-    color: rgba($color-text-dark, 0.8);
-  }
+  opacity: 0.85;
 }
 
 .pipeline-metadata__copy-message--no-visible {
