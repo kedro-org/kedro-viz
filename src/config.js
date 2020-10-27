@@ -15,7 +15,7 @@ export const sidebarWidth = {
   closed: 56
 };
 
-export const chartMinWidth = 300;
+export const chartMinWidth = 1200;
 
 export const flags = {
   newgraph: {

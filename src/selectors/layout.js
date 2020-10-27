@@ -61,7 +61,7 @@ export const getChartSize = createSelector(
     const chartWidth = width - sidebarWidth - metaSidebarWidth;
 
     // Chart size excludes sidebars when space is small
-    const excludeSidebars = chartWidth < chartMinWidth;
+    const excludeSidebars = width < chartMinWidth;
 
     return {
       left,
