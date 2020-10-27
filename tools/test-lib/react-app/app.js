@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import KedroViz from '@quantumblack/kedro-viz';
-import animals from '@quantumblack/kedro-viz/lib/utils/data/animals.mock';
+import animals from '@quantumblack/kedro-viz/lib/utils/data/animals.mock.json';
 import demo from '@quantumblack/kedro-viz/lib/utils/data/demo.mock';
 import getRandomData from '@quantumblack/kedro-viz/lib/utils/random-data';
 

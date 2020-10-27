@@ -4,21 +4,39 @@ import { toggleNodeClicked } from '../actions/nodes';
 import reducer from '../reducers';
 
 describe('getLinkedNodes function', () => {
-  it('should search through edges for ancestor and descendant nodes', () => {
-    const { nodes } = mockState.animals.graph;
-    const nodeID = nodes.find(d => d.id.includes('salmon')).id;
-    const newMockState = reducer(mockState.animals, toggleNodeClicked(nodeID));
-    const linkedNodes = getLinkedNodes(newMockState);
+  const { nodes } = mockState.animals.graph;
+  const nodeID = nodes.find(d => d.name.includes('salmon')).id;
+  const newMockState = reducer(mockState.animals, toggleNodeClicked(nodeID));
+  const linkedNodes = getLinkedNodes(newMockState);
+
+  it('should return an object', () => {
     expect(linkedNodes).toEqual(expect.any(Object));
-    expect(linkedNodes['task/salmon']).toBe(true);
-    expect(linkedNodes['data/pig']).toBe(true);
-    expect(linkedNodes['task/trout']).toBe(true);
-    expect(linkedNodes['data/whale']).toBe(true);
-    expect(linkedNodes['data/horse']).toBe(true);
-    expect(linkedNodes['data/sheep']).toBe(true);
-    expect(linkedNodes['data/cat']).toBe(true);
-    expect(linkedNodes['data/dog']).toBe(true);
-    expect(linkedNodes['data/parameters']).toBe(true);
-    expect(linkedNodes['data/parameters_rabbit']).toBe(true);
+  });
+
+  describe('should return true for ancestor/descendant nodes', () => {
+    test.each([
+      ['salmon', '4ffcf321'],
+      ['pig', '2cd4ba93'],
+      ['trout', '7196f150'],
+      ['whale', '1769e230'],
+      ['horse', '091b5035'],
+      ['sheep', '6525f2e6'],
+      ['cat', '9d989e8d'],
+      ['dog', 'e4951252'],
+      ['parameters', 'f1f1425b'],
+      ['parameters_rabbit', '2a31900d']
+    ])('node %s should be true', (name, id) => {
+      expect(linkedNodes[id]).toBe(true);
+    });
+  });
+
+  describe('should not return any linked nodes for non-ancestor/descendant nodes', () => {
+    test.each([
+      ['bear', '09f5edeb'],
+      ['shark', '4f90af66'],
+      ['weasel', '85c4cf64']
+    ])('node %s should be false', (name, id) => {
+      expect(linkedNodes[id]).toBe(undefined);
+    });
   });
 });

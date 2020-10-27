@@ -19,7 +19,7 @@ export const flags = {
   },
   pipelines: {
     description: 'Select from multiple pipelines',
-    default: typeof jest !== undefined,
+    default: typeof jest !== 'undefined',
     icon: '🔀'
   }
 };

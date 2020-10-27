@@ -5,7 +5,7 @@ import getInitialState, {
   prepareNonPipelineState
 } from './initial-state';
 import { saveState } from './helpers';
-import animals from '../utils/data/animals.mock';
+import animals from '../utils/data/animals.mock.json';
 
 describe('createInitialState', () => {
   it('returns an object', () => {

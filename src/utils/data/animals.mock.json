@@ -1,0 +1,250 @@
+{
+  "selected_pipeline": "__default__",
+  "pipelines": [
+    {
+      "id": "de",
+      "name": "Data engineering"
+    },
+    {
+      "id": "ds",
+      "name": "Data science"
+    },
+    {
+      "id": "__default__",
+      "name": "Default"
+    },
+    {
+      "id": "empty",
+      "name": "Empty pipeline"
+    }
+  ],
+  "layers": [
+    "Raw",
+    "Intermediate",
+    "Primary",
+    "Feature",
+    "Model Input",
+    "Model Output"
+  ],
+  "tags": [
+    {
+      "id": "small",
+      "name": "small"
+    },
+    {
+      "id": "medium",
+      "name": "medium"
+    },
+    {
+      "id": "large",
+      "name": "large"
+    },
+    {
+      "id": "huge",
+      "name": "huge"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "4ffcf321",
+      "name": "salmon",
+      "full_name": "salmon",
+      "tags": ["small"],
+      "layer": "Intermediate",
+      "pipelines": ["__default__", "de"],
+      "type": "task"
+    },
+    {
+      "id": "4f90af66",
+      "name": "shark",
+      "full_name": "shark",
+      "tags": ["medium", "large"],
+      "layer": "Intermediate",
+      "pipelines": ["__default__", "de"],
+      "type": "task"
+    },
+    {
+      "id": "7196f150",
+      "name": "trout",
+      "full_name": "trout",
+      "tags": ["small"],
+      "layer": "Model Input",
+      "pipelines": ["__default__", "ds"],
+      "type": "task"
+    },
+    {
+      "id": "1769e230",
+      "name": "whale",
+      "full_name": "whale",
+      "tags": ["large", "huge"],
+      "layer": "Model Output",
+      "pipelines": ["__default__", "ds"],
+      "type": "data"
+    },
+    {
+      "id": "e4951252",
+      "name": "dog",
+      "full_name": "dog",
+      "tags": ["small", "medium"],
+      "layer": "Raw",
+      "pipelines": ["__default__", "de"],
+      "type": "data"
+    },
+    {
+      "id": "9d989e8d",
+      "name": "cat",
+      "full_name": "cat",
+      "tags": ["small", "medium", "large"],
+      "layer": "Raw",
+      "pipelines": ["__default__", "de"],
+      "type": "data"
+    },
+    {
+      "id": "2a31900d",
+      "name": "parameters_rabbit",
+      "full_name": "parameters_rabbit",
+      "tags": ["small"],
+      "layer": "Intermediate",
+      "pipelines": ["__default__", "de"],
+      "type": "parameters"
+    },
+    {
+      "id": "f1f1425b",
+      "name": "parameters",
+      "full_name": "parameters",
+      "tags": [],
+      "layer": "Intermediate",
+      "pipelines": ["__default__", "de"],
+      "type": "parameters"
+    },
+    {
+      "id": "6525f2e6",
+      "name": "sheep",
+      "full_name": "sheep",
+      "tags": ["medium"],
+      "layer": "Primary",
+      "pipelines": ["__default__", "de"],
+      "type": "data"
+    },
+    {
+      "id": "091b5035",
+      "name": "horse",
+      "full_name": "horse",
+      "tags": ["large"],
+      "layer": "Model Output",
+      "pipelines": ["__default__", "de"],
+      "type": "data"
+    },
+    {
+      "id": "85c4cf64",
+      "name": "weasel",
+      "full_name": "weasel",
+      "tags": ["small"],
+      "layer": "Raw",
+      "pipelines": ["__default__", "de"],
+      "type": "data"
+    },
+    {
+      "id": "0ae9e4de",
+      "name": "elephant",
+      "full_name": "elephant",
+      "tags": ["large"],
+      "layer": "Raw",
+      "pipelines": ["__default__", "de"],
+      "type": "data"
+    },
+    {
+      "id": "09f5edeb",
+      "name": "bear",
+      "full_name": "bear",
+      "tags": ["large"],
+      "layer": "Raw",
+      "pipelines": ["__default__", "de"],
+      "type": "data"
+    },
+    {
+      "id": "fac8f1a3",
+      "name": "giraffe",
+      "full_name": "giraffe",
+      "tags": ["large"],
+      "layer": "Model Output",
+      "pipelines": ["__default__", "de"],
+      "type": "data"
+    },
+    {
+      "id": "2cd4ba93",
+      "name": "pig",
+      "full_name": "pig",
+      "tags": ["medium"],
+      "layer": "Feature",
+      "pipelines": ["__default__", "ds"],
+      "type": "data"
+    }
+  ],
+  "edges": [
+    {
+      "target": "4ffcf321",
+      "source": "9d989e8d"
+    },
+    {
+      "target": "4ffcf321",
+      "source": "e4951252"
+    },
+    {
+      "target": "4ffcf321",
+      "source": "f1f1425b"
+    },
+    {
+      "target": "4ffcf321",
+      "source": "2a31900d"
+    },
+    {
+      "target": "2cd4ba93",
+      "source": "4ffcf321"
+    },
+    {
+      "target": "091b5035",
+      "source": "4ffcf321"
+    },
+    {
+      "target": "6525f2e6",
+      "source": "4ffcf321"
+    },
+    {
+      "target": "4f90af66",
+      "source": "9d989e8d"
+    },
+    {
+      "target": "4f90af66",
+      "source": "85c4cf64"
+    },
+    {
+      "target": "4f90af66",
+      "source": "0ae9e4de"
+    },
+    {
+      "target": "4f90af66",
+      "source": "09f5edeb"
+    },
+    {
+      "target": "6525f2e6",
+      "source": "4f90af66"
+    },
+    {
+      "target": "2cd4ba93",
+      "source": "4f90af66"
+    },
+    {
+      "target": "fac8f1a3",
+      "source": "4f90af66"
+    },
+    {
+      "target": "7196f150",
+      "source": "2cd4ba93"
+    },
+    {
+      "target": "1769e230",
+      "source": "7196f150"
+    }
+  ]
+}
