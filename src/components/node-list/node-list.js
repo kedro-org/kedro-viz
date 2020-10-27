@@ -9,7 +9,7 @@ import './styles/node-list.css';
  * Scrollable list of toggleable items, with search & filter functionality
  */
 const NodeList = ({
-  isFaded,
+  faded,
   items,
   sections,
   groups,
@@ -24,7 +24,7 @@ const NodeList = ({
 }) => (
   <div
     className={classnames('pipeline-nodelist', {
-      'pipeline-nodelist--fade': isFaded
+      'pipeline-nodelist--fade': faded
     })}>
     <NodeListSearch
       onUpdateSearchValue={onUpdateSearchValue}

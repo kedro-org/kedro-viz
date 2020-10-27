@@ -24,7 +24,7 @@ export const Sidebar = ({ flags, visible }) => {
         })}>
         <div className="pipeline-ui">
           {flags.pipelines && <PipelineList onToggleOpen={togglePipeline} />}
-          <NodeList isFaded={pipelineIsOpen} />
+          <NodeList faded={pipelineIsOpen} />
         </div>
         <nav className="pipeline-toolbar">
           <PrimaryToolbar />
