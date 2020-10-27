@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import NodeList from './node-list';

@@ -25,7 +25,7 @@ describe('node-list-selectors', () => {
   describe('getFilteredNodes', () => {
     const nodes = getGroupedNodes(mockState.animals);
     let searchValue = 'bear';
-    const { filteredNodes, nodeIDs } = getFilteredNodes({ nodes, searchValue });
+    const { filteredNodes } = getFilteredNodes({ nodes, searchValue });
     const nodeList = ungroupNodes(filteredNodes);
 
     test.each(nodeList.map(node => node.name))(
