@@ -11,7 +11,6 @@
   z-index: 1;
   display: flex;
   width: 100%;
-  min-width: $sidebar-min-width-open;
   transform: translateX(calc(-100% + #{$sidebar-width-closed}));
   transition: transform ease 0.4s;
 
