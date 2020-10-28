@@ -3,7 +3,7 @@ import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 import { getVisibleLayerIDs } from './disabled';
 import { getVisibleMetaSidebar } from '../selectors/metadata';
-import { chartMinWidth, sidebarWidth, metaSidebarWidth } from '../config';
+import { sidebarWidth, metaSidebarWidth } from '../config';
 
 const getNewgraphFlag = state => state.flags.newgraph;
 const getVisibleSidebar = state => state.visible.sidebar;
@@ -30,18 +30,6 @@ export const getGraphInput = createSelector(
 );
 
 /**
- * Return the displayed width of the sidebar
- */
-export const getSidebarWidth = visibleSidebar =>
-  visibleSidebar ? sidebarWidth.open : sidebarWidth.closed;
-
-/**
- * Return the displayed width of the meta sidebar
- */
-export const getMetaSidebarWidth = visibleMetaSidebar =>
-  visibleMetaSidebar ? metaSidebarWidth.open : metaSidebarWidth.closed;
-
-/**
  * Convert the DOMRect into an Object, mutate some of the properties,
  * and add some useful new ones
  */
@@ -53,15 +41,21 @@ export const getChartSize = createSelector(
       return {};
     }
 
+    /**
+     * Calculate the displayed width of a sidebar
+     */
+    const getSidebarWidth = (visible, { breakpoint, open, closed }) =>
+      visible && width > breakpoint ? open : closed;
+
     // Get the actual sidebar width
-    const sidebarWidth = getSidebarWidth(visibleSidebar);
-    const metaSidebarWidth = getMetaSidebarWidth(visibleMetaSidebar);
+    const sidebarWidthActual = getSidebarWidth(visibleSidebar, sidebarWidth);
+    const metaSidebarWidthActual = getSidebarWidth(
+      visibleMetaSidebar,
+      metaSidebarWidth
+    );
 
     // Find the resulting space for the chart
-    const chartWidth = width - sidebarWidth - metaSidebarWidth;
-
-    // Chart size excludes sidebars when space is small
-    const excludeSidebars = width < chartMinWidth;
+    const chartWidth = width - sidebarWidthActual - metaSidebarWidthActual;
 
     return {
       left,
@@ -69,9 +63,9 @@ export const getChartSize = createSelector(
       outerWidth: width,
       outerHeight: height,
       height,
-      width: excludeSidebars ? width : chartWidth,
-      sidebarWidth: excludeSidebars ? 0 : sidebarWidth,
-      metaSidebarWidth: excludeSidebars ? 0 : metaSidebarWidth
+      width: chartWidth,
+      sidebarWidth: sidebarWidthActual,
+      metaSidebarWidth: metaSidebarWidthActual
     };
   }
 );
