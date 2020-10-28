@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import { getGraphNodes } from './nodes';
-import { runCommandTemplates } from '../config';
 
 const getClickedNode = state => state.node.clicked;
 
@@ -16,6 +15,14 @@ export const getVisibleMetaSidebar = createSelector(
   [getClickedNode],
   nodeClicked => Boolean(nodeClicked)
 );
+
+/**
+ * Templates for run commands
+ */
+const runCommandTemplates = {
+  data: name => `kedro run --to-inputs ${name}`,
+  task: name => `kedro run --to-nodes ${name}`
+};
 
 /**
  * Returns run command for the node, if applicable to the node type
