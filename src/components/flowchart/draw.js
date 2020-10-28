@@ -220,7 +220,7 @@ export const drawNodes = function(changed) {
         'transform',
         node =>
           `translate(${node.iconOffset}px, ${-node.iconSize / 2}px) ` +
-          `scale(${0.55 * (node.height / node.iconSize)})`
+          `scale(${node.iconSize / 24})`
       );
 
     // Performance: text transitions with CSS on GPU
