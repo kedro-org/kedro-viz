@@ -85,14 +85,13 @@ export class FlowChart extends Component {
         'centralNode',
         'linkedNodes',
         'nodeActive',
-        'nodeSelected',
-        'textLabels'
+        'nodeSelected'
       )
     ) {
       drawNodes.call(this, changed);
     }
 
-    if (changed('edges', 'nodes', 'layers', 'textLabels', 'chartSize')) {
+    if (changed('edges', 'nodes', 'layers', 'chartSize')) {
       this.zoomToFit();
     } else {
       this.updateZoom(chartZoom);
@@ -512,7 +511,6 @@ export const mapStateToProps = (state, ownProps) => ({
   nodes: state.graph.nodes || emptyNodes,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
-  textLabels: state.textLabels,
   visibleSidebar: state.visible.sidebar,
   ...ownProps
 });
