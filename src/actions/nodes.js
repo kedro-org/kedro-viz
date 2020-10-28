@@ -1,6 +1,6 @@
 import { getUrl } from '../utils';
 import loadJsonData from '../store/load-data';
-import { preparePipelineState } from '../store/initial-state';
+import { prepareFetchedNodeState } from '../store/initial-state';
 import { resetData } from './index';
 
 export const TOGGLE_NODE_CLICKED = 'TOGGLE_NODE_CLICKED';
@@ -44,41 +44,46 @@ export function toggleNodeHovered(nodeHovered) {
   };
 }
 
-export const TOGGLE_NODE_METADATA_LOADING = 'TOGGLE_NODE_METADAT_LOADING';
+export const TOGGLE_NODE_DATA_LOADING = 'TOGGLE_NODE_DATA_LOADING';
 
 /**
  * Toggle whether to display the loading spinner
  * @param {boolean} loading True if pipeline is still loading
  */
-export function toggleLoading(loading) {
+export function toggleNodeDataLoading(loading) {
   return {
-    type: TOGGLE_NODE_METADATA_LOADING,
+    type: TOGGLE_NODE_DATA_LOADING,
     loading
   };
 }
 
 /**
- * Determine where to load data from
+ * Determine where to load node metadata from for selected node
  */
-export const getNodeMetadataUrl = nodeID => {
+export const getNodeDataUrl = nodeID => {
   return getUrl('node', nodeID);
 };
 
 /**
  * update node metadata on selection, loading new data if it has not been previously called
- * @param {string} nodeID Unique ID for selected node on graph
+ * @param {object} selectedNode node object of clicked node
  * @return {function} A promise that resolves when the data is loaded
  */
-export function loadNodeMetaData(nodeID) {
+export function loadNodeData(selectedNode) {
   return async function(dispatch, getState) {
-    const { asyncDataSource, nodeID } = getState();
+    const { asyncDataSource, node } = getState();
+    const { fetched } = node;
 
     if (asyncDataSource) {
-      dispatch(toggleLoading(true));
-      const url = getNodeMetadataUrl(nodeID);
-      const newState = await loadJsonData(url).then(preparePipelineState);
-      dispatch(resetData(newState));
-      dispatch(toggleLoading(false));
+      if (!fetched.filter(id => id === selectedNode.id)) {
+        dispatch(toggleNodeDataLoading(true));
+        const url = getNodeDataUrl(selectedNode.id);
+        const newState = await loadJsonData(url).then(data =>
+          prepareFetchedNodeState(data, selectedNode)
+        );
+        dispatch(resetData(newState));
+        dispatch(toggleNodeDataLoading(false));
+      }
     }
   };
 }

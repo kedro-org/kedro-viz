@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge';
 import { loadState } from './helpers';
-import normalizeData from './normalize-data';
+import normalizeData, { normalizeFetchedNodeData } from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 
 /**
@@ -15,7 +15,8 @@ export const createInitialState = () => ({
   theme: 'dark',
   loading: {
     graph: false,
-    pipeline: false
+    pipeline: false,
+    node: false
   },
   visible: {
     labelBtn: true,
@@ -64,6 +65,18 @@ export const preparePipelineState = (data, applyFixes) => {
       state.pipeline.active = state.pipeline.main;
     }
   }
+  return state;
+};
+
+/**
+ * Prepare and update the node data part of the pipeline within exsting state by normalizing the raw data,
+ * and applying saved state from localStorage.
+ * @param {object} data Data fetched from the api
+ * @param {node} node the object of the selected node that at least needs to contain the 'id' and 'type' param
+ */
+export const prepareFetchedNodeState = (data, node) => {
+  const state = mergeLocalStorage(normalizeFetchedNodeData(data, node));
+
   return state;
 };
 

@@ -1,5 +1,6 @@
 import { TOGGLE_GRAPH_LOADING } from '../actions/graph';
 import { TOGGLE_PIPELINE_LOADING } from '../actions/pipelines';
+import { TOGGLE_NODE_DATA_LOADING } from '../actions/nodes';
 
 function loadingReducer(loadingState = {}, action) {
   switch (action.type) {
@@ -12,6 +13,12 @@ function loadingReducer(loadingState = {}, action) {
     case TOGGLE_GRAPH_LOADING: {
       return Object.assign({}, loadingState, {
         graph: action.loading
+      });
+    }
+
+    case TOGGLE_NODE_DATA_LOADING: {
+      return Object.assign({}, loadingState, {
+        node: action.loading
       });
     }
 
