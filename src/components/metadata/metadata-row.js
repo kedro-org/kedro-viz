@@ -24,7 +24,7 @@ const MetaDataRow = ({
     visible && (
       <>
         <dt className="pipeline-metadata__label">{label}</dt>
-        <dd className="pipeline-metadata__row">
+        <dd className="pipeline-metadata__row" data-label={label}>
           {showList && (
             <MetaDataList
               property={property}

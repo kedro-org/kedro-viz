@@ -16,15 +16,12 @@ describe('MetaData', () => {
   };
 
   const textOf = elements => elements.map(element => element.text());
-  const rows = wrapper => wrapper.find('.pipeline-metadata__row');
   const title = wrapper => wrapper.find('.pipeline-metadata__title');
   const rowIcon = row => row.find('svg.pipeline-metadata__icon');
-  const rowLabel = row => row.find('.pipeline-metadata__label');
   const rowValue = row => row.find('.pipeline-metadata__value');
   const rowByLabel = (wrapper, label) =>
-    rows(wrapper).findWhere(
-      row => rowLabel(row).length && rowLabel(row).text() === label
-    );
+    // Using attribute since traversal by sibling not supported
+    wrapper.find(`.pipeline-metadata__row[data-label="${label}"]`);
 
   it('shows the node type as an icon', () => {
     const wrapper = mount({ nodeId: 'task/salmon' });
