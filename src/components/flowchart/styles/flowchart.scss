@@ -22,3 +22,13 @@
     }
   }
 }
+
+// Applied during pan, zoom and indirectly by transitions
+.pipeline-flowchart__zoom-wrapper--animating {
+  // Performance: Lower render quality
+  shape-rendering: optimizeSpeed;
+  text-rendering: optimizeSpeed;
+
+  // Performance: Disable all hit tests
+  pointer-events: none;
+}
