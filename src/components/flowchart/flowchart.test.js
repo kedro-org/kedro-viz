@@ -180,7 +180,7 @@ describe('FlowChart', () => {
   it('maps dispatch to props', () => {
     const dispatch = jest.fn();
 
-    mapDispatchToProps(dispatch).onToggleNodeClicked('123');
+    mapDispatchToProps(dispatch).onLoadNodeData('123');
     expect(dispatch.mock.calls[0][0]).toEqual({
       nodeClicked: '123',
       type: 'TOGGLE_NODE_CLICKED'

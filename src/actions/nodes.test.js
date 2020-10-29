@@ -7,7 +7,9 @@ import {
   TOGGLE_NODE_DATA_LOADING,
   toggleNodeDataLoading,
   getNodeDataUrl,
-  loadNodeData
+  loadNodeData,
+  addNodeMetadata,
+  ADD_NODE_METADATA
 } from './nodes';
 
 describe('node actions', () => {
@@ -19,6 +21,17 @@ describe('node actions', () => {
         node
       };
       expect(toggleNodeClicked(node)).toEqual(expectedAction);
+    });
+  });
+
+  describe('add node metadata', () => {
+    it('should create an action to add node metadata', () => {
+      const data = { id: 'abc123', data: { parameters: { test: 'test' } } };
+      const expectedAction = {
+        type: ADD_NODE_METADATA,
+        data
+      };
+      expect(addNodeMetadata(data)).toEqual(expectedAction);
     });
   });
 

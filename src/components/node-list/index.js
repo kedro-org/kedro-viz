@@ -9,7 +9,7 @@ import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData } from '../../selectors/tags';
 import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import {
-  toggleNodeClicked,
+  loadNodeData,
   toggleNodeHovered,
   toggleNodesDisabled
 } from '../../actions/nodes';
@@ -171,7 +171,7 @@ export const mapDispatchToProps = dispatch => ({
     dispatch(toggleTypeDisabled(typeID, disabled));
   },
   onToggleNodeSelected: nodeID => {
-    dispatch(toggleNodeClicked(nodeID));
+    dispatch(loadNodeData(nodeID));
   },
   onToggleNodeActive: nodeID => {
     dispatch(toggleNodeHovered(nodeID));

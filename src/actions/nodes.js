@@ -57,31 +57,36 @@ export function toggleNodeDataLoading(loading) {
   };
 }
 
+export const ADD_NODE_METADATA = 'ADD_NODE_METADATA';
+
 /**
- * Determine where to load node metadata from for selected node
+ * Toggle whether to display the loading spinner
+ * @param {boolean} loading True if pipeline is still loading
  */
-export const getNodeDataUrl = nodeID => {
-  return getUrl('node', nodeID);
-};
+export function addNodeMetadata(data) {
+  return {
+    type: ADD_NODE_METADATA,
+    data
+  };
+}
 
 /**
  * update node metadata on selection, loading new data if it has not been previously called
- * @param {object} selectedNode node object of clicked node
+ * @param {string} nodeID node id of clicked node
  * @return {function} A promise that resolves when the data is loaded
  */
-export function loadNodeData(selectedNode) {
+export function loadNodeData(nodeID) {
   return async function(dispatch, getState) {
     const { asyncDataSource, node } = getState();
-    const { fetched } = node;
+
+    dispatch(toggleNodeClicked(nodeID));
 
     if (asyncDataSource) {
-      if (!fetched.filter(id => id === selectedNode.id)) {
+      if (!node.fetched[nodeID]) {
         dispatch(toggleNodeDataLoading(true));
-        const url = getNodeDataUrl(selectedNode.id);
-        const newState = await loadJsonData(url).then(data =>
-          prepareFetchedNodeState(data, selectedNode)
-        );
-        dispatch(resetData(newState));
+        const url = getUrl('node', nodeID);
+        const nodeData = await loadJsonData(url);
+        dispatch(addNodeMetadata({ id: nodeID, data: nodeData }));
         dispatch(toggleNodeDataLoading(false));
       }
     }

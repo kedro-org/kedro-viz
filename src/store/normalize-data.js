@@ -20,7 +20,7 @@ export const createInitialPipelineState = () => ({
     pipelines: {},
     clicked: null,
     hovered: null,
-    fetched: [],
+    fetched: {},
     code: {},
     codeLocation: {},
     docString: {},
@@ -118,26 +118,11 @@ const addNode = state => node => {
     ? arrayToObject(node.pipelines, () => true)
     : {};
   state.node.tags[id] = node.tags || [];
-};
-
-/**
- * Add node metadata if it doesn't already exist
- * @param {string} name - Default node name
- * @param {string} type - 'data' or 'task'
- * @param {Array} tags - List of associated tags
- */
-const addNodeData = (state, node, data) => {
-  const { id, type } = node;
-  state.node.fetched.push(id);
-  // checks the type of the node to add in new pieces of data
-  if (type === 'task') {
-    // update the corresponding fields under type
-    state.node.code[id] = data.code;
-    state.node.codeLocation[id] = data.codeLocation;
-    state.node.docString[id] = data.docString;
-  } else if (type === 'parameters') {
-    state.node.parameters[id] = data.parameters;
-  }
+  // supports for metadata in case it exists on initial load
+  state.node.code[id] = node.code;
+  state.node.codeLocation[id] = node.codeLocation;
+  state.node.docString[id] = node.docString;
+  state.node.parameters[id] = node.parameters;
 };
 
 /**
@@ -207,23 +192,6 @@ const normalizeData = data => {
   if (data.layers) {
     data.layers.forEach(addLayer(state));
   }
-
-  return state;
-};
-
-/**
- * Convert the fetched node data into a normalized state object
- * @param {Object} data Raw unformatted fetched data returned from 'api/node/node_id
- * @return {Object} Formatted, normalized state containing the new fetched data
- */
-export const normalizeFetchedNodeData = (data, node) => {
-  const state = createInitialPipelineState();
-
-  if (!validateInput(data)) {
-    return state;
-  }
-  // update the state with the new data
-  addNodeData(state, node, data);
 
   return state;
 };
