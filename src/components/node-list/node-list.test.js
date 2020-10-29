@@ -9,7 +9,7 @@ describe('NodeList', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<NodeList />);
     const search = wrapper.find('.pipeline-nodelist-search');
-    const nodeList = wrapper.find('.pipeline-nodelist');
+    const nodeList = wrapper.find('.pipeline-nodelist__list');
     expect(search.length).toBe(1);
     expect(nodeList.length).toBeGreaterThan(0);
   });
@@ -29,7 +29,7 @@ describe('NodeList', () => {
         const search = () => wrapper.find('.kui-input__field');
         search().simulate('change', { target: { value: searchText } });
         const nodeList = wrapper.find(
-          '.pipeline-nodelist--nested .pipeline-nodelist__row'
+          '.pipeline-nodelist__list--nested .pipeline-nodelist__row'
         );
         const nodes = getNodeData(mockState.animals);
         const tags = getTagData(mockState.animals);
@@ -52,7 +52,9 @@ describe('NodeList', () => {
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.kui-input__field');
       const nodeList = () =>
-        wrapper.find('.pipeline-nodelist--nested .pipeline-nodelist__row');
+        wrapper.find(
+          '.pipeline-nodelist__list--nested .pipeline-nodelist__row'
+        );
       const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
       const searchText = nodes[0].name;
@@ -84,7 +86,7 @@ describe('NodeList', () => {
     const rows = () =>
       wrapper
         .find(
-          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist--nested'
+          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist__list--nested'
         )
         .find('.pipeline-nodelist__row');
     const rowName = row =>
@@ -183,7 +185,7 @@ describe('NodeList', () => {
     const elements = wrapper =>
       wrapper
         .find(
-          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist--nested'
+          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist__list--nested'
         )
         .find('.pipeline-nodelist__row')
         .map(row => [
@@ -287,7 +289,7 @@ describe('NodeList', () => {
     it('renders the correct number of rows', () => {
       const wrapper = setup.mount(<NodeList />);
       const nodeList = wrapper.find(
-        '.pipeline-nodelist--nested .pipeline-nodelist__row'
+        '.pipeline-nodelist__list--nested .pipeline-nodelist__row'
       );
       const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
@@ -300,7 +302,7 @@ describe('NodeList', () => {
     const nodeRow = () =>
       wrapper
         .find(
-          '.pipeline-nodelist__group--type-task .pipeline-nodelist--nested .pipeline-nodelist__row'
+          '.pipeline-nodelist__group--type-task .pipeline-nodelist__list--nested .pipeline-nodelist__row'
         )
         .first();
 
@@ -320,7 +322,7 @@ describe('NodeList', () => {
     const checkbox = () =>
       wrapper
         .find(
-          '.pipeline-nodelist__group--type-task .pipeline-nodelist--nested .pipeline-nodelist__row input'
+          '.pipeline-nodelist__group--type-task .pipeline-nodelist__list--nested .pipeline-nodelist__row input'
         )
         .first();
 

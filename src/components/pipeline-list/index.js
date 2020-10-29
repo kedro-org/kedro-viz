@@ -9,15 +9,23 @@ import './pipeline-list.css';
  * A Dropdown displaying a list of selectable pipelines
  * @param {Object} pipeline Pipeline IDs, names, and active pipeline
  * @param {Function} onUpdateActivePipeline Handle updating the active pipeline
+ * @param {Function} onToggleOpen Callback when opening/closing the dropdown
  * @param {string} theme Kedro UI light/dark theme
  */
-export const PipelineList = ({ onUpdateActivePipeline, pipeline, theme }) => {
+export const PipelineList = ({
+  onUpdateActivePipeline,
+  pipeline,
+  theme,
+  onToggleOpen
+}) => {
   if (!pipeline.ids.length) {
     return null;
   }
   return (
     <div className="pipeline-list">
       <Dropdown
+        onOpened={() => onToggleOpen(true)}
+        onClosed={() => onToggleOpen(false)}
         theme={theme}
         width={null}
         onChanged={onUpdateActivePipeline}
