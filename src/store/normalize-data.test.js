@@ -1,6 +1,5 @@
 import normalizeData, {
   createInitialPipelineState,
-  normalizeFetchedNodeData
 } from './normalize-data';
 import animals from '../utils/data/animals.mock.json';
 

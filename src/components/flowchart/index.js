@@ -391,7 +391,7 @@ export class FlowChart extends Component {
     const ENTER = 13;
     const ESCAPE = 27;
     if (event.keyCode === ENTER) {
-      this.handleNodeClick(node);
+      this.onLoadNodeData(node);
     }
     if (event.keyCode === ESCAPE) {
       this.handleChartClick();
