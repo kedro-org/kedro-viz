@@ -29,24 +29,24 @@ describe('Selectors', () => {
 
     describe('if sidebar is visible', () => {
       it(`reduces the chart width by ${open} on screens wider than ${sidebarBreakpoint}`, () => {
-        expect(getSidebarWidth(true, 1200)).toEqual(open);
-        expect(getSidebarWidth(true, 900)).toEqual(open);
+        expect(getSidebarWidth(true, 1200, sidebarWidth)).toEqual(open);
+        expect(getSidebarWidth(true, 900, sidebarWidth)).toEqual(open);
       });
 
       it(`sets sidebar width to ${closed} on screens smaller than ${sidebarBreakpoint}`, () => {
-        expect(getSidebarWidth(true, 480)).toEqual(closed);
-        expect(getSidebarWidth(true, 320)).toEqual(closed);
+        expect(getSidebarWidth(true, 480, sidebarWidth)).toEqual(closed);
+        expect(getSidebarWidth(true, 320, sidebarWidth)).toEqual(closed);
       });
     });
 
     describe('if sidebar is hidden', () => {
       it(`sets sidebar width to ${closed} on screens wider than ${sidebarBreakpoint}`, () => {
-        expect(getSidebarWidth(false, 1000)).toEqual(closed);
+        expect(getSidebarWidth(false, 1000, sidebarWidth)).toEqual(closed);
       });
 
       it(`sets sidebar width to ${closed} on screens smaller than ${sidebarBreakpoint}`, () => {
-        expect(getSidebarWidth(false, 480)).toEqual(closed);
-        expect(getSidebarWidth(false, 320)).toEqual(closed);
+        expect(getSidebarWidth(false, 480, sidebarWidth)).toEqual(closed);
+        expect(getSidebarWidth(false, 320, sidebarWidth)).toEqual(closed);
       });
     });
   });

@@ -30,6 +30,12 @@ export const getGraphInput = createSelector(
 );
 
 /**
+ * Calculate the displayed width of a sidebar
+ */
+export const getSidebarWidth = (visible, width, { breakpoint, open, closed }) =>
+  visible && width > breakpoint ? open : closed;
+
+/**
  * Convert the DOMRect into an Object, mutate some of the properties,
  * and add some useful new ones
  */
@@ -41,15 +47,14 @@ export const getChartSize = createSelector(
       return {};
     }
 
-    /**
-     * Calculate the displayed width of a sidebar
-     */
-    const getSidebarWidth = (visible, { breakpoint, open, closed }) =>
-      visible && width > breakpoint ? open : closed;
-
     // Get the actual sidebar width
-    const sidebarWidthActual = getSidebarWidth(visibleSidebar, sidebarWidth);
+    const sidebarWidthActual = getSidebarWidth(
+      visibleSidebar,
+      width,
+      sidebarWidth
+    );
     const metaSidebarWidthActual = getSidebarWidth(
+      width,
       visibleMetaSidebar,
       metaSidebarWidth
     );
