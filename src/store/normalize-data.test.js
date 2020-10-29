@@ -3,8 +3,6 @@ import normalizeData, {
   normalizeFetchedNodeData
 } from './normalize-data';
 import animals from '../utils/data/animals.mock.json';
-import node_parameters from '../utils/data/node_parameters.json';
-import node_task from '../utils/data/node_task.json';
 
 const initialState = createInitialPipelineState();
 
@@ -82,32 +80,5 @@ describe('normalizeData', () => {
         nodeID => state.node.fullName[nodeID] === state.node.name[nodeID]
       )
     ).toBe(true);
-  });
-});
-
-describe('normalizeFetchedNodeData', () => {
-  it('should throw an error when received data from API is empty or false', () => {
-    const node = { id: 'abc123' };
-    expect(() => normalizeFetchedNodeData(undefined, node)).toThrow();
-    expect(() => normalizeData(null, node)).toThrow();
-    expect(() => normalizeData(false, node)).toThrow();
-  });
-
-  it('should update the relevant fields of the state with node task data type', () => {
-    const node = { id: 'abc123', type: 'task' };
-    const state = normalizeFetchedNodeData(node_task, node);
-    expect(state.pipeline.node.code[node.id]).toEqual(node_task.code);
-    expect(state.pipeline.node.codeLocation[node.id]).toEqual(
-      node_task.codeLocation
-    );
-    expect(state.pipeline.node.docString[node.id]).toEqual(node_task.docString);
-  });
-
-  it('should update the relevant fields of the state with node parameters data type', () => {
-    const node = { id: 'abc123', type: 'parameters' };
-    const state = normalizeFetchedNodeData(node_parameters, node);
-    expect(state.pipeline.node.parameters[node.id]).toEqual(
-      node_parameters.parameters
-    );
   });
 });

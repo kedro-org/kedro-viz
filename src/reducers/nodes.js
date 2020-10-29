@@ -57,6 +57,12 @@ function nodeReducer(nodeState = {}, action) {
         }),
         parameters: Object.assign({}, nodeState.parameters, {
           [action.id]: action.data.parameters
+        }),
+        dataset_location: Object.assign({}, nodeState.dataset_location, {
+          [action.id]: action.data.dataset_location
+        }),
+        dataset_type: Object.assign({}, nodeState.dataset_type, {
+          [action.id]: action.data.dataset_type
         })
       });
     }
