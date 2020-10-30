@@ -38,7 +38,7 @@ const loadJsonData = async (path = getUrl('main')) => {
     return mockAPIFeatureSupport(animals);
   }
 
-  // Use animals dataset in place of 'main' endpoint
+  // Use nodes_task dataset in place of 'main' endpoint
   if (path.includes('nodes')) {
     return mockAPIFeatureSupport(node_task);
   }
