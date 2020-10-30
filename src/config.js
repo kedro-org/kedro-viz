@@ -29,8 +29,8 @@ export const flags = {
     default: typeof jest !== 'undefined',
     icon: '🔀'
   },
-  metadata: {
-    description: 'Show metadata panel',
+  meta: {
+    description: 'Show the metadata panel',
     default: false,
     icon: '🔮'
   }
