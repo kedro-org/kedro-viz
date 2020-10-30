@@ -21,11 +21,6 @@ const getTagActive = state => state.tag.active;
 const getTextLabels = state => state.textLabels;
 const getFontLoaded = state => state.fontLoaded;
 const getNodeTypeDisabled = state => state.nodeType.disabled;
-const getNodeCode = state => state.node.code;
-const getNodeCodeLocation = state => state.node.codeLocation;
-const getNodeDocString = state => state.node.docString;
-const getNodeParameters = state => state.node.parameters;
-const getNodeFetched = state => state.node.fetched;
 
 /**
  * Set active status if the node is specifically highlighted, and/or via an associated tag
@@ -91,33 +86,6 @@ export const getNodeData = createSelector(
         disabled_tag: nodeDisabledTag[id],
         disabled_type: Boolean(typeDisabled[nodeType[id]])
       }))
-);
-
-/**
- * Returns node data fetched from the API by id and type
- */
-export const getNodeFetchedData = createSelector(
-  [
-    getNodeCode,
-    getNodeCodeLocation,
-    getNodeDocString,
-    getNodeParameters,
-    getNodeFetched
-  ],
-  (nodeID, type) => {
-    // checks if the node data has been fetched yet
-    if (getNodeFetched.includes(nodeID)) {
-      if (type === 'task') {
-        return {
-          code: getNodeCode[nodeID],
-          codeLocation: getNodeCodeLocation[nodeID],
-          docString: getNodeDocString[nodeID]
-        };
-      } else if (type === 'parameters') {
-        return { parameters: getNodeParameters[nodeID] };
-      }
-    }
-  }
 );
 
 /**
