@@ -28,11 +28,12 @@ const isTagType = type => type === 'tag';
  * Items (third level) e.g. 'Data Engineering', 'Content Optimisation'
  */
 const NodeListProvider = ({
+  faded,
   nodes,
   nodeSelected,
+  sections,
   tags,
   tagsEnabled,
-  sections,
   types,
   onToggleNodesDisabled,
   onToggleNodeSelected,
@@ -135,6 +136,7 @@ const NodeListProvider = ({
 
   return (
     <NodeList
+      faded={faded}
       items={items}
       sections={sections}
       groups={groups}

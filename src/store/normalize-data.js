@@ -7,9 +7,7 @@ import { arrayToObject } from '../utils';
 export const createInitialPipelineState = () => ({
   pipeline: {
     ids: [],
-    name: {},
-    default: null,
-    active: null
+    name: {}
   },
   node: {
     ids: [],
@@ -161,6 +159,10 @@ const addLayer = state => layer => {
 const normalizeData = data => {
   const state = createInitialPipelineState();
 
+  if (data === 'json') {
+    state.asyncDataSource = true;
+  }
+
   if (!validateInput(data)) {
     return state;
   }
@@ -170,8 +172,8 @@ const normalizeData = data => {
   if (data.pipelines) {
     data.pipelines.forEach(addPipeline(state));
     if (state.pipeline.ids.length) {
-      state.pipeline.default = data.selected_pipeline || state.pipeline.ids[0];
-      state.pipeline.active = state.pipeline.default;
+      state.pipeline.main = data.selected_pipeline || state.pipeline.ids[0];
+      state.pipeline.active = state.pipeline.main;
     }
   }
   if (data.tags) {

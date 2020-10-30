@@ -52,7 +52,7 @@ def call(cmd, env, verbose=False):
 
 
 def _should_exclude_scenario(scenario):
-    pre_16_scenario = any(key in scenario.name for key in ["0.14", "0.15"])
+    pre_16_scenario = any(key in scenario.name for key in "0.15")
     return sys.version_info >= (3, 8) and pre_16_scenario
 
 

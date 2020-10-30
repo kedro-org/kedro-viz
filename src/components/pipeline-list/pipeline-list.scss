@@ -2,10 +2,83 @@
 @import '../../styles/variables';
 
 .pipeline-list {
-  padding-bottom: 1.8em;
-
   .kui-dropdown {
     display: block;
-    margin: 0 $sidebar-padding;
+    border: none;
+
+    .kui-theme--light & {
+      box-shadow: 0 1px 1px rgba(black, 0.03);
+    }
+
+    .kui-theme--dark & {
+      box-shadow: 0 1px 1px rgba(black, 0.1);
+    }
+  }
+
+  .kui-dropdown__label,
+  .kui-menu-option {
+    height: 58px;
+  }
+
+  .kui-dropdown__label {
+    padding: 0 $sidebar-padding / 1.6; // divide by 1.6em font-size on element
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px $color-primary inset;
+
+      [data-whatinput='mouse'] & {
+        box-shadow: none;
+      }
+    }
+
+    .kui-theme--light & {
+      background: $color-bg-light-4;
+    }
+
+    .kui-theme--dark & {
+      background: $color-bg-dark-5;
+    }
+  }
+
+  .kui-dropdown__options {
+    border-top: none;
+
+    > section {
+      padding: 0;
+    }
+
+    .kui-theme--light & {
+      background: $color-bg-light-3;
+      box-shadow: 0 0 2px rgba(black, 0.1);
+    }
+
+    .kui-theme--dark & {
+      background: $color-bg-dark-1;
+    }
+  }
+
+  .kui-menu-option {
+    padding: 0 $sidebar-padding;
+
+    .kui-theme--light & {
+      border-top: 1px solid rgba(black, 0.06);
+    }
+
+    .kui-theme--dark & {
+      border-bottom: 1px solid rgba(white, 0.06);
+    }
+
+    &--focused,
+    &:focus,
+    &:hover {
+      .kui-theme--light & {
+        background: rgba(white, 0.3);
+      }
+
+      .kui-theme--dark & {
+        background: rgba(white, 0.03);
+      }
+    }
   }
 }

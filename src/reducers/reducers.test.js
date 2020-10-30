@@ -1,4 +1,4 @@
-import animals from '../utils/data/animals.mock';
+import animals from '../utils/data/animals.mock.json';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import normalizeData from '../store/normalize-data';
@@ -9,7 +9,6 @@ import {
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
-  UPDATE_ACTIVE_PIPELINE,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED
 } from '../actions';
@@ -20,6 +19,7 @@ import {
 } from '../actions/nodes';
 import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
 import { TOGGLE_TYPE_DISABLED } from '../actions/node-type';
+import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 
 describe('Reducer', () => {
   it('should return an Object', () => {

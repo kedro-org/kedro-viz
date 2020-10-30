@@ -92,7 +92,7 @@ These are the supported dataset identifiers:
 | `json` (default) | `/public/api/main` |
 | `random` | Randomly-generated data |
 | `demo` | `/src/utils/data/demo.mock.js` |
-| `animals` | `/src/utils/data/animals.mock.js` |
+| `animals` | `/src/utils/data/animals.mock.json` |
 
 By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a JSON dataset in `/public/api/main`, using `main` as the name of the file, [without an extension](https://www.computerhope.com/issues/ch002089.htm). Note that operating systems often add hidden file extensions, so you might need to use a CLI to confirm the filename.
 
@@ -150,9 +150,10 @@ npm run lib-test
 
 This script uses `npm pack` to package Kedro-Viz as a tarball, then copies it to a boilerplate React app in `/tools/test-lib/react-app` and installs it. Next, the script runs a simple server at `http://localhost:1337`, which will open in the browser so that you can check that everything is working as it should.
 
-You can also run automated tests on this demo app by navigating to this directory and running Jest:
+You can also run automated tests on this demo app by copying and installing the tarball package, navigating to the test directory and running Jest:
 
 ```bash
+npm run lib-test:setup
 cd tools/test-lib/react-app
 npm test
 ```

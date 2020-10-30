@@ -19,7 +19,6 @@ $path2-gap: $section-length + $section-gap-2x;
   width: 30px;
   height: auto;
   opacity: 0;
-  transition: all ease 0.3s;
   pointer-events: none;
 
   &--visible {

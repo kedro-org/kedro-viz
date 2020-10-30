@@ -6,6 +6,7 @@ import Sidebar from '../sidebar';
 import MetaData from '../metadata';
 import ExportModal from '../export-modal';
 import LoadingIcon from '../icons/loading';
+import { isLoading } from '../../selectors/loading';
 import './wrapper.css';
 
 /**
@@ -17,6 +18,7 @@ export const Wrapper = ({ loading, theme }) => (
       'kui-theme--dark': theme === 'dark',
       'kui-theme--light': theme === 'light'
     })}>
+    <h1 className="pipeline-title">Kedro-Viz</h1>
     <Sidebar />
     <MetaData />
     <div className="pipeline-wrapper">
@@ -28,7 +30,7 @@ export const Wrapper = ({ loading, theme }) => (
 );
 
 export const mapStateToProps = state => ({
-  loading: state.graph.loading,
+  loading: isLoading(state),
   theme: state.theme
 });
 

@@ -4,7 +4,6 @@
   text {
     font-weight: 600;
     font-size: 1.4em;
-    transition: opacity ease 0.3s 0.2s;
     pointer-events: none;
 
     .kui-theme--light & {
@@ -12,7 +11,6 @@
     }
 
     .kui-theme--dark & {
-      text-shadow: 0 0 6px black;
       fill: $node-labeltext-fill-dark;
     }
   }
@@ -85,15 +83,8 @@
   opacity: 0.3;
 }
 
-.pipeline-node--icon {
-  text {
-    opacity: 0;
-    transition-delay: 0s;
-    pointer-events: none;
-  }
-}
-
 .pipeline-node__icon {
+  transition: transform 0.3s ease;
   pointer-events: none;
 
   .kui-theme--light & {
@@ -103,4 +94,8 @@
   .kui-theme--dark & {
     fill: $node-icon-fill-dark;
   }
+}
+
+.pipeline-node__text {
+  transition: opacity 0.15s ease;
 }

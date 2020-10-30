@@ -1,5 +1,4 @@
-export const dataPath = './api/main';
-export const fullDataPath = `/public${dataPath.substr(1)}`;
+export const pathRoot = './api';
 
 export const localStorageName = 'KedroViz';
 
@@ -27,7 +26,7 @@ export const flags = {
   },
   pipelines: {
     description: 'Select from multiple pipelines',
-    default: typeof jest !== undefined,
+    default: typeof jest !== 'undefined',
     icon: '🔀'
   },
   metadata: {

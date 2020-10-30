@@ -1,4 +1,4 @@
-import { arrayToObject, unique } from './index';
+import { arrayToObject, getUrl, unique } from './index';
 
 describe('utils', () => {
   describe('arrayToObject', () => {
@@ -13,6 +13,30 @@ describe('utils', () => {
           .reverse()
           .join('');
       expect(arrayToObject(['foo'], callback)).toEqual({ foo: 'oof' });
+    });
+  });
+
+  describe('getUrl', () => {
+    it('should throw an error when passed an invalid argument', () => {
+      expect(() => getUrl()).toThrow();
+      expect(() => getUrl('unknown')).toThrow();
+      expect(() => getUrl(null)).toThrow();
+    });
+
+    it('should return the "main" json file', () => {
+      expect(getUrl('main')).toEqual('./api/main');
+    });
+
+    it('should return a "pipeline" json file', () => {
+      const id = '123456';
+      expect(getUrl('pipeline', id)).toEqual(`./api/pipelines/${id}`);
+    });
+
+    // This test exists because some of our users requested a relative path
+    // so that that could run Kedro-Viz on a non-root URL
+    it('should always return a relative path', () => {
+      expect(getUrl('main').substr(0, 2)).toEqual('./');
+      expect(getUrl('pipeline', 123).substr(0, 2)).toEqual('./');
     });
   });
 

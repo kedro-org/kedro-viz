@@ -1,4 +1,4 @@
 semver~=2.10 # Needs to be at least 2.10.0 to get VersionInfo.match
 Flask>=1.0, <2.0
-kedro>=0.14.0
+kedro>=0.15.0
 ipython>=7.0.0, <8.0
