@@ -14,17 +14,6 @@ import {
 jest.mock('../store/load-data.js');
 
 describe('node actions', () => {
-  describe('updateClickedNode', () => {
-    it('should create an action to update the clicked node', () => {
-      const node = { id: 'abc123' };
-      const expectedAction = {
-        type: TOGGLE_NODE_CLICKED,
-        node
-      };
-      expect(toggleNodeClicked(node)).toEqual(expectedAction);
-    });
-  });
-
   describe('addNodeMetadata', () => {
     it('should create an action to add node metadata', () => {
       const data = { id: 'abc123', data: { parameters: { test: 'test' } } };
@@ -60,20 +49,19 @@ describe('node actions', () => {
         expect(store.getState().loading.node).toBe(true);
       });
 
-      it('should load the new data, reset the state and added the fetched node id under pipeline.node.fetched', async () => {
+      it('should load the new data, reset the state and added the fetched node id under node.fetched', async () => {
         const store = createStore(reducer, mockState.json);
         const node = { id: 'f1f1425b' };
-        await loadNodeData(node)(store.dispatch, store.getState);
+        await loadNodeData(node.id)(store.dispatch, store.getState);
         const state = store.getState();
-        expect([node.id]).toEqual(
-          expect.arrayContaining(state.pipeline.node.fetched)
-        );
+        console.log(state.node.fetched[node.id])
+        expect(state.node.fetched[node.id]).toEqual(true);
       });
 
       it('should set loading to false when complete', async () => {
         const store = createStore(reducer, mockState.json);
         const node = { id: 'f1f1425b' };
-        await loadNodeData(node)(store.dispatch, store.getState);
+        await loadNodeData(node.id)(store.dispatch, store.getState);
         expect(store.getState().loading.node).toBe(false);
       });
 
@@ -84,10 +72,12 @@ describe('node actions', () => {
         const storeListener = jest.fn();
 
         subscribe(storeListener);
-        await loadNodeData(node)(dispatch, getState);
+        await loadNodeData(node.id)(dispatch, getState);
 
-        loadNodeData(node)(dispatch, getState);
-        expect(storeListener).toHaveBeenCalledTimes(1);
+        // we have set it at 5 times given the set of calls for the first listener, but this test is subject to change to a simplier test once we have set up a 
+        // way to directly set the 'fetched' value of the store
+        loadNodeData(node.id)(dispatch, getState);
+        expect(storeListener).toHaveBeenCalledTimes(5); 
       });
     });
   });
