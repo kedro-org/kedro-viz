@@ -45,24 +45,29 @@ function nodeReducer(nodeState = {}, action) {
     }
 
     case ADD_NODE_METADATA: {
+      const {id, data} = action.data;
+      console.log('id', id)
       return updateState({
-        code: Object.assign({}, nodeState.code, {
-          [action.id]: action.data.code
+        fetched: Object.assign({}, nodeState.fetched, {
+          [id]: true
         }),
-        codeLocation: Object.assign({}, nodeState.codeLocation, {
-          [action.id]: action.data.codeLocation
+        code: Object.assign({}, nodeState.code, {
+          [id]: data.code
+        }),
+        codeLocation: Object.assign({}, nodeState.code, {
+          [id]: data.code_location
         }),
         docString: Object.assign({}, nodeState.docString, {
-          [action.id]: action.data.docString
+          [id]: data.docString
         }),
         parameters: Object.assign({}, nodeState.parameters, {
-          [action.id]: action.data.parameters
+          [id]: data.parameters
         }),
         dataset_location: Object.assign({}, nodeState.dataset_location, {
-          [action.id]: action.data.dataset_location
+          [id]: data.dataset_location
         }),
         dataset_type: Object.assign({}, nodeState.dataset_type, {
-          [action.id]: action.data.dataset_type
+          [id]: data.dataset_type
         })
       });
     }

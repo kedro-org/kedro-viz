@@ -6,7 +6,7 @@ import { getUrl } from '../utils';
  * @param {string} path JSON file location. Defaults to main data url from config.js
  * @return {function} A promise that will return when the file is loaded and parsed
  */
-const loadJsonData = url => (path = url || getUrl('main')) =>
+const loadJsonData = (path = getUrl('main')) =>
   json(path).catch(() => {
     const fullPath = `/public${path.substr(1)}`;
     throw new Error(

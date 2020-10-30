@@ -212,9 +212,11 @@ describe('Reducer', () => {
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
-      expect(newState.node.code[nodeId]).toEqual(node_task.code);
+      expect(newState.node.code[nodeId]).toEqual(
+        node_task.code
+      );
       expect(newState.node.codeLocation[nodeId]).toEqual(
-        node_task.codeLocation
+        node_task.code_location
       );
       expect(newState.node.docString[nodeId]).toEqual(node_task.docString);
     });
@@ -224,7 +226,7 @@ describe('Reducer', () => {
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
-      expect(newState.pipeline.node.parameters[nodeId]).toEqual(
+      expect(newState.node.parameters[nodeId]).toEqual(
         node_parameters.parameters
       );
     });
@@ -234,11 +236,11 @@ describe('Reducer', () => {
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
-      expect(newState.pipeline.node.dataset_location[nodeId]).toEqual(
-        node_parameters.dataset_location
+      expect(newState.node.dataset_location[nodeId]).toEqual(
+        node_data.dataset_location
       );
-      expect(newState.pipeline.node.dataset_type[nodeId]).toEqual(
-        node_parameters.dataset_type
+      expect(newState.node.dataset_type[nodeId]).toEqual(
+        node_data.dataset_type
       );
     });
   });

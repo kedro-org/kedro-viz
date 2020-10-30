@@ -1,6 +1,7 @@
 import { getUrl } from '../../utils';
 import animals from '../../utils/data/animals.mock.json';
 import demo from '../../utils/data/demo.mock';
+import node_task from '../../utils/data/node_task.mock.json';
 
 /**
  * Mimic old deprecated API formats which didn't include newer fields
@@ -35,6 +36,11 @@ const loadJsonData = async (path = getUrl('main')) => {
   // Use animals dataset in place of 'main' endpoint
   if (path.includes('main')) {
     return mockAPIFeatureSupport(animals);
+  }
+
+  // Use animals dataset in place of 'main' endpoint
+  if (path.includes('nodes')) {
+    return mockAPIFeatureSupport(node_task);
   }
 
   // Use demo dataset for 'pipelines' endpoints
