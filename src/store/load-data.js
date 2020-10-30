@@ -6,11 +6,11 @@ import { getUrl } from '../utils';
  * @param {string} path JSON file location. Defaults to main data url from config.js
  * @return {function} A promise that will return when the file is loaded and parsed
  */
-const loadJsonData = (path = getUrl('main')) =>
+const loadJsonData = url => (path = url || getUrl('main')) =>
   json(path).catch(() => {
     const fullPath = `/public${path.substr(1)}`;
     throw new Error(
-      `Unable to load pipeline data from ${path}. If you're running Kedro-Viz as a standalone (e.g. for JavaScript development), please check that you have placed a data file at ${fullPath}.`
+      `Unable to load data from ${path}. If you're running Kedro-Viz as a standalone (e.g. for JavaScript development), please check that you have placed a data file at ${fullPath}.`
     );
   });
 

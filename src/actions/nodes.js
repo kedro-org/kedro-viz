@@ -1,7 +1,5 @@
 import { getUrl } from '../utils';
 import loadJsonData from '../store/load-data';
-import { prepareFetchedNodeState } from '../store/initial-state';
-import { resetData } from './index';
 
 export const TOGGLE_NODE_CLICKED = 'TOGGLE_NODE_CLICKED';
 
@@ -84,7 +82,7 @@ export function loadNodeData(nodeID) {
     if (asyncDataSource) {
       if (!node.fetched[nodeID]) {
         dispatch(toggleNodeDataLoading(true));
-        const url = getUrl('node', nodeID);
+        const url = getUrl('nodes', nodeID);
         const nodeData = await loadJsonData(url);
         dispatch(addNodeMetadata({ id: nodeID, data: nodeData }));
         dispatch(toggleNodeDataLoading(false));

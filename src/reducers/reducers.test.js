@@ -212,13 +212,11 @@ describe('Reducer', () => {
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
-      expect(newState.pipeline.node.code[nodeId]).toEqual(node_task.code);
-      expect(newState.pipeline.node.codeLocation[nodeId]).toEqual(
+      expect(newState.node.code[nodeId]).toEqual(node_task.code);
+      expect(newState.node.codeLocation[nodeId]).toEqual(
         node_task.codeLocation
       );
-      expect(newState.pipeline.node.docString[nodeId]).toEqual(
-        node_task.docString
-      );
+      expect(newState.node.docString[nodeId]).toEqual(node_task.docString);
     });
 
     it('should update the right fields in state under node of parameter type', () => {
