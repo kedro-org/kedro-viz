@@ -22,6 +22,7 @@ $color-bg-dark-2: #031a26;
 $color-bg-dark-3: #061c28;
 $color-bg-dark-4: #0e2330;
 $color-bg-dark-5: #122531;
+$color-bg-dark-6: #2a3b46;
 $color-bg-dark-alt: $color-light;
 
 //-- Layout --//
@@ -33,4 +34,7 @@ $sidebar-padding: 1.8em;
 // value here, please also update their corresponding value in src/config.js
 $sidebar-width-open: 400px;
 $sidebar-width-closed: 56px;
-$sidebar-breakpoint: 700px;
+$sidebar-width-breakpoint: 700px;
+$metadata-sidebar-width-open: 400px;
+$metadata-sidebar-width-closed: 0;
+$metadata-sidebar-width-breakpoint: 1200px;

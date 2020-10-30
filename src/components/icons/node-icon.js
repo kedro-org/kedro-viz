@@ -1,4 +1,5 @@
 import React from 'react';
+import modifiers from '../../utils/modifiers';
 
 export const paths = {
   // database icon
@@ -14,7 +15,9 @@ export const paths = {
 
 export default ({ className, type }) =>
   paths[type] ? (
-    <svg className={className} viewBox="0 0 24 24">
+    <svg
+      className={modifiers('pipeline-node-icon', { type }, className)}
+      viewBox="0 0 24 24">
       <path d={paths[type]} />
     </svg>
   ) : null;
