@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 const getGraphLoading = state => state.loading.graph;
 const getPipelineLoading = state => state.loading.pipeline;
 const getFontLoading = state => !state.fontLoaded;
-const getNodeLoading = state => !state.loading.node;
+const getNodeLoading = state => state.loading.node;
 
 /**
  * Determine whether to show the loading spinner
