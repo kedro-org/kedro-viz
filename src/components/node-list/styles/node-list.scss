@@ -9,10 +9,81 @@
 @import './row';
 @import './filter';
 
-.pipeline-nodelist-scrollbars {
-  min-height: 400px;
+.pipeline-nodelist {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: 1.8em;
+
+  &:before,
+  > * {
+    // Transition opacity instead of background-color for GPU acceleration
+    transition: opacity ease 0.2s;
+  }
+
+  &:before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    content: '';
+
+    .kui-theme--light & {
+      background: $color-bg-light-2;
+    }
+
+    .kui-theme--dark & {
+      background: $color-bg-dark-2;
+    }
+  }
+
+  &--fade {
+    > * {
+      opacity: 0.2;
+    }
+
+    &:before {
+      opacity: 1;
+    }
+  }
 }
 
-.pipeline-nodelist-container {
-  padding: 6px 0 16px 0;
+.pipeline-nodelist-scrollbars {
+  min-height: 400px;
+
+  &:after {
+    position: absolute;
+    top: 0;
+    right: -1px;
+    left: -1px;
+    height: 35px;
+    content: '';
+
+    .kui-theme--dark & {
+      background: linear-gradient(
+        0deg,
+        rgba($color-bg-dark-3, 0) 0%,
+        rgba($color-bg-dark-3, 1) 100%
+      );
+    }
+
+    .kui-theme--light & {
+      background: linear-gradient(
+        0deg,
+        rgba($color-bg-light-3, 0) 0%,
+        rgba($color-bg-light-3, 1) 100%
+      );
+    }
+  }
+}
+
+.pipeline-nodelist-section:first-child {
+  padding-top: 6px;
+}
+
+.pipeline-nodelist-section:last-child {
+  padding-bottom: 16px;
 }

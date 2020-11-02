@@ -22,7 +22,7 @@ describe('lib-test', () => {
   const testFirstNodeNameMatch = (wrapper, key) => {
     const firstNodeName = wrapper
       .find('.pipeline-nodelist__group--type-task')
-      .find('.pipeline-nodelist--nested')
+      .find('.pipeline-nodelist__list--nested')
       .find('NodeListRow')
       .first()
       .text();

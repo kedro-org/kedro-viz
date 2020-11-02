@@ -22,7 +22,8 @@ describe('NodeListGroups', () => {
 
   it('handles collapse button click events', () => {
     const wrapper = setup.mount(<NodeListGroups {...mockProps()} />);
-    const nodeList = () => wrapper.find('.pipeline-nodelist--nested').first();
+    const nodeList = () =>
+      wrapper.find('.pipeline-nodelist__list--nested').first();
     const toggle = () => wrapper.find('.pipeline-type-group-toggle').first();
     expect(nodeList().length).toBe(1);
     expect(toggle().hasClass('pipeline-type-group-toggle--alt')).toBe(false);

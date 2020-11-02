@@ -225,26 +225,12 @@ describe('Selectors', () => {
     });
 
     describe('if text labels are disabled', () => {
-      it('returns x=16 & y=10 for task icons', () => {
+      it('returns x=14 & y=14 for task icons', () => {
         expect(getPadding(false, true)).toEqual({ x: 14, y: 14 });
       });
 
-      it('returns x=20 & y=10 for database icons', () => {
+      it('returns x=16 & y=16 for database icons', () => {
         expect(getPadding(false, false)).toEqual({ x: 16, y: 16 });
-      });
-
-      it('returns identical x & y values', () => {
-        expect(getPadding(false, true).x).toBe(getPadding(false, true).y);
-        expect(getPadding(false, false).x).toBe(getPadding(false, false).y);
-      });
-
-      it('returns smaller padding values for task icons than database icons', () => {
-        expect(getPadding(false, true).x).toBeLessThan(
-          getPadding(false, false).x
-        );
-        expect(getPadding(false, true).y).toBeLessThan(
-          getPadding(false, false).y
-        );
       });
     });
   });
@@ -262,6 +248,7 @@ describe('Selectors', () => {
         expect(Object.values(getNodeSize(mockState.animals))).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
+              showText: expect.any(Boolean),
               width: expect.any(Number),
               height: expect.any(Number),
               textOffset: expect.any(Number),

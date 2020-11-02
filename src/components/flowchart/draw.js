@@ -2,12 +2,27 @@ import 'd3-transition';
 import { interpolatePath } from 'd3-interpolate-path';
 import { select } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
-import icon from './icon';
+import { paths as nodeIcons } from '../icons/node-icon';
 
 const lineShape = line()
   .x(d => d.x)
   .y(d => d.y)
   .curve(curveBasis);
+
+/**
+ * Matches all floating point numbers in a string
+ */
+const matchFloats = /\d+\.\d+/g;
+
+/**
+ * Limits the precision of a float value to one decimal point
+ */
+const toSinglePoint = value => parseFloat(value).toFixed(1);
+
+/**
+ * Limits the precision of a path string to one decimal point
+ */
+const limitPrecision = path => path.replace(matchFloats, toSinglePoint);
 
 /**
  * Render layer bands
@@ -95,8 +110,7 @@ export const drawNodes = function(changed) {
     linkedNodes,
     nodeActive,
     nodeSelected,
-    nodes,
-    textLabels
+    nodes
   } = this.props;
 
   if (changed('nodes')) {
@@ -137,10 +151,16 @@ export const drawNodes = function(changed) {
       .attr('opacity', 1);
 
     enterNodes.append('rect');
-    enterNodes.append(icon);
+
+    // Performance: use a single path per icon
+    enterNodes
+      .append('path')
+      .attr('class', 'pipeline-node__icon')
+      .attr('d', node => nodeIcons[node.type]);
 
     enterNodes
       .append('text')
+      .attr('class', 'pipeline-node__text')
       .text(node => node.name)
       .attr('text-anchor', 'middle')
       .attr('dy', 5)
@@ -170,11 +190,7 @@ export const drawNodes = function(changed) {
       );
   }
 
-  if (changed('nodes', 'textLabels')) {
-    allNodes
-      .classed('pipeline-node--icon', !textLabels)
-      .classed('pipeline-node--text', textLabels);
-
+  if (changed('nodes')) {
     allNodes
       .transition('update-nodes')
       .duration(this.DURATION)
@@ -193,17 +209,25 @@ export const drawNodes = function(changed) {
     updateNodes
       .select('rect')
       .transition('node-rect')
-      .duration(textLabels ? 200 : 600)
+      .duration(node => (node.showText ? 200 : 600))
       .call(updateNodeRects);
 
+    // Performance: icon transitions with CSS on GPU
     allNodes
       .select('.pipeline-node__icon')
-      .transition('node-icon-offset')
-      .duration(200)
-      .attr('width', node => node.iconSize)
-      .attr('height', node => node.iconSize)
-      .attr('x', node => node.iconOffset)
-      .attr('y', node => node.iconSize / -2);
+      .style('transition-delay', node => (node.showText ? '0ms' : '200ms'))
+      .style(
+        'transform',
+        node =>
+          `translate(${node.iconOffset}px, ${-node.iconSize / 2}px) ` +
+          `scale(${node.iconSize / 24})`
+      );
+
+    // Performance: text transitions with CSS on GPU
+    allNodes
+      .select('.pipeline-node__text')
+      .style('transition-delay', node => (node.showText ? '200ms' : '0ms'))
+      .style('opacity', node => (node.showText ? 1 : 0));
   }
 };
 
@@ -255,7 +279,8 @@ export const drawEdges = function(changed) {
       .transition('update-edges')
       .duration(this.DURATION)
       .attrTween('d', function(edge) {
-        const current = edge.points && lineShape(edge.points);
+        // Performance: Limit path precision for parsing & render
+        let current = edge.points && limitPrecision(lineShape(edge.points));
         const previous = select(this).attr('d') || current;
         return interpolatePath(previous, current);
       });

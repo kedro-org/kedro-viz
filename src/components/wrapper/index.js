@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
+import MetaData from '../metadata';
 import ExportModal from '../export-modal';
 import LoadingIcon from '../icons/loading';
 import { isLoading } from '../../selectors/loading';
@@ -19,6 +20,7 @@ export const Wrapper = ({ loading, theme }) => (
     })}>
     <h1 className="pipeline-title">Kedro-Viz</h1>
     <Sidebar />
+    <MetaData />
     <div className="pipeline-wrapper">
       <FlowChart />
       <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
