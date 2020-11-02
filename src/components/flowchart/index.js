@@ -439,9 +439,7 @@ export class FlowChart extends Component {
 
     return (
       <div
-        className={classnames('pipeline-flowchart kedro', {
-          'pipeline-flowchart--loading': isLoading
-        })}
+        className="pipeline-flowchart kedro"
         ref={this.containerRef}
         onClick={this.handleChartClick}>
         <svg
@@ -464,7 +462,12 @@ export class FlowChart extends Component {
               <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
             </marker>
           </defs>
-          <g id="zoom-wrapper" ref={this.wrapperRef}>
+          <g
+            id="zoom-wrapper"
+            className={classnames('pipeline-zoom-wrapper', {
+              'pipeline-zoom-wrapper--loading': isLoading
+            })}
+            ref={this.wrapperRef}>
             <g className="pipeline-flowchart__layers" ref={this.layersRef} />
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
             <g

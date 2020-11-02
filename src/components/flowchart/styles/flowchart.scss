@@ -4,11 +4,6 @@
 
 .pipeline-flowchart {
   height: 100%;
-
-  &--loading {
-    opacity: 0.3;
-    pointer-events: none;
-  }
 }
 
 .pipeline-flowchart__graph {
@@ -21,9 +16,17 @@
   @media print {
     width: 100%;
     height: auto;
+  }
+}
 
-    #zoom-wrapper {
-      transform: inherit;
-    }
+.pipeline-zoom-wrapper {
+  &--loading {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  @media print {
+    transform: inherit;
+    opacity: 1;
   }
 }
