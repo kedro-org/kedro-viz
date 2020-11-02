@@ -67,6 +67,7 @@
       "full_name": "salmon",
       "id": "443cf06a",
       "name": "salmon",
+      "layer": null,
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "task"
@@ -75,6 +76,7 @@
       "full_name": "shark",
       "id": "f42dab68",
       "name": "shark",
+      "layer": "raw",
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium"],
       "type": "task"
@@ -143,10 +145,10 @@
       "type": "parameters"
     },
     {
-      "full_name": "params:rabbit",
+      "full_name": "parameters_rabbit",
       "id": "c38d4c6a",
       "layer": null,
-      "name": "Params:rabbit",
+      "name": "parameters_rabbit",
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "parameters"
@@ -182,6 +184,7 @@
       "full_name": "trout",
       "id": "e27376a9",
       "name": "trout",
+      "layer": null,
       "pipelines": ["ds", "__default__"],
       "tags": ["small"],
       "type": "task"
