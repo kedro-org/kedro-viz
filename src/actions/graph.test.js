@@ -1,6 +1,7 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
-import { mockState } from '../utils/state.mock';
+import animals from '../utils/data/animals.mock';
+import { mockState, prepareState } from '../utils/state.mock';
 import { changeFlag } from './index';
 import { calculateGraph, updateGraph } from './graph';
 import { getGraphInput } from '../selectors/layout';
@@ -11,10 +12,38 @@ describe('graph actions', () => {
       expect(calculateGraph(null)).toEqual(updateGraph(null));
     });
 
-    it('sets loading to true immediately', () => {
+    it('does not set loading to true if the dataset is small', () => {
       const store = createStore(reducer, mockState.animals);
-      expect(store.getState().loading.graph).not.toBe(true);
       calculateGraph(getGraphInput(mockState.animals))(store.dispatch);
+      expect(store.getState().loading.graph).not.toBe(true);
+    });
+
+    it('sets loading to true immediately, if the dataset is sufficiently large', () => {
+      // Multiple the nodes and edges in mockState.animals until they're > 300
+      const newArray = Array(20).fill();
+      const multiplyData = fn =>
+        newArray.reduce((data, d, i) => data.concat(fn(i)), []);
+      const nodes = multiplyData(i =>
+        animals.nodes.map(node => ({
+          ...node,
+          id: node.id + i
+        }))
+      );
+      const edges = multiplyData(i =>
+        animals.edges.map(edge => ({
+          source: edge.source + i,
+          target: edge.target + i
+        }))
+      );
+      const data = {
+        ...animals,
+        nodes,
+        edges
+      };
+      const state = prepareState({ data });
+      const store = createStore(reducer, state);
+      expect(store.getState().loading.graph).not.toBe(true);
+      calculateGraph(getGraphInput(state))(store.dispatch);
       expect(store.getState().loading.graph).toBe(true);
     });
 
