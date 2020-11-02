@@ -39,6 +39,14 @@ const chooseLayout = (instance, state) =>
 const layoutWorker = preventWorkerQueues(worker, chooseLayout);
 
 /**
+ * Determine whether to show the loading spinner
+ * @param {array} graphState.edges List of visible edges
+ * @param {array} graphState.nodes List of visible nodes
+ */
+const showLoadingSpinner = ({ edges, nodes }) =>
+  edges.length + nodes.length > 300;
+
+/**
  * Async action to calculate graph layout in a web worker
  * whiled displaying a loading spinner
  * @param {Object} graphState A subset of main state
@@ -49,7 +57,7 @@ export function calculateGraph(graphState) {
     return updateGraph(graphState);
   }
   return async function(dispatch) {
-    dispatch(toggleLoading(true));
+    dispatch(toggleLoading(showLoadingSpinner(graphState)));
     const graph = await layoutWorker(graphState);
     dispatch(toggleLoading(false));
     return dispatch(updateGraph(graph));
