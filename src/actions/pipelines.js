@@ -14,7 +14,6 @@ import { resetData } from './index';
  * 4. Whether localStorage has an active pipeline already defined.
  * 5. If so, whether it exists in the current dataset.
  * 6. Whether the requested endpoint is the 'main' one, or not.
- * 7. Whether the pipeline flag is disabled.
  *
  * These are mostly handled either within this file, in the preparePipelineState
  * utility, or in the getNodeDisabledPipeline selector. Please see their tests
@@ -62,14 +61,10 @@ export const getPipelineUrl = pipeline => {
  * Check whether another async data pipeline request is needed on first page-load.
  * A second request is typically only required when an active pipeline is set in
  * localStorage, and it's not the 'main' pipeline endpoint.
- * @param {object} flags Flag state
  * @param {object} pipeline Pipeline state
  * @return {boolean} True if another request is needed
  */
-export const requiresSecondRequest = (flags, pipeline) => {
-  // Pipelines are disabled via flags
-  // TODO: Delete this line when removing flags.pipeline
-  if (!flags.pipelines) return false;
+export const requiresSecondRequest = pipeline => {
   // Pipelines are not present in the data
   if (!pipeline.ids.length || !pipeline.main) return false;
   // There is no active pipeline set
@@ -99,7 +94,7 @@ export function loadInitialPipelineData() {
       preparePipelineState(data, true)
     );
     // If the active pipeline isn't 'main' then request data from new URL
-    if (requiresSecondRequest(state.flags, newState.pipeline)) {
+    if (requiresSecondRequest(newState.pipeline)) {
       const url = getPipelineUrl(newState.pipeline);
       newState = await loadJsonData(url).then(preparePipelineState);
     }
