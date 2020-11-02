@@ -117,6 +117,24 @@
   }
 }
 
+.pipeline-metadata__value-list--no-inline {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.pipeline-metadata__value-list--no-inline li {
+  position: relative;
+  margin-left: 1em;
+
+  &:before {
+    position: absolute;
+    margin-left: -1em;
+    // For small square bullets
+    content: '▪';
+  }
+}
+
 $list-inline-spacing: 0.2em;
 
 .pipeline-metadata__value-list--inline {

@@ -21,6 +21,7 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
   const [showCopied, setShowCopied] = useState(false);
 
   const isTaskNode = metadata?.node.type === 'task';
+  const isDataNode = metadata?.node.type === 'data';
 
   const onCopyClick = () => {
     window.navigator.clipboard.writeText(metadata.runCommand);
@@ -55,6 +56,18 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
       </div>
       <dl className="pipeline-metadata__list">
         <MetaDataRow label="Type:" value={metadata.node.type} />
+        <MetaDataRow
+          label="File Path:"
+          visible={isDataNode}
+          value={metadata.filePath}
+        />
+        <MetaDataRow
+          label={`Parameters (${metadata.parameters.length}):`}
+          visible={isTaskNode}
+          commas={false}
+          inline={false}
+          value={metadata.parameters}
+        />
         <MetaDataRow
           label="Inputs:"
           property="name"
@@ -109,6 +122,12 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
             )}
           </div>
         </MetaDataRow>
+        <MetaDataRow
+          label="Description (docstring)"
+          visible={isTaskNode}
+          value={metadata.description}
+        />
+        <MetaDataRow label="Location of code in Kedro:" value={metadata.path} />
       </dl>
     </div>
   );
