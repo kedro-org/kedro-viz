@@ -35,7 +35,7 @@ describe('Selectors', () => {
 
       nodes.forEach(node => {
         // we don't need to check y/height positions if the layer isn't there.
-        if (node.layer === null) {
+        if (!node.layer || node.layer === null) {
           return;
         }
 
