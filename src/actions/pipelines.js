@@ -121,6 +121,7 @@ export function loadPipelineData(pipelineID) {
     }
     if (asyncDataSource) {
       dispatch(toggleLoading(true));
+      // Remove the previous graph to show that a new pipeline is being loaded
       dispatch(resetData(preparePipelineState('json')));
       const url = getPipelineUrl({
         main: pipeline.main,
