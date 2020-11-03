@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
 import configureStore from '../store';
 import getInitialState from '../store/initial-state';
-import animals from './data/animals.mock';
+import animals from './data/animals.mock.json';
 import demo from './data/demo.mock';
 import reducer from '../reducers';
 import { updateFontLoaded } from '../actions';

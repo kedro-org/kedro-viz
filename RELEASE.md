@@ -10,12 +10,33 @@ Please follow the established format:
 -->
 
 ## Major features and improvements
-- Drop Kedro 0.14.* support.
+
+<!-- Add release notes for the upcoming release here -->
 
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->
-- Expose parameter metadata in "api/nodes/" endpoint (#275)
+
+# Release 3.6.0
+
+## Major features and improvements
+
+- Redesign main sidebar (#236, #283) 
+- Drop Kedro 0.14.* support (#277)
+
+
+## Bug fixes and other changes
+
+- Continue work-in-progress on the multiple pipeline selection dropdown, which is still hidden behind a flag and disabled by default but is nearly complete. (#270, #273, #285, #289)
+- Continue work on new metadata panel endpoints (#275)
+- Fix chart rendering edge cases and hover styles (#288)
+- Update Python unit tests using the same json file as front-end (#281)
+- Improve lib-test docs (#278)
+- Hide random seed message unless using random data (#280)
+- Delete deprecated isParam and schema_id fields (#274)
+- Fix bug caused by typo in saveStateToLocalStorage (#271)
+- Fix interrupted chart transitions (#269)
+- Refactor and optimise flowchart performance (#268)
 
 # Release 3.5.1
 
@@ -32,7 +53,8 @@ Please follow the established format:
 - Add web worker to make the expensive graph layout calculation into an asynchronous action, to prevent it from blocking other tasks on the main thread. (#217)
 - Focus search bar with Cmd+F/Ctrl+F keyboard shortcuts (#261)
 - Allow an argument to be passed to loadJsonData, for external use if needed (#215)
-- Add support for multiple pipelines. This is a work-in-progress, and is currently disabled by default and hidden behind a flag. (#192, #215, #216, #221, #252, #254)
+- Add support for multiple pipelines. This is a work-in-progress, and is currently disabled by default and hidden behind a flag. (#192, #215, #216, #221, #254)
+- Begin adding individual node API endpoints, as a prelinary step towards full node metadata sidebars (#252)
 - Save disabled state of individual nodes in localStorage (#220)
 - Add automated testing for npm package import (#222)
 - Rename master branch to main ✊🏿 and deprecate develop (#248)

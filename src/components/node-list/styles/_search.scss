@@ -1,12 +1,5 @@
 .pipeline-nodelist-search {
-  position: relative;
-  z-index: 1;
-  margin: 0 -6px;
-  box-shadow: 0 14px 18px $color-bg-light-3;
-
-  .kui-theme--dark & {
-    box-shadow: 0 14px 18px $color-bg-dark-3;
-  }
+  padding: 2px ($sidebar-padding - 0.6) 0 ($sidebar-padding - 0.6);
 
   .kui-searchbar,
   .kui-input-wrapper {
@@ -24,20 +17,24 @@
     height: 20px;
   }
 
-  .kui-theme--dark & .kui-searchbar .kui-icon svg {
-    fill: rgba($color-light, 0.45);
+  .kui-searchbar .kui-icon__graphics {
+    .kui-theme--dark & {
+      fill: rgba($color-light, 0.45);
+    }
+
+    .kui-theme--light & {
+      fill: rgba($color-dark, 0.45);
+    }
   }
 
-  .kui-theme--light & .kui-searchbar .kui-icon svg {
-    fill: rgba($color-dark, 0.45);
-  }
+  .kui-searchbar--focused .kui-icon__graphics {
+    .kui-theme--dark & {
+      fill: rgba($color-light, 0.75);
+    }
 
-  .kui-theme--dark & .kui-searchbar.kui-searchbar--focused .kui-icon svg {
-    fill: rgba($color-light, 0.75);
-  }
-
-  .kui-theme--light & .kui-searchbar.kui-searchbar--focused .kui-icon svg {
-    fill: rgba($color-dark, 0.6);
+    .kui-theme--light & {
+      fill: rgba($color-dark, 0.6);
+    }
   }
 
   .kui-input {
@@ -52,6 +49,12 @@
     background: none;
     border: none;
     box-shadow: none;
+  }
+
+  .kui-input--focused {
+    position: relative;
+    z-index: 1;
+    outline-color: $color-primary;
   }
 
   .kui-input__field::placeholder {
@@ -113,19 +116,11 @@
     background-color: rgba($color-light, 0.55);
   }
 
-  .kui-input__line:not([data-value='']):before {
-    .kui-theme--light &,
-    .kui-theme--dark & {
-      background-color: $color-primary;
-    }
+  .kui-searchbar .kui-input__line:not([data-value='']):before {
+    background-color: $color-primary;
   }
 
   .kui-input__line:after {
     display: none;
   }
-}
-
-.pipeline-nodelist-search-inner {
-  margin-bottom: -6px;
-  padding: 2px $sidebar-padding 6px $sidebar-padding;
 }

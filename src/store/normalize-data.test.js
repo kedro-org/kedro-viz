@@ -1,5 +1,5 @@
 import normalizeData, { createInitialPipelineState } from './normalize-data';
-import animals from '../utils/data/animals.mock';
+import animals from '../utils/data/animals.mock.json';
 
 const initialState = createInitialPipelineState();
 

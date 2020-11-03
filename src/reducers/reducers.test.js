@@ -1,4 +1,4 @@
-import animals from '../utils/data/animals.mock';
+import animals from '../utils/data/animals.mock.json';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import normalizeData from '../store/normalize-data';

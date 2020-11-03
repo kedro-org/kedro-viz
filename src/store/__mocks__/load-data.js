@@ -1,5 +1,5 @@
 import { getUrl } from '../../utils';
-import animals from '../../utils/data/animals.mock';
+import animals from '../../utils/data/animals.mock.json';
 import demo from '../../utils/data/demo.mock';
 
 /**

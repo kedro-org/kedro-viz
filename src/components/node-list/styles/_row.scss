@@ -233,7 +233,3 @@
     opacity: 1;
   }
 }
-
-.pipeline-nodelist__row__checkbox {
-  @include screenReaderOnly;
-}

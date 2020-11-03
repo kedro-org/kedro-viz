@@ -92,7 +92,7 @@ These are the supported dataset identifiers:
 | `json` (default) | `/public/api/main` |
 | `random` | Randomly-generated data |
 | `demo` | `/src/utils/data/demo.mock.js` |
-| `animals` | `/src/utils/data/animals.mock.js` |
+| `animals` | `/src/utils/data/animals.mock.json` |
 
 By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a JSON dataset in `/public/api/main`, using `main` as the name of the file, [without an extension](https://www.computerhope.com/issues/ch002089.htm). Note that operating systems often add hidden file extensions, so you might need to use a CLI to confirm the filename.
 

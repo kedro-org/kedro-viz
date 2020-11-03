@@ -86,14 +86,13 @@ export class FlowChart extends Component {
         'centralNode',
         'linkedNodes',
         'nodeActive',
-        'nodeSelected',
-        'textLabels'
+        'nodeSelected'
       )
     ) {
       drawNodes.call(this, changed);
     }
 
-    if (changed('edges', 'nodes', 'layers', 'textLabels', 'chartSize')) {
+    if (changed('edges', 'nodes', 'layers', 'chartSize')) {
       this.zoomToFit();
     } else {
       this.updateZoom(chartZoom);
@@ -206,7 +205,7 @@ export class FlowChart extends Component {
           minScale = 0,
           maxScale = Infinity
         ] = this.zoomBehaviour.scaleExtent();
-        const { sidebarWidth } = this.props.chartSize;
+        const { sidebarWidth, metaSidebarWidth } = this.props.chartSize;
         const { width = 0, height = 0 } = this.props.graphSize;
 
         // Limit zoom translate extent: This needs to be recalculated on zoom
@@ -215,11 +214,17 @@ export class FlowChart extends Component {
         const margin = 500;
         this.zoomBehaviour.translateExtent([
           [-sidebarWidth / scale - margin, -margin],
-          [width + margin, height + margin]
+          [width + margin + metaSidebarWidth / scale, height + margin]
         ]);
 
         // Transform the <g> that wraps the chart
         this.el.wrapper.attr('transform', event.transform);
+
+        // Apply animating class to zoom wrapper
+        this.el.wrapper.classed(
+          'pipeline-flowchart__zoom-wrapper--animating',
+          true
+        );
 
         // Update layer label y positions
         if (this.el.layerNames) {
@@ -242,9 +247,19 @@ export class FlowChart extends Component {
           minScale,
           maxScale
         });
+      })
+      // When zoom ends
+      .on('end', () => {
+        this.el.wrapper.classed(
+          'pipeline-flowchart__zoom-wrapper--animating',
+          false
+        );
       });
 
-    this.el.svg.call(this.zoomBehaviour);
+    this.el.svg
+      .call(this.zoomBehaviour)
+      // Disabled to avoid conflicts with metadata panel triggered zooms
+      .on('dblclick.zoom', null);
   }
 
   /**
@@ -448,26 +463,26 @@ export class FlowChart extends Component {
           width={outerWidth}
           height={outerHeight}
           ref={this.svgRef}>
-          <defs>
-            <marker
-              id="pipeline-arrowhead"
-              className="pipeline-flowchart__arrowhead"
-              viewBox="0 0 10 10"
-              refX="7"
-              refY="5"
-              markerUnits="strokeWidth"
-              markerWidth="8"
-              markerHeight="6"
-              orient="auto">
-              <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
-            </marker>
-          </defs>
           <g
             id="zoom-wrapper"
             className={classnames('pipeline-zoom-wrapper', {
               'pipeline-zoom-wrapper--loading': isLoading
             })}
             ref={this.wrapperRef}>
+            <defs>
+              <marker
+                id="pipeline-arrowhead"
+                className="pipeline-flowchart__arrowhead"
+                viewBox="0 0 10 10"
+                refX="7"
+                refY="5"
+                markerUnits="strokeWidth"
+                markerWidth="8"
+                markerHeight="6"
+                orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
+              </marker>
+            </defs>
             <g className="pipeline-flowchart__layers" ref={this.layersRef} />
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
             <g
@@ -506,7 +521,6 @@ export const mapStateToProps = (state, ownProps) => ({
   nodes: state.graph.nodes || emptyNodes,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
-  textLabels: state.textLabels,
   visibleSidebar: state.visible.sidebar,
   ...ownProps
 });

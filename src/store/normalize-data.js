@@ -172,8 +172,8 @@ const normalizeData = data => {
   if (data.pipelines) {
     data.pipelines.forEach(addPipeline(state));
     if (state.pipeline.ids.length) {
-      state.pipeline.default = data.selected_pipeline || state.pipeline.ids[0];
-      state.pipeline.active = state.pipeline.default;
+      state.pipeline.main = data.selected_pipeline || state.pipeline.ids[0];
+      state.pipeline.active = state.pipeline.main;
     }
   }
   if (data.tags) {

@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "3.5.1",
+  "version": "3.6.0",
   "main": "lib/components/app/index.js",
   "files": [
     "lib"
@@ -105,7 +105,7 @@
       "prettier --single-quote --write",
       "git add"
     ],
-    "src/**/*.{js,jsx,ts,tsx,json}": [
+    "src/**/*.{js,jsx,ts,tsx}": [
       "eslint src/ --fix",
       "git add"
     ]

@@ -1,5 +1,5 @@
 import { mockState, prepareState } from '../utils/state.mock';
-import animals from '../utils/data/animals.mock';
+import animals from '../utils/data/animals.mock.json';
 import {
   getNodeDisabledPipeline,
   getPipelineNodeIDs,
