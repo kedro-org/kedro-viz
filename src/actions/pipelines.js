@@ -121,6 +121,7 @@ export function loadPipelineData(pipelineID) {
     }
     if (asyncDataSource) {
       dispatch(toggleLoading(true));
+      dispatch(resetData(preparePipelineState('json')));
       const url = getPipelineUrl({
         main: pipeline.main,
         active: pipelineID
