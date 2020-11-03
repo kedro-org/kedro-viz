@@ -189,22 +189,33 @@ describe('pipeline actions', () => {
     });
 
     describe('if loading data asynchronously', () => {
+      const active = 'new active id';
+
       it('should set loading to true immediately', () => {
         const store = createStore(reducer, mockState.json);
         expect(store.getState().loading.pipeline).toBe(false);
-        loadPipelineData('new active id')(store.dispatch, store.getState);
+        loadPipelineData(active)(store.dispatch, store.getState);
         expect(store.getState().loading.pipeline).toBe(true);
+      });
+
+      it('should hide the current graph before loading the new pipeline', () => {
+        const store = createStore(reducer, {
+          ...mockState.animals,
+          asyncDataSource: true
+        });
+        expect(store.getState().node.ids).not.toHaveLength(0);
+        loadPipelineData(active)(store.dispatch, store.getState);
+        expect(store.getState().node.ids).toHaveLength(0);
       });
 
       it('should set loading to false when complete', async () => {
         const store = createStore(reducer, mockState.json);
-        await loadPipelineData('new active id')(store.dispatch, store.getState);
+        await loadPipelineData(active)(store.dispatch, store.getState);
         expect(store.getState().loading.pipeline).toBe(false);
       });
 
       it('should load the new data, reset the state and update the active pipeline', async () => {
         const store = createStore(reducer, mockState.json);
-        const active = 'new active id';
         await loadPipelineData(active)(store.dispatch, store.getState);
         const state = store.getState();
         expect(state.pipeline.active).toBe(active);
