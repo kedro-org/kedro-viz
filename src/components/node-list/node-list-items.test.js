@@ -24,7 +24,7 @@ const ungroupNodes = groupedNodes =>
 describe('node-list-selectors', () => {
   describe('getFilteredNodes', () => {
     const nodes = getGroupedNodes(mockState.animals);
-    let searchValue = 'bear';
+    let searchValue = 'Bear';
     const { filteredNodes } = getFilteredNodes({ nodes, searchValue });
     const nodeList = ungroupNodes(filteredNodes);
 
@@ -50,7 +50,7 @@ describe('node-list-selectors', () => {
 
     it('returns expected number of tags', () => {
       expect(filteredTags.length).not.toBe(tags.length);
-      expect(filteredTags).toHaveLength(2);
+      expect(filteredTags).toHaveLength(1);
     });
 
     test.each(filteredTags.map(tag => tag.name))(
@@ -97,7 +97,7 @@ describe('node-list-selectors', () => {
 
     it('filters expected number of items', () => {
       expect(filteredTagItems.length).not.toBe(tags.length);
-      expect(filteredTagItems).toHaveLength(2);
+      expect(filteredTagItems).toHaveLength(1);
     });
 
     it('returns items of the correct format', () => {

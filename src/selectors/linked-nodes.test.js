@@ -15,7 +15,6 @@ describe('getLinkedNodes function', () => {
 
   describe('should return true for ancestor/descendant nodes', () => {
     test.each([
-      ['pig', '2cd4ba93'],
       ['whale', '1769e230'],
       ['horse', '091b5035'],
       ['sheep', '6525f2e6'],
