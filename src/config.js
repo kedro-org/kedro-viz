@@ -24,11 +24,6 @@ export const flags = {
     default: false,
     icon: '📈'
   },
-  pipelines: {
-    description: 'Select from multiple pipelines',
-    default: typeof jest !== 'undefined',
-    icon: '🔀'
-  },
   meta: {
     description: 'Show the metadata panel',
     default: false,

@@ -6,7 +6,6 @@ import {
   getPipelineTagIDs
 } from './pipeline';
 import reducer from '../reducers';
-import { changeFlag } from '../actions';
 import { updateActivePipeline } from '../actions/pipelines';
 
 const getNodeIDs = state => state.node.ids;
@@ -82,14 +81,6 @@ describe('Selectors', () => {
       const newMockState = reducer(
         mockState.animals,
         updateActivePipeline(undefined)
-      );
-      expect(getNodeDisabledPipeline(newMockState)).toEqual({});
-    });
-
-    it('does not disable any nodes if the pipelines flag is false', () => {
-      const newMockState = reducer(
-        mockState.animals,
-        changeFlag('pipelines', false)
       );
       expect(getNodeDisabledPipeline(newMockState)).toEqual({});
     });

@@ -10,10 +10,9 @@ import './sidebar.css';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
- * @param {object} props.flags Feature flags from URL/localStorage
  * @param {boolean} props.visible Whether the sidebar is open/closed
  */
-export const Sidebar = ({ flags, visible }) => {
+export const Sidebar = ({ visible }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
   return (
@@ -23,7 +22,7 @@ export const Sidebar = ({ flags, visible }) => {
           'pipeline-sidebar--visible': visible
         })}>
         <div className="pipeline-ui">
-          {flags.pipelines && <PipelineList onToggleOpen={togglePipeline} />}
+          <PipelineList onToggleOpen={togglePipeline} />
           <NodeList faded={pipelineIsOpen} />
         </div>
         <nav className="pipeline-toolbar">
@@ -37,7 +36,6 @@ export const Sidebar = ({ flags, visible }) => {
 };
 
 const mapStateToProps = state => ({
-  flags: state.flags,
   visible: state.visible.sidebar
 });
 

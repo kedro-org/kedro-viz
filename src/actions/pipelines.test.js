@@ -1,6 +1,5 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
-import { changeFlag } from './index';
 import { mockState } from '../utils/state.mock';
 import { saveState } from '../store/helpers';
 import {
@@ -56,30 +55,24 @@ describe('pipeline actions', () => {
   });
 
   describe('requiresSecondRequest', () => {
-    it('should return false if the pipelines flag is false', () => {
-      expect(requiresSecondRequest({ pipelines: false }, {})).toBe(false);
-    });
-
-    const flags = { pipelines: true };
-
     it('should return false if pipelines are not present in the data', () => {
       const pipeline = { ids: [], active: 'a' };
-      expect(requiresSecondRequest(flags, pipeline)).toBe(false);
+      expect(requiresSecondRequest(pipeline)).toBe(false);
     });
 
     it('should return false if there is no active pipeline', () => {
       const pipeline = { ids: ['a', 'b'], main: 'a' };
-      expect(requiresSecondRequest(flags, pipeline)).toBe(false);
+      expect(requiresSecondRequest(pipeline)).toBe(false);
     });
 
     it('should return false if the main pipeline is active', () => {
       const pipeline = { ids: ['a', 'b'], main: 'a', active: 'a' };
-      expect(requiresSecondRequest(flags, pipeline)).toBe(false);
+      expect(requiresSecondRequest(pipeline)).toBe(false);
     });
 
     it('should return true if the main pipeline is not active', () => {
       const pipeline = { ids: ['a', 'b'], main: 'a', active: 'b' };
-      expect(requiresSecondRequest(flags, pipeline)).toBe(true);
+      expect(requiresSecondRequest(pipeline)).toBe(true);
     });
   });
 
@@ -140,16 +133,6 @@ describe('pipeline actions', () => {
         const state = store.getState();
         expect(state.pipeline.active).toBe(state.pipeline.main);
         expect(state.node).toEqual(mockState.animals.node);
-      });
-
-      it("shouldn't make a second data request if the pipeline flag is false", async () => {
-        const { pipeline } = mockState.animals;
-        const active = pipeline.ids.find(id => id !== pipeline.main);
-        saveState({ pipeline: { active } });
-        const state = reducer(mockState.json, changeFlag('pipelines', false));
-        const store = createStore(reducer, state);
-        await loadInitialPipelineData()(store.dispatch, store.getState);
-        expect(store.getState().node).toEqual(mockState.animals.node);
       });
 
       it("shouldn't make a second data request if the dataset doesn't support pipelines", async () => {
