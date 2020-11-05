@@ -37,6 +37,19 @@ export function toggleExportModal(visible) {
   };
 }
 
+export const TOGGLE_GRAPH = 'TOGGLE_GRAPH';
+
+/**
+ * Toggle graph visible/hidden
+ * @param {boolean} visible Whether graph is shown
+ */
+export function toggleGraph(visible) {
+  return {
+    type: TOGGLE_GRAPH,
+    visible
+  };
+}
+
 export const TOGGLE_TEXT_LABELS = 'TOGGLE_TEXT_LABELS';
 
 /**

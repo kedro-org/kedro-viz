@@ -186,9 +186,9 @@ describe('pipeline actions', () => {
           ...mockState.animals,
           asyncDataSource: true
         });
-        expect(store.getState().node.ids).not.toHaveLength(0);
+        expect(store.getState().visible.graph).toBe(true);
         loadPipelineData(active)(store.dispatch, store.getState);
-        expect(store.getState().node.ids).toHaveLength(0);
+        expect(store.getState().visible.graph).toBe(false);
       });
 
       it('should set loading to false when complete', async () => {
