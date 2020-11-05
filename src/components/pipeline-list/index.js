@@ -30,9 +30,7 @@ export const PipelineList = ({
         theme={theme}
         width={null}
         onChanged={onUpdateActivePipeline}
-        defaultText={
-          pipeline.name[pipeline.active] || 'No pipelines available'
-        }>
+        defaultText={pipeline.name[pipeline.active] || ''}>
         {pipeline.ids.map(id => (
           <MenuOption
             key={`pipeline-${id}`}
