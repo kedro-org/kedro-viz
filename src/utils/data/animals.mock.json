@@ -183,7 +183,7 @@
       "id": "e27376a9",
       "name": "trout",
       "pipelines": ["ds", "__default__"],
-      "tags": ["small"],
+      "tags": [],
       "type": "task"
     },
     {
@@ -192,7 +192,7 @@
       "layer": "model output",
       "name": "Whale",
       "pipelines": ["ds", "__default__"],
-      "tags": ["small"],
+      "tags": [],
       "type": "data"
     }
   ],
