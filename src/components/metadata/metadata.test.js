@@ -37,7 +37,7 @@ describe('MetaData', () => {
 
   it('shows the node name as the title', () => {
     const wrapper = mount({ nodeId: salmonNodeId });
-    expect(textOf(title(wrapper))).toEqual(['salmon']);
+    expect(textOf(title(wrapper))).toEqual(['Salmon']);
   });
 
   it('shows the node type as text', () => {
@@ -53,7 +53,7 @@ describe('MetaData', () => {
       'Cat',
       'Dog',
       'Parameters',
-      'params:rabbit'
+      'Params:rabbit'
     ]);
   });
 

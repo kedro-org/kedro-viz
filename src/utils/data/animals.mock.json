@@ -182,9 +182,8 @@
       "full_name": "trout",
       "id": "e27376a9",
       "name": "Trout",
-      "layer": null,
       "pipelines": ["ds", "__default__"],
-      "tags": ["small"],
+      "tags": [],
       "type": "task"
     },
     {
@@ -193,24 +192,8 @@
       "layer": "model output",
       "name": "Whale",
       "pipelines": ["ds", "__default__"],
-      "tags": ["small"],
-      "type": "data"
-    },
-    {
-      "full_name": "kingkong",
-      "id": "1769e231",
-      "name": "King Kong",
-      "pipelines": ["ds", "__default__"],
-      "tags": ["huge"],
-      "type": "task"
-    },
-    {
-      "full_name": "monkey",
-      "id": "1769e232",
-      "name": "Monkey",
-      "pipelines": ["ds", "__default__"],
       "tags": [],
-      "type": "task"
+      "type": "data"
     }
   ],
   "pipelines": [
@@ -244,10 +227,6 @@
     {
       "id": "small",
       "name": "Small"
-    },
-    {
-      "id": "huge",
-      "name": "huge"
     }
   ]
 }
