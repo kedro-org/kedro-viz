@@ -2,7 +2,8 @@ import { createSelector } from 'reselect';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 import { getVisibleLayerIDs } from './disabled';
-import { sidebarBreakpoint, sidebarWidth } from '../config';
+import { getVisibleMetaSidebar } from '../selectors/metadata';
+import { sidebarWidth, metaSidebarWidth } from '../config';
 
 const getNewgraphFlag = state => state.flags.newgraph;
 const getVisibleSidebar = state => state.visible.sidebar;
@@ -29,35 +30,47 @@ export const getGraphInput = createSelector(
 );
 
 /**
- * Return the displayed width of the sidebar
+ * Calculate the displayed width of a sidebar
  */
-export const getSidebarWidth = (visibleSidebar, outerChartWidth) => {
-  if (visibleSidebar && outerChartWidth > sidebarBreakpoint) {
-    return sidebarWidth.open;
-  }
-  return sidebarWidth.closed;
-};
+export const getSidebarWidth = (visible, width, { breakpoint, open, closed }) =>
+  visible && width > breakpoint ? open : closed;
 
 /**
  * Convert the DOMRect into an Object, mutate some of the properties,
  * and add some useful new ones
  */
 export const getChartSize = createSelector(
-  [getVisibleSidebar, state => state.chartSize],
-  (visibleSidebar, chartSize) => {
+  [getVisibleSidebar, getVisibleMetaSidebar, state => state.chartSize],
+  (visibleSidebar, visibleMetaSidebar, chartSize) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
       return {};
     }
-    const sidebarWidth = getSidebarWidth(visibleSidebar, width);
+
+    // Get the actual sidebar width
+    const sidebarWidthActual = getSidebarWidth(
+      visibleSidebar,
+      width,
+      sidebarWidth
+    );
+    const metaSidebarWidthActual = getSidebarWidth(
+      width,
+      visibleMetaSidebar,
+      metaSidebarWidth
+    );
+
+    // Find the resulting space for the chart
+    const chartWidth = width - sidebarWidthActual - metaSidebarWidthActual;
+
     return {
       left,
       top,
       outerWidth: width,
       outerHeight: height,
-      width: width - sidebarWidth,
       height,
-      sidebarWidth
+      width: chartWidth,
+      sidebarWidth: sidebarWidthActual,
+      metaSidebarWidth: metaSidebarWidthActual
     };
   }
 );

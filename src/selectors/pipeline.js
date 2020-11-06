@@ -6,21 +6,14 @@ const getNodePipelines = state => state.node.pipelines;
 const getActivePipeline = state => state.pipeline.active;
 const getNodeTags = state => state.node.tags;
 const getAsyncDataSource = state => state.asyncDataSource;
-const getPipelineFlag = state => state.flags.pipelines;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
  */
 export const getNodeDisabledPipeline = createSelector(
-  [
-    getNodeIDs,
-    getNodePipelines,
-    getActivePipeline,
-    getAsyncDataSource,
-    getPipelineFlag
-  ],
-  (nodeIDs, nodePipelines, activePipeline, asyncDataSource, pipelineFlag) => {
-    if (asyncDataSource || !activePipeline || !pipelineFlag) {
+  [getNodeIDs, getNodePipelines, getActivePipeline, getAsyncDataSource],
+  (nodeIDs, nodePipelines, activePipeline, asyncDataSource) => {
+    if (asyncDataSource || !activePipeline) {
       return {};
     }
     return arrayToObject(

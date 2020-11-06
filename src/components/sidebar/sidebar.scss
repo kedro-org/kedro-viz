@@ -1,6 +1,9 @@
 @import '../../styles/variables';
+@import '../../styles/mixins';
 
 .pipeline-sidebar {
+  @include sidebarBase;
+
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
   bottom: -1px;
@@ -11,10 +14,14 @@
   transform: translateX(calc(-100% + #{$sidebar-width-closed}));
   transition: transform ease 0.4s;
 
-  @media (min-width: $sidebar-breakpoint) {
+  @media (min-width: $sidebar-width-breakpoint) {
     width: $sidebar-width-open;
     $sidebar-ui-width: $sidebar-width-open - $sidebar-width-closed;
     transform: translateX(-$sidebar-ui-width);
+  }
+
+  &--visible {
+    transform: translateX(0);
   }
 
   @media print {
@@ -23,16 +30,6 @@
 
   &--visible {
     transform: translateX(0);
-  }
-
-  .kui-theme--light & {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.07);
-  }
-
-  .kui-theme--dark & {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   }
 }
 

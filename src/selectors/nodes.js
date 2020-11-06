@@ -16,11 +16,23 @@ const getNodeTags = state => state.node.tags;
 const getNodeType = state => state.node.type;
 const getNodeLayer = state => state.node.layer;
 const getHoveredNode = state => state.node.hovered;
-const getClickedNode = state => state.node.clicked;
 const getTagActive = state => state.tag.active;
 const getTextLabels = state => state.textLabels;
 const getFontLoaded = state => state.fontLoaded;
 const getNodeTypeDisabled = state => state.nodeType.disabled;
+const getClickedNode = state => state.node.clicked;
+
+/**
+ * Gets a map of nodeIds to graph nodes
+ */
+export const getGraphNodes = createSelector(
+  [state => state.graph.nodes],
+  (nodes = []) =>
+    nodes.reduce((result, node) => {
+      result[node.id] = node;
+      return result;
+    }, {})
+);
 
 /**
  * Set active status if the node is specifically highlighted, and/or via an associated tag
@@ -173,9 +185,10 @@ export const getNodeSize = createSelector(
       const textGap = textLabels ? 6 : 0;
       const innerWidth = iconSize + textWidth + textGap;
       return {
+        showText: textLabels,
         width: innerWidth + padding.x * 2,
         height: iconSize + padding.y * 2,
-        textOffset: (innerWidth - textWidth) / 2,
+        textOffset: (innerWidth - textWidth) / 2 - 1,
         iconOffset: -innerWidth / 2,
         iconSize
       };
