@@ -206,7 +206,7 @@ describe('NodeList', () => {
 
       changeRows(wrapper, ['Small'], true);
       expect(elementsEnabled(wrapper)).toEqual([
-        ['Salmon', true],
+        ['salmon', true],
         ['Cat', true],
         ['Dog', true],
         ['Horse', true],
@@ -217,8 +217,8 @@ describe('NodeList', () => {
 
       changeRows(wrapper, ['Small', 'Large'], true);
       expect(elementsEnabled(wrapper)).toEqual([
-        ['Salmon', true],
-        ['Shark', true],
+        ['salmon', true],
+        ['shark', true],
         ['Bear', true],
         ['Cat', true],
         ['Dog', true],
@@ -239,10 +239,10 @@ describe('NodeList', () => {
 
       expect(elements(wrapper)).toEqual([
         // Nodes (enabled)
-        ['Shark', true],
+        ['shark', true],
         // Nodes (disabled)
-        ['Salmon', false],
-        ['Trout', false],
+        ['salmon', false],
+        ['trout', false],
         // Datasets (enabled)
         ['Bear', true],
         ['Cat', true],

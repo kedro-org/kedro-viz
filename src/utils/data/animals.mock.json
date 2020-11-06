@@ -66,7 +66,7 @@
     {
       "full_name": "salmon",
       "id": "443cf06a",
-      "name": "Salmon",
+      "name": "salmon",
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "task"
@@ -74,7 +74,7 @@
     {
       "full_name": "shark",
       "id": "f42dab68",
-      "name": "Shark",
+      "name": "shark",
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium"],
       "type": "task"
@@ -181,7 +181,7 @@
     {
       "full_name": "trout",
       "id": "e27376a9",
-      "name": "Trout",
+      "name": "trout",
       "pipelines": ["ds", "__default__"],
       "tags": [],
       "type": "task"
