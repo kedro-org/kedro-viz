@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import Dropdown from '@quantumblack/kedro-ui/lib/components/dropdown';
 import MenuOption from '@quantumblack/kedro-ui/lib/components/menu-option';
@@ -13,23 +14,27 @@ import './pipeline-list.css';
  * @param {string} theme Kedro UI light/dark theme
  */
 export const PipelineList = ({
+  asyncDataSource,
   onUpdateActivePipeline,
   pipeline,
   theme,
   onToggleOpen
 }) => {
-  if (!pipeline.ids.length) {
+  if (!pipeline.ids.length && !asyncDataSource) {
     return null;
   }
   return (
-    <div className="pipeline-list">
+    <div
+      className={classnames('pipeline-list', {
+        'pipeline-list--disabled': !pipeline.ids.length
+      })}>
       <Dropdown
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
         theme={theme}
         width={null}
         onChanged={onUpdateActivePipeline}
-        defaultText={pipeline.name[pipeline.active]}>
+        defaultText={pipeline.name[pipeline.active] || 'Default'}>
         {pipeline.ids.map(id => (
           <MenuOption
             key={`pipeline-${id}`}
@@ -43,6 +48,7 @@ export const PipelineList = ({
 };
 
 export const mapStateToProps = state => ({
+  asyncDataSource: state.asyncDataSource,
   pipeline: state.pipeline,
   theme: state.theme
 });

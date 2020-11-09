@@ -18,12 +18,14 @@ describe('graph actions', () => {
       expect(store.getState().loading.graph).toBe(true);
     });
 
-    it('sets loading to false after finishing calculation', () => {
+    it('sets loading to false and graph visibility to true after finishing calculation', () => {
       const store = createStore(reducer, mockState.animals);
       return calculateGraph(getGraphInput(mockState.animals))(
         store.dispatch
       ).then(() => {
-        expect(store.getState().loading.graph).toBe(false);
+        const state = store.getState();
+        expect(state.loading.graph).toBe(false);
+        expect(state.visible.graph).toBe(true);
       });
     });
 

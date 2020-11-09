@@ -1,7 +1,7 @@
 import { getUrl } from '../utils';
 import loadJsonData from '../store/load-data';
 import { preparePipelineState } from '../store/initial-state';
-import { resetData } from './index';
+import { resetData, toggleGraph } from './index';
 
 /**
  * This file contains actions that update the active pipeline, and if loading data
@@ -117,7 +117,7 @@ export function loadPipelineData(pipelineID) {
     if (asyncDataSource) {
       dispatch(toggleLoading(true));
       // Remove the previous graph to show that a new pipeline is being loaded
-      dispatch(resetData(preparePipelineState('json')));
+      dispatch(toggleGraph(false));
       const url = getPipelineUrl({
         main: pipeline.main,
         active: pipelineID

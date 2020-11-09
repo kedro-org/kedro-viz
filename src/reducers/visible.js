@@ -1,4 +1,5 @@
 import {
+  TOGGLE_GRAPH,
   TOGGLE_EXPORT_MODAL,
   TOGGLE_LAYERS,
   TOGGLE_SIDEBAR,
@@ -7,6 +8,12 @@ import {
 
 function visibleReducer(visibleState = {}, action) {
   switch (action.type) {
+    case TOGGLE_GRAPH: {
+      return Object.assign({}, visibleState, {
+        graph: action.visible
+      });
+    }
+
     case TOGGLE_EXPORT_MODAL: {
       return Object.assign({}, visibleState, {
         exportModal: action.visible

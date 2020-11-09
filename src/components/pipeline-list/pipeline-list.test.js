@@ -33,6 +33,7 @@ describe('PipelineList', () => {
 
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.animals)).toEqual({
+      asyncDataSource: expect.any(Boolean),
       pipeline: {
         active: expect.any(String),
         main: expect.any(String),
