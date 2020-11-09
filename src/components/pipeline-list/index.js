@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import Dropdown from '@quantumblack/kedro-ui/lib/components/dropdown';
 import MenuOption from '@quantumblack/kedro-ui/lib/components/menu-option';
@@ -23,14 +24,17 @@ export const PipelineList = ({
     return null;
   }
   return (
-    <div className="pipeline-list">
+    <div
+      className={classnames('pipeline-list', {
+        'pipeline-list--disabled': !pipeline.ids.length
+      })}>
       <Dropdown
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
         theme={theme}
         width={null}
         onChanged={onUpdateActivePipeline}
-        defaultText={pipeline.name[pipeline.active] || ''}>
+        defaultText={pipeline.name[pipeline.active] || 'Default'}>
         {pipeline.ids.map(id => (
           <MenuOption
             key={`pipeline-${id}`}
