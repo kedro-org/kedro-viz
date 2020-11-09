@@ -13,12 +13,13 @@ import './pipeline-list.css';
  * @param {string} theme Kedro UI light/dark theme
  */
 export const PipelineList = ({
+  asyncDataSource,
   onUpdateActivePipeline,
   pipeline,
   theme,
   onToggleOpen
 }) => {
-  if (!pipeline.ids.length) {
+  if (!pipeline.ids.length && !asyncDataSource) {
     return null;
   }
   return (
@@ -43,6 +44,7 @@ export const PipelineList = ({
 };
 
 export const mapStateToProps = state => ({
+  asyncDataSource: state.asyncDataSource,
   pipeline: state.pipeline,
   theme: state.theme
 });
