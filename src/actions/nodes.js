@@ -79,14 +79,12 @@ export function loadNodeData(nodeID) {
 
     dispatch(toggleNodeClicked(nodeID));
 
-    if (asyncDataSource) {
-      if (!node.fetched[nodeID]) {
-        dispatch(toggleNodeDataLoading(true));
-        const url = getUrl('nodes', nodeID);
-        const nodeData = await loadJsonData(url);
-        dispatch(addNodeMetadata({ id: nodeID, data: nodeData }));
-        dispatch(toggleNodeDataLoading(false));
-      }
+    if (asyncDataSource && nodeID && !node.fetched[nodeID]) {
+      dispatch(toggleNodeDataLoading(true));
+      const url = getUrl('nodes', nodeID);
+      const nodeData = await loadJsonData(url);
+      dispatch(addNodeMetadata({ id: nodeID, data: nodeData }));
+      dispatch(toggleNodeDataLoading(false));
     }
   };
 }

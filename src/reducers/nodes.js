@@ -45,8 +45,7 @@ function nodeReducer(nodeState = {}, action) {
     }
 
     case ADD_NODE_METADATA: {
-      const {id, data} = action.data;
-      console.log('id', id)
+      const { id, data } = action.data;
       return updateState({
         fetched: Object.assign({}, nodeState.fetched, {
           [id]: true
