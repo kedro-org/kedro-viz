@@ -369,7 +369,7 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = node => {
-    this.props.loadNodeData(node.id);
+    this.props.onLoadNodeData(node.id);
     event.stopPropagation();
   };
 
@@ -406,7 +406,7 @@ export class FlowChart extends Component {
     const ENTER = 13;
     const ESCAPE = 27;
     if (event.keyCode === ENTER) {
-      this.onLoadNodeData(node);
+      this.handleNodeClick(node);
     }
     if (event.keyCode === ESCAPE) {
       this.handleChartClick();
