@@ -1,5 +1,7 @@
 import React from 'react';
 import $ from 'cheerio';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
@@ -184,6 +186,22 @@ describe('FlowChart', () => {
     expect(dispatch.mock.calls[2][0]).toEqual({
       zoom,
       type: 'UPDATE_ZOOM'
+    });
+  });
+});
+
+describe('map dispatch props to async actions', () => {
+  const middlewares = [thunk];
+  const mockStore = configureMockStore(middlewares);
+
+  const store = mockStore(mockState.json);
+
+  it('calls the right actions with nodeID for onLoadNodeData', async () => {
+    await mapDispatchToProps(store.dispatch).onLoadNodeData('123');
+    console.log('storelistener', store.getActions());
+    expect(store.getActions()[0]).toEqual({
+      nodeClicked: '123',
+      type: 'TOGGLE_NODE_CLICKED'
     });
   });
 });

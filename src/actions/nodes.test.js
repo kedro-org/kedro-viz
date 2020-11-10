@@ -8,6 +8,7 @@ import {
   addNodeMetadata,
   ADD_NODE_METADATA
 } from './nodes';
+import node_parameters from '../utils/data/node_parameters.mock.json';
 
 const parametersID = 'f1f1425b';
 
@@ -57,6 +58,24 @@ describe('node actions', () => {
         expect(state.node.fetched[node.id]).toEqual(true);
       });
 
+      it('should dispatch an action with the newly fetched data to update the store', async () => {
+        const store = createStore(reducer, mockState.json);
+        const { dispatch, getState } = store;
+        const node = { id: parametersID };
+        const storeListener = jest.fn();
+        const logDispatch = action => {
+          storeListener(action);
+          return dispatch(action);
+        };
+
+        await loadNodeData(node.id)(logDispatch, getState);
+
+        expect(storeListener.mock.calls[2][0]).toEqual({
+          type: ADD_NODE_METADATA,
+          data: { id: node.id, data: node_parameters }
+        });
+      });
+
       it('should set loading to false when complete', async () => {
         const store = createStore(reducer, mockState.json);
         const node = { id: parametersID };
@@ -66,26 +85,35 @@ describe('node actions', () => {
 
       it('should do nothing if the Node data is already fetched', async () => {
         const store = createStore(reducer, mockState.json);
-        const { dispatch, getState, subscribe } = store;
+        const { dispatch, getState } = store;
         const node = { id: parametersID };
         const storeListener = jest.fn();
+        const logDispatch = action => {
+          storeListener(action);
+          return dispatch(action);
+        };
 
-        subscribe(storeListener);
-        await loadNodeData(node.id)(dispatch, getState);
-        loadNodeData(node.id)(dispatch, getState);
         // The store would have been called 5 times: 4 times for the first round to fetch the node information,
         // one more time for toggleNodeCliced
+        await loadNodeData(node.id)(logDispatch, getState);
+        await loadNodeData(node.id)(logDispatch, getState);
+
         expect(storeListener).toHaveBeenCalledTimes(5);
+
+        expect(storeListener.mock.calls[4][0]).toEqual({
+          nodeClicked: 'f1f1425b',
+          type: 'TOGGLE_NODE_CLICKED'
+        });
       });
 
-      it('should do nothing if nodeID is not present', async () => {
+      it('should not make any API calls if there is no nodeID present', async () => {
         const store = createStore(reducer, mockState.json);
         const { dispatch, getState, subscribe } = store;
         const node = { id: null };
         const storeListener = jest.fn();
 
         subscribe(storeListener);
-        loadNodeData(node.id)(dispatch, getState);
+        await loadNodeData(node.id)(dispatch, getState);
         // the store should be called only once for 'toggleNodeClicked'
         expect(storeListener).toHaveBeenCalledTimes(1);
       });
