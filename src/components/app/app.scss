@@ -5,24 +5,10 @@
 .pipeline-icon {
   opacity: 0.7;
   transition: opacity 300ms ease;
+  fill: var(--color-default-alt);
 
-  .kui-theme--light & {
-    fill: $color-dark;
-  }
-
-  .kui-theme--dark & {
-    fill: $color-light;
-  }
-}
-
-.pipeline-icon--stroke {
-  .kui-theme--light & {
+  &--stroke {
     fill: none;
-    stroke: $color-dark;
-  }
-
-  .kui-theme--dark & {
-    fill: none;
-    stroke: $color-light;
+    stroke: var(--color-default-alt);
   }
 }
