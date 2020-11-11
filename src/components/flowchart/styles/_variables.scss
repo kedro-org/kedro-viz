@@ -38,6 +38,35 @@ $node-fill-light-export: #f0f1f3;
 $node-stroke-light-export: #6b6a6b;
 $edge-light-export: #686768;
 
+.kui-theme--light {
+  --node-icon-fill: #{$node-icon-fill-light};
+  --node-fill-default: #{$node-fill-light-default};
+  --node-stroke-default: #{$node-stroke-light-default};
+  --node-fill-active: #{$node-fill-light-active};
+  --node-stroke-active: #{$node-stroke-light-active};
+  --node-fill-selected: #{$node-fill-light-selected};
+  --node-stroke-selected: #{$node-stroke-light-selected};
+  --node-labeltext-fill: #{$node-labeltext-fill-light};
+  --edge-stroke: #{$edge-light};
+  --edge-arrowhead-fill: #{$edge-arrowhead-light};
+  --layer-fill: #{$layer-light};
+  --layer-text: #{rgba(white, 0.65)};
+
+  &.pipeline-graph--export {
+    --node-fill-default: #{$node-fill-light-export};
+    --node-stroke-default: #{$node-stroke-light-export};
+    --edge-stroke: #{$edge-light-export};
+    --edge-arrowhead-fill: #{$edge-light-export};
+  }
+
+  @media print {
+    --node-fill-default: #{$node-fill-light-export};
+    --node-stroke-default: #{$node-stroke-light-export};
+    --edge-stroke: #{$edge-light-export};
+    --edge-arrowhead-fill: #{$edge-light-export};
+  }
+}
+
 //-------------- DARK --------------//
 
 // Icon
@@ -65,3 +94,18 @@ $edge-arrowhead-dark: #cacaca;
 // Layer
 
 $layer-dark: mix($color-bg-dark-1, $color-bg-dark-2);
+
+.kui-theme--dark {
+  --node-icon-fill: #{$node-icon-fill-dark};
+  --node-fill-default: #{$node-fill-dark-default};
+  --node-stroke-default: #{$node-stroke-dark-default};
+  --node-fill-active: #{$node-fill-dark-active};
+  --node-stroke-active: #{$node-stroke-dark-active};
+  --node-fill-selected: #{$node-fill-dark-selected};
+  --node-stroke-selected: #{$node-stroke-dark-selected};
+  --node-labeltext-fill: #{$node-labeltext-fill-dark};
+  --edge-stroke: #{$edge-dark};
+  --edge-arrowhead-fill: #{$edge-arrowhead-dark};
+  --layer-fill: #{$layer-dark};
+  --layer-text: #{rgba(black, 0.65)};
+}
