@@ -50,7 +50,7 @@ $edge-light-export: #686768;
   --edge-stroke: #{$edge-light};
   --edge-arrowhead-fill: #{$edge-arrowhead-light};
   --layer-fill: #{$layer-light};
-  --layer-text: #{rgba(white, 0.65)};
+  --layer-text: #{rgba(black, 0.65)};
 
   &.pipeline-graph--export {
     --node-fill-default: #{$node-fill-light-export};
@@ -107,5 +107,5 @@ $layer-dark: mix($color-bg-dark-1, $color-bg-dark-2);
   --edge-stroke: #{$edge-dark};
   --edge-arrowhead-fill: #{$edge-arrowhead-dark};
   --layer-fill: #{$layer-dark};
-  --layer-text: #{rgba(black, 0.65)};
+  --layer-text: #{rgba(white, 0.65)};
 }
