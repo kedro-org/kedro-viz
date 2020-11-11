@@ -1,111 +1,50 @@
 @import '../../../styles/variables';
 
 /**
- * List of colour variables for the different parts of the flowchart
+ * Themed colour variables for the flowchart component
  */
 
-//-------------- LIGHT --------------//
-
-// Icon
-
-$node-icon-fill-light: $color-text-light;
-
-// Node bg
-
-$node-fill-light-default: #f0f1f3;
-$node-stroke-light-default: #c6cace;
-$node-fill-light-active: #c6e6fb;
-$node-stroke-light-active: #b2cada;
-$node-fill-light-selected: #aad8ff;
-$node-stroke-light-selected: $color-primary;
-
-// Label
-
-$node-labeltext-fill-light: $color-text-light;
-
-// Edge
-
-$edge-light: #888;
-$edge-arrowhead-light: #2a3b46;
-
-// Layer
-
-$layer-light: mix($color-bg-light-1, $color-bg-light-2);
-
-// Print/export styling
-
-$node-fill-light-export: #f0f1f3;
-$node-stroke-light-export: #6b6a6b;
-$edge-light-export: #686768;
-
 .kui-theme--light {
-  --node-icon-fill: #{$node-icon-fill-light};
-  --node-fill-default: #{$node-fill-light-default};
-  --node-stroke-default: #{$node-stroke-light-default};
-  --node-fill-active: #{$node-fill-light-active};
-  --node-stroke-active: #{$node-stroke-light-active};
-  --node-fill-selected: #{$node-fill-light-selected};
-  --node-stroke-selected: #{$node-stroke-light-selected};
-  --node-labeltext-fill: #{$node-labeltext-fill-light};
-  --edge-stroke: #{$edge-light};
-  --edge-arrowhead-fill: #{$edge-arrowhead-light};
-  --layer-fill: #{$layer-light};
+  --node-icon-fill: #{$color-text-light};
+  --node-fill-default: #f0f1f3;
+  --node-stroke-default: #c6cace;
+  --node-fill-active: #c6e6fb;
+  --node-stroke-active: #b2cada;
+  --node-fill-selected: #aad8ff;
+  --node-stroke-selected: #{$color-primary};
+  --node-labeltext-fill: #{$color-text-light};
+  --edge-stroke: #888;
+  --edge-arrowhead-fill: #2a3b46;
+  --layer-fill: #{mix($color-bg-light-1, $color-bg-light-2)};
   --layer-text: #{rgba(black, 0.65)};
 
+  @mixin export {
+    --node-fill-default: #f0f1f3;
+    --node-stroke-default: #6b6a6b;
+    --edge-stroke: #686768;
+    --edge-arrowhead-fill: #686768;
+  }
+
   &.pipeline-graph--export {
-    --node-fill-default: #{$node-fill-light-export};
-    --node-stroke-default: #{$node-stroke-light-export};
-    --edge-stroke: #{$edge-light-export};
-    --edge-arrowhead-fill: #{$edge-light-export};
+    @include export;
   }
 
   @media print {
-    --node-fill-default: #{$node-fill-light-export};
-    --node-stroke-default: #{$node-stroke-light-export};
-    --edge-stroke: #{$edge-light-export};
-    --edge-arrowhead-fill: #{$edge-light-export};
+    @include export;
   }
 }
 
-//-------------- DARK --------------//
-
-// Icon
-
-$node-icon-fill-dark: $color-text-dark;
-
-// Node bg
-
-$node-fill-dark-default: #2a3b46;
-$node-stroke-dark-default: #354854;
-$node-fill-dark-active: #124066;
-$node-stroke-dark-active: #234f73;
-$node-fill-dark-selected: #004d8c;
-$node-stroke-dark-selected: $color-primary;
-
-// Label
-
-$node-labeltext-fill-dark: $color-text-dark;
-
-// Edge
-
-$edge-dark: #666;
-$edge-arrowhead-dark: #cacaca;
-
-// Layer
-
-$layer-dark: mix($color-bg-dark-1, $color-bg-dark-2);
-
 .kui-theme--dark {
-  --node-icon-fill: #{$node-icon-fill-dark};
-  --node-fill-default: #{$node-fill-dark-default};
-  --node-stroke-default: #{$node-stroke-dark-default};
-  --node-fill-active: #{$node-fill-dark-active};
-  --node-stroke-active: #{$node-stroke-dark-active};
-  --node-fill-selected: #{$node-fill-dark-selected};
-  --node-stroke-selected: #{$node-stroke-dark-selected};
-  --node-labeltext-fill: #{$node-labeltext-fill-dark};
-  --edge-stroke: #{$edge-dark};
-  --edge-arrowhead-fill: #{$edge-arrowhead-dark};
-  --layer-fill: #{$layer-dark};
+  --node-icon-fill: #{$color-text-dark};
+  --node-fill-default: #2a3b46;
+  --node-stroke-default: #354854;
+  --node-fill-active: #124066;
+  --node-stroke-active: #234f73;
+  --node-fill-selected: #004d8c;
+  --node-stroke-selected: #{$color-primary};
+  --node-labeltext-fill: #{$color-text-dark};
+  --edge-stroke: #666;
+  --edge-arrowhead-fill: #cacaca;
+  --layer-fill: #{mix($color-bg-dark-1, $color-bg-dark-2)};
   --layer-text: #{rgba(white, 0.65)};
 }
