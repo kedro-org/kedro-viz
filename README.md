@@ -103,7 +103,7 @@ As a JavaScript React component, the project is designed to be used in two diffe
 The following flags are available to toggle experimental features:
 
 - `newgraph` - From release v3.4.0. Improved graphing algorithm. (default `false`)
-- `pipelines` - From release v3.5.0. Select from multiple pipelines (WIP). (default `false`)
+- `meta` - From release v3.7.0. Show node metadata panel on click. (default `false`)
 
 ### Setting flags
 
