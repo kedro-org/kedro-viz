@@ -1,4 +1,5 @@
 import { graph as worker, preventWorkerQueues } from '../utils/worker';
+import { toggleGraph } from './index';
 
 export const TOGGLE_GRAPH_LOADING = 'TOGGLE_GRAPH_LOADING';
 
@@ -51,6 +52,7 @@ export function calculateGraph(graphState) {
   return async function(dispatch) {
     dispatch(toggleLoading(true));
     const graph = await layoutWorker(graphState);
+    dispatch(toggleGraph(true));
     dispatch(toggleLoading(false));
     return dispatch(updateGraph(graph));
   };

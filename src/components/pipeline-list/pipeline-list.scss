@@ -2,6 +2,15 @@
 @import '../../styles/variables';
 
 .pipeline-list {
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+
+    > * {
+      pointer-events: none;
+    }
+  }
+
   .kui-dropdown {
     display: block;
     border: none;
