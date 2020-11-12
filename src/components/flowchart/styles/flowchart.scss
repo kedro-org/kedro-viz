@@ -16,10 +16,17 @@
   @media print {
     width: 100%;
     height: auto;
+  }
+}
 
-    #zoom-wrapper {
-      transform: inherit;
-    }
+.pipeline-zoom-wrapper {
+  &--hidden {
+    opacity: 0;
+  }
+
+  @media print {
+    transform: inherit;
+    opacity: 1;
   }
 }
 

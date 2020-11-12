@@ -18,6 +18,7 @@ export const createInitialState = () => ({
     pipeline: false
   },
   visible: {
+    graph: true,
     labelBtn: true,
     layerBtn: true,
     exportBtn: true,
