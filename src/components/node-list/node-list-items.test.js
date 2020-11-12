@@ -70,7 +70,7 @@ describe('node-list-selectors', () => {
 
   describe('getFilteredTagItems', () => {
     const tags = getTagData(mockState.animals);
-    const searchValue = 'g';
+    const searchValue = 'm';
     const filteredTagItems = getFilteredTagItems({
       tags,
       searchValue,
@@ -97,17 +97,28 @@ describe('node-list-selectors', () => {
 
     it('filters expected number of items', () => {
       expect(filteredTagItems.length).not.toBe(tags.length);
-      expect(filteredTagItems).toHaveLength(1);
+      expect(filteredTagItems).toHaveLength(2);
     });
 
     it('returns items of the correct format', () => {
       expect(filteredTagItems).toEqual(tagItems);
     });
 
-    it('returns items for each tag', () => {
-      filteredTagItems.forEach((tagItem, index) => {
-        expect(tagItem.name).toEqual(tags[index].name);
-        expect(tagItem.id).toEqual(tags[index].id);
+    it('returns the filtered items that contains the search value', () => {
+      filteredTagItems.forEach(tagItem => {
+        expect(tagItem.name).toContain(searchValue);
+        expect(tagItem.id).toContain(searchValue);
+      });
+    });
+
+    it('filtered tagItems names and ids should match that of original tag', () => {
+      filteredTagItems.forEach(tagItem => {
+        expect(tags.filter(tag => tag.name === tagItem.name)[0].name).toEqual(
+          tagItem.name
+        );
+        expect(tags.filter(tag => tag.id === tagItem.id)[0].id).toEqual(
+          tagItem.id
+        );
       });
     });
   });
