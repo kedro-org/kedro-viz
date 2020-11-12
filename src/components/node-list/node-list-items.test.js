@@ -45,12 +45,12 @@ describe('node-list-selectors', () => {
 
   describe('getFilteredTags', () => {
     const tags = getTagData(mockState.animals);
-    const searchValue = 'g';
+    const searchValue = 'm';
     const filteredTags = getFilteredTags({ tags, searchValue }).tag;
 
     it('returns expected number of tags', () => {
       expect(filteredTags.length).not.toBe(tags.length);
-      expect(filteredTags).toHaveLength(1);
+      expect(filteredTags).toHaveLength(2);
     });
 
     test.each(filteredTags.map(tag => tag.name))(
