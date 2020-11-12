@@ -21,8 +21,8 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Finish and release the new pipeline selector, which allows you to switch between different modular pipelines (#286, #294, #296, #297)
-- Add phase 1 of the new node metadata panel front-end - behind a feature flag, for now (#276)
+- Finish and release the new pipeline selector, which allows you to switch between different modular pipelines (#286, #294, #296, #297, #302, #303)
+- Add phase 1 of the new node metadata panel front-end - behind a feature flag, for now (#276, #303)
 - Improve SVG rendering performance (#290)
 
 ## Bug fixes and other changes
