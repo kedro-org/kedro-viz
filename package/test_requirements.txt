@@ -12,3 +12,4 @@ requests-mock>=1.6.0, <2.0
 flake8>=3.5, <3.8.0
 isort
 trufflehog>=2.1.0, <3.0
+urllib3>=1.20, <1.26 # to match botocore's requirements
