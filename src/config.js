@@ -18,6 +18,7 @@ export const sidebarWidth = {
 
 export const chartMinWidth = 1200;
 
+// Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
   newgraph: {
     description: 'Improved graphing algorithm',
