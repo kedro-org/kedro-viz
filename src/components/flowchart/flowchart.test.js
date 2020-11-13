@@ -160,6 +160,7 @@ describe('FlowChart', () => {
       nodeActive: expect.any(Object),
       nodeSelected: expect.any(Object),
       nodes: expect.any(Array),
+      visibleGraph: expect.any(Boolean),
       visibleSidebar: expect.any(Boolean)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);

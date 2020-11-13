@@ -52,6 +52,7 @@
 }
 
 .pipeline-nodelist-scrollbars {
+  flex-grow: 1;
   min-height: 400px;
 
   &:after {

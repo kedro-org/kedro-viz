@@ -448,7 +448,7 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { chartSize, layers } = this.props;
+    const { chartSize, layers, visibleGraph } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
     return (
@@ -462,7 +462,12 @@ export class FlowChart extends Component {
           width={outerWidth}
           height={outerHeight}
           ref={this.svgRef}>
-          <g id="zoom-wrapper" ref={this.wrapperRef}>
+          <g
+            id="zoom-wrapper"
+            className={classnames('pipeline-zoom-wrapper', {
+              'pipeline-zoom-wrapper--hidden': !visibleGraph
+            })}
+            ref={this.wrapperRef}>
             <defs>
               <marker
                 id="pipeline-arrowhead"
@@ -514,6 +519,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodes: state.graph.nodes || emptyNodes,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
+  visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   ...ownProps
 });

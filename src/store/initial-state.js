@@ -19,6 +19,7 @@ export const createInitialState = () => ({
     node: false
   },
   visible: {
+    graph: true,
     labelBtn: true,
     layerBtn: true,
     exportBtn: true,
