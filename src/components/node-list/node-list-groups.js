@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { loadState, saveState } from '../../store/helpers';
 import NodeListGroup from './node-list-group';
-import NodeListRow from './node-list-row';
 
 const storedState = loadState();
 
@@ -35,9 +34,8 @@ const NodeListGroups = ({
           const group = groups[typeId];
           return (
             <NodeListGroup
-              container="li"
-              childrenContainer="ul"
-              childrenClassName="pipeline-nodelist__list pipeline-nodelist__list--nested"
+              group={group}
+              items={items[group.id] || []}
               key={group.id}
               id={group.id}
               name={group.name}
@@ -49,32 +47,12 @@ const NodeListGroups = ({
               invisibleIcon={group.invisibleIcon}
               collapsed={Boolean(searchValue) ? false : collapsed[group.id]}
               onToggleCollapsed={onToggleGroupCollapsed}
-              onToggleChecked={onToggleGroupChecked}>
-              {(items[group.id] || []).map(item => (
-                <NodeListRow
-                  container="li"
-                  key={item.id}
-                  id={item.id}
-                  kind={group.kind}
-                  label={item.highlightedLabel}
-                  name={item.name}
-                  type={item.type}
-                  active={item.active}
-                  checked={item.checked}
-                  disabled={item.disabled}
-                  faded={item.faded}
-                  visible={item.visible}
-                  selected={item.selected}
-                  unset={item.unset}
-                  visibleIcon={item.visibleIcon}
-                  invisibleIcon={item.invisibleIcon}
-                  onClick={() => onItemClick(item)}
-                  onMouseEnter={() => onItemMouseEnter(item)}
-                  onMouseLeave={() => onItemMouseLeave(item)}
-                  onChange={e => onItemChange(item, !e.target.checked)}
-                />
-              ))}
-            </NodeListGroup>
+              onToggleChecked={onToggleGroupChecked}
+              onItemClick={onItemClick}
+              onItemChange={onItemChange}
+              onItemMouseEnter={onItemMouseEnter}
+              onItemMouseLeave={onItemMouseLeave}
+            />
           );
         })}
       </ul>
