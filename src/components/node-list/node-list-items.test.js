@@ -95,9 +95,14 @@ describe('node-list-selectors', () => {
       })
     ]);
 
-    it('filters expected number of items', () => {
+    it('filters expected number of items and the right tags', () => {
       expect(filteredTagItems.length).not.toBe(tags.length);
       expect(filteredTagItems).toHaveLength(2);
+
+      expect(filteredTagItems[0].name).toEqual('Medium');
+      expect(filteredTagItems[0].id).toEqual('medium');
+      expect(filteredTagItems[1].name).toEqual('Small');
+      expect(filteredTagItems[1].id).toEqual('small');
     });
 
     it('returns items of the correct format', () => {
@@ -108,17 +113,6 @@ describe('node-list-selectors', () => {
       filteredTagItems.forEach(tagItem => {
         expect(tagItem.name).toContain(searchValue);
         expect(tagItem.id).toContain(searchValue);
-      });
-    });
-
-    it('filtered tagItems names and ids should match that of original tag', () => {
-      filteredTagItems.forEach(tagItem => {
-        expect(tags.filter(tag => tag.name === tagItem.name)[0].name).toEqual(
-          tagItem.name
-        );
-        expect(tags.filter(tag => tag.id === tagItem.id)[0].id).toEqual(
-          tagItem.id
-        );
       });
     });
   });
