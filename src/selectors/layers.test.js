@@ -34,8 +34,8 @@ describe('Selectors', () => {
       }, {});
 
       nodes.forEach(node => {
-        // Wwe don't need to check y/height positions if the layer isn't there or if the 'layer' field does not exists ( this is the case for 'task' type nodes ).
-        if (!node.layer) {
+        // We don't need to check y/height positions if the layer field isn't there( this is the case for 'task' type nodes ).
+        if (node.layer === null || typeof node.layer === 'undefined') {
           return;
         }
 
