@@ -27,6 +27,8 @@ Please follow the established format:
 
 ## Bug fixes and other changes
   
+- Fix JS bug in Safari (#306)
+- Fix failing CI (#304, #305)
 - Don't run eslint against .json files on pre-commit (#292)
 - Use the same JSON mock data files for JS+Python end unit/e2e tests (#279)
 
