@@ -95,7 +95,7 @@ describe('node-list-selectors', () => {
       })
     ]);
 
-    it('filters expected number of items and the right tags', () => {
+    it('returns expected items matching the searchValue', () => {
       expect(filteredTagItems.length).not.toBe(tags.length);
       expect(filteredTagItems).toHaveLength(2);
 
