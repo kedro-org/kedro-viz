@@ -300,11 +300,11 @@ workflows:
       - win_build_38
       - deploy_demo:
           requires:
-            - build_36
-            - build_37
+            # - build_36
+            # - build_37
             - build_38
-            - win_build_36
-            - win_build_37
+            # - win_build_36
+            # - win_build_37
             - win_build_38
           filters:
             branches:
