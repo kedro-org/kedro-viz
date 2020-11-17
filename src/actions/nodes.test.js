@@ -101,7 +101,7 @@ describe('node actions', () => {
         expect(storeListener).toHaveBeenCalledTimes(5);
 
         expect(storeListener.mock.calls[4][0]).toEqual({
-          nodeClicked: 'f1f1425b',
+          nodeClicked: parametersID,
           type: 'TOGGLE_NODE_CLICKED'
         });
       });
