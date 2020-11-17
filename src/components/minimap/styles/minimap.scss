@@ -1,3 +1,4 @@
+@import './variables';
 @import './node';
 
 .pipeline-minimap__graph {
@@ -11,18 +12,10 @@
   left: 100%;
   width: 500px;
   height: 222px;
+  background: var(--minimap-bg);
+  box-shadow: 0 0 2px var(--minimap-shadow);
   transform: translate(-100%, -100%);
   transition: transform 300ms ease;
-
-  .kui-theme--light & {
-    background: #a6aeb6;
-    box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
-  }
-
-  .kui-theme--dark & {
-    background: #051116;
-    box-shadow: 0 0 2px rgba(255, 255, 255, 0.05);
-  }
 }
 
 .pipeline-minimap {
@@ -35,12 +28,5 @@
   cursor: move;
   fill: rgba(0, 0, 0, 0); /* Solid for pointer events */
   stroke-width: 1px;
-
-  .kui-theme--light & {
-    stroke: #d3dee3;
-  }
-
-  .kui-theme--dark & {
-    stroke: #8e8e90;
-  }
+  stroke: var(--minimap-viewport-stroke);
 }
