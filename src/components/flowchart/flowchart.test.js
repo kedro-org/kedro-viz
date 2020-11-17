@@ -1,5 +1,7 @@
 import React from 'react';
 import $ from 'cheerio';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
@@ -167,30 +169,40 @@ describe('FlowChart', () => {
   it('maps dispatch to props', () => {
     const dispatch = jest.fn();
 
-    mapDispatchToProps(dispatch).onToggleNodeClicked('123');
-    expect(dispatch.mock.calls[0][0]).toEqual({
-      nodeClicked: '123',
-      type: 'TOGGLE_NODE_CLICKED'
-    });
-
     mapDispatchToProps(dispatch).onToggleNodeHovered('123');
-    expect(dispatch.mock.calls[1][0]).toEqual({
+    expect(dispatch.mock.calls[0][0]).toEqual({
       nodeHovered: '123',
       type: 'TOGGLE_NODE_HOVERED'
     });
 
     const boundingClientRect = { x: 0, y: 0, width: 1000, height: 1000 };
     mapDispatchToProps(dispatch).onUpdateChartSize(boundingClientRect);
-    expect(dispatch.mock.calls[2][0]).toEqual({
+    expect(dispatch.mock.calls[1][0]).toEqual({
       chartSize: boundingClientRect,
       type: 'UPDATE_CHART_SIZE'
     });
 
     const zoom = { scale: 1, x: 0, y: 0 };
     mapDispatchToProps(dispatch).onUpdateZoom(zoom);
-    expect(dispatch.mock.calls[3][0]).toEqual({
+    expect(dispatch.mock.calls[2][0]).toEqual({
       zoom,
       type: 'UPDATE_ZOOM'
+    });
+  });
+});
+
+describe('map dispatch props to async actions', () => {
+  const middlewares = [thunk];
+  const mockStore = configureMockStore(middlewares);
+
+  const store = mockStore(mockState.json);
+
+  it('calls the right actions with nodeID for onLoadNodeData', async () => {
+    await mapDispatchToProps(store.dispatch).onLoadNodeData('123');
+    console.log('storelistener', store.getActions());
+    expect(store.getActions()[0]).toEqual({
+      nodeClicked: '123',
+      type: 'TOGGLE_NODE_CLICKED'
     });
   });
 });

@@ -32,6 +32,11 @@ describe('utils', () => {
       expect(getUrl('pipeline', id)).toEqual(`./api/pipelines/${id}`);
     });
 
+    it('should include the node ID in the url', () => {
+      const id = '123456';
+      expect(getUrl('nodes', id)).toEqual(`./api/nodes/${id}`);
+    });
+
     // This test exists because some of our users requested a relative path
     // so that that could run Kedro-Viz on a non-root URL
     it('should always return a relative path', () => {
