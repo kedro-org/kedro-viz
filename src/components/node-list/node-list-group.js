@@ -56,7 +56,6 @@ export const NodeListGroup = ({
       </NodeListRow>
     </h3>
     <LazyList
-      name={name}
       height={(start, end) => (end - start) * nodeListRowHeight}
       total={items.length}
       onChange={({ start, end, total }) =>
@@ -85,14 +84,14 @@ export const NodeListGroup = ({
           )}>
           <li
             className={modifiers('pipeline-nodelist__placeholder-upper', {
-              fade: start > 0
+              fade: start !== end && start > 0
             })}
             ref={upperRef}
             style={upperStyle}
           />
           <li
             className={modifiers('pipeline-nodelist__placeholder-lower', {
-              fade: end < total
+              fade: start !== end && end < total
             })}
             ref={lowerRef}
             style={lowerStyle}
