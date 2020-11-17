@@ -87,3 +87,9 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 }
+
+%sidebar {
+  background: var(--color-sidebar-background);
+  border-bottom: var(--color-sidebar-border);
+  box-shadow: var(--color-sidebar-shadow);
+}

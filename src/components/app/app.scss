@@ -25,6 +25,9 @@
   --color-bg-3: #{$color-bg-light-3};
   --color-bg-4: #{$color-bg-light-4};
   --color-bg-alt: #{$color-bg-light-alt};
+  --color-sidebar-background: #{$color-bg-light-3};
+  --color-sidebar-border: rgba(0, 0, 0, 0.05);
+  --color-sidebar-shadow: rgba(0, 0, 0, 0.07);
 }
 
 .kui-theme--dark {
@@ -39,4 +42,7 @@
   --color-bg-5: #{$color-bg-dark-5};
   --color-bg-6: #{$color-bg-dark-6};
   --color-bg-alt: #{$color-light};
+  --color-sidebar-background: #{$color-bg-dark-2};
+  --color-sidebar-border: rgba(0, 0, 0, 0.2);
+  --color-sidebar-shadow: rgba(0, 0, 0, 0.3);
 }

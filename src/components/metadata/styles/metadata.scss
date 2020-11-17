@@ -1,8 +1,18 @@
 @import '../../../styles/variables';
-@import '../../../styles/mixins';
+@import '../../../styles/extends';
+
+.kui-theme--light {
+  --color-metadata-bg: #{$color-bg-light-3};
+  --color-metadata-kind-token-bg: #{$color-bg-light-2};
+}
+
+.kui-theme--dark {
+  --color-metadata-bg: #{$color-bg-dark-5};
+  --color-metadata-kind-token-bg: #{$color-bg-dark-6};
+}
 
 .pipeline-metadata {
-  @include sidebarBase;
+  @extend %sidebar;
 
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
@@ -13,6 +23,7 @@
   max-width: $metadata-sidebar-width-open;
   padding: 6px 0 24px 0;
   overflow-y: auto;
+  background: var(--color-metadata-bg);
   transform: translateX(100%);
   transition: transform ease 0.4s;
 
@@ -22,14 +33,6 @@
 
   @media print {
     display: none;
-  }
-
-  .kui-theme--light & {
-    background: $color-bg-light-3;
-  }
-
-  .kui-theme--dark & {
-    background: $color-bg-dark-5;
   }
 }
 
@@ -65,14 +68,7 @@
   width: 30px;
   height: 30px;
   margin: 0 0.65em 0 -0.3em;
-
-  .kui-theme--light & {
-    fill: $color-text-light;
-  }
-
-  .kui-theme--dark & {
-    fill: $color-text-dark;
-  }
+  fill: var(--color-text);
 }
 
 .pipeline-metadata__title {
@@ -113,20 +109,13 @@
   display: inline-block;
   padding: 0.18em 0.6em 0.2em 0.6em;
   font-weight: 600;
+  background: var(--color-metadata-kind-token-bg);
 
   code & {
     padding: 0.4em 0.8em;
     font-weight: normal;
     font-size: 0.9em;
     font-family: Consolas, Monaco, 'Courier New', Courier, monospace;
-  }
-
-  .kui-theme--light & {
-    background: $color-bg-light-2;
-  }
-
-  .kui-theme--dark & {
-    background: $color-bg-dark-6;
   }
 }
 

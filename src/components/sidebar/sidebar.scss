@@ -1,8 +1,8 @@
 @import '../../styles/variables';
-@import '../../styles/mixins';
+@import '../../styles/extends';
 
 .pipeline-sidebar {
-  @include sidebarBase;
+  @extend %sidebar;
 
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
