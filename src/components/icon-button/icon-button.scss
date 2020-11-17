@@ -76,17 +76,9 @@
     left: -$triangle-size + 0.5;
     width: 0;
     height: 0;
-    border-color: transparent;
+    border-color: transparent var(--color-bg-alt) transparent transparent;
     border-style: solid;
     border-width: $triangle-size $triangle-size $triangle-size 0;
     content: '';
-
-    .kui-theme--light & {
-      border-right-color: $color-bg-light-alt;
-    }
-
-    .kui-theme--dark & {
-      border-right-color: $color-bg-dark-alt;
-    }
   }
 }
