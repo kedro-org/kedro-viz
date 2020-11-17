@@ -4,7 +4,7 @@ import { getClickedNodeMetaData } from '../../selectors/metadata';
 import { setup, mockState } from '../../utils/state.mock';
 import { addEdgeLinks } from '../../utils/graph/graph';
 
-const salmonNodeId = '4ffcf321';
+const salmonNodeId = '443cf06a';
 
 describe('MetaData', () => {
   // Add edge links, can be removed when new graph is default
@@ -50,23 +50,23 @@ describe('MetaData', () => {
     const wrapper = mount({ nodeId: salmonNodeId });
     const row = rowByLabel(wrapper, 'Inputs:');
     expect(textOf(rowValue(row))).toEqual([
-      'cat',
-      'dog',
-      'parameters',
-      'parameters_rabbit'
+      'Cat',
+      'Dog',
+      'Parameters',
+      'Params:rabbit'
     ]);
   });
 
   it('shows the node outputs', () => {
     const wrapper = mount({ nodeId: salmonNodeId });
     const row = rowByLabel(wrapper, 'Outputs:');
-    expect(textOf(rowValue(row))).toEqual(['horse', 'pig', 'sheep']);
+    expect(textOf(rowValue(row))).toEqual(['Horse', 'Sheep']);
   });
 
   it('shows the node tags', () => {
     const wrapper = mount({ nodeId: salmonNodeId });
     const row = rowByLabel(wrapper, 'Tags:');
-    expect(textOf(rowValue(row))).toEqual(['small']);
+    expect(textOf(rowValue(row))).toEqual(['Small']);
   });
 
   it('shows the node pipeline', () => {

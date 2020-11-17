@@ -48,7 +48,10 @@ from kedro_viz import server
 from kedro_viz.server import _allocate_port, _hash, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
 
-input_json_path = Path(__file__).parent / "test-data.json"
+input_json_path = (
+    Path(__file__).parents[2] / "src" / "utils" / "data" / "animals.mock.json"
+)
+
 EXPECTED_PIPELINE_DATA = json.loads(input_json_path.read_text())
 
 
@@ -87,15 +90,7 @@ def get_pipeline(name: str = None):
 
 def ds_pipeline():
     ds_pipeline = Pipeline(
-        [
-            node(
-                trout,
-                inputs=["pig", "sheep"],
-                outputs=["whale"],
-                name="trout",
-                tags=["small"],
-            )
-        ]
+        [node(trout, inputs=["pig", "sheep"], outputs=["whale"], name="trout")]
     )
     return ds_pipeline
 
@@ -500,7 +495,7 @@ def test_pipeline_flag(cli_runner, client):
                 "id": "e27376a9",
                 "name": "trout",
                 "pipelines": ["ds"],
-                "tags": ["small"],
+                "tags": [],
                 "type": "task",
             },
             {
@@ -509,7 +504,7 @@ def test_pipeline_flag(cli_runner, client):
                 "layer": "feature",
                 "name": "Pig",
                 "pipelines": ["ds"],
-                "tags": ["small"],
+                "tags": [],
                 "type": "data",
             },
             {
@@ -518,7 +513,7 @@ def test_pipeline_flag(cli_runner, client):
                 "layer": "primary",
                 "name": "Sheep",
                 "pipelines": ["ds"],
-                "tags": ["small"],
+                "tags": [],
                 "type": "data",
             },
             {
@@ -527,13 +522,13 @@ def test_pipeline_flag(cli_runner, client):
                 "layer": "model output",
                 "name": "Whale",
                 "pipelines": ["ds"],
-                "tags": ["small"],
+                "tags": [],
                 "type": "data",
             },
         ],
         "pipelines": [{"id": "ds", "name": "Ds"}],
         "selected_pipeline": "ds",
-        "tags": [{"id": "small", "name": "Small"}],
+        "tags": [],
     }
 
 
