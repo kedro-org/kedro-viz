@@ -543,21 +543,21 @@ def resource_not_found(e):
 
 
 def _get_task_metadata(node):
-    """Get a dictionary of task metadata: 'code', 'code_location' and 'docstring'.
-    For 'code_location', remove the path to the project from the full code location
+    """Get a dictionary of task metadata: 'code', 'filepath' and 'docstring'.
+    For 'filepath', remove the path to the project from the full code location
     before sending to JSON.
 
     Example:
         'code_full_path':   'path-to-project/project_root/path-to-code/node.py'
         'Path.cwd().parent':'path-to-project/'
-        'code_location':    'project_root/path-to-code/node.py''
+        'filepath':    'project_root/path-to-code/node.py''
 
     """
     task_metadata = {"code": inspect.getsource(node["obj"]._func)}
 
     code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
-    code_location = code_full_path.relative_to(Path.cwd().parent)
-    task_metadata["code_location"] = str(code_location)
+    filepath = code_full_path.relative_to(Path.cwd().parent)
+    task_metadata["filepath"] = str(filepath)
 
     docstring = inspect.getdoc(node["obj"]._func)
     if docstring:
@@ -569,8 +569,8 @@ def _get_dataset_metadata(node):
     dataset = node["obj"]
     if dataset:
         dataset_metadata = {
-            "dataset_type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
-            "dataset_location": str(dataset._describe().get("filepath")),
+            "type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
+            "filepath": str(dataset._describe().get("filepath")),
         }
     else:
         # dataset not persisted, so no metadata defined in catalog.yml.
