@@ -63,7 +63,9 @@ export default ({
       useCallback(() => {
         // Get the range of items visible in this frame
         const visibleRange = visibleRangeOf(
+          // The list container
           listRef.current,
+          // The list's scrolling parent container
           listRef.current?.offsetParent,
           buffer,
           total,
@@ -200,12 +202,13 @@ const rangeEqual = (rangeA, rangeB) =>
   rangeA[0] === rangeB[0] && rangeA[1] === rangeB[1];
 
 /**
- * Gets the range of items inside the container's screen bounds
- * @param {HTMLElement} element The target element (e.g. the list element)
- * @param {HTMLElement} container The container of the target (e.g. a scrolling element)
+ * Gets the range of items inside the container's screen bounds.
+ * Assumes a single fixed height for all child items.
+ * @param {HTMLElement} element The target element (e.g. list container)
+ * @param {?HTMLElement} container The clipping container of the target (e.g. scroll container)
  * @param {number} buffer A number [0...1] as a % of the container to render additionally
- * @param {number} childTotal The total count of all children in the target (e.g. the list rows)
- * @param {number} childHeight Height of a single child element (e.g. a single list row)
+ * @param {number} childTotal The total count of all children in the target (e.g. list row count)
+ * @param {number} childHeight Height of a single child element (e.g. height of one list row)
  * @returns {array} The calculated range of visible items as `[start, end]`
  */
 const visibleRangeOf = (
@@ -215,33 +218,56 @@ const visibleRangeOf = (
   childTotal,
   childHeight
 ) => {
-  // Check both elements exist
-  if (!element || !container) {
+  // Check element exists
+  if (!element) {
     return [0, 0];
   }
 
-  // Find element bounds
-  const rect = element.getBoundingClientRect();
+  // If no container use the element itself
+  if (!container) {
+    container = element;
+  }
+
+  // Find the clipping container bounds (e.g. scroll container)
   const clip = container.getBoundingClientRect();
+
+  // Find element bounds (e.g. list container inside scroll container)
+  const rect = element.getBoundingClientRect();
 
   // Find the number of items to buffer
   const bufferCount = Math.ceil((buffer * clip.height) / childHeight);
 
-  // When element is fully above the container
-  if (rect.bottom < clip.top) {
+  // When clip is fully above viewport or element is fully above clip
+  if (clip.bottom < 0 || rect.bottom < clip.top) {
+    // Only bottom part of the buffer in range
     return range(childTotal - bufferCount, childTotal, 0, childTotal);
   }
 
-  // When element is fully below the container
-  if (rect.top > clip.bottom) {
+  // Get the viewport bounds
+  const viewport = {
+    top: 0,
+    bottom: window.innerHeight || document.documentElement.clientHeight
+  };
+
+  // When clip is fully below viewport or element is fully below clip
+  if (clip.top > viewport.bottom || rect.top > clip.bottom) {
+    // Only top part of the buffer in range
     return range(0, bufferCount, 0, childTotal);
   }
 
-  // Find visible bounds by clipping element bounds on container bounds
-  const top = Math.min(Math.max(rect.top, clip.top), clip.bottom);
-  const bottom = Math.max(Math.min(rect.bottom, clip.bottom), clip.top);
+  // Find visible rendered bounds inside scroll clip and inside viewport clip
+  const top = Math.min(
+    Math.max(rect.top, clip.top, viewport.top),
+    clip.bottom,
+    viewport.bottom
+  );
+  const bottom = Math.max(
+    Math.min(rect.bottom, clip.bottom, viewport.bottom),
+    clip.top,
+    viewport.bottom
+  );
 
-  // Find the visible item range inside the visible bounds
+  // Find visible item range inside visible rendered bounds
   const start = Math.floor((top - rect.top) / childHeight);
   const end = Math.ceil((bottom - rect.top) / childHeight);
 
