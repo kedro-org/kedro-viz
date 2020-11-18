@@ -1,4 +1,5 @@
 @import '../../../styles/variables';
+@import '../../../styles/mixins';
 
 .pipeline-layer {
   opacity: 0;
@@ -18,14 +19,11 @@
   }
 }
 
-// Fixes transparent gradient bug in Safari:
-// https://css-tricks.com/thing-know-gradients-transparent-black/
-.kui-theme--light {
-  --layer-bg-transparent: #{rgba($color-bg-light-1, 0)};
-}
-.kui-theme--dark {
-  --layer-bg-transparent: #{rgba($color-bg-dark-1, 0)};
-}
+@include transparentColour(
+  '--layer-bg-transparent',
+  $color-bg-light-1,
+  $color-bg-dark-1
+);
 
 .pipeline-flowchart__layer-names {
   position: absolute;
