@@ -3,6 +3,7 @@ import { getVisibleEdges } from './edges';
 
 const getClickedNode = state => state.node.clicked;
 const getHoveredNode = state => state.node.hovered;
+const getLazyFlag = state => state.flags.lazy;
 
 /**
  * Get the node that should be used as the center of the set of linked nodes
@@ -10,8 +11,9 @@ const getHoveredNode = state => state.node.hovered;
  * @param {string} nodeID
  */
 export const getCentralNode = createSelector(
-  [getClickedNode, getHoveredNode],
-  (clickedNode, hoveredNode) => clickedNode || hoveredNode
+  [getClickedNode, getHoveredNode, getLazyFlag],
+  (clickedNode, hoveredNode, lazy) =>
+    lazy ? clickedNode : clickedNode || hoveredNode
 );
 
 /**
