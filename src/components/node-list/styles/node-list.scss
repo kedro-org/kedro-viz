@@ -8,6 +8,22 @@
 @import './row';
 @import './filter';
 
+.kui-theme--light {
+  --color-nodelist-row-active: $row-active-light;
+  --color-nodelist-row-selected: $row-selected-light;
+  --color-nodelist-filter-indicator-on: $filter-indicator-on-light;
+  --color-nodelist-filter-indicator-off: $filter-indicator-off-light;
+  --color-nodelist-highlight: #{darken($color-primary, 10%)};
+}
+
+.kui-theme--dark {
+  --color-nodelist-row-active: $row-active-dark;
+  --color-nodelist-row-selected: $row-selected-dark;
+  --color-nodelist-filter-indicator-on: $filter-indicator-on-dark;
+  --color-nodelist-filter-indicator-off: $filter-indicator-off-dark;
+  --color-nodelist-highlight: #{$color-primary};
+}
+
 .pipeline-nodelist {
   position: relative;
   display: flex;
@@ -27,16 +43,9 @@
     right: 0;
     bottom: 0;
     left: 0;
+    background: var(--color-bg-2);
     opacity: 0;
     content: '';
-
-    .kui-theme--light & {
-      background: $color-bg-light-2;
-    }
-
-    .kui-theme--dark & {
-      background: $color-bg-dark-2;
-    }
   }
 
   &--fade {

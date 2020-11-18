@@ -3,29 +3,16 @@
 @import '../../../styles/variables';
 @import './variables';
 
-.kui-theme--dark .pipeline-row__toggle-icon--kind-filter {
+.pipeline-row__toggle-icon--kind-filter {
   &.pipeline-row__toggle-icon--checked {
-    fill: $filter-indicator-on-light;
-    stroke: $filter-indicator-on-light;
+    fill: var(--color-nodelist-filter-indicator-on);
+    stroke: var(--color-nodelist-filter-indicator-on);
   }
 
   &.pipeline-row__toggle-icon--unchecked,
   &.pipeline-row__toggle-icon--unset {
     fill: none;
-    stroke: $filter-indicator-off-light;
-  }
-}
-
-.kui-theme--light .pipeline-row__toggle-icon--kind-filter {
-  &.pipeline-row__toggle-icon--checked {
-    fill: $filter-indicator-on-dark;
-    stroke: $filter-indicator-on-dark;
-  }
-
-  &.pipeline-row__toggle-icon--unchecked,
-  &.pipeline-row__toggle-icon--unset {
-    fill: none;
-    stroke: $filter-indicator-off-dark;
+    stroke: var(--color-nodelist-filter-indicator-off);
   }
 }
 
@@ -68,12 +55,11 @@
   .pipeline-nodelist__row:hover
   .pipeline-row__toggle-icon--kind-filter {
   opacity: 1;
-  fill: $filter-indicator-on-light;
-  stroke: $filter-indicator-on-light;
+  fill: $color-primary;
+  stroke: $color-primary;
 }
 
-.kui-theme--light .pipeline-row__toggle-icon--kind-filter,
-.kui-theme--dark .pipeline-row__toggle-icon--kind-filter {
+.pipeline-row__toggle-icon--kind-filter {
   // Fade indicator when unchecked or unset
   &.pipeline-row__toggle-icon--unchecked,
   &.pipeline-row__toggle-icon--unset {

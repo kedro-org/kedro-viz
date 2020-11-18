@@ -8,25 +8,13 @@
 
   &--active,
   &--visible:hover {
-    .kui-theme--light & {
-      background-color: $row-active-light;
-    }
-
-    .kui-theme--dark & {
-      background-color: $row-active-dark;
-    }
+    background-color: --color-nodelist-row-active;
   }
 
   &--selected,
   // additional selector required to increase specificity to override previous rule:
   &--visible#{&}--selected {
-    .kui-theme--light & {
-      background-color: $row-selected-light;
-    }
-
-    .kui-theme--dark & {
-      background-color: $row-selected-dark;
-    }
+    background-color: --color-nodelist-row-selected;
   }
 
   &--disabled {
@@ -39,14 +27,7 @@
   flex-shrink: 0;
   width: $row-icon-size;
   height: $row-icon-size;
-
-  .kui-theme--light & {
-    fill: $color-text-light;
-  }
-
-  .kui-theme--dark & {
-    fill: $color-text-dark;
-  }
+  fill: var(--color-text);
 
   &--disabled {
     opacity: 0.1;
@@ -114,39 +95,16 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 
-  .kui-theme--light & {
-    color: rgba($color-dark, 0.8);
+  &--faded {
+    opacity: 0.65;
   }
 
-  .kui-theme--dark & {
-    color: rgba($color-light, 0.8);
-  }
-
-  .kui-theme--dark &--faded {
-    color: rgba($color-light, 0.55);
-  }
-
-  .kui-theme--light &--faded {
-    color: rgba($color-dark, 0.55);
-  }
-
-  .kui-theme--dark &--disabled {
-    color: rgba($color-light, 0.25);
-  }
-
-  .kui-theme--light &--disabled {
-    color: rgba($color-dark, 0.25);
-  }
-
-  .kui-theme--dark & b {
-    color: $color-primary;
-  }
-
-  .kui-theme--light & b {
-    color: darken($color-primary, 10%);
+  &--disabled {
+    opacity: 0.3;
   }
 
   b {
+    color: var(--color-nodelist-highlight);
     font-weight: normal;
   }
 
