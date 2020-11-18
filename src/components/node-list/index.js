@@ -98,7 +98,7 @@ const NodeListProvider = ({
       const tagItems = items[type] || [];
       const someTagSet = tagItems.some(tagItem => !tagItem.unset);
       const allTagsValue = someTagSet ? undefined : true;
-      tagItems.forEach(tag => onToggleTagFilter(tag.id, allTagsValue));
+      onToggleTagFilter(tagItems.map(tag => tag.id), allTagsValue);
     } else {
       onToggleTypeDisabled(type, checked);
     }
@@ -112,10 +112,10 @@ const NodeListProvider = ({
 
     if (shouldResetTags) {
       // Unset all tags
-      tags.forEach(tag => onToggleTagFilter(tag.id, undefined));
+      onToggleTagFilter(tags.map(tag => tag.id), undefined);
     } else {
       // Toggle the tag
-      onToggleTagFilter(tagItem.id, !wasChecked);
+      onToggleTagFilter([tagItem.id], !wasChecked);
     }
 
     // Reset node selection
@@ -161,11 +161,11 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
-  onToggleTagActive: (tagID, active) => {
-    dispatch(toggleTagActive(tagID, active));
+  onToggleTagActive: (tagIDs, active) => {
+    dispatch(toggleTagActive(tagIDs, active));
   },
-  onToggleTagFilter: (tagID, enabled) => {
-    dispatch(toggleTagFilter(tagID, enabled));
+  onToggleTagFilter: (tagIDs, enabled) => {
+    dispatch(toggleTagFilter(tagIDs, enabled));
   },
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));
