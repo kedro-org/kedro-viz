@@ -1,18 +1,5 @@
 @import '../../styles/variables';
 
-//--- Reusable site-wide styles --//
-
-.pipeline-icon {
-  opacity: 0.7;
-  transition: opacity 300ms ease;
-  fill: var(--color-default-alt);
-
-  &--stroke {
-    fill: none;
-    stroke: var(--color-default-alt);
-  }
-}
-
 //-- Theme colours as CSS Custom Properties --//
 
 .kui-theme--light {
@@ -45,4 +32,17 @@
   --color-sidebar-background: #{$color-bg-dark-2};
   --color-sidebar-border: rgba(0, 0, 0, 0.2);
   --color-sidebar-shadow: rgba(0, 0, 0, 0.3);
+}
+
+//--- Reusable site-wide styles --//
+
+.pipeline-icon {
+  opacity: 0.7;
+  transition: opacity 300ms ease;
+  fill: var(--color-default-alt);
+
+  &--stroke {
+    fill: none;
+    stroke: var(--color-default-alt);
+  }
 }
