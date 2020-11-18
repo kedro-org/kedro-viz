@@ -114,10 +114,21 @@ describe('actions', () => {
     const active = false;
     const expectedAction = {
       type: TOGGLE_TAG_ACTIVE,
-      tagID,
+      tagIDs: [tagID],
       active
     };
     expect(toggleTagActive(tagID, active)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle an array of tags active state on/off', () => {
+    const tagIDs = ['12345', '67890'];
+    const active = false;
+    const expectedAction = {
+      type: TOGGLE_TAG_ACTIVE,
+      tagIDs,
+      active
+    };
+    expect(toggleTagActive(tagIDs, active)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle a tag on/off', () => {
@@ -125,10 +136,21 @@ describe('actions', () => {
     const enabled = false;
     const expectedAction = {
       type: TOGGLE_TAG_FILTER,
-      tagID,
+      tagIDs: [tagID],
       enabled
     };
     expect(toggleTagFilter(tagID, enabled)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle an array of tags on/off', () => {
+    const tagIDs = ['12345', '67890'];
+    const enabled = false;
+    const expectedAction = {
+      type: TOGGLE_TAG_FILTER,
+      tagIDs,
+      enabled
+    };
+    expect(toggleTagFilter(tagIDs, enabled)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle the theme', () => {

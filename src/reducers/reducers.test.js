@@ -120,7 +120,7 @@ describe('Reducer', () => {
     it('should toggle the given tag active', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TAG_ACTIVE,
-        tagID: 'huge',
+        tagIDs: ['huge'],
         active: true
       });
       expect(newState.tag.active).toEqual({ huge: true });
@@ -131,7 +131,7 @@ describe('Reducer', () => {
     it('should disable a given tag', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TAG_FILTER,
-        tagID: 'small',
+        tagIDs: ['small'],
         enabled: true
       });
       expect(newState.tag.enabled).toEqual({ small: true });
@@ -212,9 +212,7 @@ describe('Reducer', () => {
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
-      expect(newState.node.code[nodeId]).toEqual(
-        node_task.code
-      );
+      expect(newState.node.code[nodeId]).toEqual(node_task.code);
       expect(newState.node.codeLocation[nodeId]).toEqual(
         node_task.code_location
       );

@@ -1,6 +1,6 @@
 import { mockState } from '../utils/state.mock';
 import { getTagData, getTagCount } from './tags';
-import { toggleTagFilter } from '../actions';
+import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
 
 const getTagIDs = state => state.tag.ids;
