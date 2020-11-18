@@ -7,7 +7,7 @@ import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import { getNodeActive } from '../../selectors/nodes';
 
-// The exact fixed height of a row
+// The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 36.59375;
 
 /**
