@@ -8,13 +8,13 @@
 
   &--active,
   &--visible:hover {
-    background-color: --color-nodelist-row-active;
+    background-color: var(--color-nodelist-row-active);
   }
 
   &--selected,
   // additional selector required to increase specificity to override previous rule:
   &--visible#{&}--selected {
-    background-color: --color-nodelist-row-selected;
+    background-color: var(--color-nodelist-row-selected);
   }
 
   &--disabled {
