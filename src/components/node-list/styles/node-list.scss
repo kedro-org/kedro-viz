@@ -9,18 +9,18 @@
 @import './filter';
 
 .kui-theme--light {
-  --color-nodelist-row-active: $row-active-light;
-  --color-nodelist-row-selected: $row-selected-light;
-  --color-nodelist-filter-indicator-on: $filter-indicator-on-light;
-  --color-nodelist-filter-indicator-off: $filter-indicator-off-light;
+  --color-nodelist-row-active: #{$row-active-light};
+  --color-nodelist-row-selected: #{$row-selected-light};
+  --color-nodelist-filter-indicator-on: #{$filter-indicator-on-light};
+  --color-nodelist-filter-indicator-off: #{$filter-indicator-off-light};
   --color-nodelist-highlight: #{darken($color-primary, 10%)};
 }
 
 .kui-theme--dark {
-  --color-nodelist-row-active: $row-active-dark;
-  --color-nodelist-row-selected: $row-selected-dark;
-  --color-nodelist-filter-indicator-on: $filter-indicator-on-dark;
-  --color-nodelist-filter-indicator-off: $filter-indicator-off-dark;
+  --color-nodelist-row-active: #{$row-active-dark};
+  --color-nodelist-row-selected: #{$row-selected-dark};
+  --color-nodelist-filter-indicator-on: #{$filter-indicator-on-dark};
+  --color-nodelist-filter-indicator-off: #{$filter-indicator-off-dark};
   --color-nodelist-highlight: #{$color-primary};
 }
 
