@@ -17,13 +17,27 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+# Release 3.7.0
+
+## Major features and improvements
+
+- Finish and release the new pipeline selector, which allows you to switch between different modular pipelines (#286, #294, #296, #297, #302, #303)
+- Add phase 1 of the new node metadata panel front-end - behind a feature flag, for now (#276, #303)
+- Improve SVG rendering performance (#290)
+
+## Bug fixes and other changes
+  
+- Fix JS bug in Safari (#306)
+- Fix failing CI (#304, #305)
+- Don't run eslint against .json files on pre-commit (#292)
+- Use the same JSON mock data files for JS+Python end unit/e2e tests (#279)
+
 # Release 3.6.0
 
 ## Major features and improvements
 
 - Redesign main sidebar (#236, #283) 
 - Drop Kedro 0.14.* support (#277)
-
 
 ## Bug fixes and other changes
 

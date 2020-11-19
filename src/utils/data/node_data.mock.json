@@ -1,0 +1,4 @@
+{
+  "dataset_location": "/Users/Documents/project-src/test/data/01_raw/iris.csv",
+  "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+}

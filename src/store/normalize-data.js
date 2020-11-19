@@ -19,7 +19,14 @@ export const createInitialPipelineState = () => ({
     disabled: {},
     pipelines: {},
     clicked: null,
-    hovered: null
+    hovered: null,
+    fetched: {},
+    code: {},
+    codeLocation: {},
+    docString: {},
+    parameters: {},
+    dataset_location: {},
+    dataset_type: {}
   },
   nodeType: {
     ids: ['task', 'data', 'parameters'],
@@ -113,6 +120,13 @@ const addNode = state => node => {
     ? arrayToObject(node.pipelines, () => true)
     : {};
   state.node.tags[id] = node.tags || [];
+  // supports for metadata in case it exists on initial load
+  state.node.code[id] = node.code;
+  state.node.codeLocation[id] = node.codeLocation;
+  state.node.docString[id] = node.docString;
+  state.node.parameters[id] = node.parameters;
+  state.node.dataset_location[id] = node.dataset_location;
+  state.node.dataset_type[id] = node.dataset_type;
 };
 
 /**

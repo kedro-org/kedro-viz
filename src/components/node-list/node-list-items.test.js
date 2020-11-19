@@ -24,7 +24,7 @@ const ungroupNodes = groupedNodes =>
 describe('node-list-selectors', () => {
   describe('getFilteredNodes', () => {
     const nodes = getGroupedNodes(mockState.animals);
-    let searchValue = 'bear';
+    let searchValue = 'Bear';
     const { filteredNodes } = getFilteredNodes({ nodes, searchValue });
     const nodeList = ungroupNodes(filteredNodes);
 
@@ -45,7 +45,7 @@ describe('node-list-selectors', () => {
 
   describe('getFilteredTags', () => {
     const tags = getTagData(mockState.animals);
-    const searchValue = 'g';
+    const searchValue = 'm';
     const filteredTags = getFilteredTags({ tags, searchValue }).tag;
 
     it('returns expected number of tags', () => {
@@ -70,7 +70,7 @@ describe('node-list-selectors', () => {
 
   describe('getFilteredTagItems', () => {
     const tags = getTagData(mockState.animals);
-    const searchValue = 'g';
+    const searchValue = 'm';
     const filteredTagItems = getFilteredTagItems({
       tags,
       searchValue,
@@ -95,19 +95,24 @@ describe('node-list-selectors', () => {
       })
     ]);
 
-    it('filters expected number of items', () => {
+    it('returns expected items matching the searchValue', () => {
       expect(filteredTagItems.length).not.toBe(tags.length);
       expect(filteredTagItems).toHaveLength(2);
+
+      expect(filteredTagItems[0].name).toEqual('Medium');
+      expect(filteredTagItems[0].id).toEqual('medium');
+      expect(filteredTagItems[1].name).toEqual('Small');
+      expect(filteredTagItems[1].id).toEqual('small');
     });
 
     it('returns items of the correct format', () => {
       expect(filteredTagItems).toEqual(tagItems);
     });
 
-    it('returns items for each tag', () => {
-      filteredTagItems.forEach((tagItem, index) => {
-        expect(tagItem.name).toEqual(tags[index].name);
-        expect(tagItem.id).toEqual(tags[index].id);
+    it('returns the filtered items that contains the search value', () => {
+      filteredTagItems.forEach(tagItem => {
+        expect(tagItem.name).toContain(searchValue);
+        expect(tagItem.id).toContain(searchValue);
       });
     });
   });

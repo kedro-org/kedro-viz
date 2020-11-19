@@ -6,7 +6,7 @@ import { select, event } from 'd3-selection';
 import { interpolate } from 'd3-interpolate';
 import { zoom, zoomIdentity, zoomTransform } from 'd3-zoom';
 import { updateChartSize, updateZoom } from '../../actions';
-import { toggleNodeClicked, toggleNodeHovered } from '../../actions/nodes';
+import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
@@ -369,7 +369,7 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = node => {
-    this.props.onToggleNodeClicked(node.id);
+    this.props.onLoadNodeData(node.id);
     event.stopPropagation();
   };
 
@@ -377,7 +377,7 @@ export class FlowChart extends Component {
    * Remove a node's focus state and dim linked nodes
    */
   handleChartClick = () => {
-    this.props.onToggleNodeClicked(null);
+    this.props.onLoadNodeData(null);
   };
 
   /**
@@ -525,8 +525,8 @@ export const mapStateToProps = (state, ownProps) => ({
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
-  onToggleNodeClicked: nodeClicked => {
-    dispatch(toggleNodeClicked(nodeClicked));
+  onLoadNodeData: nodeClicked => {
+    dispatch(loadNodeData(nodeClicked));
   },
   onToggleNodeHovered: nodeHovered => {
     dispatch(toggleNodeHovered(nodeHovered));

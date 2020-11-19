@@ -15,16 +15,12 @@ describe('getLinkedNodes function', () => {
 
   describe('should return true for ancestor/descendant nodes', () => {
     test.each([
-      ['salmon', '4ffcf321'],
-      ['pig', '2cd4ba93'],
-      ['trout', '7196f150'],
       ['whale', '1769e230'],
       ['horse', '091b5035'],
       ['sheep', '6525f2e6'],
       ['cat', '9d989e8d'],
       ['dog', 'e4951252'],
-      ['parameters', 'f1f1425b'],
-      ['parameters_rabbit', '2a31900d']
+      ['parameters', 'f1f1425b']
     ])('node %s should be true', (name, id) => {
       expect(linkedNodes[id]).toBe(true);
     });
