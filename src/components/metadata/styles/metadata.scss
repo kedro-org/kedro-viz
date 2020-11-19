@@ -78,7 +78,6 @@
   font-size: 1.33em;
   line-height: 1.6;
   word-break: break-word;
-  opacity: 0.85;
 }
 
 .pipeline-metadata__list {
@@ -88,7 +87,7 @@
 .pipeline-metadata__label {
   margin-bottom: 0.7em;
   font-weight: normal;
-  opacity: 0.55;
+  opacity: 0.65;
   user-select: none;
 }
 
@@ -102,7 +101,6 @@
   margin-right: auto;
   line-height: 1.5;
   word-break: break-word;
-  opacity: 0.85;
 }
 
 .pipeline-metadata__value--kind-token {
@@ -170,7 +168,6 @@ $list-inline-spacing: 0.2em;
   position: absolute;
   top: 0;
   left: 0;
-  opacity: 0.85;
 }
 
 .pipeline-metadata__copy-message--no-visible {
@@ -178,10 +175,10 @@ $list-inline-spacing: 0.2em;
 }
 
 .pipeline-metadata__copy-button:hover {
+  color: var(--color-default-alt);
   opacity: 1;
 }
 
 .pipeline-metadata__copy-button:active {
   transform: translateY(1px);
-  opacity: 0.85;
 }
