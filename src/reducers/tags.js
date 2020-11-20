@@ -1,30 +1,28 @@
 import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
 
-const activeChanges = action =>
-  action.tagIDs.reduce((result, tagID) => {
-    result[tagID] = action.active;
-    return result;
-  }, {});
-
-const enabledChanges = action =>
-  action.tagIDs.reduce((result, tagID) => {
-    result[tagID] = action.enabled;
-    return result;
-  }, {});
-
 function tagReducer(tagState = {}, action) {
   const updateState = newState => Object.assign({}, tagState, newState);
+
+  /**
+   * Batch update tags from an array of tag IDs
+   * @param {string} key Tag action value prop
+   */
+  const batchChanges = key =>
+    action.tagIDs.reduce((result, tagID) => {
+      result[tagID] = action[key];
+      return result;
+    }, {});
 
   switch (action.type) {
     case TOGGLE_TAG_ACTIVE: {
       return updateState({
-        active: Object.assign({}, tagState.active, activeChanges(action))
+        active: Object.assign({}, tagState.active, batchChanges('active'))
       });
     }
 
     case TOGGLE_TAG_FILTER: {
       return updateState({
-        enabled: Object.assign({}, tagState.enabled, enabledChanges(action))
+        enabled: Object.assign({}, tagState.enabled, batchChanges('enabled'))
       });
     }
 
