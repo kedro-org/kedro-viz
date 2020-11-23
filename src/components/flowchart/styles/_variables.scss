@@ -6,7 +6,7 @@
 
 .kui-theme--light {
   --node-icon-fill: #{$color-text-light};
-  --node-fill-default: #f0f1f3;
+  --node-fill-default: #{$color-bg-light-3};
   --node-stroke-default: #c6cace;
   --node-fill-active: #c6e6fb;
   --node-stroke-active: #b2cada;
@@ -14,12 +14,12 @@
   --node-stroke-selected: #{$color-primary};
   --node-labeltext-fill: #{$color-text-light};
   --edge-stroke: #888;
-  --edge-arrowhead-fill: #2a3b46;
+  --edge-arrowhead-fill: #{$color-bg-dark-6};
   --layer-fill: #{mix($color-bg-light-1, $color-bg-light-2)};
   --layer-text: #{rgba(black, 0.65)};
 
   @mixin export {
-    --node-fill-default: #f0f1f3;
+    --node-fill-default: #{$color-bg-light-3};
     --node-stroke-default: #6b6a6b;
     --edge-stroke: #686768;
     --edge-arrowhead-fill: #686768;
@@ -36,7 +36,7 @@
 
 .kui-theme--dark {
   --node-icon-fill: #{$color-text-dark};
-  --node-fill-default: #2a3b46;
+  --node-fill-default: #{$color-bg-dark-6};
   --node-stroke-default: #354854;
   --node-fill-active: #124066;
   --node-stroke-active: #234f73;
