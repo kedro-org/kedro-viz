@@ -1,6 +1,14 @@
 @import '../../styles/variables';
 @import '../../styles/extends';
 
+.kui-theme--light {
+  --minimap-toolbar-active: #{$color-bg-light-3};
+}
+
+.kui-theme--dark {
+  --minimap-toolbar-active: #{$color-bg-dark-4};
+}
+
 .pipeline-minimap-toolbar {
   display: block;
   margin-top: auto;
@@ -14,13 +22,7 @@
 }
 
 .pipeline-minimap-button.pipeline-icon-toolbar__button--active {
-  .kui-theme--light & {
-    background: $color-bg-light-3;
-  }
-
-  .kui-theme--dark & {
-    background: $color-bg-dark-4;
-  }
+  background: var(--minimap-toolbar-active);
 }
 
 .pipeline-minimap-button--map {
@@ -31,15 +33,8 @@
   display: block;
   width: 100%;
   padding: 6px 8px 6px;
+  color: var(--color-text);
   font-weight: bold;
   font-size: 10px;
   text-align: center;
-
-  .kui-theme--light & {
-    color: $color-text-dark-alt;
-  }
-
-  .kui-theme--dark & {
-    color: $color-text-dark;
-  }
 }

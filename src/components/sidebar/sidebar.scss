@@ -1,8 +1,8 @@
 @import '../../styles/variables';
-@import '../../styles/mixins';
+@import '../../styles/extends';
 
 .pipeline-sidebar {
-  @include sidebarBase;
+  @extend %sidebar;
 
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
@@ -40,20 +40,13 @@
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
+  background: var(--color-bg-3);
   visibility: hidden;
   transition: visibility 0.3s;
 
   .pipeline-sidebar--visible & {
     visibility: visible;
     transition: visibility 0s;
-  }
-
-  .kui-theme--light & {
-    background: $color-bg-light-3;
-  }
-
-  .kui-theme--dark & {
-    background: $color-bg-dark-3;
   }
 }
 
@@ -65,12 +58,5 @@
   align-items: center;
   width: $sidebar-width-closed;
   height: 100%;
-
-  .kui-theme--light & {
-    background: $color-bg-light-2;
-  }
-
-  .kui-theme--dark & {
-    background: $color-bg-dark-2;
-  }
+  background: var(--color-bg-2);
 }

@@ -1,67 +1,50 @@
 @import '../../../styles/variables';
 
 /**
- * List of colour variables for the different parts of the flowchart
+ * Themed colour variables for the flowchart component
  */
 
-//-------------- LIGHT --------------//
+.kui-theme--light {
+  --node-icon-fill: #{$color-text-light};
+  --node-fill-default: #{$color-bg-light-3};
+  --node-stroke-default: #c6cace;
+  --node-fill-active: #c6e6fb;
+  --node-stroke-active: #b2cada;
+  --node-fill-selected: #aad8ff;
+  --node-stroke-selected: #{$color-primary};
+  --node-labeltext-fill: #{$color-text-light};
+  --edge-stroke: #888;
+  --edge-arrowhead-fill: #{$color-bg-dark-6};
+  --layer-fill: #{mix($color-bg-light-1, $color-bg-light-2)};
+  --layer-text: #{rgba(black, 0.65)};
 
-// Icon
+  @mixin export {
+    --node-fill-default: #{$color-bg-light-3};
+    --node-stroke-default: #6b6a6b;
+    --edge-stroke: #686768;
+    --edge-arrowhead-fill: #686768;
+  }
 
-$node-icon-fill-light: $color-text-light;
+  &.pipeline-graph--export {
+    @include export;
+  }
 
-// Node bg
+  @media print {
+    @include export;
+  }
+}
 
-$node-fill-light-default: #f0f1f3;
-$node-stroke-light-default: #c6cace;
-$node-fill-light-active: #c6e6fb;
-$node-stroke-light-active: #b2cada;
-$node-fill-light-selected: #aad8ff;
-$node-stroke-light-selected: $color-primary;
-
-// Label
-
-$node-labeltext-fill-light: $color-text-light;
-
-// Edge
-
-$edge-light: #888;
-$edge-arrowhead-light: #2a3b46;
-
-// Layer
-
-$layer-light: mix($color-bg-light-1, $color-bg-light-2);
-
-// Print/export styling
-
-$node-fill-light-export: #f0f1f3;
-$node-stroke-light-export: #6b6a6b;
-$edge-light-export: #686768;
-
-//-------------- DARK --------------//
-
-// Icon
-
-$node-icon-fill-dark: $color-text-dark;
-
-// Node bg
-
-$node-fill-dark-default: #2a3b46;
-$node-stroke-dark-default: #354854;
-$node-fill-dark-active: #124066;
-$node-stroke-dark-active: #234f73;
-$node-fill-dark-selected: #004d8c;
-$node-stroke-dark-selected: $color-primary;
-
-// Label
-
-$node-labeltext-fill-dark: $color-text-dark;
-
-// Edge
-
-$edge-dark: #666;
-$edge-arrowhead-dark: #cacaca;
-
-// Layer
-
-$layer-dark: mix($color-bg-dark-1, $color-bg-dark-2);
+.kui-theme--dark {
+  --node-icon-fill: #{$color-text-dark};
+  --node-fill-default: #{$color-bg-dark-6};
+  --node-stroke-default: #354854;
+  --node-fill-active: #124066;
+  --node-stroke-active: #234f73;
+  --node-fill-selected: #004d8c;
+  --node-stroke-selected: #{$color-primary};
+  --node-labeltext-fill: #{$color-text-dark};
+  --edge-stroke: #666;
+  --edge-arrowhead-fill: #cacaca;
+  --layer-fill: #{mix($color-bg-dark-1, $color-bg-dark-2)};
+  --layer-text: #{rgba(white, 0.65)};
+}

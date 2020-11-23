@@ -38,6 +38,7 @@
   margin-right: $toggle-margin-right;
   padding: 0;
   color: inherit;
+  color: var(--color-default-alt);
   font-size: 1.16em;
   font-family: inherit;
   line-height: 1em;
@@ -59,23 +60,12 @@
 
   &:before {
     font-size: 1.5em;
+    opacity: 0.55;
     content: '▾';
   }
 
-  .kui-theme--light &:before {
-    color: rgba($color-dark, 0.55);
-  }
-
-  .kui-theme--dark &:before {
-    color: rgba($color-light, 0.55);
-  }
-
-  .kui-theme--light &:hover:before {
-    color: $color-dark;
-  }
-
-  .kui-theme--dark &:hover:before {
-    color: $color-light;
+  &:hover:before {
+    opacity: 1;
   }
 
   &--alt {

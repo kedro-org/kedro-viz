@@ -18,23 +18,12 @@
   }
 
   .kui-searchbar .kui-icon__graphics {
-    .kui-theme--dark & {
-      fill: rgba($color-light, 0.45);
-    }
-
-    .kui-theme--light & {
-      fill: rgba($color-dark, 0.45);
-    }
+    opacity: 0.45;
+    fill: var(--color-default-alt) !important;
   }
 
   .kui-searchbar--focused .kui-icon__graphics {
-    .kui-theme--dark & {
-      fill: rgba($color-light, 0.75);
-    }
-
-    .kui-theme--light & {
-      fill: rgba($color-dark, 0.6);
-    }
+    opacity: 0.75;
   }
 
   .kui-input {
@@ -61,28 +50,17 @@
     opacity: 1;
   }
 
-  .kui-theme--dark & .kui-input__field::placeholder {
-    color: rgba($color-light, 0.45);
+  .kui-input__field::placeholder {
+    color: var(--color-default-alt) !important;
+    opacity: 0.5;
   }
 
-  .kui-theme--dark & .kui-input__field:hover::placeholder {
-    color: rgba($color-light, 0.65);
+  .kui-input__field:hover::placeholder {
+    opacity: 0.7;
   }
 
-  .kui-theme--dark & .kui-input__field:focus::placeholder {
-    color: $color-light;
-  }
-
-  .kui-theme--light & .kui-input__field::placeholder {
-    color: rgba($color-dark, 0.55);
-  }
-
-  .kui-theme--light & .kui-input__field:hover::placeholder {
-    color: rgba($color-dark, 0.75);
-  }
-
-  .kui-theme--light & .kui-input__field:focus::placeholder {
-    color: rgba($color-dark, 0.9);
+  .kui-input__field:focus::placeholder {
+    opacity: 0.95;
   }
 
   .kui-input__field {
@@ -100,24 +78,19 @@
     max-width: none;
   }
 
-  .kui-theme--light & .kui-input__line:before {
-    background-color: rgba($color-dark, 0.3);
+  .kui-input__line:before {
+    background-color: var(--color-default-alt);
+    opacity: 0.3;
+    transition: background-color 0.3s, opacity 0.3s;
   }
 
-  .kui-theme--light & .kui-searchbar--focused .kui-input__line:before {
-    background-color: rgba($color-dark, 0.55);
-  }
-
-  .kui-theme--dark & .kui-input__line:before {
-    background-color: rgba($color-light, 0.3);
-  }
-
-  .kui-theme--dark & .kui-searchbar--focused .kui-input__line:before {
-    background-color: rgba($color-light, 0.55);
+  .kui-searchbar--focused .kui-input__line:before {
+    opacity: 0.55;
   }
 
   .kui-searchbar .kui-input__line:not([data-value='']):before {
     background-color: $color-primary;
+    opacity: 1;
   }
 
   .kui-input__line:after {

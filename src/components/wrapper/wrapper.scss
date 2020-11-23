@@ -5,20 +5,14 @@
   position: relative;
   height: 100%;
   overflow: hidden;
+  color: var(--color-text);
   font-size: 10px;
+  background: var(--color-bg-1);
 
   &.kui-theme--light {
-    color: #333;
-    background: $color-bg-light-1;
-
     @media print {
       background: none;
     }
-  }
-
-  &.kui-theme--dark {
-    color: #fff;
-    background: $color-bg-dark-1;
   }
 }
 

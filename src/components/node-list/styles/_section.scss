@@ -8,13 +8,6 @@
   margin: 10px 0 12px 20px;
   font-weight: bold;
   font-size: 1.38em;
+  opacity: 0.65;
   user-select: none;
-
-  .kui-theme--dark & {
-    color: rgba($color-light, 0.55);
-  }
-
-  .kui-theme--light & {
-    color: rgba($color-dark, 0.55);
-  }
 }

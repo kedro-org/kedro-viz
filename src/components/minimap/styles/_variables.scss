@@ -4,20 +4,22 @@
  * List of colour variables for the different parts of the minimap
  */
 
-//-------------- LIGHT --------------//
+.kui-theme--light {
+  --minimap-bg: #a6aeb6;
+  --minimap-shadow: rgba(255, 255, 255, 0.5);
+  --minimap-viewport-stroke: #d3dee3;
+  --minimap-node-fill-default: #{$color-bg-light-3};
+  --minimap-node-fill-active: white;
+  --minimap-node-fill-selected: #81f4ff;
+  --minimap-node-fill-faded: #c3c8ce;
+}
 
-// Node bg
-
-$node-fill-light-default: #f0f1f3;
-$node-fill-light-active: #fff;
-$node-fill-light-selected: #81f4ff;
-$node-fill-light-faded: #c3c8ce;
-
-//-------------- DARK --------------//
-
-// Node bg
-
-$node-fill-dark-default: #2a3b46;
-$node-fill-dark-active: #293b46;
-$node-fill-dark-selected: #00b0f5;
-$node-fill-dark-faded: #0e1b24;
+.kui-theme--dark {
+  --minimap-bg: #051116;
+  --minimap-shadow: rgba(255, 255, 255, 0.05);
+  --minimap-viewport-stroke: #8e8e90;
+  --minimap-node-fill-default: #{$color-bg-dark-6};
+  --minimap-node-fill-active: #293b46;
+  --minimap-node-fill-selected: #{$color-primary};
+  --minimap-node-fill-faded: #0e1b24;
+}
