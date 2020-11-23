@@ -53,8 +53,8 @@ function nodeReducer(nodeState = {}, action) {
         code: Object.assign({}, nodeState.code, {
           [id]: data.code
         }),
-        codeLocation: Object.assign({}, nodeState.code, {
-          [id]: data.code_location
+        filepath: Object.assign({}, nodeState.filepath, {
+          [id]: data.filepath
         }),
         docString: Object.assign({}, nodeState.docString, {
           [id]: data.docString
@@ -62,11 +62,9 @@ function nodeReducer(nodeState = {}, action) {
         parameters: Object.assign({}, nodeState.parameters, {
           [id]: data.parameters
         }),
-        dataset_location: Object.assign({}, nodeState.dataset_location, {
-          [id]: data.dataset_location
-        }),
-        dataset_type: Object.assign({}, nodeState.dataset_type, {
-          [id]: data.dataset_type
+        // the data returned from the API under the field name 'type' for dataset type nodes
+        datasetType: Object.assign({}, nodeState.datasetType, {
+          [id]: data.type
         })
       });
     }

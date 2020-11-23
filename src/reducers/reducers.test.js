@@ -213,9 +213,7 @@ describe('Reducer', () => {
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
       expect(newState.node.code[nodeId]).toEqual(node_task.code);
-      expect(newState.node.codeLocation[nodeId]).toEqual(
-        node_task.code_location
-      );
+      expect(newState.node.filepath[nodeId]).toEqual(node_task.filepath);
       expect(newState.node.docString[nodeId]).toEqual(node_task.docString);
     });
 
@@ -234,12 +232,8 @@ describe('Reducer', () => {
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
-      expect(newState.node.dataset_location[nodeId]).toEqual(
-        node_data.dataset_location
-      );
-      expect(newState.node.dataset_type[nodeId]).toEqual(
-        node_data.dataset_type
-      );
+      expect(newState.node.filepath[nodeId]).toEqual(node_data.filepath);
+      expect(newState.node.datasetType[nodeId]).toEqual(node_data.type);
     });
   });
 
