@@ -1,6 +1,6 @@
 import getRandomPipeline from './random-data';
 import animals from './data/animals.mock.json';
-import demo from './data/demo.mock';
+import demo from './data/demo.mock.json';
 
 /**
  * Determine the data source ID from the URL query string, or an environment

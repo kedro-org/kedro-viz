@@ -199,7 +199,6 @@ describe('map dispatch props to async actions', () => {
 
   it('calls the right actions with nodeID for onLoadNodeData', async () => {
     await mapDispatchToProps(store.dispatch).onLoadNodeData('123');
-    console.log('storelistener', store.getActions());
     expect(store.getActions()[0]).toEqual({
       nodeClicked: '123',
       type: 'TOGGLE_NODE_CLICKED'
