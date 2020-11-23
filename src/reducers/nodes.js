@@ -63,7 +63,7 @@ function nodeReducer(nodeState = {}, action) {
           [id]: data.parameters
         }),
         // the data returned from the API under the field name 'type' for dataset type nodes
-        dataset_type: Object.assign({}, nodeState.dataset_type, {
+        datasetType: Object.assign({}, nodeState.datasetType, {
           [id]: data.type
         })
       });

@@ -25,7 +25,7 @@ export const createInitialPipelineState = () => ({
     docString: {},
     parameters: {},
     filepath: {},
-    dataset_type: {}
+    datasetType: {}
   },
   nodeType: {
     ids: ['task', 'data', 'parameters'],
@@ -124,7 +124,7 @@ const addNode = state => node => {
   state.node.docString[id] = node.docString;
   state.node.parameters[id] = node.parameters;
   state.node.filepath[id] = node.filepath;
-  state.node.dataset_type[id] = node.dataset_type;
+  state.node.datasetType[id] = node.datasetType;
 };
 
 /**
