@@ -318,9 +318,9 @@ workflows:
               only:
                 - main
     jobs:
-      - build_36
-      - build_37
+      # - build_36
+      # - build_37
       - build_38
-      - win_build_36
-      - win_build_37
+      # - win_build_36
+      # - win_build_37
       - win_build_38
