@@ -1,49 +1,23 @@
-@import './variables';
-
 .pipeline-minimap-node {
   rect {
-    .kui-theme--light & {
-      fill: $node-fill-light-default;
-    }
-
-    .kui-theme--dark & {
-      fill: $node-fill-dark-default;
-    }
+    fill: var(--minimap-node-fill-default);
   }
 }
 
 .pipeline-minimap-node--active {
   rect {
-    .kui-theme--light & {
-      fill: $node-fill-light-active;
-    }
-
-    .kui-theme--dark & {
-      fill: $node-fill-dark-active;
-    }
+    fill: var(--minimap-node-fill-active);
   }
 }
 
 .pipeline-minimap-node--selected {
   rect {
-    .kui-theme--light & {
-      fill: $node-fill-light-selected;
-    }
-
-    .kui-theme--dark & {
-      fill: $node-fill-dark-selected;
-    }
+    fill: var(--minimap-node-fill-selected);
   }
 }
 
 .pipeline-minimap-node--faded {
   rect {
-    .kui-theme--light & {
-      fill: $node-fill-light-faded;
-    }
-
-    .kui-theme--dark & {
-      fill: $node-fill-dark-faded;
-    }
+    fill: var(--minimap-node-fill-faded);
   }
 }

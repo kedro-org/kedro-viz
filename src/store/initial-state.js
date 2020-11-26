@@ -15,7 +15,8 @@ export const createInitialState = () => ({
   theme: 'dark',
   loading: {
     graph: false,
-    pipeline: false
+    pipeline: false,
+    node: false
   },
   visible: {
     graph: true,

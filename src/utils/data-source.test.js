@@ -1,6 +1,6 @@
 import getPipelineData, { getSourceID, getDataValue } from './data-source';
 import animals from './data/animals.mock.json';
-import demo from './data/demo.mock';
+import demo from './data/demo.mock.json';
 
 describe('getSourceID', () => {
   const OLD_ENV = process.env;

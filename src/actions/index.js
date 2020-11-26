@@ -63,21 +63,6 @@ export function toggleTextLabels(textLabels) {
   };
 }
 
-export const TOGGLE_TAG_FILTER = 'TOGGLE_TAG_FILTER';
-
-/**
- * Toggle a tag on/off
- * @param {string} tagID Tag id
- * @param {Boolean} enabled True if tag is enabled
- */
-export function toggleTagFilter(tagID, enabled) {
-  return {
-    type: TOGGLE_TAG_FILTER,
-    tagID,
-    enabled
-  };
-}
-
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**

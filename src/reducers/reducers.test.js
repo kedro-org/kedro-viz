@@ -1,4 +1,7 @@
 import animals from '../utils/data/animals.mock.json';
+import node_parameters from '../utils/data/node_parameters.mock.json';
+import node_task from '../utils/data/node_task.mock.json';
+import node_data from '../utils/data/node_data.mock.json';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import normalizeData from '../store/normalize-data';
@@ -15,7 +18,8 @@ import {
 import {
   TOGGLE_NODE_CLICKED,
   TOGGLE_NODES_DISABLED,
-  TOGGLE_NODE_HOVERED
+  TOGGLE_NODE_HOVERED,
+  ADD_NODE_METADATA
 } from '../actions/nodes';
 import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
 import { TOGGLE_TYPE_DISABLED } from '../actions/node-type';
@@ -116,7 +120,7 @@ describe('Reducer', () => {
     it('should toggle the given tag active', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TAG_ACTIVE,
-        tagID: 'huge',
+        tagIDs: ['huge'],
         active: true
       });
       expect(newState.tag.active).toEqual({ huge: true });
@@ -127,7 +131,7 @@ describe('Reducer', () => {
     it('should disable a given tag', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TAG_FILTER,
-        tagID: 'small',
+        tagIDs: ['small'],
         enabled: true
       });
       expect(newState.tag.enabled).toEqual({ small: true });
@@ -197,6 +201,39 @@ describe('Reducer', () => {
       expect(oldState.node.hovered).not.toBe(null);
       expect(newState.node.clicked).toBe(null);
       expect(newState.node.hovered).toBe(null);
+    });
+  });
+
+  describe('ADD_NODE_METADATA', () => {
+    const nodeId = '123';
+
+    it('should update the right fields in state under node of task type', () => {
+      const data = { id: nodeId, data: node_task };
+      const loadDataAction = { type: ADD_NODE_METADATA, data };
+      const oldState = mockState.json;
+      const newState = reducer(oldState, loadDataAction);
+      expect(newState.node.code[nodeId]).toEqual(node_task.code);
+      expect(newState.node.filepath[nodeId]).toEqual(node_task.filepath);
+      expect(newState.node.docString[nodeId]).toEqual(node_task.docString);
+    });
+
+    it('should update the right fields in state under node of parameter type', () => {
+      const data = { id: nodeId, data: node_parameters };
+      const loadDataAction = { type: ADD_NODE_METADATA, data };
+      const oldState = mockState.json;
+      const newState = reducer(oldState, loadDataAction);
+      expect(newState.node.parameters[nodeId]).toEqual(
+        node_parameters.parameters
+      );
+    });
+
+    it('should update the right fields in state under node of data type', () => {
+      const data = { id: nodeId, data: node_data };
+      const loadDataAction = { type: ADD_NODE_METADATA, data };
+      const oldState = mockState.json;
+      const newState = reducer(oldState, loadDataAction);
+      expect(newState.node.filepath[nodeId]).toEqual(node_data.filepath);
+      expect(newState.node.datasetType[nodeId]).toEqual(node_data.type);
     });
   });
 

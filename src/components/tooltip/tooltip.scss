@@ -39,15 +39,8 @@ $triangle-size: 10px;
     border-color: transparent;
     border-style: solid;
     border-width: $triangle-size $triangle-size 0 $triangle-size;
+    border-top-color: var(--color-bg-alt);
     content: '';
-
-    .kui-theme--light & {
-      border-top-color: $color-bg-light-alt;
-    }
-
-    .kui-theme--dark & {
-      border-top-color: $color-bg-dark-alt;
-    }
   }
 
   &--right::after {
@@ -60,14 +53,7 @@ $triangle-size: 10px;
     bottom: auto;
     border-width: 0 $triangle-size $triangle-size $triangle-size;
     border-top-color: transparent;
-
-    .kui-theme--light & {
-      border-bottom-color: $color-bg-light-alt;
-    }
-
-    .kui-theme--dark & {
-      border-bottom-color: $color-bg-dark-alt;
-    }
+    border-bottom-color: var(--color-bg-alt);
   }
 }
 

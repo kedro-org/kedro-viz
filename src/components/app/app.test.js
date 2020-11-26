@@ -4,7 +4,7 @@ import { render, fireEvent, within } from '@testing-library/react';
 import App from './index';
 import getRandomPipeline from '../../utils/random-data';
 import animals from '../../utils/data/animals.mock.json';
-import demo from '../../utils/data/demo.mock';
+import demo from '../../utils/data/demo.mock.json';
 import { mockState } from '../../utils/state.mock';
 import { Flags } from '../../utils/flags';
 import { saveState } from '../../store/helpers';

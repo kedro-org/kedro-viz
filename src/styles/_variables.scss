@@ -1,13 +1,15 @@
 //-- Colours --//
 
-$color-dark: #000;
-$color-light: #fff;
+$color-dark: black;
+$color-light: white;
 $color-primary: #00b0f5;
 $color-link: rgba($color-primary, 0.85);
 
+//-- Theme colours as SCSS variables --//
+
 // Light:
-$color-text-light: rgba($color-dark, 0.85);
-$color-text-light-alt: rgba($color-light, 0.85);
+$color-text-light: rgba(black, 0.85);
+$color-text-light-alt: rgba(white, 0.85);
 $color-bg-light-1: #ccd1d6;
 $color-bg-light-2: #e6e8eb;
 $color-bg-light-3: #f0f1f3;
@@ -15,15 +17,15 @@ $color-bg-light-4: #f8f9fa;
 $color-bg-light-alt: #242525;
 
 // Dark:
-$color-text-dark: rgba($color-light, 0.85);
-$color-text-dark-alt: rgba($color-dark, 0.85);
+$color-text-dark: rgba(white, 0.85);
+$color-text-dark-alt: rgba(black, 0.85);
 $color-bg-dark-1: #001521;
 $color-bg-dark-2: #031a26;
 $color-bg-dark-3: #061c28;
 $color-bg-dark-4: #0e2330;
 $color-bg-dark-5: #122531;
 $color-bg-dark-6: #2a3b46;
-$color-bg-dark-alt: $color-light;
+$color-bg-dark-alt: white;
 
 //-- Layout --//
 

@@ -1,25 +1,10 @@
-@import './variables';
+@import '../../../styles/variables';
 
 .pipeline-edge path {
   pointer-events: none;
   fill: none;
   stroke-width: 1.5px;
-
-  .kui-theme--light & {
-    stroke: $edge-light;
-
-    @media print {
-      stroke: $edge-light-export;
-    }
-  }
-
-  .pipeline-graph--export.kui-theme--light & {
-    stroke: $edge-light-export;
-  }
-
-  .kui-theme--dark & {
-    stroke: $edge-dark;
-  }
+  stroke: var(--edge-stroke);
 }
 
 .pipeline-edge--faded {
@@ -27,19 +12,5 @@
 }
 
 .pipeline-flowchart__arrowhead {
-  .kui-theme--light & {
-    fill: $edge-arrowhead-light;
-
-    @media print {
-      fill: $edge-light-export;
-    }
-  }
-
-  .pipeline-graph--export.kui-theme--light & {
-    fill: $edge-light-export;
-  }
-
-  .kui-theme--dark & {
-    fill: $edge-arrowhead-dark;
-  }
+  fill: var(--edge-arrowhead-fill);
 }
