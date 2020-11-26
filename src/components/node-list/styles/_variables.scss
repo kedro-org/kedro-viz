@@ -17,10 +17,10 @@ $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
 $row-active-light: darken($color-bg-light-3, 3%);
 $row-selected-light: darken($color-bg-light-3, 8%);
 $filter-indicator-on-light: $color-primary;
-$filter-indicator-off-light: rgba($color-light, 0.55);
+$filter-indicator-off-light: rgba(black, 0.55);
 
 // Dark:
 $row-active-dark: lighten($color-bg-dark-3, 3%);
 $row-selected-dark: lighten($color-bg-dark-3, 8%);
 $filter-indicator-on-dark: $color-primary;
-$filter-indicator-off-dark: rgba($color-dark, 0.45);
+$filter-indicator-off-dark: rgba(white, 0.45);
