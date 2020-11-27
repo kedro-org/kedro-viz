@@ -131,7 +131,7 @@ export const drawNodes = function(changed) {
   const allNodes = this.el.nodes
     .merge(enterNodes)
     .merge(exitNodes)
-    .filter(node => Boolean(node));
+    .filter(node => typeof node !== 'undefined');
 
   if (changed('nodes')) {
     enterNodes
