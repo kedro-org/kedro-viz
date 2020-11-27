@@ -126,11 +126,11 @@ export const drawNodes = function(changed) {
   const updateNodes = this.el.nodes;
   const enterNodes = this.el.nodes.enter().append('g');
   const exitNodes = this.el.nodes.exit();
-  // allNodes includes a further filter to avoid undefined data on Safari
+  // Filter out undefined nodes on Safari
   const allNodes = this.el.nodes
     .merge(enterNodes)
     .merge(exitNodes)
-    .filter(node => Boolean(node));
+    .filter(node => typeof node !== 'undefined');
 
   if (changed('nodes')) {
     enterNodes
