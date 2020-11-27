@@ -114,7 +114,7 @@ export const drawNodes = function(changed) {
   } = this.props;
 
   // we need to cater for the case of change in nodeActive to ensure safari's gabage collector would not overwrite non active pipeline nodes as 'undefined'
-  if (changed('nodes', 'nodeActive')) {
+  if (changed('nodes')) {
     this.el.nodes = this.el.nodeGroup
       .selectAll('.pipeline-node')
       .data(nodes, node => node.id);
