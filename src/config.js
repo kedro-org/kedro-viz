@@ -23,11 +23,13 @@ export const flags = {
   newgraph: {
     description: 'Improved graphing algorithm',
     default: false,
+    private: false,
     icon: '📈'
   },
   meta: {
     description: 'Show the metadata panel',
     default: false,
+    private: false,
     icon: '🔮'
   }
 };
