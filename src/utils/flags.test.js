@@ -22,7 +22,7 @@ jest.mock('../config', () => ({
       description: 'private flag description',
       default: false,
       private: true,
-      icon: '🐵'
+      icon: '🙊'
     }
   }
 }));
