@@ -57,12 +57,13 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
       <dl className="pipeline-metadata__list">
         <MetaDataRow label="Type:" value={metadata.node.type} />
         <MetaDataRow
-          label="File Path:"
+          label="Dataset Type:"
           visible={isDataNode}
-          value={metadata.filePath}
+          value={metadata.datasetType}
         />
+        <MetaDataRow label="File Path:" value={metadata.filepath} />
         <MetaDataRow
-          label={`Parameters (${metadata.parameters.length}):`}
+          label={`Parameters (${metadata.parameters?.length || '-'}):`}
           visible={isTaskNode}
           commas={false}
           inline={false}
@@ -123,11 +124,11 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
           </div>
         </MetaDataRow>
         <MetaDataRow
-          label="Description (docstring)"
+          label="Description (docstring):"
           visible={isTaskNode}
-          value={metadata.description}
+          value={metadata.docstring}
         />
-        <MetaDataRow label="Location of code in Kedro:" value={metadata.path} />
+        <MetaDataRow label="Code:" visible={isTaskNode} value={metadata.code} />
       </dl>
     </div>
   );

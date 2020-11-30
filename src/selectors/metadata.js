@@ -36,21 +36,6 @@ const getRunCommand = node => {
 };
 
 /**
- * Example placeholder values for missing APIs
- */
-const placeholders = {
-  parameters: [
-    'num_neighbors:  5',
-    'train_ratio:  0.8',
-    "dist_metric:  'cosine'",
-    "eval_metric:  ['denoise_text', 'filter_pos_tags', 'find_pos_text', 'add_pos_name']"
-  ],
-  description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec ipsum elit. Morbi interdum ligula nec finibus ultrices. Vivamus vitae sapien vitae nulla elementum maximus id nec dolor. Fusce lacus turpis, egestas ut massa ac, suscipit faucibus augue. Vestibulum fringilla aliquet nibh, vitae accumsan enim placerat in.`,
-  path: 'Client001/Nodes/Library/XXX0/pipeline.py',
-  filePath: 's3://my-bucket-name/path/to/folder/dataset.parquet'
-};
-
-/**
  * Gets metadata for the currently clicked node if any
  */
 export const getClickedNodeMetaData = createSelector(
@@ -59,9 +44,25 @@ export const getClickedNodeMetaData = createSelector(
     getGraphNodes,
     state => state.node.tags,
     state => state.tag.name,
-    state => state.pipeline
+    state => state.pipeline,
+    state => state.node.filepath,
+    state => state.node.code,
+    state => state.node.docstring,
+    state => state.node.parameters,
+    state => state.node.datasetType
   ],
-  (nodeId, nodes = {}, nodeTags, tagNames, pipeline) => {
+  (
+    nodeId,
+    nodes = {},
+    nodeTags,
+    tagNames,
+    pipeline,
+    filepaths,
+    codes,
+    docstrings,
+    parameters,
+    datasetTypes
+  ) => {
     const node = nodes[nodeId];
 
     if (!node) {
@@ -74,8 +75,12 @@ export const getClickedNodeMetaData = createSelector(
         .map(tagId => tagNames[tagId])
         .sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
-      runCommand: getRunCommand(node),
-      ...placeholders
+      parameters: parameters[node.id],
+      runCommand: getRunCommand(node.id),
+      docstring: docstrings[node.id],
+      code: codes[node.id],
+      filepath: filepaths[node.id],
+      datasetType: datasetTypes[node.id]
     };
 
     // Note: node.sources node.targets require newgraph enabled

@@ -18,7 +18,6 @@ const MetaDataRow = ({
   children
 }) => {
   const showList = Array.isArray(value);
-  const showValue = !showList && typeof value !== 'undefined';
 
   return (
     visible && (
@@ -35,7 +34,7 @@ const MetaDataRow = ({
               values={value}
             />
           )}
-          {showValue && (
+          {!showList && (
             <MetaDataValue value={value} kind={kind} empty={empty} />
           )}
           {children}
