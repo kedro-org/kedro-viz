@@ -79,12 +79,7 @@ export function loadNodeData(nodeID) {
 
     dispatch(toggleNodeClicked(nodeID));
 
-    if (
-      asyncDataSource &&
-      nodeID &&
-      !node.fetched[nodeID] &&
-      flags.meta === true
-    ) {
+    if (asyncDataSource && nodeID && !node.fetched[nodeID] && flags.meta) {
       dispatch(toggleNodeDataLoading(true));
       const url = getUrl('nodes', nodeID);
       const nodeData = await loadJsonData(url);

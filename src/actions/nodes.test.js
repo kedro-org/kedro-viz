@@ -44,7 +44,7 @@ describe('node actions', () => {
     });
 
     describe('if meta flag is false', () => {
-      it('should not make any API calls if meta is false', () => {
+      it('should not make any API calls', () => {
         const store = createStore(reducer, mockState.json);
         loadNodeData('parametersID')(store.dispatch, store.getState);
         expect(store.getState().loading.node).toBe(false);
