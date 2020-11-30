@@ -103,6 +103,16 @@
   word-break: break-word;
 }
 
+.pipeline-metadata__value--kind-type,
+.pipeline-metadata__value--kind-path {
+  display: block;
+  overflow: hidden;
+  direction: rtl;
+  white-space: nowrap;
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
 .pipeline-metadata__value--kind-token {
   display: inline-block;
   padding: 0.18em 0.6em 0.2em 0.6em;

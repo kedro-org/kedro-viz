@@ -59,9 +59,10 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
         <MetaDataRow
           label="Dataset Type:"
           visible={isDataNode}
+          kind="type"
           value={metadata.datasetType}
         />
-        <MetaDataRow label="File Path:" value={metadata.filepath} />
+        <MetaDataRow label="File Path:" kind="path" value={metadata.filepath} />
         <MetaDataRow
           label={`Parameters (${metadata.parameters?.length || '-'}):`}
           visible={isTaskNode}
