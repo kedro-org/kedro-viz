@@ -88,7 +88,8 @@ const NodeListRow = ({
           `pipeline-row__toggle--kind-${kind}`,
           {
             'pipeline-row__toggle--disabled': disabled,
-            'pipeline-row__toggle--selected': selected
+            'pipeline-row__toggle--selected': selected,
+            'pipeline-row__toggle--cursor': type !== 'tag'
           }
         )}>
         <input

@@ -119,6 +119,9 @@
 .pipeline-row__toggle {
   position: absolute;
   right: $row-padding-x;
+}
+
+.pipeline-row__toggle--cursor {
   cursor: pointer;
 }
 
