@@ -406,10 +406,7 @@ def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["filepath"] == str(tmp_path)
-    assert (
-        data["type"]
-        == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
-    )
+    assert data["type"] == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -435,10 +432,7 @@ def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocke
     data = json.loads(response.data.decode())
 
     assert data["filepath"] == str(tmp_path)
-    assert (
-        data["type"]
-        == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
-    )
+    assert data["type"] == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
 
 
 @pytest.mark.usefixtures("patched_get_project_context")
@@ -454,7 +448,9 @@ def test_node_metadata_endpoint_parameters(cli_runner, client):
 
 @pytest.mark.usefixtures("patched_get_project_context")
 def test_node_metadata_endpoint_param_prefix(cli_runner, client):
-    """Test `/api/nodes/param_id` with param prefix endpoint is functional and returns an empty JSON."""
+    """Test `/api/nodes/param_id` with param prefix endpoint is functional
+    and returns an empty JSON.
+    """
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     param_id = "c38d4c6a"
     response = client.get(f"/api/nodes/{param_id}")
