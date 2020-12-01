@@ -20,7 +20,7 @@ jest.mock('../config', () => ({
     },
     privateflag: {
       description: 'private flag description',
-      default: false,
+      default: true,
       private: true,
       icon: '🙊'
     }
@@ -80,7 +80,7 @@ describe('flags', () => {
   it('Flags.defaults returns an object mapping flag defaults', () => {
     expect(Flags.defaults()).toEqual({
       [testFlagName]: false,
-      [privateFlagName]: false
+      [privateFlagName]: true
     });
   });
 });
