@@ -6,6 +6,7 @@
     "lib"
   ],
   "homepage": ".",
+  "proxy": "http://localhost:4142/",
   "scripts": {
     "build": "npm run build:css && react-scripts build",
     "build:css": "node-sass src/ -o src/",
