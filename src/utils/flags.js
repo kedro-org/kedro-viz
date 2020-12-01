@@ -66,6 +66,9 @@ export const getFlagsMessage = flagsEnabled => {
     let info = 'Experimental features 🏄‍♂️\n';
 
     allNames.forEach(name => {
+      if (flagsConfig[name].private) {
+        return;
+      }
       const isEnabled = flagsEnabled[name];
       const status = isEnabled ? 'Enabled' : 'Disabled';
       const statusIcon = isEnabled ? '🟢' : '⚪️';
