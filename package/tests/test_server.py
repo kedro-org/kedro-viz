@@ -35,6 +35,7 @@ import json
 import re
 from functools import partial
 from pathlib import Path
+from typing import Union
 
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
@@ -138,7 +139,7 @@ def start_server(mocker):
 
 
 @pytest.fixture
-def patched_get_project_context(mocker, tmp_path, dummy_layers):
+def patched_load_context(mocker, tmp_path, dummy_layers):
     class DummyDataCatalog:
         def __init__(self, layers):
             self._data_sets = {
@@ -160,25 +161,16 @@ def patched_get_project_context(mocker, tmp_path, dummy_layers):
             dataset = self._get_dataset(name)
             return dataset.exists()
 
-    def get_project_context(
-        key: str = "context", **kwargs  # pylint: disable=bad-continuation
-    ):  # pylint: disable=unused-argument
+    def load_context(project_path: Union[str, Path], **kwargs):
         mocked_context = mocker.Mock()
         mocked_context.pipelines = get_pipelines()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         dummy_data_catalog = DummyDataCatalog(dummy_layers)
         mocked_context.catalog = dummy_data_catalog
         mocked_context.pipeline = create_pipeline()
-        return {
-            "create_pipeline": create_pipeline,
-            "create_catalog": lambda config: dummy_data_catalog,
-            "context": mocked_context,
-            "get_config": lambda project_path, env=None: "config",
-        }[key]
+        return mocked_context
 
-    return mocker.patch(
-        "kedro_viz.server.get_project_context", side_effect=get_project_context
-    )
+    return mocker.patch("kedro_viz.server.load_context", side_effect=load_context)
 
 
 @pytest.fixture
@@ -188,7 +180,7 @@ def client():
     return client
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_set_port(cli_runner,):
     """Check that port argument is correctly handled."""
     result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
@@ -197,7 +189,7 @@ def test_set_port(cli_runner,):
     server.webbrowser.open_new.assert_called_with("http://127.0.0.1:8000/")
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_set_ip(cli_runner):
     """Check that host argument is correctly handled."""
     result = cli_runner.invoke(server.commands, ["viz", "--host", "0.0.0.0"])
@@ -206,7 +198,7 @@ def test_set_ip(cli_runner):
     server.webbrowser.open_new.assert_called_with("http://0.0.0.0:4141/")
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_no_browser(cli_runner):
     """Check that call to open browser is not performed when `--no-browser`
     argument is specified.
@@ -219,14 +211,12 @@ def test_no_browser(cli_runner):
     assert server.webbrowser.open_new.call_count == 1
 
 
-def test_viz_does_not_need_to_specify_project_path(
-    cli_runner, patched_get_project_context
-):
+def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_load_context):
     cli_runner.invoke(server.commands, ["viz", "--no-browser"])
-    patched_get_project_context.assert_called_once_with("context", env=None)
+    patched_load_context.assert_called_once_with(project_path=Path.cwd(), env=None)
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_no_browser_if_not_localhost(cli_runner):
     """Check that call to open browser is not performed when host
     is not the local host.
@@ -259,7 +249,7 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
     assert result.exit_code == 0, result.output
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_save_file(cli_runner, tmp_path):
     """Check that running with `--save-file` flag saves pipeline JSON file in a specified path.
     """
@@ -299,7 +289,7 @@ def test_root_endpoint(client):
     assert "Kedro Viz" in response.data.decode()
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_nodes_endpoint(cli_runner, client):
     """Test `/api/main` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
@@ -309,7 +299,7 @@ def test_nodes_endpoint(cli_runner, client):
     assert data == EXPECTED_PIPELINE_DATA
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_pipelines_endpoint(cli_runner, client):
     """Test `/api/pipelines` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
@@ -338,7 +328,7 @@ def test_pipelines_endpoint(cli_runner, client):
     assert data["tags"] == EXPECTED_PIPELINE_DATA["tags"]
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_pipelines_endpoint_invalid_pipeline_id(cli_runner, client):
     """Test `/api/pipelines/invalid_id` endpoint returns an empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
@@ -348,7 +338,7 @@ def test_pipelines_endpoint_invalid_pipeline_id(cli_runner, client):
     assert data["error"] == "404 Not Found: Invalid pipeline ID."
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON."""
     project_root = "project_root"
@@ -372,7 +362,7 @@ def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     assert data["docstring"] == inspect.getdoc(salmon)
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_node_metadata_endpoint_task_missing_docstring(
     cli_runner, client, mocker, tmp_path
 ):
@@ -398,7 +388,7 @@ def test_node_metadata_endpoint_task_missing_docstring(
     assert "docstring" not in data
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
@@ -409,7 +399,7 @@ def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     assert data["type"] == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
@@ -420,7 +410,7 @@ def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
     assert not data
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocker):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON
     with Kedro 0.15.*.
@@ -435,7 +425,7 @@ def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocke
     assert data["type"] == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_node_metadata_endpoint_parameters(cli_runner, client):
     """Test `/api/nodes/param_id` endpoint is functional and returns an empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
@@ -446,7 +436,7 @@ def test_node_metadata_endpoint_parameters(cli_runner, client):
     assert data == {"parameters": "value"}
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_node_metadata_endpoint_param_prefix(cli_runner, client):
     """Test `/api/nodes/param_id` with param prefix endpoint is functional
     and returns an empty JSON.
@@ -459,7 +449,7 @@ def test_node_metadata_endpoint_param_prefix(cli_runner, client):
     assert data == {"parameters": {"rabbit": "value"}}
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_node_metadata_endpoint_invalid(cli_runner, client):
     """Test `/api/nodes/invalid_id` endpoint returns an empty JSON."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
@@ -470,7 +460,7 @@ def test_node_metadata_endpoint_invalid(cli_runner, client):
     assert data["error"] == "404 Not Found: Invalid node ID."
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_pipeline_flag(cli_runner, client):
     """Test that running viz with `--pipeline` flag will return a correct pipeline."""
     cli_runner.invoke(server.commands, ["viz", "--pipeline", "ds"])
@@ -528,7 +518,7 @@ def test_pipeline_flag(cli_runner, client):
     }
 
 
-@pytest.mark.usefixtures("patched_get_project_context")
+@pytest.mark.usefixtures("patched_load_context")
 def test_pipeline_flag_non_existent(cli_runner):
     """Test that running viz with `--pipeline` flag but the pipeline does not exist."""
     result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "nonexistent"])
@@ -538,15 +528,7 @@ def test_pipeline_flag_non_existent(cli_runner):
 def test_viz_kedro15(mocker, cli_runner):
     """Test that running viz in Kedro 0.15.0."""
     mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
-
-    def get_project_context(
-        key: str = "context", **kwargs  # pylint: disable=bad-continuation
-    ):  # pylint: disable=unused-argument
-        mocked_context = mocker.MagicMock()
-        mocked_context.pipeline = create_pipeline()
-        return {"context": mocked_context}[key]
-
-    mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
+    mocker.patch("kedro_viz.server.load_context")
     result = cli_runner.invoke(server.commands, "viz")
     assert result.exit_code == 0, result.output
 
@@ -554,13 +536,7 @@ def test_viz_kedro15(mocker, cli_runner):
 def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
     """Test that running viz with `--pipeline` flag in Kedro 0.15.0."""
     mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
-
-    def get_project_context(
-        key: str = "context", **kwargs  # pylint: disable=bad-continuation
-    ):  # pylint: disable=unused-argument
-        return {"context": mocker.Mock()}[key]
-
-    mocker.patch("kedro_viz.server.get_project_context", new=get_project_context)
+    mocker.patch("kedro_viz.server.load_context")
     result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "ds"])
     assert "`--pipeline` flag was provided" in result.output
 
@@ -573,7 +549,7 @@ def test_viz_kedro15_invalid(mocker, cli_runner):
     )
 
     mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
-    mocker.patch("kedro_viz.server.get_project_context", side_effect=KedroContextError)
+    mocker.patch("kedro_viz.server.load_context", side_effect=KedroContextError)
 
     result = cli_runner.invoke(server.commands, "viz")
     assert "Could not find a Kedro project root." in result.output
@@ -618,15 +594,15 @@ def mocked_process(mocker):
 
 
 class TestCallViz:
-    def test_call_viz_without_project_path(self, patched_get_project_context):
+    def test_call_viz_without_project_path(self, patched_load_context):
         server._call_viz()
-        patched_get_project_context.assert_called_once_with("context", env=None)
+        patched_load_context.assert_called_once_with(project_path=Path.cwd(), env=None)
 
-    def test_call_viz_with_project_path(self, patched_get_project_context):
+    def test_call_viz_with_project_path(self, patched_load_context):
         mocked_project_path = Path("/tmp")
         server._call_viz(project_path=mocked_project_path)
-        patched_get_project_context.assert_called_once_with(
-            "context", project_path=mocked_project_path, env=None
+        patched_load_context.assert_called_once_with(
+            project_path=mocked_project_path, env=None
         )
 
 

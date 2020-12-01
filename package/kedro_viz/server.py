@@ -56,11 +56,11 @@ from kedro_viz.utils import wait_for
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
 if KEDRO_VERSION.match(">=0.16.0"):
-    from kedro.framework.cli import get_project_context
     from kedro.framework.cli.utils import KedroCliError
+    from kedro.framework.context import load_context
 else:
-    from kedro.cli import get_project_context  # pragma: no cover
     from kedro.cli.utils import KedroCliError  # pragma: no cover
+    from kedro.context import load_context  # pragma: no cover
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
@@ -671,17 +671,13 @@ def _call_viz(
             from kedro.context import KedroContextError
 
         try:
-            if project_path is not None:
-                context = get_project_context(
-                    "context", project_path=project_path, env=env
-                )
-            else:
-                context = get_project_context("context", env=env)
+            project_path = project_path or Path.cwd()
+            context = load_context(project_path=project_path, env=env)
             pipelines = _get_pipelines_from_context(context, pipeline_name)
         except KedroContextError:
             raise KedroCliError(ERROR_PROJECT_ROOT)
-        _CATALOG = context.catalog
 
+        _CATALOG = context.catalog
         _DATA = format_pipelines_data(pipelines)
 
     if save_file:
