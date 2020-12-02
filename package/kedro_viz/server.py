@@ -650,7 +650,9 @@ def _call_viz(
 
             if KEDRO_VERSION.match(">=0.17.0"):
                 from kedro.framework.session import KedroSession
-                from kedro.framework.startup import _get_project_metadata
+                from kedro.framework.startup import (  # pylint: disable=no-name-in-module,import-error
+                    _get_project_metadata,
+                )
 
                 package_name = _get_project_metadata(project_path).package_name
                 session_kwargs = dict(
@@ -659,8 +661,10 @@ def _call_viz(
                     env=env,
                     save_on_close=False,
                 )
-                with KedroSession.create(**session_kwargs) as session:
-                    context = session.load_context()
+                with KedroSession.create(  # pylint: disable=unexpected-keyword-arg
+                    **session_kwargs
+                ) as session:
+                    context = session.load_context()  # pylint: disable=no-member
                     pipelines = _get_pipelines_from_context(context, pipeline_name)
             else:
                 context = load_context(project_path=project_path, env=env)
