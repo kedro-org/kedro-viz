@@ -538,8 +538,9 @@ def nodes_metadata(node_id):
 
 
 @app.errorhandler(404)
-def resource_not_found(e):
-    return jsonify(error=str(e)), 404
+def resource_not_found(error):
+    """Returns HTTP 404 on resource not found."""
+    return jsonify(error=str(error)), 404
 
 
 def _get_task_metadata(node):
@@ -642,7 +643,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env):
         raise KedroCliError(str(ex))
 
 
-# pylint: disable=too-many-arguments,too-many-branches
+# pylint: disable=import-outside-toplevel,too-many-arguments,too-many-branches
 def _call_viz(
     host=None,
     port=None,
@@ -663,13 +664,11 @@ def _call_viz(
 
         _DATA = _load_from_file(load_file)
     else:
-        # pylint: disable=import-outside-toplevel
         if KEDRO_VERSION.match(">=0.16.0"):
             from kedro.framework.context import KedroContextError
         else:
-            from kedro.context import (  # pylint: disable=no-name-in-module,import-error
-                KedroContextError,
-            )
+            # pylint: disable=no-name-in-module,import-error
+            from kedro.context import KedroContextError
 
         try:
             if project_path is not None:
