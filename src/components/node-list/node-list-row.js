@@ -110,7 +110,8 @@ const NodeListRow = ({
             {
               'pipeline-row__toggle-icon--checked': checked,
               'pipeline-row__toggle-icon--unchecked': !checked,
-              'pipeline-row__toggle-icon--unset': unset
+              'pipeline-row__toggle-icon--unset': unset,
+              'pipeline-row__toggle-icon--visible': type !== 'tag'
             }
           )}
         />

@@ -44,6 +44,10 @@
   .pipeline-nodelist__row:hover
   .pipeline-row__toggle--kind-filter {
   opacity: 0.55;
+
+  &:hover {
+    opacity: 0.55;
+  }
 }
 
 // Show unchecked indicators as solid blue when all unset
@@ -68,9 +72,11 @@
   &.pipeline-row__toggle-icon--unset:hover {
     opacity: 0.75;
   }
+}
 
-  // Hover states when checked
-  &.pipeline-row__toggle-icon--checked:hover {
+// Hover states when checked
+.pipeline-row__toggle-icon--visible:hover {
+  .pipeline-nodelist__row--visible & {
     opacity: 1;
   }
 }

@@ -165,13 +165,16 @@
   border-radius: 50%;
   opacity: 0;
 
-  &--unchecked,
+  &--unchecked {
+    .pipeline-nodelist__row:hover & {
+      opacity: 0.55;
+    }
+  }
+}
+
+.pipeline-row__toggle-icon--visible {
   .pipeline-nodelist__row:hover & {
     opacity: 0.55;
-  }
-
-  .pipeline-nodelist__row:hover &:hover {
-    opacity: 1;
   }
 }
 
