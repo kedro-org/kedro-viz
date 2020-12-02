@@ -648,7 +648,7 @@ def _call_viz(
         try:
             project_path = project_path or Path.cwd()
 
-            if KEDRO_VERSION.match(">=0.17.0"):
+            if KEDRO_VERSION.match(">=0.17.0"):  # pragma: no cover
                 from kedro.framework.session import KedroSession
                 from kedro.framework.startup import (  # pylint: disable=no-name-in-module,import-error
                     _get_project_metadata,
