@@ -24,11 +24,9 @@ export const PipelineList = ({
     return null;
   }
   return (
-    <div
-      className={classnames('pipeline-list', {
-        'pipeline-list--disabled': !pipeline.ids.length
-      })}>
+    <div className="pipeline-list">
       <Dropdown
+        disabled={!pipeline.ids.length}
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
         theme={theme}
