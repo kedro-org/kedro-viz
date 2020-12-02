@@ -38,6 +38,9 @@ export const PipelineList = ({
         {pipeline.ids.map(id => (
           <MenuOption
             key={`pipeline-${id}`}
+            className={classnames({
+              'pipeline-list__option--active': pipeline.active === id
+            })}
             value={id}
             primaryText={pipeline.name[id]}
           />
