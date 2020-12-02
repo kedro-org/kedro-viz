@@ -525,36 +525,6 @@ def test_pipeline_flag_non_existent(cli_runner):
     assert "Failed to find the pipeline." in result.output
 
 
-def test_viz_kedro15(mocker, cli_runner):
-    """Test that running viz in Kedro 0.15.0."""
-    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
-    mocker.patch("kedro_viz.server.load_context")
-    result = cli_runner.invoke(server.commands, "viz")
-    assert result.exit_code == 0, result.output
-
-
-def test_viz_kedro15_pipeline_flag(mocker, cli_runner):
-    """Test that running viz with `--pipeline` flag in Kedro 0.15.0."""
-    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
-    mocker.patch("kedro_viz.server.load_context")
-    result = cli_runner.invoke(server.commands, ["viz", "--pipeline", "ds"])
-    assert "`--pipeline` flag was provided" in result.output
-
-
-def test_viz_kedro15_invalid(mocker, cli_runner):
-    """Test that running viz in Kedro 0.15.0,
-    and it is outside of a Kedro project root."""
-    from kedro.context import (  # pylint: disable=import-outside-toplevel,no-name-in-module,import-error
-        KedroContextError,
-    )
-
-    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
-    mocker.patch("kedro_viz.server.load_context", side_effect=KedroContextError)
-
-    result = cli_runner.invoke(server.commands, "viz")
-    assert "Could not find a Kedro project root." in result.output
-
-
 def test_viz_stacktrace(mocker, cli_runner):
     """Test that in the case of a generic exception,
     the stacktrace is printed."""
@@ -751,24 +721,6 @@ def pipeline():
 
 
 @pytest.fixture
-def old_catalog_with_layers():
-    data_sets = {
-        "bob_in": PickleDataSet("raw.csv"),
-        "params:key": MemoryDataSet("value"),
-        "result": PickleDataSet("final.csv"),
-    }
-    setattr(data_sets["bob_in"], "_layer", "raw")
-    setattr(data_sets["result"], "_layer", "final")
-    catalog = DataCatalog(data_sets=data_sets)
-    try:
-        catalog.__dict__.pop("layers")
-    except KeyError:
-        pass
-
-    return catalog
-
-
-@pytest.fixture
 def new_catalog_with_layers():
     data_sets = {
         "bob_in": PickleDataSet("raw.csv"),
@@ -781,14 +733,6 @@ def new_catalog_with_layers():
     setattr(catalog, "layers", layers)
 
     return catalog
-
-
-def test_format_pipelines_data_legacy(pipeline, old_catalog_with_layers, mocker):
-    mocker.patch("kedro_viz.server._CATALOG", old_catalog_with_layers)
-    result = format_pipelines_data(pipeline)
-    result_file_path = Path(__file__).parent / "test-format.json"
-    json_data = json.loads(result_file_path.read_text())
-    assert json_data == result
 
 
 def test_format_pipelines_data(pipeline, new_catalog_with_layers, mocker):
