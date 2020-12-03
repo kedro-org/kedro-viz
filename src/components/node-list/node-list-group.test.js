@@ -1,5 +1,6 @@
 import React from 'react';
 import { NodeListGroup } from './node-list-group';
+import NodeListRow from './node-list-row';
 import { getNodeTypes } from '../../selectors/node-types';
 import { setup, mockState } from '../../utils/state.mock';
 
@@ -9,16 +10,6 @@ describe('NodeListGroup', () => {
     expect(() =>
       setup.mount(<NodeListGroup id={type.id} name={type.name} />)
     ).not.toThrow();
-  });
-
-  it('renders children', () => {
-    const type = getNodeTypes(mockState.animals)[0];
-    const wrapper = setup.mount(
-      <NodeListGroup id={type.id} name={type.name}>
-        <div className="test-child" />
-      </NodeListGroup>
-    );
-    expect(wrapper.find('.test-child').length).toBe(1);
   });
 
   it('handles checkbox change events', () => {
@@ -50,11 +41,23 @@ describe('NodeListGroup', () => {
     expect(onToggleCollapsed.mock.calls.length).toEqual(1);
   });
 
-  it('hides children when collapsed class is used', () => {
+  it('adds class when collapsed prop true', () => {
     const type = getNodeTypes(mockState.animals)[0];
     const wrapper = setup.mount(
       <NodeListGroup id={type.id} name={type.name} collapsed={true} />
     );
-    expect(wrapper.find('.pipeline-nodelist__list--nested').length).toEqual(0);
+    const children = wrapper.find('.pipeline-nodelist__children');
+    expect(children.hasClass('pipeline-nodelist__children--closed')).toBe(true);
+  });
+
+  it('removes class when collapsed prop false', () => {
+    const type = getNodeTypes(mockState.animals)[0];
+    const wrapper = setup.mount(
+      <NodeListGroup id={type.id} name={type.name} collapsed={false} />
+    );
+    const children = wrapper.find('.pipeline-nodelist__children');
+    expect(children.hasClass('pipeline-nodelist__children--closed')).toBe(
+      false
+    );
   });
 });

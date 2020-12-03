@@ -5,7 +5,7 @@ import NodeListRow, { nodeListRowHeight } from './node-list-row';
 import LazyList from '../lazy-list';
 
 const NodeRowList = ({
-  items,
+  items = [],
   group,
   collapsed,
   onItemClick,
@@ -17,7 +17,7 @@ const NodeRowList = ({
     className={modifiers(
       'pipeline-nodelist__children',
       { closed: collapsed },
-      'pipeline-nodelist__list'
+      'pipeline-nodelist__list pipeline-nodelist__list--nested'
     )}>
     {items.map(item => (
       <NodeListRow
@@ -47,7 +47,7 @@ const NodeRowList = ({
 );
 
 const NodeRowLazyList = ({
-  items,
+  items = [],
   group,
   collapsed,
   onItemClick,
@@ -57,12 +57,7 @@ const NodeRowLazyList = ({
 }) => (
   <LazyList
     height={(start, end) => (end - start) * nodeListRowHeight}
-    total={items.length}
-    onChange={({ start, end, total }) =>
-      console.log(
-        `${group.name} ${start} to ${end} (${end - start} of ${total})`
-      )
-    }>
+    total={items.length}>
     {({
       start,
       end,
@@ -80,7 +75,7 @@ const NodeRowLazyList = ({
         className={modifiers(
           'pipeline-nodelist__children',
           { closed: collapsed },
-          'pipeline-nodelist__list'
+          'pipeline-nodelist__list pipeline-nodelist__list--nested'
         )}>
         <li
           className={modifiers('pipeline-nodelist__placeholder-upper', {
