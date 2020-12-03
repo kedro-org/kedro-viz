@@ -1,8 +1,5 @@
 import { useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
 
-// Required feature checks
-const supported = typeof IntersectionObserver !== 'undefined';
-
 /**
  * A component that renders only the children currently visible on screen.
  * @param {function} height A `function(start, end)` returning the pixel height for any given range of items
@@ -12,6 +9,7 @@ const supported = typeof IntersectionObserver !== 'undefined';
  * @param {?boolean} [lazy=true] Toggles the lazy functionality
  * @param {?boolean} [dispose=false] Toggles disposing items when they lose visibility
  * @param {?function} onChange Optional change callback
+ * @param {?function} container Optional, default scroll container is `element.offsetParent`
  * @return {object} The rendered children
  **/
 export default ({
@@ -21,8 +19,12 @@ export default ({
   lazy = true,
   dispose = false,
   buffer = 0.5,
-  onChange
+  onChange,
+  container = element => element?.offsetParent
 }) => {
+  // Required feature checks
+  const supported = typeof window.IntersectionObserver !== 'undefined';
+
   // Active only if enabled by prop and features detected
   const active = lazy && supported;
 
@@ -66,7 +68,7 @@ export default ({
           // The list container
           listRef.current,
           // The list's scrolling parent container
-          listRef.current?.offsetParent,
+          container(listRef.current),
           buffer,
           total,
           itemHeight
@@ -88,7 +90,7 @@ export default ({
           // Apply the update in the next render
           setRange(effectiveRange);
         }
-      }, [buffer, total, itemHeight, dispose])
+      }, [buffer, total, itemHeight, dispose, container])
     );
 
     // Memoised observer options
@@ -176,7 +178,7 @@ export default ({
  * @param {number} max The range maximum
  * @returns {array} The clamped range
  */
-const range = (start, end, min, max) => [
+export const range = (start, end, min, max) => [
   Math.max(Math.min(start, max), min),
   Math.max(Math.min(end, max), min)
 ];
@@ -187,7 +189,7 @@ const range = (start, end, min, max) => [
  * @param {array} rangeB The second range `[start, end]`
  * @returns {array} The range union
  */
-const rangeUnion = (rangeA, rangeB) => [
+export const rangeUnion = (rangeA, rangeB) => [
   Math.min(rangeA[0], rangeB[0]),
   Math.max(rangeA[1], rangeB[1])
 ];
@@ -198,12 +200,13 @@ const rangeUnion = (rangeA, rangeB) => [
  * @param {array} rangeB The second range `[start, end]`
  * @returns {boolean} True if ranges are equal else false
  */
-const rangeEqual = (rangeA, rangeB) =>
+export const rangeEqual = (rangeA, rangeB) =>
   rangeA[0] === rangeB[0] && rangeA[1] === rangeB[1];
 
 /**
  * Gets the range of items inside the container's screen bounds.
  * Assumes a single fixed height for all child items.
+ * Only considers visibility along the vertical y-axis (i.e. only top, bottom bounds).
  * @param {HTMLElement} element The target element (e.g. list container)
  * @param {?HTMLElement} container The clipping container of the target (e.g. scroll container)
  * @param {number} buffer A number [0...1] as a % of the container to render additionally
@@ -291,13 +294,15 @@ const useRequestFrameOnce = callback => {
 };
 
 /**
- * Generates an array of the form [0, {i / total}, ..., 1]
+ * Generates an array of the form [0, ...n / total]
  * except where total is `0` where it returns `[0]`.
  * @param {number} total The total number of thresholds to create
  * @returns {array} The threshold array
  */
-const thresholds = total =>
-  total === 0 ? [0] : Array.from({ length: total }, (_, i) => i / (total - 1));
+export const thresholds = total =>
+  total === 0
+    ? [0]
+    : [...Array.from({ length: total }, (_, i) => i / total), 1];
 
 /**
  * A hook that creates and manages an IntersectionObserver for the given element
@@ -321,7 +326,7 @@ const useIntersection = (element, options, callback) => {
     }
 
     // Create a new observer
-    observer.current = new IntersectionObserver(callback, options);
+    observer.current = new window.IntersectionObserver(callback, options);
     observer.current.observe(element.current);
 
     // Manually callback as element may already be visible
