@@ -67,9 +67,7 @@
   }
 
   // Bright indicator when checked or hovered
-  &.pipeline-row__toggle-icon--checked,
-  &.pipeline-row__toggle-icon--unchecked:hover,
-  &.pipeline-row__toggle-icon--unset:hover {
+  &.pipeline-row__toggle-icon--checked {
     opacity: 0.75;
   }
 }
