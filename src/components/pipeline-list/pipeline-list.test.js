@@ -3,6 +3,8 @@ import PipelineList, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('PipelineList', () => {
+  const pipelineIDs = mockState.animals.pipeline.ids.map((id, i) => [id, i]);
+
   it('renders without crashing', () => {
     const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
     const container = wrapper.find('.pipeline-list');
@@ -18,7 +20,6 @@ describe('PipelineList', () => {
     expect(onToggleOpen).toHaveBeenLastCalledWith(false);
   });
 
-  const pipelineIDs = mockState.animals.pipeline.ids.map((id, i) => [id, i]);
   test.each(pipelineIDs)(
     'should change the active pipeline to %s on clicking menu option %s',
     (id, i) => {
@@ -28,6 +29,20 @@ describe('PipelineList', () => {
         .at(i)
         .simulate('click');
       expect(wrapper.find('PipelineList').props().pipeline.active).toBe(id);
+    }
+  );
+
+  test.each(pipelineIDs)(
+    'should apply an active class to a pipeline row only if it is active (id: %s, index: %s)',
+    (id, i) => {
+      const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
+      const { active } = wrapper.find('PipelineList').props().pipeline;
+      const isActive = active === id;
+      const hasClass = wrapper
+        .find('MenuOption')
+        .at(i)
+        .hasClass('pipeline-list__option--active');
+      expect(hasClass).toBe(isActive);
     }
   );
 
