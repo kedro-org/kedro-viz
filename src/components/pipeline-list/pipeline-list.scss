@@ -50,6 +50,7 @@
   }
 
   .kui-dropdown__options {
+    z-index: 2; // fix closing transition animation bug
     background: var(--pipeline-list-options-bg);
     border-top: none;
     box-shadow: 0 0 2px rgba(black, 0.1);
