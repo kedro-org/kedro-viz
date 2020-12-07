@@ -48,7 +48,10 @@ from kedro_viz import server
 from kedro_viz.server import _allocate_port, _hash, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
 
-input_json_path = Path(__file__).parent / "test-data.json"
+input_json_path = (
+    Path(__file__).parents[2] / "src" / "utils" / "data" / "animals.mock.json"
+)
+
 EXPECTED_PIPELINE_DATA = json.loads(input_json_path.read_text())
 
 
@@ -87,15 +90,7 @@ def get_pipeline(name: str = None):
 
 def ds_pipeline():
     ds_pipeline = Pipeline(
-        [
-            node(
-                trout,
-                inputs=["pig", "sheep"],
-                outputs=["whale"],
-                name="trout",
-                tags=["small"],
-            )
-        ]
+        [node(trout, inputs=["pig", "sheep"], outputs=["whale"], name="trout")]
     )
     return ds_pipeline
 
@@ -357,14 +352,14 @@ def test_pipelines_endpoint_invalid_pipeline_id(cli_runner, client):
 def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON."""
     project_root = "project_root"
-    code_location = "code_location"
+    filepath = "filepath"
     mocker.patch.object(
         kedro_viz.server.Path, "cwd", return_value=tmp_path / project_root
     )
     mocker.patch.object(
         kedro_viz.server.Path,
         "resolve",
-        return_value=tmp_path / project_root / code_location,
+        return_value=tmp_path / project_root / filepath,
     )
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     task_id = "443cf06a"
@@ -373,7 +368,7 @@ def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     data = json.loads(response.data.decode())
 
     assert data["code"] == inspect.getsource(salmon)
-    assert data["code_location"] == str(Path(project_root) / code_location)
+    assert data["filepath"] == str(Path(project_root) / filepath)
     assert data["docstring"] == inspect.getdoc(salmon)
 
 
@@ -384,14 +379,14 @@ def test_node_metadata_endpoint_task_missing_docstring(
     """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON,
     but docstring is missing."""
     project_root = "project_root"
-    code_location = "code_location"
+    filepath = "filepath"
     mocker.patch.object(
         kedro_viz.server.Path, "cwd", return_value=tmp_path / project_root
     )
     mocker.patch.object(
         kedro_viz.server.Path,
         "resolve",
-        return_value=tmp_path / project_root / code_location,
+        return_value=tmp_path / project_root / filepath,
     )
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     task_id = "e27376a9"
@@ -399,7 +394,7 @@ def test_node_metadata_endpoint_task_missing_docstring(
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert data["code"] == inspect.getsource(trout)
-    assert data["code_location"] == str(Path(project_root) / code_location)
+    assert data["filepath"] == str(Path(project_root) / filepath)
     assert "docstring" not in data
 
 
@@ -410,9 +405,9 @@ def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     response = client.get(f"/api/nodes/{ _hash('cat')}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data["dataset_location"] == str(tmp_path)
+    assert data["filepath"] == str(tmp_path)
     assert (
-        data["dataset_type"]
+        data["type"]
         == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
     )
 
@@ -439,9 +434,9 @@ def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocke
     assert response.status_code == 200
     data = json.loads(response.data.decode())
 
-    assert data["dataset_location"] == str(tmp_path)
+    assert data["filepath"] == str(tmp_path)
     assert (
-        data["dataset_type"]
+        data["type"]
         == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
     )
 
@@ -500,7 +495,7 @@ def test_pipeline_flag(cli_runner, client):
                 "id": "e27376a9",
                 "name": "trout",
                 "pipelines": ["ds"],
-                "tags": ["small"],
+                "tags": [],
                 "type": "task",
             },
             {
@@ -509,7 +504,7 @@ def test_pipeline_flag(cli_runner, client):
                 "layer": "feature",
                 "name": "Pig",
                 "pipelines": ["ds"],
-                "tags": ["small"],
+                "tags": [],
                 "type": "data",
             },
             {
@@ -518,7 +513,7 @@ def test_pipeline_flag(cli_runner, client):
                 "layer": "primary",
                 "name": "Sheep",
                 "pipelines": ["ds"],
-                "tags": ["small"],
+                "tags": [],
                 "type": "data",
             },
             {
@@ -527,13 +522,13 @@ def test_pipeline_flag(cli_runner, client):
                 "layer": "model output",
                 "name": "Whale",
                 "pipelines": ["ds"],
-                "tags": ["small"],
+                "tags": [],
                 "type": "data",
             },
         ],
         "pipelines": [{"id": "ds", "name": "Ds"}],
         "selected_pipeline": "ds",
-        "tags": [{"id": "small", "name": "Small"}],
+        "tags": [],
     }
 
 

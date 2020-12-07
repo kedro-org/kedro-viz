@@ -1,16 +1,10 @@
-@import './variables';
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
 
 .pipeline-layer {
   opacity: 0;
   transition: opacity ease 0.5s;
-
-  .kui-theme--dark & {
-    fill: $layer-dark;
-  }
-
-  .kui-theme--light & {
-    fill: $layer-light;
-  }
+  fill: var(--layer-fill);
 
   &:hover {
     opacity: 1;
@@ -25,6 +19,12 @@
   }
 }
 
+@include transparentColour(
+  '--layer-bg-transparent',
+  $color-bg-light-1,
+  $color-bg-dark-1
+);
+
 .pipeline-flowchart__layer-names {
   position: absolute;
   top: 0;
@@ -34,28 +34,17 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  background: linear-gradient(
+    to right,
+    var(--color-bg-1),
+    var(--layer-bg-transparent)
+  );
   opacity: 0;
   transition: opacity ease 0.7s;
   pointer-events: none;
 
   &--visible {
     opacity: 1;
-  }
-
-  .kui-theme--dark & {
-    background: linear-gradient(
-      to right,
-      $color-bg-dark-1,
-      rgba($color-bg-dark-1, 0)
-    );
-  }
-
-  .kui-theme--light & {
-    background: linear-gradient(
-      to right,
-      $color-bg-light-1,
-      rgba($color-bg-light-1, 0)
-    );
   }
 
   @media print {
@@ -70,15 +59,8 @@
   align-items: center;
   height: 20px;
   padding-left: 18px;
+  color: var(--layer-text);
   font-weight: bold;
   font-size: 1.6em;
   white-space: nowrap;
-
-  .kui-theme--dark & {
-    color: rgba($color-light, 0.65);
-  }
-
-  .kui-theme--light & {
-    color: rgba($color-dark, 0.65);
-  }
 }

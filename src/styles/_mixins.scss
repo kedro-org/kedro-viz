@@ -26,16 +26,14 @@
   clip-path: inset(50%);
 }
 
-@mixin sidebarBase {
-  .kui-theme--light & {
-    background: $color-bg-light-3;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.07);
+// Create transparent versions of theme colours.
+// This is necessary for making gradients to transparent in Safari:
+// https://css-tricks.com/thing-know-gradients-transparent-black/
+@mixin transparentColour($var-name, $color-light, $color-dark) {
+  .kui-theme--light {
+    #{$var-name}: #{rgba($color-light, 0)};
   }
-
-  .kui-theme--dark & {
-    background: $color-bg-dark-2;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  .kui-theme--dark {
+    #{$var-name}: #{rgba($color-dark, 0)};
   }
 }

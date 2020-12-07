@@ -2,8 +2,8 @@
 
 src/                                    @richardwestenra
 public/                                 @richardwestenra
-tools/                                  @921kiyo
-package/                                @921kiyo
+tools/                                  @limdauto
+package/                                @limdauto
 
 Makefile                                @richardwestenra @DmitriiDeriabinQB
 .circleci/                              @richardwestenra @DmitriiDeriabinQB

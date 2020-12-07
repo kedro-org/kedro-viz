@@ -10,7 +10,7 @@ const loadJsonData = (path = getUrl('main')) =>
   json(path).catch(() => {
     const fullPath = `/public${path.substr(1)}`;
     throw new Error(
-      `Unable to load pipeline data from ${path}. If you're running Kedro-Viz as a standalone (e.g. for JavaScript development), please check that you have placed a data file at ${fullPath}.`
+      `Unable to load data from ${path}. If you're running Kedro-Viz as a standalone (e.g. for JavaScript development), please check that you have placed a data file at ${fullPath}.`
     );
   });
 

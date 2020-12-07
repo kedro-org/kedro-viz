@@ -1,3 +1,5 @@
+@import '../../../styles/variables';
+@import './variables';
 @import './node';
 @import './edges';
 @import './layers';
@@ -35,7 +37,4 @@
   // Performance: Lower render quality
   shape-rendering: optimizeSpeed;
   text-rendering: optimizeSpeed;
-
-  // Performance: Disable all hit tests
-  pointer-events: none;
 }

@@ -3,11 +3,26 @@
 @import '../../../styles/variables';
 @import './variables';
 @import './search';
-@import './toggle';
 @import './section';
 @import './group';
 @import './row';
 @import './filter';
+
+.kui-theme--light {
+  --color-nodelist-row-active: #{$row-active-light};
+  --color-nodelist-row-selected: #{$row-selected-light};
+  --color-nodelist-filter-indicator-on: #{$filter-indicator-on-light};
+  --color-nodelist-filter-indicator-off: #{$filter-indicator-off-light};
+  --color-nodelist-highlight: #{darken($color-primary, 10%)};
+}
+
+.kui-theme--dark {
+  --color-nodelist-row-active: #{$row-active-dark};
+  --color-nodelist-row-selected: #{$row-selected-dark};
+  --color-nodelist-filter-indicator-on: #{$filter-indicator-on-dark};
+  --color-nodelist-filter-indicator-off: #{$filter-indicator-off-dark};
+  --color-nodelist-highlight: #{$color-primary};
+}
 
 .pipeline-nodelist {
   position: relative;
@@ -28,16 +43,9 @@
     right: 0;
     bottom: 0;
     left: 0;
+    background: var(--color-bg-2);
     opacity: 0;
     content: '';
-
-    .kui-theme--light & {
-      background: $color-bg-light-2;
-    }
-
-    .kui-theme--dark & {
-      background: $color-bg-dark-2;
-    }
   }
 
   &--fade {
@@ -51,6 +59,12 @@
   }
 }
 
+@include transparentColour(
+  '--nodelist-bg-transparent',
+  $color-bg-light-3,
+  $color-bg-dark-3
+);
+
 .pipeline-nodelist-scrollbars {
   flex-grow: 1;
   min-height: 400px;
@@ -61,23 +75,12 @@
     right: -1px;
     left: -1px;
     height: 35px;
+    background: linear-gradient(
+      0deg,
+      var(--nodelist-bg-transparent) 0%,
+      var(--color-bg-3, 1) 100%
+    );
     content: '';
-
-    .kui-theme--dark & {
-      background: linear-gradient(
-        0deg,
-        rgba($color-bg-dark-3, 0) 0%,
-        rgba($color-bg-dark-3, 1) 100%
-      );
-    }
-
-    .kui-theme--light & {
-      background: linear-gradient(
-        0deg,
-        rgba($color-bg-light-3, 0) 0%,
-        rgba($color-bg-light-3, 1) 100%
-      );
-    }
   }
 }
 

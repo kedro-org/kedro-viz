@@ -204,24 +204,38 @@ describe('NodeList', () => {
     it('selecting tags enables only elements with given tags', () => {
       const wrapper = setup.mount(<NodeList />);
 
-      changeRows(wrapper, ['huge'], true);
-      expect(elementsEnabled(wrapper)).toEqual([['whale', true]]);
-
-      changeRows(wrapper, ['huge', 'small'], true);
+      changeRows(wrapper, ['Small'], true);
       expect(elementsEnabled(wrapper)).toEqual([
         ['salmon', true],
-        ['trout', true],
-        ['cat', true],
-        ['dog', true],
-        ['weasel', true],
-        ['whale', true],
-        ['parameters_rabbit', true]
+        ['Cat', true],
+        ['Dog', true],
+        ['Horse', true],
+        ['Sheep', true],
+        ['Parameters', true],
+        ['Params:rabbit', true]
+      ]);
+
+      changeRows(wrapper, ['Small', 'Large'], true);
+      expect(elementsEnabled(wrapper)).toEqual([
+        ['salmon', true],
+        ['shark', true],
+        ['Bear', true],
+        ['Cat', true],
+        ['Dog', true],
+        ['Elephant', true],
+        ['Giraffe', true],
+        ['Horse', true],
+        ['Pig', true],
+        ['Sheep', true],
+        ['Weasel', true],
+        ['Parameters', true],
+        ['Params:rabbit', true]
       ]);
     });
 
     it('selecting a tag sorts elements by enabled first then alphabetical', () => {
       const wrapper = setup.mount(<NodeList />);
-      changeRows(wrapper, ['medium'], true);
+      changeRows(wrapper, ['Medium'], true);
 
       expect(elements(wrapper)).toEqual([
         // Nodes (enabled)
@@ -230,20 +244,20 @@ describe('NodeList', () => {
         ['salmon', false],
         ['trout', false],
         // Datasets (enabled)
-        ['cat', true],
-        ['dog', true],
-        ['pig', true],
-        ['sheep', true],
+        ['Bear', true],
+        ['Cat', true],
+        ['Elephant', true],
+        ['Giraffe', true],
+        ['Pig', true],
+        ['Weasel', true],
         // Datasets (disabled)
-        ['bear', false],
-        ['elephant', false],
-        ['giraffe', false],
-        ['horse', false],
-        ['weasel', false],
-        ['whale', false],
+        ['Dog', false],
+        ['Horse', false],
+        ['Sheep', false],
+        ['Whale', false],
         // Parameters
-        ['parameters', false],
-        ['parameters_rabbit', false]
+        ['Parameters', false],
+        ['Params:rabbit', false]
       ]);
     });
 
@@ -252,9 +266,9 @@ describe('NodeList', () => {
       const unsetClass = 'pipeline-nodelist__group--all-unset';
 
       expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
-      changeRows(wrapper, ['huge'], true);
+      changeRows(wrapper, ['Large'], true);
       expect(tagItem(wrapper).hasClass(unsetClass)).toBe(false);
-      changeRows(wrapper, ['huge'], false);
+      changeRows(wrapper, ['Large'], false);
       expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
     });
 
@@ -262,11 +276,11 @@ describe('NodeList', () => {
       const wrapper = setup.mount(<NodeList />);
       const uncheckedClass = 'pipeline-nodelist__row--unchecked';
 
-      expect(rowByName(wrapper, 'huge').hasClass(uncheckedClass)).toBe(true);
-      changeRows(wrapper, ['huge'], true);
-      expect(rowByName(wrapper, 'huge').hasClass(uncheckedClass)).toBe(false);
-      changeRows(wrapper, ['huge'], false);
-      expect(rowByName(wrapper, 'huge').hasClass(uncheckedClass)).toBe(true);
+      expect(rowByName(wrapper, 'Large').hasClass(uncheckedClass)).toBe(true);
+      changeRows(wrapper, ['Large'], true);
+      expect(rowByName(wrapper, 'Large').hasClass(uncheckedClass)).toBe(false);
+      changeRows(wrapper, ['Large'], false);
+      expect(rowByName(wrapper, 'Large').hasClass(uncheckedClass)).toBe(true);
     });
 
     it('shows as partially selected when at least one but not all tags selected', () => {
@@ -276,11 +290,11 @@ describe('NodeList', () => {
       expect(partialIcon(wrapper)).toHaveLength(0);
 
       // Some tags selected
-      changeRows(wrapper, ['huge'], true);
+      changeRows(wrapper, ['Large'], true);
       expect(partialIcon(wrapper)).toHaveLength(1);
 
       // All tags selected
-      changeRows(wrapper, ['huge', 'large', 'medium', 'small'], true);
+      changeRows(wrapper, ['Large', 'Medium', 'Small'], true);
       expect(partialIcon(wrapper)).toHaveLength(0);
     });
   });

@@ -39,14 +39,7 @@ $path2-gap: $section-length + $section-gap-2x;
   path:nth-of-type(2) {
     animation: stroke-spin2 2s infinite linear;
     stroke-dasharray: $path2-length, $path2-gap;
-
-    .kui-theme--light & {
-      stroke: $color-bg-light-alt;
-    }
-
-    .kui-theme--dark & {
-      stroke: $color-bg-dark-alt;
-    }
+    stroke: var(--color-bg-alt);
   }
 }
 
