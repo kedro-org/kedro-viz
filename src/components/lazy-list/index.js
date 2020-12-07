@@ -235,13 +235,13 @@ const visibleRangeOf = (
   const clip = container.getBoundingClientRect();
 
   // Find element bounds (e.g. list container inside scroll container)
-  const rect = element.getBoundingClientRect();
+  const list = element.getBoundingClientRect();
 
   // Find the number of items to buffer
   const bufferCount = Math.ceil((buffer * clip.height) / childHeight);
 
   // When clip is fully above viewport or element is fully above clip
-  if (clip.bottom < 0 || rect.bottom < clip.top) {
+  if (clip.bottom < 0 || list.bottom < clip.top) {
     // Only bottom part of the buffer in range
     return range(childTotal - bufferCount, childTotal, 0, childTotal);
   }
@@ -253,28 +253,20 @@ const visibleRangeOf = (
   };
 
   // When clip is fully below viewport or element is fully below clip
-  if (clip.top > viewport.bottom || rect.top > clip.bottom) {
+  if (clip.top > viewport.bottom || list.top > clip.bottom) {
     // Only top part of the buffer in range
     return range(0, bufferCount, 0, childTotal);
   }
 
-  // Find visible rendered bounds inside scroll clip and inside viewport clip
-  const top = Math.min(
-    Math.max(rect.top, clip.top, viewport.top),
-    clip.bottom,
-    viewport.bottom
-  );
-  const bottom = Math.max(
-    Math.min(rect.bottom, clip.bottom, viewport.bottom),
-    clip.top,
-    viewport.bottom
-  );
+  // Find intersection of clip and viewport now overlap guaranteed
+  const top = Math.max(clip.top, viewport.top);
+  const bottom = Math.min(clip.bottom, viewport.bottom);
 
-  // Find visible item range inside visible rendered bounds
-  const start = Math.floor((top - rect.top) / childHeight);
-  const end = Math.ceil((bottom - rect.top) / childHeight);
+  // Find unbounded item range within the intersection
+  const start = Math.floor((top - list.top) / childHeight);
+  const end = Math.ceil((bottom - list.top) / childHeight);
 
-  // Apply buffer and clamp final range
+  // Apply buffer and clamp unbounded range to list bounds
   return range(start - bufferCount, end + bufferCount, 0, childTotal);
 };
 
