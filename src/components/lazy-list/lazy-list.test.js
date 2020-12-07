@@ -4,19 +4,27 @@ import { setup } from '../../utils/state.mock';
 
 describe('LazyList', () => {
   it('renders expected visible child items with padding for non-visible items', () => {
+    // Settings for all test items
     const itemCount = 500;
     const itemHeight = 30;
+
+    // The specific range of items to make visible in this test
     const visibleStart = 10;
     const visibleEnd = 40;
     const visibleCount = visibleEnd - visibleStart;
 
+    // Configure test to include some clipping and scroll conditions
     const test = setupTest({
       itemCount,
       itemHeight,
       visibleCount,
-      containerHeight: itemHeight * visibleCount,
-      viewportHeight: itemHeight * visibleCount, // * 1.25,
+      // Viewport to fit exactly desired number of visible items
+      viewportHeight: itemHeight * visibleCount,
+      // Container larger than viewport to test clipping
+      containerHeight: itemHeight * visibleCount * 2,
+      // Container scrolled half way to desired start item to test
       containerScrollY: itemHeight * visibleStart * 0.5,
+      // Viewport scrolled remaining half way to desired start item
       viewportScrollY: itemHeight * visibleStart * 0.5
     });
 
@@ -31,23 +39,25 @@ describe('LazyList', () => {
       </LazyList>
     );
 
-    // Get rendered and expected children text
-    const childrenText = wrapper
-      .find('.test-child')
-      .map(element => element.text());
-    const expectedChildrenText = Array.from(
+    // Generate expected items text for visible range
+    const expectedItemsText = Array.from(
       { length: visibleCount },
       (_, i) => `Item ${visibleStart + i}`
     );
 
-    // Sanity checks
-    expect(childrenText.length).toBe(visibleCount);
-    expect(childrenText.length).toBeLessThan(itemCount);
+    // Get actual rendered items text
+    const actualItemsText = wrapper
+      .find('.test-item')
+      .map(element => element.text());
 
-    // Test rendered children are strictly the expected visible children
-    expect(childrenText).toEqual(expectedChildrenText);
+    // Test the items are exactly as expected
+    expect(actualItemsText).toEqual(expectedItemsText);
 
-    // Test list pads the non-visible items
+    // Sanity check that not all items were rendered
+    expect(actualItemsText.length).toBe(visibleCount);
+    expect(actualItemsText.length).toBeLessThan(itemCount);
+
+    // Test element pads the remaining non-visible items
     const listElementStyle = wrapper.find('.test-list').get(0).props.style;
     expect(listElementStyle.paddingTop).toBe(visibleStart * itemHeight);
     expect(listElementStyle.height).toBe(itemCount * itemHeight);
@@ -99,7 +109,7 @@ const setupTest = ({
   const containerWidth = itemWidth;
   const listWidth = itemWidth;
 
-  // Children render function
+  // List render function
   const listRender = ({
     start,
     end,
@@ -127,9 +137,9 @@ const setupTest = ({
           <li ref={upperRef} style={upperStyle} />
           {/* Lower placeholder */}
           <li ref={lowerRef} style={lowerStyle} />
-          {/* List items subset */}
+          {/* List items in visible range */}
           {items.slice(start, end).map(i => (
-            <li key={i} className="test-child">
+            <li key={i} className="test-item">
               Item {i}
             </li>
           ))}
@@ -164,12 +174,12 @@ const setupTest = ({
   window.Element.prototype.getBoundingClientRect = function() {
     const instance = getInstance(this);
 
-    // Check which element this is
+    // Check which element this is (list or container)
     const isList = instance.type === 'ul';
 
     // Set by `style` in `listRender`
-    const width = Number.parseInt(this.style.width);
-    const height = Number.parseInt(this.style.height);
+    const width = Number.parseInt(this.style.width) || 0;
+    const height = Number.parseInt(this.style.height) || 0;
 
     // Find offset for viewport scroll and container scroll
     const offsetY = -viewportScrollY - (isList ? containerScrollY : 0);
@@ -177,13 +187,13 @@ const setupTest = ({
     // Return bounds in screen space as expected
     return {
       x: 0,
-      left: 0,
       y: offsetY,
       top: offsetY,
-      width: width,
+      bottom: offsetY + height,
+      left: 0,
       right: width,
-      height: height,
-      bottom: height + offsetY
+      width: width,
+      height: height
     };
   };
 

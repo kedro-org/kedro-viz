@@ -1,6 +1,5 @@
 import React from 'react';
 import { NodeListGroup } from './node-list-group';
-import NodeListRow from './node-list-row';
 import { getNodeTypes } from '../../selectors/node-types';
 import { setup, mockState } from '../../utils/state.mock';
 
