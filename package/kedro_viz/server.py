@@ -39,7 +39,7 @@ from collections import defaultdict
 from contextlib import closing
 from functools import partial
 from pathlib import Path
-from typing import Dict, List, Set, Union, Any
+from typing import Any, Dict, List, Set, Union
 
 import click
 import kedro
@@ -535,7 +535,6 @@ def nodes_metadata(node_id):
     if node["type"] == "data":
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
-
 
     parameter_values = _get_parameter_values(node)
 
