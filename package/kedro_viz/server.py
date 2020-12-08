@@ -696,7 +696,7 @@ def _call_viz(
 # Launch a develop viz server manually by supplying this server script with a project_path.
 # Strictly used to launch a development server for viz.
 # pylint: disable=invalid-name
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import argparse
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
