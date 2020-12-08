@@ -280,7 +280,7 @@ def _sort_layers(
 
 def _construct_layer_mapping():
     if _CATALOG.layers is None:
-        return {ds_name: None for ds_name in getattr(_CATALOG, "_data_sets")}
+        return {ds_name: None for ds_name in _CATALOG._data_sets}
 
     dataset_to_layer = {}
     for layer, dataset_names in _CATALOG.layers.items():
@@ -661,9 +661,9 @@ def _call_viz(
                     env=env,
                     save_on_close=False,
                 )
-                with KedroSession.create(  # pylint: disable=unexpected-keyword-arg
+                session = KedroSession.create(  # pylint: disable=unexpected-keyword-arg
                     **session_kwargs
-                ) as session:
+                )
                     context = session.load_context()  # pylint: disable=no-member
                     pipelines = _get_pipelines_from_context(context, pipeline_name)
             else:
