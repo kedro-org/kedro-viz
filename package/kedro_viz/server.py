@@ -664,8 +664,8 @@ def _call_viz(
                 session = KedroSession.create(  # pylint: disable=unexpected-keyword-arg
                     **session_kwargs
                 )
-                    context = session.load_context()  # pylint: disable=no-member
-                    pipelines = _get_pipelines_from_context(context, pipeline_name)
+                context = session.load_context()  # pylint: disable=no-member
+                pipelines = _get_pipelines_from_context(context, pipeline_name)
             else:
                 context = load_context(project_path=project_path, env=env)
                 pipelines = _get_pipelines_from_context(context, pipeline_name)
