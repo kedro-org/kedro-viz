@@ -478,7 +478,7 @@ def _get_parameter_values(node: Dict) -> Any:
     """Get parameter values from a stored node."""
     if node["obj"] is not None:
         parameter_values = node["obj"].load()
-    else:
+    else:  # pragma: no cover
         parameter_values = {}
     return parameter_values
 
