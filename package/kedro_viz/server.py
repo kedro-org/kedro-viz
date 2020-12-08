@@ -682,3 +682,22 @@ def _call_viz(
         if browser and is_localhost:
             webbrowser.open_new("http://{}:{:d}/".format(host, port))
         app.run(host=host, port=port)
+
+
+# Launch a develop viz server manually by supplying this server script with a project_path.
+# Strictly used to launch a development server for viz.
+# pylint: disable=invalid-name
+if __name__ == "__main__":  # pragma: no cover
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Launch a development viz server")
+    parser.add_argument("project_path", help="Path to a Kedro project")
+    parser.add_argument(
+        "--host", help="The host of the development server", default="localhost"
+    )
+    parser.add_argument(
+        "--port", help="The port of the development server", default="4142"
+    )
+    args = parser.parse_args()
+
+    _call_viz(host=args.host, port=args.port, project_path=args.project_path)

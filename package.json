@@ -14,6 +14,7 @@
     "start:app": "PORT=4141 react-scripts start",
     "start:css": "npm run build:css && node-sass src/ -o src/ --watch --recursive",
     "start:lib": "rm -rf lib && babel src --out-dir lib --copy-files --watch",
+    "start:api": "python package/kedro_viz/server.py \"$npm_config_project_path\"",
     "lib": "npm-run-all -s lib:clean lib:copy lib:webpack lib:babel lib:prune",
     "lib:clean": "rm -rf lib",
     "lib:copy": "cp -rf src lib",

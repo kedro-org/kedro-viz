@@ -77,6 +77,16 @@ This will serve the app at [localhost:4141](http://localhost:4141/), and watch f
 npm run lib
 ```
 
+#### Launch a development server with a real Kedro project
+
+Run the following command:
+
+```bash
+npm run start:api --project_path=<path-to-Kedro-project>
+```
+
+This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command.
+
 #### Data sources
 
 Kedro-Viz uses a unique identifier to determine the data source from one of several available sources. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
