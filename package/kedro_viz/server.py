@@ -39,7 +39,7 @@ from collections import defaultdict
 from contextlib import closing
 from functools import partial
 from pathlib import Path
-from typing import Dict, List, Set, Union
+from typing import Any, Dict, List, Set, Union
 
 import click
 import kedro
@@ -455,6 +455,15 @@ def _get_dataset_data_params(namespace: str):
     return node_data
 
 
+def _get_parameter_values(node: Dict) -> Any:
+    """Get parameter values from a stored node."""
+    if node["obj"] is not None:
+        parameter_values = node["obj"].load()
+    else:  # pragma: no cover
+        parameter_values = {}
+    return parameter_values
+
+
 @app.route("/api/main")
 def nodes_json():
     """Serve the data from all Kedro pipelines in the project.
@@ -508,7 +517,8 @@ def nodes_metadata(node_id):
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
 
-    parameter_values = node["obj"].load()
+    parameter_values = _get_parameter_values(node)
+
     if "parameter_name" in node:
         # In case of 'params:' prefix
         parameters_metadata = {"parameters": {node["parameter_name"]: parameter_values}}
