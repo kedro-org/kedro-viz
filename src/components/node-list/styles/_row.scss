@@ -164,15 +164,10 @@
   padding: $toggle-icon-padding;
   border-radius: 50%;
   opacity: 0;
-
-  &--unchecked {
-    .pipeline-nodelist__row:hover & {
-      opacity: 0.55;
-    }
-  }
 }
 
-.pipeline-row__toggle-icon--visible {
+// this class enables the 'eye' icon of nodes to be visible on hover of the nodes
+.pipeline-row__toggle-icon--kind-toggle {
   .pipeline-nodelist__row:hover & {
     opacity: 0.55;
   }
