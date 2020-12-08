@@ -57,11 +57,11 @@ export const getClickedNodeMetaData = createSelector(
     nodeTags,
     tagNames,
     pipeline,
-    filepaths,
-    codes,
-    docstrings,
-    parameters,
-    datasetTypes
+    nodeFilepaths,
+    nodeCodes,
+    nodeDocstrings,
+    nodeParameters,
+    nodeDatasetTypes
   ) => {
     const node = nodes[nodeId];
 
@@ -69,18 +69,24 @@ export const getClickedNodeMetaData = createSelector(
       return null;
     }
 
+    const parameters =
+      nodeParameters[node.id] &&
+      Object.entries(nodeParameters[node.id]).map(
+        ([key, value]) => `${key}: ${value}`
+      );
+
     const metadata = {
       node,
       tags: [...nodeTags[node.id]]
         .map(tagId => tagNames[tagId])
         .sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
-      parameters: parameters[node.id],
+      parameters,
       runCommand: getRunCommand(node.id),
-      docstring: docstrings[node.id],
-      code: codes[node.id],
-      filepath: filepaths[node.id],
-      datasetType: datasetTypes[node.id]
+      docstring: nodeDocstrings[node.id],
+      code: nodeCodes[node.id],
+      filepath: nodeFilepaths[node.id],
+      datasetType: nodeDatasetTypes[node.id]
     };
 
     // Note: node.sources node.targets require newgraph enabled

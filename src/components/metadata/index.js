@@ -21,6 +21,7 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
   const [showCopied, setShowCopied] = useState(false);
 
   const isTaskNode = metadata?.node.type === 'task';
+  const isParametersNode = metadata?.node.type === 'parameters';
   const isDataNode = metadata?.node.type === 'data';
 
   const onCopyClick = () => {
@@ -65,7 +66,7 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
         <MetaDataRow label="File Path:" kind="path" value={metadata.filepath} />
         <MetaDataRow
           label={`Parameters (${metadata.parameters?.length || '-'}):`}
-          visible={isTaskNode}
+          visible={isParametersNode || isTaskNode}
           commas={false}
           inline={false}
           value={metadata.parameters}
@@ -129,7 +130,6 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
           visible={isTaskNode}
           value={metadata.docstring}
         />
-        <MetaDataRow label="Code:" visible={isTaskNode} value={metadata.code} />
       </dl>
     </div>
   );
