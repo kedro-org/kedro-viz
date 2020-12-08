@@ -66,9 +66,14 @@
     opacity: 0.55;
   }
 
-  // Bright indicator when checked or hovered
   &.pipeline-row__toggle-icon--checked {
+    // condition 3: Bright indicator when checked but not hovered
     opacity: 0.75;
+
+    // condition 4: Bright indicator when checked and hovered on the entire row
+    .pipeline-nodelist__row--visible:hover & {
+      opacity: 1;
+    }
   }
 }
 
