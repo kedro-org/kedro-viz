@@ -1,6 +1,7 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
 import { mockState } from '../utils/state.mock';
+import { changeFlag } from '../actions';
 import {
   TOGGLE_NODE_DATA_LOADING,
   toggleNodeDataLoading,
@@ -42,16 +43,26 @@ describe('node actions', () => {
       jest.resetModules();
     });
 
+    describe('if meta flag is false', () => {
+      it('should not make any API calls', () => {
+        const store = createStore(reducer, mockState.json);
+        loadNodeData('parametersID')(store.dispatch, store.getState);
+        expect(store.getState().loading.node).toBe(false);
+      });
+    });
+
     describe('if loading data asynchronously', () => {
       it('should set loading to true immediately', () => {
-        const store = createStore(reducer, mockState.json);
+        const initialstate = reducer(mockState.json, changeFlag('meta', true));
+        const store = createStore(reducer, initialstate);
         expect(store.getState().loading.node).toBe(false);
         loadNodeData('parametersID')(store.dispatch, store.getState);
         expect(store.getState().loading.node).toBe(true);
       });
 
       it('should load the new data, reset the state and added the fetched node id under node.fetched', async () => {
-        const store = createStore(reducer, mockState.json);
+        let initialstate = reducer(mockState.json, changeFlag('meta', true));
+        const store = createStore(reducer, initialstate);
         const node = { id: parametersID };
         await loadNodeData(node.id)(store.dispatch, store.getState);
         const state = store.getState();
@@ -59,7 +70,8 @@ describe('node actions', () => {
       });
 
       it('should dispatch an action with the newly fetched data to update the store', async () => {
-        const store = createStore(reducer, mockState.json);
+        const initialstate = reducer(mockState.json, changeFlag('meta', true));
+        const store = createStore(reducer, initialstate);
         const { dispatch, getState } = store;
         const node = { id: parametersID };
         const storeListener = jest.fn();
@@ -77,14 +89,16 @@ describe('node actions', () => {
       });
 
       it('should set loading to false when complete', async () => {
-        const store = createStore(reducer, mockState.json);
+        const initialstate = reducer(mockState.json, changeFlag('meta', true));
+        const store = createStore(reducer, initialstate);
         const node = { id: parametersID };
         await loadNodeData(node.id)(store.dispatch, store.getState);
         expect(store.getState().loading.node).toBe(false);
       });
 
       it('should do nothing if the Node data is already fetched', async () => {
-        const store = createStore(reducer, mockState.json);
+        const initialstate = reducer(mockState.json, changeFlag('meta', true));
+        const store = createStore(reducer, initialstate);
         const { dispatch, getState } = store;
         const node = { id: parametersID };
         const storeListener = jest.fn();
@@ -107,7 +121,8 @@ describe('node actions', () => {
       });
 
       it('should not make any API calls if there is no nodeID present', async () => {
-        const store = createStore(reducer, mockState.json);
+        const initialstate = reducer(mockState.json, changeFlag('meta', true));
+        const store = createStore(reducer, initialstate);
         const { dispatch, getState, subscribe } = store;
         const node = { id: null };
         const storeListener = jest.fn();
