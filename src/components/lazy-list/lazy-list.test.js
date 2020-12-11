@@ -175,7 +175,7 @@ const setupTest = ({
     const instance = getInstance(this);
 
     // Check which element this is (list or container)
-    const isList = instance.type === 'ul';
+    const isList = instance?.type === 'ul';
 
     // Set by `style` in `listRender`
     const width = Number.parseInt(this.style.width) || 0;
