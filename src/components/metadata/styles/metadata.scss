@@ -127,6 +127,12 @@
   }
 }
 
+.pipeline-metadata__value-list-remainder {
+  display: block;
+  margin: 0.4em 0 0 0;
+  opacity: 0.45;
+}
+
 .pipeline-metadata__value-list--no-inline {
   margin: 0;
   padding: 0;

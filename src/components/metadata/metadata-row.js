@@ -15,6 +15,7 @@ const MetaDataRow = ({
   visible = true,
   inline = true,
   commas = true,
+  limit = false,
   children
 }) => {
   const showList = Array.isArray(value);
@@ -32,6 +33,7 @@ const MetaDataRow = ({
               kind={kind}
               empty={empty}
               values={value}
+              limit={limit}
             />
           )}
           {!showList && !children && (
