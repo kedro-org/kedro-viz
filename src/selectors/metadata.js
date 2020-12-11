@@ -82,7 +82,7 @@ export const getClickedNodeMetaData = createSelector(
         .sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
       parameters,
-      runCommand: getRunCommand(node.id),
+      runCommand: getRunCommand(node),
       docstring: nodeDocstrings[node.id],
       code: nodeCodes[node.id],
       filepath: nodeFilepaths[node.id],
