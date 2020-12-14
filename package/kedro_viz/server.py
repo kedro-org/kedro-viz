@@ -39,13 +39,15 @@ from collections import defaultdict
 from contextlib import closing
 from functools import partial
 from pathlib import Path
-from typing import Dict, List, Set, Union
+from typing import Any, Dict, List, Set, Union
 
 import click
 import kedro
 import requests
 from flask import Flask, abort, jsonify, send_from_directory
 from IPython.core.display import HTML, display
+from kedro.framework.cli.utils import KedroCliError
+from kedro.framework.context import KedroContextError, load_context
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 from kedro.pipeline.node import Node
 from semver import VersionInfo
@@ -54,13 +56,6 @@ from toposort import toposort_flatten
 from kedro_viz.utils import wait_for
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
-
-if KEDRO_VERSION.match(">=0.16.0"):
-    from kedro.framework.cli import get_project_context
-    from kedro.framework.cli.utils import KedroCliError
-else:
-    from kedro.cli import get_project_context  # pragma: no cover
-    from kedro.cli.utils import KedroCliError  # pragma: no cover
 
 _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 
@@ -183,15 +178,9 @@ def _load_from_file(load_file: str) -> dict:
 
 
 def _get_pipelines_from_context(context, pipeline_name) -> Dict[str, "Pipeline"]:
-    if KEDRO_VERSION.match(">=0.15.2"):
-        if pipeline_name:
-            return {pipeline_name: context._get_pipeline(name=pipeline_name)}
-        return context.pipelines
-
-    # Kedro 0.15.0 or 0.15.1
     if pipeline_name:
-        raise KedroCliError(ERROR_PIPELINE_FLAG_NOT_SUPPORTED)
-    return {_DEFAULT_KEY: context.pipeline}
+        return {pipeline_name: context._get_pipeline(name=pipeline_name)}
+    return context.pipelines
 
 
 def _sort_layers(
@@ -290,20 +279,12 @@ def _sort_layers(
 
 
 def _construct_layer_mapping():
-    if hasattr(_CATALOG, "layers"):  # kedro>=0.16.0
-        if _CATALOG.layers is None:
-            return {ds_name: None for ds_name in getattr(_CATALOG, "_data_sets")}
+    if _CATALOG.layers is None:
+        return {ds_name: None for ds_name in _CATALOG._data_sets}
 
-        dataset_to_layer = {}
-        for layer, dataset_names in _CATALOG.layers.items():
-            dataset_to_layer.update(
-                {dataset_name: layer for dataset_name in dataset_names}
-            )
-    else:
-        dataset_to_layer = {
-            ds_name: getattr(ds_obj, "_layer", None)
-            for ds_name, ds_obj in _CATALOG._data_sets.items()
-        }
+    dataset_to_layer = {}
+    for layer, dataset_names in _CATALOG.layers.items():
+        dataset_to_layer.update({dataset_name: layer for dataset_name in dataset_names})
 
     return dataset_to_layer
 
@@ -375,7 +356,7 @@ def format_pipeline_data(
     pipeline_key: str,
     pipeline: "Pipeline",  # noqa: F821
     nodes: Dict[str, dict],
-    node_dependencies: Dict[str, dict],
+    node_dependencies: Dict[str, Set[str]],
     tags: Set[str],
     edges_list: List[dict],
     nodes_list: List[dict],
@@ -474,6 +455,15 @@ def _get_dataset_data_params(namespace: str):
     return node_data
 
 
+def _get_parameter_values(node: Dict) -> Any:
+    """Get parameter values from a stored node."""
+    if node["obj"] is not None:
+        parameter_values = node["obj"].load()
+    else:  # pragma: no cover
+        parameter_values = {}
+    return parameter_values
+
+
 @app.route("/api/main")
 def nodes_json():
     """Serve the data from all Kedro pipelines in the project.
@@ -527,7 +517,8 @@ def nodes_metadata(node_id):
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
 
-    parameter_values = node["obj"].load()
+    parameter_values = _get_parameter_values(node)
+
     if "parameter_name" in node:
         # In case of 'params:' prefix
         parameters_metadata = {"parameters": {node["parameter_name"]: parameter_values}}
@@ -664,24 +655,34 @@ def _call_viz(
 
         _DATA = _load_from_file(load_file)
     else:
-        if KEDRO_VERSION.match(">=0.16.0"):
-            from kedro.framework.context import KedroContextError
-        else:
-            # pylint: disable=no-name-in-module,import-error
-            from kedro.context import KedroContextError
-
         try:
-            if project_path is not None:
-                context = get_project_context(
-                    "context", project_path=project_path, env=env
+            project_path = project_path or Path.cwd()
+
+            if KEDRO_VERSION.match(">=0.17.0"):  # pragma: no cover
+                from kedro.framework.session import KedroSession
+                from kedro.framework.startup import (  # pylint: disable=no-name-in-module,import-error
+                    _get_project_metadata,
                 )
+
+                package_name = _get_project_metadata(project_path).package_name
+                session_kwargs = dict(
+                    package_name=package_name,
+                    project_path=project_path,
+                    env=env,
+                    save_on_close=False,
+                )
+                session = KedroSession.create(  # pylint: disable=unexpected-keyword-arg
+                    **session_kwargs
+                )
+                context = session.load_context()  # pylint: disable=no-member
+                pipelines = _get_pipelines_from_context(context, pipeline_name)
             else:
-                context = get_project_context("context", env=env)
-            pipelines = _get_pipelines_from_context(context, pipeline_name)
+                context = load_context(project_path=project_path, env=env)
+                pipelines = _get_pipelines_from_context(context, pipeline_name)
         except KedroContextError:
             raise KedroCliError(ERROR_PROJECT_ROOT)
-        _CATALOG = context.catalog
 
+        _CATALOG = context.catalog
         _DATA = format_pipelines_data(pipelines)
 
     if save_file:
@@ -691,3 +692,22 @@ def _call_viz(
         if browser and is_localhost:
             webbrowser.open_new("http://{}:{:d}/".format(host, port))
         app.run(host=host, port=port)
+
+
+# Launch a develop viz server manually by supplying this server script with a project_path.
+# Strictly used to launch a development server for viz.
+# pylint: disable=invalid-name
+if __name__ == "__main__":  # pragma: no cover
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Launch a development viz server")
+    parser.add_argument("project_path", help="Path to a Kedro project")
+    parser.add_argument(
+        "--host", help="The host of the development server", default="localhost"
+    )
+    parser.add_argument(
+        "--port", help="The port of the development server", default="4142"
+    )
+    args = parser.parse_args()
+
+    _call_viz(host=args.host, port=args.port, project_path=args.project_path)

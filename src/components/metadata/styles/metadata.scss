@@ -103,6 +103,16 @@
   word-break: break-word;
 }
 
+.pipeline-metadata__value--kind-type,
+.pipeline-metadata__value--kind-path {
+  display: block;
+  overflow: hidden;
+  direction: rtl;
+  white-space: nowrap;
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
 .pipeline-metadata__value--kind-token {
   display: inline-block;
   padding: 0.18em 0.6em 0.2em 0.6em;
@@ -114,6 +124,43 @@
     font-weight: normal;
     font-size: 0.9em;
     font-family: Consolas, Monaco, 'Courier New', Courier, monospace;
+  }
+}
+
+.pipeline-metadata__value-list-expand {
+  display: block;
+  margin: 0.6em 0 0 0;
+  padding: 0 0 0.12em 0;
+  color: var(--color-text);
+  font-size: 0.96em;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  opacity: 0.45;
+  appearance: none;
+
+  &:hover {
+    border-bottom-color: var(--color-text);
+    opacity: 0.55;
+  }
+}
+
+.pipeline-metadata__value-list--no-inline {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.pipeline-metadata__value-list--no-inline li {
+  position: relative;
+  margin-left: 1em;
+
+  &:before {
+    position: absolute;
+    margin-left: -1em;
+    // For small square bullets
+    content: '▪';
   }
 }
 
