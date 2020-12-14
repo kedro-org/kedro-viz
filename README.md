@@ -105,13 +105,13 @@ The following flags are available to toggle experimental features:
 - `oldgraph` - From release v3.8.0. Display old version of graph without improved graphing algorithm. (default `false`)
 - `meta` - From release v3.7.0. Show node metadata panel on click. (default `false`)
 
-Please note that the `newgraph` flag is replaced by the `oldgraph` flag from release v3.8.0 onwards and would not be in use anymore. 
+Please note that the `newgraph` flag is replaced by the `oldgraph` flag from release v3.8.0 onwards, where setting it as `true` would display the graph without the improved graphing algorithm, and vice versa. 
 
 ### Setting flags
 
 To enable or disable a flagged feature, add the flag as a parameter with the value `true` or `false` to the end of the URL in your browser when running Kedro-Viz, e.g.
 
-`http://localhost:4141/?data=demo&newgraph=true`
+`http://localhost:4141/?data=demo&oldgraph=true`
 
 The setting you provide persists for all sessions on your machine, until you change it.
 
