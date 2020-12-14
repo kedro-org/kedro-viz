@@ -54,7 +54,6 @@
 .pipeline-nodelist__group--all-unset
   .pipeline-nodelist__row:hover
   .pipeline-row__toggle-icon--kind-filter {
-  opacity: 1;
   fill: $color-primary;
   stroke: $color-primary;
 }
@@ -65,6 +64,13 @@
   &.pipeline-row__toggle-icon--unset {
     // condition 2: semi-bright indicator when checked but not hovered
     opacity: 0.55;
+  }
+
+  // brighten up indicator when hovering over toggle all tag button
+  &.pipeline-row__toggle-icon--unchecked {
+    .pipeline-row-toggle-icon-visible:hover & {
+      opacity: 1;
+    }
   }
 
   &.pipeline-row__toggle-icon--checked {
