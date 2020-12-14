@@ -103,6 +103,7 @@ As a JavaScript React component, the project is designed to be used in two diffe
 The following flags are available to toggle experimental features:
 
 - `newgraph` - From release v3.4.0. Improved graphing algorithm. (default `false`)
+- `lazy` - From release v3.8.0. Improved sidebar performance. (default `false`)
 
 ### Setting flags
 

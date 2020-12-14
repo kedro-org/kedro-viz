@@ -25,6 +25,11 @@ export const flags = {
     default: false,
     private: false,
     icon: '📈'
+  },
+  lazy: {
+    description: 'Improved sidebar performance',
+    default: false,
+    icon: '😴'
   }
 };
 

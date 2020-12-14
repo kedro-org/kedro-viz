@@ -1,12 +1,11 @@
 import React from 'react';
 import classnames from 'classnames';
 import NodeListRow from './node-list-row';
+import NodeRowList from './node-list-row-list';
 
 export const NodeListGroup = ({
-  container: Container = 'div',
-  childrenContainer: ChildrenContainer = 'div',
-  childrenClassName,
-  children,
+  items,
+  group,
   collapsed,
   id,
   name,
@@ -18,9 +17,13 @@ export const NodeListGroup = ({
   visibleIcon,
   invisibleIcon,
   onToggleChecked,
-  onToggleCollapsed
+  onToggleCollapsed,
+  onItemClick,
+  onItemChange,
+  onItemMouseEnter,
+  onItemMouseLeave
 }) => (
-  <Container
+  <li
     className={classnames(
       'pipeline-nodelist__group',
       `pipeline-nodelist__group--type-${id}`,
@@ -51,14 +54,16 @@ export const NodeListGroup = ({
         />
       </NodeListRow>
     </h3>
-
-    <ChildrenContainer
-      className={classnames(childrenClassName, 'pipeline-nodelist__children', {
-        'pipeline-nodelist__children--closed': collapsed
-      })}>
-      {children}
-    </ChildrenContainer>
-  </Container>
+    <NodeRowList
+      items={items}
+      group={group}
+      collapsed={collapsed}
+      onItemClick={onItemClick}
+      onItemChange={onItemChange}
+      onItemMouseEnter={onItemMouseEnter}
+      onItemMouseLeave={onItemMouseLeave}
+    />
+  </li>
 );
 
 export default NodeListGroup;
