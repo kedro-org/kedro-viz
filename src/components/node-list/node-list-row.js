@@ -89,7 +89,7 @@ const NodeListRow = ({
           {
             'pipeline-row__toggle--disabled': disabled,
             'pipeline-row__toggle--selected': selected,
-            'pipeline-row__toggle--cursor': type !== 'tag'
+            'pipeline-row__toggle--not-tag': type !== 'tag'
           }
         )}>
         <input
