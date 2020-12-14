@@ -43,14 +43,6 @@ describe('node actions', () => {
       jest.resetModules();
     });
 
-    describe('if meta flag is false', () => {
-      it('should not make any API calls', () => {
-        const store = createStore(reducer, mockState.json);
-        loadNodeData('parametersID')(store.dispatch, store.getState);
-        expect(store.getState().loading.node).toBe(false);
-      });
-    });
-
     describe('if loading data asynchronously', () => {
       it('should set loading to true immediately', () => {
         const initialstate = reducer(mockState.json, changeFlag('meta', true));

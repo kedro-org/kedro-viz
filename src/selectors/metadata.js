@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { getGraphNodes } from './nodes';
 
 const getClickedNode = state => state.node.clicked;
-const getMetaFlag = state => state.flags.meta;
 
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
@@ -13,8 +12,8 @@ const sortAlpha = (a, b) => (a.name || a).localeCompare(b.name || b);
  * Returns true if metadata sidebar is visible
  */
 export const getVisibleMetaSidebar = createSelector(
-  [getClickedNode, getMetaFlag],
-  (nodeClicked, metaFlag) => metaFlag && Boolean(nodeClicked)
+  [getClickedNode],
+  nodeClicked => Boolean(nodeClicked)
 );
 
 /**
