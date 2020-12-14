@@ -26,12 +26,6 @@ export const flags = {
     private: false,
     icon: '📈'
   },
-  meta: {
-    description: 'Show the metadata panel',
-    default: false,
-    private: false,
-    icon: '🔮'
-  },
   lazy: {
     description: 'Improved sidebar performance',
     default: false,
