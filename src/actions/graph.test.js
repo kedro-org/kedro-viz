@@ -46,7 +46,7 @@ describe('graph actions', () => {
       });
     });
 
-    it('uses new graph if the oldgraph flag is set to false', () => {
+    it('uses new graph by default if the oldgraph flag is not set', () => {
       const state = reducer(mockState.animals, changeFlag('oldgraph', false));
       const store = createStore(reducer, state);
       return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {
@@ -54,7 +54,7 @@ describe('graph actions', () => {
       });
     });
 
-    it('uses dagre if the flag is not set', () => {
+    it('uses dagre if the oldgraph flag is set to true', () => {
       const state = reducer(mockState.animals, changeFlag('oldgraph', true));
       const store = createStore(reducer, state);
       return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {

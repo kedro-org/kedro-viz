@@ -21,8 +21,7 @@ export const chartMinWidth = 1200;
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
   oldgraph: {
-    description:
-      'display older version of graph (dagre algorithm) without improved graphing algorithm',
+    description: 'Use older Dagre graphing algorithm',
     default: false,
     private: false,
     icon: '📈'
