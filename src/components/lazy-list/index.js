@@ -2,6 +2,7 @@ import { useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
 
 /**
  * A component that renders only the children currently visible on screen.
+ * Renders all children if not supported by browser or is disabled via the `lazy` prop.
  * @param {function} height A `function(start, end)` returning the pixel height for any given range of items
  * @param {number} total The total count of all items in the list
  * @param {function} children A `function(props)` rendering the list and items (see `childProps`)
@@ -22,10 +23,10 @@ export default ({
   onChange,
   container = element => element?.offsetParent
 }) => {
-  // Required feature checks
+  // Required browser feature checks
   const supported = typeof window.IntersectionObserver !== 'undefined';
 
-  // Active only if enabled by prop and features detected
+  // Active only if supported and enabled else renders all children
   const active = lazy && supported;
 
   // The range of items currently rendered
