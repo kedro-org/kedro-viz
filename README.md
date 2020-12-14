@@ -102,8 +102,10 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
 The following flags are available to toggle experimental features:
 
-- `newgraph` - From release v3.4.0. Improved graphing algorithm. (default `false`)
+- `oldgraph` - From release v3.8.0. Display old version of graph without improved graphing algorithm. (default `false`)
 - `meta` - From release v3.7.0. Show node metadata panel on click. (default `false`)
+
+Please note that the `newgraph` flag is replaced by the `oldgraph` flag from release v3.8.0 onwards and would not be in use anymore. 
 
 ### Setting flags
 
