@@ -25,12 +25,6 @@ export const flags = {
     default: false,
     private: false,
     icon: '📈'
-  },
-  meta: {
-    description: 'Show the metadata panel',
-    default: false,
-    private: false,
-    icon: '🔮'
   }
 };
 
