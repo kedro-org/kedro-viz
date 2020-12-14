@@ -22,7 +22,7 @@ export const chartMinWidth = 1200;
 export const flags = {
   oldgraph: {
     description:
-      'display older version of graph without improved graphing algorithm',
+      'display older version of graph (dagre algorithm) without improved graphing algorithm',
     default: false,
     private: false,
     icon: '📈'

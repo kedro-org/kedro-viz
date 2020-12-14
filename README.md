@@ -102,7 +102,7 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
 The following flags are available to toggle experimental features:
 
-- `oldgraph` - From release v3.8.0. Display old version of graph without improved graphing algorithm. (default `false`)
+- `oldgraph` - From release v3.8.0. Display old version of graph (dagre algorithm) without improved graphing algorithm. (default `false`)
 - `meta` - From release v3.7.0. Show node metadata panel on click. (default `false`)
 
 Please note that the `newgraph` flag is replaced by the `oldgraph` flag from release v3.8.0 onwards, where setting it as `true` would display the graph without the improved graphing algorithm, and vice versa. 
