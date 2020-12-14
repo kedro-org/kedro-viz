@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import modifiers from '../../utils/modifiers';
 import MetaDataValue from './metadata-value';
 import './styles/metadata.css';
@@ -15,7 +15,8 @@ const MetaDataList = ({
   commas = true,
   limit = false
 }) => {
-  const showValues = limit ? values.slice(0, limit) : values;
+  const [expanded, setExpanded] = useState(false);
+  const showValues = !expanded && limit ? values.slice(0, limit) : values;
   const remainder = values.length - showValues.length;
 
   return values.length > 0 ? (
@@ -36,9 +37,12 @@ const MetaDataList = ({
         ))}
       </ul>
       {remainder > 0 ? (
-        <span className="pipeline-metadata__value-list-remainder">
+        <button
+          className="pipeline-metadata__value-list-expand"
+          aria-expanded={expanded}
+          onClick={() => setExpanded(true)}>
           + {remainder} more
-        </span>
+        </button>
       ) : null}
     </>
   ) : (

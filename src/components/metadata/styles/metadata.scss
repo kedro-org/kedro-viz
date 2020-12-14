@@ -127,10 +127,23 @@
   }
 }
 
-.pipeline-metadata__value-list-remainder {
+.pipeline-metadata__value-list-expand {
   display: block;
-  margin: 0.4em 0 0 0;
+  margin: 0.6em 0 0 0;
+  padding: 0 0 0.12em 0;
+  color: var(--color-text);
+  font-size: 0.96em;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
   opacity: 0.45;
+  appearance: none;
+
+  &:hover {
+    border-bottom-color: var(--color-text);
+    opacity: 0.55;
+  }
 }
 
 .pipeline-metadata__value-list--no-inline {
