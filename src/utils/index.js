@@ -42,3 +42,17 @@ export const getUrl = (type, id) => {
  * @param {Array} arr The array to remove duplicate values from
  */
 export const unique = (d, i, arr) => arr.indexOf(d) === i;
+
+/**
+ * Returns true if any of the given props are different between given objects.
+ * Only shallow changes are detected.
+ * @param {Array} props The prop names to check
+ * @param {object} objectA The first object
+ * @param {object} objectB The second object
+ * @returns {boolean} True if any prop changed else false
+ */
+export const changed = (props, objectA, objectB) => {
+  return (
+    objectA && objectB && props.some(prop => objectA[prop] !== objectB[prop])
+  );
+};
