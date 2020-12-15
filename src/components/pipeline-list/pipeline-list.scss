@@ -23,11 +23,7 @@
   .kui-dropdown {
     display: block;
     border: none;
-
-    &,
-    &:hover {
-      box-shadow: 0 1px 1px var(--pipeline-list-shadow);
-    }
+    box-shadow: 0 1px 1px var(--pipeline-list-shadow) !important;
   }
 
   .kui-dropdown__label,
