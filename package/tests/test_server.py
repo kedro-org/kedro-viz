@@ -144,7 +144,7 @@ def patched_load_context(mocker, tmp_path, dummy_layers):
         def __init__(self, layers):
             self._data_sets = {
                 "cat": PickleDataSet(filepath=str(tmp_path)),
-                "parameters": MemoryDataSet("value"),
+                "parameters": MemoryDataSet({"name": "value"}),
                 "params:rabbit": MemoryDataSet("value"),
             }
             self.layers = layers
@@ -363,6 +363,7 @@ def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     assert data["code"] == inspect.getsource(salmon)
     assert data["filepath"] == str(Path(project_root) / filepath)
     assert data["docstring"] == inspect.getdoc(salmon)
+    assert data["parameters"] == {"name": "value"}
 
 
 @_USE_PATCHED_CONTEXT
@@ -436,7 +437,7 @@ def test_node_metadata_endpoint_parameters(cli_runner, client):
     response = client.get(f"/api/nodes/{param_id}")
     assert response.status_code == 200
     data = json.loads(response.data.decode())
-    assert data == {"parameters": "value"}
+    assert data == {"parameters": {"name": "value"}}
 
 
 @_USE_PATCHED_CONTEXT
