@@ -3,6 +3,8 @@ import PipelineList, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('PipelineList', () => {
+  const pipelineIDs = mockState.animals.pipeline.ids.map((id, i) => [id, i]);
+
   it('renders without crashing', () => {
     const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
     const container = wrapper.find('.pipeline-list');
@@ -18,7 +20,11 @@ describe('PipelineList', () => {
     expect(onToggleOpen).toHaveBeenLastCalledWith(false);
   });
 
-  const pipelineIDs = mockState.animals.pipeline.ids.map((id, i) => [id, i]);
+  it('should be disabled when there are no pipelines in the store', () => {
+    const wrapper = setup.mount(<PipelineList />, { data: 'json' });
+    expect(wrapper.find('.kui-dropdown__label').prop('disabled')).toBe(true);
+  });
+
   test.each(pipelineIDs)(
     'should change the active pipeline to %s on clicking menu option %s',
     (id, i) => {
@@ -30,6 +36,26 @@ describe('PipelineList', () => {
       expect(wrapper.find('PipelineList').props().pipeline.active).toBe(id);
     }
   );
+
+  it('should apply an active class to an active pipeline row', () => {
+    const wrapper = setup.mount(<PipelineList />);
+    const { active, ids } = wrapper.find('PipelineList').props().pipeline;
+    const hasClass = wrapper
+      .find('MenuOption')
+      .at(ids.indexOf(active))
+      .hasClass('pipeline-list__option--active');
+    expect(hasClass).toBe(true);
+  });
+
+  it('should not apply an active class to an inactive pipeline row', () => {
+    const wrapper = setup.mount(<PipelineList />);
+    const { active, ids } = wrapper.find('PipelineList').props().pipeline;
+    const hasClass = wrapper
+      .find('MenuOption')
+      .at(ids.findIndex(id => id !== active))
+      .hasClass('pipeline-list__option--active');
+    expect(hasClass).toBe(false);
+  });
 
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.animals)).toEqual({

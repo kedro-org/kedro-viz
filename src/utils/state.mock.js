@@ -55,7 +55,7 @@ export const setup = {
   mount: (children, props = {}) => {
     const initialState = Object.assign(
       {},
-      prepareState({ data: animals, ...props }, props)
+      prepareState({ data: animals, ...props })
     );
     return mount(
       <Provider store={configureStore(initialState)}>{children}</Provider>
