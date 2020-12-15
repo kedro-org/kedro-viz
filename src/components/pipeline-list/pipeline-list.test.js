@@ -37,19 +37,25 @@ describe('PipelineList', () => {
     }
   );
 
-  test.each(pipelineIDs)(
-    'should apply an active class to a pipeline row only if it is active (id: %s, index: %s)',
-    (id, i) => {
-      const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
-      const { active } = wrapper.find('PipelineList').props().pipeline;
-      const isActive = active === id;
-      const hasClass = wrapper
-        .find('MenuOption')
-        .at(i)
-        .hasClass('pipeline-list__option--active');
-      expect(hasClass).toBe(isActive);
-    }
-  );
+  it('should apply an active class to an active pipeline row', () => {
+    const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
+    const { active, ids } = wrapper.find('PipelineList').props().pipeline;
+    const hasClass = wrapper
+      .find('MenuOption')
+      .at(ids.indexOf(active))
+      .hasClass('pipeline-list__option--active');
+    expect(hasClass).toBe(true);
+  });
+
+  it('should not apply an active class to an inactive pipeline row', () => {
+    const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
+    const { active, ids } = wrapper.find('PipelineList').props().pipeline;
+    const hasClass = wrapper
+      .find('MenuOption')
+      .at(ids.findIndex(id => id !== active))
+      .hasClass('pipeline-list__option--active');
+    expect(hasClass).toBe(false);
+  });
 
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.animals)).toEqual({
