@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { getGraphNodes } from './nodes';
 
 const getClickedNode = state => state.node.clicked;
-const getMetaFlag = state => state.flags.meta;
 
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
@@ -13,8 +12,8 @@ const sortAlpha = (a, b) => (a.name || a).localeCompare(b.name || b);
  * Returns true if metadata sidebar is visible
  */
 export const getVisibleMetaSidebar = createSelector(
-  [getClickedNode, getMetaFlag],
-  (nodeClicked, metaFlag) => metaFlag && Boolean(nodeClicked)
+  [getClickedNode],
+  nodeClicked => Boolean(nodeClicked)
 );
 
 /**
@@ -44,14 +43,36 @@ export const getClickedNodeMetaData = createSelector(
     getGraphNodes,
     state => state.node.tags,
     state => state.tag.name,
-    state => state.pipeline
+    state => state.pipeline,
+    state => state.node.filepath,
+    state => state.node.code,
+    state => state.node.docstring,
+    state => state.node.parameters,
+    state => state.node.datasetType
   ],
-  (nodeId, nodes = {}, nodeTags, tagNames, pipeline) => {
+  (
+    nodeId,
+    nodes = {},
+    nodeTags,
+    tagNames,
+    pipeline,
+    nodeFilepaths,
+    nodeCodes,
+    nodeDocstrings,
+    nodeParameters,
+    nodeDatasetTypes
+  ) => {
     const node = nodes[nodeId];
 
     if (!node) {
       return null;
     }
+
+    const parameters =
+      nodeParameters[node.id] &&
+      Object.entries(nodeParameters[node.id]).map(
+        ([key, value]) => `${key}: ${value}`
+      );
 
     const metadata = {
       node,
@@ -59,7 +80,12 @@ export const getClickedNodeMetaData = createSelector(
         .map(tagId => tagNames[tagId])
         .sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
-      runCommand: getRunCommand(node)
+      parameters,
+      runCommand: getRunCommand(node),
+      docstring: nodeDocstrings[node.id],
+      code: nodeCodes[node.id],
+      filepath: nodeFilepaths[node.id],
+      datasetType: nodeDatasetTypes[node.id]
     };
 
     // Note: node.sources node.targets require oldgraph enabled

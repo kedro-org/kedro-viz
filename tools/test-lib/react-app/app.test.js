@@ -23,7 +23,7 @@ describe('lib-test', () => {
     const firstNodeName = wrapper
       .find('.pipeline-nodelist__group--type-task')
       .find('.pipeline-nodelist__list--nested')
-      .find('NodeListRow')
+      .find('.pipeline-nodelist__row__label')
       .first()
       .text();
     if (key === 'random') {

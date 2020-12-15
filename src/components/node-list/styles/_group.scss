@@ -1,3 +1,5 @@
+@import '../../../styles/variables';
+
 %nolist {
   margin: 0;
   padding: 0;
@@ -16,10 +18,55 @@
   }
 
   .pipeline-nodelist__children {
+    // Avoid placeholder fade leaking out for small lists
+    overflow: hidden;
+
     &--closed {
       display: none;
     }
   }
+}
+
+$placeholder-fade: 120px;
+
+.pipeline-nodelist__placeholder-upper,
+.pipeline-nodelist__placeholder-lower {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.pipeline-nodelist__placeholder-upper:after,
+.pipeline-nodelist__placeholder-lower:after {
+  position: absolute;
+  width: 100%;
+  height: $placeholder-fade;
+  opacity: 0;
+  transition: opacity ease 0.3s;
+  content: ' ';
+  pointer-events: none;
+}
+
+.pipeline-nodelist__placeholder-upper:after {
+  bottom: -$placeholder-fade;
+  background: linear-gradient(
+    0deg,
+    var(--nodelist-bg-transparent) 0%,
+    var(--color-bg-3) 100%
+  );
+}
+
+.pipeline-nodelist__placeholder-lower:after {
+  top: -$placeholder-fade;
+  background: linear-gradient(
+    0deg,
+    var(--color-bg-3) 0%,
+    var(--nodelist-bg-transparent) 100%
+  );
+}
+
+.pipeline-nodelist__placeholder-upper--fade:after,
+.pipeline-nodelist__placeholder-lower--fade:after {
+  opacity: 1;
 }
 
 .pipeline-nodelist__heading {
