@@ -30,6 +30,11 @@ export const flags = {
     description: 'Improved sidebar performance',
     default: false,
     icon: '😴'
+  },
+  code: {
+    description: 'Show the code panel',
+    default: false,
+    icon: '{}'
   }
 };
 
