@@ -4,13 +4,13 @@ import { Provider } from 'react-redux';
 import configureStore from '../../store';
 import { resetData, updateFontLoaded } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
-import checkFontLoaded from '../../actions/check-font-loaded';
 import Wrapper from '../wrapper';
 import getInitialState, {
   preparePipelineState
 } from '../../store/initial-state';
 import { getFlagsMessage } from '../../utils/flags';
-import '@quantumblack/kedro-ui/lib/styles/app.css';
+import '@quantumblack/kedro-ui/lib/styles/app-no-webfont.css';
+import LoadWebFont from '@quantumblack/kedro-ui/lib/utils/webfont.js';
 import './app.css';
 
 /**
@@ -27,7 +27,7 @@ class App extends React.Component {
     if (this.props.data === 'json') {
       this.store.dispatch(loadInitialPipelineData());
     }
-    this.checkWebFontLoading();
+    this.loadWebFonts();
     this.announceFlags(this.store.getState().flags);
   }
 
@@ -49,11 +49,16 @@ class App extends React.Component {
   }
 
   /**
-   * Dispatch an action once the webfont has loaded
+   * Dispatch an action once the webfont has loaded.
+   * Uses https://github.com/typekit/webfontloader
    */
-  checkWebFontLoading() {
-    checkFontLoaded().then(() => {
+  loadWebFonts() {
+    const setFontLoaded = () => {
       this.store.dispatch(updateFontLoaded(true));
+    };
+    LoadWebFont({
+      active: setFontLoaded,
+      inactive: setFontLoaded
     });
   }
 

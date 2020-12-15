@@ -23,7 +23,7 @@ export const prepareState = props => {
     () => updateFontLoaded(true),
     // Precalculate graph layout:
     state => {
-      const layout = state.flags.newgraph ? graphNew : graphDagre;
+      const layout = state.flags.oldgraph ? graphDagre : graphNew;
       const graph = layout(getGraphInput(state));
       return updateGraph(graph);
     }
@@ -55,7 +55,7 @@ export const setup = {
   mount: (children, props = {}) => {
     const initialState = Object.assign(
       {},
-      prepareState({ data: animals, ...props }, props)
+      prepareState({ data: animals, ...props })
     );
     return mount(
       <Provider store={configureStore(initialState)}>{children}</Provider>

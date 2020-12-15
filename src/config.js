@@ -20,11 +20,16 @@ export const chartMinWidth = 1200;
 
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
-  newgraph: {
-    description: 'Improved graphing algorithm',
+  oldgraph: {
+    description: 'Use older Dagre graphing algorithm',
     default: false,
     private: false,
     icon: '📈'
+  },
+  lazy: {
+    description: 'Improved sidebar performance',
+    default: false,
+    icon: '😴'
   }
 };
 

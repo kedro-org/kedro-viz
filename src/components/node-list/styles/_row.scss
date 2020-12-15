@@ -1,3 +1,11 @@
+/*
+
+  Notes: 
+    - any change to row height must be reflected here:
+        `nodeListRowHeight` in node-list-row.js
+
+*/
+
 .pipeline-nodelist__row {
   position: relative;
   display: flex;

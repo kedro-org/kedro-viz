@@ -24,11 +24,9 @@ export const PipelineList = ({
     return null;
   }
   return (
-    <div
-      className={classnames('pipeline-list', {
-        'pipeline-list--disabled': !pipeline.ids.length
-      })}>
+    <div className="pipeline-list">
       <Dropdown
+        disabled={!pipeline.ids.length}
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
         theme={theme}
@@ -38,6 +36,9 @@ export const PipelineList = ({
         {pipeline.ids.map(id => (
           <MenuOption
             key={`pipeline-${id}`}
+            className={classnames({
+              'pipeline-list__option--active': pipeline.active === id
+            })}
             value={id}
             primaryText={pipeline.name[id]}
           />
