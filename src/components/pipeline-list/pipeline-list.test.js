@@ -20,6 +20,11 @@ describe('PipelineList', () => {
     expect(onToggleOpen).toHaveBeenLastCalledWith(false);
   });
 
+  it('should be disabled when there are no pipelines in the store', () => {
+    const wrapper = setup.mount(<PipelineList />, { data: 'json' });
+    expect(wrapper.find('.kui-dropdown__label').prop('disabled')).toBe(true);
+  });
+
   test.each(pipelineIDs)(
     'should change the active pipeline to %s on clicking menu option %s',
     (id, i) => {
