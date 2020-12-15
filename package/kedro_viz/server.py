@@ -353,7 +353,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
 
 def _is_namespace_param(namespace: str) -> bool:
     """Returns whether a dataset namespace is a parameter"""
-    return "param" in namespace.lower()
+    return namespace.lower().startswith("param")
 
 
 # pylint: disable=too-many-locals,too-many-arguments,too-many-branches
