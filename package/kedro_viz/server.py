@@ -356,7 +356,7 @@ def _is_namespace_param(namespace: str) -> bool:
     return "param" in namespace.lower()
 
 
-# pylint: disable=too-many-locals,too-many-arguments
+# pylint: disable=too-many-locals,too-many-arguments,too-many-branches
 def format_pipeline_data(
     pipeline_key: str,
     pipeline: "Pipeline",  # noqa: F821
@@ -418,7 +418,9 @@ def format_pipeline_data(
                     _JSON_NODES[task_id]["parameters"] = {}
 
                 if namespace == "parameters":
-                    _JSON_NODES[task_id]["parameters"] = _get_dataset_data_params(namespace).load()
+                    _JSON_NODES[task_id]["parameters"] = _get_dataset_data_params(
+                        namespace
+                    ).load()
                 else:
                     parameter_name = namespace.replace("params:", "")
                     parameter_value = _get_dataset_data_params(namespace).load()
