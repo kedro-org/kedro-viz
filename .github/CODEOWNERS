@@ -5,13 +5,13 @@ public/                                 @richardwestenra
 tools/                                  @limdauto
 package/                                @limdauto
 
-Makefile                                @richardwestenra @DmitriiDeriabinQB
-.circleci/                              @richardwestenra @DmitriiDeriabinQB
+Makefile                                @richardwestenra
+.circleci/                              @richardwestenra
 
 *.js                                    @richardwestenra
 *.json                                  @richardwestenra
 *.scss                                  @richardwestenra
-*.py                                    @DmitriiDeriabinQB @921kiyo
+*.py                                    @limdauto
 *.md                                    @richardwestenra @yetudada
 
 .babelrc                                @richardwestenra

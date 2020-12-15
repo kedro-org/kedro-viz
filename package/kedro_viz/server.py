@@ -63,7 +63,7 @@ _DEFAULT_KEY = "__default__"
 
 _DATA = None  # type: Dict
 _CATALOG = None  # type: DataCatalog
-_JSON_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, None]]]
+_JSON_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, Dict, None]]]
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -351,7 +351,12 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
     }
 
 
-# pylint: disable=too-many-locals,too-many-arguments
+def _is_namespace_param(namespace: str) -> bool:
+    """Returns whether a dataset namespace is a parameter"""
+    return namespace.lower().startswith("param")
+
+
+# pylint: disable=too-many-locals,too-many-arguments,too-many-branches
 def format_pipeline_data(
     pipeline_key: str,
     pipeline: "Pipeline",  # noqa: F821
@@ -407,6 +412,20 @@ def format_pipeline_data(
             namespace_tags[namespace].update(node.tags)
             node_dependencies[namespace_id].add(task_id)
 
+            # if it is a parameter, add it to the node's data
+            if _is_namespace_param(namespace):
+                if "parameters" not in _JSON_NODES[task_id]:
+                    _JSON_NODES[task_id]["parameters"] = {}
+
+                if namespace == "parameters":
+                    _JSON_NODES[task_id]["parameters"] = _get_dataset_data_params(
+                        namespace
+                    ).load()
+                else:
+                    parameter_name = namespace.replace("params:", "")
+                    parameter_value = _get_dataset_data_params(namespace).load()
+                    _JSON_NODES[task_id]["parameters"][parameter_name] = parameter_value
+
         for data_set in node.outputs:
             namespace = data_set.split("@")[0]
             namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
@@ -418,7 +437,7 @@ def format_pipeline_data(
             node_dependencies[task_id].add(namespace_id)
     # Parameters and data
     for namespace, tag_names in sorted(namespace_tags.items()):
-        is_param = bool("param" in namespace.lower())
+        is_param = _is_namespace_param(namespace)
         node_id = _hash(namespace)
 
         _JSON_NODES[node_id] = {
@@ -554,6 +573,10 @@ def _get_task_metadata(node):
     docstring = inspect.getdoc(node["obj"]._func)
     if docstring:
         task_metadata["docstring"] = docstring
+
+    if "parameters" in node:
+        task_metadata["parameters"] = node["parameters"]
+
     return task_metadata
 
 
