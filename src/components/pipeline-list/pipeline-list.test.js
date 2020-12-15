@@ -38,7 +38,7 @@ describe('PipelineList', () => {
   );
 
   it('should apply an active class to an active pipeline row', () => {
-    const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
+    const wrapper = setup.mount(<PipelineList />);
     const { active, ids } = wrapper.find('PipelineList').props().pipeline;
     const hasClass = wrapper
       .find('MenuOption')
@@ -48,7 +48,7 @@ describe('PipelineList', () => {
   });
 
   it('should not apply an active class to an inactive pipeline row', () => {
-    const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
+    const wrapper = setup.mount(<PipelineList />);
     const { active, ids } = wrapper.find('PipelineList').props().pipeline;
     const hasClass = wrapper
       .find('MenuOption')
