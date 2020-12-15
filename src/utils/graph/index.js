@@ -2,7 +2,7 @@ import dagre from 'dagre';
 import { graph } from './graph';
 
 /**
- * Calculate chart layout with experimental newgraph algorithm
+ * Calculate chart layout with experimental new graphing algorithm
  * This is an extremely expensive operation so we want it to run as infrequently
  * as possible, and keep it separate from other properties (like node.active)
  * which don't affect layout.
@@ -12,7 +12,7 @@ export const graphNew = ({ nodes, edges, layers }) => {
   return {
     ...result,
     size: { ...result.size, marginx: 100, marginy: 100 },
-    newgraph: true
+    oldgraph: false
   };
 };
 
@@ -52,6 +52,6 @@ export const graphDagre = ({ nodes, edges, layers }) => {
     }),
     edges: graph.edges().map(id => graph.edge(id)),
     size: graph.graph(),
-    newgraph: false
+    oldgraph: true
   };
 };

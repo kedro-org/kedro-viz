@@ -23,7 +23,7 @@ export const prepareState = props => {
     () => updateFontLoaded(true),
     // Precalculate graph layout:
     state => {
-      const layout = state.flags.newgraph ? graphNew : graphDagre;
+      const layout = state.flags.oldgraph ? graphDagre : graphNew;
       const graph = layout(getGraphInput(state));
       return updateGraph(graph);
     }

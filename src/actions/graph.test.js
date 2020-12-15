@@ -37,7 +37,7 @@ describe('graph actions', () => {
       return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {
         expect(store.getState().graph).toEqual(
           expect.objectContaining({
-            newgraph: expect.any(Boolean),
+            oldgraph: expect.any(Boolean),
             nodes: expect.any(Array),
             edges: expect.any(Array),
             size: expect.any(Object)
@@ -46,19 +46,19 @@ describe('graph actions', () => {
       });
     });
 
-    it('uses newgraph if the flag is set', () => {
-      const state = reducer(mockState.animals, changeFlag('newgraph', true));
+    it('uses new graph by default if the oldgraph flag is not set', () => {
+      const state = reducer(mockState.animals, changeFlag('oldgraph', false));
       const store = createStore(reducer, state);
       return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {
-        expect(store.getState().graph.newgraph).toBe(true);
+        expect(store.getState().graph.oldgraph).toBe(false);
       });
     });
 
-    it('uses dagre if the flag is not set', () => {
-      const state = reducer(mockState.animals, changeFlag('newgraph', false));
+    it('uses dagre if the oldgraph flag is set to true', () => {
+      const state = reducer(mockState.animals, changeFlag('oldgraph', true));
       const store = createStore(reducer, state);
       return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {
-        expect(store.getState().graph.newgraph).toBe(false);
+        expect(store.getState().graph.oldgraph).toBe(true);
       });
     });
   });

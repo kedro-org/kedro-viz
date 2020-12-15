@@ -12,7 +12,7 @@ describe('Selectors', () => {
           nodes: expect.any(Array),
           edges: expect.any(Array),
           layers: expect.any(Array),
-          newgraph: expect.any(Boolean),
+          oldgraph: expect.any(Boolean),
           fontLoaded: expect.any(Boolean)
         })
       );

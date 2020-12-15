@@ -102,14 +102,16 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
 The following flags are available to toggle experimental features:
 
-- `newgraph` - From release v3.4.0. Improved graphing algorithm. (default `false`)
-- `lazy` - From release v3.8.0. Improved sidebar performance. (default `false`)
+- `oldgraph` - From release v3.8.0. Display old version of graph (dagre algorithm) without improved graphing algorithm. (default `false`)
+- `meta` - From release v3.7.0. Show node metadata panel on click. (default `false`)
+
+Note that newgraph has been removed from v3.8.0 onwards and is now the default functionality. Should there be issues with your project, see the oldgraph flag above.
 
 ### Setting flags
 
 To enable or disable a flagged feature, add the flag as a parameter with the value `true` or `false` to the end of the URL in your browser when running Kedro-Viz, e.g.
 
-`http://localhost:4141/?data=demo&newgraph=true`
+`http://localhost:4141/?data=demo&oldgraph=true`
 
 The setting you provide persists for all sessions on your machine, until you change it.
 
