@@ -46,7 +46,7 @@
   opacity: 0.55;
 
   &:hover {
-    opacity: 0.75;
+    opacity: 0.55;
   }
 }
 
@@ -54,7 +54,6 @@
 .pipeline-nodelist__group--all-unset
   .pipeline-nodelist__row:hover
   .pipeline-row__toggle-icon--kind-filter {
-  opacity: 1;
   fill: $color-primary;
   stroke: $color-primary;
 }
@@ -63,18 +62,24 @@
   // Fade indicator when unchecked or unset
   &.pipeline-row__toggle-icon--unchecked,
   &.pipeline-row__toggle-icon--unset {
+    // condition 2: semi-bright indicator when checked but not hovered
     opacity: 0.55;
   }
 
-  // Bright indicator when checked or hovered
-  &.pipeline-row__toggle-icon--checked,
-  &.pipeline-row__toggle-icon--unchecked:hover,
-  &.pipeline-row__toggle-icon--unset:hover {
-    opacity: 0.75;
+  // brighten up indicator when hovering over toggle all tag button
+  &.pipeline-row__toggle-icon--unchecked {
+    .pipeline-row-toggle-icon-visible:hover & {
+      opacity: 1;
+    }
   }
 
-  // Hover states when checked
-  &.pipeline-row__toggle-icon--checked:hover {
-    opacity: 1;
+  &.pipeline-row__toggle-icon--checked {
+    // condition 3: Bright indicator when checked but not hovered
+    opacity: 0.75;
+
+    // condition 4: Brightest indicator when checked and hovered on the entire row
+    .pipeline-nodelist__row--visible:hover & {
+      opacity: 1;
+    }
   }
 }

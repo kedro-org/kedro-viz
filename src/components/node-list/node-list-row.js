@@ -114,7 +114,8 @@ const NodeListRow = memo(
             `pipeline-row__toggle--kind-${kind}`,
             {
               'pipeline-row__toggle--disabled': disabled,
-              'pipeline-row__toggle--selected': selected
+              'pipeline-row__toggle--selected': selected,
+              'pipeline-row__toggle--not-tag': type !== 'tag'
             }
           )}>
           <input
@@ -135,7 +136,8 @@ const NodeListRow = memo(
               {
                 'pipeline-row__toggle-icon--checked': checked,
                 'pipeline-row__toggle-icon--unchecked': !checked,
-                'pipeline-row__toggle-icon--unset': unset
+                'pipeline-row__toggle-icon--unset': unset,
+                'pipeline-row__toggle-icon--visible': type !== 'tag'
               }
             )}
           />

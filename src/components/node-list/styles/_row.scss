@@ -127,6 +127,9 @@
 .pipeline-row__toggle {
   position: absolute;
   right: $row-padding-x;
+}
+
+.pipeline-row__toggle--not-tag {
   cursor: pointer;
 }
 
@@ -169,14 +172,12 @@
   padding: $toggle-icon-padding;
   border-radius: 50%;
   opacity: 0;
+}
 
-  &--unchecked,
+// this class enables the 'eye' icon of nodes to be visible on hover of the nodes
+.pipeline-row__toggle-icon--kind-toggle {
   .pipeline-nodelist__row:hover & {
     opacity: 0.55;
-  }
-
-  .pipeline-nodelist__row:hover &:hover {
-    opacity: 1;
   }
 }
 
@@ -191,6 +192,13 @@
 
 .pipeline-nodelist__row__checkbox:focus + .pipeline-row__toggle-icon--checked {
   [data-whatintent='keyboard'] & {
+    opacity: 1;
+  }
+}
+
+// Hover states for non-filter type icons
+.pipeline-row__toggle-icon--visible:hover {
+  .pipeline-nodelist__row & {
     opacity: 1;
   }
 }
