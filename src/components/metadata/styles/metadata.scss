@@ -219,7 +219,14 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__copy-button {
   width: auto;
   height: auto;
+  margin-top: 0.3em;
+  margin-right: -0.6em;
   opacity: 0.55;
+
+  .pipeline-icon {
+    width: 26px;
+    height: 26px;
+  }
 
   &:hover {
     opacity: 1;
