@@ -28,6 +28,7 @@ const MetaData = ({
   const [showCopied, setShowCopied] = useState(false);
   const [showCode, setShowCode] = useState(false);
 
+  // Hide code panel when selected metadata changes
   useEffect(() => setShowCode(false), [metadata]);
 
   const isTaskNode = metadata?.node.type === 'task';
