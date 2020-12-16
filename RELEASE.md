@@ -17,6 +17,32 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+# Release 3.8.0
+
+## Major features and improvements
+
+- Finish the new node metadata side panel, which allows you to switch between different modular pipelines. This feature is no longer hidden behind a flag, and the 'meta' flag has been removed. (#293, #309, #312, #320, #321, #326, #295, #329, #333)
+- Enable the new graphing layout algorithm by default, and remove the 'newgraph' feature flag. If necessary, you can still revert back to the old layout algorithm by enabling the 'oldgraph' flag. (#334, #335)
+- Add experimental flagged feature to allow lazy-loading of sidebar node-list rows on scroll. This improves performance by not forcing the app to render the entire node-list on larger graphs. This feature is disabled by default, but can be enabled using the 'lazy' feature flag. (#307)
+- Use CSS custom properties for theme colours (#301, #319)
+
+## Bug fixes and other changes
+
+- Update Kedro-UI to v1.1.4. This enables us to improve webfont-loading detection, add a transition-out for closing the pipeline dropdown, add an active pipeline menu-option border-left colour, and improve accessibility when disabling the pipeline dropdown. (#325)
+- Support launching a development server against a real pipeline. This is still a work-in-progress, and we will announce when it can be used. (#318, #327)
+- Unify backend and frontend test data, to help prevent bugs appearing in future due to mismatched API schemas between frontend & backend (#298)
+- Fix tag list icon hover state styling (#316)
+- Update various dependency versions via Dependabot (#315, #330, #331)
+- Fix linters (#323)
+- Add default fallback response for non-main API calls (#328)
+- Remove get_project_context(), now that we no longer support old versions of Kedro (<0.15) (#324)
+- Add a 'private' flag prop, to hide flags for in-development features from the flags console announcement (#322)
+- Investigate the root cause of nodes being undefined in Safari (#310)
+- Fix bug that caused missed click on the flowchart (#317)
+- Change demo.mock to a .json file and update tests (#314)
+- Disable Python 3.6/3.7 jobs in daily CI workflow (#313)
+- Batch tag actions to improve performance when toggling multiple tags (#308)
+
 # Release 3.7.0
 
 ## Major features and improvements
