@@ -7,6 +7,7 @@ import { sidebarWidth, metaSidebarWidth } from '../config';
 
 const getOldgraphFlag = state => state.flags.oldgraph;
 const getVisibleSidebar = state => state.visible.sidebar;
+const getVisibleCode = state => state.visible.code;
 const getFontLoaded = state => state.fontLoaded;
 
 /**
@@ -40,8 +41,13 @@ export const getSidebarWidth = (visible, width, { breakpoint, open, closed }) =>
  * and add some useful new ones
  */
 export const getChartSize = createSelector(
-  [getVisibleSidebar, getVisibleMetaSidebar, state => state.chartSize],
-  (visibleSidebar, visibleMetaSidebar, chartSize) => {
+  [
+    getVisibleSidebar,
+    getVisibleMetaSidebar,
+    getVisibleCode,
+    state => state.chartSize
+  ],
+  (visibleSidebar, visibleMetaSidebar, visibleCodeSidebar, chartSize) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
       return {};
@@ -59,8 +65,19 @@ export const getChartSize = createSelector(
       metaSidebarWidth
     );
 
+    // Calculate flexible width for code sidebar
+    const widthRemainder = width - sidebarWidthActual - metaSidebarWidthActual;
+    const codeSidebarSize = visibleSidebar ? 0.7 : 0.6;
+    const codeSidebarWidthActual = visibleCodeSidebar
+      ? codeSidebarSize * widthRemainder
+      : 0;
+
     // Find the resulting space for the chart
-    const chartWidth = width - sidebarWidthActual - metaSidebarWidthActual;
+    const chartWidth =
+      width -
+      sidebarWidthActual -
+      metaSidebarWidthActual -
+      codeSidebarWidthActual;
 
     return {
       left,

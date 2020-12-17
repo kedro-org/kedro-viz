@@ -6,7 +6,7 @@ export const localStorageName = 'KedroViz';
 // across Sass and JavaScript, so they're defined in two places. If you update their
 // value here, please also update their corresponding value in src/styles/_variables.scss
 export const metaSidebarWidth = {
-  breakpoint: 1200,
+  breakpoint: 0,
   open: 400,
   closed: 0
 };

@@ -11,6 +11,7 @@ import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
+import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import Tooltip from '../tooltip';
 import './styles/flowchart.css';
@@ -66,7 +67,7 @@ export class FlowChart extends Component {
     const { chartZoom } = this.props;
     const changed = (...names) => this.changed(names, prevProps, this.props);
 
-    if (changed('visibleSidebar')) {
+    if (changed('visibleSidebar', 'visibleCode', 'visibleMetaSidebar')) {
       this.updateChartSize();
     }
 
@@ -521,6 +522,8 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeSelected: getNodeSelected(state),
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
+  visibleCode: state.visible.code,
+  visibleMetaSidebar: getVisibleMetaSidebar(state),
   ...ownProps
 });
 

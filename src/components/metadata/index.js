@@ -14,6 +14,7 @@ import {
   getClickedNodeMetaData
 } from '../../selectors/metadata';
 import { toggleNodeClicked } from '../../actions/nodes';
+import { toggleCode } from '../../actions';
 import './styles/metadata.css';
 
 /**
@@ -23,20 +24,21 @@ const MetaData = ({
   visible = true,
   metadata,
   codeFlag,
+  visibleCode,
+  onToggleCode,
   onToggleNodeSelected
 }) => {
   const [showCopied, setShowCopied] = useState(false);
-  const [showCode, setShowCode] = useState(false);
 
   // Hide code panel when selected metadata changes
-  useEffect(() => setShowCode(false), [metadata]);
+  useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
 
   const isTaskNode = metadata?.node.type === 'task';
   const isDataNode = metadata?.node.type === 'data';
   const isParametersNode = metadata?.node.type === 'parameters';
 
   const hasCode = Boolean(metadata?.code);
-  const showCodePanel = codeFlag && visible && showCode && hasCode;
+  const showCodePanel = codeFlag && visible && visibleCode && hasCode;
   const showCodeSwitch = codeFlag && hasCode;
 
   const onCopyClick = () => {
@@ -59,9 +61,9 @@ const MetaData = ({
             <div className="pipeline-metadata__header-toolbox">
               {showCodeSwitch && (
                 <MetaCodeToggle
-                  showCode={showCode}
+                  showCode={visibleCode}
                   hasCode={hasCode}
-                  onChange={event => setShowCode(event.target.checked)}
+                  onChange={event => onToggleCode(event.target.checked)}
                 />
               )}
               <IconButton
@@ -181,12 +183,16 @@ export const mapStateToProps = (state, ownProps) => ({
   visible: getVisibleMetaSidebar(state),
   metadata: getClickedNodeMetaData(state),
   codeFlag: state.flags.code,
+  visibleCode: state.visible.code,
   ...ownProps
 });
 
 export const mapDispatchToProps = dispatch => ({
   onToggleNodeSelected: nodeID => {
     dispatch(toggleNodeClicked(nodeID));
+  },
+  onToggleCode: visible => {
+    dispatch(toggleCode(visible));
   }
 });
 
