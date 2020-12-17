@@ -50,7 +50,7 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
   clone.prepend(style);
 
   // Download SVG/PNG
-  download(clone, 'kedro-pipeline', { css: 'internal' });
+  download(clone, 'kedro-pipeline');
 
   // Delete cloned SVG
   svg.parentNode.removeChild(clone);
