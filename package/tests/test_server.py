@@ -36,13 +36,11 @@ import re
 from collections import namedtuple
 from functools import partial
 from pathlib import Path
-from typing import Union
 
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, DataSetNotFoundError, MemoryDataSet
 from kedro.pipeline import Pipeline, node
-from semver import VersionInfo
 from toposort import CircularDependencyError
 
 import kedro_viz
