@@ -50,8 +50,8 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
   clone.prepend(style);
 
   // Download SVG/PNG
-  download(clone, 'kedro-pipeline');
-  // @TODO: Replace third { css: 'internal' } argument when CORS issue is fixed
+  const options = format === 'svg' ? { css: 'internal' } : undefined;
+  download(clone, 'kedro-pipeline', options);
 
   // Delete cloned SVG
   svg.parentNode.removeChild(clone);
