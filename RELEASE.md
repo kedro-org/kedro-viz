@@ -17,6 +17,13 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+# Release 3.8.1
+
+## Bug fixes and other changes
+
+- Temporarily disable internal CSS in exported SVGs to fix CORS error when exporting images (#337)
+- Fix tests for Kedro 0.17 (#338)
+
 # Release 3.8.0
 
 ## Major features and improvements
