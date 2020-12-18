@@ -33,15 +33,14 @@ Tests for Kedro-Viz server
 import inspect
 import json
 import re
+from collections import namedtuple
 from functools import partial
 from pathlib import Path
-from typing import Union
 
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, DataSetNotFoundError, MemoryDataSet
 from kedro.pipeline import Pipeline, node
-from semver import VersionInfo
 from toposort import CircularDependencyError
 
 import kedro_viz
@@ -54,6 +53,8 @@ input_json_path = (
 )
 
 EXPECTED_PIPELINE_DATA = json.loads(input_json_path.read_text())
+
+MockedProjectMedata = namedtuple("MockedProjectMedata", ["package_name", "settings"])
 
 
 def shark(input1, input2, input3, input4):
@@ -138,8 +139,14 @@ def start_server(mocker):
     mocker.patch("kedro_viz.server.app.run")
 
 
+@pytest.fixture(autouse=True)
+def patched_get_project_metadata(mocker):
+    mocked_metadata = MockedProjectMedata(package_name="test", settings=mocker.Mock())
+    mocker.patch("kedro.framework.startup._get_project_metadata", return_value=mocked_metadata)
+
+
 @pytest.fixture
-def patched_load_context(mocker, tmp_path, dummy_layers):
+def patched_create_session(mocker, tmp_path, dummy_layers):
     class DummyDataCatalog:
         def __init__(self, layers):
             self._data_sets = {
@@ -161,7 +168,7 @@ def patched_load_context(mocker, tmp_path, dummy_layers):
             dataset = self._get_dataset(name)
             return dataset.exists()
 
-    def load_context(project_path: Union[str, Path], **kwargs):
+    def load_context():
         mocked_context = mocker.Mock()
         mocked_context.pipelines = get_pipelines()
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
@@ -170,7 +177,9 @@ def patched_load_context(mocker, tmp_path, dummy_layers):
         mocked_context.pipeline = create_pipeline()
         return mocked_context
 
-    return mocker.patch("kedro_viz.server.load_context", side_effect=load_context)
+    mocked_session = mocker.Mock()
+    mocked_session.load_context = load_context
+    return mocker.patch("kedro.framework.session.KedroSession.create", return_value=mocked_session)
 
 
 @pytest.fixture
@@ -180,7 +189,7 @@ def client():
     return client
 
 
-_USE_PATCHED_CONTEXT = pytest.mark.usefixtures("patched_load_context")
+_USE_PATCHED_CONTEXT = pytest.mark.usefixtures("patched_create_session")
 
 
 @_USE_PATCHED_CONTEXT
@@ -214,9 +223,14 @@ def test_no_browser(cli_runner):
     assert server.webbrowser.open_new.call_count == 1
 
 
-def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_load_context):
+def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_create_session):
     cli_runner.invoke(server.commands, ["viz", "--no-browser"])
-    patched_load_context.assert_called_once_with(project_path=Path.cwd(), env=None)
+    patched_create_session.assert_called_once_with(
+        package_name="test",
+        project_path=Path.cwd(),
+        env=None,
+        save_on_close=False,
+    )
 
 
 @_USE_PATCHED_CONTEXT
@@ -282,7 +296,6 @@ def test_no_load_file(cli_runner):
     """
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 1
-    assert "Could not find a Kedro project root." in result.output
 
 
 def test_root_endpoint(client):
@@ -412,21 +425,6 @@ def test_node_metadata_endpoint_data_output(cli_runner, client, tmp_path):
     assert response.status_code == 200
     data = json.loads(response.data.decode())
     assert not data
-
-
-@_USE_PATCHED_CONTEXT
-def test_node_metadata_endpoint_data_kedro15(cli_runner, client, tmp_path, mocker):
-    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON
-    with Kedro 0.15.*.
-    """
-    mocker.patch("kedro_viz.server.KEDRO_VERSION", VersionInfo.parse("0.15.0"))
-    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    response = client.get(f"/api/nodes/{_hash('cat')}")
-    assert response.status_code == 200
-    data = json.loads(response.data.decode())
-
-    assert data["filepath"] == str(tmp_path)
-    assert data["type"] == f"{PickleDataSet.__module__}.{PickleDataSet.__qualname__}"
 
 
 @_USE_PATCHED_CONTEXT
@@ -568,15 +566,23 @@ def mocked_process(mocker):
 
 
 class TestCallViz:
-    def test_call_viz_without_project_path(self, patched_load_context):
+    def test_call_viz_without_project_path(self, patched_create_session):
         server._call_viz()
-        patched_load_context.assert_called_once_with(project_path=Path.cwd(), env=None)
+        patched_create_session.assert_called_once_with(
+            package_name="test",
+            project_path=Path.cwd(),
+            env=None,
+            save_on_close=False,
+        )
 
-    def test_call_viz_with_project_path(self, patched_load_context):
+    def test_call_viz_with_project_path(self, patched_create_session):
         mocked_project_path = Path("/tmp")
         server._call_viz(project_path=mocked_project_path)
-        patched_load_context.assert_called_once_with(
-            project_path=mocked_project_path, env=None
+        patched_create_session.assert_called_once_with(
+            package_name="test",
+            project_path=mocked_project_path,
+            env=None,
+            save_on_close=False,
         )
 
 
