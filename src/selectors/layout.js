@@ -87,7 +87,8 @@ export const getChartSize = createSelector(
       height,
       width: chartWidth,
       sidebarWidth: sidebarWidthActual,
-      metaSidebarWidth: metaSidebarWidthActual
+      metaSidebarWidth: metaSidebarWidthActual,
+      codeSidebarWidth: codeSidebarWidthActual
     };
   }
 );

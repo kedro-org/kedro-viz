@@ -205,7 +205,11 @@ export class FlowChart extends Component {
           minScale = 0,
           maxScale = Infinity
         ] = this.zoomBehaviour.scaleExtent();
-        const { sidebarWidth, metaSidebarWidth } = this.props.chartSize;
+        const {
+          sidebarWidth,
+          metaSidebarWidth,
+          codeSidebarWidth
+        } = this.props.chartSize;
         const { width = 0, height = 0 } = this.props.graphSize;
 
         // Limit zoom translate extent: This needs to be recalculated on zoom
@@ -214,7 +218,10 @@ export class FlowChart extends Component {
         const margin = 500;
         this.zoomBehaviour.translateExtent([
           [-sidebarWidth / scale - margin, -margin],
-          [width + margin + metaSidebarWidth / scale, height + margin]
+          [
+            width + margin + (metaSidebarWidth + codeSidebarWidth) / scale,
+            height + margin
+          ]
         ]);
 
         // Transform the <g> that wraps the chart
