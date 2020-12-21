@@ -38,6 +38,7 @@ export const sidebar = {
     Tags: 'tag'
   },
   Elements: {
+    Pipeline: 'pipeline',
     Nodes: 'task',
     Datasets: 'data',
     Parameters: 'parameters'

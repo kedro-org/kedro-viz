@@ -6,6 +6,7 @@ import loading from './loading';
 import node from './nodes';
 import nodeType from './node-type';
 import pipeline from './pipeline';
+import pipelineTree from './pipeline-tree';
 import tag from './tags';
 import visible from './visible';
 import {
@@ -58,6 +59,7 @@ const combinedReducer = combineReducers({
   pipeline,
   tag,
   visible,
+  pipelineTree,
   // These props don't have any actions associated with them
   asyncDataSource: createReducer(false),
   edge: createReducer({}),

@@ -9,6 +9,12 @@ export const createInitialPipelineState = () => ({
     ids: [],
     name: {}
   },
+  pipelineTree: {
+    tree: [],
+    active: '',
+    checked: [],
+    expanded: []
+  },
   node: {
     ids: [],
     name: {},
@@ -28,8 +34,9 @@ export const createInitialPipelineState = () => ({
     datasetType: {}
   },
   nodeType: {
-    ids: ['task', 'data', 'parameters'],
+    ids: ['pipeline', 'task', 'data', 'parameters'],
     name: {
+      pipeline: 'Pipeline',
       data: 'Datasets',
       task: 'Nodes',
       parameters: 'Parameters'
@@ -163,6 +170,10 @@ const addLayer = state => layer => {
   state.layer.name[layer] = layer;
 };
 
+const addPipelineTree = state => pipelineTree => {
+  state.pipelineTree.tree.push(pipelineTree);
+};
+
 /**
  * Convert the pipeline data into a normalized state object
  * @param {Object} data Raw unformatted data input
@@ -193,6 +204,10 @@ const normalizeData = data => {
   }
   if (data.layers) {
     data.layers.forEach(addLayer(state));
+  }
+  if (data.pipeline_tree) {
+    data.pipeline_tree.forEach(addPipelineTree(state));
+    state.pipelineTree.expanded = state.pipeline.ids;
   }
 
   return state;

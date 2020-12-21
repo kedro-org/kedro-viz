@@ -64,7 +64,11 @@
     "seedrandom": "^3.0.5",
     "snyk": "^1.369.2",
     "svg-crowbar": "^0.6.0",
-    "what-input": "^5.2.10"
+    "what-input": "^5.2.10",
+    "react-checkbox-tree": "^1.6.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.32",
+    "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@fortawesome/react-fontawesome": "^0.1.14"
   },
   "peerDependencies": {
     "react": "^16.8.6",

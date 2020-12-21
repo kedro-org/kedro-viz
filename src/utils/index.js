@@ -30,6 +30,9 @@ export const getUrl = (type, id) => {
     case 'nodes':
       if (!id) throw new Error('No node ID provided');
       return [pathRoot, 'nodes', id].join('/');
+    case 'tree':
+      if (!id) throw new Error('No pipeline IDs provided');
+      return [pathRoot, 'pipeline_tree', id].join('/');
     default:
       throw new Error('Unknown URL type');
   }

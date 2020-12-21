@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import PipelineList from '../pipeline-list';
+import PipelineTree from '../pipeline-tree';
 import NodeList from '../node-list';
 import PrimaryToolbar from '../primary-toolbar';
 import MiniMapToolbar from '../minimap-toolbar';
@@ -23,6 +24,7 @@ export const Sidebar = ({ visible }) => {
         })}>
         <div className="pipeline-ui">
           <PipelineList onToggleOpen={togglePipeline} />
+          <PipelineTree />
           <NodeList faded={pipelineIsOpen} />
         </div>
         <nav className="pipeline-toolbar">
