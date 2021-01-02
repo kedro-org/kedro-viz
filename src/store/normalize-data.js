@@ -207,7 +207,7 @@ const normalizeData = data => {
   }
   if (data.pipeline_tree) {
     data.pipeline_tree.forEach(addPipelineTree(state));
-    state.pipelineTree.expanded = state.pipeline.ids;
+    // state.pipelineTree.expanded = state.pipeline.ids;
   }
 
   return state;

@@ -49,6 +49,7 @@ export function loadPipelineTreeData(checked) {
       // Set active pipeline here rather than dispatching two separate actions,
       // to improve performance by only requiring one state recalculation
       newState.pipeline.active = pipelineID;
+      newState.pipelineTree.expanded = pipelineTree.expanded;
       dispatch(resetData(newState));
       dispatch(toggleLoading(false));
     } else {

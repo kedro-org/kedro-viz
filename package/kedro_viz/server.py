@@ -297,68 +297,15 @@ def _pretty_name(name: str) -> str:
     return " ".join(parts)
 
 
-def build_pipeline_edges(pipelines:List[str]) -> List[Any]:
-    """build edges between sub-pipelines.
-
-
-    """
-    pipeline_nodes = _SUB_PIPELINE_DATA["pipeline_nodes"]
-    node_dict = _SUB_PIPELINE_DATA["node_dict"]
-    edges = _SUB_PIPELINE_DATA["edges"]
-    node_pipelines = _SUB_PIPELINE_DATA["node_pipelines"]
-
-
-    pipeline_edges = []
-    for p in pipelines:
-        if p not in pipeline_nodes:
-            continue
-        nodes = pipeline_nodes[p]
-        target_nodes = {x for x in {edges.get(n, None) for n in nodes} if x is not None and node_dict[x]["type"] == "data"}
-        target_pipelines = set()
-        edge_nodes = dict()
-        for t in target_nodes:
-            new_pipelines = set()
-            for tp in node_pipelines[t]:
-                # if tp == p or pipeline_levels.get(tp, -1) != level:
-                if tp == p or tp not in pipelines:
-                    continue
-                new_pipelines.add(tp)
-                edge_node_set = edge_nodes.get(tp, set())
-                edge_node_set.add(t)
-                edge_nodes[tp] = edge_node_set
-
-            target_pipelines = target_pipelines | new_pipelines
-        for tp in target_pipelines:
-            pipeline_edges.append(dict(source=p, target=tp, edge_nodes=edge_nodes[tp]))
-    return pipeline_edges
-
-
-def convert_pipeline_edges_to_node_edge(pipelines, pipeline_edges):
+def _create_pipeline_nodes(pipelines):
     pipeline_parents = _SUB_PIPELINE_DATA["pipeline_parents"]
-    node_dict =_SUB_PIPELINE_DATA["node_dict"]
-
-    d_nodes_set = set()
-    edges_list = []
-    for pipeline_edge in pipeline_edges:
-        sp = pipeline_edge["source"]
-        tp = pipeline_edge["target"]
-        dnodes = pipeline_edge["edge_nodes"]
-        # p_nodes_set.add(sp)
-        # p_nodes_set.add(tp)
-        d_nodes_set = d_nodes_set | set(dnodes)
-        for dnode in dnodes:
-            edges_list.append(dict(source=sp, target=dnode))
-            edges_list.append(dict(source=dnode, target=tp))
-    p_nodes_list = [dict(id=p, type='pipeline', name=_pretty_name(p), full_name=p, tags=[],
-                         pipelines=list(pipeline_parents.get(p, set())))
-                    for p in pipelines]
-    d_nodes_list = [node_dict[id] for id in d_nodes_set]
-    nodes_list = [*p_nodes_list, *d_nodes_list]
-    return dict(nodes_list=nodes_list, edges_list=edges_list)
+    return [dict(id=p, type='pipeline', name=_pretty_name(p), full_name=p, tags=[],
+                 pipelines=list(pipeline_parents.get(p, set())))
+            for p in pipelines]
 
 
 def _build_sub_pipeline_level_graph(nodes_list, edges_list):
-    global _SUB_PIP_SUB_PIPELINE_DATAELINE_DATA
+    global _SUB_PIPELINE_DATA
     # Build node - pipeline relationship
 
     pipeline_nodes = {}
@@ -366,7 +313,6 @@ def _build_sub_pipeline_level_graph(nodes_list, edges_list):
     _SUB_PIPELINE_DATA["pipeline_nodes"] = pipeline_nodes
     _SUB_PIPELINE_DATA["node_pipelines"] = node_pipelines
 
-    pipelines = set()
     node_dict = dict()
     _SUB_PIPELINE_DATA["node_dict"] = node_dict
 
@@ -381,7 +327,6 @@ def _build_sub_pipeline_level_graph(nodes_list, edges_list):
         node_pipelines[node["id"]] = pipeline_sets
 
     # Build pipeline tree structure
-    # ancestor - descendants relationship
     pipeline_parents = {}
     pipeline_children = {}
 
@@ -426,33 +371,9 @@ def _build_sub_pipeline_level_graph(nodes_list, edges_list):
             parent_set.add(p)
             pipeline_direct_parents[c] = parent_set
 
-    # find root pipelines
-    parents = set(pipeline_direct_children.keys())
-    children = set(pipeline_direct_parents.keys())
-    root_pipelines = parents - children
-
-    # organize pipelines by level (tree depth)
-    pipeline_levels = {p: 0 for p in root_pipelines}
-    level_pipelines = {0: root_pipelines}
-    _SUB_PIPELINE_DATA["level_pipelines"] = level_pipelines
-
-    queue = [(p,l) for p, l in pipeline_levels.items()]
-    while len(queue) > 0:
-        p,level = queue.pop(0)
-        if p not in pipeline_direct_children:
-            continue
-        new_level = level+1
-        for c in pipeline_direct_children[p]:
-            pipeline_levels[c] = new_level
-            l_pipeline_set = level_pipelines.get(new_level, set())
-            l_pipeline_set.add(c)
-            level_pipelines[new_level] = l_pipeline_set
-            queue.append((c,new_level))
-
     # prepare node to node edges
     n2d = {}
     d2n = {}
-    # td2sn = {}
     for e in edges_list:
         sid, tid = e["source"], e["target"]
         snode, tnode = node_dict[sid], node_dict[tid]
@@ -460,52 +381,36 @@ def _build_sub_pipeline_level_graph(nodes_list, edges_list):
             data_set = n2d.get(sid, set())
             data_set.add(tid)
             n2d[sid] = data_set
-            # node_set = td2sn.get(tid, set())
-            # node_set.add(sid)
-            # td2sn[tid] = node_set
         elif snode["type"] in ["data", "parameters"] and tnode["type"] == "task":
             node_set = d2n.get(sid, set())
             node_set.add(tid)
             d2n[sid] = node_set
 
     # build node to node info
-    n2n_details = {}
+    n2n = {}
     for node_id, data_id_set in n2d.items():
         target_node_dict = {}
         for data_id in data_id_set:
-            for target_node_id in d2n[data_id]:
-                target_node_info = target_node_dict.get(target_node_id, dict(data_set=set(), pipeline_set=set()))
-                data_set = target_node_info["data_set"]
-                data_set.add(data_id)
-                pipeline_set = target_node_info["pipeline_set"] | set(node_dict[target_node_id]["pipelines"])
-                target_node_info["pipeline_set"] = pipeline_set
-                target_node_dict[target_node_id] = target_node_info
-            if data_id not in d2n:
+            if data_id in d2n:
+                for target_node_id in d2n[data_id]:
+                    target_node_info = target_node_dict.get(target_node_id, dict(data_set=set(), pipeline_set=set()))
+                    data_set = target_node_info["data_set"]
+                    data_set.add(data_id)
+                    pipeline_set = target_node_info["pipeline_set"] | set(node_dict[target_node_id]["pipelines"])
+                    target_node_info["pipeline_set"] = pipeline_set
+                    target_node_dict[target_node_id] = target_node_info
+            else:
                 target_node_info = target_node_dict.get("<no_target_node>",
                                                         dict(data_set=set(),
                                                              pipeline_set=set()))
                 data_set = target_node_info["data_set"]
                 data_set.add(data_id)
                 target_node_dict["<no_target_node>"] = target_node_info
-        n2n_details[node_id] = target_node_dict
+        n2n[node_id] = target_node_dict
 
-    _SUB_PIPELINE_DATA["node_to_node"] = n2n_details
+    _SUB_PIPELINE_DATA["node_to_node"] = n2n
     _SUB_PIPELINE_DATA["data_to_node"] = d2n
     _SUB_PIPELINE_DATA["node_to_data"] = n2d
-
-
-    edges = {e["source"]:e["target"] for e in edges_list}
-    _SUB_PIPELINE_DATA["edges"] = edges
-
-
-    level_pipeline_edges = {level:build_pipeline_edges(level_pipelines[level]) for level in level_pipelines.keys()}
-    _SUB_PIPELINE_DATA["level_pipeline_edges"] = level_pipeline_edges
-
-
-    sub_graphs = {l:convert_pipeline_edges_to_node_edge(level_pipelines[l], level_pipeline_edges[l])
-                  for l in level_pipelines.keys()}
-
-    _SUB_PIPELINE_DATA["sub_graphs"] = sub_graphs
 
 
 def _build_sub_pipeline_tree_core(pid, leaf_pids):
@@ -514,7 +419,6 @@ def _build_sub_pipeline_tree_core(pid, leaf_pids):
     tree = dict(
         value=pid,
         label=_pretty_name(pid),
-        # is_leaf=is_leaf
     )
     if not is_leaf:
         tree['children'] = [_build_sub_pipeline_tree_core(p, leaf_pids) for p in pipeline_children[pid]]
@@ -732,43 +636,41 @@ def nodes_json():
 
 
 @app.route("/api/pipeline_tree/<string:pipeline_ids>")
-def subgraph_data(pipeline_ids):
+def pipeline_tree_data(pipeline_ids):
     parent_pipelines = pipeline_ids.split(",")
-
-    if "__default__" in parent_pipelines and "__default__" not in _DATA["pipelines"]:
-        pipeline_dict = {"__default__": _DATA["pipelines"][0]}
-        parent_pipelines = [pipeline_dict.get(p, p) for p in parent_pipelines]
-
     pipeline_children = _SUB_PIPELINE_DATA["pipeline_children"]
+
+    # if "__default__" in parent_pipelines and "__default__" not in pipeline_children:
+    #     pipeline_dict = {"__default__": _DATA["pipelines"][0]["id"]}
+    #     parent_pipelines = [pipeline_dict.get(p, p) for p in parent_pipelines]
+
     children = [pipeline_children.get(p, set()) for p in parent_pipelines]
-    pipelines = reduce(lambda a,b: a | b, children)
-    pipeline_set = set(pipelines)
+    pipeline_set = set(reduce(lambda a,b: a | b, children))
 
     pipeline_ancestors = _SUB_PIPELINE_DATA["pipeline_ancestors"]
     remove_targets = set(parent_pipelines)
-    for p in pipelines:
+    for p in pipeline_set:
         remove_targets = remove_targets | (pipeline_ancestors[p] & pipeline_set)
 
-    target_pipeline_set = set(pipelines) - set(remove_targets)
-    target_pipelines = list(target_pipeline_set)
-    edges = build_pipeline_edges(target_pipelines) if target_pipelines else []
-    subgraph = convert_pipeline_edges_to_node_edge(target_pipelines, edges)
+    target_pipeline_set = pipeline_set - remove_targets
+    pipeline_type_nodes = _create_pipeline_nodes(target_pipeline_set)
 
-    pipeline_nodes = _SUB_PIPELINE_DATA["pipeline_nodes"]
+    pipeline_nodes_map = _SUB_PIPELINE_DATA["pipeline_nodes"]
 
     leaf_pipelines = [p for p in parent_pipelines if p not in pipeline_children]
-    leaf_nodes = reduce(lambda a, b: a | b,  [pipeline_nodes[p] for p in leaf_pipelines], set())
+    leaf_nodes = reduce(lambda a, b: a | b,  [pipeline_nodes_map[p] for p in leaf_pipelines], set())
 
     nodes_in_pipelines = set()
     node_dict = _SUB_PIPELINE_DATA["node_dict"]
+    parent_pipeline_set = set(parent_pipelines)
 
     for node_id, node in node_dict.items():
-        if set(node["pipelines"]) & set(parent_pipelines):
+        if set(node["pipelines"]) & set(parent_pipeline_set):
             nodes_in_pipelines.add(node_id)
 
+    node_to_node = _SUB_PIPELINE_DATA["node_to_node"]
     edges = []
     data_nodes = set()
-    node_to_node = _SUB_PIPELINE_DATA["node_to_node"]
 
     for node_id in nodes_in_pipelines:
         target_node_dict = node_to_node.get(node_id, None)
@@ -800,12 +702,13 @@ def subgraph_data(pipeline_ids):
                 data_nodes = data_nodes | data_set
 
     data_to_node = _SUB_PIPELINE_DATA["data_to_node"]
+
     for data_id, node_set in data_to_node.items():
         if data_id not in leaf_nodes:
             continue
         for node_id in node_set:
             node = node_dict[node_id]
-            if set(node["pipelines"]) & set(parent_pipelines):
+            if set(node["pipelines"]) & parent_pipeline_set:
                 target_id = None
                 if node_id in leaf_nodes:
                     target_id = node_id
@@ -816,21 +719,26 @@ def subgraph_data(pipeline_ids):
                     data_nodes.add(data_id)
                     edges.extend([dict(source=data_id, target=target_id)])
 
+
     node_to_data = _SUB_PIPELINE_DATA["node_to_data"]
     for node_id, data_set in node_to_data.items():
         if node_id not in leaf_nodes:
             continue
         for data_id in data_set:
             data = node_dict[data_id]
-            if set(data["pipelines"]) & set(parent_pipelines):
-                edges.extend([dict(source=node_id, target=data_id)])
-                data_nodes.add(data_id)
+            if (set(data["pipelines"]) & parent_pipeline_set):
+                    edges.extend([dict(source=node_id, target=data_id)])
+                    data_nodes.add(data_id)
 
-
-    data = _DATA.copy()
-    data["nodes"] = subgraph["nodes_list"] + [node_dict[n] for n in (leaf_nodes | data_nodes)]
-    data["edges"] = edges
-    return jsonify(data)
+    return jsonify({
+        "nodes": pipeline_type_nodes + [node_dict[n] for n in (leaf_nodes | data_nodes)],
+        "edges": edges,
+        "tags": _DATA["tags"],
+        "layers": _DATA["layers"],
+        "pipelines": _DATA["pipelines"],
+        "pipeline_tree": _DATA["pipeline_tree"],
+        "selected_pipeline":  _DATA["selected_pipeline"],
+    })
 
 
 @app.route("/api/pipelines/<string:pipeline_id>")

@@ -20,6 +20,8 @@ import {
   faPlusSquare,
   faMinusSquare
 } from '@fortawesome/free-solid-svg-icons';
+import './pipeline-tree.css';
+
 library.add(
   faCheckSquare,
   faSquare,
