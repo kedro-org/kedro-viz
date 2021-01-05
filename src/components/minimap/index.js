@@ -334,9 +334,7 @@ export class MiniMap extends Component {
 
     return (
       <div
-        className={classnames('pipeline-minimap-container', {
-          'pipeline-minimap-container--visible': this.props.visible
-        })}
+        className="pipeline-minimap-container"
         style={this.props.visible ? transformStyle : {}}>
         <div
           className="pipeline-minimap kedro"
