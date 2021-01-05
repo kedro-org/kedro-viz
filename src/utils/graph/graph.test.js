@@ -3,7 +3,8 @@ import { getVisibleNodes } from '../../selectors/nodes';
 import { getVisibleEdges } from '../../selectors/edges';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import { graph } from './graph';
-import { solve, greaterOrEqual, equalTo, subtract } from './solver';
+import { solve } from './solver';
+import { greaterOrEqual, equalTo, subtract } from './common';
 
 import {
   clamp,

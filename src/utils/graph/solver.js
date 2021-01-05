@@ -9,7 +9,7 @@
  **/
 import * as kiwi from 'kiwi.js';
 
-import { distance1d } from './common';
+import { equalTo, greaterOrEqual } from './common';
 
 /**
  * Combines the given object's id and key to create a new key
@@ -24,38 +24,14 @@ const key = (obj, key) => {
 };
 
 /**
- * Returns the value `a - b`
- * @param {number} a The first number
- * @param {number} b The second number
- * @returns {number} The result
- */
-export const subtract = (a, b) => a - b;
-
-/**
- * Given a `solver` operator function, returns the equivalent kiwi.js operator if defined
+ * Given an operator function, returns the equivalent kiwi.js operator if defined
  * @param {function} operator The operator function
  * @returns {object|undefined} The kiwi.js operator
  */
-const toStrictOperator = operator => {
+export const toStrictOperator = operator => {
   if (operator === equalTo) return kiwi.Operator.Eq;
   if (operator === greaterOrEqual) return kiwi.Operator.Ge;
 };
-
-/**
- * Returns `true` if `a === b` otherwise `false`
- * @param {number} a The first value
- * @param {number} b The second value
- * @returns {boolean} The result
- */
-export const equalTo = (a, b) => a === b;
-
-/**
- * Returns `true` if `a >= b` otherwise `false`
- * @param {number} a The first number
- * @param {number} b The second number
- * @returns {boolean} The result
- */
-export const greaterOrEqual = (a, b) => a >= b;
 
 /**
  * Applies the given constraints to the objects in-place.
@@ -113,11 +89,11 @@ const solveLoose = (constraints, iterations) => {
 
 /**
  * Applies the given constraints to the objects in-place.
+ * A solution is found exactly if possible, otherwise throws an error
  * Limitations:
  *  - Constraint targets and operators must be static
- *  - `delta` is always subtract
- *  - `distance` is always subtract (i.e. signed)
- * A solution is found exactly if possible, otherwise throws an error
+ *  - `constraint.delta` is always subtract
+ *  - `constraint.distance` is always subtract (i.e. signed)
  * @param {array} constraints The constraints. See docs for `solve`
  */
 const solveStrict = constraints => {

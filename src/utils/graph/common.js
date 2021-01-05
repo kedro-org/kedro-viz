@@ -30,6 +30,30 @@ export const snap = (value, unit) => Math.round(value / unit) * unit;
 export const distance1d = (a, b) => Math.abs(a - b);
 
 /**
+ * Returns the value `a - b`
+ * @param {number} a The first number
+ * @param {number} b The second number
+ * @returns {number} The result
+ */
+export const subtract = (a, b) => a - b;
+
+/**
+ * Returns `true` if `a === b` otherwise `false`
+ * @param {number} a The first value
+ * @param {number} b The second value
+ * @returns {boolean} The result
+ */
+export const equalTo = (a, b) => a === b;
+
+/**
+ * Returns `true` if `a >= b` otherwise `false`
+ * @param {number} a The first number
+ * @param {number} b The second number
+ * @returns {boolean} The result
+ */
+export const greaterOrEqual = (a, b) => a >= b;
+
+/**
  * Returns the angle in radians between the points a and b relative to the X-axis about the origin
  * @param {object} a The first point
  * @param {object} b The second point
