@@ -51,15 +51,23 @@
 
   position: absolute;
   top: 50%;
-  left: 50%;
+  right: 50%;
   margin-top: -1.2em;
-  margin-left: 1.6em;
+  margin-right: 1.6em;
   padding: 0.5em 0.7em;
   font-size: 1.4em;
   white-space: nowrap;
-  transform: translateX(-1em);
+  transform: translateX(1em);
   visibility: hidden;
   opacity: 0;
+
+  @media (min-width: $sidebar-width-breakpoint) {
+    right: auto;
+    left: 50%;
+    margin-right: auto;
+    margin-left: 1.6em;
+    transform: translateX(-1em);
+  }
 
   .pipeline-icon-toolbar__button:hover &,
   [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {
@@ -73,12 +81,19 @@
 
     position: absolute;
     top: calc(50% - #{$triangle-size});
-    left: -$triangle-size + 0.5;
+    right: -$triangle-size + 0.5;
     width: 0;
     height: 0;
-    border-color: transparent var(--color-bg-alt) transparent transparent;
+    border-color: transparent transparent transparent var(--color-bg-alt);
     border-style: solid;
-    border-width: $triangle-size $triangle-size $triangle-size 0;
+    border-width: $triangle-size 0 $triangle-size $triangle-size;
     content: '';
+
+    @media (min-width: $sidebar-width-breakpoint) {
+      right: auto;
+      left: -$triangle-size + 0.5;
+      border-color: transparent var(--color-bg-alt) transparent transparent;
+      border-width: $triangle-size $triangle-size $triangle-size 0;
+    }
   }
 }
