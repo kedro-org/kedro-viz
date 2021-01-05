@@ -224,35 +224,35 @@ export class FlowChart extends Component {
           !isNaN(event.transform.y)
         ) {
           this.el.wrapper.attr('transform', event.transform);
-        }
 
-        // Apply animating class to zoom wrapper
-        this.el.wrapper.classed(
-          'pipeline-flowchart__zoom-wrapper--animating',
-          true
-        );
+          // Apply animating class to zoom wrapper
+          this.el.wrapper.classed(
+            'pipeline-flowchart__zoom-wrapper--animating',
+            true
+          );
 
-        // Update layer label y positions
-        if (this.el.layerNames) {
-          this.el.layerNames.style('transform', d => {
-            const ty = y + (d.y + d.height / 2) * scale;
-            return `translateY(${ty}px)`;
+          // Update layer label y positions
+          if (this.el.layerNames) {
+            this.el.layerNames.style('transform', d => {
+              const ty = y + (d.y + d.height / 2) * scale;
+              return `translateY(${ty}px)`;
+            });
+          }
+
+          // Hide the tooltip so it doesn't get misaligned to its node
+          this.hideTooltip();
+
+          // Share the applied zoom state with other components
+          this.props.onUpdateZoom({
+            scale,
+            x,
+            y,
+            applied: true,
+            transition: false,
+            minScale,
+            maxScale
           });
         }
-
-        // Hide the tooltip so it doesn't get misaligned to its node
-        this.hideTooltip();
-
-        // Share the applied zoom state with other components
-        this.props.onUpdateZoom({
-          scale,
-          x,
-          y,
-          applied: true,
-          transition: false,
-          minScale,
-          maxScale
-        });
       })
       // When zoom ends
       .on('end', () => {
