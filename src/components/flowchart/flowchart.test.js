@@ -189,6 +189,22 @@ describe('FlowChart', () => {
       type: 'UPDATE_ZOOM'
     });
   });
+
+  it('will not perform zoom operations for Infinity zoom values', () => {
+    const dispatch = jest.fn();
+
+    const zoom = { scale: 1, x: Infinity, y: Infinity };
+    mapDispatchToProps(dispatch).onUpdateZoom(zoom);
+    expect(dispatch.mock.calls.length).toEqual(1);
+  });
+
+  it('will not perform zoom operations for NaN zoom values', () => {
+    const dispatch = jest.fn();
+
+    const zoom = { scale: 1, x: NaN, y: NaN };
+    mapDispatchToProps(dispatch).onUpdateZoom(zoom);
+    expect(dispatch.mock.calls.length).toEqual(1);
+  });
 });
 
 describe('map dispatch props to async actions', () => {
