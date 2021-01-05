@@ -85,9 +85,9 @@ Run the following command:
 npm run start:api --project_path=<path-to-Kedro-project>
 ```
 
-This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command.
+This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142. 
 
-From then on, launching the app locally at [localhost:4141] will pull data from the Kedro-Viz server that is running on port 4142. (note: once the development server is launched at port 4142 the local app will always pull data from that server - to disable that, you could comment out the proxy setting in `package.json` and relaunch your app.)
+Note: Once the development server is launched at port 4142, the local app will always pull data from that server. To prevent this, you can comment out the proxy setting in `package.json` and restart the dev server at port 4141.
 
 #### Data sources
 
