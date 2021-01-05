@@ -216,13 +216,14 @@ export class FlowChart extends Component {
           [width + margin + metaSidebarWidth / scale, height + margin]
         ]);
 
-        // Transform the <g> that wraps the chart
+        // checks to ensure there are valid x and y values before performing zoom operations
         if (
           event.transform.x !== Infinity &&
           event.transform.y !== Infinity &&
           !isNaN(event.transform.x) &&
           !isNaN(event.transform.y)
         ) {
+          // Transform the <g> that wraps the chart
           this.el.wrapper.attr('transform', event.transform);
 
           // Apply animating class to zoom wrapper
