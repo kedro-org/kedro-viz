@@ -1,10 +1,12 @@
-import { greaterOrEqual, equalTo } from './solver';
+import { distance1d, greaterOrEqual, equalTo, subtract } from './common';
 
 /**
  * Constraint in Y for separating rows
  */
 export const rowConstraint = {
   key: 'y',
+  delta: subtract,
+  distance: distance1d,
   operator: greaterOrEqual,
   target: (a, b, co) => co.spaceY,
   strength: () => 1,
@@ -18,6 +20,8 @@ export const rowConstraint = {
  */
 export const layerConstraint = {
   key: 'y',
+  delta: subtract,
+  distance: distance1d,
   operator: greaterOrEqual,
   target: (a, b, co) => co.layerSpace,
   strength: () => 1,
@@ -31,6 +35,8 @@ export const layerConstraint = {
  */
 export const parallelConstraint = {
   key: 'x',
+  delta: subtract,
+  distance: distance1d,
   operator: equalTo,
   target: () => 0,
   // Lower degree nodes can be moved more freely than higher
@@ -46,6 +52,8 @@ export const parallelConstraint = {
  */
 export const crossingConstraint = {
   key: 'x',
+  delta: subtract,
+  distance: distance1d,
   operator: (distance, target, delta) =>
     target >= 0 ? delta >= target : delta <= target,
   target: (a, b, co) => {
@@ -65,6 +73,8 @@ export const crossingConstraint = {
  */
 export const separationConstraint = {
   key: 'x',
+  delta: subtract,
+  distance: distance1d,
   operator: (distance, target, delta) => delta <= target,
   target: (ax, bx, co) => -co.spaceX - co.a.width * 0.5 - co.b.width * 0.5,
   strength: () => 1,
@@ -78,6 +88,8 @@ export const separationConstraint = {
  */
 export const separationStrictConstraint = {
   key: 'x',
+  delta: subtract,
+  distance: distance1d,
   operator: greaterOrEqual,
   target: (ax, bx, co) => co.targetSeparation,
   strength: () => 1,

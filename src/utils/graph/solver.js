@@ -65,12 +65,12 @@ export const greaterOrEqual = (a, b) => a >= b;
  * @param {object} constraint.a The first object to constrain
  * @param {object} constraint.b The second object to constrain
  * @param {string} constraint.base.key The property name on `a` and `b` to constrain
- * @param {boolean=true} constraint.base.required Whether the constraint must be satisfied during strict solving
- * @param {function=} constraint.base.delta A signed difference function given `a` and `b`. Default `subtract`
- * @param {function=} constraint.base.distance An absolute distance function given `a` and `b`. Default `distance1d`
- * @param {function=} constraint.base.target A target difference for `a` and `b`. Default `() => 0`
- * @param {function=} constraint.base.weightA The amount to adjust `a[key]`. Default `() => 1`
- * @param {function=} constraint.base.weightB The amount to adjust `b[key]`. Default `() => 1`
+ * @param {boolean} constraint.base.required Whether the constraint must be satisfied during strict solving
+ * @param {function} constraint.base.delta A signed difference function given `a` and `b`
+ * @param {function} constraint.base.distance An absolute distance function given `a` and `b`
+ * @param {function} constraint.base.target A target difference for `a` and `b`
+ * @param {function} constraint.base.weightA The amount to adjust `a[key]`
+ * @param {function} constraint.base.weightB The amount to adjust `b[key]`
  * @param {number=1} iterations The number of iterations
  * @param {boolean=false} strict
  */
@@ -92,16 +92,14 @@ const solveLoose = (constraints, iterations) => {
       const base = co.base;
       const a = co.a[base.key];
       const b = co.b[base.key];
-      const delta = (base.delta || subtract)(a, b, co);
-      const distance = (base.distance || distance1d)(a, b, co);
+      const delta = base.delta(a, b, co);
+      const distance = base.distance(a, b, co);
       const target = base.target(a, b, co, delta, distance);
 
-      if (!(base.operator || equalTo)(distance, target, delta)) {
-        const resolve =
-          (base.strength ? base.strength(co) : 1) * (delta - target);
-
-        let weightA = base.weightA ? base.weightA(co) : 1;
-        let weightB = base.weightB ? base.weightB(co) : 1;
+      if (!base.operator(distance, target, delta)) {
+        const resolve = base.strength(co) * (delta - target);
+        let weightA = base.weightA(co);
+        let weightB = base.weightB(co);
 
         weightA = weightA / (weightA + weightB);
         weightB = 1 - weightA;
@@ -140,7 +138,7 @@ const solveStrict = constraints => {
 
     co.constraint = new kiwi.Constraint(
       expression,
-      toStrictOperator(base.operator || equalTo),
+      toStrictOperator(base.operator),
       base.target(null, null, co),
       base.required === true ? kiwi.Strength.required : kiwi.Strength.strong
     );
