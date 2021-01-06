@@ -1,7 +1,13 @@
 import { distance1d, greaterOrEqual, equalTo, subtract } from './common';
 
 /**
- * Constraint in Y for separating rows
+ * Constraint base definitions.
+ *
+ * See `solve` function of `solver.js` for constraint specification.
+ */
+
+/**
+ * Layout constraint in Y for separating rows
  */
 export const rowConstraint = {
   key: 'y',
@@ -16,7 +22,7 @@ export const rowConstraint = {
 };
 
 /**
- * Constraint in Y for separating layers
+ * Layout constraint in Y for separating layers
  */
 export const layerConstraint = {
   key: 'y',
@@ -31,7 +37,7 @@ export const layerConstraint = {
 };
 
 /**
- * Constraint in X for minimising distance from source to target for straight edges
+ * Layout constraint in X for minimising distance from source to target for straight edges
  */
 export const parallelConstraint = {
   key: 'x',
@@ -48,7 +54,7 @@ export const parallelConstraint = {
 };
 
 /**
- * Constraint in X for minimising edge crossings
+ * Layout constraint in X for minimising edge crossings
  */
 export const crossingConstraint = {
   key: 'x',
@@ -69,7 +75,7 @@ export const crossingConstraint = {
 };
 
 /**
- * Constraint in X for minimum node separation (loose)
+ * Layout constraint in X for minimum node separation (loose)
  */
 export const separationConstraint = {
   key: 'x',
@@ -84,7 +90,7 @@ export const separationConstraint = {
 };
 
 /**
- * Constraint in X for minimum node separation (strict)
+ * Layout constraint in X for minimum node separation (strict)
  */
 export const separationStrictConstraint = {
   key: 'x',
