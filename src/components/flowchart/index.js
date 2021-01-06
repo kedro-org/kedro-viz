@@ -216,44 +216,41 @@ export class FlowChart extends Component {
           [width + margin + metaSidebarWidth / scale, height + margin]
         ]);
 
-        // checks to ensure there are valid x and y values before performing zoom operations
-        if (
-          event.transform.x !== Infinity &&
-          event.transform.y !== Infinity &&
-          !isNaN(event.transform.x) &&
-          !isNaN(event.transform.y)
-        ) {
-          // Transform the <g> that wraps the chart
-          this.el.wrapper.attr('transform', event.transform);
+        // Ensure valid x and y values before performing zoom operations
+        if (!isFinite(x) || !isFinite(y) || isNaN(x) || isNaN(y)) {
+          return;
+        }
 
-          // Apply animating class to zoom wrapper
-          this.el.wrapper.classed(
-            'pipeline-flowchart__zoom-wrapper--animating',
-            true
-          );
+        // Transform the <g> that wraps the chart
+        this.el.wrapper.attr('transform', event.transform);
 
-          // Update layer label y positions
-          if (this.el.layerNames) {
-            this.el.layerNames.style('transform', d => {
-              const ty = y + (d.y + d.height / 2) * scale;
-              return `translateY(${ty}px)`;
-            });
-          }
+        // Apply animating class to zoom wrapper
+        this.el.wrapper.classed(
+          'pipeline-flowchart__zoom-wrapper--animating',
+          true
+        );
 
-          // Hide the tooltip so it doesn't get misaligned to its node
-          this.hideTooltip();
-
-          // Share the applied zoom state with other components
-          this.props.onUpdateZoom({
-            scale,
-            x,
-            y,
-            applied: true,
-            transition: false,
-            minScale,
-            maxScale
+        // Update layer label y positions
+        if (this.el.layerNames) {
+          this.el.layerNames.style('transform', d => {
+            const ty = y + (d.y + d.height / 2) * scale;
+            return `translateY(${ty}px)`;
           });
         }
+
+        // Hide the tooltip so it doesn't get misaligned to its node
+        this.hideTooltip();
+
+        // Share the applied zoom state with other components
+        this.props.onUpdateZoom({
+          scale,
+          x,
+          y,
+          applied: true,
+          transition: false,
+          minScale,
+          maxScale
+        });
       })
       // When zoom ends
       .on('end', () => {
