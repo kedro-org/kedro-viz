@@ -30,7 +30,7 @@ export const MetaDataCode = ({
     <div
       className={modifiers(
         'pipeline-metadata-code',
-        { visible, wide: !sidebarVisible },
+        { visible, sidebarVisible },
         'kedro'
       )}>
       <h2 className="pipeline-metadata-code__title">Code block</h2>

@@ -3,7 +3,12 @@ import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 import { getVisibleLayerIDs } from './disabled';
 import { getVisibleMetaSidebar } from '../selectors/metadata';
-import { sidebarWidth, metaSidebarWidth } from '../config';
+import {
+  sidebarWidth,
+  metaSidebarWidth,
+  codeSidebarWidth,
+  chartMinWidth
+} from '../config';
 
 const getOldgraphFlag = state => state.flags.oldgraph;
 const getVisibleSidebar = state => state.visible.sidebar;
@@ -33,8 +38,8 @@ export const getGraphInput = createSelector(
 /**
  * Calculate the displayed width of a sidebar
  */
-export const getSidebarWidth = (visible, width, { breakpoint, open, closed }) =>
-  visible && width > breakpoint ? open : closed;
+export const getSidebarWidth = (visible, { open, closed }) =>
+  visible ? open : closed;
 
 /**
  * Convert the DOMRect into an Object, mutate some of the properties,
@@ -54,30 +59,27 @@ export const getChartSize = createSelector(
     }
 
     // Get the actual sidebar width
-    const sidebarWidthActual = getSidebarWidth(
-      visibleSidebar,
-      width,
-      sidebarWidth
-    );
+    const sidebarWidthActual = getSidebarWidth(visibleSidebar, sidebarWidth);
     const metaSidebarWidthActual = getSidebarWidth(
-      width,
       visibleMetaSidebar,
       metaSidebarWidth
     );
-
-    // Calculate flexible width for code sidebar
-    const widthRemainder = width - sidebarWidthActual - metaSidebarWidthActual;
-    const codeSidebarSize = visibleSidebar ? 0.7 : 0.6;
-    const codeSidebarWidthActual = visibleCodeSidebar
-      ? codeSidebarSize * widthRemainder
-      : 0;
+    const codeSidebarWidthActual = getSidebarWidth(
+      visibleCodeSidebar,
+      codeSidebarWidth
+    );
 
     // Find the resulting space for the chart
-    const chartWidth =
+    let chartWidth =
       width -
       sidebarWidthActual -
       metaSidebarWidthActual -
       codeSidebarWidthActual;
+
+    // Enforce minimum chart width
+    if (chartWidth < chartMinWidth) {
+      chartWidth = chartMinWidth;
+    }
 
     return {
       left,

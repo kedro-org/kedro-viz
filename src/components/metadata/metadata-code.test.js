@@ -24,17 +24,27 @@ describe('MetaDataCode', () => {
     ).toBe(true);
   });
 
-  it('adds wide class when sidebarVisible prop is false', () => {
-    const wrapper = setup.mount(
-      <MetaDataCode sidebarVisible={false} visible={true} value={testCode} />
-    );
-    expect(wrapper.find('.pipeline-metadata-code--wide').exists()).toBe(true);
-  });
-
-  it('removes wide class when sidebarVisible prop is true', () => {
+  it('adds sidebarVisible class when sidebarVisible prop is true', () => {
     const wrapper = setup.mount(
       <MetaDataCode sidebarVisible={true} visible={true} value={testCode} />
     );
-    expect(wrapper.find('.pipeline-metadata-code--wide').exists()).toBe(false);
+    expect(
+      wrapper.find('.pipeline-metadata-code--sidebarVisible').exists()
+    ).toBe(true);
+    expect(
+      wrapper.find('.pipeline-metadata-code--no-sidebarVisible').exists()
+    ).toBe(false);
+  });
+
+  it('removes sidebarVisible class when sidebarVisible prop is false', () => {
+    const wrapper = setup.mount(
+      <MetaDataCode sidebarVisible={false} visible={true} value={testCode} />
+    );
+    expect(
+      wrapper.find('.pipeline-metadata-code--sidebarVisible').exists()
+    ).toBe(false);
+    expect(
+      wrapper.find('.pipeline-metadata-code--no-sidebarVisible').exists()
+    ).toBe(true);
   });
 });
