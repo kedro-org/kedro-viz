@@ -40,13 +40,13 @@ export const toStrictOperator = operator => {
  * @param {array} constraints The constraints to apply
  * @param {object} constraint.a The first object to constrain
  * @param {object} constraint.b The second object to constrain
- * @param {string} constraint.base.key The property name on `a` and `b` to constrain
+ * @param {string} constraint.base.property The property name on `a` and `b` to constrain
  * @param {boolean} constraint.base.required Whether the constraint must be satisfied during strict solving
  * @param {function} constraint.base.difference A signed difference function given `a` and `b`
  * @param {function} constraint.base.distance An absolute distance function given `a` and `b`
  * @param {function} constraint.base.target A target difference for `a` and `b`
- * @param {function} constraint.base.weightA The amount to adjust `a[key]`
- * @param {function} constraint.base.weightB The amount to adjust `b[key]`
+ * @param {function} constraint.base.weightA The amount to adjust `a[property]`
+ * @param {function} constraint.base.weightB The amount to adjust `b[property]`
  * @param {object=} constants The constants used by constraints
  * @param {number=1} iterations The number of iterations
  * @param {boolean=false} strict
@@ -73,8 +73,8 @@ const solveLoose = (constraints, constants, iterations) => {
   for (let i = 0; i < iterations; i += 1) {
     for (const co of constraints) {
       const base = co.base;
-      const a = co.a[base.key];
-      const b = co.b[base.key];
+      const a = co.a[base.property];
+      const b = co.b[base.property];
       const difference = base.difference(a, b, co, constants);
       const distance = base.distance(a, b, co, constants);
       const target = base.target(a, b, co, constants, difference, distance);
@@ -87,8 +87,8 @@ const solveLoose = (constraints, constants, iterations) => {
         weightA = weightA / (weightA + weightB);
         weightB = 1 - weightA;
 
-        co.a[base.key] -= weightA * resolve;
-        co.b[base.key] += weightB * resolve;
+        co.a[base.property] -= weightA * resolve;
+        co.b[base.property] += weightB * resolve;
       }
     }
   }
@@ -110,14 +110,14 @@ const solveStrict = (constraints, constants) => {
 
   for (const co of constraints) {
     const base = co.base;
-    variables[key(co.a, base.key)] = new kiwi.Variable();
-    variables[key(co.b, base.key)] = new kiwi.Variable();
+    variables[key(co.a, base.property)] = new kiwi.Variable();
+    variables[key(co.b, base.property)] = new kiwi.Variable();
   }
 
   for (const co of constraints) {
     const base = co.base;
-    const expression = variables[key(co.a, base.key)].minus(
-      variables[key(co.b, base.key)]
+    const expression = variables[key(co.a, base.property)].minus(
+      variables[key(co.b, base.property)]
     );
 
     co.constraint = new kiwi.Constraint(
@@ -134,7 +134,7 @@ const solveStrict = (constraints, constants) => {
 
   for (const co of constraints) {
     const base = co.base;
-    co.a[base.key] = variables[key(co.a, base.key)].value();
-    co.b[base.key] = variables[key(co.b, base.key)].value();
+    co.a[base.property] = variables[key(co.a, base.property)].value();
+    co.b[base.property] = variables[key(co.b, base.property)].value();
   }
 };

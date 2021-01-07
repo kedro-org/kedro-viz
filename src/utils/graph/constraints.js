@@ -10,7 +10,7 @@ import { distance1d, greaterOrEqual, equalTo, subtract } from './common';
  * Layout constraint in Y for separating rows
  */
 export const rowConstraint = {
-  key: 'y',
+  property: 'y',
   difference: subtract,
   distance: distance1d,
   operator: greaterOrEqual,
@@ -25,7 +25,7 @@ export const rowConstraint = {
  * Layout constraint in Y for separating layers
  */
 export const layerConstraint = {
-  key: 'y',
+  property: 'y',
   difference: subtract,
   distance: distance1d,
   operator: greaterOrEqual,
@@ -40,7 +40,7 @@ export const layerConstraint = {
  * Layout constraint in X for minimising distance from source to target for straight edges
  */
 export const parallelConstraint = {
-  key: 'x',
+  property: 'x',
   difference: subtract,
   distance: distance1d,
   operator: equalTo,
@@ -57,7 +57,7 @@ export const parallelConstraint = {
  * Layout constraint in X for minimising edge crossings
  */
 export const crossingConstraint = {
-  key: 'x',
+  property: 'x',
   difference: subtract,
   distance: distance1d,
   operator: (distance, target, difference) =>
@@ -78,7 +78,7 @@ export const crossingConstraint = {
  * Layout constraint in X for minimum node separation (loose)
  */
 export const separationConstraint = {
-  key: 'x',
+  property: 'x',
   difference: subtract,
   distance: distance1d,
   operator: (distance, target, difference) => difference <= target,
@@ -94,7 +94,7 @@ export const separationConstraint = {
  * Layout constraint in X for minimum node separation (strict)
  */
 export const separationStrictConstraint = {
-  key: 'x',
+  property: 'x',
   difference: subtract,
   distance: distance1d,
   operator: greaterOrEqual,
