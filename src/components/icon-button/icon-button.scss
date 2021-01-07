@@ -52,15 +52,12 @@
   position: absolute;
   top: 50%;
   left: 50%;
+  display: none;
   margin-top: -1.2em;
   margin-left: 1.6em;
   padding: 0.5em 0.7em;
   font-size: 1.4em;
   white-space: nowrap;
-  transform: translateX(-1em);
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
 
   @media (max-width: $sidebar-width-breakpoint) {
     .pipeline-sidebar--visible & {
@@ -68,16 +65,12 @@
       left: auto;
       margin-right: 1.6em;
       margin-left: auto;
-      transform: translateX(1em);
     }
   }
 
   .pipeline-icon-toolbar__button:hover &,
   [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {
-    transform: translateX(0);
-    visibility: visible;
-    opacity: 1;
-    transition: none;
+    display: inline-block;
   }
 
   &::after {
