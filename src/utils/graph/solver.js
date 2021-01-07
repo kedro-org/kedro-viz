@@ -42,7 +42,7 @@ export const toStrictOperator = operator => {
  * @param {object} constraint.b The second object to constrain
  * @param {string} constraint.base.key The property name on `a` and `b` to constrain
  * @param {boolean} constraint.base.required Whether the constraint must be satisfied during strict solving
- * @param {function} constraint.base.delta A signed difference function given `a` and `b`
+ * @param {function} constraint.base.difference A signed difference function given `a` and `b`
  * @param {function} constraint.base.distance An absolute distance function given `a` and `b`
  * @param {function} constraint.base.target A target difference for `a` and `b`
  * @param {function} constraint.base.weightA The amount to adjust `a[key]`
@@ -75,12 +75,12 @@ const solveLoose = (constraints, constants, iterations) => {
       const base = co.base;
       const a = co.a[base.key];
       const b = co.b[base.key];
-      const delta = base.delta(a, b, co, constants);
+      const difference = base.difference(a, b, co, constants);
       const distance = base.distance(a, b, co, constants);
-      const target = base.target(a, b, co, constants, delta, distance);
+      const target = base.target(a, b, co, constants, difference, distance);
 
-      if (!base.operator(distance, target, delta)) {
-        const resolve = base.strength(co, constants) * (delta - target);
+      if (!base.operator(distance, target, difference)) {
+        const resolve = base.strength(co, constants) * (difference - target);
         let weightA = base.weightA(co, constants);
         let weightB = base.weightB(co, constants);
 
@@ -99,7 +99,7 @@ const solveLoose = (constraints, constants, iterations) => {
  * A solution is found exactly if possible, otherwise throws an error
  * Limitations:
  *  - Constraint targets and operators must be static
- *  - `constraint.delta` is always subtract
+ *  - `constraint.difference` is always subtract
  *  - `constraint.distance` is always subtract (i.e. signed)
  * @param {array} constraints The constraints. See docs for `solve`
  * @param {object} constants The constants used by constraints
