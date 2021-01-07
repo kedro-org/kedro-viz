@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import 'd3-transition';
 import { interpolate } from 'd3-interpolate';
 import { select, event } from 'd3-selection';
