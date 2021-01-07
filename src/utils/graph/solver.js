@@ -47,12 +47,18 @@ export const toStrictOperator = operator => {
  * @param {function} constraint.base.target A target difference for `a` and `b`
  * @param {function} constraint.base.weightA The amount to adjust `a[key]`
  * @param {function} constraint.base.weightB The amount to adjust `b[key]`
+ * @param {object=} constants The constants used by constraints
  * @param {number=1} iterations The number of iterations
  * @param {boolean=false} strict
  */
-export const solve = (constraints, iterations = 1, strict = false) => {
-  if (strict) return solveStrict(constraints);
-  return solveLoose(constraints, iterations);
+export const solve = (
+  constraints,
+  constants = {},
+  iterations = 1,
+  strict = false
+) => {
+  if (strict) return solveStrict(constraints, constants);
+  return solveLoose(constraints, constants, iterations);
 };
 
 /**
@@ -60,22 +66,23 @@ export const solve = (constraints, iterations = 1, strict = false) => {
  * Constraint targets and operators can be static or dynamic.
  * A solution is approximated iteratively
  * @param {array} constraints The constraints. See docs for `solve`
+ * @param {object} constants The constants used by constraints
  * @param {number} iterations The number of iterations
  */
-const solveLoose = (constraints, iterations) => {
+const solveLoose = (constraints, constants, iterations) => {
   for (let i = 0; i < iterations; i += 1) {
     for (const co of constraints) {
       const base = co.base;
       const a = co.a[base.key];
       const b = co.b[base.key];
-      const delta = base.delta(a, b, co);
-      const distance = base.distance(a, b, co);
-      const target = base.target(a, b, co, delta, distance);
+      const delta = base.delta(a, b, co, constants);
+      const distance = base.distance(a, b, co, constants);
+      const target = base.target(a, b, co, constants, delta, distance);
 
       if (!base.operator(distance, target, delta)) {
-        const resolve = base.strength(co) * (delta - target);
-        let weightA = base.weightA(co);
-        let weightB = base.weightB(co);
+        const resolve = base.strength(co, constants) * (delta - target);
+        let weightA = base.weightA(co, constants);
+        let weightB = base.weightB(co, constants);
 
         weightA = weightA / (weightA + weightB);
         weightB = 1 - weightA;
@@ -95,8 +102,9 @@ const solveLoose = (constraints, iterations) => {
  *  - `constraint.delta` is always subtract
  *  - `constraint.distance` is always subtract (i.e. signed)
  * @param {array} constraints The constraints. See docs for `solve`
+ * @param {object} constants The constants used by constraints
  */
-const solveStrict = constraints => {
+const solveStrict = (constraints, constants) => {
   const solver = new kiwi.Solver();
   const variables = {};
 
@@ -115,7 +123,7 @@ const solveStrict = constraints => {
     co.constraint = new kiwi.Constraint(
       expression,
       toStrictOperator(base.operator),
-      base.target(null, null, co),
+      base.target(null, null, co, constants),
       base.required === true ? kiwi.Strength.required : kiwi.Strength.strong
     );
 

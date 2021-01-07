@@ -14,7 +14,7 @@ export const rowConstraint = {
   delta: subtract,
   distance: distance1d,
   operator: greaterOrEqual,
-  target: (a, b, co) => co.spaceY,
+  target: (a, b, co, constants) => constants.spaceY,
   strength: () => 1,
   weightA: () => 0,
   weightB: () => 1,
@@ -29,7 +29,7 @@ export const layerConstraint = {
   delta: subtract,
   distance: distance1d,
   operator: greaterOrEqual,
-  target: (a, b, co) => co.layerSpace,
+  target: (a, b, co, constants) => constants.layerSpace,
   strength: () => 1,
   weightA: () => 0,
   weightB: () => 1,
@@ -62,13 +62,13 @@ export const crossingConstraint = {
   distance: distance1d,
   operator: (distance, target, delta) =>
     target >= 0 ? delta >= target : delta <= target,
-  target: (a, b, co) => {
+  target: (a, b, co, constants) => {
     // Find the minimal target position that separates both nodes
     const sourceDelta = co.edgeA.sourceNode.x - co.edgeB.sourceNode.x;
     const targetDelta = co.edgeA.targetNode.x - co.edgeB.targetNode.x;
-    return sourceDelta + targetDelta < 0 ? -co.basisX : co.basisX;
+    return sourceDelta + targetDelta < 0 ? -constants.basisX : constants.basisX;
   },
-  strength: co => 1 / co.basisX,
+  strength: (co, constants) => 1 / constants.basisX,
   weightA: () => 0.5,
   weightB: () => 0.5,
   required: false
@@ -82,7 +82,8 @@ export const separationConstraint = {
   delta: subtract,
   distance: distance1d,
   operator: (distance, target, delta) => delta <= target,
-  target: (ax, bx, co) => -co.spaceX - co.a.width * 0.5 - co.b.width * 0.5,
+  target: (ax, bx, co, constants) =>
+    -constants.spaceX - co.a.width * 0.5 - co.b.width * 0.5,
   strength: () => 1,
   weightA: () => 0.5,
   weightB: () => 0.5,
@@ -97,7 +98,7 @@ export const separationStrictConstraint = {
   delta: subtract,
   distance: distance1d,
   operator: greaterOrEqual,
-  target: (ax, bx, co) => co.targetSeparation,
+  target: (ax, bx, co) => co.separation,
   strength: () => 1,
   weightA: () => 0,
   weightB: () => 1,

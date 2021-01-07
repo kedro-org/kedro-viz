@@ -47,18 +47,24 @@ export const layout = ({
     node.y = 0;
   }
 
+  // Constraint constants passed to solver
+  const constants = {
+    spaceX,
+    spaceY,
+    basisX,
+    layerSpace: (spaceY + layerSpaceY) * 0.5
+  };
+
   // Constraints in Y formed by the edges of the graph
   const rowConstraints = edges.map(edge => ({
     base: rowConstraint,
     a: edge.targetNode,
-    b: edge.sourceNode,
-    spaceY
+    b: edge.sourceNode
   }));
 
   // Constraints in Y separating nodes into layers if specified
   if (layers) {
     const layerNames = Object.values(layers);
-    const layerSpace = (spaceY + layerSpaceY) * 0.5;
     let layerNodes = nodes.filter(node => node.nearestLayer === layerNames[0]);
 
     // For each defined layer
@@ -77,8 +83,7 @@ export const layout = ({
         layerConstraints.push({
           base: layerConstraint,
           a: layerNode,
-          b: node,
-          layerSpace
+          b: node
         });
       }
 
@@ -87,8 +92,7 @@ export const layout = ({
         layerConstraints.push({
           base: layerConstraint,
           a: node,
-          b: layerNode,
-          layerSpace
+          b: layerNode
         });
       }
 
@@ -97,7 +101,7 @@ export const layout = ({
   }
 
   // Find the positions of each node in Y given the constraints exactly
-  solve([...rowConstraints, ...layerConstraints], 1, true);
+  solve([...rowConstraints, ...layerConstraints], constants, 1, true);
 
   // Find the rows formed by the nodes
   const rows = groupByRow(nodes);
@@ -116,8 +120,7 @@ export const layout = ({
           a: edgeA.sourceNode,
           b: edgeB.sourceNode,
           edgeA: edgeA,
-          edgeB: edgeB,
-          basisX
+          edgeB: edgeB
         });
       }
 
@@ -128,8 +131,7 @@ export const layout = ({
           a: edgeA.targetNode,
           b: edgeB.targetNode,
           edgeA: edgeA,
-          edgeB: edgeB,
-          basisX
+          edgeB: edgeB
         });
       }
     }
@@ -164,14 +166,14 @@ export const layout = ({
 
   for (let i = 0; i < iterations; i += 1) {
     // Minimise crossing
-    solve(crossingConstraints, 1);
+    solve(crossingConstraints, constants, 1);
 
     // Minimise edge length
-    solve(parallelConstraints, 1);
+    solve(parallelConstraints, constants, 1);
 
     // Minimise edge length specifically for low-degree edges more strongly
-    solve(parallelSingleConstraints, halfIterations);
-    solve(parallelDoubleConstraints, halfIterations);
+    solve(parallelSingleConstraints, constants, halfIterations);
+    solve(parallelDoubleConstraints, constants, halfIterations);
 
     // Clear separation constraints from previous iteration
     separationConstraints.length = 0;
@@ -188,14 +190,13 @@ export const layout = ({
         separationConstraints.push({
           base: separationConstraint,
           a: rowNodes[j],
-          b: rowNodes[j + 1],
-          spaceX
+          b: rowNodes[j + 1]
         });
       }
     }
 
     // Minimise node separation overlap
-    solve(separationConstraints, halfIterations);
+    solve(separationConstraints, constants, halfIterations);
   }
 
   // For each row already sorted in X
@@ -222,13 +223,18 @@ export const layout = ({
         base: separationStrictConstraint,
         a: rowNodes[i + 1],
         b: rowNodes[i],
-        targetSeparation
+        separation: targetSeparation
       });
     }
   }
 
   // Find final positions of each node in X under given constraints exactly
-  solve([...separationStrictConstraints, ...parallelConstraints], 1, true);
+  solve(
+    [...separationStrictConstraints, ...parallelConstraints],
+    constants,
+    1,
+    true
+  );
 
   // Add additional spacing in Y for rows with many crossing edges
   expandDenseRows(edges, rows, spaceY);
