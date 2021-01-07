@@ -22,7 +22,7 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
 
   // Reset zoom/translate
   let width, height;
-  const hasGraph = graphSize.width && graphSize.height;
+  const hasGraph = isFinite(graphSize.width) && isFinite(graphSize.height);
   if (hasGraph) {
     width = graphSize.width + graphSize.marginx * 2;
     height = graphSize.height + graphSize.marginy * 2;
