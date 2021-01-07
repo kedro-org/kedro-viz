@@ -80,6 +80,29 @@ def create_project_from_config_file(context):
     assert res.returncode == OK_EXIT_CODE
 
 
+@given("I have run a non-interactive kedro new with {starter} starter")
+def create_project_with_starter(context, starter):
+    """Behave step to run kedro new given the config I previously created.
+    """
+    res = run(
+        [
+            context.kedro,
+            "new",
+            "--starter",
+            str(starter),
+            "--config",
+            str(context.config_file),
+        ],
+        env=context.env,
+        cwd=str(context.temp_dir),
+    )
+    if res.returncode != OK_EXIT_CODE:
+        print(res.stdout)
+        print(res.stderr)
+        assert False
+    assert res.returncode == OK_EXIT_CODE
+
+
 @given('I have executed the kedro command "{command}"')
 def exec_kedro_target_checked(context, command):
     """Execute Kedro command and check the status."""

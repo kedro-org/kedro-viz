@@ -470,7 +470,7 @@ def _get_dataset_data_params(namespace: str):
         except DataSetNotFoundError:
             node_data = None
     else:
-        node_data = _CATALOG._data_sets.get(namespace)
+        node_data = _CATALOG._data_sets.get(namespace)  # pragma: no cover
     return node_data
 
 
@@ -699,11 +699,11 @@ def _call_viz(
                 )
                 context = session.load_context()  # pylint: disable=no-member
                 pipelines = _get_pipelines_from_context(context, pipeline_name)
-            else:
+            else:  # pragma: no cover
                 context = load_context(project_path=project_path, env=env)
                 pipelines = _get_pipelines_from_context(context, pipeline_name)
         except KedroContextError:
-            raise KedroCliError(ERROR_PROJECT_ROOT)
+            raise KedroCliError(ERROR_PROJECT_ROOT)  # pragma: no cover
 
         _CATALOG = context.catalog
         _DATA = format_pipelines_data(pipelines)
