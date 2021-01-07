@@ -142,7 +142,9 @@ def start_server(mocker):
 @pytest.fixture(autouse=True)
 def patched_get_project_metadata(mocker):
     mocked_metadata = MockedProjectMedata(package_name="test", settings=mocker.Mock())
-    mocker.patch("kedro.framework.startup._get_project_metadata", return_value=mocked_metadata)
+    mocker.patch(
+        "kedro.framework.startup._get_project_metadata", return_value=mocked_metadata
+    )
 
 
 @pytest.fixture
@@ -179,7 +181,9 @@ def patched_create_session(mocker, tmp_path, dummy_layers):
 
     mocked_session = mocker.Mock()
     mocked_session.load_context = load_context
-    return mocker.patch("kedro.framework.session.KedroSession.create", return_value=mocked_session)
+    return mocker.patch(
+        "kedro.framework.session.KedroSession.create", return_value=mocked_session
+    )
 
 
 @pytest.fixture
@@ -226,10 +230,7 @@ def test_no_browser(cli_runner):
 def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_create_session):
     cli_runner.invoke(server.commands, ["viz", "--no-browser"])
     patched_create_session.assert_called_once_with(
-        package_name="test",
-        project_path=Path.cwd(),
-        env=None,
-        save_on_close=False,
+        package_name="test", project_path=Path.cwd(), env=None, save_on_close=False,
     )
 
 
@@ -569,10 +570,7 @@ class TestCallViz:
     def test_call_viz_without_project_path(self, patched_create_session):
         server._call_viz()
         patched_create_session.assert_called_once_with(
-            package_name="test",
-            project_path=Path.cwd(),
-            env=None,
-            save_on_close=False,
+            package_name="test", project_path=Path.cwd(), env=None, save_on_close=False,
         )
 
     def test_call_viz_with_project_path(self, patched_create_session):
