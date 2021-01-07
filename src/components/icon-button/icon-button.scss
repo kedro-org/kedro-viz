@@ -52,20 +52,25 @@
   position: absolute;
   top: 50%;
   left: 50%;
+  display: none;
   margin-top: -1.2em;
   margin-left: 1.6em;
   padding: 0.5em 0.7em;
   font-size: 1.4em;
   white-space: nowrap;
-  transform: translateX(-1em);
-  visibility: hidden;
-  opacity: 0;
+
+  @media (max-width: $sidebar-width-breakpoint) {
+    .pipeline-sidebar--visible & {
+      right: 50%;
+      left: auto;
+      margin-right: 1.6em;
+      margin-left: auto;
+    }
+  }
 
   .pipeline-icon-toolbar__button:hover &,
   [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {
-    transform: translateX(0);
-    visibility: visible;
-    opacity: 1;
+    display: inline-block;
   }
 
   &::after {
@@ -80,5 +85,14 @@
     border-style: solid;
     border-width: $triangle-size $triangle-size $triangle-size 0;
     content: '';
+
+    @media (max-width: $sidebar-width-breakpoint) {
+      .pipeline-sidebar--visible & {
+        right: -$triangle-size + 0.5;
+        left: auto;
+        border-color: transparent transparent transparent var(--color-bg-alt);
+        border-width: $triangle-size 0 $triangle-size $triangle-size;
+      }
+    }
   }
 }

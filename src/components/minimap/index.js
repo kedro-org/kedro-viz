@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import 'd3-transition';
 import { interpolate } from 'd3-interpolate';
 import { select, event } from 'd3-selection';
@@ -334,9 +333,7 @@ export class MiniMap extends Component {
 
     return (
       <div
-        className={classnames('pipeline-minimap-container', {
-          'pipeline-minimap-container--visible': this.props.visible
-        })}
+        className="pipeline-minimap-container"
         style={this.props.visible ? transformStyle : {}}>
         <div
           className="pipeline-minimap kedro"
