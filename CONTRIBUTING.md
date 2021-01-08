@@ -39,7 +39,7 @@ Working on your first pull request? You can learn how from these resources:
 
 ### Guidelines
 
-> _Note:_ We only accept contributions under the [Apache 2.0](https://opensource.org/licenses/Apache-2.0) license and you should have permission to share the submitted code.
+> **Note**: We only accept contributions under the [Apache 2.0](https://opensource.org/licenses/Apache-2.0) license and you should have permission to share the submitted code.
 
 - Aim for cross-platform compatibility on Windows, macOS and Linux, and support recent versions of major browsers
 - We use [SemVer](https://semver.org/) for versioning
@@ -85,7 +85,9 @@ Run the following command:
 npm run start:api --project_path=<path-to-Kedro-project>
 ```
 
-This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command.
+This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142. 
+
+> **Note**: Once the development server is launched at port 4142, the local app will always pull data from that server. To prevent this, you can comment out the proxy setting in `package.json` and restart the dev server at port 4141.
 
 #### Data sources
 
