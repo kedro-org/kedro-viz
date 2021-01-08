@@ -27,27 +27,12 @@ describe('Selectors', () => {
   describe('getSidebarWidth', () => {
     const { open, closed } = sidebarWidth;
 
-    describe('if sidebar is visible', () => {
-      it(`reduces the chart width by ${open} on screens wider than ${sidebarBreakpoint}`, () => {
-        expect(getSidebarWidth(true, 1200, sidebarWidth)).toEqual(open);
-        expect(getSidebarWidth(true, 900, sidebarWidth)).toEqual(open);
-      });
-
-      it(`sets sidebar width to ${closed} on screens smaller than ${sidebarBreakpoint}`, () => {
-        expect(getSidebarWidth(true, 480, sidebarWidth)).toEqual(closed);
-        expect(getSidebarWidth(true, 320, sidebarWidth)).toEqual(closed);
-      });
+    it(`if sidebar is visible sets sidebar width to ${open}`, () => {
+      expect(getSidebarWidth(true, sidebarWidth)).toEqual(open);
     });
 
-    describe('if sidebar is hidden', () => {
-      it(`sets sidebar width to ${closed} on screens wider than ${sidebarBreakpoint}`, () => {
-        expect(getSidebarWidth(false, 1000, sidebarWidth)).toEqual(closed);
-      });
-
-      it(`sets sidebar width to ${closed} on screens smaller than ${sidebarBreakpoint}`, () => {
-        expect(getSidebarWidth(false, 480, sidebarWidth)).toEqual(closed);
-        expect(getSidebarWidth(false, 320, sidebarWidth)).toEqual(closed);
-      });
+    it(`if sidebar is hidden sets sidebar width to ${closed} on screens smaller than ${sidebarBreakpoint}`, () => {
+      expect(getSidebarWidth(false, sidebarWidth)).toEqual(closed);
     });
   });
 
@@ -76,6 +61,7 @@ describe('Selectors', () => {
         outerWidth: expect.any(Number),
         sidebarWidth: expect.any(Number),
         metaSidebarWidth: expect.any(Number),
+        codeSidebarWidth: expect.any(Number),
         top: expect.any(Number),
         width: expect.any(Number)
       });
