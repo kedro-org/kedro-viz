@@ -296,11 +296,12 @@ describe('solver', () => {
     const testC = { id: 2, x: 0, y: 0 };
 
     const constraintBase = {
+      difference: subtract,
       distance: distance1d,
-      delta: subtract,
+      strength: () => 1,
       weightA: () => 0.5,
       weightB: () => 0.5,
-      strength: () => 1
+      required: false
     };
 
     const constraintXA = {
@@ -308,7 +309,7 @@ describe('solver', () => {
       b: testB,
       base: {
         ...constraintBase,
-        key: 'x',
+        property: 'x',
         operator: equalTo,
         target: () => 5
       }
@@ -319,7 +320,7 @@ describe('solver', () => {
       b: testC,
       base: {
         ...constraintBase,
-        key: 'x',
+        property: 'x',
         operator: greaterOrEqual,
         target: () => 8
       }
@@ -330,7 +331,7 @@ describe('solver', () => {
       b: testC,
       base: {
         ...constraintBase,
-        key: 'x',
+        property: 'x',
         operator: greaterOrEqual,
         target: () => 20
       }
@@ -341,7 +342,7 @@ describe('solver', () => {
       b: testC,
       base: {
         ...constraintBase,
-        key: 'y',
+        property: 'y',
         operator: equalTo,
         target: () => 5
       }
@@ -352,7 +353,7 @@ describe('solver', () => {
       b: testC,
       base: {
         ...constraintBase,
-        key: 'y',
+        property: 'y',
         operator: greaterOrEqual,
         target: () => 1
       }
@@ -363,7 +364,7 @@ describe('solver', () => {
       b: testA,
       base: {
         ...constraintBase,
-        key: 'y',
+        property: 'y',
         operator: equalTo,
         target: () => 100
       }
@@ -378,6 +379,7 @@ describe('solver', () => {
         constraintYB,
         constraintYC
       ],
+      null,
       8,
       false
     );
@@ -397,11 +399,11 @@ describe('solver', () => {
     const testC = { id: 2, x: 0, y: 0 };
 
     const constraintBase = {
-      distance: subtract,
-      delta: subtract,
+      difference: subtract,
+      distance: distance1d,
+      strength: () => 1,
       weightA: () => 0.5,
       weightB: () => 0.5,
-      strength: () => 1,
       required: true
     };
 
@@ -410,7 +412,7 @@ describe('solver', () => {
       b: testB,
       base: {
         ...constraintBase,
-        key: 'x',
+        property: 'x',
         operator: equalTo,
         target: () => 5
       }
@@ -421,7 +423,7 @@ describe('solver', () => {
       b: testC,
       base: {
         ...constraintBase,
-        key: 'x',
+        property: 'x',
         operator: greaterOrEqual,
         target: () => 8
       }
@@ -432,7 +434,7 @@ describe('solver', () => {
       b: testC,
       base: {
         ...constraintBase,
-        key: 'x',
+        property: 'x',
         operator: greaterOrEqual,
         target: () => 20
       }
@@ -443,7 +445,7 @@ describe('solver', () => {
       b: testC,
       base: {
         ...constraintBase,
-        key: 'y',
+        property: 'y',
         operator: equalTo,
         target: () => 5
       }
@@ -454,7 +456,7 @@ describe('solver', () => {
       b: testC,
       base: {
         ...constraintBase,
-        key: 'y',
+        property: 'y',
         operator: greaterOrEqual,
         target: () => 1
       }
@@ -465,7 +467,7 @@ describe('solver', () => {
       b: testA,
       base: {
         ...constraintBase,
-        key: 'y',
+        property: 'y',
         operator: equalTo,
         target: () => 100
       }
@@ -480,6 +482,7 @@ describe('solver', () => {
         constraintYB,
         constraintYC
       ],
+      null,
       1,
       true
     );
