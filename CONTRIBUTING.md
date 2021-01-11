@@ -83,7 +83,7 @@ Before launching a development server with a real Kedro project, you'd need to h
 
 After setting up Python and Kedro, you will need to have a Kedro project setup. If you don't have any existing Kedro project, you can create a new one with the `spaceflights` example:
 
-> *Note*: You can use any other [starters](https://github.com/quantumblacklabs/kedro-starters), except `mini-kedro`, for the purpose of this development server, not just `spaceflights`.
+> **Note**: You can use any other [starters](https://github.com/quantumblacklabs/kedro-starters), except `mini-kedro`, for the purpose of this development server, not just `spaceflights`.
 
 ```bash
 cd $HOME # or wherever you prefer to keep your test project
@@ -121,7 +121,7 @@ Then launch the server with
 npm run start:api --project_path=<path-to-Kedro-project>
 ```
 
-> *Note*: Alternatively, if the command above fails for some reason, you can try running `python3 package/kedro_viz/server.py <path-to-your-test-project>/new-kedro-project` instead.
+> **Note**: Alternatively, if the command above fails for some reason, you can try running `python3 package/kedro_viz/server.py <path-to-your-test-project>/new-kedro-project` instead.
 
 This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142. 
 
