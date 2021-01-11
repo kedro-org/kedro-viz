@@ -89,7 +89,9 @@ After setting up Python, install latest Kedro with:
 pip3 install kedro
 ```
 
-Create a real Kedro project with the `spaceflights` example:
+If you don't have any existing Kedro project, you can create a new one with the `spaceflights` example:
+
+> *Note*: You can use any other [starters](https://github.com/quantumblacklabs/kedro-starters), except `mini-kedro`, for the purpose of this development server, not just `spaceflights`.
 
 ```bash
 cd $HOME # or wherever you prefer to keep your test project
