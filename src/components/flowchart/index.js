@@ -200,6 +200,12 @@ export class FlowChart extends Component {
       // When zoom changes
       .on('zoom', () => {
         const { k: scale, x, y } = event.transform;
+
+        // Ensure valid x and y values before performing zoom operations
+        if (!isFinite(x) || !isFinite(y) || isNaN(x) || isNaN(y)) {
+          return;
+        }
+
         const [
           minScale = 0,
           maxScale = Infinity
