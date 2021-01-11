@@ -3,7 +3,8 @@ import { getVisibleNodes } from '../../selectors/nodes';
 import { getVisibleEdges } from '../../selectors/edges';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import { graph } from './graph';
-import { solve, greaterOrEqual, equalTo, subtract } from './solver';
+import { solve } from './solver';
+import { greaterOrEqual, equalTo, subtract } from './common';
 
 import {
   clamp,
@@ -295,65 +296,78 @@ describe('solver', () => {
     const testC = { id: 2, x: 0, y: 0 };
 
     const constraintBase = {
+      difference: subtract,
       distance: distance1d,
-      delta: subtract,
+      strength: () => 1,
       weightA: () => 0.5,
       weightB: () => 0.5,
-      strength: () => 1
+      required: false
     };
 
     const constraintXA = {
-      ...constraintBase,
       a: testA,
       b: testB,
-      key: 'x',
-      operator: equalTo,
-      target: () => 5
+      base: {
+        ...constraintBase,
+        property: 'x',
+        operator: equalTo,
+        target: () => 5
+      }
     };
 
     const constraintXB = {
-      ...constraintBase,
       a: testB,
       b: testC,
-      key: 'x',
-      operator: greaterOrEqual,
-      target: () => 8
+      base: {
+        ...constraintBase,
+        property: 'x',
+        operator: greaterOrEqual,
+        target: () => 8
+      }
     };
 
     const constraintXC = {
-      ...constraintBase,
       a: testA,
       b: testC,
-      key: 'x',
-      operator: greaterOrEqual,
-      target: () => 20
+      base: {
+        ...constraintBase,
+        property: 'x',
+        operator: greaterOrEqual,
+        target: () => 20
+      }
     };
 
     const constraintYA = {
-      ...constraintBase,
       a: testA,
       b: testC,
-      key: 'y',
-      operator: equalTo,
-      target: () => 5
+      base: {
+        ...constraintBase,
+        property: 'y',
+        operator: equalTo,
+        target: () => 5
+      }
     };
 
     const constraintYB = {
-      ...constraintBase,
       a: testB,
       b: testC,
-      key: 'y',
-      operator: greaterOrEqual,
-      target: () => 1
+      base: {
+        ...constraintBase,
+        property: 'y',
+        operator: greaterOrEqual,
+        target: () => 1
+      }
     };
 
     const constraintYC = {
-      ...constraintBase,
       a: testB,
       b: testA,
-      key: 'y',
-      operator: equalTo,
-      target: () => 100
+      base: {
+        ...constraintBase,
+        property: 'y',
+        operator: equalTo,
+        target: () => 100
+      }
     };
 
     solve(
@@ -365,6 +379,7 @@ describe('solver', () => {
         constraintYB,
         constraintYC
       ],
+      null,
       8,
       false
     );
@@ -384,66 +399,78 @@ describe('solver', () => {
     const testC = { id: 2, x: 0, y: 0 };
 
     const constraintBase = {
-      distance: subtract,
-      delta: subtract,
+      difference: subtract,
+      distance: distance1d,
+      strength: () => 1,
       weightA: () => 0.5,
       weightB: () => 0.5,
-      strength: () => 1,
       required: true
     };
 
     const constraintXA = {
-      ...constraintBase,
       a: testA,
       b: testB,
-      key: 'x',
-      operator: equalTo,
-      target: () => 5
+      base: {
+        ...constraintBase,
+        property: 'x',
+        operator: equalTo,
+        target: () => 5
+      }
     };
 
     const constraintXB = {
-      ...constraintBase,
       a: testB,
       b: testC,
-      key: 'x',
-      operator: greaterOrEqual,
-      target: () => 8
+      base: {
+        ...constraintBase,
+        property: 'x',
+        operator: greaterOrEqual,
+        target: () => 8
+      }
     };
 
     const constraintXC = {
-      ...constraintBase,
       a: testA,
       b: testC,
-      key: 'x',
-      operator: greaterOrEqual,
-      target: () => 20
+      base: {
+        ...constraintBase,
+        property: 'x',
+        operator: greaterOrEqual,
+        target: () => 20
+      }
     };
 
     const constraintYA = {
-      ...constraintBase,
       a: testA,
       b: testC,
-      key: 'y',
-      operator: equalTo,
-      target: () => 5
+      base: {
+        ...constraintBase,
+        property: 'y',
+        operator: equalTo,
+        target: () => 5
+      }
     };
 
     const constraintYB = {
-      ...constraintBase,
       a: testB,
       b: testC,
-      key: 'y',
-      operator: greaterOrEqual,
-      target: () => 1
+      base: {
+        ...constraintBase,
+        property: 'y',
+        operator: greaterOrEqual,
+        target: () => 1
+      }
     };
 
     const constraintYC = {
-      ...constraintBase,
       a: testB,
       b: testA,
-      key: 'y',
-      operator: equalTo,
-      target: () => 100
+      base: {
+        ...constraintBase,
+        property: 'y',
+        operator: equalTo,
+        target: () => 100
+      }
     };
 
     solve(
@@ -455,6 +482,7 @@ describe('solver', () => {
         constraintYB,
         constraintYC
       ],
+      null,
       1,
       true
     );

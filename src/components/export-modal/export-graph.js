@@ -21,9 +21,13 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
   clone.classList.add('kedro', `kui-theme--${theme}`, 'pipeline-graph--export');
 
   // Reset zoom/translate
-  let width = graphSize.width + graphSize.marginx * 2;
-  let height = graphSize.height + graphSize.marginy * 2;
-  clone.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  let width, height;
+  const hasGraph = isFinite(graphSize.width) && isFinite(graphSize.height);
+  if (hasGraph) {
+    width = graphSize.width + graphSize.marginx * 2;
+    height = graphSize.height + graphSize.marginy * 2;
+    clone.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  }
   clone.querySelector('#zoom-wrapper').removeAttribute('transform');
 
   // Impose a maximum size on PNGs because otherwise they break when downloading
@@ -32,8 +36,10 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
     width = Math.min(width, maxWidth);
     height = Math.min(height, maxWidth * (height / width));
   }
-  clone.setAttribute('width', width);
-  clone.setAttribute('height', height);
+  if (hasGraph) {
+    clone.setAttribute('width', width);
+    clone.setAttribute('height', height);
+  }
 
   const style = document.createElement('style');
   if (format === 'svg') {
@@ -50,8 +56,8 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
   clone.prepend(style);
 
   // Download SVG/PNG
-  download(clone, 'kedro-pipeline');
-  // @TODO: Replace third { css: 'internal' } argument when CORS issue is fixed
+  const options = format === 'svg' ? { css: 'internal' } : undefined;
+  download(clone, 'kedro-pipeline', options);
 
   // Delete cloned SVG
   svg.parentNode.removeChild(clone);

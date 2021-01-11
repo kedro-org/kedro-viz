@@ -9,7 +9,7 @@
  **/
 import * as kiwi from 'kiwi.js';
 
-import { distance1d } from './common';
+import { equalTo, greaterOrEqual } from './common';
 
 /**
  * Combines the given object's id and key to create a new key
@@ -24,38 +24,14 @@ const key = (obj, key) => {
 };
 
 /**
- * Returns the value `a - b`
- * @param {number} a The first number
- * @param {number} b The second number
- * @returns {number} The result
- */
-export const subtract = (a, b) => a - b;
-
-/**
- * Given a `solver` operator function, returns the equivalent kiwi.js operator if defined
+ * Given an operator function, returns the equivalent kiwi.js operator if defined
  * @param {function} operator The operator function
  * @returns {object|undefined} The kiwi.js operator
  */
-const toStrictOperator = operator => {
+export const toStrictOperator = operator => {
   if (operator === equalTo) return kiwi.Operator.Eq;
   if (operator === greaterOrEqual) return kiwi.Operator.Ge;
 };
-
-/**
- * Returns `true` if `a === b` otherwise `false`
- * @param {number} a The first value
- * @param {number} b The second value
- * @returns {boolean} The result
- */
-export const equalTo = (a, b) => a === b;
-
-/**
- * Returns `true` if `a >= b` otherwise `false`
- * @param {number} a The first number
- * @param {number} b The second number
- * @returns {boolean} The result
- */
-export const greaterOrEqual = (a, b) => a >= b;
 
 /**
  * Applies the given constraints to the objects in-place.
@@ -64,19 +40,25 @@ export const greaterOrEqual = (a, b) => a >= b;
  * @param {array} constraints The constraints to apply
  * @param {object} constraint.a The first object to constrain
  * @param {object} constraint.b The second object to constrain
- * @param {string} constraint.key The property name on `a` and `b` to constrain
- * @param {boolean=true} constraint.required Whether the constraint must be satisfied during strict solving
- * @param {function=} constraint.delta A signed difference function given `a` and `b`. Default `subtract`
- * @param {function=} constraint.distance An absolute distance function given `a` and `b`. Default `distance1d`
- * @param {function=} constraint.target A target difference for `a` and `b`. Default `() => 0`
- * @param {function=} constraint.weightA The amount to adjust `a[key]`. Default `() => 1`
- * @param {function=} constraint.weightB The amount to adjust `b[key]`. Default `() => 1`
+ * @param {string} constraint.base.property The property name on `a` and `b` to constrain
+ * @param {boolean} constraint.base.required Whether the constraint must be satisfied during strict solving
+ * @param {function} constraint.base.difference A signed difference function given `a` and `b`
+ * @param {function} constraint.base.distance An absolute distance function given `a` and `b`
+ * @param {function} constraint.base.target A target difference for `a` and `b`
+ * @param {function} constraint.base.weightA The amount to adjust `a[property]`
+ * @param {function} constraint.base.weightB The amount to adjust `b[property]`
+ * @param {object=} constants The constants used by constraints
  * @param {number=1} iterations The number of iterations
  * @param {boolean=false} strict
  */
-export const solve = (constraints, iterations = 1, strict = false) => {
-  if (strict) return solveStrict(constraints);
-  return solveLoose(constraints, iterations);
+export const solve = (
+  constraints,
+  constants = {},
+  iterations = 1,
+  strict = false
+) => {
+  if (strict) return solveStrict(constraints, constants);
+  return solveLoose(constraints, constants, iterations);
 };
 
 /**
@@ -84,30 +66,29 @@ export const solve = (constraints, iterations = 1, strict = false) => {
  * Constraint targets and operators can be static or dynamic.
  * A solution is approximated iteratively
  * @param {array} constraints The constraints. See docs for `solve`
+ * @param {object} constants The constants used by constraints
  * @param {number} iterations The number of iterations
  */
-const solveLoose = (constraints, iterations) => {
+const solveLoose = (constraints, constants, iterations) => {
   for (let i = 0; i < iterations; i += 1) {
     for (const co of constraints) {
-      const delta = (co.delta || subtract)(co.a[co.key], co.b[co.key], co);
-      const distance = (co.distance || distance1d)(
-        co.a[co.key],
-        co.b[co.key],
-        co
-      );
-      const target = co.target(co.a[co.key], co.b[co.key], co, delta, distance);
+      const base = co.base;
+      const a = co.a[base.property];
+      const b = co.b[base.property];
+      const difference = base.difference(a, b, co, constants);
+      const distance = base.distance(a, b, co, constants);
+      const target = base.target(a, b, co, constants, difference, distance);
 
-      if (!(co.operator || equalTo)(distance, target, delta)) {
-        const resolve = (co.strength ? co.strength(co) : 1) * (delta - target);
-
-        let weightA = co.weightA ? co.weightA(co) : 1;
-        let weightB = co.weightB ? co.weightB(co) : 1;
+      if (!base.operator(distance, target, difference)) {
+        const resolve = base.strength(co, constants) * (difference - target);
+        let weightA = base.weightA(co, constants);
+        let weightB = base.weightB(co, constants);
 
         weightA = weightA / (weightA + weightB);
         weightB = 1 - weightA;
 
-        co.a[co.key] -= weightA * resolve;
-        co.b[co.key] += weightB * resolve;
+        co.a[base.property] -= weightA * resolve;
+        co.b[base.property] += weightB * resolve;
       }
     }
   }
@@ -115,32 +96,35 @@ const solveLoose = (constraints, iterations) => {
 
 /**
  * Applies the given constraints to the objects in-place.
+ * A solution is found exactly if possible, otherwise throws an error
  * Limitations:
  *  - Constraint targets and operators must be static
- *  - `delta` is always subtract
- *  - `distance` is always subtract (i.e. signed)
- * A solution is found exactly if possible, otherwise throws an error
+ *  - `constraint.difference` is always subtract
+ *  - `constraint.distance` is always subtract (i.e. signed)
  * @param {array} constraints The constraints. See docs for `solve`
+ * @param {object} constants The constants used by constraints
  */
-const solveStrict = constraints => {
+const solveStrict = (constraints, constants) => {
   const solver = new kiwi.Solver();
   const variables = {};
 
   for (const co of constraints) {
-    variables[key(co.a, co.key)] = new kiwi.Variable();
-    variables[key(co.b, co.key)] = new kiwi.Variable();
+    const base = co.base;
+    variables[key(co.a, base.property)] = new kiwi.Variable();
+    variables[key(co.b, base.property)] = new kiwi.Variable();
   }
 
   for (const co of constraints) {
-    const expression = variables[key(co.a, co.key)].minus(
-      variables[key(co.b, co.key)]
+    const base = co.base;
+    const expression = variables[key(co.a, base.property)].minus(
+      variables[key(co.b, base.property)]
     );
 
     co.constraint = new kiwi.Constraint(
       expression,
-      toStrictOperator(co.operator || equalTo),
-      co.target(),
-      co.required === true ? kiwi.Strength.required : kiwi.Strength.strong
+      toStrictOperator(base.operator),
+      base.target(null, null, co, constants),
+      base.required === true ? kiwi.Strength.required : kiwi.Strength.strong
     );
 
     solver.addConstraint(co.constraint);
@@ -149,7 +133,8 @@ const solveStrict = constraints => {
   solver.updateVariables();
 
   for (const co of constraints) {
-    co.a[co.key] = variables[key(co.a, co.key)].value();
-    co.b[co.key] = variables[key(co.b, co.key)].value();
+    const base = co.base;
+    co.a[base.property] = variables[key(co.a, base.property)].value();
+    co.b[base.property] = variables[key(co.b, base.property)].value();
   }
 };
