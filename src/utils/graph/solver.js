@@ -58,7 +58,7 @@ export const solve = (
   strict = false
 ) => {
   if (strict) return solveStrict(constraints, constants);
-  return solveLoose(constraints, constants, iterations);
+  return solveLoose(constraints, constants, Math.ceil(iterations));
 };
 
 /**
