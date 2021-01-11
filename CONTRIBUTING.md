@@ -79,17 +79,11 @@ npm run lib
 
 #### Launch a development server with a real Kedro project
 
-Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.6, <3.9) installed. 
+Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.6, <3.9) and Kedro installed. 
 
-> *Optional*: We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's guide for installing [conda](https://kedro.readthedocs.io/en/latest/02_get_started/01_prerequisites.html#conda) and [additional dependencies](https://kedro.readthedocs.io/en/latest/02_get_started/02_install.html) for more information.
+We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's guide for installing [conda](https://kedro.readthedocs.io/en/latest/02_get_started/01_prerequisites.html#conda) and [how to get started with Kedro](https://kedro.readthedocs.io/en/latest/02_get_started/02_install.html) for more information.
 
-After setting up Python, install latest Kedro with:
-
-```bash
-pip3 install kedro
-```
-
-If you don't have any existing Kedro project, you can create a new one with the `spaceflights` example:
+After setting up Python and Kedro, you will need to have a Kedro project setup. If you don't have any existing Kedro project, you can create a new one with the `spaceflights` example:
 
 > *Note*: You can use any other [starters](https://github.com/quantumblacklabs/kedro-starters), except `mini-kedro`, for the purpose of this development server, not just `spaceflights`.
 
@@ -126,10 +120,10 @@ pip3 install -r package/test_requirements.txt
 Then launch the server with
 
 ```bash
-python3 package/kedro_viz/server.py <path-to-your-test-project>/new-kedro-project
+npm run start:api --project_path=<path-to-Kedro-project>
 ```
 
-> *Note*: Alternatively, you can run `npm run start:api --project_path=<path-to-Kedro-project>`. It will have the same effect, but might cause issues if you are on OSX and use system Python, instead of tools like conda.
+> *Note*: Alternatively, if the command above fails for some reason, you can try running `python3 package/kedro_viz/server.py <path-to-your-test-project>/new-kedro-project` instead.
 
 This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142. 
 
