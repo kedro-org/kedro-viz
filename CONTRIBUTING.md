@@ -79,9 +79,7 @@ npm run lib
 
 #### Launch a development server with a real Kedro project
 
-Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.6, <3.9) and Kedro installed. 
-
-We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's guide for installing [conda](https://kedro.readthedocs.io/en/latest/02_get_started/01_prerequisites.html#conda) and [how to get started with Kedro](https://kedro.readthedocs.io/en/latest/02_get_started/02_install.html) for more information.
+Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.6, <3.9) and Kedro installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's guide for installing [conda](https://kedro.readthedocs.io/en/latest/02_get_started/01_prerequisites.html#conda) and [how to get started with Kedro](https://kedro.readthedocs.io/en/latest/02_get_started/02_install.html) for more information.
 
 After setting up Python and Kedro, you will need to have a Kedro project setup. If you don't have any existing Kedro project, you can create a new one with the `spaceflights` example:
 
@@ -92,7 +90,7 @@ cd $HOME # or wherever you prefer to keep your test project
 kedro new --starter=spaceflights
 ```
 
-You can use default values when creating the project, which will create a new project called `new-kedro-project`. Changing your directory into that project and install the project dependencies:
+You can use default values when creating the project, which will create a new project called `new-kedro-project`. Changing your directory into that project and install the project's dependencies:
 
 ```bash
 cd new-kedro-project
