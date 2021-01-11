@@ -33,6 +33,7 @@ import json
 import logging
 import multiprocessing
 import socket
+import sys
 import traceback
 import webbrowser
 from collections import defaultdict
@@ -722,6 +723,8 @@ def _call_viz(
 # pylint: disable=invalid-name
 if __name__ == "__main__":  # pragma: no cover
     import argparse
+    from kedro.framework.startup import _get_project_metadata
+
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
     parser.add_argument("project_path", help="Path to a Kedro project")
@@ -732,5 +735,8 @@ if __name__ == "__main__":  # pragma: no cover
         "--port", help="The port of the development server", default="4142"
     )
     args = parser.parse_args()
+
+    source_dir = _get_project_metadata(args.project_path).source_dir
+    sys.path.append(str(source_dir))
 
     _call_viz(host=args.host, port=args.port, project_path=args.project_path)
