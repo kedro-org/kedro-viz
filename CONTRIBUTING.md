@@ -79,10 +79,52 @@ npm run lib
 
 #### Launch a development server with a real Kedro project
 
-Run the following command:
+Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.6, <3.9) installed. 
+
+> *Optional*: We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments.
+
+After setting up Python, install latest Kedro with:
 
 ```bash
-npm run start:api --project_path=<path-to-Kedro-project>
+pip3 install kedro
+```
+
+Create a real Kedro project with the `spaceflights` example:
+
+```bash
+cd $HOME # or wherever you prefer to keep your test project
+kedro new --starter=spaceflights
+```
+
+You can use default values when creating the project, which will create a new project called `new-kedro-project`. Changing your directory into that project and install the project dependencies:
+
+```bash
+cd new-kedro-project
+kedro install
+```
+
+After installing the project's dependencies, make sure you can run it with:
+
+```bash
+kedro run
+```
+
+Now you are ready to launch a new viz's development server with a real Kedro project. First, changing your directory back to kedro-viz:
+
+```bash
+cd /path/to/kedro-viz
+```
+
+Install kedro-viz's development dependencies with:
+
+```bash
+pip3 install -r package/test_requirements.txt
+```
+
+Then launch the server with
+
+```bash
+python3 package/kedro_viz/server.py <path-to-your-test-project>/new-kedro-project
 ```
 
 This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142. 

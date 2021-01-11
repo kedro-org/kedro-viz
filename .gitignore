@@ -55,3 +55,6 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+
+# Kedro
+*.log
