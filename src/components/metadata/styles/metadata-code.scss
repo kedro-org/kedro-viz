@@ -36,7 +36,7 @@
 
   @mixin breakpoints($sidebar-width) {
     // When screen is the minimum usable width
-    @media (min-width: 1200px) {
+    @media (min-width: $metadata-sidebar-code-breakpoint) {
       // Anchor code to the left sidebar
       left: $sidebar-width + $margin;
     }
