@@ -24,8 +24,16 @@
   padding: 6px 0 24px 0;
   overflow-y: auto;
   background: var(--color-metadata-bg);
+
+  // Subtle shadow when overlapping sidebar
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.04);
   transform: translateX(100%);
   transition: transform ease 0.4s;
+
+  // Remove shadow when no longer overlapping
+  @media (min-width: #{$sidebar-width-open + $metadata-sidebar-width-open}) {
+    box-shadow: none;
+  }
 
   &--visible {
     transform: translateX(0);
