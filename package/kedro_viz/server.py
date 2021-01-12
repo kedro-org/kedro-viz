@@ -738,5 +738,6 @@ if __name__ == "__main__":  # pragma: no cover
 
     source_dir = _get_project_metadata(args.project_path).source_dir
     sys.path.append(str(source_dir))
+    port = 4142 if args.port is None else args.port
 
-    _call_viz(host=args.host, port=args.port, project_path=args.project_path)
+    _call_viz(host=args.host, port=port, project_path=args.project_path)
