@@ -1,5 +1,6 @@
 @import '../../../styles/variables';
 @import '../../../styles/extends';
+@import '../../../styles/mixins';
 @import './metadata-code-themes.scss';
 
 .kui-theme--light {
@@ -126,7 +127,7 @@
 }
 
 .pipeline-metadata__code-toggle-input {
-  display: none;
+  @include screenReaderOnly;
 }
 
 .pipeline-metadata__code-toggle-label {
