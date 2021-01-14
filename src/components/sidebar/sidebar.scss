@@ -15,6 +15,7 @@
   width: 100%;
   transform: translateX(calc(-100% + #{$sidebar-width-closed}));
   transition: transform ease 0.4s;
+
   @media (min-width: $metadata-sidebar-code-breakpoint) {
     z-index: 3;
   }
