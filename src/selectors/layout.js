@@ -14,6 +14,7 @@ const getOldgraphFlag = state => state.flags.oldgraph;
 const getVisibleSidebar = state => state.visible.sidebar;
 const getVisibleCode = state => state.visible.code;
 const getFontLoaded = state => state.fontLoaded;
+const getChartSizeState = state => state.chartSize;
 
 /**
  * Select a subset of state that is watched by graph layout calculators
@@ -46,12 +47,7 @@ export const getSidebarWidth = (visible, { open, closed }) =>
  * and add some useful new ones
  */
 export const getChartSize = createSelector(
-  [
-    getVisibleSidebar,
-    getVisibleMetaSidebar,
-    getVisibleCode,
-    state => state.chartSize
-  ],
+  [getVisibleSidebar, getVisibleMetaSidebar, getVisibleCode, getChartSizeState],
   (visibleSidebar, visibleMetaSidebar, visibleCodeSidebar, chartSize) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
