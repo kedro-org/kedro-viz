@@ -59,22 +59,6 @@ const MetaData = ({
         {metadata && (
           <>
             <div className="pipeline-metadata__header-toolbox">
-              {showCodeSwitch && (
-                <MetaCodeToggle
-                  showCode={visibleCode}
-                  hasCode={hasCode}
-                  onChange={event => onToggleCode(event.target.checked)}
-                />
-              )}
-              <IconButton
-                container={React.Fragment}
-                ariaLabel="Close Metadata Panel"
-                className={modifiers('pipeline-metadata__close-button', {
-                  hasCode
-                })}
-                icon={CloseIcon}
-                onClick={onCloseClick}
-              />
               <div className="pipeline-metadata__header">
                 <NodeIcon
                   className="pipeline-metadata__icon"
@@ -84,6 +68,22 @@ const MetaData = ({
                   {metadata.node.name}
                 </h2>
               </div>
+              <IconButton
+                container={React.Fragment}
+                ariaLabel="Close Metadata Panel"
+                className={modifiers('pipeline-metadata__close-button', {
+                  hasCode
+                })}
+                icon={CloseIcon}
+                onClick={onCloseClick}
+              />
+              {showCodeSwitch && (
+                <MetaCodeToggle
+                  showCode={visibleCode}
+                  hasCode={hasCode}
+                  onChange={event => onToggleCode(event.target.checked)}
+                />
+              )}
             </div>
             <dl className="pipeline-metadata__list">
               <MetaDataRow label="Type:" value={metadata.node.type} />
