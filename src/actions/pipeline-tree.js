@@ -58,3 +58,28 @@ export function loadPipelineTreeData(checked) {
     dispatch(checkTreeNode(checked));
   };
 }
+
+export function loadPipelineTreeDataWithAdditionalPipeline(additionalPipeline) {
+  return async function(dispatch, getState) {
+    const { asyncDataSource, pipelineTree } = getState();
+    const checked = pipelineTree.checked.concat([additionalPipeline]);
+    const pipelineID = checked.join(',');
+    if (asyncDataSource) {
+      dispatch(toggleLoading(true));
+      // Remove the previous graph to show that a new pipeline is being loaded
+      dispatch(toggleGraph(false));
+      const url = getPipelineTreeUrl(pipelineID);
+
+      const newState = await loadJsonData(url).then(preparePipelineState);
+      // Set active pipeline here rather than dispatching two separate actions,
+      // to improve performance by only requiring one state recalculation
+      newState.pipeline.active = pipelineID;
+      newState.pipelineTree.expanded = pipelineTree.expanded;
+      dispatch(resetData(newState));
+      dispatch(toggleLoading(false));
+    } else {
+      dispatch(updateActivePipeline(pipelineID));
+    }
+    dispatch(checkTreeNode(checked));
+  };
+}

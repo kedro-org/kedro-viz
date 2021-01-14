@@ -15,6 +15,8 @@ import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import Tooltip from '../tooltip';
 import './styles/flowchart.css';
 
+import { loadPipelineTreeDataWithAdditionalPipeline } from '../../actions/pipeline-tree';
+
 /**
  * Display a pipeline flowchart, mostly rendered with D3
  */
@@ -35,6 +37,8 @@ export class FlowChart extends Component {
     this.nodesRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
+
+    this.clickCount = 0;
   }
 
   componentDidMount() {
@@ -369,7 +373,20 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = node => {
-    this.props.onLoadNodeData(node.id);
+    this.clickCount++;
+    setTimeout(() => {
+      console.log('clickCount: ', this.clickCount);
+      console.log('node: ', node);
+      if (this.clickCount == 0) return;
+      if (this.clickCount >= 2) {
+        if (node.type === 'pipeline') {
+          this.props.onOpenPipelineNode(node.id);
+        }
+      } else {
+        this.props.onLoadNodeData(node.id);
+      }
+      this.clickCount = 0;
+    }, 200);
     event.stopPropagation();
   };
 
@@ -536,6 +553,9 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onUpdateZoom: transform => {
     dispatch(updateZoom(transform));
+  },
+  onOpenPipelineNode: nodeOpened => {
+    dispatch(loadPipelineTreeDataWithAdditionalPipeline(nodeOpened));
   },
   ...ownProps
 });
