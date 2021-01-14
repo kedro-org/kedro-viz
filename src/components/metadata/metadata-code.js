@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { connect } from 'react-redux';
 import hljs from 'highlight.js/lib/core';
 import python from 'highlight.js/lib/languages/python';
@@ -18,13 +18,12 @@ export const MetaDataCode = ({
   sidebarVisible
 }) => {
   const codeRef = useRef();
-  const [highlighted, setHighlighted] = useState();
 
-  useEffect(() => {
+  const highlighted = useMemo(() => {
     const detected = hljs.highlightAuto(value);
     const language = detected.language || detected.second_best.language;
-    setHighlighted(hljs.highlight(language, value).value);
-  }, [codeRef, value]);
+    return hljs.highlight(language, value).value;
+  }, [value]);
 
   return (
     <div
