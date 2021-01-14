@@ -84,7 +84,6 @@
   bottom: 0;
   left: 0;
   display: block;
-  padding: 0 0 0 36px;
   overflow: auto;
   color: var(--color-metadata-code-text);
   font-size: 12.5px;
@@ -107,8 +106,9 @@
 }
 
 .pipeline-metadata-code pre {
-  width: 100%;
+  display: inline-block;
   margin: 0;
+  padding: 0 36px 36px;
 }
 
 .pipeline-metadata__code-toggle {
