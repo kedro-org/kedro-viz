@@ -5,12 +5,10 @@
 
 .kui-theme--light {
   --color-metadata-code-bg: #{$color-bg-light-4};
-  --color-metadata-code-text: #{$color-text-light};
 }
 
 .kui-theme--dark {
   --color-metadata-code-bg: #{$color-bg-dark-3};
-  --color-metadata-code-text: #{$color-text-dark};
 }
 
 .pipeline-metadata-code {
@@ -86,7 +84,7 @@
   left: 0;
   display: block;
   overflow: auto;
-  color: var(--color-metadata-code-text);
+  color: var(--color-text);
   font-size: 12.5px;
   line-height: 1.8;
   opacity: 1;
