@@ -20,9 +20,9 @@
   }
 
   @media (min-width: $sidebar-width-breakpoint) {
+    $sidebar-ui-width: $sidebar-width-open - $sidebar-width-closed;
     width: $sidebar-width-open;
     transform: translateX(-$sidebar-ui-width);
-    $sidebar-ui-width: $sidebar-width-open - $sidebar-width-closed;
   }
 
   &--visible {
