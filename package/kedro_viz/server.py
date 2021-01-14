@@ -374,6 +374,7 @@ def _build_sub_pipeline_level_graph(nodes_list, edges_list):
     # prepare node to node edges
     n2d = {}
     d2n = {}
+    data_from_nodes = set()
     for e in edges_list:
         sid, tid = e["source"], e["target"]
         snode, tnode = node_dict[sid], node_dict[tid]
@@ -381,10 +382,17 @@ def _build_sub_pipeline_level_graph(nodes_list, edges_list):
             data_set = n2d.get(sid, set())
             data_set.add(tid)
             n2d[sid] = data_set
+            data_from_nodes.add(tid)
         elif snode["type"] in ["data", "parameters"] and tnode["type"] == "task":
             node_set = d2n.get(sid, set())
             node_set.add(tid)
             d2n[sid] = node_set
+
+    root_data_set = set()
+    for data_id, node_id in d2n.items():
+        if data_id not in data_from_nodes:
+            root_data_set.add(data_id)
+
 
     # build node to node info
     n2n = {}
@@ -411,6 +419,7 @@ def _build_sub_pipeline_level_graph(nodes_list, edges_list):
     _SUB_PIPELINE_DATA["node_to_node"] = n2n
     _SUB_PIPELINE_DATA["data_to_node"] = d2n
     _SUB_PIPELINE_DATA["node_to_data"] = n2d
+    _SUB_PIPELINE_DATA["root_data"] = root_data_set
 
 
 def _build_sub_pipeline_tree_core(pid, leaf_pids):
@@ -581,7 +590,7 @@ def format_pipeline_data(
             node_dependencies[task_id].add(namespace_id)
     # Parameters and data
     for namespace, tag_names in sorted(namespace_tags.items()):
-        is_param = _is_namespace_param(namespace)
+        is_param = bool("param" in namespace.lower())
         node_id = _hash(namespace)
 
         _JSON_NODES[node_id] = {
@@ -701,10 +710,11 @@ def pipeline_tree_data(pipeline_ids):
                     edges.extend([dict(source=data_id, target=target_id) for data_id in data_set])
                 data_nodes = data_nodes | data_set
 
+    root_data_set = _SUB_PIPELINE_DATA["root_data"]
     data_to_node = _SUB_PIPELINE_DATA["data_to_node"]
 
     for data_id, node_set in data_to_node.items():
-        if data_id not in leaf_nodes:
+        if data_id not in leaf_nodes and data_id not in root_data_set:
             continue
         for node_id in node_set:
             node = node_dict[node_id]
