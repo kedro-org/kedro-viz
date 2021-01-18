@@ -29,6 +29,19 @@ describe('mergeLocalStorage', () => {
     window.localStorage.clear();
   });
 
+  it('overrides selected tag values in state with localstorage values if provided', () => {
+    const localStorageValues = {
+      tag: { enabled: 'large' }
+    };
+    saveState(localStorageValues);
+    expect(
+      mergeLocalStorage({
+        tag: { enabled: 'large' }
+      })
+    ).toMatchObject(localStorageValues);
+    window.localStorage.clear();
+  });
+
   it('does not add values if localStorage keys do not match state values', () => {
     const extraValues = {
       additional: 1,

@@ -6,6 +6,10 @@ import { getTagData } from '../../selectors/tags';
 import IndicatorPartialIcon from '../icons/indicator-partial';
 
 describe('NodeList', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
   it('renders without crashing', () => {
     const wrapper = setup.mount(<NodeList />);
     const search = wrapper.find('.pipeline-nodelist-search');
