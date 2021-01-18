@@ -22,7 +22,7 @@ export const MetaDataCode = ({
   const highlighted = useMemo(() => {
     const detected = hljs.highlightAuto(value);
     const language = detected.language || detected.second_best.language;
-    return hljs.highlight(language, value).value;
+    return language ? hljs.highlight(language, value).value : value;
   }, [value]);
 
   return (
