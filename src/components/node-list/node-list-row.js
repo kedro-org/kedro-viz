@@ -73,10 +73,7 @@ const NodeListRow = memo(
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
         <button
-          className={classnames(
-            'pipeline-nodelist__row__text',
-            `pipeline-nodelist__row__text--kind-${kind}`
-          )}
+          className="pipeline-nodelist__row__text"
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
@@ -99,10 +96,14 @@ const NodeListRow = memo(
             />
           )}
           <span
-            className={classnames('pipeline-nodelist__row__label', {
-              'pipeline-nodelist__row__label--faded': faded,
-              'pipeline-nodelist__row__label--disabled': disabled
-            })}
+            className={classnames(
+              'pipeline-nodelist__row__label',
+              `pipeline-nodelist__row__label--kind-${kind}`,
+              {
+                'pipeline-nodelist__row__label--faded': faded,
+                'pipeline-nodelist__row__label--disabled': disabled
+              }
+            )}
             dangerouslySetInnerHTML={{ __html: label }}
           />
         </button>

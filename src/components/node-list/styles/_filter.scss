@@ -17,20 +17,20 @@
 }
 
 // Fade row text when unchecked
-.pipeline-nodelist__row--unchecked .pipeline-nodelist__row__text--kind-filter {
+.pipeline-nodelist__row--unchecked .pipeline-nodelist__row__label--kind-filter {
   opacity: 0.55;
 }
 
 // Brighter row text when unchecked and hovered
 .pipeline-nodelist__row--unchecked:hover
-  .pipeline-nodelist__row__text--kind-filter {
+  .pipeline-nodelist__row__label--kind-filter {
   opacity: 0.8;
 }
 
 // Bright row text when all unset
 .pipeline-nodelist__group--all-unset
   .pipeline-nodelist__row--unchecked
-  .pipeline-nodelist__row__text--kind-filter {
+  .pipeline-nodelist__row__label--kind-filter {
   opacity: 1;
 }
 
