@@ -194,6 +194,9 @@ const normalizeData = (data) => {
   if (data === 'json') {
     state.asyncDataSource = true;
   }
+  if (data.randomData) {
+    state.randomData = true;
+  }
 
   if (!validateInput(data)) {
     return state;
