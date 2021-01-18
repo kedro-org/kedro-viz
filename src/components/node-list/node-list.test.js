@@ -301,6 +301,36 @@ describe('NodeList', () => {
       changeRows(wrapper, ['Large', 'Medium', 'Small'], true);
       expect(partialIcon(wrapper)).toHaveLength(0);
     });
+
+    it('saves enabled tags in localStorage and ensure that the selected tags remains selected on reload', () => {
+      const { location } = window;
+      delete window.location;
+      window.location = { reload: jest.fn() };
+
+      const wrapper = setup.mount(<NodeList />);
+      changeRows(wrapper, ['Medium'], true);
+      window.location.reload();
+      expect(elements(wrapper)).toEqual([
+        ['shark', true],
+        ['salmon', false],
+        ['trout', false],
+        ['Bear', true],
+        ['Cat', true],
+        ['Elephant', true],
+        ['Giraffe', true],
+        ['Pig', true],
+        ['Weasel', true],
+        ['Dog', false],
+        ['Horse', false],
+        ['Sheep', false],
+        ['Whale', false],
+        ['Parameters', false],
+        ['Params:rabbit', false]
+      ]);
+
+      // reset window.location back to its original value
+      window.location = location;
+    });
   });
 
   describe('node list', () => {
