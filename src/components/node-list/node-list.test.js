@@ -4,6 +4,7 @@ import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import IndicatorPartialIcon from '../icons/indicator-partial';
+import { localStorageName } from '../../config';
 
 describe('NodeList', () => {
   beforeEach(() => {
@@ -302,34 +303,13 @@ describe('NodeList', () => {
       expect(partialIcon(wrapper)).toHaveLength(0);
     });
 
-    it('saves enabled tags in localStorage and ensure that the selected tags remains selected on reload', () => {
-      const { location } = window;
-      delete window.location;
-      window.location = { reload: jest.fn() };
-
+    it('saves enabled tags in localStorage on selecting a tag on node-list', () => {
       const wrapper = setup.mount(<NodeList />);
       changeRows(wrapper, ['Medium'], true);
-      window.location.reload();
-      expect(elements(wrapper)).toEqual([
-        ['shark', true],
-        ['salmon', false],
-        ['trout', false],
-        ['Bear', true],
-        ['Cat', true],
-        ['Elephant', true],
-        ['Giraffe', true],
-        ['Pig', true],
-        ['Weasel', true],
-        ['Dog', false],
-        ['Horse', false],
-        ['Sheep', false],
-        ['Whale', false],
-        ['Parameters', false],
-        ['Params:rabbit', false]
-      ]);
-
-      // reset window.location back to its original value
-      window.location = location;
+      const localStoredValues = JSON.parse(
+        window.localStorage.getItem(localStorageName)
+      );
+      expect(localStoredValues.tag.enabled.medium).toEqual(true);
     });
   });
 
