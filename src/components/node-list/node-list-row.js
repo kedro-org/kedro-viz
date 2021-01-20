@@ -55,6 +55,7 @@ const NodeListRow = memo(
     invisibleIcon = InvisibleIcon
   }) => {
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
+    const TextButton = onClick ? 'button' : 'div';
 
     return (
       <Container
@@ -72,7 +73,7 @@ const NodeListRow = memo(
         title={name}
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
-        <button
+        <TextButton
           className="pipeline-nodelist__row__text"
           onClick={onClick}
           onFocus={onMouseEnter}
@@ -106,7 +107,7 @@ const NodeListRow = memo(
             )}
             dangerouslySetInnerHTML={{ __html: label }}
           />
-        </button>
+        </TextButton>
         {children}
         <label
           htmlFor={id}
