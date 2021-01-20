@@ -205,8 +205,8 @@
 }
 
 // Hover states for non-filter type icons
-.pipeline-row__toggle-icon--visible:hover {
-  .pipeline-nodelist__row & > * {
+.pipeline-nodelist__row {
+  .pipeline-row__toggle-icon--kind-toggle:hover > * {
     opacity: 1;
   }
 }
