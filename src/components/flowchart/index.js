@@ -13,6 +13,7 @@ import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import Tooltip from '../tooltip';
+import { chonkyNodeAmount } from '../../config';
 import './styles/flowchart.css';
 
 /**
@@ -456,6 +457,8 @@ export class FlowChart extends Component {
   render() {
     const { chartSize, layers, visibleGraph } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
+
+    // detect current amount of nodes before loading, load Modal if node size is over
 
     return (
       <div

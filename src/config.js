@@ -18,6 +18,10 @@ export const sidebarWidth = {
 
 export const chartMinWidth = 1200;
 
+// this value is used within flowchart to determine the amount of nodes in pipeline to
+// trigger chonky warning
+export const chonkyNodeAmount = 1000;
+
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
   oldgraph: {
