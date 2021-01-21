@@ -17,25 +17,14 @@ describe('mergeLocalStorage', () => {
   it('overrides state values with localstorage values if provided', () => {
     const localStorageValues = {
       textLabels: false,
-      theme: 'light'
+      theme: 'light',
+      tag: { enabled: 'medium' }
     };
     saveState(localStorageValues);
     expect(
       mergeLocalStorage({
         textLabels: true,
-        theme: 'dark'
-      })
-    ).toMatchObject(localStorageValues);
-    window.localStorage.clear();
-  });
-
-  it('overrides selected tag values in state with localstorage values if provided', () => {
-    const localStorageValues = {
-      tag: { enabled: 'large' }
-    };
-    saveState(localStorageValues);
-    expect(
-      mergeLocalStorage({
+        theme: 'dark',
         tag: { enabled: 'large' }
       })
     ).toMatchObject(localStorageValues);
