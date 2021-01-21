@@ -57,7 +57,7 @@ const NodeListRow = memo(
     invisibleIcon = InvisibleIcon
   }) => {
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
-    const TextButton = onClick ? 'button' : 'div';
+    const TextButton = onClick && kind !== 'filter' ? 'button' : 'div';
 
     return (
       <Container
