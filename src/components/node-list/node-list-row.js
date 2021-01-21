@@ -20,6 +20,7 @@ const shouldMemo = (prevProps, nextProps) =>
       'active',
       'checked',
       'unset',
+      'allUnset',
       'disabled',
       'faded',
       'visible',
@@ -37,6 +38,7 @@ const NodeListRow = memo(
     active,
     checked,
     unset,
+    allUnset,
     children,
     disabled,
     faded,
@@ -111,15 +113,11 @@ const NodeListRow = memo(
         {children}
         <label
           htmlFor={id}
-          className={classnames(
-            'pipeline-row__toggle',
-            `pipeline-row__toggle--kind-${kind}`,
-            {
-              'pipeline-row__toggle--disabled': disabled,
-              'pipeline-row__toggle--selected': selected,
-              'pipeline-row__toggle--not-tag': type !== 'tag'
-            }
-          )}>
+          className={classnames('pipeline-row__toggle', {
+            'pipeline-row__toggle--disabled': disabled,
+            'pipeline-row__toggle--selected': selected,
+            'pipeline-row__toggle--not-tag': type !== 'tag'
+          })}>
           <input
             id={id}
             className="pipeline-nodelist__row__checkbox"
@@ -136,9 +134,12 @@ const NodeListRow = memo(
               'pipeline-row__toggle-icon',
               `pipeline-row__toggle-icon--kind-${kind}`,
               {
+                'pipeline-row__toggle-icon--parent': Boolean(children),
+                'pipeline-row__toggle-icon--child': !children,
                 'pipeline-row__toggle-icon--checked': checked,
                 'pipeline-row__toggle-icon--unchecked': !checked,
-                'pipeline-row__toggle-icon--unset': unset
+                'pipeline-row__toggle-icon--unset': unset,
+                'pipeline-row__toggle-icon--all-unset': allUnset
               }
             )}
           />
