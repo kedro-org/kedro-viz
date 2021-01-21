@@ -174,15 +174,26 @@
   padding: $toggle-icon-padding;
   border-radius: 50%;
 
+  // Change opacity on the SVG's child elements instead, in order to
+  // maintain 100% opacity outline on parent SVG on keyboard focus
   > * {
     opacity: 0;
   }
 }
 
-// this class enables the 'eye' icon of nodes to be visible on hover of the nodes
-.pipeline-row__toggle-icon--kind-toggle {
-  .pipeline-nodelist__row:hover & > * {
-    opacity: 0.55;
+.pipeline-nodelist__row:hover {
+  .pipeline-row__toggle-icon--kind-toggle {
+    > * {
+      opacity: 0.55;
+    }
+  }
+}
+
+.pipeline-nodelist__row {
+  .pipeline-row__toggle-icon--kind-toggle:hover {
+    > * {
+      opacity: 1;
+    }
   }
 }
 
@@ -195,18 +206,11 @@
     > * {
       opacity: 0.55;
     }
-  }
-}
 
-.pipeline-nodelist__row__checkbox:focus + .pipeline-row__toggle-icon--checked {
-  [data-whatintent='keyboard'] & > * {
-    opacity: 1;
-  }
-}
-
-// Hover states for non-filter type icons
-.pipeline-nodelist__row {
-  .pipeline-row__toggle-icon--kind-toggle:hover > * {
-    opacity: 1;
+    &--checked {
+      > * {
+        opacity: 1;
+      }
+    }
   }
 }
