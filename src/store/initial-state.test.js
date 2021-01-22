@@ -17,13 +17,15 @@ describe('mergeLocalStorage', () => {
   it('overrides state values with localstorage values if provided', () => {
     const localStorageValues = {
       textLabels: false,
-      theme: 'light'
+      theme: 'light',
+      tag: { enabled: 'medium' }
     };
     saveState(localStorageValues);
     expect(
       mergeLocalStorage({
         textLabels: true,
-        theme: 'dark'
+        theme: 'dark',
+        tag: { enabled: 'large' }
       })
     ).toMatchObject(localStorageValues);
     window.localStorage.clear();
