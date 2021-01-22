@@ -55,7 +55,7 @@ export const getChartSize = createSelector(
     );
 
     // Find the resulting space for the chart
-    let chartWidth = width - sidebarWidthActual - metaSidebarWidthActual;
+    const chartWidth = width - sidebarWidthActual - metaSidebarWidthActual;
 
     return {
       left,
