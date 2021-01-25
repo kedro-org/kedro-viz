@@ -1,0 +1,79 @@
+@import '../../../styles/extends';
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+@import './variables';
+
+.pipeline-nodelist__row__text {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: $row-padding-y $row-offset-right $row-padding-y $row-offset-left;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: default;
+  user-select: none;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px $color-link inset;
+
+    [data-whatintent='mouse'] & {
+      box-shadow: none;
+    }
+  }
+}
+
+.pipeline-nodelist__row__label {
+  overflow: hidden;
+  font-size: 1.48em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &--faded {
+    opacity: 0.65;
+  }
+
+  &--disabled {
+    opacity: 0.3;
+  }
+
+  b {
+    color: var(--color-nodelist-highlight);
+    font-weight: normal;
+  }
+
+  i {
+    display: inline-block;
+    margin-left: 0.45em;
+    font-weight: normal;
+    font-style: normal;
+  }
+}
+
+.pipeline-nodelist__row--unchecked {
+  // Fade row text when unchecked
+  .pipeline-nodelist__row__label--kind-filter {
+    opacity: 0.55;
+  }
+
+  // Brighter row text when unchecked and hovered
+  &:hover {
+    .pipeline-nodelist__row__label--kind-filter {
+      opacity: 0.8;
+    }
+  }
+
+  // Bright row text when all unset
+  .pipeline-nodelist__group--all-unset & {
+    .pipeline-nodelist__row__label--kind-filter {
+      opacity: 1;
+    }
+  }
+}
