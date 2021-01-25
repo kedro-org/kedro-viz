@@ -47,6 +47,10 @@
   opacity: 1;
 }
 
+.pipeline-nodelist__row__checkbox {
+  @include screenReaderOnly;
+}
+
 //--- Toggle icon ---//
 
 .pipeline-row__toggle-icon {
