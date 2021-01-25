@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default ({ className }) => (
-  <svg className={className} viewBox="0 0 20 20">
-    <path d="M10 0a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 2v16a8 8 0 1 0 0-16z" />
+  <svg className={className} viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 110 18 9 9 0 010-18zm0 2v14a7 7 0 100-14z" />
   </svg>
 );
