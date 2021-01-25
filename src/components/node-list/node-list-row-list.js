@@ -35,6 +35,7 @@ const NodeRowList = ({
         visible={item.visible}
         selected={item.selected}
         unset={item.unset}
+        allUnset={group.allUnset}
         visibleIcon={item.visibleIcon}
         invisibleIcon={item.invisibleIcon}
         onClick={() => onItemClick(item)}
@@ -107,6 +108,7 @@ const NodeRowLazyList = ({
             visible={item.visible}
             selected={item.selected}
             unset={item.unset}
+            allUnset={group.allUnset}
             visibleIcon={item.visibleIcon}
             invisibleIcon={item.invisibleIcon}
             onClick={() => onItemClick(item)}

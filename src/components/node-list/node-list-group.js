@@ -38,6 +38,7 @@ export const NodeListGroup = ({
         kind={kind}
         name={name}
         label={`${name} <i>${childCount}</i>`}
+        allUnset={allUnset}
         unset={unset}
         checked={checked}
         visibleIcon={visibleIcon}
