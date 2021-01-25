@@ -154,8 +154,10 @@ $filter-icon-opacity-3: 0.75;
   }
 
   .pipeline-nodelist__row:hover & {
-    > * {
-      opacity: $filter-icon-opacity-1;
+    &.pipeline-row__toggle-icon--child {
+      > * {
+        opacity: $filter-icon-opacity-1;
+      }
     }
   }
 
