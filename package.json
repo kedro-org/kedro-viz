@@ -71,7 +71,7 @@
     "react-dom": "^16.8.6"
   },
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
+    "@babel/cli": "^7.12.10",
     "@babel/core": "^7.4.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@testing-library/jest-dom": "^5.11.4",
@@ -86,7 +86,7 @@
     "prettier": "1.17.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "^3.4.1",
+    "react-scripts": "^4.0.1",
     "stylelint": "^13.0.0",
     "stylelint-config-prettier": "^8.0.1",
     "stylelint-config-rational-order": "^0.1.2",
