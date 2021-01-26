@@ -188,7 +188,7 @@ export const getSections = createSelector(() =>
 /**
  * Create a new group of items. This can be one of two kinds:
  * 'filter': Categories, e.g. tags
- * 'toggle': Graph elements, e.g. nodes, datasets, or parameters
+ * 'element': Graph elements, e.g. nodes, datasets, or parameters
  * An item is a node-list row, e.g. a node or a tag.
  * @param {object} itemType Meta information about the group's items
  * @param {array} itemsOfType List of items in the group
@@ -213,7 +213,7 @@ export const createGroup = (itemType, itemsOfType = []) => {
   } else {
     Object.assign(group, {
       name: itemType.name,
-      kind: 'toggle',
+      kind: 'element',
       checked: !itemType.disabled,
       visibleIcon: VisibleIcon,
       invisibleIcon: InvisibleIcon

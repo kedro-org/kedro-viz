@@ -69,10 +69,10 @@
 }
 
 // There are two kinds of toggle icon, with different styling:
-// 1. Toggle: Used on elements, and features a white/black eye
-// 2. Filter: Used on categories, and features a blue square
+// 1. 'Element': Used on elements, and features a white/black eye
+// 2. 'Filter': Used on categories, and features a blue square
 
-//--- Toggle (kind=toggle) icon opacities ---//
+//--- Toggle (kind=element) icon opacities ---//
 
 /*
  | row-hover | icon-hover | checked | opacity |
@@ -84,37 +84,37 @@
  |    ✅     |     ✅      |    ✅   |    1    |
  */
 
-$toggle-icon-opacity-0: 0;
-$toggle-icon-opacity-1: 0.55;
-$toggle-icon-opacity-2: 1;
+$element-icon-opacity-0: 0;
+$element-icon-opacity-1: 0.55;
+$element-icon-opacity-2: 1;
 
-.pipeline-row__toggle-icon--kind-toggle {
+.pipeline-row__toggle-icon--kind-element {
   // Change opacity on the SVG's child elements instead, in order to
   // maintain 100% opacity outline on parent SVG on keyboard focus
   > * {
-    opacity: $toggle-icon-opacity-0;
+    opacity: $element-icon-opacity-0;
   }
 
   .pipeline-nodelist__row:hover & {
     > * {
-      opacity: $toggle-icon-opacity-1;
+      opacity: $element-icon-opacity-1;
     }
   }
 
   .pipeline-nodelist__row &:hover {
     > * {
-      opacity: $toggle-icon-opacity-2;
+      opacity: $element-icon-opacity-2;
     }
   }
 
   [data-whatintent='keyboard'] input:focus + & {
     > * {
-      opacity: $toggle-icon-opacity-1;
+      opacity: $element-icon-opacity-1;
     }
 
     &.pipeline-row__toggle-icon--checked {
       > * {
-        opacity: $toggle-icon-opacity-2;
+        opacity: $element-icon-opacity-2;
       }
     }
   }
