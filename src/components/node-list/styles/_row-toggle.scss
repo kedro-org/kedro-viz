@@ -158,10 +158,8 @@ $filter-icon-opacity-3: 0.75;
   }
 
   .pipeline-nodelist__row:hover & {
-    &.pipeline-row__toggle-icon--child {
-      > * {
-        opacity: $filter-icon-opacity-1;
-      }
+    > * {
+      opacity: $filter-icon-opacity-1;
     }
   }
 
@@ -173,9 +171,11 @@ $filter-icon-opacity-3: 0.75;
     }
   }
 
-  &.pipeline-row__toggle-icon--checked {
-    > * {
-      opacity: $filter-icon-opacity-2;
+  .pipeline-nodelist__row & {
+    &.pipeline-row__toggle-icon--checked {
+      > * {
+        opacity: $filter-icon-opacity-2;
+      }
     }
   }
 
