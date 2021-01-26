@@ -54,6 +54,7 @@
     "kiwi.js": "^1.1.2",
     "konami-code": "^0.2.1",
     "react-custom-scrollbars": "^4.2.1",
+    "react-modal": "^3.12.1",
     "react-redux": "^6.0.1",
     "react-test-renderer": "^16.13.1",
     "redux": "^4.0.5",

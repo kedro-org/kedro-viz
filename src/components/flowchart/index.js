@@ -458,8 +458,6 @@ export class FlowChart extends Component {
     const { chartSize, layers, visibleGraph } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
-    // detect current amount of nodes before loading, load Modal if node size is over
-
     return (
       <div
         className="pipeline-flowchart kedro"
