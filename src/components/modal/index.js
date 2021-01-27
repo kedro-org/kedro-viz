@@ -18,7 +18,7 @@ const customStyles = {
   }
 };
 
-export const ChonkyModal = ({ nodesNo, edgesNo }) => {
+export const ChonkyModal = ({ nodesNo, edgesNo, setDisplayAnyways }) => {
   return (
     <div>
       <Modal
@@ -44,7 +44,11 @@ export const ChonkyModal = ({ nodesNo, edgesNo }) => {
               a <br />
               less chonky graph to display.
             </div>
-            <button className="renderButton">Render it anyway</button>
+            <button
+              className="renderButton"
+              onClick={() => setDisplayAnyways(true)}>
+              Render it anyway
+            </button>
           </div>
         </div>
       </Modal>

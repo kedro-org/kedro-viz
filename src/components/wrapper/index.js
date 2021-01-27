@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import Modal from '../modal';
@@ -16,7 +16,7 @@ import './wrapper.css';
  */
 export const Wrapper = ({ loading, theme, nodes, edges }) => {
   // todo: this is the new variable to set up in the state (and stored in localStorage) for remembering user preference for display anyways
-  const displayAnyways = false;
+  const [displayAnyways, setDisplayAnyways] = useState(false);
 
   /**
    * Formula to determine if the pipeline is chonky
@@ -37,7 +37,11 @@ export const Wrapper = ({ loading, theme, nodes, edges }) => {
       <div className="pipeline-wrapper">
         {isChunkyNode(chonkyNodeAmount, nodes.length, edges.length) === true &&
         displayAnyways === false ? (
-          <Modal nodesNo={nodes.length} edgesNo={edges.length} />
+          <Modal
+            nodesNo={nodes.length}
+            edgesNo={edges.length}
+            setDisplayAnyways={setDisplayAnyways}
+          />
         ) : (
           <FlowChart />
         )}
