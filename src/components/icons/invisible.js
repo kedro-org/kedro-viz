@@ -1,7 +1,9 @@
 import React from 'react';
 
-export default ({ className }) => (
+const InvisibleIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path d="M17.78 6L19 7.22l-1.92 1.92c1.19 1.17 1.92 2.4 1.92 2.84 0 .9-3.13 5.25-7 5.25-.86 0-1.69-.22-2.45-.56l-2.3 2.3-1.23-1.21L17.78 6zm-2.45 4.9l-1.68 1.68c-.18.48-.57.87-1.05 1.04l-1.68 1.69a3.5 3.5 0 004.41-4.41zM12 6.72c.75 0 1.47.16 2.14.43l-1.4 1.4a3.5 3.5 0 00-4.17 4.17L6.71 14.6C5.64 13.51 5 12.4 5 11.98c0-.93 3.13-5.25 7-5.25z" />
   </svg>
 );
+
+export default InvisibleIcon;
