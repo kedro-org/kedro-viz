@@ -13,7 +13,7 @@ import { useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
  * @param {?function} container Optional, default scroll container is `element.offsetParent`
  * @return {object} The rendered children
  **/
-export default ({
+const LazyList = ({
   height,
   total,
   children,
@@ -326,3 +326,5 @@ const useIntersection = (element, options, callback) => {
     callback();
   }, [callback, element, options]);
 };
+
+export default LazyList;
