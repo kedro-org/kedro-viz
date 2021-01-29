@@ -112,8 +112,6 @@ export function calculateGraph(graphState) {
   return async function(dispatch) {
     const { nodes, edges, displayChonkyGraph } = graphState;
 
-    console.log('**displayChonkyGraph', displayChonkyGraph);
-
     if (
       isChonky(chonkyNodeAmount, nodes.length, edges.length) === true &&
       displayChonkyGraph === false
