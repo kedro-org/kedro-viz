@@ -1,5 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Modal from 'react-modal';
+import { toggleDisplayChonkyGraph } from '../../actions/graph';
 import goose from '../../static/images/chonky-goose.jpg';
 import './modal.css';
 
@@ -18,14 +20,16 @@ const customStyles = {
   }
 };
 
-export const ChonkyModal = ({ nodesNo, edgesNo, setDisplayAnyways }) => {
+export const ChonkyModal = ({
+  nodesNo,
+  edgesNo,
+  onToggleDisplayChonkyGraph
+}) => {
   return (
     <div>
       <Modal
         isOpen={true}
         style={customStyles}
-        contentLabel="Example Modal"
-        // className="modal"
         overlayClassName="overlay"
         ariaHideApp={false}>
         <div className="layout">
@@ -46,7 +50,7 @@ export const ChonkyModal = ({ nodesNo, edgesNo, setDisplayAnyways }) => {
             </div>
             <button
               className="renderButton"
-              onClick={() => setDisplayAnyways(true)}>
+              onClick={() => onToggleDisplayChonkyGraph(true)}>
               Render it anyway
             </button>
           </div>
@@ -56,4 +60,18 @@ export const ChonkyModal = ({ nodesNo, edgesNo, setDisplayAnyways }) => {
   );
 };
 
-export default ChonkyModal;
+export const mapStateToProps = state => ({
+  nodesNo: state.loading.nodesNo,
+  edgesNo: state.loading.edgesNo
+});
+
+export const mapDispatchToProps = dispatch => ({
+  onToggleDisplayChonkyGraph: value => {
+    dispatch(toggleDisplayChonkyGraph(value));
+  }
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ChonkyModal);

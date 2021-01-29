@@ -13,7 +13,6 @@ import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import Tooltip from '../tooltip';
-import { chonkyNodeAmount } from '../../config';
 import './styles/flowchart.css';
 
 /**

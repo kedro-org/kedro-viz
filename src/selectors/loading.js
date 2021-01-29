@@ -5,6 +5,8 @@ const getPipelineLoading = state => state.loading.pipeline;
 const getFontLoading = state => !state.fontLoaded;
 const getNodeLoading = state => state.loading.node;
 
+export const getDisplayChonkyGraph = state => state.loading.displayChonkyGraph;
+
 /**
  * Determine whether to show the loading spinner
  */

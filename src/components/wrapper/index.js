@@ -8,22 +8,13 @@ import MetaData from '../metadata';
 import ExportModal from '../export-modal';
 import LoadingIcon from '../icons/loading';
 import { isLoading } from '../../selectors/loading';
-import { chonkyNodeAmount } from '../../config';
 import './wrapper.css';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ loading, theme, nodes, edges }) => {
-  // todo: this is the new variable to set up in the state (and stored in localStorage) for remembering user preference for display anyways
-  const [displayAnyways, setDisplayAnyways] = useState(false);
-
-  /**
-   * Formula to determine if the pipeline is chonky
-   */
-  const isChunkyNode = (chonkyNodeAmount, nodesNo, edgesNo) => {
-    return nodesNo + 1.5 * edgesNo > chonkyNodeAmount ? true : false;
-  };
+export const Wrapper = ({ loading, theme, isChonky, displayChonkyGraph }) => {
+  const displayWarning = isChonky && !displayChonkyGraph ? true : false;
 
   return (
     <div
@@ -35,16 +26,7 @@ export const Wrapper = ({ loading, theme, nodes, edges }) => {
       <Sidebar />
       <MetaData />
       <div className="pipeline-wrapper">
-        {isChunkyNode(chonkyNodeAmount, nodes.length, edges.length) === true &&
-        displayAnyways === false ? (
-          <Modal
-            nodesNo={nodes.length}
-            edgesNo={edges.length}
-            setDisplayAnyways={setDisplayAnyways}
-          />
-        ) : (
-          <FlowChart />
-        )}
+        {displayWarning === true ? <Modal /> : <FlowChart />}
         <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
       </div>
       <ExportModal />
@@ -52,12 +34,11 @@ export const Wrapper = ({ loading, theme, nodes, edges }) => {
   );
 };
 
-// to-do: expose nodes to props
 export const mapStateToProps = state => ({
   loading: isLoading(state),
   theme: state.theme,
-  nodes: state.graph.nodes || [],
-  edges: state.graph.edges || []
+  isChonky: state.loading.isChonky,
+  displayChonkyGraph: state.loading.displayChonkyGraph
 });
 
 export default connect(mapStateToProps)(Wrapper);

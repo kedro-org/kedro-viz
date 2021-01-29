@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
+import { getDisplayChonkyGraph } from './loading';
 import { getVisibleLayerIDs } from './disabled';
 import { getVisibleMetaSidebar } from '../selectors/metadata';
 import { sidebarWidth, metaSidebarWidth } from '../config';
@@ -19,13 +20,15 @@ export const getGraphInput = createSelector(
     getVisibleEdges,
     getVisibleLayerIDs,
     getOldgraphFlag,
-    getFontLoaded
+    getFontLoaded,
+    getDisplayChonkyGraph
   ],
-  (nodes, edges, layers, oldgraph, fontLoaded) => {
+  (nodes, edges, layers, oldgraph, fontLoaded, displayChonkyGraph) => {
     if (!fontLoaded) {
       return null;
     }
-    return { nodes, edges, layers, oldgraph, fontLoaded };
+
+    return { nodes, edges, layers, oldgraph, fontLoaded, displayChonkyGraph };
   }
 );
 
