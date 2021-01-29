@@ -5,7 +5,7 @@
  * @param {?string} others Optional class name string to concatenate after
  * @return {string} The compiled class name(s)
  */
-export default (name, modifiers, others = '') =>
+const modifiers = (name, modifiers, others = '') =>
   Object.keys(modifiers || {}).reduce((classes, modifier) => {
     const value = modifiers[modifier];
 
@@ -18,3 +18,5 @@ export default (name, modifiers, others = '') =>
       '-'
     )}`;
   }, name) + (others ? ' ' + others : '');
+
+export default modifiers;

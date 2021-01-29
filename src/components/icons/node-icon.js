@@ -13,7 +13,7 @@ export const paths = {
     'M10.2 14v1.5H20v2h-9.8V19H8.3v-1.5H5v-2h3.3V14h2zm7.4-9v1.5H20v2h-2.4V10h-1.8V8.5H5v-2h10.8V5h1.8z'
 };
 
-export default ({ className, type }) =>
+const NodeIcon = ({ className, type }) =>
   paths[type] ? (
     <svg
       className={modifiers('pipeline-node-icon', { type }, className)}
@@ -21,3 +21,5 @@ export default ({ className, type }) =>
       <path d={paths[type]} />
     </svg>
   ) : null;
+
+export default NodeIcon;
