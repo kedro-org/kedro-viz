@@ -105,15 +105,17 @@ const isChonky = (chonkyNodeAmount, nodesNo, edgesNo) => {
  * @param {Object} graphState A subset of main state
  * @return {function} A promise that resolves when the calcuation is done
  */
-export function calculateGraph(graphState) {
+export function calculateGraph(graphState, customChonkyLimit) {
   if (!graphState) {
     return updateGraph(graphState);
   }
   return async function(dispatch) {
     const { nodes, edges, displayChonkyGraph } = graphState;
 
+    const chonkyLimit = customChonkyLimit || chonkyNodeAmount;
+
     if (
-      isChonky(chonkyNodeAmount, nodes.length, edges.length) === true &&
+      isChonky(chonkyLimit, nodes.length, edges.length) === true &&
       displayChonkyGraph === false
     ) {
       dispatch(toggleIsChonky(true));

@@ -23,7 +23,9 @@ describe('Wrapper', () => {
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.animals)).toEqual({
       loading: false,
-      theme
+      theme,
+      displayChonkyGraph: false,
+      isChonky: false
     });
   });
 });

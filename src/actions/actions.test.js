@@ -33,6 +33,16 @@ import {
   toggleTagActive,
   toggleTagFilter
 } from '../actions/tags';
+import {
+  TOGGLE_DISPLAY_CHONKY_GRAPH,
+  TOGGLE_IS_CHONKY,
+  UPDATE_NODESNO,
+  UPDATE_EDGESNO,
+  toggleDisplayChonkyGraph,
+  toggleIsChonky,
+  updateNodesNo,
+  updateEdgesNo
+} from '../actions/graph';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
 describe('actions', () => {
@@ -206,5 +216,37 @@ describe('actions', () => {
       value: true
     };
     expect(changeFlag('testFlag', true)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle display chonky graph', () => {
+    const expectedAction = {
+      type: TOGGLE_DISPLAY_CHONKY_GRAPH,
+      displayChonkyGraph: true
+    };
+    expect(toggleDisplayChonkyGraph(true)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle isChonky', () => {
+    const expectedAction = {
+      type: TOGGLE_IS_CHONKY,
+      isChonky: true
+    };
+    expect(toggleIsChonky(true)).toEqual(expectedAction);
+  });
+
+  it('should create an action to update the no. of nodes for the modal display', () => {
+    const expectedAction = {
+      type: UPDATE_NODESNO,
+      nodesNo: 10
+    };
+    expect(updateNodesNo(10)).toEqual(expectedAction);
+  });
+
+  it('should create an action to update the no. of edges for the modal display', () => {
+    const expectedAction = {
+      type: UPDATE_EDGESNO,
+      edgesNo: 10
+    };
+    expect(updateEdgesNo(10)).toEqual(expectedAction);
   });
 });
