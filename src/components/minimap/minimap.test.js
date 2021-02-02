@@ -81,8 +81,10 @@ describe('MiniMap', () => {
     expect(onUpdateChartZoom).toHaveBeenLastCalledWith({
       x: expect.any(Number),
       y: expect.any(Number),
+      scale: expect.any(Number),
       applied: expect.any(Boolean),
-      transition: expect.any(Boolean)
+      transition: expect.any(Boolean),
+      relative: expect.any(Boolean)
     });
   });
 
@@ -100,7 +102,8 @@ describe('MiniMap', () => {
     expect(onUpdateChartZoom).toHaveBeenLastCalledWith({
       scale: expect.any(Number),
       applied: expect.any(Boolean),
-      transition: expect.any(Boolean)
+      transition: expect.any(Boolean),
+      relative: expect.any(Boolean)
     });
   });
 
