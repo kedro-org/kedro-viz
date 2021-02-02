@@ -186,6 +186,11 @@ export const setViewTransform = (
     typeof transform.x !== 'undefined' && typeof transform.y !== 'undefined';
   let k, x, y;
 
+  if (typeof jest !== 'undefined') {
+    // Transitions not supported in tests
+    duration = 0;
+  }
+
   if (relative) {
     // Relative: v = v. + t
     k = current.k + (transform.k || 0);
@@ -231,6 +236,11 @@ export const setViewTransform = (
  */
 export const setViewTransformExact = (view, transform, duration = 0) => {
   const container = select(view.container.current);
+
+  if (typeof jest !== 'undefined') {
+    // Transitions not supported in tests
+    duration = 0;
+  }
 
   // Apply the transform ignoring extents
   (!duration

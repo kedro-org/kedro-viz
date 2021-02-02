@@ -276,16 +276,6 @@ describe('view', () => {
       expect(v2.y).toEqual(extents.translate.minY * extents.scale.minK);
       expect(v2.k).toEqual(extents.scale.minK);
     });
-
-    it('setViewTransform with transition duration', () => {
-      // Jest does not run d3-zoom transitions, so just check for exceptions
-      expect(() => {
-        const view = mockView(100, 100);
-        const duration = 200;
-        setViewTransform(view, { x: 1, y: 2, k: 1 }, duration, false);
-        setViewTransform(view, { x: 4, y: 5, k: 2 }, duration, true);
-      }).not.toThrow();
-    });
   });
 
   describe('getViewExtents, setViewExtents', () => {
