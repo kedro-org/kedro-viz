@@ -29,7 +29,12 @@ describe('view', () => {
       </>
     );
 
-    const view = viewing(container, wrapper, jest.fn(), jest.fn());
+    const view = viewing({
+      container,
+      wrapper,
+      onViewChanged: jest.fn(),
+      onViewEnd: jest.fn()
+    });
 
     // Elements have no dimensions in Jest so set viewport manually
     setViewport(view, {
@@ -46,7 +51,12 @@ describe('view', () => {
     it('returns an object with zoom function, container and wrapper refs', () => {
       const container = React.createRef();
       const wrapper = React.createRef();
-      const view = viewing(container, wrapper, jest.fn(), jest.fn());
+      const view = viewing({
+        container,
+        wrapper,
+        onViewChanged: jest.fn(),
+        onViewEnd: jest.fn()
+      });
       expect(view.zoom).toBeInstanceOf(Function);
       expect(view.container).toBe(container);
       expect(view.wrapper).toBe(wrapper);
@@ -320,22 +330,21 @@ describe('view', () => {
   describe('viewTransformToFit', () => {
     it('returns expected transform when example must be scaled down to fit', () => {
       // Example where object is too large, so scale down
-      const offset = { x: 10, y: 10 };
-      const focus = { x: 50, y: 50 };
-      const options = {
+      const minScaleFocus = 0.8;
+      const transform = viewTransformToFit({
+        offset: { x: 10, y: 10 },
+        focus: { x: 50, y: 50 },
         viewWidth: 200,
         viewHeight: 100,
         objectWidth: 150,
         objectHeight: 300,
         minScaleX: 0.4,
-        minScaleFocus: 0.8,
+        minScaleFocus,
         focusOffset: 0.8
-      };
-
-      const transform = viewTransformToFit(offset, focus, options);
+      });
 
       expect(transform).toEqual({
-        k: options.minScaleFocus,
+        k: minScaleFocus,
         x: -50,
         y: 60
       });
@@ -343,9 +352,9 @@ describe('view', () => {
 
     it('returns expected transform when example must be scaled up to fit', () => {
       // Example where object is too small, so scale up
-      const offset = { x: 10, y: 10 };
-      const focus = { x: 25, y: 25 };
-      const options = {
+      const transform = viewTransformToFit({
+        offset: { x: 10, y: 10 },
+        focus: { x: 25, y: 25 },
         viewWidth: 200,
         viewHeight: 100,
         objectWidth: 50,
@@ -353,9 +362,7 @@ describe('view', () => {
         minScaleX: 0.4,
         minScaleFocus: 0.8,
         focusOffset: 0.8
-      };
-
-      const transform = viewTransformToFit(offset, focus, options);
+      });
 
       expect(transform).toEqual({
         k: 2,
@@ -366,22 +373,21 @@ describe('view', () => {
 
     it('returns expected transform when focus point is outside view so must offset to ensure visibility', () => {
       // Example where focus point will get cropped, so must offset
-      const offset = { x: 10, y: 10 };
-      const focus = { x: 500, y: 25 };
-      const options = {
+      const minScaleFocus = 0.8;
+      const transform = viewTransformToFit({
+        offset: { x: 10, y: 10 },
+        focus: { x: 500, y: 25 },
         viewWidth: 200,
         viewHeight: 100,
         objectWidth: 1000,
         objectHeight: 500,
         minScaleX: 0.4,
-        minScaleFocus: 0.8,
+        minScaleFocus,
         focusOffset: 0.8
-      };
-
-      const transform = viewTransformToFit(offset, focus, options);
+      });
 
       expect(transform).toEqual({
-        k: options.minScaleFocus,
+        k: minScaleFocus,
         x: 290,
         y: -4
       });
@@ -389,21 +395,20 @@ describe('view', () => {
 
     it('returns expected transform when example is scaled to the minimum x scale', () => {
       // Example where object is too wide, so scale down but clamp to minimum
-      const offset = { x: 10, y: 10 };
-      const options = {
+      const minScaleX = 0.4;
+      const transform = viewTransformToFit({
+        offset: { x: 10, y: 10 },
         viewWidth: 200,
         viewHeight: 100,
         objectWidth: 1000,
         objectHeight: 50,
-        minScaleX: 0.4,
+        minScaleX,
         minScaleFocus: 0.8,
         focusOffset: 0.8
-      };
-
-      const transform = viewTransformToFit(offset, null, options);
+      });
 
       expect(transform).toEqual({
-        k: options.minScaleX,
+        k: minScaleX,
         x: 90,
         y: -50
       });

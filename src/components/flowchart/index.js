@@ -57,12 +57,12 @@ export class FlowChart extends Component {
     this.selectD3Elements();
     this.updateChartSize();
 
-    this.view = viewing(
-      this.svgRef,
-      this.wrapperRef,
-      this.onViewChange,
-      this.onViewChangeEnd
-    );
+    this.view = viewing({
+      container: this.svgRef,
+      wrapper: this.wrapperRef,
+      onViewChanged: this.onViewChange,
+      onViewEnd: this.onViewChangeEnd
+    });
 
     this.addGlobalEventListeners();
     this.update();
@@ -334,7 +334,9 @@ export class FlowChart extends Component {
       : null;
 
     // Find a transform that fits everything in view
-    this.defaultTransform = viewTransformToFit(offset, point, {
+    this.defaultTransform = viewTransformToFit({
+      offset,
+      point,
       viewWidth: chartWidth,
       viewHeight: chartHeight,
       objectWidth: graphWidth,

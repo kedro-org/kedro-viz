@@ -6,13 +6,21 @@ import { zoom as d3Zoom, zoomIdentity, zoomTransform } from 'd3-zoom';
 /**
  * Applies an active viewport behaviour on the given elements using d3-zoom.
  * Returns an object representing the view for use in view related functions.
- * @param {React.Ref} container The container element ref
- * @param {React.Ref} wrapper The wrapper element ref
- * @param {Function} onViewChanged Callback when view changes
- * @param {Function} onViewEnd Callback when view change ends
+ * @param {Object} options The options to use
+ * @param {React.Ref} options.container The container element ref
+ * @param {React.Ref} options.wrapper The wrapper element ref
+ * @param {?Function} options.onViewChanged Callback when view changes
+ * @param {?Function} options.onViewEnd Callback when view change ends
+ * @param {?Boolean} [options.allowUserInput=true] Enable or disable user input
  * @returns {Object} An object representing the view
  */
-export const viewing = (container, wrapper, onViewChanged, onViewEnd) => {
+export const viewing = ({
+  container,
+  wrapper,
+  onViewChanged,
+  onViewEnd,
+  allowUserInput = true
+}) => {
   const zoom = d3Zoom()
     .on('zoom', () => {
       const transform = event.transform;
@@ -23,11 +31,16 @@ export const viewing = (container, wrapper, onViewChanged, onViewEnd) => {
       }
 
       select(wrapper.current).attr('transform', transform);
-      onViewChanged(transform);
+      onViewChanged && onViewChanged(transform);
     })
     .on('end', onViewEnd)
     // Use linear interpolation
     .interpolate(interpolate);
+
+  if (!allowUserInput) {
+    // Ignore all user input default behaviour
+    zoom.filter(() => false);
+  }
 
   select(container.current)
     .call(zoom)
@@ -235,8 +248,9 @@ export const setViewTransformExact = (view, transform, duration = 0) => {
  * Returns a view transform that fits the object dimensions
  * and optional focus point inside the given view dimensions,
  * while respecting a minimum desired scale.
- * @param {Object} offset The origin point
- * @param {?Object} focus The optional point to keep in focus
+ * @param {Object} options The options
+ * @param {Object} options.offset The origin point
+ * @param {?Object} options.focus The optional point to keep in focus
  * @param {Number} options.viewWidth The width of the viewport
  * @param {Number} options.viewHeight The height of the viewport
  * @param {Number} options.objectWidth The width of the object
@@ -246,19 +260,17 @@ export const setViewTransformExact = (view, transform, duration = 0) => {
  * @param {?Number} [options.focusOffset=0.8] Offset center towards relative focus position
  * @returns {Object} A view transform that fits the constraints
  */
-export const viewTransformToFit = (
+export const viewTransformToFit = ({
   offset,
   focus,
-  {
-    viewWidth,
-    viewHeight,
-    objectWidth,
-    objectHeight,
-    minScaleX = 0,
-    minScaleFocus = 0,
-    focusOffset = 0.8
-  }
-) => {
+  viewWidth,
+  viewHeight,
+  objectWidth,
+  objectHeight,
+  minScaleX = 0,
+  minScaleFocus = 0,
+  focusOffset = 0.8
+}) => {
   let scale = origin.k;
   let x = origin.x;
   let y = origin.y;
