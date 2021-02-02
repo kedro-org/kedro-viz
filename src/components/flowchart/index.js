@@ -329,14 +329,14 @@ export class FlowChart extends Component {
     const offset = { x: chartSize.sidebarWidth, y: 0 };
 
     // Use the selected node as focus point
-    const point = centralNode
+    const focus = centralNode
       ? nodes.find(node => node.id === centralNode)
       : null;
 
     // Find a transform that fits everything in view
     this.defaultTransform = viewTransformToFit({
       offset,
-      point,
+      focus,
       viewWidth: chartWidth,
       viewHeight: chartHeight,
       objectWidth: graphWidth,
