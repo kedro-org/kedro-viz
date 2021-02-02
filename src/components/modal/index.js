@@ -45,8 +45,7 @@ export const ChonkyModal = ({
               edges.
               <br />
               Please use the filters on the left to select tags and elements for
-              a <br />
-              less chonky graph to display.
+              a less chonky graph to display.
             </div>
             <button
               className="renderButton"

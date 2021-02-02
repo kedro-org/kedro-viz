@@ -35,12 +35,14 @@ img {
 .title {
   padding: 16px 0px;
   font-size: 28px;
+  opacity: 0.8;
 }
 
 .subtitle {
+  width: 350px;
   font-weight: lighter;
   font-size: 14px;
-  opacity: 0.7;
+  opacity: 0.85;
   & b {
     font-size: 20px;
   }
@@ -48,8 +50,9 @@ img {
 
 .renderButton {
   margin: 40px 0;
-  padding: 9px;
+  padding: 5px 24px 9px;
   color: white;
+  font-size: 16px;
   font-family: 'Titillium Web';
   background-color: $color-bg-dark-1;
   border: 2px solid white;
