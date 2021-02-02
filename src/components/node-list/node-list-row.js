@@ -20,6 +20,7 @@ const shouldMemo = (prevProps, nextProps) =>
       'active',
       'checked',
       'unset',
+      'allUnset',
       'disabled',
       'faded',
       'visible',
@@ -37,6 +38,7 @@ const NodeListRow = memo(
     active,
     checked,
     unset,
+    allUnset,
     children,
     disabled,
     faded,
@@ -55,6 +57,8 @@ const NodeListRow = memo(
     invisibleIcon = InvisibleIcon
   }) => {
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
+    const isButton = onClick && kind !== 'filter';
+    const TextButton = isButton ? 'button' : 'div';
 
     return (
       <Container
@@ -72,15 +76,12 @@ const NodeListRow = memo(
         title={name}
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
-        <button
-          className={classnames(
-            'pipeline-nodelist__row__text',
-            `pipeline-nodelist__row__text--kind-${kind}`
-          )}
+        <TextButton
+          className="pipeline-nodelist__row__text"
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
-          disabled={disabled}
+          disabled={isButton && (disabled || !checked)}
           title={children ? null : name}>
           {type && (
             <NodeIcon
@@ -99,25 +100,25 @@ const NodeListRow = memo(
             />
           )}
           <span
-            className={classnames('pipeline-nodelist__row__label', {
-              'pipeline-nodelist__row__label--faded': faded,
-              'pipeline-nodelist__row__label--disabled': disabled
-            })}
+            className={classnames(
+              'pipeline-nodelist__row__label',
+              `pipeline-nodelist__row__label--kind-${kind}`,
+              {
+                'pipeline-nodelist__row__label--faded': faded,
+                'pipeline-nodelist__row__label--disabled': disabled
+              }
+            )}
             dangerouslySetInnerHTML={{ __html: label }}
           />
-        </button>
+        </TextButton>
         {children}
         <label
           htmlFor={id}
-          className={classnames(
-            'pipeline-row__toggle',
-            `pipeline-row__toggle--kind-${kind}`,
-            {
-              'pipeline-row__toggle--disabled': disabled,
-              'pipeline-row__toggle--selected': selected,
-              'pipeline-row__toggle--not-tag': type !== 'tag'
-            }
-          )}>
+          className={classnames('pipeline-row__toggle', {
+            'pipeline-row__toggle--disabled': disabled,
+            'pipeline-row__toggle--selected': selected,
+            'pipeline-row__toggle--not-tag': type !== 'tag'
+          })}>
           <input
             id={id}
             className="pipeline-nodelist__row__checkbox"
@@ -134,10 +135,12 @@ const NodeListRow = memo(
               'pipeline-row__toggle-icon',
               `pipeline-row__toggle-icon--kind-${kind}`,
               {
+                'pipeline-row__toggle-icon--parent': Boolean(children),
+                'pipeline-row__toggle-icon--child': !children,
                 'pipeline-row__toggle-icon--checked': checked,
                 'pipeline-row__toggle-icon--unchecked': !checked,
                 'pipeline-row__toggle-icon--unset': unset,
-                'pipeline-row__toggle-icon--visible': type !== 'tag'
+                'pipeline-row__toggle-icon--all-unset': allUnset
               }
             )}
           />

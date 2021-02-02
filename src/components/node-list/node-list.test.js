@@ -91,7 +91,7 @@ describe('NodeList', () => {
     const rows = () =>
       wrapper
         .find(
-          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist__list--nested'
+          '.pipeline-nodelist__group--kind-element .pipeline-nodelist__list--nested'
         )
         .find('.pipeline-nodelist__row');
     const rowName = row =>
@@ -190,7 +190,7 @@ describe('NodeList', () => {
     const elements = wrapper =>
       wrapper
         .find(
-          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist__list--nested'
+          '.pipeline-nodelist__group--kind-element .pipeline-nodelist__list--nested'
         )
         .find('.pipeline-nodelist__row')
         .map(row => [

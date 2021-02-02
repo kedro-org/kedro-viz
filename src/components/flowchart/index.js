@@ -91,7 +91,7 @@ export class FlowChart extends Component {
       drawNodes.call(this, changed);
     }
 
-    if (changed('edges', 'nodes', 'layers', 'chartSize')) {
+    if (changed('edges', 'nodes', 'layers', 'chartSize', 'centralNode')) {
       this.zoomToFit();
     } else {
       this.updateZoom(chartZoom);
@@ -324,26 +324,64 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Zoom and scale to fit graph exactly in the viewport
+   * Zoom and scale to fit graph and any selected node in view
    */
   zoomToFit() {
-    const { chartSize, graphSize } = this.props;
+    const { chartSize, graphSize, centralNode, nodes } = this.props;
+    const { width: chartWidth, height: chartHeight } = chartSize;
+    const { width: graphWidth, height: graphHeight } = graphSize;
 
     let scale = 1;
     let translateX = 0;
     let translateY = 0;
 
-    // Fit the graph exactly in the viewport
-    if (chartSize.width > 0 && graphSize.width > 0) {
-      scale = Math.min(
-        chartSize.width / graphSize.width,
-        chartSize.height / graphSize.height
-      );
+    if (chartWidth > 0 && graphWidth > 0) {
+      // Get the scales that fit each axis
+      const scaleY = chartHeight / graphHeight;
+      const scaleX = chartWidth / graphWidth;
 
-      translateX =
-        (chartSize.width - graphSize.width * scale) / 2 +
-        chartSize.sidebarWidth;
-      translateY = (chartSize.height - graphSize.height * scale) / 2;
+      // Apply a minimum to X but allow Y to fit
+      const scaleXClamp = Math.max(0.4, scaleX);
+
+      // To fit both axis, choose the smaller one
+      scale = Math.min(scaleXClamp, scaleY);
+
+      // When a node is selected
+      if (centralNode) {
+        // Ensure scale is a reasonable size
+        scale = Math.max(0.3, scale);
+      }
+
+      // Offset for the left sidebar
+      translateX += chartSize.sidebarWidth;
+
+      // Offset to center whole graph
+      translateX += (chartWidth - graphWidth * scale) * 0.5;
+      translateY += (chartHeight - graphHeight * scale) * 0.5;
+
+      const isCropped = scaleXClamp !== scaleX;
+
+      // When node is selected and graph does not fit fully in view
+      if (centralNode && isCropped) {
+        const node = nodes.find(node => node.id === centralNode);
+
+        const graphCenterX = graphWidth * 0.5;
+        const graphCenterY = graphHeight * 0.5;
+
+        const nodeCenterOffsetX = graphCenterX - node.x;
+        const nodeCenterOffsetY = graphCenterY - node.y;
+
+        const nodeRelativeOffsetX = nodeCenterOffsetX / graphWidth;
+        const nodeRelativeOffsetY = nodeCenterOffsetY / graphHeight;
+
+        // Offset to exactly center on the selected node
+        translateX += nodeCenterOffsetX * scale;
+        translateY += nodeCenterOffsetY * scale;
+
+        // Adjust centering to better account for node position
+        translateX -= nodeRelativeOffsetX * chartWidth * 0.8;
+        translateY -= nodeRelativeOffsetY * chartHeight * 0.8;
+      }
     }
 
     // Limit zoom scale extent

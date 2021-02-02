@@ -1,0 +1,235 @@
+@import '../../../styles/extends';
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+@import './variables';
+
+//--- Toggle ---//
+
+.pipeline-row__toggle {
+  position: absolute;
+  right: $row-padding-x;
+
+  &--not-tag {
+    cursor: pointer;
+  }
+
+  &--disabled {
+    display: none;
+  }
+}
+
+@include transparentColour(
+  '--row-selected-transparent',
+  $row-selected-light,
+  $row-selected-dark
+);
+
+.pipeline-row__toggle:before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -100px;
+  display: block;
+  width: 100px;
+  background: transparent;
+  background: linear-gradient(
+    90deg,
+    var(--row-selected-transparent, 0) 0%,
+    var(--color-nodelist-row-selected) 100%
+  );
+  transform: translate(0, 0);
+  opacity: 0;
+  content: ' ';
+  pointer-events: none;
+}
+
+.pipeline-row__toggle--selected:before {
+  opacity: 1;
+}
+
+.pipeline-nodelist__row__checkbox {
+  @include screenReaderOnly;
+}
+
+//--- Toggle icon ---//
+
+.pipeline-row__toggle-icon {
+  width: $toggle-icon-size;
+  height: $toggle-icon-size;
+  padding: $toggle-icon-padding;
+  border-radius: 50%;
+
+  .pipeline-nodelist__row__checkbox:focus + & {
+    outline: none;
+
+    [data-whatintent='keyboard'] & {
+      box-shadow: 0 0 0 3px $color-link inset;
+    }
+  }
+}
+
+// There are two kinds of toggle icon, with different styling:
+// 1. 'Element': Used on elements, and features a white/black eye
+// 2. 'Filter': Used on categories, and features a blue square
+
+//--- Toggle (kind=element) icon opacities ---//
+
+/*
+ | row-hover | icon-hover | checked | opacity |
+ |    🚫     |     🚫      |    🚫   |    0    |
+ |    🚫     |     🚫      |    ✅   |    0    |
+ |    ✅     |     🚫      |    🚫   |   0.55  |
+ |    ✅     |     🚫      |    ✅   |   0.55  |
+ |    ✅     |     ✅      |    🚫   |    1    |
+ |    ✅     |     ✅      |    ✅   |    1    |
+ */
+
+$element-icon-opacity-0: 0;
+$element-icon-opacity-1: 0.55;
+$element-icon-opacity-2: 1;
+
+.pipeline-row__toggle-icon--kind-element {
+  // Change opacity on the SVG's child elements instead, in order to
+  // maintain 100% opacity outline on parent SVG on keyboard focus
+  > * {
+    opacity: $element-icon-opacity-0;
+  }
+
+  .pipeline-nodelist__row:hover & {
+    > * {
+      opacity: $element-icon-opacity-1;
+    }
+  }
+
+  .pipeline-nodelist__row &:hover {
+    > * {
+      opacity: $element-icon-opacity-2;
+    }
+  }
+
+  [data-whatintent='keyboard'] input:focus + & {
+    > * {
+      opacity: $element-icon-opacity-1;
+    }
+
+    &.pipeline-row__toggle-icon--checked {
+      > * {
+        opacity: $element-icon-opacity-2;
+      }
+    }
+  }
+}
+
+//--- Toggle (kind=filter) icon opacities ---//
+
+/*
+ Parent (toggle all tags):
+ | row-hover | icon-hover | checked | opacity |
+ |    🚫     |     🚫      |    🚫   |    0    |
+ |    ✅     |     🚫      |    🚫   |   0.3   |
+ |    ✅     |     ✅      |    🚫   |   0.55  |
+ |    🚫     |     🚫      |    ✅   |   0.55  |
+ |    ✅     |     ✅      |    ✅   |   0.75  |
+
+ Child (individual tag):
+ | row-hover | checked | opacity |
+ |    🚫     |    🚫    |    0    |
+ |    ✅     |    🚫    |   0.3   |
+ |    🚫     |    ✅    |   0.55  |
+ |    ✅     |    ✅    |   0.75  |
+ */
+
+$filter-icon-opacity-0: 0;
+$filter-icon-opacity-1: 0.3;
+$filter-icon-opacity-2: 0.55;
+$filter-icon-opacity-3: 0.75;
+
+.pipeline-row__toggle-icon--kind-filter {
+  // Change opacity on the SVG's child elements instead, in order to
+  // maintain 100% opacity outline on parent SVG on keyboard focus
+  > * {
+    opacity: $filter-icon-opacity-1;
+  }
+
+  &.pipeline-row__toggle-icon--all-unset {
+    > * {
+      opacity: $filter-icon-opacity-0;
+    }
+  }
+
+  .pipeline-nodelist__row:hover & {
+    > * {
+      opacity: $filter-icon-opacity-1;
+    }
+  }
+
+  .pipeline-nodelist__row:hover & {
+    &.pipeline-row__toggle-icon--parent:hover {
+      > * {
+        opacity: $filter-icon-opacity-2;
+      }
+    }
+  }
+
+  .pipeline-nodelist__row & {
+    &.pipeline-row__toggle-icon--checked {
+      > * {
+        opacity: $filter-icon-opacity-2;
+      }
+    }
+  }
+
+  .pipeline-nodelist__row:hover & {
+    &.pipeline-row__toggle-icon--child {
+      &.pipeline-row__toggle-icon--checked {
+        > * {
+          opacity: $filter-icon-opacity-3;
+        }
+      }
+    }
+  }
+
+  .pipeline-nodelist__row & {
+    &.pipeline-row__toggle-icon--parent:hover {
+      &.pipeline-row__toggle-icon--checked {
+        > * {
+          opacity: $filter-icon-opacity-3;
+        }
+      }
+    }
+  }
+
+  [data-whatintent='keyboard'] input:focus + & {
+    > * {
+      opacity: $filter-icon-opacity-2;
+    }
+
+    &.pipeline-row__toggle-icon--checked {
+      > * {
+        opacity: $filter-icon-opacity-3;
+      }
+    }
+  }
+}
+
+//--- Toggle (kind=filter) icon fills and strokes ---//
+
+.pipeline-row__toggle-icon--kind-filter {
+  &.pipeline-row__toggle-icon--checked {
+    fill: var(--color-nodelist-filter-indicator-on);
+    stroke: var(--color-nodelist-filter-indicator-on);
+  }
+
+  &.pipeline-row__toggle-icon--unchecked,
+  &.pipeline-row__toggle-icon--unset {
+    fill: none;
+    stroke: var(--color-nodelist-filter-indicator-off);
+  }
+
+  .pipeline-nodelist__row:hover &.pipeline-row__toggle-icon--all-unset,
+  [data-whatintent='keyboard'] input:focus + &,
+  &.pipeline-row__toggle-icon--parent {
+    fill: $color-primary;
+    stroke: $color-primary;
+  }
+}

@@ -6,17 +6,15 @@ export const localStorageName = 'KedroViz';
 // across Sass and JavaScript, so they're defined in two places. If you update their
 // value here, please also update their corresponding value in src/styles/_variables.scss
 export const metaSidebarWidth = {
-  breakpoint: 1200,
   open: 400,
   closed: 0
 };
 export const sidebarWidth = {
-  breakpoint: 700,
   open: 400,
   closed: 56
 };
 
-export const chartMinWidth = 1200;
+export const chartMinWidthScale = 0.25;
 
 // this value is used to determine the amount of nodes in pipeline to trigger chonky warning
 export const chonkyNodeAmount = 1000;
