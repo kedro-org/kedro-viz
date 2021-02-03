@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import 'd3-transition';
-import { select, event } from 'd3-selection';
+import { select } from 'd3-selection';
 import { interpolate } from 'd3-interpolate';
 import { zoom, zoomIdentity, zoomTransform } from 'd3-zoom';
 import { updateChartSize, updateZoom } from '../../actions';
@@ -45,7 +45,7 @@ export class FlowChart extends Component {
     this.update();
 
     if (this.props.tooltip) {
-      this.showTooltip(null, this.props.tooltip);
+      this.showTooltip(null, null, this.props.tooltip);
     } else {
       this.hideTooltip();
     }
@@ -91,7 +91,7 @@ export class FlowChart extends Component {
       drawNodes.call(this, changed);
     }
 
-    if (changed('edges', 'nodes', 'layers', 'chartSize')) {
+    if (changed('edges', 'nodes', 'layers', 'chartSize', 'centralNode')) {
       this.zoomToFit();
     } else {
       this.updateZoom(chartZoom);
@@ -198,8 +198,14 @@ export class FlowChart extends Component {
       // Transition using linear interpolation
       .interpolate(interpolate)
       // When zoom changes
-      .on('zoom', () => {
+      .on('zoom', event => {
         const { k: scale, x, y } = event.transform;
+
+        // Ensure valid x and y values before performing zoom operations
+        if (!isFinite(x) || !isFinite(y) || isNaN(x) || isNaN(y)) {
+          return;
+        }
+
         const [
           minScale = 0,
           maxScale = Infinity
@@ -318,26 +324,64 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Zoom and scale to fit graph exactly in the viewport
+   * Zoom and scale to fit graph and any selected node in view
    */
   zoomToFit() {
-    const { chartSize, graphSize } = this.props;
+    const { chartSize, graphSize, centralNode, nodes } = this.props;
+    const { width: chartWidth, height: chartHeight } = chartSize;
+    const { width: graphWidth, height: graphHeight } = graphSize;
 
     let scale = 1;
     let translateX = 0;
     let translateY = 0;
 
-    // Fit the graph exactly in the viewport
-    if (chartSize.width > 0 && graphSize.width > 0) {
-      scale = Math.min(
-        chartSize.width / graphSize.width,
-        chartSize.height / graphSize.height
-      );
+    if (chartWidth > 0 && graphWidth > 0) {
+      // Get the scales that fit each axis
+      const scaleY = chartHeight / graphHeight;
+      const scaleX = chartWidth / graphWidth;
 
-      translateX =
-        (chartSize.width - graphSize.width * scale) / 2 +
-        chartSize.sidebarWidth;
-      translateY = (chartSize.height - graphSize.height * scale) / 2;
+      // Apply a minimum to X but allow Y to fit
+      const scaleXClamp = Math.max(0.4, scaleX);
+
+      // To fit both axis, choose the smaller one
+      scale = Math.min(scaleXClamp, scaleY);
+
+      // When a node is selected
+      if (centralNode) {
+        // Ensure scale is a reasonable size
+        scale = Math.max(0.3, scale);
+      }
+
+      // Offset for the left sidebar
+      translateX += chartSize.sidebarWidth;
+
+      // Offset to center whole graph
+      translateX += (chartWidth - graphWidth * scale) * 0.5;
+      translateY += (chartHeight - graphHeight * scale) * 0.5;
+
+      const isCropped = scaleXClamp !== scaleX;
+
+      // When node is selected and graph does not fit fully in view
+      if (centralNode && isCropped) {
+        const node = nodes.find(node => node.id === centralNode);
+
+        const graphCenterX = graphWidth * 0.5;
+        const graphCenterY = graphHeight * 0.5;
+
+        const nodeCenterOffsetX = graphCenterX - node.x;
+        const nodeCenterOffsetY = graphCenterY - node.y;
+
+        const nodeRelativeOffsetX = nodeCenterOffsetX / graphWidth;
+        const nodeRelativeOffsetY = nodeCenterOffsetY / graphHeight;
+
+        // Offset to exactly center on the selected node
+        translateX += nodeCenterOffsetX * scale;
+        translateY += nodeCenterOffsetY * scale;
+
+        // Adjust centering to better account for node position
+        translateX -= nodeRelativeOffsetX * chartWidth * 0.8;
+        translateY -= nodeRelativeOffsetY * chartHeight * 0.8;
+      }
     }
 
     // Limit zoom scale extent
@@ -366,9 +410,10 @@ export class FlowChart extends Component {
 
   /**
    * Enable a node's focus state and highlight linked nodes
+   * @param {Object} event Event object
    * @param {Object} node Datum for a single node
    */
-  handleNodeClick = node => {
+  handleNodeClick = (event, node) => {
     this.props.onLoadNodeData(node.id);
     event.stopPropagation();
   };
@@ -382,11 +427,12 @@ export class FlowChart extends Component {
 
   /**
    * Enable a node's active state, show tooltip, and highlight linked nodes
+   * @param {Object} event Event object
    * @param {Object} node Datum for a single node
    */
-  handleNodeMouseOver = node => {
+  handleNodeMouseOver = (event, node) => {
     this.props.onToggleNodeHovered(node.id);
-    this.showTooltip(node);
+    this.showTooltip(event, node);
   };
 
   /**
@@ -400,26 +446,28 @@ export class FlowChart extends Component {
 
   /**
    * Handle keydown event when a node is focused
+   * @param {Object} event Event object
    * @param {Object} node Datum for a single node
    */
-  handleNodeKeyDown = node => {
+  handleNodeKeyDown = (event, node) => {
     const ENTER = 13;
     const ESCAPE = 27;
     if (event.keyCode === ENTER) {
-      this.handleNodeClick(node);
+      this.handleNodeClick(event, node);
     }
     if (event.keyCode === ESCAPE) {
       this.handleChartClick();
-      this.handleNodeMouseOut(node);
+      this.handleNodeMouseOut();
     }
   };
 
   /**
    * Show, fill and and position the tooltip
+   * @param {Object} event Event object
    * @param {Object} node A node datum
    * @param {?Object} options Options for the tooltip if required
    */
-  showTooltip(node, options = {}) {
+  showTooltip(event, node, options = {}) {
     this.setState({
       tooltip: {
         targetRect: event && event.target.getBoundingClientRect(),

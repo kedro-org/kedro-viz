@@ -4,8 +4,13 @@ import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import IndicatorPartialIcon from '../icons/indicator-partial';
+import { localStorageName } from '../../config';
 
 describe('NodeList', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
   it('renders without crashing', () => {
     const wrapper = setup.mount(<NodeList />);
     const search = wrapper.find('.pipeline-nodelist-search');
@@ -86,7 +91,7 @@ describe('NodeList', () => {
     const rows = () =>
       wrapper
         .find(
-          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist__list--nested'
+          '.pipeline-nodelist__group--kind-element .pipeline-nodelist__list--nested'
         )
         .find('.pipeline-nodelist__row');
     const rowName = row =>
@@ -185,7 +190,7 @@ describe('NodeList', () => {
     const elements = wrapper =>
       wrapper
         .find(
-          '.pipeline-nodelist__group--kind-toggle .pipeline-nodelist__list--nested'
+          '.pipeline-nodelist__group--kind-element .pipeline-nodelist__list--nested'
         )
         .find('.pipeline-nodelist__row')
         .map(row => [
@@ -296,6 +301,15 @@ describe('NodeList', () => {
       // All tags selected
       changeRows(wrapper, ['Large', 'Medium', 'Small'], true);
       expect(partialIcon(wrapper)).toHaveLength(0);
+    });
+
+    it('saves enabled tags in localStorage on selecting a tag on node-list', () => {
+      const wrapper = setup.mount(<NodeList />);
+      changeRows(wrapper, ['Medium'], true);
+      const localStoredValues = JSON.parse(
+        window.localStorage.getItem(localStorageName)
+      );
+      expect(localStoredValues.tag.enabled.medium).toEqual(true);
     });
   });
 

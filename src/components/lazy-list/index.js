@@ -1,5 +1,8 @@
 import { useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
 
+// TODO refactor to fix eslint and remove this line:
+/* eslint-disable react-hooks/rules-of-hooks */
+
 /**
  * A component that renders only the children currently visible on screen.
  * Renders all children if not supported by browser or is disabled via the `lazy` prop.
@@ -13,7 +16,7 @@ import { useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
  * @param {?function} container Optional, default scroll container is `element.offsetParent`
  * @return {object} The rendered children
  **/
-export default ({
+const LazyList = ({
   height,
   total,
   children,
@@ -326,3 +329,5 @@ const useIntersection = (element, options, callback) => {
     callback();
   }, [callback, element, options]);
 };
+
+export default LazyList;

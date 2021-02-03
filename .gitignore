@@ -32,6 +32,7 @@ lib/
 .*.sw*
 *~
 package/.eggs/
+.eslintcache
 
 npm-debug.log*
 yarn-debug.log*
@@ -55,3 +56,6 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+
+# Kedro
+*.log

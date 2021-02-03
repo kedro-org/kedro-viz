@@ -38,6 +38,9 @@ const saveStateToLocalStorage = state => {
     layer: {
       visible: state.layer.visible
     },
+    tag: {
+      enabled: state.tag.enabled
+    },
     textLabels: state.textLabels,
     theme: state.theme,
     visible: state.visible,
