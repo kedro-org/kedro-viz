@@ -5,8 +5,7 @@ import {
   layerConstraint,
   parallelConstraint,
   crossingConstraint,
-  separationConstraint,
-  separationStrictConstraint
+  separationConstraint
 } from './constraints';
 
 /**
@@ -84,19 +83,16 @@ export const layout = ({
     solve(parallelDoubleConstraints, constants, iterations * 0.5);
 
     // Update and solve separation constraints given the updated positions
-    updateSeparationConstraints(separationConstraints, rows);
+    updateSeparationConstraints(separationConstraints, rows, spaceX);
     solve(separationConstraints, constants, iterations * 0.5);
   }
 
-  // Constraints to maintain an exact node spacing
-  const separationStrictConstraints = createSeparationStrictConstraints(
-    rows,
-    spaceX
-  );
+  // Update separation constraints but ensure spacing is exact
+  updateSeparationConstraints(separationConstraints, rows, spaceX, true);
 
   // Find the final node positions given these strict constraints
   solve(
-    [...separationStrictConstraints, ...parallelConstraints],
+    [...separationConstraints, ...parallelConstraints],
     constants,
     1,
     true
@@ -281,9 +277,10 @@ const createSeparationConstraints = rows => {
  * Updates horizontal separation constraints for the given rows.
  * @param {array} separationConstraints The constraints to update
  * @param {array} rows The rows containing nodes
+ * @param {number} spaceX The desired separation in X
  * @returns {array} The constraints
  */
-const updateSeparationConstraints = (separationConstraints, rows) => {
+const updateSeparationConstraints = (separationConstraints, rows, spaceX, snapped=false) => {
   let k = 0;
 
   // For each row
@@ -296,53 +293,32 @@ const updateSeparationConstraints = (separationConstraints, rows) => {
     // Update constraints given updated row order
     for (let j = 0; j < rowNodes.length - 1; j += 1) {
       const constraint = separationConstraints[k];
+
+      // Update the constraint objects in order
       constraint.a = rowNodes[j];
       constraint.b = rowNodes[j + 1];
-      k += 1;
-    }
-  }
-};
-
-/**
- * Creates strict horizontal separation constraints for the given rows of nodes.
- * Requires row nodes to be already pre-sorted in X.
- * @param {array} rows The input rows
- * @param {number} spaceX The desired separation in X
- * @returns {array} The constraints
- */
-const createSeparationStrictConstraints = (rows, spaceX) => {
-  const separationStrictConstraints = [];
-
-  // For each pre-sorted row
-  for (let l = 0; l < rows.length; l += 1) {
-    const rowNodes = rows[l];
-
-    // For each node on the row
-    for (let i = 0; i < rowNodes.length - 1; i += 1) {
-      // Find the current node horizontal separation
-      const separation = (rowNodes[i + 1].x - rowNodes[i].x) * 0.8;
 
       // Find the minimal required horizontal separation
       const minSeparation =
-        rowNodes[i].width * 0.5 + spaceX + rowNodes[i + 1].width * 0.5;
+        spaceX + constraint.a.width * 0.5 + constraint.b.width * 0.5;
 
-      // Snap the horizontal separation to a unit amount
-      const targetSeparation = Math.max(
-        snap(separation, spaceX),
-        minSeparation
-      );
+      if (!snapped) {
+        // Use the minimal separation
+        constraint.separation = minSeparation;
+      } else {
+        // Find the current node horizontal separation
+        const separation = constraint.b.x - constraint.a.x;
 
-      // Constraints to maintain horizontal node separation
-      separationStrictConstraints.push({
-        base: separationStrictConstraint,
-        a: rowNodes[i + 1],
-        b: rowNodes[i],
-        separation: targetSeparation
-      });
+        // Snap the current horizontal separation to a unit amount
+        constraint.separation = Math.max(
+          snap(separation * 0.8, spaceX),
+          minSeparation
+        );
+      }
+
+      k += 1;
     }
   }
-
-  return separationStrictConstraints;
 };
 
 /**
