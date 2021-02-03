@@ -51,7 +51,7 @@ commands:
     steps:
       - run:
           name: Install Node dependencies
-          command: npm ci
+          command: node tools/ci.js
 
   test_lib_transpilation:
     steps:
