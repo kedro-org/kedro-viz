@@ -58,9 +58,13 @@ const solveStrict = (constraints, constants) => {
   const solver = new Solver();
   const variables = {};
 
+  const variableId = (obj, property) => `${obj.id}_${property}`;
+
   const addVariable = (obj, property) => {
-    if (!variables[obj.id]) {
-      const variable = (variables[obj.id] = new Variable());
+    const id = variableId(obj, property);
+
+    if (!variables[id]) {
+      const variable = (variables[id] = new Variable());
       variable.property = property;
       variable.obj = obj;
     }
@@ -73,7 +77,12 @@ const solveStrict = (constraints, constants) => {
 
   for (const co of constraints) {
     solver.addConstraint(
-      co.base.strict(co, constants, variables[co.a.id], variables[co.b.id])
+      co.base.strict(
+        co,
+        constants,
+        variables[variableId(co.a, co.base.property)],
+        variables[variableId(co.b, co.base.property)]
+      )
     );
   }
 
