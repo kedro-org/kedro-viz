@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'd3-transition';
 import { interpolate } from 'd3-interpolate';
-import { select, event } from 'd3-selection';
+import { select } from 'd3-selection';
 import { zoom, zoomIdentity, zoomTransform } from 'd3-zoom';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { updateZoom } from '../../actions';
@@ -144,7 +144,7 @@ export class MiniMap extends Component {
       // Transition using linear interpolation
       .interpolate(interpolate)
       // When zoom changes
-      .on('zoom', () => {
+      .on('zoom', event => {
         // Transform the <g> that wraps the map
         this.el.wrapper.attr('transform', event.transform);
       });
