@@ -34,12 +34,12 @@ import {
   toggleTagFilter
 } from '../actions/tags';
 import {
-  TOGGLE_DISPLAY_CHONKY_GRAPH,
-  TOGGLE_IS_CHONKY,
+  TOGGLE_DISPLAY_LARGE_GRAPH,
+  TOGGLE_IS_LARGE,
   UPDATE_NODESNO,
   UPDATE_EDGESNO,
-  toggleDisplayChonkyGraph,
-  toggleIsChonky,
+  toggleDisplayLargeGraph,
+  toggleIsLarge,
   updateNodesNo,
   updateEdgesNo
 } from '../actions/graph';
@@ -218,20 +218,20 @@ describe('actions', () => {
     expect(changeFlag('testFlag', true)).toEqual(expectedAction);
   });
 
-  it('should create an action to toggle display chonky graph', () => {
+  it('should create an action to toggle display large graph', () => {
     const expectedAction = {
-      type: TOGGLE_DISPLAY_CHONKY_GRAPH,
-      displayChonkyGraph: true
+      type: TOGGLE_DISPLAY_LARGE_GRAPH,
+      displayLargeGraph: true
     };
-    expect(toggleDisplayChonkyGraph(true)).toEqual(expectedAction);
+    expect(toggleDisplayLargeGraph(true)).toEqual(expectedAction);
   });
 
-  it('should create an action to toggle isChonky', () => {
+  it('should create an action to toggle isLarge', () => {
     const expectedAction = {
-      type: TOGGLE_IS_CHONKY,
-      isChonky: true
+      type: TOGGLE_IS_LARGE,
+      isLarge: true
     };
-    expect(toggleIsChonky(true)).toEqual(expectedAction);
+    expect(toggleIsLarge(true)).toEqual(expectedAction);
   });
 
   it('should create an action to update the no. of nodes for the modal display', () => {

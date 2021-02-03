@@ -1,12 +1,12 @@
 import React from 'react';
 import ConnectedModal, {
-  ChonkyModal,
+  LargeModal,
   mapStateToProps,
   mapDispatchToProps
 } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
-describe('chonky modal', () => {
+describe('large modal', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<ConnectedModal />);
     expect(wrapper.find('.renderButton').length).toBe(1);
@@ -15,9 +15,9 @@ describe('chonky modal', () => {
   it('clicking the render anyways button will toggle the graph to display', () => {
     const mockFn = jest.fn();
     const props = {
-      onToggleDisplayChonkyGraph: mockFn
+      onToggleDisplayLargeGraph: mockFn
     };
-    const wrapper = setup.mount(<ChonkyModal {...props} />);
+    const wrapper = setup.mount(<LargeModal {...props} />);
 
     wrapper.find('.renderButton').simulate('click');
     expect(mockFn.mock.calls.length).toBe(1);
@@ -34,7 +34,7 @@ describe('chonky modal', () => {
   it('mapDispatchToProps', () => {
     const dispatch = jest.fn();
     const expectedResult = {
-      onToggleDisplayChonkyGraph: expect.any(Function)
+      onToggleDisplayLargeGraph: expect.any(Function)
     };
     expect(mapDispatchToProps(dispatch)).toEqual(expectedResult);
   });

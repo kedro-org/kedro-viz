@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import Modal from '../modal';
+import Modal from '../largePipelineWarning';
 import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
 import MetaData from '../metadata';
@@ -13,8 +13,8 @@ import './wrapper.css';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ loading, theme, isChonky, displayChonkyGraph }) => {
-  const displayWarning = isChonky && !displayChonkyGraph ? true : false;
+export const Wrapper = ({ loading, theme, isLarge, displayLargeGraph }) => {
+  const displayWarning = isLarge && !displayLargeGraph ? true : false;
 
   return (
     <div
@@ -37,8 +37,8 @@ export const Wrapper = ({ loading, theme, isChonky, displayChonkyGraph }) => {
 export const mapStateToProps = state => ({
   loading: isLoading(state),
   theme: state.theme,
-  isChonky: state.loading.isChonky,
-  displayChonkyGraph: state.loading.displayChonkyGraph
+  isLarge: state.loading.isLarge,
+  displayLargeGraph: state.loading.displayLargeGraph
 });
 
 export default connect(mapStateToProps)(Wrapper);

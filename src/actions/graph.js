@@ -1,6 +1,6 @@
 import { graph as worker, preventWorkerQueues } from '../utils/worker';
 import { toggleGraph } from './index';
-import { chonkyNodeAmount } from '../config';
+import { largeNodeAmount } from '../config';
 
 export const TOGGLE_GRAPH_LOADING = 'TOGGLE_GRAPH_LOADING';
 
@@ -28,29 +28,29 @@ export function updateGraph(graph) {
   };
 }
 
-export const TOGGLE_DISPLAY_CHONKY_GRAPH = 'TOGGLE_DISPLAY_CHONKY_GRAPH';
+export const TOGGLE_DISPLAY_LARGE_GRAPH = 'TOGGLE_DISPLAY_LARGE_GRAPH';
 
 /**
- * resets the disaplyChonkyGraph setting to enable chonky graphs to load
- * @param {boolean} isChonkyGraph
+ * resets the disaplyLargeGraph setting to enable large graphs to load
+ * @param {boolean} isLargeGraph
  */
-export function toggleDisplayChonkyGraph(displayChonkyGraph) {
+export function toggleDisplayLargeGraph(displayLargeGraph) {
   return {
-    type: TOGGLE_DISPLAY_CHONKY_GRAPH,
-    displayChonkyGraph
+    type: TOGGLE_DISPLAY_LARGE_GRAPH,
+    displayLargeGraph
   };
 }
 
-export const TOGGLE_IS_CHONKY = 'TOGGLE_IS_CHONKY';
+export const TOGGLE_IS_LARGE = 'TOGGLE_IS_LARGE';
 
 /**
- * sets the isChonky field so wrapper is aware that the selected combination is chonky
- * @param {boolean} isChonky
+ * sets the isLarge field so wrapper is aware that the selected combination is large
+ * @param {boolean} isLarge
  */
-export function toggleIsChonky(isChonky) {
+export function toggleIsLarge(isLarge) {
   return {
-    type: TOGGLE_IS_CHONKY,
-    isChonky
+    type: TOGGLE_IS_LARGE,
+    isLarge
   };
 }
 
@@ -93,10 +93,10 @@ const chooseLayout = (instance, state) =>
 const layoutWorker = preventWorkerQueues(worker, chooseLayout);
 
 /**
- * Formula to determine if the pipeline is chonky
+ * Formula to determine if the pipeline is large
  */
-const isChonky = (chonkyNodeAmount, nodesNo, edgesNo) => {
-  return nodesNo + 1.5 * edgesNo > chonkyNodeAmount ? true : false;
+const isLarge = (largeNodeAmount, nodesNo, edgesNo) => {
+  return nodesNo + 1.5 * edgesNo > largeNodeAmount ? true : false;
 };
 
 /**
@@ -105,24 +105,24 @@ const isChonky = (chonkyNodeAmount, nodesNo, edgesNo) => {
  * @param {Object} graphState A subset of main state
  * @return {function} A promise that resolves when the calcuation is done
  */
-export function calculateGraph(graphState, customChonkyLimit) {
+export function calculateGraph(graphState, customLargeLimit) {
   if (!graphState) {
     return updateGraph(graphState);
   }
   return async function(dispatch) {
-    const { nodes, edges, displayChonkyGraph } = graphState;
+    const { nodes, edges, displayLargeGraph } = graphState;
 
-    const chonkyLimit = customChonkyLimit || chonkyNodeAmount;
+    const largeLimit = customLargeLimit || largeNodeAmount;
 
     if (
-      isChonky(chonkyLimit, nodes.length, edges.length) === true &&
-      displayChonkyGraph === false
+      isLarge(largeLimit, nodes.length, edges.length) === true &&
+      displayLargeGraph === false
     ) {
-      dispatch(toggleIsChonky(true));
+      dispatch(toggleIsLarge(true));
       dispatch(updateNodesNo(nodes.length));
       dispatch(updateEdgesNo(edges.length));
     } else {
-      dispatch(toggleIsChonky(false));
+      dispatch(toggleIsLarge(false));
       dispatch(toggleLoading(true));
       const graph = await layoutWorker(graphState);
       dispatch(toggleGraph(true));

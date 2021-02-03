@@ -20,12 +20,21 @@ describe('Wrapper', () => {
     expect(container.hasClass(`kui-theme--dark`)).toBe(theme === 'dark');
   });
 
+  it('renders warning modal for large pipeines', () => {
+    const newProps = {
+      isLarge: true,
+      displayLargeGraph: false
+    };
+    const wrapper = setup.shallow(Wrapper, newProps);
+    expect(wrapper.find('.renderButton')).to.have.lengthOf(1);
+  });
+
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.animals)).toEqual({
       loading: false,
       theme,
-      displayChonkyGraph: false,
-      isChonky: false
+      displayLargeGraph: false,
+      isLarge: false
     });
   });
 });

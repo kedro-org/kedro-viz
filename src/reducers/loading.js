@@ -1,7 +1,7 @@
 import {
   TOGGLE_GRAPH_LOADING,
-  TOGGLE_DISPLAY_CHONKY_GRAPH,
-  TOGGLE_IS_CHONKY,
+  TOGGLE_DISPLAY_LARGE_GRAPH,
+  TOGGLE_IS_LARGE,
   UPDATE_NODESNO,
   UPDATE_EDGESNO
 } from '../actions/graph';
@@ -28,15 +28,15 @@ function loadingReducer(loadingState = {}, action) {
       });
     }
 
-    case TOGGLE_IS_CHONKY: {
+    case TOGGLE_IS_LARGE: {
       return Object.assign({}, loadingState, {
-        isChonky: action.isChonky
+        isLarge: action.isLarge
       });
     }
 
-    case TOGGLE_DISPLAY_CHONKY_GRAPH: {
+    case TOGGLE_DISPLAY_LARGE_GRAPH: {
       return Object.assign({}, loadingState, {
-        displayChonkyGraph: action.displayChonkyGraph
+        displayLargeGraph: action.displayLargeGraph
       });
     }
 
