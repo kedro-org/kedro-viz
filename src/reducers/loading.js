@@ -2,8 +2,7 @@ import {
   TOGGLE_GRAPH_LOADING,
   TOGGLE_DISPLAY_LARGE_GRAPH,
   TOGGLE_IS_LARGE,
-  UPDATE_NODESNO,
-  UPDATE_EDGESNO
+  UPDATE_NODE_COUNT
 } from '../actions/graph';
 import { TOGGLE_PIPELINE_LOADING } from '../actions/pipelines';
 import { TOGGLE_NODE_DATA_LOADING } from '../actions/nodes';
@@ -40,15 +39,9 @@ function loadingReducer(loadingState = {}, action) {
       });
     }
 
-    case UPDATE_NODESNO: {
+    case UPDATE_NODE_COUNT: {
       return Object.assign({}, loadingState, {
-        nodesNo: action.nodesNo
-      });
-    }
-
-    case UPDATE_EDGESNO: {
-      return Object.assign({}, loadingState, {
-        edgesNo: action.edgesNo
+        nodeCount: action.nodeCount
       });
     }
 

@@ -82,8 +82,8 @@ const layoutWorker = preventWorkerQueues(worker, chooseLayout);
 /**
  * Formula to determine if the pipeline is large
  */
-const isLarge = (largeNodeAmount, nodesNo, edgesNo) => {
-  return nodesNo + 1.5 * edgesNo > largeNodeAmount ? true : false;
+const isLarge = (largeNodeAmount, nodeCount, edgesNo) => {
+  return nodeCount + 1.5 * edgesNo > largeNodeAmount ? true : false;
 };
 
 /**
