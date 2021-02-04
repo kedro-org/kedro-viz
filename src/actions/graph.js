@@ -67,19 +67,6 @@ export function updateNodeCount(nodeCount) {
   };
 }
 
-export const UPDATE_EDGESNO = 'UPDATE_EDGESNO';
-
-/**
- * updates the edges no. for reference
- * @param {integer} edgesNo
- */
-export function updateEdgesNo(edgesNo) {
-  return {
-    type: UPDATE_EDGESNO,
-    edgesNo
-  };
-}
-
 /**
  * Choose which layout engine to use based on the oldgraph flag
  * @param {Object} instance Worker parent instance
@@ -120,7 +107,6 @@ export function calculateGraph(graphState, customLargeLimit) {
     ) {
       dispatch(toggleIsLarge(true));
       dispatch(updateNodeCount(nodes.length));
-      dispatch(updateEdgesNo(edges.length));
     } else {
       dispatch(toggleIsLarge(false));
       dispatch(toggleLoading(true));

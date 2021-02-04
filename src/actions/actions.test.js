@@ -241,12 +241,4 @@ describe('actions', () => {
     };
     expect(updateNodeCount(10)).toEqual(expectedAction);
   });
-
-  it('should create an action to update the number of edges for the modal display', () => {
-    const expectedAction = {
-      type: UPDATE_EDGESNO,
-      edgesNo: 10
-    };
-    expect(updateEdgesNo(10)).toEqual(expectedAction);
-  });
 });

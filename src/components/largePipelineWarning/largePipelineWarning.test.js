@@ -25,8 +25,7 @@ describe('large modal', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
-      nodesNo: expect.any(Number),
-      edgesNo: expect.any(Number)
+      nodesNo: expect.any(Number)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
