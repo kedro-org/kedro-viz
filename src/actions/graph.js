@@ -54,16 +54,16 @@ export function toggleIsLarge(isLarge) {
   };
 }
 
-export const UPDATE_NODESNO = 'UPDATE_NODESNO';
+export const UPDATE_NODE_COUNT = 'UPDATE_NODE_COUNT';
 
 /**
- * updates the nodes no. for warning reference
- * @param {integer} nodesNo
+ * updates the amount of nodes for large pipeline warning page
+ * @param {integer} nodeCount
  */
-export function updateNodesNo(nodesNo) {
+export function updateNodeCount(nodeCount) {
   return {
-    type: UPDATE_NODESNO,
-    nodesNo
+    type: UPDATE_NODE_COUNT,
+    nodeCount
   };
 }
 
@@ -119,7 +119,7 @@ export function calculateGraph(graphState, customLargeLimit) {
       displayLargeGraph === false
     ) {
       dispatch(toggleIsLarge(true));
-      dispatch(updateNodesNo(nodes.length));
+      dispatch(updateNodeCount(nodes.length));
       dispatch(updateEdgesNo(edges.length));
     } else {
       dispatch(toggleIsLarge(false));

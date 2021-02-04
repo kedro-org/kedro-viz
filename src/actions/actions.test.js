@@ -36,11 +36,11 @@ import {
 import {
   TOGGLE_DISPLAY_LARGE_GRAPH,
   TOGGLE_IS_LARGE,
-  UPDATE_NODESNO,
+  UPDATE_NODE_COUNT,
   UPDATE_EDGESNO,
   toggleDisplayLargeGraph,
   toggleIsLarge,
-  updateNodesNo,
+  updateNodeCount,
   updateEdgesNo
 } from '../actions/graph';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
@@ -234,15 +234,15 @@ describe('actions', () => {
     expect(toggleIsLarge(true)).toEqual(expectedAction);
   });
 
-  it('should create an action to update the no. of nodes for the modal display', () => {
+  it('should create an action to update the number of nodes for the modal display', () => {
     const expectedAction = {
-      type: UPDATE_NODESNO,
-      nodesNo: 10
+      type: UPDATE_NODE_COUNT,
+      nodeCount: 10
     };
-    expect(updateNodesNo(10)).toEqual(expectedAction);
+    expect(updateNodeCount(10)).toEqual(expectedAction);
   });
 
-  it('should create an action to update the no. of edges for the modal display', () => {
+  it('should create an action to update the number of edges for the modal display', () => {
     const expectedAction = {
       type: UPDATE_EDGESNO,
       edgesNo: 10
