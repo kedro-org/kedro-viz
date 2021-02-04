@@ -80,10 +80,12 @@ const chooseLayout = (instance, state) =>
 const layoutWorker = preventWorkerQueues(worker, chooseLayout);
 
 /**
- * Formula to determine if the pipeline is large
+ * Formula to determine if the pipeline is large, which is simply the sum of
+ * both the amount of nodes and edges within the graph. Edges are given a
+ * strongger weight of 1.5 with it being more computational heavy to render.
  */
-const isLarge = (largeNodeAmount, nodeCount, edgesNo) => {
-  return nodeCount + 1.5 * edgesNo > largeNodeAmount ? true : false;
+const isLarge = (largeNodeAmount, nodeCount, edgeCount) => {
+  return nodeCount + 1.5 * edgeCount > largeNodeAmount ? true : false;
 };
 
 /**
