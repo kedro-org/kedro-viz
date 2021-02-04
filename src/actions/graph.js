@@ -1,6 +1,6 @@
 import { graph as worker, preventWorkerQueues } from '../utils/worker';
 import { toggleGraph } from './index';
-import { largeNodeAmount } from '../config';
+import { largeNodeCountThreshold } from '../config';
 
 export const TOGGLE_GRAPH_LOADING = 'TOGGLE_GRAPH_LOADING';
 
@@ -84,8 +84,8 @@ const layoutWorker = preventWorkerQueues(worker, chooseLayout);
  * both the amount of nodes and edges within the graph. Edges are given a
  * strongger weight of 1.5 with it being more computational heavy to render.
  */
-const isLarge = (largeNodeAmount, nodeCount, edgeCount) => {
-  return nodeCount + 1.5 * edgeCount > largeNodeAmount ? true : false;
+const isLarge = (largeNodeCountThreshold, nodeCount, edgeCount) => {
+  return nodeCount + 1.5 * edgeCount > largeNodeCountThreshold ? true : false;
 };
 
 /**
@@ -101,7 +101,7 @@ export function calculateGraph(graphState, customLargeLimit) {
   return async function(dispatch) {
     const { nodes, edges, displayLargeGraph } = graphState;
 
-    const largeLimit = customLargeLimit || largeNodeAmount;
+    const largeLimit = customLargeLimit || largeNodeCountThreshold;
 
     if (
       isLarge(largeLimit, nodes.length, edges.length) === true &&

@@ -17,7 +17,7 @@ export const sidebarWidth = {
 export const chartMinWidthScale = 0.25;
 
 // this value is used to determine the amount of nodes in pipeline to trigger large warning
-export const largeNodeAmount = 1000;
+export const largeNodeCountThreshold = 1000;
 
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
