@@ -1,12 +1,5 @@
 @import '../../styles/variables';
 
-.layout {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  background-color: $color-bg-dark-1;
-}
-
 .warning {
   position: absolute;
   top: 30%;
@@ -16,21 +9,21 @@
   text-align: center;
   opacity: 0.85;
 
-  .title {
+  &__title {
     padding: 16px 0px;
     font-size: 38px;
     line-height: 1.18;
     letter-spacing: 0.27px;
   }
 
-  .subtitle {
+  &__subtitle {
     width: 350px;
     font-size: 1.48em;
     line-height: 1.5;
     opacity: 0.6;
   }
 
-  .renderButton {
+  &__btn {
     width: 200px;
     margin: 40px 0;
     padding: 7px 24px 9px;
