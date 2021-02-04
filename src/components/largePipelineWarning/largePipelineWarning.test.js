@@ -1,6 +1,6 @@
 import React from 'react';
 import ConnectedModal, {
-  LargeModal,
+  LargePipelineWarning,
   mapStateToProps,
   mapDispatchToProps
 } from './index';
@@ -17,7 +17,7 @@ describe('large modal', () => {
     const props = {
       onToggleDisplayLargeGraph: mockFn
     };
-    const wrapper = setup.mount(<LargeModal {...props} />);
+    const wrapper = setup.mount(<LargePipelineWarning {...props} />);
 
     wrapper.find('.renderButton').simulate('click');
     expect(mockFn.mock.calls.length).toBe(1);

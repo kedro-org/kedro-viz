@@ -1,5 +1,6 @@
 import { Wrapper, mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
+import { FlowChart } from '../flowchart';
 
 const { theme } = mockState.animals;
 const mockProps = {
@@ -18,15 +19,6 @@ describe('Wrapper', () => {
     const container = wrapper.find('.kedro-pipeline');
     expect(container.hasClass(`kui-theme--light`)).toBe(theme === 'light');
     expect(container.hasClass(`kui-theme--dark`)).toBe(theme === 'dark');
-  });
-
-  it('renders warning modal for large pipeines', () => {
-    const newProps = {
-      isLarge: true,
-      displayLargeGraph: false
-    };
-    const wrapper = setup.shallow(Wrapper, newProps);
-    expect(wrapper.find('.renderButton')).to.have.lengthOf(1);
   });
 
   it('maps state to props', () => {
