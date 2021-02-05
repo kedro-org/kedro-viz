@@ -23,6 +23,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 > For in-depth development and usage notes, see the [Contribution Guidelines](https://github.com/quantumblacklabs/kedro-viz/blob/main/CONTRIBUTING.md).
 
+> It's likely that Kedro-viz 3.8.0 and later versions will not work with projects created with older versions of Kedro (0.16.0). Please migrate your project to Kedro 0.17.0 before installation of the latest version of Kedro-viz.
+
 ### As a Kedro Python plugin
 
 Kedro-Viz is available as a Python plugin named `kedro-viz`.
