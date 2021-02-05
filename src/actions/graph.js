@@ -84,8 +84,8 @@ const layoutWorker = preventWorkerQueues(worker, chooseLayout);
  * both the amount of nodes and edges within the graph. Edges are given a
  * strongger weight of 1.5 with it being more computational heavy to render.
  */
-const isLarge = (largeNodeCountThreshold, nodeCount, edgeCount) => {
-  return nodeCount + 1.5 * edgeCount > largeNodeCountThreshold ? true : false;
+const isLarge = (largeGraphThreshold, nodeCount, edgeCount) => {
+  return nodeCount + 1.5 * edgeCount > largeGraphThreshold ? true : false;
 };
 
 /**
