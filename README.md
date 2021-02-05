@@ -6,6 +6,8 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-3da639.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python Version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg)](https://pypi.org/project/kedro-viz/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4355948.svg)](https://doi.org/10.5281/zenodo.4355948)
+
 
 Kedro-Viz shows you how your [Kedro](https://github.com/quantumblacklabs/kedro) data pipelines are structured.
 
@@ -122,5 +124,9 @@ Kedro-Viz will log a message in your browser's [developer console](https://devel
 ## What licence do you use?
 
 Kedro-Viz is licensed under the [Apache 2.0](https://github.com/quantumblacklabs/kedro-viz/blob/main/LICENSE.md) License.
+
+## How can I cite Kedro-Viz?
+
+If you're an academic, Kedro-Viz can also help you, for example, as a tool to visualise how your publication's pipeline is structured. Find our citation reference on [Zenodo](https://doi.org/10.5281/zenodo.4277218).
 
 <p align="center">↑↑↓↓←→←→BA</p>
