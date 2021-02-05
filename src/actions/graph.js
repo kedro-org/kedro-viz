@@ -1,6 +1,6 @@
 import { graph as worker, preventWorkerQueues } from '../utils/worker';
 import { toggleGraph } from './index';
-import { largeNodeCountThreshold } from '../config';
+import { largeGraphThreshold } from '../config';
 
 export const TOGGLE_GRAPH_LOADING = 'TOGGLE_GRAPH_LOADING';
 
@@ -94,17 +94,18 @@ const isLarge = (largeNodeCountThreshold, nodeCount, edgeCount) => {
  * @param {Object} graphState A subset of main state
  * @return {function} A promise that resolves when the calcuation is done
  */
-export function calculateGraph(graphState, customLargeLimit) {
+export function calculateGraph(
+  graphState,
+  displayThreshold = largeGraphThreshold
+) {
   if (!graphState) {
     return updateGraph(graphState);
   }
   return async function(dispatch) {
     const { nodes, edges, displayLargeGraph } = graphState;
 
-    const largeLimit = customLargeLimit || largeNodeCountThreshold;
-
     if (
-      isLarge(largeLimit, nodes.length, edges.length) === true &&
+      isLarge(displayThreshold, nodes.length, edges.length) === true &&
       displayLargeGraph === false
     ) {
       dispatch(toggleIsLarge(true));
