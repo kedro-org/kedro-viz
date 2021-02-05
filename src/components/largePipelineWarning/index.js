@@ -8,15 +8,15 @@ export const LargePipelineWarning = ({
   onToggleDisplayLargeGraph
 }) => {
   return (
-    <div className="warning">
-      <div className="warning__title">Your pipeline is large.</div>
-      <div className="warning__subtitle">
+    <div className="pipeline-warning">
+      <div className="pipeline-warning__title">Your pipeline is large.</div>
+      <div className="pipeline-warning__subtitle">
         Your pipeline might take a while to render because it has{' '}
         <b>{nodeCount}</b> nodes. Use the sidebar controls to select a smaller
         graph, or click to render.
       </div>
       <button
-        className="warning__btn"
+        className="pipeline-warning__btn"
         onClick={() => onToggleDisplayLargeGraph(true)}>
         Render it anyway
       </button>
