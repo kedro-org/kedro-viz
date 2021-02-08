@@ -31,7 +31,7 @@ export function updateGraph(graph) {
 export const TOGGLE_DISPLAY_LARGE_GRAPH = 'TOGGLE_DISPLAY_LARGE_GRAPH';
 
 /**
- * resets the disaplyLargeGraph setting to enable large graphs to load
+ * Resets the disaplyLargeGraph setting to enable large graphs to load
  * @param {boolean} isLargeGraph
  */
 export function toggleDisplayLargeGraph(displayLargeGraph) {
@@ -44,7 +44,7 @@ export function toggleDisplayLargeGraph(displayLargeGraph) {
 export const TOGGLE_IS_LARGE = 'TOGGLE_IS_LARGE';
 
 /**
- * sets the isLarge field so wrapper is aware that the selected combination is large
+ * Sets the isLarge field so wrapper is aware that the selected combination is large
  * @param {boolean} isLarge
  */
 export function toggleIsLarge(isLarge) {
@@ -57,7 +57,7 @@ export function toggleIsLarge(isLarge) {
 export const UPDATE_NODE_COUNT = 'UPDATE_NODE_COUNT';
 
 /**
- * updates the amount of nodes for large pipeline warning page
+ * Updates the amount of nodes for large pipeline warning page
  * @param {integer} nodeCount
  */
 export function updateNodeCount(nodeCount) {
