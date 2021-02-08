@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toggleDisplayLargeGraph } from '../../actions/graph';
-import './largePipelineWarning.css';
+import './large-pipeline-warning.css';
 
 export const LargePipelineWarning = ({
   nodeCount,

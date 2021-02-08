@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import Modal from '../largePipelineWarning';
+import Modal from '../large-pipeline-warning';
 import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
 import MetaData from '../metadata';
