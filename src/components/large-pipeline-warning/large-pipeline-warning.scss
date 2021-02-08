@@ -4,10 +4,17 @@
   position: absolute;
   top: 30%;
   left: 50%;
-  color: white;
   font-family: 'Titillium Web', 'sans-serif';
   text-align: center;
   opacity: 0.85;
+
+  &.kui-theme--light {
+    color: $color-text-light;
+  }
+
+  &.kui-theme--dark {
+    color: $color-text-dark;
+  }
 
   &__title {
     padding: 16px 0px;
@@ -27,10 +34,21 @@
     width: 200px;
     margin: 40px 0;
     padding: 7px 24px 9px;
+
+    &.kui-theme--light {
+      color: $color-text-light;
+      background-color: $color-bg-light-1;
+      border: 2px solid $color-text-light;
+    }
+
+    &.kui-theme--dark {
+      color: $color-text-dark;
+      background-color: $color-bg-dark-1;
+      border: 2px solid $color-text-dark;
+    }
+
     color: white;
     font-size: 16px;
     line-height: 1.25;
-    background-color: $color-bg-dark-1;
-    border: 2px solid white;
   }
 }
