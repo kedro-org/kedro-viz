@@ -80,9 +80,11 @@ const chooseLayout = (instance, state) =>
 const layoutWorker = preventWorkerQueues(worker, chooseLayout);
 
 /**
- * Formula to determine if the pipeline is large, which is simply the sum of
- * both the amount of nodes and edges within the graph. Edges are given a
- * strongger weight of 1.5 with it being more computational heavy to render.
+ * Formula to estimate the point at which the graph will take unreasonably
+ * long to render in terms of input nodes and edges.
+ *  @param {Object} largeGraphThreshold The defined threshold for a large graph
+ *  @param {integer} nodeCount The amount of nodes to be displayed in the flowchart
+ *  @param {integer} edgeCount The amount of edges to be displayed in the flowchart
  */
 const isLarge = (largeGraphThreshold, nodeCount, edgeCount) => {
   return nodeCount + 1.5 * edgeCount > largeGraphThreshold ? true : false;
