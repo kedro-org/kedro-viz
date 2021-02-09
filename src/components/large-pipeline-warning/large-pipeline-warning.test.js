@@ -9,7 +9,7 @@ import { mockState, setup } from '../../utils/state.mock';
 describe('large modal', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<ConnectedModal />);
-    expect(wrapper.find('.pipeline-warning__btn').length).toBe(1);
+    expect(wrapper.find('.pipeline-warning__title').length).toBe(1);
   });
 
   it('clicking the render anyways button will toggle the graph to display', () => {
@@ -24,7 +24,7 @@ describe('large modal', () => {
     };
     const wrapper = setup.mount(<LargePipelineWarning {...props} />);
 
-    wrapper.find('.pipeline-warning__btn').simulate('click');
+    wrapper.find('.kui-button__btn').simulate('click');
     expect(mockFn.mock.calls.length).toBe(1);
   });
 

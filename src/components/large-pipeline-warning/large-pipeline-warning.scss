@@ -4,51 +4,20 @@
   position: absolute;
   top: 30%;
   left: 50%;
-  font-family: 'Titillium Web', 'sans-serif';
   text-align: center;
-  opacity: 0.85;
-
-  &.kui-theme--light {
-    color: $color-text-light;
-  }
-
-  &.kui-theme--dark {
-    color: $color-text-dark;
-  }
 
   &__title {
-    padding: 16px 0px;
-    font-size: 38px;
+    font-weight: normal;
+    font-size: 3.8em;
     line-height: 1.18;
     letter-spacing: 0.27px;
   }
 
   &__subtitle {
-    width: 350px;
+    max-width: 350px;
+    padding-bottom: 3em;
+    font-weight: normal;
     font-size: 1.48em;
     line-height: 1.5;
-    opacity: 0.6;
-  }
-
-  &__btn {
-    width: 200px;
-    margin: 40px 0;
-    padding: 7px 24px 9px;
-
-    &.kui-theme--light {
-      color: $color-text-light;
-      background-color: $color-bg-light-1;
-      border: 2px solid $color-text-light;
-    }
-
-    &.kui-theme--dark {
-      color: $color-text-dark;
-      background-color: $color-bg-dark-1;
-      border: 2px solid $color-text-dark;
-    }
-
-    color: white;
-    font-size: 16px;
-    line-height: 1.25;
   }
 }
