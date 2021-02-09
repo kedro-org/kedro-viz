@@ -215,6 +215,7 @@ export class FlowChart extends Component {
 
   /**
    * On every frame of every view transform change (from reset, pan, zoom etc.)
+   * @param {Object} transform The current view transfrom 
    */
   onViewChange(transform) {
     const { k: scale, x, y } = transform;

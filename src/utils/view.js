@@ -192,12 +192,12 @@ export const setViewTransform = (
   }
 
   if (relative) {
-    // Relative: v = v. + t
+    // Relative: v' = v + t
     k = current.k + (transform.k || 0);
     x = current.x + (transform.x || 0);
     y = current.y + (transform.y || 0);
   } else {
-    // Absolute: v = t
+    // Absolute: v' = t
     k = transform.k || current.k;
     x = transform.x || current.x;
     y = transform.y || current.y;

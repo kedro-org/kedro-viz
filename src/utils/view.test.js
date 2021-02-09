@@ -319,7 +319,7 @@ describe('view', () => {
 
   describe('viewTransformToFit', () => {
     it('returns expected transform when example must be scaled down to fit', () => {
-      // Example where object is too large, so scale down
+      // Example where object dimensions larger than view dimensions
       const minScaleFocus = 0.8;
       const transform = viewTransformToFit({
         offset: { x: 10, y: 10 },
@@ -333,6 +333,7 @@ describe('view', () => {
         focusOffset: 0.8
       });
 
+      // Resulting transform should clamp to minimum scale and center
       expect(transform).toEqual({
         k: minScaleFocus,
         x: -50,
@@ -341,7 +342,7 @@ describe('view', () => {
     });
 
     it('returns expected transform when example must be scaled up to fit', () => {
-      // Example where object is too small, so scale up
+      // Example where object dimensions smaller than view dimensions
       const transform = viewTransformToFit({
         offset: { x: 10, y: 10 },
         focus: { x: 25, y: 25 },
@@ -354,6 +355,7 @@ describe('view', () => {
         focusOffset: 0.8
       });
 
+      // Resulting transform should scale up and center
       expect(transform).toEqual({
         k: 2,
         x: -60,
@@ -362,7 +364,8 @@ describe('view', () => {
     });
 
     it('returns expected transform when focus point is outside view so must offset to ensure visibility', () => {
-      // Example where focus point will get cropped, so must offset
+      // Example where object dimensions larger than view dimensions
+      // and focus point is set such that it will fall outside the view
       const minScaleFocus = 0.8;
       const transform = viewTransformToFit({
         offset: { x: 10, y: 10 },
@@ -376,6 +379,7 @@ describe('view', () => {
         focusOffset: 0.8
       });
 
+      // Resulting transform should clamp to minimum focus scale and center on focus point
       expect(transform).toEqual({
         k: minScaleFocus,
         x: 290,
@@ -384,7 +388,7 @@ describe('view', () => {
     });
 
     it('returns expected transform when example is scaled to the minimum x scale', () => {
-      // Example where object is too wide, so scale down but clamp to minimum
+      // Example where object wider than view width
       const minScaleX = 0.4;
       const transform = viewTransformToFit({
         offset: { x: 10, y: 10 },
@@ -397,6 +401,7 @@ describe('view', () => {
         focusOffset: 0.8
       });
 
+      // Resulting transform should clamp to minimum X scale and center
       expect(transform).toEqual({
         k: minScaleX,
         x: 90,
