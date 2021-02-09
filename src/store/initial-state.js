@@ -18,8 +18,7 @@ export const createInitialState = () => ({
     pipeline: false,
     node: false,
     displayLargeGraph: false,
-    isLarge: false,
-    nodeCount: 0
+    isLarge: false
   },
   visible: {
     graph: true,

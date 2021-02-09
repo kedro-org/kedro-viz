@@ -54,19 +54,6 @@ export function toggleIsLarge(isLarge) {
   };
 }
 
-export const UPDATE_NODE_COUNT = 'UPDATE_NODE_COUNT';
-
-/**
- * Updates the amount of nodes for large pipeline warning page
- * @param {integer} nodeCount
- */
-export function updateNodeCount(nodeCount) {
-  return {
-    type: UPDATE_NODE_COUNT,
-    nodeCount
-  };
-}
-
 /**
  * Choose which layout engine to use based on the oldgraph flag
  * @param {Object} instance Worker parent instance
@@ -111,7 +98,6 @@ export function calculateGraph(
       displayLargeGraph === false
     ) {
       dispatch(toggleIsLarge(true));
-      dispatch(updateNodeCount(nodes.length));
     } else {
       dispatch(toggleIsLarge(false));
       dispatch(toggleLoading(true));

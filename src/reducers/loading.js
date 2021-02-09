@@ -39,12 +39,6 @@ function loadingReducer(loadingState = {}, action) {
       });
     }
 
-    case UPDATE_NODE_COUNT: {
-      return Object.assign({}, loadingState, {
-        nodeCount: action.nodeCount
-      });
-    }
-
     default:
       return loadingState;
   }

@@ -233,12 +233,4 @@ describe('actions', () => {
     };
     expect(toggleIsLarge(true)).toEqual(expectedAction);
   });
-
-  it('should create an action to update the number of nodes for the modal display', () => {
-    const expectedAction = {
-      type: UPDATE_NODE_COUNT,
-      nodeCount: 10
-    };
-    expect(updateNodeCount(10)).toEqual(expectedAction);
-  });
 });

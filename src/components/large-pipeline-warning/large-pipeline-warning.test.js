@@ -15,7 +15,12 @@ describe('large modal', () => {
   it('clicking the render anyways button will toggle the graph to display', () => {
     const mockFn = jest.fn();
     const props = {
-      onToggleDisplayLargeGraph: mockFn
+      onToggleDisplayLargeGraph: mockFn,
+      nodes: {
+        data: [],
+        parameters: [],
+        task: []
+      }
     };
     const wrapper = setup.mount(<LargePipelineWarning {...props} />);
 
@@ -25,8 +30,8 @@ describe('large modal', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
-      nodeCount: expect.any(Number),
-      theme: expect.any(String)
+      theme: expect.any(String),
+      nodes: expect.any(Object)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
