@@ -93,11 +93,14 @@ export function calculateGraph(
   return async function(dispatch) {
     const { nodes, edges, displayLargeGraph } = graphState;
 
-    if (
+    const largePipeline =
       isLarge(displayThreshold, nodes.length, edges.length) === true &&
       displayLargeGraph === false
-    ) {
-      dispatch(toggleIsLarge(true));
+        ? true
+        : false;
+
+    if (largePipeline) {
+      return dispatch(toggleIsLarge(true));
     } else {
       dispatch(toggleIsLarge(false));
       dispatch(toggleLoading(true));
