@@ -71,7 +71,9 @@ export const drawLayerNames = function() {
   const enterLayerNames = this.el.layerNames
     .enter()
     .append('li')
-    .attr('class', 'pipeline-layer-name')
+    .attr('class', 'pipeline-layer-name');
+
+  enterLayerNames
     .style('opacity', 0)
     .transition('enter-layer-names')
     .duration(this.DURATION)

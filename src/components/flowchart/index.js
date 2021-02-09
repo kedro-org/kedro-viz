@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { select, event } from 'd3-selection';
+import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
@@ -68,7 +68,7 @@ export class FlowChart extends Component {
     this.update();
 
     if (this.props.tooltip) {
-      this.showTooltip(null, this.props.tooltip);
+      this.showTooltip(null, null, this.props.tooltip);
     } else {
       this.hideTooltip();
     }
@@ -360,9 +360,10 @@ export class FlowChart extends Component {
 
   /**
    * Enable a node's focus state and highlight linked nodes
+   * @param {Object} event Event object
    * @param {Object} node Datum for a single node
    */
-  handleNodeClick = node => {
+  handleNodeClick = (event, node) => {
     this.props.onLoadNodeData(node.id);
     event.stopPropagation();
   };
@@ -376,11 +377,12 @@ export class FlowChart extends Component {
 
   /**
    * Enable a node's active state, show tooltip, and highlight linked nodes
+   * @param {Object} event Event object
    * @param {Object} node Datum for a single node
    */
-  handleNodeMouseOver = node => {
+  handleNodeMouseOver = (event, node) => {
     this.props.onToggleNodeHovered(node.id);
-    this.showTooltip(node);
+    this.showTooltip(event, node);
   };
 
   /**
@@ -394,26 +396,28 @@ export class FlowChart extends Component {
 
   /**
    * Handle keydown event when a node is focused
+   * @param {Object} event Event object
    * @param {Object} node Datum for a single node
    */
-  handleNodeKeyDown = node => {
+  handleNodeKeyDown = (event, node) => {
     const ENTER = 13;
     const ESCAPE = 27;
     if (event.keyCode === ENTER) {
-      this.handleNodeClick(node);
+      this.handleNodeClick(event, node);
     }
     if (event.keyCode === ESCAPE) {
       this.handleChartClick();
-      this.handleNodeMouseOut(node);
+      this.handleNodeMouseOut();
     }
   };
 
   /**
    * Show, fill and and position the tooltip
+   * @param {Object} event Event object
    * @param {Object} node A node datum
    * @param {?Object} options Options for the tooltip if required
    */
-  showTooltip(node, options = {}) {
+  showTooltip(event, node, options = {}) {
     this.setState({
       tooltip: {
         targetRect: event && event.target.getBoundingClientRect(),

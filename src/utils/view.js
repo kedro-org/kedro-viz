@@ -1,5 +1,5 @@
 import 'd3-transition';
-import { event, select } from 'd3-selection';
+import { select } from 'd3-selection';
 import { interpolate } from 'd3-interpolate';
 import { zoom as d3Zoom, zoomIdentity, zoomTransform } from 'd3-zoom';
 
@@ -22,7 +22,7 @@ export const viewing = ({
   allowUserInput = true
 }) => {
   const zoom = d3Zoom()
-    .on('zoom', () => {
+    .on('zoom', event => {
       const transform = event.transform;
 
       // Ignore invalid transforms
