@@ -1,6 +1,7 @@
 import React from 'react';
 import MiniMap, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
+import { getViewTransform, origin } from '../../utils/view';
 
 const getNodeIDs = state => state.node.ids;
 
@@ -16,6 +17,26 @@ describe('MiniMap', () => {
     const nodes = wrapper.render().find('.pipeline-minimap-node');
     const mockNodes = getNodeIDs(mockState.animals);
     expect(nodes.length).toEqual(mockNodes.length);
+  });
+
+  it('a transform to fit the graph in container was applied', () => {
+    const wrapper = setup.mount(<MiniMap />);
+    const instance = wrapper.find('MiniMap').instance();
+    const viewTransform = getViewTransform(instance.view);
+
+    // Sanity checks only due to limited test enviornment
+    // View logic is directly covered in view utility tests
+
+    // Should not be the default transform
+    expect(viewTransform).not.toEqual(origin);
+
+    // Should have offset
+    expect(viewTransform.x).toBeLessThan(0);
+    expect(viewTransform.y).toBeLessThan(0);
+
+    // Should have scaled
+    expect(viewTransform.k).toBeLessThan(1);
+    expect(viewTransform.k).toBeGreaterThan(0);
   });
 
   it('does not update nodes when not visible', () => {

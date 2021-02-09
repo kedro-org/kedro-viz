@@ -146,13 +146,19 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Configure globals for the container dimensions,
-   * and apply them to the chart SVG
+   * Update the chart size in state from chart container bounds. 
+   * This is emulated in tests with a constant fixed size.
    */
   updateChartSize() {
-    this.props.onUpdateChartSize(
-      this.containerRef.current.getBoundingClientRect()
-    );
+    if (typeof jest !== 'undefined') {
+      // Emulate chart size for tests
+      this.props.onUpdateChartSize(chartSizeTestFallback);
+    } else {
+      // Use container bounds
+      this.props.onUpdateChartSize(
+        this.containerRef.current.getBoundingClientRect()
+      );
+    }
   }
 
   /**
@@ -501,6 +507,16 @@ export class FlowChart extends Component {
     );
   }
 }
+
+// Fixed chart size used in tests
+export const chartSizeTestFallback = {
+  left: 0,
+  top: 0,
+  right: 1280,
+  bottom: 1024,
+  width: 1280,
+  height: 1024
+};
 
 // Maintain a single reference to support change detection
 const emptyEdges = [];

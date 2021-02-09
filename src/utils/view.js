@@ -237,21 +237,20 @@ export const setViewTransform = (
 export const setViewTransformExact = (view, transform, duration = 0) => {
   const container = select(view.container.current);
 
+  // Convert transform
+  const final = origin.translate(-transform.x, -transform.y).scale(transform.k);
+
   if (typeof jest !== 'undefined') {
-    // Transitions not supported in tests
-    duration = 0;
+    // Simulate application in tests
+    view.container.current.__zoom = final;
+    return;
   }
 
   // Apply the transform ignoring extents
   (!duration
     ? container
     : container.transition('zoom').duration(duration)
-  ).call(
-    view.zoom.transform,
-    negateTransform(
-      origin.translate(transform.x, transform.y).scale(transform.k)
-    )
-  );
+  ).call(view.zoom.transform, final);
 };
 
 /**
@@ -331,5 +330,6 @@ export const viewTransformToFit = ({
     y -= focusRelativeOffsetY * viewHeight * focusOffset;
   }
 
-  return { x: -x, y: -y, k: scale };
+  // This ensures +0 instead of -0
+  return { x: -x || 0, y: -y || 0, k: scale };
 };

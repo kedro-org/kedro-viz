@@ -278,11 +278,6 @@ export class MiniMap extends Component {
     // Detect first transform
     const isFirstTransform = isOrigin(getViewTransform(this.view));
 
-    // Avoid test issues due to limited SVG support
-    if (typeof jest !== 'undefined') {
-      return;
-    }
-
     // Apply transform ignoring extents
     setViewTransformExact(
       this.view,
