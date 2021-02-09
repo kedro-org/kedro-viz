@@ -1,8 +1,7 @@
 import {
   TOGGLE_GRAPH_LOADING,
   TOGGLE_DISPLAY_LARGE_GRAPH,
-  TOGGLE_IS_LARGE,
-  UPDATE_NODE_COUNT
+  TOGGLE_IS_LARGE
 } from '../actions/graph';
 import { TOGGLE_PIPELINE_LOADING } from '../actions/pipelines';
 import { TOGGLE_NODE_DATA_LOADING } from '../actions/nodes';
