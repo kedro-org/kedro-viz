@@ -69,12 +69,12 @@ const layoutWorker = preventWorkerQueues(worker, chooseLayout);
 /**
  * Formula to estimate the point at which the graph will take unreasonably
  * long to render in terms of input nodes and edges.
- *  @param {Object} largeGraphThreshold The defined threshold for a large graph
+ *  @param {Object} displayThreshold The defined threshold for a large graph
  *  @param {integer} nodeCount The amount of nodes to be displayed in the flowchart
  *  @param {integer} edgeCount The amount of edges to be displayed in the flowchart
  */
-const isLarge = (largeGraphThreshold, nodeCount, edgeCount) => {
-  return nodeCount + 1.5 * edgeCount > largeGraphThreshold ? true : false;
+const isLarge = (displayThreshold, nodeCount, edgeCount) => {
+  return nodeCount + 1.5 * edgeCount > displayThreshold;
 };
 
 /**
@@ -94,10 +94,8 @@ export function calculateGraph(
     const { nodes, edges, displayLargeGraph } = graphState;
 
     const largePipeline =
-      isLarge(displayThreshold, nodes.length, edges.length) === true &&
-      displayLargeGraph === false
-        ? true
-        : false;
+      isLarge(displayThreshold, nodes.length, edges.length) &&
+      !displayLargeGraph;
 
     if (largePipeline) {
       return dispatch(toggleIsLarge(true));
