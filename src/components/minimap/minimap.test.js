@@ -24,7 +24,7 @@ describe('MiniMap', () => {
     const instance = wrapper.find('MiniMap').instance();
     const viewTransform = getViewTransform(instance.view);
 
-    // Sanity checks only due to limited test enviornment
+    // Sanity checks only due to limited test environment
     // View logic is directly covered in view utility tests
 
     // Should not be the default transform
