@@ -4,6 +4,7 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
+import { getViewTransform, origin } from '../../utils/view';
 
 const getNodeIDs = state => state.node.ids;
 const getNodeName = state => state.node.name;
@@ -24,6 +25,26 @@ describe('FlowChart', () => {
     const mockNodeNames = mockNodes.map(d => getNodeName(mockState.animals)[d]);
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
+  });
+
+  it('a transform to fit the graph in container was applied', () => {
+    const wrapper = setup.mount(<FlowChart />);
+    const instance = wrapper.find('FlowChart').instance();
+    const viewTransform = getViewTransform(instance.view);
+
+    // Sanity checks only due to limited test environment
+    // View logic is directly covered in view utility tests
+
+    // Should not be the default transform
+    expect(viewTransform).not.toEqual(origin);
+
+    // Should have offset
+    expect(viewTransform.x).toBeLessThan(0);
+    expect(viewTransform.y).toBe(0);
+
+    // Should have scale
+    expect(viewTransform.k).toBeLessThan(1);
+    expect(viewTransform.k).toBeGreaterThan(0);
   });
 
   it('resizes the chart if the window resizes', () => {
