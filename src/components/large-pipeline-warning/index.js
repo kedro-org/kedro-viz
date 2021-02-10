@@ -9,10 +9,14 @@ import './large-pipeline-warning.css';
 export const LargePipelineWarning = ({
   theme,
   nodes,
-  onToggleDisplayLargeGraph
+  onToggleDisplayLargeGraph,
+  visible
 }) => {
   return (
-    <div className={classnames('kedro', 'pipeline-warning')}>
+    <div
+      className={classnames('kedro', 'pipeline-warning', {
+        'pipeline-warning--sidebar-visible': visible.sidebar
+      })}>
       <h2 className="pipeline-warning__title">Your pipeline is large.</h2>
       <p className="pipeline-warning__subtitle">
         Your pipeline might take a while to render because it has{' '}
@@ -29,6 +33,7 @@ export const LargePipelineWarning = ({
 
 export const mapStateToProps = state => ({
   theme: state.theme,
+  visible: state.visible,
   nodes: getGroupedNodes(state)
 });
 
