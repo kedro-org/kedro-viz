@@ -25,14 +25,12 @@ describe('Selectors', () => {
   });
 
   describe('getSidebarWidth', () => {
-    const { open, closed } = sidebarWidth;
-
-    it(`if sidebar is visible sets sidebar width to ${open}`, () => {
-      expect(getSidebarWidth(true, sidebarWidth)).toEqual(open);
+    it(`if visible is true returns the 'open' width`, () => {
+      expect(getSidebarWidth(true, sidebarWidth)).toEqual(sidebarWidth.open);
     });
 
-    it(`if sidebar is hidden sets sidebar width to ${closed}`, () => {
-      expect(getSidebarWidth(false, sidebarWidth)).toEqual(closed);
+    it(`if visble is false returns the 'closed' width`, () => {
+      expect(getSidebarWidth(false, sidebarWidth)).toEqual(sidebarWidth.closed);
     });
   });
 
