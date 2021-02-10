@@ -15,7 +15,7 @@ export const LargePipelineWarning = ({
   return (
     <div
       className={classnames('kedro', 'pipeline-warning', {
-        'pipeline-warning--sidebar-visible': visible.sidebar
+        'pipeline-warning--sidebar-visible': visible
       })}>
       <h2 className="pipeline-warning__title">Your pipeline is large.</h2>
       <p className="pipeline-warning__subtitle">
@@ -33,7 +33,7 @@ export const LargePipelineWarning = ({
 
 export const mapStateToProps = state => ({
   theme: state.theme,
-  visible: state.visible,
+  visible: state.visible.sidebar,
   nodes: getGroupedNodes(state)
 });
 
