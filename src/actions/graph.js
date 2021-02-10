@@ -1,6 +1,5 @@
 import { graph as worker, preventWorkerQueues } from '../utils/worker';
 import { toggleGraph } from './index';
-import { largeGraphThreshold } from '../config';
 
 export const TOGGLE_GRAPH_LOADING = 'TOGGLE_GRAPH_LOADING';
 
@@ -67,45 +66,21 @@ const chooseLayout = (instance, state) =>
 const layoutWorker = preventWorkerQueues(worker, chooseLayout);
 
 /**
- * Formula to estimate the point at which the graph will take unreasonably
- * long to render in terms of input nodes and edges.
- *  @param {Object} displayThreshold The defined threshold for a large graph
- *  @param {integer} nodeCount The amount of nodes to be displayed in the flowchart
- *  @param {integer} edgeCount The amount of edges to be displayed in the flowchart
- */
-const isLarge = (displayThreshold, nodeCount, edgeCount) => {
-  return nodeCount + 1.5 * edgeCount > displayThreshold;
-};
-
-/**
  * Async action to calculate graph layout in a web worker
  * whiled displaying a loading spinner
  * @param {Object} graphState A subset of main state
  * @return {function} A promise that resolves when the calcuation is done
  */
-export function calculateGraph(
-  graphState,
-  displayThreshold = largeGraphThreshold
-) {
+export function calculateGraph(graphState) {
   if (!graphState) {
     return updateGraph(graphState);
   }
   return async function(dispatch) {
-    const { nodes, edges, displayLargeGraph } = graphState;
-
-    const largePipeline =
-      isLarge(displayThreshold, nodes.length, edges.length) &&
-      !displayLargeGraph;
-
-    if (largePipeline) {
-      return dispatch(toggleIsLarge(true));
-    } else {
-      dispatch(toggleIsLarge(false));
-      dispatch(toggleLoading(true));
-      const graph = await layoutWorker(graphState);
-      dispatch(toggleGraph(true));
-      dispatch(toggleLoading(false));
-      return dispatch(updateGraph(graph));
-    }
+    dispatch(toggleIsLarge(false));
+    dispatch(toggleLoading(true));
+    const graph = await layoutWorker(graphState);
+    dispatch(toggleGraph(true));
+    dispatch(toggleLoading(false));
+    return dispatch(updateGraph(graph));
   };
 }

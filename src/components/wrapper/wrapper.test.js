@@ -1,6 +1,5 @@
 import { Wrapper, mapStateToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
-import { FlowChart } from '../flowchart';
 
 const { theme } = mockState.animals;
 const mockProps = {
@@ -25,8 +24,7 @@ describe('Wrapper', () => {
     expect(mapStateToProps(mockState.animals)).toEqual({
       loading: false,
       theme,
-      displayLargeGraph: false,
-      isLarge: false
+      showLargeGraphWarning: false
     });
   });
 });

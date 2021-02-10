@@ -17,8 +17,7 @@ export const createInitialState = () => ({
     graph: false,
     pipeline: false,
     node: false,
-    displayLargeGraph: false,
-    isLarge: false
+    displayLargeGraph: false
   },
   visible: {
     graph: true,

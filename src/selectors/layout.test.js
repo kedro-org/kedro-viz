@@ -1,10 +1,19 @@
 import { mockState } from '../utils/state.mock';
-import { getChartSize, getSidebarWidth, getGraphInput } from './layout';
+import {
+  getChartSize,
+  getSidebarWidth,
+  getGraphInput,
+  getShouldDisplayLargeWarning
+} from './layout';
 import { updateFontLoaded } from '../actions';
 import reducer from '../reducers';
 import { sidebarWidth } from '../config';
 
 describe('Selectors', () => {
+  describe('getShouldDisplayLargeGraphWarning', () => {
+    expect(getShouldDisplayLargeWarning(mockState.animals)).toEqual(false);
+  });
+
   describe('getGraphInput', () => {
     it('returns a graph input object', () => {
       expect(getGraphInput(mockState.animals)).toEqual(

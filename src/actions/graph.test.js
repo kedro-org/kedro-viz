@@ -61,15 +61,5 @@ describe('graph actions', () => {
         expect(store.getState().graph.oldgraph).toBe(true);
       });
     });
-
-    it('triggers large warning', () => {
-      const store = createStore(reducer, mockState.animals);
-      return calculateGraph(getGraphInput(mockState.animals), 10)(
-        store.dispatch
-      ).then(() => {
-        const state = store.getState();
-        expect(state.loading.isLarge).toBe(true);
-      });
-    });
   });
 });
