@@ -10,19 +10,20 @@ export const LargePipelineWarning = ({
   theme,
   nodes,
   onToggleDisplayLargeGraph,
-  visible
+  sidebarVisible
 }) => {
+  const elementCount =
+    nodes.data.length + nodes.parameters.length + nodes.task.length;
   return (
     <div
       className={classnames('kedro', 'pipeline-warning', {
-        'pipeline-warning--sidebar-visible': visible
+        'pipeline-warning--sidebar-visible': sidebarVisible
       })}>
       <h2 className="pipeline-warning__title">Your pipeline is large.</h2>
       <p className="pipeline-warning__subtitle">
         Your pipeline might take a while to render because it has{' '}
-        <b>{nodes.data.length + nodes.parameters.length + nodes.task.length}</b>{' '}
-        nodes. Use the sidebar controls to select a smaller graph, or click to
-        render.
+        <b>{elementCount}</b> elements. Use the sidebar controls to select a
+        smaller graph, or click to render.
       </p>
       <Button theme={theme} onClick={() => onToggleDisplayLargeGraph(true)}>
         Render it anyway
@@ -33,7 +34,7 @@ export const LargePipelineWarning = ({
 
 export const mapStateToProps = state => ({
   theme: state.theme,
-  visible: state.visible.sidebar,
+  sidebarVisible: state.visible.sidebar,
   nodes: getGroupedNodes(state)
 });
 

@@ -32,7 +32,7 @@ describe('large modal', () => {
     const expectedResult = {
       theme: expect.any(String),
       nodes: expect.any(Object),
-      visible: expect.any(Boolean)
+      sidebarVisible: expect.any(Boolean)
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
