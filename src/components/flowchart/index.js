@@ -65,6 +65,7 @@ export class FlowChart extends Component {
       onViewEnd: this.onViewChangeEnd
     });
 
+    this.updateViewExtents();
     this.addGlobalEventListeners();
     this.update();
 
@@ -280,7 +281,7 @@ export class FlowChart extends Component {
    */
   updateViewExtents(transform) {
     const { k: scale } = transform || getViewTransform(this.view);
-    const { sidebarWidth, metaSidebarWidth, codeSidebarWidth } = this.props.chartSize;
+    const { sidebarWidth = 0, metaSidebarWidth = 0, codeSidebarWidth = 0 } = this.props.chartSize;
     const { width = 0, height = 0 } = this.props.graphSize;
 
     const leftSidebarOffset = sidebarWidth / scale;
