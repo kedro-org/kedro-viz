@@ -31,7 +31,7 @@ describe('Selectors', () => {
       expect(getSidebarWidth(true, sidebarWidth)).toEqual(open);
     });
 
-    it(`if sidebar is hidden sets sidebar width to ${closed} on screens smaller than ${sidebarBreakpoint}`, () => {
+    it(`if sidebar is hidden sets sidebar width to ${closed}`, () => {
       expect(getSidebarWidth(false, sidebarWidth)).toEqual(closed);
     });
   });

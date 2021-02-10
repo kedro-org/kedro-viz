@@ -18,7 +18,6 @@ export const codeSidebarWidth = {
   closed: 0
 };
 
-export const chartMinWidth = 300;
 export const chartMinWidthScale = 0.25;
 
 // Remember to update the 'Flags' section in the README when updating these:

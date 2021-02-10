@@ -272,19 +272,25 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Updates view extents based on the current view transform
+   * Updates view extents based on the current view transform.
+   * Offsets the extents considering any open sidebars.
+   * Allows additional margin for user panning within limits.
+   * Zoom scale is limited to a practical range for usability.
    * @param {?Object} transform Current transform override
    */
   updateViewExtents(transform) {
     const { k: scale } = transform || getViewTransform(this.view);
-    const { sidebarWidth, metaSidebarWidth } = this.props.chartSize;
+    const { sidebarWidth, metaSidebarWidth, codeSidebarWidth } = this.props.chartSize;
     const { width = 0, height = 0 } = this.props.graphSize;
+
+    const leftSidebarOffset = sidebarWidth / scale;
+    const rightSidebarOffset = (metaSidebarWidth + codeSidebarWidth) / scale;
     const margin = this.MARGIN;
 
     setViewExtents(this.view, {
       translate: {
-        minX: -sidebarWidth / scale - margin,
-        maxX: width + margin + metaSidebarWidth / scale,
+        minX: -leftSidebarOffset - margin,
+        maxX: width + margin + rightSidebarOffset,
         minY: -margin,
         maxY: height + margin
       },

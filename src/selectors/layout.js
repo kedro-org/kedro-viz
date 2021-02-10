@@ -7,7 +7,6 @@ import {
   sidebarWidth,
   metaSidebarWidth,
   codeSidebarWidth,
-  chartMinWidth,
   chartMinWidthScale
 } from '../config';
 
@@ -72,11 +71,6 @@ export const getChartSize = createSelector(
       sidebarWidthActual -
       metaSidebarWidthActual -
       codeSidebarWidthActual;
-
-    // Enforce minimum chart width
-    if (chartWidth < chartMinWidth) {
-      chartWidth = chartMinWidth;
-    }
 
     return {
       left,
