@@ -186,6 +186,43 @@ export const getSections = createSelector(() =>
 );
 
 /**
+ * Create a new group of items. This can be one of two kinds:
+ * 'filter': Categories, e.g. tags
+ * 'element': Graph elements, e.g. nodes, datasets, or parameters
+ * An item is a node-list row, e.g. a node or a tag.
+ * @param {object} itemType Meta information about the group's items
+ * @param {array} itemsOfType List of items in the group
+ */
+export const createGroup = (itemType, itemsOfType = []) => {
+  const group = {
+    type: itemType,
+    id: itemType.id,
+    count: itemsOfType.length,
+    allUnset: itemsOfType.every(item => item.unset),
+    allChecked: itemsOfType.every(item => item.checked)
+  };
+
+  if (itemType.id === 'tag') {
+    Object.assign(group, {
+      name: 'Tags',
+      kind: 'filter',
+      checked: !group.allUnset,
+      visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
+      invisibleIcon: IndicatorOffIcon
+    });
+  } else {
+    Object.assign(group, {
+      name: itemType.name,
+      kind: 'element',
+      checked: !itemType.disabled,
+      visibleIcon: VisibleIcon,
+      invisibleIcon: InvisibleIcon
+    });
+  }
+  return group;
+};
+
+/**
  * Returns groups of items per type
  * @param {array} types List of node types
  * @param {array} items List of items
@@ -196,36 +233,9 @@ export const getGroups = createSelector(
   (nodeTypes, items) => {
     const groups = {};
     const itemTypes = [...nodeTypes, { id: 'tag' }];
-
     for (const itemType of itemTypes) {
-      const itemsOfType = items[itemType.id] || [];
-
-      groups[itemType.id] = {
-        type: itemType,
-        id: itemType.id,
-        name: itemType.name,
-        kind: 'toggle',
-        visibleIcon: VisibleIcon,
-        invisibleIcon: InvisibleIcon,
-        checked: !itemType.disabled,
-        count: itemsOfType.length,
-        allUnset: itemsOfType.every(item => item.unset),
-        allChecked: itemsOfType.every(item => item.checked)
-      };
-
-      if (itemType.id === 'tag') {
-        const group = groups[itemType.id];
-
-        Object.assign(group, {
-          name: 'Tags',
-          kind: 'filter',
-          checked: !group.allUnset,
-          visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
-          invisibleIcon: IndicatorOffIcon
-        });
-      }
+      groups[itemType.id] = createGroup(itemType, items[itemType.id]);
     }
-
     return groups;
   }
 );

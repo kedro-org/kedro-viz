@@ -6,7 +6,7 @@ orbs:
 executors:
   circleci_machine:
     docker:
-      - image: circleci/node:10.15
+      - image: circleci/node:14.15
     working_directory: ~/repo
 
 commands:
@@ -51,7 +51,7 @@ commands:
     steps:
       - run:
           name: Install Node dependencies
-          command: npm ci
+          command: node tools/ci.js
 
   test_lib_transpilation:
     steps:

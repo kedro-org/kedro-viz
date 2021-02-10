@@ -2,7 +2,7 @@ import { mockState } from '../utils/state.mock';
 import { getChartSize, getSidebarWidth, getGraphInput } from './layout';
 import { updateFontLoaded } from '../actions';
 import reducer from '../reducers';
-import { sidebarBreakpoint, sidebarWidth } from '../config';
+import { sidebarWidth } from '../config';
 
 describe('Selectors', () => {
   describe('getGraphInput', () => {
@@ -62,6 +62,7 @@ describe('Selectors', () => {
         sidebarWidth: expect.any(Number),
         metaSidebarWidth: expect.any(Number),
         codeSidebarWidth: expect.any(Number),
+        minWidthScale: expect.any(Number),
         top: expect.any(Number),
         width: expect.any(Number)
       });

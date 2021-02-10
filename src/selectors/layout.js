@@ -7,7 +7,8 @@ import {
   sidebarWidth,
   metaSidebarWidth,
   codeSidebarWidth,
-  chartMinWidth
+  chartMinWidth,
+  chartMinWidthScale
 } from '../config';
 
 const getOldgraphFlag = state => state.flags.oldgraph;
@@ -84,6 +85,7 @@ export const getChartSize = createSelector(
       outerHeight: height,
       height,
       width: chartWidth,
+      minWidthScale: chartMinWidthScale,
       sidebarWidth: sidebarWidthActual,
       metaSidebarWidth: metaSidebarWidthActual,
       codeSidebarWidth: codeSidebarWidthActual

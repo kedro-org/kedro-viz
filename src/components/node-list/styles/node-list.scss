@@ -6,7 +6,8 @@
 @import './section';
 @import './group';
 @import './row';
-@import './filter';
+@import './row-label';
+@import './row-toggle';
 
 .kui-theme--light {
   --color-nodelist-row-active: #{$row-active-light};
