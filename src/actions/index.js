@@ -7,7 +7,7 @@ export const RESET_DATA = 'RESET_DATA';
 export function resetData(data) {
   return {
     type: RESET_DATA,
-    data
+    data,
   };
 }
 
@@ -20,7 +20,7 @@ export const TOGGLE_LAYERS = 'TOGGLE_LAYERS';
 export function toggleLayers(visible) {
   return {
     type: TOGGLE_LAYERS,
-    visible
+    visible,
   };
 }
 
@@ -33,7 +33,7 @@ export const TOGGLE_EXPORT_MODAL = 'TOGGLE_EXPORT_MODAL';
 export function toggleExportModal(visible) {
   return {
     type: TOGGLE_EXPORT_MODAL,
-    visible
+    visible,
   };
 }
 
@@ -46,7 +46,7 @@ export const TOGGLE_GRAPH = 'TOGGLE_GRAPH';
 export function toggleGraph(visible) {
   return {
     type: TOGGLE_GRAPH,
-    visible
+    visible,
   };
 }
 
@@ -59,7 +59,7 @@ export const TOGGLE_TEXT_LABELS = 'TOGGLE_TEXT_LABELS';
 export function toggleTextLabels(textLabels) {
   return {
     type: TOGGLE_TEXT_LABELS,
-    textLabels
+    textLabels,
   };
 }
 
@@ -72,7 +72,7 @@ export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 export function toggleSidebar(visible) {
   return {
     type: TOGGLE_SIDEBAR,
-    visible
+    visible,
   };
 }
 
@@ -85,7 +85,7 @@ export const TOGGLE_THEME = 'TOGGLE_THEME';
 export function toggleTheme(theme) {
   return {
     type: TOGGLE_THEME,
-    theme
+    theme,
   };
 }
 
@@ -98,7 +98,7 @@ export const UPDATE_CHART_SIZE = 'UPDATE_CHART_SIZE';
 export function updateChartSize(chartSize) {
   return {
     type: UPDATE_CHART_SIZE,
-    chartSize
+    chartSize,
   };
 }
 
@@ -111,7 +111,7 @@ export const UPDATE_ZOOM = 'UPDATE_ZOOM';
 export function updateZoom(zoom) {
   return {
     type: UPDATE_ZOOM,
-    zoom
+    zoom,
   };
 }
 
@@ -124,7 +124,7 @@ export const UPDATE_FONT_LOADED = 'UPDATE_FONT_LOADED';
 export function updateFontLoaded(fontLoaded) {
   return {
     type: UPDATE_FONT_LOADED,
-    fontLoaded
+    fontLoaded,
   };
 }
 
@@ -137,7 +137,7 @@ export const TOGGLE_MINIMAP = 'TOGGLE_MINIMAP';
 export function toggleMiniMap(visible) {
   return {
     type: TOGGLE_MINIMAP,
-    visible
+    visible,
   };
 }
 
@@ -152,6 +152,6 @@ export function changeFlag(name, value) {
   return {
     type: CHANGE_FLAG,
     name,
-    value
+    value,
   };
 }

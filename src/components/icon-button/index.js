@@ -16,7 +16,7 @@ const IconButton = ({
   labelText,
   onClick,
   visible,
-  active
+  active,
 }) => {
   const Icon = icon;
 
@@ -27,7 +27,7 @@ const IconButton = ({
         aria-live={ariaLive}
         className={classnames(className, {
           'pipeline-icon-toolbar__button': true,
-          'pipeline-icon-toolbar__button--active': active
+          'pipeline-icon-toolbar__button--active': active,
         })}
         disabled={disabled}
         onClick={onClick}>
@@ -48,7 +48,7 @@ IconButton.propTypes = {
   labelText: PropTypes.string,
   onClick: PropTypes.func,
   visible: PropTypes.bool,
-  active: PropTypes.bool
+  active: PropTypes.bool,
 };
 
 IconButton.defaultProps = {
@@ -59,7 +59,7 @@ IconButton.defaultProps = {
   labelText: null,
   onClick: null,
   visible: true,
-  active: false
+  active: false,
 };
 
 export default IconButton;

@@ -17,17 +17,17 @@ const graphWorker = isTest
 /**
  * Emulate a web worker for testing purposes
  */
-const createMockWorker = worker => {
+const createMockWorker = (worker) => {
   if (!isTest) {
     return worker;
   }
   return () => {
     const mockWorker = {
-      terminate: () => {}
+      terminate: () => {},
     };
-    Object.keys(worker).forEach(name => {
-      mockWorker[name] = payload =>
-        new Promise(resolve => resolve(worker[name](payload)));
+    Object.keys(worker).forEach((name) => {
+      mockWorker[name] = (payload) =>
+        new Promise((resolve) => resolve(worker[name](payload)));
     });
     return mockWorker;
   };
@@ -47,7 +47,7 @@ export function preventWorkerQueues(worker, getJob) {
   let instance = worker();
   let running = false;
 
-  return payload => {
+  return (payload) => {
     if (running) {
       // If worker is already processing a job, cancel it and restart
       instance.terminate();
@@ -55,7 +55,7 @@ export function preventWorkerQueues(worker, getJob) {
     }
     running = true;
 
-    return getJob(instance, payload).then(response => {
+    return getJob(instance, payload).then((response) => {
       running = false;
       return response;
     });

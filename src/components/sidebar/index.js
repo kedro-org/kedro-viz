@@ -19,7 +19,7 @@ export const Sidebar = ({ visible }) => {
     <>
       <div
         className={classnames('pipeline-sidebar', {
-          'pipeline-sidebar--visible': visible
+          'pipeline-sidebar--visible': visible,
         })}>
         <div className="pipeline-ui">
           <PipelineList onToggleOpen={togglePipeline} />
@@ -35,8 +35,8 @@ export const Sidebar = ({ visible }) => {
   );
 };
 
-const mapStateToProps = state => ({
-  visible: state.visible.sidebar
+const mapStateToProps = (state) => ({
+  visible: state.visible.sidebar,
 });
 
 export default connect(mapStateToProps)(Sidebar);

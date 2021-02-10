@@ -4,7 +4,7 @@ function flagsReducer(flagsState = {}, action) {
   switch (action.type) {
     case CHANGE_FLAG: {
       return Object.assign({}, flagsState, {
-        [action.name]: action.value
+        [action.name]: action.value,
       });
     }
 

@@ -29,7 +29,7 @@ export const UPDATE_ACTIVE_PIPELINE = 'UPDATE_ACTIVE_PIPELINE';
 export function updateActivePipeline(pipeline) {
   return {
     type: UPDATE_ACTIVE_PIPELINE,
-    pipeline
+    pipeline,
   };
 }
 
@@ -42,7 +42,7 @@ export const TOGGLE_PIPELINE_LOADING = 'TOGGLE_PIPELINE_LOADING';
 export function toggleLoading(loading) {
   return {
     type: TOGGLE_PIPELINE_LOADING,
-    loading
+    loading,
   };
 }
 
@@ -50,7 +50,7 @@ export function toggleLoading(loading) {
  * Determine where to load data from
  * @param {object} pipeline Pipeline state
  */
-export const getPipelineUrl = pipeline => {
+export const getPipelineUrl = (pipeline) => {
   if (pipeline.active === pipeline.main) {
     return getUrl('main');
   }
@@ -64,7 +64,7 @@ export const getPipelineUrl = pipeline => {
  * @param {object} pipeline Pipeline state
  * @return {boolean} True if another request is needed
  */
-export const requiresSecondRequest = pipeline => {
+export const requiresSecondRequest = (pipeline) => {
   // Pipelines are not present in the data
   if (!pipeline.ids.length || !pipeline.main) return false;
   // There is no active pipeline set
@@ -78,7 +78,7 @@ export const requiresSecondRequest = pipeline => {
  * @return {function} A promise that resolves when the data is loaded
  */
 export function loadInitialPipelineData() {
-  return async function(dispatch, getState) {
+  return async function (dispatch, getState) {
     // Get a copy of the full state from the store
     const state = getState();
     // If data is passed synchronously then this process isn't necessary
@@ -90,7 +90,7 @@ export function loadInitialPipelineData() {
     // in order to obtain the list of pipelines, which is required for determining
     // whether the active pipeline (from localStorage) exists in the data.
     const url = getUrl('main');
-    let newState = await loadJsonData(url).then(data =>
+    let newState = await loadJsonData(url).then((data) =>
       preparePipelineState(data, true)
     );
     // If the active pipeline isn't 'main' then request data from new URL
@@ -109,7 +109,7 @@ export function loadInitialPipelineData() {
  * @return {function} A promise that resolves when the data is loaded
  */
 export function loadPipelineData(pipelineID) {
-  return async function(dispatch, getState) {
+  return async function (dispatch, getState) {
     const { asyncDataSource, pipeline } = getState();
     if (pipelineID && pipelineID === pipeline.active) {
       return;
@@ -120,7 +120,7 @@ export function loadPipelineData(pipelineID) {
       dispatch(toggleGraph(false));
       const url = getPipelineUrl({
         main: pipeline.main,
-        active: pipelineID
+        active: pipelineID,
       });
       const newState = await loadJsonData(url).then(preparePipelineState);
       // Set active pipeline here rather than dispatching two separate actions,

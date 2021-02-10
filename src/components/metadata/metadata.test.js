@@ -12,7 +12,7 @@ describe('MetaData', () => {
   // Add edge links, can be removed when new graph is default
   addEdgeLinks(mockState.animals.graph.nodes, mockState.animals.graph.edges);
 
-  const mount = props => {
+  const mount = (props) => {
     mockState.animals.node.clicked = props.nodeId;
     return setup.mount(
       <MetaData
@@ -22,10 +22,10 @@ describe('MetaData', () => {
     );
   };
 
-  const textOf = elements => elements.map(element => element.text());
-  const title = wrapper => wrapper.find('.pipeline-metadata__title');
-  const rowIcon = row => row.find('svg.pipeline-metadata__icon');
-  const rowValue = row => row.find('.pipeline-metadata__value');
+  const textOf = (elements) => elements.map((element) => element.text());
+  const title = (wrapper) => wrapper.find('.pipeline-metadata__title');
+  const rowIcon = (row) => row.find('svg.pipeline-metadata__icon');
+  const rowValue = (row) => row.find('.pipeline-metadata__value');
   const rowByLabel = (wrapper, label) =>
     // Using attribute since traversal by sibling not supported
     wrapper.find(`.pipeline-metadata__row[data-label="${label}"]`);
@@ -94,7 +94,7 @@ describe('MetaData', () => {
         'Cat',
         'Dog',
         'Parameters',
-        'Params:rabbit'
+        'Params:rabbit',
       ]);
     });
 
@@ -130,7 +130,7 @@ describe('MetaData', () => {
 
     it('copies run command when button clicked', () => {
       window.navigator.clipboard = {
-        writeText: jest.fn()
+        writeText: jest.fn(),
       };
 
       const wrapper = mount({ nodeId: salmonTaskNodeId });
@@ -195,7 +195,7 @@ describe('MetaData', () => {
 
     it('copies run command when button clicked', () => {
       window.navigator.clipboard = {
-        writeText: jest.fn()
+        writeText: jest.fn(),
       };
 
       const wrapper = mount({ nodeId: catDatasetNodeId });

@@ -28,7 +28,7 @@ const key = (obj, key) => {
  * @param {function} operator The operator function
  * @returns {object|undefined} The kiwi.js operator
  */
-export const toStrictOperator = operator => {
+export const toStrictOperator = (operator) => {
   if (operator === equalTo) return kiwi.Operator.Eq;
   if (operator === greaterOrEqual) return kiwi.Operator.Ge;
 };

@@ -11,11 +11,11 @@ import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import {
   loadNodeData,
   toggleNodeHovered,
-  toggleNodesDisabled
+  toggleNodesDisabled,
 } from '../../actions/nodes';
 import './styles/node-list.css';
 
-const isTagType = type => type === 'tag';
+const isTagType = (type) => type === 'tag';
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -40,7 +40,7 @@ const NodeListProvider = ({
   onToggleNodeActive,
   onToggleTagActive,
   onToggleTagFilter,
-  onToggleTypeDisabled
+  onToggleTypeDisabled,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const items = getFilteredItems({
@@ -48,11 +48,11 @@ const NodeListProvider = ({
     tags,
     tagsEnabled,
     nodeSelected,
-    searchValue
+    searchValue,
   });
   const groups = getGroups({ types, items });
 
-  const onItemClick = item => {
+  const onItemClick = (item) => {
     if (isTagType(item.type)) {
       onTagItemChange(item, item.checked);
     } else {
@@ -76,7 +76,7 @@ const NodeListProvider = ({
     }
   };
 
-  const onItemMouseEnter = item => {
+  const onItemMouseEnter = (item) => {
     if (isTagType(item.type)) {
       onToggleTagActive(item.id, true);
     } else if (item.visible) {
@@ -84,7 +84,7 @@ const NodeListProvider = ({
     }
   };
 
-  const onItemMouseLeave = item => {
+  const onItemMouseLeave = (item) => {
     if (isTagType(item.type)) {
       onToggleTagActive(item.id, false);
     } else if (item.visible) {
@@ -96,9 +96,12 @@ const NodeListProvider = ({
     if (isTagType(type)) {
       // Filter all tags if at least one tag item set, otherwise enable all tags
       const tagItems = items[type] || [];
-      const someTagSet = tagItems.some(tagItem => !tagItem.unset);
+      const someTagSet = tagItems.some((tagItem) => !tagItem.unset);
       const allTagsValue = someTagSet ? undefined : true;
-      onToggleTagFilter(tagItems.map(tag => tag.id), allTagsValue);
+      onToggleTagFilter(
+        tagItems.map((tag) => tag.id),
+        allTagsValue
+      );
     } else {
       onToggleTypeDisabled(type, checked);
     }
@@ -107,12 +110,15 @@ const NodeListProvider = ({
   const onTagItemChange = (tagItem, wasChecked) => {
     const tagItems = items[tagItem.type] || [];
     const oneTagChecked =
-      tagItems.filter(tagItem => tagItem.checked).length === 1;
+      tagItems.filter((tagItem) => tagItem.checked).length === 1;
     const shouldResetTags = wasChecked && oneTagChecked;
 
     if (shouldResetTags) {
       // Unset all tags
-      onToggleTagFilter(tags.map(tag => tag.id), undefined);
+      onToggleTagFilter(
+        tags.map((tag) => tag.id),
+        undefined
+      );
     } else {
       // Toggle the tag
       onToggleTagFilter([tagItem.id], !wasChecked);
@@ -124,9 +130,9 @@ const NodeListProvider = ({
   };
 
   // Deselect node on Escape key
-  const handleKeyDown = event => {
+  const handleKeyDown = (event) => {
     utils.handleKeyEvent(event.keyCode, {
-      escape: () => onToggleNodeSelected(null)
+      escape: () => onToggleNodeSelected(null),
     });
   };
   useEffect(() => {
@@ -151,16 +157,16 @@ const NodeListProvider = ({
   );
 };
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state) => ({
   tags: getTagData(state),
   tagsEnabled: state.tag.enabled,
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
   sections: getSections(state),
-  types: getNodeTypes(state)
+  types: getNodeTypes(state),
 });
 
-export const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = (dispatch) => ({
   onToggleTagActive: (tagIDs, active) => {
     dispatch(toggleTagActive(tagIDs, active));
   },
@@ -170,18 +176,15 @@ export const mapDispatchToProps = dispatch => ({
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));
   },
-  onToggleNodeSelected: nodeID => {
+  onToggleNodeSelected: (nodeID) => {
     dispatch(loadNodeData(nodeID));
   },
-  onToggleNodeActive: nodeID => {
+  onToggleNodeActive: (nodeID) => {
     dispatch(toggleNodeHovered(nodeID));
   },
   onToggleNodesDisabled: (nodeIDs, disabled) => {
     dispatch(toggleNodesDisabled(nodeIDs, disabled));
-  }
+  },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NodeListProvider);
+export default connect(mapStateToProps, mapDispatchToProps)(NodeListProvider);

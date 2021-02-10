@@ -10,7 +10,7 @@ export const TOGGLE_GRAPH_LOADING = 'TOGGLE_GRAPH_LOADING';
 export function toggleLoading(loading) {
   return {
     type: TOGGLE_GRAPH_LOADING,
-    loading
+    loading,
   };
 }
 
@@ -23,7 +23,7 @@ export const UPDATE_GRAPH_LAYOUT = 'UPDATE_GRAPH_LAYOUT';
 export function updateGraph(graph) {
   return {
     type: UPDATE_GRAPH_LAYOUT,
-    graph
+    graph,
   };
 }
 
@@ -49,7 +49,7 @@ export function calculateGraph(graphState) {
   if (!graphState) {
     return updateGraph(graphState);
   }
-  return async function(dispatch) {
+  return async function (dispatch) {
     dispatch(toggleLoading(true));
     const graph = await layoutWorker(graphState);
     dispatch(toggleGraph(true));

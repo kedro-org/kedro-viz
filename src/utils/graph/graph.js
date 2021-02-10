@@ -9,7 +9,7 @@ const defaultOptions = {
     layerSpaceY: 55,
     basisX: 1500,
     padding: 100,
-    iterations: 20
+    iterations: 20,
   },
   routing: {
     spaceX: 26,
@@ -20,8 +20,8 @@ const defaultOptions = {
     stemMinTarget: 5,
     stemMax: 20,
     stemSpaceSource: 6,
-    stemSpaceTarget: 10
-  }
+    stemSpaceTarget: 10,
+  },
 };
 
 /**
@@ -43,14 +43,14 @@ export const graph = (nodes, edges, layers, options = defaultOptions) => {
   routing({ nodes, edges, layers, ...options.routing });
 
   const size = bounds(nodes, options.layout.padding);
-  nodes.forEach(node => offsetNode(node, size.min));
-  edges.forEach(edge => offsetEdge(edge, size.min));
+  nodes.forEach((node) => offsetNode(node, size.min));
+  edges.forEach((edge) => offsetEdge(edge, size.min));
 
   return {
     nodes,
     edges,
     layers,
-    size
+    size,
   };
 };
 
@@ -88,7 +88,7 @@ const addNearestLayers = (nodes, layers) => {
       (res, layer) => ({ ...res, [layer]: true }),
       {}
     );
-    const hasValidLayer = node => Boolean(layersMap[node.layer]);
+    const hasValidLayer = (node) => Boolean(layersMap[node.layer]);
 
     for (const node of nodes) {
       const layerNode = findNodeBy(
@@ -107,7 +107,7 @@ const addNearestLayers = (nodes, layers) => {
  * @param {object} node The input node
  * @returns {array} The connected nodes
  */
-const targetThenSourceNodes = node =>
+const targetThenSourceNodes = (node) =>
   targetNodes(node).concat(sourceNodes(node));
 
 /**
@@ -115,14 +115,14 @@ const targetThenSourceNodes = node =>
  * @param {object} node The input node
  * @returns {array} The target nodes
  */
-const targetNodes = node => node.targets.map(edge => edge.targetNode);
+const targetNodes = (node) => node.targets.map((edge) => edge.targetNode);
 
 /**
  * Returns the list of source nodes directly connected to the given node
  * @param {object} node The input node
  * @returns {array} The source nodes
  */
-const sourceNodes = node => node.sources.map(edge => edge.sourceNode);
+const sourceNodes = (node) => node.sources.map((edge) => edge.sourceNode);
 
 /**
  * Returns the distance between the two nodes using their assigned rank
@@ -147,7 +147,7 @@ const findNodeBy = (node, successors, metric, accept, visited) => {
   visited = visited || {};
   visited[node.id] = true;
 
-  const next = successors(node).filter(node => !visited[node.id]);
+  const next = successors(node).filter((node) => !visited[node.id]);
   const nearest = next.sort(
     (nodeA, nodeB) => metric(node, nodeA) - metric(node, nodeB)
   );
@@ -155,7 +155,7 @@ const findNodeBy = (node, successors, metric, accept, visited) => {
 
   return (
     accepted[0] ||
-    nearest.map(node =>
+    nearest.map((node) =>
       findNodeBy(node, successors, metric, accept, visited)
     )[0]
   );
@@ -170,7 +170,7 @@ const findNodeBy = (node, successors, metric, accept, visited) => {
 const bounds = (nodes, padding) => {
   const size = {
     min: { x: Infinity, y: Infinity },
-    max: { x: -Infinity, y: -Infinity }
+    max: { x: -Infinity, y: -Infinity },
   };
 
   for (const node of nodes) {

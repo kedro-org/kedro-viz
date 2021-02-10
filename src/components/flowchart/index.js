@@ -18,7 +18,7 @@ import {
   getViewTransform,
   setViewTransformExact,
   setViewExtents,
-  getViewExtents
+  getViewExtents,
 } from '../../utils/view';
 import Tooltip from '../tooltip';
 import './styles/flowchart.css';
@@ -31,7 +31,7 @@ export class FlowChart extends Component {
     super(props);
 
     this.state = {
-      tooltip: { visible: false }
+      tooltip: { visible: false },
     };
 
     this.defaultTransform = origin;
@@ -61,7 +61,7 @@ export class FlowChart extends Component {
       container: this.svgRef,
       wrapper: this.wrapperRef,
       onViewChanged: this.onViewChange,
-      onViewEnd: this.onViewChangeEnd
+      onViewEnd: this.onViewChangeEnd,
     });
 
     this.addGlobalEventListeners();
@@ -127,7 +127,9 @@ export class FlowChart extends Component {
    */
   changed(props, objectA, objectB) {
     return (
-      objectA && objectB && props.some(prop => objectA[prop] !== objectB[prop])
+      objectA &&
+      objectB &&
+      props.some((prop) => objectA[prop] !== objectB[prop])
     );
   }
 
@@ -141,12 +143,12 @@ export class FlowChart extends Component {
       edgeGroup: select(this.edgesRef.current),
       nodeGroup: select(this.nodesRef.current),
       layerGroup: select(this.layersRef.current),
-      layerNameGroup: select(this.layerNamesRef.current)
+      layerNameGroup: select(this.layerNamesRef.current),
     };
   }
 
   /**
-   * Update the chart size in state from chart container bounds. 
+   * Update the chart size in state from chart container bounds.
    * This is emulated in tests with a constant fixed size.
    */
   updateChartSize() {
@@ -221,7 +223,7 @@ export class FlowChart extends Component {
 
   /**
    * On every frame of every view transform change (from reset, pan, zoom etc.)
-   * @param {Object} transform The current view transfrom 
+   * @param {Object} transform The current view transfrom
    */
   onViewChange(transform) {
     const { k: scale, x, y } = transform;
@@ -234,7 +236,7 @@ export class FlowChart extends Component {
 
     // Update layer label y positions
     if (this.el.layerNames) {
-      this.el.layerNames.style('transform', d => {
+      this.el.layerNames.style('transform', (d) => {
         const ty = y + (d.y + d.height / 2) * scale;
         return `translateY(${ty}px)`;
       });
@@ -256,7 +258,7 @@ export class FlowChart extends Component {
       transition: false,
       relative: false,
       minScale: extents.scale.minK,
-      maxScale: extents.scale.maxK
+      maxScale: extents.scale.maxK,
     });
   }
 
@@ -285,12 +287,12 @@ export class FlowChart extends Component {
         minX: -sidebarWidth / scale - margin,
         maxX: width + margin + metaSidebarWidth / scale,
         minY: -margin,
-        maxY: height + margin
+        maxY: height + margin,
       },
       scale: {
         minK: this.MIN_SCALE * this.defaultTransform.k,
-        maxK: this.MAX_SCALE
-      }
+        maxK: this.MAX_SCALE,
+      },
     });
   }
 
@@ -337,7 +339,7 @@ export class FlowChart extends Component {
 
     // Use the selected node as focus point
     const focus = centralNode
-      ? nodes.find(node => node.id === centralNode)
+      ? nodes.find((node) => node.id === centralNode)
       : null;
 
     // Find a transform that fits everything in view
@@ -350,7 +352,7 @@ export class FlowChart extends Component {
       objectHeight: graphHeight,
       minScaleX: 0.4,
       minScaleFocus: 0.3,
-      focusOffset: 0.8
+      focusOffset: 0.8,
     });
 
     // Detect first transform
@@ -430,8 +432,8 @@ export class FlowChart extends Component {
         targetRect: event && event.target.getBoundingClientRect(),
         text: node && node.fullName,
         visible: true,
-        ...options
-      }
+        ...options,
+      },
     });
   }
 
@@ -443,8 +445,8 @@ export class FlowChart extends Component {
       this.setState({
         tooltip: {
           ...this.state.tooltip,
-          visible: false
-        }
+          visible: false,
+        },
       });
     }
   }
@@ -470,7 +472,7 @@ export class FlowChart extends Component {
           <g
             id="zoom-wrapper"
             className={classnames('pipeline-zoom-wrapper', {
-              'pipeline-zoom-wrapper--hidden': !visibleGraph
+              'pipeline-zoom-wrapper--hidden': !visibleGraph,
             })}
             ref={this.wrapperRef}>
             <defs>
@@ -498,7 +500,7 @@ export class FlowChart extends Component {
         </svg>
         <ul
           className={classnames('pipeline-flowchart__layer-names', {
-            'pipeline-flowchart__layer-names--visible': layers.length
+            'pipeline-flowchart__layer-names--visible': layers.length,
           })}
           ref={this.layerNamesRef}
         />
@@ -515,7 +517,7 @@ export const chartSizeTestFallback = {
   right: 1280,
   bottom: 1024,
   width: 1280,
-  height: 1024
+  height: 1024,
 };
 
 // Maintain a single reference to support change detection
@@ -536,26 +538,23 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeSelected: getNodeSelected(state),
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
-  ...ownProps
+  ...ownProps,
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
-  onLoadNodeData: nodeClicked => {
+  onLoadNodeData: (nodeClicked) => {
     dispatch(loadNodeData(nodeClicked));
   },
-  onToggleNodeHovered: nodeHovered => {
+  onToggleNodeHovered: (nodeHovered) => {
     dispatch(toggleNodeHovered(nodeHovered));
   },
-  onUpdateChartSize: chartSize => {
+  onUpdateChartSize: (chartSize) => {
     dispatch(updateChartSize(chartSize));
   },
-  onUpdateZoom: transform => {
+  onUpdateZoom: (transform) => {
     dispatch(updateZoom(transform));
   },
-  ...ownProps
+  ...ownProps,
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FlowChart);
+export default connect(mapStateToProps, mapDispatchToProps)(FlowChart);

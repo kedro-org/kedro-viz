@@ -6,7 +6,7 @@ import seedrandom from 'seedrandom';
  * @param {number} length Hash/ID length
  * @return string
  */
-export const generateHash = length => {
+export const generateHash = (length) => {
   const result = [];
   const characters =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -50,7 +50,7 @@ export const getSeedFromURL = () => {
  * Get an array of numbers
  * @param {number} n Length of the array
  */
-export const getNumberArray = n => Array.from(Array(n).keys());
+export const getNumberArray = (n) => Array.from(Array(n).keys());
 
 export const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
   ' '
@@ -68,13 +68,13 @@ const randomUtils = () => {
    * Get a random number between 0 to n-1, inclusive
    * @param {number} n Max number
    */
-  const randomIndex = n => Math.floor(random() * n);
+  const randomIndex = (n) => Math.floor(random() * n);
 
   /**
    * Get a random number between 1 to n, inclusive
    * @param {number} n Max number
    */
-  const randomNumber = n => Math.ceil(random() * n);
+  const randomNumber = (n) => Math.ceil(random() * n);
 
   /**
    * Get a random number between min and max, inclusive
@@ -87,7 +87,7 @@ const randomUtils = () => {
    * Get a random datum from an array
    * @param {Array} range The array to select a random item from
    */
-  const getRandom = range => range[randomIndex(range.length)];
+  const getRandom = (range) => range[randomIndex(range.length)];
 
   /**
    * Generate a random latin name
@@ -127,7 +127,7 @@ const randomUtils = () => {
     randomNumberBetween,
     getRandom,
     getRandomName,
-    getRandomSelection
+    getRandomSelection,
   };
 };
 

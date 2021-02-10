@@ -8,21 +8,21 @@ import {
   getNodeTextWidth,
   getPadding,
   getNodeSize,
-  getVisibleNodes
+  getVisibleNodes,
 } from './nodes';
 import { toggleTextLabels, updateFontLoaded } from '../actions';
 import { updateActivePipeline } from '../actions/pipelines';
 import {
   toggleNodeClicked,
   toggleNodeHovered,
-  toggleNodesDisabled
+  toggleNodesDisabled,
 } from '../actions/nodes';
 import reducer from '../reducers';
 
-const getNodeIDs = state => state.node.ids;
-const getNodeName = state => state.node.name;
-const getNodeType = state => state.node.type;
-const getNodePipelines = state => state.node.pipelines;
+const getNodeIDs = (state) => state.node.ids;
+const getNodeName = (state) => state.node.name;
+const getNodeType = (state) => state.node.type;
+const getNodePipelines = (state) => state.node.pipelines;
 
 const noFontState = reducer(mockState.animals, updateFontLoaded(false));
 
@@ -47,14 +47,16 @@ describe('Selectors', () => {
     it('returns true when a given node is hovered', () => {
       const nodes = getNodeIDs(mockState.animals);
       const nodeID = nodes[0];
-      const inactiveNodes = nodes.filter(id => id !== nodeID);
+      const inactiveNodes = nodes.filter((id) => id !== nodeID);
       const newMockState = reducer(
         mockState.animals,
         toggleNodeHovered(nodeID)
       );
       const nodeActive = getNodeActive(newMockState);
       expect(nodeActive[nodeID]).toEqual(true);
-      expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
+      expect(inactiveNodes.every((id) => nodeActive[id] === false)).toEqual(
+        true
+      );
     });
   });
 
@@ -78,14 +80,16 @@ describe('Selectors', () => {
     it('returns true when a given node is clicked', () => {
       const nodes = getNodeIDs(mockState.animals);
       const nodeID = nodes[0];
-      const inactiveNodes = nodes.filter(id => id !== nodeID);
+      const inactiveNodes = nodes.filter((id) => id !== nodeID);
       const newMockState = reducer(
         mockState.animals,
         toggleNodeClicked(nodeID)
       );
       const nodeActive = getNodeSelected(newMockState);
       expect(nodeActive[nodeID]).toEqual(true);
-      expect(inactiveNodes.every(id => nodeActive[id] === false)).toEqual(true);
+      expect(inactiveNodes.every((id) => nodeActive[id] === false)).toEqual(
+        true
+      );
     });
   });
 
@@ -99,15 +103,15 @@ describe('Selectors', () => {
             type: expect.stringMatching(/data|task/),
             disabled: expect.any(Boolean),
             disabled_node: expect.any(Boolean),
-            disabled_tag: expect.any(Boolean)
-          })
+            disabled_tag: expect.any(Boolean),
+          }),
         ])
       );
     });
 
     it('returns nodes sorted by name', () => {
       const nodeName = getNodeName(mockState.animals);
-      const nodeIDs = getNodeData(mockState.animals).map(d => d.id);
+      const nodeIDs = getNodeData(mockState.animals).map((d) => d.id);
       const visibleNodeIDs = getNodeIDs(mockState.animals).sort((a, b) => {
         if (nodeName[a] < nodeName[b]) return -1;
         if (nodeName[a] > nodeName[b]) return 1;
@@ -122,14 +126,14 @@ describe('Selectors', () => {
         mockState.animals,
         updateActivePipeline(activePipeline)
       );
-      const nodeDataIDs = getNodeData(state).map(d => d.id);
+      const nodeDataIDs = getNodeData(state).map((d) => d.id);
       const nodePipelines = getNodePipelines(state);
       const activePipelineNodeIDs = getNodeIDs(state).filter(
-        nodeID => nodePipelines[nodeID][activePipeline]
+        (nodeID) => nodePipelines[nodeID][activePipeline]
       );
       test.each(activePipelineNodeIDs)(
         `node %s is included in nodeData`,
-        nodeID => {
+        (nodeID) => {
           expect(nodeDataIDs).toContain(nodeID);
         }
       );
@@ -141,11 +145,11 @@ describe('Selectors', () => {
         mockState.animals,
         updateActivePipeline(activePipeline)
       );
-      const nodeIDs = getNodeData(state).map(d => d.id);
+      const nodeIDs = getNodeData(state).map((d) => d.id);
       const nodePipelines = getNodePipelines(state);
       test.each(nodeIDs)(
         `node %s is in active pipeline ${activePipeline}`,
-        nodeID => {
+        (nodeID) => {
           const nodeIsInActivePipeline = nodePipelines[nodeID][activePipeline];
           expect(nodeIsInActivePipeline).toBe(true);
         }
@@ -165,10 +169,12 @@ describe('Selectors', () => {
 
     test.each(types)(
       'returns all nodes in the active pipeline for "%s" type',
-      type => {
+      (type) => {
         const typeNodes = Object.values(groupedNodes[type]);
-        const typeNodeIDs = nodeIDs.filter(nodeID => nodeType[nodeID] === type);
-        expect(typeNodes.map(d => d.id)).toEqual(typeNodeIDs);
+        const typeNodeIDs = nodeIDs.filter(
+          (nodeID) => nodeType[nodeID] === type
+        );
+        expect(typeNodes.map((d) => d.id)).toEqual(typeNodeIDs);
       }
     );
   });
@@ -195,11 +201,11 @@ describe('Selectors', () => {
 
       it('returns an object whose values are all numbers', () => {
         expect(values.length).toEqual(getNodeIDs(mockState.animals).length);
-        expect(values.every(value => typeof value === 'number')).toBe(true);
+        expect(values.every((value) => typeof value === 'number')).toBe(true);
       });
 
       it('returns width=0 if svg getBBox is not supported', () => {
-        expect(values.every(value => value === 0)).toBe(true);
+        expect(values.every((value) => value === 0)).toBe(true);
       });
     });
   });
@@ -209,7 +215,7 @@ describe('Selectors', () => {
       expect(getPadding()).toEqual(
         expect.objectContaining({
           x: expect.any(Number),
-          y: expect.any(Number)
+          y: expect.any(Number),
         })
       );
     });
@@ -253,8 +259,8 @@ describe('Selectors', () => {
               height: expect.any(Number),
               textOffset: expect.any(Number),
               iconOffset: expect.any(Number),
-              iconSize: expect.any(Number)
-            })
+              iconSize: expect.any(Number),
+            }),
           ])
         );
       });
@@ -321,8 +327,8 @@ describe('Selectors', () => {
               height: expect.any(Number),
               textOffset: expect.any(Number),
               iconOffset: expect.any(Number),
-              iconSize: expect.any(Number)
-            })
+              iconSize: expect.any(Number),
+            }),
           ])
         );
       });
@@ -334,9 +340,9 @@ describe('Selectors', () => {
           mockState.animals,
           toggleNodesDisabled([nodeID], true)
         );
-        const visibleNodeIDs = getVisibleNodes(newMockState).map(d => d.id);
+        const visibleNodeIDs = getVisibleNodes(newMockState).map((d) => d.id);
         expect(visibleNodeIDs.sort()).toEqual(
-          nodes.filter(id => id !== nodeID).sort()
+          nodes.filter((id) => id !== nodeID).sort()
         );
         expect(visibleNodeIDs.includes(nodeID)).toEqual(false);
       });

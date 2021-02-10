@@ -6,19 +6,19 @@ function loadingReducer(loadingState = {}, action) {
   switch (action.type) {
     case TOGGLE_PIPELINE_LOADING: {
       return Object.assign({}, loadingState, {
-        pipeline: action.loading
+        pipeline: action.loading,
       });
     }
 
     case TOGGLE_GRAPH_LOADING: {
       return Object.assign({}, loadingState, {
-        graph: action.loading
+        graph: action.loading,
       });
     }
 
     case TOGGLE_NODE_DATA_LOADING: {
       return Object.assign({}, loadingState, {
-        node: action.loading
+        node: action.loading,
       });
     }
 

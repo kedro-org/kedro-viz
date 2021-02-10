@@ -9,7 +9,7 @@ export const Flags = {
    * @param {string} name The flag name to test
    * @returns {boolean} The result
    */
-  isDefined: name => Flags.names().includes(name),
+  isDefined: (name) => Flags.names().includes(name),
 
   /**
    * Returns an array of defined flag names
@@ -26,7 +26,7 @@ export const Flags = {
       (result, flag) =>
         Object.assign(result, { [flag]: flagsConfig[flag].default }),
       {}
-    )
+    ),
 };
 
 /**
@@ -34,7 +34,7 @@ export const Flags = {
  * @param {string=} url The URL (optional, default current location)
  * @returns {object} An object with flags and their values
  */
-export const getFlagsFromUrl = url => {
+export const getFlagsFromUrl = (url) => {
   const flags = {};
 
   let urlParams;
@@ -59,13 +59,13 @@ export const getFlagsFromUrl = url => {
  * @param {object} flagsEnabled An object mapping of flag status
  * @returns {string} The info message
  */
-export const getFlagsMessage = flagsEnabled => {
+export const getFlagsMessage = (flagsEnabled) => {
   const allNames = Flags.names();
 
   if (allNames.length > 0) {
     let info = 'Experimental features 🏄‍♂️\n';
 
-    allNames.forEach(name => {
+    allNames.forEach((name) => {
       if (flagsConfig[name].private) {
         return;
       }

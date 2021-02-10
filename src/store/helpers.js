@@ -26,7 +26,7 @@ export const loadState = () => {
  * Save updated state to localStorage
  * @param {Object} state New state object
  */
-export const saveState = state => {
+export const saveState = (state) => {
   if (noWindow) {
     return;
   }
@@ -49,7 +49,7 @@ export const saveState = state => {
  * @param {object} obj An object containing keys and booleans
  * @return {object} A new clone object but with the falsey keys removed
  */
-export const pruneFalseyKeys = obj => {
+export const pruneFalseyKeys = (obj) => {
   const newObj = {};
   for (let key in obj) {
     if (obj.hasOwnProperty(key) && obj[key]) {

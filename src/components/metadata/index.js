@@ -9,7 +9,7 @@ import MetaDataRow from './metadata-row';
 import MetaDataValue from './metadata-value';
 import {
   getVisibleMetaSidebar,
-  getClickedNodeMetaData
+  getClickedNodeMetaData,
 } from '../../selectors/metadata';
 import { toggleNodeClicked } from '../../actions/nodes';
 import './styles/metadata.css';
@@ -102,7 +102,7 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
             <MetaDataValue
               container={'code'}
               className={modifiers('pipeline-metadata__run-command-value', {
-                visible: !showCopied
+                visible: !showCopied,
               })}
               value={metadata.runCommand}
             />
@@ -110,7 +110,7 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
               <>
                 <span
                   className={modifiers('pipeline-metadata__copy-message', {
-                    visible: showCopied
+                    visible: showCopied,
                   })}>
                   Copied to clipboard.
                 </span>
@@ -139,16 +139,13 @@ const MetaData = ({ visible = true, metadata, onToggleNodeSelected }) => {
 export const mapStateToProps = (state, ownProps) => ({
   visible: getVisibleMetaSidebar(state),
   metadata: getClickedNodeMetaData(state),
-  ...ownProps
+  ...ownProps,
 });
 
-export const mapDispatchToProps = dispatch => ({
-  onToggleNodeSelected: nodeID => {
+export const mapDispatchToProps = (dispatch) => ({
+  onToggleNodeSelected: (nodeID) => {
     dispatch(toggleNodeClicked(nodeID));
-  }
+  },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MetaData);
+export default connect(mapStateToProps, mapDispatchToProps)(MetaData);

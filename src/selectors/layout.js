@@ -5,9 +5,9 @@ import { getVisibleLayerIDs } from './disabled';
 import { getVisibleMetaSidebar } from '../selectors/metadata';
 import { sidebarWidth, metaSidebarWidth, chartMinWidthScale } from '../config';
 
-const getOldgraphFlag = state => state.flags.oldgraph;
-const getVisibleSidebar = state => state.visible.sidebar;
-const getFontLoaded = state => state.fontLoaded;
+const getOldgraphFlag = (state) => state.flags.oldgraph;
+const getVisibleSidebar = (state) => state.visible.sidebar;
+const getFontLoaded = (state) => state.fontLoaded;
 
 /**
  * Select a subset of state that is watched by graph layout calculators
@@ -19,7 +19,7 @@ export const getGraphInput = createSelector(
     getVisibleEdges,
     getVisibleLayerIDs,
     getOldgraphFlag,
-    getFontLoaded
+    getFontLoaded,
   ],
   (nodes, edges, layers, oldgraph, fontLoaded) => {
     if (!fontLoaded) {
@@ -40,7 +40,7 @@ export const getSidebarWidth = (visible, { open, closed }) =>
  * and add some useful new ones
  */
 export const getChartSize = createSelector(
-  [getVisibleSidebar, getVisibleMetaSidebar, state => state.chartSize],
+  [getVisibleSidebar, getVisibleMetaSidebar, (state) => state.chartSize],
   (visibleSidebar, visibleMetaSidebar, chartSize) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
@@ -66,7 +66,7 @@ export const getChartSize = createSelector(
       width: chartWidth,
       minWidthScale: chartMinWidthScale,
       sidebarWidth: sidebarWidthActual,
-      metaSidebarWidth: metaSidebarWidthActual
+      metaSidebarWidth: metaSidebarWidthActual,
     };
   }
 );
@@ -74,9 +74,6 @@ export const getChartSize = createSelector(
 /**
  * Gets the current chart zoom
  */
-export const getChartZoom = createSelector(
-  [state => state.zoom],
-  zoom => ({
-    ...zoom
-  })
-);
+export const getChartZoom = createSelector([(state) => state.zoom], (zoom) => ({
+  ...zoom,
+}));
