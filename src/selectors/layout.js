@@ -13,7 +13,7 @@ import {
 const getOldgraphFlag = state => state.flags.oldgraph;
 const getVisibleSidebar = state => state.visible.sidebar;
 const getFontLoaded = state => state.fontLoaded;
-const getDisplayLargeGraph = state => state.loading.displayLargeGraph;
+const getDisplayLargeGraph = state => state.displayLargeGraph;
 
 /**
  * Decide whether to show the large graph warning

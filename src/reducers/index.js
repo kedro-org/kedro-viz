@@ -67,7 +67,8 @@ const combinedReducer = combineReducers({
   zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),
   fontLoaded: createReducer(false, UPDATE_FONT_LOADED, 'fontLoaded'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
-  theme: createReducer('dark', TOGGLE_THEME, 'theme')
+  theme: createReducer('dark', TOGGLE_THEME, 'theme'),
+  displayLargeGraph: createReducer(false)
 });
 
 const rootReducer = (state, action) =>
