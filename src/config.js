@@ -7,11 +7,11 @@ export const localStorageName = 'KedroViz';
 // value here, please also update their corresponding value in src/styles/_variables.scss
 export const metaSidebarWidth = {
   open: 400,
-  closed: 0
+  closed: 0,
 };
 export const sidebarWidth = {
   open: 400,
-  closed: 56
+  closed: 56,
 };
 
 export const chartMinWidthScale = 0.25;
@@ -22,22 +22,22 @@ export const flags = {
     description: 'Use older Dagre graphing algorithm',
     default: false,
     private: false,
-    icon: '📈'
+    icon: '📈',
   },
   lazy: {
     description: 'Improved sidebar performance',
     default: false,
-    icon: '😴'
-  }
+    icon: '😴',
+  },
 };
 
 export const sidebar = {
   Categories: {
-    Tags: 'tag'
+    Tags: 'tag',
   },
   Elements: {
     Nodes: 'task',
     Datasets: 'data',
-    Parameters: 'parameters'
-  }
+    Parameters: 'parameters',
+  },
 };

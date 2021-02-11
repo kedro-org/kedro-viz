@@ -3,15 +3,15 @@ import animals from '../utils/data/animals.mock.json';
 import {
   getNodeDisabledPipeline,
   getPipelineNodeIDs,
-  getPipelineTagIDs
+  getPipelineTagIDs,
 } from './pipeline';
 import reducer from '../reducers';
 import { updateActivePipeline } from '../actions/pipelines';
 
-const getNodeIDs = state => state.node.ids;
-const getNodePipelines = state => state.node.pipelines;
-const getActivePipeline = state => state.pipeline.active;
-const getTagIDs = state => state.tag.ids;
+const getNodeIDs = (state) => state.node.ids;
+const getNodePipelines = (state) => state.node.pipelines;
+const getActivePipeline = (state) => state.pipeline.active;
+const getTagIDs = (state) => state.tag.ids;
 
 describe('Selectors', () => {
   describe('getNodeDisabledPipeline', () => {
@@ -24,7 +24,7 @@ describe('Selectors', () => {
     it('returns an object whose values are all Booleans', () => {
       expect(
         Object.values(getNodeDisabledPipeline(mockState.animals)).every(
-          value => typeof value === 'boolean'
+          (value) => typeof value === 'boolean'
         )
       ).toBe(true);
     });
@@ -38,7 +38,7 @@ describe('Selectors', () => {
       const nodeDisabledPipeline = getNodeDisabledPipeline(newMockState);
       expect(
         mockState.animals.node.ids.every(
-          nodeID => !nodeDisabledPipeline[nodeID]
+          (nodeID) => !nodeDisabledPipeline[nodeID]
         )
       ).toBe(true);
     });
@@ -46,7 +46,7 @@ describe('Selectors', () => {
     it('does not disable any nodes that are in the active pipeline', () => {
       const activePipeline = 'ds';
       const activePipelineNodeIDs = mockState.animals.node.ids.filter(
-        nodeID => mockState.animals.node.pipelines[nodeID][activePipeline]
+        (nodeID) => mockState.animals.node.pipelines[nodeID][activePipeline]
       );
       const newMockState = reducer(
         mockState.animals,
@@ -54,14 +54,14 @@ describe('Selectors', () => {
       );
       const nodeDisabledPipeline = getNodeDisabledPipeline(newMockState);
       expect(
-        activePipelineNodeIDs.every(nodeID => !nodeDisabledPipeline[nodeID])
+        activePipelineNodeIDs.every((nodeID) => !nodeDisabledPipeline[nodeID])
       ).toBe(true);
     });
 
     it('disables every node that is not in the active pipeline', () => {
       const activePipeline = 'de';
       const inactivePipelineNodeIDs = mockState.animals.node.ids.filter(
-        nodeID => !mockState.animals.node.pipelines[nodeID][activePipeline]
+        (nodeID) => !mockState.animals.node.pipelines[nodeID][activePipeline]
       );
       const newMockState = reducer(
         mockState.animals,
@@ -69,7 +69,7 @@ describe('Selectors', () => {
       );
       const nodeDisabledPipeline = getNodeDisabledPipeline(newMockState);
       expect(
-        inactivePipelineNodeIDs.every(nodeID => nodeDisabledPipeline[nodeID])
+        inactivePipelineNodeIDs.every((nodeID) => nodeDisabledPipeline[nodeID])
       ).toBe(true);
     });
 
@@ -98,15 +98,15 @@ describe('Selectors', () => {
 
     it('does not contain any nodes that are not in the current pipeline', () => {
       expect(
-        pipelineNodeIDs.every(nodeID => nodePipelines[nodeID][activePipeline])
+        pipelineNodeIDs.every((nodeID) => nodePipelines[nodeID][activePipeline])
       ).toBe(true);
     });
 
     it('contains all nodes in the current pipeline', () => {
       const inactivePipelineNodeIDs = pipelineNodeIDs.filter(
-        nodeID => nodePipelines[nodeID][activePipeline]
+        (nodeID) => nodePipelines[nodeID][activePipeline]
       );
-      inactivePipelineNodeIDs.forEach(nodeID => {
+      inactivePipelineNodeIDs.forEach((nodeID) => {
         expect(pipelineNodeIDs).toContain(nodeID);
       });
     });
@@ -132,7 +132,7 @@ describe('Selectors', () => {
       const node = {
         id: 'new',
         tags: [tag.id],
-        pipelines: ['unused_pipeline'] // not included in default pipeline
+        pipelines: ['unused_pipeline'], // not included in default pipeline
       };
       const data = { ...animals };
       data.tags = [...data.tags, tag];

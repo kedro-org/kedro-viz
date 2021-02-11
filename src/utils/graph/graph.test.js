@@ -19,7 +19,7 @@ import {
   compare,
   offsetEdge,
   offsetNode,
-  nearestOnLine
+  nearestOnLine,
 } from './common';
 
 describe('graph', () => {
@@ -35,7 +35,7 @@ describe('graph', () => {
         size: expect.any(Object),
         nodes: mockNodes,
         edges: mockEdges,
-        layers: mockLayers
+        layers: mockLayers,
       })
     );
   });
@@ -46,17 +46,17 @@ describe('graph', () => {
   });
 
   it('sets valid x and y properties on all input nodes', () => {
-    result.nodes.forEach(node => {
+    result.nodes.forEach((node) => {
       expect(node.x).toEqual(expect.any(Number));
       expect(node.y).toEqual(expect.any(Number));
     });
   });
 
   it('sets valid points property on all input edges', () => {
-    result.edges.forEach(edge => {
+    result.edges.forEach((edge) => {
       expect(edge.points.length).toBeGreaterThanOrEqual(2);
 
-      edge.points.forEach(point => {
+      edge.points.forEach((point) => {
         expect(point.x).toEqual(expect.any(Number));
         expect(point.y).toEqual(expect.any(Number));
       });
@@ -139,15 +139,22 @@ describe('commmon', () => {
       { x: 0, y: 3 },
       { x: 1, y: 2 },
       { x: 0, y: 4 },
-      { x: 3, y: 2 }
+      { x: 3, y: 2 },
     ];
 
     expect(groupByRow(nodes)).toEqual([
-      [{ x: 0, y: 0, row: 0 }, { x: 1, y: 0, row: 0 }],
+      [
+        { x: 0, y: 0, row: 0 },
+        { x: 1, y: 0, row: 0 },
+      ],
       [{ x: 0, y: 1, row: 1 }],
-      [{ x: 1, y: 2, row: 2 }, { x: 2, y: 2, row: 2 }, { x: 3, y: 2, row: 2 }],
+      [
+        { x: 1, y: 2, row: 2 },
+        { x: 2, y: 2, row: 2 },
+        { x: 3, y: 2, row: 2 },
+      ],
       [{ x: 0, y: 3, row: 3 }],
-      [{ x: 0, y: 4, row: 4 }]
+      [{ x: 0, y: 4, row: 4 }],
     ]);
   });
 
@@ -216,9 +223,19 @@ describe('commmon', () => {
   });
 
   it('offsetEdge returns the edge with each point translated in-place', () => {
-    const edge = { points: [{ x: 5, y: -10 }, { x: -8, y: 2 }] };
+    const edge = {
+      points: [
+        { x: 5, y: -10 },
+        { x: -8, y: 2 },
+      ],
+    };
     const result = offsetEdge(edge, { x: 1, y: 2 });
-    expect(result).toEqual({ points: [{ x: 4, y: -12 }, { x: -9, y: 0 }] });
+    expect(result).toEqual({
+      points: [
+        { x: 4, y: -12 },
+        { x: -9, y: 0 },
+      ],
+    });
     expect(result).toBe(edge);
   });
 
@@ -227,7 +244,7 @@ describe('commmon', () => {
     expect(nearestOnLine(0, 0, 0, 0, 0, 0)).toEqual(
       expect.objectContaining({
         x: 0,
-        y: 0
+        y: 0,
       })
     );
 
@@ -235,7 +252,7 @@ describe('commmon', () => {
     expect(nearestOnLine(-1, -1, 0, 0, 1, 1)).toEqual(
       expect.objectContaining({
         x: 0,
-        y: 0
+        y: 0,
       })
     );
 
@@ -243,7 +260,7 @@ describe('commmon', () => {
     expect(nearestOnLine(2, 2, 0, 0, 1, 1)).toEqual(
       expect.objectContaining({
         x: 1,
-        y: 1
+        y: 1,
       })
     );
 
@@ -251,7 +268,7 @@ describe('commmon', () => {
     expect(nearestOnLine(0.5, 0.5, 0, 0, 1, 1)).toEqual(
       expect.objectContaining({
         x: 0.5,
-        y: 0.5
+        y: 0.5,
       })
     );
 
@@ -259,7 +276,7 @@ describe('commmon', () => {
     expect(nearestOnLine(0.5, 0, 0, 0, 1, 1)).toEqual(
       expect.objectContaining({
         x: 0.25,
-        y: 0.25
+        y: 0.25,
       })
     );
 
@@ -267,7 +284,7 @@ describe('commmon', () => {
     expect(nearestOnLine(0.5, 1, 0, 0, 1, 1)).toEqual(
       expect.objectContaining({
         x: 0.75,
-        y: 0.75
+        y: 0.75,
       })
     );
   });
@@ -279,27 +296,37 @@ describe('solver', () => {
     const testB = { id: 1, x: 0, y: 0 };
     const testC = { id: 2, x: 0, y: 0 };
 
-    const solveEqConstraint = constraint => {
-      const { a, b, target, base: { property } } = constraint;
+    const solveEqConstraint = (constraint) => {
+      const {
+        a,
+        b,
+        target,
+        base: { property },
+      } = constraint;
       const difference = a[property] - b[property];
 
       if (difference === target) {
         return;
       }
-  
+
       const resolve = difference - target;
       a[property] -= 0.5 * resolve;
       b[property] += 0.5 * resolve;
     };
 
-    const solveGeConstraint = constraint => {
-      const { a, b, target, base: { property } } = constraint;
+    const solveGeConstraint = (constraint) => {
+      const {
+        a,
+        b,
+        target,
+        base: { property },
+      } = constraint;
       const difference = a[property] - b[property];
 
       if (difference >= target) {
         return;
       }
-  
+
       const resolve = difference - target;
       a[property] -= 0.5 * resolve;
       b[property] += 0.5 * resolve;
@@ -311,8 +338,8 @@ describe('solver', () => {
       target: 5,
       base: {
         solve: solveEqConstraint,
-        property: 'x'
-      }
+        property: 'x',
+      },
     };
 
     const constraintXB = {
@@ -321,8 +348,8 @@ describe('solver', () => {
       target: 8,
       base: {
         solve: solveGeConstraint,
-        property: 'x'
-      }
+        property: 'x',
+      },
     };
 
     const constraintXC = {
@@ -331,8 +358,8 @@ describe('solver', () => {
       target: 20,
       base: {
         solve: solveGeConstraint,
-        property: 'x'
-      }
+        property: 'x',
+      },
     };
 
     const constraintYA = {
@@ -341,8 +368,8 @@ describe('solver', () => {
       target: 5,
       base: {
         solve: solveEqConstraint,
-        property: 'y'
-      }
+        property: 'y',
+      },
     };
 
     const constraintYB = {
@@ -351,8 +378,8 @@ describe('solver', () => {
       target: 1,
       base: {
         solve: solveGeConstraint,
-        property: 'y'
-      }
+        property: 'y',
+      },
     };
 
     const constraintYC = {
@@ -361,8 +388,8 @@ describe('solver', () => {
       target: 100,
       base: {
         solve: solveEqConstraint,
-        property: 'y'
-      }
+        property: 'y',
+      },
     };
 
     solve(
@@ -372,7 +399,7 @@ describe('solver', () => {
         constraintXC,
         constraintYA,
         constraintYB,
-        constraintYC
+        constraintYC,
       ],
       null,
       8,
@@ -393,7 +420,12 @@ describe('solver', () => {
     const testB = { id: 1, x: 0, y: 0 };
     const testC = { id: 2, x: 0, y: 0 };
 
-    const strictEqConstraint = (constraint, constants, variableA, variableB) => {
+    const strictEqConstraint = (
+      constraint,
+      constants,
+      variableA,
+      variableB
+    ) => {
       return new Constraint(
         variableA.minus(variableB),
         Operator.Eq,
@@ -402,7 +434,12 @@ describe('solver', () => {
       );
     };
 
-    const strictGeConstraint = (constraint, constants, variableA, variableB) => {
+    const strictGeConstraint = (
+      constraint,
+      constants,
+      variableA,
+      variableB
+    ) => {
       return new Constraint(
         variableA.minus(variableB),
         Operator.Ge,
@@ -417,8 +454,8 @@ describe('solver', () => {
       target: 5,
       base: {
         strict: strictEqConstraint,
-        property: 'x'
-      }
+        property: 'x',
+      },
     };
 
     const constraintXB = {
@@ -427,8 +464,8 @@ describe('solver', () => {
       target: 8,
       base: {
         strict: strictGeConstraint,
-        property: 'x'
-      }
+        property: 'x',
+      },
     };
 
     const constraintXC = {
@@ -437,8 +474,8 @@ describe('solver', () => {
       target: 20,
       base: {
         strict: strictGeConstraint,
-        property: 'x'
-      }
+        property: 'x',
+      },
     };
 
     const constraintYA = {
@@ -447,8 +484,8 @@ describe('solver', () => {
       target: 5,
       base: {
         strict: strictEqConstraint,
-        property: 'y'
-      }
+        property: 'y',
+      },
     };
 
     const constraintYB = {
@@ -457,8 +494,8 @@ describe('solver', () => {
       target: 1,
       base: {
         strict: strictGeConstraint,
-        property: 'y'
-      }
+        property: 'y',
+      },
     };
 
     const constraintYC = {
@@ -467,8 +504,8 @@ describe('solver', () => {
       target: 100,
       base: {
         strict: strictEqConstraint,
-        property: 'y'
-      }
+        property: 'y',
+      },
     };
 
     solve(
@@ -478,7 +515,7 @@ describe('solver', () => {
         constraintXC,
         constraintYA,
         constraintYB,
-        constraintYC
+        constraintYC,
       ],
       null,
       1,

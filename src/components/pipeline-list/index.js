@@ -18,7 +18,7 @@ export const PipelineList = ({
   onUpdateActivePipeline,
   pipeline,
   theme,
-  onToggleOpen
+  onToggleOpen,
 }) => {
   if (!pipeline.ids.length && !asyncDataSource) {
     return null;
@@ -33,11 +33,11 @@ export const PipelineList = ({
         width={null}
         onChanged={onUpdateActivePipeline}
         defaultText={pipeline.name[pipeline.active] || 'Default'}>
-        {pipeline.ids.map(id => (
+        {pipeline.ids.map((id) => (
           <MenuOption
             key={`pipeline-${id}`}
             className={classnames({
-              'pipeline-list__option--active': pipeline.active === id
+              'pipeline-list__option--active': pipeline.active === id,
             })}
             value={id}
             primaryText={pipeline.name[id]}
@@ -48,19 +48,16 @@ export const PipelineList = ({
   );
 };
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state) => ({
   asyncDataSource: state.asyncDataSource,
   pipeline: state.pipeline,
-  theme: state.theme
+  theme: state.theme,
 });
 
-export const mapDispatchToProps = dispatch => ({
-  onUpdateActivePipeline: event => {
+export const mapDispatchToProps = (dispatch) => ({
+  onUpdateActivePipeline: (event) => {
     dispatch(loadPipelineData(event.value));
-  }
+  },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PipelineList);
+export default connect(mapStateToProps, mapDispatchToProps)(PipelineList);

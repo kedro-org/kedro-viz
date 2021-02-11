@@ -13,8 +13,8 @@ const { escapeRegExp, getHighlightedText } = utils;
  * @param {object} nodes Grouped nodes
  * @return {array} List of node IDs
  */
-export const getNodeIDs = nodes => {
-  const getNodeIDs = type => nodes[type].map(node => node.id);
+export const getNodeIDs = (nodes) => {
+  const getNodeIDs = (type) => nodes[type].map((node) => node.id);
   const concatNodeIDs = (nodeIDs, type) => nodeIDs.concat(getNodeIDs(type));
 
   return Object.keys(nodes).reduce(concatNodeIDs, []);
@@ -27,13 +27,13 @@ export const getNodeIDs = nodes => {
  * @return {object} The grouped nodes with highlightedLabel fields added
  */
 export const highlightMatch = (nodes, searchValue) => {
-  const addHighlightedLabel = node => ({
+  const addHighlightedLabel = (node) => ({
     highlightedLabel: getHighlightedText(node.name, searchValue),
-    ...node
+    ...node,
   });
   const addLabelsToNodes = (newNodes, type) => ({
     ...newNodes,
-    [type]: nodes[type].map(addHighlightedLabel)
+    [type]: nodes[type].map(addHighlightedLabel),
   });
 
   return Object.keys(nodes).reduce(addLabelsToNodes, {});
@@ -59,11 +59,11 @@ export const nodeMatchesSearch = (node, searchValue) => {
  * @return {object} Grouped nodes
  */
 export const filterNodes = (nodes, searchValue) => {
-  const filterNodesByType = type =>
-    nodes[type].filter(node => nodeMatchesSearch(node, searchValue));
+  const filterNodesByType = (type) =>
+    nodes[type].filter((node) => nodeMatchesSearch(node, searchValue));
   const filterNodeLists = (newNodes, type) => ({
     ...newNodes,
-    [type]: filterNodesByType(type)
+    [type]: filterNodesByType(type),
   });
 
   return Object.keys(nodes).reduce(filterNodeLists, {});
@@ -76,13 +76,13 @@ export const filterNodes = (nodes, searchValue) => {
  * @return {object} Grouped nodes, and node IDs
  */
 export const getFilteredNodes = createSelector(
-  [state => state.nodes, state => state.searchValue],
+  [(state) => state.nodes, (state) => state.searchValue],
   (nodes, searchValue) => {
     const filteredNodes = filterNodes(nodes, searchValue);
 
     return {
       filteredNodes: highlightMatch(filteredNodes, searchValue),
-      nodeIDs: getNodeIDs(filteredNodes)
+      nodeIDs: getNodeIDs(filteredNodes),
     };
   }
 );
@@ -94,7 +94,7 @@ export const getFilteredNodes = createSelector(
  * @return {object} Grouped tags
  */
 export const getFilteredTags = createSelector(
-  [state => state.tags, state => state.searchValue],
+  [(state) => state.tags, (state) => state.searchValue],
   (tags, searchValue) =>
     highlightMatch(filterNodes({ tag: tags }, searchValue), searchValue)
 );
@@ -106,9 +106,9 @@ export const getFilteredTags = createSelector(
  * @return {array} Node list items
  */
 export const getFilteredTagItems = createSelector(
-  [getFilteredTags, state => state.tagsEnabled],
+  [getFilteredTags, (state) => state.tagsEnabled],
   (filteredTags, tagsEnabled) => ({
-    tag: filteredTags.tag.map(tag => ({
+    tag: filteredTags.tag.map((tag) => ({
       ...tag,
       type: 'tag',
       visibleIcon: IndicatorIcon,
@@ -119,8 +119,8 @@ export const getFilteredTagItems = createSelector(
       visible: true,
       disabled: false,
       unset: typeof tagsEnabled[tag.id] === 'undefined',
-      checked: tagsEnabled[tag.id] === true
-    }))
+      checked: tagsEnabled[tag.id] === true,
+    })),
   })
 );
 
@@ -145,13 +145,13 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
  * @return {number} Comparison result
  */
 export const getFilteredNodeItems = createSelector(
-  [getFilteredNodes, state => state.nodeSelected],
+  [getFilteredNodes, (state) => state.nodeSelected],
   ({ filteredNodes }, nodeSelected) => {
     const result = {};
 
     for (const type of Object.keys(filteredNodes)) {
       result[type] = filteredNodes[type]
-        .map(node => {
+        .map((node) => {
           const checked = !node.disabled_node;
           const disabled = node.disabled_tag || node.disabled_type;
           return {
@@ -164,7 +164,7 @@ export const getFilteredNodeItems = createSelector(
             visible: !disabled && checked,
             unset: false,
             checked,
-            disabled
+            disabled,
           };
         })
         .sort(compareEnabledThenAlpha);
@@ -179,9 +179,9 @@ export const getFilteredNodeItems = createSelector(
  * @return {array} List of sections
  */
 export const getSections = createSelector(() =>
-  Object.keys(sidebar).map(name => ({
+  Object.keys(sidebar).map((name) => ({
     name,
-    types: Object.values(sidebar[name])
+    types: Object.values(sidebar[name]),
   }))
 );
 
@@ -198,8 +198,8 @@ export const createGroup = (itemType, itemsOfType = []) => {
     type: itemType,
     id: itemType.id,
     count: itemsOfType.length,
-    allUnset: itemsOfType.every(item => item.unset),
-    allChecked: itemsOfType.every(item => item.checked)
+    allUnset: itemsOfType.every((item) => item.unset),
+    allChecked: itemsOfType.every((item) => item.checked),
   };
 
   if (itemType.id === 'tag') {
@@ -208,7 +208,7 @@ export const createGroup = (itemType, itemsOfType = []) => {
       kind: 'filter',
       checked: !group.allUnset,
       visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
-      invisibleIcon: IndicatorOffIcon
+      invisibleIcon: IndicatorOffIcon,
     });
   } else {
     Object.assign(group, {
@@ -216,7 +216,7 @@ export const createGroup = (itemType, itemsOfType = []) => {
       kind: 'element',
       checked: !itemType.disabled,
       visibleIcon: VisibleIcon,
-      invisibleIcon: InvisibleIcon
+      invisibleIcon: InvisibleIcon,
     });
   }
   return group;
@@ -229,7 +229,7 @@ export const createGroup = (itemType, itemsOfType = []) => {
  * @return {array} List of groups
  */
 export const getGroups = createSelector(
-  [state => state.types, state => state.items],
+  [(state) => state.types, (state) => state.items],
   (nodeTypes, items) => {
     const groups = {};
     const itemTypes = [...nodeTypes, { id: 'tag' }];
@@ -251,7 +251,7 @@ export const getFilteredItems = createSelector(
   (filteredNodeItems, filteredTagItems) => {
     return {
       ...filteredTagItems,
-      ...filteredNodeItems
+      ...filteredNodeItems,
     };
   }
 );

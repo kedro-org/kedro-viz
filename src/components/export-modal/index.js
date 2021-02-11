@@ -41,19 +41,16 @@ const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
   );
 };
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state) => ({
   graphSize: state.graph.size || {},
   visible: state.visible,
-  theme: state.theme
+  theme: state.theme,
 });
 
-export const mapDispatchToProps = dispatch => ({
-  onToggle: value => {
+export const mapDispatchToProps = (dispatch) => ({
+  onToggle: (value) => {
     dispatch(toggleExportModal(value));
-  }
+  },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ExportModal);
+export default connect(mapStateToProps, mapDispatchToProps)(ExportModal);

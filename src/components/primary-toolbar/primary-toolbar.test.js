@@ -2,7 +2,7 @@ import React from 'react';
 import ConnectedPrimaryToolbar, {
   PrimaryToolbar,
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
@@ -17,7 +17,7 @@ describe('PrimaryToolbar', () => {
       themeBtn: false,
       labelBtn: false,
       layerBtn: false,
-      exportBtn: false
+      exportBtn: false,
     };
     const wrapper = setup.mount(<ConnectedPrimaryToolbar />, { visible });
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
@@ -25,7 +25,7 @@ describe('PrimaryToolbar', () => {
 
   it('hides one button when visible prop is false for one of them', () => {
     const visible = {
-      labelBtn: false
+      labelBtn: false,
     };
     const wrapper = setup.mount(<ConnectedPrimaryToolbar />, { visible });
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
@@ -36,7 +36,7 @@ describe('PrimaryToolbar', () => {
     ['.pipeline-menu-button--theme', 'onToggleTheme'],
     ['.pipeline-menu-button--labels', 'onToggleTextLabels'],
     ['.pipeline-menu-button--export', 'onToggleExportModal'],
-    ['.pipeline-menu-button--layers', 'onToggleLayers']
+    ['.pipeline-menu-button--layers', 'onToggleLayers'],
   ];
 
   test.each(functionCalls)(
@@ -47,14 +47,11 @@ describe('PrimaryToolbar', () => {
         textLabels: mockState.animals.textLabels,
         theme: mockState.animals.theme,
         visible: mockState.animals.visible,
-        [callback]: mockFn
+        [callback]: mockFn,
       };
       const wrapper = setup.mount(<PrimaryToolbar {...props} />);
       expect(mockFn.mock.calls.length).toBe(0);
-      wrapper
-        .find(selector)
-        .find('button')
-        .simulate('click');
+      wrapper.find(selector).find('button').simulate('click');
       expect(mockFn.mock.calls.length).toBe(1);
     }
   );
@@ -70,9 +67,9 @@ describe('PrimaryToolbar', () => {
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),
         themeBtn: expect.any(Boolean),
-        sidebar: expect.any(Boolean)
+        sidebar: expect.any(Boolean),
       }),
-      visibleLayers: expect.any(Boolean)
+      visibleLayers: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
@@ -83,7 +80,7 @@ describe('PrimaryToolbar', () => {
       mapDispatchToProps(dispatch).onToggleExportModal(true);
       expect(dispatch.mock.calls[0][0]).toEqual({
         visible: true,
-        type: 'TOGGLE_EXPORT_MODAL'
+        type: 'TOGGLE_EXPORT_MODAL',
       });
     });
 
@@ -92,7 +89,7 @@ describe('PrimaryToolbar', () => {
       mapDispatchToProps(dispatch).onToggleLayers(true);
       expect(dispatch.mock.calls[0][0]).toEqual({
         visible: true,
-        type: 'TOGGLE_LAYERS'
+        type: 'TOGGLE_LAYERS',
       });
     });
 
@@ -101,7 +98,7 @@ describe('PrimaryToolbar', () => {
       mapDispatchToProps(dispatch).onToggleSidebar(true);
       expect(dispatch.mock.calls[0][0]).toEqual({
         visible: true,
-        type: 'TOGGLE_SIDEBAR'
+        type: 'TOGGLE_SIDEBAR',
       });
     });
 
@@ -110,7 +107,7 @@ describe('PrimaryToolbar', () => {
       mapDispatchToProps(dispatch).onToggleTextLabels(true);
       expect(dispatch.mock.calls[0][0]).toEqual({
         textLabels: true,
-        type: 'TOGGLE_TEXT_LABELS'
+        type: 'TOGGLE_TEXT_LABELS',
       });
     });
 
@@ -119,7 +116,7 @@ describe('PrimaryToolbar', () => {
       mapDispatchToProps(dispatch).onToggleTheme('light');
       expect(dispatch.mock.calls[0][0]).toEqual({
         theme: 'light',
-        type: 'TOGGLE_THEME'
+        type: 'TOGGLE_THEME',
       });
     });
   });

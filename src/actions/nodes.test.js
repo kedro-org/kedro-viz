@@ -7,7 +7,7 @@ import {
   toggleNodeDataLoading,
   loadNodeData,
   addNodeMetadata,
-  ADD_NODE_METADATA
+  ADD_NODE_METADATA,
 } from './nodes';
 import node_parameters from '../utils/data/node_parameters.mock.json';
 
@@ -21,7 +21,7 @@ describe('node actions', () => {
       const data = { id: 'abc123', data: { parameters: { test: 'test' } } };
       const expectedAction = {
         type: ADD_NODE_METADATA,
-        data
+        data,
       };
       expect(addNodeMetadata(data)).toEqual(expectedAction);
     });
@@ -32,7 +32,7 @@ describe('node actions', () => {
       const loading = true;
       const expectedAction = {
         type: TOGGLE_NODE_DATA_LOADING,
-        loading
+        loading,
       };
       expect(toggleNodeDataLoading(loading)).toEqual(expectedAction);
     });
@@ -67,7 +67,7 @@ describe('node actions', () => {
         const { dispatch, getState } = store;
         const node = { id: parametersID };
         const storeListener = jest.fn();
-        const logDispatch = action => {
+        const logDispatch = (action) => {
           storeListener(action);
           return dispatch(action);
         };
@@ -76,7 +76,7 @@ describe('node actions', () => {
 
         expect(storeListener.mock.calls[2][0]).toEqual({
           type: ADD_NODE_METADATA,
-          data: { id: node.id, data: node_parameters }
+          data: { id: node.id, data: node_parameters },
         });
       });
 
@@ -94,7 +94,7 @@ describe('node actions', () => {
         const { dispatch, getState } = store;
         const node = { id: parametersID };
         const storeListener = jest.fn();
-        const logDispatch = action => {
+        const logDispatch = (action) => {
           storeListener(action);
           return dispatch(action);
         };
@@ -108,7 +108,7 @@ describe('node actions', () => {
 
         expect(storeListener.mock.calls[4][0]).toEqual({
           nodeClicked: parametersID,
-          type: 'TOGGLE_NODE_CLICKED'
+          type: 'TOGGLE_NODE_CLICKED',
         });
       });
 

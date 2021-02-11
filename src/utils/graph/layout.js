@@ -5,7 +5,7 @@ import {
   layerConstraint,
   parallelConstraint,
   crossingConstraint,
-  separationConstraint
+  separationConstraint,
 } from './constraints';
 
 /**
@@ -31,7 +31,7 @@ export const layout = ({
   spaceX,
   spaceY,
   layerSpaceY,
-  iterations
+  iterations,
 }) => {
   // Set initial positions for nodes
   for (const node of nodes) {
@@ -44,7 +44,7 @@ export const layout = ({
     spaceX,
     spaceY,
     basisX,
-    layerSpace: (spaceY + layerSpaceY) * 0.5
+    layerSpace: (spaceY + layerSpaceY) * 0.5,
   };
 
   // Constraints to separate nodes into rows
@@ -66,7 +66,7 @@ export const layout = ({
   const {
     parallelConstraints,
     parallelSingleConstraints,
-    parallelDoubleConstraints
+    parallelDoubleConstraints,
   } = createParallelConstraints(edges);
 
   // Constraints to maintain a minimum horizontal node spacing
@@ -91,12 +91,7 @@ export const layout = ({
   updateSeparationConstraints(separationConstraints, rows, spaceX, true);
 
   // Find the final node positions given these strict constraints
-  solve(
-    [...separationConstraints, ...parallelConstraints],
-    constants,
-    1,
-    true
-  );
+  solve([...separationConstraints, ...parallelConstraints], constants, 1, true);
 
   // Adjust vertical spacing between rows for legibility
   expandDenseRows(edges, rows, spaceY);
@@ -107,11 +102,11 @@ export const layout = ({
  * @param {array} edges The input edges
  * @returns {array} The constraints
  */
-const createRowConstraints = edges =>
-  edges.map(edge => ({
+const createRowConstraints = (edges) =>
+  edges.map((edge) => ({
     base: rowConstraint,
     a: edge.targetNode,
-    b: edge.sourceNode
+    b: edge.sourceNode,
   }));
 
 /**
@@ -129,8 +124,8 @@ const createLayerConstraints = (nodes, layers) => {
   }
 
   // Group the nodes for each layer
-  const layerGroups = layers.map(name =>
-    nodes.filter(node => node.nearestLayer === name)
+  const layerGroups = layers.map((name) =>
+    nodes.filter((node) => node.nearestLayer === name)
   );
 
   // For each layer of nodes
@@ -146,7 +141,7 @@ const createLayerConstraints = (nodes, layers) => {
       layerConstraints.push({
         base: layerConstraint,
         a: intermediary,
-        b: node
+        b: node,
       });
     }
 
@@ -155,7 +150,7 @@ const createLayerConstraints = (nodes, layers) => {
       layerConstraints.push({
         base: layerConstraint,
         a: node,
-        b: intermediary
+        b: intermediary,
       });
     }
   }
@@ -168,7 +163,7 @@ const createLayerConstraints = (nodes, layers) => {
  * @param {array} edges The input edges
  * @returns {array} The constraints
  */
-const createCrossingConstraints = edges => {
+const createCrossingConstraints = (edges) => {
   const crossingConstraints = [];
 
   // For every pair of edges
@@ -185,7 +180,7 @@ const createCrossingConstraints = edges => {
           a: edgeA.sourceNode,
           b: edgeB.sourceNode,
           edgeA: edgeA,
-          edgeB: edgeB
+          edgeB: edgeB,
         });
       }
 
@@ -196,7 +191,7 @@ const createCrossingConstraints = edges => {
           a: edgeA.targetNode,
           b: edgeB.targetNode,
           edgeA: edgeA,
-          edgeB: edgeB
+          edgeB: edgeB,
         });
       }
     }
@@ -213,7 +208,7 @@ const createCrossingConstraints = edges => {
  * @param {array} edges The input edges
  * @returns {object} An object containing the constraints
  */
-const createParallelConstraints = edges => {
+const createParallelConstraints = (edges) => {
   const parallelConstraints = [];
   const parallelSingleConstraints = [];
   const parallelDoubleConstraints = [];
@@ -224,7 +219,7 @@ const createParallelConstraints = edges => {
     const constraint = {
       base: parallelConstraint,
       a: edge.sourceNode,
-      b: edge.targetNode
+      b: edge.targetNode,
     };
 
     parallelConstraints.push(constraint);
@@ -247,7 +242,7 @@ const createParallelConstraints = edges => {
   return {
     parallelConstraints,
     parallelSingleConstraints,
-    parallelDoubleConstraints
+    parallelDoubleConstraints,
   };
 };
 
@@ -256,7 +251,7 @@ const createParallelConstraints = edges => {
  * @param {array} rows The rows containing nodes
  * @returns {array} The constraints
  */
-const createSeparationConstraints = rows => {
+const createSeparationConstraints = (rows) => {
   const separationConstraints = [];
 
   // Constraints to maintain horizontal node separation
@@ -265,7 +260,7 @@ const createSeparationConstraints = rows => {
       separationConstraints.push({
         base: separationConstraint,
         a: null,
-        b: null
+        b: null,
       });
     }
   }
@@ -280,7 +275,12 @@ const createSeparationConstraints = rows => {
  * @param {number} spaceX The desired separation in X
  * @returns {array} The constraints
  */
-const updateSeparationConstraints = (separationConstraints, rows, spaceX, snapped=false) => {
+const updateSeparationConstraints = (
+  separationConstraints,
+  rows,
+  spaceX,
+  snapped = false
+) => {
   let k = 0;
 
   // For each row
@@ -354,7 +354,7 @@ const expandDenseRows = (edges, rows, spaceY) => {
  * @param {array} edges The input edges
  * @returns {array} The density of each row
  */
-const rowDensity = edges => {
+const rowDensity = (edges) => {
   const rows = {};
 
   for (const edge of edges) {

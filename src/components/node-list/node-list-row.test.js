@@ -20,7 +20,7 @@ describe('NodeListRow', () => {
       onMouseEnter: jest.fn(),
       onMouseLeave: jest.fn(),
       onChange: jest.fn(),
-      type: node.type
+      type: node.type,
     };
     return { props };
   };
@@ -84,7 +84,7 @@ describe('NodeListRow', () => {
 
   it('maps state to props', () => {
     const expectedResult = expect.objectContaining({
-      active: expect.any(Boolean)
+      active: expect.any(Boolean),
     });
     expect(mapStateToProps(mockState.animals, {})).toEqual(expectedResult);
   });

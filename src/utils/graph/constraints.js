@@ -33,7 +33,7 @@ export const rowConstraint = {
       constants.spaceY,
       Strength.required
     );
-  }
+  },
 };
 
 /**
@@ -63,7 +63,7 @@ export const layerConstraint = {
       constants.layerSpace,
       Strength.required
     );
-  }
+  },
 };
 
 /**
@@ -72,7 +72,7 @@ export const layerConstraint = {
 export const parallelConstraint = {
   property: 'x',
 
-  solve: constraint => {
+  solve: (constraint) => {
     const { a, b } = constraint;
     const difference = a.x - b.x;
 
@@ -95,7 +95,7 @@ export const parallelConstraint = {
       0,
       Strength.strong
     );
-  }
+  },
 };
 
 /**
@@ -121,7 +121,7 @@ export const crossingConstraint = {
     const resolve = strength * (difference - target);
     a.x -= 0.5 * resolve;
     b.x += 0.5 * resolve;
-  }
+  },
 };
 
 /**
@@ -130,7 +130,7 @@ export const crossingConstraint = {
 export const separationConstraint = {
   property: 'x',
 
-  solve: constraint => {
+  solve: (constraint) => {
     const { a, b } = constraint;
     const difference = b.x - a.x;
     const target = constraint.separation;
@@ -151,5 +151,5 @@ export const separationConstraint = {
       constraint.separation,
       Strength.required
     );
-  }
+  },
 };

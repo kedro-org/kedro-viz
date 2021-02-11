@@ -9,7 +9,7 @@ export function toggleTagActive(tagIDs, active) {
   return {
     type: TOGGLE_TAG_ACTIVE,
     tagIDs: Array.isArray(tagIDs) ? tagIDs : [tagIDs],
-    active
+    active,
   };
 }
 
@@ -24,6 +24,6 @@ export function toggleTagFilter(tagIDs, enabled) {
   return {
     type: TOGGLE_TAG_FILTER,
     tagIDs: Array.isArray(tagIDs) ? tagIDs : [tagIDs],
-    enabled
+    enabled,
   };
 }

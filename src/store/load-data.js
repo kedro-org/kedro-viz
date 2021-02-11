@@ -20,7 +20,7 @@ const loadJsonData = (path = getUrl('main'), fallback = {}) =>
       );
     }
 
-    return new Promise(resolve => resolve(fallback));
+    return new Promise((resolve) => resolve(fallback));
   });
 
 export default loadJsonData;

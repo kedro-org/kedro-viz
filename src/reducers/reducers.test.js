@@ -13,13 +13,13 @@ import {
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
-  UPDATE_FONT_LOADED
+  UPDATE_FONT_LOADED,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED,
-  ADD_NODE_METADATA
+  ADD_NODE_METADATA,
 } from '../actions/nodes';
 import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
 import { TOGGLE_TYPE_DISABLED } from '../actions/node-type';
@@ -35,21 +35,21 @@ describe('Reducer', () => {
       expect(
         reducer(mockState.animals, {
           type: RESET_DATA,
-          data: normalizeData(animals)
+          data: normalizeData(animals),
         })
       ).toEqual(mockState.animals);
     });
 
     it('should reset the state with new data', () => {
       // Exclude graph prop
-      const removeGraph = state => {
+      const removeGraph = (state) => {
         const stateCopy = Object.assign({}, state);
         delete stateCopy.graph;
         return stateCopy;
       };
       const newState = reducer(mockState.demo, {
         type: RESET_DATA,
-        data: normalizeData(animals)
+        data: normalizeData(animals),
       });
       expect(removeGraph(newState)).toEqual(removeGraph(mockState.animals));
     });
@@ -60,7 +60,7 @@ describe('Reducer', () => {
       const nodeClicked = 'abc123';
       const newState = reducer(mockState.animals, {
         type: TOGGLE_NODE_CLICKED,
-        nodeClicked
+        nodeClicked,
       });
       expect(newState.node.clicked).toEqual(nodeClicked);
     });
@@ -71,7 +71,7 @@ describe('Reducer', () => {
       const nodeHovered = 'abc123';
       const newState = reducer(mockState.animals, {
         type: TOGGLE_NODE_HOVERED,
-        nodeHovered
+        nodeHovered,
       });
       expect(newState.node.hovered).toEqual(nodeHovered);
     });
@@ -82,23 +82,23 @@ describe('Reducer', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_NODES_DISABLED,
         nodeIDs: ['123', 'abc'],
-        isDisabled: true
+        isDisabled: true,
       });
-      expect(newState.node.disabled).toEqual({ '123': true, abc: true });
+      expect(newState.node.disabled).toEqual({ 123: true, abc: true });
     });
 
     it('should set nodeClicked to null if the selected node is being disabled', () => {
       const nodeID = 'abc123';
       const clickNodeAction = {
         type: TOGGLE_NODE_CLICKED,
-        nodeClicked: nodeID
+        nodeClicked: nodeID,
       };
       const clickedState = reducer(mockState.animals, clickNodeAction);
       expect(clickedState.node.clicked).toEqual(nodeID);
       const disableNodeAction = {
         type: TOGGLE_NODES_DISABLED,
         nodeIDs: [nodeID],
-        isDisabled: true
+        isDisabled: true,
       };
       const disabledState = reducer(clickedState, disableNodeAction);
       expect(disabledState.node.clicked).toEqual(null);
@@ -109,7 +109,7 @@ describe('Reducer', () => {
     it('should toggle the value of textLabels', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TEXT_LABELS,
-        textLabels: true
+        textLabels: true,
       });
       expect(mockState.animals.textLabels).toBe(true);
       expect(newState.textLabels).toBe(true);
@@ -121,7 +121,7 @@ describe('Reducer', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TAG_ACTIVE,
         tagIDs: ['huge'],
-        active: true
+        active: true,
       });
       expect(newState.tag.active).toEqual({ huge: true });
     });
@@ -132,7 +132,7 @@ describe('Reducer', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TAG_FILTER,
         tagIDs: ['small'],
-        enabled: true
+        enabled: true,
       });
       expect(newState.tag.enabled).toEqual({ small: true });
     });
@@ -142,7 +142,7 @@ describe('Reducer', () => {
     it('should toggle the theme to light', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_THEME,
-        theme: 'light'
+        theme: 'light',
       });
       expect(newState.theme).toBe('light');
     });
@@ -153,7 +153,7 @@ describe('Reducer', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TYPE_DISABLED,
         typeID: '123',
-        disabled: true
+        disabled: true,
       });
       expect(newState.nodeType.disabled).toEqual({ 123: true });
     });
@@ -163,7 +163,7 @@ describe('Reducer', () => {
     it('should toggle whether layers are shown', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_LAYERS,
-        visible: false
+        visible: false,
       });
       expect(newState.layer.visible).toEqual(false);
     });
@@ -173,7 +173,7 @@ describe('Reducer', () => {
     it('should toggle whether the sidebar is open', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_SIDEBAR,
-        visible: false
+        visible: false,
       });
       expect(newState.visible.sidebar).toEqual(false);
     });
@@ -241,7 +241,7 @@ describe('Reducer', () => {
     it("should update the chart's dimensions", () => {
       const newState = reducer(mockState.animals, {
         type: UPDATE_CHART_SIZE,
-        chartSize: document.body.getBoundingClientRect()
+        chartSize: document.body.getBoundingClientRect(),
       });
       expect(newState.chartSize).toEqual({
         bottom: expect.any(Number),
@@ -249,7 +249,7 @@ describe('Reducer', () => {
         left: expect.any(Number),
         right: expect.any(Number),
         top: expect.any(Number),
-        width: expect.any(Number)
+        width: expect.any(Number),
       });
     });
   });
@@ -258,7 +258,7 @@ describe('Reducer', () => {
     it('should update the state when the webfont is loaded', () => {
       const newState = reducer(mockState.animals, {
         type: UPDATE_FONT_LOADED,
-        fontLoaded: true
+        fontLoaded: true,
       });
       expect(newState.fontLoaded).toBe(true);
     });
@@ -269,7 +269,7 @@ describe('Reducer', () => {
       const newState = reducer(mockState.animals, {
         type: CHANGE_FLAG,
         name: 'testFlag',
-        value: true
+        value: true,
       });
       expect(newState.flags.testFlag).toBe(true);
     });
