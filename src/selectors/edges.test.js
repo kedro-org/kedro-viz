@@ -4,10 +4,10 @@ import { addNewEdge, getTransitiveEdges, getVisibleEdges } from './edges';
 import { toggleNodesDisabled } from '../actions/nodes';
 import reducer from '../reducers';
 
-const getNodeIDs = state => state.node.ids;
-const getEdgeIDs = state => state.edge.ids;
-const getEdgeSources = state => state.edge.sources;
-const getEdgeTargets = state => state.edge.targets;
+const getNodeIDs = (state) => state.node.ids;
+const getEdgeIDs = (state) => state.edge.ids;
+const getEdgeSources = (state) => state.edge.sources;
+const getEdgeTargets = (state) => state.edge.targets;
 
 describe('Selectors', () => {
   describe('addNewEdge', () => {
@@ -26,14 +26,14 @@ describe('Selectors', () => {
     it('adds a new source to the sources dictionary', () => {
       addNewEdge('source_name', 'target', transitiveEdges);
       expect(transitiveEdges.sources).toEqual({
-        'source_name|target': 'source_name'
+        'source_name|target': 'source_name',
       });
     });
 
     it('adds a new target to the targets dictionary', () => {
       addNewEdge('source', 'target name', transitiveEdges);
       expect(transitiveEdges.targets).toEqual({
-        'source|target name': 'target name'
+        'source|target name': 'target name',
       });
     });
 
@@ -48,16 +48,16 @@ describe('Selectors', () => {
     const edgeSources = getEdgeSources(mockState.animals);
     const edgeTargets = getEdgeTargets(mockState.animals);
     // Find a node which has multiple inputs and outputs, which we can disable
-    const disabledNode = getNodeIDs(mockState.animals).find(node => {
-      const hasMultipleConnections = edgeNodes =>
-        Object.values(edgeNodes).filter(edge => edge === node).length > 1;
+    const disabledNode = getNodeIDs(mockState.animals).find((node) => {
+      const hasMultipleConnections = (edgeNodes) =>
+        Object.values(edgeNodes).filter((edge) => edge === node).length > 1;
       return (
         hasMultipleConnections(edgeSources) &&
         hasMultipleConnections(edgeTargets)
       );
     });
     const sourceEdge = getEdgeIDs(mockState.animals).find(
-      edge => edgeTargets[edge] === disabledNode
+      (edge) => edgeTargets[edge] === disabledNode
     );
     const source = edgeSources[sourceEdge];
 
@@ -66,7 +66,7 @@ describe('Selectors', () => {
         expect(getTransitiveEdges(mockState.animals)).toEqual({
           edgeIDs: [],
           sources: {},
-          targets: {}
+          targets: {},
         });
       });
     });
@@ -105,7 +105,7 @@ describe('Selectors', () => {
     it('gets only the visible edges', () => {
       const edgeDisabled = getEdgeDisabled(mockState.animals);
       expect(
-        getVisibleEdges(mockState.animals).map(d => edgeDisabled[d.id])
+        getVisibleEdges(mockState.animals).map((d) => edgeDisabled[d.id])
       ).toEqual(expect.arrayContaining([false]));
     });
 
@@ -115,17 +115,17 @@ describe('Selectors', () => {
           expect.objectContaining({
             id: expect.any(String),
             source: expect.any(String),
-            target: expect.any(String)
-          })
+            target: expect.any(String),
+          }),
         ])
       );
     });
 
     it('includes transitive edges when necessary', () => {
       // Find a node which has multiple inputs and outputs, which we can disable
-      const disabledNodeID = getNodeIDs(mockState.animals).find(node => {
-        const hasMultipleConnections = edgeNodes =>
-          Object.values(edgeNodes).filter(edge => edge === node).length > 1;
+      const disabledNodeID = getNodeIDs(mockState.animals).find((node) => {
+        const hasMultipleConnections = (edgeNodes) =>
+          Object.values(edgeNodes).filter((edge) => edge === node).length > 1;
         return (
           hasMultipleConnections(getEdgeSources(mockState.animals)) &&
           hasMultipleConnections(getEdgeTargets(mockState.animals))

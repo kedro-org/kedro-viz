@@ -8,7 +8,7 @@ const d =
 const LoadingIcon = ({ className, visible }) => (
   <svg
     className={classnames(className, 'pipeline-loading-icon', {
-      'pipeline-loading-icon--visible': visible
+      'pipeline-loading-icon--visible': visible,
     })}
     viewBox="0 0 200 180">
     <path d={d} />

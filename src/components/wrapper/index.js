@@ -16,7 +16,7 @@ export const Wrapper = ({ loading, theme }) => (
   <div
     className={classnames('kedro-pipeline', {
       'kui-theme--dark': theme === 'dark',
-      'kui-theme--light': theme === 'light'
+      'kui-theme--light': theme === 'light',
     })}>
     <h1 className="pipeline-title">Kedro-Viz</h1>
     <Sidebar />
@@ -29,9 +29,9 @@ export const Wrapper = ({ loading, theme }) => (
   </div>
 );
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state) => ({
   loading: isLoading(state),
-  theme: state.theme
+  theme: state.theme,
 });
 
 export default connect(mapStateToProps)(Wrapper);

@@ -6,7 +6,7 @@ describe('exportGraph', () => {
     width: 1000,
     height: 500,
     marginx: 40,
-    marginy: 40
+    marginy: 40,
   };
 
   beforeEach(() => {

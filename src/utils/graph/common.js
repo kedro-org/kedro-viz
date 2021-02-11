@@ -66,28 +66,28 @@ export const angle = (a, b) => Math.atan2(a.y - b.y, a.x - b.x);
  * @param {object} node The node
  * @returns {number} The left edge position
  */
-export const nodeLeft = node => node.x - node.width * 0.5;
+export const nodeLeft = (node) => node.x - node.width * 0.5;
 
 /**
  * Returns the right edge x-position of the node
  * @param {object} node The node
  * @returns {number} The right edge position
  */
-export const nodeRight = node => node.x + node.width * 0.5;
+export const nodeRight = (node) => node.x + node.width * 0.5;
 
 /**
  * Returns the top edge y-position of the node
  * @param {object} node The node
  * @returns {number} The top edge position
  */
-export const nodeTop = node => node.y - node.height * 0.5;
+export const nodeTop = (node) => node.y - node.height * 0.5;
 
 /**
  * Returns the bottom edge y-position of the node
  * @param {object} node The node
  * @returns {number} The bottom edge position
  */
-export const nodeBottom = node => node.y + node.height * 0.5;
+export const nodeBottom = (node) => node.y + node.height * 0.5;
 
 /**
  * Finds the rows formed by nodes given the their positions in Y.
@@ -96,7 +96,7 @@ export const nodeBottom = node => node.y + node.height * 0.5;
  * @param {array} nodes The input nodes
  * @returns {array} The sorted rows of nodes
  */
-export const groupByRow = nodes => {
+export const groupByRow = (nodes) => {
   const rows = {};
 
   // Create rows using node Y values
@@ -106,11 +106,11 @@ export const groupByRow = nodes => {
   }
 
   // Sort the set of rows accounting for keys being strings
-  const rowNumbers = Object.keys(rows).map(row => parseFloat(row));
+  const rowNumbers = Object.keys(rows).map((row) => parseFloat(row));
   rowNumbers.sort((a, b) => a - b);
 
   // Sort rows in order of X position if set. Break ties with ids for stability
-  const sortedRows = rowNumbers.map(row => rows[row]);
+  const sortedRows = rowNumbers.map((row) => rows[row]);
   for (let i = 0; i < sortedRows.length; i += 1) {
     sortedRows[i].sort((a, b) => compare(a.x, b.x, a.id, b.id));
 
@@ -158,7 +158,7 @@ export const offsetNode = (node, offset) => {
  * @returns {object} The edge
  */
 export const offsetEdge = (edge, offset) => {
-  edge.points.forEach(point => {
+  edge.points.forEach((point) => {
     point.x = point.x - offset.x;
     point.y = point.y - offset.y;
   });
@@ -187,6 +187,6 @@ export const nearestOnLine = (x, y, ax, ay, bx, by) => {
     ax,
     ay,
     bx,
-    by
+    by,
   };
 };

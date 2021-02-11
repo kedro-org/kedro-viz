@@ -2,11 +2,11 @@ import { createSelector } from 'reselect';
 import { getNodeDisabled } from './disabled';
 import { arrayToObject } from '../utils';
 
-const getNodeIDs = state => state.node.ids;
-const getNodeType = state => state.node.type;
-const getNodeTypeIDs = state => state.nodeType.ids;
-const getNodeTypeName = state => state.nodeType.name;
-const getNodeTypeDisabled = state => state.nodeType.disabled;
+const getNodeIDs = (state) => state.node.ids;
+const getNodeType = (state) => state.node.type;
+const getNodeTypeIDs = (state) => state.nodeType.ids;
+const getNodeTypeName = (state) => state.nodeType.name;
+const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 
 /**
  * Calculate the total number of nodes (and the number of visible nodes)
@@ -15,14 +15,14 @@ const getNodeTypeDisabled = state => state.nodeType.disabled;
 export const getTypeNodeCount = createSelector(
   [getNodeTypeIDs, getNodeIDs, getNodeType, getNodeDisabled],
   (types, nodeIDs, nodeType, nodeDisabled) =>
-    arrayToObject(types, type => {
-      const typeNodeIDs = nodeIDs.filter(nodeID => nodeType[nodeID] === type);
+    arrayToObject(types, (type) => {
+      const typeNodeIDs = nodeIDs.filter((nodeID) => nodeType[nodeID] === type);
       const visibleTypeNodeIDs = typeNodeIDs.filter(
-        nodeID => !nodeDisabled[nodeID]
+        (nodeID) => !nodeDisabled[nodeID]
       );
       return {
         total: typeNodeIDs.length,
-        visible: visibleTypeNodeIDs.length
+        visible: visibleTypeNodeIDs.length,
       };
     })
 );
@@ -33,10 +33,10 @@ export const getTypeNodeCount = createSelector(
 export const getNodeTypes = createSelector(
   [getNodeTypeIDs, getNodeTypeName, getNodeTypeDisabled, getTypeNodeCount],
   (types, typeName, typeDisabled, typeNodeCount) =>
-    types.map(id => ({
+    types.map((id) => ({
       id,
       name: typeName[id],
       disabled: Boolean(typeDisabled[id]),
-      nodeCount: typeNodeCount[id]
+      nodeCount: typeNodeCount[id],
     }))
 );

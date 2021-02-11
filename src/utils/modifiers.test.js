@@ -57,7 +57,7 @@ describe('modifiers classname utility', () => {
         type: 'mixed',
         big: true,
         small: false,
-        'very-big': true
+        'very-big': true,
       })
     ).toEqual(
       'test-name test-name--id-0 test-name--type-mixed test-name--big test-name--no-small test-name--very-big'

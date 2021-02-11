@@ -9,7 +9,7 @@ import { pathRoot } from '../config';
  */
 export const arrayToObject = (array, callback) => {
   const newObject = {};
-  array.forEach(key => {
+  array.forEach((key) => {
     newObject[key] = callback(key);
   });
   return newObject;
@@ -53,6 +53,6 @@ export const unique = (d, i, arr) => arr.indexOf(d) === i;
  */
 export const changed = (props, objectA, objectB) => {
   return (
-    objectA && objectB && props.some(prop => objectA[prop] !== objectB[prop])
+    objectA && objectB && props.some((prop) => objectA[prop] !== objectB[prop])
   );
 };

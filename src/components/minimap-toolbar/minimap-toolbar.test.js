@@ -2,7 +2,7 @@ import React from 'react';
 import ConnectedMiniMapToolbar, {
   MiniMapToolbar,
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
@@ -16,7 +16,7 @@ describe('MiniMapToolbar', () => {
     ['.pipeline-minimap-button--map', 'onToggleMiniMap'],
     ['.pipeline-minimap-button--zoom-in', 'onUpdateChartZoom'],
     ['.pipeline-minimap-button--zoom-out', 'onUpdateChartZoom'],
-    ['.pipeline-minimap-button--reset', 'onUpdateChartZoom']
+    ['.pipeline-minimap-button--reset', 'onUpdateChartZoom'],
   ];
 
   test.each(functionCalls)(
@@ -26,14 +26,11 @@ describe('MiniMapToolbar', () => {
       const props = {
         chartZoom: { scale: 1, minScale: 0.5, maxScale: 1.5 },
         visible: { miniMap: false },
-        [callback]: mockFn
+        [callback]: mockFn,
       };
       const wrapper = setup.mount(<MiniMapToolbar {...props} />);
       expect(mockFn.mock.calls.length).toBe(0);
-      wrapper
-        .find(selector)
-        .find('button')
-        .simulate('click');
+      wrapper.find(selector).find('button').simulate('click');
       expect(mockFn.mock.calls.length).toBe(1);
     }
   );
@@ -43,8 +40,8 @@ describe('MiniMapToolbar', () => {
       chartZoom: expect.any(Object),
       visible: expect.objectContaining({
         miniMap: expect.any(Boolean),
-        miniMapBtn: expect.any(Boolean)
-      })
+        miniMapBtn: expect.any(Boolean),
+      }),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
@@ -53,7 +50,7 @@ describe('MiniMapToolbar', () => {
     const dispatch = jest.fn();
     const expectedResult = {
       onToggleMiniMap: expect.any(Function),
-      onUpdateChartZoom: expect.any(Function)
+      onUpdateChartZoom: expect.any(Function),
     };
     expect(mapDispatchToProps(dispatch)).toEqual(expectedResult);
   });

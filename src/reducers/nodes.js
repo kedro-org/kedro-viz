@@ -2,17 +2,17 @@ import {
   TOGGLE_NODE_CLICKED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED,
-  ADD_NODE_METADATA
+  ADD_NODE_METADATA,
 } from '../actions/nodes';
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 
 function nodeReducer(nodeState = {}, action) {
-  const updateState = newState => Object.assign({}, nodeState, newState);
+  const updateState = (newState) => Object.assign({}, nodeState, newState);
 
   switch (action.type) {
     case TOGGLE_NODE_CLICKED: {
       return updateState({
-        clicked: action.nodeClicked
+        clicked: action.nodeClicked,
       });
     }
 
@@ -24,23 +24,23 @@ function nodeReducer(nodeState = {}, action) {
         disabled: action.nodeIDs.reduce(
           (disabled, id) =>
             Object.assign({}, disabled, {
-              [id]: action.isDisabled
+              [id]: action.isDisabled,
             }),
           nodeState.disabled
-        )
+        ),
       });
     }
 
     case TOGGLE_NODE_HOVERED: {
       return updateState({
-        hovered: action.nodeHovered
+        hovered: action.nodeHovered,
       });
     }
 
     case UPDATE_ACTIVE_PIPELINE: {
       return updateState({
         clicked: null,
-        hovered: null
+        hovered: null,
       });
     }
 
@@ -48,24 +48,24 @@ function nodeReducer(nodeState = {}, action) {
       const { id, data } = action.data;
       return updateState({
         fetched: Object.assign({}, nodeState.fetched, {
-          [id]: true
+          [id]: true,
         }),
         code: Object.assign({}, nodeState.code, {
-          [id]: data.code
+          [id]: data.code,
         }),
         filepath: Object.assign({}, nodeState.filepath, {
-          [id]: data.filepath
+          [id]: data.filepath,
         }),
         docstring: Object.assign({}, nodeState.docstring, {
-          [id]: data.docstring
+          [id]: data.docstring,
         }),
         parameters: Object.assign({}, nodeState.parameters, {
-          [id]: data.parameters
+          [id]: data.parameters,
         }),
         // the data returned from the API under the field name 'type' for dataset type nodes
         datasetType: Object.assign({}, nodeState.datasetType, {
-          [id]: data.type
-        })
+          [id]: data.type,
+        }),
       });
     }
 

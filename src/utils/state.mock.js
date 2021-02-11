@@ -16,17 +16,17 @@ import { graphNew, graphDagre } from './graph';
  * by running the asynchronous actions synchronously
  * @param {Object} props
  */
-export const prepareState = props => {
+export const prepareState = (props) => {
   const initialState = getInitialState(props);
   const actions = [
     // Set fontLoaded = true:
     () => updateFontLoaded(true),
     // Precalculate graph layout:
-    state => {
+    (state) => {
       const layout = state.flags.oldgraph ? graphDagre : graphNew;
       const graph = layout(getGraphInput(state));
       return updateGraph(graph);
-    }
+    },
   ];
   return actions.reduce(
     (state, action) => reducer(state, action(state)),
@@ -40,7 +40,7 @@ export const prepareState = props => {
 export const mockState = {
   json: prepareState({ data: 'json' }),
   demo: prepareState({ data: demo }),
-  animals: prepareState({ data: animals })
+  animals: prepareState({ data: animals }),
 };
 
 /**
@@ -66,5 +66,5 @@ export const setup = {
    * @param {Object} Component A React component
    * @param {Object} props React component props
    */
-  shallow: (Component, props = {}) => shallow(<Component {...props} />)
+  shallow: (Component, props = {}) => shallow(<Component {...props} />),
 };

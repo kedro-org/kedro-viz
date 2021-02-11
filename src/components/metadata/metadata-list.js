@@ -13,7 +13,7 @@ const MetaDataList = ({
   empty = '-',
   inline = true,
   commas = true,
-  limit = false
+  limit = false,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const showValues = !expanded && limit ? values.slice(0, limit) : values;
@@ -24,7 +24,7 @@ const MetaDataList = ({
       <ul
         className={modifiers('pipeline-metadata__value-list', {
           inline,
-          commas
+          commas,
         })}>
         {showValues.map((item, index) => (
           <li key={index}>

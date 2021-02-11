@@ -14,13 +14,13 @@ describe('ExportModal', () => {
         height: expect.any(Number),
         width: expect.any(Number),
         marginx: expect.any(Number),
-        marginy: expect.any(Number)
+        marginy: expect.any(Number),
       }),
       theme: expect.stringMatching(/light|dark/),
       visible: expect.objectContaining({
         exportBtn: expect.any(Boolean),
-        exportModal: expect.any(Boolean)
-      })
+        exportModal: expect.any(Boolean),
+      }),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });

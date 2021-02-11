@@ -10,7 +10,7 @@ describe('IconButton', () => {
       onClick: () => {},
       icon: MenuIcon,
       labelText: 'Toggle theme',
-      visible: true
+      visible: true,
     });
     expect(wrapper.find('li').length).toBe(1);
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);

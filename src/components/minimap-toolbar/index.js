@@ -16,7 +16,7 @@ export const MiniMapToolbar = ({
   onToggleMiniMap,
   visible,
   chartZoom,
-  onUpdateChartZoom
+  onUpdateChartZoom,
 }) => {
   const { scale, minScale, maxScale } = chartZoom;
 
@@ -74,24 +74,21 @@ const scaleZoom = ({ scale }, factor) => ({
   scale: scale * (factor || 1),
   applied: false,
   transition: true,
-  reset: factor === 0
+  reset: factor === 0,
 });
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state) => ({
   visible: state.visible,
-  chartZoom: getChartZoom(state)
+  chartZoom: getChartZoom(state),
 });
 
-export const mapDispatchToProps = dispatch => ({
-  onToggleMiniMap: value => {
+export const mapDispatchToProps = (dispatch) => ({
+  onToggleMiniMap: (value) => {
     dispatch(toggleMiniMap(value));
   },
-  onUpdateChartZoom: transform => {
+  onUpdateChartZoom: (transform) => {
     dispatch(updateZoom(transform));
-  }
+  },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MiniMapToolbar);
+export default connect(mapStateToProps, mapDispatchToProps)(MiniMapToolbar);

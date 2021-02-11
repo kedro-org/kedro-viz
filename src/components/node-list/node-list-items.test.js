@@ -8,14 +8,14 @@ import {
   getFilteredTagItems,
   getSections,
   getGroups,
-  getFilteredItems
+  getFilteredItems,
 } from './node-list-items';
 import { mockState } from '../../utils/state.mock';
 import { getGroupedNodes } from '../../selectors/nodes';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData } from '../../selectors/tags';
 
-const ungroupNodes = groupedNodes =>
+const ungroupNodes = (groupedNodes) =>
   Object.keys(groupedNodes).reduce(
     (names, key) => names.concat(groupedNodes[key]),
     []
@@ -28,16 +28,16 @@ describe('node-list-selectors', () => {
     const { filteredNodes } = getFilteredNodes({ nodes, searchValue });
     const nodeList = ungroupNodes(filteredNodes);
 
-    test.each(nodeList.map(node => node.name))(
+    test.each(nodeList.map((node) => node.name))(
       `node name "%s" contains search term "${searchValue}"`,
-      name => {
+      (name) => {
         expect(name).toEqual(expect.stringMatching(searchValue));
       }
     );
 
-    test.each(nodeList.map(node => node.highlightedLabel))(
+    test.each(nodeList.map((node) => node.highlightedLabel))(
       `node label "%s" contains highlighted search term "<b>${searchValue}</b>"`,
-      name => {
+      (name) => {
         expect(name).toEqual(expect.stringMatching(`<b>${searchValue}</b>`));
       }
     );
@@ -53,16 +53,16 @@ describe('node-list-selectors', () => {
       expect(filteredTags).toHaveLength(2);
     });
 
-    test.each(filteredTags.map(tag => tag.name))(
+    test.each(filteredTags.map((tag) => tag.name))(
       `tag name "%s" contains search term "${searchValue}"`,
-      name => {
+      (name) => {
         expect(name).toEqual(expect.stringMatching(searchValue));
       }
     );
 
-    test.each(filteredTags.map(tag => tag.highlightedLabel))(
+    test.each(filteredTags.map((tag) => tag.highlightedLabel))(
       `tag label "%s" contains highlighted search term "<b>${searchValue}</b>"`,
-      name => {
+      (name) => {
         expect(name).toEqual(expect.stringMatching(`<b>${searchValue}</b>`));
       }
     );
@@ -74,7 +74,7 @@ describe('node-list-selectors', () => {
     const filteredTagItems = getFilteredTagItems({
       tags,
       searchValue,
-      tagsEnabled: {}
+      tagsEnabled: {},
     }).tag;
 
     const tagItems = expect.arrayContaining([
@@ -91,8 +91,8 @@ describe('node-list-selectors', () => {
         visible: expect.any(Boolean),
         disabled: expect.any(Boolean),
         unset: expect.any(Boolean),
-        checked: expect.any(Boolean)
-      })
+        checked: expect.any(Boolean),
+      }),
     ]);
 
     it('returns expected items matching the searchValue', () => {
@@ -110,7 +110,7 @@ describe('node-list-selectors', () => {
     });
 
     it('returns the filtered items that contains the search value', () => {
-      filteredTagItems.forEach(tagItem => {
+      filteredTagItems.forEach((tagItem) => {
         expect(tagItem.name).toContain(searchValue);
         expect(tagItem.id).toContain(searchValue);
       });
@@ -123,8 +123,8 @@ describe('node-list-selectors', () => {
     const section = expect.arrayContaining([
       expect.objectContaining({
         name: expect.any(String),
-        types: expect.any(Array)
-      })
+        types: expect.any(Array),
+      }),
     ]);
 
     it('returns sections of the correct format', () => {
@@ -140,7 +140,7 @@ describe('node-list-selectors', () => {
       tags: getTagData(mockState.animals),
       tagsEnabled: {},
       nodeSelected: {},
-      searchValue
+      searchValue,
     });
 
     const items = expect.arrayContaining([
@@ -155,8 +155,8 @@ describe('node-list-selectors', () => {
         visible: expect.any(Boolean),
         disabled: expect.any(Boolean),
         unset: expect.any(Boolean),
-        checked: expect.any(Boolean)
-      })
+        checked: expect.any(Boolean),
+      }),
     ]);
 
     it('filters expected number of items', () => {
@@ -172,7 +172,7 @@ describe('node-list-selectors', () => {
           task: items,
           data: items,
           parameters: items,
-          tag: items
+          tag: items,
         })
       );
     });
@@ -185,7 +185,7 @@ describe('node-list-selectors', () => {
       tags: getTagData(mockState.animals),
       tagsEnabled: {},
       nodeSelected: {},
-      searchValue: ''
+      searchValue: '',
     });
 
     const groups = getGroups({ types, items });
@@ -200,7 +200,7 @@ describe('node-list-selectors', () => {
       count: expect.any(Number),
       allUnset: expect.any(Boolean),
       allChecked: expect.any(Boolean),
-      checked: expect.any(Boolean)
+      checked: expect.any(Boolean),
     });
 
     it('returns groups for each type in the correct format', () => {
@@ -209,7 +209,7 @@ describe('node-list-selectors', () => {
           task: groupType,
           data: groupType,
           parameters: groupType,
-          tag: groupType
+          tag: groupType,
         })
       );
     });
@@ -218,13 +218,13 @@ describe('node-list-selectors', () => {
   describe('getNodeIDs', () => {
     const generateNodes = (type, count) =>
       Array.from(new Array(count)).map((d, i) => ({
-        id: type + i
+        id: type + i,
       }));
 
     const nodes = {
       data: generateNodes('data', 10),
       task: generateNodes('task', 10),
-      parameters: generateNodes('parameters', 10)
+      parameters: generateNodes('parameters', 10),
     };
 
     it('returns a list of node IDs', () => {
@@ -244,12 +244,12 @@ describe('node-list-selectors', () => {
     const nodeList = ungroupNodes(formattedNodes);
 
     describe(`nodes which match the search term "${searchValue}"`, () => {
-      const matchingNodeList = nodeList.filter(node =>
+      const matchingNodeList = nodeList.filter((node) =>
         node.name.includes(searchValue)
       );
-      test.each(matchingNodeList.map(node => node.highlightedLabel))(
+      test.each(matchingNodeList.map((node) => node.highlightedLabel))(
         `node label "%s" contains highlighted search term "<b>${searchValue}</b>"`,
-        label => {
+        (label) => {
           expect(label).toEqual(expect.stringMatching(`<b>${searchValue}</b>`));
         }
       );
@@ -257,11 +257,11 @@ describe('node-list-selectors', () => {
 
     describe(`nodes which do not match the search term "${searchValue}"`, () => {
       const notMatchingNodeList = nodeList.filter(
-        node => !node.name.includes(searchValue)
+        (node) => !node.name.includes(searchValue)
       );
-      test.each(notMatchingNodeList.map(node => node.highlightedLabel))(
+      test.each(notMatchingNodeList.map((node) => node.highlightedLabel))(
         `node label "%s" does not contain "<b>"`,
-        label => {
+        (label) => {
           expect(label).not.toEqual(expect.stringMatching(`<b>`));
         }
       );
@@ -297,23 +297,23 @@ describe('node-list-selectors', () => {
     const filteredNodes = filterNodes(nodes, searchValue);
     const nodeList = ungroupNodes(filteredNodes);
     const notMatchingNodeList = ungroupNodes(nodes).filter(
-      node => !node.name.includes(searchValue)
+      (node) => !node.name.includes(searchValue)
     );
 
     describe('nodes which match the search term', () => {
-      test.each(nodeList.map(node => node.name))(
+      test.each(nodeList.map((node) => node.name))(
         `node name "%s" should contain search term "${searchValue}"`,
-        name => {
+        (name) => {
           expect(name).toEqual(expect.stringMatching(searchValue));
         }
       );
     });
 
     describe('nodes which do not match the search term', () => {
-      test.each(notMatchingNodeList.map(node => node.id))(
+      test.each(notMatchingNodeList.map((node) => node.id))(
         `filtered node list should not contain a node with id "%s"`,
-        nodeID => {
-          expect(nodeList.map(node => node.id)).not.toContain(
+        (nodeID) => {
+          expect(nodeList.map((node) => node.id)).not.toContain(
             expect.stringMatching(searchValue)
           );
         }

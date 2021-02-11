@@ -10,7 +10,7 @@ export const TOGGLE_NODE_CLICKED = 'TOGGLE_NODE_CLICKED';
 export function toggleNodeClicked(nodeClicked) {
   return {
     type: TOGGLE_NODE_CLICKED,
-    nodeClicked
+    nodeClicked,
   };
 }
 
@@ -25,7 +25,7 @@ export function toggleNodesDisabled(nodeIDs, isDisabled) {
   return {
     type: TOGGLE_NODES_DISABLED,
     nodeIDs,
-    isDisabled
+    isDisabled,
   };
 }
 
@@ -38,7 +38,7 @@ export const TOGGLE_NODE_HOVERED = 'TOGGLE_NODE_HOVERED';
 export function toggleNodeHovered(nodeHovered) {
   return {
     type: TOGGLE_NODE_HOVERED,
-    nodeHovered
+    nodeHovered,
   };
 }
 
@@ -51,7 +51,7 @@ export const TOGGLE_NODE_DATA_LOADING = 'TOGGLE_NODE_DATA_LOADING';
 export function toggleNodeDataLoading(loading) {
   return {
     type: TOGGLE_NODE_DATA_LOADING,
-    loading
+    loading,
   };
 }
 
@@ -64,7 +64,7 @@ export const ADD_NODE_METADATA = 'ADD_NODE_METADATA';
 export function addNodeMetadata(data) {
   return {
     type: ADD_NODE_METADATA,
-    data
+    data,
   };
 }
 
@@ -74,7 +74,7 @@ export function addNodeMetadata(data) {
  * @return {function} A promise that resolves when the data is loaded
  */
 export function loadNodeData(nodeID) {
-  return async function(dispatch, getState) {
+  return async function (dispatch, getState) {
     const { asyncDataSource, node } = getState();
 
     dispatch(toggleNodeClicked(nodeID));

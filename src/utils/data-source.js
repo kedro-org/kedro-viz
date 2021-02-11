@@ -35,7 +35,7 @@ export const getSourceID = () => {
  * @param {string} source Data source identifier
  * @return {object|string} Either raw data itself, or 'json'
  */
-export const getDataValue = source => {
+export const getDataValue = (source) => {
   switch (source) {
     case 'animals':
       // Use data from the 'animals' test dataset

@@ -6,7 +6,7 @@ import { resetData, updateFontLoaded } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
 import Wrapper from '../wrapper';
 import getInitialState, {
-  preparePipelineState
+  preparePipelineState,
 } from '../../store/initial-state';
 import { getFlagsMessage } from '../../utils/flags';
 import '@quantumblack/kedro-ui/lib/styles/app-no-webfont.css';
@@ -58,7 +58,7 @@ class App extends React.Component {
     };
     LoadWebFont({
       active: setFontLoaded,
-      inactive: setFontLoaded
+      inactive: setFontLoaded,
     });
   }
 
@@ -93,8 +93,8 @@ App.propTypes = {
       edges: PropTypes.array.isRequired,
       layers: PropTypes.array,
       nodes: PropTypes.array.isRequired,
-      tags: PropTypes.array
-    })
+      tags: PropTypes.array,
+    }),
   ]),
   /**
    * Specify the theme: Either 'light' or 'dark'.
@@ -109,8 +109,8 @@ App.propTypes = {
     layerBtn: PropTypes.bool,
     exportBtn: PropTypes.bool,
     sidebar: PropTypes.bool,
-    themeBtn: PropTypes.bool
-  })
+    themeBtn: PropTypes.bool,
+  }),
 };
 
 export default App;

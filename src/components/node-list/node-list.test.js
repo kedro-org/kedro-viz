@@ -25,12 +25,12 @@ describe('NodeList', () => {
       getNodeData(mockState.animals)[0].name,
       'a',
       'aaaaaaaaaaaaaaaaa',
-      ''
+      '',
     ];
 
     test.each(searches)(
       'filters the node list when entering the search text "%s"',
-      searchText => {
+      (searchText) => {
         const search = () => wrapper.find('.kui-input__field');
         search().simulate('change', { target: { value: searchText } });
         const nodeList = wrapper.find(
@@ -38,10 +38,10 @@ describe('NodeList', () => {
         );
         const nodes = getNodeData(mockState.animals);
         const tags = getTagData(mockState.animals);
-        const expectedResult = nodes.filter(node =>
+        const expectedResult = nodes.filter((node) =>
           node.name.includes(searchText)
         );
-        const expectedTagResult = tags.filter(tag =>
+        const expectedTagResult = tags.filter((tag) =>
           tag.name.includes(searchText)
         );
         expect(search().props().value).toBe(searchText);
@@ -67,10 +67,10 @@ describe('NodeList', () => {
       search().simulate('change', { target: { value: searchText } });
       // Check that search input value and node list have been updated
       expect(search().props().value).toBe(searchText);
-      const expectedResult = nodes.filter(node =>
+      const expectedResult = nodes.filter((node) =>
         node.name.includes(searchText)
       );
-      const expectedTagResult = tags.filter(tag =>
+      const expectedTagResult = tags.filter((tag) =>
         tag.name.includes(searchText)
       );
       expect(nodeList().length).toBe(
@@ -94,11 +94,12 @@ describe('NodeList', () => {
           '.pipeline-nodelist__group--kind-element .pipeline-nodelist__list--nested'
         )
         .find('.pipeline-nodelist__row');
-    const rowName = row =>
+    const rowName = (row) =>
       row.find('.pipeline-nodelist__row__text').prop('title');
-    const isRowEnabled = row => row.hasClass('pipeline-nodelist__row--visible');
-    const setShownRowsEnabled = enable =>
-      rows().forEach(row =>
+    const isRowEnabled = (row) =>
+      row.hasClass('pipeline-nodelist__row--visible');
+    const setShownRowsEnabled = (enable) =>
+      rows().forEach((row) =>
         row
           .find('.pipeline-nodelist__row__checkbox')
           .simulate('change', { target: { checked: enable } })
@@ -106,7 +107,9 @@ describe('NodeList', () => {
     // Get search text value and filtered nodes
     const nodes = getNodeData(mockState.animals);
     const searchText = nodes[0].name;
-    const expectedResult = nodes.filter(node => node.name.includes(searchText));
+    const expectedResult = nodes.filter((node) =>
+      node.name.includes(searchText)
+    );
 
     describe('toggle only visible rows when searching', () => {
       beforeAll(() => {
@@ -117,7 +120,7 @@ describe('NodeList', () => {
         // Disable the found rows
         setShownRowsEnabled(false);
         // All visible rows should now be disabled
-        expect(rows().everyWhere(row => !isRowEnabled(row))).toBe(true);
+        expect(rows().everyWhere((row) => !isRowEnabled(row))).toBe(true);
         // Clear the search form so that all rows are now visible
         search().simulate('change', { target: { value: '' } });
       });
@@ -127,32 +130,32 @@ describe('NodeList', () => {
       });
 
       test('Some rows should not be enabled', () => {
-        expect(rows().someWhere(row => !isRowEnabled(row))).toBe(true);
+        expect(rows().someWhere((row) => !isRowEnabled(row))).toBe(true);
       });
 
       test('Some rows should be enabled', () => {
-        expect(rows().someWhere(row => isRowEnabled(row))).toBe(true);
+        expect(rows().someWhere((row) => isRowEnabled(row))).toBe(true);
       });
 
       test('Previously-visible rows should now be not enabled', () => {
         expect(
           rows()
-            .filterWhere(row => !isRowEnabled(row))
-            .map(row => rowName(row))
+            .filterWhere((row) => !isRowEnabled(row))
+            .map((row) => rowName(row))
             .sort()
-        ).toEqual(expectedResult.map(node => node.name).sort());
+        ).toEqual(expectedResult.map((node) => node.name).sort());
       });
 
       test('Previously-hidden rows should still be enabled', () => {
         expect(
           rows()
-            .filterWhere(row => isRowEnabled(row))
-            .map(row => rowName(row))
+            .filterWhere((row) => isRowEnabled(row))
+            .map((row) => rowName(row))
             .sort()
         ).toEqual(
           nodes
-            .filter(node => !node.name.includes(searchText))
-            .map(node => node.name)
+            .filter((node) => !node.name.includes(searchText))
+            .map((node) => node.name)
             .sort()
         );
       });
@@ -161,10 +164,10 @@ describe('NodeList', () => {
         setShownRowsEnabled(true);
         expect(
           rows()
-            .filterWhere(row => isRowEnabled(row))
-            .map(row => rowName(row))
+            .filterWhere((row) => isRowEnabled(row))
+            .map((row) => rowName(row))
             .sort()
-        ).toEqual(nodes.map(node => node.name).sort());
+        ).toEqual(nodes.map((node) => node.name).sort());
       });
     });
 
@@ -181,30 +184,31 @@ describe('NodeList', () => {
       wrapper.find(`.pipeline-nodelist__row[title="${text}"]`);
 
     const changeRows = (wrapper, names, checked) =>
-      names.forEach(name =>
+      names.forEach((name) =>
         checkboxByName(wrapper, name).simulate('change', {
-          target: { checked }
+          target: { checked },
         })
       );
 
-    const elements = wrapper =>
+    const elements = (wrapper) =>
       wrapper
         .find(
           '.pipeline-nodelist__group--kind-element .pipeline-nodelist__list--nested'
         )
         .find('.pipeline-nodelist__row')
-        .map(row => [
+        .map((row) => [
           row.prop('title'),
-          !row.hasClass('pipeline-nodelist__row--disabled')
+          !row.hasClass('pipeline-nodelist__row--disabled'),
         ]);
 
-    const elementsEnabled = wrapper =>
+    const elementsEnabled = (wrapper) =>
       elements(wrapper).filter(([_, enabled]) => enabled);
 
-    const tagItem = wrapper =>
+    const tagItem = (wrapper) =>
       wrapper.find('.pipeline-nodelist__group--type-tag');
 
-    const partialIcon = wrapper => tagItem(wrapper).find(IndicatorPartialIcon);
+    const partialIcon = (wrapper) =>
+      tagItem(wrapper).find(IndicatorPartialIcon);
 
     it('selecting tags enables only elements with given tags', () => {
       const wrapper = setup.mount(<NodeList />);
@@ -217,7 +221,7 @@ describe('NodeList', () => {
         ['Horse', true],
         ['Sheep', true],
         ['Parameters', true],
-        ['Params:rabbit', true]
+        ['Params:rabbit', true],
       ]);
 
       changeRows(wrapper, ['Small', 'Large'], true);
@@ -234,7 +238,7 @@ describe('NodeList', () => {
         ['Sheep', true],
         ['Weasel', true],
         ['Parameters', true],
-        ['Params:rabbit', true]
+        ['Params:rabbit', true],
       ]);
     });
 
@@ -262,7 +266,7 @@ describe('NodeList', () => {
         ['Whale', false],
         // Parameters
         ['Parameters', false],
-        ['Params:rabbit', false]
+        ['Params:rabbit', false],
       ]);
     });
 
@@ -374,19 +378,19 @@ describe('NodeList', () => {
         disabled_type: expect.any(Boolean),
         id: expect.any(String),
         name: expect.any(String),
-        type: expect.any(String)
-      })
+        type: expect.any(String),
+      }),
     ]);
     const expectedResult = expect.objectContaining({
       tags: expect.any(Object),
       tagsEnabled: expect.any(Object),
       nodes: expect.objectContaining({
         data: nodeList,
-        task: nodeList
+        task: nodeList,
       }),
       nodeSelected: expect.any(Object),
       sections: expect.any(Array),
-      types: expect.any(Array)
+      types: expect.any(Array),
     });
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
