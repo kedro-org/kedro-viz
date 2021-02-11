@@ -18,7 +18,7 @@ export const rowConstraint = {
   strength: () => 1,
   weightA: () => 0,
   weightB: () => 1,
-  required: true
+  required: true,
 };
 
 /**
@@ -33,7 +33,7 @@ export const layerConstraint = {
   strength: () => 1,
   weightA: () => 0,
   weightB: () => 1,
-  required: false
+  required: false,
 };
 
 /**
@@ -46,11 +46,11 @@ export const parallelConstraint = {
   operator: equalTo,
   target: () => 0,
   // Lower degree nodes can be moved more freely than higher
-  strength: co =>
+  strength: (co) =>
     1 / Math.max(1, 0.5 * (co.a.targets.length + co.b.sources.length)),
   weightA: () => 0.5,
   weightB: () => 0.5,
-  required: false
+  required: false,
 };
 
 /**
@@ -71,7 +71,7 @@ export const crossingConstraint = {
   strength: (co, constants) => 1 / constants.basisX,
   weightA: () => 0.5,
   weightB: () => 0.5,
-  required: false
+  required: false,
 };
 
 /**
@@ -87,7 +87,7 @@ export const separationConstraint = {
   strength: () => 1,
   weightA: () => 0.5,
   weightB: () => 0.5,
-  required: false
+  required: false,
 };
 
 /**
@@ -102,5 +102,5 @@ export const separationStrictConstraint = {
   strength: () => 1,
   weightA: () => 0,
   weightB: () => 1,
-  required: true
+  required: true,
 };

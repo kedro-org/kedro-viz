@@ -24,7 +24,7 @@ const LazyList = ({
   dispose = false,
   buffer = 0.5,
   onChange,
-  container = element => element?.offsetParent
+  container = (element) => element?.offsetParent,
 }) => {
   // Required browser feature checks
   const supported = typeof window.IntersectionObserver !== 'undefined';
@@ -58,7 +58,7 @@ const LazyList = ({
   const lowerHeight = useMemo(() => height(range[1], total), [
     height,
     range,
-    total
+    total,
   ]);
 
   // Skipped if not enabled or supported
@@ -101,7 +101,7 @@ const LazyList = ({
     const observerOptions = useMemo(
       () => ({
         // Create a threshold point for every item
-        threshold: thresholds(total)
+        threshold: thresholds(total),
       }),
       [total]
     );
@@ -116,7 +116,7 @@ const LazyList = ({
       total,
       itemHeight,
       totalHeight,
-      requestUpdate
+      requestUpdate,
     ]);
   }
 
@@ -135,7 +135,7 @@ const LazyList = ({
         // List must always have the correct height
         height: active ? totalHeight : undefined,
         // List must always pad missing items (upper at least)
-        paddingTop: active ? upperHeight : undefined
+        paddingTop: active ? upperHeight : undefined,
       },
       upperStyle: {
         position: 'absolute',
@@ -143,7 +143,7 @@ const LazyList = ({
         height: upperHeight,
         width: '100%',
         // Upper placeholder must always snap to top edge
-        top: '0'
+        top: '0',
       },
       lowerStyle: {
         position: 'absolute',
@@ -151,8 +151,8 @@ const LazyList = ({
         height: lowerHeight,
         width: '100%',
         // Lower placeholder must always snap to bottom edge
-        bottom: '0'
-      }
+        bottom: '0',
+      },
     }),
     [
       active,
@@ -163,7 +163,7 @@ const LazyList = ({
       lowerRef,
       totalHeight,
       upperHeight,
-      lowerHeight
+      lowerHeight,
     ]
   );
 
@@ -184,7 +184,7 @@ const LazyList = ({
  */
 export const range = (start, end, min, max) => [
   Math.max(Math.min(start, max), min),
-  Math.max(Math.min(end, max), min)
+  Math.max(Math.min(end, max), min),
 ];
 
 /**
@@ -195,7 +195,7 @@ export const range = (start, end, min, max) => [
  */
 export const rangeUnion = (rangeA, rangeB) => [
   Math.min(rangeA[0], rangeB[0]),
-  Math.max(rangeA[1], rangeB[1])
+  Math.max(rangeA[1], rangeB[1]),
 ];
 
 /**
@@ -253,7 +253,7 @@ const visibleRangeOf = (
   // Get the viewport bounds
   const viewport = {
     top: 0,
-    bottom: window.innerHeight || document.documentElement.clientHeight
+    bottom: window.innerHeight || document.documentElement.clientHeight,
   };
 
   // When clip is fully below viewport or element is fully below clip
@@ -279,7 +279,7 @@ const visibleRangeOf = (
  * @param {function} callback The callback
  * @returns {function} The wrapped callback
  */
-const useRequestFrameOnce = callback => {
+const useRequestFrameOnce = (callback) => {
   const request = useRef();
 
   // Allow only a single callback per-frame
@@ -295,7 +295,7 @@ const useRequestFrameOnce = callback => {
  * @param {number} total The total number of thresholds to create
  * @returns {array} The threshold array
  */
-export const thresholds = total =>
+export const thresholds = (total) =>
   total === 0
     ? [0]
     : [...Array.from({ length: total }, (_, i) => i / total), 1];

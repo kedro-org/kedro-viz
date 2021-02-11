@@ -29,10 +29,7 @@ describe('PipelineList', () => {
     'should change the active pipeline to %s on clicking menu option %s',
     (id, i) => {
       const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
-      wrapper
-        .find('MenuOption')
-        .at(i)
-        .simulate('click');
+      wrapper.find('MenuOption').at(i).simulate('click');
       expect(wrapper.find('PipelineList').props().pipeline.active).toBe(id);
     }
   );
@@ -52,7 +49,7 @@ describe('PipelineList', () => {
     const { active, ids } = wrapper.find('PipelineList').props().pipeline;
     const hasClass = wrapper
       .find('MenuOption')
-      .at(ids.findIndex(id => id !== active))
+      .at(ids.findIndex((id) => id !== active))
       .hasClass('pipeline-list__option--active');
     expect(hasClass).toBe(false);
   });
@@ -64,9 +61,9 @@ describe('PipelineList', () => {
         active: expect.any(String),
         main: expect.any(String),
         name: expect.any(Object),
-        ids: expect.any(Array)
+        ids: expect.any(Array),
       },
-      theme: mockState.animals.theme
+      theme: mockState.animals.theme,
     });
   });
 

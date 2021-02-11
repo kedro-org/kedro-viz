@@ -1,10 +1,10 @@
 import { createSelector } from 'reselect';
 import { getNodeDisabled, getEdgeDisabled } from './disabled';
 
-const getNodeIDs = state => state.node.ids;
-const getEdgeIDs = state => state.edge.ids;
-const getEdgeSources = state => state.edge.sources;
-const getEdgeTargets = state => state.edge.targets;
+const getNodeIDs = (state) => state.node.ids;
+const getEdgeIDs = (state) => state.edge.ids;
+const getEdgeSources = (state) => state.edge.sources;
+const getEdgeTargets = (state) => state.edge.targets;
 
 /**
  * Create a new transitive edge from the first and last edge in the path
@@ -31,7 +31,7 @@ export const getTransitiveEdges = createSelector(
     const transitiveEdges = {
       edgeIDs: [],
       sources: {},
-      targets: {}
+      targets: {},
     };
 
     /**
@@ -40,8 +40,8 @@ export const getTransitiveEdges = createSelector(
      * for each path that visits disabled nodes between enabled nodes.
      * @param {Array} path The route that has been explored so far
      */
-    const walkGraphEdges = path => {
-      edgeIDs.forEach(edgeID => {
+    const walkGraphEdges = (path) => {
+      edgeIDs.forEach((edgeID) => {
         const source = path[path.length - 1];
         // Filter to only edges where the source node is the previous target
         if (edgeSources[edgeID] !== source) {
@@ -59,11 +59,11 @@ export const getTransitiveEdges = createSelector(
     };
 
     // Only run walk if some nodes are disabled
-    if (nodeIDs.some(nodeID => nodeDisabled[nodeID])) {
+    if (nodeIDs.some((nodeID) => nodeDisabled[nodeID])) {
       // Examine the children of every enabled node. The walk only needs
       // to be run in a single direction (i.e. top down), because links
       // that end in a terminus can never be transitive.
-      nodeIDs.forEach(nodeID => {
+      nodeIDs.forEach((nodeID) => {
         if (!nodeDisabled[nodeID]) {
           walkGraphEdges([nodeID]);
         }
@@ -84,15 +84,15 @@ export const getVisibleEdges = createSelector(
     getEdgeDisabled,
     getEdgeSources,
     getEdgeTargets,
-    getTransitiveEdges
+    getTransitiveEdges,
   ],
   (edgeIDs, edgeDisabled, edgeSources, edgeTargets, transitiveEdges) =>
     edgeIDs
-      .filter(id => !edgeDisabled[id])
+      .filter((id) => !edgeDisabled[id])
       .concat(transitiveEdges.edgeIDs)
-      .map(id => ({
+      .map((id) => ({
         id,
         source: edgeSources[id] || transitiveEdges.sources[id],
-        target: edgeTargets[id] || transitiveEdges.targets[id]
+        target: edgeTargets[id] || transitiveEdges.targets[id],
       }))
 );

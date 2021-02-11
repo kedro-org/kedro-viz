@@ -5,7 +5,7 @@ const viewportMargin = 2;
 /**
  * Render viewport region
  */
-export const drawViewport = function() {
+export const drawViewport = function () {
   const { mapSize } = this.props;
   const { x, y, width, height } = this.getViewport();
 
@@ -14,10 +14,7 @@ export const drawViewport = function() {
   const maxX = Math.min(x + width, mapSize.width - viewportMargin);
   const maxY = Math.min(y + height, mapSize.height - viewportMargin);
 
-  this.el.viewport
-    .enter()
-    .attr('x', 0)
-    .attr('y', 0);
+  this.el.viewport.enter().attr('x', 0).attr('y', 0);
 
   this.el.viewport
     .attr('transform', `translate(${minX}, ${minY})`)
@@ -28,18 +25,18 @@ export const drawViewport = function() {
 /**
  * Render nodes
  */
-export const drawNodes = function() {
+export const drawNodes = function () {
   const {
     centralNode,
     linkedNodes,
     nodeActive,
     nodeSelected,
-    nodes
+    nodes,
   } = this.props;
 
   this.el.nodes = this.el.nodeGroup
     .selectAll('.pipeline-minimap-node')
-    .data(nodes, node => node.id);
+    .data(nodes, (node) => node.id);
 
   const enterNodes = this.el.nodes
     .enter()
@@ -47,7 +44,7 @@ export const drawNodes = function() {
     .attr('class', 'pipeline-minimap-node');
 
   enterNodes
-    .attr('transform', node => `translate(${node.x}, ${node.y})`)
+    .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
     .attr('opacity', 0);
 
   enterNodes.append('rect');
@@ -61,28 +58,28 @@ export const drawNodes = function() {
 
   this.el.nodes = this.el.nodes
     .merge(enterNodes)
-    .attr('data-id', node => node.id)
-    .classed('pipeline-minimap-node--active', node => nodeActive[node.id])
-    .classed('pipeline-minimap-node--selected', node => nodeSelected[node.id])
+    .attr('data-id', (node) => node.id)
+    .classed('pipeline-minimap-node--active', (node) => nodeActive[node.id])
+    .classed('pipeline-minimap-node--selected', (node) => nodeSelected[node.id])
     .classed(
       'pipeline-minimap-node--faded',
-      node => centralNode && !linkedNodes[node.id]
+      (node) => centralNode && !linkedNodes[node.id]
     );
 
   this.el.nodes
     .transition('update-nodes')
     .duration(this.DURATION)
     .attr('opacity', 1)
-    .attr('transform', node => `translate(${node.x}, ${node.y})`)
+    .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
     .end()
     .catch(() => {});
 
   this.el.nodes
     .select('rect')
-    .attr('width', node => node.width - sizeOffset(node))
-    .attr('height', node => node.height - sizeOffset(node))
-    .attr('x', node => (node.width - sizeOffset(node)) / -2)
-    .attr('y', node => (node.height - sizeOffset(node)) / -2);
+    .attr('width', (node) => node.width - sizeOffset(node))
+    .attr('height', (node) => node.height - sizeOffset(node))
+    .attr('x', (node) => (node.width - sizeOffset(node)) / -2)
+    .attr('y', (node) => (node.height - sizeOffset(node)) / -2);
 };
 
-const sizeOffset = node => (node.type === 'task' ? 5 : 16);
+const sizeOffset = (node) => (node.type === 'task' ? 5 : 16);

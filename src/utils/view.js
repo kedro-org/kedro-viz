@@ -19,10 +19,10 @@ export const viewing = ({
   wrapper,
   onViewChanged,
   onViewEnd,
-  allowUserInput = true
+  allowUserInput = true,
 }) => {
   const zoom = d3Zoom()
-    .on('zoom', event => {
+    .on('zoom', (event) => {
       const transform = event.transform;
 
       // Ignore invalid transforms
@@ -50,7 +50,7 @@ export const viewing = ({
   return {
     zoom,
     container,
-    wrapper
+    wrapper,
   };
 };
 
@@ -83,7 +83,7 @@ export const isInvalidTransform = ({ x, y, k }) =>
  * @param {Object} view The view
  * @returns {Object} The view transform
  */
-export const getViewTransform = view => {
+export const getViewTransform = (view) => {
   const transform = zoomTransform(view.wrapper.current);
   return isInvalidTransform(transform) ? origin : negateTransform(transform);
 };
@@ -95,7 +95,7 @@ export const getViewTransform = view => {
  * @param {Object} transform The transform to negate
  * @returns {Object} The new transform
  */
-const negateTransform = transform =>
+const negateTransform = (transform) =>
   // This ensures +0 instead of -0
   origin.translate(-transform.x || 0, -transform.y || 0).scale(transform.k);
 
@@ -108,7 +108,10 @@ const negateTransform = transform =>
 export const setViewExtents = (view, { translate, scale }) => {
   if (translate) {
     const { minX, minY, maxX, maxY } = translate;
-    view.zoom.translateExtent([[minX, minY], [maxX, maxY]]);
+    view.zoom.translateExtent([
+      [minX, minY],
+      [maxX, maxY],
+    ]);
   }
 
   if (scale) {
@@ -122,7 +125,7 @@ export const setViewExtents = (view, { translate, scale }) => {
  * @param {Object} view The view
  * @returns {Object} The view extents
  */
-export const getViewExtents = view => {
+export const getViewExtents = (view) => {
   const scale = view.zoom.scaleExtent();
   const translate = view.zoom.translateExtent();
   return {
@@ -130,9 +133,9 @@ export const getViewExtents = view => {
       minX: translate[0][0],
       minY: translate[0][1],
       maxX: translate[1][0],
-      maxY: translate[1][1]
+      maxY: translate[1][1],
     },
-    scale: { minK: scale[0], maxK: scale[1] }
+    scale: { minK: scale[0], maxK: scale[1] },
   };
 };
 
@@ -142,13 +145,13 @@ export const getViewExtents = view => {
  * @param {Object} view The view
  * @returns {Object} The viewport extents
  */
-export const getViewport = view => {
+export const getViewport = (view) => {
   const viewport = view.zoom.extent()(select(view.container.current));
   return {
     top: viewport[0][1],
     left: viewport[0][0],
     bottom: viewport[1][1],
-    right: viewport[1][0]
+    right: viewport[1][0],
   };
 };
 
@@ -160,7 +163,7 @@ export const getViewport = view => {
 export const setViewport = (view, viewport) => {
   view.zoom.extent([
     [viewport.left, viewport.top],
-    [viewport.right, viewport.bottom]
+    [viewport.right, viewport.bottom],
   ]);
 };
 
@@ -278,7 +281,7 @@ export const viewTransformToFit = ({
   objectHeight,
   minScaleX = 0,
   minScaleFocus = 0,
-  focusOffset = 0.8
+  focusOffset = 0.8,
 }) => {
   let scale = origin.k;
   let x = origin.x;

@@ -6,7 +6,7 @@ import {
   parallelConstraint,
   crossingConstraint,
   separationConstraint,
-  separationStrictConstraint
+  separationStrictConstraint,
 } from './constraints';
 
 /**
@@ -32,7 +32,7 @@ export const layout = ({
   spaceX,
   spaceY,
   layerSpaceY,
-  iterations
+  iterations,
 }) => {
   const layerConstraints = [];
   const crossingConstraints = [];
@@ -52,27 +52,29 @@ export const layout = ({
     spaceX,
     spaceY,
     basisX,
-    layerSpace: (spaceY + layerSpaceY) * 0.5
+    layerSpace: (spaceY + layerSpaceY) * 0.5,
   };
 
   // Constraints in Y formed by the edges of the graph
-  const rowConstraints = edges.map(edge => ({
+  const rowConstraints = edges.map((edge) => ({
     base: rowConstraint,
     a: edge.targetNode,
-    b: edge.sourceNode
+    b: edge.sourceNode,
   }));
 
   // Constraints in Y separating nodes into layers if specified
   if (layers) {
     const layerNames = Object.values(layers);
-    let layerNodes = nodes.filter(node => node.nearestLayer === layerNames[0]);
+    let layerNodes = nodes.filter(
+      (node) => node.nearestLayer === layerNames[0]
+    );
 
     // For each defined layer
     for (let i = 0; i < layerNames.length - 1; i += 1) {
       const layer = layerNames[i];
       const nextLayer = layerNames[i + 1];
       const nextLayerNodes = nodes.filter(
-        node => node.nearestLayer === nextLayer
+        (node) => node.nearestLayer === nextLayer
       );
 
       // Create a temporary intermediary 'node'
@@ -83,7 +85,7 @@ export const layout = ({
         layerConstraints.push({
           base: layerConstraint,
           a: layerNode,
-          b: node
+          b: node,
         });
       }
 
@@ -92,7 +94,7 @@ export const layout = ({
         layerConstraints.push({
           base: layerConstraint,
           a: node,
-          b: layerNode
+          b: layerNode,
         });
       }
 
@@ -120,7 +122,7 @@ export const layout = ({
           a: edgeA.sourceNode,
           b: edgeB.sourceNode,
           edgeA: edgeA,
-          edgeB: edgeB
+          edgeB: edgeB,
         });
       }
 
@@ -131,7 +133,7 @@ export const layout = ({
           a: edgeA.targetNode,
           b: edgeB.targetNode,
           edgeA: edgeA,
-          edgeB: edgeB
+          edgeB: edgeB,
         });
       }
     }
@@ -142,7 +144,7 @@ export const layout = ({
     const constraint = {
       base: parallelConstraint,
       a: edge.sourceNode,
-      b: edge.targetNode
+      b: edge.targetNode,
     };
 
     parallelConstraints.push(constraint);
@@ -190,7 +192,7 @@ export const layout = ({
         separationConstraints.push({
           base: separationConstraint,
           a: rowNodes[j],
-          b: rowNodes[j + 1]
+          b: rowNodes[j + 1],
         });
       }
     }
@@ -223,7 +225,7 @@ export const layout = ({
         base: separationStrictConstraint,
         a: rowNodes[i + 1],
         b: rowNodes[i],
-        separation: targetSeparation
+        separation: targetSeparation,
       });
     }
   }
@@ -271,7 +273,7 @@ const expandDenseRows = (edges, rows, spaceY) => {
  * @param {array} edges The input edges
  * @returns {array} The density of each row
  */
-const rowDensity = edges => {
+const rowDensity = (edges) => {
   const rows = {};
 
   for (const edge of edges) {

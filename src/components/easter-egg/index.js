@@ -15,7 +15,7 @@ class EasterEgg extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      play: false
+      play: false,
     };
     if (typeof jest === 'undefined') {
       console.info('Konami code is supported');
@@ -59,7 +59,7 @@ class EasterEgg extends React.Component {
     const escape = e.keyCode === 27;
     if (escape && this.state.play) {
       this.setState({
-        play: false
+        play: false,
       });
     }
   }

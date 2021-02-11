@@ -9,7 +9,7 @@ const zeroWidthSpace = String.fromCharCode(0x200b);
  * @param {string} text Any text with special characters
  * @return {string} text
  */
-export const insertZeroWidthSpace = text =>
+export const insertZeroWidthSpace = (text) =>
   text.replace(/([^\w\s]|[_])/g, `${zeroWidthSpace}$1${zeroWidthSpace}`);
 
 /**
@@ -33,7 +33,7 @@ const Tooltip = ({ chartSize, targetRect, visible, text }) => {
       className={classnames('pipeline-tooltip', {
         'pipeline-tooltip--visible': visible,
         'pipeline-tooltip--right': isRight,
-        'pipeline-tooltip--top': isTop
+        'pipeline-tooltip--top': isTop,
       })}
       style={{ transform: `translate(${x}px, ${y}px)` }}>
       <div className="pipeline-tooltip__text">{insertZeroWidthSpace(text)}</div>
@@ -45,7 +45,7 @@ Tooltip.defaultProps = {
   chartSize: {},
   targetRect: {},
   visible: false,
-  text: ''
+  text: '',
 };
 
 export default Tooltip;

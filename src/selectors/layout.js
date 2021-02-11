@@ -7,14 +7,14 @@ import {
   sidebarWidth,
   metaSidebarWidth,
   codeSidebarWidth,
-  chartMinWidthScale
+  chartMinWidthScale,
 } from '../config';
 
-const getOldgraphFlag = state => state.flags.oldgraph;
-const getVisibleSidebar = state => state.visible.sidebar;
-const getVisibleCode = state => state.visible.code;
-const getFontLoaded = state => state.fontLoaded;
-const getChartSizeState = state => state.chartSize;
+const getOldgraphFlag = (state) => state.flags.oldgraph;
+const getVisibleSidebar = (state) => state.visible.sidebar;
+const getVisibleCode = (state) => state.visible.code;
+const getFontLoaded = (state) => state.fontLoaded;
+const getChartSizeState = (state) => state.chartSize;
 
 /**
  * Select a subset of state that is watched by graph layout calculators
@@ -26,7 +26,7 @@ export const getGraphInput = createSelector(
     getVisibleEdges,
     getVisibleLayerIDs,
     getOldgraphFlag,
-    getFontLoaded
+    getFontLoaded,
   ],
   (nodes, edges, layers, oldgraph, fontLoaded) => {
     if (!fontLoaded) {
@@ -82,7 +82,7 @@ export const getChartSize = createSelector(
       minWidthScale: chartMinWidthScale,
       sidebarWidth: sidebarWidthActual,
       metaSidebarWidth: metaSidebarWidthActual,
-      codeSidebarWidth: codeSidebarWidthActual
+      codeSidebarWidth: codeSidebarWidthActual,
     };
   }
 );
@@ -90,9 +90,6 @@ export const getChartSize = createSelector(
 /**
  * Gets the current chart zoom
  */
-export const getChartZoom = createSelector(
-  [state => state.zoom],
-  zoom => ({
-    ...zoom
-  })
-);
+export const getChartZoom = createSelector([(state) => state.zoom], (zoom) => ({
+  ...zoom,
+}));

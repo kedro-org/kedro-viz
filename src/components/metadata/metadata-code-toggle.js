@@ -8,7 +8,7 @@ import './styles/metadata.css';
 const MetaCodeToggle = ({ showCode, hasCode, onChange }) => (
   <div
     className={modifiers('pipeline-metadata__code-toggle', {
-      hasCode
+      hasCode,
     })}>
     <input
       id="pipeline-metadata__code-toggle-input"
@@ -20,7 +20,7 @@ const MetaCodeToggle = ({ showCode, hasCode, onChange }) => (
     />
     <label
       className={modifiers('pipeline-metadata__code-toggle-label', {
-        checked: hasCode && showCode
+        checked: hasCode && showCode,
       })}
       htmlFor="pipeline-metadata__code-toggle-input">
       Show Code

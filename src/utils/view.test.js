@@ -13,7 +13,7 @@ import {
   setViewExtents,
   getViewExtents,
   getViewport,
-  setViewport
+  setViewport,
 } from './view';
 
 describe('view', () => {
@@ -33,7 +33,7 @@ describe('view', () => {
       container,
       wrapper,
       onViewChanged: jest.fn(),
-      onViewEnd: jest.fn()
+      onViewEnd: jest.fn(),
     });
 
     // Elements have no dimensions in Jest so set viewport manually
@@ -41,7 +41,7 @@ describe('view', () => {
       top: 0,
       left: 0,
       bottom: height,
-      right: width
+      right: width,
     });
 
     return view;
@@ -55,7 +55,7 @@ describe('view', () => {
         container,
         wrapper,
         onViewChanged: jest.fn(),
-        onViewEnd: jest.fn()
+        onViewEnd: jest.fn(),
       });
       expect(view.zoom).toBeInstanceOf(Function);
       expect(view.container).toBe(container);
@@ -116,7 +116,7 @@ describe('view', () => {
         top: 0,
         left: 0,
         bottom: 100,
-        right: 100
+        right: 100,
       });
     });
 
@@ -126,7 +126,7 @@ describe('view', () => {
         top: 50,
         left: -50,
         bottom: 100,
-        right: 150
+        right: 150,
       };
 
       setViewport(view, viewport);
@@ -238,12 +238,12 @@ describe('view', () => {
           minX: -110,
           minY: -120,
           maxX: 120,
-          maxY: 130
+          maxY: 130,
         },
         scale: {
           minK: 1,
-          maxK: 1.5
-        }
+          maxK: 1.5,
+        },
       };
 
       setViewExtents(view, extents);
@@ -287,12 +287,12 @@ describe('view', () => {
           minX: -Infinity,
           maxX: Infinity,
           minY: -Infinity,
-          maxY: Infinity
+          maxY: Infinity,
         },
         scale: {
           minK: 0,
-          maxK: Infinity
-        }
+          maxK: Infinity,
+        },
       });
     });
 
@@ -304,12 +304,12 @@ describe('view', () => {
           minX: -1,
           maxX: 2,
           minY: -3,
-          maxY: 4
+          maxY: 4,
         },
         scale: {
           minK: 0.5,
-          maxK: 0.6
-        }
+          maxK: 0.6,
+        },
       };
 
       setViewExtents(view, extents);
@@ -330,14 +330,14 @@ describe('view', () => {
         objectHeight: 300,
         minScaleX: 0.4,
         minScaleFocus,
-        focusOffset: 0.8
+        focusOffset: 0.8,
       });
 
       // Resulting transform should clamp to minimum scale and center
       expect(transform).toEqual({
         k: minScaleFocus,
         x: -50,
-        y: 60
+        y: 60,
       });
     });
 
@@ -352,14 +352,14 @@ describe('view', () => {
         objectHeight: 50,
         minScaleX: 0.4,
         minScaleFocus: 0.8,
-        focusOffset: 0.8
+        focusOffset: 0.8,
       });
 
       // Resulting transform should scale up and center
       expect(transform).toEqual({
         k: 2,
         x: -60,
-        y: -10
+        y: -10,
       });
     });
 
@@ -376,14 +376,14 @@ describe('view', () => {
         objectHeight: 500,
         minScaleX: 0.4,
         minScaleFocus,
-        focusOffset: 0.8
+        focusOffset: 0.8,
       });
 
       // Resulting transform should clamp to minimum focus scale and center on focus point
       expect(transform).toEqual({
         k: minScaleFocus,
         x: 290,
-        y: -4
+        y: -4,
       });
     });
 
@@ -398,14 +398,14 @@ describe('view', () => {
         objectHeight: 50,
         minScaleX,
         minScaleFocus: 0.8,
-        focusOffset: 0.8
+        focusOffset: 0.8,
       });
 
       // Resulting transform should clamp to minimum X scale and center
       expect(transform).toEqual({
         k: minScaleX,
         x: 90,
-        y: -50
+        y: -50,
       });
     });
   });

@@ -8,7 +8,7 @@ describe('Selectors', () => {
     });
 
     it("returns an array whose IDs match the current pipeline's layer IDs, in the same order", () => {
-      expect(getLayers(mockState.animals).map(d => d.id)).toEqual(
+      expect(getLayers(mockState.animals).map((d) => d.id)).toEqual(
         mockState.animals.layer.ids
       );
     });
@@ -18,8 +18,8 @@ describe('Selectors', () => {
         expect.arrayContaining([
           expect.objectContaining({
             y: expect.any(Number),
-            height: expect.any(Number)
-          })
+            height: expect.any(Number),
+          }),
         ])
       );
     });
@@ -27,13 +27,13 @@ describe('Selectors', () => {
     it("calculates appropriate y/height positions for each layer corresponding to each layer's nodes", () => {
       const { nodes } = mockState.animals.graph;
       const layers = getLayers(mockState.animals);
-      const layerIDs = layers.map(layer => layer.id);
+      const layerIDs = layers.map((layer) => layer.id);
       const layersObj = layers.reduce((layers, layer) => {
         layers[layer.id] = layer;
         return layers;
       }, {});
 
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         // We don't need to check y/height positions if the layer field isn't there( this is the case for 'task' type nodes ).
         if (node.layer === null || typeof node.layer === 'undefined') {
           return;

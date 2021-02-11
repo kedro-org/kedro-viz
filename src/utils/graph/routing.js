@@ -7,7 +7,7 @@ import {
   nodeLeft,
   nodeRight,
   nodeTop,
-  nodeBottom
+  nodeBottom,
 } from './common';
 
 /**
@@ -39,7 +39,7 @@ export const routing = ({
   stemMinTarget,
   stemMax,
   stemSpaceSource,
-  stemSpaceTarget
+  stemSpaceTarget,
 }) => {
   // Find the rows formed by nodes
   const rows = groupByRow(nodes);
@@ -90,7 +90,7 @@ export const routing = ({
       const rowExtended = [
         { ...firstNode, x: Number.MIN_SAFE_INTEGER },
         ...rows[l],
-        { ...firstNode, x: Number.MAX_SAFE_INTEGER }
+        { ...firstNode, x: Number.MAX_SAFE_INTEGER },
       ];
 
       // For each gap between each nodes on the row
@@ -132,16 +132,16 @@ export const routing = ({
       const offsetY = firstNode.height + spaceY;
       edge.points.push({
         x: nearestPoint.x + sourceOffsetX,
-        y: nearestPoint.y
+        y: nearestPoint.y,
       });
       edge.points.push({
         x: nearestPoint.x + sourceOffsetX,
-        y: nearestPoint.y + offsetY
+        y: nearestPoint.y + offsetY,
       });
 
       currentPoint = {
         x: nearestPoint.x,
-        y: nearestPoint.y + offsetY
+        y: nearestPoint.y + offsetY,
       };
     }
   }
@@ -203,32 +203,33 @@ export const routing = ({
     const sourceStem = [
       {
         x: source.x + sourceOffsetX,
-        y: nodeBottom(source)
+        y: nodeBottom(source),
       },
       {
         x: source.x + sourceOffsetX,
-        y: nodeBottom(source) + stemMinSource
+        y: nodeBottom(source) + stemMinSource,
       },
       {
         x: source.x + sourceOffsetX,
-        y: nodeBottom(source) + stemMinSource + Math.min(sourceOffsetY, stemMax)
-      }
+        y:
+          nodeBottom(source) + stemMinSource + Math.min(sourceOffsetY, stemMax),
+      },
     ];
 
     // Build the target stem for the edge
     const targetStem = [
       {
         x: target.x + targetOffsetX,
-        y: nodeTop(target) - stemMinTarget - Math.min(targetOffsetY, stemMax)
+        y: nodeTop(target) - stemMinTarget - Math.min(targetOffsetY, stemMax),
       },
       {
         x: target.x + targetOffsetX,
-        y: nodeTop(target) - stemMinTarget
+        y: nodeTop(target) - stemMinTarget,
       },
       {
         x: target.x + targetOffsetX,
-        y: nodeTop(target)
-      }
+        y: nodeTop(target),
+      },
     ];
 
     // Combine all points

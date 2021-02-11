@@ -4,7 +4,7 @@ function pipelineReducer(pipelineState = {}, action) {
   switch (action.type) {
     case UPDATE_ACTIVE_PIPELINE: {
       return Object.assign({}, pipelineState, {
-        active: action.pipeline
+        active: action.pipeline,
       });
     }
 

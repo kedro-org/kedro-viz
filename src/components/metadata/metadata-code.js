@@ -15,7 +15,7 @@ hljs.registerLanguage('yaml', yaml);
 export const MetaDataCode = ({
   visible = true,
   value = '',
-  sidebarVisible
+  sidebarVisible,
 }) => {
   const codeRef = useRef();
 
@@ -40,8 +40,8 @@ export const MetaDataCode = ({
   );
 };
 
-const mapStateToProps = state => ({
-  sidebarVisible: state.visible.sidebar
+const mapStateToProps = (state) => ({
+  sidebarVisible: state.visible.sidebar,
 });
 
 export default connect(mapStateToProps)(MetaDataCode);

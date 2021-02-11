@@ -25,7 +25,7 @@ describe('LazyList', () => {
       // Container scrolled half way to desired start item to test
       containerScrollY: itemHeight * visibleStart * 0.5,
       // Viewport scrolled remaining half way to desired start item
-      viewportScrollY: itemHeight * visibleStart * 0.5
+      viewportScrollY: itemHeight * visibleStart * 0.5,
     });
 
     const wrapper = setup.mount(
@@ -34,7 +34,7 @@ describe('LazyList', () => {
         dispose={true}
         height={test.itemHeights}
         total={test.items.length}
-        container={element => element?.parentElement}>
+        container={(element) => element?.parentElement}>
         {test.listRender}
       </LazyList>
     );
@@ -48,7 +48,7 @@ describe('LazyList', () => {
     // Get actual rendered items text
     const actualItemsText = wrapper
       .find('.test-item')
-      .map(element => element.text());
+      .map((element) => element.text());
 
     // Test the items are exactly as expected
     expect(actualItemsText).toEqual(expectedItemsText);
@@ -100,7 +100,7 @@ const setupTest = ({
   viewportHeight,
   viewportScrollY,
   containerHeight,
-  containerScrollY
+  containerScrollY,
 }) => {
   // Generate test data and settings
   const items = Array.from({ length: itemCount }, (_, i) => i);
@@ -118,7 +118,7 @@ const setupTest = ({
     lowerRef,
     listStyle,
     upperStyle,
-    lowerStyle
+    lowerStyle,
   }) => (
     <>
       {/* Scroll container */}
@@ -126,7 +126,7 @@ const setupTest = ({
         style={{
           overflowY: 'scroll',
           height: containerHeight,
-          width: containerWidth
+          width: containerWidth,
         }}>
         {/* List container */}
         <ul
@@ -138,7 +138,7 @@ const setupTest = ({
           {/* Lower placeholder */}
           <li ref={lowerRef} style={lowerStyle} />
           {/* List items in visible range */}
-          {items.slice(start, end).map(i => (
+          {items.slice(start, end).map((i) => (
             <li key={i} className="test-item">
               Item {i}
             </li>
@@ -152,26 +152,26 @@ const setupTest = ({
   window.innerHeight = viewportHeight;
 
   // Emulate RAF with immediate callback
-  window.requestAnimationFrame = cb => cb(0);
+  window.requestAnimationFrame = (cb) => cb(0);
 
   // Emulate IntersectionObserver with immediate callback
-  window.IntersectionObserver = function(cb) {
+  window.IntersectionObserver = function (cb) {
     return {
       observe: () => cb(),
-      disconnect: () => null
+      disconnect: () => null,
     };
   };
 
   // Gets the React instance for a React node
-  const getInstance = node => {
-    const key = Object.keys(node).find(key =>
+  const getInstance = (node) => {
+    const key = Object.keys(node).find((key) =>
       key.startsWith('__reactInternalInstance')
     );
     return node[key];
   };
 
   // Emulate element bounds as if rendered
-  window.Element.prototype.getBoundingClientRect = function() {
+  window.Element.prototype.getBoundingClientRect = function () {
     const instance = getInstance(this);
 
     // Check which element this is (list or container)
@@ -193,7 +193,7 @@ const setupTest = ({
       left: 0,
       right: width,
       width: width,
-      height: height
+      height: height,
     };
   };
 
@@ -202,6 +202,6 @@ const setupTest = ({
     items,
     visibleCount,
     itemHeights,
-    listRender
+    listRender,
   };
 };

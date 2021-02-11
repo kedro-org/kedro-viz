@@ -7,7 +7,7 @@ const keyCodes = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑↑↓↓←→
  * Dispatch a keyboard event
  * @param {number} keyCode
  */
-const dispatchKeyDown = keyCode => {
+const dispatchKeyDown = (keyCode) => {
   const event = new KeyboardEvent('keydown', { keyCode });
   document.dispatchEvent(event);
 };

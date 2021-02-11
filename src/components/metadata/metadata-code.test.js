@@ -51,9 +51,9 @@ describe('MetaDataCode', () => {
 });
 
 describe('MetaCodeToggle', () => {
-  const input = wrapper =>
+  const input = (wrapper) =>
     wrapper.find('.pipeline-metadata__code-toggle-input');
-  const label = wrapper =>
+  const label = (wrapper) =>
     wrapper.find('.pipeline-metadata__code-toggle-label');
 
   it('is checked when showCode is true', () => {

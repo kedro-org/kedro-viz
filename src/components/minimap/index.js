@@ -12,7 +12,7 @@ import {
   isOrigin,
   viewTransformToFit,
   getViewTransform,
-  setViewTransformExact
+  setViewTransformExact,
 } from '../../utils/view';
 import { drawNodes, drawViewport } from './draw';
 import './styles/minimap.css';
@@ -54,7 +54,7 @@ export class MiniMap extends Component {
     this.view = viewing({
       container: this.svgRef,
       wrapper: this.wrapperRef,
-      allowUserInput: false
+      allowUserInput: false,
     });
 
     this.addGlobalEventListeners();
@@ -70,7 +70,7 @@ export class MiniMap extends Component {
    */
   addGlobalEventListeners() {
     window.addEventListener('wheel', this.onPointerWheelGlobal, {
-      passive: false
+      passive: false,
     });
     window.addEventListener(
       pointerEventName('pointerup'),
@@ -131,7 +131,9 @@ export class MiniMap extends Component {
    */
   changed(props, objectA, objectB) {
     return (
-      objectA && objectB && props.some(prop => objectA[prop] !== objectB[prop])
+      objectA &&
+      objectB &&
+      props.some((prop) => objectA[prop] !== objectB[prop])
     );
   }
 
@@ -143,7 +145,7 @@ export class MiniMap extends Component {
       svg: select(this.svgRef.current),
       wrapper: select(this.wrapperRef.current),
       nodeGroup: select(this.nodesRef.current),
-      viewport: select(this.viewportRef.current)
+      viewport: select(this.viewportRef.current),
     };
   }
 
@@ -173,7 +175,7 @@ export class MiniMap extends Component {
    * Handle pointer down
    * @param {Object} event Event object
    */
-  onPointerDown = event => {
+  onPointerDown = (event) => {
     this.isPointerDown = true;
     this.isPointerInside = true;
 
@@ -184,13 +186,13 @@ export class MiniMap extends Component {
    * Handle pointer wheel
    * @param {Object} event Event object
    */
-  onPointerWheel = event => {
+  onPointerWheel = (event) => {
     // Change zoom based on wheel velocity
     this.props.onUpdateChartZoom({
       relative: true,
       scale: -(event.deltaY || 0) * this.ZOOM_RATE,
       applied: false,
-      transition: false
+      transition: false,
     });
   };
 
@@ -198,7 +200,7 @@ export class MiniMap extends Component {
    * Handle global pointer wheel
    * @param {Object} event Event object
    */
-  onPointerWheelGlobal = event => {
+  onPointerWheelGlobal = (event) => {
     // Prevent window scroll when wheeling on this minimap
     const wasTarget = this.containerRef.current.contains(event.target);
     if (wasTarget) {
@@ -241,7 +243,7 @@ export class MiniMap extends Component {
         scale: chartScale,
         relative: false,
         applied: false,
-        transition: useTransition
+        transition: useTransition,
       });
 
       if (useTransition) {
@@ -272,7 +274,7 @@ export class MiniMap extends Component {
       viewWidth: mapWidth - padding,
       viewHeight: mapHeight - padding,
       objectWidth: graphWidth,
-      objectHeight: graphHeight
+      objectHeight: graphHeight,
     });
 
     // Detect first transform
@@ -311,7 +313,7 @@ export class MiniMap extends Component {
   render() {
     const { width, height } = this.props.mapSize;
     const transformStyle = {
-      transform: `translate(calc(-100% + ${width}px), -100%)`
+      transform: `translate(calc(-100% + ${width}px), -100%)`,
     };
 
     // Add pointer events with back compatibility
@@ -321,7 +323,7 @@ export class MiniMap extends Component {
       [_('onPointerEnter')]: this.onPointerEnter,
       [_('onPointerLeave')]: this.onPointerLeave,
       [_('onPointerDown')]: this.onPointerDown,
-      [_('onPointerMove')]: this.onPointerMove
+      [_('onPointerMove')]: this.onPointerMove,
     };
 
     return (
@@ -366,7 +368,7 @@ const maxWidth = 1.5 * minWidth;
 /**
  * Convert pointer event name to a mouse event name if not supported
  */
-const pointerEventName = event =>
+const pointerEventName = (event) =>
   window.PointerEvent
     ? event
     : event.replace('pointer', 'mouse').replace('Pointer', 'Mouse');
@@ -374,7 +376,7 @@ const pointerEventName = event =>
 /**
  * Gets the map sizing that fits the graph in state
  */
-const getMapSize = state => {
+const getMapSize = (state) => {
   const size = state.graph.size || {};
   const graphWidth = size.width || 0;
   const graphHeight = size.height || 0;
@@ -407,17 +409,14 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   textLabels: state.textLabels,
-  ...ownProps
+  ...ownProps,
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
-  onUpdateChartZoom: transform => {
+  onUpdateChartZoom: (transform) => {
     dispatch(updateZoom(transform));
   },
-  ...ownProps
+  ...ownProps,
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MiniMap);
+export default connect(mapStateToProps, mapDispatchToProps)(MiniMap);

@@ -12,7 +12,7 @@ export const graphNew = ({ nodes, edges, layers }) => {
   return {
     ...result,
     size: { ...result.size, marginx: 100, marginy: 100 },
-    oldgraph: false
+    oldgraph: false,
   };
 };
 
@@ -28,14 +28,14 @@ export const graphDagre = ({ nodes, edges, layers }) => {
     ranker: hasLayers ? 'none' : null,
     ranksep: hasLayers ? 200 : 70,
     marginx: 40,
-    marginy: 40
+    marginy: 40,
   });
 
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     graph.setNode(node.id, node);
   });
 
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     graph.setEdge(edge.source, edge.target, edge);
   });
 
@@ -43,15 +43,15 @@ export const graphDagre = ({ nodes, edges, layers }) => {
   dagre.layout(graph);
 
   return {
-    nodes: graph.nodes().map(id => {
+    nodes: graph.nodes().map((id) => {
       const node = graph.node(id);
       return {
         ...node,
-        order: node.x + node.y * 9999
+        order: node.x + node.y * 9999,
       };
     }),
-    edges: graph.edges().map(id => graph.edge(id)),
+    edges: graph.edges().map((id) => graph.edge(id)),
     size: graph.graph(),
-    oldgraph: true
+    oldgraph: true,
   };
 };

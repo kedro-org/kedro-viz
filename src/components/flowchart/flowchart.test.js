@@ -47,7 +47,9 @@ describe('FlowChart', () => {
     const nodes = wrapper.render().find('.pipeline-node');
     const nodeNames = nodes.map((i, el) => $(el).text()).get();
     const mockNodes = getNodeIDs(mockState.animals);
-    const mockNodeNames = mockNodes.map(d => getNodeName(mockState.animals)[d]);
+    const mockNodeNames = mockNodes.map(
+      (d) => getNodeName(mockState.animals)[d]
+    );
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
   });
@@ -131,7 +133,7 @@ describe('FlowChart', () => {
     window.addEventListener = jest.fn((event, cb) => {
       map[event] = cb;
     });
-    window.removeEventListener = jest.fn(event => {
+    window.removeEventListener = jest.fn((event) => {
       delete map[event];
     });
     const wrapper = setup.mount(<FlowChart />);
@@ -169,7 +171,7 @@ describe('FlowChart', () => {
       <FlowChart
         nodeSelected={{
           [mockNodes[0]]: true,
-          [mockNodes[1]]: true
+          [mockNodes[1]]: true,
         }}
       />
     );
@@ -182,7 +184,7 @@ describe('FlowChart', () => {
       <FlowChart
         nodeActive={{
           [mockNodes[0]]: true,
-          [mockNodes[1]]: true
+          [mockNodes[1]]: true,
         }}
       />
     );
@@ -208,7 +210,7 @@ describe('FlowChart', () => {
         tooltip={{
           targetRect: { top: 0, left: 0, width: 10, height: 10 },
           text: 'test tooltip',
-          visible: true
+          visible: true,
         }}
       />
     );
@@ -225,7 +227,7 @@ describe('FlowChart', () => {
         tooltip={{
           targetRect: { top: 0, left: 0, width: 10, height: 10 },
           text: 'test tooltip',
-          visible: false
+          visible: false,
         }}
       />
     );
@@ -249,7 +251,7 @@ describe('FlowChart', () => {
       visibleGraph: expect.any(Boolean),
       visibleSidebar: expect.any(Boolean),
       visibleCode: expect.any(Boolean),
-      visibleMetaSidebar: expect.any(Boolean)
+      visibleMetaSidebar: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
@@ -260,21 +262,21 @@ describe('FlowChart', () => {
     mapDispatchToProps(dispatch).onToggleNodeHovered('123');
     expect(dispatch.mock.calls[0][0]).toEqual({
       nodeHovered: '123',
-      type: 'TOGGLE_NODE_HOVERED'
+      type: 'TOGGLE_NODE_HOVERED',
     });
 
     const boundingClientRect = { x: 0, y: 0, width: 1000, height: 1000 };
     mapDispatchToProps(dispatch).onUpdateChartSize(boundingClientRect);
     expect(dispatch.mock.calls[1][0]).toEqual({
       chartSize: boundingClientRect,
-      type: 'UPDATE_CHART_SIZE'
+      type: 'UPDATE_CHART_SIZE',
     });
 
     const zoom = { scale: 1, x: 0, y: 0 };
     mapDispatchToProps(dispatch).onUpdateZoom(zoom);
     expect(dispatch.mock.calls[2][0]).toEqual({
       zoom,
-      type: 'UPDATE_ZOOM'
+      type: 'UPDATE_ZOOM',
     });
   });
 });
@@ -289,7 +291,7 @@ describe('map dispatch props to async actions', () => {
     await mapDispatchToProps(store.dispatch).onLoadNodeData('123');
     expect(store.getActions()[0]).toEqual({
       nodeClicked: '123',
-      type: 'TOGGLE_NODE_CLICKED'
+      type: 'TOGGLE_NODE_CLICKED',
     });
   });
 });

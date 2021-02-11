@@ -11,10 +11,10 @@ import { saveState, pruneFalseyKeys } from './helpers';
  * update state.graph via a web worker when it changes.
  * @param {object} store Redux store
  */
-const updateGraphOnChange = store => {
+const updateGraphOnChange = (store) => {
   const watchGraph = watch(() => getGraphInput(store.getState()));
   store.subscribe(
-    watchGraph(graphInput => {
+    watchGraph((graphInput) => {
       store.dispatch(calculateGraph(graphInput));
     })
   );
@@ -24,27 +24,27 @@ const updateGraphOnChange = store => {
  * Save selected state properties to window.localStorage
  * @param {object} state Redux state snapshot
  */
-const saveStateToLocalStorage = state => {
+const saveStateToLocalStorage = (state) => {
   saveState({
     node: {
-      disabled: pruneFalseyKeys(state.node.disabled)
+      disabled: pruneFalseyKeys(state.node.disabled),
     },
     nodeType: {
-      disabled: state.nodeType.disabled
+      disabled: state.nodeType.disabled,
     },
     pipeline: {
-      active: state.pipeline.active
+      active: state.pipeline.active,
     },
     layer: {
-      visible: state.layer.visible
+      visible: state.layer.visible,
     },
     tag: {
-      enabled: state.tag.enabled
+      enabled: state.tag.enabled,
     },
     textLabels: state.textLabels,
     theme: state.theme,
     visible: state.visible,
-    flags: state.flags
+    flags: state.flags,
   });
 };
 

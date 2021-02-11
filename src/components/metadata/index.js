@@ -11,7 +11,7 @@ import MetaDataCode from './metadata-code';
 import MetaCodeToggle from './metadata-code-toggle';
 import {
   getVisibleMetaSidebar,
-  getClickedNodeMetaData
+  getClickedNodeMetaData,
 } from '../../selectors/metadata';
 import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode } from '../../actions';
@@ -26,7 +26,7 @@ const MetaData = ({
   codeFlag,
   visibleCode,
   onToggleCode,
-  onToggleNodeSelected
+  onToggleNodeSelected,
 }) => {
   const [showCopied, setShowCopied] = useState(false);
 
@@ -72,7 +72,7 @@ const MetaData = ({
                 container={React.Fragment}
                 ariaLabel="Close Metadata Panel"
                 className={modifiers('pipeline-metadata__close-button', {
-                  hasCode
+                  hasCode,
                 })}
                 icon={CloseIcon}
                 onClick={onCloseClick}
@@ -81,7 +81,7 @@ const MetaData = ({
                 <MetaCodeToggle
                   showCode={visibleCode}
                   hasCode={hasCode}
-                  onChange={event => onToggleCode(event.target.checked)}
+                  onChange={(event) => onToggleCode(event.target.checked)}
                 />
               )}
             </div>
@@ -138,7 +138,7 @@ const MetaData = ({
                     className={modifiers(
                       'pipeline-metadata__run-command-value',
                       {
-                        visible: !showCopied
+                        visible: !showCopied,
                       }
                     )}
                     value={metadata.runCommand}
@@ -149,7 +149,7 @@ const MetaData = ({
                         className={modifiers(
                           'pipeline-metadata__copy-message',
                           {
-                            visible: showCopied
+                            visible: showCopied,
                           }
                         )}>
                         Copied to clipboard.
@@ -184,19 +184,16 @@ export const mapStateToProps = (state, ownProps) => ({
   metadata: getClickedNodeMetaData(state),
   codeFlag: state.flags.code,
   visibleCode: state.visible.code,
-  ...ownProps
+  ...ownProps,
 });
 
-export const mapDispatchToProps = dispatch => ({
-  onToggleNodeSelected: nodeID => {
+export const mapDispatchToProps = (dispatch) => ({
+  onToggleNodeSelected: (nodeID) => {
     dispatch(toggleNodeClicked(nodeID));
   },
-  onToggleCode: visible => {
+  onToggleCode: (visible) => {
     dispatch(toggleCode(visible));
-  }
+  },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MetaData);
+export default connect(mapStateToProps, mapDispatchToProps)(MetaData);

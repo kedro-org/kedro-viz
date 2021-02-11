@@ -21,7 +21,7 @@ export const NodeListGroup = ({
   onItemClick,
   onItemChange,
   onItemMouseEnter,
-  onItemMouseLeave
+  onItemMouseLeave,
 }) => (
   <li
     className={classnames(
@@ -29,7 +29,7 @@ export const NodeListGroup = ({
       `pipeline-nodelist__group--type-${id}`,
       `pipeline-nodelist__group--kind-${kind}`,
       {
-        'pipeline-nodelist__group--all-unset': allUnset
+        'pipeline-nodelist__group--all-unset': allUnset,
       }
     )}>
     <h3 className="pipeline-nodelist__heading">
@@ -43,14 +43,14 @@ export const NodeListGroup = ({
         checked={checked}
         visibleIcon={visibleIcon}
         invisibleIcon={invisibleIcon}
-        onChange={e => {
+        onChange={(e) => {
           onToggleChecked(id, !e.target.checked);
         }}>
         <button
           aria-label={`${collapsed ? 'Show' : 'Hide'} ${name.toLowerCase()}`}
           onClick={() => onToggleCollapsed(id)}
           className={classnames('pipeline-type-group-toggle', {
-            'pipeline-type-group-toggle--alt': collapsed
+            'pipeline-type-group-toggle--alt': collapsed,
           })}
         />
       </NodeListRow>

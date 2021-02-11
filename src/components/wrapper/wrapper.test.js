@@ -3,7 +3,7 @@ import { mockState, setup } from '../../utils/state.mock';
 
 const { theme } = mockState.animals;
 const mockProps = {
-  theme
+  theme,
 };
 
 describe('Wrapper', () => {
@@ -23,7 +23,7 @@ describe('Wrapper', () => {
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.animals)).toEqual({
       loading: false,
-      theme
+      theme,
     });
   });
 });
