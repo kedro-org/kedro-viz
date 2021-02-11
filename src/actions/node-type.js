@@ -9,6 +9,6 @@ export function toggleTypeDisabled(typeID, disabled) {
   return {
     type: TOGGLE_TYPE_DISABLED,
     typeID,
-    disabled
+    disabled,
   };
 }

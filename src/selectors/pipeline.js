@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
 
-const getNodeIDs = state => state.node.ids;
-const getNodePipelines = state => state.node.pipelines;
-const getActivePipeline = state => state.pipeline.active;
-const getNodeTags = state => state.node.tags;
-const getAsyncDataSource = state => state.asyncDataSource;
+const getNodeIDs = (state) => state.node.ids;
+const getNodePipelines = (state) => state.node.pipelines;
+const getActivePipeline = (state) => state.pipeline.active;
+const getNodeTags = (state) => state.node.tags;
+const getAsyncDataSource = (state) => state.asyncDataSource;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -18,7 +18,7 @@ export const getNodeDisabledPipeline = createSelector(
     }
     return arrayToObject(
       nodeIDs,
-      nodeID => !nodePipelines[nodeID][activePipeline]
+      (nodeID) => !nodePipelines[nodeID][activePipeline]
     );
   }
 );
@@ -29,7 +29,7 @@ export const getNodeDisabledPipeline = createSelector(
 export const getPipelineNodeIDs = createSelector(
   [getNodeIDs, getNodeDisabledPipeline],
   (nodeIDs, nodeDisabledPipeline) =>
-    nodeIDs.filter(nodeID => !nodeDisabledPipeline[nodeID])
+    nodeIDs.filter((nodeID) => !nodeDisabledPipeline[nodeID])
 );
 
 /**
@@ -39,8 +39,8 @@ export const getPipelineTagIDs = createSelector(
   [getPipelineNodeIDs, getNodeTags],
   (nodeIDs, nodeTags) => {
     const visibleTags = {};
-    nodeIDs.forEach(nodeID => {
-      nodeTags[nodeID].forEach(tagID => {
+    nodeIDs.forEach((nodeID) => {
+      nodeTags[nodeID].forEach((tagID) => {
         if (!visibleTags[tagID]) {
           visibleTags[tagID] = true;
         }

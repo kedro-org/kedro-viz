@@ -4,7 +4,7 @@ function layerReducer(layerState = {}, action) {
   switch (action.type) {
     case TOGGLE_LAYERS: {
       return Object.assign({}, layerState, {
-        visible: action.visible
+        visible: action.visible,
       });
     }
 

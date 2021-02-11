@@ -10,7 +10,7 @@ const mockProps = {
     outerWidth: 1198,
     sidebarWidth: sidebarWidth.open,
     top: 0,
-    width: 898
+    width: 898,
   },
   targetRect: {
     bottom: 341.05895,
@@ -20,10 +20,10 @@ const mockProps = {
     top: 338.95785,
     width: 9.83453,
     x: 856.19622,
-    y: 338.95785
+    y: 338.95785,
   },
   text: 'lorem_ipsum-dolor: sit [amet]',
-  visible: true
+  visible: true,
 };
 
 describe('Tooltip', () => {
@@ -36,7 +36,7 @@ describe('Tooltip', () => {
   it('should not add the top class when the tooltip is towards the bottom', () => {
     const targetRect = {
       ...mockProps.targetRect,
-      top: mockProps.chartSize.height - 10
+      top: mockProps.chartSize.height - 10,
     };
     const wrapper = setup.shallow(Tooltip, { ...mockProps, targetRect });
     const container = wrapper.find('.pipeline-tooltip--top');
@@ -46,7 +46,7 @@ describe('Tooltip', () => {
   it('should not add the right class when the tooltip is towards the left', () => {
     const targetRect = {
       ...mockProps.targetRect,
-      left: 10
+      left: 10,
     };
     const wrapper = setup.shallow(Tooltip, { ...mockProps, targetRect });
     const container = wrapper.find('.pipeline-tooltip--right');
@@ -56,7 +56,7 @@ describe('Tooltip', () => {
   it("should add the 'top' class when the tooltip is towards the top", () => {
     const targetRect = {
       ...mockProps.targetRect,
-      top: 10
+      top: 10,
     };
     const wrapper = setup.shallow(Tooltip, { ...mockProps, targetRect });
     const container = wrapper.find('.pipeline-tooltip--top');
@@ -66,7 +66,7 @@ describe('Tooltip', () => {
   it("should add the 'right' class when the tooltip is towards the right", () => {
     const targetRect = {
       ...mockProps.targetRect,
-      left: mockProps.chartSize.width - 10
+      left: mockProps.chartSize.width - 10,
     };
     const wrapper = setup.shallow(Tooltip, { ...mockProps, targetRect });
     const container = wrapper.find('.pipeline-tooltip--right');
@@ -77,9 +77,9 @@ describe('Tooltip', () => {
 describe('insertZeroWidthSpace', () => {
   describe('special characters', () => {
     const z = String.fromCharCode(0x200b);
-    const wrap = text => z + text + z;
+    const wrap = (text) => z + text + z;
     const characters = '-_[]/:\\!@£$%^&*()'.split('');
-    test.each(characters)('wraps %s with a zero-width space', d => {
+    test.each(characters)('wraps %s with a zero-width space', (d) => {
       expect(insertZeroWidthSpace(d)).toBe(wrap(d));
       expect(insertZeroWidthSpace(d).length).toBe(3);
     });
@@ -87,7 +87,7 @@ describe('insertZeroWidthSpace', () => {
 
   describe('alphanumeric characters', () => {
     const characters = ['a', 'B', '123', 'aBc123', '0', ''];
-    test.each(characters)('does not wrap %s with a zero-width space', d => {
+    test.each(characters)('does not wrap %s with a zero-width space', (d) => {
       expect(insertZeroWidthSpace(d)).toBe(d);
       expect(insertZeroWidthSpace(d).length).toBe(d.length);
     });
@@ -95,7 +95,7 @@ describe('insertZeroWidthSpace', () => {
 
   describe('spaces', () => {
     const characters = [' ', '\t', '\n', 'a b', ' a '];
-    test.each(characters)('does not wrap %s with a zero-width space', d => {
+    test.each(characters)('does not wrap %s with a zero-width space', (d) => {
       expect(insertZeroWidthSpace(d)).toBe(d);
       expect(insertZeroWidthSpace(d).length).toBe(d.length);
     });

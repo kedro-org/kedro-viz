@@ -3,7 +3,7 @@ import {
   getChartSize,
   getSidebarWidth,
   getGraphInput,
-  getShouldDisplayLargeWarning
+  getShouldDisplayLargeWarning,
 } from './layout';
 import { updateFontLoaded } from '../actions';
 import reducer from '../reducers';
@@ -22,7 +22,7 @@ describe('Selectors', () => {
           edges: expect.any(Array),
           layers: expect.any(Array),
           oldgraph: expect.any(Boolean),
-          fontLoaded: expect.any(Boolean)
+          fontLoaded: expect.any(Boolean),
         })
       );
     });
@@ -52,14 +52,14 @@ describe('Selectors', () => {
         outerWidth: undefined,
         sidebarWidth: undefined,
         top: undefined,
-        width: undefined
+        width: undefined,
       });
     });
 
     it('returns a DOMRect converted into an Object, with some extra properties', () => {
       const newMockState = {
         ...mockState.animals,
-        chartSize: { left: 100, top: 100, width: 1000, height: 1000 }
+        chartSize: { left: 100, top: 100, width: 1000, height: 1000 },
       };
       expect(getChartSize(newMockState)).toEqual({
         height: expect.any(Number),
@@ -70,7 +70,7 @@ describe('Selectors', () => {
         metaSidebarWidth: expect.any(Number),
         minWidthScale: expect.any(Number),
         top: expect.any(Number),
-        width: expect.any(Number)
+        width: expect.any(Number),
       });
     });
   });

@@ -7,7 +7,7 @@ import { arrayToObject } from '../utils';
 export const createInitialPipelineState = () => ({
   pipeline: {
     ids: [],
-    name: {}
+    name: {},
   },
   node: {
     ids: [],
@@ -25,33 +25,33 @@ export const createInitialPipelineState = () => ({
     docstring: {},
     parameters: {},
     filepath: {},
-    datasetType: {}
+    datasetType: {},
   },
   nodeType: {
     ids: ['task', 'data', 'parameters'],
     name: {
       data: 'Datasets',
       task: 'Nodes',
-      parameters: 'Parameters'
+      parameters: 'Parameters',
     },
-    disabled: {}
+    disabled: {},
   },
   edge: {
     ids: [],
     sources: {},
-    targets: {}
+    targets: {},
   },
   layer: {
     ids: [],
     name: {},
-    visible: true
+    visible: true,
   },
   tag: {
     ids: [],
     name: {},
     active: {},
-    enabled: {}
-  }
+    enabled: {},
+  },
 });
 
 /**
@@ -59,7 +59,7 @@ export const createInitialPipelineState = () => ({
  * @param {Object} data - The parsed data input
  * @return {Boolean} True if valid for formatting
  */
-const validateInput = data => {
+const validateInput = (data) => {
   if (!data) {
     throw new Error('No data provided to Kedro-Viz');
   }
@@ -90,7 +90,7 @@ const createEdgeID = (source, target) => [source, target].join('|');
  * @param {string} pipeline.id - Unique ID
  * @param {string} pipeline.name - Pipeline name
  */
-const addPipeline = state => pipeline => {
+const addPipeline = (state) => (pipeline) => {
   const { id } = pipeline;
   if (state.pipeline.name[id]) {
     return;
@@ -105,7 +105,7 @@ const addPipeline = state => pipeline => {
  * @param {string} type - 'data' or 'task'
  * @param {Array} tags - List of associated tags
  */
-const addNode = state => node => {
+const addNode = (state) => (node) => {
   const { id } = node;
   if (state.node.name[id]) {
     return;
@@ -132,7 +132,7 @@ const addNode = state => node => {
  * @param {Object} source - Parent node
  * @param {Object} target - Child node
  */
-const addEdge = state => ({ source, target }) => {
+const addEdge = (state) => ({ source, target }) => {
   const id = createEdgeID(source, target);
   if (state.edge.ids.includes(id)) {
     return;
@@ -146,7 +146,7 @@ const addEdge = state => ({ source, target }) => {
  * Add a new Tag if it doesn't already exist
  * @param {Object} tag - Tag object
  */
-const addTag = state => tag => {
+const addTag = (state) => (tag) => {
   const { id } = tag;
   state.tag.ids.push(id);
   state.tag.name[id] = tag.name;
@@ -156,7 +156,7 @@ const addTag = state => tag => {
  * Add a new Layer if it doesn't already exist
  * @param {Object} layer - Layer object
  */
-const addLayer = state => layer => {
+const addLayer = (state) => (layer) => {
   // using layer name as both layerId and name.
   // It futureproofs it if we need a separate layer ID in the future.
   state.layer.ids.push(layer);
@@ -168,7 +168,7 @@ const addLayer = state => layer => {
  * @param {Object} data Raw unformatted data input
  * @return {Object} Formatted, normalized state
  */
-const normalizeData = data => {
+const normalizeData = (data) => {
   const state = createInitialPipelineState();
 
   if (data === 'json') {

@@ -10,7 +10,7 @@ export const paths = {
     'M20 4.2l.2.2L19 5.9c-2.3-1.8-3.8-.9-4.8 3.4h3.1v2h-3.5v.2l-.1.6c-1.2 7.9-4 11-8.3 8l-.2-.1 1.2-1.6c2.5 1.8 4.2.3 5.2-5.9l.2-1v-.2H9.2v-2h3c1.4-6 4.1-8 7.9-5z',
   // sliders icon
   parameters:
-    'M10.2 14v1.5H20v2h-9.8V19H8.3v-1.5H5v-2h3.3V14h2zm7.4-9v1.5H20v2h-2.4V10h-1.8V8.5H5v-2h10.8V5h1.8z'
+    'M10.2 14v1.5H20v2h-9.8V19H8.3v-1.5H5v-2h3.3V14h2zm7.4-9v1.5H20v2h-2.4V10h-1.8V8.5H5v-2h10.8V5h1.8z',
 };
 
 const NodeIcon = ({ className, type }) =>

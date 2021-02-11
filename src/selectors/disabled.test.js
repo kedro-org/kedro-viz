@@ -4,18 +4,18 @@ import {
   getNodeDisabled,
   getEdgeDisabled,
   getVisibleNodeIDs,
-  getVisibleLayerIDs
+  getVisibleLayerIDs,
 } from './disabled';
 import { toggleNodesDisabled } from '../actions/nodes';
 import { toggleLayers } from '../actions';
 import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
 
-const getNodeIDs = state => state.node.ids;
-const getEdgeIDs = state => state.edge.ids;
-const getEdgeSources = state => state.edge.sources;
-const getEdgeTargets = state => state.edge.targets;
-const getNodeTags = state => state.node.tags;
+const getNodeIDs = (state) => state.node.ids;
+const getEdgeIDs = (state) => state.edge.ids;
+const getEdgeSources = (state) => state.edge.sources;
+const getEdgeTargets = (state) => state.edge.targets;
+const getNodeTags = (state) => state.node.tags;
 
 describe('Selectors', () => {
   describe('getNodeDisabledTag', () => {
@@ -28,7 +28,7 @@ describe('Selectors', () => {
     it('returns an object whose values are all Booleans', () => {
       expect(
         Object.values(getNodeDisabledTag(mockState.animals)).every(
-          value => typeof value === 'boolean'
+          (value) => typeof value === 'boolean'
         )
       ).toBe(true);
     });
@@ -44,7 +44,7 @@ describe('Selectors', () => {
       const tag = mockState.animals.tag.ids[0];
       const nodeTags = getNodeTags(mockState.animals);
       // Choose a node that has no tags (and which should be disabled)
-      const hasNoTags = id => !Boolean(nodeTags[id].length);
+      const hasNoTags = (id) => !Boolean(nodeTags[id].length);
       const disabledNodeID = getNodeIDs(mockState.animals).find(hasNoTags);
       // Update the state to enable one of the tags for that node
       const newMockState = reducer(
@@ -58,7 +58,7 @@ describe('Selectors', () => {
       const nodeTags = getNodeTags(mockState.animals);
       // Choose a node that has > 1 tag
       const enabledNodeID = getNodeIDs(mockState.animals).find(
-        id => nodeTags[id].length > 1
+        (id) => nodeTags[id].length > 1
       );
       // Update the state to enable one of the tags for that node
       const enabledNodeTags = nodeTags[enabledNodeID];
@@ -73,7 +73,7 @@ describe('Selectors', () => {
       const nodeTags = getNodeTags(mockState.animals);
       // Choose a node that has > 1 tag
       const enabledNodeID = getNodeIDs(mockState.animals).find(
-        id => nodeTags[id].length > 1
+        (id) => nodeTags[id].length > 1
       );
       // Update the state to activate all of the tag filters for that node
       const enabledNodeTags = nodeTags[enabledNodeID];
@@ -99,7 +99,7 @@ describe('Selectors', () => {
     it('returns an object whose values are all Booleans', () => {
       expect(
         Object.values(getNodeDisabled(mockState.animals)).every(
-          value => typeof value === 'boolean'
+          (value) => typeof value === 'boolean'
         )
       ).toBe(true);
     });
@@ -127,7 +127,7 @@ describe('Selectors', () => {
     it('returns an object whose values are all Booleans', () => {
       expect(
         Object.values(getEdgeDisabled(mockState.animals)).every(
-          value => typeof value === 'boolean'
+          (value) => typeof value === 'boolean'
         )
       ).toBe(true);
     });
@@ -141,10 +141,10 @@ describe('Selectors', () => {
 
     it('disables an edge if one of its nodes is disabled', () => {
       const disabledEdges = Object.keys(edgeDisabled).filter(
-        id => edgeDisabled[id]
+        (id) => edgeDisabled[id]
       );
       const disabledEdgesMock = edges.filter(
-        id =>
+        (id) =>
           getEdgeSources(newMockState)[id] === nodeID ||
           getEdgeTargets(newMockState)[id] === nodeID
       );
@@ -153,10 +153,10 @@ describe('Selectors', () => {
 
     it('does not disable an edge if none of its nodes are disabled', () => {
       const enabledEdges = Object.keys(edgeDisabled).filter(
-        id => !edgeDisabled[id]
+        (id) => !edgeDisabled[id]
       );
       const enabledEdgesMock = edges.filter(
-        id =>
+        (id) =>
           getEdgeSources(newMockState)[id] !== nodeID &&
           getEdgeTargets(newMockState)[id] !== nodeID
       );
@@ -176,7 +176,7 @@ describe('Selectors', () => {
     it('returns an object whose values are all Booleans', () => {
       expect(
         Object.values(getEdgeDisabled(mockState.animals)).every(
-          value => typeof value === 'boolean'
+          (value) => typeof value === 'boolean'
         )
       ).toBe(true);
     });
@@ -207,8 +207,8 @@ describe('Selectors', () => {
         ...mockState.animals,
         layer: {
           ids: [],
-          visible: true
-        }
+          visible: true,
+        },
       };
       expect(getVisibleLayerIDs(newMockState)).toEqual([]);
     });

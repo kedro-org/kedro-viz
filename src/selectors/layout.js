@@ -7,13 +7,13 @@ import {
   sidebarWidth,
   metaSidebarWidth,
   chartMinWidthScale,
-  largeGraphThreshold
+  largeGraphThreshold,
 } from '../config';
 
-const getOldgraphFlag = state => state.flags.oldgraph;
-const getVisibleSidebar = state => state.visible.sidebar;
-const getFontLoaded = state => state.fontLoaded;
-const getDisplayLargeGraph = state => state.displayLargeGraph;
+const getOldgraphFlag = (state) => state.flags.oldgraph;
+const getVisibleSidebar = (state) => state.visible.sidebar;
+const getFontLoaded = (state) => state.fontLoaded;
+const getDisplayLargeGraph = (state) => state.displayLargeGraph;
 
 /**
  * Decide whether to show the large graph warning
@@ -36,7 +36,7 @@ export const getGraphInput = createSelector(
     getVisibleLayerIDs,
     getOldgraphFlag,
     getFontLoaded,
-    getShouldDisplayLargeWarning
+    getShouldDisplayLargeWarning,
   ],
   (nodes, edges, layers, oldgraph, fontLoaded, shouldDisplayLargeWarning) => {
     if (!fontLoaded || shouldDisplayLargeWarning) {
@@ -58,7 +58,7 @@ export const getSidebarWidth = (visible, { open, closed }) =>
  * and add some useful new ones
  */
 export const getChartSize = createSelector(
-  [getVisibleSidebar, getVisibleMetaSidebar, state => state.chartSize],
+  [getVisibleSidebar, getVisibleMetaSidebar, (state) => state.chartSize],
   (visibleSidebar, visibleMetaSidebar, chartSize) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
@@ -84,7 +84,7 @@ export const getChartSize = createSelector(
       width: chartWidth,
       minWidthScale: chartMinWidthScale,
       sidebarWidth: sidebarWidthActual,
-      metaSidebarWidth: metaSidebarWidthActual
+      metaSidebarWidth: metaSidebarWidthActual,
     };
   }
 );
@@ -92,9 +92,6 @@ export const getChartSize = createSelector(
 /**
  * Gets the current chart zoom
  */
-export const getChartZoom = createSelector(
-  [state => state.zoom],
-  zoom => ({
-    ...zoom
-  })
-);
+export const getChartZoom = createSelector([(state) => state.zoom], (zoom) => ({
+  ...zoom,
+}));

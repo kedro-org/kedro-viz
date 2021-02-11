@@ -18,7 +18,7 @@ export const Wrapper = ({ loading, theme, showLargeGraphWarning }) => (
   <div
     className={classnames('kedro-pipeline', {
       'kui-theme--dark': theme === 'dark',
-      'kui-theme--light': theme === 'light'
+      'kui-theme--light': theme === 'light',
     })}>
     <h1 className="pipeline-title">Kedro-Viz</h1>
     <Sidebar />
@@ -31,10 +31,10 @@ export const Wrapper = ({ loading, theme, showLargeGraphWarning }) => (
   </div>
 );
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state) => ({
   loading: isLoading(state),
   theme: state.theme,
-  showLargeGraphWarning: getShouldDisplayLargeWarning(state)
+  showLargeGraphWarning: getShouldDisplayLargeWarning(state),
 });
 
 export default connect(mapStateToProps)(Wrapper);

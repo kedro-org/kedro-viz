@@ -17,7 +17,7 @@ import {
   toggleTextLabels,
   toggleTheme,
   updateChartSize,
-  updateFontLoaded
+  updateFontLoaded,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -25,13 +25,13 @@ import {
   TOGGLE_NODE_HOVERED,
   toggleNodeClicked,
   toggleNodesDisabled,
-  toggleNodeHovered
+  toggleNodeHovered,
 } from '../actions/nodes';
 import {
   TOGGLE_TAG_ACTIVE,
   TOGGLE_TAG_FILTER,
   toggleTagActive,
-  toggleTagFilter
+  toggleTagFilter,
 } from '../actions/tags';
 import {
   TOGGLE_DISPLAY_LARGE_GRAPH,
@@ -41,7 +41,7 @@ import {
   toggleDisplayLargeGraph,
   toggleIsLarge,
   updateNodeCount,
-  updateEdgesNo
+  updateEdgesNo,
 } from '../actions/graph';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
@@ -49,7 +49,7 @@ describe('actions', () => {
   it('should create an action to reset pipeline data', () => {
     const expectedAction = {
       type: RESET_DATA,
-      data: animals
+      data: animals,
     };
     expect(resetData(animals)).toEqual(expectedAction);
   });
@@ -58,7 +58,7 @@ describe('actions', () => {
     const visible = false;
     const expectedAction = {
       type: TOGGLE_LAYERS,
-      visible
+      visible,
     };
     expect(toggleLayers(visible)).toEqual(expectedAction);
   });
@@ -67,7 +67,7 @@ describe('actions', () => {
     const visible = false;
     const expectedAction = {
       type: TOGGLE_EXPORT_MODAL,
-      visible
+      visible,
     };
     expect(toggleExportModal(visible)).toEqual(expectedAction);
   });
@@ -76,7 +76,7 @@ describe('actions', () => {
     const visible = false;
     const expectedAction = {
       type: TOGGLE_SIDEBAR,
-      visible
+      visible,
     };
     expect(toggleSidebar(visible)).toEqual(expectedAction);
   });
@@ -85,7 +85,7 @@ describe('actions', () => {
     const nodeClicked = '12367890';
     const expectedAction = {
       type: TOGGLE_NODE_CLICKED,
-      nodeClicked
+      nodeClicked,
     };
     expect(toggleNodeClicked(nodeClicked)).toEqual(expectedAction);
   });
@@ -94,7 +94,7 @@ describe('actions', () => {
     const nodeHovered = '12367890';
     const expectedAction = {
       type: TOGGLE_NODE_HOVERED,
-      nodeHovered
+      nodeHovered,
     };
     expect(toggleNodeHovered(nodeHovered)).toEqual(expectedAction);
   });
@@ -105,7 +105,7 @@ describe('actions', () => {
     const expectedAction = {
       type: TOGGLE_NODES_DISABLED,
       nodeIDs,
-      isDisabled
+      isDisabled,
     };
     expect(toggleNodesDisabled(nodeIDs, isDisabled)).toEqual(expectedAction);
   });
@@ -114,7 +114,7 @@ describe('actions', () => {
     const textLabels = false;
     const expectedAction = {
       type: TOGGLE_TEXT_LABELS,
-      textLabels
+      textLabels,
     };
     expect(toggleTextLabels(textLabels)).toEqual(expectedAction);
   });
@@ -125,7 +125,7 @@ describe('actions', () => {
     const expectedAction = {
       type: TOGGLE_TAG_ACTIVE,
       tagIDs: [tagID],
-      active
+      active,
     };
     expect(toggleTagActive(tagID, active)).toEqual(expectedAction);
   });
@@ -136,7 +136,7 @@ describe('actions', () => {
     const expectedAction = {
       type: TOGGLE_TAG_ACTIVE,
       tagIDs,
-      active
+      active,
     };
     expect(toggleTagActive(tagIDs, active)).toEqual(expectedAction);
   });
@@ -147,7 +147,7 @@ describe('actions', () => {
     const expectedAction = {
       type: TOGGLE_TAG_FILTER,
       tagIDs: [tagID],
-      enabled
+      enabled,
     };
     expect(toggleTagFilter(tagID, enabled)).toEqual(expectedAction);
   });
@@ -158,7 +158,7 @@ describe('actions', () => {
     const expectedAction = {
       type: TOGGLE_TAG_FILTER,
       tagIDs,
-      enabled
+      enabled,
     };
     expect(toggleTagFilter(tagIDs, enabled)).toEqual(expectedAction);
   });
@@ -167,7 +167,7 @@ describe('actions', () => {
     const theme = 'light';
     const expectedAction = {
       type: TOGGLE_THEME,
-      theme
+      theme,
     };
     expect(toggleTheme(theme)).toEqual(expectedAction);
   });
@@ -178,7 +178,7 @@ describe('actions', () => {
     const expectedAction = {
       type: TOGGLE_TYPE_DISABLED,
       typeID,
-      disabled
+      disabled,
     };
     expect(toggleTypeDisabled(typeID, disabled)).toEqual(expectedAction);
   });
@@ -191,11 +191,11 @@ describe('actions', () => {
       outerHeight: 40,
       width: 50,
       height: 60,
-      navOffset: 70
+      navOffset: 70,
     };
     const expectedAction = {
       type: UPDATE_CHART_SIZE,
-      chartSize
+      chartSize,
     };
     expect(updateChartSize(chartSize)).toEqual(expectedAction);
   });
@@ -204,7 +204,7 @@ describe('actions', () => {
     const fontLoaded = true;
     const expectedAction = {
       type: UPDATE_FONT_LOADED,
-      fontLoaded
+      fontLoaded,
     };
     expect(updateFontLoaded(fontLoaded)).toEqual(expectedAction);
   });
@@ -213,7 +213,7 @@ describe('actions', () => {
     const expectedAction = {
       type: CHANGE_FLAG,
       name: 'testFlag',
-      value: true
+      value: true,
     };
     expect(changeFlag('testFlag', true)).toEqual(expectedAction);
   });
@@ -221,7 +221,7 @@ describe('actions', () => {
   it('should create an action to toggle display large graph', () => {
     const expectedAction = {
       type: TOGGLE_DISPLAY_LARGE_GRAPH,
-      displayLargeGraph: true
+      displayLargeGraph: true,
     };
     expect(toggleDisplayLargeGraph(true)).toEqual(expectedAction);
   });
@@ -229,7 +229,7 @@ describe('actions', () => {
   it('should create an action to toggle isLarge', () => {
     const expectedAction = {
       type: TOGGLE_IS_LARGE,
-      isLarge: true
+      isLarge: true,
     };
     expect(toggleIsLarge(true)).toEqual(expectedAction);
   });

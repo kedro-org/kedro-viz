@@ -10,12 +10,12 @@ describe('config', () => {
   describe('flags', () => {
     test.each(Object.keys(flags))(
       'flags.%s should be an object with description, default and icon keys',
-      key => {
+      (key) => {
         expect(flags[key]).toEqual(
           expect.objectContaining({
             description: expect.any(String),
             default: expect.any(Boolean),
-            icon: expect.any(String)
+            icon: expect.any(String),
           })
         );
       }

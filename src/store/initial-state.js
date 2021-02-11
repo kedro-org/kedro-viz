@@ -17,8 +17,7 @@ export const createInitialState = () => ({
   loading: {
     graph: false,
     pipeline: false,
-    node: false
-    // displayLargeGraph: false
+    node: false,
   },
   visible: {
     graph: true,
@@ -29,9 +28,9 @@ export const createInitialState = () => ({
     sidebar: true,
     themeBtn: true,
     miniMapBtn: true,
-    miniMap: true
+    miniMap: true,
   },
-  zoom: {}
+  zoom: {},
 });
 
 /**
@@ -40,9 +39,9 @@ export const createInitialState = () => ({
  * @param {object} state Initial/extant state
  * @return {object} Combined state from localStorage
  */
-export const mergeLocalStorage = state => {
+export const mergeLocalStorage = (state) => {
   const localStorageState = loadState();
-  Object.keys(localStorageState).forEach(key => {
+  Object.keys(localStorageState).forEach((key) => {
     if (!state[key]) {
       delete localStorageState[key];
     }
@@ -78,14 +77,14 @@ export const preparePipelineState = (data, applyFixes) => {
  * @param {object} props Props passed to App component
  * @return {object} Updated initial state
  */
-export const prepareNonPipelineState = props => {
+export const prepareNonPipelineState = (props) => {
   const state = mergeLocalStorage(createInitialState());
 
   return {
     ...state,
     flags: { ...state.flags, ...getFlagsFromUrl() },
     theme: props.theme || state.theme,
-    visible: { ...state.visible, ...props.visible }
+    visible: { ...state.visible, ...props.visible },
   };
 };
 
@@ -97,7 +96,7 @@ export const prepareNonPipelineState = props => {
  */
 const getInitialState = (props = {}) => ({
   ...prepareNonPipelineState(props),
-  ...preparePipelineState(props.data, props.data !== 'json')
+  ...preparePipelineState(props.data, props.data !== 'json'),
 });
 
 export default getInitialState;

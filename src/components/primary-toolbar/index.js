@@ -6,7 +6,7 @@ import {
   toggleLayers,
   toggleSidebar,
   toggleTextLabels,
-  toggleTheme
+  toggleTheme,
 } from '../../actions';
 import IconButton from '../icon-button';
 import MenuIcon from '../icons/menu';
@@ -34,7 +34,7 @@ export const PrimaryToolbar = ({
   textLabels,
   theme,
   visible,
-  visibleLayers
+  visibleLayers,
 }) => (
   <>
     <ul className="pipeline-primary-toolbar kedro">
@@ -44,7 +44,7 @@ export const PrimaryToolbar = ({
           'pipeline-menu-button',
           'pipeline-menu-button--menu',
           {
-            'pipeline-menu-button--inverse': !visible.sidebar
+            'pipeline-menu-button--inverse': !visible.sidebar,
           }
         )}
         onClick={() => onToggleSidebar(!visible.sidebar)}
@@ -89,33 +89,30 @@ export const PrimaryToolbar = ({
   </>
 );
 
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state) => ({
   disableLayerBtn: !state.layer.ids.length,
   textLabels: state.textLabels,
   theme: state.theme,
   visible: state.visible,
-  visibleLayers: Boolean(getVisibleLayerIDs(state).length)
+  visibleLayers: Boolean(getVisibleLayerIDs(state).length),
 });
 
-export const mapDispatchToProps = dispatch => ({
-  onToggleExportModal: value => {
+export const mapDispatchToProps = (dispatch) => ({
+  onToggleExportModal: (value) => {
     dispatch(toggleExportModal(value));
   },
-  onToggleLayers: value => {
+  onToggleLayers: (value) => {
     dispatch(toggleLayers(Boolean(value)));
   },
-  onToggleSidebar: visible => {
+  onToggleSidebar: (visible) => {
     dispatch(toggleSidebar(visible));
   },
-  onToggleTextLabels: value => {
+  onToggleTextLabels: (value) => {
     dispatch(toggleTextLabels(Boolean(value)));
   },
-  onToggleTheme: value => {
+  onToggleTheme: (value) => {
     dispatch(toggleTheme(value));
-  }
+  },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PrimaryToolbar);
+export default connect(mapStateToProps, mapDispatchToProps)(PrimaryToolbar);

@@ -43,7 +43,7 @@ describe('getDataValue', () => {
         edges: expect.any(Array),
         nodes: expect.any(Array),
         tags: expect.any(Array),
-        layers: expect.any(Array)
+        layers: expect.any(Array),
       })
     );
   });

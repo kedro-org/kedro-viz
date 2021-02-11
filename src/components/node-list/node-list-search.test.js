@@ -58,7 +58,7 @@ describe('NodeListSearch', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
-      theme: expect.any(String)
+      theme: expect.any(String),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });

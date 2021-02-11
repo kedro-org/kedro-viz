@@ -11,7 +11,7 @@ import { saveState } from '../../store/helpers';
 import { prepareNonPipelineState } from '../../store/initial-state';
 
 describe('App', () => {
-  const getState = wrapper => wrapper.instance().store.getState();
+  const getState = (wrapper) => wrapper.instance().store.getState();
 
   describe('renders without crashing', () => {
     it('when loading random data', () => {
@@ -72,7 +72,7 @@ describe('App', () => {
   it("resets the active pipeline when data prop is updated, if the active pipeline is not included in the new dataset's list of pipelines", () => {
     // Find a pipeline that is in the first dataset but not the second
     const activePipeline = animals.pipelines.find(
-      pipeline => !demo.pipelines.map(d => d.id).includes(pipeline.id)
+      (pipeline) => !demo.pipelines.map((d) => d.id).includes(pipeline.id)
     );
     const { container, rerender } = render(<App data={animals} />);
     const pipelineDropdown = container.querySelector('.pipeline-list');
