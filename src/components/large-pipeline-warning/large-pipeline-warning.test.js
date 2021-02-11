@@ -2,7 +2,7 @@ import React from 'react';
 import ConnectedModal, {
   LargePipelineWarning,
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
@@ -16,11 +16,7 @@ describe('large modal', () => {
     const mockFn = jest.fn();
     const props = {
       onToggleDisplayLargeGraph: mockFn,
-      nodes: {
-        data: [],
-        parameters: [],
-        task: []
-      }
+      nodes: [],
     };
     const wrapper = setup.mount(<LargePipelineWarning {...props} />);
 
@@ -32,7 +28,7 @@ describe('large modal', () => {
     const expectedResult = {
       theme: expect.any(String),
       nodes: expect.any(Object),
-      sidebarVisible: expect.any(Boolean)
+      sidebarVisible: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
@@ -40,7 +36,7 @@ describe('large modal', () => {
   it('mapDispatchToProps', () => {
     const dispatch = jest.fn();
     const expectedResult = {
-      onToggleDisplayLargeGraph: expect.any(Function)
+      onToggleDisplayLargeGraph: expect.any(Function),
     };
     expect(mapDispatchToProps(dispatch)).toEqual(expectedResult);
   });
