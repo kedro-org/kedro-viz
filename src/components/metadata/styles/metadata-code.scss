@@ -15,6 +15,9 @@
   @extend %sidebar;
 
   $margin: 24px;
+
+  display: flex;
+  flex-direction: column;
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
   right: 0;
@@ -24,7 +27,7 @@
   left: 0;
 
   z-index: 2;
-  padding: 0;
+  padding: 0 $metadata-sidebar-width-open 0 0;
   background: var(--color-metadata-code-bg);
   transform: translateX(100vw);
   transition: transform ease 0.5s 0.1s, left ease 0.5s;
@@ -68,21 +71,16 @@
 }
 
 .pipeline-metadata-code__title {
-  flex-grow: 1;
-  margin: 0;
   margin: 2.1em 36px 1.8em 36px;
+  flex-grow: 0;
   font-weight: normal;
   font-size: 1.7em;
   line-height: 1.6;
 }
 
 .pipeline-metadata-code__code {
-  position: absolute;
-  top: 7.1em;
-  right: $metadata-sidebar-width-open;
-  bottom: 0;
-  left: 0;
   display: block;
+  flex-grow: 1;
   overflow: auto;
   color: var(--color-text);
   font-size: 1.25em;
