@@ -5,7 +5,7 @@ const getPipelineLoading = (state) => state.loading.pipeline;
 const getFontLoading = (state) => !state.fontLoaded;
 const getNodeLoading = (state) => state.loading.node;
 
-export const getDisplayLargeGraph = (state) => state.loading.displayLargeGraph;
+export const getDisplayLargeGraph = (state) => state.ignoreLargeWarning;
 
 /**
  * Determine whether to show the loading spinner

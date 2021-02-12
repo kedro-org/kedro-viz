@@ -13,7 +13,7 @@ export const createInitialState = () => ({
   flags: Flags.defaults(),
   textLabels: true,
   theme: 'dark',
-  displayLargeGraph: false,
+  ignoreLargeWarning: false,
   loading: {
     graph: false,
     pipeline: false,

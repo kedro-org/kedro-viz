@@ -155,3 +155,16 @@ export function changeFlag(name, value) {
     value,
   };
 }
+
+export const TOGGLE_IGNORE_LARGE_WARNING = 'TOGGLE_IGNORE_LARGE_WARNING';
+
+/**
+ * Resets the ignoreLargeWarning field in the state indicating user preference to enable large graphs to load
+ * @param {boolean} ignoreLargeWarning
+ */
+export function toggleIgnoreLargeWarning(ignoreLargeWarning) {
+  return {
+    type: TOGGLE_IGNORE_LARGE_WARNING,
+    ignoreLargeWarning,
+  };
+}

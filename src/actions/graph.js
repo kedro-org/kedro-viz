@@ -27,32 +27,6 @@ export function updateGraph(graph) {
   };
 }
 
-export const TOGGLE_DISPLAY_LARGE_GRAPH = 'TOGGLE_DISPLAY_LARGE_GRAPH';
-
-/**
- * Resets the disaplyLargeGraph setting to enable large graphs to load
- * @param {boolean} isLargeGraph
- */
-export function toggleDisplayLargeGraph(displayLargeGraph) {
-  return {
-    type: TOGGLE_DISPLAY_LARGE_GRAPH,
-    displayLargeGraph,
-  };
-}
-
-export const TOGGLE_IS_LARGE = 'TOGGLE_IS_LARGE';
-
-/**
- * Sets the isLarge field so wrapper is aware that the selected combination is large
- * @param {boolean} isLarge
- */
-export function toggleIsLarge(isLarge) {
-  return {
-    type: TOGGLE_IS_LARGE,
-    isLarge,
-  };
-}
-
 /**
  * Choose which layout engine to use based on the oldgraph flag
  * @param {Object} instance Worker parent instance

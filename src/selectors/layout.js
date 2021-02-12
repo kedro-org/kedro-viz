@@ -13,16 +13,18 @@ import {
 const getOldgraphFlag = (state) => state.flags.oldgraph;
 const getVisibleSidebar = (state) => state.visible.sidebar;
 const getFontLoaded = (state) => state.fontLoaded;
-const getDisplayLargeGraph = (state) => state.displayLargeGraph;
+const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
+const getGraphHasNodes = (state) => Boolean(state.graph.nodes?.length);
 
 /**
  * Decide whether to show the large graph warning
  */
-export const getShouldDisplayLargeWarning = createSelector(
-  [getVisibleNodes, getVisibleEdges, getDisplayLargeGraph],
-  (nodes, edges, displayLargeGraph) =>
+export const getTriggerLargeGraphWarning = createSelector(
+  [getVisibleNodes, getVisibleEdges, getIgnoreLargeWarning, getGraphHasNodes],
+  (nodes, edges, ignoreLargeWarning, graphHasNodes) =>
     nodes.length + 1.5 * edges.length > largeGraphThreshold &&
-    !displayLargeGraph
+    !ignoreLargeWarning &&
+    !graphHasNodes
 );
 
 /**
@@ -36,10 +38,10 @@ export const getGraphInput = createSelector(
     getVisibleLayerIDs,
     getOldgraphFlag,
     getFontLoaded,
-    getShouldDisplayLargeWarning,
+    getTriggerLargeGraphWarning,
   ],
-  (nodes, edges, layers, oldgraph, fontLoaded, shouldDisplayLargeWarning) => {
-    if (!fontLoaded || shouldDisplayLargeWarning) {
+  (nodes, edges, layers, oldgraph, fontLoaded, triggerLargeGraphWarning) => {
+    if (!fontLoaded || triggerLargeGraphWarning) {
       return null;
     }
 

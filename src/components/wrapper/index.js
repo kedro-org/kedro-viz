@@ -1,14 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import Modal from '../large-pipeline-warning';
+import LargePipelineWarning from '../large-pipeline-warning';
 import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
 import MetaData from '../metadata';
 import ExportModal from '../export-modal';
 import LoadingIcon from '../icons/loading';
 import { isLoading } from '../../selectors/loading';
-import { getShouldDisplayLargeWarning } from '../../selectors/layout';
 import './wrapper.css';
 
 /**
@@ -24,7 +23,8 @@ export const Wrapper = ({ loading, theme, showLargeGraphWarning }) => (
     <Sidebar />
     <MetaData />
     <div className="pipeline-wrapper">
-      {showLargeGraphWarning ? <Modal /> : <FlowChart />}
+      <LargePipelineWarning />
+      <FlowChart />
       <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
     </div>
     <ExportModal />
@@ -34,7 +34,6 @@ export const Wrapper = ({ loading, theme, showLargeGraphWarning }) => (
 export const mapStateToProps = (state) => ({
   loading: isLoading(state),
   theme: state.theme,
-  showLargeGraphWarning: getShouldDisplayLargeWarning(state),
 });
 
 export default connect(mapStateToProps)(Wrapper);

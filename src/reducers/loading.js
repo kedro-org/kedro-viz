@@ -1,8 +1,4 @@
-import {
-  TOGGLE_GRAPH_LOADING,
-  TOGGLE_DISPLAY_LARGE_GRAPH,
-  TOGGLE_IS_LARGE,
-} from '../actions/graph';
+import { TOGGLE_GRAPH_LOADING } from '../actions/graph';
 import { TOGGLE_PIPELINE_LOADING } from '../actions/pipelines';
 import { TOGGLE_NODE_DATA_LOADING } from '../actions/nodes';
 
@@ -23,18 +19,6 @@ function loadingReducer(loadingState = {}, action) {
     case TOGGLE_NODE_DATA_LOADING: {
       return Object.assign({}, loadingState, {
         node: action.loading,
-      });
-    }
-
-    case TOGGLE_IS_LARGE: {
-      return Object.assign({}, loadingState, {
-        isLarge: action.isLarge,
-      });
-    }
-
-    case TOGGLE_DISPLAY_LARGE_GRAPH: {
-      return Object.assign({}, loadingState, {
-        displayLargeGraph: action.displayLargeGraph,
       });
     }
 

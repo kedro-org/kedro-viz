@@ -9,6 +9,7 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
+  TOGGLE_IGNORE_LARGE_WARNING,
   changeFlag,
   resetData,
   toggleLayers,
@@ -18,6 +19,7 @@ import {
   toggleTheme,
   updateChartSize,
   updateFontLoaded,
+  toggleIgnoreLargeWarning,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -33,16 +35,6 @@ import {
   toggleTagActive,
   toggleTagFilter,
 } from '../actions/tags';
-import {
-  TOGGLE_DISPLAY_LARGE_GRAPH,
-  TOGGLE_IS_LARGE,
-  UPDATE_NODE_COUNT,
-  UPDATE_EDGESNO,
-  toggleDisplayLargeGraph,
-  toggleIsLarge,
-  updateNodeCount,
-  updateEdgesNo,
-} from '../actions/graph';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
 describe('actions', () => {
@@ -220,17 +212,9 @@ describe('actions', () => {
 
   it('should create an action to toggle display large graph', () => {
     const expectedAction = {
-      type: TOGGLE_DISPLAY_LARGE_GRAPH,
-      displayLargeGraph: true,
+      type: TOGGLE_IGNORE_LARGE_WARNING,
+      ignoreLargeWarning: true,
     };
-    expect(toggleDisplayLargeGraph(true)).toEqual(expectedAction);
-  });
-
-  it('should create an action to toggle isLarge', () => {
-    const expectedAction = {
-      type: TOGGLE_IS_LARGE,
-      isLarge: true,
-    };
-    expect(toggleIsLarge(true)).toEqual(expectedAction);
+    expect(toggleIgnoreLargeWarning(true)).toEqual(expectedAction);
   });
 });
