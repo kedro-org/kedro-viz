@@ -8,15 +8,21 @@
   top: -1px; /* Avoids pixel rounding gaps */
   bottom: -1px;
   left: 0;
+
+  // Ensures sidebar tooltips are above code panel
   z-index: 1;
   display: flex;
   width: 100%;
   transform: translateX(calc(-100% + #{$sidebar-width-closed}));
   transition: transform ease 0.4s;
 
+  @media (min-width: $metadata-sidebar-code-breakpoint) {
+    z-index: 3;
+  }
+
   @media (min-width: $sidebar-width-breakpoint) {
-    width: $sidebar-width-open;
     $sidebar-ui-width: $sidebar-width-open - $sidebar-width-closed;
+    width: $sidebar-width-open;
     transform: translateX(-$sidebar-ui-width);
   }
 

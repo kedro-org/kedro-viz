@@ -7,11 +7,7 @@ describe('utils', () => {
     });
 
     it('returns an object with properties', () => {
-      const callback = foo =>
-        foo
-          .split('')
-          .reverse()
-          .join('');
+      const callback = (foo) => foo.split('').reverse().join('');
       expect(arrayToObject(['foo'], callback)).toEqual({ foo: 'oof' });
     });
   });

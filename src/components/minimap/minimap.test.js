@@ -1,8 +1,9 @@
 import React from 'react';
 import MiniMap, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
+import { getViewTransform, origin } from '../../utils/view';
 
-const getNodeIDs = state => state.node.ids;
+const getNodeIDs = (state) => state.node.ids;
 
 describe('MiniMap', () => {
   it('renders without crashing', () => {
@@ -18,6 +19,26 @@ describe('MiniMap', () => {
     expect(nodes.length).toEqual(mockNodes.length);
   });
 
+  it('a transform to fit the graph in container was applied', () => {
+    const wrapper = setup.mount(<MiniMap />);
+    const instance = wrapper.find('MiniMap').instance();
+    const viewTransform = getViewTransform(instance.view);
+
+    // Sanity checks only due to limited test environment
+    // View logic is directly covered in view utility tests
+
+    // Should not be the default transform
+    expect(viewTransform).not.toEqual(origin);
+
+    // Should have offset
+    expect(viewTransform.x).toBeLessThan(0);
+    expect(viewTransform.y).toBeLessThan(0);
+
+    // Should have scaled
+    expect(viewTransform.k).toBeLessThan(1);
+    expect(viewTransform.k).toBeGreaterThan(0);
+  });
+
   it('does not update nodes when not visible', () => {
     const wrapper = setup.mount(<MiniMap visible={false} />);
     const nodes = wrapper.render().find('.pipeline-minimap-node');
@@ -29,7 +50,7 @@ describe('MiniMap', () => {
     window.addEventListener = jest.fn(
       (event, cb) => (windowEvents[event] = cb)
     );
-    window.removeEventListener = jest.fn(event => delete windowEvents[event]);
+    window.removeEventListener = jest.fn((event) => delete windowEvents[event]);
 
     const wrapper = setup.mount(<MiniMap />);
     expect(() => windowEvents.wheel({ target: null })).not.toThrow();
@@ -42,7 +63,7 @@ describe('MiniMap', () => {
     window.addEventListener = jest.fn(
       (event, cb) => (windowEvents[event] = cb)
     );
-    window.removeEventListener = jest.fn(event => delete windowEvents[event]);
+    window.removeEventListener = jest.fn((event) => delete windowEvents[event]);
     window.PointerEvent = {};
 
     const wrapper = setup.mount(<MiniMap />);
@@ -57,7 +78,7 @@ describe('MiniMap', () => {
     window.addEventListener = jest.fn(
       (event, cb) => (windowEvents[event] = cb)
     );
-    window.removeEventListener = jest.fn(event => delete windowEvents[event]);
+    window.removeEventListener = jest.fn((event) => delete windowEvents[event]);
     window.PointerEvent = null;
 
     const wrapper = setup.mount(<MiniMap />);
@@ -81,8 +102,10 @@ describe('MiniMap', () => {
     expect(onUpdateChartZoom).toHaveBeenLastCalledWith({
       x: expect.any(Number),
       y: expect.any(Number),
+      scale: expect.any(Number),
       applied: expect.any(Boolean),
-      transition: expect.any(Boolean)
+      transition: expect.any(Boolean),
+      relative: expect.any(Boolean),
     });
   });
 
@@ -100,7 +123,8 @@ describe('MiniMap', () => {
     expect(onUpdateChartZoom).toHaveBeenLastCalledWith({
       scale: expect.any(Number),
       applied: expect.any(Boolean),
-      transition: expect.any(Boolean)
+      transition: expect.any(Boolean),
+      relative: expect.any(Boolean),
     });
   });
 
@@ -131,7 +155,7 @@ describe('MiniMap', () => {
       nodeActive: expect.any(Object),
       nodeSelected: expect.any(Object),
       nodes: expect.any(Array),
-      textLabels: expect.any(Boolean)
+      textLabels: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
@@ -143,7 +167,7 @@ describe('MiniMap', () => {
     mapDispatchToProps(dispatch).onUpdateChartZoom(zoom);
     expect(dispatch.mock.calls[0][0]).toEqual({
       type: 'UPDATE_ZOOM',
-      zoom
+      zoom,
     });
   });
 });

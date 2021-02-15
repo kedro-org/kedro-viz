@@ -11,7 +11,7 @@ const NodeRowList = ({
   onItemClick,
   onItemChange,
   onItemMouseEnter,
-  onItemMouseLeave
+  onItemMouseLeave,
 }) => (
   <ul
     className={modifiers(
@@ -19,7 +19,7 @@ const NodeRowList = ({
       { closed: collapsed },
       'pipeline-nodelist__list pipeline-nodelist__list--nested'
     )}>
-    {items.map(item => (
+    {items.map((item) => (
       <NodeListRow
         container="li"
         key={item.id}
@@ -41,7 +41,7 @@ const NodeRowList = ({
         onClick={() => onItemClick(item)}
         onMouseEnter={() => onItemMouseEnter(item)}
         onMouseLeave={() => onItemMouseLeave(item)}
-        onChange={e => onItemChange(item, !e.target.checked)}
+        onChange={(e) => onItemChange(item, !e.target.checked)}
       />
     ))}
   </ul>
@@ -54,7 +54,7 @@ const NodeRowLazyList = ({
   onItemClick,
   onItemChange,
   onItemMouseEnter,
-  onItemMouseLeave
+  onItemMouseLeave,
 }) => (
   <LazyList
     height={(start, end) => (end - start) * nodeListRowHeight}
@@ -68,7 +68,7 @@ const NodeRowLazyList = ({
       lowerRef,
       listStyle,
       upperStyle,
-      lowerStyle
+      lowerStyle,
     }) => (
       <ul
         ref={listRef}
@@ -80,19 +80,19 @@ const NodeRowLazyList = ({
         )}>
         <li
           className={modifiers('pipeline-nodelist__placeholder-upper', {
-            fade: start !== end && start > 0
+            fade: start !== end && start > 0,
           })}
           ref={upperRef}
           style={upperStyle}
         />
         <li
           className={modifiers('pipeline-nodelist__placeholder-lower', {
-            fade: start !== end && end < total
+            fade: start !== end && end < total,
           })}
           ref={lowerRef}
           style={lowerStyle}
         />
-        {items.slice(start, end).map(item => (
+        {items.slice(start, end).map((item) => (
           <NodeListRow
             container="li"
             key={item.id}
@@ -114,7 +114,7 @@ const NodeRowLazyList = ({
             onClick={() => onItemClick(item)}
             onMouseEnter={() => onItemMouseEnter(item)}
             onMouseLeave={() => onItemMouseLeave(item)}
-            onChange={e => onItemChange(item, !e.target.checked)}
+            onChange={(e) => onItemChange(item, !e.target.checked)}
           />
         ))}
       </ul>
@@ -124,9 +124,9 @@ const NodeRowLazyList = ({
 
 export const mapStateToProps = (state, ownProps) => ({
   lazy: state.flags.lazy,
-  ...ownProps
+  ...ownProps,
 });
 
-export default connect(mapStateToProps)(props =>
+export default connect(mapStateToProps)((props) =>
   props.lazy ? <NodeRowLazyList {...props} /> : <NodeRowList {...props} />
 );

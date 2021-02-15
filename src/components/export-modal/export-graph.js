@@ -11,7 +11,7 @@ import downloadSvg, { downloadPng } from 'svg-crowbar';
 const exportGraph = ({ format, theme, graphSize, mockFn }) => {
   const downloadFormats = {
     png: downloadPng,
-    svg: downloadSvg
+    svg: downloadSvg,
   };
   const download = mockFn || downloadFormats[format];
 

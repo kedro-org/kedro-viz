@@ -9,7 +9,7 @@ import node_parameters from '../../utils/data/node_parameters.mock.json';
  * such as pipelines, layers, tags, etc
  * @param {object} data A dataset file
  */
-export const mockAPIFeatureSupport = data => {
+export const mockAPIFeatureSupport = (data) => {
   let dataCopy = Object.assign({}, data);
   if (window.deletePipelines) {
     delete dataCopy.selected_pipeline;
@@ -22,7 +22,7 @@ export const mockAPIFeatureSupport = data => {
  * Create a promise that resolves after a timeout
  * @param {number} ms Timeout in milliseconds
  */
-const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
+const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Mock asynchronously loading/parsing data

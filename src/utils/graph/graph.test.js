@@ -2,9 +2,9 @@ import { mockState } from '../state.mock';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getVisibleEdges } from '../../selectors/edges';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
+import { Constraint, Operator, Strength } from 'kiwi.js';
 import { graph } from './graph';
 import { solve } from './solver';
-import { greaterOrEqual, equalTo, subtract } from './common';
 
 import {
   clamp,
@@ -19,7 +19,7 @@ import {
   compare,
   offsetEdge,
   offsetNode,
-  nearestOnLine
+  nearestOnLine,
 } from './common';
 
 describe('graph', () => {
@@ -35,7 +35,7 @@ describe('graph', () => {
         size: expect.any(Object),
         nodes: mockNodes,
         edges: mockEdges,
-        layers: mockLayers
+        layers: mockLayers,
       })
     );
   });
@@ -46,17 +46,17 @@ describe('graph', () => {
   });
 
   it('sets valid x and y properties on all input nodes', () => {
-    result.nodes.forEach(node => {
+    result.nodes.forEach((node) => {
       expect(node.x).toEqual(expect.any(Number));
       expect(node.y).toEqual(expect.any(Number));
     });
   });
 
   it('sets valid points property on all input edges', () => {
-    result.edges.forEach(edge => {
+    result.edges.forEach((edge) => {
       expect(edge.points.length).toBeGreaterThanOrEqual(2);
 
-      edge.points.forEach(point => {
+      edge.points.forEach((point) => {
         expect(point.x).toEqual(expect.any(Number));
         expect(point.y).toEqual(expect.any(Number));
       });
@@ -139,15 +139,22 @@ describe('commmon', () => {
       { x: 0, y: 3 },
       { x: 1, y: 2 },
       { x: 0, y: 4 },
-      { x: 3, y: 2 }
+      { x: 3, y: 2 },
     ];
 
     expect(groupByRow(nodes)).toEqual([
-      [{ x: 0, y: 0, row: 0 }, { x: 1, y: 0, row: 0 }],
+      [
+        { x: 0, y: 0, row: 0 },
+        { x: 1, y: 0, row: 0 },
+      ],
       [{ x: 0, y: 1, row: 1 }],
-      [{ x: 1, y: 2, row: 2 }, { x: 2, y: 2, row: 2 }, { x: 3, y: 2, row: 2 }],
+      [
+        { x: 1, y: 2, row: 2 },
+        { x: 2, y: 2, row: 2 },
+        { x: 3, y: 2, row: 2 },
+      ],
       [{ x: 0, y: 3, row: 3 }],
-      [{ x: 0, y: 4, row: 4 }]
+      [{ x: 0, y: 4, row: 4 }],
     ]);
   });
 
@@ -216,9 +223,19 @@ describe('commmon', () => {
   });
 
   it('offsetEdge returns the edge with each point translated in-place', () => {
-    const edge = { points: [{ x: 5, y: -10 }, { x: -8, y: 2 }] };
+    const edge = {
+      points: [
+        { x: 5, y: -10 },
+        { x: -8, y: 2 },
+      ],
+    };
     const result = offsetEdge(edge, { x: 1, y: 2 });
-    expect(result).toEqual({ points: [{ x: 4, y: -12 }, { x: -9, y: 0 }] });
+    expect(result).toEqual({
+      points: [
+        { x: 4, y: -12 },
+        { x: -9, y: 0 },
+      ],
+    });
     expect(result).toBe(edge);
   });
 
@@ -227,7 +244,7 @@ describe('commmon', () => {
     expect(nearestOnLine(0, 0, 0, 0, 0, 0)).toEqual(
       expect.objectContaining({
         x: 0,
-        y: 0
+        y: 0,
       })
     );
 
@@ -235,7 +252,7 @@ describe('commmon', () => {
     expect(nearestOnLine(-1, -1, 0, 0, 1, 1)).toEqual(
       expect.objectContaining({
         x: 0,
-        y: 0
+        y: 0,
       })
     );
 
@@ -243,7 +260,7 @@ describe('commmon', () => {
     expect(nearestOnLine(2, 2, 0, 0, 1, 1)).toEqual(
       expect.objectContaining({
         x: 1,
-        y: 1
+        y: 1,
       })
     );
 
@@ -251,7 +268,7 @@ describe('commmon', () => {
     expect(nearestOnLine(0.5, 0.5, 0, 0, 1, 1)).toEqual(
       expect.objectContaining({
         x: 0.5,
-        y: 0.5
+        y: 0.5,
       })
     );
 
@@ -259,7 +276,7 @@ describe('commmon', () => {
     expect(nearestOnLine(0.5, 0, 0, 0, 1, 1)).toEqual(
       expect.objectContaining({
         x: 0.25,
-        y: 0.25
+        y: 0.25,
       })
     );
 
@@ -267,107 +284,112 @@ describe('commmon', () => {
     expect(nearestOnLine(0.5, 1, 0, 0, 1, 1)).toEqual(
       expect.objectContaining({
         x: 0.75,
-        y: 0.75
+        y: 0.75,
       })
     );
   });
 });
 
 describe('solver', () => {
-  it('equalTo returns true if a === b otherwise false', () => {
-    expect(equalTo(0, 0)).toEqual(true);
-    expect(equalTo(1, 0)).toEqual(false);
-  });
-
-  it('greaterOrEqual returns true if a >= b otherwise false', () => {
-    expect(greaterOrEqual(-1, 0)).toEqual(false);
-    expect(greaterOrEqual(0, 0)).toEqual(true);
-    expect(greaterOrEqual(1, 0)).toEqual(true);
-  });
-
-  it('subtract returns the value a - b', () => {
-    expect(subtract(1, 2)).toEqual(-1);
-    expect(subtract(2, 1)).toEqual(1);
-  });
-
   it('solve finds a valid solution to given constraints (loose)', () => {
     const testA = { id: 0, x: 0, y: 0 };
     const testB = { id: 1, x: 0, y: 0 };
     const testC = { id: 2, x: 0, y: 0 };
 
-    const constraintBase = {
-      difference: subtract,
-      distance: distance1d,
-      strength: () => 1,
-      weightA: () => 0.5,
-      weightB: () => 0.5,
-      required: false
+    const solveEqConstraint = (constraint) => {
+      const {
+        a,
+        b,
+        target,
+        base: { property },
+      } = constraint;
+      const difference = a[property] - b[property];
+
+      if (difference === target) {
+        return;
+      }
+
+      const resolve = difference - target;
+      a[property] -= 0.5 * resolve;
+      b[property] += 0.5 * resolve;
+    };
+
+    const solveGeConstraint = (constraint) => {
+      const {
+        a,
+        b,
+        target,
+        base: { property },
+      } = constraint;
+      const difference = a[property] - b[property];
+
+      if (difference >= target) {
+        return;
+      }
+
+      const resolve = difference - target;
+      a[property] -= 0.5 * resolve;
+      b[property] += 0.5 * resolve;
     };
 
     const constraintXA = {
       a: testA,
       b: testB,
+      target: 5,
       base: {
-        ...constraintBase,
+        solve: solveEqConstraint,
         property: 'x',
-        operator: equalTo,
-        target: () => 5
-      }
+      },
     };
 
     const constraintXB = {
       a: testB,
       b: testC,
+      target: 8,
       base: {
-        ...constraintBase,
+        solve: solveGeConstraint,
         property: 'x',
-        operator: greaterOrEqual,
-        target: () => 8
-      }
+      },
     };
 
     const constraintXC = {
       a: testA,
       b: testC,
+      target: 20,
       base: {
-        ...constraintBase,
+        solve: solveGeConstraint,
         property: 'x',
-        operator: greaterOrEqual,
-        target: () => 20
-      }
+      },
     };
 
     const constraintYA = {
       a: testA,
       b: testC,
+      target: 5,
       base: {
-        ...constraintBase,
+        solve: solveEqConstraint,
         property: 'y',
-        operator: equalTo,
-        target: () => 5
-      }
+      },
     };
 
     const constraintYB = {
       a: testB,
       b: testC,
+      target: 1,
       base: {
-        ...constraintBase,
+        solve: solveGeConstraint,
         property: 'y',
-        operator: greaterOrEqual,
-        target: () => 1
-      }
+      },
     };
 
     const constraintYC = {
       a: testB,
       b: testA,
+      target: 100,
       base: {
-        ...constraintBase,
+        solve: solveEqConstraint,
         property: 'y',
-        operator: equalTo,
-        target: () => 100
-      }
+      },
     };
 
     solve(
@@ -377,7 +399,7 @@ describe('solver', () => {
         constraintXC,
         constraintYA,
         constraintYB,
-        constraintYC
+        constraintYC,
       ],
       null,
       8,
@@ -398,79 +420,92 @@ describe('solver', () => {
     const testB = { id: 1, x: 0, y: 0 };
     const testC = { id: 2, x: 0, y: 0 };
 
-    const constraintBase = {
-      difference: subtract,
-      distance: distance1d,
-      strength: () => 1,
-      weightA: () => 0.5,
-      weightB: () => 0.5,
-      required: true
+    const strictEqConstraint = (
+      constraint,
+      constants,
+      variableA,
+      variableB
+    ) => {
+      return new Constraint(
+        variableA.minus(variableB),
+        Operator.Eq,
+        constraint.target,
+        Strength.required
+      );
+    };
+
+    const strictGeConstraint = (
+      constraint,
+      constants,
+      variableA,
+      variableB
+    ) => {
+      return new Constraint(
+        variableA.minus(variableB),
+        Operator.Ge,
+        constraint.target,
+        Strength.required
+      );
     };
 
     const constraintXA = {
       a: testA,
       b: testB,
+      target: 5,
       base: {
-        ...constraintBase,
+        strict: strictEqConstraint,
         property: 'x',
-        operator: equalTo,
-        target: () => 5
-      }
+      },
     };
 
     const constraintXB = {
       a: testB,
       b: testC,
+      target: 8,
       base: {
-        ...constraintBase,
+        strict: strictGeConstraint,
         property: 'x',
-        operator: greaterOrEqual,
-        target: () => 8
-      }
+      },
     };
 
     const constraintXC = {
       a: testA,
       b: testC,
+      target: 20,
       base: {
-        ...constraintBase,
+        strict: strictGeConstraint,
         property: 'x',
-        operator: greaterOrEqual,
-        target: () => 20
-      }
+      },
     };
 
     const constraintYA = {
       a: testA,
       b: testC,
+      target: 5,
       base: {
-        ...constraintBase,
+        strict: strictEqConstraint,
         property: 'y',
-        operator: equalTo,
-        target: () => 5
-      }
+      },
     };
 
     const constraintYB = {
       a: testB,
       b: testC,
+      target: 1,
       base: {
-        ...constraintBase,
+        strict: strictGeConstraint,
         property: 'y',
-        operator: greaterOrEqual,
-        target: () => 1
-      }
+      },
     };
 
     const constraintYC = {
       a: testB,
       b: testA,
+      target: 100,
       base: {
-        ...constraintBase,
+        strict: strictEqConstraint,
         property: 'y',
-        operator: equalTo,
-        target: () => 100
-      }
+      },
     };
 
     solve(
@@ -480,7 +515,7 @@ describe('solver', () => {
         constraintXC,
         constraintYA,
         constraintYB,
-        constraintYC
+        constraintYC,
       ],
       null,
       1,

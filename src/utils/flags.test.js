@@ -6,7 +6,7 @@ const testFlagDescription = 'testflag description';
 const privateFlagDescription = 'private flag description';
 const flagsEnabled = {
   [testFlagName]: true,
-  [privateFlagName]: true
+  [privateFlagName]: true,
 };
 
 jest.mock('../config', () => ({
@@ -16,15 +16,15 @@ jest.mock('../config', () => ({
       description: 'testflag description',
       default: false,
       private: false,
-      icon: '🤖'
+      icon: '🤖',
     },
     privateflag: {
       description: 'private flag description',
       default: true,
       private: true,
-      icon: '🙊'
-    }
-  }
+      icon: '🙊',
+    },
+  },
 }));
 
 describe('flags', () => {
@@ -32,17 +32,17 @@ describe('flags', () => {
     expect(
       getFlagsFromUrl(`https://localhost:4141/?${testFlagName}=true`)
     ).toEqual({
-      [testFlagName]: true
+      [testFlagName]: true,
     });
 
     expect(
       getFlagsFromUrl(`https://localhost:4141/?${testFlagName}=1`)
     ).toEqual({
-      [testFlagName]: true
+      [testFlagName]: true,
     });
 
     expect(getFlagsFromUrl(`https://localhost:4141/?${testFlagName}`)).toEqual({
-      [testFlagName]: true
+      [testFlagName]: true,
     });
   });
 
@@ -50,13 +50,13 @@ describe('flags', () => {
     expect(
       getFlagsFromUrl(`https://localhost:4141/?${testFlagName}=false`)
     ).toEqual({
-      [testFlagName]: false
+      [testFlagName]: false,
     });
 
     expect(
       getFlagsFromUrl(`https://localhost:4141/?${testFlagName}=0`)
     ).toEqual({
-      [testFlagName]: false
+      [testFlagName]: false,
     });
   });
 
@@ -80,7 +80,7 @@ describe('flags', () => {
   it('Flags.defaults returns an object mapping flag defaults', () => {
     expect(Flags.defaults()).toEqual({
       [testFlagName]: false,
-      [privateFlagName]: true
+      [privateFlagName]: true,
     });
   });
 });

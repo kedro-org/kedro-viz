@@ -20,11 +20,11 @@ const NodeList = ({
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
-  onItemChange
+  onItemChange,
 }) => (
   <div
     className={classnames('pipeline-nodelist', {
-      'pipeline-nodelist--fade': faded
+      'pipeline-nodelist--fade': faded,
     })}>
     <NodeListSearch
       onUpdateSearchValue={onUpdateSearchValue}

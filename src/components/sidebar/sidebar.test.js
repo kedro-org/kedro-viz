@@ -6,7 +6,7 @@ const mockProps = {
   flags: { pipelines: true },
   theme: mockState.animals.theme,
   onToggle: () => {},
-  visible: true
+  visible: true,
 };
 
 describe('Sidebar', () => {
@@ -23,7 +23,7 @@ describe('Sidebar', () => {
 
   it('hides when clicking the hide menu button', () => {
     const wrapper = setup.mount(<MountSidebar />, {
-      visible: { sidebar: true }
+      visible: { sidebar: true },
     });
     wrapper.find('button[aria-label="Hide menu"]').simulate('click');
     const sidebar = wrapper.find('.pipeline-sidebar');
@@ -32,7 +32,7 @@ describe('Sidebar', () => {
 
   it('shows when clicking the show menu button', () => {
     const wrapper = setup.mount(<MountSidebar />, {
-      visible: { sidebar: false }
+      visible: { sidebar: false },
     });
     wrapper.find('button[aria-label="Show menu"]').simulate('click');
     const sidebar = wrapper.find('.pipeline-sidebar');

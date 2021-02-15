@@ -6,7 +6,7 @@ const {
   randomNumberBetween,
   getRandom,
   getRandomName,
-  getRandomSelection
+  getRandomSelection,
 } = randomUtils();
 
 describe('utils', () => {
@@ -117,7 +117,9 @@ describe('utils', () => {
     });
 
     it('returns an array of items that were all contained in the original dataset', () => {
-      expect(getRandomSelection(arr, 4).every(d => arr.includes(d))).toBe(true);
+      expect(getRandomSelection(arr, 4).every((d) => arr.includes(d))).toBe(
+        true
+      );
     });
 
     it('does not return duplicates', () => {

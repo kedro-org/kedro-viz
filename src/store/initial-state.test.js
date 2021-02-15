@@ -2,7 +2,7 @@ import getInitialState, {
   createInitialState,
   mergeLocalStorage,
   preparePipelineState,
-  prepareNonPipelineState
+  prepareNonPipelineState,
 } from './initial-state';
 import { saveState } from './helpers';
 import animals from '../utils/data/animals.mock.json';
@@ -18,14 +18,14 @@ describe('mergeLocalStorage', () => {
     const localStorageValues = {
       textLabels: false,
       theme: 'light',
-      tag: { enabled: 'medium' }
+      tag: { enabled: 'medium' },
     };
     saveState(localStorageValues);
     expect(
       mergeLocalStorage({
         textLabels: true,
         theme: 'dark',
-        tag: { enabled: 'large' }
+        tag: { enabled: 'large' },
       })
     ).toMatchObject(localStorageValues);
     window.localStorage.clear();
@@ -34,7 +34,7 @@ describe('mergeLocalStorage', () => {
   it('does not add values if localStorage keys do not match state values', () => {
     const extraValues = {
       additional: 1,
-      props: '2'
+      props: '2',
     };
     expect(mergeLocalStorage(extraValues)).toMatchObject(extraValues);
   });
@@ -50,7 +50,7 @@ describe('mergeLocalStorage', () => {
 describe('preparePipelineState', () => {
   const localStorageState = {
     node: { disabled: { abc123: true } },
-    pipeline: { active: 'unknown pipeline id' }
+    pipeline: { active: 'unknown pipeline id' },
   };
 
   it('applies localStorage values on top of normalised pipeline data', () => {
@@ -80,8 +80,8 @@ describe('prepareNonPipelineState', () => {
     // In this case, location.href is not provided
     expect(prepareNonPipelineState({ data: animals })).toMatchObject({
       flags: {
-        oldgraph: expect.any(Boolean)
-      }
+        oldgraph: expect.any(Boolean),
+      },
     });
   });
 
@@ -94,7 +94,7 @@ describe('prepareNonPipelineState', () => {
 
   it('overrides visible with values from prop', () => {
     const props = {
-      visible: { miniMap: true, sidebar: false, themeBtn: false }
+      visible: { miniMap: true, sidebar: false, themeBtn: false },
     };
     expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
       props
@@ -122,8 +122,8 @@ describe('getInitialState', () => {
         exportBtn: true,
         labelBtn: true,
         layerBtn: true,
-        themeBtn: true
-      }
+        themeBtn: true,
+      },
     });
   });
 
@@ -132,18 +132,18 @@ describe('getInitialState', () => {
       getInitialState({
         ...props,
         theme: 'light',
-        visible: { themeBtn: false }
+        visible: { themeBtn: false },
       })
     ).toMatchObject({
       theme: 'light',
-      visible: { labelBtn: true, themeBtn: false }
+      visible: { labelBtn: true, themeBtn: false },
     });
   });
 
   it('uses localstorage values instead of defaults if provided', () => {
     const storeValues = {
       textLabels: false,
-      theme: 'light'
+      theme: 'light',
     };
     saveState(storeValues);
     expect(getInitialState(props)).toMatchObject(storeValues);
@@ -153,7 +153,7 @@ describe('getInitialState', () => {
   it('uses prop values instead of localstorage if provided', () => {
     saveState({ theme: 'light' });
     expect(getInitialState({ ...props, theme: 'dark' })).toMatchObject({
-      theme: 'dark'
+      theme: 'dark',
     });
     window.localStorage.clear();
   });

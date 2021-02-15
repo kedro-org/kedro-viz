@@ -5,7 +5,7 @@ import { getVisibleEdges } from './edges';
 import { toggleLayers } from '../actions';
 import reducer from '../reducers';
 
-const getNodeLayer = state => state.node.layer;
+const getNodeLayer = (state) => state.node.layer;
 
 describe('Selectors', () => {
   describe('getLayerNodes', () => {
@@ -20,7 +20,7 @@ describe('Selectors', () => {
       const nodeLayer = getNodeLayer(mockState.animals);
       expect(
         getLayerNodes(mockState.animals).every((layerNodeIDs, i) =>
-          layerNodeIDs.every(nodeID => nodeLayer[nodeID] === layerIDs[i])
+          layerNodeIDs.every((nodeID) => nodeLayer[nodeID] === layerIDs[i])
         )
       ).toBe(true);
     });
@@ -51,7 +51,7 @@ describe('Selectors', () => {
 
     test('for every edge, the source rank is less than the target rank', () => {
       expect(
-        edges.every(edge => nodeRank[edge.source] < nodeRank[edge.target])
+        edges.every((edge) => nodeRank[edge.source] < nodeRank[edge.target])
       ).toBe(true);
     });
 

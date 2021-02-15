@@ -23,7 +23,7 @@ const LAYERS = [
   'Primary',
   'Feature',
   'Model Input',
-  'Model Output'
+  'Model Output',
 ];
 
 /**
@@ -173,7 +173,7 @@ class Pipeline {
       pipelines: this.getNodePipelines(),
       tags: this.getRandomTags(),
       _sources: [],
-      _targets: []
+      _targets: [],
     };
     return node;
   }
@@ -241,11 +241,11 @@ class Pipeline {
 
     // Find the sorted list of node ranks
     const ranks = Object.keys(nodesByRank)
-      .map(rank => parseFloat(rank))
+      .map((rank) => parseFloat(rank))
       .sort((a, b) => a - b);
 
     // Gets a random node with the given rank index
-    const getRandomNodeAtRank = rankIndex => {
+    const getRandomNodeAtRank = (rankIndex) => {
       const rankValue = ranks[rankIndex];
       const rankNodes = nodesByRank[rankValue];
       const rankNodeIndex = this.utils.randomIndex(rankNodes.length);
@@ -270,7 +270,7 @@ class Pipeline {
         source: source.id,
         target: target.id,
         _sourceNode: source,
-        _targetNode: target
+        _targetNode: target,
       };
 
       edges.push(edge);
@@ -291,7 +291,7 @@ class Pipeline {
     const nodes = {};
 
     // Gets the total number of edges for the given node
-    const degree = node => node._sources.length + node._targets.length;
+    const degree = (node) => node._sources.length + node._targets.length;
 
     for (const edge of this.edges) {
       // Keep both nodes if they have enough combined connections
@@ -315,7 +315,7 @@ class Pipeline {
     return this.nodes
       .reduce((tags, node) => (node.tags ? tags.concat(node.tags) : tags), [])
       .filter(unique)
-      .map(tag => ({ name: tag, id: tag }));
+      .map((tag) => ({ name: tag, id: tag }));
   }
 
   /**
@@ -324,12 +324,12 @@ class Pipeline {
    */
   activeEdges() {
     const visibleNodes = arrayToObject(
-      this.nodes.map(node => node.id),
+      this.nodes.map((node) => node.id),
       () => true
     );
 
     return this.edges.filter(
-      edge => visibleNodes[edge.target] && visibleNodes[edge.source]
+      (edge) => visibleNodes[edge.target] && visibleNodes[edge.source]
     );
   }
 
@@ -352,13 +352,14 @@ class Pipeline {
 
     for (let rank = 0; rank < sortedNodes.length; rank++) {
       for (const id of sortedNodes[rank]) {
-        const node = this.nodes.find(node => node.id === id);
+        const node = this.nodes.find((node) => node.id === id);
         node.rank = rank;
         node.type = this.getType(node);
         node.name = this.getNodeName(node.type);
-        node.full_name = `${node.layer}_${node.type}_${node.rank}_${
-          node.name
-        }`.replace(/\s/g, '_');
+        node.full_name = `${node.layer}_${node.type}_${node.rank}_${node.name}`.replace(
+          /\s/g,
+          '_'
+        );
       }
     }
   }
@@ -391,8 +392,8 @@ class Pipeline {
       edges: this.edges,
       layers: LAYERS,
       nodes: this.nodes,
-      pipelines: this.pipelines.map(name => ({ id: name, name })),
-      tags: this.tags
+      pipelines: this.pipelines.map((name) => ({ id: name, name })),
+      tags: this.tags,
     };
   }
 }

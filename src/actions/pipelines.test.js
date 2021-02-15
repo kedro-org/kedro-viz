@@ -10,7 +10,7 @@ import {
   getPipelineUrl,
   requiresSecondRequest,
   loadInitialPipelineData,
-  loadPipelineData
+  loadPipelineData,
 } from './pipelines';
 
 jest.mock('../store/load-data.js');
@@ -21,7 +21,7 @@ describe('pipeline actions', () => {
       const pipeline = 'abc123';
       const expectedAction = {
         type: UPDATE_ACTIVE_PIPELINE,
-        pipeline
+        pipeline,
       };
       expect(updateActivePipeline(pipeline)).toEqual(expectedAction);
     });
@@ -32,7 +32,7 @@ describe('pipeline actions', () => {
       const loading = true;
       const expectedAction = {
         type: TOGGLE_PIPELINE_LOADING,
-        loading
+        loading,
       };
       expect(toggleLoading(loading)).toEqual(expectedAction);
     });
@@ -119,7 +119,7 @@ describe('pipeline actions', () => {
 
       it('should request data from a different dataset if the active pipeline is set', async () => {
         const { pipeline } = mockState.animals;
-        const active = pipeline.ids.find(id => id !== pipeline.main);
+        const active = pipeline.ids.find((id) => id !== pipeline.main);
         saveState({ pipeline: { active } });
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
@@ -138,7 +138,7 @@ describe('pipeline actions', () => {
       it("shouldn't make a second data request if the dataset doesn't support pipelines", async () => {
         window.deletePipelines = true; // pass option to load-data mock
         const { pipeline } = mockState.animals;
-        const active = pipeline.ids.find(id => id !== pipeline.main);
+        const active = pipeline.ids.find((id) => id !== pipeline.main);
         saveState({ pipeline: { active } });
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
@@ -163,7 +163,7 @@ describe('pipeline actions', () => {
         const { dispatch, getState, subscribe } = store;
         const storeListener = jest.fn();
         const { pipeline } = getState();
-        const newActive = pipeline.ids.find(id => id !== pipeline.active);
+        const newActive = pipeline.ids.find((id) => id !== pipeline.active);
         subscribe(storeListener);
         loadPipelineData(newActive)(dispatch, getState);
         expect(storeListener).toHaveBeenCalledTimes(1);
@@ -184,7 +184,7 @@ describe('pipeline actions', () => {
       it('should hide the current graph before loading the new pipeline', () => {
         const store = createStore(reducer, {
           ...mockState.animals,
-          asyncDataSource: true
+          asyncDataSource: true,
         });
         expect(store.getState().visible.graph).toBe(true);
         loadPipelineData(active)(store.dispatch, store.getState);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import modifiers from '../../utils/modifiers';
 import MetaDataValue from './metadata-value';
 import './styles/metadata.css';
@@ -13,18 +13,21 @@ const MetaDataList = ({
   empty = '-',
   inline = true,
   commas = true,
-  limit = false
+  limit = false,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const showValues = !expanded && limit ? values.slice(0, limit) : values;
   const remainder = values.length - showValues.length;
+
+  // Default to not expanded when values change
+  useEffect(() => setExpanded(false), [values]);
 
   return values.length > 0 ? (
     <>
       <ul
         className={modifiers('pipeline-metadata__value-list', {
           inline,
-          commas
+          commas,
         })}>
         {showValues.map((item, index) => (
           <li key={index}>

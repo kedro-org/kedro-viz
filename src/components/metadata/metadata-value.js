@@ -10,7 +10,7 @@ const MetaDataValue = ({
   className,
   value,
   kind,
-  empty
+  empty,
 }) => (
   <Container
     title={value}

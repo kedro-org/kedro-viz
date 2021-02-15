@@ -3,7 +3,7 @@ import batchingToposort from 'batching-toposort';
 import { getVisibleNodeIDs, getVisibleLayerIDs } from './disabled';
 import { getVisibleEdges } from './edges';
 
-const getNodeLayer = state => state.node.layer;
+const getNodeLayer = (state) => state.node.layer;
 
 /**
  * Get list of visible nodes for each visible layer
@@ -25,7 +25,7 @@ export const getLayerNodes = createSelector(
     }
 
     // Convert to a nested array of layers of nodes
-    return layerIDs.map(layerID => layerNodes[layerID]);
+    return layerIDs.map((layerID) => layerNodes[layerID]);
   }
 );
 

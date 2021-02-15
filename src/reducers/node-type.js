@@ -5,8 +5,8 @@ function nodeTypeReducer(nodeTypeState = {}, action) {
     case TOGGLE_TYPE_DISABLED: {
       return Object.assign({}, nodeTypeState, {
         disabled: Object.assign({}, nodeTypeState.disabled, {
-          [action.typeID]: action.disabled
-        })
+          [action.typeID]: action.disabled,
+        }),
       });
     }
     default:

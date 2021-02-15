@@ -3,18 +3,18 @@ import { arrayToObject } from '../utils';
 import { getNodeDisabledPipeline, getPipelineNodeIDs } from './pipeline';
 import { getTagCount } from './tags';
 
-const getNodeIDs = state => state.node.ids;
-const getNodeDisabledNode = state => state.node.disabled;
-const getNodeTags = state => state.node.tags;
-const getNodeType = state => state.node.type;
-const getTagEnabled = state => state.tag.enabled;
-const getNodeTypeDisabled = state => state.nodeType.disabled;
-const getEdgeIDs = state => state.edge.ids;
-const getEdgeSources = state => state.edge.sources;
-const getEdgeTargets = state => state.edge.targets;
-const getLayerIDs = state => state.layer.ids;
-const getLayersVisible = state => state.layer.visible;
-const getNodeLayer = state => state.node.layer;
+const getNodeIDs = (state) => state.node.ids;
+const getNodeDisabledNode = (state) => state.node.disabled;
+const getNodeTags = (state) => state.node.tags;
+const getNodeType = (state) => state.node.type;
+const getTagEnabled = (state) => state.tag.enabled;
+const getNodeTypeDisabled = (state) => state.nodeType.disabled;
+const getEdgeIDs = (state) => state.edge.ids;
+const getEdgeSources = (state) => state.edge.sources;
+const getEdgeTargets = (state) => state.edge.targets;
+const getLayerIDs = (state) => state.layer.ids;
+const getLayersVisible = (state) => state.layer.visible;
+const getNodeLayer = (state) => state.node.layer;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -22,13 +22,13 @@ const getNodeLayer = state => state.node.layer;
 export const getNodeDisabledTag = createSelector(
   [getNodeIDs, getTagEnabled, getTagCount, getNodeTags],
   (nodeIDs, tagEnabled, tagCount, nodeTags) =>
-    arrayToObject(nodeIDs, nodeID => {
+    arrayToObject(nodeIDs, (nodeID) => {
       if (tagCount.enabled === 0) {
         return false;
       }
       if (nodeTags[nodeID].length) {
         // Hide task nodes that don't have at least one tag filter enabled
-        return !nodeTags[nodeID].some(tag => tagEnabled[tag]);
+        return !nodeTags[nodeID].some((tag) => tagEnabled[tag]);
       }
       return true;
     })
@@ -44,7 +44,7 @@ export const getNodeDisabled = createSelector(
     getNodeDisabledTag,
     getNodeDisabledPipeline,
     getNodeType,
-    getNodeTypeDisabled
+    getNodeTypeDisabled,
   ],
   (
     nodeIDs,
@@ -54,12 +54,12 @@ export const getNodeDisabled = createSelector(
     nodeType,
     typeDisabled
   ) =>
-    arrayToObject(nodeIDs, id =>
+    arrayToObject(nodeIDs, (id) =>
       [
         nodeDisabledNode[id],
         nodeDisabledTag[id],
         nodeDisabledPipeline[id],
-        typeDisabled[nodeType[id]]
+        typeDisabled[nodeType[id]],
       ].some(Boolean)
     )
 );
@@ -69,7 +69,7 @@ export const getNodeDisabled = createSelector(
  */
 export const getVisibleNodeIDs = createSelector(
   [getPipelineNodeIDs, getNodeDisabled],
-  (nodeIDs, nodeDisabled) => nodeIDs.filter(id => !nodeDisabled[id])
+  (nodeIDs, nodeDisabled) => nodeIDs.filter((id) => !nodeDisabled[id])
 );
 
 /**
@@ -85,7 +85,7 @@ export const getVisibleLayerIDs = createSelector(
     for (const nodeID of nodeIDs) {
       visibleLayerIDs[nodeLayer[nodeID]] = true;
     }
-    return layerIDs.filter(layerID => visibleLayerIDs[layerID]);
+    return layerIDs.filter((layerID) => visibleLayerIDs[layerID]);
   }
 );
 
@@ -95,7 +95,7 @@ export const getVisibleLayerIDs = createSelector(
 export const getEdgeDisabled = createSelector(
   [getEdgeIDs, getNodeDisabled, getEdgeSources, getEdgeTargets],
   (edgeIDs, nodeDisabled, edgeSources, edgeTargets) =>
-    arrayToObject(edgeIDs, edgeID => {
+    arrayToObject(edgeIDs, (edgeID) => {
       const source = edgeSources[edgeID];
       const target = edgeTargets[edgeID];
       return Boolean(nodeDisabled[source] || nodeDisabled[target]);

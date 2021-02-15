@@ -16,7 +16,7 @@ const MetaDataRow = ({
   inline = true,
   commas = true,
   limit = false,
-  children
+  children,
 }) => {
   const showList = Array.isArray(value);
 

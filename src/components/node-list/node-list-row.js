@@ -26,7 +26,7 @@ const shouldMemo = (prevProps, nextProps) =>
       'visible',
       'selected',
       'label',
-      'children'
+      'children',
     ],
     prevProps,
     nextProps
@@ -54,7 +54,7 @@ const NodeListRow = memo(
     selected,
     type,
     visibleIcon = VisibleIcon,
-    invisibleIcon = InvisibleIcon
+    invisibleIcon = InvisibleIcon,
   }) => {
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
@@ -70,7 +70,7 @@ const NodeListRow = memo(
             'pipeline-nodelist__row--active': active,
             'pipeline-nodelist__row--selected': selected,
             'pipeline-nodelist__row--disabled': disabled,
-            'pipeline-nodelist__row--unchecked': !checked
+            'pipeline-nodelist__row--unchecked': !checked,
           }
         )}
         title={name}
@@ -93,7 +93,7 @@ const NodeListRow = memo(
                   'pipeline-nodelist__row__type-icon--disabled': disabled,
                   'pipeline-nodelist__row__type-icon--nested': !children,
                   'pipeline-nodelist__row__type-icon--active': active,
-                  'pipeline-nodelist__row__type-icon--selected': selected
+                  'pipeline-nodelist__row__type-icon--selected': selected,
                 }
               )}
               type={type}
@@ -105,7 +105,7 @@ const NodeListRow = memo(
               `pipeline-nodelist__row__label--kind-${kind}`,
               {
                 'pipeline-nodelist__row__label--faded': faded,
-                'pipeline-nodelist__row__label--disabled': disabled
+                'pipeline-nodelist__row__label--disabled': disabled,
               }
             )}
             dangerouslySetInnerHTML={{ __html: label }}
@@ -117,7 +117,7 @@ const NodeListRow = memo(
           className={classnames('pipeline-row__toggle', {
             'pipeline-row__toggle--disabled': disabled,
             'pipeline-row__toggle--selected': selected,
-            'pipeline-row__toggle--not-tag': type !== 'tag'
+            'pipeline-row__toggle--not-tag': type !== 'tag',
           })}>
           <input
             id={id}
@@ -140,7 +140,7 @@ const NodeListRow = memo(
                 'pipeline-row__toggle-icon--checked': checked,
                 'pipeline-row__toggle-icon--unchecked': !checked,
                 'pipeline-row__toggle-icon--unset': unset,
-                'pipeline-row__toggle-icon--all-unset': allUnset
+                'pipeline-row__toggle-icon--all-unset': allUnset,
               }
             )}
           />
@@ -156,7 +156,7 @@ export const mapStateToProps = (state, ownProps) => ({
   active:
     typeof ownProps.active !== 'undefined'
       ? ownProps.active
-      : getNodeActive(state)[ownProps.id] || false
+      : getNodeActive(state)[ownProps.id] || false,
 });
 
 export default connect(mapStateToProps)(NodeListRow);

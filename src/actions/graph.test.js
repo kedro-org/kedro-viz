@@ -40,7 +40,7 @@ describe('graph actions', () => {
             oldgraph: expect.any(Boolean),
             nodes: expect.any(Array),
             edges: expect.any(Array),
-            size: expect.any(Object)
+            size: expect.any(Object),
           })
         );
       });

@@ -13,24 +13,24 @@ const NodeListGroups = ({
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
-  onItemChange
+  onItemChange,
 }) => {
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
 
   // Collapse/expand node group
-  const onToggleGroupCollapsed = typeID => {
+  const onToggleGroupCollapsed = (typeID) => {
     const groupsCollapsed = Object.assign({}, collapsed, {
-      [typeID]: !collapsed[typeID]
+      [typeID]: !collapsed[typeID],
     });
     setCollapsed(groupsCollapsed);
     saveState({ groupsCollapsed });
   };
 
-  return sections.map(section => (
+  return sections.map((section) => (
     <nav className="pipeline-nodelist-section kedro" key={section.name}>
       <h2 className="pipeline-nodelist-section__title">{section.name}</h2>
       <ul className="pipeline-nodelist__list">
-        {section.types.map(typeId => {
+        {section.types.map((typeId) => {
           const group = groups[typeId];
           return (
             <NodeListGroup

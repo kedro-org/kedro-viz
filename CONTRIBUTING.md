@@ -79,6 +79,8 @@ npm run lib
 
 #### Launch a development server with a real Kedro project
 
+> **Note**: Kedro-Viz>=3.8.0 will not work with projects created with Kedro<=0.16.6. Please consider migrating your project to Kedro>=0.17.0 before you develop against the latest version of Kedro-Viz. 
+
 Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.6, <3.9) and Kedro installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's guide for installing [conda](https://kedro.readthedocs.io/en/latest/02_get_started/01_prerequisites.html#conda) and [how to get started with Kedro](https://kedro.readthedocs.io/en/latest/02_get_started/02_install.html) for more information.
 
 After setting up Python and Kedro, you will need to have a Kedro project setup. If you don't have any existing Kedro project, you can create a new one with the `spaceflights` example:
