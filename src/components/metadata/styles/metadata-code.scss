@@ -82,7 +82,6 @@
   display: block;
   flex-grow: 1;
   overflow: auto;
-  color: var(--color-text);
   font-size: 1.25em;
   line-height: 1.8;
   opacity: 1;
@@ -167,7 +166,10 @@
     background-color: $color-bg-light-1;
   }
 
-  &--checked:before,
+  &--checked:before {
+    background-color: rgba($color-primary, 0.3);
+  }
+  
   &--checked:after {
     background-color: rgba($color-primary, 0.7);
   }
