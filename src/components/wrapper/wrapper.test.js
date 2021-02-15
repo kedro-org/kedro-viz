@@ -24,7 +24,6 @@ describe('Wrapper', () => {
     expect(mapStateToProps(mockState.animals)).toEqual({
       loading: false,
       theme,
-      showLargeGraphWarning: false,
     });
   });
 });

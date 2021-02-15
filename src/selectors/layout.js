@@ -14,7 +14,7 @@ const getOldgraphFlag = (state) => state.flags.oldgraph;
 const getVisibleSidebar = (state) => state.visible.sidebar;
 const getFontLoaded = (state) => state.fontLoaded;
 const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
-const getGraphHasNodes = (state) => Boolean(state.graph.nodes?.length);
+const getGraphHasNodes = (state) => Boolean(state.graph?.nodes?.length);
 
 /**
  * Decide whether to show the large graph warning

@@ -8,15 +8,22 @@ import { mockState, setup } from '../../utils/state.mock';
 
 describe('large modal', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.mount(<ConnectedModal />);
-    expect(wrapper.find('.pipeline-warning__title').length).toBe(1);
+    const mockFn = jest.fn();
+    const props = {
+      onToggleIgnoreLargeWarning: mockFn,
+      nodes: [],
+      visible: true,
+    };
+    const wrapper = setup.mount(<LargePipelineWarning {...props} />);
+    expect(wrapper.find('.pipeline-warning').length).toBe(1);
   });
 
   it('clicking the render anyways button will toggle the graph to display', () => {
     const mockFn = jest.fn();
     const props = {
-      onToggleDisplayLargeGraph: mockFn,
+      onToggleIgnoreLargeWarning: mockFn,
       nodes: [],
+      visible: true,
     };
     const wrapper = setup.mount(<LargePipelineWarning {...props} />);
 
@@ -29,6 +36,7 @@ describe('large modal', () => {
       theme: expect.any(String),
       nodes: expect.any(Object),
       sidebarVisible: expect.any(Boolean),
+      visible: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
@@ -36,7 +44,7 @@ describe('large modal', () => {
   it('mapDispatchToProps', () => {
     const dispatch = jest.fn();
     const expectedResult = {
-      onToggleDisplayLargeGraph: expect.any(Function),
+      onToggleIgnoreLargeWarning: expect.any(Function),
     };
     expect(mapDispatchToProps(dispatch)).toEqual(expectedResult);
   });
