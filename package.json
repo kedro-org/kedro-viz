@@ -51,6 +51,7 @@
     "dagre": "git+https://github.com/richardwestenra/dagre.git#manual-ranking",
     "deepmerge": "^4.2.2",
     "fetch-mock": "^9.11.0",
+    "highlight.js": "^10.5.0",
     "kiwi.js": "^1.1.2",
     "konami-code": "^0.2.1",
     "react-custom-scrollbars": "^4.2.1",

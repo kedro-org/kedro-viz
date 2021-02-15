@@ -3,11 +3,18 @@ import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 import { getVisibleLayerIDs } from './disabled';
 import { getVisibleMetaSidebar } from '../selectors/metadata';
-import { sidebarWidth, metaSidebarWidth, chartMinWidthScale } from '../config';
+import {
+  sidebarWidth,
+  metaSidebarWidth,
+  codeSidebarWidth,
+  chartMinWidthScale,
+} from '../config';
 
 const getOldgraphFlag = (state) => state.flags.oldgraph;
 const getVisibleSidebar = (state) => state.visible.sidebar;
+const getVisibleCode = (state) => state.visible.code;
 const getFontLoaded = (state) => state.fontLoaded;
+const getChartSizeState = (state) => state.chartSize;
 
 /**
  * Select a subset of state that is watched by graph layout calculators
@@ -40,8 +47,8 @@ export const getSidebarWidth = (visible, { open, closed }) =>
  * and add some useful new ones
  */
 export const getChartSize = createSelector(
-  [getVisibleSidebar, getVisibleMetaSidebar, (state) => state.chartSize],
-  (visibleSidebar, visibleMetaSidebar, chartSize) => {
+  [getVisibleSidebar, getVisibleMetaSidebar, getVisibleCode, getChartSizeState],
+  (visibleSidebar, visibleMetaSidebar, visibleCodeSidebar, chartSize) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
       return {};
@@ -53,9 +60,17 @@ export const getChartSize = createSelector(
       visibleMetaSidebar,
       metaSidebarWidth
     );
+    const codeSidebarWidthActual = getSidebarWidth(
+      visibleCodeSidebar,
+      codeSidebarWidth
+    );
 
     // Find the resulting space for the chart
-    const chartWidth = width - sidebarWidthActual - metaSidebarWidthActual;
+    let chartWidth =
+      width -
+      sidebarWidthActual -
+      metaSidebarWidthActual -
+      codeSidebarWidthActual;
 
     return {
       left,
@@ -67,6 +82,7 @@ export const getChartSize = createSelector(
       minWidthScale: chartMinWidthScale,
       sidebarWidth: sidebarWidthActual,
       metaSidebarWidth: metaSidebarWidthActual,
+      codeSidebarWidth: codeSidebarWidthActual,
     };
   }
 );

@@ -13,6 +13,10 @@ export const sidebarWidth = {
   open: 400,
   closed: 56,
 };
+export const codeSidebarWidth = {
+  open: 480,
+  closed: 0,
+};
 
 export const chartMinWidthScale = 0.25;
 
@@ -28,6 +32,11 @@ export const flags = {
     description: 'Improved sidebar performance',
     default: false,
     icon: '😴',
+  },
+  code: {
+    description: 'Show the code panel',
+    default: false,
+    icon: '{}',
   },
 };
 

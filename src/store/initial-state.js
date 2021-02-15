@@ -25,6 +25,7 @@ export const createInitialState = () => ({
     exportBtn: true,
     exportModal: false,
     sidebar: true,
+    code: false,
     themeBtn: true,
     miniMapBtn: true,
     miniMap: true,

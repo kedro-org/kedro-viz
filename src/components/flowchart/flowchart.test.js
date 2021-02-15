@@ -2,13 +2,38 @@ import React from 'react';
 import $ from 'cheerio';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
+import FlowChart, {
+  mapStateToProps,
+  mapDispatchToProps,
+  chartSizeTestFallback,
+} from './index';
 import { mockState, setup } from '../../utils/state.mock';
-import { getViewTransform, origin } from '../../utils/view';
+import { getViewTransform, getViewExtents, origin } from '../../utils/view';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
 const getLayerIDs = (state) => state.layer.ids;
+
+const chartWidth = chartSizeTestFallback.width;
+const chartHeight = chartSizeTestFallback.height;
+
+const mockChartSize = (
+  chartSize,
+  width = chartWidth,
+  height = chartHeight
+) => ({
+  left: 0,
+  top: 0,
+  outerWidth: width,
+  outerHeight: height,
+  height,
+  width,
+  minWidthScale: 1,
+  sidebarWidth: 0,
+  metaSidebarWidth: 0,
+  codeSidebarWidth: 0,
+  ...chartSize,
+});
 
 describe('FlowChart', () => {
   it('renders without crashing', () => {
@@ -47,6 +72,46 @@ describe('FlowChart', () => {
     // Should have scale
     expect(viewTransform.k).toBeLessThan(1);
     expect(viewTransform.k).toBeGreaterThan(0);
+  });
+
+  it('applies expected view extents when all sidebars closed', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        chartSize={mockChartSize({
+          sidebarWidth: 0,
+          metaSidebarWidth: 0,
+          codeSidebarWidth: 0,
+        })}
+      />
+    );
+
+    const instance = wrapper.find('FlowChart').instance();
+    const viewExtents = getViewExtents(instance.view);
+
+    expect(viewExtents).toEqual({
+      translate: { minX: -500, minY: -500, maxX: 1044, maxY: 1553 },
+      scale: { minK: 0.8, maxK: 2 },
+    });
+  });
+
+  it('applies expected view extents when all sidebars open', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        chartSize={mockChartSize({
+          sidebarWidth: 150,
+          metaSidebarWidth: 180,
+          codeSidebarWidth: 255,
+        })}
+      />
+    );
+
+    const instance = wrapper.find('FlowChart').instance();
+    const viewExtents = getViewExtents(instance.view);
+
+    expect(viewExtents).toEqual({
+      translate: { minX: -650, minY: -500, maxX: 1479, maxY: 1553 },
+      scale: { minK: 0.8, maxK: 2 },
+    });
   });
 
   it('resizes the chart if the window resizes', () => {
@@ -185,6 +250,8 @@ describe('FlowChart', () => {
       nodes: expect.any(Array),
       visibleGraph: expect.any(Boolean),
       visibleSidebar: expect.any(Boolean),
+      visibleCode: expect.any(Boolean),
+      visibleMetaSidebar: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
