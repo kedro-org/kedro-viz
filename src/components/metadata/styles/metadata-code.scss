@@ -172,13 +172,10 @@
   
   &--checked:after {
     background-color: rgba($color-primary, 0.7);
+    transform: translate(100%, -50%);
   }
 
   &--checked:hover:after {
     background-color: $color-primary;
-  }
-
-  &--checked:after {
-    transform: translate(100%, -50%);
   }
 }
