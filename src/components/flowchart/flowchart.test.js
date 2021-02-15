@@ -88,10 +88,9 @@ describe('FlowChart', () => {
     const instance = wrapper.find('FlowChart').instance();
     const viewExtents = getViewExtents(instance.view);
 
-    expect(viewExtents).toEqual({
-      translate: { minX: -500, minY: -500, maxX: 1044, maxY: 1553 },
-      scale: { minK: 0.8, maxK: 2 },
-    });
+    expect(viewExtents.translate).toEqual({ minX: -500, minY: -500, maxX: 1044, maxY: 1553 });
+    expect(viewExtents.scale.minK).toBeCloseTo(0.777);
+    expect(viewExtents.scale.maxK).toBe(2);    
   });
 
   it('applies expected view extents when all sidebars open', () => {
@@ -108,10 +107,9 @@ describe('FlowChart', () => {
     const instance = wrapper.find('FlowChart').instance();
     const viewExtents = getViewExtents(instance.view);
 
-    expect(viewExtents).toEqual({
-      translate: { minX: -650, minY: -500, maxX: 1479, maxY: 1553 },
-      scale: { minK: 0.8, maxK: 2 },
-    });
+    expect(viewExtents.translate).toEqual({ minX: -650, minY: -500, maxX: 1479, maxY: 1553 });
+    expect(viewExtents.scale.minK).toBeCloseTo(0.777);
+    expect(viewExtents.scale.maxK).toBe(2);
   });
 
   it('resizes the chart if the window resizes', () => {
