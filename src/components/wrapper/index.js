@@ -13,7 +13,7 @@ import './wrapper.css';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ loading, theme, showLargeGraphWarning }) => (
+export const Wrapper = ({ loading, theme }) => (
   <div
     className={classnames('kedro-pipeline', {
       'kui-theme--dark': theme === 'dark',

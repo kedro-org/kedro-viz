@@ -70,7 +70,7 @@ const combinedReducer = combineReducers({
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
   ignoreLargeWarning: createReducer(
-    {},
+    false,
     TOGGLE_IGNORE_LARGE_WARNING,
     'ignoreLargeWarning'
   ),
