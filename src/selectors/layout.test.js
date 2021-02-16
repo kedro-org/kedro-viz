@@ -7,11 +7,29 @@ import {
 } from './layout';
 import { updateFontLoaded } from '../actions';
 import reducer from '../reducers';
-import { sidebarWidth } from '../config';
+import { sidebarWidth, largeGraphThreshold } from '../config';
+import animals from '../utils/data/animals.mock.json';
 
 describe('Selectors', () => {
   describe('getTriggerLargeGraphWarning', () => {
-    expect(getTriggerLargeGraphWarning(mockState.animals)).toEqual(false);
+    it('returns false for the animals dataset', () => {
+      expect(getTriggerLargeGraphWarning(mockState.animals)).toEqual(false);
+    });
+    it('returns true for a large dataset', () => {
+      const data = { ...animals };
+      let extraNodes = [];
+      const iterations = Math.ceil(largeGraphThreshold / data.nodes.length) + 1;
+      new Array(iterations).fill().forEach((d, i) => {
+        const extraNodeGroup = data.nodes.map((node) => ({
+          ...node,
+          id: node.id + i,
+        }));
+        extraNodes = extraNodes.concat(extraNodeGroup);
+      });
+      data.nodes = data.nodes.concat(extraNodes);
+      const customMockState = prepareState({ data });
+      expect(getTriggerLargeGraphWarning(customMockState)).toEqual(true);
+    });
   });
 
   describe('getGraphInput', () => {
