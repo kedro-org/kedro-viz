@@ -8,10 +8,10 @@ import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
+import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import {
   viewing,
-  origin,
   isOrigin,
   viewTransformToFit,
   setViewTransform,
@@ -33,8 +33,6 @@ export class FlowChart extends Component {
     this.state = {
       tooltip: { visible: false },
     };
-
-    this.defaultTransform = origin;
 
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -64,6 +62,7 @@ export class FlowChart extends Component {
       onViewEnd: this.onViewChangeEnd,
     });
 
+    this.updateViewExtents();
     this.addGlobalEventListeners();
     this.update();
 
@@ -89,7 +88,7 @@ export class FlowChart extends Component {
     const { chartZoom } = this.props;
     const changed = (...names) => this.changed(names, prevProps, this.props);
 
-    if (changed('visibleSidebar')) {
+    if (changed('visibleSidebar', 'visibleCode', 'visibleMetaSidebar')) {
       this.updateChartSize();
     }
 
@@ -273,24 +272,47 @@ export class FlowChart extends Component {
   }
 
   /**
-   * Updates view extents based on the current view transform
+   * Updates view extents based on the current view transform.
+   * Offsets the extents considering any open sidebars.
+   * Allows additional margin for user panning within limits.
+   * Zoom scale is limited to a practical range for usability.
    * @param {?Object} transform Current transform override
    */
   updateViewExtents(transform) {
     const { k: scale } = transform || getViewTransform(this.view);
-    const { sidebarWidth, metaSidebarWidth } = this.props.chartSize;
-    const { width = 0, height = 0 } = this.props.graphSize;
+
+    const {
+      sidebarWidth = 0,
+      metaSidebarWidth = 0,
+      codeSidebarWidth = 0,
+      width: chartWidth = 0,
+      height: chartHeight = 0,
+    } = this.props.chartSize;
+
+    const {
+      width: graphWidth = 0,
+      height: graphHeight = 0,
+    } = this.props.graphSize;
+
+    const leftSidebarOffset = sidebarWidth / scale;
+    const rightSidebarOffset = (metaSidebarWidth + codeSidebarWidth) / scale;
     const margin = this.MARGIN;
+
+    // Find the relative minimum scale to fit whole graph
+    const minScale = Math.min(
+      chartWidth / (graphWidth || 1),
+      chartHeight / (graphHeight || 1)
+    );
 
     setViewExtents(this.view, {
       translate: {
-        minX: -sidebarWidth / scale - margin,
-        maxX: width + margin + metaSidebarWidth / scale,
+        minX: -leftSidebarOffset - margin,
+        maxX: graphWidth + margin + rightSidebarOffset,
         minY: -margin,
-        maxY: height + margin,
+        maxY: graphHeight + margin,
       },
       scale: {
-        minK: this.MIN_SCALE * this.defaultTransform.k,
+        minK: this.MIN_SCALE * minScale,
         maxK: this.MAX_SCALE,
       },
     });
@@ -343,7 +365,7 @@ export class FlowChart extends Component {
       : null;
 
     // Find a transform that fits everything in view
-    this.defaultTransform = viewTransformToFit({
+    const transform = viewTransformToFit({
       offset,
       focus,
       viewWidth: chartWidth,
@@ -361,7 +383,7 @@ export class FlowChart extends Component {
     // Apply transform ignoring extents
     setViewTransformExact(
       this.view,
-      this.defaultTransform,
+      transform,
       isFirstTransform ? 0 : this.DURATION,
       false
     );
@@ -538,6 +560,8 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeSelected: getNodeSelected(state),
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
+  visibleCode: state.visible.code,
+  visibleMetaSidebar: getVisibleMetaSidebar(state),
   ...ownProps,
 });
 

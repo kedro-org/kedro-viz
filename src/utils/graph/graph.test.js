@@ -2,9 +2,9 @@ import { mockState } from '../state.mock';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getVisibleEdges } from '../../selectors/edges';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
+import { Constraint, Operator, Strength } from 'kiwi.js';
 import { graph } from './graph';
 import { solve } from './solver';
-import { greaterOrEqual, equalTo, subtract } from './common';
 
 import {
   clamp,
@@ -291,99 +291,104 @@ describe('commmon', () => {
 });
 
 describe('solver', () => {
-  it('equalTo returns true if a === b otherwise false', () => {
-    expect(equalTo(0, 0)).toEqual(true);
-    expect(equalTo(1, 0)).toEqual(false);
-  });
-
-  it('greaterOrEqual returns true if a >= b otherwise false', () => {
-    expect(greaterOrEqual(-1, 0)).toEqual(false);
-    expect(greaterOrEqual(0, 0)).toEqual(true);
-    expect(greaterOrEqual(1, 0)).toEqual(true);
-  });
-
-  it('subtract returns the value a - b', () => {
-    expect(subtract(1, 2)).toEqual(-1);
-    expect(subtract(2, 1)).toEqual(1);
-  });
-
   it('solve finds a valid solution to given constraints (loose)', () => {
     const testA = { id: 0, x: 0, y: 0 };
     const testB = { id: 1, x: 0, y: 0 };
     const testC = { id: 2, x: 0, y: 0 };
 
-    const constraintBase = {
-      difference: subtract,
-      distance: distance1d,
-      strength: () => 1,
-      weightA: () => 0.5,
-      weightB: () => 0.5,
-      required: false,
+    const solveEqConstraint = (constraint) => {
+      const {
+        a,
+        b,
+        target,
+        base: { property },
+      } = constraint;
+      const difference = a[property] - b[property];
+
+      if (difference === target) {
+        return;
+      }
+
+      const resolve = difference - target;
+      a[property] -= 0.5 * resolve;
+      b[property] += 0.5 * resolve;
+    };
+
+    const solveGeConstraint = (constraint) => {
+      const {
+        a,
+        b,
+        target,
+        base: { property },
+      } = constraint;
+      const difference = a[property] - b[property];
+
+      if (difference >= target) {
+        return;
+      }
+
+      const resolve = difference - target;
+      a[property] -= 0.5 * resolve;
+      b[property] += 0.5 * resolve;
     };
 
     const constraintXA = {
       a: testA,
       b: testB,
+      target: 5,
       base: {
-        ...constraintBase,
+        solve: solveEqConstraint,
         property: 'x',
-        operator: equalTo,
-        target: () => 5,
       },
     };
 
     const constraintXB = {
       a: testB,
       b: testC,
+      target: 8,
       base: {
-        ...constraintBase,
+        solve: solveGeConstraint,
         property: 'x',
-        operator: greaterOrEqual,
-        target: () => 8,
       },
     };
 
     const constraintXC = {
       a: testA,
       b: testC,
+      target: 20,
       base: {
-        ...constraintBase,
+        solve: solveGeConstraint,
         property: 'x',
-        operator: greaterOrEqual,
-        target: () => 20,
       },
     };
 
     const constraintYA = {
       a: testA,
       b: testC,
+      target: 5,
       base: {
-        ...constraintBase,
+        solve: solveEqConstraint,
         property: 'y',
-        operator: equalTo,
-        target: () => 5,
       },
     };
 
     const constraintYB = {
       a: testB,
       b: testC,
+      target: 1,
       base: {
-        ...constraintBase,
+        solve: solveGeConstraint,
         property: 'y',
-        operator: greaterOrEqual,
-        target: () => 1,
       },
     };
 
     const constraintYC = {
       a: testB,
       b: testA,
+      target: 100,
       base: {
-        ...constraintBase,
+        solve: solveEqConstraint,
         property: 'y',
-        operator: equalTo,
-        target: () => 100,
       },
     };
 
@@ -415,78 +420,91 @@ describe('solver', () => {
     const testB = { id: 1, x: 0, y: 0 };
     const testC = { id: 2, x: 0, y: 0 };
 
-    const constraintBase = {
-      difference: subtract,
-      distance: distance1d,
-      strength: () => 1,
-      weightA: () => 0.5,
-      weightB: () => 0.5,
-      required: true,
+    const strictEqConstraint = (
+      constraint,
+      constants,
+      variableA,
+      variableB
+    ) => {
+      return new Constraint(
+        variableA.minus(variableB),
+        Operator.Eq,
+        constraint.target,
+        Strength.required
+      );
+    };
+
+    const strictGeConstraint = (
+      constraint,
+      constants,
+      variableA,
+      variableB
+    ) => {
+      return new Constraint(
+        variableA.minus(variableB),
+        Operator.Ge,
+        constraint.target,
+        Strength.required
+      );
     };
 
     const constraintXA = {
       a: testA,
       b: testB,
+      target: 5,
       base: {
-        ...constraintBase,
+        strict: strictEqConstraint,
         property: 'x',
-        operator: equalTo,
-        target: () => 5,
       },
     };
 
     const constraintXB = {
       a: testB,
       b: testC,
+      target: 8,
       base: {
-        ...constraintBase,
+        strict: strictGeConstraint,
         property: 'x',
-        operator: greaterOrEqual,
-        target: () => 8,
       },
     };
 
     const constraintXC = {
       a: testA,
       b: testC,
+      target: 20,
       base: {
-        ...constraintBase,
+        strict: strictGeConstraint,
         property: 'x',
-        operator: greaterOrEqual,
-        target: () => 20,
       },
     };
 
     const constraintYA = {
       a: testA,
       b: testC,
+      target: 5,
       base: {
-        ...constraintBase,
+        strict: strictEqConstraint,
         property: 'y',
-        operator: equalTo,
-        target: () => 5,
       },
     };
 
     const constraintYB = {
       a: testB,
       b: testC,
+      target: 1,
       base: {
-        ...constraintBase,
+        strict: strictGeConstraint,
         property: 'y',
-        operator: greaterOrEqual,
-        target: () => 1,
       },
     };
 
     const constraintYC = {
       a: testB,
       b: testA,
+      target: 100,
       base: {
-        ...constraintBase,
+        strict: strictEqConstraint,
         property: 'y',
-        operator: equalTo,
-        target: () => 100,
       },
     };
 

@@ -8,7 +8,6 @@ import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import {
   viewing,
-  origin,
   isOrigin,
   viewTransformToFit,
   getViewTransform,
@@ -31,7 +30,6 @@ export class MiniMap extends Component {
     this.isPointerDown = false;
     this.isPointerInside = false;
     this.lastTransitionTime = 0;
-    this.defaultTransform = origin;
 
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
@@ -269,7 +267,7 @@ export class MiniMap extends Component {
     const offset = { x: padding * 0.5, y: padding * 0.5 };
 
     // Find a transform that fits everything in view
-    this.defaultTransform = viewTransformToFit({
+    const transform = viewTransformToFit({
       offset,
       viewWidth: mapWidth - padding,
       viewHeight: mapHeight - padding,
@@ -283,7 +281,7 @@ export class MiniMap extends Component {
     // Apply transform ignoring extents
     setViewTransformExact(
       this.view,
-      this.defaultTransform,
+      transform,
       isFirstTransform ? 0 : this.DURATION,
       false
     );

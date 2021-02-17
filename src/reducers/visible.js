@@ -3,6 +3,7 @@ import {
   TOGGLE_EXPORT_MODAL,
   TOGGLE_LAYERS,
   TOGGLE_SIDEBAR,
+  TOGGLE_CODE,
   TOGGLE_MINIMAP,
 } from '../actions';
 
@@ -35,6 +36,12 @@ function visibleReducer(visibleState = {}, action) {
     case TOGGLE_MINIMAP: {
       return Object.assign({}, visibleState, {
         miniMap: action.visible,
+      });
+    }
+
+    case TOGGLE_CODE: {
+      return Object.assign({}, visibleState, {
+        code: action.visible,
       });
     }
 

@@ -8,13 +8,16 @@ import {
   metaSidebarWidth,
   chartMinWidthScale,
   largeGraphThreshold,
+  codeSidebarWidth,
 } from '../config';
 
 const getOldgraphFlag = (state) => state.flags.oldgraph;
 const getVisibleSidebar = (state) => state.visible.sidebar;
+const getVisibleCode = (state) => state.visible.code;
 const getFontLoaded = (state) => state.fontLoaded;
 const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
 const getGraphHasNodes = (state) => Boolean(state.graph?.nodes?.length);
+const getChartSizeState = (state) => state.chartSize;
 
 /**
  * Decide whether to show the large graph warning
@@ -60,8 +63,8 @@ export const getSidebarWidth = (visible, { open, closed }) =>
  * and add some useful new ones
  */
 export const getChartSize = createSelector(
-  [getVisibleSidebar, getVisibleMetaSidebar, (state) => state.chartSize],
-  (visibleSidebar, visibleMetaSidebar, chartSize) => {
+  [getVisibleSidebar, getVisibleMetaSidebar, getVisibleCode, getChartSizeState],
+  (visibleSidebar, visibleMetaSidebar, visibleCodeSidebar, chartSize) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
       return {};
@@ -73,9 +76,17 @@ export const getChartSize = createSelector(
       visibleMetaSidebar,
       metaSidebarWidth
     );
+    const codeSidebarWidthActual = getSidebarWidth(
+      visibleCodeSidebar,
+      codeSidebarWidth
+    );
 
     // Find the resulting space for the chart
-    const chartWidth = width - sidebarWidthActual - metaSidebarWidthActual;
+    let chartWidth =
+      width -
+      sidebarWidthActual -
+      metaSidebarWidthActual -
+      codeSidebarWidthActual;
 
     return {
       left,
@@ -87,6 +98,7 @@ export const getChartSize = createSelector(
       minWidthScale: chartMinWidthScale,
       sidebarWidth: sidebarWidthActual,
       metaSidebarWidth: metaSidebarWidthActual,
+      codeSidebarWidth: codeSidebarWidthActual,
     };
   }
 );

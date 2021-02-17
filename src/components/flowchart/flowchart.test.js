@@ -2,13 +2,38 @@ import React from 'react';
 import $ from 'cheerio';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import FlowChart, { mapStateToProps, mapDispatchToProps } from './index';
+import FlowChart, {
+  mapStateToProps,
+  mapDispatchToProps,
+  chartSizeTestFallback,
+} from './index';
 import { mockState, setup } from '../../utils/state.mock';
-import { getViewTransform, origin } from '../../utils/view';
+import { getViewTransform, getViewExtents, origin } from '../../utils/view';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
 const getLayerIDs = (state) => state.layer.ids;
+
+const chartWidth = chartSizeTestFallback.width;
+const chartHeight = chartSizeTestFallback.height;
+
+const mockChartSize = (
+  chartSize,
+  width = chartWidth,
+  height = chartHeight
+) => ({
+  left: 0,
+  top: 0,
+  outerWidth: width,
+  outerHeight: height,
+  height,
+  width,
+  minWidthScale: 1,
+  sidebarWidth: 0,
+  metaSidebarWidth: 0,
+  codeSidebarWidth: 0,
+  ...chartSize,
+});
 
 describe('FlowChart', () => {
   it('renders without crashing', () => {
@@ -47,6 +72,100 @@ describe('FlowChart', () => {
     // Should have scale
     expect(viewTransform.k).toBeLessThan(1);
     expect(viewTransform.k).toBeGreaterThan(0);
+  });
+
+  it('applies expected view extents when all sidebars closed', () => {
+    // Simulate closed sidebars
+    const chartSize = mockChartSize({
+      sidebarWidth: 0,
+      metaSidebarWidth: 0,
+      codeSidebarWidth: 0,
+    });
+
+    const wrapper = setup.mount(<FlowChart chartSize={chartSize} />);
+    const instance = wrapper.find('FlowChart').instance();
+    const viewExtents = getViewExtents(instance.view);
+
+    const margin = instance.MARGIN;
+    const minScale = instance.MIN_SCALE;
+    const maxScale = instance.MAX_SCALE;
+
+    // Assert expected constants
+    expect(margin).toEqual(500);
+    expect(minScale).toEqual(0.8);
+    expect(maxScale).toEqual(2);
+
+    const { width: chartWidth, height: chartHeight } = chartSize;
+    const { width: graphWidth, height: graphHeight } = instance.props.graphSize;
+
+    // Translate extent should only include margin and graph size
+    expect(viewExtents.translate.minX).toEqual(-margin);
+    expect(viewExtents.translate.minY).toEqual(-margin);
+    expect(viewExtents.translate.maxX).toEqual(graphWidth + margin);
+    expect(viewExtents.translate.maxY).toEqual(graphHeight + margin);
+
+    // The scale at which the full graph in view
+    const fullScale = Math.min(
+      chartWidth / (graphWidth || 1),
+      chartHeight / (graphHeight || 1)
+    );
+
+    // Scale extent should allow full graph in view
+    expect(viewExtents.scale.minK).toBeLessThanOrEqual(fullScale);
+    expect(viewExtents.scale.maxK).toEqual(maxScale);
+  });
+
+  it('applies expected view extents when all sidebars open', () => {
+    // Simulate open sidebars
+    const chartSize = mockChartSize({
+      sidebarWidth: 150,
+      metaSidebarWidth: 180,
+      codeSidebarWidth: 255,
+    });
+
+    const wrapper = setup.mount(<FlowChart chartSize={chartSize} />);
+    const instance = wrapper.find('FlowChart').instance();
+    const viewExtents = getViewExtents(instance.view);
+
+    const margin = instance.MARGIN;
+    const minScale = instance.MIN_SCALE;
+    const maxScale = instance.MAX_SCALE;
+
+    // Assert expected constants
+    expect(margin).toEqual(500);
+    expect(minScale).toEqual(0.8);
+    expect(maxScale).toEqual(2);
+
+    const {
+      width: chartWidth,
+      height: chartHeight,
+      sidebarWidth,
+      metaSidebarWidth,
+      codeSidebarWidth,
+    } = chartSize;
+
+    const { width: graphWidth, height: graphHeight } = instance.props.graphSize;
+
+    const leftSidebarOffset = sidebarWidth;
+    const rightSidebarOffset = metaSidebarWidth + codeSidebarWidth;
+
+    // Translate extent should include left and right sidebars, margin and graph size
+    expect(viewExtents.translate.minX).toEqual(-margin - leftSidebarOffset);
+    expect(viewExtents.translate.minY).toEqual(-margin);
+    expect(viewExtents.translate.maxX).toEqual(
+      graphWidth + margin + rightSidebarOffset
+    );
+    expect(viewExtents.translate.maxY).toEqual(graphHeight + margin);
+
+    // The scale at which the full graph in view
+    const fullScale = Math.min(
+      chartWidth / (graphWidth || 1),
+      chartHeight / (graphHeight || 1)
+    );
+
+    // Scale extent should allow full graph in view
+    expect(viewExtents.scale.minK).toBeLessThanOrEqual(fullScale);
+    expect(viewExtents.scale.maxK).toEqual(maxScale);
   });
 
   it('resizes the chart if the window resizes', () => {
@@ -185,6 +304,8 @@ describe('FlowChart', () => {
       nodes: expect.any(Array),
       visibleGraph: expect.any(Boolean),
       visibleSidebar: expect.any(Boolean),
+      visibleCode: expect.any(Boolean),
+      visibleMetaSidebar: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });

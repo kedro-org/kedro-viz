@@ -1,4 +1,4 @@
-import { distance1d, greaterOrEqual, equalTo, subtract } from './common';
+import { Constraint, Operator, Strength } from 'kiwi.js';
 
 /**
  * Constraint base definitions.
@@ -11,14 +11,29 @@ import { distance1d, greaterOrEqual, equalTo, subtract } from './common';
  */
 export const rowConstraint = {
   property: 'y',
-  difference: subtract,
-  distance: distance1d,
-  operator: greaterOrEqual,
-  target: (a, b, co, constants) => constants.spaceY,
-  strength: () => 1,
-  weightA: () => 0,
-  weightB: () => 1,
-  required: true,
+
+  solve: (constraint, constants) => {
+    const { a, b } = constraint;
+    const difference = a.y - b.y;
+    const target = constants.spaceY;
+
+    if (difference >= target) {
+      return;
+    }
+
+    const resolve = difference - target;
+    a.y -= 0.5 * resolve;
+    b.y += 0.5 * resolve;
+  },
+
+  strict: (constraint, constants, variableA, variableB) => {
+    return new Constraint(
+      variableA.minus(variableB),
+      Operator.Ge,
+      constants.spaceY,
+      Strength.required
+    );
+  },
 };
 
 /**
@@ -26,14 +41,29 @@ export const rowConstraint = {
  */
 export const layerConstraint = {
   property: 'y',
-  difference: subtract,
-  distance: distance1d,
-  operator: greaterOrEqual,
-  target: (a, b, co, constants) => constants.layerSpace,
-  strength: () => 1,
-  weightA: () => 0,
-  weightB: () => 1,
-  required: false,
+
+  solve: (constraint, constants) => {
+    const { a, b } = constraint;
+    const difference = a.y - b.y;
+    const target = constants.layerSpace;
+
+    if (difference >= target) {
+      return;
+    }
+
+    const resolve = difference - target;
+    a.y -= 0.5 * resolve;
+    b.y += 0.5 * resolve;
+  },
+
+  strict: (constraint, constants, variableA, variableB) => {
+    return new Constraint(
+      variableA.minus(variableB),
+      Operator.Ge,
+      constants.layerSpace,
+      Strength.required
+    );
+  },
 };
 
 /**
@@ -41,16 +71,31 @@ export const layerConstraint = {
  */
 export const parallelConstraint = {
   property: 'x',
-  difference: subtract,
-  distance: distance1d,
-  operator: equalTo,
-  target: () => 0,
-  // Lower degree nodes can be moved more freely than higher
-  strength: (co) =>
-    1 / Math.max(1, 0.5 * (co.a.targets.length + co.b.sources.length)),
-  weightA: () => 0.5,
-  weightB: () => 0.5,
-  required: false,
+
+  solve: (constraint) => {
+    const { a, b } = constraint;
+    const difference = a.x - b.x;
+
+    if (difference === 0) {
+      return;
+    }
+
+    const strength =
+      1 / Math.max(1, 0.5 * (a.targets.length + b.sources.length));
+
+    const resolve = strength * difference;
+    a.x -= 0.5 * resolve;
+    b.x += 0.5 * resolve;
+  },
+
+  strict: (constraint, constants, variableA, variableB) => {
+    return new Constraint(
+      variableA.minus(variableB),
+      Operator.Eq,
+      0,
+      Strength.strong
+    );
+  },
 };
 
 /**
@@ -58,49 +103,53 @@ export const parallelConstraint = {
  */
 export const crossingConstraint = {
   property: 'x',
-  difference: subtract,
-  distance: distance1d,
-  operator: (distance, target, difference) =>
-    target >= 0 ? difference >= target : difference <= target,
-  target: (a, b, co, constants) => {
-    // Find the minimal target position that separates both nodes
-    const sourceDelta = co.edgeA.sourceNode.x - co.edgeB.sourceNode.x;
-    const targetDelta = co.edgeA.targetNode.x - co.edgeB.targetNode.x;
-    return sourceDelta + targetDelta < 0 ? -constants.basisX : constants.basisX;
+
+  solve: (constraint, constants) => {
+    const { a, b, edgeA, edgeB } = constraint;
+    const difference = a.x - b.x;
+    const sourceDelta = edgeA.sourceNode.x - edgeB.sourceNode.x;
+    const targetDelta = edgeA.targetNode.x - edgeB.targetNode.x;
+    const target =
+      sourceDelta + targetDelta < 0 ? -constants.basisX : constants.basisX;
+
+    if (target >= 0 ? difference >= target : difference <= target) {
+      return;
+    }
+
+    const strength = 1 / constants.basisX;
+
+    const resolve = strength * (difference - target);
+    a.x -= 0.5 * resolve;
+    b.x += 0.5 * resolve;
   },
-  strength: (co, constants) => 1 / constants.basisX,
-  weightA: () => 0.5,
-  weightB: () => 0.5,
-  required: false,
 };
 
 /**
- * Layout constraint in X for minimum node separation (loose)
+ * Layout constraint in X for minimum node separation
  */
 export const separationConstraint = {
   property: 'x',
-  difference: subtract,
-  distance: distance1d,
-  operator: (distance, target, difference) => difference <= target,
-  target: (ax, bx, co, constants) =>
-    -constants.spaceX - co.a.width * 0.5 - co.b.width * 0.5,
-  strength: () => 1,
-  weightA: () => 0.5,
-  weightB: () => 0.5,
-  required: false,
-};
 
-/**
- * Layout constraint in X for minimum node separation (strict)
- */
-export const separationStrictConstraint = {
-  property: 'x',
-  difference: subtract,
-  distance: distance1d,
-  operator: greaterOrEqual,
-  target: (ax, bx, co) => co.separation,
-  strength: () => 1,
-  weightA: () => 0,
-  weightB: () => 1,
-  required: true,
+  solve: (constraint) => {
+    const { a, b } = constraint;
+    const difference = b.x - a.x;
+    const target = constraint.separation;
+
+    if (difference >= target) {
+      return;
+    }
+
+    const resolve = difference - target;
+    a.x += 0.5 * resolve;
+    b.x -= 0.5 * resolve;
+  },
+
+  strict: (constraint, constants, variableA, variableB) => {
+    return new Constraint(
+      variableB.minus(variableA),
+      Operator.Ge,
+      constraint.separation,
+      Strength.required
+    );
+  },
 };

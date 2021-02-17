@@ -1,0 +1,180 @@
+@import '../../../styles/variables';
+@import '../../../styles/extends';
+@import '../../../styles/mixins';
+@import './metadata-code-themes.scss';
+
+.kui-theme--light {
+  --color-metadata-code-bg: #{$color-bg-light-4};
+}
+
+.kui-theme--dark {
+  --color-metadata-code-bg: #{$color-bg-dark-3};
+}
+
+.pipeline-metadata-code {
+  @extend %sidebar;
+
+  $margin: 24px;
+  position: absolute;
+  top: -1px; /* Avoids pixel rounding gaps */
+  right: 0;
+  bottom: -1px;
+
+  // On small screens anchor to the left side of the screen
+  left: 0;
+
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 0 $metadata-sidebar-width-open 0 0;
+  background: var(--color-metadata-code-bg);
+  transform: translateX(100vw);
+  transition: transform ease 0.5s 0.1s, left ease 0.5s;
+
+  &--visible {
+    transform: translateX(0);
+  }
+
+  @mixin breakpoints($sidebar-width) {
+    // When screen is the minimum usable width
+    @media (min-width: $metadata-sidebar-code-breakpoint) {
+      // Anchor code to the left sidebar
+      left: $sidebar-width + $margin;
+    }
+
+    // When screen is wide enough to fit all sidebars
+    $sidebar-total-width: $sidebar-width + $margin + $metadata-sidebar-code-open +
+      $metadata-sidebar-width-open;
+    @media (min-width: #{$sidebar-total-width}) {
+      // Anchor to right sidebar
+      left: calc(
+        100% - #{$margin + $metadata-sidebar-code-open +
+          $metadata-sidebar-width-open}
+      );
+    }
+  }
+
+  // When sidebar is open
+  &--sidebarVisible {
+    @include breakpoints($sidebar-width-open);
+  }
+
+  // When sidebar is closed
+  &--no-sidebarVisible {
+    @include breakpoints($sidebar-width-closed);
+  }
+
+  @media print {
+    display: none;
+  }
+}
+
+.pipeline-metadata-code__title {
+  flex-grow: 0;
+  margin: 2.1em 36px 1.8em 36px;
+  font-weight: normal;
+  font-size: 1.7em;
+  line-height: 1.6;
+}
+
+.pipeline-metadata-code__code {
+  display: block;
+  flex-grow: 1;
+  overflow: auto;
+  font-size: 1.25em;
+  line-height: 1.8;
+  opacity: 1;
+  transition: opacity 0.4s ease 0.4s;
+
+  .pipeline-metadata-code--no-visible & {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  * {
+    font-family: Consolas, Monaco, 'Courier New', Courier, monospace;
+  }
+
+  .hljs-keyword {
+    color: var(--color-metadata-code-text);
+  }
+}
+
+.pipeline-metadata-code pre {
+  display: inline-block;
+  margin: 0;
+  padding: 0 36px 36px;
+}
+
+.pipeline-metadata__code-toggle {
+  transition: opacity 0.2s ease;
+
+  &--no-hasCode {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+}
+
+.pipeline-metadata__code-toggle {
+  margin-top: 0.3em;
+  margin-bottom: 2em;
+}
+
+.pipeline-metadata__code-toggle-input {
+  @include screenReaderOnly;
+}
+
+.pipeline-metadata__code-toggle-label {
+  position: relative;
+  padding: 0 0 0 2.8em;
+  cursor: pointer;
+  user-select: none;
+
+  &:before,
+  &:after {
+    position: absolute;
+    top: 0.81em;
+    left: 0;
+    display: block;
+    margin: 0 0.8em 0 0;
+    transform: translateY(-50%);
+    content: ' ';
+  }
+
+  &:before {
+    width: 1.7em;
+    height: 0.8em;
+    background-color: rgba($color-bg-light-1, 0.3);
+    border-radius: 0.5em;
+    transition: opacity 0.15s ease;
+  }
+
+  &:after {
+    width: 0.8em;
+    height: 0.8em;
+    background-color: rgba($color-bg-light-1, 0.7);
+    border-radius: 50%;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  [data-whatinput='keyboard'] input:focus + &:before {
+    box-shadow: 0 0 0 3px $color-link;
+  }
+
+  &:hover:after {
+    background-color: $color-bg-light-1;
+  }
+
+  &--checked:before {
+    background-color: rgba($color-primary, 0.3);
+  }
+
+  &--checked:after {
+    background-color: rgba($color-primary, 0.7);
+    transform: translate(100%, -50%);
+  }
+
+  &--checked:hover:after {
+    background-color: $color-primary;
+  }
+}

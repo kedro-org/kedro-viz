@@ -28,6 +28,8 @@ Please follow the established format:
 
 ## Major features and improvements
 
+Please note that release >=3.8.0 will not work with projects created with older versions of Kedro<=0.16.6. Please migrate your project to Kedro>=0.17.0 before you install the latest version of Kedro-Viz.
+
 - Finish the new node metadata side panel, which allows you to switch between different modular pipelines. This feature is no longer hidden behind a flag, and the 'meta' flag has been removed. (#293, #309, #312, #320, #321, #326, #295, #329, #333)
 - Enable the new graphing layout algorithm by default, and remove the 'newgraph' feature flag. If necessary, you can still revert back to the old layout algorithm by enabling the 'oldgraph' flag. (#334, #335)
 - Add experimental flagged feature to allow lazy-loading of sidebar node-list rows on scroll. This improves performance by not forcing the app to render the entire node-list on larger graphs. This feature is disabled by default, but can be enabled using the 'lazy' feature flag. (#307)

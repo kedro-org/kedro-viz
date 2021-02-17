@@ -7,31 +7,7 @@
  * # The full license is in the file COPYING.txt, distributed with this software.
  * #------------------------------------------------------------------------------
  **/
-import * as kiwi from 'kiwi.js';
-
-import { equalTo, greaterOrEqual } from './common';
-
-/**
- * Combines the given object's id and key to create a new key
- * @param {number} obj An object with `id` property
- * @param {number} key An identifier string
- * @returns {string} The combined key
- */
-const key = (obj, key) => {
-  if (typeof obj.id === 'undefined')
-    throw new Error(`Object is missing property 'id' required for key.`);
-  return obj.id + '_' + key;
-};
-
-/**
- * Given an operator function, returns the equivalent kiwi.js operator if defined
- * @param {function} operator The operator function
- * @returns {object|undefined} The kiwi.js operator
- */
-export const toStrictOperator = (operator) => {
-  if (operator === equalTo) return kiwi.Operator.Eq;
-  if (operator === greaterOrEqual) return kiwi.Operator.Ge;
-};
+import { Solver, Variable } from 'kiwi.js';
 
 /**
  * Applies the given constraints to the objects in-place.
@@ -41,13 +17,9 @@ export const toStrictOperator = (operator) => {
  * @param {object} constraint.a The first object to constrain
  * @param {object} constraint.b The second object to constrain
  * @param {string} constraint.base.property The property name on `a` and `b` to constrain
- * @param {boolean} constraint.base.required Whether the constraint must be satisfied during strict solving
- * @param {function} constraint.base.difference A signed difference function given `a` and `b`
- * @param {function} constraint.base.distance An absolute distance function given `a` and `b`
- * @param {function} constraint.base.target A target difference for `a` and `b`
- * @param {function} constraint.base.weightA The amount to adjust `a[property]`
- * @param {function} constraint.base.weightB The amount to adjust `b[property]`
- * @param {object=} constants The constants used by constraints
+ * @param {?function} constraint.base.solve A function that solves the constraint in-place
+ * @param {?function} constraint.base.strict A function returns the constraint in strict form
+ * @param {?object} constants The constants used by constraints
  * @param {number=1} iterations The number of iterations
  * @param {boolean=false} strict
  */
@@ -58,13 +30,12 @@ export const solve = (
   strict = false
 ) => {
   if (strict) return solveStrict(constraints, constants);
-  return solveLoose(constraints, constants, iterations);
+  return solveLoose(constraints, constants, Math.ceil(iterations));
 };
 
 /**
  * Applies the given constraints to the objects in-place.
- * Constraint targets and operators can be static or dynamic.
- * A solution is approximated iteratively
+ * A solution is approximated iteratively.
  * @param {array} constraints The constraints. See docs for `solve`
  * @param {object} constants The constants used by constraints
  * @param {number} iterations The number of iterations
@@ -72,69 +43,54 @@ export const solve = (
 const solveLoose = (constraints, constants, iterations) => {
   for (let i = 0; i < iterations; i += 1) {
     for (const co of constraints) {
-      const base = co.base;
-      const a = co.a[base.property];
-      const b = co.b[base.property];
-      const difference = base.difference(a, b, co, constants);
-      const distance = base.distance(a, b, co, constants);
-      const target = base.target(a, b, co, constants, difference, distance);
-
-      if (!base.operator(distance, target, difference)) {
-        const resolve = base.strength(co, constants) * (difference - target);
-        let weightA = base.weightA(co, constants);
-        let weightB = base.weightB(co, constants);
-
-        weightA = weightA / (weightA + weightB);
-        weightB = 1 - weightA;
-
-        co.a[base.property] -= weightA * resolve;
-        co.b[base.property] += weightB * resolve;
-      }
+      co.base.solve(co, constants);
     }
   }
 };
 
 /**
  * Applies the given constraints to the objects in-place.
- * A solution is found exactly if possible, otherwise throws an error
- * Limitations:
- *  - Constraint targets and operators must be static
- *  - `constraint.difference` is always subtract
- *  - `constraint.distance` is always subtract (i.e. signed)
+ * A solution is found exactly if possible, otherwise throws an error.
  * @param {array} constraints The constraints. See docs for `solve`
  * @param {object} constants The constants used by constraints
  */
 const solveStrict = (constraints, constants) => {
-  const solver = new kiwi.Solver();
+  const solver = new Solver();
   const variables = {};
 
+  const variableId = (obj, property) => `${obj.id}_${property}`;
+
+  const addVariable = (obj, property) => {
+    const id = variableId(obj, property);
+
+    if (!variables[id]) {
+      const variable = (variables[id] = new Variable());
+      variable.property = property;
+      variable.obj = obj;
+    }
+  };
+
   for (const co of constraints) {
-    const base = co.base;
-    variables[key(co.a, base.property)] = new kiwi.Variable();
-    variables[key(co.b, base.property)] = new kiwi.Variable();
+    addVariable(co.a, co.base.property);
+    addVariable(co.b, co.base.property);
   }
 
   for (const co of constraints) {
-    const base = co.base;
-    const expression = variables[key(co.a, base.property)].minus(
-      variables[key(co.b, base.property)]
+    solver.addConstraint(
+      co.base.strict(
+        co,
+        constants,
+        variables[variableId(co.a, co.base.property)],
+        variables[variableId(co.b, co.base.property)]
+      )
     );
-
-    co.constraint = new kiwi.Constraint(
-      expression,
-      toStrictOperator(base.operator),
-      base.target(null, null, co, constants),
-      base.required === true ? kiwi.Strength.required : kiwi.Strength.strong
-    );
-
-    solver.addConstraint(co.constraint);
   }
 
   solver.updateVariables();
 
-  for (const co of constraints) {
-    const base = co.base;
-    co.a[base.property] = variables[key(co.a, base.property)].value();
-    co.b[base.property] = variables[key(co.b, base.property)].value();
+  const variablesList = Object.values(variables);
+
+  for (const variable of variablesList) {
+    variable.obj[variable.property] = variable.value();
   }
 };

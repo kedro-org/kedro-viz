@@ -168,3 +168,16 @@ export function toggleIgnoreLargeWarning(ignoreLargeWarning) {
     ignoreLargeWarning,
   };
 }
+
+export const TOGGLE_CODE = 'TOGGLE_CODE';
+
+/**
+ * Toggle code panel
+ * @param {string} visible Visibility status
+ */
+export function toggleCode(visible) {
+  return {
+    type: TOGGLE_CODE,
+    visible,
+  };
+}
