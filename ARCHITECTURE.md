@@ -1,8 +1,14 @@
 # Architecture
 <!-- intro, links to important release notes for further reading, etc -->
 
+This document describes the high-level architecture of Kedro-Viz. This would be a great starting point for you to get familiar with the codebase
+
+See also the contributing docs, which walks through our set of guidelines and recommended best practices for our codebase. 
+
 # High-level Overview
 <!-- Architecture diagram including how standalone app / library entrypoints connect -->
+
+
 
 # Our choice of tools
 <!-- Redux
