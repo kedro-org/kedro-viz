@@ -147,7 +147,7 @@ describe('FlowChart', () => {
     const { width: graphWidth, height: graphHeight } = instance.props.graphSize;
 
     const leftSidebarOffset = sidebarWidth;
-    const rightSidebarOffset = (metaSidebarWidth + codeSidebarWidth);
+    const rightSidebarOffset = metaSidebarWidth + codeSidebarWidth;
 
     // Translate extent should include left and right sidebars, margin and graph size
     expect(viewExtents.translate.minX).toEqual(-margin - leftSidebarOffset);
