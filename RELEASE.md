@@ -35,7 +35,7 @@ Please follow the established format:
 - Update iconography (#357, #359)
 - Fix missing indicator Chrome zoom bug (#349)
 - Fix sidebar border/box-shadow CSS rules (#351)
-- Fix server.py to work with versions >0.17 and update contributing docs (#348)
+- Fix `server.py` to work with versions >0.17 and update contributing docs (#348)
 - Fix errors when scrolling with empty pipeline (#342)
 - Ignore coverage on some branches and fix e2e tests (#345)
 - Fix icon-button tooltips on mobile (#344)
