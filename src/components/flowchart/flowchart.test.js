@@ -75,43 +75,95 @@ describe('FlowChart', () => {
   });
 
   it('applies expected view extents when all sidebars closed', () => {
-    const wrapper = setup.mount(
-      <FlowChart
-        chartSize={mockChartSize({
-          sidebarWidth: 0,
-          metaSidebarWidth: 0,
-          codeSidebarWidth: 0,
-        })}
-      />
-    );
+    // Simulate closed sidebars
+    const chartSize = mockChartSize({
+      sidebarWidth: 0,
+      metaSidebarWidth: 0,
+      codeSidebarWidth: 0,
+    });
 
+    const wrapper = setup.mount(<FlowChart chartSize={chartSize} />);
     const instance = wrapper.find('FlowChart').instance();
     const viewExtents = getViewExtents(instance.view);
 
-    expect(viewExtents).toEqual({
-      translate: { minX: -500, minY: -500, maxX: 1044, maxY: 1553 },
-      scale: { minK: 0.8, maxK: 2 },
-    });
+    const margin = instance.MARGIN;
+    const minScale = instance.MIN_SCALE;
+    const maxScale = instance.MAX_SCALE;
+
+    // Assert expected constants
+    expect(margin).toEqual(500);
+    expect(minScale).toEqual(0.8);
+    expect(maxScale).toEqual(2);
+
+    const { width: chartWidth, height: chartHeight } = chartSize;
+    const { width: graphWidth, height: graphHeight } = instance.props.graphSize;
+
+    // Translate extent should only include margin and graph size
+    expect(viewExtents.translate.minX).toEqual(-margin);
+    expect(viewExtents.translate.minY).toEqual(-margin);
+    expect(viewExtents.translate.maxX).toEqual(graphWidth + margin);
+    expect(viewExtents.translate.maxY).toEqual(graphHeight + margin);
+
+    // The scale at which the full graph in view
+    const fullScale = Math.min(
+      chartWidth / (graphWidth || 1),
+      chartHeight / (graphHeight || 1)
+    );
+
+    // Scale extent should allow full graph in view
+    expect(viewExtents.scale.minK).toBeLessThanOrEqual(fullScale);
+    expect(viewExtents.scale.maxK).toEqual(maxScale);
   });
 
   it('applies expected view extents when all sidebars open', () => {
-    const wrapper = setup.mount(
-      <FlowChart
-        chartSize={mockChartSize({
-          sidebarWidth: 150,
-          metaSidebarWidth: 180,
-          codeSidebarWidth: 255,
-        })}
-      />
-    );
+    // Simulate open sidebars
+    const chartSize = mockChartSize({
+      sidebarWidth: 150,
+      metaSidebarWidth: 180,
+      codeSidebarWidth: 255,
+    });
 
+    const wrapper = setup.mount(<FlowChart chartSize={chartSize} />);
     const instance = wrapper.find('FlowChart').instance();
     const viewExtents = getViewExtents(instance.view);
 
-    expect(viewExtents).toEqual({
-      translate: { minX: -650, minY: -500, maxX: 1479, maxY: 1553 },
-      scale: { minK: 0.8, maxK: 2 },
-    });
+    const margin = instance.MARGIN;
+    const minScale = instance.MIN_SCALE;
+    const maxScale = instance.MAX_SCALE;
+
+    // Assert expected constants
+    expect(margin).toEqual(500);
+    expect(minScale).toEqual(0.8);
+    expect(maxScale).toEqual(2);
+
+    const {
+      width: chartWidth,
+      height: chartHeight,
+      sidebarWidth,
+      metaSidebarWidth,
+      codeSidebarWidth,
+    } = chartSize;
+
+    const { width: graphWidth, height: graphHeight } = instance.props.graphSize;
+
+    const leftSidebarOffset = sidebarWidth;
+    const rightSidebarOffset = metaSidebarWidth + codeSidebarWidth;
+
+    // Translate extent should include left and right sidebars, margin and graph size
+    expect(viewExtents.translate.minX).toEqual(-margin - leftSidebarOffset);
+    expect(viewExtents.translate.minY).toEqual(-margin);
+    expect(viewExtents.translate.maxX).toEqual(graphWidth + margin + rightSidebarOffset);
+    expect(viewExtents.translate.maxY).toEqual(graphHeight + margin);
+
+    // The scale at which the full graph in view
+    const fullScale = Math.min(
+      chartWidth / (graphWidth || 1),
+      chartHeight / (graphHeight || 1)
+    );
+
+    // Scale extent should allow full graph in view
+    expect(viewExtents.scale.minK).toBeLessThanOrEqual(fullScale);
+    expect(viewExtents.scale.maxK).toEqual(maxScale);
   });
 
   it('resizes the chart if the window resizes', () => {
