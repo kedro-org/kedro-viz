@@ -12,7 +12,6 @@ import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import {
   viewing,
-  origin,
   isOrigin,
   viewTransformToFit,
   setViewTransform,

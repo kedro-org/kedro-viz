@@ -8,7 +8,6 @@ import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
 import {
   viewing,
-  origin,
   isOrigin,
   viewTransformToFit,
   getViewTransform,
