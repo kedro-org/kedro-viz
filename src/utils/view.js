@@ -311,7 +311,8 @@ export const viewTransformToFit = ({
   x += (viewWidth - objectWidth * scale) * 0.5;
   y += (viewHeight - objectHeight * scale) * 0.5;
 
-  const isCropped = scaleXClamp !== scaleX;
+  const isCropped =
+    viewWidth < objectWidth * scale || viewHeight < objectHeight * scale;
 
   // When there is a focus point but object does not fit fully in view
   if (focus && isCropped) {
