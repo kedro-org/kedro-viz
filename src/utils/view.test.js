@@ -336,8 +336,8 @@ describe('view', () => {
       // Resulting transform should clamp to minimum scale and center
       expect(transform.k).toEqual(minScaleFocus);
 
-      // In this example offset is fractional
-      expect(transform.x).toBeCloseTo(-43.333);
+      // In this example offset may be fractional
+      expect(transform.x).toEqual(-50);
       expect(transform.y).toBeCloseTo(6.666);
     });
 
