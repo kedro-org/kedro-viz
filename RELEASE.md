@@ -21,7 +21,8 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Add code panel (#346, #356, #363, #370)
+- Add code panel and improve (#346)
+- Improve view panning behaviour when a node is selected (#356, #363, #370, #373, #374)
 - Improve layout performance for large graphs (#343)
 - Save tag state to localStorage (#353)
 
