@@ -372,7 +372,7 @@ export class FlowChart extends Component {
       viewHeight: chartHeight,
       objectWidth: graphWidth,
       objectHeight: graphHeight,
-      minScaleX: 0.4,
+      minScaleX: 0.2,
       minScaleFocus: 0.3,
       focusOffset: 0.8,
     });
