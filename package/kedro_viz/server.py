@@ -348,6 +348,11 @@ def _build_pipeline_hierarchy(pipeline_nodes):
                         for parent_parent in parent_parents:
                             remove_entry(pipeline_direct_children, parent_parent, other)
                             remove_entry(pipeline_direct_parents, other, parent_parent)
+                        other_children = pipeline_direct_children.get(other, set())
+                        for other_child in other_children:
+                            remove_entry(pipeline_direct_children, pipeline, other_child)
+                            remove_entry(pipeline_direct_parents, other_child, pipeline)
+
 
         pipeline_set = next_pipeline_set
         next_pipeline_set = set()
