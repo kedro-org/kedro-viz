@@ -36,6 +36,7 @@ import socket
 import traceback
 import webbrowser
 import itertools
+import copy
 from collections import defaultdict
 from contextlib import closing
 from functools import partial, reduce
@@ -304,6 +305,75 @@ def _create_pipeline_nodes(pipelines):
             for p in pipelines]
 
 
+def add_entry(d: Dict[str, Set], key: str, element: str):
+    if key not in d:
+        d[key] = set()
+    d[key].add(element)
+
+
+def remove_entry(d: Dict[str, Set], key: str, element: str):
+    if key not in d:
+        return
+    elements = d[key]
+    if element in elements:
+        elements.discard(element)
+
+
+def _build_pipeline_hierarchy(pipeline_nodes):
+    pipeline_direct_children = dict()
+    pipeline_direct_parents = dict()
+
+    pipeline_set = set(pipeline_nodes.keys())
+    next_pipeline_set = set()
+    while pipeline_set:
+        for pipeline in pipeline_set:
+            others = copy.copy(pipeline_set)
+            others.discard(pipeline)
+            cur_nodes = pipeline_nodes.get(pipeline, None)
+            if cur_nodes is None:
+                next_pipeline_set.discard(pipeline)
+                pipeline_direct_children[pipeline] = set()
+            else:
+                for other in others:
+                    other_nodes = pipeline_nodes.get(other, None)
+                    if other_nodes is None:
+                        continue
+                    if cur_nodes > other_nodes:
+                        next_pipeline_set.add(other)
+                        # just found a child of pipeline!
+                        next_pipeline_set.discard(pipeline)
+                        add_entry(pipeline_direct_children, pipeline, other)
+                        add_entry(pipeline_direct_parents, other, pipeline)
+                        parent_parents = pipeline_direct_parents.get(pipeline, set())
+                        for parent_parent in parent_parents:
+                            remove_entry(pipeline_direct_children, parent_parent, other)
+                            remove_entry(pipeline_direct_parents, other, parent_parent)
+
+        pipeline_set = next_pipeline_set
+        next_pipeline_set = set()
+
+    _SUB_PIPELINE_DATA["pipeline_parents"] = pipeline_direct_parents
+    _SUB_PIPELINE_DATA["pipeline_children"] = pipeline_direct_children
+
+    children_pids = set(pipeline_direct_parents.keys())
+    parents_pids = set(pipeline_direct_children.keys())
+    top_pids = parents_pids - children_pids
+    leaf_pids = children_pids - parents_pids
+
+    return [_build_sub_pipeline_tree(pipeline_direct_children, p, leaf_pids) for p in top_pids]
+
+
+def _build_sub_pipeline_tree(pipeline_direct_children, pid, leaf_pids):
+    is_leaf = pid in leaf_pids
+    tree = dict(
+        value=pid,
+        label=_pretty_name(pid),
+    )
+    if not is_leaf:
+        tree['children'] = [_build_sub_pipeline_tree(pipeline_direct_children, p, leaf_pids) for p in pipeline_direct_children[pid]]
+    return tree
+
+
 def _build_sub_pipeline_level_graph(nodes_list, edges_list):
     global _SUB_PIPELINE_DATA
     # Build node - pipeline relationship
@@ -328,7 +398,6 @@ def _build_sub_pipeline_level_graph(nodes_list, edges_list):
 
     # Build pipeline tree structure
     pipeline_parents = {}
-    pipeline_children = {}
 
     for a,b in itertools.combinations(pipeline_nodes.keys(), 2):
         a_nodes = pipeline_nodes[a]
@@ -345,31 +414,12 @@ def _build_sub_pipeline_level_graph(nodes_list, edges_list):
             parents_set = pipeline_parents.get(child, set())
             parents_set.add(parent)
             pipeline_parents[child] = parents_set
-            children_set = pipeline_children.get(parent, set())
-            children_set.add(child)
-            pipeline_children[parent] = children_set
 
-    # parent - children relationship
-    pipeline_direct_children = {}
-    pipeline_direct_parents = {}
     _SUB_PIPELINE_DATA["pipeline_ancestors"] = pipeline_parents
-    _SUB_PIPELINE_DATA["pipeline_parents"] = pipeline_direct_parents
-    _SUB_PIPELINE_DATA["pipeline_children"] = pipeline_direct_children
 
-    for p, children in pipeline_children.items():
-        new_children = children.copy()
-        for c in children:
-            c_parents = pipeline_parents[c]
-            parents_in_children = c_parents & children
-            if len(parents_in_children) > 0:
-                new_children.discard(c)
-        pipeline_direct_children[p] = new_children
-
-    for p, children in pipeline_direct_children.items():
-        for c in children:
-            parent_set = pipeline_direct_parents.get(c, set())
-            parent_set.add(p)
-            pipeline_direct_parents[c] = parent_set
+    tree = _build_pipeline_hierarchy(pipeline_nodes)
+    _SUB_PIPELINE_DATA["pipeline_tree"] = tree
+    print(tree)
 
     # prepare node to node edges
     n2d = {}
@@ -422,28 +472,6 @@ def _build_sub_pipeline_level_graph(nodes_list, edges_list):
     _SUB_PIPELINE_DATA["root_data"] = root_data_set
 
 
-def _build_sub_pipeline_tree_core(pid, leaf_pids):
-    pipeline_children = _SUB_PIPELINE_DATA["pipeline_children"]
-    is_leaf = pid in leaf_pids
-    tree = dict(
-        value=pid,
-        label=_pretty_name(pid),
-    )
-    if not is_leaf:
-        tree['children'] = [_build_sub_pipeline_tree_core(p, leaf_pids) for p in pipeline_children[pid]]
-    return tree
-
-
-def _build_sub_pipeline_tree():
-    pipeline_parents = _SUB_PIPELINE_DATA["pipeline_parents"]
-    pipeline_children = _SUB_PIPELINE_DATA["pipeline_children"]
-    children_pids = set(pipeline_parents.keys())
-    parents_pids = set(pipeline_children.keys())
-    top_pids = parents_pids - children_pids
-    leaf_pids = children_pids - parents_pids
-    return [_build_sub_pipeline_tree_core(p, leaf_pids) for p in top_pids]
-
-
 def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
     """
     Format pipelines and catalog data from Kedro for kedro-viz.
@@ -491,7 +519,6 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
     )
 
     _build_sub_pipeline_level_graph(nodes_list, edges_list)
-    sub_pipeline_tree = _build_sub_pipeline_tree()
 
     return {
         "nodes": nodes_list,
@@ -500,7 +527,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
         "layers": sorted_layers,
         "pipelines": pipelines_list,
         "selected_pipeline": selected_pipeline,
-        "pipeline_tree": sub_pipeline_tree,
+        "pipeline_tree": _SUB_PIPELINE_DATA["pipeline_tree"]
     }
 
 
@@ -746,7 +773,7 @@ def pipeline_tree_data(pipeline_ids):
         "tags": _DATA["tags"],
         "layers": _DATA["layers"],
         "pipelines": _DATA["pipelines"],
-        "pipeline_tree": _DATA["pipeline_tree"],
+        "pipeline_tree": _SUB_PIPELINE_DATA["pipeline_tree"],
         "selected_pipeline":  _DATA["selected_pipeline"],
     })
 
