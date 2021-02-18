@@ -113,7 +113,7 @@ export class FlowChart extends Component {
       drawNodes.call(this, changed);
     }
 
-    if (changed('edges', 'nodes', 'layers', 'chartSize', 'centralNode')) {
+    if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
       this.resetView();
     } else {
       this.onChartZoomChanged(chartZoom);
@@ -347,7 +347,7 @@ export class FlowChart extends Component {
    * Zoom and scale to fit graph and any selected node in view
    */
   resetView() {
-    const { chartSize, graphSize, centralNode, nodes } = this.props;
+    const { chartSize, graphSize, clickedNode, nodes } = this.props;
     const { width: chartWidth, height: chartHeight } = chartSize;
     const { width: graphWidth, height: graphHeight } = graphSize;
 
@@ -360,8 +360,8 @@ export class FlowChart extends Component {
     const offset = { x: chartSize.sidebarWidth, y: 0 };
 
     // Use the selected node as focus point
-    const focus = centralNode
-      ? nodes.find((node) => node.id === centralNode)
+    const focus = clickedNode
+      ? nodes.find((node) => node.id === clickedNode)
       : null;
 
     // Find a transform that fits everything in view
@@ -548,6 +548,7 @@ const emptyNodes = [];
 const emptyGraphSize = {};
 
 export const mapStateToProps = (state, ownProps) => ({
+  clickedNode: state.node.clicked,
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
