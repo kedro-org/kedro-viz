@@ -24,7 +24,11 @@ export const prepareState = (props) => {
     // Precalculate graph layout:
     (state) => {
       const layout = state.flags.oldgraph ? graphDagre : graphNew;
-      const graph = layout(getGraphInput(state));
+      const graphState = getGraphInput(state);
+      if (!graphState) {
+        return state;
+      }
+      const graph = layout(graphState);
       return updateGraph(graph);
     },
   ];

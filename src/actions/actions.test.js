@@ -9,6 +9,7 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
+  TOGGLE_IGNORE_LARGE_WARNING,
   changeFlag,
   resetData,
   toggleLayers,
@@ -18,6 +19,7 @@ import {
   toggleTheme,
   updateChartSize,
   updateFontLoaded,
+  toggleIgnoreLargeWarning,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -206,5 +208,13 @@ describe('actions', () => {
       value: true,
     };
     expect(changeFlag('testFlag', true)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle display large graph', () => {
+    const expectedAction = {
+      type: TOGGLE_IGNORE_LARGE_WARNING,
+      ignoreLargeWarning: true,
+    };
+    expect(toggleIgnoreLargeWarning(true)).toEqual(expectedAction);
   });
 });

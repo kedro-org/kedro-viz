@@ -20,6 +20,9 @@ export const codeSidebarWidth = {
 
 export const chartMinWidthScale = 0.25;
 
+// this value is used to determine the amount of nodes and edges in pipeline to trigger large warning
+export const largeGraphThreshold = 1000;
+
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
   oldgraph: {

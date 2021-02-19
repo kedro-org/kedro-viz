@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import LargePipelineWarning from '../large-pipeline-warning';
 import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
 import MetaData from '../metadata';
@@ -22,6 +23,7 @@ export const Wrapper = ({ loading, theme }) => (
     <Sidebar />
     <MetaData />
     <div className="pipeline-wrapper">
+      <LargePipelineWarning />
       <FlowChart />
       <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
     </div>

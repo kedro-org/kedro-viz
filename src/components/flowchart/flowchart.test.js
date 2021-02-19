@@ -152,7 +152,9 @@ describe('FlowChart', () => {
     // Translate extent should include left and right sidebars, margin and graph size
     expect(viewExtents.translate.minX).toEqual(-margin - leftSidebarOffset);
     expect(viewExtents.translate.minY).toEqual(-margin);
-    expect(viewExtents.translate.maxX).toEqual(graphWidth + margin + rightSidebarOffset);
+    expect(viewExtents.translate.maxX).toEqual(
+      graphWidth + margin + rightSidebarOffset
+    );
     expect(viewExtents.translate.maxY).toEqual(graphHeight + margin);
 
     // The scale at which the full graph in view

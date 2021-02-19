@@ -15,6 +15,7 @@ import {
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
   UPDATE_FONT_LOADED,
+  TOGGLE_IGNORE_LARGE_WARNING,
 } from '../actions';
 
 /**
@@ -68,6 +69,11 @@ const combinedReducer = combineReducers({
   fontLoaded: createReducer(false, UPDATE_FONT_LOADED, 'fontLoaded'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
+  ignoreLargeWarning: createReducer(
+    false,
+    TOGGLE_IGNORE_LARGE_WARNING,
+    'ignoreLargeWarning'
+  ),
 });
 
 const rootReducer = (state, action) =>
