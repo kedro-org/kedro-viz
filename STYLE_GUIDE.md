@@ -1,16 +1,20 @@
-# Style Guide
+# Front-end style guide
 
-This document outlines recommended code style, quirks, and best practices for development on Kedro-Viz.
+This document outlines recommended code style, quirks, and best practices for front-end development on Kedro-Viz.
 
 <!-- @TODO table of contents -->
 
-## General
+## Code style and linting
 
-###  Browser and device support
+We use [Prettier](https://prettier.io/), [ESLint](https://eslint.org/), and [stylelint](https://stylelint.io/) to lint our SCSS and JavaScript. For the most part, we use the default config - you can find specific details in the `.prettierrc`, `.eslintrc.json`, and `.stylelintrc` config files. We recommend that you install the Prettier, ESLint, and stylelint plugins for your text-editor, and enable automatic formatting on save.
+
+Other than that, we mostly recommend following the [AirBnB JavaScript Style Guide](https://github.com/airbnb/javascript).
+
+##  Browser and device support
 
 We aim to support recent versions of major modern browsers - i.e. Chome, Firefox, Edge, Safari, and Opera, on both MacOS and Windows. Keeping progressive enhancement in mind, we aim for decent mobile support where possible, i.e. nothing should be broken on mobile, but it's okay for mobile/older browsers to have a slightly degraded experience.
 
-### Accessibility
+## Accessibility
 
 We aim to meet [WCAG 2.1 Level AA](https://www.w3.org/WAI/standards-guidelines/wcag/) standards where possible, while acknowledging that this is a data visualization, so some criteria will be difficult to pass without extraordinary effort. However we will do our best within reason.
 
@@ -18,10 +22,7 @@ Kedro-Viz should be navigable with different input devices (e.g. mouse, keyboard
 
 We recommend checking [axe](https://www.deque.com/axe/) and [Lighthouse](https://developers.google.com/web/tools/lighthouse) to review for potential accessibility errors if unsure.
 
-
-## HTML
-
-### Semantics
+## Semantic HTML
 
 Ensure that page content is marked up with [semantic HTML elements](https://html.com/semantic-markup/) in order to ensure that it is as usable and accessible as possible.
 
@@ -46,31 +47,65 @@ Prefer:
 </form>
 ```
 
-
 ## CSS
-
-### SCSS/Sass
-
-<!-- Kedro-Viz uses Sass. @TODO -->
-
-### Code style and linting
-
-We use [stylelint](https://stylelint.io/) to lint our SCSS. For the most part, we use the default config - you can find specific details in the `.stylelintrc` config file.  
-We recommend installing the Prettier and stylelint plugins for your text-editor, and enabling automatic formatting on save.
 
 ### Class names
 
-This project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand.
+This project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand. [Reducing rule specificity](https://css-tricks.com/strategies-keeping-css-specificity-low/) is particularly important for improving CSS maintainability, so we try to avoid nesting CSS selectors as much as possible.
 
-We use the `pipeline-` prefix for most HTML/CSS classes, to avoid polluting the global namespace when this project is imported into other applications.
+We use the `pipeline-` prefix for most HTML/CSS classes, to reduce the risk of clashes in the global namespace when this project is imported into other applications. It's important never 
 
 <!-- @TODO Explain usage of the 'kedro' class, Kedro-UI, and webfonts -->
 
 ### Variables
 
-<!-- @TODO -->
+We use Sass variables to declare colours and reused values wherever useful. It's not necessary to declare every CSS unit value as a variable, but if a value is used in multiple places (for related reasons), then it makes sense to make it a variable - either locally in the component, or application-wide in `src/styles/_variables.scss`. Using a named variable instead of a number can clarify your intent, and help you avoid having to update a value in multiple places later on.
 
-### Colours
+Avoid:
+```scss
+color: #001521;
+color: rgba(#001521, 0.5);
+color: rgba(0, 0, 0, 0.5);
+```
+
+Prefer:
+```scss
+color: $color-bg-dark-1;
+color: rgba($color-bg-dark-1, 0.5);
+color: rgba(black, 0.5);
+```
+
+### Theme colours
+
+Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. In order to simplify code and avoid increasing CSS specificity, we use CSS Custom Properties to handle theme colours, and we recommend that you use these where possible.
+
+Avoid:
+```scss
+.pipeline-title {
+  .kui-theme--light & {
+    background: $color-bg-light-1;
+  }
+
+  .kui-theme--dark & {
+    background: $color-bg-dark-1;
+  }
+}
+```
+
+Prefer:
+```scss
+.kui-theme--light {
+  --color-bg-1: $color-bg-light-1;
+}
+
+.kui-theme--dark {
+  --color-bg-1: $color-bg-dark-1;
+}
+
+.pipeline-title {
+  background: var(--color-bg-1);
+}
+```
 
 <!-- @TODO -->
 
@@ -78,14 +113,7 @@ We use the `pipeline-` prefix for most HTML/CSS classes, to avoid polluting the 
 
 <!-- @TODO -->
 
-
 ## JavaScript
-
-### Code style and linting
-
-We use [Prettier](https://prettier.io/) and [ESLint](https://eslint.org/) to lint our JavaScript. For the most part, we use the default config - you can find specific details in the `.prettierrc` and `.eslintrc.json` config files. We recommend installing the Prettier and ESLint plugins for your text-editor, and enabling automatic formatting on save.
-
-Other than that, we mostly recommend following the [AirBnB JavaScript Style Guide](https://github.com/airbnb/javascript).
 
 ### Imports
 
@@ -98,7 +126,6 @@ In accordance with McKinsey standards, we aim to maintain at least a test covera
 We use Jest, Enzyme, and React-Testing-Library for JavaScript testing. Most of the older tests are written with Enzyme, but we are beginning to write more tests using Testing-Library as it is more flexible for testing certain browser APIs. Either is acceptable. To help with mocking the Redux store, Enzyme helper utilities can be found in `/src/utils/state.mock.js`.
 
 <!-- @TODO Explain the usage of the different datasets in testing, and add more comments explaining how the load-data mock works. -->
-
 
 ## Git and Github
 
