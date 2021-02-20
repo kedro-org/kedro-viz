@@ -19,11 +19,13 @@ export const LargePipelineWarning = ({
       className={classnames('kedro', 'pipeline-warning', {
         'pipeline-warning--sidebar-visible': sidebarVisible,
       })}>
-      <h2 className="pipeline-warning__title">Your pipeline is large.</h2>
+      <h2 className="pipeline-warning__title">
+        Whoa, that’s a chonky pipeline!
+      </h2>
       <p className="pipeline-warning__subtitle">
-        Your pipeline might take a while to render because it has{' '}
-        <b>{nodes.length}</b> elements. Use the sidebar controls to select a
-        smaller graph, or click to render.
+        This graph contains <b>{nodes.length}</b> elements, which will take a
+        while to render. You can use the sidebar controls to select a smaller
+        graph.
       </p>
       <Button theme={theme} onClick={() => onToggleIgnoreLargeWarning(true)}>
         Render it anyway
