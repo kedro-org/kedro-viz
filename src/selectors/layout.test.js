@@ -69,12 +69,14 @@ describe('Selectors', () => {
           const layout = state.flags.oldgraph ? graphDagre : graphNew;
           return updateGraph(layout(getGraphInput(state)));
         },
+        // Turn the filter back off
+        () => toggleTypeDisabled('data', false),
       ];
       const state = actions.reduce(
         (state, action) => reducer(state, action(state)),
         prepareState({ data: prepareLargeDataset() })
       );
-      expect(getTriggerLargeGraphWarning(state)).toEqual(false);
+      expect(getTriggerLargeGraphWarning(state)).toBe(false);
     });
   });
 
