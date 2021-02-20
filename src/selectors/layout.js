@@ -21,7 +21,9 @@ const getGraphHasNodes = (state) => Boolean(state.graph?.nodes?.length);
 const getChartSizeState = (state) => state.chartSize;
 
 /**
- * Decide whether to show the large graph warning
+ * Show the large graph warning only if there are sufficient nodes + edges,
+ * and it hasn't been toggled off (by clicking the Render Anyway button), and
+ * the graph hasn't already previously rendered, and the flag isn't set to false.
  */
 export const getTriggerLargeGraphWarning = createSelector(
   [
