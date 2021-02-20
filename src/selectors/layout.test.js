@@ -5,17 +5,22 @@ import {
   getGraphInput,
   getTriggerLargeGraphWarning,
 } from './layout';
-import { updateFontLoaded } from '../actions';
+import {
+  changeFlag,
+  toggleIgnoreLargeWarning,
+  updateFontLoaded,
+} from '../actions';
+import { updateGraph } from '../actions/graph';
+import { toggleTypeDisabled } from '../actions/node-type';
 import reducer from '../reducers';
+import { graphNew, graphDagre } from '../utils/graph';
 import { sidebarWidth, largeGraphThreshold } from '../config';
 import animals from '../utils/data/animals.mock.json';
 
 describe('Selectors', () => {
   describe('getTriggerLargeGraphWarning', () => {
-    it('returns false for the animals dataset', () => {
-      expect(getTriggerLargeGraphWarning(mockState.animals)).toEqual(false);
-    });
-    it('returns true for a large dataset', () => {
+    // Prepare excessively-large dataset
+    const prepareLargeDataset = () => {
       const data = { ...animals };
       let extraNodes = [];
       const iterations = Math.ceil(largeGraphThreshold / data.nodes.length) + 1;
@@ -27,8 +32,49 @@ describe('Selectors', () => {
         extraNodes = extraNodes.concat(extraNodeGroup);
       });
       data.nodes = data.nodes.concat(extraNodes);
-      const customMockState = prepareState({ data });
-      expect(getTriggerLargeGraphWarning(customMockState)).toEqual(true);
+      return data;
+    };
+
+    it('returns false for a small dataset', () => {
+      expect(getTriggerLargeGraphWarning(mockState.animals)).toEqual(false);
+    });
+
+    it('returns true for a large dataset', () => {
+      const state = prepareState({ data: prepareLargeDataset() });
+      expect(getTriggerLargeGraphWarning(state)).toEqual(true);
+    });
+
+    it('returns false if the sizewarning flag is false', () => {
+      const state = reducer(
+        prepareState({ data: prepareLargeDataset() }),
+        changeFlag('sizewarning', false)
+      );
+      expect(getTriggerLargeGraphWarning(state)).toEqual(false);
+    });
+
+    it('returns false if ignoreLargeWarning is true', () => {
+      const state = reducer(
+        prepareState({ data: prepareLargeDataset() }),
+        toggleIgnoreLargeWarning(true)
+      );
+      expect(getTriggerLargeGraphWarning(state)).toEqual(false);
+    });
+
+    it('returns false if layout has already been calculated', () => {
+      const actions = [
+        // Filter out all data nodes to reduce node-count below threshold
+        () => toggleTypeDisabled('data', true),
+        // Run layout to update state.graph
+        (state) => {
+          const layout = state.flags.oldgraph ? graphDagre : graphNew;
+          return updateGraph(layout(getGraphInput(state)));
+        },
+      ];
+      const state = actions.reduce(
+        (state, action) => reducer(state, action(state)),
+        prepareState({ data: prepareLargeDataset() })
+      );
+      expect(getTriggerLargeGraphWarning(state)).toEqual(false);
     });
   });
 
