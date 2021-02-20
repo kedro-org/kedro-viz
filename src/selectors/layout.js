@@ -12,6 +12,7 @@ import {
 } from '../config';
 
 const getOldgraphFlag = (state) => state.flags.oldgraph;
+const getSizeWarningFlag = (state) => state.flags.sizewarning;
 const getVisibleSidebar = (state) => state.visible.sidebar;
 const getVisibleCode = (state) => state.visible.code;
 const getFontLoaded = (state) => state.fontLoaded;
@@ -23,11 +24,18 @@ const getChartSizeState = (state) => state.chartSize;
  * Decide whether to show the large graph warning
  */
 export const getTriggerLargeGraphWarning = createSelector(
-  [getVisibleNodes, getVisibleEdges, getIgnoreLargeWarning, getGraphHasNodes],
-  (nodes, edges, ignoreLargeWarning, graphHasNodes) =>
+  [
+    getVisibleNodes,
+    getVisibleEdges,
+    getIgnoreLargeWarning,
+    getGraphHasNodes,
+    getSizeWarningFlag,
+  ],
+  (nodes, edges, ignoreLargeWarning, graphHasNodes, sizeWarningFlag) =>
     nodes.length + 1.5 * edges.length > largeGraphThreshold &&
     !ignoreLargeWarning &&
-    !graphHasNodes
+    !graphHasNodes &&
+    sizeWarningFlag
 );
 
 /**
