@@ -36,12 +36,12 @@ describe('Selectors', () => {
     };
 
     it('returns false for a small dataset', () => {
-      expect(getTriggerLargeGraphWarning(mockState.animals)).toEqual(false);
+      expect(getTriggerLargeGraphWarning(mockState.animals)).toBe(false);
     });
 
     it('returns true for a large dataset', () => {
       const state = prepareState({ data: prepareLargeDataset() });
-      expect(getTriggerLargeGraphWarning(state)).toEqual(true);
+      expect(getTriggerLargeGraphWarning(state)).toBe(true);
     });
 
     it('returns false if the sizewarning flag is false', () => {
@@ -49,7 +49,7 @@ describe('Selectors', () => {
         prepareState({ data: prepareLargeDataset() }),
         changeFlag('sizewarning', false)
       );
-      expect(getTriggerLargeGraphWarning(state)).toEqual(false);
+      expect(getTriggerLargeGraphWarning(state)).toBe(false);
     });
 
     it('returns false if ignoreLargeWarning is true', () => {
@@ -57,7 +57,7 @@ describe('Selectors', () => {
         prepareState({ data: prepareLargeDataset() }),
         toggleIgnoreLargeWarning(true)
       );
-      expect(getTriggerLargeGraphWarning(state)).toEqual(false);
+      expect(getTriggerLargeGraphWarning(state)).toBe(false);
     });
 
     it('returns false if layout has already been calculated', () => {
