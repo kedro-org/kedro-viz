@@ -61,9 +61,9 @@ describe('Selectors', () => {
     });
 
     it('returns false if layout has already been calculated', () => {
-      // In cases where a user enables a filter to show the graph, then
-      // disables it again, the graph should still show, so that the user
-      // doesn't keep seeing the warning over and over again.
+      // The warning should only appear once on first load, if at all.
+      // i.e. in cases where a user enables filters to reveal the graph,
+      // then disables them again, the warning should not show repeatedly.
       const actions = [
         // Filter out all data nodes to reduce node-count below threshold
         () => toggleTypeDisabled('data', true),
