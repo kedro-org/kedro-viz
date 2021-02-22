@@ -21,12 +21,14 @@
     content: '';
     pointer-events: none;
   }
+
   &:before {
     left: 0;
     border-right: 80vmax solid transparent;
     transform-origin: 0 0;
     animation: spotlight-left 3s infinite alternate ease;
   }
+
   &:after {
     right: 0;
     border-left: 80vmax solid transparent;
@@ -39,6 +41,7 @@
   from {
     transform: rotate(-5deg);
   }
+
   to {
     transform: rotate(-40deg);
   }
@@ -48,6 +51,7 @@
   from {
     transform: rotate(5deg);
   }
+
   to {
     transform: rotate(40deg);
   }
@@ -57,6 +61,7 @@
   from {
     filter: saturate(10) hue-rotate(0deg);
   }
+
   to {
     filter: saturate(10) hue-rotate(360deg);
   }
@@ -84,6 +89,7 @@
   0% {
     transform: perspective(400px) rotateY(20deg) rotateX(10deg);
   }
+
   100% {
     transform: perspective(400px) rotateY(-20deg) rotateX(10deg);
   }
@@ -93,6 +99,7 @@
   0% {
     transform: translateX(-10vw);
   }
+
   100% {
     transform: translateX(110vw);
   }
@@ -102,27 +109,35 @@
   0% {
     transform: rotate(10deg);
   }
+
   20% {
     transform: rotate(10deg);
   }
+
   25% {
     transform: rotate(0deg) translateY(-10px);
   }
+
   45% {
     transform: rotate(0deg) translateY(-10px);
   }
+
   50% {
     transform: rotate(-10deg);
   }
+
   70% {
     transform: rotate(-10deg);
   }
+
   75% {
     transform: rotate(0deg) translateY(-10px);
   }
+
   95% {
     transform: rotate(0deg) translateY(-10px);
   }
+
   100% {
     transform: rotate(10deg);
   }

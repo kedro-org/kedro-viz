@@ -33,6 +33,7 @@
   .kui-theme--light {
     #{$var-name}: #{rgba($color-light, 0)};
   }
+
   .kui-theme--dark {
     #{$var-name}: #{rgba($color-dark, 0)};
   }

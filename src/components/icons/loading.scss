@@ -47,6 +47,7 @@ $path2-gap: $section-length + $section-gap-2x;
   from {
     stroke-dashoffset: $spin1-offset-start;
   }
+
   to {
     stroke-dashoffset: $spin1-offset-end;
   }
@@ -56,6 +57,7 @@ $path2-gap: $section-length + $section-gap-2x;
   from {
     stroke-dashoffset: $spin2-offset-start;
   }
+
   to {
     stroke-dashoffset: $spin2-offset-end;
   }
