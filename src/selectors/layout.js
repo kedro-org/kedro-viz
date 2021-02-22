@@ -6,15 +6,29 @@ import { getVisibleMetaSidebar } from '../selectors/metadata';
 import {
   sidebarWidth,
   metaSidebarWidth,
-  codeSidebarWidth,
   chartMinWidthScale,
+  largeGraphThreshold,
+  codeSidebarWidth,
 } from '../config';
 
 const getOldgraphFlag = (state) => state.flags.oldgraph;
 const getVisibleSidebar = (state) => state.visible.sidebar;
 const getVisibleCode = (state) => state.visible.code;
 const getFontLoaded = (state) => state.fontLoaded;
+const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
+const getGraphHasNodes = (state) => Boolean(state.graph?.nodes?.length);
 const getChartSizeState = (state) => state.chartSize;
+
+/**
+ * Decide whether to show the large graph warning
+ */
+export const getTriggerLargeGraphWarning = createSelector(
+  [getVisibleNodes, getVisibleEdges, getIgnoreLargeWarning, getGraphHasNodes],
+  (nodes, edges, ignoreLargeWarning, graphHasNodes) =>
+    nodes.length + 1.5 * edges.length > largeGraphThreshold &&
+    !ignoreLargeWarning &&
+    !graphHasNodes
+);
 
 /**
  * Select a subset of state that is watched by graph layout calculators
@@ -27,11 +41,13 @@ export const getGraphInput = createSelector(
     getVisibleLayerIDs,
     getOldgraphFlag,
     getFontLoaded,
+    getTriggerLargeGraphWarning,
   ],
-  (nodes, edges, layers, oldgraph, fontLoaded) => {
-    if (!fontLoaded) {
+  (nodes, edges, layers, oldgraph, fontLoaded, triggerLargeGraphWarning) => {
+    if (!fontLoaded || triggerLargeGraphWarning) {
       return null;
     }
+
     return { nodes, edges, layers, oldgraph, fontLoaded };
   }
 );

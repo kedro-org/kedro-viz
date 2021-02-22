@@ -12,7 +12,6 @@ import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import {
   viewing,
-  origin,
   isOrigin,
   viewTransformToFit,
   setViewTransform,
@@ -34,8 +33,6 @@ export class FlowChart extends Component {
     this.state = {
       tooltip: { visible: false },
     };
-
-    this.defaultTransform = origin;
 
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -116,7 +113,7 @@ export class FlowChart extends Component {
       drawNodes.call(this, changed);
     }
 
-    if (changed('edges', 'nodes', 'layers', 'chartSize', 'centralNode')) {
+    if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
       this.resetView();
     } else {
       this.onChartZoomChanged(chartZoom);
@@ -283,26 +280,39 @@ export class FlowChart extends Component {
    */
   updateViewExtents(transform) {
     const { k: scale } = transform || getViewTransform(this.view);
+
     const {
       sidebarWidth = 0,
       metaSidebarWidth = 0,
       codeSidebarWidth = 0,
+      width: chartWidth = 0,
+      height: chartHeight = 0,
     } = this.props.chartSize;
-    const { width = 0, height = 0 } = this.props.graphSize;
+
+    const {
+      width: graphWidth = 0,
+      height: graphHeight = 0,
+    } = this.props.graphSize;
 
     const leftSidebarOffset = sidebarWidth / scale;
     const rightSidebarOffset = (metaSidebarWidth + codeSidebarWidth) / scale;
     const margin = this.MARGIN;
 
+    // Find the relative minimum scale to fit whole graph
+    const minScale = Math.min(
+      chartWidth / (graphWidth || 1),
+      chartHeight / (graphHeight || 1)
+    );
+
     setViewExtents(this.view, {
       translate: {
         minX: -leftSidebarOffset - margin,
-        maxX: width + margin + rightSidebarOffset,
+        maxX: graphWidth + margin + rightSidebarOffset,
         minY: -margin,
-        maxY: height + margin,
+        maxY: graphHeight + margin,
       },
       scale: {
-        minK: this.MIN_SCALE * this.defaultTransform.k,
+        minK: this.MIN_SCALE * minScale,
         maxK: this.MAX_SCALE,
       },
     });
@@ -337,7 +347,7 @@ export class FlowChart extends Component {
    * Zoom and scale to fit graph and any selected node in view
    */
   resetView() {
-    const { chartSize, graphSize, centralNode, nodes } = this.props;
+    const { chartSize, graphSize, clickedNode, nodes } = this.props;
     const { width: chartWidth, height: chartHeight } = chartSize;
     const { width: graphWidth, height: graphHeight } = graphSize;
 
@@ -350,19 +360,19 @@ export class FlowChart extends Component {
     const offset = { x: chartSize.sidebarWidth, y: 0 };
 
     // Use the selected node as focus point
-    const focus = centralNode
-      ? nodes.find((node) => node.id === centralNode)
+    const focus = clickedNode
+      ? nodes.find((node) => node.id === clickedNode)
       : null;
 
     // Find a transform that fits everything in view
-    this.defaultTransform = viewTransformToFit({
+    const transform = viewTransformToFit({
       offset,
       focus,
       viewWidth: chartWidth,
       viewHeight: chartHeight,
       objectWidth: graphWidth,
       objectHeight: graphHeight,
-      minScaleX: 0.4,
+      minScaleX: 0.2,
       minScaleFocus: 0.3,
       focusOffset: 0.8,
     });
@@ -373,7 +383,7 @@ export class FlowChart extends Component {
     // Apply transform ignoring extents
     setViewTransformExact(
       this.view,
-      this.defaultTransform,
+      transform,
       isFirstTransform ? 0 : this.DURATION,
       false
     );
@@ -538,6 +548,7 @@ const emptyNodes = [];
 const emptyGraphSize = {};
 
 export const mapStateToProps = (state, ownProps) => ({
+  clickedNode: state.node.clicked,
   centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),

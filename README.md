@@ -104,8 +104,9 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
 The following flags are available to toggle experimental features:
 
-- `oldgraph` - From release v3.8.0. Display old version of graph (dagre algorithm) without improved graphing algorithm. (default `false`)
+- `code` - From release v3.9.0. Enable showing the code panel from a node's metadata panel. (default `false`)
 - `lazy` - From release v3.8.0. Improved sidebar performance. (default `false`)
+- `oldgraph` - From release v3.8.0. Display old version of graph (dagre algorithm) without improved graphing algorithm. (default `false`)
 
 Note that newgraph has been removed from v3.8.0 onwards and is now the default functionality. Should there be issues with your project, see the oldgraph flag above.
 

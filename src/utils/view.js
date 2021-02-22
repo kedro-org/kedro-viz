@@ -311,15 +311,18 @@ export const viewTransformToFit = ({
   x += (viewWidth - objectWidth * scale) * 0.5;
   y += (viewHeight - objectHeight * scale) * 0.5;
 
-  const isCropped = scaleXClamp !== scaleX;
+  // When there is a focus point set
+  if (focus) {
+    // Find which axes would become cropped
+    const isCroppedX = viewWidth < objectWidth * scale;
+    const isCroppedY = viewHeight < objectHeight * scale;
 
-  // When there is a focus point but object does not fit fully in view
-  if (focus && isCropped) {
     const objectCenterX = objectWidth * 0.5;
     const objectCenterY = objectHeight * 0.5;
 
-    const focusCenterOffsetX = objectCenterX - focus.x;
-    const focusCenterOffsetY = objectCenterY - focus.y;
+    // Offset on the cropped axes only
+    const focusCenterOffsetX = isCroppedX ? objectCenterX - focus.x : 0;
+    const focusCenterOffsetY = isCroppedY ? objectCenterY - focus.y : 0;
 
     const focusRelativeOffsetX = focusCenterOffsetX / objectWidth;
     const focusRelativeOffsetY = focusCenterOffsetY / objectHeight;

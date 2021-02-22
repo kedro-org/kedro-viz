@@ -17,6 +17,32 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+# Release 3.9.0
+
+## Major features and improvements
+
+- Add code panel (#346)
+- Improve view panning behaviour when a node is selected (#356, #363, #370, #373, #374)
+- Improve layout performance for large graphs (#343)
+- Save tag state to localStorage (#353)
+
+## Bug fixes and other changes
+
+- Improve graph layout code quality, performance and docs (#347)
+- Update docs to remind on compatibility of Kedro-Viz 3.8.0 with Kedro 0.17 (#367)
+- Update dependencies (#360, #364, #369)
+- Fix failing CircleCI build on Windows (#365, #366)
+- Refactor node-list-row CSS, fixing hover and focus states (#355, #358, #362)
+- Update iconography (#357, #359)
+- Fix missing indicator Chrome zoom bug (#349)
+- Fix sidebar border/box-shadow CSS rules (#351)
+- Fix `server.py` to work with versions >0.17 and update contributing docs (#348)
+- Fix errors when scrolling with empty pipeline (#342)
+- Ignore coverage on some branches and fix e2e tests (#345)
+- Fix icon-button tooltips on mobile (#344)
+- Update SVG-Crowbar to fix errors (#339)
+- Update contributing docs for new dev server (#341)
+
 # Release 3.8.1
 
 ## Bug fixes and other changes
