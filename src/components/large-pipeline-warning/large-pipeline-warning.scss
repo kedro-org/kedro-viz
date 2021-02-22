@@ -18,7 +18,6 @@
 
   %warning-text {
     width: 90%;
-    max-width: 500px;
     margin-right: auto;
     margin-left: auto;
   }
@@ -36,7 +35,8 @@
 
   &__subtitle {
     @extend %warning-text;
-    margin-bottom: 2.8em;
+    max-width: 30em;
+    margin-bottom: 2.4em;
     font-size: 1.4em;
 
     @media (min-width: $sidebar-width-breakpoint) {
