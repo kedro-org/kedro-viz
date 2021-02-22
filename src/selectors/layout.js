@@ -23,7 +23,8 @@ const getChartSizeState = (state) => state.chartSize;
 /**
  * Show the large graph warning only if there are sufficient nodes + edges,
  * and it hasn't been toggled off (by clicking the Render Anyway button), and
- * the graph hasn't already previously rendered, and the flag isn't set to false.
+ * the graph layout hasn't already previously been calculated (due to a user
+ * filtering the graph to a smaller subset), and the flag isn't set to false.
  */
 export const getTriggerLargeGraphWarning = createSelector(
   [
