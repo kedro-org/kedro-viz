@@ -2,6 +2,13 @@
   extends: ['stylelint-prettier/recommended'],
   plugins: ['stylelint-order', 'stylelint-config-rational-order/plugin'],
   rules: {
+    'rule-empty-line-before': [
+      'always',
+      {
+        except: ['first-nested'],
+        ignore: ['after-comment']
+      }
+    ],
     'order/properties-order': [[], { severity: 'warning' }],
     'plugin/rational-order': [
       true,
