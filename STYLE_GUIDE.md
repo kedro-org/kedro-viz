@@ -1,12 +1,12 @@
 # Front-end style guide
 
-This document outlines recommended code style, quirks, and best practices for front-end development on Kedro-Viz.
+Before you contribute front-end development effort to Kedro-Viz, here are our recommendations for code style, quirks, and best practices.
 
 <!-- @TODO table of contents -->
 
 ## Code style and linting
 
-We use [Prettier](https://prettier.io/), [ESLint](https://eslint.org/), and [stylelint](https://stylelint.io/) to lint our SCSS and JavaScript. For the most part, we use the default config - you can find specific details in the `.prettierrc`, `.eslintrc.json`, and `.stylelintrc` config files. We recommend that you install the Prettier, ESLint, and stylelint plugins for your text-editor, and enable automatic formatting on save.
+We use [Prettier](https://prettier.io/), [ESLint](https://eslint.org/), and [stylelint](https://stylelint.io/) to lint our SCSS and JavaScript. For the most part, we use the default config - you can find specific details in the `.prettierrc`, `.eslintrc.json`, and `.stylelintrc` config files. We recommend that you install the Prettier, ESLint, and stylelint plugins for your text editor, and enable automatic formatting on save.
 
 Other than that, we mostly recommend following the [AirBnB JavaScript Style Guide](https://github.com/airbnb/javascript).
 
@@ -16,7 +16,7 @@ We aim to support recent versions of major modern browsers - i.e. Chome, Firefox
 
 ## Accessibility
 
-We aim to meet [WCAG 2.1 Level AA](https://www.w3.org/WAI/standards-guidelines/wcag/) standards where possible, while acknowledging that this is a data visualization, so some criteria will be difficult to pass without extraordinary effort. However we will do our best within reason.
+We aim to meet [WCAG 2.1 Level AA](https://www.w3.org/WAI/standards-guidelines/wcag/) standards where possible, while acknowledging that this is a data visualization tool, so some criteria will be difficult to pass without extraordinary effort. 
 
 Kedro-Viz should be navigable with different input devices (e.g. mouse, keyboard, and touchscreen), with obvious and visible focus states on all interactive elements. Text elements should have sufficient colour contrast and font-size to ensure readability to a minimum Level AA standard. Use [WAI-ARIA](https://www.w3.org/WAI/standards-guidelines/aria/) features where applicable to improve screenreader support.
 
@@ -24,7 +24,7 @@ We recommend checking [axe](https://www.deque.com/axe/) and [Lighthouse](https:/
 
 ## Semantic HTML
 
-Ensure that page content is marked up with [semantic HTML elements](https://html.com/semantic-markup/) in order to ensure that it is as usable and accessible as possible.
+Ensure that page content is marked up with [semantic HTML elements](https://html.com/semantic-markup/) to keep it as usable and accessible as possible.
 
 Avoid:
 ```jsx
@@ -51,7 +51,7 @@ Prefer:
 
 ### Class names
 
-This project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand. [Reducing rule specificity](https://css-tricks.com/strategies-keeping-css-specificity-low/) is particularly important for improving CSS maintainability, so we try to avoid nesting CSS selectors as much as possible.
+This project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand. To impove CSS maintainability we [reduce rule specificity](https://css-tricks.com/strategies-keeping-css-specificity-low/) and avoid nesting CSS selectors as much as possible.
 
 We use the `pipeline-` prefix for most HTML/CSS classes, to reduce the risk of clashes in the global namespace when this project is imported into other applications. It's important never 
 
@@ -59,7 +59,7 @@ We use the `pipeline-` prefix for most HTML/CSS classes, to reduce the risk of c
 
 ### Variables
 
-We use Sass variables to declare colours and reused values wherever useful. It's not necessary to declare every CSS unit value as a variable, but if a value is used in multiple places (for related reasons), then it makes sense to make it a variable - either locally in the component, or application-wide in `src/styles/_variables.scss`. Using a named variable instead of a number can clarify your intent, and help you avoid having to update a value in multiple places later on.
+We use Sass variables to declare colours and reuse values wherever useful. It's not necessary to declare every CSS unit value as a variable, but if a value is used in multiple places (for related reasons), then it makes sense to make it a variable - either locally in the component, or application-wide in `src/styles/_variables.scss`. Use a named variable instead of a number: it can clarify your intent, and help you avoid updates to the value in multiple places later on.
 
 Avoid:
 ```scss
@@ -77,7 +77,7 @@ color: rgba(black, 0.5);
 
 ### Theme colours
 
-Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. In order to simplify code and avoid increasing CSS specificity, we use CSS Custom Properties to handle theme colours, and we recommend that you use these where possible.
+Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. To simplify code and avoid increasing CSS specificity, we use CSS Custom Properties to handle theme colours. We recommend that you use these too where possible.
 
 Avoid:
 ```scss
@@ -117,7 +117,7 @@ Prefer:
 
 ### Imports
 
-Although it will work in regular development (because this project uses React-Scripts), avoid importing non-standard file-types like `.scss` and `.svg` directly into JavaScript files. This is because these won't work without specific webpack loaders, so when Kedro-Viz is imported into other projects, it will break. The `lib-test` testing suite exists partly for this reason, to check that Kedro-Viz still works when imported as a componnent library into a fairly standard JS app.
+Although it works in regular development (because this project uses React-Scripts), you should avoid importing non-standard file-types like `.scss` and `.svg` directly into JavaScript files. This is because these won't work without specific webpack loaders, and breaks when Kedro-Viz is imported into other projects. The `lib-test` testing suite exists partly for this reason, to check that Kedro-Viz still works when imported as a component library into a fairly standard JS app.
 
 ###  Testing
 
@@ -131,7 +131,7 @@ We use Jest, Enzyme, and React-Testing-Library for JavaScript testing. Most of t
 
 ### Commits
 
-Write commit subjects/titles in the imperative mood. Try to be as specific and detailed as you can, while keeping the subject under 50 characters so that isn't truncated when displayed. If it's a complicated or unclear change and more detail would help future readers understand the commit, please consider adding a detailed description of what you changed and why.
+Write commit subjects/titles in the imperative mood. Try to be as specific and detailed as you can, yet keep the subject under 50 characters so that isn't truncated when displayed. If it's a complicated or unclear change and more detail would help future readers understand the commit, add a detailed description of what you changed and why.
 
 Here's a great template of a good commit message [originally written by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html):
 
