@@ -16,7 +16,7 @@ We aim to support recent versions of major modern browsers - i.e. Chome, Firefox
 
 ## Accessibility
 
-We aim to meet [WCAG 2.1 Level AA](https://www.w3.org/WAI/standards-guidelines/wcag/) standards where possible, while acknowledging that this is a data visualization tool, so some criteria will be difficult to pass without extraordinary effort. 
+We aim to meet [WCAG 2.1 Level AA](https://www.w3.org/WAI/standards-guidelines/wcag/) standards where possible, while acknowledging that this is a data visualization tool, so some criteria will be difficult to pass.
 
 Kedro-Viz should be navigable with different input devices (e.g. mouse, keyboard, and touchscreen), with obvious and visible focus states on all interactive elements. Text elements should have sufficient colour contrast and font-size to ensure readability to a minimum Level AA standard. Use [WAI-ARIA](https://www.w3.org/WAI/standards-guidelines/aria/) features where applicable to improve screenreader support.
 
@@ -51,15 +51,15 @@ Prefer:
 
 ### Class names
 
-This project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand. To impove CSS maintainability we [reduce rule specificity](https://css-tricks.com/strategies-keeping-css-specificity-low/) and avoid nesting CSS selectors as much as possible.
+This project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand. To impove CSS maintainability we [reduce rule specificity](https://css-tricks.com/strategies-keeping-css-specificity-low/) and avoid nesting CSS selectors.
 
-We use the `pipeline-` prefix for most HTML/CSS classes, to reduce the risk of clashes in the global namespace when this project is imported into other applications. It's important never 
+We use the `pipeline-` prefix for most HTML/CSS classes, to reduce the risk of clashes in the global namespace when this project is imported into other applications. It's important never to use global element selectors or generic classes like `.header`.
 
 <!-- @TODO Explain usage of the 'kedro' class, Kedro-UI, and webfonts -->
 
 ### Variables
 
-We use Sass variables to declare colours and reuse values wherever useful. It's not necessary to declare every CSS unit value as a variable, but if a value is used in multiple places (for related reasons), then it makes sense to make it a variable - either locally in the component, or application-wide in `src/styles/_variables.scss`. Use a named variable instead of a number: it can clarify your intent, and help you avoid updates to the value in multiple places later on.
+We use Sass variables to declare colours and reuse values wherever useful. It's not necessary to declare every CSS unit value as a variable, but if a value is used in multiple places (for related reasons), then it makes sense to make it a variable - either locally in the component, or application-wide in `src/styles/_variables.scss`. Using a named variable instead of a number clarifies intent, and helps avoid updates to the value in multiple places later on.
 
 Avoid:
 ```scss
@@ -77,7 +77,7 @@ color: rgba(black, 0.5);
 
 ### Theme colours
 
-Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. To simplify code and avoid increasing CSS specificity, we use CSS Custom Properties to handle theme colours. We recommend that you use these too where possible.
+Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. To simplify code and avoid increasing CSS specificity, we use CSS custom properties to handle theme colours. We recommend that you use these too where possible - they are defined in the App component.
 
 Avoid:
 ```scss
@@ -123,7 +123,7 @@ Although it works in regular development (because this project uses React-Script
 
 In accordance with McKinsey standards, we aim to maintain at least a test coverage of at least 70% averaged across the codebase. As it's not practical to write tests for every JavaScript file, we usually aim for closer to 90% on most files, so that the project average continues to exceed the expected minimum standard.
 
-We use Jest, Enzyme, and React-Testing-Library for JavaScript testing. Most of the older tests are written with Enzyme, but we are beginning to write more tests using Testing-Library as it is more flexible for testing certain browser APIs. Either is acceptable. To help with mocking the Redux store, Enzyme helper utilities can be found in `/src/utils/state.mock.js`.
+We use [Jest](https://jestjs.io/), [Enzyme](https://enzymejs.github.io/enzyme/), and [Testing Library](https://testing-library.com/) for JavaScript testing. Most of the older tests are written with Enzyme, but we are beginning to write more tests using Testing Library as it is more flexible for testing certain browser APIs. Either is acceptable. To help with mocking the Redux store, Enzyme helper utilities can be found in `/src/utils/state.mock.js`.
 
 <!-- @TODO Explain the usage of the different datasets in testing, and add more comments explaining how the load-data mock works. -->
 
