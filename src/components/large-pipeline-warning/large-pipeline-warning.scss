@@ -2,7 +2,7 @@
 
 .pipeline-warning {
   position: absolute;
-  top: calc(50% - 14em);
+  top: calc(50% - 16em);
   left: 0;
   width: calc((100% - #{$sidebar-width-closed}));
   text-align: center;
@@ -15,32 +15,63 @@
       transform: translateX($sidebar-width-open);
     }
   }
+}
 
-  %warning-text {
-    width: 90%;
-    margin-right: auto;
-    margin-left: auto;
+%warning-text {
+  width: 90%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.pipeline-warning__title {
+  @extend %warning-text;
+  margin-bottom: 0.6em;
+  font-weight: normal;
+  font-size: 2.8em;
+
+  @media (min-width: $sidebar-width-breakpoint) {
+    font-size: 3.8em;
   }
+}
 
-  &__title {
-    @extend %warning-text;
-    margin-bottom: 0.6em;
-    font-weight: normal;
-    font-size: 2.8em;
+.pipeline-warning__subtitle {
+  @extend %warning-text;
+  max-width: 30em;
+  margin-bottom: 2.4em;
+  font-size: 1.4em;
 
-    @media (min-width: $sidebar-width-breakpoint) {
-      font-size: 3.8em;
-    }
+  @media (min-width: $sidebar-width-breakpoint) {
+    font-size: 1.5em;
   }
+}
 
-  &__subtitle {
-    @extend %warning-text;
-    max-width: 30em;
-    margin-bottom: 2.4em;
+.pipeline-warning__disable {
+  margin-top: 2.4em;
+
+  button {
+    padding: 0.1em 0.6em 0.2em;
+    color: inherit;
     font-size: 1.4em;
+    font-family: inherit;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
 
-    @media (min-width: $sidebar-width-breakpoint) {
-      font-size: 1.5em;
+    &:hover {
+      text-decoration: none;
+    }
+
+    &:focus {
+      outline: none;
+
+      [data-whatintent='keyboard'] & {
+        outline: 3px solid $color-link;
+      }
+    }
+
+    &:active {
+      transform: translateY(1px);
     }
   }
 }
