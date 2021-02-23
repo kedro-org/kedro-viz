@@ -19,12 +19,14 @@ Kedro-viz can exist either as a standalone web-app (via spinning up the web-app 
 
 # Our tools
 This section outlines the third party tools that we heavily utilize within Kedro-viz. 
+
 ### Redux
 We use redux to manage our data flow and state manegement within our web-app, utilizing the redux-toolkit (https://redux-toolkit.js.org/) for all redux-related configuration. 
 
 Upon firing an action to obtain the pipeline data (either from the `/pipeline` endpoint or via a JSON file), the pipeline data is further prepared and stored within the redux store as a single source of truth within the app. 
 
 All data-fetching from the API and updates to the state within the app are strictly done via actions, while all data are consumed by components either directly through the state or selectors. 
+
 ### Web workers
 Kedro-viz utilizes web workers to asynchronously perform time-consuming calculations (e.g. for instance the dagre/newgraph layout calculation for the flowchart) in a separate CPU thread, in order to prevent it from blocking other operations on the main thread (e.g. CSS transitions and other state updates).
 
@@ -40,8 +42,10 @@ All tests within Kedro-viz are set up with Jest, with some tests set up using Re
 This section outlines the important directories, its related purpose and data requirements within the app. 
 
 ## data normalisation & Redux store
+
 ### `index.js`
 Being the entry point of the store, this section is where we define the store from the initial state (defined in `normalize-data.js` and `initial-state.js`), and contains all the neccessary subscribe functions that is called within the initial configuration of the store.  This includes the `updateGraphOnChange` function that listens and updates the store with latest calculations from the `getGraphInput` selector, as well as the `saveStateToLocalStorage` function that saves selected attributes in the localStorage of the user's browser. 
+
 ### `normalize-data.js`
 This is the place where we define the initial instance of fields within the initial state that stores the pipeline data, including all sub-pipeline ids, nodes, edges, tags, etc. This also includes all the related functions for breaking down important fields of raw pipeline data (such as `nodes`, `edges` and `tags` ) into our defined format for its state before its addition into the state and the redux store in `index.js`. 
 
