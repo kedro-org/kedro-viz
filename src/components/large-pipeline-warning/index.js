@@ -32,7 +32,9 @@ export const LargePipelineWarning = ({
         Render it anyway
       </Button>
       <div className="pipeline-warning__disable">
-        <button onClick={onDisable}>Don't show this again</button>
+        <button className="pipeline-warning__disable__btn" onClick={onDisable}>
+          Don't show this again
+        </button>
       </div>
     </div>
   ) : null;
