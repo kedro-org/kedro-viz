@@ -2,9 +2,13 @@
 
 .pipeline-warning {
   position: absolute;
-  top: calc(50% - 16em);
+  top: 0;
   left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: calc((100% - #{$sidebar-width-closed}));
+  height: 100%;
   text-align: center;
   transform: translateX($sidebar-width-closed);
   transition: transform 0.4s ease, width ease 0.4s;
@@ -19,8 +23,7 @@
 
 %warning-text {
   width: 90%;
-  margin-right: auto;
-  margin-left: auto;
+  margin: 0 auto;
 }
 
 .pipeline-warning__title {
