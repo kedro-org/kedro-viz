@@ -1,21 +1,15 @@
+// Force an element to self-clear its floated children
+// https://css-tricks.com/snippets/css/clear-fix/
 @mixin clearfix {
-  &::before,
-  &::after {
+  &:after {
     display: table;
+    clear: both;
     content: '';
   }
-
-  &::after {
-    clear: both;
-  }
 }
 
-@mixin flexColumns {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
+// Hide things visually but keep them readable by screenreaders
+// https://css-tricks.com/inclusively-hidden/
 @mixin screenReaderOnly {
   position: absolute;
   width: 1px;
