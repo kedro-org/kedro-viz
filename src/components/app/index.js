@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
+import 'what-input';
+import '@quantumblack/kedro-ui/lib/styles/app-no-webfont.css';
+import LoadWebFont from '@quantumblack/kedro-ui/lib/utils/webfont.js';
 import configureStore from '../../store';
 import { resetData, updateFontLoaded } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
@@ -9,12 +12,15 @@ import getInitialState, {
   preparePipelineState,
 } from '../../store/initial-state';
 import { getFlagsMessage } from '../../utils/flags';
-import '@quantumblack/kedro-ui/lib/styles/app-no-webfont.css';
-import LoadWebFont from '@quantumblack/kedro-ui/lib/utils/webfont.js';
 import './app.css';
 
 /**
- * Main wrapper component. Intialises the Redux store
+ * Entry-point component for the use-case where Kedro-Viz is imported as a
+ * library/package into a larger application, rather than run as a standalone
+ * app. If run as a standalone then 'Container' is the top-level component.
+ *
+ * This component intialises anything that might be needed in both use-cases,
+ * e.g. the Redux store, webfont loading, announcing flags, etc.
  */
 class App extends React.Component {
   constructor(props) {
