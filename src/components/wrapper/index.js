@@ -15,7 +15,7 @@ import './wrapper.css';
  */
 export const Wrapper = ({ loading, theme }) => (
   <div
-    className={classnames('kedro-pipeline', {
+    className={classnames('kedro-pipeline kedro', {
       'kui-theme--dark': theme === 'dark',
       'kui-theme--light': theme === 'light',
     })}>

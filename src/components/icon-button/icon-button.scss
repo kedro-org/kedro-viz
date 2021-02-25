@@ -96,3 +96,9 @@
     }
   }
 }
+
+.pipeline-icon {
+  opacity: 0.7;
+  transition: opacity 300ms ease;
+  fill: var(--color-default-alt);
+}
