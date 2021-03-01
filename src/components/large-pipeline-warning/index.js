@@ -31,11 +31,14 @@ export const LargePipelineWarning = ({
       <Button theme={theme} onClick={onHide}>
         Render it anyway
       </Button>
-      <div className="pipeline-warning__disable">
-        <button className="pipeline-warning__disable__btn" onClick={onDisable}>
-          Don't show this again
-        </button>
-      </div>
+      <Button
+        theme={theme}
+        onClick={onDisable}
+        size="small"
+        mode="secondary"
+        animation="wipe">
+        Don't show this again
+      </Button>
     </div>
   ) : null;
 };

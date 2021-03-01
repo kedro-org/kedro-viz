@@ -48,33 +48,6 @@
   }
 }
 
-.pipeline-warning__disable {
-  margin-top: 2.4em;
-}
-
-.pipeline-warning__disable__btn {
-  padding: 0.1em 0.6em 0.2em;
-  color: inherit;
-  font-size: 1.4em;
-  font-family: inherit;
-  text-decoration: underline;
-  background: none;
-  border: none;
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: none;
-  }
-
-  &:focus {
-    outline: none;
-
-    [data-whatintent='keyboard'] & {
-      outline: 3px solid $color-link;
-    }
-  }
-
-  &:active {
-    transform: translateY(1px);
-  }
+.pipeline-warning .kui-button:first-of-type {
+  margin-bottom: 1.2em;
 }
