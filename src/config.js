@@ -44,7 +44,7 @@ export const flags = {
   sizewarning: {
     description: 'Show a warning before rendering very large graphs',
     default: true,
-    icon: '⚠️',
+    icon: '🐳',
   },
 };
 

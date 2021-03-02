@@ -1,17 +1,18 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { toggleIgnoreLargeWarning } from '../../actions';
+import { changeFlag, toggleIgnoreLargeWarning } from '../../actions';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTriggerLargeGraphWarning } from '../../selectors/layout';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
 import './large-pipeline-warning.css';
 
 export const LargePipelineWarning = ({
-  theme,
+  onDisable,
+  onHide,
   nodes,
-  onToggleIgnoreLargeWarning,
   sidebarVisible,
+  theme,
   visible,
 }) => {
   return visible ? (
@@ -27,8 +28,16 @@ export const LargePipelineWarning = ({
         while to render. You can use the sidebar controls to select a smaller
         graph.
       </p>
-      <Button theme={theme} onClick={() => onToggleIgnoreLargeWarning(true)}>
+      <Button theme={theme} onClick={onHide}>
         Render it anyway
+      </Button>
+      <Button
+        theme={theme}
+        onClick={onDisable}
+        size="small"
+        mode="secondary"
+        animation="wipe">
+        Don't show this again
       </Button>
     </div>
   ) : null;
@@ -42,8 +51,11 @@ export const mapStateToProps = (state) => ({
 });
 
 export const mapDispatchToProps = (dispatch) => ({
-  onToggleIgnoreLargeWarning: (value) => {
-    dispatch(toggleIgnoreLargeWarning(value));
+  onDisable: () => {
+    dispatch(changeFlag('sizewarning', false));
+  },
+  onHide: () => {
+    dispatch(toggleIgnoreLargeWarning(true));
   },
 });
 

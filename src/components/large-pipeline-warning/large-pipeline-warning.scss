@@ -2,9 +2,13 @@
 
 .pipeline-warning {
   position: absolute;
-  top: calc(50% - 14em);
+  top: 0;
   left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: calc((100% - #{$sidebar-width-closed}));
+  height: 100%;
   text-align: center;
   transform: translateX($sidebar-width-closed);
   transition: transform 0.4s ease, width ease 0.4s;
@@ -15,32 +19,35 @@
       transform: translateX($sidebar-width-open);
     }
   }
+}
 
-  %warning-text {
-    width: 90%;
-    margin-right: auto;
-    margin-left: auto;
+%warning-text {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.pipeline-warning__title {
+  @extend %warning-text;
+  margin-bottom: 0.6em;
+  font-weight: normal;
+  font-size: 2.8em;
+
+  @media (min-width: $sidebar-width-breakpoint) {
+    font-size: 3.8em;
   }
+}
 
-  &__title {
-    @extend %warning-text;
-    margin-bottom: 0.6em;
-    font-weight: normal;
-    font-size: 2.8em;
+.pipeline-warning__subtitle {
+  @extend %warning-text;
+  max-width: 30em;
+  margin-bottom: 2.4em;
+  font-size: 1.4em;
 
-    @media (min-width: $sidebar-width-breakpoint) {
-      font-size: 3.8em;
-    }
+  @media (min-width: $sidebar-width-breakpoint) {
+    font-size: 1.5em;
   }
+}
 
-  &__subtitle {
-    @extend %warning-text;
-    max-width: 30em;
-    margin-bottom: 2.4em;
-    font-size: 1.4em;
-
-    @media (min-width: $sidebar-width-breakpoint) {
-      font-size: 1.5em;
-    }
-  }
+.pipeline-warning .kui-button:first-of-type {
+  margin-bottom: 1.2em;
 }
