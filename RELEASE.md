@@ -17,6 +17,18 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+# Release 3.10.0
+
+## Major features and improvements
+
+- Display a prompt before rendering very large graphs (#361, #376, #377, #381)
+
+## Bug fixes and other changes
+
+- Clean up SCSS tech debt (#380)
+- Add Container component to simplify app/lib entrypoint (#379)
+- Add stylelint 'rule-empty-line-before': 'always' (#378)
+
 # Release 3.9.0
 
 ## Major features and improvements
