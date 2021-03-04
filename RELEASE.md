@@ -17,6 +17,12 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+# Release 3.10.1
+
+## Bug fixes and other changes
+
+- Fix %run_viz line magic for IPython notebook
+
 # Release 3.10.0
 
 ## Major features and improvements
@@ -99,7 +105,7 @@ Please note that release >=3.8.0 will not work with projects created with older 
 - Improve SVG rendering performance (#290)
 
 ## Bug fixes and other changes
-  
+
 - Fix JS bug in Safari (#306)
 - Fix failing CI (#304, #305)
 - Don't run eslint against .json files on pre-commit (#292)
@@ -109,8 +115,8 @@ Please note that release >=3.8.0 will not work with projects created with older 
 
 ## Major features and improvements
 
-- Redesign main sidebar (#236, #283) 
-- Drop Kedro 0.14.* support (#277)
+- Redesign main sidebar (#236, #283)
+- Drop Kedro 0.14.\* support (#277)
 
 ## Bug fixes and other changes
 
@@ -154,10 +160,10 @@ Please note that release >=3.8.0 will not work with projects created with older 
 - Delete duplicate icon-button component (#250)
 - Fix mispelling in demo dataset (#249)
 - Improve performance of `getLinkedNodes` (#235)
-- Expose node and dataset metadata in "api/nodes/" endpoint  (#231)
+- Expose node and dataset metadata in "api/nodes/" endpoint (#231)
 - Move react-redux from peerDependencies to regular dependencies, and move react-scripts from dependencies to devDependencies (#223)
 - Refactor initial state setup (#220)
-- Enable Windows CI  (#218, #241)
+- Enable Windows CI (#218, #241)
 - Increase width of layer rects (#209)
 - Update various dependency versions via Snyk/Dependabot (#262, #258, #257, #219, #246, #245, #244, #243, #242, #240, #237, #234, #233, #232, #230, #228, #227, #226, #225, #224, #214, #213, #212, #211, #210, #208, #207, #206, #205, #204)
 
@@ -180,7 +186,7 @@ Please note that release >=3.8.0 will not work with projects created with older 
 
 ## Bug fixes and other changes
 
-- Apply the Black formatter to back-end Python code  (#193)
+- Apply the Black formatter to back-end Python code (#193)
 - Bump websocket-extensions from 0.1.3 to 0.1.4 (#190)
 - Autoformat Python code using Black (#188)
 - Stop layout calculation from running twice on page-load, and optimise getNodeTextWidth selector performance (#186)
@@ -234,7 +240,7 @@ Please note that release >=3.8.0 will not work with projects created with older 
 - Redesign sidebar list to group nodes by type (#96)
 - Add `--pipeline` option to visualize modular pipeline (#93)
 - Add `--env` option to pass configuration environment (#93)
-- Fix backward-compatibility with Kedro 0.14.* (#93)
+- Fix backward-compatibility with Kedro 0.14.\* (#93)
 - Promote Kedro Viz commands from project specific to global commands (#91)
 - Allow users to run `kedro viz --load-file` outside of a Kedro project (#91)
 
@@ -315,7 +321,7 @@ Please note that release >=3.8.0 will not work with projects created with older 
 - Fix webfont text-width chart layout bug (#65)
 - Desaturate the background colour a touch (#64)
 - Move drawChart method to its own JS file (#63)
-- Update Snyk to 1.234.2 and patch issue  (#60)
+- Update Snyk to 1.234.2 and patch issue (#60)
 - Set the 'show sidebar' button to hidden when open (#57)
 - Snyk fix for 1 vulnerability (#56)
 - Various CSS tweaks and bugfixes (#54)
@@ -372,10 +378,10 @@ If you are just using Kedro-Viz with Kedro as a Python package, you won't need t
   }
   ```
 
-
 # Release 2.1.1:
 
 ## Bug fixes and other changes
+
 - Don't ignore gh-pages branch in CircleCI (#33)
 - Document the React props and data format (#34)
 - Fix closing of the navbar on smaller screens (#35)
