@@ -41,7 +41,7 @@ The node metadata are obtained by calling the `/nodes/<id>` endpoint on the kedr
 Kedro-viz also extracts localStorage data from the user's browser for app state data (such as `node`, `pipeline`, `tags`, `theme`, etc) that is stored from the user's last session, while extracting the user's preference for flags settings via the browser url. (please refer to lower sections for details on flags)
 
 ### data flow
-![Kedro-Viz data flow diagram](https://github.com/quantumblacklabs/kedro-viz/blob/main/.github/img/app-architecture-data-flow.png)
+![Kedro-Viz data flow diagram](https://github.com/quantumblacklabs/kedro-viz/.github/img/app-architecture-data-flow.png)
 
 On initialisation, the app uses a string data token (e.g. 'json' or 'animals') to determine the data source. 
 
