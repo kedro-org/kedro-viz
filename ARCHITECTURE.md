@@ -49,11 +49,11 @@ When loading asynchronous data (specified using the json identifier), the app fi
 
 The initial state data is separated into two: Pipeline and non-pipeline state. This is because the non-pipeline state should persist for the session duration, even if the pipeline state is reset/overwritten - e.g. if the user selects a new top-level pipeline.
 
-The application manually normalises the fetched pipeline data, in order to make immutable state updates as performant as possible. All pipeline and pipeline-related localstorage data will be further ingested via `normalized-data.js` into pipeline state data, 
+The application manually normalises the fetched pipeline data, in order to make immutable state updates as performant as possible. All pipeline and pipeline-related localstorage data will be further ingested via `normalized-data.js` into pipeline state data. 
 
-Next, the app initialises the Redux data store, by merging together initial defaults, window.localStorage data, and the normalized pipeline data, which, together with all non-pipeline related data from localstorage ( such as `theme`, `visible`, etc ), will be used to prepare non-pipeline state data. 
+The app then initialises the Redux data store by merging together initial defaults, localStorage data ( such as the `theme`, `visible` fields ), and flags data from the user url to prepare non-pipeline state data. 
 
-Both sets of data will be combined as initial state data and saved into the store to be used by the app throughout the app lifecycle. 
+Both sets of data (pipeline and non-pipeline state data) will be combined as initial state data and saved into the store to be used by the app throughout the app lifecycle. 
 
 # Codemap / features
 This section outlines the important directories, its related purpose and data requirements within the app. 
