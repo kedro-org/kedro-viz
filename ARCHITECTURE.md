@@ -32,7 +32,9 @@ The app supports the loading of synchronous data via the `/api/main` endpoint, a
 ### origins / sources
 As a standalone app, Kedro-viz can either obtains its pipeline data from the server via a running kedro project, or if during app development, from a fixed mock data source (in the form of JSON file within the app, such as `animals.mock.json`, `demo.mock.json` ). 
 
-As a library import (via npm), the Kedro-viz component allows pipeline data to be passed on as a prop from the external parent react app. 
+As a library import (via npm), the Kedro-viz component allows pipeline data to be passed on as the `data` prop from the external parent react app, in the form as shown below:
+
+```<KedroViz data={{ nodes: [...], etc }}} theme="dark" />```
 
 The node metadata are obtained by calling the `/nodes/<id>` endpoint on the kedro server, which will extract the node data from a running kedro project. Please note that given the node metadata information can only be extracted by the kedro-server (given the dynamic nature of the data), hence the Kedro-viz component library currently does not support the display of node metadata. 
 
