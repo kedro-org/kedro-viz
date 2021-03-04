@@ -5,7 +5,8 @@ This document describes the high-level architecture of Kedro-Viz. This would be 
 See also the contributing docs, which walks through our set of guidelines and recommended best practices for our codebase. 
 
 # High-level Overview
-<!-- Architecture diagram including how standalone app / library entrypoints connect -->
+
+![Kedro-Viz entry point diagram](https://github.com/quantumblacklabs/kedro-viz/blob/main/.github/img/app-architecture-entry-points.png?raw=true)
 
 On a high-level, Kedro-viz is a web-app that accepts pipeline data as an input and produces a interactive visualization graph to represent an overview of the current state of the pipeline of the Kedro project. 
 
@@ -27,6 +28,7 @@ Kedro-viz can exist either as a standalone web-app (via spinning up the web-app 
 Kedro-viz requires three type of data input: pipeline data for the main flowchart and sidebar visualization (an object that includes a list of sub-pipelines, edges and nodes of the pipeline/project to visualize), node metadata for the metadata panel (for three different types of Kedro elements: task, parameters and datasets; each element type requires a different set of fields within the object), and data from localStorage in the user's browser ( provided that the user has previously launched Kedro-viz on their browser ). 
 
 The app supports the loading of synchronous data via the `/api/main` endpoint, and asynchronous data via the kedro-viz server for both the `/api/pipeline<id>` and `/api/node/<id>` endpoints. 
+
 ### origins / sources
 As a standalone app, Kedro-viz can either obtains its pipeline data from the server via a running kedro project, or if during app development, from a fixed mock data source (in the form of JSON file within the app, such as `animals.mock.json`, `demo.mock.json` ). 
 
@@ -37,6 +39,8 @@ The node metadata are obtained by calling the `/nodes/<id>` endpoint on the kedr
 Kedro-viz also extracts localStorage data from the user's browser for app state data (such as `node`, `pipeline`, `tags`, `theme`, etc) that is stored from the user's last session, while extracting the user's preference for flags settings via the browser url. (please refer to lower sections for details on flags)
 
 ### data flow
+![Kedro-Viz data flow diagram](https://github.com/quantumblacklabs/kedro-viz/blob/main/.github/img/app-architecture-data-flow.png?raw=true)
+
 On initialisation, the app uses a string data token (e.g. 'json' or 'animals') to determine the data source. 
 
 When loading asynchronous data (specified using the json identifier), the app first loads the `/api/main` endpoint. This is because it contains the list of available top-level pipelines, which is necessary to check before loading others. If another pipeline's data is required by the app (which happens on user selection of a sub pipeline via the dropdown in the sidebar), it then loads that pipeline's data from `/api/pipeline/<id>` and replaces the app state with this new data. Conversely, when the user selects a node on the graph, if this node has not previously been selected then the app will request data for this node from `/api/nodes/<id>`.
