@@ -6,7 +6,7 @@ See also the contributing docs, which walks through our set of guidelines and re
 
 # High-level Overview
 
-![Kedro-Viz entry point diagram](https://github.com/quantumblacklabs/kedro-viz/blob/main/.github/img/app-architecture-entry-points.png)
+![Kedro-Viz entry point diagram](.github/img/app-architecture-entry-points.png)
 
 On a high-level, Kedro-viz is a web-app that accepts pipeline data as an input and produces a interactive visualization graph to represent an overview of the current state of the pipeline of the Kedro project. 
 
@@ -41,7 +41,7 @@ The node metadata are obtained by calling the `/nodes/<id>` endpoint on the kedr
 Kedro-viz also extracts localStorage data from the user's browser for app state data (such as `node`, `pipeline`, `tags`, `theme`, etc) that is stored from the user's last session, while extracting the user's preference for flags settings via the browser url. (please refer to lower sections for details on flags)
 
 ### data flow
-![Kedro-Viz data flow diagram](https://github.com/quantumblacklabs/kedro-viz/.github/img/app-architecture-data-flow.png)
+![Kedro-Viz data flow diagram](/.github/img/app-architecture-data-flow.png)
 
 On initialisation, the app uses a string data token (e.g. 'json' or 'animals') to determine the data source. 
 
