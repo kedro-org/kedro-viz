@@ -296,7 +296,7 @@ def _pretty_name(name: str) -> str:
     return " ".join(parts)
 
 
-def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
+def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
     """
     Format pipelines and catalog data from Kedro for kedro-viz.
 
@@ -318,6 +318,9 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
     node_dependencies = defaultdict(set)
     tags = set()
 
+    # keep track of modular pipelines
+    modular_pipelines = set()
+
     for pipeline_key, pipeline in pipelines.items():
         pipelines_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
         format_pipeline_data(
@@ -328,6 +331,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
             tags,
             edges_list,
             nodes_list,
+            modular_pipelines,
         )
 
     # sort tags
@@ -349,6 +353,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
         "layers": sorted_layers,
         "pipelines": pipelines_list,
         "selected_pipeline": selected_pipeline,
+        "modular_pipelines": list(modular_pipelines),
     }
 
 
@@ -366,6 +371,7 @@ def format_pipeline_data(
     tags: Set[str],
     edges_list: List[dict],
     nodes_list: List[dict],
+    modular_pipelines: Set[str],
 ) -> None:
     """Format pipeline and catalog data from Kedro for kedro-viz.
 
@@ -398,10 +404,15 @@ def format_pipeline_data(
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
+                "modular_pipelines": [],
             }
             nodes_list.append(nodes[task_id])
         else:
             nodes[task_id]["pipelines"].append(pipeline_key)
+
+        if node.namespace:
+            nodes[task_id]["modular_pipelines"].append(node.namespace)
+            modular_pipelines.add(node.namespace)
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
