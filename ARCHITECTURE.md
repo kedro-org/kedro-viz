@@ -4,7 +4,7 @@ This document describes the high-level architecture of Kedro-Viz. This would be 
 
 See also the contributing docs, which walks through our set of guidelines and recommended best practices for our codebase. 
 
-# High-level Overview
+## High-level Overview
 
 ![Kedro-Viz entry point diagram](.github/img/app-architecture-entry-points.png)
 
@@ -22,14 +22,16 @@ Currently, the API has 3 endpoints: `/api/pipeline/<id>`, `/api/node/<id>` and `
 
 Kedro-Viz can exist either as a standalone web-app (via spinning up the web-app from a bash command with data consumed from a running Kedro project), or as a react component that can be imported in any external web-app (consuming data from a JSON file instead of a running Kedro project).  
 
-# Data
+## Data
 
 ### Requirements
+
 Kedro-Viz requires three type of data input: pipeline data for the main flowchart and sidebar visualization (an object that includes a list of sub-pipelines, edges and nodes of the pipeline/project to visualize), node metadata for the metadata panel (for three different types of Kedro elements: task, parameters and datasets; each element type requires a different set of fields within the object), and data from localStorage in the user's browser ( provided that the user has previously launched Kedro-Viz on their browser ). 
 
 The app supports the loading of synchronous data via the `/api/main` endpoint, and asynchronous data via the Kedro-Viz server for both the `/api/pipeline<id>` and `/api/node/<id>` endpoints. 
 
 ### origins / sources
+
 As a standalone app, Kedro-Viz can either obtains its pipeline data from the server via a running kedro project, or if during app development, from a fixed mock data source (in the form of JSON file within the app, such as `animals.mock.json`, `demo.mock.json` ). 
 
 As a library import (via npm), the Kedro-Viz component allows pipeline data to be passed on as the `data` prop from the external parent react app, in the form as shown below:
@@ -41,6 +43,7 @@ The node metadata are obtained by calling the `/nodes/<id>` endpoint on the kedr
 Kedro-Viz also extracts localStorage data from the user's browser for app state data (such as `node`, `pipeline`, `tags`, `theme`, etc) that is stored from the user's last session, while extracting the user's preference for flags settings via the browser url. (please refer to lower sections for details on flags)
 
 ### data flow
+
 ![Kedro-Viz data flow diagram](/.github/img/app-architecture-data-flow.png)
 
 On initialisation, the app uses a string data token (e.g. 'json' or 'animals') to determine the data source. 
@@ -55,10 +58,12 @@ The app then initialises the Redux data store by merging together initial defaul
 
 Both sets of data (pipeline and non-pipeline state data) will be combined as initial state data and saved into the store to be used by the app throughout the app lifecycle. 
 
-# Codemap / features
+## Codemap / features
+
 This section outlines the important directories, its related purpose and data requirements within the app. 
 
-## data normalisation & Redux store
+### data normalisation & Redux store
+
 We use redux to manage our data flow and state manegement within our web-app. 
 
 Upon firing an action to obtain the pipeline data (either from the `/pipeline` endpoint or via a JSON file), the pipeline data is further prepared and stored within the redux store as a single source of truth within the app. 
@@ -66,17 +71,21 @@ Upon firing an action to obtain the pipeline data (either from the `/pipeline` e
 All data-fetching from the API and updates to the state within the app are strictly done via actions, while all data are consumed by components either directly through the state or selectors. 
 
 ### `/store/index.js`
+
 Being the entry point of the store, this section is where we define the store from the initial state (defined in `normalize-data.js` and `initial-state.js`), and contains all the neccessary subscribe functions that is called within the initial configuration of the store.  This includes the `updateGraphOnChange` function that listens and updates the store with latest calculations from the `getGraphInput` selector, as well as the `saveStateToLocalStorage` function that saves selected attributes in the localStorage of the user's browser. 
 
 ### `/store/normalize-data.js`
+
 This is the place where we define the initial instance of fields within the initial state that stores the pipeline data, including all sub-pipeline ids, nodes, edges, tags, etc. This also includes all the related functions for breaking down important fields of raw pipeline data (such as `nodes`, `edges` and `tags` ) into our defined format for its state before its addition into the state and the redux store in `index.js`. 
 
 ### `/store/initial-state.js`
+
 This is the place where we define the initial instance of the state for all non-pipeline / app-related fields, including `flags`, `themes`, loading states, visible elements within the app, etc, as well as the place where we define the final initial state of the store by combining the fields for the pipeline data as defined in `normalize-data.js` with the non-pipeline fields defined in this file. 
 
 Architectural invariant: the non-pipeline state takes in the values saved in the localStorage of the user's browser (given that there are saved values) during the initialization of the non-pipeline state to preserve the saved preferences of the user's previous session. 
 
-## `/actions`
+### `/actions`
+
 As mentioned in our previous section, we follow the redux pattern in using `actions` to perform all actions for data-fetching and updates to the state throughout the app. This is the directory where we state all defined actions for various types of data, breaking down into further files for each relevant type of data, along with its relevant suite of tests. 
 
 `index.js` lists all general actions defined for UI-related settings (such as toggling between themes, text labels, etc); `nodes.js` lists all actions related to the data-fetching and display of node metadata (for the node metadata panel); `pipelines.js` lists all actions related to the data-fetching and updating of the pipeline data, where, on having triggered an async action to fetch pipeline data, all raw pipeline data returned from the API will be further processed and updated in the state via the `loadPipelineData` function in `pipelines.js`. 
@@ -84,16 +93,19 @@ As mentioned in our previous section, we follow the redux pattern in using `acti
 `graph.js` lists all actions related to the toggling of elements on the flowchart / pipeline graph. 
 
 ### `/reducers`
+
 We utiilze reducers to format any raw data from the API and update our state according to any triggered actions. Similar to actions, we break down into seperate files for each data type, such as `nodes.js`, `pipeline.js`, etc.
 
 One important concept to note is that the `nodeReducer` in `nodes.js` is where the raw node metadata from the API gets prepared before updating the state. 
 
 ### `/selectors`
+
 For data derived from calculation from the state, we utiilze reducers to perform our calcuations and prepare our data for specfic use cases for different parts of the app. 
 
 For example, `getGraphLayout` within `layout.js` prepares an input object containing all `nodes`, `edges`, `layers`, and status of the graph flag to be imported as a prop into the flowchart component. 
 
 ### `/utils`
+
 The utils folder contains a set of data and functions that are utilized throughout the app. 
 
 `/data` contains a series of json files that serves as mock data for the tests, which along with `state.mock.js`, provides a set of mock data and state that are heavily utilized in the test suites within the app. 
@@ -107,12 +119,15 @@ The utils folder contains a set of data and functions that are utilized througho
 `flags.js` provides all functions related to the configuration of the feature flag object that acts as a control on experimental features in Kedro-Viz. (For further details please refer to the 'Cross Cutting Concern' section below.)
 
 ### `/tools/test-lib` (for react-component import)
+
 Other than running as a stand-alone webapp, Kedro-Viz is also avaliable as an npm package to be imported in any external web project. The `test-lib` directory provides a react project that allows the testing Kedro-Viz as a npm package. (the page is accessible via the `npm lib-test` cli command.)
 
 ### Jest & React testing library
+
 All tests within Kedro-Viz are set up with Jest, with some tests set up using React testing library to utilize their `fireEvent` function. 
 
 ### D3 chart rendering, zoom & chartSize calcs
+
 The flowchart component, and all its related calculation relating to the zoom and chartSize calculation with the D3 library, is a major part of Kedro-Viz. The drawing and the calculation logic exists the various areas throughout the app.
 
 `/components/flowchart` is the component directory for the rendering of the pipeline flowchart; `index.js` contains all logic pertaining to the react lifecycles for the optimization of the rendering of the flowchart, while `draw.js` contains majority of the D3 zoom transition calculations and the rendering of the flowchart. 
