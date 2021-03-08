@@ -55,6 +55,14 @@ The app then initialises the Redux data store by merging together initial defaul
 
 Both sets of data (pipeline and non-pipeline state data) will be combined as initial state data and saved into the store to be used by the app throughout the app lifecycle. 
 
+# App structure
+
+![Kedro-Viz app architecture](.github/img/app-architecture.png)
+
+The above diagram illustrates the overall app structure, as well as the main data and events that are passed within those main parts of the app. 
+
+Please note that the above diagram is only an abstraction to convey a generealized view of the app, where are lot of the details are omitted. Please refer to the code for the latest development of the structure and set up of Kedro-viz. 
+
 # Codemap / features
 This section outlines the important directories, its related purpose and data requirements within the app. 
 
