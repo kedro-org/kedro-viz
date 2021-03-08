@@ -689,6 +689,10 @@ def _call_viz(
                 )
 
                 package_name = _get_project_metadata(project_path).package_name
+                if KEDRO_VERSION.match(">=0.17.1"):  # pragma: no cover
+                    from kedro.framework.project import configure_project
+
+                    configure_project(package_name)
                 session_kwargs = dict(
                     package_name=package_name,
                     project_path=project_path,
@@ -724,7 +728,6 @@ def _call_viz(
 if __name__ == "__main__":  # pragma: no cover
     import argparse
     from kedro.framework.startup import _get_project_metadata
-
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
     parser.add_argument("project_path", help="Path to a Kedro project")
