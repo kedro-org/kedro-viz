@@ -8,37 +8,37 @@ See also the contributing docs, which walks through our set of guidelines and re
 
 ![Kedro-Viz entry point diagram](.github/img/app-architecture-entry-points.png)
 
-On a high-level, Kedro-viz is a web-app that accepts pipeline data as an input and produces a interactive visualization graph to represent an overview of the current state of the pipeline of the Kedro project. 
+On a high-level, Kedro-Viz is a web-app that accepts pipeline data as an input and produces a interactive visualization graph to represent an overview of the current state of the pipeline of the Kedro project. 
 
-More specifically, kedro-viz consumes pipeline data in a specific object format that includes all pipelines, edges and nodes of the Kedro project, meanwhile the Kedro-viz API layer makes request to the Kedro project for further details of a node object, which will be requested and displayed on user clicking a node on the flowchart. 
+More specifically, Kedro-Viz consumes pipeline data in a specific object format that includes all pipelines, edges and nodes of the Kedro project, meanwhile the Kedro-Viz API layer makes request to the Kedro project for further details of a node object, which will be requested and displayed on user clicking a node on the flowchart. 
 
-One important thing to note is the concept of a 'node' in Kedro-viz, which is different from the concept of 'node' in Kedro. A 'node' on Kedro-viz refers to an element for display on the flowchart, which could be either a 'database', 'parameter' or 'task' element. Each node has its own `node-type`, which currently consists of 3 types: `task` (which refers to a Kedro node that is a python function that takes inputs and outputs),`parameters`, and `datasets`. 
+One important thing to note is the concept of a 'node' in Kedro-Viz, which is different from the concept of 'node' in Kedro. A 'node' on Kedro-Viz refers to an element for display on the flowchart, which could be either a 'database', 'parameter' or 'task' element. Each node has its own `node-type`, which currently consists of 3 types: `task` (which refers to a Kedro node that is a python function that takes inputs and outputs),`parameters`, and `datasets`. 
 
-An edge represents the link between 2 kedro-viz nodes, as represented by a line between 2 kedro-viz nodes. 
+An edge represents the link between 2 Kedro-Viz nodes, as represented by a line between 2 Kedro-Viz nodes. 
 
-Kedro-viz is made up of two main parts: the front-end web-app UI that is built on React, and an API layer that pulls data from the Kedro project on which Kedro-viz is running on. The web-app is developed on Javascript with the React library, while the API layer is written in Python. 
+Kedro-Viz is made up of two main parts: the front-end web-app UI that is built on React, and an API layer that pulls data from the Kedro project on which Kedro-Viz is running on. The web-app is developed on Javascript with the React library, while the API layer is written in Python. 
 
 Currently, the API has 3 endpoints: `/api/pipeline/<id>`, `/api/node/<id>` and `/api/main`. Each endpoint is called via actions within the app. 
 
-Kedro-viz can exist either as a standalone web-app (via spinning up the web-app from a bash command with data consumed from a running Kedro project), or as a react component that can be imported in any external web-app (consuming data from a JSON file instead of a running Kedro project).  
+Kedro-Viz can exist either as a standalone web-app (via spinning up the web-app from a bash command with data consumed from a running Kedro project), or as a react component that can be imported in any external web-app (consuming data from a JSON file instead of a running Kedro project).  
 
 # Data
 
 ### Requirements
-Kedro-viz requires three type of data input: pipeline data for the main flowchart and sidebar visualization (an object that includes a list of sub-pipelines, edges and nodes of the pipeline/project to visualize), node metadata for the metadata panel (for three different types of Kedro elements: task, parameters and datasets; each element type requires a different set of fields within the object), and data from localStorage in the user's browser ( provided that the user has previously launched Kedro-viz on their browser ). 
+Kedro-Viz requires three type of data input: pipeline data for the main flowchart and sidebar visualization (an object that includes a list of sub-pipelines, edges and nodes of the pipeline/project to visualize), node metadata for the metadata panel (for three different types of Kedro elements: task, parameters and datasets; each element type requires a different set of fields within the object), and data from localStorage in the user's browser ( provided that the user has previously launched Kedro-Viz on their browser ). 
 
-The app supports the loading of synchronous data via the `/api/main` endpoint, and asynchronous data via the kedro-viz server for both the `/api/pipeline<id>` and `/api/node/<id>` endpoints. 
+The app supports the loading of synchronous data via the `/api/main` endpoint, and asynchronous data via the Kedro-Viz server for both the `/api/pipeline<id>` and `/api/node/<id>` endpoints. 
 
 ### origins / sources
-As a standalone app, Kedro-viz can either obtains its pipeline data from the server via a running kedro project, or if during app development, from a fixed mock data source (in the form of JSON file within the app, such as `animals.mock.json`, `demo.mock.json` ). 
+As a standalone app, Kedro-Viz can either obtains its pipeline data from the server via a running kedro project, or if during app development, from a fixed mock data source (in the form of JSON file within the app, such as `animals.mock.json`, `demo.mock.json` ). 
 
-As a library import (via npm), the Kedro-viz component allows pipeline data to be passed on as the `data` prop from the external parent react app, in the form as shown below:
+As a library import (via npm), the Kedro-Viz component allows pipeline data to be passed on as the `data` prop from the external parent react app, in the form as shown below:
 
 `<KedroViz data={{ nodes: [...], etc }}} theme="dark" />`
 
-The node metadata are obtained by calling the `/nodes/<id>` endpoint on the kedro server, which will extract the node data from a running kedro project. Please note that given the node metadata information can only be extracted by the kedro-server (given the dynamic nature of the data), hence the Kedro-viz component library currently does not support the display of node metadata. 
+The node metadata are obtained by calling the `/nodes/<id>` endpoint on the kedro server, which will extract the node data from a running kedro project. Please note that given the node metadata information can only be extracted by the kedro-server (given the dynamic nature of the data), hence the Kedro-Viz component library currently does not support the display of node metadata. 
 
-Kedro-viz also extracts localStorage data from the user's browser for app state data (such as `node`, `pipeline`, `tags`, `theme`, etc) that is stored from the user's last session, while extracting the user's preference for flags settings via the browser url. (please refer to lower sections for details on flags)
+Kedro-Viz also extracts localStorage data from the user's browser for app state data (such as `node`, `pipeline`, `tags`, `theme`, etc) that is stored from the user's last session, while extracting the user's preference for flags settings via the browser url. (please refer to lower sections for details on flags)
 
 ### data flow
 ![Kedro-Viz data flow diagram](/.github/img/app-architecture-data-flow.png)
@@ -115,13 +115,13 @@ The utils folder contains a set of data and functions that are utilized througho
 `flags.js` provides all functions related to the configuration of the feature flag object that acts as a control on experimental features in Kedro-Viz. (For further details please refer to the 'Cross Cutting Concern' section below.)
 
 ### `/tools/test-lib` (for react-component import)
-Other than running as a stand-alone webapp, Kedro-viz is also avaliable as an npm package to be imported in any external web project. The `test-lib` directory provides a react project that allows the testing Kedro-viz as a npm package. (the page is accessible via the `npm lib-test` cli command.)
+Other than running as a stand-alone webapp, Kedro-Viz is also avaliable as an npm package to be imported in any external web project. The `test-lib` directory provides a react project that allows the testing Kedro-Viz as a npm package. (the page is accessible via the `npm lib-test` cli command.)
 
 ### Jest & React testing library
-All tests within Kedro-viz are set up with Jest, with some tests set up using React testing library to utilize their `fireEvent` function. 
+All tests within Kedro-Viz are set up with Jest, with some tests set up using React testing library to utilize their `fireEvent` function. 
 
 ### D3 chart rendering, zoom & chartSize calcs
-The flowchart component, and all its related calculation relating to the zoom and chartSize calculation with the D3 library, is a major part of Kedro-viz. The drawing and the calculation logic exists the various areas throughout the app.
+The flowchart component, and all its related calculation relating to the zoom and chartSize calculation with the D3 library, is a major part of Kedro-Viz. The drawing and the calculation logic exists the various areas throughout the app.
 
 `/components/flowchart` is the component directory for the rendering of the pipeline flowchart; `index.js` contains all logic pertaining to the react lifecycles for the optimization of the rendering of the flowchart, while `draw.js` contains majority of the D3 zoom transition calculations and the rendering of the flowchart. 
 
