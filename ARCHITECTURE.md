@@ -31,7 +31,7 @@ When importing Kedro-Viz from npm, you can pass pipeline data to the component v
 
 On initialisation, the app uses a string data token (e.g. 'json' or 'animals') to [determine the data source](CONTRIBUTING.md#data-sources).
 
-You can find example datasets in [/src/utils/data/](/src/utils/data/), which cover the basic API structure.
+You can find example datasets in [/src/utils/data/](/src/utils/data/), which illustrate the basic API structure.
 
 ## Synchronous data loading
 
@@ -75,7 +75,7 @@ React components are all to be found in `/src/components/`. The top-level React 
 
 The `App` component contains the [Redux store Provider](https://react-redux.js.org/api/provider), as well as the `Wrapper` component, which provides the outermost HTML parent elements, and the main presentation components such as the `Sidebar`, `FlowChart` and `MetaData` panel, among others.
 
-## Data flow
+## State management
 
 ![Kedro-Viz app architecture](.github/img/app-architecture.png)
 
