@@ -41,6 +41,11 @@ export const flags = {
     default: false,
     icon: '{}',
   },
+  sizewarning: {
+    description: 'Show a warning before rendering very large graphs',
+    default: true,
+    icon: '🐳',
+  },
 };
 
 export const sidebar = {

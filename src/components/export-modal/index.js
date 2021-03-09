@@ -19,7 +19,7 @@ const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
       onClose={() => onToggle(false)}
       theme={theme}
       visible={visible.exportModal}>
-      <div className="pipeline-icon-modal">
+      <div className="pipeline-export-modal">
         <Button
           theme={theme}
           onClick={() => {

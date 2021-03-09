@@ -5,7 +5,7 @@ import { mockState, setup } from '../../utils/state.mock';
 describe('ExportModal', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<ExportModal />);
-    expect(wrapper.find('.pipeline-icon-modal').length).toBe(1);
+    expect(wrapper.find('.pipeline-export-modal').length).toBe(1);
   });
 
   it('maps state to props', () => {

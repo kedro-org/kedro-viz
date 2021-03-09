@@ -75,6 +75,12 @@ React components are all to be found in `/src/components/`. The top-level React 
 
 The `App` component contains the [Redux store Provider](https://react-redux.js.org/api/provider), as well as the `Wrapper` component, which provides the outermost HTML parent elements, and the main presentation components such as the `Sidebar`, `FlowChart` and `MetaData` panel, among others.
 
+## Data flow
+
+![Kedro-Viz app architecture](.github/img/app-architecture.png)
+
+Kedro-Viz uses Redux to manage state across the application. For example, the zoom level is synchronised between the MiniMap and FlowChart components by storing the current zoom level and chart dimensions in the central store, and dispatching actions to update this value. These actions first check the origin of the request before dispatching, in order to avoid a circular loop.
+
 ## Actions
 
 Redux actions are placed in `/src/actions/`. Where possible, actions are grouped into related files. The `/src/actions/index.js` file contains miscellaneous other actions that didn't fall into any specific group.
@@ -108,8 +114,6 @@ A 'node' in Kedro-Viz is different from the concept of a 'node' in Kedro project
 - `parameter`: reusable config variables.
 
 An edge is a link between two Kedro-Viz nodes - that is, the input/output for a Kedro node - and is represented with an arrow.
-
-The zoom level is synchronised between the MiniMap and FlowChart components by storing the current zoom level and chart dimensions in the central store, and dispatching actions to update this value. These actions first check the origin of the request before dispatching, in order to avoid a circular loop.
 
 ## Layout calculations
 
