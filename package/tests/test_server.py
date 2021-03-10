@@ -181,6 +181,7 @@ def patched_create_session(mocker, tmp_path, dummy_layers):
 
     mocked_session = mocker.Mock()
     mocked_session.load_context = load_context
+    mocker.patch("kedro.framework.project.configure_project")
     return mocker.patch(
         "kedro.framework.session.KedroSession.create", return_value=mocked_session
     )
