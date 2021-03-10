@@ -52,6 +52,22 @@ describe('normalizeData', () => {
     expect(normalizeData(data).modularPipeline.ids).toHaveLength(0);
   });
 
+  it('should not add duplicate modular pipelines', () => {
+    const data = Object.assign({}, animals, {
+      modular_pipelines: [
+        {
+          id: 'pipeline1',
+          name: 'Pipeline 1',
+        },
+        {
+          id: 'pipeline1',
+          name: 'Pipeline 1',
+        },
+      ],
+    });
+    expect(normalizeData(data).modularPipeline.ids).toHaveLength(1);
+  });
+
   it('should not add layers if layers are not supplied', () => {
     const data = Object.assign({}, animals, { layers: undefined });
     data.nodes.forEach((node) => {
