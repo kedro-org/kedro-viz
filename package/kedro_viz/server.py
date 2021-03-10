@@ -39,6 +39,7 @@ import webbrowser
 from collections import defaultdict
 from contextlib import closing
 from functools import partial
+from itertools import chain
 from pathlib import Path
 from typing import Any, Dict, List, Set, Union
 
@@ -296,7 +297,7 @@ def _pretty_name(name: str) -> str:
     return " ".join(parts)
 
 
-def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
+def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
     """
     Format pipelines and catalog data from Kedro for kedro-viz.
 
@@ -317,9 +318,12 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
     # keep track of node_id -> set(child_node_ids) for layers sorting
     node_dependencies = defaultdict(set)
     tags = set()
+    # keep track of modular pipelines
+    modular_pipelines = set()
 
     for pipeline_key, pipeline in pipelines.items():
         pipelines_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
+        # modular_pipelines = set(chain.from_iterable([_expand_namespaces(x.namespace) for x in pipeline.nodes]))
         format_pipeline_data(
             pipeline_key,
             pipeline,
@@ -328,6 +332,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
             tags,
             edges_list,
             nodes_list,
+            modular_pipelines,
         )
 
     # sort tags
@@ -349,6 +354,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, list]:
         "layers": sorted_layers,
         "pipelines": pipelines_list,
         "selected_pipeline": selected_pipeline,
+        "modular_pipelines": list(modular_pipelines),
     }
 
 
@@ -366,6 +372,7 @@ def format_pipeline_data(
     tags: Set[str],
     edges_list: List[dict],
     nodes_list: List[dict],
+    modular_pipelines: Set[str]
 ) -> None:
     """Format pipeline and catalog data from Kedro for kedro-viz.
 
@@ -376,6 +383,7 @@ def format_pipeline_data(
         node_dependencies: Dictionary of id and node dependencies.
         edges_list: List of all edges.
         nodes_list: List of all nodes.
+        modular_pipelines: Set of pipelines a node is part of.
 
     """
     # keep_track of {data_set_namespace -> set(tags)}
@@ -398,10 +406,16 @@ def format_pipeline_data(
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
+                "modular_pipelines": sorted(modular_pipelines),
             }
             nodes_list.append(nodes[task_id])
         else:
             nodes[task_id]["pipelines"].append(pipeline_key)
+
+        if node.namespace:
+            if node.namespace not in nodes[task_id]["modular_pipelines"]:
+                nodes[task_id]["modular_pipelines"].append(_expand_namespaces(node.namespace))
+            # modular_pipelines.add(node.namespace)
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
@@ -462,6 +476,21 @@ def format_pipeline_data(
             nodes_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipelines"].append(pipeline_key)
+
+
+def _expand_namespaces(namespace):
+    namespace_list = []
+    if namespace:
+        split_namespace = namespace.split(".")
+        add_on_namespace = split_namespace[0]
+
+        namespace_list.append(add_on_namespace)
+        split_namespace.remove(add_on_namespace)
+
+        for i in range(len(split_namespace)):
+            add_on_namespace = f"{add_on_namespace}.{split_namespace[i]}"
+            namespace_list.append(add_on_namespace)
+    return namespace_list
 
 
 def _get_dataset_data_params(namespace: str):
