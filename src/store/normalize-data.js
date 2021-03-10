@@ -9,6 +9,10 @@ export const createInitialPipelineState = () => ({
     ids: [],
     name: {},
   },
+  modularPipeline: {
+    ids: [],
+    name: {},
+  },
   node: {
     ids: [],
     name: {},
@@ -26,6 +30,7 @@ export const createInitialPipelineState = () => ({
     parameters: {},
     filepath: {},
     datasetType: {},
+    modularPipelines: {},
   },
   nodeType: {
     ids: ['task', 'data', 'parameters'],
@@ -100,6 +105,20 @@ const addPipeline = (state) => (pipeline) => {
 };
 
 /**
+ * Add a new modular pipeline
+ * @param {string} modularPipeline.id - Unique namespace of the modular pipeline
+ * @param {string} modularPipeline.name - modular pipeline name
+ */
+const addModularPipeline = (state) => (modularPipeline) => {
+  const { id, name } = modularPipeline;
+  if (state.modularPipeline.name[id]) {
+    return;
+  }
+  state.modularPipeline.ids.push(id);
+  state.modularPipeline.name[id] = name;
+};
+
+/**
  * Add a new node if it doesn't already exist
  * @param {string} name - Default node name
  * @param {string} type - 'data' or 'task'
@@ -125,6 +144,7 @@ const addNode = (state) => (node) => {
   state.node.parameters[id] = node.parameters;
   state.node.filepath[id] = node.filepath;
   state.node.datasetType[id] = node.datasetType;
+  state.node.modularPipelines[id] = node.modular_pipelines;
 };
 
 /**
@@ -187,6 +207,9 @@ const normalizeData = (data) => {
       state.pipeline.main = data.selected_pipeline || state.pipeline.ids[0];
       state.pipeline.active = state.pipeline.main;
     }
+  }
+  if (data.modular_pipelines) {
+    data.modular_pipelines.forEach(addModularPipeline(state));
   }
   if (data.tags) {
     data.tags.forEach(addTag(state));
