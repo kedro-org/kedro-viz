@@ -109,6 +109,7 @@ The following flags are available to toggle experimental features:
 - `lazy` - From release v3.8.0. Improved sidebar performance. (default `false`)
 - `oldgraph` - From release v3.8.0. Display old version of graph (dagre algorithm) without improved graphing algorithm. (default `false`)
 - `sizewarning` - From release v3.9.1. Show a warning before rendering very large graphs. (default `true`)
+- `modularpipeline` - From release v3.X.X. Enables modular pipeline features. (default `false`)
 
 Note that newgraph has been removed from v3.8.0 onwards and is now the default functionality. Should there be issues with your project, see the oldgraph flag above.
 

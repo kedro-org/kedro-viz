@@ -46,6 +46,11 @@ export const flags = {
     default: true,
     icon: '🐳',
   },
+  modularpipeline: {
+    description: 'enables modular pipeline features',
+    default: false,
+    icon: '⛓️',
+  },
 };
 
 export const sidebar = {
