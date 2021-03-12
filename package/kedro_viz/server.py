@@ -323,7 +323,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
 
     for pipeline_key, pipeline in pipelines.items():
         pipelines_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
-        # modular_pipelines = set(chain.from_iterable([_expand_namespaces(x.namespace) for x in pipeline.nodes]))
+        modular_pipelines.update(set(chain.from_iterable([_expand_namespaces(x.namespace) for x in pipeline.nodes if x.namespace])))
         format_pipeline_data(
             pipeline_key,
             pipeline,
@@ -332,7 +332,6 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
             tags,
             edges_list,
             nodes_list,
-            modular_pipelines,
         )
 
     # sort tags
@@ -347,6 +346,9 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         else pipelines_list[0]["id"]
     )
 
+    sorted_modular_pipelines = [{"id": modular_pipeline, "name": _pretty_name(modular_pipeline.split(".")[-1])}
+                                for modular_pipeline in sorted(modular_pipelines)]
+
     return {
         "nodes": nodes_list,
         "edges": edges_list,
@@ -354,7 +356,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         "layers": sorted_layers,
         "pipelines": pipelines_list,
         "selected_pipeline": selected_pipeline,
-        "modular_pipelines": list(modular_pipelines),
+        "modular_pipelines": sorted_modular_pipelines,
     }
 
 
@@ -372,7 +374,6 @@ def format_pipeline_data(
     tags: Set[str],
     edges_list: List[dict],
     nodes_list: List[dict],
-    modular_pipelines: Set[str]
 ) -> None:
     """Format pipeline and catalog data from Kedro for kedro-viz.
 
@@ -406,16 +407,14 @@ def format_pipeline_data(
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
-                "modular_pipelines": sorted(modular_pipelines),
+                "modular_pipelines": [],
             }
             nodes_list.append(nodes[task_id])
         else:
             nodes[task_id]["pipelines"].append(pipeline_key)
 
-        if node.namespace:
-            if node.namespace not in nodes[task_id]["modular_pipelines"]:
-                nodes[task_id]["modular_pipelines"].append(_expand_namespaces(node.namespace))
-            # modular_pipelines.add(node.namespace)
+        if node.namespace and node.namespace not in nodes[task_id]["modular_pipelines"]:
+                nodes[task_id]["modular_pipelines"] += _expand_namespaces(node.namespace)
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
@@ -480,16 +479,15 @@ def format_pipeline_data(
 
 def _expand_namespaces(namespace):
     namespace_list = []
-    if namespace:
-        split_namespace = namespace.split(".")
-        add_on_namespace = split_namespace[0]
+    split_namespace = namespace.split(".")
 
-        namespace_list.append(add_on_namespace)
-        split_namespace.remove(add_on_namespace)
-
-        for i in range(len(split_namespace)):
+    add_on_namespace = ""
+    for i in range(len(split_namespace)):
+        if add_on_namespace:
             add_on_namespace = f"{add_on_namespace}.{split_namespace[i]}"
-            namespace_list.append(add_on_namespace)
+        else:
+            add_on_namespace = split_namespace[i]
+        namespace_list.append(add_on_namespace)
     return namespace_list
 
 

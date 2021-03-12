@@ -1,82 +1,57 @@
 {
   "edges": [
-    {
-      "source": "e4951252",
-      "target": "443cf06a"
-    },
-    {
-      "source": "c38d4c6a",
-      "target": "443cf06a"
-    },
-    {
-      "source": "f1f1425b",
-      "target": "443cf06a"
-    },
-    {
-      "source": "9d989e8d",
-      "target": "443cf06a"
-    },
-    {
-      "source": "443cf06a",
-      "target": "6525f2e6"
-    },
-    {
-      "source": "443cf06a",
-      "target": "091b5035"
-    },
-    {
-      "source": "9d989e8d",
-      "target": "f42dab68"
-    },
-    {
-      "source": "85c4cf64",
-      "target": "f42dab68"
-    },
-    {
-      "source": "0ae9e4de",
-      "target": "f42dab68"
-    },
-    {
-      "source": "09f5edeb",
-      "target": "f42dab68"
-    },
-    {
-      "source": "f42dab68",
-      "target": "2cd4ba93"
-    },
-    {
-      "source": "f42dab68",
-      "target": "fac8f1a3"
-    },
-    {
-      "source": "2cd4ba93",
-      "target": "e27376a9"
-    },
-    {
-      "source": "6525f2e6",
-      "target": "e27376a9"
-    },
-    {
-      "source": "e27376a9",
-      "target": "1769e230"
-    }
+    { "source": "9d989e8d", "target": "f42dab68" },
+    { "source": "85c4cf64", "target": "f42dab68" },
+    { "source": "0ae9e4de", "target": "f42dab68" },
+    { "source": "09f5edeb", "target": "f42dab68" },
+    { "source": "f42dab68", "target": "2cd4ba93" },
+    { "source": "f42dab68", "target": "fac8f1a3" },
+    { "source": "e4951252", "target": "443cf06a" },
+    { "source": "c38d4c6a", "target": "443cf06a" },
+    { "source": "f1f1425b", "target": "443cf06a" },
+    { "source": "9d989e8d", "target": "443cf06a" },
+    { "source": "443cf06a", "target": "6525f2e6" },
+    { "source": "443cf06a", "target": "091b5035" },
+    { "source": "2cd4ba93", "target": "e27376a9" },
+    { "source": "6525f2e6", "target": "e27376a9" },
+    { "source": "e27376a9", "target": "1769e230" }
   ],
   "layers": ["raw", "feature", "primary", "model output"],
-  "nodes": [
+  "modular_pipelines": [
     {
-      "full_name": "salmon",
-      "id": "443cf06a",
-      "name": "salmon",
-      "pipelines": ["de", "__default__"],
-      "tags": ["small"],
-      "type": "task"
+      "id": "pipeline1",
+      "name": "Pipeline1"
     },
+    {
+      "id": "pipeline1.data_engineering",
+      "name": "Data Engineering"
+    },
+    {
+      "id": "pipeline1.data_engineering.data_preprocessing",
+      "name": "Data Preprocessing"
+    }
+  ],
+  "nodes": [
     {
       "full_name": "shark",
       "id": "f42dab68",
+      "modular_pipelines": [
+        "pipeline1",
+        "pipeline1.data_engineering",
+        "pipeline1.data_engineering.data_preprocessing"
+      ],
       "name": "shark",
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium"],
+      "type": "task"
+    },
+    {
+      "full_name": "salmon",
+      "id": "443cf06a",
+      "modular_pipelines": ["pipeline1", "pipeline1.data_engineering"],
+      "name": "salmon",
+      "pipelines": ["de", "__default__"],
+      "tags": ["small"],
       "type": "task"
     },
     {
@@ -181,6 +156,7 @@
     {
       "full_name": "trout",
       "id": "e27376a9",
+      "modular_pipelines": [],
       "name": "trout",
       "pipelines": ["ds", "__default__"],
       "tags": [],

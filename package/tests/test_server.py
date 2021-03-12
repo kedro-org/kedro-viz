@@ -106,6 +106,7 @@ def de_pipeline():
                 outputs=["pig", "giraffe"],
                 name="shark",
                 tags=["medium", "large"],
+                namespace="pipeline1.data_engineering.data_preprocessing"
             ),
             node(
                 salmon,
@@ -113,6 +114,7 @@ def de_pipeline():
                 outputs=["sheep", "horse"],
                 name="salmon",
                 tags=["small"],
+                namespace="pipeline1.data_engineering"
             ),
         ]
     )
@@ -478,10 +480,12 @@ def test_pipeline_flag(cli_runner, client):
             {"source": "e27376a9", "target": "1769e230"},
         ],
         "layers": ["feature", "primary", "model output"],
+        "modular_pipelines": [],
         "nodes": [
             {
                 "full_name": "trout",
                 "id": "e27376a9",
+                "modular_pipelines": [],
                 "name": "trout",
                 "pipelines": ["ds"],
                 "tags": [],
