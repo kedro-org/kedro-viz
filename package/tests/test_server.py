@@ -106,7 +106,7 @@ def de_pipeline():
                 outputs=["pig", "giraffe"],
                 name="shark",
                 tags=["medium", "large"],
-                namespace="pipeline1.data_engineering.data_preprocessing"
+                namespace="pipeline1.data_engineering.data_preprocessing",
             ),
             node(
                 salmon,
@@ -114,7 +114,7 @@ def de_pipeline():
                 outputs=["sheep", "horse"],
                 name="salmon",
                 tags=["small"],
-                namespace="pipeline1.data_engineering"
+                namespace="pipeline1.data_engineering",
             ),
         ]
     )

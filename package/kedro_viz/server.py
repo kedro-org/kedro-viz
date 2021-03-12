@@ -323,7 +323,17 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
 
     for pipeline_key, pipeline in pipelines.items():
         pipelines_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
-        modular_pipelines.update(set(chain.from_iterable([_expand_namespaces(x.namespace) for x in pipeline.nodes if x.namespace])))
+        modular_pipelines.update(
+            set(
+                chain.from_iterable(
+                    [
+                        _expand_namespaces(x.namespace)
+                        for x in pipeline.nodes
+                        if x.namespace
+                    ]
+                )
+            )
+        )
         format_pipeline_data(
             pipeline_key,
             pipeline,
@@ -346,8 +356,10 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         else pipelines_list[0]["id"]
     )
 
-    sorted_modular_pipelines = [{"id": modular_pipeline, "name": _pretty_name(modular_pipeline.split(".")[-1])}
-                                for modular_pipeline in sorted(modular_pipelines)]
+    sorted_modular_pipelines = [
+        {"id": modular_pipeline, "name": _pretty_name(modular_pipeline.split(".")[-1])}
+        for modular_pipeline in sorted(modular_pipelines)
+    ]
 
     return {
         "nodes": nodes_list,
@@ -414,7 +426,7 @@ def format_pipeline_data(
             nodes[task_id]["pipelines"].append(pipeline_key)
 
         if node.namespace and node.namespace not in nodes[task_id]["modular_pipelines"]:
-                nodes[task_id]["modular_pipelines"] += _expand_namespaces(node.namespace)
+            nodes[task_id]["modular_pipelines"] += _expand_namespaces(node.namespace)
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
@@ -482,11 +494,11 @@ def _expand_namespaces(namespace):
     split_namespace = namespace.split(".")
 
     add_on_namespace = ""
-    for i in range(len(split_namespace)):
+    for index, item in enumerate(split_namespace):
         if add_on_namespace:
-            add_on_namespace = f"{add_on_namespace}.{split_namespace[i]}"
+            add_on_namespace = f"{add_on_namespace}.{item}"
         else:
-            add_on_namespace = split_namespace[i]
+            add_on_namespace = item
         namespace_list.append(add_on_namespace)
     return namespace_list
 
