@@ -494,7 +494,7 @@ def _expand_namespaces(namespace):
     split_namespace = namespace.split(".")
 
     add_on_namespace = ""
-    for index, item in enumerate(split_namespace):
+    for _, item in enumerate(split_namespace):
         if add_on_namespace:
             add_on_namespace = f"{add_on_namespace}.{item}"
         else:
