@@ -396,7 +396,6 @@ def format_pipeline_data(
         node_dependencies: Dictionary of id and node dependencies.
         edges_list: List of all edges.
         nodes_list: List of all nodes.
-        modular_pipelines: Set of pipelines a node is part of.
 
     """
     # keep_track of {data_set_namespace -> set(tags)}
@@ -411,6 +410,10 @@ def format_pipeline_data(
         task_id = _hash(str(node))
         tags.update(node.tags)
         _JSON_NODES[task_id] = {"type": "task", "obj": node}
+
+        modular_pipelines = set()
+        modular_pipelines.update(_expand_namespaces(node.namespace))
+
         if task_id not in nodes:
             nodes[task_id] = {
                 "type": "task",
@@ -419,14 +422,11 @@ def format_pipeline_data(
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
-                "modular_pipelines": [],
+                "modular_pipelines": sorted(modular_pipelines),
             }
             nodes_list.append(nodes[task_id])
         else:
             nodes[task_id]["pipelines"].append(pipeline_key)
-
-        if node.namespace and node.namespace not in nodes[task_id]["modular_pipelines"]:
-            nodes[task_id]["modular_pipelines"] += _expand_namespaces(node.namespace)
 
         for data_set in node.inputs:
             namespace = data_set.split("@")[0]
@@ -461,6 +461,7 @@ def format_pipeline_data(
                 edges_list.append(edge)
             namespace_tags[namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
+
     # Parameters and data
     for namespace, tag_names in sorted(namespace_tags.items()):
         is_param = _is_namespace_param(namespace)
