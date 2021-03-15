@@ -8,7 +8,7 @@ We use [Prettier](https://prettier.io/), [ESLint](https://eslint.org/), and [sty
 
 Other than that, we mostly recommend following the [AirBnB JavaScript Style Guide](https://github.com/airbnb/javascript).
 
-##  Browser and device support
+## Browser and device support
 
 We aim to support recent versions of major modern browsers - i.e. Chome, Firefox, Edge, Safari, and Opera, on both MacOS and Windows. Keeping progressive enhancement in mind, we aim for decent mobile support where possible, i.e. nothing should be broken on mobile, but it's okay for mobile/older browsers to have a slightly degraded experience.
 
@@ -29,6 +29,7 @@ We recommend checking [axe](https://www.deque.com/axe/) and [Lighthouse](https:/
 Ensure that page content is marked up with [semantic HTML elements](https://html.com/semantic-markup/) to keep it as usable and accessible as possible.
 
 Avoid:
+
 ```jsx
 <div className="form">
   <div>Contact us</div>
@@ -38,7 +39,9 @@ Avoid:
   <div onClick={handleSubmit}>Submit</div>
 </div>
 ```
+
 Prefer:
+
 ```jsx
 <form onSubmit={handleSubmit}>
   <h1>Contact us</h1>
@@ -60,6 +63,7 @@ Because Kedro-Viz can be imported into other applications, we avoid ever setting
 In general, we try to avoid splitting up blocks and elements in our class names, in order make the full class-name easier to search. However in general, splitting modifiers is okay.
 
 Avoid:
+
 ```scss
 .pipeline-nodelist {
   &__list {
@@ -71,7 +75,9 @@ Avoid:
   }
 }
 ```
+
 Prefer:
+
 ```scss
 .pipeline-nodelist__list {
   @extend %nolist;
@@ -82,7 +88,7 @@ Prefer:
 }
 ```
 
-### Typography 
+### Typography
 
 Typography styles are set using the `.kedro` class. It should wrap all text elements, in order to enforce a consistent font-size/font-family etc, allowing the font-sizes to be set relatively using `em` but keeping them independent of parent app font styles. This class is [inherited from Kedro-UI](https://github.com/quantumblacklabs/kedro-ui/blob/master/src/styles/typography/styles.css), where it's used to establish a base of 10px allowing all other `em` based units to equal the equivalent in pixels divided by ten.
 
@@ -95,6 +101,7 @@ In general, we try to use `em` for styles that depend on font-size (e.g. text ma
 We use Sass variables to declare colours and reuse values wherever useful. It's not necessary to declare every CSS unit value as a variable, but if a value is used in multiple places (for related reasons), then it makes sense to make it a variable - either locally in the component, or application-wide in `src/styles/_variables.scss`. Using a named variable instead of a number clarifies intent, and helps avoid updates to the value in multiple places later on.
 
 Avoid:
+
 ```scss
 color: #001521;
 color: rgba(#001521, 0.5);
@@ -102,6 +109,7 @@ color: rgba(0, 0, 0, 0.5);
 ```
 
 Prefer:
+
 ```scss
 color: $color-bg-dark-1;
 color: rgba($color-bg-dark-1, 0.5);
@@ -113,6 +121,7 @@ color: rgba(black, 0.5);
 Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. To simplify code and avoid increasing CSS specificity, we use CSS custom properties to handle theme colours. We recommend that you use these too where possible - they are defined in the App component.
 
 Avoid:
+
 ```scss
 .pipeline-title {
   .kui-theme--light & {
@@ -126,6 +135,7 @@ Avoid:
 ```
 
 Prefer:
+
 ```scss
 .kui-theme--light {
   --color-bg-1: $color-bg-light-1;
@@ -146,7 +156,7 @@ Prefer:
 
 Although it works in regular development (because this project uses React-Scripts), you should avoid importing non-standard file-types like `.scss` and `.svg` directly into JavaScript files. This is because these won't work without specific webpack loaders, and breaks when Kedro-Viz is imported into other projects. The `lib-test` testing suite exists partly for this reason, to check that Kedro-Viz still works when imported as a component library into a fairly standard JS app.
 
-###  Testing
+### Testing
 
 In accordance with McKinsey standards, we aim to maintain at least a test coverage of at least 70% averaged across the codebase. As it's not practical to write tests for every JavaScript file, we usually aim for closer to 90% on most files, so that the project average continues to exceed the expected minimum standard.
 
@@ -194,12 +204,14 @@ Resolves: #123
 Like commit titles, PR titles should ideally be written in the imperative present tense and should summarise the changes made. If there is a JIRA ticket for the task, add the ticket ID to the PR/issue title.
 
 Avoid:
+
 > API queries are broken
 
 Prefer:
+
 > [KED-1234] Fix broken API queries
 
-PR descritions should contain a description of what's been changed and why. Use the 'Development notes' and 'QA notes' sections to explain anything that maintainers should be aware of when reviewing the code and QAing the branch, respectively. For instance, if there's something you were unsure about, mention it in your notes so that the reviewer knows to pay it extra attention - maybe they'll have a suggestion for how you can improve it. 
+PR descritions should contain a description of what's been changed and why. Use the 'Development notes' and 'QA notes' sections to explain anything that maintainers should be aware of when reviewing the code and QAing the branch, respectively. For instance, if there's something you were unsure about, mention it in your notes so that the reviewer knows to pay it extra attention - maybe they'll have a suggestion for how you can improve it.
 
 When merging a PR, use a squash commit. Remove the JIRA ticket ID from the merge commit subject, as including it often truncates the commit subject. If necessary, edit the commit subject to ensure that it fits under 50 characters. Click the 'Cancel' link to avoid updating the PR title when you do this.
 
