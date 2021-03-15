@@ -97,18 +97,14 @@ def get_pipeline(name: str = None):
 def ds_pipeline():
     ds_pipeline = Pipeline(
         [
-            node(
-                trout,
-                inputs=["pig", "sheep"],
-                outputs=["whale"],
-                name="trout"),
+            node(trout, inputs=["pig", "sheep"], outputs=["whale"], name="trout"),
             node(
                 tuna,
                 inputs=["sheep"],
                 outputs=["dolphin"],
                 name="tuna",
                 namespace="pipeline2.data_science",
-            )
+            ),
         ]
     )
     return ds_pipeline
@@ -501,11 +497,13 @@ def test_pipeline_flag(cli_runner, client):
             {"source": "689862f0", "target": "4bbf2ddc"},
             {"source": "2cd4ba93", "target": "e27376a9"},
             {"source": "6525f2e6", "target": "e27376a9"},
-            {"source": "e27376a9", "target": "1769e230"}],
+            {"source": "e27376a9", "target": "1769e230"},
+        ],
         "layers": ["feature", "primary", "model output"],
         "modular_pipelines": [
             {"id": "pipeline2", "name": "Pipeline2"},
-            {"id": "pipeline2.data_science", "name": "Data Science"}],
+            {"id": "pipeline2.data_science", "name": "Data Science"},
+        ],
         "nodes": [
             {
                 "full_name": "tuna",
@@ -514,57 +512,57 @@ def test_pipeline_flag(cli_runner, client):
                 "name": "tuna",
                 "pipelines": ["ds"],
                 "tags": [],
-                "type": "task"
+                "type": "task",
             },
-           {
-               "full_name": "trout",
+            {
+                "full_name": "trout",
                 "id": "e27376a9",
                 "modular_pipelines": [],
                 "name": "trout",
                 "pipelines": ["ds"],
                 "tags": [],
-                "type": "task"
-           },
-           {
-               "full_name": "dolphin",
+                "type": "task",
+            },
+            {
+                "full_name": "dolphin",
                 "id": "4bbf2ddc",
                 "layer": None,
                 "name": "Dolphin",
                 "pipelines": ["ds"],
                 "tags": [],
-                "type": "data"
-           },
-           {
-               "full_name": "pig",
+                "type": "data",
+            },
+            {
+                "full_name": "pig",
                 "id": "2cd4ba93",
                 "layer": "feature",
                 "name": "Pig",
                 "pipelines": ["ds"],
                 "tags": [],
-                "type": "data"
-           },
-           {
-               "full_name": "sheep",
+                "type": "data",
+            },
+            {
+                "full_name": "sheep",
                 "id": "6525f2e6",
                 "layer": "primary",
                 "name": "Sheep",
                 "pipelines": ["ds"],
                 "tags": [],
-                "type": "data"
-           },
-           {
-               "full_name": "whale",
+                "type": "data",
+            },
+            {
+                "full_name": "whale",
                 "id": "1769e230",
                 "layer": "model output",
                 "name": "Whale",
                 "pipelines": ["ds"],
                 "tags": [],
-                "type": "data"
-           }
+                "type": "data",
+            },
         ],
         "pipelines": [{"id": "ds", "name": "Ds"}],
         "selected_pipeline": "ds",
-        "tags": []
+        "tags": [],
     }
 
 

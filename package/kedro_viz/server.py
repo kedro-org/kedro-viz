@@ -39,7 +39,6 @@ import webbrowser
 from collections import defaultdict
 from contextlib import closing
 from functools import partial
-from itertools import chain
 from pathlib import Path
 from typing import Any, Dict, List, Set, Union
 
@@ -323,17 +322,6 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
 
     for pipeline_key, pipeline in pipelines.items():
         pipelines_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
-        modular_pipelines.update(
-            set(
-                chain.from_iterable(
-                    [
-                        _expand_namespaces(x.namespace)
-                        for x in pipeline.nodes
-                        if x.namespace
-                    ]
-                )
-            )
-        )
         format_pipeline_data(
             pipeline_key,
             pipeline,
@@ -342,6 +330,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
             tags,
             edges_list,
             nodes_list,
+            modular_pipelines,
         )
 
     # sort tags
@@ -386,6 +375,7 @@ def format_pipeline_data(
     tags: Set[str],
     edges_list: List[dict],
     nodes_list: List[dict],
+    modular_pipelines: Set[str],
 ) -> None:
     """Format pipeline and catalog data from Kedro for kedro-viz.
 
@@ -396,6 +386,7 @@ def format_pipeline_data(
         node_dependencies: Dictionary of id and node dependencies.
         edges_list: List of all edges.
         nodes_list: List of all nodes.
+        modular_pipelines: Set of modular pipelines for all nodes.
 
     """
     # keep_track of {data_set_namespace -> set(tags)}
@@ -411,7 +402,6 @@ def format_pipeline_data(
         tags.update(node.tags)
         _JSON_NODES[task_id] = {"type": "task", "obj": node}
 
-        modular_pipelines = set()
         modular_pipelines.update(_expand_namespaces(node.namespace))
 
         if task_id not in nodes:
@@ -422,7 +412,7 @@ def format_pipeline_data(
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
-                "modular_pipelines": sorted(modular_pipelines),
+                "modular_pipelines": _expand_namespaces(node.namespace),
             }
             nodes_list.append(nodes[task_id])
         else:
@@ -564,7 +554,7 @@ def pipeline_data(pipeline_id):
             "layers": _DATA["layers"],
             "pipelines": _DATA["pipelines"],
             "selected_pipeline": current_pipeline["id"],
-            "modular_pipelines": sorted(modular_pipelines)
+            "modular_pipelines": sorted(modular_pipelines),
         }
     )
 
