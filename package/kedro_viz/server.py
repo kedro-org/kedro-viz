@@ -490,16 +490,17 @@ def format_pipeline_data(
 
 
 def _expand_namespaces(namespace):
+    if not namespace:
+        return []
     namespace_list = []
-    split_namespace = namespace.split(".")
-
-    add_on_namespace = ""
-    for _, item in enumerate(split_namespace):
-        if add_on_namespace:
-            add_on_namespace = f"{add_on_namespace}.{item}"
+    namespace_chunks = namespace.split(".")
+    prefix = ""
+    for chunk in namespace_chunks:
+        if prefix:
+            prefix = f"{prefix}.{chunk}"
         else:
-            add_on_namespace = item
-        namespace_list.append(add_on_namespace)
+            prefix = chunk
+        namespace_list.append(prefix)
     return namespace_list
 
 
@@ -540,11 +541,14 @@ def pipeline_data(pipeline_id):
 
     pipeline_node_ids = set()
     pipeline_nodes = []
+    modular_pipelines = set()
 
     for node in _DATA["nodes"]:
         if pipeline_id in node["pipelines"]:
             pipeline_node_ids.add(node["id"])
             pipeline_nodes.append(node)
+            if node.get("modular_pipelines"):
+                modular_pipelines.update(node.get("modular_pipelines"))
 
     pipeline_edges = []
     for edge in _DATA["edges"]:
@@ -559,6 +563,7 @@ def pipeline_data(pipeline_id):
             "layers": _DATA["layers"],
             "pipelines": _DATA["pipelines"],
             "selected_pipeline": current_pipeline["id"],
+            "modular_pipelines": sorted(modular_pipelines)
         }
     )
 

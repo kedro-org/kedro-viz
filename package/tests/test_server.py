@@ -71,6 +71,10 @@ def trout(pig, sheep):
     return pig
 
 
+def tuna(sheep):
+    return sheep
+
+
 def get_pipelines():
     return {
         "de": de_pipeline(),
@@ -92,7 +96,20 @@ def get_pipeline(name: str = None):
 
 def ds_pipeline():
     ds_pipeline = Pipeline(
-        [node(trout, inputs=["pig", "sheep"], outputs=["whale"], name="trout")]
+        [
+            node(
+                trout,
+                inputs=["pig", "sheep"],
+                outputs=["whale"],
+                name="trout"),
+            node(
+                tuna,
+                inputs=["sheep"],
+                outputs=["dolphin"],
+                name="tuna",
+                namespace="pipeline2.data_science",
+            )
+        ]
     )
     return ds_pipeline
 
@@ -106,7 +123,7 @@ def de_pipeline():
                 outputs=["pig", "giraffe"],
                 name="shark",
                 tags=["medium", "large"],
-                namespace="pipeline1.data_engineering.data_preprocessing",
+                namespace="pipeline1.data_engineering",
             ),
             node(
                 salmon,
@@ -114,7 +131,6 @@ def de_pipeline():
                 outputs=["sheep", "horse"],
                 name="salmon",
                 tags=["small"],
-                namespace="pipeline1.data_engineering",
             ),
         ]
     )
@@ -339,6 +355,8 @@ def test_pipelines_endpoint(cli_runner, client):
     # make sure only edges in the selected pipelines are returned
 
     assert data["edges"] == [
+        {"source": "6525f2e6", "target": "689862f0"},
+        {"source": "689862f0", "target": "4bbf2ddc"},
         {"source": "2cd4ba93", "target": "e27376a9"},
         {"source": "6525f2e6", "target": "e27376a9"},
         {"source": "e27376a9", "target": "1769e230"},
@@ -346,6 +364,9 @@ def test_pipelines_endpoint(cli_runner, client):
 
     # make sure all tags are returned
     assert data["tags"] == EXPECTED_PIPELINE_DATA["tags"]
+
+    # make sure only the list of modular pipelines is returned for the selected pipeline
+    assert data["modular_pipelines"] == ["pipeline2", "pipeline2.data_science"]
 
 
 @_USE_PATCHED_CONTEXT
@@ -476,53 +497,74 @@ def test_pipeline_flag(cli_runner, client):
 
     assert data == {
         "edges": [
+            {"source": "6525f2e6", "target": "689862f0"},
+            {"source": "689862f0", "target": "4bbf2ddc"},
             {"source": "2cd4ba93", "target": "e27376a9"},
             {"source": "6525f2e6", "target": "e27376a9"},
-            {"source": "e27376a9", "target": "1769e230"},
-        ],
+            {"source": "e27376a9", "target": "1769e230"}],
         "layers": ["feature", "primary", "model output"],
-        "modular_pipelines": [],
+        "modular_pipelines": [
+            {"id": "pipeline2", "name": "Pipeline2"},
+            {"id": "pipeline2.data_science", "name": "Data Science"}],
         "nodes": [
             {
-                "full_name": "trout",
+                "full_name": "tuna",
+                "id": "689862f0",
+                "modular_pipelines": ["pipeline2", "pipeline2.data_science"],
+                "name": "tuna",
+                "pipelines": ["ds"],
+                "tags": [],
+                "type": "task"
+            },
+           {
+               "full_name": "trout",
                 "id": "e27376a9",
                 "modular_pipelines": [],
                 "name": "trout",
                 "pipelines": ["ds"],
                 "tags": [],
-                "type": "task",
-            },
-            {
-                "full_name": "pig",
+                "type": "task"
+           },
+           {
+               "full_name": "dolphin",
+                "id": "4bbf2ddc",
+                "layer": None,
+                "name": "Dolphin",
+                "pipelines": ["ds"],
+                "tags": [],
+                "type": "data"
+           },
+           {
+               "full_name": "pig",
                 "id": "2cd4ba93",
                 "layer": "feature",
                 "name": "Pig",
                 "pipelines": ["ds"],
                 "tags": [],
-                "type": "data",
-            },
-            {
-                "full_name": "sheep",
+                "type": "data"
+           },
+           {
+               "full_name": "sheep",
                 "id": "6525f2e6",
                 "layer": "primary",
                 "name": "Sheep",
                 "pipelines": ["ds"],
                 "tags": [],
-                "type": "data",
-            },
-            {
-                "full_name": "whale",
+                "type": "data"
+           },
+           {
+               "full_name": "whale",
                 "id": "1769e230",
                 "layer": "model output",
                 "name": "Whale",
                 "pipelines": ["ds"],
                 "tags": [],
-                "type": "data",
-            },
+                "type": "data"
+           }
         ],
         "pipelines": [{"id": "ds", "name": "Ds"}],
         "selected_pipeline": "ds",
-        "tags": [],
+        "tags": []
     }
 
 
@@ -637,7 +679,7 @@ class TestRunViz:
 
         server.run_viz(local_ns=mocked_local_ns)
 
-        # we can't use assert_called_once_with because it doesn't work with functools.partial
+        # we can"t use assert_called_once_with because it doesn"t work with functools.partial
         # so we are comparing the call args one by one
         assert (
             len(mocked_process.mock_calls) == 2
