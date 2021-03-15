@@ -2,8 +2,6 @@
 
 Before you contribute front-end development effort to Kedro-Viz, here are our recommendations for code style, quirks, and best practices.
 
-<!-- @TODO table of contents -->
-
 ## Code style and linting
 
 We use [Prettier](https://prettier.io/), [ESLint](https://eslint.org/), and [stylelint](https://stylelint.io/) to lint our SCSS and JavaScript. For the most part, we use the default config - you can find specific details in the `.prettierrc`, `.eslintrc.json`, and `.stylelintrc` config files. We recommend that you install the Prettier, ESLint, and stylelint plugins for your text editor, and enable automatic formatting on save.
@@ -13,6 +11,10 @@ Other than that, we mostly recommend following the [AirBnB JavaScript Style Guid
 ##  Browser and device support
 
 We aim to support recent versions of major modern browsers - i.e. Chome, Firefox, Edge, Safari, and Opera, on both MacOS and Windows. Keeping progressive enhancement in mind, we aim for decent mobile support where possible, i.e. nothing should be broken on mobile, but it's okay for mobile/older browsers to have a slightly degraded experience.
+
+## Kedro UI
+
+Kedro-Viz uses [Kedro-UI](https://quantumblacklabs.github.io/kedro-ui/), our UI component library, for generic/reusable interface components like buttons, modals, dropdowns, etc. Where possible, we recommend using elements from Kedro-UI over designing and building our own.
 
 ## Accessibility
 
@@ -53,9 +55,40 @@ Prefer:
 
 This project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand. To impove CSS maintainability we [reduce rule specificity](https://css-tricks.com/strategies-keeping-css-specificity-low/) and avoid nesting CSS selectors.
 
-We use the `pipeline-` prefix for most HTML/CSS classes, to reduce the risk of clashes in the global namespace when this project is imported into other applications. It's important never to use global element selectors or generic classes like `.header`.
+Because Kedro-Viz can be imported into other applications, we avoid ever setting global styles. We use the `pipeline-` prefix for most HTML/CSS classes, to reduce the risk of clashes in the global namespace when this project is imported into other applications. It's important never to use global element selectors or generic classes like `.header`.
 
-<!-- @TODO Explain usage of the 'kedro' class, Kedro-UI, and webfonts -->
+In general, we try to avoid splitting up blocks and elements in our class names, in order make the full class-name easier to search. However in general, splitting modifiers is okay.
+
+Avoid:
+```scss
+.pipeline-nodelist {
+  &__list {
+    @extend %nolist;
+
+    &--nested {
+      margin: 0 0 1.2em;
+    }
+  }
+}
+```
+Prefer:
+```scss
+.pipeline-nodelist__list {
+  @extend %nolist;
+
+  &--nested {
+    margin: 0 0 1.2em;
+  }
+}
+```
+
+### Typography 
+
+Typography styles are set using the `.kedro` class. It should wrap all text elements, in order to enforce a consistent font-size/font-family etc, allowing the font-sizes to be set relatively using `em` but keeping them independent of parent app font styles. This class is [inherited from Kedro-UI](https://github.com/quantumblacklabs/kedro-ui/blob/master/src/styles/typography/styles.css), where it's used to establish a base of 10px allowing all other `em` based units to equal the equivalent in pixels divided by ten.
+
+### Units
+
+In general, we try to use `em` for styles that depend on font-size (e.g. text margins), `%` for relative layout positioning, and `px` for absolute layout positioning. Avoid using `rem` or viewport units (e.g. `vh`/`vw`/`vmin`/`vmax`) in code that's included in the package library, as these can cause side-effects if the parent app modifies the base font-size or the app is not full-screen.
 
 ### Variables
 
@@ -107,12 +140,6 @@ Prefer:
 }
 ```
 
-<!-- @TODO -->
-
-### Units (em, %, px, etc)
-
-<!-- @TODO -->
-
 ## JavaScript
 
 ### Imports
@@ -124,8 +151,6 @@ Although it works in regular development (because this project uses React-Script
 In accordance with McKinsey standards, we aim to maintain at least a test coverage of at least 70% averaged across the codebase. As it's not practical to write tests for every JavaScript file, we usually aim for closer to 90% on most files, so that the project average continues to exceed the expected minimum standard.
 
 We use [Jest](https://jestjs.io/), [Enzyme](https://enzymejs.github.io/enzyme/), and [Testing Library](https://testing-library.com/) for JavaScript testing. Most of the older tests are written with Enzyme, but we are beginning to write more tests using Testing Library as it is more flexible for testing certain browser APIs. Either is acceptable. To help with mocking the Redux store, Enzyme helper utilities can be found in `/src/utils/state.mock.js`.
-
-<!-- @TODO Explain the usage of the different datasets in testing, and add more comments explaining how the load-data mock works. -->
 
 ## Git and Github
 
@@ -179,7 +204,3 @@ PR descritions should contain a description of what's been changed and why. Use 
 When merging a PR, use a squash commit. Remove the JIRA ticket ID from the merge commit subject, as including it often truncates the commit subject. If necessary, edit the commit subject to ensure that it fits under 50 characters. Click the 'Cancel' link to avoid updating the PR title when you do this.
 
 Add a detailed description to the merge commit - usually, the PR description will suffice. This commit is what shows up in the git blame/history, so it’s critical to make sure that it’s useful and informative.
-
-### Deployment process
-
-<!-- @TODO - should this be here? or in a different doc? -->
