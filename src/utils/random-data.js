@@ -414,7 +414,7 @@ class Pipeline {
    */
   all() {
     return {
-      randomData: true,
+      source: 'random',
       edges: this.edges,
       layers: LAYERS,
       nodes: this.nodes,

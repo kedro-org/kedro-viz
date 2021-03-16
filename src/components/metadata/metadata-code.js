@@ -14,14 +14,14 @@ hljs.registerLanguage('yaml', yaml);
  * A highlighted code panel
  */
 export const MetaDataCode = ({
-  randomData,
+  dataIsRandom,
   sidebarVisible,
   visible = true,
   value = '',
 }) => {
   const codeRef = useRef();
 
-  if (randomData && !javascript) {
+  if (dataIsRandom && !javascript) {
     javascript = require('highlight.js/lib/languages/javascript');
     hljs.registerLanguage('javascript', javascript);
   }
@@ -48,7 +48,7 @@ export const MetaDataCode = ({
 };
 
 const mapStateToProps = (state) => ({
-  randomData: state.randomData,
+  dataIsRandom: state.dataSource === 'random',
   sidebarVisible: state.visible.sidebar,
 });
 

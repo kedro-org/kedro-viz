@@ -19,7 +19,7 @@ describe('normalizeData', () => {
   it('should return initialState if input is "json"', () => {
     expect(normalizeData('json')).toEqual({
       ...initialState,
-      asyncDataSource: true,
+      dataSource: 'json',
     });
   });
 
