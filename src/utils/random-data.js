@@ -203,7 +203,7 @@ class Pipeline {
     }
     node.filepath = getRandomName(randomNumber(10), '/');
     node.parameters = arrayToObject(
-      getNumberArray(this.utils.randomNumber(10)).map(() =>
+      getNumberArray(randomNumber(10)).map(() =>
         getRandomName(randomNumber(2), '_')
       ),
       () => this.utils.randomNumber(50) / 10
