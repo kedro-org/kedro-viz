@@ -201,7 +201,7 @@ class Pipeline {
     } else if (node.type === 'data') {
       node.datasetType = getRandomName(randomNumber(2));
     }
-    node.filepath = getRandomName(randomNumber(10, '/'));
+    node.filepath = getRandomName(randomNumber(10), '/');
     node.parameters = arrayToObject(
       getNumberArray(this.utils.randomNumber(10)).map(() =>
         getRandomName(randomNumber(2), '_')
