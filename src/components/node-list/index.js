@@ -7,6 +7,7 @@ import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData } from '../../selectors/tags';
+import { getModularPipelineNodes } from '../../selectors/modular-pipelines';
 import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import {
   loadNodeData,
@@ -41,6 +42,7 @@ const NodeListProvider = ({
   onToggleTagActive,
   onToggleTagFilter,
   onToggleTypeDisabled,
+  modularPipelineNodes,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const items = getFilteredItems({
@@ -164,6 +166,7 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   sections: getSections(state),
   types: getNodeTypes(state),
+  modularPipelineNodes: getModularPipelineNodes(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
