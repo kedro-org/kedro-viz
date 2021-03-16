@@ -12,8 +12,10 @@ export const getModularPipelineNodes = createSelector(
   (allNodes, modularPipelines) => {
     return modularPipelines.map((modularPipeline) => {
       let nodes = [];
-      Object.keys(allNodes).map(
-        (key) => allNodes[key].includes(modularPipeline) && nodes.push(key)
+      Object.keys(allNodes).map((key) =>
+        allNodes[key]
+          ? allNodes[key].includes(modularPipeline) && nodes.push(key)
+          : null
       );
       return {
         modularPipeline,
