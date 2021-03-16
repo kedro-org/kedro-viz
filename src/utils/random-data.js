@@ -193,12 +193,10 @@ class Pipeline {
    * @param {object} node A single node object
    */
   getNodeMetaData(node) {
-    const { getRandom, getRandomName, randomNumber } = this.utils;
+    const { getRandomName, randomNumber } = this.utils;
 
     if (node.type === 'task') {
-      node.code = Pipeline.prototype[
-        getRandom(Object.getOwnPropertyNames(Pipeline.prototype))
-      ].toString();
+      node.code = this.generateCodeSnippet();
       node.docstring = getRandomName(randomNumber(10), '/');
     } else if (node.type === 'data') {
       node.datasetType = getRandomName(randomNumber(2));
@@ -210,6 +208,19 @@ class Pipeline {
       ),
       () => this.utils.randomNumber(50) / 10
     );
+  }
+
+  /**
+   * Use one of the methods of this class as a code example
+   */
+  generateCodeSnippet() {
+    const methods = Object.getOwnPropertyNames(Pipeline.prototype);
+    const index = this.utils.randomIndex(methods.length);
+    let code = Pipeline.prototype[methods[index]].toString();
+    if (index > 0) {
+      code = 'function ' + code.replace(/\n\s\s/g, '\n');
+    }
+    return code;
   }
 
   /**
