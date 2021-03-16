@@ -529,6 +529,7 @@ def test_pipeline_flag(cli_runner, client):
                 "layer": None,
                 "name": "Dolphin",
                 "pipelines": ["ds"],
+                "modular_pipelines": ["pipeline2", "pipeline2.data_science"],
                 "tags": [],
                 "type": "data",
             },
@@ -538,6 +539,7 @@ def test_pipeline_flag(cli_runner, client):
                 "layer": "feature",
                 "name": "Pig",
                 "pipelines": ["ds"],
+                "modular_pipelines": [],
                 "tags": [],
                 "type": "data",
             },
@@ -547,6 +549,7 @@ def test_pipeline_flag(cli_runner, client):
                 "layer": "primary",
                 "name": "Sheep",
                 "pipelines": ["ds"],
+                "modular_pipelines": ["pipeline2", "pipeline2.data_science"],
                 "tags": [],
                 "type": "data",
             },
@@ -556,6 +559,7 @@ def test_pipeline_flag(cli_runner, client):
                 "layer": "model output",
                 "name": "Whale",
                 "pipelines": ["ds"],
+                "modular_pipelines": [],
                 "tags": [],
                 "type": "data",
             },
@@ -677,7 +681,7 @@ class TestRunViz:
 
         server.run_viz(local_ns=mocked_local_ns)
 
-        # we can"t use assert_called_once_with because it doesn"t work with functools.partial
+        # we can't use assert_called_once_with because it doesn't work with functools.partial
         # so we are comparing the call args one by one
         assert (
             len(mocked_process.mock_calls) == 2

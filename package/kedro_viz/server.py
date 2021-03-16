@@ -390,11 +390,13 @@ def format_pipeline_data(
 
     """
     # keep_track of {data_set_namespace -> set(tags)}
-    namespace_tags = defaultdict(set)
+    dataset_namespace_tags = defaultdict(set)
     # keep track of {data_set_namespace -> layer it belongs to}
-    namespace_to_layer = {}
+    dataset_namespace_to_layer = {}
 
     dataset_to_layer = _construct_layer_mapping()
+
+    namespace_to_modular_pipelines = {}
 
     # Nodes and edges
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
@@ -419,65 +421,78 @@ def format_pipeline_data(
             nodes[task_id]["pipelines"].append(pipeline_key)
 
         for data_set in node.inputs:
-            namespace = data_set.split("@")[0]
-            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
-            namespace_id = _hash(namespace)
+            dataset_namespace = data_set.split("@")[0]
+            if node.namespace:
+                namespace_to_modular_pipelines[dataset_namespace] = _expand_namespaces(
+                    node.namespace
+                )
+            dataset_namespace_to_layer[dataset_namespace] = dataset_to_layer.get(
+                data_set
+            )
+            namespace_id = _hash(dataset_namespace)
             edge = {"source": namespace_id, "target": task_id}
             if edge not in edges_list:
                 edges_list.append(edge)
-            namespace_tags[namespace].update(node.tags)
+            dataset_namespace_tags[dataset_namespace].update(node.tags)
             node_dependencies[namespace_id].add(task_id)
 
             # if it is a parameter, add it to the node's data
-            if _is_namespace_param(namespace):
-                if "parameters" not in _JSON_NODES[task_id]:
-                    _JSON_NODES[task_id]["parameters"] = {}
-
-                if namespace == "parameters":
-                    _JSON_NODES[task_id]["parameters"] = _get_dataset_data_params(
-                        namespace
-                    ).load()
-                else:
-                    parameter_name = namespace.replace("params:", "")
-                    parameter_value = _get_dataset_data_params(namespace).load()
-                    _JSON_NODES[task_id]["parameters"][parameter_name] = parameter_value
+            if _is_namespace_param(dataset_namespace):
+                _add_parameter_data_to_node(dataset_namespace, task_id)
 
         for data_set in node.outputs:
-            namespace = data_set.split("@")[0]
-            namespace_to_layer[namespace] = dataset_to_layer.get(data_set)
-            namespace_id = _hash(namespace)
+            dataset_namespace = data_set.split("@")[0]
+            if node.namespace:
+                namespace_to_modular_pipelines[dataset_namespace] = _expand_namespaces(
+                    node.namespace
+                )
+            dataset_namespace_to_layer[dataset_namespace] = dataset_to_layer.get(
+                data_set
+            )
+            namespace_id = _hash(dataset_namespace)
             edge = {"source": task_id, "target": namespace_id}
             if edge not in edges_list:
                 edges_list.append(edge)
-            namespace_tags[namespace].update(node.tags)
+            dataset_namespace_tags[dataset_namespace].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
 
     # Parameters and data
-    for namespace, tag_names in sorted(namespace_tags.items()):
-        is_param = _is_namespace_param(namespace)
-        node_id = _hash(namespace)
+    for dataset_namespace, tag_names in sorted(dataset_namespace_tags.items()):
+        is_param = _is_namespace_param(dataset_namespace)
+        node_id = _hash(dataset_namespace)
 
         _JSON_NODES[node_id] = {
             "type": "parameters" if is_param else "data",
-            "obj": _get_dataset_data_params(namespace),
+            "obj": _get_dataset_data_params(dataset_namespace),
         }
-        if is_param and namespace != "parameters":
+        if is_param and dataset_namespace != "parameters":
             # Add "parameter_name" key only for "params:" prefix.
-            _JSON_NODES[node_id]["parameter_name"] = namespace.replace("params:", "")
+            _JSON_NODES[node_id]["parameter_name"] = dataset_namespace.replace(
+                "params:", ""
+            )
 
         if node_id not in nodes:
             nodes[node_id] = {
                 "type": "parameters" if is_param else "data",
                 "id": node_id,
-                "name": _pretty_name(namespace),
-                "full_name": namespace,
+                "name": _pretty_name(dataset_namespace),
+                "full_name": dataset_namespace,
                 "tags": sorted(tag_names),
-                "layer": namespace_to_layer[namespace],
+                "layer": dataset_namespace_to_layer[dataset_namespace],
                 "pipelines": [pipeline_key],
+                "modular_pipelines": namespace_to_modular_pipelines.get(
+                    dataset_namespace, []
+                ),
             }
             nodes_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipelines"].append(pipeline_key)
+            mod_pipelines = namespace_to_modular_pipelines.get(dataset_namespace, [])
+            check = nodes[node_id]["modular_pipelines"] and all(
+                item in mod_pipelines for item in nodes[node_id]["modular_pipelines"]
+            )
+            if not check:
+                nodes[node_id]["modular_pipelines"] += mod_pipelines
 
 
 def _expand_namespaces(namespace):
@@ -493,6 +508,20 @@ def _expand_namespaces(namespace):
             prefix = chunk
         namespace_list.append(prefix)
     return namespace_list
+
+
+def _add_parameter_data_to_node(dataset_namespace, task_id):
+    if "parameters" not in _JSON_NODES[task_id]:
+        _JSON_NODES[task_id]["parameters"] = {}
+
+    if dataset_namespace == "parameters":
+        _JSON_NODES[task_id]["parameters"] = _get_dataset_data_params(
+            dataset_namespace
+        ).load()
+    else:
+        parameter_name = dataset_namespace.replace("params:", "")
+        parameter_value = _get_dataset_data_params(dataset_namespace).load()
+        _JSON_NODES[task_id]["parameters"][parameter_name] = parameter_value
 
 
 def _get_dataset_data_params(namespace: str):
@@ -538,7 +567,7 @@ def pipeline_data(pipeline_id):
         if pipeline_id in node["pipelines"]:
             pipeline_node_ids.add(node["id"])
             pipeline_nodes.append(node)
-            if node.get("modular_pipelines"):
+            if node["type"] == "task" and node.get("modular_pipelines"):
                 modular_pipelines.update(node.get("modular_pipelines"))
 
     pipeline_edges = []

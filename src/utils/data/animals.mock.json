@@ -61,6 +61,7 @@
       "id": "09f5edeb",
       "layer": "raw",
       "name": "Bear",
+      "modular_pipelines": ["pipeline1", "pipeline1.data_engineering"],
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium"],
       "type": "data"
@@ -70,6 +71,7 @@
       "id": "9d989e8d",
       "layer": "raw",
       "name": "Cat",
+      "modular_pipelines": ["pipeline1", "pipeline1.data_engineering"],
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium", "small"],
       "type": "data"
@@ -79,6 +81,7 @@
       "id": "e4951252",
       "layer": null,
       "name": "Dog",
+      "modular_pipelines": [],
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "data"
@@ -88,6 +91,7 @@
       "id": "0ae9e4de",
       "layer": "raw",
       "name": "Elephant",
+      "modular_pipelines": ["pipeline1", "pipeline1.data_engineering"],
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium"],
       "type": "data"
@@ -97,6 +101,7 @@
       "id": "fac8f1a3",
       "layer": "model output",
       "name": "Giraffe",
+      "modular_pipelines": ["pipeline1", "pipeline1.data_engineering"],
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium"],
       "type": "data"
@@ -106,6 +111,7 @@
       "id": "091b5035",
       "layer": "model output",
       "name": "Horse",
+      "modular_pipelines": [],
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "data"
@@ -115,6 +121,7 @@
       "id": "f1f1425b",
       "layer": null,
       "name": "Parameters",
+      "modular_pipelines": [],
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "parameters"
@@ -124,6 +131,7 @@
       "id": "c38d4c6a",
       "layer": null,
       "name": "Params:rabbit",
+      "modular_pipelines": [],
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "parameters"
@@ -133,6 +141,7 @@
       "id": "2cd4ba93",
       "layer": "feature",
       "name": "Pig",
+      "modular_pipelines": ["pipeline1", "pipeline1.data_engineering"],
       "pipelines": ["de", "ds", "__default__"],
       "tags": ["large", "medium"],
       "type": "data"
@@ -142,6 +151,7 @@
       "id": "6525f2e6",
       "layer": "primary",
       "name": "Sheep",
+      "modular_pipelines": ["pipeline2", "pipeline2.data_science"],
       "pipelines": ["de", "ds", "__default__"],
       "tags": ["small"],
       "type": "data"
@@ -151,6 +161,7 @@
       "id": "85c4cf64",
       "layer": "raw",
       "name": "Weasel",
+      "modular_pipelines": ["pipeline1", "pipeline1.data_engineering"],
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium"],
       "type": "data"
@@ -179,6 +190,7 @@
       "layer": null,
       "name": "Dolphin",
       "pipelines": ["ds", "__default__"],
+      "modular_pipelines": ["pipeline2", "pipeline2.data_science"],
       "tags": [],
       "type": "data"
     },
@@ -187,6 +199,7 @@
       "id": "1769e230",
       "layer": "model output",
       "name": "Whale",
+      "modular_pipelines": [],
       "pipelines": ["ds", "__default__"],
       "tags": [],
       "type": "data"

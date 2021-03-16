@@ -29,6 +29,7 @@
             "full_name": "bob_in",
             "tags": [],
             "layer": "raw",
+            "modular_pipelines": [],
             "pipelines": [
                 "__default__"
             ]
@@ -40,6 +41,7 @@
             "full_name": "bob_out",
             "tags": [],
             "layer": null,
+            "modular_pipelines": [],
             "pipelines": [
                 "__default__"
             ]
@@ -51,6 +53,7 @@
             "full_name": "params:key",
             "tags": [],
             "layer": null,
+            "modular_pipelines": [],
             "pipelines": [
                 "__default__"
             ]
@@ -62,6 +65,7 @@
             "full_name": "result",
             "tags": [],
             "layer": "final",
+            "modular_pipelines": [],
             "pipelines": [
                 "__default__"
             ]
