@@ -1,25 +1,28 @@
 # Architecture
 
-This document describes the high-level architecture of Kedro-Viz. This would be a great starting point for you to get familiar with the codebase.
+This document describes the high-level architecture of Kedro-Viz. It is your starting point to learn about the codebase.
 
-See also the [contributing doc](CONTRIBUTING.md), which covers how to get started developing the project, and the [style guide](STYLE_GUIDE.md), which walks through our standards and recommended best practices for our codebase.
+For further information, see also: 
+
+* [Kedro-Viz contributing documentation](CONTRIBUTING.md), which covers how to start development on the project
+* [Kedro-Viz style guide](STYLE_GUIDE.md), which walks through our standards and recommended best practices for our codebase
 
 ## High-level Overview
 
-Kedro-Viz is a static [React](https://reactjs.org/) web-app that displays an interactive visualization of a user's Kedro pipeline. It was bootstrapped with [Create-React-App](https://create-react-app.dev/). We use [Redux](https://redux.js.org/) to manage the state, and [D3](https://d3js.org/) for rendering the graph. The production data API is written in Python, and exposes data from a Kedro project.
+Kedro-Viz is a static [React](https://reactjs.org/) web app that displays an interactive visualisation of a Kedro pipeline. It was bootstrapped with [Create-React-App](https://create-react-app.dev/). We use [Redux](https://redux.js.org/) to manage the state, and [D3](https://d3js.org/) to render the graph. The production data API is written in Python and exposes data from a Kedro project.
 
 Kedro-Viz can exist either as:
 
-- A standalone web-app, which is [published to PyPI](https://pypi.org/project/kedro-viz/) and can be run as a Kedro plugin from the CLI.
-- A React component, which is [published to npm](https://www.npmjs.com/package/@quantumblack/kedro-viz) and can be imported into a larger React application.
+- A standalone web app, which is [published to PyPI](https://pypi.org/project/kedro-viz/) and can be run as a Kedro plugin from the CLI
+- A React component, which is [published to npmjs.com](https://www.npmjs.com/package/@quantumblack/kedro-viz) and can be imported into a larger React application
 
-In order to allow the Kedro-Viz web-app to be used as a Kedro plugin, first the JavaScript app is compiled into a static build, then bundled with a simple Python server and [published to PyPI](https://pypi.org/project/kedro-viz/).
+To allow the Kedro-Viz web app to be used as a Kedro plugin, first the JavaScript app is compiled into a static build, then it is bundled with a simple Python server and [published to PyPI](https://pypi.org/project/kedro-viz/).
 
 ## Component package/library
 
-In order to publish Kedro-Viz as a React component library, it is first transpiled to the `/lib` directory with Babel. This process requires that the web worker be fully compiled (including its dependencies) with webpack, as it exists in a separate context requiring custom webpack loaders, which cannot be relied upon in an external parent application.
+To publish Kedro-Viz as a React component library, it is first transpiled to the `/lib` directory with Babel. This process requires that the web worker be fully compiled (including its dependencies) with webpack, as it exists in a separate context requiring custom webpack loaders, which cannot be relied upon in an external parent application.
 
-When importing Kedro-Viz from npm, you can pass pipeline data to the component via the `data` prop:
+When you import Kedro-Viz from npmjs.com, you can pass pipeline data to the component via the `data` prop:
 
 ```jsx
 <KedroViz
@@ -35,7 +38,7 @@ You can find example datasets in [/src/utils/data/](/src/utils/data/), which ill
 
 ## Synchronous data loading
 
-Some data source tokens instruct the app to synchronously import data directly from files in the `src` directory (such as [animals.mock.json](/src/utils/data/animals.mock.json) and [demo.mock.json](/src/utils/data/demo.mock.json)), or generated randomly on page-load. Random data can be seeded with a 'seed' query string in the URL, to allow randomly-generated layouts to be replicated.
+Some data source tokens instruct the app to synchronously `import` [test](/src/utils/data/animals.mock.json)/[demo](/src/utils/data/demo.mock.json) data from JSON files in the `/src/utils/data` directory, or to generate it randomly on page-load. Random data can be seeded with a 'seed' query string in the URL, to allow randomly-generated layouts to be replicated.
 
 ## Asynchronous data loading
 
@@ -45,7 +48,7 @@ Kedro-Viz loads data asynchronously in production from the API, or when using th
 
 Each pipeline endpoint corresponds to a different top-level pipeline. Only one top-level pipeline should be loaded at a time, so loading data from a pipeline endpoint will reset the pipeline state in the store. Each pipeline dataset contains all the data required to render the graph.
 
-On first page-load, the app always loads the `/api/main` endpoint first. This is the endpoint that corresponds to the 'default' pipeline. The app can load other pipelines from `/api/pipeline/<id>`. If another pipeline is saved as the active pipeline in localStorage, and if it exists in the current project, then the app will load that pipeline on first page-load, but it will always load the `/api/main` endpoint first, in order to check whether the active pipeline is present at that endpoint before requesting it.
+On first page-load, the app always loads the `/api/main` endpoint first. This is the endpoint that corresponds to the 'default' pipeline. The app can load other pipelines from `/api/pipeline/<id>`. If another pipeline is saved as the active pipeline in `localStorage`, and if it exists in the current project, then the app will load that pipeline on first page load, but it will always load the `/api/main` endpoint first, in order to check whether the active pipeline is present at that endpoint before requesting it.
 
 ### Node API endpoints
 
@@ -55,7 +58,7 @@ Each node endpoint contains data required to populate the metadata panel for tha
 
 Kedro-Viz uses the browser's `window.localStorage` API to save certain user preferences (such as node/tag/layer/sidebar/label visibility, flags, theme, active pipeline, etc), so that they'll persist from previous user sessions.
 
-The localStorage state is updated automatically on every Redux store update, via a subscriber function.
+The `localStorage` state is updated automatically on every Redux store update, via a subscriber function.
 
 ## Data ingestion
 
@@ -63,9 +66,9 @@ The localStorage state is updated automatically on every Redux store update, via
 
 On initialisation, Kedro-Viz [manually normalises pipeline data](/src/store/normalize-data.js), in order to [make immutable state updates as performant as possible](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape).
 
-Next, it [initialises the Redux data store](https://github.com/quantumblacklabs/kedro-viz/blob/main/src/store/initial-state.js), by merging this normalised state with other data sources such as saved user preferences from localStorage, URL flags, and default values.
+Next, it [initialises the Redux data store](https://github.com/quantumblacklabs/kedro-viz/blob/main/src/store/initial-state.js), by merging this normalised state with other data sources such as saved user preferences from `localStorage`, URL flags, and default values.
 
-During preparation, the initial state is separated into two parts: Pipeline and non-pipeline state. This is because the non-pipeline state should persist for the session duration, even if the pipeline state is reset/overwritten - i.e. if the user selects a new top-level pipeline.
+During preparation, the initial state is separated into two parts: pipeline and non-pipeline state. This is because the non-pipeline state should persist for the session duration, even if the pipeline state is reset/overwritten - i.e. if the user selects a new top-level pipeline.
 
 ## React components
 
@@ -91,7 +94,7 @@ Redux reducers are placed in `/src/reducers/`. We use a [combineReducers](https:
 
 ## Selectors
 
-Selectors can be found in `/src/selectors/`. We use [Reselect](https://github.com/reduxjs/reselect) to derive data from the state and translate it into useful data structures while keeping it memoized in order to prevent repeated calculations when the original values have not changed. In order to avoid circular imports, we've occasionally needed to get creative with file naming, hence the low-level 'disabled' selectors are separated into different files from the rest of the node/edge/tag selectors.
+Selectors can be found in `/src/selectors/`. We use [Reselect](https://github.com/reduxjs/reselect) to derive data from the state and translate it into useful data structures while keeping it memoised in order to prevent repeated calculations when the original values have not changed. In order to avoid circular imports, we've occasionally needed to get creative with file naming, hence the low-level 'disabled' selectors are separated into different files from the rest of the node/edge/tag selectors.
 
 ## Utils
 
@@ -109,9 +112,9 @@ The main graph objects are 'nodes' and 'edges'.
 
 A 'node' in Kedro-Viz is different from the concept of a 'node' in Kedro projects. A node on Kedro-Viz refers to a graph element for display on the flowchart, which could be one of three types:
 
-- `task`: a Kedro node, i.e. a Python function wrapper.
-- `data`: a dataset.
-- `parameter`: reusable config variables.
+- `task`: a Kedro node, i.e. a Python function wrapper
+- `data`: a dataset
+- `parameter`: reusable config variables
 
 An edge is a link between two Kedro-Viz nodes - that is, the input/output for a Kedro node - and is represented with an arrow.
 
