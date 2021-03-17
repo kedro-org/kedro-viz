@@ -54,7 +54,7 @@ On first page-load, the app always loads the `/api/main` endpoint first. This is
 
 Each node endpoint contains data required to populate the metadata panel for that node. When a user selects a node on the graph, if data for this node is not already present, then the app will request additional node data from `/api/nodes/<id>`.
 
-## `localStorage`
+## localStorage
 
 Kedro-Viz uses the browser's `window.localStorage` API to save certain user preferences (such as node/tag/layer/sidebar/label visibility, flags, theme, active pipeline, etc), so that they'll persist from previous user sessions.
 
