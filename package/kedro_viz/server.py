@@ -361,8 +361,8 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
     }
 
 
-def _is_namespace_param(namespace: str) -> bool:
-    """Returns whether a dataset namespace is a parameter"""
+def _is_dataset_param(namespace: str) -> bool:
+    """Returns whether a dataset is a parameter"""
     return namespace.lower().startswith("param")
 
 
@@ -389,14 +389,16 @@ def format_pipeline_data(
         modular_pipelines: Set of modular pipelines for all nodes.
 
     """
-    # keep_track of {data_set_namespace -> set(tags)}
-    dataset_namespace_tags = defaultdict(set)
-    # keep track of {data_set_namespace -> layer it belongs to}
-    dataset_namespace_to_layer = {}
+    # keep_track of {dataset_full_name -> set(tags)}
+    dataset_name_tags = defaultdict(set)
+    # keep track of {dataset_full_name -> layer it belongs to}
+    dataset_name_to_layer = {}
 
     dataset_to_layer = _construct_layer_mapping()
 
-    namespace_to_modular_pipelines = {}
+    # keep track of which datasets belong to which modular pipeline based on
+    # the task node that consumes or produces the dataset.
+    dataset_name_to_modular_pipeline = {}
 
     # Nodes and edges
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
@@ -404,7 +406,9 @@ def format_pipeline_data(
         tags.update(node.tags)
         _JSON_NODES[task_id] = {"type": "task", "obj": node}
 
-        modular_pipelines.update(_expand_namespaces(node.namespace))
+        # Modular pipelines the current node is part of.
+        node_modular_pipelines = _expand_namespaces(node.namespace)
+        modular_pipelines.update(node_modular_pipelines)
 
         if task_id not in nodes:
             nodes[task_id] = {
@@ -414,60 +418,56 @@ def format_pipeline_data(
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
-                "modular_pipelines": _expand_namespaces(node.namespace),
+                "modular_pipelines": node_modular_pipelines,
             }
             nodes_list.append(nodes[task_id])
         else:
             nodes[task_id]["pipelines"].append(pipeline_key)
 
         for data_set in node.inputs:
-            dataset_namespace = data_set.split("@")[0]
+            dataset_full_name = data_set.split("@")[0]
             if node.namespace:
-                namespace_to_modular_pipelines[dataset_namespace] = _expand_namespaces(
-                    node.namespace
-                )
-            dataset_namespace_to_layer[dataset_namespace] = dataset_to_layer.get(
-                data_set
-            )
-            namespace_id = _hash(dataset_namespace)
+                dataset_name_to_modular_pipeline[
+                    dataset_full_name
+                ] = node_modular_pipelines
+            dataset_name_to_layer[dataset_full_name] = dataset_to_layer.get(data_set)
+            namespace_id = _hash(dataset_full_name)
             edge = {"source": namespace_id, "target": task_id}
             if edge not in edges_list:
                 edges_list.append(edge)
-            dataset_namespace_tags[dataset_namespace].update(node.tags)
+            dataset_name_tags[dataset_full_name].update(node.tags)
             node_dependencies[namespace_id].add(task_id)
 
             # if it is a parameter, add it to the node's data
-            if _is_namespace_param(dataset_namespace):
-                _add_parameter_data_to_node(dataset_namespace, task_id)
+            if _is_dataset_param(dataset_full_name):
+                _add_parameter_data_to_node(dataset_full_name, task_id)
 
         for data_set in node.outputs:
-            dataset_namespace = data_set.split("@")[0]
+            dataset_full_name = data_set.split("@")[0]
             if node.namespace:
-                namespace_to_modular_pipelines[dataset_namespace] = _expand_namespaces(
-                    node.namespace
-                )
-            dataset_namespace_to_layer[dataset_namespace] = dataset_to_layer.get(
-                data_set
-            )
-            namespace_id = _hash(dataset_namespace)
+                dataset_name_to_modular_pipeline[
+                    dataset_full_name
+                ] = node_modular_pipelines
+            dataset_name_to_layer[dataset_full_name] = dataset_to_layer.get(data_set)
+            namespace_id = _hash(dataset_full_name)
             edge = {"source": task_id, "target": namespace_id}
             if edge not in edges_list:
                 edges_list.append(edge)
-            dataset_namespace_tags[dataset_namespace].update(node.tags)
+            dataset_name_tags[dataset_full_name].update(node.tags)
             node_dependencies[task_id].add(namespace_id)
 
     # Parameters and data
-    for dataset_namespace, tag_names in sorted(dataset_namespace_tags.items()):
-        is_param = _is_namespace_param(dataset_namespace)
-        node_id = _hash(dataset_namespace)
+    for dataset_full_name, tag_names in sorted(dataset_name_tags.items()):
+        is_param = _is_dataset_param(dataset_full_name)
+        node_id = _hash(dataset_full_name)
 
         _JSON_NODES[node_id] = {
             "type": "parameters" if is_param else "data",
-            "obj": _get_dataset_data_params(dataset_namespace),
+            "obj": _get_dataset_data_params(dataset_full_name),
         }
-        if is_param and dataset_namespace != "parameters":
+        if is_param and dataset_full_name != "parameters":
             # Add "parameter_name" key only for "params:" prefix.
-            _JSON_NODES[node_id]["parameter_name"] = dataset_namespace.replace(
+            _JSON_NODES[node_id]["parameter_name"] = dataset_full_name.replace(
                 "params:", ""
             )
 
@@ -475,19 +475,19 @@ def format_pipeline_data(
             nodes[node_id] = {
                 "type": "parameters" if is_param else "data",
                 "id": node_id,
-                "name": _pretty_name(dataset_namespace),
-                "full_name": dataset_namespace,
+                "name": _pretty_name(dataset_full_name),
+                "full_name": dataset_full_name,
                 "tags": sorted(tag_names),
-                "layer": dataset_namespace_to_layer[dataset_namespace],
+                "layer": dataset_name_to_layer[dataset_full_name],
                 "pipelines": [pipeline_key],
-                "modular_pipelines": namespace_to_modular_pipelines.get(
-                    dataset_namespace, []
+                "modular_pipelines": dataset_name_to_modular_pipeline.get(
+                    dataset_full_name, []
                 ),
             }
             nodes_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipelines"].append(pipeline_key)
-            mod_pipelines = namespace_to_modular_pipelines.get(dataset_namespace, [])
+            mod_pipelines = dataset_name_to_modular_pipeline.get(dataset_full_name, [])
             check = nodes[node_id]["modular_pipelines"] and all(
                 item in mod_pipelines for item in nodes[node_id]["modular_pipelines"]
             )
@@ -496,6 +496,11 @@ def format_pipeline_data(
 
 
 def _expand_namespaces(namespace):
+    """
+    Expand a node's namespace to the modular pipelines this node belongs to.
+    For example, if the node's namespace is: "pipeline1.data_science"
+    it should be expanded to: ["pipeline1", "pipeline1.data_science"]
+    """
     if not namespace:
         return []
     namespace_list = []
@@ -567,6 +572,10 @@ def pipeline_data(pipeline_id):
         if pipeline_id in node["pipelines"]:
             pipeline_node_ids.add(node["id"])
             pipeline_nodes.append(node)
+            # Only add modular pipelines that contain task nodes that
+            # are part of the selected pipeline. Task node inputs/outputs
+            # (dataset and parameter nodes) can be consumed and produced from/to
+            # modular pipelines outside of the selected pipeline, and therefore should not be added.
             if node["type"] == "task" and node.get("modular_pipelines"):
                 modular_pipelines.update(node.get("modular_pipelines"))
 
