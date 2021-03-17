@@ -7,7 +7,7 @@ import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData } from '../../selectors/tags';
-import { getModularPipelineNodes } from '../../selectors/modular-pipelines';
+import { getModularPipelineData } from '../../selectors/modular-pipelines';
 import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import {
   loadNodeData,
@@ -42,16 +42,20 @@ const NodeListProvider = ({
   onToggleTagActive,
   onToggleTagFilter,
   onToggleTypeDisabled,
-  modularPipelineNodes,
+  modularPipelines,
+  modularPipelinesEnabled,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const items = getFilteredItems({
     nodes,
     tags,
     tagsEnabled,
+    modularPipelines,
+    modularPipelinesEnabled,
     nodeSelected,
     searchValue,
   });
+
   const groups = getGroups({ types, items });
 
   const onItemClick = (item) => {
@@ -166,7 +170,8 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   sections: getSections(state),
   types: getNodeTypes(state),
-  modularPipelineNodes: getModularPipelineNodes(state),
+  modularPipelines: getModularPipelineData(state),
+  modularPipelinesEnabled: state.modularPipeline.enabled,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

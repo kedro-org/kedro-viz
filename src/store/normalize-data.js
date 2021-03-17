@@ -12,6 +12,7 @@ export const createInitialPipelineState = () => ({
   modularPipeline: {
     ids: [],
     name: {},
+    enabled: {},
   },
   node: {
     ids: [],
