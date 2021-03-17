@@ -22,7 +22,7 @@ To allow the Kedro-Viz web app to be used as a Kedro plugin, first the JavaScrip
 
 To publish Kedro-Viz as a React component library, it is first transpiled to the `/lib` directory with Babel. This process requires that the web worker be fully compiled (including its dependencies) with webpack, as it exists in a separate context requiring custom webpack loaders, which cannot be relied upon in an external parent application.
 
-When you import Kedro-Viz from `npm`, you can pass pipeline data to the component via the `data` prop:
+When you import Kedro-Viz from npmjs.com, you can pass pipeline data to the component via the `data` prop:
 
 ```jsx
 <KedroViz
