@@ -14,7 +14,7 @@ Kedro-Viz is a static [React](https://reactjs.org/) web app that displays an int
 Kedro-Viz can exist either as:
 
 - A standalone web app, which is [published to PyPI](https://pypi.org/project/kedro-viz/) and can be run as a Kedro plugin from the CLI
-- A React component, which is [published to `npm`](https://www.npmjs.com/package/@quantumblack/kedro-viz) and can be imported into a larger React application
+- A React component, which is [published to npmjs.com](https://www.npmjs.com/package/@quantumblack/kedro-viz) and can be imported into a larger React application
 
 To allow the Kedro-Viz web app to be used as a Kedro plugin, first the JavaScript app is compiled into a static build, then it is bundled with a simple Python server and [published to PyPI](https://pypi.org/project/kedro-viz/).
 
