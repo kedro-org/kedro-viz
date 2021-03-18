@@ -93,7 +93,7 @@ const addNearestLayers = (nodes, layers) => {
     for (const node of nodes) {
       const layerNode = findNodeBy(
         node,
-        targetThenSourceNodes,
+        targetNodes,
         nodeDistance,
         hasValidLayer
       );
@@ -101,14 +101,6 @@ const addNearestLayers = (nodes, layers) => {
     }
   }
 };
-
-/**
- * Returns the list of the node's connected target nodes followed by its connected source nodes
- * @param {object} node The input node
- * @returns {array} The connected nodes
- */
-const targetThenSourceNodes = (node) =>
-  targetNodes(node).concat(sourceNodes(node));
 
 /**
  * Returns the list of target nodes directly connected to the given node
