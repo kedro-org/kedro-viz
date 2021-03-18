@@ -15,7 +15,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-<!-- Add release notes for the upcoming release here -->
+- Fix layers visualisation to only look for target nodes when building layers dependency.
 
 # Release 3.10.1
 
