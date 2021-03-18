@@ -110,13 +110,6 @@ const addNearestLayers = (nodes, layers) => {
 const targetNodes = (node) => node.targets.map((edge) => edge.targetNode);
 
 /**
- * Returns the list of source nodes directly connected to the given node
- * @param {object} node The input node
- * @returns {array} The source nodes
- */
-const sourceNodes = (node) => node.sources.map((edge) => edge.sourceNode);
-
-/**
  * Returns the distance between the two nodes using their assigned rank
  * @param {object} nodeA The first input node
  * @param {object} nodeB The second input node
