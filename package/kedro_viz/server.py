@@ -296,6 +296,14 @@ def _pretty_name(name: str) -> str:
     return " ".join(parts)
 
 
+def _pretty_modular_pipeline_name(modular_pipeline: str) -> str:
+    """Takes the namespace of a modular pipeline and prettifies the
+    last part to show as the modular pipeline name."""
+    chunks = modular_pipeline.split(".")
+    last_chunk = chunks[-1]
+    return _pretty_name(last_chunk)
+
+
 def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
     """
     Format pipelines and catalog data from Kedro for kedro-viz.
@@ -346,7 +354,10 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
     )
 
     sorted_modular_pipelines = [
-        {"id": modular_pipeline, "name": _pretty_name(modular_pipeline.split(".")[-1])}
+        {
+            "id": modular_pipeline,
+            "name": _pretty_modular_pipeline_name(modular_pipeline),
+        }
         for modular_pipeline in sorted(modular_pipelines)
     ]
 
@@ -396,10 +407,6 @@ def format_pipeline_data(
 
     dataset_to_layer = _construct_layer_mapping()
 
-    # keep track of which datasets belong to which modular pipeline based on
-    # the task node that consumes or produces the dataset.
-    dataset_name_to_modular_pipeline = {}
-
     # Nodes and edges
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         task_id = _hash(str(node))
@@ -426,10 +433,6 @@ def format_pipeline_data(
 
         for data_set in node.inputs:
             dataset_full_name = data_set.split("@")[0]
-            if node.namespace:
-                dataset_name_to_modular_pipeline[
-                    dataset_full_name
-                ] = node_modular_pipelines
             dataset_name_to_layer[dataset_full_name] = dataset_to_layer.get(data_set)
             namespace_id = _hash(dataset_full_name)
             edge = {"source": namespace_id, "target": task_id}
@@ -444,10 +447,6 @@ def format_pipeline_data(
 
         for data_set in node.outputs:
             dataset_full_name = data_set.split("@")[0]
-            if node.namespace:
-                dataset_name_to_modular_pipeline[
-                    dataset_full_name
-                ] = node_modular_pipelines
             dataset_name_to_layer[dataset_full_name] = dataset_to_layer.get(data_set)
             namespace_id = _hash(dataset_full_name)
             edge = {"source": task_id, "target": namespace_id}
@@ -458,6 +457,13 @@ def format_pipeline_data(
 
     # Parameters and data
     for dataset_full_name, tag_names in sorted(dataset_name_tags.items()):
+        dataset_modular_pipelines = []
+        if "." in dataset_full_name:
+            # The last part of the namespace is the actual name of the dataset
+            # e.g. in pipeline1.data_science.a, "pipeline1.data_science" indicates
+            # the modular pipelines and "a" the name of the dataset.
+            dataset_namespace = dataset_full_name.rsplit(".", 1)[0]
+            dataset_modular_pipelines = _expand_namespaces(dataset_namespace)
         is_param = _is_dataset_param(dataset_full_name)
         node_id = _hash(dataset_full_name)
 
@@ -480,19 +486,11 @@ def format_pipeline_data(
                 "tags": sorted(tag_names),
                 "layer": dataset_name_to_layer[dataset_full_name],
                 "pipelines": [pipeline_key],
-                "modular_pipelines": dataset_name_to_modular_pipeline.get(
-                    dataset_full_name, []
-                ),
+                "modular_pipelines": dataset_modular_pipelines,
             }
             nodes_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipelines"].append(pipeline_key)
-            mod_pipelines = dataset_name_to_modular_pipeline.get(dataset_full_name, [])
-            check = nodes[node_id]["modular_pipelines"] and all(
-                item in mod_pipelines for item in nodes[node_id]["modular_pipelines"]
-            )
-            if not check:
-                nodes[node_id]["modular_pipelines"] += mod_pipelines
 
 
 def _expand_namespaces(namespace):
@@ -577,7 +575,7 @@ def pipeline_data(pipeline_id):
             # (dataset and parameter nodes) can be consumed and produced from/to
             # modular pipelines outside of the selected pipeline, and therefore should not be added.
             if node["type"] == "task" and node.get("modular_pipelines"):
-                modular_pipelines.update(node.get("modular_pipelines"))
+                modular_pipelines.update(node["modular_pipelines"])
 
     pipeline_edges = []
     for edge in _DATA["edges"]:
