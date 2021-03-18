@@ -192,7 +192,9 @@ const normalizeData = (data) => {
   const state = createInitialPipelineState();
 
   if (data === 'json') {
-    state.asyncDataSource = true;
+    state.dataSource = 'json';
+  } else if (data.source) {
+    state.dataSource = data.source;
   }
 
   if (!validateInput(data)) {

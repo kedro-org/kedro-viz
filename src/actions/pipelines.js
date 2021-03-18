@@ -82,7 +82,7 @@ export function loadInitialPipelineData() {
     // Get a copy of the full state from the store
     const state = getState();
     // If data is passed synchronously then this process isn't necessary
-    if (!state.asyncDataSource) {
+    if (state.dataSource !== 'json') {
       return;
     }
     dispatch(toggleLoading(true));
@@ -110,11 +110,11 @@ export function loadInitialPipelineData() {
  */
 export function loadPipelineData(pipelineID) {
   return async function (dispatch, getState) {
-    const { asyncDataSource, pipeline } = getState();
+    const { dataSource, pipeline } = getState();
     if (pipelineID && pipelineID === pipeline.active) {
       return;
     }
-    if (asyncDataSource) {
+    if (dataSource === 'json') {
       dispatch(toggleLoading(true));
       // Remove the previous graph to show that a new pipeline is being loaded
       dispatch(toggleGraph(false));

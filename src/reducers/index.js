@@ -60,7 +60,7 @@ const combinedReducer = combineReducers({
   tag,
   visible,
   // These props don't have any actions associated with them
-  asyncDataSource: createReducer(false),
+  dataSource: createReducer(null),
   edge: createReducer({}),
   modularPipeline: createReducer({}),
   // These props have very simple non-nested actions

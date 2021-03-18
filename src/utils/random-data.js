@@ -189,6 +189,41 @@ class Pipeline {
   }
 
   /**
+   * Generate node metadata panel info
+   * @param {object} node A single node object
+   */
+  getNodeMetaData(node) {
+    const { getRandomName, randomNumber } = this.utils;
+
+    if (node.type === 'task') {
+      node.code = this.generateCodeSnippet();
+      node.docstring = getRandomName(randomNumber(10), '/');
+    } else if (node.type === 'data') {
+      node.datasetType = getRandomName(randomNumber(2));
+    }
+    node.filepath = getRandomName(randomNumber(10), '/');
+    node.parameters = arrayToObject(
+      getNumberArray(randomNumber(10)).map(() =>
+        getRandomName(randomNumber(2), '_')
+      ),
+      () => this.utils.randomNumber(50) / 10
+    );
+  }
+
+  /**
+   * Use one of the methods of this class as a code example
+   */
+  generateCodeSnippet() {
+    const methods = Object.getOwnPropertyNames(Pipeline.prototype);
+    const index = this.utils.randomIndex(methods.length);
+    let code = Pipeline.prototype[methods[index]].toString();
+    if (index > 0) {
+      code = 'function ' + code.replace(/\n\s\s/g, '\n');
+    }
+    return code;
+  }
+
+  /**
    * Create a list of the pipelines that the node will be included in
    * @returns {array} Node piplines
    */
@@ -360,6 +395,7 @@ class Pipeline {
           /\s/g,
           '_'
         );
+        this.getNodeMetaData(node);
       }
     }
   }
