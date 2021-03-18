@@ -3,28 +3,23 @@ import { connect } from 'react-redux';
 import hljs from 'highlight.js/lib/core';
 import python from 'highlight.js/lib/languages/python';
 import yaml from 'highlight.js/lib/languages/yaml';
+import javascript from 'highlight.js/lib/languages/javascript';
 import modifiers from '../../utils/modifiers';
 import './styles/metadata-code.css';
 
-let javascript;
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('yaml', yaml);
+hljs.registerLanguage('javascript', javascript);
 
 /**
  * A highlighted code panel
  */
 export const MetaDataCode = ({
-  dataIsRandom,
   sidebarVisible,
   visible = true,
   value = '',
 }) => {
   const codeRef = useRef();
-
-  if (dataIsRandom && !javascript) {
-    javascript = require('highlight.js/lib/languages/javascript');
-    hljs.registerLanguage('javascript', javascript);
-  }
 
   const highlighted = useMemo(() => {
     const detected = hljs.highlightAuto(value);
@@ -48,7 +43,6 @@ export const MetaDataCode = ({
 };
 
 const mapStateToProps = (state) => ({
-  dataIsRandom: state.dataSource === 'random',
   sidebarVisible: state.visible.sidebar,
 });
 
