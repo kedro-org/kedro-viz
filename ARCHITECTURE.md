@@ -14,7 +14,7 @@ Kedro-Viz is a static [React](https://reactjs.org/) web app that displays an int
 Kedro-Viz can exist either as:
 
 - A standalone web app, which is [published to PyPI](https://pypi.org/project/kedro-viz/) and can be run as a Kedro plugin from the CLI
-- A React component, which is [published to npmjs.com](https://www.npmjs.com/package/@quantumblack/kedro-viz) and can be imported into a larger React application
+- A React component, which is [published to npm](https://www.npmjs.com/package/@quantumblack/kedro-viz) and can be imported into a larger React application
 
 To allow the Kedro-Viz web app to be used as a Kedro plugin, first the JavaScript app is compiled into a static build, then it is bundled with a simple Python server and [published to PyPI](https://pypi.org/project/kedro-viz/).
 
@@ -22,7 +22,7 @@ To allow the Kedro-Viz web app to be used as a Kedro plugin, first the JavaScrip
 
 To publish Kedro-Viz as a React component library, it is first transpiled to the `/lib` directory with Babel. This process requires that the web worker be fully compiled (including its dependencies) with webpack, as it exists in a separate context requiring custom webpack loaders, which cannot be relied upon in an external parent application.
 
-When you import Kedro-Viz from npmjs.com, you can pass pipeline data to the component via the `data` prop:
+When you import Kedro-Viz from npm, you can pass pipeline data to the component via the `data` prop:
 
 ```jsx
 <KedroViz
