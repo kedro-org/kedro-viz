@@ -46,7 +46,7 @@ Kedro-Viz loads data asynchronously in production from the API, or when using th
 
 ### Pipeline API endpoints
 
-Each pipeline endpoint corresponds to a different top-level pipeline. Only one top-level pipeline should be loaded at a time, so loading data from a pipeline endpoint will reset the pipeline state in the store. Each pipeline dataset contains all the data required to render the graph.
+Each pipeline endpoint corresponds to a different registered pipeline. Only one registered pipeline should be loaded at a time, so loading data from a pipeline endpoint will reset the pipeline state in the store. Each pipeline dataset contains all the data required to render the graph.
 
 On first page-load, the app always loads the `/api/main` endpoint first. This is the endpoint that corresponds to the 'default' pipeline. The app can load other pipelines from `/api/pipeline/<id>`. If another pipeline is saved as the active pipeline in `localStorage`, and if it exists in the current project, then the app will load that pipeline on first page load, but it will always load the `/api/main` endpoint first, in order to check whether the active pipeline is present at that endpoint before requesting it.
 
