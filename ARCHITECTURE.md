@@ -112,7 +112,7 @@ The main graph objects are 'nodes' and 'edges'.
 
 A 'node' in Kedro-Viz is different from the concept of a 'node' in Kedro projects. A node on Kedro-Viz refers to a graph element for display on the flowchart, which could be one of three types:
 
-- `task`: a Kedro node, i.e. a Python function wrapper
+- `task`: a Kedro [node](https://kedro.readthedocs.io/en/stable/13_resources/02_glossary.html#node), i.e. a Python function wrapper
 - `data`: a dataset
 - `parameter`: reusable config variables
 
