@@ -2,10 +2,10 @@
 
 This document describes the high-level architecture of Kedro-Viz. It is your starting point to learn about the codebase.
 
-For further information, see also: 
+For further information, see also:
 
-* [Kedro-Viz contributing documentation](CONTRIBUTING.md), which covers how to start development on the project
-* [Kedro-Viz style guide](STYLE_GUIDE.md), which walks through our standards and recommended best practices for our codebase
+- [Kedro-Viz contributing documentation](CONTRIBUTING.md), which covers how to start development on the project
+- [Kedro-Viz style guide](STYLE_GUIDE.md), which walks through our standards and recommended best practices for our codebase
 
 ## High-level Overview
 
@@ -36,19 +36,19 @@ On initialisation, the app uses a string data token (e.g. 'json' or 'animals') t
 
 You can find example datasets in [/src/utils/data/](/src/utils/data/), which illustrate the basic API structure.
 
-## Synchronous data loading
+## Bundled data loading
 
-Some data source tokens instruct the app to synchronously `import` [test](/src/utils/data/animals.mock.json)/[demo](/src/utils/data/demo.mock.json) data from JSON files in the `/src/utils/data` directory, or to generate it randomly on page-load. Random data can be seeded with a 'seed' query string in the URL, to allow randomly-generated layouts to be replicated.
+Some data source tokens instruct the app to synchronously `import` [test](/src/utils/data/animals.mock.json)/[demo](/src/utils/data/demo.mock.json) data from bundled JSON files in the `/src/utils/data` directory, or to generate it randomly on page-load. Random data can be seeded with a 'seed' query string in the URL, to allow randomly-generated layouts to be replicated.
 
-## Asynchronous data loading
+## Asynchronous/external data loading
 
 Kedro-Viz loads data asynchronously in production from the API, or when using the 'json' data source identifier in development. The API provides two types of data source: pipeline endpoints and node endpoints.
 
 ### Pipeline API endpoints
 
-Each pipeline endpoint corresponds to a different registered pipeline. Only one registered pipeline should be loaded at a time, so loading data from a pipeline endpoint will reset the pipeline state in the store. Each pipeline dataset contains all the data required to render the graph.
+Each pipeline endpoint corresponds to a different [registered pipeline](https://kedro.readthedocs.io/en/stable/13_resources/02_glossary.html#pipeline) in the Kedro project. Only one registered pipeline should be loaded at a time, so loading data from a pipeline endpoint will reset the pipeline state in the store. Each pipeline dataset contains all the data required to render the graph.
 
-On first page-load, the app always loads the `/api/main` endpoint first. This is the endpoint that corresponds to the 'default' pipeline. The app can load other pipelines from `/api/pipeline/<id>`. If another pipeline is saved as the active pipeline in `localStorage`, and if it exists in the current project, then the app will load that pipeline on first page load, but it will always load the `/api/main` endpoint first, in order to check whether the active pipeline is present at that endpoint before requesting it.
+On first page-load, the app always loads the `/api/main` endpoint first. This is the endpoint that corresponds to the 'default' pipeline. The app can load other pipelines from `/api/pipeline/<id>`. If another pipeline is saved as the user's active pipeline in `localStorage`, and if it exists in the current project, then the app will load that pipeline on first page load. However it will always load the `/api/main` endpoint first regardless, in order to check whether the active pipeline is present at that endpoint before requesting it.
 
 ### Node API endpoints
 
@@ -124,4 +124,7 @@ Kedro-Viz uses web workers to asynchronously perform time-consuming calculations
 
 The app uses [redux-watch](https://github.com/ExodusMovement/redux-watch) with a graph input selector to watch the store for state changes relevant to the graph layout. If the layout needs to change, this listener dispatches an asynchronous action which sends a message to the web worker to instruct it to calculate the new layout. Once the layout worker completes its calculations, it returns a new action to update the store's `state.graph` property with the new layout. Updates to the graph input state during worker calculations will interrupt the worker and cause it to start over from scratch.
 
-The logic for the layout calculations are handled in `/src/utils/graph/`.
+The logic for the layout calculations are handled in `/src/utils/graph/`. There are two graph layout engines, which can be toggled with the `oldgraph` flag:
+
+1. `dagre`: The previous iteration, which uses [Dagre.js](https://github.com/dagrejs/dagre)
+2. `newgraph`: Our custom built-in layout engine.
