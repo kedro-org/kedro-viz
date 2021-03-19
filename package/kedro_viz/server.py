@@ -570,12 +570,7 @@ def pipeline_data(pipeline_id):
         if pipeline_id in node["pipelines"]:
             pipeline_node_ids.add(node["id"])
             pipeline_nodes.append(node)
-            # Only add modular pipelines that contain task nodes that
-            # are part of the selected pipeline. Task node inputs/outputs
-            # (dataset and parameter nodes) can be consumed and produced from/to
-            # modular pipelines outside of the selected pipeline, and therefore should not be added.
-            if node["type"] == "task" and node.get("modular_pipelines"):
-                modular_pipelines.update(node["modular_pipelines"])
+            modular_pipelines.update(node["modular_pipelines"])
 
     pipeline_edges = []
     for edge in _DATA["edges"]:
