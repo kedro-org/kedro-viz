@@ -121,7 +121,7 @@ def de_pipeline():
         [
             node(
                 shark,
-                inputs=["cat", "weasel", "elephant", "bear"],
+                inputs=["cat", "nested.parameter.weasel", "elephant", "bear"],
                 outputs=["pig", "giraffe"],
                 name="shark",
                 tags=["medium", "large"],

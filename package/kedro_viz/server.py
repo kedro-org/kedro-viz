@@ -434,12 +434,12 @@ def format_pipeline_data(
         for data_set in node.inputs:
             dataset_full_name = data_set.split("@")[0]
             dataset_name_to_layer[dataset_full_name] = dataset_to_layer.get(data_set)
-            namespace_id = _hash(dataset_full_name)
-            edge = {"source": namespace_id, "target": task_id}
+            dataset_id = _hash(dataset_full_name)
+            edge = {"source": dataset_id, "target": task_id}
             if edge not in edges_list:
                 edges_list.append(edge)
             dataset_name_tags[dataset_full_name].update(node.tags)
-            node_dependencies[namespace_id].add(task_id)
+            node_dependencies[dataset_id].add(task_id)
 
             # if it is a parameter, add it to the node's data
             if _is_dataset_param(dataset_full_name):
@@ -448,12 +448,12 @@ def format_pipeline_data(
         for data_set in node.outputs:
             dataset_full_name = data_set.split("@")[0]
             dataset_name_to_layer[dataset_full_name] = dataset_to_layer.get(data_set)
-            namespace_id = _hash(dataset_full_name)
-            edge = {"source": task_id, "target": namespace_id}
+            dataset_id = _hash(dataset_full_name)
+            edge = {"source": task_id, "target": dataset_id}
             if edge not in edges_list:
                 edges_list.append(edge)
             dataset_name_tags[dataset_full_name].update(node.tags)
-            node_dependencies[task_id].add(namespace_id)
+            node_dependencies[task_id].add(dataset_id)
 
     # Parameters and data
     for dataset_full_name, tag_names in sorted(dataset_name_tags.items()):
@@ -463,7 +463,11 @@ def format_pipeline_data(
             # e.g. in pipeline1.data_science.a, "pipeline1.data_science" indicates
             # the modular pipelines and "a" the name of the dataset.
             dataset_namespace = dataset_full_name.rsplit(".", 1)[0]
-            dataset_modular_pipelines = _expand_namespaces(dataset_namespace)
+            dataset_modular_pipelines = (
+                _expand_namespaces(dataset_namespace)
+                if dataset_namespace in node_modular_pipelines
+                else []
+            )
         is_param = _is_dataset_param(dataset_full_name)
         node_id = _hash(dataset_full_name)
 
