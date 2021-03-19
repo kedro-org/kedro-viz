@@ -172,7 +172,7 @@ We use a branching model that helps us keep track of branches in a logical, cons
 
 ### JavaScript application tests
 
-This app uses [Jest](https://jestjs.io/) and [Enzyme](https://airbnb.io/enzyme/) to run JavaScript tests, which you can invoke as follows:
+Kedro-Viz uses [Jest](https://jestjs.io/) for running JavaScript tests, with [Enzyme](https://enzymejs.github.io/enzyme/) and [Testing-Library](https://testing-library.com/) to mount React components and mock the DOM. You can run tests as follows:
 
 ```bash
 npm test
