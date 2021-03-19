@@ -56,7 +56,7 @@ Prefer:
 
 ### Class names
 
-This project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand. To impove CSS maintainability we [reduce rule specificity](https://css-tricks.com/strategies-keeping-css-specificity-low/) and avoid nesting CSS selectors.
+While CSS files are split up per-component and imported via JS, all CSS is still global in scope. Hence, this project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand. To impove CSS maintainability we [reduce rule specificity](https://css-tricks.com/strategies-keeping-css-specificity-low/) and avoid nesting CSS selectors.
 
 Because Kedro-Viz can be imported into other applications, we avoid ever setting global styles. We use the `pipeline-` prefix for most HTML/CSS classes, to reduce the risk of clashes in the global namespace when this project is imported into other applications. It's important never to use global element selectors or generic classes like `.header`.
 
@@ -118,7 +118,9 @@ color: rgba(black, 0.5);
 
 ### Theme colours
 
-Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. To simplify code and avoid increasing CSS specificity, we use CSS custom properties to handle theme colours. We recommend that you use these too where possible - they are defined in the App component.
+Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme.
+
+The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. To simplify code and avoid increasing CSS specificity, we use CSS custom properties to handle theme colours. We recommend that you use these too where possible - they are defined in the App component.
 
 Avoid:
 
