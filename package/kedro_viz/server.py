@@ -463,11 +463,7 @@ def format_pipeline_data(
             # e.g. in pipeline1.data_science.a, "pipeline1.data_science" indicates
             # the modular pipelines and "a" the name of the dataset.
             dataset_namespace = dataset_full_name.rsplit(".", 1)[0]
-            dataset_modular_pipelines = (
-                _expand_namespaces(dataset_namespace)
-                if dataset_namespace in node_modular_pipelines
-                else []
-            )
+            dataset_modular_pipelines = _expand_namespaces(dataset_namespace)
         is_param = _is_dataset_param(dataset_full_name)
         node_id = _hash(dataset_full_name)
 

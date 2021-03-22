@@ -1,11 +1,11 @@
 {
   "edges": [
-    { "source": "9d989e8d", "target": "96295c62" },
-    { "source": "15fa33bc", "target": "96295c62" },
-    { "source": "0ae9e4de", "target": "96295c62" },
-    { "source": "09f5edeb", "target": "96295c62" },
-    { "source": "96295c62", "target": "2cd4ba93" },
-    { "source": "96295c62", "target": "fac8f1a3" },
+    { "source": "9d989e8d", "target": "f42dab68" },
+    { "source": "85c4cf64", "target": "f42dab68" },
+    { "source": "0ae9e4de", "target": "f42dab68" },
+    { "source": "09f5edeb", "target": "f42dab68" },
+    { "source": "f42dab68", "target": "2cd4ba93" },
+    { "source": "f42dab68", "target": "fac8f1a3" },
     { "source": "e4951252", "target": "443cf06a" },
     { "source": "c38d4c6a", "target": "443cf06a" },
     { "source": "f1f1425b", "target": "443cf06a" },
@@ -44,7 +44,7 @@
   "nodes": [
     {
       "full_name": "shark",
-      "id": "96295c62",
+      "id": "f42dab68",
       "modular_pipelines": ["pipeline1", "pipeline1.data_engineering"],
       "name": "shark",
       "pipelines": ["de", "__default__"],
@@ -121,16 +121,6 @@
       "type": "data"
     },
     {
-      "full_name": "nested.parameter.weasel",
-      "id": "15fa33bc",
-      "layer": null,
-      "modular_pipelines": [],
-      "name": "Nested.parameter.weasel",
-      "pipelines": ["de", "__default__"],
-      "tags": ["large", "medium"],
-      "type": "data"
-    },
-    {
       "full_name": "parameters",
       "id": "f1f1425b",
       "layer": null,
@@ -168,6 +158,16 @@
       "modular_pipelines": [],
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
+      "type": "data"
+    },
+    {
+      "full_name": "weasel",
+      "id": "85c4cf64",
+      "layer": "raw",
+      "modular_pipelines": [],
+      "name": "Weasel",
+      "pipelines": ["de", "__default__"],
+      "tags": ["large", "medium"],
       "type": "data"
     },
     {
