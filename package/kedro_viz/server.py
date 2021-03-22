@@ -457,13 +457,6 @@ def format_pipeline_data(
 
     # Parameters and data
     for dataset_full_name, tag_names in sorted(dataset_name_tags.items()):
-        dataset_modular_pipelines = []
-        if "." in dataset_full_name:
-            # The last part of the namespace is the actual name of the dataset
-            # e.g. in pipeline1.data_science.a, "pipeline1.data_science" indicates
-            # the modular pipelines and "a" the name of the dataset.
-            dataset_namespace = dataset_full_name.rsplit(".", 1)[0]
-            dataset_modular_pipelines = _expand_namespaces(dataset_namespace)
         is_param = _is_dataset_param(dataset_full_name)
         node_id = _hash(dataset_full_name)
 
@@ -471,11 +464,18 @@ def format_pipeline_data(
             "type": "parameters" if is_param else "data",
             "obj": _get_dataset_data_params(dataset_full_name),
         }
+
+        parameter_name = ""
         if is_param and dataset_full_name != "parameters":
+            parameter_name = dataset_full_name.replace("params:", "")
             # Add "parameter_name" key only for "params:" prefix.
-            _JSON_NODES[node_id]["parameter_name"] = dataset_full_name.replace(
-                "params:", ""
-            )
+            _JSON_NODES[node_id]["parameter_name"] = parameter_name
+
+        dataset_modular_pipelines = (
+            _extract_dataset_modular_pipelines(parameter_name)
+            if is_param
+            else _extract_dataset_modular_pipelines(dataset_full_name)
+        )
 
         if node_id not in nodes:
             nodes[node_id] = {
@@ -525,6 +525,19 @@ def _add_parameter_data_to_node(dataset_namespace, task_id):
         parameter_name = dataset_namespace.replace("params:", "")
         parameter_value = _get_dataset_data_params(dataset_namespace).load()
         _JSON_NODES[task_id]["parameters"][parameter_name] = parameter_value
+
+
+def _extract_dataset_modular_pipelines(dataset_full_name):
+    """
+    Extract modular pipelines from the full dataset name.
+    """
+    if "." in dataset_full_name:
+        # The last part of the namespace is the actual name of the dataset
+        # e.g. in pipeline1.data_science.a, "pipeline1.data_science" indicates
+        # the modular pipelines and "a" the name of the dataset.
+        dataset_namespace = dataset_full_name.rsplit(".", 1)[0]
+        return _expand_namespaces(dataset_namespace)
+    return []
 
 
 def _get_dataset_data_params(namespace: str):

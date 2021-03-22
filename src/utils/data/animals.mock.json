@@ -12,8 +12,10 @@
     { "source": "9d989e8d", "target": "443cf06a" },
     { "source": "443cf06a", "target": "6525f2e6" },
     { "source": "443cf06a", "target": "091b5035" },
-    { "source": "735bde08", "target": "1c18dc89" },
-    { "source": "1c18dc89", "target": "5f7e0e20" },
+    { "source": "735bde08", "target": "82750ddc" },
+    { "source": "d3f1335a", "target": "82750ddc" },
+    { "source": "d1d23e7d", "target": "82750ddc" },
+    { "source": "82750ddc", "target": "5f7e0e20" },
     { "source": "a761759c", "target": "c8c182ec" },
     { "source": "24e06541", "target": "c8c182ec" },
     { "source": "c8c182ec", "target": "0049a504" }
@@ -172,12 +174,32 @@
     },
     {
       "full_name": "tuna",
-      "id": "1c18dc89",
+      "id": "82750ddc",
       "modular_pipelines": ["pipeline1", "pipeline1.data_science"],
       "name": "tuna",
       "pipelines": ["pre_ds", "__default__"],
       "tags": [],
       "type": "task"
+    },
+    {
+      "full_name": "params:not_modular_pipeline.plankton",
+      "id": "d3f1335a",
+      "layer": null,
+      "modular_pipelines": ["not_modular_pipeline"],
+      "name": "Params:not Modular Pipeline.plankton",
+      "pipelines": ["pre_ds", "__default__"],
+      "tags": [],
+      "type": "parameters"
+    },
+    {
+      "full_name": "params:pipeline1.data_science.plankton",
+      "id": "d1d23e7d",
+      "layer": null,
+      "modular_pipelines": ["pipeline1", "pipeline1.data_science"],
+      "name": "Params:pipeline1.data Science.plankton",
+      "pipelines": ["pre_ds", "__default__"],
+      "tags": [],
+      "type": "parameters"
     },
     {
       "full_name": "pipeline1.data_science.dolphin",

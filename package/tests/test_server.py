@@ -78,7 +78,7 @@ def trout(pig, sheep):
     return pig
 
 
-def tuna(sheep):
+def tuna(sheep, plankton1, plankton2):
     return sheep
 
 
@@ -111,7 +111,18 @@ def ds_pipeline():
 
 def pre_ds_pipeline():
     pre_ds_pipeline = Pipeline(
-        [node(tuna, inputs=["sheep"], outputs=["dolphin"], name="tuna")]
+        [
+            node(
+                tuna,
+                inputs=[
+                    "sheep",
+                    "params:not_modular_pipeline.plankton",
+                    "params:pipeline1.data_science.plankton",
+                ],
+                outputs=["dolphin"],
+                name="tuna",
+            )
+        ]
     )
     return pre_ds_pipeline
 
@@ -179,6 +190,8 @@ def patched_create_session(mocker, tmp_path, dummy_layers):
                 "cat": PickleDataSet(filepath=str(tmp_path)),
                 "parameters": MemoryDataSet({"name": "value"}),
                 "params:rabbit": MemoryDataSet("value"),
+                "params:not_modular_pipeline.plankton": MemoryDataSet("value"),
+                "params:pipeline1.data_science.plankton": MemoryDataSet("value"),
             }
             self.layers = layers
 
