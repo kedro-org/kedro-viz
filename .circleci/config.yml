@@ -174,7 +174,7 @@ commands:
       - test_lib_transpilation
       - test_lib_import
       - run_eslint
-#      - run_javascript_tests
+      - run_javascript_tests
       - run_pylint_and_flake8
       - run_secret_scan
       - run_security_scan
