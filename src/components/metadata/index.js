@@ -166,11 +166,6 @@ const MetaData = ({
                   )}
                 </div>
               </MetaDataRow>
-              <MetaDataRow
-                label="Description (docstring):"
-                visible={isTaskNode}
-                value={metadata.docstring}
-              />
             </dl>
           </>
         )}
