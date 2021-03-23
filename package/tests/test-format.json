@@ -3,6 +3,7 @@
         {
             "type": "task",
             "id": "b2a701fc",
+            "modular_pipelines": [],
             "name": "Func1",
             "full_name": "func1",
             "tags": [],
@@ -13,6 +14,7 @@
         {
             "type": "task",
             "id": "3751475c",
+            "modular_pipelines": [],
             "name": "Func2",
             "full_name": "func2",
             "tags": [],
@@ -27,6 +29,7 @@
             "full_name": "bob_in",
             "tags": [],
             "layer": "raw",
+            "modular_pipelines": [],
             "pipelines": [
                 "__default__"
             ]
@@ -38,6 +41,7 @@
             "full_name": "bob_out",
             "tags": [],
             "layer": null,
+            "modular_pipelines": [],
             "pipelines": [
                 "__default__"
             ]
@@ -49,6 +53,7 @@
             "full_name": "params:key",
             "tags": [],
             "layer": null,
+            "modular_pipelines": [],
             "pipelines": [
                 "__default__"
             ]
@@ -60,6 +65,7 @@
             "full_name": "result",
             "tags": [],
             "layer": "final",
+            "modular_pipelines": [],
             "pipelines": [
                 "__default__"
             ]
@@ -92,6 +98,7 @@
         "raw",
         "final"
     ],
+    "modular_pipelines": [],
     "pipelines": [
         {
             "id": "__default__",
