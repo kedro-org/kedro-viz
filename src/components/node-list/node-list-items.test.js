@@ -160,8 +160,8 @@ describe('node-list-selectors', () => {
     ]);
 
     it('filters expected number of items', () => {
-      expect(filteredItems.task).toHaveLength(2);
-      expect(filteredItems.data).toHaveLength(6);
+      expect(filteredItems.task).toHaveLength(3);
+      expect(filteredItems.data).toHaveLength(10);
       expect(filteredItems.parameters).toHaveLength(2);
       expect(filteredItems.tag).toHaveLength(2);
     });
