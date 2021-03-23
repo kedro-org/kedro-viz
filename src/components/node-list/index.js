@@ -4,6 +4,10 @@ import utils from '@quantumblack/kedro-ui/lib/utils';
 import NodeList from './node-list';
 import { getFilteredItems, getGroups, getSections } from './node-list-items';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
+import {
+  toggleModularPipelineActive,
+  toggleModularPipelineFilter,
+} from '../../actions/modular-pipelines';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData } from '../../selectors/tags';
@@ -17,6 +21,7 @@ import {
 import './styles/node-list.css';
 
 const isTagType = (type) => type === 'tag';
+const isModularPipelineType = (type) => type === 'modularPipeline';
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -41,6 +46,8 @@ const NodeListProvider = ({
   onToggleNodeActive,
   onToggleTagActive,
   onToggleTagFilter,
+  onToggleModularPipelineActive,
+  onToggleModularPipelineFilter,
   onToggleTypeDisabled,
   modularPipelines,
   modularPipelinesEnabled,
@@ -59,8 +66,8 @@ const NodeListProvider = ({
   const groups = getGroups({ types, items });
 
   const onItemClick = (item) => {
-    if (isTagType(item.type)) {
-      onTagItemChange(item, item.checked);
+    if (isTagType(item.type) || isModularPipelineType(item.type)) {
+      onCategoryItemChange(item, item.checked);
     } else {
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
@@ -71,13 +78,12 @@ const NodeListProvider = ({
   };
 
   const onItemChange = (item, checked) => {
-    if (isTagType(item.type)) {
-      onTagItemChange(item, checked);
+    if (isTagType(item.type) || isModularPipelineType(item.type)) {
+      onCategoryItemChange(item, item.checked);
     } else {
       if (checked) {
         onToggleNodeActive(null);
       }
-
       onToggleNodesDisabled([item.id], checked);
     }
   };
@@ -85,6 +91,8 @@ const NodeListProvider = ({
   const onItemMouseEnter = (item) => {
     if (isTagType(item.type)) {
       onToggleTagActive(item.id, true);
+    } else if (isModularPipelineType(item.type)) {
+      onToggleModularPipelineActive(item.id, true);
     } else if (item.visible) {
       onToggleNodeActive(item.id);
     }
@@ -93,41 +101,64 @@ const NodeListProvider = ({
   const onItemMouseLeave = (item) => {
     if (isTagType(item.type)) {
       onToggleTagActive(item.id, false);
+    } else if (isModularPipelineType(item.type)) {
+      onToggleModularPipelineActive(item.id, true);
     } else if (item.visible) {
       onToggleNodeActive(null);
     }
   };
 
   const onToggleGroupChecked = (type, checked) => {
-    if (isTagType(type)) {
-      // Filter all tags if at least one tag item set, otherwise enable all tags
-      const tagItems = items[type] || [];
-      const someTagSet = tagItems.some((tagItem) => !tagItem.unset);
-      const allTagsValue = someTagSet ? undefined : true;
-      onToggleTagFilter(
-        tagItems.map((tag) => tag.id),
-        allTagsValue
+    if (isTagType(type) || isModularPipelineType(type)) {
+      // Filter all category items if at least one tag item set, otherwise enable all tags
+      const categoryItems = items[type] || [];
+      const someCategoryItemSet = categoryItems.some(
+        (categoryItem) => !categoryItem.unset
       );
+      const allCategoryItemsValue = someCategoryItemSet ? undefined : true;
+
+      if (isTagType(type)) {
+        onToggleTagFilter(
+          categoryItems.map((tag) => tag.id),
+          allCategoryItemsValue
+        );
+      } else {
+        onToggleModularPipelineFilter(
+          categoryItems.map((tag) => tag.id),
+          allCategoryItemsValue
+        );
+      }
     } else {
       onToggleTypeDisabled(type, checked);
     }
   };
 
-  const onTagItemChange = (tagItem, wasChecked) => {
-    const tagItems = items[tagItem.type] || [];
-    const oneTagChecked =
-      tagItems.filter((tagItem) => tagItem.checked).length === 1;
-    const shouldResetTags = wasChecked && oneTagChecked;
+  const onCategoryItemChange = (item, wasChecked) => {
+    const categoryType = item.type;
+    const categoryTypeItems = items[categoryType] || [];
+    const oneCategoryItemChecked =
+      categoryTypeItems.filter((categoryItem) => categoryItem.checked)
+        .length === 1;
+    const shouldResetCategoryItems = wasChecked && oneCategoryItemChecked;
 
-    if (shouldResetTags) {
-      // Unset all tags
-      onToggleTagFilter(
-        tags.map((tag) => tag.id),
-        undefined
-      );
+    if (shouldResetCategoryItems) {
+      // Unset all category item
+      if (categoryType === 'tag') {
+        onToggleTagFilter(
+          tags.map((tag) => tag.id),
+          undefined
+        );
+      } else {
+        onToggleModularPipelineFilter(
+          modularPipelines.map((modularPipeline) => modularPipeline.id),
+          undefined
+        );
+      }
     } else {
-      // Toggle the tag
-      onToggleTagFilter([tagItem.id], !wasChecked);
+      // Toggle the category item
+      categoryType === 'tag'
+        ? onToggleTagFilter([item.id], !wasChecked)
+        : onToggleModularPipelineFilter([item.id], !wasChecked);
     }
 
     // Reset node selection
@@ -180,6 +211,12 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleTagFilter: (tagIDs, enabled) => {
     dispatch(toggleTagFilter(tagIDs, enabled));
+  },
+  onToggleModularPipelineActive: (modularPipelineIDs, active) => {
+    dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
+  },
+  onToggleModularPipelineFilter: (modularPipelineIDs, enabled) => {
+    dispatch(toggleModularPipelineFilter(modularPipelineIDs, enabled));
   },
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));

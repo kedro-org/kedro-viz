@@ -299,12 +299,12 @@ export const getGroups = createSelector(
  * @return {array} final list of all filtered items from the three filtered item sets
  */
 export const getFilteredItems = createSelector(
-  [getFilteredNodeItems, getFilteredTagItems, getFilteredModularPipelines],
-  (filteredNodeItems, filteredTagItems, modularPipelineItems) => {
+  [getFilteredNodeItems, getFilteredTagItems, getFilteredModularPipelineItems],
+  (filteredNodeItems, filteredTagItems, filteredModularPipelineItems) => {
     return {
       ...filteredTagItems,
       ...filteredNodeItems,
-      ...modularPipelineItems,
+      ...filteredModularPipelineItems,
     };
   }
 );

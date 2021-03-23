@@ -13,6 +13,7 @@ export const createInitialPipelineState = () => ({
     ids: [],
     name: {},
     enabled: {},
+    active: {},
   },
   node: {
     ids: [],
