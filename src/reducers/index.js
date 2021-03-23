@@ -60,9 +60,9 @@ const combinedReducer = combineReducers({
   tag,
   visible,
   // These props don't have any actions associated with them
-  asyncDataSource: createReducer(false),
+  dataSource: createReducer(null),
   edge: createReducer({}),
-  id: createReducer(null),
+  modularPipeline: createReducer({}),
   // These props have very simple non-nested actions
   chartSize: createReducer({}, UPDATE_CHART_SIZE, 'chartSize'),
   zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),

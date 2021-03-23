@@ -36,16 +36,19 @@ export const getSourceID = () => {
  * @return {object|string} Either raw data itself, or 'json'
  */
 export const getDataValue = (source) => {
+  // Add data source string to data object
+  const nameSource = (data) => Object.assign(data, { source });
+
   switch (source) {
     case 'animals':
       // Use data from the 'animals' test dataset
-      return animals;
+      return nameSource(animals);
     case 'demo':
       // Use data from the 'demo' test dataset
-      return demo;
+      return nameSource(demo);
     case 'random':
       // Use procedurally-generated data
-      return getRandomPipeline();
+      return nameSource(getRandomPipeline());
     case 'json':
       // Load data asynchronously later
       return source;
