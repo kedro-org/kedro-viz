@@ -361,6 +361,8 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         for modular_pipeline in sorted(modular_pipelines)
     ]
 
+    _verify_modular_pipelines(nodes_list, modular_pipelines)
+
     return {
         "nodes": nodes_list,
         "edges": edges_list,
@@ -370,6 +372,26 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         "selected_pipeline": selected_pipeline,
         "modular_pipelines": sorted_modular_pipelines,
     }
+
+
+def _verify_modular_pipelines(nodes_list, modular_pipelines):
+    """Check dataset/parameter nodes only contain existing modular pipelines from the task nodes
+     and remove those listed that aren't modular pipelines.
+
+      Args:
+        nodes_list: List of all nodes.
+        modular_pipelines: Set of modular pipelines for all nodes.
+
+    """
+    for node in nodes_list:
+        if (node["type"] == "parameters" or node["type"] == "data") and node[
+            "modular_pipelines"
+        ]:
+            updated_modular_pipelines = []
+            for modular_pipeline in node["modular_pipelines"]:
+                if modular_pipeline in modular_pipelines:
+                    updated_modular_pipelines.append(modular_pipeline)
+            node["modular_pipelines"] = sorted(updated_modular_pipelines)
 
 
 def _is_dataset_param(namespace: str) -> bool:
@@ -425,7 +447,7 @@ def format_pipeline_data(
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
-                "modular_pipelines": node_modular_pipelines,
+                "modular_pipelines": sorted(node_modular_pipelines),
             }
             nodes_list.append(nodes[task_id])
         else:

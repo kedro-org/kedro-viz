@@ -116,8 +116,8 @@ def pre_ds_pipeline():
                 tuna,
                 inputs=[
                     "sheep",
-                    "params:not_modular_pipeline.plankton",
-                    "params:pipeline1.data_science.plankton",
+                    "params:pipeline2.data_science.plankton",
+                    "params:pipeline100.data_science.plankton",
                 ],
                 outputs=["dolphin"],
                 name="tuna",
@@ -132,7 +132,7 @@ def de_pipeline():
         [
             node(
                 shark,
-                inputs=["cat", "weasel", "elephant", "bear"],
+                inputs=["cat", "nested.weasel", "elephant", "bear"],
                 outputs=["pig", "giraffe"],
                 name="shark",
                 tags=["medium", "large"],
@@ -161,7 +161,7 @@ def create_pipeline():
 @pytest.fixture
 def dummy_layers():
     return {
-        "raw": {"elephant", "bear", "weasel", "cat", "dog"},
+        "raw": {"elephant", "bear", "nested.weasel", "cat", "dog"},
         "primary": {"sheep"},
         "feature": {"pig"},
         "model output": {"horse", "giraffe", "pipeline2.data_science.whale"},
@@ -190,8 +190,8 @@ def patched_create_session(mocker, tmp_path, dummy_layers):
                 "cat": PickleDataSet(filepath=str(tmp_path)),
                 "parameters": MemoryDataSet({"name": "value"}),
                 "params:rabbit": MemoryDataSet("value"),
-                "params:not_modular_pipeline.plankton": MemoryDataSet("value"),
-                "params:pipeline1.data_science.plankton": MemoryDataSet("value"),
+                "params:pipeline2.data_science.plankton": MemoryDataSet("value"),
+                "params:pipeline100.data_science.plankton": MemoryDataSet("value"),
             }
             self.layers = layers
 
