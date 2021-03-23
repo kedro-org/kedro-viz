@@ -1,7 +1,6 @@
 import {
   TOGGLE_GRAPH,
   TOGGLE_EXPORT_MODAL,
-  TOGGLE_LAYERS,
   TOGGLE_SIDEBAR,
   TOGGLE_CODE,
   TOGGLE_MINIMAP,
@@ -18,12 +17,6 @@ function visibleReducer(visibleState = {}, action) {
     case TOGGLE_EXPORT_MODAL: {
       return Object.assign({}, visibleState, {
         exportModal: action.visible,
-      });
-    }
-
-    case TOGGLE_LAYERS: {
-      return Object.assign({}, visibleState, {
-        layers: action.visible,
       });
     }
 

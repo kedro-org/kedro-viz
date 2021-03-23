@@ -184,7 +184,7 @@ describe('pipeline actions', () => {
       it('should hide the current graph before loading the new pipeline', () => {
         const store = createStore(reducer, {
           ...mockState.animals,
-          asyncDataSource: true,
+          dataSource: 'json',
         });
         expect(store.getState().visible.graph).toBe(true);
         loadPipelineData(active)(store.dispatch, store.getState);

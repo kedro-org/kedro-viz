@@ -49,7 +49,7 @@ export const PipelineList = ({
 };
 
 export const mapStateToProps = (state) => ({
-  asyncDataSource: state.asyncDataSource,
+  asyncDataSource: state.dataSource === 'json',
   pipeline: state.pipeline,
   theme: state.theme,
 });
