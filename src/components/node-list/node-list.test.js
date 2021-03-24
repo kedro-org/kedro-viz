@@ -247,11 +247,12 @@ describe('NodeList', () => {
       changeRows(wrapper, ['Medium'], true);
 
       expect(elements(wrapper)).toEqual([
-        // Nodes (enabled)
+        // Tasks (enabled)
         ['shark', true],
-        // Nodes (disabled)
+        // Tasks (disabled)
         ['salmon', false],
         ['trout', false],
+        ['tuna', false],
         // Datasets (enabled)
         ['Bear', true],
         ['Cat', true],
@@ -262,8 +263,12 @@ describe('NodeList', () => {
         // Datasets (disabled)
         ['Dog', false],
         ['Horse', false],
+        ['Pipeline1.data Science.dolphin', false],
+        ['Pipeline1.data Science.sheep', false],
+        ['Pipeline2.data Science.pig', false],
+        ['Pipeline2.data Science.sheep', false],
+        ['Pipeline2.data Science.whale', false],
         ['Sheep', false],
-        ['Whale', false],
         // Parameters
         ['Parameters', false],
         ['Params:rabbit', false],
