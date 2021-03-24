@@ -26,11 +26,11 @@
     },
     {
       "id": "pipeline1.data_engineering",
-      "name": "Data Engineering"
+      "name": "Pipeline1 Data Engineering"
     },
     {
       "id": "pipeline1.data_science",
-      "name": "Data Science"
+      "name": "Pipeline1 Data Science"
     },
     {
       "id": "pipeline2",
@@ -38,7 +38,7 @@
     },
     {
       "id": "pipeline2.data_science",
-      "name": "Data Science"
+      "name": "Pipeline2 Data Science"
     }
   ],
   "nodes": [

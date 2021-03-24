@@ -508,7 +508,7 @@ def test_pipeline_flag(cli_runner, client):
         "layers": [],
         "modular_pipelines": [
             {"id": "pipeline2", "name": "Pipeline2"},
-            {"id": "pipeline2.data_science", "name": "Data Science"},
+            {"id": "pipeline2.data_science", "name": "Pipeline2 Data Science"},
         ],
         "nodes": [
             {
@@ -968,4 +968,4 @@ def test_expand_namespaces():
 def test_pretty_modular_pipeline_name():
     modular_pipeline_name = "main_pipeline.sub_pipeline.deepest_pipeline"
     result = _pretty_modular_pipeline_name(modular_pipeline_name)
-    assert result == "Deepest Pipeline"
+    assert result == "Main Pipeline Sub Pipeline Deepest Pipeline"

@@ -296,12 +296,11 @@ def _pretty_name(name: str) -> str:
     return " ".join(parts)
 
 
-def _pretty_modular_pipeline_name(modular_pipeline: str) -> str:
-    """Takes the namespace of a modular pipeline and prettifies the
-    last part to show as the modular pipeline name."""
-    chunks = modular_pipeline.split(".")
-    last_chunk = chunks[-1]
-    return _pretty_name(last_chunk)
+def _pretty_modular_pipeline_name(modular_pipeline_name: str) -> str:
+    """Takes the namespace of a modular pipeline and prettifies it
+     to show as the human readable modular pipeline name."""
+    modular_pipeline_name = modular_pipeline_name.replace(".", " ")
+    return _pretty_name(modular_pipeline_name)
 
 
 def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
