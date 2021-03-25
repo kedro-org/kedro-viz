@@ -196,7 +196,10 @@ export const getFilteredNodeItems = createSelector(
       result[type] = filteredNodes[type]
         .map((node) => {
           const checked = !node.disabled_node;
-          const disabled = node.disabled_tag || node.disabled_type;
+          const disabled =
+            node.disabled_tag ||
+            node.disabled_type ||
+            node.disabled_modularPipeline;
           return {
             ...node,
             visibleIcon: VisibleIcon,

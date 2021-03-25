@@ -122,6 +122,11 @@ const NodeListProvider = ({
           categoryItems.map((tag) => tag.id),
           allCategoryItemsValue
         );
+      } else if (isModularPipelineType(type)) {
+        onToggleModularPipelineFilter(
+          categoryItems.map((tag) => tag.id),
+          allCategoryItemsValue
+        );
       } else {
         onToggleModularPipelineFilter(
           categoryItems.map((tag) => tag.id),
