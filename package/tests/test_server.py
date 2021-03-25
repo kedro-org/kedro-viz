@@ -69,8 +69,7 @@ def shark(input1, input2, input3, input4):
 
 
 def salmon(dog, rabbit, parameters, cat):
-    """docstring
-    """
+    """docstring"""
     return dog, rabbit
 
 
@@ -235,7 +234,9 @@ _USE_PATCHED_CONTEXT = pytest.mark.usefixtures("patched_create_session")
 
 
 @_USE_PATCHED_CONTEXT
-def test_set_port(cli_runner,):
+def test_set_port(
+    cli_runner,
+):
     """Check that port argument is correctly handled."""
     result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     assert result.exit_code == 0, result.output
@@ -268,7 +269,10 @@ def test_no_browser(cli_runner):
 def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_create_session):
     cli_runner.invoke(server.commands, ["viz", "--no-browser"])
     patched_create_session.assert_called_once_with(
-        package_name="test", project_path=Path.cwd(), env=None, save_on_close=False,
+        package_name="test",
+        project_path=Path.cwd(),
+        env=None,
+        save_on_close=False,
     )
 
 
@@ -288,8 +292,7 @@ def test_no_browser_if_not_localhost(cli_runner):
 
 
 def test_load_file_outside_kedro_project(cli_runner, tmp_path):
-    """Check that running viz with `--load-file` flag works outside of a Kedro project.
-    """
+    """Check that running viz with `--load-file` flag works outside of a Kedro project."""
     filepath_json = str(tmp_path / "test.json")
     data = {
         "nodes": None,
@@ -307,8 +310,7 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
 
 @_USE_PATCHED_CONTEXT
 def test_save_file(cli_runner, tmp_path):
-    """Check that running with `--save-file` flag saves pipeline JSON file in a specified path.
-    """
+    """Check that running with `--save-file` flag saves pipeline JSON file in a specified path."""
     save_path = str(tmp_path / "test.json")
 
     result = cli_runner.invoke(server.commands, ["viz", "--save-file", save_path])
@@ -331,8 +333,7 @@ def test_load_file_no_top_level_key(cli_runner, tmp_path):
 
 
 def test_no_load_file(cli_runner):
-    """Check that running viz without `--load-file` flag should fail outside of a Kedro project.
-    """
+    """Check that running viz without `--load-file` flag should fail outside of a Kedro project."""
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 1
 
@@ -619,7 +620,10 @@ class TestCallViz:
     def test_call_viz_without_project_path(self, patched_create_session):
         server._call_viz()
         patched_create_session.assert_called_once_with(
-            package_name="test", project_path=Path.cwd(), env=None, save_on_close=False,
+            package_name="test",
+            project_path=Path.cwd(),
+            env=None,
+            save_on_close=False,
         )
 
     def test_call_viz_with_project_path(self, patched_create_session):
