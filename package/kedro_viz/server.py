@@ -387,11 +387,8 @@ def _verify_modular_pipelines(nodes_list, modular_pipelines):
         if (node["type"] == "parameters" or node["type"] == "data") and node[
             "modular_pipelines"
         ]:
-            updated_modular_pipelines = []
-            for modular_pipeline in node["modular_pipelines"]:
-                if modular_pipeline in modular_pipelines:
-                    updated_modular_pipelines.append(modular_pipeline)
-            node["modular_pipelines"] = sorted(updated_modular_pipelines)
+            pipes = [pipe for pipe in node["modular_pipelines"] if pipe in modular_pipelines]
+            node["modular_pipelines"] = sorted(pipes)
 
 
 def _is_dataset_param(namespace: str) -> bool:
