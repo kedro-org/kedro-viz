@@ -75,15 +75,25 @@ const solveStrict = (constraints, constants) => {
     addVariable(co.b, co.base.property);
   }
 
+  let unsolvableCount = 0;
+
   for (const co of constraints) {
-    solver.addConstraint(
-      co.base.strict(
-        co,
-        constants,
-        variables[variableId(co.a, co.base.property)],
-        variables[variableId(co.b, co.base.property)]
-      )
-    );
+    try {
+      solver.addConstraint(
+        co.base.strict(
+          co,
+          constants,
+          variables[variableId(co.a, co.base.property)],
+          variables[variableId(co.b, co.base.property)]
+        )
+      );
+    } catch (err) {
+      unsolvableCount += 1;
+    }
+  }
+
+  if (unsolvableCount > 0) {
+    console.warn(`Skipped ${unsolvableCount} unsolvable constraints`);
   }
 
   solver.updateVariables();
