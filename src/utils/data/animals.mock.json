@@ -23,6 +23,10 @@
   "layers": ["raw", "feature", "model output", "primary"],
   "modular_pipelines": [
     {
+      "id": "nested",
+      "name": "Nested"
+    },
+    {
       "id": "pipeline1",
       "name": "Pipeline1"
     },
@@ -126,7 +130,7 @@
       "full_name": "nested.weasel",
       "id": "518ed240",
       "layer": "raw",
-      "modular_pipelines": [],
+      "modular_pipelines": ["nested"],
       "name": "Nested.weasel",
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium"],

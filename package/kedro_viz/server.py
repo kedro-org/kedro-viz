@@ -375,7 +375,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
 
 
 def _remove_non_modular_pipelines(nodes_list, modular_pipelines):
-    """Check dataset/parameter nodes only contain existing modular pipelines from the task nodes
+    """Check parameter nodes only contain existing modular pipelines from the task nodes
     and remove those listed that aren't modular pipelines.
 
      Args:
@@ -384,9 +384,7 @@ def _remove_non_modular_pipelines(nodes_list, modular_pipelines):
 
     """
     for node in nodes_list:
-        if (node["type"] == "parameters" or node["type"] == "data") and node[
-            "modular_pipelines"
-        ]:
+        if node["type"] == "parameters" and node["modular_pipelines"]:
             pipes = [
                 pipe for pipe in node["modular_pipelines"] if pipe in modular_pipelines
             ]
@@ -492,11 +490,11 @@ def format_pipeline_data(
             # Add "parameter_name" key only for "params:" prefix.
             _JSON_NODES[node_id]["parameter_name"] = parameter_name
 
-        dataset_modular_pipelines = (
-            _expand_namespaces(_get_namespace(parameter_name))
-            if is_param
-            else _expand_namespaces(_get_namespace(dataset_full_name))
-        )
+        if is_param:
+            dataset_modular_pipelines = _expand_namespaces(_get_namespace(parameter_name))
+        else:
+            dataset_modular_pipelines = _expand_namespaces(_get_namespace(dataset_full_name))
+            modular_pipelines.update(dataset_modular_pipelines)
 
         if node_id not in nodes:
             nodes[node_id] = {
