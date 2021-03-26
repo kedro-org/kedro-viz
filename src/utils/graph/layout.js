@@ -333,10 +333,9 @@ const expandDenseRows = (edges, rows, spaceY) => {
   let currentOffsetY = 0;
 
   // Add spacing based on density
-  for (let i = 0; i < densities.length; i += 1) {
-    const density = densities[i];
-
+  for (let i = 0; i < rows.length - 1; i += 1) {
     // Snap to improve vertical rhythm
+    const density = densities[i] || 0;
     const offsetY = snap(density * spaceY, Math.round(spaceY * 0.25));
     currentOffsetY += offsetY;
 
