@@ -133,4 +133,3 @@ Kedro-Viz is licensed under the [Apache 2.0](https://github.com/quantumblacklabs
 If you're an academic, Kedro-Viz can also help you, for example, as a tool to visualise how your publication's pipeline is structured. Find our citation reference on [Zenodo](https://doi.org/10.5281/zenodo.4277218).
 
 <p align="center">↑↑↓↓←→←→BA</p>
-
