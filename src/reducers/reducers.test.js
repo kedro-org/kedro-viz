@@ -214,7 +214,6 @@ describe('Reducer', () => {
       const newState = reducer(oldState, loadDataAction);
       expect(newState.node.code[nodeId]).toEqual(node_task.code);
       expect(newState.node.filepath[nodeId]).toEqual(node_task.filepath);
-      expect(newState.node.docstring[nodeId]).toEqual(node_task.docstring);
     });
 
     it('should update the right fields in state under node of parameter type', () => {
