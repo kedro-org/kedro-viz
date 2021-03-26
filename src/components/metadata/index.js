@@ -23,6 +23,7 @@ import './styles/metadata.css';
 const MetaData = ({
   visible = true,
   metadata,
+  codeFlag,
   visibleCode,
   onToggleCode,
   onToggleNodeSelected,
@@ -37,8 +38,8 @@ const MetaData = ({
   const isParametersNode = metadata?.node.type === 'parameters';
 
   const hasCode = Boolean(metadata?.code);
-  const showCodePanel = visible && visibleCode && hasCode;
-  const showCodeSwitch = hasCode;
+  const showCodePanel = codeFlag && visible && visibleCode && hasCode;
+  const showCodeSwitch = codeFlag && hasCode;
 
   const onCopyClick = () => {
     window.navigator.clipboard.writeText(metadata.runCommand);
@@ -165,6 +166,11 @@ const MetaData = ({
                   )}
                 </div>
               </MetaDataRow>
+              <MetaDataRow
+                label="Description (docstring):"
+                visible={isTaskNode}
+                value={metadata.docstring}
+              />
             </dl>
           </>
         )}
@@ -176,6 +182,7 @@ const MetaData = ({
 export const mapStateToProps = (state, ownProps) => ({
   visible: getVisibleMetaSidebar(state),
   metadata: getClickedNodeMetaData(state),
+  codeFlag: state.flags.code,
   visibleCode: state.visible.code,
   ...ownProps,
 });
