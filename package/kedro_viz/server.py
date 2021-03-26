@@ -361,6 +361,8 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         for modular_pipeline in sorted(modular_pipelines)
     ]
 
+    _remove_non_modular_pipelines(nodes_list, modular_pipelines)
+
     return {
         "nodes": nodes_list,
         "edges": edges_list,
@@ -370,6 +372,23 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         "selected_pipeline": selected_pipeline,
         "modular_pipelines": sorted_modular_pipelines,
     }
+
+
+def _remove_non_modular_pipelines(nodes_list, modular_pipelines):
+    """Check parameter nodes only contain existing modular pipelines from the task nodes
+    and remove those listed that aren't modular pipelines.
+
+     Args:
+       nodes_list: List of all nodes.
+       modular_pipelines: Set of modular pipelines for all nodes.
+
+    """
+    for node in nodes_list:
+        if node["type"] == "parameters" and node["modular_pipelines"]:
+            pipes = [
+                pipe for pipe in node["modular_pipelines"] if pipe in modular_pipelines
+            ]
+            node["modular_pipelines"] = sorted(pipes)
 
 
 def _is_dataset_param(namespace: str) -> bool:
@@ -425,7 +444,7 @@ def format_pipeline_data(
                 "full_name": getattr(node, "_func_name", str(node)),
                 "tags": sorted(node.tags),
                 "pipelines": [pipeline_key],
-                "modular_pipelines": node_modular_pipelines,
+                "modular_pipelines": sorted(node_modular_pipelines),
             }
             nodes_list.append(nodes[task_id])
         else:
@@ -457,13 +476,6 @@ def format_pipeline_data(
 
     # Parameters and data
     for dataset_full_name, tag_names in sorted(dataset_name_tags.items()):
-        dataset_modular_pipelines = []
-        if "." in dataset_full_name:
-            # The last part of the namespace is the actual name of the dataset
-            # e.g. in pipeline1.data_science.a, "pipeline1.data_science" indicates
-            # the modular pipelines and "a" the name of the dataset.
-            dataset_namespace = dataset_full_name.rsplit(".", 1)[0]
-            dataset_modular_pipelines = _expand_namespaces(dataset_namespace)
         is_param = _is_dataset_param(dataset_full_name)
         node_id = _hash(dataset_full_name)
 
@@ -471,11 +483,18 @@ def format_pipeline_data(
             "type": "parameters" if is_param else "data",
             "obj": _get_dataset_data_params(dataset_full_name),
         }
+
+        parameter_name = ""
         if is_param and dataset_full_name != "parameters":
+            parameter_name = dataset_full_name.replace("params:", "")
             # Add "parameter_name" key only for "params:" prefix.
-            _JSON_NODES[node_id]["parameter_name"] = dataset_full_name.replace(
-                "params:", ""
-            )
+            _JSON_NODES[node_id]["parameter_name"] = parameter_name
+
+        if is_param:
+            dataset_modular_pipelines = _expand_namespaces(_get_namespace(parameter_name))
+        else:
+            dataset_modular_pipelines = _expand_namespaces(_get_namespace(dataset_full_name))
+            modular_pipelines.update(dataset_modular_pipelines)
 
         if node_id not in nodes:
             nodes[node_id] = {
@@ -525,6 +544,17 @@ def _add_parameter_data_to_node(dataset_namespace, task_id):
         parameter_name = dataset_namespace.replace("params:", "")
         parameter_value = _get_dataset_data_params(dataset_namespace).load()
         _JSON_NODES[task_id]["parameters"][parameter_name] = parameter_value
+
+
+def _get_namespace(dataset_full_name):
+    """
+    Extract the namespace from the full dataset/parameter name.
+    """
+    if "." in dataset_full_name:
+        # The last part of the namespace is the actual name of the dataset
+        # e.g. in pipeline1.data_science.a, "pipeline1.data_science" indicates
+        # the modular pipelines and "a" the name of the dataset.
+        return dataset_full_name.rsplit(".", 1)[0]
 
 
 def _get_dataset_data_params(namespace: str):
