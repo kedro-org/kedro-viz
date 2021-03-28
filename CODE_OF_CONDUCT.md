@@ -63,7 +63,7 @@ Further details of specific enforcement policies may be posted separately.
 
 Project maintainers who do not follow or enforce the Code of Conduct in good
 faith may face temporary or permanent repercussions as determined by other
-members of the project's leadership
+members of the project's leadership.
 
 **Investigation Timeline:** The project team will make all reasonable efforts to initiate and conclude the investigation in a timely fashion. Depending on the type of investigation the steps and timeline for each investigation will vary.
 
