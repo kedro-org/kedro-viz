@@ -377,34 +377,8 @@ def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
 
     assert data["code"] == inspect.getsource(salmon)
     assert data["filepath"] == str(Path(project_root) / filepath)
-    assert data["docstring"] == inspect.getdoc(salmon)
     assert data["parameters"] == {"name": "value"}
 
-
-@_USE_PATCHED_CONTEXT
-def test_node_metadata_endpoint_task_missing_docstring(
-    cli_runner, client, mocker, tmp_path
-):
-    """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON,
-    but docstring is missing."""
-    project_root = "project_root"
-    filepath = "filepath"
-    mocker.patch.object(
-        kedro_viz.server.Path, "cwd", return_value=tmp_path / project_root
-    )
-    mocker.patch.object(
-        kedro_viz.server.Path,
-        "resolve",
-        return_value=tmp_path / project_root / filepath,
-    )
-    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    task_id = "e27376a9"
-    response = client.get(f"/api/nodes/{task_id}")
-    assert response.status_code == 200
-    data = json.loads(response.data.decode())
-    assert data["code"] == inspect.getsource(trout)
-    assert data["filepath"] == str(Path(project_root) / filepath)
-    assert "docstring" not in data
 
 
 @_USE_PATCHED_CONTEXT
