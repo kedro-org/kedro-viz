@@ -89,7 +89,7 @@ const addNearestLayers = (nodes, layers) => {
       validLayers[layer] = true;
     }
 
-    const hasValidLayer = (node) => Boolean(node?.layer in validLayers);
+    const hasValidLayer = (node) => Boolean(node && node.layer in validLayers);
     const lastLayer = layers[layers.length - 1];
 
     // For each node
@@ -137,7 +137,7 @@ const orderRankAscending = (nodeA, nodeB) => nodeA.rank - nodeB.rank;
  * @returns {?object} The first node accepted in order, or undefined if none
  */
 const findNodeBy = (node, successors, order, accept, visited) => {
-  // If the current node is accepted then return it
+  // If the current node is accepted then return it without further search
   if (accept(node)) {
     return node;
   }
