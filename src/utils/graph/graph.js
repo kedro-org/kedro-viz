@@ -107,7 +107,7 @@ const addNearestLayers = (nodes, layers) => {
       );
 
       // Assign the nearest layer if found otherwise must be the last layer
-      node.nearestLayer = layerNode?.layer || lastLayer;
+      node.nearestLayer = layerNode ? layerNode.layer : lastLayer;
     }
   }
 };
