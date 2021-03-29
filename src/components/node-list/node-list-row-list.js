@@ -4,6 +4,19 @@ import { connect } from 'react-redux';
 import NodeListRow, { nodeListRowHeight } from './node-list-row';
 import LazyList from '../lazy-list';
 
+// modify display of labels for modular pipelines to show nested relationship
+const getItemLabel = (item) => {
+  const layer = '・';
+  const whiteSpace = '&nbsp;&nbsp;&nbsp;&nbsp;';
+  if (item.type === 'modularPipeline') {
+    const levels = item.id.match(/\./g) ? item.id.match(/\./g).length : 0;
+    return `${whiteSpace
+      .repeat(levels)
+      .concat(layer.repeat(levels).concat(item.highlightedLabel))}`;
+  }
+  return item.highlightedLabel;
+};
+
 const NodeRowList = ({
   items = [],
   group,
@@ -25,7 +38,7 @@ const NodeRowList = ({
         key={item.id}
         id={item.id}
         kind={group.kind}
-        label={item.highlightedLabel}
+        label={getItemLabel(item)}
         name={item.name}
         type={item.type}
         active={item.active}
