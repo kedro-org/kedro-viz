@@ -25,10 +25,15 @@ const updateGraphOnChange = (store) => {
  * @param {object} state Redux state snapshot
  */
 const saveStateToLocalStorage = (state) => {
+  //option 1 - explicitly set parameters = true or option 2 - delete parameters info from state
+  // delete state.nodeType.disabled.parameters
   saveState({
     node: {
       disabled: pruneFalseyKeys(state.node.disabled),
     },
+    // nodeType:{
+    //   disabled: state.nodeType.disabled
+    // }
     nodeType: {
       disabled: {
         ...state.nodeType.disabled,
