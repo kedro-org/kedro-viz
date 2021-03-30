@@ -197,7 +197,6 @@ class Pipeline {
 
     if (node.type === 'task') {
       node.code = this.generateCodeSnippet();
-      node.docstring = getRandomName(randomNumber(10), '/');
     } else if (node.type === 'data') {
       node.datasetType = getRandomName(randomNumber(2));
     }
