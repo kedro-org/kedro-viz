@@ -122,12 +122,6 @@ describe('MetaData', () => {
       expect(textOf(rowValue(row))).toEqual(['kedro run --to-nodes salmon']);
     });
 
-    it('shows the node docstring', () => {
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
-      const row = rowByLabel(wrapper, 'Description (docstring):');
-      expect(textOf(rowValue(row))).toEqual(['-']);
-    });
-
     it('copies run command when button clicked', () => {
       window.navigator.clipboard = {
         writeText: jest.fn(),

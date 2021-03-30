@@ -69,8 +69,7 @@ def shark(input1, input2, input3, input4):
 
 
 def salmon(dog, rabbit, parameters, cat):
-    """docstring
-    """
+    """docstring"""
     return dog, rabbit
 
 
@@ -78,7 +77,7 @@ def trout(pig, sheep):
     return pig
 
 
-def tuna(sheep):
+def tuna(sheep, plankton1, plankton2):
     return sheep
 
 
@@ -111,7 +110,18 @@ def ds_pipeline():
 
 def pre_ds_pipeline():
     pre_ds_pipeline = Pipeline(
-        [node(tuna, inputs=["sheep"], outputs=["dolphin"], name="tuna")]
+        [
+            node(
+                tuna,
+                inputs=[
+                    "sheep",
+                    "params:pipeline2.data_science.plankton",
+                    "params:pipeline100.data_science.plankton",
+                ],
+                outputs=["dolphin"],
+                name="tuna",
+            )
+        ]
     )
     return pre_ds_pipeline
 
@@ -121,7 +131,7 @@ def de_pipeline():
         [
             node(
                 shark,
-                inputs=["cat", "weasel", "elephant", "bear"],
+                inputs=["cat", "nested.weasel", "elephant", "bear"],
                 outputs=["pig", "giraffe"],
                 name="shark",
                 tags=["medium", "large"],
@@ -150,7 +160,7 @@ def create_pipeline():
 @pytest.fixture
 def dummy_layers():
     return {
-        "raw": {"elephant", "bear", "weasel", "cat", "dog"},
+        "raw": {"elephant", "bear", "nested.weasel", "cat", "dog"},
         "primary": {"sheep"},
         "feature": {"pig"},
         "model output": {"horse", "giraffe", "pipeline2.data_science.whale"},
@@ -179,6 +189,8 @@ def patched_create_session(mocker, tmp_path, dummy_layers):
                 "cat": PickleDataSet(filepath=str(tmp_path)),
                 "parameters": MemoryDataSet({"name": "value"}),
                 "params:rabbit": MemoryDataSet("value"),
+                "params:pipeline2.data_science.plankton": MemoryDataSet("value"),
+                "params:pipeline100.data_science.plankton": MemoryDataSet("value"),
             }
             self.layers = layers
 
@@ -222,7 +234,9 @@ _USE_PATCHED_CONTEXT = pytest.mark.usefixtures("patched_create_session")
 
 
 @_USE_PATCHED_CONTEXT
-def test_set_port(cli_runner,):
+def test_set_port(
+    cli_runner,
+):
     """Check that port argument is correctly handled."""
     result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     assert result.exit_code == 0, result.output
@@ -255,7 +269,10 @@ def test_no_browser(cli_runner):
 def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_create_session):
     cli_runner.invoke(server.commands, ["viz", "--no-browser"])
     patched_create_session.assert_called_once_with(
-        package_name="test", project_path=Path.cwd(), env=None, save_on_close=False,
+        package_name="test",
+        project_path=Path.cwd(),
+        env=None,
+        save_on_close=False,
     )
 
 
@@ -275,8 +292,7 @@ def test_no_browser_if_not_localhost(cli_runner):
 
 
 def test_load_file_outside_kedro_project(cli_runner, tmp_path):
-    """Check that running viz with `--load-file` flag works outside of a Kedro project.
-    """
+    """Check that running viz with `--load-file` flag works outside of a Kedro project."""
     filepath_json = str(tmp_path / "test.json")
     data = {
         "nodes": None,
@@ -294,8 +310,7 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
 
 @_USE_PATCHED_CONTEXT
 def test_save_file(cli_runner, tmp_path):
-    """Check that running with `--save-file` flag saves pipeline JSON file in a specified path.
-    """
+    """Check that running with `--save-file` flag saves pipeline JSON file in a specified path."""
     save_path = str(tmp_path / "test.json")
 
     result = cli_runner.invoke(server.commands, ["viz", "--save-file", save_path])
@@ -318,8 +333,7 @@ def test_load_file_no_top_level_key(cli_runner, tmp_path):
 
 
 def test_no_load_file(cli_runner):
-    """Check that running viz without `--load-file` flag should fail outside of a Kedro project.
-    """
+    """Check that running viz without `--load-file` flag should fail outside of a Kedro project."""
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 1
 
@@ -404,34 +418,8 @@ def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
 
     assert data["code"] == inspect.getsource(salmon)
     assert data["filepath"] == str(Path(project_root) / filepath)
-    assert data["docstring"] == inspect.getdoc(salmon)
     assert data["parameters"] == {"name": "value"}
 
-
-@_USE_PATCHED_CONTEXT
-def test_node_metadata_endpoint_task_missing_docstring(
-    cli_runner, client, mocker, tmp_path
-):
-    """Test `/api/nodes/task_id` endpoint is functional and returns a valid JSON,
-    but docstring is missing."""
-    project_root = "project_root"
-    filepath = "filepath"
-    mocker.patch.object(
-        kedro_viz.server.Path, "cwd", return_value=tmp_path / project_root
-    )
-    mocker.patch.object(
-        kedro_viz.server.Path,
-        "resolve",
-        return_value=tmp_path / project_root / filepath,
-    )
-    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
-    task_id = "c8c182ec"
-    response = client.get(f"/api/nodes/{task_id}")
-    assert response.status_code == 200
-    data = json.loads(response.data.decode())
-    assert data["code"] == inspect.getsource(trout)
-    assert data["filepath"] == str(Path(project_root) / filepath)
-    assert "docstring" not in data
 
 
 @_USE_PATCHED_CONTEXT
@@ -606,7 +594,10 @@ class TestCallViz:
     def test_call_viz_without_project_path(self, patched_create_session):
         server._call_viz()
         patched_create_session.assert_called_once_with(
-            package_name="test", project_path=Path.cwd(), env=None, save_on_close=False,
+            package_name="test",
+            project_path=Path.cwd(),
+            env=None,
+            save_on_close=False,
         )
 
     def test_call_viz_with_project_path(self, patched_create_session):

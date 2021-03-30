@@ -36,11 +36,6 @@ export const flags = {
     default: false,
     icon: '😴',
   },
-  code: {
-    description: 'Show the code panel',
-    default: false,
-    icon: '{}',
-  },
   sizewarning: {
     description: 'Show a warning before rendering very large graphs',
     default: true,
