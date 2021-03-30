@@ -37,7 +37,6 @@ const NodeListProvider = ({
   faded,
   nodes,
   nodeSelected,
-  sections,
   tags,
   tagsEnabled,
   types,
@@ -51,7 +50,9 @@ const NodeListProvider = ({
   onToggleTypeDisabled,
   modularPipelines,
   modularPipelinesEnabled,
+  flag,
 }) => {
+  const sections = getSections(flag);
   const [searchValue, updateSearchValue] = useState('');
   const items = getFilteredItems({
     nodes,
@@ -204,10 +205,10 @@ export const mapStateToProps = (state) => ({
   tagsEnabled: state.tag.enabled,
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
-  sections: getSections(state),
   types: getNodeTypes(state),
   modularPipelines: getModularPipelineData(state),
   modularPipelinesEnabled: state.modularPipeline.enabled,
+  flag: state.flags.modularpipeline,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

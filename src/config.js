@@ -48,14 +48,26 @@ export const flags = {
   },
 };
 
-export const sidebar = {
-  Categories: {
-    Tags: 'tag',
-    ModularPipelines: 'modularPipeline',
-  },
-  Elements: {
-    Nodes: 'task',
-    Datasets: 'data',
-    Parameters: 'parameters',
-  },
-};
+export const sidebar = (flag) =>
+  flag
+    ? {
+        Categories: {
+          Tags: 'tag',
+          ModularPipelines: 'modularPipeline',
+        },
+        Elements: {
+          Nodes: 'task',
+          Datasets: 'data',
+          Parameters: 'parameters',
+        },
+      }
+    : {
+        Categories: {
+          Tags: 'tag',
+        },
+        Elements: {
+          Nodes: 'task',
+          Datasets: 'data',
+          Parameters: 'parameters',
+        },
+      };

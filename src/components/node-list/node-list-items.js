@@ -222,14 +222,16 @@ export const getFilteredNodeItems = createSelector(
 
 /**
  * Get formatted list of sections
+ * @param {boolean} flag value of modularpipeline flag
  * @return {array} List of sections
  */
-export const getSections = createSelector(() =>
-  Object.keys(sidebar).map((name) => ({
+export const getSections = (flag) => {
+  const sidebarObject = sidebar(flag);
+  return Object.keys(sidebarObject).map((name) => ({
     name,
-    types: Object.values(sidebar[name]),
-  }))
-);
+    types: Object.values(sidebarObject[name]),
+  }));
+};
 
 /**
  * Create a new group of items. This can be one of two kinds:
