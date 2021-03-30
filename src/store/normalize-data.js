@@ -38,7 +38,9 @@ export const createInitialPipelineState = () => ({
       task: 'Nodes',
       parameters: 'Parameters',
     },
-    disabled: {},
+    disabled: {
+      parameters: true,
+    },
   },
   edge: {
     ids: [],

@@ -30,7 +30,10 @@ const saveStateToLocalStorage = (state) => {
       disabled: pruneFalseyKeys(state.node.disabled),
     },
     nodeType: {
-      disabled: state.nodeType.disabled,
+      disabled: {
+        ...state.nodeType.disabled,
+        parameters: true,
+      },
     },
     pipeline: {
       active: state.pipeline.active,
