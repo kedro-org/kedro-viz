@@ -353,14 +353,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         else pipelines_list[0]["id"]
     )
 
-    sorted_modular_pipelines = [
-        {
-            "id": modular_pipeline,
-            "name": _pretty_modular_pipeline_name(modular_pipeline),
-        }
-        for modular_pipeline in sorted(modular_pipelines)
-    ]
-
+    sorted_modular_pipelines = _sort_and_format_modular_pipelines(modular_pipelines)
     _remove_non_modular_pipelines(nodes_list, modular_pipelines)
 
     return {
@@ -491,9 +484,13 @@ def format_pipeline_data(
             _JSON_NODES[node_id]["parameter_name"] = parameter_name
 
         if is_param:
-            dataset_modular_pipelines = _expand_namespaces(_get_namespace(parameter_name))
+            dataset_modular_pipelines = _expand_namespaces(
+                _get_namespace(parameter_name)
+            )
         else:
-            dataset_modular_pipelines = _expand_namespaces(_get_namespace(dataset_full_name))
+            dataset_modular_pipelines = _expand_namespaces(
+                _get_namespace(dataset_full_name)
+            )
             modular_pipelines.update(dataset_modular_pipelines)
 
         if node_id not in nodes:
@@ -577,6 +574,16 @@ def _get_parameter_values(node: Dict) -> Any:
     return parameter_values
 
 
+def _sort_and_format_modular_pipelines(modular_pipelines):
+    return [
+        {
+            "id": modular_pipeline,
+            "name": _pretty_modular_pipeline_name(modular_pipeline),
+        }
+        for modular_pipeline in sorted(modular_pipelines)
+    ]
+
+
 @app.route("/api/main")
 def nodes_json():
     """Serve the data from all Kedro pipelines in the project.
@@ -607,6 +614,8 @@ def pipeline_data(pipeline_id):
         if {edge["source"], edge["target"]} <= pipeline_node_ids:
             pipeline_edges.append(edge)
 
+    sorted_modular_pipelines = _sort_and_format_modular_pipelines(modular_pipelines)
+
     return jsonify(
         {
             "nodes": pipeline_nodes,
@@ -615,7 +624,7 @@ def pipeline_data(pipeline_id):
             "layers": _DATA["layers"],
             "pipelines": _DATA["pipelines"],
             "selected_pipeline": current_pipeline["id"],
-            "modular_pipelines": sorted(modular_pipelines),
+            "modular_pipelines": sorted_modular_pipelines,
         }
     )
 
