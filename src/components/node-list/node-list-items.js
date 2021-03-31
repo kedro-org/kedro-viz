@@ -31,10 +31,12 @@ export const highlightMatch = (nodes, searchValue) => {
     highlightedLabel: getHighlightedText(node.name, searchValue),
     ...node,
   });
-  const addLabelsToNodes = (newNodes, type) => ({
-    ...newNodes,
-    [type]: nodes[type].map(addHighlightedLabel),
-  });
+  const addLabelsToNodes = (newNodes, type) => {
+    return {
+      ...newNodes,
+      [type]: nodes[type].map(addHighlightedLabel),
+    };
+  };
 
   return Object.keys(nodes).reduce(addLabelsToNodes, {});
 };
@@ -65,7 +67,6 @@ export const filterNodes = (nodes, searchValue) => {
     ...newNodes,
     [type]: filterNodesByType(type),
   });
-
   return Object.keys(nodes).reduce(filterNodeLists, {});
 };
 
@@ -140,9 +141,9 @@ export const getFilteredModularPipelines = createSelector(
 );
 
 /**
- * Return filtered/highlighted tag list items
- * @param {object} filteredModularPipelines List of filtered tags
- * @param {object} modularPipelinesEnabled Map of enabled tags
+ * Return filtered/highlighted modular pipeline list items
+ * @param {object} filteredModularPipelines List of filtered modularPipelines
+ * @param {object} modularPipelinesEnabled Map of enabled modularPipelines
  * @return {array} Node list items
  */
 export const getFilteredModularPipelineItems = createSelector(
