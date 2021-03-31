@@ -161,7 +161,9 @@ describe('actions', () => {
     expect(toggleTagFilter(tagIDs, enabled)).toEqual(expectedAction);
   });
 
-  //**modular pipeline tests */
+  /**
+   * Tests for modular pipelines related actions
+   */
 
   it("should create an action to toggle a modular pipeline's active state on/off", () => {
     const modularPipelineID = '1234567890';
@@ -214,8 +216,6 @@ describe('actions', () => {
       expectedAction
     );
   });
-
-  // **
 
   it('should create an action to toggle the theme', () => {
     const theme = 'light';

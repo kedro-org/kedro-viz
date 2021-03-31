@@ -126,10 +126,10 @@ export const getFilteredTagItems = createSelector(
 );
 
 /**
- * Return filtered/highlighted tags
- * @param {object} tags List of tags
+ * Return filtered/highlighted modular pipelines
+ * @param {object} modularPipelines List of modular pipelines
  * @param {string} searchValue Search term
- * @return {object} Grouped tags
+ * @return {object} Grouped modular pipelines
  */
 export const getFilteredModularPipelines = createSelector(
   [(state) => state.modularPipelines, (state) => state.searchValue],

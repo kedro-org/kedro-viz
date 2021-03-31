@@ -111,7 +111,7 @@ const NodeListProvider = ({
 
   const onToggleGroupChecked = (type, checked) => {
     if (isTagType(type) || isModularPipelineType(type)) {
-      // Filter all category items if at least one tag item set, otherwise enable all tags
+      // Filter all category items if at least one item set, otherwise enable all items
       const categoryItems = items[type] || [];
       const someCategoryItemSet = categoryItems.some(
         (categoryItem) => !categoryItem.unset

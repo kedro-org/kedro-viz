@@ -303,9 +303,9 @@ describe('NodeList', () => {
       changeRows(wrapper, ['Large'], true);
       expect(partialIcon(wrapper)).toHaveLength(1);
 
-      // All tags selected - please note that this will now still show as partially selected due to the addition of the modular pipelien feature.
-      changeRows(wrapper, ['Large', 'Medium', 'Small'], true);
-      expect(partialIcon(wrapper)).toHaveLength(1);
+      // All tags selected
+      changeRows(wrapper, ['Medium', 'Small'], true);
+      expect(partialIcon(wrapper)).toHaveLength(0);
     });
 
     it('saves enabled tags in localStorage on selecting a tag on node-list', () => {
