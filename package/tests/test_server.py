@@ -384,7 +384,10 @@ def test_pipelines_endpoint(cli_runner, client):
     assert data["tags"] == EXPECTED_PIPELINE_DATA["tags"]
 
     # make sure only the list of modular pipelines is returned for the selected pipeline
-    assert data["modular_pipelines"] == ["pipeline2", "pipeline2.data_science"]
+    assert data["modular_pipelines"] == [
+        {"id": "pipeline2", "name": "Pipeline2"},
+        {"id": "pipeline2.data_science", "name": "Data Science"},
+    ]
 
 
 @_USE_PATCHED_CONTEXT
