@@ -4,7 +4,7 @@ import { getVisibleEdges } from '../../selectors/edges';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import { Constraint, Operator, Strength } from 'kiwi.js';
 import { graph } from './graph';
-import { solve } from './solver';
+import { solveLoose, solveStrict } from './solver';
 
 import {
   clamp,
@@ -392,7 +392,7 @@ describe('solver', () => {
       },
     };
 
-    solve(
+    solveLoose(
       [
         constraintXA,
         constraintXB,
@@ -401,9 +401,7 @@ describe('solver', () => {
         constraintYB,
         constraintYC,
       ],
-      null,
-      8,
-      false
+      8
     );
 
     expect(Math.abs(testA.x - testB.x)).toBeCloseTo(5);
@@ -508,19 +506,14 @@ describe('solver', () => {
       },
     };
 
-    solve(
-      [
-        constraintXA,
-        constraintXB,
-        constraintXC,
-        constraintYA,
-        constraintYB,
-        constraintYC,
-      ],
-      null,
-      1,
-      true
-    );
+    solveStrict([
+      constraintXA,
+      constraintXB,
+      constraintXC,
+      constraintYA,
+      constraintYB,
+      constraintYC,
+    ]);
 
     expect(Math.abs(testA.x - testB.x)).toEqual(5);
     expect(Math.abs(testB.x - testC.x)).toBeGreaterThanOrEqual(8);

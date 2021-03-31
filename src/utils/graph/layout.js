@@ -1,5 +1,5 @@
 import { halfPI, snap, angle, compare, groupByRow } from './common';
-import { solve } from './solver';
+import { solveLoose, solveStrict } from './solver';
 import {
   rowConstraint,
   layerConstraint,
@@ -52,7 +52,7 @@ export const layout = ({
   const layerConstraints = createLayerConstraints(nodes, layers);
 
   // Find the node positions given these constraints
-  solve([...rowConstraints, ...layerConstraints], constants, 1, true);
+  solveStrict([...rowConstraints, ...layerConstraints], constants, 1);
 
   // Find the solved rows using the node positions after solving
   const rows = groupByRow(nodes);
@@ -63,15 +63,15 @@ export const layout = ({
 
   // Solve these constraints iteratively
   for (let i = 0; i < iterations; i += 1) {
-    solve(crossingConstraints, constants, 1);
-    solve(parallelConstraints, constants, 50);
+    solveLoose(crossingConstraints, 1, constants);
+    solveLoose(parallelConstraints, 50, constants);
   }
 
   // Constraints to maintain a minimum horizontal node spacing
   const separationConstraints = createSeparationConstraints(rows, constants);
 
   // Find the final node positions given these strict constraints
-  solve([...separationConstraints, ...parallelConstraints], constants, 1, true);
+  solveStrict([...separationConstraints, ...parallelConstraints], constants, 1);
 
   // Adjust vertical spacing between rows for legibility
   expandDenseRows(edges, rows, spaceY);
