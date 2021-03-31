@@ -65,36 +65,22 @@ export const crossingConstraint = {
   property: 'x',
 
   solve: (constraint) => {
-    const {
-      edgeA,
-      edgeB,
-      separationA,
-      separationB,
-      strength,
-    } = constraint;
+    const { edgeA, edgeB, separationA, separationB, strength } = constraint;
 
-    const sourceSeparation = edgeA.sourceNode.x - edgeB.sourceNode.x;
-    const targetSeparation = edgeA.targetNode.x - edgeB.targetNode.x;
+    // Amount to move each node towards required separation
+    const resolveSource =
+      strength *
+      ((edgeA.sourceNode.x - edgeB.sourceNode.x - separationA) / separationA);
+    
+    const resolveTarget =
+      strength *
+      ((edgeA.targetNode.x - edgeB.targetNode.x - separationB) / separationB);
 
-    // Done if constraints are not crossing
-    if (sourceSeparation * targetSeparation < 0) {
-      return;
-    }
-
-    // Resolve larger separations more strongly
-    const resolveA =
-      strength * ((sourceSeparation - separationA) / separationA);
-    const resolveB =
-      strength * ((targetSeparation - separationB) / separationB);
-
-    // Choose the minimal solution that resolves crossing
-    if (Math.abs(resolveA) < Math.abs(resolveB)) {
-      edgeA.sourceNode.x -= resolveA;
-      edgeB.sourceNode.x += resolveA;
-    } else {
-      edgeA.targetNode.x -= resolveB;
-      edgeB.targetNode.x += resolveB;
-    }
+    // Apply the resolve each node
+    edgeA.sourceNode.x -= resolveSource;
+    edgeB.sourceNode.x += resolveSource;
+    edgeA.targetNode.x -= resolveTarget;
+    edgeB.targetNode.x += resolveTarget;
   },
 };
 
