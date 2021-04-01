@@ -27,7 +27,8 @@ export const solveLoose = (constraints, iterations, constants) => {
 
 /**
  * Applies the given constraints to the objects in-place.
- * A solution is found exactly if possible, otherwise throws an error.
+ * A solution is found exactly for the constraints that are solvable.
+ * Any unsolvable constraints will be skipped and a warning logged in the console.
  * @param {array} constraints The constraints
  * @param {string} constraint.base.property The property name on `a` and `b` to constrain
  * @param {function} constraint.base.strict A function returns the constraint in strict form
