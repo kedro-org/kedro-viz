@@ -11,36 +11,13 @@ import { Solver, Variable } from 'kiwi.js';
 
 /**
  * Applies the given constraints to the objects in-place.
- * If `strict` is set, limitations apply but an exact solution is attempted,
- * otherwise a solution is approximated iteratively
- * @param {array} constraints The constraints to apply
- * @param {object} constraint.a The first object to constrain
- * @param {object} constraint.b The second object to constrain
- * @param {string} constraint.base.property The property name on `a` and `b` to constrain
- * @param {?function} constraint.base.solve A function that solves the constraint in-place
- * @param {?function} constraint.base.strict A function returns the constraint in strict form
- * @param {?object} constants The constants used by constraints
- * @param {number=1} iterations The number of iterations
- * @param {boolean=false} strict
- */
-export const solve = (
-  constraints,
-  constants = {},
-  iterations = 1,
-  strict = false
-) => {
-  if (strict) return solveStrict(constraints, constants);
-  return solveLoose(constraints, constants, Math.ceil(iterations));
-};
-
-/**
- * Applies the given constraints to the objects in-place.
  * A solution is approximated iteratively.
- * @param {array} constraints The constraints. See docs for `solve`
- * @param {object} constants The constants used by constraints
+ * @param {array} constraints The constraints
+ * @param {function} constraint.base.solve A function that solves the constraint in-place
  * @param {number} iterations The number of iterations
+ * @param {?object} constants The constants used by constraints
  */
-const solveLoose = (constraints, constants, iterations) => {
+export const solveLoose = (constraints, iterations, constants) => {
   for (let i = 0; i < iterations; i += 1) {
     for (const co of constraints) {
       co.base.solve(co, constants);
@@ -51,10 +28,16 @@ const solveLoose = (constraints, constants, iterations) => {
 /**
  * Applies the given constraints to the objects in-place.
  * A solution is found exactly if possible, otherwise throws an error.
- * @param {array} constraints The constraints. See docs for `solve`
- * @param {object} constants The constants used by constraints
+ * @param {array} constraints The constraints
+ * @param {string} constraint.base.property The property name on `a` and `b` to constrain
+ * @param {function} constraint.base.strict A function returns the constraint in strict form
+ * @param {object} constraint.a The first object to constrain
+ * @param {object} constraint.b The second object to constrain
+ * @param {object} constraint.a.id A unique id for the first object
+ * @param {object} constraint.b.id A unique id for the second object
+ * @param {?object} constants The constants used by constraints
  */
-const solveStrict = (constraints, constants) => {
+export const solveStrict = (constraints, constants) => {
   const solver = new Solver();
   const variables = {};
 
