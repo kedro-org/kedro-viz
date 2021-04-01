@@ -5,15 +5,15 @@ const getNodeIDs = (state) => state.node.ids;
 const getNodePipelines = (state) => state.node.pipelines;
 const getActivePipeline = (state) => state.pipeline.active;
 const getNodeTags = (state) => state.node.tags;
-const getAsyncDataSource = (state) => state.asyncDataSource;
+const getDataSource = (state) => state.dataSource;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
  */
 export const getNodeDisabledPipeline = createSelector(
-  [getNodeIDs, getNodePipelines, getActivePipeline, getAsyncDataSource],
-  (nodeIDs, nodePipelines, activePipeline, asyncDataSource) => {
-    if (asyncDataSource || !activePipeline) {
+  [getNodeIDs, getNodePipelines, getActivePipeline, getDataSource],
+  (nodeIDs, nodePipelines, activePipeline, dataSource) => {
+    if (dataSource === 'json' || !activePipeline) {
       return {};
     }
     return arrayToObject(

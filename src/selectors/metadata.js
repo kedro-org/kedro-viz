@@ -46,7 +46,6 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.pipeline,
     (state) => state.node.filepath,
     (state) => state.node.code,
-    (state) => state.node.docstring,
     (state) => state.node.parameters,
     (state) => state.node.datasetType,
   ],
@@ -58,7 +57,6 @@ export const getClickedNodeMetaData = createSelector(
     pipeline,
     nodeFilepaths,
     nodeCodes,
-    nodeDocstrings,
     nodeParameters,
     nodeDatasetTypes
   ) => {
@@ -82,7 +80,6 @@ export const getClickedNodeMetaData = createSelector(
       pipeline: pipeline.name[pipeline.active],
       parameters,
       runCommand: getRunCommand(node),
-      docstring: nodeDocstrings[node.id],
       code: nodeCodes[node.id],
       filepath: nodeFilepaths[node.id],
       datasetType: nodeDatasetTypes[node.id],

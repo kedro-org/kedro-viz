@@ -4,7 +4,14 @@ import { getVisibleEdges } from '../../selectors/edges';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import { Constraint, Operator, Strength } from 'kiwi.js';
 import { graph } from './graph';
-import { solve } from './solver';
+import { solveLoose, solveStrict } from './solver';
+import {
+  rowConstraint,
+  layerConstraint,
+  parallelConstraint,
+  crossingConstraint,
+  separationConstraint,
+} from './constraints';
 
 import {
   clamp,
@@ -290,6 +297,241 @@ describe('commmon', () => {
   });
 });
 
+describe('constraints', () => {
+  it('rowConstraint separates nodes in `y` in order with at least the given spaceY with strict solve', () => {
+    const spaceY = 10;
+
+    // Set up test nodes
+    const testA = { id: 0, x: 1, y: 0 };
+    const testB = { id: 1, x: 2, y: 0 };
+    const testC = { id: 2, x: 3, y: 0 };
+
+    // Set up test constraints
+    const rowConstraintAB = {
+      base: rowConstraint,
+      a: testB,
+      b: testA,
+    };
+
+    const rowConstraintBC = {
+      base: rowConstraint,
+      a: testC,
+      b: testB,
+    };
+
+    // Expect initial y values with no separation
+    expect(testB.y - testA.y).toBe(0);
+    expect(testC.y - testB.y).toBe(0);
+
+    // Solve test constraints
+    solveStrict([rowConstraintAB, rowConstraintBC], { spaceY });
+
+    // Expect order in y is A -> B -> C
+    expect(testA.y).toBeLessThan(testB.y);
+    expect(testB.y).toBeLessThan(testC.y);
+
+    // Expect y values have been separated by at least the expected amount and direction
+    expect(testB.y - testA.y).toBeGreaterThanOrEqual(spaceY);
+    expect(testC.y - testB.y).toBeGreaterThanOrEqual(spaceY);
+  });
+
+  it('layerConstraint separates nodes in `y` in order with at least the given layerSpace with strict solve', () => {
+    const layerSpace = 10;
+
+    // Set up test nodes
+    const testA = { id: 0, x: 1, y: 0 };
+    const testB = { id: 1, x: 2, y: 0 };
+    const testC = { id: 2, x: 3, y: 0 };
+
+    // Set up test constraints
+    const layerConstraintAB = {
+      base: layerConstraint,
+      a: testB,
+      b: testA,
+    };
+
+    const layerConstraintBC = {
+      base: layerConstraint,
+      a: testC,
+      b: testB,
+    };
+
+    // Expect initial y values have no separation
+    expect(testB.y - testA.y).toBe(0);
+    expect(testC.y - testB.y).toBe(0);
+
+    // Solve test constraints
+    solveStrict([layerConstraintAB, layerConstraintBC], { layerSpace });
+
+    // Expect order in y is A -> B -> C
+    expect(testA.y).toBeLessThan(testB.y);
+    expect(testB.y).toBeLessThan(testC.y);
+
+    // Expect y values have been separated by at least the expected amount and direction
+    expect(testB.y - testA.y).toBeGreaterThanOrEqual(layerSpace);
+    expect(testC.y - testB.y).toBeGreaterThanOrEqual(layerSpace);
+  });
+
+  it('parallelConstraint minimises nodes `x` separation to exactly 0 with strict solve', () => {
+    const initialSepration = 10;
+
+    // Set up test nodes
+    const testA = { id: 0, x: initialSepration, y: 1 };
+    const testB = { id: 1, x: initialSepration * 2, y: 2 };
+    const testC = { id: 2, x: initialSepration * 3, y: 3 };
+
+    // Set up test constraints
+    const parallelConstraintAB = {
+      base: parallelConstraint,
+      strength: 0.5,
+      a: testA,
+      b: testB,
+    };
+
+    const parallelConstraintBC = {
+      base: parallelConstraint,
+      strength: 0.5,
+      a: testB,
+      b: testC,
+    };
+
+    // Expect initial x values have some separation
+    expect(testB.x - testA.x).toBeGreaterThan(0);
+    expect(testC.x - testB.x).toBeGreaterThan(0);
+
+    // Solve test constraints
+    solveStrict([parallelConstraintAB, parallelConstraintBC]);
+
+    // Expect x value separation has been minimised to exactly 0
+    expect(Math.abs(testA.x - testB.x)).toEqual(0);
+    expect(Math.abs(testB.x - testC.x)).toEqual(0);
+  });
+
+  it('parallelConstraint minimises nodes `x` separation to near 0 with loose solve', () => {
+    const initialSepration = 10;
+
+    // Set up test nodes
+    const testA = { id: 0, x: initialSepration, y: 1 };
+    const testB = { id: 1, x: initialSepration * 2, y: 2 };
+    const testC = { id: 2, x: initialSepration * 3, y: 3 };
+
+    // Set up test constraints
+    const parallelConstraintAB = {
+      base: parallelConstraint,
+      strength: 0.5,
+      a: testA,
+      b: testB,
+    };
+
+    const parallelConstraintBC = {
+      base: parallelConstraint,
+      strength: 0.5,
+      a: testB,
+      b: testC,
+    };
+
+    // Expect initial x values have some separation
+    expect(testB.x - testA.x).toBeGreaterThan(0);
+    expect(testC.x - testB.x).toBeGreaterThan(0);
+
+    // Solve test constraints
+    solveLoose([parallelConstraintAB, parallelConstraintBC], 10);
+
+    // Expect x value separation has been minimised near to 0
+    expect(Math.abs(testA.x - testB.x)).toBeCloseTo(0);
+    expect(Math.abs(testB.x - testC.x)).toBeCloseTo(0);
+  });
+
+  it('separationConstraint separates nodes in `x` in order with at least the given separation with strict solve', () => {
+    const separation = 10;
+
+    // Set up test nodes
+    const testA = { id: 0, x: 0, y: 0 };
+    const testB = { id: 1, x: 0, y: 0 };
+    const testC = { id: 2, x: 0, y: 0 };
+
+    // Set up test constraints
+    const separationConstraintAB = {
+      base: separationConstraint,
+      a: testA,
+      b: testB,
+      separation,
+    };
+
+    const separationConstraintBC = {
+      base: separationConstraint,
+      a: testB,
+      b: testC,
+      separation,
+    };
+
+    // Expect initial x values have no separation
+    expect(testB.x - testA.x).toBe(0);
+    expect(testC.x - testB.x).toBe(0);
+
+    // Solve test constraints
+    solveStrict([separationConstraintAB, separationConstraintBC]);
+
+    // Expect order in x is A -> B -> C
+    expect(testA.x).toBeLessThan(testB.x);
+    expect(testB.x).toBeLessThan(testC.x);
+
+    // Expect x values have been separated by at least the expected amount and direction
+    expect(testB.x - testA.x).toBeGreaterThanOrEqual(separation);
+    expect(testC.x - testB.x).toBeGreaterThanOrEqual(separation);
+  });
+
+  it('crossingConstraint resolves crossing to given separation in `x` between two edges with loose solve', () => {
+    const separation = 10;
+
+    // Set up test edges such that they are crossing
+    const testEdgeA = {
+      sourceNode: { id: 0, x: -5, y: 0 },
+      targetNode: { id: 1, x: 5, y: 0 },
+    };
+
+    const testEdgeB = {
+      sourceNode: { id: 2, x: 10, y: 0 },
+      targetNode: { id: 3, x: -10, y: 0 },
+    };
+
+    // Set up test constraints
+    const crossingConstraintA = {
+      base: crossingConstraint,
+      edgeA: testEdgeA,
+      edgeB: testEdgeB,
+      strength: 0.9,
+      separationA: separation,
+      separationB: separation,
+    };
+
+    // Use the dot product to determine if edges cross in X
+    const isCrossing = (edgeA, edgeB) =>
+      (edgeA.sourceNode.x - edgeB.sourceNode.x) *
+        (edgeA.targetNode.x - edgeB.targetNode.x) <
+      0;
+    
+    // Expect edges to be initially crossing
+    expect(isCrossing(testEdgeA, testEdgeB)).toBe(true);
+
+    // Solve test constraints
+    solveLoose([crossingConstraintA], 50);
+
+    // Expect edges to no longer be crossing
+    expect(isCrossing(testEdgeA, testEdgeB)).toBe(false);
+
+    // Expect source nodes to be separated by close to the expected separation
+    expect(
+      Math.abs(testEdgeA.sourceNode.x - testEdgeB.sourceNode.x)
+    ).toBeGreaterThanOrEqual(separation * 0.99);
+
+    // Expect target nodes to be separated by close to the expected separation
+    expect(
+      Math.abs(testEdgeA.targetNode.x - testEdgeB.targetNode.x)
+    ).toBeGreaterThanOrEqual(separation * 0.99);
+  });
+});
+
 describe('solver', () => {
   it('solve finds a valid solution to given constraints (loose)', () => {
     const testA = { id: 0, x: 0, y: 0 };
@@ -392,7 +634,7 @@ describe('solver', () => {
       },
     };
 
-    solve(
+    solveLoose(
       [
         constraintXA,
         constraintXB,
@@ -401,9 +643,7 @@ describe('solver', () => {
         constraintYB,
         constraintYC,
       ],
-      null,
-      8,
-      false
+      8
     );
 
     expect(Math.abs(testA.x - testB.x)).toBeCloseTo(5);
@@ -508,19 +748,14 @@ describe('solver', () => {
       },
     };
 
-    solve(
-      [
-        constraintXA,
-        constraintXB,
-        constraintXC,
-        constraintYA,
-        constraintYB,
-        constraintYC,
-      ],
-      null,
-      1,
-      true
-    );
+    solveStrict([
+      constraintXA,
+      constraintXB,
+      constraintXC,
+      constraintYA,
+      constraintYB,
+      constraintYC,
+    ]);
 
     expect(Math.abs(testA.x - testB.x)).toEqual(5);
     expect(Math.abs(testB.x - testC.x)).toBeGreaterThanOrEqual(8);

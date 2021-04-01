@@ -56,9 +56,6 @@ function nodeReducer(nodeState = {}, action) {
         filepath: Object.assign({}, nodeState.filepath, {
           [id]: data.filepath,
         }),
-        docstring: Object.assign({}, nodeState.docstring, {
-          [id]: data.docstring,
-        }),
         parameters: Object.assign({}, nodeState.parameters, {
           [id]: data.parameters,
         }),

@@ -555,7 +555,7 @@ def resource_not_found(error):
 
 
 def _get_task_metadata(node):
-    """Get a dictionary of task metadata: 'code', 'filepath' and 'docstring'.
+    """Get a dictionary of task metadata: 'code', 'filepath'.
     For 'filepath', remove the path to the project from the full code location
     before sending to JSON.
 
@@ -570,10 +570,6 @@ def _get_task_metadata(node):
     code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
     filepath = code_full_path.relative_to(Path.cwd().parent)
     task_metadata["filepath"] = str(filepath)
-
-    docstring = inspect.getdoc(node["obj"]._func)
-    if docstring:
-        task_metadata["docstring"] = docstring
 
     if "parameters" in node:
         task_metadata["parameters"] = node["parameters"]

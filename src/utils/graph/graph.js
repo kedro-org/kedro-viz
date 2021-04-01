@@ -4,12 +4,12 @@ import { routing } from './routing';
 
 const defaultOptions = {
   layout: {
-    spaceX: 16,
+    spaceX: 14,
     spaceY: 110,
     layerSpaceY: 55,
-    basisX: 1500,
+    spreadX: 2.2,
     padding: 100,
-    iterations: 20,
+    iterations: 25,
   },
   routing: {
     spaceX: 26,

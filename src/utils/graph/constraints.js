@@ -12,28 +12,13 @@ import { Constraint, Operator, Strength } from 'kiwi.js';
 export const rowConstraint = {
   property: 'y',
 
-  solve: (constraint, constants) => {
-    const { a, b } = constraint;
-    const difference = a.y - b.y;
-    const target = constants.spaceY;
-
-    if (difference >= target) {
-      return;
-    }
-
-    const resolve = difference - target;
-    a.y -= 0.5 * resolve;
-    b.y += 0.5 * resolve;
-  },
-
-  strict: (constraint, constants, variableA, variableB) => {
-    return new Constraint(
+  strict: (constraint, constants, variableA, variableB) =>
+    new Constraint(
       variableA.minus(variableB),
       Operator.Ge,
       constants.spaceY,
       Strength.required
-    );
-  },
+    ),
 };
 
 /**
@@ -42,28 +27,13 @@ export const rowConstraint = {
 export const layerConstraint = {
   property: 'y',
 
-  solve: (constraint, constants) => {
-    const { a, b } = constraint;
-    const difference = a.y - b.y;
-    const target = constants.layerSpace;
-
-    if (difference >= target) {
-      return;
-    }
-
-    const resolve = difference - target;
-    a.y -= 0.5 * resolve;
-    b.y += 0.5 * resolve;
-  },
-
-  strict: (constraint, constants, variableA, variableB) => {
-    return new Constraint(
+  strict: (constraint, constants, variableA, variableB) =>
+    new Constraint(
       variableA.minus(variableB),
       Operator.Ge,
       constants.layerSpace,
       Strength.required
-    );
-  },
+    ),
 };
 
 /**
@@ -73,54 +43,44 @@ export const parallelConstraint = {
   property: 'x',
 
   solve: (constraint) => {
-    const { a, b } = constraint;
-    const difference = a.x - b.x;
-
-    if (difference === 0) {
-      return;
-    }
-
-    const strength =
-      1 / Math.max(1, 0.5 * (a.targets.length + b.sources.length));
-
-    const resolve = strength * difference;
-    a.x -= 0.5 * resolve;
-    b.x += 0.5 * resolve;
+    const { a, b, strength } = constraint;
+    const resolve = strength * (a.x - b.x);
+    a.x -= resolve;
+    b.x += resolve;
   },
 
-  strict: (constraint, constants, variableA, variableB) => {
-    return new Constraint(
+  strict: (constraint, constants, variableA, variableB) =>
+    new Constraint(
       variableA.minus(variableB),
       Operator.Eq,
       0,
-      Strength.strong
-    );
-  },
+      Strength.create(1, 0, 0, constraint.strength)
+    ),
 };
 
 /**
- * Layout constraint in X for minimising edge crossings
+ * Crossing constraint in X for minimising edge crossings
  */
 export const crossingConstraint = {
   property: 'x',
 
-  solve: (constraint, constants) => {
-    const { a, b, edgeA, edgeB } = constraint;
-    const difference = a.x - b.x;
-    const sourceDelta = edgeA.sourceNode.x - edgeB.sourceNode.x;
-    const targetDelta = edgeA.targetNode.x - edgeB.targetNode.x;
-    const target =
-      sourceDelta + targetDelta < 0 ? -constants.basisX : constants.basisX;
+  solve: (constraint) => {
+    const { edgeA, edgeB, separationA, separationB, strength } = constraint;
 
-    if (target >= 0 ? difference >= target : difference <= target) {
-      return;
-    }
+    // Amount to move each node towards required separation
+    const resolveSource =
+      strength *
+      ((edgeA.sourceNode.x - edgeB.sourceNode.x - separationA) / separationA);
+    
+    const resolveTarget =
+      strength *
+      ((edgeA.targetNode.x - edgeB.targetNode.x - separationB) / separationB);
 
-    const strength = 1 / constants.basisX;
-
-    const resolve = strength * (difference - target);
-    a.x -= 0.5 * resolve;
-    b.x += 0.5 * resolve;
+    // Apply the resolve each node
+    edgeA.sourceNode.x -= resolveSource;
+    edgeB.sourceNode.x += resolveSource;
+    edgeA.targetNode.x -= resolveTarget;
+    edgeB.targetNode.x += resolveTarget;
   },
 };
 
@@ -130,26 +90,11 @@ export const crossingConstraint = {
 export const separationConstraint = {
   property: 'x',
 
-  solve: (constraint) => {
-    const { a, b } = constraint;
-    const difference = b.x - a.x;
-    const target = constraint.separation;
-
-    if (difference >= target) {
-      return;
-    }
-
-    const resolve = difference - target;
-    a.x += 0.5 * resolve;
-    b.x -= 0.5 * resolve;
-  },
-
-  strict: (constraint, constants, variableA, variableB) => {
-    return new Constraint(
+  strict: (constraint, constants, variableA, variableB) =>
+    new Constraint(
       variableB.minus(variableA),
       Operator.Ge,
       constraint.separation,
       Strength.required
-    );
-  },
+    ),
 };
