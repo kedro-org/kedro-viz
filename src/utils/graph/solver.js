@@ -27,7 +27,8 @@ export const solveLoose = (constraints, iterations, constants) => {
 
 /**
  * Applies the given constraints to the objects in-place.
- * A solution is found exactly if possible, otherwise throws an error.
+ * A solution is found exactly for the constraints that are solvable.
+ * Any unsolvable constraints will be skipped and a warning logged in the console.
  * @param {array} constraints The constraints
  * @param {string} constraint.base.property The property name on `a` and `b` to constrain
  * @param {function} constraint.base.strict A function returns the constraint in strict form
@@ -58,15 +59,25 @@ export const solveStrict = (constraints, constants) => {
     addVariable(co.b, co.base.property);
   }
 
+  let unsolvableCount = 0;
+
   for (const co of constraints) {
-    solver.addConstraint(
-      co.base.strict(
-        co,
-        constants,
-        variables[variableId(co.a, co.base.property)],
-        variables[variableId(co.b, co.base.property)]
-      )
-    );
+    try {
+      solver.addConstraint(
+        co.base.strict(
+          co,
+          constants,
+          variables[variableId(co.a, co.base.property)],
+          variables[variableId(co.b, co.base.property)]
+        )
+      );
+    } catch (err) {
+      unsolvableCount += 1;
+    }
+  }
+
+  if (unsolvableCount > 0) {
+    console.warn(`Skipped ${unsolvableCount} unsolvable constraints`);
   }
 
   solver.updateVariables();
