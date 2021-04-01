@@ -5,7 +5,7 @@ import { select } from 'd3-selection';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { updateZoom } from '../../actions';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
-import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
+import { getLinkedNodes } from '../../selectors/linked-nodes';
 import {
   viewing,
   isOrigin,
@@ -104,7 +104,7 @@ export class MiniMap extends Component {
         changed(
           'visible',
           'nodes',
-          'centralNode',
+          'clickedNodes',
           'linkedNodes',
           'nodesActive',
           'nodeSelected'
@@ -398,7 +398,7 @@ const emptyGraphSize = {};
 export const mapStateToProps = (state, ownProps) => ({
   visible: state.visible.miniMap,
   mapSize: getMapSize(state),
-  centralNode: getCentralNode(state),
+  clickedNode: state.node.clicked,
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
   graphSize: state.graph.size || emptyGraphSize,

@@ -1,18 +1,7 @@
 import { createSelector } from 'reselect';
 import { getVisibleEdges } from './edges';
 
-export const getClickedNode = (state) => state.node.clicked;
-
-/**
- * Get the node that should be used as the center of the set of linked nodes
- * @param {Array} edges
- * @param {string} nodeID
- */
-export const getCentralNode = createSelector(
-  [getClickedNode],
-  (clickedNode) => clickedNode
-);
-
+const getClickedNode = (state) => state.node.clicked;
 /**
  * Gets a map of visible nodeIDs to successors nodeIDs in both directions
  * @param {Array} edges
@@ -68,7 +57,7 @@ const findLinkedNodes = (nodeID, edgesByNode, visited) => {
  * @param {string} nodeID
  */
 export const getLinkedNodes = createSelector(
-  [getVisibleEdgesByNode, getCentralNode],
+  [getVisibleEdgesByNode, getClickedNode],
   ({ sourceEdges, targetEdges }, nodeID) => {
     if (!nodeID) {
       return {};

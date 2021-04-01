@@ -293,7 +293,6 @@ describe('FlowChart', () => {
   it('maps state to props', () => {
     const expectedResult = {
       clickedNode: expect.any(Object),
-      centralNode: expect.any(Object),
       chartSize: expect.any(Object),
       chartZoom: expect.any(Object),
       edges: expect.any(Array),

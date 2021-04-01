@@ -147,7 +147,7 @@ describe('MiniMap', () => {
     const expectedResult = {
       visible: expect.any(Boolean),
       mapSize: expect.any(Object),
-      centralNode: null,
+      clickedNode: null,
       chartSize: expect.any(Object),
       chartZoom: expect.any(Object),
       graphSize: expect.any(Object),

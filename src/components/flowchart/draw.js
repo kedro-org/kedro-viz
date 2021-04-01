@@ -108,7 +108,7 @@ const updateNodeRects = (nodeRects) =>
  */
 export const drawNodes = function (changed) {
   const {
-    centralNode,
+    clickedNode,
     linkedNodes,
     nodeActive,
     nodeSelected,
@@ -188,14 +188,14 @@ export const drawNodes = function (changed) {
   }
 
   if (
-    changed('nodes', 'nodeActive', 'nodeSelected', 'centralNode', 'linkedNodes')
+    changed('nodes', 'nodeActive', 'nodeSelected', 'clickedNode', 'linkedNodes')
   ) {
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
       .classed(
         'pipeline-node--faded',
-        (node) => centralNode && !linkedNodes[node.id]
+        (node) => clickedNode && !linkedNodes[node.id]
       );
   }
 
@@ -244,7 +244,7 @@ export const drawNodes = function (changed) {
  * Render edge lines
  */
 export const drawEdges = function (changed) {
-  const { edges, centralNode, linkedNodes } = this.props;
+  const { edges, clickedNode, linkedNodes } = this.props;
 
   if (changed('edges')) {
     this.el.edges = this.el.edgeGroup
@@ -299,12 +299,12 @@ export const drawEdges = function (changed) {
     this.el.edges = this.el.edgeGroup.selectAll('.pipeline-edge');
   }
 
-  if (changed('edges', 'centralNode', 'linkedNodes')) {
+  if (changed('edges', 'clickedNode', 'linkedNodes')) {
     allEdges.classed(
       'pipeline-edge--faded',
       (edge) =>
         edge &&
-        centralNode &&
+        clickedNode &&
         (!linkedNodes[edge.source] || !linkedNodes[edge.target])
     );
   }
