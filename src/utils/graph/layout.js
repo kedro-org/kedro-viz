@@ -16,9 +16,9 @@ import {
  * @param {array} params.nodes The input nodes
  * @param {array} params.edges The input edges
  * @param {object=} params.layers The node layers if specified
- * @param {number} params.spreadX The amount to adapt spacing in X
  * @param {number} params.spaceX The minimum gap between nodes in X
  * @param {number} params.spaceY The minimum gap between nodes in Y
+ * @param {number} params.spreadX Adjusts the gap for each node in X based on the number of connected edges it has
  * @param {number} params.layerSpaceY The additional gap between nodes in Y between layers
  * @param {number} params.iterations The number of solver iterations to perform
  * @returns {void}
@@ -27,9 +27,9 @@ export const layout = ({
   nodes,
   edges,
   layers,
-  spreadX,
   spaceX,
   spaceY,
+  spreadX,
   layerSpaceY,
   iterations,
 }) => {
@@ -260,24 +260,28 @@ const createSeparationConstraints = (rows, constants) => {
 };
 
 /**
- * Adds additional spacing in Y for rows containing many crossing edges.
+ * Adds additional spacing in Y relative to row density, see function `rowDensity` for definition.
  * Node positions are updated in-place
  * @param {array} edges The input edges
  * @param {array} rows The input rows of nodes
- * @param {number} spaceY The minimum spacing between nodes in Y
+ * @param {number} spaceY The spacing between nodes in Y
+ * @param {number} [scale=1.25] The amount of expansion to apply relative to row density
+ * @param {number} [unit=0.25] The unit size for rounding expansion relative to spaceY
  */
-const expandDenseRows = (edges, rows, spaceY) => {
+const expandDenseRows = (edges, rows, spaceY, scale = 1.25, unit = 0.25) => {
   const densities = rowDensity(edges);
+  const spaceYUnit = Math.round(spaceY * unit);
   let currentOffsetY = 0;
 
-  // Add spacing based on density
+  // Add spacing based relative to row density
   for (let i = 0; i < densities.length; i += 1) {
     const density = densities[i];
 
-    // Snap to improve vertical rhythm
-    const offsetY = snap(density * 1.25 * spaceY, Math.round(spaceY * 0.25));
+    // Round offset to a common unit amount to improve vertical rhythm
+    const offsetY = snap(density * scale * spaceY, spaceYUnit);
     currentOffsetY += offsetY;
 
+    // Apply offset to all nodes following the current node
     for (const node of rows[i + 1]) {
       node.y += currentOffsetY;
     }
@@ -286,8 +290,9 @@ const expandDenseRows = (edges, rows, spaceY) => {
 
 /**
  * Estimates an average 'density' for each row based on average edge angle at that row.
- * Rows are decided by each edge's source and target node Y positions.
- * Intermediate rows are assumed always vertical as a simplification.
+ * Rows with edges close to horizontal are more 'dense' than rows with straight vertical edges.
+ * Rows are determined by each edge's source and target node Y positions.
+ * Intermediate row edges are assumed always vertical as a simplification, only the start end rows are measured.
  * Returns a list of values in `(0, 1)` where `0` means all edges on that row are vertical and `1` means all horizontal
  * @param {array} edges The input edges
  * @returns {array} The density of each row
