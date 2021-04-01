@@ -77,38 +77,40 @@ export const addEdgeLinks = (nodes, edges) => {
 };
 
 /**
- * Adds the nearest layer to each node based on the layers of its connected nodes in-place
+ * Adds the nearest valid layer to each node whilst maintaining the correct layer order
  * @param {array} nodes The input nodes
  * @param {?array} layers The input layers
  */
 const addNearestLayers = (nodes, layers) => {
   if (layers && layers.length > 0) {
-    // Only accept layers specififed in the layers list.
-    const layersMap = layers.reduce(
-      (res, layer) => ({ ...res, [layer]: true }),
-      {}
-    );
-    const hasValidLayer = (node) => Boolean(layersMap[node.layer]);
+    // Create the set of valid layers for lookup
+    const validLayers = {};
+    for (const layer of layers) {
+      validLayers[layer] = true;
+    }
 
+    const hasValidLayer = (node) => Boolean(node && node.layer in validLayers);
+    const lastLayer = layers[layers.length - 1];
+
+    // For each node
     for (const node of nodes) {
+      // Find first descendant node that has a valid layer following rank order (including itself)
       const layerNode = findNodeBy(
+        // Starting node
         node,
-        targetThenSourceNodes,
-        nodeDistance,
+        // Next connected nodes to search
+        targetNodes,
+        // Lowest rank first
+        orderRankAscending,
+        // Acceptance criteria
         hasValidLayer
       );
-      node.nearestLayer = layerNode && layerNode.layer;
+
+      // Assign the nearest layer if found otherwise must be the last layer
+      node.nearestLayer = layerNode ? layerNode.layer : lastLayer;
     }
   }
 };
-
-/**
- * Returns the list of the node's connected target nodes followed by its connected source nodes
- * @param {object} node The input node
- * @returns {array} The connected nodes
- */
-const targetThenSourceNodes = (node) =>
-  targetNodes(node).concat(sourceNodes(node));
 
 /**
  * Returns the list of target nodes directly connected to the given node
@@ -118,47 +120,48 @@ const targetThenSourceNodes = (node) =>
 const targetNodes = (node) => node.targets.map((edge) => edge.targetNode);
 
 /**
- * Returns the list of source nodes directly connected to the given node
- * @param {object} node The input node
- * @returns {array} The source nodes
- */
-const sourceNodes = (node) => node.sources.map((edge) => edge.sourceNode);
-
-/**
- * Returns the distance between the two nodes using their assigned rank
+ * Comparator function for sorting nodes rank ascending
  * @param {object} nodeA The first input node
  * @param {object} nodeB The second input node
- * @returns {number} The distance
+ * @returns {number} The signed difference
  */
-const nodeDistance = (nodeA, nodeB) => Math.abs(nodeA.rank - nodeB.rank);
+const orderRankAscending = (nodeA, nodeB) => nodeA.rank - nodeB.rank;
 
 /**
- * Starting at the given node and expanding successors, returns the first node accepted relative to the metric
+ * Starting at the given node and expanding successors, returns the first node accepted in order
  * @param {object} node The starting node
  * @param {function} successors A function returning the next nodes to expand
- * @param {function} metric A function that measures the difference between two nodes
+ * @param {function} order A comparator function used for prioritising successors
  * @param {function} accept A function that returns true if the current node fits the criteria
  * @param {object=} visited An object keeping track of nodes already searched
- * @returns {?object} The first node accepted, if found
+ * @returns {?object} The first node accepted in order, or undefined if none
  */
-const findNodeBy = (node, successors, metric, accept, visited) => {
-  if (accept(node)) return node;
+const findNodeBy = (node, successors, order, accept, visited) => {
+  // If the current node is accepted then return it without further search
+  if (accept(node)) {
+    return node;
+  }
 
+  // Keep track of visited nodes
   visited = visited || {};
   visited[node.id] = true;
 
-  const next = successors(node).filter((node) => !visited[node.id]);
-  const nearest = next.sort(
-    (nodeA, nodeB) => metric(node, nodeA) - metric(node, nodeB)
-  );
-  const accepted = nearest.filter(accept);
+  const results = successors(node)
+    // Remove successors already visited
+    .filter((successor) => !visited[successor.id])
+    // Order unvisited successors
+    .sort(order)
+    // Search the unvisited successors recursively
+    .map((successor) =>
+      findNodeBy(successor, successors, order, accept, visited)
+    )
+    // Keep only the accepted resulting nodes if any
+    .filter(accept)
+    // Order resulting nodes
+    .sort(order);
 
-  return (
-    accepted[0] ||
-    nearest.map((node) =>
-      findNodeBy(node, successors, metric, accept, visited)
-    )[0]
-  );
+  // Return the first node accepted in order, or undefined if none
+  return results[0];
 };
 
 /**
