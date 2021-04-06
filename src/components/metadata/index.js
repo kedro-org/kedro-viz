@@ -5,6 +5,7 @@ import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/icon-button';
 import CopyIcon from '../icons/copy';
 import CloseIcon from '../icons/close';
+import PlotlyChart from '../plotly-chart';
 import MetaDataRow from './metadata-row';
 import MetaDataValue from './metadata-value';
 import MetaDataCode from './metadata-code';
@@ -16,6 +17,20 @@ import {
 import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode } from '../../actions';
 import './styles/metadata.css';
+
+const plotData = {
+  data: [
+    {
+      x: [1, 2, 3],
+      y: [2, 6, 3],
+      type: 'scatter',
+      mode: 'lines+markers',
+      marker: { color: 'red' },
+    },
+    { type: 'bar', x: [1, 2, 3], y: [2, 5, 3] },
+  ],
+  layout: { width: 320, height: 240, title: 'A Fancy Plot' },
+};
 
 /**
  * Shows node meta data
@@ -170,6 +185,11 @@ const MetaData = ({
                 visible={isTaskNode}
                 value={metadata.docstring}
               />
+              <MetaDataRow label="Plotly Chart:" visible={isDataNode}>
+                <div>
+                  <PlotlyChart data={plotData.data} layout={plotData.layout} />
+                </div>
+              </MetaDataRow>
             </dl>
           </>
         )}
