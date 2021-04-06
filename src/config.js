@@ -41,6 +41,11 @@ export const flags = {
     default: true,
     icon: '🐳',
   },
+  charts: {
+    description: 'Show plotly charts if specified in config.yml',
+    default: false,
+    icon: '📊',
+  },
 };
 
 export const sidebar = {
