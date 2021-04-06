@@ -21,6 +21,7 @@ import {
   getViewExtents,
 } from '../../utils/view';
 import Tooltip from '../tooltip';
+import { plotData } from '../../utils/data/plot_mock';
 import './styles/flowchart.css';
 
 /**
@@ -454,6 +455,7 @@ export class FlowChart extends Component {
         targetRect: event && event.target.getBoundingClientRect(),
         text: node && node.fullName,
         visible: true,
+        graph: node.type === 'data' ? plotData : null,
         ...options,
       },
     });
