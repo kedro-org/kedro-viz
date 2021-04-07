@@ -38,12 +38,13 @@ from functools import partial
 from pathlib import Path
 
 import pytest
-from kedro.extras.datasets.pickle import PickleDataSet
-from kedro.io import DataCatalog, DataSetNotFoundError, MemoryDataSet
-from kedro.pipeline import Pipeline, node
 from toposort import CircularDependencyError
 
 import kedro_viz
+from kedro.extras.datasets.pickle import PickleDataSet
+from kedro.extras.datasets.plotly import PlotlyDataSet
+from kedro.io import DataCatalog, DataSetNotFoundError, MemoryDataSet
+from kedro.pipeline import Pipeline, node
 from kedro_viz import server
 from kedro_viz.server import _allocate_port, _hash, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
@@ -147,12 +148,26 @@ def patched_get_project_metadata(mocker):
     )
 
 
+@pytest.fixture(
+    params=[
+        {
+            "fig": {"orientation": "h", "x": "col1", "y": "col2"},
+            "layout": {"title": "Test", "xaxis_title": "x", "yaxis_title": "y"},
+            "type": "scatter",
+        }
+    ]
+)
+def plotly_args(request):
+    return request.param
+
+
 @pytest.fixture
-def patched_create_session(mocker, tmp_path, dummy_layers):
+def patched_create_session(mocker, tmp_path, dummy_layers, plotly_args):
     class DummyDataCatalog:
         def __init__(self, layers):
             self._data_sets = {
                 "cat": PickleDataSet(filepath=str(tmp_path)),
+                "elephant": PlotlyDataSet(filepath="test.json", plotly_args=plotly_args),
                 "parameters": MemoryDataSet({"name": "value"}),
                 "params:rabbit": MemoryDataSet("value"),
             }
@@ -380,7 +395,6 @@ def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     assert data["parameters"] == {"name": "value"}
 
 
-
 @_USE_PATCHED_CONTEXT
 def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""
@@ -436,6 +450,20 @@ def test_node_metadata_endpoint_invalid(cli_runner, client):
     assert response.status_code == 404
     data = json.loads(response.data.decode())
     assert data["error"] == "404 Not Found: Invalid node ID."
+
+
+@_USE_PATCHED_CONTEXT
+def test_node_metadata_plotly_dataset(cli_runner, client, tmp_path, mocker):
+    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON including the plot data."""
+    cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
+    mocker.patch("builtins.open")
+    mocker.patch("json.load", return_value=[{}])
+    response = client.get(f"/api/nodes/{_hash('elephant')}")
+    assert response.status_code == 200
+    data = json.loads(response.data.decode())
+    assert data["filepath"] == "test.json"
+    assert data["type"] == f"{PlotlyDataSet.__module__}.{PlotlyDataSet.__qualname__}"
+    assert data["plot"]
 
 
 @_USE_PATCHED_CONTEXT

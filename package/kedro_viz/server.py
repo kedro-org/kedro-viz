@@ -43,17 +43,17 @@ from pathlib import Path
 from typing import Any, Dict, List, Set, Union
 
 import click
-import kedro
 import requests
 from flask import Flask, abort, jsonify, send_from_directory
 from IPython.core.display import HTML, display
+from semver import VersionInfo
+from toposort import toposort_flatten
+
+import kedro
 from kedro.framework.cli.utils import KedroCliError
 from kedro.framework.context import KedroContextError, load_context
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 from kedro.pipeline.node import Node
-from semver import VersionInfo
-from toposort import toposort_flatten
-
 from kedro_viz.utils import wait_for
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
@@ -580,10 +580,20 @@ def _get_task_metadata(node):
 def _get_dataset_metadata(node):
     dataset = node["obj"]
     if dataset:
-        dataset_metadata = {
-            "type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
-            "filepath": str(dataset._describe().get("filepath")),
-        }
+        filepath = str(dataset._describe().get("filepath"))
+        if dataset.__class__.__qualname__ == "PlotlyDataSet":
+            with open(filepath) as file:
+                plotly_json = json.load(file)
+            dataset_metadata = {
+                "type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
+                "filepath": filepath,
+                "plot": plotly_json,
+            }
+        else:
+            dataset_metadata = {
+                "type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
+                "filepath": filepath,
+            }
     else:
         # dataset not persisted, so no metadata defined in catalog.yml.
         dataset_metadata = {}
