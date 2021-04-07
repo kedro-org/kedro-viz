@@ -37,6 +37,19 @@ export function toggleExportModal(visible) {
   };
 }
 
+export const TOGGLE_PLOT_MODAL = 'TOGGLE_PLOT_MODAL';
+
+/**
+ * Toggle whether to show the plot modal
+ * @param {Boolean} visible True if the modal is to be shown
+ */
+export function togglePlotModal(visible) {
+  return {
+    type: TOGGLE_PLOT_MODAL,
+    visible,
+  };
+}
+
 export const TOGGLE_GRAPH = 'TOGGLE_GRAPH';
 
 /**

@@ -25,6 +25,7 @@ export const createInitialState = () => ({
     layerBtn: true,
     exportBtn: true,
     exportModal: false,
+    plotModal: false,
     sidebar: true,
     code: false,
     themeBtn: true,
