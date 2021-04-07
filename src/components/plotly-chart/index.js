@@ -8,12 +8,13 @@ import light from '../../utils/chart_templates/metadata_light.json';
  * Display plotly chart
  */
 
-const PlotlyChart = ({ theme, data, layout }) => {
+const PlotlyChart = ({ theme, data, layout, isTooltip }) => {
+  const finalTheme = isTooltip ? (theme === 'light' ? 'dark' : 'light') : theme;
   return (
     <div>
       <Plot
         data={data}
-        layout={updateLayout(theme, layout)}
+        layout={updateLayout(finalTheme, layout, isTooltip)}
         config={{ displayModeBar: false }}
       />
     </div>

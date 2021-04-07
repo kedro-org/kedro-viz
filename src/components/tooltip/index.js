@@ -1,6 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import './tooltip.css';
+import PlotlyChart from '../plotly-chart';
 
 const zeroWidthSpace = String.fromCharCode(0x200b);
 
@@ -19,7 +20,7 @@ export const insertZeroWidthSpace = (text) =>
  * @param {boolean} visible Whether to show the tooltip
  * @param {string} text Tooltip display label
  */
-const Tooltip = ({ chartSize, targetRect, visible, text }) => {
+const Tooltip = ({ chartSize, targetRect, visible, text, graph }) => {
   const { left, top, width, height, outerWidth, sidebarWidth } = chartSize;
   const isRight = targetRect.left - sidebarWidth > width / 2;
   const isTop = targetRect.top < height / 2;
@@ -36,7 +37,17 @@ const Tooltip = ({ chartSize, targetRect, visible, text }) => {
         'pipeline-tooltip--top': isTop,
       })}
       style={{ transform: `translate(${x}px, ${y}px)` }}>
-      <div className="pipeline-tooltip__text">{insertZeroWidthSpace(text)}</div>
+      <div className="pipeline-tooltip__text">
+        {insertZeroWidthSpace(text)}
+        {graph && (
+          <PlotlyChart
+            data={graph.data}
+            layout={graph.layout}
+            config={graph.config}
+            isTooltip={true}
+          />
+        )}
+      </div>
     </div>
   );
 };
@@ -46,6 +57,7 @@ Tooltip.defaultProps = {
   targetRect: {},
   visible: false,
   text: '',
+  graph: false,
 };
 
 export default Tooltip;
