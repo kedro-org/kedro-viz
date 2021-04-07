@@ -2,8 +2,8 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
-import dark from '../../utils/chart_templates/metadata_dark.json';
-import light from '../../utils/chart_templates/metadata_light.json';
+import { dark_metadata } from '../../utils/chart_templates/dark';
+import { light_metadata } from '../../utils/chart_templates/light';
 /**
  * Display plotly chart
  */
@@ -16,6 +16,8 @@ const PlotlyChart = ({ theme, data, layout, isTooltip }) => {
         data={data}
         layout={updateLayout(finalTheme, layout, isTooltip)}
         config={{ displayModeBar: false }}
+        style={{ width: '100%', height: '100%' }}
+        useResizeHandler={true}
       />
     </div>
   );
@@ -27,7 +29,7 @@ PlotlyChart.defaultProps = {
 };
 
 const updateLayout = (theme, layout) => {
-  const template = theme === 'light' ? light : dark;
+  const template = theme === 'light' ? light_metadata : dark_metadata;
   return deepmerge(layout, template);
 };
 

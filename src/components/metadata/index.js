@@ -16,7 +16,7 @@ import {
   getClickedNodeMetaData,
 } from '../../selectors/metadata';
 import { toggleNodeClicked } from '../../actions/nodes';
-import { toggleCode } from '../../actions';
+import { toggleCode, togglePlotModal } from '../../actions';
 import './styles/metadata.css';
 
 /**
@@ -28,6 +28,7 @@ const MetaData = ({
   visibleCode,
   onToggleCode,
   onToggleNodeSelected,
+  onTogglePlotModal,
 }) => {
   const [showCopied, setShowCopied] = useState(false);
 
@@ -52,6 +53,10 @@ const MetaData = ({
   const onCloseClick = () => {
     // Deselecting a node automatically hides MetaData panel
     onToggleNodeSelected(null);
+  };
+
+  const onPlotClick = () => {
+    onTogglePlotModal(true);
   };
 
   return (
@@ -175,11 +180,13 @@ const MetaData = ({
               />
               <MetaDataRow label="Plotly Chart:" visible={isDataNode}>
                 <div>
-                  <PlotlyChart
-                    data={plotData.data}
-                    layout={plotData.layout}
-                    config={plotData.config}
-                  />
+                  <a id="plotly-modal" href="#" onClick={onPlotClick}>
+                    <PlotlyChart
+                      data={plotData.data}
+                      layout={plotData.layout}
+                      config={plotData.config}
+                    />
+                  </a>
                 </div>
               </MetaDataRow>
             </dl>
@@ -203,6 +210,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleCode: (visible) => {
     dispatch(toggleCode(visible));
+  },
+  onTogglePlotModal: (visible) => {
+    dispatch(togglePlotModal(visible));
   },
 });
 
