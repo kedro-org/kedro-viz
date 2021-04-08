@@ -38,9 +38,10 @@ import traceback
 import webbrowser
 from collections import defaultdict
 from contextlib import closing
+from dataclasses import asdict
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, List, Set, Union
+from typing import cast, Any, Dict, List, Set, Union
 
 import click
 import kedro
@@ -55,6 +56,7 @@ from semver import VersionInfo
 from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
+from kedro_viz.models import GraphNode, GraphNodeType, TaskNode
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
@@ -421,7 +423,6 @@ def format_pipeline_data(
 
     # Nodes and edges
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
-        task_id = _hash(str(node))
         tags.update(node.tags)
         _JSON_NODES[task_id] = {"type": "task", "obj": node}
 
@@ -442,6 +443,8 @@ def format_pipeline_data(
             nodes_list.append(nodes[task_id])
         else:
             nodes[task_id]["pipelines"].append(pipeline_key)
+
+        _JSON_NODES[task_id] = {"type": "task", "obj": node}
 
         for data_set in node.inputs:
             dataset_full_name = data_set.split("@")[0]
