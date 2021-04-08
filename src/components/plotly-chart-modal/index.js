@@ -6,7 +6,7 @@ import { togglePlotModal } from '../../actions';
 import deepmerge from 'deepmerge';
 import { dark_modal } from '../../utils/chart_templates/dark';
 import { light_modal } from '../../utils/chart_templates/light';
-import './plot-modal.css';
+import './plotly-chart-modal.css';
 
 /**
  * Kedro-UI modal to allow users to choose between SVG/PNG export formats
@@ -19,14 +19,12 @@ const PlotModal = ({ theme, data, layout, onToggle, visible }) => {
       onClose={() => onToggle(false)}
       theme={theme}
       visible={visible.plotModal}>
-      <div className=".kedro">
-        <Plot
-          data={data}
-          layout={updateLayout(theme, layout)}
-          style={{ width: '100%', height: '100%' }}
-          useResizeHandler={true}
-        />
-      </div>
+      <Plot
+        data={data}
+        layout={updateLayout(theme, layout)}
+        style={{ width: '100%', height: '100%' }}
+        useResizeHandler={true}
+      />
     </Modal>
   );
 };

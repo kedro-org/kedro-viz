@@ -222,6 +222,7 @@ export const dark_metadata = {
     },
   },
   height: 200,
+  width: 320,
 };
 
 export const dark_modal = {
