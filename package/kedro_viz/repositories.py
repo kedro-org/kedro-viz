@@ -15,7 +15,7 @@ class GraphNodeRepository:
         self._graph_nodes_dict[node.id] = node
         self._graph_nodes_list.append(node)
 
-    def get(self, node_id: str):
+    def get(self, node_id: str) -> GraphNode:
         return self._graph_nodes_dict[node_id]
 
     def create_or_update(self, node: GraphNode, pipeline_name: str):

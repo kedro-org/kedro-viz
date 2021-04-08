@@ -1,40 +1,12 @@
-# from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
-# from sqlalchemy.orm import relationship
-#
-#
-# from .database import Base
-#
-#
-# """
-# {
-#                 "type": "task",
-#                 "id": task_id,
-#                 "name": getattr(node, "short_name", node.name),
-#                 "full_name": getattr(node, "_func_name", str(node)),
-#                 "tags": sorted(node.tags),
-#                 "pipelines": [pipeline_key],
-#             }
-# """
-#
-#
-# class GraphNode(Base):
-#     __tablename__ = "graph_nodes"
-#
-#     id = Column(String, primary_key=True, index=True)
-#     name = Column(String, unique=True, index=True)
-#     full_name = Column(String, unique=True)
-#
-#
-# class GraphEdge(Base):
-#     __tablename__ = "graph_edges"
-#
 import abc
 from dataclasses import dataclass, field, InitVar, asdict
 import hashlib
-from typing import Dict, List, Union
+import inspect
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 from enum import Enum
 
-from kedro.pipeline.node import Node
+from kedro.pipeline.node import Node as KedroNode
 from kedro.io import AbstractDataSet
 
 
@@ -93,8 +65,12 @@ class GraphNode(abc.ABC):
     tags: List[str]
     pipelines: List[str]
 
+    @property
+    def kedro_obj(self) -> Union[KedroNode, Optional[AbstractDataSet]]:
+        return self._kedro_obj
+
     @classmethod
-    def create_task_node(cls, node: Node) -> "TaskNode":
+    def create_task_node(cls, node: KedroNode) -> "TaskNode":
         return TaskNode(
             id=_hash(str(node)),
             name=getattr(node, "short_name", node.name),
@@ -120,7 +96,7 @@ class GraphNode(abc.ABC):
 
     @classmethod
     def create_parameters_node(
-        cls, full_name: str, layer: str, tags: List[str], dataset: AbstractDataSet
+        cls, full_name: str, layer: str, tags: List[str], parameters: AbstractDataSet
     ) -> "ParametersNode":
         return ParametersNode(
             id=_hash(full_name),
@@ -129,45 +105,73 @@ class GraphNode(abc.ABC):
             tags=tags,
             layer=layer,
             pipelines=[],
-            kedro_obj=dataset,
+            kedro_obj=parameters,
         )
 
     def add_pipeline(self, pipeline_key: str):
         self.pipelines.append(pipeline_key)
 
+    def has_metadata(self) -> bool:
+        return self.kedro_obj is not None
+
+
+@dataclass
+class GraphNodeMetadata(abc.ABC):
+    pass
+
 
 @dataclass
 class TaskNode(GraphNode):
-    kedro_obj: InitVar[Node]
+    kedro_obj: InitVar[KedroNode]
     modular_pipelines: List[str] = field(init=False)
     parameters: Dict = field(init=False, default_factory=dict)
     type: str = GraphNodeType.TASK.value
 
-    def __post_init__(self, kedro_obj: Node):
+    def __post_init__(self, kedro_obj: KedroNode):
         self._kedro_obj = kedro_obj
         self.modular_pipelines = _expand_namespaces(
             _expand_namespaces(kedro_obj.namespace)
         )
 
-    @property
-    def kedro_obj(self):
-        return self._kedro_obj
+
+@dataclass
+class TaskNodeMetadata(GraphNodeMetadata):
+    code: str = field(init=False)
+    filepath: str = field(init=False)
+    parameters: Dict = field(init=False)
+    task_node: InitVar[TaskNode]
+
+    def __post_init__(self, task_node: TaskNode):
+        kedro_node: KedroNode = task_node.kedro_obj
+        self.code = inspect.getsource(kedro_node._func)
+        code_full_path = Path(inspect.getfile(kedro_node._func)).expanduser().resolve()
+        filepath = code_full_path.relative_to(Path.cwd().parent)
+        self.filepath = str(filepath)
+        self.parameters = task_node.parameters
 
 
 @dataclass
 class DataNode(GraphNode):
     layer: str
-    kedro_obj: InitVar[AbstractDataSet]
+    kedro_obj: InitVar[Optional[AbstractDataSet]]
     modular_pipelines: List[str] = field(init=False)
     type: str = GraphNodeType.DATA.value
 
-    def __post_init__(self, kedro_obj: AbstractDataSet):
+    def __post_init__(self, kedro_obj: Optional[AbstractDataSet]):
         self._kedro_obj = kedro_obj
         self.modular_pipelines = _expand_namespaces(_get_namespace(self.full_name))
 
-    @property
-    def kedro_obj(self):
-        return self._kedro_obj
+
+@dataclass
+class DataNodeMetadata(GraphNodeMetadata):
+    type: str = field(init=False, default=None)
+    filepath: str = field(init=False, default=None)
+    data_node: InitVar[DataNode]
+
+    def __post_init__(self, data_node: DataNode):
+        dataset: AbstractDataSet = data_node.kedro_obj
+        self.type = f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
+        self.filepath = str(dataset._describe().get("filepath"))
 
 
 @dataclass
@@ -177,7 +181,7 @@ class ParametersNode(GraphNode):
     kedro_obj: InitVar[AbstractDataSet]
     type: str = GraphNodeType.PARAMETERS.value
 
-    def __post_init__(self, kedro_obj):
+    def __post_init__(self, kedro_obj: AbstractDataSet):
         self._kedro_obj = kedro_obj
         if self.is_all_parameters():
             self.modular_pipelines = []
@@ -197,9 +201,19 @@ class ParametersNode(GraphNode):
         return self.full_name.replace("params:", "")
 
     @property
-    def values(self) -> Dict:
-        if self.is_single_parameter():
-            return {"parameters": {self.parameter_name: self._kedro_obj.load()}}
-        else:
-            return {"parameters": self._kedro_obj.load()}
+    def parameter_value(self) -> Any:
+        return self.kedro_obj.load()
 
+
+@dataclass
+class ParametersNodeMetadata(GraphNodeMetadata):
+    parameters: Dict = field(init=False)
+    parameters_node: InitVar[ParametersNode]
+
+    def __post_init__(self, parameters_node: ParametersNode):
+        if parameters_node.is_single_parameter():
+            self.parameters = {
+                parameters_node.parameter_name: parameters_node.parameter_value
+            }
+        else:
+            self.parameters = parameters_node.parameter_value

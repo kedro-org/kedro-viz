@@ -60,8 +60,11 @@ from kedro_viz.models import (
     GraphNode,
     GraphNodeType,
     TaskNode,
+    TaskNodeMetadata,
     DataNode,
+    DataNodeMetadata,
     ParametersNode,
+    ParametersNodeMetadata,
 )
 from kedro_viz.repositories import GraphNodeRepository
 
@@ -471,7 +474,7 @@ def format_pipeline_data(
                 full_name=dataset_full_name,
                 layer=dataset_name_to_layer[dataset_full_name],
                 tags=list(sorted(tag_names)),
-                dataset=dataset,
+                parameters=dataset,
             )
         else:
             n = GraphNode.create_data_node(
@@ -599,56 +602,24 @@ def nodes_metadata(node_id):
     node = graph_node_repository.get(node_id)
     if not node:
         abort(404, description="Invalid node ID.")
+
+    if not node.has_metadata():
+        return jsonify({})
+
     if isinstance(node, TaskNode):
-        task_metadata = _get_task_metadata(node)
-        return jsonify(task_metadata)
+        metadata = TaskNodeMetadata(node)
+    elif isinstance(node, DataNode):
+        metadata = DataNodeMetadata(node)
+    else:
+        metadata = ParametersNodeMetadata(node)
 
-    if isinstance(node, DataNode):
-        dataset_metadata = _get_dataset_metadata(node)
-        return jsonify(dataset_metadata)
-
-    node: ParametersNode
-    return jsonify(node.values)
+    return jsonify(asdict(metadata))
 
 
 @app.errorhandler(404)
 def resource_not_found(error):
     """Returns HTTP 404 on resource not found."""
     return jsonify(error=str(error)), 404
-
-
-def _get_task_metadata(node):
-    """Get a dictionary of task metadata: 'code', 'filepath'.
-    For 'filepath', remove the path to the project from the full code location
-    before sending to JSON.
-
-    Example:
-        'code_full_path':   'path-to-project/project_root/path-to-code/node.py'
-        'Path.cwd().parent':'path-to-project/'
-        'filepath':    'project_root/path-to-code/node.py''
-
-    """
-    task_metadata = {"code": inspect.getsource(node.kedro_obj._func)}
-
-    code_full_path = Path(inspect.getfile(node.kedro_obj._func)).expanduser().resolve()
-    filepath = code_full_path.relative_to(Path.cwd().parent)
-    task_metadata["filepath"] = str(filepath)
-    task_metadata["parameters"] = node.parameters
-
-    return task_metadata
-
-
-def _get_dataset_metadata(node):
-    dataset = node.kedro_obj
-    if dataset:
-        dataset_metadata = {
-            "type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
-            "filepath": str(dataset._describe().get("filepath")),
-        }
-    else:
-        # dataset not persisted, so no metadata defined in catalog.yml.
-        dataset_metadata = {}
-    return dataset_metadata
 
 
 @click.group(name="Kedro-Viz")
