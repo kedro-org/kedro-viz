@@ -222,6 +222,7 @@ export const light_metadata = {
     },
   },
   height: 200,
+  width: 320,
 };
 
 export const light_modal = {

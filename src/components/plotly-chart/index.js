@@ -16,7 +16,6 @@ const PlotlyChart = ({ theme, data, layout, isTooltip }) => {
         data={data}
         layout={updateLayout(finalTheme, layout, isTooltip)}
         config={{ displayModeBar: false }}
-        style={{ width: '100%', height: '100%' }}
         useResizeHandler={true}
       />
     </div>
