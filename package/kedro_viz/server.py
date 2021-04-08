@@ -424,6 +424,8 @@ def format_pipeline_data(
     # Nodes and edges
     for node in sorted(pipeline.nodes, key=lambda n: n.name):
         tags.update(node.tags)
+        task_node = GraphNode.create_task_node(node)
+        task_id = task_node.id
         _JSON_NODES[task_id] = {"type": "task", "obj": node}
 
         # Modular pipelines the current node is part of.
@@ -431,15 +433,8 @@ def format_pipeline_data(
         modular_pipelines.update(node_modular_pipelines)
 
         if task_id not in nodes:
-            nodes[task_id] = {
-                "type": "task",
-                "id": task_id,
-                "name": getattr(node, "short_name", node.name),
-                "full_name": getattr(node, "_func_name", str(node)),
-                "tags": sorted(node.tags),
-                "pipelines": [pipeline_key],
-                "modular_pipelines": sorted(node_modular_pipelines),
-            }
+            task_node.add_pipeline(pipeline_key)
+            nodes[task_id] = asdict(task_node)
             nodes_list.append(nodes[task_id])
         else:
             nodes[task_id]["pipelines"].append(pipeline_key)
@@ -480,33 +475,25 @@ def format_pipeline_data(
             "obj": _get_dataset_data_params(dataset_full_name),
         }
 
-        parameter_name = ""
-        if is_param and dataset_full_name != "parameters":
-            parameter_name = dataset_full_name.replace("params:", "")
-            # Add "parameter_name" key only for "params:" prefix.
-            _JSON_NODES[node_id]["parameter_name"] = parameter_name
-
-        if is_param:
-            dataset_modular_pipelines = _expand_namespaces(
-                _get_namespace(parameter_name)
-            )
-        else:
-            dataset_modular_pipelines = _expand_namespaces(
-                _get_namespace(dataset_full_name)
-            )
-            modular_pipelines.update(dataset_modular_pipelines)
-
         if node_id not in nodes:
-            nodes[node_id] = {
-                "type": "parameters" if is_param else "data",
-                "id": node_id,
-                "name": _pretty_name(dataset_full_name),
-                "full_name": dataset_full_name,
-                "tags": sorted(tag_names),
-                "layer": dataset_name_to_layer[dataset_full_name],
-                "pipelines": [pipeline_key],
-                "modular_pipelines": dataset_modular_pipelines,
-            }
+            if is_param:
+                n = GraphNode.create_parameters_node(
+                    full_name=dataset_full_name,
+                    layer=dataset_name_to_layer[dataset_full_name],
+                    tags=list(sorted(tag_names)),
+                )
+                if n.is_single_parameter():
+                    _JSON_NODES[node_id]["parameter_name"] = n.parameter_name
+            else:
+                n = GraphNode.create_data_node(
+                    full_name=dataset_full_name,
+                    layer=dataset_name_to_layer[dataset_full_name],
+                    tags=list(sorted(tag_names)),
+                )
+                modular_pipelines.update(n.modular_pipelines)
+
+            n.add_pipeline(pipeline_key)
+            nodes[node_id] = asdict(n)
             nodes_list.append(nodes[node_id])
         else:
             nodes[node_id]["pipelines"].append(pipeline_key)
