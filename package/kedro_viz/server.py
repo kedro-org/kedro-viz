@@ -57,6 +57,7 @@ from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
 from kedro_viz.models import GraphNode, GraphNodeType, TaskNode
+from kedro_viz.repositories import GraphNodeRepository
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
@@ -82,6 +83,9 @@ ERROR_PIPELINE_FLAG_NOT_SUPPORTED = (
     "`--pipeline` flag was provided, but it is not supported "
     "in Kedro version {}".format(kedro.__version__)
 )
+
+
+graph_node_repository = GraphNodeRepository()
 
 
 @app.route("/")
@@ -318,12 +322,8 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
 
     """
     pipelines_list = []
-    # keep track of a sorted list of nodes to returned to the client
-    nodes_list = []
     # keep track of edges in the graph: [{source_node_id -> target_node_id}]
     edges_list = []
-    # keep tracking of node_id -> node data in the graph
-    nodes = {}
     # keep track of node_id -> set(child_node_ids) for layers sorting
     node_dependencies = defaultdict(set)
     tags = set()
@@ -335,18 +335,18 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         format_pipeline_data(
             pipeline_key,
             pipeline,
-            nodes,
             node_dependencies,
             tags,
             edges_list,
-            nodes_list,
             modular_pipelines,
         )
 
     # sort tags
     sorted_tags = [{"id": tag, "name": _pretty_name(tag)} for tag in sorted(tags)]
     # sort layers
-    sorted_layers = _sort_layers(nodes, node_dependencies)
+    sorted_layers = _sort_layers(
+        graph_node_repository._graph_nodes_dict, node_dependencies
+    )
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
     selected_pipeline = (
@@ -356,10 +356,12 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
     )
 
     sorted_modular_pipelines = _sort_and_format_modular_pipelines(modular_pipelines)
-    _remove_non_modular_pipelines(nodes_list, modular_pipelines)
+    _remove_non_modular_pipelines(
+        graph_node_repository._graph_nodes_list, modular_pipelines
+    )
 
     return {
-        "nodes": nodes_list,
+        "nodes": graph_node_repository._graph_nodes_list,
         "edges": edges_list,
         "tags": sorted_tags,
         "layers": sorted_layers,
@@ -395,11 +397,9 @@ def _is_dataset_param(namespace: str) -> bool:
 def format_pipeline_data(
     pipeline_key: str,
     pipeline: "Pipeline",  # noqa: F821
-    nodes: Dict[str, dict],
     node_dependencies: Dict[str, Set[str]],
     tags: Set[str],
     edges_list: List[dict],
-    nodes_list: List[dict],
     modular_pipelines: Set[str],
 ) -> None:
     """Format pipeline and catalog data from Kedro for kedro-viz.
@@ -432,12 +432,7 @@ def format_pipeline_data(
         node_modular_pipelines = _expand_namespaces(node.namespace)
         modular_pipelines.update(node_modular_pipelines)
 
-        if task_id not in nodes:
-            task_node.add_pipeline(pipeline_key)
-            nodes[task_id] = asdict(task_node)
-            nodes_list.append(nodes[task_id])
-        else:
-            nodes[task_id]["pipelines"].append(pipeline_key)
+        graph_node_repository.create_or_update(task_node, pipeline_key)
 
         _JSON_NODES[task_id] = {"type": "task", "obj": node}
 
@@ -475,28 +470,24 @@ def format_pipeline_data(
             "obj": _get_dataset_data_params(dataset_full_name),
         }
 
-        if node_id not in nodes:
-            if is_param:
-                n = GraphNode.create_parameters_node(
-                    full_name=dataset_full_name,
-                    layer=dataset_name_to_layer[dataset_full_name],
-                    tags=list(sorted(tag_names)),
-                )
-                if n.is_single_parameter():
-                    _JSON_NODES[node_id]["parameter_name"] = n.parameter_name
-            else:
-                n = GraphNode.create_data_node(
-                    full_name=dataset_full_name,
-                    layer=dataset_name_to_layer[dataset_full_name],
-                    tags=list(sorted(tag_names)),
-                )
-                modular_pipelines.update(n.modular_pipelines)
-
-            n.add_pipeline(pipeline_key)
-            nodes[node_id] = asdict(n)
-            nodes_list.append(nodes[node_id])
+        if is_param:
+            n = GraphNode.create_parameters_node(
+                full_name=dataset_full_name,
+                layer=dataset_name_to_layer[dataset_full_name],
+                tags=list(sorted(tag_names)),
+            )
+            if n.is_single_parameter():
+                _JSON_NODES[node_id]["parameter_name"] = n.parameter_name
         else:
-            nodes[node_id]["pipelines"].append(pipeline_key)
+            n = GraphNode.create_data_node(
+                full_name=dataset_full_name,
+                layer=dataset_name_to_layer[dataset_full_name],
+                tags=list(sorted(tag_names)),
+            )
+
+        modular_pipelines.update(n.modular_pipelines)
+
+        graph_node_repository.create_or_update(n, pipeline_key)
 
 
 def _expand_namespaces(namespace):
