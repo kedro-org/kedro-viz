@@ -56,7 +56,13 @@ from semver import VersionInfo
 from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
-from kedro_viz.models import GraphNode, GraphNodeType, TaskNode
+from kedro_viz.models import (
+    GraphNode,
+    GraphNodeType,
+    TaskNode,
+    DataNode,
+    ParametersNode,
+)
 from kedro_viz.repositories import GraphNodeRepository
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
@@ -67,7 +73,6 @@ _DEFAULT_KEY = "__default__"
 
 _DATA = None  # type: Dict
 _CATALOG = None  # type: DataCatalog
-_JSON_NODES = {}  # type: Dict[str, Dict[str, Union[Node, AbstractDataSet, Dict, None]]]
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -341,12 +346,12 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
             modular_pipelines,
         )
 
+    nodes_dict = graph_node_repository.as_dict()
+    nodes_list = graph_node_repository.as_list()
     # sort tags
     sorted_tags = [{"id": tag, "name": _pretty_name(tag)} for tag in sorted(tags)]
     # sort layers
-    sorted_layers = _sort_layers(
-        graph_node_repository._graph_nodes_dict, node_dependencies
-    )
+    sorted_layers = _sort_layers(nodes_dict, node_dependencies)
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
     selected_pipeline = (
@@ -356,12 +361,10 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
     )
 
     sorted_modular_pipelines = _sort_and_format_modular_pipelines(modular_pipelines)
-    _remove_non_modular_pipelines(
-        graph_node_repository._graph_nodes_list, modular_pipelines
-    )
+    _remove_non_modular_pipelines(nodes_list, modular_pipelines)
 
     return {
-        "nodes": graph_node_repository._graph_nodes_list,
+        "nodes": nodes_list,
         "edges": edges_list,
         "tags": sorted_tags,
         "layers": sorted_layers,
@@ -426,15 +429,12 @@ def format_pipeline_data(
         tags.update(node.tags)
         task_node = GraphNode.create_task_node(node)
         task_id = task_node.id
-        _JSON_NODES[task_id] = {"type": "task", "obj": node}
 
         # Modular pipelines the current node is part of.
         node_modular_pipelines = _expand_namespaces(node.namespace)
         modular_pipelines.update(node_modular_pipelines)
 
         graph_node_repository.create_or_update(task_node, pipeline_key)
-
-        _JSON_NODES[task_id] = {"type": "task", "obj": node}
 
         for data_set in node.inputs:
             dataset_full_name = data_set.split("@")[0]
@@ -464,28 +464,23 @@ def format_pipeline_data(
     for dataset_full_name, tag_names in sorted(dataset_name_tags.items()):
         is_param = _is_dataset_param(dataset_full_name)
         node_id = _hash(dataset_full_name)
-
-        _JSON_NODES[node_id] = {
-            "type": "parameters" if is_param else "data",
-            "obj": _get_dataset_data_params(dataset_full_name),
-        }
+        dataset = _get_dataset_data_params(dataset_full_name)
 
         if is_param:
             n = GraphNode.create_parameters_node(
                 full_name=dataset_full_name,
                 layer=dataset_name_to_layer[dataset_full_name],
                 tags=list(sorted(tag_names)),
+                dataset=dataset,
             )
-            if n.is_single_parameter():
-                _JSON_NODES[node_id]["parameter_name"] = n.parameter_name
         else:
             n = GraphNode.create_data_node(
                 full_name=dataset_full_name,
                 layer=dataset_name_to_layer[dataset_full_name],
                 tags=list(sorted(tag_names)),
+                dataset=dataset,
             )
-
-        modular_pipelines.update(n.modular_pipelines)
+            modular_pipelines.update(n.modular_pipelines)
 
         graph_node_repository.create_or_update(n, pipeline_key)
 
@@ -511,17 +506,14 @@ def _expand_namespaces(namespace):
 
 
 def _add_parameter_data_to_node(dataset_namespace, task_id):
-    if "parameters" not in _JSON_NODES[task_id]:
-        _JSON_NODES[task_id]["parameters"] = {}
+    node = graph_node_repository.get(task_id)
 
     if dataset_namespace == "parameters":
-        _JSON_NODES[task_id]["parameters"] = _get_dataset_data_params(
-            dataset_namespace
-        ).load()
+        node.parameters = _get_dataset_data_params(dataset_namespace).load()
     else:
         parameter_name = dataset_namespace.replace("params:", "")
         parameter_value = _get_dataset_data_params(dataset_namespace).load()
-        _JSON_NODES[task_id]["parameters"][parameter_name] = parameter_value
+        node.parameters[parameter_name] = parameter_value
 
 
 def _get_namespace(dataset_full_name):
@@ -544,15 +536,6 @@ def _get_dataset_data_params(namespace: str):
     else:
         node_data = _CATALOG._data_sets.get(namespace)  # pragma: no cover
     return node_data
-
-
-def _get_parameter_values(node: Dict) -> Any:
-    """Get parameter values from a stored node."""
-    if node["obj"] is not None:
-        parameter_values = node["obj"].load()
-    else:  # pragma: no cover
-        parameter_values = {}
-    return parameter_values
 
 
 def _sort_and_format_modular_pipelines(modular_pipelines):
@@ -613,25 +596,19 @@ def pipeline_data(pipeline_id):
 @app.route("/api/nodes/<string:node_id>")
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
-    node = _JSON_NODES.get(node_id)
+    node = graph_node_repository.get(node_id)
     if not node:
         abort(404, description="Invalid node ID.")
-    if node["type"] == "task":
+    if isinstance(node, TaskNode):
         task_metadata = _get_task_metadata(node)
         return jsonify(task_metadata)
-    if node["type"] == "data":
+
+    if isinstance(node, DataNode):
         dataset_metadata = _get_dataset_metadata(node)
         return jsonify(dataset_metadata)
 
-    parameter_values = _get_parameter_values(node)
-
-    if "parameter_name" in node:
-        # In case of 'params:' prefix
-        parameters_metadata = {"parameters": {node["parameter_name"]: parameter_values}}
-    else:
-        # In case of 'parameters'
-        parameters_metadata = {"parameters": parameter_values}
-    return jsonify(parameters_metadata)
+    node: ParametersNode
+    return jsonify(node.values)
 
 
 @app.errorhandler(404)
@@ -651,20 +628,18 @@ def _get_task_metadata(node):
         'filepath':    'project_root/path-to-code/node.py''
 
     """
-    task_metadata = {"code": inspect.getsource(node["obj"]._func)}
+    task_metadata = {"code": inspect.getsource(node.kedro_obj._func)}
 
-    code_full_path = Path(inspect.getfile(node["obj"]._func)).expanduser().resolve()
+    code_full_path = Path(inspect.getfile(node.kedro_obj._func)).expanduser().resolve()
     filepath = code_full_path.relative_to(Path.cwd().parent)
     task_metadata["filepath"] = str(filepath)
-
-    if "parameters" in node:
-        task_metadata["parameters"] = node["parameters"]
+    task_metadata["parameters"] = node.parameters
 
     return task_metadata
 
 
 def _get_dataset_metadata(node):
-    dataset = node["obj"]
+    dataset = node.kedro_obj
     if dataset:
         dataset_metadata = {
             "type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
