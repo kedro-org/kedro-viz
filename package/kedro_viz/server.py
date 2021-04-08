@@ -581,19 +581,15 @@ def _get_dataset_metadata(node):
     dataset = node["obj"]
     if dataset:
         filepath = str(dataset._describe().get("filepath"))
+        dataset_metadata = {
+            "type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
+            "filepath": filepath,
+        }
         if dataset.__class__.__qualname__ == "PlotlyDataSet":
             with open(filepath) as file:
                 plotly_json = json.load(file)
-            dataset_metadata = {
-                "type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
-                "filepath": filepath,
-                "plot": plotly_json,
-            }
-        else:
-            dataset_metadata = {
-                "type": f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
-                "filepath": filepath,
-            }
+            dataset_metadata = {**dataset_metadata, "plot": plotly_json}
+            
     else:
         # dataset not persisted, so no metadata defined in catalog.yml.
         dataset_metadata = {}
