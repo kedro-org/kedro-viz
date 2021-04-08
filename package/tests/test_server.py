@@ -456,7 +456,8 @@ def test_node_metadata_endpoint_invalid(cli_runner, client):
 
 @_USE_PATCHED_CONTEXT
 def test_node_metadata_plotly_dataset(cli_runner, client, tmp_path, mocker):
-    """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON including the plot data."""
+    """Test `/api/nodes/data_id` endpoint is functional and returns a
+    valid JSON including the plot data."""
     cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     mocker.patch("builtins.open")
     mocker.patch("json.load", return_value=[{}])
