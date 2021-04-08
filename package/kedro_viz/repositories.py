@@ -1,9 +1,9 @@
 from dataclasses import asdict
 
-from kedro_viz.models import GraphNode
+from kedro_viz.models.graph import GraphNode
 
 
-class GraphNodeRepository:
+class GraphNodesRepository:
     def __init__(self):
         self._graph_nodes_dict: Dict[str, GraphNode] = {}
         self._graph_nodes_list: List[GraphNode] = []
@@ -31,3 +31,8 @@ class GraphNodeRepository:
         return {
             node_id: asdict(node) for node_id, node in self._graph_nodes_dict.items()
         }
+
+
+class GraphEdgesRepository:
+    def __init__(self):
+        self.edges_list = []

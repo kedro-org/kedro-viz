@@ -56,7 +56,7 @@ from semver import VersionInfo
 from toposort import toposort_flatten
 
 from kedro_viz.utils import wait_for
-from kedro_viz.models import (
+from kedro_viz.models.graph import (
     GraphNode,
     GraphNodeType,
     TaskNode,
@@ -66,7 +66,7 @@ from kedro_viz.models import (
     ParametersNode,
     ParametersNodeMetadata,
 )
-from kedro_viz.repositories import GraphNodeRepository
+from kedro_viz.repositories import GraphNodesRepository
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
@@ -93,7 +93,7 @@ ERROR_PIPELINE_FLAG_NOT_SUPPORTED = (
 )
 
 
-graph_node_repository = GraphNodeRepository()
+graph_node_repository = GraphNodesRepository()
 
 
 @app.route("/")
@@ -432,11 +432,7 @@ def format_pipeline_data(
         tags.update(node.tags)
         task_node = GraphNode.create_task_node(node)
         task_id = task_node.id
-
-        # Modular pipelines the current node is part of.
-        node_modular_pipelines = _expand_namespaces(node.namespace)
-        modular_pipelines.update(node_modular_pipelines)
-
+        modular_pipelines.update(task_node.modular_pipelines)
         graph_node_repository.create_or_update(task_node, pipeline_key)
 
         for data_set in node.inputs:
@@ -466,7 +462,6 @@ def format_pipeline_data(
     # Parameters and data
     for dataset_full_name, tag_names in sorted(dataset_name_tags.items()):
         is_param = _is_dataset_param(dataset_full_name)
-        node_id = _hash(dataset_full_name)
         dataset = _get_dataset_data_params(dataset_full_name)
 
         if is_param:
@@ -486,26 +481,6 @@ def format_pipeline_data(
             modular_pipelines.update(n.modular_pipelines)
 
         graph_node_repository.create_or_update(n, pipeline_key)
-
-
-def _expand_namespaces(namespace):
-    """
-    Expand a node's namespace to the modular pipelines this node belongs to.
-    For example, if the node's namespace is: "pipeline1.data_science"
-    it should be expanded to: ["pipeline1", "pipeline1.data_science"]
-    """
-    if not namespace:
-        return []
-    namespace_list = []
-    namespace_chunks = namespace.split(".")
-    prefix = ""
-    for chunk in namespace_chunks:
-        if prefix:
-            prefix = f"{prefix}.{chunk}"
-        else:
-            prefix = chunk
-        namespace_list.append(prefix)
-    return namespace_list
 
 
 def _add_parameter_data_to_node(dataset_namespace, task_id):
