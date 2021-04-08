@@ -43,17 +43,17 @@ from pathlib import Path
 from typing import Any, Dict, List, Set, Union
 
 import click
+import kedro
 import requests
 from flask import Flask, abort, jsonify, send_from_directory
 from IPython.core.display import HTML, display
-from semver import VersionInfo
-from toposort import toposort_flatten
-
-import kedro
 from kedro.framework.cli.utils import KedroCliError
 from kedro.framework.context import KedroContextError, load_context
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 from kedro.pipeline.node import Node
+from semver import VersionInfo
+from toposort import toposort_flatten
+
 from kedro_viz.utils import wait_for
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
@@ -589,7 +589,7 @@ def _get_dataset_metadata(node):
             with open(filepath) as file:
                 plotly_json = json.load(file)
             dataset_metadata = {**dataset_metadata, "plot": plotly_json}
-            
+
     else:
         # dataset not persisted, so no metadata defined in catalog.yml.
         dataset_metadata = {}
@@ -657,7 +657,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env):
         raise
     except Exception as ex:
         traceback.print_exc()
-        raise KedroCliError(str(ex))
+        raise KedroCliError(str(ex)) from ex
 
 
 # pylint: disable=import-outside-toplevel,too-many-arguments,too-many-branches
@@ -709,8 +709,8 @@ def _call_viz(
             else:  # pragma: no cover
                 context = load_context(project_path=project_path, env=env)
                 pipelines = _get_pipelines_from_context(context, pipeline_name)
-        except KedroContextError:
-            raise KedroCliError(ERROR_PROJECT_ROOT)  # pragma: no cover
+        except KedroContextError as ex:
+            raise KedroCliError(ERROR_PROJECT_ROOT) from ex  # pragma: no cover
 
         _CATALOG = context.catalog
         _DATA = format_pipelines_data(pipelines)

@@ -38,13 +38,13 @@ from functools import partial
 from pathlib import Path
 
 import pytest
-from toposort import CircularDependencyError
-
-import kedro_viz
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.extras.datasets.plotly import PlotlyDataSet
 from kedro.io import DataCatalog, DataSetNotFoundError, MemoryDataSet
 from kedro.pipeline import Pipeline, node
+from toposort import CircularDependencyError
+
+import kedro_viz
 from kedro_viz import server
 from kedro_viz.server import _allocate_port, _hash, _sort_layers, format_pipelines_data
 from kedro_viz.utils import WaitForException
@@ -87,8 +87,8 @@ def get_pipeline(name: str = None):
 
     try:
         return pipelines[name]
-    except Exception:
-        raise KeyError("Failed to find the pipeline.")
+    except Exception as exc:
+        raise KeyError("Failed to find the pipeline.") from exc
 
 
 def ds_pipeline():
@@ -167,7 +167,9 @@ def patched_create_session(mocker, tmp_path, dummy_layers, plotly_args):
         def __init__(self, layers):
             self._data_sets = {
                 "cat": PickleDataSet(filepath=str(tmp_path)),
-                "elephant": PlotlyDataSet(filepath="test.json", plotly_args=plotly_args),
+                "elephant": PlotlyDataSet(
+                    filepath="test.json", plotly_args=plotly_args
+                ),
                 "parameters": MemoryDataSet({"name": "value"}),
                 "params:rabbit": MemoryDataSet("value"),
             }
