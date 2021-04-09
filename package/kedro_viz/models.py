@@ -1,9 +1,9 @@
 import abc
-from dataclasses import dataclass, field, InitVar, asdict
+from dataclasses import dataclass, field, InitVar
 import hashlib
 import inspect
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Set
 from enum import Enum
 
 from kedro.pipeline.node import Node as KedroNode
@@ -62,7 +62,7 @@ class GraphNode(abc.ABC):
     id: str
     name: str
     full_name: str
-    tags: List[str]
+    tags: Set[str]
     pipelines: List[str]
 
     @property
@@ -75,14 +75,18 @@ class GraphNode(abc.ABC):
             id=_hash(str(node)),
             name=getattr(node, "short_name", node.name),
             full_name=getattr(node, "short_name", node.name),
-            tags=list(sorted(node.tags)),
+            tags=set(node.tags),
             pipelines=[],
             kedro_obj=node,
         )
 
     @classmethod
     def create_data_node(
-        cls, full_name: str, layer: str, tags: List[str], dataset: AbstractDataSet
+        cls,
+        full_name: str,
+        layer: Optional[str],
+        tags: Set[str],
+        dataset: AbstractDataSet,
     ) -> "DataNode":
         return DataNode(
             id=_hash(full_name),
@@ -96,7 +100,11 @@ class GraphNode(abc.ABC):
 
     @classmethod
     def create_parameters_node(
-        cls, full_name: str, layer: str, tags: List[str], parameters: AbstractDataSet
+        cls,
+        full_name: str,
+        layer: Optional[str],
+        tags: Set[str],
+        parameters: AbstractDataSet,
     ) -> "ParametersNode":
         return ParametersNode(
             id=_hash(full_name),
@@ -152,7 +160,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
 @dataclass
 class DataNode(GraphNode):
-    layer: str
+    layer: Optional[str]
     kedro_obj: InitVar[Optional[AbstractDataSet]]
     modular_pipelines: List[str] = field(init=False)
     type: str = GraphNodeType.DATA.value
@@ -176,9 +184,9 @@ class DataNodeMetadata(GraphNodeMetadata):
 
 @dataclass
 class ParametersNode(GraphNode):
-    layer: str
-    modular_pipelines: List[str] = field(init=False)
+    layer: Optional[str]
     kedro_obj: InitVar[AbstractDataSet]
+    modular_pipelines: List[str] = field(init=False)
     type: str = GraphNodeType.PARAMETERS.value
 
     def __post_init__(self, kedro_obj: AbstractDataSet):
@@ -217,3 +225,18 @@ class ParametersNodeMetadata(GraphNodeMetadata):
             }
         else:
             self.parameters = parameters_node.parameter_value
+
+
+@dataclass(frozen=True)
+class GraphEdge:
+    source: str
+    target: str
+
+
+@dataclass(frozen=True)
+class GenericAPIResponse:
+    id: str
+    name: str = field(init=False)
+
+    def __post_init__(self):
+        self.name = _pretty_name(self.id)

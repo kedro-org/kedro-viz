@@ -27,8 +27,6 @@
 # limitations under the License.
 """ Kedro-Viz plugin and webserver """
 # pylint: disable=protected-access
-import hashlib
-import inspect
 import json
 import logging
 import multiprocessing
@@ -41,7 +39,7 @@ from contextlib import closing
 from dataclasses import asdict
 from functools import partial
 from pathlib import Path
-from typing import cast, Any, Dict, List, Set, Union
+from typing import Any, Dict, List, Set
 
 import click
 import kedro
@@ -50,23 +48,21 @@ from flask import Flask, abort, jsonify, send_from_directory
 from IPython.core.display import HTML, display
 from kedro.framework.cli.utils import KedroCliError
 from kedro.framework.context import KedroContextError, load_context
-from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
-from kedro.pipeline.node import Node
+from kedro.pipeline import Pipeline
 from semver import VersionInfo
 from toposort import toposort_flatten
 
-from kedro_viz.utils import wait_for
-from kedro_viz.models.graph import (
-    GraphNode,
-    GraphNodeType,
-    TaskNode,
-    TaskNodeMetadata,
+from kedro_viz.models import (
     DataNode,
     DataNodeMetadata,
-    ParametersNode,
     ParametersNodeMetadata,
+    TaskNode,
+    TaskNodeMetadata,
+    GenericAPIResponse,
 )
-from kedro_viz.repositories import GraphNodesRepository
+from kedro_viz.services import LayersSortingService
+from kedro_viz.repositories import GraphRepository
+from kedro_viz.utils import wait_for
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
@@ -75,7 +71,6 @@ _VIZ_PROCESSES = {}  # type: Dict[int, multiprocessing.Process]
 _DEFAULT_KEY = "__default__"
 
 _DATA = None  # type: Dict
-_CATALOG = None  # type: DataCatalog
 
 app = Flask(  # pylint: disable=invalid-name
     __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
@@ -93,7 +88,7 @@ ERROR_PIPELINE_FLAG_NOT_SUPPORTED = (
 )
 
 
-graph_node_repository = GraphNodesRepository()
+graph_repository = GraphRepository()
 
 
 @app.route("/")
@@ -103,10 +98,6 @@ def root(subpath="index.html"):
     return send_from_directory(
         str(Path(__file__).parent.absolute() / "html"), subpath, cache_timeout=0
     )
-
-
-def _hash(value):
-    return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
 
 
 def _check_viz_up(port):
@@ -293,17 +284,6 @@ def _sort_layers(
     return toposort_flatten(layer_dependencies)
 
 
-def _construct_layer_mapping():
-    if _CATALOG.layers is None:
-        return {ds_name: None for ds_name in _CATALOG._data_sets}
-
-    dataset_to_layer = {}
-    for layer, dataset_names in _CATALOG.layers.items():
-        dataset_to_layer.update({dataset_name: layer for dataset_name in dataset_names})
-
-    return dataset_to_layer
-
-
 def _pretty_name(name: str) -> str:
     name = name.replace("-", " ").replace("_", " ")
     parts = [n.capitalize() for n in name.split()]
@@ -330,31 +310,22 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
 
     """
     pipelines_list = []
-    # keep track of edges in the graph: [{source_node_id -> target_node_id}]
-    edges_list = []
-    # keep track of node_id -> set(child_node_ids) for layers sorting
-    node_dependencies = defaultdict(set)
-    tags = set()
-    # keep track of modular pipelines
-    modular_pipelines = set()
 
     for pipeline_key, pipeline in pipelines.items():
-        pipelines_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
-        format_pipeline_data(
-            pipeline_key,
-            pipeline,
-            node_dependencies,
-            tags,
-            edges_list,
-            modular_pipelines,
-        )
+        pipelines_list.append(GenericAPIResponse(pipeline_key))
+        graph_repository.add_pipeline(pipeline_key, pipeline)
 
-    nodes_dict = graph_node_repository.as_dict()
-    nodes_list = graph_node_repository.as_list()
+    nodes_dict = graph_repository.nodes.as_dict()
+    nodes_list = graph_repository.nodes.as_list()
+    edges_list = graph_repository.edges.as_list()
     # sort tags
-    sorted_tags = [{"id": tag, "name": _pretty_name(tag)} for tag in sorted(tags)]
+    sorted_tags = [
+        {"id": tag, "name": _pretty_name(tag)} for tag in sorted(graph_repository.tags)
+    ]
     # sort layers
-    sorted_layers = _sort_layers(nodes_dict, node_dependencies)
+    sorted_layers = LayersSortingService.get_sorted_layers(
+        nodes_dict, graph_repository.node_dependencies
+    )
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
     selected_pipeline = (
@@ -363,10 +334,12 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         else pipelines_list[0]["id"]
     )
 
-    sorted_modular_pipelines = _sort_and_format_modular_pipelines(modular_pipelines)
-    _remove_non_modular_pipelines(nodes_list, modular_pipelines)
+    sorted_modular_pipelines = _sort_and_format_modular_pipelines(
+        graph_repository.modular_pipelines
+    )
+    _remove_non_modular_pipelines(nodes_list, graph_repository.modular_pipelines)
 
-    return {
+    res = {
         "nodes": nodes_list,
         "edges": edges_list,
         "tags": sorted_tags,
@@ -375,6 +348,11 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         "selected_pipeline": selected_pipeline,
         "modular_pipelines": sorted_modular_pipelines,
     }
+
+    from pprint import pprint
+
+    pprint(res)
+    return res
 
 
 def _remove_non_modular_pipelines(nodes_list, modular_pipelines):
@@ -392,128 +370,6 @@ def _remove_non_modular_pipelines(nodes_list, modular_pipelines):
                 pipe for pipe in node["modular_pipelines"] if pipe in modular_pipelines
             ]
             node["modular_pipelines"] = sorted(pipes)
-
-
-def _is_dataset_param(namespace: str) -> bool:
-    """Returns whether a dataset is a parameter"""
-    return namespace.lower().startswith("param")
-
-
-# pylint: disable=too-many-locals,too-many-arguments,too-many-branches
-def format_pipeline_data(
-    pipeline_key: str,
-    pipeline: "Pipeline",  # noqa: F821
-    node_dependencies: Dict[str, Set[str]],
-    tags: Set[str],
-    edges_list: List[dict],
-    modular_pipelines: Set[str],
-) -> None:
-    """Format pipeline and catalog data from Kedro for kedro-viz.
-
-    Args:
-        pipeline_key: key value of a pipeline object (e.g "__default__").
-        pipeline: Kedro pipeline object.
-        nodes: Dictionary of id and node dict.
-        node_dependencies: Dictionary of id and node dependencies.
-        edges_list: List of all edges.
-        nodes_list: List of all nodes.
-        modular_pipelines: Set of modular pipelines for all nodes.
-
-    """
-    # keep_track of {dataset_full_name -> set(tags)}
-    dataset_name_tags = defaultdict(set)
-    # keep track of {dataset_full_name -> layer it belongs to}
-    dataset_name_to_layer = {}
-
-    dataset_to_layer = _construct_layer_mapping()
-
-    # Nodes and edges
-    for node in sorted(pipeline.nodes, key=lambda n: n.name):
-        tags.update(node.tags)
-        task_node = GraphNode.create_task_node(node)
-        task_id = task_node.id
-        modular_pipelines.update(task_node.modular_pipelines)
-        graph_node_repository.create_or_update(task_node, pipeline_key)
-
-        for data_set in node.inputs:
-            dataset_full_name = data_set.split("@")[0]
-            dataset_name_to_layer[dataset_full_name] = dataset_to_layer.get(data_set)
-            dataset_id = _hash(dataset_full_name)
-            edge = {"source": dataset_id, "target": task_id}
-            if edge not in edges_list:
-                edges_list.append(edge)
-            dataset_name_tags[dataset_full_name].update(node.tags)
-            node_dependencies[dataset_id].add(task_id)
-
-            # if it is a parameter, add it to the node's data
-            if _is_dataset_param(dataset_full_name):
-                _add_parameter_data_to_node(dataset_full_name, task_id)
-
-        for data_set in node.outputs:
-            dataset_full_name = data_set.split("@")[0]
-            dataset_name_to_layer[dataset_full_name] = dataset_to_layer.get(data_set)
-            dataset_id = _hash(dataset_full_name)
-            edge = {"source": task_id, "target": dataset_id}
-            if edge not in edges_list:
-                edges_list.append(edge)
-            dataset_name_tags[dataset_full_name].update(node.tags)
-            node_dependencies[task_id].add(dataset_id)
-
-    # Parameters and data
-    for dataset_full_name, tag_names in sorted(dataset_name_tags.items()):
-        is_param = _is_dataset_param(dataset_full_name)
-        dataset = _get_dataset_data_params(dataset_full_name)
-
-        if is_param:
-            n = GraphNode.create_parameters_node(
-                full_name=dataset_full_name,
-                layer=dataset_name_to_layer[dataset_full_name],
-                tags=list(sorted(tag_names)),
-                parameters=dataset,
-            )
-        else:
-            n = GraphNode.create_data_node(
-                full_name=dataset_full_name,
-                layer=dataset_name_to_layer[dataset_full_name],
-                tags=list(sorted(tag_names)),
-                dataset=dataset,
-            )
-            modular_pipelines.update(n.modular_pipelines)
-
-        graph_node_repository.create_or_update(n, pipeline_key)
-
-
-def _add_parameter_data_to_node(dataset_namespace, task_id):
-    node = graph_node_repository.get(task_id)
-
-    if dataset_namespace == "parameters":
-        node.parameters = _get_dataset_data_params(dataset_namespace).load()
-    else:
-        parameter_name = dataset_namespace.replace("params:", "")
-        parameter_value = _get_dataset_data_params(dataset_namespace).load()
-        node.parameters[parameter_name] = parameter_value
-
-
-def _get_namespace(dataset_full_name):
-    """
-    Extract the namespace from the full dataset/parameter name.
-    """
-    if "." in dataset_full_name:
-        # The last part of the namespace is the actual name of the dataset
-        # e.g. in pipeline1.data_science.a, "pipeline1.data_science" indicates
-        # the modular pipelines and "a" the name of the dataset.
-        return dataset_full_name.rsplit(".", 1)[0]
-
-
-def _get_dataset_data_params(namespace: str):
-    if KEDRO_VERSION.match(">=0.16.0"):
-        try:
-            node_data = _CATALOG._get_dataset(namespace)
-        except DataSetNotFoundError:
-            node_data = None
-    else:
-        node_data = _CATALOG._data_sets.get(namespace)  # pragma: no cover
-    return node_data
 
 
 def _sort_and_format_modular_pipelines(modular_pipelines):
@@ -574,7 +430,7 @@ def pipeline_data(pipeline_id):
 @app.route("/api/nodes/<string:node_id>")
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
-    node = graph_node_repository.get(node_id)
+    node = graph.nodes.get(node_id)
     if not node:
         abort(404, description="Invalid node ID.")
 
@@ -673,7 +529,6 @@ def _call_viz(
     project_path=None,
 ):
     global _DATA  # pylint: disable=global-statement,invalid-name
-    global _CATALOG  # pylint: disable=global-statement
 
     if load_file:
         # Remove all handlers for root logger
@@ -713,7 +568,7 @@ def _call_viz(
         except KedroContextError:
             raise KedroCliError(ERROR_PROJECT_ROOT)  # pragma: no cover
 
-        _CATALOG = context.catalog
+        graph_repository.set_catalog(context.catalog)
         _DATA = format_pipelines_data(pipelines)
 
     if save_file:
@@ -730,6 +585,7 @@ def _call_viz(
 # pylint: disable=invalid-name
 if __name__ == "__main__":  # pragma: no cover
     import argparse
+
     from kedro.framework.startup import _get_project_metadata
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
