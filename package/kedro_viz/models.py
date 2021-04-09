@@ -7,6 +7,7 @@ import inspect
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union, Set
 from enum import Enum
+from pydantic import BaseModel
 
 from kedro.pipeline.node import Node as KedroNode
 from kedro.io import AbstractDataSet
@@ -216,7 +217,7 @@ class ParametersNode(GraphNode):
 
 
 @dataclass
-class ParametersNodeMetadata(GraphNodeMetadata):
+class ParametersNodeMetadata:
     parameters: Dict = field(init=False)
     parameters_node: InitVar[ParametersNode]
 
@@ -235,9 +236,11 @@ class GraphEdge:
     target: str
 
 
+@dataclass
 class GenericAPIResponse:
     id: str
     name: str = field(init=False)
 
     def __post_init__(self):
         self.name = _pretty_name(self.id)
+

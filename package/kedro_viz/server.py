@@ -50,7 +50,6 @@ from kedro.framework.cli.utils import KedroCliError
 from kedro.framework.context import KedroContextError, load_context
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
-from toposort import toposort_flatten
 
 from kedro_viz.models import (
     DataNode,
@@ -58,10 +57,10 @@ from kedro_viz.models import (
     ParametersNodeMetadata,
     TaskNode,
     TaskNodeMetadata,
-    GenericAPIResponse,
 )
 from kedro_viz.services import LayersSortingService
-from kedro_viz.repositories import GraphRepository
+from kedro_viz.repositories import graph_repository
+from kedro_viz.responses import GraphAPIResponse
 from kedro_viz.utils import wait_for
 
 KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
@@ -86,9 +85,6 @@ ERROR_PIPELINE_FLAG_NOT_SUPPORTED = (
     "`--pipeline` flag was provided, but it is not supported "
     "in Kedro version {}".format(kedro.__version__)
 )
-
-
-graph_repository = GraphRepository()
 
 
 @app.route("/")
@@ -204,32 +200,20 @@ def _pretty_modular_pipeline_name(modular_pipeline: str) -> str:
 
 
 def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
-    """
-    Format pipelines and catalog data from Kedro for kedro-viz.
-
-    Args:
-        pipelines: Dictionary of Kedro pipeline objects.
-
-    Returns:
-        Dictionary of pipelines, nodes, edges, tags and layers, and pipelines list.
-
-    """
-    pipelines_list = []
-
-    for pipeline_key, pipeline in pipelines.items():
-        pipelines_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
-        graph_repository.add_pipeline(pipeline_key, pipeline)
-
-    nodes_dict = graph_repository.nodes.as_dict()
-    nodes_list = graph_repository.nodes.as_list()
-    edges_list = graph_repository.edges.as_list()
-    # sort tags
-    sorted_tags = [
-        {"id": tag, "name": _pretty_name(tag)} for tag in sorted(graph_repository.tags)
+    pipelines_list = [
+        {"id": pipeline_key, "name": _pretty_name(pipeline_key)}
+        for pipeline_key in pipelines
     ]
+
+    api_response = GraphAPIResponse(
+        nodes=graph_repository.nodes.nodes_list,
+        edges=graph_repository.edges.edges_list,
+        tags=sorted(graph_repository.tags),
+    )
+
     # sort layers
     sorted_layers = LayersSortingService.get_sorted_layers(
-        nodes_dict, graph_repository.node_dependencies
+        graph_repository.nodes.as_dict(), graph_repository.node_dependencies
     )
 
     default_pipeline = {"id": _DEFAULT_KEY, "name": _pretty_name(_DEFAULT_KEY)}
@@ -242,17 +226,18 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
     sorted_modular_pipelines = _sort_and_format_modular_pipelines(
         graph_repository.modular_pipelines
     )
-    _remove_non_modular_pipelines(nodes_list, graph_repository.modular_pipelines)
+    _remove_non_modular_pipelines(
+        graph_repository.nodes.as_list(), graph_repository.modular_pipelines
+    )
 
     res = {
-        "nodes": nodes_list,
-        "edges": edges_list,
-        "tags": sorted_tags,
         "layers": sorted_layers,
         "pipelines": pipelines_list,
         "selected_pipeline": selected_pipeline,
         "modular_pipelines": sorted_modular_pipelines,
     }
+    res.update(api_response.dict())
+
     return res
 
 
@@ -302,14 +287,14 @@ def pipeline_data(pipeline_id):
     pipeline_nodes = []
     modular_pipelines = set()
 
-    for node in _DATA["nodes"]:
+    for node in graph_repository.nodes.as_list():
         if pipeline_id in node["pipelines"]:
             pipeline_node_ids.add(node["id"])
             pipeline_nodes.append(node)
             modular_pipelines.update(node["modular_pipelines"])
 
     pipeline_edges = []
-    for edge in _DATA["edges"]:
+    for edge in graph_repository.edges.as_list():
         if {edge["source"], edge["target"]} <= pipeline_node_ids:
             pipeline_edges.append(edge)
 
@@ -469,7 +454,8 @@ def _call_viz(
         except KedroContextError:
             raise KedroCliError(ERROR_PROJECT_ROOT)  # pragma: no cover
 
-        graph_repository.set_catalog(context.catalog)
+        graph_repository.add_catalog(context.catalog)
+        graph_repository.add_pipelines(pipelines)
         _DATA = format_pipelines_data(pipelines)
 
     if save_file:

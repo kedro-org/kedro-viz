@@ -26,11 +26,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Kedro-Viz API"""
-from fastapi import FastAPI
+from flask import Flask
+from flask import Flask, abort, jsonify, send_from_directory
+from kedro_viz.repositories import graph_repository
 
-app = FastAPI()
+from pathlib import Path
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+app = Flask(  # pylint: disable=invalid-name
+    __name__, static_folder=str(Path(__file__).parent.absolute() / "html" / "static")
+)
+
+
+@app.route("/")
+@app.route("/<path:subpath>")
+def root(subpath="index.html"):
+    """Serve the non static html and js etc"""
+    return send_from_directory(
+        str(Path(__file__).parent.absolute() / "html"), subpath, cache_timeout=0
+    )
+
+
+@app.route("/api/main")
+def nodes_json():
+    """Serve the data from all Kedro pipelines in the project.
+    This includes basic node data amongst others edges, tags, and layers.
+    """
+    return jsonify(_DATA)

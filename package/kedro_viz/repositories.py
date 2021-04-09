@@ -51,13 +51,13 @@ class GraphNodesRepository:
 
 class GraphEdgesRepository:
     def __init__(self):
-        self._graph_edges: Set[GraphEdge] = set()
+        self.edges_list: Set[GraphEdge] = set()
 
     def add(self, edge: GraphEdge):
-        self._graph_edges.add(edge)
+        self.edges_list.add(edge)
 
     def as_list(self) -> List[GraphEdge]:
-        return list(self._graph_edges)
+        return list(self.edges_list)
 
 
 class CatalogRepository:
@@ -127,8 +127,12 @@ class GraphRepository:
         self.modular_pipelines = set()
         self.node_dependencies = defaultdict(set)
 
-    def set_catalog(self, catalog: DataCatalog):
+    def add_catalog(self, catalog: DataCatalog):
         self.catalog.set(catalog)
+
+    def add_pipelines(self, pipelines: List[Pipeline]):
+        for pipeline_key, pipeline in pipelines.items():
+            self.add_pipeline(pipeline_key, pipeline)
 
     def add_pipeline(self, pipeline_key: str, pipeline: Pipeline):
         for node in sorted(pipeline.nodes, key=lambda n: n.name):
@@ -198,3 +202,5 @@ class GraphRepository:
                 parameters_node.parameter_name
             ] = parameters_node.parameters_value
 
+
+graph_repository = GraphRepository()
