@@ -1,5 +1,7 @@
 import abc
-from dataclasses import dataclass, field, InitVar
+from dataclasses import field, InitVar, dataclass
+
+# from pydantic.dataclasses import dataclass
 import hashlib
 import inspect
 from pathlib import Path
@@ -233,7 +235,6 @@ class GraphEdge:
     target: str
 
 
-@dataclass(frozen=True)
 class GenericAPIResponse:
     id: str
     name: str = field(init=False)

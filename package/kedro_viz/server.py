@@ -312,7 +312,7 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
     pipelines_list = []
 
     for pipeline_key, pipeline in pipelines.items():
-        pipelines_list.append(GenericAPIResponse(pipeline_key))
+        pipelines_list.append({"id": pipeline_key, "name": _pretty_name(pipeline_key)})
         graph_repository.add_pipeline(pipeline_key, pipeline)
 
     nodes_dict = graph_repository.nodes.as_dict()
@@ -348,10 +348,6 @@ def format_pipelines_data(pipelines: Dict[str, "Pipeline"]) -> Dict[str, Any]:
         "selected_pipeline": selected_pipeline,
         "modular_pipelines": sorted_modular_pipelines,
     }
-
-    from pprint import pprint
-
-    pprint(res)
     return res
 
 
@@ -430,7 +426,7 @@ def pipeline_data(pipeline_id):
 @app.route("/api/nodes/<string:node_id>")
 def nodes_metadata(node_id):
     """Serve the metadata for node and dataset."""
-    node = graph.nodes.get(node_id)
+    node = graph_repository.nodes.get(node_id)
     if not node:
         abort(404, description="Invalid node ID.")
 

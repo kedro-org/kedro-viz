@@ -33,12 +33,20 @@ class GraphNodesRepository:
         return self.nodes_dict[node_id]
 
     def as_list(self):
-        return [asdict(node) for node in self.nodes_list]
+        res = []
+        for node in self.nodes_list:
+            d = asdict(node)
+            d["tags"] = list(d["tags"])
+            res.append(d)
+        return res
 
     def as_dict(self):
-        return {
-            node_id: asdict(node) for node_id, node in self.nodes_dict.items()
-        }
+        res = {}
+        for node_id, node in self.nodes_dict.items():
+            d = asdict(node)
+            d["tags"] = list(d["tags"])
+            res[node_id] = d
+        return res
 
 
 class GraphEdgesRepository:
