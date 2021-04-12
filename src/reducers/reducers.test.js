@@ -155,7 +155,10 @@ describe('Reducer', () => {
         typeID: '123',
         disabled: true,
       });
-      expect(newState.nodeType.disabled).toEqual({ 123: true });
+      expect(newState.nodeType.disabled).toEqual({
+        123: true,
+        parameters: true,
+      });
     });
   });
 

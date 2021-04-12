@@ -20,7 +20,6 @@ describe('getLinkedNodes function', () => {
       ['sheep', '6525f2e6'],
       ['cat', '9d989e8d'],
       ['dog', 'e4951252'],
-      ['parameters', 'f1f1425b'],
     ])('node %s should be true', (name, id) => {
       expect(linkedNodes[id]).toBe(true);
     });
@@ -31,6 +30,7 @@ describe('getLinkedNodes function', () => {
       ['bear', '09f5edeb'],
       ['shark', '4f90af66'],
       ['weasel', '85c4cf64'],
+      ['parameters', 'f1f1425b'],
     ])('node %s should be false', (name, id) => {
       expect(linkedNodes[id]).toBe(undefined);
     });

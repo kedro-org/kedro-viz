@@ -1,5 +1,5 @@
 import { mockState } from '../utils/state.mock';
-import { getEdgeDisabled } from './disabled';
+import { getEdgeDisabled, getVisibleNodeIDs } from './disabled';
 import { addNewEdge, getTransitiveEdges, getVisibleEdges } from './edges';
 import { toggleNodesDisabled } from '../actions/nodes';
 import reducer from '../reducers';
@@ -123,14 +123,16 @@ describe('Selectors', () => {
 
     it('includes transitive edges when necessary', () => {
       // Find a node which has multiple inputs and outputs, which we can disable
-      const disabledNodeID = getNodeIDs(mockState.animals).find((node) => {
-        const hasMultipleConnections = (edgeNodes) =>
-          Object.values(edgeNodes).filter((edge) => edge === node).length > 1;
-        return (
-          hasMultipleConnections(getEdgeSources(mockState.animals)) &&
-          hasMultipleConnections(getEdgeTargets(mockState.animals))
-        );
-      });
+      const disabledNodeID = getVisibleNodeIDs(mockState.animals).find(
+        (node) => {
+          const hasMultipleConnections = (edgeNodes) =>
+            Object.values(edgeNodes).filter((edge) => edge === node).length > 1;
+          return (
+            hasMultipleConnections(getEdgeSources(mockState.animals)) &&
+            hasMultipleConnections(getEdgeTargets(mockState.animals))
+          );
+        }
+      );
       const alteredMockState = reducer(
         mockState.animals,
         toggleNodesDisabled([disabledNodeID], true)

@@ -18,6 +18,7 @@ import {
   toggleNodesDisabled,
 } from '../actions/nodes';
 import reducer from '../reducers';
+import { getVisibleNodeIDs } from './disabled';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
@@ -334,7 +335,7 @@ describe('Selectors', () => {
       });
 
       it('returns only visible nodes', () => {
-        const nodes = getNodeIDs(mockState.animals);
+        const nodes = getVisibleNodeIDs(mockState.animals);
         const nodeID = nodes[0];
         const newMockState = reducer(
           mockState.animals,
