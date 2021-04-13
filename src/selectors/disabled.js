@@ -1,6 +1,10 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
 import { getNodeDisabledPipeline, getPipelineNodeIDs } from './pipeline';
+import {
+  getModularPipelineChildren,
+  getModularPipelineEdges,
+} from './modular-pipelines';
 import { getTagCount } from './tags';
 
 const getNodeIDs = (state) => state.node.ids;
@@ -15,6 +19,10 @@ const getEdgeTargets = (state) => state.edge.targets;
 const getLayerIDs = (state) => state.layer.ids;
 const getLayersVisible = (state) => state.layer.visible;
 const getNodeLayer = (state) => state.node.layer;
+const getModularPipelineIDs = (state) => state.modularPipeline.ids;
+const getModularPipelineContracted = (state) =>
+  state.modularPipeline.contracted;
+const getModularPipelineVisible = () => null;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -34,6 +42,32 @@ export const getNodeDisabledTag = createSelector(
     })
 );
 
+// /**
+//  * Determine whether a modular pipeline is visible by checking whether
+//  * any of the nodes inside it are visible and whether it is contracted
+//  */
+// export const getModularPipelineVisible = createSelector(
+//   [
+//     getModularPipelineIDs,
+//     getModularPipelineChildren,
+//     getNodeDisabled,
+//     getModularPipelineContracted,
+//   ],
+//   (
+//     modularPipelineIDs,
+//     modularPipelineChildren,
+//     nodeDisabled,
+//     modularPipelineContracted
+//   ) =>
+//     arrayToObject(modularPipelineIDs, (modPipID) => {
+//       const visible = Object.keys(modularPipelineChildren[modPipID]).some(
+//         (nodeID) => !nodeDisabled[nodeID]
+//       );
+//       const contracted = modularPipelineContracted[modPipID];
+//       return visible && contracted;
+//     })
+// );
+
 /**
  * Set disabled status if the node is specifically hidden, and/or via a tag/view/type
  */
@@ -45,6 +79,9 @@ export const getNodeDisabled = createSelector(
     getNodeDisabledPipeline,
     getNodeType,
     getNodeTypeDisabled,
+    getModularPipelineIDs,
+    getModularPipelineChildren,
+    getModularPipelineContracted,
   ],
   (
     nodeIDs,
@@ -52,16 +89,36 @@ export const getNodeDisabled = createSelector(
     nodeDisabledTag,
     nodeDisabledPipeline,
     nodeType,
-    typeDisabled
-  ) =>
-    arrayToObject(nodeIDs, (id) =>
+    typeDisabled,
+    modularPipelineIDs,
+    modularPipelineChildren,
+    modularPipelineContracted
+  ) => {
+    const nodeDisabled = arrayToObject(nodeIDs, (id) =>
       [
         nodeDisabledNode[id],
         nodeDisabledTag[id],
         nodeDisabledPipeline[id],
         typeDisabled[nodeType[id]],
       ].some(Boolean)
-    )
+    );
+
+    const modularPipelineDisabled = arrayToObject(
+      modularPipelineIDs,
+      (modPipID) => {
+        const childrenDisabled = Object.keys(
+          modularPipelineChildren[modPipID]
+        ).every((nodeID) => nodeDisabled[nodeID]);
+        const contracted = modularPipelineContracted[modPipID];
+        return childrenDisabled || !contracted;
+      }
+    );
+
+    return {
+      ...nodeDisabled,
+      ...modularPipelineDisabled,
+    };
+  }
 );
 
 /**
@@ -90,6 +147,39 @@ export const getVisibleLayerIDs = createSelector(
 );
 
 /**
+ * Determine whether an edge into a modular pipeline should be disabled
+ */
+export const getModularPipelineEdgeDisabled = createSelector(
+  [getModularPipelineEdges, getModularPipelineVisible],
+  (modularPipelineEdges, modularPipelineVisible) =>
+    arrayToObject(modularPipelineEdges.ids, (edgeID) => {
+      const modPipID = modularPipelineEdges.modPip[edgeID];
+      const disabled = modularPipelineVisible[modPipID];
+      return disabled;
+    })
+);
+
+/**
+ * Get a list of IDs of visible modular pipeline pseudo-nodes
+ * for contracted modular pipelines
+ */
+export const getVisibleModularPipelineIDs = createSelector(
+  [getModularPipelineIDs, getModularPipelineVisible],
+  (modularPipelineIDs, modularPipelineVisible) =>
+    modularPipelineIDs.filter((modPipID) => modularPipelineVisible[modPipID])
+);
+
+/**
+ * Get a list of IDs of visible modular pipeline edges
+ * for contracted modular pipelines
+ */
+export const getVisibleModularPipelineEdgeIDs = createSelector(
+  [getModularPipelineEdges, getModularPipelineEdgeDisabled],
+  (modularPipelineEdges, edgeDisabled) =>
+    modularPipelineEdges.ids.filter((edgeID) => !edgeDisabled[edgeID])
+);
+
+/**
  * Determine whether an edge should be disabled based on their source/target nodes
  */
 export const getEdgeDisabled = createSelector(
@@ -100,4 +190,12 @@ export const getEdgeDisabled = createSelector(
       const target = edgeTargets[edgeID];
       return Boolean(nodeDisabled[source] || nodeDisabled[target]);
     })
+);
+
+/**
+ * Determine whether an edge should be disabled based on their source/target nodes
+ */
+export const getVisibleEdgeIDs = createSelector(
+  [getEdgeIDs, getEdgeDisabled],
+  (edgeIDs, edgeDisabled) => edgeIDs.filter((id) => !edgeDisabled[id])
 );

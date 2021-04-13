@@ -3,6 +3,7 @@ import flags from './flags';
 import graph from './graph';
 import layer from './layers';
 import loading from './loading';
+import modularPipeline from './modular-pipelines';
 import node from './nodes';
 import nodeType from './node-type';
 import pipeline from './pipeline';
@@ -54,6 +55,7 @@ const combinedReducer = combineReducers({
   graph,
   layer,
   loading,
+  modularPipeline,
   node,
   nodeType,
   pipeline,
@@ -62,7 +64,7 @@ const combinedReducer = combineReducers({
   // These props don't have any actions associated with them
   dataSource: createReducer(null),
   edge: createReducer({}),
-  modularPipeline: createReducer({}),
+  // modularPipeline: createReducer({}),
   // These props have very simple non-nested actions
   chartSize: createReducer({}, UPDATE_CHART_SIZE, 'chartSize'),
   zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),

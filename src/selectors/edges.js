@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getNodeDisabled, getEdgeDisabled } from './disabled';
+import { getNodeDisabled, getVisibleEdgeIDs } from './disabled';
 
 const getNodeIDs = (state) => state.node.ids;
 const getEdgeIDs = (state) => state.edge.ids;
@@ -79,20 +79,11 @@ export const getTransitiveEdges = createSelector(
  * and return them formatted as an array of objects
  */
 export const getVisibleEdges = createSelector(
-  [
-    getEdgeIDs,
-    getEdgeDisabled,
-    getEdgeSources,
-    getEdgeTargets,
-    getTransitiveEdges,
-  ],
-  (edgeIDs, edgeDisabled, edgeSources, edgeTargets, transitiveEdges) =>
-    edgeIDs
-      .filter((id) => !edgeDisabled[id])
-      .concat(transitiveEdges.edgeIDs)
-      .map((id) => ({
-        id,
-        source: edgeSources[id] || transitiveEdges.sources[id],
-        target: edgeTargets[id] || transitiveEdges.targets[id],
-      }))
+  [getVisibleEdgeIDs, getEdgeSources, getEdgeTargets, getTransitiveEdges],
+  (edgeIDs, edgeSources, edgeTargets, transitiveEdges) =>
+    edgeIDs.concat(transitiveEdges.edgeIDs).map((id) => ({
+      id,
+      source: edgeSources[id] || transitiveEdges.sources[id],
+      target: edgeTargets[id] || transitiveEdges.targets[id],
+    }))
 );

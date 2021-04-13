@@ -181,3 +181,19 @@ export function toggleCode(visible) {
     visible,
   };
 }
+
+export const TOGGLE_MODULAR_PIPELINE_CONTRACTED =
+  'TOGGLE_MODULAR_PIPELINE_CONTRACTED';
+
+/**
+ * Toggle whether a modular pipeline is expanded or contracted
+ * @param {string} modularPipelineID Modular pipeline identifier
+ * @param {boolean} contracted False if expanded
+ */
+export function toggleModularPipelineContracted(modularPipelineID, contracted) {
+  return {
+    type: TOGGLE_MODULAR_PIPELINE_CONTRACTED,
+    modularPipelineID,
+    contracted,
+  };
+}

@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import batchingToposort from 'batching-toposort';
 import { getVisibleNodeIDs, getVisibleLayerIDs } from './disabled';
+import { getVisibleModularPipelineIDs } from './modular-pipelines';
 import { getVisibleEdges } from './edges';
 
 const getNodeLayer = (state) => state.node.layer;

@@ -6,8 +6,10 @@ import {
   getNodeDisabled,
   getNodeDisabledTag,
   getVisibleNodeIDs,
+  getVisibleModularPipelineIDs,
 } from './disabled';
 import { getNodeRank } from './ranks';
+import { getModularPipelineEdges } from './modular-pipelines';
 
 const getNodeName = (state) => state.node.name;
 const getNodeFullName = (state) => state.node.fullName;
@@ -21,6 +23,7 @@ const getTextLabels = (state) => state.textLabels;
 const getFontLoaded = (state) => state.fontLoaded;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 const getClickedNode = (state) => state.node.clicked;
+const getModularPipelineName = (state) => state.modularPipeline.name;
 
 /**
  * Gets a map of nodeIds to graph nodes
@@ -195,11 +198,40 @@ export const getNodeSize = createSelector(
 );
 
 /**
+ * Get a list of modular pipeline pseudo-nodes
+ * for contracted modular pipelines
+ */
+export const getModularPipelineNodes = createSelector(
+  [getVisibleModularPipelineIDs, getModularPipelineName],
+  (modularPipelineIDs, modularPipelineName) =>
+    modularPipelineIDs.map((id) => ({
+      id,
+      name: modularPipelineName[id],
+      label: modularPipelineName[id],
+      fullName: id,
+      type: 'pipeline',
+      // layer: nodeLayer[id],
+      // rank: Math.floor(Math.random() * 100),
+      rank: 5,
+      showText: true,
+      width: 300,
+      height: 80,
+      textOffset: -10,
+      iconOffset: -100,
+      iconSize: 24,
+      // layer: nodeLayer[id],
+      // rank: nodeRank[id],
+      // ...nodeSize[id],
+    }))
+);
+
+/**
  * Returns only visible nodes as an array, but without any extra properties
  * that are unnecessary for the chart layout calculation
  */
 export const getVisibleNodes = createSelector(
   [
+    getFontLoaded,
     getVisibleNodeIDs,
     getNodeName,
     getNodeType,
@@ -207,9 +239,11 @@ export const getVisibleNodes = createSelector(
     getNodeSize,
     getNodeLayer,
     getNodeRank,
-    getFontLoaded,
+    getModularPipelineNodes,
+    getModularPipelineEdges,
   ],
   (
+    fontLoaded,
     nodeIDs,
     nodeName,
     nodeType,
@@ -217,18 +251,21 @@ export const getVisibleNodes = createSelector(
     nodeSize,
     nodeLayer,
     nodeRank,
-    fontLoaded
-  ) =>
-    fontLoaded
-      ? nodeIDs.map((id) => ({
-          id,
-          name: nodeName[id],
-          label: nodeName[id],
-          fullName: nodeFullName[id],
-          type: nodeType[id],
-          layer: nodeLayer[id],
-          rank: nodeRank[id],
-          ...nodeSize[id],
-        }))
-      : []
+    modularPipelines
+  ) => {
+    if (!fontLoaded) {
+      return [];
+    }
+    const nodes = nodeIDs.map((id) => ({
+      id,
+      name: nodeName[id],
+      label: nodeName[id],
+      fullName: nodeFullName[id],
+      type: nodeType[id],
+      layer: nodeLayer[id],
+      rank: nodeRank[id],
+      ...nodeSize[id],
+    }));
+    return nodes.concat(modularPipelines);
+  }
 );
