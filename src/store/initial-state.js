@@ -2,6 +2,7 @@ import deepmerge from 'deepmerge';
 import { loadState } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
+import { sidebarWidth } from '../config';
 
 /**
  * Create new default state instance for properties that aren't overridden
@@ -25,7 +26,7 @@ export const createInitialState = () => ({
     layerBtn: true,
     exportBtn: true,
     exportModal: false,
-    sidebar: true,
+    sidebar: window.innerWidth > sidebarWidth.breakpoint,
     code: false,
     themeBtn: true,
     miniMapBtn: true,
