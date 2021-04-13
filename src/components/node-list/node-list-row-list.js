@@ -3,7 +3,7 @@ import modifiers from '../../utils/modifiers';
 import NodeListRow, { nodeListRowHeight } from './node-list-row';
 import LazyList from '../lazy-list';
 
-const NodeRowLazyList = ({
+const NodeRowList = ({
   items = [],
   group,
   collapsed,
@@ -78,4 +78,4 @@ const NodeRowLazyList = ({
   </LazyList>
 );
 
-export default NodeRowLazyList;
+export default NodeRowList;
