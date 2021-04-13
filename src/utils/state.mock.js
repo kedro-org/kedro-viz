@@ -21,6 +21,8 @@ export const prepareState = (props) => {
   const actions = [
     // Set fontLoaded = true:
     () => updateFontLoaded(true),
+    // Enable parameters as they are disabled by default:
+    () => toggleTypeDisabled('parameters', false),
     // Precalculate graph layout:
     (state) => {
       const layout = state.flags.oldgraph ? graphDagre : graphNew;
