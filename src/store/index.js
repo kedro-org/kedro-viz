@@ -25,6 +25,7 @@ const updateGraphOnChange = (store) => {
  * @param {object} state Redux state snapshot
  */
 const saveStateToLocalStorage = (state) => {
+  //Parameters do not get saved to local storage
   const { parameters, ...nodeTypeDisabled } = state.nodeType.disabled;
   saveState({
     node: {
