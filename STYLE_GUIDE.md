@@ -154,6 +154,27 @@ Prefer:
 
 ## JavaScript
 
+### Variable naming
+
+- Prefer camelCase over snake_case, except in JSON.
+- Try to use verbs for function/method names, and nouns for constant values.
+- Boolean variable names should give some indication of their state.
+- Prefer clarity over brevity, and avoid single-letter names and abbreviations.
+
+Avoid:
+
+```js
+const actNode = true;
+const nodeState = (d) => actNode && d.node;
+```
+
+Prefer:
+
+```js
+const isActiveNode = true;
+const getNodeState = (state) => isActiveNode && state.node;
+```
+
 ### Imports
 
 Although it works in regular development (because this project uses React-Scripts), you should avoid importing non-standard file-types like `.scss` and `.svg` directly into JavaScript files. This is because these won't work without specific webpack loaders, and breaks when Kedro-Viz is imported into other projects. The `lib-test` testing suite exists partly for this reason, to check that Kedro-Viz still works when imported as a component library into a fairly standard JS app.
