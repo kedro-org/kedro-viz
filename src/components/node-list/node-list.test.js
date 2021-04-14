@@ -226,13 +226,19 @@ describe('NodeList', () => {
 
       changeRows(wrapper, ['Small', 'Large'], true);
       expect(elementsEnabled(wrapper)).toEqual([
+        ['salmon', true],
         ['shark', true],
         ['Bear', true],
         ['Cat', true],
+        ['Dog', true],
         ['Elephant', true],
         ['Giraffe', true],
+        ['Horse', true],
         ['Nested.weasel', true],
         ['Pig', true],
+        ['Sheep', true],
+        ['Parameters', true],
+        ['Params:rabbit', true],
       ]);
     });
 
@@ -394,7 +400,8 @@ describe('NodeList', () => {
       types: expect.any(Array),
       modularPipelines: expect.any(Object),
       modularPipelinesEnabled: expect.any(Object),
-      flag: expect.any(Boolean),
+      modularPipelineFlag: expect.any(Boolean),
+      sections: expect.any(Object),
     });
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });

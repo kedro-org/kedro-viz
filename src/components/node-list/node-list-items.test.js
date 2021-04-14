@@ -119,7 +119,7 @@ describe('node-list-selectors', () => {
   });
 
   describe('getSections', () => {
-    const sections = getSections();
+    const sections = getSections({ flags: { modularpipeline: false } });
 
     const section = expect.arrayContaining([
       expect.objectContaining({
