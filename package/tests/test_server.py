@@ -424,7 +424,6 @@ def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     assert data["parameters"] == {"name": "value"}
 
 
-
 @_USE_PATCHED_CONTEXT
 def test_node_metadata_endpoint_data_input(cli_runner, client, tmp_path):
     """Test `/api/nodes/data_id` endpoint is functional and returns a valid JSON."""

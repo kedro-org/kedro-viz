@@ -552,6 +552,7 @@ def _get_namespace(dataset_full_name):
         # e.g. in pipeline1.data_science.a, "pipeline1.data_science" indicates
         # the modular pipelines and "a" the name of the dataset.
         return dataset_full_name.rsplit(".", 1)[0]
+    return None
 
 
 def _get_dataset_data_params(namespace: str):
@@ -828,6 +829,7 @@ def _call_viz(
 # pylint: disable=invalid-name
 if __name__ == "__main__":  # pragma: no cover
     import argparse
+
     from kedro.framework.startup import _get_project_metadata
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
