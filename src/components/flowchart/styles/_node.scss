@@ -8,7 +8,7 @@
     fill: var(--node-labeltext-fill);
   }
 
-  rect {
+  .pipeline-node__bg {
     stroke-width: 1px;
     fill: var(--node-fill-default);
     stroke: var(--node-stroke-default);
@@ -17,7 +17,7 @@
   &:focus {
     outline: none;
 
-    [data-whatinput='keyboard'] & rect {
+    [data-whatinput='keyboard'] & .pipeline-node__bg {
       stroke: $color-primary;
       stroke-width: 3.5px;
     }
@@ -25,14 +25,22 @@
 }
 
 .pipeline-node--active {
-  rect {
+  .pipeline-node__bg {
     fill: var(--node-fill-active);
     stroke: var(--node-stroke-active);
   }
 }
 
+.pipeline-node__parameter-icon {
+  display: none;
+
+  .pipeline-node--linkedParams & {
+    display: block;
+  }
+}
+
 .pipeline-node--selected {
-  rect {
+  .pipeline-node__bg {
     stroke-width: 2px;
     fill: var(--node-fill-selected);
     stroke: var(--node-stroke-selected);

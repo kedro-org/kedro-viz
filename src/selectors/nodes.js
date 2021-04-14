@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
+import { getEdgeswithParams } from './edges';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -231,4 +232,18 @@ export const getVisibleNodes = createSelector(
           ...nodeSize[id],
         }))
       : []
+);
+
+/**
+ * Gets a map of nodeIds which have parameters as source
+ */
+export const getNodeslinkedtoParams = createSelector(
+  [(state) => state.graph.nodes, getEdgeswithParams, getNodeTypeDisabled],
+  (nodes = [], edgeswithParams, nodeTypeDisabled) => {
+    return nodes.reduce((result, node) => {
+      if (edgeswithParams[node.id] && nodeTypeDisabled.parameters === true)
+        result[node.id] = node;
+      return result;
+    }, {});
+  }
 );

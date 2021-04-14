@@ -4,7 +4,11 @@ import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
-import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
+import {
+  getNodeActive,
+  getNodeSelected,
+  getNodeslinkedtoParams,
+} from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
@@ -107,7 +111,8 @@ export class FlowChart extends Component {
         'clickedNode',
         'linkedNodes',
         'nodeActive',
-        'nodeSelected'
+        'nodeSelected',
+        'nodesLinkedtoParams'
       )
     ) {
       drawNodes.call(this, changed);
@@ -558,6 +563,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodes: state.graph.nodes || emptyNodes,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
+  nodesLinkedtoParams: getNodeslinkedtoParams(state),
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,

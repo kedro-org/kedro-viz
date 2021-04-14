@@ -103,6 +103,14 @@ const updateNodeRects = (nodeRects) =>
     .attr('y', (node) => (node.height - 5) / -2)
     .attr('rx', (node) => (node.type === 'task' ? 0 : node.height / 2));
 
+const updateParameterRect = (nodeRects) =>
+  nodeRects
+    .style('fill', 'yellow')
+    .attr('width', (node) => 14)
+    .attr('height', (node) => 14)
+    .attr('x', (node) => (node.width + 22) / -2)
+    .attr('y', (node) => (node.height - 28) / -2);
+
 /**
  * Render node icons and name labels
  */
@@ -112,6 +120,7 @@ export const drawNodes = function (changed) {
     linkedNodes,
     nodeActive,
     nodeSelected,
+    nodesLinkedtoParams,
     nodes,
   } = this.props;
 
@@ -159,7 +168,9 @@ export const drawNodes = function (changed) {
       .duration(this.DURATION)
       .attr('opacity', 1);
 
-    enterNodes.append('rect');
+    enterNodes.append('rect').attr('class', 'pipeline-node__bg');
+
+    enterNodes.append('rect').attr('class', 'pipeline-node__parameter-icon');
 
     // Performance: use a single path per icon
     enterNodes
@@ -188,11 +199,22 @@ export const drawNodes = function (changed) {
   }
 
   if (
-    changed('nodes', 'nodeActive', 'nodeSelected', 'clickedNode', 'linkedNodes')
+    changed(
+      'nodes',
+      'nodeActive',
+      'nodeSelected',
+      'nodesLinkedtoParams',
+      'clickedNode',
+      'linkedNodes'
+    )
   ) {
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
+      .classed(
+        'pipeline-node--linkedParams',
+        (node) => nodesLinkedtoParams[node.id]
+      )
       .classed(
         'pipeline-node--faded',
         (node) => clickedNode && !linkedNodes[node.id]
@@ -213,10 +235,14 @@ export const drawNodes = function (changed) {
         }
       });
 
-    enterNodes.select('rect').call(updateNodeRects);
+    enterNodes.select('.pipeline-node__bg').call(updateNodeRects);
+    enterNodes
+      .select('.pipeline-node__parameter-icon')
+      .call(updateParameterRect);
+    //enterNodes.selectAll('.pipeline-node--linkedParams')
 
     updateNodes
-      .select('rect')
+      .select('.pipeline-node__bg')
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
       .call(updateNodeRects);
@@ -300,12 +326,17 @@ export const drawEdges = function (changed) {
   }
 
   if (changed('edges', 'clickedNode', 'linkedNodes')) {
-    allEdges.classed(
-      'pipeline-edge--faded',
-      (edge) =>
-        edge &&
-        clickedNode &&
-        (!linkedNodes[edge.source] || !linkedNodes[edge.target])
-    );
+    allEdges
+      .classed(
+        'pipeline-edge-parameters',
+        (edge) => edge.sourceNode.type === 'parameters'
+      )
+      .classed(
+        'pipeline-edge--faded',
+        (edge) =>
+          edge &&
+          clickedNode &&
+          (!linkedNodes[edge.source] || !linkedNodes[edge.target])
+      );
   }
 };

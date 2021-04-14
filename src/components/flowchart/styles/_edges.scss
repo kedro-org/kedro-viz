@@ -7,6 +7,13 @@
   stroke: var(--edge-stroke);
 }
 
+.pipeline-edge-parameters path {
+  pointer-events: none;
+  fill: none;
+  stroke-width: 1.5px;
+  stroke: yellow;
+}
+
 .pipeline-edge--faded {
   opacity: 0.1;
 }
