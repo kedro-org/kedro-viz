@@ -113,8 +113,12 @@ describe('Selectors', () => {
       const nodeName = getNodeName(mockState.animals);
       const nodeIDs = getNodeData(mockState.animals).map((d) => d.id);
       const visibleNodeIDs = getNodeIDs(mockState.animals).sort((a, b) => {
-        if (nodeName[a] < nodeName[b]) return -1;
-        if (nodeName[a] > nodeName[b]) return 1;
+        if (nodeName[a] < nodeName[b]) {
+          return -1;
+        }
+        if (nodeName[a] > nodeName[b]) {
+          return 1;
+        }
         return 0;
       });
       expect(nodeIDs).toEqual(visibleNodeIDs);
