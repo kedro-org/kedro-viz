@@ -105,11 +105,10 @@ const updateNodeRects = (nodeRects) =>
 
 const updateParameterRect = (nodeRects) =>
   nodeRects
-    .style('fill', 'yellow')
-    .attr('width', (node) => 14)
-    .attr('height', (node) => 14)
-    .attr('x', (node) => (node.width + 22) / -2)
-    .attr('y', (node) => (node.height - 28) / -2);
+    .attr('width', 12)
+    .attr('height', 12)
+    .attr('x', (node) => (node.width + 20) / -2)
+    .attr('y', -6);
 
 /**
  * Render node icons and name labels
@@ -212,6 +211,10 @@ export const drawNodes = function (changed) {
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
       .classed(
+        'pipeline-node--parameters',
+        (node) => node.type === 'parameters'
+      )
+      .classed(
         'pipeline-node--linkedParams',
         (node) => nodesLinkedtoParams[node.id]
       )
@@ -246,6 +249,12 @@ export const drawNodes = function (changed) {
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
       .call(updateNodeRects);
+
+    updateNodes
+      .select('.pipeline-node__parameter-icon')
+      .transition('node-rect')
+      .duration((node) => (node.showText ? 200 : 600))
+      .call(updateParameterRect);
 
     // Performance: icon transitions with CSS on GPU
     allNodes
