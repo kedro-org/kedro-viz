@@ -63,7 +63,7 @@ class Pipeline {
   }
 
   /**
-   * Create the modualr pipelines aray
+   * Create the modualr pipelines array
    * @returns {number} Rank count total
    */
   generateModularPipelines() {

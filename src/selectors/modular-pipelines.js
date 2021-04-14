@@ -40,11 +40,14 @@ export const getModularPipelineCount = createSelector(
  */
 export const getModularPipelineNodes = createSelector(
   [getNodesModularPipelines, getModularPipelineIDs],
-  (allNodes, modularPipelines) => {
+  (allNodesModularPipelines, modularPipelines) => {
     return modularPipelines.map((modularPipeline) => {
       let nodes = [];
-      Object.keys(allNodes).forEach((key) => {
-        if (allNodes[key] && allNodes[key].includes(modularPipeline))
+      Object.keys(allNodesModularPipelines).forEach((key) => {
+        if (
+          allNodesModularPipelines[key] &&
+          allNodesModularPipelines[key].includes(modularPipeline)
+        )
           nodes.push(key);
       });
       return {
