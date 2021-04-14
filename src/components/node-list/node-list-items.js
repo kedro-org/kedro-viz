@@ -31,12 +31,10 @@ export const highlightMatch = (nodes, searchValue) => {
     highlightedLabel: getHighlightedText(node.name, searchValue),
     ...node,
   });
-  const addLabelsToNodes = (newNodes, type) => {
-    return {
-      ...newNodes,
-      [type]: nodes[type].map(addHighlightedLabel),
-    };
-  };
+  const addLabelsToNodes = (newNodes, type) => ({
+    ...newNodes,
+    [type]: nodes[type].map(addHighlightedLabel),
+  });
 
   return Object.keys(nodes).reduce(addLabelsToNodes, {});
 };
@@ -226,13 +224,15 @@ export const getFilteredNodeItems = createSelector(
  * @param {boolean} flag value of modularpipeline flag
  * @return {array} List of sections
  */
-export const getSections = (flag) => {
-  const sidebarObject = sidebar(flag);
-  return Object.keys(sidebarObject).map((name) => ({
-    name,
-    types: Object.values(sidebarObject[name]),
-  }));
-};
+
+export const getSections = createSelector(
+  (state) => sidebar(state.flags.modularpipeline),
+  (sidebarObject) =>
+    Object.keys(sidebarObject).map((name) => ({
+      name,
+      types: Object.values(sidebarObject[name]),
+    }))
+);
 
 /**
  * Create a new group of items. This can be one of two kinds:

@@ -12,11 +12,14 @@ const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
 export const getModularPipelineData = createSelector(
   [getModularPipelineIDs, getModularPipelineName, getModularPipelineEnabled],
   (modularPipelineIDs, modularPipelineName, modularPipelineEnabled) =>
-    modularPipelineIDs.sort().map((id) => ({
-      id,
-      name: modularPipelineName[id],
-      enabled: Boolean(modularPipelineEnabled[id]),
-    }))
+    modularPipelineIDs
+      .slice()
+      .sort()
+      .map((id) => ({
+        id,
+        name: modularPipelineName[id],
+        enabled: Boolean(modularPipelineEnabled[id]),
+      }))
 );
 
 /**
@@ -40,11 +43,10 @@ export const getModularPipelineNodes = createSelector(
   (allNodes, modularPipelines) => {
     return modularPipelines.map((modularPipeline) => {
       let nodes = [];
-      Object.keys(allNodes).map((key) =>
-        allNodes[key]
-          ? allNodes[key].includes(modularPipeline) && nodes.push(key)
-          : null
-      );
+      Object.keys(allNodes).forEach((key) => {
+        if (allNodes[key] && allNodes[key].includes(modularPipeline))
+          nodes.push(key);
+      });
       return {
         modularPipeline,
         nodes,

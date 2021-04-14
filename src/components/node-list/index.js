@@ -50,9 +50,9 @@ const NodeListProvider = ({
   onToggleTypeDisabled,
   modularPipelines,
   modularPipelinesEnabled,
-  flag,
+  modularPipelineFlag,
+  sections,
 }) => {
-  const sections = getSections(flag);
   const [searchValue, updateSearchValue] = useState('');
   const items = getFilteredItems({
     nodes,
@@ -80,7 +80,7 @@ const NodeListProvider = ({
 
   const onItemChange = (item, checked) => {
     if (isTagType(item.type) || isModularPipelineType(item.type)) {
-      onCategoryItemChange(item, item.checked);
+      onCategoryItemChange(item, checked);
     } else {
       if (checked) {
         onToggleNodeActive(null);
@@ -103,7 +103,7 @@ const NodeListProvider = ({
     if (isTagType(item.type)) {
       onToggleTagActive(item.id, false);
     } else if (isModularPipelineType(item.type)) {
-      onToggleModularPipelineActive(item.id, true);
+      onToggleModularPipelineActive(item.id, false);
     } else if (item.visible) {
       onToggleNodeActive(null);
     }
@@ -203,7 +203,8 @@ export const mapStateToProps = (state) => ({
   types: getNodeTypes(state),
   modularPipelines: getModularPipelineData(state),
   modularPipelinesEnabled: state.modularPipeline.enabled,
-  flag: state.flags.modularpipeline,
+  modularPipelineFlag: state.flags.modularpipeline,
+  sections: getSections(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

@@ -165,19 +165,6 @@ describe('actions', () => {
    * Tests for modular pipelines related actions
    */
 
-  it("should create an action to toggle a modular pipeline's active state on/off", () => {
-    const modularPipelineID = '1234567890';
-    const active = false;
-    const expectedAction = {
-      type: TOGGLE_MODULAR_PIPELINE_ACTIVE,
-      modularPipelineIDs: [modularPipelineID],
-      active,
-    };
-    expect(toggleModularPipelineActive(modularPipelineID, active)).toEqual(
-      expectedAction
-    );
-  });
-
   it('should create an action to toggle an array of modular pipeliness active state on/off', () => {
     const modularPipelineIDs = ['12345', '67890'];
     const active = false;
@@ -187,19 +174,6 @@ describe('actions', () => {
       active,
     };
     expect(toggleModularPipelineActive(modularPipelineIDs, active)).toEqual(
-      expectedAction
-    );
-  });
-
-  it('should create an action to toggle a modular pipeline on/off', () => {
-    const modularPipelineID = '1234567890';
-    const enabled = false;
-    const expectedAction = {
-      type: TOGGLE_MODULAR_PIPELINE_FILTER,
-      modularPipelineIDs: [modularPipelineID],
-      enabled,
-    };
-    expect(toggleModularPipelineFilter(modularPipelineID, enabled)).toEqual(
       expectedAction
     );
   });
