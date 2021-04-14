@@ -112,6 +112,7 @@ export class FlowChart extends Component {
         'linkedNodes',
         'nodeActive',
         'nodeSelected',
+        'hoveredParameters',
         'nodesLinkedtoParams'
       )
     ) {
@@ -558,6 +559,7 @@ export const mapStateToProps = (state, ownProps) => ({
   chartZoom: getChartZoom(state),
   edges: state.graph.edges || emptyEdges,
   graphSize: state.graph.size || emptyGraphSize,
+  hoveredParameters: state.hoveredParameters,
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
   nodes: state.graph.nodes || emptyNodes,

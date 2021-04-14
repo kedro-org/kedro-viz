@@ -11,11 +11,13 @@ import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import {
   loadNodeData,
   toggleNodeHovered,
+  toggleParametersHovered,
   toggleNodesDisabled,
 } from '../../actions/nodes';
 import './styles/node-list.css';
 
 const isTagType = (type) => type === 'tag';
+const isParameterType = (type) => type === 'parameters';
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -38,6 +40,7 @@ const NodeListProvider = ({
   onToggleNodesDisabled,
   onToggleNodeSelected,
   onToggleNodeActive,
+  onToggleParametersActive,
   onToggleTagActive,
   onToggleTagFilter,
   onToggleTypeDisabled,
@@ -92,6 +95,17 @@ const NodeListProvider = ({
     }
   };
 
+  const onSectionMouseEnter = (item) => {
+    if (isParameterType(item)) {
+      onToggleParametersActive(true);
+    }
+  };
+
+  const onSectionMouseLeave = (item) => {
+    if (isParameterType(item)) {
+      onToggleParametersActive(false);
+    }
+  };
   const onToggleGroupChecked = (type, checked) => {
     if (isTagType(type)) {
       // Filter all tags if at least one tag item set, otherwise enable all tags
@@ -152,6 +166,8 @@ const NodeListProvider = ({
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
+      onSectionMouseEnter={onSectionMouseEnter}
+      onSectionMouseLeave={onSectionMouseLeave}
       onItemChange={onItemChange}
     />
   );
@@ -181,6 +197,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleNodeActive: (nodeID) => {
     dispatch(toggleNodeHovered(nodeID));
+  },
+  onToggleParametersActive: (active) => {
+    dispatch(toggleParametersHovered(active));
   },
   onToggleNodesDisabled: (nodeIDs, disabled) => {
     dispatch(toggleNodesDisabled(nodeIDs, disabled));

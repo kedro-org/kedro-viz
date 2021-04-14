@@ -22,6 +22,8 @@ export const NodeListGroup = ({
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
+  onSectionMouseEnter,
+  onSectionMouseLeave,
 }) => (
   <li
     className={classnames(
@@ -32,7 +34,10 @@ export const NodeListGroup = ({
         'pipeline-nodelist__group--all-unset': allUnset,
       }
     )}>
-    <h3 className="pipeline-nodelist__heading">
+    <h3
+      className="pipeline-nodelist__heading"
+      onMouseEnter={() => onSectionMouseEnter(id)}
+      onMouseLeave={() => onSectionMouseLeave(id)}>
       <NodeListRow
         id={id}
         kind={kind}

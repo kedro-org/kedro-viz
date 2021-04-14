@@ -17,6 +17,7 @@ import {
   UPDATE_FONT_LOADED,
   TOGGLE_IGNORE_LARGE_WARNING,
 } from '../actions';
+import { TOGGLE_PARAMETERS_HOVERED } from '../actions/nodes';
 
 /**
  * Create a generic reducer
@@ -69,6 +70,11 @@ const combinedReducer = combineReducers({
   fontLoaded: createReducer(false, UPDATE_FONT_LOADED, 'fontLoaded'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
+  hoveredParameters: createReducer(
+    false,
+    TOGGLE_PARAMETERS_HOVERED,
+    'hoveredParameters'
+  ),
   ignoreLargeWarning: createReducer(
     false,
     TOGGLE_IGNORE_LARGE_WARNING,

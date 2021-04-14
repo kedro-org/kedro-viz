@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import { arrayToObject } from '../utils';
 import { getNodeDisabled, getEdgeDisabled } from './disabled';
 
 const getNodeIDs = (state) => state.node.ids;

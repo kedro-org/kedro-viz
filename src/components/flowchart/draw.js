@@ -119,6 +119,7 @@ export const drawNodes = function (changed) {
     linkedNodes,
     nodeActive,
     nodeSelected,
+    hoveredParameters,
     nodesLinkedtoParams,
     nodes,
   } = this.props;
@@ -202,6 +203,7 @@ export const drawNodes = function (changed) {
       'nodes',
       'nodeActive',
       'nodeSelected',
+      'hoveredParameters',
       'nodesLinkedtoParams',
       'clickedNode',
       'linkedNodes'
@@ -213,6 +215,9 @@ export const drawNodes = function (changed) {
       .classed(
         'pipeline-node--parameters',
         (node) => node.type === 'parameters'
+      )
+      .classed('pipeline-node--linkedParams--active', (node) =>
+        hoveredParameters ? nodesLinkedtoParams[node.id] : null
       )
       .classed(
         'pipeline-node--linkedParams',

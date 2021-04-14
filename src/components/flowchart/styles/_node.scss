@@ -68,7 +68,7 @@
   transition: opacity 0.15s ease;
 }
 
-.pipeline-node--active.pipeline-node--linkedParams {
+.pipeline-node--linkedParams--active {
   .pipeline-node__bg {
     opacity: 0.1;
     fill: #ffbc00;
