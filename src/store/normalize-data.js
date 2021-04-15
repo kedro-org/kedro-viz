@@ -12,7 +12,9 @@ export const createInitialPipelineState = () => ({
   modularPipeline: {
     ids: [],
     name: {},
+    active: {},
     contracted: {},
+    enabled: {},
   },
   node: {
     ids: [],
@@ -27,7 +29,6 @@ export const createInitialPipelineState = () => ({
     hovered: null,
     fetched: {},
     code: {},
-    docstring: {},
     parameters: {},
     filepath: {},
     datasetType: {},
@@ -141,7 +142,6 @@ const addNode = (state) => (node) => {
   state.node.tags[id] = node.tags || [];
   // supports for metadata in case it exists on initial load
   state.node.code[id] = node.code;
-  state.node.docstring[id] = node.docstring;
   state.node.parameters[id] = node.parameters;
   state.node.filepath[id] = node.filepath;
   state.node.datasetType[id] = node.datasetType;

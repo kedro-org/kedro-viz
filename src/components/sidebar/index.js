@@ -6,7 +6,7 @@ import NodeList from '../node-list';
 import PrimaryToolbar from '../primary-toolbar';
 import MiniMapToolbar from '../minimap-toolbar';
 import MiniMap from '../minimap';
-import { toggleModularPipelineContracted } from '../../actions';
+import { toggleModularPipelineContracted } from '../../actions/modular-pipelines';
 import './sidebar.css';
 
 /**

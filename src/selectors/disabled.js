@@ -6,12 +6,15 @@ import {
   getModularPipelineEdges,
 } from './modular-pipelines';
 import { getTagCount } from './tags';
+import { getModularPipelineCount } from './modular-pipelines';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeDisabledNode = (state) => state.node.disabled;
 const getNodeTags = (state) => state.node.tags;
+const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getNodeType = (state) => state.node.type;
 const getTagEnabled = (state) => state.tag.enabled;
+const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
@@ -22,7 +25,7 @@ const getNodeLayer = (state) => state.node.layer;
 const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 const getModularPipelineContracted = (state) =>
   state.modularPipeline.contracted;
-const getModularPipelineVisible = () => null;
+const getModularPipelineVisible = () => ({});
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -69,13 +72,44 @@ export const getNodeDisabledTag = createSelector(
 // );
 
 /**
- * Set disabled status if the node is specifically hidden, and/or via a tag/view/type
+ * Calculate whether nodes should be disabled based on their modular pipelines
+ */
+export const getNodeDisabledModularPipeline = createSelector(
+  [
+    getNodeIDs,
+    getModularPipelineEnabled,
+    getModularPipelineCount,
+    getNodeModularPipelines,
+  ],
+  (
+    nodeIDs,
+    modularPipelineEnabled,
+    modularPipelineCount,
+    nodeModularPipelines
+  ) =>
+    arrayToObject(nodeIDs, (nodeID) => {
+      if (modularPipelineCount.enabled === 0) {
+        return false;
+      }
+      if (nodeModularPipelines[nodeID].length) {
+        // Hide task nodes that don't have at least one modular pipeline filter enabled
+        return !nodeModularPipelines[nodeID].some(
+          (modularPipeline) => modularPipelineEnabled[modularPipeline]
+        );
+      }
+      return true;
+    })
+);
+
+/**
+ * Set disabled status if the node is specifically hidden, and/or via a tag/view/type/modularPipeline
  */
 export const getNodeDisabled = createSelector(
   [
     getNodeIDs,
     getNodeDisabledNode,
     getNodeDisabledTag,
+    getNodeDisabledModularPipeline,
     getNodeDisabledPipeline,
     getNodeType,
     getNodeTypeDisabled,
@@ -87,6 +121,7 @@ export const getNodeDisabled = createSelector(
     nodeIDs,
     nodeDisabledNode,
     nodeDisabledTag,
+    nodeDisabledModularPipeline,
     nodeDisabledPipeline,
     nodeType,
     typeDisabled,
@@ -98,6 +133,7 @@ export const getNodeDisabled = createSelector(
       [
         nodeDisabledNode[id],
         nodeDisabledTag[id],
+        nodeDisabledModularPipeline[id],
         nodeDisabledPipeline[id],
         typeDisabled[nodeType[id]],
       ].some(Boolean)

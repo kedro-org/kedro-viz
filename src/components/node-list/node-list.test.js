@@ -234,9 +234,9 @@ describe('NodeList', () => {
         ['Elephant', true],
         ['Giraffe', true],
         ['Horse', true],
+        ['Nested.weasel', true],
         ['Pig', true],
         ['Sheep', true],
-        ['Weasel', true],
         ['Parameters', true],
         ['Params:rabbit', true],
       ]);
@@ -258,8 +258,8 @@ describe('NodeList', () => {
         ['Cat', true],
         ['Elephant', true],
         ['Giraffe', true],
+        ['Nested.weasel', true],
         ['Pig', true],
-        ['Weasel', true],
         // Datasets (disabled)
         ['Dog', false],
         ['Horse', false],
@@ -271,6 +271,8 @@ describe('NodeList', () => {
         ['Sheep', false],
         // Parameters
         ['Parameters', false],
+        ['Params:pipeline100.data Science.plankton', false],
+        ['Params:pipeline2.data Science.plankton', false],
         ['Params:rabbit', false],
       ]);
     });
@@ -308,7 +310,7 @@ describe('NodeList', () => {
       expect(partialIcon(wrapper)).toHaveLength(1);
 
       // All tags selected
-      changeRows(wrapper, ['Large', 'Medium', 'Small'], true);
+      changeRows(wrapper, ['Medium', 'Small'], true);
       expect(partialIcon(wrapper)).toHaveLength(0);
     });
 
@@ -381,6 +383,7 @@ describe('NodeList', () => {
         disabled_node: expect.any(Boolean),
         disabled_tag: expect.any(Boolean),
         disabled_type: expect.any(Boolean),
+        disabled_modularPipeline: expect.any(Boolean),
         id: expect.any(String),
         name: expect.any(String),
         type: expect.any(String),
@@ -394,8 +397,11 @@ describe('NodeList', () => {
         task: nodeList,
       }),
       nodeSelected: expect.any(Object),
-      sections: expect.any(Array),
       types: expect.any(Array),
+      modularPipelines: expect.any(Object),
+      modularPipelinesEnabled: expect.any(Object),
+      modularPipelineFlag: expect.any(Boolean),
+      sections: expect.any(Object),
     });
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
