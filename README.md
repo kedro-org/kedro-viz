@@ -107,6 +107,7 @@ The following flags are available to toggle experimental features:
 
 - `lazy` - From release v3.8.0. Improved sidebar performance. (default `false`)
 - `oldgraph` - From release v3.8.0. Display old version of graph (dagre algorithm) without improved graphing algorithm. (default `false`)
+- `parameter` - Turns-on parameters on the kedro-viz by default
 - `sizewarning` - From release v3.9.1. Show a warning before rendering very large graphs. (default `true`)
 
 Note that newgraph has been removed from v3.8.0 onwards and is now the default functionality. Should there be issues with your project, see the oldgraph flag above.
