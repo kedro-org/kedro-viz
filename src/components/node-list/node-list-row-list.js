@@ -12,9 +12,8 @@ const getItemLabel = (item) => {
   if (item.type === 'modularPipeline') {
     // parse depth of modular pipeline from namespace(i.e id)
     const levels = item.id.match(/\./g) ? item.id.match(/\./g).length : 0;
-    return `${whiteSpace
-      .repeat(levels)
-      .concat(layer.concat(item.highlightedLabel))}`;
+
+    return whiteSpace.repeat(levels) + layer + item.highlightedLabel;
   }
   return item.highlightedLabel;
 };
