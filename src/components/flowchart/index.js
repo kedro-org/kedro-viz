@@ -7,7 +7,7 @@ import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
 import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
-import { getCentralNode, getLinkedNodes } from '../../selectors/linked-nodes';
+import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import {
@@ -97,14 +97,14 @@ export class FlowChart extends Component {
       drawLayerNames.call(this);
     }
 
-    if (changed('edges', 'centralNode', 'linkedNodes')) {
+    if (changed('edges', 'clickedNode', 'linkedNodes')) {
       drawEdges.call(this, changed);
     }
 
     if (
       changed(
         'nodes',
-        'centralNode',
+        'clickedNode',
         'linkedNodes',
         'nodeActive',
         'nodeSelected'
@@ -549,7 +549,6 @@ const emptyGraphSize = {};
 
 export const mapStateToProps = (state, ownProps) => ({
   clickedNode: state.node.clicked,
-  centralNode: getCentralNode(state),
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
   edges: state.graph.edges || emptyEdges,
