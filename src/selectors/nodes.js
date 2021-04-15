@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
+import { getAllNodeIDs } from './modular-pipelines';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -10,7 +11,6 @@ import {
   getNodeDisabledModularPipeline,
 } from './disabled';
 import { getNodeRank } from './ranks';
-import { getModularPipelineEdges } from './modular-pipelines';
 
 const getNodeName = (state) => state.node.name;
 const getNodeFullName = (state) => state.node.fullName;
@@ -41,7 +41,8 @@ export const getGraphNodes = createSelector(
 );
 
 /**
- * Set active status if the node is specifically highlighted, and/or via an associated tag or modular pipeline
+ * Set active status if the node is specifically highlighted,
+ * and/or via an associated tag or modular pipeline
  */
 export const getNodeActive = createSelector(
   [
@@ -263,7 +264,7 @@ export const getVisibleNodes = createSelector(
     getNodeLayer,
     getNodeRank,
     getModularPipelineNodes,
-    getModularPipelineEdges,
+    // getModularPipelineEdges, // @TODO
   ],
   (
     fontLoaded,
@@ -289,6 +290,7 @@ export const getVisibleNodes = createSelector(
       rank: nodeRank[id],
       ...nodeSize[id],
     }));
+    // return nodes;
     return nodes.concat(modularPipelines);
   }
 );

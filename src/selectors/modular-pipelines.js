@@ -1,19 +1,46 @@
 import { createSelector } from 'reselect';
-import { getPipelineModularPipelineIDs } from './pipeline';
+import { getPipelineNodeIDs, getPipelineModularPipelineIDs } from './pipeline';
 import { arrayToObject } from '../utils';
 
-const getNodesModularPipelines = (state) => state.node.modularPipelines;
+const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
 const getNodeIDs = (state) => state.node.ids;
-const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
 
 /**
- * Get all the nodes in each modular pipeline
+ * Retrieve the formatted list of modular pipeline filters
+ */
+export const getModularPipelineData = createSelector(
+  [getModularPipelineIDs, getModularPipelineName, getModularPipelineEnabled],
+  (modularPipelineIDs, modularPipelineName, modularPipelineEnabled) =>
+    modularPipelineIDs
+      .slice()
+      .sort()
+      .map((id) => ({
+        id,
+        name: modularPipelineName[id],
+        enabled: Boolean(modularPipelineEnabled[id]),
+      }))
+);
+
+/**
+ * Get the total and enabled number of modular pipelines
+ */
+export const getModularPipelineCount = createSelector(
+  [getPipelineModularPipelineIDs, getModularPipelineEnabled],
+  (modularPipelineIDs, modularPipelineEnabled) => ({
+    total: modularPipelineIDs.length,
+    enabled: modularPipelineIDs.filter((id) => modularPipelineEnabled[id])
+      .length,
+  })
+);
+
+/**
+ * Create an object listing all the nodes in each modular pipeline
  */
 export const getModularPipelineChildren = createSelector(
   [getModularPipelineIDs, getNodeIDs, getNodeModularPipelines],
@@ -82,53 +109,22 @@ export const getModularPipelineEdges = createSelector(
 );
 
 /**
- * Retrieve the formatted list of modular pipeline filters
+ * Get the IDs of all nodes and modular pipelines combined before filtering
  */
-export const getModularPipelineData = createSelector(
-  [getModularPipelineIDs, getModularPipelineName, getModularPipelineEnabled],
-  (modularPipelineIDs, modularPipelineName, modularPipelineEnabled) =>
-    modularPipelineIDs
-      .slice()
-      .sort()
-      .map((id) => ({
-        id,
-        name: modularPipelineName[id],
-        enabled: Boolean(modularPipelineEnabled[id]),
-      }))
+export const getAllNodeIDs = createSelector(
+  [getPipelineNodeIDs, getPipelineModularPipelineIDs],
+  (nodeIDs, modularPipelineIDs) => nodeIDs.concat(modularPipelineIDs)
 );
 
 /**
- * Get the total and enabled number of modular pipelines
+ * Get the IDs of all edges and generated modular pipeline edges,
+ * with their sources and targets, combined before filtering
  */
-export const getModularPipelineCount = createSelector(
-  [getPipelineModularPipelineIDs, getModularPipelineEnabled],
-  (modularPipelineIDs, modularPipelineEnabled) => ({
-    total: modularPipelineIDs.length,
-    enabled: modularPipelineIDs.filter((id) => modularPipelineEnabled[id])
-      .length,
+export const getAllEdges = createSelector(
+  [getEdgeIDs, getEdgeSources, getEdgeTargets, getModularPipelineEdges],
+  (edgeIDs, edgeSources, edgeTargets, modPipEdges) => ({
+    ids: edgeIDs.concat(modPipEdges.ids),
+    sources: { ...edgeSources, ...modPipEdges.sources },
+    targets: { ...edgeTargets, ...modPipEdges.targets },
   })
-);
-
-/**
- * returns an array of modular pipelines with the corresponding
- * nodes for each modular pipeline
- */
-export const getModularPipelineNodes = createSelector(
-  [getNodesModularPipelines, getModularPipelineIDs],
-  (allNodesModularPipelines, modularPipelines) => {
-    return modularPipelines.map((modularPipeline) => {
-      let nodes = [];
-      Object.keys(allNodesModularPipelines).forEach((key) => {
-        if (
-          allNodesModularPipelines[key] &&
-          allNodesModularPipelines[key].includes(modularPipeline)
-        )
-          nodes.push(key);
-      });
-      return {
-        modularPipeline,
-        nodes,
-      };
-    });
-  }
 );
