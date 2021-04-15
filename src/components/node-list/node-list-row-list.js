@@ -4,14 +4,14 @@ import { connect } from 'react-redux';
 import NodeListRow, { nodeListRowHeight } from './node-list-row';
 import LazyList from '../lazy-list';
 
-// modify display of labels for modular pipelines to show nested relationship
-// note this label indentation could be subject to further design changes
+// Modify display of labels for modular pipelines to show nested relationship.
+// Note: This label indentation could be subject to further design changes.
 const getItemLabel = (item) => {
-  const layer = '・';
-  const whiteSpace = '&nbsp;&nbsp;&nbsp;&nbsp;';
   if (item.type === 'modularPipeline') {
     // parse depth of modular pipeline from namespace(i.e id)
     const levels = item.id.match(/\./g) ? item.id.match(/\./g).length : 0;
+    const layer = levels ? '・' : '';
+    const whiteSpace = '&nbsp;&nbsp;&nbsp;&nbsp;';
 
     return whiteSpace.repeat(levels) + layer + item.highlightedLabel;
   }
