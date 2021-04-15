@@ -47,7 +47,7 @@ class Pipeline {
   }
 
   /**
-   * Create the pipelines aray
+   * Create the pipelines array
    * @returns {number} Rank count total
    */
   generatePipelines() {
@@ -63,7 +63,7 @@ class Pipeline {
   }
 
   /**
-   * Create the modualr pipelines array
+   * Create the modular pipelines array
    * @returns {number} Rank count total
    */
   generateModularPipelines() {
@@ -259,7 +259,7 @@ class Pipeline {
 
   /**
    * Create a list of the modular pipelines that the node will be included in
-   * @returns {array} Node piplines
+   * @returns {array} Node pipelines
    */
   getNodeModularPipelines() {
     return this.modularPipelines.reduce((modularPipelines, id, i) => {
