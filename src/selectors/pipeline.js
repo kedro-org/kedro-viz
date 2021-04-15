@@ -5,6 +5,7 @@ const getNodeIDs = (state) => state.node.ids;
 const getNodePipelines = (state) => state.node.pipelines;
 const getActivePipeline = (state) => state.pipeline.active;
 const getNodeTags = (state) => state.node.tags;
+const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getDataSource = (state) => state.dataSource;
 
 /**
@@ -47,5 +48,23 @@ export const getPipelineTagIDs = createSelector(
       });
     });
     return Object.keys(visibleTags);
+  }
+);
+
+/**
+ * Get IDs of modular pipelines used in the current pipeline
+ */
+export const getPipelineModularPipelineIDs = createSelector(
+  [getPipelineNodeIDs, getNodeModularPipelines],
+  (nodeIDs, nodeModularPipelines) => {
+    const visibleModularPipelines = {};
+    nodeIDs.forEach((nodeID) => {
+      nodeModularPipelines[nodeID].forEach((modularPipelineID) => {
+        if (!visibleModularPipelines[modularPipelineID]) {
+          visibleModularPipelines[modularPipelineID] = true;
+        }
+      });
+    });
+    return Object.keys(visibleModularPipelines);
   }
 );

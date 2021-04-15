@@ -35,6 +35,12 @@ import {
   toggleTagActive,
   toggleTagFilter,
 } from '../actions/tags';
+import {
+  TOGGLE_MODULAR_PIPELINE_ACTIVE,
+  TOGGLE_MODULAR_PIPELINE_FILTER,
+  toggleModularPipelineActive,
+  toggleModularPipelineFilter,
+} from '../actions/modular-pipelines';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
 describe('actions', () => {
@@ -153,6 +159,36 @@ describe('actions', () => {
       enabled,
     };
     expect(toggleTagFilter(tagIDs, enabled)).toEqual(expectedAction);
+  });
+
+  /**
+   * Tests for modular pipelines related actions
+   */
+
+  it('should create an action to toggle an array of modular pipeliness active state on/off', () => {
+    const modularPipelineIDs = ['12345', '67890'];
+    const active = false;
+    const expectedAction = {
+      type: TOGGLE_MODULAR_PIPELINE_ACTIVE,
+      modularPipelineIDs,
+      active,
+    };
+    expect(toggleModularPipelineActive(modularPipelineIDs, active)).toEqual(
+      expectedAction
+    );
+  });
+
+  it('should create an action to toggle an array of tags on/off', () => {
+    const modularPipelineIDs = ['12345', '67890'];
+    const enabled = false;
+    const expectedAction = {
+      type: TOGGLE_MODULAR_PIPELINE_FILTER,
+      modularPipelineIDs,
+      enabled,
+    };
+    expect(toggleModularPipelineFilter(modularPipelineIDs, enabled)).toEqual(
+      expectedAction
+    );
   });
 
   it('should create an action to toggle the theme', () => {
