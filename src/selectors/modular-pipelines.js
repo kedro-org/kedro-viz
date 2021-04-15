@@ -33,27 +33,3 @@ export const getModularPipelineCount = createSelector(
       .length,
   })
 );
-
-/**
- * returns an array of modular pipelines with the corresponding
- * nodes for each modular pipeline
- */
-export const getModularPipelineNodes = createSelector(
-  [getNodesModularPipelines, getModularPipelineIDs],
-  (allNodesModularPipelines, modularPipelines) => {
-    return modularPipelines.map((modularPipeline) => {
-      let nodes = [];
-      Object.keys(allNodesModularPipelines).forEach((key) => {
-        if (
-          allNodesModularPipelines[key] &&
-          allNodesModularPipelines[key].includes(modularPipeline)
-        )
-          nodes.push(key);
-      });
-      return {
-        modularPipeline,
-        nodes,
-      };
-    });
-  }
-);
