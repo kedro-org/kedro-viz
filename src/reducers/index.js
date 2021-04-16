@@ -17,7 +17,7 @@ import {
   UPDATE_FONT_LOADED,
   TOGGLE_IGNORE_LARGE_WARNING,
 } from '../actions';
-import { TOGGLE_PARAMETERS_HOVERED } from '../actions/nodes';
+import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
 /**
  * Create a generic reducer

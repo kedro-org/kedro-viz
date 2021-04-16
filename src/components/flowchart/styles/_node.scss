@@ -41,7 +41,7 @@
   display: none;
   fill: #ffbc00;
 
-  .pipeline-node--linkedParams & {
+  .pipeline-node--with-input-params & {
     display: block;
   }
 }
@@ -68,7 +68,7 @@
   transition: opacity 0.15s ease;
 }
 
-.pipeline-node--linkedParams--active {
+.pipeline-node--with-input-params--active {
   .pipeline-node__bg {
     opacity: 0.1;
     fill: #ffbc00;

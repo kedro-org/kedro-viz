@@ -11,9 +11,9 @@ import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import {
   loadNodeData,
   toggleNodeHovered,
-  toggleParametersHovered,
   toggleNodesDisabled,
 } from '../../actions/nodes';
+import { toggleParametersHovered } from '../../actions';
 import './styles/node-list.css';
 
 const isTagType = (type) => type === 'tag';

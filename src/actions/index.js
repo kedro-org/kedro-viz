@@ -181,3 +181,16 @@ export function toggleCode(visible) {
     visible,
   };
 }
+
+export const TOGGLE_PARAMETERS_HOVERED = 'TOGGLE_PARAMETERS_HOVERED';
+
+/**
+ * Update the value of the currently-active hovered node
+ * @param {string|null} nodeHovered The node's unique identifier
+ */
+export function toggleParametersHovered(hoveredParameters) {
+  return {
+    type: TOGGLE_PARAMETERS_HOVERED,
+    hoveredParameters,
+  };
+}

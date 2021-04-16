@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { getNodeDisabled, getEdgeDisabled } from './disabled';
 
 const getNodeIDs = (state) => state.node.ids;
-const getNodeType = (state) => state.node.type;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
@@ -96,21 +95,4 @@ export const getVisibleEdges = createSelector(
         source: edgeSources[id] || transitiveEdges.sources[id],
         target: edgeTargets[id] || transitiveEdges.targets[id],
       }))
-);
-
-/**
- * Returns an node ID where source edge is a parameter
- */
-export const getEdgeswithParams = createSelector(
-  [getEdgeIDs, getNodeType, getEdgeSources, getEdgeTargets],
-  (edgeIDs, nodeType, edgeSources, edgeTargets) => {
-    const nodes_list = {};
-    for (const edgeID of edgeIDs) {
-      const source = edgeSources[edgeID];
-      const target = edgeTargets[edgeID];
-      if (nodeType[source] === 'parameters' && nodeType[target] === 'task')
-        nodes_list[target] = true;
-    }
-    return nodes_list;
-  }
 );

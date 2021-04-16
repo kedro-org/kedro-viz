@@ -7,7 +7,7 @@ import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
 import {
   getNodeActive,
   getNodeSelected,
-  getNodeslinkedtoParams,
+  getNodeswithInputParams,
 } from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
@@ -113,7 +113,7 @@ export class FlowChart extends Component {
         'nodeActive',
         'nodeSelected',
         'hoveredParameters',
-        'nodesLinkedtoParams'
+        'nodesWithInputParams'
       )
     ) {
       drawNodes.call(this, changed);
@@ -565,7 +565,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodes: state.graph.nodes || emptyNodes,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
-  nodesLinkedtoParams: getNodeslinkedtoParams(state),
+  nodesWithInputParams: getNodeswithInputParams(state),
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,
