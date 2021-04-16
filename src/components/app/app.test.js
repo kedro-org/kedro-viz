@@ -14,32 +14,32 @@ describe('App', () => {
   const getState = (wrapper) => wrapper.instance().store.getState();
 
   describe('renders without crashing', () => {
-    it('when loading random data', () => {
+    test('when loading random data', () => {
       shallow(<App data={getRandomPipeline()} />);
     });
 
-    it('when loading json data', () => {
+    test('when loading json data', () => {
       shallow(<App data="json" />);
     });
 
-    it('when being passed data as a prop', () => {
+    test('when being passed data as a prop', () => {
       shallow(<App data={animals} />);
     });
   });
 
   describe('updates the store', () => {
-    it('when data prop is set on first load', () => {
+    test('when data prop is set on first load', () => {
       const wrapper = shallow(<App data={animals} />);
       expect(getState(wrapper).node).toEqual(mockState.animals.node);
     });
 
-    it('when data prop is updated', () => {
+    test('when data prop is updated', () => {
       const wrapper = shallow(<App data={demo} />);
       wrapper.setProps({ data: animals });
       expect(getState(wrapper).node).toEqual(mockState.animals.node);
     });
 
-    it('but does not override localStorage values', () => {
+    test('but does not override localStorage values', () => {
       const localState = { node: { disabled: { foo: true } } };
       saveState(localState);
       const wrapper = shallow(<App data={demo} />);
@@ -48,7 +48,7 @@ describe('App', () => {
       window.localStorage.clear();
     });
 
-    it('but does not override non-pipeline values', () => {
+    test('but does not override non-pipeline values', () => {
       const wrapper = shallow(<App data={demo} />);
       wrapper.setProps({ data: animals });
       expect(getState(wrapper)).toMatchObject(prepareNonPipelineState({}));
@@ -64,7 +64,7 @@ describe('App', () => {
   });
 
   describe('throws an error', () => {
-    it('when data prop is empty', () => {
+    test('when data prop is empty', () => {
       expect(() => shallow(<App />)).toThrow();
     });
   });
