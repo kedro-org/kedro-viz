@@ -7,6 +7,7 @@ const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
 const getNodeIDs = (state) => state.node.ids;
+const getNodeName = (state) => state.node.name;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
@@ -114,6 +115,17 @@ export const getModularPipelineEdges = createSelector(
 export const getAllNodeIDs = createSelector(
   [getPipelineNodeIDs, getPipelineModularPipelineIDs],
   (nodeIDs, modularPipelineIDs) => nodeIDs.concat(modularPipelineIDs)
+);
+
+/**
+ * Get the names of all nodes and modular pipelines combined before filtering
+ */
+export const getAllNodeNames = createSelector(
+  [getNodeName, getModularPipelineName],
+  (nodeName, modularPipelineName) => ({
+    ...modularPipelineName,
+    ...nodeName,
+  })
 );
 
 /**
