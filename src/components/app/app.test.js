@@ -25,6 +25,16 @@ describe('App', () => {
     test('when being passed data as a prop', () => {
       shallow(<App data={animals} />);
     });
+
+    test('when running on a legacy dataset', () => {
+      // Strip out all newer features from the test dataset and leave just
+      // the essential ones, to test backwards-compatibility:
+      const legacyDataset = {
+        nodes: animals.nodes.map(({ id, name, type }) => ({ id, name, type })),
+        edges: animals.edges.map(({ source, target }) => ({ source, target })),
+      };
+      shallow(<App data={legacyDataset} />);
+    });
   });
 
   describe('updates the store', () => {
