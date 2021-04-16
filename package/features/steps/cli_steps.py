@@ -70,8 +70,7 @@ def create_config_file_with_example(context):
 
 @given("I have run a non-interactive kedro new")
 def create_project_from_config_file(context):
-    """Behave step to run kedro new given the config I previously created.
-    """
+    """Behave step to run kedro new given the config I previously created."""
     res = run(
         [context.kedro, "new", "-c", str(context.config_file)],
         env=context.env,
@@ -82,8 +81,7 @@ def create_project_from_config_file(context):
 
 @given("I have run a non-interactive kedro new with {starter} starter")
 def create_project_with_starter(context, starter):
-    """Behave step to run kedro new given the config I previously created.
-    """
+    """Behave step to run kedro new given the config I previously created."""
     res = run(
         [
             context.kedro,

@@ -12,6 +12,8 @@ export const createInitialPipelineState = () => ({
   modularPipeline: {
     ids: [],
     name: {},
+    enabled: {},
+    active: {},
   },
   node: {
     ids: [],
@@ -142,7 +144,7 @@ const addNode = (state) => (node) => {
   state.node.parameters[id] = node.parameters;
   state.node.filepath[id] = node.filepath;
   state.node.datasetType[id] = node.datasetType;
-  state.node.modularPipelines[id] = node.modular_pipelines;
+  state.node.modularPipelines[id] = node.modular_pipelines || [];
 };
 
 /**

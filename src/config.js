@@ -36,15 +36,37 @@ export const flags = {
     default: true,
     icon: '🐳',
   },
+  modularpipeline: {
+    description: 'enables modular pipeline features',
+    default: false,
+    icon: '⛓️',
+  },
 };
 
-export const sidebar = {
-  Categories: {
-    Tags: 'tag',
-  },
-  Elements: {
-    Nodes: 'task',
-    Datasets: 'data',
-    Parameters: 'parameters',
-  },
-};
+/**
+ * returns the sidebar config object
+ * @param {string} modularPipelineFlag the modular pipeline flag
+ */
+export const sidebar = (modularPipelineFlag) =>
+  modularPipelineFlag
+    ? {
+        Categories: {
+          Tags: 'tag',
+          ModularPipelines: 'modularPipeline',
+        },
+        Elements: {
+          Nodes: 'task',
+          Datasets: 'data',
+          Parameters: 'parameters',
+        },
+      }
+    : {
+        Categories: {
+          Tags: 'tag',
+        },
+        Elements: {
+          Nodes: 'task',
+          Datasets: 'data',
+          Parameters: 'parameters',
+        },
+      };
