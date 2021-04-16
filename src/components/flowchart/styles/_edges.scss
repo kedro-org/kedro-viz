@@ -11,7 +11,7 @@
   pointer-events: none;
   fill: none;
   stroke-width: 1.5px;
-  stroke: #ffbc00;
+  stroke: var(--node-parameter);
 }
 
 .pipeline-edge--faded {
