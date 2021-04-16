@@ -31,7 +31,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 - Remove 'id' reducer prop. (#396)
 - Remove leftover visible layer reducer. (#399)
-- Delete 'Description' field from metadata panel (#403)
+- Delete 'Description' field from metadata panel. (#403)
 - Add Eslint curly lint rule. (#420)
 # Release 3.10.1
 
