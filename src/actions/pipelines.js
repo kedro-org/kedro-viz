@@ -66,9 +66,13 @@ export const getPipelineUrl = (pipeline) => {
  */
 export const requiresSecondRequest = (pipeline) => {
   // Pipelines are not present in the data
-  if (!pipeline.ids.length || !pipeline.main) return false;
+  if (!pipeline.ids.length || !pipeline.main) {
+    return false;
+  }
   // There is no active pipeline set
-  if (!pipeline.active) return false;
+  if (!pipeline.active) {
+    return false;
+  }
   // The active pipeline is not 'main'
   return pipeline.active !== pipeline.main;
 };

@@ -109,8 +109,12 @@ export const getNodeData = createSelector(
   ) =>
     nodeIDs
       .sort((a, b) => {
-        if (nodeName[a] < nodeName[b]) return -1;
-        if (nodeName[a] > nodeName[b]) return 1;
+        if (nodeName[a] < nodeName[b]) {
+          return -1;
+        }
+        if (nodeName[a] > nodeName[b]) {
+          return 1;
+        }
         return 0;
       })
       .map((id) => ({

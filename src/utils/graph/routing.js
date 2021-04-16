@@ -100,7 +100,9 @@ export const routing = ({
         const nodeGap = nodeLeft(nextNode) - nodeRight(node);
 
         // Avoid routing through small gaps, increase bundling
-        if (nodeGap < minPassageGap) continue;
+        if (nodeGap < minPassageGap) {
+          continue;
+        }
 
         const offsetX = Math.min(spaceX, nodeGap * 0.5);
 
