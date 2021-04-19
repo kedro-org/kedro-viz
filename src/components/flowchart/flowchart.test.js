@@ -245,6 +245,19 @@ describe('FlowChart', () => {
     expect(wrapper.render().find('.pipeline-node--active').length).toBe(2);
   });
 
+  it('applies parameter class to nodes when nodesWithInputParams prop set', () => {
+    const mockNodes = getNodeIDs(mockState.animals);
+    const wrapper = setup.mount(
+      <FlowChart
+        nodesWithInputParams={{
+          [mockNodes[0]]: true,
+          [mockNodes[1]]: true,
+        }}
+      />
+    );
+    expect(wrapper.render().find('.pipeline-node--parameters').length).toBe(2);
+  });
+
   it('shows layers when layers are visible', () => {
     const mockLayers = getLayerIDs(mockState.animals);
     const wrapper = setup.mount(<FlowChart />);
@@ -297,10 +310,12 @@ describe('FlowChart', () => {
       chartZoom: expect.any(Object),
       edges: expect.any(Array),
       graphSize: expect.any(Object),
+      hoveredParameters: expect.any(Boolean),
       layers: expect.any(Array),
       linkedNodes: expect.any(Object),
       nodeActive: expect.any(Object),
       nodeSelected: expect.any(Object),
+      nodesWithInputParams: expect.any(Object),
       nodes: expect.any(Array),
       visibleGraph: expect.any(Boolean),
       visibleSidebar: expect.any(Boolean),

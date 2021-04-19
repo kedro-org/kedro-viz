@@ -9,8 +9,11 @@ import {
   getPadding,
   getNodeSize,
   getVisibleNodes,
+  getNodeswithInputParams,
+  getGraphNodes,
 } from './nodes';
 import { toggleTextLabels, updateFontLoaded } from '../actions';
+import { toggleTypeDisabled } from '../actions/node-type';
 import { updateActivePipeline } from '../actions/pipelines';
 import {
   toggleNodeClicked,
@@ -25,6 +28,7 @@ const getNodeType = (state) => state.node.type;
 const getNodePipelines = (state) => state.node.pipelines;
 
 const noFontState = reducer(mockState.animals, updateFontLoaded(false));
+const salmonTaskNodeIdKey = ['443cf06a'];
 
 describe('Selectors', () => {
   describe('getNodeActive', () => {
@@ -346,6 +350,20 @@ describe('Selectors', () => {
         );
         expect(visibleNodeIDs.includes(nodeID)).toEqual(false);
       });
+    });
+  });
+  describe('getNodeswithInputParams', () => {
+    const newMockState = reducer(
+      mockState.animals,
+      toggleTypeDisabled('parameters', true)
+    );
+    const nodeswithInputParams = getNodeswithInputParams(newMockState);
+    it('returns an onject', () => {
+      expect(nodeswithInputParams).toEqual(expect.any(Object));
+    });
+
+    it('returns an object with nodes that have parameters as inputs', () => {
+      expect(Object.keys(nodeswithInputParams)).toEqual(salmonTaskNodeIdKey);
     });
   });
 });

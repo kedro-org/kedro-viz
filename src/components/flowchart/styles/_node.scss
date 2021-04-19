@@ -33,13 +33,13 @@
 
 .pipeline-node--parameters {
   .pipeline-node__bg {
-    stroke: var(--node-parameter);
+    stroke: var(--parameter-accent);
   }
 }
 
 .pipeline-node__parameter-icon {
   display: none;
-  fill: var(--node-parameter);
+  fill: var(--parameter-accent);
 
   .pipeline-node--with-input-params & {
     display: block;
@@ -71,6 +71,6 @@
 .pipeline-node--with-input-params--active {
   .pipeline-node__bg {
     opacity: 0.1;
-    fill: var(--node-parameter);
+    fill: var(--parameter-accent);
   }
 }

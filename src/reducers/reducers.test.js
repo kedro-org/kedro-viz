@@ -9,6 +9,7 @@ import {
   CHANGE_FLAG,
   RESET_DATA,
   TOGGLE_LAYERS,
+  TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
@@ -271,6 +272,17 @@ describe('Reducer', () => {
         value: true,
       });
       expect(newState.flags.testFlag).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_PARAMETERS_HOVERED', () => {
+    it('should toggle the value of hoveredParameters', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_PARAMETERS_HOVERED,
+        hoveredParameters: true,
+      });
+      expect(mockState.animals.hoveredParameters).toBe(false);
+      expect(newState.hoveredParameters).toBe(true);
     });
   });
 });

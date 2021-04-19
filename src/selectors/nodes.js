@@ -253,7 +253,7 @@ export const getNodeswithInputParams = createSelector(
       if (
         nodeType[source] === 'parameters' &&
         nodeType[target] === 'task' &&
-        nodeTypeDisabled.parameters == true
+        nodeTypeDisabled.parameters === true
       ) {
         nodes_list[target] = nodes[target];
       }
