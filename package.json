@@ -34,7 +34,7 @@
     "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
-    "snyk-protect": "export NODE_OPTIONS=--max-old-space-size=8192 && snyk protect",
+    "snyk-protect": "snyk protect",
     "snyk-test": "snyk test -prune-repeated-subdependencies"
   },
   "dependencies": {
