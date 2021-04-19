@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.14.1
+version: v1.19.0
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'snyk:lic:npm:mdn-data:MPL-2.0':
@@ -15,6 +15,27 @@ ignore:
     - react-scripts > optimize-css-assets-webpack-plugin > cssnano > cssnano-preset-default > postcss-svgo > svgo > csso > css-tree > mdn-data:
         reason: 'False positive: mdn-data is actually on a CC0-1.0 license'
         expires: '2020-08-29T11:59:59.884Z'
+  SNYK-JS-LODASH-1018905:
+    - dagre > lodash:
+        reason: 'Unable to update Dagre'
+        expires: '2021-05-19T14:42:22.052Z'
+    - dagre > graphlib > lodash:
+        reason: 'Unable to update Dagre'
+        expires: '2021-05-19T14:42:22.052Z'
+  SNYK-JS-LODASH-1040724:
+    - dagre > lodash:
+        reason: 'Unable to update Dagre'
+        expires: '2021-05-19T14:42:22.052Z'
+    - dagre > graphlib > lodash:
+        reason: 'Unable to update Dagre'
+        expires: '2021-05-19T14:42:22.052Z'
+  SNYK-JS-LODASH-590103:
+    - dagre > lodash:
+        reason: 'Unable to update Dagre'
+        expires: '2021-05-19T14:42:22.052Z'
+    - dagre > graphlib > lodash:
+        reason: 'Unable to update Dagre'
+        expires: '2021-05-19T14:42:22.052Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-LODASH-450202:
