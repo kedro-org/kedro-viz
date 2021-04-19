@@ -304,7 +304,11 @@ export const drawEdges = function (changed) {
   if (changed('edges')) {
     enterEdges
       .append('path')
-      .attr('marker-end', (d) => `url(#pipeline-arrowhead)`);
+      .attr('marker-end', (edge) =>
+        edge.sourceNode.type === 'parameters'
+          ? `url(#pipeline-arrowhead-accent)`
+          : `url(#pipeline-arrowhead)`
+      );
 
     enterEdges
       .attr('data-id', (edge) => edge.id)

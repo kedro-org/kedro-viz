@@ -504,18 +504,21 @@ export class FlowChart extends Component {
             })}
             ref={this.wrapperRef}>
             <defs>
-              <marker
-                id="pipeline-arrowhead"
-                className="pipeline-flowchart__arrowhead"
-                viewBox="0 0 10 10"
-                refX="7"
-                refY="5"
-                markerUnits="strokeWidth"
-                markerWidth="8"
-                markerHeight="6"
-                orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
-              </marker>
+              {['arrowhead', 'arrowhead-accent'].map((id) => (
+                <marker
+                  id={`pipeline-${id}`}
+                  key={`pipeline-${id}`}
+                  className="pipeline-flowchart__arrowhead"
+                  viewBox="0 0 10 10"
+                  refX="7"
+                  refY="5"
+                  markerUnits="strokeWidth"
+                  markerWidth="8"
+                  markerHeight="6"
+                  orient="auto">
+                  <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
+                </marker>
+              ))}
             </defs>
             <g className="pipeline-flowchart__layers" ref={this.layersRef} />
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />

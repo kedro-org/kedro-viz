@@ -20,4 +20,8 @@
 
 .pipeline-flowchart__arrowhead {
   fill: var(--edge-arrowhead-fill);
+
+  &#pipeline-arrowhead-accent {
+    fill: var(--parameter-accent);
+  }
 }

@@ -246,18 +246,18 @@ export const getNodeswithInputParams = createSelector(
     getEdgeTargets,
   ],
   (nodes, edgeIDs, nodeType, nodeTypeDisabled, edgeSources, edgeTargets) => {
-    const nodes_list = {};
+    const nodesList = {};
     for (const edgeID of edgeIDs) {
       const source = edgeSources[edgeID];
       const target = edgeTargets[edgeID];
       if (
         nodeType[source] === 'parameters' &&
         nodeType[target] === 'task' &&
-        nodeTypeDisabled.parameters === true
+        nodeTypeDisabled.parameters
       ) {
-        nodes_list[target] = nodes[target];
+        nodesList[target] = nodes[target];
       }
     }
-    return nodes_list;
+    return nodesList;
   }
 );
