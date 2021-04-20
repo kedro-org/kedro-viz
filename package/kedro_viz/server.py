@@ -809,8 +809,10 @@ def _call_viz(
             else:  # pragma: no cover
                 context = load_context(project_path=project_path, env=env)
                 pipelines = _get_pipelines_from_context(context, pipeline_name)
-        except KedroContextError:
-            raise KedroCliError(ERROR_PROJECT_ROOT)  # pragma: no cover
+        except KedroContextError as e:
+            raise KedroCliError(
+                ERROR_PROJECT_ROOT + " Error message: " + str(e)
+            )  # pragma: no cover
 
         _CATALOG = context.catalog
         _DATA = format_pipelines_data(pipelines)
