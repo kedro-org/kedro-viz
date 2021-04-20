@@ -16,7 +16,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 <!-- Add release notes for the upcoming release here -->
-
+- Make backend error more explicit. (#427)
 # Release 3.11.0
 
 ## Major features and improvements
