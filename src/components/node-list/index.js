@@ -50,7 +50,6 @@ const NodeListProvider = ({
   onToggleTypeDisabled,
   modularPipelines,
   modularPipelinesEnabled,
-  modularPipelineFlag,
   sections,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
@@ -203,7 +202,6 @@ export const mapStateToProps = (state) => ({
   types: getNodeTypes(state),
   modularPipelines: getModularPipelineData(state),
   modularPipelinesEnabled: state.modularPipeline.enabled,
-  modularPipelineFlag: state.flags.modularpipeline,
   sections: getSections(state),
 });
 

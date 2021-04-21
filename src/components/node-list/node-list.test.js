@@ -400,7 +400,6 @@ describe('NodeList', () => {
       types: expect.any(Array),
       modularPipelines: expect.any(Object),
       modularPipelinesEnabled: expect.any(Object),
-      modularPipelineFlag: expect.any(Boolean),
       sections: expect.any(Object),
     });
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
