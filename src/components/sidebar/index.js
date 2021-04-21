@@ -13,9 +13,9 @@ import './sidebar.css';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {boolean} props.visible Whether the sidebar is open/closed
  */
-export const Sidebar = ({ visible, parameterFlag, onToggleTypeDisabled }) => {
+export const Sidebar = ({ visible, parametersFlag, onToggleTypeDisabled }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
-  if (parameterFlag) {
+  if (parametersFlag) {
     onToggleTypeDisabled('parameters', false);
   }
 
@@ -41,7 +41,7 @@ export const Sidebar = ({ visible, parameterFlag, onToggleTypeDisabled }) => {
 
 const mapStateToProps = (state) => ({
   visible: state.visible.sidebar,
-  parameterFlag: state.flags.parameter,
+  parametersFlag: state.flags.parameters,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

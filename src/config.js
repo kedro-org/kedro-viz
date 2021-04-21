@@ -36,7 +36,7 @@ export const flags = {
     default: false,
     icon: '😴',
   },
-  parameter: {
+  parameters: {
     description: 'Turns on parameters',
     default: false,
     icon: '🎛️',
