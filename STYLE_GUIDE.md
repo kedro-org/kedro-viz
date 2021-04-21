@@ -159,7 +159,7 @@ Prefer:
 - Prefer camelCase over snake_case, except in JSON.
 - Try to use verbs for function/method names, and nouns for constant values.
 - Boolean variable names should give some indication of their state.
-- Prefer clarity over brevity, and avoid single-letter names and abbreviations.
+- Prefer clarity over brevity, and avoid single-letter names and abbreviations unless they are well known for this domain (e.g. JSON).
 
 Avoid:
 
