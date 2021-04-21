@@ -41,7 +41,7 @@
   display: none;
   fill: var(--parameter-accent);
 
-  .pipeline-node--with-input-params & {
+  .pipeline-params--disabled & {
     display: block;
   }
 }
@@ -68,10 +68,12 @@
   transition: opacity 0.15s ease;
 }
 
-.pipeline-node--with-input-params--active {
-  .pipeline-node__bg {
-    opacity: 0.1;
-    fill: var(--parameter-accent);
+.pipeline-params--hovered {
+  &.pipeline-params--disabled {
+    .pipeline-node__bg {
+      opacity: 0.1;
+      fill: var(--parameter-accent);
+    }
   }
 }
 

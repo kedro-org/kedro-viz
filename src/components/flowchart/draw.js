@@ -216,12 +216,10 @@ export const drawNodes = function (changed) {
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
-      .classed('pipeline-node--with-input-params--active', (node) =>
-        hoveredParameters && nodeTypeDisabled.parameters
-          ? nodesWithInputParams[node.id]
-          : null
+      .classed('pipeline-params--hovered', (node) =>
+        hoveredParameters ? nodesWithInputParams[node.id] : null
       )
-      .classed('pipeline-node--with-input-params', (node) =>
+      .classed('pipeline-params--disabled', (node) =>
         nodeTypeDisabled.parameters ? nodesWithInputParams[node.id] : null
       )
       .classed(
