@@ -3,6 +3,20 @@ import modifiers from '../../utils/modifiers';
 import NodeListRow, { nodeListRowHeight } from './node-list-row';
 import LazyList from '../lazy-list';
 
+// Modify display of labels for modular pipelines to show nested relationship.
+// Note: This label indentation could be subject to further design changes.
+const getItemLabel = (item) => {
+  if (item.type === 'modularPipeline') {
+    // parse depth of modular pipeline from namespace(i.e id)
+    const levels = item.id.match(/\./g) ? item.id.match(/\./g).length : 0;
+    const layer = levels ? '・' : '';
+    const whiteSpace = '&nbsp;&nbsp;&nbsp;&nbsp;';
+
+    return whiteSpace.repeat(levels) + layer + item.highlightedLabel;
+  }
+  return item.highlightedLabel;
+};
+
 const NodeRowList = ({
   items = [],
   group,
@@ -54,7 +68,7 @@ const NodeRowList = ({
             key={item.id}
             id={item.id}
             kind={group.kind}
-            label={item.highlightedLabel}
+            label={getItemLabel(item)}
             name={item.name}
             type={item.type}
             active={item.active}
