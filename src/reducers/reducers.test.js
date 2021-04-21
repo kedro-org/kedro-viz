@@ -35,7 +35,7 @@ describe('Reducer', () => {
       expect(
         reducer(mockState.animals, {
           type: RESET_DATA,
-          data: normalizeData(animals),
+          data: mockState.animals,
         })
       ).toEqual(mockState.animals);
     });
@@ -49,7 +49,7 @@ describe('Reducer', () => {
       };
       const newState = reducer(mockState.demo, {
         type: RESET_DATA,
-        data: normalizeData(animals),
+        data: mockState.animals,
       });
       expect(removeGraph(newState)).toEqual(removeGraph(mockState.animals));
     });
