@@ -43,18 +43,15 @@ export const flags = {
   },
 };
 
-/**
- * Return the sidebar config object
- * @param {string} modularPipelineFlag the modular pipeline flag
- */
-export const sidebar = (modularPipelineFlag) => ({
+// Sidebar node list sections
+export const sidebar = {
   Categories: {
     Tags: 'tag',
-    ...(modularPipelineFlag ? { ModularPipelines: 'modularPipeline' } : {}),
+    ModularPipelines: 'modularPipeline',
   },
   Elements: {
     Nodes: 'task',
     Datasets: 'data',
     Parameters: 'parameters',
   },
-});
+};
