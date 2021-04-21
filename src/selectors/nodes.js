@@ -236,25 +236,17 @@ export const getVisibleNodes = createSelector(
       : []
 );
 
-export const getNodeswithInputParams = createSelector(
-  [
-    getGraphNodes,
-    getEdgeIDs,
-    getNodeType,
-    getNodeTypeDisabled,
-    getEdgeSources,
-    getEdgeTargets,
-  ],
-  (nodes, edgeIDs, nodeType, nodeTypeDisabled, edgeSources, edgeTargets) => {
+/**
+ * Returns an map of task nodeIDs to graph nodes that have parameter nodes as their source
+ */
+export const getNodesWithInputParams = createSelector(
+  [getGraphNodes, getEdgeIDs, getNodeType, getEdgeSources, getEdgeTargets],
+  (nodes, edgeIDs, nodeType, edgeSources, edgeTargets) => {
     const nodesList = {};
     for (const edgeID of edgeIDs) {
       const source = edgeSources[edgeID];
       const target = edgeTargets[edgeID];
-      if (
-        nodeType[source] === 'parameters' &&
-        nodeType[target] === 'task' &&
-        nodeTypeDisabled.parameters
-      ) {
+      if (nodeType[source] === 'parameters' && nodeType[target] === 'task') {
         nodesList[target] = nodes[target];
       }
     }

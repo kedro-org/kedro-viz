@@ -117,6 +117,7 @@ export const drawNodes = function (changed) {
   const {
     clickedNode,
     linkedNodes,
+    nodeTypeDisabled,
     nodeActive,
     nodeSelected,
     hoveredParameters,
@@ -170,7 +171,9 @@ export const drawNodes = function (changed) {
 
     enterNodes.append('rect').attr('class', 'pipeline-node__bg');
 
-    enterNodes.append('rect').attr('class', 'pipeline-node__parameter-icon');
+    enterNodes
+      .append('rect')
+      .attr('class', 'pipeline-node__parameter-indicator');
 
     // Performance: use a single path per icon
     enterNodes
@@ -201,6 +204,7 @@ export const drawNodes = function (changed) {
   if (
     changed(
       'nodes',
+      'nodeTypeDisabled',
       'nodeActive',
       'nodeSelected',
       'hoveredParameters',
@@ -212,16 +216,13 @@ export const drawNodes = function (changed) {
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
-      .classed(
-        'pipeline-node--parameters',
-        (node) => node.type === 'parameters'
-      )
       .classed('pipeline-node--with-input-params--active', (node) =>
-        hoveredParameters ? nodesWithInputParams[node.id] : null
+        hoveredParameters && nodeTypeDisabled.parameters
+          ? nodesWithInputParams[node.id]
+          : null
       )
-      .classed(
-        'pipeline-node--with-input-params',
-        (node) => nodesWithInputParams[node.id]
+      .classed('pipeline-node--with-input-params', (node) =>
+        nodeTypeDisabled.parameters ? nodesWithInputParams[node.id] : null
       )
       .classed(
         'pipeline-node--faded',
@@ -244,10 +245,10 @@ export const drawNodes = function (changed) {
       });
 
     enterNodes.select('.pipeline-node__bg').call(updateNodeRects);
+
     enterNodes
-      .select('.pipeline-node__parameter-icon')
+      .select('.pipeline-node__parameter-indicator')
       .call(updateParameterRect);
-    //enterNodes.selectAll('.pipeline-node--linkedParams')
 
     updateNodes
       .select('.pipeline-node__bg')
@@ -256,7 +257,7 @@ export const drawNodes = function (changed) {
       .call(updateNodeRects);
 
     updateNodes
-      .select('.pipeline-node__parameter-icon')
+      .select('.pipeline-node__parameter-indicator')
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
       .call(updateParameterRect);
@@ -346,7 +347,7 @@ export const drawEdges = function (changed) {
   if (changed('edges', 'clickedNode', 'linkedNodes')) {
     allEdges
       .classed(
-        'pipeline-edge-parameters',
+        'pipeline-edge--parameters',
         (edge) => edge.sourceNode.type === 'parameters'
       )
       .classed(

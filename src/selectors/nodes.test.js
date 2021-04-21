@@ -9,8 +9,7 @@ import {
   getPadding,
   getNodeSize,
   getVisibleNodes,
-  getNodeswithInputParams,
-  getGraphNodes,
+  getNodesWithInputParams,
 } from './nodes';
 import { toggleTextLabels, updateFontLoaded } from '../actions';
 import { toggleTypeDisabled } from '../actions/node-type';
@@ -352,12 +351,12 @@ describe('Selectors', () => {
       });
     });
   });
-  describe('getNodeswithInputParams', () => {
+  describe('getNodesWithInputParams', () => {
     const newMockState = reducer(
       mockState.animals,
       toggleTypeDisabled('parameters', true)
     );
-    const nodeswithInputParams = getNodeswithInputParams(newMockState);
+    const nodeswithInputParams = getNodesWithInputParams(newMockState);
     it('returns an onject', () => {
       expect(nodeswithInputParams).toEqual(expect.any(Object));
     });

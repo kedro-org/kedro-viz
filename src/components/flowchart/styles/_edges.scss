@@ -7,7 +7,7 @@
   stroke: var(--edge-stroke);
 }
 
-.pipeline-edge-parameters path {
+.pipeline-edge--parameters path {
   pointer-events: none;
   fill: none;
   stroke-width: 1.5px;
@@ -20,8 +20,8 @@
 
 .pipeline-flowchart__arrowhead {
   fill: var(--edge-arrowhead-fill);
+}
 
-  &#pipeline-arrowhead-accent {
-    fill: var(--parameter-accent);
-  }
+#pipeline-arrowhead-accent {
+  fill: var(--parameter-accent);
 }

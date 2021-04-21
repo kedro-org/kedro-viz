@@ -33,11 +33,10 @@ export const NodeListGroup = ({
       {
         'pipeline-nodelist__group--all-unset': allUnset,
       }
-    )}>
-    <h3
-      className="pipeline-nodelist__heading"
-      onMouseEnter={() => onSectionMouseEnter(id)}
-      onMouseLeave={() => onSectionMouseLeave(id)}>
+    )}
+    onMouseEnter={() => onSectionMouseEnter(id)}
+    onMouseLeave={() => onSectionMouseLeave(id)}>
+    <h3 className="pipeline-nodelist__heading">
       <NodeListRow
         id={id}
         kind={kind}

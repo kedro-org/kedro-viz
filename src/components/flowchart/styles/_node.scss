@@ -37,7 +37,7 @@
   }
 }
 
-.pipeline-node__parameter-icon {
+.pipeline-node__parameter-indicator {
   display: none;
   fill: var(--parameter-accent);
 
@@ -74,3 +74,12 @@
     fill: var(--parameter-accent);
   }
 }
+
+// .pipeline-node--with-input-params{
+//   &.pipeline-node--active{
+//     .pipeline-node__bg {
+//       opacity: 0.1;
+//       fill: var(--parameter-accent);
+//     }
+//   }
+// }

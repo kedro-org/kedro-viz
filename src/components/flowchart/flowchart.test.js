@@ -315,6 +315,7 @@ describe('FlowChart', () => {
       linkedNodes: expect.any(Object),
       nodeActive: expect.any(Object),
       nodeSelected: expect.any(Object),
+      nodeTypeDisabled: expect.any(Object),
       nodesWithInputParams: expect.any(Object),
       nodes: expect.any(Array),
       visibleGraph: expect.any(Boolean),
