@@ -28,12 +28,13 @@
     "lint:js": "eslint src/ --fix",
     "lint:scss": "stylelint 'src/**/*.scss' --fix",
     "prepublishOnly": "npm-run-all -s test:ci lint build lib",
+    "prepare": "npm run snyk-protect",
     "test": "react-scripts test --env=jsdom",
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject",
-    "snyk-protect": "export NODE_OPTIONS=--max-old-space-size=8192 && snyk protect",
+    "snyk-protect": "snyk protect",
     "snyk-test": "snyk test -prune-repeated-subdependencies"
   },
   "dependencies": {
@@ -63,7 +64,7 @@
     "redux-watch": "^1.2.0",
     "reselect": "^4.0.0",
     "seedrandom": "^3.0.5",
-    "snyk": "^1.439.1",
+    "snyk": "^1.540.0",
     "svg-crowbar": "^0.6.5",
     "what-input": "^5.2.10"
   },

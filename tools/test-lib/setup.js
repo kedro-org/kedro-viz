@@ -10,9 +10,9 @@ const tarball = 'kedro-viz.tgz';
  * Pack KedroViz into tarball, move and install it in a simple React App,
  * to test exporting/importing the packaged npm library
  */
-(async function() {
+(async function () {
   console.log('Packing into tarball…');
-  const pack = await exec('npm pack');
+  const pack = await exec('npm pack --ignore-scripts');
   const filename = pack.stdout.trim();
   console.log(filename);
 
