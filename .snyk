@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.14.1
+version: v1.19.0
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'snyk:lic:npm:mdn-data:MPL-2.0':
@@ -15,6 +15,481 @@ ignore:
     - react-scripts > optimize-css-assets-webpack-plugin > cssnano > cssnano-preset-default > postcss-svgo > svgo > csso > css-tree > mdn-data:
         reason: 'False positive: mdn-data is actually on a CC0-1.0 license'
         expires: '2020-08-29T11:59:59.884Z'
+  SNYK-JS-LODASH-1018905:
+    - dagre > lodash:
+        reason: Unable to update Dagre
+        expires: '2021-05-19T14:42:22.052Z'
+      '@quantumblack/kedro-ui > snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > lodash':
+        reason: None given
+        expires: '2021-05-19T16:16:17.133Z'
+    - dagre > graphlib > lodash:
+        reason: Unable to update Dagre
+        expires: '2021-05-19T14:42:22.052Z'
+      dagre > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - dagre > graphlib > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-module-imports > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-simple-access > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/helper-member-expression-to-functions > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/helper-optimise-call-expression > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > lodash':
+        reason: None given
+        expires: '2021-05-19T14:57:33.439Z'
+      snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.138Z'
+    - dagre > lodash:
+        reason: None given
+        expires: '2021-05-19T14:57:33.439Z'
+  SNYK-JS-LODASH-1040724:
+    - dagre > lodash:
+        reason: Unable to update Dagre
+        expires: '2021-05-19T14:42:22.052Z'
+      '@quantumblack/kedro-ui > snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > lodash':
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - dagre > graphlib > lodash:
+        reason: Unable to update Dagre
+        expires: '2021-05-19T14:42:22.052Z'
+      dagre > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - dagre > graphlib > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-module-imports > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-simple-access > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/helper-member-expression-to-functions > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/helper-optimise-call-expression > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > lodash':
+        reason: None given
+        expires: '2021-05-19T14:57:33.439Z'
+      snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.138Z'
+    - dagre > lodash:
+        reason: None given
+        expires: '2021-05-19T14:57:33.439Z'
+  SNYK-JS-LODASH-590103:
+    - dagre > lodash:
+        reason: Unable to update Dagre
+        expires: '2021-05-19T14:42:22.052Z'
+      '@quantumblack/kedro-ui > snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > lodash':
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - dagre > graphlib > lodash:
+        reason: Unable to update Dagre
+        expires: '2021-05-19T14:42:22.052Z'
+      dagre > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - dagre > graphlib > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.134Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-module-imports > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-simple-access > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.135Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/helper-member-expression-to-functions > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/helper-optimise-call-expression > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/generator > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.136Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - fetch-mock > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.137Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > lodash':
+        reason: None given
+        expires: '2021-05-19T14:57:33.439Z'
+      snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > lodash:
+        reason: None given
+        expires: '2021-05-19T16:16:17.138Z'
+    - dagre > lodash:
+        reason: None given
+        expires: '2021-05-19T14:57:33.439Z'
+  SNYK-JS-GLOBPARENT-1016905:
+    - '@quantumblack/kedro-ui > snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > @yarnpkg/shell > fast-glob > glob-parent':
+        reason: None given
+        expires: '2021-05-19T16:16:17.133Z'
+    - '@quantumblack/kedro-ui > snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > globby > fast-glob > glob-parent':
+        reason: None given
+        expires: '2021-05-19T16:16:17.133Z'
+    - snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > @yarnpkg/shell > fast-glob > glob-parent:
+        reason: None given
+        expires: '2021-05-19T16:16:17.138Z'
+    - snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > globby > fast-glob > glob-parent:
+        reason: None given
+        expires: '2021-05-19T16:16:17.138Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-LODASH-450202:

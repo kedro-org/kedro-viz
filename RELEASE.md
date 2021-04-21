@@ -17,6 +17,23 @@ Please follow the established format:
 
 <!-- Add release notes for the upcoming release here -->
 
+# Release 3.11.0
+
+## Major features and improvements
+- Allow the selection and filtering of nodes by modular pipeline on the flowchart via the sidebar under the categories section. This includes changes to both the server to include modualr pipeline data in the responses, as well as front end changes to enable the new modular pipeline data type. (#391, #394, #401, #402, #408, #410, #421)
+- Add Architecture docs. (#382, #393)
+- Add metadata to random data generator. (#397)
+- Simplify layout algorithm, improve layout quality and performance. (#398)
+- Improve layer solving approach when layers partially defined. (#407)
+- Remove 'code' flag to enable the code panel feature by default. (#404)
+- Remove 'lazy' flag to enable lazy loading of the sidebar by default. (#404)
+
+## Bug fixes and other changes
+- Remove 'id' reducer prop. (#396)
+- Remove leftover visible layer reducer. (#399)
+- Delete 'Description' field from metadata panel. (#403)
+- Add Eslint curly lint rule. (#420)
+
 # Release 3.10.1
 
 ## Bug fixes and other changes
@@ -74,7 +91,7 @@ Please follow the established format:
 
 Please note that release >=3.8.0 will not work with projects created with older versions of Kedro<=0.16.6. Please migrate your project to Kedro>=0.17.0 before you install the latest version of Kedro-Viz.
 
-- Finish the new node metadata side panel, which allows you to switch between different modular pipelines. This feature is no longer hidden behind a flag, and the 'meta' flag has been removed. (#293, #309, #312, #320, #321, #326, #295, #329, #333)
+- Finish the new node metadata side panel. This feature is no longer hidden behind a flag, and the 'meta' flag has been removed. (#293, #309, #312, #320, #321, #326, #295, #329, #333)
 - Enable the new graphing layout algorithm by default, and remove the 'newgraph' feature flag. If necessary, you can still revert back to the old layout algorithm by enabling the 'oldgraph' flag. (#334, #335)
 - Add experimental flagged feature to allow lazy-loading of sidebar node-list rows on scroll. This improves performance by not forcing the app to render the entire node-list on larger graphs. This feature is disabled by default, but can be enabled using the 'lazy' feature flag. (#307)
 - Use CSS custom properties for theme colours (#301, #319)

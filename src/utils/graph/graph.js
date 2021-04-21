@@ -180,10 +180,18 @@ const bounds = (nodes, padding) => {
     const x = node.x;
     const y = node.y;
 
-    if (x < size.min.x) size.min.x = x;
-    if (x > size.max.x) size.max.x = x;
-    if (y < size.min.y) size.min.y = y;
-    if (y > size.max.y) size.max.y = y;
+    if (x < size.min.x) {
+      size.min.x = x;
+    }
+    if (x > size.max.x) {
+      size.max.x = x;
+    }
+    if (y < size.min.y) {
+      size.min.y = y;
+    }
+    if (y > size.max.y) {
+      size.max.y = y;
+    }
   }
 
   size.width = size.max.x - size.min.x + 2 * padding;
