@@ -156,24 +156,57 @@ Prefer:
 
 ### Variable naming
 
-- Prefer camelCase over snake_case, except in JSON.
-- Try to use verbs for function/method names, and nouns for constant values.
-- Boolean variable names should give some indication of their state.
-- Prefer clarity over brevity, and avoid single-letter names and abbreviations unless they are well known for this domain (e.g. JSON).
+In order to allow Kedro-Viz to be worked on by many developers from different backgrounds, we try to follow a consistent set of naming conventions. Beyond consistency of form, element names must be easily understood and must convey the function of each element.
+
+✔️ DO choose easily readable identifier names.
+
+For example, a variable named `horizontalAlignment` is more English-readable than `alignmentHorizontal`.
+
+✔️ DO favour readability over brevity.
+
+The variable name `canScrollHorizontally` is better than `scrollableX`.
+
+✔️ DO use verbs in the imperative mood for function/method names.
+
+The function `getSidebarLength()` is better than `sidebarLength()`, as it indicates how it should be used.
+
+✔️ DO choose Boolean variable names that give some indication of their state.
+
+This helps the reader easily infer that this variable is a Boolean value.
 
 Avoid:
 
 ```js
-const actNode = true;
-const nodeState = (d) => actNode && d.node;
+let person = true;
+let age = true;
+let dance = true;
 ```
 
 Prefer:
 
 ```js
-const isActiveNode = true;
-const getNodeState = (state) => isActiveNode && state.node;
+let isPerson = true;
+let hasAge = true;
+let canDance = true;
 ```
+
+✔️ DO use camelCase for most variable names.
+
+✔️ DO use PascalCase for class names.
+
+✔️ DO use UPPER_CASE for constant values.
+
+✔️ DO use camel-case for file names.
+
+❌ DO NOT use snake_case, except in JSON APIs.
+
+❌ DO NOT use single letter variable names.
+
+There are a few exceptions to this rule as they can be useful when working with D3, or for some common function arguments (e.g. `i` for index). But you should try to use more informative names for the most part.
+
+❌ DO NOT use abbreviations, acronyms or contractions as part of identifier names.
+
+For example, use `getObject` rather than `getObj`. The exception to this is if the acronym is well known for this domain - e.g. JSON.
 
 ### Imports
 
