@@ -158,19 +158,19 @@ Prefer:
 
 In order to allow Kedro-Viz to be worked on by many developers from different backgrounds, we try to follow a consistent set of naming conventions. Beyond consistency of form, element names must be easily understood and must convey the function of each element.
 
-✔️ DO choose easily readable identifier names.
+✅ DO choose easily readable identifier names.
 
 For example, a variable named `horizontalAlignment` is more English-readable than `alignmentHorizontal`.
 
-✔️ DO favour readability over brevity.
+✅ DO favour readability over brevity.
 
 The variable name `canScrollHorizontally` is better than `scrollableX`.
 
-✔️ DO use verbs in the imperative mood for function/method names.
+✅ DO use verbs in the imperative mood for function/method names.
 
 The function `getSidebarLength()` is better than `sidebarLength()`, as it indicates how it should be used.
 
-✔️ DO prefix Boolean variable names to indicate their type, and prefer positive names.
+✅ DO prefix Boolean variable names to indicate their type, and prefer positive names.
 
 This helps the reader easily infer that this variable is a Boolean value, and helps avoid complicated double-negatives.
 
@@ -192,13 +192,13 @@ let canDance = true;
 let isDancing = false;
 ```
 
-✔️ DO use camelCase for most variable names.
+✅ DO use camelCase for most variable names.
 
-✔️ DO use PascalCase for class names.
+✅ DO use PascalCase for class names.
 
-✔️ DO use UPPER_CASE for constant values.
+✅ DO use UPPER_CASE for constant values.
 
-✔️ DO use camel-case for file names.
+✅ DO use camel-case for file names.
 
 ❌ DO NOT use snake_case, except in JSON APIs.
 
