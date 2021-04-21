@@ -170,9 +170,9 @@ The variable name `canScrollHorizontally` is better than `scrollableX`.
 
 The function `getSidebarLength()` is better than `sidebarLength()`, as it indicates how it should be used.
 
-✔️ DO choose Boolean variable names that give some indication of their state.
+✔️ DO prefix Boolean variable names to indicate their type, and prefer positive names.
 
-This helps the reader easily infer that this variable is a Boolean value.
+This helps the reader easily infer that this variable is a Boolean value, and helps avoid complicated double-negatives.
 
 Avoid:
 
@@ -180,6 +180,7 @@ Avoid:
 let person = true;
 let age = true;
 let dance = true;
+let notDancing = true;
 ```
 
 Prefer:
@@ -188,6 +189,7 @@ Prefer:
 let isPerson = true;
 let hasAge = true;
 let canDance = true;
+let isDancing = false;
 ```
 
 ✔️ DO use camelCase for most variable names.
