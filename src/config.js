@@ -31,6 +31,16 @@ export const flags = {
     private: false,
     icon: '📈',
   },
+  lazy: {
+    description: 'Improved sidebar performance',
+    default: false,
+    icon: '😴',
+  },
+  parameters: {
+    description: 'Turns on parameters',
+    default: false,
+    icon: '🎛️',
+  },
   sizewarning: {
     description: 'Show a warning before rendering very large graphs',
     default: true,

@@ -9,6 +9,7 @@ import FlowChart, {
 } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 import { getViewTransform, getViewExtents, origin } from '../../utils/view';
+import { getVisibleNodeIDs } from '../../selectors/disabled';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
@@ -46,7 +47,7 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(<FlowChart />);
     const nodes = wrapper.render().find('.pipeline-node');
     const nodeNames = nodes.map((i, el) => $(el).text()).get();
-    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodes = getVisibleNodeIDs(mockState.animals);
     const mockNodeNames = mockNodes.map(
       (d) => getNodeName(mockState.animals)[d]
     );

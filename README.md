@@ -106,6 +106,7 @@ As a JavaScript React component, the project is designed to be used in two diffe
 The following flags are available to toggle experimental features:
 
 - `oldgraph` - From release v3.8.0. Display old version of graph (dagre algorithm) without improved graphing algorithm. (default `false`)
+- `parameters` - Turns-on parameters on the kedro-viz by default
 - `sizewarning` - From release v3.9.1. Show a warning before rendering very large graphs. (default `true`)
 
 Note that newgraph has been removed from v3.8.0 onwards and is now the default functionality. Should there be issues with your project, see the oldgraph flag above.

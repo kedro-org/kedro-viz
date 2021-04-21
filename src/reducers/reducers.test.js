@@ -1,10 +1,8 @@
-import animals from '../utils/data/animals.mock.json';
 import node_parameters from '../utils/data/node_parameters.mock.json';
 import node_task from '../utils/data/node_task.mock.json';
 import node_data from '../utils/data/node_data.mock.json';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
-import normalizeData from '../store/normalize-data';
 import {
   CHANGE_FLAG,
   RESET_DATA,
@@ -36,7 +34,7 @@ describe('Reducer', () => {
       expect(
         reducer(mockState.animals, {
           type: RESET_DATA,
-          data: normalizeData(animals),
+          data: mockState.animals,
         })
       ).toEqual(mockState.animals);
     });
@@ -50,7 +48,7 @@ describe('Reducer', () => {
       };
       const newState = reducer(mockState.demo, {
         type: RESET_DATA,
-        data: normalizeData(animals),
+        data: mockState.animals,
       });
       expect(removeGraph(newState)).toEqual(removeGraph(mockState.animals));
     });
@@ -156,7 +154,10 @@ describe('Reducer', () => {
         typeID: '123',
         disabled: true,
       });
-      expect(newState.nodeType.disabled).toEqual({ 123: true });
+      expect(newState.nodeType.disabled).toEqual({
+        123: true,
+        parameters: false,
+      });
     });
   });
 
