@@ -57,8 +57,7 @@
 
 .pipeline-node--collapsed-hint {
   .pipeline-node__bg {
-    opacity: 0.1;
-    fill: var(--parameter-accent);
+    stroke: var(--parameter-accent);
   }
 }
 

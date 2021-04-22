@@ -243,20 +243,52 @@ describe('FlowChart', () => {
         }}
       />
     );
+    //console.log(wrapper.render().find('.pipeline-node--active'))
     expect(wrapper.render().find('.pipeline-node--active').length).toBe(2);
   });
 
-  it('applies parameter class to nodes when nodesWithInputParams prop set', () => {
+  it('applies collapsed-hint class to nodes with input parameters are hovered during collapsed state', () => {
     const mockNodes = getNodeIDs(mockState.animals);
     const wrapper = setup.mount(
       <FlowChart
+        hoveredParameters={true}
+        nodeTypeDisabled={{ parameters: true }}
         nodesWithInputParams={{
           [mockNodes[0]]: true,
           [mockNodes[1]]: true,
         }}
       />
     );
-    expect(wrapper.render().find('.pipeline-node--parameters').length).toBe(2);
+    expect(wrapper.render().find('.pipeline-node--collapsed-hint').length).toBe(
+      2
+    );
+  });
+
+  it('applies parameter-indicator--visible class to nodes with input parameters when nodeDisabled prop set', () => {
+    const mockNodes = getNodeIDs(mockState.animals);
+    const wrapper = setup.mount(
+      <FlowChart
+        nodeTypeDisabled={{ parameters: true }}
+        nodesWithInputParams={{
+          [mockNodes[0]]: true,
+          [mockNodes[1]]: true,
+        }}
+      />
+    );
+    expect(
+      wrapper.render().find('.pipeline-node__parameter-indicator--visible')
+        .length
+    ).toBe(2);
+  });
+
+  it('applies .parameters class to all parameter nodes', () => {
+    const wrapper = setup.mount(<FlowChart />);
+    expect(wrapper.render().find('.pipeline-node--parameters').length).toBe(4);
+  });
+
+  it('applies .parameters class to all the edges from parameter nodes', () => {
+    const wrapper = setup.mount(<FlowChart />);
+    expect(wrapper.render().find('.pipeline-edge--parameters ').length).toBe(4);
   });
 
   it('shows layers when layers are visible', () => {
