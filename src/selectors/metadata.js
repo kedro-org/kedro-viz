@@ -40,7 +40,7 @@ const getRunCommand = (node) => {
 export const getClickedNodeMetaData = createSelector(
   [
     getClickedNode,
-    getGraphNodes,
+    getGraphNodes, // @TODO refactor this so it doesn't rely on the graph object
     (state) => state.node.tags,
     (state) => state.tag.name,
     (state) => state.pipeline,
