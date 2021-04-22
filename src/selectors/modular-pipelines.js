@@ -6,6 +6,8 @@ const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
+const getModularPipelineContracted = (state) =>
+  state.modularPipeline.contracted;
 const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
 const getEdgeIDs = (state) => state.edge.ids;
@@ -16,14 +18,25 @@ const getEdgeTargets = (state) => state.edge.targets;
  * Retrieve the formatted list of modular pipeline filters
  */
 export const getModularPipelineData = createSelector(
-  [getModularPipelineIDs, getModularPipelineName, getModularPipelineEnabled],
-  (modularPipelineIDs, modularPipelineName, modularPipelineEnabled) =>
+  [
+    getModularPipelineIDs,
+    getModularPipelineName,
+    getModularPipelineEnabled,
+    getModularPipelineContracted,
+  ],
+  (
+    modularPipelineIDs,
+    modularPipelineName,
+    modularPipelineEnabled,
+    modularPipelineContracted
+  ) =>
     modularPipelineIDs
       .slice()
       .sort()
       .map((id) => ({
         id,
         name: modularPipelineName[id],
+        contracted: Boolean(modularPipelineContracted[id]),
         enabled: Boolean(modularPipelineEnabled[id]),
       }))
 );
