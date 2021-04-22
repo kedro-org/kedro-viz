@@ -6,18 +6,13 @@ import NodeList from '../node-list';
 import PrimaryToolbar from '../primary-toolbar';
 import MiniMapToolbar from '../minimap-toolbar';
 import MiniMap from '../minimap';
-import { toggleModularPipelineContracted } from '../../actions/modular-pipelines';
 import './sidebar.css';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {boolean} props.visible Whether the sidebar is open/closed
  */
-export const Sidebar = ({
-  modularPipeline,
-  visible,
-  onToggleModularPipelineContracted,
-}) => {
+export const Sidebar = ({ visible }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
   return (
     <>
@@ -27,19 +22,6 @@ export const Sidebar = ({
         })}>
         <div className="pipeline-ui">
           <PipelineList onToggleOpen={togglePipeline} />
-          {modularPipeline.ids.map((id) => (
-            <button
-              key={id}
-              onClick={() =>
-                onToggleModularPipelineContracted(
-                  id,
-                  !modularPipeline.contracted[id]
-                )
-              }>
-              {modularPipeline.name[id]}{' '}
-              {String(Boolean(modularPipeline.contracted[id]))}
-            </button>
-          ))}
           <NodeList faded={pipelineIsOpen} />
         </div>
         <nav className="pipeline-toolbar">
@@ -52,15 +34,8 @@ export const Sidebar = ({
   );
 };
 
-export const mapDispatchToProps = (dispatch) => ({
-  onToggleModularPipelineContracted: (id, contracted) => {
-    dispatch(toggleModularPipelineContracted(id, contracted));
-  },
-});
-
 const mapStateToProps = (state) => ({
   visible: state.visible.sidebar,
-  modularPipeline: state.modularPipeline,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);
+export default connect(mapStateToProps)(Sidebar);
