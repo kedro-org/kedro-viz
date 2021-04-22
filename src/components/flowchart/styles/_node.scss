@@ -38,11 +38,12 @@
 }
 
 .pipeline-node__parameter-indicator {
-  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
   fill: var(--parameter-accent);
 
-  .pipeline-params--disabled & {
-    display: block;
+  &--visible {
+    opacity: 1;
   }
 }
 
@@ -51,6 +52,13 @@
     stroke-width: 2px;
     fill: var(--node-fill-selected);
     stroke: var(--node-stroke-selected);
+  }
+}
+
+.pipeline-node--collapsed-hint {
+  .pipeline-node__bg {
+    opacity: 0.1;
+    fill: var(--parameter-accent);
   }
 }
 
@@ -66,13 +74,4 @@
 
 .pipeline-node__text {
   transition: opacity 0.15s ease;
-}
-
-.pipeline-params--hovered {
-  &.pipeline-params--disabled {
-    .pipeline-node__bg {
-      opacity: 0.1;
-      fill: var(--parameter-accent);
-    }
-  }
 }
