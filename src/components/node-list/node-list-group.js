@@ -18,6 +18,7 @@ export const NodeListGroup = ({
   invisibleIcon,
   onToggleChecked,
   onToggleCollapsed,
+  onToggleContracted,
   onItemClick,
   onItemChange,
   onItemMouseEnter,
@@ -63,6 +64,7 @@ export const NodeListGroup = ({
       onItemChange={onItemChange}
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
+      onToggleContracted={onToggleContracted}
     />
   </li>
 );

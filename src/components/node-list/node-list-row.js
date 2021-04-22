@@ -19,6 +19,7 @@ const shouldMemo = (prevProps, nextProps) =>
     [
       'active',
       'checked',
+      'contracted',
       'unset',
       'allUnset',
       'disabled',
@@ -40,6 +41,7 @@ const NodeListRow = memo(
     unset,
     allUnset,
     children,
+    contracted,
     disabled,
     faded,
     visible,
@@ -51,6 +53,7 @@ const NodeListRow = memo(
     onMouseLeave,
     onChange,
     onClick,
+    onToggleContracted,
     selected,
     type,
     visibleIcon = VisibleIcon,
@@ -59,6 +62,7 @@ const NodeListRow = memo(
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
+    const showContractedButton = type === 'modularPipeline';
 
     return (
       <Container
@@ -112,6 +116,13 @@ const NodeListRow = memo(
           />
         </TextButton>
         {children}
+        {showContractedButton && (
+          <button
+            className="pipeline-nodelist__row__contract"
+            onClick={onToggleContracted}>
+            {contracted ? '🥚' : '🐣'}
+          </button>
+        )}
         <label
           htmlFor={id}
           className={classnames('pipeline-row__toggle', {

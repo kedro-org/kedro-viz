@@ -26,6 +26,7 @@ const NodeRowList = ({
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
+  onToggleContracted,
 }) => (
   <ul
     className={modifiers(
@@ -44,6 +45,7 @@ const NodeRowList = ({
         type={item.type}
         active={item.active}
         checked={item.checked}
+        contracted={item.contracted}
         disabled={item.disabled}
         faded={item.faded}
         visible={item.visible}
@@ -56,6 +58,7 @@ const NodeRowList = ({
         onMouseEnter={() => onItemMouseEnter(item)}
         onMouseLeave={() => onItemMouseLeave(item)}
         onChange={(e) => onItemChange(item, !e.target.checked)}
+        onToggleContracted={() => onToggleContracted(item.id, !item.contracted)}
       />
     ))}
   </ul>
@@ -69,6 +72,7 @@ const NodeRowLazyList = ({
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
+  onToggleContracted,
 }) => (
   <LazyList
     height={(start, end) => (end - start) * nodeListRowHeight}
@@ -117,6 +121,7 @@ const NodeRowLazyList = ({
             type={item.type}
             active={item.active}
             checked={item.checked}
+            contracted={item.contracted}
             disabled={item.disabled}
             faded={item.faded}
             visible={item.visible}
@@ -129,6 +134,9 @@ const NodeRowLazyList = ({
             onMouseEnter={() => onItemMouseEnter(item)}
             onMouseLeave={() => onItemMouseLeave(item)}
             onChange={(e) => onItemChange(item, !e.target.checked)}
+            onToggleContracted={() =>
+              onToggleContracted(item.id, !item.contracted)
+            }
           />
         ))}
       </ul>
