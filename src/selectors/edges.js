@@ -1,8 +1,7 @@
 import { createSelector } from 'reselect';
+import { getPipelineNodeIDs } from './pipeline';
 import { getNodeDisabled, getEdgeDisabled } from './disabled';
 import { getAllEdges } from './modular-pipelines';
-
-const getNodeIDs = (state) => state.node.ids;
 
 /**
  * Create a new edge from the first and last edge in the path
@@ -24,7 +23,7 @@ export const addNewEdge = (source, target, { ids, sources, targets }) => {
  * in between them
  */
 export const getTransitiveEdges = createSelector(
-  [getNodeIDs, getAllEdges, getNodeDisabled],
+  [getPipelineNodeIDs, getAllEdges, getNodeDisabled],
   (nodeIDs, edges, nodeDisabled) => {
     const transitiveEdges = {
       ids: [],
