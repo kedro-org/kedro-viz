@@ -8,6 +8,7 @@ import node from './nodes';
 import nodeType from './node-type';
 import pipeline from './pipeline';
 import tag from './tags';
+import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import {
   RESET_DATA,
@@ -60,6 +61,7 @@ const combinedReducer = combineReducers({
   nodeType,
   pipeline,
   tag,
+  modularPipeline,
   visible,
   // These props don't have any actions associated with them
   dataSource: createReducer(null),

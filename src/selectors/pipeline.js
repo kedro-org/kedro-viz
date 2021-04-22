@@ -7,6 +7,7 @@ const getActivePipeline = (state) => state.pipeline.active;
 const getNodeTags = (state) => state.node.tags;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getDataSource = (state) => state.dataSource;
+const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -55,16 +56,19 @@ export const getPipelineTagIDs = createSelector(
  * Get IDs of modular pipelines used in the current pipeline
  */
 export const getPipelineModularPipelineIDs = createSelector(
-  [getPipelineNodeIDs, getNodeModularPipelines],
-  (nodeIDs, nodeModularPipelines) => {
+  [getPipelineNodeIDs, getNodeModularPipelines, getModularPipelineIDs],
+  (nodeIDs, nodeModularPipelines, modularPipelineIDs) => {
     const visibleModularPipelines = {};
-    nodeIDs.forEach((nodeID) => {
-      nodeModularPipelines[nodeID].forEach((modularPipelineID) => {
-        if (!visibleModularPipelines[modularPipelineID]) {
-          visibleModularPipelines[modularPipelineID] = true;
-        }
+    // check if pipeline contains defined modular pipelines
+    if (modularPipelineIDs.length > 0) {
+      nodeIDs.forEach((nodeID) => {
+        nodeModularPipelines[nodeID].forEach((modularPipelineID) => {
+          if (!visibleModularPipelines[modularPipelineID]) {
+            visibleModularPipelines[modularPipelineID] = true;
+          }
+        });
       });
-    });
+    }
     return Object.keys(visibleModularPipelines);
   }
 );

@@ -63,7 +63,7 @@ export const getNodeActive = createSelector(
       if (nodeID === hoveredNode) {
         return true;
       }
-      const activeViaTag = nodeTags[nodeID]?.some((tag) => tagActive[tag]);
+      const activeViaTag = nodeTags[nodeID].some((tag) => tagActive[tag]);
       const activeViaModularPipeline = nodeModularPipelines[nodeID].some(
         (modularPipeline) => modularPipelineActive[modularPipeline]
       );
@@ -109,8 +109,12 @@ export const getNodeData = createSelector(
   ) =>
     nodeIDs
       .sort((a, b) => {
-        if (nodeName[a] < nodeName[b]) return -1;
-        if (nodeName[a] > nodeName[b]) return 1;
+        if (nodeName[a] < nodeName[b]) {
+          return -1;
+        }
+        if (nodeName[a] > nodeName[b]) {
+          return 1;
+        }
         return 0;
       })
       .map((id) => ({
