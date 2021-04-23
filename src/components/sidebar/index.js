@@ -5,7 +5,6 @@ import PipelineList from '../pipeline-list';
 import NodeList from '../node-list';
 import PrimaryToolbar from '../primary-toolbar';
 import MiniMapToolbar from '../minimap-toolbar';
-import { toggleTypeDisabled } from '../../actions/node-type';
 import MiniMap from '../minimap';
 import './sidebar.css';
 
@@ -13,11 +12,8 @@ import './sidebar.css';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {boolean} props.visible Whether the sidebar is open/closed
  */
-export const Sidebar = ({ visible, parametersFlag, onToggleTypeDisabled }) => {
+export const Sidebar = ({ visible }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
-  if (parametersFlag) {
-    onToggleTypeDisabled('parameters', false);
-  }
 
   return (
     <>
@@ -41,13 +37,6 @@ export const Sidebar = ({ visible, parametersFlag, onToggleTypeDisabled }) => {
 
 const mapStateToProps = (state) => ({
   visible: state.visible.sidebar,
-  parametersFlag: state.flags.parameters,
 });
 
-export const mapDispatchToProps = (dispatch) => ({
-  onToggleTypeDisabled: (typeID, disabled) => {
-    dispatch(toggleTypeDisabled(typeID, disabled));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);
+export default connect(mapStateToProps)(Sidebar);

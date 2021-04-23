@@ -4,8 +4,6 @@ import { mockState, setup } from '../../utils/state.mock';
 import { getViewTransform, origin } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';
 
-const getNodeIDs = (state) => state.node.ids;
-
 describe('MiniMap', () => {
   it('renders without crashing', () => {
     const svg = setup.mount(<MiniMap />).find('svg');

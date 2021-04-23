@@ -28,7 +28,7 @@ const getNodeType = (state) => state.node.type;
 const getNodePipelines = (state) => state.node.pipelines;
 
 const noFontState = reducer(mockState.animals, updateFontLoaded(false));
-const salmonTaskNodeIdKey = ['443cf06a', '2ce32881'];
+const parameterNodesID = ['443cf06a', '2ce32881'];
 
 describe('Selectors', () => {
   describe('getNodeActive', () => {
@@ -361,13 +361,13 @@ describe('Selectors', () => {
       mockState.animals,
       toggleTypeDisabled('parameters', true)
     );
-    const nodeswithInputParams = getNodesWithInputParams(newMockState);
+    const nodesWithInputParams = getNodesWithInputParams(newMockState);
     it('returns an onject', () => {
-      expect(nodeswithInputParams).toEqual(expect.any(Object));
+      expect(nodesWithInputParams).toEqual(expect.any(Object));
     });
 
     it('returns an object with nodes that have parameters as inputs', () => {
-      expect(Object.keys(nodeswithInputParams)).toEqual(salmonTaskNodeIdKey);
+      expect(Object.keys(nodesWithInputParams)).toEqual(parameterNodesID);
     });
   });
 });

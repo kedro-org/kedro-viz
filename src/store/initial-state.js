@@ -60,8 +60,11 @@ export const mergeLocalStorage = (state) => {
  * @param {object} data Data prop passed to App component
  * @param {boolean} applyFixes Whether to override initialState
  */
-export const preparePipelineState = (data, applyFixes) => {
+export const preparePipelineState = (data, applyFixes, nonPipelineState) => {
   const state = mergeLocalStorage(normalizeData(data));
+  if (nonPipelineState?.flags?.parameters === false) {
+    state.nodeType.disabled.parameters = true;
+  }
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
@@ -95,9 +98,17 @@ export const prepareNonPipelineState = (props) => {
  * @param {object} props App component props
  * @return {object} Initial state
  */
-const getInitialState = (props = {}) => ({
-  ...prepareNonPipelineState(props),
-  ...preparePipelineState(props.data, props.data !== 'json'),
-});
+const getInitialState = (props = {}) => {
+  const nonPipelineState = prepareNonPipelineState(props);
+  const pipelineState = preparePipelineState(
+    props.data,
+    props.data !== 'json',
+    nonPipelineState
+  );
+  return {
+    ...nonPipelineState,
+    ...pipelineState,
+  };
+};
 
 export default getInitialState;

@@ -95,12 +95,14 @@ export function loadInitialPipelineData() {
     // whether the active pipeline (from localStorage) exists in the data.
     const url = getUrl('main');
     let newState = await loadJsonData(url).then((data) =>
-      preparePipelineState(data, true)
+      preparePipelineState(data, true, state)
     );
     // If the active pipeline isn't 'main' then request data from new URL
     if (requiresSecondRequest(newState.pipeline)) {
       const url = getPipelineUrl(newState.pipeline);
-      newState = await loadJsonData(url).then(preparePipelineState);
+      newState = await loadJsonData(url).then((data) =>
+        preparePipelineState(data, false, state)
+      );
     }
     dispatch(resetData(newState));
     dispatch(toggleLoading(false));
@@ -114,7 +116,8 @@ export function loadInitialPipelineData() {
  */
 export function loadPipelineData(pipelineID) {
   return async function (dispatch, getState) {
-    const { dataSource, pipeline } = getState();
+    const state = getState();
+    const { dataSource, pipeline } = state;
     if (pipelineID && pipelineID === pipeline.active) {
       return;
     }
@@ -126,7 +129,9 @@ export function loadPipelineData(pipelineID) {
         main: pipeline.main,
         active: pipelineID,
       });
-      const newState = await loadJsonData(url).then(preparePipelineState);
+      const newState = await loadJsonData(url).then((data) =>
+        preparePipelineState(data, false)
+      );
       // Set active pipeline here rather than dispatching two separate actions,
       // to improve performance by only requiring one state recalculation
       newState.pipeline.active = pipelineID;

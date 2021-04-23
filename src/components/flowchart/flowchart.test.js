@@ -243,7 +243,6 @@ describe('FlowChart', () => {
         }}
       />
     );
-    //console.log(wrapper.render().find('.pipeline-node--active'))
     expect(wrapper.render().find('.pipeline-node--active').length).toBe(2);
   });
 
