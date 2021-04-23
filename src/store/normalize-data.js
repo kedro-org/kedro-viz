@@ -1,4 +1,5 @@
 import { arrayToObject } from '../utils';
+import { getFlagsFromUrl } from '../utils/flags';
 
 /**
  * Create new default pipeline state instance
@@ -199,6 +200,12 @@ const normalizeData = (data) => {
 
   if (!validateInput(data)) {
     return state;
+  }
+
+  // check the current parameters flag to determine if parameters are disabled
+  const flagState = getFlagsFromUrl();
+  if (flagState.parameters) {
+    state.nodeType.disabled.parameters = false;
   }
 
   data.nodes.forEach(addNode(state));
