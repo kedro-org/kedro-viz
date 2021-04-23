@@ -14,6 +14,7 @@
       "name": "Data science"
     }
   ],
+  "modular_pipelines": [],
   "layers": [
     "Raw",
     "Intermediate",
@@ -334,7 +335,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Raw",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "load_raw_country_data",
@@ -343,7 +345,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Raw",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "load_raw_shopper_spend_data",
@@ -352,7 +355,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Raw",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "preprocess_intermediate_interaction_data",
@@ -361,7 +365,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Intermediate",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "preprocess_intermediate_country_data",
@@ -370,7 +375,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Intermediate",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "preprocess_intermediate_shopper_spend_data",
@@ -379,7 +385,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Intermediate",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "create_shopper_spend_features",
@@ -388,7 +395,8 @@
       "tags": ["feature_engineering", "data_engineering"],
       "layer": "Feature",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "create_shopper_churn_features",
@@ -397,7 +405,8 @@
       "tags": ["feature_engineering", "data_engineering"],
       "layer": "Feature",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "prepare_vendor_input",
@@ -406,7 +415,8 @@
       "tags": ["feature_engineering", "data_engineering"],
       "layer": "Intermediate",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "prepare_crm_input",
@@ -415,7 +425,8 @@
       "tags": ["feature_engineering", "data_engineering"],
       "layer": "Intermediate",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "predictive_sales_model",
@@ -424,7 +435,8 @@
       "tags": ["model_training", "data_science"],
       "layer": "Model Input",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "predictive_engagement_model",
@@ -433,7 +445,8 @@
       "tags": ["model_training", "data_science"],
       "layer": "Model Input",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "sales_model_explainable_ai",
@@ -442,7 +455,8 @@
       "tags": ["model_explanation", "data_science"],
       "layer": "Model Input",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "engagement_model_explainable_ai",
@@ -451,7 +465,8 @@
       "tags": ["model_explanation", "data_science"],
       "layer": "Models",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "perform_digital_analysis",
@@ -460,7 +475,8 @@
       "tags": ["model_training", "data_science"],
       "layer": "Model Input",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "engagement_recommendation_engine",
@@ -469,7 +485,8 @@
       "tags": ["model_training", "data_science"],
       "layer": "Models",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "sales_model_performance_monitoring",
@@ -478,7 +495,8 @@
       "tags": ["model_performance_monitoring", "data_science"],
       "layer": "Reporting",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "engagement_model_performance_monitoring",
@@ -487,7 +505,8 @@
       "tags": ["model_performance_monitoring", "data_science"],
       "layer": "Reporting",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "multi-channel_optimisation",
@@ -496,7 +515,8 @@
       "tags": ["optimisation", "data_science"],
       "layer": "Models",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "content_optimisation",
@@ -505,7 +525,8 @@
       "tags": ["optimisation", "data_science"],
       "layer": "Models",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "segment_journeys",
@@ -514,7 +535,8 @@
       "tags": ["optimisation", "data_science"],
       "layer": "Model Output",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "generate_dashboard_inputs",
@@ -523,7 +545,8 @@
       "tags": ["reporting", "data_science"],
       "layer": "Reporting",
       "pipelines": ["__default__", "ds"],
-      "type": "task"
+      "type": "task",
+      "modular_pipelines": []
     },
     {
       "full_name": "interaction_raw",
@@ -532,7 +555,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Raw",
       "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "interaction_intermediate",
@@ -541,7 +565,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Intermediate",
       "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "country_raw",
@@ -550,7 +575,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Raw",
       "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "country_intermediate",
@@ -559,7 +585,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Intermediate",
       "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "shopper_spend_raw",
@@ -568,7 +595,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Raw",
       "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "shopper_spend_intermediate",
@@ -577,7 +605,8 @@
       "tags": ["data_engineering", "preprocessing"],
       "layer": "Intermediate",
       "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "interaction_primary",
@@ -586,7 +615,8 @@
       "tags": ["feature_engineering", "data_engineering", "preprocessing"],
       "layer": "Primary",
       "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "country_primary",
@@ -595,7 +625,8 @@
       "tags": ["feature_engineering", "data_engineering", "preprocessing"],
       "layer": "Primary",
       "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "shopper_spend_primary",
@@ -604,7 +635,8 @@
       "tags": ["feature_engineering", "data_engineering", "preprocessing"],
       "layer": "Primary",
       "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "crm_predictions",
@@ -613,7 +645,8 @@
       "tags": ["feature_engineering", "data_engineering"],
       "layer": "Primary",
       "pipelines": ["__default__", "ds"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "shopper_spend_features",
@@ -628,7 +661,8 @@
       ],
       "layer": "Feature",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "shopper_churn_features",
@@ -643,7 +677,8 @@
       ],
       "layer": "Feature",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "vendor_main",
@@ -652,7 +687,8 @@
       "tags": ["feature_engineering", "data_engineering"],
       "layer": "Raw",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "salesforce_crm",
@@ -661,7 +697,8 @@
       "tags": ["feature_engineering", "data_engineering"],
       "layer": "Raw",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "vendor_predictions",
@@ -675,7 +712,8 @@
       ],
       "layer": "Primary",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "salesforce_accounts",
@@ -684,7 +722,8 @@
       "tags": ["feature_engineering", "data_engineering"],
       "layer": "Raw",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "params:_sales_model",
@@ -693,7 +732,8 @@
       "tags": ["data_science", "model_training"],
       "layer": "Model Input",
       "pipelines": ["__default__", "de"],
-      "type": "parameters"
+      "type": "parameters",
+      "modular_pipelines": []
     },
     {
       "full_name": "sales_validation_results",
@@ -706,7 +746,8 @@
       ],
       "layer": "Model Output",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "sales_trained_model",
@@ -715,7 +756,8 @@
       "tags": ["model_explanation", "data_science", "model_training"],
       "layer": "Model Input",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "params:_engagement_model",
@@ -724,7 +766,8 @@
       "tags": ["data_science", "model_training"],
       "layer": "Model Input",
       "pipelines": ["__default__", "de"],
-      "type": "parameters"
+      "type": "parameters",
+      "modular_pipelines": []
     },
     {
       "full_name": "engagement_validation_results",
@@ -737,7 +780,8 @@
       ],
       "layer": "Model Output",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "engagement_trained_model",
@@ -746,7 +790,8 @@
       "tags": ["model_explanation", "data_science", "model_training"],
       "layer": "Models",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "sales_model_explanations",
@@ -760,7 +805,8 @@
       ],
       "layer": "Model Output",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "engagement_model_explanations",
@@ -774,7 +820,8 @@
       ],
       "layer": "Model Output",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "params:_optimisation",
@@ -783,7 +830,8 @@
       "tags": ["data_science", "model_training", "optimisation"],
       "layer": "Model Input",
       "pipelines": ["__default__", "de"],
-      "type": "parameters"
+      "type": "parameters",
+      "modular_pipelines": []
     },
     {
       "full_name": "digital_analysis",
@@ -792,7 +840,8 @@
       "tags": ["data_science", "model_training", "optimisation"],
       "layer": "Model Input",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "engagement_recommendations",
@@ -801,7 +850,8 @@
       "tags": ["data_science", "model_training"],
       "layer": "Model Output",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "action_cost_table",
@@ -810,7 +860,8 @@
       "tags": ["data_science", "optimisation"],
       "layer": "Raw",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "multi-channel_resolutions",
@@ -819,7 +870,8 @@
       "tags": ["reporting", "data_science", "optimisation"],
       "layer": "Model Output",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "content_resolutions",
@@ -828,7 +880,8 @@
       "tags": ["reporting", "data_science", "optimisation"],
       "layer": "Model Output",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "segment_journeys_allocations",
@@ -837,7 +890,8 @@
       "tags": ["reporting", "data_science", "optimisation"],
       "layer": "Model Output",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "upselling_readiness_dashboard_input",
@@ -846,7 +900,8 @@
       "tags": ["reporting", "data_science"],
       "layer": "Reporting",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "lead_scoring_dashboard_input",
@@ -855,7 +910,8 @@
       "tags": ["reporting", "data_science"],
       "layer": "Reporting",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "lifetime_value_prediction_dashboard_input",
@@ -864,7 +920,8 @@
       "tags": ["reporting", "data_science"],
       "layer": "Reporting",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "digital_sales_dashboard_input",
@@ -873,7 +930,8 @@
       "tags": ["reporting", "data_science"],
       "layer": "Reporting",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     },
     {
       "full_name": "vendor_sales_dashboard_input",
@@ -882,7 +940,8 @@
       "tags": ["reporting", "data_science"],
       "layer": "Reporting",
       "pipelines": ["__default__", "de"],
-      "type": "data"
+      "type": "data",
+      "modular_pipelines": []
     }
   ],
   "tags": [

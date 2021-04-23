@@ -40,12 +40,19 @@ from pathlib import Path
 import pytest
 from kedro.extras.datasets.pickle import PickleDataSet
 from kedro.io import DataCatalog, DataSetNotFoundError, MemoryDataSet
-from kedro.pipeline import Pipeline, node
+from kedro.pipeline import Pipeline, node, pipeline
 from toposort import CircularDependencyError
 
 import kedro_viz
 from kedro_viz import server
-from kedro_viz.server import _allocate_port, _hash, _sort_layers, format_pipelines_data
+from kedro_viz.server import (
+    _allocate_port,
+    _expand_namespaces,
+    _hash,
+    _pretty_modular_pipeline_name,
+    _sort_layers,
+    format_pipelines_data,
+)
 from kedro_viz.utils import WaitForException
 
 input_json_path = (
@@ -62,8 +69,7 @@ def shark(input1, input2, input3, input4):
 
 
 def salmon(dog, rabbit, parameters, cat):
-    """docstring
-    """
+    """docstring"""
     return dog, rabbit
 
 
@@ -71,10 +77,15 @@ def trout(pig, sheep):
     return pig
 
 
+def tuna(sheep, plankton1, plankton2):
+    return sheep
+
+
 def get_pipelines():
     return {
         "de": de_pipeline(),
-        "ds": ds_pipeline(),
+        "pre_ds": pipeline(pre_ds_pipeline(), namespace="pipeline1.data_science"),
+        "ds": pipeline(ds_pipeline(), namespace="pipeline2.data_science"),
         "__default__": create_pipeline(),
         "empty": Pipeline([]),
     }
@@ -97,15 +108,34 @@ def ds_pipeline():
     return ds_pipeline
 
 
+def pre_ds_pipeline():
+    pre_ds_pipeline = Pipeline(
+        [
+            node(
+                tuna,
+                inputs=[
+                    "sheep",
+                    "params:pipeline2.data_science.plankton",
+                    "params:pipeline100.data_science.plankton",
+                ],
+                outputs=["dolphin"],
+                name="tuna",
+            )
+        ]
+    )
+    return pre_ds_pipeline
+
+
 def de_pipeline():
     de_pipeline = Pipeline(
         [
             node(
                 shark,
-                inputs=["cat", "weasel", "elephant", "bear"],
+                inputs=["cat", "nested.weasel", "elephant", "bear"],
                 outputs=["pig", "giraffe"],
                 name="shark",
                 tags=["medium", "large"],
+                namespace="pipeline1.data_engineering",
             ),
             node(
                 salmon,
@@ -120,16 +150,20 @@ def de_pipeline():
 
 
 def create_pipeline():
-    return de_pipeline() + ds_pipeline()
+    return (
+        pipeline(pre_ds_pipeline(), namespace="pipeline1.data_science")
+        + de_pipeline()
+        + pipeline(ds_pipeline(), namespace="pipeline2.data_science")
+    )
 
 
 @pytest.fixture
 def dummy_layers():
     return {
-        "raw": {"elephant", "bear", "weasel", "cat", "dog"},
+        "raw": {"elephant", "bear", "nested.weasel", "cat", "dog"},
         "primary": {"sheep"},
         "feature": {"pig"},
-        "model output": {"horse", "giraffe", "whale"},
+        "model output": {"horse", "giraffe", "pipeline2.data_science.whale"},
     }
 
 
@@ -155,6 +189,8 @@ def patched_create_session(mocker, tmp_path, dummy_layers):
                 "cat": PickleDataSet(filepath=str(tmp_path)),
                 "parameters": MemoryDataSet({"name": "value"}),
                 "params:rabbit": MemoryDataSet("value"),
+                "params:pipeline2.data_science.plankton": MemoryDataSet("value"),
+                "params:pipeline100.data_science.plankton": MemoryDataSet("value"),
             }
             self.layers = layers
 
@@ -176,7 +212,7 @@ def patched_create_session(mocker, tmp_path, dummy_layers):
         mocked_context._get_pipeline = get_pipeline  # pylint: disable=protected-access
         dummy_data_catalog = DummyDataCatalog(dummy_layers)
         mocked_context.catalog = dummy_data_catalog
-        mocked_context.pipeline = create_pipeline()
+        mocked_context.test_pipeline = create_pipeline()
         return mocked_context
 
     mocked_session = mocker.Mock()
@@ -198,7 +234,9 @@ _USE_PATCHED_CONTEXT = pytest.mark.usefixtures("patched_create_session")
 
 
 @_USE_PATCHED_CONTEXT
-def test_set_port(cli_runner,):
+def test_set_port(
+    cli_runner,
+):
     """Check that port argument is correctly handled."""
     result = cli_runner.invoke(server.commands, ["viz", "--port", "8000"])
     assert result.exit_code == 0, result.output
@@ -231,7 +269,10 @@ def test_no_browser(cli_runner):
 def test_viz_does_not_need_to_specify_project_path(cli_runner, patched_create_session):
     cli_runner.invoke(server.commands, ["viz", "--no-browser"])
     patched_create_session.assert_called_once_with(
-        package_name="test", project_path=Path.cwd(), env=None, save_on_close=False,
+        package_name="test",
+        project_path=Path.cwd(),
+        env=None,
+        save_on_close=False,
     )
 
 
@@ -251,8 +292,7 @@ def test_no_browser_if_not_localhost(cli_runner):
 
 
 def test_load_file_outside_kedro_project(cli_runner, tmp_path):
-    """Check that running viz with `--load-file` flag works outside of a Kedro project.
-    """
+    """Check that running viz with `--load-file` flag works outside of a Kedro project."""
     filepath_json = str(tmp_path / "test.json")
     data = {
         "nodes": None,
@@ -270,8 +310,7 @@ def test_load_file_outside_kedro_project(cli_runner, tmp_path):
 
 @_USE_PATCHED_CONTEXT
 def test_save_file(cli_runner, tmp_path):
-    """Check that running with `--save-file` flag saves pipeline JSON file in a specified path.
-    """
+    """Check that running with `--save-file` flag saves pipeline JSON file in a specified path."""
     save_path = str(tmp_path / "test.json")
 
     result = cli_runner.invoke(server.commands, ["viz", "--save-file", save_path])
@@ -294,8 +333,7 @@ def test_load_file_no_top_level_key(cli_runner, tmp_path):
 
 
 def test_no_load_file(cli_runner):
-    """Check that running viz without `--load-file` flag should fail outside of a Kedro project.
-    """
+    """Check that running viz without `--load-file` flag should fail outside of a Kedro project."""
     result = cli_runner.invoke(server.commands, ["viz"])
     assert result.exit_code == 1
 
@@ -337,13 +375,19 @@ def test_pipelines_endpoint(cli_runner, client):
     # make sure only edges in the selected pipelines are returned
 
     assert data["edges"] == [
-        {"source": "2cd4ba93", "target": "e27376a9"},
-        {"source": "6525f2e6", "target": "e27376a9"},
-        {"source": "e27376a9", "target": "1769e230"},
+        {"source": "a761759c", "target": "c8c182ec"},
+        {"source": "24e06541", "target": "c8c182ec"},
+        {"source": "c8c182ec", "target": "0049a504"},
     ]
 
     # make sure all tags are returned
     assert data["tags"] == EXPECTED_PIPELINE_DATA["tags"]
+
+    # make sure only the list of modular pipelines is returned for the selected pipeline
+    assert data["modular_pipelines"] == [
+        {"id": "pipeline2", "name": "Pipeline2"},
+        {"id": "pipeline2.data_science", "name": "Data Science"},
+    ]
 
 
 @_USE_PATCHED_CONTEXT
@@ -378,7 +422,6 @@ def test_node_metadata_endpoint_task(cli_runner, client, mocker, tmp_path):
     assert data["code"] == inspect.getsource(salmon)
     assert data["filepath"] == str(Path(project_root) / filepath)
     assert data["parameters"] == {"name": "value"}
-
 
 
 @_USE_PATCHED_CONTEXT
@@ -448,43 +491,51 @@ def test_pipeline_flag(cli_runner, client):
 
     assert data == {
         "edges": [
-            {"source": "2cd4ba93", "target": "e27376a9"},
-            {"source": "6525f2e6", "target": "e27376a9"},
-            {"source": "e27376a9", "target": "1769e230"},
+            {"source": "a761759c", "target": "c8c182ec"},
+            {"source": "24e06541", "target": "c8c182ec"},
+            {"source": "c8c182ec", "target": "0049a504"},
         ],
-        "layers": ["feature", "primary", "model output"],
+        "layers": [],
+        "modular_pipelines": [
+            {"id": "pipeline2", "name": "Pipeline2"},
+            {"id": "pipeline2.data_science", "name": "Data Science"},
+        ],
         "nodes": [
             {
                 "full_name": "trout",
-                "id": "e27376a9",
+                "id": "c8c182ec",
+                "modular_pipelines": ["pipeline2", "pipeline2.data_science"],
                 "name": "trout",
                 "pipelines": ["ds"],
                 "tags": [],
                 "type": "task",
             },
             {
-                "full_name": "pig",
-                "id": "2cd4ba93",
-                "layer": "feature",
-                "name": "Pig",
+                "full_name": "pipeline2.data_science.pig",
+                "id": "a761759c",
+                "layer": None,
+                "modular_pipelines": ["pipeline2", "pipeline2.data_science"],
+                "name": "Pipeline2.data Science.pig",
                 "pipelines": ["ds"],
                 "tags": [],
                 "type": "data",
             },
             {
-                "full_name": "sheep",
-                "id": "6525f2e6",
-                "layer": "primary",
-                "name": "Sheep",
+                "full_name": "pipeline2.data_science.sheep",
+                "id": "24e06541",
+                "layer": None,
+                "modular_pipelines": ["pipeline2", "pipeline2.data_science"],
+                "name": "Pipeline2.data Science.sheep",
                 "pipelines": ["ds"],
                 "tags": [],
                 "type": "data",
             },
             {
-                "full_name": "whale",
-                "id": "1769e230",
+                "full_name": "pipeline2.data_science.whale",
+                "id": "0049a504",
                 "layer": "model output",
-                "name": "Whale",
+                "modular_pipelines": ["pipeline2", "pipeline2.data_science"],
+                "name": "Pipeline2.data Science.whale",
                 "pipelines": ["ds"],
                 "tags": [],
                 "type": "data",
@@ -545,7 +596,10 @@ class TestCallViz:
     def test_call_viz_without_project_path(self, patched_create_session):
         server._call_viz()
         patched_create_session.assert_called_once_with(
-            package_name="test", project_path=Path.cwd(), env=None, save_on_close=False,
+            package_name="test",
+            project_path=Path.cwd(),
+            env=None,
+            save_on_close=False,
         )
 
     def test_call_viz_with_project_path(self, patched_create_session):
@@ -686,7 +740,7 @@ class TestAllocatePort:
 
 
 @pytest.fixture
-def pipeline():
+def test_pipeline():
     def func1(a, b):  # pylint: disable=unused-argument
         return a
 
@@ -718,18 +772,20 @@ def new_catalog_with_layers():
     return catalog
 
 
-def test_format_pipelines_data(pipeline, new_catalog_with_layers, mocker):
+def test_format_pipelines_data(test_pipeline, new_catalog_with_layers, mocker):
     mocker.patch("kedro_viz.server._CATALOG", new_catalog_with_layers)
-    result = format_pipelines_data(pipeline)
+    result = format_pipelines_data(test_pipeline)
     result_file_path = Path(__file__).parent / "test-format.json"
     json_data = json.loads(result_file_path.read_text())
     assert json_data == result
 
 
-def test_format_pipelines_data_no_layers(pipeline, new_catalog_with_layers, mocker):
+def test_format_pipelines_data_no_layers(
+    test_pipeline, new_catalog_with_layers, mocker
+):
     mocker.patch("kedro_viz.server._CATALOG", new_catalog_with_layers)
     setattr(new_catalog_with_layers, "layers", None)
-    result = format_pipelines_data(pipeline)
+    result = format_pipelines_data(test_pipeline)
     assert result["layers"] == []
 
 
@@ -889,3 +945,20 @@ def test_sort_layers_should_raise_on_cyclic_layers():
         match="Circular dependencies exist among these items: {'int':{'raw'}, 'raw':{'int'}}",
     ):
         _sort_layers(nodes, node_dependencies)
+
+
+def test_expand_namespaces():
+    node_namespace = "main_pipeline.sub_pipeline.deepest_pipeline"
+    expected = [
+        "main_pipeline",
+        "main_pipeline.sub_pipeline",
+        "main_pipeline.sub_pipeline.deepest_pipeline",
+    ]
+    result = _expand_namespaces(node_namespace)
+    assert result == expected
+
+
+def test_pretty_modular_pipeline_name():
+    modular_pipeline_name = "main_pipeline.sub_pipeline.deepest_pipeline"
+    result = _pretty_modular_pipeline_name(modular_pipeline_name)
+    assert result == "Deepest Pipeline"

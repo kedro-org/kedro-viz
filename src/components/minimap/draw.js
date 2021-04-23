@@ -27,7 +27,7 @@ export const drawViewport = function () {
  */
 export const drawNodes = function () {
   const {
-    centralNode,
+    clickedNode,
     linkedNodes,
     nodeActive,
     nodeSelected,
@@ -63,7 +63,7 @@ export const drawNodes = function () {
     .classed('pipeline-minimap-node--selected', (node) => nodeSelected[node.id])
     .classed(
       'pipeline-minimap-node--faded',
-      (node) => centralNode && !linkedNodes[node.id]
+      (node) => clickedNode && !linkedNodes[node.id]
     );
 
   this.el.nodes
