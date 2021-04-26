@@ -6,7 +6,6 @@ import getInitialState, {
 } from './initial-state';
 import { saveState } from './helpers';
 import animals from '../utils/data/animals.mock.json';
-
 describe('createInitialState', () => {
   it('returns an object', () => {
     expect(createInitialState()).toEqual(expect.any(Object));
@@ -156,5 +155,16 @@ describe('getInitialState', () => {
       theme: 'dark',
     });
     window.localStorage.clear();
+  });
+
+  it('hides parameters when parameter flag is true', () => {
+    const state = getInitialState({
+      ...props,
+      flags: {
+        parameters: true,
+      },
+    });
+    const parametersDisabled = state.nodeType.disabled.parameters;
+    expect(parametersDisabled).toBe(true);
   });
 });

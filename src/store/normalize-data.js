@@ -1,7 +1,5 @@
 import { arrayToObject } from '../utils';
 
-const isTest = typeof jest !== 'undefined';
-
 /**
  * Create new default pipeline state instance
  * @return {object} state
@@ -40,9 +38,7 @@ export const createInitialPipelineState = () => ({
       task: 'Nodes',
       parameters: 'Parameters',
     },
-    disabled: {
-      parameters: isTest ? false : true,
-    },
+    disabled: {},
   },
   edge: {
     ids: [],

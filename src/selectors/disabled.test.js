@@ -7,7 +7,6 @@ import {
   getVisibleLayerIDs,
 } from './disabled';
 import { toggleNodesDisabled } from '../actions/nodes';
-import { toggleTypeDisabled } from '../actions/node-type';
 import { toggleLayers } from '../actions';
 import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
@@ -107,7 +106,7 @@ describe('Selectors', () => {
   });
 
   describe('getEdgeDisabled', () => {
-    const nodeID = getVisibleNodeIDs(mockState.animals)[0];
+    const nodeID = getNodeIDs(mockState.animals)[0];
     const newMockState = reducer(
       mockState.animals,
       toggleNodesDisabled([nodeID], true)
@@ -134,12 +133,9 @@ describe('Selectors', () => {
     });
 
     it('does not disable an edge if no nodes are disabled', () => {
-      const newMockState = reducer(
-        mockState.animals,
-        toggleTypeDisabled('parameters', false)
+      const edgeDisabledValues = Object.values(
+        getEdgeDisabled(mockState.animals)
       );
-      const edgeDisabledValues = Object.values(getEdgeDisabled(newMockState));
-      //should i create a a boolean array [false,true,true,false...]
       expect(edgeDisabledValues).toEqual(edgeDisabledValues.map(() => false));
     });
 
@@ -187,7 +183,6 @@ describe('Selectors', () => {
   });
 
   describe('getVisibleNodeIDs', () => {
-    //this checks for all nodes including parameters
     it('returns an array of node IDs', () => {
       expect(getVisibleNodeIDs(mockState.animals)).toEqual(
         mockState.animals.node.ids

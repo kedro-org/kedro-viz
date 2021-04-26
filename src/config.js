@@ -36,6 +36,11 @@ export const flags = {
     default: false,
     icon: '😴',
   },
+  parameters: {
+    description: 'Hides parameters by default on page load',
+    default: true,
+    icon: '🎛️',
+  },
   sizewarning: {
     description: 'Show a warning before rendering very large graphs',
     default: true,
