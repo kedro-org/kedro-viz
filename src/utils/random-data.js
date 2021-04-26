@@ -17,6 +17,8 @@ const MAX_TAG_COUNT = 20;
 const PARAMETERS_FREQUENCY = 0.2;
 const MIN_PIPELINES_COUNT = 2;
 const MAX_PIPELINES_COUNT = 15;
+const MIN_MODULAR_PIPELINES_COUNT = 2;
+const MAX_MODULAR_PIPELINES_COUNT = 15;
 const LAYERS = [
   'Raw',
   'Intermediate',
@@ -33,6 +35,7 @@ class Pipeline {
   constructor() {
     this.utils = randomUtils();
     this.pipelines = this.generatePipelines();
+    this.modularPipelines = this.generateModularPipelines();
     this.rankCount = this.getRankCount();
     this.rankLayers = this.getRankLayers();
     this.tags = this.generateTags();
@@ -44,7 +47,7 @@ class Pipeline {
   }
 
   /**
-   * Create the pipelines aray
+   * Create the pipelines array
    * @returns {number} Rank count total
    */
   generatePipelines() {
@@ -57,6 +60,24 @@ class Pipeline {
       pipelines.push(this.utils.getRandomName(this.utils.randomNumber(4), ' '));
     }
     return pipelines.filter(unique);
+  }
+
+  /**
+   * Create the modular pipelines array
+   * @returns {number} Rank count total
+   */
+  generateModularPipelines() {
+    const modularPipelines = ['Data Science'];
+    const pipelineCount = this.utils.randomNumberBetween(
+      MIN_MODULAR_PIPELINES_COUNT,
+      MAX_MODULAR_PIPELINES_COUNT
+    );
+    for (let i = 1; i < pipelineCount; i++) {
+      modularPipelines.push(
+        this.utils.getRandomName(this.utils.randomNumber(4), ' ')
+      );
+    }
+    return modularPipelines.filter(unique);
   }
 
   /**
@@ -171,6 +192,7 @@ class Pipeline {
       rank: initialRank,
       layer: layer,
       pipelines: this.getNodePipelines(),
+      modular_pipelines: this.getNodeModularPipelines(),
       tags: this.getRandomTags(),
       _sources: [],
       _targets: [],
@@ -232,6 +254,19 @@ class Pipeline {
         return pipelines.concat(id);
       }
       return pipelines;
+    }, []);
+  }
+
+  /**
+   * Create a list of the modular pipelines that the node will be included in
+   * @returns {array} Node pipelines
+   */
+  getNodeModularPipelines() {
+    return this.modularPipelines.reduce((modularPipelines, id, i) => {
+      if (i === 0 || this.utils.randomIndex(2)) {
+        return modularPipelines.concat(id);
+      }
+      return modularPipelines;
     }, []);
   }
 
@@ -428,6 +463,10 @@ class Pipeline {
       layers: LAYERS,
       nodes: this.nodes,
       pipelines: this.pipelines.map((name) => ({ id: name, name })),
+      modular_pipelines: this.modularPipelines.map((name) => ({
+        id: name,
+        name,
+      })),
       tags: this.tags,
     };
   }

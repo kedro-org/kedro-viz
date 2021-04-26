@@ -164,6 +164,12 @@ In accordance with McKinsey standards, we aim to maintain at least a test covera
 
 We use [Jest](https://jestjs.io/), [Enzyme](https://enzymejs.github.io/enzyme/), and [Testing Library](https://testing-library.com/) for JavaScript testing. Most of the older tests are written with Enzyme, but we are beginning to write more tests using Testing Library as it is more flexible for testing certain browser APIs. Either is acceptable. To help with mocking the Redux store, Enzyme helper utilities can be found in `/src/utils/state.mock.js`.
 
+Before you request a review on a PR, be sure to review it yourself [by comparing changes](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-comparing-branches-in-pull-requests) line by line. Make your amends with this style guide in mind.
+
+You should manually test your PR branch [across different browsers](#browser-and-device-support) and for [regressions](https://en.wikipedia.org/wiki/Regression_testing) against the behaviour of the [previous release](https://quantumblacklabs.github.io/kedro-viz/). Resolve problems where practical or otherwise note them in the PR text before you request a review.
+
+As well as manual testing, we aim to include automated high-level [integration tests](https://en.wikipedia.org/wiki/Integration_testing) on a [user story](https://en.wikipedia.org/wiki/User_story) or feature and interface basis, such as [simulating UI interaction](https://testing-library.com/docs/ecosystem-user-event) and observing expected [UI outputs](https://github.com/testing-library/jest-dom#readme).
+
 ## Git and Github
 
 ### Commits
