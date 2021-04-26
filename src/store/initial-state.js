@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { loadState } from './helpers';
+import { loadState, saveState } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 
@@ -60,11 +60,8 @@ export const mergeLocalStorage = (state) => {
  * @param {object} data Data prop passed to App component
  * @param {boolean} applyFixes Whether to override initialState
  */
-export const preparePipelineState = (data, applyFixes, nonPipelineState) => {
+export const preparePipelineState = (data, applyFixes) => {
   const state = mergeLocalStorage(normalizeData(data));
-  if (nonPipelineState?.flags?.parameters === false) {
-    state.nodeType.disabled.parameters = true;
-  }
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
@@ -94,17 +91,22 @@ export const prepareNonPipelineState = (props) => {
 
 /**
  * Configure the redux store's initial state, by merging default values
- * with normalised pipeline data and localStorage
+ * with normalised pipeline data and localStorage.
+ * If parameters flag is set to true, then disable parameters on initial load
  * @param {object} props App component props
  * @return {object} Initial state
  */
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
-  const pipelineState = preparePipelineState(
-    props.data,
-    props.data !== 'json',
-    nonPipelineState
-  );
+  const storedState = loadState();
+  if (nonPipelineState.flags.parameters) {
+    saveState({
+      nodeType: {
+        disabled: { ...storedState?.nodeType?.disabled, parameters: true },
+      },
+    });
+  }
+  const pipelineState = preparePipelineState(props.data, props.data !== 'json');
   return {
     ...nonPipelineState,
     ...pipelineState,

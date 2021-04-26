@@ -37,8 +37,8 @@ export const flags = {
     icon: '😴',
   },
   parameters: {
-    description: 'Turns on parameters',
-    default: false,
+    description: 'Hides parameters by default on page load',
+    default: true,
     icon: '🎛️',
   },
   sizewarning: {
