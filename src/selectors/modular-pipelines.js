@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { getPipelineNodeIDs, getPipelineModularPipelineIDs } from './pipeline';
 import { arrayToObject } from '../utils';
 
-const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
@@ -10,6 +9,7 @@ const getModularPipelineContracted = (state) =>
   state.modularPipeline.contracted;
 const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
+const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
@@ -74,12 +74,14 @@ export const getModularPipelineChildren = createSelector(
 
 /**
  * Get a list of input/output edges of visible modular pipeline pseudo-nodes
- * by examining the edges of their childen
+ * by examining the edges of their childen, and also create transitive edges
+ * between collapsed modular pipelines
  */
 export const getModularPipelineEdges = createSelector(
   [
     getModularPipelineIDs,
     getModularPipelineChildren,
+    getNodeModularPipelines,
     getEdgeIDs,
     getEdgeSources,
     getEdgeTargets,
@@ -87,6 +89,7 @@ export const getModularPipelineEdges = createSelector(
   (
     modularPipelineIDs,
     modularPipelineChildren,
+    nodeModularPipelines,
     edgeIDs,
     edgeSources,
     edgeTargets
@@ -111,10 +114,18 @@ export const getModularPipelineEdges = createSelector(
         const target = edgeTargets[edgeID];
         if (modPipNodes[target] && !modPipNodes[source]) {
           // input edge
-          addNewEdge(source, modPipID, modPipID);
+          addNewEdge(source, modPipID);
+          // if source has mod pip parents, link to those as well
+          nodeModularPipelines[source].forEach((parent) => {
+            addNewEdge(parent, modPipID);
+          });
         } else if (modPipNodes[source] && !modPipNodes[target]) {
           // output edge
-          addNewEdge(modPipID, target, modPipID);
+          addNewEdge(modPipID, target);
+          // if target has mod pip parents, link to those as well
+          nodeModularPipelines[target].forEach((parent) => {
+            addNewEdge(modPipID, parent);
+          });
         }
       });
     });
