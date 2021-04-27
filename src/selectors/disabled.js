@@ -127,6 +127,39 @@ export const getNodeDisabled = createSelector(
 );
 
 /**
+ * Whether a node is disabled by any means except modular pipeline being contracted
+ */
+export const getNodeDisabledExclModPip = createSelector(
+  [
+    getNodeIDs,
+    getNodeDisabledNode,
+    getNodeDisabledTag,
+    getNodeDisabledModularPipelineFilter,
+    getNodeDisabledPipeline,
+    getNodeType,
+    getNodeTypeDisabled,
+  ],
+  (
+    nodeIDs,
+    nodeDisabledNode,
+    nodeDisabledTag,
+    nodeDisabledModularPipelineFilter,
+    nodeDisabledPipeline,
+    nodeType,
+    typeDisabled
+  ) =>
+    arrayToObject(
+      nodeIDs,
+      (id) =>
+        nodeDisabledNode[id] ||
+        nodeDisabledTag[id] ||
+        nodeDisabledModularPipelineFilter[id] ||
+        nodeDisabledPipeline[id] ||
+        typeDisabled[nodeType[id]]
+    )
+);
+
+/**
  * Set disabled status if the node is specifically hidden, and/or via a tag/view/type/modularPipeline
  */
 export const getModularPipelineDisabled = createSelector(
