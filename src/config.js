@@ -37,7 +37,9 @@ export const flags = {
     icon: '😴',
   },
   parameters: {
-    description: 'Hides parameters by default on page load',
+    description: `Hides parameters by default on page load. When parameters are hidden, 
+      functions using parameters are highlighted.
+      And when parameters are visible, they are highlighted.`,
     default: true,
     icon: '🎛️',
   },

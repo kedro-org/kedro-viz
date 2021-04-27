@@ -122,6 +122,7 @@ export const drawNodes = function (changed) {
     nodeSelected,
     hoveredParameters,
     nodesWithInputParams,
+    parametersFlag,
     nodes,
   } = this.props;
 
@@ -144,15 +145,14 @@ export const drawNodes = function (changed) {
     .merge(exitNodes)
     .filter((node) => typeof node !== 'undefined');
 
-  if (changed('nodes')) {
+  if (changed('nodes', 'parametersFlag')) {
     enterNodes
       .attr('tabindex', '0')
       .attr('class', 'pipeline-node')
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
-      .classed(
-        'pipeline-node--parameters',
-        (node) => node.type === 'parameters'
+      .classed('pipeline-node--parameters', (node) =>
+        parametersFlag ? node.type === 'parameters' : null
       )
       .classed('pipeline-node--data', (node) => node.type === 'data')
       .classed('pipeline-node--task', (node) => node.type === 'task')
@@ -210,6 +210,7 @@ export const drawNodes = function (changed) {
       'nodeSelected',
       'hoveredParameters',
       'nodesWithInputParams',
+      'parametersFlag',
       'clickedNode',
       'linkedNodes'
     )
@@ -220,6 +221,7 @@ export const drawNodes = function (changed) {
       .classed(
         'pipeline-node--collapsed-hint',
         (node) =>
+          parametersFlag &&
           hoveredParameters &&
           nodesWithInputParams[node.id] &&
           nodeTypeDisabled.parameters
@@ -230,7 +232,7 @@ export const drawNodes = function (changed) {
       );
   }
 
-  if (changed('nodes')) {
+  if (changed('nodes', 'parametersFlag')) {
     allNodes
       .transition('update-nodes')
       .duration(this.DURATION)
@@ -251,12 +253,14 @@ export const drawNodes = function (changed) {
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
       .call(updateNodeRects);
-
     allNodes
       .select('.pipeline-node__parameter-indicator')
       .classed(
         'pipeline-node__parameter-indicator--visible',
-        (node) => nodeTypeDisabled.parameters && nodesWithInputParams[node.id]
+        (node) =>
+          parametersFlag &&
+          nodeTypeDisabled.parameters &&
+          nodesWithInputParams[node.id]
       )
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
@@ -285,7 +289,7 @@ export const drawNodes = function (changed) {
  * Render edge lines
  */
 export const drawEdges = function (changed) {
-  const { edges, clickedNode, linkedNodes } = this.props;
+  const { edges, clickedNode, linkedNodes, parametersFlag } = this.props;
 
   if (changed('edges')) {
     this.el.edges = this.el.edgeGroup
@@ -344,11 +348,11 @@ export const drawEdges = function (changed) {
     this.el.edges = this.el.edgeGroup.selectAll('.pipeline-edge');
   }
 
-  if (changed('edges', 'clickedNode', 'linkedNodes')) {
+  if (changed('edges', 'clickedNode', 'linkedNodes', 'parametersFlag')) {
     allEdges
       .classed(
         'pipeline-edge--parameters',
-        (edge) => edge.sourceNode.type === 'parameters'
+        (edge) => parametersFlag && edge.sourceNode.type === 'parameters'
       )
       .classed(
         'pipeline-edge--faded',
