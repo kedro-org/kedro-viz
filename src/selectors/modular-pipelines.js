@@ -93,7 +93,7 @@ export const getModularPipelineEdges = createSelector(
   ) => {
     // List of new edges generated from modular pipelines:
     const edges = {
-      ids: [],
+      ids: {},
       sources: {},
       targets: {},
       // @TODO remove these later if unused:
@@ -105,7 +105,7 @@ export const getModularPipelineEdges = createSelector(
 
     const addNewEdge = (source, target, modPipID) => {
       const id = [source, target].join('|');
-      edges.ids.push(id);
+      edges.ids[id] = true;
       edges.sources[id] = source;
       edges.targets[id] = target;
       edges.modPip[id] = modPipID;
@@ -156,7 +156,7 @@ export const getAllNodeNames = createSelector(
 export const getAllEdges = createSelector(
   [getEdgeIDs, getEdgeSources, getEdgeTargets, getModularPipelineEdges],
   (edgeIDs, edgeSources, edgeTargets, modPipEdges) => ({
-    ids: edgeIDs.concat(modPipEdges.ids),
+    ids: edgeIDs.concat(Object.keys(modPipEdges.ids)),
     sources: { ...edgeSources, ...modPipEdges.sources },
     targets: { ...edgeTargets, ...modPipEdges.targets },
   })

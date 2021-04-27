@@ -11,11 +11,9 @@ import { getAllEdges } from './modular-pipelines';
  */
 export const addNewEdge = (source, target, { ids, sources, targets }) => {
   const id = [source, target].join('|');
-  if (!ids.includes(id)) {
-    ids.push(id);
-    sources[id] = source;
-    targets[id] = target;
-  }
+  ids[id] = true;
+  sources[id] = source;
+  targets[id] = target;
 };
 
 /**
@@ -26,7 +24,7 @@ export const getTransitiveEdges = createSelector(
   [getPipelineNodeIDs, getAllEdges, getNodeDisabledExclModPip],
   (nodeIDs, edges, nodeDisabled) => {
     const transitiveEdges = {
-      ids: [],
+      ids: {},
       sources: {},
       targets: {},
     };
@@ -80,7 +78,7 @@ export const getVisibleEdges = createSelector(
   (edges, edgeDisabled, transitiveEdges) =>
     edges.ids
       .filter((id) => !edgeDisabled[id])
-      .concat(transitiveEdges.ids)
+      .concat(Object.keys(transitiveEdges.ids))
       .map((id) => ({
         id,
         source: edges.sources[id] || transitiveEdges.sources[id],
