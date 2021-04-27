@@ -96,23 +96,15 @@ export const getModularPipelineEdges = createSelector(
       ids: {},
       sources: {},
       targets: {},
-      // @TODO remove these later if unused:
-      // The corresponding modular pipeline for an edge ID:
-      modPip: {},
-      // List of edge IDs for each modular pipeline:
-      modPipEdges: {},
     };
 
-    const addNewEdge = (source, target, modPipID) => {
+    const addNewEdge = (source, target) => {
       const id = [source, target].join('|');
       edges.ids[id] = true;
       edges.sources[id] = source;
       edges.targets[id] = target;
-      edges.modPip[id] = modPipID;
-      edges.modPipEdges[modPipID].push(id);
     };
     modularPipelineIDs.forEach((modPipID) => {
-      edges.modPipEdges[modPipID] = [];
       const modPipNodes = modularPipelineChildren[modPipID];
       edgeIDs.forEach((edgeID) => {
         const source = edgeSources[edgeID];
