@@ -72,11 +72,10 @@ export const getClickedNodeMetaData = createSelector(
         ([key, value]) => `${key}: ${value}`
       );
 
+    const tags = nodeTags[node.id] || [];
     const metadata = {
       node,
-      tags: [...nodeTags[node.id]]
-        .map((tagId) => tagNames[tagId])
-        .sort(sortAlpha),
+      tags: [...tags].map((tagId) => tagNames[tagId]).sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
       parameters,
       runCommand: getRunCommand(node),
