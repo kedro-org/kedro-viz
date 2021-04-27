@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { getVisibleNodes } from './nodes';
 import { getVisibleEdges } from './edges';
 import { getVisibleLayerIDs } from './disabled';
-import { getVisibleMetaSidebar } from '../selectors/metadata';
+import { getVisibleMetaSidebar } from './metadata';
 import {
   sidebarWidth,
   metaSidebarWidth,
