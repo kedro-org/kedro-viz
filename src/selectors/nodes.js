@@ -44,7 +44,7 @@ export const getGraphNodes = createSelector(
  */
 export const getNodeActive = createSelector(
   [
-    getPipelineNodeIDs,
+    getAllNodeIDs,
     getHoveredNode,
     getNodeTags,
     getNodeModularPipelines,
@@ -63,11 +63,18 @@ export const getNodeActive = createSelector(
       if (nodeID === hoveredNode) {
         return true;
       }
-      const activeViaTag = nodeTags[nodeID].some((tag) => tagActive[tag]);
-      const activeViaModularPipeline = nodeModularPipelines[nodeID].some(
+      const tags = nodeTags[nodeID] || [];
+      const activeViaTag = tags.some((tag) => tagActive[tag]);
+      const modularPipelines = nodeModularPipelines[nodeID] || [];
+      const activeViaModularPipeline = modularPipelines.some(
         (modularPipeline) => modularPipelineActive[modularPipeline]
       );
-      return Boolean(activeViaTag) || Boolean(activeViaModularPipeline);
+      const isActiveModularPipeline = modularPipelineActive[nodeID];
+      return (
+        Boolean(activeViaTag) ||
+        Boolean(activeViaModularPipeline) ||
+        Boolean(isActiveModularPipeline)
+      );
     })
 );
 
