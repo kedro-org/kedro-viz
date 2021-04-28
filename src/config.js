@@ -37,9 +37,7 @@ export const flags = {
     icon: '😴',
   },
   newparams: {
-    description: `Enables new behaviour of parameter nodes,
-     which includes disabling parameter nodes by default,
-      and will be highlighted on toggling their visibility.`,
+    description: `Disable parameters on page load and highlight parameter connections.`,
     default: true,
     icon: '🎛️',
   },
@@ -49,7 +47,7 @@ export const flags = {
     icon: '🐳',
   },
   modularpipeline: {
-    description: 'enables modular pipeline features',
+    description: 'Enable modular pipeline features',
     default: false,
     icon: '⛓️',
   },

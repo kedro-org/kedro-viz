@@ -106,7 +106,7 @@ As a JavaScript React component, the project is designed to be used in two diffe
 The following flags are available to toggle experimental features:
 
 - `oldgraph` - From release v3.8.0. Display old version of graph (dagre algorithm) without improved graphing algorithm. (default `false`)
-- `newparams` - From release v3.12.0. Enables new behaviour of parameter nodes, which includes disabling parameter nodes by default, and will be highlighted on toggling their visibility. (default false)
+- `newparams` - From release v3.12.0. Disable parameters on page load and highlight parameter connections.
 - `sizewarning` - From release v3.9.1. Show a warning before rendering very large graphs. (default `true`)
 - `modularpipeline` - From release v3.11.0. Enables filtering of nodes by modular pipelines. Note that selecting both modular pipeline and tag filters will only return nodes that belongs to both categories. (default `false`). 
 
