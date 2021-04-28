@@ -15,33 +15,6 @@ const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
 
 /**
- * Retrieve the formatted list of modular pipeline filters
- */
-export const getModularPipelineData = createSelector(
-  [
-    getModularPipelineIDs,
-    getModularPipelineName,
-    getModularPipelineEnabled,
-    getModularPipelineContracted,
-  ],
-  (
-    modularPipelineIDs,
-    modularPipelineName,
-    modularPipelineEnabled,
-    modularPipelineContracted
-  ) =>
-    modularPipelineIDs
-      .slice()
-      .sort()
-      .map((id) => ({
-        id,
-        name: modularPipelineName[id],
-        contracted: Boolean(modularPipelineContracted[id]),
-        enabled: Boolean(modularPipelineEnabled[id]),
-      }))
-);
-
-/**
  * Get the total and enabled number of modular pipelines
  */
 export const getModularPipelineCount = createSelector(
@@ -89,6 +62,23 @@ export const getModularPipelineParents = createSelector(
         }
         return parents;
       }, [])
+    )
+);
+
+/**
+ * Set disabled status if the node is specifically hidden, and/or via a tag/view/type/modularPipeline
+ */
+export const getModularPipelineParentsContracted = createSelector(
+  [
+    getModularPipelineIDs,
+    getModularPipelineParents,
+    getModularPipelineContracted,
+  ],
+  (modularPipelineIDs, modularPipelineParents, modularPipelineContracted) =>
+    arrayToObject(modularPipelineIDs, (modPipID) =>
+      modularPipelineParents[modPipID].some(
+        (id) => modularPipelineContracted[id]
+      )
     )
 );
 
@@ -183,4 +173,35 @@ export const getAllEdges = createSelector(
     sources: { ...edgeSources, ...modPipEdges.sources },
     targets: { ...edgeTargets, ...modPipEdges.targets },
   })
+);
+
+/**
+ * Retrieve the formatted list of modular pipeline filters
+ */
+export const getModularPipelineData = createSelector(
+  [
+    getModularPipelineIDs,
+    getModularPipelineName,
+    getModularPipelineEnabled,
+    getModularPipelineContracted,
+    getModularPipelineParentsContracted,
+  ],
+  (
+    modularPipelineIDs,
+    modularPipelineName,
+    modularPipelineEnabled,
+    modularPipelineContracted,
+    modularPipelineParentsContracted
+  ) =>
+    modularPipelineIDs
+      .slice()
+      .sort()
+      .map((id) => ({
+        id,
+        name: modularPipelineName[id],
+        contracted: Boolean(
+          modularPipelineParentsContracted[id] || modularPipelineContracted[id]
+        ),
+        enabled: Boolean(modularPipelineEnabled[id]),
+      }))
 );

@@ -9,7 +9,7 @@ import {
   getAllEdges,
   getModularPipelineCount,
   getModularPipelineChildren,
-  getModularPipelineParents,
+  getModularPipelineParentsContracted,
 } from './modular-pipelines';
 import { getTagCount } from './tags';
 
@@ -196,23 +196,6 @@ export const getModularPipelineDisabledChildren = createSelector(
       );
       return allChildrenAreDisabled;
     })
-);
-
-/**
- * Set disabled status if the node is specifically hidden, and/or via a tag/view/type/modularPipeline
- */
-export const getModularPipelineParentsContracted = createSelector(
-  [
-    getModularPipelineIDs,
-    getModularPipelineParents,
-    getModularPipelineContracted,
-  ],
-  (modularPipelineIDs, modularPipelineParents, modularPipelineContracted) =>
-    arrayToObject(modularPipelineIDs, (modPipID) =>
-      modularPipelineParents[modPipID].some(
-        (id) => modularPipelineContracted[id]
-      )
-    )
 );
 
 /**
