@@ -36,10 +36,10 @@ export const flags = {
     default: false,
     icon: '😴',
   },
-  parameters: {
-    description: `Hides parameters by default on page load. When parameters are hidden, 
-      functions using parameters are highlighted.
-      And when parameters are visible, they are highlighted.`,
+  newparams: {
+    description: `Enables new behaviour of parameter nodes,
+     which includes disabling parameter nodes by default,
+      and will be highlighted on toggling their visibility.`,
     default: true,
     icon: '🎛️',
   },

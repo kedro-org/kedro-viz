@@ -122,7 +122,7 @@ export const drawNodes = function (changed) {
     nodeSelected,
     hoveredParameters,
     nodesWithInputParams,
-    parametersFlag,
+    newParamsFlag,
     nodes,
   } = this.props;
 
@@ -145,14 +145,14 @@ export const drawNodes = function (changed) {
     .merge(exitNodes)
     .filter((node) => typeof node !== 'undefined');
 
-  if (changed('nodes', 'parametersFlag')) {
+  if (changed('nodes', 'newParamsFlag')) {
     enterNodes
       .attr('tabindex', '0')
       .attr('class', 'pipeline-node')
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
       .classed('pipeline-node--parameters', (node) =>
-        parametersFlag ? node.type === 'parameters' : null
+        newParamsFlag ? node.type === 'parameters' : null
       )
       .classed('pipeline-node--data', (node) => node.type === 'data')
       .classed('pipeline-node--task', (node) => node.type === 'task')
@@ -210,7 +210,7 @@ export const drawNodes = function (changed) {
       'nodeSelected',
       'hoveredParameters',
       'nodesWithInputParams',
-      'parametersFlag',
+      'newParamsFlag',
       'clickedNode',
       'linkedNodes'
     )
@@ -221,7 +221,7 @@ export const drawNodes = function (changed) {
       .classed(
         'pipeline-node--collapsed-hint',
         (node) =>
-          parametersFlag &&
+          newParamsFlag &&
           hoveredParameters &&
           nodesWithInputParams[node.id] &&
           nodeTypeDisabled.parameters
@@ -232,7 +232,7 @@ export const drawNodes = function (changed) {
       );
   }
 
-  if (changed('nodes', 'parametersFlag')) {
+  if (changed('nodes', 'newParamsFlag')) {
     allNodes
       .transition('update-nodes')
       .duration(this.DURATION)
@@ -258,7 +258,7 @@ export const drawNodes = function (changed) {
       .classed(
         'pipeline-node__parameter-indicator--visible',
         (node) =>
-          parametersFlag &&
+          newParamsFlag &&
           nodeTypeDisabled.parameters &&
           nodesWithInputParams[node.id]
       )
@@ -289,7 +289,7 @@ export const drawNodes = function (changed) {
  * Render edge lines
  */
 export const drawEdges = function (changed) {
-  const { edges, clickedNode, linkedNodes, parametersFlag } = this.props;
+  const { edges, clickedNode, linkedNodes, newParamsFlag } = this.props;
 
   if (changed('edges')) {
     this.el.edges = this.el.edgeGroup
@@ -348,11 +348,11 @@ export const drawEdges = function (changed) {
     this.el.edges = this.el.edgeGroup.selectAll('.pipeline-edge');
   }
 
-  if (changed('edges', 'clickedNode', 'linkedNodes', 'parametersFlag')) {
+  if (changed('edges', 'clickedNode', 'linkedNodes', 'newParamsFlag')) {
     allEdges
       .classed(
         'pipeline-edge--parameters',
-        (edge) => parametersFlag && edge.sourceNode.type === 'parameters'
+        (edge) => newParamsFlag && edge.sourceNode.type === 'parameters'
       )
       .classed(
         'pipeline-edge--faded',
