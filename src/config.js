@@ -12,6 +12,7 @@ export const metaSidebarWidth = {
 export const sidebarWidth = {
   open: 400,
   closed: 56,
+  breakpoint: 700,
 };
 export const codeSidebarWidth = {
   open: 480,
