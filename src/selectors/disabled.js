@@ -9,6 +9,7 @@ import {
   getAllEdges,
   getModularPipelineCount,
   getModularPipelineChildren,
+  getModularPipelineParents,
 } from './modular-pipelines';
 import { getTagCount } from './tags';
 
@@ -160,9 +161,9 @@ export const getNodeDisabledExclModPip = createSelector(
 );
 
 /**
- * Set disabled status if the node is specifically hidden, and/or via a tag/view/type/modularPipeline
+ * Set disabled status if the modular pipeline's children are all disabled
  */
-export const getModularPipelineDisabled = createSelector(
+export const getModularPipelineDisabledChildren = createSelector(
   [
     getModularPipelineIDs,
     getNodeDisabledNode,
@@ -172,7 +173,6 @@ export const getModularPipelineDisabled = createSelector(
     getNodeType,
     getNodeTypeDisabled,
     getModularPipelineChildren,
-    getModularPipelineContracted,
   ],
   (
     modularPipelineIDs,
@@ -182,8 +182,7 @@ export const getModularPipelineDisabled = createSelector(
     nodeDisabledPipeline,
     nodeType,
     typeDisabled,
-    modularPipelineChildren,
-    modularPipelineContracted
+    modularPipelineChildren
   ) =>
     arrayToObject(modularPipelineIDs, (modPipID) => {
       const children = Object.keys(modularPipelineChildren[modPipID]);
@@ -195,9 +194,50 @@ export const getModularPipelineDisabled = createSelector(
           nodeDisabledPipeline[nodeID] ||
           typeDisabled[nodeType[nodeID]]
       );
-      const isContracted = modularPipelineContracted[modPipID];
-      return allChildrenAreDisabled || !isContracted;
+      return allChildrenAreDisabled;
     })
+);
+
+/**
+ * Set disabled status if the node is specifically hidden, and/or via a tag/view/type/modularPipeline
+ */
+export const getModularPipelineParentsContracted = createSelector(
+  [
+    getModularPipelineIDs,
+    getModularPipelineParents,
+    getModularPipelineContracted,
+  ],
+  (modularPipelineIDs, modularPipelineParents, modularPipelineContracted) =>
+    arrayToObject(modularPipelineIDs, (modPipID) =>
+      modularPipelineParents[modPipID].some(
+        (id) => modularPipelineContracted[id]
+      )
+    )
+);
+
+/**
+ * Set disabled status if the node is specifically hidden, and/or via a tag/view/type/modularPipeline
+ */
+export const getModularPipelineDisabled = createSelector(
+  [
+    getModularPipelineIDs,
+    getModularPipelineDisabledChildren,
+    getModularPipelineParentsContracted,
+    getModularPipelineContracted,
+  ],
+  (
+    modularPipelineIDs,
+    modularPipelineDisabledChildren,
+    modularPipelineParentsContracted,
+    modularPipelineContracted
+  ) =>
+    arrayToObject(
+      modularPipelineIDs,
+      (id) =>
+        modularPipelineDisabledChildren[id] ||
+        modularPipelineParentsContracted[id] ||
+        !modularPipelineContracted[id]
+    )
 );
 
 /**

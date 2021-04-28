@@ -54,7 +54,7 @@ export const getModularPipelineCount = createSelector(
 );
 
 /**
- * Create an object listing all the nodes in each modular pipeline
+ * List all the child nodes in each modular pipeline
  */
 export const getModularPipelineChildren = createSelector(
   [getModularPipelineIDs, getNodeIDs, getNodeModularPipelines],
@@ -70,6 +70,26 @@ export const getModularPipelineChildren = createSelector(
     });
     return modPipNodes;
   }
+);
+
+/**
+ * List all the parent modular pipelines for a given modular pipeline
+ */
+export const getModularPipelineParents = createSelector(
+  [getModularPipelineIDs],
+  (modularPipelineIDs) =>
+    arrayToObject(modularPipelineIDs, (modPipID) =>
+      modPipID.split('.').reduce((parents, part, i, parts) => {
+        if (i < parts.length - 1) {
+          let parent = part;
+          if (i > 0) {
+            parent = parents[parents.length - 1] + '.' + parent;
+          }
+          parents.push(parent);
+        }
+        return parents;
+      }, [])
+    )
 );
 
 /**
