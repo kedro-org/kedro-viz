@@ -2,7 +2,11 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
-import { getAllNodeIDs, getAllNodeNames } from './modular-pipelines';
+import {
+  getAllNodeIDs,
+  getAllNodeNames,
+  getAllNodeTypes,
+} from './modular-pipelines';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -182,33 +186,47 @@ export const getNodeTextWidth = createSelector(
 /**
  * Get the top/bottom and left/right padding for a node
  * @param {Boolean} showLabels Whether labels are visible
- * @param {Boolean} isTask Whether the node is a task type (vs data/params)
+ * @param {string} nodeType task/data/parameters/pipeline
  */
-export const getPadding = (showLabels, isTask) => {
+export const getPadding = (showLabels, nodeType) => {
   if (showLabels) {
-    if (isTask) {
-      return { x: 16, y: 10 };
+    switch (nodeType) {
+      case 'pipeline':
+        return { x: 30, y: 22 };
+      case 'task':
+        return { x: 16, y: 10 };
+      default:
+        return { x: 20, y: 10 };
     }
-    return { x: 20, y: 10 };
   }
-  if (isTask) {
-    return { x: 14, y: 14 };
+  switch (nodeType) {
+    case 'pipeline':
+      return { x: 25, y: 25 };
+    case 'task':
+      return { x: 14, y: 14 };
+    default:
+      return { x: 16, y: 16 };
   }
-  return { x: 16, y: 16 };
 };
 
 /**
  * Calculate node width/height and icon/text positioning
  */
 export const getNodeSize = createSelector(
-  [getAllNodeIDs, getNodeTextWidth, getTextLabels, getNodeType, getFontLoaded],
+  [
+    getAllNodeIDs,
+    getNodeTextWidth,
+    getTextLabels,
+    getAllNodeTypes,
+    getFontLoaded,
+  ],
   (nodeIDs, nodeTextWidth, textLabels, nodeType, fontLoaded) => {
     if (!fontLoaded) {
       return {};
     }
     return arrayToObject(nodeIDs, (nodeID) => {
       const iconSize = textLabels ? 24 : 28;
-      const padding = getPadding(textLabels, nodeType[nodeID] === 'task');
+      const padding = getPadding(textLabels, nodeType[nodeID]);
       const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
       const textGap = textLabels ? 6 : 0;
       const innerWidth = iconSize + textWidth + textGap;
@@ -233,7 +251,7 @@ export const getVisibleNodes = createSelector(
     getFontLoaded,
     getVisibleNodeIDs,
     getAllNodeNames,
-    getNodeType,
+    getAllNodeTypes,
     getNodeFullName,
     getNodeSize,
     getNodeLayer,
@@ -256,8 +274,8 @@ export const getVisibleNodes = createSelector(
       id,
       name: nodeName[id],
       label: nodeName[id],
-      fullName: nodeFullName[id] || nodeName[id],
-      type: nodeType[id] || 'pipeline',
+      fullName: nodeFullName[id] || id,
+      type: nodeType[id],
       layer: nodeLayer[id],
       rank: nodeRank[id],
       ...nodeSize[id],

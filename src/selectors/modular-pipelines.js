@@ -9,6 +9,7 @@ const getModularPipelineContracted = (state) =>
   state.modularPipeline.contracted;
 const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
+const getNodeType = (state) => state.node.type;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
@@ -163,6 +164,17 @@ export const getAllNodeNames = createSelector(
 );
 
 /**
+ * Get the types of all nodes and modular pipelines combined before filtering
+ */
+export const getAllNodeTypes = createSelector(
+  [getNodeType, getModularPipelineIDs],
+  (nodeType, modularPipelineIDs) => ({
+    ...arrayToObject(modularPipelineIDs, () => 'pipeline'),
+    ...nodeType,
+  })
+);
+
+/**
  * Get the IDs of all edges and generated modular pipeline edges,
  * with their sources and targets, combined before filtering
  */
@@ -202,6 +214,7 @@ export const getModularPipelineData = createSelector(
         contracted: Boolean(
           modularPipelineParentsContracted[id] || modularPipelineContracted[id]
         ),
+        disabled: Boolean(modularPipelineParentsContracted[id]),
         enabled: Boolean(modularPipelineEnabled[id]),
       }))
 );

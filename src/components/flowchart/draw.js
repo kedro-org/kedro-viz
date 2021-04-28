@@ -101,7 +101,12 @@ const updateNodeRects = (nodeRects) =>
     .attr('height', (node) => node.height - 5)
     .attr('x', (node) => (node.width - 5) / -2)
     .attr('y', (node) => (node.height - 5) / -2)
-    .attr('rx', (node) => (node.type === 'task' ? 0 : node.height / 2));
+    .attr('rx', (node) => {
+      if (node.type === 'task' || node.type === 'pipeline') {
+        return 0;
+      }
+      return node.height / 2;
+    });
 
 /**
  * Render node icons and name labels
