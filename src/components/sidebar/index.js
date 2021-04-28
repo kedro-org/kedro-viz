@@ -14,6 +14,7 @@ import './sidebar.css';
  */
 export const Sidebar = ({ visible }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
+
   return (
     <>
       <div
