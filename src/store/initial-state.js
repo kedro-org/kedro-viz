@@ -99,7 +99,7 @@ export const prepareNonPipelineState = (props) => {
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
   const storedState = loadState();
-  if (nonPipelineState.flags.parameters) {
+  if (nonPipelineState.flags.newparams) {
     saveState({
       nodeType: {
         disabled: { ...storedState?.nodeType?.disabled, parameters: true },

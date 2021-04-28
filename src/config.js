@@ -36,8 +36,10 @@ export const flags = {
     default: false,
     icon: '😴',
   },
-  parameters: {
-    description: 'Hides parameters by default on page load',
+  newparams: {
+    description: `Enables new behaviour of parameter nodes, 
+    which includes disabling parameter nodes by default, 
+    and will be highlighted on toggling their visibility. (default false)`,
     default: true,
     icon: '🎛️',
   },
