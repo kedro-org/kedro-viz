@@ -206,9 +206,9 @@ let isDancing = false;
 
 There are a few exceptions to this rule as they can be useful when working with D3, or for some common function arguments (e.g. `i` for index). But you should try to use more informative names for the most part.
 
-❌ DO NOT use abbreviations, acronyms or contractions as part of identifier names.
+❌ AVOID using abbreviations, acronyms or contractions as part of identifier names.
 
-For example, use `getObject` rather than `getObj`. The exception to this is if the acronym is well known for this domain - e.g. JSON.
+For example, prefer `getObject` instead `getObj`, unless it is practically unavoidable. The exception is if the acronym or abbreviation is well known for this domain - e.g. JSON or ID.
 
 ### Imports
 
