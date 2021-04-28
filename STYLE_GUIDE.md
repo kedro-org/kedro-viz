@@ -198,7 +198,7 @@ let isDancing = false;
 
 ✅ DO use UPPER_CASE for constant values.
 
-✅ DO use camel-case for file names.
+✅ DO use kebab-case for file names.
 
 ❌ DO NOT use snake_case, except in JSON APIs.
 
