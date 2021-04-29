@@ -29,8 +29,6 @@ export const prepareState = ({
   const actions = [
     // Set fontLoaded = true:
     () => updateFontLoaded(true),
-    // Enable parameters as they are disabled by default:
-    () => toggleTypeDisabled('parameters', false),
     // Per-test provided actions before layout:
     ...beforeLayoutActions,
     // Precalculate graph layout:

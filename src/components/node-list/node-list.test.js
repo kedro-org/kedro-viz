@@ -273,7 +273,7 @@ describe('NodeList', () => {
         ['Parameters', false],
         ['Params:pipeline100.data Science.plankton', false],
         ['Params:pipeline2.data Science.plankton', false],
-        ['Params:rabbit', false],
+        ['Paramsp:rabbit', false],
       ]);
     });
 
