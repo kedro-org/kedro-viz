@@ -7,7 +7,7 @@ import {
   getVisibleLayerIDs,
 } from './disabled';
 import { toggleNodesDisabled } from '../actions/nodes';
-import { toggleLayers, toggleParametersHovered, toggleTheme } from '../actions';
+import { toggleLayers } from '../actions';
 import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
 import { toggleTypeDisabled } from '../actions/node-type';

@@ -23,7 +23,8 @@ describe('Selectors', () => {
     const prepareLargeDataset = () => {
       const data = { ...animals };
       let extraNodes = [];
-      const iterations = Math.ceil(largeGraphThreshold / data.nodes.length) + 1;
+      const iterations =
+        Math.ceil((largeGraphThreshold * 2) / data.nodes.length) + 1;
       new Array(iterations).fill().forEach((d, i) => {
         const extraNodeGroup = data.nodes.map((node) => ({
           ...node,
