@@ -47,27 +47,24 @@ export const getModularPipelineChildren = createSelector(
 );
 
 /**
- * List all the parent modular pipelines for a given modular pipeline
+ * List all the parent modular pipelines for a given modular pipeline.
+ * This assumes that IDs of modular pipelines contain their full path with
+ * dot separators, e.g. foo.bar.baz is the child of foo.bar and foo.
  */
 export const getModularPipelineParents = createSelector(
   [getModularPipelineIDs],
   (modularPipelineIDs) =>
     arrayToObject(modularPipelineIDs, (modPipID) =>
-      modPipID.split('.').reduce((parents, part, i, parts) => {
-        if (i < parts.length - 1) {
-          let parent = part;
-          if (i > 0) {
-            parent = parents[parents.length - 1] + '.' + parent;
-          }
-          parents.push(parent);
-        }
-        return parents;
-      }, [])
+      modPipID
+        .split('.')
+        .map((part, i, parts) => parts.slice(0, i).join('.'))
+        .slice(1)
     )
 );
 
 /**
- * Set disabled status if the node is specifically hidden, and/or via a tag/view/type/modularPipeline
+ * Set disabled status if the node is specifically hidden,
+ * and/or via a tag/view/type/modularPipeline
  */
 export const getModularPipelineParentsContracted = createSelector(
   [
