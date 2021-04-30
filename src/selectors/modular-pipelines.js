@@ -81,7 +81,7 @@ export const getModularPipelineParentsContracted = createSelector(
 );
 
 /**
- * Get a list of input/output edges of visible modular pipeline pseudo-nodes
+ * Get a list of input/output edges of modular pipeline pseudo-nodes
  * by examining the edges of their childen, and also create transitive edges
  * between collapsed modular pipelines
  */
@@ -109,34 +109,38 @@ export const getModularPipelineEdges = createSelector(
       targets: {},
     };
 
+    // Add a new edge to the list, if it doesn't already exist
     const addNewEdge = (source, target) => {
       const id = [source, target].join('|');
       edges.ids[id] = true;
       edges.sources[id] = source;
       edges.targets[id] = target;
     };
-    modularPipelineIDs.forEach((modPipID) => {
-      const modPipNodes = modularPipelineChildren[modPipID];
-      edgeIDs.forEach((edgeID) => {
+
+    for (const modPipID of modularPipelineIDs) {
+      const children = modularPipelineChildren[modPipID];
+
+      for (const edgeID of edgeIDs) {
         const source = edgeSources[edgeID];
         const target = edgeTargets[edgeID];
-        if (modPipNodes[target] && !modPipNodes[source]) {
-          // input edge
+        const isInputEdge = children[target] && !children[source];
+        const isOutputEdge = children[source] && !children[target];
+
+        if (isInputEdge) {
           addNewEdge(source, modPipID);
-          // if source has mod pip parents, link to those as well
+          // If source has modular pipeline parents, link to those too:
           nodeModularPipelines[source].forEach((parent) => {
             addNewEdge(parent, modPipID);
           });
-        } else if (modPipNodes[source] && !modPipNodes[target]) {
-          // output edge
+        } else if (isOutputEdge) {
           addNewEdge(modPipID, target);
-          // if target has mod pip parents, link to those as well
+          // If target has modular pipeline parents, link to those too:
           nodeModularPipelines[target].forEach((parent) => {
             addNewEdge(modPipID, parent);
           });
         }
-      });
-    });
+      }
+    }
     return edges;
   }
 );
