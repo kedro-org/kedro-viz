@@ -166,33 +166,14 @@ export const getNodeDisabledExclModPip = createSelector(
 export const getModularPipelineDisabledChildren = createSelector(
   [
     getModularPipelineIDs,
-    getNodeDisabledNode,
-    getNodeDisabledTag,
-    getNodeDisabledModularPipelineFilter,
-    getNodeDisabledPipeline,
-    getNodeType,
-    getNodeTypeDisabled,
     getModularPipelineChildren,
+    getNodeDisabledExclModPip,
   ],
-  (
-    modularPipelineIDs,
-    nodeDisabledNode,
-    nodeDisabledTag,
-    nodeDisabledModularPipelineFilter,
-    nodeDisabledPipeline,
-    nodeType,
-    typeDisabled,
-    modularPipelineChildren
-  ) =>
+  (modularPipelineIDs, modularPipelineChildren, nodeDisabledExclModPip) =>
     arrayToObject(modularPipelineIDs, (modPipID) => {
       const children = Object.keys(modularPipelineChildren[modPipID]);
       const allChildrenAreDisabled = children.every(
-        (nodeID) =>
-          nodeDisabledNode[nodeID] ||
-          nodeDisabledTag[nodeID] ||
-          nodeDisabledModularPipelineFilter[nodeID] ||
-          nodeDisabledPipeline[nodeID] ||
-          typeDisabled[nodeType[nodeID]]
+        (nodeID) => nodeDisabledExclModPip[nodeID]
       );
       return allChildrenAreDisabled;
     })
