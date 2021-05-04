@@ -287,7 +287,7 @@ describe('FlowChart', () => {
 
   it('applies .parameters class to all the edges from parameter nodes', () => {
     const wrapper = setup.mount(<FlowChart />);
-    expect(wrapper.render().find('.pipeline-edge--parameters ').length).toBe(4);
+    expect(wrapper.render().find('.pipeline-edge--parameters').length).toBe(4);
   });
 
   it('shows layers when layers are visible', () => {
