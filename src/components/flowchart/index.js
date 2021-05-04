@@ -506,13 +506,13 @@ export class FlowChart extends Component {
             ref={this.wrapperRef}>
             <defs>
               {(this.props.newParamsFlag
-                ? ['arrowhead', 'arrowhead-accent']
+                ? ['arrowhead', 'arrowhead--accent']
                 : ['arrowhead']
               ).map((id) => (
                 <marker
                   id={`pipeline-${id}`}
-                  key={`pipeline-${id}`}
-                  className="pipeline-flowchart__arrowhead"
+                  key={id}
+                  className={`pipeline-flowchart__${id}`}
                   viewBox="0 0 10 10"
                   refX="7"
                   refY="5"

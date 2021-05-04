@@ -114,8 +114,7 @@ export function loadInitialPipelineData() {
  */
 export function loadPipelineData(pipelineID) {
   return async function (dispatch, getState) {
-    const state = getState();
-    const { dataSource, pipeline } = state;
+    const { dataSource, pipeline } = getState();
     if (pipelineID && pipelineID === pipeline.active) {
       return;
     }

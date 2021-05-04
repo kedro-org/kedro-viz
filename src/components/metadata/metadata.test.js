@@ -14,10 +14,8 @@ describe('MetaData', () => {
   const mount = (props) => {
     return setup.mount(<MetaData visible={true} />, {
       afterLayoutActions: [
-        () => {
-          // Click the expected node
-          return toggleNodeClicked(props.nodeId);
-        },
+        // Click the expected node
+        () => toggleNodeClicked(props.nodeId),
       ],
     });
   };
@@ -40,11 +38,7 @@ describe('MetaData', () => {
       const metadata = getClickedNodeMetaData(
         prepareState({
           data: animals,
-          afterLayoutActions: [
-            () => {
-              return toggleNodeClicked(salmonTaskNodeId);
-            },
-          ],
+          afterLayoutActions: [() => toggleNodeClicked(salmonTaskNodeId)],
         })
       );
       // Add extra mock parameters

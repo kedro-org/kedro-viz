@@ -311,7 +311,7 @@ export const drawEdges = function (changed) {
       .append('path')
       .attr('marker-end', (edge) =>
         edge.sourceNode.type === 'parameters'
-          ? `url(#pipeline-arrowhead-accent)`
+          ? `url(#pipeline-arrowhead--accent)`
           : `url(#pipeline-arrowhead)`
       );
 
