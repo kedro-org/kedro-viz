@@ -31,11 +31,6 @@ export const flags = {
     private: false,
     icon: '📈',
   },
-  lazy: {
-    description: 'Improved sidebar performance',
-    default: false,
-    icon: '😴',
-  },
   newparams: {
     description: `Disable parameters on page load and highlight parameter connections.`,
     default: true,

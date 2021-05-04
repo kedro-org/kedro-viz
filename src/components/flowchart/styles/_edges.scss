@@ -8,9 +8,6 @@
 }
 
 .pipeline-edge--parameters path {
-  pointer-events: none;
-  fill: none;
-  stroke-width: 1.5px;
   stroke: var(--parameter-accent);
 }
 
@@ -22,6 +19,6 @@
   fill: var(--edge-arrowhead-fill);
 }
 
-#pipeline-arrowhead-accent {
+.pipeline-flowchart__arrowhead--accent {
   fill: var(--parameter-accent);
 }

@@ -362,7 +362,7 @@ describe('Selectors', () => {
       toggleTypeDisabled('parameters', true)
     );
     const nodesWithInputParams = getNodesWithInputParams(newMockState);
-    it('returns an onject', () => {
+    it('returns an object', () => {
       expect(nodesWithInputParams).toEqual(expect.any(Object));
     });
 

@@ -12,12 +12,8 @@ const rabbitParamsNodeId = 'c38d4c6a';
 describe('MetaData', () => {
   const mount = (props) => {
     return setup.mount(<MetaData visible={true} />, {
-      afterLayoutActions: [
-        () => {
-          // Click the expected node
-          return toggleNodeClicked(props.nodeId);
-        },
-      ],
+      // Click the expected node
+      afterLayoutActions: [() => toggleNodeClicked(props.nodeId)],
     });
   };
 
@@ -35,12 +31,7 @@ describe('MetaData', () => {
       const metadata = getClickedNodeMetaData(
         prepareState({
           data: animals,
-          afterLayoutActions: [
-            () => {
-              // Click the expected node
-              return toggleNodeClicked(salmonTaskNodeId);
-            },
-          ],
+          afterLayoutActions: [() => toggleNodeClicked(salmonTaskNodeId)],
         })
       );
 
