@@ -7,6 +7,7 @@ import {
   getNodeDisabled,
   getNodeDisabledTag,
   getVisibleNodeIDs,
+  getNodeDisabledModularPipeline,
 } from './disabled';
 import { getNodeRank } from './ranks';
 
@@ -14,10 +15,12 @@ const getNodeName = (state) => state.node.name;
 const getNodeFullName = (state) => state.node.fullName;
 const getNodeDisabledNode = (state) => state.node.disabled;
 const getNodeTags = (state) => state.node.tags;
+const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getNodeType = (state) => state.node.type;
 const getNodeLayer = (state) => state.node.layer;
 const getHoveredNode = (state) => state.node.hovered;
 const getTagActive = (state) => state.tag.active;
+const getModularPipelineActive = (state) => state.modularPipeline.active;
 const getTextLabels = (state) => state.textLabels;
 const getFontLoaded = (state) => state.fontLoaded;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
@@ -36,17 +39,36 @@ export const getGraphNodes = createSelector(
 );
 
 /**
- * Set active status if the node is specifically highlighted, and/or via an associated tag
+ * Set active status if the node is specifically highlighted, and/or via an associated tag or modular pipeline
  */
 export const getNodeActive = createSelector(
-  [getPipelineNodeIDs, getHoveredNode, getNodeTags, getTagActive],
-  (nodeIDs, hoveredNode, nodeTags, tagActive) =>
+  [
+    getPipelineNodeIDs,
+    getHoveredNode,
+    getNodeTags,
+    getNodeModularPipelines,
+    getTagActive,
+    getModularPipelineActive,
+  ],
+  (
+    nodeIDs,
+    hoveredNode,
+    nodeTags,
+    nodeModularPipelines,
+    tagActive,
+    modularPipelineActive
+  ) =>
     arrayToObject(nodeIDs, (nodeID) => {
       if (nodeID === hoveredNode) {
         return true;
       }
       const activeViaTag = nodeTags[nodeID].some((tag) => tagActive[tag]);
-      return Boolean(activeViaTag);
+      const activeViaModularPipeline =
+        nodeModularPipelines[nodeID] &&
+        nodeModularPipelines[nodeID].some(
+          (modularPipeline) => modularPipelineActive[modularPipeline]
+        );
+      return Boolean(activeViaTag) || Boolean(activeViaModularPipeline);
     })
 );
 
@@ -73,6 +95,7 @@ export const getNodeData = createSelector(
     getNodeDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
+    getNodeDisabledModularPipeline,
     getNodeTypeDisabled,
   ],
   (
@@ -82,12 +105,17 @@ export const getNodeData = createSelector(
     nodeDisabled,
     nodeDisabledNode,
     nodeDisabledTag,
+    nodeDisabledModularPipeline,
     typeDisabled
   ) =>
     nodeIDs
       .sort((a, b) => {
-        if (nodeName[a] < nodeName[b]) return -1;
-        if (nodeName[a] > nodeName[b]) return 1;
+        if (nodeName[a] < nodeName[b]) {
+          return -1;
+        }
+        if (nodeName[a] > nodeName[b]) {
+          return 1;
+        }
         return 0;
       })
       .map((id) => ({
@@ -97,6 +125,7 @@ export const getNodeData = createSelector(
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),
         disabled_tag: nodeDisabledTag[id],
+        disabled_modularPipeline: nodeDisabledModularPipeline[id],
         disabled_type: Boolean(typeDisabled[nodeType[id]]),
       }))
 );

@@ -510,7 +510,7 @@ describe('constraints', () => {
       (edgeA.sourceNode.x - edgeB.sourceNode.x) *
         (edgeA.targetNode.x - edgeB.targetNode.x) <
       0;
-    
+
     // Expect edges to be initially crossing
     expect(isCrossing(testEdgeA, testEdgeB)).toBe(true);
 

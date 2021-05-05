@@ -71,7 +71,7 @@ export const crossingConstraint = {
     const resolveSource =
       strength *
       ((edgeA.sourceNode.x - edgeB.sourceNode.x - separationA) / separationA);
-    
+
     const resolveTarget =
       strength *
       ((edgeA.targetNode.x - edgeB.targetNode.x - separationB) / separationB);

@@ -14,6 +14,7 @@ import { mockState } from '../../utils/state.mock';
 import { getGroupedNodes } from '../../selectors/nodes';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData } from '../../selectors/tags';
+import { getModularPipelineData } from '../../selectors/modular-pipelines';
 
 const ungroupNodes = (groupedNodes) =>
   Object.keys(groupedNodes).reduce(
@@ -118,7 +119,7 @@ describe('node-list-selectors', () => {
   });
 
   describe('getSections', () => {
-    const sections = getSections();
+    const sections = getSections({ flags: { modularpipeline: false } });
 
     const section = expect.arrayContaining([
       expect.objectContaining({
@@ -138,7 +139,9 @@ describe('node-list-selectors', () => {
     const filteredItems = getFilteredItems({
       nodes: getGroupedNodes(mockState.animals),
       tags: getTagData(mockState.animals),
+      modularPipelines: getModularPipelineData(mockState.animals),
       tagsEnabled: {},
+      modularPipelinesEnabled: {},
       nodeSelected: {},
       searchValue,
     });
@@ -160,10 +163,11 @@ describe('node-list-selectors', () => {
     ]);
 
     it('filters expected number of items', () => {
-      expect(filteredItems.task).toHaveLength(2);
-      expect(filteredItems.data).toHaveLength(6);
-      expect(filteredItems.parameters).toHaveLength(2);
+      expect(filteredItems.task).toHaveLength(3);
+      expect(filteredItems.data).toHaveLength(10);
+      expect(filteredItems.parameters).toHaveLength(4);
       expect(filteredItems.tag).toHaveLength(2);
+      expect(filteredItems.modularPipeline).toHaveLength(3);
     });
 
     it('returns items for each type in the correct format', () => {
@@ -180,10 +184,13 @@ describe('node-list-selectors', () => {
 
   describe('getGroups', () => {
     const types = getNodeTypes(mockState.animals);
+
     const items = getFilteredItems({
       nodes: getGroupedNodes(mockState.animals),
       tags: getTagData(mockState.animals),
+      modularPipelines: getModularPipelineData(mockState.animals),
       tagsEnabled: {},
+      modularPipelinesEnabled: {},
       nodeSelected: {},
       searchValue: '',
     });
