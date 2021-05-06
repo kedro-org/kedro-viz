@@ -7,6 +7,7 @@ import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import {
   toggleModularPipelineActive,
   toggleModularPipelineFilter,
+  toggleModularPipelineContracted,
 } from '../../actions/modular-pipelines';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { getNodeTypes } from '../../selectors/node-types';
@@ -47,6 +48,7 @@ const NodeListProvider = ({
   onToggleTagFilter,
   onToggleModularPipelineActive,
   onToggleModularPipelineFilter,
+  onToggleModularPipelineContracted,
   onToggleTypeDisabled,
   modularPipelines,
   modularPipelinesEnabled,
@@ -187,6 +189,7 @@ const NodeListProvider = ({
       searchValue={searchValue}
       onUpdateSearchValue={updateSearchValue}
       onToggleGroupChecked={onToggleGroupChecked}
+      onToggleContracted={onToggleModularPipelineContracted}
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
@@ -219,6 +222,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleModularPipelineFilter: (modularPipelineIDs, enabled) => {
     dispatch(toggleModularPipelineFilter(modularPipelineIDs, enabled));
+  },
+  onToggleModularPipelineContracted: (id, contracted) => {
+    dispatch(toggleModularPipelineContracted(id, contracted));
   },
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));

@@ -1,3 +1,5 @@
+@import '../../../styles/mixins';
+
 /*
 
   Notes: 
@@ -65,5 +67,18 @@
     &--faded > * {
       opacity: 0.55;
     }
+  }
+}
+
+.pipeline-nodelist__row__contract {
+  @include resetButton;
+  position: absolute;
+  right: 3em;
+  z-index: 5;
+  width: 3em;
+  padding: 0.5em;
+
+  &:hover {
+    background-color: var(--color-bg-1);
   }
 }
