@@ -6,6 +6,7 @@ import IconButton from '../../components/icon-button';
 import CopyIcon from '../icons/copy';
 import CloseIcon from '../icons/close';
 import MetaDataRow from './metadata-row';
+import PlotlyChart from '../plotly-chart';
 import MetaDataValue from './metadata-value';
 import MetaDataCode from './metadata-code';
 import MetaCodeToggle from './metadata-code-toggle';
@@ -35,7 +36,7 @@ const MetaData = ({
   const isTaskNode = metadata?.node.type === 'task';
   const isDataNode = metadata?.node.type === 'data';
   const isParametersNode = metadata?.node.type === 'parameters';
-
+  const isPlotNode = metadata?.node.type === 'plot';
   const hasCode = Boolean(metadata?.code);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
@@ -170,6 +171,14 @@ const MetaData = ({
                 visible={isTaskNode}
                 value={metadata.docstring}
               />
+              <MetaDataRow label="Plotly :" visible={isPlotNode}>
+                <div>
+                  <PlotlyChart
+                    data={metadata.plot.data}
+                    layout={metadata.plot.layout}
+                  />
+                </div>
+              </MetaDataRow>
             </dl>
           </>
         )}

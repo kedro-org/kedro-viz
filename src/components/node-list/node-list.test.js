@@ -222,6 +222,7 @@ describe('NodeList', () => {
         ['Sheep', true],
         ['Parameters', true],
         ['Params:rabbit', true],
+        ['Plot:bull', true],
       ]);
 
       changeRows(wrapper, ['Small', 'Large'], true);
@@ -239,6 +240,7 @@ describe('NodeList', () => {
         ['Sheep', true],
         ['Parameters', true],
         ['Params:rabbit', true],
+        ['Plot:bull', true],
       ]);
     });
 
@@ -274,6 +276,8 @@ describe('NodeList', () => {
         ['Params:pipeline100.data Science.plankton', false],
         ['Params:pipeline2.data Science.plankton', false],
         ['Params:rabbit', false],
+        //Plot
+        ['Plot:bull', false],
       ]);
     });
 
