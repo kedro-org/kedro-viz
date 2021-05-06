@@ -391,7 +391,6 @@ describe('NodeList', () => {
     ]);
     const expectedResult = expect.objectContaining({
       tags: expect.any(Object),
-      tagsEnabled: expect.any(Object),
       nodes: expect.objectContaining({
         data: nodeList,
         task: nodeList,
@@ -399,8 +398,6 @@ describe('NodeList', () => {
       nodeSelected: expect.any(Object),
       types: expect.any(Array),
       modularPipelines: expect.any(Object),
-      modularPipelinesEnabled: expect.any(Object),
-      modularPipelineFlag: expect.any(Boolean),
       sections: expect.any(Object),
     });
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
