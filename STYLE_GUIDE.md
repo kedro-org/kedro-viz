@@ -154,6 +154,62 @@ Prefer:
 
 ## JavaScript
 
+### Variable naming
+
+In order to allow Kedro-Viz to be worked on by many developers from different backgrounds, we try to follow a consistent set of naming conventions. Beyond consistency of form, element names must be easily understood and must convey the function of each element.
+
+✅ DO choose easily readable identifier names.
+
+For example, a variable named `horizontalAlignment` is more English-readable than `alignmentHorizontal`.
+
+✅ DO favour readability over brevity.
+
+The variable name `canScrollHorizontally` is better than `scrollableX`.
+
+✅ DO use verbs in the imperative mood for function/method names.
+
+The function `getSidebarLength()` is better than `sidebarLength()`, as it indicates how it should be used.
+
+✅ DO prefix Boolean variable names to indicate their type, and prefer positive names.
+
+This helps the reader easily infer that this variable is a Boolean value, and helps avoid complicated double-negatives.
+
+Avoid:
+
+```js
+let person = true;
+let age = true;
+let dance = true;
+let notDancing = true;
+```
+
+Prefer:
+
+```js
+let isPerson = true;
+let hasAge = true;
+let canDance = true;
+let isDancing = false;
+```
+
+✅ DO use camelCase for most variable names.
+
+✅ DO use PascalCase for class names.
+
+✅ DO use UPPER_CASE for constant values.
+
+✅ DO use kebab-case for file names.
+
+❌ DO NOT use snake_case, except in JSON APIs.
+
+❌ DO NOT use single letter variable names.
+
+There are a few exceptions to this rule as they can be useful when working with D3, or for some common function arguments (e.g. `i` for index). But you should try to use more informative names for the most part.
+
+❌ AVOID using abbreviations, acronyms or contractions as part of identifier names.
+
+For example, prefer `getObject` instead `getObj`, unless it is practically unavoidable. The exception is if the acronym or abbreviation is well known for this domain - e.g. JSON or ID.
+
 ### Imports
 
 Although it works in regular development (because this project uses React-Scripts), you should avoid importing non-standard file-types like `.scss` and `.svg` directly into JavaScript files. This is because these won't work without specific webpack loaders, and breaks when Kedro-Viz is imported into other projects. The `lib-test` testing suite exists partly for this reason, to check that Kedro-Viz still works when imported as a component library into a fairly standard JS app.
