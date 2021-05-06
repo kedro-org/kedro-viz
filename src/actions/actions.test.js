@@ -10,6 +10,7 @@ import {
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
   TOGGLE_IGNORE_LARGE_WARNING,
+  TOGGLE_PARAMETERS_HOVERED,
   changeFlag,
   resetData,
   toggleLayers,
@@ -20,6 +21,7 @@ import {
   updateChartSize,
   updateFontLoaded,
   toggleIgnoreLargeWarning,
+  toggleParametersHovered,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -88,13 +90,22 @@ describe('actions', () => {
     expect(toggleNodeClicked(nodeClicked)).toEqual(expectedAction);
   });
 
-  it('should create an action to toggle whether a node has been clicked', () => {
+  it('should create an action to toggle whether a node has been hovered', () => {
     const nodeHovered = '12367890';
     const expectedAction = {
       type: TOGGLE_NODE_HOVERED,
       nodeHovered,
     };
     expect(toggleNodeHovered(nodeHovered)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether parameters heading in the sidebar has been hovered', () => {
+    const hoveredParameters = true;
+    const expectedAction = {
+      type: TOGGLE_PARAMETERS_HOVERED,
+      hoveredParameters,
+    };
+    expect(toggleParametersHovered(hoveredParameters)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether somes nodes are disabled', () => {

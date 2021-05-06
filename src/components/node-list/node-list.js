@@ -20,6 +20,8 @@ const NodeList = ({
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
+  onSectionMouseEnter,
+  onSectionMouseLeave,
   onItemChange,
 }) => (
   <div
@@ -44,6 +46,8 @@ const NodeList = ({
         onItemClick={onItemClick}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
+        onSectionMouseEnter={onSectionMouseEnter}
+        onSectionMouseLeave={onSectionMouseLeave}
         onItemChange={onItemChange}
         onToggleGroupChecked={onToggleGroupChecked}
       />

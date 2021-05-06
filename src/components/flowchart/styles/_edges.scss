@@ -7,10 +7,18 @@
   stroke: var(--edge-stroke);
 }
 
+.pipeline-edge--parameters path {
+  stroke: var(--parameter-accent);
+}
+
 .pipeline-edge--faded {
   opacity: 0.1;
 }
 
 .pipeline-flowchart__arrowhead {
   fill: var(--edge-arrowhead-fill);
+}
+
+.pipeline-flowchart__arrowhead--accent {
+  fill: var(--parameter-accent);
 }

@@ -58,6 +58,7 @@ export const createInitialPipelineState = () => ({
     active: {},
     enabled: {},
   },
+  hoveredParameters: false,
 });
 
 /**

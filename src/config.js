@@ -32,13 +32,18 @@ export const flags = {
     private: false,
     icon: '📈',
   },
+  newparams: {
+    description: `Disable parameters on page load and highlight parameter connections.`,
+    default: true,
+    icon: '🎛️',
+  },
   sizewarning: {
     description: 'Show a warning before rendering very large graphs',
     default: true,
     icon: '🐳',
   },
   modularpipeline: {
-    description: 'enables modular pipeline features',
+    description: 'Enable modular pipeline features',
     default: false,
     icon: '⛓️',
   },

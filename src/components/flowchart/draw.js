@@ -103,6 +103,13 @@ const updateNodeRects = (nodeRects) =>
     .attr('y', (node) => (node.height - 5) / -2)
     .attr('rx', (node) => (node.type === 'task' ? 0 : node.height / 2));
 
+const updateParameterRect = (nodeRects) =>
+  nodeRects
+    .attr('width', 12)
+    .attr('height', 12)
+    .attr('x', (node) => (node.width + 20) / -2)
+    .attr('y', -6);
+
 /**
  * Render node icons and name labels
  */
@@ -110,8 +117,12 @@ export const drawNodes = function (changed) {
   const {
     clickedNode,
     linkedNodes,
+    nodeTypeDisabled,
     nodeActive,
     nodeSelected,
+    hoveredParameters,
+    nodesWithInputParams,
+    newParamsFlag,
     nodes,
   } = this.props;
 
@@ -134,15 +145,14 @@ export const drawNodes = function (changed) {
     .merge(exitNodes)
     .filter((node) => typeof node !== 'undefined');
 
-  if (changed('nodes')) {
+  if (changed('nodes', 'newParamsFlag')) {
     enterNodes
       .attr('tabindex', '0')
       .attr('class', 'pipeline-node')
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
-      .classed(
-        'pipeline-node--parameters',
-        (node) => node.type === 'parameters'
+      .classed('pipeline-node--parameters', (node) =>
+        newParamsFlag ? node.type === 'parameters' : null
       )
       .classed('pipeline-node--data', (node) => node.type === 'data')
       .classed('pipeline-node--task', (node) => node.type === 'task')
@@ -159,7 +169,12 @@ export const drawNodes = function (changed) {
       .duration(this.DURATION)
       .attr('opacity', 1);
 
-    enterNodes.append('rect');
+    enterNodes.append('rect').attr('class', 'pipeline-node__bg');
+
+    enterNodes
+      .append('rect')
+      .attr('class', 'pipeline-node__parameter-indicator')
+      .call(updateParameterRect);
 
     // Performance: use a single path per icon
     enterNodes
@@ -188,18 +203,36 @@ export const drawNodes = function (changed) {
   }
 
   if (
-    changed('nodes', 'nodeActive', 'nodeSelected', 'clickedNode', 'linkedNodes')
+    changed(
+      'nodes',
+      'nodeTypeDisabled',
+      'nodeActive',
+      'nodeSelected',
+      'hoveredParameters',
+      'nodesWithInputParams',
+      'newParamsFlag',
+      'clickedNode',
+      'linkedNodes'
+    )
   ) {
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
+      .classed(
+        'pipeline-node--collapsed-hint',
+        (node) =>
+          newParamsFlag &&
+          hoveredParameters &&
+          nodesWithInputParams[node.id] &&
+          nodeTypeDisabled.parameters
+      )
       .classed(
         'pipeline-node--faded',
         (node) => clickedNode && !linkedNodes[node.id]
       );
   }
 
-  if (changed('nodes')) {
+  if (changed('nodes', 'newParamsFlag')) {
     allNodes
       .transition('update-nodes')
       .duration(this.DURATION)
@@ -213,13 +246,25 @@ export const drawNodes = function (changed) {
         }
       });
 
-    enterNodes.select('rect').call(updateNodeRects);
+    enterNodes.select('.pipeline-node__bg').call(updateNodeRects);
 
     updateNodes
-      .select('rect')
+      .select('.pipeline-node__bg')
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
       .call(updateNodeRects);
+    allNodes
+      .select('.pipeline-node__parameter-indicator')
+      .classed(
+        'pipeline-node__parameter-indicator--visible',
+        (node) =>
+          newParamsFlag &&
+          nodeTypeDisabled.parameters &&
+          nodesWithInputParams[node.id]
+      )
+      .transition('node-rect')
+      .duration((node) => (node.showText ? 200 : 600))
+      .call(updateParameterRect);
 
     // Performance: icon transitions with CSS on GPU
     allNodes
@@ -244,7 +289,7 @@ export const drawNodes = function (changed) {
  * Render edge lines
  */
 export const drawEdges = function (changed) {
-  const { edges, clickedNode, linkedNodes } = this.props;
+  const { edges, clickedNode, linkedNodes, newParamsFlag } = this.props;
 
   if (changed('edges')) {
     this.el.edges = this.el.edgeGroup
@@ -264,7 +309,11 @@ export const drawEdges = function (changed) {
   if (changed('edges')) {
     enterEdges
       .append('path')
-      .attr('marker-end', (d) => `url(#pipeline-arrowhead)`);
+      .attr('marker-end', (edge) =>
+        edge.sourceNode.type === 'parameters'
+          ? `url(#pipeline-arrowhead--accent)`
+          : `url(#pipeline-arrowhead)`
+      );
 
     enterEdges
       .attr('data-id', (edge) => edge.id)
@@ -299,13 +348,18 @@ export const drawEdges = function (changed) {
     this.el.edges = this.el.edgeGroup.selectAll('.pipeline-edge');
   }
 
-  if (changed('edges', 'clickedNode', 'linkedNodes')) {
-    allEdges.classed(
-      'pipeline-edge--faded',
-      (edge) =>
-        edge &&
-        clickedNode &&
-        (!linkedNodes[edge.source] || !linkedNodes[edge.target])
-    );
+  if (changed('edges', 'clickedNode', 'linkedNodes', 'newParamsFlag')) {
+    allEdges
+      .classed(
+        'pipeline-edge--parameters',
+        (edge) => newParamsFlag && edge.sourceNode.type === 'parameters'
+      )
+      .classed(
+        'pipeline-edge--faded',
+        (edge) =>
+          edge &&
+          clickedNode &&
+          (!linkedNodes[edge.source] || !linkedNodes[edge.target])
+      );
   }
 };

@@ -1,25 +1,20 @@
 import React from 'react';
 import MetaData from './index';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
-import { setup, mockState } from '../../utils/state.mock';
-import { addEdgeLinks } from '../../utils/graph/graph';
+import { toggleNodeClicked } from '../../actions/nodes';
+import { setup, prepareState } from '../../utils/state.mock';
+import animals from '../../utils/data/animals.mock.json';
 
 const salmonTaskNodeId = '443cf06a';
 const catDatasetNodeId = '9d989e8d';
 const rabbitParamsNodeId = 'c38d4c6a';
 
 describe('MetaData', () => {
-  // Add edge links, can be removed when new graph is default
-  addEdgeLinks(mockState.animals.graph.nodes, mockState.animals.graph.edges);
-
   const mount = (props) => {
-    mockState.animals.node.clicked = props.nodeId;
-    return setup.mount(
-      <MetaData
-        visible={true}
-        metadata={getClickedNodeMetaData(mockState.animals)}
-      />
-    );
+    return setup.mount(<MetaData visible={true} />, {
+      // Click the expected node
+      afterLayoutActions: [() => toggleNodeClicked(props.nodeId)],
+    });
   };
 
   const textOf = (elements) => elements.map((element) => element.text());
@@ -33,8 +28,12 @@ describe('MetaData', () => {
   describe('All nodes', () => {
     it('limits parameters to 10 values and expands when button clicked', () => {
       // Get metadata for a sample
-      mockState.animals.node.clicked = salmonTaskNodeId;
-      const metadata = getClickedNodeMetaData(mockState.animals);
+      const metadata = getClickedNodeMetaData(
+        prepareState({
+          data: animals,
+          afterLayoutActions: [() => toggleNodeClicked(salmonTaskNodeId)],
+        })
+      );
 
       // Add extra mock parameters
       metadata.parameters = Array.from({ length: 20 }, (_, i) => `Test: ${i}`);
