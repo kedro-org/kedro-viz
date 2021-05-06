@@ -217,7 +217,7 @@ export const getFilteredNodeItems = createSelector(
 );
 
 /**
- * Get sidebar node-list sections
+ * Get sidebar node-list section config object, with/without modular pipelines
  * @param {boolean} modularPipelineFlag Whether to include modular pipelines
  * @return {object} config
  */
