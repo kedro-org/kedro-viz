@@ -155,7 +155,7 @@ const addNode = (state) => (node) => {
  */
 const addEdge = (state) => ({ source, target }) => {
   const id = createEdgeID(source, target);
-  if (state.edge.ids.includes(id)) {
+  if (state.edge.sources[id]) {
     return;
   }
   state.edge.ids.push(id);
@@ -169,17 +169,22 @@ const addEdge = (state) => ({ source, target }) => {
  */
 const addTag = (state) => (tag) => {
   const { id } = tag;
+  if (state.tag.name[id]) {
+    return;
+  }
   state.tag.ids.push(id);
   state.tag.name[id] = tag.name;
 };
 
 /**
  * Add a new Layer if it doesn't already exist
- * @param {Object} layer - Layer object
+ * @param {string} layer - Layer ID
  */
 const addLayer = (state) => (layer) => {
-  // using layer name as both layerId and name.
-  // It futureproofs it if we need a separate layer ID in the future.
+  // Use layer name as both layer ID and name
+  if (state.layer.name[layer]) {
+    return;
+  }
   state.layer.ids.push(layer);
   state.layer.name[layer] = layer;
 };
