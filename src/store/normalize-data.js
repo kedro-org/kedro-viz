@@ -1,65 +1,5 @@
+import cloneDeep from 'lodash.clonedeep';
 import { arrayToObject } from '../utils';
-
-/**
- * Create new default pipeline state instance
- * @return {object} state
- */
-export const createInitialPipelineState = () => ({
-  pipeline: {
-    ids: [],
-    name: {},
-  },
-  modularPipeline: {
-    ids: [],
-    name: {},
-    enabled: {},
-    active: {},
-  },
-  node: {
-    ids: [],
-    name: {},
-    fullName: {},
-    type: {},
-    tags: {},
-    layer: {},
-    disabled: {},
-    pipelines: {},
-    clicked: null,
-    hovered: null,
-    fetched: {},
-    code: {},
-    parameters: {},
-    filepath: {},
-    datasetType: {},
-    modularPipelines: {},
-  },
-  nodeType: {
-    ids: ['task', 'data', 'parameters'],
-    name: {
-      data: 'Datasets',
-      task: 'Nodes',
-      parameters: 'Parameters',
-    },
-    disabled: {},
-  },
-  edge: {
-    ids: [],
-    sources: {},
-    targets: {},
-  },
-  layer: {
-    ids: [],
-    name: {},
-    visible: true,
-  },
-  tag: {
-    ids: [],
-    name: {},
-    active: {},
-    enabled: {},
-  },
-  hoveredParameters: false,
-});
 
 /**
  * Check whether data is in expected format
@@ -104,6 +44,25 @@ const addPipeline = (state) => (pipeline) => {
   }
   state.pipeline.ids.push(id);
   state.pipeline.name[id] = pipeline.name;
+};
+
+/**
+ * Update the value of the active pipeline and main pipeline
+ * @param {object} data Raw input
+ * @param {object} newState.pipeline State pipeline output
+ * @returns
+ */
+const setActivePipeline = (data, { pipeline }) => {
+  if (pipeline.ids.length) {
+    // Set to specified value, or the first in the list as fallback
+    pipeline.main = data.selected_pipeline || pipeline.ids[0];
+    // Set main as active if it's not already set, or
+    // if the active pipeline from localStorage isn't recognised:
+    if (!pipeline.active || !pipeline.ids.includes(pipeline.active)) {
+      pipeline.active = pipeline.main;
+    }
+  }
+  return pipeline;
 };
 
 /**
@@ -194,39 +153,36 @@ const addLayer = (state) => (layer) => {
  * @param {Object} data Raw unformatted data input
  * @return {Object} Formatted, normalized state
  */
-const normalizeData = (data) => {
-  const state = createInitialPipelineState();
+const normalizeData = (state, data) => {
+  const newState = cloneDeep(state);
 
   if (data === 'json') {
-    state.dataSource = 'json';
+    newState.dataSource = 'json';
   } else if (data.source) {
-    state.dataSource = data.source;
+    newState.dataSource = data.source;
   }
 
   if (!validateInput(data)) {
-    return state;
+    return newState;
   }
 
-  data.nodes.forEach(addNode(state));
-  data.edges.forEach(addEdge(state));
+  data.nodes.forEach(addNode(newState));
+  data.edges.forEach(addEdge(newState));
   if (data.pipelines) {
-    data.pipelines.forEach(addPipeline(state));
-    if (state.pipeline.ids.length) {
-      state.pipeline.main = data.selected_pipeline || state.pipeline.ids[0];
-      state.pipeline.active = state.pipeline.main;
-    }
+    data.pipelines.forEach(addPipeline(newState));
+    newState.pipeline = setActivePipeline(data, newState);
   }
   if (data.modular_pipelines) {
-    data.modular_pipelines.forEach(addModularPipeline(state));
+    data.modular_pipelines.forEach(addModularPipeline(newState));
   }
   if (data.tags) {
-    data.tags.forEach(addTag(state));
+    data.tags.forEach(addTag(newState));
   }
   if (data.layers) {
-    data.layers.forEach(addLayer(state));
+    data.layers.forEach(addLayer(newState));
   }
 
-  return state;
+  return newState;
 };
 
 export default normalizeData;

@@ -1,6 +1,6 @@
 import { getUrl } from '../utils';
 import loadJsonData from '../store/load-data';
-import { preparePipelineState } from '../store/initial-state';
+import normalizeData from '../store/normalize-data';
 import { resetData, toggleGraph } from './index';
 
 /**
@@ -95,12 +95,14 @@ export function loadInitialPipelineData() {
     // whether the active pipeline (from localStorage) exists in the data.
     const url = getUrl('main');
     let newState = await loadJsonData(url).then((data) =>
-      preparePipelineState(data, true)
+      normalizeData(state, data)
     );
     // If the active pipeline isn't 'main' then request data from new URL
     if (requiresSecondRequest(newState.pipeline)) {
       const url = getPipelineUrl(newState.pipeline);
-      newState = await loadJsonData(url).then(preparePipelineState);
+      newState = await loadJsonData(url).then((data) =>
+        normalizeData(state, data)
+      );
     }
     dispatch(resetData(newState));
     dispatch(toggleLoading(false));
@@ -114,19 +116,21 @@ export function loadInitialPipelineData() {
  */
 export function loadPipelineData(pipelineID) {
   return async function (dispatch, getState) {
-    const { dataSource, pipeline } = getState();
-    if (pipelineID && pipelineID === pipeline.active) {
+    const state = getState();
+    if (pipelineID && pipelineID === state.pipeline.active) {
       return;
     }
-    if (dataSource === 'json') {
+    if (state.dataSource === 'json') {
       dispatch(toggleLoading(true));
       // Remove the previous graph to show that a new pipeline is being loaded
       dispatch(toggleGraph(false));
       const url = getPipelineUrl({
-        main: pipeline.main,
+        main: state.pipeline.main,
         active: pipelineID,
       });
-      const newState = await loadJsonData(url).then(preparePipelineState);
+      const newState = await loadJsonData(url).then((data) =>
+        normalizeData(state, data)
+      );
       // Set active pipeline here rather than dispatching two separate actions,
       // to improve performance by only requiring one state recalculation
       newState.pipeline.active = pipelineID;

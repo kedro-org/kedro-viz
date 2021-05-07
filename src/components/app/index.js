@@ -8,9 +8,8 @@ import configureStore from '../../store';
 import { resetData, updateFontLoaded } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
 import Wrapper from '../wrapper';
-import getInitialState, {
-  preparePipelineState,
-} from '../../store/initial-state';
+import getInitialState from '../../store/initial-state';
+import normalizeData from '../../store/normalize-data';
 import { getFlagsMessage } from '../../utils/flags';
 import './app.css';
 
@@ -72,7 +71,7 @@ class App extends React.Component {
    * Dispatch an action to update the store with new pipeline data
    */
   updatePipelineData() {
-    const newState = preparePipelineState(this.props.data, true);
+    const newState = normalizeData(this.store.getState(), this.props.data);
     this.store.dispatch(resetData(newState));
   }
 
