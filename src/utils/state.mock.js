@@ -9,7 +9,6 @@ import reducer from '../reducers';
 import { updateFontLoaded } from '../actions';
 import { getGraphInput } from '../selectors/layout';
 import { updateGraph } from '../actions/graph';
-import { toggleTypeDisabled } from '../actions/node-type';
 import { graphNew, graphDagre } from './graph';
 
 /**

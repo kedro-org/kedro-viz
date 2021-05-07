@@ -75,7 +75,6 @@ describe('node-list-selectors', () => {
     const filteredTagItems = getFilteredTagItems({
       tags,
       searchValue,
-      tagsEnabled: {},
     }).tag;
 
     const tagItems = expect.arrayContaining([
@@ -140,8 +139,6 @@ describe('node-list-selectors', () => {
       nodes: getGroupedNodes(mockState.animals),
       tags: getTagData(mockState.animals),
       modularPipelines: getModularPipelineData(mockState.animals),
-      tagsEnabled: {},
-      modularPipelinesEnabled: {},
       nodeSelected: {},
       searchValue,
     });
@@ -189,8 +186,6 @@ describe('node-list-selectors', () => {
       nodes: getGroupedNodes(mockState.animals),
       tags: getTagData(mockState.animals),
       modularPipelines: getModularPipelineData(mockState.animals),
-      tagsEnabled: {},
-      modularPipelinesEnabled: {},
       nodeSelected: {},
       searchValue: '',
     });
