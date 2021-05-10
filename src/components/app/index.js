@@ -5,6 +5,7 @@ import 'what-input';
 import '@quantumblack/kedro-ui/lib/styles/app-no-webfont.css';
 import LoadWebFont from '@quantumblack/kedro-ui/lib/utils/webfont.js';
 import configureStore from '../../store';
+import resetPipelineState from '../../store/reset';
 import { resetData, updateFontLoaded } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
 import Wrapper from '../wrapper';
@@ -71,7 +72,10 @@ class App extends React.Component {
    * Dispatch an action to update the store with new pipeline data
    */
   updatePipelineData() {
-    const newState = normalizeData(this.store.getState(), this.props.data);
+    const newState = normalizeData(
+      resetPipelineState(this.store.getState()),
+      this.props.data
+    );
     this.store.dispatch(resetData(newState));
   }
 
