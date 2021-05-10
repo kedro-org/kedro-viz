@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge';
 import { localStorageName } from '../config';
 
 const noWindow = typeof window === 'undefined';
@@ -42,6 +43,22 @@ export const saveState = (state) => {
   } catch (err) {
     console.error(err);
   }
+};
+
+/**
+ * Load values from localStorage and combine with existing state,
+ * but filter out any unused properties
+ * @param {object} state Initial/extant state
+ * @return {object} Combined state from localStorage
+ */
+export const mergeLocalStorage = (state) => {
+  const localStorageState = loadState();
+  Object.keys(localStorageState).forEach((key) => {
+    if (!state[key]) {
+      delete localStorageState[key];
+    }
+  });
+  return deepmerge(state, localStorageState);
 };
 
 /**

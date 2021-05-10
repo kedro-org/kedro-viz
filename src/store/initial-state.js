@@ -1,5 +1,4 @@
-import deepmerge from 'deepmerge';
-import { loadState } from './helpers';
+import { mergeLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 import { sidebarWidth } from '../config';
@@ -82,22 +81,6 @@ export const initialState = {
     miniMap: true,
   },
   zoom: {},
-};
-
-/**
- * Load values from localStorage and combine with existing state,
- * but filter out any unused values from localStorage
- * @param {object} state Initial/extant state
- * @return {object} Combined state from localStorage
- */
-export const mergeLocalStorage = (state) => {
-  const localStorageState = loadState();
-  Object.keys(localStorageState).forEach((key) => {
-    if (!state[key]) {
-      delete localStorageState[key];
-    }
-  });
-  return deepmerge(state, localStorageState);
 };
 
 /**

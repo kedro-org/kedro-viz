@@ -1,4 +1,4 @@
-import { mergeLocalStorage } from './initial-state';
+import { mergeLocalStorage } from './helpers';
 
 /**
  * Empty the store of all pipeline-related data entries,
