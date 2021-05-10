@@ -1,4 +1,22 @@
-import { saveState, mergeLocalStorage } from './helpers';
+import {
+  loadState,
+  saveState,
+  mergeLocalStorage,
+  pruneFalseyKeys,
+} from './helpers';
+
+describe('loadState and saveState', () => {
+  it('saves and retrieves localStorage values', () => {
+    expect(loadState()).toEqual({});
+    const localStorageValues = {
+      textLabels: false,
+      theme: 'light',
+      tag: { enabled: 'medium' },
+    };
+    saveState(localStorageValues);
+    expect(loadState()).toEqual(localStorageValues);
+  });
+});
 
 describe('mergeLocalStorage', () => {
   it('overrides state values with localstorage values if provided', () => {
@@ -31,5 +49,19 @@ describe('mergeLocalStorage', () => {
     expect(
       mergeLocalStorage({ quz: 'quux', foo: { bar: 30, foo: 'foo' } })
     ).toMatchObject({ quz: 'quux', foo: { bar: 1, baz: 2, foo: 'foo' } });
+  });
+});
+
+describe('pruneFalseyKeys', () => {
+  it('removes only falsey keys from an object', () => {
+    expect(pruneFalseyKeys({})).toEqual({});
+    expect(pruneFalseyKeys({ foo: true, bar: false })).toEqual({ foo: true });
+    expect(pruneFalseyKeys({ foo: 'hello', bar: undefined })).toEqual({
+      foo: 'hello',
+    });
+    expect(pruneFalseyKeys({ foo: 1, bar: 0 })).toEqual({ foo: 1 });
+    expect(pruneFalseyKeys({ foo: Infinity, bar: null })).toEqual({
+      foo: Infinity,
+    });
   });
 });
