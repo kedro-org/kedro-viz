@@ -113,8 +113,9 @@ export const mergeLocalStorage = (state) => {
  * @return {object} Initial state
  */
 const getInitialState = (props = {}) => {
-  const state = mergeLocalStorage(
-    normalizeData(createInitialState(), props.data)
+  const state = normalizeData(
+    mergeLocalStorage(createInitialState()),
+    props.data
   );
   state.flags = { ...state.flags, ...getFlagsFromUrl() };
   state.theme = props.theme || state.theme;
