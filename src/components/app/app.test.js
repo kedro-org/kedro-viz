@@ -8,7 +8,7 @@ import demo from '../../utils/data/demo.mock.json';
 import { mockState } from '../../utils/state.mock';
 import { Flags } from '../../utils/flags';
 import { saveState } from '../../store/helpers';
-import { prepareNonPipelineState } from '../../store/initial-state';
+import { initialState } from '../../store/initial-state';
 
 describe('App', () => {
   const getState = (wrapper) => wrapper.instance().store.getState();
@@ -59,9 +59,14 @@ describe('App', () => {
     });
 
     test('but does not override non-pipeline values', () => {
+      const localState = { visible: { exportModal: true } };
+      saveState(localState);
       const wrapper = shallow(<App data={demo} />);
       wrapper.setProps({ data: animals });
-      expect(getState(wrapper)).toMatchObject(prepareNonPipelineState({}));
+      expect(getState(wrapper).visible).toMatchObject({
+        ...initialState.visible,
+        ...localState.visible,
+      });
     });
   });
 

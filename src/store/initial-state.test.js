@@ -1,17 +1,6 @@
-import getInitialState, {
-  createInitialState,
-  mergeLocalStorage,
-  preparePipelineState,
-  prepareNonPipelineState,
-} from './initial-state';
+import getInitialState, { mergeLocalStorage } from './initial-state';
 import { saveState } from './helpers';
 import animals from '../utils/data/animals.mock.json';
-
-describe('createInitialState', () => {
-  it('returns an object', () => {
-    expect(createInitialState()).toEqual(expect.any(Object));
-  });
-});
 
 describe('mergeLocalStorage', () => {
   it('overrides state values with localstorage values if provided', () => {
@@ -47,61 +36,6 @@ describe('mergeLocalStorage', () => {
   });
 });
 
-describe('preparePipelineState', () => {
-  const localStorageState = {
-    node: { disabled: { abc123: true } },
-    pipeline: { active: 'unknown pipeline id' },
-  };
-
-  it('applies localStorage values on top of normalised pipeline data', () => {
-    saveState(localStorageState);
-    expect(preparePipelineState(animals)).toMatchObject(localStorageState);
-    window.localStorage.clear();
-  });
-
-  it('if applyFixes is true and stored active pipeline from localStorage is not one of the pipelines in the current list, uses default pipeline value instead', () => {
-    saveState(localStorageState);
-    const { active } = preparePipelineState(animals, true).pipeline;
-    expect(active).toBe(animals.selected_pipeline);
-    window.localStorage.clear();
-  });
-});
-
-describe('prepareNonPipelineState', () => {
-  it('applies localStorage values on top of initial state', () => {
-    const localStorageState = { theme: 'foo' };
-    saveState(localStorageState);
-    const state = prepareNonPipelineState({});
-    expect(state.theme).toEqual(localStorageState.theme);
-    window.localStorage.clear();
-  });
-
-  it('overrides flags with values from URL', () => {
-    // In this case, location.href is not provided
-    expect(prepareNonPipelineState({ data: animals })).toMatchObject({
-      flags: {
-        oldgraph: expect.any(Boolean),
-      },
-    });
-  });
-
-  it('overrides theme with value from prop', () => {
-    const props = { theme: 'light' };
-    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
-      props
-    );
-  });
-
-  it('overrides visible with values from prop', () => {
-    const props = {
-      visible: { miniMap: true, sidebar: false, themeBtn: false },
-    };
-    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
-      props
-    );
-  });
-});
-
 describe('getInitialState', () => {
   const props = { data: animals };
 
@@ -118,6 +52,8 @@ describe('getInitialState', () => {
       chartSize: {},
       textLabels: true,
       theme: 'dark',
+      node: expect.any(Object),
+      pipeline: expect.any(Object),
       visible: {
         exportBtn: true,
         labelBtn: true,
@@ -167,5 +103,48 @@ describe('getInitialState', () => {
     });
     const parametersDisabled = state.nodeType.disabled.parameters;
     expect(parametersDisabled).toBe(true);
+  });
+
+  it('applies localStorage values on top of initial state', () => {
+    const localStorageState = {
+      theme: 'foo',
+      node: { disabled: { abc123: true } },
+    };
+    saveState(localStorageState);
+    expect(getInitialState(props)).toMatchObject(localStorageState);
+    window.localStorage.clear();
+  });
+
+  it('sets main pipeline as active if active pipeline from localStorage is not one of the pipelines in the current list', () => {
+    const localStorageState = {
+      pipeline: { active: 'unknown pipeline id' },
+    };
+    saveState(localStorageState);
+    const state = getInitialState(props);
+    expect(state.pipeline.active).toBe(animals.selected_pipeline);
+    window.localStorage.clear();
+  });
+
+  it('overrides flags with values from URL', () => {
+    // In this case, location.href is not provided
+    expect(getInitialState(props)).toMatchObject({
+      flags: {
+        oldgraph: expect.any(Boolean),
+      },
+    });
+  });
+
+  it('overrides theme with value from prop', () => {
+    const theme = 'test';
+    expect(getInitialState({ ...props, theme })).toMatchObject({ theme });
+  });
+
+  it('overrides visible with values from prop', () => {
+    const visible = {
+      miniMap: true,
+      sidebar: false,
+      themeBtn: false,
+    };
+    expect(getInitialState({ ...props, visible })).toMatchObject({ visible });
   });
 });

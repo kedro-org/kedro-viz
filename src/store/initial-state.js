@@ -4,7 +4,7 @@ import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 import { sidebarWidth } from '../config';
 
-const initialState = {
+export const initialState = {
   chartSize: {},
   edge: {
     ids: [],

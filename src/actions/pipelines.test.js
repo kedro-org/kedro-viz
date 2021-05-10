@@ -1,6 +1,6 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
-import { mockState } from '../utils/state.mock';
+import { mockState, prepareState } from '../utils/state.mock';
 import { saveState } from '../store/helpers';
 import {
   updateActivePipeline,
@@ -110,7 +110,7 @@ describe('pipeline actions', () => {
 
       it("should reset the active pipeline if its ID isn't included in the list of pipeline IDs", async () => {
         saveState({ pipeline: { active: 'unknown-id' } });
-        const store = createStore(reducer, mockState.json);
+        const store = createStore(reducer, prepareState({ data: 'json' }));
         await loadInitialPipelineData()(store.dispatch, store.getState);
         const state = store.getState();
         expect(state.pipeline.active).toBe(state.pipeline.main);
@@ -121,7 +121,7 @@ describe('pipeline actions', () => {
         const { pipeline } = mockState.animals;
         const active = pipeline.ids.find((id) => id !== pipeline.main);
         saveState({ pipeline: { active } });
-        const store = createStore(reducer, mockState.json);
+        const store = createStore(reducer, prepareState({ data: 'json' }));
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().pipeline.active).toBe(active);
         expect(store.getState().node).toEqual(mockState.demo.node);
@@ -140,7 +140,7 @@ describe('pipeline actions', () => {
         const { pipeline } = mockState.animals;
         const active = pipeline.ids.find((id) => id !== pipeline.main);
         saveState({ pipeline: { active } });
-        const store = createStore(reducer, mockState.json);
+        const store = createStore(reducer, prepareState({ data: 'json' }));
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().node).toEqual(mockState.animals.node);
       });
