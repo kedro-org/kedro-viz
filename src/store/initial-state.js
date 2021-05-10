@@ -4,12 +4,7 @@ import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 import { sidebarWidth } from '../config';
 
-/**
- * Create new default state instance for properties that aren't overridden
- * when the pipeline is reset with new data via the App component's data prop
- * @return {object} state
- */
-export const createInitialState = () => ({
+const initialState = {
   chartSize: {},
   edge: {
     ids: [],
@@ -87,7 +82,7 @@ export const createInitialState = () => ({
     miniMap: true,
   },
   zoom: {},
-});
+};
 
 /**
  * Load values from localStorage and combine with existing state,
@@ -113,10 +108,7 @@ export const mergeLocalStorage = (state) => {
  * @return {object} Initial state
  */
 const getInitialState = (props = {}) => {
-  const state = normalizeData(
-    mergeLocalStorage(createInitialState()),
-    props.data
-  );
+  const state = normalizeData(mergeLocalStorage(initialState), props.data);
   state.flags = { ...state.flags, ...getFlagsFromUrl() };
   state.theme = props.theme || state.theme;
   state.visible = { ...state.visible, ...props.visible };
