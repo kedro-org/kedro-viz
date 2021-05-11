@@ -15,7 +15,7 @@ clean:
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
 
 run:
-	python package/kedro_viz/server.py --port 4343 --logdir logs/
+	python package/kedro_viz/server.py --port 4141
 
 pytest: build
 	cd package && python3 setup.py test
@@ -26,7 +26,7 @@ e2e-tests: build
 pylint:
 	cd package && isort
 	black package/kedro_viz package/tests package/features
-	pylint -j 0 --disable=bad-continuation,unnecessary-pass,ungrouped-imports package/kedro_viz
+	pylint --rcfile=package/.pylintrc -j 0 package/kedro_viz
 	pylint -j 0 --disable=bad-continuation,missing-docstring,redefined-outer-name,no-self-use,invalid-name,too-few-public-methods,no-member,unused-argument package/tests
 	pylint -j 0 --disable=missing-docstring,no-name-in-module,unused-argument package/features
 	flake8 package
