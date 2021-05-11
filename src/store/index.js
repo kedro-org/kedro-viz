@@ -56,7 +56,6 @@ const saveStateToLocalStorage = (state) => {
 export default function configureStore(initialState) {
   const store = createStore(reducer, initialState, applyMiddleware(thunk));
   updateGraphOnChange(store);
-
   store.subscribe(() => {
     saveStateToLocalStorage(store.getState());
   });

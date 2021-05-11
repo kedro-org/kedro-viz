@@ -8,6 +8,7 @@ import animals from '../../utils/data/animals.mock.json';
 const salmonTaskNodeId = '443cf06a';
 const catDatasetNodeId = '9d989e8d';
 const rabbitParamsNodeId = 'c38d4c6a';
+const bullPlotNodeID = 'c3p345ed';
 
 describe('MetaData', () => {
   const mount = (props) => {
@@ -241,6 +242,50 @@ describe('MetaData', () => {
 
     it('shows the node pipeline', () => {
       const wrapper = mount({ nodeId: rabbitParamsNodeId });
+      const row = rowByLabel(wrapper, 'Pipeline:');
+      expect(textOf(rowValue(row))).toEqual(['Default']);
+    });
+  });
+
+  describe('Plot nodes', () => {
+    it('shows the node type as an icon', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--type-plot')).toBe(
+        true
+      );
+    });
+
+    it('shows the node name as the title', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      expect(textOf(title(wrapper))).toEqual(['Plot:bull']);
+    });
+
+    it('shows the node type as text', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const row = rowByLabel(wrapper, 'Type:');
+      expect(textOf(rowValue(row))).toEqual(['plot']);
+    });
+
+    it('shows the node filepath', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const row = rowByLabel(wrapper, 'File Path:');
+      expect(textOf(rowValue(row))).toEqual(['-']);
+    });
+
+    it('shows the node parameters', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const row = rowByLabel(wrapper, 'Parameters (-):');
+      expect(textOf(rowValue(row))).toEqual([]);
+    });
+
+    it('shows the node tags', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const row = rowByLabel(wrapper, 'Tags:');
+      expect(textOf(rowValue(row))).toEqual(['Small']);
+    });
+
+    it('shows the node pipeline', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
       const row = rowByLabel(wrapper, 'Pipeline:');
       expect(textOf(rowValue(row))).toEqual(['Default']);
     });

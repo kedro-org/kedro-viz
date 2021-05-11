@@ -11,3 +11,6 @@ import Adapter from 'enzyme-adapter-react-16';
 window.URL.createObjectURL = function () {};
 
 configure({ adapter: new Adapter() });
+
+//Require to create jest using Plotly.js library
+window.URL.createObjectURL = function () {};
