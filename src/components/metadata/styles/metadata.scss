@@ -13,15 +13,16 @@
 
 .pipeline-metadata {
   @extend %sidebar;
-
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
   right: 0;
   bottom: -1px;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: $metadata-sidebar-width-open;
-  padding: 6px 0 24px 0;
+  padding: 6px 0 0 0;
   overflow-y: auto;
   background: var(--color-metadata-bg);
   transform: translateX(100%);
@@ -90,6 +91,9 @@
 }
 
 .pipeline-metadata__list {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
   margin: 0;
 }
 
@@ -246,4 +250,40 @@ $list-inline-spacing: 0.2em;
   &--no-visible {
     display: none;
   }
+}
+
+.pipeline-metadata__plot {
+  height: 300px;
+  background-color: rgb(1, 1, 1);
+}
+
+.pipeline-metadata__scrollable {
+  flex-grow: 1;
+  height: 0px;
+  margin-top: -1.9em;
+  overflow-y: auto;
+}
+
+.pipeline-metadata__expand-plot {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  background-color: #003464;
+
+  &:hover {
+    background-color: #005d92;
+  }
+}
+
+.pipeline-metadata-icon {
+  width: 1.9em;
+  height: 1.9em;
+  margin: 10px 5px 10px 36px;
+  fill: var(--color-default-alt);
+}
+
+.pipeline-metadata-icon__text {
+  margin: 10px 10px 10px 5px;
+  font-size: 1.48em;
+  fill: var(--color-default-alt);
 }

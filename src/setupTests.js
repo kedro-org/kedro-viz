@@ -7,4 +7,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
+//Required for plotly tests
+window.URL.createObjectURL = function () {};
+
 configure({ adapter: new Adapter() });
