@@ -1,4 +1,4 @@
-# Copyright 2020 QuantumBlack Visual Analytics Limited
+# Copyright 2021 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,10 +25,6 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-""" Kedro plugin for vizualising a Kedro pipeline """
+"""Kedro plugin for vizualising a Kedro pipeline"""
 
 __version__ = "3.11.0"
-
-
-from kedro_viz.server import format_pipeline_data  # noqa
