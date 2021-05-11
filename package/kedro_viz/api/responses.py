@@ -172,7 +172,11 @@ class NamedEntityAPIResponse(BaseAPIResponse):
 
 
 class GraphAPIResponse(BaseAPIResponse):
-    nodes: List[Union[TaskNodeAPIResponse, DataNodeAPIResponse]]
+    nodes: List[
+        Union[
+            TaskNodeAPIResponse, DataNodeAPIResponse, ParametersNodeMetadataAPIResponse
+        ]
+    ]
     edges: List[GraphEdgeAPIResponse]
     tags: List[NamedEntityAPIResponse]
     layers: List[str]

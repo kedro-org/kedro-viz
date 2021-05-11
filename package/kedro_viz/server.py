@@ -87,3 +87,23 @@ def run_server(
     if browser and is_localhost:
         webbrowser.open_new(f"http://{host}:{port}/")
     uvicorn.run(app, host=host, port=port)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    import argparse
+    import sys
+
+    from kedro.framework.startup import bootstrap_project
+
+    parser = argparse.ArgumentParser(description="Launch a development viz server")
+    parser.add_argument("project_path", help="Path to a Kedro project")
+    parser.add_argument(
+        "--host", help="The host of the development server", default=_DEFAULT_HOST
+    )
+    parser.add_argument(
+        "--port", help="The port of the development server", default=_DEFAULT_PORT
+    )
+    args = parser.parse_args()
+
+    source_dir = bootstrap_project(args.project_path)
+    run_server(host=args.host, port=args.port, project_path=args.project_path)
