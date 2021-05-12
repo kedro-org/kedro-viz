@@ -26,77 +26,109 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import json
-from pathlib import Path
-from typing import Dict
 from unittest import mock
 
-from kedro.io import DataCatalog
-from kedro.pipeline import Pipeline
+import pytest
+from pydantic import BaseModel
 
 from kedro_viz.server import run_server
 
 
+class ExampleAPIResponse(BaseModel):
+    content: str
+
+
+@pytest.fixture(autouse=True)
+def patched_uvicorn_run(mocker):
+    yield mocker.patch("uvicorn.run")
+
+
+@pytest.fixture(autouse=True)
+def patched_data_access_manager(mocker):
+    yield mocker.patch("kedro_viz.server.data_access_manager")
+
+
+@pytest.fixture(autouse=True)
+def patched_create_api_app_from_project(mocker):
+    yield mocker.patch("kedro_viz.api.apps.create_api_app_from_project")
+
+
+@pytest.fixture
+def patched_create_api_app_from_file(mocker):
+    yield mocker.patch("kedro_viz.api.apps.create_api_app_from_file")
+
+
+@pytest.fixture(autouse=True)
+def patched_load_data(mocker, example_catalog, example_pipelines):
+    yield mocker.patch(
+        "kedro_viz.server.kedro_data_loader.load_data",
+        return_value=(example_catalog, example_pipelines),
+    )
+
+
 class TestServer:
-    @mock.patch("uvicorn.run")
-    @mock.patch("webbrowser.open_new")
-    @mock.patch("kedro_viz.server.data_access_manager")
-    @mock.patch("kedro_viz.server.apps.create_api_app_from_project")
     def test_run_server_from_project(
         self,
-        create_api_app_from_project,
-        data_access_manager,
-        webbrowser_open,
-        uvicorn_run,
+        patched_create_api_app_from_project,
+        patched_data_access_manager,
+        patched_uvicorn_run,
         example_catalog,
         example_pipelines,
     ):
-        with mock.patch(
-            "kedro_viz.server.kedro_data_loader.load_data",
-            return_value=(example_catalog, example_pipelines),
-        ):
-            run_server(browser=True)
+        run_server()
+        # assert that when running server, data are added correctly to the data access manager
+        patched_data_access_manager.add_catalog.assert_called_once_with(example_catalog)
+        patched_data_access_manager.add_pipelines.assert_called_once_with(
+            example_pipelines
+        )
 
-            # assert that when running server, data are added correctly to the data access manager
-            data_access_manager.add_catalog.assert_called_once_with(example_catalog)
-            data_access_manager.add_pipelines.assert_called_once_with(example_pipelines)
+        # correct api app is created
+        patched_create_api_app_from_project.assert_called_once()
 
-            # correct api app is created
-            create_api_app_from_project.assert_called_once()
+        # an uvicorn server is launched
+        patched_uvicorn_run.assert_called_once()
 
-            # webbrowser is launched
-            webbrowser_open.assert_called_once_with("http://0.0.0.0:4141/")
-
-            # an uvicorn server is launched
-            uvicorn_run.assert_called_once()
-
-    @mock.patch("uvicorn.run")
-    @mock.patch("kedro_viz.server.data_access_manager")
-    @mock.patch("kedro_viz.server.apps.create_api_app_from_file")
-    def test_run_server_from_file(
-        self, create_api_app_from_file, data_access_manager, uvicorn_run,
+    def test_specific_pipeline(
+        self, patched_data_access_manager, example_pipelines,
     ):
-        with mock.patch("kedro_viz.server.kedro_data_loader.load_data"):
-            load_file = "test.json"
-            run_server(load_file=load_file)
-            create_api_app_from_file.assert_called_once_with(load_file)
-            uvicorn_run.assert_called_once()
+        run_server(pipeline_name="data_science")
 
-    @mock.patch("uvicorn.run")
-    @mock.patch("kedro_viz.server.apps.create_api_app_from_project")
-    def test_save_file(
-        self,
-        uvicorn_run,
-        create_api_app_from_project,
-        example_catalog,
-        example_pipelines,
-        assert_example_data,
-        tmp_path,
+        # assert that when running server, data are added correctly to the data access manager
+        patched_data_access_manager.add_pipelines.assert_called_once_with(
+            {"data_science": example_pipelines["data_science"]}
+        )
+
+    def test_load_file(self, patched_create_api_app_from_file):
+        load_file = "test.json"
+        run_server(load_file=load_file)
+        patched_create_api_app_from_file.assert_called_once_with(load_file)
+
+    def test_save_file(self, tmp_path, mocker):
+        mocker.patch(
+            "kedro_viz.server.responses.get_default_response",
+            return_value=ExampleAPIResponse(content="test"),
+        )
+        save_file = tmp_path / "save.json"
+        run_server(save_file=save_file)
+        with open(save_file, "r") as f:
+            assert json.load(f) == {"content": "test"}
+
+    @pytest.mark.parametrize(
+        "browser,ip,should_browser_open",
+        [
+            (True, "0.0.0.0", True),
+            (True, "127.0.0.1", True),
+            (True, "localhost", True),
+            (False, "127.0.0.1", False),
+            (True, "8.8.8.8", False),
+        ],
+    )
+    @mock.patch("kedro_viz.server.webbrowser")
+    def test_browser_open(
+        self, webbrowser, browser, ip, should_browser_open, mocker,
     ):
-        with mock.patch(
-            "kedro_viz.server.kedro_data_loader.load_data",
-            return_value=(example_catalog, example_pipelines),
-        ):
-            save_file = tmp_path / "save.json"
-            run_server(save_file=save_file)
-            with open(save_file, "r") as saved_pipelines:
-                assert_example_data(json.load(saved_pipelines))
+        run_server(browser=browser, host=ip)
+        if should_browser_open:
+            webbrowser.open_new.assert_called_once()
+        else:
+            webbrowser.open_new.assert_not_called()

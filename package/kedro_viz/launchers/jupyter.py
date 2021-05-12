@@ -58,7 +58,7 @@ def _wait_for(
     timeout: int = 10,
     print_error: bool = True,
     sleep_for: int = 1,
-    **kwargs
+    **kwargs,
 ) -> None:
     """
     Run specified function until it returns expected result until timeout.
@@ -92,12 +92,11 @@ def _wait_for(
         sleep(sleep_for)
 
     raise WaitForException(
-        "func: {}, didn't return {} within specified"
-        " timeout: {}".format(func, expected_result, timeout)
+        f"func: {func}, didn't return {expected_result} within specified timeout: {timeout}"
     )
 
 
-def _check_viz_up(port):
+def _check_viz_up(port):  # pragma: no cover
     url = "http://127.0.0.1:{}/".format(port)
     try:
         response = requests.get(url)
@@ -146,7 +145,7 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
 
-    if local_ns is not None and "project_path" in local_ns:
+    if local_ns is not None and "project_path" in local_ns:  # pragma: no cover
         target = partial(run_server, project_path=local_ns["project_path"])
     else:
         target = run_server

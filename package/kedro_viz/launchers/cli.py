@@ -94,6 +94,6 @@ def viz(host, port, browser, load_file, save_file, pipeline, env):
     """
     try:
         run_server(host, port, browser, load_file, save_file, pipeline, env)
-    except Exception as ex:
+    except Exception as ex:  # pragma: no cover
         traceback.print_exc()
         raise KedroCliError(str(ex)) from ex
