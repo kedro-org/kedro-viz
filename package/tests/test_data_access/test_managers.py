@@ -25,6 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Dict
 import pytest
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
@@ -39,10 +40,6 @@ from kedro_viz.models.graph import DataNode, GraphEdge, ParametersNode, TaskNode
 def identity(x):
     return x
 
-
-@pytest.fixture
-def data_access_manager():
-    yield DataAccessManager()
 
 
 class TestAddCatalog:
@@ -279,67 +276,14 @@ class TestAddDataSet:
 
 
 class TestAddPipelines:
-    def _create_pipelines(self):
-        def process_data(raw_data, train_test_split):
-            ...
-
-        def train_model(model_inputs, parameters):
-            ...
-
-        data_processing_pipeline = pipeline(
-            Pipeline(
-                [
-                    node(
-                        process_data,
-                        inputs=["raw_data", "params:train_test_split"],
-                        outputs="model_inputs",
-                        name="process_data",
-                        tags=["split"],
-                    )
-                ]
-            ),
-            namespace="uk.data_processing",
-            outputs="model_inputs",
-        )
-        data_science_pipeline = pipeline(
-            Pipeline(
-                [
-                    node(
-                        train_model,
-                        inputs=["model_inputs", "parameters"],
-                        outputs="model",
-                        name="train_model",
-                        tags=["train"],
-                    )
-                ]
-            ),
-            namespace="uk.data_science",
-            inputs="model_inputs",
-        )
-        return {
-            "__default__": data_processing_pipeline + data_science_pipeline,
-            "data_science": data_science_pipeline,
-            "data_processing": data_processing_pipeline,
-        }
-
-    def _create_catalog(self):
-        return DataCatalog(
-            data_sets={
-                "raw_data": CSVDataSet(filepath="raw_data.csv"),
-                "model_inputs": CSVDataSet(filepath="model_inputs.csv"),
-            },
-            feed_dict={
-                "parameters": {"train_test_split": 0.1},
-                "params:train_test_split": 0.1,
-            },
-            layers={"raw": {"raw_data",}, "model_inputs": {"model_inputs",}},
-        )
-
-    def test_add_pipelines(self, data_access_manager: DataAccessManager):
-        catalog = self._create_catalog()
-        data_access_manager.add_catalog(catalog)
-        pipelines = self._create_pipelines()
-        data_access_manager.add_pipelines(pipelines)
+    def test_add_pipelines(
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+        example_catalog: DataCatalog,
+    ):
+        data_access_manager.add_catalog(example_catalog)
+        data_access_manager.add_pipelines(example_pipelines)
 
         assert [p.id for p in data_access_manager.registered_pipelines.as_list()] == [
             "__default__",
@@ -363,13 +307,14 @@ class TestAddPipelines:
         ]
 
     def test_get_default_selected_pipelines_without_default(
-        self, data_access_manager: DataAccessManager
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+        example_catalog: DataCatalog,
     ):
-        catalog = self._create_catalog()
-        data_access_manager.add_catalog(catalog)
-        pipelines = self._create_pipelines()
-        del pipelines["__default__"]
-        data_access_manager.add_pipelines(pipelines)
+        data_access_manager.add_catalog(example_catalog)
+        del example_pipelines["__default__"]
+        data_access_manager.add_pipelines(example_pipelines)
         assert not data_access_manager.registered_pipelines.get("__default__")
         assert data_access_manager.get_default_selected_pipeline().id == "data_science"
 

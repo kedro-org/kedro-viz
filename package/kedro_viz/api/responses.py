@@ -32,6 +32,7 @@ from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
 from kedro_viz.data_access import data_access_manager
+from kedro_viz.models.graph import ModularPipeline
 
 
 class APIErrorMessage(BaseModel):
@@ -178,10 +179,10 @@ class GraphAPIResponse(BaseAPIResponse):
         ]
     ]
     edges: List[GraphEdgeAPIResponse]
-    tags: List[NamedEntityAPIResponse]
+    tags: List[str]
     layers: List[str]
     pipelines: List[NamedEntityAPIResponse]
-    modular_pipelines: List[NodeMetadataAPIResponse]
+    modular_pipelines: List[NamedEntityAPIResponse]
     selected_pipeline: str
 
 

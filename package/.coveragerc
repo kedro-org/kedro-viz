@@ -1,7 +1,6 @@
 [report]
-fail_under=100
+# fail_under=100
 show_missing=True
-omit=*/plugin.py
 exclude_lines =
     pragma: no cover
     raise NotImplementedError

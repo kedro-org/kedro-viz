@@ -32,3 +32,75 @@ this directory. You don't need to import the fixtures as pytest will
 discover them automatically. More info here:
 https://docs.pytest.org/en/latest/fixture.html
 """
+import pytest
+from kedro.extras.datasets.pandas import CSVDataSet
+from kedro.io import DataCatalog
+from kedro.pipeline import Pipeline, node
+from kedro.pipeline.modular_pipeline import pipeline
+
+from kedro_viz.data_access import DataAccessManager
+
+
+@pytest.fixture
+def data_access_manager():
+    yield DataAccessManager()
+
+
+@pytest.fixture
+def example_pipelines():
+    def process_data(raw_data, train_test_split):
+        ...
+
+    def train_model(model_inputs, parameters):
+        ...
+
+    data_processing_pipeline = pipeline(
+        Pipeline(
+            [
+                node(
+                    process_data,
+                    inputs=["raw_data", "params:train_test_split"],
+                    outputs="model_inputs",
+                    name="process_data",
+                    tags=["split"],
+                )
+            ]
+        ),
+        namespace="uk.data_processing",
+        outputs="model_inputs",
+    )
+    data_science_pipeline = pipeline(
+        Pipeline(
+            [
+                node(
+                    train_model,
+                    inputs=["model_inputs", "parameters"],
+                    outputs="model",
+                    name="train_model",
+                    tags=["train"],
+                )
+            ]
+        ),
+        namespace="uk.data_science",
+        inputs="model_inputs",
+    )
+    yield {
+        "__default__": data_processing_pipeline + data_science_pipeline,
+        "data_science": data_science_pipeline,
+        "data_processing": data_processing_pipeline,
+    }
+
+
+@pytest.fixture
+def example_catalog():
+    yield DataCatalog(
+        data_sets={
+            "raw_data": CSVDataSet(filepath="raw_data.csv"),
+            "model_inputs": CSVDataSet(filepath="model_inputs.csv"),
+        },
+        feed_dict={
+            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
+            "params:train_test_split": 0.1,
+        },
+        layers={"raw": {"raw_data",}, "model_inputs": {"model_inputs",}},
+    )
