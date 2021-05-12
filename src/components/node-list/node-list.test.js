@@ -86,6 +86,7 @@ describe('NodeList', () => {
   });
 
   describe('visibility checkboxes on element items', () => {
+    //Parameters are enabled here to override the default behavior
     const wrapper = setup.mount(<NodeList />, {
       beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
     });
@@ -218,6 +219,7 @@ describe('NodeList', () => {
       tagItem(wrapper).find(IndicatorPartialIcon);
 
     it('selecting tags enables only elements with given tags', () => {
+      //Parameters are enabled here to override the default behavior
       const wrapper = setup.mount(<NodeList />, {
         beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
       });
@@ -252,6 +254,7 @@ describe('NodeList', () => {
     });
 
     it('selecting a tag sorts elements by enabled first then alphabetical', () => {
+      //Parameters are enabled here to override the default behavior
       const wrapper = setup.mount(<NodeList />, {
         beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
       });

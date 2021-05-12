@@ -282,6 +282,7 @@ describe('FlowChart', () => {
   });
 
   it('applies .parameters class to all parameter nodes', () => {
+    //Parameters are enabled here to override the default behavior
     const wrapper = setup.mount(<FlowChart />, {
       beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
     });
@@ -290,6 +291,7 @@ describe('FlowChart', () => {
 
   it('applies .parameters class to all the edges from parameter nodes', () => {
     const wrapper = setup.mount(<FlowChart />, {
+      //Parameters are enabled here to override the default behavior
       beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
     });
     expect(wrapper.render().find('.pipeline-edge--parameters ').length).toBe(4);
