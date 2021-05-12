@@ -106,6 +106,7 @@ def _setup_context_with_venv(context, venv_dir):
             "-U",
             "pip>=20.0",
             "setuptools>=38.0",
+            "cookiecutter>=1.7.2",
             "wheel",
             "botocore",
         ],

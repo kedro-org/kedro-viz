@@ -156,7 +156,7 @@ describe('Reducer', () => {
       });
       expect(newState.nodeType.disabled).toEqual({
         123: true,
-        parameters: false,
+        parameters: true,
       });
     });
   });
