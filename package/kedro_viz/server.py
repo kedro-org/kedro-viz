@@ -91,7 +91,6 @@ def run_server(
 
 if __name__ == "__main__":  # pragma: no cover
     import argparse
-    import sys
 
     from kedro.framework.startup import bootstrap_project
 

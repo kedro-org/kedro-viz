@@ -37,6 +37,7 @@ from kedro_viz.data_access.managers import DataAccessManager
 from fastapi.testclient import TestClient
 
 from kedro_viz.models.graph import TaskNode
+from tests.conftest import assert_nodes_equal, assert_edges_equal
 
 
 @pytest.fixture
@@ -65,142 +66,14 @@ class TestIndexEndpoint:
         assert response.status_code == 200
 
 
-def _assert_nodes_equal(response_nodes, expected_nodes):
-    node_sort_key = lambda x: x["id"]
-    for response_node, expected_node in zip(
-        sorted(response_nodes, key=node_sort_key),
-        sorted(expected_nodes, key=node_sort_key),
-    ):
-        response_node_tags = response_node.pop("tags")
-        expected_node_tags = expected_node.pop("tags")
-        assert sorted(response_node_tags) == sorted(expected_node_tags)
-        assert response_node == expected_node
-
-
-def _assert_edges_equal(response_edges, expected_edges):
-    edge_sort_key = lambda x: x["source"]
-    assert sorted(response_edges, key=edge_sort_key) == sorted(
-        expected_edges, key=edge_sort_key
-    )
-
-
-def _assert_graph_response(response_data):
-    """Assert graph response for the `example_pipelines` and `example_catalog`
-    fixtures."""
-    expected_edges = [
-        {"source": "7b140b3f", "target": "d5a8b994"},
-        {"source": "56118ad8", "target": "0ecea0de"},
-        {"source": "13399a82", "target": "56118ad8"},
-        {"source": "f1f1425b", "target": "7b140b3f"},
-        {"source": "0ecea0de", "target": "7b140b3f"},
-        {"source": "c506f374", "target": "56118ad8"},
-    ]
-    _assert_edges_equal(response_data.pop("edges"), expected_edges)
-    # compare nodes
-    expected_nodes = [
-        {
-            "id": "56118ad8",
-            "name": "Process Data",
-            "full_name": "process_data",
-            "tags": ["split"],
-            "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": ["uk", "uk.data_processing"],
-            "type": "task",
-            "parameters": {"train_test_split": 0.1},
-        },
-        {
-            "id": "13399a82",
-            "name": "Uk.data Processing.raw Data",
-            "full_name": "uk.data_processing.raw_data",
-            "tags": ["split"],
-            "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": ["uk", "uk.data_processing"],
-            "type": "data",
-            "layer": None,
-        },
-        {
-            "id": "c506f374",
-            "name": "Params:train Test Split",
-            "full_name": "params:train_test_split",
-            "tags": ["split"],
-            "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": [],
-            "type": "parameters",
-            "layer": None,
-        },
-        {
-            "id": "0ecea0de",
-            "name": "Model Inputs",
-            "full_name": "model_inputs",
-            "tags": ["train", "split"],
-            "pipelines": ["__default__", "data_science", "data_processing"],
-            "modular_pipelines": [],
-            "type": "data",
-            "layer": "model_inputs",
-        },
-        {
-            "id": "7b140b3f",
-            "name": "Train Model",
-            "full_name": "train_model",
-            "tags": ["train"],
-            "pipelines": ["__default__", "data_science"],
-            "modular_pipelines": ["uk", "uk.data_science"],
-            "type": "task",
-            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
-        },
-        {
-            "id": "f1f1425b",
-            "name": "Parameters",
-            "full_name": "parameters",
-            "tags": ["train"],
-            "pipelines": ["__default__", "data_science"],
-            "modular_pipelines": [],
-            "type": "parameters",
-            "layer": None,
-        },
-        {
-            "id": "d5a8b994",
-            "name": "Uk.data Science.model",
-            "full_name": "uk.data_science.model",
-            "tags": ["train"],
-            "pipelines": ["__default__", "data_science"],
-            "modular_pipelines": ["uk", "uk.data_science"],
-            "type": "data",
-            "layer": None,
-        },
-    ]
-    _assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
-
-    # compare the rest
-    assert response_data == {
-        "tags": ["split", "train"],
-        "layers": [],
-        "pipelines": [
-            {"id": "__default__", "name": "Default"},
-            {"id": "data_science", "name": "Data Science"},
-            {"id": "data_processing", "name": "Data Processing"},
-        ],
-        "modular_pipelines": [
-            {"id": "uk", "name": "Uk"},
-            {"id": "uk.data_processing", "name": "Data Processing"},
-            {"id": "uk.data_science", "name": "Data Science"},
-        ],
-        "selected_pipeline": "__default__",
-    }
-
-
 class TestMainEndpoint:
     """Test a viz API created from a Kedro project."""
 
-    def test_endpoint_main(self, client):
+    def test_endpoint_main(self, client, assert_example_data):
         response = client.get("/api/main")
         assert response.status_code == 200
         response_data = response.json()
-        with open("foo.json", "w") as f:
-            import json
-
-            json.dump(response_data, f)
-        _assert_graph_response(response.json())
+        assert_example_data(response.json())
 
 
 class TestNodeMetadataEndpoint:
@@ -212,7 +85,7 @@ class TestNodeMetadataEndpoint:
         response = client.get(f"/api/nodes/56118ad8")
         assert response.json() == {
             "code": "    def process_data(raw_data, train_test_split):\n        ...\n",
-            "filepath": "kedro-viz\\package\\tests\\conftest.py",
+            "filepath": str(Path("kedro-viz/package/tests/conftest.py")),
             "parameters": {"train_test_split": 0.1},
         }
 
@@ -249,7 +122,7 @@ class TestSinglePipelineEndpoint:
             {"source": "7b140b3f", "target": "d5a8b994"},
             {"source": "f1f1425b", "target": "7b140b3f"},
         ]
-        _assert_edges_equal(response_data.pop("edges"), expected_edges)
+        assert_edges_equal(response_data.pop("edges"), expected_edges)
         expected_nodes = [
             {
                 "id": "0ecea0de",
@@ -292,7 +165,7 @@ class TestSinglePipelineEndpoint:
                 "layer": None,
             },
         ]
-        _assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
+        assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
         assert response_data == {
             "tags": ["split", "train"],
             "layers": [],
@@ -314,9 +187,9 @@ class TestSinglePipelineEndpoint:
 
 
 class TestAPIAppFromFile:
-    def test_api_app_from_json_file(self):
-        filepath = str(Path(__file__).parent / "example_pipelines.json")
+    def test_api_app_from_json_file(self, assert_example_data):
+        filepath = str(Path(__file__).parent.parent / "example_pipelines.json")
         api_app = apps.create_api_app_from_file(filepath)
         client = TestClient(api_app)
         response = client.get("/api/main")
-        _assert_graph_response(response.json())
+        assert_example_data(response.json())
