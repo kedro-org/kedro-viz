@@ -31,7 +31,7 @@ import json
 import os
 from os import path
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 name = "kedro-viz"
 here = path.abspath(path.dirname(__file__))

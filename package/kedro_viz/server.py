@@ -35,7 +35,7 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.api import apps, responses
-from kedro_viz.data_access import data_access_manager, DataAccessManager
+from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.services import layers_services
 
@@ -47,7 +47,7 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: List[Pipeline],
-):
+):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
     """
