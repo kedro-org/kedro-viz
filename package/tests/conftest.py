@@ -95,5 +95,8 @@ def example_catalog():
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
             "params:train_test_split": 0.1,
         },
-        layers={"raw": {"raw_data",}, "model_inputs": {"model_inputs"},},
+        layers={
+            "raw": {"uk.data_processing.raw_data",},
+            "model_inputs": {"model_inputs"},
+        },
     )

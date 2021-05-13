@@ -18,7 +18,7 @@
       "pipelines": ["__default__", "data_processing"],
       "modular_pipelines": ["uk", "uk.data_processing"],
       "type": "data",
-      "layer": null
+      "layer": "raw"
     },
     {
       "id": "c506f374",
@@ -80,7 +80,7 @@
     { "source": "7b140b3f", "target": "d5a8b994" }
   ],
   "tags": ["split", "train"],
-  "layers": [],
+  "layers": ["raw", "model_inputs"],
   "pipelines": [
     { "id": "__default__", "name": "Default" },
     { "id": "data_science", "name": "Data Science" },

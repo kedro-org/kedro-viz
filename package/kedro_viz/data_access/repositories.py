@@ -64,6 +64,9 @@ class GraphNodesRepository:
     def as_list(self) -> List[GraphNode]:
         return self.nodes_list
 
+    def as_dict(self) -> Dict[str, GraphNode]:
+        return self.nodes_dict
+
     def filter_by_ids(self, node_ids: Set[str]) -> List[GraphNode]:
         return [n for n in self.nodes_list if n.id in node_ids]
 

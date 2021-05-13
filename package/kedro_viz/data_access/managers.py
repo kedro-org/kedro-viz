@@ -63,9 +63,9 @@ class DataAccessManager:
         self.edges = GraphEdgesRepository()
         self.registered_pipelines = RegisteredPipelinesRepository()
         self.tags = TagsRepository()
-        self.layers = LayersRepository()
         self.modular_pipelines = ModularPipelinesRepository()
         self.node_dependencies = defaultdict(set)
+        self.layers = LayersRepository()
 
     def add_catalog(self, catalog: DataCatalog):
         self.catalog.set(catalog)

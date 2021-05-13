@@ -28,15 +28,36 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
 import webbrowser
 from pathlib import Path
+from typing import List
 
 import uvicorn
+from kedro.io import DataCatalog
+from kedro.pipeline import Pipeline
 
 from kedro_viz.api import apps, responses
-from kedro_viz.data_access import data_access_manager
+from kedro_viz.data_access import data_access_manager, DataAccessManager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+from kedro_viz.services import layers_services
 
 _DEFAULT_HOST = "0.0.0.0"
 _DEFAULT_PORT = 4141
+
+
+def populate_data(
+    data_access_manager: DataAccessManager,
+    catalog: DataCatalog,
+    pipelines: List[Pipeline],
+):
+    """Populate data repositories. Should be called once on application start
+    if creatinge an api app from project.
+    """
+    data_access_manager.add_catalog(catalog)
+    data_access_manager.add_pipelines(pipelines)
+    data_access_manager.set_layers(
+        layers_services.sort_layers(
+            data_access_manager.nodes.as_dict(), data_access_manager.node_dependencies,
+        )
+    )
 
 
 def run_server(
@@ -73,8 +94,7 @@ def run_server(
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
-        data_access_manager.add_catalog(catalog)
-        data_access_manager.add_pipelines(pipelines)
+        populate_data(data_access_manager, catalog, pipelines)
         if save_file:
             res = responses.get_default_response()
             Path(save_file).write_text(res.json(indent=4, sort_keys=True))

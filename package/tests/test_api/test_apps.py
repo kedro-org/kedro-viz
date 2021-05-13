@@ -38,6 +38,7 @@ from kedro.pipeline import Pipeline
 from kedro_viz.api import apps
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.models.graph import TaskNode
+from kedro_viz.server import populate_data
 
 
 @pytest.fixture
@@ -47,8 +48,7 @@ def example_api(
     example_catalog: DataCatalog,
 ):
     api = apps.create_api_app_from_project()
-    data_access_manager.add_catalog(example_catalog)
-    data_access_manager.add_pipelines(example_pipelines)
+    populate_data(data_access_manager, example_catalog, example_pipelines)
     with mock.patch(
         "kedro_viz.api.responses.data_access_manager", new=data_access_manager
     ), mock.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager):
@@ -110,7 +110,7 @@ def assert_example_data(response_data):
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
-            "layer": None,
+            "layer": "raw",
         },
         {
             "id": "c506f374",
@@ -168,7 +168,7 @@ def assert_example_data(response_data):
     # compare the rest
     assert response_data == {
         "tags": ["split", "train"],
-        "layers": [],
+        "layers": ["raw", "model_inputs"],
         "pipelines": [
             {"id": "__default__", "name": "Default"},
             {"id": "data_science", "name": "Data Science"},
@@ -290,7 +290,7 @@ class TestSinglePipelineEndpoint:
         assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
         assert response_data == {
             "tags": ["split", "train"],
-            "layers": [],
+            "layers": ["raw", "model_inputs"],
             "pipelines": [
                 {"id": "__default__", "name": "Default"},
                 {"id": "data_science", "name": "Data Science"},
