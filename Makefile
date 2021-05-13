@@ -17,8 +17,8 @@ clean:
 run:
 	python package/kedro_viz/server.py --port 4141
 
-pytest:
-	cd package && python3 setup.py test
+pytest: build
+	cd package && pytest
 
 e2e-tests: build
 	cd package && behave
