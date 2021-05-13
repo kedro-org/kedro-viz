@@ -31,7 +31,7 @@ import json
 import os
 from os import path
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 name = "kedro-viz"
 here = path.abspath(path.dirname(__file__))
@@ -74,7 +74,7 @@ setup(
     tests_require=test_requires,
     keywords="pipelines, machine learning, data pipelines, data science, data engineering, visualisation",
     author="QuantumBlack Labs",
-    packages=["kedro_viz"],
+    packages=find_packages(exclude=["tests*", "features*"]),
     package_data={"kedro_viz": list(files)},
     zip_safe=False,
     entry_points={
