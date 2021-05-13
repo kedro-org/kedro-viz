@@ -11,6 +11,7 @@ const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
 const getNodeType = (state) => state.node.type;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
+const getEdge = (state) => state.edge;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
@@ -180,11 +181,11 @@ export const getAllNodeTypes = createSelector(
  * with their sources and targets, combined before filtering
  */
 export const getAllEdges = createSelector(
-  [getEdgeIDs, getEdgeSources, getEdgeTargets, getModularPipelineEdges],
-  (edgeIDs, edgeSources, edgeTargets, modPipEdges) => ({
-    ids: edgeIDs.concat(Object.keys(modPipEdges.ids)),
-    sources: { ...edgeSources, ...modPipEdges.sources },
-    targets: { ...edgeTargets, ...modPipEdges.targets },
+  [getEdge, getModularPipelineEdges],
+  (edge, modPipEdge) => ({
+    ids: edge.ids.concat(Object.keys(modPipEdge.ids)),
+    sources: { ...edge.sources, ...modPipEdge.sources },
+    targets: { ...edge.targets, ...modPipEdge.targets },
   })
 );
 
