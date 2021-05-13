@@ -205,11 +205,13 @@ class TestNodeMetadataEndpoint:
 
     def test_task_node_metadata(self, client):
         response = client.get("/api/nodes/56118ad8")
-        assert response.json() == {
-            "code": "    def process_data(raw_data, train_test_split):\n        ...\n",
-            "filepath": str(Path("package/tests/conftest.py")),
-            "parameters": {"train_test_split": 0.1},
-        }
+        metadata = response.json()
+        assert (
+            metadata["code"].lstrip()
+            == "def process_data(raw_data, train_test_split):\n        ...\n"
+        )
+        assert metadata["parameters"] == {"train_test_split": 0.1}
+        assert str(Path("package/tests/conftest.py")) in metadata["filepath"]
 
     def test_data_node_metadata(self, client):
         response = client.get("/api/nodes/0ecea0de")
