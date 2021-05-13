@@ -26,7 +26,7 @@ export const getNodeDisabledPipeline = createSelector(
 );
 
 /**
- * Get a list of just the IDs for the active pipeline
+ * Get only the nodes included in the active pipeline
  */
 export const getPipelineNodeIDs = createSelector(
   [getNodeIDs, getNodeDisabledPipeline],
