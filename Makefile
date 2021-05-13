@@ -18,7 +18,7 @@ run:
 	python package/kedro_viz/server.py --port 4141
 
 pytest: build
-	cd package && pytest
+	cd package && pytest --cov-fail-under=100
 
 e2e-tests: build
 	cd package && behave
