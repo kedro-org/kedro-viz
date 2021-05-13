@@ -189,6 +189,68 @@ export const getAllEdges = createSelector(
   })
 );
 
+const intersection = (array1, array2) =>
+  array1.filter((d) => array2.indexOf(d) !== -1);
+
+/**
+ * Determine whether a modular pipeline is both a parent and child of node(s)
+ * that are not included as part of the MP. This would cause a circular
+ * dependency error, so we need to prevent these MPs from being collapsed.
+ */
+export const getUncollapsibleModularPipelines = createSelector(
+  [
+    (state) => state.edge,
+    getPipelineNodeIDs,
+    getNodeModularPipelines,
+    getAllNodeNames,
+  ],
+  (edge, nodeIDs, nodeModPips, nodeName) => {
+    const modularPipelineIsCircular = {};
+    /**
+     * Recursively walk through the graph, to determine whether
+     * a modular pipeline links back to itself.
+     * @param {Array} path The route that has been explored so far
+     */
+    const walkGraphEdges = (path) => {
+      edge.ids.forEach((edgeID) => {
+        const source = path[path.length - 1];
+        // Filter to only edges where the source node is the previous target
+        if (edge.sources[edgeID] !== source.id) {
+          return;
+        }
+        const id = edge.targets[edgeID];
+        const target = { id, name: nodeName[id], modPips: nodeModPips[id] };
+        const originIntersection = intersection(
+          path[0].modPips,
+          target.modPips
+        );
+        if (path.length === 1 && originIntersection.length) {
+          return;
+        }
+        if (originIntersection.length) {
+          originIntersection.forEach((modPipID) => {
+            modularPipelineIsCircular[modPipID] = true;
+          });
+        } else {
+          walkGraphEdges(path.concat(target));
+        }
+      });
+    };
+    // Walk the graph from every modular pipeline
+    nodeIDs.forEach((nodeID) => {
+      walkGraphEdges([
+        {
+          id: nodeID,
+          name: nodeName[nodeID],
+          modPips: nodeModPips[nodeID],
+        },
+      ]);
+    });
+
+    return modularPipelineIsCircular;
+  }
+);
+
 /**
  * Retrieve the formatted list of modular pipeline filters
  */
@@ -199,13 +261,15 @@ export const getModularPipelineData = createSelector(
     getModularPipelineEnabled,
     getModularPipelineContracted,
     getModularPipelineParentsContracted,
+    getUncollapsibleModularPipelines,
   ],
   (
     modularPipelineIDs,
     modularPipelineName,
     modularPipelineEnabled,
     modularPipelineContracted,
-    modularPipelineParentsContracted
+    modularPipelineParentsContracted,
+    modularPipelineUncollapsible
   ) =>
     modularPipelineIDs
       .slice()
@@ -217,6 +281,7 @@ export const getModularPipelineData = createSelector(
           modularPipelineParentsContracted[id] || modularPipelineContracted[id]
         ),
         disabled: Boolean(modularPipelineParentsContracted[id]),
+        uncollapsible: Boolean(modularPipelineUncollapsible[id]),
         enabled: Boolean(modularPipelineEnabled[id]),
       }))
 );
