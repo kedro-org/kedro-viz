@@ -162,10 +162,11 @@
       "id": "c3p345ed",
       "layer": "model output",
       "name": "Plot:bull",
+      "datasetType": "plotly.PlotlyDataSet",
       "modular_pipelines": [],
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
-      "type": "plot"
+      "type": "data"
     },
     {
       "full_name": "pig",

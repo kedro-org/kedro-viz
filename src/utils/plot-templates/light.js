@@ -98,8 +98,8 @@ const light = {
   mapbox: {
     style: 'light',
   },
-  paper_bgcolor: 'rgba(0, 0, 0, 0)',
-  plot_bgcolor: 'rgba(0, 0, 0, 0)',
+  paper_bgcolor: '#EEEEEE',
+  plot_bgcolor: '#EEEEEE',
   title: {
     font: {
       family: 'Titillium+Web:400',
@@ -180,18 +180,12 @@ const light = {
 
 export const light_preview = {
   ...light,
-  title: {
-    ...light.title,
-    font: {
-      ...light.title.font,
-      size: 16,
-    },
-  },
+  title: '',
   margin: {
-    l: 0,
-    r: 10,
+    l: 100,
+    r: 40,
     t: 40,
-    b: 20,
+    b: 70,
   },
   xaxis: {
     ...light.xaxis,
@@ -206,6 +200,7 @@ export const light_preview = {
       ...light.xaxis.tickfont,
       size: 8,
     },
+    nticks: 5,
   },
   yaxis: {
     ...light.yaxis,
@@ -220,9 +215,10 @@ export const light_preview = {
       ...light.yaxis.tickfont,
       size: 8,
     },
+    nticks: 5,
   },
-  height: 200,
-  width: 320,
+  height: 300,
+  width: 400,
 };
 
 export const light_modal = {

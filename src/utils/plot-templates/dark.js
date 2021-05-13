@@ -98,8 +98,8 @@ const dark = {
   mapbox: {
     style: 'DARK',
   },
-  paper_bgcolor: 'rgb(1,1,1,0)',
-  plot_bgcolor: 'rgb(1,1,1)',
+  paper_bgcolor: '#111111',
+  plot_bgcolor: '#111111',
   title: {
     font: {
       family: 'Titillium+Web:400',
@@ -184,8 +184,8 @@ export const dark_preview = {
   margin: {
     l: 100,
     r: 40,
-    t: 20,
-    b: 20,
+    t: 40,
+    b: 70,
   },
   xaxis: {
     ...dark.xaxis,

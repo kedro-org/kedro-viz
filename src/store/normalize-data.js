@@ -35,12 +35,11 @@ export const createInitialPipelineState = () => ({
     modularPipelines: {},
   },
   nodeType: {
-    ids: ['task', 'data', 'parameters', 'plot'],
+    ids: ['task', 'data', 'parameters'],
     name: {
       data: 'Datasets',
       task: 'Nodes',
       parameters: 'Parameters',
-      plot: 'Plot',
     },
     disabled: {},
   },

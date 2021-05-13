@@ -219,10 +219,10 @@ describe('NodeList', () => {
         ['Cat', true],
         ['Dog', true],
         ['Horse', true],
+        ['Plot:bull', true],
         ['Sheep', true],
         ['Parameters', true],
         ['Params:rabbit', true],
-        ['Plot:bull', true],
       ]);
 
       changeRows(wrapper, ['Small', 'Large'], true);
@@ -237,17 +237,16 @@ describe('NodeList', () => {
         ['Horse', true],
         ['Nested.weasel', true],
         ['Pig', true],
+        ['Plot:bull', true],
         ['Sheep', true],
         ['Parameters', true],
         ['Params:rabbit', true],
-        ['Plot:bull', true],
       ]);
     });
 
     it('selecting a tag sorts elements by enabled first then alphabetical', () => {
       const wrapper = setup.mount(<NodeList />);
       changeRows(wrapper, ['Medium'], true);
-
       expect(elements(wrapper)).toEqual([
         // Tasks (enabled)
         ['shark', true],
@@ -270,14 +269,13 @@ describe('NodeList', () => {
         ['Pipeline2.data Science.pig', false],
         ['Pipeline2.data Science.sheep', false],
         ['Pipeline2.data Science.whale', false],
+        ['Plot:bull', false],
         ['Sheep', false],
         // Parameters
         ['Parameters', false],
         ['Params:pipeline100.data Science.plankton', false],
         ['Params:pipeline2.data Science.plankton', false],
         ['Params:rabbit', false],
-        //Plot
-        ['Plot:bull', false],
       ]);
     });
 

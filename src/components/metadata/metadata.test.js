@@ -65,7 +65,7 @@ describe('MetaData', () => {
   describe('Task nodes', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
-      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--type-task')).toBe(
+      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-task')).toBe(
         true
       );
     });
@@ -141,7 +141,7 @@ describe('MetaData', () => {
   describe('Dataset nodes', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: catDatasetNodeId });
-      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--type-data')).toBe(
+      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-data')).toBe(
         true
       );
     });
@@ -207,7 +207,7 @@ describe('MetaData', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: rabbitParamsNodeId });
       expect(
-        rowIcon(wrapper).hasClass('pipeline-node-icon--type-parameters')
+        rowIcon(wrapper).hasClass('pipeline-node-icon--icon-parameters')
       ).toBe(true);
     });
 
@@ -250,7 +250,7 @@ describe('MetaData', () => {
   describe('Plot nodes', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: bullPlotNodeID });
-      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--type-plot')).toBe(
+      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-plot')).toBe(
         true
       );
     });
@@ -263,7 +263,7 @@ describe('MetaData', () => {
     it('shows the node type as text', () => {
       const wrapper = mount({ nodeId: bullPlotNodeID });
       const row = rowByLabel(wrapper, 'Type:');
-      expect(textOf(rowValue(row))).toEqual(['plot']);
+      expect(textOf(rowValue(row))).toEqual(['data']);
     });
 
     it('shows the node filepath', () => {
