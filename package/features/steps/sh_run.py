@@ -25,7 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+# type: ignore
 import shlex
 import subprocess
 from typing import Any, Sequence

@@ -35,14 +35,14 @@ import socket
 from contextlib import closing
 from functools import partial
 from time import sleep, time
-from typing import Any, Callable
+from typing import Any, Callable, Dict
 
 import requests
 from IPython.core.display import HTML, display
 
 from kedro_viz.server import run_server
 
-_VIZ_PROCESSES = {}
+_VIZ_PROCESSES: Dict[str, int] = {}
 
 
 logger = logging.getLogger(__name__)

@@ -31,7 +31,7 @@ load data from projects created in a range of Kedro versions.
 """
 # pylint: disable=import-outside-toplevel
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Tuple, cast
 
 from kedro import __version__
 from kedro.io import DataCatalog
@@ -41,7 +41,7 @@ from semver import VersionInfo
 KEDRO_VERSION = VersionInfo.parse(__version__)
 
 
-def _bootstrap(project_path: str):
+def _bootstrap(project_path: Path):
     """Bootstrap the integration by running various Kedro bootstrapping methods
     depending on the version
     """
@@ -82,7 +82,7 @@ def load_data(
             project_path=project_path, env=env, save_on_close=False
         )
         context = session.load_context()
-        return context.catalog, pipelines
+        return context.catalog, cast(Dict, pipelines)
 
     if KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession

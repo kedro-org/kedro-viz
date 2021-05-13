@@ -73,7 +73,7 @@ def sort_layers(
     Raises:
         CircularDependencyError: When the layers have cyclic dependencies.
     """
-    node_layers = {}  # map node_id to the layers that depend on it
+    node_layers: Dict[str, Set[str]] = {}  # map node_id to the layers that depend on it
 
     def find_child_layers(node_id: str) -> Set[str]:
         """For the given node_id, find all layers that depend on it in a depth-first manner.

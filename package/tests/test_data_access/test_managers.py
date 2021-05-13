@@ -25,7 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Dict
+from typing import Dict, cast
 
 from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.io import DataCatalog
@@ -165,8 +165,11 @@ class TestAddNode:
             namespace="uk.data_science",
         )
         task_node = data_access_manager.add_node(pipeline_name, kedro_node)
-        parameter_node: ParametersNode = data_access_manager.add_node_input(
-            pipeline_name, parameter_name, task_node
+        parameter_node = cast(
+            ParametersNode,
+            data_access_manager.add_node_input(
+                pipeline_name, parameter_name, task_node
+            ),
         )
         assert parameter_node.modular_pipelines == [
             "uk",
@@ -224,7 +227,7 @@ class TestAddDataSet:
         dataset_name = "x"
         catalog = DataCatalog(
             data_sets={dataset_name: dataset},
-            layers={"raw": [dataset_name]},
+            layers={"raw": {dataset_name}},
         )
         data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset("my_pipeline", dataset_name)

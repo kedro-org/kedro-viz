@@ -28,7 +28,7 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
 import webbrowser
 from pathlib import Path
-from typing import List
+from typing import Dict
 
 import uvicorn
 from kedro.io import DataCatalog
@@ -46,7 +46,7 @@ _DEFAULT_PORT = 4141
 def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
-    pipelines: List[Pipeline],
+    pipelines: Dict[str, Pipeline],
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
@@ -88,8 +88,8 @@ def run_server(
             to visualise. If not supplied, the current working directory will be used.
     """
     if load_file is None:
-        project_path = Path(project_path) if project_path else Path.cwd()
-        catalog, pipelines = kedro_data_loader.load_data(project_path, env)
+        path = Path(project_path) if project_path else Path.cwd()
+        catalog, pipelines = kedro_data_loader.load_data(path, env)
         pipelines = (
             pipelines
             if pipeline_name is None

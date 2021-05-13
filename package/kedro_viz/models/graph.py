@@ -25,7 +25,6 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """`kedro_viz.models.graph` defines data models to represent Kedro entities in a viz graph."""
 # pylint: disable=protected-access
 import abc
@@ -34,7 +33,7 @@ import inspect
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.io import AbstractDataSet
 from kedro.pipeline.node import Node as KedroNode
@@ -90,6 +89,8 @@ class GraphNode(abc.ABC):
     # in the future this will be modelled as a many-to-many relationship
     # in a database
     pipelines: List[str]
+    modular_pipelines: List[str] = field(init=False)
+    _kedro_obj: Union[KedroNode, Optional[AbstractDataSet]] = field(init=False)
 
     @staticmethod
     def _hash(value: str):
@@ -133,10 +134,8 @@ class GraphNode(abc.ABC):
         """For every node in the graph representation of a Kedro pipeline,
         there might be an underlying Kedro object stored at `self._kedro_obj`.
         For example, it could be a Node or a DataSet object.
-        The value will be set by the concrete implementation of this abstract class,
-        hence the pylint disable.
         """
-        return self._kedro_obj  # pylint: disable=no-member
+        return self._kedro_obj
 
     @classmethod
     def create_task_node(cls, node: KedroNode) -> "TaskNode":
@@ -264,7 +263,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
     task_node: InitVar[TaskNode]
 
     def __post_init__(self, task_node: TaskNode):
-        kedro_node: KedroNode = task_node.kedro_obj
+        kedro_node = cast(KedroNode, task_node.kedro_obj)
         self.code = inspect.getsource(kedro_node._func)
         code_full_path = Path(inspect.getfile(kedro_node._func)).expanduser().resolve()
         try:
@@ -302,12 +301,12 @@ class DataNode(GraphNode):
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
-    type: str = field(init=False, default=None)
-    filepath: str = field(init=False, default=None)
+    type: str = field(init=False)
+    filepath: str = field(init=False)
     data_node: InitVar[DataNode]
 
     def __post_init__(self, data_node: DataNode):
-        dataset: AbstractDataSet = data_node.kedro_obj
+        dataset = cast(AbstractDataSet, data_node.kedro_obj)
         self.type = f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
         self.filepath = str(dataset._describe().get("filepath"))
 
@@ -346,7 +345,8 @@ class ParametersNode(GraphNode):
     @property
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
-        return self.kedro_obj.load()
+        self._kedro_obj: AbstractDataSet
+        return self._kedro_obj.load()
 
 
 @dataclass

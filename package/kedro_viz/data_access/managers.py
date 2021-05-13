@@ -27,7 +27,7 @@
 # limitations under the License.
 """`kedro_viz.data_access.managers` defines data access managers."""
 from collections import defaultdict
-from typing import List, Union
+from typing import Dict, List, Union
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
@@ -70,7 +70,7 @@ class DataAccessManager:
     def add_catalog(self, catalog: DataCatalog):
         self.catalog.set(catalog)
 
-    def add_pipelines(self, pipelines: List[KedroPipeline]):
+    def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         for pipeline_key, pipeline in pipelines.items():
             self.add_pipeline(pipeline_key, pipeline)
 
@@ -129,6 +129,7 @@ class DataAccessManager:
     ) -> Union[DataNode, ParametersNode]:
         obj = self.catalog.get_dataset(dataset_name)
         layer = self.catalog.get_layer_for_dataset(dataset_name)
+        graph_node: Union[DataNode, ParametersNode]
         if self.catalog.is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
                 full_name=dataset_name,

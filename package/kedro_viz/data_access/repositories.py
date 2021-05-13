@@ -123,7 +123,8 @@ class CatalogRepository:
                 )
         return self._layers_mapping
 
-    def get_dataset(self, dataset_name: str) -> AbstractDataSet:
+    def get_dataset(self, dataset_name: str) -> Optional[AbstractDataSet]:
+        dataset_obj: Optional[AbstractDataSet]
         if _KEDRO_VERSION.match(">=0.16.0"):
             try:
                 dataset_obj = self._catalog._get_dataset(dataset_name)
@@ -168,7 +169,7 @@ class RegisteredPipelinesRepository:
 
 class ModularPipelinesRepository:
     def __init__(self):
-        self.modular_pipelines: Dict[str, Set[ModularPipeline]] = {}
+        self.modular_pipelines: Dict[str, ModularPipeline] = {}
 
     def add(self, modular_pipeline_ids: Iterable[str]):
         for modular_pipeline_id in modular_pipeline_ids:
