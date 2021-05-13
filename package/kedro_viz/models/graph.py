@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
@@ -19,12 +19,13 @@
 # trademarks of QuantumBlack. The License does not grant you any right or
 # license to the QuantumBlack Trademarks. You may not use the QuantumBlack
 # Trademarks or any confusingly similar mark as a trademark for your product,
-#     or use the QuantumBlack Trademarks in any other manner that might cause
+# or use the QuantumBlack Trademarks in any other manner that might cause
 # confusion in the marketplace, including but not limited to in advertising,
 # on websites, or on software.
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """`kedro_viz.models.graph` defines data models to represent Kedro entities in a viz graph."""
 # pylint: disable=protected-access
 import abc
@@ -270,7 +271,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
             filepath = code_full_path.relative_to(Path.cwd().parent)
         except ValueError:  # pragma: no cover
             # if the filepath can't be resolved relative to the current directory,
-            #  e.g. either during tests or during launching development server
+            # e.g. either during tests or during launching development server
             # outside of a Kedro project, simply return the fullpath to the file.
             filepath = code_full_path
         self.filepath = str(filepath)
