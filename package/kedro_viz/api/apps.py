@@ -28,9 +28,9 @@
 """`kedro_viz.api.app` defines the FastAPI app to serve Kedro data in a RESTful API.
 This data could either come from a real Kedro project or a file.
 """
-# pylint: disable=unused-variable
 import json
 from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles

@@ -17,19 +17,19 @@ clean:
 run:
 	python package/kedro_viz/server.py --port 4141
 
-pytest: build
+pytest:
 	cd package && python3 setup.py test
 
 e2e-tests: build
 	cd package && behave
 
 pylint:
-	cd package && isort
+	cd package && isort .
 	black package/kedro_viz package/tests package/features
 	pylint --rcfile=package/.pylintrc -j 0 package/kedro_viz
-	pylint -j 0 --disable=bad-continuation,missing-docstring,redefined-outer-name,no-self-use,invalid-name,too-few-public-methods,no-member,unused-argument package/tests
-	pylint -j 0 --disable=missing-docstring,no-name-in-module,unused-argument package/features
-	flake8 package
+	pylint --rcfile=package/.pylintrc -j 0 --disable=protected-access,missing-docstring,redefined-outer-name,no-self-use,invalid-name,too-few-public-methods,no-member,unused-argument,duplicate-code package/tests
+	pylint --rcfile=package/.pylintrc -j 0 --disable=missing-docstring,no-name-in-module,unused-argument package/features
+	flake8 --config=package/.flake8 package
 
 secret-scan:
 	trufflehog --max_depth 1 --exclude_path trufflehog-ignore.txt .

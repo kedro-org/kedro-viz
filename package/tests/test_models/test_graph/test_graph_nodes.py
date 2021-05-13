@@ -25,7 +25,6 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# pylint: disable=protected-access
 from pathlib import Path
 from textwrap import dedent
 
@@ -36,14 +35,14 @@ from kedro.pipeline.node import node
 
 from kedro_viz.models.graph import (
     DataNode,
+    DataNodeMetadata,
     GraphNode,
     ModularPipeline,
     ParametersNode,
+    ParametersNodeMetadata,
     RegisteredPipeline,
     TaskNode,
     TaskNodeMetadata,
-    DataNodeMetadata,
-    ParametersNodeMetadata,
 )
 
 
@@ -213,7 +212,7 @@ class TestGraphNodeMetadata:
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert (
             data_node_metadata.type
-            == f"kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+            == "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
         )
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
 

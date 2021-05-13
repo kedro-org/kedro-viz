@@ -28,10 +28,9 @@
 """`kedro_viz.launchers.cli` launches the viz server as a CLI app."""
 
 import traceback
+
 import click
-
 from kedro.framework.cli.utils import KedroCliError
-
 
 from kedro_viz.server import run_server
 
@@ -41,7 +40,6 @@ def commands():
     """Visualize the pipeline using kedroviz."""
 
 
-# pylint: disable=too-many-arguments
 @commands.command(context_settings=dict(help_option_names=["-h", "--help"]))
 @click.option(
     "--host",

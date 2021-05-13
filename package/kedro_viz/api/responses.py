@@ -31,8 +31,8 @@ import abc
 from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
+
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.graph import ModularPipeline
 
 
 class APIErrorMessage(BaseModel):
@@ -95,7 +95,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
             "example": {
                 "code": "def split_data(data: pd.DataFrame, parameters: Dict) -> Tuple:",
                 "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
-                "parameters": {"test_size": 0.2,},
+                "parameters": {"test_size": 0.2},
             }
         }
 

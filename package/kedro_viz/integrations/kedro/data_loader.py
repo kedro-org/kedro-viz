@@ -33,12 +33,10 @@ load data from projects created in a range of Kedro versions.
 from pathlib import Path
 from typing import Dict, Tuple
 
-
 from kedro import __version__
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
-
 
 KEDRO_VERSION = VersionInfo.parse(__version__)
 
@@ -54,8 +52,8 @@ def _bootstrap(project_path: str):
         return
 
     if KEDRO_VERSION.match(">=0.17.1"):
-        from kedro.framework.startup import _get_project_metadata
         from kedro.framework.project import configure_project
+        from kedro.framework.startup import _get_project_metadata
 
         package_name = _get_project_metadata(project_path).package_name
 
@@ -77,8 +75,8 @@ def load_data(
     _bootstrap(project_path)
 
     if KEDRO_VERSION.match(">=0.17.3"):
-        from kedro.framework.session import KedroSession
         from kedro.framework.project import pipelines
+        from kedro.framework.session import KedroSession
 
         session = KedroSession.create(
             project_path=project_path, env=env, save_on_close=False
@@ -88,7 +86,10 @@ def load_data(
 
     if KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
-        from kedro.framework.startup import _get_project_metadata
+
+        session = KedroSession.create(
+            project_path=project_path, env=env, save_on_close=False
+        )
 
         context = session.load_context()
         return context.catalog, context.pipelines

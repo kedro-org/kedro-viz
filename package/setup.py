@@ -77,7 +77,6 @@ setup(
     packages=["kedro_viz"],
     package_data={"kedro_viz": list(files)},
     zip_safe=False,
-    setup_requires=["pytest-runner==4.2"],
     entry_points={
         "kedro.global_commands": ["kedro-viz = kedro_viz.launchers.cli:commands"],
         "kedro.line_magic": ["line_magic = kedro_viz.launchers.jupyter:run_viz"],

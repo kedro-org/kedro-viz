@@ -26,12 +26,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Dict
-import pytest
+
+from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
-from kedro.pipeline.modular_pipeline import pipeline
-from kedro.extras.datasets.pandas import CSVDataSet
-
 
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.models.graph import DataNode, GraphEdge, ParametersNode, TaskNode
@@ -39,7 +37,6 @@ from kedro_viz.models.graph import DataNode, GraphEdge, ParametersNode, TaskNode
 
 def identity(x):
     return x
-
 
 
 class TestAddCatalog:
@@ -317,4 +314,3 @@ class TestAddPipelines:
         data_access_manager.add_pipelines(example_pipelines)
         assert not data_access_manager.registered_pipelines.get("__default__")
         assert data_access_manager.get_default_selected_pipeline().id == "data_science"
-

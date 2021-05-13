@@ -25,17 +25,18 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import operator
 from pathlib import Path
-from unittest import mock
-import pytest
 from typing import Dict
+from unittest import mock
+
+import pytest
+from fastapi.testclient import TestClient
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.api import apps
 from kedro_viz.data_access.managers import DataAccessManager
-from fastapi.testclient import TestClient
-
 from kedro_viz.models.graph import TaskNode
 
 
@@ -60,7 +61,7 @@ def client(example_api):
 
 
 def assert_nodes_equal(response_nodes, expected_nodes):
-    node_sort_key = lambda x: x["id"]
+    node_sort_key = operator.itemgetter("id")
     for response_node, expected_node in zip(
         sorted(response_nodes, key=node_sort_key),
         sorted(expected_nodes, key=node_sort_key),
@@ -72,7 +73,7 @@ def assert_nodes_equal(response_nodes, expected_nodes):
 
 
 def assert_edges_equal(response_edges, expected_edges):
-    edge_sort_key = lambda x: x["source"]
+    edge_sort_key = operator.itemgetter("source")
     assert sorted(response_edges, key=edge_sort_key) == sorted(
         expected_edges, key=edge_sort_key
     )
@@ -194,7 +195,6 @@ class TestMainEndpoint:
     def test_endpoint_main(self, client):
         response = client.get("/api/main")
         assert response.status_code == 200
-        response_data = response.json()
         assert_example_data(response.json())
 
 
@@ -204,10 +204,10 @@ class TestNodeMetadataEndpoint:
         assert response.status_code == 404
 
     def test_task_node_metadata(self, client):
-        response = client.get(f"/api/nodes/56118ad8")
+        response = client.get("/api/nodes/56118ad8")
         assert response.json() == {
             "code": "    def process_data(raw_data, train_test_split):\n        ...\n",
-            "filepath": str(Path("kedro-viz/package/tests/conftest.py")),
+            "filepath": str(Path("package/tests/conftest.py")),
             "parameters": {"train_test_split": 0.1},
         }
 
@@ -230,7 +230,7 @@ class TestNodeMetadataEndpoint:
 
     def test_no_metadata(self, client):
         with mock.patch.object(TaskNode, "have_metadata", return_value=False):
-            response = client.get(f"/api/nodes/56118ad8")
+            response = client.get("/api/nodes/56118ad8")
         assert response.json() == {}
 
 

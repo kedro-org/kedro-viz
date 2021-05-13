@@ -48,7 +48,7 @@ def run_server(
     pipeline_name: str = None,
     env: str = None,
     project_path: str = None,
-):  # pylint: disable=too-many-arguments
+):
     """Run a uvicorn server with a FastAPI app that either launches an API from a file
     or from reading data from a real Kedro project.
 

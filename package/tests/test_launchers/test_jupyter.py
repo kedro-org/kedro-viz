@@ -26,7 +26,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import pytest
-from kedro_viz.launchers.jupyter import run_viz, _VIZ_PROCESSES, WaitForException
+
+from kedro_viz.launchers.jupyter import _VIZ_PROCESSES, WaitForException, run_viz
 from kedro_viz.server import run_server
 
 
@@ -55,8 +56,8 @@ class TestRunVizLineMagic:
         assert set(_VIZ_PROCESSES.keys()) == {4141}
 
     def test_run_viz_invalid_port(self, mocker, patched_check_viz_up):
-        process_init = mocker.patch("multiprocessing.Process")
-        jupyter_display = mocker.patch("kedro_viz.launchers.jupyter.display")
+        mocker.patch("multiprocessing.Process")
+        mocker.patch("kedro_viz.launchers.jupyter.display")
         with pytest.raises(ValueError):
             run_viz(port=999999)
 

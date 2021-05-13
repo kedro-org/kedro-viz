@@ -106,4 +106,3 @@ class TestModularPipelinesRepository:
             "uk.data_engineering",
             "uk.data_science",
         ]
-

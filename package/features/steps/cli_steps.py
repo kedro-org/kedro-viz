@@ -39,7 +39,7 @@ from IPython.testing.globalipapp import get_ipython
 
 from features.steps.sh_run import ChildTerminatingPopen, run
 from features.steps.util import download_url
-from kedro_viz.utils import wait_for
+from kedro_viz.launchers.jupyter import _wait_for
 
 OK_EXIT_CODE = 0
 
@@ -177,7 +177,7 @@ def exec_line_magic(context, command):
 def check_kedroviz_up(context):
     """Check that kedro-viz is up and responding to requests"""
 
-    wait_for(
+    _wait_for(
         _check_kedroviz_running,
         expected_result=None,
         print_error=False,

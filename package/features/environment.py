@@ -56,7 +56,7 @@ def _should_exclude_scenario(scenario):
     return sys.version_info >= (3, 8) and pre_16_scenario
 
 
-def before_scenario(context, scenario):  # pylint: disable=unused-argument
+def before_scenario(context, scenario):
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """

@@ -38,7 +38,6 @@ from kedro_viz.models.graph import (
     GraphEdge,
     GraphNode,
     ParametersNode,
-    ModularPipeline,
     RegisteredPipeline,
     TaskNode,
 )

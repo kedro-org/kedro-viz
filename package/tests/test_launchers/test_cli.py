@@ -25,8 +25,6 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from unittest import mock
-
 import pytest
 from click.testing import CliRunner
 

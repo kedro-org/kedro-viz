@@ -46,7 +46,6 @@ from .responses import (
     get_default_response,
 )
 
-
 router = APIRouter(prefix="/api", responses={404: {"model": APIErrorMessage}},)
 
 
