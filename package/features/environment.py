@@ -25,10 +25,8 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Behave environment setup commands"""
 
-import glob
 import os
 import shutil
 import sys
@@ -39,7 +37,7 @@ from typing import Set
 
 from features.steps.sh_run import run
 
-_PATHS_TO_REMOVE = set()  # type: Set[Path]
+_PATHS_TO_REMOVE: Set[Path] = set()
 
 
 def call(cmd, env, verbose=False):
@@ -112,15 +110,7 @@ def _setup_context_with_venv(context, venv_dir):
         env=context.env,
     )
 
-    for wheel_path in glob.glob("dist/*.whl"):
-        os.remove(wheel_path)
-    call([context.python, "setup.py", "clean", "--all", "bdist_wheel"], env=context.env)
-
-    call(
-        [context.python, "-m", "pip", "install", "-U"] + glob.glob("dist/*.whl"),
-        env=context.env,
-    )
-
+    call([context.python, "setup.py", "install"], env=context.env)
     return context
 
 
