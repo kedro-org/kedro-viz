@@ -216,13 +216,11 @@ class GraphNode(abc.ABC):
         )
 
     def belong_to_pipeline(self, pipeline_id: str) -> bool:
-        """Check whether this graph node belongs to a given pipeline_id.
-        """
+        """Check whether this graph node belongs to a given pipeline_id."""
         return pipeline_id in self.pipelines
 
     def add_pipeline(self, pipeline_id: str):
-        """Add a pipeline_id to the list of pipelines that this node belongs to.
-        """
+        """Add a pipeline_id to the list of pipelines that this node belongs to."""
         if pipeline_id not in self.pipelines:
             self.pipelines.append(pipeline_id)
 

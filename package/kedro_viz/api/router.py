@@ -46,7 +46,10 @@ from .responses import (
     get_default_response,
 )
 
-router = APIRouter(prefix="/api", responses={404: {"model": APIErrorMessage}},)
+router = APIRouter(
+    prefix="/api",
+    responses={404: {"model": APIErrorMessage}},
+)
 
 
 @router.get("/main", response_model=GraphAPIResponse)
@@ -55,7 +58,8 @@ async def main():
 
 
 @router.get(
-    "/nodes/{node_id}", response_model=NodeMetadataAPIResponse,
+    "/nodes/{node_id}",
+    response_model=NodeMetadataAPIResponse,
 )
 async def get_single_node_metadata(node_id: str):
     node = data_access_manager.nodes.get(node_id)
@@ -75,7 +79,8 @@ async def get_single_node_metadata(node_id: str):
 
 
 @router.get(
-    "/pipelines/{pipeline_id}", response_model=GraphAPIResponse,
+    "/pipelines/{pipeline_id}",
+    response_model=GraphAPIResponse,
 )
 async def get_single_pipeline_data(pipeline_id: str):
     if not data_access_manager.registered_pipelines.have(pipeline_id):

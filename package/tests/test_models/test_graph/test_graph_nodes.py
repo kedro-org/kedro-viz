@@ -57,7 +57,11 @@ class TestGraphNodeCreation:
             (None, []),
             (
                 "uk.data_science.model_training",
-                ["uk", "uk.data_science", "uk.data_science.model_training",],
+                [
+                    "uk",
+                    "uk.data_science",
+                    "uk.data_science.model_training",
+                ],
             ),
         ],
     )
@@ -87,7 +91,11 @@ class TestGraphNodeCreation:
             (
                 "uk.data_science.model_training.dataset",
                 "Uk.data Science.model Training.dataset",
-                ["uk", "uk.data_science", "uk.data_science.model_training",],
+                [
+                    "uk",
+                    "uk.data_science",
+                    "uk.data_science.model_training",
+                ],
             ),
         ],
     )
@@ -96,7 +104,10 @@ class TestGraphNodeCreation:
     ):
         kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
-            full_name=dataset_name, layer="raw", tags=set(), dataset=kedro_dataset,
+            full_name=dataset_name,
+            layer="raw",
+            tags=set(),
+            dataset=kedro_dataset,
         )
         assert isinstance(data_node, DataNode)
         assert data_node.kedro_obj is kedro_dataset
@@ -164,7 +175,10 @@ class TestGraphNodePipelines:
         another_pipeline = RegisteredPipeline("testing")
         kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
-            full_name="dataset", layer="raw", tags=set(), dataset=kedro_dataset,
+            full_name="dataset",
+            layer="raw",
+            tags=set(),
+            dataset=kedro_dataset,
         )
         assert data_node.pipelines == []
         data_node.add_pipeline(default_pipeline)
@@ -207,7 +221,10 @@ class TestGraphNodeMetadata:
     def test_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")
         data_node = GraphNode.create_data_node(
-            full_name="dataset", layer="raw", tags=set(), dataset=dataset,
+            full_name="dataset",
+            layer="raw",
+            tags=set(),
+            dataset=dataset,
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert (

@@ -88,8 +88,7 @@ def commands():
     "catalog config in `local` will be used",
 )
 def viz(host, port, browser, load_file, save_file, pipeline, env):
-    """Visualize a Kedro pipeline using kedroviz.
-    """
+    """Visualize a Kedro pipeline using kedroviz."""
     try:
         run_server(host, port, browser, load_file, save_file, pipeline, env)
     except Exception as ex:  # pragma: no cover

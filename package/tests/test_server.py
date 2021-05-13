@@ -89,7 +89,9 @@ class TestServer:
         patched_uvicorn_run.assert_called_once()
 
     def test_specific_pipeline(
-        self, patched_data_access_manager, example_pipelines,
+        self,
+        patched_data_access_manager,
+        example_pipelines,
     ):
         run_server(pipeline_name="data_science")
 
@@ -125,7 +127,12 @@ class TestServer:
     )
     @mock.patch("kedro_viz.server.webbrowser")
     def test_browser_open(
-        self, webbrowser, browser, ip, should_browser_open, mocker,
+        self,
+        webbrowser,
+        browser,
+        ip,
+        should_browser_open,
+        mocker,
     ):
         run_server(browser=browser, host=ip)
         if should_browser_open:

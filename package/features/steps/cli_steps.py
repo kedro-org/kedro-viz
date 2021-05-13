@@ -139,7 +139,7 @@ def install_kedro(context, version):
 
 @when('I execute the kedro viz command "{command}"')
 def exec_viz_command(context, command):
-    """Execute Kedro viz command """
+    """Execute Kedro viz command"""
     split_command = command.split()
     make_cmd = [context.kedro] + split_command
 

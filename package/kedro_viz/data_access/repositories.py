@@ -103,8 +103,7 @@ class CatalogRepository:
 
     @property
     def layers_mapping(self):
-        """Return layer mapping: dataset_full_name -> layer it belongs to in the catalog
-        """
+        """Return layer mapping: dataset_full_name -> layer it belongs to in the catalog"""
         if self._layers_mapping is not None:
             return self._layers_mapping
 

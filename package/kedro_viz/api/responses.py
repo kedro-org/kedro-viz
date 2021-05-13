@@ -187,8 +187,7 @@ class GraphAPIResponse(BaseAPIResponse):
 
 
 def get_default_response() -> GraphAPIResponse:
-    """Default response for `/api/main`.
-    """
+    """Default response for `/api/main`."""
     return GraphAPIResponse(
         nodes=data_access_manager.nodes.as_list(),
         edges=data_access_manager.edges.as_list(),

@@ -98,7 +98,9 @@ class TestAddNode:
         task_node = data_access_manager.add_node(pipeline_name, kedro_node)
 
         # add its input to the graph
-        catalog = DataCatalog(data_sets={dataset_name: dataset},)
+        catalog = DataCatalog(
+            data_sets={dataset_name: dataset},
+        )
         data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(pipeline_name, dataset_name)
         data_node = data_access_manager.add_node_input(
@@ -115,7 +117,11 @@ class TestAddNode:
         ]
         # the input data node should have the task node's tags
         assert data_node.tags == {"tag1", "tag2"}
-        assert data_access_manager.node_dependencies == {data_node.id: {task_node.id,}}
+        assert data_access_manager.node_dependencies == {
+            data_node.id: {
+                task_node.id,
+            }
+        }
 
     def test_add_parameters_as_node_input(self, data_access_manager: DataAccessManager):
         parameters = {"train_test_split": 0.1, "num_epochs": 1000}
@@ -187,7 +193,9 @@ class TestAddNode:
         task_node = data_access_manager.add_node(pipeline_name, kedro_node)
 
         # add its output to the graph
-        catalog = DataCatalog(data_sets={dataset_name: dataset},)
+        catalog = DataCatalog(
+            data_sets={dataset_name: dataset},
+        )
         data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(pipeline_name, dataset_name)
         data_node = data_access_manager.add_node_output(
@@ -203,7 +211,11 @@ class TestAddNode:
         ]
         # the output data node should have the task node's tags
         assert data_node.tags == {"tag1", "tag2"}
-        assert data_access_manager.node_dependencies == {task_node.id: {data_node.id,}}
+        assert data_access_manager.node_dependencies == {
+            task_node.id: {
+                data_node.id,
+            }
+        }
 
 
 class TestAddDataSet:
@@ -211,7 +223,8 @@ class TestAddDataSet:
         dataset = CSVDataSet(filepath="dataset.csv")
         dataset_name = "x"
         catalog = DataCatalog(
-            data_sets={dataset_name: dataset}, layers={"raw": [dataset_name]},
+            data_sets={dataset_name: dataset},
+            layers={"raw": [dataset_name]},
         )
         data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset("my_pipeline", dataset_name)
@@ -231,7 +244,9 @@ class TestAddDataSet:
     ):
         dataset = CSVDataSet(filepath="dataset.csv")
         dataset_name = "uk.data_science.x"
-        catalog = DataCatalog(data_sets={dataset_name: dataset},)
+        catalog = DataCatalog(
+            data_sets={dataset_name: dataset},
+        )
         data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset("my_pipeline", dataset_name)
         nodes_list = data_access_manager.nodes.as_list()

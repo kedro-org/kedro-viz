@@ -55,7 +55,8 @@ def populate_data(
     data_access_manager.add_pipelines(pipelines)
     data_access_manager.set_layers(
         layers_services.sort_layers(
-            data_access_manager.nodes.as_dict(), data_access_manager.node_dependencies,
+            data_access_manager.nodes.as_dict(),
+            data_access_manager.node_dependencies,
         )
     )
 

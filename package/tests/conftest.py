@@ -96,7 +96,9 @@ def example_catalog():
             "params:train_test_split": 0.1,
         },
         layers={
-            "raw": {"uk.data_processing.raw_data",},
+            "raw": {
+                "uk.data_processing.raw_data",
+            },
             "model_inputs": {"model_inputs"},
         },
     )
