@@ -8,6 +8,7 @@ $row-icon-margin: 0.8em;
 $row-icon-size: 2.2em;
 $toggle-icon-padding: 0.3em;
 $toggle-icon-size: 2.1em + $toggle-icon-padding * 2;
+$contract-icon-offset: $row-icon-size + ($toggle-icon-padding * 2);
 $row-offset-left: $row-padding-x + $toggle-size + $toggle-margin-right;
 $row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
 

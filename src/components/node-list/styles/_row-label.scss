@@ -21,6 +21,10 @@
   cursor: default;
   user-select: none;
 
+  &--has-contract {
+    padding-right: $row-offset-right + $contract-icon-offset;
+  }
+
   &:focus {
     outline: none;
     box-shadow: 0 0 0 4px $color-link inset;

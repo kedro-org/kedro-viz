@@ -73,12 +73,32 @@
 .pipeline-nodelist__row__contract {
   @include resetButton;
   position: absolute;
-  right: 3em;
+  right: $toggle-icon-size;
   z-index: 5;
-  width: 3em;
-  padding: 0.5em;
+  width: $row-icon-size + $toggle-icon-padding * 2;
+  height: 100%;
+  padding: 0 $toggle-icon-padding;
+  opacity: 0.1;
+  fill: var(--color-text);
 
-  &:hover {
-    background-color: var(--color-bg-1);
+  .pipeline-nodelist__row:hover & {
+    opacity: 0.5;
+  }
+
+  .pipeline-nodelist__row &:hover,
+  [data-whatintent='keyboard'] &:focus {
+    opacity: 1;
+  }
+
+  &:focus {
+    outline: none;
+
+    [data-whatintent='keyboard'] & {
+      box-shadow: 0 0 0 3px $color-link inset;
+    }
+  }
+
+  svg {
+    vertical-align: middle;
   }
 }

@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { changed } from '../../utils';
 import NodeIcon from '../icons/node-icon';
+import ExpandIcon from '../icons/expand';
+import CollapseIcon from '../icons/collapse';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import { getNodeActive } from '../../selectors/nodes';
@@ -60,6 +62,7 @@ const NodeListRow = memo(
     invisibleIcon = InvisibleIcon,
   }) => {
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
+    const ContractedIcon = contracted ? CollapseIcon : ExpandIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
     const showContractedButton = type === 'modularPipeline';
@@ -81,7 +84,9 @@ const NodeListRow = memo(
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
         <TextButton
-          className="pipeline-nodelist__row__text"
+          className={classnames('pipeline-nodelist__row__text', {
+            'pipeline-nodelist__row__text--has-contract': showContractedButton,
+          })}
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
@@ -120,7 +125,7 @@ const NodeListRow = memo(
           <button
             className="pipeline-nodelist__row__contract"
             onClick={onToggleContracted}>
-            {contracted ? '🥚' : '🐣'}
+            <ContractedIcon />
           </button>
         )}
         <label
