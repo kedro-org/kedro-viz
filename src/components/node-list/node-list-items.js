@@ -234,15 +234,22 @@ export const getSidebarConfig = createSelector(
 
 /**
  * Get formatted list of sections
- * @param {boolean} flag value of modularpipeline flag
- * @return {array} List of sections
+ * @return {object} Map of arrays of sections
  */
-export const getSections = createSelector(getSidebarConfig, (sidebarConfig) =>
-  Object.keys(sidebarConfig).map((name) => ({
-    name,
-    types: Object.values(sidebarConfig[name]),
-  }))
-);
+export const getSections = createSelector(getSidebarConfig, (sidebarConfig) => {
+  const sections = {};
+
+  for (const key of Object.keys(sidebarConfig)) {
+    sections[key] = [
+      {
+        name: key,
+        types: Object.values(sidebarConfig[key]),
+      },
+    ];
+  }
+
+  return sections;
+});
 
 /**
  * Create a new group of items. This can be one of two kinds:

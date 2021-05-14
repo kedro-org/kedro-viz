@@ -1,5 +1,6 @@
 import React from 'react';
 import NodeList, { mapStateToProps } from './index';
+import SplitPanel from '../split-panel';
 import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
@@ -348,6 +349,25 @@ describe('NodeList', () => {
       const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
       expect(nodeList.length).toBe(nodes.length + tags.length);
+    });
+
+    it('renders elements panel, filter panel inside a SplitPanel with a handle', () => {
+      const wrapper = setup.mount(<NodeList />);
+      const split = wrapper.find(SplitPanel);
+
+      expect(split.find('.pipeline-nodelist__split').exists()).toBe(true);
+
+      expect(split.find('.pipeline-nodelist__elements-panel').exists()).toBe(
+        true
+      );
+
+      expect(split.find('.pipeline-nodelist__filter-panel').exists()).toBe(
+        true
+      );
+
+      expect(split.find('.pipeline-nodelist__split-handle').exists()).toBe(
+        true
+      );
     });
   });
 
