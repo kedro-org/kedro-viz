@@ -45,9 +45,9 @@ class TestGraphNodeRepository:
     def test_get_node_by_id(self):
         repo = GraphNodesRepository()
         task_node = GraphNode.create_task_node(node(identity, inputs="x", outputs=None))
-        assert repo.get(task_node.id) is None
-        repo.add(task_node)
-        assert repo.get(task_node.id) is task_node
+        assert repo.get_node_by_id(task_node.id) is None
+        repo.add_node(task_node)
+        assert repo.get_node_by_id(task_node.id) is task_node
 
     def test_filter_by_ids(self):
         repo = GraphNodesRepository()
@@ -59,12 +59,12 @@ class TestGraphNodeRepository:
             )
             task_node_ids.append(task_node.id)
             task_nodes.append(task_node)
-            repo.add(task_node)
+            repo.add_node(task_node)
 
-        filtered = repo.filter_by_ids(set(task_node_ids[:-1]))
+        filtered = repo.get_nodes_by_ids(set(task_node_ids[:-1]))
         assert filtered == task_nodes[:-1]
         assert task_nodes[-1] not in filtered
-        assert repo.filter_by_ids({"not exist"}) == []
+        assert repo.get_nodes_by_ids({"not exist"}) == []
 
 
 class TestGraphEdgesRepository:
@@ -75,8 +75,8 @@ class TestGraphEdgesRepository:
         da = GraphEdge(source="d", target="a")
         repo = GraphEdgesRepository()
         for edge in [ab, bc, cd, da]:
-            repo.add(edge)
-        assert set(repo.filter_by_node_ids({"a", "b", "d"})) == {ab, da}
+            repo.add_edge(edge)
+        assert set(repo.get_edges_by_node_ids({"a", "b", "d"})) == {ab, da}
 
 
 class TestRegisteredPipelinesrepository:
@@ -84,8 +84,8 @@ class TestRegisteredPipelinesrepository:
         repo = RegisteredPipelinesRepository()
         repo.add_node("__default__", "a")
         repo.add_node("__default__", "b")
-        assert repo.get_node_ids_in_pipeline("__default__") == {"a", "b"}
-        assert repo.get_node_ids_in_pipeline("another") == set()
+        assert repo.get_node_ids_by_pipeline_id("__default__") == {"a", "b"}
+        assert repo.get_node_ids_by_pipeline_id("another") == set()
 
 
 class TestModularPipelinesRepository:

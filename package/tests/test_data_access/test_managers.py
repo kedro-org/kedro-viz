@@ -44,7 +44,7 @@ class TestAddCatalog:
         dataset = CSVDataSet(filepath="dataset.csv")
         catalog = DataCatalog(data_sets={"dataset": dataset})
         data_access_manager.add_catalog(catalog)
-        assert data_access_manager.catalog.get() is catalog
+        assert data_access_manager.catalog.get_catalog() is catalog
 
     def test_set_layers(self, data_access_manager: DataAccessManager):
         layers = ["raw", "intermediate", "final"]
@@ -330,5 +330,5 @@ class TestAddPipelines:
         data_access_manager.add_catalog(example_catalog)
         del example_pipelines["__default__"]
         data_access_manager.add_pipelines(example_pipelines)
-        assert not data_access_manager.registered_pipelines.get("__default__")
+        assert not data_access_manager.registered_pipelines.get_pipeline_by_id("__default__")
         assert data_access_manager.get_default_selected_pipeline().id == "data_science"

@@ -62,7 +62,7 @@ async def main():
     response_model=NodeMetadataAPIResponse,  # type: ignore
 )
 async def get_single_node_metadata(node_id: str):
-    node = data_access_manager.nodes.get(node_id)
+    node = data_access_manager.nodes.get_node_by_id(node_id)
     if not node:
         return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
 
@@ -83,17 +83,17 @@ async def get_single_node_metadata(node_id: str):
     response_model=GraphAPIResponse,
 )
 async def get_single_pipeline_data(pipeline_id: str):
-    if not data_access_manager.registered_pipelines.have(pipeline_id):
+    if not data_access_manager.registered_pipelines.has_pipeline(pipeline_id):
         return JSONResponse(status_code=404, content={"message": "Invalid pipeline ID"})
 
-    node_ids = data_access_manager.registered_pipelines.get_node_ids_in_pipeline(
+    node_ids = data_access_manager.registered_pipelines.get_node_ids_by_pipeline_id(
         pipeline_id
     )
-    nodes = data_access_manager.nodes.filter_by_ids(node_ids)
+    nodes = data_access_manager.nodes.get_nodes_by_ids(node_ids)
 
     return GraphAPIResponse(
         nodes=nodes,
-        edges=data_access_manager.edges.filter_by_node_ids(node_ids),
+        edges=data_access_manager.edges.get_edges_by_node_ids(node_ids),
         tags=data_access_manager.tags.as_list(),
         layers=data_access_manager.layers.as_list(),
         pipelines=data_access_manager.registered_pipelines.as_list(),

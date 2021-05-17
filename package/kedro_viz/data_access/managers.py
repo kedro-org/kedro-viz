@@ -68,7 +68,7 @@ class DataAccessManager:
         self.layers = LayersRepository()
 
     def add_catalog(self, catalog: DataCatalog):
-        self.catalog.set(catalog)
+        self.catalog.set_catalog(catalog)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         for pipeline_key, pipeline in pipelines.items():
@@ -81,7 +81,7 @@ class DataAccessManager:
         self._remove_non_modular_pipelines()
 
     def add_pipeline(self, pipeline_key: str, pipeline: KedroPipeline):
-        self.registered_pipelines.add(pipeline_key)
+        self.registered_pipelines.add_pipeline(pipeline_key)
         for node in sorted(pipeline.nodes, key=lambda n: n.name):
             task_node = self.add_node(pipeline_key, node)
             self.registered_pipelines.add_node(pipeline_key, task_node.id)
@@ -95,10 +95,10 @@ class DataAccessManager:
                 self.registered_pipelines.add_node(pipeline_key, output_node.id)
 
     def add_node(self, pipeline_key: str, node: KedroNode) -> TaskNode:
-        task_node: TaskNode = self.nodes.add(GraphNode.create_task_node(node))
+        task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))
         task_node.add_pipeline(pipeline_key)
-        self.tags.add(task_node.tags)
-        self.modular_pipelines.add(task_node.modular_pipelines)
+        self.tags.add_tags(task_node.tags)
+        self.modular_pipelines.add_modular_pipeline(task_node.modular_pipelines)
         return task_node
 
     def add_node_input(
@@ -106,7 +106,7 @@ class DataAccessManager:
     ) -> Union[DataNode, ParametersNode]:
         graph_node = self.add_dataset(pipeline_key, input_dataset)
         graph_node.tags.update(task_node.tags)
-        self.edges.add(GraphEdge(source=graph_node.id, target=task_node.id))
+        self.edges.add_edge(GraphEdge(source=graph_node.id, target=task_node.id))
         self.node_dependencies[graph_node.id].add(task_node.id)
 
         if isinstance(graph_node, ParametersNode):
@@ -120,7 +120,7 @@ class DataAccessManager:
     ) -> Union[DataNode, ParametersNode]:
         graph_node = self.add_dataset(pipeline_key, output_dataset)
         graph_node.tags.update(task_node.tags)
-        self.edges.add(GraphEdge(source=task_node.id, target=graph_node.id))
+        self.edges.add_edge(GraphEdge(source=task_node.id, target=graph_node.id))
         self.node_dependencies[task_node.id].add(graph_node.id)
         return graph_node
 
@@ -132,20 +132,14 @@ class DataAccessManager:
         graph_node: Union[DataNode, ParametersNode]
         if self.catalog.is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
-                full_name=dataset_name,
-                layer=layer,
-                tags=set(),
-                parameters=obj,
+                full_name=dataset_name, layer=layer, tags=set(), parameters=obj,
             )
         else:
             graph_node = GraphNode.create_data_node(
-                full_name=dataset_name,
-                layer=layer,
-                tags=set(),
-                dataset=obj,
+                full_name=dataset_name, layer=layer, tags=set(), dataset=obj,
             )
-            self.modular_pipelines.add(graph_node.modular_pipelines)
-        graph_node = self.nodes.add(graph_node)
+            self.modular_pipelines.add_modular_pipeline(graph_node.modular_pipelines)
+        graph_node = self.nodes.add_node(graph_node)
         graph_node.add_pipeline(pipeline_key)
         return graph_node
 
@@ -164,7 +158,7 @@ class DataAccessManager:
         default_pipeline = RegisteredPipeline(id="__default__")
         return (
             default_pipeline
-            if self.registered_pipelines.have(default_pipeline.id)
+            if self.registered_pipelines.has_pipeline(default_pipeline.id)
             else self.registered_pipelines.as_list()[0]
         )
 
@@ -174,9 +168,9 @@ class DataAccessManager:
                 pipes = [
                     pipe
                     for pipe in node.modular_pipelines
-                    if self.modular_pipelines.have(pipe)
+                    if self.modular_pipelines.has_modular_pipeline(pipe)
                 ]
                 node.modular_pipelines = sorted(pipes)
 
     def set_layers(self, layers: List[str]):
-        self.layers.set(layers)
+        self.layers.set_layers(layers)

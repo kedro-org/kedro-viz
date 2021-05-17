@@ -49,16 +49,16 @@ class GraphNodesRepository:
         self.nodes_dict: Dict[str, GraphNode] = {}
         self.nodes_list: List[GraphNode] = []
 
-    def have_node(self, node: GraphNode) -> bool:
+    def has_node(self, node: GraphNode) -> bool:
         return node.id in self.nodes_dict
 
-    def add(self, node: GraphNode) -> GraphNode:
-        if not self.have_node(node):
+    def add_node(self, node: GraphNode) -> GraphNode:
+        if not self.has_node(node):
             self.nodes_dict[node.id] = node
             self.nodes_list.append(node)
         return self.nodes_dict[node.id]
 
-    def get(self, node_id: str) -> Optional[GraphNode]:
+    def get_node_by_id(self, node_id: str) -> Optional[GraphNode]:
         return self.nodes_dict.get(node_id, None)
 
     def as_list(self) -> List[GraphNode]:
@@ -67,7 +67,7 @@ class GraphNodesRepository:
     def as_dict(self) -> Dict[str, GraphNode]:
         return self.nodes_dict
 
-    def filter_by_ids(self, node_ids: Set[str]) -> List[GraphNode]:
+    def get_nodes_by_ids(self, node_ids: Set[str]) -> List[GraphNode]:
         return [n for n in self.nodes_list if n.id in node_ids]
 
 
@@ -75,13 +75,13 @@ class GraphEdgesRepository:
     def __init__(self):
         self.edges_list: Set[GraphEdge] = set()
 
-    def add(self, edge: GraphEdge):
+    def add_edge(self, edge: GraphEdge):
         self.edges_list.add(edge)
 
     def as_list(self) -> List[GraphEdge]:
         return list(self.edges_list)
 
-    def filter_by_node_ids(self, node_ids: Set[str]) -> List[GraphEdge]:
+    def get_edges_by_node_ids(self, node_ids: Set[str]) -> List[GraphEdge]:
         return [e for e in self.edges_list if {e.source, e.target}.issubset(node_ids)]
 
 
@@ -91,10 +91,10 @@ class CatalogRepository:
     def __init__(self):
         self._layers_mapping = None
 
-    def get(self) -> DataCatalog:
+    def get_catalog(self) -> DataCatalog:
         return self._catalog
 
-    def set(self, value: DataCatalog):
+    def set_catalog(self, value: DataCatalog):
         self._catalog = value
 
     @staticmethod
@@ -148,22 +148,22 @@ class RegisteredPipelinesRepository:
         self.pipelines_dict: Dict[str, RegisteredPipeline] = OrderedDict()
         self.pipelines_node_ids_mapping: Dict[str, Set[str]] = defaultdict(set)
 
-    def add(self, pipeline_id: str):
+    def add_pipeline(self, pipeline_id: str):
         self.pipelines_dict[pipeline_id] = RegisteredPipeline(id=pipeline_id)
 
     def add_node(self, pipeline_id: str, node_id: str):
         self.pipelines_node_ids_mapping[pipeline_id].add(node_id)
 
-    def get(self, pipeline_id: str) -> Optional[RegisteredPipeline]:
+    def get_pipeline_by_id(self, pipeline_id: str) -> Optional[RegisteredPipeline]:
         return self.pipelines_dict.get(pipeline_id)
 
-    def have(self, pipeline_id: str) -> bool:
+    def has_pipeline(self, pipeline_id: str) -> bool:
         return pipeline_id in self.pipelines_dict
 
     def as_list(self) -> List[RegisteredPipeline]:
         return list(self.pipelines_dict.values())
 
-    def get_node_ids_in_pipeline(self, pipeline_id: str) -> Set[str]:
+    def get_node_ids_by_pipeline_id(self, pipeline_id: str) -> Set[str]:
         return self.pipelines_node_ids_mapping[pipeline_id]
 
 
@@ -171,12 +171,12 @@ class ModularPipelinesRepository:
     def __init__(self):
         self.modular_pipelines: Dict[str, ModularPipeline] = {}
 
-    def add(self, modular_pipeline_ids: Iterable[str]):
+    def add_modular_pipeline(self, modular_pipeline_ids: Iterable[str]):
         for modular_pipeline_id in modular_pipeline_ids:
             modular_pipeline = ModularPipeline(modular_pipeline_id)
             self.modular_pipelines[modular_pipeline_id] = modular_pipeline
 
-    def have(self, modular_pipeline_id: str) -> bool:
+    def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
         return modular_pipeline_id in self.modular_pipelines
 
     def as_list(self) -> List[ModularPipeline]:
@@ -186,7 +186,7 @@ class ModularPipelinesRepository:
     def from_nodes(cls, nodes: List[GraphNode]) -> "ModularPipelinesRepository":
         repo = cls()
         for node in nodes:
-            repo.add(node.modular_pipelines)
+            repo.add_modular_pipeline(node.modular_pipelines)
         return repo
 
 
@@ -194,7 +194,7 @@ class LayersRepository:
     def __init__(self):
         self.layers_list: List[str] = []
 
-    def set(self, layers: List[str]):
+    def set_layers(self, layers: List[str]):
         self.layers_list = layers
 
     def as_list(self) -> List[str]:
@@ -205,7 +205,7 @@ class TagsRepository:
     def __init__(self):
         self.tags_set: Set[str] = set()
 
-    def add(self, tags: Iterable[str]):
+    def add_tags(self, tags: Iterable[str]):
         self.tags_set.update(tags)
 
     def as_list(self) -> List[str]:

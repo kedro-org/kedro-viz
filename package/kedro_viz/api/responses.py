@@ -168,6 +168,10 @@ class GraphEdgeAPIResponse(BaseAPIResponse):
 
 
 class NamedEntityAPIResponse(BaseAPIResponse):
+    """Model an API field that has an ID and a name.
+    For example, used for representing modular pipelines and pipelines in the API response.
+    """
+
     id: str
     name: Optional[str]
 
