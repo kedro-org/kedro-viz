@@ -120,11 +120,8 @@ pip3 install -r package/test_requirements.txt
 Then launch the server with
 
 ```bash
-npm run start:api --project_path=<path-to-Kedro-project>
+PYTHONPATH=$(pwd)/package python3 package/kedro_viz/server.py <path-to-your-test-project>/new-kedro-project
 ```
-
-> **Note**: Alternatively, if the command above fails for some reason, you can try running `python3 package/kedro_viz/server.py <path-to-your-test-project>/new-kedro-project` instead.
-
 This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142. 
 
 > **Note**: Once the development server is launched at port 4142, the local app will always pull data from that server. To prevent this, you can comment out the proxy setting in `package.json` and restart the dev server at port 4141.
