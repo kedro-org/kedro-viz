@@ -25,6 +25,6 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Kedro plugin for vizualising a Kedro pipeline"""
+"""Kedro plugin for visualising a Kedro pipeline"""
 
 __version__ = "3.11.0"

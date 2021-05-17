@@ -71,7 +71,7 @@ def run_server(
     env: str = None,
     project_path: str = None,
 ):
-    """Run a uvicorn server with a FastAPI app that either launches an API from a file
+    """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
 
     Args:
