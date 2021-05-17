@@ -65,8 +65,8 @@ class TestAddNode:
         nodes_list = data_access_manager.nodes.as_list()
         assert len(nodes_list) == 1
         assert isinstance(graph_node, TaskNode)
-        assert graph_node.belong_to_pipeline("my_pipeline")
-        assert graph_node.have_metadata
+        assert graph_node.belongs_to_pipeline("my_pipeline")
+        assert graph_node.has_metadata
         assert graph_node.kedro_obj is kedro_node
         assert data_access_manager.tags.as_list() == ["tag1", "tag2"]
 
@@ -239,7 +239,7 @@ class TestAddDataSet:
         assert isinstance(graph_node, DataNode)
         assert graph_node.kedro_obj is dataset
         assert graph_node.layer == "raw"
-        assert graph_node.belong_to_pipeline("my_pipeline")
+        assert graph_node.belongs_to_pipeline("my_pipeline")
         assert not graph_node.modular_pipelines
 
     def test_add_dataset_with_modular_pipeline(

@@ -69,8 +69,7 @@ class ModularPipeline:
 
 
 class GraphNodeType(Enum):
-    """Represents all possible node types in the graph representation
-    of a Kedro pipeline"""
+    """Represent all possible node types in the graph representation of a Kedro pipeline"""
 
     TASK = "task"
     DATA = "data"
@@ -81,15 +80,26 @@ class GraphNodeType(Enum):
 class GraphNode(abc.ABC):
     """Represent a node in the graph representation of a Kedro pipeline"""
 
+    # a unique identifier for the node in the graph
+    # obtained by hashing the node's string representation
     id: str
+
+    # the pretty name of a node
     name: str
+
+    # the full name of this node obtained from the underlying Kedro object
     full_name: str
+
+    # the tags associated with this node
     tags: Set[str]
 
-    # in the future this will be modelled as a many-to-many relationship
-    # in a database
+    # the list of registered pipeline IDs this node belongs to
     pipelines: List[str]
+
+    # the list of modular pipeline this node belongs to
     modular_pipelines: List[str] = field(init=False)
+
+    # the underlying Kedro object for this node
     _kedro_obj: Union[KedroNode, Optional[AbstractDataSet]] = field(init=False)
 
     @staticmethod
@@ -203,7 +213,7 @@ class GraphNode(abc.ABC):
                 of this dataset. N.B. currently it's derived from the node's tags.
             parameters: A parameters dataset in a Kedro pipeline.
         Returns:
-            An instance of Parameters.
+            An instance of ParametersNode.
         """
         return ParametersNode(
             id=cls._hash(full_name),
@@ -215,16 +225,16 @@ class GraphNode(abc.ABC):
             kedro_obj=parameters,
         )
 
-    def belong_to_pipeline(self, pipeline_id: str) -> bool:
-        """Check whether this graph node belongs to a given pipeline_id."""
-        return pipeline_id in self.pipelines
-
     def add_pipeline(self, pipeline_id: str):
         """Add a pipeline_id to the list of pipelines that this node belongs to."""
         if pipeline_id not in self.pipelines:
             self.pipelines.append(pipeline_id)
 
-    def have_metadata(self) -> bool:
+    def belongs_to_pipeline(self, pipeline_id: str) -> bool:
+        """Check whether this graph node belongs to a given pipeline_id."""
+        return pipeline_id in self.pipelines
+
+    def has_metadata(self) -> bool:
         """Check whether this graph node has metadata.
         Since metadata of a graph node is derived from the underlying Kedro object,
         we just need to check whether the underlying object exists.
@@ -234,7 +244,7 @@ class GraphNode(abc.ABC):
 
 @dataclass
 class GraphNodeMetadata(abc.ABC):
-    """Abstract class to represents a graph node's metadata"""
+    """Represent a graph node's metadata"""
 
 
 @dataclass
@@ -257,9 +267,16 @@ class TaskNode(GraphNode):
 class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode"""
 
+    # the source code of the node's function
     code: str = field(init=False)
+
+    # path to the file where the node is defined
     filepath: str = field(init=False)
+
+    # parameters of the node, if available
     parameters: Dict = field(init=False)
+
+    # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
 
     def __post_init__(self, task_node: TaskNode):
@@ -281,9 +298,16 @@ class TaskNodeMetadata(GraphNodeMetadata):
 class DataNode(GraphNode):
     """Represent a graph node of type DATA"""
 
+    # the layer that this data node belongs to
     layer: Optional[str]
+
+    # the underlying Kedro's AbstractDataSet for this data node
     kedro_obj: InitVar[Optional[AbstractDataSet]]
+
+    # the list of modular pipelines this data node belongs to
     modular_pipelines: List[str] = field(init=False)
+
+    # the type of this graph node, which is DATA
     type: str = GraphNodeType.DATA.value
 
     def __post_init__(self, kedro_obj: Optional[AbstractDataSet]):
@@ -301,8 +325,14 @@ class DataNode(GraphNode):
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
+    # the dataset type for this data node, e.g. CSVDataSet
     type: str = field(init=False)
+
+    # the path to the actual data file for the underlying dataset.
+    # only available if the dataset has filepath set.
     filepath: str = field(init=False)
+
+    # the underlying data node to which this metadata belongs
     data_node: InitVar[DataNode]
 
     def __post_init__(self, data_node: DataNode):
@@ -315,9 +345,17 @@ class DataNodeMetadata(GraphNodeMetadata):
 class ParametersNode(GraphNode):
     """Represent a graph node of type PARAMETERS"""
 
+    # the layer that this parameters node belongs to
     layer: Optional[str]
+
+    # the underlying Kedro's AbstractDataSet for this parameters node
+    # n.b. for parameters, this is always MemoryDataSet
     kedro_obj: InitVar[AbstractDataSet]
+
+    # the list of modular pipelines this parameters node belongs to
     modular_pipelines: List[str] = field(init=False)
+
+    # the type of this graph node, which is PARAMETERS
     type: str = GraphNodeType.PARAMETERS.value
 
     def __post_init__(self, kedro_obj: AbstractDataSet):

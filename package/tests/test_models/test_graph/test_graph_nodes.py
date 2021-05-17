@@ -182,8 +182,8 @@ class TestGraphNodePipelines:
         )
         assert data_node.pipelines == []
         data_node.add_pipeline(default_pipeline)
-        assert data_node.belong_to_pipeline(default_pipeline)
-        assert not data_node.belong_to_pipeline(another_pipeline)
+        assert data_node.belongs_to_pipeline(default_pipeline)
+        assert not data_node.belongs_to_pipeline(another_pipeline)
 
 
 class TestGraphNodeMetadata:
@@ -194,7 +194,7 @@ class TestGraphNodeMetadata:
         data_node = GraphNode.create_data_node(
             "test_dataset", layer=None, tags=set(), dataset=dataset
         )
-        assert data_node.have_metadata() == have_metadata
+        assert data_node.has_metadata() == have_metadata
 
     def test_task_node_metadata(self):
         kedro_node = node(

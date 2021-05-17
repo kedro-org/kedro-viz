@@ -66,7 +66,7 @@ async def get_single_node_metadata(node_id: str):
     if not node:
         return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
 
-    if not node.have_metadata():
+    if not node.has_metadata():
         return JSONResponse(content={})
 
     if isinstance(node, TaskNode):
