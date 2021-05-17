@@ -17,8 +17,6 @@ describe('getLinkedNodes function', () => {
     test.each([
       ['salmon', '443cf06a'],
       ['dog', 'e4951252'],
-      ['params:rabbit', 'c38d4c6a'],
-      ['parameters', 'f1f1425b'],
       ['cat', '9d989e8d'],
       ['sheep', '6525f2e6'],
       ['horse', '091b5035'],
@@ -32,6 +30,8 @@ describe('getLinkedNodes function', () => {
       ['bear', '09f5edeb'],
       ['shark', '4f90af66'],
       ['weasel', '85c4cf64'],
+      ['params:rabbit', 'c38d4c6a'],
+      ['parameters', 'f1f1425b'],
     ])('node %s should be false', (name, id) => {
       expect(linkedNodes[id]).toBe(undefined);
     });

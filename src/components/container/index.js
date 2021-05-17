@@ -1,6 +1,5 @@
 import React from 'react';
 import App from '../app';
-import EasterEgg from '../easter-egg';
 import getPipelineData from '../../utils/data-source';
 import './container.css';
 
@@ -11,7 +10,6 @@ import './container.css';
 const Container = () => (
   <>
     <App data={getPipelineData()} />
-    <EasterEgg />
   </>
 );
 
