@@ -120,7 +120,9 @@ An edge is a link between two Kedro-Viz nodes - that is, the input/output for a 
 
 ## Layout calculations
 
-Kedro-Viz uses web workers to asynchronously perform time-consuming calculations (e.g. for instance the dagre/newgraph layout calculation for the flowchart) in a separate CPU thread, in order to prevent it from blocking other operations on the main thread (e.g. CSS transitions and other state updates).
+Kedro-Viz includes a graph layout engine, for details see the [layout engine documentation](https://github.com/quantumblacklabs/kedro-viz/blob/main/LAYOUT_ENGINE.md).
+
+Our layout engine runs inside a web worker, which asynchronously performs these expensive calculations in a separate CPU thread, in order to avoid this blocking other operations on the main thread (e.g. CSS transitions and other state updates).
 
 The app uses [redux-watch](https://github.com/ExodusMovement/redux-watch) with a graph input selector to watch the store for state changes relevant to the graph layout. If the layout needs to change, this listener dispatches an asynchronous action which sends a message to the web worker to instruct it to calculate the new layout. Once the layout worker completes its calculations, it returns a new action to update the store's `state.graph` property with the new layout. Updates to the graph input state during worker calculations will interrupt the worker and cause it to start over from scratch.
 

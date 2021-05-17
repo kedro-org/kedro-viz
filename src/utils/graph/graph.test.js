@@ -1,3 +1,9 @@
+/*
+* Graph layout engine tests.
+*
+* Refer to LAYOUT_ENGINE.md for description of the approach.
+*/
+
 import { mockState } from '../state.mock';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getVisibleEdges } from '../../selectors/edges';
