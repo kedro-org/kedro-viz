@@ -128,7 +128,7 @@ def _allocate_port(start_at: int, end_at: int = 65535) -> int:
 # pylint: disable=unused-argument,missing-type-doc
 def run_viz(port: int = None, line=None, local_ns=None) -> None:
     """
-    Line magic function to start kedro viz. It calls a kedro viz in a process and display it in
+    Line magic function to start kedro viz. It calls a kedro viz in a process and displays it in
     the Jupyter notebook environment.
 
     Args:

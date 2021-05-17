@@ -37,7 +37,7 @@ from kedro_viz.server import run_server
 
 @click.group(name="Kedro-Viz")
 def commands():
-    """Visualize the pipeline using kedroviz."""
+    """Visualise the pipeline using Kedro viz."""
 
 
 @commands.command(context_settings=dict(help_option_names=["-h", "--help"]))
@@ -74,8 +74,8 @@ def commands():
     "--pipeline",
     type=str,
     default=None,
-    help="Name of the modular pipeline to visualize. "
-    "If not set, the default pipeline is visualized",
+    help="Name of the modular pipeline to visualise. "
+    "If not set, the default pipeline is visualised",
 )
 @click.option(
     "--env",
@@ -88,7 +88,7 @@ def commands():
     "catalog config in `local` will be used",
 )
 def viz(host, port, browser, load_file, save_file, pipeline, env):
-    """Visualize a Kedro pipeline using kedroviz."""
+    """Visualise a Kedro pipeline using Kedro viz."""
     try:
         run_server(host, port, browser, load_file, save_file, pipeline, env)
     except Exception as ex:  # pragma: no cover
