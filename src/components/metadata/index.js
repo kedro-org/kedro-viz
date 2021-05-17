@@ -16,7 +16,7 @@ import {
   getClickedNodeMetaData,
 } from '../../selectors/metadata';
 import { toggleNodeClicked } from '../../actions/nodes';
-import { toggleCode } from '../../actions';
+import { toggleCode, togglePlotModal } from '../../actions';
 import './styles/metadata.css';
 
 /**
@@ -28,6 +28,7 @@ const MetaData = ({
   visibleCode,
   onToggleCode,
   onToggleNodeSelected,
+  onTogglePlotModal,
 }) => {
   const [showCopied, setShowCopied] = useState(false);
   // Hide code panel when selected metadata changes
@@ -52,6 +53,11 @@ const MetaData = ({
   const onCloseClick = () => {
     // Deselecting a node automatically hides MetaData panel
     onToggleNodeSelected(null);
+  };
+
+  const onExpandPlotClick = () => {
+    // Deselecting a node automatically hides MetaData panel
+    onTogglePlotModal(true);
   };
 
   return (
@@ -172,11 +178,14 @@ const MetaData = ({
                   <PlotlyChart
                     data={metadata.plot.data}
                     layout={metadata.plot.layout}
+                    view="preview"
                   />
                 </div>
               )}
               {hasPlot && (
-                <div className="pipeline-metadata__expand-plot">
+                <div
+                  className="pipeline-metadata__expand-plot"
+                  onClick={onExpandPlotClick}>
                   <ExpandIcon className="pipeline-metadata-icon"></ExpandIcon>
                   <span className="pipeline-metadata-icon__text">
                     Expand Plotly Visualization
@@ -204,6 +213,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleCode: (visible) => {
     dispatch(toggleCode(visible));
+  },
+  onTogglePlotModal: (visible) => {
+    dispatch(togglePlotModal(visible));
   },
 });
 

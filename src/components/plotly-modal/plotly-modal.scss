@@ -1,0 +1,72 @@
+@import '../../styles/variables';
+@import '../../styles/extends';
+
+.plotly-modal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  background-color: var(--color-bg-7);
+}
+
+.pipeline-plot-modal__top {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 100%;
+  padding: 1.5em;
+}
+
+.pipeline-plot-modal__title {
+  align-self: center;
+  padding-left: 20%;
+  font-size: 1.9em;
+}
+
+.pipeline-plot-modal__back {
+  display: flex;
+  flex-direction: row;
+  align-self: flex-start;
+  width: $metadata-sidebar-width-open;
+  list-style: none;
+}
+
+.pipeline-plot-modal__bottom {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 100%;
+}
+
+.pipeline-plot-modal__collapse-plot {
+  display: flex;
+  flex-direction: row;
+  align-self: flex-end;
+  width: $metadata-sidebar-width-open;
+  list-style: none;
+  background-color: #003464;
+
+  &:hover {
+    background-color: #005d92;
+  }
+}
+
+.pipeline-plotly-chart {
+  display: flex;
+  width: 75%;
+  height: 75%;
+}

@@ -26,6 +26,7 @@ export const createInitialState = () => ({
     layerBtn: true,
     exportBtn: true,
     exportModal: false,
+    plotModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
     code: false,
     themeBtn: true,

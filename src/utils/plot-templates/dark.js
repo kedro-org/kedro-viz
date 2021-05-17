@@ -104,7 +104,7 @@ const dark = {
     font: {
       family: 'Titillium+Web:400',
       color: 'rgba(255,255,255,0.85)',
-      size: 20,
+      size: 16,
     },
     xref: 'paper',
     yref: 'paper',
