@@ -10,6 +10,7 @@ import FlowChart, {
 import { mockState, setup } from '../../utils/state.mock';
 import { getViewTransform, getViewExtents, origin } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';
+import { toggleTypeDisabled } from '../../actions/node-type';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
@@ -281,13 +282,19 @@ describe('FlowChart', () => {
   });
 
   it('applies .parameters class to all parameter nodes', () => {
-    const wrapper = setup.mount(<FlowChart />);
+    //Parameters are enabled here to override the default behavior
+    const wrapper = setup.mount(<FlowChart />, {
+      beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+    });
     expect(wrapper.render().find('.pipeline-node--parameters').length).toBe(4);
   });
 
   it('applies .parameters class to all the edges from parameter nodes', () => {
-    const wrapper = setup.mount(<FlowChart />);
-    expect(wrapper.render().find('.pipeline-edge--parameters').length).toBe(4);
+    const wrapper = setup.mount(<FlowChart />, {
+      //Parameters are enabled here to override the default behavior
+      beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+    });
+    expect(wrapper.render().find('.pipeline-edge--parameters ').length).toBe(4);
   });
 
   it('shows layers when layers are visible', () => {

@@ -10,6 +10,7 @@ import { toggleNodesDisabled } from '../actions/nodes';
 import { toggleLayers } from '../actions';
 import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
+import { toggleTypeDisabled } from '../actions/node-type';
 
 const getNodeIDs = (state) => state.node.ids;
 const getEdgeIDs = (state) => state.edge.ids;
@@ -107,9 +108,13 @@ describe('Selectors', () => {
 
   describe('getEdgeDisabled', () => {
     const nodeID = getNodeIDs(mockState.animals)[0];
-    const newMockState = reducer(
+    const tempMockState = reducer(
       mockState.animals,
       toggleNodesDisabled([nodeID], true)
+    );
+    const newMockState = reducer(
+      tempMockState,
+      toggleTypeDisabled('parameters', false)
     );
     const edgeDisabled = getEdgeDisabled(newMockState);
     const edges = getEdgeIDs(newMockState);
@@ -133,13 +138,17 @@ describe('Selectors', () => {
     });
 
     it('does not disable an edge if no nodes are disabled', () => {
-      const edgeDisabledValues = Object.values(
-        getEdgeDisabled(mockState.animals)
+      const newMockState = reducer(
+        mockState.animals,
+        toggleTypeDisabled('parameters', false)
       );
+      const edgeDisabledValues = Object.values(getEdgeDisabled(newMockState));
       expect(edgeDisabledValues).toEqual(edgeDisabledValues.map(() => false));
     });
 
     it('disables an edge if one of its nodes is disabled', () => {
+      const edgeDisabled = getEdgeDisabled(newMockState);
+      const edges = getEdgeIDs(newMockState);
       const disabledEdges = Object.keys(edgeDisabled).filter(
         (id) => edgeDisabled[id]
       );
@@ -183,10 +192,12 @@ describe('Selectors', () => {
   });
 
   describe('getVisibleNodeIDs', () => {
+    const newMockState = reducer(
+      mockState.animals,
+      toggleTypeDisabled('parameters', false)
+    );
     it('returns an array of node IDs', () => {
-      expect(getVisibleNodeIDs(mockState.animals)).toEqual(
-        mockState.animals.node.ids
-      );
+      expect(getVisibleNodeIDs(newMockState)).toEqual(newMockState.node.ids);
     });
   });
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import MetaData from './index';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
+import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleNodeClicked } from '../../actions/nodes';
 import { setup, prepareState } from '../../utils/state.mock';
 import animals from '../../utils/data/animals.mock.json';
@@ -12,10 +13,16 @@ const rabbitParamsNodeId = 'c38d4c6a';
 describe('MetaData', () => {
   const mount = (props) => {
     return setup.mount(<MetaData visible={true} />, {
-      // Click the expected node
-      afterLayoutActions: [() => toggleNodeClicked(props.nodeId)],
+      afterLayoutActions: [
+        // Click the expected node
+        () => toggleNodeClicked(props.nodeId),
+      ],
     });
   };
+
+  afterEach(() => {
+    toggleTypeDisabled('parameters', true);
+  });
 
   const textOf = (elements) => elements.map((element) => element.text());
   const title = (wrapper) => wrapper.find('.pipeline-metadata__title');
@@ -34,7 +41,6 @@ describe('MetaData', () => {
           afterLayoutActions: [() => toggleNodeClicked(salmonTaskNodeId)],
         })
       );
-
       // Add extra mock parameters
       metadata.parameters = Array.from({ length: 20 }, (_, i) => `Test: ${i}`);
 
@@ -86,7 +92,24 @@ describe('MetaData', () => {
       expect(textOf(rowValue(row))).toEqual(['-']);
     });
 
-    it('shows the node inputs', () => {
+    it('shows the node inputs when parameters are disabled (default)', () => {
+      const wrapper = mount({ nodeId: salmonTaskNodeId });
+      const row = rowByLabel(wrapper, 'Inputs:');
+      expect(textOf(rowValue(row))).toEqual(['Cat', 'Dog']);
+    });
+
+    it('shows the node inputs when parameters are enabled', () => {
+      const mount = (props) => {
+        return setup.mount(<MetaData visible={true} />, {
+          beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+          afterLayoutActions: [
+            () => {
+              // Click the expected node
+              return toggleNodeClicked(props.nodeId);
+            },
+          ],
+        });
+      };
       const wrapper = mount({ nodeId: salmonTaskNodeId });
       const row = rowByLabel(wrapper, 'Inputs:');
       expect(textOf(rowValue(row))).toEqual([
@@ -203,46 +226,59 @@ describe('MetaData', () => {
   });
 
   describe('Parameter nodes', () => {
-    it('shows the node type as an icon', () => {
-      const wrapper = mount({ nodeId: rabbitParamsNodeId });
-      expect(
-        rowIcon(wrapper).hasClass('pipeline-node-icon--type-parameters')
-      ).toBe(true);
-    });
+    describe('when parameters are enabled', () => {
+      const mount = (props) => {
+        return setup.mount(<MetaData visible={true} />, {
+          beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+          afterLayoutActions: [
+            () => {
+              // Click the expected node
+              return toggleNodeClicked(props.nodeId);
+            },
+          ],
+        });
+      };
+      it('shows the node type as an icon', () => {
+        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        expect(
+          rowIcon(wrapper).hasClass('pipeline-node-icon--type-parameters')
+        ).toBe(true);
+      });
 
-    it('shows the node name as the title', () => {
-      const wrapper = mount({ nodeId: rabbitParamsNodeId });
-      expect(textOf(title(wrapper))).toEqual(['Params:rabbit']);
-    });
+      it('shows the node name as the title', () => {
+        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        expect(textOf(title(wrapper))).toEqual(['Params:rabbit']);
+      });
 
-    it('shows the node type as text', () => {
-      const wrapper = mount({ nodeId: rabbitParamsNodeId });
-      const row = rowByLabel(wrapper, 'Type:');
-      expect(textOf(rowValue(row))).toEqual(['parameters']);
-    });
+      it('shows the node type as text', () => {
+        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const row = rowByLabel(wrapper, 'Type:');
+        expect(textOf(rowValue(row))).toEqual(['parameters']);
+      });
 
-    it('shows the node filepath', () => {
-      const wrapper = mount({ nodeId: rabbitParamsNodeId });
-      const row = rowByLabel(wrapper, 'File Path:');
-      expect(textOf(rowValue(row))).toEqual(['-']);
-    });
+      it('shows the node filepath', () => {
+        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const row = rowByLabel(wrapper, 'File Path:');
+        expect(textOf(rowValue(row))).toEqual(['-']);
+      });
 
-    it('shows the node parameters', () => {
-      const wrapper = mount({ nodeId: rabbitParamsNodeId });
-      const row = rowByLabel(wrapper, 'Parameters (-):');
-      expect(textOf(rowValue(row))).toEqual(['-']);
-    });
+      it('shows the node parameters', () => {
+        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const row = rowByLabel(wrapper, 'Parameters (-):');
+        expect(textOf(rowValue(row))).toEqual(['-']);
+      });
 
-    it('shows the node tags', () => {
-      const wrapper = mount({ nodeId: rabbitParamsNodeId });
-      const row = rowByLabel(wrapper, 'Tags:');
-      expect(textOf(rowValue(row))).toEqual(['Small']);
-    });
+      it('shows the node tags', () => {
+        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const row = rowByLabel(wrapper, 'Tags:');
+        expect(textOf(rowValue(row))).toEqual(['Small']);
+      });
 
-    it('shows the node pipeline', () => {
-      const wrapper = mount({ nodeId: rabbitParamsNodeId });
-      const row = rowByLabel(wrapper, 'Pipeline:');
-      expect(textOf(rowValue(row))).toEqual(['Default']);
+      it('shows the node pipeline', () => {
+        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const row = rowByLabel(wrapper, 'Pipeline:');
+        expect(textOf(rowValue(row))).toEqual(['Default']);
+      });
     });
   });
 });
