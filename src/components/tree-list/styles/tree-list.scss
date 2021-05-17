@@ -1,0 +1,94 @@
+@import '../../../styles/extends';
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+@import './variables';
+@import './search';
+@import './section';
+@import './group';
+@import './row';
+@import './row-label';
+@import './row-toggle';
+
+.kui-theme--light {
+  --color-nodelist-row-active: #{$row-active-light};
+  --color-nodelist-row-selected: #{$row-selected-light};
+  --color-nodelist-filter-indicator-on: #{$filter-indicator-on-light};
+  --color-nodelist-filter-indicator-off: #{$filter-indicator-off-light};
+  --color-nodelist-highlight: #{darken($color-primary, 10%)};
+}
+
+.kui-theme--dark {
+  --color-nodelist-row-active: #{$row-active-dark};
+  --color-nodelist-row-selected: #{$row-selected-dark};
+  --color-nodelist-filter-indicator-on: #{$filter-indicator-on-dark};
+  --color-nodelist-filter-indicator-off: #{$filter-indicator-off-dark};
+  --color-nodelist-highlight: #{$color-primary};
+}
+
+.pipeline-nodelist {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: 1.8em;
+
+  &:before,
+  > * {
+    // Transition opacity instead of background-color for GPU acceleration
+    transition: opacity ease 0.2s;
+  }
+
+  &:before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: var(--color-bg-2);
+    opacity: 0;
+    content: '';
+  }
+
+  &--fade {
+    > * {
+      opacity: 0.2;
+    }
+
+    &:before {
+      opacity: 1;
+    }
+  }
+}
+
+@include transparentColour(
+  '--nodelist-bg-transparent',
+  $color-bg-light-3,
+  $color-bg-dark-3
+);
+
+.pipeline-nodelist-scrollbars {
+  flex-grow: 1;
+  min-height: 400px;
+
+  &:after {
+    position: absolute;
+    top: 0;
+    right: -1px;
+    left: -1px;
+    height: 35px;
+    background: linear-gradient(
+      0deg,
+      var(--nodelist-bg-transparent) 0%,
+      var(--color-bg-3) 100%
+    );
+    content: '';
+  }
+}
+
+.pipeline-nodelist-section:first-child {
+  padding-top: 6px;
+}
+
+.pipeline-nodelist-section:last-child {
+  padding-bottom: 16px;
+}

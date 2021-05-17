@@ -1,0 +1,121 @@
+@import '../../../styles/variables';
+
+%nolist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pipeline-nodelist__list {
+  @extend %nolist;
+
+  li {
+    @extend %nolist;
+  }
+
+  &--nested {
+    margin: 0 0 1.2em;
+  }
+
+  .pipeline-nodelist__children {
+    // Avoid placeholder fade leaking out for small lists
+    overflow: hidden;
+
+    &--closed {
+      display: none;
+    }
+  }
+}
+
+$placeholder-fade: 120px;
+
+.pipeline-nodelist__placeholder-upper,
+.pipeline-nodelist__placeholder-lower {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.pipeline-nodelist__placeholder-upper:after,
+.pipeline-nodelist__placeholder-lower:after {
+  position: absolute;
+  width: 100%;
+  height: $placeholder-fade;
+  opacity: 0;
+  transition: opacity ease 0.3s;
+  content: ' ';
+  pointer-events: none;
+}
+
+.pipeline-nodelist__placeholder-upper:after {
+  bottom: -$placeholder-fade;
+  background: linear-gradient(
+    0deg,
+    var(--nodelist-bg-transparent) 0%,
+    var(--color-bg-3) 100%
+  );
+}
+
+.pipeline-nodelist__placeholder-lower:after {
+  top: -$placeholder-fade;
+  background: linear-gradient(
+    0deg,
+    var(--color-bg-3) 0%,
+    var(--nodelist-bg-transparent) 100%
+  );
+}
+
+.pipeline-nodelist__placeholder-upper--fade:after,
+.pipeline-nodelist__placeholder-lower--fade:after {
+  opacity: 1;
+}
+
+.pipeline-nodelist__heading {
+  margin: 0;
+
+  .pipeline-nodelist__row__label {
+    font-weight: bold;
+  }
+}
+
+.pipeline-type-group-toggle {
+  position: absolute;
+  left: $row-padding-x;
+  width: $toggle-size;
+  height: $toggle-size;
+  margin-right: $toggle-margin-right;
+  padding: 0;
+  color: inherit;
+  color: var(--color-default-alt);
+  font-size: 1.16em;
+  font-family: inherit;
+  line-height: 1em;
+  text-align: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform ease 0.1s;
+
+  &:focus {
+    outline: none;
+
+    [data-whatintent='keyboard'] & {
+      box-shadow: 0 0 0 3px $color-link inset;
+    }
+  }
+
+  &:before {
+    font-size: 1.5em;
+    opacity: 0.55;
+    content: '▾';
+  }
+
+  &:hover:before {
+    opacity: 1;
+  }
+
+  &--alt {
+    transform: rotate(-90deg);
+  }
+}

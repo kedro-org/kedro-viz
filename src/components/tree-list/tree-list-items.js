@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
-import { getPipelineModularPipelineIDs } from './pipeline';
-import { arrayToObject } from '../utils';
+import { arrayToObject } from '../../utils';
 
 const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 const getModularPipelineName = (state) => state.modularPipeline.name;
@@ -26,25 +25,48 @@ export const getModularPipelineData = createSelector(
 );
 
 /**
- * Get the total and enabled number of modular pipelines
+ * Constructs a set of nodes items needed for the sidebar
+ * @param {object} itemA First item to compare
+ * @param {object} itemB Second item to compare
+ * @return {number} Comparison result
  */
-export const getModularPipelineCount = createSelector(
-  [getPipelineModularPipelineIDs, getModularPipelineEnabled],
-  (modularPipelineIDs, modularPipelineEnabled) => ({
-    total: modularPipelineIDs.length,
-    enabled: modularPipelineIDs.filter((id) => modularPipelineEnabled[id])
-      .length,
-  })
-);
+//  export const getNodeItems = createSelector(
+//     [(state) => state.node, (state) => state.nodeSelected, (state) => ],
+//     (nodes, nodeSelected) => {
+//       const result = {};
+
+//     //   return {
+//     //     ...node,
+//     //     visibleIcon: VisibleIcon,
+//     //     invisibleIcon: InvisibleIcon,
+//     //     active: undefined,
+//     //     selected: nodeSelected[node.id],
+//     //     faded: node.disabled_node || disabled,
+//     //     visible: !disabled && checked,
+//     //     unset: false,
+//     //     checked,
+//     //     disabled,
+//     //   };
+
+//       return result;
+//     }
+//   );
 
 /**
  * returns an array of modular pipelines with the corresponding
  * nodes for each modular pipeline
  */
 export const getModularPipelineNodes = createSelector(
-  [getNodesModularPipelines, getModularPipelineIDs, getNodeNames, getNodeTypes],
-  (allNodes, modularPipelinesIDs, nodeNames, nodeTypes) => {
+  [
+    getNodesModularPipelines,
+    getModularPipelineIDs,
+    getNodeNames,
+    getNodeTypes,
+    (state) => state.nodes,
+  ],
+  (allNodes, modularPipelinesIDs, nodeNames, nodeTypes, nodes) => {
     const modularPipelineNodes = arrayToObject(modularPipelinesIDs, () => []);
+    console.log('nodes', nodes);
 
     // create a new field for the topmost / root pipeline
     modularPipelineNodes['main'] = [];
@@ -82,14 +104,26 @@ export const getModularPipelineNodes = createSelector(
  * returns an array of modular pipelines arranged in a nested structure with corresponding nodes and names
  */
 export const getNestedModularPipelines = createSelector(
-  [getModularPipelineIDs, getModularPipelineNodes, getModularPipelineName],
-  (modularPipelineIDs, modularPipelineNodes, modularPipelinesNames) => {
+  [
+    getModularPipelineIDs,
+    getModularPipelineNodes,
+    getModularPipelineName,
+    getModularPipelineEnabled,
+  ],
+  (
+    modularPipelineIDs,
+    modularPipelineNodes,
+    modularPipelinesNames,
+    modularPipelineEnabled
+  ) => {
     // go through modular pipeline ids to return nested data structure
     const mainTree = {
       nodes: modularPipelineNodes.main,
-      modularPipelines: {},
+      children: [],
       name: 'main',
       id: 'main',
+      enabled: true,
+      type: 'modularpipeline',
     };
     let level = 1; // this keeps track of how far you are down in the nested pipeline
     let currentParent = mainTree;
@@ -102,7 +136,9 @@ export const getNestedModularPipelines = createSelector(
         let i = id.lastIndexOf('.');
         const parent = id.substr(0, i);
         // update the current parent to a new lower level
-        currentParent = currentParent.modularPipelines[parent];
+        currentParent = currentParent.children.filter(
+          (mp) => mp.id === parent
+        )[0];
         level = currentLevel;
       } else if (currentLevel === 1) {
         // update the current parent back to the top parent
@@ -111,12 +147,14 @@ export const getNestedModularPipelines = createSelector(
       }
 
       // add in the new level and nodes
-      currentParent.modularPipelines[id] = {
-        nodes: modularPipelineNodes[id],
-        modularPipelines: {},
-        name: modularPipelinesNames[id],
+      currentParent.children.push({
         id,
-      };
+        name: modularPipelinesNames[id],
+        enabled: modularPipelineEnabled[id],
+        nodes: modularPipelineNodes[id],
+        children: [],
+        type: 'modularpipeline',
+      });
       //update current level
       level = currentLevel;
     });
