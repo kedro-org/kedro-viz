@@ -123,7 +123,9 @@ const NodeListRow = memo(
         {children}
         {showContractedButton && (
           <button
-            className="pipeline-nodelist__row__contract"
+            className={classnames('pipeline-nodelist__row__contract', {
+              'pipeline-nodelist__row__contract--contracted': contracted,
+            })}
             onClick={onToggleContracted}>
             <ContractedIcon />
           </button>

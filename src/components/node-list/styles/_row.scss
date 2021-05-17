@@ -81,6 +81,7 @@
   opacity: 0.1;
   fill: var(--color-text);
 
+  &--contracted,
   .pipeline-nodelist__row:hover & {
     opacity: 0.5;
   }
