@@ -188,13 +188,13 @@ class TestGraphNodePipelines:
 
 class TestGraphNodeMetadata:
     @pytest.mark.parametrize(
-        "dataset,have_metadata", [(MemoryDataSet(data=1), True), (None, False)]
+        "dataset,has_metadata", [(MemoryDataSet(data=1), True), (None, False)]
     )
-    def test_node_have_metadata(self, dataset, have_metadata):
+    def test_node_has_metadata(self, dataset, has_metadata):
         data_node = GraphNode.create_data_node(
             "test_dataset", layer=None, tags=set(), dataset=dataset
         )
-        assert data_node.has_metadata() == have_metadata
+        assert data_node.has_metadata() == has_metadata
 
     def test_task_node_metadata(self):
         kedro_node = node(

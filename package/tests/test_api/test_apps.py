@@ -231,7 +231,7 @@ class TestNodeMetadataEndpoint:
         assert response.json() == {"parameters": {"train_test_split": 0.1}}
 
     def test_no_metadata(self, client):
-        with mock.patch.object(TaskNode, "have_metadata", return_value=False):
+        with mock.patch.object(TaskNode, "has_metadata", return_value=False):
             response = client.get("/api/nodes/56118ad8")
         assert response.json() == {}
 
