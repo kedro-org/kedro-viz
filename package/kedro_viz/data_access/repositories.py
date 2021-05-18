@@ -209,5 +209,5 @@ class TagsRepository:
     def add_tags(self, tags: Iterable[str]):
         self.tags_set.update([Tag(id=tag_id) for tag_id in tags])
 
-    def as_list(self) -> List[str]:
+    def as_list(self) -> List[Tag]:
         return list(sorted(self.tags_set, key=lambda t: t.id))
