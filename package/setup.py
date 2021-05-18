@@ -1,10 +1,10 @@
-# Copyright 2020 QuantumBlack Visual Analytics Limited
+# Copyright 2021 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
@@ -19,19 +19,18 @@
 # trademarks of QuantumBlack. The License does not grant you any right or
 # license to the QuantumBlack Trademarks. You may not use the QuantumBlack
 # Trademarks or any confusingly similar mark as a trademark for your product,
-#     or use the QuantumBlack Trademarks in any other manner that might cause
+# or use the QuantumBlack Trademarks in any other manner that might cause
 # confusion in the marketplace, including but not limited to in advertising,
 # on websites, or on software.
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
+# type: ignore
 import json
 import os
 from os import path
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 name = "kedro-viz"
 here = path.abspath(path.dirname(__file__))
@@ -74,12 +73,11 @@ setup(
     tests_require=test_requires,
     keywords="pipelines, machine learning, data pipelines, data science, data engineering, visualisation",
     author="QuantumBlack Labs",
-    packages=["kedro_viz"],
+    packages=find_packages(exclude=["tests*", "features*"]),
     package_data={"kedro_viz": list(files)},
     zip_safe=False,
-    setup_requires=["pytest-runner==4.2"],
     entry_points={
-        "kedro.global_commands": ["kedro-viz = kedro_viz.server:commands"],
-        "kedro.line_magic": ["line_magic = kedro_viz.server:run_viz"],
+        "kedro.global_commands": ["kedro-viz = kedro_viz.launchers.cli:commands"],
+        "kedro.line_magic": ["line_magic = kedro_viz.launchers.jupyter:run_viz"],
     },
 )

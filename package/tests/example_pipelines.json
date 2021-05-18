@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "56118ad8",
+      "name": "Process Data",
+      "full_name": "process_data",
+      "tags": ["split"],
+      "pipelines": ["__default__", "data_processing"],
+      "modular_pipelines": ["uk", "uk.data_processing"],
+      "type": "task",
+      "parameters": { "train_test_split": 0.1 }
+    },
+    {
+      "id": "13399a82",
+      "name": "Uk.data Processing.raw Data",
+      "full_name": "uk.data_processing.raw_data",
+      "tags": ["split"],
+      "pipelines": ["__default__", "data_processing"],
+      "modular_pipelines": ["uk", "uk.data_processing"],
+      "type": "data",
+      "layer": "raw"
+    },
+    {
+      "id": "c506f374",
+      "name": "Params:train Test Split",
+      "full_name": "params:train_test_split",
+      "tags": ["split"],
+      "pipelines": ["__default__", "data_processing"],
+      "modular_pipelines": [],
+      "type": "parameters",
+      "layer": null
+    },
+    {
+      "id": "0ecea0de",
+      "name": "Model Inputs",
+      "full_name": "model_inputs",
+      "tags": ["train", "split"],
+      "pipelines": ["__default__", "data_science", "data_processing"],
+      "modular_pipelines": [],
+      "type": "data",
+      "layer": "model_inputs"
+    },
+    {
+      "id": "7b140b3f",
+      "name": "Train Model",
+      "full_name": "train_model",
+      "tags": ["train"],
+      "pipelines": ["__default__", "data_science"],
+      "modular_pipelines": ["uk", "uk.data_science"],
+      "type": "task",
+      "parameters": { "train_test_split": 0.1, "num_epochs": 1000 }
+    },
+    {
+      "id": "f1f1425b",
+      "name": "Parameters",
+      "full_name": "parameters",
+      "tags": ["train"],
+      "pipelines": ["__default__", "data_science"],
+      "modular_pipelines": [],
+      "type": "parameters",
+      "layer": null
+    },
+    {
+      "id": "d5a8b994",
+      "name": "Uk.data Science.model",
+      "full_name": "uk.data_science.model",
+      "tags": ["train"],
+      "pipelines": ["__default__", "data_science"],
+      "modular_pipelines": ["uk", "uk.data_science"],
+      "type": "data",
+      "layer": null
+    }
+  ],
+  "edges": [
+    { "source": "f1f1425b", "target": "7b140b3f" },
+    { "source": "0ecea0de", "target": "7b140b3f" },
+    { "source": "56118ad8", "target": "0ecea0de" },
+    { "source": "c506f374", "target": "56118ad8" },
+    { "source": "13399a82", "target": "56118ad8" },
+    { "source": "7b140b3f", "target": "d5a8b994" }
+  ],
+  "tags": ["split", "train"],
+  "layers": ["raw", "model_inputs"],
+  "pipelines": [
+    { "id": "__default__", "name": "Default" },
+    { "id": "data_science", "name": "Data Science" },
+    { "id": "data_processing", "name": "Data Processing" }
+  ],
+  "modular_pipelines": [
+    { "id": "uk", "name": "Uk" },
+    { "id": "uk.data_processing", "name": "Data Processing" },
+    { "id": "uk.data_science", "name": "Data Science" }
+  ],
+  "selected_pipeline": "__default__"
+}

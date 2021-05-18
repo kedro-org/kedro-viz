@@ -12,6 +12,7 @@ import { Solver, Variable } from 'kiwi.js';
 /**
  * Applies the given constraints to the objects in-place.
  * A solution is approximated iteratively.
+ * Refer to LAYOUT_ENGINE.md for further details.
  * @param {array} constraints The constraints
  * @param {function} constraint.base.solve A function that solves the constraint in-place
  * @param {number} iterations The number of iterations
@@ -29,6 +30,7 @@ export const solveLoose = (constraints, iterations, constants) => {
  * Applies the given constraints to the objects in-place.
  * A solution is found exactly for the constraints that are solvable.
  * Any unsolvable constraints will be skipped and a warning logged in the console.
+ * Refer to LAYOUT_ENGINE.md for further details.
  * @param {array} constraints The constraints
  * @param {string} constraint.base.property The property name on `a` and `b` to constrain
  * @param {function} constraint.base.strict A function returns the constraint in strict form
