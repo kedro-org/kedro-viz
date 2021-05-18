@@ -3,7 +3,7 @@
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may
 # run arbitrary code
-extension-pkg-whitelist=
+extension-pkg-whitelist=pydantic
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
@@ -50,7 +50,7 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=ungrouped-imports,bad-continuation
+disable=ungrouped-imports,bad-continuation,attribute-defined-outside-init,too-many-arguments
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -136,7 +136,7 @@ function-name-hint=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
 function-rgx=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
 
 # Good variable names which should always be accepted, separated by a comma
-good-names=i,j,k,ex,Run,_
+good-names=i,j,k,ex,Run,_,id
 
 # Include a hint for the correct naming format with invalid-name
 include-naming-hint=no

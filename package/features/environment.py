@@ -1,10 +1,10 @@
-# Copyright 2020 QuantumBlack Visual Analytics Limited
+# Copyright 2021 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
@@ -19,16 +19,14 @@
 # trademarks of QuantumBlack. The License does not grant you any right or
 # license to the QuantumBlack Trademarks. You may not use the QuantumBlack
 # Trademarks or any confusingly similar mark as a trademark for your product,
-#     or use the QuantumBlack Trademarks in any other manner that might cause
+# or use the QuantumBlack Trademarks in any other manner that might cause
 # confusion in the marketplace, including but not limited to in advertising,
 # on websites, or on software.
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Behave environment setup commands"""
 
-import glob
 import os
 import shutil
 import sys
@@ -39,7 +37,7 @@ from typing import Set
 
 from features.steps.sh_run import run
 
-_PATHS_TO_REMOVE = set()  # type: Set[Path]
+_PATHS_TO_REMOVE: Set[Path] = set()
 
 
 def call(cmd, env, verbose=False):
@@ -56,7 +54,7 @@ def _should_exclude_scenario(scenario):
     return sys.version_info >= (3, 8) and pre_16_scenario
 
 
-def before_scenario(context, scenario):  # pylint: disable=unused-argument
+def before_scenario(context, scenario):
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
@@ -113,15 +111,7 @@ def _setup_context_with_venv(context, venv_dir):
         env=context.env,
     )
 
-    for wheel_path in glob.glob("dist/*.whl"):
-        os.remove(wheel_path)
-    call([context.python, "setup.py", "clean", "--all", "bdist_wheel"], env=context.env)
-
-    call(
-        [context.python, "-m", "pip", "install", "-U"] + glob.glob("dist/*.whl"),
-        env=context.env,
-    )
-
+    call([context.python, "setup.py", "install"], env=context.env)
     return context
 
 

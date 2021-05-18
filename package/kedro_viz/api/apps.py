@@ -25,22 +25,48 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""`kedro_viz.api.app` defines the FastAPI app to serve Kedro data in a RESTful API.
+This data could either come from a real Kedro project or a file.
+"""
+import json
+from pathlib import Path
+
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+
+from kedro_viz import __version__
+
+from .router import router
+
+_HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
 
 
-Feature: Viz plugin in new project
-    Background:
-        Given I have prepared a config file with example code
+def _create_base_api_app() -> FastAPI:
+    return FastAPI(
+        title="Kedro-Viz API", description="REST API for Kedro Viz", version=__version__
+    )
 
-    Scenario: Execute viz with Kedro 0.16.1
-        Given I have installed kedro version "0.16.1"
-        And I have run a non-interactive kedro new
-        And I have executed the kedro command "install"
-        When I execute the kedro viz command "viz"
-        Then kedro-viz should start successfully
 
-    Scenario: Execute viz with latest Kedro
-        Given I have installed kedro version "latest"
-        And I have run a non-interactive kedro new with pandas-iris starter
-        And I have executed the kedro command "install"
-        When I execute the kedro viz command "viz"
-        Then kedro-viz should start successfully
+def create_api_app_from_project() -> FastAPI:
+    """Create an API from a real Kedro project by adding the router to the FastAPI app."""
+    app = _create_base_api_app()
+    app.include_router(router)
+    app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
+
+    @app.get("/")
+    async def index():
+        return FileResponse(_HTML_DIR / "index.html")
+
+    return app
+
+
+def create_api_app_from_file(filepath: str) -> FastAPI:
+    """Create an API from a json file."""
+    app = _create_base_api_app()
+
+    @app.get("/api/main", response_class=JSONResponse)
+    async def main():
+        return json.loads(Path(filepath).read_text())
+
+    return app
