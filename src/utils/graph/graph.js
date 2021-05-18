@@ -1,3 +1,9 @@
+/*
+* The Kedro Viz Graph Layout Engine
+*
+* Refer to LAYOUT_ENGINE.md for description of the approach.
+*/
+
 import { offsetNode, offsetEdge } from './common';
 import { layout } from './layout';
 import { routing } from './routing';
