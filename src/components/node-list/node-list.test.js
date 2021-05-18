@@ -1,10 +1,12 @@
 import React from 'react';
 import NodeList, { mapStateToProps } from './index';
+import SplitPanel from '../split-panel';
 import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import IndicatorPartialIcon from '../icons/indicator-partial';
 import { localStorageName } from '../../config';
+import { toggleTypeDisabled } from '../../actions/node-type';
 
 describe('NodeList', () => {
   beforeEach(() => {
@@ -85,7 +87,14 @@ describe('NodeList', () => {
   });
 
   describe('visibility checkboxes on element items', () => {
-    const wrapper = setup.mount(<NodeList />);
+    //Parameters are enabled here to override the default behavior
+    const wrapper = setup.mount(<NodeList />, {
+      beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+    });
+
+    afterEach(() => {
+      toggleTypeDisabled('parameters', true);
+    });
     // Re-find elements from root each time to see updates
     const search = () => wrapper.find('.kui-input__field');
     const rows = () =>
@@ -211,7 +220,10 @@ describe('NodeList', () => {
       tagItem(wrapper).find(IndicatorPartialIcon);
 
     it('selecting tags enables only elements with given tags', () => {
-      const wrapper = setup.mount(<NodeList />);
+      //Parameters are enabled here to override the default behavior
+      const wrapper = setup.mount(<NodeList />, {
+        beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+      });
 
       changeRows(wrapper, ['Small'], true);
       expect(elementsEnabled(wrapper)).toEqual([
@@ -245,7 +257,11 @@ describe('NodeList', () => {
     });
 
     it('selecting a tag sorts elements by enabled first then alphabetical', () => {
-      const wrapper = setup.mount(<NodeList />);
+      //Parameters are enabled here to override the default behavior
+      const wrapper = setup.mount(<NodeList />, {
+        beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+      });
+
       changeRows(wrapper, ['Medium'], true);
       expect(elements(wrapper)).toEqual([
         // Tasks (enabled)
@@ -335,6 +351,25 @@ describe('NodeList', () => {
       const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
       expect(nodeList.length).toBe(nodes.length + tags.length);
+    });
+
+    it('renders elements panel, filter panel inside a SplitPanel with a handle', () => {
+      const wrapper = setup.mount(<NodeList />);
+      const split = wrapper.find(SplitPanel);
+
+      expect(split.find('.pipeline-nodelist__split').exists()).toBe(true);
+
+      expect(split.find('.pipeline-nodelist__elements-panel').exists()).toBe(
+        true
+      );
+
+      expect(split.find('.pipeline-nodelist__filter-panel').exists()).toBe(
+        true
+      );
+
+      expect(split.find('.pipeline-nodelist__split-handle').exists()).toBe(
+        true
+      );
     });
   });
 

@@ -8,6 +8,7 @@
 @import './row';
 @import './row-label';
 @import './row-toggle';
+@import './panels';
 
 .kui-theme--light {
   --color-nodelist-row-active: #{$row-active-light};
@@ -15,6 +16,9 @@
   --color-nodelist-filter-indicator-on: #{$filter-indicator-on-light};
   --color-nodelist-filter-indicator-off: #{$filter-indicator-off-light};
   --color-nodelist-highlight: #{darken($color-primary, 10%)};
+  --color-nodelist-split-handle: #555;
+  --color-nodelist-split-handle-border: #{rgba(#555, 0.18)};
+  --color-nodelist-filter-panel: #{$color-bg-light-4};
 }
 
 .kui-theme--dark {
@@ -23,6 +27,9 @@
   --color-nodelist-filter-indicator-on: #{$filter-indicator-on-dark};
   --color-nodelist-filter-indicator-off: #{$filter-indicator-off-dark};
   --color-nodelist-highlight: #{$color-primary};
+  --color-nodelist-split-handle: #fff;
+  --color-nodelist-split-handle-border: #{rgba(#fff, 0.15)};
+  --color-nodelist-filter-panel: #{$color-bg-dark-5};
 }
 
 .pipeline-nodelist {
@@ -66,27 +73,8 @@
   $color-bg-dark-3
 );
 
-.pipeline-nodelist-scrollbars {
-  flex-grow: 1;
-  min-height: 400px;
-
-  &:after {
-    position: absolute;
-    top: 0;
-    right: -1px;
-    left: -1px;
-    height: 35px;
-    background: linear-gradient(
-      0deg,
-      var(--nodelist-bg-transparent) 0%,
-      var(--color-bg-3) 100%
-    );
-    content: '';
-  }
-}
-
 .pipeline-nodelist-section:first-child {
-  padding-top: 6px;
+  padding-top: 12px;
 }
 
 .pipeline-nodelist-section:last-child {
