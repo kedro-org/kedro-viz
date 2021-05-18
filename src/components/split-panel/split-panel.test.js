@@ -85,7 +85,6 @@ describe('SplitPanel', () => {
 
     const wrapper = mockSplitPanel({
       splitDefault: splitDefault / 100,
-      splitDefault: 0.5,
       splitMin: 0,
       splitMax: 1,
     });

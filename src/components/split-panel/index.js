@@ -1,14 +1,29 @@
 import { useState, useRef } from 'react';
 
 /**
- * A design agnostic user resizable split panel controller.
- * @param {function} children A `function(props)` for rendering the panels and handle (see implementation for props)
+ * Any React render function that returns elements, including those representing the container, panels and handle elements.
+ * The state and props this function provides are expected to be applied these child elements to enable SplitPanel functionality.
+ * See split-panel.test.js for a reference implementation.
+ * @callback splitPanelRender
+ * @param {object} state An object that contains a copy of the current split panel state and props intended for children
+ * @param {boolean} state.isResizing Is `true` when the split is being actively moved, otherwise `false`
+ * @param {number} state.split A number [0...1] as the current % split position
+ * @param {object} state.props.container The props intended for the panel container element(s)
+ * @param {object} state.props.panelA The props intended for the first panel descendent element(s)
+ * @param {object} state.props.panelB The props intended for the second panel descendent element(s)
+ * @param {object} state.props.handle The props intended for the handle descendent element(s)
+ **/
+
+/**
+ * A design agnostic user-resizable split panel controller.
+ * Pass any React render function as this component's children and return your elements there.
+ * See split-panel.test.js for a reference implementation.
+ * @param {splitPanelRender} children Any React render function that returns elements including representing the container, panels, handle
  * @param {?number} [splitDefault=0.65] A number [0...1] as the default % split position
  * @param {?number} [splitMin=0] A number [0...1] as the minimum % split position
  * @param {?number} [splitMax=1] A number [0...1] as the maximum % split position
  * @param {?number} [keyboardStep=0.025] A number [0...1] as the % step to move split when using keyboard
- * @param {?string} [orientation='vertical'] Only 'vertical' currently supported.
- * @return {object} The rendered children
+ * @param {?string} [orientation='vertical'] Only 'vertical' currently supported
  **/
 export const SplitPanel = ({
   splitDefault = 0.65,
@@ -26,19 +41,26 @@ export const SplitPanel = ({
     handle: handleRef.current?.getBoundingClientRect(),
   });
 
-  const clampSplit = (value) => {
+  const clamp = (splitValue) => {
     const rects = getRects();
+
     const handleSize = rects.handle
       ? rects.handle.height / rects.container.height
       : 0;
-    return Math.max(
-      splitMin,
-      Math.min(splitMax - handleSize, value)
-    );
+
+    if (splitValue < splitMin) {
+      return splitMin;
+    }
+
+    if (splitValue > splitMax - handleSize) {
+      return splitMax - handleSize;
+    }
+
+    return splitValue;
   };
 
   const [isResizing, setIsResizing] = useState(false);
-  const [split, setSplit] = useState(clampSplit(splitDefault));
+  const [split, setSplit] = useState(clamp(splitDefault));
 
   const onMouse = (event) => {
     if (event.type === 'mouseup') {
@@ -54,7 +76,7 @@ export const SplitPanel = ({
         rects.container.height;
 
       setIsResizing(true);
-      setSplit(clampSplit(mouseOffsetVertical));
+      setSplit(clamp(mouseOffsetVertical));
 
       event.preventDefault();
     }
@@ -70,7 +92,7 @@ export const SplitPanel = ({
       }[event.key] || 0;
 
     if (keyboardOffset) {
-      setSplit(clampSplit(split + keyboardOffset));
+      setSplit(clamp(split + keyboardOffset));
       event.preventDefault();
     }
   };
@@ -79,7 +101,11 @@ export const SplitPanel = ({
     isResizing,
     split,
     props: {
-      container: { ref: containerRef, onMouseMove: onMouse, onMouseUp: onMouse },
+      container: {
+        ref: containerRef,
+        onMouseMove: onMouse,
+        onMouseUp: onMouse,
+      },
       panelA: { style: { height: split * 100 + '%' } },
       panelB: { style: { height: (1 - split) * 100 + '%' } },
       handle: {
@@ -91,7 +117,7 @@ export const SplitPanel = ({
         onMouseDown: onMouse,
         onKeyDown: onKey,
       },
-    }
+    },
   });
 };
 
