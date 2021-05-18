@@ -6,7 +6,9 @@ import reducer from './index';
 import {
   CHANGE_FLAG,
   RESET_DATA,
+  TOGGLE_EXPORT_MODAL,
   TOGGLE_LAYERS,
+  TOGGLE_MINIMAP,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
@@ -23,6 +25,10 @@ import {
 import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
 import { TOGGLE_TYPE_DISABLED } from '../actions/node-type';
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
+import {
+  TOGGLE_MODULAR_PIPELINE_ACTIVE,
+  TOGGLE_MODULAR_PIPELINE_FILTER,
+} from '../actions/modular-pipelines';
 
 describe('Reducer', () => {
   it('should return an Object', () => {
@@ -181,6 +187,26 @@ describe('Reducer', () => {
     });
   });
 
+  describe('TOGGLE_EXPORT_MODAL', () => {
+    it('should toggle whether the export modal is visible', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_EXPORT_MODAL,
+        visible: false,
+      });
+      expect(newState.visible.exportModal).toEqual(false);
+    });
+  });
+
+  describe('TOGGLE_MINIMAP', () => {
+    it('should toggle whether the minimap is open', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_MINIMAP,
+        visible: false,
+      });
+      expect(newState.visible.miniMap).toEqual(false);
+    });
+  });
+
   describe('UPDATE_ACTIVE_PIPELINE', () => {
     const pipeline = 'abc123';
     const nodeClicked = '123';
@@ -284,6 +310,28 @@ describe('Reducer', () => {
       });
       expect(mockState.animals.hoveredParameters).toBe(false);
       expect(newState.hoveredParameters).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_MODULAR_PIPELINE_ACTIVE', () => {
+    it('should toggle whether a modular pipeline is active', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_MODULAR_PIPELINE_ACTIVE,
+        modularPipelineIDs: ['nested'],
+        active: true,
+      });
+      expect(newState.modularPipeline.active).toEqual({ nested: true });
+    });
+  });
+
+  describe('TOGGLE_MODULAR_PIPELINE_FILTER', () => {
+    it('should toggle whether a modular pipeline filter is enabled', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_MODULAR_PIPELINE_FILTER,
+        modularPipelineIDs: ['nested'],
+        enabled: true,
+      });
+      expect(newState.modularPipeline.enabled).toEqual({ nested: true });
     });
   });
 });
