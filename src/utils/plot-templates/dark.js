@@ -1,4 +1,7 @@
-const dark = {
+//Plotly templates are defined to override user-specified styles with Kedro-viz styles
+//More details can be found here - https://plotly.com/python/templates/
+
+const darkTemplate = {
   autosize: true,
   annotationdefaults: {
     arrowcolor: '#2a3f5f',
@@ -178,8 +181,8 @@ const dark = {
   },
 };
 
-export const dark_preview = {
-  ...dark,
+export const darkPreviewTemplate = {
+  ...darkTemplate,
   title: '',
   margin: {
     l: 100,
@@ -188,31 +191,31 @@ export const dark_preview = {
     b: 70,
   },
   xaxis: {
-    ...dark.xaxis,
+    ...darkTemplate.xaxis,
     title: {
-      ...dark.xaxis.title,
+      ...darkTemplate.xaxis.title,
       font: {
-        ...dark.xaxis.font,
+        ...darkTemplate.xaxis.font,
         size: 8,
       },
     },
     tickfont: {
-      ...dark.xaxis.tickfont,
+      ...darkTemplate.xaxis.tickfont,
       size: 8,
     },
     nticks: 5,
   },
   yaxis: {
-    ...dark.yaxis,
+    ...darkTemplate.yaxis,
     title: {
-      ...dark.yaxis.title,
+      ...darkTemplate.yaxis.title,
       font: {
-        ...dark.yaxis.font,
+        ...darkTemplate.yaxis.font,
         size: 8,
       },
     },
     tickfont: {
-      ...dark.yaxis.tickfont,
+      ...darkTemplate.yaxis.tickfont,
       size: 8,
     },
     nticks: 5,
@@ -221,6 +224,6 @@ export const dark_preview = {
   width: 400,
 };
 
-export const dark_modal = {
-  ...dark,
+export const darkModalTemplate = {
+  ...darkTemplate,
 };

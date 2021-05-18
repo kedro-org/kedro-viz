@@ -2,8 +2,8 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
-import { dark_preview } from '../../utils/plot-templates/dark';
-import { light_preview } from '../../utils/plot-templates/light';
+import { darkPreviewTemplate } from '../../utils/plot-templates/dark';
+import { lightPreviewTemplate } from '../../utils/plot-templates/light';
 import './plotly-chart.css';
 /**
  * Display plotly chart
@@ -12,7 +12,7 @@ import './plotly-chart.css';
  * @param {boolean} visible Whether to show the tooltip
  * @param {string} text Tooltip display label
  */
-const PlotlyChart = ({ theme, data, layout }) => {
+const PlotlyChart = ({ theme, data = {}, layout = {} }) => {
   const hideToolBar = { displayModeBar: false };
   return (
     <div className="pipeline-plotly-chart">
@@ -25,13 +25,9 @@ const PlotlyChart = ({ theme, data, layout }) => {
   );
 };
 
-PlotlyChart.defaultProps = {
-  data: {},
-  layout: {},
-};
-
 const updateLayout = (theme, layout) => {
-  const template = theme === 'light' ? light_preview : dark_preview;
+  const template =
+    theme === 'light' ? lightPreviewTemplate : darkPreviewTemplate;
   return deepmerge(layout, template);
 };
 

@@ -146,7 +146,7 @@ const addNode = (state) => (node) => {
   state.node.parameters[id] = node.parameters;
   state.node.filepath[id] = node.filepath;
   state.node.plot[id] = node.plot;
-  state.node.datasetType[id] = node.datasetType;
+  state.node.datasetType[id] = node.dataset_type;
   state.node.modularPipelines[id] = node.modular_pipelines || [];
 };
 

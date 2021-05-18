@@ -35,9 +35,7 @@ const MetaData = ({
   const isTaskNode = metadata?.node.type === 'task';
   const isDataNode = metadata?.node.type === 'data';
   const isParametersNode = metadata?.node.type === 'parameters';
-  const icon = metadata?.datasetType
-    ? metadata?.datasetType
-    : metadata?.node.type;
+  const nodeTypeIcon = metadata?.datasetType || metadata?.node.type;
   const hasPlot = Boolean(metadata?.plot);
   const hasCode = Boolean(metadata?.code);
   const showCodePanel = visible && visibleCode && hasCode;
@@ -62,7 +60,10 @@ const MetaData = ({
           <>
             <div className="pipeline-metadata__header-toolbox">
               <div className="pipeline-metadata__header">
-                <NodeIcon className="pipeline-metadata__icon" icon={icon} />
+                <NodeIcon
+                  className="pipeline-metadata__icon"
+                  icon={nodeTypeIcon}
+                />
                 <h2 className="pipeline-metadata__title">
                   {metadata.node.name}
                 </h2>
@@ -85,7 +86,7 @@ const MetaData = ({
               )}
             </div>
             <dl className="pipeline-metadata__list">
-              <div className="pipeline-metadata__scrollable">
+              <div className="pipeline-metadata__properties">
                 <MetaDataRow label="Type:" value={metadata.node.type} />
                 <MetaDataRow
                   label="Dataset Type:"
@@ -168,20 +169,20 @@ const MetaData = ({
                 </MetaDataRow>
               </div>
               {hasPlot && (
-                <div className="pipeline-metadata__plot">
-                  <PlotlyChart
-                    data={metadata.plot.data}
-                    layout={metadata.plot.layout}
-                  />
-                </div>
-              )}
-              {hasPlot && (
-                <div className="pipeline-metadata__expand-plot">
-                  <ExpandIcon className="pipeline-metadata-icon"></ExpandIcon>
-                  <span className="pipeline-metadata-icon__text">
-                    Expand Plotly Visualization
-                  </span>
-                </div>
+                <>
+                  <div className="pipeline-metadata__plot">
+                    <PlotlyChart
+                      data={metadata.plot.data}
+                      layout={metadata.plot.layout}
+                    />
+                  </div>
+                  <div className="pipeline-metadata__expand-plot">
+                    <ExpandIcon className="pipeline-metadata-icon"></ExpandIcon>
+                    <span className="pipeline-metadata-icon__text">
+                      Expand Plotly Visualization
+                    </span>
+                  </div>
+                </>
               )}
             </dl>
           </>

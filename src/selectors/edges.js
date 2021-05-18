@@ -98,20 +98,3 @@ export const getVisibleEdges = createSelector(
         target: edgeTargets[id] || transitiveEdges.targets[id],
       }))
 );
-
-/**
- * Returns an node ID where source edge is a parameter
- */
-export const getEdgeswithParams = createSelector(
-  [getEdgeIDs, getNodeType, getEdgeSources, getEdgeTargets],
-  (edgeIDs, nodeType, edgeSources, edgeTargets) => {
-    const nodes_list = {};
-    for (const edgeID of edgeIDs) {
-      const source = edgeSources[edgeID];
-      const target = edgeTargets[edgeID];
-      if (nodeType[source] === 'parameters' && nodeType[target] === 'task')
-        {nodes_list[target] = true;}
-    }
-    return nodes_list;
-  }
-);
