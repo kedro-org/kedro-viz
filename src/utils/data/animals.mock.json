@@ -162,7 +162,7 @@
       "id": "c3p345ed",
       "layer": "model output",
       "name": "Plot:bull",
-      "datase_type": "plotly",
+      "dataset_type": "plotly",
       "modular_pipelines": [],
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
