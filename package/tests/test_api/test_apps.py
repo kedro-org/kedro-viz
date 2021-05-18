@@ -167,7 +167,7 @@ def assert_example_data(response_data):
 
     # compare the rest
     assert response_data == {
-        "tags": ["split", "train"],
+        "tags": [{"id": "split", "name": "Split"}, {"id": "train", "name": "Train"}],
         "layers": ["raw", "model_inputs"],
         "pipelines": [
             {"id": "__default__", "name": "Default"},
@@ -291,7 +291,10 @@ class TestSinglePipelineEndpoint:
         ]
         assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
         assert response_data == {
-            "tags": ["split", "train"],
+            "tags": [
+                {"id": "split", "name": "Split"},
+                {"id": "train", "name": "Train"},
+            ],
             "layers": ["raw", "model_inputs"],
             "pipelines": [
                 {"id": "__default__", "name": "Default"},

@@ -183,8 +183,8 @@ class GraphAPIResponse(BaseAPIResponse):
         ]
     ]
     edges: List[GraphEdgeAPIResponse]
-    tags: List[str]
     layers: List[str]
+    tags: List[NamedEntityAPIResponse]
     pipelines: List[NamedEntityAPIResponse]
     modular_pipelines: List[NamedEntityAPIResponse]
     selected_pipeline: str
