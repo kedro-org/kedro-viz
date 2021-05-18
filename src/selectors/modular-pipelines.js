@@ -87,9 +87,10 @@ export const getNestedModularPipelines = createSelector(
     // go through modular pipeline ids to return nested data structure
     const mainTree = {
       nodes: modularPipelineNodes.main,
-      modularPipelines: {},
+      children: [],
       name: 'main',
       id: 'main',
+      type: 'modularpipeline',
     };
     let level = 1; // this keeps track of how far you are down in the nested pipeline
     let currentParent = mainTree;
@@ -102,7 +103,9 @@ export const getNestedModularPipelines = createSelector(
         let i = id.lastIndexOf('.');
         const parent = id.substr(0, i);
         // update the current parent to a new lower level
-        currentParent = currentParent.modularPipelines[parent];
+        currentParent = currentParent.children.filter(
+          (mp) => mp.id === parent
+        )[0];
         level = currentLevel;
       } else if (currentLevel === 1) {
         // update the current parent back to the top parent
@@ -111,12 +114,13 @@ export const getNestedModularPipelines = createSelector(
       }
 
       // add in the new level and nodes
-      currentParent.modularPipelines[id] = {
+      currentParent.children.push({
         nodes: modularPipelineNodes[id],
-        modularPipelines: {},
+        children: [],
         name: modularPipelinesNames[id],
         id,
-      };
+        type: 'modularpipeline',
+      });
       //update current level
       level = currentLevel;
     });

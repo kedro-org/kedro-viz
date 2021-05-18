@@ -1,12 +1,22 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../../utils';
+import IndicatorIcon from '../icons/indicator';
+import IndicatorOffIcon from '../icons/indicator-off';
+import IndicatorPartialIcon from '../icons/indicator-partial';
+import VisibleIcon from '../icons/visible';
+import InvisibleIcon from '../icons/invisible';
 
 const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
+
+// selectors for node items
+const getNodeIds = (state) => state.node.ids;
 const getNodesModularPipelines = (state) => state.node.modularPipelines;
 const getNodeNames = (state) => state.node.name;
 const getNodeTypes = (state) => state.node.type;
+const getNodeTags = (state) => state.node.tags;
+const getNodeDisabled = (state) => state.node.disabled;
 
 /**
  * Retrieve the formatted list of modular pipeline filters
@@ -30,27 +40,46 @@ export const getModularPipelineData = createSelector(
  * @param {object} itemB Second item to compare
  * @return {number} Comparison result
  */
-//  export const getNodeItems = createSelector(
-//     [(state) => state.node, (state) => state.nodeSelected, (state) => ],
-//     (nodes, nodeSelected) => {
-//       const result = {};
+export const getNodeItems = createSelector(
+  [
+    getNodeIds,
+    getNodeNames,
+    getNodeTypes,
+    getNodeTags,
+    getNodeDisabled,
+    (state) => state.nodeSelected,
+    (state) => state.nodes,
+  ],
+  (
+    nodeIds,
+    nodeNames,
+    nodeTypes,
+    nodeTags,
+    nodeDisabled,
+    nodeSelected,
+    nodes
+  ) => {
+    const result = {};
 
-//     //   return {
-//     //     ...node,
-//     //     visibleIcon: VisibleIcon,
-//     //     invisibleIcon: InvisibleIcon,
-//     //     active: undefined,
-//     //     selected: nodeSelected[node.id],
-//     //     faded: node.disabled_node || disabled,
-//     //     visible: !disabled && checked,
-//     //     unset: false,
-//     //     checked,
-//     //     disabled,
-//     //   };
+    nodeIds.forEach((id) => {
+      result[id] = {
+        name: nodeNames[id],
+        type: nodeTypes[id],
+        visibleIcon: VisibleIcon,
+        invisibleIcon: InvisibleIcon,
+        // active: undefined,
+        // selected: nodeSelected[node.id],
+        // faded: node.disabled_node || disabled,
+        // visible: !disabled && checked,
+        // unset: false,
+        // checked,
+        // disabled,
+      };
+    });
 
-//       return result;
-//     }
-//   );
+    return result;
+  }
+);
 
 /**
  * returns an array of modular pipelines with the corresponding
@@ -62,11 +91,10 @@ export const getModularPipelineNodes = createSelector(
     getModularPipelineIDs,
     getNodeNames,
     getNodeTypes,
-    (state) => state.nodes,
+    getNodeItems,
   ],
-  (allNodes, modularPipelinesIDs, nodeNames, nodeTypes, nodes) => {
+  (allNodes, modularPipelinesIDs, nodeNames, nodeTypes, nodeItems) => {
     const modularPipelineNodes = arrayToObject(modularPipelinesIDs, () => []);
-    console.log('nodes', nodes);
 
     // create a new field for the topmost / root pipeline
     modularPipelineNodes['main'] = [];
