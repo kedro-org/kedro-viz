@@ -132,11 +132,17 @@ class DataAccessManager:
         graph_node: Union[DataNode, ParametersNode]
         if self.catalog.is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
-                full_name=dataset_name, layer=layer, tags=set(), parameters=obj,
+                full_name=dataset_name,
+                layer=layer,
+                tags=set(),
+                parameters=obj,
             )
         else:
             graph_node = GraphNode.create_data_node(
-                full_name=dataset_name, layer=layer, tags=set(), dataset=obj,
+                full_name=dataset_name,
+                layer=layer,
+                tags=set(),
+                dataset=obj,
             )
             self.modular_pipelines.add_modular_pipeline(graph_node.modular_pipelines)
         graph_node = self.nodes.add_node(graph_node)

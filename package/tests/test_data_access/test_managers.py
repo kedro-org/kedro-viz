@@ -32,7 +32,7 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz.data_access.managers import DataAccessManager
-from kedro_viz.models.graph import DataNode, GraphEdge, ParametersNode, TaskNode, Tag
+from kedro_viz.models.graph import DataNode, GraphEdge, ParametersNode, Tag, TaskNode
 
 
 def identity(x):
