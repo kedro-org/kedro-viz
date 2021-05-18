@@ -99,6 +99,7 @@ export const getNodeData = createSelector(
     getNodeDisabledTag,
     getNodeDisabledModularPipeline,
     getNodeTypeDisabled,
+    getNodeModularPipelines,
   ],
   (
     nodeIDs,
@@ -108,7 +109,8 @@ export const getNodeData = createSelector(
     nodeDisabledNode,
     nodeDisabledTag,
     nodeDisabledModularPipeline,
-    typeDisabled
+    typeDisabled,
+    nodeModularPipelines
   ) =>
     nodeIDs
       .sort((a, b) => {
@@ -124,6 +126,7 @@ export const getNodeData = createSelector(
         id,
         name: nodeName[id],
         type: nodeType[id],
+        modularPipelines: nodeModularPipelines[id],
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),
         disabled_tag: nodeDisabledTag[id],
