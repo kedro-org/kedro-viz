@@ -39,6 +39,7 @@ from kedro_viz.models.graph import (
     GraphNode,
     ModularPipeline,
     RegisteredPipeline,
+    Tag,
 )
 
 _KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
@@ -203,10 +204,10 @@ class LayersRepository:
 
 class TagsRepository:
     def __init__(self):
-        self.tags_set: Set[str] = set()
+        self.tags_set: Set[Tag] = set()
 
     def add_tags(self, tags: Iterable[str]):
-        self.tags_set.update(tags)
+        self.tags_set.update([Tag(id=tag_id) for tag_id in tags])
 
-    def as_list(self) -> List[str]:
-        return list(sorted(self.tags_set))
+    def as_list(self) -> List[Tag]:
+        return list(sorted(self.tags_set, key=lambda t: t.id))

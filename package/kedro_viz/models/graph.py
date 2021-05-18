@@ -68,6 +68,14 @@ class ModularPipeline:
         self.name = _pretty_name(self.id.split(".")[-1])
 
 
+@dataclass
+class Tag(RegisteredPipeline):
+    """Represent a tag"""
+
+    def __hash__(self) -> int:
+        return hash(self.id)
+
+
 class GraphNodeType(Enum):
     """Represent all possible node types in the graph representation of a Kedro pipeline"""
 

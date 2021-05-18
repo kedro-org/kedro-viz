@@ -79,7 +79,10 @@
     { "source": "13399a82", "target": "56118ad8" },
     { "source": "7b140b3f", "target": "d5a8b994" }
   ],
-  "tags": ["split", "train"],
+  "tags": [
+    { "id": "split", "name": "Split" },
+    { "id": "train", "name": "Train" }
+  ],
   "layers": ["raw", "model_inputs"],
   "pipelines": [
     { "id": "__default__", "name": "Default" },

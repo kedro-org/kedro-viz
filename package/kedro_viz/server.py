@@ -121,7 +121,7 @@ if __name__ == "__main__":  # pragma: no cover
         "--host", help="The host of the development server", default=_DEFAULT_HOST
     )
     parser.add_argument(
-        "--port", help="The port of the development server", default=_DEFAULT_PORT
+        "--port", help="The port of the development server", default=4142
     )
     args = parser.parse_args()
 

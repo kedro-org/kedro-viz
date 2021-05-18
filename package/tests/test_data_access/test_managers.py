@@ -32,7 +32,7 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz.data_access.managers import DataAccessManager
-from kedro_viz.models.graph import DataNode, GraphEdge, ParametersNode, TaskNode
+from kedro_viz.models.graph import DataNode, GraphEdge, ParametersNode, Tag, TaskNode
 
 
 def identity(x):
@@ -68,7 +68,7 @@ class TestAddNode:
         assert graph_node.belongs_to_pipeline("my_pipeline")
         assert graph_node.has_metadata
         assert graph_node.kedro_obj is kedro_node
-        assert data_access_manager.tags.as_list() == ["tag1", "tag2"]
+        assert data_access_manager.tags.as_list() == [Tag("tag1"), Tag("tag2")]
 
     def test_add_node_with_modular_pipeline(
         self, data_access_manager: DataAccessManager
@@ -314,7 +314,7 @@ class TestAddPipelines:
             "parameters",
             "params:train_test_split",
         }
-        assert data_access_manager.tags.as_list() == ["split", "train"]
+        assert data_access_manager.tags.as_list() == [Tag("split"), Tag("train")]
         assert [p.id for p in data_access_manager.modular_pipelines.as_list()] == [
             "uk",
             "uk.data_processing",
@@ -330,5 +330,7 @@ class TestAddPipelines:
         data_access_manager.add_catalog(example_catalog)
         del example_pipelines["__default__"]
         data_access_manager.add_pipelines(example_pipelines)
-        assert not data_access_manager.registered_pipelines.get_pipeline_by_id("__default__")
+        assert not data_access_manager.registered_pipelines.get_pipeline_by_id(
+            "__default__"
+        )
         assert data_access_manager.get_default_selected_pipeline().id == "data_science"
