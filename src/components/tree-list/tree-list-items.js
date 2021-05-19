@@ -219,6 +219,16 @@ export const getFilteredModularPipelineNodes = createSelector(
 
     // ** important: clean through existing modular pipelines in nodes first to only extract the deepest layer
     // assumption: each node is unique and will only exist once on the flowchart
+    Object.keys(filteredNodeItems).forEach((key) => {
+      filteredNodeItems[key].map((node, i) => {
+        // console.log(`${key} nodes`, node);
+        if (node.modularPipelines.length > 1) {
+          node.modularPipelines = [
+            node.modularPipelines[node.modularPipelines.length - 1],
+          ];
+        }
+      });
+    });
 
     // create a new field for the topmost / root pipeline
     modularPipelineNodes['main'] = [];
