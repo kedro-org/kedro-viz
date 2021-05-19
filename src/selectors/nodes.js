@@ -2,12 +2,7 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
-import {
-  getAllNodeIDs,
-  getAllNodeNames,
-  getAllNodeFullNames,
-  getAllNodeTypes,
-} from './contracted';
+import { getContractedModularPipelines } from './contracted';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -48,7 +43,7 @@ export const getGraphNodes = createSelector(
  */
 export const getNodeActive = createSelector(
   [
-    getAllNodeIDs,
+    getContractedModularPipelines,
     getHoveredNode,
     getNodeTags,
     getNodeModularPipelines,
@@ -56,14 +51,14 @@ export const getNodeActive = createSelector(
     getModularPipelineActive,
   ],
   (
-    nodeIDs,
+    { node },
     hoveredNode,
     nodeTags,
     nodeModularPipelines,
     tagActive,
     modularPipelineActive
   ) =>
-    arrayToObject(nodeIDs, (nodeID) => {
+    arrayToObject(node.ids, (nodeID) => {
       if (nodeID === hoveredNode) {
         return true;
       }
@@ -157,8 +152,9 @@ export const getGroupedNodes = createSelector([getNodeData], (nodes) =>
  * measure its width with getBBox, then delete the container and store the value
  */
 export const getNodeTextWidth = createSelector(
-  [getAllNodeIDs, getAllNodeNames, getFontLoaded],
-  (nodeIDs, nodeName, fontLoaded) => {
+  [getContractedModularPipelines, getFontLoaded],
+  // @TODO fix this so it only runs when new data is added
+  ({ node }, fontLoaded) => {
     if (!fontLoaded) {
       return {};
     }
@@ -168,10 +164,10 @@ export const getNodeTextWidth = createSelector(
       .attr('class', 'kedro pipeline-node');
     svg
       .selectAll('text')
-      .data(nodeIDs)
+      .data(node.ids)
       .enter()
       .append('text')
-      .text((nodeID) => nodeName[nodeID])
+      .text((nodeID) => node.name[nodeID])
       .each(function (nodeID) {
         const width = this.getBBox ? this.getBBox().width : 0;
         nodeTextWidth[nodeID] = width;
@@ -212,19 +208,18 @@ export const getPadding = (showLabels, nodeType) => {
  */
 export const getNodeSize = createSelector(
   [
-    getAllNodeIDs,
+    getContractedModularPipelines,
     getNodeTextWidth,
     getTextLabels,
-    getAllNodeTypes,
     getFontLoaded,
   ],
-  (nodeIDs, nodeTextWidth, textLabels, nodeType, fontLoaded) => {
+  ({ node }, nodeTextWidth, textLabels, fontLoaded) => {
     if (!fontLoaded) {
       return {};
     }
-    return arrayToObject(nodeIDs, (nodeID) => {
+    return arrayToObject(node.ids, (nodeID) => {
       const iconSize = textLabels ? 24 : 28;
-      const padding = getPadding(textLabels, nodeType[nodeID]);
+      const padding = getPadding(textLabels, node.type[nodeID]);
       const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
       const textGap = textLabels ? 6 : 0;
       const innerWidth = iconSize + textWidth + textGap;
@@ -248,32 +243,21 @@ export const getVisibleNodes = createSelector(
   [
     getFontLoaded,
     getVisibleNodeIDs,
-    getAllNodeNames,
-    getAllNodeTypes,
-    getAllNodeFullNames,
+    getContractedModularPipelines,
     getNodeSize,
     getNodeLayer,
     getNodeRank,
   ],
-  (
-    fontLoaded,
-    nodeIDs,
-    nodeName,
-    nodeType,
-    nodeFullName,
-    nodeSize,
-    nodeLayer,
-    nodeRank
-  ) => {
+  (fontLoaded, nodeIDs, { node }, nodeSize, nodeLayer, nodeRank) => {
     if (!fontLoaded) {
       return [];
     }
     const nodes = nodeIDs.map((id) => ({
       id,
-      name: nodeName[id],
-      label: nodeName[id],
-      fullName: nodeFullName[id] || id,
-      type: nodeType[id],
+      name: node.name[id],
+      label: node.name[id],
+      fullName: node.fullName[id] || id,
+      type: node.type[id],
       layer: nodeLayer[id],
       rank: nodeRank[id],
       ...nodeSize[id],

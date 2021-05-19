@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getAllEdges, getContractedModularPipelines } from './contracted';
+import { getContractedModularPipelines } from './contracted';
 import { getNodeDisabled, getEdgeDisabled } from './disabled';
 
 /**
@@ -20,8 +20,8 @@ export const addNewEdge = (source, target, { ids, sources, targets }) => {
  * in between them
  */
 export const getTransitiveEdges = createSelector(
-  [getContractedModularPipelines, getAllEdges, getNodeDisabled],
-  ({ node }, edges, nodeDisabled) => {
+  [getContractedModularPipelines, getNodeDisabled],
+  ({ node, edge }, nodeDisabled) => {
     const transitiveEdges = {
       ids: {},
       sources: {},
@@ -35,13 +35,13 @@ export const getTransitiveEdges = createSelector(
      * @param {Array} path The route that has been explored so far
      */
     const walkGraphEdges = (path) => {
-      edges.ids.forEach((edgeID) => {
+      edge.ids.forEach((edgeID) => {
         const source = path[path.length - 1];
         // Filter to only edges where the source node is the previous target
-        if (edges.sources[edgeID] !== source) {
+        if (edge.sources[edgeID] !== source) {
           return;
         }
-        const target = edges.targets[edgeID];
+        const target = edge.targets[edgeID];
         if (nodeDisabled[target]) {
           // If target node is disabled then keep walking the graph
           walkGraphEdges(path.concat(target));
@@ -73,14 +73,14 @@ export const getTransitiveEdges = createSelector(
  * and return them formatted as an array of objects
  */
 export const getVisibleEdges = createSelector(
-  [getAllEdges, getEdgeDisabled, getTransitiveEdges],
-  (edges, edgeDisabled, transitiveEdges) =>
-    edges.ids
+  [getContractedModularPipelines, getEdgeDisabled, getTransitiveEdges],
+  ({ edge }, edgeDisabled, transitiveEdges) =>
+    edge.ids
       .filter((id) => !edgeDisabled[id])
       .concat(Object.keys(transitiveEdges.ids))
       .map((id) => ({
         id,
-        source: edges.sources[id] || transitiveEdges.sources[id],
-        target: edges.targets[id] || transitiveEdges.targets[id],
+        source: edge.sources[id] || transitiveEdges.sources[id],
+        target: edge.targets[id] || transitiveEdges.targets[id],
       }))
 );

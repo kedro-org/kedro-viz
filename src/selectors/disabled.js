@@ -6,7 +6,7 @@ import {
   getModularPipelineChildren,
   getModularPipelineParentsContracted,
 } from './modular-pipelines';
-import { getAllEdges, getContractedModularPipelines } from './contracted';
+import { getContractedModularPipelines } from './contracted';
 import { getTagCount } from './tags';
 
 const getNodeIDs = (state) => state.node.ids;
@@ -191,8 +191,9 @@ export const getVisibleLayerIDs = createSelector(
  * Determine whether an edge should be disabled based on their source/target nodes
  */
 export const getEdgeDisabled = createSelector(
-  [getAllEdges, getNodeDisabled],
-  ({ ids, sources, targets }, nodeDisabled) => {
+  [getContractedModularPipelines, getNodeDisabled],
+  ({ edge }, nodeDisabled) => {
+    const { ids, sources, targets } = edge;
     return arrayToObject(ids, (edgeID) => {
       const source = sources[edgeID];
       const target = targets[edgeID];
