@@ -5,8 +5,9 @@ import { getPipelineNodeIDs } from './pipeline';
 import {
   getAllNodeIDs,
   getAllNodeNames,
+  getAllNodeFullNames,
   getAllNodeTypes,
-} from './modular-pipelines';
+} from './contracted';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -16,7 +17,6 @@ import {
 import { getNodeRank } from './ranks';
 
 const getNodeName = (state) => state.node.name;
-const getNodeFullName = (state) => state.node.fullName;
 const getNodeDisabledNode = (state) => state.node.disabled;
 const getNodeTags = (state) => state.node.tags;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
@@ -250,7 +250,7 @@ export const getVisibleNodes = createSelector(
     getVisibleNodeIDs,
     getAllNodeNames,
     getAllNodeTypes,
-    getNodeFullName,
+    getAllNodeFullNames,
     getNodeSize,
     getNodeLayer,
     getNodeRank,

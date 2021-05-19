@@ -87,15 +87,9 @@ const NodeRowList = ({
             onMouseEnter={() => onItemMouseEnter(item)}
             onMouseLeave={() => onItemMouseLeave(item)}
             onChange={(e) => onItemChange(item, !e.target.checked)}
-            onToggleContracted={() => {
-              if (item.uncollapsible) {
-                window.alert(
-                  'This modular pipeline cannot be contracted, as it is both a dependency of and dependent on a node that is not part of the modular pipeline. Contracting it would cause a circular loop, so it cannot be allowed. Sorry!'
-                );
-                return;
-              }
-              onToggleContracted(item.id, !item.contracted);
-            }}
+            onToggleContracted={() =>
+              onToggleContracted(item.id, !item.contracted)
+            }
           />
         ))}
       </ul>
