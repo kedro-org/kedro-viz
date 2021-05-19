@@ -6,6 +6,5 @@ describe('Container', () => {
   it('renders without crashing', () => {
     const wrapper = mount(<Container />);
     expect(wrapper.find('App')).toHaveLength(1);
-    expect(wrapper.find('EasterEgg')).toHaveLength(1);
   });
 });
