@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { getPipelineModularPipelineIDs } from './pipeline';
 import { arrayToObject } from '../utils';
 
-const getModularPipelineIDs = (state) => state.modularPipeline.ids;
+export const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
 const getNodesModularPipelines = (state) => state.node.modularPipelines;

@@ -14,7 +14,7 @@ const getNodeName = (state) => state.node.name;
 const getNodeFullName = (state) => state.node.fullName;
 const getNodeDisabledNode = (state) => state.node.disabled;
 const getNodeTags = (state) => state.node.tags;
-const getNodeModularPipelines = (state) => state.node.modularPipelines;
+export const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getNodeType = (state) => state.node.type;
 const getNodeLayer = (state) => state.node.layer;
 const getHoveredNode = (state) => state.node.hovered;
