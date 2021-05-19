@@ -20,6 +20,7 @@ const getNodeLayer = (state) => state.node.layer;
 const getHoveredNode = (state) => state.node.hovered;
 const getTagActive = (state) => state.tag.active;
 const getModularPipelineActive = (state) => state.modularPipeline.active;
+const getModularPipelineName = (state) => state.modularPipeline.name;
 const getTextLabels = (state) => state.textLabels;
 const getFontLoaded = (state) => state.fontLoaded;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
@@ -152,25 +153,27 @@ export const getGroupedNodes = createSelector([getNodeData], (nodes) =>
  * measure its width with getBBox, then delete the container and store the value
  */
 export const getNodeTextWidth = createSelector(
-  [getContractedModularPipelines, getFontLoaded],
-  // @TODO fix this so it only runs when new data is added
-  ({ node }, fontLoaded) => {
+  [getNodeName, getModularPipelineName, getFontLoaded],
+  (nodeName, modularPipelineName, fontLoaded) => {
     if (!fontLoaded) {
       return {};
     }
+    const names = Object.values(
+      Object.assign({}, nodeName, modularPipelineName)
+    );
     const nodeTextWidth = {};
     const svg = select(document.body)
       .append('svg')
       .attr('class', 'kedro pipeline-node');
     svg
       .selectAll('text')
-      .data(node.ids)
+      .data(names)
       .enter()
       .append('text')
-      .text((nodeID) => node.name[nodeID])
-      .each(function (nodeID) {
+      .text((name) => name)
+      .each(function (name) {
         const width = this.getBBox ? this.getBBox().width : 0;
-        nodeTextWidth[nodeID] = width;
+        nodeTextWidth[name] = width;
       });
     svg.remove();
     return nodeTextWidth;
@@ -220,7 +223,7 @@ export const getNodeSize = createSelector(
     return arrayToObject(node.ids, (nodeID) => {
       const iconSize = textLabels ? 24 : 28;
       const padding = getPadding(textLabels, node.type[nodeID]);
-      const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
+      const textWidth = textLabels ? nodeTextWidth[node.name[nodeID]] : 0;
       const textGap = textLabels ? 6 : 0;
       const innerWidth = iconSize + textWidth + textGap;
       return {
