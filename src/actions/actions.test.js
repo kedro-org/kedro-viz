@@ -2,26 +2,28 @@ import animals from '../utils/data/animals.mock.json';
 import {
   CHANGE_FLAG,
   RESET_DATA,
-  TOGGLE_LAYERS,
   TOGGLE_EXPORT_MODAL,
+  TOGGLE_IGNORE_LARGE_WARNING,
+  TOGGLE_LAYERS,
+  TOGGLE_MINIMAP,
+  TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
-  TOGGLE_IGNORE_LARGE_WARNING,
-  TOGGLE_PARAMETERS_HOVERED,
   changeFlag,
   resetData,
-  toggleLayers,
+  toggleIgnoreLargeWarning,
   toggleExportModal,
+  toggleLayers,
+  toggleMiniMap,
+  toggleParametersHovered,
   toggleSidebar,
   toggleTextLabels,
   toggleTheme,
   updateChartSize,
   updateFontLoaded,
-  toggleIgnoreLargeWarning,
-  toggleParametersHovered,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -61,6 +63,15 @@ describe('actions', () => {
       visible,
     };
     expect(toggleLayers(visible)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether to show layers', () => {
+    const visible = false;
+    const expectedAction = {
+      type: TOGGLE_MINIMAP,
+      visible,
+    };
+    expect(toggleMiniMap(visible)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether to show the export modal', () => {
