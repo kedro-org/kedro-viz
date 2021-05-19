@@ -29,7 +29,7 @@
     "lint:scss": "stylelint 'src/**/*.scss' --fix",
     "prepublishOnly": "npm-run-all -s test:ci lint build lib",
     "prepare": "npm run snyk-protect",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --transformIgnorePatterns \"node_modules/(?!your-module-name)/\"",
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
