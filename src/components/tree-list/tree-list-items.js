@@ -217,6 +217,9 @@ export const getFilteredModularPipelineNodes = createSelector(
     const modularPipelineNodes = arrayToObject(modularPipelineIDs, () => []);
     const { modularPipeline } = filteredModularPipelines;
 
+    // ** important: clean through existing modular pipelines in nodes first to only extract the deepest layer
+    // assumption: each node is unique and will only exist once on the flowchart
+
     // create a new field for the topmost / root pipeline
     modularPipelineNodes['main'] = [];
 
@@ -278,10 +281,14 @@ export const getNestedModularPipelines = createSelector(
         // look for the parent modular pipeline in the new lower level
         let i = id.lastIndexOf('.');
         const parent = id.substr(0, i);
-        // update the current parent to a new lower level
+        // check if the current parent exists in the existing list of children
+
+        // assign the current parent if it is the children of the
         currentParent = currentParent.children.filter(
           (mp) => mp.id === parent
         )[0];
+
+        // update the current parent to a new lower level
         level = currentLevel;
       } else if (currentLevel === 1) {
         // update the current parent back to the top parent
