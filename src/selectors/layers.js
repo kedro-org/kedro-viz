@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getVisibleLayerIDs } from './disabled';
+import { getVisibleLayerIDs } from './contracted';
 
 const getGraph = (state) => state.graph;
 const getLayerName = (state) => state.layer.name;

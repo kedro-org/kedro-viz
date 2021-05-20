@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
-import { getPipelineNodeIDs, getPipelineModularPipelineIDs } from './pipeline';
 import { getModularPipelineChildren } from './modular-pipelines';
+import { getVisibleNodeIDs, getVisibleModularPipelineIDs } from './disabled';
+import { getCombinedEdges } from './edges';
 import { arrayToObject } from '../utils';
 
 const getModularPipelineName = (state) => state.modularPipeline.name;
@@ -9,9 +10,9 @@ const getModularPipelineContracted = (state) =>
 const getNodeName = (state) => state.node.name;
 const getNodeFullName = (state) => state.node.fullName;
 const getNodeType = (state) => state.node.type;
-const getEdgeIDs = (state) => state.edge.ids;
-const getEdgeSources = (state) => state.edge.sources;
-const getEdgeTargets = (state) => state.edge.targets;
+const getLayerIDs = (state) => state.layer.ids;
+const getLayersVisible = (state) => state.layer.visible;
+const getNodeLayer = (state) => state.node.layer;
 
 /**
  * Collapse modular pipelines by replacing standalone MP children with MP nodes,
@@ -19,17 +20,15 @@ const getEdgeTargets = (state) => state.edge.targets;
  */
 export const getContractedModularPipelines = createSelector(
   [
-    getPipelineModularPipelineIDs,
+    getVisibleModularPipelineIDs,
     getModularPipelineChildren,
     getModularPipelineContracted,
     getModularPipelineName,
-    getPipelineNodeIDs,
+    getVisibleNodeIDs,
     getNodeName,
     getNodeFullName,
     getNodeType,
-    getEdgeIDs,
-    getEdgeSources,
-    getEdgeTargets,
+    getCombinedEdges,
   ],
   (
     modularPipelineIDs,
@@ -40,9 +39,7 @@ export const getContractedModularPipelines = createSelector(
     nodeName,
     nodeFullName,
     nodeType,
-    edgeIDs,
-    edgeSource,
-    edgeTarget
+    combinedEdges
   ) => {
     // List of nodes, but converting the IDs to an object to improve performance
     const node = {
@@ -55,9 +52,9 @@ export const getContractedModularPipelines = createSelector(
 
     // List of edges, but converting the IDs to an object to improve performance
     const edge = {
-      ids: arrayToObject(edgeIDs, () => true),
-      sources: { ...edgeSource },
-      targets: { ...edgeTarget },
+      ids: arrayToObject(combinedEdges.ids, () => true),
+      sources: { ...combinedEdges.sources },
+      targets: { ...combinedEdges.targets },
     };
 
     /**
@@ -170,5 +167,35 @@ export const getContractedModularPipelines = createSelector(
       edge: { ...edge, ids: Object.keys(edge.ids) },
       node: { ...node, ids: Object.keys(node.ids) },
     };
+  }
+);
+
+/**
+ * Get only the visible edges, and format as an array of objects
+ */
+export const getVisibleEdges = createSelector(
+  [getContractedModularPipelines],
+  ({ edge }) =>
+    edge.ids.map((id) => ({
+      id,
+      source: edge.sources[id],
+      target: edge.targets[id],
+    }))
+);
+
+/**
+ * Get a list of just the IDs for the remaining visible layers
+ */
+export const getVisibleLayerIDs = createSelector(
+  [getContractedModularPipelines, getNodeLayer, getLayerIDs, getLayersVisible],
+  ({ node }, nodeLayer, layerIDs, layersVisible) => {
+    if (!layersVisible) {
+      return [];
+    }
+    const visibleLayerIDs = {};
+    for (const nodeID of node.ids) {
+      visibleLayerIDs[nodeLayer[nodeID]] = true;
+    }
+    return layerIDs.filter((layerID) => visibleLayerIDs[layerID]);
   }
 );

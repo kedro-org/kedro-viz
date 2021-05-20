@@ -6,7 +6,6 @@ import { getContractedModularPipelines } from './contracted';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
-  getVisibleNodeIDs,
   getNodeDisabledModularPipelineFilter,
 } from './disabled';
 import { getNodeRank } from './ranks';
@@ -245,17 +244,16 @@ export const getNodeSize = createSelector(
 export const getVisibleNodes = createSelector(
   [
     getFontLoaded,
-    getVisibleNodeIDs,
     getContractedModularPipelines,
     getNodeSize,
     getNodeLayer,
     getNodeRank,
   ],
-  (fontLoaded, nodeIDs, { node }, nodeSize, nodeLayer, nodeRank) => {
+  (fontLoaded, { node }, nodeSize, nodeLayer, nodeRank) => {
     if (!fontLoaded) {
       return [];
     }
-    const nodes = nodeIDs.map((id) => ({
+    const nodes = node.ids.map((id) => ({
       id,
       name: node.name[id],
       label: node.name[id],

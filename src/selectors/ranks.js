@@ -1,7 +1,10 @@
 import { createSelector } from 'reselect';
 import batchingToposort from 'batching-toposort';
-import { getVisibleNodeIDs, getVisibleLayerIDs } from './disabled';
-import { getVisibleEdges } from './edges';
+import {
+  getContractedModularPipelines,
+  getVisibleEdges,
+  getVisibleLayerIDs,
+} from './contracted';
 
 const getNodeLayer = (state) => state.node.layer;
 
@@ -9,21 +12,20 @@ const getNodeLayer = (state) => state.node.layer;
  * Get list of visible nodes for each visible layer
  */
 export const getLayerNodes = createSelector(
-  [getVisibleNodeIDs, getVisibleLayerIDs, getNodeLayer],
-  (nodeIDs, layerIDs, nodeLayer) => {
+  [getContractedModularPipelines, getVisibleLayerIDs, getNodeLayer],
+  ({ node }, layerIDs, nodeLayer) => {
     if (!layerIDs.length) {
       return [];
     }
     // Create object containing a list of every node for each layer
     const layerNodes = {};
-    for (const nodeID of nodeIDs) {
+    for (const nodeID of node.ids) {
       const layer = nodeLayer[nodeID];
       if (!layerNodes[layer]) {
         layerNodes[layer] = [];
       }
       layerNodes[layer].push(nodeID);
     }
-
     // Convert to a nested array of layers of nodes
     return layerIDs.map((layerID) => layerNodes[layerID]);
   }
@@ -34,8 +36,14 @@ export const getLayerNodes = createSelector(
  * by toposorting while taking layers into account
  */
 export const getNodeRank = createSelector(
-  [getVisibleNodeIDs, getVisibleEdges, getLayerNodes, getVisibleLayerIDs],
-  (nodeIDs, edges, layerNodes, layerIDs) => {
+  [
+    getContractedModularPipelines,
+    getVisibleEdges,
+    getLayerNodes,
+    getVisibleLayerIDs,
+  ],
+  ({ node }, edges, layerNodes, layerIDs) => {
+    console.log(layerNodes);
     if (!layerIDs.length) {
       return {};
     }
@@ -44,7 +52,7 @@ export const getNodeRank = createSelector(
     const nodeDeps = {};
 
     // Initialise empty dependency arrays for each node
-    for (const nodeID of nodeIDs) {
+    for (const nodeID of node.ids) {
       nodeDeps[nodeID] = [];
     }
 

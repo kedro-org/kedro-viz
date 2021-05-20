@@ -14,7 +14,7 @@ import ThemeIcon from '../icons/theme';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
 import LayersIcon from '../icons/layers';
-import { getVisibleLayerIDs } from '../../selectors/disabled';
+import { getVisibleLayerIDs } from '../../selectors/contracted';
 import './primary-toolbar.css';
 
 /**

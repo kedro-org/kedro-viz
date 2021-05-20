@@ -1,6 +1,10 @@
 import { createSelector } from 'reselect';
-import { getContractedModularPipelines } from './contracted';
+import { getPipelineNodeIDs } from './pipeline';
 import { getNodeDisabled, getEdgeDisabled } from './disabled';
+
+const getEdgeIDs = (state) => state.edge.ids;
+const getEdgeSources = (state) => state.edge.sources;
+const getEdgeTargets = (state) => state.edge.targets;
 
 /**
  * Create a new edge from the first and last edge in the path
@@ -20,8 +24,14 @@ export const addNewEdge = (source, target, { ids, sources, targets }) => {
  * in between them
  */
 export const getTransitiveEdges = createSelector(
-  [getContractedModularPipelines, getNodeDisabled],
-  ({ node, edge }, nodeDisabled) => {
+  [
+    getEdgeIDs,
+    getEdgeSources,
+    getEdgeTargets,
+    getPipelineNodeIDs,
+    getNodeDisabled,
+  ],
+  (edgeIDs, edgeSources, edgeTargets, nodeIDs, nodeDisabled) => {
     const transitiveEdges = {
       ids: {},
       sources: {},
@@ -35,13 +45,13 @@ export const getTransitiveEdges = createSelector(
      * @param {Array} path The route that has been explored so far
      */
     const walkGraphEdges = (path) => {
-      edge.ids.forEach((edgeID) => {
+      edgeIDs.forEach((edgeID) => {
         const source = path[path.length - 1];
         // Filter to only edges where the source node is the previous target
-        if (edge.sources[edgeID] !== source) {
+        if (edgeSources[edgeID] !== source) {
           return;
         }
-        const target = edge.targets[edgeID];
+        const target = edgeTargets[edgeID];
         if (nodeDisabled[target]) {
           // If target node is disabled then keep walking the graph
           walkGraphEdges(path.concat(target));
@@ -53,11 +63,11 @@ export const getTransitiveEdges = createSelector(
     };
 
     // Only run walk if some nodes are disabled
-    if (node.ids.some((nodeID) => nodeDisabled[nodeID])) {
+    if (nodeIDs.some((nodeID) => nodeDisabled[nodeID])) {
       // Examine the children of every enabled node. The walk only needs
       // to be run in a single direction (i.e. top down), because links
       // that end in a terminus can never be transitive.
-      node.ids.forEach((nodeID) => {
+      nodeIDs.forEach((nodeID) => {
         if (!nodeDisabled[nodeID]) {
           walkGraphEdges([nodeID]);
         }
@@ -70,17 +80,21 @@ export const getTransitiveEdges = createSelector(
 
 /**
  * Get only the visible edges (plus transitive edges),
- * and return them formatted as an array of objects
+ * and return them combined together as an array of objects
  */
-export const getVisibleEdges = createSelector(
-  [getContractedModularPipelines, getEdgeDisabled, getTransitiveEdges],
-  ({ edge }, edgeDisabled, transitiveEdges) =>
-    edge.ids
+export const getCombinedEdges = createSelector(
+  [
+    getEdgeIDs,
+    getEdgeDisabled,
+    getEdgeSources,
+    getEdgeTargets,
+    getTransitiveEdges,
+  ],
+  (edgeIDs, edgeDisabled, edgeSources, edgeTargets, transitiveEdges) => ({
+    ids: edgeIDs
       .filter((id) => !edgeDisabled[id])
-      .concat(Object.keys(transitiveEdges.ids))
-      .map((id) => ({
-        id,
-        source: edge.sources[id] || transitiveEdges.sources[id],
-        target: edge.targets[id] || transitiveEdges.targets[id],
-      }))
+      .concat(Object.keys(transitiveEdges.ids)),
+    sources: Object.assign({}, edgeSources, transitiveEdges.sources),
+    targets: Object.assign({}, edgeTargets, transitiveEdges.targets),
+  })
 );

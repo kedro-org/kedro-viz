@@ -1,12 +1,15 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
-import { getNodeDisabledPipeline } from './pipeline';
+import {
+  getNodeDisabledPipeline,
+  getPipelineModularPipelineIDs,
+  getPipelineNodeIDs,
+} from './pipeline';
 import {
   getModularPipelineCount,
   getModularPipelineChildren,
   getModularPipelineParentsContracted,
 } from './modular-pipelines';
-import { getContractedModularPipelines } from './contracted';
 import { getTagCount } from './tags';
 
 const getNodeIDs = (state) => state.node.ids;
@@ -17,9 +20,9 @@ const getNodeType = (state) => state.node.type;
 const getTagEnabled = (state) => state.tag.enabled;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
-const getLayerIDs = (state) => state.layer.ids;
-const getLayersVisible = (state) => state.layer.visible;
-const getNodeLayer = (state) => state.node.layer;
+const getEdgeIDs = (state) => state.edge.ids;
+const getEdgeSources = (state) => state.edge.sources;
+const getEdgeTargets = (state) => state.edge.targets;
 const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 const getModularPipelineContracted = (state) =>
   state.modularPipeline.contracted;
@@ -161,43 +164,28 @@ export const getModularPipelineDisabled = createSelector(
  * Get a list of just the IDs for the remaining visible nodes
  */
 export const getVisibleNodeIDs = createSelector(
-  [getContractedModularPipelines, getNodeDisabled, getModularPipelineDisabled],
-  ({ node }, nodeDisabled, modularPipelineDisabled) => {
-    return node.ids.filter(
-      (id) =>
-        !nodeDisabled[id] && !modularPipelineDisabled[node.modularPipeline[id]]
-    );
-  }
+  [getPipelineNodeIDs, getNodeDisabled],
+  (nodeIDs, nodeDisabled) => nodeIDs.filter((id) => !nodeDisabled[id])
 );
 
 /**
- * Get a list of just the IDs for the remaining visible layers
+ * Get a list of just the IDs for the remaining visible nodes
  */
-export const getVisibleLayerIDs = createSelector(
-  [getVisibleNodeIDs, getNodeLayer, getLayerIDs, getLayersVisible],
-  (nodeIDs, nodeLayer, layerIDs, layersVisible) => {
-    if (!layersVisible) {
-      return [];
-    }
-    const visibleLayerIDs = {};
-    for (const nodeID of nodeIDs) {
-      visibleLayerIDs[nodeLayer[nodeID]] = true;
-    }
-    return layerIDs.filter((layerID) => visibleLayerIDs[layerID]);
-  }
+export const getVisibleModularPipelineIDs = createSelector(
+  [getPipelineModularPipelineIDs, getModularPipelineDisabled],
+  (modPipIDs, modularPipelineDisabled) =>
+    modPipIDs.filter((id) => !modularPipelineDisabled[id])
 );
 
 /**
  * Determine whether an edge should be disabled based on their source/target nodes
  */
 export const getEdgeDisabled = createSelector(
-  [getContractedModularPipelines, getNodeDisabled],
-  ({ edge }, nodeDisabled) => {
-    const { ids, sources, targets } = edge;
-    return arrayToObject(ids, (edgeID) => {
-      const source = sources[edgeID];
-      const target = targets[edgeID];
+  [getEdgeIDs, getNodeDisabled, getEdgeSources, getEdgeTargets],
+  (edgeIDs, nodeDisabled, edgeSources, edgeTargets) =>
+    arrayToObject(edgeIDs, (edgeID) => {
+      const source = edgeSources[edgeID];
+      const target = edgeTargets[edgeID];
       return Boolean(nodeDisabled[source] || nodeDisabled[target]);
-    });
-  }
+    })
 );
