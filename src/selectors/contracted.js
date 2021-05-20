@@ -28,6 +28,7 @@ export const getContractedModularPipelines = createSelector(
     getNodeName,
     getNodeFullName,
     getNodeType,
+    getNodeLayer,
     getCombinedEdges,
   ],
   (
@@ -39,6 +40,7 @@ export const getContractedModularPipelines = createSelector(
     nodeName,
     nodeFullName,
     nodeType,
+    nodeLayer,
     combinedEdges
   ) => {
     // List of nodes, but converting the IDs to an object to improve performance
@@ -47,6 +49,7 @@ export const getContractedModularPipelines = createSelector(
       name: { ...nodeName },
       fullName: { ...nodeFullName },
       type: { ...nodeType },
+      layer: { ...nodeLayer },
       modularPipeline: {},
     };
 
@@ -60,17 +63,18 @@ export const getContractedModularPipelines = createSelector(
     /**
      * Add a new node to replace existing node(s)
      * @param {string} modPipID Modular pipeline ID
-     * @param {string} uid A node/edge ID, to ensure uniqueness
+     * @param {string} nodeID A node ID, to ensure uniqueness
      * @returns {string} The ID for the new node
      */
-    const addNode = (modPipID, uid) => {
-      const nodeID = [modPipID, uid].join('-');
-      node.ids[nodeID] = true;
-      node.name[nodeID] = modularPipelineName[modPipID];
-      node.fullName[nodeID] = modPipID;
-      node.type[nodeID] = 'pipeline';
-      node.modularPipeline[nodeID] = modPipID;
-      return nodeID;
+    const addNode = (modPipID, nodeID) => {
+      const id = [modPipID, nodeID].join('-');
+      node.ids[id] = true;
+      node.name[id] = modularPipelineName[modPipID];
+      node.fullName[id] = modPipID;
+      node.type[id] = 'pipeline';
+      node.layer[id] = node.layer[nodeID];
+      node.modularPipeline[id] = modPipID;
+      return id;
     };
 
     const deleteNode = (nodeID) => {
@@ -143,9 +147,9 @@ export const getContractedModularPipelines = createSelector(
         return;
       }
 
-      const newNodeID = addNode(modPipID, edgeID);
       const source = edge.sources[edgeID];
       const target = edge.targets[edgeID];
+      const newNodeID = addNode(modPipID, source);
       deleteNode(source);
       deleteNode(target);
       deleteEdge(edgeID);

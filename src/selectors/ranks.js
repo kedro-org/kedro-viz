@@ -6,21 +6,19 @@ import {
   getVisibleLayerIDs,
 } from './contracted';
 
-const getNodeLayer = (state) => state.node.layer;
-
 /**
  * Get list of visible nodes for each visible layer
  */
 export const getLayerNodes = createSelector(
-  [getContractedModularPipelines, getVisibleLayerIDs, getNodeLayer],
-  ({ node }, layerIDs, nodeLayer) => {
+  [getContractedModularPipelines, getVisibleLayerIDs],
+  ({ node }, layerIDs) => {
     if (!layerIDs.length) {
       return [];
     }
     // Create object containing a list of every node for each layer
     const layerNodes = {};
     for (const nodeID of node.ids) {
-      const layer = nodeLayer[nodeID];
+      const layer = node.layer[nodeID];
       if (!layerNodes[layer]) {
         layerNodes[layer] = [];
       }
@@ -43,7 +41,6 @@ export const getNodeRank = createSelector(
     getVisibleLayerIDs,
   ],
   ({ node }, edges, layerNodes, layerIDs) => {
-    console.log(layerNodes);
     if (!layerIDs.length) {
       return {};
     }

@@ -15,7 +15,6 @@ const getNodeDisabledNode = (state) => state.node.disabled;
 const getNodeTags = (state) => state.node.tags;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getNodeType = (state) => state.node.type;
-const getNodeLayer = (state) => state.node.layer;
 const getHoveredNode = (state) => state.node.hovered;
 const getTagActive = (state) => state.tag.active;
 const getModularPipelineActive = (state) => state.modularPipeline.active;
@@ -242,14 +241,8 @@ export const getNodeSize = createSelector(
  * that are unnecessary for the chart layout calculation
  */
 export const getVisibleNodes = createSelector(
-  [
-    getFontLoaded,
-    getContractedModularPipelines,
-    getNodeSize,
-    getNodeLayer,
-    getNodeRank,
-  ],
-  (fontLoaded, { node }, nodeSize, nodeLayer, nodeRank) => {
+  [getFontLoaded, getContractedModularPipelines, getNodeSize, getNodeRank],
+  (fontLoaded, { node }, nodeSize, nodeRank) => {
     if (!fontLoaded) {
       return [];
     }
@@ -259,7 +252,7 @@ export const getVisibleNodes = createSelector(
       label: node.name[id],
       fullName: node.fullName[id] || id,
       type: node.type[id],
-      layer: nodeLayer[id],
+      layer: node.layer[id],
       rank: nodeRank[id],
       ...nodeSize[id],
     }));
