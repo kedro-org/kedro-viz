@@ -55,6 +55,7 @@ const NodeListRow = memo(
     type,
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
+    rowType,
   }) => {
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
@@ -77,7 +78,10 @@ const NodeListRow = memo(
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
         <TextButton
-          className="pipeline-nodelist__row__text"
+          className={classnames('pipeline-nodelist__row__text', {
+            'pipeline-nodelist__row__text--tree': rowType === 'tree',
+            'pipeline-nodelist__row__text--filter': rowType !== 'tree',
+          })}
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}

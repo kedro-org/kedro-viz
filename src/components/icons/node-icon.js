@@ -18,7 +18,29 @@ const NodeIcon = ({ className, type }) =>
     <svg
       className={modifiers('pipeline-node-icon', { type }, className)}
       viewBox="0 0 24 24">
-      <path d={paths[type]} />
+      {type === 'modularPipeline' ? (
+        <g>
+          <path
+            d="M0 0H24V24H0z"
+            transform="translate(-241 -1672) translate(153 1491) translate(0 145) translate(64 36) translate(24)"
+          />
+          <g
+            fill="#FFF"
+            stroke="#FFF"
+            transform="translate(-241 -1672) translate(153 1491) translate(0 145) translate(64 36) translate(24) translate(6 4)">
+            <ellipse cx="2.182" cy="9.6" rx="1.682" ry="1.633" />
+            <ellipse cx="8.727" cy="13.867" rx="1.682" ry="1.633" />
+            <ellipse cx="2.182" cy="2.133" rx="1.682" ry="1.633" />
+            <ellipse cx="9.818" cy="5.333" rx="1.682" ry="1.633" />
+            <path
+              stroke-width="2"
+              d="M9.818 5.333L3.273 9.6M8.727 13.867L2.182 9.6M2.182 2.133L10.909 5.333"
+            />
+          </g>
+        </g>
+      ) : (
+        <path d={paths[type]} />
+      )}
     </svg>
   ) : null;
 
