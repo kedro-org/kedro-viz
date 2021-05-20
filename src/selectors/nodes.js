@@ -67,7 +67,8 @@ export const getNodeActive = createSelector(
       const activeViaModularPipeline = modularPipelines.some(
         (modularPipeline) => modularPipelineActive[modularPipeline]
       );
-      const isActiveModularPipeline = modularPipelineActive[nodeID];
+      const isActiveModularPipeline =
+        modularPipelineActive[node.modularPipeline[nodeID]];
       return Boolean(
         activeViaTag || activeViaModularPipeline || isActiveModularPipeline
       );
