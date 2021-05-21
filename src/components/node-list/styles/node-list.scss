@@ -19,6 +19,7 @@
   --color-nodelist-split-handle: #555;
   --color-nodelist-split-handle-border: #{rgba(#555, 0.18)};
   --color-nodelist-filter-panel: #{$color-bg-light-4};
+  --color-nodelist-element-panel: #{$color-bg-light-3};
 }
 
 .kui-theme--dark {
@@ -30,6 +31,7 @@
   --color-nodelist-split-handle: #fff;
   --color-nodelist-split-handle-border: #{rgba(#fff, 0.15)};
   --color-nodelist-filter-panel: #{$color-bg-dark-5};
+  --color-nodelist-element-panel: #{$color-bg-dark-3};
 }
 
 .pipeline-nodelist {
@@ -73,10 +75,6 @@
   $color-bg-dark-3
 );
 
-.pipeline-nodelist-section:first-child {
-  padding-top: 12px;
-}
-
 .pipeline-nodelist-section:last-child {
-  padding-bottom: 16px;
+  padding-bottom: 28px;
 }

@@ -89,11 +89,7 @@
   }
 
   .pipeline-nodelist__filter-panel &:after {
-    background: linear-gradient(
-      0deg,
-      var(--nodelist-bg-transparent) 0%,
-      var(--color-nodelist-filter-panel) 100%
-    );
+    display: none;
   }
 }
 
