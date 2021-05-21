@@ -1,9 +1,7 @@
 import { createSelector } from 'reselect';
-import { arrayToObject } from '../utils';
 import { getNodeDisabled, getEdgeDisabled } from './disabled';
 
 const getNodeIDs = (state) => state.node.ids;
-const getNodeType = (state) => state.node.type;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
