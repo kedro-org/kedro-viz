@@ -77,29 +77,32 @@ const NodeListRow = memo(
         title={name}
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
+        {type && (
+          <NodeIcon
+            className={classnames(
+              'pipeline-nodelist__row__type-icon',
+              'pipeline-nodelist__row__icon',
+              {
+                'pipeline-nodelist__row__type-icon--faded': faded,
+                'pipeline-nodelist__row__type-icon--disabled': disabled,
+                'pipeline-nodelist__row__type-icon--nested': !children,
+                'pipeline-nodelist__row__type-icon--active': active,
+                'pipeline-nodelist__row__type-icon--selected': selected,
+              }
+            )}
+            type={type}
+          />
+        )}
         <TextButton
-          className="pipeline-nodelist__row__text"
+          className={classnames(
+            'pipeline-nodelist__row__text',
+            `pipeline-nodelist__row__text--kind-${kind}`
+          )}
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
           disabled={isButton && (disabled || !checked)}
           title={children ? null : name}>
-          {type && (
-            <NodeIcon
-              className={classnames(
-                'pipeline-nodelist__row__type-icon',
-                'pipeline-nodelist__row__icon',
-                {
-                  'pipeline-nodelist__row__type-icon--faded': faded,
-                  'pipeline-nodelist__row__type-icon--disabled': disabled,
-                  'pipeline-nodelist__row__type-icon--nested': !children,
-                  'pipeline-nodelist__row__type-icon--active': active,
-                  'pipeline-nodelist__row__type-icon--selected': selected,
-                }
-              )}
-              type={type}
-            />
-          )}
           <span
             className={classnames(
               'pipeline-nodelist__row__label',

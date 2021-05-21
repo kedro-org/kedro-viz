@@ -6,9 +6,6 @@
 //--- Toggle ---//
 
 .pipeline-row__toggle {
-  position: absolute;
-  right: $row-padding-x;
-
   &--not-tag {
     cursor: pointer;
   }

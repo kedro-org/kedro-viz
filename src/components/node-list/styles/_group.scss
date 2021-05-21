@@ -9,10 +9,6 @@
 .pipeline-nodelist__list {
   @extend %nolist;
 
-  li {
-    @extend %nolist;
-  }
-
   &--nested {
     margin: 0 0 1.2em;
   }
@@ -143,15 +139,11 @@ $placeholder-fade: 120px;
 }
 
 .pipeline-type-group-toggle {
-  position: absolute;
-  left: $row-padding-x;
   width: $toggle-size;
   height: $toggle-size;
-  margin-right: $toggle-margin-right;
   padding: 0;
-  color: inherit;
   color: var(--color-default-alt);
-  font-size: 1.16em;
+  font-size: inherit;
   font-family: inherit;
   line-height: 1em;
   text-align: center;
@@ -171,7 +163,7 @@ $placeholder-fade: 120px;
   }
 
   &:before {
-    font-size: 1.5em;
+    font-size: 1.8em;
     opacity: 0.55;
     content: '▾';
   }
@@ -181,6 +173,6 @@ $placeholder-fade: 120px;
   }
 
   &--alt {
-    transform: rotate(-90deg);
+    transform: rotate(90deg);
   }
 }
