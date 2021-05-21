@@ -69,6 +69,7 @@ const NodeRowList = ({
             id={item.id}
             kind={group.kind}
             label={getItemLabel(item)}
+            count={item.count}
             name={item.name}
             type={item.type}
             active={item.active}

@@ -10,7 +10,7 @@ import {
 } from '../../actions/modular-pipelines';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { getNodeTypes } from '../../selectors/node-types';
-import { getTagData } from '../../selectors/tags';
+import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import { getModularPipelineData } from '../../selectors/modular-pipelines';
 import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import {
@@ -40,6 +40,7 @@ const NodeListProvider = ({
   nodes,
   nodeSelected,
   tags,
+  tagNodeCounts,
   types,
   onToggleNodesDisabled,
   onToggleNodeSelected,
@@ -57,6 +58,7 @@ const NodeListProvider = ({
   const items = getFilteredItems({
     nodes,
     tags,
+    tagNodeCounts,
     modularPipelines,
     nodeSelected,
     searchValue,
@@ -118,6 +120,7 @@ const NodeListProvider = ({
       onToggleParametersActive(false);
     }
   };
+  
   const onToggleGroupChecked = (type, checked) => {
     if (isTagType(type) || isModularPipelineType(type)) {
       // Filter all category items if at least one item set, otherwise enable all items
@@ -208,6 +211,7 @@ const NodeListProvider = ({
 
 export const mapStateToProps = (state) => ({
   tags: getTagData(state),
+  tagNodeCounts: getTagNodeCounts(state),
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
   types: getNodeTypes(state),

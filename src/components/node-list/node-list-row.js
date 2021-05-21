@@ -45,6 +45,7 @@ const NodeListRow = memo(
     visible,
     id,
     label,
+    count,
     name,
     kind,
     onMouseEnter,
@@ -111,7 +112,9 @@ const NodeListRow = memo(
             dangerouslySetInnerHTML={{ __html: label }}
           />
         </TextButton>
-        {children}
+        {typeof count === 'number' ? (
+          <span className={'pipeline-nodelist__row__count'}>{count}</span>
+        ) : null}
         <label
           htmlFor={id}
           className={classnames('pipeline-row__toggle', {
@@ -145,6 +148,7 @@ const NodeListRow = memo(
             )}
           />
         </label>
+        {children}
       </Container>
     );
   },

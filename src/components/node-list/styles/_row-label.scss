@@ -49,12 +49,22 @@
     color: var(--color-nodelist-highlight);
     font-weight: normal;
   }
+}
 
-  i {
-    display: inline-block;
-    margin-left: 0.45em;
-    font-weight: normal;
-    font-style: normal;
+.pipeline-nodelist__row__count {
+  display: inline-block;
+  margin: 0 0.7em 0 auto;
+  width: 2.2em;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1.16em;
+  opacity: 0.75;
+  text-align: right;
+  user-select: none;
+
+  .pipeline-nodelist__row--unchecked & {
+    opacity: 0.55;
   }
 }
 

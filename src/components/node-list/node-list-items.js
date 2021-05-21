@@ -104,22 +104,25 @@ export const getFilteredTags = createSelector(
  * @return {array} Node list items
  */
 export const getFilteredTagItems = createSelector(
-  getFilteredTags,
-  (filteredTags) => ({
-    tag: filteredTags.tag.map((tag) => ({
-      ...tag,
-      type: 'tag',
-      visibleIcon: IndicatorIcon,
-      invisibleIcon: IndicatorOffIcon,
-      active: false,
-      selected: false,
-      faded: false,
-      visible: true,
-      disabled: false,
-      unset: !tag.enabled,
-      checked: tag.enabled,
-    })),
-  })
+  [getFilteredTags, (state) => state.tagNodeCounts],
+    (filteredTags, nodeTags) => {
+      return ({
+        tag: filteredTags.tag.map((tag) => ({
+          ...tag,
+          type: 'tag',
+          visibleIcon: IndicatorIcon,
+          invisibleIcon: IndicatorOffIcon,
+          active: false,
+          selected: false,
+          faded: false,
+          visible: true,
+          disabled: false,
+          unset: !tag.enabled,
+          checked: tag.enabled,
+          count: nodeTags[tag.id] || 0
+        })),
+    });
+  }
 );
 
 /**
@@ -263,7 +266,6 @@ export const createGroup = (itemType, itemsOfType = []) => {
   const group = {
     type: itemType,
     id: itemType.id,
-    count: itemsOfType.length,
     allUnset: itemsOfType.every((item) => item.unset),
     allChecked: itemsOfType.every((item) => item.checked),
   };

@@ -42,7 +42,6 @@ const NodeListGroups = ({
               name={group.name}
               kind={group.kind}
               checked={group.checked}
-              childCount={group.count}
               allUnset={group.allUnset}
               visibleIcon={group.visibleIcon}
               invisibleIcon={group.invisibleIcon}
