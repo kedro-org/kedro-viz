@@ -17,7 +17,10 @@
   align-items: center;
   padding: 0 $row-offset-right 0 $row-offset-left;
 
-  // force gpu layers to avoid drawing lag on scroll
+  // Fixed height required for lazy list (see note above).
+  height: 37px;
+
+  // Force gpu layers to avoid drawing lag on scroll.
   transform: translate(0, 0);
 
   &--active,
@@ -26,7 +29,7 @@
   }
 
   &--selected,
-  // additional selector required to increase specificity to override previous rule:
+  // Additional selector required to increase specificity to override previous rule:
   &--visible#{&}--selected {
     background-color: var(--color-nodelist-row-selected);
   }

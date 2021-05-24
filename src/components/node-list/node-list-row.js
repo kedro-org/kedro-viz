@@ -8,7 +8,7 @@ import InvisibleIcon from '../icons/invisible';
 import { getNodeActive } from '../../selectors/nodes';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
-export const nodeListRowHeight = 36.59375;
+export const nodeListRowHeight = 37;
 
 /**
  * Returns `true` if there are no props changes, therefore the last render can be reused.
