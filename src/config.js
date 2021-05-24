@@ -42,11 +42,17 @@ export const flags = {
     default: true,
     icon: '🐳',
   },
+  modularpipeline: {
+    description: 'Enable modular pipeline features',
+    default: false,
+    icon: '⛓️',
+  },
 };
 
 export const sidebar = {
   Categories: {
     Tags: 'tag',
+    ModularPipelines: 'modularPipeline',
   },
   Elements: {
     Nodes: 'task',

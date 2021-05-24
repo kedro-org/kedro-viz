@@ -55,12 +55,24 @@ describe('LargePipelineWarning', () => {
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
 
-  it('maps dispatch to props', () => {
-    const dispatch = jest.fn();
-    const expectedResult = {
-      onDisable: expect.any(Function),
-      onHide: expect.any(Function),
-    };
-    expect(mapDispatchToProps(dispatch)).toEqual(expectedResult);
+  describe('mapDispatchToProps', () => {
+    it('disables the size warning flag', () => {
+      const dispatch = jest.fn();
+      mapDispatchToProps(dispatch).onDisable();
+      expect(dispatch.mock.calls[0][0]).toEqual({
+        type: 'CHANGE_FLAG',
+        name: 'sizewarning',
+        value: false,
+      });
+    });
+
+    it('hides the size warning', () => {
+      const dispatch = jest.fn();
+      mapDispatchToProps(dispatch).onHide();
+      expect(dispatch.mock.calls[0][0]).toEqual({
+        type: 'TOGGLE_IGNORE_LARGE_WARNING',
+        ignoreLargeWarning: true,
+      });
+    });
   });
 });

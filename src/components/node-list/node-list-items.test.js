@@ -120,15 +120,18 @@ describe('node-list-selectors', () => {
   describe('getSections', () => {
     const sections = getSections({ flags: { modularpipeline: false } });
 
-    const section = expect.arrayContaining([
-      expect.objectContaining({
-        name: expect.any(String),
-        types: expect.any(Array),
-      }),
-    ]);
+    const groupType = expect.objectContaining({
+      name: expect.any(String),
+      types: expect.any(Array),
+    });
+
+    const sectionType = expect.objectContaining({
+      Elements: expect.arrayContaining([groupType]),
+      Categories: expect.arrayContaining([groupType]),
+    });
 
     it('returns sections of the correct format', () => {
-      expect(sections).toEqual(section);
+      expect(sections).toEqual(sectionType);
     });
   });
 

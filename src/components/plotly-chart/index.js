@@ -2,9 +2,15 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
-import { dark_preview, dark_modal } from '../../utils/plot-templates/dark';
-import { light_preview, light_modal } from '../../utils/plot-templates/light';
-
+import {
+  darkPreviewTemplate,
+  darkModalTemplate,
+} from '../../utils/plot-templates/dark';
+import {
+  lightPreviewTemplate,
+  lightModalTemplate,
+} from '../../utils/plot-templates/light';
+import './plotly-chart.css';
 /**
  * Display plotly chart
  * @param {object} chartSize Chart dimensions in pixels
@@ -12,7 +18,7 @@ import { light_preview, light_modal } from '../../utils/plot-templates/light';
  * @param {boolean} visible Whether to show the tooltip
  * @param {string} text Tooltip display label
  */
-const PlotlyChart = ({ theme, data, layout, view }) => {
+const PlotlyChart = ({ theme, view, data = {}, layout = {} }) => {
   return (
     <div className="pipeline-plotly-chart">
       <Plot
@@ -33,15 +39,15 @@ PlotlyChart.defaultProps = {
 const updateLayout = (theme, view, layout) => {
   if (theme === 'dark') {
     if (view === 'modal') {
-      return deepmerge(layout, dark_modal);
+      return deepmerge(layout, darkModalTemplate);
     } else {
-      return deepmerge(layout, dark_preview);
+      return deepmerge(layout, darkPreviewTemplate);
     }
   } else {
     if (view === 'modal') {
-      return deepmerge(layout, light_modal);
+      return deepmerge(layout, lightModalTemplate);
     } else {
-      return deepmerge(layout, light_preview);
+      return deepmerge(layout, lightPreviewTemplate);
     }
   }
 };

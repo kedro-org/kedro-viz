@@ -1,12 +1,14 @@
-import node_parameters from '../utils/data/node_parameters.mock.json';
-import node_task from '../utils/data/node_task.mock.json';
-import node_data from '../utils/data/node_data.mock.json';
+import nodeParameters from '../utils/data/node_parameters.mock.json';
+import nodeTask from '../utils/data/node_task.mock.json';
+import nodeData from '../utils/data/node_data.mock.json';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import {
   CHANGE_FLAG,
   RESET_DATA,
+  TOGGLE_EXPORT_MODAL,
   TOGGLE_LAYERS,
+  TOGGLE_MINIMAP,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
@@ -23,6 +25,10 @@ import {
 import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
 import { TOGGLE_TYPE_DISABLED } from '../actions/node-type';
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
+import {
+  TOGGLE_MODULAR_PIPELINE_ACTIVE,
+  TOGGLE_MODULAR_PIPELINE_FILTER,
+} from '../actions/modular-pipelines';
 
 describe('Reducer', () => {
   it('should return an Object', () => {
@@ -156,7 +162,7 @@ describe('Reducer', () => {
       });
       expect(newState.nodeType.disabled).toEqual({
         123: true,
-        parameters: false,
+        parameters: true,
       });
     });
   });
@@ -178,6 +184,26 @@ describe('Reducer', () => {
         visible: false,
       });
       expect(newState.visible.sidebar).toEqual(false);
+    });
+  });
+
+  describe('TOGGLE_EXPORT_MODAL', () => {
+    it('should toggle whether the export modal is visible', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_EXPORT_MODAL,
+        visible: false,
+      });
+      expect(newState.visible.exportModal).toEqual(false);
+    });
+  });
+
+  describe('TOGGLE_MINIMAP', () => {
+    it('should toggle whether the minimap is open', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_MINIMAP,
+        visible: false,
+      });
+      expect(newState.visible.miniMap).toEqual(false);
     });
   });
 
@@ -210,30 +236,30 @@ describe('Reducer', () => {
     const nodeId = '123';
 
     it('should update the right fields in state under node of task type', () => {
-      const data = { id: nodeId, data: node_task };
+      const data = { id: nodeId, data: nodeTask };
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
-      expect(newState.node.code[nodeId]).toEqual(node_task.code);
-      expect(newState.node.filepath[nodeId]).toEqual(node_task.filepath);
+      expect(newState.node.code[nodeId]).toEqual(nodeTask.code);
+      expect(newState.node.filepath[nodeId]).toEqual(nodeTask.filepath);
     });
 
     it('should update the right fields in state under node of parameter type', () => {
-      const data = { id: nodeId, data: node_parameters };
+      const data = { id: nodeId, data: nodeParameters };
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
       expect(newState.node.parameters[nodeId]).toEqual(
-        node_parameters.parameters
+        nodeParameters.parameters
       );
     });
 
     it('should update the right fields in state under node of data type', () => {
-      const data = { id: nodeId, data: node_data };
+      const data = { id: nodeId, data: nodeData };
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
-      expect(newState.node.filepath[nodeId]).toEqual(node_data.filepath);
+      expect(newState.node.filepath[nodeId]).toEqual(nodeData.filepath);
     });
   });
 
@@ -283,6 +309,28 @@ describe('Reducer', () => {
       });
       expect(mockState.animals.hoveredParameters).toBe(false);
       expect(newState.hoveredParameters).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_MODULAR_PIPELINE_ACTIVE', () => {
+    it('should toggle whether a modular pipeline is active', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_MODULAR_PIPELINE_ACTIVE,
+        modularPipelineIDs: ['nested'],
+        active: true,
+      });
+      expect(newState.modularPipeline.active).toEqual({ nested: true });
+    });
+  });
+
+  describe('TOGGLE_MODULAR_PIPELINE_FILTER', () => {
+    it('should toggle whether a modular pipeline filter is enabled', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_MODULAR_PIPELINE_FILTER,
+        modularPipelineIDs: ['nested'],
+        enabled: true,
+      });
+      expect(newState.modularPipeline.enabled).toEqual({ nested: true });
     });
   });
 });

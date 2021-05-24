@@ -4,11 +4,13 @@
 .kui-theme--light {
   --color-metadata-bg: #{$color-bg-light-3};
   --color-metadata-kind-token-bg: #{$color-bg-light-2};
+  --color-plot-bg: #{$color-bg-light-5};
 }
 
 .kui-theme--dark {
   --color-metadata-bg: #{$color-bg-dark-5};
   --color-metadata-kind-token-bg: #{$color-bg-dark-6};
+  --color-plot-bg: #{$color-bg-dark-7};
 }
 
 .pipeline-metadata {
@@ -256,7 +258,7 @@ $list-inline-spacing: 0.2em;
   height: 300px;
 }
 
-.pipeline-metadata__scrollable {
+.pipeline-metadata__properties {
   flex-grow: 1;
   height: 0px;
   margin-top: -1.9em;
@@ -267,10 +269,10 @@ $list-inline-spacing: 0.2em;
   display: flex;
   flex-direction: row;
   list-style: none;
-  background-color: #003464;
+  background-color: #{$color-plot-button};
 
   &:hover {
-    background-color: #005d92;
+    background-color: #{$color-plot-button-hovered};
   }
 }
 
@@ -278,11 +280,11 @@ $list-inline-spacing: 0.2em;
   width: 1.9em;
   height: 1.9em;
   margin: 10px 5px 10px 36px;
-  fill: white;
+  fill: #{$color-light};
 }
 
 .pipeline-metadata-icon__text {
   margin: 10px 10px 10px 5px;
-  color: white;
+  color: #{$color-light};
   font-size: 1.48em;
 }

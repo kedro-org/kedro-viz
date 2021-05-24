@@ -1,4 +1,7 @@
-const light = {
+//Plotly templates are defined to override user-specified styles with Kedro-viz styles
+//More details can be found here - https://plotly.com/python/templates/
+
+const lightTemplate = {
   autosize: true,
   annotationdefaults: {
     arrowcolor: '#2a3f5f',
@@ -178,8 +181,8 @@ const light = {
   },
 };
 
-export const light_preview = {
-  ...light,
+export const lightPreviewTemplate = {
+  ...lightTemplate,
   title: '',
   margin: {
     l: 100,
@@ -188,31 +191,31 @@ export const light_preview = {
     b: 70,
   },
   xaxis: {
-    ...light.xaxis,
+    ...lightTemplate.xaxis,
     title: {
-      ...light.xaxis.title,
+      ...lightTemplate.xaxis.title,
       font: {
-        ...light.xaxis.font,
+        ...lightTemplate.xaxis.font,
         size: 8,
       },
     },
     tickfont: {
-      ...light.xaxis.tickfont,
+      ...lightTemplate.xaxis.tickfont,
       size: 8,
     },
     nticks: 5,
   },
   yaxis: {
-    ...light.yaxis,
+    ...lightTemplate.yaxis,
     title: {
-      ...light.yaxis.title,
+      ...lightTemplate.yaxis.title,
       font: {
-        ...light.yaxis.font,
+        ...lightTemplate.yaxis.font,
         size: 8,
       },
     },
     tickfont: {
-      ...light.yaxis.tickfont,
+      ...lightTemplate.yaxis.tickfont,
       size: 8,
     },
     nticks: 5,
@@ -221,6 +224,6 @@ export const light_preview = {
   width: 400,
 };
 
-export const light_modal = {
-  ...light,
+export const lightModalTemplate = {
+  ...lightTemplate,
 };
