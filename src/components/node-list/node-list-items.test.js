@@ -13,7 +13,7 @@ import {
 import { mockState } from '../../utils/state.mock';
 import { getGroupedNodes } from '../../selectors/nodes';
 import { getNodeTypes } from '../../selectors/node-types';
-import { getTagData } from '../../selectors/tags';
+import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import { getModularPipelineData } from '../../selectors/modular-pipelines';
 
 const ungroupNodes = (groupedNodes) =>
@@ -73,6 +73,7 @@ describe('node-list-selectors', () => {
     const tags = getTagData(mockState.animals);
     const searchValue = 'm';
     const filteredTagItems = getFilteredTagItems({
+      tagNodeCounts: getTagNodeCounts(mockState.animals),
       tags,
       searchValue,
     }).tag;
@@ -92,6 +93,7 @@ describe('node-list-selectors', () => {
         disabled: expect.any(Boolean),
         unset: expect.any(Boolean),
         checked: expect.any(Boolean),
+        count: expect.any(Number)
       }),
     ]);
 
@@ -114,6 +116,11 @@ describe('node-list-selectors', () => {
         expect(tagItem.name).toContain(searchValue);
         expect(tagItem.id).toContain(searchValue);
       });
+    });
+
+    it('returns tag items with expected counts', () => {
+      expect(filteredTagItems[0].count).toEqual(7);
+      expect(filteredTagItems[1].count).toEqual(7);
     });
   });
 
@@ -143,6 +150,7 @@ describe('node-list-selectors', () => {
       nodes: getGroupedNodes(mockState.animals),
       tags: getTagData(mockState.animals),
       modularPipelines: getModularPipelineData(mockState.animals),
+      tagNodeCounts: getTagNodeCounts(mockState.animals),
       nodeSelected: {},
       searchValue,
     });
@@ -159,7 +167,7 @@ describe('node-list-selectors', () => {
         visible: expect.any(Boolean),
         disabled: expect.any(Boolean),
         unset: expect.any(Boolean),
-        checked: expect.any(Boolean),
+        checked: expect.any(Boolean)
       }),
     ]);
 
@@ -181,6 +189,11 @@ describe('node-list-selectors', () => {
         })
       );
     });
+
+    it('returns tag items with expected counts', () => {
+      expect(filteredItems.tag[0].count).toEqual(7);
+      expect(filteredItems.tag[1].count).toEqual(7);
+    });
   });
 
   describe('getGroups', () => {
@@ -190,6 +203,7 @@ describe('node-list-selectors', () => {
       nodes: getGroupedNodes(mockState.animals),
       tags: getTagData(mockState.animals),
       modularPipelines: getModularPipelineData(mockState.animals),
+      tagNodeCounts: getTagNodeCounts(mockState.animals),
       nodeSelected: {},
       searchValue: '',
     });
@@ -203,10 +217,9 @@ describe('node-list-selectors', () => {
       visibleIcon: expect.any(Function),
       invisibleIcon: expect.any(Function),
       kind: expect.any(String),
-      count: expect.any(Number),
       allUnset: expect.any(Boolean),
       allChecked: expect.any(Boolean),
-      checked: expect.any(Boolean),
+      checked: expect.any(Boolean)
     });
 
     it('returns groups for each type in the correct format', () => {

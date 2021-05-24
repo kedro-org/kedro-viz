@@ -105,7 +105,7 @@ export const getFilteredTags = createSelector(
  */
 export const getFilteredTagItems = createSelector(
   [getFilteredTags, (state) => state.tagNodeCounts],
-    (filteredTags, nodeTags) => {
+    (filteredTags, tagNodeCounts = {}) => {
       return ({
         tag: filteredTags.tag.map((tag) => ({
           ...tag,
@@ -119,7 +119,7 @@ export const getFilteredTagItems = createSelector(
           disabled: false,
           unset: !tag.enabled,
           checked: tag.enabled,
-          count: nodeTags[tag.id] || 0
+          count: tagNodeCounts[tag.id] || 0
         })),
     });
   }

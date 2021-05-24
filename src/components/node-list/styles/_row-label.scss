@@ -6,6 +6,9 @@
 .pipeline-nodelist__row__text {
   display: flex;
   align-items: center;
+
+  // Fixed with required for overflow elipsis
+  width: calc(100% - 5.5em);
   margin-right: auto;
   padding: $row-padding-y 0 $row-padding-y 0;
   color: inherit;
@@ -20,9 +23,6 @@
   box-shadow: none;
   cursor: default;
   user-select: none;
-
-  // Fixed with required for overflow elipsis
-  width: calc(100% - 5.5em);
 
   &--kind-filter {
     width: calc(100% - 6.5em);
@@ -60,14 +60,14 @@
 
 .pipeline-nodelist__row__count {
   display: inline-block;
-  margin: 0 0.7em 0 auto;
-  width: 2.2em;
   flex-shrink: 0;
+  width: 2.2em;
+  margin: 0 0.7em 0 auto;
   overflow: hidden;
-  text-overflow: ellipsis;
   font-size: 1.16em;
-  opacity: 0.75;
   text-align: right;
+  text-overflow: ellipsis;
+  opacity: 0.75;
   user-select: none;
 
   .pipeline-nodelist__row--unchecked & {
