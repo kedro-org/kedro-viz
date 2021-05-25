@@ -366,16 +366,21 @@ export const getFilteredModularPipelineNodes = createSelector(
     getFilteredNodeItems,
     getFilteredModularPipelineItems,
     (state) => state.modularPipelineIds,
+    (state) => state.nodeTypeIDs,
   ],
-  (filteredNodeItems, filteredModularPipelines, modularPipelineIDs) => {
+  (
+    filteredNodeItems,
+    filteredModularPipelines,
+    modularPipelineIDs,
+    nodeTypeIDs
+  ) => {
     const modularPipelineNodes = arrayToObject(modularPipelineIDs, () => []);
     const { modularPipeline } = filteredModularPipelines;
 
-    // ** important: clean through existing modular pipelines in nodes first to only extract the deepest layer
-    // assumption: each node is unique and will only exist once on the flowchart
-    Object.keys(filteredNodeItems).forEach((key) => {
-      filteredNodeItems[key].map((node, i) => {
-        // console.log(`${key} nodes`, node);
+    // assumption: each node is unique and will only exist once on the flowchart, hence we are only taking
+    // the deepest nested modular pipeline as the node's modular pipeline
+    nodeTypeIDs.forEach((key) => {
+      filteredNodeItems[key]?.forEach((node, i) => {
         if (node.modularPipelines.length > 1) {
           node.modularPipelines = [
             node.modularPipelines[node.modularPipelines.length - 1],
@@ -387,10 +392,10 @@ export const getFilteredModularPipelineNodes = createSelector(
     // create a new field for the topmost / root pipeline
     modularPipelineNodes['main'] = [];
 
-    // go through each type of nodes first to identify root level nodes
-    Object.keys(filteredNodeItems).forEach((key) => {
-      filteredNodeItems[key].map((node, i) => {
-        // console.log(`${key} nodes`, node);
+    // go through each type of nodes according to the order of specified node types in normalize-data
+    // first to identify root level nodes
+    nodeTypeIDs.forEach((key) => {
+      filteredNodeItems[key]?.forEach((node, i) => {
         if (node.modularPipelines.length === 0) {
           modularPipelineNodes.main.push(node);
           filteredNodeItems[key].splice(i, 1);
@@ -399,65 +404,9 @@ export const getFilteredModularPipelineNodes = createSelector(
     });
 
     // go through the set of nodes and slot them into the corresponding modular pipeline array
-    modularPipeline.map((mp) => {
-      Object.keys(filteredNodeItems).forEach((key) =>
-        filteredNodeItems[key].map((nodeItem) => {
-          if (nodeItem.modularPipelines.includes(mp.id)) {
-            modularPipelineNodes[mp.id].push(nodeItem);
-          }
-        })
-      );
-    });
-
-    return modularPipelineNodes;
-  }
-);
-
-/**
- * returns an array of the corresponding modularPipelines
- * for the filtered nodes
- */
-export const getFilteredNodesModularPipelines = createSelector(
-  [
-    getFilteredNodeItems,
-    getFilteredModularPipelineItems,
-    (state) => state.modularPipelineIds,
-  ],
-  (filteredNodeItems, filteredModularPipelines, modularPipelineIDs) => {
-    const modularPipelineNodes = arrayToObject(modularPipelineIDs, () => []);
-    const { modularPipeline } = filteredModularPipelines;
-
-    // ** important: clean through existing modular pipelines in nodes first to only extract the deepest layer
-    // assumption: each node is unique and will only exist once on the flowchart
-    Object.keys(filteredNodeItems).forEach((key) => {
-      filteredNodeItems[key].map((node, i) => {
-        // console.log(`${key} nodes`, node);
-        if (node.modularPipelines.length > 1) {
-          node.modularPipelines = [
-            node.modularPipelines[node.modularPipelines.length - 1],
-          ];
-        }
-      });
-    });
-
-    // create a new field for the topmost / root pipeline
-    modularPipelineNodes['main'] = [];
-
-    // go through each type of nodes first to identify root level nodes
-    Object.keys(filteredNodeItems).forEach((key) => {
-      filteredNodeItems[key].map((node, i) => {
-        // console.log(`${key} nodes`, node);
-        if (node.modularPipelines.length === 0) {
-          modularPipelineNodes.main.push(node);
-          filteredNodeItems[key].splice(i, 1);
-        }
-      });
-    });
-
-    // go through the set of nodes and slot them into the corresponding modular pipeline array
-    modularPipeline.map((mp) => {
-      Object.keys(filteredNodeItems).forEach((key) =>
-        filteredNodeItems[key].map((nodeItem) => {
+    modularPipeline.forEach((mp) => {
+      nodeTypeIDs.forEach((key) =>
+        filteredNodeItems[key]?.forEach((nodeItem) => {
           if (nodeItem.modularPipelines.includes(mp.id)) {
             modularPipelineNodes[mp.id].push(nodeItem);
           }

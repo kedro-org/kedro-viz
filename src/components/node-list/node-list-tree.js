@@ -15,7 +15,7 @@ import {
   toggleModularPipelineFilter,
 } from '../../actions/modular-pipelines';
 import { toggleTypeDisabled } from '../../actions/node-type';
-import { getNodeTypes } from '../../selectors/node-types';
+import { getNodeTypes, getNodeTypeIDs } from '../../selectors/node-types';
 import {
   getModularPipelineIDs,
   getModularPipelineData,
@@ -60,6 +60,7 @@ const TreeListProvider = ({
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
+  nodeTypeIDs,
 }) => {
   const classes = useStyles();
 
@@ -72,9 +73,8 @@ const TreeListProvider = ({
     searchValue,
     modularPipelineIds,
     nodeModularPipelines,
+    nodeTypeIDs,
   });
-
-  console.log('treeData', treeData);
 
   const onItemClick = (item) => {
     if (!isModularPipelineType(item.type)) {
@@ -224,10 +224,9 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   nodeModularPipelines: getNodeModularPipelines(state),
   types: getNodeTypes(state),
+  nodeTypeIDs: getNodeTypeIDs(state),
   modularPipelineIds: getModularPipelineIDs(state),
   modularPipelines: getModularPipelineData(state),
-  // modularPipelineNodes: getFilteredModularPipelineNodes(state),
-  // treeData: getNestedModularPipelines(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

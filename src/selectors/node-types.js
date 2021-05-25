@@ -4,7 +4,7 @@ import { arrayToObject } from '../utils';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeType = (state) => state.node.type;
-const getNodeTypeIDs = (state) => state.nodeType.ids;
+export const getNodeTypeIDs = (state) => state.nodeType.ids;
 const getNodeTypeName = (state) => state.nodeType.name;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 
