@@ -1,6 +1,6 @@
 import React from 'react';
 import PlotlyModal from './index';
-import { toggleNodeClicked } from '../../actions/nodes';
+import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 import { setup, prepareState } from '../../utils/state.mock';
 import { togglePlotModal } from '../../actions';
@@ -20,8 +20,11 @@ describe('Plotly Modal', () => {
   metadata.plot = nodePlot.plot;
 
   const mount = (props) => {
-    return setup.mount(<PlotlyModal metadata={metadata} />, {
-      beforeLayoutActions: [() => toggleNodeClicked(props.nodeId)],
+    return setup.mount(<PlotlyModal metadata={nodePlot.plot} />, {
+      beforeLayoutActions: [
+        () => toggleNodeClicked(props.nodeId),
+        () => addNodeMetadata({ id: bullPlotNodeID, data: nodePlot }),
+      ],
       afterLayoutActions: [
         () => {
           // Click the expected node
@@ -50,7 +53,7 @@ describe('Plotly Modal', () => {
 
   it('shows plot when a plot node is clicked', () => {
     const wrapper = mount({ nodeId: bullPlotNodeID });
-    expect(wrapper.find('.pipeline-plot-modal__header').length).toBe(0);
-    expect(wrapper.find('.pipeline-plotly-chart').length).toBe(0);
+    expect(wrapper.find('.pipeline-plot-modal__header').length).toBe(1);
+    expect(wrapper.find('.pipeline-plotly-chart').length).toBe(1);
   });
 });
