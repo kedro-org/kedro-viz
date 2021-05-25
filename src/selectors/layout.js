@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
 import { getVisibleNodes } from './nodes';
-import { getVisibleEdges } from './edges';
-import { getVisibleLayerIDs } from './disabled';
+import { getVisibleEdges, getVisibleLayerIDs } from './contracted';
 import { getVisibleMetaSidebar } from '../selectors/metadata';
 import {
   sidebarWidth,
@@ -58,6 +57,7 @@ export const getGraphInput = createSelector(
     if (!fontLoaded || triggerLargeGraphWarning) {
       return null;
     }
+    // console.table(edges);
 
     return { nodes, edges, layers, oldgraph, fontLoaded };
   }

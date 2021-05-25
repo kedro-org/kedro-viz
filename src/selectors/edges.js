@@ -1,7 +1,10 @@
 import { createSelector } from 'reselect';
 import { getPipelineNodeIDs } from './pipeline';
-import { getNodeDisabledExclModPip, getEdgeDisabled } from './disabled';
-import { getAllEdges } from './modular-pipelines';
+import { getNodeDisabled, getEdgeDisabled } from './disabled';
+
+const getEdgeIDs = (state) => state.edge.ids;
+const getEdgeSources = (state) => state.edge.sources;
+const getEdgeTargets = (state) => state.edge.targets;
 
 /**
  * Create a new edge from the first and last edge in the path
@@ -21,8 +24,14 @@ export const addNewEdge = (source, target, { ids, sources, targets }) => {
  * in between them
  */
 export const getTransitiveEdges = createSelector(
-  [getPipelineNodeIDs, getAllEdges, getNodeDisabledExclModPip],
-  (nodeIDs, edges, nodeDisabled) => {
+  [
+    getEdgeIDs,
+    getEdgeSources,
+    getEdgeTargets,
+    getPipelineNodeIDs,
+    getNodeDisabled,
+  ],
+  (edgeIDs, edgeSources, edgeTargets, nodeIDs, nodeDisabled) => {
     const transitiveEdges = {
       ids: {},
       sources: {},
@@ -36,13 +45,13 @@ export const getTransitiveEdges = createSelector(
      * @param {Array} path The route that has been explored so far
      */
     const walkGraphEdges = (path) => {
-      edges.ids.forEach((edgeID) => {
+      edgeIDs.forEach((edgeID) => {
         const source = path[path.length - 1];
         // Filter to only edges where the source node is the previous target
-        if (edges.sources[edgeID] !== source) {
+        if (edgeSources[edgeID] !== source) {
           return;
         }
-        const target = edges.targets[edgeID];
+        const target = edgeTargets[edgeID];
         if (nodeDisabled[target]) {
           // If target node is disabled then keep walking the graph
           walkGraphEdges(path.concat(target));
@@ -71,17 +80,21 @@ export const getTransitiveEdges = createSelector(
 
 /**
  * Get only the visible edges (plus transitive edges),
- * and return them formatted as an array of objects
+ * and return them combined together as an array of objects
  */
-export const getVisibleEdges = createSelector(
-  [getAllEdges, getEdgeDisabled, getTransitiveEdges],
-  (edges, edgeDisabled, transitiveEdges) =>
-    edges.ids
+export const getCombinedEdges = createSelector(
+  [
+    getEdgeIDs,
+    getEdgeDisabled,
+    getEdgeSources,
+    getEdgeTargets,
+    getTransitiveEdges,
+  ],
+  (edgeIDs, edgeDisabled, edgeSources, edgeTargets, transitiveEdges) => ({
+    ids: edgeIDs
       .filter((id) => !edgeDisabled[id])
-      .concat(Object.keys(transitiveEdges.ids))
-      .map((id) => ({
-        id,
-        source: edges.sources[id] || transitiveEdges.sources[id],
-        target: edges.targets[id] || transitiveEdges.targets[id],
-      }))
+      .concat(Object.keys(transitiveEdges.ids)),
+    sources: Object.assign({}, edgeSources, transitiveEdges.sources),
+    targets: Object.assign({}, edgeTargets, transitiveEdges.targets),
+  })
 );

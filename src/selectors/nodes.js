@@ -2,29 +2,23 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
-import {
-  getAllNodeIDs,
-  getAllNodeNames,
-  getAllNodeTypes,
-} from './modular-pipelines';
+import { getContractedModularPipelines } from './contracted';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
-  getVisibleNodeIDs,
   getNodeDisabledModularPipelineFilter,
 } from './disabled';
 import { getNodeRank } from './ranks';
 
 const getNodeName = (state) => state.node.name;
-const getNodeFullName = (state) => state.node.fullName;
 const getNodeDisabledNode = (state) => state.node.disabled;
 const getNodeTags = (state) => state.node.tags;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getNodeType = (state) => state.node.type;
-const getNodeLayer = (state) => state.node.layer;
 const getHoveredNode = (state) => state.node.hovered;
 const getTagActive = (state) => state.tag.active;
 const getModularPipelineActive = (state) => state.modularPipeline.active;
+const getModularPipelineName = (state) => state.modularPipeline.name;
 const getTextLabels = (state) => state.textLabels;
 const getFontLoaded = (state) => state.fontLoaded;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
@@ -48,7 +42,7 @@ export const getGraphNodes = createSelector(
  */
 export const getNodeActive = createSelector(
   [
-    getAllNodeIDs,
+    getContractedModularPipelines,
     getHoveredNode,
     getNodeTags,
     getNodeModularPipelines,
@@ -56,14 +50,14 @@ export const getNodeActive = createSelector(
     getModularPipelineActive,
   ],
   (
-    nodeIDs,
+    { node },
     hoveredNode,
     nodeTags,
     nodeModularPipelines,
     tagActive,
     modularPipelineActive
   ) =>
-    arrayToObject(nodeIDs, (nodeID) => {
+    arrayToObject(node.ids, (nodeID) => {
       if (nodeID === hoveredNode) {
         return true;
       }
@@ -73,7 +67,8 @@ export const getNodeActive = createSelector(
       const activeViaModularPipeline = modularPipelines.some(
         (modularPipeline) => modularPipelineActive[modularPipeline]
       );
-      const isActiveModularPipeline = modularPipelineActive[nodeID];
+      const isActiveModularPipeline =
+        modularPipelineActive[node.modularPipeline[nodeID]];
       return Boolean(
         activeViaTag || activeViaModularPipeline || isActiveModularPipeline
       );
@@ -157,24 +152,27 @@ export const getGroupedNodes = createSelector([getNodeData], (nodes) =>
  * measure its width with getBBox, then delete the container and store the value
  */
 export const getNodeTextWidth = createSelector(
-  [getAllNodeIDs, getAllNodeNames, getFontLoaded],
-  (nodeIDs, nodeName, fontLoaded) => {
+  [getNodeName, getModularPipelineName, getFontLoaded],
+  (nodeName, modularPipelineName, fontLoaded) => {
     if (!fontLoaded) {
       return {};
     }
+    const names = Object.values(
+      Object.assign({}, nodeName, modularPipelineName)
+    );
     const nodeTextWidth = {};
     const svg = select(document.body)
       .append('svg')
       .attr('class', 'kedro pipeline-node');
     svg
       .selectAll('text')
-      .data(nodeIDs)
+      .data(names)
       .enter()
       .append('text')
-      .text((nodeID) => nodeName[nodeID])
-      .each(function (nodeID) {
+      .text((name) => name)
+      .each(function (name) {
         const width = this.getBBox ? this.getBBox().width : 0;
-        nodeTextWidth[nodeID] = width;
+        nodeTextWidth[name] = width;
       });
     svg.remove();
     return nodeTextWidth;
@@ -212,20 +210,19 @@ export const getPadding = (showLabels, nodeType) => {
  */
 export const getNodeSize = createSelector(
   [
-    getAllNodeIDs,
+    getContractedModularPipelines,
     getNodeTextWidth,
     getTextLabels,
-    getAllNodeTypes,
     getFontLoaded,
   ],
-  (nodeIDs, nodeTextWidth, textLabels, nodeType, fontLoaded) => {
+  ({ node }, nodeTextWidth, textLabels, fontLoaded) => {
     if (!fontLoaded) {
       return {};
     }
-    return arrayToObject(nodeIDs, (nodeID) => {
+    return arrayToObject(node.ids, (nodeID) => {
       const iconSize = textLabels ? 24 : 28;
-      const padding = getPadding(textLabels, nodeType[nodeID]);
-      const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
+      const padding = getPadding(textLabels, node.type[nodeID]);
+      const textWidth = textLabels ? nodeTextWidth[node.name[nodeID]] : 0;
       const textGap = textLabels ? 6 : 0;
       const innerWidth = iconSize + textWidth + textGap;
       return {
@@ -245,36 +242,18 @@ export const getNodeSize = createSelector(
  * that are unnecessary for the chart layout calculation
  */
 export const getVisibleNodes = createSelector(
-  [
-    getFontLoaded,
-    getVisibleNodeIDs,
-    getAllNodeNames,
-    getAllNodeTypes,
-    getNodeFullName,
-    getNodeSize,
-    getNodeLayer,
-    getNodeRank,
-  ],
-  (
-    fontLoaded,
-    nodeIDs,
-    nodeName,
-    nodeType,
-    nodeFullName,
-    nodeSize,
-    nodeLayer,
-    nodeRank
-  ) => {
+  [getFontLoaded, getContractedModularPipelines, getNodeSize, getNodeRank],
+  (fontLoaded, { node }, nodeSize, nodeRank) => {
     if (!fontLoaded) {
       return [];
     }
-    const nodes = nodeIDs.map((id) => ({
+    const nodes = node.ids.map((id) => ({
       id,
-      name: nodeName[id],
-      label: nodeName[id],
-      fullName: nodeFullName[id] || id,
-      type: nodeType[id],
-      layer: nodeLayer[id],
+      name: node.name[id],
+      label: node.name[id],
+      fullName: node.fullName[id] || id,
+      type: node.type[id],
+      layer: node.layer[id],
       rank: nodeRank[id],
       ...nodeSize[id],
     }));

@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getVisibleEdges } from './edges';
+import { getVisibleEdges } from './contracted';
 
 const getClickedNode = (state) => state.node.clicked;
 /**
