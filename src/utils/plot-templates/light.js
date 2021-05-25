@@ -1,5 +1,7 @@
-//Plotly templates are defined to override user-specified styles with Kedro-viz styles
-//More details can be found here - https://plotly.com/python/templates/
+/*
+Plotly templates are defined to override user-specified styles with Kedro-viz styles
+More details can be found here - https://plotly.com/python/templates/
+*/
 
 const lightTemplate = {
   autosize: true,
