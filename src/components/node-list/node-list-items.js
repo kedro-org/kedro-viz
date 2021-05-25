@@ -150,15 +150,15 @@ export const getFilteredModularPipelineItems = createSelector(
       (modularPipeline) => ({
         ...modularPipeline,
         type: 'modularPipeline',
-        visibleIcon: IndicatorIcon,
-        invisibleIcon: IndicatorOffIcon,
+        visibleIcon: VisibleIcon,
+        invisibleIcon: InvisibleIcon,
         active: false,
         selected: false,
         faded: false,
         visible: true,
         disabled: false,
-        unset: !modularPipeline.enabled,
-        checked: modularPipeline.enabled,
+        unset: false,
+        checked: true,
       })
     ),
   })
@@ -516,7 +516,6 @@ export const getNestedModularPipelines = createSelector(
         currentParent = mainTree;
       }
 
-      console.log('currentParent', currentParent);
       // add in the new level and nodes
       currentParent.children.push(
         Object.assign(modularPipeline, {

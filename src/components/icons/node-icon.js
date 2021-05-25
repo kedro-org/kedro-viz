@@ -11,6 +11,8 @@ export const paths = {
   // sliders icon
   parameters:
     'M10.2 14v1.5H20v2h-9.8V19H8.3v-1.5H5v-2h3.3V14h2zm7.4-9v1.5H20v2h-2.4V10h-1.8V8.5H5v-2h10.8V5h1.8z',
+  modularPipeline:
+    'M8.18 4c1.11 0 2.03.8 2.17 1.86l4.4 1.61c.31-.17.68-.27 1.07-.27 1.2 0 2.18.95 2.18 2.13s-.98 2.14-2.18 2.14c-.38 0-.73-.1-1.04-.26l-4.22 2.74L13.69 16c.3-.16.66-.26 1.04-.26 1.2 0 2.18.96 2.18 2.14 0 1.18-.98 2.13-2.18 2.13a2.16 2.16 0 01-2.17-2.35l-3.34-2.18c-.3.17-.66.26-1.04.26-1.2 0-2.18-.95-2.18-2.13s.98-2.13 2.18-2.13c.61 0 1.16.24 1.56.63l3.9-2.55v-.22-.13L9.63 7.73c-.39.33-.9.54-1.45.54C6.98 8.27 6 7.3 6 6.13 6 4.95 6.98 4 8.18 4z',
 };
 
 const NodeIcon = ({ className, type }) =>
@@ -18,29 +20,7 @@ const NodeIcon = ({ className, type }) =>
     <svg
       className={modifiers('pipeline-node-icon', { type }, className)}
       viewBox="0 0 24 24">
-      {type === 'modularPipeline' ? (
-        <g>
-          <path
-            d="M0 0H24V24H0z"
-            transform="translate(-241 -1672) translate(153 1491) translate(0 145) translate(64 36) translate(24)"
-          />
-          <g
-            fill="#FFF"
-            stroke="#FFF"
-            transform="translate(-241 -1672) translate(153 1491) translate(0 145) translate(64 36) translate(24) translate(6 4)">
-            <ellipse cx="2.182" cy="9.6" rx="1.682" ry="1.633" />
-            <ellipse cx="8.727" cy="13.867" rx="1.682" ry="1.633" />
-            <ellipse cx="2.182" cy="2.133" rx="1.682" ry="1.633" />
-            <ellipse cx="9.818" cy="5.333" rx="1.682" ry="1.633" />
-            <path
-              stroke-width="2"
-              d="M9.818 5.333L3.273 9.6M8.727 13.867L2.182 9.6M2.182 2.133L10.909 5.333"
-            />
-          </g>
-        </g>
-      ) : (
-        <path d={paths[type]} />
-      )}
+      <path d={paths[type]} />
     </svg>
   ) : null;
 

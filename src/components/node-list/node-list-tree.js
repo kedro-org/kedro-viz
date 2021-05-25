@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -39,6 +39,12 @@ const useStyles = makeStyles({
   },
 });
 
+const StyledTreeView = withStyles({
+  root: {
+    padding: '0 0 0 20px',
+  },
+})(TreeView);
+
 const isModularPipelineType = (type) => type === 'modularPipeline';
 
 const TreeListProvider = ({
@@ -56,7 +62,6 @@ const TreeListProvider = ({
   onItemMouseLeave,
 }) => {
   const classes = useStyles();
-  console.log('grouped nodes', nodes);
 
   console.log('searchValue', searchValue);
 
@@ -93,7 +98,7 @@ const TreeListProvider = ({
             container="li"
             key={rowData.id}
             id={rowData.id}
-            kind="node"
+            kind="element"
             label={rowData.name}
             name={rowData.name}
             type={rowData.type}
@@ -135,7 +140,7 @@ const TreeListProvider = ({
                 container="li"
                 key={node.id}
                 id={node.id}
-                kind="node"
+                kind="element"
                 label={node.name}
                 name={node.name}
                 type={node.type}
@@ -156,7 +161,6 @@ const TreeListProvider = ({
                 rowType="tree"
               />
             }
-            onLabelClick={() => onItemClick(node)}
           />
         ))}
       </TreeItem>
@@ -164,19 +168,54 @@ const TreeListProvider = ({
   };
 
   return (
-    <TreeView
+    <StyledTreeView
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpanded={['main']}
       defaultExpandIcon={<ChevronRightIcon />}>
-      {renderTree(
-        treeData,
-        onItemMouseEnter,
-        onItemMouseLeave,
-        onItemChange,
-        onItemClick
-      )}
-    </TreeView>
+      {treeData.children.length > 0 &&
+        treeData.children.map((node) =>
+          renderTree(
+            node,
+            onItemMouseEnter,
+            onItemMouseLeave,
+            onItemChange,
+            onItemClick
+          )
+        )}
+
+      {treeData.nodes.map((node) => (
+        <TreeItem
+          key={node.id}
+          nodeId={node.id}
+          label={
+            <NodeListRow
+              container="li"
+              key={node.id}
+              id={node.id}
+              kind="element"
+              label={node.name}
+              name={node.name}
+              type={node.type}
+              active={node.active}
+              checked={node.checked}
+              disabled={node.disabled}
+              faded={node.faded}
+              visible={node.visible}
+              selected={node.selected}
+              unset={node.unset}
+              allUnset={true}
+              visibleIcon={node.visibleIcon}
+              invisibleIcon={node.invisibleIcon}
+              onClick={() => onItemClick(node)}
+              onMouseEnter={() => onItemMouseEnter(node)}
+              onMouseLeave={() => onItemMouseLeave(node)}
+              onChange={(e) => onItemChange(node, !e.target.checked)}
+              rowType="tree"
+            />
+          }
+        />
+      ))}
+    </StyledTreeView>
   );
 };
 
