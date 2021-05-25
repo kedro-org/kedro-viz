@@ -333,30 +333,7 @@ export const getFilteredItems = createSelector(
   }
 );
 
-// these are the selectors needed for the tree list structure
-
-// new filter logic:
-// 1. filter the set of nodes by search value
-// 2. filter the set of modular pipelines by search value
-// 3. go through the set of filtered nodes to append the modular pipeline to the lsit of modular pipelines
-
-// pre-search logic:
-// A: top down ( from modular pipeline to nodes)
-// B. bottom up (using filtered nodes to construct the modular pipeline hierachy)
-
-// search logic:
-// 1. deal with all highlighted nodes first -> top down approach
-// 1.1 filtered modular pipelines and grab nodes from the filtered nodes list ==> all highlighted label
-// 1.2 remove all nodes that are already used in this first iteration
-
-// 2. deal with non-highlighted nodes
-// 2.1 grab all remaining nodes for the filtered modular pipeliens and put them in a non-lighted way
-// 2.2
-
-// 1.1 grab all nodes contained by the filtered modualr pipeline
-// 1.2 check all nodes
-// 2. filtered nodes
-
+// the following are selectors needed for the tree list data
 /**
  * returns an array of the corresponding filtered nodes
  * filtered nodes for each modular pipeline
@@ -424,9 +401,6 @@ export const getFilteredModularPipelineNodes = createSelector(
 export const getNestedModularPipelines = createSelector(
   [getFilteredModularPipelineItems, getFilteredModularPipelineNodes],
   (modularPipelineItems, modularPipelineNodes) => {
-    console.log('filteredModularPipelineNodes', modularPipelineNodes);
-    console.log('filteredModularPipelineItems', modularPipelineItems);
-
     modularPipelineItems = modularPipelineItems.modularPipeline;
     // go through modular pipeline ids to return nested data structure
     const mainTree = {
@@ -437,10 +411,9 @@ export const getNestedModularPipelines = createSelector(
       enabled: true,
       type: 'modularpipeline',
     };
-    let level = 1; // this keeps track of how far you are down in the nested pipeline
+    let level = 1; // level indiator: this keeps track of how far you are down in the nested pipeline
     let currentParent = mainTree;
 
-    // ** note to self: current set up only works with the assumption that the parent modular pipeline exists
     modularPipelineItems.forEach((modularPipeline) => {
       const { id } = modularPipeline;
       let currentLevel = id.split('.').length;
@@ -450,17 +423,16 @@ export const getNestedModularPipelines = createSelector(
         // look for the parent modular pipeline in the new lower level
         let i = id.lastIndexOf('.');
         const parent = id.substr(0, i);
-        // check if the current parent exists in the existing list of children
 
-        // assign the current parent if it is the children of the
+        // update the current parent if it is the children of the previous currentParent
         currentParent = currentParent.children.filter(
           (mp) => mp.id === parent
         )[0];
 
-        // update the current parent to a new lower level
+        // update the current level indicator to a new lower level
         level = currentLevel;
       } else if (currentLevel === 1) {
-        // update the current parent back to the top parent
+        // update the current level indicator back to the top parent
         level = 1;
         currentParent = mainTree;
       }
