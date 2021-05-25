@@ -11,36 +11,7 @@ const bullPlotNodeID = 'c3p345ed';
 
 describe('Plotly Modal', () => {
   describe('modal behaviour', () => {
-    const mount = (props) => {
-      return setup.mount(<PlotlyModal />, {
-        beforeLayoutActions: [() => toggleNodeClicked(props.nodeId)],
-        afterLayoutActions: [
-          () => {
-            // Click the expected node
-            return togglePlotModal(true);
-          },
-        ],
-      });
-    };
-    it('renders without crashing', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID });
-      expect(wrapper.find('.pipeline-plotly-modal').length).toBe(1);
-    });
-
-    it('modal closes when collapse button is clicked', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID });
-      wrapper.find('.pipeline-plot-modal__collapse-plot').simulate('click');
-      expect(wrapper.find('.pipeline-plotly-modal').length).toBe(0);
-    });
-
-    it('modal closes when back button is clicked', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID });
-      wrapper.find('.pipeline-plot-modal__back').simulate('click');
-      expect(wrapper.find('.pipeline-plotly-modal').length).toBe(0);
-    });
-  });
-
-  describe('plotly chart renders correctly', () => {
+    // prepare mock metadata with plot data
     const metadata = getClickedNodeMetaData(
       prepareState({
         data: animals,
@@ -61,9 +32,25 @@ describe('Plotly Modal', () => {
       });
     };
 
+    it('renders without crashing', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      expect(wrapper.find('.pipeline-plotly-modal').length).toBe(1);
+    });
+
+    it('modal closes when collapse button is clicked', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      wrapper.find('.pipeline-plot-modal__collapse-plot').simulate('click');
+      expect(wrapper.find('.pipeline-plotly-modal').length).toBe(0);
+    });
+
+    it('modal closes when back button is clicked', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      wrapper.find('.pipeline-plot-modal__back').simulate('click');
+      expect(wrapper.find('.pipeline-plotly-modal').length).toBe(0);
+    });
+
     it('shows plot when a plot node is clicked', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID, metadata: metadata });
-      // console.log(wrapper.debug())
+      const wrapper = mount({ nodeId: bullPlotNodeID });
       expect(wrapper.find('.pipeline-plot-modal__header').length).toBe(0);
       expect(wrapper.find('.pipeline-plotly-chart').length).toBe(0);
     });
