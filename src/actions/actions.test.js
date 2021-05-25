@@ -2,24 +2,28 @@ import animals from '../utils/data/animals.mock.json';
 import {
   CHANGE_FLAG,
   RESET_DATA,
-  TOGGLE_LAYERS,
   TOGGLE_EXPORT_MODAL,
+  TOGGLE_IGNORE_LARGE_WARNING,
+  TOGGLE_LAYERS,
+  TOGGLE_MINIMAP,
+  TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
-  TOGGLE_IGNORE_LARGE_WARNING,
   changeFlag,
   resetData,
-  toggleLayers,
+  toggleIgnoreLargeWarning,
   toggleExportModal,
+  toggleLayers,
+  toggleMiniMap,
+  toggleParametersHovered,
   toggleSidebar,
   toggleTextLabels,
   toggleTheme,
   updateChartSize,
   updateFontLoaded,
-  toggleIgnoreLargeWarning,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -61,6 +65,15 @@ describe('actions', () => {
     expect(toggleLayers(visible)).toEqual(expectedAction);
   });
 
+  it('should create an action to toggle whether to show layers', () => {
+    const visible = false;
+    const expectedAction = {
+      type: TOGGLE_MINIMAP,
+      visible,
+    };
+    expect(toggleMiniMap(visible)).toEqual(expectedAction);
+  });
+
   it('should create an action to toggle whether to show the export modal', () => {
     const visible = false;
     const expectedAction = {
@@ -88,13 +101,22 @@ describe('actions', () => {
     expect(toggleNodeClicked(nodeClicked)).toEqual(expectedAction);
   });
 
-  it('should create an action to toggle whether a node has been clicked', () => {
+  it('should create an action to toggle whether a node has been hovered', () => {
     const nodeHovered = '12367890';
     const expectedAction = {
       type: TOGGLE_NODE_HOVERED,
       nodeHovered,
     };
     expect(toggleNodeHovered(nodeHovered)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether parameters heading in the sidebar has been hovered', () => {
+    const hoveredParameters = true;
+    const expectedAction = {
+      type: TOGGLE_PARAMETERS_HOVERED,
+      hoveredParameters,
+    };
+    expect(toggleParametersHovered(hoveredParameters)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether somes nodes are disabled', () => {

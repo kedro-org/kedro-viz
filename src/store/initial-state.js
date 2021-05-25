@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { loadState } from './helpers';
+import { loadState, saveState } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 import { sidebarWidth } from '../config';
@@ -92,13 +92,26 @@ export const prepareNonPipelineState = (props) => {
 
 /**
  * Configure the redux store's initial state, by merging default values
- * with normalised pipeline data and localStorage
+ * with normalised pipeline data and localStorage.
+ * If parameters flag is set to true, then disable parameters on initial load
  * @param {object} props App component props
  * @return {object} Initial state
  */
-const getInitialState = (props = {}) => ({
-  ...prepareNonPipelineState(props),
-  ...preparePipelineState(props.data, props.data !== 'json'),
-});
+const getInitialState = (props = {}) => {
+  const nonPipelineState = prepareNonPipelineState(props);
+  if (nonPipelineState.flags.newparams) {
+    const storedState = loadState();
+    saveState({
+      nodeType: {
+        disabled: { ...storedState?.nodeType?.disabled, parameters: true },
+      },
+    });
+  }
+  const pipelineState = preparePipelineState(props.data, props.data !== 'json');
+  return {
+    ...nonPipelineState,
+    ...pipelineState,
+  };
+};
 
 export default getInitialState;

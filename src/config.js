@@ -21,7 +21,7 @@ export const codeSidebarWidth = {
 
 export const chartMinWidthScale = 0.25;
 
-// this value is used to determine the amount of nodes and edges in pipeline to trigger large warning
+// Determine the number of nodes and edges in pipeline to trigger size warning
 export const largeGraphThreshold = 1000;
 
 // Remember to update the 'Flags' section in the README when updating these:
@@ -32,42 +32,32 @@ export const flags = {
     private: false,
     icon: '📈',
   },
+  newparams: {
+    description: `Disable parameters on page load and highlight parameter connections.`,
+    default: true,
+    icon: '🎛️',
+  },
   sizewarning: {
     description: 'Show a warning before rendering very large graphs',
     default: true,
     icon: '🐳',
   },
   modularpipeline: {
-    description: 'enables modular pipeline features',
+    description: 'Enable modular pipeline features',
     default: false,
     icon: '⛓️',
   },
 };
 
-/**
- * returns the sidebar config object
- * @param {string} modularPipelineFlag the modular pipeline flag
- */
-export const sidebar = (modularPipelineFlag) =>
-  modularPipelineFlag
-    ? {
-        Categories: {
-          Tags: 'tag',
-          ModularPipelines: 'modularPipeline',
-        },
-        Elements: {
-          Nodes: 'task',
-          Datasets: 'data',
-          Parameters: 'parameters',
-        },
-      }
-    : {
-        Categories: {
-          Tags: 'tag',
-        },
-        Elements: {
-          Nodes: 'task',
-          Datasets: 'data',
-          Parameters: 'parameters',
-        },
-      };
+// Sidebar node list sections
+export const sidebar = {
+  Categories: {
+    Tags: 'tag',
+    ModularPipelines: 'modularPipeline',
+  },
+  Elements: {
+    Nodes: 'task',
+    Datasets: 'data',
+    Parameters: 'parameters',
+  },
+};

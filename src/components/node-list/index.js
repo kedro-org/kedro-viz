@@ -19,9 +19,11 @@ import {
   toggleNodeHovered,
   toggleNodesDisabled,
 } from '../../actions/nodes';
+import { toggleParametersHovered } from '../../actions';
 import './styles/node-list.css';
 
 const isTagType = (type) => type === 'tag';
+const isParameterType = (type) => type === 'parameters';
 const isModularPipelineType = (type) => type === 'modularPipeline';
 
 /**
@@ -39,11 +41,11 @@ const NodeListProvider = ({
   nodes,
   nodeSelected,
   tags,
-  tagsEnabled,
   types,
   onToggleNodesDisabled,
   onToggleNodeSelected,
   onToggleNodeActive,
+  onToggleParametersActive,
   onToggleTagActive,
   onToggleTagFilter,
   onToggleModularPipelineActive,
@@ -51,17 +53,13 @@ const NodeListProvider = ({
   onToggleModularPipelineContracted,
   onToggleTypeDisabled,
   modularPipelines,
-  modularPipelinesEnabled,
-  modularPipelineFlag,
   sections,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const items = getFilteredItems({
     nodes,
     tags,
-    tagsEnabled,
     modularPipelines,
-    modularPipelinesEnabled,
     nodeSelected,
     searchValue,
   });
@@ -111,6 +109,17 @@ const NodeListProvider = ({
     }
   };
 
+  const onSectionMouseEnter = (item) => {
+    if (isParameterType(item)) {
+      onToggleParametersActive(true);
+    }
+  };
+
+  const onSectionMouseLeave = (item) => {
+    if (isParameterType(item)) {
+      onToggleParametersActive(false);
+    }
+  };
   const onToggleGroupChecked = (type, checked) => {
     if (isTagType(type) || isModularPipelineType(type)) {
       // Filter all category items if at least one item set, otherwise enable all items
@@ -193,6 +202,8 @@ const NodeListProvider = ({
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
+      onSectionMouseEnter={onSectionMouseEnter}
+      onSectionMouseLeave={onSectionMouseLeave}
       onItemChange={onItemChange}
     />
   );
@@ -200,13 +211,10 @@ const NodeListProvider = ({
 
 export const mapStateToProps = (state) => ({
   tags: getTagData(state),
-  tagsEnabled: state.tag.enabled,
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
   types: getNodeTypes(state),
   modularPipelines: getModularPipelineData(state),
-  modularPipelinesEnabled: state.modularPipeline.enabled,
-  modularPipelineFlag: state.flags.modularpipeline,
   sections: getSections(state),
 });
 
@@ -234,6 +242,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleNodeActive: (nodeID) => {
     dispatch(toggleNodeHovered(nodeID));
+  },
+  onToggleParametersActive: (active) => {
+    dispatch(toggleParametersHovered(active));
   },
   onToggleNodesDisabled: (nodeIDs, disabled) => {
     dispatch(toggleNodesDisabled(nodeIDs, disabled));

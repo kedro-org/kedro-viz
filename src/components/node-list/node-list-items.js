@@ -101,12 +101,11 @@ export const getFilteredTags = createSelector(
 /**
  * Return filtered/highlighted tag list items
  * @param {object} filteredTags List of filtered tags
- * @param {object} tagsEnabled Map of enabled tags
  * @return {array} Node list items
  */
 export const getFilteredTagItems = createSelector(
-  [getFilteredTags, (state) => state.tagsEnabled],
-  (filteredTags, tagsEnabled) => ({
+  getFilteredTags,
+  (filteredTags) => ({
     tag: filteredTags.tag.map((tag) => ({
       ...tag,
       type: 'tag',
@@ -117,8 +116,8 @@ export const getFilteredTagItems = createSelector(
       faded: false,
       visible: true,
       disabled: false,
-      unset: typeof tagsEnabled[tag.id] === 'undefined',
-      checked: tagsEnabled[tag.id] === true,
+      unset: !tag.enabled,
+      checked: tag.enabled,
     })),
   })
 );
@@ -141,12 +140,11 @@ export const getFilteredModularPipelines = createSelector(
 /**
  * Return filtered/highlighted modular pipeline list items
  * @param {object} filteredModularPipelines List of filtered modularPipelines
- * @param {object} modularPipelinesEnabled Map of enabled modularPipelines
  * @return {array} Node list items
  */
 export const getFilteredModularPipelineItems = createSelector(
-  [getFilteredModularPipelines, (state) => state.modularPipelinesEnabled],
-  (filteredModularPipelines, modularPipelinesEnabled) => ({
+  getFilteredModularPipelines,
+  (filteredModularPipelines) => ({
     modularPipeline: filteredModularPipelines.modularPipeline.map(
       (modularPipeline) => ({
         ...modularPipeline,
@@ -157,9 +155,9 @@ export const getFilteredModularPipelineItems = createSelector(
         selected: false,
         faded: false,
         visible: true,
-        unset:
-          typeof modularPipelinesEnabled[modularPipeline.id] === 'undefined',
-        checked: modularPipelinesEnabled[modularPipeline.id] === true,
+        disabled: false,
+        unset: !modularPipeline.enabled,
+        checked: modularPipeline.enabled,
       })
     ),
   })
@@ -219,19 +217,39 @@ export const getFilteredNodeItems = createSelector(
 );
 
 /**
- * Get formatted list of sections
- * @param {boolean} flag value of modularpipeline flag
- * @return {array} List of sections
+ * Get sidebar node-list section config object, with/without modular pipelines
+ * @param {boolean} modularPipelineFlag Whether to include modular pipelines
+ * @return {object} config
  */
-
-export const getSections = createSelector(
-  (state) => sidebar(state.flags.modularpipeline),
-  (sidebarObject) =>
-    Object.keys(sidebarObject).map((name) => ({
-      name,
-      types: Object.values(sidebarObject[name]),
-    }))
+export const getSidebarConfig = createSelector(
+  (state) => state.flags.modularpipeline,
+  (modularPipelineFlag) => {
+    if (modularPipelineFlag) {
+      return sidebar;
+    }
+    const { ModularPipelines, ...Categories } = sidebar.Categories;
+    return Object.assign({}, sidebar, { Categories });
+  }
 );
+
+/**
+ * Get formatted list of sections
+ * @return {object} Map of arrays of sections
+ */
+export const getSections = createSelector(getSidebarConfig, (sidebarConfig) => {
+  const sections = {};
+
+  for (const key of Object.keys(sidebarConfig)) {
+    sections[key] = [
+      {
+        name: key,
+        types: Object.values(sidebarConfig[key]),
+      },
+    ];
+  }
+
+  return sections;
+});
 
 /**
  * Create a new group of items. This can be one of two kinds:

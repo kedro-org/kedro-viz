@@ -1,10 +1,12 @@
-import { Constraint, Operator, Strength } from 'kiwi.js';
-
 /**
  * Constraint base definitions.
+ * 
+ * Refer to LAYOUT_ENGINE.md for descriptions of each constraint.
  *
  * See `solve` function of `solver.js` for constraint specification.
  */
+
+import { Constraint, Operator, Strength } from 'kiwi.js';
 
 /**
  * Layout constraint in Y for separating rows

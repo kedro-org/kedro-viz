@@ -1,10 +1,10 @@
-# Copyright 2020 QuantumBlack Visual Analytics Limited
+# Copyright 2021 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
@@ -19,7 +19,7 @@
 # trademarks of QuantumBlack. The License does not grant you any right or
 # license to the QuantumBlack Trademarks. You may not use the QuantumBlack
 # Trademarks or any confusingly similar mark as a trademark for your product,
-#     or use the QuantumBlack Trademarks in any other manner that might cause
+# or use the QuantumBlack Trademarks in any other manner that might cause
 # confusion in the marketplace, including but not limited to in advertising,
 # on websites, or on software.
 #
@@ -28,18 +28,13 @@
 
 """Behave step definitions for the cli_scenarios feature."""
 
-import json
 from time import sleep, time
 
-import behave
 import requests
 import yaml
 from behave import given, then, when
-from IPython.testing.globalipapp import get_ipython
 
 from features.steps.sh_run import ChildTerminatingPopen, run
-from features.steps.util import download_url
-from kedro_viz.utils import wait_for
 
 OK_EXIT_CODE = 0
 
@@ -142,22 +137,9 @@ def install_kedro(context, version):
         assert False
 
 
-@when('I execute the kedro jupyter command "{command}"')
-def exec_notebook(context, command):
-    """Execute Kedro Jupyter target."""
-    split_command = command.split()
-    cmd = [context.kedro, "jupyter"] + split_command
-
-    # Jupyter notebook forks a child process from a parent process, and
-    # only kills the parent process when it is terminated
-    context.result = ChildTerminatingPopen(
-        cmd, env=context.env, cwd=str(context.root_project_dir)
-    )
-
-
 @when('I execute the kedro viz command "{command}"')
 def exec_viz_command(context, command):
-    """Execute Kedro viz command """
+    """Execute Kedro viz command"""
     split_command = command.split()
     make_cmd = [context.kedro] + split_command
 
@@ -166,34 +148,21 @@ def exec_viz_command(context, command):
     )
 
 
-@when('I execute line magic "{command}"')
-def exec_line_magic(context, command):
-    """Execute line magic function """
-    ip = get_ipython()
-    ip.magic(command)
-
-
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
     """Check that kedro-viz is up and responding to requests"""
+    max_duration = 30  # 30 seconds
+    end_by = time() + max_duration
 
-    wait_for(
-        _check_kedroviz_running,
-        expected_result=None,
-        print_error=False,
-        context=context,
-        timeout_=30,
-    )
+    while time() < end_by:
+        try:
+            data_json = requests.get("http://localhost:4141/api/main").json()
+        except Exception:
+            sleep(2.0)
+            continue
+        else:
+            break
 
-
-def _check_kedroviz_running(context):
-    """
-    Check that a service is running and responding appropriately
-
-    Args:
-        context (behave.runner.Context): Test context
-    """
-    data_json = json.loads(download_url("http://localhost:4141/api/main"))
     try:
         assert context.result.poll() is None
         assert (
@@ -202,20 +171,3 @@ def _check_kedroviz_running(context):
         )
     finally:
         context.result.terminate()
-
-
-def _check_service_up(context: behave.runner.Context, url: str, string: str):
-    """Check that a service is running and responding appropriately.
-
-    Args:
-        context: Test context.
-        url: Url that is to be read.
-        string: The string to be checked.
-
-    """
-    response = requests.get(url, timeout=1.0)
-    response.raise_for_status()
-
-    data = response.text
-    assert string in data
-    assert context.result.poll() is None

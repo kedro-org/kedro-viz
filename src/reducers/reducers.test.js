@@ -1,14 +1,15 @@
-import animals from '../utils/data/animals.mock.json';
 import node_parameters from '../utils/data/node_parameters.mock.json';
 import node_task from '../utils/data/node_task.mock.json';
 import node_data from '../utils/data/node_data.mock.json';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
-import normalizeData from '../store/normalize-data';
 import {
   CHANGE_FLAG,
   RESET_DATA,
+  TOGGLE_EXPORT_MODAL,
   TOGGLE_LAYERS,
+  TOGGLE_MINIMAP,
+  TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
@@ -24,6 +25,10 @@ import {
 import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
 import { TOGGLE_TYPE_DISABLED } from '../actions/node-type';
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
+import {
+  TOGGLE_MODULAR_PIPELINE_ACTIVE,
+  TOGGLE_MODULAR_PIPELINE_FILTER,
+} from '../actions/modular-pipelines';
 
 describe('Reducer', () => {
   it('should return an Object', () => {
@@ -35,7 +40,7 @@ describe('Reducer', () => {
       expect(
         reducer(mockState.animals, {
           type: RESET_DATA,
-          data: normalizeData(animals),
+          data: mockState.animals,
         })
       ).toEqual(mockState.animals);
     });
@@ -49,7 +54,7 @@ describe('Reducer', () => {
       };
       const newState = reducer(mockState.demo, {
         type: RESET_DATA,
-        data: normalizeData(animals),
+        data: mockState.animals,
       });
       expect(removeGraph(newState)).toEqual(removeGraph(mockState.animals));
     });
@@ -155,7 +160,10 @@ describe('Reducer', () => {
         typeID: '123',
         disabled: true,
       });
-      expect(newState.nodeType.disabled).toEqual({ 123: true });
+      expect(newState.nodeType.disabled).toEqual({
+        123: true,
+        parameters: true,
+      });
     });
   });
 
@@ -176,6 +184,26 @@ describe('Reducer', () => {
         visible: false,
       });
       expect(newState.visible.sidebar).toEqual(false);
+    });
+  });
+
+  describe('TOGGLE_EXPORT_MODAL', () => {
+    it('should toggle whether the export modal is visible', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_EXPORT_MODAL,
+        visible: false,
+      });
+      expect(newState.visible.exportModal).toEqual(false);
+    });
+  });
+
+  describe('TOGGLE_MINIMAP', () => {
+    it('should toggle whether the minimap is open', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_MINIMAP,
+        visible: false,
+      });
+      expect(newState.visible.miniMap).toEqual(false);
     });
   });
 
@@ -271,6 +299,39 @@ describe('Reducer', () => {
         value: true,
       });
       expect(newState.flags.testFlag).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_PARAMETERS_HOVERED', () => {
+    it('should toggle the value of hoveredParameters', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_PARAMETERS_HOVERED,
+        hoveredParameters: true,
+      });
+      expect(mockState.animals.hoveredParameters).toBe(false);
+      expect(newState.hoveredParameters).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_MODULAR_PIPELINE_ACTIVE', () => {
+    it('should toggle whether a modular pipeline is active', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_MODULAR_PIPELINE_ACTIVE,
+        modularPipelineIDs: ['nested'],
+        active: true,
+      });
+      expect(newState.modularPipeline.active).toEqual({ nested: true });
+    });
+  });
+
+  describe('TOGGLE_MODULAR_PIPELINE_FILTER', () => {
+    it('should toggle whether a modular pipeline filter is enabled', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_MODULAR_PIPELINE_FILTER,
+        modularPipelineIDs: ['nested'],
+        enabled: true,
+      });
+      expect(newState.modularPipeline.enabled).toEqual({ nested: true });
     });
   });
 });

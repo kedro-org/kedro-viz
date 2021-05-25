@@ -16,6 +16,7 @@ import reducer from '../reducers';
 import { graphNew, graphDagre } from '../utils/graph';
 import { sidebarWidth, largeGraphThreshold } from '../config';
 import animals from '../utils/data/animals.mock.json';
+import { getVisibleNodeIDs } from './disabled';
 
 describe('Selectors', () => {
   describe('getTriggerLargeGraphWarning', () => {
@@ -23,7 +24,8 @@ describe('Selectors', () => {
     const prepareLargeDataset = () => {
       const data = { ...animals };
       let extraNodes = [];
-      const iterations = Math.ceil(largeGraphThreshold / data.nodes.length) + 1;
+      const visibleNodeCount = getVisibleNodeIDs(mockState.animals).length;
+      const iterations = Math.ceil(largeGraphThreshold / visibleNodeCount) + 1;
       new Array(iterations).fill().forEach((d, i) => {
         const extraNodeGroup = data.nodes.map((node) => ({
           ...node,

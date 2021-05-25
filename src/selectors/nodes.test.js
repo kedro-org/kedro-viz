@@ -9,8 +9,10 @@ import {
   getPadding,
   getNodeSize,
   getVisibleNodes,
+  getNodesWithInputParams,
 } from './nodes';
 import { toggleTextLabels, updateFontLoaded } from '../actions';
+import { toggleTypeDisabled } from '../actions/node-type';
 import { updateActivePipeline } from '../actions/pipelines';
 import {
   toggleNodeClicked,
@@ -18,6 +20,7 @@ import {
   toggleNodesDisabled,
 } from '../actions/nodes';
 import reducer from '../reducers';
+import { getVisibleNodeIDs } from './disabled';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
@@ -25,6 +28,7 @@ const getNodeType = (state) => state.node.type;
 const getNodePipelines = (state) => state.node.pipelines;
 
 const noFontState = reducer(mockState.animals, updateFontLoaded(false));
+const parameterNodesID = ['443cf06a', '2ce32881'];
 
 describe('Selectors', () => {
   describe('getNodeActive', () => {
@@ -338,7 +342,7 @@ describe('Selectors', () => {
       });
 
       it('returns only visible nodes', () => {
-        const nodes = getNodeIDs(mockState.animals);
+        const nodes = getVisibleNodeIDs(mockState.animals);
         const nodeID = nodes[0];
         const newMockState = reducer(
           mockState.animals,
@@ -350,6 +354,20 @@ describe('Selectors', () => {
         );
         expect(visibleNodeIDs.includes(nodeID)).toEqual(false);
       });
+    });
+  });
+  describe('getNodesWithInputParams', () => {
+    const newMockState = reducer(
+      mockState.animals,
+      toggleTypeDisabled('parameters', true)
+    );
+    const nodesWithInputParams = getNodesWithInputParams(newMockState);
+    it('returns an object', () => {
+      expect(nodesWithInputParams).toEqual(expect.any(Object));
+    });
+
+    it('returns an object with nodes that have parameters as inputs', () => {
+      expect(Object.keys(nodesWithInputParams)).toEqual(parameterNodesID);
     });
   });
 });

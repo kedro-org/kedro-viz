@@ -88,7 +88,7 @@ const NodeRowList = ({
             onMouseLeave={() => onItemMouseLeave(item)}
             onChange={(e) => onItemChange(item, !e.target.checked)}
             onToggleContracted={() =>
-              onToggleContracted(item.id, !item.contracted)
+              onToggleContracted && onToggleContracted(item.id, !item.contracted)
             }
           />
         ))}

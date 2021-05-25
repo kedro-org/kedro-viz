@@ -54,7 +54,6 @@
     "fetch-mock": "^9.11.0",
     "highlight.js": "^10.5.0",
     "kiwi.js": "^1.1.2",
-    "konami-code": "^0.2.1",
     "react-custom-scrollbars": "^4.2.1",
     "react-redux": "^7.2.2",
     "react-test-renderer": "^17.0.1",

@@ -2,8 +2,7 @@ import React from 'react';
 import MiniMap, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 import { getViewTransform, origin } from '../../utils/view';
-
-const getNodeIDs = (state) => state.node.ids;
+import { getVisibleNodeIDs } from '../../selectors/disabled';
 
 describe('MiniMap', () => {
   it('renders without crashing', () => {
@@ -15,7 +14,7 @@ describe('MiniMap', () => {
   it('renders nodes with D3', () => {
     const wrapper = setup.mount(<MiniMap />);
     const nodes = wrapper.render().find('.pipeline-minimap-node');
-    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodes = getVisibleNodeIDs(mockState.animals);
     expect(nodes.length).toEqual(mockNodes.length);
   });
 

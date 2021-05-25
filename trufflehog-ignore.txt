@@ -4,4 +4,5 @@ tools/test-lib/react-app/package.json
 tools/test-lib/react-app/package-lock.json
 RELEASE.md
 README.md
+LAYOUT_ENGINE.md
 src/utils/random-utils.js

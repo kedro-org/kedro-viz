@@ -1,0 +1,103 @@
+@import '../../../styles/extends';
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+
+.pipeline-nodelist__split {
+  // Required absolute for % sizing in Safari flexbox.
+  position: absolute;
+  top: 58px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+
+  &--resizing {
+    cursor: row-resize;
+  }
+}
+
+.pipeline-nodelist__split-handle {
+  position: relative;
+  flex-grow: 0;
+  flex-shrink: 0;
+  height: 16px;
+  border-top: 1px solid transparent;
+  cursor: row-resize;
+  transition: border-color ease 0.1s 0.15s;
+
+  // Add the handle grip.
+  &:after {
+    position: absolute;
+    top: 7px;
+    left: 50%;
+    display: block;
+    width: 50px;
+    height: 2px;
+    background: var(--color-nodelist-split-handle);
+    border-radius: 2px;
+    transform: translate(-50%, 0);
+    opacity: 0;
+    transition: opacity ease 0.1s 0.15s;
+    content: ' ';
+    pointer-events: none;
+  }
+
+  // Filter panel hovered, show handle.
+  .pipeline-nodelist__filter-panel:hover &:after {
+    opacity: 0.2;
+  }
+
+  // Handle has keyboard focus, show outline.
+  &:focus {
+    z-index: 1;
+    outline: 3px solid $color-link;
+  }
+
+  // Handle is hovered, highlight border.
+  &:hover {
+    border-top: 1px solid var(--color-nodelist-split-handle-border);
+  }
+
+  // Handle is hovered, highlight grip (note: this requires increased specificity).
+  .pipeline-nodelist__filter-panel:hover &:hover:after {
+    opacity: 0.3;
+  }
+
+  // Handle is active resizing, highlight border.
+  .pipeline-nodelist__split--resizing & {
+    border-top: 1px solid $color-link;
+  }
+}
+
+.pipeline-nodelist-scrollbars {
+  flex-grow: 1;
+
+  &:after {
+    position: absolute;
+    top: 0;
+    right: -1px;
+    left: -1px;
+    height: 30px;
+    background: linear-gradient(
+      0deg,
+      var(--nodelist-bg-transparent) 0%,
+      var(--color-bg-3) 100%
+    );
+    content: '';
+    pointer-events: none;
+  }
+
+  .pipeline-nodelist__filter-panel &:after {
+    background: linear-gradient(
+      0deg,
+      var(--nodelist-bg-transparent) 0%,
+      var(--color-nodelist-filter-panel) 100%
+    );
+  }
+}
+
+.pipeline-nodelist__filter-panel {
+  z-index: 1;
+  background: var(--color-nodelist-filter-panel);
+}

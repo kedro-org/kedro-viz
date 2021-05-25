@@ -75,7 +75,6 @@ describe('node-list-selectors', () => {
     const filteredTagItems = getFilteredTagItems({
       tags,
       searchValue,
-      tagsEnabled: {},
     }).tag;
 
     const tagItems = expect.arrayContaining([
@@ -121,15 +120,19 @@ describe('node-list-selectors', () => {
   describe('getSections', () => {
     const sections = getSections({ flags: { modularpipeline: false } });
 
-    const section = expect.arrayContaining([
+    const groupType = 
       expect.objectContaining({
         name: expect.any(String),
         types: expect.any(Array),
-      }),
-    ]);
+      });
+
+    const sectionType = expect.objectContaining({
+      Elements: expect.arrayContaining([groupType]),
+      Categories: expect.arrayContaining([groupType])
+    });
 
     it('returns sections of the correct format', () => {
-      expect(sections).toEqual(section);
+      expect(sections).toEqual(sectionType);
     });
   });
 
@@ -140,8 +143,6 @@ describe('node-list-selectors', () => {
       nodes: getGroupedNodes(mockState.animals),
       tags: getTagData(mockState.animals),
       modularPipelines: getModularPipelineData(mockState.animals),
-      tagsEnabled: {},
-      modularPipelinesEnabled: {},
       nodeSelected: {},
       searchValue,
     });
@@ -189,8 +190,6 @@ describe('node-list-selectors', () => {
       nodes: getGroupedNodes(mockState.animals),
       tags: getTagData(mockState.animals),
       modularPipelines: getModularPipelineData(mockState.animals),
-      tagsEnabled: {},
-      modularPipelinesEnabled: {},
       nodeSelected: {},
       searchValue: '',
     });

@@ -4,7 +4,11 @@ import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
-import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
+import {
+  getNodeActive,
+  getNodeSelected,
+  getNodesWithInputParams,
+} from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
@@ -33,7 +37,6 @@ export class FlowChart extends Component {
     this.state = {
       tooltip: { visible: false },
     };
-
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
 
@@ -97,7 +100,7 @@ export class FlowChart extends Component {
       drawLayerNames.call(this);
     }
 
-    if (changed('edges', 'clickedNode', 'linkedNodes')) {
+    if (changed('edges', 'clickedNode', 'linkedNodes', 'newParamsFlag')) {
       drawEdges.call(this, changed);
     }
 
@@ -106,8 +109,12 @@ export class FlowChart extends Component {
         'nodes',
         'clickedNode',
         'linkedNodes',
+        'nodeTypeDisabled',
         'nodeActive',
-        'nodeSelected'
+        'nodeSelected',
+        'hoveredParameters',
+        'nodesWithInputParams',
+        'newParamsFlag'
       )
     ) {
       drawNodes.call(this, changed);
@@ -498,18 +505,24 @@ export class FlowChart extends Component {
             })}
             ref={this.wrapperRef}>
             <defs>
-              <marker
-                id="pipeline-arrowhead"
-                className="pipeline-flowchart__arrowhead"
-                viewBox="0 0 10 10"
-                refX="7"
-                refY="5"
-                markerUnits="strokeWidth"
-                markerWidth="8"
-                markerHeight="6"
-                orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
-              </marker>
+              {(this.props.newParamsFlag
+                ? ['arrowhead', 'arrowhead--accent']
+                : ['arrowhead']
+              ).map((id) => (
+                <marker
+                  id={`pipeline-${id}`}
+                  key={id}
+                  className={`pipeline-flowchart__${id}`}
+                  viewBox="0 0 10 10"
+                  refX="7"
+                  refY="5"
+                  markerUnits="strokeWidth"
+                  markerWidth="8"
+                  markerHeight="6"
+                  orient="auto">
+                  <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
+                </marker>
+              ))}
             </defs>
             <g className="pipeline-flowchart__layers" ref={this.layersRef} />
             <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
@@ -553,11 +566,15 @@ export const mapStateToProps = (state, ownProps) => ({
   chartZoom: getChartZoom(state),
   edges: state.graph.edges || emptyEdges,
   graphSize: state.graph.size || emptyGraphSize,
+  hoveredParameters: state.hoveredParameters,
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
   nodes: state.graph.nodes || emptyNodes,
+  nodeTypeDisabled: state.nodeType.disabled,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
+  nodesWithInputParams: getNodesWithInputParams(state),
+  newParamsFlag: state.flags.newparams,
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,

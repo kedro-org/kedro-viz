@@ -157,4 +157,15 @@ describe('getInitialState', () => {
     });
     window.localStorage.clear();
   });
+
+  it('hides parameters when parameter flag is true', () => {
+    const state = getInitialState({
+      ...props,
+      flags: {
+        parameters: true,
+      },
+    });
+    const parametersDisabled = state.nodeType.disabled.parameters;
+    expect(parametersDisabled).toBe(true);
+  });
 });
