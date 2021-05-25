@@ -1,24 +1,13 @@
 import React from 'react';
 import PlotlyModal from './index';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
-import { getClickedNodeMetaData } from '../../selectors/metadata';
-import { setup, prepareState } from '../../utils/state.mock';
+import { setup } from '../../utils/state.mock';
 import { togglePlotModal } from '../../actions';
-import animals from '../../utils/data/animals.mock.json';
 import nodePlot from '../../utils/data/node_plot.mock.json';
 
 const bullPlotNodeID = 'c3p345ed';
 
 describe('Plotly Modal', () => {
-  // prepare mock metadata with plot data
-  const metadata = getClickedNodeMetaData(
-    prepareState({
-      data: animals,
-      afterLayoutActions: [() => toggleNodeClicked(bullPlotNodeID)],
-    })
-  );
-  metadata.plot = nodePlot.plot;
-
   const mount = (props) => {
     return setup.mount(<PlotlyModal metadata={nodePlot.plot} />, {
       beforeLayoutActions: [
