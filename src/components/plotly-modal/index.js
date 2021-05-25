@@ -1,62 +1,62 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PlotlyChart from '../plotly-chart';
-import ExpandIcon from '../icons/expand';
+import CollapseIcon from '../icons/collapse';
+import BackIcon from '../icons/back';
+import NodeIcon from '../../components/icons/node-icon';
 import { togglePlotModal } from '../../actions';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './plotly-modal.css';
 
-const PlotlyModal = ({ metadata, theme, onToggle, visible }) => {
-  const hasPlot = Boolean(metadata?.plot);
+const PlotlyModal = ({ metadata, onToggle, visible }) => {
+  // console.log(metadata)
+  const nodeTypeIcon = metadata?.datasetType || metadata?.node.type;
 
   const onCollapsePlotClick = () => {
     // Deselecting a node automatically hides MetaData panel
     onToggle(false);
   };
-
-  if (!visible.plotModal || !hasPlot) {
+  if (!visible.plotModal) {
     return null;
   }
   return (
-    <div className="plotly-modal">
-      {hasPlot && (
-        <div className="pipeline-plot-modal__top">
-          <div
-            className="pipeline-plot-modal__back"
-            onClick={onCollapsePlotClick}>
-            <ExpandIcon className="pipeline-metadata-icon"></ExpandIcon>
-            <span className="pipeline-metadata-icon__text">Back</span>
-          </div>
-          <div className="pipeline-plot-modal__title">
-            <p>{metadata.node.name}</p>
-          </div>
+    <div className="pipeline-plotly-modal">
+      <div className="pipeline-plot-modal__top">
+        <div
+          className="pipeline-plot-modal__back"
+          onClick={onCollapsePlotClick}>
+          <BackIcon className="pipeline-plot-modal-icon__back"></BackIcon>
+          <span className="pipeline-plot-modal-text__back">Back</span>
         </div>
-      )}
-      {hasPlot && (
-        <PlotlyChart
-          data={metadata.plot.data}
-          layout={metadata.plot.layout}
-          view="modal"
-        />
-      )}
-      {hasPlot && (
-        <div className="pipeline-plot-modal__bottom">
-          <div
-            className="pipeline-plot-modal__collapse-plot"
-            onClick={onCollapsePlotClick}>
-            <ExpandIcon className="pipeline-metadata-icon"></ExpandIcon>
-            <span className="pipeline-metadata-icon__text">
-              Collapse Plotly Visualization
-            </span>
-          </div>
+        <div className="pipeline-plot-modal__header">
+          <NodeIcon className="pipeline-plot-modal__icon" icon={nodeTypeIcon} />
+          <span className="pipeline-plot-modal__title">
+            {' '}
+            {metadata.node.name}{' '}
+          </span>
         </div>
-      )}
+        <span></span>
+      </div>
+      <PlotlyChart
+        data={metadata.plot.data}
+        layout={metadata.plot.layout}
+        view="modal"
+      />
+      <div className="pipeline-plot-modal__bottom">
+        <div
+          className="pipeline-plot-modal__collapse-plot"
+          onClick={onCollapsePlotClick}>
+          <CollapseIcon className="pipeline-plot-modal-icon__collapse-plot"></CollapseIcon>
+          <span className="pipeline-plot-modal-text__collapse-plot">
+            Collapse Plotly Visualization
+          </span>
+        </div>
+      </div>
     </div>
   );
 };
 
 export const mapStateToProps = (state) => ({
-  graphSize: state.graph.size || {},
   visible: state.visible,
   metadata: getClickedNodeMetaData(state),
   theme: state.theme,

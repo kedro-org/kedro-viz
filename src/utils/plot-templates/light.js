@@ -82,6 +82,7 @@ const lightTemplate = {
     family: 'Titillium+Web:400',
     color: 'rgba(0,0,0,0.55)',
   },
+  height: undefined,
   hoverlabel: {
     align: 'left',
   },
@@ -115,6 +116,7 @@ const lightTemplate = {
     xanchor: 'left',
     yanchor: 'middle',
   },
+  width: undefined,
   xaxis: {
     automargin: true,
     gridcolor: 'rgba(0,0,0,0.12)',

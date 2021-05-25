@@ -1,7 +1,21 @@
 @import '../../styles/variables';
 @import '../../styles/extends';
 
-.plotly-modal {
+.kui-theme--light {
+  --color-bg-plot: #{$color-bg-light-5};
+  --color-button-plot: #{$color-button};
+  --color-button-plot-hovered: #{$color-button-hovered};
+  --color-button-text: #{$color-light};
+}
+
+.kui-theme--dark {
+  --color-bg-plot: #{$color-bg-dark-7};
+  --color-button-plot: #{$color-button};
+  --color-button-plot-hovered: #{$color-button-hovered};
+  --color-button-text: #{$color-light};
+}
+
+.pipeline-plotly-modal {
   position: absolute;
   top: 0;
   right: 0;
@@ -16,7 +30,7 @@
   justify-content: space-between;
   width: 100%; /* Full width (cover the whole page) */
   height: 100%; /* Full height (cover the whole page) */
-  background-color: var(--color-bg-7);
+  background-color: var(--color-bg-plot);
 }
 
 .pipeline-plot-modal__top {
@@ -24,23 +38,46 @@
   flex-direction: row;
   align-content: center;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   min-width: 100%;
   padding: 1.5em;
 }
 
+.pipeline-plot-modal__header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pipeline-plot-modal__icon {
+  display: inline-block;
+  width: 2.9em;
+  height: 2.8em;
+  margin: 10px 5px 10px 36px;
+  fill: var(--color-text);
+}
+
 .pipeline-plot-modal__title {
-  align-self: center;
-  padding-left: 20%;
-  font-size: 1.9em;
+  margin: 12px 12px 12px 5px;
+  font-size: 1.8em;
 }
 
 .pipeline-plot-modal__back {
   display: flex;
   flex-direction: row;
   align-self: flex-start;
-  width: $metadata-sidebar-width-open;
   list-style: none;
+}
+
+.pipeline-plot-modal-text__back {
+  margin: 10px 10px 10px 5px;
+  font-size: 1.4em;
+}
+
+.pipeline-plot-modal-icon__back {
+  width: 1.9em;
+  height: 1.9em;
+  margin: 10px 5px 10px 36px;
+  fill: var(--color-text);
 }
 
 .pipeline-plot-modal__bottom {
@@ -58,11 +95,24 @@
   align-self: flex-end;
   width: $metadata-sidebar-width-open;
   list-style: none;
-  background-color: #003464;
+  background-color: var(--color-button-plot);
 
   &:hover {
-    background-color: #005d92;
+    background-color: var(--color-button-plot-hovered);
   }
+}
+
+.pipeline-plot-modal-icon__collapse-plot {
+  width: 1.9em;
+  height: 1.9em;
+  margin: 10px 5px 10px 36px;
+  fill: var(--color-button-text);
+}
+
+.pipeline-plot-modal-text__collapse-plot {
+  margin: 10px 10px 10px 5px;
+  color: var(--color-button-text);
+  font-size: 1.6em;
 }
 
 .pipeline-plotly-chart {

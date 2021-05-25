@@ -5,12 +5,18 @@
   --color-metadata-bg: #{$color-bg-light-3};
   --color-metadata-kind-token-bg: #{$color-bg-light-2};
   --color-plot-bg: #{$color-bg-light-5};
+  --color-button-plot: #{$color-button};
+  --color-button-plot-hovered: #{$color-button-hovered};
+  --color-button-text: #{$color-light};
 }
 
 .kui-theme--dark {
   --color-metadata-bg: #{$color-bg-dark-5};
   --color-metadata-kind-token-bg: #{$color-bg-dark-6};
   --color-plot-bg: #{$color-bg-dark-7};
+  --color-button-plot: #{$color-button};
+  --color-button-plot-hovered: #{$color-button-hovered};
+  --color-button-text: #{$color-light};
 }
 
 .pipeline-metadata {
@@ -269,22 +275,22 @@ $list-inline-spacing: 0.2em;
   display: flex;
   flex-direction: row;
   list-style: none;
-  background-color: #{$color-plot-button};
+  background-color: var(--color-button-plot);
 
   &:hover {
-    background-color: #{$color-plot-button-hovered};
+    background-color: var(--color-button-plot-hovered);
   }
 }
 
-.pipeline-metadata-icon {
+.pipeline-metadata-icon__expand-plot {
   width: 1.9em;
   height: 1.9em;
   margin: 10px 5px 10px 36px;
-  fill: #{$color-light};
+  fill: var(--color-button-text);
 }
 
-.pipeline-metadata-icon__text {
+.pipeline-metadata-text__expand-plot {
   margin: 10px 10px 10px 5px;
-  color: #{$color-light};
-  font-size: 1.48em;
+  color: var(--color-button-text);
+  font-size: 1.6em;
 }
