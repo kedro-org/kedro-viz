@@ -9,7 +9,7 @@ import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './plotly-modal.css';
 
 const PlotlyModal = ({ metadata, onToggle, visible }) => {
-  // console.log(metadata)
+  const hasPlot = Boolean(metadata?.plot);
   const nodeTypeIcon = metadata?.datasetType || metadata?.node.type;
 
   const onCollapsePlotClick = () => {
@@ -28,20 +28,27 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
           <BackIcon className="pipeline-plot-modal-icon__back"></BackIcon>
           <span className="pipeline-plot-modal-text__back">Back</span>
         </div>
-        <div className="pipeline-plot-modal__header">
-          <NodeIcon className="pipeline-plot-modal__icon" icon={nodeTypeIcon} />
-          <span className="pipeline-plot-modal__title">
-            {' '}
-            {metadata.node.name}{' '}
-          </span>
-        </div>
+        {hasPlot && (
+          <div className="pipeline-plot-modal__header">
+            <NodeIcon
+              className="pipeline-plot-modal__icon"
+              icon={nodeTypeIcon}
+            />
+            <span className="pipeline-plot-modal__title">
+              {' '}
+              {metadata.node.name}{' '}
+            </span>
+          </div>
+        )}
         <span></span>
       </div>
-      <PlotlyChart
-        data={metadata.plot.data}
-        layout={metadata.plot.layout}
-        view="modal"
-      />
+      {hasPlot && (
+        <PlotlyChart
+          data={metadata.plot.data}
+          layout={metadata.plot.layout}
+          view="modal"
+        />
+      )}
       <div className="pipeline-plot-modal__bottom">
         <div
           className="pipeline-plot-modal__collapse-plot"

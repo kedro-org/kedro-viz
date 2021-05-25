@@ -10,7 +10,7 @@ import {
   lightPreviewTemplate,
   lightModalTemplate,
 } from '../../utils/plot-templates/light';
-import './plotly-chart.css';
+
 /**
  * Display plotly chart
  * @param {object} chartSize Chart dimensions in pixels
@@ -18,7 +18,7 @@ import './plotly-chart.css';
  * @param {boolean} visible Whether to show the tooltip
  * @param {string} text Tooltip display label
  */
-const PlotlyChart = ({ theme, view, data = {}, layout = {} }) => {
+const PlotlyChart = ({ theme, view, data = [], layout = {} }) => {
   return (
     <div className="pipeline-plotly-chart">
       <Plot
@@ -29,11 +29,6 @@ const PlotlyChart = ({ theme, view, data = {}, layout = {} }) => {
       />
     </div>
   );
-};
-
-PlotlyChart.defaultProps = {
-  data: {},
-  layout: {},
 };
 
 const updateLayout = (theme, view, layout) => {
