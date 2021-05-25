@@ -5,9 +5,6 @@ import { arrayToObject } from '../utils';
 export const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
-const getNodesModularPipelines = (state) => state.node.modularPipelines;
-const getNodeNames = (state) => state.node.name;
-const getNodeTypes = (state) => state.node.type;
 
 /**
  * Retrieve the formatted list of modular pipeline filters
