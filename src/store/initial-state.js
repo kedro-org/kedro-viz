@@ -26,7 +26,7 @@ export const createInitialState = () => ({
     layerBtn: true,
     exportBtn: true,
     exportModal: false,
-    sidebar: window.innerWidth > sidebarWidth.breakpoint,
+    sidebar: true,
     code: false,
     themeBtn: true,
     miniMapBtn: true,
@@ -82,11 +82,19 @@ export const preparePipelineState = (data, applyFixes) => {
 export const prepareNonPipelineState = (props) => {
   const state = mergeLocalStorage(createInitialState());
 
+  const sidebar = window.innerWidth > sidebarWidth.breakpoint;
+  const miniMapBtn = window.innerWidth > sidebarWidth.breakpoint;
+
   return {
     ...state,
     flags: { ...state.flags, ...getFlagsFromUrl() },
     theme: props.theme || state.theme,
-    visible: { ...state.visible, ...props.visible },
+    visible: {
+      ...state.visible,
+      ...props.visible,
+      sidebar: sidebar,
+      miniMapBtn: miniMapBtn,
+    },
   };
 };
 
