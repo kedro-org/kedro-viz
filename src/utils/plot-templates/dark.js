@@ -30,7 +30,7 @@ const darkTemplate = {
         font: {
           family: ['Titillium Web:400', 'sans-serif'],
           color: 'rgba(255,255,255,0.55)',
-          size: 16,
+          size: 12,
         },
       },
     },

@@ -38,26 +38,26 @@
   flex-direction: row;
   align-content: center;
   align-items: center;
-  justify-content: space-between;
   min-width: 100%;
   padding: 1.5em;
 }
 
 .pipeline-plot-modal__header {
   display: flex;
-  justify-content: space-between;
+  flex-grow: 1;
+  justify-content: flex-start;
 }
 
 .pipeline-plot-modal__icon {
   display: inline-block;
   width: 2.9em;
   height: 2.8em;
-  margin: 10px 5px 10px 36px;
+  margin: 5px 5px 10px 0px;
   fill: var(--color-text);
 }
 
 .pipeline-plot-modal__title {
-  margin: 12px 12px 12px 5px;
+  margin-top: 7px;
   font-size: 1.8em;
 }
 
@@ -65,6 +65,7 @@
   display: flex;
   flex-direction: row;
   align-self: flex-start;
+  width: 45%;
   list-style: none;
 }
 

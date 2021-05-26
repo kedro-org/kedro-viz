@@ -30,12 +30,9 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
         <div className="pipeline-plot-modal__header">
           <NodeIcon className="pipeline-plot-modal__icon" icon={nodeTypeIcon} />
           <span className="pipeline-plot-modal__title">
-            {' '}
-            {metadata.node.name}{' '}
+            {metadata.node.name}
           </span>
         </div>
-
-        <span></span>
       </div>
       <PlotlyChart
         data={metadata.plot.data}

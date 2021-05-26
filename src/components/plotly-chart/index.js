@@ -19,11 +19,14 @@ import {
  * @param {string} text Tooltip display label
  */
 const PlotlyChart = ({ theme, view, data = [], layout = {} }) => {
+  const plotConfig = view === 'preview' ? { staticPlot: true } : undefined;
+
   return (
     <div className="pipeline-plotly-chart">
       <Plot
         data={data}
         layout={updateLayout(theme, view, layout)}
+        config={plotConfig}
         style={{ width: '100%', height: '100%' }}
         useResizeHandler={true}
       />
@@ -40,6 +43,7 @@ const updateLayout = (theme, view, layout) => {
     }
   } else {
     if (view === 'modal') {
+      console.log(deepmerge(layout, lightModalTemplate));
       return deepmerge(layout, lightModalTemplate);
     } else {
       return deepmerge(layout, lightPreviewTemplate);

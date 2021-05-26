@@ -30,7 +30,7 @@ const lightTemplate = {
         font: {
           family: 'Titillium+Web:400',
           color: 'rgba(0,0,0,0.55)',
-          size: 16,
+          size: 12,
         },
       },
     },
@@ -110,7 +110,7 @@ const lightTemplate = {
     font: {
       family: 'Titillium+Web:400',
       color: 'rgba(0,0,0,0.85)',
-      size: 20,
+      size: 16,
     },
     xref: 'paper',
     yref: 'paper',
