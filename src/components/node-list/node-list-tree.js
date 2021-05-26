@@ -85,7 +85,8 @@ const TreeListProvider = ({
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
-        onItemClick={onItemClick}>
+        onItemClick={onItemClick}
+        key={rowData.id}>
         {rowData.children.length > 0 &&
           rowData.children.map((node) =>
             renderTree(
@@ -105,6 +106,7 @@ const TreeListProvider = ({
             onItemMouseLeave={onItemMouseLeave}
             onItemChange={onItemChange}
             onItemClick={onItemClick}
+            key={node.id}
           />
         ))}
       </NodeListTreeItem>
@@ -135,6 +137,7 @@ const TreeListProvider = ({
           onItemMouseLeave={onItemMouseLeave}
           onItemChange={onItemChange}
           onItemClick={onItemClick}
+          key={node.id}
         />
       ))}
     </StyledTreeView>

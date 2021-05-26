@@ -62,7 +62,7 @@ const NodeListRow = memo(
     const TextButton = isButton ? 'button' : 'div';
 
     return (
-      <Container
+      <div
         className={classnames(
           'pipeline-nodelist__row kedro',
           `pipeline-nodelist__row--kind-${kind}`,
@@ -149,7 +149,7 @@ const NodeListRow = memo(
             )}
           />
         </label>
-      </Container>
+      </div>
     );
   },
   shouldMemo
