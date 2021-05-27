@@ -175,7 +175,9 @@ const MetaData = ({
                 </MetaDataRow>
               </div>
               {hasPlot && (
-                <div className="pipeline-metadata__plot">
+                <div
+                  className="pipeline-metadata__plot"
+                  onClick={onExpandPlotClick}>
                   <PlotlyChart
                     data={metadata.plot.data}
                     layout={metadata.plot.layout}
