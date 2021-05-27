@@ -13,13 +13,16 @@ import { lightPreviewTemplate } from '../../utils/plot-templates/light';
  * @param {string} text Tooltip display label
  */
 const PlotlyChart = ({ theme, data = {}, layout = {} }) => {
-  const hideToolBar = { displayModeBar: false };
+  const plotConfig = { staticPlot: true };
+
   return (
     <div className="pipeline-plotly-chart">
       <Plot
         data={data}
         layout={updateLayout(theme, layout)}
-        config={hideToolBar}
+        config={plotConfig}
+        style={{ width: '100%', height: '100%' }}
+        useResizeHandler={true}
       />
     </div>
   );
