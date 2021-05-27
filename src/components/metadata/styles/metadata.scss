@@ -276,6 +276,7 @@ $list-inline-spacing: 0.2em;
   flex-direction: row;
   list-style: none;
   background-color: var(--color-button-plot);
+  cursor: default;
 
   &:hover {
     background-color: var(--color-button-plot-hovered);

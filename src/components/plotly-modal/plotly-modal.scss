@@ -98,6 +98,7 @@
   width: $metadata-sidebar-width-open;
   list-style: none;
   background-color: var(--color-button-plot);
+  cursor: default;
 
   &:hover {
     background-color: var(--color-button-plot-hovered);

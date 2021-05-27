@@ -175,25 +175,25 @@ const MetaData = ({
                 </MetaDataRow>
               </div>
               {hasPlot && (
-                <div
-                  className="pipeline-metadata__plot"
-                  onClick={onExpandPlotClick}>
-                  <PlotlyChart
-                    data={metadata.plot.data}
-                    layout={metadata.plot.layout}
-                    view="preview"
-                  />
-                </div>
-              )}
-              {hasPlot && (
-                <div
-                  className="pipeline-metadata__expand-plot"
-                  onClick={onExpandPlotClick}>
-                  <ExpandIcon className="pipeline-metadata-icon__expand-plot"></ExpandIcon>
-                  <span className="pipeline-metadata-text__expand-plot">
-                    Expand Plotly Visualization
-                  </span>
-                </div>
+                <>
+                  <div
+                    className="pipeline-metadata__plot"
+                    onClick={onExpandPlotClick}>
+                    <PlotlyChart
+                      data={metadata.plot.data}
+                      layout={metadata.plot.layout}
+                      view="preview"
+                    />
+                  </div>
+                  <div
+                    className="pipeline-metadata__expand-plot"
+                    onClick={onExpandPlotClick}>
+                    <ExpandIcon className="pipeline-metadata-icon__expand-plot"></ExpandIcon>
+                    <span className="pipeline-metadata-text__expand-plot">
+                      Expand Plotly Visualization
+                    </span>
+                  </div>
+                </>
               )}
             </dl>
           </>
