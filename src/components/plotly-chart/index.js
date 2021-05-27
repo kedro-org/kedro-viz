@@ -4,7 +4,7 @@ import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
 import { darkPreviewTemplate } from '../../utils/plot-templates/dark';
 import { lightPreviewTemplate } from '../../utils/plot-templates/light';
-import './plotly-chart.css';
+
 /**
  * Display plotly chart
  * @param {object} chartSize Chart dimensions in pixels
