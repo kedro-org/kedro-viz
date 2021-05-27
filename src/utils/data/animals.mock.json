@@ -158,10 +158,10 @@
       "type": "parameters"
     },
     {
-      "full_name": "plot:bull",
+      "full_name": "bull",
       "id": "c3p345ed",
       "layer": "model output",
-      "name": "Plot:bull",
+      "name": "Bull",
       "dataset_type": "plotly",
       "modular_pipelines": [],
       "pipelines": ["de", "__default__"],
