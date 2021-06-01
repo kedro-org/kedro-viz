@@ -5,7 +5,7 @@ import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleNodeClicked } from '../../actions/nodes';
 import { setup, prepareState } from '../../utils/state.mock';
 import animals from '../../utils/data/animals.mock.json';
-import nodePlot from '../../utils/data/node_plot.mock.json';
+import node_plot from '../../utils/data/node_plot.mock.json';
 
 const salmonTaskNodeId = '443cf06a';
 const catDatasetNodeId = '9d989e8d';
@@ -334,7 +334,7 @@ describe('MetaData', () => {
           afterLayoutActions: [() => toggleNodeClicked(bullPlotNodeID)],
         })
       );
-      metadata.plot = nodePlot.plot;
+      metadata.plot = node_plot.plot;
 
       const wrapper = setup.mount(
         <MetaData visible={true} metadata={metadata} />
