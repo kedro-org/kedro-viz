@@ -27,7 +27,7 @@
 # limitations under the License.
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
-from kedro.io import DataCatalog
+from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 
@@ -88,8 +88,9 @@ def example_pipelines():
 def example_catalog():
     yield DataCatalog(
         data_sets={
-            "raw_data": CSVDataSet(filepath="raw_data.csv"),
+            "uk.data_processing.raw_data": CSVDataSet(filepath="raw_data.csv"),
             "model_inputs": CSVDataSet(filepath="model_inputs.csv"),
+            "uk.data_science.model": MemoryDataSet(),
         },
         feed_dict={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},

@@ -30,12 +30,14 @@
 import abc
 import hashlib
 import inspect
+import json
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.io import AbstractDataSet
+from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
 
 
@@ -312,6 +314,9 @@ class DataNode(GraphNode):
     # the underlying Kedro's AbstractDataSet for this data node
     kedro_obj: InitVar[Optional[AbstractDataSet]]
 
+    # the concrete type of the underlying kedro_obj
+    dataset_type: Optional[str] = field(init=False)
+
     # the list of modular pipelines this data node belongs to
     modular_pipelines: List[str] = field(init=False)
 
@@ -320,6 +325,11 @@ class DataNode(GraphNode):
 
     def __post_init__(self, kedro_obj: Optional[AbstractDataSet]):
         self._kedro_obj = kedro_obj
+        self.dataset_type = (
+            f"{kedro_obj.__class__.__module__}.{kedro_obj.__class__.__qualname__}"
+            if self.kedro_obj
+            else None
+        )
 
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
@@ -338,15 +348,29 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # the path to the actual data file for the underlying dataset.
     # only available if the dataset has filepath set.
-    filepath: str = field(init=False)
+    filepath: Optional[str] = field(init=False)
 
     # the underlying data node to which this metadata belongs
     data_node: InitVar[DataNode]
 
+    # the optional plot data if the underlying dataset has a plot.
+    # currently only applicable for PlotlyDataSet
+    plot: Optional[Dict] = field(init=False)
+
     def __post_init__(self, data_node: DataNode):
+        self.type = data_node.dataset_type
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
-        self.type = f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
-        self.filepath = str(dataset._describe().get("filepath"))
+        filepath = dataset._describe().get("filepath")
+        self.filepath = str(filepath) if filepath else None
+
+        # Parse plot data
+        # TODO: make this more generic
+        if self.type == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet":
+            load_path = get_filepath_str(
+                data_node.kedro_obj._get_load_path(), data_node.kedro_obj._protocol
+            )
+            with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
+                self.plot = json.load(fs_file)
 
 
 @dataclass
