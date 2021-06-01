@@ -120,7 +120,8 @@ describe('node-list-selectors', () => {
   describe('getSections', () => {
     const sections = getSections({ flags: { modularpipeline: false } });
 
-    const groupType = expect.objectContaining({
+    const groupType = 
+    expect.objectContaining({
       name: expect.any(String),
       types: expect.any(Array),
     });
