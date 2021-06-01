@@ -296,10 +296,8 @@ export class FlowChart extends Component {
       height: chartHeight = 0,
     } = this.props.chartSize;
 
-    const {
-      width: graphWidth = 0,
-      height: graphHeight = 0,
-    } = this.props.graphSize;
+    const { width: graphWidth = 0, height: graphHeight = 0 } =
+      this.props.graphSize;
 
     const leftSidebarOffset = sidebarWidth / scale;
     const rightSidebarOffset = (metaSidebarWidth + codeSidebarWidth) / scale;
