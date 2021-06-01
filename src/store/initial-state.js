@@ -83,7 +83,7 @@ export const prepareNonPipelineState = (props) => {
   const state = mergeLocalStorage(createInitialState());
 
   const sidebar = window.innerWidth > sidebarWidth.breakpoint;
-  const miniMapBtn = window.innerWidth > sidebarWidth.breakpoint;
+  const miniMap = window.innerWidth > sidebarWidth.breakpoint;
 
   return {
     ...state,
@@ -93,7 +93,7 @@ export const prepareNonPipelineState = (props) => {
       ...state.visible,
       ...props.visible,
       sidebar: sidebar,
-      miniMapBtn: miniMapBtn,
+      miniMap: miniMap,
     },
   };
 };
