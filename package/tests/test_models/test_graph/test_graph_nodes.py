@@ -25,6 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
 from pathlib import Path
 from textwrap import dedent
 from unittest.mock import MagicMock, patch
@@ -45,6 +46,15 @@ from kedro_viz.models.graph import (
     TaskNode,
     TaskNodeMetadata,
 )
+
+
+orig_import = __import__
+
+
+def import_mock(name, *args):
+    if name.startswith("plotly"):
+        return MagicMock()
+    return orig_import(name, *args)
 
 
 def identity(x):
@@ -235,8 +245,9 @@ class TestGraphNodeMetadata:
         )
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
 
+    @patch("builtins.__import__", side_effect=import_mock)
     @patch("json.load")
-    def test_plotly_data_node_metadata(self, patched_json_load):
+    def test_plotly_data_node_metadata(self, patched_json_load, patched_import):
         mock_plot_data = {
             "data": [
                 {
