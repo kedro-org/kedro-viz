@@ -262,6 +262,14 @@ class TestGraphNodeMetadata:
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot == mock_plot_data
 
+    @patch("builtins.__import__", side_effect=import_mock)
+    def test_plotly_data_node_dataset_not_exist(self, patched_import):
+        plotly_data_node = MagicMock()
+        plotly_data_node.is_plot_node.return_value = True
+        plotly_data_node.kedro_obj._exists.return_value = False
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
+        assert not hasattr(plotly_node_metadata, "plot")
+
     def test_parameters_metadata_all_parameters(self):
         parameters = {"test_split_ratio": 0.3, "num_epochs": 1000}
         parameters_dataset = MemoryDataSet(data=parameters)
