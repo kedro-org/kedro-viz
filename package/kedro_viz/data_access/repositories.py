@@ -129,7 +129,7 @@ class CatalogRepository:
         if _KEDRO_VERSION.match(">=0.16.0"):
             try:
                 dataset_obj = self._catalog._get_dataset(dataset_name)
-            except DataSetNotFoundError:
+            except DataSetNotFoundError:  # pragma: no cover
                 dataset_obj = None
         else:
             dataset_obj = self._catalog._data_sets.get(dataset_name)  # pragma: no cover
