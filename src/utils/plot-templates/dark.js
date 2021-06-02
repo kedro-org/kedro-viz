@@ -84,7 +84,7 @@ const darkTemplate = {
     family: 'Titillium+Web:400',
     color: 'rgba(255,255,255,0.55)',
   },
-  height: undefined,
+  height: null,
   hoverlabel: {
     align: 'left',
   },
@@ -118,7 +118,7 @@ const darkTemplate = {
     xanchor: 'left',
     yanchor: 'middle',
   },
-  width: undefined,
+  width: null,
   xaxis: {
     automargin: true,
     gridcolor: 'rgba(255,255,255,0.12)',

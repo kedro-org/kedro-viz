@@ -113,6 +113,20 @@
   fill: var(--color-button-text);
 }
 
+@media (max-width: $plotly-modal-breakpoint) {
+  .pipeline-plot-modal__collapse-plot {
+    width: auto;
+  }
+
+  .pipeline-plot-modal-text__collapse-plot {
+    display: none;
+  }
+
+  .pipeline-plot-modal-icon__collapse-plot {
+    margin: 10px 10px 10px 10px;
+  }
+}
+
 .pipeline-plot-modal-text__collapse-plot {
   margin: 10px 10px 10px 5px;
   color: var(--color-button-text);
