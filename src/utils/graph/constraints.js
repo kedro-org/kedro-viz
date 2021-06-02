@@ -1,6 +1,6 @@
 /**
  * Constraint base definitions.
- * 
+ *
  * Refer to LAYOUT_ENGINE.md for descriptions of each constraint.
  *
  * See `solve` function of `solver.js` for constraint specification.
