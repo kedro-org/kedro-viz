@@ -43,7 +43,6 @@ const updateLayout = (theme, view, layout) => {
     }
   } else {
     if (view === 'modal') {
-      console.log(deepmerge(layout, lightModalTemplate));
       return deepmerge(layout, lightModalTemplate);
     } else {
       return deepmerge(layout, lightPreviewTemplate);

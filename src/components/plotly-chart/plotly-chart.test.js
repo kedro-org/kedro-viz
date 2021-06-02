@@ -42,7 +42,7 @@ describe('PlotlyChart', () => {
     const wrapper = mount(props);
     const instance = wrapper.find('PlotlyComponent').instance();
     const layout = instance.props.layout;
-    expect(layout.height).toBe(undefined);
+    expect(layout.height).toBe(null);
     expect(layout.paper_bgcolor).toBe('#111111');
   });
 
@@ -56,7 +56,7 @@ describe('PlotlyChart', () => {
     const wrapper = mount(props);
     const instance = wrapper.find('PlotlyComponent').instance();
     const layout = instance.props.layout;
-    expect(layout.height).toBe(undefined);
+    expect(layout.height).toBe(null);
     expect(layout.paper_bgcolor).toBe('#EEEEEE');
   });
 
