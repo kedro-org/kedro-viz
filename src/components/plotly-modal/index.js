@@ -12,7 +12,6 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
   const nodeTypeIcon = metadata?.datasetType || metadata?.node.type;
 
   const onCollapsePlotClick = () => {
-    // Deselecting a node automatically hides MetaData panel
     onToggle(false);
   };
   if (!visible.plotModal) {

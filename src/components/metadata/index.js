@@ -54,7 +54,6 @@ const MetaData = ({
   };
 
   const onExpandPlotClick = () => {
-    // Deselecting a node automatically hides MetaData panel
     onTogglePlotModal(true);
   };
 

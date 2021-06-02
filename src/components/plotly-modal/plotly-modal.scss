@@ -24,7 +24,6 @@
   z-index: 3;
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
   align-content: center;
   align-items: center;
   justify-content: space-between;
@@ -62,6 +61,7 @@
 }
 
 .pipeline-plot-modal__back {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-self: flex-start;
@@ -92,6 +92,7 @@
 }
 
 .pipeline-plot-modal__collapse-plot {
+  position: absolute;
   display: flex;
   flex-direction: row;
   align-self: flex-end;
