@@ -28,4 +28,5 @@ const NodeIcon = ({ className, icon }) => {
     </svg>
   ) : null;
 };
+
 export default NodeIcon;
