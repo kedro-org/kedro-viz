@@ -365,9 +365,12 @@ class DataNodeMetadata(GraphNodeMetadata):
 
         # Parse plot data
         # TODO: make this more generic
-        if self.type == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet":
+        if (
+            self.type == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
+            and dataset._exist()
+        ):
             load_path = get_filepath_str(
-                data_node.kedro_obj._get_load_path(), data_node.kedro_obj._protocol
+                dataset._get_load_path(), data_node.kedro_obj._protocol
             )
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
