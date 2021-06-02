@@ -180,7 +180,11 @@ export const drawNodes = function (changed) {
     enterNodes
       .append('path')
       .attr('class', 'pipeline-node__icon')
-      .attr('d', (node) => nodeIcons[node.icon]);
+      .attr('d', (node) => {
+        return node.icon.includes('plotly')
+          ? nodeIcons['plot']
+          : nodeIcons[node.icon];
+      });
 
     enterNodes
       .append('text')
