@@ -27,6 +27,7 @@
 # limitations under the License.
 from pathlib import Path
 from textwrap import dedent
+from unittest.mock import MagicMock, patch
 
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
@@ -44,6 +45,15 @@ from kedro_viz.models.graph import (
     TaskNode,
     TaskNodeMetadata,
 )
+
+
+orig_import = __import__
+
+
+def import_mock(name, *args):
+    if name.startswith("plotly"):
+        return MagicMock()
+    return orig_import(name, *args)
 
 
 def identity(x):
@@ -117,6 +127,7 @@ class TestGraphNodeCreation:
         assert data_node.tags == set()
         assert data_node.pipelines == []
         assert data_node.modular_pipelines == expected_modular_pipelines
+        assert not data_node.is_plot_node()
 
     def test_create_parameters_all_parameters(self):
         parameters_dataset = MemoryDataSet(
@@ -232,6 +243,32 @@ class TestGraphNodeMetadata:
             == "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
         )
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
+
+    @patch("builtins.__import__", side_effect=import_mock)
+    @patch("json.load")
+    def test_plotly_data_node_metadata(self, patched_json_load, patched_import):
+        mock_plot_data = {
+            "data": [
+                {
+                    "x": ["giraffes", "orangutans", "monkeys"],
+                    "y": [20, 14, 23],
+                    "type": "bar",
+                }
+            ]
+        }
+        patched_json_load.return_value = mock_plot_data
+        plotly_data_node = MagicMock()
+        plotly_data_node.is_plot_node.return_value = True
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
+        assert plotly_node_metadata.plot == mock_plot_data
+
+    @patch("builtins.__import__", side_effect=import_mock)
+    def test_plotly_data_node_dataset_not_exist(self, patched_import):
+        plotly_data_node = MagicMock()
+        plotly_data_node.is_plot_node.return_value = True
+        plotly_data_node.kedro_obj._exists.return_value = False
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
+        assert not hasattr(plotly_node_metadata, "plot")
 
     def test_parameters_metadata_all_parameters(self):
         parameters = {"test_split_ratio": 0.3, "num_epochs": 1000}

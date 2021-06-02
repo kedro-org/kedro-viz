@@ -60,6 +60,7 @@ async def main():
 @router.get(
     "/nodes/{node_id}",
     response_model=NodeMetadataAPIResponse,  # type: ignore
+    response_model_exclude_none=True,
 )
 async def get_single_node_metadata(node_id: str):
     node = data_access_manager.nodes.get_node_by_id(node_id)

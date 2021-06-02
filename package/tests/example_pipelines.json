@@ -18,7 +18,8 @@
       "pipelines": ["__default__", "data_processing"],
       "modular_pipelines": ["uk", "uk.data_processing"],
       "type": "data",
-      "layer": "raw"
+      "layer": "raw",
+      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "c506f374",
@@ -28,7 +29,8 @@
       "pipelines": ["__default__", "data_processing"],
       "modular_pipelines": [],
       "type": "parameters",
-      "layer": null
+      "layer": null,
+      "dataset_type": null
     },
     {
       "id": "0ecea0de",
@@ -38,7 +40,8 @@
       "pipelines": ["__default__", "data_science", "data_processing"],
       "modular_pipelines": [],
       "type": "data",
-      "layer": "model_inputs"
+      "layer": "model_inputs",
+      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "7b140b3f",
@@ -58,7 +61,8 @@
       "pipelines": ["__default__", "data_science"],
       "modular_pipelines": [],
       "type": "parameters",
-      "layer": null
+      "layer": null,
+      "dataset_type": null
     },
     {
       "id": "d5a8b994",
@@ -68,7 +72,8 @@
       "pipelines": ["__default__", "data_science"],
       "modular_pipelines": ["uk", "uk.data_science"],
       "type": "data",
-      "layer": null
+      "layer": null,
+      "dataset_type": "kedro.io.memory_data_set.MemoryDataSet"
     }
   ],
   "edges": [
