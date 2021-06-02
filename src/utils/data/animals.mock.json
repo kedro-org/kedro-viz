@@ -162,7 +162,7 @@
       "id": "c3p345ed",
       "layer": "model output",
       "name": "Bull",
-      "dataset_type": "plotly",
+      "dataset_type": "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet",
       "modular_pipelines": [],
       "pipelines": ["de", "__default__"],
       "tags": ["small"],

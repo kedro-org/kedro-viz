@@ -287,14 +287,14 @@ describe('MetaData', () => {
   describe('Plot nodes', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: bullPlotNodeID });
-      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-plotly')).toBe(
+      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-plot')).toBe(
         true
       );
     });
 
     it('shows the node name as the title', () => {
       const wrapper = mount({ nodeId: bullPlotNodeID });
-      expect(textOf(title(wrapper))).toEqual(['Plot:bull']);
+      expect(textOf(title(wrapper))).toEqual(['Bull']);
     });
 
     it('shows the node type as text', () => {

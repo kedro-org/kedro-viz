@@ -85,8 +85,8 @@ const MetaData = ({
                 />
               )}
             </div>
-            <dl className="pipeline-metadata__list">
-              <div className="pipeline-metadata__properties">
+            <div className="pipeline-metadata__list">
+              <dl className="pipeline-metadata__properties">
                 <MetaDataRow label="Type:" value={metadata.node.type} />
                 <MetaDataRow
                   label="Dataset Type:"
@@ -167,7 +167,7 @@ const MetaData = ({
                     )}
                   </div>
                 </MetaDataRow>
-              </div>
+              </dl>
               {hasPlot && (
                 <>
                   <div className="pipeline-metadata__plot">
@@ -184,7 +184,7 @@ const MetaData = ({
                   </div>
                 </>
               )}
-            </dl>
+            </div>
           </>
         )}
       </div>
