@@ -28,7 +28,6 @@
     "lint:js": "eslint src/ --fix",
     "lint:scss": "stylelint 'src/**/*.scss' --fix",
     "prepublishOnly": "npm-run-all -s test:ci lint build lib",
-    "prepare": "npm run snyk-protect",
     "test": "react-scripts test --env=jsdom",
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
