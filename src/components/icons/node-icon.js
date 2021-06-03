@@ -16,16 +16,13 @@ export const paths = {
     'M6.261 11.546l5.465 5.766-1.452 1.376-4.013-4.235-2.535 2.676-1.452-1.376 3.987-4.207zm6.911-2.898l8.495 7.607-1.334 1.49-7.14-6.394-2.514 2.325-1.358-1.469 3.851-3.559zM5.5 6C6.328 6 7 6.672 7 7.5S6.328 9 5.5 9 4 8.328 4 7.5 4.672 6 5.5 6z',
 };
 
-const NodeIcon = ({ className, icon }) => {
-  if (icon.includes('plotly')) {
-    icon = 'plot';
-  }
-  return paths[icon] ? (
+const NodeIcon = ({ className, icon }) =>
+  paths[icon] ? (
     <svg
       className={modifiers('pipeline-node-icon', { icon }, className)}
       viewBox="0 0 24 24">
       <path d={paths[icon]} />
     </svg>
   ) : null;
-};
+
 export default NodeIcon;
