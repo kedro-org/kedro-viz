@@ -25,8 +25,8 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
         <button
           className="pipeline-plot-modal__back"
           onClick={onCollapsePlotClick}>
-          <BackIcon className="pipeline-plot-modal-icon__back"></BackIcon>
-          <span className="pipeline-plot-modal-text__back">Back</span>
+          <BackIcon className="pipeline-plot-modal__back-icon"></BackIcon>
+          <span className="pipeline-plot-modal__back-text">Back</span>
         </button>
         <div className="pipeline-plot-modal__header">
           <NodeIcon className="pipeline-plot-modal__icon" icon={nodeTypeIcon} />
@@ -44,8 +44,8 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
         <button
           className="pipeline-plot-modal__collapse-plot"
           onClick={onCollapsePlotClick}>
-          <CollapseIcon className="pipeline-plot-modal-icon__collapse-plot"></CollapseIcon>
-          <span className="pipeline-plot-modal-text__collapse-plot">
+          <CollapseIcon className="pipeline-plot-modal__collapse-plot-icon"></CollapseIcon>
+          <span className="pipeline-plot-modal__collapse-plot-text">
             Collapse Plotly Visualization
           </span>
         </button>

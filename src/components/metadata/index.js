@@ -189,8 +189,8 @@ const MetaData = ({
                   <button
                     className="pipeline-metadata__expand-plot"
                     onClick={onExpandPlotClick}>
-                    <ExpandIcon className="pipeline-metadata-icon__expand-plot"></ExpandIcon>
-                    <span className="pipeline-metadata-text__expand-plot">
+                    <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__expand-plot-text">
                       Expand Plotly Visualization
                     </span>
                   </button>
