@@ -17,6 +17,7 @@ import {
 } from '../../selectors/metadata';
 import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode, togglePlotModal } from '../../actions';
+import { datasetMapping } from '../../config';
 import './styles/metadata.css';
 
 /**
@@ -36,7 +37,8 @@ const MetaData = ({
   const isTaskNode = metadata?.node.type === 'task';
   const isDataNode = metadata?.node.type === 'data';
   const isParametersNode = metadata?.node.type === 'parameters';
-  const nodeTypeIcon = metadata?.datasetType || metadata?.node.type;
+  const nodeTypeIcon =
+    datasetMapping[metadata?.datasetType] || metadata?.node.type;
   const hasPlot = Boolean(metadata?.plot);
   const hasCode = Boolean(metadata?.code);
   const showCodePanel = visible && visibleCode && hasCode;
