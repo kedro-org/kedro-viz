@@ -30,6 +30,7 @@
 import abc
 import hashlib
 import inspect
+import logging
 import json
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
@@ -39,6 +40,9 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 from kedro.io import AbstractDataSet
 from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
+
+
+logger = logging.getLogger(__name__)
 
 
 def _pretty_name(name: str) -> str:
@@ -431,6 +435,11 @@ class ParametersNode(GraphNode):
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
         self._kedro_obj: AbstractDataSet
+        if self._kedro_obj is None:
+            logger.warning(
+                "Cannot find parameter `%s` in the catalog.", self.parameter_name
+            )
+            return None
         return self._kedro_obj.load()
 
 

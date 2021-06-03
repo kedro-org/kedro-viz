@@ -27,7 +27,7 @@
 # limitations under the License.
 from pathlib import Path
 from textwrap import dedent
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, call
 
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
@@ -170,6 +170,17 @@ class TestGraphNodeCreation:
         assert parameters_node.is_single_parameter()
         assert parameters_node.parameter_value == 0.3
         assert parameters_node.modular_pipelines == expected_modular_pipelines
+
+    @patch("logging.Logger.warning")
+    def test_create_non_existing_parameter_node(self, patched_warning):
+        parameters_node = GraphNode.create_parameters_node(
+            full_name="non_existing", layer=None, tags={}, parameters=None
+        )
+        assert isinstance(parameters_node, ParametersNode)
+        assert parameters_node.parameter_value is None
+        patched_warning.assert_has_calls(
+            [call("Cannot find parameter `%s` in the catalog.", "non_existing")]
+        )
 
 
 class TestGraphNodePipelines:
