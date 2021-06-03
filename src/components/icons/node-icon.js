@@ -11,22 +11,18 @@ export const paths = {
   // sliders icon
   parameters:
     'M10.2 14v1.5H20v2h-9.8V19H8.3v-1.5H5v-2h3.3V14h2zm7.4-9v1.5H20v2h-2.4V10h-1.8V8.5H5v-2h10.8V5h1.8z',
-  //plot icon
-  plot:
+  //plotly icon
+  plotly:
     'M6.261 11.546l5.465 5.766-1.452 1.376-4.013-4.235-2.535 2.676-1.452-1.376 3.987-4.207zm6.911-2.898l8.495 7.607-1.334 1.49-7.14-6.394-2.514 2.325-1.358-1.469 3.851-3.559zM5.5 6C6.328 6 7 6.672 7 7.5S6.328 9 5.5 9 4 8.328 4 7.5 4.672 6 5.5 6z',
 };
 
-const NodeIcon = ({ className, icon }) => {
-  if (icon.includes('plotly')) {
-    icon = 'plot';
-  }
-  return paths[icon] ? (
+const NodeIcon = ({ className, icon }) =>
+  paths[icon] ? (
     <svg
       className={modifiers('pipeline-node-icon', { icon }, className)}
       viewBox="0 0 24 24">
       <path d={paths[icon]} />
     </svg>
   ) : null;
-};
 
 export default NodeIcon;

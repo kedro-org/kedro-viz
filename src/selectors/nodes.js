@@ -8,6 +8,7 @@ import {
   getVisibleNodeIDs,
   getNodeDisabledModularPipeline,
 } from './disabled';
+import { datasetMapping } from '../config';
 import { getNodeRank } from './ranks';
 
 const getNodeName = (state) => state.node.name;
@@ -127,7 +128,7 @@ export const getNodeData = createSelector(
         id,
         name: nodeName[id],
         type: nodeType[id],
-        icon: nodeDatasetType[id] || nodeType[id],
+        icon: datasetMapping[nodeDatasetType[id]] || nodeType[id],
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),
         disabled_tag: nodeDisabledTag[id],
@@ -263,7 +264,7 @@ export const getVisibleNodes = createSelector(
           name: nodeName[id],
           label: nodeName[id],
           fullName: nodeFullName[id],
-          icon: nodeDatasetType[id] || nodeType[id],
+          icon: datasetMapping[nodeDatasetType[id]] || nodeType[id],
           type: nodeType[id],
           layer: nodeLayer[id],
           rank: nodeRank[id],

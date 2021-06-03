@@ -60,3 +60,7 @@ export const sidebar = {
     Parameters: 'parameters',
   },
 };
+
+export const datasetMapping = {
+  'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet': 'plotly',
+};
