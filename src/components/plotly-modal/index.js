@@ -5,13 +5,12 @@ import CollapseIcon from '../icons/collapse';
 import BackIcon from '../icons/back';
 import NodeIcon from '../../components/icons/node-icon';
 import { togglePlotModal } from '../../actions';
-import { datasetMapping } from '../../config';
+import getShortType from '../../utils/short-type';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './plotly-modal.css';
 
 const PlotlyModal = ({ metadata, onToggle, visible }) => {
-  const nodeTypeIcon =
-    datasetMapping[metadata?.datasetType] || metadata?.node.type;
+  const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.node.type);
 
   const onCollapsePlotClick = () => {
     onToggle(false);
