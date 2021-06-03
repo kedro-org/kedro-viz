@@ -287,7 +287,7 @@ describe('MetaData', () => {
   describe('Plot nodes', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: bullPlotNodeID });
-      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-plot')).toBe(
+      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-plotly')).toBe(
         true
       );
     });
