@@ -18,7 +18,8 @@
     { "source": "2ce32881", "target": "5f7e0e20" },
     { "source": "a761759c", "target": "c8c182ec" },
     { "source": "24e06541", "target": "c8c182ec" },
-    { "source": "c8c182ec", "target": "0049a504" }
+    { "source": "c8c182ec", "target": "0049a504" },
+    { "source": "c3p345ed", "target": "0049a504" }
   ],
   "layers": ["raw", "feature", "model output", "primary"],
   "modular_pipelines": [
@@ -155,6 +156,17 @@
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "parameters"
+    },
+    {
+      "full_name": "bull",
+      "id": "c3p345ed",
+      "layer": "model output",
+      "name": "Bull",
+      "dataset_type": "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet",
+      "modular_pipelines": [],
+      "pipelines": ["de", "__default__"],
+      "tags": ["small"],
+      "type": "data"
     },
     {
       "full_name": "pig",

@@ -53,6 +53,7 @@ const NodeListRow = memo(
     onClick,
     selected,
     type,
+    icon,
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
   }) => {
@@ -83,7 +84,7 @@ const NodeListRow = memo(
           onBlur={onMouseLeave}
           disabled={isButton && (disabled || !checked)}
           title={children ? null : name}>
-          {type && (
+          {icon && (
             <NodeIcon
               className={classnames(
                 'pipeline-nodelist__row__type-icon',
@@ -96,7 +97,7 @@ const NodeListRow = memo(
                   'pipeline-nodelist__row__type-icon--selected': selected,
                 }
               )}
-              type={type}
+              icon={icon}
             />
           )}
           <span

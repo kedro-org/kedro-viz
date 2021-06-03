@@ -6,6 +6,7 @@ import FlowChart from '../flowchart';
 import Sidebar from '../sidebar';
 import MetaData from '../metadata';
 import ExportModal from '../export-modal';
+import PlotlyModal from '../plotly-modal';
 import LoadingIcon from '../icons/loading';
 import { isLoading } from '../../selectors/loading';
 import './wrapper.css';
@@ -28,6 +29,7 @@ export const Wrapper = ({ loading, theme }) => (
       <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
     </div>
     <ExportModal />
+    <PlotlyModal />
   </div>
 );
 

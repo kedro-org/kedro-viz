@@ -228,6 +228,7 @@ describe('NodeList', () => {
       changeRows(wrapper, ['Small'], true);
       expect(elementsEnabled(wrapper)).toEqual([
         ['salmon', true],
+        ['Bull', true],
         ['Cat', true],
         ['Dog', true],
         ['Horse', true],
@@ -241,6 +242,7 @@ describe('NodeList', () => {
         ['salmon', true],
         ['shark', true],
         ['Bear', true],
+        ['Bull', true],
         ['Cat', true],
         ['Dog', true],
         ['Elephant', true],
@@ -261,7 +263,6 @@ describe('NodeList', () => {
       });
 
       changeRows(wrapper, ['Medium'], true);
-
       expect(elements(wrapper)).toEqual([
         // Tasks (enabled)
         ['shark', true],
@@ -277,6 +278,7 @@ describe('NodeList', () => {
         ['Nested.weasel', true],
         ['Pig', true],
         // Datasets (disabled)
+        ['Bull', false],
         ['Dog', false],
         ['Horse', false],
         ['Pipeline1.data Science.dolphin', false],
