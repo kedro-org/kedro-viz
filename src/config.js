@@ -61,6 +61,6 @@ export const sidebar = {
   },
 };
 
-export const datasetMapping = {
+export const shortTypeMapping = {
   'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet': 'plotly',
 };
