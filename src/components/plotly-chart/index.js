@@ -2,6 +2,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
+import './plotly-chart.css';
 import {
   darkPreviewTemplate,
   darkModalTemplate,

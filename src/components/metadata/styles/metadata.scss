@@ -261,6 +261,8 @@ $list-inline-spacing: 0.2em;
 }
 
 .pipeline-metadata__plot {
+  display: flex;
+  cursor: pointer;
   height: 300px;
 }
 
@@ -276,24 +278,24 @@ $list-inline-spacing: 0.2em;
 
   display: flex;
   flex-direction: row;
-  list-style: none;
+  align-items: center;
   background-color: var(--color-button-plot);
-  cursor: default;
+  padding: 0;
 
   &:hover {
     background-color: var(--color-button-plot-hovered);
   }
 }
 
-.pipeline-metadata-icon__expand-plot {
+.pipeline-metadata__expand-plot-icon {
   width: 1.9em;
   height: 1.9em;
-  margin: 10px 5px 10px 36px;
+  margin: 0 6px 0 36px;
   fill: var(--color-button-text);
 }
 
-.pipeline-metadata-text__expand-plot {
-  margin: 10px 10px 10px 5px;
+.pipeline-metadata__expand-plot-text {
+  margin: 12px 10px 12px 5px;
   color: var(--color-button-text);
   font-size: 1.6em;
 }
