@@ -272,6 +272,8 @@ $list-inline-spacing: 0.2em;
 }
 
 .pipeline-metadata__expand-plot {
+  @extend %button;
+
   display: flex;
   flex-direction: row;
   list-style: none;

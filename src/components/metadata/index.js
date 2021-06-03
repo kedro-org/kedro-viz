@@ -186,14 +186,14 @@ const MetaData = ({
                       view="preview"
                     />
                   </div>
-                  <div
+                  <button
                     className="pipeline-metadata__expand-plot"
                     onClick={onExpandPlotClick}>
                     <ExpandIcon className="pipeline-metadata-icon__expand-plot"></ExpandIcon>
                     <span className="pipeline-metadata-text__expand-plot">
                       Expand Plotly Visualization
                     </span>
-                  </div>
+                  </button>
                 </>
               )}
             </div>

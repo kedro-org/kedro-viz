@@ -61,6 +61,8 @@
 }
 
 .pipeline-plot-modal__back {
+  @extend %button;
+
   position: relative;
   display: flex;
   flex-direction: row;
@@ -92,7 +94,8 @@
 }
 
 .pipeline-plot-modal__collapse-plot {
-  position: absolute;
+  @extend %button;
+
   display: flex;
   flex-direction: row;
   align-self: flex-end;
