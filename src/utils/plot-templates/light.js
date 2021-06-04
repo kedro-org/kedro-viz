@@ -187,13 +187,16 @@ const lightTemplate = {
 
 export const lightPreviewTemplate = {
   ...lightTemplate,
-  title: '',
+  height: 300,
   margin: {
     l: 100,
     r: 40,
     t: 40,
     b: 70,
   },
+  showlegend: false,
+  title: '',
+  width: 400,
   xaxis: {
     ...lightTemplate.xaxis,
     title: {
@@ -224,8 +227,6 @@ export const lightPreviewTemplate = {
     },
     nticks: 5,
   },
-  height: 300,
-  width: 400,
 };
 
 export const lightModalTemplate = {

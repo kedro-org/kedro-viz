@@ -187,13 +187,16 @@ const darkTemplate = {
 
 export const darkPreviewTemplate = {
   ...darkTemplate,
-  title: '',
+  height: 300,
   margin: {
     l: 100,
     r: 40,
     t: 40,
     b: 70,
   },
+  showlegend: false,
+  title: '',
+  width: 400,
   xaxis: {
     ...darkTemplate.xaxis,
     title: {
@@ -224,8 +227,6 @@ export const darkPreviewTemplate = {
     },
     nticks: 5,
   },
-  height: 300,
-  width: 400,
 };
 
 export const darkModalTemplate = {
