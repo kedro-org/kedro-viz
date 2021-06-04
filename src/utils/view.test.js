@@ -84,7 +84,7 @@ describe('view', () => {
   });
 
   describe('isInvalidTransform', () => {
-    it('returns true if any component is infinite, `NaN` or `undefined` otherwise false', () => {
+    it('returns true if any component is infinite, `NaN` or `undefined` or `(0,0,0)` otherwise false', () => {
       expect(isInvalidTransform({})).toBe(true);
 
       expect(isInvalidTransform({ x: Infinity, y: 0, k: 0 })).toBe(true);
@@ -94,6 +94,7 @@ describe('view', () => {
       expect(isInvalidTransform({ x: NaN, y: 0, k: 0 })).toBe(true);
       expect(isInvalidTransform({ x: 0, y: NaN, k: 0 })).toBe(true);
       expect(isInvalidTransform({ x: 0, y: 0, k: NaN })).toBe(true);
+      expect(isInvalidTransform({ x: 0, y: 0, k: 0 })).toBe(true);
 
       expect(isInvalidTransform({ x: undefined, y: 0, k: 0 })).toBe(true);
       expect(isInvalidTransform({ x: 0, y: undefined, k: 0 })).toBe(true);
@@ -103,7 +104,6 @@ describe('view', () => {
         true
       );
 
-      expect(isInvalidTransform({ x: 0, y: 0, k: 0 })).toBe(false);
       expect(isInvalidTransform({ x: 1, y: 1, k: 1 })).toBe(false);
       expect(isInvalidTransform({ x: -1, y: -1, k: -1 })).toBe(false);
     });
