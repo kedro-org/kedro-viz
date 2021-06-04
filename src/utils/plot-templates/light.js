@@ -22,13 +22,11 @@ const lightTemplate = {
       ticklen: 12,
       tickfont: {
         color: 'rgba(0,0,0,0.55)',
-        family: 'Titillium+Web:400',
         size: 12,
       },
       ticklabelposition: 'outside',
       title: {
         font: {
-          family: 'Titillium+Web:400',
           color: 'rgba(0,0,0,0.55)',
           size: 12,
         },
@@ -81,7 +79,6 @@ const lightTemplate = {
     '#F8E979',
   ],
   font: {
-    family: 'Titillium+Web:400',
     color: 'rgba(0,0,0,0.55)',
   },
   height: null,
@@ -92,12 +89,10 @@ const lightTemplate = {
   legend: {
     title: {
       font: {
-        family: 'Titillium+Web:400',
         color: 'rgba(0,0,0,0.55)',
       },
     },
     font: {
-      family: 'Titillium+Web:400',
       color: 'rgba(0,0,0,0.55)',
     },
   },
@@ -108,7 +103,6 @@ const lightTemplate = {
   plot_bgcolor: '#EEEEEE',
   title: {
     font: {
-      family: 'Titillium+Web:400',
       color: 'rgba(0,0,0,0.85)',
       size: 16,
     },
@@ -134,13 +128,11 @@ const lightTemplate = {
     ticklen: 12,
     tickfont: {
       color: 'rgba(0,0,0,0.55)',
-      family: 'Titillium+Web:400',
       size: 12,
     },
     ticklabelposition: 'outside',
     title: {
       font: {
-        family: 'Titillium+Web:400',
         color: 'rgba(0,0,0,0.55)',
         size: 16,
       },
@@ -163,13 +155,11 @@ const lightTemplate = {
     ticklen: 12,
     tickfont: {
       color: 'rgba(0,0,0,0.55)',
-      family: 'Titillium+Web:400',
       size: 12,
     },
     ticklabelposition: 'outside',
     title: {
       font: {
-        family: 'Titillium+Web:400',
         color: 'rgba(0,0,0,0.55)',
         size: 16,
       },
