@@ -22,13 +22,11 @@ const darkTemplate = {
       ticklen: 12,
       tickfont: {
         color: 'rgba(255,255,255,0.55)',
-        family: ['sans-serif'],
         size: 12,
       },
       ticklabelposition: 'outside',
       title: {
         font: {
-          family: ['Titillium Web:400', 'sans-serif'],
           color: 'rgba(255,255,255,0.55)',
           size: 12,
         },
@@ -81,7 +79,6 @@ const darkTemplate = {
     '#F8E979',
   ],
   font: {
-    family: 'Titillium+Web:400',
     color: 'rgba(255,255,255,0.55)',
   },
   height: null,
@@ -92,12 +89,10 @@ const darkTemplate = {
   legend: {
     title: {
       font: {
-        family: 'Titillium+Web:400',
         color: 'rgba(255,255,255,0.55)',
       },
     },
     font: {
-      family: 'Titillium+Web:400',
       color: 'rgba(255,255,255,0.55)',
     },
   },
@@ -108,7 +103,6 @@ const darkTemplate = {
   plot_bgcolor: '#111111',
   title: {
     font: {
-      family: 'Titillium+Web:400',
       color: 'rgba(255,255,255,0.85)',
       size: 16,
     },
@@ -134,13 +128,11 @@ const darkTemplate = {
     ticklen: 12,
     tickfont: {
       color: 'rgba(255,255,255,0.55)',
-      family: 'Titillium+Web:400',
       size: 12,
     },
     ticklabelposition: 'outside',
     title: {
       font: {
-        family: 'Titillium+Web:400',
         color: 'rgba(255,255,255,0.55)',
         size: 16,
       },
@@ -163,13 +155,11 @@ const darkTemplate = {
     ticklen: 12,
     tickfont: {
       color: 'rgba(255,255,255,0.55)',
-      family: 'Titillium+Web:400',
       size: 12,
     },
     ticklabelposition: 'outside',
     title: {
       font: {
-        family: 'Titillium+Web:400',
         color: 'rgba(255,255,255,0.55)',
         size: 16,
       },
@@ -187,13 +177,16 @@ const darkTemplate = {
 
 export const darkPreviewTemplate = {
   ...darkTemplate,
-  title: '',
+  height: 300,
   margin: {
     l: 100,
     r: 40,
     t: 40,
     b: 70,
   },
+  showlegend: false,
+  title: '',
+  width: 400,
   xaxis: {
     ...darkTemplate.xaxis,
     title: {
@@ -224,8 +217,6 @@ export const darkPreviewTemplate = {
     },
     nticks: 5,
   },
-  height: 300,
-  width: 400,
 };
 
 export const darkModalTemplate = {
