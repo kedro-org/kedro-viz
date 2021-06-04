@@ -75,7 +75,7 @@ export const isOrigin = ({ x, y, k }) =>
  * @returns {Boolean} True if the transform is invalid else false
  */
 export const isInvalidTransform = ({ x, y, k }) =>
-  !isFinite(x + y + k) || isNaN(x + y + k);
+  !isFinite(x + y + k) || isNaN(x + y + k) || (x === 0 && y === 0 && k === 0);
 
 /**
  * Returns the current transform of the given view.
