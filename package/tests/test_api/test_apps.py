@@ -111,6 +111,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
             "layer": "raw",
+            "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "c506f374",
@@ -121,6 +122,7 @@ def assert_example_data(response_data):
             "modular_pipelines": [],
             "type": "parameters",
             "layer": None,
+            "dataset_type": None,
         },
         {
             "id": "0ecea0de",
@@ -131,6 +133,7 @@ def assert_example_data(response_data):
             "modular_pipelines": [],
             "type": "data",
             "layer": "model_inputs",
+            "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "7b140b3f",
@@ -151,6 +154,7 @@ def assert_example_data(response_data):
             "modular_pipelines": [],
             "type": "parameters",
             "layer": None,
+            "dataset_type": None,
         },
         {
             "id": "d5a8b994",
@@ -161,6 +165,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
+            "dataset_type": "kedro.io.memory_data_set.MemoryDataSet",
         },
     ]
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
@@ -257,6 +262,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": [],
                 "type": "data",
                 "layer": "model_inputs",
+                "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
             },
             {
                 "id": "7b140b3f",
@@ -277,6 +283,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": [],
                 "type": "parameters",
                 "layer": None,
+                "dataset_type": None,
             },
             {
                 "id": "d5a8b994",
@@ -287,6 +294,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": ["uk", "uk.data_science"],
                 "type": "data",
                 "layer": None,
+                "dataset_type": "kedro.io.memory_data_set.MemoryDataSet",
             },
         ]
         assert_nodes_equal(response_data.pop("nodes"), expected_nodes)

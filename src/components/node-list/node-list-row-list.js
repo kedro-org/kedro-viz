@@ -71,6 +71,7 @@ const NodeRowList = ({
             label={getItemLabel(item)}
             name={item.name}
             type={item.type}
+            icon={item.icon}
             active={item.active}
             checked={item.checked}
             disabled={item.disabled}

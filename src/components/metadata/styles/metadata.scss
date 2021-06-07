@@ -4,24 +4,33 @@
 .kui-theme--light {
   --color-metadata-bg: #{$color-bg-light-3};
   --color-metadata-kind-token-bg: #{$color-bg-light-2};
+  --color-plot-bg: #{$color-bg-light-5};
+  --color-button-plot: #{$color-button};
+  --color-button-plot-hovered: #{$color-button-hovered};
+  --color-button-text: #{$color-light};
 }
 
 .kui-theme--dark {
   --color-metadata-bg: #{$color-bg-dark-5};
   --color-metadata-kind-token-bg: #{$color-bg-dark-6};
+  --color-plot-bg: #{$color-bg-dark-7};
+  --color-button-plot: #{$color-button};
+  --color-button-plot-hovered: #{$color-button-hovered};
+  --color-button-text: #{$color-light};
 }
 
 .pipeline-metadata {
   @extend %sidebar;
-
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
   right: 0;
   bottom: -1px;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: $metadata-sidebar-width-open;
-  padding: 6px 0 24px 0;
+  padding: 6px 0 0 0;
   overflow-y: auto;
   background: var(--color-metadata-bg);
   transform: translateX(100%);
@@ -90,6 +99,9 @@
 }
 
 .pipeline-metadata__list {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
   margin: 0;
 }
 
@@ -246,4 +258,44 @@ $list-inline-spacing: 0.2em;
   &--no-visible {
     display: none;
   }
+}
+
+.pipeline-metadata__plot {
+  display: flex;
+  cursor: pointer;
+  height: 300px;
+}
+
+.pipeline-metadata__properties {
+  flex-grow: 1;
+  height: 0px;
+  margin-top: -1.9em;
+  overflow-y: auto;
+}
+
+.pipeline-metadata__expand-plot {
+  @extend %button;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--color-button-plot);
+  padding: 0;
+
+  &:hover {
+    background-color: var(--color-button-plot-hovered);
+  }
+}
+
+.pipeline-metadata__expand-plot-icon {
+  width: 1.9em;
+  height: 1.9em;
+  margin: 0 6px 0 36px;
+  fill: var(--color-button-text);
+}
+
+.pipeline-metadata__expand-plot-text {
+  margin: 12px 10px 12px 5px;
+  color: var(--color-button-text);
+  font-size: 1.6em;
 }

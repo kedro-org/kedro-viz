@@ -260,7 +260,6 @@ describe('Reducer', () => {
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
       expect(newState.node.filepath[nodeId]).toEqual(node_data.filepath);
-      expect(newState.node.datasetType[nodeId]).toEqual(node_data.type);
     });
   });
 

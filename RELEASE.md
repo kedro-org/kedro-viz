@@ -27,6 +27,7 @@ Please follow the established format:
 - Improve layer solving approach when layers partially defined. (#407)
 - Remove 'code' flag to enable the code panel feature by default. (#404)
 - Remove 'lazy' flag to enable lazy loading of the sidebar by default. (#404)
+- Render the pipeline with warning of parameters missing from the catalog instead of showing an obfuscated error. (#43)
 
 ## Bug fixes and other changes
 - Remove 'id' reducer prop. (#396)

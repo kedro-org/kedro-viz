@@ -5,7 +5,6 @@ import { mockState, setup } from '../../utils/state.mock';
 import { getNodeData } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import { getModularPipelineData } from '../../selectors/modular-pipelines';
-import { getNestedModularPipelines } from './node-list-items';
 import IndicatorPartialIcon from '../icons/indicator-partial';
 import { localStorageName } from '../../config';
 import { toggleTypeDisabled } from '../../actions/node-type';
@@ -235,6 +234,7 @@ describe('NodeList', () => {
         ['Pipeline1', true],
         ['Pipeline2', true],
         ['salmon', true],
+        ['Bull', true],
         ['Cat', true],
         ['Horse', true],
         ['Parameters', true],

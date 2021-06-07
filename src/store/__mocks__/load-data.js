@@ -2,6 +2,7 @@ import { getUrl } from '../../utils';
 import animals from '../../utils/data/animals.mock.json';
 import demo from '../../utils/data/demo.mock.json';
 import node_task from '../../utils/data/node_task.mock.json';
+import node_plot from '../../utils/data/node_plot.mock.json';
 import node_parameters from '../../utils/data/node_parameters.mock.json';
 
 /**
@@ -42,6 +43,11 @@ const loadJsonData = async (path = getUrl('main')) => {
   // Use nodes_parameters dataset for node data
   if (path.includes('nodes/f1f1425b')) {
     return node_parameters;
+  }
+
+  // Use node_plot dataset for node data
+  if (path.includes('nodes/c3p345ed')) {
+    return node_plot;
   }
 
   // Use nodes_task dataset in place of 'main' endpoint

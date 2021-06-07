@@ -63,6 +63,9 @@ function nodeReducer(nodeState = {}, action) {
         datasetType: Object.assign({}, nodeState.datasetType, {
           [id]: data.type,
         }),
+        plot: Object.assign({}, nodeState.plot, {
+          [id]: data.plot,
+        }),
       });
     }
 

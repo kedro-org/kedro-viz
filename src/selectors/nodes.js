@@ -8,6 +8,7 @@ import {
   getVisibleNodeIDs,
   getNodeDisabledModularPipeline,
 } from './disabled';
+import getShortType from '../utils/short-type';
 import { getNodeRank } from './ranks';
 
 const getNodeName = (state) => state.node.name;
@@ -16,6 +17,7 @@ const getNodeDisabledNode = (state) => state.node.disabled;
 const getNodeTags = (state) => state.node.tags;
 export const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getNodeType = (state) => state.node.type;
+const getNodeDatasetType = (state) => state.node.datasetType;
 const getNodeLayer = (state) => state.node.layer;
 const getHoveredNode = (state) => state.node.hovered;
 const getTagActive = (state) => state.tag.active;
@@ -94,6 +96,7 @@ export const getNodeData = createSelector(
     getPipelineNodeIDs,
     getNodeName,
     getNodeType,
+    getNodeDatasetType,
     getNodeDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
@@ -105,6 +108,7 @@ export const getNodeData = createSelector(
     nodeIDs,
     nodeName,
     nodeType,
+    nodeDatasetType,
     nodeDisabled,
     nodeDisabledNode,
     nodeDisabledTag,
@@ -238,6 +242,7 @@ export const getVisibleNodes = createSelector(
     getVisibleNodeIDs,
     getNodeName,
     getNodeType,
+    getNodeDatasetType,
     getNodeFullName,
     getNodeSize,
     getNodeLayer,
@@ -248,6 +253,7 @@ export const getVisibleNodes = createSelector(
     nodeIDs,
     nodeName,
     nodeType,
+    nodeDatasetType,
     nodeFullName,
     nodeSize,
     nodeLayer,
@@ -260,6 +266,7 @@ export const getVisibleNodes = createSelector(
           name: nodeName[id],
           label: nodeName[id],
           fullName: nodeFullName[id],
+          icon: getShortType([nodeDatasetType[id]], nodeType[id]),
           type: nodeType[id],
           layer: nodeLayer[id],
           rank: nodeRank[id],
