@@ -11,11 +11,17 @@ Please follow the established format:
 
 ## Major features and improvements
 
-<!-- Add release notes for the upcoming release here -->
+- Complete backend rewrite to be more modular and maintainable using FastAPI. (#432)
+- Add layout engine documentation. (#436)
+- Add split panel components and implement into the sidebar. (#448)
+- Visualise plotly charts if user defines them with `kedro.extra.datasets.plotly.PlotlyDataSet` in their Kedro project _(Note: This feature is only available in `kedro>=0.17.4`)._ (#455)
 
 ## Bug fixes and other changes
 
-<!-- Add release notes for the upcoming release here -->
+- Upgrade prettier to latest version (2.3.0) and reformat all JS in /src in line with prettier v2.3.0 (#461)
+- Render the pipeline with warning of parameters missing from the catalog instead of showing an obfuscated error. (#466)
+- Fix CLI `--pipeline` arg throws KedroContext attribute error. (#432)
+- Fix glitch when the entire graph is collapsed during initial chart loading. (#467)
 
 # Release 3.11.0
 
@@ -27,7 +33,6 @@ Please follow the established format:
 - Improve layer solving approach when layers partially defined. (#407)
 - Remove 'code' flag to enable the code panel feature by default. (#404)
 - Remove 'lazy' flag to enable lazy loading of the sidebar by default. (#404)
-- Render the pipeline with warning of parameters missing from the catalog instead of showing an obfuscated error. (#43)
 
 ## Bug fixes and other changes
 - Remove 'id' reducer prop. (#396)
