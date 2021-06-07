@@ -14,7 +14,7 @@ Please follow the established format:
 - Complete backend rewrite to be more modular and maintainable using FastAPI. (#432)
 - Add layout engine documentation. (#436)
 - Add split panel components and implement into the sidebar. (#448)
-- Visualise plotly charts if user defines them with `kedro.extra.datasets.plotly.PlotlyDataSet` in their Kedro project (N.B: this feature is only available in `kedro>=0.17.4`). (#455)
+- Visualise plotly charts if user defines them with `kedro.extra.datasets.plotly.PlotlyDataSet` in their Kedro project _(Note: This feature is only available in `kedro>=0.17.4`)._ (#455)
 
 ## Bug fixes and other changes
 
