@@ -1,5 +1,6 @@
 import React from 'react';
-import Plot from 'react-plotly.js';
+import createPlotlyComponent from 'react-plotly.js/factory';
+import Plotly from 'plotly.js-cartesian-dist';
 import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
 import './plotly-chart.css';
@@ -19,6 +20,9 @@ import {
  * @param {boolean} visible Whether to show the tooltip
  * @param {string} text Tooltip display label
  */
+
+const Plot = createPlotlyComponent(Plotly);
+
 const PlotlyChart = ({ theme, view, data = [], layout = {} }) => {
   const plotConfig = view === 'preview' ? { staticPlot: true } : undefined;
 
