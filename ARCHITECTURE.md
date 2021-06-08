@@ -96,6 +96,8 @@ Redux reducers are placed in `/src/reducers/`. We use a [combineReducers](https:
 
 Selectors can be found in `/src/selectors/`. We use [Reselect](https://github.com/reduxjs/reselect) to derive data from the state and translate it into useful data structures while keeping it memoised in order to prevent repeated calculations when the original values have not changed. In order to avoid circular imports, we've occasionally needed to get creative with file naming, hence the low-level 'disabled' selectors are separated into different files from the rest of the node/edge/tag selectors.
 
+We have used Kedro-Viz to visualize the selector dependency graph - [visit the demo to see it in action](https://quantumblacklabs.github.io/kedro-viz/?data=selectors).
+
 ## Utils
 
 The `/src/utils/` directory contains miscellaneous reusable utility functions.
