@@ -25,6 +25,8 @@ const updateGraphOnChange = (store) => {
  * @param {object} state Redux state snapshot
  */
 const saveStateToLocalStorage = (state) => {
+  // does not save modal state to localStorage
+  const { exportModal, plotModal, ...otherVisibleProps } = state.visible;
   saveState({
     node: {
       disabled: pruneFalseyKeys(state.node.disabled),
@@ -42,8 +44,8 @@ const saveStateToLocalStorage = (state) => {
       enabled: state.tag.enabled,
     },
     textLabels: state.textLabels,
+    visible: otherVisibleProps,
     theme: state.theme,
-    visible: state.visible,
     flags: state.flags,
   });
 };
@@ -56,7 +58,6 @@ const saveStateToLocalStorage = (state) => {
 export default function configureStore(initialState) {
   const store = createStore(reducer, initialState, applyMiddleware(thunk));
   updateGraphOnChange(store);
-
   store.subscribe(() => {
     saveStateToLocalStorage(store.getState());
   });

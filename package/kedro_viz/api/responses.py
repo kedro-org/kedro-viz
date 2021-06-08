@@ -85,6 +85,32 @@ class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
         }
 
 
+class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
+    layer: Optional[str]
+    dataset_type: Optional[str]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": "d7b83b05",
+                "name": "Master Table",
+                "full_name": "master_table",
+                "tags": [],
+                "pipelines": ["__default__", "dp", "ds"],
+                "modular_pipelines": [],
+                "type": "data",
+                "layer": "primary",
+                "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            }
+        }
+
+
+NodeAPIResponse = Union[
+    TaskNodeAPIResponse,
+    DataNodeAPIResponse,
+]
+
+
 class TaskNodeMetadataAPIResponse(BaseAPIResponse):
     code: str
     filepath: str
@@ -103,6 +129,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
     filepath: str
     type: str
+    plot: Optional[Dict]
 
     class Config:
         schema_extra = {
@@ -144,24 +171,6 @@ NodeMetadataAPIResponse = Union[
 ]
 
 
-class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
-    layer: Optional[str]
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "id": "d7b83b05",
-                "name": "Master Table",
-                "full_name": "master_table",
-                "tags": [],
-                "pipelines": ["__default__", "dp", "ds"],
-                "modular_pipelines": [],
-                "type": "data",
-                "layer": "primary",
-            }
-        }
-
-
 class GraphEdgeAPIResponse(BaseAPIResponse):
     source: str
     target: str
@@ -177,11 +186,7 @@ class NamedEntityAPIResponse(BaseAPIResponse):
 
 
 class GraphAPIResponse(BaseAPIResponse):
-    nodes: List[
-        Union[
-            TaskNodeAPIResponse, DataNodeAPIResponse, ParametersNodeMetadataAPIResponse
-        ]
-    ]
+    nodes: List[NodeAPIResponse]
     edges: List[GraphEdgeAPIResponse]
     layers: List[str]
     tags: List[NamedEntityAPIResponse]

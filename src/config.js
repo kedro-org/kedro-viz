@@ -49,7 +49,6 @@ export const flags = {
   },
 };
 
-// Sidebar node list sections
 export const sidebar = {
   Categories: {
     Tags: 'tag',
@@ -60,4 +59,8 @@ export const sidebar = {
     Datasets: 'data',
     Parameters: 'parameters',
   },
+};
+
+export const shortTypeMapping = {
+  'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet': 'plotly',
 };

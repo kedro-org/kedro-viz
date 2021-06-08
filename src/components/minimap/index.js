@@ -292,9 +292,11 @@ export class MiniMap extends Component {
    */
   getViewport() {
     const { chartZoom, chartSize } = this.props;
-    const { k: mapScale, x: translateX, y: translateY } = getViewTransform(
-      this.view
-    );
+    const {
+      k: mapScale,
+      x: translateX,
+      y: translateY,
+    } = getViewTransform(this.view);
 
     const scale = mapScale / chartZoom.scale;
     const width = chartSize.width * scale;

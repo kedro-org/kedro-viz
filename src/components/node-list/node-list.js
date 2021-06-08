@@ -34,62 +34,60 @@ const NodeList = ({
       searchValue={searchValue}
     />
     <SplitPanel>
-      {
-        ({ isResizing, props: { container, panelA, panelB, handle } }) =>
-          <div 
-            className={classnames('pipeline-nodelist__split', {
-              'pipeline-nodelist__split--resizing': isResizing,
-            })}
-            {...container}
-          >
-            <div className="pipeline-nodelist__elements-panel" {...panelA}>
-              <Scrollbars
-                className="pipeline-nodelist-scrollbars"
-                style={{ width: 'auto' }}
-                autoHide
-                hideTracksWhenNotNeeded>
-                <NodeListGroups
-                  items={items}
-                  sections={sections.Elements}
-                  groups={groups}
-                  searchValue={searchValue}
-                  getGroupState={getGroupState}
-                  onItemClick={onItemClick}
-                  onItemMouseEnter={onItemMouseEnter}
-                  onItemMouseLeave={onItemMouseLeave}
-                  onSectionMouseEnter={onSectionMouseEnter}
-                  onSectionMouseLeave={onSectionMouseLeave}
-                  onItemChange={onItemChange}
-                  onToggleGroupChecked={onToggleGroupChecked}
-                />
-              </Scrollbars>
-            </div>
-            <div className="pipeline-nodelist__filter-panel" {...panelB}>
-              <div className="pipeline-nodelist__split-handle" {...handle} />
-              <Scrollbars
-                className="pipeline-nodelist-scrollbars"
-                style={{ width: 'auto' }}
-                autoHide
-                hideTracksWhenNotNeeded>
-                <h2 className="pipeline-nodelist-section__title">Filters</h2>
-                <NodeListGroups
-                  items={items}
-                  sections={sections.Categories}
-                  groups={groups}
-                  searchValue={searchValue}
-                  getGroupState={getGroupState}
-                  onItemClick={onItemClick}
-                  onItemMouseEnter={onItemMouseEnter}
-                  onItemMouseLeave={onItemMouseLeave}
-                  onSectionMouseEnter={onSectionMouseEnter}
-                  onSectionMouseLeave={onSectionMouseLeave}
-                  onItemChange={onItemChange}
-                  onToggleGroupChecked={onToggleGroupChecked}
-                />
-              </Scrollbars>
-            </div>
+      {({ isResizing, props: { container, panelA, panelB, handle } }) => (
+        <div
+          className={classnames('pipeline-nodelist__split', {
+            'pipeline-nodelist__split--resizing': isResizing,
+          })}
+          {...container}>
+          <div className="pipeline-nodelist__elements-panel" {...panelA}>
+            <Scrollbars
+              className="pipeline-nodelist-scrollbars"
+              style={{ width: 'auto' }}
+              autoHide
+              hideTracksWhenNotNeeded>
+              <NodeListGroups
+                items={items}
+                sections={sections.Elements}
+                groups={groups}
+                searchValue={searchValue}
+                getGroupState={getGroupState}
+                onItemClick={onItemClick}
+                onItemMouseEnter={onItemMouseEnter}
+                onItemMouseLeave={onItemMouseLeave}
+                onSectionMouseEnter={onSectionMouseEnter}
+                onSectionMouseLeave={onSectionMouseLeave}
+                onItemChange={onItemChange}
+                onToggleGroupChecked={onToggleGroupChecked}
+              />
+            </Scrollbars>
           </div>
-      }
+          <div className="pipeline-nodelist__filter-panel" {...panelB}>
+            <div className="pipeline-nodelist__split-handle" {...handle} />
+            <Scrollbars
+              className="pipeline-nodelist-scrollbars"
+              style={{ width: 'auto' }}
+              autoHide
+              hideTracksWhenNotNeeded>
+              <h2 className="pipeline-nodelist-section__title">Filters</h2>
+              <NodeListGroups
+                items={items}
+                sections={sections.Categories}
+                groups={groups}
+                searchValue={searchValue}
+                getGroupState={getGroupState}
+                onItemClick={onItemClick}
+                onItemMouseEnter={onItemMouseEnter}
+                onItemMouseLeave={onItemMouseLeave}
+                onSectionMouseEnter={onSectionMouseEnter}
+                onSectionMouseLeave={onSectionMouseLeave}
+                onItemChange={onItemChange}
+                onToggleGroupChecked={onToggleGroupChecked}
+              />
+            </Scrollbars>
+          </div>
+        </div>
+      )}
     </SplitPanel>
   </div>
 );

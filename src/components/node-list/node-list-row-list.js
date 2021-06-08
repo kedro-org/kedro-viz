@@ -72,6 +72,7 @@ const NodeRowList = ({
             count={item.count}
             name={item.name}
             type={item.type}
+            icon={item.icon}
             active={item.active}
             checked={item.checked}
             disabled={item.disabled}

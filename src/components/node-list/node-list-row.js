@@ -54,6 +54,7 @@ const NodeListRow = memo(
     onClick,
     selected,
     type,
+    icon,
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
   }) => {
@@ -77,7 +78,7 @@ const NodeListRow = memo(
         title={name}
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
-        {type && (
+        {icon && (
           <NodeIcon
             className={classnames(
               'pipeline-nodelist__row__type-icon',
@@ -90,7 +91,7 @@ const NodeListRow = memo(
                 'pipeline-nodelist__row__type-icon--selected': selected,
               }
             )}
-            type={type}
+            icon={icon}
           />
         )}
         <TextButton

@@ -5,10 +5,12 @@ import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleNodeClicked } from '../../actions/nodes';
 import { setup, prepareState } from '../../utils/state.mock';
 import animals from '../../utils/data/animals.mock.json';
+import node_plot from '../../utils/data/node_plot.mock.json';
 
 const salmonTaskNodeId = '443cf06a';
 const catDatasetNodeId = '9d989e8d';
 const rabbitParamsNodeId = 'c38d4c6a';
+const bullPlotNodeID = 'c3p345ed';
 
 describe('MetaData', () => {
   const mount = (props) => {
@@ -70,7 +72,7 @@ describe('MetaData', () => {
   describe('Task nodes', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
-      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--type-task')).toBe(
+      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-task')).toBe(
         true
       );
     });
@@ -163,7 +165,7 @@ describe('MetaData', () => {
   describe('Dataset nodes', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: catDatasetNodeId });
-      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--type-data')).toBe(
+      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-data')).toBe(
         true
       );
     });
@@ -241,7 +243,7 @@ describe('MetaData', () => {
       it('shows the node type as an icon', () => {
         const wrapper = mount({ nodeId: rabbitParamsNodeId });
         expect(
-          rowIcon(wrapper).hasClass('pipeline-node-icon--type-parameters')
+          rowIcon(wrapper).hasClass('pipeline-node-icon--icon-parameters')
         ).toBe(true);
       });
 
@@ -278,6 +280,71 @@ describe('MetaData', () => {
         const wrapper = mount({ nodeId: rabbitParamsNodeId });
         const row = rowByLabel(wrapper, 'Pipeline:');
         expect(textOf(rowValue(row))).toEqual(['Default']);
+      });
+    });
+  });
+
+  describe('Plot nodes', () => {
+    it('shows the node type as an icon', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-plotly')).toBe(
+        true
+      );
+    });
+
+    it('shows the node name as the title', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      expect(textOf(title(wrapper))).toEqual(['Bull']);
+    });
+
+    it('shows the node type as text', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const row = rowByLabel(wrapper, 'Type:');
+      expect(textOf(rowValue(row))).toEqual(['data']);
+    });
+
+    it('shows the node filepath', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const row = rowByLabel(wrapper, 'File Path:');
+      expect(textOf(rowValue(row))).toEqual(['-']);
+    });
+
+    it('shows the node parameters', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const row = rowByLabel(wrapper, 'Parameters (-):');
+      expect(textOf(rowValue(row))).toEqual([]);
+    });
+
+    it('shows the node tags', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const row = rowByLabel(wrapper, 'Tags:');
+      expect(textOf(rowValue(row))).toEqual(['Small']);
+    });
+
+    it('shows the node pipeline', () => {
+      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const row = rowByLabel(wrapper, 'Pipeline:');
+      expect(textOf(rowValue(row))).toEqual(['Default']);
+    });
+
+    describe('shows the plot info', () => {
+      const metadata = getClickedNodeMetaData(
+        prepareState({
+          data: animals,
+          afterLayoutActions: [() => toggleNodeClicked(bullPlotNodeID)],
+        })
+      );
+      metadata.plot = node_plot.plot;
+
+      const wrapper = setup.mount(
+        <MetaData visible={true} metadata={metadata} />
+      );
+
+      it('shows the plotly chart', () => {
+        expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
+      });
+      it('shows the plotly expand button', () => {
+        expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(1);
       });
     });
   });

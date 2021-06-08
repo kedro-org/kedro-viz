@@ -30,6 +30,7 @@ export const createInitialPipelineState = () => ({
     code: {},
     parameters: {},
     filepath: {},
+    plot: {},
     datasetType: {},
     modularPipelines: {},
   },
@@ -144,7 +145,8 @@ const addNode = (state) => (node) => {
   state.node.code[id] = node.code;
   state.node.parameters[id] = node.parameters;
   state.node.filepath[id] = node.filepath;
-  state.node.datasetType[id] = node.datasetType;
+  state.node.plot[id] = node.plot;
+  state.node.datasetType[id] = node.dataset_type;
   state.node.modularPipelines[id] = node.modular_pipelines || [];
 };
 
@@ -153,15 +155,17 @@ const addNode = (state) => (node) => {
  * @param {Object} source - Parent node
  * @param {Object} target - Child node
  */
-const addEdge = (state) => ({ source, target }) => {
-  const id = createEdgeID(source, target);
-  if (state.edge.ids.includes(id)) {
-    return;
-  }
-  state.edge.ids.push(id);
-  state.edge.sources[id] = source;
-  state.edge.targets[id] = target;
-};
+const addEdge =
+  (state) =>
+  ({ source, target }) => {
+    const id = createEdgeID(source, target);
+    if (state.edge.ids.includes(id)) {
+      return;
+    }
+    state.edge.ids.push(id);
+    state.edge.sources[id] = source;
+    state.edge.targets[id] = target;
+  };
 
 /**
  * Add a new Tag if it doesn't already exist

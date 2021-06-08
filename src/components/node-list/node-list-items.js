@@ -78,7 +78,6 @@ export const getFilteredNodes = createSelector(
   [(state) => state.nodes, (state) => state.searchValue],
   (nodes, searchValue) => {
     const filteredNodes = filterNodes(nodes, searchValue);
-
     return {
       filteredNodes: highlightMatch(filteredNodes, searchValue),
       nodeIDs: getNodeIDs(filteredNodes),
