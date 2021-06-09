@@ -25,11 +25,13 @@ const SettingsModal = ({ theme, onToggle, onToggleFlag, visible, flags }) => {
         onClose={() => onToggle(false)}
         visible={visible.settingsModal}>
         <div className="pipeline-settings-modal__content">
-          <h2>Flags</h2>
+          <div className="pipeline-settings-modal__subtitle">Flags</div>
           <div className="pipeline-settings-modal__grid">
-            <div className="col-3">Name</div>
-            <div className="col-3">State</div>
-            <div className="col-6">Description</div>
+            <div className="col-3 pipeline-settings-modal__header">Name</div>
+            <div className="col-3 pipeline-settings-modal__header">State</div>
+            <div className="col-6 pipeline-settings-modal__header">
+              Description
+            </div>
             {flagData.map(({ name, value, description }) => (
               <>
                 <div className="col-3">{name}</div>

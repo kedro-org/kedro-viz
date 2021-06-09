@@ -3,15 +3,25 @@
 @import '../../styles/mixins';
 
 .kui-theme--light {
-  --color-modal-bg: #{$color-dark};
-  --color-modal-text: #{$color-light};
-  --color-modal-icon: #{$color-light};
+  --color-modal-bg: #{$color-bg-light-4};
+  --color-modal-text: #{$color-text-light};
+  --color-modal-icon: #{$color-text-light};
+  --color-modal-header-text: #{rgba($color-dark, 0.55)};
+  --color-toggle--on: #{$color-primary-2};
+  --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
+  --color-toggle--off: #{$color-bg-dark-9};
+  --color-toggle-bar--off: #{rgba($color-bg-dark-9, 0.3)};
 }
 
 .kui-theme--dark {
-  --color-modal-bg: #{$color-light};
-  --color-modal-text: #{$color-dark};
-  --color-modal-icon: #{$color-dark};
+  --color-modal-bg: #{$color-bg-dark-8};
+  --color-modal-text: #{$color-text-dark};
+  --color-modal-icon: #{$color-text-dark};
+  --color-modal-header-text: #{rgba($color-light, 0.55)};
+  --color-toggle--on: #{$color-primary};
+  --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
+  --color-toggle--off: #{$color-bg-light-3};
+  --color-toggle-bar--off: #{$color-bg-dark-10};
 }
 
 .pipeline-settings-modal {
@@ -35,13 +45,13 @@
   }
 
   .kui-modal__bg--visible {
-    opacity: 0.5;
+    opacity: 0.8;
   }
 }
 
 .pipeline-settings-modal__content {
   width: 100%;
-  margin-bottom: 2em;
+  margin-bottom: 4em;
 
   .kui-button {
     margin: 0 10px;
@@ -54,14 +64,23 @@
   font-size: 1.2em;
 }
 
+.pipeline-settings-modal__subtitle {
+  margin-bottom: 10px;
+  font-size: 1.5em;
+}
+
+.pipeline-settings-modal__header {
+  color: var(--color-modal-header-text);
+}
+
 .col-3 {
   flex: 0 0 calc(100% / 12 * 3);
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .col-6 {
   flex: 0 0 calc(100% / 12 * 6);
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .pipeline-settings-modal-toggle {
@@ -94,7 +113,7 @@
   &:before {
     width: 1.7em;
     height: 0.8em;
-    background-color: rgba($color-bg-dark-8, 0.9);
+    background-color: var(--color-toggle-bar--off);
     border-radius: 0.5em;
     transition: opacity 0.15s ease;
   }
@@ -102,25 +121,25 @@
   &:after {
     width: 0.8em;
     height: 0.8em;
-    background-color: $color-dark;
+    background-color: var(--color-toggle--off);
     border-radius: 50%;
     transition: opacity 0.15s ease, transform 0.15s ease;
   }
 
   &:hover:after {
-    background-color: $color-dark;
+    background-color: ar(--color-toggle--off);
   }
 
   &--checked:before {
-    background-color: rgba($color-bg-dark-9, 0.9);
+    background-color: var(--color-toggle-bar--on);
   }
 
   &--checked:after {
-    background-color: $color-toggle-on;
+    background-color: var(--color-toggle--on);
     transform: translate(100%, -50%);
   }
 
   &--checked:hover:after {
-    background-color: $color-toggle-on;
+    background-color: var(--color-toggle--on);
   }
 }
