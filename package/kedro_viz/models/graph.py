@@ -51,6 +51,10 @@ def _pretty_name(name: str) -> str:
     return " ".join(parts)
 
 
+def _strip_namespace(name: str) -> str:
+    return name.split('.')[-1]
+
+
 @dataclass
 class RegisteredPipeline:
     """Represent a registered pipeline in a Kedro project"""
@@ -201,7 +205,7 @@ class GraphNode(abc.ABC):
         """
         return DataNode(
             id=cls._hash(full_name),
-            name=_pretty_name(full_name),
+            name=_pretty_name(_strip_namespace(full_name)),
             full_name=full_name,
             tags=tags,
             layer=layer,
