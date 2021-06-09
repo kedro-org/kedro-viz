@@ -27,7 +27,7 @@
 # limitations under the License.
 from pathlib import Path
 from textwrap import dedent
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
@@ -45,7 +45,6 @@ from kedro_viz.models.graph import (
     TaskNode,
     TaskNodeMetadata,
 )
-
 
 orig_import = __import__
 
