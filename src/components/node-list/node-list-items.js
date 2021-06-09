@@ -60,13 +60,9 @@ export const nodeMatchesSearch = (node, searchValue) => {
  * @param {boolean} matchSearchValue dictates whether to return nodes containing search value
  * @return {object} Grouped nodes
  */
-export const filterNodes = (nodes, searchValue, matchSearchValue) => {
+export const filterNodes = (nodes, searchValue) => {
   const filterNodesByType = (type) =>
-    nodes[type].filter((node) =>
-      matchSearchValue
-        ? nodeMatchesSearch(node, searchValue)
-        : !nodeMatchesSearch(node, searchValue)
-    );
+    nodes[type].filter((node) => nodeMatchesSearch(node, searchValue));
   const filterNodeLists = (newNodes, type) => ({
     ...newNodes,
     [type]: filterNodesByType(type),
@@ -83,29 +79,11 @@ export const filterNodes = (nodes, searchValue, matchSearchValue) => {
 export const getFilteredNodes = createSelector(
   [(state) => state.nodes, (state) => state.searchValue],
   (nodes, searchValue) => {
-    const filteredNodes = filterNodes(nodes, searchValue, true);
+    const filteredNodes = filterNodes(nodes, searchValue);
 
     return {
       filteredNodes: highlightMatch(filteredNodes, searchValue),
       nodeIDs: getNodeIDs(filteredNodes),
-    };
-  }
-);
-
-/**
- * Return non filtered nodes needed for filtered modular pipelines
- * @param {object} nodes Grouped lists of nodes
- * @param {string} searchValue Search term
- * @return {object} Grouped nodes, and node IDs
- */
-export const getNonFilteredNodes = createSelector(
-  [(state) => state.nodes, (state) => state.searchValue],
-  (nodes, searchValue) => {
-    const nonFilteredNodes = filterNodes(nodes, searchValue, false);
-
-    return {
-      nonFilteredNodes,
-      nodeIDs: getNodeIDs(nonFilteredNodes),
     };
   }
 );
@@ -119,7 +97,7 @@ export const getNonFilteredNodes = createSelector(
 export const getFilteredTags = createSelector(
   [(state) => state.tags, (state) => state.searchValue],
   (tags, searchValue) =>
-    highlightMatch(filterNodes({ tag: tags }, searchValue, true), searchValue)
+    highlightMatch(filterNodes({ tag: tags }, searchValue), searchValue)
 );
 
 /**
@@ -156,22 +134,7 @@ export const getFilteredModularPipelines = createSelector(
   [(state) => state.modularPipelines, (state) => state.searchValue],
   (modularPipelines, searchValue) =>
     highlightMatch(
-      filterNodes({ modularPipeline: modularPipelines }, searchValue, true),
-      searchValue
-    )
-);
-
-/**
- * Return filtered/highlighted modular pipelines
- * @param {object} modularPipelines List of modular pipelines
- * @param {string} searchValue Search term
- * @return {object} Grouped modular pipelines
- */
-export const getNonFilteredModularPipelines = createSelector(
-  [(state) => state.modularPipelines, (state) => state.searchValue],
-  (modularPipelines, searchValue) =>
-    highlightMatch(
-      filterNodes({ modularPipeline: modularPipelines }, searchValue, false),
+      filterNodes({ modularPipeline: modularPipelines }, searchValue),
       searchValue
     )
 );
@@ -203,35 +166,6 @@ export const getFilteredModularPipelineItems = createSelector(
 );
 
 /**
- * Return non filtered/highlighted modular pipeline list items
- * @param {object} nonFilteredModularPipelines List of non filtered modularPipelines
- * @return {array} Node list items
- */
-export const getNonFilteredModularPipelineItems = createSelector(
-  getFilteredModularPipelines,
-  (state) => state.modularPipelineIDs,
-  (filteredModularPipelines) => {
-    return {
-      modularPipeline: filteredModularPipelines.modularPipeline.map(
-        (modularPipeline) => ({
-          ...modularPipeline,
-          type: 'modularPipeline',
-          visibleIcon: VisibleIcon,
-          invisibleIcon: InvisibleIcon,
-          active: false,
-          selected: false,
-          faded: false,
-          visible: true,
-          disabled: false,
-          unset: false,
-          checked: true,
-        })
-      ),
-    };
-  }
-);
-
-/**
  * Compares items for sorting in groups first
  * by enabled status (by tag) and then alphabeticaly (by name)
  * @param {object} itemA First item to compare
@@ -258,46 +192,6 @@ export const getFilteredNodeItems = createSelector(
 
     for (const type of Object.keys(filteredNodes)) {
       result[type] = filteredNodes[type]
-        .map((node) => {
-          const checked = !node.disabled_node;
-          const disabled =
-            node.disabled_tag ||
-            node.disabled_type ||
-            node.disabled_modularPipeline;
-          return {
-            ...node,
-            visibleIcon: VisibleIcon,
-            invisibleIcon: InvisibleIcon,
-            active: undefined,
-            selected: nodeSelected[node.id],
-            faded: node.disabled_node || disabled,
-            visible: !disabled && checked,
-            unset: false,
-            checked,
-            disabled,
-          };
-        })
-        .sort(compareEnabledThenAlpha);
-    }
-
-    return result;
-  }
-);
-
-/**
- * returns non filtered node items that are sorted in groups first
- * by enabled status (by tag) and then alphabeticaly (by name)
- * @param {object} itemA First item to compare
- * @param {object} itemB Second item to compare
- * @return {number} Comparison result
- */
-export const getNonFilteredNodeItems = createSelector(
-  [getNonFilteredNodes, (state) => state.nodeSelected],
-  ({ nonFilteredNodes }, nodeSelected) => {
-    const result = {};
-
-    for (const type of Object.keys(nonFilteredNodes)) {
-      result[type] = nonFilteredNodes[type]
         .map((node) => {
           const checked = !node.disabled_node;
           const disabled =
@@ -448,40 +342,41 @@ export const getFilteredNodeModularPipelines = createSelector(
   [
     getFilteredNodeItems,
     getFilteredModularPipelineItems,
-    getNonFilteredModularPipelineItems,
     (state) => state.modularPipelines,
     (state) => state.nodeTypeIDs,
   ],
   (
     filteredNodeItems,
     filteredModularPipelines,
-    nonFilteredModularPipelines,
     modularPipelines,
     nodeTypeIDs
   ) => {
     const filteredNodeMoudularPipelines = [];
     const filteredMP = filteredModularPipelines.modularPipeline;
 
-    // 1. check each node against filtered modular pipelines and take them out if we found parent modular pipeline
-    nodeTypeIDs.forEach((key) => {
-      filteredNodeItems[key]?.forEach((filteredNode, i) => {
-        if (
-          filteredMP.some(
-            (mp) =>
-              mp.id ===
-              filteredNode.modularPipelines[
-                filteredNode.modularPipelines.length - 1
-              ]
-          )
-        ) {
-          filteredNodeItems[key].splice(i, 1);
-        }
-      });
-    });
+    const nodeItems = {};
+    Object.assign(nodeItems, filteredNodeItems);
+
+    // // 1. check each node against filtered modular pipelines and take them out if we found parent modular pipeline
+    // nodeTypeIDs.forEach((key) => {
+    //   nodeItems[key]?.forEach((filteredNode, i) => {
+    //     if (
+    //       filteredMP.some(
+    //         (mp) =>
+    //           mp.id ===
+    //           filteredNode.modularPipelines[
+    //             filteredNode.modularPipelines.length - 1
+    //           ]
+    //       )
+    //     ) {
+    //       nodeItems[key].splice(i, 1);
+    //     }
+    //   });
+    // });
 
     // for the remaining nodes, obtain the parent modular pipeline items
     nodeTypeIDs.forEach((key) => {
-      filteredNodeItems[key]?.forEach((filteredNode, i) => {
+      nodeItems[key]?.forEach((filteredNode) => {
         // go through the set of modular pipelines
         filteredNode.modularPipelines.forEach((nodeModularPipeline) => {
           if (!filteredMP.some((mpItem) => mpItem.id === nodeModularPipeline)) {
@@ -637,26 +532,19 @@ export const getFilteredModularPipelineNodes = createSelector(
   (filteredNodeItems, filteredTreeItems, modularPipelineIDs, nodeTypeIDs) => {
     const modularPipelineNodes = arrayToObject(modularPipelineIDs, () => []);
 
+    const nodeItems = Object.assign({}, filteredNodeItems);
+
     // assumption: each node is unique and will only exist once on the flowchart, hence we are only taking
     // the deepest nested modular pipeline as the node's modular pipeline
     nodeTypeIDs.forEach((key) => {
       // extract the last modular pipeline within the array of filtered nodes
-      filteredTreeItems[key]?.forEach((node) => {
+      nodeItems[key]?.forEach((node) => {
         if (node.modularPipelines.length > 1) {
           node.modularPipelines = [
             node.modularPipelines[node.modularPipelines.length - 1],
           ];
         }
       });
-
-      // // extract the last modular pipeline within the array of filtered nodes
-      // nonFilteredNodeItems[key]?.forEach((node, i) => {
-      //   if (node.modularPipelines.length > 1) {
-      //     node.modularPipelines = [
-      //       node.modularPipelines[node.modularPipelines.length - 1],
-      //     ];
-      //   }
-      // });
     });
 
     // create a new field for the topmost / root pipeline
@@ -665,35 +553,22 @@ export const getFilteredModularPipelineNodes = createSelector(
     // go through each type of nodes according to the order of specified node types in normalize-data
     // first to identify root level nodes
     nodeTypeIDs.forEach((key) => {
-      filteredNodeItems[key]?.forEach((node, i) => {
+      nodeItems[key]?.forEach((node, i) => {
         if (node.modularPipelines.length === 0) {
           modularPipelineNodes.main.push(node);
-          filteredNodeItems[key].splice(i, 1);
+          nodeItems[key].splice(i, 1);
         }
       });
-
-      // // take out all unfiltered nodes from the main pipeline
-      // nonFilteredNodeItems[key]?.forEach((node, i) => {
-      //   if (node.modularPipelines.length === 0) {
-      //     nonFilteredNodeItems[key].splice(i, 1);
-      //   }
-      // });
     });
 
     // go through the set of nodes and slot them into the corresponding modular pipeline array
     filteredTreeItems.forEach((mp) => {
       nodeTypeIDs.forEach((key) => {
-        filteredNodeItems[key]?.forEach((nodeItem) => {
+        nodeItems[key]?.forEach((nodeItem) => {
           if (nodeItem.modularPipelines.includes(mp.id)) {
             modularPipelineNodes[mp.id].push(nodeItem);
           }
         });
-
-        // nonFilteredNodeItems[key]?.forEach((nodeItem) => {
-        //   if (nodeItem.modularPipelines.includes(mp.id)) {
-        //     modularPipelineNodes[mp.id].push(nodeItem);
-        //   }
-        // });
       });
     });
 
@@ -710,7 +585,7 @@ export const getNestedModularPipelines = createSelector(
     getFilteredModularPipelineNodes,
     (state) => state.modularPipelines,
   ],
-  (filteredTreeItems, modularPipelineNodes, modularPipelines) => {
+  (filteredTreeItems, modularPipelineNodes) => {
     // go through modular pipeline ids to return nested data structure
     const mainTree = {
       nodes: modularPipelineNodes ? modularPipelineNodes.main : [],
@@ -723,21 +598,31 @@ export const getNestedModularPipelines = createSelector(
     let level = 1; // level indiator: this keeps track of how far you are down in the nested pipeline
     let currentParent = mainTree;
 
-    // ** note to self: current set up only works with the assumption that the parent modular pipeline exists
-    filteredTreeItems.forEach((modularPipeline) => {
+    filteredTreeItems?.forEach((modularPipeline) => {
       const { id } = modularPipeline;
       let currentLevel = id.split('.').length;
 
-      // determine the current parent and update level
-      if (currentLevel > level) {
-        // look for the parent modular pipeline in the new lower level
-        let i = id.lastIndexOf('.');
-        const parent = id.substr(0, i);
+      if (currentLevel > 1) {
+        let lastIndex = 0;
+        let parents = [];
+        // obtain all parents for that level
+        for (let i = 0; i <= currentLevel - 1; i++) {
+          // obtain the name of that pipeline
+          parents.push(id.substr(0, id.indexOf('.', lastIndex)));
+          lastIndex = id.indexOf('.', lastIndex) + 1;
+        }
 
-        // update the current parent if it is the children of the previous currentParent
-        currentParent = currentParent.children.filter(
-          (mp) => mp.id === parent
-        )[0];
+        // remove any empty instance
+        parents = parents.filter((e) => e);
+
+        let parent = mainTree;
+
+        // go through each level to obtain the child
+        parents.forEach((id) => {
+          parent = parent.children.filter((mp) => mp.id === id)[0];
+        });
+
+        currentParent = parent;
 
         // update the current level indicator to a new lower level
         level = currentLevel;

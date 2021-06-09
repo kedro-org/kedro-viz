@@ -9,6 +9,7 @@ const NodeListTreeItem = ({
   onItemMouseLeave,
   onItemChange,
   children,
+  searchCount,
 }) => (
   <TreeItem
     key={data.id}
@@ -21,6 +22,7 @@ const NodeListTreeItem = ({
         kind="element"
         label={data.highlightedLabel || data.name}
         name={data.name}
+        icon={data.type}
         type={data.type}
         active={data.active}
         checked={data.checked}
@@ -37,6 +39,7 @@ const NodeListTreeItem = ({
         onMouseLeave={() => onItemMouseLeave(data)}
         onChange={(e) => onItemChange(data, !e.target.checked)}
         rowType="tree"
+        searchCount={searchCount}
       />
     }>
     {children}

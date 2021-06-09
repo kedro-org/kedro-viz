@@ -57,6 +57,7 @@ const NodeListRow = memo(
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
     rowType,
+    searchCount, // this is the value that saves the amount of
   }) => {
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
@@ -133,22 +134,36 @@ const NodeListRow = memo(
             name={name}
             onChange={onChange}
           />
-          <VisibilityIcon
-            aria-label={name}
-            className={classnames(
-              'pipeline-nodelist__row__icon',
-              'pipeline-row__toggle-icon',
-              `pipeline-row__toggle-icon--kind-${kind}`,
-              {
-                'pipeline-row__toggle-icon--parent': Boolean(children),
-                'pipeline-row__toggle-icon--child': !children,
-                'pipeline-row__toggle-icon--checked': checked,
-                'pipeline-row__toggle-icon--unchecked': !checked,
-                'pipeline-row__toggle-icon--unset': unset,
-                'pipeline-row__toggle-icon--all-unset': allUnset,
-              }
-            )}
-          />
+          {typeof searchCount !== 'undefined' ? (
+            <span
+              className={classnames(
+                'pipeline-nodelist__row__label',
+                `pipeline-nodelist__row__label--kind-${kind}`,
+                {
+                  'pipeline-nodelist__row__label--faded': faded,
+                  'pipeline-nodelist__row__label--disabled': disabled,
+                }
+              )}>
+              <b>{searchCount}</b>
+            </span>
+          ) : (
+            <VisibilityIcon
+              aria-label={name}
+              className={classnames(
+                'pipeline-nodelist__row__icon',
+                'pipeline-row__toggle-icon',
+                `pipeline-row__toggle-icon--kind-${kind}`,
+                {
+                  'pipeline-row__toggle-icon--parent': Boolean(children),
+                  'pipeline-row__toggle-icon--child': !children,
+                  'pipeline-row__toggle-icon--checked': checked,
+                  'pipeline-row__toggle-icon--unchecked': !checked,
+                  'pipeline-row__toggle-icon--unset': unset,
+                  'pipeline-row__toggle-icon--all-unset': allUnset,
+                }
+              )}
+            />
+          )}
         </label>
       </div>
     );

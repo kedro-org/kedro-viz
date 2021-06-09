@@ -66,6 +66,39 @@ const TreeListProvider = ({
     nodeTypeIDs,
   });
 
+  // construct an object that stores the number of filtered results for each modular pipeline
+  const searchTreeCount = {};
+
+  const countHighlightedItems = (item, totalCount, parent) => {
+    // go through the nodes
+    totalCount[item.id] = 0;
+
+    // check against its own name first
+    if (typeof item.highlightedLabel !== 'undefined') {
+      totalCount[item.id] = totalCount[item.id] + 1;
+    }
+
+    item.nodes.forEach((node) => {
+      if (typeof node.highlightedLabel !== 'undefined') {
+        totalCount[item.id] = totalCount[item.id] + 1;
+      }
+    });
+
+    // go through the children
+    item.children.forEach((child) => {
+      // go through the children of all child
+      countHighlightedItems(child, totalCount, item.id);
+    });
+
+    // update the parent
+    totalCount[parent] = totalCount[parent] + totalCount[item.id];
+  };
+
+  // go through the filteredModularPipelines and count the highlight labels
+  if (searchValue) {
+    countHighlightedItems(treeData, searchTreeCount, 'main');
+  }
+
   const onItemClick = (item) => {
     if (!isModularPipelineType(item.type)) {
       onToggleNodeSelected(item.id);
@@ -77,7 +110,8 @@ const TreeListProvider = ({
     onItemMouseEnter,
     onItemMouseLeave,
     onItemChange,
-    onItemClick
+    onItemClick,
+    searchTreeCount
   ) => {
     return (
       <NodeListTreeItem
@@ -86,7 +120,8 @@ const TreeListProvider = ({
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
         onItemClick={onItemClick}
-        key={rowData.id}>
+        key={rowData.id}
+        searchCount={searchTreeCount[rowData.id]}>
         {rowData.children.length > 0 &&
           rowData.children.map((node) =>
             renderTree(
@@ -94,7 +129,8 @@ const TreeListProvider = ({
               onItemMouseEnter,
               onItemMouseLeave,
               onItemChange,
-              onItemClick
+              onItemClick,
+              searchTreeCount
             )
           )}
 
@@ -125,7 +161,8 @@ const TreeListProvider = ({
             onItemMouseEnter,
             onItemMouseLeave,
             onItemChange,
-            onItemClick
+            onItemClick,
+            searchTreeCount
           )
         )}
 
