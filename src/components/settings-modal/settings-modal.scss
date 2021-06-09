@@ -126,10 +126,6 @@
     transition: opacity 0.15s ease, transform 0.15s ease;
   }
 
-  &:hover:after {
-    background-color: ar(--color-toggle--off);
-  }
-
   &--checked:before {
     background-color: var(--color-toggle-bar--on);
   }
@@ -137,9 +133,5 @@
   &--checked:after {
     background-color: var(--color-toggle--on);
     transform: translate(100%, -50%);
-  }
-
-  &--checked:hover:after {
-    background-color: var(--color-toggle--on);
   }
 }
