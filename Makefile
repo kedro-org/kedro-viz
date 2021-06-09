@@ -30,7 +30,7 @@ pylint:
 	pylint --rcfile=package/.pylintrc -j 0 --disable=protected-access,missing-docstring,redefined-outer-name,no-self-use,invalid-name,too-few-public-methods,no-member,unused-argument,duplicate-code package/tests
 	pylint --rcfile=package/.pylintrc -j 0 --disable=missing-docstring,no-name-in-module,unused-argument package/features
 	flake8 --config=package/.flake8 package
-	yes | mypy --install-types && mypy --config-file=package/mypy.ini package
+	yes | mypy --install-types && mypy --no-incremental --config-file=package/mypy.ini package
 
 secret-scan:
 	trufflehog --max_depth 1 --exclude_path trufflehog-ignore.txt .
