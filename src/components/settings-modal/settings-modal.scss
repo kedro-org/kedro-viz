@@ -1,0 +1,126 @@
+@import '../../styles/variables';
+@import '../../styles/extends';
+@import '../../styles/mixins';
+
+.kui-theme--light {
+  --color-modal-bg: #{$color-dark};
+  --color-modal-text: #{$color-light};
+  --color-modal-icon: #{$color-light};
+}
+
+.kui-theme--dark {
+  --color-modal-bg: #{$color-light};
+  --color-modal-text: #{$color-dark};
+  --color-modal-icon: #{$color-dark};
+}
+
+.pipeline-settings-modal {
+  .kui-modal__content {
+    max-width: calc(100% - 50em);
+  }
+
+  .kui-modal__wrapper {
+    align-items: flex-start;
+    color: var(--color-modal-text);
+    text-align: left;
+    background-color: var(--color-modal-bg);
+  }
+
+  .kui-modal__title {
+    color: var(--color-modal-text);
+  }
+
+  .kui-icon__graphics {
+    fill: var(--color-modal-icon);
+  }
+
+  .kui-modal__bg--visible {
+    opacity: 0.5;
+  }
+}
+
+.pipeline-settings-modal__content {
+  width: 100%;
+  margin-bottom: 2em;
+
+  .kui-button {
+    margin: 0 10px;
+  }
+}
+
+.pipeline-settings-modal__grid {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 1.2em;
+}
+
+.col-3 {
+  flex: 0 0 calc(100% / 12 * 3);
+  margin-top: 10px;
+}
+
+.col-6 {
+  flex: 0 0 calc(100% / 12 * 6);
+  margin-top: 10px;
+}
+
+.pipeline-settings-modal-toggle {
+  margin-top: 0.3em;
+  margin-bottom: 2em;
+  transition: opacity 0.2s ease;
+}
+
+.pipeline-settings-modal-toggle-input {
+  @include screenReaderOnly;
+}
+
+.pipeline-settings-modal-toggle-label {
+  position: relative;
+  padding: 0 0 0 2.8em;
+  cursor: pointer;
+  user-select: none;
+
+  &:before,
+  &:after {
+    position: absolute;
+    top: 0.81em;
+    left: 0;
+    display: block;
+    margin: 0 0.8em 0 0;
+    transform: translateY(-50%);
+    content: ' ';
+  }
+
+  &:before {
+    width: 1.7em;
+    height: 0.8em;
+    background-color: rgba($color-bg-dark-8, 0.9);
+    border-radius: 0.5em;
+    transition: opacity 0.15s ease;
+  }
+
+  &:after {
+    width: 0.8em;
+    height: 0.8em;
+    background-color: $color-dark;
+    border-radius: 50%;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  &:hover:after {
+    background-color: $color-dark;
+  }
+
+  &--checked:before {
+    background-color: rgba($color-bg-dark-9, 0.9);
+  }
+
+  &--checked:after {
+    background-color: $color-toggle-on;
+    transform: translate(100%, -50%);
+  }
+
+  &--checked:hover:after {
+    background-color: $color-toggle-on;
+  }
+}

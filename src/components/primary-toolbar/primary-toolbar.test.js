@@ -18,6 +18,7 @@ describe('PrimaryToolbar', () => {
       labelBtn: false,
       layerBtn: false,
       exportBtn: false,
+      settingsBtn: false,
     };
     const wrapper = setup.mount(<ConnectedPrimaryToolbar />, { visible });
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
@@ -37,6 +38,7 @@ describe('PrimaryToolbar', () => {
     ['.pipeline-menu-button--labels', 'onToggleTextLabels'],
     ['.pipeline-menu-button--export', 'onToggleExportModal'],
     ['.pipeline-menu-button--layers', 'onToggleLayers'],
+    ['.pipeline-menu-button--settings', 'onToggleSettingsModal'],
   ];
 
   test.each(functionCalls)(
@@ -65,6 +67,7 @@ describe('PrimaryToolbar', () => {
         exportBtn: expect.any(Boolean),
         exportModal: expect.any(Boolean),
         plotModal: expect.any(Boolean),
+        settingsModal: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),
         themeBtn: expect.any(Boolean),

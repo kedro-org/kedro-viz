@@ -87,7 +87,9 @@ const MetaData = ({
                 <MetaCodeToggle
                   showCode={visibleCode}
                   hasCode={hasCode}
-                  onChange={(event) => onToggleCode(event.target.checked)}
+                  onChange={(event) => {
+                    onToggleCode(event.target.checked);
+                  }}
                 />
               )}
             </div>

@@ -16,6 +16,7 @@ import {
   resetData,
   toggleIgnoreLargeWarning,
   toggleExportModal,
+  toggleSettingsModal,
   toggleLayers,
   toggleMiniMap,
   toggleParametersHovered,

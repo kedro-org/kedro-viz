@@ -114,6 +114,7 @@ App.propTypes = {
     labelBtn: PropTypes.bool,
     layerBtn: PropTypes.bool,
     exportBtn: PropTypes.bool,
+    settingsBtn: PropTypes.bool,
     sidebar: PropTypes.bool,
     themeBtn: PropTypes.bool,
   }),

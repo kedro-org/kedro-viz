@@ -27,22 +27,26 @@ export const largeGraphThreshold = 1000;
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
   oldgraph: {
+    name: 'Old Graph',
     description: 'Use older Dagre graphing algorithm',
     default: false,
     private: false,
     icon: '📈',
   },
   newparams: {
+    name: 'New parameters',
     description: `Disable parameters on page load and highlight parameter connections.`,
     default: true,
     icon: '🎛️',
   },
   sizewarning: {
+    name: 'Size Warning',
     description: 'Show a warning before rendering very large graphs',
     default: true,
     icon: '🐳',
   },
   modularpipeline: {
+    name: 'Modular Pipelines',
     description: 'Enable modular pipeline features',
     default: false,
     icon: '⛓️',
