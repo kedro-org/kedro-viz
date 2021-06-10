@@ -10,7 +10,7 @@ build: clean
 	cp -R build package/kedro_viz/html
 
 clean:
-	rm -rf build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
+	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
 	find . -regex ".*/__pycache__" -exec rm -rf {} +
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
 
