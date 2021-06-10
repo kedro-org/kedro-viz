@@ -58,7 +58,8 @@
   }
 }
 
-.pipeline-settings-modal__grid {
+.pipeline-settings-modal__grid,
+.pipeline-settings-modal__header {
   display: flex;
   flex-wrap: wrap;
   font-size: 1.2em;
@@ -69,7 +70,9 @@
   font-size: 1.5em;
 }
 
-.pipeline-settings-modal__header {
+.pipeline-settings-modal__name,
+.pipeline-settings-modal__state,
+.pipeline-settings-modal__description {
   color: var(--color-modal-header-text);
 }
 
@@ -84,8 +87,6 @@
 }
 
 .pipeline-settings-modal-toggle {
-  margin-top: 0.3em;
-  margin-bottom: 2em;
   transition: opacity 0.2s ease;
 }
 

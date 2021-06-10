@@ -89,11 +89,11 @@ export const PrimaryToolbar = ({
         visible={visible.layerBtn}
       />
       <IconButton
-        ariaLabel={`Change the settings flags`}
+        ariaLabel={'Change the settings flags'}
         className={'pipeline-menu-button--settings'}
         onClick={() => onToggleSettingsModal(true)}
         icon={SettingsIcon}
-        labelText={`Settings`}
+        labelText={'Settings'}
         disabled={disableLayerBtn}
         visible={visible.settingsBtn}
       />

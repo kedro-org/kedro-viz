@@ -7,6 +7,7 @@ import {
   CHANGE_FLAG,
   RESET_DATA,
   TOGGLE_EXPORT_MODAL,
+  TOGGLE_SETTINGS_MODAL,
   TOGGLE_LAYERS,
   TOGGLE_MINIMAP,
   TOGGLE_PARAMETERS_HOVERED,
@@ -194,6 +195,16 @@ describe('Reducer', () => {
         visible: false,
       });
       expect(newState.visible.exportModal).toEqual(false);
+    });
+  });
+
+  describe('TOGGLE_SETTINGS_MODAL', () => {
+    it('should toggle whether the export modal is visible', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_SETTINGS_MODAL,
+        visible: false,
+      });
+      expect(newState.visible.settingsModal).toEqual(false);
     });
   });
 

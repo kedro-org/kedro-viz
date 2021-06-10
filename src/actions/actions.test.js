@@ -2,6 +2,7 @@ import animals from '../utils/data/animals.mock.json';
 import {
   CHANGE_FLAG,
   RESET_DATA,
+  TOGGLE_SETTINGS_MODAL,
   TOGGLE_EXPORT_MODAL,
   TOGGLE_IGNORE_LARGE_WARNING,
   TOGGLE_LAYERS,
@@ -82,6 +83,15 @@ describe('actions', () => {
       visible,
     };
     expect(toggleExportModal(visible)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether to show the settings modal', () => {
+    const visible = false;
+    const expectedAction = {
+      type: TOGGLE_SETTINGS_MODAL,
+      visible,
+    };
+    expect(toggleSettingsModal(visible)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether the sidebar is open', () => {

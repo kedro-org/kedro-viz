@@ -9,7 +9,7 @@ import './settings-modal.css';
 const SettingsToggle = ({ id, checked, onChange, className }) => {
   const toggleLabel = checked ? 'On' : 'Off';
   return (
-    <div className={classnames('pipeline-settings-modal-toggles', className)}>
+    <div className={classnames('pipeline-settings-modal-toggle', className)}>
       <label
         className={classnames(
           modifiers('pipeline-settings-modal-toggle-label', {

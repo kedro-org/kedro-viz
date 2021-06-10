@@ -26,26 +26,26 @@ const SettingsModal = ({ theme, onToggle, onToggleFlag, visible, flags }) => {
         visible={visible.settingsModal}>
         <div className="pipeline-settings-modal__content">
           <div className="pipeline-settings-modal__subtitle">Flags</div>
-          <div className="pipeline-settings-modal__grid">
-            <div className="col-3 pipeline-settings-modal__header">Name</div>
-            <div className="col-3 pipeline-settings-modal__header">State</div>
-            <div className="col-6 pipeline-settings-modal__header">
+          <div className="pipeline-settings-modal__header">
+            <div className="col-3 pipeline-settings-modal__name">Name</div>
+            <div className="col-3 pipeline-settings-modal__state">State</div>
+            <div className="col-6 pipeline-settings-modal__description">
               Description
             </div>
-            {flagData.map(({ name, value, description }) => (
-              <>
-                <div className="col-3">{name}</div>
-                <SettingsToggle
-                  id={name}
-                  className="col-3"
-                  checked={flags[value]}
-                  onChange={(event) =>
-                    onToggleFlag(value, event.target.checked)
-                  }></SettingsToggle>
-                <div className="col-6">{description}</div>
-              </>
-            ))}
           </div>
+          {flagData.map(({ name, value, description }, index) => (
+            <div className="pipeline-settings-modal__grid" key={index}>
+              <div className="col-3">{name}</div>
+              <SettingsToggle
+                id={name}
+                className="col-3"
+                checked={flags[value]}
+                onChange={(event) =>
+                  onToggleFlag(value, event.target.checked)
+                }></SettingsToggle>
+              <div className="col-6">{description}</div>
+            </div>
+          ))}
         </div>
       </Modal>
     </div>
