@@ -67,10 +67,6 @@
   }
 }
 
-.pipeline-nodelist__elements-panel {
-  padding-top: 1em;
-}
-
 @include transparentColour(
   '--nodelist-bg-transparent',
   $color-bg-light-3,
