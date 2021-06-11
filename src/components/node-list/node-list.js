@@ -55,27 +55,25 @@ const NodeList = ({
                 style={{ width: 'auto' }}
                 autoHide
                 hideTracksWhenNotNeeded>
-                <div classnames="pipeline-nodelist__tree">
-                  {searching ? (
-                    <NodeListTreeSearch
-                      searchValue={searchValue}
-                      faded={faded}
-                      onItemClick={onItemClick}
-                      onItemMouseEnter={onItemMouseEnter}
-                      onItemMouseLeave={onItemMouseLeave}
-                      onItemChange={onItemChange}
-                    />
-                  ) : (
-                    <NodeListTree
-                      searchValue={searchValue}
-                      faded={faded}
-                      onItemClick={onItemClick}
-                      onItemMouseEnter={onItemMouseEnter}
-                      onItemMouseLeave={onItemMouseLeave}
-                      onItemChange={onItemChange}
-                    />
-                  )}
-                </div>
+                {searching ? (
+                  <NodeListTreeSearch
+                    searchValue={searchValue}
+                    faded={faded}
+                    onItemClick={onItemClick}
+                    onItemMouseEnter={onItemMouseEnter}
+                    onItemMouseLeave={onItemMouseLeave}
+                    onItemChange={onItemChange}
+                  />
+                ) : (
+                  <NodeListTree
+                    searchValue={searchValue}
+                    faded={faded}
+                    onItemClick={onItemClick}
+                    onItemMouseEnter={onItemMouseEnter}
+                    onItemMouseLeave={onItemMouseLeave}
+                    onItemChange={onItemChange}
+                  />
+                )}
               </Scrollbars>
             </div>
             <div className="pipeline-nodelist__filter-panel" {...panelB}>
