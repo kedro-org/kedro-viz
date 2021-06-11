@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -18,7 +18,7 @@ import {
 } from '../../selectors/modular-pipelines';
 import {
   getNestedModularPipelines,
-  getTreeSearchValueCount,
+  getFilteredTreeItems,
 } from './node-list-items';
 import {
   getGroupedNodes,
@@ -59,6 +59,31 @@ const TreeListProvider = ({
 }) => {
   const classes = useStyles();
 
+  const [expandedPipelines, setExpandedPipelines] = useState([]);
+
+  useEffect(() => {
+    const filteredTreeItems =
+      searchValue !== ''
+        ? getFilteredTreeItems({
+            nodes,
+            modularPipelines,
+            nodeSelected,
+            searchValue,
+            modularPipelineIds,
+            nodeModularPipelines,
+            nodeTypeIDs,
+          })
+        : [];
+
+    let expandedModularPipelines = [];
+
+    searchValue !== '' &&
+      filteredTreeItems.forEach((modularPipeline) =>
+        expandedModularPipelines.push(modularPipeline.id)
+      );
+    setExpandedPipelines(expandedModularPipelines);
+  }, [searchValue]);
+
   const treeData = getNestedModularPipelines({
     nodes,
     modularPipelines,
@@ -68,8 +93,6 @@ const TreeListProvider = ({
     nodeModularPipelines,
     nodeTypeIDs,
   });
-
-  const searchTreeCount = getTreeSearchValueCount({ treeData, searchValue });
 
   const onItemClick = (item) => {
     if (!isModularPipelineType(item.type)) {
@@ -92,8 +115,7 @@ const TreeListProvider = ({
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
         onItemClick={onItemClick}
-        key={rowData.id}
-        searchCount={searchTreeCount[rowData.id]}>
+        key={rowData.id}>
         {rowData.children.length > 0 &&
           rowData.children.map((node) =>
             renderTree(
@@ -125,7 +147,8 @@ const TreeListProvider = ({
     <StyledTreeView
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpandIcon={<ChevronRightIcon />}>
+      defaultExpandIcon={<ChevronRightIcon />}
+      expanded={expandedPipelines}>
       {treeData.children.length > 0 &&
         treeData.children.map((node) =>
           renderTree(
@@ -133,8 +156,7 @@ const TreeListProvider = ({
             onItemMouseEnter,
             onItemMouseLeave,
             onItemChange,
-            onItemClick,
-            searchTreeCount
+            onItemClick
           )
         )}
 

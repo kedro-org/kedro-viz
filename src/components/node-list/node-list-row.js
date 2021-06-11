@@ -118,35 +118,23 @@ const NodeListRow = memo(
           />
         </TextButton>
         {children}
-        <label
-          htmlFor={id}
-          className={classnames('pipeline-row__toggle', {
-            'pipeline-row__toggle--disabled': disabled,
-            'pipeline-row__toggle--selected': selected,
-            'pipeline-row__toggle--not-tag': type !== 'tag',
-          })}>
-          <input
-            id={id}
-            className="pipeline-nodelist__row__checkbox"
-            type="checkbox"
-            checked={checked}
-            disabled={disabled}
-            name={name}
-            onChange={onChange}
-          />
-          {typeof searchCount !== 'undefined' ? (
-            <span
-              className={classnames(
-                'pipeline-nodelist__row__label',
-                `pipeline-nodelist__row__label--kind-${kind}`,
-                {
-                  'pipeline-nodelist__row__label--faded': faded,
-                  'pipeline-nodelist__row__label--disabled': disabled,
-                }
-              )}>
-              <b>{searchCount}</b>
-            </span>
-          ) : (
+        {type !== 'modularPipeline' && (
+          <label
+            htmlFor={id}
+            className={classnames('pipeline-row__toggle', {
+              'pipeline-row__toggle--disabled': disabled,
+              'pipeline-row__toggle--selected': selected,
+              'pipeline-row__toggle--not-tag': type !== 'tag',
+            })}>
+            <input
+              id={id}
+              className="pipeline-nodelist__row__checkbox"
+              type="checkbox"
+              checked={checked}
+              disabled={disabled}
+              name={name}
+              onChange={onChange}
+            />
             <VisibilityIcon
               aria-label={name}
               className={classnames(
@@ -163,8 +151,8 @@ const NodeListRow = memo(
                 }
               )}
             />
-          )}
-        </label>
+          </label>
+        )}
       </div>
     );
   },
