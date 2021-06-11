@@ -55,7 +55,6 @@ const NodeList = ({
                 style={{ width: 'auto' }}
                 autoHide
                 hideTracksWhenNotNeeded>
-                <h2 className="pipeline-nodelist-section__title">Elements</h2>
                 <div classnames="pipeline-nodelist__tree">
                   {searching ? (
                     <NodeListTreeSearch

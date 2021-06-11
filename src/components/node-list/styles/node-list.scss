@@ -67,6 +67,10 @@
   }
 }
 
+.pipeline-nodelist__tree {
+  padding-top: 1em;
+}
+
 @include transparentColour(
   '--nodelist-bg-transparent',
   $color-bg-light-3,

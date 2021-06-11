@@ -354,34 +354,14 @@ export const getFilteredNodeModularPipelines = createSelector(
     const filteredNodeMoudularPipelines = [];
     const filteredMP = filteredModularPipelines.modularPipeline;
 
-    const nodeItems = {};
-    Object.assign(nodeItems, filteredNodeItems);
+    const nodeItems = Object.assign({}, filteredNodeItems);
 
-    // // 1. check each node against filtered modular pipelines and take them out if we found parent modular pipeline
-    // nodeTypeIDs.forEach((key) => {
-    //   nodeItems[key]?.forEach((filteredNode, i) => {
-    //     if (
-    //       filteredMP.some(
-    //         (mp) =>
-    //           mp.id ===
-    //           filteredNode.modularPipelines[
-    //             filteredNode.modularPipelines.length - 1
-    //           ]
-    //       )
-    //     ) {
-    //       nodeItems[key].splice(i, 1);
-    //     }
-    //   });
-    // });
-
-    // for the remaining nodes, obtain the parent modular pipeline items
     nodeTypeIDs.forEach((key) => {
       nodeItems[key]?.forEach((filteredNode) => {
-        // go through the set of modular pipelines
         filteredNode.modularPipelines.forEach((nodeModularPipeline) => {
           if (!filteredMP.some((mpItem) => mpItem.id === nodeModularPipeline)) {
           }
-          // construct the modular pipeline object
+
           filteredNodeMoudularPipelines.push(
             constructModularPipelineItem(
               modularPipelines.filter(
@@ -468,7 +448,6 @@ export const getFilteredModularPipelineParent = createSelector(
             )
           );
         }
-
         lastIndex = childrenMP.id.indexOf('.', lastIndex) + 1;
       }
     });
