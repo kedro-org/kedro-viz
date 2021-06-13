@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import cloneDeep from 'lodash.clonedeep';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import { sidebar } from '../../config';
 import IndicatorIcon from '../icons/indicator';
@@ -176,6 +177,21 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
   const byEnabledTag = Number(itemA.disabled_tag) - Number(itemB.disabled_tag);
   const byAlpha = itemA.name.localeCompare(itemB.name);
   return byEnabledTag !== 0 ? byEnabledTag : byAlpha;
+};
+
+/**
+ * Compares items for sorting in each modularPipeline in the nested tree structure
+ * by enabled status (by tag) and then alphabeticaly (by name)
+ * @param {object} itemA First item to compare
+ * @param {object} itemB Second item to compare
+ * @return {number} Comparison result
+ */
+const compareEnabledThenType = (itemA, itemB) => {
+  const byEnabledTag = Number(itemA.disabled_tag) - Number(itemB.disabled_tag);
+  const nodeTypeIDs = ['task', 'data', 'parameters'];
+  const byNodeType =
+    nodeTypeIDs.indexOf(itemA.type) - nodeTypeIDs.indexOf(itemB.type);
+  return byEnabledTag !== 0 ? byEnabledTag : byNodeType;
 };
 
 /**
@@ -513,7 +529,7 @@ export const getFilteredModularPipelineNodes = createSelector(
   (filteredNodeItems, filteredTreeItems, modularPipelineIDs, nodeTypeIDs) => {
     const modularPipelineNodes = arrayToObject(modularPipelineIDs, () => []);
 
-    const nodeItems = Object.assign({}, filteredNodeItems);
+    const nodeItems = cloneDeep(filteredNodeItems);
 
     // assumption: each node is unique and will only exist once on the flowchart, hence we are only taking
     // the deepest nested modular pipeline as the node's modular pipeline
@@ -542,6 +558,9 @@ export const getFilteredModularPipelineNodes = createSelector(
       });
     });
 
+    // further sort nodes according to status
+    modularPipelineNodes.main.sort(compareEnabledThenType);
+
     // go through the set of nodes and slot them into the corresponding modular pipeline array
     filteredTreeItems.forEach((mp) => {
       nodeTypeIDs.forEach((key) => {
@@ -551,6 +570,7 @@ export const getFilteredModularPipelineNodes = createSelector(
           }
         });
       });
+      modularPipelineNodes[mp.id].sort(compareEnabledThenType);
     });
 
     return modularPipelineNodes;
