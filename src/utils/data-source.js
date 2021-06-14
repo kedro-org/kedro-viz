@@ -1,6 +1,7 @@
 import getRandomPipeline from './random-data';
 import animals from './data/animals.mock.json';
 import demo from './data/demo.mock.json';
+import selectors from './data/selectors.mock.json';
 
 /**
  * Determine the data source ID from the URL query string, or an environment
@@ -46,6 +47,9 @@ export const getDataValue = (source) => {
     case 'demo':
       // Use data from the 'demo' test dataset
       return nameSource(demo);
+    case 'selectors':
+      // Use data from the 'selectors' test dataset
+      return nameSource(selectors);
     case 'random':
       // Use procedurally-generated data
       return nameSource(getRandomPipeline());
@@ -54,7 +58,7 @@ export const getDataValue = (source) => {
       return source;
     default:
       throw new Error(
-        `Unexpected data source value '${source}'. Your input should be one of the following values: 'animals', 'demo', 'json', or 'random'`
+        `Unexpected data source value '${source}'. Your input should be one of the following values: 'animals', 'demo', 'json', 'selectors', or 'random'`
       );
   }
 };

@@ -262,8 +262,8 @@ $list-inline-spacing: 0.2em;
 
 .pipeline-metadata__plot {
   display: flex;
-  cursor: pointer;
   height: 300px;
+  cursor: pointer;
 }
 
 .pipeline-metadata__properties {
@@ -279,8 +279,8 @@ $list-inline-spacing: 0.2em;
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: var(--color-button-plot);
   padding: 0;
+  background-color: var(--color-button-plot);
 
   &:hover {
     background-color: var(--color-button-plot-hovered);

@@ -13,14 +13,14 @@
 }
 
 %button {
-  background: none;
+  padding: 0;
   color: inherit;
   font-size: inherit;
   font-family: inherit;
+  background: none;
   border: none;
   box-shadow: none;
   cursor: pointer;
-  padding: 0;
 
   &:focus {
     outline: none;

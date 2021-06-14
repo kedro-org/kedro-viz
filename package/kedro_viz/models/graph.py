@@ -30,8 +30,8 @@
 import abc
 import hashlib
 import inspect
-import logging
 import json
+import logging
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -40,7 +40,6 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 from kedro.io import AbstractDataSet
 from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
-
 
 logger = logging.getLogger(__name__)
 
