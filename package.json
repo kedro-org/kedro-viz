@@ -57,7 +57,7 @@
     "highlight.js": "^10.5.0",
     "kiwi.js": "^1.1.2",
     "lodash.clonedeep": "^4.5.0",
-    "plotly.js": "^1.58.4",
+    "plotly.js-cartesian-dist": "^1.58.4",
     "react-custom-scrollbars": "^4.2.1",
     "react-plotly.js": "^2.5.1",
     "react-redux": "^7.2.2",
