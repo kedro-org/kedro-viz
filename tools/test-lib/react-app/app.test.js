@@ -21,31 +21,31 @@ describe('lib-test', () => {
    */
   const testFirstNodeNameMatch = (wrapper, key) => {
     const firstNodeName = wrapper
-      .find('.pipeline-nodelist__group--type-task')
-      .find('.pipeline-nodelist__list--nested')
+      .find('.pipeline-nodelist__row')
+      .find('.pipeline-nodelist__row__text--tree')
       .find('.pipeline-nodelist__row__label')
       .first()
       .text();
-    if (key === 'random') {
-      // The random dataset is generated on load, so instead check that each
-      // of the node name words are included in the LOREM_IPSUM source
-      firstNodeName.split(' ').forEach(word => {
-        expect(LOREM_IPSUM).toContain(word);
-      });
+
+    if (key === 'random' || key === 'animals') {
+      const modularPipelineNames = dataSources[key]().modular_pipelines.map(
+        (modularPipeline) => modularPipeline.name
+      );
+      expect(modularPipelineNames).toContain(firstNodeName);
     } else {
-      const nodeNames = dataSources[key]().nodes.map(node => node.name);
+      const nodeNames = dataSources[key]().nodes.map((node) => node.name);
       expect(nodeNames).toContain(firstNodeName);
     }
   };
 
-  test.each(keys)(`uses %s dataset when provided as prop`, key => {
+  test.each(keys)(`uses %s dataset when provided as prop`, (key) => {
     const wrapper = mount(<App initialData={key} />);
     testFirstNodeNameMatch(wrapper, key);
   });
 
   test.each(keys)(
     `updates to %s dataset when radio button triggers change`,
-    key => {
+    (key) => {
       const wrapper = mount(<App />);
       wrapper
         .find('Radio')
