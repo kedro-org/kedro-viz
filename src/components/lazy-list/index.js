@@ -55,11 +55,10 @@ const LazyList = ({
   const upperHeight = useMemo(() => height(0, range[0]), [height, range]);
 
   // Height of items below the rendered range
-  const lowerHeight = useMemo(() => height(range[1], total), [
-    height,
-    range,
-    total,
-  ]);
+  const lowerHeight = useMemo(
+    () => height(range[1], total),
+    [height, range, total]
+  );
 
   // Skipped if not enabled or supported
   if (active) {
@@ -112,12 +111,10 @@ const LazyList = ({
     useIntersection(lowerRef, observerOptions, requestUpdate);
 
     // Updates on changes in item dimensions
-    useLayoutEffect(() => requestUpdate(), [
-      total,
-      itemHeight,
-      totalHeight,
-      requestUpdate,
-    ]);
+    useLayoutEffect(
+      () => requestUpdate(),
+      [total, itemHeight, totalHeight, requestUpdate]
+    );
   }
 
   // Memoised child props for user to apply as needed
