@@ -56,7 +56,7 @@ def create_api_app_from_project(project_path: Path) -> FastAPI:
     app.include_router(router)
     app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
-    templates = Jinja2Templates(directory=_HTML_DIR)
+    templates = Jinja2Templates(directory=str(_HTML_DIR))
 
     @app.get("/")
     async def index(request: Request):
