@@ -235,8 +235,8 @@ describe('NodeList', () => {
         ['Pipeline2', true],
         ['salmon', true],
         ['Bull', true],
-        ['Cat', true],
-        ['Horse', true],
+        ['Dog', true],
+        ['Sheep', true],
         ['Parameters', true],
       ]);
 
@@ -247,8 +247,9 @@ describe('NodeList', () => {
         ['Pipeline2', true],
         ['salmon', true],
         ['Bear', true],
-        ['Dog', true],
-        ['Giraffe', true],
+        ['Cat', true],
+        ['Elephant', true],
+        ['Horse', true],
         ['Pig', true],
         ['Parameters', true],
       ]);
@@ -260,26 +261,24 @@ describe('NodeList', () => {
         beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
       });
 
-      changeRows(wrapper, ['Medium'], true);
-
       // with the modular pipeline tree structure the elements displayed here are for the top level pipeline
       expect(elements(wrapper)).toEqual([
         // modular pipelines (enabled)
         ['Nested', true],
         ['Pipeline1', true],
         ['Pipeline2', true],
-        // Tasks (disabled)
-        ['salmon', false],
-        // Datasets (enabled)
+        // Tasks (enabled)
+        ['salmon', true],
         ['Bear', true],
+        // Datasets (enabled)
+        ['Cat', true],
         ['Elephant', true],
+        ['Horse', true],
         ['Pig', true],
-        // Datasets (disabled)
-        ['Horse', false],
-        ['Sheep', false],
-        // Parameters
-        ['Parameters', false],
-        ['Params:rabbit', false],
+        ['Sheep', true],
+        // Parameters(enabled)
+        ['Parameters', true],
+        ['Params:rabbit', true],
       ]);
     });
 
