@@ -31,11 +31,13 @@ This data could either come from a real Kedro project or a file.
 import json
 from pathlib import Path
 
-from fastapi import FastAPI
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 from kedro_viz import __version__
+from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 from .router import router
 
@@ -48,15 +50,27 @@ def _create_base_api_app() -> FastAPI:
     )
 
 
-def create_api_app_from_project() -> FastAPI:
+def create_api_app_from_project(project_path: Path) -> FastAPI:
     """Create an API from a real Kedro project by adding the router to the FastAPI app."""
     app = _create_base_api_app()
     app.include_router(router)
     app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
+    templates = Jinja2Templates(directory=str(_HTML_DIR))
+
     @app.get("/")
-    async def index():
-        return FileResponse(_HTML_DIR / "index.html")
+    async def index(request: Request):
+        heap_app_id = kedro_telemetry.get_heap_app_id(project_path)
+        heap_user_identity = kedro_telemetry.get_heap_identity()
+        return templates.TemplateResponse(
+            "index.html",
+            {
+                "request": request,
+                "should_add_telemetry": bool(heap_app_id) and bool(heap_user_identity),
+                "heap_app_id": heap_app_id,
+                "heap_user_identity": heap_user_identity,
+            },
+        )
 
     return app
 
