@@ -84,42 +84,40 @@ const TreeListProvider = ({
     onItemChange,
     onItemClick,
     searchTreeCount
-  ) => {
-    return (
-      <NodeListTreeItem
-        data={rowData}
-        onItemMouseEnter={onItemMouseEnter}
-        onItemMouseLeave={onItemMouseLeave}
-        onItemChange={onItemChange}
-        onItemClick={onItemClick}
-        key={rowData.id}
-        searchCount={searchTreeCount[rowData.id]}>
-        {rowData.children.length > 0 &&
-          rowData.children.map((node) =>
-            renderTree(
-              node,
-              onItemMouseEnter,
-              onItemMouseLeave,
-              onItemChange,
-              onItemClick,
-              searchTreeCount
-            )
-          )}
+  ) => (
+    <NodeListTreeItem
+      data={rowData}
+      onItemMouseEnter={onItemMouseEnter}
+      onItemMouseLeave={onItemMouseLeave}
+      onItemChange={onItemChange}
+      onItemClick={onItemClick}
+      key={rowData.id}
+      searchCount={searchTreeCount[rowData.id]}>
+      {rowData.children.length > 0 &&
+        rowData.children.map((node) =>
+          renderTree(
+            node,
+            onItemMouseEnter,
+            onItemMouseLeave,
+            onItemChange,
+            onItemClick,
+            searchTreeCount
+          )
+        )}
 
-        {/* render set of node elements in that modular pipeline */}
-        {rowData.nodes.map((node) => (
-          <NodeListTreeItem
-            data={node}
-            onItemMouseEnter={onItemMouseEnter}
-            onItemMouseLeave={onItemMouseLeave}
-            onItemChange={onItemChange}
-            onItemClick={onItemClick}
-            key={node.id}
-          />
-        ))}
-      </NodeListTreeItem>
-    );
-  };
+      {/* render set of node elements in that modular pipeline */}
+      {rowData.nodes.map((node) => (
+        <NodeListTreeItem
+          data={node}
+          onItemMouseEnter={onItemMouseEnter}
+          onItemMouseLeave={onItemMouseLeave}
+          onItemChange={onItemChange}
+          onItemClick={onItemClick}
+          key={node.id}
+        />
+      ))}
+    </NodeListTreeItem>
+  );
 
   return (
     <StyledTreeView

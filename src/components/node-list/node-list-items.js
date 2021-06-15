@@ -537,15 +537,13 @@ export const getFilteredModularPipelineNodes = createSelector(
       // extract the last modular pipeline within the array of filtered nodes
       nodeItems[key]?.forEach((node) => {
         if (node.modularPipelines.length > 1) {
-          node.modularPipelines = [
-            node.modularPipelines[node.modularPipelines.length - 1],
-          ];
+          node.modularPipelines = node.modularPipelines.slice(-1);
         }
       });
     });
 
     // create a new field for the topmost / root pipeline
-    modularPipelineNodes['main'] = [];
+    modularPipelineNodes.main = [];
 
     // go through each type of nodes according to the order of specified node types in normalize-data
     // first to identify root level nodes
