@@ -82,7 +82,15 @@ const TreeListProvider = ({
         expandedModularPipelines.push(modularPipeline.id)
       );
     setExpandedPipelines(expandedModularPipelines);
-  }, [searchValue]);
+  }, [
+    searchValue,
+    nodes,
+    modularPipelines,
+    nodeSelected,
+    modularPipelineIds,
+    nodeModularPipelines,
+    nodeTypeIDs,
+  ]);
 
   const treeData = getNestedModularPipelines({
     nodes,

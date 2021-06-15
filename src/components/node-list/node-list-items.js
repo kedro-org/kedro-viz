@@ -594,7 +594,6 @@ export const getNestedModularPipelines = createSelector(
       enabled: true,
       type: 'modularpipeline',
     };
-    let level = 1; // level indiator: this keeps track of how far you are down in the nested pipeline
     let currentParent = mainTree;
 
     filteredTreeItems?.forEach((modularPipeline) => {
@@ -622,12 +621,7 @@ export const getNestedModularPipelines = createSelector(
         });
 
         currentParent = parent;
-
-        // update the current level indicator to a new lower level
-        level = currentLevel;
-      } else if (currentLevel === 1) {
-        // update the current level indicator back to the top parent
-        level = 1;
+      } else {
         currentParent = mainTree;
       }
 
@@ -638,8 +632,6 @@ export const getNestedModularPipelines = createSelector(
           nodes: modularPipelineNodes[id],
         })
       );
-      //update current level
-      level = currentLevel;
     });
 
     return mainTree;
