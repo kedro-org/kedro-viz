@@ -94,6 +94,21 @@ def load_data(
         context = session.load_context()
         return context.catalog, context.pipelines
 
+    if KEDRO_VERSION.match("==0.17.0"):
+        from kedro.framework.session import KedroSession
+        from kedro.framework.startup import _get_project_metadata
+
+        metadata = _get_project_metadata(project_path)
+        session = KedroSession.create(
+            package_name=metadata.package_name,
+            project_path=project_path,
+            env=env,
+            save_on_close=False,
+        )
+
+        context = session.load_context()
+        return context.catalog, context.pipelines
+
     # pre-0.17 load_context version
     from kedro.framework.context import load_context
 
