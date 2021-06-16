@@ -1,12 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Modal from '@quantumblack/kedro-ui/lib/components/modal';
-import Button from '@quantumblack/kedro-ui/lib/components/button';
 import { changeFlag, toggleSettingsModal } from '../../actions';
-import { Flags, getFlagsData } from '../../utils/flags';
-import { flags } from '../../config';
+import { getFlagsData } from '../../utils/flags';
 import './settings-modal.css';
-import SettingsToggle from './settings-toggle';
+import Toggle from '../toggle';
 
 /**
  * Kedro-UI modal to allow users to choose between SVG/PNG export formats
@@ -27,23 +25,26 @@ const SettingsModal = ({ theme, onToggle, onToggleFlag, visible, flags }) => {
         <div className="pipeline-settings-modal__content">
           <div className="pipeline-settings-modal__subtitle">Flags</div>
           <div className="pipeline-settings-modal__header">
-            <div className="col-3 pipeline-settings-modal__name">Name</div>
-            <div className="col-3 pipeline-settings-modal__state">State</div>
-            <div className="col-6 pipeline-settings-modal__description">
+            <div className="pipeline-settings-modal__name">Name</div>
+            <div className="pipeline-settings-modal__state">State</div>
+            <div className="pipeline-settings-modal__description">
               Description
             </div>
           </div>
           {flagData.map(({ name, value, description }, index) => (
-            <div className="pipeline-settings-modal__grid" key={index}>
-              <div className="col-3">{name}</div>
-              <SettingsToggle
-                id={name}
-                className="col-3"
+            <div className="pipeline-settings-modal__column" key={name}>
+              <div className="pipeline-settings-modal__name">{name}</div>
+              <Toggle
+                id={value}
+                className="pipeline-settings-modal__state"
+                title={flags[value] ? 'On' : 'Off'}
                 checked={flags[value]}
                 onChange={(event) =>
                   onToggleFlag(value, event.target.checked)
-                }></SettingsToggle>
-              <div className="col-6">{description}</div>
+                }></Toggle>
+              <div className="pipeline-settings-modal__description">
+                {description}
+              </div>
             </div>
           ))}
         </div>
@@ -63,6 +64,8 @@ export const mapDispatchToProps = (dispatch) => ({
     dispatch(toggleSettingsModal(value));
   },
   onToggleFlag: (name, value) => {
+    console.log(name);
+    console.log(value);
     dispatch(changeFlag(name, value));
   },
 });

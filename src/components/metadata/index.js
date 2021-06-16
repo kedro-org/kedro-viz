@@ -10,7 +10,7 @@ import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
 import MetaDataValue from './metadata-value';
 import MetaDataCode from './metadata-code';
-import MetaCodeToggle from './metadata-code-toggle';
+import Toggle from '../toggle';
 import {
   getVisibleMetaSidebar,
   getClickedNodeMetaData,
@@ -84,9 +84,11 @@ const MetaData = ({
                 onClick={onCloseClick}
               />
               {showCodeSwitch && (
-                <MetaCodeToggle
-                  showCode={visibleCode}
-                  hasCode={hasCode}
+                <Toggle
+                  id="code"
+                  checked={visibleCode}
+                  enabled={hasCode}
+                  title="Show Code"
                   onChange={(event) => {
                     onToggleCode(event.target.checked);
                   }}
