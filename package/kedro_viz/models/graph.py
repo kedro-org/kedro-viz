@@ -32,6 +32,7 @@ import hashlib
 import inspect
 import json
 import logging
+import re
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -51,7 +52,8 @@ def _pretty_name(name: str) -> str:
 
 
 def _strip_namespace(name: str) -> str:
-    return name.split(".")[-1]
+    pattern = re.compile(r"[A-Za-z0-9-_]+\.")
+    return re.sub(pattern, "", name)
 
 
 @dataclass
@@ -234,7 +236,7 @@ class GraphNode(abc.ABC):
         """
         return ParametersNode(
             id=cls._hash(full_name),
-            name=_pretty_name(full_name),
+            name=_pretty_name(_strip_namespace(full_name)),
             full_name=full_name,
             tags=tags,
             layer=layer,
