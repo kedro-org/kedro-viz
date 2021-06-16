@@ -65,6 +65,7 @@ describe('PrimaryToolbar', () => {
       theme: expect.stringMatching(/light|dark/),
       visible: expect.objectContaining({
         exportBtn: expect.any(Boolean),
+        settingsBtn: expect.any(Boolean),
         exportModal: expect.any(Boolean),
         plotModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),

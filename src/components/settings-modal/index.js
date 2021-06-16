@@ -32,7 +32,7 @@ const SettingsModal = ({ theme, onToggle, onToggleFlag, visible, flags }) => {
             </div>
           </div>
           {flagData.map(({ name, value, description }, index) => (
-            <div className="pipeline-settings-modal__column" key={name}>
+            <div className="pipeline-settings-modal__column" key={value}>
               <div className="pipeline-settings-modal__name">{name}</div>
               <Toggle
                 id={value}
@@ -64,8 +64,6 @@ export const mapDispatchToProps = (dispatch) => ({
     dispatch(toggleSettingsModal(value));
   },
   onToggleFlag: (name, value) => {
-    console.log(name);
-    console.log(value);
     dispatch(changeFlag(name, value));
   },
 });
