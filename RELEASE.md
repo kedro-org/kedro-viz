@@ -8,6 +8,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 3.12.1
+
+## Bug fixes and other changes
+
+- Fix compatibility with `kedro==0.17.0`
+
 # Release 3.12.0
 
 ## Major features and improvements
