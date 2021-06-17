@@ -25,22 +25,35 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""`kedro_viz.integrations.kedro.telemetry` helps integrate Kedro Viz with Kedro-Telemetry
+"""
+import hashlib
+import logging
+import socket
+from pathlib import Path
+from typing import Optional
+
+import yaml
+from kedro_telemetry.plugin import _get_heap_app_id, _is_valid_syntax
+
+logger = logging.getLogger(__name__)
 
 
-Feature: Viz plugin in new project
-    Background:
-        Given I have prepared a config file with example code
+def get_heap_app_id(project_path: Path) -> Optional[str]:
+    """Return the Heap App ID used for Kedro telemetry if user has given consent."""
+    telemetry_file_path = project_path / ".telemetry"
+    if not telemetry_file_path.exists():
+        return None
+    with open(telemetry_file_path) as telemetry_file:
+        telemetry = yaml.safe_load(telemetry_file)
+        if _is_valid_syntax(telemetry) and telemetry["consent"]:
+            return _get_heap_app_id()
+    return None
 
-    Scenario: Execute viz with Kedro 0.16.1
-        Given I have installed kedro version "0.16.1"
-        And I have run a non-interactive kedro new
-        And I have executed the kedro command "install"
-        When I execute the kedro viz command "viz"
-        Then kedro-viz should start successfully
 
-    Scenario: Execute viz with latest Kedro
-        Given I have installed kedro version "0.17.3"
-        And I have run a non-interactive kedro new with pandas-iris starter
-        And I have executed the kedro command "install"
-        When I execute the kedro viz command "viz"
-        Then kedro-viz should start successfully
+def get_heap_identity() -> Optional[str]:  # pragma: no cover
+    """Return the user ID in heap identical to the id used by kedro-telemetry plugin."""
+    try:
+        return hashlib.sha512(bytes(socket.gethostname(), encoding="utf8")).hexdigest()
+    except socket.timeout:
+        return None

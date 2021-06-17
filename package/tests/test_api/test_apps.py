@@ -47,7 +47,7 @@ def example_api(
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
 ):
-    api = apps.create_api_app_from_project()
+    api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(data_access_manager, example_catalog, example_pipelines)
     with mock.patch(
         "kedro_viz.api.responses.data_access_manager", new=data_access_manager
@@ -192,6 +192,19 @@ class TestIndexEndpoint:
     def test_index(self, client):
         response = client.get("/")
         assert response.status_code == 200
+        assert "heap" not in response.text
+
+    @mock.patch("kedro_viz.integrations.kedro.telemetry.get_heap_app_id")
+    @mock.patch("kedro_viz.integrations.kedro.telemetry.get_heap_identity")
+    def test_heap_enabled(
+        self, mock_get_heap_identity, mock_get_heap_app_id, client, tmpdir
+    ):
+        mock_get_heap_app_id.return_value = "my_heap_app"
+        mock_get_heap_identity.return_value = "my_heap_identity"
+        response = client.get("/")
+        assert response.status_code == 200
+        assert 'heap.load("my_heap_app")' in response.text
+        assert 'heap.identify("my_heap_identity")' in response.text
 
 
 class TestMainEndpoint:
