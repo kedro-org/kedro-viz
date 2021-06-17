@@ -57,7 +57,6 @@ const NodeListRow = memo(
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
     rowType,
-    searchCount, // this is the value that saves the amount of
   }) => {
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
