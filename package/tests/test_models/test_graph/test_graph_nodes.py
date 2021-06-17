@@ -99,7 +99,7 @@ class TestGraphNodeCreation:
             ("dataset", "Dataset", []),
             (
                 "uk.data_science.model_training.dataset",
-                "Uk.data Science.model Training.dataset",
+                "Dataset",
                 [
                     "uk",
                     "uk.data_science",
