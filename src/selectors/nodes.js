@@ -130,6 +130,7 @@ export const getNodeData = createSelector(
         id,
         name: nodeName[id],
         type: nodeType[id],
+        icon: getShortType([nodeDatasetType[id]], nodeType[id]),
         modularPipelines: nodeModularPipelines[id],
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),

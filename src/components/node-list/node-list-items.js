@@ -152,6 +152,7 @@ export const getFilteredModularPipelineItems = createSelector(
       (modularPipeline) => ({
         ...modularPipeline,
         type: 'modularPipeline',
+        icon: 'modularPipeline',
         visibleIcon: VisibleIcon,
         invisibleIcon: InvisibleIcon,
         active: false,
