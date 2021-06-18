@@ -25,22 +25,31 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from pathlib import Path
+from unittest import mock
+
+from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 
-Feature: Viz plugin in new project
-    Background:
-        Given I have prepared a config file with example code
+def test_get_heap_app_id_no_telemetry_file():
+    assert kedro_telemetry.get_heap_app_id(Path.cwd()) is None
 
-    Scenario: Execute viz with Kedro 0.16.1
-        Given I have installed kedro version "0.16.1"
-        And I have run a non-interactive kedro new
-        And I have executed the kedro command "install"
-        When I execute the kedro viz command "viz"
-        Then kedro-viz should start successfully
 
-    Scenario: Execute viz with latest Kedro
-        Given I have installed kedro version "0.17.3"
-        And I have run a non-interactive kedro new with pandas-iris starter
-        And I have executed the kedro command "install"
-        When I execute the kedro viz command "viz"
-        Then kedro-viz should start successfully
+def test_get_heap_app_id_invalid_telemetry_file(tmpdir):
+    telemetry_file = tmpdir / ".telemetry"
+    telemetry_file.write_text("foo", encoding="utf-8")
+    assert kedro_telemetry.get_heap_app_id(tmpdir) is None
+
+
+def test_get_heap_app_id_no_consent(tmpdir):
+    telemetry_file = tmpdir / ".telemetry"
+    telemetry_file.write_text("consent: false", encoding="utf-8")
+    assert kedro_telemetry.get_heap_app_id(tmpdir) is None
+
+
+@mock.patch("kedro_viz.integrations.kedro.telemetry._get_heap_app_id")
+def test_get_heap_app_id_with_consent(original_get_heap_app_id, tmpdir):
+    original_get_heap_app_id.return_value = "my_heap_id"
+    telemetry_file = tmpdir / ".telemetry"
+    telemetry_file.write_text("consent: true", encoding="utf-8")
+    assert kedro_telemetry.get_heap_app_id(tmpdir) == "my_heap_id"

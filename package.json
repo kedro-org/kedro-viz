@@ -92,7 +92,6 @@
     "snyk": "^1.623.0",
     "stylelint": "^13.9.0",
     "stylelint-config-prettier": "^8.0.2",
-    "stylelint-config-rational-order": "^0.1.2",
     "stylelint-order": "^4.1.0",
     "stylelint-prettier": "^1.1.2",
     "webpack-cli": "^4.4.0",

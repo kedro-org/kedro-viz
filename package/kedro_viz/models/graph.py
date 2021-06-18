@@ -30,8 +30,9 @@
 import abc
 import hashlib
 import inspect
-import logging
 import json
+import logging
+import re
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -41,7 +42,6 @@ from kedro.io import AbstractDataSet
 from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -49,6 +49,11 @@ def _pretty_name(name: str) -> str:
     name = name.replace("-", " ").replace("_", " ")
     parts = [n.capitalize() for n in name.split()]
     return " ".join(parts)
+
+
+def _strip_namespace(name: str) -> str:
+    pattern = re.compile(r"[A-Za-z0-9-_]+\.")
+    return re.sub(pattern, "", name)
 
 
 @dataclass
@@ -201,7 +206,7 @@ class GraphNode(abc.ABC):
         """
         return DataNode(
             id=cls._hash(full_name),
-            name=_pretty_name(full_name),
+            name=_pretty_name(_strip_namespace(full_name)),
             full_name=full_name,
             tags=tags,
             layer=layer,
@@ -231,7 +236,7 @@ class GraphNode(abc.ABC):
         """
         return ParametersNode(
             id=cls._hash(full_name),
-            name=_pretty_name(full_name),
+            name=_pretty_name(_strip_namespace(full_name)),
             full_name=full_name,
             tags=tags,
             layer=layer,
