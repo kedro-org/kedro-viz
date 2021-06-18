@@ -4,7 +4,6 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import NodeListSearch from './node-list-search';
 import NodeListGroups from './node-list-groups';
 import NodeListTree from './node-list-tree';
-import NodeListTreeSearch from './node-list-tree-search';
 import SplitPanel from '../split-panel';
 import './styles/node-list.css';
 
@@ -56,25 +55,15 @@ const NodeList = ({
                 autoHide
                 hideTracksWhenNotNeeded>
                 <div className="pipeline-nodelist-section">
-                  {searching ? (
-                    <NodeListTreeSearch
-                      searchValue={searchValue}
-                      faded={faded}
-                      onItemClick={onItemClick}
-                      onItemMouseEnter={onItemMouseEnter}
-                      onItemMouseLeave={onItemMouseLeave}
-                      onItemChange={onItemChange}
-                    />
-                  ) : (
-                    <NodeListTree
-                      searchValue={searchValue}
-                      faded={faded}
-                      onItemClick={onItemClick}
-                      onItemMouseEnter={onItemMouseEnter}
-                      onItemMouseLeave={onItemMouseLeave}
-                      onItemChange={onItemChange}
-                    />
-                  )}
+                  <NodeListTree
+                    searchValue={searchValue}
+                    faded={faded}
+                    onItemClick={onItemClick}
+                    onItemMouseEnter={onItemMouseEnter}
+                    onItemMouseLeave={onItemMouseLeave}
+                    onItemChange={onItemChange}
+                    searching={searching}
+                  />
                 </div>
               </Scrollbars>
             </div>
