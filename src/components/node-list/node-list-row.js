@@ -79,10 +79,10 @@ const NodeListRow = memo(
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
         <TextButton
-          className={classnames('pipeline-nodelist__row__text', {
-            'pipeline-nodelist__row__text--tree': rowType === 'tree',
-            'pipeline-nodelist__row__text--filter': rowType !== 'tree',
-          })}
+          className={classnames(
+            'pipeline-nodelist__row__text',
+            `pipeline-nodelist__row__text--${rowType}`
+          )}
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}

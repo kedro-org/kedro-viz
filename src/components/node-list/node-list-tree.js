@@ -159,7 +159,8 @@ const TreeListProvider = ({
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
-      expanded={expandedPipelines}>
+      expanded={expandedPipelines}
+      key="tree">
       {/* render set of modular pipelines in the main pipeline */}
       {renderModularPipelines(treeData)}
       {/* render set of node elements in the main pipeline */}
@@ -169,7 +170,8 @@ const TreeListProvider = ({
     <StyledTreeView
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpandIcon={<ChevronRightIcon />}>
+      defaultExpandIcon={<ChevronRightIcon />}
+      key="tree-search">
       {renderModularPipelines(treeData)}
       {renderChildNodes(treeData)}
     </StyledTreeView>

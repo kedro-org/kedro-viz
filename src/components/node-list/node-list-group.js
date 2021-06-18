@@ -47,6 +47,7 @@ export const NodeListGroup = ({
         checked={checked}
         visibleIcon={visibleIcon}
         invisibleIcon={invisibleIcon}
+        rowType="filter"
         onChange={(e) => {
           onToggleChecked(id, !e.target.checked);
         }}>
