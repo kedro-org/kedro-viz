@@ -367,7 +367,7 @@ export const getFilteredNodeModularPipelines = createSelector(
     modularPipelines,
     nodeTypeIDs
   ) => {
-    const filteredNodeMoudularPipelines = [];
+    const filteredNodeModularPipelines = [];
     const filteredMP = filteredModularPipelines.modularPipeline;
 
     const nodeItems = Object.assign({}, filteredNodeItems);
@@ -378,7 +378,7 @@ export const getFilteredNodeModularPipelines = createSelector(
           if (!filteredMP.some((mpItem) => mpItem.id === nodeModularPipeline)) {
           }
 
-          filteredNodeMoudularPipelines.push(
+          filteredNodeModularPipelines.push(
             constructModularPipelineItem(
               modularPipelines.filter(
                 (rawMP) => rawMP.id === nodeModularPipeline
@@ -389,14 +389,14 @@ export const getFilteredNodeModularPipelines = createSelector(
       });
     });
 
-    return filteredNodeMoudularPipelines;
+    return filteredNodeModularPipelines;
   }
 );
 
 /**
- * constructs a modular pipeline item for filtered modualar pipeline parents that does not exist in filtered modualr pipeline items
+ * constructs a modular pipeline item for filtered modular pipeline parents that does not exist in filtered modular pipeline items
  * @param {obj} modularPipeline the modular pipeine that needs the construction of a modular pipeline item
- * @return {boolean} True if match
+ * @return {obj} modular pipeline item
  */
 const constructModularPipelineItem = (modularPipeline) => ({
   ...modularPipeline,
@@ -495,7 +495,7 @@ export const getFilteredTreeItems = createSelector(
 
     // sort all 3 sets of modular pipelines according to the original order
     modularPipelines?.forEach((mp) => {
-      // check filtered modualr pipelines
+      // check filtered modular pipelines
       if (modularPipelineItems.some((mp2) => mp2.id === mp.id)) {
         finalModularPipelines.push(
           modularPipelineItems.filter((mp2) => mp2.id === mp.id)[0]
