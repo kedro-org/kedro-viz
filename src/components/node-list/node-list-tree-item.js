@@ -16,7 +16,7 @@ const NodeListTreeItem = ({
     nodeId={data.id}
     label={
       <NodeListRow
-        container="li"
+        container="div"
         key={data.id}
         id={data.id}
         kind="element"
