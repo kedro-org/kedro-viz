@@ -58,7 +58,6 @@ export const nodeMatchesSearch = (node, searchValue) => {
  * Return only the results that match the search text
  * @param {object} nodes Grouped lists of nodes
  * @param {string} searchValue Search term
- * @param {boolean} matchSearchValue dictates whether to return nodes containing search value
  * @return {object} Grouped nodes
  */
 export const filterNodes = (nodes, searchValue) => {
@@ -396,7 +395,7 @@ export const getFilteredNodeModularPipelines = createSelector(
 
 /**
  * constructs a modular pipeline item for filtered modualar pipeline parents that does not exist in filtered modualr pipeline items
- * @param {obj modularPipeline the modular pipeine that needs the construction of a modular pipeline item
+ * @param {obj} modularPipeline the modular pipeine that needs the construction of a modular pipeline item
  * @return {boolean} True if match
  */
 const constructModularPipelineItem = (modularPipeline) => ({
@@ -636,47 +635,5 @@ export const getNestedModularPipelines = createSelector(
     });
 
     return mainTree;
-  }
-);
-
-/**
- * iterative function to update the total Count of search values within a tree object
- */
-const countHighlightedItems = (item, totalCount, parent) => {
-  totalCount[item.id] = 0;
-
-  // check against its own name first
-  if (typeof item.highlightedLabel !== 'undefined') {
-    totalCount[item.id] = totalCount[item.id] + 1;
-  }
-
-  item.nodes.forEach((node) => {
-    if (typeof node.highlightedLabel !== 'undefined') {
-      totalCount[item.id] = totalCount[item.id] + 1;
-    }
-  });
-
-  item.children.forEach((child) => {
-    countHighlightedItems(child, totalCount, item.id);
-  });
-
-  totalCount[parent] = totalCount[parent] + totalCount[item.id];
-};
-
-/**
- * returns an object that outlines the matching search value for each modular pipeline
- * note: this selector might be needed in the next iteration of the tree search UI
- */
-export const getTreeSearchValueCount = createSelector(
-  [(state) => state.treeData, (state) => state.searchValue],
-  (nestedModularPipelines, searchValue) => {
-    const searchTreeCount = {};
-
-    // go through the filteredModularPipelines and count the highlight labels
-    if (searchValue !== '') {
-      countHighlightedItems(nestedModularPipelines, searchTreeCount, 'main');
-    }
-
-    return searchTreeCount;
   }
 );
