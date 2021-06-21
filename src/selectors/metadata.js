@@ -35,7 +35,7 @@ const getRunCommand = (node) => {
 };
 
 /**
- * Gets metadata for the nodes
+ * Gets metadata for a node
  */
 
 export const getNodeMetaData = (nodeId, nodes, state) => {
