@@ -12,7 +12,6 @@ describe('NodeListRow', () => {
       disabled: false,
       faded: false,
       visible: true,
-      unset: false,
       id: node.id,
       label: node.highlightedLabel,
       name: node.name,

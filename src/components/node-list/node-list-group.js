@@ -11,8 +11,7 @@ export const NodeListGroup = ({
   name,
   kind,
   checked,
-  unset,
-  allUnset,
+  allUnchecked,
   visibleIcon,
   invisibleIcon,
   onToggleChecked,
@@ -30,7 +29,7 @@ export const NodeListGroup = ({
       `pipeline-nodelist__group--type-${id}`,
       `pipeline-nodelist__group--kind-${kind}`,
       {
-        'pipeline-nodelist__group--all-unset': allUnset,
+        'pipeline-nodelist__group--all-unchecked': allUnchecked,
       }
     )}
     onMouseEnter={() => onSectionMouseEnter(id)}
@@ -41,14 +40,11 @@ export const NodeListGroup = ({
         kind={kind}
         name={name}
         label={name}
-        allUnset={allUnset}
-        unset={unset}
+        allUnchecked={allUnchecked}
         checked={checked}
         visibleIcon={visibleIcon}
         invisibleIcon={invisibleIcon}
-        onChange={(e) => {
-          onToggleChecked(id, !e.target.checked);
-        }}>
+        onChange={(e) => onToggleChecked(id, !e.target.checked)}>
         <button
           aria-label={`${collapsed ? 'Show' : 'Hide'} ${name.toLowerCase()}`}
           onClick={() => onToggleCollapsed(id)}

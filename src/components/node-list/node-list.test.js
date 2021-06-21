@@ -297,7 +297,7 @@ describe('NodeList', () => {
 
     it('adds a class to tag group item when all tags unset', () => {
       const wrapper = setup.mount(<NodeList />);
-      const unsetClass = 'pipeline-nodelist__group--all-unset';
+      const unsetClass = 'pipeline-nodelist__group--all-unchecked';
 
       expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
       changeRows(wrapper, ['Large'], true);

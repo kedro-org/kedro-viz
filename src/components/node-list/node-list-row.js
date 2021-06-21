@@ -19,8 +19,7 @@ const shouldMemo = (prevProps, nextProps) =>
     [
       'active',
       'checked',
-      'unset',
-      'allUnset',
+      'allUnchecked',
       'disabled',
       'faded',
       'visible',
@@ -37,8 +36,7 @@ const NodeListRow = memo(
     container: Container = 'div',
     active,
     checked,
-    unset,
-    allUnset,
+    allUnchecked,
     children,
     disabled,
     faded,
@@ -146,8 +144,7 @@ const NodeListRow = memo(
                 'pipeline-row__toggle-icon--child': !children,
                 'pipeline-row__toggle-icon--checked': checked,
                 'pipeline-row__toggle-icon--unchecked': !checked,
-                'pipeline-row__toggle-icon--unset': unset,
-                'pipeline-row__toggle-icon--all-unset': allUnset,
+                'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
               }
             )}
           />

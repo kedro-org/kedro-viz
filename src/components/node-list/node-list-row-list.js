@@ -79,8 +79,7 @@ const NodeRowList = ({
             faded={item.faded}
             visible={item.visible}
             selected={item.selected}
-            unset={item.unset}
-            allUnset={group.allUnset}
+            allUnchecked={group.allUnchecked}
             visibleIcon={item.visibleIcon}
             invisibleIcon={item.invisibleIcon}
             onClick={() => onItemClick(item)}

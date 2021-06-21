@@ -91,7 +91,6 @@ describe('node-list-selectors', () => {
         faded: expect.any(Boolean),
         visible: expect.any(Boolean),
         disabled: expect.any(Boolean),
-        unset: expect.any(Boolean),
         checked: expect.any(Boolean),
         count: expect.any(Number)
       }),
@@ -165,7 +164,6 @@ describe('node-list-selectors', () => {
         faded: expect.any(Boolean),
         visible: expect.any(Boolean),
         disabled: expect.any(Boolean),
-        unset: expect.any(Boolean),
         checked: expect.any(Boolean)
       }),
     ]);
@@ -216,7 +214,7 @@ describe('node-list-selectors', () => {
       visibleIcon: expect.any(Function),
       invisibleIcon: expect.any(Function),
       kind: expect.any(String),
-      allUnset: expect.any(Boolean),
+      allUnchecked: expect.any(Boolean),
       allChecked: expect.any(Boolean),
       checked: expect.any(Boolean)
     });
