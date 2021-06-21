@@ -36,7 +36,7 @@ export const getNodeTypes = createSelector(
     types.map((id) => ({
       id,
       name: typeName[id],
-      disabled: Boolean(typeDisabled[id]),
+      disabled: typeDisabled[id],
       nodeCount: typeNodeCount[id],
     }))
 );

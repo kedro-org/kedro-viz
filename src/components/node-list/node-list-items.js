@@ -9,78 +9,77 @@ import InvisibleIcon from '../icons/invisible';
 const { escapeRegExp, getHighlightedText } = utils;
 
 /**
- * Get a list of IDs of the visible nodes
- * @param {object} nodes Grouped nodes
+ * Get a list of IDs of the visible nodes from all groups
+ * @param {object} nodeGroups Grouped lists of nodes by type
  * @return {array} List of node IDs
  */
-export const getNodeIDs = (nodes) => {
-  const getNodeIDs = (type) => nodes[type].map((node) => node.id);
-  const concatNodeIDs = (nodeIDs, type) => nodeIDs.concat(getNodeIDs(type));
-
-  return Object.keys(nodes).reduce(concatNodeIDs, []);
-};
+export const getNodeIDs = (nodeGroups) =>
+  Object.values(nodeGroups).flatMap((nodes) => nodes.map((node) => node.id));
 
 /**
  * Add a new highlightedLabel field to each of the node objects
- * @param {object} nodes Grouped lists of nodes
+ * @param {object} nodeGroups Grouped lists of nodes by type
  * @param {string} searchValue Search term
  * @return {object} The grouped nodes with highlightedLabel fields added
  */
-export const highlightMatch = (nodes, searchValue) => {
-  const addHighlightedLabel = (node) => ({
-    highlightedLabel: getHighlightedText(node.name, searchValue),
-    ...node,
-  });
-  const addLabelsToNodes = (newNodes, type) => ({
-    ...newNodes,
-    [type]: nodes[type].map(addHighlightedLabel),
-  });
+export const highlightMatch = (nodeGroups, searchValue) => {
+  const highlightedGroups = {};
 
-  return Object.keys(nodes).reduce(addLabelsToNodes, {});
+  for (const type of Object.keys(nodeGroups)) {
+    highlightedGroups[type] = nodeGroups[type].map((node) => ({
+      ...node,
+      highlightedLabel: getHighlightedText(node.name, searchValue),
+    }));
+  }
+
+  return highlightedGroups;
 };
 
 /**
- * Check whether a name matches the search text
- * @param {string} name
+ * Check whether a node matches the search text or true if no search value given
+ * @param {object} node
  * @param {string} searchValue
- * @return {boolean} True if match
+ * @return {boolean} True if node matches or no search value given
  */
 export const nodeMatchesSearch = (node, searchValue) => {
-  const valueRegex = searchValue
-    ? new RegExp(escapeRegExp(searchValue), 'gi')
-    : '';
-  return Boolean(node.name.match(valueRegex));
+  if (searchValue) {
+    return new RegExp(escapeRegExp(searchValue), 'gi').test(node.name);
+  }
+
+  return true;
 };
 
 /**
  * Return only the results that match the search text
- * @param {object} nodes Grouped lists of nodes
+ * @param {object} nodeGroups Grouped lists of nodes by type
  * @param {string} searchValue Search term
  * @return {object} Grouped nodes
  */
-export const filterNodes = (nodes, searchValue) => {
-  const filterNodesByType = (type) =>
-    nodes[type].filter((node) => nodeMatchesSearch(node, searchValue));
-  const filterNodeLists = (newNodes, type) => ({
-    ...newNodes,
-    [type]: filterNodesByType(type),
-  });
-  return Object.keys(nodes).reduce(filterNodeLists, {});
+export const filterNodeGroups = (nodeGroups, searchValue) => {
+  const filteredGroups = {};
+
+  for (const nodeGroupId of Object.keys(nodeGroups)) {
+    filteredGroups[nodeGroupId] = nodeGroups[nodeGroupId].filter((node) =>
+      nodeMatchesSearch(node, searchValue)
+    );
+  }
+
+  return filteredGroups;
 };
 
 /**
  * Return filtered/highlighted nodes, and filtered node IDs
- * @param {object} nodes Grouped lists of nodes
+ * @param {object} nodeGroups Grouped lists of nodes by type
  * @param {string} searchValue Search term
  * @return {object} Grouped nodes, and node IDs
  */
 export const getFilteredNodes = createSelector(
   [(state) => state.nodes, (state) => state.searchValue],
-  (nodes, searchValue) => {
-    const filteredNodes = filterNodes(nodes, searchValue);
+  (nodeGroups, searchValue) => {
+    const filteredGroups = filterNodeGroups(nodeGroups, searchValue);
     return {
-      filteredNodes: highlightMatch(filteredNodes, searchValue),
-      nodeIDs: getNodeIDs(filteredNodes),
+      filteredNodes: highlightMatch(filteredGroups, searchValue),
+      nodeIDs: getNodeIDs(filteredGroups),
     };
   }
 );
@@ -94,7 +93,7 @@ export const getFilteredNodes = createSelector(
 export const getFilteredTags = createSelector(
   [(state) => state.tags, (state) => state.searchValue],
   (tags, searchValue) =>
-    highlightMatch(filterNodes({ tag: tags }, searchValue), searchValue)
+    highlightMatch(filterNodeGroups({ tag: tags }, searchValue), searchValue)
 );
 
 /**
@@ -134,7 +133,7 @@ export const getFilteredModularPipelines = createSelector(
   [(state) => state.modularPipelines, (state) => state.searchValue],
   (modularPipelines, searchValue) =>
     highlightMatch(
-      filterNodes({ modularPipeline: modularPipelines }, searchValue),
+      filterNodeGroups({ modularPipeline: modularPipelines }, searchValue),
       searchValue
     )
 );
@@ -188,10 +187,10 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
 export const getFilteredNodeItems = createSelector(
   [getFilteredNodes, (state) => state.nodeSelected],
   ({ filteredNodes }, nodeSelected) => {
-    const result = {};
+    const filteredNodeItems = {};
 
     for (const type of Object.keys(filteredNodes)) {
-      result[type] = filteredNodes[type]
+      filteredNodeItems[type] = filteredNodes[type]
         .map((node) => {
           const checked = !node.disabled_node;
           const disabled =
@@ -214,44 +213,33 @@ export const getFilteredNodeItems = createSelector(
         .sort(compareEnabledThenAlpha);
     }
 
-    return result;
-  }
-);
-
-/**
- * Get sidebar node-list section config object, with/without modular pipelines
- * @param {boolean} modularPipelineFlag Whether to include modular pipelines
- * @return {object} config
- */
-export const getSidebarConfig = createSelector(
-  (state) => state.flags.modularpipeline,
-  (modularPipelineFlag) => {
-    if (modularPipelineFlag) {
-      return sidebar;
-    }
-    const { ModularPipelines, ...Categories } = sidebar.Categories;
-    return Object.assign({}, sidebar, { Categories });
+    return filteredNodeItems;
   }
 );
 
 /**
  * Get formatted list of sections
+ * @param {boolean} modularPipelineFlag Whether to include modular pipelines
  * @return {object} Map of arrays of sections
  */
-export const getSections = createSelector(getSidebarConfig, (sidebarConfig) => {
-  const sections = {};
+export const getSections = createSelector(
+  (state) => state.flags.modularpipeline,
+  (modularPipelineFlag) => {
+    const sections = {};
+    const exclude = { modularPipeline: !modularPipelineFlag };
 
-  for (const key of Object.keys(sidebarConfig)) {
-    sections[key] = [
-      {
-        name: key,
-        types: Object.values(sidebarConfig[key]),
-      },
-    ];
+    for (const key of Object.keys(sidebar)) {
+      sections[key] = [
+        {
+          name: key,
+          types: Object.values(sidebar[key]).filter((type) => !exclude[type]),
+        },
+      ];
+    }
+
+    return sections;
   }
-
-  return sections;
-});
+);
 
 /**
  * Create a new group of items. This can be one of two kinds:

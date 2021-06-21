@@ -21,9 +21,11 @@ const NodeListGroups = ({
 
   // Collapse/expand node group
   const onToggleGroupCollapsed = (typeID) => {
-    const groupsCollapsed = Object.assign({}, collapsed, {
+    const groupsCollapsed = {
+      ...collapsed,
       [typeID]: !collapsed[typeID],
-    });
+    };
+    
     setCollapsed(groupsCollapsed);
     saveState({ groupsCollapsed });
   };
