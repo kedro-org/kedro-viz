@@ -87,6 +87,16 @@ export const getClickedNodeMetaData = createSelector(
       plot: nodePlot[node.id],
       datasetType: nodeDatasetTypes[node.id],
     };
+
+    if (node.sources && node.targets) {
+      metadata.inputs = node.sources
+        .map((edge) => nodes[edge.source])
+        .sort(sortAlpha);
+      metadata.outputs = node.targets
+        .map((edge) => nodes[edge.target])
+        .sort(sortAlpha);
+    }
+
     return metadata;
   }
 );
