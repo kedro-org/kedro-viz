@@ -26,12 +26,6 @@ export const largeGraphThreshold = 1000;
 
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
-  oldgraph: {
-    description: 'Use older Dagre graphing algorithm',
-    default: false,
-    private: false,
-    icon: '📈',
-  },
   newparams: {
     description: `Disable parameters on page load and highlight parameter connections.`,
     default: true,
