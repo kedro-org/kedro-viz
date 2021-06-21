@@ -115,7 +115,7 @@ const NodeListRow = memo(
           />
         </TextButton>
         {typeof count === 'number' ? (
-          <span className={'pipeline-nodelist__row__count'}>{count}</span>
+          <span onClick={onClick} className={'pipeline-nodelist__row__count'}>{count}</span>
         ) : null}
         <label
           htmlFor={id}
