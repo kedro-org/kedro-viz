@@ -28,6 +28,8 @@ import {
 import { loadNodeData } from '../../actions/nodes';
 import NodeListTreeItem from './node-list-tree-item';
 
+// please note that this setup is unique for initialization of the material-ui tree,
+// and setup is only used here and not anywhere else in the app.
 const useStyles = makeStyles({
   root: {
     height: 110,

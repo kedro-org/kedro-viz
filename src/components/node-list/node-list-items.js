@@ -494,19 +494,41 @@ export const getFilteredTreeItems = createSelector(
     let finalModularPipelines = [];
 
     // sort all 3 sets of modular pipelines according to the original order
-    modularPipelines?.forEach((mp) => {
+    modularPipelines?.forEach((modularPipeline) => {
       // check filtered modular pipelines
-      if (modularPipelineItems.some((mp2) => mp2.id === mp.id)) {
+      if (
+        modularPipelineItems.some(
+          (modularPipelineItem) => modularPipelineItem.id === modularPipeline.id
+        )
+      ) {
         finalModularPipelines.push(
-          modularPipelineItems.filter((mp2) => mp2.id === mp.id)[0]
+          modularPipelineItems.filter(
+            (modularPipelineItem) =>
+              modularPipelineItem.id === modularPipeline.id
+          )[0]
         );
-      } else if (nodeModularPipelines.some((mp2) => mp2.id === mp.id)) {
+      } else if (
+        nodeModularPipelines.some(
+          (nodeModularPipeline) => nodeModularPipeline.id === modularPipeline.id
+        )
+      ) {
         finalModularPipelines.push(
-          nodeModularPipelines.filter((mp2) => mp2.id === mp.id)[0]
+          nodeModularPipelines.filter(
+            (nodeModularPipeline) =>
+              nodeModularPipeline.id === modularPipeline.id
+          )[0]
         );
-      } else if (modularPipelineParent.some((mp2) => mp2.id === mp.id)) {
+      } else if (
+        modularPipelineParent.some(
+          (modularPipelineParentPipeline) =>
+            modularPipelineParentPipeline.id === modularPipeline.id
+        )
+      ) {
         finalModularPipelines.push(
-          modularPipelineParent.filter((mp2) => mp2.id === mp.id)[0]
+          modularPipelineParent.filter(
+            (modularPipelineParentPipeline) =>
+              modularPipelineParentPipeline.id === modularPipeline.id
+          )[0]
         );
       }
     });

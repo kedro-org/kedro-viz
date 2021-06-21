@@ -12,6 +12,9 @@ import {
   getFilteredTreeItems,
   getFilteredNodeModularPipelines,
   getFilteredNodeItems,
+  getFilteredModularPipelineParent,
+  getFilteredModularPipelineNodes,
+  getNestedModularPipelines,
 } from './node-list-items';
 import { mockState } from '../../utils/state.mock';
 import {
@@ -435,6 +438,25 @@ describe('node-list-selectors', () => {
       });
     });
 
+    describe('getFilteredModularPipelineParent', () => {
+      const searchValue = 'Data Engineering';
+
+      const filteredModularPipelineParents = getFilteredModularPipelineParent({
+        nodes: getGroupedNodes(mockState.animals),
+        tags: getTagData(mockState.animals),
+        modularPipelines: getModularPipelineData(mockState.animals),
+        nodeSelected: {},
+        searchValue,
+        modularPipelineIDs: getModularPipelineIDs(mockState.animals),
+        nodeModularPipelines: getNodeModularPipelines(mockState.animals),
+        nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+      });
+
+      it('filters expected number of items', () => {
+        expect(filteredModularPipelineParents).toHaveLength(1);
+      });
+    });
+
     describe('getFilteredTreeItems', () => {
       const searchValue = 'shark';
 
@@ -451,6 +473,86 @@ describe('node-list-selectors', () => {
 
       it('filters expected number of items', () => {
         expect(filteredTreeItems).toHaveLength(2);
+      });
+    });
+
+    describe('getFilteredModularPipelineNodes', () => {
+      describe('should return an object corresponding to the right amount of modular pipeline items', () => {
+        const filteredModularPipelineNodes = getFilteredModularPipelineNodes({
+          nodes: getGroupedNodes(mockState.animals),
+          tags: getTagData(mockState.animals),
+          modularPipelines: getModularPipelineData(mockState.animals),
+          nodeSelected: {},
+          searchValue: '',
+          modularPipelineIds: getModularPipelineIDs(mockState.animals),
+          nodeModularPipelines: getNodeModularPipelines(mockState.animals),
+          nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+        });
+
+        it('filters expected number of items', () => {
+          expect(Object.keys(filteredModularPipelineNodes)).toHaveLength(7);
+        });
+      });
+
+      describe('should return the correct amount of nodes for the filtered modular pipeline', () => {
+        const searchValue = 'Nested.weasel';
+
+        const filteredModularPipelineNodes = getFilteredModularPipelineNodes({
+          nodes: getGroupedNodes(mockState.animals),
+          tags: getTagData(mockState.animals),
+          modularPipelines: getModularPipelineData(mockState.animals),
+          nodeSelected: {},
+          searchValue,
+          modularPipelineIds: getModularPipelineIDs(mockState.animals),
+          nodeModularPipelines: getNodeModularPipelines(mockState.animals),
+          nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+        });
+
+        it('filters expected number of items', () => {
+          expect(filteredModularPipelineNodes.nested).toHaveLength(1);
+        });
+      });
+    });
+
+    describe('getNestedModularPipelines', () => {
+      describe('should return the right amount of nodes and children pipelines by default', () => {
+        const searchValue = '';
+
+        const nestedModularPipelines = getNestedModularPipelines({
+          nodes: getGroupedNodes(mockState.animals),
+          tags: getTagData(mockState.animals),
+          modularPipelines: getModularPipelineData(mockState.animals),
+          nodeSelected: {},
+          searchValue,
+          modularPipelineIds: getModularPipelineIDs(mockState.animals),
+          nodeModularPipelines: getNodeModularPipelines(mockState.animals),
+          nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+        });
+
+        it('contains expected number of node and modular pipeline items', () => {
+          expect(nestedModularPipelines.nodes).toHaveLength(9);
+          expect(nestedModularPipelines.children).toHaveLength(3);
+        });
+      });
+
+      describe('should return the right amount of nodes and children pipelines', () => {
+        const searchValue = 'shark';
+
+        const nestedModularPipelines = getNestedModularPipelines({
+          nodes: getGroupedNodes(mockState.animals),
+          tags: getTagData(mockState.animals),
+          modularPipelines: getModularPipelineData(mockState.animals),
+          nodeSelected: {},
+          searchValue,
+          modularPipelineIds: getModularPipelineIDs(mockState.animals),
+          nodeModularPipelines: getNodeModularPipelines(mockState.animals),
+          nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+        });
+
+        it('contains expected number of node and modular pipeline items for the search value', () => {
+          expect(nestedModularPipelines.nodes).toHaveLength(0);
+          expect(nestedModularPipelines.children).toHaveLength(1);
+        });
       });
     });
   });
