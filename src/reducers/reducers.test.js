@@ -162,7 +162,9 @@ describe('Reducer', () => {
       });
       expect(newState.nodeType.disabled).toEqual({
         123: true,
+        data: false,
         parameters: true,
+        task: false
       });
     });
   });
