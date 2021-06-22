@@ -3,9 +3,6 @@
 @import '../../styles/mixins';
 
 .kui-theme--light {
-  --color-modal-bg: #{$color-bg-light-4};
-  --color-modal-text: #{$color-text-light};
-  --color-modal-icon: #{$color-text-light};
   --color-modal-header-text: #{rgba($color-dark, 0.55)};
   --color-toggle--on: #{$color-primary-2};
   --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
@@ -14,9 +11,6 @@
 }
 
 .kui-theme--dark {
-  --color-modal-bg: #{$color-bg-dark-8};
-  --color-modal-text: #{$color-text-dark};
-  --color-modal-icon: #{$color-text-dark};
   --color-modal-header-text: #{rgba($color-light, 0.55)};
   --color-toggle--on: #{$color-primary};
   --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
@@ -31,17 +25,7 @@
 
   .kui-modal__wrapper {
     align-items: flex-start;
-    color: var(--color-modal-text);
     text-align: left;
-    background-color: var(--color-modal-bg);
-  }
-
-  .kui-modal__title {
-    color: var(--color-modal-text);
-  }
-
-  .kui-icon__graphics {
-    fill: var(--color-modal-icon);
   }
 
   .kui-modal__bg--visible {
