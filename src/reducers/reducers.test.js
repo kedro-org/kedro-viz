@@ -157,7 +157,7 @@ describe('Reducer', () => {
     it('should toggle whether a type is disabled', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TYPE_DISABLED,
-        typeID: '123',
+        typeIDs: { '123': true },
         disabled: true,
       });
       expect(newState.nodeType.disabled).toEqual({

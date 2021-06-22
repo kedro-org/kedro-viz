@@ -103,7 +103,7 @@ const getInitialState = (props = {}) => {
   if (nonPipelineState.flags.newparams) {
     saveState({
       nodeType: {
-        // Always disables parameters and enables all other types (the default)
+        // Default to disabled parameters and other types enabled
         disabled: { parameters: true, task: false, data: false },
       },
     });

@@ -51,6 +51,7 @@ export const flags = {
 
 export const sidebar = {
   Categories: {
+    ElementTypes: 'elementType',
     Tags: 'tag',
     ModularPipelines: 'modularPipeline',
   },

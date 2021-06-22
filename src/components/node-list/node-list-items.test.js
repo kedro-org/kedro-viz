@@ -3,7 +3,7 @@ import {
   getNodeIDs,
   highlightMatch,
   nodeMatchesSearch,
-  filterNodes,
+  filterNodeGroups,
   getFilteredTags,
   getFilteredTagItems,
   getSections,
@@ -119,7 +119,7 @@ describe('node-list-selectors', () => {
 
     it('returns tag items with expected counts', () => {
       expect(filteredTagItems[0].count).toEqual(7);
-      expect(filteredTagItems[1].count).toEqual(7);
+      expect(filteredTagItems[1].count).toEqual(8);
     });
   });
 
@@ -146,6 +146,7 @@ describe('node-list-selectors', () => {
 
     const filteredItems = getFilteredItems({
       nodes: getGroupedNodes(mockState.animals),
+      nodeTypes: getNodeTypes(mockState.animals),
       tags: getTagData(mockState.animals),
       modularPipelines: getModularPipelineData(mockState.animals),
       tagNodeCounts: getTagNodeCounts(mockState.animals),
@@ -174,6 +175,7 @@ describe('node-list-selectors', () => {
       expect(filteredItems.parameters).toHaveLength(4);
       expect(filteredItems.tag).toHaveLength(2);
       expect(filteredItems.modularPipeline).toHaveLength(3);
+      expect(filteredItems.elementType).toHaveLength(2);
     });
 
     it('returns items for each type in the correct format', () => {
@@ -189,15 +191,16 @@ describe('node-list-selectors', () => {
 
     it('returns tag items with expected counts', () => {
       expect(filteredItems.tag[0].count).toEqual(7);
-      expect(filteredItems.tag[1].count).toEqual(7);
+      expect(filteredItems.tag[1].count).toEqual(8);
     });
   });
 
   describe('getGroups', () => {
-    const types = getNodeTypes(mockState.animals);
+    const nodeTypes = getNodeTypes(mockState.animals);
 
     const items = getFilteredItems({
       nodes: getGroupedNodes(mockState.animals),
+      nodeTypes,
       tags: getTagData(mockState.animals),
       modularPipelines: getModularPipelineData(mockState.animals),
       tagNodeCounts: getTagNodeCounts(mockState.animals),
@@ -205,7 +208,7 @@ describe('node-list-selectors', () => {
       searchValue: '',
     });
 
-    const groups = getGroups({ types, items });
+    const groups = getGroups({ nodeTypes, items });
 
     const groupType = expect.objectContaining({
       id: expect.any(String),
@@ -307,10 +310,10 @@ describe('node-list-selectors', () => {
     });
   });
 
-  describe('filterNodes', () => {
+  describe('filterNodeGroups', () => {
     const nodes = getGroupedNodes(mockState.animals);
     const searchValue = 'a';
-    const filteredNodes = filterNodes(nodes, searchValue);
+    const filteredNodes = filterNodeGroups(nodes, searchValue);
     const nodeList = ungroupNodes(filteredNodes);
     const notMatchingNodeList = ungroupNodes(nodes).filter(
       (node) => !node.name.includes(searchValue)

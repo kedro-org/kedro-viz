@@ -7,6 +7,7 @@ import { getTagData } from '../../selectors/tags';
 import IndicatorPartialIcon from '../icons/indicator-partial';
 import { localStorageName } from '../../config';
 import { toggleTypeDisabled } from '../../actions/node-type';
+import { sidebar } from '../../config';
 
 describe('NodeList', () => {
   beforeEach(() => {
@@ -46,9 +47,12 @@ describe('NodeList', () => {
         const expectedTagResult = tags.filter((tag) =>
           tag.name.includes(searchText)
         );
+        const expectedElementTypeResult = Object.keys(sidebar.Elements).filter((type) =>
+          type.includes(searchText)
+        );
         expect(search().props().value).toBe(searchText);
         expect(nodeList.length).toBe(
-          expectedResult.length + expectedTagResult.length
+          expectedResult.length + expectedTagResult.length + expectedElementTypeResult.length
         );
       }
     );
@@ -64,6 +68,7 @@ describe('NodeList', () => {
         );
       const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
+      const elementTypes = Object.keys(sidebar.Elements);
       const searchText = nodes[0].name;
       // Enter search text
       search().simulate('change', { target: { value: searchText } });
@@ -75,14 +80,17 @@ describe('NodeList', () => {
       const expectedTagResult = tags.filter((tag) =>
         tag.name.includes(searchText)
       );
+      const expectedElementTypeResult = elementTypes.filter((type) =>
+        type.includes(searchText)
+      );
       expect(nodeList().length).toBe(
-        expectedResult.length + expectedTagResult.length
+        expectedResult.length + expectedTagResult.length + expectedElementTypeResult.length
       );
       // Clear the list with escape key
       searchWrapper.simulate('keydown', { keyCode: 27 });
       // Check that search input value and node list have been reset
       expect(search().props().value).toBe('');
-      expect(nodeList().length).toBe(nodes.length + tags.length);
+      expect(nodeList().length).toBe(nodes.length + tags.length + elementTypes.length);
     });
   });
 
@@ -350,7 +358,8 @@ describe('NodeList', () => {
       );
       const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
-      expect(nodeList.length).toBe(nodes.length + tags.length);
+      const elementTypes = Object.keys(sidebar.Elements);
+      expect(nodeList.length).toBe(nodes.length + tags.length + elementTypes.length);
     });
 
     it('renders elements panel, filter panel inside a SplitPanel with a handle', () => {
@@ -433,7 +442,7 @@ describe('NodeList', () => {
         task: nodeList,
       }),
       nodeSelected: expect.any(Object),
-      types: expect.any(Array),
+      nodeTypes: expect.any(Array),
       modularPipelines: expect.any(Object),
       sections: expect.any(Object),
     });

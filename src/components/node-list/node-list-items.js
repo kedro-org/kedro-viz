@@ -103,24 +103,21 @@ export const getFilteredTags = createSelector(
  */
 export const getFilteredTagItems = createSelector(
   [getFilteredTags, (state) => state.tagNodeCounts],
-    (filteredTags, tagNodeCounts = {}) => {
-      return ({
-        tag: filteredTags.tag.map((tag) => ({
-          ...tag,
-          type: 'tag',
-          visibleIcon: IndicatorIcon,
-          invisibleIcon: IndicatorOffIcon,
-          active: false,
-          selected: false,
-          faded: false,
-          visible: true,
-          disabled: false,
-          unset: !tag.enabled,
-          checked: tag.enabled,
-          count: tagNodeCounts[tag.id] || 0
-        })),
-    });
-  }
+  (filteredTags, tagNodeCounts = {}) => ({
+    tag: filteredTags.tag.map((tag) => ({
+      ...tag,
+      type: 'tag',
+      visibleIcon: IndicatorIcon,
+      invisibleIcon: IndicatorOffIcon,
+      active: false,
+      selected: false,
+      faded: false,
+      visible: true,
+      disabled: false,
+      checked: tag.enabled,
+      count: tagNodeCounts[tag.id] || 0,
+    })),
+  })
 );
 
 /**
@@ -164,6 +161,58 @@ export const getFilteredModularPipelineItems = createSelector(
 );
 
 /**
+ * Return filtered/highlighted element types
+ * @param {string} searchValue Search term
+ * @return {object} Grouped element types
+ */
+export const getFilteredElementTypes = createSelector(
+  [(state) => state.searchValue],
+  (searchValue) =>
+    highlightMatch(
+      filterNodeGroups(
+        {
+          elementType: Object.entries(sidebar.Elements).map(([name, type]) => ({
+            id: type,
+            name,
+          })),
+        },
+        searchValue
+      ),
+      searchValue
+    )
+);
+
+/**
+ * Return filtered/highlighted element type items
+ * @param {object} filteredTags List of filtered element types
+ * @param {array} nodeTypes List of node types
+ * @return {object} Element type items
+ */
+export const getFilteredElementTypeItems = createSelector(
+  [getFilteredElementTypes, (state) => state.nodeTypes],
+  (filteredElementTypes, nodeTypes) => ({
+    elementType: filteredElementTypes.elementType.map((elementType) => {
+      const nodeType = nodeTypes.find((type) => type.id === elementType.id);
+
+      return {
+        ...elementType,
+        nodeTypeDisabled: nodeType.disabled,
+        type: 'elementType',
+        visibleIcon: IndicatorIcon,
+        invisibleIcon: IndicatorOffIcon,
+        active: false,
+        selected: false,
+        faded: false,
+        visible: true,
+        disabled: false,
+        checked: nodeType.disabled === false,
+        count: nodeType.nodeCount.total,
+      };
+    }),
+  })
+);
+
+/**
  * Compares items for sorting in groups first
  * by enabled status (by tag) and then alphabeticaly (by name)
  * @param {object} itemA First item to compare
@@ -177,11 +226,10 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
 };
 
 /**
- * Compares items for sorting in groups first
- * by enabled status (by tag) and then alphabeticaly (by name)
- * @param {object} itemA First item to compare
- * @param {object} itemB Second item to compare
- * @return {number} Comparison result
+ * Return filtered node items
+ * @param {object} filteredNodes
+ * @param {object} nodeSelected
+ * @return {object} Grouped, filtered and sorted node items
  */
 export const getFilteredNodeItems = createSelector(
   [getFilteredNodes, (state) => state.nodeSelected],
@@ -244,42 +292,51 @@ export const getSections = createSelector(
  * 'filter': Categories, e.g. tags
  * 'element': Graph elements, e.g. nodes, datasets, or parameters
  * An item is a node-list row, e.g. a node or a tag.
- * @param {object} itemType Meta information about the group's items
+ * @param {object} groupType Meta information about the group's items
  * @param {array} itemsOfType List of items in the group
  */
-export const createGroup = (itemType, itemsOfType = []) => {
+export const createGroup = (groupType, itemsOfType = []) => {
   const group = {
-    type: itemType,
-    id: itemType.id,
-    allUnset: itemsOfType.every((item) => item.unset),
+    type: groupType,
+    id: groupType.id,
+    allUnchecked: itemsOfType.every((item) => !item.checked),
     allChecked: itemsOfType.every((item) => item.checked),
   };
 
-  if (itemType.id === 'tag') {
+  if (groupType.id === 'tag') {
     Object.assign(group, {
       name: 'Tags',
       kind: 'filter',
-      checked: !group.allUnset,
+      checked: !group.allUnchecked,
       visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
       invisibleIcon: IndicatorOffIcon,
     });
-  } else if (itemType.id === 'modularPipeline') {
+  } else if (groupType.id === 'modularPipeline') {
     Object.assign(group, {
       name: 'Modular Pipelines',
       kind: 'filter',
-      checked: !group.allUnset,
+      checked: !group.allUnchecked,
+      visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
+      invisibleIcon: IndicatorOffIcon,
+    });
+  } else if (groupType.id === 'elementType') {
+    Object.assign(group, {
+      name: 'Element types',
+      kind: 'filter',
+      checked: !group.allUnchecked,
       visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
       invisibleIcon: IndicatorOffIcon,
     });
   } else {
     Object.assign(group, {
-      name: itemType.name,
+      name: groupType.name,
       kind: 'element',
-      checked: !itemType.disabled,
+      checked: !groupType.disabled,
       visibleIcon: VisibleIcon,
       invisibleIcon: InvisibleIcon,
     });
   }
+
   return group;
 };
 
@@ -290,13 +347,18 @@ export const createGroup = (itemType, itemsOfType = []) => {
  * @return {array} List of groups
  */
 export const getGroups = createSelector(
-  [(state) => state.types, (state) => state.items],
+  [(state) => state.nodeTypes, (state) => state.items],
   (nodeTypes, items) => {
     const groups = {};
-    const itemTypes = [...nodeTypes, { id: 'tag' }, { id: 'modularPipeline' }];
-    for (const itemType of itemTypes) {
-      groups[itemType.id] = createGroup(itemType, items[itemType.id]);
+    const groupTypes = [
+      ...nodeTypes,
+      ...Object.values(sidebar.Categories).map((id) => ({ id })),
+    ];
+
+    for (const groupType of groupTypes) {
+      groups[groupType.id] = createGroup(groupType, items[groupType.id]);
     }
+
     return groups;
   }
 );
@@ -309,12 +371,21 @@ export const getGroups = createSelector(
  * @return {array} final list of all filtered items from the three filtered item sets
  */
 export const getFilteredItems = createSelector(
-  [getFilteredNodeItems, getFilteredTagItems, getFilteredModularPipelineItems],
-  (filteredNodeItems, filteredTagItems, filteredModularPipelineItems) => {
-    return {
-      ...filteredTagItems,
-      ...filteredNodeItems,
-      ...filteredModularPipelineItems,
-    };
-  }
+  [
+    getFilteredNodeItems,
+    getFilteredTagItems,
+    getFilteredModularPipelineItems,
+    getFilteredElementTypeItems,
+  ],
+  (
+    filteredNodeItems,
+    filteredTagItems,
+    filteredModularPipelineItems,
+    filteredElementTypeItems
+  ) => ({
+    ...filteredTagItems,
+    ...filteredNodeItems,
+    ...filteredModularPipelineItems,
+    ...filteredElementTypeItems,
+  })
 );

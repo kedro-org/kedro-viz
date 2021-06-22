@@ -8,9 +8,9 @@ import { getGroups, getSections } from './node-list-items';
 describe('NodeListGroups', () => {
   const mockProps = () => {
     const items = getGroupedNodes(mockState.animals);
-    const types = getNodeTypes(mockState.animals);
+    const nodeTypes = getNodeTypes(mockState.animals);
     const sections = getSections({ flags: { modularpipeline: true } }).Elements;
-    const groups = getGroups({ types, items });
+    const groups = getGroups({ nodeTypes, items });
     return { items, sections, groups };
   };
 
