@@ -181,7 +181,7 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
 
 /**
  * Compares items for sorting in each modularPipeline in the nested tree structure
- * by enabled status (by tag) and then alphabeticaly (by name)
+ * by enabled status (by tag) and then alphabeticaly (by type)
  * @param {object} itemA First item to compare
  * @param {object} itemB Second item to compare
  * @return {number} Comparison result
@@ -375,14 +375,6 @@ export const getFilteredNodeModularPipelines = createSelector(
     nodeTypeIDs.forEach((key) => {
       nodeItems[key]?.forEach((filteredNode) => {
         filteredNode.modularPipelines.forEach((nodeModularPipeline) => {
-          if (
-            !filteredModularPipeline.some(
-              (modularPipelineItem) =>
-                modularPipelineItem.id === nodeModularPipeline
-            )
-          ) {
-          }
-
           filteredNodeModularPipelines.push(
             constructModularPipelineItem(
               modularPipelines.filter(
