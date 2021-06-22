@@ -363,7 +363,7 @@ export const getFilteredNodeModularPipelines = createSelector(
   (filteredNodeItems, modularPipelines, nodeTypeIDs) => {
     const filteredNodeModularPipelines = [];
 
-    const nodeItems = Object.assign({}, filteredNodeItems);
+    const nodeItems = cloneDeep(filteredNodeItems);
 
     nodeTypeIDs.forEach((nodeTypeId) => {
       nodeItems[nodeTypeId]?.forEach((filteredNode) => {
