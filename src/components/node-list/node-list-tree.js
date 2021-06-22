@@ -112,7 +112,6 @@ const TreeListProvider = ({
   };
 
   const renderModularPipelines = (treeData) =>
-    treeData.children.length > 0 &&
     treeData.children.map((node) =>
       renderTree(
         node,
