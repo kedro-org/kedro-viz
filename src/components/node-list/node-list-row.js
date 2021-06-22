@@ -122,7 +122,6 @@ const NodeListRow = memo(
           className={classnames('pipeline-row__toggle', {
             'pipeline-row__toggle--disabled': disabled,
             'pipeline-row__toggle--selected': selected,
-            'pipeline-row__toggle--not-tag': type !== 'tag',
           })}>
           <input
             id={id}
