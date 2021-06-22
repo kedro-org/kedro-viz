@@ -351,7 +351,7 @@ export const getFilteredItems = createSelector(
 );
 
 /**
- * returns the corresponding filtered parent moduar pipelines
+ * returns the corresponding filtered parent modular pipelines
  * for each filtered node
  */
 export const getFilteredNodeModularPipelines = createSelector(
