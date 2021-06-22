@@ -357,23 +357,16 @@ export const getFilteredItems = createSelector(
 export const getFilteredNodeModularPipelines = createSelector(
   [
     getFilteredNodeItems,
-    getFilteredModularPipelineItems,
     (state) => state.modularPipelines,
     (state) => state.nodeTypeIDs,
   ],
-  (
-    filteredNodeItems,
-    filteredModularPipelines,
-    modularPipelines,
-    nodeTypeIDs
-  ) => {
+  (filteredNodeItems, modularPipelines, nodeTypeIDs) => {
     const filteredNodeModularPipelines = [];
-    const filteredModularPipeline = filteredModularPipelines.modularPipeline;
 
     const nodeItems = Object.assign({}, filteredNodeItems);
 
-    nodeTypeIDs.forEach((key) => {
-      nodeItems[key]?.forEach((filteredNode) => {
+    nodeTypeIDs.forEach((nodeTypeId) => {
+      nodeItems[nodeTypeId]?.forEach((filteredNode) => {
         filteredNode.modularPipelines.forEach((nodeModularPipeline) => {
           filteredNodeModularPipelines.push(
             constructModularPipelineItem(
@@ -589,8 +582,8 @@ export const getFilteredModularPipelineNodes = createSelector(
 
     // go through the set of nodes and slot them into the corresponding modular pipeline array
     filteredTreeItems.forEach((modularPipeline) => {
-      nodeTypeIDs.forEach((key) => {
-        nodeItems[key]?.forEach((nodeItem) => {
+      nodeTypeIDs.forEach((nodeTypeId) => {
+        nodeItems[nodeTypeId]?.forEach((nodeItem) => {
           if (nodeItem.modularPipelines.includes(modularPipeline.id)) {
             modularPipelineNodes[modularPipeline.id].push(nodeItem);
           }
