@@ -1,5 +1,5 @@
 import { getUrl } from '../utils';
-import loadJsonData from '../store/load-data';
+import { loadJsonData, loadMockNodeData } from '../store/load-data';
 
 export const TOGGLE_NODE_CLICKED = 'TOGGLE_NODE_CLICKED';
 
@@ -85,6 +85,12 @@ export function loadNodeData(nodeID) {
       const nodeData = await loadJsonData(url);
       dispatch(addNodeMetadata({ id: nodeID, data: nodeData }));
       dispatch(toggleNodeDataLoading(false));
+    } else {
+      const nodeData = loadMockNodeData(dataSource, nodeID);
+      if (nodeData) {
+        dispatch(addNodeMetadata({ id: nodeID, data: nodeData }));
+        dispatch(toggleNodeDataLoading(false));
+      }
     }
   };
 }
