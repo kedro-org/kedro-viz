@@ -31,10 +31,10 @@ This data could either come from a real Kedro project or a file.
 import json
 from pathlib import Path
 
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from jinja2 import Environment, FileSystemLoader
 
 from kedro_viz import __version__
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
@@ -56,21 +56,19 @@ def create_api_app_from_project(project_path: Path) -> FastAPI:
     app.include_router(router)
     app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
-    templates = Jinja2Templates(directory=str(_HTML_DIR))
-
     @app.get("/")
-    async def index(request: Request):
+    async def index():
         heap_app_id = kedro_telemetry.get_heap_app_id(project_path)
         heap_user_identity = kedro_telemetry.get_heap_identity()
-        return templates.TemplateResponse(
-            "index.html",
-            {
-                "request": request,
-                "should_add_telemetry": bool(heap_app_id) and bool(heap_user_identity),
-                "heap_app_id": heap_app_id,
-                "heap_user_identity": heap_user_identity,
-            },
-        )
+        should_add_telemetry = bool(heap_app_id) and bool(heap_user_identity)
+        html_content = (_HTML_DIR / "index.html").read_text(encoding="utf-8")
+        if should_add_telemetry:
+            env = Environment(loader=FileSystemLoader(_HTML_DIR))
+            telemetry_content = env.get_template("telemetry.html").render(
+                heap_app_id=heap_app_id, heap_user_identity=heap_user_identity
+            )
+            html_content = html_content.replace("</head>", telemetry_content)
+        return HTMLResponse(html_content)
 
     return app
 
