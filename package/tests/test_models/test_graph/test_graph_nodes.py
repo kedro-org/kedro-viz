@@ -27,6 +27,7 @@
 # limitations under the License.
 from pathlib import Path
 from textwrap import dedent
+from types import FunctionType
 from unittest.mock import MagicMock, call, patch
 
 import pytest
@@ -59,7 +60,7 @@ def identity(x):
     return x
 
 
-def decorator(fun: callable) -> callable:
+def decorator(fun: FunctionType) -> FunctionType:
     """
     Not the best way to write decorator
     but trying to stay faithful to the bug report here:
