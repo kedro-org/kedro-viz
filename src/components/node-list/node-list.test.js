@@ -2,7 +2,17 @@ import React from 'react';
 import NodeList, { mapStateToProps } from './index';
 import SplitPanel from '../split-panel';
 import { mockState, setup } from '../../utils/state.mock';
-import { getNodeData } from '../../selectors/nodes';
+import {
+  getNodeData,
+  getNodeModularPipelines,
+  getGroupedNodes,
+} from '../../selectors/nodes';
+import { getNestedModularPipelines } from './node-list-items';
+import { getNodeTypeIDs } from '../../selectors/node-types';
+import {
+  getModularPipelineData,
+  getModularPipelineIDs,
+} from '../../selectors/modular-pipelines';
 import { getTagData } from '../../selectors/tags';
 import IndicatorPartialIcon from '../icons/indicator-partial';
 import { localStorageName } from '../../config';
@@ -56,6 +66,51 @@ describe('NodeList', () => {
         );
       }
     );
+  });
+  
+  describe('tree-search-ui', () => {
+    describe('searching through nodes', () => {
+      const wrapper = setup.mount(<NodeList />);
+      const searches = [
+        getNodeData(mockState.animals)[0].name,
+        'aaaaaaaaaaaaa',
+      ];
+
+      test.each(searches)(
+        'filters the nodes and its relevant parent modular pipeline when entering the search text "%s"',
+        (searchText) => {
+          const search = () => wrapper.find('.kui-input__field');
+          search().simulate('change', { target: { value: searchText } });
+          const nodeList = wrapper.find(
+            '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
+          );
+          const nodes = getNodeData(mockState.animals);
+          const tags = getTagData(mockState.animals);
+          const nodesModularPipelines = getNodeModularPipelines(
+            mockState.animals
+          );
+          const expectedResult = nodes.filter((node) =>
+            node.name.includes(searchText)
+          );
+          const expectedTagResult = tags.filter((tag) =>
+            tag.name.includes(searchText)
+          );
+          // obtain the modular pipeline parents
+          const expectedModularPipelines = nodesModularPipelines.hasOwnProperty(
+            searchText
+          )
+            ? nodesModularPipelines[searchText]
+            : [];
+
+          expect(search().props().value).toBe(searchText);
+          expect(nodeList.length).toBe(
+            expectedResult.length +
+              expectedTagResult.length +
+              expectedModularPipelines.length
+          );
+        }
+      );
+    });
 
     it('clears the search filter input and resets the list when hitting the Escape key', () => {
       const wrapper = setup.mount(<NodeList />);
@@ -64,8 +119,9 @@ describe('NodeList', () => {
       const search = () => wrapper.find('.kui-input__field');
       const nodeList = () =>
         wrapper.find(
-          '.pipeline-nodelist__list--nested .pipeline-nodelist__row'
+          '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
         );
+
       const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
       const elementTypes = Object.keys(sidebar.Elements);
@@ -177,19 +233,24 @@ describe('NodeList', () => {
         );
       });
 
-      test('Toggling all the nodes back on enables all nodes', () => {
-        setShownRowsEnabled(true);
-        expect(
-          rows()
-            .filterWhere((row) => isRowEnabled(row))
-            .map((row) => rowName(row))
-            .sort()
-        ).toEqual(nodes.map((node) => node.name).sort());
+      // obtain the nested modular pipeline data to correspond to the node-list-tree layout
+      const nestedModularPipelines = getNestedModularPipelines({
+        nodes: getGroupedNodes(mockState.animals),
+        tags: getTagData(mockState.animals),
+        modularPipelines: getModularPipelineData(mockState.animals),
+        nodeSelected: {},
+        searchValue: '',
+        modularPipelineIds: getModularPipelineIDs(mockState.animals),
+        nodeModularPipelines: getNodeModularPipelines(mockState.animals),
+        nodeTypeIDs: getNodeTypeIDs(mockState.animals),
       });
-    });
 
-    afterAll(() => {
-      wrapper.unmount();
+      // Check that search input value and node list have been reset
+      expect(search().props().value).toBe('');
+      expect(nodeList().length).toBe(
+        nestedModularPipelines.children.length +
+          nestedModularPipelines.nodes.length
+      );
     });
   });
 
@@ -209,17 +270,16 @@ describe('NodeList', () => {
 
     const elements = (wrapper) =>
       wrapper
-        .find(
-          '.pipeline-nodelist__group--kind-element .pipeline-nodelist__list--nested'
-        )
+        .find('.MuiTreeItem-label')
         .find('.pipeline-nodelist__row')
         .map((row) => [
           row.prop('title'),
           !row.hasClass('pipeline-nodelist__row--disabled'),
         ]);
 
-    const elementsEnabled = (wrapper) =>
-      elements(wrapper).filter(([_, enabled]) => enabled);
+    const elementsEnabled = (wrapper) => {
+      return elements(wrapper).filter(([_, enabled]) => enabled);
+    };
 
     const tagItem = (wrapper) =>
       wrapper.find('.pipeline-nodelist__group--type-tag');
@@ -227,7 +287,7 @@ describe('NodeList', () => {
     const partialIcon = (wrapper) =>
       tagItem(wrapper).find(IndicatorPartialIcon);
 
-    it('selecting tags enables only elements with given tags', () => {
+    it('selecting tags enables only elements with given tags and modular pipelines', () => {
       //Parameters are enabled here to override the default behavior
       const wrapper = setup.mount(<NodeList />, {
         beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
@@ -235,71 +295,55 @@ describe('NodeList', () => {
 
       changeRows(wrapper, ['Small'], true);
       expect(elementsEnabled(wrapper)).toEqual([
+        ['Nested', true],
+        ['Pipeline1', true],
+        ['Pipeline2', true],
         ['salmon', true],
         ['Bull', true],
-        ['Cat', true],
         ['Dog', true],
-        ['Horse', true],
         ['Sheep', true],
         ['Parameters', true],
-        ['Params:rabbit', true],
       ]);
 
       changeRows(wrapper, ['Small', 'Large'], true);
       expect(elementsEnabled(wrapper)).toEqual([
+        ['Nested', true],
+        ['Pipeline1', true],
+        ['Pipeline2', true],
         ['salmon', true],
-        ['shark', true],
         ['Bear', true],
-        ['Bull', true],
         ['Cat', true],
-        ['Dog', true],
         ['Elephant', true],
-        ['Giraffe', true],
         ['Horse', true],
-        ['Nested.weasel', true],
         ['Pig', true],
-        ['Sheep', true],
         ['Parameters', true],
-        ['Params:rabbit', true],
       ]);
     });
 
-    it('selecting a tag sorts elements by enabled first then alphabetical', () => {
+    it('selecting a tag sorts elements by modular pipelines first then by task, data and parameter nodes ', () => {
       //Parameters are enabled here to override the default behavior
       const wrapper = setup.mount(<NodeList />, {
         beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
       });
 
-      changeRows(wrapper, ['Medium'], true);
+      // with the modular pipeline tree structure the elements displayed here are for the top level pipeline
       expect(elements(wrapper)).toEqual([
+        // modular pipelines (enabled)
+        ['Nested', true],
+        ['Pipeline1', true],
+        ['Pipeline2', true],
         // Tasks (enabled)
-        ['shark', true],
-        // Tasks (disabled)
-        ['salmon', false],
-        ['trout', false],
-        ['tuna', false],
-        // Datasets (enabled)
+        ['salmon', true],
         ['Bear', true],
+        // Datasets (enabled)
         ['Cat', true],
         ['Elephant', true],
-        ['Giraffe', true],
-        ['Nested.weasel', true],
+        ['Horse', true],
         ['Pig', true],
-        // Datasets (disabled)
-        ['Bull', false],
-        ['Dog', false],
-        ['Horse', false],
-        ['Pipeline1.data Science.dolphin', false],
-        ['Pipeline1.data Science.sheep', false],
-        ['Pipeline2.data Science.pig', false],
-        ['Pipeline2.data Science.sheep', false],
-        ['Pipeline2.data Science.whale', false],
-        ['Sheep', false],
-        // Parameters
-        ['Parameters', false],
-        ['Params:pipeline100.data Science.plankton', false],
-        ['Params:pipeline2.data Science.plankton', false],
-        ['Params:rabbit', false],
+        ['Sheep', true],
+        // Parameters(enabled)
+        ['Parameters', true],
+        ['Params:rabbit', true],
       ]);
     });
 
@@ -351,15 +395,31 @@ describe('NodeList', () => {
   });
 
   describe('node list', () => {
-    it('renders the correct number of rows', () => {
+    it('renders the correct number of tags in the filter panel', () => {
       const wrapper = setup.mount(<NodeList />);
       const nodeList = wrapper.find(
         '.pipeline-nodelist__list--nested .pipeline-nodelist__row'
       );
-      const nodes = getNodeData(mockState.animals);
+      // const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
       const elementTypes = Object.keys(sidebar.Elements);
       expect(nodeList.length).toBe(nodes.length + tags.length + elementTypes.length);
+      expect(nodeList.length).toBe(tags.length);
+    });
+
+    it('renders the correct number of modular pipelines and nodes in the tree panel', () => {
+      const wrapper = setup.mount(<NodeList />);
+      const nodeList = wrapper.find('.pipeline-nodelist__row');
+
+      // with the tree structure we now need extract nodes that are in the top level modular pipeline
+      const nodes = getNodeData(mockState.animals).filter(
+        (node) => node.modularPipelines.length === 0
+      );
+      // Similar to the above, we now need to only extract modular pipelines in the top level only
+      const modularPipelines = getModularPipelineData(mockState.animals).filter(
+        (mp) => !mp.id.includes('.')
+      );
+      expect(nodeList.length).toBe(nodes.length + modularPipelines.length);
     });
 
     it('renders elements panel, filter panel inside a SplitPanel with a handle', () => {
@@ -384,12 +444,8 @@ describe('NodeList', () => {
 
   describe('node list element item', () => {
     const wrapper = setup.mount(<NodeList />);
-    const nodeRow = () =>
-      wrapper
-        .find(
-          '.pipeline-nodelist__group--type-task .pipeline-nodelist__list--nested .pipeline-nodelist__row'
-        )
-        .first();
+    // this needs to be the 4th element as the first 3 elements are modular pipelines rows which does not apply the '--active' class
+    const nodeRow = () => wrapper.find('.pipeline-nodelist__row').at(4);
 
     it('handles mouseenter events', () => {
       nodeRow().simulate('mouseenter');
@@ -404,12 +460,7 @@ describe('NodeList', () => {
 
   describe('node list element item checkbox', () => {
     const wrapper = setup.mount(<NodeList />);
-    const checkbox = () =>
-      wrapper
-        .find(
-          '.pipeline-nodelist__group--type-task .pipeline-nodelist__list--nested .pipeline-nodelist__row input'
-        )
-        .first();
+    const checkbox = () => wrapper.find('.pipeline-nodelist__row input').at(4);
 
     it('handles toggle off event', () => {
       checkbox().simulate('change', { target: { checked: false } });

@@ -28,6 +28,14 @@
     width: calc(100% - 6.5em);
   }
 
+  &--filter {
+    padding: $row-padding-y $row-offset-right $row-padding-y $row-offset-left;
+  }
+
+  &--tree {
+    padding: $row-padding-y 1em $row-padding-y 1em;
+  }
+
   &:focus {
     outline: none;
     box-shadow: 0 0 0 4px $color-link inset;

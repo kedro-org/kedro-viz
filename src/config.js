@@ -53,7 +53,6 @@ export const sidebar = {
   Categories: {
     ElementTypes: 'elementType',
     Tags: 'tag',
-    ModularPipelines: 'modularPipeline',
   },
   Elements: {
     Nodes: 'task',

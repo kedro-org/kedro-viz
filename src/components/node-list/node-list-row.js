@@ -55,6 +55,7 @@ const NodeListRow = memo(
     icon,
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
+    rowType,
   }) => {
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
@@ -95,7 +96,8 @@ const NodeListRow = memo(
         <TextButton
           className={classnames(
             'pipeline-nodelist__row__text',
-            `pipeline-nodelist__row__text--kind-${kind}`
+            `pipeline-nodelist__row__text--kind-${kind}`,
+            `pipeline-nodelist__row__text--${rowType}`
           )}
           onClick={onClick}
           onFocus={onMouseEnter}
@@ -114,41 +116,49 @@ const NodeListRow = memo(
             dangerouslySetInnerHTML={{ __html: label }}
           />
         </TextButton>
-        {typeof count === 'number' ? (
-          <span onClick={onClick} className={'pipeline-nodelist__row__count'}>{count}</span>
-        ) : null}
-        <label
-          htmlFor={id}
-          className={classnames('pipeline-row__toggle', {
-            'pipeline-row__toggle--disabled': disabled,
-            'pipeline-row__toggle--selected': selected,
-          })}>
-          <input
-            id={id}
-            className="pipeline-nodelist__row__checkbox"
-            type="checkbox"
-            checked={checked}
-            disabled={disabled}
-            name={name}
-            onChange={onChange}
-          />
-          <VisibilityIcon
-            aria-label={name}
-            className={classnames(
-              'pipeline-nodelist__row__icon',
-              'pipeline-row__toggle-icon',
-              `pipeline-row__toggle-icon--kind-${kind}`,
-              {
-                'pipeline-row__toggle-icon--parent': Boolean(children),
-                'pipeline-row__toggle-icon--child': !children,
-                'pipeline-row__toggle-icon--checked': checked,
-                'pipeline-row__toggle-icon--unchecked': !checked,
-                'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
-              }
-            )}
-          />
-        </label>
         {children}
+        {type !== 'modularPipeline' && (
+          <>
+            {typeof count === 'number' ? (
+              <span
+                onClick={onClick}
+                className={'pipeline-nodelist__row__count'}>
+                {count}
+              </span>
+            ) : null}
+            <label
+              htmlFor={id}
+              className={classnames('pipeline-row__toggle', {
+                'pipeline-row__toggle--disabled': disabled,
+                'pipeline-row__toggle--selected': selected,
+              })}>
+              <input
+                id={id}
+                className="pipeline-nodelist__row__checkbox"
+                type="checkbox"
+                checked={checked}
+                disabled={disabled}
+                name={name}
+                onChange={onChange}
+              />
+              <VisibilityIcon
+                aria-label={name}
+                className={classnames(
+                  'pipeline-nodelist__row__icon',
+                  'pipeline-row__toggle-icon',
+                  `pipeline-row__toggle-icon--kind-${kind}`,
+                  {
+                    'pipeline-row__toggle-icon--parent': Boolean(children),
+                    'pipeline-row__toggle-icon--child': !children,
+                    'pipeline-row__toggle-icon--checked': checked,
+                    'pipeline-row__toggle-icon--unchecked': !checked,
+                    'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
+                  }
+                )}
+              />
+            </label>
+          </>
+        )}
       </Container>
     );
   },
