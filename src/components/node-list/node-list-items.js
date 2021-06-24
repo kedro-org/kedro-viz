@@ -370,10 +370,10 @@ export const getFilteredNodeModularPipelines = createSelector(
         filteredNode.modularPipelines.forEach((nodeModularPipeline) => {
           filteredNodeModularPipelines.push(
             constructModularPipelineItem(
-              modularPipelines.filter(
+              modularPipelines.find(
                 (rawModularPipeline) =>
                   rawModularPipeline.id === nodeModularPipeline
-              )[0]
+              )
             )
           );
         });
@@ -418,13 +418,26 @@ export const getFilteredModularPipelineParent = createSelector(
     filteredNodeModularPipelines,
     modularPipelines
   ) => {
-    const filteredMoudularPipelineParents = [];
+    const filteredModularPipelineParents = [];
     const filteredModularPipeline = filteredModularPipelines.modularPipeline;
 
     // 1. extract only modular pipelines with additional namespace
     const childrenModularPipelines = filteredModularPipeline.filter(
       (modularPipeline) => modularPipeline.id.includes('.')
     );
+
+    const checkFilteredModularPipelineList = (modularPipeLineList, parent) =>
+      !modularPipeLineList.some(
+        (modularPipeline) => modularPipeline.id === parent
+      );
+
+    const checkFilteredNodeModularPipelineList = (
+      filteredNodeModularPipelinesList,
+      parent
+    ) =>
+      !filteredNodeModularPipelinesList.some(
+        (modularPipeline) => modularPipeline.id === parent
+      );
 
     // extract the parents only for those modular pipelines that does not have a filtered parent
     childrenModularPipelines.forEach((childrenModularPipeline) => {
@@ -443,23 +456,22 @@ export const getFilteredModularPipelineParent = createSelector(
 
         // check against the filtered modular pipeline, existing list of parent pipelines and also the filtered node parent list
         if (
-          !filteredModularPipeline.some(
+          checkFilteredModularPipelineList(filteredModularPipeline, parent) &&
+          !filteredModularPipelineParents.some(
             (modularPipeline) => modularPipeline.id === parent
           ) &&
-          !filteredMoudularPipelineParents.some(
-            (modularPipeline) => modularPipeline.id === parent
-          ) &&
-          !filteredNodeModularPipelines.some(
-            (modularPipeline) => modularPipeline.id === parent
+          checkFilteredNodeModularPipelineList(
+            filteredNodeModularPipelines,
+            parent
           )
         ) {
           // add the relevant modular pipeline to the list of parents
-          filteredMoudularPipelineParents.push(
+          filteredModularPipelineParents.push(
             // construct the item needed and then add it to the list
             constructModularPipelineItem(
-              modularPipelines.filter(
+              modularPipelines.find(
                 (rawModularPipeline) => rawModularPipeline.id === parent
-              )[0]
+              )
             )
           );
         }
@@ -467,7 +479,7 @@ export const getFilteredModularPipelineParent = createSelector(
       }
     });
 
-    return filteredMoudularPipelineParents;
+    return filteredModularPipelineParents;
   }
 );
 
@@ -492,42 +504,54 @@ export const getFilteredTreeItems = createSelector(
 
     let finalModularPipelines = [];
 
+    const checkModularPipelineItems = (modularPipelineItems, modularPipeline) =>
+      modularPipelineItems.some(
+        (modularPipelineItem) => modularPipelineItem.id === modularPipeline.id
+      );
+
+    const checkNodeModularPipelines = (nodeModularPipelines, modularPipeline) =>
+      nodeModularPipelines.some(
+        (nodeModularPipeline) => nodeModularPipeline.id === modularPipeline.id
+      );
+
+    const checkModularPipelineParentPipeline = (
+      modularPipelineParent,
+      modularPipeline
+    ) =>
+      modularPipelineParent.some(
+        (modularPipelineParentPipeline) =>
+          modularPipelineParentPipeline.id === modularPipeline.id
+      );
+
     // sort all 3 sets of modular pipelines according to the original order
     modularPipelines?.forEach((modularPipeline) => {
-      // check filtered modular pipelines
-      if (
-        modularPipelineItems.some(
-          (modularPipelineItem) => modularPipelineItem.id === modularPipeline.id
-        )
-      ) {
+      if (checkModularPipelineItems(modularPipelineItems, modularPipeline)) {
         finalModularPipelines.push(
-          modularPipelineItems.filter(
+          modularPipelineItems.find(
             (modularPipelineItem) =>
               modularPipelineItem.id === modularPipeline.id
-          )[0]
+          )
         );
       } else if (
-        nodeModularPipelines.some(
-          (nodeModularPipeline) => nodeModularPipeline.id === modularPipeline.id
-        )
+        checkNodeModularPipelines(nodeModularPipelines, modularPipeline)
       ) {
         finalModularPipelines.push(
-          nodeModularPipelines.filter(
+          nodeModularPipelines.find(
             (nodeModularPipeline) =>
               nodeModularPipeline.id === modularPipeline.id
-          )[0]
+          )
         );
       } else if (
-        modularPipelineParent.some(
-          (modularPipelineParentPipeline) =>
-            modularPipelineParentPipeline.id === modularPipeline.id
+        checkModularPipelineParentPipeline(
+          modularPipelineParent,
+          modularPipeline
         )
       ) {
         finalModularPipelines.push(
-          modularPipelineParent.filter(
+          modularPipelineParent.find(
             (modularPipelineParentPipeline) =>
               modularPipelineParentPipeline.id === modularPipeline.id
-          )[0]
+          )
         );
       }
     });
@@ -638,9 +662,9 @@ export const getNestedModularPipelines = createSelector(
 
         // go through each level to obtain the child
         parents.forEach((id) => {
-          parent = parent.children.filter(
+          parent = parent.children.find(
             (modularPipeline) => modularPipeline.id === id
-          )[0];
+          );
         });
 
         currentParent = parent;
