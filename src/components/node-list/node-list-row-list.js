@@ -86,6 +86,7 @@ const NodeRowList = ({
             onMouseEnter={() => onItemMouseEnter(item)}
             onMouseLeave={() => onItemMouseLeave(item)}
             onChange={(e) => onItemChange(item, !e.target.checked)}
+            rowType="filter"
           />
         ))}
       </ul>

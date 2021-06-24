@@ -37,6 +37,9 @@
     "snyk-test": "snyk test -prune-repeated-subdependencies"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.58",
     "@quantumblack/kedro-ui": "1.1.4",
     "batching-toposort": "^1.2.0",
     "classnames": "^2.3.1",
@@ -53,6 +56,7 @@
     "fetch-mock": "^9.11.0",
     "highlight.js": "^10.7.3",
     "kiwi.js": "^1.1.2",
+    "lodash.clonedeep": "^4.5.0",
     "plotly.js-cartesian-dist": "^1.58.4",
     "react-custom-scrollbars": "^4.2.1",
     "react-plotly.js": "^2.5.1",

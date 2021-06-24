@@ -52,7 +52,6 @@ export const flags = {
 export const sidebar = {
   Categories: {
     Tags: 'tag',
-    ModularPipelines: 'modularPipeline',
   },
   Elements: {
     Nodes: 'task',

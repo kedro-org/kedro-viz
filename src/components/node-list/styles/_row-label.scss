@@ -6,8 +6,10 @@
 .pipeline-nodelist__row__text {
   display: flex;
   align-items: center;
-  width: 100%;
-  padding: $row-padding-y $row-offset-right $row-padding-y $row-offset-left;
+
+  // Fixed with required for overflow elipsis
+  width: calc(100% - 5.5em);
+  margin-right: auto;
   color: inherit;
   font-size: inherit;
   font-family: inherit;
@@ -20,6 +22,18 @@
   box-shadow: none;
   cursor: default;
   user-select: none;
+
+  &--kind-filter {
+    width: calc(100% - 6.5em);
+  }
+
+  &--filter {
+    padding: $row-padding-y $row-offset-right $row-padding-y $row-offset-left;
+  }
+
+  &--tree {
+    padding: $row-padding-y 1em $row-padding-y 1em;
+  }
 
   &:focus {
     outline: none;

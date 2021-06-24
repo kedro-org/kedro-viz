@@ -13,6 +13,7 @@
 
   // force gpu layers to avoid drawing lag on scroll
   transform: translate(0, 0);
+  cursor: default;
 
   &--active,
   &--visible:hover {
