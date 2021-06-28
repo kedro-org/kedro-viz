@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FocusModeIcon = ({ className }) => (
+const FocusModeIcon = ({ className, checked }) => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +14,7 @@ const FocusModeIcon = ({ className }) => (
             d="M0 0H24V24H0z"
             transform="translate(-258 -194) translate(258 194)"
           />
-          <g fill="#FFF" fillRule="nonzero">
+          <g fill={checked ? '#00BCFF' : '#FFF'} fillRule="nonzero">
             <path
               d="M5 0L5 2 2 2 2 5 0 5 0 0z"
               transform="translate(-258 -194) translate(258 194) translate(6 6)"

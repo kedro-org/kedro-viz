@@ -141,6 +141,7 @@ const NodeListRow = memo(
           />
           <VisibilityIcon
             aria-label={name}
+            checked={checked}
             className={classnames(
               'pipeline-nodelist__row__icon',
               'pipeline-row__toggle-icon',
