@@ -159,8 +159,8 @@ export const getFilteredModularPipelineItems = createSelector(
         faded: false,
         visible: true,
         disabled: false,
-        unset: false,
-        checked: true,
+        unset: !modularPipeline.enabled,
+        checked: modularPipeline.enabled,
       })
     ),
   })
