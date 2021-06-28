@@ -116,7 +116,6 @@ const NodeListRow = memo(
             dangerouslySetInnerHTML={{ __html: label }}
           />
         </TextButton>
-        {children}
         {type !== 'modularPipeline' && (
           <>
             {typeof count === 'number' ? (
@@ -159,6 +158,7 @@ const NodeListRow = memo(
             </label>
           </>
         )}
+        {children}
       </Container>
     );
   },

@@ -15,7 +15,6 @@
   position: relative;
   display: flex;
   align-items: center;
-  padding: 0 $row-offset-right 0 $row-offset-left;
 
   // Fixed height required for lazy list (see note above).
   height: 37px;
@@ -23,6 +22,10 @@
   // Force gpu layers to avoid drawing lag on scroll.
   transform: translate(0, 0);
   cursor: default;
+
+  &--kind-filter {
+    padding: 0 $row-offset-right 0 $row-offset-left;
+  }
 
   &--active,
   &--visible:hover {
@@ -53,9 +56,6 @@
 }
 
 .pipeline-nodelist__row__type-icon {
-  margin-right: $row-icon-margin;
-  margin-left: -0.4em;
-
   &--nested > * {
     opacity: 0.3;
   }
