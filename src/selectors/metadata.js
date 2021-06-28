@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import { getGraphNodes } from './nodes';
-
 const getClickedNode = (state) => state.node.clicked;
 
 /**
@@ -22,6 +21,33 @@ export const getVisibleMetaSidebar = createSelector(
 const runCommandTemplates = {
   data: (name) => `kedro run --to-inputs ${name}`,
   task: (name) => `kedro run --to-nodes ${name}`,
+};
+
+const renderParameters = (key, value) => {
+  if (typeof value === 'object') {
+    console.log(value);
+    if (Array.isArray(value)) {
+      console.log(value);
+      if (
+        !value.some((v) => {
+          return typeof v == 'object';
+        })
+      ) {
+        return `${key}: ${value}`;
+      }
+    }
+    return Object.entries(value).map(([k, v]) => [key, renderParameters(k, v)]);
+  } else {
+    return `${key}: ${value}`;
+  }
+};
+
+const prettifyParams = (params) => {
+  let newparams = {};
+  params.forEach(([key, value]) => {
+    //  console.log(key)
+    //  console.log(value)
+  });
 };
 
 /**
@@ -68,11 +94,24 @@ export const getClickedNodeMetaData = createSelector(
       return null;
     }
 
-    const parameters =
+    let parameters =
       nodeParameters[node.id] &&
-      Object.entries(nodeParameters[node.id]).map(
-        ([key, value]) => `${key}: ${value}`
+      Object.entries(nodeParameters[node.id]).map(([key, value]) =>
+        renderParameters(key, value)
       );
+
+    // let parameters =
+    //   nodeParameters[node.id] && JSON.stringify(nodeParameters[node.id])
+    // if(parameters){
+    //     parameters = parameters.replaceAll(/[{]/g,'\t')
+    //     parameters = parameters.replaceAll(/[{]/g,'\t')
+    //    // parameters = parameters.replaceAll(/[{}\[,]["|,|{|}|\]|\t][{},]*/g,'\n')
+    //    // parameters = parameters.replaceAll("\"","")
+    //}
+    // console.log(parameters)
+    if (parameters) {
+      prettifyParams(parameters[0]);
+    }
 
     const metadata = {
       node,
