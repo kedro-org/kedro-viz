@@ -7,7 +7,7 @@ import './settings-modal.css';
 import Toggle from '../toggle';
 
 /**
- * Kedro-UI modal to allow users to choose between SVG/PNG export formats
+ * Kedro-UI modal to allow users to change the flag settings
  */
 
 const SettingsModal = ({ theme, onToggle, onToggleFlag, visible, flags }) => {
