@@ -284,20 +284,17 @@ export const getFilteredNodeItems = createSelector(
 
 /**
  * Get formatted list of sections
- * @param {boolean} modularPipelineFlag Whether to include modular pipelines
  * @return {object} Map of arrays of sections
  */
 export const getSections = createSelector(
-  (state) => state.flags.modularpipeline,
-  (modularPipelineFlag) => {
+  () => {
     const sections = {};
-    const exclude = { modularPipeline: !modularPipelineFlag };
 
     for (const key of Object.keys(sidebar)) {
       sections[key] = [
         {
           name: key,
-          types: Object.values(sidebar[key]).filter((type) => !exclude[type]),
+          types: Object.values(sidebar[key]),
         },
       ];
     }
@@ -654,7 +651,6 @@ export const getFilteredModularPipelineNodes = createSelector(
       nodeItems[nodeTypeId]?.forEach((node, i) => {
         if (node.modularPipelines.length === 0) {
           modularPipelineNodes.main.push(node);
-          nodeItems[nodeTypeId].splice(i, 1);
         }
       });
     });

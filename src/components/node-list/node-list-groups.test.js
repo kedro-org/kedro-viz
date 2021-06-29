@@ -9,7 +9,7 @@ describe('NodeListGroups', () => {
   const mockProps = () => {
     const items = getGroupedNodes(mockState.animals);
     const nodeTypes = getNodeTypes(mockState.animals);
-    const sections = getSections({ flags: { modularpipeline: true } }).Elements;
+    const sections = getSections().Elements;
     const groups = getGroups({ nodeTypes, items });
     return { items, sections, groups };
   };

@@ -32,12 +32,6 @@ const isGroupType = (type) =>
 /**
  * Provides data from the store to populate a NodeList component.
  * Also handles user interaction and dispatches updates back to the store.
- *
- * The data are hierarchical but provided through flat lists in the form of:
- *
- * Sections (first level) e.g. Categories, Elements
- * Groups (second level) e.g. Tags, Nodes, Datasets, Parameters
- * Items (third level) e.g. 'Data Engineering', 'Content Optimisation'
  */
 const NodeListProvider = ({
   faded,
