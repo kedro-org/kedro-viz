@@ -239,16 +239,10 @@ export const getFilteredNodeItems = createSelector(
  * @param {boolean} modularPipelineFlag Whether to include modular pipelines
  * @return {object} config
  */
-export const getSidebarConfig = createSelector(
-  (state) => state.flags.modularpipeline,
-  (modularPipelineFlag) => {
-    if (modularPipelineFlag) {
-      return sidebar;
-    }
-    const { ModularPipelines, ...Categories } = sidebar.Categories;
-    return Object.assign({}, sidebar, { Categories });
-  }
-);
+export const getSidebarConfig = createSelector(() => {
+  const { ModularPipelines, ...Categories } = sidebar.Categories;
+  return Object.assign({}, sidebar, { Categories });
+});
 
 /**
  * Get formatted list of sections
@@ -596,7 +590,6 @@ export const getFilteredModularPipelineNodes = createSelector(
       nodeItems[nodeTypeId]?.forEach((node, i) => {
         if (node.modularPipelines.length === 0) {
           modularPipelineNodes.main.push(node);
-          nodeItems[nodeTypeId].splice(i, 1);
         }
       });
     });
