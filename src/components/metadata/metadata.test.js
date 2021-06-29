@@ -70,8 +70,8 @@ describe('MetaData', () => {
   });
 
   describe('Task nodes', () => {
-    it('shows the code toggle for task nodes with code', () => {
-      // Get metadata for a sample
+    describe('Code toggle', () => {
+      // Get metadata for a sample node
       const metadata = getClickedNodeMetaData(
         prepareState({
           data: animals,
@@ -85,9 +85,9 @@ describe('MetaData', () => {
         <MetaData visible={true} metadata={metadata} />
       );
 
-      console.log(wrapper);
-
-      expect(wrapper.find('.pipeline-toggle').length).toBe(1);
+      it('shows the code toggle for task nodes with code', () => {
+        expect(wrapper.find('.pipeline-toggle').length).toBe(1);
+      });
     });
 
     it('shows the node type as an icon', () => {
