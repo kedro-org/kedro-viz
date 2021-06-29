@@ -458,7 +458,6 @@ const constructModularPipelineItem = (modularPipeline) => ({
   faded: false,
   visible: true,
   disabled: false,
-  unset: false,
   checked: true,
 });
 

@@ -32,42 +32,6 @@ describe('NodeList', () => {
     expect(nodeList.length).toBeGreaterThan(0);
   });
 
-  describe('search filter', () => {
-    const wrapper = setup.mount(<NodeList />);
-    const searches = [
-      getNodeData(mockState.animals)[0].name,
-      'a',
-      'aaaaaaaaaaaaaaaaa',
-      '',
-    ];
-
-    test.each(searches)(
-      'filters the node list when entering the search text "%s"',
-      (searchText) => {
-        const search = () => wrapper.find('.kui-input__field');
-        search().simulate('change', { target: { value: searchText } });
-        const nodeList = wrapper.find(
-          '.pipeline-nodelist__list--nested .pipeline-nodelist__row'
-        );
-        const nodes = getNodeData(mockState.animals);
-        const tags = getTagData(mockState.animals);
-        const expectedResult = nodes.filter((node) =>
-          node.name.includes(searchText)
-        );
-        const expectedTagResult = tags.filter((tag) =>
-          tag.name.includes(searchText)
-        );
-        const expectedElementTypeResult = Object.keys(sidebar.Elements).filter((type) =>
-          type.includes(searchText)
-        );
-        expect(search().props().value).toBe(searchText);
-        expect(nodeList.length).toBe(
-          expectedResult.length + expectedTagResult.length + expectedElementTypeResult.length
-        );
-      }
-    );
-  });
-  
   describe('tree-search-ui', () => {
     describe('searching through nodes', () => {
       const wrapper = setup.mount(<NodeList />);
@@ -95,6 +59,9 @@ describe('NodeList', () => {
           const expectedTagResult = tags.filter((tag) =>
             tag.name.includes(searchText)
           );
+          const expectedElementTypeResult = Object.keys(sidebar.Elements).filter((type) =>
+            type.includes(searchText)
+          );
           // obtain the modular pipeline parents
           const expectedModularPipelines = nodesModularPipelines.hasOwnProperty(
             searchText
@@ -106,6 +73,7 @@ describe('NodeList', () => {
           expect(nodeList.length).toBe(
             expectedResult.length +
               expectedTagResult.length +
+              expectedElementTypeResult.length +
               expectedModularPipelines.length
           );
         }
@@ -144,94 +112,6 @@ describe('NodeList', () => {
       );
       // Clear the list with escape key
       searchWrapper.simulate('keydown', { keyCode: 27 });
-      // Check that search input value and node list have been reset
-      expect(search().props().value).toBe('');
-      expect(nodeList().length).toBe(nodes.length + tags.length + elementTypes.length);
-    });
-  });
-
-  describe('visibility checkboxes on element items', () => {
-    //Parameters are enabled here to override the default behavior
-    const wrapper = setup.mount(<NodeList />, {
-      beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
-    });
-
-    afterEach(() => {
-      toggleTypeDisabled('parameters', true);
-    });
-    // Re-find elements from root each time to see updates
-    const search = () => wrapper.find('.kui-input__field');
-    const rows = () =>
-      wrapper
-        .find(
-          '.pipeline-nodelist__group--kind-element .pipeline-nodelist__list--nested'
-        )
-        .find('.pipeline-nodelist__row');
-    const rowName = (row) =>
-      row.find('.pipeline-nodelist__row__text').prop('title');
-    const isRowEnabled = (row) =>
-      row.hasClass('pipeline-nodelist__row--visible');
-    const setShownRowsEnabled = (enable) =>
-      rows().forEach((row) =>
-        row
-          .find('.pipeline-nodelist__row__checkbox')
-          .simulate('change', { target: { checked: enable } })
-      );
-    // Get search text value and filtered nodes
-    const nodes = getNodeData(mockState.animals);
-    const searchText = nodes[0].name;
-    const expectedResult = nodes.filter((node) =>
-      node.name.includes(searchText)
-    );
-
-    describe('toggle only visible rows when searching', () => {
-      beforeAll(() => {
-        // Reset node checked state
-        setShownRowsEnabled(true);
-        // Enter search text
-        search().simulate('change', { target: { value: searchText } });
-        // Disable the found rows
-        setShownRowsEnabled(false);
-        // All visible rows should now be disabled
-        expect(rows().everyWhere((row) => !isRowEnabled(row))).toBe(true);
-        // Clear the search form so that all rows are now visible
-        search().simulate('change', { target: { value: '' } });
-      });
-
-      test('All rows should now be shown', () => {
-        expect(rows().length).toBe(nodes.length);
-      });
-
-      test('Some rows should not be enabled', () => {
-        expect(rows().someWhere((row) => !isRowEnabled(row))).toBe(true);
-      });
-
-      test('Some rows should be enabled', () => {
-        expect(rows().someWhere((row) => isRowEnabled(row))).toBe(true);
-      });
-
-      test('Previously-visible rows should now be not enabled', () => {
-        expect(
-          rows()
-            .filterWhere((row) => !isRowEnabled(row))
-            .map((row) => rowName(row))
-            .sort()
-        ).toEqual(expectedResult.map((node) => node.name).sort());
-      });
-
-      test('Previously-hidden rows should still be enabled', () => {
-        expect(
-          rows()
-            .filterWhere((row) => isRowEnabled(row))
-            .map((row) => rowName(row))
-            .sort()
-        ).toEqual(
-          nodes
-            .filter((node) => !node.name.includes(searchText))
-            .map((node) => node.name)
-            .sort()
-        );
-      });
 
       // obtain the nested modular pipeline data to correspond to the node-list-tree layout
       const nestedModularPipelines = getNestedModularPipelines({
@@ -347,15 +227,15 @@ describe('NodeList', () => {
       ]);
     });
 
-    it('adds a class to tag group item when all tags unset', () => {
+    it('adds a class to tag group item when all tags unchecked', () => {
       const wrapper = setup.mount(<NodeList />);
-      const unsetClass = 'pipeline-nodelist__group--all-unchecked';
+      const uncheckedClass = 'pipeline-nodelist__group--all-unchecked';
 
-      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
+      expect(tagItem(wrapper).hasClass(uncheckedClass)).toBe(true);
       changeRows(wrapper, ['Large'], true);
-      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(false);
+      expect(tagItem(wrapper).hasClass(uncheckedClass)).toBe(false);
       changeRows(wrapper, ['Large'], false);
-      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
+      expect(tagItem(wrapper).hasClass(uncheckedClass)).toBe(true);
     });
 
     it('adds a class to the row when a tag row unchecked', () => {
@@ -403,8 +283,7 @@ describe('NodeList', () => {
       // const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
       const elementTypes = Object.keys(sidebar.Elements);
-      expect(nodeList.length).toBe(nodes.length + tags.length + elementTypes.length);
-      expect(nodeList.length).toBe(tags.length);
+      expect(nodeList.length).toBe(tags.length + elementTypes.length);
     });
 
     it('renders the correct number of modular pipelines and nodes in the tree panel', () => {

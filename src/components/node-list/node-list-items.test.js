@@ -355,7 +355,7 @@ describe('node-list-selectors', () => {
   describe('filterModularPipelines', () => {
     const modularPipelines = getModularPipelineData(mockState.animals);
     const searchValue = '2';
-    const filteredModularPipelines = filterNodes(
+    const filteredModularPipelines = filterNodeGroups(
       { modularPipeline: modularPipelines },
       searchValue
     );
@@ -417,7 +417,6 @@ describe('node-list-selectors', () => {
           faded: expect.any(Boolean),
           visible: expect.any(Boolean),
           disabled: expect.any(Boolean),
-          unset: expect.any(Boolean),
           checked: expect.any(Boolean),
         }),
       ]);

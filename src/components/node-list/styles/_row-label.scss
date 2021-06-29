@@ -92,7 +92,7 @@
     }
   }
 
-  // Bright row text when all unset
+  // Bright row text when all unchecked
   .pipeline-nodelist__group--all-unchecked & {
     .pipeline-nodelist__row__label--kind-filter {
       opacity: 1;
