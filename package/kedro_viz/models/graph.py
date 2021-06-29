@@ -313,7 +313,9 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, task_node: TaskNode):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
-        self.code = inspect.getsource(_extract_wrapped_func(kedro_node._func))
+        self.code = inspect.getsource(
+            _extract_wrapped_func(cast(FunctionType, kedro_node._func))
+        )
         code_full_path = Path(inspect.getfile(kedro_node._func)).expanduser().resolve()
         try:
             filepath = code_full_path.relative_to(Path.cwd().parent)
