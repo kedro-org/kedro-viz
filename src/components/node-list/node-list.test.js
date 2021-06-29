@@ -171,9 +171,12 @@ describe('NodeList', () => {
         ['Pipeline2', true],
         ['salmon', true],
         ['Bull', true],
+        ['Cat', true],
         ['Dog', true],
+        ['Horse', true],
         ['Sheep', true],
         ['Parameters', true],
+        ['Params:rabbit', true],
       ]);
 
       changeRows(wrapper, ['Small', 'Large'], true);
@@ -183,11 +186,16 @@ describe('NodeList', () => {
         ['Pipeline2', true],
         ['salmon', true],
         ['Bear', true],
+        ['Bull', true],
         ['Cat', true],
+        ['Dog', true],
         ['Elephant', true],
+        ['Giraffe', true],
         ['Horse', true],
         ['Pig', true],
+        ['Sheep', true],
         ['Parameters', true],
+        ['Params:rabbit', true],
       ]);
     });
 
@@ -207,13 +215,17 @@ describe('NodeList', () => {
         ['salmon', true],
         ['Bear', true],
         // Datasets (enabled)
+        ['Bull', true],
         ['Cat', true],
+        ['Dog', true],
         ['Elephant', true],
+        ['Giraffe', true],
         ['Horse', true],
         ['Pig', true],
         ['Sheep', true],
         // Parameters(enabled)
         ['Parameters', true],
+        ['Params:pipeline100.data Science.plankton', true],
         ['Params:rabbit', true],
       ]);
     });
@@ -276,11 +288,11 @@ describe('NodeList', () => {
       expect(nodeList.length).toBe(tags.length);
     });
 
-    it('renders the correct number of modular pipelines and nodes in the tree panel', () => {
+    it('renders the correct number of modular pipelines and nodes in the tree sidepanel', () => {
       const wrapper = setup.mount(<NodeList />);
-      const nodeList = wrapper.find('.pipeline-nodelist__row');
+      const nodeList = wrapper.find('.pipeline-nodelist__row__text--tree');
 
-      // with the tree structure we now need extract nodes that are in the top level modular pipeline
+      // with the tree structure we now need to extract nodes that are in the top level modular pipeline
       const nodes = getNodeData(mockState.animals).filter(
         (node) => node.modularPipelines.length === 0
       );
