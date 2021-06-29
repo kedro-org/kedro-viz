@@ -70,6 +70,26 @@ describe('MetaData', () => {
   });
 
   describe('Task nodes', () => {
+    it('shows the code toggle for task nodes with code', () => {
+      // Get metadata for a sample
+      const metadata = getClickedNodeMetaData(
+        prepareState({
+          data: animals,
+          afterLayoutActions: [() => toggleNodeClicked(salmonTaskNodeId)],
+        })
+      );
+      // Add extra mock for code
+      metadata.code = 'abcdsdfsdf';
+
+      const wrapper = setup.mount(
+        <MetaData visible={true} metadata={metadata} />
+      );
+
+      console.log(wrapper);
+
+      expect(wrapper.find('.pipeline-toggle').length).toBe(1);
+    });
+
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
       expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-task')).toBe(
