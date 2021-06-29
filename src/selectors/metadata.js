@@ -23,31 +23,15 @@ const runCommandTemplates = {
   task: (name) => `kedro run --to-nodes ${name}`,
 };
 
-const renderParameters = (key, value) => {
-  if (typeof value === 'object') {
-    console.log(value);
-    if (Array.isArray(value)) {
-      console.log(value);
-      if (
-        !value.some((v) => {
-          return typeof v == 'object';
-        })
-      ) {
-        return `${key}: ${value}`;
-      }
-    }
-    return Object.entries(value).map(([k, v]) => [key, renderParameters(k, v)]);
-  } else {
-    return `${key}: ${value}`;
+const renderParameters = (params) => {
+  if (!params) {
+    return null;
   }
-};
-
-const prettifyParams = (params) => {
-  let newparams = {};
-  params.forEach(([key, value]) => {
-    //  console.log(key)
-    //  console.log(value)
-  });
+  const pretty_params = JSON.stringify(params, null, 1);
+  const parameters = {};
+  parameters.name = pretty_params.replaceAll(/[{}"]/g, '');
+  parameters.count = parameters.name.split(':').length - 1;
+  return parameters;
 };
 
 /**
@@ -94,32 +78,13 @@ export const getClickedNodeMetaData = createSelector(
       return null;
     }
 
-    let parameters =
-      nodeParameters[node.id] &&
-      Object.entries(nodeParameters[node.id]).map(([key, value]) =>
-        renderParameters(key, value)
-      );
-
-    // let parameters =
-    //   nodeParameters[node.id] && JSON.stringify(nodeParameters[node.id])
-    // if(parameters){
-    //     parameters = parameters.replaceAll(/[{]/g,'\t')
-    //     parameters = parameters.replaceAll(/[{]/g,'\t')
-    //    // parameters = parameters.replaceAll(/[{}\[,]["|,|{|}|\]|\t][{},]*/g,'\n')
-    //    // parameters = parameters.replaceAll("\"","")
-    //}
-    // console.log(parameters)
-    if (parameters) {
-      prettifyParams(parameters[0]);
-    }
-
     const metadata = {
       node,
       tags: [...nodeTags[node.id]]
         .map((tagId) => tagNames[tagId])
         .sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
-      parameters,
+      parameters: renderParameters(nodeParameters[node.id]),
       runCommand: getRunCommand(node),
       code: nodeCodes[node.id],
       filepath: nodeFilepaths[node.id],

@@ -106,11 +106,11 @@ const MetaData = ({
                   value={metadata.filepath}
                 />
                 <MetaDataRow
-                  label={`Parameters (${metadata.parameters?.length || '-'}):`}
+                  label={`Parameters (${metadata.parameters?.count || '-'}):`}
                   visible={isParametersNode || isTaskNode}
                   commas={false}
                   inline={false}
-                  value={metadata.parameters}
+                  value={metadata.parameters?.name}
                   limit={10}
                 />
                 <MetaDataRow
