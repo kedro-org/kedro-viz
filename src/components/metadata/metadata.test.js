@@ -6,6 +6,7 @@ import { toggleNodeClicked } from '../../actions/nodes';
 import { setup, prepareState } from '../../utils/state.mock';
 import animals from '../../utils/data/animals.mock.json';
 import node_plot from '../../utils/data/node_plot.mock.json';
+import { mapDispatchToProps } from './index';
 
 const salmonTaskNodeId = '443cf06a';
 const catDatasetNodeId = '9d989e8d';
@@ -365,6 +366,35 @@ describe('MetaData', () => {
       });
       it('shows the plotly expand button', () => {
         expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(1);
+      });
+    });
+  });
+
+  describe('mapDispatchToProps', () => {
+    it('onToggleNodeSelected', () => {
+      const dispatch = jest.fn();
+      mapDispatchToProps(dispatch).onToggleNodeSelected(true);
+      expect(dispatch.mock.calls[0][0]).toEqual({
+        nodeClicked: true,
+        type: 'TOGGLE_NODE_CLICKED',
+      });
+    });
+
+    it('onToggleCode', () => {
+      const dispatch = jest.fn();
+      mapDispatchToProps(dispatch).onToggleCode(true);
+      expect(dispatch.mock.calls[0][0]).toEqual({
+        visible: true,
+        type: 'TOGGLE_CODE',
+      });
+    });
+
+    it('onTogglePlotModal', () => {
+      const dispatch = jest.fn();
+      mapDispatchToProps(dispatch).onTogglePlotModal(true);
+      expect(dispatch.mock.calls[0][0]).toEqual({
+        visible: true,
+        type: 'TOGGLE_PLOT_MODAL',
       });
     });
   });

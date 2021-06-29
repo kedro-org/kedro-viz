@@ -13,6 +13,7 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
+  TOGGLE_CODE,
   changeFlag,
   resetData,
   toggleIgnoreLargeWarning,
@@ -21,6 +22,7 @@ import {
   toggleLayers,
   toggleMiniMap,
   toggleParametersHovered,
+  toggleCode,
   toggleSidebar,
   toggleTextLabels,
   toggleTheme,
@@ -285,5 +287,13 @@ describe('actions', () => {
       ignoreLargeWarning: true,
     };
     expect(toggleIgnoreLargeWarning(true)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle the code display', () => {
+    const expectedAction = {
+      type: TOGGLE_CODE,
+      visible: true,
+    };
+    expect(toggleCode(true)).toEqual(expectedAction);
   });
 });

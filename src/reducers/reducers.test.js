@@ -10,6 +10,7 @@ import {
   TOGGLE_SETTINGS_MODAL,
   TOGGLE_LAYERS,
   TOGGLE_MINIMAP,
+  TOGGLE_CODE,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
@@ -298,6 +299,17 @@ describe('Reducer', () => {
         fontLoaded: true,
       });
       expect(newState.fontLoaded).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_CODE', () => {
+    it('should toggle the value of hoveredParameters', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_CODE,
+        visible: true,
+      });
+      expect(mockState.animals.visible.code).toBe(false);
+      expect(newState.visible.code).toBe(true);
     });
   });
 
