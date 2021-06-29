@@ -2,6 +2,10 @@ import { createSelector } from 'reselect';
 import { getGraphNodes } from './nodes';
 
 const getClickedNode = (state) => state.node.clicked;
+const getEdgeIDs = (state) => state.edge.ids;
+const getEdgeSources = (state) => state.edge.sources;
+const getEdgeTargets = (state) => state.edge.targets;
+const getNodeName = (state) => state.node.name;
 
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
@@ -41,6 +45,10 @@ export const getClickedNodeMetaData = createSelector(
   [
     getClickedNode,
     getGraphNodes,
+    getEdgeIDs,
+    getEdgeSources,
+    getEdgeTargets,
+    getNodeName,
     (state) => state.node.tags,
     (state) => state.tag.name,
     (state) => state.pipeline,
@@ -53,6 +61,10 @@ export const getClickedNodeMetaData = createSelector(
   (
     nodeId,
     nodes = {},
+    edgeIDs,
+    edgeSources,
+    edgeTargets,
+    nodeName,
     nodeTags,
     tagNames,
     pipeline,
@@ -88,16 +100,20 @@ export const getClickedNodeMetaData = createSelector(
       datasetType: nodeDatasetTypes[node.id],
     };
 
-    // Note: node.sources node.targets require oldgraph enabled
-    if (node.sources && node.targets) {
-      metadata.inputs = node.sources
-        .map((edge) => nodes[edge.source])
-        .sort(sortAlpha);
-      metadata.outputs = node.targets
-        .map((edge) => nodes[edge.target])
-        .sort(sortAlpha);
+    const filteredEdgeIDs = edgeIDs.filter((edge) => edge.includes(node.id));
+    const inputs = [];
+    const outputs = [];
+    for (const edgeID of filteredEdgeIDs) {
+      const source = edgeSources[edgeID];
+      const target = edgeTargets[edgeID];
+      if (source === node.id) {
+        inputs.push(nodeName[target]);
+      } else {
+        outputs.push(nodeName[source]);
+      }
     }
-
+    metadata.inputs = inputs.sort(sortAlpha);
+    metadata.outputs = outputs.sort(sortAlpha);
     return metadata;
   }
 );
