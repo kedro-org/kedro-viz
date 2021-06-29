@@ -54,6 +54,7 @@ const NodeListProvider = ({
   sections,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
+  const [focusMode, setFocusMode] = useState();
   const items = getFilteredItems({
     nodes,
     tags,
@@ -63,6 +64,14 @@ const NodeListProvider = ({
   });
 
   const groups = getGroups({ types, items });
+
+  // set the modular pipeline focus mode on toggle
+  const onToggleFocusMode = (modularPipelineItem) => {
+    setFocusMode(modularPipelineItem.name);
+    // set onCategoryItemChange to set a modular pipeline being checked
+    onCategoryItemChange(modularPipelineItem, modularPipelineItem.checked);
+    // disable all other nodes
+  };
 
   const onItemClick = (item) => {
     if (isTagType(item.type) || isModularPipelineType(item.type)) {
@@ -202,6 +211,8 @@ const NodeListProvider = ({
       onSectionMouseEnter={onSectionMouseEnter}
       onSectionMouseLeave={onSectionMouseLeave}
       onItemChange={onItemChange}
+      focusMode={focusMode}
+      onToggleFocusMode={onToggleFocusMode}
     />
   );
 };
