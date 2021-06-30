@@ -36,6 +36,7 @@ import re
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
+from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.io import AbstractDataSet
@@ -282,6 +283,18 @@ class TaskNode(GraphNode):
         self.modular_pipelines = self._expand_namespaces(kedro_obj.namespace)
 
 
+def _extract_wrapped_func(func: FunctionType) -> FunctionType:
+    """Extract a wrapped decorated function to inspect the source code if available.
+    Adapted from https://stackoverflow.com/a/43506509/1684058
+    """
+    if func.__closure__ is None:
+        return func
+    closure = (c.cell_contents for c in func.__closure__)
+    wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
+    # return the original function if it's not a decorated function
+    return func if wrapped_func is None else wrapped_func
+
+
 @dataclass
 class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode"""
@@ -300,7 +313,9 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, task_node: TaskNode):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
-        self.code = inspect.getsource(kedro_node._func)
+        self.code = inspect.getsource(
+            _extract_wrapped_func(cast(FunctionType, kedro_node._func))
+        )
         code_full_path = Path(inspect.getfile(kedro_node._func)).expanduser().resolve()
         try:
             filepath = code_full_path.relative_to(Path.cwd().parent)

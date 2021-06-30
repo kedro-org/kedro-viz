@@ -130,7 +130,7 @@ describe('node-list-selectors', () => {
   });
 
   describe('getSections', () => {
-    const sections = getSections({ flags: { modularpipeline: false } });
+    const sections = getSections();
 
     const groupType = expect.objectContaining({
       name: expect.any(String),
@@ -530,7 +530,7 @@ describe('node-list-selectors', () => {
         });
 
         it('contains expected number of node and modular pipeline items', () => {
-          expect(nestedModularPipelines.nodes).toHaveLength(9);
+          expect(nestedModularPipelines.nodes).toHaveLength(13);
           expect(nestedModularPipelines.children).toHaveLength(3);
         });
       });
