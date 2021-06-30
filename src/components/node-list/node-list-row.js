@@ -26,6 +26,7 @@ const shouldMemo = (prevProps, nextProps) =>
       'selected',
       'label',
       'children',
+      'count'
     ],
     prevProps,
     nextProps
