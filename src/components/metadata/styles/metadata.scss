@@ -300,3 +300,8 @@ $list-inline-spacing: 0.2em;
   color: var(--color-button-text);
   font-size: 1.6em;
 }
+
+.react-json-view {
+  font-family: Consolas, Monaco, 'Courier New', Courier, monospace !important;
+  font-size: 0.85em;
+}

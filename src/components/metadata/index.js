@@ -26,6 +26,7 @@ import './styles/metadata.css';
 const MetaData = ({
   visible = true,
   metadata,
+  theme,
   visibleCode,
   onToggleCode,
   onToggleNodeSelected,
@@ -107,7 +108,9 @@ const MetaData = ({
                 />
                 <MetaDataRow
                   label={`Parameters (${metadata.parameters?.count || '-'}):`}
+                  theme={theme}
                   visible={isParametersNode || isTaskNode}
+                  kind="parameters"
                   commas={false}
                   inline={false}
                   value={metadata.parameters?.name}
@@ -206,6 +209,7 @@ const MetaData = ({
 export const mapStateToProps = (state, ownProps) => ({
   visible: getVisibleMetaSidebar(state),
   metadata: getClickedNodeMetaData(state),
+  theme: state.theme,
   visibleCode: state.visible.code,
   ...ownProps,
 });

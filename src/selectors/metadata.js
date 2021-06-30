@@ -27,10 +27,10 @@ const renderParameters = (params) => {
   if (!params) {
     return null;
   }
-  const pretty_params = JSON.stringify(params, null, 1);
   const parameters = {};
-  parameters.name = pretty_params.replaceAll(/[{}"]/g, '');
-  parameters.count = parameters.name.split(':').length - 1;
+  //parameters have an extra layer of nesting which needs to be removed
+  parameters.name = params[Object.keys(params)[0]];
+  parameters.count = Object.keys(params[Object.keys(params)[0]]).length;
   return parameters;
 };
 

@@ -34,41 +34,6 @@ describe('MetaData', () => {
     // Using attribute since traversal by sibling not supported
     wrapper.find(`.pipeline-metadata__row[data-label="${label}"]`);
 
-  describe('All nodes', () => {
-    it('limits parameters to 10 values and expands when button clicked', () => {
-      // Get metadata for a sample
-      const metadata = getClickedNodeMetaData(
-        prepareState({
-          data: animals,
-          afterLayoutActions: [() => toggleNodeClicked(salmonTaskNodeId)],
-        })
-      );
-      // Add extra mock parameters
-      metadata.parameters = Array.from({ length: 20 }, (_, i) => `Test: ${i}`);
-
-      const wrapper = setup.mount(
-        <MetaData visible={true} metadata={metadata} />
-      );
-
-      const parametersRow = () => rowByLabel(wrapper, 'Parameters (20):');
-      const expandButton = parametersRow().find(
-        '.pipeline-metadata__value-list-expand'
-      );
-
-      // Expand button should show remainder
-      expect(expandButton.text()).toBe('+ 10 more');
-
-      // Should show 10 values
-      expect(parametersRow().find('.pipeline-metadata__value').length).toBe(10);
-
-      // User clicks to expand
-      expandButton.simulate('click');
-
-      // Should show all 20 values
-      expect(parametersRow().find('.pipeline-metadata__value').length).toBe(20);
-    });
-  });
-
   describe('Task nodes', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
@@ -91,7 +56,7 @@ describe('MetaData', () => {
     it('shows the node parameters', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
       const row = rowByLabel(wrapper, 'Parameters (-):');
-      expect(textOf(rowValue(row))).toEqual(['-']);
+      expect(textOf(rowValue(row))).toEqual(['{}0 items']);
     });
 
     it('shows the node inputs when parameters are disabled (default)', () => {
@@ -267,7 +232,7 @@ describe('MetaData', () => {
       it('shows the node parameters', () => {
         const wrapper = mount({ nodeId: rabbitParamsNodeId });
         const row = rowByLabel(wrapper, 'Parameters (-):');
-        expect(textOf(rowValue(row))).toEqual(['-']);
+        expect(textOf(rowValue(row))).toEqual(['{}0 items']);
       });
 
       it('shows the node tags', () => {
