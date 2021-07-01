@@ -55,7 +55,7 @@ describe('MetaData', () => {
 
     it('shows the node parameters', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
-      const row = rowByLabel(wrapper, 'Parameters (-):');
+      const row = rowByLabel(wrapper, 'Parameters:');
       expect(textOf(rowValue(row))).toEqual(['{}0 items']);
     });
 
@@ -231,7 +231,7 @@ describe('MetaData', () => {
 
       it('shows the node parameters', () => {
         const wrapper = mount({ nodeId: rabbitParamsNodeId });
-        const row = rowByLabel(wrapper, 'Parameters (-):');
+        const row = rowByLabel(wrapper, 'Parameters:');
         expect(textOf(rowValue(row))).toEqual(['{}0 items']);
       });
 
@@ -276,7 +276,7 @@ describe('MetaData', () => {
 
     it('shows the node parameters', () => {
       const wrapper = mount({ nodeId: bullPlotNodeID });
-      const row = rowByLabel(wrapper, 'Parameters (-):');
+      const row = rowByLabel(wrapper, 'Parameters:');
       expect(textOf(rowValue(row))).toEqual([]);
     });
 

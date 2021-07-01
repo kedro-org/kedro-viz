@@ -24,13 +24,10 @@ const runCommandTemplates = {
 };
 
 const renderParameters = (params) => {
-  if (!params) {
-    return null;
-  }
-  //parameters have an extra layer of nesting which needs to be removed
-  else if (!params[Object.keys(params)[0]]) {
+  if (!params || !params[Object.keys(params)[0]]) {
     return {};
   }
+  //parameters have an extra layer of nesting which needs to be removed
   return params[Object.keys(params)[0]];
 };
 
