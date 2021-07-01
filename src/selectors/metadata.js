@@ -27,11 +27,11 @@ const renderParameters = (params) => {
   if (!params) {
     return null;
   }
-  const parameters = {};
   //parameters have an extra layer of nesting which needs to be removed
-  parameters.name = params[Object.keys(params)[0]];
-  parameters.count = Object.keys(params[Object.keys(params)[0]]).length;
-  return parameters;
+  else if (!params[Object.keys(params)[0]]) {
+    return {};
+  }
+  return params[Object.keys(params)[0]];
 };
 
 /**
