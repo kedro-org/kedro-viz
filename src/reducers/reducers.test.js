@@ -303,7 +303,7 @@ describe('Reducer', () => {
   });
 
   describe('TOGGLE_CODE', () => {
-    it('should toggle the value of hoveredParameters', () => {
+    it('should toggle whether the code panel is open', () => {
       const newState = reducer(mockState.animals, {
         type: TOGGLE_CODE,
         visible: true,
