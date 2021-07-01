@@ -308,7 +308,6 @@ describe('Reducer', () => {
         type: TOGGLE_CODE,
         visible: true,
       });
-      expect(mockState.animals.visible.code).toBe(false);
       expect(newState.visible.code).toBe(true);
     });
   });
