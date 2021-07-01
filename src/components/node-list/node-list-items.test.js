@@ -6,7 +6,6 @@ import {
   filterNodeGroups,
   getFilteredTags,
   getFilteredTagItems,
-  getSections,
   getGroups,
   getFilteredItems,
   getFilteredTreeItems,
@@ -132,24 +131,6 @@ describe('node-list-selectors', () => {
     it('returns tag items with expected counts', () => {
       expect(filteredTagItems[0].count).toEqual(7);
       expect(filteredTagItems[1].count).toEqual(8);
-    });
-  });
-
-  describe('getSections', () => {
-    const sections = getSections();
-
-    const groupType = expect.objectContaining({
-      name: expect.any(String),
-      types: expect.any(Array),
-    });
-
-    const sectionType = expect.objectContaining({
-      Elements: expect.arrayContaining([groupType]),
-      Categories: expect.arrayContaining([groupType]),
-    });
-
-    it('returns sections of the correct format', () => {
-      expect(sections).toEqual(sectionType);
     });
   });
 

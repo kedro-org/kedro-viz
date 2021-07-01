@@ -386,7 +386,6 @@ describe('NodeList', () => {
       nodeSelected: expect.any(Object),
       nodeTypes: expect.any(Array),
       modularPipelines: expect.any(Object),
-      sections: expect.any(Object),
     });
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });

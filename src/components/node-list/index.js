@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import NodeList from './node-list';
-import { getFilteredItems, getGroups, getSections } from './node-list-items';
+import { getFilteredItems, getGroups } from './node-list-items';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import { getModularPipelineData } from '../../selectors/modular-pipelines';
@@ -180,7 +180,6 @@ const NodeListProvider = ({
     <NodeList
       faded={faded}
       items={items}
-      sections={sections}
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={updateSearchValue}
@@ -202,7 +201,6 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   nodeTypes: getNodeTypes(state),
   modularPipelines: getModularPipelineData(state),
-  sections: getSections(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

@@ -3,15 +3,14 @@ import NodeListGroups from './node-list-groups';
 import { mockState, setup } from '../../utils/state.mock';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getGroupedNodes } from '../../selectors/nodes';
-import { getGroups, getSections } from './node-list-items';
+import { getGroups } from './node-list-items';
 
 describe('NodeListGroups', () => {
   const mockProps = () => {
     const items = getGroupedNodes(mockState.animals);
     const nodeTypes = getNodeTypes(mockState.animals);
-    const sections = getSections().Elements;
     const groups = getGroups({ nodeTypes, items });
-    return { items, sections, groups };
+    return { items, groups };
   };
 
   it('renders without throwing', () => {

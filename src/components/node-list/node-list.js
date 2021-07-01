@@ -13,7 +13,6 @@ import './styles/node-list.css';
 const NodeList = ({
   faded,
   items,
-  sections,
   groups,
   searchValue,
   getGroupState,
@@ -77,7 +76,6 @@ const NodeList = ({
                 <h2 className="pipeline-nodelist-section__title">Filters</h2>
                 <NodeListGroups
                   items={items}
-                  sections={sections.Categories}
                   groups={groups}
                   searchValue={searchValue}
                   getGroupState={getGroupState}

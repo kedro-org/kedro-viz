@@ -283,27 +283,6 @@ export const getFilteredNodeItems = createSelector(
 );
 
 /**
- * Get formatted list of sections
- * @return {object} Map of arrays of sections
- */
-export const getSections = createSelector(
-  () => {
-    const sections = {};
-
-    for (const key of Object.keys(sidebar)) {
-      sections[key] = [
-        {
-          name: key,
-          types: Object.values(sidebar[key]),
-        },
-      ];
-    }
-
-    return sections;
-  }
-);
-
-/**
  * Create a new group of items. This can be one of two kinds:
  * 'filter': Categories, e.g. tags
  * 'element': Graph elements, e.g. nodes, datasets, or parameters
