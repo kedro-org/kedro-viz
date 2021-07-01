@@ -10,11 +10,11 @@ export const darkjsonViewerTheme = {
   base08: '#122531',
   base09: '#ffbc00',
   base0A: '#122531',
-  base0B: '#122531',
-  base0C: '#122531',
+  base0B: 'rgba(255,255,255,0.85)',
+  base0C: 'rgba(255,255,255,0.85)',
   base0D: '#00b0f5',
   base0E: '#dcc6e0',
-  base0F: '#ffbc00',
+  base0F: 'rgba(255,255,255,0.85)',
 };
 
 export const lightjsonViewerTheme = {
@@ -29,9 +29,9 @@ export const lightjsonViewerTheme = {
   base08: '#f0f1f3',
   base09: '#a000bc',
   base0A: '#f0f1f3',
-  base0B: '#f0f1f3',
-  base0C: '#f0f1f3',
+  base0B: 'rgba(0,0,0,0.85)',
+  base0C: 'rgba(0,0,0,0.85)',
   base0D: '#00b0f5',
   base0E: '#7928a1',
-  base0F: '#f0f1f3',
+  base0F: 'rgba(0,0,0,0.85)',
 };
