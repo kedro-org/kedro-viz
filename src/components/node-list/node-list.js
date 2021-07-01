@@ -25,6 +25,8 @@ const NodeList = ({
   onSectionMouseEnter,
   onSectionMouseLeave,
   onItemChange,
+  focusMode,
+  onToggleFocusMode,
 }) => {
   const [searching, setSearching] = useState(false);
 
@@ -63,6 +65,8 @@ const NodeList = ({
                     onItemMouseLeave={onItemMouseLeave}
                     onItemChange={onItemChange}
                     searching={searching}
+                    focusMode={focusMode}
+                    onToggleFocusMode={onToggleFocusMode}
                   />
                 </div>
               </Scrollbars>

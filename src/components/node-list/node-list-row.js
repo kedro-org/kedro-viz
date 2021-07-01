@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { changed } from '../../utils';
@@ -58,6 +58,8 @@ const NodeListRow = memo(
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
     rowType,
+    focusMode,
+    onToggleFocusMode,
   }) => {
     const VisibilityIcon =
       type === 'modularPipeline'
@@ -67,6 +69,16 @@ const NodeListRow = memo(
         : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
+
+    const [applyFocusMode, setApplyFocusMode] = useState(
+      focusMode !== null && type === 'modularPipeline' && id === focusMode?.id
+    );
+
+    useEffect(() => {
+      setApplyFocusMode(
+        focusMode !== null && type === 'modularPipeline' && id === focusMode?.id
+      );
+    }, [focusMode]);
 
     return (
       <Container
@@ -153,6 +165,7 @@ const NodeListRow = memo(
                 'pipeline-row__toggle-icon--unchecked': !checked,
                 'pipeline-row__toggle-icon--unset': unset,
                 'pipeline-row__toggle-icon--all-unset': allUnset,
+                'pipeline-row__toggle-icon--focus-checked': applyFocusMode,
               }
             )}
           />

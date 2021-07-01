@@ -145,25 +145,32 @@ export const getFilteredModularPipelines = createSelector(
  * @return {array} Node list items
  */
 export const getFilteredModularPipelineItems = createSelector(
-  getFilteredModularPipelines,
-  (filteredModularPipelines) => ({
-    modularPipeline: filteredModularPipelines.modularPipeline.map(
-      (modularPipeline) => ({
-        ...modularPipeline,
-        type: 'modularPipeline',
-        icon: 'modularPipeline',
-        visibleIcon: VisibleIcon,
-        invisibleIcon: InvisibleIcon,
-        active: false,
-        selected: false,
-        faded: false,
-        visible: true,
-        disabled: false,
-        unset: !modularPipeline.enabled,
-        checked: modularPipeline.enabled,
-      })
-    ),
-  })
+  [getFilteredModularPipelines, (state) => state.focusMode],
+  (filteredModularPipelines, focusMode) => {
+    return {
+      modularPipeline: filteredModularPipelines.modularPipeline.map(
+        (modularPipeline) => {
+          // check if this pipeline belongs to a parent under focus mode
+
+          return {
+            ...modularPipeline,
+            type: 'modularPipeline',
+            icon: 'modularPipeline',
+            visibleIcon: VisibleIcon,
+            invisibleIcon: InvisibleIcon,
+            active: false,
+            selected: false,
+            faded: false,
+            visible: true,
+            disabled:
+              focusMode !== null && focusMode?.id !== modularPipeline.id,
+            unset: !modularPipeline.enabled,
+            checked: modularPipeline.enabled,
+          };
+        }
+      ),
+    };
+  }
 );
 
 /**
@@ -353,8 +360,9 @@ export const getFilteredNodeModularPipelines = createSelector(
     getFilteredNodeItems,
     (state) => state.modularPipelines,
     (state) => state.nodeTypeIDs,
+    (state) => state.focusMode,
   ],
-  (filteredNodeItems, modularPipelines, nodeTypeIDs) => {
+  (filteredNodeItems, modularPipelines, nodeTypeIDs, focusMode) => {
     const filteredNodeModularPipelines = [];
 
     const nodeItems = cloneDeep(filteredNodeItems);
@@ -363,12 +371,13 @@ export const getFilteredNodeModularPipelines = createSelector(
       nodeItems[nodeTypeId]?.forEach((filteredNode) => {
         filteredNode.modularPipelines.forEach((nodeModularPipeline) => {
           filteredNodeModularPipelines.push(
-            constructModularPipelineItem(
-              modularPipelines.find(
+            constructModularPipelineItem({
+              modularPipeline: modularPipelines.find(
                 (rawModularPipeline) =>
                   rawModularPipeline.id === nodeModularPipeline
-              )
-            )
+              ),
+              focusMode,
+            })
           );
         });
       });
@@ -383,7 +392,7 @@ export const getFilteredNodeModularPipelines = createSelector(
  * @param {obj} modularPipeline the modular pipeine that needs the construction of a modular pipeline item
  * @return {obj} modular pipeline item
  */
-const constructModularPipelineItem = (modularPipeline) => ({
+const constructModularPipelineItem = (modularPipeline, focusMode) => ({
   ...modularPipeline,
   type: 'modularPipeline',
   visibleIcon: VisibleIcon,
@@ -392,7 +401,7 @@ const constructModularPipelineItem = (modularPipeline) => ({
   selected: false,
   faded: false,
   visible: true,
-  disabled: false,
+  disabled: focusMode !== null && focusMode?.id !== modularPipeline.id,
   unset: false,
   checked: true,
 });
@@ -406,11 +415,13 @@ export const getFilteredModularPipelineParent = createSelector(
     getFilteredModularPipelineItems,
     getFilteredNodeModularPipelines,
     (state) => state.modularPipelines,
+    (state) => state.focusMode,
   ],
   (
     filteredModularPipelines,
     filteredNodeModularPipelines,
-    modularPipelines
+    modularPipelines,
+    focusMode
   ) => {
     const filteredModularPipelineParents = [];
     const filteredModularPipeline = filteredModularPipelines.modularPipeline;
@@ -465,7 +476,8 @@ export const getFilteredModularPipelineParent = createSelector(
             constructModularPipelineItem(
               modularPipelines.find(
                 (rawModularPipeline) => rawModularPipeline.id === parent
-              )
+              ),
+              focusMode
             )
           );
         }

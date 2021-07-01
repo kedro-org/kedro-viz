@@ -59,6 +59,8 @@ const TreeListProvider = ({
   onItemMouseLeave,
   nodeTypeIDs,
   searching,
+  focusMode,
+  onToggleFocusMode,
 }) => {
   const classes = useStyles();
 
@@ -75,6 +77,7 @@ const TreeListProvider = ({
             modularPipelineIds,
             nodeModularPipelines,
             nodeTypeIDs,
+            focusMode,
           })
         : [];
 
@@ -93,6 +96,7 @@ const TreeListProvider = ({
     modularPipelineIds,
     nodeModularPipelines,
     nodeTypeIDs,
+    focusMode,
   ]);
 
   const treeData = getNestedModularPipelines({
@@ -103,6 +107,7 @@ const TreeListProvider = ({
     modularPipelineIds,
     nodeModularPipelines,
     nodeTypeIDs,
+    focusMode,
   });
 
   const onItemClick = (item) => {
@@ -131,6 +136,8 @@ const TreeListProvider = ({
         onItemChange={onItemChange}
         onItemClick={onItemClick}
         key={node.id}
+        focusMode={focusMode}
+        onToggleFocusMode={onToggleFocusMode}
       />
     ));
 
@@ -147,7 +154,9 @@ const TreeListProvider = ({
       onItemMouseLeave={onItemMouseLeave}
       onItemChange={onItemChange}
       onItemClick={onItemClick}
-      key={rowData.id}>
+      key={rowData.id}
+      focusMode={focusMode}
+      onToggleFocusMode={onToggleFocusMode}>
       {renderModularPipelines(rowData)}
 
       {/* render set of node elements in that modular pipeline */}

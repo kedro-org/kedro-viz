@@ -10,6 +10,8 @@ const NodeListTreeItem = ({
   onItemChange,
   children,
   searchCount,
+  focusMode,
+  onToggleFocusMode,
 }) => (
   <TreeItem
     key={data.id}
@@ -40,6 +42,8 @@ const NodeListTreeItem = ({
         onChange={(e) => onItemChange(data, !e.target.checked)}
         rowType="tree"
         searchCount={searchCount}
+        focusMode={focusMode}
+        onToggleFocusMode={onToggleFocusMode}
       />
     }>
     {children}

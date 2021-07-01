@@ -48,24 +48,17 @@ const NodeListProvider = ({
   sections,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
-  const [focusMode, setFocusMode] = useState();
+  const [focusMode, setFocusMode] = useState(null); // this is used to set special CSS settings for the visibility button
   const items = getFilteredItems({
     nodes,
     tags,
     modularPipelines,
     nodeSelected,
     searchValue,
+    focusMode,
   });
 
   const groups = getGroups({ types, items });
-
-  // set the modular pipeline focus mode on toggle
-  const onToggleFocusMode = (modularPipelineItem) => {
-    setFocusMode(modularPipelineItem.name);
-    // set onCategoryItemChange to set a modular pipeline being checked
-    onCategoryItemChange(modularPipelineItem, modularPipelineItem.checked);
-    // disable all other nodes
-  };
 
   const onItemClick = (item) => {
     if (isTagType(item.type) || isModularPipelineType(item.type)) {
@@ -82,11 +75,23 @@ const NodeListProvider = ({
   const onItemChange = (item, checked) => {
     if (isTagType(item.type) || isModularPipelineType(item.type)) {
       onCategoryItemChange(item, checked);
+      if (isModularPipelineType(item.type)) {
+        onToggleFocusMode(item);
+      }
     } else {
       if (checked) {
         onToggleNodeActive(null);
       }
       onToggleNodesDisabled([item.id], checked);
+    }
+  };
+
+  // set the modular pipeline focus mode on toggle
+  const onToggleFocusMode = (item) => {
+    if (focusMode === null) {
+      setFocusMode(item);
+    } else {
+      setFocusMode(null);
     }
   };
 
