@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getGraphNodes } from './nodes';
+import { getGraphNodes, getNodeTargetNames, getNodeSourceNames } from './nodes';
 
 const getClickedNode = (state) => state.node.clicked;
 const getEdgeIDs = (state) => state.edge.ids;
@@ -45,10 +45,8 @@ export const getClickedNodeMetaData = createSelector(
   [
     getClickedNode,
     getGraphNodes,
-    getEdgeIDs,
-    getEdgeSources,
-    getEdgeTargets,
-    getNodeName,
+    getNodeSourceNames,
+    getNodeTargetNames,
     (state) => state.node.tags,
     (state) => state.tag.name,
     (state) => state.pipeline,
@@ -61,10 +59,8 @@ export const getClickedNodeMetaData = createSelector(
   (
     nodeId,
     nodes = {},
-    edgeIDs,
-    edgeSources,
-    edgeTargets,
-    nodeName,
+    nodeSources,
+    nodeTargets,
     nodeTags,
     tagNames,
     pipeline,
@@ -79,7 +75,6 @@ export const getClickedNodeMetaData = createSelector(
     if (!node) {
       return null;
     }
-
     const parameters =
       nodeParameters[node.id] &&
       Object.entries(nodeParameters[node.id]).map(
@@ -98,22 +93,24 @@ export const getClickedNodeMetaData = createSelector(
       filepath: nodeFilepaths[node.id],
       plot: nodePlot[node.id],
       datasetType: nodeDatasetTypes[node.id],
+      inputs: nodeSources[node.id],
+      outputs: nodeTargets[node.id],
     };
 
-    const filteredEdgeIDs = edgeIDs.filter((edge) => edge.includes(node.id));
-    const inputs = [];
-    const outputs = [];
-    for (const edgeID of filteredEdgeIDs) {
-      const source = edgeSources[edgeID];
-      const target = edgeTargets[edgeID];
-      if (source === node.id) {
-        inputs.push(nodeName[target]);
-      } else {
-        outputs.push(nodeName[source]);
-      }
-    }
-    metadata.inputs = inputs.sort(sortAlpha);
-    metadata.outputs = outputs.sort(sortAlpha);
+    // const filteredEdgeIDs = edgeIDs.filter((edge) => edge.includes(node.id));
+    // const inputs = [];
+    // const outputs = [];
+    // for (const edgeID of filteredEdgeIDs) {
+    //   const source = edgeSources[edgeID];
+    //   const target = edgeTargets[edgeID];
+    //   if (source === node.id) {
+    //     inputs.push(nodeName[target]);
+    //   } else {
+    //     outputs.push(nodeName[source]);
+    //   }
+    // }
+    // metadata.inputs = inputs.sort(sortAlpha);
+    // metadata.outputs = outputs.sort(sortAlpha);
     return metadata;
   }
 );
