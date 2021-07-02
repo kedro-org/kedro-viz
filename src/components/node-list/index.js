@@ -64,7 +64,7 @@ const NodeListProvider = ({
     searchValue,
   });
 
-  const groups = getGroups({ nodeTypes, items });
+  const groups = getGroups({ items });
 
   const onItemClick = (item) => {
     if (isGroupType(item.type)) {

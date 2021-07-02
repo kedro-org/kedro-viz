@@ -283,75 +283,31 @@ export const getFilteredNodeItems = createSelector(
 );
 
 /**
- * Create a new group of items. This can be one of two kinds:
- * 'filter': Categories, e.g. tags
- * 'element': Graph elements, e.g. nodes, datasets, or parameters
- * An item is a node-list row, e.g. a node or a tag.
- * @param {object} groupType Meta information about the group's items
- * @param {array} itemsOfType List of items in the group
- */
-export const createGroup = (groupType, itemsOfType = []) => {
-  const group = {
-    type: groupType,
-    id: groupType.id,
-    allUnchecked: itemsOfType.every((item) => !item.checked),
-    allChecked: itemsOfType.every((item) => item.checked),
-  };
-
-  if (groupType.id === 'tag') {
-    Object.assign(group, {
-      name: 'Tags',
-      kind: 'filter',
-      checked: !group.allUnchecked,
-      visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
-      invisibleIcon: IndicatorOffIcon,
-    });
-  } else if (groupType.id === 'modularPipeline') {
-    Object.assign(group, {
-      name: 'Modular Pipelines',
-      kind: 'filter',
-      checked: !group.allUnchecked,
-      visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
-      invisibleIcon: IndicatorOffIcon,
-    });
-  } else if (groupType.id === 'elementType') {
-    Object.assign(group, {
-      name: 'Element types',
-      kind: 'filter',
-      checked: !group.allUnchecked,
-      visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
-      invisibleIcon: IndicatorOffIcon,
-    });
-  } else {
-    Object.assign(group, {
-      name: groupType.name,
-      kind: 'element',
-      checked: !groupType.disabled,
-      visibleIcon: VisibleIcon,
-      invisibleIcon: InvisibleIcon,
-    });
-  }
-
-  return group;
-};
-
-/**
- * Returns groups of items per type
- * @param {array} types List of node types
- * @param {array} items List of items
+ * Returns group items for each sidebar filter group defined in the sidebar config.
+ * @param {object} items List items by group type
  * @return {array} List of groups
  */
 export const getGroups = createSelector(
-  [(state) => state.nodeTypes, (state) => state.items],
-  (nodeTypes, items) => {
+  [(state) => state.items],
+  (items) => {
     const groups = {};
-    const groupTypes = [
-      ...nodeTypes,
-      ...Object.values(sidebar.Categories).map((id) => ({ id })),
-    ];
-
-    for (const groupType of groupTypes) {
-      groups[groupType.id] = createGroup(groupType, items[groupType.id]);
+ 
+    for (const [type, name] of Object.entries(sidebarGroups)) {
+      const itemsOfType = items[type] || [];
+      const allUnchecked = itemsOfType.every((item) => !item.checked);
+      const allChecked = itemsOfType.every((item) => item.checked);
+    
+      groups[type] = {
+        type,
+        name,
+        id: type,
+        kind: 'filter',
+        allUnchecked: itemsOfType.every((item) => !item.checked),
+        allChecked: itemsOfType.every((item) => item.checked),
+        checked: !allUnchecked,
+        visibleIcon: allChecked ? IndicatorIcon : IndicatorPartialIcon,
+        invisibleIcon: IndicatorOffIcon,
+      };
     }
 
     return groups;
