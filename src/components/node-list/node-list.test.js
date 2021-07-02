@@ -17,7 +17,7 @@ import { getTagData } from '../../selectors/tags';
 import IndicatorPartialIcon from '../icons/indicator-partial';
 import { localStorageName } from '../../config';
 import { toggleTypeDisabled } from '../../actions/node-type';
-import { sidebar } from '../../config';
+import { sidebarElementTypes } from '../../config';
 
 describe('NodeList', () => {
   beforeEach(() => {
@@ -59,7 +59,7 @@ describe('NodeList', () => {
           const expectedTagResult = tags.filter((tag) =>
             tag.name.includes(searchText)
           );
-          const expectedElementTypeResult = Object.keys(sidebar.Elements).filter((type) =>
+          const expectedElementTypeResult = Object.keys(sidebarElementTypes).filter((type) =>
             type.includes(searchText)
           );
           // obtain the modular pipeline parents
@@ -92,7 +92,7 @@ describe('NodeList', () => {
 
       const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
-      const elementTypes = Object.keys(sidebar.Elements);
+      const elementTypes = Object.keys(sidebarElementTypes);
       const searchText = nodes[0].name;
       // Enter search text
       search().simulate('change', { target: { value: searchText } });
@@ -294,7 +294,7 @@ describe('NodeList', () => {
       );
       // const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
-      const elementTypes = Object.keys(sidebar.Elements);
+      const elementTypes = Object.keys(sidebarElementTypes);
       expect(nodeList.length).toBe(tags.length + elementTypes.length);
     });
 

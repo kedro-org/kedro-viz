@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import cloneDeep from 'lodash.clonedeep';
 import utils from '@quantumblack/kedro-ui/lib/utils';
-import { sidebar } from '../../config';
+import { sidebarGroups, sidebarElementTypes } from '../../config';
 import IndicatorIcon from '../icons/indicator';
 import IndicatorOffIcon from '../icons/indicator-off';
 import IndicatorPartialIcon from '../icons/indicator-partial';
@@ -174,7 +174,7 @@ export const getFilteredElementTypes = createSelector(
     highlightMatch(
       filterNodeGroups(
         {
-          elementType: Object.entries(sidebar.Elements).map(([name, type]) => ({
+          elementType: Object.entries(sidebarElementTypes).map(([type, name]) => ({
             id: type,
             name,
           })),
@@ -237,7 +237,7 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
  */
 const compareEnabledThenType = (itemA, itemB) => {
   const byEnabledTag = Number(itemA.disabled_tag) - Number(itemB.disabled_tag);
-  const nodeTypeIDs = ['task', 'data', 'parameters'];
+  const nodeTypeIDs = Object.keys(sidebarElementTypes);
   const byNodeType =
     nodeTypeIDs.indexOf(itemA.type) - nodeTypeIDs.indexOf(itemB.type);
   return byEnabledTag !== 0 ? byEnabledTag : byNodeType;
