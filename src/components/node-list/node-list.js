@@ -21,8 +21,6 @@ const NodeList = ({
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
-  onSectionMouseEnter,
-  onSectionMouseLeave,
   onItemChange,
 }) => {
   const [searching, setSearching] = useState(false);
@@ -82,8 +80,6 @@ const NodeList = ({
                   onItemClick={onItemClick}
                   onItemMouseEnter={onItemMouseEnter}
                   onItemMouseLeave={onItemMouseLeave}
-                  onSectionMouseEnter={onSectionMouseEnter}
-                  onSectionMouseLeave={onSectionMouseLeave}
                   onItemChange={onItemChange}
                   onToggleGroupChecked={onToggleGroupChecked}
                 />

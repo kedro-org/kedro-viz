@@ -50,7 +50,6 @@ const NodeListProvider = ({
   onToggleModularPipelineFilter,
   onToggleTypeDisabled,
   modularPipelines,
-  sections,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
 
@@ -153,18 +152,6 @@ const NodeListProvider = ({
     onToggleNodeActive(null);
   };
 
-  const onSectionMouseEnter = (type) => {
-    if (isParameterType(type)) {
-      onToggleParametersActive(true);
-    }
-  };
-
-  const onSectionMouseLeave = (type) => {
-    if (isParameterType(type)) {
-      onToggleParametersActive(false);
-    }
-  };
-
   // Deselect node on Escape key
   const handleKeyDown = (event) => {
     utils.handleKeyEvent(event.keyCode, {
@@ -187,8 +174,6 @@ const NodeListProvider = ({
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
-      onSectionMouseEnter={onSectionMouseEnter}
-      onSectionMouseLeave={onSectionMouseLeave}
       onItemChange={onItemChange}
     />
   );

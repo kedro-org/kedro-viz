@@ -12,8 +12,6 @@ const NodeListGroups = ({
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
-  onSectionMouseEnter,
-  onSectionMouseLeave,
   onItemChange,
 }) => {
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
@@ -49,8 +47,6 @@ const NodeListGroups = ({
             onToggleChecked={onToggleGroupChecked}
             onItemClick={onItemClick}
             onItemChange={onItemChange}
-            onSectionMouseEnter={onSectionMouseEnter}
-            onSectionMouseLeave={onSectionMouseLeave}
             onItemMouseEnter={onItemMouseEnter}
             onItemMouseLeave={onItemMouseLeave}
           />
