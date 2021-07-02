@@ -60,7 +60,6 @@ const TreeListProvider = ({
   nodeTypeIDs,
   searching,
   focusMode,
-  onToggleFocusMode,
 }) => {
   const classes = useStyles();
 
@@ -123,7 +122,9 @@ const TreeListProvider = ({
         onItemMouseEnter,
         onItemMouseLeave,
         onItemChange,
-        onItemClick
+        onItemClick,
+        treeData.disabled, // this value is needed to determine whether the children belongs to a parent under focusMode
+        treeData.id
       )
     );
 
@@ -137,7 +138,6 @@ const TreeListProvider = ({
         onItemClick={onItemClick}
         key={node.id}
         focusMode={focusMode}
-        onToggleFocusMode={onToggleFocusMode}
       />
     ));
 
@@ -146,7 +146,9 @@ const TreeListProvider = ({
     onItemMouseEnter,
     onItemMouseLeave,
     onItemChange,
-    onItemClick
+    onItemClick,
+    parentDisabled,
+    parentPipeline
   ) => (
     <NodeListTreeItem
       data={rowData}
@@ -156,7 +158,8 @@ const TreeListProvider = ({
       onItemClick={onItemClick}
       key={rowData.id}
       focusMode={focusMode}
-      onToggleFocusMode={onToggleFocusMode}>
+      parentPipeline={parentPipeline}
+      parentDisabled={parentDisabled}>
       {renderModularPipelines(rowData)}
 
       {/* render set of node elements in that modular pipeline */}
@@ -170,7 +173,7 @@ const TreeListProvider = ({
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       expanded={expandedPipelines}
-      key="tree">
+      key="tree-search">
       {/* render set of modular pipelines in the main pipeline */}
       {renderModularPipelines(treeData)}
       {/* render set of node elements in the main pipeline */}
@@ -181,7 +184,7 @@ const TreeListProvider = ({
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
-      key="tree-search">
+      key="tree">
       {renderModularPipelines(treeData)}
       {renderChildNodes(treeData)}
     </StyledTreeView>

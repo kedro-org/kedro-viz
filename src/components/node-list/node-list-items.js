@@ -371,13 +371,13 @@ export const getFilteredNodeModularPipelines = createSelector(
       nodeItems[nodeTypeId]?.forEach((filteredNode) => {
         filteredNode.modularPipelines.forEach((nodeModularPipeline) => {
           filteredNodeModularPipelines.push(
-            constructModularPipelineItem({
-              modularPipeline: modularPipelines.find(
+            constructModularPipelineItem(
+              modularPipelines.find(
                 (rawModularPipeline) =>
                   rawModularPipeline.id === nodeModularPipeline
               ),
-              focusMode,
-            })
+              focusMode
+            )
           );
         });
       });

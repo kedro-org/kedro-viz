@@ -11,7 +11,8 @@ const NodeListTreeItem = ({
   children,
   searchCount,
   focusMode,
-  onToggleFocusMode,
+  parentDisabled,
+  parentPipeline,
 }) => (
   <TreeItem
     key={data.id}
@@ -43,7 +44,8 @@ const NodeListTreeItem = ({
         rowType="tree"
         searchCount={searchCount}
         focusMode={focusMode}
-        onToggleFocusMode={onToggleFocusMode}
+        parentDisabled={parentDisabled}
+        parentPipeline={parentPipeline}
       />
     }>
     {children}

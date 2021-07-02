@@ -59,7 +59,8 @@ const NodeListRow = memo(
     invisibleIcon = InvisibleIcon,
     rowType,
     focusMode,
-    onToggleFocusMode,
+    parentDisabled,
+    parentPipeline,
   }) => {
     const VisibilityIcon =
       type === 'modularPipeline'
@@ -70,15 +71,57 @@ const NodeListRow = memo(
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
 
+    const determineDisabledLabel = (
+      parentPipeline,
+      parentDisabled,
+      applyFocusMode,
+      disabled
+    ) => {
+      if (parentPipeline === 'main') {
+        return disabled;
+      }
+      return (
+        parentDisabled !== false &&
+        disabled === true &&
+        applyFocusMode === false
+      );
+    };
+
     const [applyFocusMode, setApplyFocusMode] = useState(
       focusMode !== null && type === 'modularPipeline' && id === focusMode?.id
+    );
+
+    const [applyDisabledLabel, setApplyDisabledLabel] = useState(
+      determineDisabledLabel(
+        parentPipeline,
+        parentDisabled,
+        applyFocusMode,
+        disabled
+      )
     );
 
     useEffect(() => {
       setApplyFocusMode(
         focusMode !== null && type === 'modularPipeline' && id === focusMode?.id
       );
-    }, [focusMode]);
+
+      setApplyDisabledLabel(
+        determineDisabledLabel(
+          parentPipeline,
+          parentDisabled,
+          applyFocusMode,
+          disabled
+        )
+      );
+    }, [
+      focusMode,
+      parentDisabled,
+      disabled,
+      type,
+      id,
+      parentPipeline,
+      applyFocusMode,
+    ]);
 
     return (
       <Container
@@ -128,7 +171,7 @@ const NodeListRow = memo(
               `pipeline-nodelist__row__label--kind-${kind}`,
               {
                 'pipeline-nodelist__row__label--faded': faded,
-                'pipeline-nodelist__row__label--disabled': disabled,
+                'pipeline-nodelist__row__label--disabled': applyDisabledLabel,
               }
             )}
             dangerouslySetInnerHTML={{ __html: label }}
