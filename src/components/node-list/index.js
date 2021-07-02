@@ -93,6 +93,8 @@ const NodeListProvider = ({
       onToggleTagActive(item.id, true);
     } else if (isModularPipelineType(item.type)) {
       onToggleModularPipelineActive(item.id, true);
+    } else if (isElementType(item.type) && isParameterType(item.id)) {
+      onToggleParametersActive(true);
     } else if (item.visible) {
       onToggleNodeActive(item.id);
     }
@@ -103,6 +105,8 @@ const NodeListProvider = ({
       onToggleTagActive(item.id, false);
     } else if (isModularPipelineType(item.type)) {
       onToggleModularPipelineActive(item.id, false);
+    } else if (isElementType(item.type) && isParameterType(item.id)) {
+      onToggleParametersActive(false);
     } else if (item.visible) {
       onToggleNodeActive(null);
     }
