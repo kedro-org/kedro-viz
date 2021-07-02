@@ -128,7 +128,7 @@ const NodeListRow = memo(
             ) : null}
             <label
               htmlFor={id}
-              className={classnames('pipeline-row__toggle', {
+              className={classnames('pipeline-row__toggle', `pipeline-row__toggle--kind-${kind}`, {
                 'pipeline-row__toggle--disabled': disabled,
                 'pipeline-row__toggle--selected': selected,
               })}>

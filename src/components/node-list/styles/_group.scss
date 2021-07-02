@@ -42,32 +42,13 @@ $placeholder-fade: 120px;
   pointer-events: none;
 }
 
-.pipeline-nodelist__elements-panel {
-  .pipeline-nodelist__placeholder-upper:after {
-    bottom: -$placeholder-fade;
-    background: linear-gradient(
-      0deg,
-      var(--nodelist-bg-transparent) 0%,
-      var(--color-nodelist-element-panel) 100%
-    );
-  }
-
-  .pipeline-nodelist__placeholder-lower:after {
-    top: -$placeholder-fade;
-    background: linear-gradient(
-      0deg,
-      var(--color-bg-3) 0%,
-      var(--color-nodelist-element-panel) 100%
-    );
-  }
-}
-
+// Add fade overlay at the lazy list boundaries visible during scroll
 .pipeline-nodelist__filter-panel {
   .pipeline-nodelist__placeholder-upper:after {
     bottom: -$placeholder-fade;
     background: linear-gradient(
       0deg,
-      var(--nodelist-bg-transparent) 0%,
+      var(--color-nodelist-bg-filter-transparent) 0%,
       var(--color-nodelist-filter-panel) 100%
     );
   }
@@ -77,7 +58,7 @@ $placeholder-fade: 120px;
     background: linear-gradient(
       0deg,
       var(--color-nodelist-filter-panel) 0%,
-      var(--nodelist-bg-transparent) 100%
+      var(--color-nodelist-bg-filter-transparent) 100%
     );
   }
 }
@@ -113,7 +94,7 @@ $placeholder-fade: 120px;
     height: 20px;
     background: linear-gradient(
       0deg,
-      var(--nodelist-bg-transparent) 0%,
+      var(--color-nodelist-bg-transparent) 0%,
       var(--color-nodelist-element-panel) 100%
     );
     transition: opacity ease 0.3s;
@@ -133,7 +114,7 @@ $placeholder-fade: 120px;
     height: 20px;
     background: linear-gradient(
       0deg,
-      var(--nodelist-bg-transparent) 0%,
+      var(--color-nodelist-bg-transparent) 0%,
       var(--color-nodelist-filter-panel) 100%
     );
     transition: opacity ease 0.3s;

@@ -8,6 +8,10 @@
 .pipeline-row__toggle {
   cursor: pointer;
 
+  &--kind-element {
+    margin-right: 8px;
+  }
+
   &--disabled {
     display: none;
   }

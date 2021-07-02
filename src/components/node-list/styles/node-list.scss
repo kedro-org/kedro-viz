@@ -34,6 +34,18 @@
   --color-nodelist-element-panel: #{$color-bg-dark-3};
 }
 
+@include transparentColour(
+  '--color-nodelist-bg-transparent',
+  $color-bg-light-3,
+  $color-bg-dark-3
+);
+
+@include transparentColour(
+  '--color-nodelist-bg-filter-transparent',
+  $color-bg-light-4,
+  $color-bg-dark-5
+);
+
 .pipeline-nodelist {
   position: relative;
   display: flex;
@@ -67,15 +79,4 @@
       opacity: 1;
     }
   }
-}
-
-@include transparentColour(
-  '--nodelist-bg-transparent',
-  $color-bg-light-3,
-  $color-bg-dark-3
-);
-
-.pipeline-nodelist-section:last-child {
-  padding-bottom: 28px;
-  padding-top: 4px;
 }
