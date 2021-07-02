@@ -1,4 +1,10 @@
 export const TOGGLE_TYPE_DISABLED = 'TOGGLE_TYPE_DISABLED';
+
+/**
+ * The default enabled / disabled value for all types is 'unset', meaning not explicitly set by user.
+ * In practice 'unset' acts like enabled but is a distinct state for UI purposes.
+ * The value `0` is chosen to be falsy, JSON serializable but distinct from `false`.
+ */
 export const NODE_TYPE_DISABLED_UNSET = 0;
 
 /**

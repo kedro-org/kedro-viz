@@ -199,7 +199,6 @@ export const getFilteredElementTypeItems = createSelector(
 
       return {
         ...elementType,
-        nodeTypeDisabled: nodeType.disabled,
         type: 'elementType',
         visibleIcon: IndicatorIcon,
         invisibleIcon: IndicatorOffIcon,

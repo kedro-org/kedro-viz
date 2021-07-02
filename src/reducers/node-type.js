@@ -3,6 +3,9 @@ import {
   NODE_TYPE_DISABLED_UNSET,
 } from '../actions/node-type';
 
+/**
+ * See actions/node-type.js for details on the 'unset' value.
+ */
 const allNodeTypesUnset = {
   parameters: NODE_TYPE_DISABLED_UNSET,
   task: NODE_TYPE_DISABLED_UNSET,
@@ -20,36 +23,37 @@ const isNodeTypeDisabled = (nodeTypeValue) => nodeTypeValue === true;
 function nodeTypeReducer(nodeTypeState = {}, action) {
   switch (action.type) {
     case TOGGLE_TYPE_DISABLED: {
-      const typeDisabledState = {
+      const nextDisabledState = {
         ...nodeTypeState.disabled,
         ...action.typeIDs,
       };
-      
-      const typeDisabledStateValues = Object.values(typeDisabledState);
 
-      // If all types would now be disabled
-      if (typeDisabledStateValues.every(isNodeTypeDisabled)) {
-        // Reset all types back to unset
+      const nextTypesDisabled = Object.values(nextDisabledState);
+
+      // If no types will be enabled
+      if (nextTypesDisabled.every(isNodeTypeDisabled)) {
+        // Then reset all types to unset (defaulting to enabled)
         return {
           ...nodeTypeState,
           disabled: { ...allNodeTypesUnset },
         };
       }
 
-      // Otherwise if there is now at least one enabled type
-      if (typeDisabledStateValues.some(isNodeTypeEnabled)) {
-        for (const type in typeDisabledState) {
-          typeDisabledState[type] =
-            // Disable all the unset types
-            isNodeTypeUnset(typeDisabledState[type])
-              ? true
-              : typeDisabledState[type];
+      // Otherwise if there is at least one enabled type
+      if (nextTypesDisabled.some(isNodeTypeEnabled)) {
+        const nextTypesUnset = nextTypesDisabled.filter((type) =>
+          isNodeTypeUnset(nextDisabledState[type])
+        );
+
+        // Set any unset types to explicitly disabled
+        for (const type in nextTypesUnset) {
+          nextDisabledState[type] = true;
         }
       }
 
       return {
         ...nodeTypeState,
-        disabled: typeDisabledState,
+        disabled: nextDisabledState,
       };
     }
     default:
