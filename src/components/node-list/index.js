@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import NodeList from './node-list';
-import { getFilteredItems, getGroups } from './node-list-items';
+import {
+  getFilteredItems,
+  getGroups,
+  isTagType,
+  isParameterType,
+  isModularPipelineType,
+  isElementType,
+  isGroupType,
+} from './node-list-items';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import { getModularPipelineData } from '../../selectors/modular-pipelines';
@@ -19,14 +27,6 @@ import {
   toggleNodesDisabled,
 } from '../../actions/nodes';
 import './styles/node-list.css';
-
-const isTagType = (type) => type === 'tag';
-const isParameterType = (type) => type === 'parameters';
-const isModularPipelineType = (type) => type === 'modularPipeline';
-const isElementType = (type) => type === 'elementType';
-
-const isGroupType = (type) =>
-  isElementType(type) || isTagType(type) || isModularPipelineType(type);
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -163,7 +163,7 @@ const NodeListProvider = ({
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={updateSearchValue}
-      onToggleGroupChecked={onToggleGroupChecked}
+      onGroupToggleChanged={onGroupToggleChanged}
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}

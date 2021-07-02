@@ -17,7 +17,7 @@ const NodeList = ({
   searchValue,
   getGroupState,
   onUpdateSearchValue,
-  onToggleGroupChecked,
+  onGroupToggleChanged,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
@@ -81,7 +81,7 @@ const NodeList = ({
                   onItemMouseEnter={onItemMouseEnter}
                   onItemMouseLeave={onItemMouseLeave}
                   onItemChange={onItemChange}
-                  onToggleGroupChecked={onToggleGroupChecked}
+                  onGroupToggleChanged={onGroupToggleChanged}
                 />
               </Scrollbars>
             </div>

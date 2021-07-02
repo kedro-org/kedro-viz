@@ -206,7 +206,7 @@ describe('node-list-selectors', () => {
     const groupType = expect.objectContaining({
       id: expect.any(String),
       name: expect.any(String),
-      type: expect.any(Object),
+      type: expect.any(String),
       visibleIcon: expect.any(Function),
       invisibleIcon: expect.any(Function),
       kind: expect.any(String),
@@ -218,9 +218,7 @@ describe('node-list-selectors', () => {
     it('returns groups for each type in the correct format', () => {
       expect(groups).toEqual(
         expect.objectContaining({
-          task: groupType,
-          data: groupType,
-          parameters: groupType,
+          elementType: groupType,
           tag: groupType,
         })
       );

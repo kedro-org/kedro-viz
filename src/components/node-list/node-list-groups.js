@@ -8,7 +8,7 @@ const NodeListGroups = ({
   items,
   groups,
   searchValue,
-  onToggleGroupChecked,
+  onGroupToggleChanged,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
@@ -44,7 +44,7 @@ const NodeListGroups = ({
             invisibleIcon={group.invisibleIcon}
             collapsed={Boolean(searchValue) ? false : collapsed[group.id]}
             onToggleCollapsed={onToggleGroupCollapsed}
-            onToggleChecked={onToggleGroupChecked}
+            onToggleChecked={onGroupToggleChanged}
             onItemClick={onItemClick}
             onItemChange={onItemChange}
             onItemMouseEnter={onItemMouseEnter}

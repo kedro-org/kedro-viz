@@ -10,6 +10,14 @@ import InvisibleIcon from '../icons/invisible';
 import { arrayToObject } from '../../utils';
 const { escapeRegExp, getHighlightedText } = utils;
 
+export const isTagType = (type) => type === 'tag';
+export const isParameterType = (type) => type === 'parameters';
+export const isModularPipelineType = (type) => type === 'modularPipeline';
+export const isElementType = (type) => type === 'elementType';
+
+export const isGroupType = (type) =>
+  isElementType(type) || isTagType(type);
+
 /**
  * Get a list of IDs of the visible nodes from all groups
  * @param {object} nodeGroups Grouped lists of nodes by type

@@ -32,15 +32,15 @@ describe('NodeListGroups', () => {
   });
 
   it('handles group checkbox change events', () => {
-    const onToggleGroupChecked = jest.fn();
+    const onGroupToggleChanged = jest.fn();
     const wrapper = setup.mount(
       <NodeListGroups
         {...mockProps()}
-        onToggleGroupChecked={onToggleGroupChecked}
+        onGroupToggleChanged={onGroupToggleChanged}
       />
     );
     const checkbox = () => wrapper.find('input').first();
     checkbox().simulate('change', { target: { checked: false } });
-    expect(onToggleGroupChecked.mock.calls.length).toEqual(1);
+    expect(onGroupToggleChanged.mock.calls.length).toEqual(1);
   });
 });
