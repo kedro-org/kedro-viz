@@ -1,3 +1,8 @@
+/*
+ * To apply custom theme to react-json-view objects, we need to follow thier base 16 theme styling guidelines
+ * indicated here - https://github.com/chriskempson/base16/blob/master/styling.md and implemented below.
+ */
+
 export const darkjsonViewerTheme = {
   base00: '#122531',
   base01: '#122531',

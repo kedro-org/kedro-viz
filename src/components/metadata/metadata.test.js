@@ -6,6 +6,7 @@ import { toggleNodeClicked } from '../../actions/nodes';
 import { setup, prepareState } from '../../utils/state.mock';
 import animals from '../../utils/data/animals.mock.json';
 import node_plot from '../../utils/data/node_plot.mock.json';
+import MetaDataList from './metadata-list';
 
 const salmonTaskNodeId = '443cf06a';
 const catDatasetNodeId = '9d989e8d';
@@ -30,9 +31,39 @@ describe('MetaData', () => {
   const title = (wrapper) => wrapper.find('.pipeline-metadata__title');
   const rowIcon = (row) => row.find('svg.pipeline-metadata__icon');
   const rowValue = (row) => row.find('.pipeline-metadata__value');
+  const rowObject = (row) => row.find('.pipeline-metadata__object');
   const rowByLabel = (wrapper, label) =>
     // Using attribute since traversal by sibling not supported
     wrapper.find(`.pipeline-metadata__row[data-label="${label}"]`);
+
+  describe('All nodes', () => {
+    it('limits Metadata list to 10 values and expands when button clicked', () => {
+      const metadata = getClickedNodeMetaData(
+        prepareState({
+          data: animals,
+          afterLayoutActions: [() => toggleNodeClicked(salmonTaskNodeId)],
+        })
+      );
+      metadata.inputs = Array.from({ length: 20 }, (_, i) => `Test: ${i}`);
+      const wrapper = setup.mount(
+        <MetaDataList
+          property="name"
+          inline={false}
+          commas={false}
+          empty="-"
+          values={metadata.inputs}
+          limit={10}
+        />
+      );
+      const expandButton = wrapper.find(
+        '.pipeline-metadata__value-list-expand'
+      );
+      expect(expandButton.text()).toBe('+ 10 more');
+      expect(wrapper.find('.pipeline-metadata__value').length).toBe(10);
+      expandButton.simulate('click');
+      expect(wrapper.find('.pipeline-metadata__value').length).toBe(20);
+    });
+  });
 
   describe('Task nodes', () => {
     it('shows the node type as an icon', () => {
@@ -56,7 +87,8 @@ describe('MetaData', () => {
     it('shows the node parameters', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
       const row = rowByLabel(wrapper, 'Parameters:');
-      expect(textOf(rowValue(row))).toEqual(['{}0 items']);
+      //this is output of react-json-view with no value
+      expect(textOf(rowObject(row))).toEqual(['{}0 items']);
     });
 
     it('shows the node inputs when parameters are disabled (default)', () => {
@@ -232,7 +264,8 @@ describe('MetaData', () => {
       it('shows the node parameters', () => {
         const wrapper = mount({ nodeId: rabbitParamsNodeId });
         const row = rowByLabel(wrapper, 'Parameters:');
-        expect(textOf(rowValue(row))).toEqual(['{}0 items']);
+        //this is output of react-json-view with no value
+        expect(textOf(rowObject(row))).toEqual(['{}0 items']);
       });
 
       it('shows the node tags', () => {

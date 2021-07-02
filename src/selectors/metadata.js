@@ -23,12 +23,16 @@ const runCommandTemplates = {
   task: (name) => `kedro run --to-nodes ${name}`,
 };
 
-const renderParameters = (params) => {
-  if (!params || !params[Object.keys(params)[0]]) {
+/**
+ * Unwrap parameters by extracting the first object
+ *  @param {?object} parameters The parameters
+ *  @returns {object} The unwrapped parameters
+ */
+const unwrapParameters = (parameters) => {
+  if (!parameters || !parameters[Object.keys(parameters)[0]]) {
     return {};
   }
-  //parameters have an extra layer of nesting which needs to be removed
-  return params[Object.keys(params)[0]];
+  return parameters[Object.keys(parameters)[0]];
 };
 
 /**
@@ -81,7 +85,7 @@ export const getClickedNodeMetaData = createSelector(
         .map((tagId) => tagNames[tagId])
         .sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
-      parameters: renderParameters(nodeParameters[node.id]),
+      parameters: unwrapParameters(nodeParameters[node.id]),
       runCommand: getRunCommand(node),
       code: nodeCodes[node.id],
       filepath: nodeFilepaths[node.id],
