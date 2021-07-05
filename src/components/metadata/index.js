@@ -107,7 +107,7 @@ const MetaData = ({
                   value={metadata.filepath}
                 />
                 <MetaDataRow
-                  label={'Parameters:'}
+                  label="Parameters:"
                   theme={theme}
                   visible={isParametersNode || isTaskNode}
                   kind="parameters"
