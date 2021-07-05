@@ -1,4 +1,6 @@
 import React from 'react';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
 import NodeListRow from './node-list-row';
 
@@ -17,6 +19,8 @@ const NodeListTreeItem = ({
   <TreeItem
     key={data.id}
     nodeId={data.id}
+    collapseIcon={<ExpandMoreIcon />}
+    expandIcon={<ChevronRightIcon />}
     label={
       <NodeListRow
         container="div"
