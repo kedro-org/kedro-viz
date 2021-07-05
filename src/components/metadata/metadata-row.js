@@ -1,4 +1,3 @@
-import { CheckBoxOutlineBlankRounded } from '@material-ui/icons';
 import React from 'react';
 import MetaDataList from './metadata-list';
 import MetaDataValue from './metadata-value';
