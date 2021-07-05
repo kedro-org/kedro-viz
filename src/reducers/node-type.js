@@ -39,14 +39,9 @@ function nodeTypeReducer(nodeTypeState = {}, action) {
         };
       }
 
-      // Otherwise if there is at least one enabled type
-      if (nextTypesDisabled.some(isNodeTypeEnabled)) {
-        const nextTypesUnset = nextTypesDisabled.filter((type) =>
-          isNodeTypeUnset(nextDisabledState[type])
-        );
-
-        // Set any unset types to explicitly disabled
-        for (const type in nextTypesUnset) {
+      // At least one type is enabled, set any unset types to disabled
+      for (const type in nextDisabledState) {
+        if (isNodeTypeUnset(nextDisabledState[type])) {
           nextDisabledState[type] = true;
         }
       }
