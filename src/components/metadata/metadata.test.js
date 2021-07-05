@@ -58,9 +58,13 @@ describe('MetaData', () => {
       const expandButton = wrapper.find(
         '.pipeline-metadata__value-list-expand'
       );
+      // Expand button should show remainder
       expect(expandButton.text()).toBe('+ 10 more');
+      // Should show 10 values
       expect(wrapper.find('.pipeline-metadata__value').length).toBe(10);
+      // User clicks to expand
       expandButton.simulate('click');
+      // Should show all 20 values
       expect(wrapper.find('.pipeline-metadata__value').length).toBe(20);
     });
   });
