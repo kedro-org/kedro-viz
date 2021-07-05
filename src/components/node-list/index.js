@@ -211,7 +211,6 @@ const NodeListProvider = ({
       onSectionMouseLeave={onSectionMouseLeave}
       onItemChange={onItemChange}
       focusMode={focusMode}
-      onToggleFocusMode={onToggleFocusMode}
     />
   );
 };
