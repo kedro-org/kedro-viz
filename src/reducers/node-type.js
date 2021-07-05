@@ -15,9 +15,6 @@ const allNodeTypesUnset = {
 const isNodeTypeUnset = (nodeTypeValue) =>
   nodeTypeValue === NODE_TYPE_DISABLED_UNSET;
 
-const isNodeTypeEnabled = (nodeTypeValue) =>
-  isNodeTypeUnset(nodeTypeValue) || nodeTypeValue === false;
-
 const isNodeTypeDisabled = (nodeTypeValue) => nodeTypeValue === true;
 
 function nodeTypeReducer(nodeTypeState = {}, action) {

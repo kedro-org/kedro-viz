@@ -6,7 +6,6 @@ import {
   getFilteredItems,
   getGroups,
   isTagType,
-  isParameterType,
   isModularPipelineType,
   isElementType,
   isGroupType,
@@ -91,7 +90,8 @@ const NodeListProvider = ({
       onToggleTagActive(item.id, true);
     } else if (isModularPipelineType(item.type)) {
       onToggleModularPipelineActive(item.id, true);
-    } else if (isElementType(item.type) && isParameterType(item.id)) {
+    } else if (isElementType(item.type) && item.id === 'parameters') {
+      // Show parameters highlight when mouse enter parameters filter item
       onToggleParametersActive(true);
     } else if (item.visible) {
       onToggleNodeActive(item.id);
@@ -103,7 +103,8 @@ const NodeListProvider = ({
       onToggleTagActive(item.id, false);
     } else if (isModularPipelineType(item.type)) {
       onToggleModularPipelineActive(item.id, false);
-    } else if (isElementType(item.type) && isParameterType(item.id)) {
+    } else if (isElementType(item.type) && item.id === 'parameters') {
+      // Hide parameters highlight when mouse leave parameters filter item
       onToggleParametersActive(false);
     } else if (item.visible) {
       onToggleNodeActive(null);
