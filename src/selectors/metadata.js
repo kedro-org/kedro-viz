@@ -91,26 +91,30 @@ export const getClickedNodeMetaData = createSelector(
       inputs: {},
       outputs: {},
     };
-    metadata.inputs.enabled = node.sources
+    metadata.inputs.visible = node.sources
       .map((s) =>
         nodeSources[node.id].includes(s.sourceNode.name)
           ? s.sourceNode.name
           : undefined
       )
-      .filter(Boolean);
-    metadata.inputs.disabled = nodeSources[node.id]
-      .filter((n) => !metadata.inputs.enabled.includes(n))
-      .filter(Boolean);
-    metadata.outputs.enabled = node.targets
+      .filter(Boolean)
+      .sort(sortAlpha);
+    metadata.inputs.hidden = nodeSources[node.id]
+      .filter((n) => !metadata.inputs.visible.includes(n))
+      .filter(Boolean)
+      .sort(sortAlpha);
+    metadata.outputs.visible = node.targets
       .map((s) =>
         nodeTargets[node.id].includes(s.targetNode.name)
           ? s.targetNode.name
           : undefined
       )
-      .filter(Boolean);
-    metadata.outputs.disabled = nodeTargets[node.id]
-      .filter((n) => !metadata.outputs.enabled.includes(n))
-      .filter(Boolean);
+      .filter(Boolean)
+      .sort(sortAlpha);
+    metadata.outputs.hidden = nodeTargets[node.id]
+      .filter((n) => !metadata.outputs.visible.includes(n))
+      .filter(Boolean)
+      .sort(sortAlpha);
     return metadata;
   }
 );
