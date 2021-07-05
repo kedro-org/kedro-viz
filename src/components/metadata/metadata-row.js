@@ -1,3 +1,4 @@
+import { CheckBoxOutlineBlankRounded } from '@material-ui/icons';
 import React from 'react';
 import MetaDataList from './metadata-list';
 import MetaDataValue from './metadata-value';
@@ -19,13 +20,26 @@ const MetaDataRow = ({
   children,
 }) => {
   const showList = Array.isArray(value);
-
+  const multipleProps = Array.isArray(property);
   return (
     visible && (
       <>
         <dt className="pipeline-metadata__label">{label}</dt>
         <dd className="pipeline-metadata__row" data-label={label}>
-          {showList && (
+          {multipleProps &&
+            Object.keys(value).map((prop, index) => (
+              <MetaDataList
+                key={index}
+                property=""
+                inline={true}
+                commas={true}
+                kind={`${kind}--${prop}`}
+                empty={null}
+                values={value[prop]}
+                limit={limit}
+              />
+            ))}
+          {!multipleProps && showList && (
             <MetaDataList
               property={property}
               inline={inline}
@@ -36,7 +50,7 @@ const MetaDataRow = ({
               limit={limit}
             />
           )}
-          {!showList && !children && (
+          {!multipleProps && !showList && !children && (
             <MetaDataValue value={value} kind={kind} empty={empty} />
           )}
           {children}

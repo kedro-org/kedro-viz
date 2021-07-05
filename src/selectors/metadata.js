@@ -2,11 +2,6 @@ import { createSelector } from 'reselect';
 import { getGraphNodes, getNodeTargetNames, getNodeSourceNames } from './nodes';
 
 const getClickedNode = (state) => state.node.clicked;
-const getEdgeIDs = (state) => state.edge.ids;
-const getEdgeSources = (state) => state.edge.sources;
-const getEdgeTargets = (state) => state.edge.targets;
-const getNodeName = (state) => state.node.name;
-
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
  */
@@ -93,24 +88,29 @@ export const getClickedNodeMetaData = createSelector(
       filepath: nodeFilepaths[node.id],
       plot: nodePlot[node.id],
       datasetType: nodeDatasetTypes[node.id],
-      inputs: nodeSources[node.id],
-      outputs: nodeTargets[node.id],
+      inputs: {},
+      outputs: {},
     };
-
-    // const filteredEdgeIDs = edgeIDs.filter((edge) => edge.includes(node.id));
-    // const inputs = [];
-    // const outputs = [];
-    // for (const edgeID of filteredEdgeIDs) {
-    //   const source = edgeSources[edgeID];
-    //   const target = edgeTargets[edgeID];
-    //   if (source === node.id) {
-    //     inputs.push(nodeName[target]);
-    //   } else {
-    //     outputs.push(nodeName[source]);
-    //   }
-    // }
-    // metadata.inputs = inputs.sort(sortAlpha);
-    // metadata.outputs = outputs.sort(sortAlpha);
+    metadata.inputs.enabled = node.sources
+      .map((s) =>
+        nodeSources[node.id].includes(s.sourceNode.name)
+          ? s.sourceNode.name
+          : undefined
+      )
+      .filter(Boolean);
+    metadata.inputs.disabled = nodeSources[node.id]
+      .filter((n) => !metadata.inputs.enabled.includes(n))
+      .filter(Boolean);
+    metadata.outputs.enabled = node.targets
+      .map((s) =>
+        nodeTargets[node.id].includes(s.targetNode.name)
+          ? s.targetNode.name
+          : undefined
+      )
+      .filter(Boolean);
+    metadata.outputs.disabled = nodeTargets[node.id]
+      .filter((n) => !metadata.outputs.enabled.includes(n))
+      .filter(Boolean);
     return metadata;
   }
 );
