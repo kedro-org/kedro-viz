@@ -105,18 +105,15 @@ As a JavaScript React component, the project is designed to be used in two diffe
 
 The following flags are available to toggle experimental features:
 
-- `oldgraph` - From release v3.8.0. Display old version of graph (dagre algorithm) without improved graphing algorithm. (default `false`)
 - `newparams` - From release v3.12.0. Disable parameters on page load and highlight parameter connections.
 - `sizewarning` - From release v3.9.1. Show a warning before rendering very large graphs. (default `true`)
 - `modularpipeline` - From release v3.11.0. Enables filtering of nodes by modular pipelines. Note that selecting both modular pipeline and tag filters will only return nodes that belongs to both categories. (default `false`). 
-
-Note that newgraph has been removed from v3.8.0 onwards and is now the default functionality. Should there be issues with your project, see the oldgraph flag above.
 
 ### Setting flags
 
 To enable or disable a flagged feature, add the flag as a parameter with the value `true` or `false` to the end of the URL in your browser when running Kedro-Viz, e.g.
 
-`http://localhost:4141/?data=demo&oldgraph=true`
+`http://localhost:4141/?data=demo&newparams=true`
 
 The setting you provide persists for all sessions on your machine, until you change it.
 

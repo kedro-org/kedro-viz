@@ -11,7 +11,6 @@ import {
   codeSidebarWidth,
 } from '../config';
 
-const getOldgraphFlag = (state) => state.flags.oldgraph;
 const getSizeWarningFlag = (state) => state.flags.sizewarning;
 const getVisibleSidebar = (state) => state.visible.sidebar;
 const getVisibleCode = (state) => state.visible.code;
@@ -50,16 +49,15 @@ export const getGraphInput = createSelector(
     getVisibleNodes,
     getVisibleEdges,
     getVisibleLayerIDs,
-    getOldgraphFlag,
     getFontLoaded,
     getTriggerLargeGraphWarning,
   ],
-  (nodes, edges, layers, oldgraph, fontLoaded, triggerLargeGraphWarning) => {
+  (nodes, edges, layers, fontLoaded, triggerLargeGraphWarning) => {
     if (!fontLoaded || triggerLargeGraphWarning) {
       return null;
     }
 
-    return { nodes, edges, layers, oldgraph, fontLoaded };
+    return { nodes, edges, layers, fontLoaded };
   }
 );
 
