@@ -115,13 +115,11 @@ const MetaData = ({
                 />
                 <MetaDataRow
                   label="Inputs:"
-                  property={['visible', 'hidden']}
                   visible={isTaskNode}
                   value={metadata.inputs}
                 />
                 <MetaDataRow
                   label="Outputs:"
-                  property={['visible', 'hidden']}
                   visible={isTaskNode}
                   value={metadata.outputs}
                 />

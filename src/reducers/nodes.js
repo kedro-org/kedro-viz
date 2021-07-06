@@ -59,6 +59,12 @@ function nodeReducer(nodeState = {}, action) {
         parameters: Object.assign({}, nodeState.parameters, {
           [id]: data.parameters,
         }),
+        inputs: Object.assign({}, nodeState.inputs, {
+          [id]: data.inputs,
+        }),
+        outputs: Object.assign({}, nodeState.outputs, {
+          [id]: data.outputs,
+        }),
         // the data returned from the API under the field name 'type' for dataset type nodes
         datasetType: Object.assign({}, nodeState.datasetType, {
           [id]: data.type,

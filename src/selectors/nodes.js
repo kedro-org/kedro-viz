@@ -293,36 +293,3 @@ export const getNodesWithInputParams = createSelector(
     return nodesList;
   }
 );
-
-const getNodeEdges = (nodeID, edgeIDs) =>
-  edgeIDs.filter((edge) => edge.includes(nodeID));
-
-export const getNodeSourceNames = createSelector(
-  [getPipelineNodeIDs, getNodeName, getEdgeIDs, getEdgeSources, getEdgeTargets],
-  (nodeIDs, nodeName, edgeIDs, edgeSources, edgeTargets) =>
-    arrayToObject(nodeIDs, (nodeID) => {
-      const filteredEdgeIds = getNodeEdges(nodeID, edgeIDs);
-      const sources = [];
-      for (const edgeID of filteredEdgeIds) {
-        if (edgeTargets[edgeID] === nodeID) {
-          sources.push(nodeName[edgeSources[edgeID]]);
-        }
-      }
-      return sources;
-    })
-);
-
-export const getNodeTargetNames = createSelector(
-  [getPipelineNodeIDs, getNodeName, getEdgeIDs, getEdgeSources, getEdgeTargets],
-  (nodeIDs, nodeName, edgeIDs, edgeSources, edgeTargets) =>
-    arrayToObject(nodeIDs, (nodeID) => {
-      const filteredEdgeIds = getNodeEdges(nodeID, edgeIDs);
-      const targets = [];
-      for (const edgeID of filteredEdgeIds) {
-        if (edgeSources[edgeID] === nodeID) {
-          targets.push(nodeName[edgeTargets[edgeID]]);
-        }
-      }
-      return targets;
-    })
-);

@@ -19,26 +19,13 @@ const MetaDataRow = ({
   children,
 }) => {
   const showList = Array.isArray(value);
-  const multipleProps = Array.isArray(property);
+
   return (
     visible && (
       <>
         <dt className="pipeline-metadata__label">{label}</dt>
         <dd className="pipeline-metadata__row" data-label={label}>
-          {multipleProps &&
-            Object.keys(value).map((prop, index) => (
-              <MetaDataList
-                key={index}
-                property=""
-                inline={true}
-                commas={true}
-                kind={`${kind}--${prop}`}
-                empty={null}
-                values={value[prop]}
-                limit={limit}
-              />
-            ))}
-          {!multipleProps && showList && (
+          {showList && (
             <MetaDataList
               property={property}
               inline={inline}
@@ -49,7 +36,7 @@ const MetaDataRow = ({
               limit={limit}
             />
           )}
-          {!multipleProps && !showList && !children && (
+          {!showList && !children && (
             <MetaDataValue value={value} kind={kind} empty={empty} />
           )}
           {children}

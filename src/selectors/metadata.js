@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getGraphNodes, getNodeTargetNames, getNodeSourceNames } from './nodes';
+import { getGraphNodes } from './nodes';
 
 const getClickedNode = (state) => state.node.clicked;
 /**
@@ -40,12 +40,12 @@ export const getClickedNodeMetaData = createSelector(
   [
     getClickedNode,
     getGraphNodes,
-    getNodeSourceNames,
-    getNodeTargetNames,
     (state) => state.node.tags,
     (state) => state.tag.name,
     (state) => state.pipeline,
     (state) => state.node.filepath,
+    (state) => state.node.inputs,
+    (state) => state.node.outputs,
     (state) => state.node.code,
     (state) => state.node.parameters,
     (state) => state.node.plot,
@@ -54,19 +54,18 @@ export const getClickedNodeMetaData = createSelector(
   (
     nodeId,
     nodes = {},
-    nodeSources,
-    nodeTargets,
     nodeTags,
     tagNames,
     pipeline,
     nodeFilepaths,
+    nodeInputs,
+    nodeOutputs,
     nodeCodes,
     nodeParameters,
     nodePlot,
     nodeDatasetTypes
   ) => {
     const node = nodes[nodeId];
-
     if (!node) {
       return null;
     }
@@ -88,33 +87,10 @@ export const getClickedNodeMetaData = createSelector(
       filepath: nodeFilepaths[node.id],
       plot: nodePlot[node.id],
       datasetType: nodeDatasetTypes[node.id],
-      inputs: {},
-      outputs: {},
+      inputs: nodeInputs[node.id],
+      outputs: nodeOutputs[node.id],
     };
-    metadata.inputs.visible = node.sources
-      .map((s) =>
-        nodeSources[node.id].includes(s.sourceNode.name)
-          ? s.sourceNode.name
-          : undefined
-      )
-      .filter(Boolean)
-      .sort(sortAlpha);
-    metadata.inputs.hidden = nodeSources[node.id]
-      .filter((n) => !metadata.inputs.visible.includes(n))
-      .filter(Boolean)
-      .sort(sortAlpha);
-    metadata.outputs.visible = node.targets
-      .map((s) =>
-        nodeTargets[node.id].includes(s.targetNode.name)
-          ? s.targetNode.name
-          : undefined
-      )
-      .filter(Boolean)
-      .sort(sortAlpha);
-    metadata.outputs.hidden = nodeTargets[node.id]
-      .filter((n) => !metadata.outputs.visible.includes(n))
-      .filter(Boolean)
-      .sort(sortAlpha);
+    console.log(metadata);
     return metadata;
   }
 );

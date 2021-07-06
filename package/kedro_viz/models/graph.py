@@ -311,7 +311,8 @@ class TaskNodeMetadata(GraphNodeMetadata):
             filepath = code_full_path
         self.filepath = str(filepath)
         self.parameters = task_node.parameters
-
+        self.inputs = [_pretty_name(_strip_namespace(name)) for name in kedro_node.inputs]
+        self.outputs = [_pretty_name(_strip_namespace(name)) for name in kedro_node.outputs]
 
 @dataclass
 class DataNode(GraphNode):

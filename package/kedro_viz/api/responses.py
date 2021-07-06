@@ -115,13 +115,16 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
     code: str
     filepath: str
     parameters: Dict
-
+    inputs: List[str]
+    outputs: List[str]
     class Config:
         schema_extra = {
             "example": {
                 "code": "def split_data(data: pd.DataFrame, parameters: Dict) -> Tuple:",
                 "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
                 "parameters": {"test_size": 0.2},
+                "inputs": ["params:input1", "input2"],
+                "outputs":['output1']
             }
         }
 
