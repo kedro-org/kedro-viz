@@ -90,7 +90,6 @@ export const getClickedNodeMetaData = createSelector(
       inputs: nodeInputs[node.id],
       outputs: nodeOutputs[node.id],
     };
-    console.log(metadata);
     return metadata;
   }
 );
