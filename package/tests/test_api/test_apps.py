@@ -229,12 +229,21 @@ class TestNodeMetadataEndpoint:
             == "def process_data(raw_data, train_test_split):\n        ...\n"
         )
         assert metadata["parameters"] == {"train_test_split": 0.1}
+        assert metadata["run_command"] == 'kedro run --to-nodes="process_data"'
         assert str(Path("package/tests/conftest.py")) in metadata["filepath"]
 
     def test_data_node_metadata(self, client):
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
+            "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "run_command": 'kedro run --to-outputs="model_inputs"',
+        }
+
+    def test_data_node_metadata_for_free_input(self, client):
+        response = client.get("/api/nodes/13399a82")
+        assert response.json() == {
+            "filepath": "raw_data.csv",
             "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
         }
 

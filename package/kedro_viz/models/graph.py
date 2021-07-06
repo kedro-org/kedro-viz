@@ -192,7 +192,7 @@ class GraphNode(abc.ABC):
         layer: Optional[str],
         tags: Set[str],
         dataset: AbstractDataSet,
-        is_free_input: bool,
+        is_free_input: bool = False,
     ) -> "DataNode":
         """Create a graph node of type DATA for a given Kedro DataSet instance.
 
@@ -337,7 +337,6 @@ class TaskNodeMetadata(GraphNodeMetadata):
         # a human-readable run command `kedro run --to-nodes/nodes` is not available
         if kedro_node._name is not None:
             self.run_command = f'kedro run --to-nodes="{kedro_node._name}"'
-            print(self.run_command)
 
 
 @dataclass

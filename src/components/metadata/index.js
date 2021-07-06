@@ -40,12 +40,16 @@ const MetaData = ({
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.node.type);
   const hasPlot = Boolean(metadata?.plot);
   const hasCode = Boolean(metadata?.code);
-  const hasRunCommand = Boolean(metadata?.runCommand);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
+  const runCommand = Boolean(metadata?.runCommand)
+    ? metadata.runCommand
+    : isTaskNode
+    ? 'Please provide a name argument for this node in order to see a run command.'
+    : null;
 
   const onCopyClick = () => {
-    window.navigator.clipboard.writeText(metadata.runCommand);
+    window.navigator.clipboard.writeText(runCommand);
     setShowCopied(true);
     setTimeout(() => setShowCopied(false), 1500);
   };
@@ -137,7 +141,7 @@ const MetaData = ({
                   visible={Boolean(metadata.pipeline)}
                   value={metadata.pipeline}
                 />
-                <MetaDataRow label="Run Command:" visible={hasRunCommand}>
+                <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
                   <div className="pipeline-metadata__toolbox-container">
                     <MetaDataValue
                       container={'code'}
@@ -147,9 +151,9 @@ const MetaData = ({
                           visible: !showCopied,
                         }
                       )}
-                      value={metadata.runCommand}
+                      value={runCommand}
                     />
-                    {window.navigator.clipboard && (
+                    {window.navigator.clipboard && metadata.runCommand && (
                       <>
                         <span
                           className={modifiers(
