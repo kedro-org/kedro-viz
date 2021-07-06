@@ -308,6 +308,9 @@ class TaskNodeMetadata(GraphNodeMetadata):
     # parameters of the node, if available
     parameters: Dict = field(init=False)
 
+    # command to run the pipeline to this node
+    run_command: Optional[str] = field(init=False, default=None)
+
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
 
@@ -326,6 +329,12 @@ class TaskNodeMetadata(GraphNodeMetadata):
             filepath = code_full_path
         self.filepath = str(filepath)
         self.parameters = task_node.parameters
+
+        # if a node doesn't have a user-supplied `_name` attribute,
+        # a human-readable run command `kedro run --to-nodes/nodes` is not available
+        if kedro_node._name is not None:
+            self.run_command = f'kedro run --to-nodes="{kedro_node._name}"'
+            print(self.run_command)
 
 
 @dataclass

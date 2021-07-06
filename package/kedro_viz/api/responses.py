@@ -115,6 +115,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
     code: str
     filepath: str
     parameters: Dict
+    run_command: str
 
     class Config:
         schema_extra = {

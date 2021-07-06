@@ -30,6 +30,7 @@ const runCommandTemplates = {
  * @returns {?string} The run command for the node, if applicable
  */
 const getRunCommand = (node) => {
+  console.log(node);
   const template = runCommandTemplates[node.type];
   return template ? template(node.fullName) : null;
 };
@@ -49,6 +50,7 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.parameters,
     (state) => state.node.plot,
     (state) => state.node.datasetType,
+    (state) => state.node.runCommand,
   ],
   (
     nodeId,
@@ -60,7 +62,8 @@ export const getClickedNodeMetaData = createSelector(
     nodeCodes,
     nodeParameters,
     nodePlot,
-    nodeDatasetTypes
+    nodeDatasetTypes,
+    nodeRunCommand
   ) => {
     const node = nodes[nodeId];
 
@@ -81,7 +84,8 @@ export const getClickedNodeMetaData = createSelector(
         .sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
       parameters,
-      runCommand: getRunCommand(node),
+      // runCommand: getRunCommand(node),
+      runCommand: nodeRunCommand[node.id],
       code: nodeCodes[node.id],
       filepath: nodeFilepaths[node.id],
       plot: nodePlot[node.id],

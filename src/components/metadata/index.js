@@ -40,6 +40,7 @@ const MetaData = ({
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.node.type);
   const hasPlot = Boolean(metadata?.plot);
   const hasCode = Boolean(metadata?.code);
+  const hasRunCommand = Boolean(metadata?.runCommand);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
 
@@ -136,9 +137,7 @@ const MetaData = ({
                   visible={Boolean(metadata.pipeline)}
                   value={metadata.pipeline}
                 />
-                <MetaDataRow
-                  label="Run Command:"
-                  visible={Boolean(metadata.runCommand)}>
+                <MetaDataRow label="Run Command:" visible={hasRunCommand}>
                   <div className="pipeline-metadata__toolbox-container">
                     <MetaDataValue
                       container={'code'}
