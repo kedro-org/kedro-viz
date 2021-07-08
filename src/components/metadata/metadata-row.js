@@ -38,7 +38,7 @@ const MetaDataRow = ({
               limit={limit}
             />
           )}
-          {!showList && !children && (
+          {!showList && !showObject && !children && (
             <MetaDataValue
               value={value}
               kind={kind}
