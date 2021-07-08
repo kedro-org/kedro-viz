@@ -114,6 +114,7 @@ const MetaData = ({
                   commas={false}
                   inline={false}
                   value={metadata.parameters}
+                  limit={10}
                 />
                 <MetaDataRow
                   label="Inputs:"
