@@ -24,7 +24,7 @@ const runCommandTemplates = {
 };
 
 /**
- * Unwrap parameters by extracting the first object
+ * Unwrap parameters by extracting the first and only object based on assumption that server returns object with additional nesting.
  *  @param {?object} parameters The parameters as returned from the server
  *  @returns {object} The unwrapped parameters
  */

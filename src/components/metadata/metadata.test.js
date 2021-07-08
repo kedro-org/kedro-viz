@@ -36,39 +36,6 @@ describe('MetaData', () => {
     // Using attribute since traversal by sibling not supported
     wrapper.find(`.pipeline-metadata__row[data-label="${label}"]`);
 
-  describe('All nodes', () => {
-    it('limits Metadata list to 10 values and expands when button clicked', () => {
-      const metadata = getClickedNodeMetaData(
-        prepareState({
-          data: animals,
-          afterLayoutActions: [() => toggleNodeClicked(salmonTaskNodeId)],
-        })
-      );
-      metadata.inputs = Array.from({ length: 20 }, (_, i) => `Test: ${i}`);
-      const wrapper = setup.mount(
-        <MetaDataList
-          property="name"
-          inline={false}
-          commas={false}
-          empty="-"
-          values={metadata.inputs}
-          limit={10}
-        />
-      );
-      const expandButton = wrapper.find(
-        '.pipeline-metadata__value-list-expand'
-      );
-      // Expand button should show remainder
-      expect(expandButton.text()).toBe('+ 10 more');
-      // Should show 10 values
-      expect(wrapper.find('.pipeline-metadata__value').length).toBe(10);
-      // User clicks to expand
-      expandButton.simulate('click');
-      // Should show all 20 values
-      expect(wrapper.find('.pipeline-metadata__value').length).toBe(20);
-    });
-  });
-
   describe('Task nodes', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
