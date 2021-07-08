@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Modal from '@quantumblack/kedro-ui/lib/components/modal';
 import { changeFlag, toggleSettingsModal } from '../../actions';
-import { getFlagsData } from '../../utils/flags';
+import { getFlagsState } from '../../utils/flags';
 import './settings-modal.css';
 import Toggle from '../toggle';
 
@@ -10,17 +10,17 @@ import Toggle from '../toggle';
  * Kedro-UI modal to allow users to change the flag settings
  */
 
-const SettingsModal = ({ theme, onToggle, onToggleFlag, visible, flags }) => {
+const SettingsModal = ({ theme, onClose, onToggleFlag, visible, flags }) => {
   if (!visible.settingsBtn) {
     return null;
   }
-  const flagData = getFlagsData();
+  const flagData = getFlagsState();
   return (
     <div className="pipeline-settings-modal">
       <Modal
         title="Settings"
         theme={theme}
-        onClose={() => onToggle(false)}
+        onClose={() => onClose(false)}
         visible={visible.settingsModal}>
         <div className="pipeline-settings-modal__content">
           <div className="pipeline-settings-modal__subtitle">Flags</div>
@@ -60,7 +60,7 @@ export const mapStateToProps = (state) => ({
 });
 
 export const mapDispatchToProps = (dispatch) => ({
-  onToggle: (value) => {
+  onClose: (value) => {
     dispatch(toggleSettingsModal(value));
   },
   onToggleFlag: (name, value) => {

@@ -1,4 +1,9 @@
-import { Flags, getFlagsFromUrl, getFlagsMessage, getFlagsData } from './flags';
+import {
+  Flags,
+  getFlagsFromUrl,
+  getFlagsMessage,
+  getFlagsState,
+} from './flags';
 
 const testFlagName = 'testflag';
 const privateFlagName = 'privateflag';
@@ -87,7 +92,7 @@ describe('flags', () => {
   });
 
   it('get Flags data returns an object with flag names and description', () => {
-    expect(getFlagsData()).toEqual([
+    expect(getFlagsState()).toEqual([
       {
         name: 'test flag',
         description: 'testflag description',

@@ -84,7 +84,7 @@ export const getFlagsMessage = (flagsEnabled) => {
   }
 };
 
-export const getFlagsData = () => {
+export const getFlagsState = () => {
   const allNames = Flags.names();
   return allNames.map((flag) => {
     return {

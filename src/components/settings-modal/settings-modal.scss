@@ -20,7 +20,8 @@
 
 .pipeline-settings-modal {
   .kui-modal__content {
-    max-width: calc(100% - 50em);
+    width: calc(100% - 5em);
+    max-width: 900px;
   }
 
   .kui-modal__wrapper {
@@ -36,6 +37,7 @@
 .pipeline-settings-modal__content {
   width: 100%;
   margin-bottom: 4em;
+  font-size: 1.25em;
 
   .kui-button {
     margin: 0 10px;
