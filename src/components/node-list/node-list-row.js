@@ -119,13 +119,13 @@ const NodeListRow = memo(
         </TextButton>
         {type !== 'modularPipeline' && (
           <>
-            {typeof count === 'number' ? (
+            {typeof count === 'number' && (
               <span
                 onClick={onClick}
                 className={'pipeline-nodelist__row__count'}>
                 {count}
               </span>
-            ) : null}
+            )}
             <label
               htmlFor={id}
               className={classnames('pipeline-row__toggle', `pipeline-row__toggle--kind-${kind}`, {

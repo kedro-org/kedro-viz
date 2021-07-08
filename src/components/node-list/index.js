@@ -18,7 +18,8 @@ import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleParametersHovered } from '../../actions';
 import {
-  toggleModularPipelineActive
+  toggleModularPipelineActive,
+  toggleModularPipelineFilter
 } from '../../actions/modular-pipelines';
 import {
   loadNodeData,
@@ -126,7 +127,7 @@ const NodeListProvider = ({
     } else if (isElementType(groupType)) {
       onToggleTypeDisabled(
         groupItems.reduce(
-          (o, item) => ({ ...o, [item.id]: !groupItemsDisabled }),
+          (state, item) => ({ ...state, [item.id]: !groupItemsDisabled }),
           {}
         )
       );
@@ -191,6 +192,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleModularPipelineActive: (modularPipelineIDs, active) => {
     dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
+  },
+  onToggleModularPipelineFilter: (modularPipelineIDs, enabled) => {
+    dispatch(toggleModularPipelineFilter(modularPipelineIDs, enabled));
   },
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));

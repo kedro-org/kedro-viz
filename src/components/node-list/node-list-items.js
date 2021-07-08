@@ -11,7 +11,6 @@ import { arrayToObject } from '../../utils';
 const { escapeRegExp, getHighlightedText } = utils;
 
 export const isTagType = (type) => type === 'tag';
-export const isParameterType = (type) => type === 'parameters';
 export const isModularPipelineType = (type) => type === 'modularPipeline';
 export const isElementType = (type) => type === 'elementType';
 
