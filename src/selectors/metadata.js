@@ -25,7 +25,7 @@ const runCommandTemplates = {
 
 /**
  * Unwrap parameters by extracting the first object
- *  @param {?object} parameters The parameters
+ *  @param {?object} parameters The parameters as returned from the server
  *  @returns {object} The unwrapped parameters
  */
 const unwrapParameters = (parameters) => {
