@@ -52,7 +52,6 @@ describe('MetaData', () => {
         <MetaData visible={true} metadata={metadata} />
       );
       const parametersRow = () => rowByLabel(wrapper, 'Parameters:');
-      console.log(parametersRow);
       const expandButton = parametersRow().find(
         '.pipeline-metadata__value-list-expand'
       );
