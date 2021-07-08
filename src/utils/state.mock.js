@@ -9,7 +9,7 @@ import reducer from '../reducers';
 import { updateFontLoaded } from '../actions';
 import { getGraphInput } from '../selectors/layout';
 import { updateGraph } from '../actions/graph';
-import { graphNew, graphDagre } from './graph';
+import { graphNew } from './graph';
 
 /**
  * Prime the state object for the testing environment
@@ -32,7 +32,7 @@ export const prepareState = ({
     ...beforeLayoutActions,
     // Precalculate graph layout:
     (state) => {
-      const layout = state.flags.oldgraph ? graphDagre : graphNew;
+      const layout = graphNew;
       const graphState = getGraphInput(state);
       if (!graphState) {
         return state;

@@ -88,7 +88,6 @@ export const getClickedNodeMetaData = createSelector(
       datasetType: nodeDatasetTypes[node.id],
     };
 
-    // Note: node.sources node.targets require oldgraph enabled
     if (node.sources && node.targets) {
       metadata.inputs = node.sources
         .map((edge) => nodes[edge.source])

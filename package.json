@@ -51,7 +51,6 @@
     "d3-shape": "^2.1.0",
     "d3-transition": "^2.0.0",
     "d3-zoom": "^2.0.0",
-    "dagre": "git+https://github.com/richardwestenra/dagre.git#manual-ranking",
     "deepmerge": "^4.2.2",
     "fetch-mock": "^9.11.0",
     "highlight.js": "^10.7.3",
