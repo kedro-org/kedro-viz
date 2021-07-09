@@ -17,24 +17,6 @@ export const getVisibleMetaSidebar = createSelector(
 );
 
 /**
- * Templates for run commands
- */
-const runCommandTemplates = {
-  data: (name) => `kedro run --to-inputs ${name}`,
-  task: (name) => `kedro run --to-nodes ${name}`,
-};
-
-/**
- * Returns run command for the node, if applicable to the node type
- * @param {object} node The node
- * @returns {?string} The run command for the node, if applicable
- */
-const getRunCommand = (node) => {
-  const template = runCommandTemplates[node.type];
-  return template ? template(node.fullName) : null;
-};
-
-/**
  * Gets metadata for the currently clicked node if any
  */
 export const getClickedNodeMetaData = createSelector(
@@ -49,6 +31,7 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.parameters,
     (state) => state.node.plot,
     (state) => state.node.datasetType,
+    (state) => state.node.runCommand,
   ],
   (
     nodeId,
@@ -60,7 +43,8 @@ export const getClickedNodeMetaData = createSelector(
     nodeCodes,
     nodeParameters,
     nodePlot,
-    nodeDatasetTypes
+    nodeDatasetTypes,
+    nodeRunCommand
   ) => {
     const node = nodes[nodeId];
 
@@ -81,7 +65,7 @@ export const getClickedNodeMetaData = createSelector(
         .sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
       parameters,
-      runCommand: getRunCommand(node),
+      runCommand: nodeRunCommand[node.id],
       code: nodeCodes[node.id],
       filepath: nodeFilepaths[node.id],
       plot: nodePlot[node.id],
