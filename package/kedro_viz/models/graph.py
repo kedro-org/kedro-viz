@@ -339,6 +339,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
             self.run_command = f'kedro run --to-nodes="{kedro_node._name}"'
 
 
+# pylint: disable=too-many-instance-attributes
 @dataclass
 class DataNode(GraphNode):
     """Represent a graph node of type DATA"""
