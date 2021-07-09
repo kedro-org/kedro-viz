@@ -28,9 +28,12 @@
 """`kedro_viz.launchers.cli` launches the viz server as a CLI app."""
 
 import traceback
+import webbrowser
+from pathlib import Path
 
 import click
 from kedro.framework.cli.utils import KedroCliError
+from watchgod import RegExpWatcher, run_process
 
 from kedro_viz.server import run_server
 
@@ -87,10 +90,51 @@ def commands():
     help="Kedro configuration environment. If not specified, "
     "catalog config in `local` will be used",
 )
-def viz(host, port, browser, load_file, save_file, pipeline, env):
+@click.option(
+    "--autoreload",
+    is_flag=True,
+    help="Autoreload viz server when a Python file change in the Kedro project",
+)
+def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
     """Visualise a Kedro pipeline using Kedro viz."""
     try:
-        run_server(host, port, browser, load_file, save_file, pipeline, env)
+        if autoreload:
+            is_localhost = host in ("127.0.0.1", "localhost", "0.0.0.0")
+
+            if browser and is_localhost:
+                webbrowser.open_new(f"http://{host}:{port}/")
+
+            project_path = Path.cwd()
+            process_kwargs = {
+                "host": host,
+                "port": port,
+                "load_file": load_file,
+                "save_file": save_file,
+                "pipeline_name": pipeline,
+                "env": env,
+                "autoreload": True,
+                "browser": False,
+                "project_path": project_path,
+            }
+
+            run_process(
+                path=project_path,
+                target=run_server,
+                kwargs=process_kwargs,
+                watcher_cls=RegExpWatcher,
+                watcher_kwargs=dict(re_files=r"^.*(\.yml|\.yaml|\.py)$"),
+            )
+
+        else:
+            run_server(
+                host=host,
+                port=port,
+                load_file=load_file,
+                save_file=save_file,
+                pipeline_name=pipeline,
+                env=env,
+                browser=browser,
+            )
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
         raise KedroCliError(str(ex)) from ex
