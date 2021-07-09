@@ -3,13 +3,20 @@
 @import '../../../styles/variables';
 @import './variables';
 
+.pipeline-nodelist__elements-panel .MuiTreeItem-label {
+  // Handle MuiTreeItem icon offset for correct width
+  $icon-offset: 15px + 4px;
+  width: calc(100% - #{$icon-offset});
+}
+
 .pipeline-nodelist__row__text {
   display: flex;
   align-items: center;
 
   // Fixed with required for overflow elipsis
-  width: calc(100% - 5.5em);
+  width: calc(100% - 7em);
   margin-right: auto;
+  padding: $row-padding-y 0 $row-padding-y 0;
   color: inherit;
   font-size: inherit;
   font-family: inherit;
@@ -23,16 +30,8 @@
   cursor: default;
   user-select: none;
 
-  &--kind-filter {
-    width: calc(100% - 6.5em);
-  }
-
-  &--filter {
-    padding: $row-padding-y $row-offset-right $row-padding-y $row-offset-left;
-  }
-
   &--tree {
-    padding: $row-padding-y 1em $row-padding-y 1em;
+    padding: $row-padding-y 0 $row-padding-y 1em;
   }
 
   &:focus {
@@ -63,12 +62,22 @@
     color: var(--color-nodelist-highlight);
     font-weight: normal;
   }
+}
 
-  i {
-    display: inline-block;
-    margin-left: 0.45em;
-    font-weight: normal;
-    font-style: normal;
+.pipeline-nodelist__row__count {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 2.2em;
+  margin: 0 0.7em 0.1em auto;
+  overflow: hidden;
+  font-size: 1.16em;
+  text-align: right;
+  text-overflow: ellipsis;
+  opacity: 0.75;
+  user-select: none;
+
+  .pipeline-nodelist__row--unchecked & {
+    opacity: 0.55;
   }
 }
 
@@ -85,8 +94,8 @@
     }
   }
 
-  // Bright row text when all unset
-  .pipeline-nodelist__group--all-unset & {
+  // Bright row text when all unchecked
+  .pipeline-nodelist__group--all-unchecked & {
     .pipeline-nodelist__row__label--kind-filter {
       opacity: 1;
     }

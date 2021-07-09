@@ -38,15 +38,17 @@ export const flags = {
   },
 };
 
-export const sidebar = {
-  Categories: {
-    Tags: 'tag',
-  },
-  Elements: {
-    Nodes: 'task',
-    Datasets: 'data',
-    Parameters: 'parameters',
-  },
+// Sidebar groups is an ordered map of { id: label }
+export const sidebarGroups = {
+  elementType: 'Element types',
+  tag: 'Tags'
+};
+
+// Sidebar element types is an ordered map of { id: label }
+export const sidebarElementTypes = {
+  task: 'Nodes',
+  data: 'Datasets',
+  parameters: 'Parameters'
 };
 
 export const shortTypeMapping = {

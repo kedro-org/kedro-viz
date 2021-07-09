@@ -8,7 +8,7 @@ import InvisibleIcon from '../icons/invisible';
 import { getNodeActive } from '../../selectors/nodes';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
-export const nodeListRowHeight = 36.59375;
+export const nodeListRowHeight = 37;
 
 /**
  * Returns `true` if there are no props changes, therefore the last render can be reused.
@@ -19,14 +19,14 @@ const shouldMemo = (prevProps, nextProps) =>
     [
       'active',
       'checked',
-      'unset',
-      'allUnset',
+      'allUnchecked',
       'disabled',
       'faded',
       'visible',
       'selected',
       'label',
       'children',
+      'count'
     ],
     prevProps,
     nextProps
@@ -37,14 +37,14 @@ const NodeListRow = memo(
     container: Container = 'div',
     active,
     checked,
-    unset,
-    allUnset,
+    allUnchecked,
     children,
     disabled,
     faded,
     visible,
     id,
     label,
+    count,
     name,
     kind,
     onMouseEnter,
@@ -78,9 +78,26 @@ const NodeListRow = memo(
         title={name}
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
+        {icon && (
+          <NodeIcon
+            className={classnames(
+              'pipeline-nodelist__row__type-icon',
+              'pipeline-nodelist__row__icon',
+              {
+                'pipeline-nodelist__row__type-icon--faded': faded,
+                'pipeline-nodelist__row__type-icon--disabled': disabled,
+                'pipeline-nodelist__row__type-icon--nested': !children,
+                'pipeline-nodelist__row__type-icon--active': active,
+                'pipeline-nodelist__row__type-icon--selected': selected,
+              }
+            )}
+            icon={icon}
+          />
+        )}
         <TextButton
           className={classnames(
             'pipeline-nodelist__row__text',
+            `pipeline-nodelist__row__text--kind-${kind}`,
             `pipeline-nodelist__row__text--${rowType}`
           )}
           onClick={onClick}
@@ -88,22 +105,6 @@ const NodeListRow = memo(
           onBlur={onMouseLeave}
           disabled={isButton && (disabled || !checked)}
           title={children ? null : name}>
-          {icon && (
-            <NodeIcon
-              className={classnames(
-                'pipeline-nodelist__row__type-icon',
-                'pipeline-nodelist__row__icon',
-                {
-                  'pipeline-nodelist__row__type-icon--faded': faded,
-                  'pipeline-nodelist__row__type-icon--disabled': disabled,
-                  'pipeline-nodelist__row__type-icon--nested': !children,
-                  'pipeline-nodelist__row__type-icon--active': active,
-                  'pipeline-nodelist__row__type-icon--selected': selected,
-                }
-              )}
-              icon={icon}
-            />
-          )}
           <span
             className={classnames(
               'pipeline-nodelist__row__label',
@@ -116,42 +117,49 @@ const NodeListRow = memo(
             dangerouslySetInnerHTML={{ __html: label }}
           />
         </TextButton>
-        {children}
         {type !== 'modularPipeline' && (
-          <label
-            htmlFor={id}
-            className={classnames('pipeline-row__toggle', {
-              'pipeline-row__toggle--disabled': disabled,
-              'pipeline-row__toggle--selected': selected,
-              'pipeline-row__toggle--not-tag': type !== 'tag',
-            })}>
-            <input
-              id={id}
-              className="pipeline-nodelist__row__checkbox"
-              type="checkbox"
-              checked={checked}
-              disabled={disabled}
-              name={name}
-              onChange={onChange}
-            />
-            <VisibilityIcon
-              aria-label={name}
-              className={classnames(
-                'pipeline-nodelist__row__icon',
-                'pipeline-row__toggle-icon',
-                `pipeline-row__toggle-icon--kind-${kind}`,
-                {
-                  'pipeline-row__toggle-icon--parent': Boolean(children),
-                  'pipeline-row__toggle-icon--child': !children,
-                  'pipeline-row__toggle-icon--checked': checked,
-                  'pipeline-row__toggle-icon--unchecked': !checked,
-                  'pipeline-row__toggle-icon--unset': unset,
-                  'pipeline-row__toggle-icon--all-unset': allUnset,
-                }
-              )}
-            />
-          </label>
+          <>
+            {typeof count === 'number' && (
+              <span
+                onClick={onClick}
+                className={'pipeline-nodelist__row__count'}>
+                {count}
+              </span>
+            )}
+            <label
+              htmlFor={id}
+              className={classnames('pipeline-row__toggle', `pipeline-row__toggle--kind-${kind}`, {
+                'pipeline-row__toggle--disabled': disabled,
+                'pipeline-row__toggle--selected': selected,
+              })}>
+              <input
+                id={id}
+                className="pipeline-nodelist__row__checkbox"
+                type="checkbox"
+                checked={checked}
+                disabled={disabled}
+                name={name}
+                onChange={onChange}
+              />
+              <VisibilityIcon
+                aria-label={name}
+                className={classnames(
+                  'pipeline-nodelist__row__icon',
+                  'pipeline-row__toggle-icon',
+                  `pipeline-row__toggle-icon--kind-${kind}`,
+                  {
+                    'pipeline-row__toggle-icon--parent': Boolean(children),
+                    'pipeline-row__toggle-icon--child': !children,
+                    'pipeline-row__toggle-icon--checked': checked,
+                    'pipeline-row__toggle-icon--unchecked': !checked,
+                    'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
+                  }
+                )}
+              />
+            </label>
+          </>
         )}
+        {children}
       </Container>
     );
   },

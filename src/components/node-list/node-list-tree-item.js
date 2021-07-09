@@ -30,8 +30,7 @@ const NodeListTreeItem = ({
         faded={data.faded}
         visible={data.visible}
         selected={data.selected}
-        unset={data.unset}
-        allUnset={true}
+        allUnchecked={true}
         visibleIcon={data.visibleIcon}
         invisibleIcon={data.invisibleIcon}
         onClick={() => onItemClick(data)}

@@ -11,9 +11,7 @@ export const NodeListGroup = ({
   name,
   kind,
   checked,
-  unset,
-  childCount,
-  allUnset,
+  allUnchecked,
   visibleIcon,
   invisibleIcon,
   onToggleChecked,
@@ -22,8 +20,6 @@ export const NodeListGroup = ({
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
-  onSectionMouseEnter,
-  onSectionMouseLeave,
 }) => (
   <li
     className={classnames(
@@ -31,19 +27,16 @@ export const NodeListGroup = ({
       `pipeline-nodelist__group--type-${id}`,
       `pipeline-nodelist__group--kind-${kind}`,
       {
-        'pipeline-nodelist__group--all-unset': allUnset,
+        'pipeline-nodelist__group--all-unchecked': allUnchecked,
       }
-    )}
-    onMouseEnter={() => onSectionMouseEnter(id)}
-    onMouseLeave={() => onSectionMouseLeave(id)}>
+    )}>
     <h3 className="pipeline-nodelist__heading">
       <NodeListRow
         id={id}
         kind={kind}
         name={name}
-        label={`${name} <i>${childCount}</i>`}
-        allUnset={allUnset}
-        unset={unset}
+        label={name}
+        allUnchecked={allUnchecked}
         checked={checked}
         visibleIcon={visibleIcon}
         invisibleIcon={invisibleIcon}

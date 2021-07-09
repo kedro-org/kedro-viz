@@ -1,15 +1,17 @@
 //-- Layout --//
 
-$toggle-size: 2.4em;
-$toggle-margin-right: 1em;
 $row-padding-y: 0.68em;
-$row-padding-x: 1.52em;
+$row-padding-x: 2.2em;
+$row-label-padding-x: $row-padding-x * 0.8;
 $row-icon-margin: 0.8em;
 $row-icon-size: 2.2em;
+$toggle-margin-left: $row-padding-x;
 $toggle-icon-padding: 0.3em;
 $toggle-icon-size: 2.1em + $toggle-icon-padding * 2;
-$row-offset-left: $row-padding-x + $toggle-size + $toggle-margin-right;
-$row-offset-right: $row-padding-x + $row-icon-size + $row-icon-margin;
+$toggle-size: 2.2em + $toggle-icon-padding * 2;
+$section-title-padding-x: $row-padding-x * 0.7;
+$row-offset-left: 2.6em;
+$row-offset-right: 1.6em;
 
 //-- Colours --//
 

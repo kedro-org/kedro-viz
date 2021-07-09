@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import cloneDeep from 'lodash.clonedeep';
 import utils from '@quantumblack/kedro-ui/lib/utils';
-import { sidebar } from '../../config';
+import { sidebarGroups, sidebarElementTypes } from '../../config';
 import IndicatorIcon from '../icons/indicator';
 import IndicatorOffIcon from '../icons/indicator-off';
 import IndicatorPartialIcon from '../icons/indicator-partial';
@@ -10,80 +10,85 @@ import InvisibleIcon from '../icons/invisible';
 import { arrayToObject } from '../../utils';
 const { escapeRegExp, getHighlightedText } = utils;
 
+export const isTagType = (type) => type === 'tag';
+export const isModularPipelineType = (type) => type === 'modularPipeline';
+export const isElementType = (type) => type === 'elementType';
+
+export const isGroupType = (type) =>
+  isElementType(type) || isTagType(type);
+
 /**
- * Get a list of IDs of the visible nodes
- * @param {object} nodes Grouped nodes
+ * Get a list of IDs of the visible nodes from all groups
+ * @param {object} nodeGroups Grouped lists of nodes by type
  * @return {array} List of node IDs
  */
-export const getNodeIDs = (nodes) => {
-  const getNodeIDs = (type) => nodes[type].map((node) => node.id);
-  const concatNodeIDs = (nodeIDs, type) => nodeIDs.concat(getNodeIDs(type));
-
-  return Object.keys(nodes).reduce(concatNodeIDs, []);
-};
+export const getNodeIDs = (nodeGroups) =>
+  Object.values(nodeGroups).flatMap((nodes) => nodes.map((node) => node.id));
 
 /**
  * Add a new highlightedLabel field to each of the node objects
- * @param {object} nodes Grouped lists of nodes
+ * @param {object} nodeGroups Grouped lists of nodes by type
  * @param {string} searchValue Search term
  * @return {object} The grouped nodes with highlightedLabel fields added
  */
-export const highlightMatch = (nodes, searchValue) => {
-  const addHighlightedLabel = (node) => ({
-    highlightedLabel: getHighlightedText(node.name, searchValue),
-    ...node,
-  });
-  const addLabelsToNodes = (newNodes, type) => ({
-    ...newNodes,
-    [type]: nodes[type].map(addHighlightedLabel),
-  });
+export const highlightMatch = (nodeGroups, searchValue) => {
+  const highlightedGroups = {};
 
-  return Object.keys(nodes).reduce(addLabelsToNodes, {});
+  for (const type of Object.keys(nodeGroups)) {
+    highlightedGroups[type] = nodeGroups[type].map((node) => ({
+      ...node,
+      highlightedLabel: getHighlightedText(node.name, searchValue),
+    }));
+  }
+
+  return highlightedGroups;
 };
 
 /**
- * Check whether a name matches the search text
- * @param {string} name
+ * Check whether a node matches the search text or true if no search value given
+ * @param {object} node
  * @param {string} searchValue
- * @return {boolean} True if match
+ * @return {boolean} True if node matches or no search value given
  */
 export const nodeMatchesSearch = (node, searchValue) => {
-  const valueRegex = searchValue
-    ? new RegExp(escapeRegExp(searchValue), 'gi')
-    : '';
-  return Boolean(node.name.match(valueRegex));
+  if (searchValue) {
+    return new RegExp(escapeRegExp(searchValue), 'gi').test(node.name);
+  }
+
+  return true;
 };
 
 /**
  * Return only the results that match the search text
- * @param {object} nodes Grouped lists of nodes
+ * @param {object} nodeGroups Grouped lists of nodes by type
  * @param {string} searchValue Search term
  * @return {object} Grouped nodes
  */
-export const filterNodes = (nodes, searchValue) => {
-  const filterNodesByType = (type) =>
-    nodes[type].filter((node) => nodeMatchesSearch(node, searchValue));
-  const filterNodeLists = (newNodes, type) => ({
-    ...newNodes,
-    [type]: filterNodesByType(type),
-  });
-  return Object.keys(nodes).reduce(filterNodeLists, {});
+export const filterNodeGroups = (nodeGroups, searchValue) => {
+  const filteredGroups = {};
+
+  for (const nodeGroupId of Object.keys(nodeGroups)) {
+    filteredGroups[nodeGroupId] = nodeGroups[nodeGroupId].filter((node) =>
+      nodeMatchesSearch(node, searchValue)
+    );
+  }
+
+  return filteredGroups;
 };
 
 /**
  * Return filtered/highlighted nodes, and filtered node IDs
- * @param {object} nodes Grouped lists of nodes
+ * @param {object} nodeGroups Grouped lists of nodes by type
  * @param {string} searchValue Search term
  * @return {object} Grouped nodes, and node IDs
  */
 export const getFilteredNodes = createSelector(
   [(state) => state.nodes, (state) => state.searchValue],
-  (nodes, searchValue) => {
-    const filteredNodes = filterNodes(nodes, searchValue);
-
+  (nodeGroups, searchValue) => {
+    const filteredGroups = filterNodeGroups(nodeGroups, searchValue);
     return {
-      filteredNodes: highlightMatch(filteredNodes, searchValue),
-      nodeIDs: getNodeIDs(filteredNodes),
+      filteredNodes: highlightMatch(filteredGroups, searchValue),
+      nodeIDs: getNodeIDs(filteredGroups),
     };
   }
 );
@@ -97,7 +102,7 @@ export const getFilteredNodes = createSelector(
 export const getFilteredTags = createSelector(
   [(state) => state.tags, (state) => state.searchValue],
   (tags, searchValue) =>
-    highlightMatch(filterNodes({ tag: tags }, searchValue), searchValue)
+    highlightMatch(filterNodeGroups({ tag: tags }, searchValue), searchValue)
 );
 
 /**
@@ -106,8 +111,8 @@ export const getFilteredTags = createSelector(
  * @return {array} Node list items
  */
 export const getFilteredTagItems = createSelector(
-  getFilteredTags,
-  (filteredTags) => ({
+  [getFilteredTags, (state) => state.tagNodeCounts],
+  (filteredTags, tagNodeCounts = {}) => ({
     tag: filteredTags.tag.map((tag) => ({
       ...tag,
       type: 'tag',
@@ -118,8 +123,8 @@ export const getFilteredTagItems = createSelector(
       faded: false,
       visible: true,
       disabled: false,
-      unset: !tag.enabled,
       checked: tag.enabled,
+      count: tagNodeCounts[tag.id] || 0,
     })),
   })
 );
@@ -134,7 +139,7 @@ export const getFilteredModularPipelines = createSelector(
   [(state) => state.modularPipelines, (state) => state.searchValue],
   (modularPipelines, searchValue) =>
     highlightMatch(
-      filterNodes({ modularPipeline: modularPipelines }, searchValue),
+      filterNodeGroups({ modularPipeline: modularPipelines }, searchValue),
       searchValue
     )
 );
@@ -159,10 +164,60 @@ export const getFilteredModularPipelineItems = createSelector(
         faded: false,
         visible: true,
         disabled: false,
-        unset: false,
         checked: true,
       })
     ),
+  })
+);
+
+/**
+ * Return filtered/highlighted element types
+ * @param {string} searchValue Search term
+ * @return {object} Grouped element types
+ */
+export const getFilteredElementTypes = createSelector(
+  [(state) => state.searchValue],
+  (searchValue) =>
+    highlightMatch(
+      filterNodeGroups(
+        {
+          elementType: Object.entries(sidebarElementTypes).map(([type, name]) => ({
+            id: type,
+            name,
+          })),
+        },
+        searchValue
+      ),
+      searchValue
+    )
+);
+
+/**
+ * Return filtered/highlighted element type items
+ * @param {object} filteredTags List of filtered element types
+ * @param {array} nodeTypes List of node types
+ * @return {object} Element type items
+ */
+export const getFilteredElementTypeItems = createSelector(
+  [getFilteredElementTypes, (state) => state.nodeTypes],
+  (filteredElementTypes, nodeTypes) => ({
+    elementType: filteredElementTypes.elementType.map((elementType) => {
+      const nodeType = nodeTypes.find((type) => type.id === elementType.id);
+
+      return {
+        ...elementType,
+        type: 'elementType',
+        visibleIcon: IndicatorIcon,
+        invisibleIcon: IndicatorOffIcon,
+        active: false,
+        selected: false,
+        faded: false,
+        visible: true,
+        disabled: false,
+        checked: nodeType.disabled === false,
+        count: nodeType.nodeCount.total,
+      };
+    }),
   })
 );
 
@@ -188,7 +243,7 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
  */
 const compareEnabledThenType = (itemA, itemB) => {
   const byEnabledTag = Number(itemA.disabled_tag) - Number(itemB.disabled_tag);
-  const nodeTypeIDs = ['task', 'data', 'parameters'];
+  const nodeTypeIDs = Object.keys(sidebarElementTypes);
   const byNodeType =
     nodeTypeIDs.indexOf(itemA.type) - nodeTypeIDs.indexOf(itemB.type);
   return byEnabledTag !== 0 ? byEnabledTag : byNodeType;
@@ -204,10 +259,10 @@ const compareEnabledThenType = (itemA, itemB) => {
 export const getFilteredNodeItems = createSelector(
   [getFilteredNodes, (state) => state.nodeSelected],
   ({ filteredNodes }, nodeSelected) => {
-    const result = {};
+    const filteredNodeItems = {};
 
     for (const type of Object.keys(filteredNodes)) {
-      result[type] = filteredNodes[type]
+      filteredNodeItems[type] = filteredNodes[type]
         .map((node) => {
           const checked = !node.disabled_node;
           const disabled =
@@ -222,7 +277,6 @@ export const getFilteredNodeItems = createSelector(
             selected: nodeSelected[node.id],
             faded: node.disabled_node || disabled,
             visible: !disabled && checked,
-            unset: false,
             checked,
             disabled,
           };
@@ -230,98 +284,38 @@ export const getFilteredNodeItems = createSelector(
         .sort(compareEnabledThenAlpha);
     }
 
-    return result;
+    return filteredNodeItems;
   }
 );
 
 /**
- * Get sidebar node-list section config object, with/without modular pipelines
- * @param {boolean} modularPipelineFlag Whether to include modular pipelines
- * @return {object} config
- */
-export const getSidebarConfig = createSelector(() => {
-  const { ModularPipelines, ...Categories } = sidebar.Categories;
-  return Object.assign({}, sidebar, { Categories });
-});
-
-/**
- * Get formatted list of sections
- * @return {object} Map of arrays of sections
- */
-export const getSections = createSelector(getSidebarConfig, (sidebarConfig) => {
-  const sections = {};
-
-  for (const key of Object.keys(sidebarConfig)) {
-    sections[key] = [
-      {
-        name: key,
-        types: Object.values(sidebarConfig[key]),
-      },
-    ];
-  }
-
-  return sections;
-});
-
-/**
- * Create a new group of items. This can be one of two kinds:
- * 'filter': Categories, e.g. tags
- * 'element': Graph elements, e.g. nodes, datasets, or parameters
- * An item is a node-list row, e.g. a node or a tag.
- * @param {object} itemType Meta information about the group's items
- * @param {array} itemsOfType List of items in the group
- */
-export const createGroup = (itemType, itemsOfType = []) => {
-  const group = {
-    type: itemType,
-    id: itemType.id,
-    count: itemsOfType.length,
-    allUnset: itemsOfType.every((item) => item.unset),
-    allChecked: itemsOfType.every((item) => item.checked),
-  };
-
-  if (itemType.id === 'tag') {
-    Object.assign(group, {
-      name: 'Tags',
-      kind: 'filter',
-      checked: !group.allUnset,
-      visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
-      invisibleIcon: IndicatorOffIcon,
-    });
-  } else if (itemType.id === 'modularPipeline') {
-    Object.assign(group, {
-      name: 'Modular Pipelines',
-      kind: 'filter',
-      checked: !group.allUnset,
-      visibleIcon: group.allChecked ? IndicatorIcon : IndicatorPartialIcon,
-      invisibleIcon: IndicatorOffIcon,
-    });
-  } else {
-    Object.assign(group, {
-      name: itemType.name,
-      kind: 'element',
-      checked: !itemType.disabled,
-      visibleIcon: VisibleIcon,
-      invisibleIcon: InvisibleIcon,
-    });
-  }
-  return group;
-};
-
-/**
- * Returns groups of items per type
- * @param {array} types List of node types
- * @param {array} items List of items
+ * Returns group items for each sidebar filter group defined in the sidebar config.
+ * @param {object} items List items by group type
  * @return {array} List of groups
  */
 export const getGroups = createSelector(
-  [(state) => state.types, (state) => state.items],
-  (nodeTypes, items) => {
+  [(state) => state.items],
+  (items) => {
     const groups = {};
-    const itemTypes = [...nodeTypes, { id: 'tag' }, { id: 'modularPipeline' }];
-    for (const itemType of itemTypes) {
-      groups[itemType.id] = createGroup(itemType, items[itemType.id]);
+ 
+    for (const [type, name] of Object.entries(sidebarGroups)) {
+      const itemsOfType = items[type] || [];
+      const allUnchecked = itemsOfType.every((item) => !item.checked);
+      const allChecked = itemsOfType.every((item) => item.checked);
+    
+      groups[type] = {
+        type,
+        name,
+        id: type,
+        kind: 'filter',
+        allUnchecked: itemsOfType.every((item) => !item.checked),
+        allChecked: itemsOfType.every((item) => item.checked),
+        checked: !allUnchecked,
+        visibleIcon: allChecked ? IndicatorIcon : IndicatorPartialIcon,
+        invisibleIcon: IndicatorOffIcon,
+      };
     }
+
     return groups;
   }
 );
@@ -334,14 +328,23 @@ export const getGroups = createSelector(
  * @return {array} final list of all filtered items from the three filtered item sets
  */
 export const getFilteredItems = createSelector(
-  [getFilteredNodeItems, getFilteredTagItems, getFilteredModularPipelineItems],
-  (filteredNodeItems, filteredTagItems, filteredModularPipelineItems) => {
-    return {
-      ...filteredTagItems,
-      ...filteredNodeItems,
-      ...filteredModularPipelineItems,
-    };
-  }
+  [
+    getFilteredNodeItems,
+    getFilteredTagItems,
+    getFilteredModularPipelineItems,
+    getFilteredElementTypeItems,
+  ],
+  (
+    filteredNodeItems,
+    filteredTagItems,
+    filteredModularPipelineItems,
+    filteredElementTypeItems
+  ) => ({
+    ...filteredTagItems,
+    ...filteredNodeItems,
+    ...filteredModularPipelineItems,
+    ...filteredElementTypeItems,
+  })
 );
 
 /**
@@ -393,7 +396,6 @@ const constructModularPipelineItem = (modularPipeline) => ({
   faded: false,
   visible: true,
   disabled: false,
-  unset: false,
   checked: true,
 });
 
