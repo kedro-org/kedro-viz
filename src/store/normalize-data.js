@@ -150,7 +150,6 @@ const addNode = (state) => (node) => {
   state.node.datasetType[id] = node.dataset_type;
   state.node.runCommand[id] = node.runCommand;
   state.node.modularPipelines[id] = node.modular_pipelines || [];
-  console.log(node);
 };
 
 /**
