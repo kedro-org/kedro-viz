@@ -2,6 +2,23 @@
 @import '../../../styles/mixins';
 @import '../../../styles/variables';
 
+.pipeline-nodelist__filter-panel {
+  z-index: 1;
+  background: var(--color-nodelist-filter-panel);
+
+  .pipeline-nodelist-section:last-child {
+    padding-bottom: 28px;
+    padding-top: 4px;
+  }
+}
+
+.pipeline-nodelist__elements-panel {
+  .pipeline-nodelist-section:last-child {
+    padding-bottom: 28px;
+    padding-top: 12px;
+  }
+}
+
 .pipeline-nodelist__split {
   // Required absolute for % sizing in Safari flexbox.
   position: absolute;
@@ -78,10 +95,10 @@
     top: 0;
     right: -1px;
     left: -1px;
-    height: 30px;
+    height: 22px;
     background: linear-gradient(
       0deg,
-      var(--nodelist-bg-transparent) 0%,
+      var(--color-nodelist-bg-transparent) 0%,
       var(--color-bg-3) 100%
     );
     content: '';
@@ -89,15 +106,6 @@
   }
 
   .pipeline-nodelist__filter-panel &:after {
-    background: linear-gradient(
-      0deg,
-      var(--nodelist-bg-transparent) 0%,
-      var(--color-nodelist-filter-panel) 100%
-    );
+    display: none;
   }
-}
-
-.pipeline-nodelist__filter-panel {
-  z-index: 1;
-  background: var(--color-nodelist-filter-panel);
 }

@@ -115,6 +115,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
     code: str
     filepath: str
     parameters: Dict
+    run_command: Optional[str]
 
     class Config:
         schema_extra = {
@@ -122,6 +123,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
                 "code": "def split_data(data: pd.DataFrame, parameters: Dict) -> Tuple:",
                 "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
                 "parameters": {"test_size": 0.2},
+                "run_command": 'kedro run --to-nodes="split_data"',
             }
         }
 
@@ -130,12 +132,14 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     filepath: str
     type: str
     plot: Optional[Dict]
+    run_command: Optional[str]
 
     class Config:
         schema_extra = {
             "example": {
                 "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
                 "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+                "run_command": 'kedro run --to-outputs="master_table"',
             }
         }
 
