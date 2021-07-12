@@ -3,15 +3,14 @@ import NodeListGroups from './node-list-groups';
 import { mockState, setup } from '../../utils/state.mock';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getGroupedNodes } from '../../selectors/nodes';
-import { getGroups, getSections } from './node-list-items';
+import { getGroups } from './node-list-items';
 
 describe('NodeListGroups', () => {
   const mockProps = () => {
     const items = getGroupedNodes(mockState.animals);
-    const types = getNodeTypes(mockState.animals);
-    const sections = getSections().Elements;
-    const groups = getGroups({ types, items });
-    return { items, sections, groups };
+    const nodeTypes = getNodeTypes(mockState.animals);
+    const groups = getGroups({ nodeTypes, items });
+    return { items, groups };
   };
 
   it('renders without throwing', () => {
@@ -33,15 +32,15 @@ describe('NodeListGroups', () => {
   });
 
   it('handles group checkbox change events', () => {
-    const onToggleGroupChecked = jest.fn();
+    const onGroupToggleChanged = jest.fn();
     const wrapper = setup.mount(
       <NodeListGroups
         {...mockProps()}
-        onToggleGroupChecked={onToggleGroupChecked}
+        onGroupToggleChanged={onGroupToggleChanged}
       />
     );
     const checkbox = () => wrapper.find('input').first();
     checkbox().simulate('change', { target: { checked: false } });
-    expect(onToggleGroupChecked.mock.calls.length).toEqual(1);
+    expect(onGroupToggleChanged.mock.calls.length).toEqual(1);
   });
 });

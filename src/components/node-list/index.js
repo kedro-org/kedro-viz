@@ -2,28 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import utils from '@quantumblack/kedro-ui/lib/utils';
 import NodeList from './node-list';
-import { getFilteredItems, getGroups, getSections } from './node-list-items';
+import {
+  getFilteredItems,
+  getGroups,
+  isTagType,
+  isModularPipelineType,
+  isElementType,
+  isGroupType,
+} from './node-list-items';
+import { getNodeTypes } from '../../selectors/node-types';
+import { getTagData, getTagNodeCounts } from '../../selectors/tags';
+import { getModularPipelineData } from '../../selectors/modular-pipelines';
+import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
+import { toggleTypeDisabled } from '../../actions/node-type';
+import { toggleParametersHovered } from '../../actions';
 import {
   toggleModularPipelineActive,
   toggleModularPipelineFilter,
 } from '../../actions/modular-pipelines';
-import { toggleTypeDisabled } from '../../actions/node-type';
-import { getNodeTypes } from '../../selectors/node-types';
-import { getTagData } from '../../selectors/tags';
-import { getModularPipelineData } from '../../selectors/modular-pipelines';
-import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import {
   loadNodeData,
   toggleNodeHovered,
   toggleNodesDisabled,
 } from '../../actions/nodes';
-import { toggleParametersHovered } from '../../actions';
 import './styles/node-list.css';
-
-const isTagType = (type) => type === 'tag';
-const isParameterType = (type) => type === 'parameters';
-const isModularPipelineType = (type) => type === 'modularPipeline';
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -34,7 +37,8 @@ const NodeListProvider = ({
   nodes,
   nodeSelected,
   tags,
-  types,
+  tagNodeCounts,
+  nodeTypes,
   onToggleNodesDisabled,
   onToggleNodeSelected,
   onToggleNodeActive,
@@ -42,27 +46,31 @@ const NodeListProvider = ({
   onToggleTagActive,
   onToggleTagFilter,
   onToggleModularPipelineActive,
-  onToggleModularPipelineFilter,
   onToggleTypeDisabled,
+  onToggleModularPipelineFilter,
   modularPipelines,
-  sections,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const [focusMode, setFocusMode] = useState(null); // this is used to set special CSS settings for the visibility button
   const items = getFilteredItems({
     nodes,
     tags,
+    nodeTypes,
+    tagNodeCounts,
     modularPipelines,
     nodeSelected,
     searchValue,
     focusMode,
   });
 
-  const groups = getGroups({ types, items });
+  const groups = getGroups({ items });
 
   const onItemClick = (item) => {
-    if (isTagType(item.type) || isModularPipelineType(item.type)) {
-      onCategoryItemChange(item, item.checked);
+    if (isGroupType(item.type) || isModularPipelineType(item.type)) {
+      onGroupItemChange(item, item.checked);
+      if (isModularPipelineType(item.type)) {
+        onToggleFocusMode(item);
+      }
     } else {
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
@@ -73,8 +81,8 @@ const NodeListProvider = ({
   };
 
   const onItemChange = (item, checked) => {
-    if (isTagType(item.type) || isModularPipelineType(item.type)) {
-      onCategoryItemChange(item, checked);
+    if (isGroupType(item.type) || isModularPipelineType(item.type)) {
+      onGroupItemChange(item, checked);
       if (isModularPipelineType(item.type)) {
         onToggleFocusMode(item);
       }
@@ -100,6 +108,9 @@ const NodeListProvider = ({
       onToggleTagActive(item.id, true);
     } else if (isModularPipelineType(item.type)) {
       onToggleModularPipelineActive(item.id, true);
+    } else if (isElementType(item.type) && item.id === 'parameters') {
+      // Show parameters highlight when mouse enter parameters filter item
+      onToggleParametersActive(true);
     } else if (item.visible) {
       onToggleNodeActive(item.id);
     }
@@ -110,73 +121,44 @@ const NodeListProvider = ({
       onToggleTagActive(item.id, false);
     } else if (isModularPipelineType(item.type)) {
       onToggleModularPipelineActive(item.id, false);
+    } else if (isElementType(item.type) && item.id === 'parameters') {
+      // Hide parameters highlight when mouse leave parameters filter item
+      onToggleParametersActive(false);
     } else if (item.visible) {
       onToggleNodeActive(null);
     }
   };
 
-  const onSectionMouseEnter = (item) => {
-    if (isParameterType(item)) {
-      onToggleParametersActive(true);
-    }
-  };
+  const onGroupToggleChanged = (groupType) => {
+    // Enable all items in group if none enabled, otherwise disable all of them
+    const groupItems = items[groupType] || [];
+    const groupItemsDisabled = groupItems.every(
+      (groupItem) => !groupItem.checked
+    );
 
-  const onSectionMouseLeave = (item) => {
-    if (isParameterType(item)) {
-      onToggleParametersActive(false);
-    }
-  };
-  const onToggleGroupChecked = (type, checked) => {
-    if (isTagType(type) || isModularPipelineType(type)) {
-      // Filter all category items if at least one item set, otherwise enable all items
-      const categoryItems = items[type] || [];
-      const someCategoryItemSet = categoryItems.some(
-        (categoryItem) => !categoryItem.unset
+    if (isTagType(groupType)) {
+      onToggleTagFilter(
+        groupItems.map((item) => item.id),
+        groupItemsDisabled
       );
-      const allCategoryItemsValue = someCategoryItemSet ? undefined : true;
-
-      if (isTagType(type)) {
-        onToggleTagFilter(
-          categoryItems.map((tag) => tag.id),
-          allCategoryItemsValue
-        );
-      } else {
-        onToggleModularPipelineFilter(
-          categoryItems.map((item) => item.id),
-          allCategoryItemsValue
-        );
-      }
-    } else {
-      onToggleTypeDisabled(type, checked);
+    } else if (isElementType(groupType)) {
+      onToggleTypeDisabled(
+        groupItems.reduce(
+          (state, item) => ({ ...state, [item.id]: !groupItemsDisabled }),
+          {}
+        )
+      );
     }
   };
 
-  const onCategoryItemChange = (item, wasChecked) => {
-    const categoryType = item.type;
-    const categoryTypeItems = items[categoryType] || [];
-    const oneCategoryItemChecked =
-      categoryTypeItems.filter((categoryItem) => categoryItem.checked)
-        .length === 1;
-    const shouldResetCategoryItems = wasChecked && oneCategoryItemChecked;
-
-    if (shouldResetCategoryItems) {
-      // Unset all category item
-      if (categoryType === 'tag') {
-        onToggleTagFilter(
-          tags.map((tag) => tag.id),
-          undefined
-        );
-      } else {
-        onToggleModularPipelineFilter(
-          modularPipelines.map((modularPipeline) => modularPipeline.id),
-          undefined
-        );
-      }
-    } else {
-      // Toggle the category item
-      categoryType === 'tag'
-        ? onToggleTagFilter([item.id], !wasChecked)
-        : onToggleModularPipelineFilter([item.id], !wasChecked);
+  const onGroupItemChange = (item, wasChecked) => {
+    // Toggle the group
+    if (isTagType(item.type)) {
+      onToggleTagFilter(item.id, !wasChecked);
+    } else if (isModularPipelineType(item.type)) {
+      onToggleModularPipelineFilter([item.id], !wasChecked);
+    } else if (isElementType(item.type)) {
+      onToggleTypeDisabled({ [item.id]: wasChecked });
     }
 
     // Reset node selection
@@ -199,16 +181,13 @@ const NodeListProvider = ({
     <NodeList
       faded={faded}
       items={items}
-      sections={sections}
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={updateSearchValue}
-      onToggleGroupChecked={onToggleGroupChecked}
+      onGroupToggleChanged={onGroupToggleChanged}
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
-      onSectionMouseEnter={onSectionMouseEnter}
-      onSectionMouseLeave={onSectionMouseLeave}
       onItemChange={onItemChange}
       focusMode={focusMode}
     />
@@ -217,11 +196,11 @@ const NodeListProvider = ({
 
 export const mapStateToProps = (state) => ({
   tags: getTagData(state),
+  tagNodeCounts: getTagNodeCounts(state),
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
-  types: getNodeTypes(state),
+  nodeTypes: getNodeTypes(state),
   modularPipelines: getModularPipelineData(state),
-  sections: getSections(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

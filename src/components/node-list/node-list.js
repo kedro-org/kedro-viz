@@ -13,17 +13,14 @@ import './styles/node-list.css';
 const NodeList = ({
   faded,
   items,
-  sections,
   groups,
   searchValue,
   getGroupState,
   onUpdateSearchValue,
-  onToggleGroupChecked,
+  onGroupToggleChanged,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
-  onSectionMouseEnter,
-  onSectionMouseLeave,
   onItemChange,
   focusMode,
 }) => {
@@ -79,17 +76,14 @@ const NodeList = ({
                 <h2 className="pipeline-nodelist-section__title">Filters</h2>
                 <NodeListGroups
                   items={items}
-                  sections={sections.Categories}
                   groups={groups}
                   searchValue={searchValue}
                   getGroupState={getGroupState}
                   onItemClick={onItemClick}
                   onItemMouseEnter={onItemMouseEnter}
                   onItemMouseLeave={onItemMouseLeave}
-                  onSectionMouseEnter={onSectionMouseEnter}
-                  onSectionMouseLeave={onSectionMouseLeave}
                   onItemChange={onItemChange}
-                  onToggleGroupChecked={onToggleGroupChecked}
+                  onGroupToggleChanged={onGroupToggleChanged}
                 />
               </Scrollbars>
             </div>
