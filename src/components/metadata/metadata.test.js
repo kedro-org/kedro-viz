@@ -89,11 +89,11 @@ describe('MetaData', () => {
       expect(textOf(rowValue(row))).toEqual(['task']);
     });
 
-    it('shows the node parameters when there are no parameters', () => {
+    it('does not display the node parameter row when there are no parameters', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
       const row = rowByLabel(wrapper, 'Parameters:');
       //this is output of react-json-view with no value
-      expect(textOf(rowObject(row))).toEqual(['{}0 items']);
+      expect(textOf(rowObject(row)).length).toEqual(0);
     });
 
     it('shows the node parameters when there are parameters', () => {
@@ -333,11 +333,11 @@ describe('MetaData', () => {
         expect(textOf(rowValue(row))).toEqual(['-']);
       });
 
-      it('shows the node parameters', () => {
+      it('does not display the node parameter when it is an empty object', () => {
         const wrapper = mount({ nodeId: rabbitParamsNodeId });
         const row = rowByLabel(wrapper, 'Parameters:');
-        //this is output of react-json-view with no value
-        expect(textOf(rowObject(row))).toEqual(['{}0 items']);
+        //the metadata-object component would not load when parameters is an empty object
+        expect(textOf(rowObject(row)).length).toEqual(0);
       });
 
       it('shows the node tags', () => {
