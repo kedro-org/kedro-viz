@@ -301,7 +301,8 @@ $list-inline-spacing: 0.2em;
   font-size: 1.6em;
 }
 
-.react-json-view {
-  font-family: Consolas, Monaco, 'Courier New', Courier, monospace !important;
-  font-size: 0.85em;
+.pipeline-metadata__object {
+  .react-json-view {
+    font-size: 0.85em;
+  }
 }

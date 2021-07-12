@@ -16,6 +16,9 @@ const MetaDataObject = ({ className, value, kind, theme }) => (
       className={modifiers('pipeline-metadata__object', { kind }, className)}>
       <ReactJson
         theme={theme === 'dark' ? darkjsonViewerTheme : lightjsonViewerTheme}
+        style={{
+          fontFamily: "Consolas, Monaco, 'Courier New', Courier, monospace",
+        }}
         name={false}
         indentWidth={1}
         collapsed={1}
