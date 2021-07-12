@@ -36,6 +36,7 @@ import re
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
+from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.io import AbstractDataSet
@@ -191,6 +192,7 @@ class GraphNode(abc.ABC):
         layer: Optional[str],
         tags: Set[str],
         dataset: AbstractDataSet,
+        is_free_input: bool = False,
     ) -> "DataNode":
         """Create a graph node of type DATA for a given Kedro DataSet instance.
 
@@ -201,6 +203,7 @@ class GraphNode(abc.ABC):
             tags: The set of tags assigned to assign to the graph representation
                 of this dataset. N.B. currently it's derived from the node's tags.
             dataset: A dataset in a Kedro pipeline.
+            is_free_input: Whether the dataset is a free input in the pipeline
         Returns:
             An instance of DataNode.
         """
@@ -212,6 +215,7 @@ class GraphNode(abc.ABC):
             layer=layer,
             pipelines=[],
             kedro_obj=dataset,
+            is_free_input=is_free_input,
         )
 
     @classmethod
@@ -282,6 +286,18 @@ class TaskNode(GraphNode):
         self.modular_pipelines = self._expand_namespaces(kedro_obj.namespace)
 
 
+def _extract_wrapped_func(func: FunctionType) -> FunctionType:
+    """Extract a wrapped decorated function to inspect the source code if available.
+    Adapted from https://stackoverflow.com/a/43506509/1684058
+    """
+    if func.__closure__ is None:
+        return func
+    closure = (c.cell_contents for c in func.__closure__)
+    wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
+    # return the original function if it's not a decorated function
+    return func if wrapped_func is None else wrapped_func
+
+
 @dataclass
 class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode"""
@@ -295,12 +311,17 @@ class TaskNodeMetadata(GraphNodeMetadata):
     # parameters of the node, if available
     parameters: Dict = field(init=False)
 
+    # command to run the pipeline to this node
+    run_command: Optional[str] = field(init=False, default=None)
+
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
 
     def __post_init__(self, task_node: TaskNode):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
-        self.code = inspect.getsource(kedro_node._func)
+        self.code = inspect.getsource(
+            _extract_wrapped_func(cast(FunctionType, kedro_node._func))
+        )
         code_full_path = Path(inspect.getfile(kedro_node._func)).expanduser().resolve()
         try:
             filepath = code_full_path.relative_to(Path.cwd().parent)
@@ -312,10 +333,19 @@ class TaskNodeMetadata(GraphNodeMetadata):
         self.filepath = str(filepath)
         self.parameters = task_node.parameters
 
+        # if a node doesn't have a user-supplied `_name` attribute,
+        # a human-readable run command `kedro run --to-nodes/nodes` is not available
+        if kedro_node._name is not None:
+            self.run_command = f'kedro run --to-nodes="{kedro_node._name}"'
 
+
+# pylint: disable=too-many-instance-attributes
 @dataclass
 class DataNode(GraphNode):
     """Represent a graph node of type DATA"""
+
+    # whether the data node is a free input
+    is_free_input: bool
 
     # the layer that this data node belongs to
     layer: Optional[str]
@@ -328,6 +358,9 @@ class DataNode(GraphNode):
 
     # the list of modular pipelines this data node belongs to
     modular_pipelines: List[str] = field(init=False)
+
+    # command to run the pipeline to this node
+    run_command: Optional[str] = field(init=False, default=None)
 
     # the type of this graph node, which is DATA
     type: str = GraphNodeType.DATA.value
@@ -376,6 +409,9 @@ class DataNodeMetadata(GraphNodeMetadata):
     # currently only applicable for PlotlyDataSet
     plot: Optional[Dict] = field(init=False)
 
+    # command to run the pipeline to this data node
+    run_command: Optional[str] = field(init=False, default=None)
+
     def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
@@ -395,6 +431,10 @@ class DataNodeMetadata(GraphNodeMetadata):
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
+
+        # Run command is only available if a node is an output, i.e. not a free input
+        if not data_node.is_free_input:
+            self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
 
 @dataclass

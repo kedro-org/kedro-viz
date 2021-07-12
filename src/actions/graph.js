@@ -28,16 +28,15 @@ export function updateGraph(graph) {
 }
 
 /**
- * Choose which layout engine to use based on the oldgraph flag
+ * Assign layout engine to use based on the newgraph
  * @param {Object} instance Worker parent instance
  * @param {Object} state A subset of main state
  * @return {function} Promise function
  */
-const chooseLayout = (instance, state) =>
-  state.oldgraph ? instance.graphDagre(state) : instance.graphNew(state);
+const layout = (instance, state) => instance.graphNew(state);
 
 // Prepare new layout worker
-const layoutWorker = preventWorkerQueues(worker, chooseLayout);
+const layoutWorker = preventWorkerQueues(worker, layout);
 
 /**
  * Async action to calculate graph layout in a web worker
