@@ -27,7 +27,7 @@
 # limitations under the License.
 from pathlib import Path
 from textwrap import dedent
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
@@ -46,7 +46,6 @@ from kedro_viz.models.graph import (
     TaskNodeMetadata,
 )
 
-
 orig_import = __import__
 
 
@@ -57,6 +56,25 @@ def import_mock(name, *args):
 
 
 def identity(x):
+    return x
+
+
+def decorator(fun):
+    """
+    Not the best way to write decorator
+    but trying to stay faithful to the bug report here:
+    https://github.com/quantumblacklabs/kedro-viz/issues/484
+    """
+
+    def _new_fun(*args, **kwargs):
+        return fun(*args, **kwargs)
+
+    _new_fun.__name__ = fun.__name__
+    return _new_fun
+
+
+@decorator
+def decorated(x):
     return x
 
 
@@ -100,7 +118,7 @@ class TestGraphNodeCreation:
             ("dataset", "Dataset", []),
             (
                 "uk.data_science.model_training.dataset",
-                "Uk.data Science.model Training.dataset",
+                "Dataset",
                 [
                     "uk",
                     "uk.data_science",
@@ -239,6 +257,42 @@ class TestGraphNodeMetadata:
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
         assert task_node_metadata.parameters == {}
+        assert task_node_metadata.run_command == 'kedro run --to-nodes="identity_node"'
+
+    def test_task_node_metadata_no_run_command(self):
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            tags={"tag"},
+            namespace="namespace",
+        )
+        task_node = GraphNode.create_task_node(kedro_node)
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+        assert task_node_metadata.run_command is None
+
+    def test_task_node_metadata_with_decorated_func(self):
+        kedro_node = node(
+            decorated,
+            inputs="x",
+            outputs="y",
+            name="identity_node",
+            tags={"tag"},
+            namespace="namespace",
+        )
+        task_node = GraphNode.create_task_node(kedro_node)
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+        assert task_node_metadata.code == dedent(
+            """\
+            @decorator
+            def decorated(x):
+                return x
+            """
+        )
+        assert task_node_metadata.filepath == str(
+            Path(__file__).relative_to(Path.cwd().parent).expanduser()
+        )
+        assert task_node_metadata.parameters == {}
 
     def test_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")
@@ -254,6 +308,7 @@ class TestGraphNodeMetadata:
             == "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
         )
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
+        assert data_node_metadata.run_command == 'kedro run --to-outputs="dataset"'
 
     @patch("builtins.__import__", side_effect=import_mock)
     @patch("json.load")

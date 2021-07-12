@@ -15,7 +15,7 @@ const getNodeName = (state) => state.node.name;
 const getNodeFullName = (state) => state.node.fullName;
 const getNodeDisabledNode = (state) => state.node.disabled;
 const getNodeTags = (state) => state.node.tags;
-const getNodeModularPipelines = (state) => state.node.modularPipelines;
+export const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getNodeType = (state) => state.node.type;
 const getNodeDatasetType = (state) => state.node.datasetType;
 const getNodeLayer = (state) => state.node.layer;
@@ -102,6 +102,7 @@ export const getNodeData = createSelector(
     getNodeDisabledTag,
     getNodeDisabledModularPipeline,
     getNodeTypeDisabled,
+    getNodeModularPipelines,
   ],
   (
     nodeIDs,
@@ -112,7 +113,8 @@ export const getNodeData = createSelector(
     nodeDisabledNode,
     nodeDisabledTag,
     nodeDisabledModularPipeline,
-    typeDisabled
+    typeDisabled,
+    nodeModularPipelines
   ) =>
     nodeIDs
       .sort((a, b) => {
@@ -129,6 +131,7 @@ export const getNodeData = createSelector(
         name: nodeName[id],
         type: nodeType[id],
         icon: getShortType([nodeDatasetType[id]], nodeType[id]),
+        modularPipelines: nodeModularPipelines[id],
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),
         disabled_tag: nodeDisabledTag[id],
