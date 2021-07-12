@@ -93,8 +93,8 @@ export const PrimaryToolbar = ({
         className={'pipeline-menu-button--settings'}
         onClick={() => onToggleSettingsModal(true)}
         icon={SettingsIcon}
+        disabled={false}
         labelText={'Settings'}
-        disabled={disableLayerBtn}
         visible={visible.settingsBtn}
       />
     </ul>
