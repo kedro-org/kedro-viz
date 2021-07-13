@@ -122,6 +122,7 @@
   margin-right: auto;
   line-height: 1.5;
   word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .pipeline-metadata__value--kind-type,
@@ -298,4 +299,10 @@ $list-inline-spacing: 0.2em;
   margin: 12px 10px 12px 5px;
   color: var(--color-button-text);
   font-size: 1.6em;
+}
+
+.pipeline-metadata__object {
+  .react-json-view {
+    font-size: 0.85em;
+  }
 }
