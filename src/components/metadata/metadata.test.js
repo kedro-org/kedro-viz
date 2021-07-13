@@ -129,7 +129,7 @@ describe('MetaData', () => {
         mockMetadata: node_task,
       });
       const row = rowByLabel(wrapper, 'Parameters:');
-      //this is output of react-json-view with no value
+      //this is the metadata output when there is no data
       expect(textOf(rowObject(row))).toEqual(['-']);
     });
 
