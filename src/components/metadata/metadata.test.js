@@ -8,6 +8,8 @@ import animals from '../../utils/data/animals.mock.json';
 import node_plot from '../../utils/data/node_plot.mock.json';
 import { mapDispatchToProps } from './index';
 import node_parameters from '../../utils/data/node_parameters.mock.json';
+import node_task from '../../utils/data/node_task.mock.json';
+import node_data from '../../utils/data/node_data.mock.json';
 
 const salmonTaskNodeId = '443cf06a';
 const catDatasetNodeId = '9d989e8d';
@@ -20,6 +22,8 @@ describe('MetaData', () => {
       afterLayoutActions: [
         // Click the expected node
         () => toggleNodeClicked(props.nodeId),
+        //simulating loadNodeData in node.js
+        () => addNodeMetadata({ id: props.nodeId, data: props.mockMetadata }),
       ],
     });
   };
@@ -93,44 +97,47 @@ describe('MetaData', () => {
     });
 
     it('shows the node type as an icon', () => {
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
+      const wrapper = mount({
+        nodeId: salmonTaskNodeId,
+        mockMetadata: node_task,
+      });
       expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-task')).toBe(
         true
       );
     });
 
     it('shows the node name as the title', () => {
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
+      const wrapper = mount({
+        nodeId: salmonTaskNodeId,
+        mockMetadata: node_task,
+      });
       expect(textOf(title(wrapper))).toEqual(['salmon']);
     });
 
     it('shows the node type as text', () => {
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
+      const wrapper = mount({
+        nodeId: salmonTaskNodeId,
+        mockMetadata: node_task,
+      });
       const row = rowByLabel(wrapper, 'Type:');
       expect(textOf(rowValue(row))).toEqual(['task']);
     });
 
     it('does not display the node parameter row when there are no parameters', () => {
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
+      const wrapper = mount({
+        nodeId: salmonTaskNodeId,
+        mockMetadata: node_task,
+      });
       const row = rowByLabel(wrapper, 'Parameters:');
       //this is output of react-json-view with no value
       expect(textOf(rowObject(row))).toEqual(['-']);
     });
 
     it('shows the node parameters when there are parameters', () => {
-      const metadata = getClickedNodeMetaData(
-        prepareState({
-          data: animals,
-          afterLayoutActions: [
-            () => toggleNodeClicked(salmonTaskNodeId),
-            () =>
-              addNodeMetadata({ id: salmonTaskNodeId, data: node_parameters }),
-          ],
-        })
-      );
-      const wrapper = setup.mount(
-        <MetaData visible={true} metadata={metadata} />
-      );
+      const wrapper = mount({
+        nodeId: salmonTaskNodeId,
+        mockMetadata: node_parameters,
+      });
       const row = rowByLabel(wrapper, 'Parameters:');
       //this is output of react-json-view with 3 parameters
       expect(textOf(rowObject(row))[0]).toEqual(
@@ -138,25 +145,11 @@ describe('MetaData', () => {
       );
     });
 
-    it('shows the node inputs when parameters are disabled (default)', () => {
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
-      const row = rowByLabel(wrapper, 'Inputs:');
-      expect(textOf(rowValue(row))).toEqual(['Cat', 'Dog']);
-    });
-
-    it('shows the node inputs when parameters are enabled', () => {
-      const mount = (props) => {
-        return setup.mount(<MetaData visible={true} />, {
-          beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
-          afterLayoutActions: [
-            () => {
-              // Click the expected node
-              return toggleNodeClicked(props.nodeId);
-            },
-          ],
-        });
-      };
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
+    it('shows the node inputs', () => {
+      const wrapper = mount({
+        nodeId: salmonTaskNodeId,
+        mockMetadata: node_task,
+      });
       const row = rowByLabel(wrapper, 'Inputs:');
       expect(textOf(rowValue(row))).toEqual([
         'Cat',
@@ -167,25 +160,37 @@ describe('MetaData', () => {
     });
 
     it('shows the node outputs', () => {
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
+      const wrapper = mount({
+        nodeId: salmonTaskNodeId,
+        mockMetadata: node_task,
+      });
       const row = rowByLabel(wrapper, 'Outputs:');
       expect(textOf(rowValue(row))).toEqual(['Horse', 'Sheep']);
     });
 
     it('shows the node tags', () => {
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
+      const wrapper = mount({
+        nodeId: salmonTaskNodeId,
+        mockMetadata: node_task,
+      });
       const row = rowByLabel(wrapper, 'Tags:');
       expect(textOf(rowValue(row))).toEqual(['Small']);
     });
 
     it('shows the node pipeline', () => {
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
+      const wrapper = mount({
+        nodeId: salmonTaskNodeId,
+        mockMetadata: node_task,
+      });
       const row = rowByLabel(wrapper, 'Pipeline:');
       expect(textOf(rowValue(row))).toEqual(['Default']);
     });
     describe('when there is no runCommand returned by the backend', () => {
       it('should show a help message asking user to provide a name property', () => {
-        const wrapper = mount({ nodeId: salmonTaskNodeId });
+        const wrapper = mount({
+          nodeId: salmonTaskNodeId,
+          mockMetadata: node_task,
+        });
         const row = rowByLabel(wrapper, 'Run Command:');
         expect(textOf(rowValue(row))).toEqual([
           'Please provide a name argument for this node in order to see a run command.',
@@ -237,43 +242,68 @@ describe('MetaData', () => {
 
   describe('Dataset nodes', () => {
     it('shows the node type as an icon', () => {
-      const wrapper = mount({ nodeId: catDatasetNodeId });
+      const wrapper = mount({
+        nodeId: catDatasetNodeId,
+        mockMetadata: node_data,
+      });
       expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-data')).toBe(
         true
       );
     });
 
     it('shows the node name as the title', () => {
-      const wrapper = mount({ nodeId: catDatasetNodeId });
+      const wrapper = mount({
+        nodeId: catDatasetNodeId,
+        mockMetadata: node_data,
+      });
       expect(textOf(title(wrapper))).toEqual(['Cat']);
     });
 
     it('shows the node type as text', () => {
-      const wrapper = mount({ nodeId: catDatasetNodeId });
+      const wrapper = mount({
+        nodeId: catDatasetNodeId,
+        mockMetadata: node_data,
+      });
       const row = rowByLabel(wrapper, 'Type:');
       expect(textOf(rowValue(row))).toEqual(['data']);
     });
 
     it('shows the node dataset type', () => {
-      const wrapper = mount({ nodeId: catDatasetNodeId });
+      const wrapper = mount({
+        nodeId: catDatasetNodeId,
+        mockMetadata: node_data,
+      });
       const row = rowByLabel(wrapper, 'Dataset Type:');
-      expect(textOf(rowValue(row))).toEqual(['-']);
+      expect(textOf(rowValue(row))).toEqual([
+        'kedro.extras.datasets.pandas.csv_dataset.CSVDataSet',
+      ]);
     });
 
     it('shows the node filepath', () => {
-      const wrapper = mount({ nodeId: catDatasetNodeId });
+      const wrapper = mount({
+        nodeId: catDatasetNodeId,
+        mockMetadata: node_data,
+      });
       const row = rowByLabel(wrapper, 'File Path:');
-      expect(textOf(rowValue(row))).toEqual(['-']);
+      expect(textOf(rowValue(row))).toEqual([
+        '/Users/Documents/project-src/test/data/01_raw/iris.csv',
+      ]);
     });
 
     it('shows the node tags', () => {
-      const wrapper = mount({ nodeId: catDatasetNodeId });
+      const wrapper = mount({
+        nodeId: catDatasetNodeId,
+        mockMetadata: node_data,
+      });
       const row = rowByLabel(wrapper, 'Tags:');
       expect(textOf(rowValue(row))).toEqual(['Large', 'Medium', 'Small']);
     });
 
     it('shows the node pipeline', () => {
-      const wrapper = mount({ nodeId: catDatasetNodeId });
+      const wrapper = mount({
+        nodeId: catDatasetNodeId,
+        mockMetadata: node_data,
+      });
       const row = rowByLabel(wrapper, 'Pipeline:');
       expect(textOf(rowValue(row))).toEqual(['Default']);
     });
@@ -376,54 +406,64 @@ describe('MetaData', () => {
 
   describe('Plot nodes', () => {
     it('shows the node type as an icon', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const wrapper = mount({
+        nodeId: bullPlotNodeID,
+        mockMetadata: node_plot,
+      });
       expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-plotly')).toBe(
         true
       );
     });
 
     it('shows the node name as the title', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const wrapper = mount({
+        nodeId: bullPlotNodeID,
+        mockMetadata: node_plot,
+      });
       expect(textOf(title(wrapper))).toEqual(['Bull']);
     });
 
     it('shows the node type as text', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const wrapper = mount({
+        nodeId: bullPlotNodeID,
+        mockMetadata: node_plot,
+      });
       const row = rowByLabel(wrapper, 'Type:');
       expect(textOf(rowValue(row))).toEqual(['data']);
     });
 
     it('shows the node filepath', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const wrapper = mount({
+        nodeId: bullPlotNodeID,
+        mockMetadata: node_plot,
+      });
       const row = rowByLabel(wrapper, 'File Path:');
       expect(textOf(rowValue(row))).toEqual(['-']);
     });
 
     it('shows the node tags', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const wrapper = mount({
+        nodeId: bullPlotNodeID,
+        mockMetadata: node_plot,
+      });
       const row = rowByLabel(wrapper, 'Tags:');
       expect(textOf(rowValue(row))).toEqual(['Small']);
     });
 
     it('shows the node pipeline', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID });
+      const wrapper = mount({
+        nodeId: bullPlotNodeID,
+        mockMetadata: node_plot,
+      });
       const row = rowByLabel(wrapper, 'Pipeline:');
       expect(textOf(rowValue(row))).toEqual(['Default']);
     });
 
     describe('shows the plot info', () => {
-      const metadata = getClickedNodeMetaData(
-        prepareState({
-          data: animals,
-          afterLayoutActions: [() => toggleNodeClicked(bullPlotNodeID)],
-        })
-      );
-      metadata.plot = node_plot.plot;
-
-      const wrapper = setup.mount(
-        <MetaData visible={true} metadata={metadata} />
-      );
-
+      const wrapper = mount({
+        nodeId: bullPlotNodeID,
+        mockMetadata: node_plot,
+      });
       it('shows the plotly chart', () => {
         expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
       });
