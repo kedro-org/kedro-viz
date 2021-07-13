@@ -21,7 +21,7 @@ const MetaDataRow = ({
   children,
 }) => {
   const showList = Array.isArray(value);
-  const showObject = typeof value === 'object' && !showList;
+  const showObject = typeof value === 'object' && value !== null && !showList;
   return (
     visible && (
       <>
