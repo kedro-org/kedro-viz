@@ -46,7 +46,7 @@ const MetaDataRow = ({
               theme={theme}
             />
           )}
-          {showObject && (
+          {showObject && Object.keys(value).length > 0 && (
             <MetaDataObject value={value} kind={kind} theme={theme} />
           )}
           {children}
