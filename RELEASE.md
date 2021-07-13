@@ -14,7 +14,7 @@ Please follow the established format:
 
 - Implement new tree list with modular pipelines and search UI for new sidebar navigation. (#479)
 - Implement element filters and further design updates to the filter panel for new sidebar navigation. (#454)
-- Implement `kedro-telemetry` in production to enable heap analysis for Kedro-Viz. (#481, #487)
+- Implement [`kedro-telemetry`](https://github.com/quantumblacklabs/kedro-telemetry) in production to enable Heap Analytics analysis for Kedro-Viz. (#481, #487)
 - Show decorated function's source code on code panel. (#493)
 - Enable the display of entire parameter object with react-json-viewer on the metadata panel. (#494)
 
