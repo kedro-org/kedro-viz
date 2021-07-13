@@ -93,7 +93,7 @@ describe('MetaData', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
       const row = rowByLabel(wrapper, 'Parameters:');
       //this is output of react-json-view with no value
-      expect(textOf(rowObject(row)).length).toEqual(0);
+      expect(textOf(rowObject(row))).toEqual(['-']);
     });
 
     it('shows the node parameters when there are parameters', () => {
@@ -336,8 +336,7 @@ describe('MetaData', () => {
       it('does not display the node parameter when it is an empty object', () => {
         const wrapper = mount({ nodeId: rabbitParamsNodeId });
         const row = rowByLabel(wrapper, 'Parameters:');
-        //the metadata-object component would not load when parameters is an empty object
-        expect(textOf(rowObject(row)).length).toEqual(0);
+        expect(textOf(rowObject(row))).toEqual(['-']);
       });
 
       it('shows the node tags', () => {
@@ -377,12 +376,6 @@ describe('MetaData', () => {
       const wrapper = mount({ nodeId: bullPlotNodeID });
       const row = rowByLabel(wrapper, 'File Path:');
       expect(textOf(rowValue(row))).toEqual(['-']);
-    });
-
-    it('shows the node parameters', () => {
-      const wrapper = mount({ nodeId: bullPlotNodeID });
-      const row = rowByLabel(wrapper, 'Parameters:');
-      expect(textOf(rowValue(row))).toEqual([]);
     });
 
     it('shows the node tags', () => {
