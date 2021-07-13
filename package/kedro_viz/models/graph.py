@@ -30,19 +30,31 @@
 import abc
 import hashlib
 import inspect
+import json
+import logging
+import re
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
+from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.io import AbstractDataSet
+from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
+
+logger = logging.getLogger(__name__)
 
 
 def _pretty_name(name: str) -> str:
     name = name.replace("-", " ").replace("_", " ")
     parts = [n.capitalize() for n in name.split()]
     return " ".join(parts)
+
+
+def _strip_namespace(name: str) -> str:
+    pattern = re.compile(r"[A-Za-z0-9-_]+\.")
+    return re.sub(pattern, "", name)
 
 
 @dataclass
@@ -180,6 +192,7 @@ class GraphNode(abc.ABC):
         layer: Optional[str],
         tags: Set[str],
         dataset: AbstractDataSet,
+        is_free_input: bool = False,
     ) -> "DataNode":
         """Create a graph node of type DATA for a given Kedro DataSet instance.
 
@@ -190,17 +203,19 @@ class GraphNode(abc.ABC):
             tags: The set of tags assigned to assign to the graph representation
                 of this dataset. N.B. currently it's derived from the node's tags.
             dataset: A dataset in a Kedro pipeline.
+            is_free_input: Whether the dataset is a free input in the pipeline
         Returns:
             An instance of DataNode.
         """
         return DataNode(
             id=cls._hash(full_name),
-            name=_pretty_name(full_name),
+            name=_pretty_name(_strip_namespace(full_name)),
             full_name=full_name,
             tags=tags,
             layer=layer,
             pipelines=[],
             kedro_obj=dataset,
+            is_free_input=is_free_input,
         )
 
     @classmethod
@@ -225,7 +240,7 @@ class GraphNode(abc.ABC):
         """
         return ParametersNode(
             id=cls._hash(full_name),
-            name=_pretty_name(full_name),
+            name=_pretty_name(_strip_namespace(full_name)),
             full_name=full_name,
             tags=tags,
             layer=layer,
@@ -271,6 +286,18 @@ class TaskNode(GraphNode):
         self.modular_pipelines = self._expand_namespaces(kedro_obj.namespace)
 
 
+def _extract_wrapped_func(func: FunctionType) -> FunctionType:
+    """Extract a wrapped decorated function to inspect the source code if available.
+    Adapted from https://stackoverflow.com/a/43506509/1684058
+    """
+    if func.__closure__ is None:
+        return func
+    closure = (c.cell_contents for c in func.__closure__)
+    wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
+    # return the original function if it's not a decorated function
+    return func if wrapped_func is None else wrapped_func
+
+
 @dataclass
 class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode"""
@@ -284,12 +311,17 @@ class TaskNodeMetadata(GraphNodeMetadata):
     # parameters of the node, if available
     parameters: Dict = field(init=False)
 
+    # command to run the pipeline to this node
+    run_command: Optional[str] = field(init=False, default=None)
+
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
 
     def __post_init__(self, task_node: TaskNode):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
-        self.code = inspect.getsource(kedro_node._func)
+        self.code = inspect.getsource(
+            _extract_wrapped_func(cast(FunctionType, kedro_node._func))
+        )
         code_full_path = Path(inspect.getfile(kedro_node._func)).expanduser().resolve()
         try:
             filepath = code_full_path.relative_to(Path.cwd().parent)
@@ -301,10 +333,19 @@ class TaskNodeMetadata(GraphNodeMetadata):
         self.filepath = str(filepath)
         self.parameters = task_node.parameters
 
+        # if a node doesn't have a user-supplied `_name` attribute,
+        # a human-readable run command `kedro run --to-nodes/nodes` is not available
+        if kedro_node._name is not None:
+            self.run_command = f'kedro run --to-nodes="{kedro_node._name}"'
 
+
+# pylint: disable=too-many-instance-attributes
 @dataclass
 class DataNode(GraphNode):
     """Represent a graph node of type DATA"""
+
+    # whether the data node is a free input
+    is_free_input: bool
 
     # the layer that this data node belongs to
     layer: Optional[str]
@@ -312,14 +353,25 @@ class DataNode(GraphNode):
     # the underlying Kedro's AbstractDataSet for this data node
     kedro_obj: InitVar[Optional[AbstractDataSet]]
 
+    # the concrete type of the underlying kedro_obj
+    dataset_type: Optional[str] = field(init=False)
+
     # the list of modular pipelines this data node belongs to
     modular_pipelines: List[str] = field(init=False)
+
+    # command to run the pipeline to this node
+    run_command: Optional[str] = field(init=False, default=None)
 
     # the type of this graph node, which is DATA
     type: str = GraphNodeType.DATA.value
 
     def __post_init__(self, kedro_obj: Optional[AbstractDataSet]):
         self._kedro_obj = kedro_obj
+        self.dataset_type = (
+            f"{kedro_obj.__class__.__module__}.{kedro_obj.__class__.__qualname__}"
+            if self.kedro_obj
+            else None
+        )
 
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
@@ -328,25 +380,61 @@ class DataNode(GraphNode):
             self._get_namespace(self.full_name)
         )
 
+    def is_plot_node(self):
+        """Check if the current node is a plot node.
+        Currently it only recognises one underlying dataset as a plot node.
+        In the future, we might want to make this generic.
+        """
+        return (
+            self.dataset_type
+            == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
+        )
+
 
 @dataclass
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
     # the dataset type for this data node, e.g. CSVDataSet
-    type: str = field(init=False)
+    type: Optional[str] = field(init=False)
 
     # the path to the actual data file for the underlying dataset.
     # only available if the dataset has filepath set.
-    filepath: str = field(init=False)
+    filepath: Optional[str] = field(init=False)
 
     # the underlying data node to which this metadata belongs
     data_node: InitVar[DataNode]
 
+    # the optional plot data if the underlying dataset has a plot.
+    # currently only applicable for PlotlyDataSet
+    plot: Optional[Dict] = field(init=False)
+
+    # command to run the pipeline to this data node
+    run_command: Optional[str] = field(init=False, default=None)
+
     def __post_init__(self, data_node: DataNode):
+        self.type = data_node.dataset_type
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
-        self.type = f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
-        self.filepath = str(dataset._describe().get("filepath"))
+        filepath = dataset._describe().get("filepath")
+        self.filepath = str(filepath) if filepath else None
+
+        # Parse plot data
+        if data_node.is_plot_node():
+            from kedro.extras.datasets.plotly.plotly_dataset import (  # pylint: disable=import-outside-toplevel
+                PlotlyDataSet,
+            )
+
+            dataset = cast(PlotlyDataSet, dataset)
+            if not dataset._exists():
+                return
+
+            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
+            with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
+                self.plot = json.load(fs_file)
+
+        # Run command is only available if a node is an output, i.e. not a free input
+        if not data_node.is_free_input:
+            self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
 
 @dataclass
@@ -392,6 +480,11 @@ class ParametersNode(GraphNode):
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
         self._kedro_obj: AbstractDataSet
+        if self._kedro_obj is None:
+            logger.warning(
+                "Cannot find parameter `%s` in the catalog.", self.parameter_name
+            )
+            return None
         return self._kedro_obj.load()
 
 

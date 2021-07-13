@@ -32,10 +32,12 @@ import json
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from jinja2 import Environment, FileSystemLoader
 
 from kedro_viz import __version__
+from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 from .router import router
 
@@ -48,7 +50,7 @@ def _create_base_api_app() -> FastAPI:
     )
 
 
-def create_api_app_from_project() -> FastAPI:
+def create_api_app_from_project(project_path: Path) -> FastAPI:
     """Create an API from a real Kedro project by adding the router to the FastAPI app."""
     app = _create_base_api_app()
     app.include_router(router)
@@ -56,7 +58,17 @@ def create_api_app_from_project() -> FastAPI:
 
     @app.get("/")
     async def index():
-        return FileResponse(_HTML_DIR / "index.html")
+        heap_app_id = kedro_telemetry.get_heap_app_id(project_path)
+        heap_user_identity = kedro_telemetry.get_heap_identity()
+        should_add_telemetry = bool(heap_app_id) and bool(heap_user_identity)
+        html_content = (_HTML_DIR / "index.html").read_text(encoding="utf-8")
+        if should_add_telemetry:
+            env = Environment(loader=FileSystemLoader(_HTML_DIR))
+            telemetry_content = env.get_template("telemetry.html").render(
+                heap_app_id=heap_app_id, heap_user_identity=heap_user_identity
+            )
+            html_content = html_content.replace("</head>", telemetry_content)
+        return HTMLResponse(html_content)
 
     return app
 

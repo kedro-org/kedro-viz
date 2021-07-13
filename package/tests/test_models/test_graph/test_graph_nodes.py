@@ -27,6 +27,7 @@
 # limitations under the License.
 from pathlib import Path
 from textwrap import dedent
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
@@ -45,8 +46,35 @@ from kedro_viz.models.graph import (
     TaskNodeMetadata,
 )
 
+orig_import = __import__
+
+
+def import_mock(name, *args):
+    if name.startswith("plotly"):
+        return MagicMock()
+    return orig_import(name, *args)
+
 
 def identity(x):
+    return x
+
+
+def decorator(fun):
+    """
+    Not the best way to write decorator
+    but trying to stay faithful to the bug report here:
+    https://github.com/quantumblacklabs/kedro-viz/issues/484
+    """
+
+    def _new_fun(*args, **kwargs):
+        return fun(*args, **kwargs)
+
+    _new_fun.__name__ = fun.__name__
+    return _new_fun
+
+
+@decorator
+def decorated(x):
     return x
 
 
@@ -90,7 +118,7 @@ class TestGraphNodeCreation:
             ("dataset", "Dataset", []),
             (
                 "uk.data_science.model_training.dataset",
-                "Uk.data Science.model Training.dataset",
+                "Dataset",
                 [
                     "uk",
                     "uk.data_science",
@@ -117,6 +145,7 @@ class TestGraphNodeCreation:
         assert data_node.tags == set()
         assert data_node.pipelines == []
         assert data_node.modular_pipelines == expected_modular_pipelines
+        assert not data_node.is_plot_node()
 
     def test_create_parameters_all_parameters(self):
         parameters_dataset = MemoryDataSet(
@@ -159,6 +188,17 @@ class TestGraphNodeCreation:
         assert parameters_node.is_single_parameter()
         assert parameters_node.parameter_value == 0.3
         assert parameters_node.modular_pipelines == expected_modular_pipelines
+
+    @patch("logging.Logger.warning")
+    def test_create_non_existing_parameter_node(self, patched_warning):
+        parameters_node = GraphNode.create_parameters_node(
+            full_name="non_existing", layer=None, tags={}, parameters=None
+        )
+        assert isinstance(parameters_node, ParametersNode)
+        assert parameters_node.parameter_value is None
+        patched_warning.assert_has_calls(
+            [call("Cannot find parameter `%s` in the catalog.", "non_existing")]
+        )
 
 
 class TestGraphNodePipelines:
@@ -217,6 +257,42 @@ class TestGraphNodeMetadata:
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
         assert task_node_metadata.parameters == {}
+        assert task_node_metadata.run_command == 'kedro run --to-nodes="identity_node"'
+
+    def test_task_node_metadata_no_run_command(self):
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            tags={"tag"},
+            namespace="namespace",
+        )
+        task_node = GraphNode.create_task_node(kedro_node)
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+        assert task_node_metadata.run_command is None
+
+    def test_task_node_metadata_with_decorated_func(self):
+        kedro_node = node(
+            decorated,
+            inputs="x",
+            outputs="y",
+            name="identity_node",
+            tags={"tag"},
+            namespace="namespace",
+        )
+        task_node = GraphNode.create_task_node(kedro_node)
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+        assert task_node_metadata.code == dedent(
+            """\
+            @decorator
+            def decorated(x):
+                return x
+            """
+        )
+        assert task_node_metadata.filepath == str(
+            Path(__file__).relative_to(Path.cwd().parent).expanduser()
+        )
+        assert task_node_metadata.parameters == {}
 
     def test_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")
@@ -232,6 +308,33 @@ class TestGraphNodeMetadata:
             == "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
         )
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
+        assert data_node_metadata.run_command == 'kedro run --to-outputs="dataset"'
+
+    @patch("builtins.__import__", side_effect=import_mock)
+    @patch("json.load")
+    def test_plotly_data_node_metadata(self, patched_json_load, patched_import):
+        mock_plot_data = {
+            "data": [
+                {
+                    "x": ["giraffes", "orangutans", "monkeys"],
+                    "y": [20, 14, 23],
+                    "type": "bar",
+                }
+            ]
+        }
+        patched_json_load.return_value = mock_plot_data
+        plotly_data_node = MagicMock()
+        plotly_data_node.is_plot_node.return_value = True
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
+        assert plotly_node_metadata.plot == mock_plot_data
+
+    @patch("builtins.__import__", side_effect=import_mock)
+    def test_plotly_data_node_dataset_not_exist(self, patched_import):
+        plotly_data_node = MagicMock()
+        plotly_data_node.is_plot_node.return_value = True
+        plotly_data_node.kedro_obj._exists.return_value = False
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
+        assert not hasattr(plotly_node_metadata, "plot")
 
     def test_parameters_metadata_all_parameters(self):
         parameters = {"test_split_ratio": 0.3, "num_epochs": 1000}

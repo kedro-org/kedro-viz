@@ -8,13 +8,15 @@ import {
   getNodeDisabledTag,
   getNodeDisabledModularPipelineFilter,
 } from './disabled';
+import getShortType from '../utils/short-type';
 import { getNodeRank } from './ranks';
 
 const getNodeName = (state) => state.node.name;
 const getNodeDisabledNode = (state) => state.node.disabled;
 const getNodeTags = (state) => state.node.tags;
-const getNodeModularPipelines = (state) => state.node.modularPipelines;
+export const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getNodeType = (state) => state.node.type;
+const getNodeDatasetType = (state) => state.node.datasetType;
 const getHoveredNode = (state) => state.node.hovered;
 const getTagActive = (state) => state.tag.active;
 const getModularPipelineActive = (state) => state.modularPipeline.active;
@@ -95,44 +97,46 @@ export const getNodeSelected = createSelector(
  */
 export const getNodeData = createSelector(
   [
-    getPipelineNodeIDs,
-    getNodeName,
-    getNodeType,
+    getContractedModularPipelines,
+    getNodeDatasetType,
     getNodeDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
     getNodeDisabledModularPipelineFilter,
     getNodeTypeDisabled,
+    getNodeModularPipelines,
   ],
   (
-    nodeIDs,
-    nodeName,
-    nodeType,
+    { node },
+    nodeDatasetType,
     nodeDisabled,
     nodeDisabledNode,
     nodeDisabledTag,
     nodeDisabledModularPipeline,
-    typeDisabled
+    typeDisabled,
+    nodeModularPipelines
   ) =>
-    nodeIDs
+    node.ids
       .sort((a, b) => {
-        if (nodeName[a] < nodeName[b]) {
+        if (node.name[a] < node.name[b]) {
           return -1;
         }
-        if (nodeName[a] > nodeName[b]) {
+        if (node.name[a] > node.name[b]) {
           return 1;
         }
         return 0;
       })
       .map((id) => ({
         id,
-        name: nodeName[id],
-        type: nodeType[id],
+        name: node.name[id],
+        type: node.type[id],
+        icon: getShortType([nodeDatasetType[id]], node.type[id]),
+        modularPipelines: nodeModularPipelines[id],
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),
         disabled_tag: nodeDisabledTag[id],
         disabled_modularPipeline: nodeDisabledModularPipeline[id],
-        disabled_type: Boolean(typeDisabled[nodeType[id]]),
+        disabled_type: Boolean(typeDisabled[node.type[id]]),
       }))
 );
 
@@ -245,8 +249,8 @@ export const getNodeSize = createSelector(
  * that are unnecessary for the chart layout calculation
  */
 export const getVisibleNodes = createSelector(
-  [getFontLoaded, getContractedModularPipelines, getNodeSize, getNodeRank],
-  (fontLoaded, { node }, nodeSize, nodeRank) => {
+ [getFontLoaded, getContractedModularPipelines, getNodeSize, getNodeRank, getNodeDatasetType],
+  (fontLoaded, { node }, nodeSize, nodeRank, nodeDatasetType) => {
     if (!fontLoaded) {
       return [];
     }
@@ -255,6 +259,7 @@ export const getVisibleNodes = createSelector(
       name: node.name[id],
       label: node.name[id],
       fullName: node.fullName[id] || id,
+      icon: getShortType([nodeDatasetType[id]], node.type[id]),
       type: node.type[id],
       layer: node.layer[id],
       rank: nodeRank[id],
@@ -262,7 +267,7 @@ export const getVisibleNodes = createSelector(
     }));
     return nodes;
   }
-);
+)
 
 /**
  * Returns an map of task nodeIDs to graph nodes that have parameter nodes as their source

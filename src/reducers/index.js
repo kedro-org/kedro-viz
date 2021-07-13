@@ -27,15 +27,14 @@ import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
  * @param {string} key Action payload key
  * @return {*} Updated state
  */
-const createReducer = (initialState, type, key) => (
-  state = initialState,
-  action
-) => {
-  if (typeof key !== 'undefined' && action.type === type) {
-    return action[key];
-  }
-  return state;
-};
+const createReducer =
+  (initialState, type, key) =>
+  (state = initialState, action) => {
+    if (typeof key !== 'undefined' && action.type === type) {
+      return action[key];
+    }
+    return state;
+  };
 
 /**
  * Reset/update application-wide data

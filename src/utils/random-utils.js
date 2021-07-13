@@ -52,9 +52,10 @@ export const getSeedFromURL = () => {
  */
 export const getNumberArray = (n) => Array.from(Array(n).keys());
 
-export const LOREM_IPSUM = 'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
-  ' '
-);
+export const LOREM_IPSUM =
+  'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
+    ' '
+  );
 
 /**
  * Utils that depend on a seeded RNG

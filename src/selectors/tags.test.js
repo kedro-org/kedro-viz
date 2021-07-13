@@ -1,5 +1,5 @@
 import { mockState } from '../utils/state.mock';
-import { getTagData, getTagCount } from './tags';
+import { getTagData, getTagCount, getTagNodeCounts } from './tags';
 import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
 
@@ -48,6 +48,14 @@ describe('Selectors', () => {
           enabled: 1,
           total: tagIDs.length,
         })
+      );
+    });
+  });
+
+  describe('getTagNodeCounts', () => {
+    it('gets the total number of nodes for each tag', () => {
+      expect(getTagNodeCounts(mockState.animals)).toEqual(
+        expect.objectContaining({ large: 7, medium: 7, small: 8 })
       );
     });
   });

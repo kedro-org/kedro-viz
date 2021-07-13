@@ -26,13 +26,8 @@ export const drawViewport = function () {
  * Render nodes
  */
 export const drawNodes = function () {
-  const {
-    clickedNode,
-    linkedNodes,
-    nodeActive,
-    nodeSelected,
-    nodes,
-  } = this.props;
+  const { clickedNode, linkedNodes, nodeActive, nodeSelected, nodes } =
+    this.props;
 
   this.el.nodes = this.el.nodeGroup
     .selectAll('.pipeline-minimap-node')

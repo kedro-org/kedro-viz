@@ -6,11 +6,10 @@
 //--- Toggle ---//
 
 .pipeline-row__toggle {
-  position: absolute;
-  right: $row-padding-x;
+  cursor: pointer;
 
-  &--not-tag {
-    cursor: pointer;
+  &--kind-element {
+    margin-right: 8px;
   }
 
   &--disabled {
@@ -140,9 +139,9 @@ $element-icon-opacity-2: 1;
  */
 
 $filter-icon-opacity-0: 0;
-$filter-icon-opacity-1: 0.3;
-$filter-icon-opacity-2: 0.55;
-$filter-icon-opacity-3: 0.75;
+$filter-icon-opacity-1: 0.55;
+$filter-icon-opacity-2: 0.9;
+$filter-icon-opacity-3: 1;
 
 .pipeline-row__toggle-icon--kind-filter {
   // Change opacity on the SVG's child elements instead, in order to
@@ -151,9 +150,13 @@ $filter-icon-opacity-3: 0.75;
     opacity: $filter-icon-opacity-1;
   }
 
-  &.pipeline-row__toggle-icon--all-unset {
+  .pipeline-nodelist__heading &.pipeline-row__toggle-icon--all-unchecked > * {
+    opacity: $filter-icon-opacity-0;
+  }
+
+  &.pipeline-row__toggle-icon--all-unchecked {
     > * {
-      opacity: $filter-icon-opacity-0;
+      opacity: $filter-icon-opacity-1;
     }
   }
 
@@ -220,14 +223,12 @@ $filter-icon-opacity-3: 0.75;
     stroke: var(--color-nodelist-filter-indicator-on);
   }
 
-  &.pipeline-row__toggle-icon--unchecked,
-  &.pipeline-row__toggle-icon--unset {
+  &.pipeline-row__toggle-icon--unchecked {
     fill: none;
     stroke: var(--color-nodelist-filter-indicator-off);
   }
 
-  .pipeline-nodelist__row:hover &.pipeline-row__toggle-icon--all-unset,
-  [data-whatintent='keyboard'] input:focus + &,
+  .pipeline-nodelist__row:hover &.pipeline-row__toggle-icon--all-unchecked,
   &.pipeline-row__toggle-icon--parent {
     fill: $color-primary;
     stroke: $color-primary;

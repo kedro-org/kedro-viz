@@ -3,14 +3,12 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { changed } from '../../utils';
 import NodeIcon from '../icons/node-icon';
-import ExpandIcon from '../icons/expand';
-import CollapseIcon from '../icons/collapse';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import { getNodeActive } from '../../selectors/nodes';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
-export const nodeListRowHeight = 36.59375;
+export const nodeListRowHeight = 37;
 
 /**
  * Returns `true` if there are no props changes, therefore the last render can be reused.
@@ -21,15 +19,15 @@ const shouldMemo = (prevProps, nextProps) =>
     [
       'active',
       'checked',
+      'allUnchecked',
       'contracted',
-      'unset',
-      'allUnset',
       'disabled',
       'faded',
       'visible',
       'selected',
       'label',
       'children',
+      'count'
     ],
     prevProps,
     nextProps
@@ -40,29 +38,28 @@ const NodeListRow = memo(
     container: Container = 'div',
     active,
     checked,
-    unset,
-    allUnset,
+    allUnchecked,
     children,
-    contracted,
     disabled,
     faded,
     visible,
     id,
     label,
+    count,
     name,
     kind,
     onMouseEnter,
     onMouseLeave,
     onChange,
     onClick,
-    onToggleContracted,
     selected,
     type,
+    icon,
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
+    rowType,
   }) => {
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
-    const ContractedIcon = contracted ? CollapseIcon : ExpandIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
     const showContractedButton = type === 'modularPipeline';
@@ -83,31 +80,35 @@ const NodeListRow = memo(
         title={name}
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
+        {icon && (
+          <NodeIcon
+            className={classnames(
+              'pipeline-nodelist__row__type-icon',
+              'pipeline-nodelist__row__icon',
+              {
+                'pipeline-nodelist__row__type-icon--faded': faded,
+                'pipeline-nodelist__row__type-icon--disabled': disabled,
+                'pipeline-nodelist__row__type-icon--nested': !children,
+                'pipeline-nodelist__row__type-icon--active': active,
+                'pipeline-nodelist__row__type-icon--selected': selected,
+              }
+            )}
+            icon={icon}
+          />
+        )}
         <TextButton
-          className={classnames('pipeline-nodelist__row__text', {
+          className={classnames(
+            'pipeline-nodelist__row__text',
+            `pipeline-nodelist__row__text--kind-${kind}`,
+            `pipeline-nodelist__row__text--${rowType}`, {
             'pipeline-nodelist__row__text--has-contract': showContractedButton,
-          })}
+            }
+          )}
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
           disabled={isButton && (disabled || !checked)}
           title={children ? null : name}>
-          {type && (
-            <NodeIcon
-              className={classnames(
-                'pipeline-nodelist__row__type-icon',
-                'pipeline-nodelist__row__icon',
-                {
-                  'pipeline-nodelist__row__type-icon--faded': faded,
-                  'pipeline-nodelist__row__type-icon--disabled': disabled,
-                  'pipeline-nodelist__row__type-icon--nested': !children,
-                  'pipeline-nodelist__row__type-icon--active': active,
-                  'pipeline-nodelist__row__type-icon--selected': selected,
-                }
-              )}
-              type={type}
-            />
-          )}
           <span
             className={classnames(
               'pipeline-nodelist__row__label',
@@ -120,49 +121,49 @@ const NodeListRow = memo(
             dangerouslySetInnerHTML={{ __html: label }}
           />
         </TextButton>
-        {children}
-        {showContractedButton && (
-          <button
-            className={classnames('pipeline-nodelist__row__contract', {
-              'pipeline-nodelist__row__contract--contracted': contracted,
-            })}
-            onClick={onToggleContracted}>
-            <ContractedIcon />
-          </button>
-        )}
-        <label
-          htmlFor={id}
-          className={classnames('pipeline-row__toggle', {
-            'pipeline-row__toggle--disabled': disabled,
-            'pipeline-row__toggle--selected': selected,
-            'pipeline-row__toggle--not-tag': type !== 'tag',
-          })}>
-          <input
-            id={id}
-            className="pipeline-nodelist__row__checkbox"
-            type="checkbox"
-            checked={checked}
-            disabled={disabled}
-            name={name}
-            onChange={onChange}
-          />
-          <VisibilityIcon
-            aria-label={name}
-            className={classnames(
-              'pipeline-nodelist__row__icon',
-              'pipeline-row__toggle-icon',
-              `pipeline-row__toggle-icon--kind-${kind}`,
-              {
-                'pipeline-row__toggle-icon--parent': Boolean(children),
-                'pipeline-row__toggle-icon--child': !children,
-                'pipeline-row__toggle-icon--checked': checked,
-                'pipeline-row__toggle-icon--unchecked': !checked,
-                'pipeline-row__toggle-icon--unset': unset,
-                'pipeline-row__toggle-icon--all-unset': allUnset,
-              }
+        {type !== 'modularPipeline' && (
+          <>
+            {typeof count === 'number' && (
+              <span
+                onClick={onClick}
+                className={'pipeline-nodelist__row__count'}>
+                {count}
+              </span>
             )}
-          />
-        </label>
+            <label
+              htmlFor={id}
+              className={classnames('pipeline-row__toggle', `pipeline-row__toggle--kind-${kind}`, {
+                'pipeline-row__toggle--disabled': disabled,
+                'pipeline-row__toggle--selected': selected,
+              })}>
+              <input
+                id={id}
+                className="pipeline-nodelist__row__checkbox"
+                type="checkbox"
+                checked={checked}
+                disabled={disabled}
+                name={name}
+                onChange={onChange}
+              />
+              <VisibilityIcon
+                aria-label={name}
+                className={classnames(
+                  'pipeline-nodelist__row__icon',
+                  'pipeline-row__toggle-icon',
+                  `pipeline-row__toggle-icon--kind-${kind}`,
+                  {
+                    'pipeline-row__toggle-icon--parent': Boolean(children),
+                    'pipeline-row__toggle-icon--child': !children,
+                    'pipeline-row__toggle-icon--checked': checked,
+                    'pipeline-row__toggle-icon--unchecked': !checked,
+                    'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
+                  }
+                )}
+              />
+            </label>
+          </>
+        )}
+        {children}
       </Container>
     );
   },

@@ -80,7 +80,7 @@ describe('prepareNonPipelineState', () => {
     // In this case, location.href is not provided
     expect(prepareNonPipelineState({ data: animals })).toMatchObject({
       flags: {
-        oldgraph: expect.any(Boolean),
+        newparams: expect.any(Boolean),
       },
     });
   });

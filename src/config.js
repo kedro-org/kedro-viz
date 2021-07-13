@@ -26,12 +26,6 @@ export const largeGraphThreshold = 1000;
 
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
-  oldgraph: {
-    description: 'Use older Dagre graphing algorithm',
-    default: false,
-    private: false,
-    icon: '📈',
-  },
   newparams: {
     description: `Disable parameters on page load and highlight parameter connections.`,
     default: true,
@@ -42,22 +36,21 @@ export const flags = {
     default: true,
     icon: '🐳',
   },
-  modularpipeline: {
-    description: 'Enable modular pipeline features',
-    default: false,
-    icon: '⛓️',
-  },
 };
 
-// Sidebar node list sections
-export const sidebar = {
-  Categories: {
-    Tags: 'tag',
-    ModularPipelines: 'modularPipeline',
-  },
-  Elements: {
-    Nodes: 'task',
-    Datasets: 'data',
-    Parameters: 'parameters',
-  },
+// Sidebar groups is an ordered map of { id: label }
+export const sidebarGroups = {
+  elementType: 'Element types',
+  tag: 'Tags'
+};
+
+// Sidebar element types is an ordered map of { id: label }
+export const sidebarElementTypes = {
+  task: 'Nodes',
+  data: 'Datasets',
+  parameters: 'Parameters'
+};
+
+export const shortTypeMapping = {
+  'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet': 'plotly',
 };

@@ -224,13 +224,13 @@ describe('actions', () => {
 
   it('should create an action to toggle whether a type is disabled', () => {
     const typeID = '123';
-    const disabled = true;
     const expectedAction = {
       type: TOGGLE_TYPE_DISABLED,
-      typeID,
-      disabled,
+      typeIDs: {
+        [typeID]: true,
+      },
     };
-    expect(toggleTypeDisabled(typeID, disabled)).toEqual(expectedAction);
+    expect(toggleTypeDisabled(typeID, true)).toEqual(expectedAction);
   });
 
   it('should create an action to update the chart size', () => {

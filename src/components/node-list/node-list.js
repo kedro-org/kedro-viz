@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars';
 import NodeListSearch from './node-list-search';
 import NodeListGroups from './node-list-groups';
+import NodeListTree from './node-list-tree';
 import SplitPanel from '../split-panel';
 import './styles/node-list.css';
 
@@ -12,58 +13,57 @@ import './styles/node-list.css';
 const NodeList = ({
   faded,
   items,
-  sections,
   groups,
   searchValue,
   getGroupState,
   onUpdateSearchValue,
-  onToggleGroupChecked,
   onToggleContracted,
+  onGroupToggleChanged,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
-  onSectionMouseEnter,
-  onSectionMouseLeave,
   onItemChange,
-}) => (
-  <div
-    className={classnames('pipeline-nodelist', {
-      'pipeline-nodelist--fade': faded,
-    })}>
-    <NodeListSearch
-      onUpdateSearchValue={onUpdateSearchValue}
-      searchValue={searchValue}
-    />
-    <SplitPanel>
-      {
-        ({ isResizing, props: { container, panelA, panelB, handle } }) =>
-          <div 
+}) => {
+  const [searching, setSearching] = useState(false);
+
+  useEffect(() => {
+    setSearching(searchValue !== '');
+  }, [searchValue]);
+
+  return (
+    <div
+      className={classnames('pipeline-nodelist', {
+        'pipeline-nodelist--fade': faded,
+      })}>
+      <NodeListSearch
+        onUpdateSearchValue={onUpdateSearchValue}
+        searchValue={searchValue}
+      />
+      <SplitPanel>
+        {({ isResizing, props: { container, panelA, panelB, handle } }) => (
+          <div
             className={classnames('pipeline-nodelist__split', {
               'pipeline-nodelist__split--resizing': isResizing,
             })}
-            {...container}
-          >
+            {...container}>
             <div className="pipeline-nodelist__elements-panel" {...panelA}>
               <Scrollbars
                 className="pipeline-nodelist-scrollbars"
                 style={{ width: 'auto' }}
                 autoHide
                 hideTracksWhenNotNeeded>
-                <NodeListGroups
-                  items={items}
-                  sections={sections.Elements}
-                  groups={groups}
-                  searchValue={searchValue}
-                  getGroupState={getGroupState}
-                  onItemClick={onItemClick}
-                  onItemMouseEnter={onItemMouseEnter}
-                  onItemMouseLeave={onItemMouseLeave}
-                  onSectionMouseEnter={onSectionMouseEnter}
-                  onSectionMouseLeave={onSectionMouseLeave}
-                  onItemChange={onItemChange}
-                  onToggleGroupChecked={onToggleGroupChecked}
-                  onToggleContracted={onToggleContracted}
-                />
+                <div className="pipeline-nodelist-section">
+                  <NodeListTree
+                    searchValue={searchValue}
+                    faded={faded}
+                    onItemClick={onItemClick}
+                    onItemMouseEnter={onItemMouseEnter}
+                    onItemMouseLeave={onItemMouseLeave}
+                    onItemChange={onItemChange}
+                    onToggleContracted={onToggleContracted}
+                    searching={searching}
+                  />
+                </div>
               </Scrollbars>
             </div>
             <div className="pipeline-nodelist__filter-panel" {...panelB}>
@@ -76,25 +76,23 @@ const NodeList = ({
                 <h2 className="pipeline-nodelist-section__title">Filters</h2>
                 <NodeListGroups
                   items={items}
-                  sections={sections.Categories}
                   groups={groups}
                   searchValue={searchValue}
                   getGroupState={getGroupState}
                   onItemClick={onItemClick}
                   onItemMouseEnter={onItemMouseEnter}
                   onItemMouseLeave={onItemMouseLeave}
-                  onSectionMouseEnter={onSectionMouseEnter}
-                  onSectionMouseLeave={onSectionMouseLeave}
                   onItemChange={onItemChange}
-                  onToggleGroupChecked={onToggleGroupChecked}
                   onToggleContracted={onToggleContracted}
+                  onGroupToggleChanged={onGroupToggleChanged}
                 />
               </Scrollbars>
             </div>
           </div>
-      }
-    </SplitPanel>
-  </div>
-);
+        )}
+      </SplitPanel>
+    </div>
+  );
+};
 
 export default NodeList;

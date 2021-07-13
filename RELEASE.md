@@ -1,21 +1,34 @@
-# Upcoming release:
+# Upcoming release
 
 <!--
 Use the sections below to add notes for the next release.
-
 Please follow the established format:
 - Keep each note concise - ideally commit title length
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-## Major features and improvements
-
-<!-- Add release notes for the upcoming release here -->
+# Release 3.12.1
 
 ## Bug fixes and other changes
 
-<!-- Add release notes for the upcoming release here -->
+- Fix compatibility with `kedro==0.17.0`
+
+# Release 3.12.0
+
+## Major features and improvements
+
+- Complete backend rewrite to be more modular and maintainable using FastAPI. (#432)
+- Add layout engine documentation. (#436)
+- Add split panel components and implement into the sidebar. (#448)
+- Visualise plotly charts if user defines them with `kedro.extra.datasets.plotly.PlotlyDataSet` in their Kedro project _(Note: This feature is only available in `kedro>=0.17.4`)._ (#455)
+
+## Bug fixes and other changes
+
+- Upgrade prettier to latest version (2.3.0) and reformat all JS in /src in line with prettier v2.3.0 (#461)
+- Render the pipeline with warning of parameters missing from the catalog instead of showing an obfuscated error. (#466)
+- Fix CLI `--pipeline` arg throws KedroContext attribute error. (#432)
+- Fix glitch when the entire graph is collapsed during initial chart loading. (#467)
 
 # Release 3.11.0
 

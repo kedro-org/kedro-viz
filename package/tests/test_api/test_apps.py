@@ -47,7 +47,7 @@ def example_api(
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
 ):
-    api = apps.create_api_app_from_project()
+    api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(data_access_manager, example_catalog, example_pipelines)
     with mock.patch(
         "kedro_viz.api.responses.data_access_manager", new=data_access_manager
@@ -104,13 +104,14 @@ def assert_example_data(response_data):
         },
         {
             "id": "13399a82",
-            "name": "Uk.data Processing.raw Data",
+            "name": "Raw Data",
             "full_name": "uk.data_processing.raw_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
             "layer": "raw",
+            "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "c506f374",
@@ -121,6 +122,7 @@ def assert_example_data(response_data):
             "modular_pipelines": [],
             "type": "parameters",
             "layer": None,
+            "dataset_type": None,
         },
         {
             "id": "0ecea0de",
@@ -131,6 +133,7 @@ def assert_example_data(response_data):
             "modular_pipelines": [],
             "type": "data",
             "layer": "model_inputs",
+            "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "7b140b3f",
@@ -151,16 +154,18 @@ def assert_example_data(response_data):
             "modular_pipelines": [],
             "type": "parameters",
             "layer": None,
+            "dataset_type": None,
         },
         {
             "id": "d5a8b994",
-            "name": "Uk.data Science.model",
+            "name": "Model",
             "full_name": "uk.data_science.model",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
+            "dataset_type": "kedro.io.memory_data_set.MemoryDataSet",
         },
     ]
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
@@ -187,6 +192,19 @@ class TestIndexEndpoint:
     def test_index(self, client):
         response = client.get("/")
         assert response.status_code == 200
+        assert "heap" not in response.text
+
+    @mock.patch("kedro_viz.integrations.kedro.telemetry.get_heap_app_id")
+    @mock.patch("kedro_viz.integrations.kedro.telemetry.get_heap_identity")
+    def test_heap_enabled(
+        self, mock_get_heap_identity, mock_get_heap_app_id, client, tmpdir
+    ):
+        mock_get_heap_app_id.return_value = "my_heap_app"
+        mock_get_heap_identity.return_value = "my_heap_identity"
+        response = client.get("/")
+        assert response.status_code == 200
+        assert 'heap.load("my_heap_app")' in response.text
+        assert 'heap.identify("my_heap_identity")' in response.text
 
 
 class TestMainEndpoint:
@@ -211,12 +229,21 @@ class TestNodeMetadataEndpoint:
             == "def process_data(raw_data, train_test_split):\n        ...\n"
         )
         assert metadata["parameters"] == {"train_test_split": 0.1}
+        assert metadata["run_command"] == 'kedro run --to-nodes="process_data"'
         assert str(Path("package/tests/conftest.py")) in metadata["filepath"]
 
     def test_data_node_metadata(self, client):
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
+            "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "run_command": 'kedro run --to-outputs="model_inputs"',
+        }
+
+    def test_data_node_metadata_for_free_input(self, client):
+        response = client.get("/api/nodes/13399a82")
+        assert response.json() == {
+            "filepath": "raw_data.csv",
             "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
         }
 
@@ -257,6 +284,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": [],
                 "type": "data",
                 "layer": "model_inputs",
+                "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
             },
             {
                 "id": "7b140b3f",
@@ -277,16 +305,18 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": [],
                 "type": "parameters",
                 "layer": None,
+                "dataset_type": None,
             },
             {
                 "id": "d5a8b994",
-                "name": "Uk.data Science.model",
+                "name": "Model",
                 "full_name": "uk.data_science.model",
                 "tags": ["train"],
                 "pipelines": ["__default__", "data_science"],
                 "modular_pipelines": ["uk", "uk.data_science"],
                 "type": "data",
                 "layer": None,
+                "dataset_type": "kedro.io.memory_data_set.MemoryDataSet",
             },
         ]
         assert_nodes_equal(response_data.pop("nodes"), expected_nodes)

@@ -96,6 +96,8 @@ Redux reducers are placed in `/src/reducers/`. We use a [combineReducers](https:
 
 Selectors can be found in `/src/selectors/`. We use [Reselect](https://github.com/reduxjs/reselect) to derive data from the state and translate it into useful data structures while keeping it memoised in order to prevent repeated calculations when the original values have not changed. In order to avoid circular imports, we've occasionally needed to get creative with file naming, hence the low-level 'disabled' selectors are separated into different files from the rest of the node/edge/tag selectors.
 
+We have used Kedro-Viz to visualize the selector dependency graph - [visit the demo to see it in action](https://quantumblacklabs.github.io/kedro-viz/?data=selectors).
+
 ## Utils
 
 The `/src/utils/` directory contains miscellaneous reusable utility functions.
@@ -125,8 +127,3 @@ Kedro-Viz includes a graph layout engine, for details see the [layout engine doc
 Our layout engine runs inside a web worker, which asynchronously performs these expensive calculations in a separate CPU thread, in order to avoid this blocking other operations on the main thread (e.g. CSS transitions and other state updates).
 
 The app uses [redux-watch](https://github.com/ExodusMovement/redux-watch) with a graph input selector to watch the store for state changes relevant to the graph layout. If the layout needs to change, this listener dispatches an asynchronous action which sends a message to the web worker to instruct it to calculate the new layout. Once the layout worker completes its calculations, it returns a new action to update the store's `state.graph` property with the new layout. Updates to the graph input state during worker calculations will interrupt the worker and cause it to start over from scratch.
-
-The logic for the layout calculations are handled in `/src/utils/graph/`. There are two graph layout engines, which can be toggled with the `oldgraph` flag:
-
-1. `dagre`: The previous iteration, which uses [Dagre.js](https://github.com/dagrejs/dagre)
-2. `newgraph`: Our custom built-in layout engine.
