@@ -19,7 +19,7 @@ import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleParametersHovered } from '../../actions';
 import {
   toggleModularPipelineActive,
-  toggleModularPipelineFilter
+  toggleModularPipelineFilter,
 } from '../../actions/modular-pipelines';
 import {
   loadNodeData,

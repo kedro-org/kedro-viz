@@ -23,7 +23,10 @@ import {
   ADD_NODE_METADATA,
 } from '../actions/nodes';
 import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
-import { TOGGLE_TYPE_DISABLED, NODE_TYPE_DISABLED_UNSET } from '../actions/node-type';
+import {
+  TOGGLE_TYPE_DISABLED,
+  NODE_TYPE_DISABLED_UNSET,
+} from '../actions/node-type';
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
@@ -158,11 +161,11 @@ describe('Reducer', () => {
       const mockDisabledState = {
         data: false,
         parameters: true,
-        task: true
+        task: true,
       };
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TYPE_DISABLED,
-        typeIDs: mockDisabledState
+        typeIDs: mockDisabledState,
       });
       expect(newState.nodeType.disabled).toEqual(mockDisabledState);
     });
@@ -171,16 +174,16 @@ describe('Reducer', () => {
       const mockDisabledState = {
         data: NODE_TYPE_DISABLED_UNSET,
         parameters: false,
-        task: true
+        task: true,
       };
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TYPE_DISABLED,
-        typeIDs: mockDisabledState
+        typeIDs: mockDisabledState,
       });
       expect(newState.nodeType.disabled).toEqual({
         data: true,
         parameters: false,
-        task: true
+        task: true,
       });
     });
 
@@ -188,16 +191,16 @@ describe('Reducer', () => {
       const mockDisabledState = {
         data: true,
         parameters: true,
-        task: true
+        task: true,
       };
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TYPE_DISABLED,
-        typeIDs: mockDisabledState
+        typeIDs: mockDisabledState,
       });
       expect(newState.nodeType.disabled).toEqual({
         data: NODE_TYPE_DISABLED_UNSET,
         parameters: NODE_TYPE_DISABLED_UNSET,
-        task: NODE_TYPE_DISABLED_UNSET
+        task: NODE_TYPE_DISABLED_UNSET,
       });
     });
   });
