@@ -85,7 +85,8 @@
       "modular_pipelines": [],
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium", "small"],
-      "type": "data"
+      "type": "data",
+      "dataset_type": null
     },
     {
       "full_name": "dog",
