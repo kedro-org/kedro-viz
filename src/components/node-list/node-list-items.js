@@ -14,8 +14,7 @@ export const isTagType = (type) => type === 'tag';
 export const isModularPipelineType = (type) => type === 'modularPipeline';
 export const isElementType = (type) => type === 'elementType';
 
-export const isGroupType = (type) =>
-  isElementType(type) || isTagType(type);
+export const isGroupType = (type) => isElementType(type) || isTagType(type);
 
 /**
  * Get a list of IDs of the visible nodes from all groups
@@ -181,10 +180,12 @@ export const getFilteredElementTypes = createSelector(
     highlightMatch(
       filterNodeGroups(
         {
-          elementType: Object.entries(sidebarElementTypes).map(([type, name]) => ({
-            id: type,
-            name,
-          })),
+          elementType: Object.entries(sidebarElementTypes).map(
+            ([type, name]) => ({
+              id: type,
+              name,
+            })
+          ),
         },
         searchValue
       ),
@@ -293,32 +294,29 @@ export const getFilteredNodeItems = createSelector(
  * @param {object} items List items by group type
  * @return {array} List of groups
  */
-export const getGroups = createSelector(
-  [(state) => state.items],
-  (items) => {
-    const groups = {};
- 
-    for (const [type, name] of Object.entries(sidebarGroups)) {
-      const itemsOfType = items[type] || [];
-      const allUnchecked = itemsOfType.every((item) => !item.checked);
-      const allChecked = itemsOfType.every((item) => item.checked);
-    
-      groups[type] = {
-        type,
-        name,
-        id: type,
-        kind: 'filter',
-        allUnchecked: itemsOfType.every((item) => !item.checked),
-        allChecked: itemsOfType.every((item) => item.checked),
-        checked: !allUnchecked,
-        visibleIcon: allChecked ? IndicatorIcon : IndicatorPartialIcon,
-        invisibleIcon: IndicatorOffIcon,
-      };
-    }
+export const getGroups = createSelector([(state) => state.items], (items) => {
+  const groups = {};
 
-    return groups;
+  for (const [type, name] of Object.entries(sidebarGroups)) {
+    const itemsOfType = items[type] || [];
+    const allUnchecked = itemsOfType.every((item) => !item.checked);
+    const allChecked = itemsOfType.every((item) => item.checked);
+
+    groups[type] = {
+      type,
+      name,
+      id: type,
+      kind: 'filter',
+      allUnchecked: itemsOfType.every((item) => !item.checked),
+      allChecked: itemsOfType.every((item) => item.checked),
+      checked: !allUnchecked,
+      visibleIcon: allChecked ? IndicatorIcon : IndicatorPartialIcon,
+      invisibleIcon: IndicatorOffIcon,
+    };
   }
-);
+
+  return groups;
+});
 
 /**
  * Returns filtered/highlighted items for nodes, tags and modular pipelines

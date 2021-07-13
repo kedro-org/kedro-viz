@@ -59,9 +59,9 @@ describe('NodeList', () => {
           const expectedTagResult = tags.filter((tag) =>
             tag.name.includes(searchText)
           );
-          const expectedElementTypeResult = Object.keys(sidebarElementTypes).filter((type) =>
-            type.includes(searchText)
-          );
+          const expectedElementTypeResult = Object.keys(
+            sidebarElementTypes
+          ).filter((type) => type.includes(searchText));
           // obtain the modular pipeline parents
           const expectedModularPipelines = nodesModularPipelines.hasOwnProperty(
             searchText
@@ -108,7 +108,9 @@ describe('NodeList', () => {
         type.includes(searchText)
       );
       expect(nodeList().length).toBe(
-        expectedResult.length + expectedTagResult.length + expectedElementTypeResult.length
+        expectedResult.length +
+          expectedTagResult.length +
+          expectedElementTypeResult.length
       );
       // Clear the list with escape key
       searchWrapper.simulate('keydown', { keyCode: 27 });

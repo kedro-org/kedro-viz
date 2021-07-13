@@ -26,7 +26,7 @@ const shouldMemo = (prevProps, nextProps) =>
       'selected',
       'label',
       'children',
-      'count'
+      'count',
     ],
     prevProps,
     nextProps
@@ -128,10 +128,14 @@ const NodeListRow = memo(
             )}
             <label
               htmlFor={id}
-              className={classnames('pipeline-row__toggle', `pipeline-row__toggle--kind-${kind}`, {
-                'pipeline-row__toggle--disabled': disabled,
-                'pipeline-row__toggle--selected': selected,
-              })}>
+              className={classnames(
+                'pipeline-row__toggle',
+                `pipeline-row__toggle--kind-${kind}`,
+                {
+                  'pipeline-row__toggle--disabled': disabled,
+                  'pipeline-row__toggle--selected': selected,
+                }
+              )}>
               <input
                 id={id}
                 className="pipeline-nodelist__row__checkbox"
