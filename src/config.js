@@ -41,14 +41,14 @@ export const flags = {
 // Sidebar groups is an ordered map of { id: label }
 export const sidebarGroups = {
   elementType: 'Element types',
-  tag: 'Tags'
+  tag: 'Tags',
 };
 
 // Sidebar element types is an ordered map of { id: label }
 export const sidebarElementTypes = {
   task: 'Nodes',
   data: 'Datasets',
-  parameters: 'Parameters'
+  parameters: 'Parameters',
 };
 
 export const shortTypeMapping = {
