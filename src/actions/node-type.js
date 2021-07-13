@@ -15,8 +15,6 @@ export const NODE_TYPE_DISABLED_UNSET = 0;
 export function toggleTypeDisabled(typeIDs, disabled) {
   return {
     type: TOGGLE_TYPE_DISABLED,
-    typeIDs: typeof typeIDs === 'string'
-      ? { [typeIDs]: disabled }
-      : typeIDs,
+    typeIDs: typeof typeIDs === 'string' ? { [typeIDs]: disabled } : typeIDs,
   };
 }

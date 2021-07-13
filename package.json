@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "3.12.0",
+  "version": "3.13.0",
   "main": "lib/components/app/index.js",
   "files": [
     "lib"
@@ -24,6 +24,7 @@
     "lib-test": "npm-run-all -s lib lib-test:setup lib-test:serve",
     "lib-test:setup": "node ./tools/test-lib/setup.js",
     "lib-test:serve": "node ./tools/test-lib/serve.js",
+    "format": "prettier --single-quote --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "lint": "npm-run-all -p lint:js lint:scss",
     "lint:js": "eslint src/ --fix",
     "lint:scss": "stylelint 'src/**/*.scss' --fix",
@@ -58,6 +59,7 @@
     "lodash.clonedeep": "^4.5.0",
     "plotly.js-cartesian-dist": "^1.58.4",
     "react-custom-scrollbars": "^4.2.1",
+    "react-json-view": "^1.21.3",
     "react-plotly.js": "^2.5.1",
     "react-redux": "^7.2.4",
     "react-test-renderer": "^17.0.2",

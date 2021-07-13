@@ -61,7 +61,9 @@ describe('node-list-selectors', () => {
   describe('getFilteredElementTypes', () => {
     const elementTypes = Object.keys(sidebarElementTypes);
     const searchValue = 'n';
-    const filteredElementTypes = getFilteredElementTypes({ searchValue }).elementType;
+    const filteredElementTypes = getFilteredElementTypes({
+      searchValue,
+    }).elementType;
 
     const elementType = expect.arrayContaining([
       expect.objectContaining({
@@ -102,7 +104,7 @@ describe('node-list-selectors', () => {
         visible: expect.any(Boolean),
         disabled: expect.any(Boolean),
         checked: expect.any(Boolean),
-        count: expect.any(Number)
+        count: expect.any(Number),
       }),
     ]);
 
@@ -178,7 +180,7 @@ describe('node-list-selectors', () => {
         visible: expect.any(Boolean),
         disabled: expect.any(Boolean),
         checked: expect.any(Boolean),
-        count: expect.any(Number)
+        count: expect.any(Number),
       }),
     ]);
 
@@ -233,7 +235,7 @@ describe('node-list-selectors', () => {
         faded: expect.any(Boolean),
         visible: expect.any(Boolean),
         disabled: expect.any(Boolean),
-        checked: expect.any(Boolean)
+        checked: expect.any(Boolean),
       }),
     ]);
 
@@ -287,7 +289,7 @@ describe('node-list-selectors', () => {
       kind: expect.any(String),
       allUnchecked: expect.any(Boolean),
       allChecked: expect.any(Boolean),
-      checked: expect.any(Boolean)
+      checked: expect.any(Boolean),
     });
 
     it('returns groups for each type in the correct format', () => {
