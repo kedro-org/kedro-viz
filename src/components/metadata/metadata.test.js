@@ -2,10 +2,11 @@ import React from 'react';
 import MetaData from './index';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 import { toggleTypeDisabled } from '../../actions/node-type';
-import { toggleNodeClicked } from '../../actions/nodes';
+import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
 import { setup, prepareState } from '../../utils/state.mock';
 import animals from '../../utils/data/animals.mock.json';
 import node_plot from '../../utils/data/node_plot.mock.json';
+import node_parameters from '../../utils/data/node_parameters.mock.json';
 
 const salmonTaskNodeId = '443cf06a';
 const catDatasetNodeId = '9d989e8d';
@@ -30,6 +31,7 @@ describe('MetaData', () => {
   const title = (wrapper) => wrapper.find('.pipeline-metadata__title');
   const rowIcon = (row) => row.find('svg.pipeline-metadata__icon');
   const rowValue = (row) => row.find('.pipeline-metadata__value');
+  const rowObject = (row) => row.find('.pipeline-metadata__object');
   const rowByLabel = (wrapper, label) =>
     // Using attribute since traversal by sibling not supported
     wrapper.find(`.pipeline-metadata__row[data-label="${label}"]`);
@@ -49,8 +51,7 @@ describe('MetaData', () => {
       const wrapper = setup.mount(
         <MetaData visible={true} metadata={metadata} />
       );
-
-      const parametersRow = () => rowByLabel(wrapper, 'Parameters (20):');
+      const parametersRow = () => rowByLabel(wrapper, 'Parameters:');
       const expandButton = parametersRow().find(
         '.pipeline-metadata__value-list-expand'
       );
@@ -88,10 +89,32 @@ describe('MetaData', () => {
       expect(textOf(rowValue(row))).toEqual(['task']);
     });
 
-    it('shows the node parameters', () => {
+    it('does not display the node parameter row when there are no parameters', () => {
       const wrapper = mount({ nodeId: salmonTaskNodeId });
-      const row = rowByLabel(wrapper, 'Parameters (-):');
-      expect(textOf(rowValue(row))).toEqual(['-']);
+      const row = rowByLabel(wrapper, 'Parameters:');
+      //this is output of react-json-view with no value
+      expect(textOf(rowObject(row)).length).toEqual(0);
+    });
+
+    it('shows the node parameters when there are parameters', () => {
+      const metadata = getClickedNodeMetaData(
+        prepareState({
+          data: animals,
+          afterLayoutActions: [
+            () => toggleNodeClicked(salmonTaskNodeId),
+            () =>
+              addNodeMetadata({ id: salmonTaskNodeId, data: node_parameters }),
+          ],
+        })
+      );
+      const wrapper = setup.mount(
+        <MetaData visible={true} metadata={metadata} />
+      );
+      const row = rowByLabel(wrapper, 'Parameters:');
+      //this is output of react-json-view with 3 parameters
+      expect(textOf(rowObject(row))[0]).toEqual(
+        expect.stringContaining('3 items')
+      );
     });
 
     it('shows the node inputs when parameters are disabled (default)', () => {
@@ -139,26 +162,55 @@ describe('MetaData', () => {
       const row = rowByLabel(wrapper, 'Pipeline:');
       expect(textOf(rowValue(row))).toEqual(['Default']);
     });
-
-    it('shows the node run command', () => {
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
-      const row = rowByLabel(wrapper, 'Run Command:');
-      expect(textOf(rowValue(row))).toEqual(['kedro run --to-nodes salmon']);
+    describe('when there is no runCommand returned by the backend', () => {
+      it('should show a help message asking user to provide a name property', () => {
+        const wrapper = mount({ nodeId: salmonTaskNodeId });
+        const row = rowByLabel(wrapper, 'Run Command:');
+        expect(textOf(rowValue(row))).toEqual([
+          'Please provide a name argument for this node in order to see a run command.',
+        ]);
+      });
     });
 
-    it('copies run command when button clicked', () => {
-      window.navigator.clipboard = {
-        writeText: jest.fn(),
-      };
-
-      const wrapper = mount({ nodeId: salmonTaskNodeId });
-      const copyButton = wrapper.find('button.pipeline-metadata__copy-button');
-
-      copyButton.simulate('click');
-
-      expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
-        'kedro run --to-nodes salmon'
+    describe('when there is a runCommand returned by the backend', () => {
+      const metadata = getClickedNodeMetaData(
+        prepareState({
+          data: animals,
+          afterLayoutActions: [() => toggleNodeClicked(salmonTaskNodeId)],
+        })
       );
+      // Add runCommand which would be returned by the server
+      metadata.runCommand = 'kedro run --to-nodes="salmon"';
+
+      it('shows the node run command', () => {
+        const wrapper = setup.mount(
+          <MetaData visible={true} metadata={metadata} />
+        );
+
+        const row = rowByLabel(wrapper, 'Run Command:');
+        expect(textOf(rowValue(row))).toEqual([
+          'kedro run --to-nodes="salmon"',
+        ]);
+      });
+
+      it('copies run command when button clicked', () => {
+        window.navigator.clipboard = {
+          writeText: jest.fn(),
+        };
+
+        const wrapper = setup.mount(
+          <MetaData visible={true} metadata={metadata} />
+        );
+        const copyButton = wrapper.find(
+          'button.pipeline-metadata__copy-button'
+        );
+
+        copyButton.simulate('click');
+
+        expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
+          'kedro run --to-nodes="salmon"'
+        );
+      });
     });
   });
 
@@ -205,25 +257,42 @@ describe('MetaData', () => {
       expect(textOf(rowValue(row))).toEqual(['Default']);
     });
 
-    it('shows the node run command', () => {
-      const wrapper = mount({ nodeId: catDatasetNodeId });
-      const row = rowByLabel(wrapper, 'Run Command:');
-      expect(textOf(rowValue(row))).toEqual(['kedro run --to-inputs cat']);
-    });
-
-    it('copies run command when button clicked', () => {
-      window.navigator.clipboard = {
-        writeText: jest.fn(),
-      };
-
-      const wrapper = mount({ nodeId: catDatasetNodeId });
-      const copyButton = wrapper.find('button.pipeline-metadata__copy-button');
-
-      copyButton.simulate('click');
-
-      expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
-        'kedro run --to-inputs cat'
+    describe('when there is a runCommand returned by the backend', () => {
+      const metadata = getClickedNodeMetaData(
+        prepareState({
+          data: animals,
+          afterLayoutActions: [() => toggleNodeClicked(catDatasetNodeId)],
+        })
       );
+      // Add runCommand which would be returned by the server
+      metadata.runCommand = 'kedro run --to-outputs="cat"';
+
+      it('shows the node run command', () => {
+        const wrapper = setup.mount(
+          <MetaData visible={true} metadata={metadata} />
+        );
+        const row = rowByLabel(wrapper, 'Run Command:');
+        expect(textOf(rowValue(row))).toEqual(['kedro run --to-outputs="cat"']);
+      });
+
+      it('copies run command when button clicked', () => {
+        window.navigator.clipboard = {
+          writeText: jest.fn(),
+        };
+
+        const wrapper = setup.mount(
+          <MetaData visible={true} metadata={metadata} />
+        );
+        const copyButton = wrapper.find(
+          'button.pipeline-metadata__copy-button'
+        );
+
+        copyButton.simulate('click');
+
+        expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
+          'kedro run --to-outputs="cat"'
+        );
+      });
     });
   });
 
@@ -264,10 +333,11 @@ describe('MetaData', () => {
         expect(textOf(rowValue(row))).toEqual(['-']);
       });
 
-      it('shows the node parameters', () => {
+      it('does not display the node parameter when it is an empty object', () => {
         const wrapper = mount({ nodeId: rabbitParamsNodeId });
-        const row = rowByLabel(wrapper, 'Parameters (-):');
-        expect(textOf(rowValue(row))).toEqual(['-']);
+        const row = rowByLabel(wrapper, 'Parameters:');
+        //the metadata-object component would not load when parameters is an empty object
+        expect(textOf(rowObject(row)).length).toEqual(0);
       });
 
       it('shows the node tags', () => {
@@ -311,7 +381,7 @@ describe('MetaData', () => {
 
     it('shows the node parameters', () => {
       const wrapper = mount({ nodeId: bullPlotNodeID });
-      const row = rowByLabel(wrapper, 'Parameters (-):');
+      const row = rowByLabel(wrapper, 'Parameters:');
       expect(textOf(rowValue(row))).toEqual([]);
     });
 

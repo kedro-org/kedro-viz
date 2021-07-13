@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import { getGraphNodes } from './nodes';
-
 const getClickedNode = (state) => state.node.clicked;
 
 /**
@@ -17,21 +16,15 @@ export const getVisibleMetaSidebar = createSelector(
 );
 
 /**
- * Templates for run commands
+ * Unwrap parameters by extracting the first and only object based on assumption that server returns object with additional nesting.
+ *  @param {?object} parameters The parameters as returned from the server
+ *  @returns {object} The unwrapped parameters
  */
-const runCommandTemplates = {
-  data: (name) => `kedro run --to-inputs ${name}`,
-  task: (name) => `kedro run --to-nodes ${name}`,
-};
-
-/**
- * Returns run command for the node, if applicable to the node type
- * @param {object} node The node
- * @returns {?string} The run command for the node, if applicable
- */
-const getRunCommand = (node) => {
-  const template = runCommandTemplates[node.type];
-  return template ? template(node.fullName) : null;
+const unwrapParameters = (parameters) => {
+  if (!parameters || !parameters[Object.keys(parameters)[0]]) {
+    return {};
+  }
+  return parameters[Object.keys(parameters)[0]];
 };
 
 /**
@@ -49,6 +42,7 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.parameters,
     (state) => state.node.plot,
     (state) => state.node.datasetType,
+    (state) => state.node.runCommand,
   ],
   (
     nodeId,
@@ -60,7 +54,8 @@ export const getClickedNodeMetaData = createSelector(
     nodeCodes,
     nodeParameters,
     nodePlot,
-    nodeDatasetTypes
+    nodeDatasetTypes,
+    nodeRunCommand
   ) => {
     const node = nodes[nodeId];
 
@@ -68,20 +63,14 @@ export const getClickedNodeMetaData = createSelector(
       return null;
     }
 
-    const parameters =
-      nodeParameters[node.id] &&
-      Object.entries(nodeParameters[node.id]).map(
-        ([key, value]) => `${key}: ${value}`
-      );
-
     const metadata = {
       node,
       tags: [...nodeTags[node.id]]
         .map((tagId) => tagNames[tagId])
         .sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
-      parameters,
-      runCommand: getRunCommand(node),
+      parameters: unwrapParameters(nodeParameters[node.id]),
+      runCommand: nodeRunCommand[node.id],
       code: nodeCodes[node.id],
       filepath: nodeFilepaths[node.id],
       plot: nodePlot[node.id],

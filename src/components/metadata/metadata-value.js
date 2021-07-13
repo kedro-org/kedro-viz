@@ -12,11 +12,13 @@ const MetaDataValue = ({
   kind,
   empty,
 }) => (
-  <Container
-    title={value}
-    className={modifiers('pipeline-metadata__value', { kind }, className)}>
-    {!value && value !== 0 ? empty : value}
-  </Container>
+  <>
+    <Container
+      title={value}
+      className={modifiers('pipeline-metadata__value', { kind }, className)}>
+      {!value && value !== 0 ? empty : value}
+    </Container>
+  </>
 );
 
 export default MetaDataValue;
