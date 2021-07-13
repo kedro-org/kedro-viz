@@ -8,6 +8,23 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 3.13.0
+
+## Major features and improvements
+
+- Implement new tree list with modular pipelines and search UI for new sidebar navigation. (#479)
+- Implement element filters and further design updates to the filter panel for new sidebar navigation. (#454)
+- Implement `kedro-telemetry` in production to enable heap analysis for Kedro-Viz. (#481, #487)
+- Show decorated function's source code on code panel. (#493)
+- Enable the display of entire parameter object with react-json-viewer on the metadata panel. (#494)
+
+## Bug fixes and other changes
+
+- Upgrade dev dependencies to solve snyk errors. (#486)
+- Remove the old dagre graphing logic and the 'oldgraph' flag. (#486)
+- Delete 'modularpipeline' flag. (#495)
+- Fix run command suggestion. (#497)
+
 # Release 3.12.1
 
 ## Bug fixes and other changes
