@@ -26,9 +26,7 @@ const getTextLabels = (state) => state.textLabels;
 const getFontLoaded = (state) => state.fontLoaded;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 const getClickedNode = (state) => state.node.clicked;
-const getEdgeIDs = (state) => state.edge.ids;
-const getEdgeSources = (state) => state.edge.sources;
-const getEdgeTargets = (state) => state.edge.targets;
+const getNodeParameters = (state) => state.node.parameters;
 
 /**
  * Gets a map of nodeIds to graph nodes
@@ -275,21 +273,22 @@ export const getVisibleNodes = createSelector(
         }))
       : []
 );
-
 /**
- * Returns an map of task nodeIDs to graph nodes that have parameter nodes as their source
+ *    Sets a parameter node name if the node has one parameter object or count of parameters
+ *   if the node has more than one parameter object. This name is used when hovering over parameter
+ *   indicator in the flowchart
  */
-export const getNodesWithInputParams = createSelector(
-  [getGraphNodes, getEdgeIDs, getNodeType, getEdgeSources, getEdgeTargets],
-  (nodes, edgeIDs, nodeType, edgeSources, edgeTargets) => {
-    const nodesList = {};
-    for (const edgeID of edgeIDs) {
-      const source = edgeSources[edgeID];
-      const target = edgeTargets[edgeID];
-      if (nodeType[source] === 'parameters' && nodeType[target] === 'task') {
-        nodesList[target] = nodes[target];
+
+export const getInputParameters = createSelector(
+  [getPipelineNodeIDs, getNodeParameters],
+  (nodeIDs, nodeParameters) =>
+    arrayToObject(nodeIDs, (nodeID) => {
+      if (!nodeParameters[nodeID]) {
+        return null;
       }
-    }
-    return nodesList;
-  }
+      const length = Object.keys(nodeParameters[nodeID]).length;
+      return length > 1
+        ? `Parameters:${length}`
+        : `Params:${Object.keys(nodeParameters[nodeID])[0]}`;
+    })
 );

@@ -121,7 +121,7 @@ export const drawNodes = function (changed) {
     nodeActive,
     nodeSelected,
     hoveredParameters,
-    nodesWithInputParams,
+    inputParameters,
     newParamsFlag,
     nodes,
   } = this.props;
@@ -174,6 +174,7 @@ export const drawNodes = function (changed) {
     enterNodes
       .append('rect')
       .attr('class', 'pipeline-node__parameter-indicator')
+      .on('mouseover', this.handleParamsIndicatorMouseOver)
       .call(updateParameterRect);
 
     // Performance: use a single path per icon
@@ -209,7 +210,7 @@ export const drawNodes = function (changed) {
       'nodeActive',
       'nodeSelected',
       'hoveredParameters',
-      'nodesWithInputParams',
+      'inputParameters',
       'newParamsFlag',
       'clickedNode',
       'linkedNodes'
@@ -223,7 +224,7 @@ export const drawNodes = function (changed) {
         (node) =>
           newParamsFlag &&
           hoveredParameters &&
-          nodesWithInputParams[node.id] &&
+          inputParameters[node.id] &&
           nodeTypeDisabled.parameters
       )
       .classed(
@@ -260,7 +261,7 @@ export const drawNodes = function (changed) {
         (node) =>
           newParamsFlag &&
           nodeTypeDisabled.parameters &&
-          nodesWithInputParams[node.id]
+          inputParameters[node.id]
       )
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))

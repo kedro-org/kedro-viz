@@ -253,7 +253,7 @@ describe('FlowChart', () => {
       <FlowChart
         hoveredParameters={true}
         nodeTypeDisabled={{ parameters: true }}
-        nodesWithInputParams={{
+        inputParameters={{
           [mockNodes[0]]: true,
           [mockNodes[1]]: true,
         }}
@@ -269,7 +269,7 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(
       <FlowChart
         nodeTypeDisabled={{ parameters: true }}
-        nodesWithInputParams={{
+        inputParameters={{
           [mockNodes[0]]: true,
           [mockNodes[1]]: true,
         }}
@@ -355,7 +355,7 @@ describe('FlowChart', () => {
       nodeActive: expect.any(Object),
       nodeSelected: expect.any(Object),
       nodeTypeDisabled: expect.any(Object),
-      nodesWithInputParams: expect.any(Object),
+      inputParameters: expect.any(Object),
       newParamsFlag: expect.any(Boolean),
       nodes: expect.any(Array),
       visibleGraph: expect.any(Boolean),
