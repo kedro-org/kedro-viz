@@ -1,7 +1,6 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
 import { mockState } from '../utils/state.mock';
-import { changeFlag } from './index';
 import { calculateGraph, updateGraph } from './graph';
 import { getGraphInput } from '../selectors/layout';
 

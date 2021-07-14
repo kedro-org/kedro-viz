@@ -10,10 +10,11 @@ import {
 /**
  * Shows a metadata object
  */
-const MetaDataObject = ({ className, value, kind, theme }) => (
-  <>
-    <div
-      className={modifiers('pipeline-metadata__object', { kind }, className)}>
+const MetaDataObject = ({ className, value, kind, theme, empty }) => (
+  <div className={modifiers('pipeline-metadata__object', { kind }, className)}>
+    {Object.keys(value).length === 0 ? (
+      empty
+    ) : (
       <ReactJson
         theme={theme === 'dark' ? darkjsonViewerTheme : lightjsonViewerTheme}
         style={{
@@ -26,8 +27,8 @@ const MetaDataObject = ({ className, value, kind, theme }) => (
         enableClipboard={true}
         displayDataTypes={false}
         src={value}></ReactJson>
-    </div>
-  </>
+    )}
+  </div>
 );
 
 export default MetaDataObject;
