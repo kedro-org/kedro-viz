@@ -50,6 +50,7 @@ const TreeListProvider = ({
   nodes,
   nodeSelected,
   onToggleNodeSelected,
+  onToggleContracted,
   searchValue,
   modularPipelines,
   modularPipelineIds,
@@ -111,6 +112,27 @@ const TreeListProvider = ({
     }
   };
 
+  const onItemExpandToggle = (event, expandedItemIds) => {
+    // Contract all modular pipelines that are not expanded on sidebar
+    for (const id of modularPipelineIds) {
+      if (!expandedItemIds.includes(id)) {
+        onToggleContracted(id, true);
+      }
+    }
+
+    // Expand all modular pipelines that are expanded on sidebar
+    for (const id of expandedItemIds) {
+      onToggleContracted(id, false);
+    }
+  };
+
+  const onSearchItemExpandToggle = (event, expandedItemIds) => {
+    // Expand all the modular pipelines shown in the search
+    for (const id of expandedPipelines) {
+      onToggleContracted(id, false);
+    }
+  };
+
   const renderModularPipelines = (treeData) =>
     treeData.children.map((node) =>
       renderTree(
@@ -161,6 +183,7 @@ const TreeListProvider = ({
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       expanded={expandedPipelines}
+      onNodeToggle={onSearchItemExpandToggle}
       key="tree">
       {/* render set of modular pipelines in the main pipeline */}
       {renderModularPipelines(treeData)}
@@ -172,6 +195,7 @@ const TreeListProvider = ({
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
+      onNodeToggle={onItemExpandToggle}
       key="tree-search">
       {renderModularPipelines(treeData)}
       {renderChildNodes(treeData)}
