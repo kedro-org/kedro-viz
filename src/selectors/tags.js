@@ -34,17 +34,14 @@ export const getTagCount = createSelector(
 /**
  * Get the total number of nodes for each tag
  */
- export const getTagNodeCounts = createSelector(
-  [getNodeTags],
-  (nodeTags) => {
-    const counts = {};
+export const getTagNodeCounts = createSelector([getNodeTags], (nodeTags) => {
+  const counts = {};
 
-    for (const tagIds of Object.values(nodeTags)) {
-      for (const tagId of tagIds) {
-        counts[tagId] = (counts[tagId] + 1) || 1;
-      }
+  for (const tagIds of Object.values(nodeTags)) {
+    for (const tagId of tagIds) {
+      counts[tagId] = counts[tagId] + 1 || 1;
     }
-
-    return counts;
   }
-);
+
+  return counts;
+});

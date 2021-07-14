@@ -72,26 +72,18 @@ describe('NodeListRow', () => {
     it('shows count if count prop set', () => {
       const { props } = setupProps();
       const mockCount = 123;
-      const wrapper = setup.mount(
-        <NodeListRow {...props} count={mockCount} />
+      const wrapper = setup.mount(<NodeListRow {...props} count={mockCount} />);
+      expect(wrapper.find('.pipeline-nodelist__row__count').text()).toBe(
+        mockCount.toString()
       );
-      expect(
-        wrapper
-          .find('.pipeline-nodelist__row__count')
-          .text()
-      ).toBe(mockCount.toString());
     });
 
     it('does not show count if count prop not set', () => {
       const { props } = setupProps();
-      const wrapper = setup.mount(
-        <NodeListRow {...props} count={null} />
+      const wrapper = setup.mount(<NodeListRow {...props} count={null} />);
+      expect(wrapper.find('.pipeline-nodelist__row__count').exists()).toBe(
+        false
       );
-      expect(
-        wrapper
-          .find('.pipeline-nodelist__row__count')
-          .exists()
-      ).toBe(false);
     });
   });
 
