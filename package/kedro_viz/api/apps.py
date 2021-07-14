@@ -76,6 +76,12 @@ def create_api_app_from_project(project_path: Path) -> FastAPI:
 def create_api_app_from_file(filepath: str) -> FastAPI:
     """Create an API from a json file."""
     app = _create_base_api_app()
+    app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
+
+    @app.get("/")
+    async def index():
+        html_content = (_HTML_DIR / "index.html").read_text(encoding="utf-8")
+        return HTMLResponse(html_content)
 
     @app.get("/api/main", response_class=JSONResponse)
     async def main():
