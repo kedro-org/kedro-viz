@@ -7,6 +7,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 3.13.1
+
+## Bug fixes and other changes
+
+- Fix running kedro viz with `--load-file`. (#509)
 
 # Release 3.13.0
 
