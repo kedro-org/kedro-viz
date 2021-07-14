@@ -249,7 +249,13 @@ export const getNodeSize = createSelector(
  * that are unnecessary for the chart layout calculation
  */
 export const getVisibleNodes = createSelector(
- [getFontLoaded, getContractedModularPipelines, getNodeSize, getNodeRank, getNodeDatasetType],
+  [
+    getFontLoaded,
+    getContractedModularPipelines,
+    getNodeSize,
+    getNodeRank,
+    getNodeDatasetType,
+  ],
   (fontLoaded, { node }, nodeSize, nodeRank, nodeDatasetType) => {
     if (!fontLoaded) {
       return [];
@@ -267,7 +273,7 @@ export const getVisibleNodes = createSelector(
     }));
     return nodes;
   }
-)
+);
 
 /**
  * Returns an map of task nodeIDs to graph nodes that have parameter nodes as their source

@@ -32,19 +32,3 @@
     #{$var-name}: #{rgba($color-dark, 0)};
   }
 }
-
-// Reset default browser button styles
-@mixin resetButton() {
-  display: inline-block;
-  padding: 0;
-  color: inherit;
-  background: none;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  cursor: pointer;
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  appearance: none;
-  user-select: none;
-}

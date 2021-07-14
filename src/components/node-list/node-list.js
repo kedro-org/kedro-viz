@@ -83,7 +83,6 @@ const NodeList = ({
                   onItemMouseEnter={onItemMouseEnter}
                   onItemMouseLeave={onItemMouseLeave}
                   onItemChange={onItemChange}
-                  onToggleContracted={onToggleContracted}
                   onGroupToggleChanged={onGroupToggleChanged}
                 />
               </Scrollbars>

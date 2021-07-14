@@ -20,7 +20,6 @@ const shouldMemo = (prevProps, nextProps) =>
       'active',
       'checked',
       'allUnchecked',
-      'contracted',
       'disabled',
       'faded',
       'visible',
@@ -62,7 +61,6 @@ const NodeListRow = memo(
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
-    const showContractedButton = type === 'modularPipeline';
 
     return (
       <Container
@@ -100,9 +98,7 @@ const NodeListRow = memo(
           className={classnames(
             'pipeline-nodelist__row__text',
             `pipeline-nodelist__row__text--kind-${kind}`,
-            `pipeline-nodelist__row__text--${rowType}`, {
-            'pipeline-nodelist__row__text--has-contract': showContractedButton,
-            }
+            `pipeline-nodelist__row__text--${rowType}`
           )}
           onClick={onClick}
           onFocus={onMouseEnter}

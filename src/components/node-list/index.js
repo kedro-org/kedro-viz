@@ -47,7 +47,6 @@ const NodeListProvider = ({
   onToggleTagActive,
   onToggleTagFilter,
   onToggleModularPipelineActive,
-  onToggleModularPipelineFilter,
   onToggleModularPipelineContracted,
   onToggleTypeDisabled,
   modularPipelines,

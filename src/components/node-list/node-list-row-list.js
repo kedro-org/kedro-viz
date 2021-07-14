@@ -11,7 +11,6 @@ const NodeRowList = ({
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
-  onToggleContracted,
 }) => (
   <LazyList
     height={(start, end) => (end - start) * nodeListRowHeight}
@@ -62,7 +61,6 @@ const NodeRowList = ({
             icon={item.icon}
             active={item.active}
             checked={item.checked}
-            contracted={item.contracted}
             disabled={item.disabled}
             faded={item.faded}
             visible={item.visible}
@@ -74,9 +72,6 @@ const NodeRowList = ({
             onMouseEnter={() => onItemMouseEnter(item)}
             onMouseLeave={() => onItemMouseLeave(item)}
             onChange={(e) => onItemChange(item, !e.target.checked)}
-            onToggleContracted={() =>
-              onToggleContracted && onToggleContracted(item.id, !item.contracted)
-            }
             rowType="filter"
           />
         ))}
