@@ -115,18 +115,25 @@ const TreeListProvider = ({
     }
   };
 
-  const renderModularPipelines = (treeData) =>
-    treeData.children.map((node) =>
+  const renderModularPipelines = (treeData, parentStatus) => {
+    // this value is needed to determine whether the children modular pipeline belongs to a parent under focusMode
+    const status =
+      parentStatus === false && treeData.id !== 'main'
+        ? parentStatus
+        : treeData.disabled;
+
+    return treeData.children.map((node) =>
       renderTree(
         node,
         onItemMouseEnter,
         onItemMouseLeave,
         onItemChange,
         onItemClick,
-        treeData.disabled, // this value is needed to determine whether the children belongs to a parent under focusMode
+        status,
         treeData.id
       )
     );
+  };
 
   const renderChildNodes = (treeData) =>
     treeData.nodes.map((node) => (
@@ -160,7 +167,7 @@ const TreeListProvider = ({
       focusMode={focusMode}
       parentPipeline={parentPipeline}
       parentDisabled={parentDisabled}>
-      {renderModularPipelines(rowData)}
+      {renderModularPipelines(rowData, parentDisabled)}
 
       {/* render set of node elements in that modular pipeline */}
       {renderChildNodes(rowData)}
@@ -175,7 +182,7 @@ const TreeListProvider = ({
       expanded={expandedPipelines}
       key="tree-search">
       {/* render set of modular pipelines in the main pipeline */}
-      {renderModularPipelines(treeData)}
+      {renderModularPipelines(treeData, false)}
       {/* render set of node elements in the main pipeline */}
       {renderChildNodes(treeData)}
     </StyledTreeView>
@@ -185,7 +192,7 @@ const TreeListProvider = ({
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       key="tree">
-      {renderModularPipelines(treeData)}
+      {renderModularPipelines(treeData, false)}
       {renderChildNodes(treeData)}
     </StyledTreeView>
   );
