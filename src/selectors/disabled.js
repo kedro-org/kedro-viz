@@ -46,10 +46,9 @@ export const getNodeDisabledTag = createSelector(
 );
 
 /**
- * Calculate whether nodes should be disabled based on whether their modular pipeline
- * filters are enabled
+ * Calculate whether nodes should be disabled based on their modular pipelines
  */
-export const getNodeDisabledModularPipelineFilter = createSelector(
+export const getNodeDisabledModularPipeline = createSelector(
   [
     getNodeIDs,
     getModularPipelineEnabled,
@@ -98,7 +97,7 @@ export const getNodeDisabled = createSelector(
     getNodeIDs,
     getNodeDisabledNode,
     getNodeDisabledTag,
-    getNodeDisabledModularPipelineFilter,
+    getNodeDisabledModularPipeline,
     getNodeDisabledPipeline,
     getNodeType,
     getNodeTypeDisabled,

@@ -2,7 +2,7 @@ import React from 'react';
 
 const CollapseIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <path d="M11.3 12.7v5.4H9.1v-1.7L5.5 20 4 18.5l3.6-3.6H5.9v-2.2h5.4zM18.5 4L20 5.5l-3.6 3.6h1.7v2.2h-5.4V5.9h2.2v1.7L18.5 4z" />
+    <path d="M21 3v18H3v-9.133h2V19h14V5h-7V3h9zm-16.293.293L11 9.586V8h2v5H8v-2h1.586L3.293 4.707l1.414-1.414z" />
   </svg>
 );
 

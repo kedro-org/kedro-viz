@@ -6,7 +6,7 @@ import { getContractedModularPipelines } from './contracted';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
-  getNodeDisabledModularPipelineFilter,
+  getNodeDisabledModularPipeline,
 } from './disabled';
 import getShortType from '../utils/short-type';
 import { getNodeRank } from './ranks';
@@ -102,7 +102,7 @@ export const getNodeData = createSelector(
     getNodeDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
-    getNodeDisabledModularPipelineFilter,
+    getNodeDisabledModularPipeline,
     getNodeTypeDisabled,
     getNodeModularPipelines,
   ],

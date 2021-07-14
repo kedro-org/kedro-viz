@@ -3,11 +3,11 @@ import flags from './flags';
 import graph from './graph';
 import layer from './layers';
 import loading from './loading';
-import modularPipeline from './modular-pipelines';
 import node from './nodes';
 import nodeType from './node-type';
 import pipeline from './pipeline';
 import tag from './tags';
+import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import {
   RESET_DATA,
@@ -55,11 +55,11 @@ const combinedReducer = combineReducers({
   graph,
   layer,
   loading,
-  modularPipeline,
   node,
   nodeType,
   pipeline,
   tag,
+  modularPipeline,
   visible,
   // These props don't have any actions associated with them
   dataSource: createReducer(null),

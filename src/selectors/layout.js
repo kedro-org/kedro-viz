@@ -55,7 +55,6 @@ export const getGraphInput = createSelector(
     if (!fontLoaded || triggerLargeGraphWarning) {
       return null;
     }
-    // console.table(edges);
 
     return { nodes, edges, layers, fontLoaded };
   }
