@@ -95,9 +95,11 @@ export const getNodeSelected = createSelector(
 /**
  * Returns formatted nodes as an array, with all relevant properties
  */
-export const getNodeData = createSelector(
+ export const getNodeData = createSelector(
   [
-    getContractedModularPipelines,
+    getPipelineNodeIDs,
+    getNodeName,
+    getNodeType,
     getNodeDatasetType,
     getNodeDisabled,
     getNodeDisabledNode,
@@ -107,7 +109,9 @@ export const getNodeData = createSelector(
     getNodeModularPipelines,
   ],
   (
-    { node },
+    nodeIDs,
+    nodeName,
+    nodeType,
     nodeDatasetType,
     nodeDisabled,
     nodeDisabledNode,
@@ -116,27 +120,27 @@ export const getNodeData = createSelector(
     typeDisabled,
     nodeModularPipelines
   ) =>
-    node.ids
+    nodeIDs
       .sort((a, b) => {
-        if (node.name[a] < node.name[b]) {
+        if (nodeName[a] < nodeName[b]) {
           return -1;
         }
-        if (node.name[a] > node.name[b]) {
+        if (nodeName[a] > nodeName[b]) {
           return 1;
         }
         return 0;
       })
       .map((id) => ({
         id,
-        name: node.name[id],
-        type: node.type[id],
-        icon: getShortType([nodeDatasetType[id]], node.type[id]),
+        name: nodeName[id],
+        type: nodeType[id],
+        icon: getShortType([nodeDatasetType[id]], nodeType[id]),
         modularPipelines: nodeModularPipelines[id],
         disabled: nodeDisabled[id],
         disabled_node: Boolean(nodeDisabledNode[id]),
         disabled_tag: nodeDisabledTag[id],
         disabled_modularPipeline: nodeDisabledModularPipeline[id],
-        disabled_type: Boolean(typeDisabled[node.type[id]]),
+        disabled_type: Boolean(typeDisabled[nodeType[id]]),
       }))
 );
 

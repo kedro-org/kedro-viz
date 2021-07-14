@@ -126,13 +126,6 @@ const TreeListProvider = ({
     }
   };
 
-  const onSearchItemExpandToggle = (event, expandedItemIds) => {
-    // Expand all the modular pipelines shown in the search
-    for (const id of expandedPipelines) {
-      onToggleContracted(id, false);
-    }
-  };
-
   const renderModularPipelines = (treeData) =>
     treeData.children.map((node) =>
       renderTree(
@@ -183,7 +176,6 @@ const TreeListProvider = ({
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       expanded={expandedPipelines}
-      onNodeToggle={onSearchItemExpandToggle}
       key="tree">
       {/* render set of modular pipelines in the main pipeline */}
       {renderModularPipelines(treeData)}
