@@ -283,7 +283,10 @@ export const getInputParameters = createSelector(
   [getPipelineNodeIDs, getNodeParameters],
   (nodeIDs, nodeParameters) =>
     arrayToObject(nodeIDs, (nodeID) => {
-      if (!nodeParameters[nodeID]) {
+      if (
+        !nodeParameters[nodeID] ||
+        Object.keys(nodeParameters[nodeID]).length === 0
+      ) {
         return null;
       }
       const length = Object.keys(nodeParameters[nodeID]).length;
