@@ -456,14 +456,14 @@ export class FlowChart extends Component {
   /**
    * Show, fill and and position the tooltip
    * @param {Object} event Event object
-   * @param {Object} node A node datum
+   * @param {Object} nodeName The fullname of the node
    * @param {?Object} options Options for the tooltip if required
    */
-  showTooltip(event, text, options = {}) {
+  showTooltip(event, nodeName, options = {}) {
     this.setState({
       tooltip: {
         targetRect: event && event.target.getBoundingClientRect(),
-        text: text,
+        text: nodeName,
         visible: true,
         ...options,
       },
