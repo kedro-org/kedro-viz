@@ -26,38 +26,31 @@ export const largeGraphThreshold = 1000;
 
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
-  oldgraph: {
-    description: 'Use older Dagre graphing algorithm',
-    default: false,
-    private: false,
-    icon: '📈',
-  },
   newparams: {
+    name: 'New parameters',
     description: `Disable parameters on page load and highlight parameter connections.`,
     default: true,
     icon: '🎛️',
   },
   sizewarning: {
+    name: 'Size Warning',
     description: 'Show a warning before rendering very large graphs',
     default: true,
     icon: '🐳',
   },
-  modularpipeline: {
-    description: 'Enable modular pipeline features',
-    default: false,
-    icon: '⛓️',
-  },
 };
 
-export const sidebar = {
-  Categories: {
-    Tags: 'tag',
-  },
-  Elements: {
-    Nodes: 'task',
-    Datasets: 'data',
-    Parameters: 'parameters',
-  },
+// Sidebar groups is an ordered map of { id: label }
+export const sidebarGroups = {
+  elementType: 'Element types',
+  tag: 'Tags',
+};
+
+// Sidebar element types is an ordered map of { id: label }
+export const sidebarElementTypes = {
+  task: 'Nodes',
+  data: 'Datasets',
+  parameters: 'Parameters',
 };
 
 export const shortTypeMapping = {

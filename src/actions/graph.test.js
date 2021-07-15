@@ -1,7 +1,6 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
 import { mockState } from '../utils/state.mock';
-import { changeFlag } from './index';
 import { calculateGraph, updateGraph } from './graph';
 import { getGraphInput } from '../selectors/layout';
 
@@ -37,28 +36,11 @@ describe('graph actions', () => {
       return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {
         expect(store.getState().graph).toEqual(
           expect.objectContaining({
-            oldgraph: expect.any(Boolean),
             nodes: expect.any(Array),
             edges: expect.any(Array),
             size: expect.any(Object),
           })
         );
-      });
-    });
-
-    it('uses new graph by default if the oldgraph flag is not set', () => {
-      const state = reducer(mockState.animals, changeFlag('oldgraph', false));
-      const store = createStore(reducer, state);
-      return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {
-        expect(store.getState().graph.oldgraph).toBe(false);
-      });
-    });
-
-    it('uses dagre if the oldgraph flag is set to true', () => {
-      const state = reducer(mockState.animals, changeFlag('oldgraph', true));
-      const store = createStore(reducer, state);
-      return calculateGraph(getGraphInput(state))(store.dispatch).then(() => {
-        expect(store.getState().graph.oldgraph).toBe(true);
       });
     });
   });

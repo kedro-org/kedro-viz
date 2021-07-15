@@ -117,6 +117,8 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
     parameters: Dict
     inputs: List[str]
     outputs: List[str]
+    run_command: Optional[str]
+
     class Config:
         schema_extra = {
             "example": {
@@ -125,6 +127,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
                 "parameters": {"test_size": 0.2},
                 "inputs": ["params:input1", "input2"],
                 "outputs":['output1']
+                "run_command": 'kedro run --to-nodes="split_data"',
             }
         }
 
@@ -133,12 +136,14 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     filepath: str
     type: str
     plot: Optional[Dict]
+    run_command: Optional[str]
 
     class Config:
         schema_extra = {
             "example": {
                 "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
                 "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+                "run_command": 'kedro run --to-outputs="master_table"',
             }
         }
 

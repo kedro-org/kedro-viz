@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "3.12.0",
+  "version": "3.13.1",
   "main": "lib/components/app/index.js",
   "files": [
     "lib"
@@ -24,6 +24,7 @@
     "lib-test": "npm-run-all -s lib lib-test:setup lib-test:serve",
     "lib-test:setup": "node ./tools/test-lib/setup.js",
     "lib-test:serve": "node ./tools/test-lib/serve.js",
+    "format": "prettier --single-quote --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "lint": "npm-run-all -p lint:js lint:scss",
     "lint:js": "eslint src/ --fix",
     "lint:scss": "stylelint 'src/**/*.scss' --fix",
@@ -37,10 +38,10 @@
     "snyk-test": "snyk test -prune-repeated-subdependencies"
   },
   "dependencies": {
+    "@quantumblack/kedro-ui": "1.1.7",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
-    "@quantumblack/kedro-ui": "1.1.4",
     "batching-toposort": "^1.2.0",
     "classnames": "^2.3.1",
     "d3-fetch": "^2.0.0",
@@ -51,7 +52,6 @@
     "d3-shape": "^2.1.0",
     "d3-transition": "^2.0.0",
     "d3-zoom": "^2.0.0",
-    "dagre": "git+https://github.com/richardwestenra/dagre.git#manual-ranking",
     "deepmerge": "^4.2.2",
     "fetch-mock": "^9.11.0",
     "highlight.js": "^10.7.3",
@@ -59,6 +59,7 @@
     "lodash.clonedeep": "^4.5.0",
     "plotly.js-cartesian-dist": "^1.58.4",
     "react-custom-scrollbars": "^4.2.1",
+    "react-json-view": "^1.21.3",
     "react-plotly.js": "^2.5.1",
     "react-redux": "^7.2.4",
     "react-test-renderer": "^17.0.2",

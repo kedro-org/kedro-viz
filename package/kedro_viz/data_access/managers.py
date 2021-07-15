@@ -82,12 +82,16 @@ class DataAccessManager:
 
     def add_pipeline(self, pipeline_key: str, pipeline: KedroPipeline):
         self.registered_pipelines.add_pipeline(pipeline_key)
+        free_inputs = pipeline.inputs()
         for node in sorted(pipeline.nodes, key=lambda n: n.name):
             task_node = self.add_node(pipeline_key, node)
             self.registered_pipelines.add_node(pipeline_key, task_node.id)
 
             for input_ in node.inputs:
-                input_node = self.add_node_input(pipeline_key, input_, task_node)
+                is_free_input = input_ in free_inputs
+                input_node = self.add_node_input(
+                    pipeline_key, input_, task_node, is_free_input
+                )
                 self.registered_pipelines.add_node(pipeline_key, input_node.id)
 
             for output in node.outputs:
@@ -102,9 +106,15 @@ class DataAccessManager:
         return task_node
 
     def add_node_input(
-        self, pipeline_key: str, input_dataset: str, task_node: TaskNode
+        self,
+        pipeline_key: str,
+        input_dataset: str,
+        task_node: TaskNode,
+        is_free_input: bool = False,
     ) -> Union[DataNode, ParametersNode]:
-        graph_node = self.add_dataset(pipeline_key, input_dataset)
+        graph_node = self.add_dataset(
+            pipeline_key, input_dataset, is_free_input=is_free_input
+        )
         graph_node.tags.update(task_node.tags)
         self.edges.add_edge(GraphEdge(source=graph_node.id, target=task_node.id))
         self.node_dependencies[graph_node.id].add(task_node.id)
@@ -125,7 +135,7 @@ class DataAccessManager:
         return graph_node
 
     def add_dataset(
-        self, pipeline_key: str, dataset_name: str
+        self, pipeline_key: str, dataset_name: str, is_free_input: bool = False
     ) -> Union[DataNode, ParametersNode]:
         obj = self.catalog.get_dataset(dataset_name)
         layer = self.catalog.get_layer_for_dataset(dataset_name)
@@ -143,6 +153,7 @@ class DataAccessManager:
                 layer=layer,
                 tags=set(),
                 dataset=obj,
+                is_free_input=is_free_input,
             )
             self.modular_pipelines.add_modular_pipeline(graph_node.modular_pipelines)
         graph_node = self.nodes.add_node(graph_node)

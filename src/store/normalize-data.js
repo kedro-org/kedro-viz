@@ -34,6 +34,7 @@ export const createInitialPipelineState = () => ({
     outputs: {},
     plot: {},
     datasetType: {},
+    runCommand: {},
     modularPipelines: {},
   },
   nodeType: {
@@ -149,6 +150,7 @@ const addNode = (state) => (node) => {
   state.node.filepath[id] = node.filepath;
   state.node.plot[id] = node.plot;
   state.node.datasetType[id] = node.dataset_type;
+  state.node.runCommand[id] = node.runCommand;
   state.node.modularPipelines[id] = node.modular_pipelines || [];
 };
 

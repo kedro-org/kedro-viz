@@ -1,5 +1,6 @@
 import React from 'react';
 import MetaDataList from './metadata-list';
+import MetaDataObject from './metadata-object';
 import MetaDataValue from './metadata-value';
 import './styles/metadata.css';
 
@@ -8,6 +9,7 @@ import './styles/metadata.css';
  */
 const MetaDataRow = ({
   label,
+  theme,
   property,
   value,
   kind = 'text',
@@ -19,7 +21,7 @@ const MetaDataRow = ({
   children,
 }) => {
   const showList = Array.isArray(value);
-
+  const showObject = typeof value === 'object' && value !== null && !showList;
   return (
     visible && (
       <>
@@ -36,8 +38,21 @@ const MetaDataRow = ({
               limit={limit}
             />
           )}
-          {!showList && !children && (
-            <MetaDataValue value={value} kind={kind} empty={empty} />
+          {!showList && !showObject && !children && (
+            <MetaDataValue
+              value={value}
+              kind={kind}
+              empty={empty}
+              theme={theme}
+            />
+          )}
+          {showObject && (
+            <MetaDataObject
+              value={value}
+              kind={kind}
+              theme={theme}
+              empty={empty}
+            />
           )}
           {children}
         </dd>

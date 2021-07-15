@@ -7,8 +7,10 @@ import {
   CHANGE_FLAG,
   RESET_DATA,
   TOGGLE_EXPORT_MODAL,
+  TOGGLE_SETTINGS_MODAL,
   TOGGLE_LAYERS,
   TOGGLE_MINIMAP,
+  TOGGLE_CODE,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
@@ -23,7 +25,10 @@ import {
   ADD_NODE_METADATA,
 } from '../actions/nodes';
 import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
-import { TOGGLE_TYPE_DISABLED } from '../actions/node-type';
+import {
+  TOGGLE_TYPE_DISABLED,
+  NODE_TYPE_DISABLED_UNSET,
+} from '../actions/node-type';
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
@@ -154,15 +159,50 @@ describe('Reducer', () => {
   });
 
   describe('TOGGLE_TYPE_DISABLED', () => {
-    it('should toggle whether a type is disabled', () => {
+    it('should set provided types as enabled or disabled if explicitly set', () => {
+      const mockDisabledState = {
+        data: false,
+        parameters: true,
+        task: true,
+      };
       const newState = reducer(mockState.animals, {
         type: TOGGLE_TYPE_DISABLED,
-        typeID: '123',
-        disabled: true,
+        typeIDs: mockDisabledState,
+      });
+      expect(newState.nodeType.disabled).toEqual(mockDisabledState);
+    });
+
+    it('should set any unset types to disabled when at least one type is explicitly enabled', () => {
+      const mockDisabledState = {
+        data: NODE_TYPE_DISABLED_UNSET,
+        parameters: false,
+        task: true,
+      };
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_TYPE_DISABLED,
+        typeIDs: mockDisabledState,
       });
       expect(newState.nodeType.disabled).toEqual({
-        123: true,
+        data: true,
+        parameters: false,
+        task: true,
+      });
+    });
+
+    it('should reset all types to unset when all types are explicitly disabled', () => {
+      const mockDisabledState = {
+        data: true,
         parameters: true,
+        task: true,
+      };
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_TYPE_DISABLED,
+        typeIDs: mockDisabledState,
+      });
+      expect(newState.nodeType.disabled).toEqual({
+        data: NODE_TYPE_DISABLED_UNSET,
+        parameters: NODE_TYPE_DISABLED_UNSET,
+        task: NODE_TYPE_DISABLED_UNSET,
       });
     });
   });
@@ -194,6 +234,16 @@ describe('Reducer', () => {
         visible: false,
       });
       expect(newState.visible.exportModal).toEqual(false);
+    });
+  });
+
+  describe('TOGGLE_SETTINGS_MODAL', () => {
+    it('should toggle whether the export modal is visible', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_SETTINGS_MODAL,
+        visible: false,
+      });
+      expect(newState.visible.settingsModal).toEqual(false);
     });
   });
 
@@ -287,6 +337,16 @@ describe('Reducer', () => {
         fontLoaded: true,
       });
       expect(newState.fontLoaded).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_CODE', () => {
+    it('should toggle whether the code panel is open', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_CODE,
+        visible: true,
+      });
+      expect(newState.visible.code).toBe(true);
     });
   });
 

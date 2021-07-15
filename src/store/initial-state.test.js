@@ -80,7 +80,7 @@ describe('prepareNonPipelineState', () => {
     // In this case, location.href is not provided
     expect(prepareNonPipelineState({ data: animals })).toMatchObject({
       flags: {
-        oldgraph: expect.any(Boolean),
+        newparams: expect.any(Boolean),
       },
     });
   });
@@ -120,6 +120,7 @@ describe('getInitialState', () => {
       theme: 'dark',
       visible: {
         exportBtn: true,
+        settingsBtn: true,
         labelBtn: true,
         layerBtn: true,
         themeBtn: true,

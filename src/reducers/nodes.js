@@ -72,6 +72,9 @@ function nodeReducer(nodeState = {}, action) {
         plot: Object.assign({}, nodeState.plot, {
           [id]: data.plot,
         }),
+        runCommand: Object.assign({}, nodeState.runCommand, {
+          [id]: data.run_command,
+        }),
       });
     }
 

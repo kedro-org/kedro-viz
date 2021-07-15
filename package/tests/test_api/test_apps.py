@@ -231,12 +231,21 @@ class TestNodeMetadataEndpoint:
         assert metadata["parameters"] == {"train_test_split": 0.1}
         assert metadata["inputs"] == ['Raw Data', 'Params:train Test Split']
         assert metadata["outputs"] == ['Model Inputs']
+        assert metadata["run_command"] == 'kedro run --to-nodes="process_data"'
         assert str(Path("package/tests/conftest.py")) in metadata["filepath"]
 
     def test_data_node_metadata(self, client):
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
+            "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "run_command": 'kedro run --to-outputs="model_inputs"',
+        }
+
+    def test_data_node_metadata_for_free_input(self, client):
+        response = client.get("/api/nodes/13399a82")
+        assert response.json() == {
+            "filepath": "raw_data.csv",
             "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
         }
 
@@ -337,9 +346,16 @@ class TestSinglePipelineEndpoint:
 
 
 class TestAPIAppFromFile:
-    def test_api_app_from_json_file(self):
+    def test_api_app_from_json_file_main_api(self):
         filepath = str(Path(__file__).parent.parent / "example_pipelines.json")
         api_app = apps.create_api_app_from_file(filepath)
         client = TestClient(api_app)
         response = client.get("/api/main")
         assert_example_data(response.json())
+
+    def test_api_app_from_json_file_index(self):
+        filepath = str(Path(__file__).parent.parent / "example_pipelines.json")
+        api_app = apps.create_api_app_from_file(filepath)
+        client = TestClient(api_app)
+        response = client.get("/")
+        assert response.status_code == 200

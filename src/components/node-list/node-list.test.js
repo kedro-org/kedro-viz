@@ -17,6 +17,7 @@ import { getTagData } from '../../selectors/tags';
 import IndicatorPartialIcon from '../icons/indicator-partial';
 import { localStorageName } from '../../config';
 import { toggleTypeDisabled } from '../../actions/node-type';
+import { sidebarElementTypes } from '../../config';
 
 describe('NodeList', () => {
   beforeEach(() => {
@@ -58,6 +59,9 @@ describe('NodeList', () => {
           const expectedTagResult = tags.filter((tag) =>
             tag.name.includes(searchText)
           );
+          const expectedElementTypeResult = Object.keys(
+            sidebarElementTypes
+          ).filter((type) => type.includes(searchText));
           // obtain the modular pipeline parents
           const expectedModularPipelines = nodesModularPipelines.hasOwnProperty(
             searchText
@@ -69,6 +73,7 @@ describe('NodeList', () => {
           expect(nodeList.length).toBe(
             expectedResult.length +
               expectedTagResult.length +
+              expectedElementTypeResult.length +
               expectedModularPipelines.length
           );
         }
@@ -87,6 +92,7 @@ describe('NodeList', () => {
 
       const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
+      const elementTypes = Object.keys(sidebarElementTypes);
       const searchText = nodes[0].name;
       // Enter search text
       search().simulate('change', { target: { value: searchText } });
@@ -98,8 +104,13 @@ describe('NodeList', () => {
       const expectedTagResult = tags.filter((tag) =>
         tag.name.includes(searchText)
       );
+      const expectedElementTypeResult = elementTypes.filter((type) =>
+        type.includes(searchText)
+      );
       expect(nodeList().length).toBe(
-        expectedResult.length + expectedTagResult.length
+        expectedResult.length +
+          expectedTagResult.length +
+          expectedElementTypeResult.length
       );
       // Clear the list with escape key
       searchWrapper.simulate('keydown', { keyCode: 27 });
@@ -171,9 +182,12 @@ describe('NodeList', () => {
         ['Pipeline2', true],
         ['salmon', true],
         ['Bull', true],
+        ['Cat', true],
         ['Dog', true],
+        ['Horse', true],
         ['Sheep', true],
         ['Parameters', true],
+        ['Params:rabbit', true],
       ]);
 
       changeRows(wrapper, ['Small', 'Large'], true);
@@ -183,11 +197,16 @@ describe('NodeList', () => {
         ['Pipeline2', true],
         ['salmon', true],
         ['Bear', true],
+        ['Bull', true],
         ['Cat', true],
+        ['Dog', true],
         ['Elephant', true],
+        ['Giraffe', true],
         ['Horse', true],
         ['Pig', true],
+        ['Sheep', true],
         ['Parameters', true],
+        ['Params:rabbit', true],
       ]);
     });
 
@@ -207,26 +226,30 @@ describe('NodeList', () => {
         ['salmon', true],
         ['Bear', true],
         // Datasets (enabled)
+        ['Bull', true],
         ['Cat', true],
+        ['Dog', true],
         ['Elephant', true],
+        ['Giraffe', true],
         ['Horse', true],
         ['Pig', true],
         ['Sheep', true],
         // Parameters(enabled)
         ['Parameters', true],
+        ['Params:pipeline100.data Science.plankton', true],
         ['Params:rabbit', true],
       ]);
     });
 
-    it('adds a class to tag group item when all tags unset', () => {
+    it('adds a class to tag group item when all tags unchecked', () => {
       const wrapper = setup.mount(<NodeList />);
-      const unsetClass = 'pipeline-nodelist__group--all-unset';
+      const uncheckedClass = 'pipeline-nodelist__group--all-unchecked';
 
-      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
+      expect(tagItem(wrapper).hasClass(uncheckedClass)).toBe(true);
       changeRows(wrapper, ['Large'], true);
-      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(false);
+      expect(tagItem(wrapper).hasClass(uncheckedClass)).toBe(false);
       changeRows(wrapper, ['Large'], false);
-      expect(tagItem(wrapper).hasClass(unsetClass)).toBe(true);
+      expect(tagItem(wrapper).hasClass(uncheckedClass)).toBe(true);
     });
 
     it('adds a class to the row when a tag row unchecked', () => {
@@ -273,14 +296,15 @@ describe('NodeList', () => {
       );
       // const nodes = getNodeData(mockState.animals);
       const tags = getTagData(mockState.animals);
-      expect(nodeList.length).toBe(tags.length);
+      const elementTypes = Object.keys(sidebarElementTypes);
+      expect(nodeList.length).toBe(tags.length + elementTypes.length);
     });
 
-    it('renders the correct number of modular pipelines and nodes in the tree panel', () => {
+    it('renders the correct number of modular pipelines and nodes in the tree sidepanel', () => {
       const wrapper = setup.mount(<NodeList />);
-      const nodeList = wrapper.find('.pipeline-nodelist__row');
+      const nodeList = wrapper.find('.pipeline-nodelist__row__text--tree');
 
-      // with the tree structure we now need extract nodes that are in the top level modular pipeline
+      // with the tree structure we now need to extract nodes that are in the top level modular pipeline
       const nodes = getNodeData(mockState.animals).filter(
         (node) => node.modularPipelines.length === 0
       );
@@ -362,9 +386,8 @@ describe('NodeList', () => {
         task: nodeList,
       }),
       nodeSelected: expect.any(Object),
-      types: expect.any(Array),
+      nodeTypes: expect.any(Array),
       modularPipelines: expect.any(Object),
-      sections: expect.any(Object),
     });
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });

@@ -13,7 +13,7 @@ import {
 import { updateGraph } from '../actions/graph';
 import { toggleTypeDisabled } from '../actions/node-type';
 import reducer from '../reducers';
-import { graphNew, graphDagre } from '../utils/graph';
+import { graphNew } from '../utils/graph';
 import { sidebarWidth, largeGraphThreshold } from '../config';
 import animals from '../utils/data/animals.mock.json';
 import { getVisibleNodeIDs } from './disabled';
@@ -71,7 +71,7 @@ describe('Selectors', () => {
         () => toggleTypeDisabled('data', true),
         // Run layout to update state.graph
         (state) => {
-          const layout = state.flags.oldgraph ? graphDagre : graphNew;
+          const layout = graphNew;
           return updateGraph(layout(getGraphInput(state)));
         },
         // Turn the filter back off
@@ -92,7 +92,6 @@ describe('Selectors', () => {
           nodes: expect.any(Array),
           edges: expect.any(Array),
           layers: expect.any(Array),
-          oldgraph: expect.any(Boolean),
           fontLoaded: expect.any(Boolean),
         })
       );
