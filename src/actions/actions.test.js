@@ -2,6 +2,7 @@ import animals from '../utils/data/animals.mock.json';
 import {
   CHANGE_FLAG,
   RESET_DATA,
+  TOGGLE_SETTINGS_MODAL,
   TOGGLE_EXPORT_MODAL,
   TOGGLE_IGNORE_LARGE_WARNING,
   TOGGLE_LAYERS,
@@ -12,13 +13,16 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
+  TOGGLE_CODE,
   changeFlag,
   resetData,
   toggleIgnoreLargeWarning,
   toggleExportModal,
+  toggleSettingsModal,
   toggleLayers,
   toggleMiniMap,
   toggleParametersHovered,
+  toggleCode,
   toggleSidebar,
   toggleTextLabels,
   toggleTheme,
@@ -81,6 +85,15 @@ describe('actions', () => {
       visible,
     };
     expect(toggleExportModal(visible)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether to show the settings modal', () => {
+    const visible = false;
+    const expectedAction = {
+      type: TOGGLE_SETTINGS_MODAL,
+      visible,
+    };
+    expect(toggleSettingsModal(visible)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether the sidebar is open', () => {
@@ -274,5 +287,13 @@ describe('actions', () => {
       ignoreLargeWarning: true,
     };
     expect(toggleIgnoreLargeWarning(true)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle the code display', () => {
+    const expectedAction = {
+      type: TOGGLE_CODE,
+      visible: true,
+    };
+    expect(toggleCode(true)).toEqual(expectedAction);
   });
 });
