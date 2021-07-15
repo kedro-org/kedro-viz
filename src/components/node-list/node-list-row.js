@@ -164,7 +164,6 @@ const NodeListRow = memo(
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
-          disabled={isButton && (disabled || !checked)}
           title={children ? null : name}>
           <span
             className={classnames(
