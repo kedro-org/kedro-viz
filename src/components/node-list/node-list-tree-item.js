@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
@@ -52,8 +52,6 @@ const NodeListTreeItem = ({
         focusMode={focusMode}
         parentDisabled={parentDisabled}
         parentPipeline={parentPipeline}
-        // applyDisabledLabel={applyDisabledLabel}
-        // applyFocusMode={applyFocusMode}
       />
     }>
     {children}
