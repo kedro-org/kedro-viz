@@ -1,4 +1,9 @@
-import { Flags, getFlagsFromUrl, getFlagsMessage } from './flags';
+import {
+  Flags,
+  getFlagsFromUrl,
+  getFlagsMessage,
+  getFlagsState,
+} from './flags';
 
 const testFlagName = 'testflag';
 const privateFlagName = 'privateflag';
@@ -13,12 +18,14 @@ jest.mock('../config', () => ({
   ...jest.requireActual('../config'),
   flags: {
     testflag: {
+      name: 'test flag',
       description: 'testflag description',
       default: false,
       private: false,
       icon: '🤖',
     },
     privateflag: {
+      name: 'private flag',
       description: 'private flag description',
       default: true,
       private: true,
@@ -82,5 +89,20 @@ describe('flags', () => {
       [testFlagName]: false,
       [privateFlagName]: true,
     });
+  });
+
+  it('get Flags data returns an object with flag names and description', () => {
+    expect(getFlagsState()).toEqual([
+      {
+        name: 'test flag',
+        description: 'testflag description',
+        value: 'testflag',
+      },
+      {
+        name: 'private flag',
+        description: 'private flag description',
+        value: 'privateflag',
+      },
+    ]);
   });
 });
