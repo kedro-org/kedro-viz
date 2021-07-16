@@ -56,7 +56,8 @@
       "name": "shark",
       "pipelines": ["de", "__default__"],
       "tags": ["large", "medium"],
-      "type": "task"
+      "type": "task",
+      "parameters": {}
     },
     {
       "full_name": "salmon",
@@ -65,7 +66,8 @@
       "name": "salmon",
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
-      "type": "task"
+      "type": "task",
+      "parameters": {}
     },
     {
       "full_name": "bear",
@@ -196,7 +198,8 @@
       "name": "tuna",
       "pipelines": ["pre_ds", "__default__"],
       "tags": [],
-      "type": "task"
+      "type": "task",
+      "parameters": {}
     },
     {
       "full_name": "params:pipeline100.data_science.plankton",
@@ -245,7 +248,8 @@
       "name": "trout",
       "pipelines": ["ds", "__default__"],
       "tags": [],
-      "type": "task"
+      "type": "task",
+      "parameters": {}
     },
     {
       "full_name": "pipeline2.data_science.pig",
