@@ -353,51 +353,75 @@ describe('MetaData', () => {
         return setup.mount(<MetaData visible={true} />, {
           beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
           afterLayoutActions: [
-            () => {
-              // Click the expected node
-              return toggleNodeClicked(props.nodeId);
-            },
+            // Click the expected node
+            () => toggleNodeClicked(props.nodeId),
+            //simulating loadNodeData in node.js
+            () =>
+              addNodeMetadata({ id: props.nodeId, data: props.mockMetadata }),
           ],
         });
       };
       it('shows the node type as an icon', () => {
-        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const wrapper = mount({
+          nodeId: rabbitParamsNodeId,
+          mockMetadata: node_parameters,
+        });
         expect(
           rowIcon(wrapper).hasClass('pipeline-node-icon--icon-parameters')
         ).toBe(true);
       });
 
       it('shows the node name as the title', () => {
-        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const wrapper = mount({
+          nodeId: rabbitParamsNodeId,
+          mockMetadata: node_parameters,
+        });
         expect(textOf(title(wrapper))).toEqual(['Params:rabbit']);
       });
 
       it('shows the node type as text', () => {
-        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const wrapper = mount({
+          nodeId: rabbitParamsNodeId,
+          mockMetadata: node_parameters,
+        });
         const row = rowByLabel(wrapper, 'Type:');
         expect(textOf(rowValue(row))).toEqual(['parameters']);
       });
 
       it('shows the node filepath', () => {
-        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const wrapper = mount({
+          nodeId: rabbitParamsNodeId,
+          mockMetadata: node_parameters,
+        });
         const row = rowByLabel(wrapper, 'File Path:');
         expect(textOf(rowValue(row))).toEqual(['-']);
       });
 
       it('does not display the node parameter when it is an empty object', () => {
-        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const wrapper = mount({
+          nodeId: rabbitParamsNodeId,
+          mockMetadata: node_parameters,
+        });
         const row = rowByLabel(wrapper, 'Parameters:');
-        expect(textOf(rowObject(row))).toEqual(['-']);
+        expect(textOf(rowObject(row))[0]).toEqual(
+          expect.stringContaining('3 items')
+        );
       });
 
       it('shows the node tags', () => {
-        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const wrapper = mount({
+          nodeId: rabbitParamsNodeId,
+          mockMetadata: node_parameters,
+        });
         const row = rowByLabel(wrapper, 'Tags:');
         expect(textOf(rowValue(row))).toEqual(['Small']);
       });
 
       it('shows the node pipeline', () => {
-        const wrapper = mount({ nodeId: rabbitParamsNodeId });
+        const wrapper = mount({
+          nodeId: rabbitParamsNodeId,
+          mockMetadata: node_parameters,
+        });
         const row = rowByLabel(wrapper, 'Pipeline:');
         expect(textOf(rowValue(row))).toEqual(['Default']);
       });
