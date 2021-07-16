@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
 import NodeListRow from './node-list-row';
+
+const arrowIconColor = '#8e8e90';
 
 const NodeListTreeItem = ({
   data,
@@ -19,8 +21,9 @@ const NodeListTreeItem = ({
   <TreeItem
     key={data.id}
     nodeId={data.id}
-    collapseIcon={<ExpandMoreIcon />}
-    expandIcon={<ChevronRightIcon />}
+    // this setup is to allow flexibility for adjusting the setting for individual arrow icons
+    collapseIcon={<ExpandMoreIcon style={{ color: arrowIconColor }} />}
+    expandIcon={<ChevronRightIcon style={{ color: arrowIconColor }} />}
     label={
       <NodeListRow
         container="div"
@@ -49,6 +52,8 @@ const NodeListTreeItem = ({
         focusMode={focusMode}
         parentDisabled={parentDisabled}
         parentPipeline={parentPipeline}
+        // applyDisabledLabel={applyDisabledLabel}
+        // applyFocusMode={applyFocusMode}
       />
     }>
     {children}

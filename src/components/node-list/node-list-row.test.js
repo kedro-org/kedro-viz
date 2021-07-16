@@ -19,7 +19,6 @@ describe('NodeListRow', () => {
       onMouseEnter: jest.fn(),
       onMouseLeave: jest.fn(),
       onChange: jest.fn(),
-      type: node.type,
     };
     return { props };
   };
@@ -84,6 +83,37 @@ describe('NodeListRow', () => {
       expect(wrapper.find('.pipeline-nodelist__row__count').exists()).toBe(
         false
       );
+    });
+
+    describe('focus mode', () => {
+      it('sets the visibility toggle to the checked mode when the row is selected for focusmode', () => {
+        const { props } = setupProps();
+        const wrapper = setup.mount(
+          <NodeListRow {...props} focusMode={node} type="modularPipeline" />
+        );
+
+        expect(
+          wrapper.find('.pipeline-row__toggle-icon--focus-checked').exists()
+        ).toBe(true);
+      });
+
+      it('sets the label to match the selected parent when the row belongs to a modular pipeline selected by focus mode', () => {
+        const selectedItem = { id: 'abc' };
+        const { props } = setupProps();
+        const wrapper = setup.mount(
+          <NodeListRow
+            {...props}
+            focusMode={selectedItem}
+            parentDisabled={true}
+            parentPipeline={'abc'}
+            disabled={true}
+          />
+        );
+
+        expect(
+          wrapper.find('.pipeline-nodelist__row__label--disabled').exists()
+        ).toBe(true);
+      });
     });
   });
 

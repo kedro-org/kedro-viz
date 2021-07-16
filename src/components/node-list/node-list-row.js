@@ -71,6 +71,9 @@ const NodeListRow = memo(
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
 
+    const determineFocusMode = (focusMode, type, id) =>
+      focusMode !== null && type === 'modularPipeline' && id === focusMode?.id;
+
     const determineDisabledLabel = (
       parentPipeline,
       parentDisabled,
@@ -88,7 +91,7 @@ const NodeListRow = memo(
     };
 
     const [applyFocusMode, setApplyFocusMode] = useState(
-      focusMode !== null && type === 'modularPipeline' && id === focusMode?.id
+      determineFocusMode(focusMode, type, id)
     );
 
     const [applyDisabledLabel, setApplyDisabledLabel] = useState(
@@ -101,9 +104,7 @@ const NodeListRow = memo(
     );
 
     useEffect(() => {
-      setApplyFocusMode(
-        focusMode !== null && type === 'modularPipeline' && id === focusMode?.id
-      );
+      setApplyFocusMode(determineFocusMode(focusMode, type, id));
 
       setApplyDisabledLabel(
         determineDisabledLabel(
