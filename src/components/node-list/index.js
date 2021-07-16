@@ -51,7 +51,7 @@ const NodeListProvider = ({
   modularPipelines,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
-  const [focusMode, setFocusMode] = useState(null); // this is used to set special CSS settings for the visibility button
+  const [focusMode, setFocusMode] = useState(null);
   const items = getFilteredItems({
     nodes,
     tags,
