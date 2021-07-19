@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import {
   toggleExportModal,
+  toggleSettingsModal,
   toggleLayers,
   toggleSidebar,
   toggleTextLabels,
@@ -14,6 +15,7 @@ import ThemeIcon from '../icons/theme';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
 import LayersIcon from '../icons/layers';
+import SettingsIcon from '../icons/settings';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import './primary-toolbar.css';
 
@@ -27,6 +29,7 @@ import './primary-toolbar.css';
 export const PrimaryToolbar = ({
   disableLayerBtn,
   onToggleExportModal,
+  onToggleSettingsModal,
   onToggleLayers,
   onToggleSidebar,
   onToggleTextLabels,
@@ -85,6 +88,15 @@ export const PrimaryToolbar = ({
         disabled={disableLayerBtn}
         visible={visible.layerBtn}
       />
+      <IconButton
+        ariaLabel={'Change the settings flags'}
+        className={'pipeline-menu-button--settings'}
+        onClick={() => onToggleSettingsModal(true)}
+        icon={SettingsIcon}
+        disabled={false}
+        labelText={'Settings'}
+        visible={visible.settingsBtn}
+      />
     </ul>
   </>
 );
@@ -100,6 +112,9 @@ export const mapStateToProps = (state) => ({
 export const mapDispatchToProps = (dispatch) => ({
   onToggleExportModal: (value) => {
     dispatch(toggleExportModal(value));
+  },
+  onToggleSettingsModal: (value) => {
+    dispatch(toggleSettingsModal(value));
   },
   onToggleLayers: (value) => {
     dispatch(toggleLayers(Boolean(value)));
