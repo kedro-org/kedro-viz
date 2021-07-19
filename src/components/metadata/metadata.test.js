@@ -67,15 +67,12 @@ describe('MetaData', () => {
   });
 
   describe('Task nodes', () => {
-    describe('Code toggle', () => {
+    it('shows the code toggle for task nodes with code', () => {
       const wrapper = mount({
         nodeId: salmonTaskNodeId,
         mockMetadata: node_task,
       });
-
-      it('shows the code toggle for task nodes with code', () => {
-        expect(wrapper.find('.pipeline-toggle').length).toBe(1);
-      });
+      expect(wrapper.find('.pipeline-toggle').length).toBe(1);
     });
 
     it('shows the node type as an icon', () => {
