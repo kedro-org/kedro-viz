@@ -332,6 +332,12 @@ class TaskNodeMetadata(GraphNodeMetadata):
             filepath = code_full_path
         self.filepath = str(filepath)
         self.parameters = task_node.parameters
+        self.inputs = [
+            _pretty_name(_strip_namespace(name)) for name in kedro_node.inputs
+        ]
+        self.outputs = [
+            _pretty_name(_strip_namespace(name)) for name in kedro_node.outputs
+        ]
 
         # if a node doesn't have a user-supplied `_name` attribute,
         # a human-readable run command `kedro run --to-nodes/nodes` is not available
