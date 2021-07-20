@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
 import { getGraphNodes } from './nodes';
 const getClickedNode = (state) => state.node.clicked;
-
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
  */
@@ -26,6 +25,8 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.tag.name,
     (state) => state.pipeline,
     (state) => state.node.filepath,
+    (state) => state.node.inputs,
+    (state) => state.node.outputs,
     (state) => state.node.code,
     (state) => state.node.parameters,
     (state) => state.node.plot,
@@ -39,6 +40,8 @@ export const getClickedNodeMetaData = createSelector(
     tagNames,
     pipeline,
     nodeFilepaths,
+    nodeInputs,
+    nodeOutputs,
     nodeCodes,
     nodeParameters,
     nodePlot,
@@ -46,11 +49,9 @@ export const getClickedNodeMetaData = createSelector(
     nodeRunCommand
   ) => {
     const node = nodes[nodeId];
-
     if (!node) {
       return null;
     }
-
     const metadata = {
       node,
       tags: [...nodeTags[node.id]]
@@ -63,17 +64,9 @@ export const getClickedNodeMetaData = createSelector(
       filepath: nodeFilepaths[node.id],
       plot: nodePlot[node.id],
       datasetType: nodeDatasetTypes[node.id],
+      inputs: nodeInputs[node.id],
+      outputs: nodeOutputs[node.id],
     };
-
-    if (node.sources && node.targets) {
-      metadata.inputs = node.sources
-        .map((edge) => nodes[edge.source])
-        .sort(sortAlpha);
-      metadata.outputs = node.targets
-        .map((edge) => nodes[edge.target])
-        .sort(sortAlpha);
-    }
-
     return metadata;
   }
 );

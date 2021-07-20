@@ -30,6 +30,8 @@ export const createInitialPipelineState = () => ({
     code: {},
     parameters: {},
     filepath: {},
+    inputs: {},
+    outputs: {},
     plot: {},
     datasetType: {},
     runCommand: {},
