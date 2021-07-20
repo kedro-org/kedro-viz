@@ -120,6 +120,7 @@ describe('getInitialState', () => {
       theme: 'dark',
       visible: {
         exportBtn: true,
+        settingsBtn: true,
         labelBtn: true,
         layerBtn: true,
         themeBtn: true,

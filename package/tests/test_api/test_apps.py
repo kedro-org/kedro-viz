@@ -229,6 +229,8 @@ class TestNodeMetadataEndpoint:
             == "def process_data(raw_data, train_test_split):\n        ...\n"
         )
         assert metadata["parameters"] == {"train_test_split": 0.1}
+        assert metadata["inputs"] == ["Raw Data", "Params:train Test Split"]
+        assert metadata["outputs"] == ["Model Inputs"]
         assert metadata["run_command"] == 'kedro run --to-nodes="process_data"'
         assert str(Path("package/tests/conftest.py")) in metadata["filepath"]
 

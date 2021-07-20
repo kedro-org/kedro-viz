@@ -115,6 +115,8 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
     code: str
     filepath: str
     parameters: Dict
+    inputs: List[str]
+    outputs: List[str]
     run_command: Optional[str]
 
     class Config:
@@ -123,6 +125,8 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
                 "code": "def split_data(data: pd.DataFrame, parameters: Dict) -> Tuple:",
                 "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
                 "parameters": {"test_size": 0.2},
+                "inputs": ["params:input1", "input2"],
+                "outputs":['output1'],
                 "run_command": 'kedro run --to-nodes="split_data"',
             }
         }

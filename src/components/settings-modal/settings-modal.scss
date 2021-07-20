@@ -1,0 +1,74 @@
+@import '../../styles/variables';
+@import '../../styles/extends';
+@import '../../styles/mixins';
+
+.kui-theme--light {
+  --color-modal-header-text: #{rgba($color-dark, 0.55)};
+  --color-toggle--on: #{$color-primary-2};
+  --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
+  --color-toggle--off: #{$color-bg-dark-9};
+  --color-toggle-bar--off: #{rgba($color-bg-dark-9, 0.3)};
+}
+
+.kui-theme--dark {
+  --color-modal-header-text: #{rgba($color-light, 0.55)};
+  --color-toggle--on: #{$color-primary};
+  --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
+  --color-toggle--off: #{$color-bg-light-3};
+  --color-toggle-bar--off: #{$color-bg-dark-10};
+}
+
+.pipeline-settings-modal {
+  .kui-modal__content {
+    width: calc(100% - 5em);
+    max-width: 900px;
+  }
+
+  .kui-modal__wrapper {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .kui-modal__bg--visible {
+    opacity: 0.7;
+  }
+}
+
+.pipeline-settings-modal__content {
+  width: 100%;
+  margin-bottom: 4em;
+  font-size: 1.25em;
+
+  .kui-button {
+    margin: 0 10px;
+  }
+}
+
+.pipeline-settings-modal__column,
+.pipeline-settings-modal__header {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 1.2em;
+}
+
+.pipeline-settings-modal__header {
+  margin-bottom: 10px;
+  color: var(--color-modal-header-text);
+}
+
+.pipeline-settings-modal__subtitle {
+  margin-bottom: 10px;
+  font-size: 1.5em;
+}
+
+.pipeline-settings-modal__name {
+  @include flexColumn(3);
+}
+
+.pipeline-settings-modal__description {
+  @include flexColumn(6);
+}
+
+.pipeline-settings-modal__state {
+  @include flexColumn(3);
+}

@@ -83,3 +83,14 @@ export const getFlagsMessage = (flagsEnabled) => {
     return info;
   }
 };
+
+export const getFlagsState = () => {
+  const allNames = Flags.names();
+  return allNames.map((flag) => {
+    return {
+      name: flagsConfig[flag].name,
+      value: flag,
+      description: flagsConfig[flag].description,
+    };
+  });
+};
