@@ -86,15 +86,16 @@ class DataAccessManager:
         for node in sorted(pipeline.nodes, key=lambda n: n.name):
             task_node = self.add_node(pipeline_key, node)
             self.registered_pipelines.add_node(pipeline_key, task_node.id)
-
             for input_ in node.inputs:
                 is_free_input = input_ in free_inputs
+                input_ = self.catalog.strip_encoding(input_)
                 input_node = self.add_node_input(
                     pipeline_key, input_, task_node, is_free_input
                 )
                 self.registered_pipelines.add_node(pipeline_key, input_node.id)
 
             for output in node.outputs:
+                output = self.catalog.strip_encoding(output)
                 output_node = self.add_node_output(pipeline_key, output, task_node)
                 self.registered_pipelines.add_node(pipeline_key, output_node.id)
 
@@ -114,7 +115,7 @@ class DataAccessManager:
     ) -> Union[DataNode, ParametersNode]:
         graph_node = self.add_dataset(
             pipeline_key, input_dataset, is_free_input=is_free_input
-        )
+        )  
         graph_node.tags.update(task_node.tags)
         self.edges.add_edge(GraphEdge(source=graph_node.id, target=task_node.id))
         self.node_dependencies[graph_node.id].add(task_node.id)
