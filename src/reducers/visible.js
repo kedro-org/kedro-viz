@@ -55,7 +55,7 @@ function visibleReducer(visibleState = {}, action) {
 
     case TOGGLE_FOCUS_MODE: {
       return Object.assign({}, visibleState, {
-        focusMode: action.visible,
+        focusMode: action.modularPipeline,
       });
     }
 

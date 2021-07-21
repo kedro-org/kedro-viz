@@ -75,7 +75,13 @@ const NodeListProvider = ({
     if (isGroupType(item.type) || isModularPipelineType(item.type)) {
       onGroupItemChange(item, item.checked);
       if (isModularPipelineType(item.type)) {
-        onToggleFocusMode(item);
+        if (isModularPipelineType(item.type)) {
+          if (focusMode === null) {
+            onToggleFocusMode(item);
+          } else {
+            onToggleFocusMode(null);
+          }
+        }
       }
     } else {
       if (item.faded || item.selected) {
@@ -91,7 +97,6 @@ const NodeListProvider = ({
       onGroupItemChange(item, checked);
       if (isModularPipelineType(item.type)) {
         if (focusMode === null) {
-          console.log('here');
           onToggleFocusMode(item);
         } else {
           onToggleFocusMode(null);
@@ -104,15 +109,6 @@ const NodeListProvider = ({
       onToggleNodesDisabled([item.id], checked);
     }
   };
-
-  // // set the modular pipeline focus mode on toggle
-  // const onToggleFocusMode = (item) => {
-  //   if (focusMode === null) {
-  //     onToggleFocusMode(item);
-  //   } else {
-  //     onToggleFocusMode(null);
-  //   }
-  // };
 
   const onItemMouseEnter = (item) => {
     if (isTagType(item.type)) {
