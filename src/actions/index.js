@@ -220,3 +220,16 @@ export function toggleParametersHovered(hoveredParameters) {
     hoveredParameters,
   };
 }
+
+export const TOGGLE_FOCUS_MODE = 'TOGGLE_FOCUS_MODE';
+
+/**
+ * Update the value of the selected modular pipeline under focus mode
+ * @param {Object} modularPipeline The selected modular pipeline for focus mode
+ */
+export function toggleFocusMode(modularPipeline) {
+  return {
+    type: TOGGLE_FOCUS_MODE,
+    modularPipeline,
+  };
+}
