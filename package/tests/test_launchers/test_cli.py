@@ -45,6 +45,7 @@ from kedro_viz.launchers import cli
                 save_file=None,
                 pipeline_name=None,
                 env=None,
+                autoreload=False,
             ),
         ),
         (
@@ -70,6 +71,7 @@ from kedro_viz.launchers import cli
                 save_file="save.json",
                 pipeline_name="data_science",
                 env="local",
+                autoreload=False,
             ),
         ),
     ],
