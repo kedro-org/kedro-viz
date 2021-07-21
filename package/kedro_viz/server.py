@@ -40,8 +40,14 @@ from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.services import layers_services
 
-_DEFAULT_HOST = "0.0.0.0"
-_DEFAULT_PORT = 4141
+DEFAULT_HOST = "127.0.0.1"
+DEFAULT_PORT = 4141
+DEV_PORT = 4142
+
+
+def is_localhost(host) -> bool:
+    """Check whether a host is a localhost"""
+    return host in ("127.0.0.1", "localhost", "0.0.0.0")
 
 
 def populate_data(
@@ -63,15 +69,15 @@ def populate_data(
 
 
 def run_server(
-    host: str = _DEFAULT_HOST,
-    port: int = _DEFAULT_PORT,
+    host: str = DEFAULT_HOST,
+    port: int = DEFAULT_PORT,
     browser: bool = None,
     load_file: str = None,
     save_file: str = None,
     pipeline_name: str = None,
     env: str = None,
-    autoreload: bool = False,
     project_path: str = None,
+    autoreload: bool = False,
 ):
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
@@ -107,9 +113,7 @@ def run_server(
     else:
         app = apps.create_api_app_from_file(load_file)
 
-    is_localhost = host in ("127.0.0.1", "localhost", "0.0.0.0")
-
-    if browser and is_localhost:
+    if browser and is_localhost(host):
         webbrowser.open_new(f"http://{host}:{port}/")
     uvicorn.run(app, host=host, port=port)
 
@@ -122,10 +126,10 @@ if __name__ == "__main__":  # pragma: no cover
     parser = argparse.ArgumentParser(description="Launch a development viz server")
     parser.add_argument("project_path", help="Path to a Kedro project")
     parser.add_argument(
-        "--host", help="The host of the development server", default="localhost"
+        "--host", help="The host of the development server", default=DEFAULT_HOST
     )
     parser.add_argument(
-        "--port", help="The port of the development server", default=4142
+        "--port", help="The port of the development server", default=DEFAULT_PORT
     )
     args = parser.parse_args()
 
