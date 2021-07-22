@@ -126,7 +126,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
                 "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
                 "parameters": {"test_size": 0.2},
                 "inputs": ["params:input1", "input2"],
-                "outputs":['output1'],
+                "outputs": ["output1"],
                 "run_command": 'kedro run --to-nodes="split_data"',
             }
         }
