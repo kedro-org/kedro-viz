@@ -213,7 +213,7 @@ describe('actions', () => {
     );
   });
 
-  it('should create an action to toggle an array of tags on/off', () => {
+  it('should create an action to toggle an array of modular pipelines on/off', () => {
     const modularPipelineIDs = ['12345', '67890'];
     const enabled = false;
     const expectedAction = {
