@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo, useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { changed } from '../../utils';
