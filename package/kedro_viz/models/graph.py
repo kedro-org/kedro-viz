@@ -413,7 +413,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # the optional plot data if the underlying dataset has a plot.
     # currently only applicable for PlotlyDataSet
-    plot: Optional[Dict] = field(init=False, default=None)
+    plot: Optional[Dict] = field(init=False)
 
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
@@ -425,7 +425,9 @@ class DataNodeMetadata(GraphNodeMetadata):
 
         # for directory-based datasets like PartitionedDataSet
         # the filepath is the path to the directory containing all partitioned files.
-        filepath = dataset_description.get("filepath") or dataset_description.get("path")
+        filepath = dataset_description.get("filepath") or dataset_description.get(
+            "path"
+        )
         self.filepath = str(filepath) if filepath else None
 
         # Parse plot data
