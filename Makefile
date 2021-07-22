@@ -7,7 +7,6 @@ install: build
 
 build: clean
 	npm run build
-	rm -rf build/api
 	cp -R build package/kedro_viz/html
 
 clean:
