@@ -31,7 +31,7 @@ from unittest.mock import MagicMock, call, patch
 
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
-from kedro.io import MemoryDataSet
+from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.pipeline.node import node
 
 from kedro_viz.models.graph import (
@@ -309,6 +309,17 @@ class TestGraphNodeMetadata:
         )
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == 'kedro run --to-outputs="dataset"'
+
+    def test_partitioned_data_node_metadata(self):
+        dataset = PartitionedDataSet(path="partitioned/", dataset="pandas.CSVDataSet")
+        data_node = GraphNode.create_data_node(
+            full_name="dataset",
+            layer="raw",
+            tags=set(),
+            dataset=dataset,
+        )
+        data_node_metadata = DataNodeMetadata(data_node=data_node)
+        assert data_node_metadata.filepath == "partitioned/"
 
     @patch("builtins.__import__", side_effect=import_mock)
     @patch("json.load")
