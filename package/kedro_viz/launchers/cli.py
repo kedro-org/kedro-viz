@@ -28,11 +28,14 @@
 """`kedro_viz.launchers.cli` launches the viz server as a CLI app."""
 
 import traceback
+import webbrowser
+from pathlib import Path
 
 import click
 from kedro.framework.cli.utils import KedroCliError
+from watchgod import RegExpWatcher, run_process
 
-from kedro_viz.server import run_server
+from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, is_localhost, run_server
 
 
 @click.group(name="Kedro-Viz")
@@ -43,12 +46,12 @@ def commands():
 @commands.command(context_settings=dict(help_option_names=["-h", "--help"]))
 @click.option(
     "--host",
-    default="127.0.0.1",
-    help="Host that viz will listen to. Defaults to 127.0.0.1.",
+    default=DEFAULT_HOST,
+    help="Host that viz will listen to. Defaults to localhost.",
 )
 @click.option(
     "--port",
-    default=4141,
+    default=DEFAULT_PORT,
     type=int,
     help="TCP port that viz will listen to. Defaults to 4141.",
 )
@@ -87,10 +90,43 @@ def commands():
     help="Kedro configuration environment. If not specified, "
     "catalog config in `local` will be used",
 )
-def viz(host, port, browser, load_file, save_file, pipeline, env):
+@click.option(
+    "--autoreload",
+    is_flag=True,
+    help="Autoreload viz server when a Python file change in the Kedro project",
+)
+def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
     """Visualise a Kedro pipeline using Kedro viz."""
     try:
-        run_server(host, port, browser, load_file, save_file, pipeline, env)
+        run_server_kwargs = {
+            "host": host,
+            "port": port,
+            "load_file": load_file,
+            "save_file": save_file,
+            "pipeline_name": pipeline,
+            "env": env,
+            "browser": browser,
+            "autoreload": autoreload,
+        }
+        if autoreload:
+            if browser and is_localhost(host):
+                webbrowser.open_new(f"http://{host}:{port}/")
+
+            project_path = Path.cwd()
+            run_server_kwargs["project_path"] = project_path
+            # we don't want to launch a new browser tab on reload
+            run_server_kwargs["browser"] = False
+
+            run_process(
+                path=project_path,
+                target=run_server,
+                kwargs=run_server_kwargs,
+                watcher_cls=RegExpWatcher,
+                watcher_kwargs=dict(re_files=r"^.*(\.yml|\.yaml|\.py)$"),
+            )
+
+        else:
+            run_server(**run_server_kwargs)
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
         raise KedroCliError(str(ex)) from ex
