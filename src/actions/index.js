@@ -221,7 +221,8 @@ export function toggleParametersHovered(hoveredParameters) {
   };
 }
 
-export const TOGGLE_FOCUS_MODE = 'TOGGLE_FOCUS_MODE';
+export const TOGGLE_MODULAR_PIPELINE_FOCUS_MODE =
+  'TOGGLE_MODULAR_PIPELINE_FOCUS_MODE';
 
 /**
  * Update the value of the selected modular pipeline under focus mode
@@ -229,7 +230,7 @@ export const TOGGLE_FOCUS_MODE = 'TOGGLE_FOCUS_MODE';
  */
 export function toggleFocusMode(modularPipeline) {
   return {
-    type: TOGGLE_FOCUS_MODE,
+    type: TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
     modularPipeline,
   };
 }

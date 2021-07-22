@@ -14,7 +14,7 @@ import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import {
   getModularPipelineData,
-  getFocusMode,
+  getFocusedModularPipelines,
 } from '../../selectors/modular-pipelines';
 import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
@@ -217,7 +217,7 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   nodeTypes: getNodeTypes(state),
   modularPipelines: getModularPipelineData(state),
-  focusMode: getFocusMode(state),
+  focusMode: getFocusedModularPipelines(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
