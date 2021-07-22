@@ -117,6 +117,12 @@ $element-icon-opacity-2: 1;
       }
     }
   }
+
+  &.pipeline-row__toggle-icon--focus-checked {
+    > * {
+      opacity: $element-icon-opacity-2;
+    }
+  }
 }
 
 //--- Toggle (kind=filter) icon opacities ---//
