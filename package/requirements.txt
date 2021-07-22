@@ -2,7 +2,7 @@ semver~=2.10 # Needs to be at least 2.10.0 to get VersionInfo.match
 kedro>=0.16.0
 ipython>=7.0.0, <8.0
 dataclasses==0.8; python_version == "3.6"
-fastapi>=0.63.0, <1.0
+fastapi>=0.63.0, <0.67.0
 aiofiles==0.6.0
 uvicorn~=0.13.4
 watchgod~=0.7
