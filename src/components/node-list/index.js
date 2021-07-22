@@ -110,6 +110,15 @@ const NodeListProvider = ({
     }
   };
 
+  // // set the modular pipeline focus mode on toggle
+  // const onToggleFocusMode = (item) => {
+  //   if (focusMode === null) {
+  //     setFocusMode(item);
+  //   } else {
+  //     setFocusMode(null);
+  //   }
+  // };
+
   const onItemMouseEnter = (item) => {
     if (isTagType(item.type)) {
       onToggleTagActive(item.id, true);

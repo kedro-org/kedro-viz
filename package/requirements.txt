@@ -5,3 +5,4 @@ dataclasses==0.8; python_version == "3.6"
 fastapi>=0.63.0, <1.0
 aiofiles==0.6.0
 uvicorn~=0.13.4
+watchgod~=0.7

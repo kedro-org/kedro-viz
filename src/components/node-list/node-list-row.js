@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { changed } from '../../utils';
@@ -71,58 +71,25 @@ const NodeListRow = memo(
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
 
-    const determineFocusMode = (focusMode, type, id) =>
-      focusMode !== null && type === 'modularPipeline' && id === focusMode?.id;
+    const determineFocusMode = useCallback(
+      () =>
+        focusMode !== null &&
+        type === 'modularPipeline' &&
+        id === focusMode?.id,
+      [focusMode, type, id]
+    );
+    const isInFocusMode = determineFocusMode();
 
-    const determineDisabledLabel = (
-      parentPipeline,
-      parentDisabled,
-      applyFocusMode,
-      disabled
-    ) => {
+    const determineDisabledLabel = useCallback(() => {
       if (parentPipeline === 'main') {
         return disabled;
       }
       return (
-        parentDisabled !== false &&
-        disabled === true &&
-        applyFocusMode === false
+        parentDisabled !== false && disabled === true && isInFocusMode === false
       );
-    };
+    }, [parentDisabled, disabled, isInFocusMode, parentPipeline]);
 
-    const [applyFocusMode, setApplyFocusMode] = useState(
-      determineFocusMode(focusMode, type, id)
-    );
-
-    const [applyDisabledLabel, setApplyDisabledLabel] = useState(
-      determineDisabledLabel(
-        parentPipeline,
-        parentDisabled,
-        applyFocusMode,
-        disabled
-      )
-    );
-
-    useEffect(() => {
-      setApplyFocusMode(determineFocusMode(focusMode, type, id));
-
-      setApplyDisabledLabel(
-        determineDisabledLabel(
-          parentPipeline,
-          parentDisabled,
-          applyFocusMode,
-          disabled
-        )
-      );
-    }, [
-      focusMode,
-      parentDisabled,
-      disabled,
-      type,
-      id,
-      parentPipeline,
-      applyFocusMode,
-    ]);
+    const isDisabledLabel = determineDisabledLabel();
 
     return (
       <Container
@@ -172,7 +139,7 @@ const NodeListRow = memo(
               `pipeline-nodelist__row__label--kind-${kind}`,
               {
                 'pipeline-nodelist__row__label--faded': faded,
-                'pipeline-nodelist__row__label--disabled': applyDisabledLabel,
+                'pipeline-nodelist__row__label--disabled': isDisabledLabel,
               }
             )}
             dangerouslySetInnerHTML={{ __html: label }}
@@ -215,7 +182,7 @@ const NodeListRow = memo(
                 'pipeline-row__toggle-icon--checked': checked,
                 'pipeline-row__toggle-icon--unchecked': !checked,
                 'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
-                'pipeline-row__toggle-icon--focus-checked': applyFocusMode,
+                'pipeline-row__toggle-icon--focus-checked': isInFocusMode,
               }
             )}
           />
