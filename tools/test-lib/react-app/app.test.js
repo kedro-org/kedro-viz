@@ -27,15 +27,10 @@ describe('lib-test', () => {
       .first()
       .text();
 
-    if (key === 'random' || key === 'animals') {
       const modularPipelineNames = dataSources[key]().modular_pipelines.map(
         (modularPipeline) => modularPipeline.name
       );
       expect(modularPipelineNames).toContain(firstNodeName);
-    } else {
-      const nodeNames = dataSources[key]().nodes.map((node) => node.name);
-      expect(nodeNames).toContain(firstNodeName);
-    }
   };
 
   test.each(keys)(`uses %s dataset when provided as prop`, (key) => {
