@@ -95,7 +95,7 @@ export const getNodeSelected = createSelector(
 /**
  * Returns formatted nodes as an array, with all relevant properties
  */
- export const getNodeData = createSelector(
+export const getNodeData = createSelector(
   [
     getPipelineNodeIDs,
     getNodeName,

@@ -99,6 +99,13 @@ const TreeListProvider = ({
     focusMode,
   ]);
 
+  useEffect(() => {
+    // Initial state contracts all modular pipelines
+    for (const id of modularPipelineIds) {
+      onToggleContracted(id, true);
+    }
+  }, [modularPipelineIds, onToggleContracted]);
+
   const treeData = getNestedModularPipelines({
     nodes,
     modularPipelines,
