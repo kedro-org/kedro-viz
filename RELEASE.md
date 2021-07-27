@@ -7,6 +7,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
+## Major features and improvements
+
+- Add `--autoreload` flag to `kedro viz` to automatically reload Kedro Viz tab when the Kedro project code changes.
+
 # Release 3.13.1
 
 ## Bug fixes and other changes

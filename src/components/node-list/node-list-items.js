@@ -149,8 +149,8 @@ export const getFilteredModularPipelines = createSelector(
  * @return {array} Node list items
  */
 export const getFilteredModularPipelineItems = createSelector(
-  getFilteredModularPipelines,
-  (filteredModularPipelines) => ({
+  [getFilteredModularPipelines, (state) => state.focusMode],
+  (filteredModularPipelines, focusMode) => ({
     modularPipeline: filteredModularPipelines.modularPipeline.map(
       (modularPipeline) => ({
         ...modularPipeline,
@@ -162,8 +162,8 @@ export const getFilteredModularPipelineItems = createSelector(
         selected: false,
         faded: false,
         visible: true,
-        disabled: false,
-        checked: true,
+        disabled: focusMode !== null && focusMode?.id !== modularPipeline.id,
+        checked: modularPipeline.enabled,
       })
     ),
   })
@@ -354,8 +354,9 @@ export const getFilteredNodeModularPipelines = createSelector(
     getFilteredNodeItems,
     (state) => state.modularPipelines,
     (state) => state.nodeTypeIDs,
+    (state) => state.focusMode,
   ],
-  (filteredNodeItems, modularPipelines, nodeTypeIDs) => {
+  (filteredNodeItems, modularPipelines, nodeTypeIDs, focusMode) => {
     const filteredNodeModularPipelines = [];
 
     const nodeItems = cloneDeep(filteredNodeItems);
@@ -368,7 +369,8 @@ export const getFilteredNodeModularPipelines = createSelector(
               modularPipelines.find(
                 (rawModularPipeline) =>
                   rawModularPipeline.id === nodeModularPipeline
-              )
+              ),
+              focusMode
             )
           );
         });
@@ -384,7 +386,7 @@ export const getFilteredNodeModularPipelines = createSelector(
  * @param {obj} modularPipeline the modular pipeine that needs the construction of a modular pipeline item
  * @return {obj} modular pipeline item
  */
-const constructModularPipelineItem = (modularPipeline) => ({
+const constructModularPipelineItem = (modularPipeline, focusMode) => ({
   ...modularPipeline,
   type: 'modularPipeline',
   visibleIcon: VisibleIcon,
@@ -393,7 +395,7 @@ const constructModularPipelineItem = (modularPipeline) => ({
   selected: false,
   faded: false,
   visible: true,
-  disabled: false,
+  disabled: focusMode !== null && focusMode?.id !== modularPipeline.id,
   checked: true,
 });
 
@@ -406,11 +408,13 @@ export const getFilteredModularPipelineParent = createSelector(
     getFilteredModularPipelineItems,
     getFilteredNodeModularPipelines,
     (state) => state.modularPipelines,
+    (state) => state.focusMode,
   ],
   (
     filteredModularPipelines,
     filteredNodeModularPipelines,
-    modularPipelines
+    modularPipelines,
+    focusMode
   ) => {
     const filteredModularPipelineParents = [];
     const filteredModularPipeline = filteredModularPipelines.modularPipeline;
@@ -465,7 +469,8 @@ export const getFilteredModularPipelineParent = createSelector(
             constructModularPipelineItem(
               modularPipelines.find(
                 (rawModularPipeline) => rawModularPipeline.id === parent
-              )
+              ),
+              focusMode
             )
           );
         }
