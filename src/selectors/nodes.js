@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
+import { getFocusedModularPipelines } from './modular-pipelines';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -277,7 +278,64 @@ export const getVisibleNodes = createSelector(
 );
 
 /**
- * Returns an map of task nodeIDs to graph nodes that have parameter nodes as their source
+ * Returns nodes that are related to
+ */
+export const getDatasetNodesInFocusedModularPipeline = createSelector(
+  [
+    getNodeModularPipelines,
+    getEdgeIDs,
+    getNodeType,
+    getEdgeSources,
+    getEdgeTargets,
+    getFocusedModularPipelines,
+    getNodeDisabled,
+    getNodeDisabledNode,
+    getNodeDisabledTag,
+    getNodeDisabledModularPipeline,
+    getNodeTypeDisabled,
+  ],
+  (
+    modularPipelineNodes,
+    edgeIDs,
+    nodeType,
+    edgeSources,
+    edgeTargets,
+    focusedModularPipelines,
+    nodeDisabled,
+    nodeDisabledNode,
+    nodeDisabledTag,
+    nodeDisabledModularPipeline,
+    nodeTypeDisabled
+  ) => {
+    const nodesList = {};
+
+    console.log('modularPipelineNodes', modularPipelineNodes);
+    console.log('nodeDisabledModularPipeline', nodeDisabledModularPipeline);
+
+    // if (focusedModularPipelines !== null) {
+    //   // loop through current nodeDisabledModularPipelines first to identify the disabled dataset nodes
+
+    //   nodeDisabledModularPipeline.map((node) => {
+    //     if (node.type === 'dataset' || node.type === 'parameters') {
+    //       const source = edgeSources[node.id];
+    //       const target = edgeTargets[node.id];
+
+    //       // check edge target nodes
+
+    //       if (nodeType[target] === 'task') {
+    //       }
+    //     }
+    //   });
+
+    //   // further check if this node is within nodeDisabled, nodeDisabledNode, nodeDisabledTag, etc
+    //   return nodesList;
+    // }
+    return nodesList;
+  }
+);
+
+/**
+ * Returns a map of task nodeIDs to graph nodes that have parameter nodes as their source
  */
 export const getNodesWithInputParams = createSelector(
   [getGraphNodes, getEdgeIDs, getNodeType, getEdgeSources, getEdgeTargets],
