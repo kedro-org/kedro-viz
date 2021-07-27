@@ -67,7 +67,7 @@
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "task",
-      "parameters": {}
+      "parameters": { "params:rabbit": { "p": 1 }, "parameters": { "p": 2 } }
     },
     {
       "full_name": "bear",
@@ -199,7 +199,10 @@
       "pipelines": ["pre_ds", "__default__"],
       "tags": [],
       "type": "task",
-      "parameters": {}
+      "parameters": {
+        "params:pipeline100.data_science.plankton": { "p": 1 },
+        "params:pipeline2.data_science.plankton": { "p": 2 }
+      }
     },
     {
       "full_name": "params:pipeline100.data_science.plankton",
