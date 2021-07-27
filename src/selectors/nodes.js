@@ -273,25 +273,3 @@ export const getVisibleNodes = createSelector(
         }))
       : []
 );
-/**
- *    Sets a parameter node name if the node has one parameter object or count of parameters
- *   if the node has more than one parameter object. This name is used when hovering over parameter
- *   indicator in the flowchart
- */
-
-export const getInputParameters = createSelector(
-  [getPipelineNodeIDs, getNodeParameters],
-  (nodeIDs, nodeParameters) =>
-    arrayToObject(nodeIDs, (nodeID) => {
-      if (
-        !nodeParameters[nodeID] ||
-        Object.keys(nodeParameters[nodeID]).length === 0
-      ) {
-        return null;
-      }
-      const length = Object.keys(nodeParameters[nodeID]).length;
-      return length > 1
-        ? `Parameters:${length}`
-        : `Params:${Object.keys(nodeParameters[nodeID])[0]}`;
-    })
-);

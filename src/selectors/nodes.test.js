@@ -9,7 +9,6 @@ import {
   getPadding,
   getNodeSize,
   getVisibleNodes,
-  getInputParameters,
 } from './nodes';
 import { toggleTextLabels, updateFontLoaded } from '../actions';
 import { updateActivePipeline } from '../actions/pipelines';
@@ -355,41 +354,6 @@ describe('Selectors', () => {
         );
         expect(visibleNodeIDs.includes(nodeID)).toEqual(false);
       });
-    });
-  });
-  describe('getInputParameters', () => {
-    const newState = mockState.animals;
-    //mock set up to test nodes with more than one parameter
-    newState.node.parameters[salmonTaskNodeId] = {
-      Test1: { t1: '1' },
-      Test2: { t2: '2' },
-    };
-    //mock set up to test nodes with one parameter
-    newState.node.parameters[sharkTaskNodeId] = { Test1: { t1: '1' } };
-    const inputParameters = getInputParameters(newState);
-
-    it('returns an object', () => {
-      expect(inputParameters).toEqual(expect.any(Object));
-    });
-
-    it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(inputParameters).sort()).toEqual(
-        getNodeIDs(mockState.animals).sort()
-      );
-    });
-
-    it('returns an object whose values are all string', () => {
-      expect(Object.values(inputParameters)).toEqual(
-        expect.arrayContaining([expect.any(String)])
-      );
-    });
-
-    it('returns parameter count for node that has more than one parameter', () => {
-      expect(inputParameters[salmonTaskNodeId]).toEqual('Parameters:2');
-    });
-
-    it('returns parameter node name for node that has one parameter', () => {
-      expect(inputParameters[sharkTaskNodeId]).toEqual('Params:Test1');
     });
   });
 });

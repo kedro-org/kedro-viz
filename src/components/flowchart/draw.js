@@ -121,11 +121,10 @@ export const drawNodes = function (changed) {
     nodeActive,
     nodeSelected,
     hoveredParameters,
-    inputParameters,
+    nodeParameters,
     newParamsFlag,
     nodes,
   } = this.props;
-
   if (changed('nodes')) {
     this.el.nodes = this.el.nodeGroup
       .selectAll('.pipeline-node')
@@ -210,7 +209,7 @@ export const drawNodes = function (changed) {
       'nodeActive',
       'nodeSelected',
       'hoveredParameters',
-      'inputParameters',
+      'nodeParameters',
       'newParamsFlag',
       'clickedNode',
       'linkedNodes'
@@ -224,7 +223,8 @@ export const drawNodes = function (changed) {
         (node) =>
           newParamsFlag &&
           hoveredParameters &&
-          inputParameters[node.id] &&
+          nodeParameters[node.id] &&
+          Object.keys(nodeParameters[node.id]).length > 0 &&
           nodeTypeDisabled.parameters
       )
       .classed(
@@ -261,7 +261,8 @@ export const drawNodes = function (changed) {
         (node) =>
           newParamsFlag &&
           nodeTypeDisabled.parameters &&
-          inputParameters[node.id]
+          nodeParameters[node.id] &&
+          Object.keys(nodeParameters[node.id]).length > 0
       )
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
