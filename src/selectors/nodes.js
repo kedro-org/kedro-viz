@@ -26,7 +26,6 @@ const getTextLabels = (state) => state.textLabels;
 const getFontLoaded = (state) => state.fontLoaded;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 const getClickedNode = (state) => state.node.clicked;
-const getNodeParameters = (state) => state.node.parameters;
 
 /**
  * Gets a map of nodeIds to graph nodes

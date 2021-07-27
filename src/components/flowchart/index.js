@@ -418,19 +418,17 @@ export class FlowChart extends Component {
   };
 
   handleParamsIndicatorMouseOver = (event, node) => {
-    if (
-      this.props.nodeParameters[node.id] &&
-      Object.keys(this.props.nodeParameters[node.id]).length > 0
-    ) {
-      const nodeParameters = this.props.nodeParameters[node.id];
-      const length = Object.keys(nodeParameters).length;
+    const nodeParameterNames = Object.keys(
+      this.props.nodeParameters[node.id] || {}
+    );
+    if (nodeParameterNames.length) {
       const label =
-        length > 1
-          ? `Parameters:${length}`
-          : `Params:${Object.keys(nodeParameters)[0]}`;
-      nodeParameters && this.showTooltip(event, label);
-      event.stopPropagation();
+        nodeParameterNames.length > 1
+          ? `Parameters:${nodeParameterNames.length}`
+          : `Params:${nodeParameterNames[0]}`;
+      this.showTooltip(event, label);
     }
+    event.stopPropagation();
   };
 
   /**
@@ -465,11 +463,11 @@ export class FlowChart extends Component {
    * @param {Object} nodeName The fullname of the node
    * @param {?Object} options Options for the tooltip if required
    */
-  showTooltip(event, nodeName, options = {}) {
+  showTooltip(event, text, options = {}) {
     this.setState({
       tooltip: {
         targetRect: event && event.target.getBoundingClientRect(),
-        text: nodeName,
+        text: text,
         visible: true,
         ...options,
       },
