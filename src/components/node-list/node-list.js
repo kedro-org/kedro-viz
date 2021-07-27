@@ -23,6 +23,7 @@ const NodeList = ({
   onItemMouseEnter,
   onItemMouseLeave,
   onItemChange,
+  focusMode,
 }) => {
   const [searching, setSearching] = useState(false);
 
@@ -62,6 +63,7 @@ const NodeList = ({
                     onItemChange={onItemChange}
                     onToggleContracted={onToggleContracted}
                     searching={searching}
+                    focusMode={focusMode}
                   />
                 </div>
               </Scrollbars>

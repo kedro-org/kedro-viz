@@ -49,10 +49,11 @@ const NodeListProvider = ({
   onToggleModularPipelineActive,
   onToggleModularPipelineContracted,
   onToggleTypeDisabled,
+  onToggleModularPipelineFilter,
   modularPipelines,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
-
+  const [focusMode, setFocusMode] = useState(null);
   const items = getFilteredItems({
     nodes,
     tags,
@@ -61,13 +62,17 @@ const NodeListProvider = ({
     modularPipelines,
     nodeSelected,
     searchValue,
+    focusMode,
   });
 
   const groups = getGroups({ items });
 
   const onItemClick = (item) => {
-    if (isGroupType(item.type)) {
+    if (isGroupType(item.type) || isModularPipelineType(item.type)) {
       onGroupItemChange(item, item.checked);
+      if (isModularPipelineType(item.type)) {
+        onToggleFocusMode(item);
+      }
     } else {
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
@@ -78,13 +83,25 @@ const NodeListProvider = ({
   };
 
   const onItemChange = (item, checked) => {
-    if (isGroupType(item.type)) {
+    if (isGroupType(item.type) || isModularPipelineType(item.type)) {
       onGroupItemChange(item, checked);
+      if (isModularPipelineType(item.type)) {
+        onToggleFocusMode(item);
+      }
     } else {
       if (checked) {
         onToggleNodeActive(null);
       }
       onToggleNodesDisabled([item.id], checked);
+    }
+  };
+
+  // set the modular pipeline focus mode on toggle
+  const onToggleFocusMode = (item) => {
+    if (focusMode === null) {
+      setFocusMode(item);
+    } else {
+      setFocusMode(null);
     }
   };
 
@@ -140,6 +157,8 @@ const NodeListProvider = ({
     // Toggle the group
     if (isTagType(item.type)) {
       onToggleTagFilter(item.id, !wasChecked);
+    } else if (isModularPipelineType(item.type)) {
+      onToggleModularPipelineFilter([item.id], !wasChecked);
     } else if (isElementType(item.type)) {
       onToggleTypeDisabled({ [item.id]: wasChecked });
     }
@@ -173,6 +192,7 @@ const NodeListProvider = ({
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
       onItemChange={onItemChange}
+      focusMode={focusMode}
     />
   );
 };

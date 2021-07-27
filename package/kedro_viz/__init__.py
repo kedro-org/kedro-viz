@@ -27,4 +27,4 @@
 # limitations under the License.
 """Kedro plugin for visualising a Kedro pipeline"""
 
-__version__ = "3.13.0"
+__version__ = "3.13.1"

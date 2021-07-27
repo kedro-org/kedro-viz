@@ -7,8 +7,10 @@ import {
   CHANGE_FLAG,
   RESET_DATA,
   TOGGLE_EXPORT_MODAL,
+  TOGGLE_SETTINGS_MODAL,
   TOGGLE_LAYERS,
   TOGGLE_MINIMAP,
+  TOGGLE_CODE,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_TEXT_LABELS,
@@ -235,6 +237,16 @@ describe('Reducer', () => {
     });
   });
 
+  describe('TOGGLE_SETTINGS_MODAL', () => {
+    it('should toggle whether the export modal is visible', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_SETTINGS_MODAL,
+        visible: false,
+      });
+      expect(newState.visible.settingsModal).toEqual(false);
+    });
+  });
+
   describe('TOGGLE_MINIMAP', () => {
     it('should toggle whether the minimap is open', () => {
       const newState = reducer(mockState.animals, {
@@ -325,6 +337,16 @@ describe('Reducer', () => {
         fontLoaded: true,
       });
       expect(newState.fontLoaded).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_CODE', () => {
+    it('should toggle whether the code panel is open', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_CODE,
+        visible: true,
+      });
+      expect(newState.visible.code).toBe(true);
     });
   });
 

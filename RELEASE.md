@@ -8,6 +8,16 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Major features and improvements
+
+- Add `--autoreload` flag to `kedro viz` to automatically reload Kedro Viz tab when the Kedro project code changes.
+
+# Release 3.13.1
+
+## Bug fixes and other changes
+
+- Fix running kedro viz with `--load-file`. (#509)
+
 # Release 3.13.0
 
 ## Major features and improvements

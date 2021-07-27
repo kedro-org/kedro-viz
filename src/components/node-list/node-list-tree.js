@@ -60,6 +60,7 @@ const TreeListProvider = ({
   onItemMouseLeave,
   nodeTypeIDs,
   searching,
+  focusMode,
 }) => {
   const classes = useStyles();
 
@@ -76,6 +77,7 @@ const TreeListProvider = ({
             modularPipelineIds,
             nodeModularPipelines,
             nodeTypeIDs,
+            focusMode,
           })
         : [];
 
@@ -94,6 +96,7 @@ const TreeListProvider = ({
     modularPipelineIds,
     nodeModularPipelines,
     nodeTypeIDs,
+    focusMode,
   ]);
 
   const treeData = getNestedModularPipelines({
@@ -104,6 +107,7 @@ const TreeListProvider = ({
     modularPipelineIds,
     nodeModularPipelines,
     nodeTypeIDs,
+    focusMode,
   });
 
   const onItemClick = (item) => {
@@ -126,16 +130,25 @@ const TreeListProvider = ({
     }
   };
 
-  const renderModularPipelines = (treeData) =>
-    treeData.children.map((node) =>
+  const renderModularPipelines = (treeData, parentStatus) => {
+    // this value is needed to determine whether the children modular pipeline belongs to a parent under focusMode
+    const status =
+      parentStatus === false && treeData.id !== 'main'
+        ? parentStatus
+        : treeData.disabled;
+
+    return treeData.children.map((node) =>
       renderTree(
         node,
         onItemMouseEnter,
         onItemMouseLeave,
         onItemChange,
-        onItemClick
+        onItemClick,
+        status,
+        treeData.id
       )
     );
+  };
 
   const renderChildNodes = (treeData) =>
     treeData.nodes.map((node) => (
@@ -146,6 +159,7 @@ const TreeListProvider = ({
         onItemChange={onItemChange}
         onItemClick={onItemClick}
         key={node.id}
+        focusMode={focusMode}
       />
     ));
 
@@ -154,7 +168,9 @@ const TreeListProvider = ({
     onItemMouseEnter,
     onItemMouseLeave,
     onItemChange,
-    onItemClick
+    onItemClick,
+    parentDisabled,
+    parentPipeline
   ) => (
     <NodeListTreeItem
       data={rowData}
@@ -162,8 +178,11 @@ const TreeListProvider = ({
       onItemMouseLeave={onItemMouseLeave}
       onItemChange={onItemChange}
       onItemClick={onItemClick}
-      key={rowData.id}>
-      {renderModularPipelines(rowData)}
+      key={rowData.id}
+      focusMode={focusMode}
+      parentPipeline={parentPipeline}
+      parentDisabled={parentDisabled}>
+      {renderModularPipelines(rowData, parentDisabled)}
 
       {/* render set of node elements in that modular pipeline */}
       {renderChildNodes(rowData)}
@@ -176,9 +195,9 @@ const TreeListProvider = ({
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       expanded={expandedPipelines}
-      key="tree">
+      key="tree-search">
       {/* render set of modular pipelines in the main pipeline */}
-      {renderModularPipelines(treeData)}
+      {renderModularPipelines(treeData, false)}
       {/* render set of node elements in the main pipeline */}
       {renderChildNodes(treeData)}
     </StyledTreeView>
@@ -188,8 +207,8 @@ const TreeListProvider = ({
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       onNodeToggle={onItemExpandToggle}
-      key="tree-search">
-      {renderModularPipelines(treeData)}
+      key="tree">
+      {renderModularPipelines(treeData, false)}
       {renderChildNodes(treeData)}
     </StyledTreeView>
   );
