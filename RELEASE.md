@@ -30,7 +30,6 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Upgrade dev dependencies to solve snyk errors. (#486)
 - Remove the old dagre graphing logic and the 'oldgraph' flag. (#486)
 - Delete 'modularpipeline' flag. (#495)
 - Fix run command suggestion. (#497)
