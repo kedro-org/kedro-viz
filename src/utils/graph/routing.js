@@ -237,17 +237,19 @@ export const routing = ({
     // Combine all points
     const points = [...sourceStem, ...edge.points, ...targetStem];
 
+    // TODO: revert this after resolving the problem
+    
     // Fix any invalid points caused by invalid layouts
-    let pointYMax = points[0].y;
+    // let pointYMax = points[0].y;
 
-    for (const point of points) {
-      // Ensure increasing Y values for each point
-      if (point.y < pointYMax) {
-        point.y = pointYMax;
-      } else {
-        pointYMax = point.y;
-      }
-    }
+    // for (const point of points) {
+    //   // Ensure increasing Y values for each point
+    //   if (point.y < pointYMax) {
+    //     point.y = pointYMax;
+    //   } else {
+    //     pointYMax = point.y;
+    //   }
+    // }
 
     // Assign finished points to edge
     edge.points = points;
