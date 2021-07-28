@@ -1,5 +1,6 @@
 -r requirements.txt
 kedro[pandas.CSVDataSet]>=0.16.0  # we use CSVDataSet in tests
+kedro-telemetry>=0.1.1  # for testing telemetry integration
 bandit~=1.6.2
 behave>=1.2.6, <2.0
 black==21.5b1
@@ -18,6 +19,7 @@ types-aiofiles==0.1.3
 types-cachetools==0.1.6
 types-click==0.1.14
 types-futures==0.1.3
+types-Jinja2==2.11.2
 types-orjson==0.1.0
 types-pkg-resources==0.1.2
 types-protobuf==0.1.10

@@ -14,8 +14,7 @@ export const isTagType = (type) => type === 'tag';
 export const isModularPipelineType = (type) => type === 'modularPipeline';
 export const isElementType = (type) => type === 'elementType';
 
-export const isGroupType = (type) =>
-  isElementType(type) || isTagType(type);
+export const isGroupType = (type) => isElementType(type) || isTagType(type);
 
 /**
  * Get a list of IDs of the visible nodes from all groups
@@ -150,8 +149,8 @@ export const getFilteredModularPipelines = createSelector(
  * @return {array} Node list items
  */
 export const getFilteredModularPipelineItems = createSelector(
-  getFilteredModularPipelines,
-  (filteredModularPipelines) => ({
+  [getFilteredModularPipelines, (state) => state.focusMode],
+  (filteredModularPipelines, focusMode) => ({
     modularPipeline: filteredModularPipelines.modularPipeline.map(
       (modularPipeline) => ({
         ...modularPipeline,
@@ -163,8 +162,8 @@ export const getFilteredModularPipelineItems = createSelector(
         selected: false,
         faded: false,
         visible: true,
-        disabled: false,
-        checked: true,
+        disabled: focusMode !== null && focusMode?.id !== modularPipeline.id,
+        checked: modularPipeline.enabled,
       })
     ),
   })
@@ -181,10 +180,12 @@ export const getFilteredElementTypes = createSelector(
     highlightMatch(
       filterNodeGroups(
         {
-          elementType: Object.entries(sidebarElementTypes).map(([type, name]) => ({
-            id: type,
-            name,
-          })),
+          elementType: Object.entries(sidebarElementTypes).map(
+            ([type, name]) => ({
+              id: type,
+              name,
+            })
+          ),
         },
         searchValue
       ),
@@ -293,32 +294,29 @@ export const getFilteredNodeItems = createSelector(
  * @param {object} items List items by group type
  * @return {array} List of groups
  */
-export const getGroups = createSelector(
-  [(state) => state.items],
-  (items) => {
-    const groups = {};
- 
-    for (const [type, name] of Object.entries(sidebarGroups)) {
-      const itemsOfType = items[type] || [];
-      const allUnchecked = itemsOfType.every((item) => !item.checked);
-      const allChecked = itemsOfType.every((item) => item.checked);
-    
-      groups[type] = {
-        type,
-        name,
-        id: type,
-        kind: 'filter',
-        allUnchecked: itemsOfType.every((item) => !item.checked),
-        allChecked: itemsOfType.every((item) => item.checked),
-        checked: !allUnchecked,
-        visibleIcon: allChecked ? IndicatorIcon : IndicatorPartialIcon,
-        invisibleIcon: IndicatorOffIcon,
-      };
-    }
+export const getGroups = createSelector([(state) => state.items], (items) => {
+  const groups = {};
 
-    return groups;
+  for (const [type, name] of Object.entries(sidebarGroups)) {
+    const itemsOfType = items[type] || [];
+    const allUnchecked = itemsOfType.every((item) => !item.checked);
+    const allChecked = itemsOfType.every((item) => item.checked);
+
+    groups[type] = {
+      type,
+      name,
+      id: type,
+      kind: 'filter',
+      allUnchecked: itemsOfType.every((item) => !item.checked),
+      allChecked: itemsOfType.every((item) => item.checked),
+      checked: !allUnchecked,
+      visibleIcon: allChecked ? IndicatorIcon : IndicatorPartialIcon,
+      invisibleIcon: IndicatorOffIcon,
+    };
   }
-);
+
+  return groups;
+});
 
 /**
  * Returns filtered/highlighted items for nodes, tags and modular pipelines
@@ -356,8 +354,9 @@ export const getFilteredNodeModularPipelines = createSelector(
     getFilteredNodeItems,
     (state) => state.modularPipelines,
     (state) => state.nodeTypeIDs,
+    (state) => state.focusMode,
   ],
-  (filteredNodeItems, modularPipelines, nodeTypeIDs) => {
+  (filteredNodeItems, modularPipelines, nodeTypeIDs, focusMode) => {
     const filteredNodeModularPipelines = [];
 
     const nodeItems = cloneDeep(filteredNodeItems);
@@ -370,7 +369,8 @@ export const getFilteredNodeModularPipelines = createSelector(
               modularPipelines.find(
                 (rawModularPipeline) =>
                   rawModularPipeline.id === nodeModularPipeline
-              )
+              ),
+              focusMode
             )
           );
         });
@@ -386,17 +386,18 @@ export const getFilteredNodeModularPipelines = createSelector(
  * @param {obj} modularPipeline the modular pipeine that needs the construction of a modular pipeline item
  * @return {obj} modular pipeline item
  */
-const constructModularPipelineItem = (modularPipeline) => ({
+const constructModularPipelineItem = (modularPipeline, focusMode) => ({
   ...modularPipeline,
   type: 'modularPipeline',
+  icon: 'modularPipeline',
   visibleIcon: VisibleIcon,
   invisibleIcon: InvisibleIcon,
   active: false,
   selected: false,
   faded: false,
   visible: true,
-  disabled: false,
-  checked: true,
+  disabled: focusMode !== null && focusMode?.id !== modularPipeline.id,
+  checked: modularPipeline.enabled,
 });
 
 /**
@@ -408,11 +409,13 @@ export const getFilteredModularPipelineParent = createSelector(
     getFilteredModularPipelineItems,
     getFilteredNodeModularPipelines,
     (state) => state.modularPipelines,
+    (state) => state.focusMode,
   ],
   (
     filteredModularPipelines,
     filteredNodeModularPipelines,
-    modularPipelines
+    modularPipelines,
+    focusMode
   ) => {
     const filteredModularPipelineParents = [];
     const filteredModularPipeline = filteredModularPipelines.modularPipeline;
@@ -467,7 +470,8 @@ export const getFilteredModularPipelineParent = createSelector(
             constructModularPipelineItem(
               modularPipelines.find(
                 (rawModularPipeline) => rawModularPipeline.id === parent
-              )
+              ),
+              focusMode
             )
           );
         }

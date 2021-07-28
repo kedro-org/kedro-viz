@@ -37,6 +37,19 @@ export function toggleExportModal(visible) {
   };
 }
 
+export const TOGGLE_SETTINGS_MODAL = 'TOGGLE_SETTINGS_MODAL';
+
+/**
+ * Toggle whether to show the settings modal
+ * @param {Boolean} visible True if the modal is to be shown
+ */
+export function toggleSettingsModal(visible) {
+  return {
+    type: TOGGLE_SETTINGS_MODAL,
+    visible,
+  };
+}
+
 export const TOGGLE_PLOT_MODAL = 'TOGGLE_PLOT_MODAL';
 
 /**

@@ -8,19 +8,42 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Major features and improvements
+
+- Add `--autoreload` flag to `kedro viz` to automatically reload Kedro Viz tab when the Kedro project code changes.
+
+# Release 3.14.0
+
+## Major features and improvements
+
+- Implement first version of focus mode feature to allow selective display of modular pipelines on the flowchart. (#514)
+- Add `--autoreload` to relaunch viz server on file change. (#498)
+- Updated demo data set to shuttle factory example. (#518)
+
+## Bug fixes and other changes
+
+- Removed build/api after running build. (#515)
+- Fix path parsing for PartitionedDataSet (#516)
+- Fix dev server port (#517)
+
+# Release 3.13.1
+
+## Bug fixes and other changes
+
+- Fix running kedro viz with `--load-file`. (#509)
+
 # Release 3.13.0
 
 ## Major features and improvements
 
 - Implement new tree list with modular pipelines and search UI for new sidebar navigation. (#479)
 - Implement element filters and further design updates to the filter panel for new sidebar navigation. (#454)
-- Implement `kedro-telemetry` in production to enable heap analysis for Kedro-Viz. (#481, #487)
+- Implement [`kedro-telemetry`](https://github.com/quantumblacklabs/kedro-telemetry) in production to enable Heap Analytics analysis for Kedro-Viz. (#481, #487)
 - Show decorated function's source code on code panel. (#493)
 - Enable the display of entire parameter object with react-json-viewer on the metadata panel. (#494)
 
 ## Bug fixes and other changes
 
-- Upgrade dev dependencies to solve snyk errors. (#486)
 - Remove the old dagre graphing logic and the 'oldgraph' flag. (#486)
 - Delete 'modularpipeline' flag. (#495)
 - Fix run command suggestion. (#497)

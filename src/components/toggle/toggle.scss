@@ -1,0 +1,86 @@
+@import '../../styles/variables';
+
+.kui-theme--light {
+  --color-toggle-on: #{$color-primary-2};
+  --color-toggle-on-bar: #{rgba($color-primary-2, 0.3)};
+  --color-toggle-off: #{$color-bg-dark-9};
+  --color-toggle-off-bar: #{rgba($color-bg-dark-9, 0.3)};
+}
+
+.kui-theme--dark {
+  --color-toggle-on: #{$color-primary};
+  --color-toggle-on-bar: #{rgba($color-primary, 0.3)};
+  --color-toggle-off: #{$color-light};
+  --color-toggle-off-bar: #{rgba($color-light, 0.3)};
+}
+
+.pipeline-toggle {
+  transition: opacity 0.2s ease;
+}
+
+.pipeline-toggle--no-hasCode {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.pipeline-toggle {
+  margin-top: 0.3em;
+  margin-bottom: 2em;
+}
+
+.pipeline-toggle-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+.pipeline-toggle-label {
+  position: relative;
+  padding: 0 0 0 2.8em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pipeline-toggle-label:before,
+.pipeline-toggle-label:after {
+  position: absolute;
+  top: 0.81em;
+  left: 0;
+  display: block;
+  margin: 0 0.8em 0 0;
+  transform: translateY(-50%);
+  content: ' ';
+}
+
+.pipeline-toggle-label:before {
+  width: 1.7em;
+  height: 0.8em;
+  background-color: var(--color-toggle-off-bar);
+  border-radius: 0.5em;
+  transition: opacity 0.15s ease;
+}
+
+.pipeline-toggle-label:after {
+  width: 0.8em;
+  height: 0.8em;
+  background-color: var(--color-toggle-off);
+  border-radius: 50%;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+[data-whatinput='keyboard'] input:focus + .pipeline-toggle-label:before {
+  box-shadow: 0 0 0 3px yellow;
+}
+
+.pipeline-toggle-label--checked:before {
+  background-color: var(--color-toggle-on-bar);
+}
+
+.pipeline-toggle-label--checked:after {
+  background-color: var(--color-toggle-on);
+  transform: translate(100%, -50%);
+}
