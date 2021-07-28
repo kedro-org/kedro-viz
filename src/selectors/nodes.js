@@ -84,10 +84,10 @@ export const getNodeActive = createSelector(
  * Set selected status if the node is clicked
  */
 export const getNodeSelected = createSelector(
-  [getPipelineNodeIDs, getClickedNode, getNodeDisabled],
-  (nodeIDs, clickedNode, nodeDisabled) =>
+  [getContractedModularPipelines, getClickedNode, getNodeDisabled],
+  ({ node }, clickedNode, nodeDisabled) =>
     arrayToObject(
-      nodeIDs,
+      node.ids,
       (nodeID) => nodeID === clickedNode && !nodeDisabled[nodeID]
     )
 );

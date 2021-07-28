@@ -25,7 +25,7 @@ import {
   getNodeSelected,
   getNodeModularPipelines,
 } from '../../selectors/nodes';
-import { loadNodeData } from '../../actions/nodes';
+import { loadNodeData, toggleNodeClicked } from '../../actions/nodes';
 import NodeListTreeItem from './node-list-tree-item';
 
 // please note that this setup is unique for initialization of the material-ui tree,
@@ -50,6 +50,7 @@ const TreeListProvider = ({
   nodes,
   nodeSelected,
   onToggleNodeSelected,
+  onToggleNodeClicked,
   onToggleContracted,
   searchValue,
   modularPipelines,
@@ -124,6 +125,9 @@ const TreeListProvider = ({
   };
 
   const onItemExpandToggle = (event, expandedItemIds) => {
+    // Reset clicked node
+    onToggleNodeClicked(null);
+
     // Contract all modular pipelines that are not expanded on sidebar
     for (const id of modularPipelineIds) {
       if (!expandedItemIds.includes(id)) {
@@ -240,6 +244,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));
+  },
+  onToggleNodeClicked: (nodeID) => {
+    dispatch(toggleNodeClicked(nodeID));
   },
   onToggleNodeSelected: (nodeID) => {
     dispatch(loadNodeData(nodeID));
