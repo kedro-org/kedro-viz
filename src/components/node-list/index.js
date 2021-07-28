@@ -55,7 +55,6 @@ const NodeListProvider = ({
   modularPipelines,
   focusMode,
 }) => {
-  console.log('focusMode', focusMode);
   const [searchValue, updateSearchValue] = useState('');
   // const [focusMode, setFocusMode] = useState(null);
   const items = getFilteredItems({
