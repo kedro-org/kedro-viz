@@ -17,11 +17,11 @@ Please follow the established format:
 ## Major features and improvements
 
 - Implement first version of focus mode feature to allow selective display of modular pipelines on the flowchart. (#514)
+- Add `--autoreload` to relaunch viz server on file change. (#498)
 - Updated demo data set to shuttle factory example. (#518)
 
 ## Bug fixes and other changes
 
-- Upgrade dev dependencies to solve snyk errors. (#486)
 - Removed build/api after running build. (#515)
 - Fix path parsing for PartitionedDataSet (#516)
 - Fix dev server port (#517)
@@ -44,7 +44,6 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Upgrade dev dependencies to solve snyk errors. (#486)
 - Remove the old dagre graphing logic and the 'oldgraph' flag. (#486)
 - Delete 'modularpipeline' flag. (#495)
 - Fix run command suggestion. (#497)
