@@ -389,6 +389,7 @@ export const getFilteredNodeModularPipelines = createSelector(
 const constructModularPipelineItem = (modularPipeline, focusMode) => ({
   ...modularPipeline,
   type: 'modularPipeline',
+  icon: 'modularPipeline',
   visibleIcon: VisibleIcon,
   invisibleIcon: InvisibleIcon,
   active: false,
@@ -396,7 +397,7 @@ const constructModularPipelineItem = (modularPipeline, focusMode) => ({
   faded: false,
   visible: true,
   disabled: focusMode !== null && focusMode?.id !== modularPipeline.id,
-  checked: true,
+  checked: modularPipeline.enabled,
 });
 
 /**
