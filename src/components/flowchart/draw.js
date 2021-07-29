@@ -125,12 +125,12 @@ export const drawNodes = function (changed) {
     newParamsFlag,
     nodes,
   } = this.props;
+
   if (changed('nodes')) {
     this.el.nodes = this.el.nodeGroup
       .selectAll('.pipeline-node')
       .data(nodes, (node) => node.id);
   }
-
   if (!this.el.nodes) {
     return;
   }
@@ -200,6 +200,7 @@ export const drawNodes = function (changed) {
 
     this.el.nodes = this.el.nodeGroup.selectAll('.pipeline-node');
   }
+
   if (
     changed(
       'nodes',

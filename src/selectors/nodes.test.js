@@ -9,8 +9,10 @@ import {
   getPadding,
   getNodeSize,
   getVisibleNodes,
+  getNodesWithInputParams,
 } from './nodes';
 import { toggleTextLabels, updateFontLoaded } from '../actions';
+import { toggleTypeDisabled } from '../actions/node-type';
 import { updateActivePipeline } from '../actions/pipelines';
 import {
   toggleNodeClicked,
@@ -27,8 +29,7 @@ const getNodePipelines = (state) => state.node.pipelines;
 
 const noFontState = reducer(mockState.animals, updateFontLoaded(false));
 
-const salmonTaskNodeId = '443cf06a';
-const sharkTaskNodeId = '15586b7a';
+const parameterNodesID = ['443cf06a', '2ce32881'];
 
 describe('Selectors', () => {
   describe('getNodeActive', () => {
@@ -354,6 +355,21 @@ describe('Selectors', () => {
         );
         expect(visibleNodeIDs.includes(nodeID)).toEqual(false);
       });
+    });
+  });
+
+  describe('getNodesWithInputParams', () => {
+    const newMockState = reducer(
+      mockState.animals,
+      toggleTypeDisabled('parameters', true)
+    );
+    const nodesWithInputParams = getNodesWithInputParams(newMockState);
+    it('returns an object', () => {
+      expect(nodesWithInputParams).toEqual(expect.any(Object));
+    });
+
+    it('returns an object with nodes that have parameters as inputs', () => {
+      expect(Object.keys(nodesWithInputParams)).toEqual(parameterNodesID);
     });
   });
 });

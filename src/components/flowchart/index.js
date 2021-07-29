@@ -7,7 +7,7 @@ import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
 import {
   getNodeActive,
   getNodeSelected,
-  getnodesWithInputParams,
+  getNodesWithInputParams,
 } from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
@@ -462,7 +462,7 @@ export class FlowChart extends Component {
   /**
    * Show, fill and and position the tooltip
    * @param {Object} event Event object
-   * @param {Object} nodeName The fullname of the node
+   * @param {Object} text Text to show on the tooltip
    * @param {?Object} options Options for the tooltip if required
    */
   showTooltip(event, text, options = {}) {
@@ -583,7 +583,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeTypeDisabled: state.nodeType.disabled,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
-  nodesWithInputParams: getnodesWithInputParams(state),
+  nodesWithInputParams: getNodesWithInputParams(state),
   newParamsFlag: state.flags.newparams,
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,

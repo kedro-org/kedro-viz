@@ -280,7 +280,7 @@ export const getVisibleNodes = createSelector(
  * Returns an map of task nodeIDs to graph nodes that have parameter nodes as their source
  */
 
-export const getnodesWithInputParams = createSelector(
+export const getNodesWithInputParams = createSelector(
   [
     getGraphNodes,
     getNodeName,
