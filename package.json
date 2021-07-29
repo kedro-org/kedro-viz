@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "3.13.1",
+  "version": "3.14.0",
   "main": "lib/components/app/index.js",
   "files": [
     "lib"
@@ -10,7 +10,7 @@
   "scripts": {
     "build": "npm run build:css && react-scripts build",
     "build:css": "node-sass src/ -o src/",
-    "postbuild":"rm -rf build/api",
+    "postbuild": "rm -rf build/api",
     "start": "REACT_APP_DATA_SOURCE=$DATA npm-run-all -p start:css start:app start:lib",
     "start:app": "PORT=4141 react-scripts start",
     "start:css": "npm run build:css && node-sass src/ -o src/ --watch --recursive",
