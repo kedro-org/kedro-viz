@@ -121,7 +121,7 @@ export const drawNodes = function (changed) {
     nodeActive,
     nodeSelected,
     hoveredParameters,
-    nodeParameters,
+    nodeswithInputParams,
     newParamsFlag,
     nodes,
   } = this.props;
@@ -134,7 +134,6 @@ export const drawNodes = function (changed) {
   if (!this.el.nodes) {
     return;
   }
-
   const updateNodes = this.el.nodes;
   const enterNodes = this.el.nodes.enter().append('g');
   const exitNodes = this.el.nodes.exit();
@@ -201,7 +200,6 @@ export const drawNodes = function (changed) {
 
     this.el.nodes = this.el.nodeGroup.selectAll('.pipeline-node');
   }
-
   if (
     changed(
       'nodes',
@@ -209,7 +207,7 @@ export const drawNodes = function (changed) {
       'nodeActive',
       'nodeSelected',
       'hoveredParameters',
-      'nodeParameters',
+      'nodeswithInputParams',
       'newParamsFlag',
       'clickedNode',
       'linkedNodes'
@@ -223,8 +221,7 @@ export const drawNodes = function (changed) {
         (node) =>
           newParamsFlag &&
           hoveredParameters &&
-          nodeParameters[node.id] &&
-          Object.keys(nodeParameters[node.id]).length > 0 &&
+          nodeswithInputParams[node.id] &&
           nodeTypeDisabled.parameters
       )
       .classed(
@@ -261,8 +258,7 @@ export const drawNodes = function (changed) {
         (node) =>
           newParamsFlag &&
           nodeTypeDisabled.parameters &&
-          nodeParameters[node.id] &&
-          Object.keys(nodeParameters[node.id]).length > 0
+          nodeswithInputParams[node.id]
       )
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))

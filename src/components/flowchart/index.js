@@ -4,7 +4,11 @@ import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
-import { getNodeActive, getNodeSelected } from '../../selectors/nodes';
+import {
+  getNodeActive,
+  getNodeSelected,
+  getNodesWithInputParams,
+} from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
@@ -109,7 +113,7 @@ export class FlowChart extends Component {
         'nodeActive',
         'nodeSelected',
         'hoveredParameters',
-        'nodeParameters',
+        'nodeswithInputParams',
         'newParamsFlag'
       )
     ) {
@@ -418,14 +422,12 @@ export class FlowChart extends Component {
   };
 
   handleParamsIndicatorMouseOver = (event, node) => {
-    const nodeParameterNames = Object.keys(
-      this.props.nodeParameters[node.id] || {}
-    );
-    if (nodeParameterNames.length) {
+    const parameterNames = this.props.nodeswithInputParams[node.id];
+    if (parameterNames) {
       const label =
-        nodeParameterNames.length > 1
-          ? `Parameters:${nodeParameterNames.length}`
-          : `Params:${nodeParameterNames[0]}`;
+        parameterNames.length > 1
+          ? `Parameters:${parameterNames.length}`
+          : parameterNames[0];
       this.showTooltip(event, label);
     }
     event.stopPropagation();
@@ -581,7 +583,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeTypeDisabled: state.nodeType.disabled,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
-  nodeParameters: state.node.parameters,
+  nodeswithInputParams: getNodesWithInputParams(state),
   newParamsFlag: state.flags.newparams,
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,

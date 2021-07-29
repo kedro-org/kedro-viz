@@ -26,6 +26,9 @@ const getTextLabels = (state) => state.textLabels;
 const getFontLoaded = (state) => state.fontLoaded;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 const getClickedNode = (state) => state.node.clicked;
+const getEdgeIDs = (state) => state.edge.ids;
+const getEdgeSources = (state) => state.edge.sources;
+const getEdgeTargets = (state) => state.edge.targets;
 
 /**
  * Gets a map of nodeIds to graph nodes
@@ -271,4 +274,33 @@ export const getVisibleNodes = createSelector(
           ...nodeSize[id],
         }))
       : []
+);
+
+/**
+ * Returns an map of task nodeIDs to graph nodes that have parameter nodes as their source
+ */
+
+export const getNodesWithInputParams = createSelector(
+  [
+    getGraphNodes,
+    getNodeName,
+    getEdgeIDs,
+    getNodeType,
+    getEdgeSources,
+    getEdgeTargets,
+  ],
+  (nodes, nodeName, edgeIDs, nodeType, edgeSources, edgeTargets) => {
+    const nodesList = {};
+    for (const edgeID of edgeIDs) {
+      const source = edgeSources[edgeID];
+      const target = edgeTargets[edgeID];
+      if (nodeType[source] === 'parameters' && nodeType[target] === 'task') {
+        if (!nodesList[target]) {
+          nodesList[target] = [];
+        }
+        nodesList[target].push(nodeName[source]);
+      }
+    }
+    return nodesList;
+  }
 );
