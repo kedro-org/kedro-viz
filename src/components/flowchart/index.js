@@ -7,7 +7,7 @@ import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
 import {
   getNodeActive,
   getNodeSelected,
-  getNodesWithInputParams,
+  getnodesWithInputParams,
 } from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
@@ -113,7 +113,7 @@ export class FlowChart extends Component {
         'nodeActive',
         'nodeSelected',
         'hoveredParameters',
-        'nodeswithInputParams',
+        'nodesWithInputParams',
         'newParamsFlag'
       )
     ) {
@@ -422,7 +422,7 @@ export class FlowChart extends Component {
   };
 
   handleParamsIndicatorMouseOver = (event, node) => {
-    const parameterNames = this.props.nodeswithInputParams[node.id];
+    const parameterNames = this.props.nodesWithInputParams[node.id];
     if (parameterNames) {
       const label =
         parameterNames.length > 1
@@ -583,7 +583,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeTypeDisabled: state.nodeType.disabled,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
-  nodeswithInputParams: getNodesWithInputParams(state),
+  nodesWithInputParams: getnodesWithInputParams(state),
   newParamsFlag: state.flags.newparams,
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,

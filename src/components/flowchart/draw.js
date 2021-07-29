@@ -121,7 +121,7 @@ export const drawNodes = function (changed) {
     nodeActive,
     nodeSelected,
     hoveredParameters,
-    nodeswithInputParams,
+    nodesWithInputParams,
     newParamsFlag,
     nodes,
   } = this.props;
@@ -207,7 +207,7 @@ export const drawNodes = function (changed) {
       'nodeActive',
       'nodeSelected',
       'hoveredParameters',
-      'nodeswithInputParams',
+      'nodesWithInputParams',
       'newParamsFlag',
       'clickedNode',
       'linkedNodes'
@@ -221,7 +221,7 @@ export const drawNodes = function (changed) {
         (node) =>
           newParamsFlag &&
           hoveredParameters &&
-          nodeswithInputParams[node.id] &&
+          nodesWithInputParams[node.id] &&
           nodeTypeDisabled.parameters
       )
       .classed(
@@ -258,7 +258,7 @@ export const drawNodes = function (changed) {
         (node) =>
           newParamsFlag &&
           nodeTypeDisabled.parameters &&
-          nodeswithInputParams[node.id]
+          nodesWithInputParams[node.id]
       )
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
