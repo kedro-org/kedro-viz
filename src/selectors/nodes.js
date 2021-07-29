@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
+import { getFocusedModularPipeline } from './modular-pipelines';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -288,6 +289,22 @@ export const getNodesWithInputParams = createSelector(
       const target = edgeTargets[edgeID];
       if (nodeType[source] === 'parameters' && nodeType[target] === 'task') {
         nodesList[target] = nodes[target];
+      }
+    }
+    return nodesList;
+  }
+);
+
+/**
+ * Returns a list of dataset nodes that are input and output nodes of the modular pipeline under focus mode
+ */
+export const getInputOutputNodesForFocusedModularPipeline = createSelector(
+  [getFocusedModularPipeline, getGraphNodes, getNodeModularPipelines],
+  (focusedModularPipeline, graphNodes, nodeModularPipelines) => {
+    const nodesList = {};
+    for (const nodeID in graphNodes) {
+      if (!nodeModularPipelines[nodeID].includes(focusedModularPipeline?.id)) {
+        nodesList[nodeID] = graphNodes[nodeID];
       }
     }
     return nodesList;

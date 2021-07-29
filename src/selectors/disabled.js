@@ -78,16 +78,6 @@ export const getNodeDisabledModularPipeline = createSelector(
       if (modularPipelineCount.enabled === 0) {
         return false;
       }
-      // check to see whether the node itself belongs to a modular pipeline
-      // if (nodeModularPipelines[nodeID].length) {
-      if (nodeID === '1161a87b') {
-        console.log('found output');
-      }
-
-      if (nodeID === '6d5873ac') {
-        console.log('found input');
-      }
-      // check if the node belongs to the selected modular pipeline first
       if (
         !isNodeOfActiveModularPipeline(
           nodeModularPipelines,
@@ -96,17 +86,13 @@ export const getNodeDisabledModularPipeline = createSelector(
         ) &&
         (nodeType[nodeID] === 'parameters' || nodeType[nodeID] === 'data')
       ) {
-        // check if the node points to a target that belongs to a modular pipeline
-        // obtain the edgeID first
         const relatedEdgeIDs = edgeIDs.filter((edgeID) =>
           edgeID.includes(nodeID)
         );
 
         let isMPEdge = false;
 
-        // check amongst all the relatedEdgeIDs to see if any of them fulfills
-        relatedEdgeIDs.map((relatedEdgeID) => {
-          // obtain the source and target
+        relatedEdgeIDs.forEach((relatedEdgeID) => {
           const source = edgeSources[relatedEdgeID];
           const target = edgeTargets[relatedEdgeID];
 

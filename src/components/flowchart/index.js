@@ -8,6 +8,7 @@ import {
   getNodeActive,
   getNodeSelected,
   getNodesWithInputParams,
+  getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
@@ -572,6 +573,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   nodesWithInputParams: getNodesWithInputParams(state),
+  inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   newParamsFlag: state.flags.newparams,
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,

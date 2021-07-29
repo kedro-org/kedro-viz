@@ -14,7 +14,7 @@ import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import {
   getModularPipelineData,
-  getFocusedModularPipelines,
+  getFocusedModularPipeline,
 } from '../../selectors/modular-pipelines';
 import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
@@ -69,6 +69,7 @@ const NodeListProvider = ({
   });
 
   const groups = getGroups({ items });
+  console.log('focusMode', focusMode);
 
   const onItemClick = (item) => {
     if (isGroupType(item.type) || isModularPipelineType(item.type)) {
@@ -216,7 +217,7 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   nodeTypes: getNodeTypes(state),
   modularPipelines: getModularPipelineData(state),
-  focusMode: getFocusedModularPipelines(state),
+  focusMode: getFocusedModularPipeline(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
