@@ -28,7 +28,6 @@ const getNodeType = (state) => state.node.type;
 const getNodePipelines = (state) => state.node.pipelines;
 
 const noFontState = reducer(mockState.animals, updateFontLoaded(false));
-
 const parameterNodesID = ['443cf06a', '2ce32881'];
 
 describe('Selectors', () => {
@@ -357,7 +356,6 @@ describe('Selectors', () => {
       });
     });
   });
-
   describe('getNodesWithInputParams', () => {
     const newMockState = reducer(
       mockState.animals,

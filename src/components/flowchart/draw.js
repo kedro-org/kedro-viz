@@ -131,9 +131,11 @@ export const drawNodes = function (changed) {
       .selectAll('.pipeline-node')
       .data(nodes, (node) => node.id);
   }
+
   if (!this.el.nodes) {
     return;
   }
+
   const updateNodes = this.el.nodes;
   const enterNodes = this.el.nodes.enter().append('g');
   const exitNodes = this.el.nodes.exit();
