@@ -37,6 +37,21 @@
   }
 }
 
+.pipeline-node--dataset-input {
+  text {
+    fill: var(--node-input-fill)
+  }
+
+  .pipeline-node__bg {
+    fill: none;
+    stroke-dasharray: 3px 3px;
+  }
+
+  .pipeline-node__icon {
+    fill: var(--node-input-fill)
+  }
+}
+
 .pipeline-node__parameter-indicator {
   opacity: 0;
   transition: opacity 0.3s ease;

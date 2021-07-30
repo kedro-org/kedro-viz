@@ -302,9 +302,13 @@ export const getInputOutputNodesForFocusedModularPipeline = createSelector(
   [getFocusedModularPipeline, getGraphNodes, getNodeModularPipelines],
   (focusedModularPipeline, graphNodes, nodeModularPipelines) => {
     const nodesList = {};
-    for (const nodeID in graphNodes) {
-      if (!nodeModularPipelines[nodeID].includes(focusedModularPipeline?.id)) {
-        nodesList[nodeID] = graphNodes[nodeID];
+    if (focusedModularPipeline !== null) {
+      for (const nodeID in graphNodes) {
+        if (
+          !nodeModularPipelines[nodeID].includes(focusedModularPipeline?.id)
+        ) {
+          nodesList[nodeID] = graphNodes[nodeID];
+        }
       }
     }
     return nodesList;

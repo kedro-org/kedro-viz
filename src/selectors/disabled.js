@@ -2,10 +2,7 @@ import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
 import { getNodeDisabledPipeline, getPipelineNodeIDs } from './pipeline';
 import { getTagCount } from './tags';
-import {
-  getModularPipelineCount,
-  getFocusedModularPipelines,
-} from './modular-pipelines';
+import { getModularPipelineCount } from './modular-pipelines';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeDisabledNode = (state) => state.node.disabled;

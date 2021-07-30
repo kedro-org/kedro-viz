@@ -11,6 +11,10 @@
   stroke: var(--parameter-accent);
 }
 
+.pipeline-edge--data-focusmode path {
+  stroke-dasharray: 3px 3px;
+}
+
 .pipeline-edge--faded {
   opacity: 0.1;
 }
@@ -21,4 +25,8 @@
 
 .pipeline-flowchart__arrowhead--accent {
   fill: var(--parameter-accent);
+}
+
+.pipeline-flowchart__arrowhead--input {
+  fill: var(--node-input-fill);
 }

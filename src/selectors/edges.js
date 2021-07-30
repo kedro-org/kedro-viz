@@ -1,10 +1,12 @@
 import { createSelector } from 'reselect';
 import { getNodeDisabled, getEdgeDisabled } from './disabled';
+import { getFocusedModularPipeline } from './modular-pipelines';
 
 const getNodeIDs = (state) => state.node.ids;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
+const getNodeModularPipelines = (state) => state.node.modularPipelines;
 
 /**
  * Create a new transitive edge from the first and last edge in the path
@@ -95,4 +97,31 @@ export const getVisibleEdges = createSelector(
         source: edgeSources[id] || transitiveEdges.sources[id],
         target: edgeTargets[id] || transitiveEdges.targets[id],
       }))
+);
+
+/**
+ * Obtain all the edges that belongs to input and output data
+ * nodes when under focus mode.
+ */
+export const getInputOutputDataEdges = createSelector(
+  [getVisibleEdges, getNodeModularPipelines, getFocusedModularPipeline],
+  (visibleEdges, nodeModularPipelines, focusedModularPipeline) => {
+    const edgesList = {};
+    if (focusedModularPipeline !== null) {
+      visibleEdges.forEach((edge) => {
+        if (
+          !nodeModularPipelines[edge.source]?.includes(
+            focusedModularPipeline.id
+          ) ||
+          !nodeModularPipelines[edge.target]?.includes(
+            focusedModularPipeline.id
+          )
+        ) {
+          edgesList[edge.id] = edge;
+        }
+      });
+    }
+
+    return edgesList;
+  }
 );

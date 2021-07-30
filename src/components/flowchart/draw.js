@@ -122,8 +122,10 @@ export const drawNodes = function (changed) {
     nodeSelected,
     hoveredParameters,
     nodesWithInputParams,
+    inputOutputDataNodes,
     newParamsFlag,
     nodes,
+    focusMode,
   } = this.props;
 
   if (changed('nodes')) {
@@ -212,7 +214,9 @@ export const drawNodes = function (changed) {
       'nodesWithInputParams',
       'newParamsFlag',
       'clickedNode',
-      'linkedNodes'
+      'linkedNodes',
+      'focusMode',
+      'inputOutputDataNodes'
     )
   ) {
     allNodes
@@ -225,6 +229,10 @@ export const drawNodes = function (changed) {
           hoveredParameters &&
           nodesWithInputParams[node.id] &&
           nodeTypeDisabled.parameters
+      )
+      .classed(
+        'pipeline-node--dataset-input',
+        (node) => focusMode !== null && !!inputOutputDataNodes[node.id]
       )
       .classed(
         'pipeline-node--faded',
@@ -289,7 +297,14 @@ export const drawNodes = function (changed) {
  * Render edge lines
  */
 export const drawEdges = function (changed) {
-  const { edges, clickedNode, linkedNodes, newParamsFlag } = this.props;
+  const {
+    edges,
+    clickedNode,
+    linkedNodes,
+    newParamsFlag,
+    focusMode,
+    inputOutputDataEdges,
+  } = this.props;
 
   if (changed('edges')) {
     this.el.edges = this.el.edgeGroup
@@ -312,6 +327,8 @@ export const drawEdges = function (changed) {
       .attr('marker-end', (edge) =>
         edge.sourceNode.type === 'parameters'
           ? `url(#pipeline-arrowhead--accent)`
+          : focusMode !== null && !!inputOutputDataEdges[edge.id]
+          ? `url(#pipeline-arrowhead--input)`
           : `url(#pipeline-arrowhead)`
       );
 
@@ -348,11 +365,24 @@ export const drawEdges = function (changed) {
     this.el.edges = this.el.edgeGroup.selectAll('.pipeline-edge');
   }
 
-  if (changed('edges', 'clickedNode', 'linkedNodes', 'newParamsFlag')) {
+  if (
+    changed(
+      'edges',
+      'clickedNode',
+      'linkedNodes',
+      'newParamsFlag',
+      'focusMode',
+      'inputOutputDataEdges'
+    )
+  ) {
     allEdges
       .classed(
         'pipeline-edge--parameters',
         (edge) => newParamsFlag && edge.sourceNode.type === 'parameters'
+      )
+      .classed(
+        'pipeline-edge--data-focusmode',
+        (edge) => focusMode !== null && !!inputOutputDataEdges[edge.id]
       )
       .classed(
         'pipeline-edge--faded',

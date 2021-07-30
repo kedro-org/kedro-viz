@@ -10,6 +10,7 @@ import {
   getNodesWithInputParams,
   getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
+import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
@@ -101,7 +102,16 @@ export class FlowChart extends Component {
       drawLayerNames.call(this);
     }
 
-    if (changed('edges', 'clickedNode', 'linkedNodes', 'newParamsFlag')) {
+    if (
+      changed(
+        'edges',
+        'clickedNode',
+        'linkedNodes',
+        'newParamsFlag',
+        'focusMode',
+        'inputOutputDataEdges'
+      )
+    ) {
       drawEdges.call(this, changed);
     }
 
@@ -115,7 +125,9 @@ export class FlowChart extends Component {
         'nodeSelected',
         'hoveredParameters',
         'nodesWithInputParams',
-        'newParamsFlag'
+        'newParamsFlag',
+        'focusMode',
+        'inputOutputDataNodes'
       )
     ) {
       drawNodes.call(this, changed);
@@ -574,11 +586,13 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeSelected: getNodeSelected(state),
   nodesWithInputParams: getNodesWithInputParams(state),
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
+  inputOutputDataEdges: getInputOutputDataEdges(state),
   newParamsFlag: state.flags.newparams,
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
+  focusMode: state.visible.modularPipelineFocusMode,
   ...ownProps,
 });
 
