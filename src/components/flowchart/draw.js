@@ -232,7 +232,17 @@ export const drawNodes = function (changed) {
       )
       .classed(
         'pipeline-node--dataset-input',
-        (node) => focusMode !== null && !!inputOutputDataNodes[node.id]
+        (node) =>
+          focusMode !== null &&
+          !!inputOutputDataNodes[node.id] &&
+          node.type === 'data'
+      )
+      .classed(
+        'pipeline-node--parameter-input',
+        (node) =>
+          focusMode !== null &&
+          !!inputOutputDataNodes[node.id] &&
+          node.type === 'parameters'
       )
       .classed(
         'pipeline-node--faded',
