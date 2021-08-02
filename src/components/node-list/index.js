@@ -56,7 +56,6 @@ const NodeListProvider = ({
   focusMode,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
-  // const [focusMode, setFocusMode] = useState(null);
   const items = getFilteredItems({
     nodes,
     tags,
@@ -108,15 +107,6 @@ const NodeListProvider = ({
       onToggleNodesDisabled([item.id], checked);
     }
   };
-
-  // // set the modular pipeline focus mode on toggle
-  // const onToggleFocusMode = (item) => {
-  //   if (focusMode === null) {
-  //     setFocusMode(item);
-  //   } else {
-  //     setFocusMode(null);
-  //   }
-  // };
 
   const onItemMouseEnter = (item) => {
     if (isTagType(item.type)) {
