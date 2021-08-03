@@ -192,6 +192,7 @@ class GraphNode(abc.ABC):
         layer: Optional[str],
         tags: Set[str],
         dataset: AbstractDataSet,
+        transcoded_data: Dict = None,
         is_free_input: bool = False,
     ) -> "DataNode":
         """Create a graph node of type DATA for a given Kedro DataSet instance.
@@ -215,6 +216,7 @@ class GraphNode(abc.ABC):
             layer=layer,
             pipelines=[],
             kedro_obj=dataset,
+            transcoded_data = transcoded_data,
             is_free_input=is_free_input,
         )
 
@@ -356,6 +358,8 @@ class DataNode(GraphNode):
     # the layer that this data node belongs to
     layer: Optional[str]
 
+    transcoded_data: Optional[Dict]
+
     # the underlying Kedro's AbstractDataSet for this data node
     kedro_obj: InitVar[Optional[AbstractDataSet]]
 
@@ -378,13 +382,15 @@ class DataNode(GraphNode):
             if self.kedro_obj
             else None
         )
-
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
         self.modular_pipelines = self._expand_namespaces(
             self._get_namespace(self.full_name)
         )
+
+    def is_transcoded_node(self):
+        return(bool(self.transcoded_data))
 
     def is_plot_node(self):
         """Check if the current node is a plot node.
@@ -403,6 +409,10 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # the dataset type for this data node, e.g. CSVDataSet
     type: Optional[str] = field(init=False)
+
+    original_type: Optional[str] = field(init=False)
+    
+    transcoded_type: Optional[List[str]] = field(init=False)
 
     # the path to the actual data file for the underlying dataset.
     # only available if the dataset has filepath set.
@@ -423,7 +433,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
         filepath = dataset._describe().get("filepath")
         self.filepath = str(filepath) if filepath else None
-
+    
         # Parse plot data
         if data_node.is_plot_node():
             from kedro.extras.datasets.plotly.plotly_dataset import (  # pylint: disable=import-outside-toplevel
@@ -437,7 +447,12 @@ class DataNodeMetadata(GraphNodeMetadata):
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
-
+       
+        # Add transcoded node properties 
+        if data_node.is_transcoded_node():
+            self.type = None
+            self.original_type = data_node.transcoded_data.get('original')
+            self.transcoded_type = data_node.transcoded_data.get('derivations')
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'

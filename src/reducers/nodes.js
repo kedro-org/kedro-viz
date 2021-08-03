@@ -69,6 +69,12 @@ function nodeReducer(nodeState = {}, action) {
         datasetType: Object.assign({}, nodeState.datasetType, {
           [id]: data.type,
         }),
+        originalType: Object.assign({}, nodeState.originalType, {
+          [id]: data.original_type,
+        }),
+        transcodedType: Object.assign({}, nodeState.transcodedType, {
+          [id]: data.transcoded_type,
+        }),
         plot: Object.assign({}, nodeState.plot, {
           [id]: data.plot,
         }),

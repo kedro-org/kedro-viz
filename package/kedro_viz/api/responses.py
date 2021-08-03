@@ -134,8 +134,10 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
 
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
     filepath: str
-    type: str
+    type: Optional[str]
     plot: Optional[Dict]
+    original_type: Optional[str]
+    transcoded_type: Optional[List[str]]
     run_command: Optional[str]
 
     class Config:
