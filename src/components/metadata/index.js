@@ -41,6 +41,7 @@ const MetaData = ({
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.node.type);
   const hasPlot = Boolean(metadata?.plot);
   const hasCode = Boolean(metadata?.code);
+  const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
   let runCommand = metadata?.runCommand;
@@ -106,12 +107,30 @@ const MetaData = ({
             <div className="pipeline-metadata__list">
               <dl className="pipeline-metadata__properties">
                 <MetaDataRow label="Type:" value={metadata.node.type} />
-                <MetaDataRow
-                  label="Dataset Type:"
-                  visible={isDataNode}
-                  kind="type"
-                  value={metadata.datasetType}
-                />
+                {!isTranscoded && (
+                  <MetaDataRow
+                    label="Dataset Type:"
+                    visible={isDataNode}
+                    kind="type"
+                    value={metadata.datasetType}
+                  />
+                )}
+                {isTranscoded && (
+                  <MetaDataRow
+                    label="Original Type:"
+                    visible={isDataNode}
+                    kind="type"
+                    value={metadata.originalType}
+                  />
+                )}
+                {isTranscoded && (
+                  <MetaDataRow
+                    label="Transcoded Type:"
+                    visible={isDataNode}
+                    kind="type"
+                    value={metadata.transcodedType}
+                  />
+                )}
                 <MetaDataRow
                   label="File Path:"
                   kind="path"
