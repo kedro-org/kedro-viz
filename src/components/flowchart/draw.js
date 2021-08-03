@@ -242,7 +242,16 @@ export const drawNodes = function (changed) {
         (node) =>
           focusMode !== null &&
           !!inputOutputDataNodes[node.id] &&
-          node.type === 'parameters'
+          node.type === 'parameters' &&
+          newParamsFlag === true
+      )
+      .classed(
+        'pipeline-node--dataset-input',
+        (node) =>
+          focusMode !== null &&
+          !!inputOutputDataNodes[node.id] &&
+          node.type === 'parameters' &&
+          newParamsFlag === false
       )
       .classed(
         'pipeline-node--faded',
@@ -331,13 +340,19 @@ export const drawEdges = function (changed) {
   const exitEdges = this.el.edges.exit();
   const allEdges = this.el.edges.merge(enterEdges).merge(exitEdges);
 
-  if (changed('edges')) {
+  if (changed('edges', 'newParamsFlag', 'focusMode', 'inputOutputDataNodes')) {
     enterEdges
       .append('path')
       .attr('marker-end', (edge) =>
         edge.sourceNode.type === 'parameters'
-          ? `url(#pipeline-arrowhead--accent)`
-          : focusMode !== null && !!inputOutputDataEdges[edge.id]
+          ? focusMode !== null && inputOutputDataEdges[edge.id]
+            ? newParamsFlag !== true
+              ? `url(#pipeline-arrowhead--accent--input)`
+              : `url(#pipeline-arrowhead--input)`
+            : newParamsFlag === true
+            ? `url(#pipeline-arrowhead--accent)`
+            : `url(#pipeline-arrowhead)`
+          : focusMode !== null && inputOutputDataEdges[edge.id]
           ? `url(#pipeline-arrowhead--input)`
           : `url(#pipeline-arrowhead)`
       );
@@ -388,7 +403,17 @@ export const drawEdges = function (changed) {
     allEdges
       .classed(
         'pipeline-edge--parameters',
-        (edge) => newParamsFlag && edge.sourceNode.type === 'parameters'
+        (edge) =>
+          newParamsFlag &&
+          edge.sourceNode.type === 'parameters' &&
+          focusMode === null
+      )
+      .classed(
+        'pipeline-edge--parameters--input',
+        (edge) =>
+          newParamsFlag &&
+          edge.sourceNode.type === 'parameters' &&
+          focusMode !== null
       )
       .classed(
         'pipeline-edge--data-focusmode',
