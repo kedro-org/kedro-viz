@@ -397,7 +397,7 @@ export const drawEdges = function (changed) {
           inputOutputDataEdges[edge.id]
       )
       .classed(
-        'pipeline-edge--data-focusmode',
+        'pipeline-edge--data--input',
         (edge) => focusMode !== null && inputOutputDataEdges[edge.id]
       )
       .classed(
