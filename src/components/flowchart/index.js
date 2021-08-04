@@ -100,7 +100,7 @@ export class FlowChart extends Component {
       drawLayerNames.call(this);
     }
 
-    if (changed('edges', 'clickedNode', 'linkedNodes', 'newParamsFlag')) {
+    if (changed('edges', 'clickedNode', 'linkedNodes')) {
       drawEdges.call(this, changed);
     }
 
@@ -113,8 +113,7 @@ export class FlowChart extends Component {
         'nodeActive',
         'nodeSelected',
         'hoveredParameters',
-        'nodesWithInputParams',
-        'newParamsFlag'
+        'nodesWithInputParams'
       )
     ) {
       drawNodes.call(this, changed);
@@ -503,10 +502,7 @@ export class FlowChart extends Component {
             })}
             ref={this.wrapperRef}>
             <defs>
-              {(this.props.newParamsFlag
-                ? ['arrowhead', 'arrowhead--accent']
-                : ['arrowhead']
-              ).map((id) => (
+              {['arrowhead', 'arrowhead--accent'].map((id) => (
                 <marker
                   id={`pipeline-${id}`}
                   key={id}
@@ -572,7 +568,6 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   nodesWithInputParams: getNodesWithInputParams(state),
-  newParamsFlag: state.flags.newparams,
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,

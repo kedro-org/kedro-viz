@@ -26,12 +26,6 @@ export const largeGraphThreshold = 1000;
 
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
-  newparams: {
-    name: 'New parameters',
-    description: `Disable parameters on page load and highlight parameter connections.`,
-    default: true,
-    icon: '🎛️',
-  },
   sizewarning: {
     name: 'Size Warning',
     description: 'Show a warning before rendering very large graphs',
