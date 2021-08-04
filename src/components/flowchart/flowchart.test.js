@@ -297,6 +297,22 @@ describe('FlowChart', () => {
     expect(wrapper.render().find('.pipeline-edge--parameters ').length).toBe(4);
   });
 
+  it('getHoveredParameterLabel returns parameter count when there are more than 1 hidden parameters ', () => {
+    const wrapper = setup.mount(<FlowChart />);
+    const parameterNames = ['params1', 'params2'];
+    const instance = wrapper.find('FlowChart').instance();
+    const label = instance.getHoveredParameterLabel(parameterNames);
+    expect(label).toEqual('Parameters:2');
+  });
+
+  it('getHoveredParameterLabel returns parameter name when there is 1 hidden parameter ', () => {
+    const wrapper = setup.mount(<FlowChart />);
+    const parameterNames = ['params1'];
+    const instance = wrapper.find('FlowChart').instance();
+    const label = instance.getHoveredParameterLabel(parameterNames);
+    expect(label).toEqual('params1');
+  });
+
   it('shows layers when layers are visible', () => {
     const mockLayers = getLayerIDs(mockState.animals);
     const wrapper = setup.mount(<FlowChart />);
