@@ -234,14 +234,14 @@ export const drawNodes = function (changed) {
         'pipeline-node--dataset-input',
         (node) =>
           focusMode !== null &&
-          !!inputOutputDataNodes[node.id] &&
+          inputOutputDataNodes[node.id] &&
           node.type === 'data'
       )
       .classed(
         'pipeline-node--parameter-input',
         (node) =>
           focusMode !== null &&
-          !!inputOutputDataNodes[node.id] &&
+          inputOutputDataNodes[node.id] &&
           node.type === 'parameters'
       )
       .classed(
@@ -307,14 +307,8 @@ export const drawNodes = function (changed) {
  * Render edge lines
  */
 export const drawEdges = function (changed) {
-  const {
-    edges,
-    clickedNode,
-    linkedNodes,
-    newParamsFlag,
-    focusMode,
-    inputOutputDataEdges,
-  } = this.props;
+  const { edges, clickedNode, linkedNodes, focusMode, inputOutputDataEdges } =
+    this.props;
 
   if (changed('edges')) {
     this.el.edges = this.el.edgeGroup
@@ -398,7 +392,6 @@ export const drawEdges = function (changed) {
       .classed(
         'pipeline-edge--parameters--input',
         (edge) =>
-          newParamsFlag &&
           edge.sourceNode.type === 'parameters' &&
           focusMode !== null &&
           inputOutputDataEdges[edge.id]
