@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
-import { getFocusedModularPipeline } from './modular-pipelines';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -30,6 +29,8 @@ const getClickedNode = (state) => state.node.clicked;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
+const getFocusedModularPipeline = (state) =>
+  state.visible.modularPipelineFocusMode;
 
 /**
  * Gets a map of nodeIds to graph nodes

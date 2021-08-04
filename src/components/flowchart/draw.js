@@ -242,16 +242,7 @@ export const drawNodes = function (changed) {
         (node) =>
           focusMode !== null &&
           !!inputOutputDataNodes[node.id] &&
-          node.type === 'parameters' &&
-          newParamsFlag === true
-      )
-      .classed(
-        'pipeline-node--dataset-input',
-        (node) =>
-          focusMode !== null &&
-          !!inputOutputDataNodes[node.id] &&
-          node.type === 'parameters' &&
-          newParamsFlag === false
+          node.type === 'parameters'
       )
       .classed(
         'pipeline-node--faded',
@@ -341,12 +332,13 @@ export const drawEdges = function (changed) {
   const allEdges = this.el.edges.merge(enterEdges).merge(exitEdges);
 
   if (changed('edges', 'newParamsFlag', 'focusMode', 'inputOutputDataNodes')) {
-    enterEdges
-      .append('path')
+    enterEdges.append('path');
+    allEdges
+      .select('path')
       .attr('marker-end', (edge) =>
         edge.sourceNode.type === 'parameters'
           ? focusMode !== null && inputOutputDataEdges[edge.id]
-            ? newParamsFlag !== true
+            ? newParamsFlag === true
               ? `url(#pipeline-arrowhead--accent--input)`
               : `url(#pipeline-arrowhead--input)`
             : newParamsFlag === true
@@ -411,13 +403,13 @@ export const drawEdges = function (changed) {
       .classed(
         'pipeline-edge--parameters--input',
         (edge) =>
-          newParamsFlag &&
           edge.sourceNode.type === 'parameters' &&
-          focusMode !== null
+          focusMode !== null &&
+          inputOutputDataEdges[edge.id]
       )
       .classed(
         'pipeline-edge--data-focusmode',
-        (edge) => focusMode !== null && !!inputOutputDataEdges[edge.id]
+        (edge) => focusMode !== null && inputOutputDataEdges[edge.id]
       )
       .classed(
         'pipeline-edge--faded',
