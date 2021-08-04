@@ -338,12 +338,8 @@ export const drawEdges = function (changed) {
       .attr('marker-end', (edge) =>
         edge.sourceNode.type === 'parameters'
           ? focusMode !== null && inputOutputDataEdges[edge.id]
-            ? newParamsFlag === true
-              ? `url(#pipeline-arrowhead--accent--input)`
-              : `url(#pipeline-arrowhead--input)`
-            : newParamsFlag === true
-            ? `url(#pipeline-arrowhead--accent)`
-            : `url(#pipeline-arrowhead)`
+            ? `url(#pipeline-arrowhead--accent--input)`
+            : `url(#pipeline-arrowhead--accent)`
           : focusMode !== null && inputOutputDataEdges[edge.id]
           ? `url(#pipeline-arrowhead--input)`
           : `url(#pipeline-arrowhead)`
@@ -396,13 +392,13 @@ export const drawEdges = function (changed) {
       .classed(
         'pipeline-edge--parameters',
         (edge) =>
-          newParamsFlag &&
           edge.sourceNode.type === 'parameters' &&
-          focusMode === null
+          !inputOutputDataEdges[edge.id]
       )
       .classed(
         'pipeline-edge--parameters--input',
         (edge) =>
+          newParamsFlag &&
           edge.sourceNode.type === 'parameters' &&
           focusMode !== null &&
           inputOutputDataEdges[edge.id]
