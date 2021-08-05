@@ -80,7 +80,7 @@ describe('prepareNonPipelineState', () => {
     // In this case, location.href is not provided
     expect(prepareNonPipelineState({ data: animals })).toMatchObject({
       flags: {
-        newparams: expect.any(Boolean),
+        sizewarning: expect.any(Boolean),
       },
     });
   });
@@ -157,16 +157,5 @@ describe('getInitialState', () => {
       theme: 'dark',
     });
     window.localStorage.clear();
-  });
-
-  it('hides parameters when parameter flag is true', () => {
-    const state = getInitialState({
-      ...props,
-      flags: {
-        parameters: true,
-      },
-    });
-    const parametersDisabled = state.nodeType.disabled.parameters;
-    expect(parametersDisabled).toBe(true);
   });
 });

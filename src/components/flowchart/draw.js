@@ -123,7 +123,6 @@ export const drawNodes = function (changed) {
     hoveredParameters,
     nodesWithInputParams,
     inputOutputDataNodes,
-    newParamsFlag,
     nodes,
     focusMode,
   } = this.props;
@@ -147,14 +146,15 @@ export const drawNodes = function (changed) {
     .merge(exitNodes)
     .filter((node) => typeof node !== 'undefined');
 
-  if (changed('nodes', 'newParamsFlag')) {
+  if (changed('nodes')) {
     enterNodes
       .attr('tabindex', '0')
       .attr('class', 'pipeline-node')
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
-      .classed('pipeline-node--parameters', (node) =>
-        newParamsFlag ? node.type === 'parameters' : null
+      .classed(
+        'pipeline-node--parameters',
+        (node) => node.type === 'parameters'
       )
       .classed('pipeline-node--data', (node) => node.type === 'data')
       .classed('pipeline-node--task', (node) => node.type === 'task')
@@ -212,7 +212,6 @@ export const drawNodes = function (changed) {
       'nodeSelected',
       'hoveredParameters',
       'nodesWithInputParams',
-      'newParamsFlag',
       'clickedNode',
       'linkedNodes',
       'focusMode',
@@ -225,7 +224,6 @@ export const drawNodes = function (changed) {
       .classed(
         'pipeline-node--collapsed-hint',
         (node) =>
-          newParamsFlag &&
           hoveredParameters &&
           nodesWithInputParams[node.id] &&
           nodeTypeDisabled.parameters
@@ -250,7 +248,7 @@ export const drawNodes = function (changed) {
       );
   }
 
-  if (changed('nodes', 'newParamsFlag')) {
+  if (changed('nodes')) {
     allNodes
       .transition('update-nodes')
       .duration(this.DURATION)
@@ -275,10 +273,7 @@ export const drawNodes = function (changed) {
       .select('.pipeline-node__parameter-indicator')
       .classed(
         'pipeline-node__parameter-indicator--visible',
-        (node) =>
-          newParamsFlag &&
-          nodeTypeDisabled.parameters &&
-          nodesWithInputParams[node.id]
+        (node) => nodeTypeDisabled.parameters && nodesWithInputParams[node.id]
       )
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))

@@ -107,7 +107,6 @@ export class FlowChart extends Component {
         'edges',
         'clickedNode',
         'linkedNodes',
-        'newParamsFlag',
         'focusMode',
         'inputOutputDataEdges'
       )
@@ -125,7 +124,6 @@ export class FlowChart extends Component {
         'nodeSelected',
         'hoveredParameters',
         'nodesWithInputParams',
-        'newParamsFlag',
         'focusMode',
         'inputOutputDataNodes'
       )
@@ -589,7 +587,6 @@ export const mapStateToProps = (state, ownProps) => ({
   nodesWithInputParams: getNodesWithInputParams(state),
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   inputOutputDataEdges: getInputOutputDataEdges(state),
-  newParamsFlag: state.flags.newparams,
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,

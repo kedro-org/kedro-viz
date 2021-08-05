@@ -14,7 +14,8 @@ We aim to support recent versions of major modern browsers - i.e. Chome, Firefox
 
 ## Kedro UI
 
-Kedro-Viz uses [Kedro-UI](https://quantumblacklabs.github.io/kedro-ui/), our UI component library, for generic/reusable interface components like buttons, modals, dropdowns, etc. Where possible, we recommend using elements from Kedro-UI over designing and building our own.
+Kedro-Viz uses [Kedro-UI](https://quantumblacklabs.github.io/kedro-ui/), our UI component library, for generic/reusable interface components like buttons, modals, dropdowns, etc. 
+Kedro-UI is a legacy repo and will no longer be maintained. Hence, we recommend not using Kedro-UI for newer components.  
 
 ## Accessibility
 
