@@ -102,14 +102,12 @@ export const prepareNonPipelineState = (props) => {
  */
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
-  if (nonPipelineState.flags.newparams) {
-    saveState({
-      nodeType: {
-        // Default to disabled parameters and other types enabled
-        disabled: { parameters: true, task: false, data: false },
-      },
-    });
-  }
+  saveState({
+    nodeType: {
+      // Default to disabled parameters and other types enabled
+      disabled: { parameters: true, task: false, data: false },
+    },
+  });
   const pipelineState = preparePipelineState(props.data, props.data !== 'json');
   return {
     ...nonPipelineState,

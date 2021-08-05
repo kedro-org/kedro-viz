@@ -45,10 +45,10 @@ describe('SettingsModal', () => {
       visible: false,
     });
 
-    mapDispatchToProps(dispatch).onToggleFlag('newparams', false);
+    mapDispatchToProps(dispatch).onToggleFlag('sizewarning', false);
     expect(dispatch.mock.calls[1][0]).toEqual({
       type: 'CHANGE_FLAG',
-      name: 'newparams',
+      name: 'sizewarning',
       value: false,
     });
   });
