@@ -470,6 +470,7 @@ describe('node-list-selectors', () => {
         inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
           mockState.animals
         ),
+        focusMode: { id: 'pipeline1' },
       });
 
       const items = expect.arrayContaining([
@@ -499,6 +500,27 @@ describe('node-list-selectors', () => {
             parameters: [],
           })
         );
+      });
+
+      describe('focus mode', () => {
+        const filteredNodeItems = getFilteredNodeItems({
+          nodes: getGroupedNodes(mockState.animals),
+          tags: getTagData(mockState.animals),
+          modularPipelines: getModularPipelineData(mockState.animals),
+          nodeSelected: {},
+          modularPipelineIDs: getModularPipelineIDs(mockState.animals),
+          nodeModularPipelines: getNodeModularPipelines(mockState.animals),
+          nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+          inputOutputDataNodes: { '0ae9e4de': { id: '0ae9e4de' } },
+          focusMode: { id: 'pipeline1' },
+        });
+
+        it('sets the faded field for an input node to true under focus mode ', () => {
+          const inputNode = filteredNodeItems.data.filter(
+            (node) => node.id === '0ae9e4de'
+          )[0];
+          expect(inputNode.faded).toEqual(true);
+        });
       });
 
       const filteredNodeModularPipelines = getFilteredNodeModularPipelines({
