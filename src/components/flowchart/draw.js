@@ -174,6 +174,7 @@ export const drawNodes = function (changed) {
     enterNodes
       .append('rect')
       .attr('class', 'pipeline-node__parameter-indicator')
+      .on('mouseover', this.handleParamsIndicatorMouseOver)
       .call(updateParameterRect);
 
     // Performance: use a single path per icon
