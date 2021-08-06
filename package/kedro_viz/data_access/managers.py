@@ -40,6 +40,7 @@ from kedro_viz.models.graph import (
     ParametersNode,
     RegisteredPipeline,
     TaskNode,
+    TranscodedDataNode,
 )
 
 from .repositories import (
@@ -83,6 +84,7 @@ class DataAccessManager:
     def add_pipeline(self, pipeline_key: str, pipeline: KedroPipeline):
         self.registered_pipelines.add_pipeline(pipeline_key)
         free_inputs = pipeline.inputs()
+
         for node in sorted(pipeline.nodes, key=lambda n: n.name):
             task_node = self.add_node(pipeline_key, node)
             self.registered_pipelines.add_node(pipeline_key, task_node.id)
@@ -93,10 +95,15 @@ class DataAccessManager:
                     pipeline_key, input_, task_node, is_free_input
                 )
                 self.registered_pipelines.add_node(pipeline_key, input_node.id)
+                if isinstance(input_node, TranscodedDataNode):
+                    input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
             for output in node.outputs:
                 output_node = self.add_node_output(pipeline_key, output, task_node)
                 self.registered_pipelines.add_node(pipeline_key, output_node.id)
+                if isinstance(output_node, TranscodedDataNode):
+                    output_node.original_name = output
+                    output_node.original_version = self.catalog.get_dataset(output)
 
     def add_node(self, pipeline_key: str, node: KedroNode) -> TaskNode:
         task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))

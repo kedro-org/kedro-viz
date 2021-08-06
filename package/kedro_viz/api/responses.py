@@ -148,6 +148,13 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
         }
 
 
+class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
+    filepath: str
+    original_type: str
+    transcoded_types: List[str]
+    run_command: Optional[str]
+
+
 class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
     parameters: Dict
 
@@ -175,6 +182,7 @@ class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
 NodeMetadataAPIResponse = Union[
     TaskNodeMetadataAPIResponse,
     DataNodeMetadataAPIResponse,
+    TranscodedDataNodeMetadataAPIReponse,
     ParametersNodeMetadataAPIResponse,
 ]
 
