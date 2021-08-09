@@ -378,7 +378,7 @@ describe('Selectors', () => {
   });
 
   describe('getInputOutputDataNodes', () => {
-    it('includes input output ndoes related to a modular pipeline in the returned object', () => {
+    it('includes input output nodes related to a modular pipeline in the returned object', () => {
       const newMockState = reducer(
         mockState.animals,
         toggleFocusMode({ id: 'pipeline1' })
