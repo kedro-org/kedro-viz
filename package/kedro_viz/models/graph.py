@@ -42,6 +42,7 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 from kedro.io import AbstractDataSet
 from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
+from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +56,11 @@ def _pretty_name(name: str) -> str:
 def _strip_namespace(name: str) -> str:
     pattern = re.compile(r"[A-Za-z0-9-_]+\.")
     return re.sub(pattern, "", name)
+
+
+def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
+    filepath = dataset_description.get("filepath") or dataset_description.get("path")
+    return str(filepath) if filepath else None
 
 
 @dataclass
@@ -170,7 +176,6 @@ class GraphNode(abc.ABC):
     @classmethod
     def create_task_node(cls, node: KedroNode) -> "TaskNode":
         """Create a graph node of type TASK for a given Kedro Node instance.
-
         Args:
             node: A node in a Kedro pipeline.
         Returns:
@@ -192,11 +197,9 @@ class GraphNode(abc.ABC):
         layer: Optional[str],
         tags: Set[str],
         dataset: AbstractDataSet,
-        transcoded_data: Dict = None,
         is_free_input: bool = False,
     ) -> "DataNode":
         """Create a graph node of type DATA for a given Kedro DataSet instance.
-
         Args:
             full_name: The fullname of the dataset, including namespace, e.g.
                 data_science.master_table.
@@ -208,6 +211,19 @@ class GraphNode(abc.ABC):
         Returns:
             An instance of DataNode.
         """
+        is_transcoded_dataset = TRANSCODING_SEPARATOR in full_name
+        if is_transcoded_dataset:
+            dataset_name = _strip_transcoding(full_name)
+            return TranscodedDataNode(
+                id=cls._hash(dataset_name),
+                name=_pretty_name(dataset_name),
+                full_name=dataset_name,
+                tags=tags,
+                layer=layer,
+                pipelines=[],
+                is_free_input=is_free_input,
+            )
+
         return DataNode(
             id=cls._hash(full_name),
             name=_pretty_name(_strip_namespace(full_name)),
@@ -216,7 +232,6 @@ class GraphNode(abc.ABC):
             layer=layer,
             pipelines=[],
             kedro_obj=dataset,
-            transcoded_data = transcoded_data,
             is_free_input=is_free_input,
         )
 
@@ -229,7 +244,6 @@ class GraphNode(abc.ABC):
         parameters: AbstractDataSet,
     ) -> "ParametersNode":
         """Create a graph node of type PARAMETERS for a given Kedro parameters dataset instance.
-
         Args:
             full_name: The fullname of the dataset, including namespace, e.g.
                 data_science.test_split_ratio
@@ -358,8 +372,6 @@ class DataNode(GraphNode):
     # the layer that this data node belongs to
     layer: Optional[str]
 
-    transcoded_data: Optional[Dict]
-
     # the underlying Kedro's AbstractDataSet for this data node
     kedro_obj: InitVar[Optional[AbstractDataSet]]
 
@@ -382,15 +394,13 @@ class DataNode(GraphNode):
             if self.kedro_obj
             else None
         )
+
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
         self.modular_pipelines = self._expand_namespaces(
             self._get_namespace(self.full_name)
         )
-
-    def is_transcoded_node(self):
-        return(bool(self.transcoded_data))
 
     def is_plot_node(self):
         """Check if the current node is a plot node.
@@ -404,15 +414,51 @@ class DataNode(GraphNode):
 
 
 @dataclass
+class TranscodedDataNode(GraphNode):
+    """Represent a graph node of type DATA"""
+
+    # whether the data node is a free input
+    is_free_input: bool
+
+    # the layer that this data node belongs to
+    layer: Optional[str]
+
+    # the original Kedro's AbstractDataSet for this transcoded data node
+    original_version: AbstractDataSet = field(init=False)
+
+    # keep track of the original name for the generated run command
+    original_name: str = field(init=False)
+
+    # the transcoded versions of this transcoded data nodes
+    transcoded_versions: Set[AbstractDataSet] = field(init=False, default_factory=set)
+
+    # the list of modular pipelines this data node belongs to
+    modular_pipelines: List[str] = field(init=False)
+
+    # command to run the pipeline to this node
+    run_command: Optional[str] = field(init=False, default=None)
+
+    # the type of this graph node, which is DATA
+    type: str = GraphNodeType.DATA.value
+
+    def has_metadata(self) -> bool:
+        return True
+
+    def __post_init__(self):
+        # the modular pipelines that a data node belongs to
+        # are derived from its namespace, which in turn
+        # is derived from the dataset's name.
+        self.modular_pipelines = self._expand_namespaces(
+            self._get_namespace(self.full_name)
+        )
+
+
+@dataclass
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
     # the dataset type for this data node, e.g. CSVDataSet
     type: Optional[str] = field(init=False)
-
-    original_type: Optional[str] = field(init=False)
-    
-    transcoded_type: Optional[List[str]] = field(init=False)
 
     # the path to the actual data file for the underlying dataset.
     # only available if the dataset has filepath set.
@@ -433,13 +479,8 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
 
-        # for directory-based datasets like PartitionedDataSet
-        # the filepath is the path to the directory containing all partitioned files.
-        filepath = dataset_description.get("filepath") or dataset_description.get(
-            "path"
-        )
-        self.filepath = str(filepath) if filepath else None
-    
+        self.filepath = _parse_filepath(dataset_description)
+
         # Parse plot data
         if data_node.is_plot_node():
             from kedro.extras.datasets.plotly.plotly_dataset import (  # pylint: disable=import-outside-toplevel
@@ -453,15 +494,44 @@ class DataNodeMetadata(GraphNodeMetadata):
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
-       
-        # Add transcoded node properties 
-        if data_node.is_transcoded_node():
-            self.type = None
-            self.original_type = data_node.transcoded_data.get('original')
-            self.transcoded_type = data_node.transcoded_data.get('derivations')
+
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
+
+
+@dataclass
+class TranscodedDataNodeMetadata(GraphNodeMetadata):
+    """Represent the metadata of a TranscodedDataNode"""
+
+    # the path to the actual data file for the underlying dataset.
+    # only available if the dataset has filepath set.
+    filepath: Optional[str] = field(init=False)
+
+    run_command: Optional[str] = field(init=False)
+
+    original_type: str = field(init=False)
+
+    transcoded_types: List[str] = field(init=False)
+
+    # the underlying data node to which this metadata belongs
+    transcoded_data_node: InitVar[TranscodedDataNode]
+
+    def __post_init__(self, transcoded_data_node: TranscodedDataNode):
+        original_version = transcoded_data_node.original_version
+        self.original_type = f"{original_version.__class__.__module__}.{original_version.__class__.__qualname__}"
+        self.transcoded_types = [
+            f"{transcoded_version.__class__.__module__}.{transcoded_version.__class__.__qualname__}"
+            for transcoded_version in transcoded_data_node.transcoded_versions
+        ]
+
+        dataset_description = original_version._describe()
+        self.filepath = _parse_filepath(dataset_description)
+
+        if not transcoded_data_node.is_free_input:
+            self.run_command = (
+                f'kedro run --to-outputs="{transcoded_data_node.original_name}"'
+            )
 
 
 @dataclass

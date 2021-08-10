@@ -33,7 +33,9 @@ from fastapi.responses import JSONResponse
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.graph import (
     DataNode,
+    TranscodedDataNode,
     DataNodeMetadata,
+    TranscodedDataNodeMetadata,
     ParametersNodeMetadata,
     TaskNode,
     TaskNodeMetadata,
@@ -75,6 +77,9 @@ async def get_single_node_metadata(node_id: str):
 
     if isinstance(node, DataNode):
         return DataNodeMetadata(node)
+
+    if isinstance(node, TranscodedDataNode):
+        return TranscodedDataNodeMetadata(node)
 
     return ParametersNodeMetadata(node)
 

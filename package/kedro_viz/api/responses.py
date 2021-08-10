@@ -134,10 +134,8 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
 
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
     filepath: str
-    type: Optional[str]
+    type: str
     plot: Optional[Dict]
-    original_type: Optional[str]
-    transcoded_type: Optional[List[str]]
     run_command: Optional[str]
 
     class Config:
@@ -148,6 +146,13 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
                 "run_command": 'kedro run --to-outputs="master_table"',
             }
         }
+
+
+class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
+    filepath: str
+    original_type: str
+    transcoded_types: List[str]
+    run_command: Optional[str]
 
 
 class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
@@ -177,6 +182,7 @@ class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
 NodeMetadataAPIResponse = Union[
     TaskNodeMetadataAPIResponse,
     DataNodeMetadataAPIResponse,
+    TranscodedDataNodeMetadataAPIReponse,
     ParametersNodeMetadataAPIResponse,
 ]
 
