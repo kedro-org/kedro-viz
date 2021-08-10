@@ -304,7 +304,7 @@ describe('FlowChart', () => {
     );
   });
 
-  it('applies pipeline-edge--data--input class to input dataset edges under focus mode', () => {
+  it('applies pipeline-edge--dataset--input class to input dataset edges under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
         nodeTypeDisabled={{ parameters: true }}
@@ -315,7 +315,9 @@ describe('FlowChart', () => {
         }}
       />
     );
-    expect(wrapper.render().find('.pipeline-edge--data--input').length).toBe(2);
+    expect(wrapper.render().find('.pipeline-edge--dataset--input').length).toBe(
+      2
+    );
   });
 
   it('applies pipeline-node--parameter-input class to input parameter nodes under focus mode', () => {
