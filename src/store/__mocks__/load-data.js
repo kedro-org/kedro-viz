@@ -1,9 +1,9 @@
 import { getUrl } from '../../utils';
 import animals from '../../utils/data/animals.mock.json';
 import demo from '../../utils/data/demo.mock.json';
-import node_task from '../../utils/data/node_task.mock.json';
-import node_plot from '../../utils/data/node_plot.mock.json';
-import node_parameters from '../../utils/data/node_parameters.mock.json';
+import nodeTask from '../../utils/data/node_task.mock.json';
+import nodePlot from '../../utils/data/node_plot.mock.json';
+import nodeParameters from '../../utils/data/node_parameters.mock.json';
 
 /**
  * Mimic old deprecated API formats which didn't include newer fields
@@ -21,9 +21,10 @@ export const mockAPIFeatureSupport = (data) => {
 
 /**
  * Create a promise that resolves after a timeout
- * @param {number} ms Timeout in milliseconds
+ * @param {number} milliseconds Timeout in milliseconds
  */
-const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const timeout = (milliseconds) =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 /**
  * Mock asynchronously loading/parsing data
@@ -40,19 +41,19 @@ const loadJsonData = async (path = getUrl('main')) => {
     return mockAPIFeatureSupport(animals);
   }
 
-  // Use nodes_parameters dataset for node data
+  // Use nodeParameters dataset for node data
   if (path.includes('nodes/f1f1425b')) {
-    return node_parameters;
+    return nodeParameters;
   }
 
-  // Use node_plot dataset for node data
+  // Use nodePlot dataset for node data
   if (path.includes('nodes/c3p345ed')) {
-    return node_plot;
+    return nodePlot;
   }
 
-  // Use nodes_task dataset in place of 'main' endpoint
+  // Use nodeTask dataset in place of 'main' endpoint
   if (path.includes('nodes')) {
-    return node_task;
+    return nodeTask;
   }
 
   // Use demo dataset for 'pipelines' endpoints

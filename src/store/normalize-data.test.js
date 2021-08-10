@@ -46,7 +46,7 @@ describe('normalizeData', () => {
     });
     expect(normalizeData(data).pipeline.active).toBe(undefined);
   });
-
+  /* eslint-disable id-length,camelcase */
   it('should not add modular pipelines if modular pipelines are not supplied', () => {
     const data = Object.assign({}, animals, { modular_pipelines: undefined });
     expect(normalizeData(data).modularPipeline.ids).toHaveLength(0);

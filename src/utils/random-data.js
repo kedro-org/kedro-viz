@@ -182,6 +182,7 @@ class Pipeline {
    * @param {number} initialRank Rank index
    * @returns {object} Node object
    */
+  /* eslint-disable camelcase */
   createNode(i, initialRank) {
     const layer = this.rankLayers[initialRank];
     const node = {

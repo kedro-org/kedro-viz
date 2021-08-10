@@ -222,8 +222,8 @@ const createSeparationConstraints = (rows, constants) => {
   const separationConstraints = [];
 
   // For each row of nodes
-  for (let l = 0; l < rows.length; l += 1) {
-    const rowNodes = rows[l];
+  for (let i = 0; i < rows.length; i += 1) {
+    const rowNodes = rows[i];
 
     // Stable sort row nodes horizontally, breaks ties with ids
     rowNodes.sort((a, b) => compare(a.x, b.x, a.id, b.id));

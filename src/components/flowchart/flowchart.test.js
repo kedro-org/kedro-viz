@@ -172,8 +172,8 @@ describe('FlowChart', () => {
 
   it('resizes the chart if the window resizes', () => {
     const map = {};
-    window.addEventListener = jest.fn((event, cb) => {
-      map[event] = cb;
+    window.addEventListener = jest.fn((event, callback) => {
+      map[event] = callback;
     });
     const wrapper = setup.mount(<FlowChart />);
     const spy = jest.spyOn(
@@ -186,8 +186,8 @@ describe('FlowChart', () => {
 
   it('removes the resize event listener on unmount', () => {
     const map = {};
-    window.addEventListener = jest.fn((event, cb) => {
-      map[event] = cb;
+    window.addEventListener = jest.fn((event, callback) => {
+      map[event] = callback;
     });
     window.removeEventListener = jest.fn((event) => {
       delete map[event];

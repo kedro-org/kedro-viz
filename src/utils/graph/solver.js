@@ -20,8 +20,8 @@ import { Solver, Variable } from 'kiwi.js';
  */
 export const solveLoose = (constraints, iterations, constants) => {
   for (let i = 0; i < iterations; i += 1) {
-    for (const co of constraints) {
-      co.base.solve(co, constants);
+    for (const constrain of constraints) {
+      constrain.base.solve(constrain, constants);
     }
   }
 };
@@ -56,21 +56,21 @@ export const solveStrict = (constraints, constants) => {
     }
   };
 
-  for (const co of constraints) {
-    addVariable(co.a, co.base.property);
-    addVariable(co.b, co.base.property);
+  for (const constrain of constraints) {
+    addVariable(constrain.a, constrain.base.property);
+    addVariable(constrain.b, constrain.base.property);
   }
 
   let unsolvableCount = 0;
 
-  for (const co of constraints) {
+  for (const constrain of constraints) {
     try {
       solver.addConstraint(
-        co.base.strict(
-          co,
+        constrain.base.strict(
+          constrain,
           constants,
-          variables[variableId(co.a, co.base.property)],
-          variables[variableId(co.b, co.base.property)]
+          variables[variableId(constrain.a, constrain.base.property)],
+          variables[variableId(constrain.b, constrain.base.property)]
         )
       );
     } catch (err) {

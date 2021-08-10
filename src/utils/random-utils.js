@@ -48,9 +48,9 @@ export const getSeedFromURL = () => {
 
 /**
  * Get an array of numbers
- * @param {number} n Length of the array
+ * @param {number} num Length of the array
  */
-export const getNumberArray = (n) => Array.from(Array(n).keys());
+export const getNumberArray = (num) => Array.from(Array(num).keys());
 
 export const LOREM_IPSUM =
   'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
@@ -67,15 +67,15 @@ const randomUtils = () => {
 
   /**
    * Get a random number between 0 to n-1, inclusive
-   * @param {number} n Max number
+   * @param {number} num Max number
    */
-  const randomIndex = (n) => Math.floor(random() * n);
+  const randomIndex = (num) => Math.floor(random() * num);
 
   /**
    * Get a random number between 1 to n, inclusive
-   * @param {number} n Max number
+   * @param {number} num Max number
    */
-  const randomNumber = (n) => Math.ceil(random() * n);
+  const randomNumber = (num) => Math.ceil(random() * num);
 
   /**
    * Get a random number between min and max, inclusive
@@ -95,8 +95,8 @@ const randomUtils = () => {
    * @param {number} n Number of words in the name
    * @param {string} join The character(s) used to join each word
    */
-  const getRandomName = (n, join = '_') =>
-    getNumberArray(n)
+  const getRandomName = (num, join = '_') =>
+    getNumberArray(num)
       .map(() => getRandom(LOREM_IPSUM))
       .join(join);
 
@@ -106,16 +106,16 @@ const randomUtils = () => {
    * @param {array} arr List from which to choose
    * @param {number} n Number of items to select
    */
-  const getRandomSelection = (arr, n) => {
-    const result = new Array(n);
+  const getRandomSelection = (arr, num) => {
+    const result = new Array(num);
     let len = arr.length;
     const taken = new Array(len);
-    if (n > len) {
+    if (num > len) {
       return arr;
     }
-    while (n--) {
-      var x = Math.floor(random() * len);
-      result[n] = arr[x in taken ? taken[x] : x];
+    while (num--) {
+      const x = Math.floor(random() * len);
+      result[num] = arr[x in taken ? taken[x] : x];
       taken[x] = --len in taken ? taken[len] : len;
     }
     return result;
