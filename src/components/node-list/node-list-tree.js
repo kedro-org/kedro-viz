@@ -24,6 +24,7 @@ import {
   getGroupedNodes,
   getNodeSelected,
   getNodeModularPipelines,
+  getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
 import { loadNodeData } from '../../actions/nodes';
 import NodeListTreeItem from './node-list-tree-item';
@@ -60,6 +61,7 @@ const TreeListProvider = ({
   nodeTypeIDs,
   searching,
   focusMode,
+  inputOutputDataNodes,
 }) => {
   const classes = useStyles();
 
@@ -107,6 +109,7 @@ const TreeListProvider = ({
     nodeModularPipelines,
     nodeTypeIDs,
     focusMode,
+    inputOutputDataNodes,
   });
 
   const onItemClick = (item) => {
@@ -206,6 +209,7 @@ export const mapStateToProps = (state) => ({
   nodeTypeIDs: getNodeTypeIDs(state),
   modularPipelineIds: getModularPipelineIDs(state),
   modularPipelines: getModularPipelineData(state),
+  inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

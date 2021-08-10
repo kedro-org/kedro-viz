@@ -258,8 +258,13 @@ const compareEnabledThenType = (itemA, itemB) => {
  * @return {number} Comparison result
  */
 export const getFilteredNodeItems = createSelector(
-  [getFilteredNodes, (state) => state.nodeSelected],
-  ({ filteredNodes }, nodeSelected) => {
+  [
+    getFilteredNodes,
+    (state) => state.nodeSelected,
+    (state) => state.focusMode,
+    (state) => state.inputOutputDataNodes,
+  ],
+  ({ filteredNodes }, nodeSelected, focusMode, inputOutputDataNodes) => {
     const filteredNodeItems = {};
 
     for (const type of Object.keys(filteredNodes)) {
@@ -269,14 +274,16 @@ export const getFilteredNodeItems = createSelector(
           const disabled =
             node.disabled_tag ||
             node.disabled_type ||
-            node.disabled_modularPipeline;
+            node.disabled_modularPipeline ||
+            (focusMode !== null && !!inputOutputDataNodes[node.id]);
+
           return {
             ...node,
             visibleIcon: VisibleIcon,
             invisibleIcon: InvisibleIcon,
             active: undefined,
             selected: nodeSelected[node.id],
-            faded: node.disabled_node || disabled,
+            faded: disabled || node.disabled_node,
             visible: !disabled && checked,
             checked,
             disabled,

@@ -10,8 +10,13 @@ import {
   getNodeSize,
   getVisibleNodes,
   getNodesWithInputParams,
+  getInputOutputNodesForFocusedModularPipeline,
 } from './nodes';
-import { toggleTextLabels, updateFontLoaded } from '../actions';
+import {
+  toggleTextLabels,
+  updateFontLoaded,
+  toggleFocusMode,
+} from '../actions';
 import { toggleTypeDisabled } from '../actions/node-type';
 import { updateActivePipeline } from '../actions/pipelines';
 import {
@@ -356,6 +361,7 @@ describe('Selectors', () => {
       });
     });
   });
+
   describe('getNodesWithInputParams', () => {
     const newMockState = reducer(
       mockState.animals,
@@ -368,6 +374,19 @@ describe('Selectors', () => {
 
     it('returns an object with nodes that have parameters as inputs', () => {
       expect(Object.keys(nodesWithInputParams)).toEqual(parameterNodesID);
+    });
+  });
+
+  describe('getInputOutputDataNodes', () => {
+    it('includes input output nodes related to a modular pipeline in the returned object', () => {
+      const newMockState = reducer(
+        mockState.animals,
+        toggleFocusMode({ id: 'pipeline1' })
+      );
+
+      expect(
+        getInputOutputNodesForFocusedModularPipeline(newMockState)
+      ).toHaveProperty('0ae9e4de');
     });
   });
 });

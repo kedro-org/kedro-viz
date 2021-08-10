@@ -14,6 +14,7 @@ import {
   UPDATE_CHART_SIZE,
   UPDATE_FONT_LOADED,
   TOGGLE_CODE,
+  TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
   changeFlag,
   resetData,
   toggleIgnoreLargeWarning,
@@ -28,6 +29,7 @@ import {
   toggleTheme,
   updateChartSize,
   updateFontLoaded,
+  toggleFocusMode,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -295,5 +297,13 @@ describe('actions', () => {
       visible: true,
     };
     expect(toggleCode(true)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle focus mode for modular pipelines', () => {
+    const expectedAction = {
+      type: TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
+      modularPipeline: { id: '1234' },
+    };
+    expect(toggleFocusMode({ id: '1234' })).toEqual(expectedAction);
   });
 });
