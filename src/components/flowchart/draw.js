@@ -383,7 +383,7 @@ export const drawEdges = function (changed) {
           edge.sourceNode.type === 'parameters' && !isInputOutputEdge(edge.id)
       )
       .classed(
-        'pipeline-edge--parameters--input',
+        'pipeline-edge--parameters-input',
         (edge) =>
           edge.sourceNode.type === 'parameters' && isInputOutputEdge(edge.id)
       )

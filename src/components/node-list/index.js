@@ -79,12 +79,10 @@ const NodeListProvider = ({
     if (isGroupType(item.type) || isModularPipelineType(item.type)) {
       onGroupItemChange(item, item.checked);
       if (isModularPipelineType(item.type)) {
-        if (isModularPipelineType(item.type)) {
-          if (focusMode === null) {
-            onToggleFocusMode(item);
-          } else {
-            onToggleFocusMode(null);
-          }
+        if (focusMode === null) {
+          onToggleFocusMode(item);
+        } else {
+          onToggleFocusMode(null);
         }
       }
     } else {

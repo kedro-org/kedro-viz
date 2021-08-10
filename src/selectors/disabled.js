@@ -48,7 +48,8 @@ const isNodeOfActiveModularPipeline = (
 
 /**
  * Calculate whether nodes should be disabled based on their modular pipelines,
- * except related dataset nodes and
+ * except related dataset nodes and parameter nodes that are input and output
+ * to the currently selected modular pipeline under focus mode
  */
 export const getNodeDisabledModularPipeline = createSelector(
   [
