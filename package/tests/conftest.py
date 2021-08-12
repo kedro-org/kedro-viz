@@ -105,6 +105,7 @@ def example_catalog():
         },
     )
 
+
 @pytest.fixture
 def example_transcoded_pipelines():
     def process_data(raw_data, train_test_split):
@@ -129,15 +130,16 @@ def example_transcoded_pipelines():
                     outputs="model",
                     name="train_model",
                     tags=["train"],
-                )
+                ),
             ]
         ),
     )
- 
+
     yield {
         "__default__": data_processing_pipeline,
         "data_processing": data_processing_pipeline,
     }
+
 
 @pytest.fixture
 def example_transcoded_catalog():

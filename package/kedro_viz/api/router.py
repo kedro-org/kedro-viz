@@ -33,12 +33,12 @@ from fastapi.responses import JSONResponse
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.graph import (
     DataNode,
-    TranscodedDataNode,
     DataNodeMetadata,
-    TranscodedDataNodeMetadata,
     ParametersNodeMetadata,
     TaskNode,
     TaskNodeMetadata,
+    TranscodedDataNode,
+    TranscodedDataNodeMetadata,
 )
 
 from .responses import (

@@ -135,11 +135,6 @@ class CatalogRepository:
             dataset_obj = self._catalog._data_sets.get(dataset_name)  # pragma: no cover
         return dataset_obj
 
-    def get_transcoded_info(self,dataset_name:str) -> Optional[str]:
-        name = self.strip_encoding(dataset_name)
-        obj = self.get_dataset(dataset_name)
-        return (name, f"{obj.__class__.__module__}.{obj.__class__.__qualname__}")
-
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(dataset_name)
 

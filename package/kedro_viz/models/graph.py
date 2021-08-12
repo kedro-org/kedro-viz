@@ -126,7 +126,9 @@ class GraphNode(abc.ABC):
     modular_pipelines: List[str] = field(init=False)
 
     # the underlying Kedro object for this node
-    _kedro_obj: Union[KedroNode, Optional[AbstractDataSet]] = field(init=False)
+    _kedro_obj: Union[KedroNode, Optional[AbstractDataSet]] = field(
+        init=False, default=None
+    )
 
     @staticmethod
     def _hash(value: str):
