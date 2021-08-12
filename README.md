@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-✨ <em> Data Science Pipelines, Beautifully Designed</em> ✨
+✨ <em> Data Science Pipelines. Beautifully Designed</em> ✨
 <br />
 Live Demo: <a href="https://quantumblacklabs.github.io/kedro-viz/" target="_blank">https://quantumblacklabs.github.io/kedro-viz/</a>
 </p>
@@ -25,57 +25,57 @@ Live Demo: <a href="https://quantumblacklabs.github.io/kedro-viz/" target="_blan
 
 ## Introduction
 
-Kedro-Viz is an interactive development tool for buidling data science pipelines with [Kedro](https://github.com/quantumblacklabs/kedro).
+Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/quantumblacklabs/kedro).
 
 ## Features
 
 - ✨ Complete visualisation of a Kedro project and its pipelines
-- 🎨 Support light & dark themes out of the box
-- 🚀 Scale to big pipelins with hundreds of nodes
+- 🎨 Supports light & dark themes out of the box
+- 🚀 Scales to big pipelines with hundreds of nodes
 - 🔎 Highly interactive, filterable and searchable
-- 🔬 Focus mode for modular pipelines visualisation
+- 🔬 Focus mode for modular pipeline visualisation
 - 📊 Rich metadata side panel to display parameters, plots, etc.
 - ♻️ Autoreload on code change
-- 🎩 And many more to come
+- 🎩 Many more to come
 
 ## Installation
 
 There are two ways you can use Kedro-Viz:
 
 * As a [Kedro plugin](https://kedro.readthedocs.io/en/stable/07_extend_kedro/04_plugins.html) (the most common way).
+
+    To install Kedro-Viz as a Kedro plugin:
+
+    ```bash
+    pip install kedro-viz
+    ```
+
 * As a standalone React component (for embedding Kedro-Viz in your web application).
 
-To install Kedro-Viz as a Kedro plugin:
+   To install the standalone React component:
 
-```bash
-$ pip install kedro-viz
-```
-
-To install the standalone React component:
-
-```bash
-$ npm install @quantumblack/kedro-viz
-```
+    ```bash
+    npm install @quantumblack/kedro-viz
+    ```
 
 ## Usage
 
-
 ### As a Kedro plugin
 
-You can launch Kedro-Viz as a Kedro plugin from the command line with the following command at the root of a Kedro project:
+To launch Kedro-Viz from the command line as a Kedro plugin, use the following command from the root folder of your Kedro project:
 
 ```bash
-$ kedro viz
+kedro viz
 ```
 
-A browser tab should automatically open and serve the visualisation at `http://127.0.0.1:4141/`.
+A browser tab opens automatically to serve the visualisation at `http://127.0.0.1:4141/`.
 
 Kedro-Viz also supports the following additional arguments on the command line:
 
 ```bash
 Usage: kedro viz [OPTIONS]
 
-  Visualise a Kedro pipeline using Kedro viz.
+  Visualise a Kedro pipeline using Kedro-Viz.
 
 Options:
   --host TEXT               Host that viz will listen to. Defaults to
@@ -115,7 +115,7 @@ const MyApp = () => <KedroViz data={json} />;
 The JSON can be obtained by running:
 
 ```bash
-$ kedro viz --save-file=filename.json
+kedro viz --save-file=filename.json
 ```
 
 ## Feature Flags
@@ -124,15 +124,16 @@ Kedro-Viz uses features flags to roll out some experimental features. The follow
 
 | Flag | Description |
 |------| ------------|
-| sizewarning | From release v3.9.1. Show a warning before rendering very large graphs. (default `true`) |
+| sizewarning | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
 
-To enable or disable a flag, you can click on the settings icon in the toolbar and toggle the flag on/off.
+To enable or disable a flag, click on the settings icon in the toolbar and toggle the flag on/off.
 
-Kedro-Viz will also log a message in your browser's [developer console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#The_JavaScript_console) regarding the available flags and their values as currently set on your machine.
+Kedro-Viz also logs a message in your browser's [developer console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#The_JavaScript_console) to show the available flags and their values as currently set on your machine.
 
 ## Maintainers
 
-Kedro-Viz is maintained by a [product team from QuantumBlack](https://kedro.readthedocs.io/en/stable/12_faq/01_faq.html) and a number of [contributors from across the world](https://github.com/quantumblacklabs/Kedro-Viz/contributors).
+Kedro-Viz is maintained by the [product team from QuantumBlack](https://kedro.readthedocs.io/en/stable/12_faq/01_faq.html#who-maintains-kedro) and a number of [contributors from across the world](https://github.com/quantumblacklabs/Kedro-Viz/contributors).
+
 ## Contribution
 
 If you want to contribute to Kedro-Viz, please check out our [contributing guide](./CONTRIBUTING.md).
