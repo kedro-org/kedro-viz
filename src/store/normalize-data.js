@@ -153,7 +153,7 @@ const addNode = (state) => (node) => {
   state.node.plot[id] = node.plot;
   state.node.datasetType[id] = node.dataset_type;
   state.node.originalType[id] = node.original_type;
-  state.node.transcodedType[id] = node.transcoded_type;
+  state.node.transcodedType[id] = node.transcoded_types;
   state.node.runCommand[id] = node.runCommand;
   state.node.modularPipelines[id] = node.modular_pipelines || [];
 };
