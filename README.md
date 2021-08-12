@@ -9,6 +9,8 @@
 
 <p align="center">
 ✨ <em> Data Science Pipelines, Beautifully Designed</em> ✨
+<br />
+Live Demo: <a href="https://quantumblacklabs.github.io/kedro-viz/" target="_blank">https://quantumblacklabs.github.io/kedro-viz/</a>
 </p>
 
 <br />
