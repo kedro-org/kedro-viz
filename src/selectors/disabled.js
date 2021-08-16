@@ -37,8 +37,19 @@ export const getNodeDisabledTag = createSelector(
     })
 );
 
+const isNodeOfActiveModularPipeline = (
+  nodeModularPipelines,
+  nodeID,
+  modularPipelineEnabled
+) =>
+  nodeModularPipelines[nodeID].some(
+    (modularPipeline) => modularPipelineEnabled[modularPipeline]
+  );
+
 /**
- * Calculate whether nodes should be disabled based on their modular pipelines
+ * Calculate whether nodes should be disabled based on their modular pipelines,
+ * except related dataset nodes and parameter nodes that are input and output
+ * to the currently selected modular pipeline under focus mode
  */
 export const getNodeDisabledModularPipeline = createSelector(
   [
@@ -46,24 +57,74 @@ export const getNodeDisabledModularPipeline = createSelector(
     getModularPipelineEnabled,
     getModularPipelineCount,
     getNodeModularPipelines,
+    getEdgeIDs,
+    getNodeType,
+    getEdgeSources,
+    getEdgeTargets,
   ],
   (
     nodeIDs,
     modularPipelineEnabled,
     modularPipelineCount,
-    nodeModularPipelines
+    nodeModularPipelines,
+    edgeIDs,
+    nodeType,
+    edgeSources,
+    edgeTargets
   ) =>
     arrayToObject(nodeIDs, (nodeID) => {
+      // check for excpetion 1: when there are no modular pipelines enabled
       if (modularPipelineCount.enabled === 0) {
         return false;
       }
-      if (nodeModularPipelines[nodeID].length) {
-        // Hide task nodes that don't have at least one modular pipeline filter enabled
-        return !nodeModularPipelines[nodeID].some(
-          (modularPipeline) => modularPipelineEnabled[modularPipeline]
+
+      const isDisabledByModularPipeline = !isNodeOfActiveModularPipeline(
+        nodeModularPipelines,
+        nodeID,
+        modularPipelineEnabled
+      );
+
+      // check for excpetion 2: check for input/output nodes that are not part of modular pipelines
+      if (
+        isDisabledByModularPipeline &&
+        (nodeType[nodeID] === 'parameters' || nodeType[nodeID] === 'data')
+      ) {
+        const relatedEdgeIDs = edgeIDs.filter((edgeID) =>
+          edgeID.includes(nodeID)
         );
+
+        let isMPEdge = false;
+
+        relatedEdgeIDs.forEach((relatedEdgeID) => {
+          const source = edgeSources[relatedEdgeID];
+          const target = edgeTargets[relatedEdgeID];
+
+          const isInput =
+            source === nodeID &&
+            isNodeOfActiveModularPipeline(
+              nodeModularPipelines,
+              target,
+              modularPipelineEnabled
+            );
+
+          const isOutput =
+            target === nodeID &&
+            isNodeOfActiveModularPipeline(
+              nodeModularPipelines,
+              source,
+              modularPipelineEnabled
+            );
+
+          // check if the target node belongs to a enabled modualr pipeline
+          if ((isInput || isOutput) && isMPEdge === false) {
+            isMPEdge = true;
+          }
+        });
+        return !isMPEdge;
       }
-      return true;
+
+      // Hide nodes that don't have at least one modular pipeline filter enabled
+      return isDisabledByModularPipeline;
     })
 );
 

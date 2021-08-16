@@ -34,6 +34,7 @@ export const createInitialState = () => ({
     themeBtn: true,
     miniMapBtn: true,
     miniMap: true,
+    modularPipelineFocusMode: null,
   },
   zoom: {},
 });

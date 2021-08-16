@@ -1,7 +1,13 @@
 import { mockState } from '../utils/state.mock';
 import { getEdgeDisabled } from './disabled';
-import { addNewEdge, getTransitiveEdges, getVisibleEdges } from './edges';
+import {
+  addNewEdge,
+  getTransitiveEdges,
+  getVisibleEdges,
+  getInputOutputDataEdges,
+} from './edges';
 import { toggleNodesDisabled } from '../actions/nodes';
+import { toggleFocusMode } from '../actions';
 import reducer from '../reducers';
 
 const getNodeIDs = (state) => state.node.ids;
@@ -137,6 +143,19 @@ describe('Selectors', () => {
       );
       expect(getVisibleEdges(alteredMockState).length).toBeGreaterThan(
         getVisibleEdges(mockState.animals).length
+      );
+    });
+  });
+
+  describe('getInputOutputDataEdges', () => {
+    it('includes input output edges related to a modular pipeline in the returned object', () => {
+      const newMockState = reducer(
+        mockState.animals,
+        toggleFocusMode({ id: 'pipeline1' })
+      );
+
+      expect(getInputOutputDataEdges(newMockState)).toHaveProperty(
+        '0ae9e4de|15586b7a'
       );
     });
   });

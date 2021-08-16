@@ -6,6 +6,7 @@ import {
   TOGGLE_SIDEBAR,
   TOGGLE_CODE,
   TOGGLE_MINIMAP,
+  TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
 } from '../actions';
 
 function visibleReducer(visibleState = {}, action) {
@@ -49,6 +50,12 @@ function visibleReducer(visibleState = {}, action) {
     case TOGGLE_CODE: {
       return Object.assign({}, visibleState, {
         code: action.visible,
+      });
+    }
+
+    case TOGGLE_MODULAR_PIPELINE_FOCUS_MODE: {
+      return Object.assign({}, visibleState, {
+        modularPipelineFocusMode: action.modularPipeline,
       });
     }
 

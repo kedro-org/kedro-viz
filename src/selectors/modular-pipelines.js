@@ -2,6 +2,8 @@ import { createSelector } from 'reselect';
 import { getPipelineModularPipelineIDs } from './pipeline';
 
 export const getModularPipelineIDs = (state) => state.modularPipeline.ids;
+export const getFocusedModularPipeline = (state) =>
+  state.visible.modularPipelineFocusMode;
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
 

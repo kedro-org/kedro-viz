@@ -8,7 +8,9 @@ import {
   getNodeActive,
   getNodeSelected,
   getNodesWithInputParams,
+  getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
+import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
@@ -100,7 +102,15 @@ export class FlowChart extends Component {
       drawLayerNames.call(this);
     }
 
-    if (changed('edges', 'clickedNode', 'linkedNodes')) {
+    if (
+      changed(
+        'edges',
+        'clickedNode',
+        'linkedNodes',
+        'focusMode',
+        'inputOutputDataEdges'
+      )
+    ) {
       drawEdges.call(this, changed);
     }
 
@@ -113,7 +123,9 @@ export class FlowChart extends Component {
         'nodeActive',
         'nodeSelected',
         'hoveredParameters',
-        'nodesWithInputParams'
+        'nodesWithInputParams',
+        'focusMode',
+        'inputOutputDataNodes'
       )
     ) {
       drawNodes.call(this, changed);
@@ -527,7 +539,12 @@ export class FlowChart extends Component {
             })}
             ref={this.wrapperRef}>
             <defs>
-              {['arrowhead', 'arrowhead--accent'].map((id) => (
+              {[
+                'arrowhead',
+                'arrowhead--input',
+                'arrowhead--accent--input',
+                'arrowhead--accent',
+              ].map((id) => (
                 <marker
                   id={`pipeline-${id}`}
                   key={id}
@@ -593,10 +610,13 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   nodesWithInputParams: getNodesWithInputParams(state),
+  inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
+  inputOutputDataEdges: getInputOutputDataEdges(state),
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
+  focusMode: state.visible.modularPipelineFocusMode,
   ...ownProps,
 });
 
