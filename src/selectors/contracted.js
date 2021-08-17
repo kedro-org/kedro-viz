@@ -94,14 +94,16 @@ export const getContractedModularPipelines = createSelector(
      * Add a new edge between a source and a target
      * @param {string} source A source node ID
      * @param {string} target A target node ID
-     * @returns {string} The ID for the new edge
      */
     const addEdge = (source, target) => {
-      const edgeID = [source, target].join('|');
-      edge.ids[edgeID] = true;
-      edge.sources[edgeID] = source;
-      edge.targets[edgeID] = target;
-      return edgeID;
+      // Add the new edge
+      const newEdgeID = [source, target].join('|');
+      edge.ids[newEdgeID] = true;
+      edge.sources[newEdgeID] = source;
+      edge.targets[newEdgeID] = target;
+
+      // Handle potential cycle given the new edge
+      deleteCyclicEdge(newEdgeID);
     };
 
     /**
@@ -112,6 +114,43 @@ export const getContractedModularPipelines = createSelector(
       delete edge.ids[edgeID];
       delete edge.sources[edgeID];
       delete edge.targets[edgeID];
+    };
+
+    /**
+     * Finds the first existing edge between the given source and target.
+     * @param {string} source A source node ID
+     * @param {string} target A target node ID
+     * @returns {?string} An edge ID if found, otherwise undefined
+     */
+    const findEdgeBetween = (source, target) =>
+      Object.keys(edge.ids).find(
+        (edgeID) =>
+          edge.sources[edgeID] === source && edge.targets[edgeID] === target
+      );
+
+    /**
+     * If there is an edge between the same nodes in the reverse direction to the new edge,
+     * then this function will delete one of the two edges to avoid forming a cycle in the graph.
+     * To decide which edge gets dropped, the Kedro specific simplifcation strategy is
+     * to keep the edge where the source is a modular pipeline node, otherwise just keep the new edge.
+     * @param {string} newEdgeID An edge ID
+     * @returns {string} The resulting edge ID
+     */
+    const deleteCyclicEdge = (newEdgeID) => {
+      // Find first edge between these nodes but in the reverse direction (target to source)
+      const reverseEdgeID = findEdgeBetween(
+        edge.targets[newEdgeID],
+        edge.sources[newEdgeID]
+      );
+
+      // If a reverse edge was found, then handle the cycle (as described in this function description)
+      if (reverseEdgeID) {
+        const sourceIsPipeline =
+          node.type[edge.sources[newEdgeID]] === 'pipeline';
+
+        // Keep the edge where the source is a modular pipeline node, otherwise just keep the new edge
+        deleteEdge(sourceIsPipeline ? reverseEdgeID : newEdgeID);
+      }
     };
 
     /**
