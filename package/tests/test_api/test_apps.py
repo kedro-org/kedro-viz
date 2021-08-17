@@ -385,16 +385,12 @@ class TestTranscodedDataset:
         assert response.status_code == 200
         assert_example_transcoded_data(response.json())
 
-    def test_transcoded_data_node_metadata(self, example_transcoded_api):
-        client = TestClient(example_transcoded_api)
-        response = client.get("/api/nodes/0ecea0de")
-        print(response.json())
-        assert 404 == 404
-        # assert response.json() == {
-        #     "filepath": "model_inputs.csv",
-        #     "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
-        #     "run_command": 'kedro run --to-outputs="model_inputs"',
-        # }
+    # def test_transcodeddata_node_metadata(self, example_transcoded_api):
+    #     client = TestClient(example_transcoded_api)
+    #     print(client.get("/api/nodes/0ecea0de"))
+    #     response = client.get("/api/nodes/0ecea0de")
+    #     print(response.json())
+
 
 
 class TestNodeMetadataEndpoint:
