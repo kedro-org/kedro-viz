@@ -161,7 +161,8 @@ export const getContractedModularPipelines = createSelector(
      */
     const redirectEdges = (nodeID, deletedNodes = []) => {
       const { sources, targets } = edge;
-      Object.keys(edge.ids).forEach((edgeID) => {
+
+      for (const edgeID of Object.keys(edge.ids)) {
         if (deletedNodes.includes(targets[edgeID])) {
           // Redirect incoming edges:
           addEdge(sources[edgeID], nodeID);
@@ -171,7 +172,7 @@ export const getContractedModularPipelines = createSelector(
           addEdge(nodeID, targets[edgeID]);
           deleteEdge(edgeID);
         }
-      });
+      }
     };
 
     /**
@@ -181,38 +182,38 @@ export const getContractedModularPipelines = createSelector(
      */
     const replaceModularPipelineNodes = (modPipID) => {
       const children = modularPipelineChildren[modPipID];
-      Object.keys(node.ids).forEach((nodeID) => {
+
+      for (const nodeID of Object.keys(node.ids)) {
         if (children[nodeID]) {
           deleteNode(nodeID);
           const newNodeID = addNode(modPipID, nodeID);
           redirectEdges(newNodeID, [nodeID]);
         }
-      });
+      }
     };
 
     /**
+     * Determine whether a node is a child of the modular pipeline,
+     * or if it is a modular pipeline node created for the given MP
+     * @param {string} modPipID Modular pipeline ID
+     * @param {string} nodeID A node's ID
+     * @returns {boolean} True if the node belongs to the modular pipeline
+     */
+    const belongsToModPip = (modPipID, nodeID) =>
+      modularPipelineChildren[modPipID][nodeID] ||
+      node.modularPipeline[nodeID] === modPipID;
+
+    /**
      * Find an edge whose source and target both belong to the modular pipeline
-     * @param {*} modPipID Modular pipeline ID
+     * @param {string} modPipID Modular pipeline ID
      * @returns {string|undefined} An edge ID, or undefined
      */
-    const findModPipEdge = (modPipID) => {
-      const children = modularPipelineChildren[modPipID];
-
-      /**
-       * Determine whether a node is a child of the modular pipeline,
-       * or if it is a modular pipeline node created for this MP:
-       * @param {string} nodeID A node's ID
-       * @returns {boolean} True if the node belongs to the modular pipeline
-       */
-      const belongsToModPip = (nodeID) =>
-        children[nodeID] || node.modularPipeline[nodeID] === modPipID;
-
-      return Object.keys(edge.ids).find(
+    const findModPipEdge = (modPipID) =>
+      Object.keys(edge.ids).find(
         (edgeID) =>
-          belongsToModPip(edge.sources[edgeID]) &&
-          belongsToModPip(edge.targets[edgeID])
+          belongsToModPip(modPipID, edge.sources[edgeID]) &&
+          belongsToModPip(modPipID, edge.targets[edgeID])
       );
-    };
 
     /**
      * Find an edge which has source and target nodes which are both part of
@@ -223,12 +224,15 @@ export const getContractedModularPipelines = createSelector(
      */
     const collapseEdges = (modPipID) => {
       const edgeID = findModPipEdge(modPipID);
+
       if (!edgeID) {
         return;
       }
+
       const source = edge.sources[edgeID];
       const target = edge.targets[edgeID];
       const newNodeID = addNode(modPipID, source);
+
       deleteNode(source);
       deleteNode(target);
       deleteEdge(edgeID);
@@ -239,9 +243,11 @@ export const getContractedModularPipelines = createSelector(
     const contractedModularPipelines = modularPipelineIDs.filter(
       (id) => modularPipelineContracted[id]
     );
+
     for (const modPipID of contractedModularPipelines) {
       // Collapse edges that link from a modular pipeline to itself:
       collapseEdges(modPipID);
+      
       // Replace single nodes that belong to a modular pipeline:
       replaceModularPipelineNodes(modPipID);
     }
