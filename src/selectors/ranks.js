@@ -67,20 +67,16 @@ export const getNodeRank = createSelector(
       }
     }
 
-    // NOTE: Temporarily disabled toposort as it can not handle graph cycles caused by contracting
-
-    // TODO: revert this after resolving the problem
-
     // Run toposort algorithm to rank nodes by dependency
-    // const toposortedNodes = batchingToposort(nodeDeps);
+    const toposortedNodes = batchingToposort(nodeDeps);
 
     // Convert toposort order into rank numbering
     const nodeRanks = {};
-    // for (let rank = 0; rank < toposortedNodes.length; rank++) {
-    //   for (const nodeID of toposortedNodes[rank]) {
-    //     nodeRanks[nodeID] = rank;
-    //   }
-    // }
+    for (let rank = 0; rank < toposortedNodes.length; rank++) {
+      for (const nodeID of toposortedNodes[rank]) {
+        nodeRanks[nodeID] = rank;
+      }
+    }
 
     return nodeRanks;
   }
