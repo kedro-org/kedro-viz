@@ -1,5 +1,5 @@
 import React from 'react';
-import $ from 'cheerio';
+import $ from 'cheerio'; //eslint-disable-line id-length
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import FlowChart, {
