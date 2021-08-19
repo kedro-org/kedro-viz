@@ -1,8 +1,9 @@
+/* eslint-disable id-length */
+
 /**
  * PI / 2 constant
  */
 
-/* eslint-disable id-length */
 export const HALF_PI = Math.PI * 0.5;
 
 /**
