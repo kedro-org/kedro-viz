@@ -1,10 +1,12 @@
 import { createSelector } from 'reselect';
-import { getPipelineNodeIDs } from './pipeline';
 import { getNodeDisabled, getEdgeDisabled } from './disabled';
+import { getFocusedModularPipeline } from './modular-pipelines';
 
+const getNodeIDs = (state) => state.node.ids;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
+const getNodeModularPipelines = (state) => state.node.modularPipelines;
 
 /**
  * Create a new edge from the first and last edge in the path
@@ -25,13 +27,23 @@ export const addNewEdge = (source, target, { ids, sources, targets }) => {
  */
 export const getTransitiveEdges = createSelector(
   [
+    getNodeIDs,
     getEdgeIDs,
+    getNodeDisabled,
     getEdgeSources,
     getEdgeTargets,
-    getPipelineNodeIDs,
-    getNodeDisabled,
+    getFocusedModularPipeline,
+    getNodeModularPipelines,
   ],
-  (edgeIDs, edgeSources, edgeTargets, nodeIDs, nodeDisabled) => {
+  (
+    nodeIDs,
+    edgeIDs,
+    nodeDisabled,
+    edgeSources,
+    edgeTargets,
+    focusedModularPipeline,
+    nodeModularPipelines
+  ) => {
     const transitiveEdges = {
       ids: {},
       sources: {},
@@ -52,10 +64,17 @@ export const getTransitiveEdges = createSelector(
           return;
         }
         const target = edgeTargets[edgeID];
+
+        // Further filter out connections between indicative input / output nodes under focus mode
+        const isNotInputEdge =
+          focusedModularPipeline !== null &&
+          !nodeModularPipelines[source].includes(focusedModularPipeline.id) &&
+          !nodeModularPipelines[target].includes(focusedModularPipeline.id);
+
         if (nodeDisabled[target]) {
           // If target node is disabled then keep walking the graph
           walkGraphEdges(path.concat(target));
-        } else if (path.length > 1) {
+        } else if (path.length > 1 && !isNotInputEdge) {
           // Else only create a new edge if there would be 3 or more nodes in the path
           addNewEdge(path[0], target, transitiveEdges);
         }
@@ -97,4 +116,31 @@ export const getCombinedEdges = createSelector(
     sources: Object.assign({}, edgeSources, transitiveEdges.sources),
     targets: Object.assign({}, edgeTargets, transitiveEdges.targets),
   })
+);
+
+/**
+ * Obtain all the edges that belongs to input and output data
+ * nodes when under focus mode.
+ */
+export const getInputOutputDataEdges = createSelector(
+  [getCombinedEdges, getNodeModularPipelines, getFocusedModularPipeline],
+  (combinedEdges, nodeModularPipelines, focusedModularPipeline) => {
+    const edgesList = {};
+    if (focusedModularPipeline !== null) {
+      combinedEdges.ids.forEach((edge) => {
+        if (
+          !nodeModularPipelines[edge.sources]?.includes(
+            focusedModularPipeline.id
+          ) ||
+          !nodeModularPipelines[edge.targets]?.includes(
+            focusedModularPipeline.id
+          )
+        ) {
+          edgesList[edge.id] = edge;
+        }
+      });
+    }
+
+    return edgesList;
+  }
 );

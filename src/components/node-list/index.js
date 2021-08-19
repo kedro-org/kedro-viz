@@ -12,11 +12,18 @@ import {
 } from './node-list-items';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
-import { getModularPipelineData } from '../../selectors/modular-pipelines';
-import { getGroupedNodes, getNodeSelected } from '../../selectors/nodes';
+import {
+  getModularPipelineData,
+  getFocusedModularPipeline,
+} from '../../selectors/modular-pipelines';
+import {
+  getGroupedNodes,
+  getNodeSelected,
+  getInputOutputNodesForFocusedModularPipeline,
+} from '../../selectors/nodes';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
-import { toggleParametersHovered } from '../../actions';
+import { toggleParametersHovered, toggleFocusMode } from '../../actions';
 import {
   toggleModularPipelineActive,
   toggleModularPipelineFilter,
@@ -50,10 +57,12 @@ const NodeListProvider = ({
   onToggleModularPipelineContracted,
   onToggleTypeDisabled,
   onToggleModularPipelineFilter,
+  onToggleFocusMode,
   modularPipelines,
+  focusMode,
+  inputOutputDataNodes,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
-  const [focusMode, setFocusMode] = useState(null);
   const items = getFilteredItems({
     nodes,
     tags,
@@ -63,6 +72,7 @@ const NodeListProvider = ({
     nodeSelected,
     searchValue,
     focusMode,
+    inputOutputDataNodes,
   });
 
   const groups = getGroups({ items });
@@ -71,7 +81,11 @@ const NodeListProvider = ({
     if (isGroupType(item.type) || isModularPipelineType(item.type)) {
       onGroupItemChange(item, item.checked);
       if (isModularPipelineType(item.type)) {
-        onToggleFocusMode(item);
+        if (focusMode === null) {
+          onToggleFocusMode(item);
+        } else {
+          onToggleFocusMode(null);
+        }
       }
     } else {
       if (item.faded || item.selected) {
@@ -86,22 +100,17 @@ const NodeListProvider = ({
     if (isGroupType(item.type) || isModularPipelineType(item.type)) {
       onGroupItemChange(item, checked);
       if (isModularPipelineType(item.type)) {
-        onToggleFocusMode(item);
+        if (focusMode === null) {
+          onToggleFocusMode(item);
+        } else {
+          onToggleFocusMode(null);
+        }
       }
     } else {
       if (checked) {
         onToggleNodeActive(null);
       }
       onToggleNodesDisabled([item.id], checked);
-    }
-  };
-
-  // set the modular pipeline focus mode on toggle
-  const onToggleFocusMode = (item) => {
-    if (focusMode === null) {
-      setFocusMode(item);
-    } else {
-      setFocusMode(null);
     }
   };
 
@@ -204,6 +213,8 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   nodeTypes: getNodeTypes(state),
   modularPipelines: getModularPipelineData(state),
+  focusMode: getFocusedModularPipeline(state),
+  inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
@@ -236,6 +247,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleNodesDisabled: (nodeIDs, disabled) => {
     dispatch(toggleNodesDisabled(nodeIDs, disabled));
+  },
+  onToggleFocusMode: (modularPipeline) => {
+    dispatch(toggleFocusMode(modularPipeline));
   },
 });
 

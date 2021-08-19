@@ -21,6 +21,7 @@ import { mockState } from '../../utils/state.mock';
 import {
   getGroupedNodes,
   getNodeModularPipelines,
+  getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
 import { getNodeTypes, getNodeTypeIDs } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
@@ -222,6 +223,9 @@ describe('node-list-selectors', () => {
       tagNodeCounts: getTagNodeCounts(mockState.animals),
       nodeSelected: {},
       searchValue,
+      inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+        mockState.animals
+      ),
     });
 
     const items = expect.arrayContaining([
@@ -276,6 +280,9 @@ describe('node-list-selectors', () => {
       tagNodeCounts: getTagNodeCounts(mockState.animals),
       nodeSelected: {},
       searchValue: '',
+      inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+        mockState.animals
+      ),
     });
 
     const groups = getGroups({ nodeTypes, items });
@@ -460,6 +467,10 @@ describe('node-list-selectors', () => {
         modularPipelineIDs: getModularPipelineIDs(mockState.animals),
         nodeModularPipelines: getNodeModularPipelines(mockState.animals),
         nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+          mockState.animals
+        ),
+        focusMode: { id: 'pipeline1' },
       });
 
       const items = expect.arrayContaining([
@@ -491,6 +502,27 @@ describe('node-list-selectors', () => {
         );
       });
 
+      describe('focus mode', () => {
+        const filteredNodeItems = getFilteredNodeItems({
+          nodes: getGroupedNodes(mockState.animals),
+          tags: getTagData(mockState.animals),
+          modularPipelines: getModularPipelineData(mockState.animals),
+          nodeSelected: {},
+          modularPipelineIDs: getModularPipelineIDs(mockState.animals),
+          nodeModularPipelines: getNodeModularPipelines(mockState.animals),
+          nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+          inputOutputDataNodes: { '0ae9e4de': { id: '0ae9e4de' } },
+          focusMode: { id: 'pipeline1' },
+        });
+
+        it('sets the faded field for an input node to true under focus mode ', () => {
+          const inputNode = filteredNodeItems.data.filter(
+            (node) => node.id === '0ae9e4de'
+          )[0];
+          expect(inputNode.faded).toEqual(true);
+        });
+      });
+
       const filteredNodeModularPipelines = getFilteredNodeModularPipelines({
         nodes: getGroupedNodes(mockState.animals),
         tags: getTagData(mockState.animals),
@@ -500,6 +532,9 @@ describe('node-list-selectors', () => {
         modularPipelineIDs: getModularPipelineIDs(mockState.animals),
         nodeModularPipelines: getNodeModularPipelines(mockState.animals),
         nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+          mockState.animals
+        ),
       });
 
       it('filters expected number of items', () => {
@@ -538,6 +573,9 @@ describe('node-list-selectors', () => {
         modularPipelineIDs: getModularPipelineIDs(mockState.animals),
         nodeModularPipelines: getNodeModularPipelines(mockState.animals),
         nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+          mockState.animals
+        ),
       });
 
       it('filters expected number of items', () => {
@@ -556,6 +594,9 @@ describe('node-list-selectors', () => {
           modularPipelineIds: getModularPipelineIDs(mockState.animals),
           nodeModularPipelines: getNodeModularPipelines(mockState.animals),
           nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+          inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+            mockState.animals
+          ),
         });
 
         it('filters expected number of items', () => {
@@ -575,6 +616,9 @@ describe('node-list-selectors', () => {
           modularPipelineIds: getModularPipelineIDs(mockState.animals),
           nodeModularPipelines: getNodeModularPipelines(mockState.animals),
           nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+          inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+            mockState.animals
+          ),
         });
 
         it('filters expected number of items', () => {
@@ -596,6 +640,9 @@ describe('node-list-selectors', () => {
           modularPipelineIds: getModularPipelineIDs(mockState.animals),
           nodeModularPipelines: getNodeModularPipelines(mockState.animals),
           nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+          inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+            mockState.animals
+          ),
         });
 
         it('contains expected number of node and modular pipeline items', () => {
@@ -616,6 +663,9 @@ describe('node-list-selectors', () => {
           modularPipelineIds: getModularPipelineIDs(mockState.animals),
           nodeModularPipelines: getNodeModularPipelines(mockState.animals),
           nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+          inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+            mockState.animals
+          ),
         });
 
         it('contains expected number of node and modular pipeline items for the search value', () => {

@@ -8,7 +8,9 @@ import {
   getNodeActive,
   getNodeSelected,
   getNodesWithInputParams,
+  getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
+import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
@@ -100,7 +102,15 @@ export class FlowChart extends Component {
       drawLayerNames.call(this);
     }
 
-    if (changed('edges', 'clickedNode', 'linkedNodes', 'newParamsFlag')) {
+    if (
+      changed(
+        'edges',
+        'clickedNode',
+        'linkedNodes',
+        'focusMode',
+        'inputOutputDataEdges'
+      )
+    ) {
       drawEdges.call(this, changed);
     }
 
@@ -114,7 +124,8 @@ export class FlowChart extends Component {
         'nodeSelected',
         'hoveredParameters',
         'nodesWithInputParams',
-        'newParamsFlag'
+        'focusMode',
+        'inputOutputDataNodes'
       )
     ) {
       drawNodes.call(this, changed);
@@ -393,6 +404,16 @@ export class FlowChart extends Component {
       false
     );
   }
+  /**
+   * Returns parameter count when there are more
+   * than one parameters and parameter name if there's a single parameter
+   * @param {Array} parameterNames
+   * @returns {String}
+   */
+  getHoveredParameterLabel = (parameterNames) =>
+    parameterNames.length > 1
+      ? `Parameters:${parameterNames.length}`
+      : parameterNames[0];
 
   /**
    * Enable a node's focus state and highlight linked nodes
@@ -418,7 +439,22 @@ export class FlowChart extends Component {
    */
   handleNodeMouseOver = (event, node) => {
     this.props.onToggleNodeHovered(node.id);
-    this.showTooltip(event, node);
+    node && this.showTooltip(event, node.fullName);
+  };
+
+  /**
+   * Shows tooltip when the parameter indicator is hovered on
+   * @param {Object} event Event object
+   * @param {Object} node Datum for a single node
+   */
+  handleParamsIndicatorMouseOver = (event, node) => {
+    const parameterNames = this.props.nodesWithInputParams[node.id];
+    if (parameterNames) {
+      const label = this.getHoveredParameterLabel(parameterNames);
+
+      this.showTooltip(event, label);
+    }
+    event.stopPropagation();
   };
 
   /**
@@ -450,14 +486,14 @@ export class FlowChart extends Component {
   /**
    * Show, fill and and position the tooltip
    * @param {Object} event Event object
-   * @param {Object} node A node datum
+   * @param {Object} text Text to show on the tooltip
    * @param {?Object} options Options for the tooltip if required
    */
-  showTooltip(event, node, options = {}) {
+  showTooltip(event, text, options = {}) {
     this.setState({
       tooltip: {
         targetRect: event && event.target.getBoundingClientRect(),
-        text: node && node.fullName,
+        text: text,
         visible: true,
         ...options,
       },
@@ -503,10 +539,12 @@ export class FlowChart extends Component {
             })}
             ref={this.wrapperRef}>
             <defs>
-              {(this.props.newParamsFlag
-                ? ['arrowhead', 'arrowhead--accent']
-                : ['arrowhead']
-              ).map((id) => (
+              {[
+                'arrowhead',
+                'arrowhead--input',
+                'arrowhead--accent--input',
+                'arrowhead--accent',
+              ].map((id) => (
                 <marker
                   id={`pipeline-${id}`}
                   key={id}
@@ -572,11 +610,13 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   nodesWithInputParams: getNodesWithInputParams(state),
-  newParamsFlag: state.flags.newparams,
+  inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
+  inputOutputDataEdges: getInputOutputDataEdges(state),
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
+  focusMode: state.visible.modularPipelineFocusMode,
   ...ownProps,
 });
 

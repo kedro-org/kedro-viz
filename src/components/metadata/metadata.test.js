@@ -103,7 +103,6 @@ describe('MetaData', () => {
     });
 
     it('does not display the node parameter row when there are no parameters', () => {
-      node_task.parameters = {};
       const wrapper = mount({
         nodeId: salmonTaskNodeId,
         mockMetadata: node_task,

@@ -12,6 +12,20 @@ Please follow the established format:
 
 - Add `--autoreload` flag to `kedro viz` to automatically reload Kedro Viz tab when the Kedro project code changes.
 
+# Release 3.14.0
+
+## Major features and improvements
+
+- Implement first version of focus mode feature to allow selective display of modular pipelines on the flowchart. (#514)
+- Add `--autoreload` to relaunch viz server on file change. (#498)
+- Updated demo data set to shuttle factory example. (#518)
+
+## Bug fixes and other changes
+
+- Removed build/api after running build. (#515)
+- Fix path parsing for PartitionedDataSet (#516)
+- Fix dev server port (#517)
+
 # Release 3.13.1
 
 ## Bug fixes and other changes
@@ -30,7 +44,6 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Upgrade dev dependencies to solve snyk errors. (#486)
 - Remove the old dagre graphing logic and the 'oldgraph' flag. (#486)
 - Delete 'modularpipeline' flag. (#495)
 - Fix run command suggestion. (#497)

@@ -3,6 +3,8 @@ import { getPipelineModularPipelineIDs } from './pipeline';
 import { arrayToObject } from '../utils';
 
 export const getModularPipelineIDs = (state) => state.modularPipeline.ids;
+export const getFocusedModularPipeline = (state) =>
+  state.visible.modularPipelineFocusMode;
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
 const getModularPipelineContracted = (state) =>

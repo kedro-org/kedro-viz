@@ -26,8 +26,13 @@ const updateGraphOnChange = (store) => {
  */
 const saveStateToLocalStorage = (state) => {
   // does not save modal state to localStorage
-  const { exportModal, plotModal, settingsModal, ...otherVisibleProps } =
-    state.visible;
+  const {
+    exportModal,
+    plotModal,
+    settingsModal,
+    modularPipelineFocusMode,
+    ...otherVisibleProps
+  } = state.visible;
   saveState({
     node: {
       disabled: pruneFalseyKeys(state.node.disabled),

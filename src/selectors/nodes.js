@@ -28,6 +28,8 @@ const getClickedNode = (state) => state.node.clicked;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
+const getFocusedModularPipeline = (state) =>
+  state.visible.modularPipelineFocusMode;
 
 /**
  * Gets a map of nodeIds to graph nodes
@@ -280,17 +282,48 @@ export const getVisibleNodes = createSelector(
 );
 
 /**
- * Returns an map of task nodeIDs to graph nodes that have parameter nodes as their source
+ * Returns a map of task nodeIDs to graph nodes that have parameter nodes as their source
  */
+
 export const getNodesWithInputParams = createSelector(
-  [getGraphNodes, getEdgeIDs, getNodeType, getEdgeSources, getEdgeTargets],
-  (nodes, edgeIDs, nodeType, edgeSources, edgeTargets) => {
+  [
+    getGraphNodes,
+    getNodeName,
+    getEdgeIDs,
+    getNodeType,
+    getEdgeSources,
+    getEdgeTargets,
+  ],
+  (nodes, nodeName, edgeIDs, nodeType, edgeSources, edgeTargets) => {
     const nodesList = {};
     for (const edgeID of edgeIDs) {
       const source = edgeSources[edgeID];
       const target = edgeTargets[edgeID];
       if (nodeType[source] === 'parameters' && nodeType[target] === 'task') {
-        nodesList[target] = nodes[target];
+        if (!nodesList[target]) {
+          nodesList[target] = [];
+        }
+        nodesList[target].push(nodeName[source]);
+      }
+    }
+    return nodesList;
+  }
+);
+
+/**
+ * Returns a list of dataset nodes that are input and output nodes of the modular pipeline under focus mode
+ */
+export const getInputOutputNodesForFocusedModularPipeline = createSelector(
+  [getFocusedModularPipeline, getGraphNodes, getNodeModularPipelines],
+  (focusedModularPipeline, graphNodes, nodeModularPipelines) => {
+    const nodesList = {};
+    if (focusedModularPipeline !== null) {
+      for (const nodeID in graphNodes) {
+        if (
+          !nodeModularPipelines[nodeID]?.includes(focusedModularPipeline?.id)
+        ) {
+          nodesList[nodeID] = graphNodes[nodeID];
+        }
       }
     }
     return nodesList;

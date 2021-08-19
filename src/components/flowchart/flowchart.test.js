@@ -254,8 +254,8 @@ describe('FlowChart', () => {
         hoveredParameters={true}
         nodeTypeDisabled={{ parameters: true }}
         nodesWithInputParams={{
-          [mockNodes[0]]: true,
-          [mockNodes[1]]: true,
+          [mockNodes[0]]: ['params1'],
+          [mockNodes[1]]: ['params2', 'params3'],
         }}
       />
     );
@@ -270,8 +270,8 @@ describe('FlowChart', () => {
       <FlowChart
         nodeTypeDisabled={{ parameters: true }}
         nodesWithInputParams={{
-          [mockNodes[0]]: true,
-          [mockNodes[1]]: true,
+          [mockNodes[0]]: ['params1'],
+          [mockNodes[1]]: ['params2', 'params3'],
         }}
       />
     );
@@ -279,6 +279,62 @@ describe('FlowChart', () => {
       wrapper.render().find('.pipeline-node__parameter-indicator--visible')
         .length
     ).toBe(2);
+  });
+
+  it('does not apply pipeline-node--dataset-input class to input dataset nodes when not under focus mode', () => {
+    const wrapper = setup.mount(<FlowChart />);
+    expect(wrapper.render().find('.pipeline-node--dataset-input').length).toBe(
+      0
+    );
+  });
+
+  it('applies pipeline-node--dataset-input class to input dataset nodes under focus mode', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        nodeTypeDisabled={{ parameters: true }}
+        focusMode={{ id: 'pipeline1' }}
+        inputOutputDataNodes={{
+          '0ae9e4de': { id: '0ae9e4de', name: 'Elephant' },
+          '09f5edeb': { id: '09f5edeb', name: 'Bear' },
+        }}
+      />
+    );
+    expect(wrapper.render().find('.pipeline-node--dataset-input').length).toBe(
+      2
+    );
+  });
+
+  it('applies pipeline-edge--dataset--input class to input dataset edges under focus mode', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        nodeTypeDisabled={{ parameters: true }}
+        focusMode={{ id: 'pipeline1' }}
+        inputOutputDataEdges={{
+          '0ae9e4de|15586b7a': { id: '0ae9e4de||15586b7a' },
+          '09f5edeb|15586b7a': { id: '09f5edeb||15586b7a' },
+        }}
+      />
+    );
+    expect(wrapper.render().find('.pipeline-edge--dataset--input').length).toBe(
+      2
+    );
+  });
+
+  it('applies pipeline-node--parameter-input class to input parameter nodes under focus mode', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        focusMode={{ id: 'pipeline1' }}
+        inputOutputDataNodes={{
+          '46734c62': { id: '46734c62' },
+        }}
+      />,
+      {
+        beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+      }
+    );
+    expect(
+      wrapper.render().find('.pipeline-node--parameter-input').length
+    ).toBe(1);
   });
 
   it('applies .parameters class to all parameter nodes', () => {
@@ -295,6 +351,22 @@ describe('FlowChart', () => {
       beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
     });
     expect(wrapper.render().find('.pipeline-edge--parameters ').length).toBe(4);
+  });
+
+  it('getHoveredParameterLabel returns parameter count when there are more than 1 hidden parameters ', () => {
+    const wrapper = setup.mount(<FlowChart />);
+    const parameterNames = ['params1', 'params2'];
+    const instance = wrapper.find('FlowChart').instance();
+    const label = instance.getHoveredParameterLabel(parameterNames);
+    expect(label).toEqual('Parameters:2');
+  });
+
+  it('getHoveredParameterLabel returns parameter name when there is 1 hidden parameter ', () => {
+    const wrapper = setup.mount(<FlowChart />);
+    const parameterNames = ['params1'];
+    const instance = wrapper.find('FlowChart').instance();
+    const label = instance.getHoveredParameterLabel(parameterNames);
+    expect(label).toEqual('params1');
   });
 
   it('shows layers when layers are visible', () => {
@@ -356,12 +428,14 @@ describe('FlowChart', () => {
       nodeSelected: expect.any(Object),
       nodeTypeDisabled: expect.any(Object),
       nodesWithInputParams: expect.any(Object),
-      newParamsFlag: expect.any(Boolean),
       nodes: expect.any(Array),
       visibleGraph: expect.any(Boolean),
       visibleSidebar: expect.any(Boolean),
       visibleCode: expect.any(Boolean),
       visibleMetaSidebar: expect.any(Boolean),
+      inputOutputDataNodes: expect.any(Object),
+      inputOutputDataEdges: expect.any(Object),
+      focusMode: expect.any(Object),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
