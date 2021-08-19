@@ -1,0 +1,112 @@
+{
+    "edges": [
+        {
+            "source": "81035c6d",
+            "target": "0c2ef3f3"
+        },
+        {
+            "source": "d60acd12",
+            "target": "81035c6d"
+        },
+        {
+            "source": "91be94d4",
+            "target": "d60acd12"
+        },
+        {
+            "source": "84a51684",
+            "target": "0c2ef3f3"
+        },
+        {
+            "source": "d60acd12",
+            "target": "84a51684"
+        }
+    ],
+    "layers": [],
+    "modular_pipelines": [
+        {
+            "id": "clean",
+            "name": "Clean"
+        }
+    ],
+    "nodes": [
+        {
+            "full_name": "A",
+            "id": "d60acd12",
+            "modular_pipelines": [
+                "clean"
+            ],
+            "name": "A",
+            "parameters": {},
+            "pipelines": [
+                "__default__"
+            ],
+            "tags": [],
+            "type": "task"
+        },
+        {
+            "dataset_type": null,
+            "full_name": "clean.a",
+            "id": "91be94d4",
+            "layer": null,
+            "modular_pipelines": [
+                "clean"
+            ],
+            "name": "A",
+            "pipelines": [
+                "__default__"
+            ],
+            "tags": [],
+            "type": "data"
+        },
+        {
+            "dataset_type": null,
+            "full_name": "clean.b",
+            "id": "81035c6d",
+            "layer": null,
+            "modular_pipelines": [
+                "clean"
+            ],
+            "name": "B",
+            "pipelines": [
+                "__default__"
+            ],
+            "tags": [],
+            "type": "data"
+        },
+        {
+            "dataset_type": null,
+            "full_name": "c",
+            "id": "84a51684",
+            "layer": null,
+            "modular_pipelines": [],
+            "name": "C",
+            "pipelines": [
+                "__default__"
+            ],
+            "tags": [],
+            "type": "data"
+        },
+        {
+            "full_name": "B",
+            "id": "0c2ef3f3",
+            "modular_pipelines": [
+                "clean"
+            ],
+            "name": "B",
+            "parameters": {},
+            "pipelines": [
+                "__default__"
+            ],
+            "tags": [],
+            "type": "task"
+        }
+    ],
+    "pipelines": [
+        {
+            "id": "__default__",
+            "name": "Default"
+        }
+    ],
+    "selected_pipeline": "__default__",
+    "tags": []
+}
