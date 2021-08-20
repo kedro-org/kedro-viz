@@ -43,10 +43,6 @@ const saveStateToLocalStorage = (state) => {
     pipeline: {
       active: state.pipeline.active,
     },
-    modularPipeline: {
-      contracted: state.modularPipeline.contracted,
-      enabled: state.modularPipeline.enabled,
-    },
     layer: {
       visible: state.layer.visible,
     },
