@@ -20,6 +20,7 @@ const getNodeType = (state) => state.node.type;
 const getNodeDatasetType = (state) => state.node.datasetType;
 const getNodeLayer = (state) => state.node.layer;
 const getHoveredNode = (state) => state.node.hovered;
+const getPrettyName = (state) => state.prettyName;
 const getTagActive = (state) => state.tag.active;
 const getModularPipelineActive = (state) => state.modularPipeline.active;
 const getTextLabels = (state) => state.textLabels;
@@ -244,6 +245,7 @@ export const getVisibleNodes = createSelector(
   [
     getVisibleNodeIDs,
     getNodeName,
+    getPrettyName,
     getNodeType,
     getNodeDatasetType,
     getNodeFullName,
@@ -255,6 +257,7 @@ export const getVisibleNodes = createSelector(
   (
     nodeIDs,
     nodeName,
+    prettyName,
     nodeType,
     nodeDatasetType,
     nodeFullName,
@@ -267,7 +270,7 @@ export const getVisibleNodes = createSelector(
       ? nodeIDs.map((id) => ({
           id,
           name: nodeName[id],
-          label: nodeName[id],
+          label: prettyName ? nodeName[id] : nodeFullName[id],
           fullName: nodeFullName[id],
           icon: getShortType([nodeDatasetType[id]], nodeType[id]),
           type: nodeType[id],

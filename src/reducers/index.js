@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux';
 import flags from './flags';
-import settings from './settings';
 import graph from './graph';
 import layer from './layers';
 import loading from './loading';
@@ -18,6 +17,7 @@ import {
   UPDATE_ZOOM,
   UPDATE_FONT_LOADED,
   TOGGLE_IGNORE_LARGE_WARNING,
+  TOGGLE_PRETTY_NAME,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -53,7 +53,6 @@ function resetDataReducer(state = {}, action) {
 const combinedReducer = combineReducers({
   // These props have their own reducers in other files
   flags,
-  settings,
   graph,
   layer,
   loading,
@@ -72,6 +71,7 @@ const combinedReducer = combineReducers({
   fontLoaded: createReducer(false, UPDATE_FONT_LOADED, 'fontLoaded'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
+  prettyName: createReducer(true, TOGGLE_PRETTY_NAME, 'prettyName'),
   hoveredParameters: createReducer(
     false,
     TOGGLE_PARAMETERS_HOVERED,
