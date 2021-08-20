@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import flags from './flags';
+import settings from './settings';
 import graph from './graph';
 import layer from './layers';
 import loading from './loading';
@@ -52,6 +53,7 @@ function resetDataReducer(state = {}, action) {
 const combinedReducer = combineReducers({
   // These props have their own reducers in other files
   flags,
+  settings,
   graph,
   layer,
   loading,
