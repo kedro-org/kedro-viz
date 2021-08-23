@@ -385,16 +385,15 @@ class TestTranscodedDataset:
         assert response.status_code == 200
         assert_example_transcoded_data(response.json())
 
-    # def test_transcoded_data_node_metadata(self, example_transcoded_api):
-    #     client = TestClient(example_transcoded_api)
-    #     response = client.get("/api/nodes/0ecea0de")
-    #     assert response.json() == {
-    #         "filepath": "model_inputs.csv",
-    #         "original_type": ["kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"],
-    #         "transcoded_types": ["kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"],
-    #         "run_command": 'kedro run --to-outputs="model_inputs"',
-    #     }
-
+    def test_transcoded_data_node_metadata(self, example_transcoded_api):
+        client = TestClient(example_transcoded_api)
+        response = client.get("/api/nodes/0ecea0de")
+        assert response.json() == {
+            'filepath': 'model_inputs.csv', 
+            'original_type': 'kedro.extras.datasets.spark.spark_dataset.SparkDataSet', 
+            'transcoded_types': ['kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet'], 
+            'run_command': 'kedro run --to-outputs="model_inputs@spark"'
+        }
 
 
 class TestNodeMetadataEndpoint:

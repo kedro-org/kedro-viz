@@ -521,12 +521,12 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, transcoded_data_node: TranscodedDataNode):
         original_version = transcoded_data_node.original_version
-        self.original_type = [
+        self.original_type = (
             f"{original_version.__class__.__module__}."
-            f"{original_version.__class__.__qualname__}"
-        ]
+            f"{original_version.__class__.__qualname__}")
         self.transcoded_types = [
-            f"{transcoded_version.__class__.__module__}.{transcoded_version.__class__.__qualname__}"
+            f"{transcoded_version.__class__.__module__}."
+            f"{transcoded_version.__class__.__qualname__}"
             for transcoded_version in transcoded_data_node.transcoded_versions
         ]
 
