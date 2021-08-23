@@ -113,34 +113,7 @@ export const getCombinedEdges = createSelector(
     ids: edgeIDs
       .filter((id) => !edgeDisabled[id])
       .concat(Object.keys(transitiveEdges.ids)),
-    sources: Object.assign({}, edgeSources, transitiveEdges.sources),
-    targets: Object.assign({}, edgeTargets, transitiveEdges.targets),
+    sources: { ...edgeSources, ...transitiveEdges.sources },
+    targets: { ...edgeTargets, ...transitiveEdges.targets },
   })
-);
-
-/**
- * Obtain all the edges that belongs to input and output data
- * nodes when under focus mode.
- */
-export const getInputOutputDataEdges = createSelector(
-  [getCombinedEdges, getNodeModularPipelines, getFocusedModularPipeline],
-  (combinedEdges, nodeModularPipelines, focusedModularPipeline) => {
-    const edgesList = {};
-    if (focusedModularPipeline !== null) {
-      combinedEdges.ids.forEach((edge) => {
-        if (
-          !nodeModularPipelines[edge.sources]?.includes(
-            focusedModularPipeline.id
-          ) ||
-          !nodeModularPipelines[edge.targets]?.includes(
-            focusedModularPipeline.id
-          )
-        ) {
-          edgesList[edge.id] = edge;
-        }
-      });
-    }
-
-    return edgesList;
-  }
 );

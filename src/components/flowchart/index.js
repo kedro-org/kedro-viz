@@ -10,7 +10,7 @@ import {
   getNodesWithInputParams,
   getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
-import { getInputOutputDataEdges } from '../../selectors/edges';
+import { getInputOutputDataEdges } from '../../selectors/contracted';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';

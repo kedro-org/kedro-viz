@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getModularPipelineChildren } from './modular-pipelines';
+import { getModularPipelineChildren, getFocusedModularPipeline } from './modular-pipelines';
 import { getVisibleNodeIDs, getVisibleModularPipelineIDs } from './disabled';
 import { getCombinedEdges } from './edges';
 import { arrayToObject } from '../utils';
@@ -7,6 +7,7 @@ import { arrayToObject } from '../utils';
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineContracted = (state) =>
   state.modularPipeline.contracted;
+const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getNodeName = (state) => state.node.name;
 const getNodeFullName = (state) => state.node.fullName;
 const getNodeType = (state) => state.node.type;
@@ -286,5 +287,32 @@ export const getVisibleLayerIDs = createSelector(
       visibleLayerIDs[nodeLayer[nodeID]] = true;
     }
     return layerIDs.filter((layerID) => visibleLayerIDs[layerID]);
+  }
+);
+
+/**
+ * Obtain all the edges that belongs to input and output data
+ * nodes when under focus mode.
+ */
+ export const getInputOutputDataEdges = createSelector(
+  [getVisibleEdges, getNodeModularPipelines, getFocusedModularPipeline],
+  (visibleEdges, nodeModularPipelines, focusedModularPipeline) => {
+    const edgesList = {};
+    if (focusedModularPipeline !== null) {
+      visibleEdges.forEach((edge) => {
+        if (
+          !nodeModularPipelines[edge.source]?.includes(
+            focusedModularPipeline.id
+          ) ||
+          !nodeModularPipelines[edge.target]?.includes(
+            focusedModularPipeline.id
+          )
+        ) {
+          edgesList[edge.id] = edge;
+        }
+      });
+    }
+
+    return edgesList;
   }
 );
