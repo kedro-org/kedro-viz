@@ -36,7 +36,7 @@ const SettingsModal = ({
         onClose={() => onClose(false)}
         visible={visible.settingsModal}>
         <div className="pipeline-settings-modal__content">
-          <div className="pipeline-settings-modal__subtitle">Settings</div>
+          <div className="pipeline-settings-modal__subtitle">General</div>
           <div className="pipeline-settings-modal__header">
             <div className="pipeline-settings-modal__name">Name</div>
             <div className="pipeline-settings-modal__state">State</div>
@@ -51,7 +51,7 @@ const SettingsModal = ({
             description={settingsConfig['prettyName'].description}
             onToggleChange={(event) => onTogglePrettyName(event.target.checked)}
           />
-          <div className="pipeline-settings-modal__subtitle">Flags</div>
+          <div className="pipeline-settings-modal__subtitle">Experiments</div>
           {flagData.map(({ name, value, description }, index) => (
             <SettingsModalRow
               key={value}
