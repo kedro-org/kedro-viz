@@ -204,8 +204,9 @@ def assert_example_data(response_data):
     }
 
 
+
 def assert_example_transcoded_data(response_data):
-    """Assert graph response for the `example_pipelines` and `example_catalog` fixtures."""
+    """Assert graph response for the `example_transcoded_pipelines` and `example_transcoded_catalog` fixtures."""
     expected_edges = [
         {"source": "f1f1425b", "target": "2302ea78"},
         {"source": "dbad7c24", "target": "0ecea0de"},
@@ -295,18 +296,6 @@ def assert_example_transcoded_data(response_data):
     ]
 
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
-
-    # compare the rest
-    assert response_data == {
-        "layers": [],
-        "tags": [{"id": "split", "name": "Split"}, {"id": "train", "name": "Train"}],
-        "pipelines": [
-            {"id": "__default__", "name": "Default"},
-            {"id": "data_processing", "name": "Data Processing"},
-        ],
-        "modular_pipelines": [],
-        "selected_pipeline": "__default__",
-    }
 
 
 class TestIndexEndpoint:

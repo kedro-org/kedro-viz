@@ -150,15 +150,10 @@ class TestGraphNodeCreation:
         assert data_node.modular_pipelines == expected_modular_pipelines
         assert not data_node.is_plot_node()
 
-    @pytest.mark.parametrize(
-        "dataset_name,original_name,pretty_name",
-        [
-            ("dataset@spark", "dataset", "Dataset"),
-        ],
-    )
-    def test_create_transcoded_data_node(
-        self, dataset_name, original_name, pretty_name
-    ):
+    def test_create_transcoded_data_node(self):
+        dataset_name = "dataset@spark"
+        original_name = "dataset"
+        pretty_name = "Dataset"
         kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
             full_name=dataset_name,

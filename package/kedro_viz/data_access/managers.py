@@ -143,10 +143,10 @@ class DataAccessManager:
 
     def add_dataset(
         self, pipeline_key: str, dataset_name: str, is_free_input: bool = False
-    ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
+    ) -> Union[DataNode, ParametersNode]:
         obj = self.catalog.get_dataset(dataset_name)
         layer = self.catalog.get_layer_for_dataset(dataset_name)
-        graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
+        graph_node: Union[DataNode, ParametersNode]
         if self.catalog.is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
                 full_name=dataset_name,

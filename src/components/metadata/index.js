@@ -116,20 +116,20 @@ const MetaData = ({
                   />
                 )}
                 {isTranscoded && (
-                  <MetaDataRow
-                    label="Original Type:"
-                    visible={isDataNode}
-                    kind="type"
-                    value={metadata.originalType}
-                  />
-                )}
-                {isTranscoded && (
-                  <MetaDataRow
-                    label="Transcoded Type:"
-                    visible={isDataNode}
-                    kind="type"
-                    value={metadata.transcodedType}
-                  />
+                  <>
+                    <MetaDataRow
+                      label="Original Type:"
+                      visible={isDataNode}
+                      kind="type"
+                      value={metadata.originalType}
+                    />
+                    <MetaDataRow
+                      label="Transcoded Types:"
+                      visible={isDataNode}
+                      kind="type"
+                      value={metadata.transcodedTypes}
+                    />
+                  </>
                 )}
                 <MetaDataRow
                   label="File Path:"
