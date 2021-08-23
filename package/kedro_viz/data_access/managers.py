@@ -118,7 +118,7 @@ class DataAccessManager:
         input_dataset: str,
         task_node: TaskNode,
         is_free_input: bool = False,
-    ) -> Union[DataNode, ParametersNode]:
+    ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         graph_node = self.add_dataset(
             pipeline_key, input_dataset, is_free_input=is_free_input
         )
@@ -134,7 +134,7 @@ class DataAccessManager:
 
     def add_node_output(
         self, pipeline_key: str, output_dataset: str, task_node: TaskNode
-    ) -> Union[DataNode, ParametersNode]:
+    ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         graph_node = self.add_dataset(pipeline_key, output_dataset)
         graph_node.tags.update(task_node.tags)
         self.edges.add_edge(GraphEdge(source=task_node.id, target=graph_node.id))
