@@ -200,7 +200,7 @@ class GraphNode(abc.ABC):
         tags: Set[str],
         dataset: AbstractDataSet,
         is_free_input: bool = False,
-    ) -> "DataNode":
+    ) -> Union["DataNode","TranscodedDataNode"]:
         """Create a graph node of type DATA for a given Kedro DataSet instance.
         Args:
             full_name: The fullname of the dataset, including namespace, e.g.
