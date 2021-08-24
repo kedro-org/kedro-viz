@@ -200,7 +200,7 @@ class GraphNode(abc.ABC):
         tags: Set[str],
         dataset: AbstractDataSet,
         is_free_input: bool = False,
-    ) -> Union["DataNode","TranscodedDataNode"]:
+    ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type DATA for a given Kedro DataSet instance.
         Args:
             full_name: The fullname of the dataset, including namespace, e.g.
@@ -523,7 +523,8 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
         original_version = transcoded_data_node.original_version
         self.original_type = (
             f"{original_version.__class__.__module__}."
-            f"{original_version.__class__.__qualname__}")
+            f"{original_version.__class__.__qualname__}"
+        )
         self.transcoded_types = [
             f"{transcoded_version.__class__.__module__}."
             f"{transcoded_version.__class__.__qualname__}"

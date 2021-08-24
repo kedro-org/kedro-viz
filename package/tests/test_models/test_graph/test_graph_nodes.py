@@ -345,11 +345,14 @@ class TestGraphNodeMetadata:
         transcoded_data_node_metadata = TranscodedDataNodeMetadata(
             transcoded_data_node=transcoded_data_node
         )
-        assert (transcoded_data_node_metadata.original_type == 
-        "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet")
+        assert (
+            transcoded_data_node_metadata.original_type
+            == "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+        )
 
         assert transcoded_data_node_metadata.transcoded_types == [
-                "kedro.extras.datasets.spark.spark_dataset.SparkDataSet"]
+            "kedro.extras.datasets.spark.spark_dataset.SparkDataSet"
+        ]
 
     def test_partitioned_data_node_metadata(self):
         dataset = PartitionedDataSet(path="partitioned/", dataset="pandas.CSVDataSet")

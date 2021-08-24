@@ -204,10 +204,8 @@ def assert_example_data(response_data):
     }
 
 
-
 def assert_example_transcoded_data(response_data):
-    """Assert graph response for the `example_transcoded_pipelines` and 
-    `example_transcoded_catalog` fixtures."""
+    """Assert graph response for the `example_transcoded_pipelines` and `example_transcoded_catalog` fixtures."""
     expected_edges = [
         {"source": "f1f1425b", "target": "2302ea78"},
         {"source": "dbad7c24", "target": "0ecea0de"},
@@ -379,10 +377,12 @@ class TestTranscodedDataset:
         client = TestClient(example_transcoded_api)
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
-            'filepath': 'model_inputs.csv', 
-            'original_type': 'kedro.extras.datasets.spark.spark_dataset.SparkDataSet', 
-            'transcoded_types': ['kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet'], 
-            'run_command': 'kedro run --to-outputs="model_inputs@spark"'
+            "filepath": "model_inputs.csv",
+            "original_type": "kedro.extras.datasets.spark.spark_dataset.SparkDataSet",
+            "transcoded_types": [
+                "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+            ],
+            "run_command": 'kedro run --to-outputs="model_inputs@spark"',
         }
 
 
