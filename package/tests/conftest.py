@@ -26,7 +26,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import pytest
-from kedro.extras.datasets.pandas import CSVDataSet
+from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
+from kedro.extras.datasets.spark import SparkDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
@@ -101,5 +102,54 @@ def example_catalog():
                 "uk.data_processing.raw_data",
             },
             "model_inputs": {"model_inputs"},
+        },
+    )
+
+
+@pytest.fixture
+def example_transcoded_pipelines():
+    def process_data(raw_data, train_test_split):
+        ...
+
+    def train_model(model_inputs, parameters):
+        ...
+
+    data_processing_pipeline = pipeline(
+        Pipeline(
+            [
+                node(
+                    process_data,
+                    inputs=["raw_data", "params:train_test_split"],
+                    outputs="model_inputs@spark",
+                    name="process_data",
+                    tags=["split"],
+                ),
+                node(
+                    train_model,
+                    inputs=["model_inputs@pandas", "parameters"],
+                    outputs="model",
+                    name="train_model",
+                    tags=["train"],
+                ),
+            ]
+        ),
+    )
+
+    yield {
+        "__default__": data_processing_pipeline,
+        "data_processing": data_processing_pipeline,
+    }
+
+
+@pytest.fixture
+def example_transcoded_catalog():
+    yield DataCatalog(
+        data_sets={
+            "model_inputs@pandas": ParquetDataSet(filepath="model_inputs.parquet"),
+            "model_inputs@spark": SparkDataSet(filepath="model_inputs.csv"),
+        },
+        feed_dict={
+            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
+            "params:train_test_split": 0.1,
         },
     )

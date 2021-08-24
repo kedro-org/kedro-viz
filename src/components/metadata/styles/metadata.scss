@@ -189,8 +189,6 @@
 $list-inline-spacing: 0.2em;
 
 .pipeline-metadata__value-list--inline {
-  display: flex;
-  flex-wrap: wrap;
   margin: 0 -$list-inline-spacing * 1.5;
   padding: 0;
   list-style: none;
