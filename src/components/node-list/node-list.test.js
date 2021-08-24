@@ -6,6 +6,7 @@ import {
   getNodeData,
   getNodeModularPipelines,
   getGroupedNodes,
+  getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
 import { getNestedModularPipelines } from './node-list-items';
 import { getNodeTypeIDs } from '../../selectors/node-types';
@@ -81,7 +82,9 @@ describe('NodeList', () => {
     });
 
     it('clears the search filter input and resets the list when hitting the Escape key', () => {
-      const wrapper = setup.mount(<NodeList />);
+      const wrapper = setup.mount(
+        <NodeList focusMode={null} inputOutputDataNodes={{}} />
+      );
       const searchWrapper = wrapper.find('.pipeline-nodelist-search');
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.kui-input__field');
@@ -125,6 +128,9 @@ describe('NodeList', () => {
         modularPipelineIds: getModularPipelineIDs(mockState.animals),
         nodeModularPipelines: getNodeModularPipelines(mockState.animals),
         nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+          mockState.animals
+        ),
       });
 
       // Check that search input value and node list have been reset

@@ -40,6 +40,7 @@ from kedro_viz.models.graph import (
     ParametersNode,
     RegisteredPipeline,
     TaskNode,
+    TranscodedDataNode,
 )
 
 from .repositories import (
@@ -83,6 +84,7 @@ class DataAccessManager:
     def add_pipeline(self, pipeline_key: str, pipeline: KedroPipeline):
         self.registered_pipelines.add_pipeline(pipeline_key)
         free_inputs = pipeline.inputs()
+
         for node in sorted(pipeline.nodes, key=lambda n: n.name):
             task_node = self.add_node(pipeline_key, node)
             self.registered_pipelines.add_node(pipeline_key, task_node.id)
@@ -93,10 +95,15 @@ class DataAccessManager:
                     pipeline_key, input_, task_node, is_free_input
                 )
                 self.registered_pipelines.add_node(pipeline_key, input_node.id)
+                if isinstance(input_node, TranscodedDataNode):
+                    input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
             for output in node.outputs:
                 output_node = self.add_node_output(pipeline_key, output, task_node)
                 self.registered_pipelines.add_node(pipeline_key, output_node.id)
+                if isinstance(output_node, TranscodedDataNode):
+                    output_node.original_name = output
+                    output_node.original_version = self.catalog.get_dataset(output)
 
     def add_node(self, pipeline_key: str, node: KedroNode) -> TaskNode:
         task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))
@@ -111,7 +118,7 @@ class DataAccessManager:
         input_dataset: str,
         task_node: TaskNode,
         is_free_input: bool = False,
-    ) -> Union[DataNode, ParametersNode]:
+    ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         graph_node = self.add_dataset(
             pipeline_key, input_dataset, is_free_input=is_free_input
         )
@@ -127,7 +134,7 @@ class DataAccessManager:
 
     def add_node_output(
         self, pipeline_key: str, output_dataset: str, task_node: TaskNode
-    ) -> Union[DataNode, ParametersNode]:
+    ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         graph_node = self.add_dataset(pipeline_key, output_dataset)
         graph_node.tags.update(task_node.tags)
         self.edges.add_edge(GraphEdge(source=task_node.id, target=graph_node.id))
@@ -136,10 +143,10 @@ class DataAccessManager:
 
     def add_dataset(
         self, pipeline_key: str, dataset_name: str, is_free_input: bool = False
-    ) -> Union[DataNode, ParametersNode]:
+    ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         obj = self.catalog.get_dataset(dataset_name)
         layer = self.catalog.get_layer_for_dataset(dataset_name)
-        graph_node: Union[DataNode, ParametersNode]
+        graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
         if self.catalog.is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
                 full_name=dataset_name,

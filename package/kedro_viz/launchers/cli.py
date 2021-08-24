@@ -77,7 +77,7 @@ def commands():
     "--pipeline",
     type=str,
     default=None,
-    help="Name of the modular pipeline to visualise. "
+    help="Name of the registered pipeline to visualise. "
     "If not set, the default pipeline is visualised",
 )
 @click.option(
@@ -93,7 +93,7 @@ def commands():
 @click.option(
     "--autoreload",
     is_flag=True,
-    help="Autoreload viz server when a Python file change in the Kedro project",
+    help="Autoreload viz server when a Python or YAML file change in the Kedro project",
 )
 def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
     """Visualise a Kedro pipeline using Kedro viz."""

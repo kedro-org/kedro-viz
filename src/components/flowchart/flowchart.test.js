@@ -281,6 +281,62 @@ describe('FlowChart', () => {
     ).toBe(2);
   });
 
+  it('does not apply pipeline-node--dataset-input class to input dataset nodes when not under focus mode', () => {
+    const wrapper = setup.mount(<FlowChart />);
+    expect(wrapper.render().find('.pipeline-node--dataset-input').length).toBe(
+      0
+    );
+  });
+
+  it('applies pipeline-node--dataset-input class to input dataset nodes under focus mode', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        nodeTypeDisabled={{ parameters: true }}
+        focusMode={{ id: 'pipeline1' }}
+        inputOutputDataNodes={{
+          '0ae9e4de': { id: '0ae9e4de', name: 'Elephant' },
+          '09f5edeb': { id: '09f5edeb', name: 'Bear' },
+        }}
+      />
+    );
+    expect(wrapper.render().find('.pipeline-node--dataset-input').length).toBe(
+      2
+    );
+  });
+
+  it('applies pipeline-edge--dataset--input class to input dataset edges under focus mode', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        nodeTypeDisabled={{ parameters: true }}
+        focusMode={{ id: 'pipeline1' }}
+        inputOutputDataEdges={{
+          '0ae9e4de|15586b7a': { id: '0ae9e4de||15586b7a' },
+          '09f5edeb|15586b7a': { id: '09f5edeb||15586b7a' },
+        }}
+      />
+    );
+    expect(wrapper.render().find('.pipeline-edge--dataset--input').length).toBe(
+      2
+    );
+  });
+
+  it('applies pipeline-node--parameter-input class to input parameter nodes under focus mode', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        focusMode={{ id: 'pipeline1' }}
+        inputOutputDataNodes={{
+          '46734c62': { id: '46734c62' },
+        }}
+      />,
+      {
+        beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+      }
+    );
+    expect(
+      wrapper.render().find('.pipeline-node--parameter-input').length
+    ).toBe(1);
+  });
+
   it('applies .parameters class to all parameter nodes', () => {
     //Parameters are enabled here to override the default behavior
     const wrapper = setup.mount(<FlowChart />, {
@@ -377,6 +433,9 @@ describe('FlowChart', () => {
       visibleSidebar: expect.any(Boolean),
       visibleCode: expect.any(Boolean),
       visibleMetaSidebar: expect.any(Boolean),
+      inputOutputDataNodes: expect.any(Object),
+      inputOutputDataEdges: expect.any(Object),
+      focusMode: expect.any(Object),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
