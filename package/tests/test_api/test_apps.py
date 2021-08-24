@@ -206,7 +206,8 @@ def assert_example_data(response_data):
 
 
 def assert_example_transcoded_data(response_data):
-    """Assert graph response for the `example_transcoded_pipelines` and `example_transcoded_catalog` fixtures."""
+    """Assert graph response for the `example_transcoded_pipelines` and 
+    `example_transcoded_catalog` fixtures."""
     expected_edges = [
         {"source": "f1f1425b", "target": "2302ea78"},
         {"source": "dbad7c24", "target": "0ecea0de"},
