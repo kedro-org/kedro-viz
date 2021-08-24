@@ -8,7 +8,7 @@ import { mapDispatchToProps } from './index';
 import node_parameters from '../../utils/data/node_parameters.mock.json';
 import node_task from '../../utils/data/node_task.mock.json';
 import node_data from '../../utils/data/node_data.mock.json';
-import node_transcoded_data from '../../utils/data/node_transcoded_data.mock.json';
+import nodeTranscodedData from '../../utils/data/node_transcoded_data.mock.json';
 
 const salmonTaskNodeId = '443cf06a';
 const catDatasetNodeId = '9d989e8d';
@@ -330,7 +330,7 @@ describe('MetaData', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({
         nodeId: bearDatasetNodeId,
-        mockMetadata: node_transcoded_data,
+        mockMetadata: nodeTranscodedData,
       });
       expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-data')).toBe(
         true
@@ -340,7 +340,7 @@ describe('MetaData', () => {
     it('shows the node name as the title', () => {
       const wrapper = mount({
         nodeId: bearDatasetNodeId,
-        mockMetadata: node_transcoded_data,
+        mockMetadata: nodeTranscodedData,
       });
       expect(textOf(title(wrapper))).toEqual(['Bear']);
     });
@@ -348,7 +348,7 @@ describe('MetaData', () => {
     it('shows the node type as text', () => {
       const wrapper = mount({
         nodeId: bearDatasetNodeId,
-        mockMetadata: node_transcoded_data,
+        mockMetadata: nodeTranscodedData,
       });
       const row = rowByLabel(wrapper, 'Type:');
       expect(textOf(rowValue(row))).toEqual(['data']);
@@ -357,7 +357,7 @@ describe('MetaData', () => {
     it('shows the node original type', () => {
       const wrapper = mount({
         nodeId: bearDatasetNodeId,
-        mockMetadata: node_transcoded_data,
+        mockMetadata: nodeTranscodedData,
       });
       const row = rowByLabel(wrapper, 'Original Type:');
       expect(textOf(rowValue(row))).toEqual([
@@ -368,9 +368,9 @@ describe('MetaData', () => {
     it('shows the node transcoded type', () => {
       const wrapper = mount({
         nodeId: bearDatasetNodeId,
-        mockMetadata: node_transcoded_data,
+        mockMetadata: nodeTranscodedData,
       });
-      const row = rowByLabel(wrapper, 'Transcoded Type:');
+      const row = rowByLabel(wrapper, 'Transcoded Types:');
       expect(textOf(rowValue(row))).toEqual([
         'kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet',
       ]);
@@ -379,7 +379,7 @@ describe('MetaData', () => {
     it('shows the node filepath', () => {
       const wrapper = mount({
         nodeId: bearDatasetNodeId,
-        mockMetadata: node_transcoded_data,
+        mockMetadata: nodeTranscodedData,
       });
       const row = rowByLabel(wrapper, 'File Path:');
       expect(textOf(rowValue(row))).toEqual([
@@ -390,7 +390,7 @@ describe('MetaData', () => {
     it('shows the node tags', () => {
       const wrapper = mount({
         nodeId: bearDatasetNodeId,
-        mockMetadata: node_transcoded_data,
+        mockMetadata: nodeTranscodedData,
       });
       const row = rowByLabel(wrapper, 'Tags:');
       expect(textOf(rowValue(row))).toEqual(['Large', 'Medium']);
@@ -399,7 +399,7 @@ describe('MetaData', () => {
     it('shows the node pipeline', () => {
       const wrapper = mount({
         nodeId: bearDatasetNodeId,
-        mockMetadata: node_transcoded_data,
+        mockMetadata: nodeTranscodedData,
       });
       const row = rowByLabel(wrapper, 'Pipeline:');
       expect(textOf(rowValue(row))).toEqual(['Default']);
