@@ -144,8 +144,8 @@
   code & {
     padding: 0.4em 0.8em;
     font-weight: normal;
-    font-size: 0.9em;
-    font-family: Consolas, Monaco, 'Courier New', Courier, monospace;
+    font-size: 0.85em;
+    font-family: $font-monospace;
   }
 }
 
@@ -221,6 +221,8 @@ $list-inline-spacing: 0.2em;
   display: flex;
   flex-grow: 1;
   align-items: center;
+  font-family: $font-monospace;
+  font-size: 0.9em;
 
   &--no-visible {
     opacity: 0;
@@ -300,7 +302,8 @@ $list-inline-spacing: 0.2em;
 }
 
 .pipeline-metadata__object {
-  .react-json-view {
-    font-size: 0.85em;
+  .pretty-json-container {
+    font-family: $font-monospace;
+    font-size: 0.87em;
   }
 }
