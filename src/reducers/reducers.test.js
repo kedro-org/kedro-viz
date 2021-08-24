@@ -13,6 +13,7 @@ import {
   TOGGLE_CODE,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
+  TOGGLE_PRETTY_NAME,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
@@ -112,6 +113,17 @@ describe('Reducer', () => {
       };
       const disabledState = reducer(clickedState, disableNodeAction);
       expect(disabledState.node.clicked).toEqual(null);
+    });
+  });
+
+  describe('TOGGLE_PRETTY_NAME', () => {
+    it('should toggle the value of prettyName', () => {
+      const newState = reducer(mockState.animals, {
+        type: TOGGLE_PRETTY_NAME,
+        prettyName: true,
+      });
+      expect(mockState.animals.prettyName).toBe(true);
+      expect(newState.prettyName).toBe(true);
     });
   });
 

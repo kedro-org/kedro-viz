@@ -16,6 +16,7 @@ import {
   toggleTextLabels,
   updateFontLoaded,
   toggleFocusMode,
+  togglePrettyName,
 } from '../actions';
 import { toggleTypeDisabled } from '../actions/node-type';
 import { updateActivePipeline } from '../actions/pipelines';
@@ -358,6 +359,33 @@ describe('Selectors', () => {
           nodes.filter((id) => id !== nodeID).sort()
         );
         expect(visibleNodeIDs.includes(nodeID)).toEqual(false);
+      });
+
+      it('returns node labels with full name when pretty name is turned off', () => {
+        const nodes = getVisibleNodes(mockState.animals);
+        const nodeFullName = nodes[0].fullName;
+        const newMockState = reducer(
+          mockState.animals,
+          togglePrettyName(false)
+        );
+        const visibleNodeLabels = getVisibleNodes(newMockState).map(
+          (d) => d.label
+        );
+        console.log(visibleNodeLabels);
+        console.log(nodeFullName);
+        expect(visibleNodeLabels.includes(nodeFullName)).toEqual(true);
+      });
+
+      it('returns node labels with pretty name when pretty name is turned on', () => {
+        const nodes = getVisibleNodes(mockState.animals);
+        const nodePrettyName = nodes[0].name;
+        const newMockState = reducer(mockState.animals, togglePrettyName(true));
+        const visibleNodeLabels = getVisibleNodes(newMockState).map(
+          (d) => d.label
+        );
+        console.log(visibleNodeLabels);
+        console.log(nodePrettyName);
+        expect(visibleNodeLabels.includes(nodePrettyName)).toEqual(true);
       });
     });
   });
