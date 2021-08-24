@@ -1,5 +1,5 @@
 import React from 'react';
-import $ from 'cheerio';
+import select from 'cheerio';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import FlowChart, {
@@ -47,7 +47,7 @@ describe('FlowChart', () => {
   it('renders nodes with D3', () => {
     const wrapper = setup.mount(<FlowChart />);
     const nodes = wrapper.render().find('.pipeline-node');
-    const nodeNames = nodes.map((i, el) => $(el).text()).get();
+    const nodeNames = nodes.map((i, el) => select(el).text()).get();
     const mockNodes = getVisibleNodeIDs(mockState.animals);
     const mockNodeNames = mockNodes.map(
       (d) => getNodeName(mockState.animals)[d]
@@ -172,8 +172,8 @@ describe('FlowChart', () => {
 
   it('resizes the chart if the window resizes', () => {
     const map = {};
-    window.addEventListener = jest.fn((event, cb) => {
-      map[event] = cb;
+    window.addEventListener = jest.fn((event, callback) => {
+      map[event] = callback;
     });
     const wrapper = setup.mount(<FlowChart />);
     const spy = jest.spyOn(
@@ -186,8 +186,8 @@ describe('FlowChart', () => {
 
   it('removes the resize event listener on unmount', () => {
     const map = {};
-    window.addEventListener = jest.fn((event, cb) => {
-      map[event] = cb;
+    window.addEventListener = jest.fn((event, callback) => {
+      map[event] = callback;
     });
     window.removeEventListener = jest.fn((event) => {
       delete map[event];

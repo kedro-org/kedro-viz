@@ -230,7 +230,7 @@ export const getFilteredElementTypeItems = createSelector(
  * @return {number} Comparison result
  */
 const compareEnabledThenAlpha = (itemA, itemB) => {
-  const byEnabledTag = Number(itemA.disabled_tag) - Number(itemB.disabled_tag);
+  const byEnabledTag = Number(itemA.disabledTag) - Number(itemB.disabledTag);
   const byAlpha = itemA.name.localeCompare(itemB.name);
   return byEnabledTag !== 0 ? byEnabledTag : byAlpha;
 };
@@ -243,7 +243,7 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
  * @return {number} Comparison result
  */
 const compareEnabledThenType = (itemA, itemB) => {
-  const byEnabledTag = Number(itemA.disabled_tag) - Number(itemB.disabled_tag);
+  const byEnabledTag = Number(itemA.disabledTag) - Number(itemB.disabledTag);
   const nodeTypeIDs = Object.keys(sidebarElementTypes);
   const byNodeType =
     nodeTypeIDs.indexOf(itemA.type) - nodeTypeIDs.indexOf(itemB.type);
@@ -270,11 +270,11 @@ export const getFilteredNodeItems = createSelector(
     for (const type of Object.keys(filteredNodes)) {
       filteredNodeItems[type] = filteredNodes[type]
         .map((node) => {
-          const checked = !node.disabled_node;
+          const checked = !node.disabledNode;
           const disabled =
-            node.disabled_tag ||
-            node.disabled_type ||
-            node.disabled_modularPipeline ||
+            node.disabledTag ||
+            node.disabledType ||
+            node.disabledModularPipeline ||
             (focusMode !== null && !!inputOutputDataNodes[node.id]);
 
           return {
@@ -283,7 +283,7 @@ export const getFilteredNodeItems = createSelector(
             invisibleIcon: InvisibleIcon,
             active: undefined,
             selected: nodeSelected[node.id],
-            faded: disabled || node.disabled_node,
+            faded: disabled || node.disabledNode,
             visible: !disabled && checked,
             checked,
             disabled,

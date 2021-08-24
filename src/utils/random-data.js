@@ -182,17 +182,18 @@ class Pipeline {
    * @param {number} initialRank Rank index
    * @returns {object} Node object
    */
+
   createNode(i, initialRank) {
     const layer = this.rankLayers[initialRank];
     const node = {
       id: `${layer}_${initialRank}_${i}`,
       name: null,
-      full_name: null,
+      full_name: null, //eslint-disable-line camelcase
       type: null,
       rank: initialRank,
       layer: layer,
       pipelines: this.getNodePipelines(),
-      modular_pipelines: this.getNodeModularPipelines(),
+      modular_pipelines: this.getNodeModularPipelines(), //eslint-disable-line camelcase
       tags: this.getRandomTags(),
       _sources: [],
       _targets: [],
@@ -425,11 +426,11 @@ class Pipeline {
         node.rank = rank;
         node.type = this.getType(node);
         node.name = this.getNodeName(node.type);
-        node.full_name =
-          `${node.layer}_${node.type}_${node.rank}_${node.name}`.replace(
-            /\s/g,
-            '_'
-          );
+        node.full_name =  //eslint-disable-line camelcase
+        `${node.layer}_${node.type}_${node.rank}_${node.name}`.replace(
+          /\s/g,
+          '_'
+        );
         this.getNodeMetaData(node);
       }
     }
@@ -464,6 +465,7 @@ class Pipeline {
       layers: LAYERS,
       nodes: this.nodes,
       pipelines: this.pipelines.map((name) => ({ id: name, name })),
+      //eslint-disable-next-line camelcase
       modular_pipelines: this.modularPipelines.map((name) => ({
         id: name,
         name,

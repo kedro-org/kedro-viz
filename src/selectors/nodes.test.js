@@ -111,8 +111,8 @@ describe('Selectors', () => {
             name: expect.any(String),
             type: expect.stringMatching(/data|task/),
             disabled: expect.any(Boolean),
-            disabled_node: expect.any(Boolean),
-            disabled_tag: expect.any(Boolean),
+            disabledNode: expect.any(Boolean),
+            disabledTag: expect.any(Boolean),
           }),
         ])
       );
