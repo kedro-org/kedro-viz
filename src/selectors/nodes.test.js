@@ -371,8 +371,6 @@ describe('Selectors', () => {
         const visibleNodeLabels = getVisibleNodes(newMockState).map(
           (d) => d.label
         );
-        console.log(visibleNodeLabels);
-        console.log(nodeFullName);
         expect(visibleNodeLabels.includes(nodeFullName)).toEqual(true);
       });
 
@@ -383,8 +381,6 @@ describe('Selectors', () => {
         const visibleNodeLabels = getVisibleNodes(newMockState).map(
           (d) => d.label
         );
-        console.log(visibleNodeLabels);
-        console.log(nodePrettyName);
         expect(visibleNodeLabels.includes(nodePrettyName)).toEqual(true);
       });
     });

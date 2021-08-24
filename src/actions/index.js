@@ -92,7 +92,7 @@ export function toggleTextLabels(textLabels) {
 export const TOGGLE_PRETTY_NAME = 'TOGGLE_PRETTY_NAME';
 
 /**
- * Toggle whether to show text labels on/off
+ * Toggle whether to show pretty name on/off
  * @param {Boolean} prettyName True if text labels are to be shown
  */
 export function togglePrettyName(prettyName) {
