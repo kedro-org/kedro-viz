@@ -1,5 +1,5 @@
 import React from 'react';
-import $ from 'cheerio'; //eslint-disable-line id-length
+import select from 'cheerio';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import FlowChart, {
@@ -47,7 +47,7 @@ describe('FlowChart', () => {
   it('renders nodes with D3', () => {
     const wrapper = setup.mount(<FlowChart />);
     const nodes = wrapper.render().find('.pipeline-node');
-    const nodeNames = nodes.map((i, el) => $(el).text()).get();
+    const nodeNames = nodes.map((i, el) => select(el).text()).get();
     const mockNodes = getVisibleNodeIDs(mockState.animals);
     const mockNodeNames = mockNodes.map(
       (d) => getNodeName(mockState.animals)[d]
