@@ -116,7 +116,7 @@ commands:
           name: Cleanup
           command: make clean
 
-  build_application:
+  build_npm_package:
     steps:
       - run:
           name: Build application
@@ -143,7 +143,7 @@ commands:
             # fallback to using the latest cache if no exact match is found
             - v${CACHE_VERSION}-dependencies-
       - install_node_dependencies
-      - build_application
+      - build_npm_package
       - add_ssh_keys:
           fingerprints:
             - "9a:fe:61:f4:d6:c2:c1:58:75:c9:72:56:6e:53:fd:8b"
@@ -185,9 +185,11 @@ commands:
           paths:
             - node_modules
           key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
-      - build_application
+      - build_npm_package
       - package_app
       - check_legal_compliance
+
+
 
   # Windows-related commands
   win_setup_conda:
@@ -289,6 +291,54 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=8192"
     steps: [win_build]
 
+  release_to_npm:
+    executor: circleci_machine
+    description: Build Kedro-Viz as an npm package and push it to npm
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
+            - v${CACHE_VERSION}-dependencies-
+      - install_node_dependencies
+      - build_npm_package
+      - run:
+          name: Prepublish check
+          command: npm run prepublishOnly
+      - run:
+          name: Publish to npm
+          command: npm publish 
+  
+  release_to_pypi:
+    executor: circleci_machine
+    description: Build Kedro-Viz as a Python package and push it to PyPI
+    environment:
+      CONDA_ENV_PY_VERSION: "3.8"
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-dependencies-
+      - setup_python_env
+      - run:
+          name: Install twine
+          command: python -m pip install -U twine
+      - run:
+          name: Build Python package
+          command: make package
+      - run:
+          name: Publish to PyPI
+          command: python -m twine --non-interactive upload package/dist/*
+
+release_filter: &release_filter
+  filters:
+    tags:
+      only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+    branches:
+      ignore: /.*/
+    
 workflows:
   version: 2
   build:
@@ -325,3 +375,13 @@ workflows:
       # - win_build_36
       # - win_build_37
       - win_build_38
+
+  release:
+    jobs:
+      - build_38
+      - release_to_npm:
+          <<: *release_filter
+      - release_to_pypi:
+          <<: *release_filter
+          requires:
+            - build_38
