@@ -303,8 +303,8 @@ jobs:
       - install_node_dependencies
       - build_npm_package
       - run:
-          name: Prepublish check
-          command: npm run prepublishOnly
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
       - run:
           name: Publish to npm
           command: npm publish 
@@ -330,7 +330,7 @@ jobs:
           command: make package
       - run:
           name: Publish to PyPI
-          command: python -m twine --non-interactive upload package/dist/*
+          command: python -m twine upload package/dist/*
 
 release_filter: &release_filter
   filters:
