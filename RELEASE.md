@@ -11,17 +11,18 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Visualise related data nodes of a modular pipeline in focus mode (#530)
+- Visualise related data nodes of a modular pipeline in focus mode. (#530)
+- Show parameter names when hovering over parameters indicator in the flowchart. (#512)
 
 ## Bug fixes and other changes
 
-- Fix the display of transcoded data nodes and their metadata (#491, #525)
-- Remove `newparams` flag (#528)
-- Add notice about Kedro-UI deprecation on the Styleguide (#529)
-- Add more eslint rule (#532)
-- Refactor `LazyList` component to fix eslint error (#539)
-- Update deprecated `highlight.js` call (#540)
-- Unify monospace fonts (#540)
+- Fix the display of transcoded data nodes and their metadata. (#491, #525)
+- Remove `newparams` flag. (#528)
+- Add notice about Kedro-UI deprecation on the Styleguide. (#529)
+- Add more eslint rule. (#532)
+- Refactor `LazyList` component to fix eslint error. (#539)
+- Update deprecated `highlight.js` call. (#540)
+- Unify monospace fonts. (#540)
 
 # Release 3.14.0
 
