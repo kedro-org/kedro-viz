@@ -303,9 +303,6 @@ jobs:
       - install_node_dependencies
       - build_npm_package
       - run:
-          name: Prepublish check
-          command: npm run prepublishOnly
-      - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
       - run:
@@ -340,7 +337,7 @@ release_filter: &release_filter
     tags:
       only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
     branches:
-      only: fix-release-circle-ci
+      ignore: /.*/
     
 workflows:
   version: 2
