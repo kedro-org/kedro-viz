@@ -378,7 +378,8 @@ workflows:
 
   release:
     jobs:
-      - build_38
+      - build_38:
+          <<: *release_filter
       - release_to_npm:
           <<: *release_filter
       - release_to_pypi:

@@ -7,10 +7,22 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 3.15.0
 
 ## Major features and improvements
 
-- Add `--autoreload` flag to `kedro viz` to automatically reload Kedro Viz tab when the Kedro project code changes.
+- Visualise related data nodes of a modular pipeline in focus mode. (#530)
+- Show parameter names when hovering over parameters indicator in the flowchart. (#512)
+
+## Bug fixes and other changes
+
+- Fix the display of transcoded data nodes and their metadata. (#491, #525)
+- Remove `newparams` flag. (#528)
+- Add notice about Kedro-UI deprecation on the Styleguide. (#529)
+- Add more eslint rule. (#532)
+- Refactor `LazyList` component to fix eslint error. (#539)
+- Update deprecated `highlight.js` call. (#540)
+- Unify monospace fonts. (#540)
 
 # Release 3.14.0
 
@@ -18,11 +30,11 @@ Please follow the established format:
 
 - Implement first version of focus mode feature to allow selective display of modular pipelines on the flowchart. (#514)
 - Add `--autoreload` to relaunch viz server on file change. (#498)
-- Updated demo data set to shuttle factory example. (#518)
+- Update demo data set to shuttle factory example. (#518)
 
 ## Bug fixes and other changes
 
-- Removed build/api after running build. (#515)
+- Remove build/api after running build. (#515)
 - Fix path parsing for PartitionedDataSet (#516)
 - Fix dev server port (#517)
 
