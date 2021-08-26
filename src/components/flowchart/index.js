@@ -225,9 +225,9 @@ export class FlowChart extends Component {
    * Add viewBox on window print so that the SVG can be scaled to fit
    */
   handleBeforePrint = () => {
-    const gs = this.props.graphSize;
-    const width = gs.width + gs.marginx * 2;
-    const height = gs.height + gs.marginy * 2;
+    const graphSize = this.props.graphSize;
+    const width = graphSize.width + graphSize.marginx * 2;
+    const height = graphSize.height + graphSize.marginy * 2;
     this.el.svg.attr('viewBox', `0 0 ${width} ${height}`);
   };
 
@@ -254,8 +254,8 @@ export class FlowChart extends Component {
     // Update layer label y positions
     if (this.el.layerNames) {
       this.el.layerNames.style('transform', (d) => {
-        const ty = y + (d.y + d.height / 2) * scale;
-        return `translateY(${ty}px)`;
+        const updateY = y + (d.y + d.height / 2) * scale;
+        return `translateY(${updateY}px)`;
       });
     }
 
@@ -404,6 +404,7 @@ export class FlowChart extends Component {
       false
     );
   }
+
   /**
    * Returns parameter count when there are more
    * than one parameters and parameter name if there's a single parameter

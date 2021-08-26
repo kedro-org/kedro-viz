@@ -1,8 +1,5 @@
 import { useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
 
-// TODO refactor to fix eslint and remove this line:
-/* eslint-disable react-hooks/rules-of-hooks */
-
 /**
  * A component that renders only the children currently visible on screen.
  * Renders all children if not supported by browser or is disabled via the `lazy` prop.
@@ -60,62 +57,59 @@ const LazyList = ({
     [height, range, total]
   );
 
-  // Skipped if not enabled or supported
-  if (active) {
-    // Allows an update only once per frame
-    const requestUpdate = useRequestFrameOnce(
-      // Memoise the frame callback
-      useCallback(() => {
-        // Get the range of items visible in this frame
-        const visibleRange = visibleRangeOf(
-          // The list container
-          listRef.current,
-          // The list's scrolling parent container
-          container(listRef.current),
-          buffer,
-          total,
-          itemHeight
-        );
+  // Allows an update only once per frame
+  const requestUpdate = useRequestFrameOnce(
+    // Memoise the frame callback
+    useCallback(() => {
+      // Get the range of items visible in this frame
+      const visibleRange = visibleRangeOf(
+        // The list container
+        listRef.current,
+        // The list's scrolling parent container
+        container(listRef.current),
+        buffer,
+        total,
+        itemHeight
+      );
 
-        // Merge ranges
-        const effectiveRange =
-          // If dispose, render visible range only
-          dispose
-            ? visibleRange
-            : // If not dispose, expand current range with visible range
-              rangeUnion(rangeRef.current, visibleRange);
+      // Merge ranges
+      const effectiveRange =
+        // If dispose, render visible range only
+        dispose
+          ? visibleRange
+          : // If not dispose, expand current range with visible range
+            rangeUnion(rangeRef.current, visibleRange);
 
-        // Avoid duplicate render calls as state is not set immediate
-        if (!rangeEqual(rangeRef.current, effectiveRange)) {
-          // Store the update in a ref immediately
-          rangeRef.current = effectiveRange;
+      // Avoid duplicate render calls as state is not set immediate
+      if (!rangeEqual(rangeRef.current, effectiveRange)) {
+        // Store the update in a ref immediately
+        rangeRef.current = effectiveRange;
 
-          // Apply the update in the next render
-          setRange(effectiveRange);
-        }
-      }, [buffer, total, itemHeight, dispose, container])
-    );
+        // Apply the update in the next render
+        setRange(effectiveRange);
+      }
+    }, [buffer, total, itemHeight, dispose, container])
+  );
 
-    // Memoised observer options
-    const observerOptions = useMemo(
-      () => ({
-        // Create a threshold point for every item
-        threshold: thresholds(total),
-      }),
-      [total]
-    );
+  // Memoised observer options
+  const observerOptions = useMemo(
+    () => ({
+      // Create a threshold point for every item
+      threshold: thresholds(total),
+    }),
+    [total]
+  );
 
-    // Updates on changes in visibility at the given thresholds (intersection ratios)
-    useIntersection(listRef, observerOptions, requestUpdate);
-    useIntersection(upperRef, observerOptions, requestUpdate);
-    useIntersection(lowerRef, observerOptions, requestUpdate);
+  // Updates on changes in visibility at the given thresholds (intersection ratios)
+  useIntersection(listRef, observerOptions, requestUpdate);
+  useIntersection(upperRef, observerOptions, requestUpdate);
+  useIntersection(lowerRef, observerOptions, requestUpdate);
 
-    // Updates on changes in item dimensions
-    useLayoutEffect(
-      () => requestUpdate(),
-      [total, itemHeight, totalHeight, requestUpdate]
-    );
-  }
+  // Updates on changes in item dimensions
+  useLayoutEffect(
+    () => requestUpdate(),
+    [total, itemHeight, totalHeight, requestUpdate]
+  );
 
   // Memoised child props for user to apply as needed
   const childProps = useMemo(
@@ -318,9 +312,11 @@ const useIntersection = (element, options, callback) => {
       observer.current.disconnect();
     }
 
-    // Create a new observer
-    observer.current = new window.IntersectionObserver(callback, options);
-    observer.current.observe(element.current);
+    // Create a new observer if supported
+    if (window.IntersectionObserver) {
+      observer.current = new window.IntersectionObserver(callback, options);
+      observer.current.observe(element.current);
+    }
 
     // Manually callback as element may already be visible
     callback();

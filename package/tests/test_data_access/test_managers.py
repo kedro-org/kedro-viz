@@ -32,7 +32,14 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
 
 from kedro_viz.data_access.managers import DataAccessManager
-from kedro_viz.models.graph import DataNode, GraphEdge, ParametersNode, Tag, TaskNode
+from kedro_viz.models.graph import (
+    DataNode,
+    GraphEdge,
+    ParametersNode,
+    Tag,
+    TaskNode,
+    TranscodedDataNode,
+)
 
 
 def identity(x):
@@ -320,6 +327,19 @@ class TestAddPipelines:
             "uk.data_processing",
             "uk.data_science",
         ]
+
+    def test_add_pipelines_with_transcoded_data(
+        self,
+        data_access_manager: DataAccessManager,
+        example_transcoded_pipelines: Dict[str, Pipeline],
+        example_transcoded_catalog: DataCatalog,
+    ):
+        data_access_manager.add_catalog(example_transcoded_catalog)
+        data_access_manager.add_pipelines(example_transcoded_pipelines)
+        assert any(
+            isinstance(node, TranscodedDataNode)
+            for node in data_access_manager.nodes.as_list()
+        )
 
     def test_get_default_selected_pipelines_without_default(
         self,

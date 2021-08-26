@@ -17,16 +17,14 @@ const MetaDataObject = ({ className, value, kind, theme, empty }) => (
     ) : (
       <ReactJson
         theme={theme === 'dark' ? darkjsonViewerTheme : lightjsonViewerTheme}
-        style={{
-          fontFamily: "Consolas, Monaco, 'Courier New', Courier, monospace",
-        }}
         name={false}
         indentWidth={1}
         collapsed={1}
         collapseStringsAfterLength={true}
         enableClipboard={true}
         displayDataTypes={false}
-        src={value}></ReactJson>
+        src={value}
+      />
     )}
   </div>
 );

@@ -48,12 +48,18 @@ describe('normalizeData', () => {
   });
 
   it('should not add modular pipelines if modular pipelines are not supplied', () => {
-    const data = Object.assign({}, animals, { modular_pipelines: undefined });
+    const data = Object.assign(
+      {},
+      animals,
+      //eslint-disable-next-line camelcase
+      { modular_pipelines: undefined }
+    );
     expect(normalizeData(data).modularPipeline.ids).toHaveLength(0);
   });
 
   it('should not add duplicate modular pipelines', () => {
     const data = Object.assign({}, animals, {
+      //eslint-disable-next-line camelcase
       modular_pipelines: [
         {
           id: 'pipeline1',

@@ -56,6 +56,22 @@ def example_api(
 
 
 @pytest.fixture
+def example_transcoded_api(
+    data_access_manager: DataAccessManager,
+    example_transcoded_pipelines: Dict[str, Pipeline],
+    example_transcoded_catalog: DataCatalog,
+):
+    api = apps.create_api_app_from_project(mock.MagicMock())
+    populate_data(
+        data_access_manager, example_transcoded_catalog, example_transcoded_pipelines
+    )
+    with mock.patch(
+        "kedro_viz.api.responses.data_access_manager", new=data_access_manager
+    ), mock.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager):
+        yield api
+
+
+@pytest.fixture
 def client(example_api):
     yield TestClient(example_api)
 
@@ -188,6 +204,100 @@ def assert_example_data(response_data):
     }
 
 
+def assert_example_transcoded_data(response_data):
+    """Assert graph response for the `example_transcoded_pipelines` 
+    and `example_transcoded_catalog` fixtures."""
+    expected_edges = [
+        {"source": "f1f1425b", "target": "2302ea78"},
+        {"source": "dbad7c24", "target": "0ecea0de"},
+        {"source": "c506f374", "target": "dbad7c24"},
+        {"source": "7c58d8e6", "target": "dbad7c24"},
+        {"source": "2302ea78", "target": "1d06a0d7"},
+        {"source": "0ecea0de", "target": "2302ea78"},
+    ]
+    assert_edges_equal(response_data.pop("edges"), expected_edges)
+    # compare nodes
+    expected_nodes = [
+        {
+            "id": "dbad7c24",
+            "name": "Process Data",
+            "full_name": "process_data",
+            "tags": ["split"],
+            "pipelines": ["__default__", "data_processing"],
+            "modular_pipelines": [],
+            "type": "task",
+            "parameters": {"train_test_split": 0.1},
+        },
+        {
+            "id": "7c58d8e6",
+            "name": "Raw Data",
+            "full_name": "raw_data",
+            "tags": ["split"],
+            "pipelines": ["__default__", "data_processing"],
+            "modular_pipelines": [],
+            "type": "data",
+            "layer": None,
+            "dataset_type": None,
+        },
+        {
+            "id": "c506f374",
+            "name": "Params:train Test Split",
+            "full_name": "params:train_test_split",
+            "tags": ["split"],
+            "pipelines": ["__default__", "data_processing"],
+            "modular_pipelines": [],
+            "type": "parameters",
+            "layer": None,
+            "dataset_type": None,
+        },
+        {
+            "id": "0ecea0de",
+            "name": "Model Inputs",
+            "full_name": "model_inputs",
+            "tags": ["train", "split"],
+            "pipelines": ["__default__", "data_processing"],
+            "modular_pipelines": [],
+            "type": "data",
+            "layer": None,
+            "dataset_type": None,
+        },
+        {
+            "id": "2302ea78",
+            "name": "Train Model",
+            "full_name": "train_model",
+            "tags": ["train"],
+            "pipelines": ["__default__", "data_processing"],
+            "modular_pipelines": [],
+            "type": "task",
+            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
+        },
+        {
+            "id": "f1f1425b",
+            "name": "Parameters",
+            "full_name": "parameters",
+            "tags": ["train"],
+            "pipelines": ["__default__", "data_processing"],
+            "modular_pipelines": [],
+            "type": "parameters",
+            "layer": None,
+            "dataset_type": None,
+        },
+        {
+            "id": "1d06a0d7",
+            "name": "Model",
+            "full_name": "model",
+            "tags": ["train"],
+            "pipelines": ["__default__", "data_processing"],
+            "modular_pipelines": [],
+            "type": "data",
+            "layer": None,
+            "dataset_type": None,
+        },
+    ]
+
+    assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
+
+
 class TestIndexEndpoint:
     def test_index(self, client):
         response = client.get("/")
@@ -253,6 +363,28 @@ class TestMainEndpoint:
         response = client.get("/api/main")
         assert response.status_code == 200
         assert_example_data(response.json())
+
+
+class TestTranscodedDataset:
+    """Test a viz API created from a Kedro project."""
+
+    def test_endpoint_main(self, example_transcoded_api):
+        client = TestClient(example_transcoded_api)
+        response = client.get("/api/main")
+        assert response.status_code == 200
+        assert_example_transcoded_data(response.json())
+
+    def test_transcoded_data_node_metadata(self, example_transcoded_api):
+        client = TestClient(example_transcoded_api)
+        response = client.get("/api/nodes/0ecea0de")
+        assert response.json() == {
+            "filepath": "model_inputs.csv",
+            "original_type": "kedro.extras.datasets.spark.spark_dataset.SparkDataSet",
+            "transcoded_types": [
+                "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+            ],
+            "run_command": 'kedro run --to-outputs="model_inputs@spark"',
+        }
 
 
 class TestNodeMetadataEndpoint:

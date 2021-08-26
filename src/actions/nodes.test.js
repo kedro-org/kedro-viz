@@ -9,7 +9,7 @@ import {
   addNodeMetadata,
   ADD_NODE_METADATA,
 } from './nodes';
-import node_parameters from '../utils/data/node_parameters.mock.json';
+import nodeParameters from '../utils/data/node_parameters.mock.json';
 
 const parametersID = 'f1f1425b';
 
@@ -76,7 +76,7 @@ describe('node actions', () => {
 
         expect(storeListener.mock.calls[2][0]).toEqual({
           type: ADD_NODE_METADATA,
-          data: { id: node.id, data: node_parameters },
+          data: { id: node.id, data: nodeParameters },
         });
       });
 
