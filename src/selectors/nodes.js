@@ -158,12 +158,20 @@ export const getGroupedNodes = createSelector([getNodeData], (nodes) =>
 );
 
 /**
+ * Returns node label based on if pretty name is turned on/off
+ */
+export const getNodeLabel = createSelector(
+  [getPrettyName, getNodeName, getNodeFullName],
+  (prettyName, nodeName, nodeFullName) => (prettyName ? nodeName : nodeFullName)
+);
+
+/**
  * Temporarily create a new SVG container in the DOM, write a node to it,
  * measure its width with getBBox, then delete the container and store the value
  */
 export const getNodeTextWidth = createSelector(
-  [getPipelineNodeIDs, getNodeName, getFontLoaded],
-  (nodeIDs, nodeName, fontLoaded) => {
+  [getPipelineNodeIDs, getNodeLabel, getFontLoaded],
+  (nodeIDs, nodeLabel, fontLoaded) => {
     if (!fontLoaded) {
       return {};
     }
@@ -176,7 +184,7 @@ export const getNodeTextWidth = createSelector(
       .data(nodeIDs)
       .enter()
       .append('text')
-      .text((nodeID) => nodeName[nodeID])
+      .text((nodeID) => nodeLabel[nodeID])
       .each(function (nodeID) {
         const width = this.getBBox ? this.getBBox().width : 0;
         nodeTextWidth[nodeID] = width;
@@ -245,7 +253,7 @@ export const getVisibleNodes = createSelector(
   [
     getVisibleNodeIDs,
     getNodeName,
-    getPrettyName,
+    getNodeLabel,
     getNodeType,
     getNodeDatasetType,
     getNodeFullName,
@@ -257,7 +265,7 @@ export const getVisibleNodes = createSelector(
   (
     nodeIDs,
     nodeName,
-    prettyName,
+    nodeLabel,
     nodeType,
     nodeDatasetType,
     nodeFullName,
@@ -270,7 +278,7 @@ export const getVisibleNodes = createSelector(
       ? nodeIDs.map((id) => ({
           id,
           name: nodeName[id],
-          label: prettyName ? nodeName[id] : nodeFullName[id],
+          label: nodeLabel[id],
           fullName: nodeFullName[id],
           icon: getShortType([nodeDatasetType[id]], nodeType[id]),
           type: nodeType[id],
