@@ -8,6 +8,8 @@ import IndicatorPartialIcon from '../icons/indicator-partial';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import { arrayToObject } from '../../utils';
+import { Fade } from '@material-ui/core';
+
 const { escapeRegExp, getHighlightedText } = utils;
 
 export const isTagType = (type) => type === 'tag';
@@ -34,10 +36,12 @@ export const highlightMatch = (nodeGroups, searchValue) => {
   const highlightedGroups = {};
 
   for (const type of Object.keys(nodeGroups)) {
-    highlightedGroups[type] = nodeGroups[type].map((node) => ({
-      ...node,
-      highlightedLabel: getHighlightedText(node.name, searchValue),
-    }));
+    highlightedGroups[type] = nodeGroups[type].map((node) => {
+      return {
+        ...node,
+        highlightedLabel: getHighlightedText(node.label, searchValue),
+      };
+    });
   }
 
   return highlightedGroups;
@@ -176,21 +180,22 @@ export const getFilteredModularPipelineItems = createSelector(
  */
 export const getFilteredElementTypes = createSelector(
   [(state) => state.searchValue],
-  (searchValue) =>
-    highlightMatch(
+  (searchValue) => {
+    return highlightMatch(
       filterNodeGroups(
         {
           elementType: Object.entries(sidebarElementTypes).map(
             ([type, name]) => ({
               id: type,
-              name,
+              label: name,
             })
           ),
         },
         searchValue
       ),
       searchValue
-    )
+    );
+  }
 );
 
 /**
@@ -311,7 +316,7 @@ export const getGroups = createSelector([(state) => state.items], (items) => {
 
     groups[type] = {
       type,
-      name,
+      label: name,
       id: type,
       kind: 'filter',
       allUnchecked: itemsOfType.every((item) => !item.checked),

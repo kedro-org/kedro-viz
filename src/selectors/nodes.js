@@ -92,12 +92,21 @@ export const getNodeSelected = createSelector(
 );
 
 /**
+ * Returns node label based on if pretty name is turned on/off
+ */
+export const getNodeLabel = createSelector(
+  [getPrettyName, getNodeName, getNodeFullName],
+  (prettyName, nodeName, nodeFullName) => (prettyName ? nodeName : nodeFullName)
+);
+
+/**
  * Returns formatted nodes as an array, with all relevant properties
  */
 export const getNodeData = createSelector(
   [
     getPipelineNodeIDs,
     getNodeName,
+    getNodeLabel,
     getNodeType,
     getNodeDatasetType,
     getNodeDisabled,
@@ -110,6 +119,7 @@ export const getNodeData = createSelector(
   (
     nodeIDs,
     nodeName,
+    nodeLabel,
     nodeType,
     nodeDatasetType,
     nodeDisabled,
@@ -132,6 +142,7 @@ export const getNodeData = createSelector(
       .map((id) => ({
         id,
         name: nodeName[id],
+        label: nodeLabel[id],
         type: nodeType[id],
         icon: getShortType([nodeDatasetType[id]], nodeType[id]),
         modularPipelines: nodeModularPipelines[id],
@@ -155,14 +166,6 @@ export const getGroupedNodes = createSelector([getNodeData], (nodes) =>
     obj[key].push(item);
     return obj;
   }, {})
-);
-
-/**
- * Returns node label based on if pretty name is turned on/off
- */
-export const getNodeLabel = createSelector(
-  [getPrettyName, getNodeName, getNodeFullName],
-  (prettyName, nodeName, nodeFullName) => (prettyName ? nodeName : nodeFullName)
 );
 
 /**
