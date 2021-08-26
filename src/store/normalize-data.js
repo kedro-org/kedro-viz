@@ -125,6 +125,7 @@ const addModularPipeline = (state) => (modularPipeline) => {
   }
   state.modularPipeline.ids.push(id);
   state.modularPipeline.name[id] = name;
+  state.modularPipeline.contracted[id] = true;
 };
 
 /**
