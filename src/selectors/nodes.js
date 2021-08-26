@@ -170,9 +170,7 @@ export const getNodeTextWidth = createSelector(
     if (!fontLoaded) {
       return {};
     }
-    const names = Object.values(
-      Object.assign({}, nodeName, modularPipelineName)
-    );
+    const names = Object.values({ ...nodeName, ...modularPipelineName });
     const nodeTextWidth = {};
     const svg = select(document.body)
       .append('svg')

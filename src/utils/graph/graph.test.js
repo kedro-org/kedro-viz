@@ -6,8 +6,7 @@
 
 import { mockState } from '../state.mock';
 import { getVisibleNodes } from '../../selectors/nodes';
-import { getVisibleEdges } from '../../selectors/edges';
-import { getVisibleLayerIDs } from '../../selectors/disabled';
+import { getVisibleLayerIDs, getVisibleEdges } from '../../selectors/contracted';
 import { Constraint, Operator, Strength } from 'kiwi.js';
 import { graph } from './graph';
 import { solveLoose, solveStrict } from './solver';

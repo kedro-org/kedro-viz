@@ -5,8 +5,8 @@ import {
   getNodeDisabled,
   getEdgeDisabled,
   getVisibleNodeIDs,
-  getVisibleLayerIDs,
 } from './disabled';
+import { getVisibleLayerIDs } from './contracted';
 import { toggleNodesDisabled } from '../actions/nodes';
 import { toggleLayers, toggleFocusMode } from '../actions';
 import { toggleTagFilter } from '../actions/tags';

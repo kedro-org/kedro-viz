@@ -12,6 +12,7 @@ import {
   getNodesWithInputParams,
   getInputOutputNodesForFocusedModularPipeline,
 } from './nodes';
+import { getContractedModularPipelines } from './contracted';
 import {
   toggleTextLabels,
   updateFontLoaded,
@@ -27,10 +28,11 @@ import {
 import reducer from '../reducers';
 import { getVisibleNodeIDs } from './disabled';
 
-const getNodeIDs = (state) => state.node.ids;
-const getNodeName = (state) => state.node.name;
-const getNodeType = (state) => state.node.type;
+const getNodeIDs = (state) => getContractedModularPipelines(state).node.ids;
+const getNodeName = (state) => getContractedModularPipelines(state).node.name;
+const getNodeType = (state) => getContractedModularPipelines(state).node.type;
 const getNodePipelines = (state) => state.node.pipelines;
+const getModularPipelineName = (state) => state.modularPipeline.name;
 
 const noFontState = reducer(mockState.animals, updateFontLoaded(false));
 const parameterNodesID = ['443cf06a', '2ce32881'];
@@ -44,7 +46,7 @@ describe('Selectors', () => {
     });
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(nodeActive)).toEqual(getNodeIDs(mockState.animals));
+      expect(Object.keys(nodeActive).sort()).toEqual(getNodeIDs(mockState.animals).sort());
     });
 
     it('returns an object whose values are all Booleans', () => {
@@ -77,7 +79,7 @@ describe('Selectors', () => {
     });
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(nodeSelected)).toEqual(getNodeIDs(mockState.animals));
+      expect(Object.keys(nodeSelected).sort()).toEqual(getNodeIDs(mockState.animals).sort());
     });
 
     it('returns an object whose values are all Booleans', () => {
@@ -207,9 +209,12 @@ describe('Selectors', () => {
         expect(nodeTextWidth).toEqual(expect.objectContaining({}));
       });
 
-      it('returns an object with nodeIDs for keys', () => {
+      it('returns an object with keys for each unique modular pipeline and node name', () => {
         const keys = Object.keys(nodeTextWidth);
-        expect(keys.sort()).toEqual(getNodeIDs(mockState.animals).sort());
+        const modularPipelineNames = getModularPipelineName(mockState.animals);
+        const nodeNames = getNodeName(mockState.animals);
+        const expectedKeys = new Set(Object.values({ ...modularPipelineNames, ...nodeNames }));
+        expect(keys.sort()).toEqual([...expectedKeys].sort());
       });
 
       it('returns an object whose values are all numbers', () => {
@@ -235,21 +240,21 @@ describe('Selectors', () => {
 
     describe('if text labels are enabled', () => {
       it('returns x=16 & y=10 for task icons', () => {
-        expect(getPadding(true, true)).toEqual({ x: 16, y: 10 });
+        expect(getPadding(true, 'task')).toEqual({ x: 16, y: 10 });
       });
 
       it('returns x=20 & y=10 for database icons', () => {
-        expect(getPadding(true, false)).toEqual({ x: 20, y: 10 });
+        expect(getPadding(true, 'data')).toEqual({ x: 20, y: 10 });
       });
     });
 
     describe('if text labels are disabled', () => {
       it('returns x=14 & y=14 for task icons', () => {
-        expect(getPadding(false, true)).toEqual({ x: 14, y: 14 });
+        expect(getPadding(false, 'task')).toEqual({ x: 14, y: 14 });
       });
 
       it('returns x=16 & y=16 for database icons', () => {
-        expect(getPadding(false, false)).toEqual({ x: 16, y: 16 });
+        expect(getPadding(false, 'data')).toEqual({ x: 16, y: 16 });
       });
     });
   });

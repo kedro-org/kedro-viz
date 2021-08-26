@@ -1,7 +1,7 @@
 import { mockState } from '../utils/state.mock';
 import { getLayerNodes, getNodeRank } from './ranks';
-import { getVisibleNodeIDs, getVisibleLayerIDs } from './disabled';
-import { getVisibleEdges } from './edges';
+import { getVisibleNodeIDs } from './disabled';
+import { getVisibleLayerIDs, getVisibleEdges } from './contracted';
 import { toggleLayers } from '../actions';
 import reducer from '../reducers';
 
