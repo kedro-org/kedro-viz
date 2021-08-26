@@ -342,34 +342,42 @@ describe('NodeList', () => {
   });
 
   describe('node list element item', () => {
-    const wrapper = setup.mount(<NodeList />);
-    // this needs to be the 4th element as the first 3 elements are modular pipelines rows which does not apply the '--active' class
-    const nodeRow = () => wrapper.find('.pipeline-nodelist__row').at(4);
-
-    it('handles mouseenter events', () => {
-      nodeRow().simulate('mouseenter');
-      expect(nodeRow().hasClass('pipeline-nodelist__row--active')).toBe(true);
+    it('TODO: Fix performance issue here in node-list.test.js and enable below tests', () => {
+      expect(false).toBe(true);
     });
 
-    it('handles mouseleave events', () => {
-      nodeRow().simulate('mouseleave');
-      expect(nodeRow().hasClass('pipeline-nodelist__row--active')).toBe(false);
-    });
+    // const wrapper = setup.mount(<NodeList />);
+    // // this needs to be the 4th element as the first 3 elements are modular pipelines rows which does not apply the '--active' class
+    // const nodeRow = () => wrapper.find('.pipeline-nodelist__row').at(4);
+
+    // it('handles mouseenter events', () => {
+    //   nodeRow().simulate('mouseenter');
+    //   expect(nodeRow().hasClass('pipeline-nodelist__row--active')).toBe(true);
+    // });
+
+    // it('handles mouseleave events', () => {
+    //   nodeRow().simulate('mouseleave');
+    //   expect(nodeRow().hasClass('pipeline-nodelist__row--active')).toBe(false);
+    // });
   });
 
   describe('node list element item checkbox', () => {
-    const wrapper = setup.mount(<NodeList />);
-    const checkbox = () => wrapper.find('.pipeline-nodelist__row input').at(4);
-
-    it('handles toggle off event', () => {
-      checkbox().simulate('change', { target: { checked: false } });
-      expect(checkbox().props().checked).toBe(false);
+    it('TODO: Fix performance issue here in node-list.test.js and enable below tests', () => {
+      expect(false).toBe(true);
     });
 
-    it('handles toggle on event', () => {
-      checkbox().simulate('change', { target: { checked: true } });
-      expect(checkbox().props().checked).toBe(true);
-    });
+    // const wrapper = setup.mount(<NodeList />);
+    // const checkbox = () => wrapper.find('.pipeline-nodelist__row input').at(4);
+
+    // it('handles toggle off event', () => {
+    //   checkbox().simulate('change', { target: { checked: false } });
+    //   expect(checkbox().props().checked).toBe(false);
+    // });
+
+    // it('handles toggle on event', () => {
+    //   checkbox().simulate('change', { target: { checked: true } });
+    //   expect(checkbox().props().checked).toBe(true);
+    // });
   });
 
   it('maps state to props', () => {
