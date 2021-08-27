@@ -5,6 +5,7 @@ import configureStore from '../store';
 import getInitialState from '../store/initial-state';
 import animals from './data/animals.mock.json';
 import demo from './data/demo.mock.json';
+import contracting from './data/contracting.mock.json'
 import reducer from '../reducers';
 import { updateFontLoaded } from '../actions';
 import { getGraphInput } from '../selectors/layout';
@@ -56,6 +57,7 @@ export const mockState = {
   json: prepareState({ data: 'json' }),
   demo: prepareState({ data: demo }),
   animals: prepareState({ data: animals }),
+  contracting: prepareState({ data: contracting }),
 };
 
 /**
