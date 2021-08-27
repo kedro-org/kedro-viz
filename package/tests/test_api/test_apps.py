@@ -131,7 +131,7 @@ def assert_example_data(response_data):
         },
         {
             "id": "c506f374",
-            "name": "Params:train Test Split",
+            "name": "Params: Train Test Split",
             "full_name": "params:train_test_split",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
@@ -241,7 +241,7 @@ def assert_example_transcoded_data(response_data):
         },
         {
             "id": "c506f374",
-            "name": "Params:train Test Split",
+            "name": "Params: Train Test Split",
             "full_name": "params:train_test_split",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
@@ -400,7 +400,7 @@ class TestNodeMetadataEndpoint:
             == "def process_data(raw_data, train_test_split):\n        ...\n"
         )
         assert metadata["parameters"] == {"train_test_split": 0.1}
-        assert metadata["inputs"] == ["Raw Data", "Params:train Test Split"]
+        assert metadata["inputs"] == ["Raw Data", "Params: Train Test Split"]
         assert metadata["outputs"] == ["Model Inputs"]
         assert metadata["run_command"] == 'kedro run --to-nodes="process_data"'
         assert str(Path("package/tests/conftest.py")) in metadata["filepath"]

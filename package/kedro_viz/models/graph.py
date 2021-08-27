@@ -48,9 +48,9 @@ logger = logging.getLogger(__name__)
 
 
 def _pretty_name(name: str) -> str:
-    name = name.replace("-", " ").replace("_", " ")
-    parts = [n.capitalize() for n in re.split('(\\W)',name)]
-    return "".join(parts)
+    name = name.replace("-", " ").replace("_", " ").replace(":",": ")
+    parts = [n.capitalize() for n in name.split()]
+    return " ".join(parts)
 
 
 def _strip_namespace(name: str) -> str:
