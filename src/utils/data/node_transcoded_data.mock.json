@@ -1,0 +1,7 @@
+{
+  "filepath": "/Users/Documents/project-src/test/data/01_raw/iris.csv",
+  "original_type": "kedro.extras.datasets.spark.spark_dataset.SparkDataSet",
+  "transcoded_types": [
+    "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+  ]
+}

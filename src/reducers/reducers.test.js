@@ -1,6 +1,6 @@
-import node_parameters from '../utils/data/node_parameters.mock.json';
-import node_task from '../utils/data/node_task.mock.json';
-import node_data from '../utils/data/node_data.mock.json';
+import nodeParameters from '../utils/data/node_parameters.mock.json';
+import nodeTask from '../utils/data/node_task.mock.json';
+import nodeData from '../utils/data/node_data.mock.json';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
 import {
@@ -286,30 +286,30 @@ describe('Reducer', () => {
     const nodeId = '123';
 
     it('should update the right fields in state under node of task type', () => {
-      const data = { id: nodeId, data: node_task };
+      const data = { id: nodeId, data: nodeTask };
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
-      expect(newState.node.code[nodeId]).toEqual(node_task.code);
-      expect(newState.node.filepath[nodeId]).toEqual(node_task.filepath);
+      expect(newState.node.code[nodeId]).toEqual(nodeTask.code);
+      expect(newState.node.filepath[nodeId]).toEqual(nodeTask.filepath);
     });
 
     it('should update the right fields in state under node of parameter type', () => {
-      const data = { id: nodeId, data: node_parameters };
+      const data = { id: nodeId, data: nodeParameters };
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
       expect(newState.node.parameters[nodeId]).toEqual(
-        node_parameters.parameters
+        nodeParameters.parameters
       );
     });
 
     it('should update the right fields in state under node of data type', () => {
-      const data = { id: nodeId, data: node_data };
+      const data = { id: nodeId, data: nodeData };
       const loadDataAction = { type: ADD_NODE_METADATA, data };
       const oldState = mockState.json;
       const newState = reducer(oldState, loadDataAction);
-      expect(newState.node.filepath[nodeId]).toEqual(node_data.filepath);
+      expect(newState.node.filepath[nodeId]).toEqual(nodeData.filepath);
     });
   });
 

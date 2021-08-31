@@ -3,6 +3,8 @@ Plotly templates are defined to override user-specified styles with Kedro-viz st
 More details can be found here - https://plotly.com/python/templates/
 */
 
+/* eslint-disable id-length,camelcase */
+
 const darkTemplate = {
   autosize: true,
   annotationdefaults: {

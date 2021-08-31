@@ -237,17 +237,23 @@ make pytest
 make e2e-tests
 ```
 
-## Preparing a release
+## Release process
 
-The version number for Kedro-Viz is defined in three places, which all need to be maintained at the same version number:
-
-- `package.json`
-- `package-lock.json`
-- `package/kedro_viz/__init__.py`
-
-The `Makefile` contains a `version` target which accepts the `VERSION` argument
-or environmental variable, which will update all the files at the same time. To update the version and prepare a new release, first check that the release notes are up to date, then run the following command:
+- Update [RELEASE.md](./RELEASE.md) with the latest release note.
+- Bump the release version number by running:
 
 ```bash
-make version VERSION=1.0.5
+make version VERSION=<version-to-release>
 ```
+
+> *Notes*: Kedro-Viz uses [Semantic Versioning](https://semver.org/) as the versioning scheme. 
+
+- Commit, raise a PR and get it merged into `main`.
+
+- Once the release commit is in `main`, trigger the release by:
+    * Create a Release through [Github UI](https://github.com/quantumblacklabs/kedro-viz/releases/new).
+    * Input the version as the tag version with Target set to `main`
+    * Paste the release note in the text box.
+    * Publish the release.
+
+- Once the release tag is published on Github, a CircleCI job will be triggered to push it to npm and PyPI accordingly.
