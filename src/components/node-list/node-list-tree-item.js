@@ -17,47 +17,45 @@ const NodeListTreeItem = ({
   focusMode,
   parentDisabled,
   parentPipeline,
-}) => {
-  return (
-    <TreeItem
-      key={data.id}
-      nodeId={data.id}
-      // this setup is to allow flexibility for adjusting the setting for individual arrow icons
-      collapseIcon={<ExpandMoreIcon style={{ color: arrowIconColor }} />}
-      expandIcon={<ChevronRightIcon style={{ color: arrowIconColor }} />}
-      label={
-        <NodeListRow
-          container="div"
-          key={data.id}
-          id={data.id}
-          kind="element"
-          label={data.highlightedLabel || data.name}
-          name={data.name}
-          icon={data.icon}
-          type={data.type}
-          active={data.active}
-          checked={data.checked}
-          disabled={data.disabled}
-          faded={data.faded}
-          visible={data.visible}
-          selected={data.selected}
-          allUnchecked={true}
-          visibleIcon={data.visibleIcon}
-          invisibleIcon={data.invisibleIcon}
-          onClick={() => onItemClick(data)}
-          onMouseEnter={() => onItemMouseEnter(data)}
-          onMouseLeave={() => onItemMouseLeave(data)}
-          onChange={(e) => onItemChange(data, !e.target.checked)}
-          rowType="tree"
-          searchCount={searchCount}
-          focusMode={focusMode}
-          parentDisabled={parentDisabled}
-          parentPipeline={parentPipeline}
-        />
-      }>
-      {children}
-    </TreeItem>
-  );
-};
+}) => (
+  <TreeItem
+    key={data.id}
+    nodeId={data.id}
+    // this setup is to allow flexibility for adjusting the setting for individual arrow icons
+    collapseIcon={<ExpandMoreIcon style={{ color: arrowIconColor }} />}
+    expandIcon={<ChevronRightIcon style={{ color: arrowIconColor }} />}
+    label={
+      <NodeListRow
+        container="div"
+        key={data.id}
+        id={data.id}
+        kind="element"
+        label={data.highlightedLabel || data.name}
+        name={data.name}
+        icon={data.icon}
+        type={data.type}
+        active={data.active}
+        checked={data.checked}
+        disabled={data.disabled}
+        faded={data.faded}
+        visible={data.visible}
+        selected={data.selected}
+        allUnchecked={true}
+        visibleIcon={data.visibleIcon}
+        invisibleIcon={data.invisibleIcon}
+        onClick={() => onItemClick(data)}
+        onMouseEnter={() => onItemMouseEnter(data)}
+        onMouseLeave={() => onItemMouseLeave(data)}
+        onChange={(e) => onItemChange(data, !e.target.checked)}
+        rowType="tree"
+        searchCount={searchCount}
+        focusMode={focusMode}
+        parentDisabled={parentDisabled}
+        parentPipeline={parentPipeline}
+      />
+    }>
+    {children}
+  </TreeItem>
+);
 
 export default NodeListTreeItem;
