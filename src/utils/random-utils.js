@@ -48,9 +48,9 @@ export const getSeedFromURL = () => {
 
 /**
  * Get an array of numbers
- * @param {number} n Length of the array
+ * @param {number} length Length of the array
  */
-export const getNumberArray = (n) => Array.from(Array(n).keys());
+export const getNumberArray = (length) => Array.from(Array(length).keys());
 
 export const LOREM_IPSUM =
   'lorem ipsum dolor sit amet consectetur adipiscing elit vestibulum id turpis nunc nulla vitae diam dignissim fermentum elit sit amet viverra libero quisque condimentum pellentesque convallis sed consequat neque ac rhoncus finibus'.split(
@@ -67,15 +67,15 @@ const randomUtils = () => {
 
   /**
    * Get a random number between 0 to n-1, inclusive
-   * @param {number} n Max number
+   * @param {number} max Max number
    */
-  const randomIndex = (n) => Math.floor(random() * n);
+  const randomIndex = (max) => Math.floor(random() * max);
 
   /**
    * Get a random number between 1 to n, inclusive
-   * @param {number} n Max number
+   * @param {number} max Max number
    */
-  const randomNumber = (n) => Math.ceil(random() * n);
+  const randomNumber = (max) => Math.ceil(random() * max);
 
   /**
    * Get a random number between min and max, inclusive
@@ -92,11 +92,11 @@ const randomUtils = () => {
 
   /**
    * Generate a random latin name
-   * @param {number} n Number of words in the name
+   * @param {number} numWords Number of words in the name
    * @param {string} join The character(s) used to join each word
    */
-  const getRandomName = (n, join = '_') =>
-    getNumberArray(n)
+  const getRandomName = (numWords, join = '_') =>
+    getNumberArray(numWords)
       .map(() => getRandom(LOREM_IPSUM))
       .join(join);
 
@@ -104,18 +104,18 @@ const randomUtils = () => {
    * Randomly select a certain number (n) of items from an array (arr).
    * via https://stackoverflow.com/a/19270021/1651713
    * @param {array} arr List from which to choose
-   * @param {number} n Number of items to select
+   * @param {number} numItems Number of items to select
    */
-  const getRandomSelection = (arr, n) => {
-    const result = new Array(n);
+  const getRandomSelection = (arr, numItems) => {
+    const result = new Array(numItems);
     let len = arr.length;
     const taken = new Array(len);
-    if (n > len) {
+    if (numItems > len) {
       return arr;
     }
-    while (n--) {
-      var x = Math.floor(random() * len);
-      result[n] = arr[x in taken ? taken[x] : x];
+    while (numItems--) {
+      const x = Math.floor(random() * len);
+      result[numItems] = arr[x in taken ? taken[x] : x];
       taken[x] = --len in taken ? taken[len] : len;
     }
     return result;

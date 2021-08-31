@@ -3,7 +3,7 @@ import PlotlyModal from './index';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
 import { setup } from '../../utils/state.mock';
 import { togglePlotModal } from '../../actions';
-import node_plot from '../../utils/data/node_plot.mock.json';
+import nodePlot from '../../utils/data/node_plot.mock.json';
 
 const bullPlotNodeID = 'c3p345ed';
 
@@ -13,7 +13,7 @@ describe('Plotly Modal', () => {
       beforeLayoutActions: [() => toggleNodeClicked(props.nodeId)],
       afterLayoutActions: [
         () => togglePlotModal(true),
-        () => addNodeMetadata({ id: bullPlotNodeID, data: node_plot }),
+        () => addNodeMetadata({ id: bullPlotNodeID, data: nodePlot }),
       ],
     });
   };

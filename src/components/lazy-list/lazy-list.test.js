@@ -152,12 +152,12 @@ const setupTest = ({
   window.innerHeight = viewportHeight;
 
   // Emulate RAF with immediate callback
-  window.requestAnimationFrame = (cb) => cb(0);
+  window.requestAnimationFrame = (callback) => callback(0);
 
   // Emulate IntersectionObserver with immediate callback
-  window.IntersectionObserver = function (cb) {
+  window.IntersectionObserver = function (callback) {
     return {
-      observe: () => cb(),
+      observe: () => callback(),
       disconnect: () => null,
     };
   };

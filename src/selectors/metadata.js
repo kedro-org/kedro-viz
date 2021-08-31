@@ -31,6 +31,8 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.parameters,
     (state) => state.node.plot,
     (state) => state.node.datasetType,
+    (state) => state.node.originalType,
+    (state) => state.node.transcodedTypes,
     (state) => state.node.runCommand,
   ],
   (
@@ -46,6 +48,8 @@ export const getClickedNodeMetaData = createSelector(
     nodeParameters,
     nodePlot,
     nodeDatasetTypes,
+    nodeOriginalTypes,
+    nodeTranscodedTypes,
     nodeRunCommand
   ) => {
     const node = nodes[nodeId];
@@ -64,6 +68,8 @@ export const getClickedNodeMetaData = createSelector(
       filepath: nodeFilepaths[node.id],
       plot: nodePlot[node.id],
       datasetType: nodeDatasetTypes[node.id],
+      originalType: nodeOriginalTypes[node.id],
+      transcodedTypes: nodeTranscodedTypes[node.id],
       inputs: nodeInputs[node.id],
       outputs: nodeOutputs[node.id],
     };

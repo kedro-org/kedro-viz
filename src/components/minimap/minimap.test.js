@@ -47,7 +47,7 @@ describe('MiniMap', () => {
   it('adds and removes global wheel event handler', () => {
     const windowEvents = {};
     window.addEventListener = jest.fn(
-      (event, cb) => (windowEvents[event] = cb)
+      (event, callback) => (windowEvents[event] = callback)
     );
     window.removeEventListener = jest.fn((event) => delete windowEvents[event]);
 
@@ -60,7 +60,7 @@ describe('MiniMap', () => {
   it('adds and removes global pointer event handler when supported', () => {
     const windowEvents = {};
     window.addEventListener = jest.fn(
-      (event, cb) => (windowEvents[event] = cb)
+      (event, callback) => (windowEvents[event] = callback)
     );
     window.removeEventListener = jest.fn((event) => delete windowEvents[event]);
     window.PointerEvent = {};
@@ -75,7 +75,7 @@ describe('MiniMap', () => {
   it('adds and removes global mouse event handler when pointer events not supported', () => {
     const windowEvents = {};
     window.addEventListener = jest.fn(
-      (event, cb) => (windowEvents[event] = cb)
+      (event, callback) => (windowEvents[event] = callback)
     );
     window.removeEventListener = jest.fn((event) => delete windowEvents[event]);
     window.PointerEvent = null;

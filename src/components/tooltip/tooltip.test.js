@@ -76,8 +76,8 @@ describe('Tooltip', () => {
 
 describe('insertZeroWidthSpace', () => {
   describe('special characters', () => {
-    const z = String.fromCharCode(0x200b);
-    const wrap = (text) => z + text + z;
+    const zero = String.fromCharCode(0x200b);
+    const wrap = (text) => zero + text + zero;
     const characters = '-_[]/:\\!@£$%^&*()'.split('');
     test.each(characters)('wraps %s with a zero-width space', (d) => {
       expect(insertZeroWidthSpace(d)).toBe(wrap(d));

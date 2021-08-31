@@ -22,13 +22,13 @@ describe('utils', () => {
     });
 
     it('returns an integer', () => {
-      const n = randomIndex(500);
-      expect(Math.round(n)).toEqual(n);
+      const num = randomIndex(500);
+      expect(Math.round(num)).toEqual(num);
     });
 
     it('returns a number less than the number passed', () => {
-      const n = 10;
-      expect(randomIndex(n)).toBeLessThan(n);
+      const num = 10;
+      expect(randomIndex(num)).toBeLessThan(num);
     });
   });
 
@@ -38,13 +38,13 @@ describe('utils', () => {
     });
 
     it('returns an integer', () => {
-      const n = randomNumber(500);
-      expect(Math.round(n)).toEqual(n);
+      const num = randomNumber(500);
+      expect(Math.round(num)).toEqual(num);
     });
 
     it('returns a number less or equal to the number passed', () => {
-      const n = 10;
-      expect(randomNumber(n)).toBeLessThan(n + 1);
+      const num = 10;
+      expect(randomNumber(num)).toBeLessThan(num + 1);
     });
 
     it('returns a number greater than zero', () => {
@@ -60,8 +60,8 @@ describe('utils', () => {
     });
 
     it('returns an integer', () => {
-      const n = randomNumberBetween(min, max);
-      expect(Math.round(n)).toEqual(n);
+      const num = randomNumberBetween(min, max);
+      expect(Math.round(num)).toEqual(num);
     });
 
     it('returns a number less or equal to the max number passed', () => {
