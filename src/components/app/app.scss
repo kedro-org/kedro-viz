@@ -7,10 +7,10 @@
   --color-default-alt: #{$color-dark};
   --color-text: #{$color-text-light};
   --color-text-alt: #{$color-text-light-alt};
-  --color-bg-1: #{$color-bg-light-1};
-  --color-bg-2: #{$color-bg-light-2};
+  --color-bg-1: #{$color-bg-dev-light-1};
+  --color-bg-2: #{$color-bg-light-4};
   --color-bg-3: #{$color-bg-light-3};
-  --color-bg-4: #{$color-bg-light-4};
+  --color-bg-4: #{$color-bg-dev-light-1};
   --color-bg-alt: #{$color-bg-light-alt};
   --color-sidebar-background: #{$color-bg-light-3};
   --color-sidebar-border: rgba(0, 0, 0, 0.05);
@@ -24,10 +24,10 @@
   --color-text-alt: #{$color-text-dark-alt};
   --color-bg-1: #{$color-bg-dark-1};
   --color-bg-2: #{$color-bg-dark-2};
-  --color-bg-3: #{$color-bg-dark-3};
+  --color-bg-3: #{$color-bg-dark-2};
   --color-bg-4: #{$color-bg-dark-4};
-  --color-bg-5: #{$color-bg-dark-5};
-  --color-bg-6: #{$color-bg-dark-6};
+  --color-bg-5: #{$color-bg-dark-3};
+  --color-bg-6: #{$color-bg-dark-5};
   --color-bg-alt: #{$color-light};
   --color-sidebar-background: #{$color-bg-dark-2};
   --color-sidebar-border: rgba(0, 0, 0, 0.2);

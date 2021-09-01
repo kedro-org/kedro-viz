@@ -3,17 +3,17 @@
 
 .kui-theme--light {
   --color-metadata-bg: #{$color-bg-light-3};
-  --color-metadata-kind-token-bg: #{$color-bg-light-2};
-  --color-plot-bg: #{$color-bg-light-5};
+  --color-metadata-kind-token-bg: #{$color-bg-light-4};
+  --color-plot-bg: #{$color-bg-light-4};
   --color-button-plot: #{$color-button};
   --color-button-plot-hovered: #{$color-button-hovered};
   --color-button-text: #{$color-light};
 }
 
 .kui-theme--dark {
-  --color-metadata-bg: #{$color-bg-dark-5};
-  --color-metadata-kind-token-bg: #{$color-bg-dark-6};
-  --color-plot-bg: #{$color-bg-dark-7};
+  --color-metadata-bg: #{$color-bg-dark-3};
+  --color-metadata-kind-token-bg: #{$color-bg-dark-5};
+  --color-plot-bg: #{$color-bg-dark-2};
   --color-button-plot: #{$color-button};
   --color-button-plot-hovered: #{$color-button-hovered};
   --color-button-text: #{$color-light};

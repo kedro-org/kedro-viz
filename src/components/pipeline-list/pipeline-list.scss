@@ -3,7 +3,7 @@
 
 .kui-theme--light {
   --pipeline-list-shadow: rgba(black, 0.03);
-  --pipeline-list-label-bg: #{$color-bg-light-4};
+  --pipeline-list-label-bg: #{$color-bg-light-1};
   --pipeline-list-options-bg: #{$color-bg-light-3};
   --pipeline-list-option-border-width: 1px 0 0 2px;
   --pipeline-list-option-border-color: #{rgba(black, 0.06)};
@@ -12,7 +12,7 @@
 
 .kui-theme--dark {
   --pipeline-list-shadow: rgba(black, 0.1);
-  --pipeline-list-label-bg: #{$color-bg-dark-5};
+  --pipeline-list-label-bg: #{$color-bg-dark-3};
   --pipeline-list-options-bg: #{$color-bg-dark-1};
   --pipeline-list-option-border-width: 0 0 1px 2px;
   --pipeline-list-option-border-color: #{rgba(white, 0.06)};
