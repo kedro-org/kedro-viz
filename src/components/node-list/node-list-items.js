@@ -66,9 +66,9 @@ export const nodeMatchesSearch = (node, searchValue) => {
 export const filterNodeGroups = (nodeGroups, searchValue) => {
   const filteredGroups = {};
   for (const nodeGroupId of Object.keys(nodeGroups)) {
-    filteredGroups[nodeGroupId] = nodeGroups[nodeGroupId].filter((node) => {
-      return nodeMatchesSearch(node, searchValue);
-    });
+    filteredGroups[nodeGroupId] = nodeGroups[nodeGroupId].filter((node) =>
+      nodeMatchesSearch(node, searchValue)
+    );
   }
 
   return filteredGroups;
@@ -135,12 +135,11 @@ export const getFilteredTagItems = createSelector(
  */
 export const getFilteredModularPipelines = createSelector(
   [(state) => state.modularPipelines, (state) => state.searchValue],
-  (modularPipelines, searchValue) => {
-    return highlightMatch(
+  (modularPipelines, searchValue) =>
+    highlightMatch(
       filterNodeGroups({ modularPipeline: modularPipelines }, searchValue),
       searchValue
-    );
-  }
+    )
 );
 
 /**

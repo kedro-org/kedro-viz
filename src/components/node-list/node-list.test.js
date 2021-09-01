@@ -179,11 +179,7 @@ describe('NodeList', () => {
       const wrapper = setup.mount(<NodeList />, {
         beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
       });
-
-      console.log(elements(wrapper));
-
       changeRows(wrapper, ['Small'], true);
-
       expect(elementsEnabled(wrapper)).toEqual([
         ['Nested', true],
         ['Pipeline1', true],

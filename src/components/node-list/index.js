@@ -57,7 +57,6 @@ const NodeListProvider = ({
   onToggleModularPipelineFilter,
   onToggleFocusMode,
   modularPipelines,
-  prettyName,
   focusMode,
   inputOutputDataNodes,
 }) => {
@@ -70,7 +69,6 @@ const NodeListProvider = ({
     modularPipelines,
     nodeSelected,
     searchValue,
-    prettyName,
     focusMode,
     inputOutputDataNodes,
   });
@@ -212,7 +210,6 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   nodeTypes: getNodeTypes(state),
   modularPipelines: getModularPipelineData(state),
-  prettyName: state.prettyName,
   focusMode: getFocusedModularPipeline(state),
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
 });
