@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 def _pretty_name(name: str) -> str:
-    name = name.replace("-", " ").replace("_", " ")
+    name = name.replace("-", " ").replace("_", " ").replace(":",": ")
     parts = [n.capitalize() for n in name.split()]
     return " ".join(parts)
 
