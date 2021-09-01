@@ -37,10 +37,9 @@ describe('NodeList', () => {
     describe('searching through nodes', () => {
       const wrapper = setup.mount(<NodeList />);
       const searches = [
-        getNodeData(mockState.animals)[0].name,
+        getNodeData(mockState.animals)[0].label,
         'aaaaaaaaaaaaa',
       ];
-
       test.each(searches)(
         'filters the nodes and its relevant parent modular pipeline when entering the search text "%s"',
         (searchText) => {
@@ -54,11 +53,12 @@ describe('NodeList', () => {
           const nodesModularPipelines = getNodeModularPipelines(
             mockState.animals
           );
+
           const expectedResult = nodes.filter((node) =>
-            node.name.includes(searchText)
+            node.label.includes(searchText)
           );
           const expectedTagResult = tags.filter((tag) =>
-            tag.name.includes(searchText)
+            tag.label.includes(searchText)
           );
           const expectedElementTypeResult = Object.keys(
             sidebarElementTypes
@@ -102,10 +102,10 @@ describe('NodeList', () => {
       // Check that search input value and node list have been updated
       expect(search().props().value).toBe(searchText);
       const expectedResult = nodes.filter((node) =>
-        node.name.includes(searchText)
+        node.label.includes(searchText)
       );
       const expectedTagResult = tags.filter((tag) =>
-        tag.name.includes(searchText)
+        tag.label.includes(searchText)
       );
       const expectedElementTypeResult = elementTypes.filter((type) =>
         type.includes(searchText)
@@ -145,7 +145,6 @@ describe('NodeList', () => {
   describe('checkboxes on tag filter items', () => {
     const checkboxByName = (wrapper, text) =>
       wrapper.find(`.pipeline-nodelist__row__checkbox[name="${text}"]`);
-
     const rowByName = (wrapper, text) =>
       wrapper.find(`.pipeline-nodelist__row[title="${text}"]`);
 
@@ -181,7 +180,10 @@ describe('NodeList', () => {
         beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
       });
 
+      console.log(elements(wrapper));
+
       changeRows(wrapper, ['Small'], true);
+
       expect(elementsEnabled(wrapper)).toEqual([
         ['Nested', true],
         ['Pipeline1', true],

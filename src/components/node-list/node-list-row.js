@@ -104,7 +104,7 @@ const NodeListRow = memo(
             'pipeline-nodelist__row--unchecked': !checked,
           }
         )}
-        title={name}
+        title={label}
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
         {icon && (
@@ -132,7 +132,7 @@ const NodeListRow = memo(
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
-          title={children ? null : name}>
+          title={children ? null : label}>
           <span
             className={classnames(
               'pipeline-nodelist__row__label',
@@ -166,7 +166,7 @@ const NodeListRow = memo(
             type="checkbox"
             checked={checked}
             disabled={disabled}
-            name={name}
+            name={label}
             onChange={onChange}
           />
           <VisibilityIcon

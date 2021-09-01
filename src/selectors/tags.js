@@ -14,6 +14,7 @@ export const getTagData = createSelector(
   (tagIDs, tagName, tagActive, tagEnabled) =>
     tagIDs.sort().map((id) => ({
       id,
+      name: tagName[id],
       label: tagName[id],
       active: Boolean(tagActive[id]),
       enabled: Boolean(tagEnabled[id]),

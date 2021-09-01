@@ -8,7 +8,6 @@ import IndicatorPartialIcon from '../icons/indicator-partial';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import { arrayToObject } from '../../utils';
-
 const { escapeRegExp, getHighlightedText } = utils;
 
 export const isTagType = (type) => type === 'tag';
@@ -52,7 +51,7 @@ export const highlightMatch = (nodeGroups, searchValue) => {
  */
 export const nodeMatchesSearch = (node, searchValue) => {
   if (searchValue) {
-    return new RegExp(escapeRegExp(searchValue), 'gi').test(node.name);
+    return new RegExp(escapeRegExp(searchValue), 'gi').test(node.label);
   }
 
   return true;
@@ -66,11 +65,10 @@ export const nodeMatchesSearch = (node, searchValue) => {
  */
 export const filterNodeGroups = (nodeGroups, searchValue) => {
   const filteredGroups = {};
-
   for (const nodeGroupId of Object.keys(nodeGroups)) {
-    filteredGroups[nodeGroupId] = nodeGroups[nodeGroupId].filter((node) =>
-      nodeMatchesSearch(node, searchValue)
-    );
+    filteredGroups[nodeGroupId] = nodeGroups[nodeGroupId].filter((node) => {
+      return nodeMatchesSearch(node, searchValue);
+    });
   }
 
   return filteredGroups;
@@ -137,11 +135,12 @@ export const getFilteredTagItems = createSelector(
  */
 export const getFilteredModularPipelines = createSelector(
   [(state) => state.modularPipelines, (state) => state.searchValue],
-  (modularPipelines, searchValue) =>
-    highlightMatch(
+  (modularPipelines, searchValue) => {
+    return highlightMatch(
       filterNodeGroups({ modularPipeline: modularPipelines }, searchValue),
       searchValue
-    )
+    );
+  }
 );
 
 /**
@@ -486,7 +485,6 @@ export const getFilteredModularPipelineParent = createSelector(
         lastIndex = childrenModularPipeline.id.indexOf('.', lastIndex) + 1;
       }
     });
-
     return filteredModularPipelineParents;
   }
 );
