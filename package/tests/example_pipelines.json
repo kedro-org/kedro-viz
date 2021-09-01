@@ -23,7 +23,7 @@
     },
     {
       "id": "c506f374",
-      "name": "Params:train Test Split",
+      "name": "Params: Train Test Split",
       "full_name": "params:train_test_split",
       "tags": ["split"],
       "pipelines": ["__default__", "data_processing"],
