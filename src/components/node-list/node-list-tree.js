@@ -79,6 +79,7 @@ const TreeListProvider = ({
             nodeModularPipelines,
             nodeTypeIDs,
             focusMode,
+            inputOutputDataNodes,
           })
         : [];
 
@@ -98,6 +99,7 @@ const TreeListProvider = ({
     nodeModularPipelines,
     nodeTypeIDs,
     focusMode,
+    inputOutputDataNodes,
   ]);
 
   const treeData = getNestedModularPipelines({

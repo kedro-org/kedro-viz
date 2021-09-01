@@ -140,6 +140,66 @@ describe('NodeList', () => {
           nestedModularPipelines.nodes.length
       );
     });
+
+    it('search works alongside focus mode', () => {
+      const wrapper = setup.mount(
+        <NodeList focusMode={{ id: 'pipeline1' }} inputOutputDataNodes={{}} />
+      );
+      const searchWrapper = wrapper.find('.pipeline-nodelist-search');
+      // Re-find elements from root each time to see updates
+      const search = () => wrapper.find('.kui-input__field');
+      const nodeList = () =>
+        wrapper.find(
+          '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
+        );
+
+      const nodes = getNodeData(mockState.animals);
+      const tags = getTagData(mockState.animals);
+      const elementTypes = Object.keys(sidebarElementTypes);
+      const searchText = nodes[0].name;
+      // Enter search text
+      search().simulate('change', { target: { value: searchText } });
+      // Check that search input value and node list have been updated
+      expect(search().props().value).toBe(searchText);
+      const expectedResult = nodes.filter((node) =>
+        node.name.includes(searchText)
+      );
+      const expectedTagResult = tags.filter((tag) =>
+        tag.name.includes(searchText)
+      );
+      const expectedElementTypeResult = elementTypes.filter((type) =>
+        type.includes(searchText)
+      );
+      expect(nodeList().length).toBe(
+        expectedResult.length +
+          expectedTagResult.length +
+          expectedElementTypeResult.length
+      );
+      // Clear the list with escape key
+      searchWrapper.simulate('keydown', { keyCode: 27 });
+
+      // obtain the nested modular pipeline data to correspond to the node-list-tree layout
+      const nestedModularPipelines = getNestedModularPipelines({
+        nodes: getGroupedNodes(mockState.animals),
+        tags: getTagData(mockState.animals),
+        modularPipelines: getModularPipelineData(mockState.animals),
+        nodeSelected: {},
+        searchValue: '',
+        modularPipelineIds: getModularPipelineIDs(mockState.animals),
+        nodeModularPipelines: getNodeModularPipelines(mockState.animals),
+        nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+          mockState.animals
+        ),
+      });
+
+      // Check that search input value and node list have been reset
+      expect(search().props().value).toBe('');
+      expect(nodeList().length).toBe(
+        nestedModularPipelines.children.length +
+          nestedModularPipelines.nodes.length
+      );
+    });
   });
 
   describe('checkboxes on tag filter items', () => {
