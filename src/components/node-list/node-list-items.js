@@ -65,6 +65,7 @@ export const nodeMatchesSearch = (node, searchValue) => {
  */
 export const filterNodeGroups = (nodeGroups, searchValue) => {
   const filteredGroups = {};
+
   for (const nodeGroupId of Object.keys(nodeGroups)) {
     filteredGroups[nodeGroupId] = nodeGroups[nodeGroupId].filter((node) =>
       nodeMatchesSearch(node, searchValue)
@@ -484,6 +485,7 @@ export const getFilteredModularPipelineParent = createSelector(
         lastIndex = childrenModularPipeline.id.indexOf('.', lastIndex) + 1;
       }
     });
+
     return filteredModularPipelineParents;
   }
 );

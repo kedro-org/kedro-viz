@@ -40,6 +40,7 @@ describe('NodeList', () => {
         getNodeData(mockState.animals)[0].name,
         'aaaaaaaaaaaaa',
       ];
+
       test.each(searches)(
         'filters the nodes and its relevant parent modular pipeline when entering the search text "%s"',
         (searchText) => {
@@ -53,7 +54,6 @@ describe('NodeList', () => {
           const nodesModularPipelines = getNodeModularPipelines(
             mockState.animals
           );
-
           const expectedResult = nodes.filter((node) =>
             node.name.includes(searchText)
           );
@@ -145,6 +145,7 @@ describe('NodeList', () => {
   describe('checkboxes on tag filter items', () => {
     const checkboxByName = (wrapper, text) =>
       wrapper.find(`.pipeline-nodelist__row__checkbox[name="${text}"]`);
+
     const rowByName = (wrapper, text) =>
       wrapper.find(`.pipeline-nodelist__row[title="${text}"]`);
 
@@ -179,6 +180,7 @@ describe('NodeList', () => {
       const wrapper = setup.mount(<NodeList />, {
         beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
       });
+
       changeRows(wrapper, ['Small'], true);
       expect(elementsEnabled(wrapper)).toEqual([
         ['Nested', true],

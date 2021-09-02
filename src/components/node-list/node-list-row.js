@@ -44,6 +44,7 @@ const NodeListRow = memo(
     faded,
     visible,
     id,
+    label,
     count,
     name,
     kind,
@@ -141,7 +142,7 @@ const NodeListRow = memo(
                 'pipeline-nodelist__row__label--disabled': isDisabledLabel,
               }
             )}
-            dangerouslySetInnerHTML={{ __html: name }}
+            dangerouslySetInnerHTML={{ __html: label }}
           />
         </TextButton>
         {typeof count === 'number' && (
