@@ -36,7 +36,7 @@ export const highlightMatch = (nodeGroups, searchValue) => {
   for (const type of Object.keys(nodeGroups)) {
     highlightedGroups[type] = nodeGroups[type].map((node) => ({
       ...node,
-      highlightedLabel: getHighlightedText(node.label, searchValue),
+      highlightedLabel: getHighlightedText(node.name, searchValue),
     }));
   }
 
@@ -51,7 +51,7 @@ export const highlightMatch = (nodeGroups, searchValue) => {
  */
 export const nodeMatchesSearch = (node, searchValue) => {
   if (searchValue) {
-    return new RegExp(escapeRegExp(searchValue), 'gi').test(node.label);
+    return new RegExp(escapeRegExp(searchValue), 'gi').test(node.name);
   }
 
   return true;
@@ -182,7 +182,7 @@ export const getFilteredElementTypes = createSelector(
           elementType: Object.entries(sidebarElementTypes).map(
             ([type, name]) => ({
               id: type,
-              label: name,
+              name,
             })
           ),
         },
@@ -310,7 +310,7 @@ export const getGroups = createSelector([(state) => state.items], (items) => {
 
     groups[type] = {
       type,
-      label: name,
+      name,
       id: type,
       kind: 'filter',
       allUnchecked: itemsOfType.every((item) => !item.checked),

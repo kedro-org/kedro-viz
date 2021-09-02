@@ -69,7 +69,7 @@ describe('node-list-selectors', () => {
     const elementType = expect.arrayContaining([
       expect.objectContaining({
         id: expect.any(String),
-        label: expect.any(String),
+        name: expect.any(String),
       }),
     ]);
 
@@ -94,7 +94,7 @@ describe('node-list-selectors', () => {
     const elementTypeItems = expect.arrayContaining([
       expect.objectContaining({
         id: expect.any(String),
-        label: expect.any(String),
+        name: expect.any(String),
         highlightedLabel: expect.any(String),
         type: expect.any(String),
         visibleIcon: expect.any(Function),
@@ -113,7 +113,7 @@ describe('node-list-selectors', () => {
       expect(filteredElementTypeItems.length).not.toBe(nodeTypes.length);
       expect(filteredElementTypeItems).toHaveLength(1);
 
-      expect(filteredElementTypeItems[0].label).toEqual('Parameters');
+      expect(filteredElementTypeItems[0].name).toEqual('Parameters');
       expect(filteredElementTypeItems[0].id).toEqual('parameters');
     });
 
@@ -123,7 +123,7 @@ describe('node-list-selectors', () => {
 
     it('returns filtered items that contain the search value', () => {
       filteredElementTypeItems.forEach((elementTypeItem) => {
-        expect(elementTypeItem.label).toContain(searchValue);
+        expect(elementTypeItem.name).toContain(searchValue);
         expect(elementTypeItem.id).toContain(searchValue);
       });
     });
@@ -143,7 +143,7 @@ describe('node-list-selectors', () => {
       expect(filteredTags).toHaveLength(2);
     });
 
-    test.each(filteredTags.map((tag) => tag.label))(
+    test.each(filteredTags.map((tag) => tag.name))(
       `tag name "%s" contains search term "${searchValue}"`,
       (name) => {
         expect(name).toEqual(expect.stringMatching(searchValue));
@@ -170,7 +170,7 @@ describe('node-list-selectors', () => {
     const tagItems = expect.arrayContaining([
       expect.objectContaining({
         id: expect.any(String),
-        label: expect.any(String),
+        name: expect.any(String),
         highlightedLabel: expect.any(String),
         type: expect.any(String),
         visibleIcon: expect.any(Function),
@@ -189,9 +189,9 @@ describe('node-list-selectors', () => {
       expect(filteredTagItems.length).not.toBe(tags.length);
       expect(filteredTagItems).toHaveLength(2);
 
-      expect(filteredTagItems[0].label).toEqual('Medium');
+      expect(filteredTagItems[0].name).toEqual('Medium');
       expect(filteredTagItems[0].id).toEqual('medium');
-      expect(filteredTagItems[1].label).toEqual('Small');
+      expect(filteredTagItems[1].name).toEqual('Small');
       expect(filteredTagItems[1].id).toEqual('small');
     });
 
@@ -201,7 +201,7 @@ describe('node-list-selectors', () => {
 
     it('returns the filtered items that contains the search value', () => {
       filteredTagItems.forEach((tagItem) => {
-        expect(tagItem.label).toContain(searchValue);
+        expect(tagItem.name).toContain(searchValue);
         expect(tagItem.id).toContain(searchValue);
       });
     });
@@ -231,7 +231,7 @@ describe('node-list-selectors', () => {
     const items = expect.arrayContaining([
       expect.objectContaining({
         id: expect.any(String),
-        label: expect.any(String),
+        name: expect.any(String),
         highlightedLabel: expect.any(String),
         type: expect.any(String),
         visibleIcon: expect.any(Function),
@@ -289,7 +289,7 @@ describe('node-list-selectors', () => {
 
     const groupType = expect.objectContaining({
       id: expect.any(String),
-      label: expect.any(String),
+      name: expect.any(String),
       type: expect.any(String),
       visibleIcon: expect.any(Function),
       invisibleIcon: expect.any(Function),
@@ -363,7 +363,7 @@ describe('node-list-selectors', () => {
   });
 
   describe('nodeMatchesSearch', () => {
-    const node = { label: 'qwertyuiop' };
+    const node = { name: 'qwertyuiop' };
 
     it('returns true if the node name matches the search', () => {
       expect(nodeMatchesSearch(node, 'qwertyuiop')).toBe(true);
@@ -424,12 +424,12 @@ describe('node-list-selectors', () => {
     );
     const modularPipelineList = filteredModularPipelines.modularPipeline;
     const notMatchingModularPipelineList = modularPipelines.filter(
-      (modularPipeline) => !modularPipeline.label.includes(searchValue)
+      (modularPipeline) => !modularPipeline.name.includes(searchValue)
     );
 
     describe('nodes which match the search term', () => {
       test.each(
-        modularPipelineList.map((modularPipeline) => modularPipeline.label)
+        modularPipelineList.map((modularPipeline) => modularPipeline.name)
       )(
         `modular pipeline name "%s" should contain search term "${searchValue}"`,
         (name) => {

@@ -133,7 +133,6 @@ describe('getNodeData', () => {
         expect.objectContaining({
           id: expect.any(String),
           name: expect.any(String),
-          label: expect.any(String),
           type: expect.stringMatching(/data|task/),
           disabled: expect.any(Boolean),
           disabledNode: expect.any(Boolean),
@@ -354,7 +353,6 @@ describe('getVisibleNodes', () => {
             id: expect.any(String),
             name: expect.any(String),
             fullName: expect.any(String),
-            label: expect.any(String),
             type: expect.any(String),
             width: expect.any(Number),
             height: expect.any(Number),

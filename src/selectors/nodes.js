@@ -105,7 +105,6 @@ export const getNodeLabel = createSelector(
 export const getNodeData = createSelector(
   [
     getPipelineNodeIDs,
-    getNodeName,
     getNodeLabel,
     getNodeType,
     getNodeDatasetType,
@@ -118,7 +117,6 @@ export const getNodeData = createSelector(
   ],
   (
     nodeIDs,
-    nodeName,
     nodeLabel,
     nodeType,
     nodeDatasetType,
@@ -131,18 +129,17 @@ export const getNodeData = createSelector(
   ) =>
     nodeIDs
       .sort((a, b) => {
-        if (nodeName[a] < nodeName[b]) {
+        if (nodeLabel[a] < nodeLabel[b]) {
           return -1;
         }
-        if (nodeName[a] > nodeName[b]) {
+        if (nodeLabel[a] > nodeLabel[b]) {
           return 1;
         }
         return 0;
       })
       .map((id) => ({
         id,
-        name: nodeName[id],
-        label: nodeLabel[id],
+        name: nodeLabel[id],
         type: nodeType[id],
         icon: getShortType([nodeDatasetType[id]], nodeType[id]),
         modularPipelines: nodeModularPipelines[id],
@@ -255,7 +252,6 @@ export const getNodeSize = createSelector(
 export const getVisibleNodes = createSelector(
   [
     getVisibleNodeIDs,
-    getNodeName,
     getNodeLabel,
     getNodeType,
     getNodeDatasetType,
@@ -267,7 +263,6 @@ export const getVisibleNodes = createSelector(
   ],
   (
     nodeIDs,
-    nodeName,
     nodeLabel,
     nodeType,
     nodeDatasetType,
@@ -280,8 +275,7 @@ export const getVisibleNodes = createSelector(
     fontLoaded
       ? nodeIDs.map((id) => ({
           id,
-          name: nodeName[id],
-          label: nodeLabel[id],
+          name: nodeLabel[id],
           fullName: nodeFullName[id],
           icon: getShortType([nodeDatasetType[id]], nodeType[id]),
           type: nodeType[id],

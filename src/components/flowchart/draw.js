@@ -191,7 +191,7 @@ export const drawNodes = function (changed) {
     enterNodes
       .append('text')
       .attr('class', 'pipeline-node__text')
-      .text((node) => node.label)
+      .text((node) => node.name)
       .attr('text-anchor', 'middle')
       .attr('dy', 5)
       .attr('dx', (node) => node.textOffset);
@@ -291,7 +291,7 @@ export const drawNodes = function (changed) {
     // Performance: text transitions with CSS on GPU
     allNodes
       .select('.pipeline-node__text')
-      .text((node) => node.label)
+      .text((node) => node.name)
       .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
       .style('opacity', (node) => (node.showText ? 1 : 0));
   }

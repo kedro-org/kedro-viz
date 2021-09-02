@@ -37,7 +37,7 @@ describe('NodeList', () => {
     describe('searching through nodes', () => {
       const wrapper = setup.mount(<NodeList />);
       const searches = [
-        getNodeData(mockState.animals)[0].label,
+        getNodeData(mockState.animals)[0].name,
         'aaaaaaaaaaaaa',
       ];
       test.each(searches)(
@@ -55,10 +55,10 @@ describe('NodeList', () => {
           );
 
           const expectedResult = nodes.filter((node) =>
-            node.label.includes(searchText)
+            node.name.includes(searchText)
           );
           const expectedTagResult = tags.filter((tag) =>
-            tag.label.includes(searchText)
+            tag.name.includes(searchText)
           );
           const expectedElementTypeResult = Object.keys(
             sidebarElementTypes
@@ -102,10 +102,10 @@ describe('NodeList', () => {
       // Check that search input value and node list have been updated
       expect(search().props().value).toBe(searchText);
       const expectedResult = nodes.filter((node) =>
-        node.label.includes(searchText)
+        node.name.includes(searchText)
       );
       const expectedTagResult = tags.filter((tag) =>
-        tag.label.includes(searchText)
+        tag.name.includes(searchText)
       );
       const expectedElementTypeResult = elementTypes.filter((type) =>
         type.includes(searchText)

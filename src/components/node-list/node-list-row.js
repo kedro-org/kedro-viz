@@ -44,7 +44,6 @@ const NodeListRow = memo(
     faded,
     visible,
     id,
-    label,
     count,
     name,
     kind,
@@ -104,7 +103,7 @@ const NodeListRow = memo(
             'pipeline-nodelist__row--unchecked': !checked,
           }
         )}
-        title={label}
+        title={name}
         onMouseEnter={visible ? onMouseEnter : null}
         onMouseLeave={visible ? onMouseLeave : null}>
         {icon && (
@@ -132,7 +131,7 @@ const NodeListRow = memo(
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
-          title={children ? null : label}>
+          title={children ? null : name}>
           <span
             className={classnames(
               'pipeline-nodelist__row__label',
@@ -142,7 +141,7 @@ const NodeListRow = memo(
                 'pipeline-nodelist__row__label--disabled': isDisabledLabel,
               }
             )}
-            dangerouslySetInnerHTML={{ __html: label }}
+            dangerouslySetInnerHTML={{ __html: name }}
           />
         </TextButton>
         {typeof count === 'number' && (
@@ -166,7 +165,7 @@ const NodeListRow = memo(
             type="checkbox"
             checked={checked}
             disabled={disabled}
-            name={label}
+            name={name}
             onChange={onChange}
           />
           <VisibilityIcon

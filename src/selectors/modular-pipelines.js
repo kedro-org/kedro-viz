@@ -29,7 +29,7 @@ export const getModularPipelineData = createSelector(
       .sort()
       .map((id) => ({
         id,
-        label: prettyName ? modularPipelineName[id] : id,
+        name: prettyName ? modularPipelineName[id] : id,
         enabled: Boolean(modularPipelineEnabled[id]),
       }));
   }
