@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Dropdown from '@quantumblack/kedro-ui/lib/components/dropdown';
 import MenuOption from '@quantumblack/kedro-ui/lib/components/menu-option';
 import { loadPipelineData } from '../../actions/pipelines';
+import { toggleFocusMode } from '../../actions';
 import './pipeline-list.css';
 
 /**
@@ -57,6 +58,7 @@ export const mapStateToProps = (state) => ({
 export const mapDispatchToProps = (dispatch) => ({
   onUpdateActivePipeline: (event) => {
     dispatch(loadPipelineData(event.value));
+    dispatch(toggleFocusMode(null));
   },
 });
 
