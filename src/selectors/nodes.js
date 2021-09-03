@@ -284,15 +284,8 @@ export const getVisibleNodes = createSelector(
  */
 
 export const getNodesWithInputParams = createSelector(
-  [
-    getGraphNodes,
-    getNodeName,
-    getEdgeIDs,
-    getNodeType,
-    getEdgeSources,
-    getEdgeTargets,
-  ],
-  (nodes, nodeName, edgeIDs, nodeType, edgeSources, edgeTargets) => {
+  [getNodeName, getEdgeIDs, getNodeType, getEdgeSources, getEdgeTargets],
+  (nodeName, edgeIDs, nodeType, edgeSources, edgeTargets) => {
     const nodesList = {};
     for (const edgeID of edgeIDs) {
       const source = edgeSources[edgeID];

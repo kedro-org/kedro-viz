@@ -102,6 +102,7 @@ const updateNodeRects = (nodeRects) =>
     .attr('x', (node) => (node.width - 5) / -2)
     .attr('y', (node) => (node.height - 5) / -2)
     .attr('rx', (node) => {
+      // Task and Pipeline nodes are rectangle so radius on x-axis is 0
       if (node.type === 'task' || node.type === 'pipeline') {
         return 0;
       }

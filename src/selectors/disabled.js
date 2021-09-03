@@ -137,20 +137,6 @@ export const getNodeDisabledModularPipeline = createSelector(
 );
 
 /**
- * Calculate whether nodes should be disabled based on whether a modular pipeline
- * they're in is contracted
- */
-export const getNodeDisabledModularPipelineContracted = createSelector(
-  [getNodeIDs, getNodeModularPipelines, getModularPipelineContracted],
-  (nodeIDs, nodeModularPipelines, modularPipelineContracted) =>
-    arrayToObject(nodeIDs, (nodeID) =>
-      nodeModularPipelines[nodeID].some(
-        (modPipID) => modularPipelineContracted[modPipID]
-      )
-    )
-);
-
-/**
  * Set disabled status if the node is specifically hidden, and/or via a tag/view/type/modularPipeline
  */
 export const getNodeDisabled = createSelector(
