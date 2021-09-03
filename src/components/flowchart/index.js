@@ -422,6 +422,9 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = (event, node) => {
+    if (node.type === 'pipeline') {
+      return;
+    }
     this.props.onLoadNodeData(node.id);
     event.stopPropagation();
   };
