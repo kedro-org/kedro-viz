@@ -1,6 +1,10 @@
 import { createSelector } from 'reselect';
-import { getModularPipelineChildren, getFocusedModularPipeline } from './modular-pipelines';
-import { getVisibleNodeIDs, getVisibleModularPipelineIDs } from './disabled';
+import {
+  getModularPipelineChildren,
+  getModularPipelineIDs,
+  getFocusedModularPipeline,
+} from './modular-pipelines';
+import { getVisibleNodeIDs } from './disabled';
 import { getCombinedEdges } from './edges';
 import { arrayToObject } from '../utils';
 
@@ -21,7 +25,7 @@ const getNodeLayer = (state) => state.node.layer;
  */
 export const getContractedModularPipelines = createSelector(
   [
-    getVisibleModularPipelineIDs,
+    getModularPipelineIDs,
     getModularPipelineChildren,
     getModularPipelineContracted,
     getModularPipelineName,
@@ -248,7 +252,7 @@ export const getContractedModularPipelines = createSelector(
     for (const modPipID of contractedModularPipelines) {
       // Collapse edges that link from a modular pipeline to itself:
       collapseEdges(modPipID);
-      
+
       // Replace single nodes that belong to a modular pipeline:
       replaceModularPipelineNodes(modPipID);
     }
@@ -294,7 +298,7 @@ export const getVisibleLayerIDs = createSelector(
  * Obtain all the edges that belongs to input and output data
  * nodes when under focus mode.
  */
- export const getInputOutputDataEdges = createSelector(
+export const getInputOutputDataEdges = createSelector(
   [getVisibleEdges, getNodeModularPipelines, getFocusedModularPipeline],
   (visibleEdges, nodeModularPipelines, focusedModularPipeline) => {
     const edgesList = {};
