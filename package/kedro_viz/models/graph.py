@@ -33,11 +33,16 @@ import inspect
 import json
 import logging
 import re
+import os
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
+from datetime import datetime
+import pandas as pd
+import plotly.express as px
+import plotly.io as pio 
 
 from kedro.io import AbstractDataSet
 from kedro.io.core import get_filepath_str
@@ -413,6 +418,12 @@ class DataNode(GraphNode):
             self.dataset_type
             == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
         )
+    
+    def is_metric_node(self):
+        return (
+            self.dataset_type
+            == "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
+        )
 
 
 @dataclass
@@ -473,6 +484,8 @@ class DataNodeMetadata(GraphNodeMetadata):
     # currently only applicable for PlotlyDataSet
     plot: Optional[Dict] = field(init=False)
 
+    metrics: Optional[Dict] = field(init=False)
+
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
 
@@ -480,9 +493,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
-
         self.filepath = _parse_filepath(dataset_description)
-
         # Parse plot data
         if data_node.is_plot_node():
             from kedro.extras.datasets.plotly.plotly_dataset import (  # pylint: disable=import-outside-toplevel
@@ -496,6 +507,46 @@ class DataNodeMetadata(GraphNodeMetadata):
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
+
+        if data_node.is_metric_node():
+            if not dataset._exists():
+                return
+            
+            #loads the latest json file and assigns it to metrics
+            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
+            with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
+                self.metrics = json.load(fs_file)
+
+
+            df = pd.DataFrame()
+            # gets all the timestamp folders in the metrics.json folder
+            subfolders = [x for x in Path(self.filepath).iterdir() if x.is_dir()]
+            for folder in subfolders:
+                #creates a dictionary with time = folder_name
+                dict = {"time":datetime.strptime(folder.name,"%Y-%m-%dT%H.%M.%S.%fZ")}
+                path = folder / Path(self.filepath).name
+                #opens json file in each timestamped folder and adds it to the dict
+                with open(path) as fs_file:
+                    dict.update(json.load(fs_file))
+                #creates a dataframe out of dict which includes timestamp and contents of the json
+                df = df.append(dict, ignore_index=True)
+            #unpivots the data to make it plot ready
+            df = pd.melt(df,id_vars=['time'])
+            #sorts the dataframe by date so that it displays the timeseries correctly
+            df = df.sort_values(by='time')
+            #creates a plotly figure -> converts it to json and then loads that json 
+            plot = json.loads(pio.to_json(px.line(df, x="time", y='value', color='variable')))
+            self.plot = plot
+            
+                
+                    
+                   
+
+            
+                
+                           
+
+            
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
