@@ -135,7 +135,6 @@ commands:
           command: make legal
 
   deploy_to_s3:
-    executor: circleci_machine
     steps:
       - checkout
       - restore_cache:
@@ -280,6 +279,10 @@ jobs:
     executor: circleci_machine
     steps: [deploy_gh_pages]
 
+  deploy_s3:
+    executor: circleci_machine
+    steps: [deploy_to_s3]
+
   # Windows-related jobs
   win_build_36:
     executor: win/default
@@ -361,6 +364,7 @@ workflows:
       # - win_build_36
       # - win_build_37
       - win_build_38
+      - deploy_s3
       - deploy_demo:
           requires:
             # - build_36
