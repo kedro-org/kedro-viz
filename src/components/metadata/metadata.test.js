@@ -1,5 +1,6 @@
 import React from 'react';
 import MetaData from './index';
+import { togglePrettyName } from '../../actions';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
 import { setup } from '../../utils/state.mock';
@@ -66,6 +67,40 @@ describe('MetaData', () => {
       // Should show all 20 values
       expect(parametersRow().find('.pipeline-metadata__value').length).toBe(20);
     });
+
+    it('when pretty name is turned off the metadata title displays the full node name', () => {
+      const props = {
+        nodeId: salmonTaskNodeId,
+        mockMetadata: nodeTask,
+      };
+      const wrapper = setup.mount(<MetaData visible={true} />, {
+        beforeLayoutActions: [() => togglePrettyName(false)],
+        afterLayoutActions: [
+          // Click the expected node
+          () => toggleNodeClicked(props.nodeId),
+          //simulating loadNodeData in node.js
+          () => addNodeMetadata({ id: props.nodeId, data: props.mockMetadata }),
+        ],
+      });
+      expect(textOf(title(wrapper))).toEqual(['salmon']);
+    });
+
+    it('when pretty name is turned on the metadata title display the formatted name', () => {
+      const props = {
+        nodeId: salmonTaskNodeId,
+        mockMetadata: nodeTask,
+      };
+      const wrapper = setup.mount(<MetaData visible={true} />, {
+        beforeLayoutActions: [() => togglePrettyName(true)],
+        afterLayoutActions: [
+          // Click the expected node
+          () => toggleNodeClicked(props.nodeId),
+          //simulating loadNodeData in node.js
+          () => addNodeMetadata({ id: props.nodeId, data: props.mockMetadata }),
+        ],
+      });
+      expect(textOf(title(wrapper))).toEqual(['Salmon']);
+    });
   });
 
   describe('Task nodes', () => {
@@ -92,7 +127,7 @@ describe('MetaData', () => {
         nodeId: salmonTaskNodeId,
         mockMetadata: nodeTask,
       });
-      expect(textOf(title(wrapper))).toEqual(['salmon']);
+      expect(textOf(title(wrapper))).toEqual(['Salmon']);
     });
 
     it('shows the node type as text', () => {

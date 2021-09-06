@@ -63,6 +63,7 @@ describe('PipelineList', () => {
         name: expect.any(Object),
         ids: expect.any(Array),
       },
+      prettyName: expect.any(Boolean),
       theme: mockState.animals.theme,
     });
   });

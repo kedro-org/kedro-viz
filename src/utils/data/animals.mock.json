@@ -63,7 +63,7 @@
       "full_name": "salmon",
       "id": "443cf06a",
       "modular_pipelines": [],
-      "name": "salmon",
+      "name": "Salmon",
       "pipelines": ["de", "__default__"],
       "tags": ["small"],
       "type": "task",

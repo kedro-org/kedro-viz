@@ -37,7 +37,7 @@ export const flags = {
 export const settings = {
   prettyName: {
     name: 'Pretty Name',
-    description: 'Prettify the kedro node name',
+    description: 'Display a formatted name for the kedro nodes',
     default: true,
   },
 };
