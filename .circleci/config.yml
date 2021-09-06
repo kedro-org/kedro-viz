@@ -153,7 +153,7 @@ commands:
           command: pip3 install awscli
       - run:
           name: Publish to S3
-          command: aws s3 cp --recursive build s3://kedro-viz-fe/${CI_BRANCH}
+          command: aws s3 cp --recursive build s3://kedro-viz-fe/${CIRCLE_BRANCH}
 
   deploy_gh_pages:
     steps:
