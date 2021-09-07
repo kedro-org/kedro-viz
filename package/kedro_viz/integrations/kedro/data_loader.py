@@ -122,10 +122,10 @@ def load_all_versions(filepath: str) -> Dict[str, any]:
     version_list = [x for x in Path(filepath).iterdir() if x.is_dir()]
     versions = {}
     for v in version_list:
-        version = datetime.strptime(v.name,VERSION_FORMAT)
+        timestamp = datetime.strptime(v.name,VERSION_FORMAT)
         path = v / Path(filepath).name
         with open(path) as fs_file:
-            versions.update({version: json.load(fs_file)})
+            versions.update({timestamp: json.load(fs_file)})
     return versions
 
 
