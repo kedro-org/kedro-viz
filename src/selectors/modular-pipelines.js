@@ -60,24 +60,6 @@ export const getModularPipelineParents = createSelector(
 );
 
 /**
- * Set disabled status if the node is specifically hidden,
- * and/or via a tag/view/type/modularPipeline
- */
-export const getModularPipelineParentsContracted = createSelector(
-  [
-    getModularPipelineIDs,
-    getModularPipelineParents,
-    getModularPipelineContracted,
-  ],
-  (modularPipelineIDs, modularPipelineParents, modularPipelineContracted) =>
-    arrayToObject(modularPipelineIDs, (modPipID) =>
-      modularPipelineParents[modPipID].some(
-        (id) => modularPipelineContracted[id]
-      )
-    )
-);
-
-/**
  * Retrieve the formatted list of modular pipeline filters
  */
 export const getModularPipelineData = createSelector(
@@ -86,14 +68,12 @@ export const getModularPipelineData = createSelector(
     getModularPipelineName,
     getModularPipelineEnabled,
     getModularPipelineContracted,
-    getModularPipelineParentsContracted,
   ],
   (
     modularPipelineIDs,
     modularPipelineName,
     modularPipelineEnabled,
-    modularPipelineContracted,
-    modularPipelineParentsContracted
+    modularPipelineContracted
   ) =>
     modularPipelineIDs
       .slice()
@@ -101,10 +81,7 @@ export const getModularPipelineData = createSelector(
       .map((id) => ({
         id,
         name: modularPipelineName[id],
-        contracted: Boolean(
-          modularPipelineParentsContracted[id] || modularPipelineContracted[id]
-        ),
-        disabled: Boolean(modularPipelineParentsContracted[id]),
+        contracted: Boolean(modularPipelineContracted[id]),
         enabled: Boolean(modularPipelineEnabled[id]),
       }))
 );
