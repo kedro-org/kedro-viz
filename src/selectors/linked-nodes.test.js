@@ -5,7 +5,7 @@ import reducer from '../reducers';
 
 describe('getLinkedNodes function', () => {
   const { nodes } = mockState.animals.graph;
-  const nodeID = nodes.find((d) => d.name.includes('salmon')).id;
+  const nodeID = nodes.find((d) => d.name.includes('Salmon')).id;
   const newMockState = reducer(mockState.animals, toggleNodeClicked(nodeID));
   const linkedNodes = getLinkedNodes(newMockState);
 
