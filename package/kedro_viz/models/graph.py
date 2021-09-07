@@ -41,6 +41,7 @@ from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 from datetime import datetime
 import pandas as pd
+from pandas.core.frame import DataFrame
 import plotly.express as px
 import plotly.io as pio 
 
@@ -48,6 +49,7 @@ from kedro.io import AbstractDataSet
 from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 
 logger = logging.getLogger(__name__)
 
@@ -466,6 +468,11 @@ class TranscodedDataNode(GraphNode):
         )
 
 
+def create_metrics_plot(df: DataFrame) -> Dict[str, any]:
+            df = df.reset_index().rename(columns={'index': 'version'})
+            df = pd.melt(df, id_vars='version', var_name='metrics').sort_values(by='version')
+            return json.loads(pio.to_json(px.line(df, x="version", y='value', color='metrics')))
+
 @dataclass
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
@@ -512,41 +519,15 @@ class DataNodeMetadata(GraphNodeMetadata):
             if not dataset._exists():
                 return
             
-            #loads the latest json file and assigns it to metrics
+
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
-                self.metrics = json.load(fs_file)
-
-
-            df = pd.DataFrame()
-            # gets all the timestamp folders in the metrics.json folder
-            subfolders = [x for x in Path(self.filepath).iterdir() if x.is_dir()]
-            for folder in subfolders:
-                #creates a dictionary with time = folder_name
-                dict = {"time":datetime.strptime(folder.name,"%Y-%m-%dT%H.%M.%S.%fZ")}
-                path = folder / Path(self.filepath).name
-                #opens json file in each timestamped folder and adds it to the dict
-                with open(path) as fs_file:
-                    dict.update(json.load(fs_file))
-                #creates a dataframe out of dict which includes timestamp and contents of the json
-                df = df.append(dict, ignore_index=True)
-            #unpivots the data to make it plot ready
-            df = pd.melt(df,id_vars=['time'])
-            #sorts the dataframe by date so that it displays the timeseries correctly
-            df = df.sort_values(by='time')
-            #creates a plotly figure -> converts it to json and then loads that json 
-            plot = json.loads(pio.to_json(px.line(df, x="time", y='value', color='variable')))
-            self.plot = plot
-            
-                
-                    
-                   
-
-            
-                
-                           
-
-            
+                self.metrics = json.load(fs_file)    
+            self.plot = create_metrics_plot(
+                pd.DataFrame.from_dict(
+                kedro_data_loader.load_all_versions(self.filepath),
+                orient='index'))
+        
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:

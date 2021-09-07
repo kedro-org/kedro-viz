@@ -30,6 +30,7 @@ load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
 # pylint: disable=import-outside-toplevel
+import json
 from pathlib import Path
 from typing import Dict, Tuple, cast
 
@@ -37,8 +38,10 @@ from kedro import __version__
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
+from datetime import datetime
 
 KEDRO_VERSION = VersionInfo.parse(__version__)
+VERSION_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
 
 
 def _bootstrap(project_path: Path):
@@ -114,3 +117,17 @@ def load_data(
 
     context = load_context(project_path=project_path, env=env)
     return context.catalog, context.pipelines
+
+def load_all_versions(filepath: str) -> Dict[str, any]:
+    version_list = [x for x in Path(filepath).iterdir() if x.is_dir()]
+    versions = {}
+    for v in version_list:
+        version = datetime.strptime(v.name,VERSION_FORMAT)
+        path = v / Path(filepath).name
+        with open(path) as fs_file:
+            versions.update({version: json.load(fs_file)})
+    return versions
+
+
+
+       
