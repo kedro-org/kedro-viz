@@ -148,32 +148,29 @@ describe('NodeList', () => {
       wrapper
         .find('.MuiTreeItem-label')
         .find('.pipeline-nodelist__row')
-        .map((row) => [
-          row.prop('title'),
-          !row.hasClass('pipeline-nodelist__row--disabled'),
-        ]);
+        .map((row) => [row.prop('title')]);
 
     it('shows full node names when pretty name is turned off', () => {
       const wrapper = setup.mount(<NodeList />, {
         beforeLayoutActions: [() => togglePrettyName(false)],
       });
       expect(elements(wrapper)).toEqual([
-        ['nested', true],
-        ['pipeline1', true],
-        ['pipeline2', true],
-        ['salmon', true],
-        ['bear', true],
-        ['bull', true],
-        ['cat', true],
-        ['dog', true],
-        ['elephant', true],
-        ['giraffe', true],
-        ['horse', true],
-        ['pig', true],
-        ['sheep', true],
-        ['parameters', false],
-        ['params:pipeline100.data_science.plankton', false],
-        ['params:rabbit', false],
+        ['nested'],
+        ['pipeline1'],
+        ['pipeline2'],
+        ['salmon'],
+        ['bear'],
+        ['bull'],
+        ['cat'],
+        ['dog'],
+        ['elephant'],
+        ['giraffe'],
+        ['horse'],
+        ['pig'],
+        ['sheep'],
+        ['parameters'],
+        ['params:pipeline100.data_science.plankton'],
+        ['params:rabbit'],
       ]);
     });
     it('shows formatted node names when pretty name is turned on', () => {
@@ -181,22 +178,22 @@ describe('NodeList', () => {
         beforeLayoutActions: [() => togglePrettyName(true)],
       });
       expect(elements(wrapper)).toEqual([
-        ['Nested', true],
-        ['Pipeline1', true],
-        ['Pipeline2', true],
-        ['Salmon', true],
-        ['Bear', true],
-        ['Bull', true],
-        ['Cat', true],
-        ['Dog', true],
-        ['Elephant', true],
-        ['Giraffe', true],
-        ['Horse', true],
-        ['Pig', true],
-        ['Sheep', true],
-        ['Parameters', false],
-        ['Params:pipeline100.data Science.plankton', false],
-        ['Params:rabbit', false],
+        ['Nested'],
+        ['Pipeline1'],
+        ['Pipeline2'],
+        ['Salmon'],
+        ['Bear'],
+        ['Bull'],
+        ['Cat'],
+        ['Dog'],
+        ['Elephant'],
+        ['Giraffe'],
+        ['Horse'],
+        ['Pig'],
+        ['Sheep'],
+        ['Parameters'],
+        ['Params:pipeline100.data Science.plankton'],
+        ['Params:rabbit'],
       ]);
     });
   });
