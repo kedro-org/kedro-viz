@@ -14,6 +14,7 @@ const IconButton = ({
   disabled,
   icon,
   labelText,
+  dataHeapEvent,
   onClick,
   visible,
   active,
@@ -23,6 +24,7 @@ const IconButton = ({
   return visible ? (
     <Container>
       <button
+        data-heap-event={dataHeapEvent}
         aria-label={ariaLabel}
         aria-live={ariaLive}
         className={classnames(className, {
@@ -46,6 +48,7 @@ IconButton.propTypes = {
   disabled: PropTypes.bool,
   icon: PropTypes.func,
   labelText: PropTypes.string,
+  dataHeapEvent: PropTypes.string,
   onClick: PropTypes.func,
   visible: PropTypes.bool,
   active: PropTypes.bool,
@@ -57,6 +60,7 @@ IconButton.defaultProps = {
   disabled: false,
   icon: null,
   labelText: null,
+  dataHeapEvent: null,
   onClick: null,
   visible: true,
   active: false,

@@ -61,6 +61,9 @@ export const PrimaryToolbar = ({
         onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
         icon={ThemeIcon}
         labelText="Toggle theme"
+        dataHeapEvent={`toggle theme to ${
+          theme === 'light' ? 'dark' : 'light'
+        }`}
         visible={visible.themeBtn}
       />
       <IconButton
