@@ -16,6 +16,7 @@ const catDatasetNodeId = '9d989e8d';
 const rabbitParamsNodeId = 'c38d4c6a';
 const bullPlotNodeId = 'c3p345ed';
 const bearDatasetNodeId = '09f5edeb';
+const planktonParamsNodeID = '9d8a4d91';
 
 describe('MetaData', () => {
   const mount = (props) => {
@@ -70,11 +71,14 @@ describe('MetaData', () => {
 
     it('when pretty name is turned off the metadata title displays the full node name', () => {
       const props = {
-        nodeId: salmonTaskNodeId,
-        mockMetadata: nodeTask,
+        nodeId: planktonParamsNodeID,
+        mockMetadata: nodeParameters,
       };
       const wrapper = setup.mount(<MetaData visible={true} />, {
-        beforeLayoutActions: [() => togglePrettyName(false)],
+        beforeLayoutActions: [
+          () => togglePrettyName(false),
+          () => toggleTypeDisabled('parameters', false),
+        ],
         afterLayoutActions: [
           // Click the expected node
           () => toggleNodeClicked(props.nodeId),
@@ -82,16 +86,21 @@ describe('MetaData', () => {
           () => addNodeMetadata({ id: props.nodeId, data: props.mockMetadata }),
         ],
       });
-      expect(textOf(title(wrapper))).toEqual(['salmon']);
+      expect(textOf(title(wrapper))).toEqual([
+        'params:pipeline100.data_science.plankton',
+      ]);
     });
 
     it('when pretty name is turned on the metadata title display the formatted name', () => {
       const props = {
-        nodeId: salmonTaskNodeId,
-        mockMetadata: nodeTask,
+        nodeId: planktonParamsNodeID,
+        mockMetadata: nodeParameters,
       };
       const wrapper = setup.mount(<MetaData visible={true} />, {
-        beforeLayoutActions: [() => togglePrettyName(true)],
+        beforeLayoutActions: [
+          () => togglePrettyName(true),
+          () => toggleTypeDisabled('parameters', false),
+        ],
         afterLayoutActions: [
           // Click the expected node
           () => toggleNodeClicked(props.nodeId),
@@ -99,7 +108,7 @@ describe('MetaData', () => {
           () => addNodeMetadata({ id: props.nodeId, data: props.mockMetadata }),
         ],
       });
-      expect(textOf(title(wrapper))).toEqual(['Salmon']);
+      expect(textOf(title(wrapper))).toEqual(['Params: Plankton']);
     });
   });
 
@@ -456,7 +465,7 @@ describe('MetaData', () => {
         nodeId: rabbitParamsNodeId,
         mockMetadata: nodeParameters,
       });
-      expect(textOf(title(wrapper))).toEqual(['Params:rabbit']);
+      expect(textOf(title(wrapper))).toEqual(['Params: Rabbit']);
     });
 
     it('shows the node type as text', () => {

@@ -192,8 +192,8 @@ describe('NodeList', () => {
         ['Pig'],
         ['Sheep'],
         ['Parameters'],
-        ['Params:pipeline100.data Science.plankton'],
-        ['Params:rabbit'],
+        ['Params: Plankton'],
+        ['Params: Rabbit'],
       ]);
     });
   });
@@ -249,7 +249,7 @@ describe('NodeList', () => {
         ['Horse', true],
         ['Sheep', true],
         ['Parameters', true],
-        ['Params:rabbit', true],
+        ['Params: Rabbit', true],
       ]);
 
       changeRows(wrapper, ['Small', 'Large'], true);
@@ -268,7 +268,7 @@ describe('NodeList', () => {
         ['Pig', true],
         ['Sheep', true],
         ['Parameters', true],
-        ['Params:rabbit', true],
+        ['Params: Rabbit', true],
       ]);
     });
 
@@ -298,8 +298,8 @@ describe('NodeList', () => {
         ['Sheep', true],
         // Parameters(enabled)
         ['Parameters', true],
-        ['Params:pipeline100.data Science.plankton', true],
-        ['Params:rabbit', true],
+        ['Params: Plankton', true],
+        ['Params: Rabbit', true],
       ]);
     });
 
