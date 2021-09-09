@@ -32,30 +32,31 @@ import hashlib
 import inspect
 import json
 import logging
-import re
 import os
+import re
 from dataclasses import InitVar, dataclass, field
+from datetime import datetime
 from enum import Enum
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
-from datetime import datetime
-import pandas as pd
-from pandas.core.frame import DataFrame
-import plotly.express as px
-import plotly.io as pio 
 
+import pandas as pd
+import plotly.express as px
+import plotly.io as pio
 from kedro.io import AbstractDataSet
 from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
-from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+from pandas.core.frame import DataFrame
+
+from kedro_viz.integrations.kedro import data_loader
 
 logger = logging.getLogger(__name__)
 
 
 def _pretty_name(name: str) -> str:
-    name = name.replace("-", " ").replace("_", " ").replace(":",": ")
+    name = name.replace("-", " ").replace("_", " ").replace(":", ": ")
     parts = [n.capitalize() for n in name.split()]
     return " ".join(parts)
 
@@ -420,7 +421,7 @@ class DataNode(GraphNode):
             self.dataset_type
             == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
         )
-    
+
     def is_metric_node(self):
         return (
             self.dataset_type
@@ -468,11 +469,6 @@ class TranscodedDataNode(GraphNode):
         )
 
 
-def create_metrics_plot(df: DataFrame) -> Dict[str, any]:
-            df = df.reset_index().rename(columns={'index': 'version'})
-            df = pd.melt(df, id_vars='version', var_name='metrics').sort_values(by='version')
-            return json.loads(pio.to_json(px.line(df, x="version", y='value', color='metrics')))
-
 @dataclass
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
@@ -518,20 +514,29 @@ class DataNodeMetadata(GraphNodeMetadata):
         if data_node.is_metric_node():
             if not dataset._exists():
                 return
-            
 
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
-                self.metrics = json.load(fs_file)    
-            self.plot = create_metrics_plot(
-                pd.DataFrame.from_dict(
-                kedro_data_loader.load_all_versions(self.filepath),
-                orient='index'))
-        
+                self.metrics = json.load(fs_file)
+            metrics_data = data_loader.load_data_for_all_versions(self.filepath)
+            self.plot = self.create_metrics_plot(
+                pd.DataFrame.from_dict(metrics_data, orient="index")
+            )
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
+
+    def create_metrics_plot(self, df: DataFrame) -> Dict[str, any]:
+        renamed_df = df.reset_index().rename(columns={"index": "version"})
+        melted_sorted_df = pd.melt(
+            renamed_df, id_vars="version", var_name="metrics"
+        ).sort_values(by="version")
+        return json.loads(
+            pio.to_json(
+                px.line(melted_sorted_df, x="version", y="value", color="metrics")
+            )
+        )
 
 
 @dataclass
