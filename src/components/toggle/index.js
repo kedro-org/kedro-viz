@@ -22,6 +22,7 @@ const Toggle = ({
       id={`pipeline-toggle-input-${id}`}
       className="pipeline-toggle-input"
       type="checkbox"
+      data-heap-event={`visible.code.${checked}`}
       checked={checked}
       disabled={!enabled}
       onChange={onChange}

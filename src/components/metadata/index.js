@@ -194,6 +194,7 @@ const MetaData = ({
                           <IconButton
                             ariaLabel="Copy run command to clipboard."
                             className="pipeline-metadata__copy-button"
+                            dataHeapEvent={`clicked.run_command`}
                             icon={CopyIcon}
                             onClick={onCopyClick}
                           />

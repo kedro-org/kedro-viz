@@ -43,6 +43,7 @@ export const PrimaryToolbar = ({
     <ul className="pipeline-primary-toolbar kedro">
       <IconButton
         ariaLabel={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
+        dataHeapEvent={`visible.sidebar.${visible.sidebar}`}
         className={classnames(
           'pipeline-menu-button',
           'pipeline-menu-button--menu',
@@ -61,9 +62,7 @@ export const PrimaryToolbar = ({
         onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
         icon={ThemeIcon}
         labelText="Toggle theme"
-        dataHeapEvent={`toggle theme to ${
-          theme === 'light' ? 'dark' : 'light'
-        }`}
+        dataHeapEvent={`theme.${theme}`}
         visible={visible.themeBtn}
       />
       <IconButton
@@ -88,6 +87,7 @@ export const PrimaryToolbar = ({
         onClick={() => onToggleLayers(!visibleLayers)}
         icon={LayersIcon}
         labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
+        dataHeapEvent={`visible.layers.${visibleLayers}`}
         disabled={disableLayerBtn}
         visible={visible.layerBtn}
       />
