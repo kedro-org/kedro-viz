@@ -56,6 +56,7 @@ def count_truthy(elements: List[Any]) -> int:
 
 - Keep UI elements fully keyboard accessible, and aim to support screen-readers where possible
 - Maintain a high level of animation performance, and minimise page-load time
+- We have a specific color style guide which is defined in the style guide docs under theme colours.   
 
 ### JavaScript Development
 
