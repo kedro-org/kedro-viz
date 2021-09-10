@@ -17,10 +17,6 @@ We aim to support recent versions of major modern browsers - i.e. Chome, Firefox
 Kedro-Viz uses [Kedro-UI](https://quantumblacklabs.github.io/kedro-ui/), our UI component library, for generic/reusable interface components like buttons, modals, dropdowns, etc. 
 Kedro-UI is a legacy repo and will no longer be maintained. Hence, we recommend not using Kedro-UI for newer components.  
 
-## Kedro Colors 
-
-Kedro uses the below style guide for colours 
-
 ## Accessibility
 
 We aim to meet [WCAG 2.1 Level AA](https://www.w3.org/WAI/standards-guidelines/wcag/) standards where possible, while acknowledging that this is a data visualization tool, so some criteria will be difficult to pass.
@@ -123,7 +119,9 @@ color: rgba(black, 0.5);
 
 ### Theme colours
 
-Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme.
+Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. Below is the style guide for kedro colors 
+
+![Kedro-Viz Color Styleguide](./.github/img/kedro_colours.png)
 
 The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. To simplify code and avoid increasing CSS specificity, we use CSS custom properties to handle theme colours. We recommend that you use these too where possible - they are defined in the App component.
 
