@@ -17,6 +17,10 @@ We aim to support recent versions of major modern browsers - i.e. Chome, Firefox
 Kedro-Viz uses [Kedro-UI](https://quantumblacklabs.github.io/kedro-ui/), our UI component library, for generic/reusable interface components like buttons, modals, dropdowns, etc. 
 Kedro-UI is a legacy repo and will no longer be maintained. Hence, we recommend not using Kedro-UI for newer components.  
 
+## Kedro Colors 
+
+Kedro uses the below style guide for colours 
+
 ## Accessibility
 
 We aim to meet [WCAG 2.1 Level AA](https://www.w3.org/WAI/standards-guidelines/wcag/) standards where possible, while acknowledging that this is a data visualization tool, so some criteria will be difficult to pass.
