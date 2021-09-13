@@ -291,6 +291,7 @@ export const drawNodes = function (changed) {
     // Performance: text transitions with CSS on GPU
     allNodes
       .select('.pipeline-node__text')
+      .text((node) => node.name)
       .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
       .style('opacity', (node) => (node.showText ? 1 : 0));
   }

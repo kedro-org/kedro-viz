@@ -34,6 +34,14 @@ export const flags = {
   },
 };
 
+export const settings = {
+  prettyName: {
+    name: 'Pretty Name',
+    description: 'Display a formatted name for the kedro nodes',
+    default: true,
+  },
+};
+
 // Sidebar groups is an ordered map of { id: label }
 export const sidebarGroups = {
   elementType: 'Element types',

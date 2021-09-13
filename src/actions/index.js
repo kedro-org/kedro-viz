@@ -89,6 +89,19 @@ export function toggleTextLabels(textLabels) {
   };
 }
 
+export const TOGGLE_PRETTY_NAME = 'TOGGLE_PRETTY_NAME';
+
+/**
+ * Toggle whether to show pretty name on/off
+ * @param {Boolean} prettyName True if pretty name is to be shown
+ */
+export function togglePrettyName(prettyName) {
+  return {
+    type: TOGGLE_PRETTY_NAME,
+    prettyName,
+  };
+}
+
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**

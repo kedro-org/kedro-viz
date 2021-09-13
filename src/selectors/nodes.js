@@ -20,6 +20,7 @@ const getNodeType = (state) => state.node.type;
 const getNodeDatasetType = (state) => state.node.datasetType;
 const getNodeLayer = (state) => state.node.layer;
 const getHoveredNode = (state) => state.node.hovered;
+const getPrettyName = (state) => state.prettyName;
 const getTagActive = (state) => state.tag.active;
 const getModularPipelineActive = (state) => state.modularPipeline.active;
 const getTextLabels = (state) => state.textLabels;
@@ -91,12 +92,20 @@ export const getNodeSelected = createSelector(
 );
 
 /**
+ * Returns node label based on if pretty name is turned on/off
+ */
+export const getNodeLabel = createSelector(
+  [getPrettyName, getNodeName, getNodeFullName],
+  (prettyName, nodeName, nodeFullName) => (prettyName ? nodeName : nodeFullName)
+);
+
+/**
  * Returns formatted nodes as an array, with all relevant properties
  */
 export const getNodeData = createSelector(
   [
     getPipelineNodeIDs,
-    getNodeName,
+    getNodeLabel,
     getNodeType,
     getNodeDatasetType,
     getNodeDisabled,
@@ -108,7 +117,7 @@ export const getNodeData = createSelector(
   ],
   (
     nodeIDs,
-    nodeName,
+    nodeLabel,
     nodeType,
     nodeDatasetType,
     nodeDisabled,
@@ -120,17 +129,17 @@ export const getNodeData = createSelector(
   ) =>
     nodeIDs
       .sort((a, b) => {
-        if (nodeName[a] < nodeName[b]) {
+        if (nodeLabel[a] < nodeLabel[b]) {
           return -1;
         }
-        if (nodeName[a] > nodeName[b]) {
+        if (nodeLabel[a] > nodeLabel[b]) {
           return 1;
         }
         return 0;
       })
       .map((id) => ({
         id,
-        name: nodeName[id],
+        name: nodeLabel[id],
         type: nodeType[id],
         icon: getShortType([nodeDatasetType[id]], nodeType[id]),
         modularPipelines: nodeModularPipelines[id],
@@ -161,8 +170,8 @@ export const getGroupedNodes = createSelector([getNodeData], (nodes) =>
  * measure its width with getBBox, then delete the container and store the value
  */
 export const getNodeTextWidth = createSelector(
-  [getPipelineNodeIDs, getNodeName, getFontLoaded],
-  (nodeIDs, nodeName, fontLoaded) => {
+  [getPipelineNodeIDs, getNodeLabel, getFontLoaded],
+  (nodeIDs, nodeLabel, fontLoaded) => {
     if (!fontLoaded) {
       return {};
     }
@@ -175,7 +184,7 @@ export const getNodeTextWidth = createSelector(
       .data(nodeIDs)
       .enter()
       .append('text')
-      .text((nodeID) => nodeName[nodeID])
+      .text((nodeID) => nodeLabel[nodeID])
       .each(function (nodeID) {
         const width = this.getBBox ? this.getBBox().width : 0;
         nodeTextWidth[nodeID] = width;
@@ -243,7 +252,7 @@ export const getNodeSize = createSelector(
 export const getVisibleNodes = createSelector(
   [
     getVisibleNodeIDs,
-    getNodeName,
+    getNodeLabel,
     getNodeType,
     getNodeDatasetType,
     getNodeFullName,
@@ -254,7 +263,7 @@ export const getVisibleNodes = createSelector(
   ],
   (
     nodeIDs,
-    nodeName,
+    nodeLabel,
     nodeType,
     nodeDatasetType,
     nodeFullName,
@@ -266,8 +275,7 @@ export const getVisibleNodes = createSelector(
     fontLoaded
       ? nodeIDs.map((id) => ({
           id,
-          name: nodeName[id],
-          label: nodeName[id],
+          name: nodeLabel[id],
           fullName: nodeFullName[id],
           icon: getShortType([nodeDatasetType[id]], nodeType[id]),
           type: nodeType[id],
