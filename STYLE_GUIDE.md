@@ -119,7 +119,7 @@ color: rgba(black, 0.5);
 
 ### Theme colours
 
-Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. Please refer to the Kedro-Viz Color style guide for the set of colours for each theme
+Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. Please refer to the below colour guide for the set of colours for each theme
 
 ![Kedro-Viz Color Styleguide](./.github/img/kedro_colours.png)
 
