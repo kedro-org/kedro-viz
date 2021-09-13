@@ -130,7 +130,6 @@ def exec_kedro_target_checked(context, command):
 @given('I have installed kedro version "{version}"')
 def install_kedro(context, version):
     """Execute Kedro command and check the status."""
-    pin_dynaconf = [context.pip, "install", "'dynaconf==3.1.4'"]
     if version == "latest":
         cmd = [context.pip, "install", "-U", "kedro"]
     else:
@@ -141,9 +140,6 @@ def install_kedro(context, version):
         print(res.stdout)
         print(res.stderr)
         assert False
-
-    # pin dynaconf to avoid backward breaking change in 3.1.5
-    run(pin_dynaconf, env=context.env)
 
 
 @when('I execute the kedro viz command "{command}"')
