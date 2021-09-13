@@ -116,6 +116,7 @@ def exec_kedro_target_checked(context, command):
     # Wait for subprocess completion since on Windows it takes some time
     # to install dependencies in a separate console
     if "install" in cmd:
+        result = run([context.pip, "install", "dynaconf==3.1.5"])
         max_duration = 5 * 60  # 5 minutes
         end_by = time() + max_duration
 
