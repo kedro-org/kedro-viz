@@ -105,7 +105,6 @@ def create_project_with_starter(context, starter):
 def exec_kedro_target_checked(context, command):
     """Execute Kedro command and check the status."""
     pin_dynaconf = [context.pip, "install", "dynaconf==3.1.5"]
-    result = run(pin_dynaconf)
     cmd = [context.kedro] + command.split()
 
     res = run(cmd, env=context.env, cwd=str(context.root_project_dir))
