@@ -32,10 +32,8 @@ import hashlib
 import inspect
 import json
 import logging
-import os
 import re
 from dataclasses import InitVar, dataclass, field
-from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
@@ -423,6 +421,7 @@ class DataNode(GraphNode):
         )
 
     def is_metric_node(self):
+        """Check if the current node is a metrics node."""
         return (
             self.dataset_type
             == "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
@@ -527,8 +526,15 @@ class DataNodeMetadata(GraphNodeMetadata):
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
-    def create_metrics_plot(self, df: DataFrame) -> Dict[str, any]:
-        renamed_df = df.reset_index().rename(columns={"index": "version"})
+    @staticmethod
+    def create_metrics_plot(data_frame: DataFrame) -> Dict[str, any]:
+        """
+        Args:
+            data_frame: dataframe with the metrics data from all versions
+        Returns:
+            a plotly line chart object with metrics data
+        """
+        renamed_df = data_frame.reset_index().rename(columns={"index": "version"})
         melted_sorted_df = pd.melt(
             renamed_df, id_vars="version", var_name="metrics"
         ).sort_values(by="version")

@@ -120,6 +120,12 @@ def load_data(
 
 
 def load_data_for_all_versions(filepath: str) -> Dict[str, any]:
+    """Load data for all versions of the dataset
+    Args:
+        filepath: the path whether the dataset is located.
+    Returns:
+        A dictionary containing the version and the json data inside each version
+    """
     version_list = [path for path in Path(filepath).iterdir() if path.is_dir()]
     versions = {}
     for version in version_list:

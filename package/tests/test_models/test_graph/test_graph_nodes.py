@@ -25,6 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import datetime
 from pathlib import Path
 from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
@@ -149,6 +150,7 @@ class TestGraphNodeCreation:
         assert data_node.pipelines == []
         assert data_node.modular_pipelines == expected_modular_pipelines
         assert not data_node.is_plot_node()
+        assert not data_node.is_metric_node()
 
     def test_create_transcoded_data_node(self):
         dataset_name = "dataset@spark"
@@ -380,6 +382,7 @@ class TestGraphNodeMetadata:
         patched_json_load.return_value = mock_plot_data
         plotly_data_node = MagicMock()
         plotly_data_node.is_plot_node.return_value = True
+        plotly_data_node.is_metric_node.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot == mock_plot_data
 
@@ -387,9 +390,64 @@ class TestGraphNodeMetadata:
     def test_plotly_data_node_dataset_not_exist(self, patched_import):
         plotly_data_node = MagicMock()
         plotly_data_node.is_plot_node.return_value = True
+        plotly_data_node.is_metric_node.return_value = False
         plotly_data_node.kedro_obj._exists.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
+
+    @patch("json.load")
+    @patch("kedro_viz.integrations.kedro.data_loader.load_data_for_all_versions")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.create_metrics_plot")
+    def test_metrics_data_node_metadata(
+        self,
+        patched_metrics_plot,
+        patched_data_loader,
+        patched_json_load,
+    ):
+        mock_metrics_data = {
+            "recommendations": 0.0009277445547700936,
+            "recommended_controls": 0.001159680693462617,
+            "projected_optimization": 0.0013916168321551402,
+        }
+        mock_version_data = {
+            datetime.datetime(2021, 9, 10, 9, 2, 44, 245000): {
+                "recommendations": 0.3866563620506992,
+                "recommended_controls": 0.48332045256337397,
+                "projected_optimization": 0.5799845430760487,
+            },
+            datetime.datetime(2021, 9, 10, 9, 3, 23, 733000): {
+                "recommendations": 0.200383330721228,
+                "recommended_controls": 0.250479163401535,
+                "projected_optimization": 0.30057499608184196,
+            },
+        }
+        mock_plot_data = {
+            "data": [
+                {
+                    "metrics": ["giraffes", "orangutans", "monkeys"],
+                    "value": [20, 14, 23],
+                    "type": "bar",
+                }
+            ]
+        }
+        patched_json_load.return_value = mock_metrics_data
+        patched_data_loader.return_value = mock_version_data
+        patched_metrics_plot.return_value = mock_plot_data
+        metrics_data_node = MagicMock()
+        metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_metric_node.return_value = True
+        metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
+        assert metrics_node_metadata.metrics == mock_metrics_data
+        assert metrics_node_metadata.plot == mock_plot_data
+
+    def test_metrics_data_node_dataset_not_exist(self):
+        metrics_data_node = MagicMock()
+        metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_metric_node.return_value = True
+        metrics_data_node.kedro_obj._exists.return_value = False
+        metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
+        assert not hasattr(metrics_node_metadata, "metric")
+        assert not hasattr(metrics_node_metadata, "plot")
 
     def test_parameters_metadata_all_parameters(self):
         parameters = {"test_split_ratio": 0.3, "num_epochs": 1000}
