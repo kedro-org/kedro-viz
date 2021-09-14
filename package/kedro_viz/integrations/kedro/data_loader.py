@@ -119,7 +119,7 @@ def load_data(
     return context.catalog, context.pipelines
 
 
-def load_data_for_all_versions(filepath: str) -> Dict[str, any]:
+def load_data_for_all_versions(filepath: str) -> Dict[datetime, any]:
     """Load data for all versions of the dataset
     Args:
         filepath: the path whether the dataset is located.
