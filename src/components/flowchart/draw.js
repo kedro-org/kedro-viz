@@ -101,7 +101,13 @@ const updateNodeRects = (nodeRects) =>
     .attr('height', (node) => node.height - 5)
     .attr('x', (node) => (node.width - 5) / -2)
     .attr('y', (node) => (node.height - 5) / -2)
-    .attr('rx', (node) => (node.type === 'task' ? 0 : node.height / 2));
+    .attr('rx', (node) => {
+      // Task and Pipeline nodes are rectangle so radius on x-axis is 0
+      if (node.type === 'task' || node.type === 'modularPipeline') {
+        return 0;
+      }
+      return node.height / 2;
+    });
 
 const updateParameterRect = (nodeRects) =>
   nodeRects

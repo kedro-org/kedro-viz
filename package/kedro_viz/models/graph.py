@@ -105,7 +105,9 @@ class GraphNodeType(Enum):
     TASK = "task"
     DATA = "data"
     PARAMETERS = "parameters"
-    MODULAR_PIPELINE = "modular_pipeline"
+    MODULAR_PIPELINE = (
+        "modularPipeline"  # camelCase so it can be referred directly to in the frontend
+    )
 
 
 @dataclass

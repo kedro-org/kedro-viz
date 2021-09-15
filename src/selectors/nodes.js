@@ -199,17 +199,25 @@ export const getNodeTextWidth = createSelector(
  * @param {Boolean} showLabels Whether labels are visible
  * @param {Boolean} isTask Whether the node is a task type (vs data/params)
  */
-export const getPadding = (showLabels, isTask) => {
+export const getPadding = (showLabels, nodeType) => {
   if (showLabels) {
-    if (isTask) {
-      return { x: 16, y: 10 };
+    switch (nodeType) {
+      case 'modularPipeline':
+        return { x: 30, y: 22 };
+      case 'task':
+        return { x: 16, y: 10 };
+      default:
+        return { x: 20, y: 10 };
     }
-    return { x: 20, y: 10 };
   }
-  if (isTask) {
-    return { x: 14, y: 14 };
+  switch (nodeType) {
+    case 'modularPipeline':
+      return { x: 25, y: 25 };
+    case 'task':
+      return { x: 14, y: 14 };
+    default:
+      return { x: 16, y: 16 };
   }
-  return { x: 16, y: 16 };
 };
 
 /**
@@ -229,7 +237,7 @@ export const getNodeSize = createSelector(
     }
     return arrayToObject(nodeIDs, (nodeID) => {
       const iconSize = textLabels ? 24 : 28;
-      const padding = getPadding(textLabels, nodeType[nodeID] === 'task');
+      const padding = getPadding(textLabels, nodeType[nodeID]);
       const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
       const textGap = textLabels ? 6 : 0;
       const innerWidth = iconSize + textWidth + textGap;
