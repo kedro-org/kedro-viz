@@ -105,6 +105,7 @@ class GraphNodeType(Enum):
     TASK = "task"
     DATA = "data"
     PARAMETERS = "parameters"
+    MODULAR_PIPELINE = "modular_pipeline"
 
 
 @dataclass
@@ -319,6 +320,12 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
     wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
     # return the original function if it's not a decorated function
     return func if wrapped_func is None else wrapped_func
+
+
+@dataclass
+class ModularPipelineNode(GraphNode):
+    """Represent a modular pipeline node in the graph
+    """
 
 
 @dataclass
