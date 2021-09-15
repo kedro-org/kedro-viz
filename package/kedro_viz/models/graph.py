@@ -493,7 +493,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
-        dataset = cast(AbstractVersionedDataSet, data_node.kedro_obj)
+        dataset = cast(AbstractDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
         # Parse plot data
@@ -511,8 +511,13 @@ class DataNodeMetadata(GraphNodeMetadata):
                 self.plot = json.load(fs_file)
 
         if data_node.is_metric_node():
-            if not dataset._exists():
+            if not dataset._exists() or self.filepath is None:
                 return
+            from kedro.extras.datasets.tracking.metrics_dataset import (  # pylint: disable=import-outside-toplevel
+                MetricsDataSet,
+            )
+
+            dataset = cast(MetricsDataSet, dataset)
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.metrics = json.load(fs_file)
@@ -528,7 +533,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
     @staticmethod
-    def create_metrics_plot(data_frame: DataFrame) -> Dict[str, any]:
+    def create_metrics_plot(data_frame: DataFrame) -> Dict[str, Any]:
         """
         Args:
             data_frame: dataframe with the metrics data from all versions

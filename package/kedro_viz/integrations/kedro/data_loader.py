@@ -31,9 +31,10 @@ load data from projects created in a range of Kedro versions.
 """
 # pylint: disable=import-outside-toplevel
 import json
+import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Tuple, cast
+from typing import Any, Dict, Optional, Tuple, cast
 
 from kedro import __version__
 from kedro.io import DataCatalog
@@ -42,7 +43,8 @@ from semver import VersionInfo
 
 KEDRO_VERSION = VersionInfo.parse(__version__)
 VERSION_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
-LIMIT = 10
+
+logger = logging.getLogger(__name__)
 
 
 def _bootstrap(project_path: Path):
@@ -120,24 +122,34 @@ def load_data(
     return context.catalog, context.pipelines
 
 
-def load_data_for_all_versions(filepath: str = None) -> Dict[datetime, Any]:
+def load_data_for_all_versions(
+    filepath: str, limit: int = 10
+) -> Optional[Dict[datetime, Any]]:
     """Load data for all versions of the dataset
     Args:
-        filepath: the path whether the dataset is located.
+        filepath: the path where the dataset is located.
+        limit: the maximum number of past versions we want to load.
     Returns:
         A dictionary containing the version and the json data inside each version
     """
-    try:
-        version_list = [path for path in Path(filepath).iterdir() if path.is_dir()]
-        versions = {}
-        for index, version in enumerate(version_list):
-            if index == LIMIT:
-                break
+    version_list = [
+        path for path in sorted(Path(filepath).iterdir(), reverse=True) if path.is_dir()
+    ]
+    versions = {}
+    for index, version in enumerate(version_list):
+        if index == limit:
+            break
+
+        try:
             timestamp = datetime.strptime(version.name, VERSION_FORMAT)
+        except ValueError:
+            logger.warning(
+                "Version %s is not a timestamp. Skip when loading metrics.",
+                version.name,
+            )
+            continue
+        else:
             path = version / Path(filepath).name
             with open(path) as fs_file:
                 versions[timestamp] = json.load(fs_file)
-    except ValueError:
-        print("Version format is not compatible with Kedro-Viz")
-        return None
     return versions
