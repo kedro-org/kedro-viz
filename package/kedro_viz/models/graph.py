@@ -42,7 +42,7 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
-from kedro.io import AbstractDataSet
+from kedro.io import AbstractDataSet, AbstractVersionedDataSet
 from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
@@ -493,7 +493,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
-        dataset = cast(AbstractDataSet, data_node.kedro_obj)
+        dataset = cast(AbstractVersionedDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
         # Parse plot data
@@ -513,11 +513,12 @@ class DataNodeMetadata(GraphNodeMetadata):
         if data_node.is_metric_node():
             if not dataset._exists():
                 return
-
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.metrics = json.load(fs_file)
             metrics_data = data_loader.load_data_for_all_versions(self.filepath)
+            if not metrics_data:
+                return
             self.plot = self.create_metrics_plot(
                 pd.DataFrame.from_dict(metrics_data, orient="index")
             )

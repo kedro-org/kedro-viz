@@ -33,7 +33,7 @@ load data from projects created in a range of Kedro versions.
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Tuple, cast
+from typing import Any, Dict, Tuple, cast
 
 from kedro import __version__
 from kedro.io import DataCatalog
@@ -42,6 +42,7 @@ from semver import VersionInfo
 
 KEDRO_VERSION = VersionInfo.parse(__version__)
 VERSION_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
+LIMIT = 10
 
 
 def _bootstrap(project_path: Path):
@@ -119,18 +120,24 @@ def load_data(
     return context.catalog, context.pipelines
 
 
-def load_data_for_all_versions(filepath: str) -> Dict[datetime, any]:
+def load_data_for_all_versions(filepath: str = None) -> Dict[datetime, Any]:
     """Load data for all versions of the dataset
     Args:
         filepath: the path whether the dataset is located.
     Returns:
         A dictionary containing the version and the json data inside each version
     """
-    version_list = [path for path in Path(filepath).iterdir() if path.is_dir()]
-    versions = {}
-    for version in version_list:
-        timestamp = datetime.strptime(version.name, VERSION_FORMAT)
-        path = version / Path(filepath).name
-        with open(path) as fs_file:
-            versions[timestamp] = json.load(fs_file)
+    try:
+        version_list = [path for path in Path(filepath).iterdir() if path.is_dir()]
+        versions = {}
+        for index, version in enumerate(version_list):
+            if index == LIMIT:
+                break
+            timestamp = datetime.strptime(version.name, VERSION_FORMAT)
+            path = version / Path(filepath).name
+            with open(path) as fs_file:
+                versions[timestamp] = json.load(fs_file)
+    except ValueError:
+        print("Version format is not compatible with Kedro-Viz")
+        return None
     return versions
