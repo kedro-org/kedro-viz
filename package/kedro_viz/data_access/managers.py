@@ -41,6 +41,7 @@ from kedro_viz.models.graph import (
     RegisteredPipeline,
     TaskNode,
     TranscodedDataNode,
+    ModularPipelineNode,
 )
 
 from .repositories import (
@@ -89,6 +90,7 @@ class DataAccessManager:
             task_node = self.add_node(pipeline_key, node)
             self.registered_pipelines.add_node(pipeline_key, task_node.id)
 
+            # Add node inputs as DataNode to the graph
             for input_ in node.inputs:
                 is_free_input = input_ in free_inputs
                 input_node = self.add_node_input(
@@ -98,6 +100,7 @@ class DataAccessManager:
                 if isinstance(input_node, TranscodedDataNode):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
+            # Add node outputs as DataNode to the graph
             for output in node.outputs:
                 output_node = self.add_node_output(pipeline_key, output, task_node)
                 self.registered_pipelines.add_node(pipeline_key, output_node.id)
@@ -105,11 +108,19 @@ class DataAccessManager:
                     output_node.original_name = output
                     output_node.original_version = self.catalog.get_dataset(output)
 
+            # Add node's modular pipelines as ModularPipelineNOde to the graph
+            for modular_pipeline_id in task_node.modular_pipelines:
+                modular_pipeline_node = self.add_node_modular_pipeline(
+                    pipeline_key, modular_pipeline_id
+                )
+                self.registered_pipelines.add_node(
+                    pipeline_key, modular_pipeline_node.id
+                )
+
     def add_node(self, pipeline_key: str, node: KedroNode) -> TaskNode:
         task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))
         task_node.add_pipeline(pipeline_key)
         self.tags.add_tags(task_node.tags)
-        self.modular_pipelines.add_modular_pipeline(task_node.modular_pipelines)
         return task_node
 
     def add_node_input(
@@ -141,6 +152,17 @@ class DataAccessManager:
         self.node_dependencies[task_node.id].add(graph_node.id)
         return graph_node
 
+    def add_node_modular_pipeline(
+        self, pipeline_key: str, modular_pipeline_id: str
+    ) -> ModularPipelineNode:
+        modular_pipeline_node: ModularPipelineNode = self.nodes.add_node(
+            GraphNode.create_modular_pipeline_node(modular_pipeline_id)
+        )
+        modular_pipeline_node.add_pipeline(pipeline_key)
+        self.nodes.add_node(modular_pipeline_node)
+        self.modular_pipelines.add_modular_pipeline(modular_pipeline_id)
+        return modular_pipeline_node
+
     def add_dataset(
         self, pipeline_key: str, dataset_name: str, is_free_input: bool = False
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
@@ -162,7 +184,7 @@ class DataAccessManager:
                 dataset=obj,
                 is_free_input=is_free_input,
             )
-            self.modular_pipelines.add_modular_pipeline(graph_node.modular_pipelines)
+            self.modular_pipelines.add_modular_pipelines(graph_node.modular_pipelines)
         graph_node = self.nodes.add_node(graph_node)
         graph_node.add_pipeline(pipeline_key)
         return graph_node

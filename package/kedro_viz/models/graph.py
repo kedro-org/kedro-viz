@@ -129,7 +129,7 @@ class GraphNode(abc.ABC):
     pipelines: List[str]
 
     # the list of modular pipeline this node belongs to
-    modular_pipelines: List[str] = field(init=False)
+    modular_pipelines: Optional[List[str]] = field(init=False)
 
     # the underlying Kedro object for this node
     _kedro_obj: Union[KedroNode, Optional[AbstractDataSet]] = field(
@@ -272,6 +272,19 @@ class GraphNode(abc.ABC):
             kedro_obj=parameters,
         )
 
+    @classmethod
+    def create_modular_pipeline_node(
+        cls, modular_pipeline_id: str
+    ) -> "ModularPipelineNode":
+        modular_pipeline = ModularPipeline(modular_pipeline_id)
+        return ModularPipelineNode(
+            id=modular_pipeline.id,
+            name=modular_pipeline.name,
+            full_name=modular_pipeline.id,
+            tags=set(),
+            pipelines=[],
+        )
+
     def add_pipeline(self, pipeline_id: str):
         """Add a pipeline_id to the list of pipelines that this node belongs to."""
         if pipeline_id not in self.pipelines:
@@ -324,8 +337,10 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
 
 @dataclass
 class ModularPipelineNode(GraphNode):
-    """Represent a modular pipeline node in the graph
-    """
+    """Represent a modular pipeline node in the graph"""
+
+    type: str = GraphNodeType.MODULAR_PIPELINE.value
+    modular_pipelines: Optional[List[str]] = None
 
 
 @dataclass

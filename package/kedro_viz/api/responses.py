@@ -50,8 +50,12 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     full_name: str
     tags: List[str]
     pipelines: List[str]
-    modular_pipelines: List[str]
+    modular_pipelines: Optional[List[str]]
     type: str
+
+
+class ModularPipelineNodeAPIResponse(BaseGraphNodeAPIResponse):
+    ...
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
@@ -106,6 +110,7 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
 
 
 NodeAPIResponse = Union[
+    ModularPipelineNodeAPIResponse,
     TaskNodeAPIResponse,
     DataNodeAPIResponse,
 ]
@@ -214,6 +219,9 @@ class GraphAPIResponse(BaseAPIResponse):
 
 def get_default_response() -> GraphAPIResponse:
     """Default response for `/api/main`."""
+    from pprint import pprint
+
+    pprint(data_access_manager.nodes.as_list())
     return GraphAPIResponse(
         nodes=data_access_manager.nodes.as_list(),
         edges=data_access_manager.edges.as_list(),

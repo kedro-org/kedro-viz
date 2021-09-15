@@ -172,10 +172,12 @@ class ModularPipelinesRepository:
     def __init__(self):
         self.modular_pipelines: Dict[str, ModularPipeline] = {}
 
-    def add_modular_pipeline(self, modular_pipeline_ids: Iterable[str]):
-        for modular_pipeline_id in modular_pipeline_ids:
-            modular_pipeline = ModularPipeline(modular_pipeline_id)
-            self.modular_pipelines[modular_pipeline_id] = modular_pipeline
+    def add_modular_pipeline(self, modular_pipeline_id: str):
+        modular_pipeline = ModularPipeline(modular_pipeline_id)
+        self.modular_pipelines[modular_pipeline_id] = modular_pipeline
+
+    def add_modular_pipelines(self, modular_pipeline_ids: Iterable[str]):
+        map(self.add_modular_pipeline, modular_pipeline_ids)
 
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
         return modular_pipeline_id in self.modular_pipelines
@@ -187,7 +189,7 @@ class ModularPipelinesRepository:
     def from_nodes(cls, nodes: List[GraphNode]) -> "ModularPipelinesRepository":
         repo = cls()
         for node in nodes:
-            repo.add_modular_pipeline(node.modular_pipelines)
+            repo.add_modular_pipelines(node.modular_pipelines)
         return repo
 
 
