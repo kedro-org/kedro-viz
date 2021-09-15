@@ -47,6 +47,27 @@ const StyledTreeView = withStyles({
 
 const isModularPipelineType = (type) => type === 'modularPipeline';
 
+/**
+ * The tree structure of modular pipelines are encoded in their ids.
+ * For example, if the modular pipeline's name is:
+ * "foo.bar.qux", the parent of this modular pipeline are ["foo", "foo.bar"]
+ */
+const getModularPipelineParents = (modularPipelineID) => {};
+
+/**
+ * Turn the list of nodes into tree object
+ */
+const getSidebarTree = (nodes) => {
+  console.log(nodes);
+  const tree = {};
+  for (const node of nodes) {
+    if (node.type === 'modularPipeline') {
+      for (const parent of node.id.split('.')) {
+      }
+    }
+  }
+};
+
 const TreeListProvider = ({
   nodes,
   nodeSelected,
@@ -63,6 +84,7 @@ const TreeListProvider = ({
   focusMode,
   inputOutputDataNodes,
 }) => {
+  getSidebarTree(nodes);
   const classes = useStyles();
 
   const [expandedPipelines, setExpandedPipelines] = useState([]);
