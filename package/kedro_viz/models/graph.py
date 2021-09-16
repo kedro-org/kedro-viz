@@ -39,10 +39,6 @@ from pathlib import Path
 from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
-import pandas as pd
-import plotly.express as px
-import plotly.io as pio
-
 from kedro.io import AbstractDataSet
 from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
@@ -515,7 +511,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             if not dataset._exists() or self.filepath is None:
                 return
 
-            import pandas as pd
+            import pandas as pd  # pylint: disable=import-outside-toplevel
             from kedro.extras.datasets.tracking.metrics_dataset import (  # pylint: disable=import-outside-toplevel
                 MetricsDataSet,
             )
@@ -543,9 +539,9 @@ class DataNodeMetadata(GraphNodeMetadata):
         Returns:
             a plotly line chart object with metrics data
         """
-        import pandas as pd
-        import plotly.express as px
-        import plotly.io as pio
+        import pandas as pd  # pylint: disable=import-outside-toplevel
+        import plotly.express as px  # pylint: disable=import-outside-toplevel
+        import plotly.io as pio  # pylint: disable=import-outside-toplevel
 
         renamed_df = data_frame.reset_index().rename(columns={"index": "version"})
         melted_sorted_df = pd.melt(
