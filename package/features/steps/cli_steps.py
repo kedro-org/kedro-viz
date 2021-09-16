@@ -104,6 +104,7 @@ def create_project_with_starter(context, starter):
 @given('I have executed the kedro command "{command}"')
 def exec_kedro_target_checked(context, command):
     """Execute Kedro command and check the status."""
+    pin_dynaconf = [context.pip, "install", "dynaconf==3.1.5"]
     cmd = [context.kedro] + command.split()
 
     res = run(cmd, env=context.env, cwd=str(context.root_project_dir))
@@ -116,6 +117,7 @@ def exec_kedro_target_checked(context, command):
     # Wait for subprocess completion since on Windows it takes some time
     # to install dependencies in a separate console
     if "install" in cmd:
+        result = run(pin_dynaconf)
         max_duration = 5 * 60  # 5 minutes
         end_by = time() + max_duration
 

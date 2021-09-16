@@ -19,6 +19,7 @@ import IndicatorPartialIcon from '../icons/indicator-partial';
 import { localStorageName } from '../../config';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { sidebarElementTypes } from '../../config';
+import { togglePrettyName } from '../../actions';
 
 describe('NodeList', () => {
   beforeEach(() => {
@@ -202,6 +203,61 @@ describe('NodeList', () => {
     });
   });
 
+  describe('Pretty names in node list', () => {
+    const elements = (wrapper) =>
+      wrapper
+        .find('.MuiTreeItem-label')
+        .find('.pipeline-nodelist__row')
+        .map((row) => [row.prop('title')]);
+
+    it('shows full node names when pretty name is turned off', () => {
+      const wrapper = setup.mount(<NodeList />, {
+        beforeLayoutActions: [() => togglePrettyName(false)],
+      });
+      expect(elements(wrapper)).toEqual([
+        ['nested'],
+        ['pipeline1'],
+        ['pipeline2'],
+        ['salmon'],
+        ['bear'],
+        ['bull'],
+        ['cat'],
+        ['dog'],
+        ['elephant'],
+        ['giraffe'],
+        ['horse'],
+        ['pig'],
+        ['sheep'],
+        ['parameters'],
+        ['params:pipeline100.data_science.plankton'],
+        ['params:rabbit'],
+      ]);
+    });
+    it('shows formatted node names when pretty name is turned on', () => {
+      const wrapper = setup.mount(<NodeList />, {
+        beforeLayoutActions: [() => togglePrettyName(true)],
+      });
+      expect(elements(wrapper)).toEqual([
+        ['Nested'],
+        ['Pipeline1'],
+        ['Pipeline2'],
+        ['Salmon'],
+        ['Bear'],
+        ['Bull'],
+        ['Cat'],
+        ['Dog'],
+        ['Elephant'],
+        ['Giraffe'],
+        ['Horse'],
+        ['Pig'],
+        ['Sheep'],
+        ['Parameters'],
+        ['Params: Plankton'],
+        ['Params: Rabbit'],
+      ]);
+    });
+  });
+
   describe('checkboxes on tag filter items', () => {
     const checkboxByName = (wrapper, text) =>
       wrapper.find(`.pipeline-nodelist__row__checkbox[name="${text}"]`);
@@ -246,14 +302,14 @@ describe('NodeList', () => {
         ['Nested', true],
         ['Pipeline1', true],
         ['Pipeline2', true],
-        ['salmon', true],
+        ['Salmon', true],
         ['Bull', true],
         ['Cat', true],
         ['Dog', true],
         ['Horse', true],
         ['Sheep', true],
         ['Parameters', true],
-        ['Params:rabbit', true],
+        ['Params: Rabbit', true],
       ]);
 
       changeRows(wrapper, ['Small', 'Large'], true);
@@ -261,7 +317,7 @@ describe('NodeList', () => {
         ['Nested', true],
         ['Pipeline1', true],
         ['Pipeline2', true],
-        ['salmon', true],
+        ['Salmon', true],
         ['Bear', true],
         ['Bull', true],
         ['Cat', true],
@@ -272,7 +328,7 @@ describe('NodeList', () => {
         ['Pig', true],
         ['Sheep', true],
         ['Parameters', true],
-        ['Params:rabbit', true],
+        ['Params: Rabbit', true],
       ]);
     });
 
@@ -289,7 +345,7 @@ describe('NodeList', () => {
         ['Pipeline1', true],
         ['Pipeline2', true],
         // Tasks (enabled)
-        ['salmon', true],
+        ['Salmon', true],
         ['Bear', true],
         // Datasets (enabled)
         ['Bull', true],
@@ -302,8 +358,8 @@ describe('NodeList', () => {
         ['Sheep', true],
         // Parameters(enabled)
         ['Parameters', true],
-        ['Params:pipeline100.data Science.plankton', true],
-        ['Params:rabbit', true],
+        ['Params: Plankton', true],
+        ['Params: Rabbit', true],
       ]);
     });
 

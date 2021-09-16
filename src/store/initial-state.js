@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge';
 import { loadState, saveState } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
-import { sidebarWidth } from '../config';
+import { settings, sidebarWidth } from '../config';
 
 /**
  * Create new default state instance for properties that aren't overridden
@@ -14,6 +14,7 @@ export const createInitialState = () => ({
   flags: Flags.defaults(),
   textLabels: true,
   theme: 'dark',
+  prettyName: settings.prettyName.default,
   ignoreLargeWarning: false,
   loading: {
     graph: false,

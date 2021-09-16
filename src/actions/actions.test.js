@@ -9,6 +9,7 @@ import {
   TOGGLE_MINIMAP,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
+  TOGGLE_PRETTY_NAME,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
@@ -25,6 +26,7 @@ import {
   toggleParametersHovered,
   toggleCode,
   toggleSidebar,
+  togglePrettyName,
   toggleTextLabels,
   toggleTheme,
   updateChartSize,
@@ -143,6 +145,15 @@ describe('actions', () => {
       isDisabled,
     };
     expect(toggleNodesDisabled(nodeIDs, isDisabled)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether to show pretty names on/off', () => {
+    const prettyName = false;
+    const expectedAction = {
+      type: TOGGLE_PRETTY_NAME,
+      prettyName,
+    };
+    expect(togglePrettyName(prettyName)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether to show text labels on/off', () => {
