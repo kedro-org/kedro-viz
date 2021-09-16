@@ -6,21 +6,33 @@ export const getFocusedModularPipeline = (state) =>
   state.visible.modularPipelineFocusMode;
 const getModularPipelineName = (state) => state.modularPipeline.name;
 const getModularPipelineEnabled = (state) => state.modularPipeline.enabled;
+const getPrettyName = (state) => state.prettyName;
 
 /**
  * Retrieve the formatted list of modular pipeline filters
  */
 export const getModularPipelineData = createSelector(
-  [getModularPipelineIDs, getModularPipelineName, getModularPipelineEnabled],
-  (modularPipelineIDs, modularPipelineName, modularPipelineEnabled) =>
-    modularPipelineIDs
+  [
+    getModularPipelineIDs,
+    getModularPipelineName,
+    getModularPipelineEnabled,
+    getPrettyName,
+  ],
+  (
+    modularPipelineIDs,
+    modularPipelineName,
+    modularPipelineEnabled,
+    prettyName
+  ) => {
+    return modularPipelineIDs
       .slice()
       .sort()
       .map((id) => ({
         id,
-        name: modularPipelineName[id],
+        name: prettyName ? modularPipelineName[id] : id,
         enabled: Boolean(modularPipelineEnabled[id]),
-      }))
+      }));
+  }
 );
 
 /**

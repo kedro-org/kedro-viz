@@ -107,6 +107,7 @@ def _setup_context_with_venv(context, venv_dir):
             "cookiecutter>=1.7.2",
             "wheel",
             "botocore",
+            "dynaconf==3.1.5",
         ],
         env=context.env,
     )

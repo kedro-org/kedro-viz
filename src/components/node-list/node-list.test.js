@@ -19,6 +19,7 @@ import IndicatorPartialIcon from '../icons/indicator-partial';
 import { localStorageName } from '../../config';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { sidebarElementTypes } from '../../config';
+import { togglePrettyName } from '../../actions';
 
 describe('NodeList', () => {
   beforeEach(() => {
@@ -140,6 +141,121 @@ describe('NodeList', () => {
           nestedModularPipelines.nodes.length
       );
     });
+
+    it('search works alongside focus mode', () => {
+      const wrapper = setup.mount(
+        <NodeList focusMode={{ id: 'pipeline1' }} inputOutputDataNodes={{}} />
+      );
+      const searchWrapper = wrapper.find('.pipeline-nodelist-search');
+      // Re-find elements from root each time to see updates
+      const search = () => wrapper.find('.kui-input__field');
+      const nodeList = () =>
+        wrapper.find(
+          '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
+        );
+
+      const nodes = getNodeData(mockState.animals);
+      const tags = getTagData(mockState.animals);
+      const elementTypes = Object.keys(sidebarElementTypes);
+      const searchText = nodes[0].name;
+      // Enter search text
+      search().simulate('change', { target: { value: searchText } });
+      // Check that search input value and node list have been updated
+      expect(search().props().value).toBe(searchText);
+      const expectedResult = nodes.filter((node) =>
+        node.name.includes(searchText)
+      );
+      const expectedTagResult = tags.filter((tag) =>
+        tag.name.includes(searchText)
+      );
+      const expectedElementTypeResult = elementTypes.filter((type) =>
+        type.includes(searchText)
+      );
+      expect(nodeList().length).toBe(
+        expectedResult.length +
+          expectedTagResult.length +
+          expectedElementTypeResult.length
+      );
+      // Clear the list with escape key
+      searchWrapper.simulate('keydown', { keyCode: 27 });
+
+      // obtain the nested modular pipeline data to correspond to the node-list-tree layout
+      const nestedModularPipelines = getNestedModularPipelines({
+        nodes: getGroupedNodes(mockState.animals),
+        tags: getTagData(mockState.animals),
+        modularPipelines: getModularPipelineData(mockState.animals),
+        nodeSelected: {},
+        searchValue: '',
+        modularPipelineIds: getModularPipelineIDs(mockState.animals),
+        nodeModularPipelines: getNodeModularPipelines(mockState.animals),
+        nodeTypeIDs: getNodeTypeIDs(mockState.animals),
+        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
+          mockState.animals
+        ),
+      });
+
+      // Check that search input value and node list have been reset
+      expect(search().props().value).toBe('');
+      expect(nodeList().length).toBe(
+        nestedModularPipelines.children.length +
+          nestedModularPipelines.nodes.length
+      );
+    });
+  });
+
+  describe('Pretty names in node list', () => {
+    const elements = (wrapper) =>
+      wrapper
+        .find('.MuiTreeItem-label')
+        .find('.pipeline-nodelist__row')
+        .map((row) => [row.prop('title')]);
+
+    it('shows full node names when pretty name is turned off', () => {
+      const wrapper = setup.mount(<NodeList />, {
+        beforeLayoutActions: [() => togglePrettyName(false)],
+      });
+      expect(elements(wrapper)).toEqual([
+        ['nested'],
+        ['pipeline1'],
+        ['pipeline2'],
+        ['salmon'],
+        ['bear'],
+        ['bull'],
+        ['cat'],
+        ['dog'],
+        ['elephant'],
+        ['giraffe'],
+        ['horse'],
+        ['pig'],
+        ['sheep'],
+        ['parameters'],
+        ['params:pipeline100.data_science.plankton'],
+        ['params:rabbit'],
+      ]);
+    });
+    it('shows formatted node names when pretty name is turned on', () => {
+      const wrapper = setup.mount(<NodeList />, {
+        beforeLayoutActions: [() => togglePrettyName(true)],
+      });
+      expect(elements(wrapper)).toEqual([
+        ['Nested'],
+        ['Pipeline1'],
+        ['Pipeline2'],
+        ['Salmon'],
+        ['Bear'],
+        ['Bull'],
+        ['Cat'],
+        ['Dog'],
+        ['Elephant'],
+        ['Giraffe'],
+        ['Horse'],
+        ['Pig'],
+        ['Sheep'],
+        ['Parameters'],
+        ['Params: Plankton'],
+        ['Params: Rabbit'],
+      ]);
+    });
   });
 
   describe('checkboxes on tag filter items', () => {
@@ -186,14 +302,14 @@ describe('NodeList', () => {
         ['Nested', true],
         ['Pipeline1', true],
         ['Pipeline2', true],
-        ['salmon', true],
+        ['Salmon', true],
         ['Bull', true],
         ['Cat', true],
         ['Dog', true],
         ['Horse', true],
         ['Sheep', true],
         ['Parameters', true],
-        ['Params:rabbit', true],
+        ['Params: Rabbit', true],
       ]);
 
       changeRows(wrapper, ['Small', 'Large'], true);
@@ -201,7 +317,7 @@ describe('NodeList', () => {
         ['Nested', true],
         ['Pipeline1', true],
         ['Pipeline2', true],
-        ['salmon', true],
+        ['Salmon', true],
         ['Bear', true],
         ['Bull', true],
         ['Cat', true],
@@ -212,7 +328,7 @@ describe('NodeList', () => {
         ['Pig', true],
         ['Sheep', true],
         ['Parameters', true],
-        ['Params:rabbit', true],
+        ['Params: Rabbit', true],
       ]);
     });
 
@@ -229,7 +345,7 @@ describe('NodeList', () => {
         ['Pipeline1', true],
         ['Pipeline2', true],
         // Tasks (enabled)
-        ['salmon', true],
+        ['Salmon', true],
         ['Bear', true],
         // Datasets (enabled)
         ['Bull', true],
@@ -242,8 +358,8 @@ describe('NodeList', () => {
         ['Sheep', true],
         // Parameters(enabled)
         ['Parameters', true],
-        ['Params:pipeline100.data Science.plankton', true],
-        ['Params:rabbit', true],
+        ['Params: Plankton', true],
+        ['Params: Rabbit', true],
       ]);
     });
 

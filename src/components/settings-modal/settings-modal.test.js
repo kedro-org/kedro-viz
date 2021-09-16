@@ -32,6 +32,7 @@ describe('SettingsModal', () => {
       }),
       theme: expect.stringMatching(/light|dark/),
       flags: expect.any(Object),
+      prettyName: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
@@ -50,6 +51,12 @@ describe('SettingsModal', () => {
       type: 'CHANGE_FLAG',
       name: 'sizewarning',
       value: false,
+    });
+
+    mapDispatchToProps(dispatch).onTogglePrettyName(false);
+    expect(dispatch.mock.calls[2][0]).toEqual({
+      type: 'TOGGLE_PRETTY_NAME',
+      prettyName: false,
     });
   });
 });

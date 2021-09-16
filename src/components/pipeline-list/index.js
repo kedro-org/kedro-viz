@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Dropdown from '@quantumblack/kedro-ui/lib/components/dropdown';
 import MenuOption from '@quantumblack/kedro-ui/lib/components/menu-option';
 import { loadPipelineData } from '../../actions/pipelines';
+import { toggleFocusMode } from '../../actions';
 import './pipeline-list.css';
 
 /**
@@ -17,6 +18,7 @@ export const PipelineList = ({
   asyncDataSource,
   onUpdateActivePipeline,
   pipeline,
+  prettyName,
   theme,
   onToggleOpen,
 }) => {
@@ -32,7 +34,11 @@ export const PipelineList = ({
         theme={theme}
         width={null}
         onChanged={onUpdateActivePipeline}
-        defaultText={pipeline.name[pipeline.active] || 'Default'}>
+        defaultText={
+          prettyName
+            ? pipeline.name[pipeline.active]
+            : pipeline.active || 'Default'
+        }>
         {pipeline.ids.map((id) => (
           <MenuOption
             key={`pipeline-${id}`}
@@ -40,7 +46,7 @@ export const PipelineList = ({
               'pipeline-list__option--active': pipeline.active === id,
             })}
             value={id}
-            primaryText={pipeline.name[id]}
+            primaryText={prettyName ? pipeline.name[id] : id}
           />
         ))}
       </Dropdown>
@@ -51,12 +57,14 @@ export const PipelineList = ({
 export const mapStateToProps = (state) => ({
   asyncDataSource: state.dataSource === 'json',
   pipeline: state.pipeline,
+  prettyName: state.prettyName,
   theme: state.theme,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
   onUpdateActivePipeline: (event) => {
     dispatch(loadPipelineData(event.value));
+    dispatch(toggleFocusMode(null));
   },
 });
 
