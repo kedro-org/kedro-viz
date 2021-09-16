@@ -30,6 +30,7 @@ from pathlib import Path
 from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
 
+import pandas as pd
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
 from kedro.extras.datasets.spark import SparkDataSet
@@ -440,7 +441,7 @@ class TestGraphNodeMetadata:
         assert metrics_node_metadata.metrics == mock_metrics_data
         assert metrics_node_metadata.plot == mock_plot_data
 
-    def test_metrics_data_node_dataset_not_exist(self):
+    def test_metrics_data_node_metadata_dataset_not_exist(self):
         metrics_data_node = MagicMock()
         metrics_data_node.is_plot_node.return_value = False
         metrics_data_node.is_metric_node.return_value = True
@@ -448,6 +449,42 @@ class TestGraphNodeMetadata:
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
         assert not hasattr(metrics_node_metadata, "metric")
         assert not hasattr(metrics_node_metadata, "plot")
+
+    @patch("json.load")
+    @patch("kedro_viz.integrations.kedro.data_loader.load_data_for_all_versions")
+    def test_metrics_data_node_metadata_versioned_dataset_not_exist(
+        self,
+        patched_data_loader,
+        patched_json_load,
+    ):
+        mock_metrics_data = {
+            "recommendations": 0.0009277445547700936,
+            "recommended_controls": 0.001159680693462617,
+            "projected_optimization": 0.0013916168321551402,
+        }
+        patched_json_load.return_value = mock_metrics_data
+        patched_data_loader.return_value = {}
+        metrics_data_node = MagicMock()
+        metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_metric_node.return_value = True
+        metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
+        assert metrics_node_metadata.metrics == mock_metrics_data
+        assert not hasattr(metrics_node_metadata, "plot")
+
+    def test_data_node_metadata_create_metrics_plot(self):
+        test_versioned_data = {
+            "index": [
+                datetime.datetime(2021, 9, 10, 9, 2, 44, 245000),
+                datetime.datetime(2021, 9, 11, 9, 2, 44, 245000),
+            ],
+            "recommendations": [1, 2],
+            "recommended_controls": [3, 4],
+            "projected_optimization": [5, 6],
+        }
+        data_frame = pd.DataFrame(data=test_versioned_data)
+        test_plot = DataNodeMetadata.create_metrics_plot(data_frame)
+        assert "data" in test_plot
+        assert "layout" in test_plot
 
     def test_parameters_metadata_all_parameters(self):
         parameters = {"test_split_ratio": 0.3, "num_epochs": 1000}
