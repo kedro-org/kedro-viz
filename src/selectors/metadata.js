@@ -58,6 +58,12 @@ export const getClickedNodeMetaData = createSelector(
     if (!node) {
       return null;
     }
+    //rounding of metrics data
+    nodeMetrics[node.id] &&
+      Object.entries(nodeMetrics[node.id]).forEach(([key, value]) => {
+        nodeMetrics[node.id][key] = Math.round(value * 100) / 100;
+      });
+
     const metadata = {
       node,
       tags: [...nodeTags[node.id]]

@@ -539,7 +539,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         Returns:
             a plotly line chart object with metrics data
         """
-        import pandas as pd  # pylint: disable=import-outside-toplevel
+        import pandas as pd # pylint: disable=import-outside-toplevel
         import plotly.express as px  # pylint: disable=import-outside-toplevel
         import plotly.io as pio  # pylint: disable=import-outside-toplevel
 

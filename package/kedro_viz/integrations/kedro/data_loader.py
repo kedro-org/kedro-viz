@@ -136,15 +136,12 @@ def load_data_for_all_versions(
         path for path in sorted(Path(filepath).iterdir(), reverse=True) if path.is_dir()
     ]
     versions = {}
-    for index, version in enumerate(version_list):
-        if index == limit:
-            break
-
+    for version in version_list[:limit]:
         try:
             timestamp = datetime.strptime(version.name, VERSION_FORMAT)
         except ValueError:
             logger.warning(
-                "Version %s is not a timestamp. Skip when loading metrics.",
+                "Expected timestamp of format '%Y-%m-%dT%H.%M.%S.%fZ'. Skip when loading metrics.",
                 version.name,
             )
             continue

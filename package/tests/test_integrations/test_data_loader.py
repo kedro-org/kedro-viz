@@ -46,3 +46,16 @@ def test_load_data_for_all_versions():
     }
     filepath = str(Path(__file__).parent.parent / "example_metrics/metrics.json")
     assert data_loader.load_data_for_all_versions(filepath) == mock_metrics_json
+
+
+def test_load_data_for_all_versions_set_limit():
+    mock_metrics_json = {
+        datetime.datetime(2021, 9, 10, 9, 3, 23, 733000): {
+            "recommendations": 0.200383330721228,
+            "recommended_controls": 0.250479163401535,
+            "projected_optimization": 0.30057499608184196,
+        },
+    }
+    limit = 1
+    filepath = str(Path(__file__).parent.parent / "example_metrics/metrics.json")
+    assert data_loader.load_data_for_all_versions(filepath,limit) == mock_metrics_json
