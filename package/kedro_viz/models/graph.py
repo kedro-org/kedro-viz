@@ -39,6 +39,10 @@ from pathlib import Path
 from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
+import pandas as pd
+import plotly.express as px
+import plotly.io as pio
+
 from kedro.io import AbstractDataSet
 from kedro.io.core import get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
