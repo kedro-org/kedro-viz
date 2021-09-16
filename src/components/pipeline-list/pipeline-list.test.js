@@ -63,6 +63,7 @@ describe('PipelineList', () => {
         name: expect.any(Object),
         ids: expect.any(Array),
       },
+      prettyName: expect.any(Boolean),
       theme: mockState.animals.theme,
     });
   });
@@ -70,6 +71,12 @@ describe('PipelineList', () => {
   it('maps dispatch to props', async () => {
     const dispatch = jest.fn();
     mapDispatchToProps(dispatch).onUpdateActivePipeline({ value: '123' });
-    expect(dispatch.mock.calls.length).toEqual(1);
+    // The calls would also include the action to reset focus mode
+    expect(dispatch.mock.calls.length).toEqual(2);
+    // ensure that the action to reset focus mode is being called
+    expect(dispatch.mock.calls[1][0]).toEqual({
+      type: 'TOGGLE_MODULAR_PIPELINE_FOCUS_MODE',
+      modularPipeline: null,
+    });
   });
 });

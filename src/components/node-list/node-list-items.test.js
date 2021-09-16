@@ -245,7 +245,7 @@ describe('node-list-selectors', () => {
 
     it('filters expected number of items', () => {
       expect(filteredItems.task).toHaveLength(3);
-      expect(filteredItems.data).toHaveLength(10);
+      expect(filteredItems.data).toHaveLength(6);
       expect(filteredItems.parameters).toHaveLength(4);
       expect(filteredItems.tag).toHaveLength(2);
       expect(filteredItems.modularPipeline).toHaveLength(3);
@@ -605,7 +605,7 @@ describe('node-list-selectors', () => {
       });
 
       describe('should return the correct amount of nodes for the filtered modular pipeline', () => {
-        const searchValue = 'Nested.weasel';
+        const searchValue = 'Weasel';
 
         const filteredModularPipelineNodes = getFilteredModularPipelineNodes({
           nodes: getGroupedNodes(mockState.animals),
