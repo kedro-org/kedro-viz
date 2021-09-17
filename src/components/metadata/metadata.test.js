@@ -494,7 +494,7 @@ describe('MetaData', () => {
         nodeId: bearDatasetNodeId,
         mockMetadata: nodeMetricsData,
       });
-      const row = rowByLabel(wrapper, 'Metrics:');
+      const row = rowByLabel(wrapper, 'Metrics from last run:');
       expect(textOf(rowObject(row))[0]).toEqual(
         expect.stringContaining('3 items')
       );
