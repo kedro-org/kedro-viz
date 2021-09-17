@@ -124,11 +124,22 @@ const TreeListProvider = ({
   const renderModularPipelineTree = useCallback(
     (key) => {
       const node = modularPipelineTree[key];
+      if (!node) {
+        return;
+      }
+
+      const children = sortBy(
+        node.children,
+        (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
+        (child) => nodes[child.id]?.name
+      ).map((child) =>
+        isModularPipelineType(child.type)
+          ? renderModularPipelineTree(child.id)
+          : renderLeafNode(child.id)
+      );
 
       if (key === '__root__') {
-        return node?.children.map((child) =>
-          renderModularPipelineTree(child.id)
-        );
+        return children;
       }
 
       return (
@@ -143,15 +154,7 @@ const TreeListProvider = ({
           onItemClick={onItemClick}
           key={node.id}
           focusMode={focusMode}>
-          {sortBy(
-            node.children,
-            (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
-            (child) => nodes[child.id]?.name
-          ).map((child) =>
-            isModularPipelineType(child.type)
-              ? renderModularPipelineTree(child.id)
-              : renderLeafNode(child.id)
-          )}
+          {children}
         </NodeListTreeItem>
       );
     },

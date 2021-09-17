@@ -190,37 +190,8 @@ class ModularPipelinesRepository:
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
         return modular_pipeline_id in self.modular_pipelines
 
-    def as_list(self) -> List[ModularPipeline]:
-        """Serialise the list of modular pipeline as a tree by expanding namespace if necessarry"""
-        tree: Dict[str, ModularPipeline] = {"__root__": ModularPipeline(id="__root__")}
-
-        for modular_pipeline_id, modular_pipeline in self.modular_pipelines.items():
-            tree[modular_pipeline_id] = modular_pipeline
-            namespace_chunks = modular_pipeline_id.split(".")
-            n = len(namespace_chunks)
-            tree["__root__"].children.add(
-                ModularPipelineChild(
-                    id=namespace_chunks[0],
-                    type=ModularPipelineChildType.MODULAR_PIPELINE.value,
-                )
-            )
-            if n == 1:
-                continue
-
-            i = 0
-            while i < n - 1:
-                parent_id = namespace_chunks[i]
-                if parent_id not in tree:
-                    tree[parent_id] = ModularPipeline(parent_id)
-                tree[parent_id].children.add(
-                    ModularPipelineChild(
-                        id=f"{parent_id}.{namespace_chunks[i + 1]}",
-                        type=ModularPipelineChildType.MODULAR_PIPELINE.value,
-                    )
-                )
-                i += 1
-
-        return tree
+    def as_dict(self):
+        return self.modular_pipelines
 
     @classmethod
     def from_nodes(cls, nodes: List[GraphNode]) -> "ModularPipelinesRepository":

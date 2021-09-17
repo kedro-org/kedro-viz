@@ -41,6 +41,9 @@ from kedro_viz.models.graph import (
     RegisteredPipeline,
     TaskNode,
     TranscodedDataNode,
+    ModularPipeline,
+    ModularPipelineChild,
+    ModularPipelineChildType,
 )
 
 from .repositories import (
@@ -203,3 +206,46 @@ class DataAccessManager:
 
     def set_layers(self, layers: List[str]):
         self.layers.set_layers(layers)
+
+    def get_modular_pipelines_tree(self) -> Dict[str, ModularPipeline]:
+        tree: Dict[str, ModularPipeline] = {"__root__": ModularPipeline(id="__root__")}
+        dangling_ids = set(self.nodes.as_dict().keys())
+
+        for (
+            modular_pipeline_id,
+            modular_pipeline,
+        ) in self.modular_pipelines.as_dict().items():
+            tree[modular_pipeline_id] = modular_pipeline
+
+            dangling_ids.difference_update([c.id for c in modular_pipeline.children])
+
+            chunks = modular_pipeline_id.split(".")
+            num_chunks = len(chunks)
+            tree["__root__"].children.add(
+                ModularPipelineChild(
+                    id=chunks[0],
+                    type=ModularPipelineChildType.MODULAR_PIPELINE.value,
+                )
+            )
+            if num_chunks == 1:
+                continue
+
+            i = 0
+            while i < num_chunks - 1:
+                parent_id = chunks[i]
+                if parent_id not in tree:
+                    tree[parent_id] = ModularPipeline(parent_id)
+
+                tree[parent_id].children.add(
+                    ModularPipelineChild(
+                        id=f"{parent_id}.{chunks[i + 1]}",
+                        type=ModularPipelineChildType.MODULAR_PIPELINE.value,
+                    )
+                )
+                i += 1
+
+        for node_id, node in self.nodes.as_dict().items():
+            if node_id in dangling_ids:
+                tree["__root__"].children.add(ModularPipelineChild(node.id, node.type))
+
+        return tree
