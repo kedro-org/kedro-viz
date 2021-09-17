@@ -141,8 +141,8 @@ def load_data_for_all_versions(
             timestamp = datetime.strptime(version.name, VERSION_FORMAT)
         except ValueError:
             logger.warning(
-                "Expected timestamp of format '%Y-%m-%dT%H.%M.%S.%fZ'. Skip when loading metrics.",
-                version.name,
+                """Expected timestamp of format YYYY-MM-DDTHH:MM:SS.ffffff.
+                 Skip when loading metrics."""
             )
             continue
         else:

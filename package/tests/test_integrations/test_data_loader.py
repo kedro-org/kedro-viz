@@ -26,12 +26,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import datetime
+import json
 from pathlib import Path
+
+import pytest
 
 from kedro_viz.integrations.kedro import data_loader
 
 
-def test_load_data_for_all_versions():
+@pytest.fixture
+def metrics_filepath(tmpdir):
+    dir_name = ["2021-09-10T09.02.44.245Z", "2021-09-10T09.03.23.733Z"]
+    filename = "metrics.json"
+    json_content = [
+        {
+            "recommendations": 0.3866563620506992,
+            "recommended_controls": 0.48332045256337397,
+            "projected_optimization": 0.5799845430760487,
+        },
+        {
+            "recommendations": 0.200383330721228,
+            "recommended_controls": 0.250479163401535,
+            "projected_optimization": 0.30057499608184196,
+        },
+    ]
+    source_dir = Path(tmpdir / filename)
+    for index, directory in enumerate(dir_name):
+        filepath = Path(source_dir / directory / filename)
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        filepath.write_text(json.dumps(json_content[index]))
+    return source_dir
+
+
+def test_load_data_for_all_versions(metrics_filepath):
     mock_metrics_json = {
         datetime.datetime(2021, 9, 10, 9, 2, 44, 245000): {
             "recommendations": 0.3866563620506992,
@@ -44,11 +71,10 @@ def test_load_data_for_all_versions():
             "projected_optimization": 0.30057499608184196,
         },
     }
-    filepath = str(Path(__file__).parent.parent / "example_metrics/metrics.json")
-    assert data_loader.load_data_for_all_versions(filepath) == mock_metrics_json
+    assert data_loader.load_data_for_all_versions(metrics_filepath) == mock_metrics_json
 
 
-def test_load_data_for_all_versions_set_limit():
+def test_load_data_for_all_versions_set_limit(metrics_filepath):
     mock_metrics_json = {
         datetime.datetime(2021, 9, 10, 9, 3, 23, 733000): {
             "recommendations": 0.200383330721228,
@@ -57,5 +83,7 @@ def test_load_data_for_all_versions_set_limit():
         },
     }
     limit = 1
-    filepath = str(Path(__file__).parent.parent / "example_metrics/metrics.json")
-    assert data_loader.load_data_for_all_versions(filepath,limit) == mock_metrics_json
+    assert (
+        data_loader.load_data_for_all_versions(metrics_filepath, limit)
+        == mock_metrics_json
+    )
