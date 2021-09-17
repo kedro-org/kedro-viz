@@ -33,6 +33,16 @@
   &--disabled {
     pointer-events: none;
   }
+
+  .Mui-selected & {
+    .kui-theme--dark & {
+      background-color: #{$color-bg-dark-3};
+    }
+
+    .kui-theme--light & {
+      background-color: #{$color-bg-light-3};
+    }
+  }
 }
 
 .pipeline-nodelist__row__icon {
