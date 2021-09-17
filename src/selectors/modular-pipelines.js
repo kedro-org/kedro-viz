@@ -20,38 +20,18 @@ export const getModularPipelineData = createSelector(
     // getModularPipelineName,
     // getModularPipelineEnabled,
     // getModularPipelineChildren,
-    // getPrettyName,
+    getPrettyName,
   ],
-  (
-    modularPipelineIDs,
-    modularPipelineTree
-    // modularPipelineName,
-    // modularPipelineEnabled,
-    // modularPipelineChildren,
-    // prettyName
-  ) => {
+  (modularPipelineIDs, modularPipelineTree, prettyName) => {
     return modularPipelineIDs
       .slice()
       .sort()
       .map((id) => ({
         id,
-        // name: prettyName ? modularPipelineName[id] : id,
-        name: modularPipelineTree[id].name,
+        name: prettyName ? modularPipelineTree[id].name : id,
         // enabled: Boolean(modularPipelineEnabled[id]),
         enabled: true,
         children: modularPipelineTree[id].children,
       }));
   }
 );
-
-/**
- * Get the total and enabled number of modular pipelines
- */
-// export const getModularPipelineCount = createSelector(
-//   [getPipelineModularPipelineIDs, getModularPipelineEnabled],
-//   (modularPipelineIDs, modularPipelineEnabled) => ({
-//     total: modularPipelineIDs.length,
-//     enabled: modularPipelineIDs.filter((id) => modularPipelineEnabled[id])
-//       .length,
-//   })
-// );

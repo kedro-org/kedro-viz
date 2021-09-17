@@ -186,8 +186,8 @@ export const getNodeDataObject = createSelector(
         modularPipelines: nodeModularPipelines[id],
         disabled: nodeDisabled[id],
         disabledNode: Boolean(nodeDisabledNode[id]),
-        disabledTag: nodeDisabledTag[id],
-        disabledModularPipeline: nodeDisabledModularPipeline[id],
+        disabledTag: Boolean(nodeDisabledTag[id]),
+        disabledModularPipeline: Boolean(nodeDisabledModularPipeline[id]),
         disabledType: Boolean(typeDisabled[nodeType[id]]),
       };
       return obj;
