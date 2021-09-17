@@ -13,7 +13,7 @@ import {
   toggleModularPipelineFilter,
 } from '../../actions/modular-pipelines';
 import { toggleTypeDisabled } from '../../actions/node-type';
-import { getNodeDataObject, getNodeSelected } from '../../selectors/nodes';
+import { getNodeSelected } from '../../selectors/nodes';
 import { loadNodeData } from '../../actions/nodes';
 import NodeListTreeItem from './node-list-tree-item';
 import VisibleIcon from '../icons/visible';
@@ -53,6 +53,7 @@ const getModularPipelineRowData = ({
 }) => ({
   id: id,
   name: highlightedLabel || name,
+
   type: 'modularPipeline',
   icon: 'modularPipeline',
   visibleIcon: VisibleIcon,
@@ -98,15 +99,15 @@ const TreeListProvider = ({
     };
   };
 
-  const renderLeafNode = (nodeID) => {
+  const renderLeafNode = (node) => {
     return (
       <NodeListTreeItem
-        data={getNodeRowData(nodes[nodeID])}
+        data={getNodeRowData(node)}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
         onItemClick={onItemClick}
-        key={nodeID}
+        key={node.id}
         focusMode={focusMode}
       />
     );
@@ -121,11 +122,11 @@ const TreeListProvider = ({
     const children = sortBy(
       node.children,
       (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
-      (child) => nodes[child.id]?.name
+      (child) => child.name
     ).map((child) =>
       isModularPipelineType(child.type)
         ? renderModularPipelinesTree(child.id)
-        : renderLeafNode(child.id)
+        : renderLeafNode(child.node)
     );
 
     if (modularPipelineID === '__root__') {
@@ -174,7 +175,6 @@ const TreeListProvider = ({
 };
 
 export const mapStateToProps = (state) => ({
-  nodes: getNodeDataObject(state),
   nodeSelected: getNodeSelected(state),
 });
 

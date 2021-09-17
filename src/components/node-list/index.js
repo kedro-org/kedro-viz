@@ -13,7 +13,7 @@ import {
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import {
-  getModularPipelinesTree,
+  // getModularPipelinesTree,
   getFocusedModularPipeline,
   getFilteredModularPipelinesTree,
 } from '../../selectors/modular-pipelines';
@@ -21,6 +21,7 @@ import {
   getGroupedNodes,
   getNodeSelected,
   getInputOutputNodesForFocusedModularPipeline,
+  getModularPipelinesTree,
 } from '../../selectors/nodes';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
@@ -190,7 +191,7 @@ const NodeListProvider = ({
     <NodeList
       faded={faded}
       items={items}
-      modularPipelinesTree={filteredModularPipelinesTree}
+      modularPipelinesTree={modularPipelinesTree}
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={updateSearchValue}

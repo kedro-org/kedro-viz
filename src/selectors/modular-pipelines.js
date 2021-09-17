@@ -1,11 +1,27 @@
 import utils from '@quantumblack/kedro-ui/lib/utils';
-const { escapeRegExp, getHighlightedText } = utils;
+import { createSelector } from 'reselect';
+import { getNodeDataObject } from './nodes';
 
+console.log(getNodeDataObject);
+
+const { escapeRegExp, getHighlightedText } = utils;
 export const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 export const getModularPipelinesTree = (state) => state.modularPipeline.tree;
 export const getFocusedModularPipeline = (state) =>
   state.visible.modularPipelineFocusMode;
 // const getPrettyName = (state) => state.prettyName;
+
+// export const getModularPipelinesTree = createSelector(
+//   [(state) => state.modularPipeline.tree, getNodeDataObject],
+//   (modularPipelinesTree, nodes) => {
+//     return Object.keys(modularPipelinesTree).reduce(
+//       (tree, modularPipelineID) => {
+//         tree[modularPipelineID] = modularPipelinesTree[modularPipelineID];
+//       },
+//       {}
+//     );
+//   }
+// );
 
 export const modularPipelineMatchesSearch = (modularPipeline, searchValue) => {
   if (searchValue) {

@@ -194,6 +194,23 @@ export const getNodeDataObject = createSelector(
     }, {})
 );
 
+export const getModularPipelinesTree = createSelector(
+  [(state) => state.modularPipeline.tree, getNodeDataObject],
+  (modularPipelinesTree, nodes) => {
+    if (!modularPipelinesTree) {
+      return {};
+    }
+    for (const modularPipelineID in modularPipelinesTree) {
+      for (const child of modularPipelinesTree[modularPipelineID].children) {
+        if (child.type !== 'modularPipeline') {
+          child.node = { ...nodes[child.id] };
+        }
+      }
+    }
+    return modularPipelinesTree;
+  }
+);
+
 /**
  * Returns formatted nodes grouped by type
  */
