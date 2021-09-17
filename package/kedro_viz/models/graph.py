@@ -549,8 +549,8 @@ class DataNodeMetadata(GraphNodeMetadata):
         ).sort_values(by="version")
         return json.loads(
             pio.to_json(
-                px.line(melted_sorted_df, x="version", y="value", color="metrics")
-            )
+                px.line(melted_sorted_df, x="version", y="value", color="metrics",
+                 title="Metrics trend"))  
         )
 
 

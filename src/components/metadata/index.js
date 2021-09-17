@@ -139,7 +139,7 @@ const MetaData = ({
                 />
                 {hasMetrics && (
                   <MetaDataRow
-                    label="Metrics:"
+                    label="Metrics from last run:"
                     theme={theme}
                     visible={isDataNode}
                     kind="metrics"
