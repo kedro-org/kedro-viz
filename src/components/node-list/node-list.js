@@ -13,6 +13,7 @@ import './styles/node-list.css';
 const NodeList = ({
   faded,
   items,
+  modularPipelinesTree,
   groups,
   searchValue,
   getGroupState,
@@ -54,6 +55,7 @@ const NodeList = ({
                 hideTracksWhenNotNeeded>
                 <div className="pipeline-nodelist-section">
                   <NodeListTree
+                    modularPipelinesTree={modularPipelinesTree}
                     searchValue={searchValue}
                     faded={faded}
                     onItemClick={onItemClick}

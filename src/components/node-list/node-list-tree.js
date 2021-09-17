@@ -5,6 +5,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import noop from 'lodash.noop';
 import sortBy from 'lodash.sortby';
 
 import {
@@ -12,7 +13,6 @@ import {
   toggleModularPipelineFilter,
 } from '../../actions/modular-pipelines';
 import { toggleTypeDisabled } from '../../actions/node-type';
-import { getModularPipelineTree } from '../../selectors/modular-pipelines';
 import { getNodeDataObject, getNodeSelected } from '../../selectors/nodes';
 import { loadNodeData } from '../../actions/nodes';
 import NodeListTreeItem from './node-list-tree-item';
@@ -44,9 +44,15 @@ const StyledTreeView = withStyles({
 
 const isModularPipelineType = (type) => type === 'modularPipeline';
 
-const getModularPipelineRowData = ({ id, name, enabled, focusMode }) => ({
+const getModularPipelineRowData = ({
+  id,
+  highlightedLabel,
+  name,
+  enabled,
+  focusMode,
+}) => ({
   id: id,
-  name: name,
+  name: highlightedLabel || name,
   type: 'modularPipeline',
   icon: 'modularPipeline',
   visibleIcon: VisibleIcon,
@@ -63,7 +69,7 @@ const getModularPipelineRowData = ({ id, name, enabled, focusMode }) => ({
 const TreeListProvider = ({
   nodes,
   nodeSelected,
-  modularPipelineTree,
+  modularPipelinesTree,
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
@@ -106,8 +112,8 @@ const TreeListProvider = ({
     );
   };
 
-  const renderModularPipelineTree = (modularPipelineID) => {
-    const node = modularPipelineTree[modularPipelineID];
+  const renderModularPipelinesTree = (modularPipelineID) => {
+    const node = modularPipelinesTree[modularPipelineID];
     if (!node) {
       return;
     }
@@ -118,7 +124,7 @@ const TreeListProvider = ({
       (child) => nodes[child.id]?.name
     ).map((child) =>
       isModularPipelineType(child.type)
-        ? renderModularPipelineTree(child.id)
+        ? renderModularPipelinesTree(child.id)
         : renderLeafNode(child.id)
     );
 
@@ -135,7 +141,7 @@ const TreeListProvider = ({
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
-        onItemClick={onItemClick}
+        onItemClick={noop}
         key={node.id}
         focusMode={focusMode}>
         {children}
@@ -154,6 +160,7 @@ const TreeListProvider = ({
       {/* {renderModularPipelines(treeData, false)} */}
       {/* render set of node elements in the main pipeline */}
       {/* {renderChildNodes(treeData)} */}
+      {renderModularPipelinesTree('__root__')}
     </StyledTreeView>
   ) : (
     <StyledTreeView
@@ -161,7 +168,7 @@ const TreeListProvider = ({
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       key="tree">
-      {renderModularPipelineTree('__root__')}
+      {renderModularPipelinesTree('__root__')}
     </StyledTreeView>
   );
 };
@@ -169,7 +176,6 @@ const TreeListProvider = ({
 export const mapStateToProps = (state) => ({
   nodes: getNodeDataObject(state),
   nodeSelected: getNodeSelected(state),
-  modularPipelineTree: getModularPipelineTree(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

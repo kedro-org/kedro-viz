@@ -13,8 +13,9 @@ import {
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import {
-  getModularPipelineData,
+  getModularPipelinesTree,
   getFocusedModularPipeline,
+  getFilteredModularPipelinesTree,
 } from '../../selectors/modular-pipelines';
 import {
   getGroupedNodes,
@@ -57,6 +58,7 @@ const NodeListProvider = ({
   onToggleModularPipelineFilter,
   onToggleFocusMode,
   modularPipelines,
+  modularPipelinesTree,
   focusMode,
   inputOutputDataNodes,
 }) => {
@@ -73,19 +75,17 @@ const NodeListProvider = ({
     inputOutputDataNodes,
   });
 
+  const filteredModularPipelinesTree = getFilteredModularPipelinesTree({
+    modularPipelinesTree,
+    searchValue,
+  });
+
   const groups = getGroups({ items });
 
   const onItemClick = (item) => {
-    if (isGroupType(item.type) || isModularPipelineType(item.type)) {
+    if (isGroupType(item.type)) {
       onGroupItemChange(item, item.checked);
-      if (isModularPipelineType(item.type)) {
-        if (focusMode === null) {
-          onToggleFocusMode(item);
-        } else {
-          onToggleFocusMode(null);
-        }
-      }
-    } else {
+    } else if (!isModularPipelineType(item.tye)) {
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
       } else {
@@ -190,6 +190,7 @@ const NodeListProvider = ({
     <NodeList
       faded={faded}
       items={items}
+      modularPipelinesTree={filteredModularPipelinesTree}
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={updateSearchValue}
@@ -209,9 +210,9 @@ export const mapStateToProps = (state) => ({
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
   nodeTypes: getNodeTypes(state),
-  modularPipelines: getModularPipelineData(state),
   focusMode: getFocusedModularPipeline(state),
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
+  modularPipelinesTree: getModularPipelinesTree(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
