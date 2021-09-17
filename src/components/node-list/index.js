@@ -80,6 +80,7 @@ const NodeListProvider = ({
     modularPipelinesTree,
     searchValue,
   });
+  // console.log(filteredMsodularPipelinesTree);
 
   const groups = getGroups({ items });
 
@@ -191,7 +192,7 @@ const NodeListProvider = ({
     <NodeList
       faded={faded}
       items={items}
-      modularPipelinesTree={modularPipelinesTree}
+      modularPipelinesTree={filteredModularPipelinesTree}
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={updateSearchValue}

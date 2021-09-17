@@ -322,11 +322,6 @@ export const getGroups = createSelector([(state) => state.items], (items) => {
   return groups;
 });
 
-// export const getFilteredModularPipelinesTree = createSelector(
-//   [(state) => state.modularPipeline?.tree],
-//   (modularPipelinesTree) => ({ modularPipelinesTree })
-// );
-
 /**
  * Returns filtered/highlighted items for nodes, tags and modular pipelines
  * @param {object} filteredNodeItems List of filtered nodes

@@ -1,63 +1,91 @@
 import utils from '@quantumblack/kedro-ui/lib/utils';
-import { createSelector } from 'reselect';
-import { getNodeDataObject } from './nodes';
-
-console.log(getNodeDataObject);
 
 const { escapeRegExp, getHighlightedText } = utils;
 export const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 export const getModularPipelinesTree = (state) => state.modularPipeline.tree;
 export const getFocusedModularPipeline = (state) =>
   state.visible.modularPipelineFocusMode;
-// const getPrettyName = (state) => state.prettyName;
 
-// export const getModularPipelinesTree = createSelector(
-//   [(state) => state.modularPipeline.tree, getNodeDataObject],
-//   (modularPipelinesTree, nodes) => {
-//     return Object.keys(modularPipelinesTree).reduce(
-//       (tree, modularPipelineID) => {
-//         tree[modularPipelineID] = modularPipelinesTree[modularPipelineID];
-//       },
-//       {}
-//     );
-//   }
-// );
-
-export const modularPipelineMatchesSearch = (modularPipeline, searchValue) => {
-  if (searchValue) {
-    return new RegExp(escapeRegExp(searchValue), 'gi').test(
-      modularPipeline.name
-    );
+export const search = (value, searchValue) => {
+  if (!value) {
+    return false;
   }
-
-  return true;
+  if (searchValue) {
+    return new RegExp(escapeRegExp(searchValue), 'gi').test(value);
+  }
 };
 
 export const getFilteredModularPipelinesTree = ({
   modularPipelinesTree,
   searchValue,
 }) => {
-  return Object.entries(modularPipelinesTree).reduce(
-    (tree, [modularPipelineID, modularPipeline]) => {
-      if (modularPipelineID === '__root__') {
-        return tree;
-      }
+  if (!searchValue) {
+    return modularPipelinesTree;
+  }
+  if (!modularPipelinesTree) {
+    return {};
+  }
 
-      if (modularPipelineMatchesSearch(modularPipeline, searchValue)) {
-        tree[modularPipelineID] = {
-          ...modularPipeline,
-          highlightedLabel: getHighlightedText(
-            modularPipeline.name,
-            searchValue
-          ),
-        };
-        tree['__root__'].children.push({
-          id: modularPipelineID,
-          type: 'modularPipeline',
-        });
+  const dfs = (modularPipelineID, result) => {
+    const modularPipeline = modularPipelinesTree[modularPipelineID];
+    if (!modularPipeline) {
+      return {};
+    }
+    const searchResult = {
+      ...modularPipeline,
+      name: getHighlightedText(modularPipeline.name, searchValue),
+      children: [],
+    };
+
+    for (const child of modularPipeline.children) {
+      if (child.type !== 'modularPipeline') {
+        if (search(child.node.name, searchValue)) {
+          searchResult.children.push({
+            ...child,
+            node: {
+              ...child.node,
+              highlightedLabel: getHighlightedText(
+                child.node.name,
+                searchValue
+              ),
+            },
+          });
+        }
+      } else {
+        dfs(child.id, result);
+        if (
+          (result[child.id] && result[child.id].children.length > 0) ||
+          search(modularPipeline.name, searchValue)
+        ) {
+          searchResult.children.push({
+            ...child,
+            highlightedLabel: getHighlightedText(
+              result[child.id].name,
+              searchValue
+            ),
+          });
+        }
+        // if (
+        //   (subTreeResult.children && subTreeResult.children.length > 0) ||
+        //   search(subTree.name, searchValue)
+        // ) {
+        //   searchResult.children.push({
+        //     ...child,
+        //     highlightedLabel: getHighlightedText(subTree.name, searchValue),
+        //   });
+        // }
       }
-      return tree;
-    },
-    { __root__: { id: '__root__', name: 'Root', children: [] } }
-  );
+    }
+
+    if (
+      searchResult.children.length > 0 ||
+      search(modularPipeline.name, searchValue)
+    ) {
+      result[modularPipelineID] = searchResult;
+    }
+  };
+  const result = {};
+  dfs('__root__', result);
+  console.log(result);
+  return result;
 };
