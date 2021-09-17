@@ -79,12 +79,24 @@ class RegisteredPipeline:
         self.name = _pretty_name(self.id)
 
 
+class ModularPipelineChildType(Enum):
+    NODE = "node"
+    MODULAR_PIPELINE = "modularPipeline"
+
+
+@dataclass(frozen=True)
+class ModularPipelineChild:
+    id: str
+    type: str
+
+
 @dataclass
 class ModularPipeline:
     """Represent a modular pipeline within a registered pipeline"""
 
     id: str
     name: str = field(init=False)
+    children: Set[ModularPipelineChild] = field(default_factory=set)
 
     def __post_init__(self):
         # prettify the last bit of the modular pipaline name, i.e. without the namespace
@@ -131,6 +143,7 @@ class GraphNode(abc.ABC):
     pipelines: List[str]
 
     # the list of modular pipeline this node belongs to
+    namespace: Optional[str] = field(init=False)
     modular_pipelines: Optional[List[str]] = field(init=False)
 
     # the underlying Kedro object for this node
@@ -320,6 +333,7 @@ class TaskNode(GraphNode):
 
     def __post_init__(self, kedro_obj: KedroNode):
         self._kedro_obj = kedro_obj
+        self.namespace = kedro_obj.namespace
 
         # the modular pipelines that a task node belongs to are derived from its namespace.
         self.modular_pipelines = self._expand_namespaces(kedro_obj.namespace)
@@ -429,6 +443,7 @@ class DataNode(GraphNode):
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
+        self.namespace = self._get_namespace(self.full_name)
         self.modular_pipelines = self._expand_namespaces(
             self._get_namespace(self.full_name)
         )
@@ -667,8 +682,10 @@ class ParametersNode(GraphNode):
     def __post_init__(self, kedro_obj: AbstractDataSet):
         self._kedro_obj = kedro_obj
         if self.is_all_parameters():
+            self.namespace = None
             self.modular_pipelines = []
         else:
+            self.namespace = self._get_namespace(self.parameter_name)
             self.modular_pipelines = self._expand_namespaces(
                 self._get_namespace(self.parameter_name)
             )

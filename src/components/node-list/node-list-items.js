@@ -149,24 +149,24 @@ export const getFilteredModularPipelines = createSelector(
  * @return {array} Node list items
  */
 export const getFilteredModularPipelineItems = createSelector(
-  [getFilteredModularPipelines, (state) => state.focusMode],
-  (filteredModularPipelines, focusMode) => ({
-    modularPipeline: filteredModularPipelines.modularPipeline.map(
-      (modularPipeline) => ({
-        ...modularPipeline,
-        type: 'modularPipeline',
-        icon: 'modularPipeline',
-        visibleIcon: VisibleIcon,
-        invisibleIcon: InvisibleIcon,
-        active: false,
-        selected: false,
-        faded: false,
-        visible: true,
-        disabled: focusMode !== null && focusMode?.id !== modularPipeline.id,
-        checked: modularPipeline.enabled,
-      })
-    ),
-  })
+  // [getFilteredModularPipelines, (state) => state.focusMode],
+  [(state) => state.modularPipeline.tree, (state) => state.focusMode],
+  (modularPipeline, focusMode) =>
+    Object.values(modularPipeline).map((modularPipeline) => ({
+      id: modularPipeline.id,
+      name: modularPipeline.name,
+      type: 'modularPipeline',
+      icon: 'modularPipeline',
+      visibleIcon: VisibleIcon,
+      invisibleIcon: InvisibleIcon,
+      active: false,
+      selected: false,
+      faded: false,
+      visible: true,
+      enabled: true,
+      disabled: focusMode && focusMode?.id !== modularPipeline.id,
+      checked: modularPipeline.enabled,
+    }))
 );
 
 /**
@@ -336,18 +336,18 @@ export const getFilteredItems = createSelector(
   [
     getFilteredNodeItems,
     getFilteredTagItems,
-    getFilteredModularPipelineItems,
+    // getFilteredModularPipelineItems,
     getFilteredElementTypeItems,
   ],
   (
     filteredNodeItems,
     filteredTagItems,
-    filteredModularPipelineItems,
+    // filteredModularPipelineItems,
     filteredElementTypeItems
   ) => ({
     ...filteredTagItems,
     ...filteredNodeItems,
-    ...filteredModularPipelineItems,
+    // ...filteredModularPipelineItems,
     ...filteredElementTypeItems,
   })
 );

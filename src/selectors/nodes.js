@@ -70,12 +70,13 @@ export const getNodeActive = createSelector(
         return true;
       }
       const activeViaTag = nodeTags[nodeID].some((tag) => tagActive[tag]);
-      const activeViaModularPipeline =
-        nodeModularPipelines[nodeID] &&
-        nodeModularPipelines[nodeID].some(
-          (modularPipeline) => modularPipelineActive[modularPipeline]
-        );
-      return Boolean(activeViaTag) || Boolean(activeViaModularPipeline);
+      // const activeViaModularPipeline =
+      //   nodeModularPipelines[nodeID] &&
+      //   nodeModularPipelines[nodeID].some(
+      //     (modularPipeline) => modularPipelineActive[modularPipeline]
+      //   );
+      // return Boolean(activeViaTag) || Boolean(activeViaModularPipeline);
+      return Boolean(activeViaTag);
     })
 );
 
@@ -149,6 +150,48 @@ export const getNodeData = createSelector(
         disabledModularPipeline: nodeDisabledModularPipeline[id],
         disabledType: Boolean(typeDisabled[nodeType[id]]),
       }))
+);
+
+export const getNodeDataObject = createSelector(
+  [
+    getPipelineNodeIDs,
+    getNodeLabel,
+    getNodeType,
+    getNodeDatasetType,
+    getNodeDisabled,
+    getNodeDisabledNode,
+    getNodeDisabledTag,
+    getNodeDisabledModularPipeline,
+    getNodeTypeDisabled,
+    getNodeModularPipelines,
+  ],
+  (
+    nodeIDs,
+    nodeLabel,
+    nodeType,
+    nodeDatasetType,
+    nodeDisabled,
+    nodeDisabledNode,
+    nodeDisabledTag,
+    nodeDisabledModularPipeline,
+    typeDisabled,
+    nodeModularPipelines
+  ) =>
+    nodeIDs.reduce((obj, id) => {
+      obj[id] = {
+        id,
+        name: nodeLabel[id],
+        type: nodeType[id],
+        icon: getShortType([nodeDatasetType[id]], nodeType[id]),
+        modularPipelines: nodeModularPipelines[id],
+        disabled: nodeDisabled[id],
+        disabledNode: Boolean(nodeDisabledNode[id]),
+        disabledTag: nodeDisabledTag[id],
+        disabledModularPipeline: nodeDisabledModularPipeline[id],
+        disabledType: Boolean(typeDisabled[nodeType[id]]),
+      };
+      return obj;
+    }, {})
 );
 
 /**

@@ -11,9 +11,11 @@ export const createInitialPipelineState = () => ({
   },
   modularPipeline: {
     ids: [],
-    name: {},
-    enabled: {},
-    active: {},
+    tree: {},
+    // name: {},
+    // children: {},
+    // enabled: {},
+    // active: {},
   },
   node: {
     ids: [],
@@ -118,9 +120,10 @@ const addPipeline = (state) => (pipeline) => {
  * Add a new modular pipeline
  * @param {string} modularPipeline.id - Unique namespace of the modular pipeline
  * @param {string} modularPipeline.name - modular pipeline name
+ * @param {Array[string]} modularPipeline.children - modular pipeline children
  */
 const addModularPipeline = (state) => (modularPipeline) => {
-  const { id, name } = modularPipeline;
+  const { id, name, children } = modularPipeline;
   if (state.modularPipeline.name[id]) {
     return;
   }
@@ -224,7 +227,8 @@ const normalizeData = (data) => {
     }
   }
   if (data.modular_pipelines) {
-    data.modular_pipelines.forEach(addModularPipeline(state));
+    state.modularPipeline.ids = Object.keys(data.modular_pipelines);
+    state.modularPipeline.tree = data.modular_pipelines;
   }
   if (data.tags) {
     data.tags.forEach(addTag(state));

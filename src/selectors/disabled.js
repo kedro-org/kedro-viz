@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
 import { getNodeDisabledPipeline, getPipelineNodeIDs } from './pipeline';
 import { getTagCount } from './tags';
-import { getModularPipelineCount } from './modular-pipelines';
+// import { getModularPipelineCount } from './modular-pipelines';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeDisabledNode = (state) => state.node.disabled;
@@ -55,7 +55,7 @@ export const getNodeDisabledModularPipeline = createSelector(
   [
     getNodeIDs,
     getModularPipelineEnabled,
-    getModularPipelineCount,
+    // getModularPipelineCount,
     getNodeModularPipelines,
     getEdgeIDs,
     getNodeType,
@@ -65,7 +65,7 @@ export const getNodeDisabledModularPipeline = createSelector(
   (
     nodeIDs,
     modularPipelineEnabled,
-    modularPipelineCount,
+    // modularPipelineCount,
     nodeModularPipelines,
     edgeIDs,
     nodeType,
@@ -74,15 +74,16 @@ export const getNodeDisabledModularPipeline = createSelector(
   ) =>
     arrayToObject(nodeIDs, (nodeID) => {
       // check for excpetion 1: when there are no modular pipelines enabled
-      if (modularPipelineCount.enabled === 0) {
-        return false;
-      }
+      // if (modularPipelineCount.enabled === 0) {
+      //   return false;
+      // }
 
-      const isDisabledByModularPipeline = !isNodeOfActiveModularPipeline(
-        nodeModularPipelines,
-        nodeID,
-        modularPipelineEnabled
-      );
+      // const isDisabledByModularPipeline = !isNodeOfActiveModularPipeline(
+      //   nodeModularPipelines,
+      //   nodeID,
+      //   modularPipelineEnabled
+      // );
+      const isDisabledByModularPipeline = false;
 
       // check for excpetion 2: check for input/output nodes that are not part of modular pipelines
       if (

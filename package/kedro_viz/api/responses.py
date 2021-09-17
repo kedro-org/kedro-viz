@@ -207,21 +207,29 @@ class NamedEntityAPIResponse(BaseAPIResponse):
     name: Optional[str]
 
 
+class ModularPipelineChildAPIResponse(BaseAPIResponse):
+    id: str
+    type: str
+
+
+class ModularPipelineAPIResponse(BaseAPIResponse):
+    id: str
+    name: str
+    children: List[ModularPipelineChildAPIResponse]
+
+
 class GraphAPIResponse(BaseAPIResponse):
     nodes: List[NodeAPIResponse]
     edges: List[GraphEdgeAPIResponse]
     layers: List[str]
     tags: List[NamedEntityAPIResponse]
     pipelines: List[NamedEntityAPIResponse]
-    modular_pipelines: List[NamedEntityAPIResponse]
+    modular_pipelines: Dict[str, ModularPipelineAPIResponse]
     selected_pipeline: str
 
 
 def get_default_response() -> GraphAPIResponse:
     """Default response for `/api/main`."""
-    from pprint import pprint
-
-    pprint(data_access_manager.nodes.as_list())
     return GraphAPIResponse(
         nodes=data_access_manager.nodes.as_list(),
         edges=data_access_manager.edges.as_list(),

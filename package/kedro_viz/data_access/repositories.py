@@ -38,6 +38,8 @@ from kedro_viz.models.graph import (
     GraphEdge,
     GraphNode,
     ModularPipeline,
+    ModularPipelineChild,
+    ModularPipelineChildType,
     RegisteredPipeline,
     Tag,
 )
@@ -172,24 +174,59 @@ class ModularPipelinesRepository:
     def __init__(self):
         self.modular_pipelines: Dict[str, ModularPipeline] = {}
 
-    def add_modular_pipeline(self, modular_pipeline_id: str):
-        modular_pipeline = ModularPipeline(modular_pipeline_id)
-        self.modular_pipelines[modular_pipeline_id] = modular_pipeline
+    def add_modular_pipeline_from_node(self, node: GraphNode):
+        modular_pipeline_id = node.namespace
+        if not modular_pipeline_id:
+            return
 
-    def add_modular_pipelines(self, modular_pipeline_ids: Iterable[str]):
-        map(self.add_modular_pipeline, modular_pipeline_ids)
+        if modular_pipeline_id not in self.modular_pipelines:
+            modular_pipeline = ModularPipeline(modular_pipeline_id)
+            self.modular_pipelines[modular_pipeline_id] = modular_pipeline
+
+        self.modular_pipelines[modular_pipeline_id].children.add(
+            ModularPipelineChild(id=node.id, type=node.type)
+        )
 
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
         return modular_pipeline_id in self.modular_pipelines
 
     def as_list(self) -> List[ModularPipeline]:
-        return list(sorted(self.modular_pipelines.values(), key=lambda p: p.id))
+        """Serialise the list of modular pipeline as a tree by expanding namespace if necessarry"""
+        tree: Dict[str, ModularPipeline] = {"__root__": ModularPipeline(id="__root__")}
+
+        for modular_pipeline_id, modular_pipeline in self.modular_pipelines.items():
+            tree[modular_pipeline_id] = modular_pipeline
+            namespace_chunks = modular_pipeline_id.split(".")
+            n = len(namespace_chunks)
+            tree["__root__"].children.add(
+                ModularPipelineChild(
+                    id=namespace_chunks[0],
+                    type=ModularPipelineChildType.MODULAR_PIPELINE.value,
+                )
+            )
+            if n == 1:
+                continue
+
+            i = 0
+            while i < n - 1:
+                parent_id = namespace_chunks[i]
+                if parent_id not in tree:
+                    tree[parent_id] = ModularPipeline(parent_id)
+                tree[parent_id].children.add(
+                    ModularPipelineChild(
+                        id=f"{parent_id}.{namespace_chunks[i + 1]}",
+                        type=ModularPipelineChildType.MODULAR_PIPELINE.value,
+                    )
+                )
+                i += 1
+
+        return tree
 
     @classmethod
     def from_nodes(cls, nodes: List[GraphNode]) -> "ModularPipelinesRepository":
         repo = cls()
         for node in nodes:
-            repo.add_modular_pipelines(node.modular_pipelines)
+            repo.add_modular_pipeline_from_node(node)
         return repo
 
 
