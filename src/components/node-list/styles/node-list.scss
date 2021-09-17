@@ -18,7 +18,7 @@
   --color-nodelist-highlight: #{darken($color-primary, 10%)};
   --color-nodelist-split-handle: #555;
   --color-nodelist-split-handle-border: #{rgba(#555, 0.18)};
-  --color-nodelist-filter-panel: #{$color-bg-light-4};
+  --color-nodelist-filter-panel: #{$color-bg-light-1};
   --color-nodelist-element-panel: #{$color-bg-light-3};
 }
 
@@ -30,20 +30,20 @@
   --color-nodelist-highlight: #{$color-primary};
   --color-nodelist-split-handle: #fff;
   --color-nodelist-split-handle-border: #{rgba(#fff, 0.15)};
-  --color-nodelist-filter-panel: #{$color-bg-dark-5};
-  --color-nodelist-element-panel: #{$color-bg-dark-3};
+  --color-nodelist-filter-panel: #{$color-bg-dark-3};
+  --color-nodelist-element-panel: #{$color-bg-dark-2};
 }
 
 @include transparentColour(
   '--color-nodelist-bg-transparent',
   $color-bg-light-3,
-  $color-bg-dark-3
+  $color-bg-dark-2
 );
 
 @include transparentColour(
   '--color-nodelist-bg-filter-transparent',
-  $color-bg-light-4,
-  $color-bg-dark-5
+  $color-bg-light-1,
+  $color-bg-dark-3
 );
 
 .pipeline-nodelist {
