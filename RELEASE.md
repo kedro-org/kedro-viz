@@ -12,7 +12,7 @@ Please follow the established format:
 ## Major features and improvements
 
 - Improve pretty-name algorithm. (#546)
-- Setup CU for automatic deployment. (#555)
+- Setup CI for automatic deployment. (#555)
 - Turn on/off pretty naming on the settings panel. (#542)
 
 ## Bug fixes and other changes
