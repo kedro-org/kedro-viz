@@ -87,3 +87,17 @@
     padding-left: 0;
   }
 }
+
+.Mui-selected {
+  .kui-theme--dark & {
+    .pipeline-nodelist__row {
+      background-color: #{$color-bg-dark-2};
+    }
+  }
+
+  .kui-theme--light & {
+    .pipeline-nodelist__row {
+      background-color: #{$color-bg-light-3};
+    }
+  }
+}
