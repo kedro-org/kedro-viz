@@ -6,8 +6,8 @@
   --color-modal-header-text: #{rgba($color-dark, 0.55)};
   --color-toggle--on: #{$color-primary-2};
   --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
-  --color-toggle--off: #{$color-bg-dark-9};
-  --color-toggle-bar--off: #{rgba($color-bg-dark-9, 0.3)};
+  --color-toggle--off: #{$color-bg-dark-5};
+  --color-toggle-bar--off: #{rgba($color-bg-dark-5, 0.3)};
 }
 
 .kui-theme--dark {
@@ -15,7 +15,7 @@
   --color-toggle--on: #{$color-primary};
   --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
   --color-toggle--off: #{$color-bg-light-3};
-  --color-toggle-bar--off: #{$color-bg-dark-10};
+  --color-toggle-bar--off: #{$color-bg-dark-2};
 }
 
 .pipeline-settings-modal {

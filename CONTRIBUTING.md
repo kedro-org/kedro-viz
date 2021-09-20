@@ -56,6 +56,7 @@ def count_truthy(elements: List[Any]) -> int:
 
 - Keep UI elements fully keyboard accessible, and aim to support screen-readers where possible
 - Maintain a high level of animation performance, and minimise page-load time
+- We use the set of colours defined in the [Kedro-Viz Style Guide](https://github.com/quantumblacklabs/kedro-viz/blob/main/STYLE_GUIDE.md) for all colour variables and usage.
 
 ### JavaScript Development
 

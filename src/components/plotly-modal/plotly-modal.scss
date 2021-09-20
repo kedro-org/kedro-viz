@@ -2,14 +2,14 @@
 @import '../../styles/extends';
 
 .kui-theme--light {
-  --color-bg-plot: #{$color-bg-light-5};
+  --color-bg-plot: #{$color-bg-light-4};
   --color-button-plot: #{$color-button};
   --color-button-plot-hovered: #{$color-button-hovered};
   --color-button-text: #{$color-light};
 }
 
 .kui-theme--dark {
-  --color-bg-plot: #{$color-bg-dark-7};
+  --color-bg-plot: #{$color-bg-dark-2};
   --color-button-plot: #{$color-button};
   --color-button-plot-hovered: #{$color-button-hovered};
   --color-button-text: #{$color-light};

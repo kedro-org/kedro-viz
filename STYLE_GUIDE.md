@@ -119,7 +119,9 @@ color: rgba(black, 0.5);
 
 ### Theme colours
 
-Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme.
+Kedro-Viz has both light and dark themes, and every component must be styled appropriately for each theme. Please refer to the below colour guide for the set of colours for each theme
+
+![Kedro-Viz Color Styleguide](./.github/img/kedro_colours.png)
 
 The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. To simplify code and avoid increasing CSS specificity, we use CSS custom properties to handle theme colours. We recommend that you use these too where possible - they are defined in the App component.
 
