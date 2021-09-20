@@ -7,6 +7,21 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 3.16.0
+
+## Major features and improvements
+
+- Improve pretty-name algorithm. (#546)
+- Setup CI for automatic deployment. (#555)
+- Turn on/off pretty naming on the settings panel. (#542)
+
+## Bug fixes and other changes
+
+- Fix focus mode search (#549)
+- Fix focus mode error when switching pipelines  (#553)
+- Pin dynaconf before Kedro is released. (#559)
+- Refactor colors based on latest palette (#552)
+
 # Release 3.15.0
 
 ## Major features and improvements
