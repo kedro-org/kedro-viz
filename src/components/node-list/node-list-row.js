@@ -117,7 +117,8 @@ const NodeListRow = memo(
                 'pipeline-nodelist__row__type-icon--disabled': disabled,
                 'pipeline-nodelist__row__type-icon--nested': !children,
                 'pipeline-nodelist__row__type-icon--active': active,
-                'pipeline-nodelist__row__type-icon--selected': selected,
+                'pipeline-nodelist__row__type-icon--selected':
+                  selected || isInFocusMode,
               }
             )}
             icon={icon}

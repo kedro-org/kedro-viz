@@ -15,6 +15,26 @@
   transform: translate(0, 0);
   cursor: default;
 
+  .Mui-selected & {
+    .kui-theme--dark & {
+      background-color: #{$color-bg-dark-2};
+
+      &--active,
+      &--visible:hover {
+        background-color: var(--color-nodelist-row-active);
+      }
+
+      &--selected,
+      &--visible#{&}--selected {
+        background-color: var(--color-nodelist-row-selected);
+      }
+    }
+
+    .kui-theme--light & {
+      background-color: #{$color-bg-light-3};
+    }
+  }
+
   &--kind-filter {
     padding: 0 $row-offset-right 0 $row-offset-left;
   }
