@@ -489,6 +489,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     run_command: Optional[str] = field(init=False, default=None)
 
     def __post_init__(self, data_node: DataNode):
+        # pylint: disable=import-outside-toplevel
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
@@ -511,10 +512,8 @@ class DataNodeMetadata(GraphNodeMetadata):
             if not dataset._exists() or self.filepath is None:
                 return
 
-            import pandas as pd  # pylint: disable=import-outside-toplevel
-            from kedro.extras.datasets.tracking.metrics_dataset import (  # pylint: disable=import-outside-toplevel
-                MetricsDataSet,
-            )
+            import pandas as pd
+            from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
             dataset = cast(MetricsDataSet, dataset)
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
@@ -539,9 +538,10 @@ class DataNodeMetadata(GraphNodeMetadata):
         Returns:
             a plotly line chart object with metrics data
         """
-        import pandas as pd  # pylint: disable=import-outside-toplevel
-        import plotly.express as px  # pylint: disable=import-outside-toplevel
-        import plotly.io as pio  # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel
+        import pandas as pd
+        import plotly.express as px
+        import plotly.io as pio
 
         renamed_df = data_frame.reset_index().rename(columns={"index": "version"})
         melted_sorted_df = pd.melt(
@@ -549,8 +549,14 @@ class DataNodeMetadata(GraphNodeMetadata):
         ).sort_values(by="version")
         return json.loads(
             pio.to_json(
-                px.line(melted_sorted_df, x="version", y="value", color="metrics",
-                 title="Metrics trend"))  
+                px.line(
+                    melted_sorted_df,
+                    x="version",
+                    y="value",
+                    color="metrics",
+                    title="Metrics trend",
+                )
+            )
         )
 
 
