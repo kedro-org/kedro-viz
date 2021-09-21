@@ -30,14 +30,12 @@ load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
 # pylint: disable=import-outside-toplevel
-import json
 import logging
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, cast
 
 from kedro import __version__
-from kedro.io import AbstractDataSet, DataCatalog
+from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
 
@@ -125,35 +123,3 @@ def load_data(
 
     context = load_context(project_path=project_path, env=env)
     return context.catalog, context.pipelines
-
-
-def load_data_for_multiple_versions(
-    dataset: AbstractDataSet, num_versions: int = 10
-) -> Optional[Dict[datetime, Any]]:
-    """Load data for all versions of the dataset
-    Args:
-        dataset: the kedro dataset
-        num_versions: the maximum number of past versions we want to load.
-    Returns:
-        A dictionary containing the version and the json data inside each version
-    """
-    dataset_description = dataset._describe()
-    filepath = _parse_filepath(dataset_description)
-    version_list = [
-        path for path in sorted(Path(filepath).iterdir(), reverse=True) if path.is_dir()
-    ]
-    versions = {}
-    for version in version_list[:num_versions]:
-        try:
-            timestamp = datetime.strptime(version.name, VERSION_FORMAT)
-        except ValueError:
-            logger.warning(
-                """Expected timestamp of format YYYY-MM-DDTHH:MM:SS.ffffff.
-                 Skip when loading metrics."""
-            )
-            continue
-        else:
-            path = version / Path(filepath).name
-            with open(path) as fs_file:
-                versions[timestamp] = json.load(fs_file)
-    return versions

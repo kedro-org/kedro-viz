@@ -34,6 +34,7 @@ import json
 import logging
 import re
 from dataclasses import InitVar, dataclass, field
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
@@ -48,9 +49,8 @@ from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
 
-from kedro_viz.integrations.kedro import data_loader
-
 logger = logging.getLogger(__name__)
+VERSION_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
 
 
 def _pretty_name(name: str) -> str:
@@ -515,12 +515,12 @@ class DataNodeMetadata(GraphNodeMetadata):
             from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
             dataset = cast(MetricsDataSet, dataset)
-            if not dataset._exists():
+            if not dataset._exists() or self.filepath is None:
                 return
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.metrics = json.load(fs_file)
-            metrics_data = data_loader.load_data_for_multiple_versions(dataset)
+            metrics_data = self.load_metrics_versioned_data(self.filepath)
             if not metrics_data:
                 return
             self.plot = self.create_metrics_plot(
@@ -530,6 +530,38 @@ class DataNodeMetadata(GraphNodeMetadata):
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
+
+    @staticmethod
+    def load_metrics_versioned_data(
+        filepath: str, num_versions: int = 10
+    ) -> Optional[Dict[datetime, Any]]:
+        """Load data for multiple versions of the metrics dataset
+        Args:
+            filepath: the path whether the dataset is located.
+            num_versions: the maximum number of past versions we want to load.
+        Returns:
+            A dictionary containing the version and the json data inside each version
+        """
+        version_list = [
+            path
+            for path in sorted(Path(filepath).iterdir(), reverse=True)
+            if path.is_dir()
+        ]
+        versions = {}
+        for version in version_list[:num_versions]:
+            try:
+                timestamp = datetime.strptime(version.name, VERSION_FORMAT)
+            except ValueError:
+                logger.warning(
+                    """Expected timestamp of format YYYY-MM-DDTHH:MM:SS.ffffff.
+                    Skip when loading metrics."""
+                )
+                continue
+            else:
+                path = version / Path(filepath).name
+                with open(path) as fs_file:
+                    versions[timestamp] = json.load(fs_file)
+        return versions
 
     @staticmethod
     def create_metrics_plot(data_frame: DataFrame) -> Dict[str, Any]:

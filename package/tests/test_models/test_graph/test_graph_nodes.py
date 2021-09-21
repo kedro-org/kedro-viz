@@ -26,6 +26,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import datetime
+import json
 from pathlib import Path
 from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
@@ -397,7 +398,7 @@ class TestGraphNodeMetadata:
         assert not hasattr(plotly_node_metadata, "plot")
 
     @patch("json.load")
-    @patch("kedro_viz.integrations.kedro.data_loader.load_data_for_all_versions")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.create_metrics_plot")
     def test_metrics_data_node_metadata(
         self,
@@ -451,7 +452,7 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "plot")
 
     @patch("json.load")
-    @patch("kedro_viz.integrations.kedro.data_loader.load_data_for_all_versions")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
     def test_metrics_data_node_metadata_versioned_dataset_not_exist(
         self,
         patched_data_loader,
@@ -485,6 +486,98 @@ class TestGraphNodeMetadata:
         test_plot = DataNodeMetadata.create_metrics_plot(data_frame)
         assert "data" in test_plot
         assert "layout" in test_plot
+
+    @pytest.fixture
+    def metrics_filepath(self, tmpdir):
+        dir_name = ["2021-09-10T09.02.44.245Z", "2021-09-10T09.03.23.733Z"]
+        filename = "metrics.json"
+        json_content = [
+            {
+                "recommendations": 0.3866563620506992,
+                "recommended_controls": 0.48332045256337397,
+                "projected_optimization": 0.5799845430760487,
+            },
+            {
+                "recommendations": 0.200383330721228,
+                "recommended_controls": 0.250479163401535,
+                "projected_optimization": 0.30057499608184196,
+            },
+        ]
+        source_dir = Path(tmpdir / filename)
+        for index, directory in enumerate(dir_name):
+            filepath = Path(source_dir / directory / filename)
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+            filepath.write_text(json.dumps(json_content[index]))
+        return source_dir
+
+    @pytest.fixture
+    def metrics_filepath_invalid_timestamp(self, tmpdir):
+        dir_name = ["2021", "2021"]
+        filename = "metrics.json"
+        json_content = [
+            {
+                "recommendations": 0.3866563620506992,
+                "recommended_controls": 0.48332045256337397,
+                "projected_optimization": 0.5799845430760487,
+            },
+            {
+                "recommendations": 0.200383330721228,
+                "recommended_controls": 0.250479163401535,
+                "projected_optimization": 0.30057499608184196,
+            },
+        ]
+        source_dir = Path(tmpdir / filename)
+        for index, directory in enumerate(dir_name):
+            filepath = Path(source_dir / directory / filename)
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+            filepath.write_text(json.dumps(json_content[index]))
+        return source_dir
+
+    def test_load_metrics_versioned_data(self, metrics_filepath):
+        mock_metrics_json = {
+            datetime.datetime(2021, 9, 10, 9, 2, 44, 245000): {
+                "recommendations": 0.3866563620506992,
+                "recommended_controls": 0.48332045256337397,
+                "projected_optimization": 0.5799845430760487,
+            },
+            datetime.datetime(2021, 9, 10, 9, 3, 23, 733000): {
+                "recommendations": 0.200383330721228,
+                "recommended_controls": 0.250479163401535,
+                "projected_optimization": 0.30057499608184196,
+            },
+        }
+        assert (
+            DataNodeMetadata.load_metrics_versioned_data(metrics_filepath)
+            == mock_metrics_json
+        )
+
+    def test_load_metrics_versioned_data_set_limit(self, metrics_filepath):
+        mock_metrics_json = {
+            datetime.datetime(2021, 9, 10, 9, 3, 23, 733000): {
+                "recommendations": 0.200383330721228,
+                "recommended_controls": 0.250479163401535,
+                "projected_optimization": 0.30057499608184196,
+            },
+        }
+        limit = 1
+        assert (
+            DataNodeMetadata.load_metrics_versioned_data(metrics_filepath, limit)
+            == mock_metrics_json
+        )
+
+    @patch("logging.Logger.warning")
+    def test_load_metrics_versioned_data_invalid_timestamp(
+        self, patched_warning, metrics_filepath_invalid_timestamp
+    ):
+        DataNodeMetadata.load_metrics_versioned_data(metrics_filepath_invalid_timestamp)
+        patched_warning.assert_has_calls(
+            [
+                call(
+                    """Expected timestamp of format YYYY-MM-DDTHH:MM:SS.ffffff.
+                    Skip when loading metrics."""
+                )
+            ]
+        )
 
     def test_parameters_metadata_all_parameters(self):
         parameters = {"test_split_ratio": 0.3, "num_epochs": 1000}
