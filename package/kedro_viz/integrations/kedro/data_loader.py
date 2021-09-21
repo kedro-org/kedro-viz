@@ -44,12 +44,6 @@ VERSION_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
 
 logger = logging.getLogger(__name__)
 
-
-def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
-    filepath = dataset_description.get("filepath") or dataset_description.get("path")
-    return str(filepath) if filepath else None
-
-
 def _bootstrap(project_path: Path):
     """Bootstrap the integration by running various Kedro bootstrapping methods
     depending on the version
