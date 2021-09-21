@@ -499,10 +499,8 @@ class DataNodeMetadata(GraphNodeMetadata):
         self.filepath = _parse_filepath(dataset_description)
         # Parse plot data
         if data_node.is_plot_node():
-            from kedro.extras.datasets.plotly.plotly_dataset import (  # pylint: disable=import-outside-toplevel
-                PlotlyDataSet,
-            )
-
+            from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
+                
             dataset = cast(PlotlyDataSet, dataset)
             if not dataset._exists():
                 return
