@@ -530,10 +530,3 @@ class TestAPIAppFromFile:
         client = TestClient(api_app)
         response = client.get("/")
         assert response.status_code == 200
-
-    def test_api_app_from_fe_json_file_main_api(self):
-        filepath = str(Path(__file__).parent.parent / "example_pipelines.json")
-        api_app = apps.create_api_app_from_file(filepath)
-        client = TestClient(api_app)
-        response = client.get("/api/main")
-        assert_example_data(response.json())

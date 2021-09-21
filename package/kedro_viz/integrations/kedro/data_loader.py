@@ -37,7 +37,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, cast
 
 from kedro import __version__
-from kedro.io import DataCatalog
+from kedro.io import AbstractDataSet, DataCatalog
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
 
@@ -45,6 +45,11 @@ KEDRO_VERSION = VersionInfo.parse(__version__)
 VERSION_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
 
 logger = logging.getLogger(__name__)
+
+
+def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
+    filepath = dataset_description.get("filepath") or dataset_description.get("path")
+    return str(filepath) if filepath else None
 
 
 def _bootstrap(project_path: Path):
@@ -122,21 +127,23 @@ def load_data(
     return context.catalog, context.pipelines
 
 
-def load_data_for_all_versions(
-    filepath: str, limit: int = 10
+def load_data_for_multiple_versions(
+    dataset: AbstractDataSet, num_versions: int = 10
 ) -> Optional[Dict[datetime, Any]]:
     """Load data for all versions of the dataset
     Args:
-        filepath: the path where the dataset is located.
-        limit: the maximum number of past versions we want to load.
+        dataset: the kedro dataset
+        num_versions: the maximum number of past versions we want to load.
     Returns:
         A dictionary containing the version and the json data inside each version
     """
+    dataset_description = dataset._describe()
+    filepath = _parse_filepath(dataset_description)
     version_list = [
         path for path in sorted(Path(filepath).iterdir(), reverse=True) if path.is_dir()
     ]
     versions = {}
-    for version in version_list[:limit]:
+    for version in version_list[:num_versions]:
         try:
             timestamp = datetime.strptime(version.name, VERSION_FORMAT)
         except ValueError:
