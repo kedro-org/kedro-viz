@@ -32,7 +32,7 @@ load data from projects created in a range of Kedro versions.
 # pylint: disable=import-outside-toplevel
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, cast
+from typing import Dict, Tuple, cast
 
 from kedro import __version__
 from kedro.io import DataCatalog
@@ -40,9 +40,7 @@ from kedro.pipeline import Pipeline
 from semver import VersionInfo
 
 KEDRO_VERSION = VersionInfo.parse(__version__)
-VERSION_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
 
-logger = logging.getLogger(__name__)
 
 def _bootstrap(project_path: Path):
     """Bootstrap the integration by running various Kedro bootstrapping methods
