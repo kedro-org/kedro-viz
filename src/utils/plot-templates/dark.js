@@ -190,11 +190,7 @@ export const darkPreviewTemplate = {
     font: {
       size: 12,
     },
-    xref: 'paper',
-    yref: 'paper',
-    x: 0,
-    xanchor: 'left',
-    yanchor: 'middle',
+    x: 0.09,
   },
   showlegend: false,
   width: 400,
