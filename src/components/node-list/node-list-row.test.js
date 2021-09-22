@@ -44,6 +44,18 @@ describe('NodeListRow', () => {
       expect(props.onMouseLeave.mock.calls.length).toEqual(1);
     });
 
+    it('applies the overwrite class if not selected', () => {
+      const { props } = setupProps();
+      const activeNodeWrapper = setup.mount(
+        <NodeListRow {...props} selected={false} />
+      );
+      expect(
+        activeNodeWrapper
+          .find('.pipeline-nodelist__row')
+          .hasClass('pipeline-nodelist__row--overwrite')
+      ).toBe(true);
+    });
+
     it('uses active class if active', () => {
       const { props } = setupProps();
       const activeNodeWrapper = setup.mount(
