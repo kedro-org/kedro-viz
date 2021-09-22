@@ -80,3 +80,10 @@
     }
   }
 }
+
+.MuiTreeItem-label {
+  .kui-theme--dark &,
+  .kui-theme--light & {
+    padding-left: 0;
+  }
+}
