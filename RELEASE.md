@@ -15,6 +15,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Overwrite material UI selected row defaults. (#568)
+
 # Release 3.16.0
 
 ## Major features and improvements
