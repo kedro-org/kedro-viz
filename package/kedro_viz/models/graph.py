@@ -44,13 +44,12 @@ import pandas as pd
 import plotly.express as px
 import plotly.io as pio
 from kedro.io import AbstractDataSet
-from kedro.io.core import get_filepath_str
+from kedro.io.core import VERSION_FORMAT, get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
 
 logger = logging.getLogger(__name__)
-VERSION_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
 
 
 def _pretty_name(name: str) -> str:
@@ -500,7 +499,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         # Parse plot data
         if data_node.is_plot_node():
             from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
-                
+
             dataset = cast(PlotlyDataSet, dataset)
             if not dataset._exists():
                 return
