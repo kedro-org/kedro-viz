@@ -33,6 +33,7 @@ export const createInitialPipelineState = () => ({
     inputs: {},
     outputs: {},
     plot: {},
+    metrics: {},
     datasetType: {},
     originalType: {},
     transcodedTypes: {},
