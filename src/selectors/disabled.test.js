@@ -1,7 +1,6 @@
 import { mockState } from '../utils/state.mock';
 import {
   getNodeDisabledTag,
-  getNodeDisabledModularPipeline,
   getNodeDisabled,
   getEdgeDisabled,
   getVisibleNodeIDs,
@@ -84,39 +83,6 @@ describe('Selectors', () => {
         mockState.animals
       );
       expect(getNodeDisabledTag(newMockState)[enabledNodeID]).toEqual(false);
-    });
-  });
-
-  describe('getNodeDisabledModularPipeline', () => {
-    it('returns an object', () => {
-      expect(getNodeDisabledModularPipeline(mockState.animals)).toEqual(
-        expect.any(Object)
-      );
-    });
-
-    it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(
-        Object.keys(getNodeDisabledModularPipeline(mockState.animals))
-      ).toEqual(getNodeIDs(mockState.animals));
-    });
-
-    it('returns an object whose values are all Booleans', () => {
-      expect(
-        Object.values(getNodeDisabledModularPipeline(mockState.animals)).every(
-          (value) => typeof value === 'boolean'
-        )
-      ).toBe(true);
-    });
-
-    it('assigns a node that is an input to a modular pipeline to active status', () => {
-      const newMockState = reducer(
-        mockState.animals,
-        toggleFocusMode({ id: 'pipeline1' })
-      );
-
-      expect(getNodeDisabledModularPipeline(newMockState)['0ae9e4de']).toEqual(
-        false
-      );
     });
   });
 

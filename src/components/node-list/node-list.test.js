@@ -495,7 +495,6 @@ describe('NodeList', () => {
         disabledNode: expect.any(Boolean),
         disabledTag: expect.any(Boolean),
         disabledType: expect.any(Boolean),
-        disabledModularPipeline: expect.any(Boolean),
         id: expect.any(String),
         name: expect.any(String),
         type: expect.any(String),

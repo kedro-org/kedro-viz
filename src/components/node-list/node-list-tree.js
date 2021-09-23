@@ -78,8 +78,7 @@ const TreeListProvider = ({
 
   const getNodeRowData = (node) => {
     const checked = !node.disabledNode;
-    const disabled =
-      node.disabledTag || node.disabledType || node.disabledModularPipeline;
+    const disabled = node.disabledTag || node.disabledType;
     // (focusMode !== null && !!inputOutputDataNodes[node.id]);
 
     return {

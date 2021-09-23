@@ -271,7 +271,6 @@ export const getFilteredNodeItems = createSelector(
           const disabled =
             node.disabledTag ||
             node.disabledType ||
-            node.disabledModularPipeline ||
             (focusMode !== null && !!inputOutputDataNodes[node.id]);
 
           return {

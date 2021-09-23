@@ -8,7 +8,6 @@
     "disabled": false,
     "disabledNode": false,
     "disabledTag": false,
-    "disabledModularPipeline": false,
     "disabledType": false
   },
   {
@@ -20,7 +19,6 @@
     "disabled": false,
     "disabledNode": false,
     "disabledTag": false,
-    "disabledModularPipeline": false,
     "disabledType": false
   },
   {
@@ -32,7 +30,6 @@
     "disabled": false,
     "disabledNode": false,
     "disabledTag": false,
-    "disabledModularPipeline": false,
     "disabledType": false
   }
 ]

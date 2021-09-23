@@ -6,7 +6,6 @@ import {
   getNodeDisabled,
   getNodeDisabledTag,
   getVisibleNodeIDs,
-  getNodeDisabledModularPipeline,
 } from './disabled';
 import getShortType from '../utils/short-type';
 import { getNodeRank } from './ranks';
@@ -111,7 +110,6 @@ export const getNodeData = createSelector(
     getNodeDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
-    getNodeDisabledModularPipeline,
     getNodeTypeDisabled,
     getNodeModularPipelines,
   ],
@@ -123,7 +121,6 @@ export const getNodeData = createSelector(
     nodeDisabled,
     nodeDisabledNode,
     nodeDisabledTag,
-    nodeDisabledModularPipeline,
     typeDisabled,
     nodeModularPipelines
   ) =>
@@ -146,7 +143,6 @@ export const getNodeData = createSelector(
         disabled: nodeDisabled[id],
         disabledNode: Boolean(nodeDisabledNode[id]),
         disabledTag: nodeDisabledTag[id],
-        disabledModularPipeline: nodeDisabledModularPipeline[id],
         disabledType: Boolean(typeDisabled[nodeType[id]]),
       }))
 );
@@ -160,7 +156,6 @@ export const getNodeDataObject = createSelector(
     getNodeDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
-    getNodeDisabledModularPipeline,
     getNodeTypeDisabled,
     getNodeModularPipelines,
   ],
@@ -172,7 +167,6 @@ export const getNodeDataObject = createSelector(
     nodeDisabled,
     nodeDisabledNode,
     nodeDisabledTag,
-    nodeDisabledModularPipeline,
     typeDisabled,
     nodeModularPipelines
   ) =>
@@ -186,7 +180,6 @@ export const getNodeDataObject = createSelector(
         disabled: nodeDisabled[id],
         disabledNode: Boolean(nodeDisabledNode[id]),
         disabledTag: Boolean(nodeDisabledTag[id]),
-        disabledModularPipeline: Boolean(nodeDisabledModularPipeline[id]),
         disabledType: Boolean(typeDisabled[nodeType[id]]),
       };
       return obj;
