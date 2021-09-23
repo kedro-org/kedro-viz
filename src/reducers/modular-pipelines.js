@@ -1,7 +1,4 @@
-import {
-  TOGGLE_MODULAR_PIPELINE_ACTIVE,
-  TOGGLE_MODULAR_PIPELINE_FILTER,
-} from '../actions/modular-pipelines';
+import { TOGGLE_MODULAR_PIPELINE_ACTIVE } from '../actions/modular-pipelines';
 
 function modularPipelineReducer(modularPipelineState = {}, action) {
   const updateState = (newState) =>
@@ -24,16 +21,6 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
           {},
           modularPipelineState.active,
           batchChanges('active')
-        ),
-      });
-    }
-
-    case TOGGLE_MODULAR_PIPELINE_FILTER: {
-      return updateState({
-        enabled: Object.assign(
-          {},
-          modularPipelineState.enabled,
-          batchChanges('enabled')
         ),
       });
     }

@@ -8,10 +8,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import noop from 'lodash.noop';
 import sortBy from 'lodash.sortby';
 
-import {
-  toggleModularPipelineActive,
-  toggleModularPipelineFilter,
-} from '../../actions/modular-pipelines';
+import { toggleModularPipelineActive } from '../../actions/modular-pipelines';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { getNodeSelected } from '../../selectors/nodes';
 import { loadNodeData } from '../../actions/nodes';
@@ -176,9 +173,6 @@ export const mapStateToProps = (state) => ({
 export const mapDispatchToProps = (dispatch) => ({
   onToggleModularPipelineActive: (modularPipelineIDs, active) => {
     dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
-  },
-  onToggleModularPipelineFilter: (modularPipelineIDs, enabled) => {
-    dispatch(toggleModularPipelineFilter(modularPipelineIDs, enabled));
   },
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));

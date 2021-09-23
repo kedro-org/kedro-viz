@@ -13,7 +13,6 @@ import {
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import {
-  // getModularPipelinesTree,
   getFocusedModularPipeline,
   getModularPipelinesSearchResult,
 } from '../../selectors/modular-pipelines';
@@ -26,10 +25,7 @@ import {
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleParametersHovered, toggleFocusMode } from '../../actions';
-import {
-  toggleModularPipelineActive,
-  toggleModularPipelineFilter,
-} from '../../actions/modular-pipelines';
+import { toggleModularPipelineActive } from '../../actions/modular-pipelines';
 import {
   loadNodeData,
   toggleNodeHovered,
@@ -56,7 +52,6 @@ const NodeListProvider = ({
   onToggleTagFilter,
   onToggleModularPipelineActive,
   onToggleTypeDisabled,
-  onToggleModularPipelineFilter,
   onToggleFocusMode,
   modularPipelines,
   modularPipelinesTree,
@@ -167,8 +162,6 @@ const NodeListProvider = ({
     // Toggle the group
     if (isTagType(item.type)) {
       onToggleTagFilter(item.id, !wasChecked);
-    } else if (isModularPipelineType(item.type)) {
-      onToggleModularPipelineFilter([item.id], !wasChecked);
     } else if (isElementType(item.type)) {
       onToggleTypeDisabled({ [item.id]: wasChecked });
     }
@@ -228,9 +221,6 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleModularPipelineActive: (modularPipelineIDs, active) => {
     dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
-  },
-  onToggleModularPipelineFilter: (modularPipelineIDs, enabled) => {
-    dispatch(toggleModularPipelineFilter(modularPipelineIDs, enabled));
   },
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));

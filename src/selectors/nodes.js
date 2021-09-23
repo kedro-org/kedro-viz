@@ -70,13 +70,12 @@ export const getNodeActive = createSelector(
         return true;
       }
       const activeViaTag = nodeTags[nodeID].some((tag) => tagActive[tag]);
-      // const activeViaModularPipeline =
-      //   nodeModularPipelines[nodeID] &&
-      //   nodeModularPipelines[nodeID].some(
-      //     (modularPipeline) => modularPipelineActive[modularPipeline]
-      //   );
-      // return Boolean(activeViaTag) || Boolean(activeViaModularPipeline);
-      return Boolean(activeViaTag);
+      const activeViaModularPipeline =
+        nodeModularPipelines[nodeID] &&
+        nodeModularPipelines[nodeID].some(
+          (modularPipeline) => modularPipelineActive[modularPipeline]
+        );
+      return Boolean(activeViaTag) || Boolean(activeViaModularPipeline);
     })
 );
 
