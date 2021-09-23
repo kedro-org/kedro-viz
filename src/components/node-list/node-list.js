@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars';
 import NodeListSearch from './node-list-search';
@@ -14,6 +13,7 @@ const NodeList = ({
   faded,
   items,
   modularPipelinesTree,
+  modularPipelinesSearchResult,
   groups,
   searchValue,
   getGroupState,
@@ -25,12 +25,6 @@ const NodeList = ({
   onItemChange,
   focusMode,
 }) => {
-  const [searching, setSearching] = useState(false);
-
-  useEffect(() => {
-    setSearching(searchValue !== '');
-  }, [searchValue]);
-
   return (
     <div
       className={classnames('pipeline-nodelist', {
@@ -55,6 +49,7 @@ const NodeList = ({
                 hideTracksWhenNotNeeded>
                 <div className="pipeline-nodelist-section">
                   <NodeListTree
+                    modularPipelinesSearchResult={modularPipelinesSearchResult}
                     modularPipelinesTree={modularPipelinesTree}
                     searchValue={searchValue}
                     faded={faded}
@@ -62,7 +57,6 @@ const NodeList = ({
                     onItemMouseEnter={onItemMouseEnter}
                     onItemMouseLeave={onItemMouseLeave}
                     onItemChange={onItemChange}
-                    searching={searching}
                     focusMode={focusMode}
                   />
                 </div>

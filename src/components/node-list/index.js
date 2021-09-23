@@ -15,7 +15,7 @@ import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import {
   // getModularPipelinesTree,
   getFocusedModularPipeline,
-  getFilteredModularPipelinesTree,
+  getModularPipelinesSearchResult,
 } from '../../selectors/modular-pipelines';
 import {
   getGroupedNodes,
@@ -76,11 +76,12 @@ const NodeListProvider = ({
     inputOutputDataNodes,
   });
 
-  const filteredModularPipelinesTree = getFilteredModularPipelinesTree({
-    modularPipelinesTree,
-    searchValue,
-  });
-  // console.log(filteredMsodularPipelinesTree);
+  const modularPipelinesSearchResult = searchValue
+    ? getModularPipelinesSearchResult({
+        modularPipelinesTree,
+        searchValue,
+      })
+    : null;
 
   const groups = getGroups({ items });
 
@@ -192,7 +193,8 @@ const NodeListProvider = ({
     <NodeList
       faded={faded}
       items={items}
-      modularPipelinesTree={filteredModularPipelinesTree}
+      modularPipelinesTree={modularPipelinesTree}
+      modularPipelinesSearchResult={modularPipelinesSearchResult}
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={updateSearchValue}

@@ -15,13 +15,10 @@ export const search = (value, searchValue) => {
   }
 };
 
-export const getFilteredModularPipelinesTree = ({
+export const getModularPipelinesSearchResult = ({
   modularPipelinesTree,
   searchValue,
 }) => {
-  if (!searchValue) {
-    return modularPipelinesTree;
-  }
   if (!modularPipelinesTree) {
     return {};
   }
@@ -65,15 +62,6 @@ export const getFilteredModularPipelinesTree = ({
             ),
           });
         }
-        // if (
-        //   (subTreeResult.children && subTreeResult.children.length > 0) ||
-        //   search(subTree.name, searchValue)
-        // ) {
-        //   searchResult.children.push({
-        //     ...child,
-        //     highlightedLabel: getHighlightedText(subTree.name, searchValue),
-        //   });
-        // }
       }
     }
 
@@ -86,6 +74,5 @@ export const getFilteredModularPipelinesTree = ({
   };
   const result = {};
   dfs('__root__', result);
-  console.log(result);
   return result;
 };

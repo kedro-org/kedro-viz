@@ -501,6 +501,7 @@ class TranscodedDataNode(GraphNode):
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
+        self.namespace = self._get_namespace(self.full_name)
         self.modular_pipelines = self._expand_namespaces(
             self._get_namespace(self.full_name)
         )

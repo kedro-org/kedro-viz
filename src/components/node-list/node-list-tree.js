@@ -68,14 +68,13 @@ const getModularPipelineRowData = ({
 });
 
 const TreeListProvider = ({
-  nodes,
   nodeSelected,
+  modularPipelinesSearchResult,
   modularPipelinesTree,
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
   onItemClick,
-  searching,
   focusMode,
 }) => {
   const classes = useStyles();
@@ -113,8 +112,8 @@ const TreeListProvider = ({
     );
   };
 
-  const renderModularPipelinesTree = (modularPipelineID) => {
-    const node = modularPipelinesTree[modularPipelineID];
+  const renderTree = (tree, modularPipelineID) => {
+    const node = tree[modularPipelineID];
     if (!node) {
       return;
     }
@@ -125,7 +124,7 @@ const TreeListProvider = ({
       (child) => child.name
     ).map((child) =>
       isModularPipelineType(child.type)
-        ? renderModularPipelinesTree(child.id)
+        ? renderTree(tree, child.id)
         : renderLeafNode(child.node)
     );
 
@@ -150,26 +149,22 @@ const TreeListProvider = ({
     );
   };
 
-  return searching ? (
+  return modularPipelinesSearchResult ? (
     <StyledTreeView
       className={classes.root}
+      expanded={Object.keys(modularPipelinesSearchResult)}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
-      // expanded={expandedPipelines}
-      key="tree-search">
-      {/* render set of modular pipelines in the main pipeline */}
-      {/* {renderModularPipelines(treeData, false)} */}
-      {/* render set of node elements in the main pipeline */}
-      {/* {renderChildNodes(treeData)} */}
-      {renderModularPipelinesTree('__root__')}
+      key="modularPipelinesSearchResult">
+      {renderTree(modularPipelinesSearchResult, '__root__')}
     </StyledTreeView>
   ) : (
     <StyledTreeView
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
-      key="tree">
-      {renderModularPipelinesTree('__root__')}
+      key="modularPipelinesTree">
+      {renderTree(modularPipelinesTree, '__root__')}
     </StyledTreeView>
   );
 };
