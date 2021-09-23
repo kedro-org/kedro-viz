@@ -54,10 +54,6 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     type: str
 
 
-class ModularPipelineNodeAPIResponse(BaseGraphNodeAPIResponse):
-    ...
-
-
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
     parameters: Dict
 
@@ -110,7 +106,6 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
 
 
 NodeAPIResponse = Union[
-    ModularPipelineNodeAPIResponse,
     TaskNodeAPIResponse,
     DataNodeAPIResponse,
 ]
