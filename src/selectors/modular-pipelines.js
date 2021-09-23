@@ -2,7 +2,6 @@ import utils from '@quantumblack/kedro-ui/lib/utils';
 
 const { escapeRegExp, getHighlightedText } = utils;
 export const getModularPipelineIDs = (state) => state.modularPipeline.ids;
-export const getModularPipelinesTree = (state) => state.modularPipeline.tree;
 export const getFocusedModularPipeline = (state) =>
   state.visible.modularPipelineFocusMode;
 
@@ -57,7 +56,7 @@ export const getModularPipelinesSearchResult = ({
           searchResult.children.push({
             ...child,
             highlightedLabel: getHighlightedText(
-              result[child.id].name,
+              result[child.id]?.name || '',
               searchValue
             ),
           });

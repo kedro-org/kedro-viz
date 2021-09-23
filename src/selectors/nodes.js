@@ -29,8 +29,6 @@ const getClickedNode = (state) => state.node.clicked;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
-const getFocusedModularPipeline = (state) =>
-  state.visible.modularPipelineFocusMode;
 
 /**
  * Gets a map of nodeIds to graph nodes
@@ -192,6 +190,7 @@ export const getModularPipelinesTree = createSelector(
     if (!modularPipelinesTree) {
       return {};
     }
+    // we rely on the fact that the ids are sorted so parents always come before children
     for (const modularPipelineID in modularPipelinesTree) {
       for (const child of modularPipelinesTree[modularPipelineID].children) {
         if (child.type !== 'modularPipeline') {
@@ -379,18 +378,21 @@ export const getNodesWithInputParams = createSelector(
  * Returns a list of dataset nodes that are input and output nodes of the modular pipeline under focus mode
  */
 export const getInputOutputNodesForFocusedModularPipeline = createSelector(
-  [getFocusedModularPipeline, getGraphNodes, getNodeModularPipelines],
-  (focusedModularPipeline, graphNodes, nodeModularPipelines) => {
-    const nodesList = {};
-    if (focusedModularPipeline !== null) {
-      for (const nodeID in graphNodes) {
-        if (
-          !nodeModularPipelines[nodeID].includes(focusedModularPipeline?.id)
-        ) {
-          nodesList[nodeID] = graphNodes[nodeID];
-        }
-      }
-    }
-    return nodesList;
+  [
+    (state) => state.visible.modularPipelineFocusMode?.id,
+    getGraphNodes,
+    getModularPipelinesTree,
+  ],
+  (focusedModularPipelineID, graphNodes, modularPipelinesTree) => {
+    const focusedModularPipeline = focusedModularPipelineID
+      ? modularPipelinesTree[focusedModularPipelineID]
+      : null;
+    const nodeIDs = focusedModularPipeline
+      ? [...focusedModularPipeline.inputs, ...focusedModularPipeline.outputs]
+      : [];
+    return nodeIDs.reduce((result, nodeID) => {
+      result[nodeID] = graphNodes[nodeID];
+      return result;
+    }, {});
   }
 );

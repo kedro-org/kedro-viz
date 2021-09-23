@@ -97,6 +97,8 @@ class ModularPipeline:
     id: str
     name: str = field(init=False)
     children: Set[ModularPipelineChild] = field(default_factory=set)
+    inputs: Set[str] = field(default_factory=set)
+    outputs: Set[str] = field(default_factory=set)
 
     def __post_init__(self):
         # prettify the last bit of the modular pipaline name, i.e. without the namespace

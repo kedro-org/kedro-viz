@@ -216,6 +216,8 @@ class ModularPipelineAPIResponse(BaseAPIResponse):
     id: str
     name: str
     children: List[ModularPipelineChildAPIResponse]
+    inputs: List[str]
+    outputs: List[str]
 
 
 class GraphAPIResponse(BaseAPIResponse):

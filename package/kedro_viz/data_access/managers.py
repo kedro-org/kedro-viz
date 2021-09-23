@@ -91,7 +91,9 @@ class DataAccessManager:
         for node in sorted(pipeline.nodes, key=lambda n: n.name):
             task_node = self.add_node(pipeline_key, node)
             self.registered_pipelines.add_node(pipeline_key, task_node.id)
-            self.modular_pipelines.add_modular_pipeline_from_node(task_node)
+            task_modular_pipeline = (
+                self.modular_pipelines.add_modular_pipeline_from_node(task_node)
+            )
 
             # Add node inputs as DataNode to the graph
             for input_ in node.inputs:
@@ -103,7 +105,18 @@ class DataAccessManager:
                 if isinstance(input_node, TranscodedDataNode):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
-                self.modular_pipelines.add_modular_pipeline_from_node(input_node)
+                input_modular_pipeline = (
+                    self.modular_pipelines.add_modular_pipeline_from_node(input_node)
+                )
+
+                # if there is a modular pipeline for a task node
+                # but its input doesn't belong to a modular pipeline,
+                # it must mean that this input is "externalised"
+                # to connect this modular pipeline with others
+                if task_modular_pipeline is not None and input_modular_pipeline is None:
+                    self.modular_pipelines.add_input_to_modular_pipeline(
+                        task_modular_pipeline, input_node
+                    )
 
             # Add node outputs as DataNode to the graph
             for output in node.outputs:
@@ -114,6 +127,16 @@ class DataAccessManager:
                     output_node.original_version = self.catalog.get_dataset(output)
 
                 self.modular_pipelines.add_modular_pipeline_from_node(output_node)
+                output_modular_pipeline = (
+                    self.modular_pipelines.add_modular_pipeline_from_node(output_node)
+                )
+                if (
+                    task_modular_pipeline is not None
+                    and output_modular_pipeline is None
+                ):
+                    self.modular_pipelines.add_output_to_modular_pipeline(
+                        task_modular_pipeline, output_node
+                    )
 
     def add_node(self, pipeline_key: str, node: KedroNode) -> TaskNode:
         task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))
@@ -234,7 +257,11 @@ class DataAccessManager:
             while i < num_chunks - 1:
                 parent_id = chunks[i]
                 if parent_id not in tree:
-                    tree[parent_id] = ModularPipeline(parent_id)
+                    tree[parent_id] = ModularPipeline(
+                        parent_id,
+                        inputs=modular_pipeline.inputs,
+                        outputs=modular_pipeline.outputs,
+                    )
 
                 tree[parent_id].children.add(
                     ModularPipelineChild(

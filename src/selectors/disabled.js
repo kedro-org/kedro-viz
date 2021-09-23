@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
 import { getNodeDisabledPipeline, getPipelineNodeIDs } from './pipeline';
+import { getFocusedModularPipeline } from './modular-pipelines';
 import { getTagCount } from './tags';
 
 const getNodeIDs = (state) => state.node.ids;
@@ -15,6 +16,22 @@ const getEdgeTargets = (state) => state.edge.targets;
 const getLayerIDs = (state) => state.layer.ids;
 const getLayersVisible = (state) => state.layer.visible;
 const getNodeLayer = (state) => state.node.layer;
+const getNodeModularPipelines = (state) => state.node.modularPipelines;
+
+const getInputOutputNodeIDsForFocusedModularPipeline = createSelector(
+  [
+    (state) => state.visible.modularPipelineFocusMode,
+    (state) => state.modularPipeline.tree,
+  ],
+  (focusedModularPipeline, modularPipelinesTree) => {
+    const modularPipeline = focusedModularPipeline
+      ? modularPipelinesTree[focusedModularPipeline.id]
+      : null;
+    return modularPipeline
+      ? [...modularPipeline.inputs, ...modularPipeline.outputs]
+      : [];
+  }
+);
 
 /**
  * Calculate whether nodes should be disabled based on their tags
@@ -45,6 +62,9 @@ export const getNodeDisabled = createSelector(
     getNodeDisabledPipeline,
     getNodeType,
     getNodeTypeDisabled,
+    getNodeModularPipelines,
+    getFocusedModularPipeline,
+    getInputOutputNodeIDsForFocusedModularPipeline,
   ],
   (
     nodeIDs,
@@ -52,7 +72,10 @@ export const getNodeDisabled = createSelector(
     nodeDisabledTag,
     nodeDisabledPipeline,
     nodeType,
-    typeDisabled
+    typeDisabled,
+    nodeModularPipelines,
+    focusedModularPipeline,
+    inputOutputNodeIDs
   ) =>
     arrayToObject(nodeIDs, (id) =>
       [
@@ -60,6 +83,9 @@ export const getNodeDisabled = createSelector(
         nodeDisabledTag[id],
         nodeDisabledPipeline[id],
         typeDisabled[nodeType[id]],
+        focusedModularPipeline &&
+          !nodeModularPipelines[id].includes(focusedModularPipeline.id) &&
+          !inputOutputNodeIDs.includes(id),
       ].some(Boolean)
     )
 );

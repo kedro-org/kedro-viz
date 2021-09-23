@@ -104,7 +104,5 @@ async def get_single_pipeline_data(pipeline_id: str):
         layers=data_access_manager.layers.as_list(),
         pipelines=data_access_manager.registered_pipelines.as_list(),
         selected_pipeline=pipeline_id,
-        modular_pipelines=data_access_manager.modular_pipelines.from_nodes(
-            nodes
-        ).as_list(),
+        modular_pipelines=data_access_manager.get_modular_pipelines_tree(),
     )

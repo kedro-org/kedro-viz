@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import utils from '@quantumblack/kedro-ui/lib/utils';
+import debounce from 'lodash/debounce';
 import NodeList from './node-list';
 import {
   getFilteredItems,
@@ -190,7 +191,7 @@ const NodeListProvider = ({
       modularPipelinesSearchResult={modularPipelinesSearchResult}
       groups={groups}
       searchValue={searchValue}
-      onUpdateSearchValue={updateSearchValue}
+      onUpdateSearchValue={debounce(updateSearchValue, 250)}
       onGroupToggleChanged={onGroupToggleChanged}
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}

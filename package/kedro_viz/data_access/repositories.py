@@ -37,6 +37,7 @@ from semver import VersionInfo
 from kedro_viz.models.graph import (
     GraphEdge,
     GraphNode,
+    ParametersNode,
     ModularPipeline,
     ModularPipelineChild,
     ModularPipelineChildType,
@@ -174,10 +175,23 @@ class ModularPipelinesRepository:
     def __init__(self):
         self.modular_pipelines: Dict[str, ModularPipeline] = {}
 
+    def add_input_to_modular_pipeline(
+        self, pipeline_id: str, input_node: GraphNode
+    ) -> bool:
+        self.modular_pipelines[pipeline_id].inputs.add(input_node.id)
+
+    def add_output_to_modular_pipeline(
+        self, pipeline_id: str, output_node: GraphNode
+    ) -> bool:
+        self.modular_pipelines[pipeline_id].outputs.add(output_node.id)
+
     def add_modular_pipeline_from_node(self, node: GraphNode):
+        if isinstance(node, ParametersNode):
+            return
+
         modular_pipeline_id = node.namespace
         if not modular_pipeline_id:
-            return
+            return None
 
         if modular_pipeline_id not in self.modular_pipelines:
             modular_pipeline = ModularPipeline(modular_pipeline_id)
@@ -186,6 +200,7 @@ class ModularPipelinesRepository:
         self.modular_pipelines[modular_pipeline_id].children.add(
             ModularPipelineChild(id=node.id, type=node.type)
         )
+        return modular_pipeline_id
 
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
         return modular_pipeline_id in self.modular_pipelines
