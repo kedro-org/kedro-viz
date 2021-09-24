@@ -23,6 +23,7 @@ const NodeList = ({
   onItemMouseEnter,
   onItemMouseLeave,
   onItemChange,
+  onModularPipelineToggleExpanded,
   focusMode,
 }) => {
   return (
@@ -57,6 +58,7 @@ const NodeList = ({
                     onItemMouseEnter={onItemMouseEnter}
                     onItemMouseLeave={onItemMouseLeave}
                     onItemChange={onItemChange}
+                    onNodeToggleExpanded={onModularPipelineToggleExpanded}
                     focusMode={focusMode}
                   />
                 </div>

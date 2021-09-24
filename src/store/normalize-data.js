@@ -14,7 +14,7 @@ export const createInitialPipelineState = () => ({
     tree: {},
     // name: {},
     // children: {},
-    // enabled: {},
+    expanded: [],
     active: {},
   },
   node: {

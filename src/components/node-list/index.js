@@ -26,7 +26,10 @@ import {
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleParametersHovered, toggleFocusMode } from '../../actions';
-import { toggleModularPipelineActive } from '../../actions/modular-pipelines';
+import {
+  toggleModularPipelineActive,
+  toggleModularPipelineExpanded,
+} from '../../actions/modular-pipelines';
 import {
   loadNodeData,
   toggleNodeHovered,
@@ -52,6 +55,7 @@ const NodeListProvider = ({
   onToggleTagActive,
   onToggleTagFilter,
   onToggleModularPipelineActive,
+  onToggleModularPipelineExpanded,
   onToggleTypeDisabled,
   onToggleFocusMode,
   modularPipelines,
@@ -192,6 +196,7 @@ const NodeListProvider = ({
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={debounce(updateSearchValue, 250)}
+      onModularPipelineToggleExpanded={onToggleModularPipelineExpanded}
       onGroupToggleChanged={onGroupToggleChanged}
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
@@ -228,6 +233,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleNodeSelected: (nodeID) => {
     dispatch(loadNodeData(nodeID));
+  },
+  onToggleModularPipelineExpanded: (expanded) => {
+    dispatch(toggleModularPipelineExpanded(expanded));
   },
   onToggleNodeActive: (nodeID) => {
     dispatch(toggleNodeHovered(nodeID));

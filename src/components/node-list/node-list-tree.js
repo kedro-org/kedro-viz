@@ -8,10 +8,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import noop from 'lodash.noop';
 import sortBy from 'lodash.sortby';
 
-import { toggleModularPipelineActive } from '../../actions/modular-pipelines';
-import { toggleTypeDisabled } from '../../actions/node-type';
 import { getNodeSelected } from '../../selectors/nodes';
-import { loadNodeData } from '../../actions/nodes';
 import NodeListTreeItem from './node-list-tree-item';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
@@ -45,7 +42,6 @@ const getModularPipelineRowData = ({
   id,
   highlightedLabel,
   name,
-  enabled,
   focusMode,
 }) => ({
   id: id,
@@ -72,6 +68,7 @@ const TreeListProvider = ({
   onItemMouseEnter,
   onItemMouseLeave,
   onItemClick,
+  onNodeToggleExpanded,
   focusMode,
 }) => {
   const classes = useStyles();
@@ -146,6 +143,10 @@ const TreeListProvider = ({
     );
   };
 
+  const onItemExpandToggle = (event, expandedItemIds) => {
+    onNodeToggleExpanded(expandedItemIds);
+  };
+
   return modularPipelinesSearchResult ? (
     <StyledTreeView
       className={classes.root}
@@ -160,6 +161,7 @@ const TreeListProvider = ({
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
+      onNodeToggle={onItemExpandToggle}
       key="modularPipelinesTree">
       {renderTree(modularPipelinesTree, '__root__')}
     </StyledTreeView>
@@ -170,16 +172,4 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
 });
 
-export const mapDispatchToProps = (dispatch) => ({
-  onToggleModularPipelineActive: (modularPipelineIDs, active) => {
-    dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
-  },
-  onToggleTypeDisabled: (typeID, disabled) => {
-    dispatch(toggleTypeDisabled(typeID, disabled));
-  },
-  onToggleNodeSelected: (nodeID) => {
-    dispatch(loadNodeData(nodeID));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(TreeListProvider);
+export default connect(mapStateToProps)(TreeListProvider);

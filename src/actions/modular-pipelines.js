@@ -14,3 +14,17 @@ export function toggleModularPipelineActive(modularPipelineIDs, active) {
     active,
   };
 }
+
+export const TOGGLE_MODULAR_PIPELINE_EXPANDED =
+  'TOGGLE_MODULAR_PIPELINE_EXPANDED';
+
+/**
+ * Toggle whether a modular pipeline is expanded or contracted
+ * @param {Array[Number]} expandedIDs
+ */
+export function toggleModularPipelineExpanded(expandedIDs) {
+  return {
+    type: TOGGLE_MODULAR_PIPELINE_EXPANDED,
+    expandedIDs,
+  };
+}

@@ -1,4 +1,7 @@
-import { TOGGLE_MODULAR_PIPELINE_ACTIVE } from '../actions/modular-pipelines';
+import {
+  TOGGLE_MODULAR_PIPELINE_ACTIVE,
+  TOGGLE_MODULAR_PIPELINE_EXPANDED,
+} from '../actions/modular-pipelines';
 
 function modularPipelineReducer(modularPipelineState = {}, action) {
   const updateState = (newState) =>
@@ -22,6 +25,11 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
           modularPipelineState.active,
           batchChanges('active')
         ),
+      });
+    }
+    case TOGGLE_MODULAR_PIPELINE_EXPANDED: {
+      return updateState({
+        expanded: action.expandedIDs,
       });
     }
 
