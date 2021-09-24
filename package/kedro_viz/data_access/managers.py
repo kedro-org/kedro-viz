@@ -257,11 +257,7 @@ class DataAccessManager:
             while i < num_chunks - 1:
                 parent_id = chunks[i]
                 if parent_id not in tree:
-                    tree[parent_id] = ModularPipeline(
-                        parent_id,
-                        inputs=modular_pipeline.inputs,
-                        outputs=modular_pipeline.outputs,
-                    )
+                    tree[parent_id] = ModularPipeline(parent_id)
 
                 tree[parent_id].children.add(
                     ModularPipelineChild(
@@ -269,6 +265,8 @@ class DataAccessManager:
                         type=ModularPipelineChildType.MODULAR_PIPELINE.value,
                     )
                 )
+                tree[parent_id].inputs.update(modular_pipeline.inputs)
+                tree[parent_id].outputs.update(modular_pipeline.outputs)
                 i += 1
 
         for node_id, node in self.nodes.as_dict().items():
