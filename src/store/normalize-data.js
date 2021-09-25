@@ -234,10 +234,32 @@ const normalizeData = (data) => {
         addModularPipelineNode(state, modularPipeline);
       }
     }
-    state.modularPipeline.visible = arrayToObject(
-      data.modular_pipelines['__root__'].children.map((child) => child.id),
-      (id) => true
-    );
+    for (const child of data.modular_pipelines['__root__'].children) {
+      state.modularPipeline.visible[child.id] = true;
+      if (child.type === 'modularPipeline') {
+        const { inputs, outputs } = data.modular_pipelines[child.id];
+        for (const input of inputs) {
+          state.modularPipeline.visible[input.id] = true;
+        }
+        for (const output of outputs) {
+          state.modularPipeline.visible[output.id] = true;
+        }
+      }
+    }
+
+    for (const modularPipelineID in data.modular_pipelines) {
+      if (modularPipelineID === '__root__') {
+        continue;
+      }
+
+      const { inputs, outputs } = data.modular_pipelines[modularPipelineID];
+      for (const input of inputs) {
+        addEdge(state)({ source: input, target: modularPipelineID });
+      }
+      for (const output of outputs) {
+        addEdge(state)({ source: modularPipelineID, target: output });
+      }
+    }
   }
   if (data.tags) {
     data.tags.forEach(addTag(state));

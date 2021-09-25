@@ -70,6 +70,7 @@ const TreeListProvider = ({
   onItemClick,
   onNodeToggleExpanded,
   focusMode,
+  expanded,
 }) => {
   const classes = useStyles();
 
@@ -158,6 +159,7 @@ const TreeListProvider = ({
     </StyledTreeView>
   ) : (
     <StyledTreeView
+      expanded={expanded}
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
@@ -170,6 +172,7 @@ const TreeListProvider = ({
 
 export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
+  expanded: state.modularPipeline.expanded,
 });
 
 export default connect(mapStateToProps)(TreeListProvider);

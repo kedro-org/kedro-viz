@@ -3,6 +3,16 @@ import {
   TOGGLE_MODULAR_PIPELINE_EXPANDED,
 } from '../actions/modular-pipelines';
 
+// mark a tree as invisible from a node downwards
+const markTreeInvisible = (tree, node, result) => {
+  tree[node].children.forEach((child) => {
+    result[child.id] = false;
+    if (child.type === 'modularPipeline') {
+      markTreeInvisible(tree, child.id, result);
+    }
+  });
+};
+
 function modularPipelineReducer(modularPipelineState = {}, action) {
   const updateState = (newState) =>
     Object.assign({}, modularPipelineState, newState);
@@ -29,29 +39,12 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
     }
     case TOGGLE_MODULAR_PIPELINE_EXPANDED: {
       const newVisibleState = { ...modularPipelineState.visible };
-      // for (const expandedID of action.expandedIDs) {
-      //   const chunks = expandedID.split('.');
-      //   let i = 0;
-      //   let prefix = [];
-      //   let isParentVisible = true;
-      //   while (i < chunks.length - 1) {
-      //     prefix.push(chunks[i]);
-      //     if (!newState.visible[prefix.join('.')]) {
-      //       isParentVisible = false;
-      //       break;
-      //     }
-      //     i++;
-      //   }
-
-      //   if (isParentVisible) {
-      //     newState.visible[expandedID] = true;
-      //   }
-      // }
       const isExpanding =
         action.expandedIDs.length > modularPipelineState.expanded.length;
+      let expandedIDs = action.expandedIDs;
 
       if (isExpanding) {
-        const expandedModularPipeline = action.expandedIDs.filter(
+        const expandedModularPipeline = expandedIDs.filter(
           (expandedID) => !modularPipelineState.expanded.includes(expandedID)
         )[0];
         newVisibleState[expandedModularPipeline] = false;
@@ -60,17 +53,21 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
         );
       } else {
         const collapsedModularPipeline = modularPipelineState.expanded.filter(
-          (expandedID) => !action.expandedIDs.includes(expandedID)
+          (expandedID) => !expandedIDs.includes(expandedID)
         )[0];
         newVisibleState[collapsedModularPipeline] = true;
-        modularPipelineState.tree[collapsedModularPipeline].children.forEach(
-          (child) => (newVisibleState[child.id] = false)
+        markTreeInvisible(
+          modularPipelineState.tree,
+          collapsedModularPipeline,
+          newVisibleState
+        );
+        expandedIDs = expandedIDs.filter(
+          (id) => !id.startsWith(collapsedModularPipeline)
         );
       }
-      console.log(newVisibleState);
 
       return updateState({
-        expanded: action.expandedIDs,
+        expanded: expandedIDs,
         visible: newVisibleState,
       });
     }
