@@ -190,7 +190,6 @@ export const getModularPipelinesTree = createSelector(
     if (!modularPipelinesTree) {
       return {};
     }
-    // we rely on the fact that the ids are sorted so parents always come before children
     for (const modularPipelineID in modularPipelinesTree) {
       for (const child of modularPipelinesTree[modularPipelineID].children) {
         if (child.type !== 'modularPipeline') {

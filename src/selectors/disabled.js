@@ -17,6 +17,7 @@ const getLayerIDs = (state) => state.layer.ids;
 const getLayersVisible = (state) => state.layer.visible;
 const getNodeLayer = (state) => state.node.layer;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
+const getVisibleModularPipelines = (state) => state.modularPipeline.visible;
 
 const getInputOutputNodeIDsForFocusedModularPipeline = createSelector(
   [
@@ -65,6 +66,7 @@ export const getNodeDisabled = createSelector(
     getNodeModularPipelines,
     getFocusedModularPipeline,
     getInputOutputNodeIDsForFocusedModularPipeline,
+    getVisibleModularPipelines,
   ],
   (
     nodeIDs,
@@ -75,10 +77,11 @@ export const getNodeDisabled = createSelector(
     typeDisabled,
     nodeModularPipelines,
     focusedModularPipeline,
-    inputOutputNodeIDs
+    inputOutputNodeIDs,
+    visibleModularPipelines
   ) =>
-    arrayToObject(nodeIDs, (id) =>
-      [
+    arrayToObject(nodeIDs, (id) => {
+      return [
         nodeDisabledNode[id],
         nodeDisabledTag[id],
         nodeDisabledPipeline[id],
@@ -86,8 +89,9 @@ export const getNodeDisabled = createSelector(
         focusedModularPipeline &&
           !nodeModularPipelines[id].includes(focusedModularPipeline.id) &&
           !inputOutputNodeIDs.includes(id),
-      ].some(Boolean)
-    )
+        !visibleModularPipelines[id],
+      ].some(Boolean);
+    })
 );
 
 /**

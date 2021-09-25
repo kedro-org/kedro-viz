@@ -14,6 +14,7 @@ export const createInitialPipelineState = () => ({
     tree: {},
     // name: {},
     // children: {},
+    visible: {},
     expanded: [],
     active: {},
   },
@@ -117,21 +118,6 @@ const addPipeline = (state) => (pipeline) => {
 };
 
 /**
- * Add a new modular pipeline
- * @param {string} modularPipeline.id - Unique namespace of the modular pipeline
- * @param {string} modularPipeline.name - modular pipeline name
- * @param {Array[string]} modularPipeline.children - modular pipeline children
- */
-const addModularPipeline = (state) => (modularPipeline) => {
-  const { id, name, children } = modularPipeline;
-  if (state.modularPipeline.name[id]) {
-    return;
-  }
-  state.modularPipeline.ids.push(id);
-  state.modularPipeline.name[id] = name;
-};
-
-/**
  * Add a new node if it doesn't already exist
  * @param {string} name - Default node name
  * @param {string} type - 'data' or 'task'
@@ -161,6 +147,17 @@ const addNode = (state) => (node) => {
   state.node.transcodedTypes[id] = node.transcoded_types;
   state.node.runCommand[id] = node.runCommand;
   state.node.modularPipelines[id] = node.modular_pipelines || [];
+};
+
+const addModularPipelineNode = (state, modularPipeline) => {
+  const { id, name } = modularPipeline;
+  state.node.ids.push(id);
+  state.node.name[id] = name;
+  state.node.fullName[id] = name;
+  state.node.type[id] = 'modularPipeline';
+  state.node.layer[id] = null;
+  state.node.pipelines[id] = {};
+  state.node.tags[id] = [];
 };
 
 /**
@@ -231,6 +228,16 @@ const normalizeData = (data) => {
   if (data.modular_pipelines) {
     state.modularPipeline.ids = Object.keys(data.modular_pipelines);
     state.modularPipeline.tree = data.modular_pipelines;
+    for (const modularPipelineID in data.modular_pipelines) {
+      const modularPipeline = data.modular_pipelines[modularPipelineID];
+      if (modularPipelineID !== '__root__') {
+        addModularPipelineNode(state, modularPipeline);
+      }
+    }
+    state.modularPipeline.visible = arrayToObject(
+      data.modular_pipelines['__root__'].children.map((child) => child.id),
+      (id) => true
+    );
   }
   if (data.tags) {
     data.tags.forEach(addTag(state));
