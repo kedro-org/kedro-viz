@@ -81,14 +81,25 @@ export const getNodeDisabled = createSelector(
     visibleModularPipelines
   ) =>
     arrayToObject(nodeIDs, (id) => {
+      let isDisabledViaFocusedModularPipeline = false;
+      if (focusedModularPipeline) {
+        if (nodeType[id] === 'modularPipeline') {
+          isDisabledViaFocusedModularPipeline = !id.startsWith(
+            focusedModularPipeline.id
+          );
+        } else {
+          isDisabledViaFocusedModularPipeline =
+            !nodeModularPipelines[id].includes(focusedModularPipeline.id) &&
+            !inputOutputNodeIDs.includes(id);
+        }
+      }
+
       return [
         nodeDisabledNode[id],
         nodeDisabledTag[id],
         nodeDisabledPipeline[id],
         typeDisabled[nodeType[id]],
-        focusedModularPipeline &&
-          !nodeModularPipelines[id].includes(focusedModularPipeline.id) &&
-          !inputOutputNodeIDs.includes(id),
+        isDisabledViaFocusedModularPipeline,
         !visibleModularPipelines[id],
       ].some(Boolean);
     })

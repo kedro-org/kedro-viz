@@ -158,6 +158,7 @@ const addModularPipelineNode = (state, modularPipeline) => {
   state.node.layer[id] = null;
   state.node.pipelines[id] = {};
   state.node.tags[id] = [];
+  state.node.modularPipelines[id] = [];
 };
 
 /**
