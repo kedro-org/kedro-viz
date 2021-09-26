@@ -79,13 +79,21 @@ class DataAccessManager:
         for pipeline_key, pipeline in pipelines.items():
             self.add_pipeline(pipeline_key, pipeline)
 
+        # todo: scope modular pipeline tree to registered pipelines
         self.set_modular_pipelines_tree()
 
     def add_pipeline(self, pipeline_key: str, pipeline: KedroPipeline):
+        """Iterate through all the nodes and datasets in a "registered" pipeline
+        and add them to relevant repositories. Take care of extracting other relevant information
+        such as modular pipelines, layers, etc. and add them to relevant repositories.
+
+        The purpose of this method is to construct a set of repositories of Viz-specific domian models
+        from raw Kedro object before feeding them to the API serialisation layer.
+        """
         self.registered_pipelines.add_pipeline(pipeline_key)
         free_inputs = pipeline.inputs()
 
-        for node in sorted(pipeline.nodes, key=lambda n: n.name):
+        for node in pipeline.nodes:
             task_node = self.add_node(pipeline_key, node)
             self.registered_pipelines.add_node(pipeline_key, task_node.id)
             task_modular_pipeline = (
