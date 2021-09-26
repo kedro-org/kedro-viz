@@ -77,7 +77,6 @@ const TreeListProvider = ({
   const getNodeRowData = (node) => {
     const checked = !node.disabledNode;
     const disabled = node.disabledTag || node.disabledType;
-    // (focusMode !== null && !!inputOutputDataNodes[node.id]);
 
     return {
       ...node,
@@ -115,12 +114,11 @@ const TreeListProvider = ({
     const children = sortBy(
       node.children,
       (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
-      (child) =>
-        isModularPipelineType(child.type) ? child.id : child.node.name
+      (child) => child.data.name
     ).map((child) =>
       isModularPipelineType(child.type)
         ? renderTree(tree, child.id)
-        : renderLeafNode(child.node)
+        : renderLeafNode(child.data)
     );
 
     if (modularPipelineID === '__root__') {

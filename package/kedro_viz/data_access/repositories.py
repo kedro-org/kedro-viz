@@ -175,8 +175,38 @@ class RegisteredPipelinesRepository:
 
 
 class ModularPipelinesRepository:
+
+    ROOT_MODULAR_PIPELINE_ID = "__root__"
+
     def __init__(self):
-        self.modular_pipelines: Dict[str, ModularPipeline] = {}
+        # Represent the set of modular pipelines as a tree.
+        # Under the hood, Kedro uses a materialized path approach to tree representation. See:
+        # https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-materialized-paths/
+        # For examples:
+        # - A node could have a materialized path as a namespace property, i.e. namesapce="uk.data_science"
+        # - A dataset could have a materialized path baked into its name, i.e. "uk.data_science.model"
+        # This allows for compaction in data representation during execution,
+        # i.e. no need to keep an ephemeral nested structure when the execution tree is flattened out,
+        # as well as clean algebraic query syntax, i.e. `pipeline.only_nodes_with_namespace("data_science")`.
+        # Both are well-known properties of the materialized path representation of a tree.
+        #
+        # However, when the tree needs to be displayed visually, it's much more convenient to work with
+        # the child-references representation. See:
+        # https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
+        # Specifically:
+        # - Each tree node has an ID, a name derived from the ID and a set of children.
+        # - Each child of a node could be a data node, a task node, a parameters node or another modular pipeline node.
+        # (See the `ModularPipeline` type definition for more details)
+        # - There is a designated root node with a __root__ ID.
+        #
+        # With this representation, a folder-like render of the tree is simply a recursive in-order tree traversal.
+        # To improve the performance on the client, we perform the conversion between
+        # these two representations on the backend.
+        self.modular_pipelines: Dict[str, ModularPipeline] = {
+            self.ROOT_MODULAR_PIPELINE_ID: ModularPipeline(
+                id=self.ROOT_MODULAR_PIPELINE_ID
+            )
+        }
 
     def add_input_to_modular_pipeline(
         self, pipeline_id: str, input_node: GraphNode
@@ -217,6 +247,71 @@ class ModularPipelinesRepository:
         for node in nodes:
             repo.add_modular_pipeline_from_node(node)
         return repo
+
+    def expand_tree(self) -> Set[str]:
+        """Expand the current compact tree into a full-blown representation with child-references
+        by converting each parent in the node's materialized path into a dedicated node in the tree.
+        Returns the set of all node IDs in the tree.
+
+        Examples:
+
+            If the current modular_pipelines tree has the following shape
+                { "one.two": {"id": "one.two", "children": ["one.two.three"] }}
+            After the expansion, the tree will be:
+                {
+                    "one": {"id": "one", "children": ["one.two"]},
+                    "one.two": {"id": "one.two", "children": ["one.two.three"]}
+                    "one.two.three": {"id": "one.two.three", "children": []}
+                }
+        """
+        all_node_ids = set()
+
+        for modular_pipeline_id, modular_pipeline in list(
+            self.modular_pipelines.items()
+        ):
+            if modular_pipeline_id == self.ROOT_MODULAR_PIPELINE_ID:
+                continue
+
+            # Split the materialized path ID of a modular pipeline into the list of parents.
+            # Then iterate through this list to construct the tree of child references,
+            # with the left-most child being a child of the __root__ node.
+            # For example, if the modular pipeline ID is "one.two.three",
+            # In each iteration, the tree node ID will be:
+            # - one
+            # - one.two
+            # - one.two.three
+            # `one` is a child of the `__root__` node, `one.two` is a child of `one`, and so on.
+            chunks = modular_pipeline_id.split(".")
+            num_chunks = len(chunks)
+            self.modular_pipelines[self.ROOT_MODULAR_PIPELINE_ID].children.add(
+                ModularPipelineChild(
+                    id=chunks[0],
+                    type=GraphNodeType.MODULAR_PIPELINE,
+                )
+            )
+            if num_chunks == 1:
+                continue
+
+            for i in range(1, num_chunks):
+                parent_id = ".".join(chunks[:i])
+                if parent_id not in self.modular_pipelines:
+                    self.modular_pipelines[parent_id] = ModularPipeline(parent_id)
+                    all_node_ids.add(parent_id)
+
+                self.modular_pipelines[parent_id].children.add(
+                    ModularPipelineChild(
+                        id=f"{parent_id}.{chunks[i]}",
+                        type=GraphNodeType.MODULAR_PIPELINE,
+                    )
+                )
+                self.modular_pipelines[parent_id].inputs.update(modular_pipeline.inputs)
+                self.modular_pipelines[parent_id].outputs.update(
+                    modular_pipeline.outputs
+                )
+
+            all_node_ids.update([child.id for child in modular_pipeline.children])
+
+        return all_node_ids
 
 
 class LayersRepository:
