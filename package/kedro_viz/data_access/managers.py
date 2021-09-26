@@ -80,11 +80,6 @@ class DataAccessManager:
             self.add_pipeline(pipeline_key, pipeline)
 
         self.set_modular_pipelines_tree()
-        # After adding the pipelines, we will have to manually go through parameters nodes
-        # to remove non-modular pipelines that we infer from the parameters' name.
-        # The reason is because we only know the complete list of valid modular pipelines
-        # after iterating through all task and data nodes.
-        self._remove_non_modular_pipelines()
 
     def add_pipeline(self, pipeline_key: str, pipeline: KedroPipeline):
         self.registered_pipelines.add_pipeline(pipeline_key)
@@ -218,16 +213,6 @@ class DataAccessManager:
             if self.registered_pipelines.has_pipeline(default_pipeline.id)
             else self.registered_pipelines.as_list()[0]
         )
-
-    def _remove_non_modular_pipelines(self):
-        for node in self.nodes.nodes_list:
-            if isinstance(node, ParametersNode):
-                pipes = [
-                    pipe
-                    for pipe in node.modular_pipelines
-                    if self.modular_pipelines.has_modular_pipeline(pipe)
-                ]
-                node.modular_pipelines = sorted(pipes)
 
     def set_layers(self, layers: List[str]):
         self.layers.set_layers(layers)
