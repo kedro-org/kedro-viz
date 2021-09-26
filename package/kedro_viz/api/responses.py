@@ -50,8 +50,10 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     full_name: str
     tags: List[str]
     pipelines: List[str]
-    modular_pipelines: Optional[List[str]]
     type: str
+
+    # If a node is a ModularPipeline node, this value will be None, hence Optional.
+    modular_pipelines: Optional[List[str]]
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
