@@ -126,7 +126,10 @@ class DataAccessManager:
                 # - Cheap query for visualisation in focus mode: no need to traverse the graph
                 # to work out the inputs and outputs for a modular pipeline.
                 # - Function as the inputs and output data nodes when a modular pipeline is collapsed.
-                if task_modular_pipeline is not None and input_modular_pipeline is None:
+                if (
+                    task_modular_pipeline is not None
+                    and not input_modular_pipeline is None
+                ):
                     self.modular_pipelines.mark_modular_pipeline_input(
                         task_modular_pipeline, input_node
                     )
@@ -244,9 +247,6 @@ class DataAccessManager:
                 continue
             self.nodes.add_node(
                 GraphNode.create_modular_pipeline_node(modular_pipeline_id)
-            )
-            modular_pipelines_tree[modular_pipeline_id].inputs.difference_update(
-                modular_pipelines_tree[modular_pipeline_id].outputs
             )
             for input_ in modular_pipelines_tree[modular_pipeline_id].inputs:
                 self.edges.add_edge(
