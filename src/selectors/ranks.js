@@ -52,15 +52,19 @@ export const getNodeRank = createSelector(
     for (const edge of edges) {
       nodeDeps[edge.source].push(edge.target);
     }
+    // console.log(edges);
+    // console.log(layerNodes);
+    console.log(nodeDeps);
 
     // Add "false edge" dependencies for layered nodes to prevent layer overlaps
-    for (let i = 1; i < layerNodes.length; i++) {
-      for (const sourceID of layerNodes[i - 1]) {
-        for (const targetID of layerNodes[i]) {
-          nodeDeps[sourceID].push(targetID);
-        }
-      }
-    }
+    // for (let i = 1; i < layerNodes.length; i++) {
+    //   for (const sourceID of layerNodes[i - 1]) {
+    //     for (const targetID of layerNodes[i]) {
+    //       nodeDeps[sourceID].push(targetID);
+    //     }
+    //   }
+    // }
+    // console.log(nodeDeps);
 
     // Run toposort algorithm to rank nodes by dependency
     const toposortedNodes = batchingToposort(nodeDeps);

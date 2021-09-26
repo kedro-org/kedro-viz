@@ -79,6 +79,9 @@ class GraphEdgesRepository:
     def __init__(self):
         self.edges_list: Set[GraphEdge] = set()
 
+    def remove_edge(self, edge: GraphEdge):
+        self.edges_list.remove(edge)
+
     def add_edge(self, edge: GraphEdge):
         self.edges_list.add(edge)
 

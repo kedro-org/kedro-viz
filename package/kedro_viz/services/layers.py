@@ -29,7 +29,7 @@
 from collections import defaultdict
 from typing import Dict, List, Set
 
-from toposort import toposort_flatten
+from toposort import toposort_flatten, CircularDependencyError
 
 from kedro_viz.models.graph import GraphNode
 
@@ -118,4 +118,8 @@ def sort_layers(
 
     # toposort the layer_dependencies to find the layer order.
     # Note that for string, toposort_flatten will default to alphabetical order for tie-break.
-    return toposort_flatten(layer_dependencies)
+    try:
+        return toposort_flatten(layer_dependencies)
+    except CircularDependencyError:
+        # todo: log warning here
+        return []

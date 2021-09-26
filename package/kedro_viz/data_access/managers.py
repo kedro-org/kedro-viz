@@ -28,6 +28,7 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
 from collections import defaultdict
 from typing import Dict, List, Union
+import networkx as nx
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
@@ -70,6 +71,9 @@ class DataAccessManager:
         self.modular_pipelines = ModularPipelinesRepository()
         self.node_dependencies = defaultdict(set)
         self.layers = LayersRepository()
+        self.tree: Dict[str, ModularPipeline] = {
+            "__root__": ModularPipeline(id="__root__")
+        }
 
     def add_catalog(self, catalog: DataCatalog):
         self.catalog.set_catalog(catalog)
@@ -78,6 +82,7 @@ class DataAccessManager:
         for pipeline_key, pipeline in pipelines.items():
             self.add_pipeline(pipeline_key, pipeline)
 
+        self.set_modular_pipelines_tree()
         # After adding the pipelines, we will have to manually go through parameters nodes
         # to remove non-modular pipelines that we infer from the parameters' name.
         # The reason is because we only know the complete list of valid modular pipelines
@@ -230,21 +235,20 @@ class DataAccessManager:
     def set_layers(self, layers: List[str]):
         self.layers.set_layers(layers)
 
-    def get_modular_pipelines_tree(self) -> Dict[str, ModularPipeline]:
-        tree: Dict[str, ModularPipeline] = {"__root__": ModularPipeline(id="__root__")}
+    def set_modular_pipelines_tree(self):
         dangling_ids = set(self.nodes.as_dict().keys())
 
         for (
             modular_pipeline_id,
             modular_pipeline,
         ) in self.modular_pipelines.as_dict().items():
-            tree[modular_pipeline_id] = modular_pipeline
+            self.tree[modular_pipeline_id] = modular_pipeline
 
             dangling_ids.difference_update([c.id for c in modular_pipeline.children])
 
             chunks = modular_pipeline_id.split(".")
             num_chunks = len(chunks)
-            tree["__root__"].children.add(
+            self.tree["__root__"].children.add(
                 ModularPipelineChild(
                     id=chunks[0],
                     type=ModularPipelineChildType.MODULAR_PIPELINE.value,
@@ -256,26 +260,61 @@ class DataAccessManager:
             i = 0
             while i < num_chunks - 1:
                 parent_id = chunks[i]
-                if parent_id not in tree:
-                    tree[parent_id] = ModularPipeline(parent_id)
+                if parent_id not in self.tree:
+                    self.tree[parent_id] = ModularPipeline(parent_id)
 
-                tree[parent_id].children.add(
+                self.tree[parent_id].children.add(
                     ModularPipelineChild(
                         id=f"{parent_id}.{chunks[i + 1]}",
                         type=ModularPipelineChildType.MODULAR_PIPELINE.value,
                     )
                 )
-                tree[parent_id].inputs.update(modular_pipeline.inputs)
-                tree[parent_id].outputs.update(modular_pipeline.outputs)
+                self.tree[parent_id].inputs.update(modular_pipeline.inputs)
+                self.tree[parent_id].outputs.update(modular_pipeline.outputs)
                 i += 1
 
-        for modular_pipeline_id in tree:
-            tree[modular_pipeline_id].inputs.difference_update(
-                tree[modular_pipeline_id].outputs
+        for modular_pipeline_id in self.tree:
+            if modular_pipeline_id == "__root__":
+                continue
+            self.nodes.add_node(
+                GraphNode.create_modular_pipeline_node(modular_pipeline_id)
             )
+            self.tree[modular_pipeline_id].inputs.difference_update(
+                self.tree[modular_pipeline_id].outputs
+            )
+            for input_ in self.tree[modular_pipeline_id].inputs:
+                self.edges.add_edge(
+                    GraphEdge(source=input_, target=modular_pipeline_id)
+                )
+                self.node_dependencies[input_].add(modular_pipeline_id)
+            for output in self.tree[modular_pipeline_id].outputs:
+                self.edges.add_edge(
+                    GraphEdge(source=modular_pipeline_id, target=output)
+                )
+                self.node_dependencies[modular_pipeline_id].add(output)
+
+        # remove cycles
+        digraph = nx.DiGraph()
+        for edge in self.edges.as_list():
+            digraph.add_edge(edge.source, edge.target)
+
+        for modular_pipeline_id in self.tree:
+            if not digraph.has_node(modular_pipeline_id):
+                continue
+            descendants = nx.descendants(digraph, modular_pipeline_id)
+            bad_inputs = self.tree[modular_pipeline_id].inputs.intersection(descendants)
+            for bad_input in bad_inputs:
+                digraph.remove_edge(bad_input, modular_pipeline_id)
+                self.edges.remove_edge(GraphEdge(bad_input, modular_pipeline_id))
+                self.node_dependencies[bad_input].remove(modular_pipeline_id)
+
+        print(nx.is_directed_acyclic_graph(digraph))
 
         for node_id, node in self.nodes.as_dict().items():
             if node_id in dangling_ids:
-                tree["__root__"].children.add(ModularPipelineChild(node.id, node.type))
+                self.tree["__root__"].children.add(
+                    ModularPipelineChild(node.id, node.type)
+                )
 
-        return tree
+    def get_modular_pipelines_tree(self) -> Dict[str, ModularPipeline]:
+        return self.tree

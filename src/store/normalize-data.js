@@ -229,12 +229,6 @@ const normalizeData = (data) => {
   if (data.modular_pipelines) {
     state.modularPipeline.ids = Object.keys(data.modular_pipelines);
     state.modularPipeline.tree = data.modular_pipelines;
-    for (const modularPipelineID in data.modular_pipelines) {
-      const modularPipeline = data.modular_pipelines[modularPipelineID];
-      if (modularPipelineID !== '__root__') {
-        addModularPipelineNode(state, modularPipeline);
-      }
-    }
     for (const child of data.modular_pipelines['__root__'].children) {
       state.modularPipeline.visible[child.id] = true;
       if (child.type === 'modularPipeline') {
@@ -247,21 +241,8 @@ const normalizeData = (data) => {
         }
       }
     }
-
-    for (const modularPipelineID in data.modular_pipelines) {
-      if (modularPipelineID === '__root__') {
-        continue;
-      }
-
-      const { inputs, outputs } = data.modular_pipelines[modularPipelineID];
-      for (const input of inputs) {
-        addEdge(state)({ source: input, target: modularPipelineID });
-      }
-      for (const output of outputs) {
-        addEdge(state)({ source: modularPipelineID, target: output });
-      }
-    }
   }
+
   if (data.tags) {
     data.tags.forEach(addTag(state));
   }
