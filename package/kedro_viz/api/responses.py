@@ -207,12 +207,48 @@ class ModularPipelineChildAPIResponse(BaseAPIResponse):
     type: str
 
 
-class ModularPipelineAPIResponse(BaseAPIResponse):
+class ModularPipelinesTreeAPIResponse(BaseAPIResponse):
+    """Model the tree representation of modular pipelines in the API response.
+    The root of the tree is designated by the "__root__" key.
+    """
+
     id: str
     name: str
-    children: List[ModularPipelineChildAPIResponse]
     inputs: List[str]
     outputs: List[str]
+    children: List[ModularPipelineChildAPIResponse]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "__root__": {
+                    "id": "__root__",
+                    "name": "Root",
+                    "inputs": [],
+                    "outputs": [],
+                    "children": [
+                        {"id": "d577578a", "type": "parameters"},
+                        {"id": "data_science", "type": "modularPipeline"},
+                        {"id": "f1f1425b", "type": "parameters"},
+                        {"id": "data_engineering", "type": "modularPipeline"},
+                    ],
+                },
+                "data_engineering": {
+                    "id": "data_engineering",
+                    "name": "Data Engineering",
+                    "inputs": ["d577578a"],
+                    "outputs": [],
+                    "children": [],
+                },
+                "data_science": {
+                    "id": "data_science",
+                    "name": "Data Science",
+                    "inputs": ["f1f1425b"],
+                    "outputs": [],
+                    "children": [],
+                },
+            }
+        }
 
 
 class GraphAPIResponse(BaseAPIResponse):
@@ -221,7 +257,7 @@ class GraphAPIResponse(BaseAPIResponse):
     layers: List[str]
     tags: List[NamedEntityAPIResponse]
     pipelines: List[NamedEntityAPIResponse]
-    modular_pipelines: Dict[str, ModularPipelineAPIResponse]
+    modular_pipelines: Dict[str, ModularPipelinesTreeAPIResponse]
     selected_pipeline: str
 
 

@@ -79,20 +79,34 @@ class RegisteredPipeline:
         self.name = _pretty_name(self.id)
 
 
-class ModularPipelineChildType(Enum):
-    NODE = "node"
-    MODULAR_PIPELINE = "modularPipeline"
+class GraphNodeType(str, Enum):
+    """Represent all possible node types in the graph representation of a Kedro pipeline.
+    Need to inherit from str as well so FastAPI can serialise it. See:
+    https://fastapi.tiangolo.com/tutorial/path-params/#working-with-python-enumerations
+    """
+
+    TASK = "task"
+    DATA = "data"
+    PARAMETERS = "parameters"
+    MODULAR_PIPELINE = (
+        "modularPipeline"  # camelCase so it can be referred directly to in the frontend
+    )
 
 
 @dataclass(frozen=True)
 class ModularPipelineChild:
+    """Represent a child of a modular pipeline."""
+
     id: str
-    type: str
+    type: GraphNodeType
 
 
 @dataclass
 class ModularPipeline:
-    """Represent a modular pipeline within a registered pipeline"""
+    """Represent a modular pipeline within a registered pipeline.
+    Think of this as an abstraction similar to a Node or a DataSet in Kedro core.
+    Necessary because Kedro core doesn't expose a ModularPipeline abstraction.
+    """
 
     id: str
     name: str = field(init=False)
@@ -111,17 +125,6 @@ class Tag(RegisteredPipeline):
 
     def __hash__(self) -> int:
         return hash(self.id)
-
-
-class GraphNodeType(Enum):
-    """Represent all possible node types in the graph representation of a Kedro pipeline"""
-
-    TASK = "task"
-    DATA = "data"
-    PARAMETERS = "parameters"
-    MODULAR_PIPELINE = (
-        "modularPipeline"  # camelCase so it can be referred directly to in the frontend
-    )
 
 
 @dataclass

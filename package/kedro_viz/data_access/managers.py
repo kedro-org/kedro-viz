@@ -38,13 +38,13 @@ from kedro_viz.models.graph import (
     DataNode,
     GraphEdge,
     GraphNode,
+    GraphNodeType,
     ParametersNode,
     RegisteredPipeline,
     TaskNode,
     TranscodedDataNode,
     ModularPipeline,
     ModularPipelineChild,
-    ModularPipelineChildType,
 )
 
 from .repositories import (
@@ -251,7 +251,7 @@ class DataAccessManager:
             self.tree["__root__"].children.add(
                 ModularPipelineChild(
                     id=chunks[0],
-                    type=ModularPipelineChildType.MODULAR_PIPELINE.value,
+                    type=GraphNodeType.MODULAR_PIPELINE,
                 )
             )
             if num_chunks == 1:
@@ -266,7 +266,7 @@ class DataAccessManager:
                 self.tree[parent_id].children.add(
                     ModularPipelineChild(
                         id=f"{parent_id}.{chunks[i + 1]}",
-                        type=ModularPipelineChildType.MODULAR_PIPELINE.value,
+                        type=GraphNodeType.MODULAR_PIPELINE,
                     )
                 )
                 self.tree[parent_id].inputs.update(modular_pipeline.inputs)

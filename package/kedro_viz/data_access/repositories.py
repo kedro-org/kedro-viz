@@ -37,10 +37,10 @@ from semver import VersionInfo
 from kedro_viz.models.graph import (
     GraphEdge,
     GraphNode,
+    GraphNodeType,
     ParametersNode,
     ModularPipeline,
     ModularPipelineChild,
-    ModularPipelineChildType,
     RegisteredPipeline,
     Tag,
 )
@@ -201,7 +201,7 @@ class ModularPipelinesRepository:
             self.modular_pipelines[modular_pipeline_id] = modular_pipeline
 
         self.modular_pipelines[modular_pipeline_id].children.add(
-            ModularPipelineChild(id=node.id, type=node.type)
+            ModularPipelineChild(id=node.id, type=GraphNodeType(node.type))
         )
         return modular_pipeline_id
 
