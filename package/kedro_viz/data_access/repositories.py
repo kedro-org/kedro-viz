@@ -289,6 +289,7 @@ class ModularPipelinesRepository:
                     type=GraphNodeType.MODULAR_PIPELINE,
                 )
             )
+            all_node_ids.update([child.id for child in modular_pipeline.children])
             if num_chunks == 1:
                 continue
 
@@ -308,8 +309,6 @@ class ModularPipelinesRepository:
                 self.modular_pipelines[parent_id].outputs.update(
                     modular_pipeline.outputs
                 )
-
-            all_node_ids.update([child.id for child in modular_pipeline.children])
 
         return all_node_ids
 
