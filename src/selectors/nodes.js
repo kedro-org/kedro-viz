@@ -389,9 +389,10 @@ export const getInputOutputNodesForFocusedModularPipeline = createSelector(
     const nodeIDs = focusedModularPipeline
       ? [...focusedModularPipeline.inputs, ...focusedModularPipeline.outputs]
       : [];
-    return nodeIDs.reduce((result, nodeID) => {
+    const result = nodeIDs.reduce((result, nodeID) => {
       result[nodeID] = graphNodes[nodeID];
       return result;
     }, {});
+    return result;
   }
 );

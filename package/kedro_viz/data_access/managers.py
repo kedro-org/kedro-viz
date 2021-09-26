@@ -269,6 +269,11 @@ class DataAccessManager:
                 tree[parent_id].outputs.update(modular_pipeline.outputs)
                 i += 1
 
+        for modular_pipeline_id in tree:
+            tree[modular_pipeline_id].inputs.difference_update(
+                tree[modular_pipeline_id].outputs
+            )
+
         for node_id, node in self.nodes.as_dict().items():
             if node_id in dangling_ids:
                 tree["__root__"].children.add(ModularPipelineChild(node.id, node.type))

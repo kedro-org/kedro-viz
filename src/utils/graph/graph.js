@@ -77,9 +77,6 @@ export const addEdgeLinks = (nodes, edges) => {
   for (const edge of edges) {
     edge.sourceNode = nodeById[edge.source];
     edge.targetNode = nodeById[edge.target];
-    if (edge.sourceNode === undefined) {
-      console.log(edge);
-    }
     edge.sourceNode.targets.push(edge);
     edge.targetNode.sources.push(edge);
   }
