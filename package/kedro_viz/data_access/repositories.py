@@ -208,17 +208,23 @@ class ModularPipelinesRepository:
             )
         }
 
-    def add_input_to_modular_pipeline(
+    def mark_modular_pipeline_input(
         self, pipeline_id: str, input_node: GraphNode
     ) -> bool:
         self.modular_pipelines[pipeline_id].inputs.add(input_node.id)
 
-    def add_output_to_modular_pipeline(
+    def mark_modular_pipeline_output(
         self, pipeline_id: str, output_node: GraphNode
     ) -> bool:
         self.modular_pipelines[pipeline_id].outputs.add(output_node.id)
 
-    def add_modular_pipeline_from_node(self, node: GraphNode):
+    def add_modular_pipeline_from_node(self, node: GraphNode) -> str:
+        """Add the graph node's modular pipeline to the modular pipeline tree.
+        Return the added modular pipeline ID.
+        """
+
+        # There is no need to extract modular pipeline from parameters
+        # because all valid modular pipelines are encoded in either a TaskNode or DataNode.
         if isinstance(node, ParametersNode):
             return
 
@@ -226,10 +232,13 @@ class ModularPipelinesRepository:
         if not modular_pipeline_id:
             return None
 
+        # Add the modular pipeline to the tree if it doesn't exist yet
         if modular_pipeline_id not in self.modular_pipelines:
             modular_pipeline = ModularPipeline(modular_pipeline_id)
             self.modular_pipelines[modular_pipeline_id] = modular_pipeline
 
+        # Since we extract the modular pipeline from the node's namespace,
+        # the node is by definition a child of the modular pipeline.
         self.modular_pipelines[modular_pipeline_id].children.add(
             ModularPipelineChild(id=node.id, type=GraphNodeType(node.type))
         )
@@ -253,7 +262,7 @@ class ModularPipelinesRepository:
         by converting each parent in the node's materialized path into a dedicated node in the tree.
         Returns the set of all node IDs in the tree.
 
-        Examples:
+        Example:
 
             If the current modular_pipelines tree has the following shape
                 { "one.two": {"id": "one.two", "children": ["one.two.three"] }}

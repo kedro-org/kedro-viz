@@ -96,6 +96,7 @@ class DataAccessManager:
         for node in pipeline.nodes:
             task_node = self.add_node(pipeline_key, node)
             self.registered_pipelines.add_node(pipeline_key, task_node.id)
+
             task_modular_pipeline = (
                 self.modular_pipelines.add_modular_pipeline_from_node(task_node)
             )
@@ -114,16 +115,24 @@ class DataAccessManager:
                     self.modular_pipelines.add_modular_pipeline_from_node(input_node)
                 )
 
-                # if there is a modular pipeline for a task node
-                # but its input doesn't belong to a modular pipeline,
-                # it must mean that this input is "externalised"
-                # to connect this modular pipeline with others
+                # Kedro's Rule:
+                # If there is a modular pipeline for a task node
+                # but its inputs don't belong to any modular pipeline,
+                # it must mean that this input is considered an input of the modular pipeline,
+                # i.e. it is used to connect this modular pipeline with the rest of the graph.
+                # Similar rule applies for a node's outputs.
+                #
+                # We mark them as such in the modular pipelines tree for 2 purposes:
+                # - Cheap query for visualisation in focus mode: no need to traverse the graph
+                # to work out the inputs and outputs for a modular pipeline.
+                # - Function as the inputs and output data nodes when a modular pipeline is collapsed.
                 if task_modular_pipeline is not None and input_modular_pipeline is None:
-                    self.modular_pipelines.add_input_to_modular_pipeline(
+                    self.modular_pipelines.mark_modular_pipeline_input(
                         task_modular_pipeline, input_node
                     )
 
             # Add node outputs as DataNode to the graph
+            # Similar reasoning to the inputs procedure.
             for output in node.outputs:
                 output_node = self.add_node_output(pipeline_key, output, task_node)
                 self.registered_pipelines.add_node(pipeline_key, output_node.id)
@@ -139,7 +148,7 @@ class DataAccessManager:
                     task_modular_pipeline is not None
                     and output_modular_pipeline is None
                 ):
-                    self.modular_pipelines.add_output_to_modular_pipeline(
+                    self.modular_pipelines.mark_modular_pipeline_output(
                         task_modular_pipeline, output_node
                     )
 
