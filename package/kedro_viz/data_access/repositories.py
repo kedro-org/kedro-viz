@@ -208,12 +208,12 @@ class ModularPipelinesRepository:
             )
         }
 
-    def mark_modular_pipeline_input(
+    def add_modular_pipeline_input(
         self, pipeline_id: str, input_node: GraphNode
     ) -> bool:
         self.modular_pipelines[pipeline_id].inputs.add(input_node.id)
 
-    def mark_modular_pipeline_output(
+    def add_modular_pipeline_output(
         self, pipeline_id: str, output_node: GraphNode
     ) -> bool:
         self.modular_pipelines[pipeline_id].outputs.add(output_node.id)

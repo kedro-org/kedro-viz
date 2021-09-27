@@ -97,7 +97,7 @@ class DataAccessManager:
             task_node = self.add_node(pipeline_key, node)
             self.registered_pipelines.add_node(pipeline_key, task_node.id)
 
-            task_modular_pipeline = (
+            current_modular_pipeline = (
                 self.modular_pipelines.add_modular_pipeline_from_node(task_node)
             )
 
@@ -111,28 +111,10 @@ class DataAccessManager:
                 if isinstance(input_node, TranscodedDataNode):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
-                input_modular_pipeline = (
-                    self.modular_pipelines.add_modular_pipeline_from_node(input_node)
+                self.modular_pipelines.add_modular_pipeline_from_node(input_node)
+                self.modular_pipelines.add_modular_pipeline_input(
+                    current_modular_pipeline, input_node
                 )
-
-                # Kedro's Rule:
-                # If there is a modular pipeline for a task node
-                # but its inputs don't belong to any modular pipeline,
-                # it must mean that this input is considered an input of the modular pipeline,
-                # i.e. it is used to connect this modular pipeline with the rest of the graph.
-                # Similar rule applies for a node's outputs.
-                #
-                # We mark them as such in the modular pipelines tree for 2 purposes:
-                # - Cheap query for visualisation in focus mode: no need to traverse the graph
-                # to work out the inputs and outputs for a modular pipeline.
-                # - Function as the inputs and output data nodes when a modular pipeline is collapsed.
-                if (
-                    task_modular_pipeline is not None
-                    and not input_modular_pipeline is None
-                ):
-                    self.modular_pipelines.mark_modular_pipeline_input(
-                        task_modular_pipeline, input_node
-                    )
 
             # Add node outputs as DataNode to the graph
             # Similar reasoning to the inputs procedure.
@@ -144,16 +126,9 @@ class DataAccessManager:
                     output_node.original_version = self.catalog.get_dataset(output)
 
                 self.modular_pipelines.add_modular_pipeline_from_node(output_node)
-                output_modular_pipeline = (
-                    self.modular_pipelines.add_modular_pipeline_from_node(output_node)
+                self.modular_pipelines.add_modular_pipeline_output(
+                    current_modular_pipeline, output_node
                 )
-                if (
-                    task_modular_pipeline is not None
-                    and output_modular_pipeline is None
-                ):
-                    self.modular_pipelines.mark_modular_pipeline_output(
-                        task_modular_pipeline, output_node
-                    )
 
     def add_node(self, pipeline_key: str, node: KedroNode) -> TaskNode:
         task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))
@@ -242,18 +217,42 @@ class DataAccessManager:
         dangling_ids = set(self.nodes.as_dict().keys()) - tree_node_ids
         modular_pipelines_tree = self.modular_pipelines.as_dict()
 
-        for modular_pipeline_id in modular_pipelines_tree:
+        # turn all modular pipelines in the tree into a graph node for visualisation,
+        # except for the artificial root node.
+        for modular_pipeline_id, modular_pipeline in modular_pipelines_tree.items():
             if modular_pipeline_id == "__root__":
                 continue
+
             self.nodes.add_node(
                 GraphNode.create_modular_pipeline_node(modular_pipeline_id)
             )
-            for input_ in modular_pipelines_tree[modular_pipeline_id].inputs:
+
+            # Okay, here be dragons:
+            # What we consider as a modular pipeline's inputs, i.e. the ones visualised as dotted nodes in focus mode,
+            # are the inputs that don't serve as outputs for some nodes in the same modular pipeline
+            # and vice versa.
+            #
+            # Here is an example. Let's say the modular pipeline has the following structure:
+            #   A -> node(f) -> B -> node(g) -> C
+            #
+            # We consider A as an input for the modular pipeline and not B, C because
+            # A isn't an output of any node in this same pipeline.
+            # Similarly, we consider C as an output for the modular pipeline because
+            # C isn't an input of any node in this same pipeline.
+            #
+            # Based on the observation above, the code below is what remove all intermediate inputs and outputs
+            # and leave only the valid inputs and outputs for the current modular pipeline:
+            modular_pipeline.inputs, modular_pipeline.outputs = (
+                modular_pipeline.inputs - modular_pipeline.outputs,
+                modular_pipeline.outputs - modular_pipeline.inputs,
+            )
+
+            for input_ in modular_pipeline.inputs:
                 self.edges.add_edge(
                     GraphEdge(source=input_, target=modular_pipeline_id)
                 )
                 self.node_dependencies[input_].add(modular_pipeline_id)
-            for output in modular_pipelines_tree[modular_pipeline_id].outputs:
+            for output in modular_pipeline.outputs:
                 self.edges.add_edge(
                     GraphEdge(source=modular_pipeline_id, target=output)
                 )
