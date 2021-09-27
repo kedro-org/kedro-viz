@@ -100,7 +100,7 @@ export const getNodeDisabled = createSelector(
         nodeDisabledPipeline[id],
         typeDisabled[nodeType[id]],
         isDisabledViaFocusedModularPipeline,
-        !visibleModularPipelines[id],
+        !visibleModularPipelines[id] && !inputOutputNodeIDs.includes(id),
       ].some(Boolean);
     })
 );
