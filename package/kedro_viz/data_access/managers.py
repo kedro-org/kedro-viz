@@ -38,7 +38,6 @@ from kedro_viz.models.graph import (
     DataNode,
     GraphEdge,
     GraphNode,
-    GraphNodeType,
     ParametersNode,
     RegisteredPipeline,
     TaskNode,
@@ -112,9 +111,11 @@ class DataAccessManager:
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
                 self.modular_pipelines.add_modular_pipeline_from_node(input_node)
-                self.modular_pipelines.add_modular_pipeline_input(
-                    current_modular_pipeline, input_node
-                )
+
+                if current_modular_pipeline is not None:
+                    self.modular_pipelines.add_modular_pipeline_input(
+                        current_modular_pipeline, input_node
+                    )
 
             # Add node outputs as DataNode to the graph
             # Similar reasoning to the inputs procedure.
@@ -126,9 +127,11 @@ class DataAccessManager:
                     output_node.original_version = self.catalog.get_dataset(output)
 
                 self.modular_pipelines.add_modular_pipeline_from_node(output_node)
-                self.modular_pipelines.add_modular_pipeline_output(
-                    current_modular_pipeline, output_node
-                )
+
+                if current_modular_pipeline is not None:
+                    self.modular_pipelines.add_modular_pipeline_output(
+                        current_modular_pipeline, output_node
+                    )
 
     def add_node(self, pipeline_key: str, node: KedroNode) -> TaskNode:
         task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))
@@ -214,6 +217,7 @@ class DataAccessManager:
 
     def set_modular_pipelines_tree(self):
         tree_node_ids = self.modular_pipelines.expand_tree()
+        print(len(tree_node_ids))
         dangling_ids = set(self.nodes.as_dict().keys()) - tree_node_ids
         modular_pipelines_tree = self.modular_pipelines.as_dict()
 
@@ -258,18 +262,26 @@ class DataAccessManager:
                 )
                 self.node_dependencies[modular_pipeline_id].add(output)
 
-        # remove cycles
+        # After adding modular pipeline nodes into the graph,
+        # There is a chance that the graph contains cycle if
+        # users construct their modular pipelines in a few particular ways.
+        # To detect the cycles, we simply search for all reachable
+        # descendants of a modular pipeline node and check if
+        # any of them is an input into this modular pipeline.
+        # If found, we will simply throw away the edge between
+        # the bad input and the modular pipeline.
+        # N.B.: when fully expanded, the graph will still be a fully connected valid DAG.
+        #
+        # We leverage networkx to help with graph traversal
         digraph = nx.DiGraph()
         for edge in self.edges.as_list():
             digraph.add_edge(edge.source, edge.target)
 
-        for modular_pipeline_id in modular_pipelines_tree:
+        for modular_pipeline_id, modular_pipeline in modular_pipelines_tree.items():
             if not digraph.has_node(modular_pipeline_id):
                 continue
             descendants = nx.descendants(digraph, modular_pipeline_id)
-            bad_inputs = modular_pipelines_tree[
-                modular_pipeline_id
-            ].inputs.intersection(descendants)
+            bad_inputs = modular_pipeline.inputs.intersection(descendants)
             for bad_input in bad_inputs:
                 digraph.remove_edge(bad_input, modular_pipeline_id)
                 self.edges.remove_edge(GraphEdge(bad_input, modular_pipeline_id))
