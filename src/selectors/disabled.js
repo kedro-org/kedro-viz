@@ -84,9 +84,9 @@ export const getNodeDisabled = createSelector(
       let isDisabledViaFocusedModularPipeline = false;
       if (focusedModularPipeline) {
         if (nodeType[id] === 'modularPipeline') {
-          isDisabledViaFocusedModularPipeline = !id.startsWith(
-            focusedModularPipeline.id
-          );
+          isDisabledViaFocusedModularPipeline =
+            id !== focusedModularPipeline.id &&
+            !id.startsWith(`${focusedModularPipeline.id}.`);
         } else {
           isDisabledViaFocusedModularPipeline =
             !nodeModularPipelines[id].includes(focusedModularPipeline.id) &&

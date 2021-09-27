@@ -51,6 +51,7 @@ export const getNodeActive = createSelector(
     getHoveredNode,
     getNodeTags,
     getTagActive,
+    getNodeModularPipelines,
     getModularPipelineActive,
     (state) => state.modularPipeline.tree,
   ],
@@ -59,6 +60,7 @@ export const getNodeActive = createSelector(
     hoveredNode,
     nodeTags,
     tagActive,
+    nodeModularPipelines,
     modularPipelineActive,
     modularPipelinesTree
   ) => {
@@ -76,7 +78,11 @@ export const getNodeActive = createSelector(
       const activeViaTag = nodeTags[nodeID].some((tag) => tagActive[tag]);
       const activeModularPipeline = activeModularPipelines.includes(nodeID);
       const activeViaModularPipeline =
-        nodesActiveViaModularPipeline.includes(nodeID);
+        nodesActiveViaModularPipeline.includes(nodeID) ||
+        (nodeModularPipelines[nodeID] &&
+          nodeModularPipelines[nodeID].some(
+            (modularPipeline) => modularPipelineActive[modularPipeline]
+          ));
       return (
         Boolean(activeViaTag) ||
         Boolean(activeViaModularPipeline) ||
