@@ -246,16 +246,10 @@ class DataAccessManager:
             #
             # Based on the observation above, the code below is what remove all intermediate inputs and outputs
             # and leave only the valid inputs and outputs for the current modular pipeline:
-            # modular_pipeline.inputs.difference_update(modular_pipeline.outputs)
-            # modular_pipeline.outputs.difference_update(modular_pipeline.outputs)
-            # modular_pipeline.inputs, modular_pipeline.outputs = (
-            #     modular_pipeline.inputs - modular_pipeline.outputs,
-            #     modular_pipeline.outputs - modular_pipeline.inputs,
-            # )
             prev_inputs = modular_pipeline.inputs
             prev_outputs = modular_pipeline.outputs
-            modular_pipeline.inputs = prev_inputs - prev_outputs
-            modular_pipeline.outputs = prev_outputs - prev_inputs
+            modular_pipeline.inputs.difference_update(prev_outputs)
+            modular_pipeline.outputs.difference_update(prev_inputs)
 
             for input_ in modular_pipeline.inputs:
                 self.edges.add_edge(
