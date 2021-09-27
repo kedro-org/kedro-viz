@@ -202,7 +202,7 @@ class ModularPipelinesRepository:
         # With this representation, a folder-like render of the tree is simply a recursive in-order tree traversal.
         # To improve the performance on the client, we perform the conversion between
         # these two representations on the backend.
-        self.modular_pipelines: Dict[str, ModularPipeline] = {
+        self.tree: Dict[str, ModularPipeline] = {
             self.ROOT_MODULAR_PIPELINE_ID: ModularPipeline(
                 id=self.ROOT_MODULAR_PIPELINE_ID
             )
@@ -211,12 +211,12 @@ class ModularPipelinesRepository:
     def add_modular_pipeline_input(
         self, pipeline_id: str, input_node: GraphNode
     ) -> bool:
-        self.modular_pipelines[pipeline_id].inputs.add(input_node.id)
+        self.tree[pipeline_id].inputs.add(input_node.id)
 
     def add_modular_pipeline_output(
         self, pipeline_id: str, output_node: GraphNode
     ) -> bool:
-        self.modular_pipelines[pipeline_id].outputs.add(output_node.id)
+        self.tree[pipeline_id].outputs.add(output_node.id)
 
     def add_modular_pipeline_from_node(self, node: GraphNode) -> str:
         """Add the graph node's modular pipeline to the modular pipeline tree.
@@ -233,22 +233,22 @@ class ModularPipelinesRepository:
             return None
 
         # Add the modular pipeline to the tree if it doesn't exist yet
-        if modular_pipeline_id not in self.modular_pipelines:
+        if modular_pipeline_id not in self.tree:
             modular_pipeline = ModularPipeline(modular_pipeline_id)
-            self.modular_pipelines[modular_pipeline_id] = modular_pipeline
+            self.tree[modular_pipeline_id] = modular_pipeline
 
         # Since we extract the modular pipeline from the node's namespace,
         # the node is by definition a child of the modular pipeline.
-        self.modular_pipelines[modular_pipeline_id].children.add(
+        self.tree[modular_pipeline_id].children.add(
             ModularPipelineChild(id=node.id, type=GraphNodeType(node.type))
         )
         return modular_pipeline_id
 
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
-        return modular_pipeline_id in self.modular_pipelines
+        return modular_pipeline_id in self.tree
 
     def as_dict(self):
-        return self.modular_pipelines
+        return self.tree
 
     @classmethod
     def from_nodes(cls, nodes: List[GraphNode]) -> "ModularPipelinesRepository":
@@ -257,7 +257,7 @@ class ModularPipelinesRepository:
             repo.add_modular_pipeline_from_node(node)
         return repo
 
-    def expand_tree(self) -> Set[str]:
+    def expand_tree(self):
         """Expand the current compact tree into a full-blown representation with child-references
         by converting each parent in the node's materialized path into a dedicated node in the tree.
         Returns the set of all node IDs in the tree.
@@ -273,11 +273,7 @@ class ModularPipelinesRepository:
                     "one.two.three": {"id": "one.two.three", "children": []}
                 }
         """
-        all_node_ids = set()
-
-        for modular_pipeline_id, modular_pipeline in list(
-            self.modular_pipelines.items()
-        ):
+        for modular_pipeline_id, modular_pipeline in list(self.tree.items()):
             if modular_pipeline_id == self.ROOT_MODULAR_PIPELINE_ID:
                 continue
 
@@ -292,34 +288,29 @@ class ModularPipelinesRepository:
             # `one` is a child of the `__root__` node, `one.two` is a child of `one`, and so on.
             chunks = modular_pipeline_id.split(".")
             num_chunks = len(chunks)
-            self.modular_pipelines[self.ROOT_MODULAR_PIPELINE_ID].children.add(
+            self.tree[self.ROOT_MODULAR_PIPELINE_ID].children.add(
                 ModularPipelineChild(
                     id=chunks[0],
                     type=GraphNodeType.MODULAR_PIPELINE,
                 )
             )
-            all_node_ids.update([child.id for child in modular_pipeline.children])
             if num_chunks == 1:
                 continue
 
             for i in range(1, num_chunks):
                 parent_id = ".".join(chunks[:i])
-                if parent_id not in self.modular_pipelines:
-                    self.modular_pipelines[parent_id] = ModularPipeline(parent_id)
-                    all_node_ids.add(parent_id)
+                if parent_id not in self.tree:
+                    self.tree[parent_id] = ModularPipeline(parent_id)
 
-                self.modular_pipelines[parent_id].children.add(
+                self.tree[parent_id].children.add(
                     ModularPipelineChild(
                         id=f"{parent_id}.{chunks[i]}",
                         type=GraphNodeType.MODULAR_PIPELINE,
                     )
                 )
-                self.modular_pipelines[parent_id].inputs.update(modular_pipeline.inputs)
-                self.modular_pipelines[parent_id].outputs.update(
-                    modular_pipeline.outputs
-                )
-
-        return all_node_ids
+                self.tree[parent_id].inputs.update(modular_pipeline.inputs)
+                self.tree[parent_id].outputs.update(modular_pipeline.outputs)
+        return self.tree
 
 
 class LayersRepository:

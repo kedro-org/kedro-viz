@@ -39,6 +39,7 @@ from kedro_viz.models.graph import (
     GraphEdge,
     GraphNode,
     ParametersNode,
+    ModularPipelineNode,
     RegisteredPipeline,
     TaskNode,
     TranscodedDataNode,
@@ -216,9 +217,7 @@ class DataAccessManager:
         self.layers.set_layers(layers)
 
     def set_modular_pipelines_tree(self):
-        tree_node_ids = self.modular_pipelines.expand_tree()
-        dangling_ids = set(self.nodes.as_dict().keys()) - tree_node_ids
-        modular_pipelines_tree = self.modular_pipelines.as_dict()
+        modular_pipelines_tree = self.modular_pipelines.expand_tree()
 
         # turn all modular pipelines in the tree into a graph node for visualisation,
         # except for the artificial root node.
@@ -247,10 +246,8 @@ class DataAccessManager:
             # and leave only the valid inputs and outputs for the current modular pipeline:
             prev_inputs = modular_pipeline.inputs.copy()
             prev_outputs = modular_pipeline.outputs.copy()
-            modular_pipeline.inputs, modular_pipeline.outputs = (
-                prev_inputs - prev_outputs,
-                prev_outputs - prev_inputs,
-            )
+            modular_pipeline.inputs.difference_update(prev_outputs)
+            modular_pipeline.outputs.difference_update(prev_inputs)
 
             for input_ in modular_pipeline.inputs:
                 self.edges.add_edge(
@@ -289,9 +286,9 @@ class DataAccessManager:
                 self.node_dependencies[bad_input].remove(modular_pipeline_id)
 
         for node_id, node in self.nodes.as_dict().items():
-            if node_id in dangling_ids:
+            if not isinstance(node, ModularPipelineNode) and not node.modular_pipelines:
                 modular_pipelines_tree["__root__"].children.add(
-                    ModularPipelineChild(node.id, node.type)
+                    ModularPipelineChild(node_id, node.type)
                 )
 
     def get_modular_pipelines_tree(self) -> Dict[str, ModularPipeline]:
