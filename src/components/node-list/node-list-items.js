@@ -192,21 +192,6 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
 };
 
 /**
- * Compares items for sorting in each modularPipeline in the nested tree structure
- * by enabled status (by tag) and then alphabeticaly (by type)
- * @param {object} itemA First item to compare
- * @param {object} itemB Second item to compare
- * @return {number} Comparison result
- */
-const compareEnabledThenType = (itemA, itemB) => {
-  const byEnabledTag = Number(itemA.disabledTag) - Number(itemB.disabledTag);
-  const nodeTypeIDs = Object.keys(sidebarElementTypes);
-  const byNodeType =
-    nodeTypeIDs.indexOf(itemA.type) - nodeTypeIDs.indexOf(itemB.type);
-  return byEnabledTag !== 0 ? byEnabledTag : byNodeType;
-};
-
-/**
  * Compares items for sorting in groups first
  * by enabled status (by tag) and then alphabeticaly (by name)
  * @param {object} itemA First item to compare

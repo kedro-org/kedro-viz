@@ -46,7 +46,6 @@ const getModularPipelineRowData = ({
 }) => ({
   id: id,
   name: highlightedLabel || name,
-
   type: 'modularPipeline',
   icon: 'modularPipeline',
   visibleIcon: VisibleIcon,
