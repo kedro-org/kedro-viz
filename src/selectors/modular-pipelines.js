@@ -35,13 +35,13 @@ export const getModularPipelinesSearchResult = ({
 
     for (const child of modularPipeline.children) {
       if (child.type !== 'modularPipeline') {
-        if (search(child.node.name, searchValue)) {
+        if (search(child.data.name, searchValue)) {
           searchResult.children.push({
             ...child,
             node: {
-              ...child.node,
+              ...child.data,
               highlightedLabel: getHighlightedText(
-                child.node.name,
+                child.data.name,
                 searchValue
               ),
             },
