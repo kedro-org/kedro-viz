@@ -50,35 +50,40 @@ export const getNodeActive = createSelector(
     getPipelineNodeIDs,
     getHoveredNode,
     getNodeTags,
-    getNodeModularPipelines,
     getTagActive,
     getModularPipelineActive,
+    (state) => state.modularPipeline.tree,
   ],
   (
     nodeIDs,
     hoveredNode,
     nodeTags,
-    nodeModularPipelines,
     tagActive,
-    modularPipelineActive
-  ) =>
-    arrayToObject(nodeIDs, (nodeID) => {
+    modularPipelineActive,
+    modularPipelinesTree
+  ) => {
+    const activeModularPipelines = Object.keys(modularPipelineActive).filter(
+      (modularPipelineID) => modularPipelineActive[modularPipelineID]
+    );
+    const nodesActiveViaModularPipeline = activeModularPipelines.flatMap((id) =>
+      modularPipelinesTree[id].children.map((child) => child.id)
+    );
+
+    return arrayToObject(nodeIDs, (nodeID) => {
       if (nodeID === hoveredNode) {
         return true;
       }
       const activeViaTag = nodeTags[nodeID].some((tag) => tagActive[tag]);
-      const activeModularPipeline = modularPipelineActive[nodeID];
+      const activeModularPipeline = activeModularPipelines.includes(nodeID);
       const activeViaModularPipeline =
-        nodeModularPipelines[nodeID] &&
-        nodeModularPipelines[nodeID].some(
-          (modularPipeline) => modularPipelineActive[modularPipeline]
-        );
+        nodesActiveViaModularPipeline.includes(nodeID);
       return (
         Boolean(activeViaTag) ||
         Boolean(activeViaModularPipeline) ||
         Boolean(activeModularPipeline)
       );
-    })
+    });
+  }
 );
 
 /**

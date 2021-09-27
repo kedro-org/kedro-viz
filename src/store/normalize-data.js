@@ -149,18 +149,6 @@ const addNode = (state) => (node) => {
   state.node.modularPipelines[id] = node.modular_pipelines || [];
 };
 
-const addModularPipelineNode = (state, modularPipeline) => {
-  const { id, name } = modularPipeline;
-  state.node.ids.push(id);
-  state.node.name[id] = name;
-  state.node.fullName[id] = name;
-  state.node.type[id] = 'modularPipeline';
-  state.node.layer[id] = null;
-  state.node.pipelines[id] = {};
-  state.node.tags[id] = [];
-  state.node.modularPipelines[id] = [];
-};
-
 /**
  * Create a new link between two nodes and add it to the edges array
  * @param {Object} source - Parent node
