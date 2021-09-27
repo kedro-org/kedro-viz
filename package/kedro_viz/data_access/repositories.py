@@ -33,6 +33,8 @@ from typing import Dict, Iterable, List, Optional, Set
 import kedro
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 from semver import VersionInfo
+from sqlalchemy import  Column, Integer, String
+from kedro_viz.integrations.kedro.database import Base
 
 from kedro_viz.models.graph import (
     GraphEdge,
@@ -44,7 +46,13 @@ from kedro_viz.models.graph import (
 
 _KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
 
+class SessionRepository(Base):
+    __tablename__ = "sessions"
 
+    id = Column(Integer, primary_key=True, index=True)
+    blob = Column(String)
+    class Config:
+        orm_mode = True
 class GraphNodesRepository:
     def __init__(self):
         self.nodes_dict: Dict[str, GraphNode] = {}
