@@ -514,9 +514,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             dataset = cast(MetricsDataSet, dataset)
             if not dataset._exists() or self.filepath is None:
                 return
-            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
-            with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
-                self.metrics = json.load(fs_file)
+            self.metrics = self.load_latest_metrics_data(self.filepath)
             metrics_data = self.load_metrics_versioned_data(self.filepath)
             if not metrics_data:
                 return
@@ -527,6 +525,19 @@ class DataNodeMetadata(GraphNodeMetadata):
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
+
+    @staticmethod
+    def load_latest_metrics_data(filepath: str) -> Dict:
+        """Load data for latest versions of the metrics dataset
+        Args:
+            filepath: the path whether the dataset is located.
+        Returns:
+            A dictionary containing json data for the latest version
+        """
+        latest_version = sorted(Path(filepath).iterdir(), reverse=True)[0]
+        path = latest_version / Path(filepath).name
+        with open(path) as fs_file:
+            return json.load(fs_file)
 
     @staticmethod
     def load_metrics_versioned_data(
