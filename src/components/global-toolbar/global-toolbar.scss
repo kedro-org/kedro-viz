@@ -1,0 +1,24 @@
+@import '../../styles/variables';
+@import '../../styles/extends';
+
+.global-toolbar {
+  background: var(--color-sidebar-background);
+  display: flex;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: $global-toolbar-width;
+  z-index: 4;
+}
+
+.global-primary-toolbar {
+  @extend %listReset;
+
+  margin-top: auto;
+}
+
+.toolbar-menu-button--large {
+  height: $global-toolbar-width;
+  width: $global-toolbar-width;
+}

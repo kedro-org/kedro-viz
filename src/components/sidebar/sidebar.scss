@@ -7,7 +7,7 @@
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
   bottom: -1px;
-  left: 0;
+  left: $global-toolbar-width;
 
   // Ensures sidebar tooltips are above code panel
   z-index: 1;

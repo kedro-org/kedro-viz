@@ -3,39 +3,30 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import {
   toggleExportModal,
-  toggleSettingsModal,
   toggleLayers,
   toggleSidebar,
   toggleTextLabels,
-  toggleTheme,
 } from '../../actions';
 import IconButton from '../icon-button';
 import MenuIcon from '../icons/menu';
-import ThemeIcon from '../icons/theme';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
 import LayersIcon from '../icons/layers';
-import SettingsIcon from '../icons/settings';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import './primary-toolbar.css';
 
 /**
- * Main contols for filtering the chart data
- * @param {Function} onToggleTheme Handle toggling theme between light/dark
+ * Main controls for filtering the chart data
  * @param {Function} onToggleTextLabels Handle toggling text labels on/off
  * @param {Boolean} textLabels Whether text labels are displayed
- * @param {string} theme Kedro UI light/dark theme
  */
 export const PrimaryToolbar = ({
   disableLayerBtn,
   onToggleExportModal,
-  onToggleSettingsModal,
   onToggleLayers,
   onToggleSidebar,
   onToggleTextLabels,
-  onToggleTheme,
   textLabels,
-  theme,
   visible,
   visibleLayers,
 }) => (
@@ -53,15 +44,6 @@ export const PrimaryToolbar = ({
         onClick={() => onToggleSidebar(!visible.sidebar)}
         icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
-      />
-      <IconButton
-        ariaLive="polite"
-        ariaLabel={`Change to ${theme === 'light' ? 'dark' : 'light'} theme`}
-        className={'pipeline-menu-button--theme'}
-        onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
-        icon={ThemeIcon}
-        labelText="Toggle theme"
-        visible={visible.themeBtn}
       />
       <IconButton
         ariaLive="polite"
@@ -88,15 +70,6 @@ export const PrimaryToolbar = ({
         disabled={disableLayerBtn}
         visible={visible.layerBtn}
       />
-      <IconButton
-        ariaLabel={'Change the settings flags'}
-        className={'pipeline-menu-button--settings'}
-        onClick={() => onToggleSettingsModal(true)}
-        icon={SettingsIcon}
-        disabled={false}
-        labelText={'Settings'}
-        visible={visible.settingsBtn}
-      />
     </ul>
   </>
 );
@@ -104,7 +77,6 @@ export const PrimaryToolbar = ({
 export const mapStateToProps = (state) => ({
   disableLayerBtn: !state.layer.ids.length,
   textLabels: state.textLabels,
-  theme: state.theme,
   visible: state.visible,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
 });
@@ -112,9 +84,6 @@ export const mapStateToProps = (state) => ({
 export const mapDispatchToProps = (dispatch) => ({
   onToggleExportModal: (value) => {
     dispatch(toggleExportModal(value));
-  },
-  onToggleSettingsModal: (value) => {
-    dispatch(toggleSettingsModal(value));
   },
   onToggleLayers: (value) => {
     dispatch(toggleLayers(Boolean(value)));
@@ -124,9 +93,6 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleTextLabels: (value) => {
     dispatch(toggleTextLabels(Boolean(value)));
-  },
-  onToggleTheme: (value) => {
-    dispatch(toggleTheme(value));
   },
 });
 

@@ -3,6 +3,7 @@ import { interpolatePath } from 'd3-interpolate-path';
 import { select } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { paths as nodeIcons } from '../icons/node-icon';
+import { globalToolbarWidth } from '../../config';
 
 const lineShape = line()
   .x((d) => d.x)
@@ -62,7 +63,7 @@ export const drawLayerNames = function () {
   this.el.layerNameGroup
     .transition('layer-names-sidebar-width')
     .duration(this.DURATION)
-    .style('transform', `translateX(${sidebarWidth}px)`);
+    .style('transform', `translateX(${sidebarWidth + globalToolbarWidth}px)`);
 
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.pipeline-layer-name')
