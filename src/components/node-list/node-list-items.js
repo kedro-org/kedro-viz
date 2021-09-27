@@ -126,47 +126,6 @@ export const getFilteredTagItems = createSelector(
 );
 
 /**
- * Return filtered/highlighted modular pipelines
- * @param {object} modularPipelines List of modular pipelines
- * @param {string} searchValue Search term
- * @return {object} Grouped modular pipelines
- */
-export const getFilteredModularPipelines = createSelector(
-  [(state) => state.modularPipelines, (state) => state.searchValue],
-  (modularPipelines, searchValue) =>
-    highlightMatch(
-      filterNodeGroups({ modularPipeline: modularPipelines }, searchValue),
-      searchValue
-    )
-);
-
-/**
- * Return filtered/highlighted modular pipeline list items
- * @param {object} filteredModularPipelines List of filtered modularPipelines
- * @return {array} Node list items
- */
-export const getFilteredModularPipelineItems = createSelector(
-  // [getFilteredModularPipelines, (state) => state.focusMode],
-  [(state) => state.modularPipeline.tree, (state) => state.focusMode],
-  (modularPipeline, focusMode) =>
-    Object.values(modularPipeline).map((modularPipeline) => ({
-      id: modularPipeline.id,
-      name: modularPipeline.name,
-      type: 'modularPipeline',
-      icon: 'modularPipeline',
-      visibleIcon: VisibleIcon,
-      invisibleIcon: InvisibleIcon,
-      active: false,
-      selected: false,
-      faded: false,
-      visible: true,
-      enabled: true,
-      disabled: focusMode && focusMode?.id !== modularPipeline.id,
-      checked: modularPipeline.enabled,
-    }))
-);
-
-/**
  * Return filtered/highlighted element types
  * @param {string} searchValue Search term
  * @return {object} Grouped element types
