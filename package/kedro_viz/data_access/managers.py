@@ -217,7 +217,6 @@ class DataAccessManager:
 
     def set_modular_pipelines_tree(self):
         tree_node_ids = self.modular_pipelines.expand_tree()
-        print(len(tree_node_ids))
         dangling_ids = set(self.nodes.as_dict().keys()) - tree_node_ids
         modular_pipelines_tree = self.modular_pipelines.as_dict()
 
