@@ -397,14 +397,14 @@ class TestGraphNodeMetadata:
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
 
-    @patch("json.load")
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.create_metrics_plot")
     def test_metrics_data_node_metadata(
         self,
         patched_metrics_plot,
+        patched_latest_metrics,
         patched_data_loader,
-        patched_json_load,
     ):
         mock_metrics_data = {
             "recommendations": 0.0009277445547700936,
@@ -432,8 +432,8 @@ class TestGraphNodeMetadata:
                 }
             ]
         }
-        patched_json_load.return_value = mock_metrics_data
         patched_data_loader.return_value = mock_version_data
+        patched_latest_metrics.return_value = mock_metrics_data
         patched_metrics_plot.return_value = mock_plot_data
         metrics_data_node = MagicMock()
         metrics_data_node.is_plot_node.return_value = False
@@ -451,19 +451,19 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "metric")
         assert not hasattr(metrics_node_metadata, "plot")
 
-    @patch("json.load")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
     def test_metrics_data_node_metadata_versioned_dataset_not_exist(
         self,
         patched_data_loader,
-        patched_json_load,
+        patched_latest_metrics,
     ):
         mock_metrics_data = {
             "recommendations": 0.0009277445547700936,
             "recommended_controls": 0.001159680693462617,
             "projected_optimization": 0.0013916168321551402,
         }
-        patched_json_load.return_value = mock_metrics_data
+        patched_latest_metrics.return_value = mock_metrics_data
         patched_data_loader.return_value = {}
         metrics_data_node = MagicMock()
         metrics_data_node.is_plot_node.return_value = False
@@ -548,6 +548,17 @@ class TestGraphNodeMetadata:
         }
         assert (
             DataNodeMetadata.load_metrics_versioned_data(metrics_filepath)
+            == mock_metrics_json
+        )
+
+    def test_load_latest_metrics(self, metrics_filepath):
+        mock_metrics_json = {
+            "recommendations": 0.200383330721228,
+            "recommended_controls": 0.250479163401535,
+            "projected_optimization": 0.30057499608184196,
+        }
+        assert (
+            DataNodeMetadata.load_latest_metrics_data(metrics_filepath)
             == mock_metrics_json
         )
 
