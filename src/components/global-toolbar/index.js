@@ -1,8 +1,12 @@
+import React from 'react';
 import { connect } from 'react-redux';
 import { toggleSettingsModal, toggleTheme } from '../../actions';
 import IconButton from '../icon-button';
+import ExperimentsIcon from '../icons/experiments';
+import LogoIcon from '../icons/logo';
 import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
+import TreeIcon from '../icons/tree';
 
 import './global-toolbar.css';
 
@@ -20,6 +24,28 @@ export const GlobalToolbar = ({
   return (
     <>
       <div className="global-toolbar">
+        <ul className="global-routes-toolbar kedro">
+          <IconButton
+            ariaLabel={'View your pipeline'}
+            className={'pipeline-menu-button--logo toolbar-menu-button--large'}
+            disabled={false}
+            icon={LogoIcon}
+          />
+          <IconButton
+            ariaLabel={'View your pipeline'}
+            className={'toolbar-menu-button--large'}
+            disabled={false}
+            icon={TreeIcon}
+            labelText={'Pipeline'}
+          />
+          <IconButton
+            ariaLabel={'View your experiments'}
+            className={'toolbar-menu-button--large'}
+            disabled={false}
+            icon={ExperimentsIcon}
+            labelText={'Experiments tracking'}
+          />
+        </ul>
         <ul className="global-primary-toolbar kedro">
           <IconButton
             ariaLive="polite"

@@ -2,14 +2,19 @@
 @import '../../styles/extends';
 
 .global-toolbar {
-  background: var(--color-sidebar-background);
+  background: var(--color-global-toolbar-background);
   display: flex;
+  flex-direction: column;
   height: 100%;
   left: 0;
   position: absolute;
   top: 0;
   width: $global-toolbar-width;
-  z-index: 4;
+  z-index: 5;
+}
+
+.global-routes-toolbar {
+  @extend %listReset;
 }
 
 .global-primary-toolbar {
@@ -21,4 +26,14 @@
 .toolbar-menu-button--large {
   height: $global-toolbar-width;
   width: $global-toolbar-width;
+}
+
+.pipeline-menu-button--logo {
+  margin-bottom: 40px;
+
+  svg {
+    height: 2.9em;
+    opacity: 1;
+    width: 2.9em;
+  }
 }
