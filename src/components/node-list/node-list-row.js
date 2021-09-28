@@ -102,6 +102,8 @@ const NodeListRow = memo(
             'pipeline-nodelist__row--selected': selected,
             'pipeline-nodelist__row--disabled': disabled,
             'pipeline-nodelist__row--unchecked': !checked,
+            'pipeline-nodelist__row--overwrite':
+              active || selected ? false : true,
           }
         )}
         title={name}
@@ -117,7 +119,8 @@ const NodeListRow = memo(
                 'pipeline-nodelist__row__type-icon--disabled': disabled,
                 'pipeline-nodelist__row__type-icon--nested': !children,
                 'pipeline-nodelist__row__type-icon--active': active,
-                'pipeline-nodelist__row__type-icon--selected': selected,
+                'pipeline-nodelist__row__type-icon--selected':
+                  selected || isInFocusMode,
               }
             )}
             icon={icon}

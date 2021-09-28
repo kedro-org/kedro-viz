@@ -181,13 +181,18 @@ export const darkPreviewTemplate = {
   ...darkTemplate,
   height: 300,
   margin: {
-    l: 100,
+    l: 70,
     r: 40,
-    t: 40,
+    t: 60,
     b: 70,
   },
+  title: {
+    font: {
+      size: 12,
+    },
+    x: 0.09,
+  },
   showlegend: false,
-  title: '',
   width: 400,
   xaxis: {
     ...darkTemplate.xaxis,

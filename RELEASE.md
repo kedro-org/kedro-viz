@@ -7,6 +7,15 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
+# Release 3.16.1
+
+## Major features and improvements
+
+## Bug fixes and other changes
+
+- Overwrite material UI selected row defaults. (#568)
+
 # Release 3.16.0
 
 ## Major features and improvements
