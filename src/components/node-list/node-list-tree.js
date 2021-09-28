@@ -93,6 +93,9 @@ const TreeListProvider = ({
   };
 
   const renderLeafNode = (node) => {
+    // if (!node || !node.id) {
+    //   return;
+    // }
     return (
       <NodeListTreeItem
         data={getNodeRowData(node)}
@@ -115,11 +118,13 @@ const TreeListProvider = ({
       node.children,
       (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
       (child) => child.data.name
-    ).map((child) =>
-      isModularPipelineType(child.type)
-        ? renderTree(tree, child.id)
-        : renderLeafNode(child.data)
-    );
+    )
+      // .filter((child) => child.data?.id)
+      .map((child) =>
+        isModularPipelineType(child.type)
+          ? renderTree(tree, child.id)
+          : renderLeafNode(child.data)
+      );
 
     if (modularPipelineID === '__root__') {
       return children;

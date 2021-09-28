@@ -39,7 +39,7 @@ from kedro_viz.models.graph import (
     GraphNode,
     GraphNodeType,
     ParametersNode,
-    ModularPipeline,
+    ModularPipelineNode,
     ModularPipelineChild,
     RegisteredPipeline,
     Tag,
@@ -202,24 +202,16 @@ class ModularPipelinesRepository:
         # With this representation, a folder-like render of the tree is simply a recursive in-order tree traversal.
         # To improve the performance on the client, we perform the conversion between
         # these two representations on the backend.
-        self.tree: Dict[str, ModularPipeline] = {
-            self.ROOT_MODULAR_PIPELINE_ID: ModularPipeline(
-                id=self.ROOT_MODULAR_PIPELINE_ID
-            )
-        }
+        self.tree: Dict[str, ModularPipelineNode] = {}
 
-    def add_modular_pipeline_input(
-        self, pipeline_id: str, input_node: GraphNode
-    ) -> bool:
+    def add_input(self, pipeline_id: str, input_node: GraphNode) -> bool:
         is_internal_input = pipeline_id in input_node.modular_pipelines
         if is_internal_input:
             self.tree[pipeline_id].internal_inputs.add(input_node.id)
         else:
             self.tree[pipeline_id].external_inputs.add(input_node.id)
 
-    def add_modular_pipeline_output(
-        self, pipeline_id: str, output_node: GraphNode
-    ) -> bool:
+    def add_output(self, pipeline_id: str, output_node: GraphNode) -> bool:
         is_internal_output = pipeline_id in output_node.modular_pipelines
         if is_internal_output:
             self.tree[pipeline_id].internal_outputs.add(output_node.id)
@@ -242,9 +234,12 @@ class ModularPipelinesRepository:
 
         # Add the modular pipeline to the tree if it doesn't exist yet
         if modular_pipeline_id not in self.tree:
-            modular_pipeline = ModularPipeline(modular_pipeline_id)
-            self.tree[modular_pipeline_id] = modular_pipeline
+            modular_pipeline_node = GraphNode.create_modular_pipeline_node(
+                modular_pipeline_id
+            )
+            self.tree[modular_pipeline_id] = modular_pipeline_node
 
+        self.tree[modular_pipeline_id].pipelines.update(node.pipelines)
         # Since we extract the modular pipeline from the node's namespace,
         # the node is by definition a child of the modular pipeline.
         self.tree[modular_pipeline_id].children.add(
@@ -265,7 +260,7 @@ class ModularPipelinesRepository:
             repo.add_modular_pipeline_from_node(node)
         return repo
 
-    def expand_tree(self):
+    def expand(self, registered_pipeline_key: str):
         """Expand the current compact tree into a full-blown representation with child-references
         by converting each parent in the node's materialized path into a dedicated node in the tree.
         Returns the set of all node IDs in the tree.
@@ -281,9 +276,17 @@ class ModularPipelinesRepository:
                     "one.two.three": {"id": "one.two.three", "children": []}
                 }
         """
-        for modular_pipeline_id, modular_pipeline in list(self.tree.items()):
-            if modular_pipeline_id == self.ROOT_MODULAR_PIPELINE_ID:
+        tree = {
+            self.ROOT_MODULAR_PIPELINE_ID: GraphNode.create_modular_pipeline_node(
+                self.ROOT_MODULAR_PIPELINE_ID
+            )
+        }
+        for modular_pipeline_id, modular_pipeline_node in list(self.tree.items()):
+            if not modular_pipeline_node.belongs_to_pipeline(registered_pipeline_key):
                 continue
+
+            if modular_pipeline_id not in tree:
+                tree[modular_pipeline_id] = modular_pipeline_node
 
             # Split the materialized path ID of a modular pipeline into the list of parents.
             # Then iterate through this list to construct the tree of child references,
@@ -296,7 +299,7 @@ class ModularPipelinesRepository:
             # `one` is a child of the `__root__` node, `one.two` is a child of `one`, and so on.
             chunks = modular_pipeline_id.split(".")
             num_chunks = len(chunks)
-            self.tree[self.ROOT_MODULAR_PIPELINE_ID].children.add(
+            tree[self.ROOT_MODULAR_PIPELINE_ID].children.add(
                 ModularPipelineChild(
                     id=chunks[0],
                     type=GraphNodeType.MODULAR_PIPELINE,
@@ -307,28 +310,31 @@ class ModularPipelinesRepository:
 
             for i in range(1, num_chunks):
                 parent_id = ".".join(chunks[:i])
-                if parent_id not in self.tree:
-                    self.tree[parent_id] = ModularPipeline(parent_id)
+                if parent_id not in tree:
+                    tree[parent_id] = GraphNode.create_modular_pipeline_node(
+                        parent_id,
+                    )
 
-                self.tree[parent_id].children.add(
+                tree[parent_id].pipelines.update(modular_pipeline_node.pipelines)
+                tree[parent_id].children.add(
                     ModularPipelineChild(
                         id=f"{parent_id}.{chunks[i]}",
                         type=GraphNodeType.MODULAR_PIPELINE,
                     )
                 )
-                self.tree[parent_id].internal_inputs.update(
-                    modular_pipeline.internal_inputs
+                tree[parent_id].internal_inputs.update(
+                    modular_pipeline_node.internal_inputs
                 )
-                self.tree[parent_id].external_inputs.update(
-                    modular_pipeline.external_inputs
+                tree[parent_id].external_inputs.update(
+                    modular_pipeline_node.external_inputs
                 )
-                self.tree[parent_id].internal_outputs.update(
-                    modular_pipeline.internal_outputs
+                tree[parent_id].internal_outputs.update(
+                    modular_pipeline_node.internal_outputs
                 )
-                self.tree[parent_id].external_outputs.update(
-                    modular_pipeline.external_outputs
+                tree[parent_id].external_outputs.update(
+                    modular_pipeline_node.external_outputs
                 )
-        return self.tree
+        return tree
 
 
 class LayersRepository:

@@ -102,49 +102,6 @@ class ModularPipelineChild:
 
 
 @dataclass
-class ModularPipeline:
-    """Represent a modular pipeline within a registered pipeline.
-    Think of this as an abstraction similar to a Node or a DataSet in Kedro core.
-    Necessary because Kedro core doesn't expose a ModularPipeline abstraction.
-    """
-
-    id: str
-    name: str = field(init=False)
-    children: Set[ModularPipelineChild] = field(default_factory=set)
-    internal_inputs: Set[str] = field(default_factory=set)
-    internal_outputs: Set[str] = field(default_factory=set)
-    external_inputs: Set[str] = field(default_factory=set)
-    external_outputs: Set[str] = field(default_factory=set)
-
-    def __post_init__(self):
-        # prettify the last bit of the modular pipaline name, i.e. without the namespace
-        self.name = _pretty_name(self.id.split(".")[-1])
-
-    @property
-    def inputs(self) -> Set[str]:
-        # Okay, here be dragons:
-        # What we consider as a modular pipeline's inputs, i.e. the ones visualised as dotted nodes in focus mode,
-        # are the inputs that don't serve as outputs for some nodes in the same modular pipeline
-        # and vice versa.
-        #
-        # Here is an example. Let's say the modular pipeline has the following structure:
-        #   A -> node(f) -> B -> node(g) -> C
-        #
-        # We consider A as an input for the modular pipeline and not B, C because
-        # A isn't an output of any node in this same pipeline.
-        # Similarly, we consider C as an output for the modular pipeline because
-        # C isn't an input of any node in this same pipeline.
-        #
-        # Based on the observation above, the code below is what remove all intermediate inputs and outputs
-        # and leave only the valid inputs and outputs for the current modular pipeline:
-        return (self.external_inputs | self.internal_inputs) - self.internal_outputs
-
-    @property
-    def outputs(self) -> Set[str]:
-        return (self.external_outputs | self.internal_outputs) - self.internal_inputs
-
-
-@dataclass
 class Tag(RegisteredPipeline):
     """Represent a tag"""
 
@@ -167,13 +124,13 @@ class GraphNode(abc.ABC):
     full_name: str
 
     # the tags associated with this node
-    tags: Set[str]
+    tags: Set[str] = field(default_factory=set)
 
-    # the list of registered pipeline IDs this node belongs to
-    pipelines: List[str]
+    # the set of registered pipeline IDs this node belongs to
+    pipelines: Set[str] = field(default_factory=set)
 
     # the list of modular pipeline this node belongs to
-    namespace: Optional[str] = field(init=False)
+    namespace: Optional[str] = field(init=False, default=None)
     modular_pipelines: Optional[List[str]] = field(init=False)
 
     # the underlying Kedro object for this node
@@ -239,7 +196,6 @@ class GraphNode(abc.ABC):
             name=_pretty_name(getattr(node, "short_name", node.name)),
             full_name=getattr(node, "short_name", node.name),
             tags=set(node.tags),
-            pipelines=[],
             kedro_obj=node,
         )
 
@@ -273,7 +229,6 @@ class GraphNode(abc.ABC):
                 full_name=dataset_name,
                 tags=tags,
                 layer=layer,
-                pipelines=[],
                 is_free_input=is_free_input,
             )
 
@@ -283,7 +238,6 @@ class GraphNode(abc.ABC):
             full_name=full_name,
             tags=tags,
             layer=layer,
-            pipelines=[],
             kedro_obj=dataset,
             is_free_input=is_free_input,
         )
@@ -313,7 +267,6 @@ class GraphNode(abc.ABC):
             full_name=full_name,
             tags=tags,
             layer=layer,
-            pipelines=[],
             kedro_obj=parameters,
         )
 
@@ -321,19 +274,15 @@ class GraphNode(abc.ABC):
     def create_modular_pipeline_node(
         cls, modular_pipeline_id: str
     ) -> "ModularPipelineNode":
-        modular_pipeline = ModularPipeline(modular_pipeline_id)
         return ModularPipelineNode(
-            id=modular_pipeline.id,
-            name=modular_pipeline.name,
-            full_name=modular_pipeline.id,
-            tags=set(),
-            pipelines=[],
+            id=modular_pipeline_id,
+            name=_pretty_name(_strip_namespace(modular_pipeline_id)),
+            full_name=modular_pipeline_id,
         )
 
     def add_pipeline(self, pipeline_id: str):
         """Add a pipeline_id to the list of pipelines that this node belongs to."""
-        if pipeline_id not in self.pipelines:
-            self.pipelines.append(pipeline_id)
+        self.pipelines.add(pipeline_id)
 
     def belongs_to_pipeline(self, pipeline_id: str) -> bool:
         """Check whether this graph node belongs to a given pipeline_id."""
@@ -387,6 +336,34 @@ class ModularPipelineNode(GraphNode):
 
     type: str = GraphNodeType.MODULAR_PIPELINE.value
     modular_pipelines: Optional[List[str]] = None
+    children: Set[ModularPipelineChild] = field(default_factory=set)
+    internal_inputs: Set[str] = field(default_factory=set)
+    internal_outputs: Set[str] = field(default_factory=set)
+    external_inputs: Set[str] = field(default_factory=set)
+    external_outputs: Set[str] = field(default_factory=set)
+
+    @property
+    def inputs(self) -> Set[str]:
+        # Okay, here be dragons:
+        # What we consider as a modular pipeline's inputs, i.e. the ones visualised as dotted nodes in focus mode,
+        # are the inputs that don't serve as outputs for some nodes in the same modular pipeline
+        # and vice versa.
+        #
+        # Here is an example. Let's say the modular pipeline has the following structure:
+        #   A -> node(f) -> B -> node(g) -> C
+        #
+        # We consider A as an input for the modular pipeline and not B, C because
+        # A isn't an output of any node in this same pipeline.
+        # Similarly, we consider C as an output for the modular pipeline because
+        # C isn't an input of any node in this same pipeline.
+        #
+        # Based on the observation above, the code below is what remove all intermediate inputs and outputs
+        # and leave only the valid inputs and outputs for the current modular pipeline:
+        return (self.external_inputs | self.internal_inputs) - self.internal_outputs
+
+    @property
+    def outputs(self) -> Set[str]:
+        return (self.external_outputs | self.internal_outputs) - self.internal_inputs
 
 
 @dataclass
@@ -442,10 +419,10 @@ class DataNode(GraphNode):
     """Represent a graph node of type DATA"""
 
     # whether the data node is a free input
-    is_free_input: bool
+    is_free_input: bool = field(default=False)
 
     # the layer that this data node belongs to
-    layer: Optional[str]
+    layer: Optional[str] = field(default=None)
 
     # the underlying Kedro's AbstractDataSet for this data node
     kedro_obj: InitVar[Optional[AbstractDataSet]]
@@ -501,10 +478,10 @@ class TranscodedDataNode(GraphNode):
     """Represent a graph node of type DATA"""
 
     # whether the data node is a free input
-    is_free_input: bool
+    is_free_input: bool = field(default=False)
 
     # the layer that this data node belongs to
-    layer: Optional[str]
+    layer: Optional[str] = field(default=None)
 
     # the original Kedro's AbstractDataSet for this transcoded data node
     original_version: AbstractDataSet = field(init=False)
@@ -698,7 +675,7 @@ class ParametersNode(GraphNode):
     """Represent a graph node of type PARAMETERS"""
 
     # the layer that this parameters node belongs to
-    layer: Optional[str]
+    layer: Optional[str] = field(default=None)
 
     # the underlying Kedro's AbstractDataSet for this parameters node
     # n.b. for parameters, this is always MemoryDataSet

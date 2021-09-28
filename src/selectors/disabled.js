@@ -110,7 +110,9 @@ export const getNodeDisabled = createSelector(
  */
 export const getVisibleNodeIDs = createSelector(
   [getPipelineNodeIDs, getNodeDisabled],
-  (nodeIDs, nodeDisabled) => nodeIDs.filter((id) => !nodeDisabled[id])
+  (nodeIDs, nodeDisabled) => {
+    return nodeIDs.filter((id) => !nodeDisabled[id]);
+  }
 );
 
 /**

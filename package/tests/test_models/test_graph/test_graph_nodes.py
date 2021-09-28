@@ -42,7 +42,7 @@ from kedro_viz.models.graph import (
     DataNode,
     DataNodeMetadata,
     GraphNode,
-    ModularPipeline,
+    ModularPipelineNode,
     ParametersNode,
     ParametersNodeMetadata,
     RegisteredPipeline,
@@ -232,7 +232,7 @@ class TestGraphNodePipelines:
         assert pipeline.name == "Default"
 
     def test_modular_pipeline_pretty_name(self):
-        pipeline = ModularPipeline("data_engineering")
+        pipeline = GraphNode.create_modular_pipeline_node("data_engineering")
         assert pipeline.name == "Data Engineering"
 
     def test_add_node_to_pipeline(self):

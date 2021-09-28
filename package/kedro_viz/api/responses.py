@@ -270,7 +270,7 @@ def get_default_response() -> GraphAPIResponse:
         nodes=data_access_manager.nodes.as_list(),
         edges=data_access_manager.edges.as_list(),
         tags=data_access_manager.tags.as_list(),
-        layers=data_access_manager.layers.as_list(),
+        layers=data_access_manager.get_sorted_layers(),
         pipelines=data_access_manager.registered_pipelines.as_list(),
         modular_pipelines=data_access_manager.get_modular_pipelines_tree(),
         selected_pipeline=data_access_manager.get_default_selected_pipeline().id,

@@ -101,8 +101,8 @@ async def get_single_pipeline_data(pipeline_id: str):
         nodes=nodes,
         edges=data_access_manager.edges.get_edges_by_node_ids(node_ids),
         tags=data_access_manager.tags.as_list(),
-        layers=data_access_manager.layers.as_list(),
+        layers=data_access_manager.get_sorted_layers(pipeline_id),
         pipelines=data_access_manager.registered_pipelines.as_list(),
         selected_pipeline=pipeline_id,
-        modular_pipelines=data_access_manager.get_modular_pipelines_tree(),
+        modular_pipelines=data_access_manager.get_modular_pipelines_tree(pipeline_id),
     )
