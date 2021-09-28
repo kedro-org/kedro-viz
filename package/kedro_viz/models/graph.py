@@ -359,11 +359,13 @@ class ModularPipelineNode(GraphNode):
         #
         # Based on the observation above, the code below is what remove all intermediate inputs and outputs
         # and leave only the valid inputs and outputs for the current modular pipeline:
-        return (self.external_inputs | self.internal_inputs) - self.internal_outputs
+        return (self.external_inputs | self.internal_inputs) - (
+            self.internal_outputs | self.external_outputs
+        )
 
     @property
     def outputs(self) -> Set[str]:
-        return (self.external_outputs | self.internal_outputs) - self.internal_inputs
+        return self.external_outputs | self.internal_outputs
 
 
 @dataclass

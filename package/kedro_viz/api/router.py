@@ -96,13 +96,17 @@ async def get_single_pipeline_data(pipeline_id: str):
         pipeline_id
     )
     nodes = data_access_manager.nodes.get_nodes_by_ids(node_ids)
+    edges = data_access_manager.edges[pipeline_id].get_edges_by_node_ids(node_ids)
+    modular_pipelines_tree = data_access_manager.construct_modular_pipelines_tree(
+        pipeline_id
+    )
 
     return GraphAPIResponse(
         nodes=nodes,
-        edges=data_access_manager.edges.get_edges_by_node_ids(node_ids),
+        edges=edges,
         tags=data_access_manager.tags.as_list(),
         layers=data_access_manager.get_sorted_layers(pipeline_id),
         pipelines=data_access_manager.registered_pipelines.as_list(),
         selected_pipeline=pipeline_id,
-        modular_pipelines=data_access_manager.get_modular_pipelines_tree(pipeline_id),
+        modular_pipelines=modular_pipelines_tree,
     )

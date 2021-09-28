@@ -281,7 +281,7 @@ class ModularPipelinesRepository:
                 self.ROOT_MODULAR_PIPELINE_ID
             )
         }
-        for modular_pipeline_id, modular_pipeline_node in list(self.tree.items()):
+        for modular_pipeline_id, modular_pipeline_node in self.tree.items():
             if not modular_pipeline_node.belongs_to_pipeline(registered_pipeline_key):
                 continue
 

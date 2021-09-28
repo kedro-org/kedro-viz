@@ -65,10 +65,10 @@ class DataAccessManager:
     def __init__(self):
         self.catalog = CatalogRepository()
         self.nodes = GraphNodesRepository()
-        self.edges = GraphEdgesRepository()
         self.registered_pipelines = RegisteredPipelinesRepository()
         self.tags = TagsRepository()
         self.modular_pipelines = ModularPipelinesRepository()
+        self.edges: Dict[str, GraphNodesRepository] = {}
         self.node_dependencies: Dict[str, Dict[str, Set]] = {}
 
     def add_catalog(self, catalog: DataCatalog):
@@ -77,6 +77,7 @@ class DataAccessManager:
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project into the repositories."""
         for pipeline_key, pipeline in pipelines.items():
+            self.edges[pipeline_key] = GraphEdgesRepository()
             self.node_dependencies[pipeline_key] = defaultdict(set)
             self.add_pipeline(pipeline_key, pipeline)
 
@@ -155,7 +156,9 @@ class DataAccessManager:
             pipeline_key, input_dataset, is_free_input=is_free_input
         )
         graph_node.tags.update(task_node.tags)
-        self.edges.add_edge(GraphEdge(source=graph_node.id, target=task_node.id))
+        self.edges[pipeline_key].add_edge(
+            GraphEdge(source=graph_node.id, target=task_node.id)
+        )
         self.node_dependencies[pipeline_key][graph_node.id].add(task_node.id)
 
         if isinstance(graph_node, ParametersNode):
@@ -169,7 +172,9 @@ class DataAccessManager:
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         graph_node = self.add_dataset(pipeline_key, output_dataset)
         graph_node.tags.update(task_node.tags)
-        self.edges.add_edge(GraphEdge(source=task_node.id, target=graph_node.id))
+        self.edges[pipeline_key].add_edge(
+            GraphEdge(source=task_node.id, target=graph_node.id)
+        )
         self.node_dependencies[pipeline_key][task_node.id].add(graph_node.id)
         return graph_node
 
@@ -224,7 +229,7 @@ class DataAccessManager:
             self.nodes.as_dict(), self.node_dependencies[registered_pipeline_key]
         )
 
-    def get_modular_pipelines_tree(
+    def construct_modular_pipelines_tree(
         self, registered_pipeline_key: str = "__default__"
     ) -> Dict:
         """Get the modular pipelines tree for a specific registered pipeline.
@@ -253,7 +258,7 @@ class DataAccessManager:
             )
 
             for input_ in modular_pipeline_node.inputs:
-                self.edges.add_edge(
+                self.edges[registered_pipeline_key].add_edge(
                     GraphEdge(source=input_, target=modular_pipeline_id)
                 )
                 self.node_dependencies[registered_pipeline_key][input_].add(
@@ -261,7 +266,7 @@ class DataAccessManager:
                 )
             root_children_ids.update(modular_pipeline_node.external_inputs)
             for output in modular_pipeline_node.outputs:
-                self.edges.add_edge(
+                self.edges[registered_pipeline_key].add_edge(
                     GraphEdge(source=modular_pipeline_id, target=output)
                 )
                 self.node_dependencies[registered_pipeline_key][
@@ -283,7 +288,7 @@ class DataAccessManager:
         #
         # We leverage networkx to help with graph traversal
         digraph = nx.DiGraph()
-        for edge in self.edges.as_list():
+        for edge in self.edges[registered_pipeline_key].as_list():
             digraph.add_edge(edge.source, edge.target)
 
         for modular_pipeline_id, modular_pipeline in modular_pipelines_tree.items():
@@ -293,7 +298,9 @@ class DataAccessManager:
             bad_inputs = modular_pipeline.inputs.intersection(descendants)
             for bad_input in bad_inputs:
                 digraph.remove_edge(bad_input, modular_pipeline_id)
-                self.edges.remove_edge(GraphEdge(bad_input, modular_pipeline_id))
+                self.edges[registered_pipeline_key].remove_edge(
+                    GraphEdge(bad_input, modular_pipeline_id)
+                )
                 self.node_dependencies[registered_pipeline_key][bad_input].remove(
                     modular_pipeline_id
                 )

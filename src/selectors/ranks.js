@@ -49,6 +49,7 @@ export const getNodeRank = createSelector(
     }
 
     // Add dependencies for visible edges
+    console.log(nodeDeps);
     for (const edge of edges) {
       nodeDeps[edge.source].push(edge.target);
     }

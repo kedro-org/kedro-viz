@@ -118,15 +118,16 @@ export const getVisibleEdges = createSelector(
     getEdgeTargets,
     getTransitiveEdges,
   ],
-  (edgeIDs, edgeDisabled, edgeSources, edgeTargets, transitiveEdges) =>
-    edgeIDs
+  (edgeIDs, edgeDisabled, edgeSources, edgeTargets, transitiveEdges) => {
+    return edgeIDs
       .filter((id) => !edgeDisabled[id])
       .concat(transitiveEdges.edgeIDs)
       .map((id) => ({
         id,
         source: edgeSources[id] || transitiveEdges.sources[id],
         target: edgeTargets[id] || transitiveEdges.targets[id],
-      }))
+      }));
+  }
 );
 
 /**

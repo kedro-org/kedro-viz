@@ -185,7 +185,6 @@ class TestAddNode:
         ]
         # removing non-modular pipelines from parameters should only leave the ones
         # that exist as defined by the nodes' namespaces in a pipeline
-        data_access_manager._remove_non_modular_pipelines()
         assert parameter_node.modular_pipelines == [
             "uk",
             "uk.data_science",
