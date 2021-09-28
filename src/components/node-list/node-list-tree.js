@@ -42,7 +42,8 @@ const getModularPipelineRowData = ({
   id,
   highlightedLabel,
   name,
-  focusMode,
+  disabled,
+  focused,
 }) => ({
   id: id,
   name: highlightedLabel || name,
@@ -55,7 +56,8 @@ const getModularPipelineRowData = ({
   faded: false,
   visible: true,
   enabled: true,
-  disabled: focusMode && focusMode?.id !== id,
+  disabled: disabled,
+  focused: focused,
   checked: true,
 });
 
@@ -99,7 +101,6 @@ const TreeListProvider = ({
         onItemChange={onItemChange}
         onItemClick={onItemClick}
         key={node.id}
-        focusMode={focusMode}
       />
     );
   };
@@ -128,14 +129,14 @@ const TreeListProvider = ({
       <NodeListTreeItem
         data={getModularPipelineRowData({
           ...node,
-          focusMode,
+          disabled: focusMode && focusMode.id !== node.id,
+          focused: focusMode?.id === node.id,
         })}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
         onItemClick={noop}
-        key={node.id}
-        focusMode={focusMode}>
+        key={node.id}>
         {children}
       </NodeListTreeItem>
     );

@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useMemo } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { changed } from '../../utils';
@@ -23,6 +23,7 @@ const shouldMemo = (prevProps, nextProps) =>
       'allUnchecked',
       'disabled',
       'faded',
+      'focused',
       'visible',
       'selected',
       'label',
@@ -42,6 +43,7 @@ const NodeListRow = memo(
     children,
     disabled,
     faded,
+    focused,
     visible,
     id,
     label,
@@ -58,9 +60,6 @@ const NodeListRow = memo(
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
     rowType,
-    focusMode,
-    parentDisabled,
-    parentPipeline,
   }) => {
     const VisibilityIcon =
       type === 'modularPipeline'
@@ -70,26 +69,6 @@ const NodeListRow = memo(
         : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
-
-    const determineFocusMode = useCallback(
-      () =>
-        focusMode !== null &&
-        type === 'modularPipeline' &&
-        id === focusMode?.id,
-      [focusMode, type, id]
-    );
-    const isInFocusMode = determineFocusMode();
-
-    const determineDisabledLabel = useCallback(() => {
-      if (parentPipeline === 'main') {
-        return disabled;
-      }
-      return (
-        parentDisabled !== false && disabled === true && isInFocusMode === false
-      );
-    }, [parentDisabled, disabled, isInFocusMode, parentPipeline]);
-
-    const isDisabledLabel = determineDisabledLabel();
 
     return (
       <Container
@@ -139,7 +118,7 @@ const NodeListRow = memo(
               `pipeline-nodelist__row__label--kind-${kind}`,
               {
                 'pipeline-nodelist__row__label--faded': faded,
-                'pipeline-nodelist__row__label--disabled': isDisabledLabel,
+                'pipeline-nodelist__row__label--disabled': disabled,
               }
             )}
             dangerouslySetInnerHTML={{ __html: label }}
@@ -159,7 +138,8 @@ const NodeListRow = memo(
               'pipeline-row__toggle--disabled': disabled,
               'pipeline-row__toggle--selected': selected,
             }
-          )}>
+          )}
+          onClick={(e) => e.stopPropagation()}>
           <input
             id={id}
             className="pipeline-nodelist__row__checkbox"
@@ -182,7 +162,7 @@ const NodeListRow = memo(
                 'pipeline-row__toggle-icon--checked': checked,
                 'pipeline-row__toggle-icon--unchecked': !checked,
                 'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
-                'pipeline-row__toggle-icon--focus-checked': isInFocusMode,
+                'pipeline-row__toggle-icon--focus-checked': focused,
               }
             )}
           />

@@ -38,6 +38,7 @@ from kedro_viz.models.graph import (
     DataNode,
     GraphEdge,
     GraphNode,
+    GraphNodeType,
     ParametersNode,
     ModularPipelineNode,
     RegisteredPipeline,
@@ -112,7 +113,6 @@ class DataAccessManager:
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
                 self.modular_pipelines.add_modular_pipeline_from_node(input_node)
-
                 if current_modular_pipeline is not None:
                     self.modular_pipelines.add_modular_pipeline_input(
                         current_modular_pipeline, input_node
@@ -218,6 +218,7 @@ class DataAccessManager:
 
     def set_modular_pipelines_tree(self):
         modular_pipelines_tree = self.modular_pipelines.expand_tree()
+        root_children_ids = set()
 
         # turn all modular pipelines in the tree into a graph node for visualisation,
         # except for the artificial root node.
@@ -229,36 +230,19 @@ class DataAccessManager:
                 GraphNode.create_modular_pipeline_node(modular_pipeline_id)
             )
 
-            # Okay, here be dragons:
-            # What we consider as a modular pipeline's inputs, i.e. the ones visualised as dotted nodes in focus mode,
-            # are the inputs that don't serve as outputs for some nodes in the same modular pipeline
-            # and vice versa.
-            #
-            # Here is an example. Let's say the modular pipeline has the following structure:
-            #   A -> node(f) -> B -> node(g) -> C
-            #
-            # We consider A as an input for the modular pipeline and not B, C because
-            # A isn't an output of any node in this same pipeline.
-            # Similarly, we consider C as an output for the modular pipeline because
-            # C isn't an input of any node in this same pipeline.
-            #
-            # Based on the observation above, the code below is what remove all intermediate inputs and outputs
-            # and leave only the valid inputs and outputs for the current modular pipeline:
-            prev_inputs = modular_pipeline.inputs.copy()
-            prev_outputs = modular_pipeline.outputs.copy()
-            modular_pipeline.inputs.difference_update(prev_outputs)
-            modular_pipeline.outputs.difference_update(prev_inputs)
-
             for input_ in modular_pipeline.inputs:
                 self.edges.add_edge(
                     GraphEdge(source=input_, target=modular_pipeline_id)
                 )
                 self.node_dependencies[input_].add(modular_pipeline_id)
+            root_children_ids.update(modular_pipeline.external_inputs)
             for output in modular_pipeline.outputs:
                 self.edges.add_edge(
                     GraphEdge(source=modular_pipeline_id, target=output)
                 )
                 self.node_dependencies[modular_pipeline_id].add(output)
+                root_children_ids.add(output)
+            root_children_ids.update(modular_pipeline.external_outputs)
 
         # After adding modular pipeline nodes into the graph,
         # There is a chance that the graph contains cycle if
@@ -286,9 +270,13 @@ class DataAccessManager:
                 self.node_dependencies[bad_input].remove(modular_pipeline_id)
 
         for node_id, node in self.nodes.as_dict().items():
-            if not isinstance(node, ModularPipelineNode) and not node.modular_pipelines:
+            if node.type == GraphNodeType.MODULAR_PIPELINE:
+                continue
+            if not node.modular_pipelines or node_id in root_children_ids:
                 modular_pipelines_tree["__root__"].children.add(
-                    ModularPipelineChild(node_id, node.type)
+                    ModularPipelineChild(
+                        node_id, self.nodes.get_node_by_id(node_id).type
+                    )
                 )
 
     def get_modular_pipelines_tree(self) -> Dict[str, ModularPipeline]:

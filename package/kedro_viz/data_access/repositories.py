@@ -211,12 +211,20 @@ class ModularPipelinesRepository:
     def add_modular_pipeline_input(
         self, pipeline_id: str, input_node: GraphNode
     ) -> bool:
-        self.tree[pipeline_id].inputs.add(input_node.id)
+        is_internal_input = pipeline_id in input_node.modular_pipelines
+        if is_internal_input:
+            self.tree[pipeline_id].internal_inputs.add(input_node.id)
+        else:
+            self.tree[pipeline_id].external_inputs.add(input_node.id)
 
     def add_modular_pipeline_output(
         self, pipeline_id: str, output_node: GraphNode
     ) -> bool:
-        self.tree[pipeline_id].outputs.add(output_node.id)
+        is_internal_output = pipeline_id in output_node.modular_pipelines
+        if is_internal_output:
+            self.tree[pipeline_id].internal_outputs.add(output_node.id)
+        else:
+            self.tree[pipeline_id].external_outputs.add(output_node.id)
 
     def add_modular_pipeline_from_node(self, node: GraphNode) -> str:
         """Add the graph node's modular pipeline to the modular pipeline tree.
@@ -308,8 +316,18 @@ class ModularPipelinesRepository:
                         type=GraphNodeType.MODULAR_PIPELINE,
                     )
                 )
-                self.tree[parent_id].inputs.update(modular_pipeline.inputs)
-                self.tree[parent_id].outputs.update(modular_pipeline.outputs)
+                self.tree[parent_id].internal_inputs.update(
+                    modular_pipeline.internal_inputs
+                )
+                self.tree[parent_id].external_inputs.update(
+                    modular_pipeline.external_inputs
+                )
+                self.tree[parent_id].internal_outputs.update(
+                    modular_pipeline.internal_outputs
+                )
+                self.tree[parent_id].external_outputs.update(
+                    modular_pipeline.external_outputs
+                )
         return self.tree
 
 

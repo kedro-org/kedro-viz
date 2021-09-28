@@ -111,12 +111,37 @@ class ModularPipeline:
     id: str
     name: str = field(init=False)
     children: Set[ModularPipelineChild] = field(default_factory=set)
-    inputs: Set[str] = field(default_factory=set)
-    outputs: Set[str] = field(default_factory=set)
+    internal_inputs: Set[str] = field(default_factory=set)
+    internal_outputs: Set[str] = field(default_factory=set)
+    external_inputs: Set[str] = field(default_factory=set)
+    external_outputs: Set[str] = field(default_factory=set)
 
     def __post_init__(self):
         # prettify the last bit of the modular pipaline name, i.e. without the namespace
         self.name = _pretty_name(self.id.split(".")[-1])
+
+    @property
+    def inputs(self) -> Set[str]:
+        # Okay, here be dragons:
+        # What we consider as a modular pipeline's inputs, i.e. the ones visualised as dotted nodes in focus mode,
+        # are the inputs that don't serve as outputs for some nodes in the same modular pipeline
+        # and vice versa.
+        #
+        # Here is an example. Let's say the modular pipeline has the following structure:
+        #   A -> node(f) -> B -> node(g) -> C
+        #
+        # We consider A as an input for the modular pipeline and not B, C because
+        # A isn't an output of any node in this same pipeline.
+        # Similarly, we consider C as an output for the modular pipeline because
+        # C isn't an input of any node in this same pipeline.
+        #
+        # Based on the observation above, the code below is what remove all intermediate inputs and outputs
+        # and leave only the valid inputs and outputs for the current modular pipeline:
+        return (self.external_inputs | self.internal_inputs) - self.internal_outputs
+
+    @property
+    def outputs(self) -> Set[str]:
+        return (self.external_outputs | self.internal_outputs) - self.internal_inputs
 
 
 @dataclass

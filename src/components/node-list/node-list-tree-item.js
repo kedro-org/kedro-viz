@@ -13,10 +13,6 @@ const NodeListTreeItem = ({
   onItemMouseLeave,
   onItemChange,
   children,
-  searchCount,
-  focusMode,
-  parentDisabled,
-  parentPipeline,
 }) => (
   <TreeItem
     key={data.id}
@@ -48,10 +44,7 @@ const NodeListTreeItem = ({
         onMouseLeave={() => onItemMouseLeave(data)}
         onChange={(e) => onItemChange(data, !e.target.checked)}
         rowType="tree"
-        searchCount={searchCount}
-        focusMode={focusMode}
-        parentDisabled={parentDisabled}
-        parentPipeline={parentPipeline}
+        focused={data.focused}
       />
     }>
     {children}
