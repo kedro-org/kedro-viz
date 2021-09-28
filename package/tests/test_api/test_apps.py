@@ -32,10 +32,13 @@ from unittest import mock
 
 import pytest
 from fastapi.testclient import TestClient
+from graphene import Schema
+from graphene.test import Client
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.api import apps
+from kedro_viz.api.graphql import Query
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.models.graph import TaskNode
 from kedro_viz.server import populate_data
@@ -74,6 +77,18 @@ def example_transcoded_api(
 @pytest.fixture
 def client(example_api):
     yield TestClient(example_api)
+
+
+@pytest.fixture(scope="module")
+def graphql_client():
+    client = Client(schema=Schema(query=Query))
+    return client
+
+
+def test_graphql_endpoint(graphql_client):
+    query = "{ healthcheck }"
+    result = graphql_client.execute(query)
+    assert result["data"]["healthcheck"] == "{}"
 
 
 def assert_nodes_equal(response_nodes, expected_nodes):
