@@ -109,5 +109,5 @@ def test_kedro_viz_command_with_autoreload(mocker):
             "project_path": mock_project_path,
         },
         watcher_cls=RegExpWatcher,
-        watcher_kwargs={"re_files": "^.*(\\.yml|\\.yaml|\\.py)$"},
+        watcher_kwargs={"re_files": "^.*(\\.yml|\\.yaml|\\.py|\\.json)$"},
     )
