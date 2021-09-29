@@ -28,46 +28,48 @@
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
 # pylint: disable=missing-function-docstring
 # pylint: disable=unused-argument
-from fastapi import APIRouter,Depends
-import graphene
-from graphene import ObjectType, Schema, String
-from kedro_viz.integrations.kedro.database import SessionLocal, engine
-from starlette.graphql import GraphQLApp
-# from sqlalchemy.orm import Session
-from graphene_sqlalchemy import SQLAlchemyObjectType
-from kedro_viz.data_access.repositories import SessionRepository
-import kedro_viz.data_access.repositories as models
+import typing
 
-models.Base.metadata.create_all(bind=engine)
+import strawberry
+from fastapi import APIRouter
+from strawberry.asgi import GraphQL
+
+from kedro_viz.database import create_db_engine
+from kedro_viz.models.session import Base, KedroSession
+
 
 def get_db():
+    session_class, engine = create_db_engine()
+    Base.metadata.create_all(bind=engine)
+    db = session_class()
     try:
-        print('I go to get_db')
-        db = SessionLocal()
         yield db
     finally:
         db.close()
 
-class Session(SQLAlchemyObjectType):
-    class Meta:
-        model = SessionRepository
 
-class Query(ObjectType):
-    """GraphQL query that returns an empty object on HTTP 200 Response"""
-    sessions = graphene.List(Session)
+@strawberry.type
+class KedroSessionGraphQLType:
+    id: str
+    blob: str
 
-    def resolve_sessions(self, info):
-        # print('Latest')
-        # print(type(db))
-        # session = db.query(SessionRepository)
-        # session = session.all()
-        # return {
-        #     "session":session
-        # }
-        query = Session.get_query(info)
-        return query.all()
+
+def get_all_sessions() -> typing.List[KedroSessionGraphQLType]:
+    db = next(get_db())
+    return [
+        KedroSessionGraphQLType(id=kedro_session.id, blob=kedro_session.blob)
+        for kedro_session in db.query(KedroSession).all()
+    ]
+
+
+@strawberry.type
+class Query:
+    sessions: typing.List[KedroSessionGraphQLType] = strawberry.field(
+        resolver=get_all_sessions
+    )
 
 
 router = APIRouter()
 
-router.add_route("/graphql", GraphQLApp(schema=Schema(query=Query)))
+schema = strawberry.Schema(query=Query)
+router.add_route("/graphql", GraphQL(schema))
