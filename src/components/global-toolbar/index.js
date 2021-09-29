@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toggleSettingsModal, toggleTheme } from '../../actions';
-import IconButton from '../icon-button';
 import ExperimentsIcon from '../icons/experiments';
+import IconButton from '../icon-button';
 import LogoIcon from '../icons/logo';
 import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
@@ -23,36 +23,38 @@ export const GlobalToolbar = ({
 }) => {
   return (
     <>
-      <div className="global-toolbar">
-        <ul className="global-routes-toolbar kedro">
+      <div className="pipeline-global-toolbar">
+        <ul className="pipeline-global-routes-toolbar kedro">
           <IconButton
-            ariaLabel={'View your pipeline'}
-            className={'pipeline-menu-button--logo toolbar-menu-button--large'}
+            ariaLabel={'Kedro Viz logo and link'}
+            className={'pipeline-menu-button--logo pipeline-menu-button--large'}
             disabled={false}
             icon={LogoIcon}
           />
           <IconButton
             ariaLabel={'View your pipeline'}
-            className={'toolbar-menu-button--large'}
+            className={'pipeline-menu-button--large'}
             disabled={false}
             icon={TreeIcon}
             labelText={'Pipeline'}
           />
           <IconButton
             ariaLabel={'View your experiments'}
-            className={'toolbar-menu-button--large'}
+            className={'pipeline-menu-button--large'}
             disabled={false}
             icon={ExperimentsIcon}
             labelText={'Experiments tracking'}
           />
         </ul>
-        <ul className="global-primary-toolbar kedro">
+        <ul className="pipeline-global-control-toolbar kedro">
           <IconButton
             ariaLive="polite"
             ariaLabel={`Change to ${
               theme === 'light' ? 'dark' : 'light'
             } theme`}
-            className={'pipeline-menu-button--theme toolbar-menu-button--large'}
+            className={
+              'pipeline-menu-button--theme pipeline-menu-button--large'
+            }
             onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
             icon={ThemeIcon}
             labelText="Toggle theme"
@@ -61,7 +63,7 @@ export const GlobalToolbar = ({
           <IconButton
             ariaLabel={'Change the settings flags'}
             className={
-              'pipeline-menu-button--settings toolbar-menu-button--large'
+              'pipeline-menu-button--settings pipeline-menu-button--large'
             }
             onClick={() => onToggleSettingsModal(true)}
             icon={SettingsIcon}
