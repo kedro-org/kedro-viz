@@ -108,7 +108,7 @@ def run_server(
         if save_file:
             res = responses.get_default_response()
             Path(save_file).write_text(res.json(indent=4, sort_keys=True))
-
+    
         app = apps.create_api_app_from_project(path, autoreload)
     else:
         app = apps.create_api_app_from_file(load_file)
