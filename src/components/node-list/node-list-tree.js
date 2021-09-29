@@ -93,9 +93,6 @@ const TreeListProvider = ({
   };
 
   const renderLeafNode = (node) => {
-    // if (!node || !node.id) {
-    //   return;
-    // }
     return (
       <NodeListTreeItem
         data={getNodeRowData(node)}
