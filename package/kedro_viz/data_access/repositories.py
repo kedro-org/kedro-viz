@@ -218,6 +218,9 @@ class ModularPipelinesRepository:
         else:
             self.tree[pipeline_id].external_outputs.add(output_node.id)
 
+    def add_child(self, modular_pipeline_id: str, child: ModularPipelineChild):
+        self.tree[modular_pipeline_id].children.add(child)
+
     def add_modular_pipeline_from_node(self, node: GraphNode) -> str:
         """Add the graph node's modular pipeline to the modular pipeline tree.
         Return the added modular pipeline ID.
@@ -242,8 +245,9 @@ class ModularPipelinesRepository:
         self.tree[modular_pipeline_id].pipelines.update(node.pipelines)
         # Since we extract the modular pipeline from the node's namespace,
         # the node is by definition a child of the modular pipeline.
-        self.tree[modular_pipeline_id].children.add(
-            ModularPipelineChild(id=node.id, type=GraphNodeType(node.type))
+        self.add_child(
+            modular_pipeline_id,
+            ModularPipelineChild(id=node.id, type=GraphNodeType(node.type)),
         )
         return modular_pipeline_id
 

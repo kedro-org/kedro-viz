@@ -26,12 +26,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.services.layers` defines layers-related logic."""
+import logging
 from collections import defaultdict
 from typing import Dict, List, Set
 
+import networkx as nx
 from toposort import toposort_flatten, CircularDependencyError
 
 from kedro_viz.models.graph import GraphNode
+
+
+logger = logging.getLogger(__name__)
 
 
 def sort_layers(
@@ -121,5 +126,9 @@ def sort_layers(
     try:
         return toposort_flatten(layer_dependencies)
     except CircularDependencyError:
-        # todo: log warning here
+        dependency_graph = nx.DiGraph(layer_dependencies)
+        logger.warning(
+            "Layers visualisation is disabled as circular dependency detected: %s",
+            nx.algorithms.cycles.find_cycle(dependency_graph),
+        )
         return []

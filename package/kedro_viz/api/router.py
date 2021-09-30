@@ -92,14 +92,14 @@ async def get_single_pipeline_data(pipeline_id: str):
     if not data_access_manager.registered_pipelines.has_pipeline(pipeline_id):
         return JSONResponse(status_code=404, content={"message": "Invalid pipeline ID"})
 
+    modular_pipelines_tree = data_access_manager.construct_modular_pipelines_tree(
+        pipeline_id
+    )
     node_ids = data_access_manager.registered_pipelines.get_node_ids_by_pipeline_id(
         pipeline_id
     )
     nodes = data_access_manager.nodes.get_nodes_by_ids(node_ids)
     edges = data_access_manager.edges[pipeline_id].get_edges_by_node_ids(node_ids)
-    modular_pipelines_tree = data_access_manager.construct_modular_pipelines_tree(
-        pipeline_id
-    )
 
     return GraphAPIResponse(
         nodes=nodes,

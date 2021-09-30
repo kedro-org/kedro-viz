@@ -272,7 +272,6 @@ class DataAccessManager:
                 self.node_dependencies[registered_pipeline_key][
                     modular_pipeline_id
                 ].add(output)
-                root_children_ids.add(output)
             root_children_ids.update(modular_pipeline_node.external_outputs)
 
         # After adding modular pipeline nodes into the graph,
