@@ -29,20 +29,23 @@
 # pylint: disable=missing-function-docstring
 # pylint: disable=unused-argument
 from fastapi import APIRouter
-from graphene import ObjectType, Schema, String
-from starlette.graphql import GraphQLApp
+import strawberry
+from strawberry.asgi import GraphQL
+
+@strawberry.type
+class HealthCheck:
+    name: str
 
 
-class Query(ObjectType):
-    """GraphQL query that returns an empty object on HTTP 200 Response"""
+@strawberry.type
+class Query:
+    @strawberry.field
+    def healthcheck(self) -> HealthCheck:
+        return HealthCheck(name="")
 
-    healthcheck = String()
 
-    @staticmethod
-    def resolve_healthcheck(*args):
-        return {}
-
+schema = strawberry.Schema(query=Query)
 
 router = APIRouter()
 
-router.add_route("/graphql", GraphQLApp(schema=Schema(query=Query)))
+router.add_route("/graphql", GraphQL(schema))
