@@ -219,15 +219,6 @@ const normalizeData = (data) => {
     state.modularPipeline.tree = data.modular_pipelines;
     for (const child of data.modular_pipelines['__root__'].children) {
       state.modularPipeline.visible[child.id] = true;
-      if (child.type === 'modularPipeline') {
-        const { inputs, outputs } = data.modular_pipelines[child.id];
-        for (const input of inputs) {
-          state.modularPipeline.visible[input.id] = true;
-        }
-        for (const output of outputs) {
-          state.modularPipeline.visible[output.id] = true;
-        }
-      }
     }
   }
 
