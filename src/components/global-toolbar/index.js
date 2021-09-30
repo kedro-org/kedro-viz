@@ -33,17 +33,15 @@ export const GlobalToolbar = ({
           />
           <IconButton
             ariaLabel={'View your pipeline'}
-            className={'pipeline-menu-button--large'}
+            className={'pipeline-menu-button--large pipeline-menu-button--link'}
             disabled={false}
             icon={TreeIcon}
-            labelText={'Pipeline'}
           />
           <IconButton
             ariaLabel={'View your experiments'}
-            className={'pipeline-menu-button--large'}
+            className={'pipeline-menu-button--large pipeline-menu-button--link'}
             disabled={false}
             icon={ExperimentsIcon}
-            labelText={'Experiments tracking'}
           />
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
@@ -58,7 +56,6 @@ export const GlobalToolbar = ({
             onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
             icon={ThemeIcon}
             labelText="Toggle theme"
-            visible={visible.themeBtn}
           />
           <IconButton
             ariaLabel={'Change the settings flags'}
@@ -69,7 +66,6 @@ export const GlobalToolbar = ({
             icon={SettingsIcon}
             disabled={false}
             labelText={'Settings'}
-            visible={visible.settingsBtn}
           />
         </ul>
       </div>

@@ -28,6 +28,12 @@
   width: $global-toolbar-width;
 }
 
+.pipeline-menu-button--link {
+  &:hover {
+    background-color: var(--color-bg-2);
+  }
+}
+
 .pipeline-menu-button--logo {
   margin-bottom: 40px;
 

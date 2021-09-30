@@ -12,23 +12,6 @@ describe('GlobalToolbar', () => {
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
   });
 
-  it('hides all buttons (except logo and route buttons) when visible prop is false for each of them', () => {
-    const visible = {
-      themeBtn: false,
-      settingsBtn: false,
-    };
-    const wrapper = setup.mount(<ConnectedGlobalToolbar />, { visible });
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(3);
-  });
-
-  it('hides one button when visible prop is false for one of them', () => {
-    const visible = {
-      themeBtn: false,
-    };
-    const wrapper = setup.mount(<ConnectedGlobalToolbar />, { visible });
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
-  });
-
   const functionCalls = [
     ['.pipeline-menu-button--theme', 'onToggleTheme'],
     ['.pipeline-menu-button--settings', 'onToggleSettingsModal'],
@@ -55,13 +38,11 @@ describe('GlobalToolbar', () => {
       theme: expect.stringMatching(/light|dark/),
       visible: expect.objectContaining({
         exportBtn: expect.any(Boolean),
-        settingsBtn: expect.any(Boolean),
         exportModal: expect.any(Boolean),
         plotModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),
-        themeBtn: expect.any(Boolean),
         sidebar: expect.any(Boolean),
       }),
     };

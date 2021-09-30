@@ -59,13 +59,11 @@ describe('PrimaryToolbar', () => {
       textLabels: expect.any(Boolean),
       visible: expect.objectContaining({
         exportBtn: expect.any(Boolean),
-        settingsBtn: expect.any(Boolean),
         exportModal: expect.any(Boolean),
         plotModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),
-        themeBtn: expect.any(Boolean),
         sidebar: expect.any(Boolean),
       }),
       visibleLayers: expect.any(Boolean),

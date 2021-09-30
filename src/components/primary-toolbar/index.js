@@ -54,14 +54,6 @@ export const PrimaryToolbar = ({
         visible={visible.labelBtn}
       />
       <IconButton
-        ariaLabel="Export graph as SVG or PNG"
-        className={'pipeline-menu-button--export'}
-        onClick={() => onToggleExportModal(true)}
-        icon={ExportIcon}
-        labelText="Export visualisation"
-        visible={visible.exportBtn}
-      />
-      <IconButton
         ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
         className={'pipeline-menu-button--layers'}
         onClick={() => onToggleLayers(!visibleLayers)}
@@ -69,6 +61,14 @@ export const PrimaryToolbar = ({
         labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
         disabled={disableLayerBtn}
         visible={visible.layerBtn}
+      />
+      <IconButton
+        ariaLabel="Export graph as SVG or PNG"
+        className={'pipeline-menu-button--export'}
+        onClick={() => onToggleExportModal(true)}
+        icon={ExportIcon}
+        labelText="Export visualisation"
+        visible={visible.exportBtn}
       />
     </ul>
   </>
