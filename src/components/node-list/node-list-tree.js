@@ -36,19 +36,21 @@ const StyledTreeView = withStyles({
   },
 })(TreeView);
 
-const isModularPipelineType = (type) => type === 'modularPipeline';
+const MODULAR_PIPELINE_TYPE = 'modularPipeline';
+
+const isModularPipelineType = (type) => type === MODULAR_PIPELINE_TYPE;
 
 const getModularPipelineRowData = ({
   id,
   highlightedLabel,
-  name,
+  data,
   disabled,
   focused,
 }) => ({
   id: id,
-  name: highlightedLabel || name,
-  type: 'modularPipeline',
-  icon: 'modularPipeline',
+  name: highlightedLabel || data.name,
+  type: MODULAR_PIPELINE_TYPE,
+  icon: MODULAR_PIPELINE_TYPE,
   visibleIcon: VisibleIcon,
   invisibleIcon: InvisibleIcon,
   active: false,
@@ -115,13 +117,11 @@ const TreeListProvider = ({
       node.children,
       (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
       (child) => child.data.name
-    )
-      // .filter((child) => child.data?.id)
-      .map((child) =>
-        isModularPipelineType(child.type)
-          ? renderTree(tree, child.id)
-          : renderLeafNode(child.data)
-      );
+    ).map((child) =>
+      isModularPipelineType(child.type)
+        ? renderTree(tree, child.id)
+        : renderLeafNode(child.data)
+    );
 
     if (modularPipelineID === '__root__') {
       return children;

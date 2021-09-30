@@ -207,12 +207,11 @@ export const getModularPipelinesTree = createSelector(
       return {};
     }
     for (const modularPipelineID in modularPipelinesTree) {
+      modularPipelinesTree[modularPipelineID].data = {
+        ...nodes[modularPipelineID],
+      };
       for (const child of modularPipelinesTree[modularPipelineID].children) {
-        if (child.type !== 'modularPipeline') {
-          child.data = { ...nodes[child.id] };
-        } else {
-          child.data = { ...modularPipelinesTree[child.id] };
-        }
+        child.data = { ...nodes[child.id] };
       }
     }
     return modularPipelinesTree;

@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { changed } from '../../utils';

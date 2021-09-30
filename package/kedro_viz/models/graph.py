@@ -365,7 +365,7 @@ class ModularPipelineNode(GraphNode):
 
     @property
     def outputs(self) -> Set[str]:
-        return self.external_outputs | self.internal_outputs
+        return (self.external_outputs | self.internal_outputs) - (self.internal_inputs)
 
 
 @dataclass
