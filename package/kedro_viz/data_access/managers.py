@@ -109,8 +109,8 @@ class DataAccessManager:
             task_node = self.add_node(registered_pipeline_id, node)
             self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
 
-            current_modular_pipeline = (
-                self.modular_pipelines.add_modular_pipeline_from_node(task_node)
+            current_modular_pipeline = self.modular_pipelines.extract_from_node(
+                task_node
             )
 
             # Add node's inputs as DataNode to the graph
@@ -130,10 +130,9 @@ class DataAccessManager:
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
                 # Add the input as an input of the task_node's modular_pipeline, if any.
-                # The method `add_input` will take care of
-                # figuring out whether the it is an internal or external input
-                # of the modular pipeline.
-                self.modular_pipelines.add_modular_pipeline_from_node(input_node)
+                # The method `add_input` will take care of figuring out whether
+                # it is an internal or external input of the modular pipeline.
+                self.modular_pipelines.extract_from_node(input_node)
                 if current_modular_pipeline is not None:
                     self.modular_pipelines.add_input(
                         current_modular_pipeline, input_node
@@ -152,7 +151,7 @@ class DataAccessManager:
                     output_node.original_name = output
                     output_node.original_version = self.catalog.get_dataset(output)
 
-                self.modular_pipelines.add_modular_pipeline_from_node(output_node)
+                self.modular_pipelines.extract_from_node(output_node)
                 if current_modular_pipeline is not None:
                     self.modular_pipelines.add_output(
                         current_modular_pipeline, output_node
@@ -256,7 +255,11 @@ class DataAccessManager:
         and add the modular pipeline nodes to the list of nodes in the registered pipeline.
         """
 
-        modular_pipelines_tree = self.modular_pipelines.expand(registered_pipeline_id)
+        modular_pipelines_tree = (
+            self.modular_pipelines.get_modular_pipelines_tree_for_registered_pipeline(
+                registered_pipeline_id
+            )
+        )
         root_children_ids = set()
 
         # turn all modular pipelines in the tree into a graph node for visualisation,
