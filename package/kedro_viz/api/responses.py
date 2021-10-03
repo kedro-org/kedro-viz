@@ -266,16 +266,21 @@ class GraphAPIResponse(BaseAPIResponse):
 
 def get_default_response() -> GraphAPIResponse:
     """Default response for `/api/main`."""
-    default_pipeline_key = "__default__"
-    modular_pipeline_tree = data_access_manager.construct_modular_pipelines_tree(
-        default_pipeline_key
-    )
+    default_pipeline_id = "__default__"
     return GraphAPIResponse(
-        nodes=data_access_manager.nodes.as_list(),
-        edges=data_access_manager.edges[default_pipeline_key].as_list(),
+        nodes=data_access_manager.get_nodes_for_registered_pipeline(
+            default_pipeline_id
+        ),
+        edges=data_access_manager.get_edges_for_registered_pipeline(
+            default_pipeline_id
+        ),
         tags=data_access_manager.tags.as_list(),
-        layers=data_access_manager.get_sorted_layers(),
+        layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
+            default_pipeline_id
+        ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
-        modular_pipelines=modular_pipeline_tree,
+        modular_pipelines=data_access_manager.get_modular_pipelines_tree_for_registered_pipeline(
+            registered_pipeline_id
+        ),
         selected_pipeline=data_access_manager.get_default_selected_pipeline().id,
     )

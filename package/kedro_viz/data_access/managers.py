@@ -72,7 +72,7 @@ class DataAccessManager:
         self.modular_pipelines = ModularPipelinesRepository()
 
         # Make sure each registered pipeline has a distinct collection of edges.
-        self.edges: Dict[RegisteredPipelineID, GraphNodesRepository] = {}
+        self.edges: Dict[RegisteredPipelineID, GraphEdgesRepository] = {}
 
         # Make sure the node dependencies are built separately for each registered pipeline.
         self.node_dependencies: Dict[RegisteredPipelineID, Dict[NodeID, Set]] = {}
@@ -240,14 +240,27 @@ class DataAccessManager:
             else self.registered_pipelines.as_list()[0]
         )
 
-    def get_sorted_layers(
+    def get_nodes_for_registered_pipeline(
+        self, registered_pipeline_id: str = "__default__"
+    ) -> List[GraphNode]:
+        node_ids = self.registered_pipelines.get_node_ids_by_pipeline_id(
+            registered_pipeline_id
+        )
+        return self.nodes.get_nodes_by_ids(node_ids)
+
+    def get_edges_for_registered_pipeline(
+        self, registered_pipeline_id: str = "__default__"
+    ) -> List[GraphEdge]:
+        return self.edges[registered_pipeline_id].as_list()
+
+    def get_sorted_layers_for_registered_pipeline(
         self, registered_pipeline_id: str = "__default__"
     ) -> List[str]:
         return layers_services.sort_layers(
             self.nodes.as_dict(), self.node_dependencies[registered_pipeline_id]
         )
 
-    def construct_modular_pipelines_tree(
+    def get_modular_pipelines_tree_for_registered_pipeline(
         self, registered_pipeline_id: str = "__default__"
     ) -> Dict:
         """Get the modular pipelines tree for a specific registered pipeline.

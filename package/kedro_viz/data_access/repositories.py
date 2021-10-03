@@ -285,7 +285,7 @@ class ModularPipelinesRepository:
             ... )
             >>> assert modular_pipeline_node.id == "data_science"
         """
-        if not self.has(modular_pipeline_id):
+        if not self.has_modular_pipeline(modular_pipeline_id):
             modular_pipeline_node = GraphNode.create_modular_pipeline_node(
                 modular_pipeline_id
             )
@@ -395,7 +395,7 @@ class ModularPipelinesRepository:
             ... )
             >>> modular_pipelines.extract_from_node(model_output_node)
             'data_science'
-            >>> assert modular_pipelines.has("data_science")
+            >>> assert modular_pipelines.has_modular_pipeline("data_science")
         """
 
         # There is no need to extract modular pipeline from parameters
@@ -422,7 +422,7 @@ class ModularPipelinesRepository:
         )
         return modular_pipeline_id
 
-    def has(self, modular_pipeline_id: str) -> bool:
+    def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
         """Return whether this modular pipeline repository has a given modular pipeline ID.
         Args:
             modular_pipeline_id: ID of the modular pipeline to check existence in the repository.
@@ -430,9 +430,9 @@ class ModularPipelinesRepository:
             Whether the given modular pipeline ID is in the repository.
         Example:
             >>> modular_pipelines = ModularPipelinesRepository()
-            >>> modular_pipelines.has("__root__")
+            >>> modular_pipelines.has_modular_pipeline("__root__")
             True
-            >>> modular_pipelines.has("doesnt exist")
+            >>> modular_pipelines.has_modular_pipeline("doesnt exist")
             False
         """
         return modular_pipeline_id in self.tree
