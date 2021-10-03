@@ -34,6 +34,7 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 
+from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (
     DataNode,
     GraphEdge,
@@ -45,7 +46,7 @@ from kedro_viz.models.graph import (
     TaskNode,
     TranscodedDataNode,
 )
-from kedro_viz.services import layers_services
+from kedro_viz.services import layers_services, modular_pipelines_services
 
 from .repositories import (
     CatalogRepository,
@@ -55,9 +56,6 @@ from .repositories import (
     RegisteredPipelinesRepository,
     TagsRepository,
 )
-
-RegisteredPipelineID = str
-NodeID = str
 
 
 # pylint: disable=too-many-instance-attributes,missing-function-docstring
@@ -72,15 +70,15 @@ class DataAccessManager:
         self.modular_pipelines = ModularPipelinesRepository()
 
         # Make sure each registered pipeline has a distinct collection of edges.
-        self.edges: Dict[RegisteredPipelineID, GraphEdgesRepository] = {}
+        self.edges: Dict[str, GraphEdgesRepository] = {}
 
         # Make sure the node dependencies are built separately for each registered pipeline.
-        self.node_dependencies: Dict[RegisteredPipelineID, Dict[NodeID, Set]] = {}
+        self.node_dependencies: Dict[str, Dict[str, Set]] = {}
 
     def add_catalog(self, catalog: DataCatalog):
         self.catalog.set_catalog(catalog)
 
-    def add_pipelines(self, pipelines: Dict[RegisteredPipelineID, KedroPipeline]):
+    def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project
         into the relevant repositories.
         """
@@ -92,9 +90,7 @@ class DataAccessManager:
             # Add the registered pipeline and its components to their repositories
             self.add_pipeline(registered_pipeline_id, pipeline)
 
-    def add_pipeline(
-        self, registered_pipeline_id: RegisteredPipelineID, pipeline: KedroPipeline
-    ):
+    def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline
         and add them to relevant repositories. Take care of extracting other relevant information
         such as modular pipelines, layers, etc. and add them to relevant repositories.
@@ -233,7 +229,7 @@ class DataAccessManager:
             ] = parameters_node.parameter_value
 
     def get_default_selected_pipeline(self) -> RegisteredPipeline:
-        default_pipeline = RegisteredPipeline(id="__default__")
+        default_pipeline = RegisteredPipeline(id=DEFAULT_REGISTERED_PIPELINE_ID)
         return (
             default_pipeline
             if self.registered_pipelines.has_pipeline(default_pipeline.id)
@@ -241,7 +237,7 @@ class DataAccessManager:
         )
 
     def get_nodes_for_registered_pipeline(
-        self, registered_pipeline_id: str = "__default__"
+        self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[GraphNode]:
         node_ids = self.registered_pipelines.get_node_ids_by_pipeline_id(
             registered_pipeline_id
@@ -249,29 +245,27 @@ class DataAccessManager:
         return self.nodes.get_nodes_by_ids(node_ids)
 
     def get_edges_for_registered_pipeline(
-        self, registered_pipeline_id: str = "__default__"
+        self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[GraphEdge]:
         return self.edges[registered_pipeline_id].as_list()
 
     def get_sorted_layers_for_registered_pipeline(
-        self, registered_pipeline_id: str = "__default__"
+        self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[str]:
         return layers_services.sort_layers(
             self.nodes.as_dict(), self.node_dependencies[registered_pipeline_id]
         )
 
     def get_modular_pipelines_tree_for_registered_pipeline(
-        self, registered_pipeline_id: str = "__default__"
+        self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict:
         """Get the modular pipelines tree for a specific registered pipeline.
         During the process, expand the compact tree into a full tree
         and add the modular pipeline nodes to the list of nodes in the registered pipeline.
         """
 
-        modular_pipelines_tree = (
-            self.modular_pipelines.get_modular_pipelines_tree_for_registered_pipeline(
-                registered_pipeline_id
-            )
+        modular_pipelines_tree = modular_pipelines_services.expand_tree(
+            self.modular_pipelines.as_dict()
         )
         root_children_ids = set()
 
@@ -282,8 +276,8 @@ class DataAccessManager:
             modular_pipeline_node,
         ) in modular_pipelines_tree.items():
             if (
-                modular_pipeline_id
-                == ModularPipelinesRepository.ROOT_MODULAR_PIPELINE_ID
+                modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID
+                or not modular_pipeline_node.belongs_to_pipeline(registered_pipeline_id)
             ):
                 continue
 
@@ -346,9 +340,7 @@ class DataAccessManager:
             ):
                 continue
             if not node.modular_pipelines or node_id in root_children_ids:
-                modular_pipelines_tree[
-                    ModularPipelinesRepository.ROOT_MODULAR_PIPELINE_ID
-                ].children.add(
+                modular_pipelines_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
                     ModularPipelineChild(
                         node_id, self.nodes.get_node_by_id(node_id).type
                     )

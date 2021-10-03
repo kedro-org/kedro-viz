@@ -31,10 +31,9 @@ from collections import defaultdict
 from typing import Dict, List, Set
 
 import networkx as nx
-from toposort import toposort_flatten, CircularDependencyError
+from toposort import CircularDependencyError, toposort_flatten
 
 from kedro_viz.models.graph import GraphNode
-
 
 logger = logging.getLogger(__name__)
 

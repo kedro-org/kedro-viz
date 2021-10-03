@@ -34,6 +34,8 @@ import kedro
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 from semver import VersionInfo
 
+from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
+
 from kedro_viz.models.graph import (
     DataNode,
     GraphEdge,
@@ -249,8 +251,6 @@ class ModularPipelinesRepository:
     and adding it to this repository.
     """
 
-    ROOT_MODULAR_PIPELINE_ID = "__root__"
-
     def __init__(self):
         # The tree representation of the tree.
         # Example:
@@ -263,8 +263,8 @@ class ModularPipelinesRepository:
         #   "data_engineering": ModularPipelineNode(id="data_science", children=[]),
         # }
         self.tree: Dict[str, ModularPipelineNode] = {
-            self.ROOT_MODULAR_PIPELINE_ID: GraphNode.create_modular_pipeline_node(
-                self.ROOT_MODULAR_PIPELINE_ID
+            ROOT_MODULAR_PIPELINE_ID: GraphNode.create_modular_pipeline_node(
+                ROOT_MODULAR_PIPELINE_ID
             )
         }
 
@@ -436,85 +436,6 @@ class ModularPipelinesRepository:
             False
         """
         return modular_pipeline_id in self.tree
-
-    def get_modular_pipelines_tree_for_registered_pipeline(
-        self, registered_pipeline_id: str
-    ) -> Dict[str, ModularPipelineNode]:
-        """Return the modular pipelines tree for a given registered pipeline by
-        making a copy of the current tree in the repository and
-        converting each parent in each tree node's materialized path into a dedicated node.
-        Only keep the tree nodes that belong to the given registered pipeline.
-
-        Example:
-
-            If the current modular_pipelines tree has the following shape
-                { "one.two": {"id": "one.two", "children": ["one.two.three"] }}
-            After the expansion, the tree will be:
-                {
-                    "one": {"id": "one", "children": ["one.two"]},
-                    "one.two": {"id": "one.two", "children": ["one.two.three"]}
-                    "one.two.three": {"id": "one.two.three", "children": []}
-                }
-        """
-        tree = {
-            self.ROOT_MODULAR_PIPELINE_ID: GraphNode.create_modular_pipeline_node(
-                self.ROOT_MODULAR_PIPELINE_ID
-            )
-        }
-        for modular_pipeline_id, modular_pipeline_node in self.tree.items():
-            if not modular_pipeline_node.belongs_to_pipeline(registered_pipeline_id):
-                continue
-
-            if modular_pipeline_id not in tree:
-                tree[modular_pipeline_id] = modular_pipeline_node
-
-            # Split the materialized path ID of a modular pipeline into the list of parents.
-            # Then iterate through this list to construct the tree of child references,
-            # with the left-most child being a child of the __root__ node.
-            # For example, if the modular pipeline ID is "one.two.three",
-            # In each iteration, the tree node ID will be:
-            # - one
-            # - one.two
-            # - one.two.three
-            # `one` is a child of the `__root__` node, `one.two` is a child of `one`, and so on.
-            chunks = modular_pipeline_id.split(".")
-            num_chunks = len(chunks)
-            tree[self.ROOT_MODULAR_PIPELINE_ID].children.add(
-                ModularPipelineChild(
-                    id=chunks[0],
-                    type=GraphNodeType.MODULAR_PIPELINE,
-                )
-            )
-            if num_chunks == 1:
-                continue
-
-            for i in range(1, num_chunks):
-                parent_id = ".".join(chunks[:i])
-                if parent_id not in tree:
-                    tree[parent_id] = GraphNode.create_modular_pipeline_node(
-                        parent_id,
-                    )
-
-                tree[parent_id].pipelines.update(modular_pipeline_node.pipelines)
-                tree[parent_id].children.add(
-                    ModularPipelineChild(
-                        id=f"{parent_id}.{chunks[i]}",
-                        type=GraphNodeType.MODULAR_PIPELINE,
-                    )
-                )
-                tree[parent_id].internal_inputs.update(
-                    modular_pipeline_node.internal_inputs
-                )
-                tree[parent_id].external_inputs.update(
-                    modular_pipeline_node.external_inputs
-                )
-                tree[parent_id].internal_outputs.update(
-                    modular_pipeline_node.internal_outputs
-                )
-                tree[parent_id].external_outputs.update(
-                    modular_pipeline_node.external_outputs
-                )
-        return tree
 
     def as_dict(self) -> Dict[str, ModularPipelineNode]:
         """Returns the repository as a dictionary."""

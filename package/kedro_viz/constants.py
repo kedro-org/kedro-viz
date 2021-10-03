@@ -25,6 +25,6 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""`kedro_viz.services` provides an additional business logic layer for the API."""
-from . import layers as layers_services
-from . import modular_pipelines as modular_pipelines_services
+"""`kedro_viz.constants` defines constants to be used throughout the application."""
+DEFAULT_REGISTERED_PIPELINE_ID = "__default__"
+ROOT_MODULAR_PIPELINE_ID = "__root__"
