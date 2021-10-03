@@ -4,7 +4,6 @@ ipython>=7.0.0, <8.0
 dataclasses==0.8; python_version == "3.6"
 fastapi>=0.63.0, <0.67.0
 aiofiles==0.6.0
-click==7.0.0
 uvicorn[standard]~=0.13.4
 watchgod~=0.7
 plotly~=4.14.3
