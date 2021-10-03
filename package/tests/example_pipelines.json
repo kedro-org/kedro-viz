@@ -95,6 +95,7 @@
     { "id": "data_processing", "name": "Data Processing" }
   ],
   "modular_pipelines": [
+    { "id": "__root__", "name": "Root" },
     { "id": "uk", "name": "Uk" },
     { "id": "uk.data_processing", "name": "Data Processing" },
     { "id": "uk.data_science", "name": "Data Science" }

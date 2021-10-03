@@ -100,8 +100,9 @@ class TestModularPipelinesRepository:
                 )
             ),
         ]
-        repo = ModularPipelinesRepository.from_nodes(task_nodes)
-        assert [p.id for p in repo.as_list()] == [
+        modular_pipelines_repo = ModularPipelinesRepository.from_nodes(task_nodes)
+        assert [p.id for p in modular_pipelines_repo.as_list()] == [
+            "__root__",
             "uk",
             "uk.data_engineering",
             "uk.data_science",

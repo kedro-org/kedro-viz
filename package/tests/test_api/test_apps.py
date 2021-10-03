@@ -27,7 +27,7 @@
 # limitations under the License.
 import operator
 from pathlib import Path
-from typing import Dict
+from typing import List, Dict
 from unittest import mock
 
 import pytest
@@ -89,16 +89,25 @@ def assert_nodes_equal(response_nodes, expected_nodes):
         sorted(response_nodes, key=node_sort_key),
         sorted(expected_nodes, key=node_sort_key),
     ):
+        # since tags and pipelines are Sets, which are unordered,
+        # to assert them, we have to sort first
         response_node_tags = response_node.pop("tags")
         expected_node_tags = expected_node.pop("tags")
         assert sorted(response_node_tags) == sorted(expected_node_tags)
+
+        response_node_pipelines = response_node.pop("pipelines")
+        expected_node_pipelines = expected_node.pop("pipelines")
+        assert sorted(response_node_pipelines) == sorted(expected_node_pipelines)
+
         assert response_node == expected_node
 
 
-def assert_edges_equal(response_edges, expected_edges):
-    edge_sort_key = operator.itemgetter("source")
-    assert sorted(response_edges, key=edge_sort_key) == sorted(
-        expected_edges, key=edge_sort_key
+def assert_dict_list_equal(response: List[Dict], expected: List[Dict], sort_key: str):
+    """Assert two list of dictionaries with undeterministic order
+    to be equal by sorting them first based on a sort key.
+    """
+    assert sorted(response, key=operator.itemgetter(sort_key)) == sorted(
+        expected, key=operator.itemgetter(sort_key)
     )
 
 
@@ -112,7 +121,9 @@ def assert_example_data(response_data):
         {"source": "0ecea0de", "target": "7b140b3f"},
         {"source": "c506f374", "target": "56118ad8"},
     ]
-    assert_edges_equal(response_data.pop("edges"), expected_edges)
+    assert_dict_list_equal(
+        response_data.pop("edges"), expected_edges, sort_key="source"
+    )
     # compare nodes
     expected_nodes = [
         {
@@ -193,6 +204,19 @@ def assert_example_data(response_data):
     ]
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
 
+    # compare modular pipelines
+    expected_modular_pipelines = [
+        {"id": "__root__", "name": "Root"},
+        {"id": "uk", "name": "Uk"},
+        {"id": "uk.data_processing", "name": "Data Processing"},
+        {"id": "uk.data_science", "name": "Data Science"},
+    ]
+    assert_dict_list_equal(
+        response_data.pop("modular_pipelines"),
+        expected_modular_pipelines,
+        sort_key="id",
+    )
+
     # compare the rest
     assert response_data == {
         "tags": [{"id": "split", "name": "Split"}, {"id": "train", "name": "Train"}],
@@ -201,11 +225,6 @@ def assert_example_data(response_data):
             {"id": "__default__", "name": "Default"},
             {"id": "data_science", "name": "Data Science"},
             {"id": "data_processing", "name": "Data Processing"},
-        ],
-        "modular_pipelines": [
-            {"id": "uk", "name": "Uk"},
-            {"id": "uk.data_processing", "name": "Data Processing"},
-            {"id": "uk.data_science", "name": "Data Science"},
         ],
         "selected_pipeline": "__default__",
     }
@@ -222,7 +241,9 @@ def assert_example_transcoded_data(response_data):
         {"source": "2302ea78", "target": "1d06a0d7"},
         {"source": "0ecea0de", "target": "2302ea78"},
     ]
-    assert_edges_equal(response_data.pop("edges"), expected_edges)
+    assert_dict_list_equal(
+        response_data.pop("edges"), expected_edges, sort_key="source"
+    )
     # compare nodes
     expected_nodes = [
         {
@@ -453,7 +474,9 @@ class TestSinglePipelineEndpoint:
             {"source": "7b140b3f", "target": "d5a8b994"},
             {"source": "f1f1425b", "target": "7b140b3f"},
         ]
-        assert_edges_equal(response_data.pop("edges"), expected_edges)
+        assert_dict_list_equal(
+            response_data.pop("edges"), expected_edges, sort_key="source"
+        )
         expected_nodes = [
             {
                 "id": "0ecea0de",
@@ -500,6 +523,17 @@ class TestSinglePipelineEndpoint:
             },
         ]
         assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
+
+        expected_modular_pipelines = [
+            {"id": "__root__", "name": "Root"},
+            {"id": "uk", "name": "Uk"},
+            {"id": "uk.data_science", "name": "Data Science"},
+        ]
+        assert_dict_list_equal(
+            response_data.pop("modular_pipelines"),
+            expected_modular_pipelines,
+            sort_key="id",
+        )
         assert response_data == {
             "tags": [
                 {"id": "split", "name": "Split"},
@@ -510,10 +544,6 @@ class TestSinglePipelineEndpoint:
                 {"id": "__default__", "name": "Default"},
                 {"id": "data_science", "name": "Data Science"},
                 {"id": "data_processing", "name": "Data Processing"},
-            ],
-            "modular_pipelines": [
-                {"id": "uk", "name": "Uk"},
-                {"id": "uk.data_science", "name": "Data Science"},
             ],
             "selected_pipeline": "data_science",
         }

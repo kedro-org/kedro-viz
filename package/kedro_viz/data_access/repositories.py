@@ -37,7 +37,7 @@ from semver import VersionInfo
 from kedro_viz.models.graph import (
     GraphEdge,
     GraphNode,
-    ModularPipeline,
+    ModularPipelineNode,
     RegisteredPipeline,
     Tag,
 )
@@ -169,25 +169,57 @@ class RegisteredPipelinesRepository:
 
 
 class ModularPipelinesRepository:
-    def __init__(self):
-        self.modular_pipelines: Dict[str, ModularPipeline] = {}
+    """Data access interface for all modular pipelines in a registerd pipeline.
+    Conceptually, the collection of modular pipelines in a registered pipeline
+    is a tree. Practically, this tree is represented as a dictionary of
+    {ID -> modular pipeline node}, with each node having reference to their children.
+    This is the child-references approach to representing a tree:
+    https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
+    with the only minor difference that it uses a dictionary for fast access by ID.
 
-    def add_modular_pipeline(self, modular_pipeline_ids: Iterable[str]):
+    The root node in a the tree is always designated with a __root__ ID. This is because
+    we will not visualise this root node.
+
+    Example:
+        {
+            "__root__": ModularPipelineNode(
+                id="__root__", children=["uk"]
+            ),
+            "data_science": ModularPipelineNode(
+                id="data_science", children=["data_science.train_model"]
+            ),
+            "data_science.train_model": ModularPipelineNode(
+                id="data_science.train_model", children=[]
+            ),
+        }
+    """
+
+    ROOT_NODE_ID = "__root__"
+
+    def __init__(self):
+        self.modular_pipelines: Dict[str, ModularPipelineNode] = {
+            self.ROOT_NODE_ID: GraphNode.create_modular_pipeline_node(self.ROOT_NODE_ID)
+        }
+
+    def add_modular_pipelines(self, modular_pipeline_ids: Iterable[str]):
+        """Add a collection of modular pipeline IDs into the tree."""
         for modular_pipeline_id in modular_pipeline_ids:
-            modular_pipeline = ModularPipeline(modular_pipeline_id)
+            modular_pipeline = GraphNode.create_modular_pipeline_node(
+                modular_pipeline_id
+            )
             self.modular_pipelines[modular_pipeline_id] = modular_pipeline
 
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
         return modular_pipeline_id in self.modular_pipelines
 
-    def as_list(self) -> List[ModularPipeline]:
+    def as_list(self) -> List[ModularPipelineNode]:
         return list(sorted(self.modular_pipelines.values(), key=lambda p: p.id))
 
     @classmethod
     def from_nodes(cls, nodes: List[GraphNode]) -> "ModularPipelinesRepository":
         repo = cls()
         for node in nodes:
-            repo.add_modular_pipeline(node.modular_pipelines)
+            repo.add_modular_pipelines(node.modular_pipelines)
         return repo
 
 

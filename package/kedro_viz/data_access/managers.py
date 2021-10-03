@@ -109,7 +109,7 @@ class DataAccessManager:
         task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))
         task_node.add_pipeline(pipeline_key)
         self.tags.add_tags(task_node.tags)
-        self.modular_pipelines.add_modular_pipeline(task_node.modular_pipelines)
+        self.modular_pipelines.add_modular_pipelines(task_node.modular_pipelines)
         return task_node
 
     def add_node_input(
@@ -162,7 +162,7 @@ class DataAccessManager:
                 dataset=obj,
                 is_free_input=is_free_input,
             )
-            self.modular_pipelines.add_modular_pipeline(graph_node.modular_pipelines)
+            self.modular_pipelines.add_modular_pipelines(graph_node.modular_pipelines)
         graph_node = self.nodes.add_node(graph_node)
         graph_node.add_pipeline(pipeline_key)
         return graph_node

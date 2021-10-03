@@ -323,6 +323,7 @@ class TestAddPipelines:
         }
         assert data_access_manager.tags.as_list() == [Tag("split"), Tag("train")]
         assert [p.id for p in data_access_manager.modular_pipelines.as_list()] == [
+            "__root__",
             "uk",
             "uk.data_processing",
             "uk.data_science",
