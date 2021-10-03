@@ -86,24 +86,3 @@ class TestRegisteredPipelinesrepository:
         repo.add_node("__default__", "b")
         assert repo.get_node_ids_by_pipeline_id("__default__") == {"a", "b"}
         assert repo.get_node_ids_by_pipeline_id("another") == set()
-
-
-class TestModularPipelinesRepository:
-    def test_modular_pipelines_repo_from_nodes(self):
-        task_nodes = [
-            GraphNode.create_task_node(
-                node(identity, inputs="x", outputs=None, namespace="uk.data_science")
-            ),
-            GraphNode.create_task_node(
-                node(
-                    identity, inputs="x", outputs=None, namespace="uk.data_engineering"
-                )
-            ),
-        ]
-        modular_pipelines_repo = ModularPipelinesRepository.from_nodes(task_nodes)
-        assert [p.id for p in modular_pipelines_repo.as_list()] == [
-            "__root__",
-            "uk",
-            "uk.data_engineering",
-            "uk.data_science",
-        ]

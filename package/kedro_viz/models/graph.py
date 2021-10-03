@@ -408,7 +408,7 @@ class ModularPipelineNode(GraphNode):
         Follow the same logic as the inputs calculation.
         """
         return (self.external_outputs | self.internal_outputs) - (
-            self.external_outputs | self.internal_outputs
+            self.external_inputs | self.internal_inputs
         )
 
 
