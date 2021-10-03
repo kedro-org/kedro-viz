@@ -26,11 +26,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
-# pylint: disable=missing-function-docstring
-# pylint: disable=unused-argument
-from fastapi import APIRouter
 import strawberry
+
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-function-docstring
+# pylint: disable=too-few-public-methods
+# pylint: disable=no-self-use
+from fastapi import APIRouter
 from strawberry.asgi import GraphQL
+
 
 @strawberry.type
 class HealthCheck:
