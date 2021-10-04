@@ -1,15 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-import LargePipelineWarning from '../large-pipeline-warning';
-import FlowChart from '../flowchart';
-import Sidebar from '../sidebar';
-import MetaData from '../metadata';
-import ExportModal from '../export-modal';
-import SettingsModal from '../settings-modal';
-import PlotlyModal from '../plotly-modal';
-import LoadingIcon from '../icons/loading';
 import { isLoading } from '../../selectors/loading';
+import classnames from 'classnames';
+import ExportModal from '../export-modal';
+import FlowChart from '../flowchart';
+import GlobalToolbar from '../global-toolbar';
+import LargePipelineWarning from '../large-pipeline-warning';
+import LoadingIcon from '../icons/loading';
+import MetaData from '../metadata';
+import PlotlyModal from '../plotly-modal';
+import SettingsModal from '../settings-modal';
+import Sidebar from '../sidebar';
 import './wrapper.css';
 
 /**
@@ -20,8 +21,10 @@ export const Wrapper = ({ loading, theme }) => (
     className={classnames('kedro-pipeline kedro', {
       'kui-theme--dark': theme === 'dark',
       'kui-theme--light': theme === 'light',
-    })}>
+    })}
+  >
     <h1 className="pipeline-title">Kedro-Viz</h1>
+    <GlobalToolbar />
     <Sidebar />
     <MetaData />
     <div className="pipeline-wrapper">

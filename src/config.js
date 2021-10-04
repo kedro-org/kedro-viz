@@ -19,6 +19,8 @@ export const codeSidebarWidth = {
   closed: 0,
 };
 
+export const globalToolbarWidth = 80;
+
 export const chartMinWidthScale = 0.25;
 
 // Determine the number of nodes and edges in pipeline to trigger size warning
