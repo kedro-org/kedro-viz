@@ -78,9 +78,9 @@ def client(example_api):
 
 
 def test_graphql_endpoint():
-    query = "{ healthcheck { name }}"
+    query = "{ healthcheck { status }}"
     result = schema.execute_sync(query)
-    assert result.data["healthcheck"] == {"name": ""}
+    assert result.data["healthcheck"] == {"status": "OK"}
 
 
 def assert_nodes_equal(response_nodes, expected_nodes):

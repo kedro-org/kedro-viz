@@ -38,14 +38,14 @@ from strawberry.asgi import GraphQL
 
 @strawberry.type
 class HealthCheck:
-    name: str
+    status: str
 
 
 @strawberry.type
 class Query:
     @strawberry.field
     def healthcheck(self) -> HealthCheck:
-        return HealthCheck(name="")
+        return HealthCheck(status="OK")
 
 
 schema = strawberry.Schema(query=Query)
