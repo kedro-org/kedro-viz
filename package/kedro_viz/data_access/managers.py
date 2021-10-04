@@ -58,6 +58,9 @@ from .repositories import (
 )
 
 
+NodeDependencies = Dict[str, Set]
+
+
 # pylint: disable=too-many-instance-attributes,missing-function-docstring
 class DataAccessManager:
     """Centralised interface for the rest of the application to interact with data repositories."""
@@ -70,10 +73,10 @@ class DataAccessManager:
         self.modular_pipelines = ModularPipelinesRepository()
 
         # Make sure each registered pipeline has a distinct collection of edges.
-        self.edges: Dict[str, GraphEdgesRepository] = {}
+        self.edges: Dict[str, GraphEdgesRepository] = defaultdict(GraphEdgesRepository)
 
         # Make sure the node dependencies are built separately for each registered pipeline.
-        self.node_dependencies: Dict[str, Dict[str, Set]] = {}
+        self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(dict)
 
     def add_catalog(self, catalog: DataCatalog):
         self.catalog.set_catalog(catalog)

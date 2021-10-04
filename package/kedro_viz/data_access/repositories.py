@@ -442,17 +442,6 @@ class ModularPipelinesRepository:
         return self.tree
 
 
-class LayersRepository:
-    def __init__(self):
-        self.layers_list: List[str] = []
-
-    def set_layers(self, layers: List[str]):
-        self.layers_list = layers
-
-    def as_list(self) -> List[str]:
-        return self.layers_list
-
-
 class TagsRepository:
     def __init__(self):
         self.tags_set: Set[Tag] = set()

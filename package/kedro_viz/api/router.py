@@ -30,6 +30,7 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
+from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.graph import (
     DataNode,
@@ -94,6 +95,25 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
     ):
         return JSONResponse(status_code=404, content={"message": "Invalid pipeline ID"})
 
+    modular_pipelines_tree = (
+        data_access_manager.get_modular_pipelines_tree_for_registered_pipeline(
+            registered_pipeline_id
+        )
+    )
+
+    # temporarily serialise the modular pipelines tree back to a list
+    # for backward compatibility before new expand/collapse frontend is merged.
+    modular_pipelines = [
+        {
+            "id": modular_pipeline_id,
+            "name": modular_pipeline_node.name,
+        }
+        for modular_pipeline_id, modular_pipeline_node in sorted(
+            modular_pipelines_tree.items()
+        )
+        if modular_pipeline_id != ROOT_MODULAR_PIPELINE_ID
+    ]
+
     return GraphAPIResponse(
         nodes=data_access_manager.get_nodes_for_registered_pipeline(
             registered_pipeline_id
@@ -107,7 +127,5 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
         ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
         selected_pipeline=registered_pipeline_id,
-        modular_pipelines=data_access_manager.get_sorted_layers_for_registered_pipeline(
-            registered_pipeline_id
-        ),
+        modular_pipelines=modular_pipelines,
     )

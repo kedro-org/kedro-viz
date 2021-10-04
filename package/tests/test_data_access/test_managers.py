@@ -53,11 +53,6 @@ class TestAddCatalog:
         data_access_manager.add_catalog(catalog)
         assert data_access_manager.catalog.get_catalog() is catalog
 
-    def test_set_layers(self, data_access_manager: DataAccessManager):
-        layers = ["raw", "intermediate", "final"]
-        data_access_manager.set_layers(layers)
-        assert data_access_manager.layers.as_list() == layers
-
 
 class TestAddNode:
     def test_add_node(self, data_access_manager: DataAccessManager):

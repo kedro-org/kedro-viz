@@ -261,7 +261,7 @@ class GraphAPIResponse(BaseAPIResponse):
     layers: List[str]
     tags: List[NamedEntityAPIResponse]
     pipelines: List[NamedEntityAPIResponse]
-    modular_pipelines: ModularPipelinesTreeAPIResponse
+    modular_pipelines: List[NamedEntityAPIResponse]
     selected_pipeline: str
 
 
