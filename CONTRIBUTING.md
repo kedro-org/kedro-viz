@@ -106,6 +106,8 @@ Alternatively, if you know the JIRA ticket number of the issue that you are fixi
 
 ### JavaScript development
 
+_*Note*: We use `node==14` in our development environment._
+
 First clone this repo, then download and install dependencies:
 
 ```bash
