@@ -1,11 +1,14 @@
 import React from 'react';
 
 /**
- * Top-level component for experiment tracking page
+ * Main experiment tracking page container. Handles showing/hiding the sidebar nav for experiment tracking,
+ * the display of experiment details, as well as the comparison view.
  */
 const ExperimentWrapper = () => (
   <>
-    <div>This is the main experiment tracking wrapper</div>
+    <div className="kedro-pipeline">
+      This is the main experiment tracking wrapper
+    </div>
   </>
 );
 

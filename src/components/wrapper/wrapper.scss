@@ -1,6 +1,19 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
+.kedro-pipeline {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--color-text);
+  background: var(--color-bg-1);
+
+  & .kui-theme--light{
+    @media print {
+      background: none;
+    }
+  }
+}
 
 .pipeline-title {
   @include screenReaderOnly;

@@ -7,12 +7,12 @@ import LargePipelineWarning from '../large-pipeline-warning';
 import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import PlotlyModal from '../plotly-modal';
-import SettingsModal from '../settings-modal';
 import Sidebar from '../sidebar';
 import './flowchart-wrapper.css';
 
 /**
- * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
+ * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
+ * the rendering of the flowchart, as well as the display of all related modals.
  */
 export const FlowchartWrapper = ({ loading }) => (
   <div className="kedro-pipeline">
@@ -24,7 +24,6 @@ export const FlowchartWrapper = ({ loading }) => (
       <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
     </div>
     <ExportModal />
-    <SettingsModal />
     <PlotlyModal />
   </div>
 );
