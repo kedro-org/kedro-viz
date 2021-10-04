@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import 'what-input';
 import '@quantumblack/kedro-ui/lib/styles/app-no-webfont.css';
 import LoadWebFont from '@quantumblack/kedro-ui/lib/utils/webfont.js';
@@ -9,7 +8,6 @@ import configureStore from '../../store';
 import { resetData, updateFontLoaded } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
 import Wrapper from '../wrapper';
-import ExperimentWrapper from '../experimentWrapper';
 import getInitialState, {
   preparePipelineState,
 } from '../../store/initial-state';
@@ -81,10 +79,7 @@ class App extends React.Component {
   render() {
     return this.props.data ? (
       <Provider store={this.store}>
-        <Router>
-          <Wrapper />
-          <ExperimentWrapper />
-        </Router>
+        <Wrapper />
       </Provider>
     ) : null;
   }

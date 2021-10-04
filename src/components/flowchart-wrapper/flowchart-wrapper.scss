@@ -1,0 +1,26 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.kedro-pipeline {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--color-text);
+  background: var(--color-bg-1);
+
+  .kui-theme--light &{
+    @media print {
+      background: none;
+    }
+  }
+}
+
+.pipeline-wrapper {
+  height: 100%;
+}
+
+.pipeline-wrapper__loading {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}
