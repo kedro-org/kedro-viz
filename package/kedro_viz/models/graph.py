@@ -27,6 +27,7 @@
 # limitations under the License.
 """`kedro_viz.models.graph` defines data models to represent Kedro entities in a viz graph."""
 # pylint: disable=protected-access
+# pylint: disable=logging-fstring-interpolation
 import abc
 import hashlib
 import inspect
@@ -36,13 +37,14 @@ import re
 from dataclasses import InitVar, dataclass, field
 from datetime import datetime
 from enum import Enum
-from pathlib import Path, PurePath
+from pathlib import Path
 from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
+from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import AbstractDataSet
 from kedro.io.core import VERSION_FORMAT, get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
@@ -509,7 +511,6 @@ class DataNodeMetadata(GraphNodeMetadata):
                 self.plot = json.load(fs_file)
 
         if data_node.is_metric_node():
-            from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
             dataset = cast(MetricsDataSet, dataset)
             if not dataset._exists() or self.filepath is None:
                 return
@@ -526,10 +527,10 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
     @staticmethod
-    def load_latest_metrics_data(dataset) -> str:
+    def load_latest_metrics_data(dataset: MetricsDataSet) -> Optional[Dict[Any, Any]]:
         """Load data for latest versions of the metrics dataset
         Args:
-            filepath: the path whether the dataset is located.
+            dataset: the latest version of the metrics dataset
         Returns:
             A dictionary containing json data for the latest version
         """
@@ -538,13 +539,10 @@ class DataNodeMetadata(GraphNodeMetadata):
         most_recent = next(
             (path for path in version_paths if dataset._exists_function(path)), None
         )
-
         if not most_recent:
             logger.warning(f"Did not find any versions for {dataset}")
-        recent_path = dataset._get_versioned_path(PurePath(most_recent).parent.name)
-        load_path = get_filepath_str(recent_path, dataset._protocol)
-        with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
-            return(json.load(fs_file))
+        with dataset._fs.open(most_recent, **dataset._fs_open_args_load) as fs_file:
+            return json.load(fs_file)
 
     @staticmethod
     def load_metrics_versioned_data(

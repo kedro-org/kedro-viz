@@ -25,6 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# pylint: disable=too-many-public-methods
 import datetime
 import json
 from pathlib import Path
@@ -552,17 +553,14 @@ class TestGraphNodeMetadata:
             == mock_metrics_json
         )
 
-    def test_load_latest_metrics(self,metrics_filepath):
+    def test_load_latest_metrics(self, metrics_filepath):
         dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
         mock_metrics_json = {
             "recommendations": 0.200383330721228,
             "recommended_controls": 0.250479163401535,
             "projected_optimization": 0.30057499608184196,
         }
-        assert (
-            DataNodeMetadata.load_latest_metrics_data(dataset)
-            == mock_metrics_json
-        )
+        assert DataNodeMetadata.load_latest_metrics_data(dataset) == mock_metrics_json
 
     def test_load_metrics_versioned_data_set_limit(self, metrics_filepath):
         mock_metrics_json = {
