@@ -35,6 +35,7 @@ import pandas as pd
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
 from kedro.extras.datasets.spark import SparkDataSet
+from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.pipeline.node import node
 
@@ -551,14 +552,15 @@ class TestGraphNodeMetadata:
             == mock_metrics_json
         )
 
-    def test_load_latest_metrics(self, metrics_filepath):
+    def test_load_latest_metrics(self,metrics_filepath):
+        dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
         mock_metrics_json = {
             "recommendations": 0.200383330721228,
             "recommended_controls": 0.250479163401535,
             "projected_optimization": 0.30057499608184196,
         }
         assert (
-            DataNodeMetadata.load_latest_metrics_data(metrics_filepath)
+            DataNodeMetadata.load_latest_metrics_data(dataset)
             == mock_metrics_json
         )
 
