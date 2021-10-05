@@ -108,6 +108,7 @@ def _setup_context_with_venv(context, venv_dir):
             "wheel",
             "botocore",
             "dynaconf==3.1.5",
+            "click<8.0"
         ],
         env=context.env,
     )
