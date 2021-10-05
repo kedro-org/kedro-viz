@@ -539,8 +539,6 @@ class DataNodeMetadata(GraphNodeMetadata):
         most_recent = next(
             (path for path in version_paths if dataset._exists_function(path)), None
         )
-        if not most_recent:
-            logger.warning(f"Did not find any versions for {dataset}")
         with dataset._fs.open(most_recent, **dataset._fs_open_args_load) as fs_file:
             return json.load(fs_file)
 
