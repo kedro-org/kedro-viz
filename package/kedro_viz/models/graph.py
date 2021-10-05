@@ -44,7 +44,6 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
-from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import AbstractDataSet
 from kedro.io.core import VERSION_FORMAT, get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
@@ -511,6 +510,8 @@ class DataNodeMetadata(GraphNodeMetadata):
                 self.plot = json.load(fs_file)
 
         if data_node.is_metric_node():
+            from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
+
             dataset = cast(MetricsDataSet, dataset)
             if not dataset._exists() or self.filepath is None:
                 return
@@ -527,7 +528,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
     @staticmethod
-    def load_latest_metrics_data(dataset: MetricsDataSet) -> Optional[Dict[Any, Any]]:
+    def load_latest_metrics_data(dataset: Any) -> Optional[Dict[Any, Any]]:
         """Load data for latest versions of the metrics dataset
         Args:
             dataset: the latest version of the metrics dataset
