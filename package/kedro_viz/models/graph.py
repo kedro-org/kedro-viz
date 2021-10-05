@@ -27,7 +27,6 @@
 # limitations under the License.
 """`kedro_viz.models.graph` defines data models to represent Kedro entities in a viz graph."""
 # pylint: disable=protected-access
-# pylint: disable=logging-fstring-interpolation
 import abc
 import hashlib
 import inspect
