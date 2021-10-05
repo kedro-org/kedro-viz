@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { isLoading } from '../../selectors/loading';
 import classnames from 'classnames';
 import GlobalToolbar from '../global-toolbar';
@@ -12,21 +12,22 @@ import './wrapper.css';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ loading, theme }) => (
+export const Wrapper = ({ theme }) => (
   <div
     className={classnames('kedro-pipeline kedro', {
       'kui-theme--dark': theme === 'dark',
       'kui-theme--light': theme === 'light',
-    })}>
+    })}
+  >
     <h1 className="pipeline-title">Kedro-Viz</h1>
-    <GlobalToolbar />
-    <SettingsModal />
     <Router>
+      <GlobalToolbar />
+      <SettingsModal />
       <Switch>
         <Route exact path={['/', '/flowchart']}>
           <FlowchartWrapper />
         </Route>
-        <Route path="/experiment">
+        <Route path={['/runs', '/runs/:id']}>
           <ExperimentWrapper />
         </Route>
       </Switch>

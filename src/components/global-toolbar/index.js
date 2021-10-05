@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { toggleSettingsModal, toggleTheme } from '../../actions';
 import ExperimentsIcon from '../icons/experiments';
 import IconButton from '../icon-button';
@@ -31,18 +32,26 @@ export const GlobalToolbar = ({
             disabled={false}
             icon={LogoIcon}
           />
-          <IconButton
-            ariaLabel={'View your pipeline'}
-            className={'pipeline-menu-button--large pipeline-menu-button--link'}
-            disabled={false}
-            icon={TreeIcon}
-          />
-          <IconButton
-            ariaLabel={'View your experiments'}
-            className={'pipeline-menu-button--large pipeline-menu-button--link'}
-            disabled={false}
-            icon={ExperimentsIcon}
-          />
+          <Link to={{ pathname: '/' }}>
+            <IconButton
+              ariaLabel={'View your pipeline'}
+              className={
+                'pipeline-menu-button--large pipeline-menu-button--link'
+              }
+              disabled={false}
+              icon={TreeIcon}
+            />
+          </Link>
+          <Link to={{ pathname: '/runs' }}>
+            <IconButton
+              ariaLabel={'View your experiments'}
+              className={
+                'pipeline-menu-button--large pipeline-menu-button--link'
+              }
+              disabled={false}
+              icon={ExperimentsIcon}
+            />
+          </Link>
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
           <IconButton
