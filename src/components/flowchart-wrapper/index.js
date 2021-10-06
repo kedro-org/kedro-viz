@@ -14,7 +14,7 @@ import './flowchart-wrapper.css';
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
  * the rendering of the flowchart, as well as the display of all related modals.
  */
-export const FlowchartWrapper = ({ loading }) => (
+export const FlowChartWrapper = ({ loading }) => (
   <div className="kedro-pipeline">
     <Sidebar />
     <MetaData />
@@ -32,4 +32,4 @@ export const mapStateToProps = (state) => ({
   loading: isLoading(state),
 });
 
-export default connect(mapStateToProps)(FlowchartWrapper);
+export default connect(mapStateToProps)(FlowChartWrapper);

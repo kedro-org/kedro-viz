@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { isLoading } from '../../selectors/loading';
 import classnames from 'classnames';
 import GlobalToolbar from '../global-toolbar';
-import FlowchartWrapper from '../flowchart-wrapper';
+import FlowChartWrapper from '../flowchart-wrapper';
 import ExperimentWrapper from '../experiment-wrapper';
 import SettingsModal from '../settings-modal';
 import './wrapper.css';
@@ -25,7 +25,7 @@ export const Wrapper = ({ theme }) => (
       <SettingsModal />
       <Switch>
         <Route exact path={['/', '/flowchart']}>
-          <FlowchartWrapper />
+          <FlowChartWrapper />
         </Route>
         <Route path={['/runsList', '/runsList/:id']}>
           <ExperimentWrapper />
