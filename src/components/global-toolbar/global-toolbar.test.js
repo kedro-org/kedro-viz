@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import ConnectedGlobalToolbar, {
   GlobalToolbar,
   mapStateToProps,
@@ -8,7 +9,11 @@ import { mockState, setup } from '../../utils/state.mock';
 
 describe('GlobalToolbar', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.mount(<ConnectedGlobalToolbar />);
+    const wrapper = setup.mount(
+      <MemoryRouter>
+        <ConnectedGlobalToolbar />
+      </MemoryRouter>
+    );
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
   });
 
@@ -26,7 +31,11 @@ describe('GlobalToolbar', () => {
         visible: mockState.animals.visible,
         [callback]: mockFn,
       };
-      const wrapper = setup.mount(<GlobalToolbar {...props} />);
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <GlobalToolbar {...props} />
+        </MemoryRouter>
+      );
       expect(mockFn.mock.calls.length).toBe(0);
       wrapper.find(selector).find('button').simulate('click');
       expect(mockFn.mock.calls.length).toBe(1);
@@ -36,15 +45,6 @@ describe('GlobalToolbar', () => {
   it('maps state to props', () => {
     const expectedResult = {
       theme: expect.stringMatching(/light|dark/),
-      visible: expect.objectContaining({
-        exportBtn: expect.any(Boolean),
-        exportModal: expect.any(Boolean),
-        plotModal: expect.any(Boolean),
-        settingsModal: expect.any(Boolean),
-        labelBtn: expect.any(Boolean),
-        layerBtn: expect.any(Boolean),
-        sidebar: expect.any(Boolean),
-      }),
     };
     expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
   });
