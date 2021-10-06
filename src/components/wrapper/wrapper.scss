@@ -8,7 +8,7 @@
   color: var(--color-text);
   background: var(--color-bg-1);
 
-  & .kui-theme--light{
+  &.kui-theme--light {
     @media print {
       background: none;
     }
@@ -18,4 +18,3 @@
 .pipeline-title {
   @include screenReaderOnly;
 }
-
