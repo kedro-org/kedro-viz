@@ -40,6 +40,7 @@ const MetaData = ({
   const isParametersNode = metadata?.node.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.node.type);
   const hasPlot = Boolean(metadata?.plot);
+  const hasMetrics = Boolean(metadata?.metrics);
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
@@ -136,6 +137,17 @@ const MetaData = ({
                   kind="path"
                   value={metadata.filepath}
                 />
+                {hasMetrics && (
+                  <MetaDataRow
+                    label="Metrics from last run:"
+                    theme={theme}
+                    visible={isDataNode}
+                    kind="metrics"
+                    commas={false}
+                    inline={false}
+                    value={metadata.metrics}
+                  />
+                )}
                 <MetaDataRow
                   label="Parameters:"
                   theme={theme}
