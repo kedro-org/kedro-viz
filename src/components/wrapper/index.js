@@ -27,7 +27,7 @@ export const Wrapper = ({ theme }) => (
         <Route exact path={['/', '/flowchart']}>
           <FlowchartWrapper />
         </Route>
-        <Route path={['/runs', '/runs/:id']}>
+        <Route path={['/runsList', '/runsList/:id']}>
           <ExperimentWrapper />
         </Route>
       </Switch>

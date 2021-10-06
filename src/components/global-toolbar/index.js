@@ -20,7 +20,6 @@ export const GlobalToolbar = ({
   onToggleSettingsModal,
   onToggleTheme,
   theme,
-  visible,
 }) => {
   return (
     <>
@@ -42,7 +41,7 @@ export const GlobalToolbar = ({
               icon={TreeIcon}
             />
           </Link>
-          <Link to={{ pathname: '/runs' }}>
+          <Link to={{ pathname: '/runsList' }}>
             <IconButton
               ariaLabel={'View your experiments'}
               className={
@@ -84,7 +83,6 @@ export const GlobalToolbar = ({
 
 export const mapStateToProps = (state) => ({
   theme: state.theme,
-  visible: state.visible,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

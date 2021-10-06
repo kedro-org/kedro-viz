@@ -1,6 +1,12 @@
 //--- Useful JS utility functions ---//
 
 import { pathRoot } from '../config';
+import { useLocation } from 'react-router-dom';
+
+/**
+ * Custom hook for obtaining query params from URL
+ */
+export const useQuery = () => new URLSearchParams(useLocation().search);
 
 /**
  * Loop through an array and output to an object

@@ -12,7 +12,7 @@ const ExperimentWrapper = () => (
     <Sidebar />
     <div>
       <Switch>
-        <Route path={['/runs/:id', '/runs']}>
+        <Route path={['/runsList/:id', '/runsList']}>
           <Details />
         </Route>
       </Switch>

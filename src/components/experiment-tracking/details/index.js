@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useQuery } from '../../../utils';
 import './details.css';
 
 /**
@@ -9,7 +9,11 @@ import './details.css';
  * the display of experiment details, as well as the comparison view.
  */
 const Details = ({ sidebarVisible }) => {
-  let { id } = useParams();
+  const query = useQuery();
+
+  const run = query.get('run');
+  const compare = query.get('compare');
+  const compareList = typeof compare === 'string' ? compare.split(' ') : null;
 
   return (
     <>
@@ -19,10 +23,15 @@ const Details = ({ sidebarVisible }) => {
         })}
       >
         <h1>
-          {typeof id !== 'undefined'
-            ? `This displays the details of run ${id}`
-            : 'No selected Run'}
+          {run !== null
+            ? 'Single view details'
+            : compare !== null
+            ? 'Compare view details'
+            : 'No runs'}
         </h1>
+        {run !== null && <h2>Details of Run {run}</h2>}
+        {compareList !== null &&
+          compareList.map((run, i) => <h2 key={i}>details of Run {run}</h2>)}
       </div>
     </>
   );

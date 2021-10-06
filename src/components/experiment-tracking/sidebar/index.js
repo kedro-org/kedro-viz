@@ -19,7 +19,7 @@ export const Sidebar = ({ visible }) => {
         })}
       >
         <div className="pipeline-ui">
-          <Route path={['/runs/:id', '/runs']}>
+          <Route path={['/runsList/:id', '/runsList']}>
             <RunsList />
           </Route>
         </div>
