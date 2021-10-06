@@ -26,7 +26,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import pytest
-from toposort import CircularDependencyError
 
 from kedro_viz.models.graph import GraphNode
 from kedro_viz.services.layers import sort_layers
@@ -184,7 +183,7 @@ def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
     assert sort_layers(nodes, node_dependencies) == expected, graph_schema
 
 
-def test_sort_layers_should_raise_on_cyclic_layers():
+def test_sort_layers_should_return_empty_list_on_cyclic_layers():
     # node_1(layer=raw) -> node_2(layer=int) -> node_3(layer=raw)
     data = {
         "node_1": {"id": "node_1", "layer": "raw"},
@@ -201,9 +200,4 @@ def test_sort_layers_should_raise_on_cyclic_layers():
         for node_id, node_dict in data.items()
     }
     node_dependencies = {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": set()}
-    with pytest.raises(
-        CircularDependencyError,
-        match="Circular dependencies exist among these items: {'int':{'raw'}, 'raw':{'int'}}",
-    ):
-
-        sort_layers(nodes, node_dependencies)
+    assert sort_layers(nodes, node_dependencies) == []

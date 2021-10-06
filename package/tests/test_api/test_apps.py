@@ -27,7 +27,7 @@
 # limitations under the License.
 import operator
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, List
 from unittest import mock
 
 import pytest
@@ -122,6 +122,16 @@ def assert_example_data(response_data):
         {"source": "f1f1425b", "target": "7b140b3f"},
         {"source": "0ecea0de", "target": "7b140b3f"},
         {"source": "c506f374", "target": "56118ad8"},
+        {"source": "13399a82", "target": "uk.data_processing"},
+        {"source": "uk.data_processing", "target": "0ecea0de"},
+        {"source": "c506f374", "target": "uk.data_processing"},
+        {"source": "f1f1425b", "target": "uk"},
+        {"source": "13399a82", "target": "uk"},
+        {"source": "f1f1425b", "target": "uk.data_science"},
+        {"source": "c506f374", "target": "uk"},
+        {"source": "uk.data_science", "target": "d5a8b994"},
+        {"source": "0ecea0de", "target": "uk.data_science"},
+        {"source": "uk", "target": "d5a8b994"},
     ]
     assert_dict_list_equal(
         response_data.pop("edges"), expected_edges, sort_keys=("source", "target")
@@ -203,12 +213,44 @@ def assert_example_data(response_data):
             "layer": None,
             "dataset_type": "kedro.io.memory_data_set.MemoryDataSet",
         },
+        {
+            "id": "uk.data_processing",
+            "name": "Data Processing",
+            "full_name": "uk.data_processing",
+            "tags": [],
+            "pipelines": ["__default__", "data_processing"],
+            "type": "modularPipeline",
+            "modular_pipelines": None,
+            "layer": None,
+            "dataset_type": None,
+        },
+        {
+            "id": "uk.data_science",
+            "name": "Data Science",
+            "full_name": "uk.data_science",
+            "tags": [],
+            "pipelines": ["__default__", "data_science"],
+            "type": "modularPipeline",
+            "modular_pipelines": None,
+            "layer": None,
+            "dataset_type": None,
+        },
+        {
+            "id": "uk",
+            "name": "Uk",
+            "full_name": "uk",
+            "tags": [],
+            "pipelines": ["__default__", "data_processing", "data_science"],
+            "type": "modularPipeline",
+            "modular_pipelines": None,
+            "layer": None,
+            "dataset_type": None,
+        },
     ]
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
 
     # compare modular pipelines
     expected_modular_pipelines = [
-        {"id": "__root__", "name": "Root"},
         {"id": "uk", "name": "Uk"},
         {"id": "uk.data_processing", "name": "Data Processing"},
         {"id": "uk.data_science", "name": "Data Science"},

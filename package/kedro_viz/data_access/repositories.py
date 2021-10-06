@@ -28,14 +28,13 @@
 """`kedro_viz.data_access.repositories` defines repositories to save and load application data."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from collections import OrderedDict, defaultdict
-from typing import Dict, Iterable, List, Optional, Set, Union
+from typing import Dict, Generator, Iterable, List, Optional, Set, Union
 
 import kedro
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 from semver import VersionInfo
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
-
 from kedro_viz.models.graph import (
     DataNode,
     GraphEdge,
@@ -83,6 +82,10 @@ class GraphEdgesRepository:
 
     def __init__(self):
         self.edges_list: Set[GraphEdge] = set()
+
+    def __iter__(self) -> Generator:
+        for edge in self.edges_list:
+            yield edge
 
     def remove_edge(self, edge: GraphEdge):
         """Remove an edge from this edge repository.
@@ -305,7 +308,8 @@ class ModularPipelinesRepository:
             modular_pipeline_id: ID of the modular pipeline to add the input to.
             input_node: The input node to add.
         Raises:
-            ValueError: when attempt to add a non-data, non-parameter node as input to the modular pipeline.
+            ValueError: when attempt to add a non-data,non-parameter node as input
+                to the modular pipeline.
         Example:
             >>> modular_pipelines = ModularPipelinesRepository()
             >>> data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
@@ -337,7 +341,8 @@ class ModularPipelinesRepository:
             modular_pipeline_id: ID of the modular pipeline to add the output to.
             output_node: The output node to add.
         Raises:
-            ValueError: when attempt to add a non-data, non-parameter node as output to the modular pipeline.
+            ValueError: when attempt to add a non-data, non-parameter node as output
+                to the modular pipeline.
         Example:
             >>> modular_pipelines = ModularPipelinesRepository()
             >>> data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(

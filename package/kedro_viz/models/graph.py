@@ -109,6 +109,7 @@ class Tag(RegisteredPipeline):
         return hash(self.id)
 
 
+# pylint: disable=too-many-instance-attributes
 @dataclass
 class GraphNode(abc.ABC):
     """Represent a node in the graph representation of a Kedro pipeline"""
@@ -122,6 +123,9 @@ class GraphNode(abc.ABC):
 
     # the full name of this node obtained from the underlying Kedro object
     full_name: str
+
+    # the type of the graph node
+    type: str
 
     # the tags associated with this node
     tags: Set[str] = field(default_factory=set)
@@ -158,7 +162,7 @@ class GraphNode(abc.ABC):
 
         Example:
             >>> GraphNode._get_namespace("pipeline.dataset")
-            pipeline
+            'pipeline'
         """
         if "." not in dataset_full_name:
             return None
@@ -177,8 +181,8 @@ class GraphNode(abc.ABC):
             The list of modular pipelines that this node belongs to.
 
         Example:
-            >>> GraphNode._expand_namespace("pipeline1.data_science")
-            ["pipeline1", "pipeline1.data_science"]
+            >>> GraphNode._expand_namespaces("pipeline1.data_science")
+            ['pipeline1', 'pipeline1.data_science']
         """
         if not namespace:
             return []
@@ -299,8 +303,10 @@ class GraphNode(abc.ABC):
         Returns:
             An instance of ModularPipelineNode.
         Example:
-            >>> GraphNode.create_modular_pipeline_node("pipeline.data_science")
-            ModularPipelineNode(id="pipeline.data_science", name="Data Science", full_name="pipeline.data_science")
+            >>> node = GraphNode.create_modular_pipeline_node("pipeline.data_science")
+            >>> assert node.id == "pipeline.data_science"
+            >>> assert node.name == "Data Science"
+            >>> assert node.type == GraphNodeType.MODULAR_PIPELINE
         """
         return ModularPipelineNode(
             id=modular_pipeline_id,
@@ -550,7 +556,7 @@ class TranscodedDataNode(GraphNode):
     def has_metadata(self) -> bool:
         return True
 
-    def __post_init__(self):
+    def __post_init__(self, *args, **kwargs):
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.

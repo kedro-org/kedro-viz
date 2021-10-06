@@ -31,7 +31,6 @@ from kedro.pipeline import node
 from kedro_viz.data_access.repositories import (
     GraphEdgesRepository,
     GraphNodesRepository,
-    ModularPipelinesRepository,
     RegisteredPipelinesRepository,
 )
 from kedro_viz.models.graph import GraphEdge, GraphNode
