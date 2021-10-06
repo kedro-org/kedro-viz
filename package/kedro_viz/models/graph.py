@@ -38,7 +38,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import Any, Dict, List, Optional, Set, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
 
 import pandas as pd
 import plotly.express as px
@@ -48,6 +48,12 @@ from kedro.io.core import VERSION_FORMAT, get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
+
+# only import MetricsDataSet at top-level for type-checking
+# so it doesn't blow up if user doesn't have the dataset dependencies installed.
+if TYPE_CHECKING:
+    from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
+
 
 logger = logging.getLogger(__name__)
 
@@ -527,7 +533,9 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
     @staticmethod
-    def load_latest_metrics_data(dataset: Any) -> Optional[Dict[Any, Any]]:
+    def load_latest_metrics_data(
+        dataset: "MetricsDataSet",
+    ) -> Optional[Dict[str, float]]:
         """Load data for latest versions of the metrics dataset
         Args:
             dataset: the latest version of the metrics dataset
