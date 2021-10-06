@@ -1,20 +1,16 @@
 import React from 'react';
-import { useQuery } from '../../../utils';
+import { useRunIdsFromUrl } from '../../../utils';
 
 /**
  * Main runslist container.
  */
 export const RunsList = () => {
-  const query = useQuery();
-
-  const run = query.get('run');
-  const compare = query.get('compare');
-  const compareList = typeof compare === 'string' ? compare.split(' ') : null;
+  const { run, compare, compareList } = useRunIdsFromUrl();
 
   // the following are only placeholders to indicate routing intent and should be
   // deleted on building the actual implementation of the runsList
   return (
-    <div>
+    <>
       <h1>
         {run !== null
           ? 'Single view'
@@ -25,7 +21,7 @@ export const RunsList = () => {
       {run !== null && <h2>Run {run} selected</h2>}
       {compareList !== null &&
         compareList.map((run, i) => <h2 key={i}>Run {run} selected</h2>)}
-    </div>
+    </>
   );
 };
 

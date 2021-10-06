@@ -8,16 +8,14 @@ import Details from '../experiment-tracking/details';
  * the display of experiment details single / comparison view.
  */
 const ExperimentWrapper = () => (
-  <div>
+  <>
     <Sidebar />
-    <div>
-      <Switch>
-        <Route path={['/runsList/:id', '/runsList']}>
-          <Details />
-        </Route>
-      </Switch>
-    </div>
-  </div>
+    <Switch>
+      <Route path={['/runsList/:id', '/runsList']}>
+        <Details />
+      </Route>
+    </Switch>
+  </>
 );
 
 export default ExperimentWrapper;
