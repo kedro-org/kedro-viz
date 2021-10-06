@@ -26,23 +26,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
+import strawberry
+
+# pylint: disable=missing-class-docstring
 # pylint: disable=missing-function-docstring
-# pylint: disable=unused-argument
+# pylint: disable=too-few-public-methods
+# pylint: disable=no-self-use
 from fastapi import APIRouter
-from graphene import ObjectType, Schema, String
-from starlette.graphql import GraphQLApp
+from strawberry.asgi import GraphQL
 
 
-class Query(ObjectType):
-    """GraphQL query that returns an empty object on HTTP 200 Response"""
+@strawberry.type
+class HealthCheck:
+    status: str
 
-    healthcheck = String()
 
-    @staticmethod
-    def resolve_healthcheck(*args):
-        return {}
+@strawberry.type
+class Query:
+    @strawberry.field
+    def healthcheck(self) -> HealthCheck:
+        return HealthCheck(status="OK")
 
+
+schema = strawberry.Schema(query=Query)
 
 router = APIRouter()
 
-router.add_route("/graphql", GraphQLApp(schema=Schema(query=Query)))
+router.add_route("/graphql", GraphQL(schema))
