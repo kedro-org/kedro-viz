@@ -41,6 +41,7 @@ from jinja2 import Environment, FileSystemLoader
 from kedro_viz import __version__
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
+from .graphql import router as graphql_router
 from .router import router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
@@ -71,6 +72,7 @@ def create_api_app_from_project(
     """
     app = _create_base_api_app()
     app.include_router(router)
+    app.include_router(graphql_router)
     app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
     # everytime the server reloads, a new app with a new timestamp will be created.
