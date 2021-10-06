@@ -122,7 +122,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
                 target=run_server,
                 kwargs=run_server_kwargs,
                 watcher_cls=RegExpWatcher,
-                watcher_kwargs=dict(re_files=r"^.*(\.yml|\.yaml|\.py)$"),
+                watcher_kwargs=dict(re_files=r"^.*(\.yml|\.yaml|\.py|\.json)$"),
             )
 
         else:
