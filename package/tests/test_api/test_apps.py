@@ -36,6 +36,7 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.api import apps
+from kedro_viz.api.graphql import schema
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.models.graph import TaskNode
 from kedro_viz.server import populate_data
@@ -74,6 +75,12 @@ def example_transcoded_api(
 @pytest.fixture
 def client(example_api):
     yield TestClient(example_api)
+
+
+def test_graphql_endpoint():
+    query = "{ healthcheck { status }}"
+    result = schema.execute_sync(query)
+    assert result.data["healthcheck"] == {"status": "OK"}
 
 
 def assert_nodes_equal(response_nodes, expected_nodes):
@@ -205,7 +212,7 @@ def assert_example_data(response_data):
 
 
 def assert_example_transcoded_data(response_data):
-    """Assert graph response for the `example_transcoded_pipelines` 
+    """Assert graph response for the `example_transcoded_pipelines`
     and `example_transcoded_catalog` fixtures."""
     expected_edges = [
         {"source": "f1f1425b", "target": "2302ea78"},
