@@ -8,13 +8,14 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 3.16.1
+# Release 3.17.0
 
 ## Major features and improvements
 
 ## Bug fixes and other changes
 
 - Overwrite material UI selected row defaults. (#568)
+- Fix URI param parsing for data source. (#578)
 
 # Release 3.16.0
 
@@ -27,7 +28,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix focus mode search (#549)
-- Fix focus mode error when switching pipelines  (#553)
+- Fix focus mode error when switching pipelines (#553)
 - Pin dynaconf before Kedro is released. (#559)
 - Refactor colors based on latest palette (#552)
 
@@ -109,6 +110,7 @@ Please follow the established format:
 # Release 3.11.0
 
 ## Major features and improvements
+
 - Allow the selection and filtering of nodes by modular pipeline on the flowchart via the sidebar under the categories section. This includes changes to both the server to include modualr pipeline data in the responses, as well as front end changes to enable the new modular pipeline data type. (#391, #394, #401, #402, #408, #410, #421)
 - Add Architecture docs. (#382, #393)
 - Add metadata to random data generator. (#397)
@@ -118,6 +120,7 @@ Please follow the established format:
 - Remove 'lazy' flag to enable lazy loading of the sidebar by default. (#404)
 
 ## Bug fixes and other changes
+
 - Remove 'id' reducer prop. (#396)
 - Remove leftover visible layer reducer. (#399)
 - Delete 'Description' field from metadata panel. (#403)

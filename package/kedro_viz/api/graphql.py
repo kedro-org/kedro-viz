@@ -26,6 +26,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
+import strawberry
+
+# pylint: disable=missing-class-docstring
 # pylint: disable=missing-function-docstring
 # pylint: disable=unused-argument
 import typing
@@ -53,6 +56,9 @@ class KedroSessionGraphQLType:
     id: str
     blob: str
 
+@strawberry.type
+class HealthCheck:
+    status: str
 
 def get_all_sessions() -> typing.List[KedroSessionGraphQLType]:
     db = next(get_db())
@@ -68,6 +74,7 @@ class Query:
         resolver=get_all_sessions
     )
 
+schema = strawberry.Schema(query=Query)
 
 router = APIRouter()
 

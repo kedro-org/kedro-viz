@@ -14,12 +14,13 @@ import selectors from './data/selectors.mock.json';
  * @return {string} Data source identifier
  */
 export const getSourceID = () => {
-  const query = document.location.search.match(/data=(\w+)/);
+  const urlParams = new URL(document.location.href).searchParams;
+  const dataSource = urlParams.get('data');
   const { REACT_APP_DATA_SOURCE } = process.env;
   const isDemo = document.location.host === 'quantumblacklabs.github.io';
 
-  if (query) {
-    return encodeURIComponent(query[1]);
+  if (dataSource) {
+    return encodeURIComponent(dataSource);
   }
   if (REACT_APP_DATA_SOURCE) {
     return REACT_APP_DATA_SOURCE;
