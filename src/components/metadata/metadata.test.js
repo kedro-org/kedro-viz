@@ -368,166 +368,71 @@ describe('MetaData', () => {
         );
       });
     });
-  });
-
-  describe('Transcoded dataset nodes', () => {
-    it('shows the node type as an icon', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeTranscodedData,
+    describe('Transcoded dataset nodes', () => {
+      it('shows the node original type', () => {
+        const wrapper = mount({
+          nodeId: bearDatasetNodeId,
+          mockMetadata: nodeTranscodedData,
+        });
+        const row = rowByLabel(wrapper, 'Original Type:');
+        expect(textOf(rowValue(row))).toEqual([
+          'kedro.extras.datasets.spark.spark_dataset.SparkDataSet',
+        ]);
       });
-      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-data')).toBe(
-        true
-      );
+
+      it('shows the node transcoded type', () => {
+        const wrapper = mount({
+          nodeId: bearDatasetNodeId,
+          mockMetadata: nodeTranscodedData,
+        });
+        const row = rowByLabel(wrapper, 'Transcoded Types:');
+        expect(textOf(rowValue(row))).toEqual([
+          'kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet',
+        ]);
+      });
+    });
+    describe('Metrics dataset nodes', () => {
+      it('shows the node metrics', () => {
+        const wrapper = mount({
+          nodeId: bearDatasetNodeId,
+          mockMetadata: nodeMetricsData,
+        });
+        const row = rowByLabel(wrapper, 'Metrics from last run:');
+        expect(textOf(rowObject(row))[0]).toEqual(
+          expect.stringContaining('3 items')
+        );
+      });
+
+      describe('shows the time series plot for metrics node', () => {
+        const wrapper = mount({
+          nodeId: bearDatasetNodeId,
+          mockMetadata: nodeMetricsData,
+        });
+        it('shows the plotly chart', () => {
+          expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
+        });
+        it('shows the plotly expand button', () => {
+          expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(
+            1
+          );
+        });
+      });
     });
 
-    it('shows the node name as the title', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeTranscodedData,
-      });
-      expect(textOf(title(wrapper))).toEqual(['Bear']);
-    });
-
-    it('shows the node type as text', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeTranscodedData,
-      });
-      const row = rowByLabel(wrapper, 'Type:');
-      expect(textOf(rowValue(row))).toEqual(['data']);
-    });
-
-    it('shows the node original type', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeTranscodedData,
-      });
-      const row = rowByLabel(wrapper, 'Original Type:');
-      expect(textOf(rowValue(row))).toEqual([
-        'kedro.extras.datasets.spark.spark_dataset.SparkDataSet',
-      ]);
-    });
-
-    it('shows the node transcoded type', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeTranscodedData,
-      });
-      const row = rowByLabel(wrapper, 'Transcoded Types:');
-      expect(textOf(rowValue(row))).toEqual([
-        'kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet',
-      ]);
-    });
-
-    it('shows the node filepath', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeTranscodedData,
-      });
-      const row = rowByLabel(wrapper, 'File Path:');
-      expect(textOf(rowValue(row))).toEqual([
-        '/Users/Documents/project-src/test/data/01_raw/iris.csv',
-      ]);
-    });
-
-    it('shows the node tags', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeTranscodedData,
-      });
-      const row = rowByLabel(wrapper, 'Tags:');
-      expect(textOf(rowValue(row))).toEqual(['Large', 'Medium']);
-    });
-
-    it('shows the node pipeline', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeTranscodedData,
-      });
-      const row = rowByLabel(wrapper, 'Pipeline:');
-      expect(textOf(rowValue(row))).toEqual(['Default']);
-    });
-  });
-
-  describe('Metrics dataset nodes', () => {
-    it('shows the node type as an icon', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeMetricsData,
-      });
-      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-data')).toBe(
-        true
-      );
-    });
-
-    it('shows the node name as the title', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeMetricsData,
-      });
-      expect(textOf(title(wrapper))).toEqual(['Bear']);
-    });
-
-    it('shows the node type as text', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeMetricsData,
-      });
-      const row = rowByLabel(wrapper, 'Type:');
-      expect(textOf(rowValue(row))).toEqual(['data']);
-    });
-
-    it('shows the node filepath', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeMetricsData,
-      });
-      const row = rowByLabel(wrapper, 'File Path:');
-      expect(textOf(rowValue(row))).toEqual([
-        '/Users/Documents/project-src/test/data/01_raw/iris.csv',
-      ]);
-    });
-
-    it('shows the node metrics', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeMetricsData,
-      });
-      const row = rowByLabel(wrapper, 'Metrics from last run:');
-      expect(textOf(rowObject(row))[0]).toEqual(
-        expect.stringContaining('3 items')
-      );
-    });
-
-    it('shows the node tags', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeMetricsData,
-      });
-      const row = rowByLabel(wrapper, 'Tags:');
-      expect(textOf(rowValue(row))).toEqual(['Large', 'Medium']);
-    });
-
-    it('shows the node pipeline', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeMetricsData,
-      });
-      const row = rowByLabel(wrapper, 'Pipeline:');
-      expect(textOf(rowValue(row))).toEqual(['Default']);
-    });
-
-    describe('shows the plot info', () => {
-      const wrapper = mount({
-        nodeId: bearDatasetNodeId,
-        mockMetadata: nodeMetricsData,
-      });
-      it('shows the plotly chart', () => {
-        expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
-      });
-      it('shows the plotly expand button', () => {
-        expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(1);
+    describe('Plot nodes', () => {
+      describe('shows the plot info', () => {
+        const wrapper = mount({
+          nodeId: bullPlotNodeId,
+          mockMetadata: nodePlot,
+        });
+        it('shows the plotly chart', () => {
+          expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
+        });
+        it('shows the plotly expand button', () => {
+          expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(
+            1
+          );
+        });
       });
     });
   });
@@ -596,75 +501,6 @@ describe('MetaData', () => {
       });
       const row = rowByLabel(wrapper, 'Pipeline:');
       expect(textOf(rowValue(row))).toEqual(['Default']);
-    });
-  });
-
-  describe('Plot nodes', () => {
-    it('shows the node type as an icon', () => {
-      const wrapper = mount({
-        nodeId: bullPlotNodeId,
-        mockMetadata: nodePlot,
-      });
-      expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-plotly')).toBe(
-        true
-      );
-    });
-
-    it('shows the node name as the title', () => {
-      const wrapper = mount({
-        nodeId: bullPlotNodeId,
-        mockMetadata: nodePlot,
-      });
-      expect(textOf(title(wrapper))).toEqual(['Bull']);
-    });
-
-    it('shows the node type as text', () => {
-      const wrapper = mount({
-        nodeId: bullPlotNodeId,
-        mockMetadata: nodePlot,
-      });
-      const row = rowByLabel(wrapper, 'Type:');
-      expect(textOf(rowValue(row))).toEqual(['data']);
-    });
-
-    it('shows the node filepath', () => {
-      const wrapper = mount({
-        nodeId: bullPlotNodeId,
-        mockMetadata: nodePlot,
-      });
-      const row = rowByLabel(wrapper, 'File Path:');
-      expect(textOf(rowValue(row))).toEqual(['-']);
-    });
-
-    it('shows the node tags', () => {
-      const wrapper = mount({
-        nodeId: bullPlotNodeId,
-        mockMetadata: nodePlot,
-      });
-      const row = rowByLabel(wrapper, 'Tags:');
-      expect(textOf(rowValue(row))).toEqual(['Small']);
-    });
-
-    it('shows the node pipeline', () => {
-      const wrapper = mount({
-        nodeId: bullPlotNodeId,
-        mockMetadata: nodePlot,
-      });
-      const row = rowByLabel(wrapper, 'Pipeline:');
-      expect(textOf(rowValue(row))).toEqual(['Default']);
-    });
-
-    describe('shows the plot info', () => {
-      const wrapper = mount({
-        nodeId: bullPlotNodeId,
-        mockMetadata: nodePlot,
-      });
-      it('shows the plotly chart', () => {
-        expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
-      });
-      it('shows the plotly expand button', () => {
-        expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(1);
-      });
     });
   });
 
