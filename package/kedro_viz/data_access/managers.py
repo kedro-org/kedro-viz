@@ -79,12 +79,18 @@ class DataAccessManager:
         )
 
     def add_catalog(self, catalog: DataCatalog):
-        """Add a catalog to the CatalogRepository."""
+        """Add a catalog to the CatalogRepository.
+        Args:
+            catalog: The DataCatalog instance to add.
+        """
         self.catalog.set_catalog(catalog)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project
         into the relevant repositories.
+
+        Args:
+            pipelines: All registered pipelines in a Kedro project.
         """
         for registered_pipeline_id, pipeline in pipelines.items():
             # Add the registered pipeline and its components to their repositories
@@ -97,6 +103,11 @@ class DataAccessManager:
 
         The purpose of this method is to construct a set of repositories of Viz-specific
         domain models from raw Kedro object before feeding them to the API serialisation layer.
+
+        Args:
+            registered_pipeline_id: The ID of the registered pipeline to add to the graph.
+            pipeline: The Kedro pipeline instance to convert to graph models
+                and add to relevant repositories representing the graph.
         """
         self.registered_pipelines.add_pipeline(registered_pipeline_id)
         free_inputs = pipeline.inputs()
@@ -153,31 +164,47 @@ class DataAccessManager:
                         current_modular_pipeline, output_node
                     )
 
-    def add_node(self, pipeline_id: str, node: KedroNode) -> TaskNode:
+    def add_node(self, registered_pipeline_id: str, node: KedroNode) -> TaskNode:
         """Add a Kedro node as a TaskNode to the NodesRepository
-        for a given registered pipeline ID."""
+        for a given registered pipeline ID.
+
+        Args:
+            registered_pipeline_id: The registered pipeline ID to which the node belongs.
+            node: The Kedro node to add as TaskNode.
+        Returns:
+            The GraphNode instance representing the Kedro node that was added to the graph.
+        """
         task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))
-        task_node.add_pipeline(pipeline_id)
+        task_node.add_pipeline(registered_pipeline_id)
         self.tags.add_tags(task_node.tags)
         return task_node
 
     def add_node_input(
         self,
-        pipeline_id: str,
+        registered_pipeline_id: str,
         input_dataset: str,
         task_node: TaskNode,
         is_free_input: bool = False,
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro node's input as a DataNode, TranscodedDataNode or ParametersNode
-        to the NodesRepository for a given registered pipeline ID."""
+        to the NodesRepository for a given registered pipeline ID.
+
+        Args:
+            registered_pipeline_id: The pipeline ID to which the node's input belongs.
+            input_dataset: The input dataset of the TaskNode.
+            task_node: The TaskNode to add input to.
+        Returns:
+            The GraphNode instance representing the node's input that was added to the graph.
+        """
+
         graph_node = self.add_dataset(
-            pipeline_id, input_dataset, is_free_input=is_free_input
+            registered_pipeline_id, input_dataset, is_free_input=is_free_input
         )
         graph_node.tags.update(task_node.tags)
-        self.edges[pipeline_id].add_edge(
+        self.edges[registered_pipeline_id].add_edge(
             GraphEdge(source=graph_node.id, target=task_node.id)
         )
-        self.node_dependencies[pipeline_id][graph_node.id].add(task_node.id)
+        self.node_dependencies[registered_pipeline_id][graph_node.id].add(task_node.id)
 
         if isinstance(graph_node, ParametersNode):
             self.add_parameters_to_task_node(
@@ -186,23 +213,42 @@ class DataAccessManager:
         return graph_node
 
     def add_node_output(
-        self, pipeline_id: str, output_dataset: str, task_node: TaskNode
+        self, registered_pipeline_id: str, output_dataset: str, task_node: TaskNode
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro node's output as a DataNode, TranscodedDataNode or ParametersNode
-        to the NodesRepository for a given registered pipeline ID."""
-        graph_node = self.add_dataset(pipeline_id, output_dataset)
+        to the NodesRepository for a given registered pipeline ID.
+
+        Args:
+            registered_pipeline_id: The pipeline ID to which the node's output belongs.
+            output_dataset: The output dataset of the TaskNode.
+            task_node: The TaskNode to add output to.
+        Returns:
+            The GraphNode instance representing the node's output that was added to the graph.
+        """
+        graph_node = self.add_dataset(registered_pipeline_id, output_dataset)
         graph_node.tags.update(task_node.tags)
-        self.edges[pipeline_id].add_edge(
+        self.edges[registered_pipeline_id].add_edge(
             GraphEdge(source=task_node.id, target=graph_node.id)
         )
-        self.node_dependencies[pipeline_id][task_node.id].add(graph_node.id)
+        self.node_dependencies[registered_pipeline_id][task_node.id].add(graph_node.id)
         return graph_node
 
     def add_dataset(
-        self, pipeline_id: str, dataset_name: str, is_free_input: bool = False
+        self,
+        registered_pipeline_id: str,
+        dataset_name: str,
+        is_free_input: bool = False,
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro dataset as a DataNode, TranscodedDataNode or ParametersNode
-        to the NodesRepository for a given registered pipeline ID."""
+        to the NodesRepository for a given registered pipeline ID.
+
+        Args:
+            registered_pipeline_id: The registered pipeline ID to which the dataset belongs.
+            dataset_name: The name of the dataset.
+            is_free_input: Whether the dataset is a free input to the registered pipeline.
+        Returns:
+            The GraphNode instance representing the dataset that was added to the NodesRepository.
+        """
         obj = self.catalog.get_dataset(dataset_name)
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
@@ -222,13 +268,19 @@ class DataAccessManager:
                 is_free_input=is_free_input,
             )
         graph_node = self.nodes.add_node(graph_node)
-        graph_node.add_pipeline(pipeline_id)
+        graph_node.add_pipeline(registered_pipeline_id)
         return graph_node
 
     @staticmethod
     def add_parameters_to_task_node(
         parameters_node: ParametersNode, task_node: TaskNode
     ):
+        """Add parameters to a task node in order to show which task node has parameters.
+
+        Args:
+            parameters_node: The parameters to add.
+            task_node: The task node to add parameters to.
+        """
         if parameters_node.is_all_parameters():
             task_node.parameters = parameters_node.parameter_value
         else:
@@ -237,6 +289,13 @@ class DataAccessManager:
             ] = parameters_node.parameter_value
 
     def get_default_selected_pipeline(self) -> RegisteredPipeline:
+        """Return the default selected pipeline ID to display on first page load.
+        If the DEFAULT_REGISTERED_PIPELINE_ID is present in user's project,
+        use that. Otherwise, return the first one in the list of registered pipelines.
+
+        Returns:
+            The default selected RegisteredPipeline instance.
+        """
         default_pipeline = RegisteredPipeline(id=DEFAULT_REGISTERED_PIPELINE_ID)
         return (
             default_pipeline
@@ -247,6 +306,13 @@ class DataAccessManager:
     def get_nodes_for_registered_pipeline(
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[GraphNode]:
+        """Return all nodes for a given registered pipeline.
+
+        Args:
+            registered_pipeline_id: The registered pipeline ID to get nodes for.
+        Returns:
+            List of GraphNode objects in the given registered pipeline.
+        """
         node_ids = self.registered_pipelines.get_node_ids_by_pipeline_id(
             registered_pipeline_id
         )
@@ -255,16 +321,37 @@ class DataAccessManager:
     def get_edges_for_registered_pipeline(
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[GraphEdge]:
+        """Return all edges for a given registered pipeline.
+
+        Args:
+            registered_pipeline_id: The registered pipeline ID to get edges for.
+        Returns:
+            List of GraphEdge objects in the given registered pipeline.
+        """
         return self.edges[registered_pipeline_id].as_list()
 
     def get_node_dependencies_for_registered_pipeline(
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict[str, Set]:
+        """Return all edges for a given registered pipeline.
+
+        Args:
+            registered_pipeline_id: The registered pipeline ID to get edges for.
+        Returns:
+            Dictionary of GraphNode objects and the nodes that they depend on in the given registered pipeline.
+        """
         return self.node_dependencies[registered_pipeline_id]
 
     def get_sorted_layers_for_registered_pipeline(
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[str]:
+        """Return layers in a topologically sorted order for a registered pipeline.
+
+        Args:
+            registered_pipeline_id: The registered pipeline ID to get sorted layers for.
+        Returns:
+            List of layers in a topologically sorted order for the given registered pipeline.
+        """
         return layers_services.sort_layers(
             self.nodes.as_dict(),
             self.get_node_dependencies_for_registered_pipeline(registered_pipeline_id),
@@ -277,6 +364,11 @@ class DataAccessManager:
         """Get the modular pipelines tree for a specific registered pipeline.
         During the process, expand the compact tree into a full tree
         and add the modular pipeline nodes to the list of nodes in the registered pipeline.
+
+        Args:
+            registered_pipeline_id: The registered pipeline ID to get modular pipelines for.
+        Returns:
+            The modular pipelines tree represented as a dictionary of nodes with child references.
         """
 
         edges = self.edges[registered_pipeline_id]

@@ -192,7 +192,7 @@ class CatalogRepository:
 
     @staticmethod
     def is_dataset_param(dataset_name: str) -> bool:
-        """Returns whether a dataset is a parameter"""
+        """Return whether a dataset is a parameter"""
         return dataset_name.lower().startswith("param")
 
 
@@ -443,7 +443,7 @@ class ModularPipelinesRepository:
         return modular_pipeline_id in self.tree
 
     def as_dict(self) -> Dict[str, ModularPipelineNode]:
-        """Returns the repository as a dictionary."""
+        """Return the repository as a dictionary."""
         return self.tree
 
 
