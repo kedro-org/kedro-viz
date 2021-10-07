@@ -154,10 +154,8 @@ class GraphNode(abc.ABC):
         """Extract the namespace from the full dataset/parameter name.
         Args:
             dataset_full_name: The full name of the dataset.
-
         Returns:
             The namespace of this dataset, if available.
-
         Example:
             >>> GraphNode._get_namespace("pipeline.dataset")
             'pipeline'
@@ -171,13 +169,10 @@ class GraphNode(abc.ABC):
     def _expand_namespaces(namespace: Optional[str]) -> List[str]:
         """Expand a node's namespace to the list of modular pipelines
         that this node belongs to.
-
         Args:
             namespace: The namespace of the node.
-
         Returns:
             The list of modular pipelines that this node belongs to.
-
         Example:
             >>> GraphNode._expand_namespaces("pipeline1.data_science")
             ['pipeline1', 'pipeline1.data_science']

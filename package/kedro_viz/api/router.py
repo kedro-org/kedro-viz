@@ -96,7 +96,7 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
         return JSONResponse(status_code=404, content={"message": "Invalid pipeline ID"})
 
     modular_pipelines_tree = (
-        data_access_manager.get_modular_pipelines_tree_for_registered_pipeline(
+        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
             registered_pipeline_id
         )
     )

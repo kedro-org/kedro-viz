@@ -27,10 +27,14 @@
 # limitations under the License.
 from typing import Dict
 
+import networkx as nx
+import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
+from kedro.pipeline.modular_pipeline import pipeline
 
+from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.models.graph import (
     DataNode,
@@ -175,7 +179,7 @@ class TestAddNode:
             registered_pipeline_id, parameter_name, task_node
         )
         modular_pipelines_tree = (
-            data_access_manager.get_modular_pipelines_tree_for_registered_pipeline(
+            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
                 registered_pipeline_id
             )
         )
@@ -301,7 +305,7 @@ class TestAddPipelines:
         data_access_manager.add_pipelines(example_pipelines)
 
         assert [p.id for p in data_access_manager.registered_pipelines.as_list()] == [
-            "__default__",
+            DEFAULT_REGISTERED_PIPELINE_ID,
             "data_science",
             "data_processing",
         ]
@@ -317,16 +321,16 @@ class TestAddPipelines:
         assert data_access_manager.tags.as_list() == [Tag("split"), Tag("train")]
         assert sorted(data_access_manager.modular_pipelines.as_dict().keys()) == sorted(
             [
-                "__root__",
+                ROOT_MODULAR_PIPELINE_ID,
                 "uk.data_processing",
                 "uk.data_science",
             ]
         )
         assert sorted(
-            data_access_manager.get_modular_pipelines_tree_for_registered_pipeline().keys()
+            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline().keys()
         ) == sorted(
             [
-                "__root__",
+                ROOT_MODULAR_PIPELINE_ID,
                 "uk",
                 "uk.data_processing",
                 "uk.data_science",
@@ -353,9 +357,76 @@ class TestAddPipelines:
         example_catalog: DataCatalog,
     ):
         data_access_manager.add_catalog(example_catalog)
-        del example_pipelines["__default__"]
+        del example_pipelines[DEFAULT_REGISTERED_PIPELINE_ID]
         data_access_manager.add_pipelines(example_pipelines)
         assert not data_access_manager.registered_pipelines.get_pipeline_by_id(
-            "__default__"
+            DEFAULT_REGISTERED_PIPELINE_ID
         )
         assert data_access_manager.get_default_selected_pipeline().id == "data_science"
+
+    def test_add_pipelines_with_circular_modular_pipelines(
+        self,
+        data_access_manager: DataAccessManager,
+    ):
+        # in this test example,
+        # internal modular pipeline has two disconnected nodes: a->b and c->d
+        # b connects as input to an external modular pipeline
+        # while c serves as that modular pipeline's output
+        # which creates a circular dependency between internal and external.
+
+        internal = pipeline(
+            Pipeline(
+                [
+                    node(
+                        identity,
+                        inputs="a",
+                        outputs="b",
+                    ),
+                    node(
+                        identity,
+                        inputs="c",
+                        outputs="d",
+                    ),
+                ]
+            ),
+            namespace="internal",
+            inputs={"c"},
+            outputs={"b"},
+        )
+        external = pipeline(
+            Pipeline(
+                [
+                    node(
+                        identity,
+                        inputs="b",
+                        outputs="c",
+                    )
+                ]
+            ),
+            namespace="external",
+            inputs={"b"},
+            outputs={"c"},
+        )
+
+        registered_pipelines = {
+            "__default__": internal + external,
+        }
+        data_access_manager.add_catalog(DataCatalog())
+        data_access_manager.add_pipelines(registered_pipelines)
+        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+            DEFAULT_REGISTERED_PIPELINE_ID
+        )
+        edges = data_access_manager.get_edges_for_registered_pipeline(
+            DEFAULT_REGISTERED_PIPELINE_ID
+        )
+
+        # make sure that the original edge external.d->internal.d that forms the cycle
+        # is not in the final list of edges
+        d = next(edge for edge in edges if edge.source == "external").target
+        assert not any(edge.target == "internal" for edge in edges if edge.source == d)
+
+        digraph = nx.DiGraph()
+        for edge in edges:
+            digraph.add_edge(edge.source, edge.target)
+        with pytest.raises(nx.NetworkXNoCycle):
+            nx.find_cycle(digraph)

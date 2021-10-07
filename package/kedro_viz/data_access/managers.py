@@ -358,12 +358,15 @@ class DataAccessManager:
         )
 
     # pylint: disable=too-many-locals
-    def get_modular_pipelines_tree_for_registered_pipeline(
+    def create_modular_pipelines_tree_for_registered_pipeline(
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict[str, ModularPipelineNode]:
-        """Get the modular pipelines tree for a specific registered pipeline.
+        """Create the modular pipelines tree for a specific registered pipeline.
         During the process, expand the compact tree into a full tree
-        and add the modular pipeline nodes to the list of nodes in the registered pipeline.
+        and add the modular pipeline nodes to the list of nodes
+        as well as modular pipeline edges to the list of edges in the registered pipeline.
+        N.B. The method is named `create_` to also imply that it has side effect on
+        other repositories in the data access manager.
 
         Args:
             registered_pipeline_id: The registered pipeline ID to get modular pipelines for.

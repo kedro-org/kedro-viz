@@ -403,8 +403,8 @@ const constructModularPipelineItem = (modularPipeline, focusMode) => ({
   selected: false,
   faded: false,
   visible: true,
-  disabled: focusMode !== null && focusMode?.id !== modularPipeline.id,
-  checked: modularPipeline.enabled,
+  disabled: focusMode !== null && focusMode?.id !== modularPipeline?.id,
+  checked: modularPipeline?.enabled,
 });
 
 /**

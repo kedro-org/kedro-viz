@@ -269,7 +269,7 @@ class GraphAPIResponse(BaseAPIResponse):
 def get_default_response() -> GraphAPIResponse:
     """Default response for `/api/main`."""
     modular_pipelines_tree = (
-        data_access_manager.get_modular_pipelines_tree_for_registered_pipeline(
+        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
             DEFAULT_REGISTERED_PIPELINE_ID
         )
     )
