@@ -59,7 +59,6 @@ from .repositories import (
 )
 
 
-# pylint: disable=missing-function-docstring
 class DataAccessManager:
     """Centralised interface for the rest of the application to interact with data repositories."""
 
@@ -193,6 +192,7 @@ class DataAccessManager:
             registered_pipeline_id: The pipeline ID to which the node's input belongs.
             input_dataset: The input dataset of the TaskNode.
             task_node: The TaskNode to add input to.
+            is_free_input: Whether the input is a free input to the pipeline.
         Returns:
             The GraphNode instance representing the node's input that was added to the graph.
         """
@@ -338,7 +338,8 @@ class DataAccessManager:
         Args:
             registered_pipeline_id: The registered pipeline ID to get edges for.
         Returns:
-            Dictionary of GraphNode objects and the nodes that they depend on in the given registered pipeline.
+            Dictionary of GraphNode objects and the nodes that they depend on
+                in the given registered pipeline.
         """
         return self.node_dependencies[registered_pipeline_id]
 
