@@ -39,7 +39,6 @@ from kedro.extras.datasets.spark import SparkDataSet
 from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.pipeline.node import node
-from kedro.io.core import Version
 
 from kedro_viz.models.graph import (
     DataNode,
@@ -590,12 +589,10 @@ class TestGraphNodeMetadata:
             == mock_metrics_json
         )
 
-    @pytest.fixture
-    def filepath_json(self, tmpdir):
-        return (tmpdir / "test.json")
 
-    def test_load_latest_metrics(self, filepath_json):
-        dataset = MetricsDataSet(filepath=f"{filepath_json}")
+    def test_load_latest_metrics(self, metrics_filepath):
+        print(self)
+        dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
         data = {"col1": 1, "col2": 0.23, "col3": 0.002}
         dataset.save(data)
         assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
