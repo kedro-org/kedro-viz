@@ -128,6 +128,6 @@ def sort_layers(
         dependency_graph = nx.DiGraph(layer_dependencies)
         logger.warning(
             "Layers visualisation is disabled as circular dependency detected: %s",
-            nx.algorithms.cycles.find_cycle(dependency_graph),
+            sorted(nx.algorithms.cycles.find_cycle(dependency_graph)),
         )
         return []

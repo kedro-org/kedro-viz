@@ -183,8 +183,9 @@ def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
     assert sort_layers(nodes, node_dependencies) == expected, graph_schema
 
 
-def test_sort_layers_should_return_empty_list_on_cyclic_layers():
+def test_sort_layers_should_return_empty_list_on_cyclic_layers(mocker):
     # node_1(layer=raw) -> node_2(layer=int) -> node_3(layer=raw)
+    mocked_warning = mocker.patch("kedro_viz.services.layers.logger.warning")
     data = {
         "node_1": {"id": "node_1", "layer": "raw"},
         "node_2": {"id": "node_2", "layer": "int"},
@@ -201,3 +202,7 @@ def test_sort_layers_should_return_empty_list_on_cyclic_layers():
     }
     node_dependencies = {"node_1": {"node_2"}, "node_2": {"node_3"}, "node_3": set()}
     assert sort_layers(nodes, node_dependencies) == []
+    mocked_warning.assert_called_once_with(
+        "Layers visualisation is disabled as circular dependency detected: %s",
+        sorted([("int", "raw"), ("raw", "int")]),
+    )
