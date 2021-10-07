@@ -513,6 +513,29 @@ class TestGraphNodeMetadata:
         return source_dir
 
     @pytest.fixture
+    def metrics_filepath_reload(self, tmpdir):
+        dir_name = ["2021-09-10T09.03.55.245Z", "2021-09-10T09.03.56.733Z"]
+        filename = "metrics.json"
+        json_content = [
+            {
+                "recommendations": 0.4,
+                "recommended_controls": 0.5,
+                "projected_optimization": 0.6,
+            },
+            {
+                "recommendations": 0.7,
+                "recommended_controls": 0.8,
+                "projected_optimization": 0.9,
+            },
+        ]
+        source_dir = Path(tmpdir / filename)
+        for index, directory in enumerate(dir_name):
+            filepath = Path(source_dir / directory / filename)
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+            filepath.write_text(json.dumps(json_content[index]))
+        return source_dir
+
+    @pytest.fixture
     def metrics_filepath_invalid_timestamp(self, tmpdir):
         dir_name = ["2021", "2021"]
         filename = "metrics.json"
@@ -555,12 +578,20 @@ class TestGraphNodeMetadata:
 
     def test_load_latest_metrics(self, metrics_filepath):
         dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
-        mock_metrics_json = {
-            "recommendations": 0.200383330721228,
-            "recommended_controls": 0.250479163401535,
-            "projected_optimization": 0.30057499608184196,
-        }
-        assert DataNodeMetadata.load_latest_metrics_data(dataset) == mock_metrics_json
+        data = {"col1": 1, "col2": 0.23, "col3": 0.002}
+        dataset.save(data)
+        assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
+        new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
+        dataset.save(new_data)
+        assert DataNodeMetadata.load_latest_metrics_data(dataset) == new_data
+
+    def mock_database_exist(self):
+        return None
+
+    def test_load_latest_metrics_fail(self, mocker, metrics_filepath):
+        dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
+        mocker.patch.object(dataset, "_exists_function", return_value=False)
+        assert DataNodeMetadata.load_latest_metrics_data(dataset) is None
 
     def test_load_metrics_versioned_data_set_limit(self, metrics_filepath):
         mock_metrics_json = {

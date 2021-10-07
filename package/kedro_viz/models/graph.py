@@ -520,7 +520,10 @@ class DataNodeMetadata(GraphNodeMetadata):
             dataset = cast(MetricsDataSet, dataset)
             if not dataset._exists() or self.filepath is None:
                 return
-            self.metrics = self.load_latest_metrics_data(dataset)
+            metrics = self.load_latest_metrics_data(dataset)
+            if not metrics:
+                return
+            self.metrics = metrics
             metrics_data = self.load_metrics_versioned_data(self.filepath)
             if not metrics_data:
                 return
@@ -536,7 +539,9 @@ class DataNodeMetadata(GraphNodeMetadata):
     def load_latest_metrics_data(
         dataset: "MetricsDataSet",
     ) -> Optional[Dict[str, float]]:
-        """Load data for latest versions of the metrics dataset
+        """Load data for latest versions of the metrics dataset.
+        Below operation is also on kedro.io.core -> fetched_latest_load_version()
+        However it is a cached function and hence cannot be relied upon
         Args:
             dataset: the latest version of the metrics dataset
         Returns:
@@ -547,6 +552,8 @@ class DataNodeMetadata(GraphNodeMetadata):
         most_recent = next(
             (path for path in version_paths if dataset._exists_function(path)), None
         )
+        if not most_recent:
+            return None
         with dataset._fs.open(most_recent, **dataset._fs_open_args_load) as fs_file:
             return json.load(fs_file)
 
