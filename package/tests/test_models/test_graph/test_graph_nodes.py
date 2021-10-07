@@ -592,7 +592,9 @@ class TestGraphNodeMetadata:
 
     def test_load_latest_metrics(self, metrics_filepath):
         print(self)
+        print("Hello")
         dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
+        print(dataset)
         data = {"col1": 1, "col2": 0.23, "col3": 0.002}
         dataset.save(data)
         assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
