@@ -28,7 +28,7 @@
 """`kedro_viz.services.modular_pipelines` defines modular pipelines-related business logic.
 The service layer consist of pure functions opearting on domain models.
 """
-from typing import Dict
+from typing import Dict, List
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (
@@ -39,7 +39,9 @@ from kedro_viz.models.graph import (
 )
 
 
-def expand_tree(tree: Dict[str, ModularPipelineNode]) -> Dict[str, ModularPipelineNode]:
+def expand_tree(
+    modular_pipelines_tree: Dict[str, ModularPipelineNode]
+) -> Dict[str, ModularPipelineNode]:
     """Expand a given modular pipelines tree by adding parents for each node in the tree
     based on the node's ID. The function will return a new copy of the tree,
     instead of mutating the tree in-place.
@@ -48,7 +50,7 @@ def expand_tree(tree: Dict[str, ModularPipelineNode]) -> Dict[str, ModularPipeli
     the parent's inputs & ouputs with the modular pipeline's inputs & outputs.
 
     Args:
-        tree: The modulars pipeline tree to expand.
+        modular_pipelines_tree: The modulars pipeline tree to expand.
     Returns:
         The expanded modular pipelines tree.
     Example:
@@ -62,7 +64,7 @@ def expand_tree(tree: Dict[str, ModularPipelineNode]) -> Dict[str, ModularPipeli
             ROOT_MODULAR_PIPELINE_ID
         )
     }
-    for modular_pipeline_id, modular_pipeline_node in tree.items():
+    for modular_pipeline_id, modular_pipeline_node in modular_pipelines_tree.items():
 
         if modular_pipeline_id not in expanded_tree:
             expanded_tree[modular_pipeline_id] = modular_pipeline_node
@@ -114,3 +116,32 @@ def expand_tree(tree: Dict[str, ModularPipelineNode]) -> Dict[str, ModularPipeli
                 modular_pipeline_node.external_outputs
             )
     return expanded_tree
+
+
+def tree_to_list(
+    modular_pipelines_tree: Dict[str, ModularPipelineNode]
+) -> List[Dict[str, str]]:
+    """Serialise a tree to a list of {id, name} for each tree node except the __root__ node.
+    N.B.: This is only temporarily needed until the new frontend supports the full tree structure.
+
+    Args:
+        modular_pipelines_tree: The modulars pipeline tree to convert to list.
+    Returns:
+        The list of modular pipelines tree node IDs & names.
+    Example:
+        >>> modular_pipeline_node = GraphNode.create_modular_pipeline_node("one.two")
+        >>> tree = {"one.two": modular_pipeline_node}
+        >>> expanded_tree = expand_tree(tree)
+        >>> tree_to_list(expanded_tree)
+        [{'id': 'one', 'name': 'One'}, {'id': 'one.two', 'name': 'Two'}]
+    """
+    return [
+        {
+            "id": modular_pipeline_id,
+            "name": modular_pipeline_node.name,
+        }
+        for modular_pipeline_id, modular_pipeline_node in sorted(
+            modular_pipelines_tree.items()
+        )
+        if modular_pipeline_id != ROOT_MODULAR_PIPELINE_ID
+    ]

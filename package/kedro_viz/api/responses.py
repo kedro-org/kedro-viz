@@ -32,8 +32,9 @@ from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
-from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
+from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID
 from kedro_viz.data_access import data_access_manager
+from kedro_viz.services import modular_pipelines_services
 
 
 class APIErrorMessage(BaseModel):
@@ -274,16 +275,8 @@ def get_default_response() -> GraphAPIResponse:
     )
     # temporarily serialise the modular pipelines tree back to a list
     # for backward compatibility before new expand/collapse frontend is merged.
-    modular_pipelines = [
-        {
-            "id": modular_pipeline_id,
-            "name": modular_pipeline_node.name,
-        }
-        for modular_pipeline_id, modular_pipeline_node in sorted(
-            modular_pipelines_tree.items()
-        )
-        if modular_pipeline_id != ROOT_MODULAR_PIPELINE_ID
-    ]
+    modular_pipelines = modular_pipelines_services.tree_to_list(modular_pipelines_tree)
+
     return GraphAPIResponse(
         nodes=data_access_manager.get_nodes_for_registered_pipeline(
             DEFAULT_REGISTERED_PIPELINE_ID
