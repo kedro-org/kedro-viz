@@ -592,10 +592,10 @@ class TestGraphNodeMetadata:
 
     @pytest.fixture
     def filepath_json(self, tmpdir):
-        return (tmpdir / "test.json").as_posix()
+        return (tmpdir / "test.json")
 
-    def test_load_latest_metrics(self, filepath_json, save_version):
-        dataset = MetricsDataSet(filepath=filepath_json, version=Version(None, save_version))
+    def test_load_latest_metrics(self, filepath_json):
+        dataset = MetricsDataSet(filepath=f"{filepath_json}")
         data = {"col1": 1, "col2": 0.23, "col3": 0.002}
         dataset.save(data)
         assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
