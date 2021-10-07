@@ -455,7 +455,7 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "plot")
 
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
-    def test_metrics_data_node_metadata_versioned_dataset_not_exist(
+    def test_metrics_data_node_metadata_metrics_not_exist(
         self,
         patched_latest_metrics,
     ):
