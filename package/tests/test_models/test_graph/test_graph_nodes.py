@@ -504,7 +504,7 @@ class TestGraphNodeMetadata:
         assert "layout" in test_plot
 
     @pytest.fixture
-    def metrics_filepath(self, tmpdir):
+    def metrics_filepath(self, tmp_path):
         dir_name = ["2021-09-10T09.02.44.245Z", "2021-09-10T09.03.23.733Z"]
         filename = "metrics.json"
         json_content = [
@@ -519,7 +519,7 @@ class TestGraphNodeMetadata:
                 "projected_optimization": 0.30057499608184196,
             },
         ]
-        source_dir = Path(tmpdir / filename)
+        source_dir = Path(tmp_path / filename)
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -527,7 +527,7 @@ class TestGraphNodeMetadata:
         return source_dir
 
     @pytest.fixture
-    def metrics_filepath_reload(self, tmpdir):
+    def metrics_filepath_reload(self, tmp_path):
         dir_name = ["2021-09-10T09.03.55.245Z", "2021-09-10T09.03.56.733Z"]
         filename = "metrics.json"
         json_content = [
@@ -542,7 +542,7 @@ class TestGraphNodeMetadata:
                 "projected_optimization": 0.9,
             },
         ]
-        source_dir = Path(tmpdir / filename)
+        source_dir = Path(tmp_path / filename)
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -550,7 +550,7 @@ class TestGraphNodeMetadata:
         return source_dir
 
     @pytest.fixture
-    def metrics_filepath_invalid_timestamp(self, tmpdir):
+    def metrics_filepath_invalid_timestamp(self, tmp_path):
         dir_name = ["2021", "2021"]
         filename = "metrics.json"
         json_content = [
@@ -565,7 +565,7 @@ class TestGraphNodeMetadata:
                 "projected_optimization": 0.30057499608184196,
             },
         ]
-        source_dir = Path(tmpdir / filename)
+        source_dir = Path(tmp_path / filename)
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
