@@ -589,7 +589,6 @@ class TestGraphNodeMetadata:
             == mock_metrics_json
         )
 
-
     def test_load_latest_metrics(self, metrics_filepath):
         print(self)
         print("Hello")
