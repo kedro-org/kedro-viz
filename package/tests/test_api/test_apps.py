@@ -612,8 +612,7 @@ class TestSinglePipelineEndpoint:
                 {"id": "split", "name": "Split"},
                 {"id": "train", "name": "Train"},
             ],
-            # "layers": ["raw", "model_inputs"],
-            "layers": [],
+            "layers": ["model_inputs", "raw"],
             "pipelines": [
                 {"id": "__default__", "name": "Default"},
                 {"id": "data_science", "name": "Data Science"},

@@ -168,6 +168,19 @@ from kedro_viz.services.layers import sort_layers
             {"node_1": {"node_2"}, "node_2": {}, "node_3": {"node_4"}, "node_4": {}},
             ["c", "d", "a", "b"],
         ),
+        (
+            # completely disjoint nodes:
+            """
+            node_1(layer=a)
+            node_2(layer=b)
+            """,
+            {
+                "node_1": {"id": "node_1", "layer": "a"},
+                "node_2": {"id": "node_2", "layer": "b"},
+            },
+            {"node_1": {}, "node_2": {}},
+            ["a", "b"],
+        ),
     ],
 )
 def test_sort_layers(graph_schema, nodes, node_dependencies, expected):

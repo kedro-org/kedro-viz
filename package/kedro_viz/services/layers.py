@@ -92,6 +92,14 @@ def sort_layers(
 
         node_layers[node_id] = set()
 
+        # The layer of the current node can also be considered as depending on that node.
+        # This is to cater for the edge case where all nodes are completely disjoint from each other
+        # and no dependency graph for layers can be constructed,
+        # yet the layers still need to be displayed.
+        node_layer = getattr(nodes[node_id], "layer", None)
+        if node_layer is not None:
+            node_layers[node_id].add(node_layer)
+
         # for each child node of the given node_id,
         # mark its layer and all layers that depend on it as child layers of the given node_id.
         for child_node_id in dependencies[node_id]:
