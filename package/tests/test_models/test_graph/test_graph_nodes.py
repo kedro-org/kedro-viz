@@ -454,7 +454,7 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "plot")
 
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
-    def test_metrics_data_node_metadata_metrics_not_exist(
+    def test_metrics_data_node_metadata_latest_metrics_not_exist(
         self,
         patched_latest_metrics,
     ):
@@ -571,6 +571,24 @@ class TestGraphNodeMetadata:
             filepath.write_text(json.dumps(json_content[index]))
         return source_dir
 
+    def test_load_latest_metrics(self, metrics_filepath):
+        dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
+        print(dataset)
+        data = {"col1": 1, "col2": 0.23, "col3": 0.002}
+        dataset.save(data)
+        assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
+        new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
+        dataset.save(new_data)
+        assert DataNodeMetadata.load_latest_metrics_data(dataset) == new_data
+
+    def mock_database_exist(self):
+        return None
+
+    def test_load_latest_metrics_fail(self, mocker, metrics_filepath):
+        dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
+        mocker.patch.object(dataset, "_exists_function", return_value=False)
+        assert DataNodeMetadata.load_latest_metrics_data(dataset) is None
+
     def test_load_metrics_versioned_data(self, metrics_filepath):
         mock_metrics_json = {
             datetime.datetime(2021, 9, 10, 9, 2, 44, 245000): {
@@ -588,26 +606,6 @@ class TestGraphNodeMetadata:
             DataNodeMetadata.load_metrics_versioned_data(metrics_filepath)
             == mock_metrics_json
         )
-
-    def test_load_latest_metrics(self, metrics_filepath):
-        print(self)
-        print("Hello")
-        dataset = MetricsDataSet(filepath="test.json")
-        print(dataset)
-        data = {"col1": 1, "col2": 0.23, "col3": 0.002}
-        dataset.save(data)
-        assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
-        new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
-        dataset.save(new_data)
-        assert DataNodeMetadata.load_latest_metrics_data(dataset) == new_data
-
-    def mock_database_exist(self):
-        return None
-
-    def test_load_latest_metrics_fail(self, mocker, metrics_filepath):
-        dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
-        mocker.patch.object(dataset, "_exists_function", return_value=False)
-        assert DataNodeMetadata.load_latest_metrics_data(dataset) is None
 
     def test_load_metrics_versioned_data_set_limit(self, metrics_filepath):
         mock_metrics_json = {
