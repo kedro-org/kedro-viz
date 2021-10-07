@@ -51,7 +51,7 @@ from pandas.core.frame import DataFrame
 
 # only import MetricsDataSet at top-level for type-checking
 # so it doesn't blow up if user doesn't have the dataset dependencies installed.
-if TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
     from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
 
