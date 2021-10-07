@@ -455,6 +455,19 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "plot")
 
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
+    def test_metrics_data_node_metadata_versioned_dataset_not_exist(
+        self,
+        patched_latest_metrics,
+    ):
+        patched_latest_metrics.return_value = None
+        metrics_data_node = MagicMock()
+        metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_metric_node.return_value = True
+        metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
+        assert not hasattr(metrics_node_metadata, "metric")
+        assert not hasattr(metrics_node_metadata, "plot")
+
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
     def test_metrics_data_node_metadata_versioned_dataset_not_exist(
         self,
@@ -578,8 +591,8 @@ class TestGraphNodeMetadata:
         )
 
     @pytest.fixture
-    def filepath_json(tmp_path):
-        return (tmp_path / "test.json").as_posix()
+    def filepath_json(self, tmpdir):
+        return (tmpdir / "test.json").as_posix()
 
     def test_load_latest_metrics(self, filepath_json, save_version):
         dataset = MetricsDataSet(filepath=filepath_json, version=Version(None, save_version))
