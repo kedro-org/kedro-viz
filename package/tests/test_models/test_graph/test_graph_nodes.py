@@ -39,7 +39,6 @@ from kedro.extras.datasets.spark import SparkDataSet
 from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.pipeline.node import node
-from kedro.io.core import Version 
 
 from kedro_viz.models.graph import (
     DataNode,
