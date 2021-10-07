@@ -127,6 +127,9 @@ class GraphNode(abc.ABC):
     # the type of the graph node
     type: str
 
+    # the underlying Kedro object for each graph node, if any
+    kedro_obj: Optional[Union[KedroNode, AbstractDataSet]] = field(default=None)
+
     # the tags associated with this node
     tags: Set[str] = field(default_factory=set)
 
@@ -141,11 +144,6 @@ class GraphNode(abc.ABC):
 
     # The list of modular pipeline this node belongs to.
     modular_pipelines: Optional[List[str]] = field(init=False)
-
-    # the underlying Kedro object for this node
-    _kedro_obj: Union[KedroNode, Optional[AbstractDataSet]] = field(
-        init=False, default=None
-    )
 
     @staticmethod
     def _hash(value: str):
@@ -196,14 +194,6 @@ class GraphNode(abc.ABC):
                 prefix = chunk
             namespace_list.append(prefix)
         return namespace_list
-
-    @property
-    def kedro_obj(self) -> Union[KedroNode, Optional[AbstractDataSet]]:
-        """For every node in the graph representation of a Kedro pipeline,
-        there _might_ be an underlying Kedro object stored at `self._kedro_obj`.
-        For example, it could be a Node or a DataSet object.
-        """
-        return self._kedro_obj
 
     @classmethod
     def create_task_node(cls, node: KedroNode) -> "TaskNode":
@@ -339,17 +329,15 @@ class GraphNodeMetadata(abc.ABC):
 class TaskNode(GraphNode):
     """Represent a graph node of type TASK"""
 
-    kedro_obj: InitVar[KedroNode]
     modular_pipelines: List[str] = field(init=False)
     parameters: Dict = field(init=False, default_factory=dict)
     type: str = GraphNodeType.TASK.value
 
-    def __post_init__(self, kedro_obj: KedroNode):
-        self._kedro_obj = kedro_obj
-        self.namespace = kedro_obj.namespace
+    def __post_init__(self):
+        self.namespace = self.kedro_obj.namespace
 
         # the modular pipelines that a task node belongs to are derived from its namespace.
-        self.modular_pipelines = self._expand_namespaces(kedro_obj.namespace)
+        self.modular_pipelines = self._expand_namespaces(self.kedro_obj.namespace)
 
 
 def _extract_wrapped_func(func: FunctionType) -> FunctionType:
@@ -476,9 +464,6 @@ class DataNode(GraphNode):
     # the layer that this data node belongs to
     layer: Optional[str] = field(default=None)
 
-    # the underlying Kedro's AbstractDataSet for this data node
-    kedro_obj: InitVar[Optional[AbstractDataSet]]
-
     # the concrete type of the underlying kedro_obj
     dataset_type: Optional[str] = field(init=False)
 
@@ -491,10 +476,9 @@ class DataNode(GraphNode):
     # the type of this graph node, which is DATA
     type: str = GraphNodeType.DATA.value
 
-    def __post_init__(self, kedro_obj: Optional[AbstractDataSet]):
-        self._kedro_obj = kedro_obj
+    def __post_init__(self):
         self.dataset_type = (
-            f"{kedro_obj.__class__.__module__}.{kedro_obj.__class__.__qualname__}"
+            f"{self.kedro_obj.__class__.__module__}.{self.kedro_obj.__class__.__qualname__}"
             if self.kedro_obj
             else None
         )
@@ -556,7 +540,7 @@ class TranscodedDataNode(GraphNode):
     def has_metadata(self) -> bool:
         return True
 
-    def __post_init__(self, *args, **kwargs):
+    def __post_init__(self):
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
@@ -729,18 +713,13 @@ class ParametersNode(GraphNode):
     # the layer that this parameters node belongs to
     layer: Optional[str] = field(default=None)
 
-    # the underlying Kedro's AbstractDataSet for this parameters node
-    # n.b. for parameters, this is always MemoryDataSet
-    kedro_obj: InitVar[AbstractDataSet]
-
     # the list of modular pipelines this parameters node belongs to
     modular_pipelines: List[str] = field(init=False)
 
     # the type of this graph node, which is PARAMETERS
     type: str = GraphNodeType.PARAMETERS.value
 
-    def __post_init__(self, kedro_obj: AbstractDataSet):
-        self._kedro_obj = kedro_obj
+    def __post_init__(self):
         if self.is_all_parameters():
             self.namespace = None
             self.modular_pipelines = []
@@ -766,13 +745,13 @@ class ParametersNode(GraphNode):
     @property
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
-        self._kedro_obj: AbstractDataSet
-        if self._kedro_obj is None:
+        self.kedro_obj: AbstractDataSet
+        if self.kedro_obj is None:
             logger.warning(
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name
             )
             return None
-        return self._kedro_obj.load()
+        return self.kedro_obj.load()
 
 
 @dataclass

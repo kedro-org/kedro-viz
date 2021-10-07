@@ -58,8 +58,6 @@ from .repositories import (
     TagsRepository,
 )
 
-NodeDependencies = Dict[str, Set]
-
 
 # pylint: disable=missing-function-docstring
 class DataAccessManager:

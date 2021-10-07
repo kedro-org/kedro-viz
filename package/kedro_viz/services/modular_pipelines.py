@@ -38,10 +38,8 @@ from kedro_viz.models.graph import (
     ModularPipelineNode,
 )
 
-ModularPipelinesTree = Dict[str, ModularPipelineNode]
 
-
-def expand_tree(tree: ModularPipelinesTree) -> ModularPipelinesTree:
+def expand_tree(tree: Dict[str, ModularPipelineNode]) -> Dict[str, ModularPipelineNode]:
     """Expand a given modular pipelines tree by adding parents for each node in the tree
     based on the node's ID. The function will return a new copy of the tree,
     instead of mutating the tree in-place.
