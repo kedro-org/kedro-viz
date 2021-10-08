@@ -12,8 +12,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Display metrics from the latest run on the metadata panel if user defines them 
-with `kedro.extra.datasets.tracking.metrics.MetricsDataSet` in their Kedro project (#554)
+- Display metrics from the latest run on the metadata panel if user defines them with `kedro.extra.datasets.tracking.metrics.MetricsDataSet` in their Kedro project (#554)
 - Visualize and compare metrics from last 10 runs on the metadata panel (#554)
 
 ## Bug fixes and other changes
