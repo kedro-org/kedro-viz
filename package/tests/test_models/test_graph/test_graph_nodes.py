@@ -451,7 +451,7 @@ class TestGraphNodeMetadata:
         metrics_data_node.is_metric_node.return_value = True
         metrics_data_node.kedro_obj._exists.return_value = False
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
-        assert not hasattr(metrics_node_metadata, "metric")
+        assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
 
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
@@ -464,7 +464,7 @@ class TestGraphNodeMetadata:
         metrics_data_node.is_plot_node.return_value = False
         metrics_data_node.is_metric_node.return_value = True
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
-        assert not hasattr(metrics_node_metadata, "metric")
+        assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
 
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
@@ -572,10 +572,11 @@ class TestGraphNodeMetadata:
             filepath.write_text(json.dumps(json_content[index]))
         return source_dir
 
-    # Note - filepath is assigned temp.json as temp solution instead of metrics_filepath
-    # as it fails on windows build. This will be cleaned up in the future.
-    def test_load_latest_metrics(self):
-        filename = "temp.json"
+   
+    def test_load_latest_metrics(self, tmp_path):
+         # Note - filepath is assigned temp.json as temp solution instead of metrics_filepath
+        # as it fails on windows build. This will be cleaned up in the future.
+        filename = tmp_path / "temp.json"
         dataset = MetricsDataSet(filepath=filename)
         data = {"col1": 1, "col2": 0.23, "col3": 0.002}
         dataset.save(data)
@@ -584,9 +585,6 @@ class TestGraphNodeMetadata:
         dataset.save(new_data)
         assert DataNodeMetadata.load_latest_metrics_data(dataset) == new_data
         shutil.rmtree(filename)
-
-    def mock_database_exist(self):
-        return None
 
     def test_load_latest_metrics_fail(self, mocker, metrics_filepath):
         dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
