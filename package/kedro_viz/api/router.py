@@ -40,7 +40,6 @@ from kedro_viz.models.graph import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
-from kedro_viz.services import modular_pipelines_services
 
 from .responses import (
     APIErrorMessage,
@@ -101,10 +100,6 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
         )
     )
 
-    # temporarily serialise the modular pipelines tree back to a list
-    # for backward compatibility before new expand/collapse frontend is merged.
-    modular_pipelines = modular_pipelines_services.tree_to_list(modular_pipelines_tree)
-
     return GraphAPIResponse(
         nodes=data_access_manager.get_nodes_for_registered_pipeline(
             registered_pipeline_id
@@ -118,5 +113,5 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
         ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
         selected_pipeline=registered_pipeline_id,
-        modular_pipelines=modular_pipelines,
+        modular_pipelines=modular_pipelines_tree,
     )

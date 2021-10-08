@@ -80,15 +80,3 @@ def test_expanded_tree_should_add_child_inputs_outputs_to_parent():
     assert expanded_tree["uk"].internal_outputs == {"internal_output"}
     assert expanded_tree["uk"].external_inputs == {"external_input"}
     assert expanded_tree["uk"].external_outputs == {"external_output"}
-
-
-def test_tree_to_list():
-    modular_pipeline_id = "uk.data_science.model_training"
-    modular_pipeline_node = GraphNode.create_modular_pipeline_node(modular_pipeline_id)
-    tree = {modular_pipeline_id: modular_pipeline_node}
-    expanded_tree = modular_pipelines_services.expand_tree(tree)
-    assert modular_pipelines_services.tree_to_list(expanded_tree) == [
-        {"id": "uk", "name": "Uk"},
-        {"id": "uk.data_science", "name": "Data Science"},
-        {"id": "uk.data_science.model_training", "name": "Model Training"},
-    ]
