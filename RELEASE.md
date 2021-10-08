@@ -12,10 +12,18 @@ Please follow the established format:
 
 ## Major features and improvements
 
+- Expose metrics data from the latest run as a dataset node. (#554)
+- Visualize and compare metrics from last 10 runs on the metadata panel. (#554)
+
 ## Bug fixes and other changes
 
 - Overwrite material UI selected row defaults. (#568)
 - Fix URI param parsing for data source. (#578)
+- Add a graphql test endpoint on Kedro-viz server. (#570)
+- Update the demo dataset on Kedro-viz. (#574)
+- Fix auto-reload for metrics run data. (#572)
+- Refactor tests for metadata panel. (#580)
+- Fix metrics tree to get latest metrics data. (#573)
 
 # Release 3.16.0
 
