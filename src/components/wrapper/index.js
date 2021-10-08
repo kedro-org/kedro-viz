@@ -1,22 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { isLoading } from '../../selectors/loading';
 import classnames from 'classnames';
-import ExportModal from '../export-modal';
-import FlowChart from '../flowchart';
 import GlobalToolbar from '../global-toolbar';
-import LargePipelineWarning from '../large-pipeline-warning';
-import LoadingIcon from '../icons/loading';
-import MetaData from '../metadata';
-import PlotlyModal from '../plotly-modal';
+import FlowChartWrapper from '../flowchart-wrapper';
+import ExperimentWrapper from '../experiment-wrapper';
 import SettingsModal from '../settings-modal';
-import Sidebar from '../sidebar';
 import './wrapper.css';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ loading, theme }) => (
+export const Wrapper = ({ theme }) => (
   <div
     className={classnames('kedro-pipeline kedro', {
       'kui-theme--dark': theme === 'dark',
@@ -24,17 +20,18 @@ export const Wrapper = ({ loading, theme }) => (
     })}
   >
     <h1 className="pipeline-title">Kedro-Viz</h1>
-    <GlobalToolbar />
-    <Sidebar />
-    <MetaData />
-    <div className="pipeline-wrapper">
-      <LargePipelineWarning />
-      <FlowChart />
-      <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
-    </div>
-    <ExportModal />
-    <SettingsModal />
-    <PlotlyModal />
+    <Router>
+      <GlobalToolbar />
+      <SettingsModal />
+      <Switch>
+        <Route exact path={['/', '/flowchart']}>
+          <FlowChartWrapper />
+        </Route>
+        <Route path={['/runsList', '/runsList/:id']}>
+          <ExperimentWrapper />
+        </Route>
+      </Switch>
+    </Router>
   </div>
 );
 
