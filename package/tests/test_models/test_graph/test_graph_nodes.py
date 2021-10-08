@@ -28,6 +28,7 @@
 # pylint: disable=too-many-public-methods
 import datetime
 import json
+import shutil
 from pathlib import Path
 from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
@@ -571,15 +572,18 @@ class TestGraphNodeMetadata:
             filepath.write_text(json.dumps(json_content[index]))
         return source_dir
 
-    def test_load_latest_metrics(self, metrics_filepath):
-        dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
-        print(dataset)
+    # Note - filepath is assigned temp.json as temp solution instead of metrics_filepath
+    # as it fails on windows build. This will be cleaned up in the future.
+    def test_load_latest_metrics(self):
+        filename = "temp.json"
+        dataset = MetricsDataSet(filepath=filename)
         data = {"col1": 1, "col2": 0.23, "col3": 0.002}
         dataset.save(data)
         assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
         new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
         dataset.save(new_data)
         assert DataNodeMetadata.load_latest_metrics_data(dataset) == new_data
+        shutil.rmtree(filename)
 
     def mock_database_exist(self):
         return None
