@@ -38,7 +38,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import Any, Dict, List, Optional, Set, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
 
 import pandas as pd
 import plotly.express as px
@@ -48,6 +48,12 @@ from kedro.io.core import VERSION_FORMAT, get_filepath_str
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
+
+# only import MetricsDataSet at top-level for type-checking
+# so it doesn't blow up if user doesn't have the dataset dependencies installed.
+if TYPE_CHECKING:  # pragma: no cover
+    from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
+
 
 logger = logging.getLogger(__name__)
 
@@ -514,9 +520,10 @@ class DataNodeMetadata(GraphNodeMetadata):
             dataset = cast(MetricsDataSet, dataset)
             if not dataset._exists() or self.filepath is None:
                 return
-            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
-            with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
-                self.metrics = json.load(fs_file)
+            metrics = self.load_latest_metrics_data(dataset)
+            if not metrics:
+                return
+            self.metrics = metrics
             metrics_data = self.load_metrics_versioned_data(self.filepath)
             if not metrics_data:
                 return
@@ -527,6 +534,28 @@ class DataNodeMetadata(GraphNodeMetadata):
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
+
+    @staticmethod
+    def load_latest_metrics_data(
+        dataset: "MetricsDataSet",
+    ) -> Optional[Dict[str, float]]:
+        """Load data for latest versions of the metrics dataset.
+        Below operation is also on kedro.io.core -> fetched_latest_load_version()
+        However it is a cached function and hence cannot be relied upon
+        Args:
+            dataset: the latest version of the metrics dataset
+        Returns:
+            A dictionary containing json data for the latest version
+        """
+        pattern = str(dataset._get_versioned_path("*"))
+        version_paths = sorted(dataset._glob_function(pattern), reverse=True)
+        most_recent = next(
+            (path for path in version_paths if dataset._exists_function(path)), None
+        )
+        if not most_recent:
+            return None
+        with dataset._fs.open(most_recent, **dataset._fs_open_args_load) as fs_file:
+            return json.load(fs_file)
 
     @staticmethod
     def load_metrics_versioned_data(
