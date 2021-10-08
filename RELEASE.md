@@ -18,7 +18,7 @@ with `kedro.extra.datasets.tracking.metrics.MetricsDataSet` in their Kedro proje
 
 ## Bug fixes and other changes
 
-- Overwrite material UI selected row defaults. (#568)
+- Overwrite material UI selected row defaults (#568)
 - Fix URI param parsing for data source. (#578)
 - Introduce graphql endpoint on Kedro-viz (#570)
 - Update the demo dataset on Kedro-viz (#574)
