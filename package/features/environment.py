@@ -109,7 +109,7 @@ def _setup_context_with_venv(context, venv_dir):
             "botocore",
             "dynaconf==3.1.5",
             "PyYAML>=4.2, <6.0",
-            "click<8.0"
+            "click<8.0",
         ],
         env=context.env,
     )
