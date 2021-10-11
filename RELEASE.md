@@ -11,7 +11,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Relax pandas requirements.
+- Relax pandas and plotly versions.
 
 # Release 3.17.0
 
