@@ -38,9 +38,9 @@ describe('RunsListCard', () => {
     const wrapper = mount(
       <RunsListCard data={randomRun} onClick={setActive} />
     );
-    const handleClick = jest.spyOn(React, 'useState');
+    const onClick = jest.spyOn(React, 'useState');
 
-    handleClick.mockImplementation((active) => [active, setActive]);
+    onClick.mockImplementation((active) => [active, setActive]);
     wrapper.simulate('click');
     expect(setActive).toBeTruthy();
     expect(wrapper.find('.runs-list-card--active').length).toBe(1);

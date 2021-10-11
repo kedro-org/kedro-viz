@@ -1,4 +1,5 @@
 import React from 'react';
+import Accordion from '../accordion';
 import RunsListCard from '../runs-list-card';
 import { useRunIdsFromUrl } from '../../../utils';
 
@@ -39,11 +40,11 @@ const runData = [
 /**
  * Main runs-list container.
  */
-export const RunsList = () => {
+const RunsList = () => {
   const { run, compare, compareList } = useRunIdsFromUrl();
 
-  // the following are only placeholders to indicate routing intent and should be
-  // deleted on building the actual implementation of the runsList
+  // the following are only placeholders to indicate routing intent and should
+  // be deleted on building the actual implementation of the runsList
   return (
     <>
       <h1 style={{ marginBottom: 20 }}>
@@ -60,11 +61,13 @@ export const RunsList = () => {
             Run {run} selected
           </h2>
         ))}
-      <div className="runs-list__wrapper">
-        {runData.map((data, i) => (
-          <RunsListCard data={data} key={i} />
-        ))}
-      </div>
+      <Accordion heading="All" headingDetail={runData.length}>
+        <div className="runs-list__wrapper">
+          {runData.map((data, i) => (
+            <RunsListCard data={data} key={i} />
+          ))}
+        </div>
+      </Accordion>
     </>
   );
 };

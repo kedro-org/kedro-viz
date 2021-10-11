@@ -5,20 +5,16 @@ import CheckIcon from '../../icons/check';
 
 import './runs-list-card.css';
 
-export const RunsListCard = ({ data }) => {
+const RunsListCard = ({ data }) => {
   const { bookmark, id, timestamp, title } = data;
   const [active, setActive] = useState(false);
-
-  const handleClick = () => {
-    setActive(!active);
-  };
 
   return (
     <div
       className={classnames('kedro', 'runs-list-card', {
         'runs-list-card--active': active,
       })}
-      onClick={handleClick}
+      onClick={() => setActive(!active)}
     >
       {active ? <CheckIcon className={'runs-list-card__checked'} /> : null}
       <div>
