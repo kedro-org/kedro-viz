@@ -573,14 +573,15 @@ class TestGraphNodeMetadata:
             filepath.write_text(json.dumps(json_content[index]))
         return source_dir
 
-    def test_load_latest_metrics(self, tmp_path):
+    def test_load_latest_metrics(self):
         # Note - filepath is assigned temp.json as temp solution instead of metrics_filepath
         # as it fails on windows build. This will be cleaned up in the future.
-        filename = tmp_path / "temp.json"
-        dataset = MetricsDataSet(filepath=f"{filename}")
+        filename = "temp.json"
+        dataset = MetricsDataSet(filepath=filename)
         data = {"col1": 1, "col2": 0.23, "col3": 0.002}
         dataset.save(data)
         assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
+        #to avoid datasets being saved concurrently 
         time.sleep(1)
         new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
         dataset.save(new_data)
