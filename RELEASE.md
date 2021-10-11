@@ -11,7 +11,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Disable layers visualisation instead of throwing an error when there is a cycle in layers. (#383)
-- Dislay layers when layers dependency can't be established in a disjoint graph.
+- Disable layers when their dependency cannot be established in a disjoint graph.
 
 # Release 3.17.0
 

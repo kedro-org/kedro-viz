@@ -222,8 +222,8 @@ class RegisteredPipelinesRepository:
 
 class ModularPipelinesRepository:
     """Repository for the set of modular pipelines in a registered pipeline.
-    Internally, the repostiory models the set of modular pipelines as a tree using child-references.
-    For more detail about this representatin, see:
+    Internally, the repository models the set of modular pipelines as a tree using child-references.
+    For more detail about this representation, see:
     https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
 
 
@@ -232,7 +232,7 @@ class ModularPipelinesRepository:
     https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-materialized-paths/
     For examples:
     - A node could have a materialized path as a namespace property,
-    i.e. namesapce="uk.data_science"
+    i.e. namespace="uk.data_science"
     - A dataset could have a materialized path baked into its name,
     i.e. "uk.data_science.model"
     This allows for compaction in data representation during execution,

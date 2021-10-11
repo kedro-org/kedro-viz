@@ -101,7 +101,7 @@ class DataAccessManager:
         such as modular pipelines, layers, etc. and add them to relevant repositories.
 
         The purpose of this method is to construct a set of repositories of Viz-specific
-        domain models from raw Kedro object before feeding them to the API serialisation layer.
+        domain models from raw Kedro objects before feeding them to the API serialisation layer.
 
         Args:
             registered_pipeline_id: The ID of the registered pipeline to add to the graph.
@@ -333,7 +333,7 @@ class DataAccessManager:
     def get_node_dependencies_for_registered_pipeline(
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict[str, Set]:
-        """Return all edges for a given registered pipeline.
+        """Return all node dependencies for a given registered pipeline.
 
         Args:
             registered_pipeline_id: The registered pipeline ID to get edges for.
@@ -383,7 +383,8 @@ class DataAccessManager:
         root_children_ids = set()
 
         # turn all modular pipelines in the tree into a graph node for visualisation,
-        # except for the artificial root node.
+        # except for the artificial root node and nodes that don't belong to the
+        # currently selected registered pipeline.
         for (
             modular_pipeline_id,
             modular_pipeline_node,
@@ -409,7 +410,7 @@ class DataAccessManager:
             root_children_ids.update(modular_pipeline_node.external_outputs)
 
         # After adding modular pipeline nodes into the graph,
-        # There is a chance that the graph with these nodes contains cycle if
+        # There is a chance that the graph with these nodes contains cycles if
         # users construct their modular pipelines in a few particular ways.
         # To detect the cycles, we simply search for all reachable
         # descendants of a modular pipeline node and check if

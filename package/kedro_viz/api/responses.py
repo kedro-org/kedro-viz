@@ -207,6 +207,8 @@ class NamedEntityAPIResponse(BaseAPIResponse):
 
 
 class ModularPipelineChildAPIResponse(BaseAPIResponse):
+    """Model a child in a modular pipeline's children field in the API response."""
+
     id: str
     type: str
 

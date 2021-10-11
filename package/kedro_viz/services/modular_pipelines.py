@@ -26,7 +26,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.services.modular_pipelines` defines modular pipelines-related business logic.
-The service layer consist of pure functions opearting on domain models.
+The service layer consist of pure functions operating on domain models.
 """
 from typing import Dict, List
 
@@ -47,10 +47,10 @@ def expand_tree(
     instead of mutating the tree in-place.
 
     While adding a parent of a modular pipeline into the tree, it also updates
-    the parent's inputs & ouputs with the modular pipeline's inputs & outputs.
+    the parent's inputs & outputs with the modular pipeline's inputs & outputs.
 
     Args:
-        modular_pipelines_tree: The modulars pipeline tree to expand.
+        modular_pipelines_tree: The modular pipeline stree to expand.
     Returns:
         The expanded modular pipelines tree.
     Example:
