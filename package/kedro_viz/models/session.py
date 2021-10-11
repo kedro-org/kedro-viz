@@ -2,7 +2,7 @@
 Named KedroSession to avoid confusion with sqlalchemy Session
 and fastapi Session.
 """
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, String
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -11,7 +11,7 @@ Base = declarative_base()
 class KedroSession(Base):
     __tablename__ = "sessions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     blob = Column(String)
 
     class Config:

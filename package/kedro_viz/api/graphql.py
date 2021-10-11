@@ -42,7 +42,7 @@ from kedro_viz.models.session import Base, KedroSession
 
 
 def get_db():
-    session_class, engine = create_db_engine()
+    engine, session_class = create_db_engine()
     Base.metadata.create_all(bind=engine)
     db = session_class()
     try:
@@ -56,9 +56,6 @@ class KedroSessionGraphQLType:
     id: str
     blob: str
 
-@strawberry.type
-class HealthCheck:
-    status: str
 
 def get_all_sessions() -> typing.List[KedroSessionGraphQLType]:
     db = next(get_db())
