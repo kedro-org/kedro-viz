@@ -72,6 +72,7 @@ def count_truthy(elements: List[Any]) -> int:
     - A working user-journey, however small
     - A backward-compatible change that paves the way for future features implementations
     - A non-breaking refactoring of the code
+    - Note: to be considered complete, the branch must include tests (end to end or unit tests) for the newly introduced feature or fix
 - We embrace freedom to make exception when absolutely necessary.
 - We use a naming convention that helps us keep track of branches in a logical, consistent way. All branches should have the hyphen-separated convention of: `<type-of-change>/<short-description-of-change>` e.g. `feature/awesome-new-feature`.
 
@@ -166,7 +167,15 @@ Install kedro-viz's development dependencies with:
 pip3 install -r package/test_requirements.txt
 ```
 
-Then launch the server with
+Build the application with:
+
+```bash
+make build
+```
+
+As far as the development server for the backend is concerned, you only nede to run `make build` once when you first setup the project.
+
+Then launch the server with:
 
 ```bash
 PYTHONPATH=$(pwd)/package python3 package/kedro_viz/server.py <path-to-your-test-project>/new-kedro-project
