@@ -12,9 +12,7 @@ The Kedro team pledges to foster and maintain a welcoming and friendly community
 
 We use [GitHub Issues](https://github.com/quantumblacklabs/kedro-viz/issues) to keep track of known bugs. We keep a close eye on them and try to make it clear when we have an internal fix in progress. Before reporting a new issue, please do your best to ensure your problem hasn't already been reported. If so, it's often better to just leave a comment on an existing issue, rather than create a new one. Old issues also can often include helpful tips and solutions to common problems.
 
-If you are looking for help with your code, please consider posting a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/kedro-viz). If you tag it `kedro-viz`, `kedro` and `python`, more people will see it and may be able to help. We are unable to provide individual support via email. In the interest of community engagement we also believe that help is much more valuable if it's shared publicly, so that more people can benefit from it.
-
-If you're over on Stack Overflow and want to boost your points, take a look at the `kedro-viz` tag and see if you can help others out by sharing your knowledge. It's another great way to contribute.
+If you are looking for help with your code, please consider posting a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/kedro-viz) or our [Discord channel](https://discord.gg/4qeKKspFf8). 
 
 If you have already checked the [existing issues](https://github.com/quantumblacklabs/kedro-viz/issues) on GitHub and are still convinced that you have found odd or erroneous behaviour then please file a [new issue](https://github.com/quantumblacklabs/kedro-viz/issues/new/choose). We have a template that helps you provide the necessary information we'll need in order to address your query.
 
@@ -37,7 +35,16 @@ Working on your first pull request? You can learn how from these resources:
 - [First timers only](https://www.firsttimersonly.com/)
 - [How to contribute to an open source project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github)
 
-### Guidelines
+## Contribution process
+
+-  Fork the project
+-  Develop your contribution in a new branch and open a PR against the `main` branch
+-  Make sure the CI builds are green (have a look at the section [Running checks locally](#running-checks-locally) below)
+-  Update the PR according to the reviewer's comments
+
+# Contribution guidelines
+
+## General guidelines
 
 > **Note**: We only accept contributions under the [Apache 2.0](https://opensource.org/licenses/Apache-2.0) license and you should have permission to share the submitted code.
 
@@ -56,9 +63,51 @@ def count_truthy(elements: List[Any]) -> int:
 
 - Keep UI elements fully keyboard accessible, and aim to support screen-readers where possible
 - Maintain a high level of animation performance, and minimise page-load time
-- We use the set of colours defined in the [Kedro-Viz Style Guide](https://github.com/quantumblacklabs/kedro-viz/blob/main/STYLE_GUIDE.md) for all colour variables and usage.
+- Comply with the set of colours defined in the [Kedro-Viz Style Guide](https://github.com/quantumblacklabs/kedro-viz/blob/main/STYLE_GUIDE.md) for all colour variables and usage
 
-### JavaScript Development
+## Git branching guidelines
+
+- We practice [Trunk-Based Development](https://trunkbaseddevelopment.com/).
+- We bias towards small, complete pieces of work that can be merged into trunk. "Complete" is defined as:
+    - A working user-journey, however small
+    - A backward-compatible change that paves the way for future features implementations
+    - A non-breaking refactoring of the code
+    - Note: to be considered complete, the branch must include tests (end to end or unit tests) for the newly introduced feature or fix
+- We embrace freedom to make exception when absolutely necessary.
+- We use a naming convention that helps us keep track of branches in a logical, consistent way. All branches should have the hyphen-separated convention of: `<type-of-change>/<short-description-of-change>` e.g. `feature/awesome-new-feature`.
+
+| Types of changes | Description |
+| ---------------- | ----------- |
+| `docs`    | Changes to the documentation of the plugin |
+| `feature` | Non-breaking change which adds functionality |
+| `fix`     | Non-breaking change which fixes an issue |
+| `tests`   | Changes to project unit (`tests/`) and / or integration (`features/`) tests |
+
+Alternatively, if you know the JIRA ticket number of the issue that you are fixing, you can prefix your branch name with it, e.g. `KED-<JIRA-ticket-number>/short-description-of-the-issue`.
+
+## PR authoring guidelines
+
+- PRs for releasable changes must always be made against `main`. As per Trunk-based Development convention, `main` branch must always be releasable.
+- PRs must update the release note for the upcoming release with details about the change.
+- Request review on a PR only as the PR is fully ready for review, i.e. no debugging statement, no stylistic non-compliance.
+- Publish a draft PR if you need informal, fast feedback on a work in progress.
+- A demo build of frontend changes is automatically created at `http://kedro-viz-fe.s3-website.eu-west-2.amazonaws.com/<your-branch-name>` for every new branch.
+- Make sure you tick items in the PR checklist as appropriate.
+
+## PR review guidelines
+
+- Focus on correctness, as opposed to nit-picking
+- Strive for consistency with existing codebase
+- Disagree and commit fast before discussion derails to bike shedding
+- Mark optional review suggestions with `Optional` or `Nit`. These suggestions should still be respected, discussed and resolved, but the PR author can choose to disagree
+- Assume review suggestions and questions are made from a helpful, knowledge-sharing, collaborative frame by default
+- Normalise pointing out improvements unrelated to the current PR in review, then file a JIRA ticket to resolve it in another PR
+
+## Development guidelines
+
+### JavaScript development
+
+_*Note*: We use `node==14` in our development environment._
 
 First clone this repo, then download and install dependencies:
 
@@ -78,7 +127,7 @@ This will serve the app at [localhost:4141](http://localhost:4141/), and watch f
 npm run lib
 ```
 
-#### Launch a development server with a real Kedro project
+### Launch a development server with a real Kedro project
 
 > **Note**: Kedro-Viz>=3.8.0 will not work with projects created with Kedro<=0.16.6. Please consider migrating your project to Kedro>=0.17.0 before you develop against the latest version of Kedro-Viz. 
 
@@ -118,7 +167,15 @@ Install kedro-viz's development dependencies with:
 pip3 install -r package/test_requirements.txt
 ```
 
-Then launch the server with
+Build the application with:
+
+```bash
+make build
+```
+
+As far as the development server for the backend is concerned, you only nede to run `make build` once when you first setup the project.
+
+Then launch the server with:
 
 ```bash
 PYTHONPATH=$(pwd)/package python3 package/kedro_viz/server.py <path-to-your-test-project>/new-kedro-project
@@ -127,7 +184,7 @@ This command will launch a Kedro-Viz server at [localhost:4142](http://localhost
 
 > **Note**: Once the development server is launched at port 4142, the local app will always pull data from that server. To prevent this, you can comment out the proxy setting in `package.json` and restart the dev server at port 4141.
 
-#### Data sources
+### Data sources
 
 Kedro-Viz uses a unique identifier to determine the data source from one of several available sources. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
 
@@ -150,23 +207,10 @@ Alternatively, you can synchronously load one of the mock datasets in `/src/util
 
 Finally, you can use pseudo-random data, which is procedurally-generated on page load, and is often useful for local development. Random data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
 
-### Branching conventions
+## Testing guidelines
 
-We use a branching model that helps us keep track of branches in a logical, consistent way. All branches should have the hyphen-separated convention of: `<type-of-change>/<short-description-of-change>` e.g. `feature/awesome-new-feature`
-
-| Types of changes | Description |
-| ---------------- | ----------- |
-| `docs`    | Changes to the documentation of the plugin |
-| `feature` | Non-breaking change which adds functionality |
-| `fix`     | Non-breaking change which fixes an issue |
-| `tests`   | Changes to project unit (`tests/`) and / or integration (`features/`) tests |
-
-## Plugin contribution process
-
-1.  Fork the project
-2.  Develop your contribution in a new branch and open a PR against the `main` branch
-3.  Make sure the CI builds are green (have a look at the section [Running checks locally](#running-checks-locally) below)
-4.  Update the PR according to the reviewer's comments
+- Scope out major journeys from acceptance criteria from the ticket for manual end-to-end testing
+- Write any other necessary tests (e.g. unit tests, snapshot tests, etc.) needed to give us enough confidence on the implementation
 
 ### JavaScript application tests
 
@@ -190,7 +234,7 @@ npm run test:coverage
 
 See the [Create-React-App docs](https://github.com/facebook/create-react-app) for further information on JS testing.
 
-#### Testing package imports
+### Testing package imports
 
 You can simulate how the published package will behave when imported into another JavaScript application by running
 
@@ -208,22 +252,12 @@ cd tools/test-lib/react-app
 npm test
 ```
 
-## Python web server tests
+### Python web server tests
 
-To run E2E tests you need to install the test requirements which includes `behave`, do this using the following command:
+Before running Python tests, install test requirements:
 
 ```bash
 pip install -r test_requirements.txt
-```
-
-### Running checks locally
-
-All checks run by our CI / CD pipeline can be run locally on your computer.
-
-#### PEP-8 Standards (`isort`, `pylint` and `flake8`)
-
-```bash
-make lint
 ```
 
 #### Unit tests, 100% coverage (`pytest`, `pytest-cov`)
@@ -237,6 +271,15 @@ make pytest
 ```bash
 make e2e-tests
 ```
+#### Linting tests (`isort`, `pylint` and `flake8`)
+
+```bash
+make lint
+```
+
+# Release guidelines
+
+- Practice frequent, staggered releases.
 
 ## Release process
 
