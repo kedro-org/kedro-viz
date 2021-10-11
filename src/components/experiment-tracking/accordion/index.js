@@ -3,6 +3,12 @@ import classnames from 'classnames';
 
 import './accordion.css';
 
+/**
+ * A collapsable container component.
+ * @param {object} children React children
+ * @param {string} heading Text to display on the top-level
+ * @param {string|null} headingDetail A secondary text string for additional context
+ */
 const Accordion = ({
   children,
   heading = 'Heading here',

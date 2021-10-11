@@ -5,8 +5,12 @@ import CheckIcon from '../../icons/check';
 
 import './runs-list-card.css';
 
+/**
+ * Display a card showing run info from an experiment
+ * @param {object} data High-level data from the run (id, timestamp, etc.)
+ */
 const RunsListCard = ({ data }) => {
-  const { bookmark, id, timestamp, title } = data;
+  const { bookmark = false, id, timestamp, title = null } = data;
   const [active, setActive] = useState(false);
 
   return (
