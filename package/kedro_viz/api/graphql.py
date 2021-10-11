@@ -71,8 +71,6 @@ class Query:
         resolver=get_all_sessions
     )
 
-schema = strawberry.Schema(query=Query)
-
 router = APIRouter()
 
 schema = strawberry.Schema(query=Query)

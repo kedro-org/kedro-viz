@@ -33,8 +33,6 @@ from typing import Dict, Iterable, List, Optional, Set
 import kedro
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 from semver import VersionInfo
-from sqlalchemy import Column, Integer, String
-
 
 from kedro_viz.models.graph import (
     GraphEdge,
