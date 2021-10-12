@@ -13,6 +13,11 @@ Please follow the established format:
 
 - Relax pandas and plotly versions.
 
+## Bug fixes and other changes
+
+- Disable layers visualisation instead of throwing an error when there is a cycle in layers. (#383)
+- Disable layers when their dependency cannot be established in a disjoint graph.
+
 # Release 3.17.0
 
 ## Major features and improvements

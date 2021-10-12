@@ -38,7 +38,6 @@ from watchgod import run_process
 from kedro_viz.api import apps, responses
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
-from kedro_viz.services import layers_services
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 4141
@@ -60,12 +59,6 @@ def populate_data(
     """
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)
-    data_access_manager.set_layers(
-        layers_services.sort_layers(
-            data_access_manager.nodes.as_dict(),
-            data_access_manager.node_dependencies,
-        )
-    )
 
 
 def run_server(
