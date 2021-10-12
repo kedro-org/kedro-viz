@@ -43,7 +43,7 @@ const runData = [
 const RunsList = () => {
   const { run, compare, compareList } = useRunIdsFromUrl();
 
-  // the following are only placeholders to indicate routing intent and should
+  // The following are only placeholders to indicate routing intent and should
   // be deleted on building the actual implementation of the runsList
   return (
     <>
