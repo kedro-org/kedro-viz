@@ -25,8 +25,10 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# pylint: disable=too-many-public-methods
 import datetime
 import json
+import shutil
 from pathlib import Path
 from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
@@ -35,6 +37,7 @@ import pandas as pd
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
 from kedro.extras.datasets.spark import SparkDataSet
+from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.pipeline.node import node
 
@@ -397,14 +400,14 @@ class TestGraphNodeMetadata:
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
 
-    @patch("json.load")
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.create_metrics_plot")
     def test_metrics_data_node_metadata(
         self,
         patched_metrics_plot,
+        patched_latest_metrics,
         patched_data_loader,
-        patched_json_load,
     ):
         mock_metrics_data = {
             "recommendations": 0.0009277445547700936,
@@ -432,8 +435,8 @@ class TestGraphNodeMetadata:
                 }
             ]
         }
-        patched_json_load.return_value = mock_metrics_data
         patched_data_loader.return_value = mock_version_data
+        patched_latest_metrics.return_value = mock_metrics_data
         patched_metrics_plot.return_value = mock_plot_data
         metrics_data_node = MagicMock()
         metrics_data_node.is_plot_node.return_value = False
@@ -448,22 +451,35 @@ class TestGraphNodeMetadata:
         metrics_data_node.is_metric_node.return_value = True
         metrics_data_node.kedro_obj._exists.return_value = False
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
-        assert not hasattr(metrics_node_metadata, "metric")
+        assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
 
-    @patch("json.load")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
+    def test_metrics_data_node_metadata_latest_metrics_not_exist(
+        self,
+        patched_latest_metrics,
+    ):
+        patched_latest_metrics.return_value = None
+        metrics_data_node = MagicMock()
+        metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_metric_node.return_value = True
+        metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
+        assert not hasattr(metrics_node_metadata, "metrics")
+        assert not hasattr(metrics_node_metadata, "plot")
+
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
     def test_metrics_data_node_metadata_versioned_dataset_not_exist(
         self,
         patched_data_loader,
-        patched_json_load,
+        patched_latest_metrics,
     ):
         mock_metrics_data = {
             "recommendations": 0.0009277445547700936,
             "recommended_controls": 0.001159680693462617,
             "projected_optimization": 0.0013916168321551402,
         }
-        patched_json_load.return_value = mock_metrics_data
+        patched_latest_metrics.return_value = mock_metrics_data
         patched_data_loader.return_value = {}
         metrics_data_node = MagicMock()
         metrics_data_node.is_plot_node.return_value = False
@@ -488,7 +504,7 @@ class TestGraphNodeMetadata:
         assert "layout" in test_plot
 
     @pytest.fixture
-    def metrics_filepath(self, tmpdir):
+    def metrics_filepath(self, tmp_path):
         dir_name = ["2021-09-10T09.02.44.245Z", "2021-09-10T09.03.23.733Z"]
         filename = "metrics.json"
         json_content = [
@@ -503,7 +519,7 @@ class TestGraphNodeMetadata:
                 "projected_optimization": 0.30057499608184196,
             },
         ]
-        source_dir = Path(tmpdir / filename)
+        source_dir = Path(tmp_path / filename)
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -511,7 +527,30 @@ class TestGraphNodeMetadata:
         return source_dir
 
     @pytest.fixture
-    def metrics_filepath_invalid_timestamp(self, tmpdir):
+    def metrics_filepath_reload(self, tmp_path):
+        dir_name = ["2021-09-10T09.03.55.245Z", "2021-09-10T09.03.56.733Z"]
+        filename = "metrics.json"
+        json_content = [
+            {
+                "recommendations": 0.4,
+                "recommended_controls": 0.5,
+                "projected_optimization": 0.6,
+            },
+            {
+                "recommendations": 0.7,
+                "recommended_controls": 0.8,
+                "projected_optimization": 0.9,
+            },
+        ]
+        source_dir = Path(tmp_path / filename)
+        for index, directory in enumerate(dir_name):
+            filepath = Path(source_dir / directory / filename)
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+            filepath.write_text(json.dumps(json_content[index]))
+        return source_dir
+
+    @pytest.fixture
+    def metrics_filepath_invalid_timestamp(self, tmp_path):
         dir_name = ["2021", "2021"]
         filename = "metrics.json"
         json_content = [
@@ -526,12 +565,30 @@ class TestGraphNodeMetadata:
                 "projected_optimization": 0.30057499608184196,
             },
         ]
-        source_dir = Path(tmpdir / filename)
+        source_dir = Path(tmp_path / filename)
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
             filepath.write_text(json.dumps(json_content[index]))
         return source_dir
+
+    def test_load_latest_metrics(self, tmp_path):
+        # Note - filepath is assigned temp.json as temp solution instead of metrics_filepath
+        # as it fails on windows build. This will be cleaned up in the future.
+        filename = "temp.json"
+        dataset = MetricsDataSet(filepath=filename)
+        data = {"col1": 1, "col2": 0.23, "col3": 0.002}
+        dataset.save(data)
+        assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
+        new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
+        dataset.save(new_data)
+        assert DataNodeMetadata.load_latest_metrics_data(dataset) == new_data
+        shutil.rmtree(filename)
+
+    def test_load_latest_metrics_fail(self, mocker, metrics_filepath):
+        dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
+        mocker.patch.object(dataset, "_exists_function", return_value=False)
+        assert DataNodeMetadata.load_latest_metrics_data(dataset) is None
 
     def test_load_metrics_versioned_data(self, metrics_filepath):
         mock_metrics_json = {
