@@ -96,7 +96,7 @@ def _setup_context_with_venv(context, venv_dir):
     context.env["PATH"] = path_sep.join(path)
     # Windows thinks the pip version check warning is a failure
     # so disable it here.
-    context.env["PIP_DISABLE_PIP_VERSION_CHECK"] = 1
+    context.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
 
     call(
         [
