@@ -7,6 +7,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 3.17.1
+
+## Bug fixes and other changes
+
+- Relax pandas and plotly versions.
 
 # Release 3.17.0
 
