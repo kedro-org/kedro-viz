@@ -215,8 +215,23 @@ const normalizeData = (data) => {
     return state;
   }
 
-  data.nodes.forEach(addNode(state));
-  data.edges.forEach(addEdge(state));
+  // temporarily filter out modularPipeline nodes and edges
+  const modularPipelineNodes = new Set();
+  data.nodes.forEach((node) => {
+    if (node.type === 'modularPipeline') {
+      modularPipelineNodes.add(node.id);
+    } else {
+      addNode(state)(node);
+    }
+  });
+  data.edges.forEach((edge) => {
+    if (
+      !modularPipelineNodes.has(edge.source) &&
+      !modularPipelineNodes.has(edge.target)
+    ) {
+      addEdge(state)(edge);
+    }
+  });
   if (data.pipelines) {
     data.pipelines.forEach(addPipeline(state));
     if (state.pipeline.ids.length) {
