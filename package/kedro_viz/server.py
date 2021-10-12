@@ -37,7 +37,7 @@ from watchgod import run_process
 
 from kedro_viz.api import apps, responses
 from kedro_viz.data_access import DataAccessManager, data_access_manager
-from kedro_viz.integrations.kedro import data_loader as kedro_data_loader, session_store
+from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.services import layers_services
 
 DEFAULT_HOST = "127.0.0.1"
