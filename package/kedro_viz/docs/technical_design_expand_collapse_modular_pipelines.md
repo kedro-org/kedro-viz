@@ -61,7 +61,7 @@ With this structure, both rendering and search can be implemented easily with si
 The high-level technical design of this feature consists of:
 
 1. Conversion logic between Kedro core's materialized path representation and Kedro-Viz's child-references representation
-of the modular pipelines tree. This logic lives in the data access manager when adding modular pipelines to their repository
+of the modular pipelines tree. This logic lives in the data access manager when adding modular pipelines to the repository
 in the backend.
 2. A new API response with the child-references representation of modular pipelines tree. The API response will also contain:
     - All modular pipelines as graph nodes and corresponding edges connecting them with other nodes.
