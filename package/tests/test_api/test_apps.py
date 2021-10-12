@@ -82,7 +82,7 @@ def test_graphql_run_query():
             query TestQuery($runId: ID!) {
                 run(runId: $runId) {
                     id
-                    bookmark    
+                    bookmark
                     timestamp
                     title
                     metadata {
@@ -118,7 +118,7 @@ def test_graphql_runs_query():
                 query TestQuery{
                     runs {
                         id
-                        bookmark    
+                        bookmark
                         timestamp
                         title
                     }
