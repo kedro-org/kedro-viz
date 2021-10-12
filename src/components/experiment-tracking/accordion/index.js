@@ -9,11 +9,7 @@ import './accordion.css';
  * @param {string} heading Text to display on the top-level
  * @param {string|null} headingDetail A secondary text string for additional context
  */
-const Accordion = ({
-  children,
-  heading = 'Heading here',
-  headingDetail = null,
-}) => {
+const Accordion = ({ children, heading = '', headingDetail = null }) => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (

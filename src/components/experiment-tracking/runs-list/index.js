@@ -47,20 +47,16 @@ const RunsList = () => {
   // be deleted on building the actual implementation of the runsList
   return (
     <>
-      <h1 style={{ marginBottom: 20 }}>
+      <h1>
         {run !== null
           ? 'Single view'
           : compare !== null
           ? 'Compare view'
           : 'No runs'}
       </h1>
-      {run !== null && <h2 style={{ marginBottom: 20 }}>Run {run} selected</h2>}
+      {run !== null && <h2>Run {run} selected</h2>}
       {compareList !== null &&
-        compareList.map((run, i) => (
-          <h2 key={i} style={{ marginBottom: 20 }}>
-            Run {run} selected
-          </h2>
-        ))}
+        compareList.map((run, i) => <h2 key={i}>Run {run} selected</h2>)}
       <Accordion heading="All" headingDetail={runData.length}>
         <div className="runs-list__wrapper">
           {runData.map((data, i) => (
