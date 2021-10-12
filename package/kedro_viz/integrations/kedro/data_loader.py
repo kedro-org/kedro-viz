@@ -82,7 +82,8 @@ def load_data(
             project_path=project_path, env=env, save_on_close=False
         )
         context = session.load_context()
-        return context.catalog, cast(Dict, pipelines)
+        session_store = session._store
+        return context.catalog, cast(Dict, pipelines), session_store
 
     if KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
@@ -92,7 +93,8 @@ def load_data(
         )
 
         context = session.load_context()
-        return context.catalog, context.pipelines
+        session_store = session._store
+        return context.catalog, context.pipelines, session_store
 
     if KEDRO_VERSION.match("==0.17.0"):
         from kedro.framework.session import KedroSession
@@ -107,10 +109,11 @@ def load_data(
         )
 
         context = session.load_context()
-        return context.catalog, context.pipelines
+        session_store = session._store
+        return context.catalog, context.pipelines, session_store
 
     # pre-0.17 load_context version
     from kedro.framework.context import load_context
 
     context = load_context(project_path=project_path, env=env)
-    return context.catalog, context.pipelines
+    return context.catalog, context.pipelines, None

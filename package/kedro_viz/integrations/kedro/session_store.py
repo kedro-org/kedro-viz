@@ -20,7 +20,7 @@ def get_db():
 class SessionStore(BaseSessionStore):
     """Stores the session data on disk using `shelve` package."""
 
-    @staticmethod
+    @property
     def location(self) -> Path:
         return Path(self._path).expanduser().resolve() / "session_store"
 

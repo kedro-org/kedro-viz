@@ -37,7 +37,7 @@ from watchgod import run_process
 
 from kedro_viz.api import apps, responses
 from kedro_viz.data_access import DataAccessManager, data_access_manager
-from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+from kedro_viz.integrations.kedro import data_loader as kedro_data_loader, session_store
 from kedro_viz.services import layers_services
 
 DEFAULT_HOST = "127.0.0.1"
@@ -54,12 +54,14 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
+    session_store
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
     """
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)
+    data_access_manager.add_session_store(session_store)
     data_access_manager.set_layers(
         layers_services.sort_layers(
             data_access_manager.nodes.as_dict(),
@@ -98,13 +100,13 @@ def run_server(
     """
     if load_file is None:
         path = Path(project_path) if project_path else Path.cwd()
-        catalog, pipelines = kedro_data_loader.load_data(path, env)
+        catalog, pipelines, session_store = kedro_data_loader.load_data(path, env)
         pipelines = (
             pipelines
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
-        populate_data(data_access_manager, catalog, pipelines)
+        populate_data(data_access_manager, catalog, pipelines, session_store)
         if save_file:
             res = responses.get_default_response()
             Path(save_file).write_text(res.json(indent=4, sort_keys=True))
