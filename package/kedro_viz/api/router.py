@@ -40,6 +40,7 @@ from kedro_viz.models.graph import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
+from kedro_viz.services import modular_pipelines_services
 
 from .responses import (
     APIErrorMessage,
@@ -85,26 +86,37 @@ async def get_single_node_metadata(node_id: str):
 
 
 @router.get(
-    "/pipelines/{pipeline_id}",
+    "/pipelines/{registered_pipeline_id}",
     response_model=GraphAPIResponse,
 )
-async def get_single_pipeline_data(pipeline_id: str):
-    if not data_access_manager.registered_pipelines.has_pipeline(pipeline_id):
+async def get_single_pipeline_data(registered_pipeline_id: str):
+    if not data_access_manager.registered_pipelines.has_pipeline(
+        registered_pipeline_id
+    ):
         return JSONResponse(status_code=404, content={"message": "Invalid pipeline ID"})
 
-    node_ids = data_access_manager.registered_pipelines.get_node_ids_by_pipeline_id(
-        pipeline_id
+    modular_pipelines_tree = (
+        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+            registered_pipeline_id
+        )
     )
-    nodes = data_access_manager.nodes.get_nodes_by_ids(node_ids)
+
+    # temporarily serialise the modular pipelines tree back to a list
+    # for backward compatibility before new expand/collapse frontend is merged.
+    modular_pipelines = modular_pipelines_services.tree_to_list(modular_pipelines_tree)
 
     return GraphAPIResponse(
-        nodes=nodes,
-        edges=data_access_manager.edges.get_edges_by_node_ids(node_ids),
+        nodes=data_access_manager.get_nodes_for_registered_pipeline(
+            registered_pipeline_id
+        ),
+        edges=data_access_manager.get_edges_for_registered_pipeline(
+            registered_pipeline_id
+        ),
         tags=data_access_manager.tags.as_list(),
-        layers=data_access_manager.layers.as_list(),
+        layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
+            registered_pipeline_id
+        ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
-        selected_pipeline=pipeline_id,
-        modular_pipelines=data_access_manager.modular_pipelines.from_nodes(
-            nodes
-        ).as_list(),
+        selected_pipeline=registered_pipeline_id,
+        modular_pipelines=modular_pipelines,
     )

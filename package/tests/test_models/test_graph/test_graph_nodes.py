@@ -46,7 +46,6 @@ from kedro_viz.models.graph import (
     DataNode,
     DataNodeMetadata,
     GraphNode,
-    ModularPipeline,
     ParametersNode,
     ParametersNodeMetadata,
     RegisteredPipeline,
@@ -119,7 +118,7 @@ class TestGraphNodeCreation:
         assert task_node.name == "Identity Node"
         assert task_node.full_name == "identity_node"
         assert task_node.tags == {"tag"}
-        assert task_node.pipelines == []
+        assert task_node.pipelines == set()
         assert task_node.modular_pipelines == expected_modular_pipelines
 
     @pytest.mark.parametrize(
@@ -153,7 +152,7 @@ class TestGraphNodeCreation:
         assert data_node.name == pretty_name
         assert data_node.layer == "raw"
         assert data_node.tags == set()
-        assert data_node.pipelines == []
+        assert data_node.pipelines == set()
         assert data_node.modular_pipelines == expected_modular_pipelines
         assert not data_node.is_plot_node()
         assert not data_node.is_metric_node()
@@ -174,7 +173,7 @@ class TestGraphNodeCreation:
         assert data_node.name == pretty_name
         assert data_node.layer == "raw"
         assert data_node.tags == set()
-        assert data_node.pipelines == []
+        assert data_node.pipelines == set()
 
     def test_create_parameters_all_parameters(self):
         parameters_dataset = MemoryDataSet(
@@ -236,7 +235,7 @@ class TestGraphNodePipelines:
         assert pipeline.name == "Default"
 
     def test_modular_pipeline_pretty_name(self):
-        pipeline = ModularPipeline("data_engineering")
+        pipeline = GraphNode.create_modular_pipeline_node("data_engineering")
         assert pipeline.name == "Data Engineering"
 
     def test_add_node_to_pipeline(self):
@@ -249,10 +248,10 @@ class TestGraphNodePipelines:
             tags=set(),
             dataset=kedro_dataset,
         )
-        assert data_node.pipelines == []
-        data_node.add_pipeline(default_pipeline)
-        assert data_node.belongs_to_pipeline(default_pipeline)
-        assert not data_node.belongs_to_pipeline(another_pipeline)
+        assert data_node.pipelines == set()
+        data_node.add_pipeline(default_pipeline.id)
+        assert data_node.belongs_to_pipeline(default_pipeline.id)
+        assert not data_node.belongs_to_pipeline(another_pipeline.id)
 
 
 class TestGraphNodeMetadata:
