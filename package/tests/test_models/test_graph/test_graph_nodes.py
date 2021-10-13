@@ -580,7 +580,7 @@ class TestGraphNodeMetadata:
         data = {"col1": 1, "col2": 0.23, "col3": 0.002}
         dataset.save(data)
         assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
-        #to avoid datasets being saved concurrently 
+        # to avoid datasets being saved concurrently
         time.sleep(1)
         new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
         dataset.save(new_data)
