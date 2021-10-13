@@ -12,12 +12,12 @@ const randomRun = {
   title: 'Sprint 4 EOW',
 };
 
-const savedRun = {
-  bookmark: true,
-  id: 'ef32bfd',
-  timestamp: '2021-08-31T01:36:24.560Z',
-  title: 'Sprint 4 EOW',
-};
+// const savedRun = {
+//   bookmark: true,
+//   id: 'ef32bfd',
+//   timestamp: '2021-08-31T01:36:24.560Z',
+//   title: 'Sprint 4 EOW',
+// };
 
 describe('RunsListCard', () => {
   it('renders without crashing', () => {
@@ -27,11 +27,11 @@ describe('RunsListCard', () => {
     expect(wrapper.find('.runs-list-card__title').length).toBe(1);
   });
 
-  it('renders with a bookmark icon', () => {
-    const wrapper = shallow(<RunsListCard data={savedRun} />);
+  // it('renders with a bookmark icon', () => {
+  //   const wrapper = shallow(<RunsListCard data={savedRun} />);
 
-    expect(wrapper.find('.runs-list-card__bookmark').length).toBe(1);
-  });
+  //   expect(wrapper.find('.runs-list-card__bookmark').length).toBe(1);
+  // });
 
   it('calls a function on click and adds an active class', () => {
     const setActive = jest.fn();
