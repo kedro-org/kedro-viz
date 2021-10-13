@@ -1,0 +1,31 @@
+.details-metadata {
+  background-color: var(--color-bg-1);
+  display: flex;
+  height: 100%;
+  overflow-x: scroll;
+  padding: 5em 0 0 5em;
+}
+
+.details-metadata__run {
+  flex-shrink: 0;
+  margin-right: 13em;
+}
+
+.details-metadata__run td {
+  font-size: 1.4em;
+  padding-bottom: 16px;
+  vertical-align: top;
+
+  &:first-of-type {
+    width: 230px;
+  }
+
+  &:last-of-type {
+    width: 310px;
+  }
+}
+
+td.details-metadata__title {
+  font-weight: 600;
+  font-size: 2em;
+}
