@@ -26,15 +26,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
-import strawberry
+# pylint: disable=no-self-use, too-few-public-methods
+from __future__ import annotations
 
-# pylint: disable=missing-class-docstring
-# pylint: disable=missing-function-docstring
-# pylint: disable=unused-argument
-import typing
+from typing import List
 
 import strawberry
 from fastapi import APIRouter
+from strawberry import ID
 from strawberry.asgi import GraphQL
 
 from kedro_viz.database import create_db_engine
@@ -51,7 +50,77 @@ def get_db():
         db.close()
 
 
+def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
+    """Placeholder for the proper method.
+    Get a run by id from the session store.
+
+    Args:
+        run_id: ID of the run to fetch
+
+    Returns:
+        Run object
+    """
+    metadata = RunMetadata(
+        id=ID("123"),
+        author="author",
+        gitBranch="my-branch",
+        gitSha="892372937",
+        notes="",
+        runCommand="kedro run",
+    )
+    details = RunDetails(id=ID("123"), name="name", details="{json:details}")
+
+    return Run(
+        id=ID("123"),
+        bookmark=True,
+        timestamp="2021-09-08T10:55:36.810Z",
+        title="Sprint 5",
+        metadata=metadata,
+        details=details,
+    )
+
+
+def get_runs() -> List[Run]:
+    """Placeholder for the proper method.
+    Get all runs from the session store.
+
+    Returns:
+        list of Run objects
+    """
+    return [get_run(ID("123"))]
+
+
 @strawberry.type
+class Run:
+    """Run object format to return to the frontend"""
+
+    id: ID
+    bookmark: bool
+    timestamp: str
+    title: str
+    metadata: RunMetadata
+    details: RunDetails
+
+
+@strawberry.type
+class RunMetadata:
+    """RunMetadata object format"""
+
+    id: ID
+    author: str
+    gitBranch: str
+    gitSha: str
+    notes: str
+    runCommand: str
+
+
+@strawberry.type
+class RunDetails:
+    """RunDetails object format"""
+
+    id: ID
+    name: str
+    details: str
 class KedroSessionGraphQLType:
     id: str
     blob: str
@@ -67,6 +136,17 @@ def get_all_sessions() -> typing.List[KedroSessionGraphQLType]:
 
 @strawberry.type
 class Query:
+    """Query endpoint to get data from the session store"""
+
+    @strawberry.field
+    def run(self, run_id: ID) -> Run:
+        """Query to get data for a specific run from the session store"""
+        return get_run(run_id)
+
+    runs: List[Run] = strawberry.field(resolver=get_runs)
+
+
+schema = strawberry.Schema(query=Query)
     sessions: typing.List[KedroSessionGraphQLType] = strawberry.field(
         resolver=get_all_sessions
     )

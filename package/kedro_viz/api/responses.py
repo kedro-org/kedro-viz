@@ -32,7 +32,9 @@ from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
+from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID
 from kedro_viz.data_access import data_access_manager
+from kedro_viz.services import modular_pipelines_services
 
 
 class APIErrorMessage(BaseModel):
@@ -50,8 +52,10 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     full_name: str
     tags: List[str]
     pipelines: List[str]
-    modular_pipelines: List[str]
     type: str
+
+    # If a node is a ModularPipeline node, this value will be None, hence Optional.
+    modular_pipelines: Optional[List[str]]
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
@@ -202,6 +206,58 @@ class NamedEntityAPIResponse(BaseAPIResponse):
     name: Optional[str]
 
 
+class ModularPipelineChildAPIResponse(BaseAPIResponse):
+    """Model a child in a modular pipeline's children field in the API response."""
+
+    id: str
+    type: str
+
+
+class ModularPipelinesTreeNodeAPIResponse(BaseAPIResponse):
+    """Model a node in the tree representation of modular pipelines in the API response."""
+
+    id: str
+    name: str
+    inputs: List[str]
+    outputs: List[str]
+    children: List[ModularPipelineChildAPIResponse]
+
+
+# Represent the modular pipelines in the API response as a tree.
+# The root node is always designated with the __root__ key.
+# Example:
+# {
+#     "__root__": {
+#            "id": "__root__",
+#            "name": "Root",
+#            "inputs": [],
+#            "outputs": [],
+#            "children": [
+#                {"id": "d577578a", "type": "parameters"},
+#                {"id": "data_science", "type": "modularPipeline"},
+#                {"id": "f1f1425b", "type": "parameters"},
+#                {"id": "data_engineering", "type": "modularPipeline"},
+#            ],
+#        },
+#        "data_engineering": {
+#            "id": "data_engineering",
+#            "name": "Data Engineering",
+#            "inputs": ["d577578a"],
+#            "outputs": [],
+#            "children": [],
+#        },
+#        "data_science": {
+#            "id": "data_science",
+#            "name": "Data Science",
+#            "inputs": ["f1f1425b"],
+#            "outputs": [],
+#            "children": [],
+#        },
+#    }
+# }
+ModularPipelinesTreeAPIResponse = Dict[str, ModularPipelinesTreeNodeAPIResponse]
+
+
 class GraphAPIResponse(BaseAPIResponse):
     nodes: List[NodeAPIResponse]
     edges: List[GraphEdgeAPIResponse]
@@ -214,12 +270,27 @@ class GraphAPIResponse(BaseAPIResponse):
 
 def get_default_response() -> GraphAPIResponse:
     """Default response for `/api/main`."""
+    modular_pipelines_tree = (
+        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+            DEFAULT_REGISTERED_PIPELINE_ID
+        )
+    )
+    # temporarily serialise the modular pipelines tree back to a list
+    # for backward compatibility before new expand/collapse frontend is merged.
+    modular_pipelines = modular_pipelines_services.tree_to_list(modular_pipelines_tree)
+
     return GraphAPIResponse(
-        nodes=data_access_manager.nodes.as_list(),
-        edges=data_access_manager.edges.as_list(),
+        nodes=data_access_manager.get_nodes_for_registered_pipeline(
+            DEFAULT_REGISTERED_PIPELINE_ID
+        ),
+        edges=data_access_manager.get_edges_for_registered_pipeline(
+            DEFAULT_REGISTERED_PIPELINE_ID
+        ),
         tags=data_access_manager.tags.as_list(),
-        layers=data_access_manager.layers.as_list(),
+        layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
+            DEFAULT_REGISTERED_PIPELINE_ID
+        ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
-        modular_pipelines=data_access_manager.modular_pipelines.as_list(),
+        modular_pipelines=modular_pipelines,
         selected_pipeline=data_access_manager.get_default_selected_pipeline().id,
     )
