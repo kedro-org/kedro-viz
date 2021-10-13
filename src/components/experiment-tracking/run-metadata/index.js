@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classnames from 'classnames';
 
 import './run-metadata.css';
 
 const RunMetadata = ({ isSingleRun, runs }) => {
+  let initialState = {};
+  for (let i = 0; i < runs.length; i++) {
+    initialState[i] = false;
+  }
+
+  const [expandNotes, setExpandNotes] = useState(initialState);
+
+  const onShowMoreClick = (key) => {
+    setExpandNotes({ ...expandNotes, [key]: true });
+  };
+
   return (
     <div
       className={classnames('details-metadata', {
@@ -54,7 +65,22 @@ const RunMetadata = ({ isSingleRun, runs }) => {
                 </tr>
                 <tr>
                   {i === 0 ? <td>Notes</td> : null}
-                  <td>{run.notes}</td>
+                  <td>
+                    <div
+                      className="details-metadata__notes"
+                      style={expandNotes[i] ? { display: 'block' } : null}
+                    >
+                      {run.notes}
+                    </div>
+                    {run.notes.length > 100 && !expandNotes[i] ? (
+                      <button
+                        className="details-metadata__show-more"
+                        onClick={() => onShowMoreClick(i)}
+                      >
+                        Show more
+                      </button>
+                    ) : null}
+                  </td>
                 </tr>
               </tbody>
             </table>

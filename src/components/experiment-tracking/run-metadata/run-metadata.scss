@@ -49,3 +49,21 @@ td.details-metadata__title {
   font-weight: 600;
   font-size: 2em;
 }
+
+.details-metadata__notes {
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.details-metadata__show-more {
+  background-color: unset;
+  border: none;
+  color: var(--color-text-faded);
+  cursor: pointer;
+  font-size: 14px;
+  margin: 2px 0 0;
+  padding: 0;
+}
