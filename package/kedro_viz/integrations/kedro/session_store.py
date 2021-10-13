@@ -6,12 +6,10 @@ from kedro.framework.session.store import BaseSessionStore
 from sqlalchemy.orm import Session
 from kedro_viz.models.session import KedroSession, Base
 
-engine, session_class = create_db_engine()
-Base.metadata.create_all(bind=engine)
-
 def get_db():
     try:
         engine, session_class = create_db_engine()
+        Base.metadata.create_all(bind=engine)
         db = session_class()
         yield db
     finally:
@@ -22,7 +20,7 @@ class SessionStore(BaseSessionStore):
 
     @property
     def location(self) -> Path:
-        return Path(self._path).expanduser().resolve() / "session_store"
+        return Path(self._path).expanduser().resolve() / "session_store.db"
 
     def save(self, db: Session = next(get_db())):
         """Save the session store info on db ."""

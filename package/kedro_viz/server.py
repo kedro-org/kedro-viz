@@ -54,14 +54,14 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
-    session_store
+    session_store_location
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
     """
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)
-    data_access_manager.add_session_store(session_store)
+    data_access_manager.add_session_store_location(session_store_location)
     data_access_manager.set_layers(
         layers_services.sort_layers(
             data_access_manager.nodes.as_dict(),
@@ -100,13 +100,13 @@ def run_server(
     """
     if load_file is None:
         path = Path(project_path) if project_path else Path.cwd()
-        catalog, pipelines, session_store = kedro_data_loader.load_data(path, env)
+        catalog, pipelines, session_store_location = kedro_data_loader.load_data(path, env)
         pipelines = (
             pipelines
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
-        populate_data(data_access_manager, catalog, pipelines, session_store)
+        populate_data(data_access_manager, catalog, pipelines, session_store_location)
         if save_file:
             res = responses.get_default_response()
             Path(save_file).write_text(res.json(indent=4, sort_keys=True))

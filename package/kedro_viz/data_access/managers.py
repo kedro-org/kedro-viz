@@ -27,7 +27,6 @@
 # limitations under the License.
 """`kedro_viz.data_access.managers` defines data access managers."""
 from collections import defaultdict
-from kedro_viz.integrations.kedro.session_store import SessionStore
 from typing import Dict, List, Union
 
 from kedro.io import DataCatalog
@@ -73,10 +72,8 @@ class DataAccessManager:
     def add_catalog(self, catalog: DataCatalog):
         self.catalog.set_catalog(catalog)
 
-    def add_session_store(self, session_store: SessionStore):
-        print(session_store)
-        print(session_store.location)
-        self.session_store_location = session_store.location
+    def add_session_store_location(self, session_store_location: str):
+        self.session_store_location = session_store_location
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         for pipeline_key, pipeline in pipelines.items():
