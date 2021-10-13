@@ -1,19 +1,31 @@
 import React from 'react';
+import classnames from 'classnames';
 
 import './run-metadata.css';
 
 const RunMetadata = ({ isSingleRun, runs }) => {
   return (
-    <div className="details-metadata">
+    <div
+      className={classnames('details-metadata', {
+        'details-metadata--single': isSingleRun,
+      })}
+    >
       {runs.map((run, i) => {
         return (
-          <div className="details-metadata__run" key={run.gitSha}>
-            <table>
+          <div
+            className={classnames('kedro', 'details-metadata__run', {
+              'details-metadata__run--single': isSingleRun,
+            })}
+            key={run.gitSha}
+          >
+            <table className="details-metadata__table">
               <tbody>
                 {isSingleRun ? (
-                  <td className="details-metadata__title" colSpan="2">
-                    {run.title}
-                  </td>
+                  <tr>
+                    <td className="details-metadata__title" colSpan="2">
+                      {run.title}
+                    </td>
+                  </tr>
                 ) : (
                   <tr>
                     {i === 0 ? <td></td> : null}

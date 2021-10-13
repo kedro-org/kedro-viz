@@ -1,14 +1,24 @@
 .details-metadata {
   background-color: var(--color-bg-1);
   display: flex;
-  height: 100%;
+  flex-shrink: 0;
+  // height: 100%;
   overflow-x: scroll;
   padding: 5em 0 0 5em;
+
+  &--single {
+    padding: 5em 0 0 9em;
+  }
 }
 
 .details-metadata__run {
   flex-shrink: 0;
   margin-right: 13em;
+}
+
+.details-metadata__table {
+  max-width: 755px;
+  width: 100%;
 }
 
 .details-metadata__run td {
@@ -22,6 +32,16 @@
 
   &:last-of-type {
     width: 310px;
+  }
+}
+
+.details-metadata__run--single td {
+  &:first-of-type {
+    width: 50%;
+  }
+
+  &:last-of-type {
+    width: 50%;
   }
 }
 
