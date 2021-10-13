@@ -41,10 +41,8 @@ const runData = [
  * Main runs-list container.
  */
 const RunsList = () => {
-  const { run, compare, compareList } = useRunIdsFromUrl();
+  const { run, compare } = useRunIdsFromUrl();
 
-  // The following are only placeholders to indicate routing intent and should
-  // be deleted on building the actual implementation of the runsList
   return (
     <>
       <h1>
@@ -54,9 +52,6 @@ const RunsList = () => {
           ? 'Compare view'
           : 'No runs'}
       </h1>
-      {run !== null && <h2>Run {run} selected</h2>}
-      {compareList !== null &&
-        compareList.map((run, i) => <h2 key={i}>Run {run} selected</h2>)}
       <Accordion heading="All" headingDetail={runData.length}>
         <div className="runs-list__wrapper">
           {runData.map((data, i) => (

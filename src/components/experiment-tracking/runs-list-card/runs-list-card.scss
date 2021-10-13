@@ -16,10 +16,6 @@
     background: var(--color-run-list-hover);
     cursor: pointer;
   }
-
-  &:last-of-type {
-    border-bottom: none;
-  }
 }
 
 .runs-list-card__title {

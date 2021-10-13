@@ -17,9 +17,9 @@ const Accordion = ({ children, heading = '', headingDetail = null }) => {
       <div className="accordion__heading">
         <div className="accordion__title">
           {heading}
-          {headingDetail ? (
+          {headingDetail && (
             <span className="accordion__title__detail">{headingDetail}</span>
-          ) : null}
+          )}
         </div>
         <button
           aria-label={`${collapsed ? 'Show' : 'Hide'} ${heading.toLowerCase()}`}
