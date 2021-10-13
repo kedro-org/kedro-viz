@@ -48,9 +48,9 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(<FlowChart />);
     const nodes = wrapper.render().find('.pipeline-node');
     const nodeNames = nodes.map((i, el) => select(el).text()).get();
-    const mockNodes = getVisibleNodeIDs(mockState.animals);
+    const mockNodes = getVisibleNodeIDs(mockState.spaceflights);
     const mockNodeNames = mockNodes.map(
-      (d) => getNodeName(mockState.animals)[d]
+      (d) => getNodeName(mockState.spaceflights)[d]
     );
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
@@ -222,7 +222,7 @@ describe('FlowChart', () => {
   });
 
   it('applies selected class to nodes when nodeSelected prop set', () => {
-    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodes = getNodeIDs(mockState.spaceflights);
     const wrapper = setup.mount(
       <FlowChart
         nodeSelected={{
@@ -235,7 +235,7 @@ describe('FlowChart', () => {
   });
 
   it('applies active class to nodes when nodeActive prop set', () => {
-    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodes = getNodeIDs(mockState.spaceflights);
     const wrapper = setup.mount(
       <FlowChart
         nodeActive={{
@@ -248,7 +248,7 @@ describe('FlowChart', () => {
   });
 
   it('applies collapsed-hint class to nodes with input parameters are hovered during collapsed state', () => {
-    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodes = getNodeIDs(mockState.spaceflights);
     const wrapper = setup.mount(
       <FlowChart
         hoveredParameters={true}
@@ -265,7 +265,7 @@ describe('FlowChart', () => {
   });
 
   it('applies parameter-indicator--visible class to nodes with input parameters when nodeDisabled prop set', () => {
-    const mockNodes = getNodeIDs(mockState.animals);
+    const mockNodes = getNodeIDs(mockState.spaceflights);
     const wrapper = setup.mount(
       <FlowChart
         nodeTypeDisabled={{ parameters: true }}
@@ -292,15 +292,14 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(
       <FlowChart
         nodeTypeDisabled={{ parameters: true }}
-        focusMode={{ id: 'pipeline1' }}
+        focusMode={{ id: 'data_science' }}
         inputOutputDataNodes={{
-          '0ae9e4de': { id: '0ae9e4de', name: 'Elephant' },
-          '09f5edeb': { id: '09f5edeb', name: 'Bear' },
+          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
         }}
       />
     );
     expect(wrapper.render().find('.pipeline-node--dataset-input').length).toBe(
-      2
+      1
     );
   });
 
@@ -308,24 +307,23 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(
       <FlowChart
         nodeTypeDisabled={{ parameters: true }}
-        focusMode={{ id: 'pipeline1' }}
+        focusMode={{ id: 'data_science' }}
         inputOutputDataEdges={{
-          '0ae9e4de|15586b7a': { id: '0ae9e4de||15586b7a' },
-          '09f5edeb|15586b7a': { id: '09f5edeb||15586b7a' },
+          '23c94afb|65d0d789': { id: '23c94afb|65d0d789' },
         }}
       />
     );
     expect(wrapper.render().find('.pipeline-edge--dataset--input').length).toBe(
-      2
+      1
     );
   });
 
   it('applies pipeline-node--parameter-input class to input parameter nodes under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
-        focusMode={{ id: 'pipeline1' }}
+        focusMode={{ id: 'data_science' }}
         inputOutputDataNodes={{
-          '46734c62': { id: '46734c62' },
+          f1f1425b: { id: 'f1f1425b' },
         }}
       />,
       {
@@ -342,7 +340,7 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(<FlowChart />, {
       beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
     });
-    expect(wrapper.render().find('.pipeline-node--parameters').length).toBe(4);
+    expect(wrapper.render().find('.pipeline-node--parameters').length).toBe(1);
   });
 
   it('applies .parameters class to all the edges from parameter nodes', () => {
@@ -350,7 +348,7 @@ describe('FlowChart', () => {
       //Parameters are enabled here to override the default behavior
       beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
     });
-    expect(wrapper.render().find('.pipeline-edge--parameters ').length).toBe(4);
+    expect(wrapper.render().find('.pipeline-edge--parameters ').length).toBe(1);
   });
 
   it('getHoveredParameterLabel returns parameter count when there are more than 1 hidden parameters ', () => {
@@ -370,7 +368,7 @@ describe('FlowChart', () => {
   });
 
   it('shows layers when layers are visible', () => {
-    const mockLayers = getLayerIDs(mockState.animals);
+    const mockLayers = getLayerIDs(mockState.spaceflights);
     const wrapper = setup.mount(<FlowChart />);
     expect(wrapper.render().find('.pipeline-layer').length).toBe(
       mockLayers.length
@@ -437,7 +435,7 @@ describe('FlowChart', () => {
       inputOutputDataEdges: expect.any(Object),
       focusMode: expect.any(Object),
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {

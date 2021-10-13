@@ -1,7 +1,6 @@
 import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import { LOREM_IPSUM } from '@quantumblack/kedro-viz/lib/utils/random-utils';
 import App, { dataSources } from './app';
 
 configure({ adapter: new Adapter() });
@@ -17,7 +16,7 @@ describe('lib-test', () => {
    * Get the name of the first node in the NodeList, and check that it's
    * included in the list of the node names in the dataset
    * @param {object} wrapper App component mounted by Enzyme
-   * @param {string} key dataSources key: animals/demo/random
+   * @param {string} key dataSources key: spaceflights/demo/random
    */
   const testFirstNodeNameMatch = (wrapper, key) => {
     const firstNodeName = wrapper
