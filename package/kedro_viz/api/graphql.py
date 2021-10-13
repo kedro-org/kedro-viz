@@ -48,17 +48,17 @@ def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
         Run object
     """
     metadata = RunMetadata(
-        id=ID(123),
+        id=ID("123"),
         author="author",
         gitBranch="my-branch",
         gitSha="892372937",
         notes="",
         runCommand="kedro run",
     )
-    details = RunDetails(id=ID(123), name="name", details="{json:details}")
+    details = RunDetails(id=ID("123"), name="name", details="{json:details}")
 
     return Run(
-        id=ID(123),
+        id=ID("123"),
         bookmark=True,
         timestamp="2021-09-08T10:55:36.810Z",
         title="Sprint 5",
@@ -74,7 +74,7 @@ def get_runs() -> List[Run]:
     Returns:
         list of Run objects
     """
-    return [get_run(ID(123))]
+    return [get_run(ID("123"))]
 
 
 @strawberry.type
