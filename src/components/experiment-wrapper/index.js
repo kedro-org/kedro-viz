@@ -4,8 +4,9 @@ import Sidebar from '../experiment-tracking/sidebar';
 import Details from '../experiment-tracking/details';
 
 /**
- * Main experiment tracking page container. Handles showing/hiding the sidebar nav for experiment tracking,
- * the display of experiment details single / comparison view.
+ * Main experiment tracking page container. Handles showing/hiding the sidebar
+ * nav for experiment tracking and the display of the experiment details
+ * single / comparison view.
  */
 const ExperimentWrapper = () => (
   <>

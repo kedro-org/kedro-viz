@@ -1,0 +1,62 @@
+@import '../../../styles/variables';
+
+$toggle-icon-padding: 0.3em;
+$toggle-size: 2.2em + $toggle-icon-padding * 2;
+
+.accordion__heading {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.8em 2.6em 0.8em 3em;
+}
+
+.accordion__title {
+  font-size: 1.2em;
+}
+
+.accordion__title__detail {
+  margin-left: 8px;
+}
+
+.accordion__toggle {
+  width: $toggle-size;
+  height: $toggle-size;
+  padding: 0;
+  color: var(--color-default-alt);
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1em;
+  text-align: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform ease 0.1s;
+
+  &:focus {
+    outline: none;
+
+    [data-whatintent='keyboard'] & {
+      box-shadow: 0 0 0 3px $color-link inset;
+    }
+  }
+
+  &:before {
+    font-size: 1.8em;
+    opacity: 0.55;
+    content: '▾';
+  }
+
+  &:hover:before {
+    opacity: 1;
+  }
+
+  &--alt {
+    transform: rotate(90deg);
+  }
+}
+
+.accordion__content--hide {
+  display: none;
+}
