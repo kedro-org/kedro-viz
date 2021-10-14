@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import KedroViz from '@quantumblack/kedro-viz';
-import animals from '@quantumblack/kedro-viz/lib/utils/data/animals.mock.json';
+import spaceflights from '@quantumblack/kedro-viz/lib/utils/data/spaceflights.mock.json';
 import demo from '@quantumblack/kedro-viz/lib/utils/data/demo.mock.json';
 import getRandomData from '@quantumblack/kedro-viz/lib/utils/random-data';
 
 export const dataSources = {
-  animals: () => animals,
+  spaceflights: () => spaceflights,
   demo: () => demo,
-  random: () => getRandomData()
+  random: () => getRandomData(),
 };
 
 const Radio = ({ current, value, onChange }) => (
@@ -25,7 +25,7 @@ const Radio = ({ current, value, onChange }) => (
 
 const App = ({ initialData }) => {
   const [dataKey, updateDataKey] = useState(initialData);
-  const onChange = e => updateDataKey(e.target.value);
+  const onChange = (e) => updateDataKey(e.target.value);
 
   return (
     <div style={{ padding: 30, height: '80vh' }}>
@@ -33,7 +33,7 @@ const App = ({ initialData }) => {
       <p>
         Data source:
         <Radio value="random" onChange={onChange} current={dataKey} />
-        <Radio value="animals" onChange={onChange} current={dataKey} />
+        <Radio value="spaceflights" onChange={onChange} current={dataKey} />
         <Radio value="demo" onChange={onChange} current={dataKey} />
       </p>
       <KedroViz data={dataSources[dataKey]()} />
@@ -42,7 +42,7 @@ const App = ({ initialData }) => {
 };
 
 App.defaultProps = {
-  initialData: 'random'
+  initialData: 'random',
 };
 
 export default App;

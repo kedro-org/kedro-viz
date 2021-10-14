@@ -15,16 +15,16 @@ import { toggleTypeDisabled } from '../actions/node-type';
 import reducer from '../reducers';
 import { graphNew } from '../utils/graph';
 import { sidebarWidth, largeGraphThreshold } from '../config';
-import animals from '../utils/data/animals.mock.json';
+import spaceflights from '../utils/data/spaceflights.mock.json';
 import { getVisibleNodeIDs } from './disabled';
 
 describe('Selectors', () => {
   describe('getTriggerLargeGraphWarning', () => {
     // Prepare excessively-large dataset
     const prepareLargeDataset = () => {
-      const data = { ...animals };
+      const data = { ...spaceflights };
       let extraNodes = [];
-      const visibleNodeCount = getVisibleNodeIDs(mockState.animals).length;
+      const visibleNodeCount = getVisibleNodeIDs(mockState.spaceflights).length;
       const iterations = Math.ceil(largeGraphThreshold / visibleNodeCount) + 1;
       new Array(iterations).fill().forEach((d, i) => {
         const extraNodeGroup = data.nodes.map((node) => ({
@@ -38,7 +38,7 @@ describe('Selectors', () => {
     };
 
     it('returns false for a small dataset', () => {
-      expect(getTriggerLargeGraphWarning(mockState.animals)).toBe(false);
+      expect(getTriggerLargeGraphWarning(mockState.spaceflights)).toBe(false);
     });
 
     it('returns true for a large dataset', () => {
@@ -87,7 +87,7 @@ describe('Selectors', () => {
 
   describe('getGraphInput', () => {
     it('returns a graph input object', () => {
-      expect(getGraphInput(mockState.animals)).toEqual(
+      expect(getGraphInput(mockState.spaceflights)).toEqual(
         expect.objectContaining({
           nodes: expect.any(Array),
           edges: expect.any(Array),
@@ -98,7 +98,7 @@ describe('Selectors', () => {
     });
 
     it('returns null if fontLoaded is false', () => {
-      const newMockState = reducer(mockState.animals, updateFontLoaded(false));
+      const newMockState = reducer(mockState.spaceflights, updateFontLoaded(false));
       expect(getGraphInput(newMockState)).toEqual(null);
     });
   });
@@ -115,7 +115,7 @@ describe('Selectors', () => {
 
   describe('getChartSize', () => {
     it('returns a set of undefined properties if chartSize DOMRect is not supplied', () => {
-      expect(getChartSize(mockState.animals)).toEqual({
+      expect(getChartSize(mockState.spaceflights)).toEqual({
         height: undefined,
         left: undefined,
         outerHeight: undefined,
@@ -128,7 +128,7 @@ describe('Selectors', () => {
 
     it('returns a DOMRect converted into an Object, with some extra properties', () => {
       const newMockState = {
-        ...mockState.animals,
+        ...mockState.spaceflights,
         chartSize: { left: 100, top: 100, width: 1000, height: 1000 },
       };
       expect(getChartSize(newMockState)).toEqual({

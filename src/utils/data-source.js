@@ -1,5 +1,5 @@
 import getRandomPipeline from './random-data';
-import animals from './data/animals.mock.json';
+import spaceflights from './data/spaceflights.mock.json';
 import demo from './data/demo.mock.json';
 import selectors from './data/selectors.mock.json';
 
@@ -8,7 +8,7 @@ import selectors from './data/selectors.mock.json';
  * variable from the CLI, or from the URL host, else return undefined.
  * You can supply one of the following strings:
    - 'random': Use randomly-generated data
-   - 'animals': Use data from the 'animals' test dataset ( this is the same dataset as used by the Core team for their tests )
+   - 'spaceflights': Use data from the 'spaceflights' test dataset ( this is the same dataset as used by the Core team for their tests )
    - 'demo': Use data from the 'demo' test dataset
    - 'json': Load data from a local json file (in /public/api/main)
  * @return {string} Data source identifier
@@ -42,9 +42,9 @@ export const getDataValue = (source) => {
   const nameSource = (data) => Object.assign(data, { source });
 
   switch (source) {
-    case 'animals':
-      // Use data from the 'animals' test dataset
-      return nameSource(animals);
+    case 'spaceflights':
+      // Use data from the 'spaceflights' test dataset
+      return nameSource(spaceflights);
     case 'demo':
       // Use data from the 'demo' test dataset
       return nameSource(demo);
@@ -59,7 +59,7 @@ export const getDataValue = (source) => {
       return source;
     default:
       throw new Error(
-        `Unexpected data source value '${source}'. Your input should be one of the following values: 'animals', 'demo', 'json', 'selectors', or 'random'`
+        `Unexpected data source value '${source}'. Your input should be one of the following values: 'spaceflights', 'demo', 'json', 'selectors', or 'random'`
       );
   }
 };
