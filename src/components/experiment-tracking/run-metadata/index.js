@@ -66,15 +66,15 @@ const RunMetadata = ({ isSingleRun, runs }) => {
                 <tr>
                   {i === 0 ? <td>Notes</td> : null}
                   <td>
-                    <div
+                    <p
                       className="details-metadata__notes"
                       style={expandNotes[i] ? { display: 'block' } : null}
                     >
                       {run.notes}
-                    </div>
+                    </p>
                     {run.notes.length > 100 && !expandNotes[i] ? (
                       <button
-                        className="details-metadata__show-more"
+                        className="details-metadata__show-more kedro"
                         onClick={() => onShowMoreClick(i)}
                       >
                         Show more

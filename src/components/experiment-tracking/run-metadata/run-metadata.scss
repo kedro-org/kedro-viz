@@ -54,11 +54,12 @@ td.details-metadata__title {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   display: -webkit-box;
+  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.details-metadata__show-more {
+.details-metadata__show-more.kedro {
   background-color: unset;
   border: none;
   color: var(--color-text-faded);
