@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import watch from 'redux-watch';
 import reducer from '../reducers';
@@ -63,7 +63,13 @@ const saveStateToLocalStorage = (state) => {
  * @return {Object} Redux store
  */
 export default function configureStore(initialState) {
-  const store = createStore(reducer, initialState, applyMiddleware(thunk));
+  const composeEnhancers =
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  const store = createStore(
+    reducer,
+    initialState,
+    composeEnhancers(applyMiddleware(thunk))
+  );
   updateGraphOnChange(store);
   store.subscribe(() => {
     saveStateToLocalStorage(store.getState());

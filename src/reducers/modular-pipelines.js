@@ -1,7 +1,17 @@
 import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
-  TOGGLE_MODULAR_PIPELINE_FILTER,
+  TOGGLE_MODULAR_PIPELINE_EXPANDED,
 } from '../actions/modular-pipelines';
+
+// mark a tree as invisible from a node downwards
+const markTreeInvisible = (tree, node, result) => {
+  tree[node].children.forEach((child) => {
+    result[child.id] = false;
+    if (child.type === 'modularPipeline') {
+      markTreeInvisible(tree, child.id, result);
+    }
+  });
+};
 
 function modularPipelineReducer(modularPipelineState = {}, action) {
   const updateState = (newState) =>
@@ -27,14 +37,38 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
         ),
       });
     }
+    case TOGGLE_MODULAR_PIPELINE_EXPANDED: {
+      const newVisibleState = { ...modularPipelineState.visible };
+      const isExpanding =
+        action.expandedIDs.length > modularPipelineState.expanded.length;
+      let expandedIDs = action.expandedIDs;
 
-    case TOGGLE_MODULAR_PIPELINE_FILTER: {
+      if (isExpanding) {
+        const expandedModularPipeline = expandedIDs.filter(
+          (expandedID) => !modularPipelineState.expanded.includes(expandedID)
+        )[0];
+        newVisibleState[expandedModularPipeline] = false;
+        modularPipelineState.tree[expandedModularPipeline].children.forEach(
+          (child) => (newVisibleState[child.id] = true)
+        );
+      } else {
+        const collapsedModularPipeline = modularPipelineState.expanded.filter(
+          (expandedID) => !expandedIDs.includes(expandedID)
+        )[0];
+        newVisibleState[collapsedModularPipeline] = true;
+        markTreeInvisible(
+          modularPipelineState.tree,
+          collapsedModularPipeline,
+          newVisibleState
+        );
+        expandedIDs = expandedIDs.filter(
+          (id) => !id.startsWith(collapsedModularPipeline)
+        );
+      }
+
       return updateState({
-        enabled: Object.assign(
-          {},
-          modularPipelineState.enabled,
-          batchChanges('enabled')
-        ),
+        expanded: expandedIDs,
+        visible: newVisibleState,
       });
     }
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import utils from '@quantumblack/kedro-ui/lib/utils';
+import debounce from 'lodash/debounce';
 import NodeList from './node-list';
 import {
   getFilteredItems,
@@ -13,20 +14,21 @@ import {
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import {
-  getModularPipelineData,
   getFocusedModularPipeline,
+  getModularPipelinesSearchResult,
 } from '../../selectors/modular-pipelines';
 import {
   getGroupedNodes,
   getNodeSelected,
   getInputOutputNodesForFocusedModularPipeline,
+  getModularPipelinesTree,
 } from '../../selectors/nodes';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleParametersHovered, toggleFocusMode } from '../../actions';
 import {
   toggleModularPipelineActive,
-  toggleModularPipelineFilter,
+  toggleModularPipelineExpanded,
 } from '../../actions/modular-pipelines';
 import {
   loadNodeData,
@@ -53,10 +55,11 @@ const NodeListProvider = ({
   onToggleTagActive,
   onToggleTagFilter,
   onToggleModularPipelineActive,
+  onToggleModularPipelineExpanded,
   onToggleTypeDisabled,
-  onToggleModularPipelineFilter,
   onToggleFocusMode,
   modularPipelines,
+  modularPipelinesTree,
   focusMode,
   inputOutputDataNodes,
 }) => {
@@ -73,19 +76,19 @@ const NodeListProvider = ({
     inputOutputDataNodes,
   });
 
+  const modularPipelinesSearchResult = searchValue
+    ? getModularPipelinesSearchResult({
+        modularPipelinesTree,
+        searchValue,
+      })
+    : null;
+
   const groups = getGroups({ items });
 
   const onItemClick = (item) => {
-    if (isGroupType(item.type) || isModularPipelineType(item.type)) {
+    if (isGroupType(item.type)) {
       onGroupItemChange(item, item.checked);
-      if (isModularPipelineType(item.type)) {
-        if (focusMode === null) {
-          onToggleFocusMode(item);
-        } else {
-          onToggleFocusMode(null);
-        }
-      }
-    } else {
+    } else if (!isModularPipelineType(item.tye)) {
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
       } else {
@@ -164,8 +167,6 @@ const NodeListProvider = ({
     // Toggle the group
     if (isTagType(item.type)) {
       onToggleTagFilter(item.id, !wasChecked);
-    } else if (isModularPipelineType(item.type)) {
-      onToggleModularPipelineFilter([item.id], !wasChecked);
     } else if (isElementType(item.type)) {
       onToggleTypeDisabled({ [item.id]: wasChecked });
     }
@@ -190,9 +191,12 @@ const NodeListProvider = ({
     <NodeList
       faded={faded}
       items={items}
+      modularPipelinesTree={modularPipelinesTree}
+      modularPipelinesSearchResult={modularPipelinesSearchResult}
       groups={groups}
       searchValue={searchValue}
-      onUpdateSearchValue={updateSearchValue}
+      onUpdateSearchValue={debounce(updateSearchValue, 250)}
+      onModularPipelineToggleExpanded={onToggleModularPipelineExpanded}
       onGroupToggleChanged={onGroupToggleChanged}
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
@@ -209,9 +213,9 @@ export const mapStateToProps = (state) => ({
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
   nodeTypes: getNodeTypes(state),
-  modularPipelines: getModularPipelineData(state),
   focusMode: getFocusedModularPipeline(state),
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
+  modularPipelinesTree: getModularPipelinesTree(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
@@ -224,14 +228,14 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleModularPipelineActive: (modularPipelineIDs, active) => {
     dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
   },
-  onToggleModularPipelineFilter: (modularPipelineIDs, enabled) => {
-    dispatch(toggleModularPipelineFilter(modularPipelineIDs, enabled));
-  },
   onToggleTypeDisabled: (typeID, disabled) => {
     dispatch(toggleTypeDisabled(typeID, disabled));
   },
   onToggleNodeSelected: (nodeID) => {
     dispatch(loadNodeData(nodeID));
+  },
+  onToggleModularPipelineExpanded: (expanded) => {
+    dispatch(toggleModularPipelineExpanded(expanded));
   },
   onToggleNodeActive: (nodeID) => {
     dispatch(toggleNodeHovered(nodeID));

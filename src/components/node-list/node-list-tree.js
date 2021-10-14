@@ -1,33 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import noop from 'lodash.noop';
+import sortBy from 'lodash.sortby';
 
-import {
-  toggleModularPipelineActive,
-  toggleModularPipelineFilter,
-} from '../../actions/modular-pipelines';
-import { toggleTypeDisabled } from '../../actions/node-type';
-import { getNodeTypes, getNodeTypeIDs } from '../../selectors/node-types';
-import {
-  getModularPipelineIDs,
-  getModularPipelineData,
-} from '../../selectors/modular-pipelines';
-import {
-  getNestedModularPipelines,
-  getFilteredTreeItems,
-} from './node-list-items';
-import {
-  getGroupedNodes,
-  getNodeSelected,
-  getNodeModularPipelines,
-  getInputOutputNodesForFocusedModularPipeline,
-} from '../../selectors/nodes';
-import { loadNodeData } from '../../actions/nodes';
+import { getNodeSelected } from '../../selectors/nodes';
 import NodeListTreeItem from './node-list-tree-item';
+import VisibleIcon from '../icons/visible';
+import InvisibleIcon from '../icons/invisible';
+
+const GROUPED_NODES_DISPLAY_ORDER = {
+  modularPipeline: 0,
+  task: 1,
+  data: 2,
+  parameter: 3,
+};
 
 // please note that this setup is unique for initialization of the material-ui tree,
 // and setup is only used here and not anywhere else in the app.
@@ -45,188 +36,143 @@ const StyledTreeView = withStyles({
   },
 })(TreeView);
 
-const isModularPipelineType = (type) => type === 'modularPipeline';
+const MODULAR_PIPELINE_TYPE = 'modularPipeline';
+
+const isModularPipelineType = (type) => type === MODULAR_PIPELINE_TYPE;
+
+const getModularPipelineRowData = ({
+  id,
+  highlightedLabel,
+  data,
+  disabled,
+  focused,
+}) => ({
+  id: id,
+  name: highlightedLabel || data.name,
+  type: MODULAR_PIPELINE_TYPE,
+  icon: MODULAR_PIPELINE_TYPE,
+  visibleIcon: VisibleIcon,
+  invisibleIcon: InvisibleIcon,
+  active: false,
+  selected: false,
+  faded: false,
+  visible: true,
+  enabled: true,
+  disabled: disabled,
+  focused: focused,
+  checked: true,
+});
 
 const TreeListProvider = ({
-  nodes,
   nodeSelected,
-  onToggleNodeSelected,
-  searchValue,
-  modularPipelines,
-  modularPipelineIds,
-  nodeModularPipelines,
+  modularPipelinesSearchResult,
+  modularPipelinesTree,
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
-  nodeTypeIDs,
-  searching,
+  onItemClick,
+  onNodeToggleExpanded,
   focusMode,
-  inputOutputDataNodes,
+  expanded,
 }) => {
   const classes = useStyles();
 
-  const [expandedPipelines, setExpandedPipelines] = useState([]);
+  const getNodeRowData = (node) => {
+    const checked = !node.disabledNode;
+    const disabled = node.disabledTag || node.disabledType;
 
-  useEffect(() => {
-    const filteredTreeItems =
-      searchValue !== ''
-        ? getFilteredTreeItems({
-            nodes,
-            modularPipelines,
-            nodeSelected,
-            searchValue,
-            modularPipelineIds,
-            nodeModularPipelines,
-            nodeTypeIDs,
-            focusMode,
-            inputOutputDataNodes,
-          })
-        : [];
-
-    let expandedModularPipelines = [];
-
-    searchValue !== '' &&
-      filteredTreeItems.forEach((modularPipeline) =>
-        expandedModularPipelines.push(modularPipeline.id)
-      );
-    setExpandedPipelines(expandedModularPipelines);
-  }, [
-    searchValue,
-    nodes,
-    modularPipelines,
-    nodeSelected,
-    modularPipelineIds,
-    nodeModularPipelines,
-    nodeTypeIDs,
-    focusMode,
-    inputOutputDataNodes,
-  ]);
-
-  const treeData = getNestedModularPipelines({
-    nodes,
-    modularPipelines,
-    nodeSelected,
-    searchValue,
-    modularPipelineIds,
-    nodeModularPipelines,
-    nodeTypeIDs,
-    focusMode,
-    inputOutputDataNodes,
-  });
-
-  const onItemClick = (item) => {
-    if (!isModularPipelineType(item.type)) {
-      onToggleNodeSelected(item.id);
-    }
+    return {
+      ...node,
+      visibleIcon: VisibleIcon,
+      invisibleIcon: InvisibleIcon,
+      active: false,
+      selected: nodeSelected[node.id],
+      faded: disabled || node.disabledNode,
+      visible: !disabled && checked,
+      checked,
+      disabled,
+    };
   };
 
-  const renderModularPipelines = (treeData, parentStatus) => {
-    // this value is needed to determine whether the children modular pipeline belongs to a parent under focusMode
-    const status =
-      parentStatus === false && treeData.id !== 'main'
-        ? parentStatus
-        : treeData.disabled;
-
-    return treeData.children.map((node) =>
-      renderTree(
-        node,
-        onItemMouseEnter,
-        onItemMouseLeave,
-        onItemChange,
-        onItemClick,
-        status,
-        treeData.id
-      )
-    );
-  };
-
-  const renderChildNodes = (treeData) =>
-    treeData.nodes.map((node) => (
+  const renderLeafNode = (node) => {
+    return (
       <NodeListTreeItem
-        data={node}
+        data={getNodeRowData(node)}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
         onItemClick={onItemClick}
         key={node.id}
-        focusMode={focusMode}
       />
-    ));
+    );
+  };
 
-  const renderTree = (
-    rowData,
-    onItemMouseEnter,
-    onItemMouseLeave,
-    onItemChange,
-    onItemClick,
-    parentDisabled,
-    parentPipeline
-  ) => (
-    <NodeListTreeItem
-      data={rowData}
-      onItemMouseEnter={onItemMouseEnter}
-      onItemMouseLeave={onItemMouseLeave}
-      onItemChange={onItemChange}
-      onItemClick={onItemClick}
-      key={rowData.id}
-      focusMode={focusMode}
-      parentPipeline={parentPipeline}
-      parentDisabled={parentDisabled}>
-      {renderModularPipelines(rowData, parentDisabled)}
+  const renderTree = (tree, modularPipelineID) => {
+    const node = tree[modularPipelineID];
+    if (!node) {
+      return;
+    }
 
-      {/* render set of node elements in that modular pipeline */}
-      {renderChildNodes(rowData)}
-    </NodeListTreeItem>
-  );
+    const children = sortBy(
+      node.children,
+      (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
+      (child) => child.data.name
+    ).map((child) =>
+      isModularPipelineType(child.type)
+        ? renderTree(tree, child.id)
+        : renderLeafNode(child.data)
+    );
 
-  return searching ? (
+    if (modularPipelineID === '__root__') {
+      return children;
+    }
+
+    return (
+      <NodeListTreeItem
+        data={getModularPipelineRowData({
+          ...node,
+          disabled: focusMode && focusMode.id !== node.id,
+          focused: focusMode?.id === node.id,
+        })}
+        onItemMouseEnter={onItemMouseEnter}
+        onItemMouseLeave={onItemMouseLeave}
+        onItemChange={onItemChange}
+        onItemClick={noop}
+        key={node.id}>
+        {children}
+      </NodeListTreeItem>
+    );
+  };
+
+  const onItemExpandToggle = (event, expandedItemIds) => {
+    onNodeToggleExpanded(expandedItemIds);
+  };
+
+  return modularPipelinesSearchResult ? (
     <StyledTreeView
       className={classes.root}
+      expanded={Object.keys(modularPipelinesSearchResult)}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
-      expanded={expandedPipelines}
-      key="tree-search">
-      {/* render set of modular pipelines in the main pipeline */}
-      {renderModularPipelines(treeData, false)}
-      {/* render set of node elements in the main pipeline */}
-      {renderChildNodes(treeData)}
+      key="modularPipelinesSearchResult">
+      {renderTree(modularPipelinesSearchResult, '__root__')}
     </StyledTreeView>
   ) : (
     <StyledTreeView
+      expanded={expanded}
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
-      key="tree">
-      {renderModularPipelines(treeData, false)}
-      {renderChildNodes(treeData)}
+      onNodeToggle={onItemExpandToggle}
+      key="modularPipelinesTree">
+      {renderTree(modularPipelinesTree, '__root__')}
     </StyledTreeView>
   );
 };
 
 export const mapStateToProps = (state) => ({
-  nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
-  nodeModularPipelines: getNodeModularPipelines(state),
-  types: getNodeTypes(state),
-  nodeTypeIDs: getNodeTypeIDs(state),
-  modularPipelineIds: getModularPipelineIDs(state),
-  modularPipelines: getModularPipelineData(state),
-  inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
+  expanded: state.modularPipeline.expanded,
 });
 
-export const mapDispatchToProps = (dispatch) => ({
-  onToggleModularPipelineActive: (modularPipelineIDs, active) => {
-    dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
-  },
-  onToggleModularPipelineFilter: (modularPipelineIDs, enabled) => {
-    dispatch(toggleModularPipelineFilter(modularPipelineIDs, enabled));
-  },
-  onToggleTypeDisabled: (typeID, disabled) => {
-    dispatch(toggleTypeDisabled(typeID, disabled));
-  },
-  onToggleNodeSelected: (nodeID) => {
-    dispatch(loadNodeData(nodeID));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(TreeListProvider);
+export default connect(mapStateToProps)(TreeListProvider);
