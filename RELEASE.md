@@ -7,6 +7,16 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 3.17.1
+
+## Bug fixes and other changes
+
+- Relax pandas and plotly versions.
+
+## Bug fixes and other changes
+
+- Disable layers visualisation instead of throwing an error when there is a cycle in layers. (#383)
+- Disable layers when their dependency cannot be established in a disjoint graph.
 
 # Release 3.17.0
 

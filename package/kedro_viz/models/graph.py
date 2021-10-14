@@ -85,16 +85,26 @@ class RegisteredPipeline:
         self.name = _pretty_name(self.id)
 
 
-@dataclass
-class ModularPipeline:
-    """Represent a modular pipeline within a registered pipeline"""
+class GraphNodeType(str, Enum):
+    """Represent all possible node types in the graph representation of a Kedro pipeline.
+    The type needs to inherit from str as well so FastAPI can serialise it. See:
+    https://fastapi.tiangolo.com/tutorial/path-params/#working-with-python-enumerations
+    """
+
+    TASK = "task"
+    DATA = "data"
+    PARAMETERS = "parameters"
+    MODULAR_PIPELINE = (
+        "modularPipeline"  # camelCase so it can be referred directly to in the frontend
+    )
+
+
+@dataclass(frozen=True)
+class ModularPipelineChild:
+    """Represent a child of a modular pipeline."""
 
     id: str
-    name: str = field(init=False)
-
-    def __post_init__(self):
-        # prettify the last bit of the modular pipaline name, i.e. without the namespace
-        self.name = _pretty_name(self.id.split(".")[-1])
+    type: GraphNodeType
 
 
 @dataclass
@@ -105,14 +115,7 @@ class Tag(RegisteredPipeline):
         return hash(self.id)
 
 
-class GraphNodeType(Enum):
-    """Represent all possible node types in the graph representation of a Kedro pipeline"""
-
-    TASK = "task"
-    DATA = "data"
-    PARAMETERS = "parameters"
-
-
+# pylint: disable=too-many-instance-attributes
 @dataclass
 class GraphNode(abc.ABC):
     """Represent a node in the graph representation of a Kedro pipeline"""
@@ -127,19 +130,26 @@ class GraphNode(abc.ABC):
     # the full name of this node obtained from the underlying Kedro object
     full_name: str
 
+    # the type of the graph node
+    type: str
+
+    # the underlying Kedro object for each graph node, if any
+    kedro_obj: Optional[Union[KedroNode, AbstractDataSet]] = field(default=None)
+
     # the tags associated with this node
-    tags: Set[str]
+    tags: Set[str] = field(default_factory=set)
 
-    # the list of registered pipeline IDs this node belongs to
-    pipelines: List[str]
+    # the set of registered pipeline IDs this node belongs to
+    pipelines: Set[str] = field(default_factory=set)
 
-    # the list of modular pipeline this node belongs to
-    modular_pipelines: List[str] = field(init=False)
+    # The original namespace on this node.
+    # N.B.: in Kedro, modular pipeline is implemented by declaring namespace on a node.
+    # For example, node(func, namespace="uk.de") means this node belongs
+    # to the modular pipeline "uk" and "uk.de"
+    namespace: Optional[str] = field(init=False, default=None)
 
-    # the underlying Kedro object for this node
-    _kedro_obj: Union[KedroNode, Optional[AbstractDataSet]] = field(
-        init=False, default=None
-    )
+    # The list of modular pipeline this node belongs to.
+    modular_pipelines: Optional[List[str]] = field(init=False)
 
     @staticmethod
     def _hash(value: str):
@@ -147,23 +157,31 @@ class GraphNode(abc.ABC):
 
     @staticmethod
     def _get_namespace(dataset_full_name: str) -> Optional[str]:
-        """
-        Extract the namespace from the full dataset/parameter name.
+        """Extract the namespace from the full dataset/parameter name.
+        Args:
+            dataset_full_name: The full name of the dataset.
+        Returns:
+            The namespace of this dataset, if available.
+        Example:
+            >>> GraphNode._get_namespace("pipeline.dataset")
+            'pipeline'
         """
         if "." not in dataset_full_name:
             return None
 
-        # The last part of the namespace is the actual name of the dataset
-        # e.g. in pipeline1.data_science.a, "pipeline1.data_science" indicates
-        # the modular pipelines and "a" the name of the dataset.
         return dataset_full_name.rsplit(".", 1)[0]
 
     @staticmethod
     def _expand_namespaces(namespace: Optional[str]) -> List[str]:
-        """
-        Expand a node's namespace to the modular pipelines this node belongs to.
-        For example, if the node's namespace is: "pipeline1.data_science"
-        it should be expanded to: ["pipeline1", "pipeline1.data_science"]
+        """Expand a node's namespace to the list of modular pipelines
+        that this node belongs to.
+        Args:
+            namespace: The namespace of the node.
+        Returns:
+            The list of modular pipelines that this node belongs to.
+        Example:
+            >>> GraphNode._expand_namespaces("pipeline1.data_science")
+            ['pipeline1', 'pipeline1.data_science']
         """
         if not namespace:
             return []
@@ -178,14 +196,6 @@ class GraphNode(abc.ABC):
             namespace_list.append(prefix)
         return namespace_list
 
-    @property
-    def kedro_obj(self) -> Union[KedroNode, Optional[AbstractDataSet]]:
-        """For every node in the graph representation of a Kedro pipeline,
-        there might be an underlying Kedro object stored at `self._kedro_obj`.
-        For example, it could be a Node or a DataSet object.
-        """
-        return self._kedro_obj
-
     @classmethod
     def create_task_node(cls, node: KedroNode) -> "TaskNode":
         """Create a graph node of type TASK for a given Kedro Node instance.
@@ -199,7 +209,6 @@ class GraphNode(abc.ABC):
             name=_pretty_name(getattr(node, "short_name", node.name)),
             full_name=getattr(node, "short_name", node.name),
             tags=set(node.tags),
-            pipelines=[],
             kedro_obj=node,
         )
 
@@ -233,7 +242,6 @@ class GraphNode(abc.ABC):
                 full_name=dataset_name,
                 tags=tags,
                 layer=layer,
-                pipelines=[],
                 is_free_input=is_free_input,
             )
 
@@ -243,7 +251,6 @@ class GraphNode(abc.ABC):
             full_name=full_name,
             tags=tags,
             layer=layer,
-            pipelines=[],
             kedro_obj=dataset,
             is_free_input=is_free_input,
         )
@@ -273,14 +280,34 @@ class GraphNode(abc.ABC):
             full_name=full_name,
             tags=tags,
             layer=layer,
-            pipelines=[],
             kedro_obj=parameters,
+        )
+
+    @classmethod
+    def create_modular_pipeline_node(
+        cls, modular_pipeline_id: str
+    ) -> "ModularPipelineNode":
+        """Create a graph node of type MODULAR_PIPELINE for a given modular pipeline ID.
+        This is used to visualise all modular pipelines in a Kedro project on the graph.
+        Args:
+            modular_pipeline_id: The ID of the modular pipeline to convert into a graph node.
+        Returns:
+            An instance of ModularPipelineNode.
+        Example:
+            >>> node = GraphNode.create_modular_pipeline_node("pipeline.data_science")
+            >>> assert node.id == "pipeline.data_science"
+            >>> assert node.name == "Data Science"
+            >>> assert node.type == GraphNodeType.MODULAR_PIPELINE
+        """
+        return ModularPipelineNode(
+            id=modular_pipeline_id,
+            name=_pretty_name(_strip_namespace(modular_pipeline_id)),
+            full_name=modular_pipeline_id,
         )
 
     def add_pipeline(self, pipeline_id: str):
         """Add a pipeline_id to the list of pipelines that this node belongs to."""
-        if pipeline_id not in self.pipelines:
-            self.pipelines.append(pipeline_id)
+        self.pipelines.add(pipeline_id)
 
     def belongs_to_pipeline(self, pipeline_id: str) -> bool:
         """Check whether this graph node belongs to a given pipeline_id."""
@@ -303,16 +330,15 @@ class GraphNodeMetadata(abc.ABC):
 class TaskNode(GraphNode):
     """Represent a graph node of type TASK"""
 
-    kedro_obj: InitVar[KedroNode]
     modular_pipelines: List[str] = field(init=False)
     parameters: Dict = field(init=False, default_factory=dict)
     type: str = GraphNodeType.TASK.value
 
-    def __post_init__(self, kedro_obj: KedroNode):
-        self._kedro_obj = kedro_obj
+    def __post_init__(self):
+        self.namespace = self.kedro_obj.namespace
 
         # the modular pipelines that a task node belongs to are derived from its namespace.
-        self.modular_pipelines = self._expand_namespaces(kedro_obj.namespace)
+        self.modular_pipelines = self._expand_namespaces(self.kedro_obj.namespace)
 
 
 def _extract_wrapped_func(func: FunctionType) -> FunctionType:
@@ -325,6 +351,60 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
     wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
     # return the original function if it's not a decorated function
     return func if wrapped_func is None else wrapped_func
+
+
+@dataclass
+class ModularPipelineNode(GraphNode):
+    """Represent a modular pipeline node in the graph"""
+
+    type: str = GraphNodeType.MODULAR_PIPELINE.value
+
+    # A modular pipeline doesn't belong to any other modular pipeline,
+    # in the same sense as other types of GraphNode do.
+    # Therefore it's default to None.
+    # The parent-child relationship between modular pipeline themselves is modelled explicitly.
+    modular_pipelines: Optional[List[str]] = None
+
+    # Model the modular pipelines tree using a child-references representation of a tree.
+    # See: https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
+    # for more details.
+    # For example, if a node namespace is "uk.data_science",
+    # the "uk" modular pipeline node's children are ["uk.data_science"]
+    children: Set[ModularPipelineChild] = field(default_factory=set)
+
+    # Keep track of a modular pipeline's inputs and outputs, both internal and external.
+    # Internal inputs/outputs are IDs of the datasets not connected to any nodes external
+    # to the pipeline.External inputs/outputs are IDs of the datasets used to connect
+    # this modular pipeline to other modular pipelines in the whole registered pipeline.
+    # In practical term, external inputs/outputs are the ones explicitly specified
+    # when using the pipeline() factory function.
+    # More information can be found here:
+    # https://kedro.readthedocs.io/en/latest/06_nodes_and_pipelines/03_modular_pipelines.html#how-to-connect-existing-pipelines
+    internal_inputs: Set[str] = field(default_factory=set)
+    internal_outputs: Set[str] = field(default_factory=set)
+    external_inputs: Set[str] = field(default_factory=set)
+    external_outputs: Set[str] = field(default_factory=set)
+
+    @property
+    def inputs(self) -> Set[str]:
+        """Return a set of inputs for this modular pipeline.
+        Visually, these are inputs displayed as the inputs of the modular pipeline,
+        both when collapsed and focused.
+        Intuitively, the set of inputs for this modular pipeline is the set of all
+        external and internal inputs, excluding the ones also serving as outputs.
+        """
+        return (self.external_inputs | self.internal_inputs) - (
+            self.external_outputs | self.internal_outputs
+        )
+
+    @property
+    def outputs(self) -> Set[str]:
+        """Return a set of inputs for this modular pipeline.
+        Follow the same logic as the inputs calculation.
+        """
+        return (self.external_outputs | self.internal_outputs) - (
+            self.external_inputs | self.internal_inputs
+        )
 
 
 @dataclass
@@ -380,13 +460,10 @@ class DataNode(GraphNode):
     """Represent a graph node of type DATA"""
 
     # whether the data node is a free input
-    is_free_input: bool
+    is_free_input: bool = field(default=False)
 
     # the layer that this data node belongs to
-    layer: Optional[str]
-
-    # the underlying Kedro's AbstractDataSet for this data node
-    kedro_obj: InitVar[Optional[AbstractDataSet]]
+    layer: Optional[str] = field(default=None)
 
     # the concrete type of the underlying kedro_obj
     dataset_type: Optional[str] = field(init=False)
@@ -400,10 +477,9 @@ class DataNode(GraphNode):
     # the type of this graph node, which is DATA
     type: str = GraphNodeType.DATA.value
 
-    def __post_init__(self, kedro_obj: Optional[AbstractDataSet]):
-        self._kedro_obj = kedro_obj
+    def __post_init__(self):
         self.dataset_type = (
-            f"{kedro_obj.__class__.__module__}.{kedro_obj.__class__.__qualname__}"
+            f"{self.kedro_obj.__class__.__module__}.{self.kedro_obj.__class__.__qualname__}"
             if self.kedro_obj
             else None
         )
@@ -411,6 +487,7 @@ class DataNode(GraphNode):
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
+        self.namespace = self._get_namespace(self.full_name)
         self.modular_pipelines = self._expand_namespaces(
             self._get_namespace(self.full_name)
         )
@@ -438,10 +515,10 @@ class TranscodedDataNode(GraphNode):
     """Represent a graph node of type DATA"""
 
     # whether the data node is a free input
-    is_free_input: bool
+    is_free_input: bool = field(default=False)
 
     # the layer that this data node belongs to
-    layer: Optional[str]
+    layer: Optional[str] = field(default=None)
 
     # the original Kedro's AbstractDataSet for this transcoded data node
     original_version: AbstractDataSet = field(init=False)
@@ -468,6 +545,7 @@ class TranscodedDataNode(GraphNode):
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
+        self.namespace = self._get_namespace(self.full_name)
         self.modular_pipelines = self._expand_namespaces(
             self._get_namespace(self.full_name)
         )
@@ -657,11 +735,7 @@ class ParametersNode(GraphNode):
     """Represent a graph node of type PARAMETERS"""
 
     # the layer that this parameters node belongs to
-    layer: Optional[str]
-
-    # the underlying Kedro's AbstractDataSet for this parameters node
-    # n.b. for parameters, this is always MemoryDataSet
-    kedro_obj: InitVar[AbstractDataSet]
+    layer: Optional[str] = field(default=None)
 
     # the list of modular pipelines this parameters node belongs to
     modular_pipelines: List[str] = field(init=False)
@@ -669,11 +743,12 @@ class ParametersNode(GraphNode):
     # the type of this graph node, which is PARAMETERS
     type: str = GraphNodeType.PARAMETERS.value
 
-    def __post_init__(self, kedro_obj: AbstractDataSet):
-        self._kedro_obj = kedro_obj
+    def __post_init__(self):
         if self.is_all_parameters():
+            self.namespace = None
             self.modular_pipelines = []
         else:
+            self.namespace = self._get_namespace(self.parameter_name)
             self.modular_pipelines = self._expand_namespaces(
                 self._get_namespace(self.parameter_name)
             )
@@ -694,13 +769,13 @@ class ParametersNode(GraphNode):
     @property
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
-        self._kedro_obj: AbstractDataSet
-        if self._kedro_obj is None:
+        self.kedro_obj: AbstractDataSet
+        if self.kedro_obj is None:
             logger.warning(
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name
             )
             return None
-        return self._kedro_obj.load()
+        return self.kedro_obj.load()
 
 
 @dataclass
