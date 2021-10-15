@@ -70,7 +70,7 @@
     "redux-watch": "^1.2.0",
     "reselect": "^4.0.0",
     "seedrandom": "^3.0.5",
-    "svg-crowbar": "^0.6.5",
+    "svg-crowbar": "^0.7.0",
     "what-input": "^5.2.10"
   },
   "peerDependencies": {
