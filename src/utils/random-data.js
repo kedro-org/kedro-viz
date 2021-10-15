@@ -17,8 +17,6 @@ const MAX_TAG_COUNT = 20;
 const PARAMETERS_FREQUENCY = 0.2;
 const MIN_PIPELINES_COUNT = 2;
 const MAX_PIPELINES_COUNT = 15;
-const MIN_MODULAR_PIPELINES_COUNT = 2;
-const MAX_MODULAR_PIPELINES_COUNT = 15;
 const LAYERS = [
   'Raw',
   'Intermediate',
@@ -74,16 +72,6 @@ class Pipeline {
         children: [],
       },
     };
-    // const pipelineCount = this.utils.randomNumberBetween(
-    //   MIN_MODULAR_PIPELINES_COUNT,
-    //   MAX_MODULAR_PIPELINES_COUNT
-    // );
-    // for (let i = 1; i < pipelineCount; i++) {
-    //   modularPipelines.push(
-    //     this.utils.getRandomName(this.utils.randomNumber(4), ' ')
-    //   );
-    // }
-    // return modularPipelines.filter(unique);
   }
 
   /**
