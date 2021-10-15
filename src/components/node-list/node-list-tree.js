@@ -85,7 +85,7 @@ const TreeListProvider = ({
       ...node,
       visibleIcon: VisibleIcon,
       invisibleIcon: InvisibleIcon,
-      active: false,
+      active: node.active,
       selected: nodeSelected[node.id],
       faded: disabled || node.disabledNode,
       visible: !disabled && checked,

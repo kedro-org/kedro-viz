@@ -3,6 +3,7 @@ import MetaData from './index';
 import { togglePrettyName } from '../../actions';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
+import { toggleModularPipelineExpanded } from '../../actions/modular-pipelines';
 import { setup } from '../../utils/state.mock';
 import nodePlot from '../../utils/data/node_plot.mock.json';
 import { mapDispatchToProps } from './index';
@@ -15,12 +16,18 @@ import nodeMetricsData from '../../utils/data/node_metrics_data.mock.json';
 const modelInputDataSetNodeId = '23c94afb';
 const splitDataTaskNodeId = '65d0d789';
 const parametersNodeId = 'f1f1425b';
+const dataScienceNodeId = 'data_science';
+const dataProcessingNodeId = 'data_processing';
 
 describe('MetaData', () => {
   const mount = (props) => {
     return setup.mount(<MetaData visible={true} />, {
       //parameters are enabled here to test all metadata panel functionality
-      beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+      beforeLayoutActions: [
+        () => toggleTypeDisabled('parameters', false),
+        // expand a modular pipeline
+        () => toggleModularPipelineExpanded([dataScienceNodeId]),
+      ],
       afterLayoutActions: [
         // Click the expected node
         () => toggleNodeClicked(props.nodeId),
@@ -46,7 +53,7 @@ describe('MetaData', () => {
       metadata.parameters = Array.from({ length: 20 }, (_, i) => `Test: ${i}`);
 
       const wrapper = mount({
-        nodeId: splitDataTaskNodeId,
+        nodeId: parametersNodeId,
         mockMetadata: metadata,
       });
       const parametersRow = () => rowByLabel(wrapper, 'Parameters:');

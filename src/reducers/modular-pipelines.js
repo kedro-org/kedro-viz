@@ -44,26 +44,30 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
       let expandedIDs = action.expandedIDs;
 
       if (isExpanding) {
-        const expandedModularPipeline = expandedIDs.filter(
+        const expandedModularPipelines = expandedIDs.filter(
           (expandedID) => !modularPipelineState.expanded.includes(expandedID)
-        )[0];
-        newVisibleState[expandedModularPipeline] = false;
-        modularPipelineState.tree[expandedModularPipeline].children.forEach(
-          (child) => (newVisibleState[child.id] = true)
         );
+        expandedModularPipelines.forEach((expandedModularPipeline) => {
+          newVisibleState[expandedModularPipeline] = false;
+          modularPipelineState.tree[expandedModularPipeline].children.forEach(
+            (child) => (newVisibleState[child.id] = true)
+          );
+        });
       } else {
-        const collapsedModularPipeline = modularPipelineState.expanded.filter(
+        const collapsedModularPipelines = modularPipelineState.expanded.filter(
           (expandedID) => !expandedIDs.includes(expandedID)
-        )[0];
-        newVisibleState[collapsedModularPipeline] = true;
-        markTreeInvisible(
-          modularPipelineState.tree,
-          collapsedModularPipeline,
-          newVisibleState
         );
-        expandedIDs = expandedIDs.filter(
-          (id) => !id.startsWith(collapsedModularPipeline)
-        );
+        collapsedModularPipelines.forEach((collapsedModularPipeline) => {
+          newVisibleState[collapsedModularPipeline] = true;
+          markTreeInvisible(
+            modularPipelineState.tree,
+            collapsedModularPipeline,
+            newVisibleState
+          );
+          expandedIDs = expandedIDs.filter(
+            (id) => !id.startsWith(collapsedModularPipeline)
+          );
+        });
       }
 
       return updateState({

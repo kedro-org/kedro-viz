@@ -4,6 +4,7 @@ const { escapeRegExp, getHighlightedText } = utils;
 export const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 export const getFocusedModularPipeline = (state) =>
   state.visible.modularPipelineFocusMode;
+export const getModularPipelineData = (state) => state.modularPipeline.tree;
 
 export const search = (value, searchValue) => {
   if (!value) {

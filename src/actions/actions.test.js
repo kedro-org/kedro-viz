@@ -49,9 +49,7 @@ import {
 } from '../actions/tags';
 import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
-  TOGGLE_MODULAR_PIPELINE_FILTER,
   toggleModularPipelineActive,
-  toggleModularPipelineFilter,
 } from '../actions/modular-pipelines';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
@@ -222,19 +220,6 @@ describe('actions', () => {
       active,
     };
     expect(toggleModularPipelineActive(modularPipelineIDs, active)).toEqual(
-      expectedAction
-    );
-  });
-
-  it('should create an action to toggle an array of modular pipelines on/off', () => {
-    const modularPipelineIDs = ['12345', '67890'];
-    const enabled = false;
-    const expectedAction = {
-      type: TOGGLE_MODULAR_PIPELINE_FILTER,
-      modularPipelineIDs,
-      enabled,
-    };
-    expect(toggleModularPipelineFilter(modularPipelineIDs, enabled)).toEqual(
       expectedAction
     );
   });

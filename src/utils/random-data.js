@@ -63,21 +63,27 @@ class Pipeline {
   }
 
   /**
-   * Create the modular pipelines array
+   * Create the modular pipelines tree
    * @returns {number} Rank count total
    */
   generateModularPipelines() {
-    const modularPipelines = ['Data Science'];
-    const pipelineCount = this.utils.randomNumberBetween(
-      MIN_MODULAR_PIPELINES_COUNT,
-      MAX_MODULAR_PIPELINES_COUNT
-    );
-    for (let i = 1; i < pipelineCount; i++) {
-      modularPipelines.push(
-        this.utils.getRandomName(this.utils.randomNumber(4), ' ')
-      );
-    }
-    return modularPipelines.filter(unique);
+    return {
+      __root__: {
+        id: '__root__',
+        name: 'Root',
+        children: [],
+      },
+    };
+    // const pipelineCount = this.utils.randomNumberBetween(
+    //   MIN_MODULAR_PIPELINES_COUNT,
+    //   MAX_MODULAR_PIPELINES_COUNT
+    // );
+    // for (let i = 1; i < pipelineCount; i++) {
+    //   modularPipelines.push(
+    //     this.utils.getRandomName(this.utils.randomNumber(4), ' ')
+    //   );
+    // }
+    // return modularPipelines.filter(unique);
   }
 
   /**
@@ -263,12 +269,13 @@ class Pipeline {
    * @returns {array} Node pipelines
    */
   getNodeModularPipelines() {
-    return this.modularPipelines.reduce((modularPipelines, id, i) => {
-      if (i === 0 || this.utils.randomIndex(2)) {
-        return modularPipelines.concat(id);
-      }
-      return modularPipelines;
-    }, []);
+    return [];
+    // return this.modularPipelines.reduce((modularPipelines, id, i) => {
+    //   if (i === 0 || this.utils.randomIndex(2)) {
+    //     return modularPipelines.concat(id);
+    //   }
+    //   return modularPipelines;
+    // }, []);
   }
 
   /**
@@ -465,11 +472,8 @@ class Pipeline {
       layers: LAYERS,
       nodes: this.nodes,
       pipelines: this.pipelines.map((name) => ({ id: name, name })),
-      //eslint-disable-next-line camelcase
-      modular_pipelines: this.modularPipelines.map((name) => ({
-        id: name,
-        name,
-      })),
+      // todo lim: fixme
+      modularPipelines: this.modularPipelines,
       tags: this.tags,
     };
   }

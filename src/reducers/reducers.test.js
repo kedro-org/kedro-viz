@@ -396,15 +396,4 @@ describe('Reducer', () => {
       expect(newState.modularPipeline.active).toEqual({ nested: true });
     });
   });
-
-  describe('TOGGLE_MODULAR_PIPELINE_FILTER', () => {
-    it('should toggle whether a modular pipeline filter is enabled', () => {
-      const newState = reducer(mockState.spaceflights, {
-        type: TOGGLE_MODULAR_PIPELINE_FILTER,
-        modularPipelineIDs: ['nested'],
-        enabled: true,
-      });
-      expect(newState.modularPipeline.enabled).toEqual({ nested: true });
-    });
-  });
 });
