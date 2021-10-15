@@ -47,9 +47,10 @@ def example_api(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
+    example_session_store_location: str,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(data_access_manager, example_catalog, example_pipelines)
+    populate_data(data_access_manager, example_catalog, example_pipelines, example_session_store_location)
     with mock.patch(
         "kedro_viz.api.responses.data_access_manager", new=data_access_manager
     ), mock.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager):
@@ -61,10 +62,11 @@ def example_transcoded_api(
     data_access_manager: DataAccessManager,
     example_transcoded_pipelines: Dict[str, Pipeline],
     example_transcoded_catalog: DataCatalog,
+    example_session_store_location: str,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
-        data_access_manager, example_transcoded_catalog, example_transcoded_pipelines
+        data_access_manager, example_transcoded_catalog, example_transcoded_pipelines, example_session_store_location
     )
     with mock.patch(
         "kedro_viz.api.responses.data_access_manager", new=data_access_manager

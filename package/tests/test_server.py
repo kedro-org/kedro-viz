@@ -59,10 +59,10 @@ def patched_create_api_app_from_file(mocker):
 
 
 @pytest.fixture(autouse=True)
-def patched_load_data(mocker, example_catalog, example_pipelines):
+def patched_load_data(mocker, example_catalog, example_pipelines,example_session_store_location):
     yield mocker.patch(
         "kedro_viz.server.kedro_data_loader.load_data",
-        return_value=(example_catalog, example_pipelines),
+        return_value=(example_catalog, example_pipelines,example_session_store_location),
     )
 
 
@@ -74,6 +74,7 @@ class TestServer:
         patched_uvicorn_run,
         example_catalog,
         example_pipelines,
+        example_session_store_location
     ):
         run_server()
         # assert that when running server, data are added correctly to the data access manager
@@ -81,6 +82,7 @@ class TestServer:
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             example_pipelines
         )
+        patched_data_access_manager.add_session_store_location.assert_called_once_with(example_session_store_location)
 
         # correct api app is created
         patched_create_api_app_from_project.assert_called_once()

@@ -58,6 +58,11 @@ class TestAddCatalog:
         data_access_manager.set_layers(layers)
         assert data_access_manager.layers.as_list() == layers
 
+class TestAddSessionStoreLocation:
+    def test_add_session_store_location(self,data_access_manager: DataAccessManager,
+     example_session_store_location):
+        data_access_manager.add_session_store_location(example_session_store_location)
+        assert data_access_manager.session_store_location == example_session_store_location
 
 class TestAddNode:
     def test_add_node(self, data_access_manager: DataAccessManager):

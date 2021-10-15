@@ -153,3 +153,7 @@ def example_transcoded_catalog():
             "params:train_test_split": 0.1,
         },
     )
+
+@pytest.fixture
+def example_session_store_location():
+    yield "/temp/store.db"

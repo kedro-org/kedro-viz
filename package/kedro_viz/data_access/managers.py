@@ -28,6 +28,7 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
 from collections import defaultdict
 from typing import Dict, List, Union
+from sqlalchemy.orm import Session as DatabaseSession
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
@@ -67,13 +68,18 @@ class DataAccessManager:
         self.modular_pipelines = ModularPipelinesRepository()
         self.node_dependencies = defaultdict(set)
         self.layers = LayersRepository()
-        self.session_store_location = None
+        self._db_session = None
+
+    @property
+    def db_session(self):
+        return self._db_session
+    
+    @db_session.setter
+    def db_session(self, db_session: DatabaseSession):
+        self._db_session = db_session
 
     def add_catalog(self, catalog: DataCatalog):
         self.catalog.set_catalog(catalog)
-
-    def add_session_store_location(self, session_store_location: str):
-        self.session_store_location = session_store_location
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         for pipeline_key, pipeline in pipelines.items():

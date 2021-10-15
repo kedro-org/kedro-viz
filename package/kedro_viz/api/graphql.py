@@ -37,18 +37,8 @@ import strawberry
 from fastapi import APIRouter
 from strawberry.asgi import GraphQL
 
-from kedro_viz.database import create_db_engine
-from kedro_viz.models.session import Base, KedroSession
-
-
-def get_db():
-    engine, session_class = create_db_engine()
-    Base.metadata.create_all(bind=engine)
-    db = session_class()
-    try:
-        yield db
-    finally:
-        db.close()
+from kedro_viz.data_access import data_access_manager
+from kedro_viz.models.session import KedroSession
 
 
 @strawberry.type
@@ -58,10 +48,10 @@ class KedroSessionGraphQLType:
 
 
 def get_all_sessions() -> typing.List[KedroSessionGraphQLType]:
-    db = next(get_db())
+    data_access_manager.db_session
     return [
         KedroSessionGraphQLType(id=kedro_session.id, blob=kedro_session.blob)
-        for kedro_session in db.query(KedroSession).all()
+        for kedro_session in data_access_manager.db_session.query(KedroSession).all()
     ]
 
 
