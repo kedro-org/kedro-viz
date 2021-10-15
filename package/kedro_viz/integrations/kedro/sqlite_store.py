@@ -1,8 +1,7 @@
 from pathlib import Path
 from kedro.framework.session.store import BaseSessionStore
-from sqlalchemy.orm import Session
 from kedro_viz.database import create_db_engine
-from kedro_viz.models.session import KedroSession
+from kedro_viz.models.run_model import Base, RunModel
 
 
 def get_db(session_class):
@@ -12,7 +11,7 @@ def get_db(session_class):
     finally:
         db.close()
 
-class SessionStore(BaseSessionStore):
+class SQLiteStore(BaseSessionStore):
     """Stores the session data on disk using `shelve` package."""
 
     @property
@@ -24,8 +23,9 @@ class SessionStore(BaseSessionStore):
         """Save the session store info on db ."""
 
         engine, session_class = create_db_engine(self.location)
+        Base.metadata.create_all(bind=engine)
         db = next(get_db(session_class))
-        session_store_data = KedroSession(
+        session_store_data = RunModel(
             id=self._session_id,
             blob=f"{self}"
         )

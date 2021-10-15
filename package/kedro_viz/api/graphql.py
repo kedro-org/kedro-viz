@@ -38,27 +38,27 @@ from fastapi import APIRouter
 from strawberry.asgi import GraphQL
 
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.session import KedroSession
+from kedro_viz.models.run_model import RunModel
 
 
 @strawberry.type
-class KedroSessionGraphQLType:
+class RunModelGraphQLType:
     id: str
     blob: str
 
 
-def get_all_sessions() -> typing.List[KedroSessionGraphQLType]:
+def get_all_runs() -> typing.List[RunModelGraphQLType]:
     data_access_manager.db_session
     return [
-        KedroSessionGraphQLType(id=kedro_session.id, blob=kedro_session.blob)
-        for kedro_session in data_access_manager.db_session.query(KedroSession).all()
+        RunModelGraphQLType(id=kedro_session.id, blob=kedro_session.blob)
+        for kedro_session in data_access_manager.db_session.query(RunModel).all()
     ]
 
 
 @strawberry.type
 class Query:
-    sessions: typing.List[KedroSessionGraphQLType] = strawberry.field(
-        resolver=get_all_sessions
+    runs: typing.List[RunModelGraphQLType] = strawberry.field(
+        resolver=get_all_runs
     )
 
 router = APIRouter()

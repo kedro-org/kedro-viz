@@ -41,7 +41,7 @@ from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.services import layers_services
 from kedro_viz.database import create_db_engine
-from kedro_viz.models.session import Base
+from kedro_viz.models.run_model import Base
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 4141
 DEV_PORT = 4142
