@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { runs } from './mock-data';
+import Accordion from '../accordion';
 import RunMetadata from '../run-metadata';
 
 import './details.css';
@@ -22,7 +23,15 @@ const Details = ({ sidebarVisible }) => {
         })}
       >
         <RunMetadata isSingleRun={isSingleRun} runs={runs} />
-        <div className="details-stats"></div>
+        <div className="details-stats">
+          <Accordion heading="Metrics" layout="left">
+            <div>content</div>
+            <div>content</div>
+            <div>content</div>
+            <div>content</div>
+            <div>content</div>
+          </Accordion>
+        </div>
       </div>
     </>
   );

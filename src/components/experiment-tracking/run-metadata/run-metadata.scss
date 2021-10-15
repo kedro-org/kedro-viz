@@ -2,7 +2,6 @@
   background-color: var(--color-bg-1);
   display: flex;
   flex-shrink: 0;
-  // height: 100%;
   overflow-x: scroll;
   padding: 5em 0 0 5em;
 
@@ -17,7 +16,7 @@
 }
 
 .details-metadata__table {
-  max-width: 755px;
+  max-width: 75em;
   width: 100%;
 }
 

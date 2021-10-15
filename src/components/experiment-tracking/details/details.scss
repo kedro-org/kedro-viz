@@ -12,11 +12,11 @@
   top: 0;
   transform: translateX($sidebar-width-closed);
   transition: transform 0.4s ease, width ease 0.4s;
-  width: calc((100% - #{$sidebar-width-closed}));
+  width: calc((100% - #{$sidebar-width-closed} - #{$global-toolbar-width}));
 
   @media (min-width: $sidebar-width-breakpoint) {
     &--sidebar-visible {
-      width: calc((100% - #{$sidebar-width-open}));
+      width: calc((100% - #{$sidebar-width-open} - #{$global-toolbar-width}));
       transform: translateX($sidebar-width-open);
     }
   }
