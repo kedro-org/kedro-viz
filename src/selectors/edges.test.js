@@ -10,12 +10,16 @@ import { toggleNodesDisabled } from '../actions/nodes';
 import { toggleFocusMode } from '../actions';
 import reducer from '../reducers';
 
-const getNodeIDs = (state) => state.node.ids;
-const getEdgeIDs = (state) => state.edge.ids;
-const getEdgeSources = (state) => state.edge.sources;
-const getEdgeTargets = (state) => state.edge.targets;
-
 describe('Selectors', () => {
+  const { nodes, edges } = mockState.spaceflights.graph;
+  const disabledNode = nodes.find((node) =>
+    node.name.includes('Train Model')
+  ).id;
+  const sourceToDisabledNode = edges.find(
+    (edge) =>
+      edge.target === disabledNode && edge.sourceNode.type !== 'parameters'
+  ).source;
+
   describe('addNewEdge', () => {
     const transitiveEdges = {};
     beforeEach(() => {
@@ -51,25 +55,9 @@ describe('Selectors', () => {
   });
 
   describe('getTransitiveEdges', () => {
-    const edgeSources = getEdgeSources(mockState.animals);
-    const edgeTargets = getEdgeTargets(mockState.animals);
-    // Find a node which has multiple inputs and outputs, which we can disable
-    const disabledNode = getNodeIDs(mockState.animals).find((node) => {
-      const hasMultipleConnections = (edgeNodes) =>
-        Object.values(edgeNodes).filter((edge) => edge === node).length > 1;
-      return (
-        hasMultipleConnections(edgeSources) &&
-        hasMultipleConnections(edgeTargets)
-      );
-    });
-    const sourceEdge = getEdgeIDs(mockState.animals).find(
-      (edge) => edgeTargets[edge] === disabledNode
-    );
-    const source = edgeSources[sourceEdge];
-
     describe('if all edges are enabled', () => {
       it('creates no transitive edges', () => {
-        expect(getTransitiveEdges(mockState.animals)).toEqual({
+        expect(getTransitiveEdges(mockState.spaceflights)).toEqual({
           edgeIDs: [],
           sources: {},
           targets: {},
@@ -82,20 +70,24 @@ describe('Selectors', () => {
       let alteredMockState;
       beforeEach(() => {
         alteredMockState = reducer(
-          mockState.animals,
+          mockState.spaceflights,
           toggleNodesDisabled([disabledNode], true)
         );
       });
 
       it('creates transitive edges matching the source node', () => {
         expect(getTransitiveEdges(alteredMockState).edgeIDs).toEqual(
-          expect.arrayContaining([expect.stringContaining(source)])
+          expect.arrayContaining([
+            expect.stringContaining(sourceToDisabledNode),
+          ])
         );
       });
 
       it('creates transitive edges not matching the source node', () => {
         expect(getTransitiveEdges(alteredMockState).edgeIDs).toEqual(
-          expect.arrayContaining([expect.not.stringContaining(source)])
+          expect.arrayContaining([
+            expect.not.stringContaining(sourceToDisabledNode),
+          ])
         );
       });
 
@@ -109,14 +101,14 @@ describe('Selectors', () => {
 
   describe('getVisibleEdges', () => {
     it('gets only the visible edges', () => {
-      const edgeDisabled = getEdgeDisabled(mockState.animals);
+      const edgeDisabled = getEdgeDisabled(mockState.spaceflights);
       expect(
-        getVisibleEdges(mockState.animals).map((d) => edgeDisabled[d.id])
+        getVisibleEdges(mockState.spaceflights).map((d) => edgeDisabled[d.id])
       ).toEqual(expect.arrayContaining([false]));
     });
 
     it('formats the edges into an array of objects', () => {
-      expect(getVisibleEdges(mockState.animals)).toEqual(
+      expect(getVisibleEdges(mockState.spaceflights)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
@@ -128,21 +120,12 @@ describe('Selectors', () => {
     });
 
     it('includes transitive edges when necessary', () => {
-      // Find a node which has multiple inputs and outputs, which we can disable
-      const disabledNodeID = getNodeIDs(mockState.animals).find((node) => {
-        const hasMultipleConnections = (edgeNodes) =>
-          Object.values(edgeNodes).filter((edge) => edge === node).length > 1;
-        return (
-          hasMultipleConnections(getEdgeSources(mockState.animals)) &&
-          hasMultipleConnections(getEdgeTargets(mockState.animals))
-        );
-      });
       const alteredMockState = reducer(
-        mockState.animals,
-        toggleNodesDisabled([disabledNodeID], true)
+        mockState.spaceflights,
+        toggleNodesDisabled([disabledNode], true)
       );
-      expect(getVisibleEdges(alteredMockState).length).toBeGreaterThan(
-        getVisibleEdges(mockState.animals).length
+      expect(new Set(getVisibleEdges(alteredMockState))).not.toEqual(
+        new Set(getVisibleEdges(mockState.spaceflights))
       );
     });
   });
@@ -150,12 +133,12 @@ describe('Selectors', () => {
   describe('getInputOutputDataEdges', () => {
     it('includes input output edges related to a modular pipeline in the returned object', () => {
       const newMockState = reducer(
-        mockState.animals,
-        toggleFocusMode({ id: 'pipeline1' })
+        mockState.spaceflights,
+        toggleFocusMode({ id: 'data_processing' })
       );
 
       expect(getInputOutputDataEdges(newMockState)).toHaveProperty(
-        '0ae9e4de|15586b7a'
+        '47b81aa6|23c94afb'
       );
     });
   });

@@ -32,13 +32,13 @@ When you import Kedro-Viz from npm, you can pass pipeline data to the component 
 
 ## Data sources
 
-On initialisation, the app uses a string data token (e.g. 'json' or 'animals') to [determine the data source](CONTRIBUTING.md#data-sources).
+On initialisation, the app uses a string data token (e.g. 'json' or 'spaceflights') to [determine the data source](CONTRIBUTING.md#data-sources).
 
 You can find example datasets in [/src/utils/data/](/src/utils/data/), which illustrate the basic API structure.
 
 ## Bundled data loading
 
-Some data source tokens instruct the app to synchronously `import` [test](/src/utils/data/animals.mock.json)/[demo](/src/utils/data/demo.mock.json) data from bundled JSON files in the `/src/utils/data` directory, or to generate it randomly on page-load. Random data can be seeded with a 'seed' query string in the URL, to allow randomly-generated layouts to be replicated.
+Some data source tokens instruct the app to synchronously `import` [test](/src/utils/data/spaceflights.mock.json)/[demo](/src/utils/data/demo.mock.json) data from bundled JSON files in the `/src/utils/data` directory, or to generate it randomly on page-load. Random data can be seeded with a 'seed' query string in the URL, to allow randomly-generated layouts to be replicated.
 
 ## Asynchronous/external data loading
 

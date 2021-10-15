@@ -36,9 +36,9 @@ import {
 } from './common';
 
 describe('graph', () => {
-  const mockNodes = getVisibleNodes(mockState.animals);
-  const mockEdges = getVisibleEdges(mockState.animals);
-  const mockLayers = getVisibleLayerIDs(mockState.animals);
+  const mockNodes = getVisibleNodes(mockState.spaceflights);
+  const mockEdges = getVisibleEdges(mockState.spaceflights);
+  const mockLayers = getVisibleLayerIDs(mockState.spaceflights);
 
   const result = graph(mockNodes, mockEdges, mockLayers);
 

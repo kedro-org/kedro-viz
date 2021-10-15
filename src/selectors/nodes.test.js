@@ -34,19 +34,21 @@ const getNodeName = (state) => state.node.name;
 const getNodeType = (state) => state.node.type;
 const getNodePipelines = (state) => state.node.pipelines;
 
-const noFontState = reducer(mockState.animals, updateFontLoaded(false));
-const parameterNodesID = ['443cf06a', '2ce32881'];
+const noFontState = reducer(mockState.spaceflights, updateFontLoaded(false));
+const parameterNodesID = ['65d0d789'];
 
 describe('Selectors', () => {
   describe('getNodeActive', () => {
-    const nodeActive = getNodeActive(mockState.animals);
+    const nodeActive = getNodeActive(mockState.spaceflights);
 
     it('returns an object', () => {
       expect(nodeActive).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(nodeActive)).toEqual(getNodeIDs(mockState.animals));
+      expect(Object.keys(nodeActive)).toEqual(
+        getNodeIDs(mockState.spaceflights)
+      );
     });
 
     it('returns an object whose values are all Booleans', () => {
@@ -56,11 +58,11 @@ describe('Selectors', () => {
     });
 
     it('returns true when a given node is hovered', () => {
-      const nodes = getNodeIDs(mockState.animals);
+      const nodes = getNodeIDs(mockState.spaceflights);
       const nodeID = nodes[0];
       const inactiveNodes = nodes.filter((id) => id !== nodeID);
       const newMockState = reducer(
-        mockState.animals,
+        mockState.spaceflights,
         toggleNodeHovered(nodeID)
       );
       const nodeActive = getNodeActive(newMockState);
@@ -72,14 +74,16 @@ describe('Selectors', () => {
   });
 
   describe('getNodeSelected', () => {
-    const nodeSelected = getNodeSelected(mockState.animals);
+    const nodeSelected = getNodeSelected(mockState.spaceflights);
 
     it('returns an object', () => {
       expect(nodeSelected).toEqual(expect.any(Object));
     });
 
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(nodeSelected)).toEqual(getNodeIDs(mockState.animals));
+      expect(Object.keys(nodeSelected)).toEqual(
+        getNodeIDs(mockState.spaceflights)
+      );
     });
 
     it('returns an object whose values are all Booleans', () => {
@@ -89,11 +93,11 @@ describe('Selectors', () => {
     });
 
     it('returns true when a given node is clicked', () => {
-      const nodes = getNodeIDs(mockState.animals);
+      const nodes = getNodeIDs(mockState.spaceflights);
       const nodeID = nodes[0];
       const inactiveNodes = nodes.filter((id) => id !== nodeID);
       const newMockState = reducer(
-        mockState.animals,
+        mockState.spaceflights,
         toggleNodeClicked(nodeID)
       );
       const nodeActive = getNodeSelected(newMockState);
@@ -106,20 +110,26 @@ describe('Selectors', () => {
 
   describe('getNodeLabel', () => {
     it('returns node labels with full name when pretty name is turned off', () => {
-      const nodes = getVisibleNodes(mockState.animals);
+      const nodes = getVisibleNodes(mockState.spaceflights);
       const nodeId = nodes[0].id;
       const nodeFullName = nodes[0].fullName;
-      const newMockState = reducer(mockState.animals, togglePrettyName(false));
+      const newMockState = reducer(
+        mockState.spaceflights,
+        togglePrettyName(false)
+      );
       const nodeLabels = getNodeLabel(newMockState);
 
       expect(nodeLabels[nodeId]).toEqual(nodeFullName);
     });
 
     it('returns node labels with pretty name when pretty name is turned on', () => {
-      const nodes = getVisibleNodes(mockState.animals);
+      const nodes = getVisibleNodes(mockState.spaceflights);
       const nodeId = nodes[0].id;
       const nodePrettyName = nodes[0].name;
-      const newMockState = reducer(mockState.animals, togglePrettyName(true));
+      const newMockState = reducer(
+        mockState.spaceflights,
+        togglePrettyName(true)
+      );
       const nodeLabels = getNodeLabel(newMockState);
       expect(nodeLabels[nodeId]).toEqual(nodePrettyName);
     });
@@ -128,7 +138,7 @@ describe('Selectors', () => {
 
 describe('getNodeData', () => {
   it('returns formatted nodes as an array', () => {
-    expect(getNodeData(mockState.animals)).toEqual(
+    expect(getNodeData(mockState.spaceflights)).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: expect.any(String),
@@ -143,9 +153,9 @@ describe('getNodeData', () => {
   });
 
   it('returns nodes sorted by name', () => {
-    const nodeName = getNodeName(mockState.animals);
-    const nodeIDs = getNodeData(mockState.animals).map((d) => d.id);
-    const visibleNodeIDs = getNodeIDs(mockState.animals).sort((a, b) => {
+    const nodeName = getNodeName(mockState.spaceflights);
+    const nodeIDs = getNodeData(mockState.spaceflights).map((d) => d.id);
+    const visibleNodeIDs = getNodeIDs(mockState.spaceflights).sort((a, b) => {
       if (nodeName[a] < nodeName[b]) {
         return -1;
       }
@@ -158,9 +168,9 @@ describe('getNodeData', () => {
   });
 
   describe(`includes all nodes in the active pipeline`, () => {
-    const activePipeline = mockState.animals.pipeline.ids[1];
+    const activePipeline = mockState.spaceflights.pipeline.ids[1];
     const state = reducer(
-      mockState.animals,
+      mockState.spaceflights,
       updateActivePipeline(activePipeline)
     );
     const nodeDataIDs = getNodeData(state).map((d) => d.id);
@@ -177,9 +187,9 @@ describe('getNodeData', () => {
   });
 
   describe(`does not include any nodes that are not in the active pipeline`, () => {
-    const activePipeline = mockState.animals.pipeline.ids[1];
+    const activePipeline = mockState.spaceflights.pipeline.ids[1];
     const state = reducer(
-      mockState.animals,
+      mockState.spaceflights,
       updateActivePipeline(activePipeline)
     );
     const nodeIDs = getNodeData(state).map((d) => d.id);
@@ -195,13 +205,13 @@ describe('getNodeData', () => {
 });
 
 describe('getGroupedNodes', () => {
-  const groupedNodes = getGroupedNodes(mockState.animals);
-  const types = mockState.animals.nodeType.ids.sort();
-  const nodeIDs = getPipelineNodeIDs(mockState.animals);
-  const nodeType = getNodeType(mockState.animals);
+  const groupedNodes = getGroupedNodes(mockState.spaceflights);
+  const types = mockState.spaceflights.nodeType.ids.sort();
+  const nodeIDs = getPipelineNodeIDs(mockState.spaceflights);
+  const nodeType = getNodeType(mockState.spaceflights);
 
   it('returns nodes grouped by type ID', () => {
-    expect(Object.keys(groupedNodes)).toEqual(types);
+    expect(Object.keys(groupedNodes).sort()).toEqual(types.sort());
   });
 
   test.each(types)(
@@ -222,7 +232,7 @@ describe('getNodeTextWidth', () => {
   });
 
   describe('when fonts have loaded', () => {
-    const nodeTextWidth = getNodeTextWidth(mockState.animals);
+    const nodeTextWidth = getNodeTextWidth(mockState.spaceflights);
     const values = Object.values(nodeTextWidth);
 
     it('returns an object', () => {
@@ -231,11 +241,11 @@ describe('getNodeTextWidth', () => {
 
     it('returns an object with nodeIDs for keys', () => {
       const keys = Object.keys(nodeTextWidth);
-      expect(keys.sort()).toEqual(getNodeIDs(mockState.animals).sort());
+      expect(keys.sort()).toEqual(getNodeIDs(mockState.spaceflights).sort());
     });
 
     it('returns an object whose values are all numbers', () => {
-      expect(values.length).toEqual(getNodeIDs(mockState.animals).length);
+      expect(values.length).toEqual(getNodeIDs(mockState.spaceflights).length);
       expect(values.every((value) => typeof value === 'number')).toBe(true);
     });
 
@@ -285,8 +295,8 @@ describe('getNodeSize', () => {
 
   describe('when fonts have loaded', () => {
     it('returns an object containing objects with numerical properties', () => {
-      expect(getNodeSize(mockState.animals)).toEqual(expect.any(Object));
-      expect(Object.values(getNodeSize(mockState.animals))).toEqual(
+      expect(getNodeSize(mockState.spaceflights)).toEqual(expect.any(Object));
+      expect(Object.values(getNodeSize(mockState.spaceflights))).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             showText: expect.any(Boolean),
@@ -301,13 +311,16 @@ describe('getNodeSize', () => {
     });
 
     it('erases the generated SVG node', () => {
-      getNodeSize(mockState.animals);
+      getNodeSize(mockState.spaceflights);
       const svg = document.querySelectorAll('svg');
       expect(svg.length).toEqual(0);
     });
 
     describe('when text labels are disabled', () => {
-      const newMockState = reducer(mockState.animals, toggleTextLabels(false));
+      const newMockState = reducer(
+        mockState.spaceflights,
+        toggleTextLabels(false)
+      );
 
       it('returns identical width and height', () => {
         const node0 = Object.values(getNodeSize(newMockState))[0];
@@ -321,7 +334,10 @@ describe('getNodeSize', () => {
     });
 
     describe('when text labels are enabled', () => {
-      const newMockState = reducer(mockState.animals, toggleTextLabels(true));
+      const newMockState = reducer(
+        mockState.spaceflights,
+        toggleTextLabels(true)
+      );
 
       it('returns a width greater than the height', () => {
         const node0 = Object.values(getNodeSize(newMockState))[0];
@@ -347,7 +363,7 @@ describe('getVisibleNodes', () => {
 
   describe('when fonts have loaded', () => {
     it('returns visible nodes as an array', () => {
-      expect(getVisibleNodes(mockState.animals)).toEqual(
+      expect(getVisibleNodes(mockState.spaceflights)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
@@ -365,10 +381,10 @@ describe('getVisibleNodes', () => {
     });
 
     it('returns only visible nodes', () => {
-      const nodes = getVisibleNodeIDs(mockState.animals);
+      const nodes = getVisibleNodeIDs(mockState.spaceflights);
       const nodeID = nodes[0];
       const newMockState = reducer(
-        mockState.animals,
+        mockState.spaceflights,
         toggleNodesDisabled([nodeID], true)
       );
       const visibleNodeIDs = getVisibleNodes(newMockState).map((d) => d.id);
@@ -382,7 +398,7 @@ describe('getVisibleNodes', () => {
 
 describe('getNodesWithInputParams', () => {
   const newMockState = reducer(
-    mockState.animals,
+    mockState.spaceflights,
     toggleTypeDisabled('parameters', true)
   );
   const nodesWithInputParams = getNodesWithInputParams(newMockState);
@@ -398,12 +414,12 @@ describe('getNodesWithInputParams', () => {
 describe('getInputOutputDataNodes', () => {
   it('includes input output nodes related to a modular pipeline in the returned object', () => {
     const newMockState = reducer(
-      mockState.animals,
-      toggleFocusMode({ id: 'pipeline1' })
+      mockState.spaceflights,
+      toggleFocusMode({ id: 'data_processing' })
     );
 
     expect(
       getInputOutputNodesForFocusedModularPipeline(newMockState)
-    ).toHaveProperty('0ae9e4de');
+    ).toHaveProperty('23c94afb');
   });
 });

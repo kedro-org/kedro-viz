@@ -43,7 +43,7 @@ describe('MiniMapToolbar', () => {
         miniMapBtn: expect.any(Boolean),
       }),
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
 
   it('mapDispatchToProps', () => {

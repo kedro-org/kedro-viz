@@ -23,6 +23,6 @@ describe('ExportModal', () => {
         settingsModal: expect.any(Boolean),
       }),
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
 });
