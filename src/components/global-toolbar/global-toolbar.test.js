@@ -27,8 +27,8 @@ describe('GlobalToolbar', () => {
     (selector, callback) => {
       const mockFn = jest.fn();
       const props = {
-        theme: mockState.animals.theme,
-        visible: mockState.animals.visible,
+        theme: mockState.spaceflights.theme,
+        visible: mockState.spaceflights.visible,
         [callback]: mockFn,
       };
       const wrapper = setup.mount(
@@ -46,7 +46,7 @@ describe('GlobalToolbar', () => {
     const expectedResult = {
       theme: expect.stringMatching(/light|dark/),
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
 
   describe('mapDispatchToProps', () => {

@@ -3,7 +3,10 @@ import PipelineList, { mapStateToProps, mapDispatchToProps } from './index';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('PipelineList', () => {
-  const pipelineIDs = mockState.animals.pipeline.ids.map((id, i) => [id, i]);
+  const pipelineIDs = mockState.spaceflights.pipeline.ids.map((id, i) => [
+    id,
+    i,
+  ]);
 
   it('renders without crashing', () => {
     const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
@@ -55,7 +58,7 @@ describe('PipelineList', () => {
   });
 
   it('maps state to props', () => {
-    expect(mapStateToProps(mockState.animals)).toEqual({
+    expect(mapStateToProps(mockState.spaceflights)).toEqual({
       asyncDataSource: expect.any(Boolean),
       pipeline: {
         active: expect.any(String),
@@ -64,7 +67,7 @@ describe('PipelineList', () => {
         ids: expect.any(Array),
       },
       prettyName: expect.any(Boolean),
-      theme: mockState.animals.theme,
+      theme: mockState.spaceflights.theme,
     });
   });
 

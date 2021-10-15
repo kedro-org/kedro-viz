@@ -88,7 +88,7 @@ describe('pipeline actions', () => {
 
     describe('if loading data synchronously', () => {
       it('should return immediately', () => {
-        const store = createStore(reducer, mockState.animals);
+        const store = createStore(reducer, mockState.spaceflights);
         loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().loading.pipeline).toBe(false);
       });
@@ -114,11 +114,11 @@ describe('pipeline actions', () => {
         await loadInitialPipelineData()(store.dispatch, store.getState);
         const state = store.getState();
         expect(state.pipeline.active).toBe(state.pipeline.main);
-        expect(state.node).toEqual(mockState.animals.node);
+        expect(state.node).toEqual(mockState.spaceflights.node);
       });
 
       it('should request data from a different dataset if the active pipeline is set', async () => {
-        const { pipeline } = mockState.animals;
+        const { pipeline } = mockState.spaceflights;
         const active = pipeline.ids.find((id) => id !== pipeline.main);
         saveState({ pipeline: { active } });
         const store = createStore(reducer, mockState.json);
@@ -132,24 +132,24 @@ describe('pipeline actions', () => {
         await loadInitialPipelineData()(store.dispatch, store.getState);
         const state = store.getState();
         expect(state.pipeline.active).toBe(state.pipeline.main);
-        expect(state.node).toEqual(mockState.animals.node);
+        expect(state.node).toEqual(mockState.spaceflights.node);
       });
 
       it("shouldn't make a second data request if the dataset doesn't support pipelines", async () => {
         window.deletePipelines = true; // pass option to load-data mock
-        const { pipeline } = mockState.animals;
+        const { pipeline } = mockState.spaceflights;
         const active = pipeline.ids.find((id) => id !== pipeline.main);
         saveState({ pipeline: { active } });
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
-        expect(store.getState().node).toEqual(mockState.animals.node);
+        expect(store.getState().node).toEqual(mockState.spaceflights.node);
       });
     });
   });
 
   describe('loadPipelineData', () => {
     it('should do nothing if the pipelineID is already active', () => {
-      const store = createStore(reducer, mockState.animals);
+      const store = createStore(reducer, mockState.spaceflights);
       const { dispatch, getState, subscribe } = store;
       const storeListener = jest.fn();
       subscribe(storeListener);
@@ -159,7 +159,7 @@ describe('pipeline actions', () => {
 
     describe('if loading data synchronously', () => {
       it('updates the active pipeline', () => {
-        const store = createStore(reducer, mockState.animals);
+        const store = createStore(reducer, mockState.spaceflights);
         const { dispatch, getState, subscribe } = store;
         const storeListener = jest.fn();
         const { pipeline } = getState();
@@ -183,7 +183,7 @@ describe('pipeline actions', () => {
 
       it('should hide the current graph before loading the new pipeline', () => {
         const store = createStore(reducer, {
-          ...mockState.animals,
+          ...mockState.spaceflights,
           dataSource: 'json',
         });
         expect(store.getState().visible.graph).toBe(true);
