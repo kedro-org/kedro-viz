@@ -8,19 +8,22 @@ import './accordion.css';
  * @param {object} children React children
  * @param {string} heading Text to display on the top-level
  * @param {string|null} headingDetail A secondary text string for additional context
+ * @param {string} layout Left or right toggle button
+ * @param {string} size Set the header font size
  */
 const Accordion = ({
   children,
   heading = '',
   headingDetail = null,
   layout = 'right',
+  size = 'small',
 }) => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
     <div
       className={classnames('accordion', {
-        'accordion--alt': layout === 'left',
+        'accordion--left': layout === 'left',
       })}
     >
       <div className="accordion__heading">
@@ -35,7 +38,12 @@ const Accordion = ({
             })}
           />
         )}
-        <div className="accordion__title">
+        <div
+          className={classnames('accordion__title', {
+            'accordion__title--medium': size === 'medium',
+            'accordion__title--large': size === 'large',
+          })}
+        >
           {heading}
           {headingDetail && (
             <span className="accordion__title__detail">{headingDetail}</span>

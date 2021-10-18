@@ -24,12 +24,12 @@ const Details = ({ sidebarVisible }) => {
       >
         <RunMetadata isSingleRun={isSingleRun} runs={runs} />
         <div className="details-stats">
-          <Accordion heading="Metrics" layout="left">
-            <div>content</div>
-            <div>content</div>
-            <div>content</div>
-            <div>content</div>
-            <div>content</div>
+          <Accordion heading="Metrics" layout="left" size="large">
+            <Accordion
+              heading="Digital Analysis"
+              layout="left"
+              size="medium"
+            ></Accordion>
           </Accordion>
         </div>
       </div>
