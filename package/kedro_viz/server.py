@@ -29,6 +29,7 @@
 import webbrowser
 from pathlib import Path
 from typing import Dict
+from sqlalchemy.orm import session
 
 import uvicorn
 from kedro.io import DataCatalog
@@ -38,7 +39,8 @@ from watchgod import run_process
 from kedro_viz.api import apps, responses
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
-
+from kedro_viz.database import create_db_engine
+from kedro_viz.models.run_model import Base
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 4141
 DEV_PORT = 4142
@@ -47,6 +49,7 @@ DEV_PORT = 4142
 def is_localhost(host) -> bool:
     """Check whether a host is a localhost"""
     return host in ("127.0.0.1", "localhost", "0.0.0.0")
+
 
 
 def populate_data(
@@ -58,6 +61,10 @@ def populate_data(
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
     """
+    database_engine, session_class = create_db_engine(session_store_location)
+    Base.metadata.create_all(bind=database_engine)
+    data_access_manager.db_session = session_class()
+
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)
     data_access_manager.add_session_store_location(session_store_location)

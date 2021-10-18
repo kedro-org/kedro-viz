@@ -37,19 +37,14 @@ from fastapi import APIRouter
 from strawberry import ID
 from strawberry.asgi import GraphQL
 
-from kedro_viz.database import create_db_engine
-from kedro_viz.models.session import Base, KedroSession
+from kedro_viz.data_access import data_access_manager
+from kedro_viz.models.run_model import RunModel
 
 
-def get_db():
-    engine, session_class = create_db_engine()
-    Base.metadata.create_all(bind=engine)
-    db = session_class()
-    try:
-        yield db
-    finally:
-        db.close()
-
+@strawberry.type
+class RunModelGraphQLType:
+    id: str
+    blob: str
 
 def format_run(id, run_dict) -> Run:
     """
@@ -127,6 +122,12 @@ def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
     return format_run(kedro_session.id, evaluated_blob)
 
 
+def get_all_runs() -> typing.List[RunModelGraphQLType]:
+    data_access_manager.db_session
+    return [
+        RunModelGraphQLType(id=kedro_session.id, blob=kedro_session.blob)
+        for kedro_session in data_access_manager.db_session.query(RunModel).all()
+    ]
 def get_runs() -> List[Run]:
     """Get all runs from the session store.
 
@@ -176,6 +177,9 @@ class RunDetails:
 
 @strawberry.type
 class Query:
+    runs: typing.List[RunModelGraphQLType] = strawberry.field(
+        resolver=get_all_runs
+    )
     """Query endpoint to get data from the session store"""
 
     @strawberry.field

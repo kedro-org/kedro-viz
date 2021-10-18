@@ -28,6 +28,7 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
 from collections import defaultdict
 from typing import Dict, List, Set, Union
+from sqlalchemy.orm import Session as DatabaseSession
 
 import networkx as nx
 from kedro.io import DataCatalog
@@ -76,7 +77,15 @@ class DataAccessManager:
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
-        self.session_store_location = None
+        self._db_session = None
+
+    @property
+    def db_session(self):
+        return self._db_session
+
+    @db_session.setter
+    def db_session(self, db_session: DatabaseSession):
+        self._db_session = db_session
 
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository.
@@ -84,9 +93,6 @@ class DataAccessManager:
             catalog: The DataCatalog instance to add.
         """
         self.catalog.set_catalog(catalog)
-
-    def add_session_store_location(self, session_store_location: str):
-        self.session_store_location = session_store_location
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project
