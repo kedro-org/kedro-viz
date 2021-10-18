@@ -41,11 +41,6 @@ from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.run_model import RunModel
 
 
-@strawberry.type
-class RunModelGraphQLType:
-    id: str
-    blob: str
-
 def format_run(id, run_dict) -> Run:
     """
      {
@@ -116,27 +111,24 @@ def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
     Returns:
         Run object
     """
-    db = next(get_db())
-    kedro_session = db.query(KedroSession).filter(KedroSession.id == run_id).first()
+    kedro_session = (
+        data_access_manager.db_session.query(RunModel)
+        .filter(RunModel.id == run_id)
+        .first()
+    )
     evaluated_blob = eval(kedro_session.blob)
     return format_run(kedro_session.id, evaluated_blob)
 
 
-def get_all_runs() -> typing.List[RunModelGraphQLType]:
-    data_access_manager.db_session
-    return [
-        RunModelGraphQLType(id=kedro_session.id, blob=kedro_session.blob)
-        for kedro_session in data_access_manager.db_session.query(RunModel).all()
-    ]
 def get_runs() -> List[Run]:
     """Get all runs from the session store.
 
     Returns:
         list of Run objects
     """
-    db = next(get_db())
+    data_access_manager.db_session
     runs = []
-    for kedro_session in db.query(KedroSession).all():
+    for kedro_session in data_access_manager.db_session.query(RunModel).all():
         evaluated_blob = eval(kedro_session.blob)
         run = format_run(kedro_session.id, evaluated_blob)
         runs.append(run)
@@ -177,9 +169,6 @@ class RunDetails:
 
 @strawberry.type
 class Query:
-    runs: typing.List[RunModelGraphQLType] = strawberry.field(
-        resolver=get_all_runs
-    )
     """Query endpoint to get data from the session store"""
 
     @strawberry.field

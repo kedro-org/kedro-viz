@@ -29,8 +29,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.api.graphql import schema
-from kedro_viz.models.session import Base
-from kedro_viz.models.session import KedroSession
+from kedro_viz.models.run_model import RunModel, Base
 
 
 def create_test_db_engine():
@@ -55,14 +54,14 @@ def override_get_db():
 
 def test_graphql_run_query(mocker):
     mocker.patch(
-        "package.kedro_viz.database.create_db_engine",
+        "kedro_viz.database.create_db_engine",
         return_value=create_test_db_engine(),
     )
     mocker.patch(
-        "package.kedro_viz.api.graphql.get_db", return_value=next(override_get_db())
+        "kedro_viz.data_access.data_access_manager.db_session"
     )
     db = next(override_get_db())
-    session_store_data = KedroSession(
+    run_data = RunModel(
         id="123",
         blob="{'package_name': 'iristest','project_path': PosixPath("
         "'/Users/merel_theisen/Projects/Testing/iristest'),'session_id': "
@@ -73,7 +72,7 @@ def test_graphql_run_query(mocker):
         "{}},'command_name': 'run','command_path': 'kedro run'}} ",
     )
 
-    db.add(session_store_data)
+    db.add(run_data)
     db.commit()
 
     query = """
