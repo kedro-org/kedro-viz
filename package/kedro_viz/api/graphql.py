@@ -29,6 +29,7 @@
 # pylint: disable=no-self-use, too-few-public-methods
 from __future__ import annotations
 
+from pathlib import Path, PosixPath
 from typing import List
 
 import strawberry
@@ -50,9 +51,69 @@ def get_db():
         db.close()
 
 
+def format_run(id, run_dict) -> Run:
+    """
+     {
+        "id": "2021-10-13T10.16.31.780Z",
+        "blob": "
+        {
+            'package_name': 'iristest',
+            'project_path': PosixPath('/Users/merel_theisen/Projects/Testing/iristest'),
+            'session_id': '2021-10-13T10.16.31.780Z',
+            'git': {
+                'commit_sha': '9483bd8',
+                'dirty': True
+            },
+            'cli': {
+                'args': [],
+                'params': {
+                    'from_inputs': [],
+                    'to_outputs': [],
+                    'from_nodes': [],
+                    'to_nodes': [],
+                    'node_names': (),
+                    'runner': None,
+                    'parallel': False,
+                    'is_async': False,
+                    'env': None,
+                    'tag': (),
+                    'load_version': {},
+                    'pipeline': None,
+                    'config': None,
+                    'params': {}
+                },
+                'command_name': 'run',
+                'command_path': 'kedro run'}}"
+      },
+    Args:
+        id:
+        run_dict:
+
+    Returns:
+
+    """
+    metadata = RunMetadata(
+        id=ID(id),
+        author="",
+        gitBranch="",
+        gitSha=run_dict["git"]["commit_sha"],
+        bookmark=True,
+        title="Sprint 5",
+        notes="",
+        timestamp=run_dict["session_id"],
+        runCommand=run_dict["cli"]["command_path"],
+    )
+    details = RunDetails(id=ID(id), details="{json:details}")
+
+    return Run(
+        id=ID(id),
+        metadata=metadata,
+        details=details,
+    )
+
+
 def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
-    """Placeholder for the proper method.
-    Get a run by id from the session store.
+    """Get a run by id from the session store.
 
     Args:
         run_id: ID of the run to fetch
@@ -60,34 +121,25 @@ def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
     Returns:
         Run object
     """
-    metadata = RunMetadata(
-        id=ID("123"),
-        author="author",
-        gitBranch="my-branch",
-        gitSha="892372937",
-        notes="",
-        runCommand="kedro run",
-    )
-    details = RunDetails(id=ID("123"), name="name", details="{json:details}")
-
-    return Run(
-        id=ID("123"),
-        bookmark=True,
-        timestamp="2021-09-08T10:55:36.810Z",
-        title="Sprint 5",
-        metadata=metadata,
-        details=details,
-    )
+    db = next(get_db())
+    kedro_session = db.query(KedroSession).filter(KedroSession.id == run_id).first()
+    evaluated_blob = eval(kedro_session.blob)
+    return format_run(kedro_session.id, evaluated_blob)
 
 
 def get_runs() -> List[Run]:
-    """Placeholder for the proper method.
-    Get all runs from the session store.
+    """Get all runs from the session store.
 
     Returns:
         list of Run objects
     """
-    return [get_run(ID("123"))]
+    db = next(get_db())
+    runs = []
+    for kedro_session in db.query(KedroSession).all():
+        evaluated_blob = eval(kedro_session.blob)
+        run = format_run(kedro_session.id, evaluated_blob)
+        runs.append(run)
+    return runs
 
 
 @strawberry.type
@@ -95,9 +147,6 @@ class Run:
     """Run object format to return to the frontend"""
 
     id: ID
-    bookmark: bool
-    timestamp: str
-    title: str
     metadata: RunMetadata
     details: RunDetails
 
@@ -110,7 +159,10 @@ class RunMetadata:
     author: str
     gitBranch: str
     gitSha: str
+    bookmark: bool
+    title: str
     notes: str
+    timestamp: str
     runCommand: str
 
 
@@ -119,19 +171,7 @@ class RunDetails:
     """RunDetails object format"""
 
     id: ID
-    name: str
     details: str
-class KedroSessionGraphQLType:
-    id: str
-    blob: str
-
-
-def get_all_sessions() -> typing.List[KedroSessionGraphQLType]:
-    db = next(get_db())
-    return [
-        KedroSessionGraphQLType(id=kedro_session.id, blob=kedro_session.blob)
-        for kedro_session in db.query(KedroSession).all()
-    ]
 
 
 @strawberry.type
@@ -145,11 +185,6 @@ class Query:
 
     runs: List[Run] = strawberry.field(resolver=get_runs)
 
-
-schema = strawberry.Schema(query=Query)
-    sessions: typing.List[KedroSessionGraphQLType] = strawberry.field(
-        resolver=get_all_sessions
-    )
 
 router = APIRouter()
 

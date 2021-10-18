@@ -36,7 +36,6 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.api import apps
-from kedro_viz.api.graphql import schema
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.models.graph import TaskNode
 from kedro_viz.server import populate_data
@@ -75,69 +74,6 @@ def example_transcoded_api(
 @pytest.fixture
 def client(example_api):
     yield TestClient(example_api)
-
-
-def test_graphql_run_query():
-    query = """
-            query TestQuery($runId: ID!) {
-                run(runId: $runId) {
-                    id
-                    bookmark
-                    timestamp
-                    title
-                    metadata {
-                        author
-                        gitBranch
-                    }
-                    details {
-                        name
-                        details
-                    }
-                }
-            }
-        """
-
-    result = schema.execute_sync(
-        query,
-        variable_values={"runId": "123"},
-    )
-
-    assert result.errors is None
-    assert result.data["run"] == {
-        "id": "123",
-        "bookmark": True,
-        "timestamp": "2021-09-08T10:55:36.810Z",
-        "title": "Sprint 5",
-        "metadata": {"author": "author", "gitBranch": "my-branch"},
-        "details": {"details": "{json:details}", "name": "name"},
-    }
-
-
-def test_graphql_runs_query():
-    query = """
-                query TestQuery{
-                    runs {
-                        id
-                        bookmark
-                        timestamp
-                        title
-                    }
-                }
-            """
-
-    result = schema.execute_sync(
-        query,
-    )
-
-    assert result.errors is None
-    assert result.data["runs"] == [
-        {
-            "id": "123",
-            "bookmark": True,
-            "timestamp": "2021-09-08T10:55:36.810Z",
-            "title": "Sprint 5",
-        }
-    ]
 
 
 def assert_nodes_equal(response_nodes, expected_nodes):
