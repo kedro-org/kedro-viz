@@ -7,11 +7,13 @@ import {
   getFilteredItems,
   getGroups,
   isTagType,
-  isModularPipelineType,
   isElementType,
   isGroupType,
 } from './node-list-items';
-import { getNodeTypes } from '../../selectors/node-types';
+import {
+  getNodeTypes,
+  isModularPipelineType,
+} from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import {
   getFocusedModularPipeline,

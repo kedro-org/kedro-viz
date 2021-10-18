@@ -9,6 +9,7 @@ import noop from 'lodash.noop';
 import sortBy from 'lodash.sortby';
 
 import { getNodeSelected } from '../../selectors/nodes';
+import { isModularPipelineType } from '../../selectors/node-types';
 import NodeListTreeItem from './node-list-tree-item';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
@@ -36,10 +37,6 @@ const StyledTreeView = withStyles({
   },
 })(TreeView);
 
-const MODULAR_PIPELINE_TYPE = 'modularPipeline';
-
-const isModularPipelineType = (type) => type === MODULAR_PIPELINE_TYPE;
-
 const getModularPipelineRowData = ({
   id,
   highlightedLabel,
@@ -49,8 +46,8 @@ const getModularPipelineRowData = ({
 }) => ({
   id: id,
   name: highlightedLabel || data.name,
-  type: MODULAR_PIPELINE_TYPE,
-  icon: MODULAR_PIPELINE_TYPE,
+  type: 'modularPipeline',
+  icon: 'modularPipeline',
   visibleIcon: VisibleIcon,
   invisibleIcon: InvisibleIcon,
   active: false,
