@@ -1,7 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { runs } from './mock-data';
 import Accordion from '../accordion';
 import RunMetadata from '../run-metadata';
 
@@ -12,7 +11,7 @@ import './details.css';
  * nav for experiment tracking, the display of experiment details,
  * as well as the comparison view.
  */
-const Details = ({ sidebarVisible }) => {
+const Details = ({ runs, sidebarVisible }) => {
   const isSingleRun = runs.length === 1 ? true : false;
 
   return (

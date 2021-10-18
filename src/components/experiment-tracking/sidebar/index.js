@@ -4,13 +4,15 @@ import { Route } from 'react-router-dom';
 import classnames from 'classnames';
 import RunsList from '../runs-list';
 import PrimaryToolbar from '../../primary-toolbar';
+
 import './sidebar.css';
 
 /**
  * Main runslist sidebar container. Handles showing/hiding the sidebar nav, and theme classes.
+ * @param {data} props.data The RunsList data
  * @param {boolean} props.visible Whether the sidebar is open/closed
  */
-export const Sidebar = ({ visible }) => {
+export const Sidebar = ({ data, visible }) => {
   return (
     <>
       <div
@@ -20,7 +22,7 @@ export const Sidebar = ({ visible }) => {
       >
         <div className="pipeline-ui">
           <Route path={['/runsList/:id', '/runsList']}>
-            <RunsList />
+            <RunsList runs={data} />
           </Route>
         </div>
         <nav className="pipeline-toolbar">
