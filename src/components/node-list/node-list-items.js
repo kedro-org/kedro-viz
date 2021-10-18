@@ -1,15 +1,14 @@
-import { createSelector } from 'reselect';
 import utils from '@quantumblack/kedro-ui/lib/utils';
-import { sidebarGroups, sidebarElementTypes } from '../../config';
+import { createSelector } from 'reselect';
+import { sidebarElementTypes, sidebarGroups } from '../../config';
 import IndicatorIcon from '../icons/indicator';
 import IndicatorOffIcon from '../icons/indicator-off';
 import IndicatorPartialIcon from '../icons/indicator-partial';
-import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
+import VisibleIcon from '../icons/visible';
 const { escapeRegExp, getHighlightedText } = utils;
 
 export const isTagType = (type) => type === 'tag';
-export const isModularPipelineType = (type) => type === 'modularPipeline';
 export const isElementType = (type) => type === 'elementType';
 export const isGroupType = (type) => isElementType(type) || isTagType(type);
 
@@ -266,10 +265,10 @@ export const getGroups = createSelector([(state) => state.items], (items) => {
 });
 
 /**
- * Returns filtered/highlighted items for nodes, tags and modular pipelines
+ * Returns filtered/highlighted items for nodes & tags
  * @param {object} filteredNodeItems List of filtered nodes
  * @param {object} filteredTagItems List of filtered tags
- * @param {object} filteredModularPipelinesItems List of filtered modularPipelines
+ * @param {object} getFilteredElementTypeItems List of filtered element type items
  * @return {array} final list of all filtered items from the three filtered item sets
  */
 export const getFilteredItems = createSelector(

@@ -26,7 +26,11 @@ describe('MetaData', () => {
       beforeLayoutActions: [
         () => toggleTypeDisabled('parameters', false),
         // expand a modular pipeline
-        () => toggleModularPipelineExpanded([dataScienceNodeId]),
+        () =>
+          toggleModularPipelineExpanded([
+            dataScienceNodeId,
+            dataProcessingNodeId,
+          ]),
       ],
       afterLayoutActions: [
         // Click the expected node
@@ -53,7 +57,7 @@ describe('MetaData', () => {
       metadata.parameters = Array.from({ length: 20 }, (_, i) => `Test: ${i}`);
 
       const wrapper = mount({
-        nodeId: parametersNodeId,
+        nodeId: splitDataTaskNodeId,
         mockMetadata: metadata,
       });
       const parametersRow = () => rowByLabel(wrapper, 'Parameters:');

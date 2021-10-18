@@ -19,7 +19,7 @@ export const TOGGLE_MODULAR_PIPELINE_EXPANDED =
   'TOGGLE_MODULAR_PIPELINE_EXPANDED';
 
 /**
- * Toggle whether a modular pipeline is expanded or contracted
+ * Toggle a set of modular pipelines to be expanded.
  * @param {Array[Number]} expandedIDs
  */
 export function toggleModularPipelineExpanded(expandedIDs) {
