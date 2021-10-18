@@ -82,8 +82,8 @@ def load_data(
             project_path=project_path, env=env, save_on_close=False
         ) as session:
             context = session.load_context()
-            catalog, pipelines = context.catalog, dict(pipelines)
-        return catalog, pipelines
+            catalog, pipelines_dict = context.catalog, dict(pipelines)
+        return catalog, pipelines_dict
 
     if KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
