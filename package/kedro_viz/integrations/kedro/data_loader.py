@@ -31,7 +31,7 @@ load data from projects created in a range of Kedro versions.
 """
 # pylint: disable=import-outside-toplevel
 from pathlib import Path
-from typing import Dict, Tuple, cast
+from typing import Dict, Tuple
 
 from kedro import __version__
 from kedro.io import DataCatalog
@@ -80,17 +80,17 @@ def load_data(
 
         with KedroSession.create(
             project_path=project_path, env=env, save_on_close=False
-            ) as session:
+        ) as session:
             context = session.load_context()
             catalog, pipelines = context.catalog, dict(pipelines)
         return catalog, pipelines
 
     if KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
-        
+
         with KedroSession.create(
             project_path=project_path, env=env, save_on_close=False
-            ) as session:
+        ) as session:
             context = session.load_context()
         return context.catalog, context.pipelines
 
@@ -104,10 +104,9 @@ def load_data(
             project_path=project_path,
             env=env,
             save_on_close=False,
-            ) as session:
+        ) as session:
             context = session.load_context()
         return context.catalog, context.pipelines
-        
 
     # pre-0.17 load_context version
     from kedro.framework.context import load_context
