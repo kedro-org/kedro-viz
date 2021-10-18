@@ -25,119 +25,123 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from unittest import mock
+from unittest.mock import PropertyMock
+
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-from kedro_viz.api.graphql import schema
 from kedro_viz.models.run_model import RunModel, Base
+from strawberry import ID
+
+from package.kedro_viz.api.graphql import get_run, Run, get_runs, RunMetadata, RunDetails
 
 
-def create_test_db_engine():
-    SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+@pytest.fixture(scope='function')
+def setup_database():
 
-    engine = create_engine(
-        SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-    )
-    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    return engine, TestingSessionLocal
-
-
-def override_get_db():
-    engine, session_class = create_test_db_engine()
-    Base.metadata.create_all(bind=engine)
-    db = session_class()
-    try:
-        yield db
-    finally:
-        db.close()
+    engine = create_engine('sqlite://')
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    yield session
+    session.close()
 
 
-def test_graphql_run_query(mocker):
-    mocker.patch(
-        "kedro_viz.database.create_db_engine",
-        return_value=create_test_db_engine(),
-    )
-    mocker.patch(
-        "kedro_viz.data_access.data_access_manager.db_session"
-    )
-    db = next(override_get_db())
-    run_data = RunModel(
+@pytest.fixture(scope='function')
+def add_data(setup_database):
+
+    session = setup_database
+
+    # Creates runs
+    run_data_1 = RunModel(
         id="123",
         blob="{'package_name': 'iristest','project_path': PosixPath("
-        "'/Users/merel_theisen/Projects/Testing/iristest'),'session_id': "
-        "'2021-10-13T10.16.31.780Z','git': {'commit_sha': '986a68','dirty': True},"
-        "'cli': {'args': [],'params': {'from_inputs': [],'to_outputs': [],'from_nodes': [],"
-        "'to_nodes': [],'node_names': (),'runner': None,'parallel': False,'is_async': False,"
-        "'env': None,'tag': (),'load_version': {},'pipeline': None,'config': None,'params': "
-        "{}},'command_name': 'run','command_path': 'kedro run'}} ",
+             "'/Users/Projects/Testing/iristest'),'session_id': "
+             "'2021-10-13T10.16.31.780Z','git': {'commit_sha': '986a68','dirty': True},"
+             "'cli': {'args': [],'params': {'from_inputs': [],'to_outputs': [],'from_nodes': [],"
+             "'to_nodes': [],'node_names': (),'runner': None,'parallel': False,'is_async': False,"
+             "'env': None,'tag': (),'load_version': {},'pipeline': None,'config': None,'params': "
+             "{}},'command_name': 'run','command_path': 'kedro run'}} ",
     )
+    session.add(run_data_1)
 
-    db.add(run_data)
-    db.commit()
-
-    query = """
-            query TestQuery($runId: ID!) {
-                run(runId: $runId) {
-                    id
-                    metadata {
-                        gitSha
-                        bookmark
-                        timestamp
-                        title
-                        notes
-                    }
-                    details {
-                        details
-                    }
-                }
-            }
-        """
-
-    result = schema.execute_sync(
-        query,
-        variable_values={"runId": "123"},
+    run_data_2 = RunModel(
+        id="456",
+        blob="{'package_name': 'my_proj','project_path': PosixPath("
+             "'/Users/Projects/Testing/my_proj'),'session_id': "
+             "'2020-11-11T10.16.31.780Z','git': {'commit_sha': '765m18','dirty': True},"
+             "'cli': {'args': [],'params': {'from_inputs': [],'to_outputs': [],'from_nodes': [],"
+             "'to_nodes': [],'node_names': (),'runner': None,'parallel': False,'is_async': False,"
+             "'env': None,'tag': (),'load_version': {},'pipeline': None,'config': None,'params': "
+             "{}},'command_name': 'run','command_path': 'kedro run'}} ",
     )
+    session.add(run_data_2)
+    session.commit()
 
-    assert result.errors is None
-    assert result.data["run"] == {
-        "id": "123",
-        "metadata": {
-            "gitSha": "986a68",
-            "notes": "",
-            "bookmark": True,
-            "timestamp": "2021-09-08T10:55:36.810Z",
-            "title": "Sprint 5",
-        },
-        "details": {"details": "{json:details}"},
-    }
+    yield session
 
 
-def test_graphql_runs_query():
-    query = """
-                query TestQuery{
-                    runs {
-                        id
-                        metadata {
-                            bookmark
-                            timestamp
-                            title
-                        }
-                    }
-                }
-            """
+def test_graphql_run_query(add_data):
+    db_session = add_data
+    with mock.patch("kedro_viz.data_access.DataAccessManager.db_session",
+                    new_callable=PropertyMock) as mock_session:
+        mock_session.return_value = db_session
 
-    result = schema.execute_sync(
-        query,
-    )
+        details = RunDetails(id="123", details="")
+        metadata = RunMetadata(id="123", author="", gitBranch="", gitSha="986a68", bookmark=False, title="", notes="", timestamp='2021-10-13T10.16.31.780Z',
+                               runCommand="kedro run")
+        run = Run(id="123", metadata=metadata, details=details)
+        assert get_run(ID("123")) == run
 
-    assert result.errors is None
-    assert result.data["runs"] == [
-        {
-            "id": "123",
-            "metadata": {
-                "bookmark": True,
-                "timestamp": "2021-09-08T10:55:36.810Z",
-                "title": "Sprint 5",
-            },
-        }
-    ]
+
+def test_graphql_runs_query(add_data):
+    db_session = add_data
+    with mock.patch("kedro_viz.data_access.DataAccessManager.db_session",
+                    new_callable=PropertyMock) as mock_session:
+        mock_session.return_value = db_session
+
+        details_1 = RunDetails(id="123", details="")
+        metadata_1 = RunMetadata(id="123", author="", gitBranch="", gitSha="986a68", bookmark=False,
+                                 title="", notes="", timestamp='2021-10-13T10.16.31.780Z',
+                                 runCommand="kedro run")
+        run_1 = Run(id="123", metadata=metadata_1, details=details_1)
+
+        details_2 = RunDetails(id="456", details="")
+        metadata_2 = RunMetadata(id="456", author="", gitBranch="", gitSha="765m18", bookmark=False,
+                                 title="", notes="", timestamp='2020-11-11T10.16.31.780Z',
+                                 runCommand="kedro run")
+        run_2 = Run(id="456", metadata=metadata_2, details=details_2)
+
+        assert get_runs() == [run_1, run_2]
+
+
+
+    # query = """
+    #             query TestQuery{
+    #                 runs {
+    #                     id
+    #                     metadata {
+    #                         bookmark
+    #                         timestamp
+    #                         title
+    #                     }
+    #                 }
+    #             }
+    #         """
+
+    # result = schema.execute_sync(
+    #     query,
+    # )
+    #
+    # assert result.errors is None
+    # assert result.data["runs"] == [
+    #     {
+    #         "id": "123",
+    #         "metadata": {
+    #             "bookmark": True,
+    #             "timestamp": "2021-09-08T10:55:36.810Z",
+    #             "title": "Sprint 5",
+    #         },
+    #     }
+    # ]

@@ -87,13 +87,13 @@ def format_run(id, run_dict) -> Run:
         author="",
         gitBranch="",
         gitSha=run_dict["git"]["commit_sha"],
-        bookmark=True,
-        title="Sprint 5",
+        bookmark=False,
+        title="",
         notes="",
         timestamp=run_dict["session_id"],
         runCommand=run_dict["cli"]["command_path"],
     )
-    details = RunDetails(id=ID(id), details="{json:details}")
+    details = RunDetails(id=ID(id), details="")
 
     return Run(
         id=ID(id),
@@ -111,13 +111,10 @@ def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
     Returns:
         Run object
     """
-    kedro_session = (
-        data_access_manager.db_session.query(RunModel)
-        .filter(RunModel.id == run_id)
-        .first()
-    )
-    evaluated_blob = eval(kedro_session.blob)
-    return format_run(kedro_session.id, evaluated_blob)
+    session = data_access_manager.db_session
+    run_data = session.query(RunModel).filter(RunModel.id == run_id).first()
+    evaluated_blob = eval(run_data.blob)
+    return format_run(run_data.id, evaluated_blob)
 
 
 def get_runs() -> List[Run]:
@@ -126,11 +123,11 @@ def get_runs() -> List[Run]:
     Returns:
         list of Run objects
     """
-    data_access_manager.db_session
     runs = []
-    for kedro_session in data_access_manager.db_session.query(RunModel).all():
-        evaluated_blob = eval(kedro_session.blob)
-        run = format_run(kedro_session.id, evaluated_blob)
+    session = data_access_manager.db_session
+    for run_data in session.query(RunModel).all():
+        evaluated_blob = eval(run_data.blob)
+        run = format_run(run_data.id, evaluated_blob)
         runs.append(run)
     return runs
 
