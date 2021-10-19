@@ -1,15 +1,17 @@
-import { prepareState } from '../utils/state.mock';
-import spaceflights from '../utils/data/spaceflights.mock.json';
-import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
-import {
-  getNodeDisabledTag,
-  getNodeDisabled,
-  getEdgeDisabled,
-  getVisibleLayerIDs,
-} from './disabled';
 import { toggleLayers } from '../actions';
+import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
+import { toggleTypeDisabled } from '../actions/node-type';
 import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
+import spaceflights from '../utils/data/spaceflights.mock.json';
+import { prepareState } from '../utils/state.mock';
+import {
+  getEdgeDisabled,
+  getNodeDisabled,
+  getNodeDisabledTag,
+  getVisibleLayerIDs,
+  getVisibleNodeIDs,
+} from './disabled';
 
 const getNodeIDs = (state) => state.node.ids;
 const getEdgeIDs = (state) => state.edge.ids;
@@ -142,6 +144,22 @@ describe('Selectors', () => {
           (value) => typeof value === 'boolean'
         )
       ).toBe(true);
+    });
+  });
+
+  describe('getVisibleNodeIDs', () => {
+    const newMockState = reducer(
+      mockState,
+      toggleTypeDisabled('parameters', false)
+    );
+    it('returns an array of node IDs currently visible on the sidebar', () => {
+      expect(new Set([...getVisibleNodeIDs(newMockState)])).toEqual(
+        new Set([
+          ...Object.keys(newMockState.modularPipeline.visible).filter(
+            (nodeID) => newMockState.modularPipeline.visible[nodeID]
+          ),
+        ])
+      );
     });
   });
 
