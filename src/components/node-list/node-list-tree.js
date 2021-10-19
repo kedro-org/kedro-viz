@@ -14,6 +14,7 @@ import NodeListTreeItem from './node-list-tree-item';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 
+// Display order of node groups
 const GROUPED_NODES_DISPLAY_ORDER = {
   modularPipeline: 0,
   task: 1,
@@ -37,6 +38,16 @@ const StyledTreeView = withStyles({
   },
 })(TreeView);
 
+/**
+ * Return the data of a modular pipeline to display as a row in the node list.
+ * @param {Object} params
+ * @param {String} params.id The modular pipeline ID
+ * @param {String} params.highlightedLabel The modular pipeline name with highlights when matched under search
+ * @param {Object} params.data The modular pipeline data to display
+ * @param {Boolean} params.disabled Whether the modular pipeline is disabled, e.g. when it's not the focused one
+ * @param {Boolean} params.focused Whether the modular pipeline is the focused one in focus mode
+ * @returns
+ */
 const getModularPipelineRowData = ({
   id,
   highlightedLabel,
@@ -60,6 +71,28 @@ const getModularPipelineRowData = ({
   checked: true,
 });
 
+/**
+ * Return the data of a node to display as a row in the node list
+ * @param {Object} node The node to display
+ * @param {Boolean} selected Whether the node is currently selected
+ */
+const getNodeRowData = (node, selected) => {
+  const checked = !node.disabledNode;
+  const disabled = node.disabledTag || node.disabledType;
+
+  return {
+    ...node,
+    visibleIcon: VisibleIcon,
+    invisibleIcon: InvisibleIcon,
+    active: node.active,
+    selected: selected,
+    faded: disabled || node.disabledNode,
+    visible: !disabled && checked,
+    checked,
+    disabled,
+  };
+};
+
 const TreeListProvider = ({
   nodeSelected,
   modularPipelinesSearchResult,
@@ -74,27 +107,11 @@ const TreeListProvider = ({
 }) => {
   const classes = useStyles();
 
-  const getNodeRowData = (node) => {
-    const checked = !node.disabledNode;
-    const disabled = node.disabledTag || node.disabledType;
-
-    return {
-      ...node,
-      visibleIcon: VisibleIcon,
-      invisibleIcon: InvisibleIcon,
-      active: node.active,
-      selected: nodeSelected[node.id],
-      faded: disabled || node.disabledNode,
-      visible: !disabled && checked,
-      checked,
-      disabled,
-    };
-  };
-
+  // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
     return (
       <NodeListTreeItem
-        data={getNodeRowData(node)}
+        data={getNodeRowData(node, nodeSelected[node.id])}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
@@ -104,12 +121,15 @@ const TreeListProvider = ({
     );
   };
 
+  // recursively renders the modular pipeline tree
   const renderTree = (tree, modularPipelineID) => {
+    // current tree node to render
     const node = tree[modularPipelineID];
     if (!node) {
       return;
     }
 
+    // render each child of the tree node first
     const children = sortBy(
       node.children,
       (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
@@ -120,6 +140,9 @@ const TreeListProvider = ({
         : renderLeafNode(child.data)
     );
 
+    // then render the node itself wrapping around the children
+    // except when it's the root node,
+    // because we don't want to display the __root__ modular pipeline.
     if (modularPipelineID === '__root__') {
       return children;
     }

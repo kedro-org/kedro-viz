@@ -4,9 +4,7 @@ import { getNodeData } from '../../selectors/nodes';
 import { setup, mockState } from '../../utils/state.mock';
 
 describe('NodeListRow', () => {
-  const node = getNodeData(mockState.spaceflights).find(
-    (data) => data.id === '23c94afb'
-  );
+  const node = getNodeData(mockState.spaceflights)[0];
   const setupProps = () => {
     const props = {
       active: true,

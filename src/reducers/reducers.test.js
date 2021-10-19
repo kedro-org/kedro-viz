@@ -31,10 +31,7 @@ import {
   NODE_TYPE_DISABLED_UNSET,
 } from '../actions/node-type';
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
-import {
-  TOGGLE_MODULAR_PIPELINE_ACTIVE,
-  TOGGLE_MODULAR_PIPELINE_FILTER,
-} from '../actions/modular-pipelines';
+import { TOGGLE_MODULAR_PIPELINE_ACTIVE } from '../actions/modular-pipelines';
 
 describe('Reducer', () => {
   it('should return an Object', () => {

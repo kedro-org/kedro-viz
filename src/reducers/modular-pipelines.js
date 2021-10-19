@@ -3,16 +3,6 @@ import {
   TOGGLE_MODULAR_PIPELINE_EXPANDED,
 } from '../actions/modular-pipelines';
 
-// mark a tree as invisible from a node downwards
-const markTreeInvisible = (tree, node, result) => {
-  tree[node].children.forEach((child) => {
-    result[child.id] = false;
-    if (child.type === 'modularPipeline') {
-      markTreeInvisible(tree, child.id, result);
-    }
-  });
-};
-
 function modularPipelineReducer(modularPipelineState = {}, action) {
   const updateState = (newState) =>
     Object.assign({}, modularPipelineState, newState);
@@ -37,6 +27,18 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
         ),
       });
     }
+
+    // The expanded IDs for tree nodes directly emitted from modular pipelines
+    // are not directly usable for our purpose. For example, for a tree a -> b -> c,
+    // when a is collapsed, [b,c] are passed to the action payload as expanded.
+    // What we care about, however, is not what is currently "expanded", but actually
+    // what is currently "visible" on the tree.
+    // Therefore there are 2 states here: expanded and visible.
+    // We use expanded state and the action's payload to work out what's visible:
+    // - When a modular pipeline is collapsed, we have to mark all of its children
+    // as invisible recursively.
+    // - When a modular pipeline is expanded, we have to mark all of its children
+    // as visible, but not recursively.
     case TOGGLE_MODULAR_PIPELINE_EXPANDED: {
       const newVisibleState = { ...modularPipelineState.visible };
       const isExpanding =
@@ -57,13 +59,20 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
         const collapsedModularPipelines = modularPipelineState.expanded.filter(
           (expandedID) => !expandedIDs.includes(expandedID)
         );
+
+        // recursively set all children of a node in the tree as invisible
+        const setChildrenInvisible = (node) => {
+          modularPipelineState.tree[node].children.forEach((child) => {
+            newVisibleState[child.id] = false;
+            if (child.type === 'modularPipeline') {
+              setChildrenInvisible(child.id);
+            }
+          });
+        };
+
         collapsedModularPipelines.forEach((collapsedModularPipeline) => {
           newVisibleState[collapsedModularPipeline] = true;
-          markTreeInvisible(
-            modularPipelineState.tree,
-            collapsedModularPipeline,
-            newVisibleState
-          );
+          setChildrenInvisible(collapsedModularPipeline);
           expandedIDs = expandedIDs.filter(
             (id) => !id.startsWith(collapsedModularPipeline)
           );
