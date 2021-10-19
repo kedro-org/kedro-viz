@@ -1,3 +1,4 @@
+import React from 'react';
 import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars';
 import NodeListSearch from './node-list-search';
