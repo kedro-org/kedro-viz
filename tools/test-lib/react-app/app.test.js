@@ -5,7 +5,7 @@ import App, { dataSources } from './app';
 
 configure({ adapter: new Adapter() });
 
-const keys = Object.keys(dataSources);
+const keys = Object.keys(dataSources).filter((key) => key !== 'random');
 
 describe('lib-test', () => {
   test('renders without crashing', () => {

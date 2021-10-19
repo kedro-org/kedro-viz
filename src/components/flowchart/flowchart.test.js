@@ -12,9 +12,7 @@ import { getViewTransform, getViewExtents, origin } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';
 import { toggleTypeDisabled } from '../../actions/node-type';
 
-const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
-const getLayerIDs = (state) => state.layer.ids;
 
 const chartWidth = chartSizeTestFallback.width;
 const chartHeight = chartSizeTestFallback.height;

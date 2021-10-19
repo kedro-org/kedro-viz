@@ -39,7 +39,6 @@ class Pipeline {
     this.nodes = this.generateNodes();
     this.edges = this.generateEdges();
     this.modularPipelines = this.generateModularPipelines(this.nodes);
-    console.log(this.modularPipelines);
 
     this.update();
     this.finalise();
