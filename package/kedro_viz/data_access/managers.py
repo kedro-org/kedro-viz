@@ -28,12 +28,12 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
 from collections import defaultdict
 from typing import Dict, List, Set, Union
-from sqlalchemy.orm import Session as DatabaseSession
 
 import networkx as nx
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
+from sqlalchemy.orm import Session as DatabaseSession
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (

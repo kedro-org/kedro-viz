@@ -154,6 +154,7 @@ def example_transcoded_catalog():
         },
     )
 
+
 @pytest.fixture
 def example_session_store_location():
     yield "/temp/store.db"

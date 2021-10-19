@@ -41,68 +41,37 @@ from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.run_model import RunModel
 
 
-def format_run(id, run_dict) -> Run:
-    """
-     {
-        "id": "2021-10-13T10.16.31.780Z",
-        "blob": "
-        {
-            'package_name': 'iristest',
-            'project_path': PosixPath('/Users/merel_theisen/Projects/Testing/iristest'),
-            'session_id': '2021-10-13T10.16.31.780Z',
-            'git': {
-                'commit_sha': '9483bd8',
-                'dirty': True
-            },
-            'cli': {
-                'args': [],
-                'params': {
-                    'from_inputs': [],
-                    'to_outputs': [],
-                    'from_nodes': [],
-                    'to_nodes': [],
-                    'node_names': (),
-                    'runner': None,
-                    'parallel': False,
-                    'is_async': False,
-                    'env': None,
-                    'tag': (),
-                    'load_version': {},
-                    'pipeline': None,
-                    'config': None,
-                    'params': {}
-                },
-                'command_name': 'run',
-                'command_path': 'kedro run'}}"
-      },
+def format_run(run_id: str, run_blob: dict) -> Run:
+    """Convert blob data in the correct Run format.
+
     Args:
-        id:
-        run_dict:
+        run_id: ID of the run to fetch
+        run_blob: JSON blob of run metadata and details
 
     Returns:
-
+        Run object
     """
     metadata = RunMetadata(
-        id=ID(id),
+        id=ID(run_id),
         author="",
         gitBranch="",
-        gitSha=run_dict["git"]["commit_sha"],
+        gitSha=run_blob["git"]["commit_sha"],
         bookmark=False,
         title="",
         notes="",
-        timestamp=run_dict["session_id"],
-        runCommand=run_dict["cli"]["command_path"],
+        timestamp=run_blob["session_id"],
+        runCommand=run_blob["cli"]["command_path"],
     )
-    details = RunDetails(id=ID(id), details="")
+    details = RunDetails(id=ID(run_id), details="")
 
     return Run(
-        id=ID(id),
+        id=ID(run_id),
         metadata=metadata,
         details=details,
     )
 
 
-def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
+def get_run(run_id: ID) -> Run:
     """Get a run by id from the session store.
 
     Args:
