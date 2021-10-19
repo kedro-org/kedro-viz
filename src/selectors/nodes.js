@@ -161,6 +161,11 @@ export const getNodeData = createSelector(
       }))
 );
 
+/**
+ * Returns formatted nodes as an object, with all relevant properties.
+ * This is similar to `getNodeData`, but instead of returning an Array,
+ * it returns all nodes as an Object.
+ */
 export const getNodeDataObject = createSelector(
   [
     getPipelineNodeIDs,
@@ -200,6 +205,9 @@ export const getNodeDataObject = createSelector(
     }, {})
 );
 
+/**
+ * Return the modular pipelines tree with full data for each tree node for display.
+ */
 export const getModularPipelinesTree = createSelector(
   [(state) => state.modularPipeline.tree, getNodeDataObject],
   (modularPipelinesTree, nodes) => {

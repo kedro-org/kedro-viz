@@ -33,12 +33,13 @@ class Pipeline {
   constructor() {
     this.utils = randomUtils();
     this.pipelines = this.generatePipelines();
-    this.modularPipelines = this.generateModularPipelines();
     this.rankCount = this.getRankCount();
     this.rankLayers = this.getRankLayers();
     this.tags = this.generateTags();
     this.nodes = this.generateNodes();
     this.edges = this.generateEdges();
+    this.modularPipelines = this.generateModularPipelines(this.nodes);
+    console.log(this.modularPipelines);
 
     this.update();
     this.finalise();
@@ -61,15 +62,15 @@ class Pipeline {
   }
 
   /**
-   * Create the modular pipelines tree
+   * Create the modular pipelines tree from nodes in the graph
    * @returns {Object} A modular pipelines tree
    */
-  generateModularPipelines() {
+  generateModularPipelines(nodes) {
     return {
       __root__: {
         id: '__root__',
         name: 'Root',
-        children: [],
+        children: nodes.map((node) => ({ id: node.id, type: node.type })),
       },
     };
   }
@@ -446,7 +447,8 @@ class Pipeline {
       layers: LAYERS,
       nodes: this.nodes,
       pipelines: this.pipelines.map((name) => ({ id: name, name })),
-      modularPipelines: this.modularPipelines,
+      //eslint-disable-next-line camelcase
+      modular_pipelines: this.modularPipelines,
       tags: this.tags,
     };
   }
