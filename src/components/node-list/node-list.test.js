@@ -1,13 +1,22 @@
 import React from 'react';
-import NodeList, { mapStateToProps } from './index';
-import SplitPanel from '../split-panel';
-import { mockState, setup } from '../../utils/state.mock';
-import { getTagData } from '../../selectors/tags';
-import IndicatorPartialIcon from '../icons/indicator-partial';
-import { localStorageName } from '../../config';
-import { toggleTypeDisabled } from '../../actions/node-type';
-import { sidebarElementTypes } from '../../config';
 import { togglePrettyName } from '../../actions';
+import { toggleTypeDisabled } from '../../actions/node-type';
+import { localStorageName, sidebarElementTypes } from '../../config';
+import {
+  getNodeData,
+  getNodeModularPipelines,
+  getModularPipelinesTree,
+} from '../../selectors/nodes';
+import { getTagData } from '../../selectors/tags';
+import { mockState, setup } from '../../utils/state.mock';
+import IndicatorPartialIcon from '../icons/indicator-partial';
+import SplitPanel from '../split-panel';
+import NodeList, { mapStateToProps } from './index';
+
+jest.mock('lodash/debounce', () => (func) => {
+  func.cancel = jest.fn();
+  return func;
+});
 
 describe('NodeList', () => {
   beforeEach(() => {
@@ -20,6 +29,149 @@ describe('NodeList', () => {
     const nodeList = wrapper.find('.pipeline-nodelist__list');
     expect(search.length).toBe(1);
     expect(nodeList.length).toBeGreaterThan(0);
+  });
+
+  describe('tree-search-ui', () => {
+    describe('displays nodes matching search value', () => {
+      const wrapper = setup.mount(<NodeList />);
+
+      const searches = [
+        // search text that matches an external node only
+        'Metrics',
+        // search text that matches a few nodes nested inside modular pipelines
+        'Preprocess',
+        // bogus search text that should yield 0 result
+        'aaaaaaaaaaaaa',
+      ];
+
+      test.each(searches)(
+        'display only the nodes matching the search text "%s", as well as their modular pipelines',
+        (searchText) => {
+          const search = () => wrapper.find('.kui-input__field');
+          search().simulate('change', { target: { value: searchText } });
+          const nodeList = wrapper.find(
+            '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
+          );
+          const nodes = getNodeData(mockState.spaceflights);
+          const tags = getTagData(mockState.spaceflights);
+          const nodesModularPipelines = getNodeModularPipelines(
+            mockState.spaceflights
+          );
+          const expectedResult = nodes.filter((node) =>
+            node.name.includes(searchText)
+          );
+          const expectedTagResult = tags.filter((tag) =>
+            tag.name.includes(searchText)
+          );
+          const expectedElementTypeResult = Object.keys(
+            sidebarElementTypes
+          ).filter((type) => type.includes(searchText));
+          const expectedModularPipelines = nodesModularPipelines.hasOwnProperty(
+            searchText
+          )
+            ? nodesModularPipelines[searchText]
+            : [];
+
+          expect(search().props().value).toBe(searchText);
+          expect(nodeList.length).toBe(
+            expectedResult.length +
+              expectedTagResult.length +
+              expectedElementTypeResult.length +
+              expectedModularPipelines.length
+          );
+        }
+      );
+    });
+    it('clears the search input and resets the list when hitting the Escape key', () => {
+      const wrapper = setup.mount(<NodeList />);
+      const searchWrapper = wrapper.find('.pipeline-nodelist-search');
+      // Re-find elements from root each time to see updates
+      const search = () => wrapper.find('.kui-input__field');
+      const nodeList = () =>
+        wrapper.find(
+          '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
+        );
+
+      const nodes = getNodeData(mockState.spaceflights);
+      const tags = getTagData(mockState.spaceflights);
+      const elementTypes = Object.keys(sidebarElementTypes);
+      const searchText = 'Metrics';
+      // Enter search text
+      search().simulate('change', { target: { value: searchText } });
+      // Check that search input value and node list have been updated
+      expect(search().props().value).toBe(searchText);
+      const expectedResult = nodes.filter((node) =>
+        node.name.includes(searchText)
+      );
+      const expectedTagResult = tags.filter((tag) =>
+        tag.name.includes(searchText)
+      );
+      const expectedElementTypeResult = elementTypes.filter((type) =>
+        type.includes(searchText)
+      );
+      expect(nodeList().length).toBe(
+        expectedResult.length +
+          expectedTagResult.length +
+          expectedElementTypeResult.length
+      );
+      // Clear the list with escape key
+      searchWrapper.simulate('keydown', { keyCode: 27 });
+
+      // Check that search input value and node list have been reset
+      const modularPipelinesTree = getModularPipelinesTree(
+        mockState.spaceflights
+      );
+      expect(search().props().value).toBe('');
+      expect(nodeList().length).toBe(
+        modularPipelinesTree['__root__'].children.length
+      );
+    });
+    it('displays search results when in focus mode', () => {
+      const wrapper = setup.mount(
+        <NodeList focusMode={{ id: 'data_science' }} />
+      );
+      const searchWrapper = wrapper.find('.pipeline-nodelist-search');
+      // Re-find elements from root each time to see updates
+      const search = () => wrapper.find('.kui-input__field');
+      const nodeList = () =>
+        wrapper.find(
+          '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
+        );
+
+      const nodes = getNodeData(mockState.spaceflights);
+      const tags = getTagData(mockState.spaceflights);
+      const elementTypes = Object.keys(sidebarElementTypes);
+      const searchText = 'Metrics';
+      // Enter search text
+      search().simulate('change', { target: { value: searchText } });
+      // Check that search input value and node list have been updated
+      expect(search().props().value).toBe(searchText);
+      const expectedResult = nodes.filter((node) =>
+        node.name.includes(searchText)
+      );
+      const expectedTagResult = tags.filter((tag) =>
+        tag.name.includes(searchText)
+      );
+      const expectedElementTypeResult = elementTypes.filter((type) =>
+        type.includes(searchText)
+      );
+      expect(nodeList().length).toBe(
+        expectedResult.length +
+          expectedTagResult.length +
+          expectedElementTypeResult.length
+      );
+      // Clear the list with escape key
+      searchWrapper.simulate('keydown', { keyCode: 27 });
+
+      // Check that search input value and node list have been reset
+      const modularPipelinesTree = getModularPipelinesTree(
+        mockState.spaceflights
+      );
+      expect(search().props().value).toBe('');
+      expect(nodeList().length).toBe(
+        modularPipelinesTree['__root__'].children.length
+      );
+    });
   });
 
   describe('Pretty names in node list', () => {
@@ -194,6 +346,16 @@ describe('NodeList', () => {
       const tags = getTagData(mockState.spaceflights);
       const elementTypes = Object.keys(sidebarElementTypes);
       expect(nodeList.length).toBe(tags.length + elementTypes.length);
+    });
+    it('renders the correct number of modular pipelines and nodes in the tree sidepanel', () => {
+      const wrapper = setup.mount(<NodeList />);
+      const nodeList = wrapper.find('.pipeline-nodelist__row__text--tree');
+      const modularPipelinesTree = getModularPipelinesTree(
+        mockState.spaceflights
+      );
+      expect(nodeList.length).toBe(
+        modularPipelinesTree['__root__'].children.length
+      );
     });
 
     it('renders elements panel, filter panel inside a SplitPanel with a handle', () => {
