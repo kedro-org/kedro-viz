@@ -12,7 +12,7 @@ def get_db(session_class):
         db.close()
 
 class SQLiteStore(BaseSessionStore):
-    """Stores the session data on disk using `shelve` package."""
+    """Stores the session data on the sqlite db."""
 
     @property
     def location(self) -> Path:
@@ -21,7 +21,6 @@ class SQLiteStore(BaseSessionStore):
 
     def save(self):
         """Save the session store info on db ."""
-
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
         db = next(get_db(session_class))

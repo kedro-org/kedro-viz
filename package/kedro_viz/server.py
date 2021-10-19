@@ -29,7 +29,6 @@
 import webbrowser
 from pathlib import Path
 from typing import Dict
-from sqlalchemy.orm import session
 
 import uvicorn
 from kedro.io import DataCatalog

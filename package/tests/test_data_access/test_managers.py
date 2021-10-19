@@ -40,7 +40,8 @@ from kedro_viz.models.graph import (
     TaskNode,
     TranscodedDataNode,
 )
-
+from unittest.mock import patch, PropertyMock
+from sqlalchemy.orm import Session as DatabaseSession
 
 def identity(x):
     return x
@@ -58,12 +59,12 @@ class TestAddCatalog:
         data_access_manager.set_layers(layers)
         assert data_access_manager.layers.as_list() == layers
 
-class TestAddSessionStoreLocation:
-    def test_add_session_store_location(self,data_access_manager: DataAccessManager,
-     example_session_store_location):
-        data_access_manager.add_session_store_location(example_session_store_location)
-        assert data_access_manager.session_store_location == example_session_store_location
-
+class TestDBSession:
+    def test_db_session(self, data_access_manager: DataAccessManager):
+        with patch("kedro_viz.data_access.managers.DataAccessManager.db_session", new_callable=PropertyMock) as mock_db_session:
+            mock_db_session.return_value = DatabaseSession()
+            assert isinstance(data_access_manager.db_session, DatabaseSession)
+            mock_db_session.assert_called_once_with()
 class TestAddNode:
     def test_add_node(self, data_access_manager: DataAccessManager):
         kedro_node = node(
