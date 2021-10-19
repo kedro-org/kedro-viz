@@ -7,6 +7,10 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+## Major features and improvements
+
+- Allow expand and collapse modular pipelines on the graph.
+
 # Release 3.17.1
 
 ## Bug fixes and other changes
