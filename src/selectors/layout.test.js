@@ -43,8 +43,8 @@ describe('Selectors', () => {
         extraNodes = extraNodes.concat(extraNodeGroup);
       });
       data.nodes = data.nodes.concat(extraNodes);
-      data.modular_pipelines['__root__'].children.concat(
-        extraNodes.map((node) => ({
+      data.modular_pipelines['__root__'].children.push(
+        ...extraNodes.map((node) => ({
           id: node.id,
           type: node.type,
         }))
@@ -56,16 +56,16 @@ describe('Selectors', () => {
       expect(getTriggerLargeGraphWarning(mockState)).toBe(false);
     });
 
-    // it('returns true for a large dataset', () => {
-    //   const state = prepareState({
-    //     data: prepareLargeDataset(),
-    //     beforeLayoutActions: [
-    //       () =>
-    //         toggleModularPipelineExpanded(['data_science', 'data_processing']),
-    //     ],
-    //   });
-    //   expect(getTriggerLargeGraphWarning(state)).toBe(true);
-    // });
+    it('returns true for a large dataset', () => {
+      const state = prepareState({
+        data: prepareLargeDataset(),
+        beforeLayoutActions: [
+          () =>
+            toggleModularPipelineExpanded(['data_science', 'data_processing']),
+        ],
+      });
+      expect(getTriggerLargeGraphWarning(state)).toBe(true);
+    });
 
     it('returns false if the sizewarning flag is false', () => {
       const state = reducer(
