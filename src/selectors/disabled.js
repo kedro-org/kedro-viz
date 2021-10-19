@@ -22,6 +22,10 @@ const getNodeLayer = (state) => state.node.layer;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getVisibleSidebarNodes = (state) => state.modularPipeline.visible;
 
+/**
+ * Return all inputs and outputs of currently visible modular pipelines
+ * so that even if they are not expanded, their inputs and outputs are still rendered.
+ */
 const getVisibleModularPipelineInputsOutputs = createSelector(
   [getVisibleSidebarNodes, getModularPipelinesTree],
   (visibleSidebarNodes, modularPipelineData) => {
