@@ -29,12 +29,16 @@
 # pylint: disable=no-self-use, too-few-public-methods
 from __future__ import annotations
 
+import json
 from typing import List
 
 import strawberry
 from fastapi import APIRouter
+from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 from strawberry import ID
 from strawberry.asgi import GraphQL
+
+from package.kedro_viz.data_access import data_access_manager
 
 
 def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
@@ -48,20 +52,20 @@ def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
         Run object
     """
     metadata = RunMetadata(
-        id=ID("123"),
-        author="author",
-        gitBranch="my-branch",
-        gitSha="892372937",
+        id=ID(run_id),
+        author="",
+        gitBranch="",
+        gitSha="commit_sha",
+        bookmark=False,
+        title="",
         notes="",
-        runCommand="kedro run",
+        timestamp="session_id",
+        runCommand="command_path",
     )
-    details = RunDetails(id=ID("123"), name="name", details="{json:details}")
+    details = RunDetails(id=ID(run_id), details="")
 
     return Run(
-        id=ID("123"),
-        bookmark=True,
-        timestamp="2021-09-08T10:55:36.810Z",
-        title="Sprint 5",
+        id=ID(run_id),
         metadata=metadata,
         details=details,
     )
@@ -77,14 +81,27 @@ def get_runs() -> List[Run]:
     return [get_run(ID("123"))]
 
 
+def get_run_details(run_id: ID) -> RunDetails:
+    details = {}
+    catalog = data_access_manager.catalog.get_catalog()
+    experiment_datasets = [
+        (ds_name, ds_value)
+        for ds_name, ds_value in catalog._data_sets.items()
+        if (type(ds_value) == MetricsDataSet or type(ds_value) == JSONDataSet)
+    ]
+    for name, dataset in experiment_datasets:
+        file_path = dataset._get_versioned_path(str(run_id))
+        with dataset._fs.open(file_path, **dataset._fs_open_args_load) as fs_file:
+            json_data = json.load(fs_file)
+            details[name] = json_data
+    return RunDetails(id=run_id, details=details)
+
+
 @strawberry.type
 class Run:
     """Run object format to return to the frontend"""
 
     id: ID
-    bookmark: bool
-    timestamp: str
-    title: str
     metadata: RunMetadata
     details: RunDetails
 
@@ -97,7 +114,10 @@ class RunMetadata:
     author: str
     gitBranch: str
     gitSha: str
+    bookmark: bool
+    title: str
     notes: str
+    timestamp: str
     runCommand: str
 
 
@@ -106,7 +126,6 @@ class RunDetails:
     """RunDetails object format"""
 
     id: ID
-    name: str
     details: str
 
 
@@ -120,6 +139,11 @@ class Query:
         return get_run(run_id)
 
     runs: List[Run] = strawberry.field(resolver=get_runs)
+
+    @strawberry.field
+    def run_details(self, run_id: ID) -> RunDetails:
+        """Query to get run details for a specific run from the session store"""
+        return get_run_details(run_id)
 
 
 schema = strawberry.Schema(query=Query)
