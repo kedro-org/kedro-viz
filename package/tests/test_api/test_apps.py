@@ -162,6 +162,7 @@ def assert_nodes_equal(response_nodes, expected_nodes):
 def _is_dict_list(collection: Any) -> bool:
     if isinstance(collection, list):
         return isinstance(collection[0], dict) if len(collection) > 0 else True
+    return False
 
 
 def assert_dict_list_equal(
