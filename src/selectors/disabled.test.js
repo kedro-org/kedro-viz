@@ -1,5 +1,6 @@
 import { toggleLayers } from '../actions';
 import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
+import { toggleNodesDisabled } from '../actions/nodes';
 import { toggleTypeDisabled } from '../actions/node-type';
 import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
@@ -15,6 +16,8 @@ import {
 
 const getNodeIDs = (state) => state.node.ids;
 const getEdgeIDs = (state) => state.edge.ids;
+const getEdgeSources = (state) => state.edge.sources;
+const getEdgeTargets = (state) => state.edge.targets;
 const getNodeTags = (state) => state.node.tags;
 
 describe('Selectors', () => {
@@ -110,6 +113,17 @@ describe('Selectors', () => {
   });
 
   describe('getEdgeDisabled', () => {
+    const nodeID = mockState.modularPipeline.tree['__root__'].children[0].id;
+    const tempMockState = reducer(
+      mockState,
+      toggleNodesDisabled([nodeID], true)
+    );
+    const newMockState = reducer(
+      tempMockState,
+      toggleTypeDisabled('parameters', false)
+    );
+    const edgeDisabled = getEdgeDisabled(newMockState);
+    const edges = getEdgeIDs(newMockState);
     it('returns an object', () => {
       expect(getEdgeDisabled(mockState)).toEqual(expect.any(Object));
     });
@@ -144,6 +158,32 @@ describe('Selectors', () => {
           (value) => typeof value === 'boolean'
         )
       ).toBe(true);
+    });
+    it('disables an edge if one of its nodes is disabled', () => {
+      const edgeDisabled = getEdgeDisabled(newMockState);
+      const edges = getEdgeIDs(newMockState);
+      const disabledEdges = Object.keys(edgeDisabled).filter(
+        (id) => edgeDisabled[id]
+      );
+      const disabledEdgesMock = edges.filter(
+        (id) =>
+          getEdgeSources(newMockState)[id] === nodeID ||
+          getEdgeTargets(newMockState)[id] === nodeID
+      );
+      expect(disabledEdges).toEqual(expect.arrayContaining(disabledEdgesMock));
+    });
+    it('does not disable an edge if none of its nodes are disabled', () => {
+      const disabledEdges = Object.keys(edgeDisabled).filter(
+        (id) => edgeDisabled[id]
+      );
+      const enabledEdgesMock = edges.filter(
+        (id) =>
+          getEdgeSources(newMockState)[id] !== nodeID &&
+          getEdgeTargets(newMockState)[id] !== nodeID
+      );
+      expect(enabledEdgesMock).not.toEqual(
+        expect.arrayContaining(disabledEdges)
+      );
     });
   });
 
