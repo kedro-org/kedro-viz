@@ -46,30 +46,29 @@ describe('NodeListRow', () => {
       expect(props.onMouseLeave.mock.calls.length).toEqual(1);
     });
 
-    // todo: add this overwrite back in
-    // it('applies the overwrite class if not active', () => {
-    //   const { props } = setupProps();
-    //   const activeNodeWrapper = setup.mount(
-    //     <NodeListRow {...props} active={false} />
-    //   );
-    //   expect(
-    //     activeNodeWrapper
-    //       .find('.pipeline-nodelist__row')
-    //       .hasClass('pipeline-nodelist__row--overwrite')
-    //   ).toBe(true);
-    // });
+    it('applies the overwrite class if not active', () => {
+      const { props } = setupProps();
+      const activeNodeWrapper = setup.mount(
+        <NodeListRow {...props} active={false} />
+      );
+      expect(
+        activeNodeWrapper
+          .find('.pipeline-nodelist__row')
+          .hasClass('pipeline-nodelist__row--overwrite')
+      ).toBe(true);
+    });
 
-    // it('applies the overwrite class if not selected or active', () => {
-    //   const { props } = setupProps();
-    //   const activeNodeWrapper = setup.mount(
-    //     <NodeListRow {...props} selected={false} active={false} />
-    //   );
-    //   expect(
-    //     activeNodeWrapper
-    //       .find('.pipeline-nodelist__row')
-    //       .hasClass('pipeline-nodelist__row--overwrite')
-    //   ).toBe(true);
-    // });
+    it('applies the overwrite class if not selected or active', () => {
+      const { props } = setupProps();
+      const activeNodeWrapper = setup.mount(
+        <NodeListRow {...props} selected={false} active={false} />
+      );
+      expect(
+        activeNodeWrapper
+          .find('.pipeline-nodelist__row')
+          .hasClass('pipeline-nodelist__row--overwrite')
+      ).toBe(true);
+    });
 
     it('does not applies the overwrite class if not selected', () => {
       const { props } = setupProps();
@@ -137,87 +136,15 @@ describe('NodeListRow', () => {
     });
 
     describe('focus mode', () => {
-      // it('sets the visibility toggle to the checked mode when the row is selected for focus mode', () => {
-      //   const { props } = setupProps();
-      //   const wrapper = setup.mount(
-      //     <NodeListRow {...props} focusMode={node} type="modularPipeline" />
-      //   );
-
-      //   expect(
-      //     wrapper.find('.pipeline-row__toggle-icon--focus-checked').exists()
-      //   ).toBe(true);
-      // });
-
-      // it('sets a disabled label to appear activated when the row belongs to a modular pipeline selected by focus mode', () => {
-      //   const selectedItem = { id: 'data_scienc' };
-      //   const { props } = setupProps();
-      //   const wrapper = setup.mount(
-      //     <NodeListRow {...props} focusMode={selectedItem} disabled={true} />
-      //   );
-
-      //   expect(
-      //     wrapper.find('.pipeline-nodelist__row__label--disabled').exists()
-      //   ).toBe(false);
-      // });
-
-      it('sets a disabled label to follow its own disabled status when it belongs to the main pipeline', () => {
-        const selectedItem = { id: 'abc' };
+      it('sets the visibility toggle to the checked mode when the row is selected for focus mode', () => {
         const { props } = setupProps();
         const wrapper = setup.mount(
-          <NodeListRow {...props} focusMode={selectedItem} disabled={true} />
+          <NodeListRow {...props} focused={true} type="modularPipeline" />
         );
 
         expect(
-          wrapper.find('.pipeline-nodelist__row__label--disabled').exists()
+          wrapper.find('.pipeline-row__toggle-icon--focus-checked').exists()
         ).toBe(true);
-      });
-
-      it('sets the row label to remain as deactived if parent is not part of selected focus mode', () => {
-        const selectedItem = { id: '123' };
-        const { props } = setupProps();
-        const wrapper = setup.mount(
-          <NodeListRow {...props} focusMode={selectedItem} disabled={true} />
-        );
-
-        expect(
-          wrapper.find('.pipeline-nodelist__row__label--disabled').exists()
-        ).toBe(true);
-      });
-
-      it('sets the row label to remain as deactived if it is a node that does not belong to a selected modular pipeline', () => {
-        const selectedItem = { id: '123' };
-        const { props } = setupProps();
-        const wrapper = setup.mount(
-          <NodeListRow
-            {...props}
-            type={'node'}
-            focusMode={selectedItem}
-            parentDisabled={undefined}
-            disabled={true}
-          />
-        );
-
-        expect(
-          wrapper.find('.pipeline-nodelist__row__label--disabled').exists()
-        ).toBe(true);
-      });
-
-      it('sets the row label to be activated if it is a node that belongs to a selected modular pipeline', () => {
-        const selectedItem = { id: '123' };
-        const { props } = setupProps();
-        const wrapper = setup.mount(
-          <NodeListRow
-            {...props}
-            type={'node'}
-            focusMode={selectedItem}
-            parentDisabled={undefined}
-            disabled={false}
-          />
-        );
-
-        expect(
-          wrapper.find('.pipeline-nodelist__row__label--disabled').exists()
-        ).toBe(false);
       });
     });
   });
