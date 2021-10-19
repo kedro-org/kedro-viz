@@ -5,7 +5,7 @@ import getInitialState, {
   prepareNonPipelineState,
 } from './initial-state';
 import { saveState } from './helpers';
-import animals from '../utils/data/animals.mock.json';
+import spaceflights from '../utils/data/spaceflights.mock.json';
 
 describe('createInitialState', () => {
   it('returns an object', () => {
@@ -55,14 +55,14 @@ describe('preparePipelineState', () => {
 
   it('applies localStorage values on top of normalised pipeline data', () => {
     saveState(localStorageState);
-    expect(preparePipelineState(animals)).toMatchObject(localStorageState);
+    expect(preparePipelineState(spaceflights)).toMatchObject(localStorageState);
     window.localStorage.clear();
   });
 
   it('if applyFixes is true and stored active pipeline from localStorage is not one of the pipelines in the current list, uses default pipeline value instead', () => {
     saveState(localStorageState);
-    const { active } = preparePipelineState(animals, true).pipeline;
-    expect(active).toBe(animals.selected_pipeline);
+    const { active } = preparePipelineState(spaceflights, true).pipeline;
+    expect(active).toBe(spaceflights.selected_pipeline);
     window.localStorage.clear();
   });
 });
@@ -78,7 +78,7 @@ describe('prepareNonPipelineState', () => {
 
   it('overrides flags with values from URL', () => {
     // In this case, location.href is not provided
-    expect(prepareNonPipelineState({ data: animals })).toMatchObject({
+    expect(prepareNonPipelineState({ data: spaceflights })).toMatchObject({
       flags: {
         sizewarning: expect.any(Boolean),
       },
@@ -87,7 +87,7 @@ describe('prepareNonPipelineState', () => {
 
   it('overrides theme with value from prop', () => {
     const props = { theme: 'light' };
-    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
+    expect(prepareNonPipelineState({ data: spaceflights, ...props })).toMatchObject(
       props
     );
   });
@@ -96,14 +96,14 @@ describe('prepareNonPipelineState', () => {
     const props = {
       visible: { miniMap: true, sidebar: false, themeBtn: false },
     };
-    expect(prepareNonPipelineState({ data: animals, ...props })).toMatchObject(
+    expect(prepareNonPipelineState({ data: spaceflights, ...props })).toMatchObject(
       props
     );
   });
 });
 
 describe('getInitialState', () => {
-  const props = { data: animals };
+  const props = { data: spaceflights };
 
   it('throws an error when data prop is empty', () => {
     expect(() => getInitialState({})).toThrow();

@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
 import configureStore from '../store';
 import getInitialState from '../store/initial-state';
-import animals from './data/animals.mock.json';
+import spaceflights from './data/spaceflights.mock.json';
 import demo from './data/demo.mock.json';
 import reducer from '../reducers';
 import { updateFontLoaded } from '../actions';
@@ -55,7 +55,7 @@ export const prepareState = ({
 export const mockState = {
   json: prepareState({ data: 'json' }),
   demo: prepareState({ data: demo }),
-  animals: prepareState({ data: animals }),
+  spaceflights: prepareState({ data: spaceflights }),
 };
 
 /**
@@ -73,7 +73,7 @@ export const setup = {
   mount: (children, props = {}) => {
     const initialState = Object.assign(
       {},
-      prepareState({ data: animals, ...props })
+      prepareState({ data: spaceflights, ...props })
     );
     return mount(
       <Provider store={configureStore(initialState)}>{children}</Provider>
