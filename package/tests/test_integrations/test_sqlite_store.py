@@ -25,69 +25,48 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import logging
 from pathlib import Path
-from attr import set_run_validators
+
 import pytest
-from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore, get_db
-from kedro_viz.models.run_model import RunModel, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from unittest.mock import patch
 
-FAKE_SESSION_ID = "fake_session_id"
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore, get_db
+from kedro_viz.models.run_model import Base, RunModel
+
+FAKE_SESSION_ID_1 = "fake_session_id_1"
+
+FAKE_SESSION_ID_2 = "fake_session_id_2"
+
 
 @pytest.fixture
 def store_path(tmp_path):
     return Path(tmp_path)
 
+
 @pytest.fixture
-def setup_db(store_path):
-    engine = create_engine(f'sqlite:///{store_path}.session_store.db')
+def dbsession(store_path):
+    engine = create_engine(f"sqlite:///{store_path}/session_store.db")
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
-    # session = Session()
-    yield Session
+    return Session
 
-
-@pytest.fixture
-def example_dataset(setup_db):
-    session = setup_db
-    run_1 = RunModel(id='1534326',blob='Hello World 1')
-    run_2 = RunModel(id='41312339',blob='Hello World 2')
-    session.add(run_1)
-    session.add(run_2)
-    session.commit()
-    yield session
-
-@pytest.fixture
-def example_db(setup_db):
-    session_class = setup_db
-    db = session_class()
-    yield db
-    db.close()
 
 class TestSQLiteStore:
     def test_empty(self, store_path):
-        sqlite_store = SQLiteStore(str(store_path), FAKE_SESSION_ID)
+        sqlite_store = SQLiteStore(str(store_path), FAKE_SESSION_ID_1)
         assert sqlite_store == {}
-        assert sqlite_store.location == store_path/ "session_store.db"
-        
+        assert sqlite_store.location == store_path / "session_store.db"
 
-    @patch("kedro_viz.database.create_db_engine")
-    @patch("kedro_viz.integrations.kedro.sqlite_store.get_db")
-    def test_save(self, patched_db_session, patched_db_conn, store_path, example_db):
-        db_session = example_dataset
-        sqlite_store = SQLiteStore(str(store_path), FAKE_SESSION_ID)
-        sqlite_store["path"] = store_path
-        sqlite_store["session_id"] = FAKE_SESSION_ID
-        patched_db_conn.return_value = ""
-        patched_db_session.return_value = setup_db
+    def test_save(self, store_path, dbsession):
+        sqlite_store = SQLiteStore(str(store_path), FAKE_SESSION_ID_1)
         sqlite_store.save()
-        for s in db_session.query(RunModel).all():
-            print(s)
-        assert 3==2
-        
+        db = next(get_db(dbsession))
+        assert db.query(RunModel).count() == 1
 
-        
+        # save another session
 
+        sqlite_store2 = SQLiteStore(str(store_path), FAKE_SESSION_ID_2)
+        sqlite_store2.save()
+        db = next(get_db(dbsession))
+        assert db.query(RunModel).count() == 2

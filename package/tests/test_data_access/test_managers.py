@@ -26,10 +26,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Dict, cast
+from unittest.mock import PropertyMock, patch
 
 from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
+from sqlalchemy.orm import Session as DatabaseSession
 
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.models.graph import (
@@ -40,8 +42,7 @@ from kedro_viz.models.graph import (
     TaskNode,
     TranscodedDataNode,
 )
-from unittest.mock import patch, PropertyMock
-from sqlalchemy.orm import Session as DatabaseSession
+
 
 def identity(x):
     return x
@@ -59,12 +60,18 @@ class TestAddCatalog:
         data_access_manager.set_layers(layers)
         assert data_access_manager.layers.as_list() == layers
 
+
 class TestDBSession:
     def test_db_session(self, data_access_manager: DataAccessManager):
-        with patch("kedro_viz.data_access.managers.DataAccessManager.db_session", new_callable=PropertyMock) as mock_db_session:
+        with patch(
+            "kedro_viz.data_access.managers.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_db_session:
             mock_db_session.return_value = DatabaseSession()
             assert isinstance(data_access_manager.db_session, DatabaseSession)
             mock_db_session.assert_called_once_with()
+
+
 class TestAddNode:
     def test_add_node(self, data_access_manager: DataAccessManager):
         kedro_node = node(

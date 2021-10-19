@@ -25,19 +25,19 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import pytest
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from pathlib import Path
 
+import pytest
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
 from kedro.extras.datasets.spark import SparkDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
-from kedro_viz.models.run_model import Base,RunModel
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 from kedro_viz.data_access import DataAccessManager
+from kedro_viz.models.run_model import Base, RunModel
 
 
 @pytest.fixture
@@ -159,29 +159,28 @@ def example_transcoded_catalog():
         },
     )
 
+
 @pytest.fixture
 def example_session_store_location(tmp_path):
-    yield Path(tmp_path /"store.db")
-
+    yield Path(tmp_path / "session_store.db")
 
 
 @pytest.fixture
-def setup_database(example_session_store_location):
-    engine = create_engine(f'sqlite:///{example_session_store_location}')
+def setup_dbconn(example_session_store_location):
+    engine = create_engine(f"sqlite:///{example_session_store_location}")
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
     yield session
     session.close()
 
+
 @pytest.fixture
-def example_db_dataset(setup_database):
-    session = setup_database
-    run_1 = RunModel(id='1534326',blob='Hello World 1')
-    run_2 = RunModel(id='41312339',blob='Hello World 2')
+def example_db_dataset(setup_dbconn):
+    session = setup_dbconn
+    run_1 = RunModel(id="1534326", blob="Hello World 1")
+    run_2 = RunModel(id="41312339", blob="Hello World 2")
     session.add(run_1)
     session.add(run_2)
     session.commit()
-
     yield session
-

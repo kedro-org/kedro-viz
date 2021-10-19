@@ -28,11 +28,11 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
 from collections import defaultdict
 from typing import Dict, List, Union
-from sqlalchemy.orm import Session as DatabaseSession
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
+from sqlalchemy.orm import Session as DatabaseSession
 
 from kedro_viz.models.graph import (
     DataNode,
@@ -71,9 +71,9 @@ class DataAccessManager:
         self._db_session = None
 
     @property
-    def db_session(self):
+    def db_session(self):  # pragma: no cover
         return self._db_session
-    
+
     @db_session.setter
     def db_session(self, db_session: DatabaseSession):
         self._db_session = db_session

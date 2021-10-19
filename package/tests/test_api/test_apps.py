@@ -29,7 +29,7 @@ import operator
 from pathlib import Path
 from typing import Dict
 from unittest import mock
-from unittest.mock import patch, PropertyMock
+from unittest.mock import PropertyMock
 
 import pytest
 from fastapi.testclient import TestClient
@@ -37,11 +37,9 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.api import apps
-from kedro_viz.api.graphql import schema
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.models.graph import TaskNode
 from kedro_viz.server import populate_data
-from sqlalchemy.orm import session
 
 
 @pytest.fixture
@@ -52,7 +50,12 @@ def example_api(
     example_session_store_location: str,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(data_access_manager, example_catalog, example_pipelines, example_session_store_location)
+    populate_data(
+        data_access_manager,
+        example_catalog,
+        example_pipelines,
+        example_session_store_location,
+    )
     with mock.patch(
         "kedro_viz.api.responses.data_access_manager", new=data_access_manager
     ), mock.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager):
@@ -68,7 +71,10 @@ def example_transcoded_api(
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
-        data_access_manager, example_transcoded_catalog, example_transcoded_pipelines, example_session_store_location
+        data_access_manager,
+        example_transcoded_catalog,
+        example_transcoded_pipelines,
+        example_session_store_location,
     )
     with mock.patch(
         "kedro_viz.api.responses.data_access_manager", new=data_access_manager
@@ -79,7 +85,6 @@ def example_transcoded_api(
 @pytest.fixture
 def client(example_api):
     yield TestClient(example_api)
-
 
 
 def assert_nodes_equal(response_nodes, expected_nodes):
@@ -303,14 +308,23 @@ def assert_example_transcoded_data(response_data):
 
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
 
+
 class TestGraphQLEndpoint:
     def test_graphql_endpoint(self, client, example_db_dataset):
-        with mock.patch("kedro_viz.data_access.DataAccessManager.db_session",
-                    new_callable=PropertyMock) as mock_session:
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
             mock_session.return_value = example_db_dataset
-            response = client.post("/graphql",json = {"query": "{runs{id blob}}"})
-        assert response.json() == {'data': {'runs': [{'id': '1534326', 'blob': 'Hello World 1'}, 
-        {'id': '41312339', 'blob': 'Hello World 2'}]}}
+            response = client.post("/graphql", json={"query": "{runs{id blob}}"})
+        assert response.json() == {
+            "data": {
+                "runs": [
+                    {"id": "1534326", "blob": "Hello World 1"},
+                    {"id": "41312339", "blob": "Hello World 2"},
+                ]
+            }
+        }
 
 
 class TestIndexEndpoint:

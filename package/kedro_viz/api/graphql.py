@@ -26,11 +26,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
-import strawberry
-
 # pylint: disable=missing-class-docstring
 # pylint: disable=missing-function-docstring
-# pylint: disable=unused-argument
+# pylint: disable=too-few-public-methods
+
 import typing
 
 import strawberry
@@ -48,7 +47,6 @@ class RunModelGraphQLType:
 
 
 def get_all_runs() -> typing.List[RunModelGraphQLType]:
-    data_access_manager.db_session
     return [
         RunModelGraphQLType(id=kedro_session.id, blob=kedro_session.blob)
         for kedro_session in data_access_manager.db_session.query(RunModel).all()
@@ -57,9 +55,8 @@ def get_all_runs() -> typing.List[RunModelGraphQLType]:
 
 @strawberry.type
 class Query:
-    runs: typing.List[RunModelGraphQLType] = strawberry.field(
-        resolver=get_all_runs
-    )
+    all_runs: typing.List[RunModelGraphQLType] = strawberry.field(resolver=get_all_runs)
+
 
 router = APIRouter()
 

@@ -2,6 +2,9 @@
 Named RunModel to avoid confusion with sqlalchemy Session
 and fastapi Session.
 """
+# pylint: disable=missing-class-docstring
+# pylint: disable=too-few-public-methods
+
 from sqlalchemy import Column, String
 from sqlalchemy.ext.declarative import declarative_base
 
