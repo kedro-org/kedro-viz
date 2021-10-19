@@ -4,7 +4,7 @@ const { escapeRegExp, getHighlightedText } = utils;
 export const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 export const getFocusedModularPipeline = (state) =>
   state.visible.modularPipelineFocusMode;
-export const getModularPipelineData = (state) => state.modularPipeline.tree;
+export const getModularPipelinesTree = (state) => state.modularPipeline.tree;
 
 /**
  * Search a given string in a string target.

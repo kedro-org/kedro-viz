@@ -18,7 +18,6 @@ import {
 } from '../../selectors/nodes';
 import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
-import { getModularPipelineData } from '../../selectors/modular-pipelines';
 import { sidebarElementTypes } from '../../config';
 
 const ungroupNodes = (groupedNodes) =>

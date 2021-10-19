@@ -1,7 +1,10 @@
 import { createSelector } from 'reselect';
 import { arrayToObject } from '../utils';
 import { getNodeDisabledPipeline, getPipelineNodeIDs } from './pipeline';
-import { getFocusedModularPipeline } from './modular-pipelines';
+import {
+  getFocusedModularPipeline,
+  getModularPipelinesTree,
+} from './modular-pipelines';
 import { getTagCount } from './tags';
 
 const getNodeIDs = (state) => state.node.ids;
@@ -17,20 +20,21 @@ const getLayerIDs = (state) => state.layer.ids;
 const getLayersVisible = (state) => state.layer.visible;
 const getNodeLayer = (state) => state.node.layer;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
-const getVisibleModularPipelines = (state) => state.modularPipeline.visible;
+const getVisibleSidebarNodes = (state) => state.modularPipeline.visible;
 
-const getInputOutputNodeIDsForFocusedModularPipeline = createSelector(
-  [
-    (state) => state.visible.modularPipelineFocusMode,
-    (state) => state.modularPipeline.tree,
-  ],
-  (focusedModularPipeline, modularPipelinesTree) => {
-    const modularPipeline = focusedModularPipeline
-      ? modularPipelinesTree[focusedModularPipeline.id]
-      : null;
-    return modularPipeline
-      ? [...modularPipeline.inputs, ...modularPipeline.outputs]
-      : [];
+const getVisibleModularPipelineInputsOutputs = createSelector(
+  [getVisibleSidebarNodes, getModularPipelinesTree],
+  (visibleSidebarNodes, modularPipelineData) => {
+    const result = new Set();
+    for (const nodeID in visibleSidebarNodes) {
+      if (visibleSidebarNodes[nodeID] && nodeID in modularPipelineData) {
+        [
+          ...modularPipelineData[nodeID].inputs,
+          ...modularPipelineData[nodeID].outputs,
+        ].forEach((nodeID) => result.add(nodeID));
+      }
+    }
+    return result;
   }
 );
 
@@ -64,9 +68,10 @@ export const getNodeDisabled = createSelector(
     getNodeType,
     getNodeTypeDisabled,
     getNodeModularPipelines,
+    getModularPipelinesTree,
     getFocusedModularPipeline,
-    getInputOutputNodeIDsForFocusedModularPipeline,
-    getVisibleModularPipelines,
+    getVisibleSidebarNodes,
+    getVisibleModularPipelineInputsOutputs,
   ],
   (
     nodeIDs,
@@ -76,13 +81,22 @@ export const getNodeDisabled = createSelector(
     nodeType,
     typeDisabled,
     nodeModularPipelines,
+    modularPipelinesTree,
     focusedModularPipeline,
-    inputOutputNodeIDs,
-    visibleModularPipelines
+    visibleSidebarNodes,
+    visibleModularPipelineInputsOutputs
   ) =>
     arrayToObject(nodeIDs, (id) => {
+      const isDisabledViaSidebar =
+        !visibleSidebarNodes[id] &&
+        !visibleModularPipelineInputsOutputs.has(id);
+
       let isDisabledViaFocusedModularPipeline = false;
       if (focusedModularPipeline) {
+        const inputOutputNodeIDs = [
+          ...modularPipelinesTree[focusedModularPipeline.id].inputs,
+          ...modularPipelinesTree[focusedModularPipeline.id].outputs,
+        ];
         if (nodeType[id] === 'modularPipeline') {
           isDisabledViaFocusedModularPipeline =
             id !== focusedModularPipeline.id &&
@@ -93,14 +107,13 @@ export const getNodeDisabled = createSelector(
             !inputOutputNodeIDs.includes(id);
         }
       }
-
       return [
         nodeDisabledNode[id],
         nodeDisabledTag[id],
         nodeDisabledPipeline[id],
         typeDisabled[nodeType[id]],
+        isDisabledViaSidebar,
         isDisabledViaFocusedModularPipeline,
-        !visibleModularPipelines[id] && !inputOutputNodeIDs.includes(id),
       ].some(Boolean);
     })
 );
