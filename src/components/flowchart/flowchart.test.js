@@ -368,7 +368,7 @@ describe('FlowChart', () => {
 
   it('shows layers when layers are visible', () => {
     const wrapper = setup.mount(<FlowChart />);
-    expect(wrapper.render().find('.pipeline-layer').length).toBe(1);
+    expect(wrapper.render().find('.pipeline-layer').length).toBe(2);
   });
 
   it('hides layers when layers.length is 0', () => {

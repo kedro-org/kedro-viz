@@ -76,10 +76,8 @@ const getModularPipelineRowData = ({
  * @param {Object} node The node to display
  * @param {Boolean} selected Whether the node is currently selected
  */
-const getNodeRowData = (node, selected) => {
+const getNodeRowData = (node, disabled, selected) => {
   const checked = !node.disabledNode;
-  const disabled = node.disabledTag || node.disabledType;
-
   return {
     ...node,
     visibleIcon: VisibleIcon,
@@ -109,9 +107,21 @@ const TreeListProvider = ({
 
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
+    const disabled =
+      node.disabledTag ||
+      node.disabledType ||
+      (focusMode &&
+        !node.modularPipelines
+          .map(
+            (modularPipelineID) =>
+              modularPipelineID === focusMode.id ||
+              modularPipelineID.startsWith(`${focusMode.id}.`)
+          )
+          .some(Boolean));
+    const selected = nodeSelected[node.id];
     return (
       <NodeListTreeItem
-        data={getNodeRowData(node, nodeSelected[node.id])}
+        data={getNodeRowData(node, disabled, selected)}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
