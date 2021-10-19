@@ -7,7 +7,7 @@ const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
-const getVisibleModularPipelines = (state) => state.modularPipeline.visible;
+const getVisibleSidebarNodes = (state) => state.modularPipeline.visible;
 
 /**
  * Create a new transitive edge from the first and last edge in the path
@@ -37,7 +37,7 @@ export const getTransitiveEdges = createSelector(
     getEdgeTargets,
     getFocusedModularPipeline,
     getNodeModularPipelines,
-    getVisibleModularPipelines,
+    getVisibleSidebarNodes,
   ],
   (
     nodeIDs,
