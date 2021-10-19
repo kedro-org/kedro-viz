@@ -62,7 +62,7 @@ class Pipeline {
 
   /**
    * Create the modular pipelines tree
-   * @returns {number} Rank count total
+   * @returns {Object} A modular pipelines tree
    */
   generateModularPipelines() {
     return {
@@ -187,7 +187,7 @@ class Pipeline {
       rank: initialRank,
       layer: layer,
       pipelines: this.getNodePipelines(),
-      modular_pipelines: this.getNodeModularPipelines(), //eslint-disable-line camelcase
+      modular_pipelines: null, //eslint-disable-line camelcase
       tags: this.getRandomTags(),
       _sources: [],
       _targets: [],
@@ -250,20 +250,6 @@ class Pipeline {
       }
       return pipelines;
     }, []);
-  }
-
-  /**
-   * Create a list of the modular pipelines that the node will be included in
-   * @returns {array} Node pipelines
-   */
-  getNodeModularPipelines() {
-    return [];
-    // return this.modularPipelines.reduce((modularPipelines, id, i) => {
-    //   if (i === 0 || this.utils.randomIndex(2)) {
-    //     return modularPipelines.concat(id);
-    //   }
-    //   return modularPipelines;
-    // }, []);
   }
 
   /**
@@ -460,7 +446,6 @@ class Pipeline {
       layers: LAYERS,
       nodes: this.nodes,
       pipelines: this.pipelines.map((name) => ({ id: name, name })),
-      // todo lim: fixme
       modularPipelines: this.modularPipelines,
       tags: this.tags,
     };

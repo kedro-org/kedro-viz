@@ -79,10 +79,7 @@ const NodeListProvider = ({
   });
 
   const modularPipelinesSearchResult = searchValue
-    ? getModularPipelinesSearchResult({
-        modularPipelinesTree,
-        searchValue,
-      })
+    ? getModularPipelinesSearchResult(modularPipelinesTree, searchValue)
     : null;
 
   const groups = getGroups({ items });
