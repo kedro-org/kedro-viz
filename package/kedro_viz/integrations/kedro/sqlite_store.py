@@ -27,9 +27,11 @@
 # limitations under the License.
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
+import json
+
 # pylint: disable=too-many-ancestors
 from pathlib import Path
-import json
+
 from kedro.framework.session.store import BaseSessionStore
 
 from kedro_viz.database import create_db_engine
@@ -54,9 +56,11 @@ class SQLiteStore(BaseSessionStore):
         return Path(self._path).expanduser().resolve() / "session_store.db"
 
     def to_json(self):
+        """Returns session_store information in json format after converting PosixPath to string"""
         session_dict = self.__dict__
-        session_proj_path = str(session_dict['data']['project_path'])
-        session_dict['data']['project_path'] = session_proj_path
+        if "project_path" in session_dict["data"].keys():
+            session_proj_path = str(session_dict["data"]["project_path"])
+            session_dict["data"]["project_path"] = session_proj_path
         return json.dumps(session_dict)
 
     def save(self):

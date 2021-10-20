@@ -6,8 +6,8 @@ and fastapi Session.
 # pylint: disable=too-few-public-methods
 
 from sqlalchemy import Column, String
-from sqlalchemy.types import JSON
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.types import JSON
 
 Base = declarative_base()
 

@@ -31,11 +31,11 @@ load data from projects created in a range of Kedro versions.
 """
 # pylint: disable=import-outside-toplevel
 # pylint: disable=protected-access
+# pylint: disable=too-many-return-statements
 from pathlib import Path
 from typing import Dict, Optional, Tuple, cast
 
 from kedro import __version__
-from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
@@ -89,9 +89,8 @@ def load_data(
         session_store = session._store
         if isinstance(session_store, SQLiteStore):
             session_store_location = session_store.location
-        else:
-            session_store_location = None
-        return context.catalog, cast(Dict, pipelines), session_store_location
+            return context.catalog, cast(Dict, pipelines), session_store_location
+        return context.catalog, cast(Dict, pipelines), None
 
     if KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
@@ -104,9 +103,8 @@ def load_data(
         session_store = session._store
         if isinstance(session_store, SQLiteStore):
             session_store_location = session_store.location
-        else:
-            session_store_location = None
-        return context.catalog, context.pipelines, session_store_location
+            return context.catalog, context.pipelines, session_store_location
+        return context.catalog, context.pipelines, None
 
     if KEDRO_VERSION.match("==0.17.0"):
         from kedro.framework.session import KedroSession
@@ -124,9 +122,8 @@ def load_data(
         session_store = session._store
         if isinstance(session_store, SQLiteStore):
             session_store_location = session_store.location
-        else:
-            session_store_location = None
-        return context.catalog, context.pipelines, session_store_location
+            return context.catalog, context.pipelines, session_store_location
+        return context.catalog, context.pipelines, None
 
     # pre-0.17 load_context version
     from kedro.framework.context import load_context
