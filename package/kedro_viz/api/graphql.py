@@ -30,17 +30,18 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import TYPE_CHECKING, List
 
 import strawberry
 from fastapi import APIRouter
 from strawberry import ID
 from strawberry.asgi import GraphQL
+
 from kedro_viz.data_access import data_access_manager
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
+
 
 def get_run(run_id: ID) -> Run:
     """Placeholder for the proper method.
@@ -83,7 +84,7 @@ def get_runs() -> List[Run]:
 
 
 def get_run_details(run_id: ID) -> RunDetails:
-    # pylint: disable=protected-access
+    # pylint: disable=protected-access,import-outside-toplevel
     """Get all details for a specific run. Run details contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
     during that specific `kedro run`.
@@ -95,6 +96,8 @@ def get_run_details(run_id: ID) -> RunDetails:
         RunDetails object
 
     """
+    from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
+
     details = {}
     catalog = data_access_manager.catalog.get_catalog()
     experiment_datasets = [
