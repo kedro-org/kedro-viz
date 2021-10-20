@@ -142,8 +142,7 @@ class Query:
     runs: List[Run] = strawberry.field(resolver=get_runs)
     all_runs: typing.List[RunModelGraphQLType] = strawberry.field(resolver=get_all_runs)
 
-
+schema = strawberry.Schema(query=Query)
 router = APIRouter()
 
-schema = strawberry.Schema(query=Query)
 router.add_route("/graphql", GraphQL(schema))
