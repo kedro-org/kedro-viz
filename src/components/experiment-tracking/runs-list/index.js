@@ -20,7 +20,11 @@ const RunsList = ({ runs }) => {
           ? 'Compare view'
           : 'No runs'}
       </h1>
-      <Accordion heading="All" headingDetail={runs.length}>
+      <Accordion
+        heading="All"
+        headingClassName="runs-list__accordion-header"
+        headingDetail={runs.length}
+      >
         <div className="runs-list__wrapper">
           {runs.map((data, i) => (
             <RunsListCard data={data} key={i} />

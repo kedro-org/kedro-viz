@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 
 import './accordion.css';
@@ -13,26 +13,46 @@ import './accordion.css';
  */
 const Accordion = ({
   children,
+  className = null,
   heading = '',
+  headingClassName = null,
   headingDetail = null,
+  hideContent = false,
+  hideHeading = false,
   layout = 'right',
+  onCallback,
   size = 'small',
 }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(hideContent);
+
+  useEffect(() => {
+    setCollapsed(hideContent);
+  }, [hideContent]);
+
+  const onClick = () => {
+    setCollapsed(!collapsed);
+    onCallback && onCallback();
+  };
 
   return (
     <div
       className={classnames('accordion', {
         'accordion--left': layout === 'left',
+        [`${className}`]: className,
       })}
     >
-      <div className="accordion__heading">
+      <div
+        className={classnames('accordion__heading', {
+          'accordion__heading--hide': hideHeading,
+          [`${headingClassName}`]: headingClassName,
+        })}
+      >
         {layout === 'left' && (
           <button
             aria-label={`${
               collapsed ? 'Show' : 'Hide'
             } ${heading.toLowerCase()}`}
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={onClick}
             className={classnames('accordion__toggle', {
               'accordion__toggle--alt': collapsed,
             })}
@@ -54,7 +74,7 @@ const Accordion = ({
             aria-label={`${
               collapsed ? 'Show' : 'Hide'
             } ${heading.toLowerCase()}`}
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={onClick}
             className={classnames('accordion__toggle', {
               'accordion__toggle--alt': collapsed,
             })}

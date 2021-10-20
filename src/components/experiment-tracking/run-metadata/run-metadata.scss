@@ -16,7 +16,9 @@
 }
 
 .details-metadata__table {
+  border-collapse: collapse;
   max-width: 75em;
+  margin-left: -1px; // For exact alignment with content below.
   width: 100%;
 }
 

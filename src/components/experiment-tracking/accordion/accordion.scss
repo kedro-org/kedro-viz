@@ -1,7 +1,8 @@
 @import '../../../styles/variables';
 
 $toggle-icon-padding: 0.3em;
-$toggle-size: 2.2em + $toggle-icon-padding * 2;
+$toggle-height: 2.2em + $toggle-icon-padding * 2;
+$toggle-width: 1.15em;
 
 // Standard layout
 
@@ -9,7 +10,10 @@ $toggle-size: 2.2em + $toggle-icon-padding * 2;
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding: 0.8em 2.6em 0.8em 3em;
+
+  &--hide {
+    visibility: hidden;
+  }
 }
 
 .accordion__title {
@@ -31,8 +35,8 @@ $toggle-size: 2.2em + $toggle-icon-padding * 2;
 }
 
 .accordion__toggle {
-  width: $toggle-size;
-  height: $toggle-size;
+  width: $toggle-width;
+  height: $toggle-height;
   padding: 0;
   color: var(--color-default-alt);
   font-size: inherit;
@@ -77,6 +81,10 @@ $toggle-size: 2.2em + $toggle-icon-padding * 2;
 
 .accordion--left .accordion__heading {
   justify-content: flex-start;
+}
+
+.accordion--left .accordion__title {
+  margin-left: $toggle-height - $toggle-width;
 }
 
 .accordion--left .accordion__toggle {
