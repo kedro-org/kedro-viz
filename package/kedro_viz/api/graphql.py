@@ -155,7 +155,7 @@ class Query:
     @strawberry.field
     def run_details(self, run_id: ID) -> RunDetails:
         """Query to get run details for a specific run from the session store"""
-        return get_run_details(run_id)
+        return get_run_details(run_id)  # pragma: no cover
 
 
 schema = strawberry.Schema(query=Query)
