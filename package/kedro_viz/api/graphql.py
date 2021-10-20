@@ -38,10 +38,10 @@ from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 from strawberry import ID
 from strawberry.asgi import GraphQL
 
-from package.kedro_viz.data_access import data_access_manager
+from kedro_viz.data_access import data_access_manager
 
 
-def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
+def get_run(run_id: ID) -> Run:
     """Placeholder for the proper method.
     Get a run by id from the session store.
 
@@ -82,19 +82,31 @@ def get_runs() -> List[Run]:
 
 
 def get_run_details(run_id: ID) -> RunDetails:
+    # pylint: disable=protected-access
+    """Get all details for a specific run. Run details contains the data from the
+    tracking MetricsDataSet and JSONDataSet instances that have been logged
+    during that specific `kedro run`.
+
+    Args:
+        run_id:  ID of the run to fetch the details for.
+
+    Returns:
+        RunDetails object
+
+    """
     details = {}
     catalog = data_access_manager.catalog.get_catalog()
     experiment_datasets = [
         (ds_name, ds_value)
         for ds_name, ds_value in catalog._data_sets.items()
-        if (type(ds_value) == MetricsDataSet or type(ds_value) == JSONDataSet)
+        if (isinstance(ds_value, (MetricsDataSet, JSONDataSet)))
     ]
     for name, dataset in experiment_datasets:
         file_path = dataset._get_versioned_path(str(run_id))
         with dataset._fs.open(file_path, **dataset._fs_open_args_load) as fs_file:
             json_data = json.load(fs_file)
             details[name] = json_data
-    return RunDetails(id=run_id, details=details)
+    return RunDetails(id=run_id, details=json.dumps(details))
 
 
 @strawberry.type
