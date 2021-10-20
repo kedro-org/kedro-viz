@@ -6,6 +6,7 @@ and fastapi Session.
 # pylint: disable=too-few-public-methods
 
 from sqlalchemy import Column, String
+from sqlalchemy.types import JSON
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -15,7 +16,7 @@ class RunModel(Base):
     __tablename__ = "runs"
 
     id = Column(String, primary_key=True, index=True)
-    blob = Column(String)
+    blob = Column(JSON)
 
     class Config:
         orm_mode = True

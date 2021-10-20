@@ -29,7 +29,7 @@
 which stores sessions data in the SQLite database"""
 # pylint: disable=too-many-ancestors
 from pathlib import Path
-
+import json
 from kedro.framework.session.store import BaseSessionStore
 
 from kedro_viz.database import create_db_engine
@@ -53,11 +53,17 @@ class SQLiteStore(BaseSessionStore):
         """Returns location of the sqlite_store database"""
         return Path(self._path).expanduser().resolve() / "session_store.db"
 
+    def to_json(self):
+        session_dict = self.__dict__
+        session_proj_path = str(session_dict['data']['project_path'])
+        session_dict['data']['project_path'] = session_proj_path
+        return json.dumps(session_dict)
+
     def save(self):
         """Save the session store info on db ."""
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
-        session_store_data = RunModel(id=self._session_id, blob=f"{self}")
+        session_store_data = RunModel(id=self._session_id, blob=self.to_json())
         database.add(session_store_data)
         database.commit()
