@@ -31,8 +31,6 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from unittest.mock import  patch
-
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore, get_db
 from kedro_viz.models.run_model import Base, RunModel
 
@@ -62,7 +60,7 @@ class TestSQLiteStore:
 
     def test_save(self, store_path, dbsession):
         sqlite_store = SQLiteStore(str(store_path), FAKE_SESSION_ID_1)
-        sqlite_store.data = {"project_path":PosixPath(store_path)}
+        sqlite_store.data = {"project_path": PosixPath(store_path)}
         sqlite_store.save()
         db = next(get_db(dbsession))
         assert db.query(RunModel).count() == 1
@@ -71,6 +69,3 @@ class TestSQLiteStore:
         sqlite_store2.save()
         db = next(get_db(dbsession))
         assert db.query(RunModel).count() == 2
-    
-       
-     
