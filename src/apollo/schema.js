@@ -5,29 +5,50 @@ import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json';
 import gql from 'graphql-tag';
 
 const typeDefs = gql`
-  type Runs {
-    runs: [Run!]!
+  scalar JSON
+  scalar JSONObject
+
+  schema {
+    query: Query
+    subscription: Subscription
   }
+
+  type Query {
+    runsList: [Run]!
+    runsWithData(runIDs: [ID]!): [Run!]!
+  }
+
+  type Subscription {
+    runAdded(runID: ID!): Run!
+  }
+
   type Run {
-    id: ID!
-    bookmark: Boolean!
-    timestamp: String!
-    title: String!
-    metadata: [RunMetadata!]!
-    details: [RunDetails!]!
+    runID: ID!
+    metadata: RunMetadata
+    trackingData: RunTrackingData
   }
+
   type RunMetadata {
-    id: ID!
-    author: String!
-    gitBranch: String!
-    gitSha: String!
-    notes: String!
-    runCommand: String!
+    runID: ID!
+    title: String!
+    timestamp: String!
+    author: String
+    gitBranch: String
+    gitSha: String
+    bookmark: Boolean
+    notes: String
+    runCommand: String
   }
-  type RunDetails {
-    id: ID!
-    name: String!
-    details: JSONObject
+
+  type RunTrackingData {
+    runID: ID!
+    trackingData: [TrackingDataset]
+  }
+
+  type TrackingDataset {
+    datasetName: String
+    datasetType: String
+    data: JSONObject
   }
 `;
 

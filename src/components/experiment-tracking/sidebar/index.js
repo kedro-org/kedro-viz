@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
+import { useQuery } from '@apollo/client';
 import classnames from 'classnames';
 import RunsList from '../runs-list';
 import PrimaryToolbar from '../../primary-toolbar';
+import { GET_RUNS } from '../../../apollo/queries';
 import './sidebar.css';
 
 /**
@@ -11,6 +13,10 @@ import './sidebar.css';
  * @param {boolean} props.visible Whether the sidebar is open/closed
  */
 export const Sidebar = ({ visible }) => {
+  const { data } = useQuery(GET_RUNS);
+
+  console.log('data', data);
+
   return (
     <>
       <div
