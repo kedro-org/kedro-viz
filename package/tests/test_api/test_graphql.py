@@ -34,7 +34,11 @@ from kedro.io import DataCatalog, Version
 from kedro.io.core import generate_timestamp
 from strawberry import ID
 
-from kedro_viz.api.graphql import RunDetails, get_run_details
+from kedro_viz.api.graphql import (
+    RunTrackingData,
+    TrackingDataSet,
+    get_run_tracking_data,
+)
 from kedro_viz.data_access.managers import DataAccessManager
 
 
@@ -79,9 +83,23 @@ def test_graphql_run_details_query(
         )
         data_access_manager.add_catalog(catalog)
 
-        assert get_run_details(ID(save_version)) == RunDetails(
+        assert get_run_tracking_data(ID(save_version)) == RunTrackingData(
             id=ID(save_version),
-            details='{"metrics": {"col1": 1.0, "col2": 2.0, "col3": 3.0}, "more_metrics": {'
-            '"col4": 4.0, "col5": 5.0, "col6": 6.0}, "json_tracking": {"col7": '
-            '"column_seven", "col2": true, "col3": 3}}',
+            trackingData=[
+                TrackingDataSet(
+                    datasetName="metrics",
+                    datasetType=MetricsDataSet,
+                    data='{"col1": 1.0, "col2": 2.0, "col3": 3.0}',
+                ),
+                TrackingDataSet(
+                    datasetName="more_metrics",
+                    datasetType=MetricsDataSet,
+                    data='{"col4": 4.0, "col5": 5.0, "col6": 6.0}',
+                ),
+                TrackingDataSet(
+                    datasetName="json_tracking",
+                    datasetType=JSONDataSet,
+                    data='{"col7": "column_seven", "col2": true, "col3": 3}',
+                ),
+            ],
         )

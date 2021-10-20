@@ -89,8 +89,10 @@ def test_graphql_run_query():
                         author
                         gitBranch
                     }
-                    details {
-                        details
+                    trackingData {
+                        trackingData {
+                            datasetName
+                        }
                     }
                 }
             }
@@ -111,7 +113,7 @@ def test_graphql_run_query():
             "author": "",
             "gitBranch": "",
         },
-        "details": {"details": ""},
+        "trackingData": {"trackingData": []},
     }
 
 

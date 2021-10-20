@@ -64,12 +64,12 @@ def get_run(run_id: ID) -> Run:
         timestamp="session_id",
         runCommand="command_path",
     )
-    details = RunDetails(id=ID(run_id), details="")
+    tracking_data = RunTrackingData(id=ID(run_id), trackingData=[])
 
     return Run(
         id=ID(run_id),
         metadata=metadata,
-        details=details,
+        trackingData=tracking_data,
     )
 
 
@@ -83,7 +83,7 @@ def get_runs() -> List[Run]:
     return [get_run(ID("123"))]
 
 
-def get_run_details(run_id: ID) -> RunDetails:
+def get_run_tracking_data(run_id: ID) -> RunTrackingData:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all details for a specific run. Run details contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
@@ -98,7 +98,7 @@ def get_run_details(run_id: ID) -> RunDetails:
     """
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 
-    details = {}
+    all_datasets = []
     catalog = data_access_manager.catalog.get_catalog()
     experiment_datasets = [
         (ds_name, ds_value)
@@ -109,8 +109,13 @@ def get_run_details(run_id: ID) -> RunDetails:
         file_path = dataset._get_versioned_path(str(run_id))
         with dataset._fs.open(file_path, **dataset._fs_open_args_load) as fs_file:
             json_data = json.load(fs_file)
-            details[name] = json_data
-    return RunDetails(id=run_id, details=json.dumps(details))
+            tracking_dataset = TrackingDataSet(
+                datasetName=name,
+                datasetType=(type(dataset)),
+                data=json.dumps(json_data),
+            )
+            all_datasets.append(tracking_dataset)
+    return RunTrackingData(id=run_id, trackingData=all_datasets)
 
 
 @strawberry.type
@@ -119,7 +124,7 @@ class Run:
 
     id: ID
     metadata: RunMetadata
-    details: RunDetails
+    trackingData: RunTrackingData
 
 
 @strawberry.type
@@ -138,11 +143,20 @@ class RunMetadata:
 
 
 @strawberry.type
-class RunDetails:
-    """RunDetails object format"""
+class TrackingDataSet:
+    """TrackingDataSet object to structure tracking data for a Run."""
+
+    datasetName: str
+    datasetType: str
+    data: str
+
+
+@strawberry.type
+class RunTrackingData:
+    """RunTrackingData object format"""
 
     id: ID
-    details: str
+    trackingData: List[TrackingDataSet]
 
 
 @strawberry.type
@@ -155,11 +169,6 @@ class Query:
         return get_run(run_id)
 
     runs: List[Run] = strawberry.field(resolver=get_runs)
-
-    @strawberry.field
-    def run_details(self, run_id: ID) -> RunDetails:
-        """Query to get run details for a specific run from the session store"""
-        return get_run_details(run_id)  # pragma: no cover
 
 
 schema = strawberry.Schema(query=Query)
