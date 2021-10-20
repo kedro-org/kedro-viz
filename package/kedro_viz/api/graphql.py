@@ -34,12 +34,13 @@ from typing import List
 
 import strawberry
 from fastapi import APIRouter
-from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 from strawberry import ID
 from strawberry.asgi import GraphQL
-
 from kedro_viz.data_access import data_access_manager
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:  # pragma: no cover
+    from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 
 def get_run(run_id: ID) -> Run:
     """Placeholder for the proper method.
