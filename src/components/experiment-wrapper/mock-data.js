@@ -13,26 +13,26 @@ export const runs = [
     details: {
       'Digital Analysis Metrics': [
         {
-          asdf: 123,
+          bootstrap: 'true',
         },
         {
-          dfgas: 35534,
+          classWeight: '-',
         },
       ],
       'Shopper Spend Raw Metrics': [
         {
-          asdf: 23422,
+          maxFeatures: 'auto',
         },
         {
-          dfgas: 12564,
+          minSamplesLeaf: 12564,
         },
       ],
       'Digital Analysis Features': [
         {
-          asdf: 234,
+          AU_SSID_NULLS: 234,
         },
         {
-          dfgas: 34,
+          AR_ARM_NULLS: 34,
         },
       ],
     },
@@ -51,26 +51,26 @@ export const runs = [
     details: {
       'Digital Analysis Metrics': [
         {
-          asdf: 123,
+          bootstrap: 'false',
         },
         {
-          dfgas: 564,
+          classWeight: 'low',
         },
       ],
       'Shopper Spend Raw Metrics': [
         {
-          asdf: 665,
+          maxFeatures: 'min',
         },
         {
-          dfgas: 1,
+          minSamplesLeaf: 1,
         },
       ],
       'Digital Analysis Features': [
         {
-          asdf: 99,
+          AU_SSID_NULLS: 99,
         },
         {
-          dfgas: 40,
+          AR_ARM_NULLS: 40,
         },
       ],
     },
@@ -89,26 +89,26 @@ export const runs = [
     details: {
       'Digital Analysis Metrics': [
         {
-          asdf: 123,
+          bootstrap: 'false',
         },
         {
-          dfgas: 35534,
+          classWeight: 'high',
         },
       ],
       'Shopper Spend Raw Metrics': [
         {
-          asdf: 23422,
+          maxFeatures: 'max',
         },
         {
-          dfgas: 12564,
+          minSamplesLeaf: 12564,
         },
       ],
       'Digital Analysis Features': [
         {
-          asdf: 234,
+          AU_SSID_NULLS: 234,
         },
         {
-          dfgas: 34,
+          AR_ARM_NULLS: 34,
         },
       ],
     },
