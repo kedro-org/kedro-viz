@@ -26,12 +26,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.services.layers` defines layers-related logic."""
+import logging
 from collections import defaultdict
 from typing import Dict, List, Set
 
-from toposort import toposort_flatten
+from toposort import CircularDependencyError, toposort_flatten
 
 from kedro_viz.models.graph import GraphNode
+
+logger = logging.getLogger(__name__)
 
 
 def sort_layers(
@@ -88,6 +91,14 @@ def sort_layers(
 
         node_layers[node_id] = set()
 
+        # The layer of the current node can also be considered as depending on that node.
+        # This is to cater for the edge case where all nodes are completely disjoint from each other
+        # and no dependency graph for layers can be constructed,
+        # yet the layers still need to be displayed.
+        node_layer = getattr(nodes[node_id], "layer", None)
+        if node_layer is not None:
+            node_layers[node_id].add(node_layer)
+
         # for each child node of the given node_id,
         # mark its layer and all layers that depend on it as child layers of the given node_id.
         for child_node_id in dependencies[node_id]:
@@ -118,4 +129,10 @@ def sort_layers(
 
     # toposort the layer_dependencies to find the layer order.
     # Note that for string, toposort_flatten will default to alphabetical order for tie-break.
-    return toposort_flatten(layer_dependencies)
+    try:
+        return toposort_flatten(layer_dependencies)
+    except CircularDependencyError:
+        logger.warning(
+            "Layers visualisation is disabled as circular dependency detected among layers."
+        )
+        return []

@@ -4,7 +4,7 @@ import { getNodeData } from '../../selectors/nodes';
 import { setup, mockState } from '../../utils/state.mock';
 
 describe('NodeListRow', () => {
-  const node = getNodeData(mockState.animals)[0];
+  const node = getNodeData(mockState.spaceflights)[0];
   const setupProps = () => {
     const props = {
       active: true,
@@ -252,6 +252,6 @@ describe('NodeListRow', () => {
     const expectedResult = expect.objectContaining({
       active: expect.any(Boolean),
     });
-    expect(mapStateToProps(mockState.animals, {})).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.spaceflights, {})).toEqual(expectedResult);
   });
 });

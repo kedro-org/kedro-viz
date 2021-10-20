@@ -7,15 +7,33 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 3.17.1
+
+## Bug fixes and other changes
+
+- Relax pandas and plotly versions.
+
+## Bug fixes and other changes
+
+- Disable layers visualisation instead of throwing an error when there is a cycle in layers. (#383)
+- Disable layers when their dependency cannot be established in a disjoint graph.
 
 # Release 3.17.0
 
 ## Major features and improvements
 
+- Expose metrics data from the latest run as a dataset node. (#554)
+- Visualize and compare metrics from last 10 runs on the metadata panel. (#554)
+
 ## Bug fixes and other changes
 
 - Overwrite material UI selected row defaults. (#568)
 - Fix URI param parsing for data source. (#578)
+- Add a graphql test endpoint on Kedro-viz server. (#570)
+- Update the demo dataset on Kedro-viz. (#574)
+- Fix auto-reload for metrics run data. (#572)
+- Refactor tests for metadata panel. (#580)
+- Fix metrics tree to get latest metrics data. (#573)
 
 # Release 3.16.0
 

@@ -1,4 +1,5 @@
 {
-  "filepath": "/Users/Documents/project-src/test/data/01_raw/iris.csv",
-  "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+  "filepath": "/tmp/project/data/03_primary/model_input_table.csv",
+  "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+  "run_command": "kedro run --to-outputs=\"model_input_table\""
 }

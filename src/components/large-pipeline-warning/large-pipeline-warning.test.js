@@ -52,7 +52,7 @@ describe('LargePipelineWarning', () => {
       sidebarVisible: expect.any(Boolean),
       visible: expect.any(Boolean),
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
 
   describe('mapDispatchToProps', () => {
