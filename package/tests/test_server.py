@@ -88,9 +88,6 @@ class TestServer:
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             example_pipelines
         )
-        patched_data_access_manager.add_session_store_location.assert_called_once_with(
-            example_session_store_location
-        )
 
         # correct api app is created
         patched_create_api_app_from_project.assert_called_once()

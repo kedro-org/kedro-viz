@@ -77,7 +77,7 @@ def create_api_app_from_project(
     app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
     @app.on_event("shutdown")
-    def shutdown_event():
+    def shutdown_event():  # pragma: no cover
         data_access_manager.db_session.close()
 
     # everytime the server reloads, a new app with a new timestamp will be created.

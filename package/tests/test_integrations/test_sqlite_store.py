@@ -25,26 +25,47 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from pathlib import Path
 
-"""Data model to represent run data from a Kedro Session."""
-# pylint: disable=too-few-public-methods
+import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from sqlalchemy import Column, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.types import JSON
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore, get_db
+from kedro_viz.models.run_model import Base, RunModel
 
-Base = declarative_base()
+FAKE_SESSION_ID_1 = "fake_session_id_1"
+
+FAKE_SESSION_ID_2 = "fake_session_id_2"
 
 
-class RunModel(Base):
-    """Data model to represent run data from a Kedro Session."""
+@pytest.fixture
+def store_path(tmp_path):
+    return Path(tmp_path)
 
-    __tablename__ = "runs"
 
-    id = Column(String, primary_key=True, index=True)
-    blob = Column(JSON)
+@pytest.fixture
+def dbsession(store_path):
+    engine = create_engine(f"sqlite:///{store_path}/session_store.db")
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    return Session
 
-    class Config:
-        """Supports data model to map to ORM objects"""
 
-        orm_mode = True
+class TestSQLiteStore:
+    def test_empty(self, store_path):
+        sqlite_store = SQLiteStore(str(store_path), FAKE_SESSION_ID_1)
+        assert sqlite_store == {}
+        assert sqlite_store.location == store_path / "session_store.db"
+
+    def test_save(self, store_path, dbsession):
+        sqlite_store = SQLiteStore(str(store_path), FAKE_SESSION_ID_1)
+        sqlite_store.data = {"project_path": Path(store_path)}
+        sqlite_store.save()
+        db = next(get_db(dbsession))
+        assert db.query(RunModel).count() == 1
+        # save another session
+        sqlite_store2 = SQLiteStore(str(store_path), FAKE_SESSION_ID_2)
+        sqlite_store2.save()
+        db = next(get_db(dbsession))
+        assert db.query(RunModel).count() == 2

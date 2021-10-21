@@ -30,13 +30,17 @@ load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
 # pylint: disable=import-outside-toplevel
+# pylint: disable=protected-access
+# pylint: disable=too-many-return-statements
 from pathlib import Path
-from typing import Dict, Tuple, cast
+from typing import Dict, Optional, Tuple, cast
 
 from kedro import __version__
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
+
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
 KEDRO_VERSION = VersionInfo.parse(__version__)
 
@@ -63,7 +67,7 @@ def _bootstrap(project_path: Path):
 
 def load_data(
     project_path: Path, env: str = None
-) -> Tuple[DataCatalog, Dict[str, Pipeline]]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], Optional[Path]]:
     """Load data from a Kedro project.
     Args:
         project_path: the path whether the Kedro project is located.
@@ -82,8 +86,11 @@ def load_data(
             project_path=project_path, env=env, save_on_close=False
         )
         context = session.load_context()
-        session_store_location = session._store.location
-        return context.catalog, cast(Dict, pipelines), session_store_location
+        session_store = session._store
+        if isinstance(session_store, SQLiteStore):
+            session_store_location = session_store.location
+            return context.catalog, cast(Dict, pipelines), session_store_location
+        return context.catalog, cast(Dict, pipelines), None
 
     if KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
@@ -93,8 +100,11 @@ def load_data(
         )
 
         context = session.load_context()
-        session_store_location = session._store.location
-        return context.catalog, context.pipelines, session_store_location
+        session_store = session._store
+        if isinstance(session_store, SQLiteStore):
+            session_store_location = session_store.location
+            return context.catalog, context.pipelines, session_store_location
+        return context.catalog, context.pipelines, None
 
     if KEDRO_VERSION.match("==0.17.0"):
         from kedro.framework.session import KedroSession
@@ -109,8 +119,11 @@ def load_data(
         )
 
         context = session.load_context()
-        session_store_location = session._store.location
-        return context.catalog, context.pipelines, session_store_location
+        session_store = session._store
+        if isinstance(session_store, SQLiteStore):
+            session_store_location = session_store.location
+            return context.catalog, context.pipelines, session_store_location
+        return context.catalog, context.pipelines, None
 
     # pre-0.17 load_context version
     from kedro.framework.context import load_context

@@ -26,10 +26,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-function-docstring
 # pylint: disable=no-self-use, too-few-public-methods
+
 from __future__ import annotations
 
 from pathlib import Path, PosixPath
+import typing
 from typing import List
 
 import strawberry
@@ -145,7 +149,8 @@ class Query:
     runs: List[Run] = strawberry.field(resolver=get_runs)
 
 
+schema = strawberry.Schema(query=Query)
+
 router = APIRouter()
 
-schema = strawberry.Schema(query=Query)
 router.add_route("/graphql", GraphQL(schema))

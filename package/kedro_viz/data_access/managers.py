@@ -26,6 +26,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.data_access.managers` defines data access managers."""
+# pylint: disable=too-many-instance-attributes
 from collections import defaultdict
 from typing import Dict, List, Set, Union
 
@@ -72,15 +73,14 @@ class DataAccessManager:
 
         # Make sure each registered pipeline has a distinct collection of edges.
         self.edges: Dict[str, GraphEdgesRepository] = defaultdict(GraphEdgesRepository)
-
         # Make sure the node dependencies are built separately for each registered pipeline.
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
-        self._db_session = None
 
     @property
-    def db_session(self):
+    def db_session(self):  # pragma: no cover
+        """Sqlite db connection session"""
         return self._db_session
 
     @db_session.setter
