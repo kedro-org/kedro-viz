@@ -29,62 +29,12 @@ import operator
 from pathlib import Path
 from typing import Dict, List
 from unittest import mock
-from unittest.mock import PropertyMock
 
 import pytest
 from fastapi.testclient import TestClient
-from kedro.io import DataCatalog
-from kedro.pipeline import Pipeline
 
 from kedro_viz.api import apps
-from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.models.graph import TaskNode
-from kedro_viz.server import populate_data
-
-
-@pytest.fixture
-def example_api(
-    data_access_manager: DataAccessManager,
-    example_pipelines: Dict[str, Pipeline],
-    example_catalog: DataCatalog,
-    example_session_store_location: str,
-):
-    api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(
-        data_access_manager,
-        example_catalog,
-        example_pipelines,
-        example_session_store_location,
-    )
-    with mock.patch(
-        "kedro_viz.api.responses.data_access_manager", new=data_access_manager
-    ), mock.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager):
-        yield api
-
-
-@pytest.fixture
-def example_transcoded_api(
-    data_access_manager: DataAccessManager,
-    example_transcoded_pipelines: Dict[str, Pipeline],
-    example_transcoded_catalog: DataCatalog,
-    example_session_store_location: str,
-):
-    api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(
-        data_access_manager,
-        example_transcoded_catalog,
-        example_transcoded_pipelines,
-        example_session_store_location,
-    )
-    with mock.patch(
-        "kedro_viz.api.responses.data_access_manager", new=data_access_manager
-    ), mock.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager):
-        yield api
-
-
-@pytest.fixture
-def client(example_api):
-    yield TestClient(example_api)
 
 
 def assert_nodes_equal(response_nodes, expected_nodes):
@@ -372,46 +322,6 @@ def assert_example_transcoded_data(response_data):
     ]
 
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
-
-
-class TestGraphQLEndpoint:
-    def test_graphql_run_list_endpoint(self, client, example_db_dataset):
-        with mock.patch(
-            "kedro_viz.data_access.DataAccessManager.db_session",
-            new_callable=PropertyMock,
-        ) as mock_session:
-            mock_session.return_value = example_db_dataset
-            response = client.post(
-                "/graphql", json={"query": "{runsList {id metadata {bookmark}}}"}
-            )
-        assert response.json() == {
-            "data": {
-                "runsList": [
-                    {"id": "1534326", "metadata": {"bookmark": False}},
-                    {"id": "41312339", "metadata": {"bookmark": False}},
-                ]
-            }
-        }
-
-    def test_graphql_runs_with_data_endpoint(self, client, example_db_dataset):
-        with mock.patch(
-            "kedro_viz.data_access.DataAccessManager.db_session",
-            new_callable=PropertyMock,
-        ) as mock_session:
-            mock_session.return_value = example_db_dataset
-            response = client.post(
-                "/graphql",
-                json={
-                    "query": "{runsWithData(runIds: [1534326]) {id metadata {bookmark}}}"
-                },
-            )
-        assert response.json() == {
-            "data": {
-                "runsWithData": [
-                    {"id": "1534326", "metadata": {"bookmark": False}},
-                ]
-            }
-        }
 
 
 class TestIndexEndpoint:

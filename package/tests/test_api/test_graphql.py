@@ -90,3 +90,43 @@ def test_graphql_get_runs(example_db_dataset):
         run_2 = Run(id="41312339", metadata=metadata_2, trackingData=tracking_data_2)
 
         assert get_runs() == [run_1, run_2]
+
+
+class TestGraphQLEndpoints:
+    def test_graphql_run_list_endpoint(self, client, example_db_dataset):
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = example_db_dataset
+            response = client.post(
+                "/graphql", json={"query": "{runsList {id metadata {bookmark}}}"}
+            )
+        assert response.json() == {
+            "data": {
+                "runsList": [
+                    {"id": "1534326", "metadata": {"bookmark": False}},
+                    {"id": "41312339", "metadata": {"bookmark": False}},
+                ]
+            }
+        }
+
+    def test_graphql_runs_with_data_endpoint(self, client, example_db_dataset):
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = example_db_dataset
+            response = client.post(
+                "/graphql",
+                json={
+                    "query": "{runsWithData(runIds: [1534326]) {id metadata {bookmark}}}"
+                },
+            )
+        assert response.json() == {
+            "data": {
+                "runsWithData": [
+                    {"id": "1534326", "metadata": {"bookmark": False}},
+                ]
+            }
+        }
