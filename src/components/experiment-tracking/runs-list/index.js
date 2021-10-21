@@ -11,8 +11,6 @@ import './runs-list.css';
 const RunsList = ({ runData }) => {
   const { run, compare } = useRunIdsFromUrl();
 
-  console.log('runData', runData);
-
   const { runsList } = runData;
 
   return (
