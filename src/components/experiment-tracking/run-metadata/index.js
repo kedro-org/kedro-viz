@@ -24,7 +24,7 @@ const RunMetadata = ({ isSingleRun, runs }) => {
       {runs.map((run, i) => {
         return (
           <div
-            className={classnames('kedro', 'details-metadata__run', {
+            className={classnames('details-metadata__run', {
               'details-metadata__run--single': isSingleRun,
             })}
             key={run.gitSha}

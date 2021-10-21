@@ -3,7 +3,7 @@
   display: flex;
   flex-shrink: 0;
   min-width: 100%;
-  padding: 5em 0 0 5em;
+  padding: 5em 0 0.8em 5em;
   width: max-content;
 
   &--single {
@@ -14,6 +14,10 @@
 .details-metadata__run {
   flex-shrink: 0;
   margin-right: 13em;
+
+  &:last-of-type {
+    margin-right: 5em;
+  }
 }
 
 .details-metadata__table {
