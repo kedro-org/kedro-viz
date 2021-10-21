@@ -66,7 +66,6 @@ def populate_data(
 
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)
-    data_access_manager.add_session_store_location(session_store_location)
 
 
 def run_server(

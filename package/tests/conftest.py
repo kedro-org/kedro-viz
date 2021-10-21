@@ -25,6 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import json
 from pathlib import Path
 
 import pytest
@@ -178,8 +179,61 @@ def setup_dbconn(example_session_store_location):
 @pytest.fixture
 def example_db_dataset(setup_dbconn):
     session = setup_dbconn
-    run_1 = RunModel(id="1534326", blob="Hello World 1")
-    run_2 = RunModel(id="41312339", blob="Hello World 2")
+
+    session_data_1 = {
+        "package_name": "testsql",
+        "project_path": "/Users/Projects/testsql",
+        "session_id": "2021-10-21T15.02.12.672Z",
+        "cli": {
+            "args": [],
+            "params": {
+                "from_inputs": [],
+                "to_outputs": [],
+                "from_nodes": [],
+                "to_nodes": [],
+                "node_names": (),
+                "runner": None,
+                "parallel": False,
+                "is_async": False,
+                "env": None,
+                "tag": (),
+                "load_version": {},
+                "pipeline": None,
+                "config": None,
+                "params": {},
+            },
+            "command_name": "run",
+            "command_path": "kedro run",
+        },
+    }
+    run_1 = RunModel(id="1534326", blob=json.dumps(session_data_1))
+    session_data_2 = {
+        "package_name": "my_package",
+        "project_path": "/Users/Projects/my_package",
+        "session_id": "2020-11-17T15.02.12.672Z",
+        "cli": {
+            "args": [],
+            "params": {
+                "from_inputs": [],
+                "to_outputs": [],
+                "from_nodes": [],
+                "to_nodes": [],
+                "node_names": (),
+                "runner": None,
+                "parallel": False,
+                "is_async": False,
+                "env": None,
+                "tag": (),
+                "load_version": {},
+                "pipeline": None,
+                "config": None,
+                "params": {},
+            },
+            "command_name": "run",
+            "command_path": "kedro run",
+        },
+    }
+    run_2 = RunModel(id="41312339", blob=json.dumps(session_data_2))
     session.add(run_1)
     session.add(run_2)
     session.commit()

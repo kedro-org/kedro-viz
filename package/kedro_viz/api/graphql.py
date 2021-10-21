@@ -30,7 +30,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path, PosixPath
+import json
 from typing import List
 
 import strawberry
@@ -52,15 +52,16 @@ def format_run(run_id: str, run_blob: dict) -> Run:
     Returns:
         Run object
     """
+    git_data = run_blob.get("git")
     metadata = RunMetadata(
         id=ID(run_id),
         author="",
         gitBranch="",
-        gitSha=run_blob["git"]["commit_sha"],
+        gitSha=git_data.get("commit_sha") if git_data else None,
         bookmark=False,
         title="",
         notes="",
-        timestamp=run_blob["session_id"],
+        timestamp=run_blob.get("session_id"),
         runCommand=run_blob["cli"]["command_path"],
     )
     tracking_data = RunTrackingData(id=ID(run_id), trackingData="")
@@ -83,8 +84,7 @@ def get_run(run_id: ID) -> Run:
     """
     session = data_access_manager.db_session
     run_data = session.query(RunModel).filter(RunModel.id == run_id).first()
-    evaluated_blob = eval(run_data.blob)
-    return format_run(run_data.id, evaluated_blob)
+    return format_run(run_data.id, json.loads(run_data.blob))
 
 
 def get_runs() -> List[Run]:
@@ -96,8 +96,7 @@ def get_runs() -> List[Run]:
     runs = []
     session = data_access_manager.db_session
     for run_data in session.query(RunModel).all():
-        evaluated_blob = eval(run_data.blob)
-        run = format_run(run_data.id, evaluated_blob)
+        run = format_run(run_data.id, json.loads(run_data.blob))
         runs.append(run)
     return runs
 
@@ -148,9 +147,13 @@ class Query:
     """Query endpoint to get data from the session store"""
 
     @strawberry.field
-    def run(self, run_id: ID) -> Run:
-        """Query to get data for a specific run from the session store"""
-        return get_run(run_id)
+    def runs_with_data(self, run_ids: List[ID]) -> List[Run]:
+        """Query to get data for specific runs from the session store"""
+        runs = []
+        for run_id in run_ids:
+            run = get_run(run_id)
+            runs.append(run)
+        return runs
 
     runsList: List[Run] = strawberry.field(resolver=get_runs)
 

@@ -47,7 +47,6 @@ def get_db(session_class):
         database.close()
 
 
-
 class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
 
