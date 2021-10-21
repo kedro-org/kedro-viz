@@ -15,26 +15,28 @@ import './sidebar.css';
 export const Sidebar = ({ visible }) => {
   const { data } = useQuery(GET_RUNS);
 
-  console.log('data', data);
-
-  return (
-    <>
-      <div
-        className={classnames('pipeline-sidebar', {
-          'pipeline-sidebar--visible': visible,
-        })}
-      >
-        <div className="pipeline-ui">
-          <Route path={['/runsList/:id', '/runsList']}>
-            <RunsList />
-          </Route>
+  if (data) {
+    return (
+      <>
+        <div
+          className={classnames('pipeline-sidebar', {
+            'pipeline-sidebar--visible': visible,
+          })}
+        >
+          <div className="pipeline-ui">
+            <Route path={['/runsList/:id', '/runsList']}>
+              <RunsList runData={data} />
+            </Route>
+          </div>
+          <nav className="pipeline-toolbar">
+            <PrimaryToolbar />
+          </nav>
         </div>
-        <nav className="pipeline-toolbar">
-          <PrimaryToolbar />
-        </nav>
-      </div>
-    </>
-  );
+      </>
+    );
+  }
+
+  return null;
 };
 
 const mapStateToProps = (state) => ({

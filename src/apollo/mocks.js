@@ -1,31 +1,34 @@
 import { Factory } from 'fishery';
 import faker from 'faker';
-import { MockedResponse } from '@apollo/client/testing';
 import { GET_RUNS, GET_RUN_METADATA, GET_RUNS_TRACKING_DATA } from './queries';
 
-export const MetaDataMock = Factory.define(({ runID }) => ({
-  runID,
+export const MetaDataMock = Factory.define(({ sequence }) => ({
+  runId: `abcd0m${sequence}`,
   author: faker.git.shortSha(),
   gitBranch: faker.git.branch(),
   gitSha: faker.git.commitSha(),
-  bookmark: faker.random.words(),
+  bookmark: faker.datatype.boolean(),
   title: faker.random.words(3),
   notes: faker.random.words(10),
-  timestamp: faker.date.past(2),
+  timestamp: faker.date.past(),
   runCommand: faker.random.words(5),
 }));
 
-export const TrackingDataMock = Factory.define(({ runID }) => ({
-  runID,
+export const TrackingDataMock = Factory.define(({ sequence }) => ({
+  runId: `abcd0m${sequence}`,
   trackingData: faker.random.words(10),
 }));
 
-export const RunMock = Factory.define(() => {
-  const runID = faker.datatype.uuid();
+export const TrackingDatasetMock = Factory.define(({ sequence }) => ({
+  runId: `abcd0m${sequence}`,
+  trackingDataName: faker.random.words(),
+}));
+
+export const RunMock = Factory.define(({ sequence }) => {
   return {
-    runID,
-    metadata: MetaDataMock.build(runID),
-    trackingData: MetaDataMock.build(runID),
+    runId: `abcd0m${sequence}`,
+    metaData: MetaDataMock.build(),
+    trackingData: TrackingDataMock.build(),
   };
 });
 
@@ -35,7 +38,7 @@ export const runsQueryMock = {
   },
   result: {
     data: {
-      runs: RunMock.buildList(10),
+      runsList: RunMock.buildList(10),
     },
   },
 };

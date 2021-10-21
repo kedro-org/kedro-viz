@@ -6,10 +6,11 @@ export const GET_RUNS = gql`
     runsList {
       runId
       metaData {
+        runId
         title
         bookmark
         gitSha
-        timeStamp
+        timestamp
       }
     }
   }
