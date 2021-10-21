@@ -32,6 +32,7 @@ export const RunMock = Factory.define(({ sequence }) => {
   };
 });
 
+/** mock for runList data */
 export const runsQueryMock = {
   request: {
     query: GET_RUNS,
@@ -43,24 +44,26 @@ export const runsQueryMock = {
   },
 };
 
+/** mock for metadata data*/
 export const runMetaDataQueryMock = {
   request: {
     query: GET_RUN_METADATA,
   },
   result: {
     data: {
-      metadata: RunMock.buildList(10),
+      metadata: MetaDataMock.build(),
     },
   },
 };
 
+/** mock for tracking data */
 export const runTrackingDataMock = {
   request: {
     query: GET_RUNS_TRACKING_DATA,
   },
   result: {
     data: {
-      metadata: RunMock.buildList(10),
+      trackingData: TrackingDataMock.build(),
     },
   },
 };
