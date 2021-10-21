@@ -26,14 +26,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
-# pylint: disable=missing-class-docstring
-# pylint: disable=missing-function-docstring
 # pylint: disable=no-self-use, too-few-public-methods
 
 from __future__ import annotations
 
 from pathlib import Path, PosixPath
-import typing
 from typing import List
 
 import strawberry
@@ -66,12 +63,12 @@ def format_run(run_id: str, run_blob: dict) -> Run:
         timestamp=run_blob["session_id"],
         runCommand=run_blob["cli"]["command_path"],
     )
-    details = RunDetails(id=ID(run_id), details="")
+    tracking_data = RunTrackingData(id=ID(run_id), trackingData="")
 
     return Run(
         id=ID(run_id),
         metadata=metadata,
-        details=details,
+        trackingData=tracking_data,
     )
 
 
@@ -111,7 +108,7 @@ class Run:
 
     id: ID
     metadata: RunMetadata
-    details: RunDetails
+    trackingData: RunTrackingData
 
 
 @strawberry.type
@@ -130,11 +127,20 @@ class RunMetadata:
 
 
 @strawberry.type
-class RunDetails:
-    """RunDetails object format"""
+class TrackingDataSet:
+    """TrackingDataSet object to structure tracking data for a Run."""
+
+    datasetName: str
+    datasetType: str
+    data: str
+
+
+@strawberry.type
+class RunTrackingData:
+    """RunTrackingData object format"""
 
     id: ID
-    details: str
+    trackingData: List[TrackingDataSet]
 
 
 @strawberry.type
@@ -146,7 +152,7 @@ class Query:
         """Query to get data for a specific run from the session store"""
         return get_run(run_id)
 
-    runs: List[Run] = strawberry.field(resolver=get_runs)
+    runsList: List[Run] = strawberry.field(resolver=get_runs)
 
 
 schema = strawberry.Schema(query=Query)

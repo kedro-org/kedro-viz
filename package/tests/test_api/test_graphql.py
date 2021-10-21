@@ -33,7 +33,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from strawberry import ID
 
-from kedro_viz.api.graphql import Run, RunDetails, RunMetadata, get_run, get_runs
+from kedro_viz.api.graphql import Run, RunTrackingData, RunMetadata, get_run, get_runs
 from kedro_viz.models.run_model import Base, RunModel
 
 
@@ -88,7 +88,7 @@ def test_graphql_run_query(add_data):
     ) as mock_session:
         mock_session.return_value = db_session
 
-        details = RunDetails(id="123", details="")
+        tracking_data = RunTrackingData(id="123", trackingData="")
         metadata = RunMetadata(
             id="123",
             author="",
@@ -100,7 +100,7 @@ def test_graphql_run_query(add_data):
             timestamp="2021-10-13T10.16.31.780Z",
             runCommand="kedro run",
         )
-        run = Run(id="123", metadata=metadata, details=details)
+        run = Run(id="123", metadata=metadata, trackingData=tracking_data)
         assert get_run(ID("123")) == run
 
 
@@ -111,7 +111,7 @@ def test_graphql_runs_query(add_data):
     ) as mock_session:
         mock_session.return_value = db_session
 
-        details_1 = RunDetails(id="123", details="")
+        tracking_data_1 = RunTrackingData(id="123", trackingData="")
         metadata_1 = RunMetadata(
             id="123",
             author="",
@@ -123,9 +123,9 @@ def test_graphql_runs_query(add_data):
             timestamp="2021-10-13T10.16.31.780Z",
             runCommand="kedro run",
         )
-        run_1 = Run(id="123", metadata=metadata_1, details=details_1)
+        run_1 = Run(id="123", metadata=metadata_1, trackingData=tracking_data_1)
 
-        details_2 = RunDetails(id="456", details="")
+        tracking_data_2 = RunTrackingData(id="456", trackingData="")
         metadata_2 = RunMetadata(
             id="456",
             author="",
@@ -137,6 +137,6 @@ def test_graphql_runs_query(add_data):
             timestamp="2020-11-11T10.16.31.780Z",
             runCommand="kedro run",
         )
-        run_2 = Run(id="456", metadata=metadata_2, details=details_2)
+        run_2 = Run(id="456", metadata=metadata_2, trackingData=tracking_data_2)
 
         assert get_runs() == [run_1, run_2]

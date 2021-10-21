@@ -381,10 +381,10 @@ class TestGraphQLEndpoint:
             new_callable=PropertyMock,
         ) as mock_session:
             mock_session.return_value = example_db_dataset
-            response = client.post("/graphql", json={"query": "{allRuns{id blob}}"})
+            response = client.post("/graphql", json={"query": "{runsList{id metadata{bookmark}}}"})
         assert response.json() == {
             "data": {
-                "allRuns": [
+                "runsList": [
                     {"id": "1534326", "blob": "Hello World 1"},
                     {"id": "41312339", "blob": "Hello World 2"},
                 ]
