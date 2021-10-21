@@ -25,7 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from pathlib import Path, PosixPath
+from pathlib import Path
 
 import pytest
 from sqlalchemy import create_engine
@@ -60,7 +60,7 @@ class TestSQLiteStore:
 
     def test_save(self, store_path, dbsession):
         sqlite_store = SQLiteStore(str(store_path), FAKE_SESSION_ID_1)
-        sqlite_store.data = {"project_path": PosixPath(store_path)}
+        sqlite_store.data = {"project_path": Path(store_path)}
         sqlite_store.save()
         db = next(get_db(dbsession))
         assert db.query(RunModel).count() == 1
