@@ -45,7 +45,8 @@ export const runsQueryMock = {
 };
 
 /** mock for metadata data*/
-/** WIP: this would need further work to enable dynamic input of variables*/
+/** WIP: the run variable will be replaced by an input to enable dynamic input of variables*/
+/** This will be enabled with in a seperate ticket*/
 export const runMetaDataQueryMock = {
   request: {
     query: GET_RUN_METADATA,
@@ -61,7 +62,8 @@ export const runMetaDataQueryMock = {
 };
 
 /** mock for tracking data */
-/** WIP: this would need further work to enable dynamic input of variables*/
+/** WIP: the run variable will be replaced by an input to enable dynamic input of variables*/
+/** This will be enabled with in a seperate ticket*/
 export const runTrackingDataMock = {
   request: {
     query: GET_RUNS_TRACKING_DATA,
