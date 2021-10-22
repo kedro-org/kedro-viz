@@ -88,17 +88,17 @@ def test_graphql_run_details_query(
             trackingData=[
                 TrackingDataSet(
                     datasetName="metrics",
-                    datasetType=MetricsDataSet,
+                    datasetType=str(MetricsDataSet),
                     data='{"col1": 1.0, "col2": 2.0, "col3": 3.0}',
                 ),
                 TrackingDataSet(
                     datasetName="more_metrics",
-                    datasetType=MetricsDataSet,
+                    datasetType=str(MetricsDataSet),
                     data='{"col4": 4.0, "col5": 5.0, "col6": 6.0}',
                 ),
                 TrackingDataSet(
                     datasetName="json_tracking",
-                    datasetType=JSONDataSet,
+                    datasetType=str(JSONDataSet),
                     data='{"col7": "column_seven", "col2": true, "col3": 3}',
                 ),
             ],

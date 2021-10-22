@@ -30,7 +30,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, List, Type, Union
+from typing import TYPE_CHECKING, List
 
 import strawberry
 from fastapi import APIRouter
@@ -111,7 +111,7 @@ def get_run_tracking_data(run_id: ID) -> RunTrackingData:
             json_data = json.load(fs_file)
             tracking_dataset = TrackingDataSet(
                 datasetName=name,
-                datasetType=(type(dataset)),
+                datasetType=str(type(dataset)),
                 data=json.dumps(json_data),
             )
             all_datasets.append(tracking_dataset)
@@ -147,7 +147,7 @@ class TrackingDataSet:
     """TrackingDataSet object to structure tracking data for a Run."""
 
     datasetName: str
-    datasetType: Union[Type[MetricsDataSet], Type[JSONDataSet]]
+    datasetType: str
     data: str
 
 
