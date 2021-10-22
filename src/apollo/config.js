@@ -1,9 +1,10 @@
-import { schemaLink } from './schema';
+import fetch from 'cross-fetch';
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 
 const link = createHttpLink({
-  /** Your graphql endpoint */
-  uri: 'http://localhost:4000/',
+  /** our graphql endpoint */
+  uri: 'http://localhost:4142/',
+  fetch,
 });
 
 export const client = new ApolloClient({
