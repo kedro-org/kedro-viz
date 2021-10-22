@@ -18,7 +18,12 @@ const RunsList = ({ runData }) => {
       <Accordion heading="All" headingDetail={runsList.length}>
         <div className="runs-list__wrapper">
           {runsList.map((data, i) => (
-            <RunsListCard data={data} key={i} />
+            <RunsListCard
+              data={data}
+              key={i}
+              selectedRun={run}
+              selectedRunsToCompare={compare}
+            />
           ))}
         </div>
       </Accordion>
