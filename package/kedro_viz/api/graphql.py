@@ -30,7 +30,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Type, Union
 
 import strawberry
 from fastapi import APIRouter
@@ -96,7 +96,7 @@ def get_run_tracking_data(run_id: ID) -> RunTrackingData:
         RunDetails object
 
     """
-    from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
+    from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
 
     all_datasets = []
     catalog = data_access_manager.catalog.get_catalog()
@@ -147,7 +147,7 @@ class TrackingDataSet:
     """TrackingDataSet object to structure tracking data for a Run."""
 
     datasetName: str
-    datasetType: str
+    datasetType: Union[Type[MetricsDataSet], Type[JSONDataSet]]
     data: str
 
 
