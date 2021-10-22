@@ -6,10 +6,12 @@ import { configure, mount, shallow } from 'enzyme';
 configure({ adapter: new Adapter() });
 
 const randomRun = {
-  bookmark: false,
-  id: 'ef32bfd',
-  timestamp: '2021-08-31T01:36:24.560Z',
-  title: 'Sprint 4 EOW',
+  metaData: {
+    bookmark: false,
+    runId: 'ef32bfd',
+    timestamp: new Date('October 15, 2021 03:24:00'),
+    title: 'Sprint 4 EOW',
+  },
 };
 
 // const savedRun = {
