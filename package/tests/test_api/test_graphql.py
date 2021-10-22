@@ -39,14 +39,14 @@ def test_graphql_get_run(example_db_dataset):
     ) as mock_session:
         mock_session.return_value = example_db_dataset
 
-        tracking_data = RunTrackingData(id="1534326", trackingData="")
+        tracking_data = RunTrackingData(id="1534326", trackingData=None)
         metadata = RunMetadata(
             id="1534326",
             author="",
             gitBranch="",
             gitSha=None,
             bookmark=False,
-            title="",
+            title="2021-10-21T15.02.12.672Z",
             notes="",
             timestamp="2021-10-21T15.02.12.672Z",
             runCommand="kedro run",
@@ -61,28 +61,28 @@ def test_graphql_get_runs(example_db_dataset):
     ) as mock_session:
         mock_session.return_value = example_db_dataset
 
-        tracking_data_1 = RunTrackingData(id="1534326", trackingData="")
+        tracking_data_1 = RunTrackingData(id="1534326", trackingData=None)
         metadata_1 = RunMetadata(
             id="1534326",
             author="",
             gitBranch="",
             gitSha=None,
             bookmark=False,
-            title="",
+            title="2021-10-21T15.02.12.672Z",
             notes="",
             timestamp="2021-10-21T15.02.12.672Z",
             runCommand="kedro run",
         )
         run_1 = Run(id="1534326", metadata=metadata_1, trackingData=tracking_data_1)
 
-        tracking_data_2 = RunTrackingData(id="41312339", trackingData="")
+        tracking_data_2 = RunTrackingData(id="41312339", trackingData=None)
         metadata_2 = RunMetadata(
             id="41312339",
             author="",
             gitBranch="",
             gitSha=None,
             bookmark=False,
-            title="",
+            title="2020-11-17T15.02.12.672Z",
             notes="",
             timestamp="2020-11-17T15.02.12.672Z",
             runCommand="kedro run",

@@ -31,7 +31,7 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import List, Optional
 
 import strawberry
 from fastapi import APIRouter
@@ -59,12 +59,12 @@ def format_run(run_id: str, run_blob: dict) -> Run:
         gitBranch="",
         gitSha=git_data.get("commit_sha") if git_data else None,
         bookmark=False,
-        title="",
+        title=run_blob["session_id"],
         notes="",
-        timestamp=run_blob.get("session_id"),
+        timestamp=run_blob["session_id"],
         runCommand=run_blob["cli"]["command_path"],
     )
-    tracking_data = RunTrackingData(id=ID(run_id), trackingData="")
+    tracking_data = RunTrackingData(id=ID(run_id), trackingData=None)
 
     return Run(
         id=ID(run_id),
@@ -106,8 +106,8 @@ class Run:
     """Run object format to return to the frontend"""
 
     id: ID
-    metadata: RunMetadata
-    trackingData: RunTrackingData
+    metadata: Optional[RunMetadata]
+    trackingData: Optional[RunTrackingData]
 
 
 @strawberry.type
@@ -115,23 +115,23 @@ class RunMetadata:
     """RunMetadata object format"""
 
     id: ID
-    author: str
-    gitBranch: str
-    gitSha: str
-    bookmark: bool
     title: str
-    notes: str
     timestamp: str
-    runCommand: str
+    author: Optional[str]
+    gitBranch: Optional[str]
+    gitSha: Optional[str]
+    bookmark: Optional[bool]
+    notes: Optional[str]
+    runCommand: Optional[str]
 
 
 @strawberry.type
 class TrackingDataSet:
     """TrackingDataSet object to structure tracking data for a Run."""
 
-    datasetName: str
-    datasetType: str
-    data: str
+    datasetName: Optional[str]
+    datasetType: Optional[str]
+    data: Optional[str]
 
 
 @strawberry.type
@@ -139,7 +139,7 @@ class RunTrackingData:
     """RunTrackingData object format"""
 
     id: ID
-    trackingData: List[TrackingDataSet]
+    trackingData: Optional[List[TrackingDataSet]]
 
 
 @strawberry.type
