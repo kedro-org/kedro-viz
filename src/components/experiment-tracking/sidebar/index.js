@@ -9,7 +9,7 @@ import './sidebar.css';
 
 /**
  * Main runslist sidebar container. Handles showing/hiding the sidebar nav, and theme classes.
- * @param {data} props.data The RunsList data
+ * @param {array} props.data The RunsList data
  * @param {boolean} props.visible Whether the sidebar is open/closed
  */
 export const Sidebar = ({ data, visible }) => {

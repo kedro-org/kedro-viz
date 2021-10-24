@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import RunMetadata from '../run-metadata';
-import RunMetrics from '../run-metrics';
+import RunDataset from '../run-dataset';
 
 import './details.css';
 
@@ -22,7 +22,7 @@ const Details = ({ runs, sidebarVisible }) => {
         })}
       >
         <RunMetadata isSingleRun={isSingleRun} runs={runs} />
-        <RunMetrics runs={runs} />
+        <RunDataset runs={runs} />
       </div>
     </>
   );

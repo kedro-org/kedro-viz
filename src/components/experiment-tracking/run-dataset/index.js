@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import classnames from 'classnames';
 import Accordion from '../accordion';
 
-import './run-metrics.css';
+import './run-dataset.css';
 
-const RunMetrics = ({ runs }) => {
+/**
+ * Display the dataset of the experiment tracking run.
+ * @param {array} props.runs The experiment tracking run data.
+ */
+const RunDataset = ({ runs }) => {
   const isSingleRun = runs.length === 1 ? true : false;
 
   let initialState = {};
@@ -33,24 +37,24 @@ const RunMetrics = ({ runs }) => {
 
         if (runDetails && Object.keys(runDetails).length !== 0) {
           markup = Object.entries(runDetails).map(
-            ([objectName, valuesArray], rowIndex) => {
+            ([objectName, valuesArray], datasetIndex) => {
               return (
                 <Accordion
                   className="details-dataset__accordion"
                   heading={objectName}
                   headingClassName="details-dataset__accordion-header"
-                  hideContent={collapseAccordion[rowIndex]}
                   hideHeading={runIndex >= 1 ? true : false}
-                  key={objectName + rowIndex}
+                  isCollapsed={collapseAccordion[datasetIndex]}
+                  key={objectName + datasetIndex}
                   layout="left"
-                  onCallback={() => onAccordionClick(rowIndex)}
+                  onCallback={() => onAccordionClick(datasetIndex)}
                   size="large"
                 >
                   {valuesArray.map((data, dataIndex) => {
                     return buildDatasetDataMarkup(
                       data,
                       dataIndex,
-                      rowIndex,
+                      datasetIndex,
                       runIndex,
                       isSingleRun
                     );
@@ -71,15 +75,23 @@ const RunMetrics = ({ runs }) => {
   );
 };
 
+/**
+ * Build the necessary markup used to display the run dataset.
+ * @param {object} data A single dataset object from a run.
+ * @param {number} dataIndex The array index of the dataset data.
+ * @param {number} datasetIndex The array index of the datasets.
+ * @param {number} runIndex The array index of the experiment runs.
+ * @param {boolean} isSingleRun Whether or not this is a single run or multiple.
+ */
 function buildDatasetDataMarkup(
   data,
   dataIndex,
-  rowIndex,
+  datasetIndex,
   runIndex,
   isSingleRun
 ) {
   for (const [key, value] of Object.entries(data)) {
-    const isFirstRow = dataIndex === 0 && rowIndex === 0;
+    const isFirstRow = dataIndex === 0 && datasetIndex === 0;
     const valueLabelMarkup = (
       <span
         className={classnames('details-dataset__value-header', {
@@ -138,4 +150,4 @@ function buildDatasetDataMarkup(
   }
 }
 
-export default RunMetrics;
+export default RunDataset;
