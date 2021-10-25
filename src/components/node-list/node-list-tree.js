@@ -39,6 +39,20 @@ const StyledTreeView = withStyles({
 })(TreeView);
 
 /**
+ * Return whether the given modular pipeline ID is on focus mode path, i.e.
+ * it's not the currently focused pipeline nor one of its children.
+ * @param {String} focusModeID The currently focused modular pipeline ID.
+ * @param {String} modularPipelineID The modular pipeline ID to check.
+ * @return {Boolean} Whether the given modular pipeline ID is on focus mode path.
+ */
+const isOnFocusedModePath = (focusModeID, modularPipelineID) => {
+  return (
+    modularPipelineID === focusModeID ||
+    modularPipelineID.startsWith(`${focusModeID}.`)
+  );
+};
+
+/**
  * Return the data of a modular pipeline to display as a row in the node list.
  * @param {Object} params
  * @param {String} params.id The modular pipeline ID
@@ -112,10 +126,8 @@ const TreeListProvider = ({
       node.disabledType ||
       (focusMode &&
         !node.modularPipelines
-          .map(
-            (modularPipelineID) =>
-              modularPipelineID === focusMode.id ||
-              modularPipelineID.startsWith(`${focusMode.id}.`)
+          .map((modularPipelineID) =>
+            isOnFocusedModePath(focusMode.id, modularPipelineID)
           )
           .some(Boolean));
     const selected = nodeSelected[node.id];
@@ -161,7 +173,7 @@ const TreeListProvider = ({
       <NodeListTreeItem
         data={getModularPipelineRowData({
           ...node,
-          disabled: focusMode && focusMode.id !== node.id,
+          disabled: focusMode && !isOnFocusedModePath(focusMode.id, node.id),
           focused: focusMode?.id === node.id,
         })}
         onItemMouseEnter={onItemMouseEnter}
