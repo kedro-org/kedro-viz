@@ -30,7 +30,7 @@ The service layer consist of pure functions operating on domain models.
 """
 from typing import Dict
 
-from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
+from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID, DEFAULT_REGISTERED_PIPELINE_ID
 from kedro_viz.models.graph import (
     GraphNode,
     GraphNodeType,
@@ -40,17 +40,20 @@ from kedro_viz.models.graph import (
 
 
 def expand_tree(
-    modular_pipelines_tree: Dict[str, ModularPipelineNode]
+    modular_pipelines_tree: Dict[str, ModularPipelineNode],
+    registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID,
 ) -> Dict[str, ModularPipelineNode]:
     """Expand a given modular pipelines tree by adding parents for each node in the tree
-    based on the node's ID. The function will return a new copy of the tree,
+    based on the node's ID. Filter out any nodes that don't belong to the given
+    registered pipeline ID. The function will return a new copy of the tree,
     instead of mutating the tree in-place.
 
     While adding a parent of a modular pipeline into the tree, it also updates
     the parent's inputs & outputs with the modular pipeline's inputs & outputs.
 
     Args:
-        modular_pipelines_tree: The modular pipeline stree to expand.
+        modular_pipelines_tree: The modular pipelines tree to expand.
+        registered_pipeline_id: The registered pipeline ID to filter modular pipelines.
     Returns:
         The expanded modular pipelines tree.
     Example:
@@ -65,7 +68,10 @@ def expand_tree(
         )
     }
     for modular_pipeline_id, modular_pipeline_node in modular_pipelines_tree.items():
-        if modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID:
+        if (
+            modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID
+            or not modular_pipeline_node.belongs_to_pipeline(registered_pipeline_id)
+        ):
             continue
 
         if modular_pipeline_id not in expanded_tree:

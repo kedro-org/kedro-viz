@@ -639,9 +639,8 @@ class TestSinglePipelineEndpoint:
             {"source": "f1f1425b", "target": "uk.data_science"},
             {"source": "f1f1425b", "target": "7b140b3f"},
             {"source": "uk.data_science", "target": "d5a8b994"},
-            {"source": "c506f374", "target": "uk"},
             {"source": "uk", "target": "d5a8b994"},
-            {"source": "13399a82", "target": "uk"},
+            {"source": "0ecea0de", "target": "uk"},
             {"source": "0ecea0de", "target": "uk.data_science"},
             {"source": "f1f1425b", "target": "uk"},
             {"source": "0ecea0de", "target": "7b140b3f"},
@@ -698,7 +697,7 @@ class TestSinglePipelineEndpoint:
                 "name": "Uk",
                 "full_name": "uk",
                 "tags": [],
-                "pipelines": ["data_science", "data_processing", "__default__"],
+                "pipelines": ["data_science", "__default__"],
                 "type": "modularPipeline",
                 "modular_pipelines": None,
                 "layer": None,
@@ -733,22 +732,11 @@ class TestSinglePipelineEndpoint:
             "uk": {
                 "children": [
                     {"id": "uk.data_science", "type": "modularPipeline"},
-                    {"id": "uk.data_processing", "type": "modularPipeline"},
                 ],
                 "id": "uk",
-                "inputs": ["c506f374", "f1f1425b", "13399a82"],
+                "inputs": ["0ecea0de", "f1f1425b"],
                 "name": "Uk",
                 "outputs": ["d5a8b994"],
-            },
-            "uk.data_processing": {
-                "children": [
-                    {"id": "13399a82", "type": "data"},
-                    {"id": "56118ad8", "type": "task"},
-                ],
-                "id": "uk.data_processing",
-                "inputs": ["c506f374", "13399a82"],
-                "name": "Data Processing",
-                "outputs": ["0ecea0de"],
             },
             "uk.data_science": {
                 "children": [
