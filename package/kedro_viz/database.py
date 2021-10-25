@@ -35,7 +35,7 @@ from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import sessionmaker as Session
 
 
-def create_db_engine(session_store_location) -> Tuple[Engine, Session] :
+def create_db_engine(session_store_location) -> Tuple[Engine, Session]:
     """SQLAlchemy connection to a SQLite DB"""
     database_url = f"sqlite:///{session_store_location}"
     engine = create_engine(database_url, connect_args={"check_same_thread": False})

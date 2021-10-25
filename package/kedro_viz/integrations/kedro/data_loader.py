@@ -92,7 +92,7 @@ def load_data(
             session_store_location = None
             if isinstance(session_store, SQLiteStore):
                 session_store_location = session_store.location
-        
+
         return context.catalog, cast(Dict, pipelines), session_store_location
 
     if KEDRO_VERSION.match(">=0.17.1"):
@@ -107,7 +107,7 @@ def load_data(
             session_store_location = None
             if isinstance(session_store, SQLiteStore):
                 session_store_location = session_store.location
-        
+
         return context.catalog, context.pipelines, session_store_location
 
     if KEDRO_VERSION.match("==0.17.0"):
@@ -127,7 +127,7 @@ def load_data(
             session_store_location = None
             if isinstance(session_store, SQLiteStore):
                 session_store_location = session_store.location
-        
+
         return context.catalog, context.pipelines, session_store_location
 
     # pre-0.17 load_context version

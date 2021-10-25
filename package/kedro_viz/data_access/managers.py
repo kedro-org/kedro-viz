@@ -78,7 +78,6 @@ class DataAccessManager:
             lambda: defaultdict(set)
         )
 
-
     @property
     def db_session(self):  # pragma: no cover
         """Sqlite db connection session"""

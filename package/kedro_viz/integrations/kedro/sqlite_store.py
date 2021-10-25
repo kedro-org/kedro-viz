@@ -31,14 +31,15 @@ import json
 
 # pylint: disable=too-many-ancestors
 from pathlib import Path
+from typing import Generator
 
 from kedro.framework.session.store import BaseSessionStore
-from sqlalchemy.orm import sessionmaker as Session
+
 from kedro_viz.database import create_db_engine
 from kedro_viz.models.run_model import Base, RunModel
 
 
-def get_db(session_class) -> Session:
+def get_db(session_class) -> Generator:
     """Makes connection to the database"""
     try:
         database = session_class()

@@ -27,7 +27,7 @@
 # limitations under the License.
 import operator
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 from unittest import mock
 from unittest.mock import PropertyMock
 
@@ -48,7 +48,7 @@ def example_api(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
-    example_session_store_location: str,
+    example_session_store_location: Optional[Path],
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
@@ -82,7 +82,7 @@ def example_transcoded_api(
     data_access_manager: DataAccessManager,
     example_transcoded_pipelines: Dict[str, Pipeline],
     example_transcoded_catalog: DataCatalog,
-    example_session_store_location: str,
+    example_session_store_location: Optional[Path],
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
