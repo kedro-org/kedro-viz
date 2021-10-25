@@ -70,12 +70,14 @@ class DataAccessManager:
         self.registered_pipelines = RegisteredPipelinesRepository()
         self.tags = TagsRepository()
         self.modular_pipelines = ModularPipelinesRepository()
+        self._db_session = None
         # Make sure each registered pipeline has a distinct collection of edges.
         self.edges: Dict[str, GraphEdgesRepository] = defaultdict(GraphEdgesRepository)
         # Make sure the node dependencies are built separately for each registered pipeline.
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
+
 
     @property
     def db_session(self):  # pragma: no cover

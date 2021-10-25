@@ -33,12 +33,12 @@ import json
 from pathlib import Path
 
 from kedro.framework.session.store import BaseSessionStore
-
+from sqlalchemy.orm import sessionmaker as Session
 from kedro_viz.database import create_db_engine
 from kedro_viz.models.run_model import Base, RunModel
 
 
-def get_db(session_class):
+def get_db(session_class) -> Session:
     """Makes connection to the database"""
     try:
         database = session_class()
@@ -55,7 +55,7 @@ class SQLiteStore(BaseSessionStore):
         """Returns location of the sqlite_store database"""
         return Path(self._path).expanduser().resolve() / "session_store.db"
 
-    def to_json(self):
+    def to_json(self) -> str:
         """Returns session_store information in json format after converting PosixPath to string"""
         session_dict = self.__dict__
         if "project_path" in session_dict["data"].keys():
