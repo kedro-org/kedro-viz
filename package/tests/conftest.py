@@ -166,7 +166,7 @@ def example_session_store_location(tmp_path):
 
 
 @pytest.fixture
-def setup_dbconn(example_session_store_location):
+def example_db_session(example_session_store_location):
     engine = create_engine(f"sqlite:///{example_session_store_location}")
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -176,11 +176,10 @@ def setup_dbconn(example_session_store_location):
 
 
 @pytest.fixture
-def example_db_dataset(setup_dbconn):
-    session = setup_dbconn
+def example_db_dataset(example_db_session):
     run_1 = RunModel(id="1534326", blob="Hello World 1")
     run_2 = RunModel(id="41312339", blob="Hello World 2")
-    session.add(run_1)
-    session.add(run_2)
-    session.commit()
-    yield session
+    example_db_session.add(run_1)
+    example_db_session.add(run_2)
+    example_db_session.commit()
+    yield example_db_session

@@ -71,6 +71,8 @@ class SQLiteStore(BaseSessionStore):
         for key, value in self.data.items():
             if _is_json_serializable(value):
                 session_dict[key] = value
+            else:
+                session_dict[key] = str(value)
         return json.dumps(session_dict)
 
     def save(self):
