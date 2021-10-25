@@ -358,7 +358,7 @@ class DataAccessManager:
             self.get_node_dependencies_for_registered_pipeline(registered_pipeline_id),
         )
 
-    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-locals,too-many-branches
     def create_modular_pipelines_tree_for_registered_pipeline(
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict[str, ModularPipelineNode]:
@@ -396,6 +396,7 @@ class DataAccessManager:
                 registered_pipeline_id, modular_pipeline_node.id
             )
 
+            # only keep the modular pipeline's inputs belonging to the current registered pipeline
             inputs_in_registered_pipeline = set()
             for input_id in modular_pipeline_node.inputs:
                 input_node = self.nodes.get_node_by_id(input_id)
@@ -409,6 +410,7 @@ class DataAccessManager:
                 modular_pipeline_node.external_inputs & inputs_in_registered_pipeline
             )
 
+            # only keep the modular pipeline's outputs belonging to the current registered pipeline
             outputs_in_registered_pipeline = set()
             for output_id in modular_pipeline_node.outputs:
                 output_node = self.nodes.get_node_by_id(output_id)
