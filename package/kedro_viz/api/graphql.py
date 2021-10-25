@@ -26,8 +26,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
-# pylint: disable=missing-class-docstring
-# pylint: disable=missing-function-docstring
 # pylint: disable=no-self-use, too-few-public-methods
 
 from __future__ import annotations
@@ -86,11 +84,19 @@ def get_runs() -> List[Run]:
 
 @strawberry.type
 class RunModelGraphQLType:
+    """RunModel format to return to the frontend"""
+
     id: str
     blob: str
 
 
 def get_all_runs() -> typing.List[RunModelGraphQLType]:
+    """Gets all runs from the session store
+
+    Returns:
+        list of Run objects
+
+    """
     return [
         RunModelGraphQLType(id=kedro_session.id, blob=kedro_session.blob)
         for kedro_session in data_access_manager.db_session.query(RunModel).all()

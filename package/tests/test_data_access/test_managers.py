@@ -26,7 +26,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Dict
-from unittest.mock import PropertyMock, patch
 
 import networkx as nx
 import pytest
@@ -34,7 +33,6 @@ from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
-from sqlalchemy.orm import Session as DatabaseSession
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
@@ -58,17 +56,6 @@ class TestAddCatalog:
         catalog = DataCatalog(data_sets={"dataset": dataset})
         data_access_manager.add_catalog(catalog)
         assert data_access_manager.catalog.get_catalog() is catalog
-
-
-class TestDBSession:
-    def test_db_session(self, data_access_manager: DataAccessManager):
-        with patch(
-            "kedro_viz.data_access.managers.DataAccessManager.db_session",
-            new_callable=PropertyMock,
-        ) as mock_db_session:
-            mock_db_session.return_value = DatabaseSession()
-            assert isinstance(data_access_manager.db_session, DatabaseSession)
-            mock_db_session.assert_called_once_with()
 
 
 class TestAddNode:
