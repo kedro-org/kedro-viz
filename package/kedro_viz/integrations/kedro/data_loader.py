@@ -82,48 +82,49 @@ def load_data(
         from kedro.framework.project import pipelines
         from kedro.framework.session import KedroSession
 
-        session = KedroSession.create(
+        with KedroSession.create(
             project_path=project_path, env=env, save_on_close=False
-        )
-        context = session.load_context()
-        session_store = session._store
-        if isinstance(session_store, SQLiteStore):
-            session_store_location = session_store.location
-            return context.catalog, cast(Dict, pipelines), session_store_location
-        return context.catalog, cast(Dict, pipelines), None
+        ) as session:
+
+            context = session.load_context()
+            session_store = session._store
+            if isinstance(session_store, SQLiteStore):
+                session_store_location = session_store.location
+                return context.catalog, cast(Dict, pipelines), session_store_location
+            return context.catalog, cast(Dict, pipelines), None
 
     if KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
 
-        session = KedroSession.create(
+        with KedroSession.create(
             project_path=project_path, env=env, save_on_close=False
-        )
+        ) as session:
 
-        context = session.load_context()
-        session_store = session._store
-        if isinstance(session_store, SQLiteStore):
-            session_store_location = session_store.location
-            return context.catalog, context.pipelines, session_store_location
-        return context.catalog, context.pipelines, None
+            context = session.load_context()
+            session_store = session._store
+            if isinstance(session_store, SQLiteStore):
+                session_store_location = session_store.location
+                return context.catalog, context.pipelines, session_store_location
+            return context.catalog, context.pipelines, None
 
     if KEDRO_VERSION.match("==0.17.0"):
         from kedro.framework.session import KedroSession
         from kedro.framework.startup import _get_project_metadata
 
         metadata = _get_project_metadata(project_path)
-        session = KedroSession.create(
+        with KedroSession.create(
             package_name=metadata.package_name,
             project_path=project_path,
             env=env,
             save_on_close=False,
-        )
+        ) as session:
 
-        context = session.load_context()
-        session_store = session._store
-        if isinstance(session_store, SQLiteStore):
-            session_store_location = session_store.location
-            return context.catalog, context.pipelines, session_store_location
-        return context.catalog, context.pipelines, None
+            context = session.load_context()
+            session_store = session._store
+            if isinstance(session_store, SQLiteStore):
+                session_store_location = session_store.location
+                return context.catalog, context.pipelines, session_store_location
+            return context.catalog, context.pipelines, None
 
     # pre-0.17 load_context version
     from kedro.framework.context import load_context
