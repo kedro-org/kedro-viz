@@ -27,14 +27,19 @@
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
 # pylint: disable=no-self-use, too-few-public-methods
+
 from __future__ import annotations
 
+import typing
 from typing import List
 
 import strawberry
 from fastapi import APIRouter
 from strawberry import ID
 from strawberry.asgi import GraphQL
+
+from kedro_viz.data_access import data_access_manager
+from kedro_viz.models.run_model import RunModel
 
 
 def get_run(run_id: ID) -> Run:  # pylint: disable=unused-argument
@@ -75,6 +80,27 @@ def get_runs() -> List[Run]:
         list of Run objects
     """
     return [get_run(ID("123"))]
+
+
+@strawberry.type
+class RunModelGraphQLType:
+    """RunModel format to return to the frontend"""
+
+    id: str
+    blob: str
+
+
+def get_all_runs() -> typing.List[RunModelGraphQLType]:
+    """Gets all runs from the session store
+
+    Returns:
+        list of Run objects
+
+    """
+    return [
+        RunModelGraphQLType(id=kedro_session.id, blob=kedro_session.blob)
+        for kedro_session in data_access_manager.db_session.query(RunModel).all()
+    ]
 
 
 @strawberry.type
@@ -120,6 +146,7 @@ class Query:
         return get_run(run_id)
 
     runs: List[Run] = strawberry.field(resolver=get_runs)
+    all_runs: typing.List[RunModelGraphQLType] = strawberry.field(resolver=get_all_runs)
 
 
 schema = strawberry.Schema(query=Query)

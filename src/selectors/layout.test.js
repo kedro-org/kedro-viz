@@ -98,7 +98,10 @@ describe('Selectors', () => {
     });
 
     it('returns null if fontLoaded is false', () => {
-      const newMockState = reducer(mockState.spaceflights, updateFontLoaded(false));
+      const newMockState = reducer(
+        mockState.spaceflights,
+        updateFontLoaded(false)
+      );
       expect(getGraphInput(newMockState)).toEqual(null);
     });
   });

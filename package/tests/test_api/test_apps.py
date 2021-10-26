@@ -27,8 +27,9 @@
 # limitations under the License.
 import operator
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 from unittest import mock
+from unittest.mock import PropertyMock
 
 import pytest
 from fastapi.testclient import TestClient
@@ -47,9 +48,29 @@ def example_api(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
+    example_session_store_location: Optional[Path],
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(data_access_manager, example_catalog, example_pipelines)
+    populate_data(
+        data_access_manager,
+        example_catalog,
+        example_pipelines,
+        example_session_store_location,
+    )
+    with mock.patch(
+        "kedro_viz.api.responses.data_access_manager", new=data_access_manager
+    ), mock.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager):
+        yield api
+
+
+@pytest.fixture
+def example_api_no_session_store(
+    data_access_manager: DataAccessManager,
+    example_pipelines: Dict[str, Pipeline],
+    example_catalog: DataCatalog,
+):
+    api = apps.create_api_app_from_project(mock.MagicMock())
+    populate_data(data_access_manager, example_catalog, example_pipelines, None)
     with mock.patch(
         "kedro_viz.api.responses.data_access_manager", new=data_access_manager
     ), mock.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager):
@@ -61,10 +82,14 @@ def example_transcoded_api(
     data_access_manager: DataAccessManager,
     example_transcoded_pipelines: Dict[str, Pipeline],
     example_transcoded_catalog: DataCatalog,
+    example_session_store_location: Optional[Path],
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
-        data_access_manager, example_transcoded_catalog, example_transcoded_pipelines
+        data_access_manager,
+        example_transcoded_catalog,
+        example_transcoded_pipelines,
+        example_session_store_location,
     )
     with mock.patch(
         "kedro_viz.api.responses.data_access_manager", new=data_access_manager
@@ -427,6 +452,24 @@ def assert_example_transcoded_data(response_data):
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
 
 
+class TestGraphQLEndpoint:
+    def test_graphql_endpoint(self, client, example_db_dataset):
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = example_db_dataset
+            response = client.post("/graphql", json={"query": "{allRuns{id blob}}"})
+        assert response.json() == {
+            "data": {
+                "allRuns": [
+                    {"id": "1534326", "blob": "Hello World 1"},
+                    {"id": "41312339", "blob": "Hello World 2"},
+                ]
+            }
+        }
+
+
 class TestIndexEndpoint:
     def test_index(self, client):
         response = client.get("/")
@@ -489,6 +532,12 @@ class TestMainEndpoint:
     """Test a viz API created from a Kedro project."""
 
     def test_endpoint_main(self, client):
+        response = client.get("/api/main")
+        assert response.status_code == 200
+        assert_example_data(response.json())
+
+    def test_endpoint_main_no_session_store(self, example_api_no_session_store):
+        client = TestClient(example_api_no_session_store)
         response = client.get("/api/main")
         assert response.status_code == 200
         assert_example_data(response.json())

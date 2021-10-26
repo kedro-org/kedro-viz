@@ -28,7 +28,7 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
 import webbrowser
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 import uvicorn
 from kedro.io import DataCatalog
@@ -37,7 +37,9 @@ from watchgod import run_process
 
 from kedro_viz.api import apps, responses
 from kedro_viz.data_access import DataAccessManager, data_access_manager
+from kedro_viz.database import create_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+from kedro_viz.models.run_model import Base
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 4141
@@ -53,10 +55,16 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
+    session_store_location: Optional[Path],
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
     """
+    if session_store_location:
+        database_engine, session_class = create_db_engine(session_store_location)
+        Base.metadata.create_all(bind=database_engine)
+        data_access_manager.db_session = session_class()
+
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)
 
@@ -91,17 +99,18 @@ def run_server(
     """
     if load_file is None:
         path = Path(project_path) if project_path else Path.cwd()
-        catalog, pipelines = kedro_data_loader.load_data(path, env)
+        catalog, pipelines, session_store_location = kedro_data_loader.load_data(
+            path, env
+        )
         pipelines = (
             pipelines
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
-        populate_data(data_access_manager, catalog, pipelines)
+        populate_data(data_access_manager, catalog, pipelines, session_store_location)
         if save_file:
             res = responses.get_default_response()
             Path(save_file).write_text(res.json(indent=4, sort_keys=True))
-
         app = apps.create_api_app_from_project(path, autoreload)
     else:
         app = apps.create_api_app_from_file(load_file)
