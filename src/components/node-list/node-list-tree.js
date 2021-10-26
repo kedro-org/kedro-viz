@@ -60,7 +60,7 @@ const isOnFocusedModePath = (focusModeID, modularPipelineID) => {
  * @param {Object} params.data The modular pipeline data to display
  * @param {Boolean} params.disabled Whether the modular pipeline is disabled, e.g. when it's not the focused one
  * @param {Boolean} params.focused Whether the modular pipeline is the focused one in focus mode
- * @returns
+ * @return {Object} The modular pipeline's data needed to render as a row in the node list tree.
  */
 const getModularPipelineRowData = ({
   id,
@@ -88,6 +88,7 @@ const getModularPipelineRowData = ({
 /**
  * Return the data of a node to display as a row in the node list
  * @param {Object} node The node to display
+ * @param {Boolean} selected Whether the node is currently disabled
  * @param {Boolean} selected Whether the node is currently selected
  */
 const getNodeRowData = (node, disabled, selected) => {
