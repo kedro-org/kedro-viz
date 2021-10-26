@@ -27,7 +27,7 @@
 # limitations under the License.
 import json
 from pathlib import Path
-
+import time
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -37,7 +37,7 @@ from kedro_viz.models.run_model import Base, RunModel
 
 
 def session_id():
-    i = 1
+    i = 0
     while True:
         yield f"session_{i}"
         i += 1
@@ -75,12 +75,13 @@ class TestSQLiteStore:
         }
 
     def test_save_multiple_runs(self, store_path, db_session_class):
-        sqlite_store = SQLiteStore(store_path, next(session_id()))
+        session = session_id()
+        sqlite_store = SQLiteStore(store_path, next(session))
         sqlite_store.save()
         db = next(get_db(db_session_class))
         assert db.query(RunModel).count() == 1
         # save another session
-        sqlite_store2 = SQLiteStore(store_path, next(session_id()))
+        sqlite_store2 = SQLiteStore(store_path, next(session))
         sqlite_store2.save()
         db = next(get_db(db_session_class))
         assert db.query(RunModel).count() == 2
