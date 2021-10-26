@@ -13,6 +13,9 @@ Please follow the established format:
 ## Major features and improvements
 
 - Allow expand and collapse modular pipelines on the graph. (#600)
+
+## Bug fixes and other changes
+
 - Disable layers visualisation instead of throwing an error when there is a cycle in layers. (#383)
 - Disable layers when their dependency cannot be established in a disjoint graph. (#584)
 - Change syntax for session creation to fix improperly thrown No Active Session error. (#603)
