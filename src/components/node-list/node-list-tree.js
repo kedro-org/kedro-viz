@@ -13,6 +13,7 @@ import { isModularPipelineType } from '../../selectors/node-types';
 import NodeListTreeItem from './node-list-tree-item';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
+import FocusModeIcon from '../icons/focus-mode';
 
 // Display order of node groups
 const GROUPED_NODES_DISPLAY_ORDER = {
@@ -68,13 +69,13 @@ const getModularPipelineRowData = ({
   data,
   disabled,
   focused,
+  focusModeIcon,
 }) => ({
   id: id,
   name: highlightedLabel || data.name,
   type: 'modularPipeline',
   icon: 'modularPipeline',
-  visibleIcon: VisibleIcon,
-  invisibleIcon: InvisibleIcon,
+  focusModeIcon: focusModeIcon,
   active: false,
   selected: false,
   faded: false,
@@ -170,12 +171,21 @@ const TreeListProvider = ({
       return children;
     }
 
+    const isFocusedModularPipeline = focusMode?.id === node.id;
+    let focusModeIcon;
+    if (!focusMode) {
+      focusModeIcon = FocusModeIcon;
+    } else {
+      focusModeIcon = isFocusedModularPipeline ? FocusModeIcon : null;
+    }
+
     return (
       <NodeListTreeItem
         data={getModularPipelineRowData({
           ...node,
+          focusModeIcon,
           disabled: focusMode && !isOnFocusedModePath(focusMode.id, node.id),
-          focused: focusMode?.id === node.id,
+          focused: isFocusedModularPipeline,
         })}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}

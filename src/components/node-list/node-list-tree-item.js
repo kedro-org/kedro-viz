@@ -39,6 +39,7 @@ const NodeListTreeItem = ({
         allUnchecked={true}
         visibleIcon={data.visibleIcon}
         invisibleIcon={data.invisibleIcon}
+        focusModeIcon={data.focusModeIcon}
         onClick={() => onItemClick(data)}
         onMouseEnter={() => onItemMouseEnter(data)}
         onMouseLeave={() => onItemMouseLeave(data)}
