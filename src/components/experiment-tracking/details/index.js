@@ -11,7 +11,7 @@ import './details.css';
  * nav for experiment tracking, the display of experiment details,
  * as well as the comparison view.
  */
-const Details = ({ runs, sidebarVisible }) => {
+const Details = ({ runs, sidebarVisible, trackingData }) => {
   const isSingleRun = runs.length === 1 ? true : false;
 
   return (
@@ -22,7 +22,7 @@ const Details = ({ runs, sidebarVisible }) => {
         })}
       >
         <RunMetadata isSingleRun={isSingleRun} runs={runs} />
-        <RunDataset runs={runs} />
+        <RunDataset isSingleRun={isSingleRun} trackingData={trackingData} />
       </div>
     </>
   );

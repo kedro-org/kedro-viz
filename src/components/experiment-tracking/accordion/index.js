@@ -10,7 +10,6 @@ import './accordion.css';
  * @param {string} heading Text to display on the top-level.
  * @param {string|null} headingClassName A class name for the accordion header.
  * @param {string|null} headingDetail Text to display on the top-level.
- * @param {string} hideHeading Text to display on the top-level
  * @param {boolean} isCollapsed Control to collapse or expand the content.
  * @param {string|null} layout A secondary text string for additional context
  * @param {function} onCallback Fire a function on click from a parent.
@@ -22,7 +21,6 @@ const Accordion = ({
   heading = '',
   headingClassName = null,
   headingDetail = null,
-  hideHeading = false,
   isCollapsed = false,
   layout = 'right',
   onCallback,
@@ -48,7 +46,6 @@ const Accordion = ({
     >
       <div
         className={classnames('accordion__heading', {
-          'accordion__heading--hide': hideHeading,
           [`${headingClassName}`]: headingClassName,
         })}
       >

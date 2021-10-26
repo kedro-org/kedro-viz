@@ -9,7 +9,7 @@ import './runs-list-card.css';
  * @param {object} data High-level data from the run (id, timestamp, etc.)
  */
 const RunsListCard = ({ data }) => {
-  const { id, timestamp, title = null } = data;
+  const { id, timestamp, title = null } = data.metadata;
   const [active, setActive] = useState(false);
 
   return (

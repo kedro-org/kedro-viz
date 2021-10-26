@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { runs } from './mock-data';
+import { runs, trackingData } from './mock-data';
 import Sidebar from '../experiment-tracking/sidebar';
 import Details from '../experiment-tracking/details';
 
@@ -14,7 +14,7 @@ const ExperimentWrapper = () => (
     <Sidebar data={runs} />
     <Switch>
       <Route path={['/runsList/:id', '/runsList']}>
-        <Details runs={runs} />
+        <Details runs={runs} trackingData={trackingData} />
       </Route>
     </Switch>
   </>
