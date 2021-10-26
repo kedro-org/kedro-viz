@@ -27,7 +27,7 @@
 # limitations under the License.
 import json
 from pathlib import Path
-import time
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
