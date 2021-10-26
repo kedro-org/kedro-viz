@@ -6,7 +6,6 @@ import {
   getNodeDisabled,
   getNodeDisabledTag,
   getVisibleNodeIDs,
-  getNodeDisabledModularPipeline,
 } from './disabled';
 import getShortType from '../utils/short-type';
 import { getNodeRank } from './ranks';
@@ -30,8 +29,6 @@ const getClickedNode = (state) => state.node.clicked;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
-const getFocusedModularPipeline = (state) =>
-  state.visible.modularPipelineFocusMode;
 
 /**
  * Gets a map of nodeIds to graph nodes
@@ -53,30 +50,46 @@ export const getNodeActive = createSelector(
     getPipelineNodeIDs,
     getHoveredNode,
     getNodeTags,
-    getNodeModularPipelines,
     getTagActive,
+    getNodeModularPipelines,
     getModularPipelineActive,
+    (state) => state.modularPipeline.tree,
   ],
   (
     nodeIDs,
     hoveredNode,
     nodeTags,
-    nodeModularPipelines,
     tagActive,
-    modularPipelineActive
-  ) =>
-    arrayToObject(nodeIDs, (nodeID) => {
+    nodeModularPipelines,
+    modularPipelineActive,
+    modularPipelinesTree
+  ) => {
+    const activeModularPipelines = Object.keys(modularPipelineActive).filter(
+      (modularPipelineID) => modularPipelineActive[modularPipelineID]
+    );
+    const nodesActiveViaModularPipeline = activeModularPipelines.flatMap((id) =>
+      modularPipelinesTree[id].children.map((child) => child.id)
+    );
+
+    return arrayToObject(nodeIDs, (nodeID) => {
       if (nodeID === hoveredNode) {
         return true;
       }
       const activeViaTag = nodeTags[nodeID].some((tag) => tagActive[tag]);
+      const activeModularPipeline = activeModularPipelines.includes(nodeID);
       const activeViaModularPipeline =
-        nodeModularPipelines[nodeID] &&
-        nodeModularPipelines[nodeID].some(
-          (modularPipeline) => modularPipelineActive[modularPipeline]
-        );
-      return Boolean(activeViaTag) || Boolean(activeViaModularPipeline);
-    })
+        nodesActiveViaModularPipeline.includes(nodeID) ||
+        (nodeModularPipelines[nodeID] &&
+          nodeModularPipelines[nodeID].some(
+            (modularPipeline) => modularPipelineActive[modularPipeline]
+          ));
+      return (
+        Boolean(activeViaTag) ||
+        Boolean(activeViaModularPipeline) ||
+        Boolean(activeModularPipeline)
+      );
+    });
+  }
 );
 
 /**
@@ -111,7 +124,6 @@ export const getNodeData = createSelector(
     getNodeDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
-    getNodeDisabledModularPipeline,
     getNodeTypeDisabled,
     getNodeModularPipelines,
   ],
@@ -123,7 +135,6 @@ export const getNodeData = createSelector(
     nodeDisabled,
     nodeDisabledNode,
     nodeDisabledTag,
-    nodeDisabledModularPipeline,
     typeDisabled,
     nodeModularPipelines
   ) =>
@@ -146,9 +157,73 @@ export const getNodeData = createSelector(
         disabled: nodeDisabled[id],
         disabledNode: Boolean(nodeDisabledNode[id]),
         disabledTag: nodeDisabledTag[id],
-        disabledModularPipeline: nodeDisabledModularPipeline[id],
         disabledType: Boolean(typeDisabled[nodeType[id]]),
       }))
+);
+
+/**
+ * Returns formatted nodes as an object, with all relevant properties.
+ * This is similar to `getNodeData`, but instead of returning an Array,
+ * it returns all nodes as an Object.
+ */
+export const getNodeDataObject = createSelector(
+  [
+    getPipelineNodeIDs,
+    getNodeLabel,
+    getNodeType,
+    getNodeDatasetType,
+    getNodeDisabled,
+    getNodeDisabledNode,
+    getNodeDisabledTag,
+    getNodeTypeDisabled,
+    getNodeModularPipelines,
+  ],
+  (
+    nodeIDs,
+    nodeLabel,
+    nodeType,
+    nodeDatasetType,
+    nodeDisabled,
+    nodeDisabledNode,
+    nodeDisabledTag,
+    typeDisabled,
+    nodeModularPipelines
+  ) =>
+    nodeIDs.reduce((obj, id) => {
+      obj[id] = {
+        id,
+        name: nodeLabel[id],
+        type: nodeType[id],
+        icon: getShortType([nodeDatasetType[id]], nodeType[id]),
+        modularPipelines: nodeModularPipelines[id],
+        disabled: nodeDisabled[id],
+        disabledNode: Boolean(nodeDisabledNode[id]),
+        disabledTag: Boolean(nodeDisabledTag[id]),
+        disabledType: Boolean(typeDisabled[nodeType[id]]),
+      };
+      return obj;
+    }, {})
+);
+
+/**
+ * Return the modular pipelines tree with full data for each tree node for display.
+ */
+export const getModularPipelinesTree = createSelector(
+  [(state) => state.modularPipeline.tree, getNodeDataObject],
+  (modularPipelinesTree, nodes) => {
+    if (!modularPipelinesTree) {
+      return {};
+    }
+    for (const modularPipelineID in modularPipelinesTree) {
+      modularPipelinesTree[modularPipelineID].data = {
+        ...nodes[modularPipelineID],
+      };
+      for (const child of modularPipelinesTree[modularPipelineID].children) {
+        child.data = { ...nodes[child.id] };
+      }
+    }
+    return modularPipelinesTree;
+  }
 );
 
 /**
@@ -199,17 +274,25 @@ export const getNodeTextWidth = createSelector(
  * @param {Boolean} showLabels Whether labels are visible
  * @param {Boolean} isTask Whether the node is a task type (vs data/params)
  */
-export const getPadding = (showLabels, isTask) => {
+export const getPadding = (showLabels, nodeType) => {
   if (showLabels) {
-    if (isTask) {
-      return { x: 16, y: 10 };
+    switch (nodeType) {
+      case 'modularPipeline':
+        return { x: 30, y: 22 };
+      case 'task':
+        return { x: 16, y: 10 };
+      default:
+        return { x: 20, y: 10 };
     }
-    return { x: 20, y: 10 };
   }
-  if (isTask) {
-    return { x: 14, y: 14 };
+  switch (nodeType) {
+    case 'modularPipeline':
+      return { x: 25, y: 25 };
+    case 'task':
+      return { x: 14, y: 14 };
+    default:
+      return { x: 16, y: 16 };
   }
-  return { x: 16, y: 16 };
 };
 
 /**
@@ -229,7 +312,7 @@ export const getNodeSize = createSelector(
     }
     return arrayToObject(nodeIDs, (nodeID) => {
       const iconSize = textLabels ? 24 : 28;
-      const padding = getPadding(textLabels, nodeType[nodeID] === 'task');
+      const padding = getPadding(textLabels, nodeType[nodeID]);
       const textWidth = textLabels ? nodeTextWidth[nodeID] : 0;
       const textGap = textLabels ? 6 : 0;
       const innerWidth = iconSize + textWidth + textGap;
@@ -319,18 +402,22 @@ export const getNodesWithInputParams = createSelector(
  * Returns a list of dataset nodes that are input and output nodes of the modular pipeline under focus mode
  */
 export const getInputOutputNodesForFocusedModularPipeline = createSelector(
-  [getFocusedModularPipeline, getGraphNodes, getNodeModularPipelines],
-  (focusedModularPipeline, graphNodes, nodeModularPipelines) => {
-    const nodesList = {};
-    if (focusedModularPipeline !== null) {
-      for (const nodeID in graphNodes) {
-        if (
-          !nodeModularPipelines[nodeID].includes(focusedModularPipeline?.id)
-        ) {
-          nodesList[nodeID] = graphNodes[nodeID];
-        }
-      }
-    }
-    return nodesList;
+  [
+    (state) => state.visible.modularPipelineFocusMode?.id,
+    getGraphNodes,
+    getModularPipelinesTree,
+  ],
+  (focusedModularPipelineID, graphNodes, modularPipelinesTree) => {
+    const focusedModularPipeline = focusedModularPipelineID
+      ? modularPipelinesTree[focusedModularPipelineID]
+      : null;
+    const nodeIDs = focusedModularPipeline
+      ? [...focusedModularPipeline.inputs, ...focusedModularPipeline.outputs]
+      : [];
+    const result = nodeIDs.reduce((result, nodeID) => {
+      result[nodeID] = graphNodes[nodeID];
+      return result;
+    }, {});
+    return result;
   }
 );

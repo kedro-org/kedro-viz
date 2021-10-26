@@ -5,7 +5,7 @@ import App, { dataSources } from './app';
 
 configure({ adapter: new Adapter() });
 
-const keys = Object.keys(dataSources);
+const keys = Object.keys(dataSources).filter((key) => key !== 'random');
 
 describe('lib-test', () => {
   test('renders without crashing', () => {
@@ -26,10 +26,11 @@ describe('lib-test', () => {
       .first()
       .text();
 
-      const modularPipelineNames = dataSources[key]().modular_pipelines.map(
-        (modularPipeline) => modularPipeline.name
-      );
-      expect(modularPipelineNames).toContain(firstNodeName);
+    const modularPipelinesTree = dataSources[key]().modular_pipelines;
+    const modularPipelineNames = Object.keys(modularPipelinesTree).map(
+      (modularPipelineID) => modularPipelinesTree[modularPipelineID].name
+    );
+    expect(modularPipelineNames).toContain(firstNodeName);
   };
 
   test.each(keys)(`uses %s dataset when provided as prop`, (key) => {

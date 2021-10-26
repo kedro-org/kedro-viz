@@ -368,7 +368,7 @@ class DataAccessManager:
             self.get_node_dependencies_for_registered_pipeline(registered_pipeline_id),
         )
 
-    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-locals,too-many-branches
     def create_modular_pipelines_tree_for_registered_pipeline(
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict[str, ModularPipelineNode]:
@@ -388,21 +388,17 @@ class DataAccessManager:
         edges = self.edges[registered_pipeline_id]
         node_dependencies = self.node_dependencies[registered_pipeline_id]
         modular_pipelines_tree = modular_pipelines_services.expand_tree(
-            self.modular_pipelines.as_dict()
+            self.modular_pipelines.as_dict(), registered_pipeline_id
         )
         root_children_ids = set()
 
         # turn all modular pipelines in the tree into a graph node for visualisation,
-        # except for the artificial root node and nodes that don't belong to the
-        # currently selected registered pipeline.
+        # except for the artificial root node
         for (
             modular_pipeline_id,
             modular_pipeline_node,
         ) in modular_pipelines_tree.items():
-            if (
-                modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID
-                or not modular_pipeline_node.belongs_to_pipeline(registered_pipeline_id)
-            ):
+            if modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID:
                 continue
 
             modular_pipeline_node = self.nodes.add_node(modular_pipeline_node)
@@ -410,14 +406,33 @@ class DataAccessManager:
                 registered_pipeline_id, modular_pipeline_node.id
             )
 
-            for input_ in modular_pipeline_node.inputs:
-                edges.add_edge(GraphEdge(source=input_, target=modular_pipeline_id))
-                node_dependencies[input_].add(modular_pipeline_id)
-            root_children_ids.update(modular_pipeline_node.external_inputs)
-            for output in modular_pipeline_node.outputs:
-                edges.add_edge(GraphEdge(source=modular_pipeline_id, target=output))
-                node_dependencies[modular_pipeline_id].add(output)
-            root_children_ids.update(modular_pipeline_node.external_outputs)
+            # only keep the modular pipeline's inputs belonging to the current registered pipeline
+            inputs_in_registered_pipeline = set()
+            for input_id in modular_pipeline_node.inputs:
+                input_node = self.nodes.get_node_by_id(input_id)
+                if input_node.belongs_to_pipeline(registered_pipeline_id):
+                    edges.add_edge(
+                        GraphEdge(source=input_id, target=modular_pipeline_id)
+                    )
+                    node_dependencies[input_id].add(modular_pipeline_id)
+                    inputs_in_registered_pipeline.add(input_id)
+            root_children_ids.update(
+                modular_pipeline_node.external_inputs & inputs_in_registered_pipeline
+            )
+
+            # only keep the modular pipeline's outputs belonging to the current registered pipeline
+            outputs_in_registered_pipeline = set()
+            for output_id in modular_pipeline_node.outputs:
+                output_node = self.nodes.get_node_by_id(output_id)
+                if output_node.belongs_to_pipeline(registered_pipeline_id):
+                    edges.add_edge(
+                        GraphEdge(source=modular_pipeline_id, target=output_id)
+                    )
+                    node_dependencies[modular_pipeline_id].add(output_id)
+                    outputs_in_registered_pipeline.add(output_id)
+            root_children_ids.update(
+                modular_pipeline_node.external_outputs & outputs_in_registered_pipeline
+            )
 
         # After adding modular pipeline nodes into the graph,
         # There is a chance that the graph with these nodes contains cycles if

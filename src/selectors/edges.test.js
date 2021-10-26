@@ -1,4 +1,4 @@
-import { mockState } from '../utils/state.mock';
+import { prepareState } from '../utils/state.mock';
 import { getEdgeDisabled } from './disabled';
 import {
   addNewEdge,
@@ -6,12 +6,21 @@ import {
   getVisibleEdges,
   getInputOutputDataEdges,
 } from './edges';
+
+import spaceflights from '../utils/data/spaceflights.mock.json';
 import { toggleNodesDisabled } from '../actions/nodes';
+import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
 import { toggleFocusMode } from '../actions';
 import reducer from '../reducers';
 
 describe('Selectors', () => {
-  const { nodes, edges } = mockState.spaceflights.graph;
+  const mockState = prepareState({
+    data: spaceflights,
+    beforeLayoutActions: [
+      () => toggleModularPipelineExpanded(['data_science']),
+    ],
+  });
+  const { nodes, edges } = mockState.graph;
   const disabledNode = nodes.find((node) =>
     node.name.includes('Train Model')
   ).id;
@@ -57,7 +66,7 @@ describe('Selectors', () => {
   describe('getTransitiveEdges', () => {
     describe('if all edges are enabled', () => {
       it('creates no transitive edges', () => {
-        expect(getTransitiveEdges(mockState.spaceflights)).toEqual({
+        expect(getTransitiveEdges(mockState)).toEqual({
           edgeIDs: [],
           sources: {},
           targets: {},
@@ -70,8 +79,9 @@ describe('Selectors', () => {
       let alteredMockState;
       beforeEach(() => {
         alteredMockState = reducer(
-          mockState.spaceflights,
-          toggleNodesDisabled([disabledNode], true)
+          mockState,
+          toggleNodesDisabled([disabledNode], true),
+          toggleModularPipelineExpanded(['data_science'])
         );
       });
 
@@ -101,14 +111,14 @@ describe('Selectors', () => {
 
   describe('getVisibleEdges', () => {
     it('gets only the visible edges', () => {
-      const edgeDisabled = getEdgeDisabled(mockState.spaceflights);
-      expect(
-        getVisibleEdges(mockState.spaceflights).map((d) => edgeDisabled[d.id])
-      ).toEqual(expect.arrayContaining([false]));
+      const edgeDisabled = getEdgeDisabled(mockState);
+      expect(getVisibleEdges(mockState).map((d) => edgeDisabled[d.id])).toEqual(
+        expect.arrayContaining([false])
+      );
     });
 
     it('formats the edges into an array of objects', () => {
-      expect(getVisibleEdges(mockState.spaceflights)).toEqual(
+      expect(getVisibleEdges(mockState)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
@@ -121,25 +131,32 @@ describe('Selectors', () => {
 
     it('includes transitive edges when necessary', () => {
       const alteredMockState = reducer(
-        mockState.spaceflights,
+        mockState,
         toggleNodesDisabled([disabledNode], true)
       );
       expect(new Set(getVisibleEdges(alteredMockState))).not.toEqual(
-        new Set(getVisibleEdges(mockState.spaceflights))
+        new Set(getVisibleEdges(mockState))
       );
     });
   });
 
   describe('getInputOutputDataEdges', () => {
+    const modularPipelineId = 'data_processing';
     it('includes input output edges related to a modular pipeline in the returned object', () => {
       const newMockState = reducer(
-        mockState.spaceflights,
-        toggleFocusMode({ id: 'data_processing' })
+        mockState,
+        toggleFocusMode({ id: modularPipelineId })
       );
 
-      expect(getInputOutputDataEdges(newMockState)).toHaveProperty(
-        '47b81aa6|23c94afb'
-      );
+      const inputs = ['f192326a', '90ebe5f3', '0abef172'];
+      const outputs = ['23c94afb'];
+      const expectedEdges = inputs
+        .map((input) => `${input}|${modularPipelineId}`)
+        .concat(outputs.map((output) => `${modularPipelineId}|${output}`));
+      const result = getInputOutputDataEdges(newMockState);
+      expectedEdges.forEach((edge) => {
+        expect(result).toHaveProperty(edge);
+      });
     });
   });
 });

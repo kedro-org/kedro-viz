@@ -10,4 +10,4 @@ plotly>=4.0
 pandas>=0.24
 sqlalchemy~=1.2
 strawberry-graphql~=0.79.0
-networkx~=2.6.0
+networkx>=1.0

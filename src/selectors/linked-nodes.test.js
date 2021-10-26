@@ -1,17 +1,23 @@
 import { getLinkedNodes } from './linked-nodes';
-import { mockState } from '../utils/state.mock';
+import { prepareState } from '../utils/state.mock';
 import { toggleNodeClicked } from '../actions/nodes';
+import spaceflights from '../utils/data/spaceflights.mock.json';
+import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
 import reducer from '../reducers';
 
 describe('getLinkedNodes function', () => {
-  const { nodes } = mockState.spaceflights.graph;
+  const mockState = prepareState({
+    data: spaceflights,
+    beforeLayoutActions: [
+      () => toggleModularPipelineExpanded(['data_science', 'data_processing']),
+    ],
+  });
+
+  const { nodes } = mockState.graph;
   const nodeID = nodes.find((d) =>
     d.name.includes('Preprocess Companies Node')
   ).id;
-  const newMockState = reducer(
-    mockState.spaceflights,
-    toggleNodeClicked(nodeID)
-  );
+  const newMockState = reducer(mockState, toggleNodeClicked(nodeID));
   const linkedNodes = getLinkedNodes(newMockState);
 
   it('should return an object', () => {

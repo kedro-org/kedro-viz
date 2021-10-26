@@ -94,7 +94,7 @@ describe('Selectors', () => {
 
     it('returns true when a given node is clicked', () => {
       const nodes = getNodeIDs(mockState.spaceflights);
-      const nodeID = nodes[0];
+      const nodeID = 'data_science';
       const inactiveNodes = nodes.filter((id) => id !== nodeID);
       const newMockState = reducer(
         mockState.spaceflights,
@@ -267,21 +267,21 @@ describe('getPadding', () => {
 
   describe('if text labels are enabled', () => {
     it('returns x=16 & y=10 for task icons', () => {
-      expect(getPadding(true, true)).toEqual({ x: 16, y: 10 });
+      expect(getPadding(true, 'task')).toEqual({ x: 16, y: 10 });
     });
 
     it('returns x=20 & y=10 for database icons', () => {
-      expect(getPadding(true, false)).toEqual({ x: 20, y: 10 });
+      expect(getPadding(true, 'data')).toEqual({ x: 20, y: 10 });
     });
   });
 
   describe('if text labels are disabled', () => {
     it('returns x=14 & y=14 for task icons', () => {
-      expect(getPadding(false, true)).toEqual({ x: 14, y: 14 });
+      expect(getPadding(false, 'task')).toEqual({ x: 14, y: 14 });
     });
 
     it('returns x=16 & y=16 for database icons', () => {
-      expect(getPadding(false, false)).toEqual({ x: 16, y: 16 });
+      expect(getPadding(false, 'data')).toEqual({ x: 16, y: 16 });
     });
   });
 });
