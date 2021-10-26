@@ -16,9 +16,9 @@ const getTagIDs = (state) => state.tag.ids;
 describe('Selectors', () => {
   describe('getNodeDisabledPipeline', () => {
     it("returns an object whose keys match the current pipeline's nodes", () => {
-      expect(Object.keys(getNodeDisabledPipeline(mockState.spaceflights))).toEqual(
-        getNodeIDs(mockState.spaceflights)
-      );
+      expect(
+        Object.keys(getNodeDisabledPipeline(mockState.spaceflights))
+      ).toEqual(getNodeIDs(mockState.spaceflights));
     });
 
     it('returns an object whose values are all Booleans', () => {
@@ -46,7 +46,8 @@ describe('Selectors', () => {
     it('does not disable any nodes that are in the active pipeline', () => {
       const activePipeline = 'ds';
       const activePipelineNodeIDs = mockState.spaceflights.node.ids.filter(
-        (nodeID) => mockState.spaceflights.node.pipelines[nodeID][activePipeline]
+        (nodeID) =>
+          mockState.spaceflights.node.pipelines[nodeID][activePipeline]
       );
       const newMockState = reducer(
         mockState.spaceflights,
@@ -61,7 +62,8 @@ describe('Selectors', () => {
     it('disables every node that is not in the active pipeline', () => {
       const activePipeline = 'de';
       const inactivePipelineNodeIDs = mockState.spaceflights.node.ids.filter(
-        (nodeID) => !mockState.spaceflights.node.pipelines[nodeID][activePipeline]
+        (nodeID) =>
+          !mockState.spaceflights.node.pipelines[nodeID][activePipeline]
       );
       const newMockState = reducer(
         mockState.spaceflights,

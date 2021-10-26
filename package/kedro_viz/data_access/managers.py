@@ -26,6 +26,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.data_access.managers` defines data access managers."""
+# pylint: disable=too-many-instance-attributes
 from collections import defaultdict
 from typing import Dict, List, Set, Union
 
@@ -33,6 +34,7 @@ import networkx as nx
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
+from sqlalchemy.orm import Session as DatabaseSession
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (
@@ -68,14 +70,22 @@ class DataAccessManager:
         self.registered_pipelines = RegisteredPipelinesRepository()
         self.tags = TagsRepository()
         self.modular_pipelines = ModularPipelinesRepository()
-
+        self._db_session = None
         # Make sure each registered pipeline has a distinct collection of edges.
         self.edges: Dict[str, GraphEdgesRepository] = defaultdict(GraphEdgesRepository)
-
         # Make sure the node dependencies are built separately for each registered pipeline.
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
+
+    @property
+    def db_session(self):  # pragma: no cover
+        """Sqlite db connection session"""
+        return self._db_session
+
+    @db_session.setter
+    def db_session(self, db_session: DatabaseSession):
+        self._db_session = db_session
 
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository.
