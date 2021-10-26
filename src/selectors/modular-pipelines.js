@@ -75,7 +75,7 @@ export const searchTree = (
     }
   }
 
-  if (foundChildren.length > 0 || searchString(searchValue, treeNode.name)) {
+  if (foundChildren.length > 0 || searchString(treeNode.name, searchValue)) {
     result[currentNodeID] = {
       ...treeNode,
       highlightedLabel: getHighlightedText(treeNode.name, searchValue),
