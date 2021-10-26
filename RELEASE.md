@@ -8,6 +8,8 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.0.0
+
 ## Major features and improvements
 
 - Allow expand and collapse modular pipelines on the graph. (#600)
