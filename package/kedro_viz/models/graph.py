@@ -38,7 +38,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast, Type
 
 import pandas as pd
 import plotly.express as px
@@ -598,20 +598,28 @@ class DataNodeMetadata(GraphNodeMetadata):
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
 
-        if data_node.is_metric_node():
+        if (data_node.is_metric_node() | data_node.is_json_node()):
             from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
+            from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
 
-            dataset = cast(MetricsDataSet, dataset)
+            if data_node.is_metric_node():
+                dataset = cast(MetricsDataSet, dataset)
+            else:   
+                dataset = cast(JSONDataSet, dataset)
+
             if not dataset._exists() or self.filepath is None:
                 return
-            metrics = self.load_latest_metrics_data(dataset)
-            if not metrics:
+            
+            tracking_data = self.load_latest_tracking_data(dataset)
+            if not tracking_data:
                 return
-            self.metrics = metrics
-            metrics_data = self.load_metrics_versioned_data(self.filepath)
-            if not metrics_data:
-                return
-            self.plot = self.create_metrics_plot(
+            self.metrics = tracking_data
+
+            if data_node.is_metric_node():
+                metrics_data = self.load_metrics_versioned_data(self.filepath)
+                if not metrics_data:
+                    return
+                self.plot = self.create_metrics_plot(
                 pd.DataFrame.from_dict(metrics_data, orient="index")
             )
 
@@ -620,10 +628,10 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
     @staticmethod
-    def load_latest_metrics_data(
-        dataset: "MetricsDataSet",
+    def load_latest_tracking_data(
+        dataset: "Type[JSONDataSet]",
     ) -> Optional[Dict[str, float]]:
-        """Load data for latest versions of the metrics dataset.
+        """Load data for latest versions of the json dataset.
         Below operation is also on kedro.io.core -> fetched_latest_load_version()
         However it is a cached function and hence cannot be relied upon
         Args:
