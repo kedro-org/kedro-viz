@@ -509,6 +509,12 @@ class DataNode(GraphNode):
             == "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
         )
 
+    def is_json_node(self):
+        """Check if the current node is a JSONDataSet node."""
+        return (
+            self.dataset_type
+            == "kedro.extras.datasets.tracking.json_dataset.JSONDataSet"
+        )
 
 @dataclass
 class TranscodedDataNode(GraphNode):
