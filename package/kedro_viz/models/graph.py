@@ -38,7 +38,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast, Type
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
 
 import pandas as pd
 import plotly.express as px
@@ -516,6 +516,7 @@ class DataNode(GraphNode):
             == "kedro.extras.datasets.tracking.json_dataset.JSONDataSet"
         )
 
+
 @dataclass
 class TranscodedDataNode(GraphNode):
     """Represent a graph node of type DATA"""
@@ -598,18 +599,18 @@ class DataNodeMetadata(GraphNodeMetadata):
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
 
-        if (data_node.is_metric_node() | data_node.is_json_node()):
-            from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
+        if data_node.is_metric_node() | data_node.is_json_node():
             from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
+            from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
             if data_node.is_metric_node():
                 dataset = cast(MetricsDataSet, dataset)
-            else:   
+            else:
                 dataset = cast(JSONDataSet, dataset)
 
             if not dataset._exists() or self.filepath is None:
                 return
-            
+
             tracking_data = self.load_latest_tracking_data(dataset)
             if not tracking_data:
                 return
@@ -620,8 +621,8 @@ class DataNodeMetadata(GraphNodeMetadata):
                 if not metrics_data:
                     return
                 self.plot = self.create_metrics_plot(
-                pd.DataFrame.from_dict(metrics_data, orient="index")
-            )
+                    pd.DataFrame.from_dict(metrics_data, orient="index")
+                )
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
