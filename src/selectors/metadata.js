@@ -30,7 +30,7 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.code,
     (state) => state.node.parameters,
     (state) => state.node.plot,
-    (state) => state.node.metrics,
+    (state) => state.node.trackingData,
     (state) => state.node.datasetType,
     (state) => state.node.originalType,
     (state) => state.node.transcodedTypes,
@@ -48,7 +48,7 @@ export const getClickedNodeMetaData = createSelector(
     nodeCodes,
     nodeParameters,
     nodePlot,
-    nodeMetrics,
+    nodeTrackingData,
     nodeDatasetTypes,
     nodeOriginalTypes,
     nodeTranscodedTypes,
@@ -58,10 +58,10 @@ export const getClickedNodeMetaData = createSelector(
     if (!node) {
       return null;
     }
-    //rounding of metrics data
-    nodeMetrics[node.id] &&
-      Object.entries(nodeMetrics[node.id]).forEach(([key, value]) => {
-        nodeMetrics[node.id][key] = Math.round(value * 100) / 100;
+    //rounding of tracking data
+    nodeTrackingData[node.id] &&
+      Object.entries(nodeTrackingData[node.id]).forEach(([key, value]) => {
+        nodeTrackingData[node.id][key] = Math.round(value * 100) / 100;
       });
 
     const metadata = {
@@ -75,7 +75,7 @@ export const getClickedNodeMetaData = createSelector(
       code: nodeCodes[node.id],
       filepath: nodeFilepaths[node.id],
       plot: nodePlot[node.id],
-      metrics: nodeMetrics[node.id],
+      trackingData: nodeTrackingData[node.id],
       datasetType: nodeDatasetTypes[node.id],
       originalType: nodeOriginalTypes[node.id],
       transcodedTypes: nodeTranscodedTypes[node.id],

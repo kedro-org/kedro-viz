@@ -576,7 +576,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     # currently only applicable for PlotlyDataSet
     plot: Optional[Dict] = field(init=False)
 
-    metrics: Optional[Dict] = field(init=False)
+    tracking_data: Optional[Dict] = field(init=False)
 
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
@@ -614,10 +614,10 @@ class DataNodeMetadata(GraphNodeMetadata):
             tracking_data = self.load_latest_tracking_data(dataset)
             if not tracking_data:
                 return
-            self.metrics = tracking_data
+            self.tracking_data = tracking_data
 
             if data_node.is_metric_node():
-                metrics_data = self.load_metrics_versioned_data(self.filepath)
+                metrics_data = self.load_tracking_versioned_data(self.filepath)
                 if not metrics_data:
                     return
                 self.plot = self.create_metrics_plot(
@@ -651,7 +651,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             return json.load(fs_file)
 
     @staticmethod
-    def load_metrics_versioned_data(
+    def load_tracking_versioned_data(
         filepath: str, num_versions: int = 10
     ) -> Optional[Dict[datetime, Any]]:
         """Load data for multiple versions of the metrics dataset
