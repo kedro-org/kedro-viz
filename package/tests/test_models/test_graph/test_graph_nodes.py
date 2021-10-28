@@ -400,9 +400,9 @@ class TestGraphNodeMetadata:
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
-    @patch("kedro_viz.models.graph.DataNodeMetadata.create_metrics_plot")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_tracking_versioned_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.create_tracking_plot")
     def test_metrics_data_node_metadata(
         self,
         patched_metrics_plot,
@@ -442,7 +442,7 @@ class TestGraphNodeMetadata:
         metrics_data_node.is_plot_node.return_value = False
         metrics_data_node.is_metric_node.return_value = True
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
-        assert metrics_node_metadata.metrics == mock_metrics_data
+        assert metrics_node_metadata.tracking_data == mock_metrics_data
         assert metrics_node_metadata.plot == mock_plot_data
 
     def test_metrics_data_node_metadata_dataset_not_exist(self):
@@ -454,7 +454,7 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
     def test_metrics_data_node_metadata_latest_metrics_not_exist(
         self,
         patched_latest_metrics,
@@ -467,8 +467,8 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_tracking_versioned_data")
     def test_metrics_data_node_metadata_versioned_dataset_not_exist(
         self,
         patched_data_loader,
@@ -485,7 +485,7 @@ class TestGraphNodeMetadata:
         metrics_data_node.is_plot_node.return_value = False
         metrics_data_node.is_metric_node.return_value = True
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
-        assert metrics_node_metadata.metrics == mock_metrics_data
+        assert metrics_node_metadata.tracking_data == mock_metrics_data
         assert not hasattr(metrics_node_metadata, "plot")
 
     def test_data_node_metadata_create_metrics_plot(self):
@@ -606,7 +606,7 @@ class TestGraphNodeMetadata:
             },
         }
         assert (
-            DataNodeMetadata.load_metrics_versioned_data(metrics_filepath)
+            DataNodeMetadata.load_tracking_versioned_data(metrics_filepath)
             == mock_metrics_json
         )
 
@@ -620,7 +620,7 @@ class TestGraphNodeMetadata:
         }
         limit = 1
         assert (
-            DataNodeMetadata.load_metrics_versioned_data(metrics_filepath, limit)
+            DataNodeMetadata.load_tracking_versioned_data(metrics_filepath, limit)
             == mock_metrics_json
         )
 
@@ -628,7 +628,7 @@ class TestGraphNodeMetadata:
     def test_load_metrics_versioned_data_invalid_timestamp(
         self, patched_warning, metrics_filepath_invalid_timestamp
     ):
-        DataNodeMetadata.load_metrics_versioned_data(metrics_filepath_invalid_timestamp)
+        DataNodeMetadata.load_tracking_versioned_data(metrics_filepath_invalid_timestamp)
         patched_warning.assert_has_calls(
             [
                 call(
