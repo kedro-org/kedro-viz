@@ -38,7 +38,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Type, Union, cast
 
 import pandas as pd
 import plotly.express as px
@@ -49,10 +49,10 @@ from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
 
-# only import MetricsDataSet at top-level for type-checking
+# only import JSONDataSet at top-level for type-checking
 # so it doesn't blow up if user doesn't have the dataset dependencies installed.
 if TYPE_CHECKING:  # pragma: no cover
-    from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
+    from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
 
 
 logger = logging.getLogger(__name__)
