@@ -30,6 +30,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import TYPE_CHECKING, List
 
 import strawberry
@@ -64,6 +65,8 @@ def get_run(run_id: ID) -> Run:
         timestamp="session_id",
         runCommand="command_path",
     )
+    # Don't forget to update this to     tracking_data = get_run_tracking_data(run_id=ID(run_id))
+    # when merging all the resolver code.
     tracking_data = RunTrackingData(id=ID(run_id), trackingData=[])
 
     return Run(
@@ -107,14 +110,15 @@ def get_run_tracking_data(run_id: ID) -> RunTrackingData:
     ]
     for name, dataset in experiment_datasets:
         file_path = dataset._get_versioned_path(str(run_id))
-        with dataset._fs.open(file_path, **dataset._fs_open_args_load) as fs_file:
-            json_data = json.load(fs_file)
-            tracking_dataset = TrackingDataSet(
-                datasetName=name,
-                datasetType=str(type(dataset)),
-                data=json.dumps(json_data),
-            )
-            all_datasets.append(tracking_dataset)
+        if Path(file_path).is_file():
+            with dataset._fs.open(file_path, **dataset._fs_open_args_load) as fs_file:
+                json_data = json.load(fs_file)
+                tracking_dataset = TrackingDataSet(
+                    datasetName=name,
+                    datasetType=str(type(dataset)),
+                    data=json.dumps(json_data),
+                )
+                all_datasets.append(tracking_dataset)
     return RunTrackingData(id=run_id, trackingData=all_datasets)
 
 
