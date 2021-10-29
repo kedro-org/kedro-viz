@@ -56,6 +56,8 @@ class TestAddCatalog:
         catalog = DataCatalog(data_sets={"dataset": dataset})
         data_access_manager.add_catalog(catalog)
         assert data_access_manager.catalog.get_catalog() is catalog
+
+        
 class TestAddNode:
     def test_add_node(self, data_access_manager: DataAccessManager):
         kedro_node = node(
