@@ -27,7 +27,7 @@
 # limitations under the License.
 import json
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 from unittest import mock
 
 import pytest
@@ -41,7 +41,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.api import apps
-from kedro_viz.data_access.managers import DataAccessManager
+from kedro_viz.data_access import DataAccessManager
 from kedro_viz.models.run_model import Base, RunModel
 from kedro_viz.server import populate_data
 
@@ -171,7 +171,7 @@ def example_api(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
-    example_session_store_location: str,
+    example_session_store_location: Optional[Path],
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
@@ -187,11 +187,25 @@ def example_api(
 
 
 @pytest.fixture
+def example_api_no_session_store(
+    data_access_manager: DataAccessManager,
+    example_pipelines: Dict[str, Pipeline],
+    example_catalog: DataCatalog,
+):
+    api = apps.create_api_app_from_project(mock.MagicMock())
+    populate_data(data_access_manager, example_catalog, example_pipelines, None)
+    with mock.patch(
+        "kedro_viz.api.responses.data_access_manager", new=data_access_manager
+    ), mock.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager):
+        yield api
+
+
+@pytest.fixture
 def example_transcoded_api(
     data_access_manager: DataAccessManager,
     example_transcoded_pipelines: Dict[str, Pipeline],
     example_transcoded_catalog: DataCatalog,
-    example_session_store_location: str,
+    example_session_store_location: Optional[Path],
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
@@ -217,7 +231,7 @@ def example_session_store_location(tmp_path):
 
 
 @pytest.fixture
-def setup_dbconn(example_session_store_location):
+def example_db_session(example_session_store_location):
     engine = create_engine(f"sqlite:///{example_session_store_location}")
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -227,8 +241,8 @@ def setup_dbconn(example_session_store_location):
 
 
 @pytest.fixture
-def example_db_dataset(setup_dbconn):
-    session = setup_dbconn
+def example_db_dataset(example_db_session):
+    session = example_db_session
 
     session_data_1 = {
         "package_name": "testsql",

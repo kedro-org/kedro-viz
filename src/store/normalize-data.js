@@ -11,8 +11,9 @@ export const createInitialPipelineState = () => ({
   },
   modularPipeline: {
     ids: [],
-    name: {},
-    enabled: {},
+    tree: {},
+    visible: {},
+    expanded: [],
     active: {},
   },
   node: {
@@ -41,11 +42,12 @@ export const createInitialPipelineState = () => ({
     modularPipelines: {},
   },
   nodeType: {
-    ids: ['task', 'data', 'parameters'],
+    ids: ['task', 'data', 'parameters', 'modularPipeline'],
     name: {
       data: 'Datasets',
       task: 'Nodes',
       parameters: 'Parameters',
+      modularPipeline: 'Modular Pipelines',
     },
     disabled: {},
   },
@@ -111,20 +113,6 @@ const addPipeline = (state) => (pipeline) => {
   }
   state.pipeline.ids.push(id);
   state.pipeline.name[id] = pipeline.name;
-};
-
-/**
- * Add a new modular pipeline
- * @param {string} modularPipeline.id - Unique namespace of the modular pipeline
- * @param {string} modularPipeline.name - modular pipeline name
- */
-const addModularPipeline = (state) => (modularPipeline) => {
-  const { id, name } = modularPipeline;
-  if (state.modularPipeline.name[id]) {
-    return;
-  }
-  state.modularPipeline.ids.push(id);
-  state.modularPipeline.name[id] = name;
 };
 
 /**
@@ -215,23 +203,8 @@ const normalizeData = (data) => {
     return state;
   }
 
-  // temporarily filter out modularPipeline nodes and edges
-  const modularPipelineNodes = new Set();
-  data.nodes.forEach((node) => {
-    if (node.type === 'modularPipeline') {
-      modularPipelineNodes.add(node.id);
-    } else {
-      addNode(state)(node);
-    }
-  });
-  data.edges.forEach((edge) => {
-    if (
-      !modularPipelineNodes.has(edge.source) &&
-      !modularPipelineNodes.has(edge.target)
-    ) {
-      addEdge(state)(edge);
-    }
-  });
+  data.nodes.forEach(addNode(state));
+  data.edges.forEach(addEdge(state));
   if (data.pipelines) {
     data.pipelines.forEach(addPipeline(state));
     if (state.pipeline.ids.length) {
@@ -240,8 +213,13 @@ const normalizeData = (data) => {
     }
   }
   if (data.modular_pipelines) {
-    data.modular_pipelines.forEach(addModularPipeline(state));
+    state.modularPipeline.ids = Object.keys(data.modular_pipelines);
+    state.modularPipeline.tree = data.modular_pipelines;
+    for (const child of data.modular_pipelines['__root__'].children) {
+      state.modularPipeline.visible[child.id] = true;
+    }
   }
+
   if (data.tags) {
     data.tags.forEach(addTag(state));
   }

@@ -53,7 +53,7 @@ def format_run(run_id: str, run_blob: dict) -> Run:
         Run object
     """
     git_data = run_blob.get("git")
-    metadata = RunMetadata(
+    run = Run(
         id=ID(run_id),
         author="",
         gitBranch="",
@@ -64,13 +64,7 @@ def format_run(run_id: str, run_blob: dict) -> Run:
         timestamp=run_blob["session_id"],
         runCommand=run_blob["cli"]["command_path"],
     )
-    tracking_data = RunTrackingData(id=ID(run_id), trackingData=None)
-
-    return Run(
-        id=ID(run_id),
-        metadata=metadata,
-        trackingData=tracking_data,
-    )
+    return run
 
 
 def get_run(run_id: ID) -> Run:
@@ -103,16 +97,7 @@ def get_runs() -> List[Run]:
 
 @strawberry.type
 class Run:
-    """Run object format to return to the frontend"""
-
-    id: ID
-    metadata: Optional[RunMetadata]
-    trackingData: Optional[RunTrackingData]
-
-
-@strawberry.type
-class RunMetadata:
-    """RunMetadata object format"""
+    """Run object format"""
 
     id: ID
     title: str
@@ -135,27 +120,19 @@ class TrackingDataSet:
 
 
 @strawberry.type
-class RunTrackingData:
-    """RunTrackingData object format"""
-
-    id: ID
-    trackingData: Optional[List[TrackingDataSet]]
-
-
-@strawberry.type
 class Query:
     """Query endpoint to get data from the session store"""
 
+    runs_list: List[Run] = strawberry.field(resolver=get_runs)
+
     @strawberry.field
-    def runs_with_data(self, run_ids: List[ID]) -> List[Run]:
+    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
         """Query to get data for specific runs from the session store"""
         runs = []
         for run_id in run_ids:
             run = get_run(run_id)
             runs.append(run)
         return runs
-
-    runsList: List[Run] = strawberry.field(resolver=get_runs)
 
 
 schema = strawberry.Schema(query=Query)

@@ -31,20 +31,30 @@ import json
 
 # pylint: disable=too-many-ancestors
 from pathlib import Path
+from typing import Any, Generator, Type
 
 from kedro.framework.session.store import BaseSessionStore
+from sqlalchemy.orm.session import Session
 
 from kedro_viz.database import create_db_engine
 from kedro_viz.models.run_model import Base, RunModel
 
 
-def get_db(session_class):
+def get_db(session_class: Type[Session]) -> Generator:
     """Makes connection to the database"""
     try:
         database = session_class()
         yield database
     finally:
         database.close()
+
+
+def _is_json_serializable(obj: Any):
+    try:
+        json.dumps(obj)
+        return True
+    except (TypeError, OverflowError):
+        return False
 
 
 class SQLiteStore(BaseSessionStore):
@@ -55,12 +65,14 @@ class SQLiteStore(BaseSessionStore):
         """Returns location of the sqlite_store database"""
         return Path(self._path).expanduser().resolve() / "session_store.db"
 
-    def to_json(self):
+    def to_json(self) -> str:
         """Returns session_store information in json format after converting PosixPath to string"""
-        session_dict = self.__dict__
-        if "project_path" in session_dict["data"].keys():
-            session_proj_path = str(session_dict["data"]["project_path"])
-            session_dict["data"]["project_path"] = session_proj_path
+        session_dict = {}
+        for key, value in self.data.items():
+            if _is_json_serializable(value):
+                session_dict[key] = value
+            else:
+                session_dict[key] = str(value)
         return json.dumps(session_dict)
 
     def save(self):

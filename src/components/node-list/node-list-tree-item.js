@@ -13,10 +13,6 @@ const NodeListTreeItem = ({
   onItemMouseLeave,
   onItemChange,
   children,
-  searchCount,
-  focusMode,
-  parentDisabled,
-  parentPipeline,
 }) => (
   <TreeItem
     key={data.id}
@@ -43,15 +39,13 @@ const NodeListTreeItem = ({
         allUnchecked={true}
         visibleIcon={data.visibleIcon}
         invisibleIcon={data.invisibleIcon}
+        focusModeIcon={data.focusModeIcon}
         onClick={() => onItemClick(data)}
         onMouseEnter={() => onItemMouseEnter(data)}
         onMouseLeave={() => onItemMouseLeave(data)}
         onChange={(e) => onItemChange(data, !e.target.checked)}
         rowType="tree"
-        searchCount={searchCount}
-        focusMode={focusMode}
-        parentDisabled={parentDisabled}
-        parentPipeline={parentPipeline}
+        focused={data.focused}
       />
     }>
     {children}

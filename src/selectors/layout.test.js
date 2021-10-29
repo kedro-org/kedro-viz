@@ -1,4 +1,4 @@
-import { mockState, prepareState } from '../utils/state.mock';
+import { prepareState } from '../utils/state.mock';
 import {
   getChartSize,
   getSidebarWidth,
@@ -17,32 +17,53 @@ import { graphNew } from '../utils/graph';
 import { sidebarWidth, largeGraphThreshold } from '../config';
 import spaceflights from '../utils/data/spaceflights.mock.json';
 import { getVisibleNodeIDs } from './disabled';
+import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
 
 describe('Selectors', () => {
+  const mockState = prepareState({
+    data: spaceflights,
+    beforeLayoutActions: [
+      () => toggleModularPipelineExpanded(['data_science', 'data_processing']),
+    ],
+  });
   describe('getTriggerLargeGraphWarning', () => {
     // Prepare excessively-large dataset
     const prepareLargeDataset = () => {
       const data = { ...spaceflights };
       let extraNodes = [];
-      const visibleNodeCount = getVisibleNodeIDs(mockState.spaceflights).length;
+      const visibleNodeCount = getVisibleNodeIDs(mockState).length;
       const iterations = Math.ceil(largeGraphThreshold / visibleNodeCount) + 1;
       new Array(iterations).fill().forEach((d, i) => {
         const extraNodeGroup = data.nodes.map((node) => ({
           ...node,
           id: node.id + i,
+          //eslint-disable-next-line camelcase
+          modular_pipelines: [],
         }));
         extraNodes = extraNodes.concat(extraNodeGroup);
       });
       data.nodes = data.nodes.concat(extraNodes);
+      data.modular_pipelines['__root__'].children.push(
+        ...extraNodes.map((node) => ({
+          id: node.id,
+          type: node.type,
+        }))
+      );
       return data;
     };
 
     it('returns false for a small dataset', () => {
-      expect(getTriggerLargeGraphWarning(mockState.spaceflights)).toBe(false);
+      expect(getTriggerLargeGraphWarning(mockState)).toBe(false);
     });
 
     it('returns true for a large dataset', () => {
-      const state = prepareState({ data: prepareLargeDataset() });
+      const state = prepareState({
+        data: prepareLargeDataset(),
+        beforeLayoutActions: [
+          () =>
+            toggleModularPipelineExpanded(['data_science', 'data_processing']),
+        ],
+      });
       expect(getTriggerLargeGraphWarning(state)).toBe(true);
     });
 
@@ -87,7 +108,7 @@ describe('Selectors', () => {
 
   describe('getGraphInput', () => {
     it('returns a graph input object', () => {
-      expect(getGraphInput(mockState.spaceflights)).toEqual(
+      expect(getGraphInput(mockState)).toEqual(
         expect.objectContaining({
           nodes: expect.any(Array),
           edges: expect.any(Array),
@@ -98,10 +119,7 @@ describe('Selectors', () => {
     });
 
     it('returns null if fontLoaded is false', () => {
-      const newMockState = reducer(
-        mockState.spaceflights,
-        updateFontLoaded(false)
-      );
+      const newMockState = reducer(mockState, updateFontLoaded(false));
       expect(getGraphInput(newMockState)).toEqual(null);
     });
   });
@@ -118,7 +136,7 @@ describe('Selectors', () => {
 
   describe('getChartSize', () => {
     it('returns a set of undefined properties if chartSize DOMRect is not supplied', () => {
-      expect(getChartSize(mockState.spaceflights)).toEqual({
+      expect(getChartSize(mockState)).toEqual({
         height: undefined,
         left: undefined,
         outerHeight: undefined,
@@ -131,7 +149,7 @@ describe('Selectors', () => {
 
     it('returns a DOMRect converted into an Object, with some extra properties', () => {
       const newMockState = {
-        ...mockState.spaceflights,
+        ...mockState,
         chartSize: { left: 100, top: 100, width: 1000, height: 1000 },
       };
       expect(getChartSize(newMockState)).toEqual({

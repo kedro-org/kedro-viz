@@ -28,7 +28,7 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
 import webbrowser
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 import uvicorn
 from kedro.io import DataCatalog
@@ -55,14 +55,15 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
-    session_store_location,
+    session_store_location: Optional[Path],
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
     """
-    database_engine, session_class = create_db_engine(session_store_location)
-    Base.metadata.create_all(bind=database_engine)
-    data_access_manager.db_session = session_class()
+    if session_store_location:
+        database_engine, session_class = create_db_engine(session_store_location)
+        Base.metadata.create_all(bind=database_engine)
+        data_access_manager.db_session = session_class()
 
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)

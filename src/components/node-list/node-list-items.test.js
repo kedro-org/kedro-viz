@@ -10,25 +10,14 @@ import {
   getFilteredElementTypeItems,
   getGroups,
   getFilteredItems,
-  getFilteredTreeItems,
-  getFilteredNodeModularPipelines,
-  getFilteredNodeItems,
-  getFilteredModularPipelineParent,
-  getFilteredModularPipelineNodes,
-  getNestedModularPipelines,
 } from './node-list-items';
 import { mockState } from '../../utils/state.mock';
 import {
   getGroupedNodes,
-  getNodeModularPipelines,
   getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
-import { getNodeTypes, getNodeTypeIDs } from '../../selectors/node-types';
+import { getNodeTypes } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
-import {
-  getModularPipelineData,
-  getModularPipelineIDs,
-} from '../../selectors/modular-pipelines';
 import { sidebarElementTypes } from '../../config';
 
 const ungroupNodes = (groupedNodes) =>
@@ -221,7 +210,6 @@ describe('node-list-selectors', () => {
       nodes: getGroupedNodes(mockState.spaceflights),
       nodeTypes: getNodeTypes(mockState.spaceflights),
       tags: getTagData(mockState.spaceflights),
-      modularPipelines: getModularPipelineData(mockState.spaceflights),
       tagNodeCounts: getTagNodeCounts(mockState.spaceflights),
       nodeSelected: {},
       searchValue,
@@ -278,7 +266,6 @@ describe('node-list-selectors', () => {
       nodes: getGroupedNodes(mockState.spaceflights),
       nodeTypes,
       tags: getTagData(mockState.spaceflights),
-      modularPipelines: getModularPipelineData(mockState.spaceflights),
       tagNodeCounts: getTagNodeCounts(mockState.spaceflights),
       nodeSelected: {},
       searchValue: '',
@@ -414,268 +401,6 @@ describe('node-list-selectors', () => {
           );
         }
       );
-    });
-  });
-
-  describe('filterModularPipelines', () => {
-    const modularPipelines = getModularPipelineData(mockState.spaceflights);
-    const searchValue = 'Data Processing';
-    const filteredModularPipelines = filterNodeGroups(
-      { modularPipeline: modularPipelines },
-      searchValue
-    );
-    const modularPipelineList = filteredModularPipelines.modularPipeline;
-    const notMatchingModularPipelineList = modularPipelines.filter(
-      (modularPipeline) => !modularPipeline.name.includes(searchValue)
-    );
-
-    describe('nodes which match the search term', () => {
-      test.each(
-        modularPipelineList.map((modularPipeline) => modularPipeline.name)
-      )(
-        `modular pipeline name "%s" should contain search term "${searchValue}"`,
-        (name) => {
-          expect(name).toEqual(expect.stringMatching(searchValue));
-        }
-      );
-    });
-
-    describe('modularPipelines which do not match the search term', () => {
-      test.each(
-        notMatchingModularPipelineList.map(
-          (modularPipeline) => modularPipeline.id
-        )
-      )(
-        `filtered modular pipeline list should not contain a node with id "%s"`,
-        (modularPipelineID) => {
-          expect(
-            modularPipelines.map((modularPipeline) => modularPipeline.id)
-          ).not.toContain(expect.stringMatching(searchValue));
-        }
-      );
-    });
-  });
-
-  describe('Tree list selectors', () => {
-    describe('getFilteredNodeModularPipelines', () => {
-      const searchValue = 'Split';
-
-      const filteredNodeItems = getFilteredNodeItems({
-        nodes: getGroupedNodes(mockState.spaceflights),
-        tags: getTagData(mockState.spaceflights),
-        modularPipelines: getModularPipelineData(mockState.spaceflights),
-        nodeSelected: {},
-        searchValue,
-        modularPipelineIDs: getModularPipelineIDs(mockState.spaceflights),
-        nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-        nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
-          mockState.spaceflights
-        ),
-        focusMode: { id: 'data_processing' },
-      });
-
-      const items = expect.arrayContaining([
-        expect.objectContaining({
-          id: expect.any(String),
-          name: expect.any(String),
-          highlightedLabel: expect.any(String),
-          type: expect.any(String),
-          visibleIcon: expect.any(Function),
-          invisibleIcon: expect.any(Function),
-          faded: expect.any(Boolean),
-          visible: expect.any(Boolean),
-          disabled: expect.any(Boolean),
-          checked: expect.any(Boolean),
-        }),
-      ]);
-
-      it('filters expected number of items', () => {
-        expect(filteredNodeItems.task).toHaveLength(1);
-      });
-
-      it('returns items for each type in the correct format', () => {
-        expect(filteredNodeItems).toEqual(
-          expect.objectContaining({
-            task: items,
-            data: [],
-            parameters: [],
-          })
-        );
-      });
-
-      describe('focus mode', () => {
-        const filteredNodeItems = getFilteredNodeItems({
-          nodes: getGroupedNodes(mockState.spaceflights),
-          tags: getTagData(mockState.spaceflights),
-          modularPipelines: getModularPipelineData(mockState.spaceflights),
-          nodeSelected: {},
-          modularPipelineIDs: getModularPipelineIDs(mockState.spaceflights),
-          nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-          nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-          inputOutputDataNodes: { '23c94afb': { id: '23c94afb' } },
-          focusMode: { id: 'data_processing' },
-        });
-
-        it('sets the faded field for an input node to true under focus mode ', () => {
-          const inputNode = filteredNodeItems.data.filter(
-            (node) => node.id === '23c94afb'
-          )[0];
-          expect(inputNode.faded).toEqual(true);
-        });
-      });
-
-      const filteredNodeModularPipelines = getFilteredNodeModularPipelines({
-        nodes: getGroupedNodes(mockState.spaceflights),
-        tags: getTagData(mockState.spaceflights),
-        modularPipelines: getModularPipelineData(mockState.spaceflights),
-        nodeSelected: {},
-        searchValue,
-        modularPipelineIDs: getModularPipelineIDs(mockState.spaceflights),
-        nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-        nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
-          mockState.spaceflights
-        ),
-      });
-
-      it('filters expected number of items', () => {
-        expect(filteredNodeModularPipelines).toHaveLength(1);
-      });
-    });
-
-    describe('getFilteredModularPipelineParent', () => {
-      const searchValue = 'Data';
-
-      const filteredModularPipelineParents = getFilteredModularPipelineParent({
-        nodes: getGroupedNodes(mockState.spaceflights),
-        tags: getTagData(mockState.spaceflights),
-        modularPipelines: getModularPipelineData(mockState.spaceflights),
-        nodeSelected: {},
-        searchValue,
-        modularPipelineIDs: getModularPipelineIDs(mockState.spaceflights),
-        nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-        nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-        inputOutputDataNodes: { '23c94afb': { id: '23c94afb' } },
-      });
-
-      it('filters expected number of items', () => {
-        expect(filteredModularPipelineParents).toHaveLength(0);
-      });
-    });
-
-    describe('getFilteredTreeItems', () => {
-      const searchValue = 'split';
-
-      const filteredTreeItems = getFilteredTreeItems({
-        nodes: getGroupedNodes(mockState.spaceflights),
-        tags: getTagData(mockState.spaceflights),
-        modularPipelines: getModularPipelineData(mockState.spaceflights),
-        nodeSelected: {},
-        searchValue,
-        modularPipelineIDs: getModularPipelineIDs(mockState.spaceflights),
-        nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-        nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
-          mockState.spaceflights
-        ),
-      });
-
-      it('filters expected number of items', () => {
-        expect(filteredTreeItems).toHaveLength(1);
-      });
-    });
-
-    describe('getFilteredModularPipelineNodes', () => {
-      describe('should return an object corresponding to the right amount of modular pipeline items', () => {
-        const filteredModularPipelineNodes = getFilteredModularPipelineNodes({
-          nodes: getGroupedNodes(mockState.spaceflights),
-          tags: getTagData(mockState.spaceflights),
-          modularPipelines: getModularPipelineData(mockState.spaceflights),
-          nodeSelected: {},
-          searchValue: '',
-          modularPipelineIds: getModularPipelineIDs(mockState.spaceflights),
-          nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-          nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-          inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
-            mockState.spaceflights
-          ),
-        });
-
-        it('filters expected number of items', () => {
-          expect(Object.keys(filteredModularPipelineNodes)).toHaveLength(3);
-        });
-      });
-
-      describe('should return the correct amount of nodes for the filtered modular pipeline', () => {
-        const searchValue = 'split';
-
-        const filteredModularPipelineNodes = getFilteredModularPipelineNodes({
-          nodes: getGroupedNodes(mockState.spaceflights),
-          tags: getTagData(mockState.spaceflights),
-          modularPipelines: getModularPipelineData(mockState.spaceflights),
-          nodeSelected: {},
-          searchValue,
-          modularPipelineIds: getModularPipelineIDs(mockState.spaceflights),
-          nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-          nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-          inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
-            mockState.spaceflights
-          ),
-        });
-
-        it('filters expected number of items', () => {
-          expect(filteredModularPipelineNodes.data_science).toHaveLength(1);
-        });
-      });
-    });
-
-    describe('getNestedModularPipelines', () => {
-      describe('should return the right amount of nodes and children pipelines by default', () => {
-        const searchValue = '';
-
-        const nestedModularPipelines = getNestedModularPipelines({
-          nodes: getGroupedNodes(mockState.spaceflights),
-          tags: getTagData(mockState.spaceflights),
-          modularPipelines: getModularPipelineData(mockState.spaceflights),
-          nodeSelected: {},
-          searchValue,
-          modularPipelineIds: getModularPipelineIDs(mockState.spaceflights),
-          nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-          nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-          inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
-            mockState.spaceflights
-          ),
-        });
-
-        it('contains expected number of node and modular pipeline items', () => {
-          expect(nestedModularPipelines.nodes).toHaveLength(3);
-          expect(nestedModularPipelines.children).toHaveLength(2);
-        });
-      });
-
-      describe('should return the right amount of nodes and children pipelines', () => {
-        const searchValue = 'split';
-
-        const nestedModularPipelines = getNestedModularPipelines({
-          nodes: getGroupedNodes(mockState.spaceflights),
-          tags: getTagData(mockState.spaceflights),
-          modularPipelines: getModularPipelineData(mockState.spaceflights),
-          nodeSelected: {},
-          searchValue,
-          modularPipelineIds: getModularPipelineIDs(mockState.spaceflights),
-          nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-          nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-          inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
-            mockState.spaceflights
-          ),
-        });
-
-        it('contains expected number of node and modular pipeline items for the search value', () => {
-          expect(nestedModularPipelines.nodes).toHaveLength(0);
-          expect(nestedModularPipelines.children).toHaveLength(1);
-        });
-      });
     });
   });
 });

@@ -1,25 +1,22 @@
 import React from 'react';
-import NodeList, { mapStateToProps } from './index';
-import SplitPanel from '../split-panel';
-import { mockState, setup } from '../../utils/state.mock';
+import { togglePrettyName } from '../../actions';
+import { toggleTypeDisabled } from '../../actions/node-type';
+import { localStorageName, sidebarElementTypes } from '../../config';
 import {
   getNodeData,
   getNodeModularPipelines,
-  getGroupedNodes,
-  getInputOutputNodesForFocusedModularPipeline,
+  getModularPipelinesTree,
 } from '../../selectors/nodes';
-import { getNestedModularPipelines } from './node-list-items';
-import { getNodeTypeIDs } from '../../selectors/node-types';
-import {
-  getModularPipelineData,
-  getModularPipelineIDs,
-} from '../../selectors/modular-pipelines';
 import { getTagData } from '../../selectors/tags';
+import { mockState, setup } from '../../utils/state.mock';
 import IndicatorPartialIcon from '../icons/indicator-partial';
-import { localStorageName } from '../../config';
-import { toggleTypeDisabled } from '../../actions/node-type';
-import { sidebarElementTypes } from '../../config';
-import { togglePrettyName } from '../../actions';
+import SplitPanel from '../split-panel';
+import NodeList, { mapStateToProps } from './index';
+
+jest.mock('lodash/debounce', () => (func) => {
+  func.cancel = jest.fn();
+  return func;
+});
 
 describe('NodeList', () => {
   beforeEach(() => {
@@ -35,12 +32,20 @@ describe('NodeList', () => {
   });
 
   describe('tree-search-ui', () => {
-    describe('searching through nodes', () => {
+    describe('displays nodes matching search value', () => {
       const wrapper = setup.mount(<NodeList />);
-      const searches = ['Metrics', 'aaaaaaaaaaaaa'];
+
+      const searches = [
+        // search text that matches an external node only
+        'Metrics',
+        // search text that matches a few nodes nested inside modular pipelines
+        'Preprocess',
+        // bogus search text that should yield 0 result
+        'aaaaaaaaaaaaa',
+      ];
 
       test.each(searches)(
-        'filters the nodes and its relevant parent modular pipeline when entering the search text "%s"',
+        'display only the nodes matching the search text "%s", as well as their modular pipelines',
         (searchText) => {
           const search = () => wrapper.find('.kui-input__field');
           search().simulate('change', { target: { value: searchText } });
@@ -61,7 +66,6 @@ describe('NodeList', () => {
           const expectedElementTypeResult = Object.keys(
             sidebarElementTypes
           ).filter((type) => type.includes(searchText));
-          // obtain the modular pipeline parents
           const expectedModularPipelines = nodesModularPipelines.hasOwnProperty(
             searchText
           )
@@ -78,11 +82,8 @@ describe('NodeList', () => {
         }
       );
     });
-
-    it('clears the search filter input and resets the list when hitting the Escape key', () => {
-      const wrapper = setup.mount(
-        <NodeList focusMode={null} inputOutputDataNodes={{}} />
-      );
+    it('clears the search input and resets the list when hitting the Escape key', () => {
+      const wrapper = setup.mount(<NodeList />);
       const searchWrapper = wrapper.find('.pipeline-nodelist-search');
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.kui-input__field');
@@ -116,35 +117,18 @@ describe('NodeList', () => {
       // Clear the list with escape key
       searchWrapper.simulate('keydown', { keyCode: 27 });
 
-      // obtain the nested modular pipeline data to correspond to the node-list-tree layout
-      const nestedModularPipelines = getNestedModularPipelines({
-        nodes: getGroupedNodes(mockState.spaceflights),
-        tags: getTagData(mockState.spaceflights),
-        modularPipelines: getModularPipelineData(mockState.spaceflights),
-        nodeSelected: {},
-        searchValue: '',
-        modularPipelineIds: getModularPipelineIDs(mockState.spaceflights),
-        nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-        nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
-          mockState.spaceflights
-        ),
-      });
-
       // Check that search input value and node list have been reset
+      const modularPipelinesTree = getModularPipelinesTree(
+        mockState.spaceflights
+      );
       expect(search().props().value).toBe('');
       expect(nodeList().length).toBe(
-        nestedModularPipelines.children.length +
-          nestedModularPipelines.nodes.length
+        modularPipelinesTree['__root__'].children.length
       );
     });
-
-    it('search works alongside focus mode', () => {
+    it('displays search results when in focus mode', () => {
       const wrapper = setup.mount(
-        <NodeList
-          focusMode={{ id: 'data_science' }}
-          inputOutputDataNodes={{}}
-        />
+        <NodeList focusMode={{ id: 'data_science' }} />
       );
       const searchWrapper = wrapper.find('.pipeline-nodelist-search');
       // Re-find elements from root each time to see updates
@@ -179,26 +163,13 @@ describe('NodeList', () => {
       // Clear the list with escape key
       searchWrapper.simulate('keydown', { keyCode: 27 });
 
-      // obtain the nested modular pipeline data to correspond to the node-list-tree layout
-      const nestedModularPipelines = getNestedModularPipelines({
-        nodes: getGroupedNodes(mockState.spaceflights),
-        tags: getTagData(mockState.spaceflights),
-        modularPipelines: getModularPipelineData(mockState.spaceflights),
-        nodeSelected: {},
-        searchValue: '',
-        modularPipelineIds: getModularPipelineIDs(mockState.spaceflights),
-        nodeModularPipelines: getNodeModularPipelines(mockState.spaceflights),
-        nodeTypeIDs: getNodeTypeIDs(mockState.spaceflights),
-        inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(
-          mockState.spaceflights
-        ),
-      });
-
       // Check that search input value and node list have been reset
+      const modularPipelinesTree = getModularPipelinesTree(
+        mockState.spaceflights
+      );
       expect(search().props().value).toBe('');
       expect(nodeList().length).toBe(
-        nestedModularPipelines.children.length +
-          nestedModularPipelines.nodes.length
+        modularPipelinesTree['__root__'].children.length
       );
     });
   });
@@ -376,20 +347,15 @@ describe('NodeList', () => {
       const elementTypes = Object.keys(sidebarElementTypes);
       expect(nodeList.length).toBe(tags.length + elementTypes.length);
     });
-
     it('renders the correct number of modular pipelines and nodes in the tree sidepanel', () => {
       const wrapper = setup.mount(<NodeList />);
       const nodeList = wrapper.find('.pipeline-nodelist__row__text--tree');
-
-      // with the tree structure we now need to extract nodes that are in the top level modular pipeline
-      const nodes = getNodeData(mockState.spaceflights).filter(
-        (node) => node.modularPipelines.length === 0
-      );
-      // Similar to the above, we now need to only extract modular pipelines in the top level only
-      const modularPipelines = getModularPipelineData(
+      const modularPipelinesTree = getModularPipelinesTree(
         mockState.spaceflights
-      ).filter((modularPipeline) => !modularPipeline.id.includes('.'));
-      expect(nodeList.length).toBe(nodes.length + modularPipelines.length);
+      );
+      expect(nodeList.length).toBe(
+        modularPipelinesTree['__root__'].children.length
+      );
     });
 
     it('renders elements panel, filter panel inside a SplitPanel with a handle', () => {
@@ -415,7 +381,7 @@ describe('NodeList', () => {
   describe('node list element item', () => {
     const wrapper = setup.mount(<NodeList />);
     // this needs to be the 3rd element as the first 2 elements are modular pipelines rows which does not apply the '--active' class
-    const nodeRow = () => wrapper.find('.pipeline-nodelist__row').at(2);
+    const nodeRow = () => wrapper.find('.pipeline-nodelist__row').at(3);
 
     it('handles mouseenter events', () => {
       nodeRow().simulate('mouseenter');
@@ -450,7 +416,6 @@ describe('NodeList', () => {
         disabledNode: expect.any(Boolean),
         disabledTag: expect.any(Boolean),
         disabledType: expect.any(Boolean),
-        disabledModularPipeline: expect.any(Boolean),
         id: expect.any(String),
         name: expect.any(String),
         type: expect.any(String),
@@ -461,10 +426,11 @@ describe('NodeList', () => {
       nodes: expect.objectContaining({
         data: nodeList,
         task: nodeList,
+        modularPipeline: nodeList,
       }),
       nodeSelected: expect.any(Object),
       nodeTypes: expect.any(Array),
-      modularPipelines: expect.any(Object),
+      modularPipelinesTree: expect.any(Object),
     });
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });

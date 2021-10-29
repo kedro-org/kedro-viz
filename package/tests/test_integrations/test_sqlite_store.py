@@ -25,6 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import json
 from pathlib import Path
 
 import pytest
@@ -34,9 +35,12 @@ from sqlalchemy.orm import sessionmaker
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore, get_db
 from kedro_viz.models.run_model import Base, RunModel
 
-FAKE_SESSION_ID_1 = "fake_session_id_1"
 
-FAKE_SESSION_ID_2 = "fake_session_id_2"
+def session_id():
+    i = 0
+    while True:
+        yield f"session_{i}"
+        i += 1
 
 
 @pytest.fixture
@@ -45,7 +49,7 @@ def store_path(tmp_path):
 
 
 @pytest.fixture
-def dbsession(store_path):
+def db_session_class(store_path):
     engine = create_engine(f"sqlite:///{store_path}/session_store.db")
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -54,18 +58,30 @@ def dbsession(store_path):
 
 class TestSQLiteStore:
     def test_empty(self, store_path):
-        sqlite_store = SQLiteStore(str(store_path), FAKE_SESSION_ID_1)
+        sqlite_store = SQLiteStore(store_path, next(session_id()))
         assert sqlite_store == {}
         assert sqlite_store.location == store_path / "session_store.db"
 
-    def test_save(self, store_path, dbsession):
-        sqlite_store = SQLiteStore(str(store_path), FAKE_SESSION_ID_1)
-        sqlite_store.data = {"project_path": Path(store_path)}
+    def test_save_single_run(self, store_path, db_session_class):
+        sqlite_store = SQLiteStore(store_path, next(session_id()))
+        sqlite_store.data = {"project_path": store_path, "project_name": "test"}
         sqlite_store.save()
-        db = next(get_db(dbsession))
+        db = next(get_db(db_session_class))
+        loaded_runs = db.query(RunModel).all()
+        assert len(loaded_runs) == 1
+        assert json.loads(loaded_runs[0].blob) == {
+            "project_path": str(store_path),
+            "project_name": "test",
+        }
+
+    def test_save_multiple_runs(self, store_path, db_session_class):
+        session = session_id()
+        sqlite_store = SQLiteStore(store_path, next(session))
+        sqlite_store.save()
+        db = next(get_db(db_session_class))
         assert db.query(RunModel).count() == 1
         # save another session
-        sqlite_store2 = SQLiteStore(str(store_path), FAKE_SESSION_ID_2)
+        sqlite_store2 = SQLiteStore(store_path, next(session))
         sqlite_store2.save()
-        db = next(get_db(dbsession))
+        db = next(get_db(db_session_class))
         assert db.query(RunModel).count() == 2
