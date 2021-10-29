@@ -631,7 +631,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @staticmethod
     def load_latest_tracking_data(
-        dataset: "Union[JSONDataSet, MetricsDataSet]",
+        dataset: Union["JSONDataSet", "MetricsDataSet"],
     ) -> Optional[Dict[str, float]]:
         """Load data for latest versions of the json dataset.
         Below operation is also on kedro.io.core -> fetched_latest_load_version()
