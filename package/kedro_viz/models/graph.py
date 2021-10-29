@@ -517,6 +517,21 @@ class DataNode(GraphNode):
             == "kedro.extras.datasets.tracking.json_dataset.JSONDataSet"
         )
 
+    def is_tracking_node(self):
+        # pylint: disable=import-outside-toplevel
+        """Checks if the current node is a type defined under kedro.extras.datasets.tracking"""
+        from kedro.extras.datasets import tracking
+
+        tracking_classes = inspect.getmembers(tracking, inspect.isclass)
+        # Check if the dataset type matches any of the (name, class) pairs
+        return bool(
+            [
+                tracking_class
+                for tracking_class in tracking_classes
+                if self.dataset_type in str(tracking_class[1])
+            ]
+        )
+
 
 @dataclass
 class TranscodedDataNode(GraphNode):
@@ -600,7 +615,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
 
-        if data_node.is_metric_node() | data_node.is_json_node():
+        if data_node.is_tracking_node():
             from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
             from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
@@ -637,7 +652,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         Below operation is also on kedro.io.core -> fetched_latest_load_version()
         However it is a cached function and hence cannot be relied upon
         Args:
-            dataset: the latest version of the metrics dataset
+            dataset: the latest version of the metrics or json dataset
         Returns:
             A dictionary containing json data for the latest version
         """

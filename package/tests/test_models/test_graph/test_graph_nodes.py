@@ -628,7 +628,9 @@ class TestGraphNodeMetadata:
     def test_load_metrics_versioned_data_invalid_timestamp(
         self, patched_warning, metrics_filepath_invalid_timestamp
     ):
-        DataNodeMetadata.load_tracking_versioned_data(metrics_filepath_invalid_timestamp)
+        DataNodeMetadata.load_tracking_versioned_data(
+            metrics_filepath_invalid_timestamp
+        )
         patched_warning.assert_has_calls(
             [
                 call(
