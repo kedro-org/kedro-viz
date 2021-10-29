@@ -10,7 +10,7 @@ import './runs-list-card.css';
  * @param {object} data High-level data from the run (id, timestamp, etc.)
  */
 const RunsListCard = ({ data }) => {
-  const { runId, timestamp, title = null, bookmark } = data.metaData;
+  const { id, timestamp, title = null, bookmark } = data.metadata;
   const [active, setActive] = useState(false);
 
   return (
@@ -25,7 +25,7 @@ const RunsListCard = ({ data }) => {
         <div className="runs-list-card__title">
           {typeof title === 'string' ? title : timestamp}
         </div>
-        <div className="runs-list-card__id">{runId}</div>
+        <div className="runs-list-card__id">{id}</div>
         <div className="runs-list-card__timestamp">
           {timestamp.toISOString()}
         </div>

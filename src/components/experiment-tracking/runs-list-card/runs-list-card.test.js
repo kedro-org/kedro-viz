@@ -6,9 +6,9 @@ import { configure, mount, shallow } from 'enzyme';
 configure({ adapter: new Adapter() });
 
 const randomRun = {
-  metaData: {
+  metadata: {
     bookmark: false,
-    runId: 'ef32bfd',
+    id: 'ef32bfd',
     timestamp: new Date('October 15, 2021 03:24:00'),
     title: 'Sprint 4 EOW',
   },

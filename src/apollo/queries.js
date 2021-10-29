@@ -4,9 +4,9 @@ import gql from 'graphql-tag';
 export const GET_RUNS = gql`
   query getRunsList {
     runsList {
-      runId
-      metaData {
-        runId
+      id
+      metadata {
+        id
         title
         bookmark
         gitSha
@@ -19,8 +19,8 @@ export const GET_RUNS = gql`
 export const GET_RUN_METADATA = gql`
   query getRunMetadata($run: [ID]!) {
     runsWithData(run: $run) {
-      runId
-      metaData {
+      id
+      metadata {
         author
         gitBranch
         gitSha
@@ -38,7 +38,7 @@ export const GET_RUN_METADATA = gql`
 export const GET_RUNS_TRACKING_DATA = gql`
   query getRunMetadata($run: [ID]!) {
     runsWithData(run: $run) {
-      runId
+      id
       runTrackingData {
         details
       }

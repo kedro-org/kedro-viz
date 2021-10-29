@@ -15,7 +15,8 @@ const typeDefs = gql`
 
   type Query {
     runsList: [Run]!
-    runsWithData(runIDs: [ID]!): [Run!]!
+    runMetadata(runIDs: [ID]!): [Run!]!
+    runTrackingData(runIDs: [ID]!): [TrackingDataset]!
   }
 
   type Subscription {
@@ -23,16 +24,10 @@ const typeDefs = gql`
   }
 
   type Run {
-    runID: ID!
-    metadata: RunMetadata
-    trackingData: RunTrackingData
-  }
-
-  type RunMetadata {
-    runID: ID!
+    id: ID!
     title: String!
     timestamp: String!
-    author: String
+    author: String
     gitBranch: String
     gitSha: String
     bookmark: Boolean
