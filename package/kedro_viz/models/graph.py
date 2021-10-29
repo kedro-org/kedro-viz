@@ -38,7 +38,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Type, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
 
 import pandas as pd
 import plotly.express as px
@@ -53,6 +53,7 @@ from pandas.core.frame import DataFrame
 # so it doesn't blow up if user doesn't have the dataset dependencies installed.
 if TYPE_CHECKING:  # pragma: no cover
     from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
+    from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
 
 logger = logging.getLogger(__name__)
@@ -630,7 +631,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @staticmethod
     def load_latest_tracking_data(
-        dataset: "Type[JSONDataSet]",
+        dataset: "Union[JSONDataSet, MetricsDataSet]",
     ) -> Optional[Dict[str, float]]:
         """Load data for latest versions of the json dataset.
         Below operation is also on kedro.io.core -> fetched_latest_load_version()
