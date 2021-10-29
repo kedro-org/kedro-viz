@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
 import CheckIcon from '../../icons/check';
+import BookmarkIcon from '../../icons/bookmark';
 
 import './runs-list-card.css';
 
@@ -9,7 +10,7 @@ import './runs-list-card.css';
  * @param {object} data High-level data from the run (id, timestamp, etc.)
  */
 const RunsListCard = ({ data }) => {
-  const { id, timestamp, title = null } = data;
+  const { id, timestamp, title = null, bookmark } = data.metadata;
   const [active, setActive] = useState(false);
 
   return (
@@ -25,9 +26,11 @@ const RunsListCard = ({ data }) => {
           {typeof title === 'string' ? title : timestamp}
         </div>
         <div className="runs-list-card__id">{id}</div>
-        <div className="runs-list-card__timestamp">{timestamp}</div>
+        <div className="runs-list-card__timestamp">
+          {timestamp.toISOString()}
+        </div>
       </div>
-      {/* {bookmark && <BookmarkIcon className={'runs-list-card__bookmark'} />} */}
+      {bookmark && <BookmarkIcon className={'runs-list-card__bookmark'} />}
     </div>
   );
 };
