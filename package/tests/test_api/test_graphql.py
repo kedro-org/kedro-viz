@@ -56,9 +56,7 @@ class TestGraphQLEndpoints:
             mock_session.return_value = example_db_dataset
             response = client.post(
                 "/graphql",
-                json={
-                    "query": "{runMetadata(runIds: [1534326]) {id bookmark}}"
-                },
+                json={"query": "{runMetadata(runIds: [1534326]) {id bookmark}}"},
             )
         assert response.json() == {
             "data": {
