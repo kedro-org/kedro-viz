@@ -137,10 +137,49 @@
     { "id": "data_science", "name": "Data Science" },
     { "id": "data_processing", "name": "Data Processing" }
   ],
-  "modular_pipelines": [
-    { "id": "uk", "name": "Uk" },
-    { "id": "uk.data_processing", "name": "Data Processing" },
-    { "id": "uk.data_science", "name": "Data Science" }
-  ],
+  "modular_pipelines": {
+    "__root__": {
+      "children": [
+        { "id": "0ecea0de", "type": "data" },
+        { "id": "f1f1425b", "type": "parameters" },
+        { "id": "c506f374", "type": "parameters" },
+        { "id": "uk", "type": "modularPipeline" }
+      ],
+      "id": "__root__",
+      "inputs": [],
+      "name": "Root",
+      "outputs": []
+    },
+    "uk": {
+      "children": [
+        { "id": "uk.data_science", "type": "modularPipeline" },
+        { "id": "uk.data_processing", "type": "modularPipeline" }
+      ],
+      "id": "uk",
+      "inputs": ["c506f374", "f1f1425b", "13399a82"],
+      "name": "Uk",
+      "outputs": ["d5a8b994"]
+    },
+    "uk.data_processing": {
+      "children": [
+        { "id": "13399a82", "type": "data" },
+        { "id": "56118ad8", "type": "task" }
+      ],
+      "id": "uk.data_processing",
+      "inputs": ["c506f374", "13399a82"],
+      "name": "Data Processing",
+      "outputs": ["0ecea0de"]
+    },
+    "uk.data_science": {
+      "children": [
+        { "id": "d5a8b994", "type": "data" },
+        { "id": "7b140b3f", "type": "task" }
+      ],
+      "id": "uk.data_science",
+      "inputs": ["0ecea0de", "f1f1425b"],
+      "name": "Data Science",
+      "outputs": ["d5a8b994"]
+    }
+  },
   "selected_pipeline": "__default__"
 }

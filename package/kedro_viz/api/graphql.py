@@ -27,11 +27,14 @@
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
 # pylint: disable=no-self-use, too-few-public-methods
+
 from __future__ import annotations
 
 import json
+import typing
 from pathlib import Path
-from typing import TYPE_CHECKING, List
+from typing import Dict, TYPE_CHECKING, List, Optional
+from kedro.extras.datasets import tracking
 
 import strawberry
 from fastapi import APIRouter
@@ -39,64 +42,84 @@ from strawberry import ID
 from strawberry.asgi import GraphQL
 
 from kedro_viz.data_access import data_access_manager
+from kedro_viz.models.run_model import RunModel
+
 
 if TYPE_CHECKING:  # pragma: no cover
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 
-
-def get_run(run_id: ID) -> Run:
-    """Placeholder for the proper method.
-    Get a run by id from the session store.
-
+def format_run(run_id: str, run_blob: dict) -> Run:
+    """Convert blob data in the correct Run format.
     Args:
         run_id: ID of the run to fetch
-
+        run_blob: JSON blob of run metadata and details
     Returns:
         Run object
     """
-    metadata = RunMetadata(
+    git_data = run_blob.get("git")
+    run = Run(
         id=ID(run_id),
         author="",
         gitBranch="",
-        gitSha="commit_sha",
+        gitSha=git_data.get("commit_sha") if git_data else None,
         bookmark=False,
-        title="",
+        title=run_blob["session_id"],
         notes="",
-        timestamp="session_id",
-        runCommand="command_path",
+        timestamp=run_blob["session_id"],
+        runCommand=run_blob["cli"]["command_path"],
     )
-    # Don't forget to update this to     tracking_data = get_run_tracking_data(run_id=ID(run_id))
-    # when merging all the resolver code.
-    tracking_data = RunTrackingData(id=ID(run_id), trackingData=[])
+    return run
 
-    return Run(
-        id=ID(run_id),
-        metadata=metadata,
-        trackingData=tracking_data,
-    )
+
+def get_run(run_id: ID) -> Run:
+    """Get a run by id from the session store.
+    Args:
+        run_id: ID of the run to fetch
+    Returns:
+        Run object
+    """
+    session = data_access_manager.db_session
+    run_data = session.query(RunModel).filter(RunModel.id == run_id).first()
+    return format_run(run_data.id, json.loads(run_data.blob))
 
 
 def get_runs() -> List[Run]:
-    """Placeholder for the proper method.
-    Get all runs from the session store.
-
+    """Get all runs from the session store.
     Returns:
         list of Run objects
     """
-    return [get_run(ID("123"))]
+    runs = []
+    session = data_access_manager.db_session
+    for run_data in session.query(RunModel).all():
+        run = format_run(run_data.id, json.loads(run_data.blob))
+        runs.append(run)
+    return runs
 
+def format_run_tracking_data(tracking_data: Dict) -> Dict:
+    tracking_keys = set()
+    for key in tracking_data.keys():
+        for nested_keys in tracking_data[key].keys():
+            tracking_keys.add(nested_keys)
+    runs_tracking_data = {key:[
+        {'runId': run_id, 
+         'value':tracking_data[run_id][key]}
+         for run_id in tracking_data if key in tracking_data[run_id]]
+         for key in tracking_keys}
+    return runs_tracking_data
+    
+  
 
-def get_run_tracking_data(run_id: ID) -> RunTrackingData:
+def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all details for a specific run. Run details contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
     during that specific `kedro run`.
 
     Args:
-        run_id:  ID of the run to fetch the details for.
+        run_ids:  List of IDs of runs to fetch the details for.
 
     Returns:
-        RunDetails object
+        List of TrackingDataSets 
 
     """
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
@@ -108,71 +131,69 @@ def get_run_tracking_data(run_id: ID) -> RunTrackingData:
         for ds_name, ds_value in catalog._data_sets.items()
         if (isinstance(ds_value, (MetricsDataSet, JSONDataSet)))
     ]
+
     for name, dataset in experiment_datasets:
-        file_path = dataset._get_versioned_path(str(run_id))
-        if Path(file_path).is_file():
-            with dataset._fs.open(file_path, **dataset._fs_open_args_load) as fs_file:
-                json_data = json.load(fs_file)
-                tracking_dataset = TrackingDataSet(
-                    datasetName=name,
-                    datasetType=str(type(dataset)),
-                    data=json.dumps(json_data),
-                )
-                all_datasets.append(tracking_dataset)
-    return RunTrackingData(id=run_id, trackingData=all_datasets)
+        all_runs = {}
+        for run_id in run_ids:
+            id = ID(run_id)
+            file_path = dataset._get_versioned_path(str(id))
+            if Path(file_path).is_file():
+                with dataset._fs.open(file_path, **dataset._fs_open_args_load) as fs_file:
+                    json_data = json.load(fs_file)
+                    all_runs[id] = json_data
+        tracking_dataset = TrackingDataSet(
+            datasetName=name,
+            datasetType=str(type(dataset)),
+            data=json.dumps(format_run_tracking_data(all_runs))
+        )
+        all_datasets.append(tracking_dataset)
+    return all_datasets            
 
 
 @strawberry.type
 class Run:
-    """Run object format to return to the frontend"""
+    """Run object format"""
 
     id: ID
-    metadata: RunMetadata
-    trackingData: RunTrackingData
-
-
-@strawberry.type
-class RunMetadata:
-    """RunMetadata object format"""
-
-    id: ID
-    author: str
-    gitBranch: str
-    gitSha: str
-    bookmark: bool
     title: str
-    notes: str
     timestamp: str
-    runCommand: str
+    author: Optional[str]
+    gitBranch: Optional[str]
+    gitSha: Optional[str]
+    bookmark: Optional[bool]
+    notes: Optional[str]
+    runCommand: Optional[str]
 
 
 @strawberry.type
 class TrackingDataSet:
     """TrackingDataSet object to structure tracking data for a Run."""
-
-    datasetName: str
-    datasetType: str
-    data: str
-
-
-@strawberry.type
-class RunTrackingData:
-    """RunTrackingData object format"""
-
-    id: ID
-    trackingData: List[TrackingDataSet]
+    
+    datasetName: Optional[str]
+    datasetType: Optional[str]
+    data: Optional[str]
 
 
 @strawberry.type
 class Query:
     """Query endpoint to get data from the session store"""
 
-    @strawberry.field
-    def run(self, run_id: ID) -> Run:
-        """Query to get data for a specific run from the session store"""
-        return get_run(run_id)
+    runs_list: List[Run] = strawberry.field(resolver=get_runs)
 
-    runs: List[Run] = strawberry.field(resolver=get_runs)
+    @strawberry.field
+    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
+        """Query to get data for specific runs from the session store"""
+        runs = []
+        for run_id in run_ids:
+            run = get_run(run_id)
+            runs.append(run)
+        return runs
+
+    @strawberry.field
+    def run_tracking_data(self, run_ids: List[ID]) -> List[TrackingDataSet]:
+        """Query to get data for specific runs from the session store"""
+        runs = get_run_tracking_data(run_ids)
+        return runs
 
 
 schema = strawberry.Schema(query=Query)
@@ -180,3 +201,15 @@ schema = strawberry.Schema(query=Query)
 router = APIRouter()
 
 router.add_route("/graphql", GraphQL(schema))
+
+
+
+
+
+
+
+
+
+
+
+

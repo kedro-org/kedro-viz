@@ -87,18 +87,18 @@ describe('prepareNonPipelineState', () => {
 
   it('overrides theme with value from prop', () => {
     const props = { theme: 'light' };
-    expect(prepareNonPipelineState({ data: spaceflights, ...props })).toMatchObject(
-      props
-    );
+    expect(
+      prepareNonPipelineState({ data: spaceflights, ...props })
+    ).toMatchObject(props);
   });
 
   it('overrides visible with values from prop', () => {
     const props = {
       visible: { miniMap: true, sidebar: false, themeBtn: false },
     };
-    expect(prepareNonPipelineState({ data: spaceflights, ...props })).toMatchObject(
-      props
-    );
+    expect(
+      prepareNonPipelineState({ data: spaceflights, ...props })
+    ).toMatchObject(props);
   });
 });
 
