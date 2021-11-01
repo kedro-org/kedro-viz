@@ -19,7 +19,48 @@ describe('Accordion', () => {
     expect(wrapper.find('.child').length).toBe(2);
   });
 
-  it('handle collapse button click event', () => {
+  it('renders the toggle button on the left', () => {
+    const wrapper = shallow(
+      <Accordion heading="Title here" layout="left">
+        <div className="child">1</div>
+        <div className="child">2</div>
+      </Accordion>
+    );
+
+    expect(
+      wrapper.find(
+        '.accordion__heading > .accordion__toggle + .accordion__title'
+      ).length
+    ).toBe(1);
+  });
+
+  it('renders the toggle button on the right', () => {
+    const wrapper = shallow(
+      <Accordion heading="Title here" layout="right">
+        <div className="child">1</div>
+        <div className="child">2</div>
+      </Accordion>
+    );
+
+    expect(
+      wrapper.find(
+        '.accordion__heading > .accordion__title + .accordion__toggle'
+      ).length
+    ).toBe(1);
+  });
+
+  it('handles collapsing the accordion with a prop', () => {
+    const wrapper = shallow(
+      <Accordion heading="Title here" isCollapsed>
+        <div className="child">1</div>
+        <div className="child">2</div>
+      </Accordion>
+    );
+
+    expect(wrapper.find('.accordion__content--hide').length).toBe(1);
+  });
+
+  it('handles collapse button click event', () => {
     const setCollapsed = jest.fn();
     const wrapper = mount(
       <Accordion>

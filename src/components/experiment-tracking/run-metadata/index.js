@@ -9,10 +9,10 @@ const RunMetadata = ({ isSingleRun, runs }) => {
     initialState[i] = false;
   }
 
-  const [expandNotes, setExpandNotes] = useState(initialState);
+  const [toggleNotes, setToggleNotes] = useState(initialState);
 
-  const onShowMoreClick = (key) => {
-    setExpandNotes({ ...expandNotes, [key]: true });
+  const onToggleNoteExpand = (index) => {
+    setToggleNotes({ ...toggleNotes, [index]: !toggleNotes[index] });
   };
 
   return (
@@ -72,16 +72,16 @@ const RunMetadata = ({ isSingleRun, runs }) => {
                   <td>
                     <p
                       className="details-metadata__notes"
-                      style={expandNotes[i] ? { display: 'block' } : null}
+                      style={toggleNotes[i] ? { display: 'block' } : null}
                     >
                       {metadata.notes}
                     </p>
-                    {metadata.notes.length > 100 && !expandNotes[i] ? (
+                    {metadata.notes.length > 100 ? (
                       <button
                         className="details-metadata__show-more kedro"
-                        onClick={() => onShowMoreClick(i)}
+                        onClick={() => onToggleNoteExpand(i)}
                       >
-                        Show more
+                        Show {toggleNotes[i] ? 'less' : 'more'}
                       </button>
                     ) : null}
                   </td>
