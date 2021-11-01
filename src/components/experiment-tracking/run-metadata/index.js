@@ -81,7 +81,7 @@ const RunMetadata = ({ isSingleRun, runs }) => {
                         className="details-metadata__show-more kedro"
                         onClick={() => onToggleNoteExpand(i)}
                       >
-                        Show {toggleNotes[i] ? 'less' : 'more'}
+                        {toggleNotes[i] ? 'Show less' : 'Show more'}
                       </button>
                     ) : null}
                   </td>
