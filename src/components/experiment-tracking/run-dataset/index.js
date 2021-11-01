@@ -26,9 +26,16 @@ const RunDataset = ({ isSingleRun, trackingData }) => {
             layout="left"
             size="large"
           >
-            {dataset.data.map((dataObject, rowIndex) => {
-              return buildDatasetDataMarkup(dataObject, rowIndex, isSingleRun);
-            })}
+            {Object.keys(dataset.data)
+              .sort()
+              .map((key, rowIndex) => {
+                return buildDatasetDataMarkup(
+                  key,
+                  dataset.data[key],
+                  rowIndex,
+                  isSingleRun
+                );
+              })}
           </Accordion>
         );
       })}
@@ -38,57 +45,61 @@ const RunDataset = ({ isSingleRun, trackingData }) => {
 
 /**
  * Build the necessary markup used to display the run dataset.
- * @param {object} data A single dataset object from a run.
+ * @param {string} datasetKey The row label of the data.
+ * @param {array} datasetValues A single dataset array from a run.
  * @param {number} rowIndex The array index of the dataset data.
  * @param {boolean} isSingleRun Whether or not this is a single run.
  */
-function buildDatasetDataMarkup(data, rowIndex, isSingleRun) {
-  for (const [datasetKey, datasetValues] of Object.entries(data)) {
-    return (
-      <React.Fragment key={datasetKey + rowIndex}>
-        {rowIndex === 0 ? (
-          <div className="details-dataset__row">
-            <span
-              className={classnames('details-dataset__name-header', {
-                'details-dataset__value-header--single': isSingleRun,
-              })}
-            >
-              Name
-            </span>
-            {datasetValues.map((value, index) => (
-              <span
-                className={classnames('details-dataset__value-header', {
-                  'details-dataset__value-header--single': isSingleRun,
-                })}
-                key={value.runId + index}
-              >
-                Value
-              </span>
-            ))}
-          </div>
-        ) : null}
+function buildDatasetDataMarkup(
+  datasetKey,
+  datasetValues,
+  rowIndex,
+  isSingleRun
+) {
+  return (
+    <React.Fragment key={datasetKey + rowIndex}>
+      {rowIndex === 0 ? (
         <div className="details-dataset__row">
           <span
-            className={classnames('details-dataset__label', {
-              'details-dataset__label--single': isSingleRun,
+            className={classnames('details-dataset__name-header', {
+              'details-dataset__value-header--single': isSingleRun,
             })}
           >
-            {datasetKey}
+            Name
           </span>
           {datasetValues.map((value, index) => (
             <span
-              className={classnames('details-dataset__value', {
-                'details-dataset__value--single': isSingleRun,
+              className={classnames('details-dataset__value-header', {
+                'details-dataset__value-header--single': isSingleRun,
               })}
               key={value.runId + index}
             >
-              {value.value}
+              Value
             </span>
           ))}
         </div>
-      </React.Fragment>
-    );
-  }
+      ) : null}
+      <div className="details-dataset__row">
+        <span
+          className={classnames('details-dataset__label', {
+            'details-dataset__label--single': isSingleRun,
+          })}
+        >
+          {datasetKey}
+        </span>
+        {datasetValues.map((value, index) => (
+          <span
+            className={classnames('details-dataset__value', {
+              'details-dataset__value--single': isSingleRun,
+            })}
+            key={value.runId + index}
+          >
+            {value.value}
+          </span>
+        ))}
+      </div>
+    </React.Fragment>
+  );
 }
 
 export default RunDataset;
