@@ -8,26 +8,22 @@ import './runs-list.css';
 /**
  * Main runs-list container.
  */
-const RunsList = ({ runs }) => {
+const RunsList = ({ runData }) => {
   const { run, compare } = useRunIdsFromUrl();
+
+  const { runsList } = runData;
 
   return (
     <>
-      <h1>
-        {run !== null
-          ? 'Single view'
-          : compare !== null
-          ? 'Compare view'
-          : 'No runs'}
-      </h1>
-      <Accordion
-        heading="All"
-        headingClassName="runs-list__accordion-header"
-        headingDetail={runs.length}
-      >
+      <Accordion heading="All" headingDetail={runsList.length}>
         <div className="runs-list__wrapper">
-          {runs.map((data, i) => (
-            <RunsListCard data={data} key={i} />
+          {runsList.map((data, i) => (
+            <RunsListCard
+              data={data}
+              key={i}
+              selectedRun={run}
+              selectedRunsToCompare={compare}
+            />
           ))}
         </div>
       </Accordion>

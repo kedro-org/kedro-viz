@@ -9,7 +9,7 @@ const randomRun = {
   metadata: {
     bookmark: false,
     id: 'ef32bfd',
-    timestamp: '2021-08-31T01:36:24.560Z',
+    timestamp: new Date('October 15, 2021 03:24:00'),
     title: 'Sprint 4 EOW',
   },
 };
