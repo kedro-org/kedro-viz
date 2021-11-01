@@ -15,7 +15,11 @@ const RunsList = ({ runData }) => {
 
   return (
     <>
-      <Accordion heading="All" headingDetail={runsList.length}>
+      <Accordion
+        heading="All"
+        headingClassName="runs-list__accordion-header"
+        headingDetail={runsList.length}
+      >
         <div className="runs-list__wrapper">
           {runsList.map((data, i) => (
             <RunsListCard
