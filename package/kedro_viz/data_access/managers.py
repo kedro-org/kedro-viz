@@ -26,6 +26,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.data_access.managers` defines data access managers."""
+import logging
+
 # pylint: disable=too-many-instance-attributes
 from collections import defaultdict
 from typing import Dict, List, Set, Union
@@ -60,6 +62,8 @@ from .repositories import (
     TagsRepository,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class DataAccessManager:
     """Centralised interface for the rest of the application to interact with data repositories."""
@@ -81,6 +85,8 @@ class DataAccessManager:
     @property
     def db_session(self):  # pragma: no cover
         """Sqlite db connection session"""
+        if not self._db_session:
+            logger.warning("Database connection was unsuccessful")
         return self._db_session
 
     @db_session.setter
