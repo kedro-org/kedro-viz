@@ -26,13 +26,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
-# pylint: disable=no-self-use, too-few-public-methods
+# pylint: disable=no-self-use, too-few-public-methods, unnecessary-lambda
 
 from __future__ import annotations
 
 import json
 import logging
-from typing import List, Optional, Dict, NewType, Any
+from typing import Any, Dict, List, NewType, Optional
 
 import strawberry
 from fastapi import APIRouter
@@ -48,7 +48,7 @@ JSONScalar = strawberry.scalar(
     NewType("JSONScalar", Any),
     serialize=lambda v: v,
     parse_value=lambda v: json.loads(v),
-    description="The GenericScalar scalar type represents a generic GraphQL scalar value that could be: List or Object."
+    description="JSON Object Type",
 )
 
 
@@ -77,23 +77,24 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
     return run
 
 
-def get_run(run_id: ID) -> Optional[Run]:
+def get_runs(run_ids: List[ID]) -> List[Run]:
     """Get a run by id from the session store.
 
     Args:
-        run_id: ID of the run to fetch
+        run_ids: ID of the run to fetch
 
     Returns:
-        Run object
+        list of Run objects
     """
+    runs: List[Run] = []
     session = data_access_manager.db_session
     if not session:
-        return None
-    run_data = session.query(RunModel).filter(RunModel.id == run_id).first()
-    if not run_data:
-        logger.warning("Cannot find matching run")
-        return None
-    return format_run(run_data.id, json.loads(run_data.blob))
+        return runs
+    all_run_data = session.query(RunModel).filter(RunModel.id.in_(run_ids)).all()
+    for run_data in all_run_data:
+        run = format_run(run_data.id, json.loads(run_data.blob))
+        runs.append(run)
+    return runs
 
 
 def get_all_runs() -> List[Run]:
@@ -102,7 +103,7 @@ def get_all_runs() -> List[Run]:
     Returns:
         list of Run objects
     """
-    runs = []
+    runs: List[Run] = []
     session = data_access_manager.db_session
     if not session:
         return runs
@@ -134,6 +135,8 @@ class TrackingDataSet:
     datasetName: str
     datasetType: str
     data: JSONScalar
+
+
 @strawberry.type
 class Query:
     """Query endpoint to get data from the session store"""
@@ -143,12 +146,7 @@ class Query:
     @strawberry.field
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
         """Query to get data for specific runs from the session store"""
-        runs = []
-        for run_id in run_ids:
-            run = get_run(run_id)
-            if run:
-                runs.append(run)
-        return runs
+        return get_runs(run_ids)
 
 
 schema = strawberry.Schema(query=Query)
