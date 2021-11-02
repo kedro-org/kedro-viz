@@ -80,6 +80,7 @@ def load_data(
     if KEDRO_VERSION.match(">=0.17.3"):
         from kedro.framework.project import pipelines
         from kedro.framework.session import KedroSession
+
         from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
         with KedroSession.create(
@@ -96,6 +97,7 @@ def load_data(
 
     if KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
+
         from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
         with KedroSession.create(
@@ -113,6 +115,7 @@ def load_data(
     if KEDRO_VERSION.match("==0.17.0"):
         from kedro.framework.session import KedroSession
         from kedro.framework.startup import _get_project_metadata
+
         from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
         metadata = _get_project_metadata(project_path)

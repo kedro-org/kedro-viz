@@ -26,19 +26,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from unittest import mock
+from unittest.mock import PropertyMock
 
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 from kedro.io import DataCatalog, Version
 from kedro.io.core import generate_timestamp
-from strawberry import ID
 
-from kedro_viz.api.graphql import (
-    RunTrackingData,
-    TrackingDataSet,
-    get_run_tracking_data,
-)
+from kedro_viz.api.graphql import TrackingDataSet, get_run_tracking_data
 from kedro_viz.data_access.managers import DataAccessManager
 
 
@@ -47,9 +43,10 @@ def save_version():
     return generate_timestamp()
 
 
-def test_graphql_run_details_query(
-    tmp_path, save_version, data_access_manager: DataAccessManager
+def test_graphql_run_tracking_data_query(
+    tmp_path, data_access_manager: DataAccessManager
 ):
+    save_version = "2021-11-02T18.24.24.379Z"
     with mock.patch(
         "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
     ):
@@ -83,23 +80,85 @@ def test_graphql_run_details_query(
         )
         data_access_manager.add_catalog(catalog)
 
-        assert get_run_tracking_data(ID(save_version)) == RunTrackingData(
-            id=ID(save_version),
-            trackingData=[
-                TrackingDataSet(
-                    datasetName="metrics",
-                    datasetType=str(MetricsDataSet),
-                    data='{"col1": 1.0, "col2": 2.0, "col3": 3.0}',
+        assert get_run_tracking_data([save_version]) == [
+            TrackingDataSet(
+                datasetName="metrics",
+                datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                data="""{"col1": [{"runId": "2021-11-02T18.24.24.379Z", "value": 1.0}], "col2": [{"runId": "2021-11-02T18.24.24.379Z", "value": 2.0}], "col3": [{"runId": "2021-11-02T18.24.24.379Z", "value": 3.0}]}""",
+            ),
+            TrackingDataSet(
+                datasetName="more_metrics",
+                datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                data=(
+                    """{"col4": [{"runId": "2021-11-02T18.24.24.379Z", "value": 4.0}], "col5": [{"runId": "2021-11-02T18.24.24.379Z", "value": 5.0}], "col6": [{"runId": "2021-11-02T18.24.24.379Z", "value": 6.0}]}"""
                 ),
-                TrackingDataSet(
-                    datasetName="more_metrics",
-                    datasetType=str(MetricsDataSet),
-                    data='{"col4": 4.0, "col5": 5.0, "col6": 6.0}',
+            ),
+            TrackingDataSet(
+                datasetName="json_tracking",
+                datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
+                data=(
+                    """{"col2": [{"runId": "2021-11-02T18.24.24.379Z", "value": true}], "col3": [{"runId": "2021-11-02T18.24.24.379Z", "value": 3}], "col7": [{"runId": "2021-11-02T18.24.24.379Z", "value": "column_seven"}]}"""
                 ),
-                TrackingDataSet(
-                    datasetName="json_tracking",
-                    datasetType=str(JSONDataSet),
-                    data='{"col7": "column_seven", "col2": true, "col3": 3}',
-                ),
-            ],
-        )
+            ),
+        ]
+
+
+class TestGraphQLEndpoints:
+    def test_graphql_run_list_endpoint(self, client, example_db_dataset):
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = example_db_dataset
+            response = client.post(
+                "/graphql", json={"query": "{runsList {id bookmark}}"}
+            )
+        assert response.json() == {
+            "data": {
+                "runsList": [
+                    {"id": "1534326", "bookmark": False},
+                    {"id": "41312339", "bookmark": False},
+                ]
+            }
+        }
+
+    def test_graphql_run_list_endpoint_no_dbsession(self, client):
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = None
+            response = client.post(
+                "/graphql", json={"query": "{runsList {id bookmark}}"}
+            )
+        assert response.json() == {"data": {"runsList": []}}
+
+    def test_graphql_runs_metadata_endpoint(self, client, example_db_dataset):
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = example_db_dataset
+            response = client.post(
+                "/graphql",
+                json={"query": "{runMetadata(runIds: [1534326]) {id bookmark}}"},
+            )
+        assert response.json() == {
+            "data": {
+                "runMetadata": [
+                    {"id": "1534326", "bookmark": False},
+                ]
+            }
+        }
+
+    def test_graphql_runs_metadata_endpoint_no_dbsession(self, client):
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = None
+            response = client.post(
+                "/graphql",
+                json={"query": "{runMetadata(runIds: [1534326]) {id bookmark}}"},
+            )
+        assert response.json() == {"data": {"runMetadata": []}}

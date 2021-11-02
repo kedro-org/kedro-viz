@@ -26,7 +26,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID, DEFAULT_REGISTERED_PIPELINE_ID
+from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import GraphNode, GraphNodeType, ModularPipelineChild
 from kedro_viz.services import modular_pipelines_services
 

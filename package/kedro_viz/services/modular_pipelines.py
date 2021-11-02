@@ -30,7 +30,7 @@ The service layer consist of pure functions operating on domain models.
 """
 from typing import Dict
 
-from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID, DEFAULT_REGISTERED_PIPELINE_ID
+from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (
     GraphNode,
     GraphNodeType,

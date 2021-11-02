@@ -26,15 +26,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """`kedro_viz.api.graphql` defines graphql API endpoint."""
-# pylint: disable=no-self-use, too-few-public-methods
+# pylint: disable=no-self-use, too-few-public-methods, unnecessary-lambda
 
 from __future__ import annotations
 
 import json
-import typing
+import logging
 from pathlib import Path
-from typing import Dict, TYPE_CHECKING, List, Optional
-from kedro.extras.datasets import tracking
+from typing import TYPE_CHECKING, Any, Dict, List, NewType, Optional
 
 import strawberry
 from fastapi import APIRouter
@@ -44,11 +43,30 @@ from strawberry.asgi import GraphQL
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.run_model import RunModel
 
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:  # pragma: no cover
-    from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 
-def format_run(run_id: str, run_blob: dict) -> Run:
+    class JSONObject:
+        """Stub for JSONObject during type checking since mypy
+         doesn't support dynamic base.
+        https://github.com/python/mypy/issues/2477
+        """
+
+        ...
+
+
+else:
+    JSONObject = strawberry.scalar(
+        NewType("JSONObject", Any),
+        serialize=lambda v: v,
+        parse_value=lambda v: json.loads(v),
+        description="""The GenericScalar scalar type represents a generic GraphQL
+        scalar value that could be: List or Object.""",
+    )
+
+
+def format_run(run_id: str, run_blob: Dict) -> Run:
     """Convert blob data in the correct Run format.
     Args:
         run_id: ID of the run to fetch
@@ -71,55 +89,88 @@ def format_run(run_id: str, run_blob: dict) -> Run:
     return run
 
 
-def get_run(run_id: ID) -> Run:
+def get_runs(run_ids: List[ID]) -> List[Run]:
     """Get a run by id from the session store.
     Args:
-        run_id: ID of the run to fetch
-    Returns:
-        Run object
-    """
-    session = data_access_manager.db_session
-    run_data = session.query(RunModel).filter(RunModel.id == run_id).first()
-    return format_run(run_data.id, json.loads(run_data.blob))
-
-
-def get_runs() -> List[Run]:
-    """Get all runs from the session store.
+        run_ids: ID of the run to fetch
     Returns:
         list of Run objects
     """
-    runs = []
+    runs: List[Run] = []
     session = data_access_manager.db_session
+    if not session:
+        return runs
+    all_run_data = session.query(RunModel).filter(RunModel.id.in_(run_ids)).all()
+    for run_data in all_run_data:
+        run = format_run(run_data.id, json.loads(run_data.blob))
+        runs.append(run)
+    return runs
+
+
+def get_all_runs() -> List[Run]:
+    """Get all runs from the session store.
+
+    Returns:
+        list of Run objects
+    """
+    runs: List[Run] = []
+    session = data_access_manager.db_session
+    if not session:
+        return runs
     for run_data in session.query(RunModel).all():
         run = format_run(run_data.id, json.loads(run_data.blob))
         runs.append(run)
     return runs
 
+
 def format_run_tracking_data(tracking_data: Dict) -> Dict:
+    """Convert tracking data in the front-end format.
+    [{
+        datasetName: 'Data Analysis',
+        datasetType: "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
+        data: {
+            bootstrap: [
+            { runId: 'My Favorite Sprint', value: 0.8 },
+            { runId: 'Another favorite sprint', value: 0.5 },
+            { runId: 'Slick test this one', value: 1 },
+            ],
+            classWeight: [
+            { runId: 'My Favorite Sprint', value: 23 },
+            { runId: 'Another favorite sprint', value: 21 },
+            { runId: 'Slick test this one', value: 21 },
+            ]
+    }]
+
+    Args:
+        tracking_data: JSON blob of tracking data for selected runs
+    Returns:
+        Dictionary with formatted tracking data for selected runs
+    """
     tracking_keys = set()
     for key in tracking_data.keys():
         for nested_keys in tracking_data[key].keys():
             tracking_keys.add(nested_keys)
-    runs_tracking_data = {key:[
-        {'runId': run_id, 
-         'value':tracking_data[run_id][key]}
-         for run_id in tracking_data if key in tracking_data[run_id]]
-         for key in tracking_keys}
+    runs_tracking_data = {
+        key: [
+            {"runId": run_id, "value": tracking_data[run_id][key]}
+            for run_id in tracking_data
+            if key in tracking_data[run_id]
+        ]
+        for key in sorted(tracking_keys)
+    }
     return runs_tracking_data
-    
-  
+
 
 def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all details for a specific run. Run details contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
     during that specific `kedro run`.
-
     Args:
         run_ids:  List of IDs of runs to fetch the details for.
 
     Returns:
-        List of TrackingDataSets 
+        List of TrackingDataSets
 
     """
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
@@ -132,22 +183,30 @@ def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
         if (isinstance(ds_value, (MetricsDataSet, JSONDataSet)))
     ]
 
+    if not experiment_datasets:
+        logger.warning("No tracking datasets found in catalog")
+
     for name, dataset in experiment_datasets:
         all_runs = {}
         for run_id in run_ids:
-            id = ID(run_id)
-            file_path = dataset._get_versioned_path(str(id))
+            runid = ID(run_id)
+            file_path = dataset._get_versioned_path(str(runid))
             if Path(file_path).is_file():
-                with dataset._fs.open(file_path, **dataset._fs_open_args_load) as fs_file:
+                with dataset._fs.open(
+                    file_path, **dataset._fs_open_args_load
+                ) as fs_file:
                     json_data = json.load(fs_file)
-                    all_runs[id] = json_data
+                    all_runs[runid] = json_data
+            else:
+                logger.warning("`%s`could not be found", file_path)
+
         tracking_dataset = TrackingDataSet(
             datasetName=name,
-            datasetType=str(type(dataset)),
-            data=json.dumps(format_run_tracking_data(all_runs))
+            datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
+            data=json.dumps(format_run_tracking_data(all_runs)),
         )
         all_datasets.append(tracking_dataset)
-    return all_datasets            
+    return all_datasets
 
 
 @strawberry.type
@@ -168,26 +227,15 @@ class Run:
 @strawberry.type
 class TrackingDataSet:
     """TrackingDataSet object to structure tracking data for a Run."""
-    
-    datasetName: Optional[str]
-    datasetType: Optional[str]
-    data: Optional[str]
+
+    datasetName: str
+    datasetType: str
+    data: JSONObject
 
 
 @strawberry.type
 class Query:
     """Query endpoint to get data from the session store"""
-
-    runs_list: List[Run] = strawberry.field(resolver=get_runs)
-
-    @strawberry.field
-    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        """Query to get data for specific runs from the session store"""
-        runs = []
-        for run_id in run_ids:
-            run = get_run(run_id)
-            runs.append(run)
-        return runs
 
     @strawberry.field
     def run_tracking_data(self, run_ids: List[ID]) -> List[TrackingDataSet]:
@@ -195,21 +243,16 @@ class Query:
         runs = get_run_tracking_data(run_ids)
         return runs
 
+    runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
+
+    @strawberry.field
+    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
+        """Query to get data for specific runs from the session store"""
+        return get_runs(run_ids)
+
 
 schema = strawberry.Schema(query=Query)
 
 router = APIRouter()
 
 router.add_route("/graphql", GraphQL(schema))
-
-
-
-
-
-
-
-
-
-
-
-
