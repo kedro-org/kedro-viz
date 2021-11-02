@@ -44,7 +44,7 @@ from kedro_viz.models.run_model import RunModel
 
 logger = logging.getLogger(__name__)
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
 
     class JSONObject:
         """Stub for JSONObject during type checking since mypy
