@@ -32,7 +32,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any, Dict, List, NewType, Optional
+from typing import List, Optional, Dict, NewType, Any, TYPE_CHECKING
 
 import strawberry
 from fastapi import APIRouter
@@ -44,12 +44,23 @@ from kedro_viz.models.run_model import RunModel
 
 logger = logging.getLogger(__name__)
 
-JSONScalar = strawberry.scalar(
-    NewType("JSONScalar", Any),
-    serialize=lambda v: v,
-    parse_value=lambda v: json.loads(v),
-    description="JSON Object Type",
-)
+if TYPE_CHECKING:
+
+    class JSONObject:
+        """Stub for JSONObject during type checking since mypy doesn't support dynamic base.
+        https://github.com/python/mypy/issues/2477
+        """
+
+        ...
+
+
+else:
+    JSONObject = strawberry.scalar(
+        NewType("JSONObject", Any),
+        serialize=lambda v: v,
+        parse_value=lambda v: json.loads(v),
+        description="The GenericScalar scalar type represents a generic GraphQL scalar value that could be: List or Object.",
+    )
 
 
 def format_run(run_id: str, run_blob: Dict) -> Run:
@@ -134,7 +145,7 @@ class TrackingDataSet:
 
     datasetName: str
     datasetType: str
-    data: JSONScalar
+    data: JSONObject
 
 
 @strawberry.type
