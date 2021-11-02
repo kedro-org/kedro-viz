@@ -519,18 +519,8 @@ class DataNode(GraphNode):
 
     def is_tracking_node(self):
         # pylint: disable=import-outside-toplevel
-        """Checks if the current node is a type defined under kedro.extras.datasets.tracking"""
-        from kedro.extras.datasets import tracking
-
-        tracking_classes = inspect.getmembers(tracking, inspect.isclass)
-        # Check if the dataset type matches any of the (name, class) pairs
-        return bool(
-            [
-                tracking_class
-                for tracking_class in tracking_classes
-                if self.dataset_type in str(tracking_class[1])
-            ]
-        )
+        """Checks if the current node is a tracking data node"""
+        return self.is_json_node() or self.is_metric_node()
 
 
 @dataclass
