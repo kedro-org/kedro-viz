@@ -31,6 +31,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import List, Optional, Dict, NewType, Any
 
 import strawberry
@@ -40,6 +41,8 @@ from strawberry.asgi import GraphQL
 
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.run_model import RunModel
+
+logger = logging.getLogger(__name__)
 
 JSONScalar = strawberry.scalar(
     NewType("JSONScalar", Any),
@@ -74,7 +77,7 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
     return run
 
 
-def get_run(run_id: ID) -> Run:
+def get_run(run_id: ID) -> Optional[Run]:
     """Get a run by id from the session store.
 
     Args:
@@ -85,10 +88,11 @@ def get_run(run_id: ID) -> Run:
     """
     session = data_access_manager.db_session
     if not session:
-        raise Exception("Cannot connect to the database")
+        return None
     run_data = session.query(RunModel).filter(RunModel.id == run_id).first()
     if not run_data:
-       raise Exception("Cannot find matching run")
+        logger.warning("Cannot find matching run")
+        return None
     return format_run(run_data.id, json.loads(run_data.blob))
 
 
@@ -101,7 +105,7 @@ def get_all_runs() -> List[Run]:
     runs = []
     session = data_access_manager.db_session
     if not session:
-        raise Exception("Cannot connect to the database")
+        return
     for run_data in session.query(RunModel).all():
         run = format_run(run_data.id, json.loads(run_data.blob))
         runs.append(run)
@@ -142,7 +146,8 @@ class Query:
         runs = []
         for run_id in run_ids:
             run = get_run(run_id)
-            runs.append(run)
+            if run:
+                runs.append(run)
         return runs
 
 

@@ -81,15 +81,14 @@ class DataAccessManager:
     @property
     def db_session(self):  # pragma: no cover
         """Sqlite db connection session"""
+        if not self._db_session:
+            logger.warning(
+                    """Database connection was unsuccessful"""
+                )
         return self._db_session
 
     @db_session.setter
     def db_session(self, db_session: DatabaseSession):
-        if not db_session:
-            logger.warning(
-                    """Database connection was unsuccessful"""
-                )
-        else:
             self._db_session = db_session
 
     def add_catalog(self, catalog: DataCatalog):
