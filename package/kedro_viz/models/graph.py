@@ -619,14 +619,10 @@ class DataNodeMetadata(GraphNodeMetadata):
             from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
             from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
-            if data_node.is_metric_node():
-                dataset = cast(MetricsDataSet, dataset)
-            else:
-                dataset = cast(JSONDataSet, dataset)
-
             if not dataset._exists() or self.filepath is None:
                 return
 
+            dataset = cast(Union[JSONDataSet, MetricsDataSet], dataset)
             tracking_data = self.load_latest_tracking_data(dataset)
             if not tracking_data:
                 return
