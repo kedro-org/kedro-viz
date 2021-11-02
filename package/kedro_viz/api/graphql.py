@@ -32,7 +32,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import List, Optional, Dict, NewType, Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List, NewType, Optional
 
 import strawberry
 from fastapi import APIRouter
@@ -47,7 +47,8 @@ logger = logging.getLogger(__name__)
 if TYPE_CHECKING:
 
     class JSONObject:
-        """Stub for JSONObject during type checking since mypy doesn't support dynamic base.
+        """Stub for JSONObject during type checking since mypy
+         doesn't support dynamic base.
         https://github.com/python/mypy/issues/2477
         """
 
@@ -59,7 +60,8 @@ else:
         NewType("JSONObject", Any),
         serialize=lambda v: v,
         parse_value=lambda v: json.loads(v),
-        description="The GenericScalar scalar type represents a generic GraphQL scalar value that could be: List or Object.",
+        description="""The GenericScalar scalar type represents a generic GraphQL
+        scalar value that could be: List or Object.""",
     )
 
 
