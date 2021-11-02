@@ -105,7 +105,7 @@ def get_all_runs() -> List[Run]:
     runs = []
     session = data_access_manager.db_session
     if not session:
-        return
+        return runs
     for run_data in session.query(RunModel).all():
         run = format_run(run_data.id, json.loads(run_data.blob))
         runs.append(run)
