@@ -31,7 +31,7 @@
 from __future__ import annotations
 
 import json
-from typing import List, Optional
+from typing import List, Optional, Dict, NewType, Any
 
 import strawberry
 from fastapi import APIRouter
@@ -41,8 +41,15 @@ from strawberry.asgi import GraphQL
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.run_model import RunModel
 
+JSONScalar = strawberry.scalar(
+    NewType("JSONScalar", Any),
+    serialize=lambda v: v,
+    parse_value=lambda v: json.loads(v),
+    description="The GenericScalar scalar type represents a generic GraphQL scalar value that could be: List or Object."
+)
 
-def format_run(run_id: str, run_blob: dict) -> Run:
+
+def format_run(run_id: str, run_blob: Dict) -> Run:
     """Convert blob data in the correct Run format.
 
     Args:
@@ -77,11 +84,15 @@ def get_run(run_id: ID) -> Run:
         Run object
     """
     session = data_access_manager.db_session
+    if not session:
+        raise Exception("Cannot connect to the database")
     run_data = session.query(RunModel).filter(RunModel.id == run_id).first()
+    if not run_data:
+       raise Exception("Cannot find matching run")
     return format_run(run_data.id, json.loads(run_data.blob))
 
 
-def get_runs() -> List[Run]:
+def get_all_runs() -> List[Run]:
     """Get all runs from the session store.
 
     Returns:
@@ -89,6 +100,8 @@ def get_runs() -> List[Run]:
     """
     runs = []
     session = data_access_manager.db_session
+    if not session:
+        raise Exception("Cannot connect to the database")
     for run_data in session.query(RunModel).all():
         run = format_run(run_data.id, json.loads(run_data.blob))
         runs.append(run)
@@ -114,16 +127,14 @@ class Run:
 class TrackingDataSet:
     """TrackingDataSet object to structure tracking data for a Run."""
 
-    datasetName: Optional[str]
-    datasetType: Optional[str]
-    data: Optional[str]
-
-
+    datasetName: str
+    datasetType: str
+    data: JSONScalar
 @strawberry.type
 class Query:
     """Query endpoint to get data from the session store"""
 
-    runs_list: List[Run] = strawberry.field(resolver=get_runs)
+    runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
 
     @strawberry.field
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
