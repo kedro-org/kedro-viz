@@ -169,7 +169,7 @@ class TestTrackingData:
                 TrackingDataSet(
                     datasetName="json_tracking",
                     datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
-                    data=JSONObject(),
+                    data=JSONObject({}),
                 )
             ]
 

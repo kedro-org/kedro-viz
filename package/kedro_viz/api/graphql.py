@@ -33,7 +33,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, NewType, Optional
+from typing import TYPE_CHECKING, Dict, List, NewType, Optional
 
 import strawberry
 from fastapi import APIRouter
@@ -47,13 +47,13 @@ logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:  # pragma: no cover
 
-    class JSONObject:
+    class JSONObject(dict):
         """Stub for JSONObject during type checking since mypy
          doesn't support dynamic base.
         https://github.com/python/mypy/issues/2477
         """
 
-        ...
+        pass
 
 
 else:
