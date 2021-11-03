@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Route } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import classnames from 'classnames';
 import RunsList from '../runs-list';
@@ -25,9 +24,7 @@ export const Sidebar = ({ onRunSelection, visible }) => {
           })}
         >
           <div className="pipeline-ui">
-            <Route path={['/runsList/:id', '/runsList']}>
-              <RunsList onRunSelection={onRunSelection} runData={data} />
-            </Route>
+            <RunsList onRunSelection={onRunSelection} runData={data} />
           </div>
           <nav className="pipeline-toolbar">
             <PrimaryToolbar />

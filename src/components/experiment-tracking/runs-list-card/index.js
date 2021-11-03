@@ -9,7 +9,11 @@ import './runs-list-card.css';
  * Display a card showing run info from an experiment
  * @param {object} data High-level data from the run (id, timestamp, etc.)
  */
-const RunsListCard = ({ data, onRunSelection }) => {
+const RunsListCard = ({
+  data,
+  enableComparisonView = false,
+  onRunSelection,
+}) => {
   const { id, timestamp, title = null, bookmark } = data;
   const [active, setActive] = useState(false);
 
@@ -25,7 +29,14 @@ const RunsListCard = ({ data, onRunSelection }) => {
       })}
       onClick={() => onClick(id)}
     >
-      {active && <CheckIcon className={'runs-list-card__checked'} />}
+      {(active || enableComparisonView) && (
+        <CheckIcon
+          className={classnames('runs-list-card__checked', {
+            'runs-list-card__checked--active': active,
+            'runs-list-card__checked--comparing': enableComparisonView,
+          })}
+        />
+      )}
       <div>
         <div className="runs-list-card__title">
           {typeof title === 'string' ? title : timestamp}

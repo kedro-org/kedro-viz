@@ -1,16 +1,13 @@
 import React from 'react';
 import Accordion from '../accordion';
 import RunsListCard from '../runs-list-card';
-import { useRunIdsFromUrl } from '../../../utils';
 
 import './runs-list.css';
 
 /**
  * Main runs-list container.
  */
-const RunsList = ({ onRunSelection, runData }) => {
-  const { run, compare } = useRunIdsFromUrl();
-
+const RunsList = ({ enableComparisonView, onRunSelection, runData }) => {
   const { runsList } = runData;
 
   return (
@@ -24,10 +21,9 @@ const RunsList = ({ onRunSelection, runData }) => {
           {runsList.map((data, i) => (
             <RunsListCard
               data={data}
+              enableComparisonView={enableComparisonView}
               key={i}
               onRunSelection={onRunSelection}
-              selectedRun={run}
-              selectedRunsToCompare={compare}
             />
           ))}
         </div>

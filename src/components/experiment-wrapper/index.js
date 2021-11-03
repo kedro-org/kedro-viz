@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-// import { runs, trackingData } from './mock-data';
-import Sidebar from '../experiment-tracking/sidebar';
+import React, { useCallback, useState } from 'react';
+import Sidebar from '../sidebar';
 import Details from '../experiment-tracking/details';
-import { Provider } from '../provider/provider';
+// import { Provider } from '../provider/provider';
 
 /**
  * Main experiment tracking page container. Handles showing/hiding the sidebar
@@ -11,17 +10,24 @@ import { Provider } from '../provider/provider';
  */
 const ExperimentWrapper = () => {
   const [selectedRun, setSelectedRun] = useState(null);
+  const [enableComparisonView, setEnableComparisonView] = useState(false);
 
-  const onRunSelection = (id) => {
-    setSelectedRun(id);
-  };
+  const onRunSelection = useCallback((id) => setSelectedRun(id), []);
+
+  const onToggleComparison = useCallback(
+    () => setEnableComparisonView(!enableComparisonView),
+    [enableComparisonView]
+  );
 
   return (
     <>
-      <Provider useMocks={true}>
-        <Sidebar onRunSelection={onRunSelection} />
-        <Details selectedRun={selectedRun} />
-      </Provider>
+      <Sidebar
+        enableComparisonView={enableComparisonView}
+        isExperimentView
+        onRunSelection={onRunSelection}
+        onToggleComparison={onToggleComparison}
+      />
+      <Details selectedRun={selectedRun} />
     </>
   );
 };
