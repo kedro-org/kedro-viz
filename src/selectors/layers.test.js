@@ -1,20 +1,28 @@
-import { mockState } from '../utils/state.mock';
+import { prepareState } from '../utils/state.mock';
+import spaceflights from '../utils/data/spaceflights.mock.json';
+import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
 import { getLayers } from './layers';
 
 describe('Selectors', () => {
+  const mockState = prepareState({
+    data: spaceflights,
+    beforeLayoutActions: [
+      () => toggleModularPipelineExpanded(['data_science', 'data_processing']),
+    ],
+  });
   describe('getLayers', () => {
     it('returns an array', () => {
-      expect(getLayers(mockState.spaceflights)).toEqual(expect.any(Array));
+      expect(getLayers(mockState)).toEqual(expect.any(Array));
     });
 
     it("returns an array whose IDs match the current pipeline's layer IDs, in the same order", () => {
-      expect(getLayers(mockState.spaceflights).map((d) => d.id)).toEqual(
-        mockState.spaceflights.layer.ids
+      expect(getLayers(mockState).map((d) => d.id)).toEqual(
+        mockState.layer.ids
       );
     });
 
     it('returns numeric y/height properties for each layer object', () => {
-      expect(getLayers(mockState.spaceflights)).toEqual(
+      expect(getLayers(mockState)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             y: expect.any(Number),
@@ -25,8 +33,8 @@ describe('Selectors', () => {
     });
 
     it("calculates appropriate y/height positions for each layer corresponding to each layer's nodes", () => {
-      const { nodes } = mockState.spaceflights.graph;
-      const layers = getLayers(mockState.spaceflights);
+      const { nodes } = mockState.graph;
+      const layers = getLayers(mockState);
       const layerIDs = layers.map((layer) => layer.id);
       const layersObj = layers.reduce((layers, layer) => {
         layers[layer.id] = layer;

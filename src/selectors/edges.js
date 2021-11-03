@@ -7,6 +7,7 @@ const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
+const getVisibleSidebarNodes = (state) => state.modularPipeline.visible;
 
 /**
  * Create a new transitive edge from the first and last edge in the path
@@ -36,6 +37,7 @@ export const getTransitiveEdges = createSelector(
     getEdgeTargets,
     getFocusedModularPipeline,
     getNodeModularPipelines,
+    getVisibleSidebarNodes,
   ],
   (
     nodeIDs,
@@ -44,7 +46,8 @@ export const getTransitiveEdges = createSelector(
     edgeSources,
     edgeTargets,
     focusedModularPipeline,
-    nodeModularPipelines
+    nodeModularPipelines,
+    visibleModularPipelines
   ) => {
     const transitiveEdges = {
       edgeIDs: [],
@@ -66,6 +69,10 @@ export const getTransitiveEdges = createSelector(
           return;
         }
         const target = edgeTargets[edgeID];
+
+        if (!visibleModularPipelines[target]) {
+          return;
+        }
 
         // Further filter out connections between indicative input / output nodes under focus mode
         const isNotInputEdge =

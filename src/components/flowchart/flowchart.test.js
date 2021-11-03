@@ -12,12 +12,13 @@ import { getViewTransform, getViewExtents, origin } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';
 import { toggleTypeDisabled } from '../../actions/node-type';
 
-const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
-const getLayerIDs = (state) => state.layer.ids;
 
 const chartWidth = chartSizeTestFallback.width;
 const chartHeight = chartSizeTestFallback.height;
+
+const dataScienceNodeId = 'data_science';
+const dataProcessingNodeId = 'data_processing';
 
 const mockChartSize = (
   chartSize,
@@ -72,7 +73,7 @@ describe('FlowChart', () => {
     expect(viewTransform.y).toBe(0);
 
     // Should have scale
-    expect(viewTransform.k).toBeLessThan(1);
+    expect(viewTransform.k).not.toEqual(origin.k);
     expect(viewTransform.k).toBeGreaterThan(0);
   });
 
@@ -222,12 +223,11 @@ describe('FlowChart', () => {
   });
 
   it('applies selected class to nodes when nodeSelected prop set', () => {
-    const mockNodes = getNodeIDs(mockState.spaceflights);
     const wrapper = setup.mount(
       <FlowChart
         nodeSelected={{
-          [mockNodes[0]]: true,
-          [mockNodes[1]]: true,
+          [dataScienceNodeId]: true,
+          [dataProcessingNodeId]: true,
         }}
       />
     );
@@ -235,12 +235,11 @@ describe('FlowChart', () => {
   });
 
   it('applies active class to nodes when nodeActive prop set', () => {
-    const mockNodes = getNodeIDs(mockState.spaceflights);
     const wrapper = setup.mount(
       <FlowChart
         nodeActive={{
-          [mockNodes[0]]: true,
-          [mockNodes[1]]: true,
+          [dataScienceNodeId]: true,
+          [dataProcessingNodeId]: true,
         }}
       />
     );
@@ -248,14 +247,13 @@ describe('FlowChart', () => {
   });
 
   it('applies collapsed-hint class to nodes with input parameters are hovered during collapsed state', () => {
-    const mockNodes = getNodeIDs(mockState.spaceflights);
     const wrapper = setup.mount(
       <FlowChart
         hoveredParameters={true}
         nodeTypeDisabled={{ parameters: true }}
         nodesWithInputParams={{
-          [mockNodes[0]]: ['params1'],
-          [mockNodes[1]]: ['params2', 'params3'],
+          [dataScienceNodeId]: ['params1'],
+          [dataProcessingNodeId]: ['params2', 'params3'],
         }}
       />
     );
@@ -265,13 +263,12 @@ describe('FlowChart', () => {
   });
 
   it('applies parameter-indicator--visible class to nodes with input parameters when nodeDisabled prop set', () => {
-    const mockNodes = getNodeIDs(mockState.spaceflights);
     const wrapper = setup.mount(
       <FlowChart
         nodeTypeDisabled={{ parameters: true }}
         nodesWithInputParams={{
-          [mockNodes[0]]: ['params1'],
-          [mockNodes[1]]: ['params2', 'params3'],
+          [dataScienceNodeId]: ['params1'],
+          [dataProcessingNodeId]: ['params2', 'params3'],
         }}
       />
     );
@@ -292,7 +289,7 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(
       <FlowChart
         nodeTypeDisabled={{ parameters: true }}
-        focusMode={{ id: 'data_science' }}
+        focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
           '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
         }}
@@ -307,9 +304,11 @@ describe('FlowChart', () => {
     const wrapper = setup.mount(
       <FlowChart
         nodeTypeDisabled={{ parameters: true }}
-        focusMode={{ id: 'data_science' }}
+        focusMode={{ id: dataScienceNodeId }}
         inputOutputDataEdges={{
-          '23c94afb|65d0d789': { id: '23c94afb|65d0d789' },
+          [`23c94afb|${dataScienceNodeId}`]: {
+            id: `23c94afb|${dataScienceNodeId}`,
+          },
         }}
       />
     );
@@ -321,7 +320,7 @@ describe('FlowChart', () => {
   it('applies pipeline-node--parameter-input class to input parameter nodes under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
-        focusMode={{ id: 'data_science' }}
+        focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
           f1f1425b: { id: 'f1f1425b' },
         }}
@@ -368,11 +367,8 @@ describe('FlowChart', () => {
   });
 
   it('shows layers when layers are visible', () => {
-    const mockLayers = getLayerIDs(mockState.spaceflights);
     const wrapper = setup.mount(<FlowChart />);
-    expect(wrapper.render().find('.pipeline-layer').length).toBe(
-      mockLayers.length
-    );
+    expect(wrapper.render().find('.pipeline-layer').length).toBe(2);
   });
 
   it('hides layers when layers.length is 0', () => {

@@ -49,9 +49,9 @@ import {
 } from '../actions/tags';
 import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
-  TOGGLE_MODULAR_PIPELINE_FILTER,
+  TOGGLE_MODULAR_PIPELINE_EXPANDED,
   toggleModularPipelineActive,
-  toggleModularPipelineFilter,
+  toggleModularPipelineExpanded,
 } from '../actions/modular-pipelines';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
@@ -213,7 +213,7 @@ describe('actions', () => {
    * Tests for modular pipelines related actions
    */
 
-  it('should create an action to toggle an array of modular pipeliness active state on/off', () => {
+  it('should create an action to toggle an array of modular pipelines active state on/off', () => {
     const modularPipelineIDs = ['12345', '67890'];
     const active = false;
     const expectedAction = {
@@ -226,15 +226,13 @@ describe('actions', () => {
     );
   });
 
-  it('should create an action to toggle an array of modular pipelines on/off', () => {
+  it('should create an action to expand an array of modular pipelines', () => {
     const modularPipelineIDs = ['12345', '67890'];
-    const enabled = false;
     const expectedAction = {
-      type: TOGGLE_MODULAR_PIPELINE_FILTER,
-      modularPipelineIDs,
-      enabled,
+      type: TOGGLE_MODULAR_PIPELINE_EXPANDED,
+      expandedIDs: modularPipelineIDs,
     };
-    expect(toggleModularPipelineFilter(modularPipelineIDs, enabled)).toEqual(
+    expect(toggleModularPipelineExpanded(modularPipelineIDs)).toEqual(
       expectedAction
     );
   });

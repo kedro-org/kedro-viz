@@ -10,7 +10,7 @@ const getDataSource = (state) => state.dataSource;
 const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 
 /**
- * Calculate whether nodes should be disabled based on their tags
+ * Calculate whether nodes should be disabled based on their registered pipelines
  */
 export const getNodeDisabledPipeline = createSelector(
   [getNodeIDs, getNodePipelines, getActivePipeline, getDataSource],
@@ -63,7 +63,10 @@ export const getPipelineModularPipelineIDs = createSelector(
     if (modularPipelineIDs.length > 0) {
       nodeIDs.forEach((nodeID) => {
         nodeModularPipelines[nodeID].forEach((modularPipelineID) => {
-          if (!visibleModularPipelines[modularPipelineID]) {
+          if (
+            modularPipelineID &&
+            !visibleModularPipelines[modularPipelineID]
+          ) {
             visibleModularPipelines[modularPipelineID] = true;
           }
         });

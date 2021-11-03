@@ -15,19 +15,16 @@ export function toggleModularPipelineActive(modularPipelineIDs, active) {
   };
 }
 
-export const TOGGLE_MODULAR_PIPELINE_FILTER = 'TOGGLE_MODULAR_PIPELINE_FILTER';
+export const TOGGLE_MODULAR_PIPELINE_EXPANDED =
+  'TOGGLE_MODULAR_PIPELINE_EXPANDED';
 
 /**
- * Toggle a modular pipeline's filtering on/off (or array of modular pipelines)
- * @param {string|Array} modularPipelineIDs Modular pipeline id(s)
- * @param {Boolean} enabled True if modular pipeline(s) enabled
+ * Toggle a set of modular pipelines to be expanded.
+ * @param {Array[Number]} expandedIDs
  */
-export function toggleModularPipelineFilter(modularPipelineIDs, enabled) {
+export function toggleModularPipelineExpanded(expandedIDs) {
   return {
-    type: TOGGLE_MODULAR_PIPELINE_FILTER,
-    modularPipelineIDs: Array.isArray(modularPipelineIDs)
-      ? modularPipelineIDs
-      : [modularPipelineIDs],
-    enabled,
+    type: TOGGLE_MODULAR_PIPELINE_EXPANDED,
+    expandedIDs,
   };
 }
