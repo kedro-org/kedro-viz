@@ -8,7 +8,7 @@ import './runs-list.css';
 /**
  * Main runs-list container.
  */
-const RunsList = ({ runData }) => {
+const RunsList = ({ onRunSelection, runData }) => {
   const { run, compare } = useRunIdsFromUrl();
 
   const { runsList } = runData;
@@ -25,6 +25,7 @@ const RunsList = ({ runData }) => {
             <RunsListCard
               data={data}
               key={i}
+              onRunSelection={onRunSelection}
               selectedRun={run}
               selectedRunsToCompare={compare}
             />

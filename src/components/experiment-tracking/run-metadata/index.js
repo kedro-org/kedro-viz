@@ -22,50 +22,46 @@ const RunMetadata = ({ isSingleRun, runs }) => {
       })}
     >
       {runs.map((run, i) => {
-        const { metadata } = run;
-
         return (
           <div
             className={classnames('details-metadata__run', {
               'details-metadata__run--single': isSingleRun,
             })}
-            key={metadata.gitSha}
+            key={run.gitSha}
           >
             <table className="details-metadata__table">
               <tbody>
                 {isSingleRun ? (
                   <tr>
                     <td className="details-metadata__title" colSpan="2">
-                      {metadata.title}
+                      {run.title}
                     </td>
                   </tr>
                 ) : (
                   <tr>
                     {i === 0 ? <td></td> : null}
-                    <td className="details-metadata__title">
-                      {metadata.title}
-                    </td>
+                    <td className="details-metadata__title">{run.title}</td>
                   </tr>
                 )}
                 <tr>
                   {i === 0 ? <td>Created By</td> : null}
-                  <td>{metadata.author}</td>
+                  <td>{run.author}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Creation Date</td> : null}
-                  <td>{metadata.timestamp}</td>
+                  <td>{run.timestamp.toISOString()}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Git SHA</td> : null}
-                  <td>{metadata.gitSha}</td>
+                  <td>{run.gitSha}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Git Branch</td> : null}
-                  <td>{metadata.gitBranch}</td>
+                  <td>{run.gitBranch}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Run Command</td> : null}
-                  <td>{metadata.runCommand}</td>
+                  <td>{run.runCommand}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Notes</td> : null}
@@ -74,9 +70,9 @@ const RunMetadata = ({ isSingleRun, runs }) => {
                       className="details-metadata__notes"
                       style={toggleNotes[i] ? { display: 'block' } : null}
                     >
-                      {metadata.notes}
+                      {run.notes}
                     </p>
-                    {metadata.notes.length > 100 ? (
+                    {run.notes.length > 100 ? (
                       <button
                         className="details-metadata__show-more kedro"
                         onClick={() => onToggleNoteExpand(i)}

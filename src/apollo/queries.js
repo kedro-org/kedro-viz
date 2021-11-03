@@ -4,44 +4,39 @@ import gql from 'graphql-tag';
 export const GET_RUNS = gql`
   query getRunsList {
     runsList {
+      bookmark
+      gitSha
       id
-      metadata {
-        id
-        title
-        bookmark
-        gitSha
-        timestamp
-      }
+      timestamp
+      title
     }
   }
 `;
+
 /** query for details metadata component */
 export const GET_RUN_METADATA = gql`
   query getRunMetadata($run: [ID]!) {
-    runsWithData(run: $run) {
+    runMetadata(run: $run) {
+      author
+      bookmark
+      gitBranch
+      gitSha
       id
-      metadata {
-        author
-        gitBranch
-        gitSha
-        bookmark
-        title
-        notes
-        timestamp
-        runCommand
-      }
+      notes
+      runCommand
+      timestamp
+      title
     }
   }
 `;
 
 /** query for collapsable run details component */
-export const GET_RUNS_TRACKING_DATA = gql`
-  query getRunMetadata($run: [ID]!) {
-    runsWithData(run: $run) {
-      id
-      runTrackingData {
-        details
-      }
+export const GET_RUN_TRACKING_DATA = gql`
+  query getRunTrackingData($run: [ID]!) {
+    runTrackingData(run: $run) {
+      datasetName
+      datasetType
+      data
     }
   }
 `;

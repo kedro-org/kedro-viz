@@ -9,16 +9,21 @@ import './runs-list-card.css';
  * Display a card showing run info from an experiment
  * @param {object} data High-level data from the run (id, timestamp, etc.)
  */
-const RunsListCard = ({ data }) => {
-  const { id, timestamp, title = null, bookmark } = data.metadata;
+const RunsListCard = ({ data, onRunSelection }) => {
+  const { id, timestamp, title = null, bookmark } = data;
   const [active, setActive] = useState(false);
+
+  const onClick = (id) => {
+    onRunSelection(id);
+    setActive(!active);
+  };
 
   return (
     <div
       className={classnames('kedro', 'runs-list-card', {
         'runs-list-card--active': active,
       })}
-      onClick={() => setActive(!active)}
+      onClick={() => onClick(id)}
     >
       {active && <CheckIcon className={'runs-list-card__checked'} />}
       <div>

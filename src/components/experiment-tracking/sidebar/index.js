@@ -13,7 +13,7 @@ import './sidebar.css';
  * @param {array} props.data The RunsList data
  * @param {boolean} props.visible Whether the sidebar is open/closed
  */
-export const Sidebar = ({ visible }) => {
+export const Sidebar = ({ onRunSelection, visible }) => {
   const { data } = useQuery(GET_RUNS);
 
   if (data) {
@@ -26,7 +26,7 @@ export const Sidebar = ({ visible }) => {
         >
           <div className="pipeline-ui">
             <Route path={['/runsList/:id', '/runsList']}>
-              <RunsList runData={data} />
+              <RunsList onRunSelection={onRunSelection} runData={data} />
             </Route>
           </div>
           <nav className="pipeline-toolbar">

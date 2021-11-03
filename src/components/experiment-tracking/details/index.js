@@ -1,8 +1,10 @@
 import React from 'react';
+import { useQuery } from '@apollo/client';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
+import { GET_RUN_METADATA } from '../../../apollo/queries';
 
 import './details.css';
 
@@ -11,8 +13,21 @@ import './details.css';
  * nav for experiment tracking, the display of experiment details,
  * as well as the comparison view.
  */
-const Details = ({ runs, sidebarVisible, trackingData }) => {
-  const isSingleRun = runs.length === 1 ? true : false;
+const Details = ({ selectedRun, sidebarVisible }) => {
+  const { loading, error, data } = useQuery(GET_RUN_METADATA, {
+    variables: { run: selectedRun ? 'test' : null },
+  });
+
+  const isSingleRun = data && data.runMetadata.length === 1 ? true : false;
+  const trackingData = [];
+
+  if (loading) {
+    return 'Loading...';
+  }
+
+  if (error) {
+    return null;
+  }
 
   return (
     <>
@@ -21,7 +36,7 @@ const Details = ({ runs, sidebarVisible, trackingData }) => {
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadata isSingleRun={isSingleRun} runs={runs} />
+        <RunMetadata isSingleRun={isSingleRun} runs={data.runMetadata} />
         <RunDataset isSingleRun={isSingleRun} trackingData={trackingData} />
       </div>
     </>
