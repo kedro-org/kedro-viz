@@ -44,37 +44,31 @@ def example_tracking_output():
         TrackingDataSet(
             datasetName="metrics",
             datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-            data=JSONObject(
-                {
-                    "col1": [{"runId": "2021-11-02T18.24.24.379Z", "value": 1.0}],
-                    "col2": [{"runId": "2021-11-02T18.24.24.379Z", "value": 2.0}],
-                    "col3": [{"runId": "2021-11-02T18.24.24.379Z", "value": 3.0}],
-                }
-            ),
+            data={
+                "col1": [{"runId": "2021-11-02T18.24.24.379Z", "value": 1.0}],
+                "col2": [{"runId": "2021-11-02T18.24.24.379Z", "value": 2.0}],
+                "col3": [{"runId": "2021-11-02T18.24.24.379Z", "value": 3.0}],
+            },
         ),
         TrackingDataSet(
             datasetName="more_metrics",
             datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-            data=JSONObject(
-                {
-                    "col4": [{"runId": "2021-11-02T18.24.24.379Z", "value": 4.0}],
-                    "col5": [{"runId": "2021-11-02T18.24.24.379Z", "value": 5.0}],
-                    "col6": [{"runId": "2021-11-02T18.24.24.379Z", "value": 6.0}],
-                }
-            ),
+            data={
+                "col4": [{"runId": "2021-11-02T18.24.24.379Z", "value": 4.0}],
+                "col5": [{"runId": "2021-11-02T18.24.24.379Z", "value": 5.0}],
+                "col6": [{"runId": "2021-11-02T18.24.24.379Z", "value": 6.0}],
+            },
         ),
         TrackingDataSet(
             datasetName="json_tracking",
             datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
-            data=JSONObject(
-                {
-                    "col2": [{"runId": "2021-11-02T18.24.24.379Z", "value": True}],
-                    "col3": [{"runId": "2021-11-02T18.24.24.379Z", "value": 3}],
-                    "col7": [
-                        {"runId": "2021-11-02T18.24.24.379Z", "value": "column_seven"}
-                    ],
-                }
-            ),
+            data={
+                "col2": [{"runId": "2021-11-02T18.24.24.379Z", "value": True}],
+                "col3": [{"runId": "2021-11-02T18.24.24.379Z", "value": 3}],
+                "col7": [
+                    {"runId": "2021-11-02T18.24.24.379Z", "value": "column_seven"}
+                ],
+            },
         ),
     ]
 
@@ -169,7 +163,7 @@ class TestTrackingData:
                 TrackingDataSet(
                     datasetName="json_tracking",
                     datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
-                    data=JSONObject({})
+                    data={},
                 )
             ]
 
@@ -263,37 +257,33 @@ class TestGraphQLEndpoints:
                         "datasetName": "metrics",
                         "datasetType": "kedro.extras.datasets.tracking."
                         "metrics_dataset.MetricsDataSet",
-                        "data": JSONObject(
-                            {
-                                "col1": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 1.0}
-                                ],
-                                "col2": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 2.0}
-                                ],
-                                "col3": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 3.0}
-                                ],
-                            }
-                        ),
+                        "data": {
+                            "col1": [
+                                {"runId": "2021-11-02T18.24.24.379Z", "value": 1.0}
+                            ],
+                            "col2": [
+                                {"runId": "2021-11-02T18.24.24.379Z", "value": 2.0}
+                            ],
+                            "col3": [
+                                {"runId": "2021-11-02T18.24.24.379Z", "value": 3.0}
+                            ],
+                        },
                     },
                     {
                         "datasetName": "more_metrics",
                         "datasetType": "kedro.extras.datasets.tracking."
                         "metrics_dataset.MetricsDataSet",
-                        "data": JSONObject(
-                            {
-                                "col4": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 4.0}
-                                ],
-                                "col5": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 5.0}
-                                ],
-                                "col6": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 6.0}
-                                ],
-                            }
-                        ),
+                        "data": {
+                            "col4": [
+                                {"runId": "2021-11-02T18.24.24.379Z", "value": 4.0}
+                            ],
+                            "col5": [
+                                {"runId": "2021-11-02T18.24.24.379Z", "value": 5.0}
+                            ],
+                            "col6": [
+                                {"runId": "2021-11-02T18.24.24.379Z", "value": 6.0}
+                            ],
+                        },
                     },
                     {
                         "datasetName": "json_tracking",
