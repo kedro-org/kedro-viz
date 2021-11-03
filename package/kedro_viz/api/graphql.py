@@ -123,7 +123,7 @@ def get_all_runs() -> List[Run]:
     return runs
 
 
-def format_run_tracking_data(tracking_data: Dict) -> Dict:
+def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
     """Convert tracking data in the front-end format.
     [{
         datasetName: 'Data Analysis',
@@ -158,7 +158,7 @@ def format_run_tracking_data(tracking_data: Dict) -> Dict:
         ]
         for key in sorted(tracking_keys)
     }
-    return runs_tracking_data
+    return json.loads(json.dumps(runs_tracking_data))
 
 
 def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
@@ -203,7 +203,7 @@ def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
         tracking_dataset = TrackingDataSet(
             datasetName=name,
             datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
-            data=json.dumps(format_run_tracking_data(all_runs)),
+            data=format_run_tracking_data(all_runs),
         )
         all_datasets.append(tracking_dataset)
     return all_datasets
