@@ -41,8 +41,5 @@ security-scan:
 version:
 	python3 tools/versioning.py $(VERSION)
 
-legal:
-	python tools/license_and_headers.py
-
 install-pip-setuptools:
 	python -m pip install -U "pip>=18.0, <19.0" "setuptools>=38.0, <39.0" wheel

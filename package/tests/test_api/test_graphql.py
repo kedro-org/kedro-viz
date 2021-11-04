@@ -1,3 +1,4 @@
+
 # Copyright 2021 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +26,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 
 from unittest import mock
 from unittest.mock import PropertyMock, call, patch
