@@ -3,12 +3,10 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 from fsspec.implementations.local import LocalFileSystem
-from gcsfs import GCSFileSystem
-from s3fs.core import S3FileSystem
-
 from kedro.extras.datasets.tracking import MetricsDataSet
 from kedro.io import DataSetError
 from kedro.io.core import PROTOCOL_DELIMITER, Version
+from s3fs.core import S3FileSystem
 
 
 @pytest.fixture
@@ -102,7 +100,6 @@ class TestMetricsDataSet:
             ("s3://bucket/file.json", S3FileSystem),
             ("file:///tmp/test.json", LocalFileSystem),
             ("/tmp/test.json", LocalFileSystem),
-            ("gcs://bucket/file.json", GCSFileSystem),
         ],
     )
     def test_protocol_usage(self, filepath, instance_type):
