@@ -402,7 +402,7 @@ class TestGraphNodeMetadata:
 
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_tracking_versioned_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
-    @patch("kedro_viz.models.graph.DataNodeMetadata.create_tracking_plot")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.create_metrics_plot")
     def test_metrics_data_node_metadata(
         self,
         patched_metrics_plot,
@@ -440,10 +440,32 @@ class TestGraphNodeMetadata:
         patched_metrics_plot.return_value = mock_plot_data
         metrics_data_node = MagicMock()
         metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_tracking_node.return_value = True
         metrics_data_node.is_metric_node.return_value = True
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
         assert metrics_node_metadata.tracking_data == mock_metrics_data
         assert metrics_node_metadata.plot == mock_plot_data
+
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    def test_json_data_node_metadata(
+        self,
+        patched_latest_json,
+    ):
+        mock_json_data = {
+            "recommendations": "test string",
+            "recommended_controls": False,
+            "projected_optimization": 0.0013902,
+        }
+
+        patched_latest_json.return_value = mock_json_data
+        json_data_node = MagicMock()
+        json_data_node.is_plot_node.return_value = False
+        json_data_node.is_tracking_node.return_value = True
+        json_data_node.is_metric_node.return_value = False
+        json_node_metadata = DataNodeMetadata(data_node=json_data_node)
+        # print("\n \n \n",json_node_metadata.plot, "\n \n \n")
+        assert json_node_metadata.tracking_data == mock_json_data
+        assert not hasattr(json_node_metadata, "plot")
 
     def test_metrics_data_node_metadata_dataset_not_exist(self):
         metrics_data_node = MagicMock()

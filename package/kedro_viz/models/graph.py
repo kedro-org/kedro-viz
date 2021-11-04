@@ -518,7 +518,6 @@ class DataNode(GraphNode):
         )
 
     def is_tracking_node(self):
-        # pylint: disable=import-outside-toplevel
         """Checks if the current node is a tracking data node"""
         return self.is_json_node() or self.is_metric_node()
 
