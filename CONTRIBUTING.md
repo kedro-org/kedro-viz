@@ -186,9 +186,7 @@ This command will launch a Kedro-Viz server at [localhost:4142](http://localhost
 
 #### Launch the development server with the `SQLiteSessionStore`
 
-Kedro-Viz provides a `SQLiteSessionStore` that users can use in their project to enable experiment tracking functionality. If you want to use this session store with the development server,
-make sure you don't use relative path when specifying the store's location. For example, to specify the local `data` directory within a project as the session store's location, configure the project's `settings.py` as follow:
-
+Kedro-Viz provides a `SQLiteSessionStore` that users can use in their project to enable experiment tracking functionality. If you want to use this session store with the development server, make sure you don't use a relative path when specifying the store's location. For example, to specify the local `data` directory within a project as the session store's location, configure the project's `settings.py` as follow:
 ```python
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
