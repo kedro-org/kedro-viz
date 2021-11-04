@@ -25,11 +25,12 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import time
-from pathlib import PureWindowsPath
+
 from unittest import mock
 from unittest.mock import PropertyMock, call, patch
+from pathlib import Path
 
+import shutil
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
@@ -77,29 +78,28 @@ def example_tracking_output():
 
 class TestTrackingData:
     def test_graphql_run_tracking_data_query(
-        self, tmp_path, data_access_manager: DataAccessManager, example_tracking_output
+        self, data_access_manager: DataAccessManager, example_tracking_output
     ):
         save_version = "2021-11-02T18.24.24.379Z"
         with mock.patch(
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
         ):
             metrics_dataset = MetricsDataSet(
-                filepath=PureWindowsPath(tmp_path / "test.json").as_posix(),
+                filepath=Path("test.json").as_posix(),
                 version=Version(None, save_version),
             )
             metrics_dataset.save({"col1": 1, "col2": 2, "col3": 3})
-            time.sleep(1)
 
             dataset = CSVDataSet(filepath="dataset.csv")
 
             more_metrics = MetricsDataSet(
-                filepath=PureWindowsPath(tmp_path / "metrics.json").as_posix(),
+                filepath=Path("metrics.json").as_posix(),
                 version=Version(None, save_version),
             )
             more_metrics.save({"col4": 4, "col5": 5, "col6": 6})
-            time.sleep(1)
+
             json_dataset = JSONDataSet(
-                filepath=PureWindowsPath(tmp_path / "tracking.json").as_posix(),
+                filepath=Path("tracking.json").as_posix(),
                 version=Version(None, save_version),
             )
             json_dataset.save({"col7": "column_seven", "col2": True, "col3": 3})
@@ -115,6 +115,10 @@ class TestTrackingData:
             data_access_manager.add_catalog(catalog)
 
             assert get_run_tracking_data([ID(save_version)]) == example_tracking_output
+
+            shutil.rmtree("test.json")
+            shutil.rmtree("metrics.json")
+            shutil.rmtree("tracking.json")
 
     @patch("logging.Logger.warning")
     def test_graphql_run_no_tracking_data_query(
@@ -142,7 +146,7 @@ class TestTrackingData:
 
     @patch("logging.Logger.warning")
     def test_graphql_run_tracking_no_filepath_query(
-        self, patched_warning, tmp_path, data_access_manager: DataAccessManager
+        self, patched_warning, data_access_manager: DataAccessManager
     ):
         save_version = "2021-11-02T18.24.24.379Z"
         with mock.patch(
@@ -151,7 +155,7 @@ class TestTrackingData:
             dataset = CSVDataSet(filepath="dataset.csv")
 
             json_dataset = JSONDataSet(
-                filepath=PureWindowsPath(tmp_path / "tracking.json").as_posix(),
+                filepath=Path("tracking.json").as_posix(),
                 version=Version(None, save_version),
             )
 
