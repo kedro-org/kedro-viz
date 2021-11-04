@@ -25,6 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from pathlib import PureWindowsPath
 from unittest import mock
 from unittest.mock import PropertyMock, call, patch
 
@@ -82,7 +83,7 @@ class TestTrackingData:
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
         ):
             metrics_dataset = MetricsDataSet(
-                filepath=(tmp_path / "test.json").as_posix(),
+                filepath=PureWindowsPath(tmp_path / "test.json").as_posix(),
                 version=Version(None, save_version),
             )
             metrics_dataset.save({"col1": 1, "col2": 2, "col3": 3})
@@ -90,13 +91,13 @@ class TestTrackingData:
             dataset = CSVDataSet(filepath="dataset.csv")
 
             more_metrics = MetricsDataSet(
-                filepath=(tmp_path / "metrics.json").as_posix(),
+                filepath=PureWindowsPath(tmp_path / "metrics.json").as_posix(),
                 version=Version(None, save_version),
             )
             more_metrics.save({"col4": 4, "col5": 5, "col6": 6})
 
             json_dataset = JSONDataSet(
-                filepath=(tmp_path / "tracking.json").as_posix(),
+                filepath=PureWindowsPath(tmp_path / "tracking.json").as_posix(),
                 version=Version(None, save_version),
             )
             json_dataset.save({"col7": "column_seven", "col2": True, "col3": 3})
@@ -147,7 +148,7 @@ class TestTrackingData:
         ):
             dataset = CSVDataSet(filepath="dataset.csv")
             json_dataset = JSONDataSet(
-                filepath=(tmp_path / "tracking.json").as_posix(),
+                filepath=PureWindowsPath(tmp_path / "tracking.json").as_posix(),
                 version=Version(None, save_version),
             )
 
