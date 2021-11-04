@@ -67,7 +67,7 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
     """Convert blob data in the correct Run format.
     Args:
         run_id: ID of the run to fetch
-        run_blob: JSON blob of run metadata and details
+        run_blob: JSON blob of run metadata and tracking data
     Returns:
         Run object
     """
@@ -122,6 +122,32 @@ def get_all_runs() -> List[Run]:
 
 def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
     """Convert tracking data in the front-end format.
+
+    Args:
+        tracking_data: JSON blob of tracking data for selected runs
+    Returns:
+        Dictionary with formatted tracking data for selected runs
+
+     Example:
+        >>> from kedro.extras.datasets.tracking import MetricsDataSet
+        >>>
+        >>> tracking_data = {
+            {'My Favorite Sprint': {
+                'bootstrap':0.8
+                'classWeight":23
+            },
+            {'Another Favorite Sprint': {
+                'bootstrap':0.5
+                'classWeight":21
+            },
+            {'Slick test this one': {
+                'bootstrap':1
+                'classWeight":21
+            },
+        }
+        >>> format_run_tracking_data (tracking_data)
+
+    Return :
     [{
         datasetName: 'Data Analysis',
         datasetType: "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
@@ -135,14 +161,11 @@ def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
             { runId: 'My Favorite Sprint', value: 23 },
             { runId: 'Another favorite sprint', value: 21 },
             { runId: 'Slick test this one', value: 21 },
-            ]
+            ]}
     }]
 
-    Args:
-        tracking_data: JSON blob of tracking data for selected runs
-    Returns:
-        Dictionary with formatted tracking data for selected runs
     """
+
     tracking_keys = set()
     for key in tracking_data.keys():
         for nested_keys in tracking_data[key].keys():
@@ -160,11 +183,11 @@ def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
 
 def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
     # pylint: disable=protected-access,import-outside-toplevel
-    """Get all details for a specific run. Run details contains the data from the
+    """Get all tracking data for a list of runs. Tracking data contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
     during that specific `kedro run`.
     Args:
-        run_ids:  List of IDs of runs to fetch the details for.
+        run_ids:  List of IDs of runs to fetch the tracking data for.
 
     Returns:
         List of TrackingDataSets
@@ -179,9 +202,6 @@ def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
         for ds_name, ds_value in catalog._data_sets.items()
         if (isinstance(ds_value, (MetricsDataSet, JSONDataSet)))
     ]
-
-    if not experiment_datasets:
-        logger.warning("No tracking datasets found in catalog")
 
     for name, dataset in experiment_datasets:
         all_runs = {}
@@ -237,8 +257,7 @@ class Query:
     @strawberry.field
     def run_tracking_data(self, run_ids: List[ID]) -> List[TrackingDataSet]:
         """Query to get data for specific runs from the session store"""
-        runs = get_run_tracking_data(run_ids)
-        return runs
+        return get_run_tracking_data(run_ids)
 
     runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
 
