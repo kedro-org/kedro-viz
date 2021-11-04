@@ -78,8 +78,8 @@ function nodeReducer(nodeState = {}, action) {
         plot: Object.assign({}, nodeState.plot, {
           [id]: data.plot,
         }),
-        metrics: Object.assign({}, nodeState.metrics, {
-          [id]: data.metrics,
+        trackingData: Object.assign({}, nodeState.trackingData, {
+          [id]: data.tracking_data,
         }),
         runCommand: Object.assign({}, nodeState.runCommand, {
           [id]: data.run_command,
