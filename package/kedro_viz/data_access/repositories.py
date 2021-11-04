@@ -161,7 +161,7 @@ class CatalogRepository:
         return dataset_obj
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
-        return self.layers_mapping.get(dataset_name)
+        return self.layers_mapping.get(self.strip_encoding(dataset_name))
 
     @staticmethod
     def is_dataset_param(dataset_name: str) -> bool:
