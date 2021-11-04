@@ -1,4 +1,3 @@
-
 # pylint: disable=too-many-public-methods
 import datetime
 import json
