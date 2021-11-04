@@ -163,7 +163,7 @@ class TestTrackingData:
                 TrackingDataSet(
                     datasetName="json_tracking",
                     datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
-                    data={},
+                    data=JSONObject({}),
                 )
             ]
 
@@ -288,22 +288,18 @@ class TestGraphQLEndpoints:
                     {
                         "datasetName": "json_tracking",
                         "datasetType": "kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
-                        "data": JSONObject(
-                            {
-                                "col2": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": True}
-                                ],
-                                "col3": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 3}
-                                ],
-                                "col7": [
-                                    {
-                                        "runId": "2021-11-02T18.24.24.379Z",
-                                        "value": "column_seven",
-                                    }
-                                ],
-                            }
-                        ),
+                        "data": {
+                            "col2": [
+                                {"runId": "2021-11-02T18.24.24.379Z", "value": True}
+                            ],
+                            "col3": [{"runId": "2021-11-02T18.24.24.379Z", "value": 3}],
+                            "col7": [
+                                {
+                                    "runId": "2021-11-02T18.24.24.379Z",
+                                    "value": "column_seven",
+                                }
+                            ],
+                        },
                     },
                 ]
             }
