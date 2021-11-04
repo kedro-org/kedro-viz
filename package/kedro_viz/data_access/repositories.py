@@ -10,6 +10,7 @@ from semver import VersionInfo
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (
     DataNode,
+    TranscodedDataNode,
     GraphEdge,
     GraphNode,
     GraphNodeType,
@@ -294,7 +295,7 @@ class ModularPipelinesRepository:
             >>> modular_pipelines.add_input("data_science", model_input_node)
             >>> assert data_science_pipeline.inputs == {model_input_node.id}
         """
-        if not isinstance(input_node, (DataNode, ParametersNode)):
+        if not isinstance(input_node, (DataNode, TranscodedDataNode, ParametersNode)):
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
@@ -327,7 +328,7 @@ class ModularPipelinesRepository:
             >>> modular_pipelines.add_output("data_science", model_output_node)
             >>> assert data_science_pipeline.outputs == {model_output_node.id}
         """
-        if not isinstance(output_node, (DataNode, ParametersNode)):
+        if not isinstance(output_node, (DataNode, TranscodedDataNode, ParametersNode)):
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
