@@ -216,7 +216,7 @@ class TestGraphNodePipelines:
         another_pipeline = RegisteredPipeline("testing")
         kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
-            full_name="dataset",
+            full_name="dataset@transcoded",
             layer="raw",
             tags=set(),
             dataset=kedro_dataset,
