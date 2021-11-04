@@ -25,6 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import time
 from pathlib import PureWindowsPath
 from unittest import mock
 from unittest.mock import PropertyMock, call, patch
@@ -87,6 +88,7 @@ class TestTrackingData:
                 version=Version(None, save_version),
             )
             metrics_dataset.save({"col1": 1, "col2": 2, "col3": 3})
+            time.sleep(1)
 
             dataset = CSVDataSet(filepath="dataset.csv")
 
@@ -95,7 +97,7 @@ class TestTrackingData:
                 version=Version(None, save_version),
             )
             more_metrics.save({"col4": 4, "col5": 5, "col6": 6})
-
+            time.sleep(1)
             json_dataset = JSONDataSet(
                 filepath=PureWindowsPath(tmp_path / "tracking.json").as_posix(),
                 version=Version(None, save_version),
@@ -147,6 +149,7 @@ class TestTrackingData:
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
         ):
             dataset = CSVDataSet(filepath="dataset.csv")
+
             json_dataset = JSONDataSet(
                 filepath=PureWindowsPath(tmp_path / "tracking.json").as_posix(),
                 version=Version(None, save_version),
