@@ -22,7 +22,7 @@ from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
 
-# only import JSONDataSet at top-level for type-checking
+# only import JSONDataSet and `MetricsDataSet` at top-level for type-checking
 # so it doesn't blow up if user doesn't have the dataset dependencies installed.
 if TYPE_CHECKING:  # pragma: no cover
     from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
@@ -591,7 +591,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.tracking_data = tracking_data
 
             if data_node.is_metric_node():
-                metrics_data = self.load_tracking_versioned_data(self.filepath)
+                metrics_data = self.load_versioned_tracking_data(self.filepath)
                 if not metrics_data:
                     return
                 self.plot = self.create_metrics_plot(
@@ -625,7 +625,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             return json.load(fs_file)
 
     @staticmethod
-    def load_tracking_versioned_data(
+    def load_versioned_tracking_data(
         filepath: str, num_versions: int = 10
     ) -> Optional[Dict[datetime, Any]]:
         """Load data for multiple versions of the metrics dataset

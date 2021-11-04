@@ -373,7 +373,7 @@ class TestGraphNodeMetadata:
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_tracking_versioned_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_versioned_tracking_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.create_metrics_plot")
     def test_metrics_data_node_metadata(
@@ -436,7 +436,6 @@ class TestGraphNodeMetadata:
         json_data_node.is_tracking_node.return_value = True
         json_data_node.is_metric_node.return_value = False
         json_node_metadata = DataNodeMetadata(data_node=json_data_node)
-        # print("\n \n \n",json_node_metadata.plot, "\n \n \n")
         assert json_node_metadata.tracking_data == mock_json_data
         assert not hasattr(json_node_metadata, "plot")
 
@@ -463,7 +462,7 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "plot")
 
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_tracking_versioned_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_versioned_tracking_data")
     def test_metrics_data_node_metadata_versioned_dataset_not_exist(
         self,
         patched_data_loader,
@@ -601,7 +600,7 @@ class TestGraphNodeMetadata:
             },
         }
         assert (
-            DataNodeMetadata.load_tracking_versioned_data(metrics_filepath)
+            DataNodeMetadata.load_versioned_tracking_data(metrics_filepath)
             == mock_metrics_json
         )
 
@@ -615,7 +614,7 @@ class TestGraphNodeMetadata:
         }
         limit = 1
         assert (
-            DataNodeMetadata.load_tracking_versioned_data(metrics_filepath, limit)
+            DataNodeMetadata.load_versioned_tracking_data(metrics_filepath, limit)
             == mock_metrics_json
         )
 
@@ -623,7 +622,7 @@ class TestGraphNodeMetadata:
     def test_load_metrics_versioned_data_invalid_timestamp(
         self, patched_warning, metrics_filepath_invalid_timestamp
     ):
-        DataNodeMetadata.load_tracking_versioned_data(
+        DataNodeMetadata.load_versioned_tracking_data(
             metrics_filepath_invalid_timestamp
         )
         patched_warning.assert_has_calls(
