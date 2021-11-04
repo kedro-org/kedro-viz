@@ -25,6 +25,7 @@
 #
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import json
 from pathlib import Path
 from typing import Dict, Optional
@@ -35,8 +36,10 @@ from fastapi.testclient import TestClient
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
 from kedro.extras.datasets.spark import SparkDataSet
 from kedro.io import DataCatalog, MemoryDataSet
+from kedro.io.core import generate_timestamp
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
+from pytest import fixture
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -302,17 +305,6 @@ def example_db_dataset(example_db_session):
     session.add(run_2)
     session.commit()
     yield session
-
-"""
-This file contains the fixtures that are reusable by any tests within
-this directory. You don't need to import the fixtures as pytest will
-discover them automatically. More info here:
-https://docs.pytest.org/en/latest/fixture.html
-"""
-
-from pytest import fixture
-
-from kedro.io.core import generate_timestamp
 
 
 @fixture(params=[None])
