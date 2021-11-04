@@ -128,12 +128,6 @@ commands:
           name: Package app
           command: make package
 
-  check_legal_compliance:
-    steps:
-      - run:
-          name: Check for legal compliance
-          command: make legal
-
   deploy_to_s3:
     steps:
       - checkout
@@ -208,7 +202,6 @@ commands:
           key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
       - build_npm_package
       - package_app
-      - check_legal_compliance
 
   # Windows-related commands
   win_setup_conda:
