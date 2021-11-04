@@ -7,6 +7,9 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+## Bug fixes and other changes
+
+- Display JSON data on the metadata panel. (#608)
 
 # Release 4.0.0
 

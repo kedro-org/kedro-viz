@@ -112,7 +112,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     filepath: str
     type: str
     plot: Optional[Dict]
-    metrics: Optional[Dict]
+    tracking_data: Optional[Dict]
     run_command: Optional[str]
 
     class Config:

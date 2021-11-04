@@ -373,8 +373,8 @@ class TestGraphNodeMetadata:
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_versioned_tracking_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.create_metrics_plot")
     def test_metrics_data_node_metadata(
         self,
@@ -413,10 +413,31 @@ class TestGraphNodeMetadata:
         patched_metrics_plot.return_value = mock_plot_data
         metrics_data_node = MagicMock()
         metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_tracking_node.return_value = True
         metrics_data_node.is_metric_node.return_value = True
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
-        assert metrics_node_metadata.metrics == mock_metrics_data
+        assert metrics_node_metadata.tracking_data == mock_metrics_data
         assert metrics_node_metadata.plot == mock_plot_data
+
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    def test_json_data_node_metadata(
+        self,
+        patched_latest_json,
+    ):
+        mock_json_data = {
+            "recommendations": "test string",
+            "recommended_controls": False,
+            "projected_optimization": 0.0013902,
+        }
+
+        patched_latest_json.return_value = mock_json_data
+        json_data_node = MagicMock()
+        json_data_node.is_plot_node.return_value = False
+        json_data_node.is_tracking_node.return_value = True
+        json_data_node.is_metric_node.return_value = False
+        json_node_metadata = DataNodeMetadata(data_node=json_data_node)
+        assert json_node_metadata.tracking_data == mock_json_data
+        assert not hasattr(json_node_metadata, "plot")
 
     def test_metrics_data_node_metadata_dataset_not_exist(self):
         metrics_data_node = MagicMock()
@@ -427,7 +448,7 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
     def test_metrics_data_node_metadata_latest_metrics_not_exist(
         self,
         patched_latest_metrics,
@@ -440,8 +461,8 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_metrics_data")
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_metrics_versioned_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_versioned_tracking_data")
     def test_metrics_data_node_metadata_versioned_dataset_not_exist(
         self,
         patched_data_loader,
@@ -458,7 +479,7 @@ class TestGraphNodeMetadata:
         metrics_data_node.is_plot_node.return_value = False
         metrics_data_node.is_metric_node.return_value = True
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
-        assert metrics_node_metadata.metrics == mock_metrics_data
+        assert metrics_node_metadata.tracking_data == mock_metrics_data
         assert not hasattr(metrics_node_metadata, "plot")
 
     def test_data_node_metadata_create_metrics_plot(self):
@@ -552,18 +573,18 @@ class TestGraphNodeMetadata:
         dataset = MetricsDataSet(filepath=filename)
         data = {"col1": 1, "col2": 0.23, "col3": 0.002}
         dataset.save(data)
-        assert DataNodeMetadata.load_latest_metrics_data(dataset) == data
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == data
         # to avoid datasets being saved concurrently
         time.sleep(1)
         new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
         dataset.save(new_data)
-        assert DataNodeMetadata.load_latest_metrics_data(dataset) == new_data
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == new_data
         shutil.rmtree(filename)
 
     def test_load_latest_metrics_fail(self, mocker, metrics_filepath):
         dataset = MetricsDataSet(filepath=f"{metrics_filepath}")
         mocker.patch.object(dataset, "_exists_function", return_value=False)
-        assert DataNodeMetadata.load_latest_metrics_data(dataset) is None
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) is None
 
     def test_load_metrics_versioned_data(self, metrics_filepath):
         mock_metrics_json = {
@@ -579,7 +600,7 @@ class TestGraphNodeMetadata:
             },
         }
         assert (
-            DataNodeMetadata.load_metrics_versioned_data(metrics_filepath)
+            DataNodeMetadata.load_versioned_tracking_data(metrics_filepath)
             == mock_metrics_json
         )
 
@@ -593,7 +614,7 @@ class TestGraphNodeMetadata:
         }
         limit = 1
         assert (
-            DataNodeMetadata.load_metrics_versioned_data(metrics_filepath, limit)
+            DataNodeMetadata.load_versioned_tracking_data(metrics_filepath, limit)
             == mock_metrics_json
         )
 
@@ -601,7 +622,9 @@ class TestGraphNodeMetadata:
     def test_load_metrics_versioned_data_invalid_timestamp(
         self, patched_warning, metrics_filepath_invalid_timestamp
     ):
-        DataNodeMetadata.load_metrics_versioned_data(metrics_filepath_invalid_timestamp)
+        DataNodeMetadata.load_versioned_tracking_data(
+            metrics_filepath_invalid_timestamp
+        )
         patched_warning.assert_has_calls(
             [
                 call(
