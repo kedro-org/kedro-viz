@@ -63,7 +63,7 @@ class SQLiteStore(BaseSessionStore):
     @property
     def location(self) -> Path:
         """Returns location of the sqlite_store database"""
-        return Path(self._path).expanduser().resolve() / "session_store.db"
+        return Path(self._path) / "session_store.db"
 
     def to_json(self) -> str:
         """Returns session_store information in json format after converting PosixPath to string"""
