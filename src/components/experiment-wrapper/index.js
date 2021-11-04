@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '../sidebar';
 import Details from '../experiment-tracking/details';
 
@@ -7,13 +7,21 @@ import Details from '../experiment-tracking/details';
  * nav for experiment tracking and the display of the experiment details
  * single / comparison view.
  */
+
+const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three
+
 const ExperimentWrapper = () => {
-  const [selectedRuns, setSelectedRuns] = useState([]);
+  const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableComparisonView, setEnableComparisonView] = useState(false);
+  const [selectedRuns, setSelectedRuns] = useState([]);
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
-      return;
+      if (selectedRuns.includes(id)) {
+        setSelectedRuns(selectedRuns.filter((run) => run !== id));
+      } else {
+        setSelectedRuns([...selectedRuns, id]);
+      }
     } else {
       if (selectedRuns.includes(id)) {
         setSelectedRuns([]);
@@ -23,17 +31,30 @@ const ExperimentWrapper = () => {
     }
   };
 
-  const onToggleComparison = () => {
+  const onToggleComparisonView = () => {
     setEnableComparisonView(!enableComparisonView);
+
+    if (enableComparisonView && selectedRuns.length > 1) {
+      setSelectedRuns(selectedRuns.slice(0, 1));
+    }
   };
+
+  useEffect(() => {
+    if (selectedRuns.length > MAX_NUMBER_COMPARISONS) {
+      setDisableRunSelection(true);
+    } else {
+      setDisableRunSelection(false);
+    }
+  }, [selectedRuns]);
 
   return (
     <>
       <Sidebar
+        disableRunSelection={disableRunSelection}
         enableComparisonView={enableComparisonView}
         isExperimentView
         onRunSelection={onRunSelection}
-        onToggleComparison={onToggleComparison}
+        onToggleComparisonView={onToggleComparisonView}
         selectedRuns={selectedRuns}
       />
       <Details selectedRuns={selectedRuns} />

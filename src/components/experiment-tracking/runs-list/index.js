@@ -8,6 +8,7 @@ import './runs-list.css';
  * Main runs-list container.
  */
 const RunsList = ({
+  disableRunSelection,
   enableComparisonView,
   onRunSelection,
   runData,
@@ -26,6 +27,7 @@ const RunsList = ({
           {runsList.map((data, i) => (
             <RunsListCard
               data={data}
+              disableRunSelection={disableRunSelection}
               enableComparisonView={enableComparisonView}
               key={i}
               onRunSelection={onRunSelection}

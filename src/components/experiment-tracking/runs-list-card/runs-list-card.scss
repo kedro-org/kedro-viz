@@ -12,6 +12,11 @@
     box-shadow: -1px 0px 0px inset #{$color-accent-blue};
   }
 
+  &--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
   &:hover {
     background: var(--color-run-list-hover);
     cursor: pointer;

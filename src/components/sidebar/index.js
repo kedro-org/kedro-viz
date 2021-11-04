@@ -18,10 +18,11 @@ import './sidebar.css';
  * @param {boolean} props.visible Whether the sidebar is open/closed
  */
 export const Sidebar = ({
+  disableRunSelection,
   enableComparisonView,
   isExperimentView = false,
   onRunSelection,
-  onToggleComparison,
+  onToggleComparisonView,
   selectedRuns,
   visible,
 }) => {
@@ -41,6 +42,7 @@ export const Sidebar = ({
           <div className="pipeline-ui">
             {data ? (
               <RunsList
+                disableRunSelection={disableRunSelection}
                 enableComparisonView={enableComparisonView}
                 onRunSelection={onRunSelection}
                 runData={data}
@@ -52,7 +54,7 @@ export const Sidebar = ({
             <PrimaryToolbar
               enableComparisonView={enableComparisonView}
               isExperimentView
-              onToggleComparison={onToggleComparison}
+              onToggleComparisonView={onToggleComparisonView}
             />
           </nav>
         </div>

@@ -25,7 +25,7 @@ export const PrimaryToolbar = ({
   disableLayerBtn,
   enableComparisonView,
   isExperimentView,
-  onToggleComparison,
+  onToggleComparisonView,
   onToggleExportModal,
   onToggleLayers,
   onToggleSidebar,
@@ -55,7 +55,7 @@ export const PrimaryToolbar = ({
             enableComparisonView ? 'off' : 'on'
           }`}
           className={'pipeline-menu-button--comparison'}
-          onClick={onToggleComparison}
+          onClick={onToggleComparisonView}
           icon={PlusIcon}
           labelText={`${enableComparisonView ? 'Hide' : 'Show'} comparison`}
         />

@@ -11,6 +11,7 @@ import './runs-list-card.css';
  */
 const RunsListCard = ({
   data,
+  disableRunSelection,
   enableComparisonView = false,
   onRunSelection,
   selectedRuns,
@@ -34,6 +35,7 @@ const RunsListCard = ({
     <div
       className={classnames('kedro', 'runs-list-card', {
         'runs-list-card--active': active,
+        'runs-list-card--disabled': disableRunSelection && !active,
       })}
       onClick={() => onClick(id)}
     >
