@@ -9,10 +9,7 @@ Please follow the established format:
 -->
 ## Bug fixes and other changes
 
-- Display JSON data on the metadata panel. (#608)
-
-## Bug fixes and other changes
-
+- Display JSON tracking (`tracking.JSONDataSet`) on the metadata panel. (#608)
 - Fix layers visualisation for transcoded datasets. (#614, #615)
 
 # Release 4.0.0
