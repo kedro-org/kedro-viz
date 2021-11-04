@@ -8,6 +8,10 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Bug fixes and other changes
+
+- Fix layers visualisation for transcoded datasets. (#614, #615)
+
 # Release 4.0.0
 
 ## Major features and improvements
