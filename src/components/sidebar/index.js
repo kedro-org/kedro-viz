@@ -22,6 +22,7 @@ export const Sidebar = ({
   isExperimentView = false,
   onRunSelection,
   onToggleComparison,
+  selectedRuns,
   visible,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
@@ -43,6 +44,7 @@ export const Sidebar = ({
                 enableComparisonView={enableComparisonView}
                 onRunSelection={onRunSelection}
                 runData={data}
+                selectedRuns={selectedRuns}
               />
             ) : null}
           </div>
@@ -83,4 +85,4 @@ const mapStateToProps = (state) => ({
   visible: state.visible.sidebar,
 });
 
-export default connect(mapStateToProps)(Sidebar);
+export default connect(mapStateToProps)(React.memo(Sidebar));

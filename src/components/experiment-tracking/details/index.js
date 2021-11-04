@@ -13,9 +13,9 @@ import './details.css';
  * nav for experiment tracking, the display of experiment details,
  * as well as the comparison view.
  */
-const Details = ({ selectedRun, sidebarVisible }) => {
+const Details = ({ selectedRuns, sidebarVisible }) => {
   const { loading, error, data } = useQuery(GET_RUN_METADATA, {
-    variables: { run: selectedRun ? 'test' : null },
+    variables: { run: selectedRuns.length > 0 ? 'test' : null },
   });
 
   const isSingleRun = data && data.runMetadata.length === 1 ? true : false;

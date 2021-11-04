@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import CheckIcon from '../../icons/check';
 import BookmarkIcon from '../../icons/bookmark';
@@ -13,14 +13,22 @@ const RunsListCard = ({
   data,
   enableComparisonView = false,
   onRunSelection,
+  selectedRuns,
 }) => {
   const { id, timestamp, title = null, bookmark } = data;
   const [active, setActive] = useState(false);
 
   const onClick = (id) => {
     onRunSelection(id);
-    setActive(!active);
+
+    if (selectedRuns.includes(id)) {
+      setActive(false);
+    }
   };
+
+  useEffect(() => {
+    setActive(selectedRuns.includes(id));
+  }, [id, selectedRuns]);
 
   return (
     <div

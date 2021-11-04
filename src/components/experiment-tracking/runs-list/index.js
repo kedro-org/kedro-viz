@@ -7,7 +7,12 @@ import './runs-list.css';
 /**
  * Main runs-list container.
  */
-const RunsList = ({ enableComparisonView, onRunSelection, runData }) => {
+const RunsList = ({
+  enableComparisonView,
+  onRunSelection,
+  runData,
+  selectedRuns,
+}) => {
   const { runsList } = runData;
 
   return (
@@ -24,6 +29,7 @@ const RunsList = ({ enableComparisonView, onRunSelection, runData }) => {
               enableComparisonView={enableComparisonView}
               key={i}
               onRunSelection={onRunSelection}
+              selectedRuns={selectedRuns}
             />
           ))}
         </div>
