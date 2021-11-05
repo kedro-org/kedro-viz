@@ -10,7 +10,6 @@ from semver import VersionInfo
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (
     DataNode,
-    TranscodedDataNode,
     GraphEdge,
     GraphNode,
     GraphNodeType,
@@ -19,6 +18,7 @@ from kedro_viz.models.graph import (
     ParametersNode,
     RegisteredPipeline,
     Tag,
+    TranscodedDataNode,
 )
 
 _KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
