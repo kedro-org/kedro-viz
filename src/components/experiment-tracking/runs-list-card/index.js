@@ -52,9 +52,7 @@ const RunsListCard = ({
           {typeof title === 'string' ? title : timestamp}
         </div>
         <div className="runs-list-card__id">{id}</div>
-        <div className="runs-list-card__timestamp">
-          {timestamp.toISOString()}
-        </div>
+        <div className="runs-list-card__timestamp">{timestamp}</div>
       </div>
       {bookmark && <BookmarkIcon className={'runs-list-card__bookmark'} />}
     </div>

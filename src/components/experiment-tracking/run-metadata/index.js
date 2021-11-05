@@ -49,7 +49,7 @@ const RunMetadata = ({ isSingleRun, runs }) => {
                 </tr>
                 <tr>
                   {i === 0 ? <td>Creation Date</td> : null}
-                  <td>{run.timestamp.toISOString()}</td>
+                  <td>{run.timestamp}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Git SHA</td> : null}

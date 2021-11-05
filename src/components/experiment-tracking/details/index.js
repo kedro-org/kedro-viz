@@ -15,7 +15,8 @@ import './details.css';
  */
 const Details = ({ selectedRuns, sidebarVisible }) => {
   const { loading, error, data } = useQuery(GET_RUN_METADATA, {
-    variables: { run: selectedRuns.length > 0 ? 'test' : null },
+    variables: { runs: 'test' },
+    skip: selectedRuns.length === 0,
   });
 
   const isSingleRun = data && data.runMetadata.length === 1 ? true : false;
@@ -36,7 +37,11 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadata isSingleRun={isSingleRun} runs={data.runMetadata} />
+        {data ? (
+          <RunMetadata isSingleRun={isSingleRun} runs={data.runMetadata} />
+        ) : (
+          <div className="details-metadata"></div>
+        )}
         <RunDataset isSingleRun={isSingleRun} trackingData={trackingData} />
       </div>
     </>

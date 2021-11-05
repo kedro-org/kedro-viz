@@ -15,8 +15,8 @@ export const GET_RUNS = gql`
 
 /** query for details metadata component */
 export const GET_RUN_METADATA = gql`
-  query getRunMetadata($run: [ID]!) {
-    runMetadata(run: $run) {
+  query getRunMetadata($runs: [ID]!) {
+    runMetadata(runIDs: $runs) {
       author
       bookmark
       gitBranch
@@ -32,8 +32,8 @@ export const GET_RUN_METADATA = gql`
 
 /** query for collapsable run details component */
 export const GET_RUN_TRACKING_DATA = gql`
-  query getRunTrackingData($run: [ID]!) {
-    runTrackingData(run: $run) {
+  query getRunTrackingData($runs: [ID]!) {
+    runTrackingData(runIDs: $runs) {
       datasetName
       datasetType
       data
