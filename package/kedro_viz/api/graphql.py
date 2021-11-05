@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import logging
+from collections import defaultdict
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, NewType, Optional
 
@@ -117,39 +118,30 @@ def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
         >>>         'classWeight":21
         >>>     },
         >>> }
-        >>> format_run_tracking_data (tracking_data)
-        [{
-            datasetName: 'Data Analysis',
-            datasetType: "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
-            data: {
-                bootstrap: [
-                    { runId: 'My Favorite Run', value: 0.8 },
-                    { runId: 'Another favorite run', value: 0.5 },
-                    { runId: 'Slick test this one', value: 1 },
-                ],
-                classWeight: [
-                    { runId: 'My Favorite Run', value: 23 },
-                    { runId: 'Another favorite run', value: 21 },
-                    { runId: 'Slick test this one', value: 21 },
-                ]
-            }
-        }]
+        >>> format_run_tracking_data(tracking_data)
+        {
+            bootstrap: [
+                { runId: 'My Favorite Run', value: 0.8 },
+                { runId: 'Another favorite run', value: 0.5 },
+                { runId: 'Slick test this one', value: 1 },
+            ],
+            classWeight: [
+                { runId: 'My Favorite Run', value: 23 },
+                { runId: 'Another favorite run', value: 21 },
+                { runId: 'Slick test this one', value: 21 },
+            ]
+        }
 
     """
+    formatted_tracking_data = defaultdict(list)
 
-    tracking_keys = set()
-    for key in tracking_data.keys():
-        for nested_keys in tracking_data[key].keys():
-            tracking_keys.add(nested_keys)
-    runs_tracking_data = {
-        key: [
-            {"runId": run_id, "value": tracking_data[run_id][key]}
-            for run_id in tracking_data
-            if key in tracking_data[run_id]
-        ]
-        for key in sorted(tracking_keys)
-    }
-    return json.loads(json.dumps(runs_tracking_data))
+    for run_id, run_tracking_data in tracking_data.items():
+        for tracking_name, data in run_tracking_data.items():
+            formatted_tracking_data[tracking_name].append(
+                {"runId": run_id, "value": data}
+            )
+
+    return JSONObject(formatted_tracking_data)
 
 
 def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
