@@ -10,6 +10,7 @@ from semver import VersionInfo
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (
     DataNode,
+    TranscodedDataNode,
     GraphEdge,
     GraphNode,
     GraphNodeType,
@@ -161,7 +162,7 @@ class CatalogRepository:
         return dataset_obj
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
-        return self.layers_mapping.get(dataset_name)
+        return self.layers_mapping.get(self.strip_encoding(dataset_name))
 
     @staticmethod
     def is_dataset_param(dataset_name: str) -> bool:
@@ -294,7 +295,7 @@ class ModularPipelinesRepository:
             >>> modular_pipelines.add_input("data_science", model_input_node)
             >>> assert data_science_pipeline.inputs == {model_input_node.id}
         """
-        if not isinstance(input_node, (DataNode, ParametersNode)):
+        if not isinstance(input_node, (DataNode, TranscodedDataNode, ParametersNode)):
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
@@ -327,7 +328,7 @@ class ModularPipelinesRepository:
             >>> modular_pipelines.add_output("data_science", model_output_node)
             >>> assert data_science_pipeline.outputs == {model_output_node.id}
         """
-        if not isinstance(output_node, (DataNode, ParametersNode)):
+        if not isinstance(output_node, (DataNode, TranscodedDataNode, ParametersNode)):
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )

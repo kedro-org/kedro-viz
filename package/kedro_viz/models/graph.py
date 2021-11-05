@@ -22,9 +22,10 @@ from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
 
-# only import MetricsDataSet at top-level for type-checking
+# only import JSONDataSet and `MetricsDataSet` at top-level for type-checking
 # so it doesn't blow up if user doesn't have the dataset dependencies installed.
 if TYPE_CHECKING:  # pragma: no cover
+    from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
     from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
 
@@ -482,6 +483,17 @@ class DataNode(GraphNode):
             == "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
         )
 
+    def is_json_node(self):
+        """Check if the current node is a JSONDataSet node."""
+        return (
+            self.dataset_type
+            == "kedro.extras.datasets.tracking.json_dataset.JSONDataSet"
+        )
+
+    def is_tracking_node(self):
+        """Checks if the current node is a tracking data node"""
+        return self.is_json_node() or self.is_metric_node()
+
 
 @dataclass
 class TranscodedDataNode(GraphNode):
@@ -542,7 +554,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     # currently only applicable for PlotlyDataSet
     plot: Optional[Dict] = field(init=False)
 
-    metrics: Optional[Dict] = field(init=False)
+    tracking_data: Optional[Dict] = field(init=False)
 
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
@@ -565,36 +577,40 @@ class DataNodeMetadata(GraphNodeMetadata):
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
 
-        if data_node.is_metric_node():
+        if data_node.is_tracking_node():
+            from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
             from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
-            dataset = cast(MetricsDataSet, dataset)
             if not dataset._exists() or self.filepath is None:
                 return
-            metrics = self.load_latest_metrics_data(dataset)
-            if not metrics:
+
+            dataset = cast(Union[JSONDataSet, MetricsDataSet], dataset)
+            tracking_data = self.load_latest_tracking_data(dataset)
+            if not tracking_data:
                 return
-            self.metrics = metrics
-            metrics_data = self.load_metrics_versioned_data(self.filepath)
-            if not metrics_data:
-                return
-            self.plot = self.create_metrics_plot(
-                pd.DataFrame.from_dict(metrics_data, orient="index")
-            )
+            self.tracking_data = tracking_data
+
+            if data_node.is_metric_node():
+                metrics_data = self.load_versioned_tracking_data(self.filepath)
+                if not metrics_data:
+                    return
+                self.plot = self.create_metrics_plot(
+                    pd.DataFrame.from_dict(metrics_data, orient="index")
+                )
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
     @staticmethod
-    def load_latest_metrics_data(
-        dataset: "MetricsDataSet",
+    def load_latest_tracking_data(
+        dataset: Union["JSONDataSet", "MetricsDataSet"],
     ) -> Optional[Dict[str, float]]:
-        """Load data for latest versions of the metrics dataset.
+        """Load data for latest versions of the json dataset.
         Below operation is also on kedro.io.core -> fetched_latest_load_version()
         However it is a cached function and hence cannot be relied upon
         Args:
-            dataset: the latest version of the metrics dataset
+            dataset: the latest version of the metrics or json dataset
         Returns:
             A dictionary containing json data for the latest version
         """
@@ -609,7 +625,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             return json.load(fs_file)
 
     @staticmethod
-    def load_metrics_versioned_data(
+    def load_versioned_tracking_data(
         filepath: str, num_versions: int = 10
     ) -> Optional[Dict[datetime, Any]]:
         """Load data for multiple versions of the metrics dataset

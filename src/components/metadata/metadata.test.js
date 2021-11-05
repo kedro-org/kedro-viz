@@ -12,6 +12,7 @@ import nodeTask from '../../utils/data/node_task.mock.json';
 import nodeData from '../../utils/data/node_data.mock.json';
 import nodeTranscodedData from '../../utils/data/node_transcoded_data.mock.json';
 import nodeMetricsData from '../../utils/data/node_metrics_data.mock.json';
+import nodeJSONData from '../../utils/data/node_json_data.mock.json';
 
 const modelInputDataSetNodeId = '23c94afb';
 const splitDataTaskNodeId = '65d0d789';
@@ -402,7 +403,7 @@ describe('MetaData', () => {
           nodeId: modelInputDataSetNodeId,
           mockMetadata: nodeMetricsData,
         });
-        const row = rowByLabel(wrapper, 'Metrics from last run:');
+        const row = rowByLabel(wrapper, 'Tracking data from last run:');
         expect(textOf(rowObject(row))[0]).toEqual(
           expect.stringContaining('3 items')
         );
@@ -421,6 +422,26 @@ describe('MetaData', () => {
             1
           );
         });
+      });
+    });
+
+    describe('JSON dataset nodes', () => {
+      it('shows the json data', () => {
+        const wrapper = mount({
+          nodeId: modelInputDataSetNodeId,
+          mockMetadata: nodeJSONData,
+        });
+        const row = rowByLabel(wrapper, 'Tracking data from last run:');
+        expect(textOf(rowObject(row))[0]).toEqual(
+          expect.stringContaining('3 items')
+        );
+      });
+      it('does not show the plotly chart', () => {
+        const wrapper = mount({
+          nodeId: modelInputDataSetNodeId,
+          mockMetadata: nodeJSONData,
+        });
+        expect(wrapper.find('.pipeline-metadata__plot').length).toBe(0);
       });
     });
 
