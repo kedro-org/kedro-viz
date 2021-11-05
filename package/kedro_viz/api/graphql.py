@@ -101,41 +101,39 @@ def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
     Returns:
         Dictionary with formatted tracking data for selected runs
 
-     Example:
+    Example:
         >>> from kedro.extras.datasets.tracking import MetricsDataSet
-        >>>
         >>> tracking_data = {
-            {'My Favorite Sprint': {
-                'bootstrap':0.8
-                'classWeight":23
-            },
-            {'Another Favorite Sprint': {
-                'bootstrap':0.5
-                'classWeight":21
-            },
-            {'Slick test this one': {
-                'bootstrap':1
-                'classWeight":21
-            },
-        }
+        >>>     {'My Favorite Sprint': {
+        >>>         'bootstrap':0.8
+        >>>         'classWeight":23
+        >>>     },
+        >>>     {'Another Favorite Sprint': {
+        >>>         'bootstrap':0.5
+        >>>         'classWeight":21
+        >>>     },
+        >>>     {'Slick test this one': {
+        >>>         'bootstrap':1
+        >>>         'classWeight":21
+        >>>     },
+        >>> }
         >>> format_run_tracking_data (tracking_data)
-
-    Return :
-    [{
-        datasetName: 'Data Analysis',
-        datasetType: "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
-        data: {
-            bootstrap: [
-            { runId: 'My Favorite Sprint', value: 0.8 },
-            { runId: 'Another favorite sprint', value: 0.5 },
-            { runId: 'Slick test this one', value: 1 },
-            ],
-            classWeight: [
-            { runId: 'My Favorite Sprint', value: 23 },
-            { runId: 'Another favorite sprint', value: 21 },
-            { runId: 'Slick test this one', value: 21 },
-            ]}
-    }]
+        [{
+            datasetName: 'Data Analysis',
+            datasetType: "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
+            data: {
+                bootstrap: [
+                    { runId: 'My Favorite Run', value: 0.8 },
+                    { runId: 'Another favorite run', value: 0.5 },
+                    { runId: 'Slick test this one', value: 1 },
+                ],
+                classWeight: [
+                    { runId: 'My Favorite Run', value: 23 },
+                    { runId: 'Another favorite run', value: 21 },
+                    { runId: 'Slick test this one', value: 21 },
+                ]
+            }
+        }]
 
     """
 
