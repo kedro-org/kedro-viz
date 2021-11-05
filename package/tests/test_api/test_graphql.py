@@ -1,4 +1,3 @@
-
 # Copyright 2021 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +27,7 @@
 # limitations under the License.
 
 
+import shutil
 from unittest import mock
 from unittest.mock import PropertyMock, call, patch
 
@@ -47,9 +47,9 @@ def save_version():
 
 
 @pytest.fixture
-def example_tracking_catalog(tmp_path, save_version):
+def example_tracking_catalog(save_version):
     metrics_dataset = MetricsDataSet(
-        filepath=str(tmp_path / "test.json"),
+        filepath="test.json",
         version=Version(None, save_version),
     )
     metrics_dataset.save({"col1": 1, "col2": 2, "col3": 3})
@@ -57,13 +57,13 @@ def example_tracking_catalog(tmp_path, save_version):
     dataset = CSVDataSet(filepath="dataset.csv")
 
     more_metrics = MetricsDataSet(
-        filepath=str(tmp_path / "metrics.json"),
+        filepath="metrics.json",
         version=Version(None, save_version),
     )
     more_metrics.save({"col4": 4, "col5": 5, "col6": 6})
 
     json_dataset = JSONDataSet(
-        filepath=str(tmp_path / "tracking.json"),
+        filepath="tracking.json",
         version=Version(None, save_version),
     )
     json_dataset.save({"col7": "column_seven", "col2": True, "col3": 3})
@@ -113,6 +113,18 @@ def example_tracking_output(save_version):
     ]
 
 
+@pytest.fixture(scope="class", autouse=True)
+def cleanup(request):
+    """Cleanup a testing directory once we are finished."""
+
+    def remove_test_dir():
+        shutil.rmtree("test.json")
+        shutil.rmtree("metrics.json")
+        shutil.rmtree("tracking.json")
+
+    request.addfinalizer(remove_test_dir)
+
+
 class TestTrackingData:
     def test_graphql_run_tracking_data_query(
         self,
@@ -139,7 +151,7 @@ class TestTrackingData:
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
         ):
             json_dataset = JSONDataSet(
-                filepath=str(tmp_path / "tracking.json"),
+                filepath="tracking_more.json",
                 version=Version(None, save_version),
             )
 
