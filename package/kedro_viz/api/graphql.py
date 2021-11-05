@@ -170,13 +170,13 @@ def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
 
     all_datasets = []
     catalog = data_access_manager.catalog.get_catalog()
-    experiment_datasets = [
+    tracking_datasets = [
         (ds_name, ds_value)
         for ds_name, ds_value in catalog._data_sets.items()
         if (isinstance(ds_value, (MetricsDataSet, JSONDataSet)))
     ]
 
-    for name, dataset in experiment_datasets:
+    for name, dataset in tracking_datasets:
         all_runs = {}
         for run_id in run_ids:
             runid = ID(run_id)
@@ -188,7 +188,7 @@ def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
                     json_data = json.load(fs_file)
                     all_runs[runid] = json_data
             else:
-                logger.warning("`%s`could not be found", file_path)
+                logger.warning("`%s` could not be found", file_path)
 
         tracking_dataset = TrackingDataSet(
             datasetName=name,
