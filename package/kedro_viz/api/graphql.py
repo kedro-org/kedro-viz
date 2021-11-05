@@ -232,8 +232,7 @@ class Query:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids)
 
-    def runs_list(self, offset: Int, limit: Int) -> List[Run]: 
-        return get_all_runs(offset,limit)
+    runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
 
     @strawberry.field
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
