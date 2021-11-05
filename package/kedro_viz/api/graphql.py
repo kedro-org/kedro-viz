@@ -104,15 +104,15 @@ def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
     Example:
         >>> from kedro.extras.datasets.tracking import MetricsDataSet
         >>> tracking_data = {
-        >>>     {'My Favorite Sprint': {
+        >>>     'My Favorite Sprint': {
         >>>         'bootstrap':0.8
         >>>         'classWeight":23
         >>>     },
-        >>>     {'Another Favorite Sprint': {
+        >>>     'Another Favorite Sprint': {
         >>>         'bootstrap':0.5
         >>>         'classWeight":21
         >>>     },
-        >>>     {'Slick test this one': {
+        >>>     'Slick test this one': {
         >>>         'bootstrap':1
         >>>         'classWeight":21
         >>>     },
