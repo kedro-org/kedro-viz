@@ -14,17 +14,15 @@ const RunsList = ({
   runData,
   selectedRuns,
 }) => {
-  const { runsList } = runData;
-
   return (
     <>
       <Accordion
         heading="All"
         headingClassName="runs-list__accordion-header"
-        headingDetail={runsList.length}
+        headingDetail={runData.length}
       >
         <div className="runs-list__wrapper">
-          {runsList.map((data, i) => (
+          {runData.map((data, i) => (
             <RunsListCard
               data={data}
               disableRunSelection={disableRunSelection}

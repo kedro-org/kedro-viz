@@ -1,48 +1,39 @@
 export const runs = [
   {
     id: 'My Favorite Sprint',
-    metadata: {
-      id: 'd36fce9',
-      author: 'Luke Skywalker',
-      bookmark: true,
-      timestamp: '2021-09-08T10:55:36.810Z',
-      gitSha: 'ad60192',
-      gitBranch: 'feature/new-feature',
-      runCommand: 'kedro run --pipeline my_pipeline',
-      notes:
-        'But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful.',
-      title: 'My Favorite Sprint',
-    },
+    author: 'Luke Skywalker',
+    bookmark: true,
+    timestamp: '2021-09-08T10:55:36.810Z',
+    gitSha: 'ad60192',
+    gitBranch: 'feature/new-feature',
+    runCommand: 'kedro run --pipeline my_pipeline',
+    notes:
+      'But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful.',
+    title: 'My Favorite Sprint',
   },
   {
     id: 'Another favorite sprint',
-    metadata: {
-      id: '05542fb',
-      author: 'Leia Organa',
-      bookmark: false,
-      timestamp: '2021-09-07T11:36:24.560Z',
-      gitSha: 'bt60142',
-      gitBranch: 'feature/new-feature',
-      runCommand: 'kedro run --pipeline my_pipeline',
-      notes:
-        'On the other hand, we denounce with righteous indignation and dislike men who are so beguiled.',
-      title: 'Another favorite sprint',
-    },
+    author: 'Leia Organa',
+    bookmark: false,
+    timestamp: '2021-09-07T11:36:24.560Z',
+    gitSha: 'bt60142',
+    gitBranch: 'feature/new-feature',
+    runCommand: 'kedro run --pipeline my_pipeline',
+    notes:
+      'On the other hand, we denounce with righteous indignation and dislike men who are so beguiled.',
+    title: 'Another favorite sprint',
   },
   {
     id: 'Slick test this one',
-    metadata: {
-      id: '80c0d3a',
-      author: 'Obi-wan Kenobi',
-      bookmark: false,
-      timestamp: '2021-09-04T04:36:24.560Z',
-      gitSha: 'tz24689',
-      gitBranch: 'feature/new-feature',
-      runCommand: 'kedro run --pipeline my_pipeline',
-      notes:
-        'On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment',
-      title: 'Slick test this one',
-    },
+    author: 'Obi-wan Kenobi',
+    bookmark: false,
+    timestamp: '2021-09-04T04:36:24.560Z',
+    gitSha: 'tz24689',
+    gitBranch: 'feature/new-feature',
+    runCommand: 'kedro run --pipeline my_pipeline',
+    notes:
+      'On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment',
+    title: 'Slick test this one',
   },
 ];
 

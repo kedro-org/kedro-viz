@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useQuery } from '@apollo/client';
 import Sidebar from '../sidebar';
 import Details from '../experiment-tracking/details';
+import { GET_RUNS } from '../../apollo/queries';
 
 /**
  * Main experiment tracking page container. Handles showing/hiding the sidebar
@@ -14,6 +16,8 @@ const ExperimentWrapper = () => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableComparisonView, setEnableComparisonView] = useState(false);
   const [selectedRuns, setSelectedRuns] = useState([]);
+
+  const { data } = useQuery(GET_RUNS);
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
@@ -49,15 +53,22 @@ const ExperimentWrapper = () => {
 
   return (
     <>
-      <Sidebar
-        disableRunSelection={disableRunSelection}
-        enableComparisonView={enableComparisonView}
-        isExperimentView
-        onRunSelection={onRunSelection}
-        onToggleComparisonView={onToggleComparisonView}
-        selectedRuns={selectedRuns}
-      />
-      <Details selectedRuns={selectedRuns} />
+      {data ? (
+        <>
+          <Sidebar
+            disableRunSelection={disableRunSelection}
+            enableComparisonView={enableComparisonView}
+            isExperimentView
+            onRunSelection={onRunSelection}
+            onToggleComparisonView={onToggleComparisonView}
+            runsListData={data.runsList}
+            selectedRuns={selectedRuns}
+          />
+          <Details selectedRuns={selectedRuns} />
+        </>
+      ) : (
+        <p>Nothing here yet.</p>
+      )}
     </>
   );
 };

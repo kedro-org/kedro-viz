@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { useQuery } from '@apollo/client';
 import classnames from 'classnames';
 import MiniMap from '../minimap';
 import MiniMapToolbar from '../minimap-toolbar';
@@ -9,7 +8,6 @@ import PipelineList from '../pipeline-list';
 import PrimaryToolbar from '../primary-toolbar';
 
 import RunsList from '../experiment-tracking/runs-list';
-import { GET_RUNS } from '../../apollo/queries';
 
 import './sidebar.css';
 
@@ -23,13 +21,11 @@ export const Sidebar = ({
   isExperimentView = false,
   onRunSelection,
   onToggleComparisonView,
+  runsListData,
   selectedRuns,
   visible,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
-  const { data } = useQuery(GET_RUNS, {
-    skip: !isExperimentView,
-  });
 
   if (isExperimentView) {
     return (
@@ -40,15 +36,13 @@ export const Sidebar = ({
           })}
         >
           <div className="pipeline-ui">
-            {data ? (
-              <RunsList
-                disableRunSelection={disableRunSelection}
-                enableComparisonView={enableComparisonView}
-                onRunSelection={onRunSelection}
-                runData={data}
-                selectedRuns={selectedRuns}
-              />
-            ) : null}
+            <RunsList
+              disableRunSelection={disableRunSelection}
+              enableComparisonView={enableComparisonView}
+              onRunSelection={onRunSelection}
+              runData={runsListData}
+              selectedRuns={selectedRuns}
+            />
           </div>
           <nav className="pipeline-toolbar">
             <PrimaryToolbar
@@ -87,4 +81,4 @@ const mapStateToProps = (state) => ({
   visible: state.visible.sidebar,
 });
 
-export default connect(mapStateToProps)(React.memo(Sidebar));
+export default connect(mapStateToProps)(Sidebar);

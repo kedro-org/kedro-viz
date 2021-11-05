@@ -11,10 +11,10 @@ import './runs-list-card.css';
  */
 const RunsListCard = ({
   data,
-  disableRunSelection,
+  disableRunSelection = false,
   enableComparisonView = false,
   onRunSelection,
-  selectedRuns,
+  selectedRuns = [],
 }) => {
   const { id, timestamp, title = null, bookmark } = data;
   const [active, setActive] = useState(false);
