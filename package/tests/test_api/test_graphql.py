@@ -174,7 +174,7 @@ class TestTrackingData:
             patched_warning.assert_has_calls(
                 [
                     call(
-                        "`%s`could not be found",
+                        "`%s` could not be found",
                         json_dataset._get_versioned_path(str(save_version)),
                     )
                 ]
