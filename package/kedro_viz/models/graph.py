@@ -647,7 +647,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             except ValueError:
                 logger.warning(
                     """Expected timestamp of format YYYY-MM-DDTHH:MM:SS.ffffff.
-                    Skip when loading metrics."""
+                    Skip when loading tracking data."""
                 )
                 continue
             else:
