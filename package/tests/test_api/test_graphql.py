@@ -48,6 +48,8 @@ def save_version():
 
 @pytest.fixture
 def example_tracking_catalog(save_version):
+    # Note - filepath is assigned without using tmp_path as it fails on windows build.
+    # This is a temp soln and will be cleaned up in the future.
     metrics_dataset = MetricsDataSet(
         filepath="test.json",
         version=Version(None, save_version),
@@ -144,7 +146,6 @@ class TestTrackingData:
         self,
         patched_warning,
         save_version,
-        tmp_path,
         data_access_manager: DataAccessManager,
     ):
         with mock.patch(
