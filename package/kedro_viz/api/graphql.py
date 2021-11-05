@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Any, Dict, List, NewType, Optional
+from collections import defaultdict
+from pathlib import Path
+from typing import TYPE_CHECKING, Dict, List, NewType, Optional
 
 import strawberry
 from fastapi import APIRouter
@@ -19,32 +21,27 @@ logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:  # pragma: no cover
 
-    class JSONObject:
+    class JSONObject(dict):
         """Stub for JSONObject during type checking since mypy
          doesn't support dynamic base.
         https://github.com/python/mypy/issues/2477
         """
 
-        ...
-
 
 else:
     JSONObject = strawberry.scalar(
-        NewType("JSONObject", Any),
+        NewType("JSONObject", dict),
         serialize=lambda v: v,
         parse_value=lambda v: json.loads(v),
-        description="""The GenericScalar scalar type represents a generic GraphQL
-        scalar value that could be: List or Object.""",
+        description="Generic scalar type respresenting a JSON object",
     )
 
 
 def format_run(run_id: str, run_blob: Dict) -> Run:
     """Convert blob data in the correct Run format.
-
     Args:
         run_id: ID of the run to fetch
-        run_blob: JSON blob of run metadata and details
-
+        run_blob: JSON blob of run metadata and tracking data
     Returns:
         Run object
     """
@@ -65,10 +62,8 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
 
 def get_runs(run_ids: List[ID]) -> List[Run]:
     """Get a run by id from the session store.
-
     Args:
         run_ids: ID of the run to fetch
-
     Returns:
         list of Run objects
     """
@@ -99,6 +94,101 @@ def get_all_runs() -> List[Run]:
     return runs
 
 
+def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
+    """Convert tracking data in the front-end format.
+
+    Args:
+        tracking_data: JSON blob of tracking data for selected runs
+    Returns:
+        Dictionary with formatted tracking data for selected runs
+
+    Example:
+        >>> from kedro.extras.datasets.tracking import MetricsDataSet
+        >>> tracking_data = {
+        >>>     'My Favorite Sprint': {
+        >>>         'bootstrap':0.8
+        >>>         'classWeight":23
+        >>>     },
+        >>>     'Another Favorite Sprint': {
+        >>>         'bootstrap':0.5
+        >>>         'classWeight":21
+        >>>     },
+        >>>     'Slick test this one': {
+        >>>         'bootstrap':1
+        >>>         'classWeight":21
+        >>>     },
+        >>> }
+        >>> format_run_tracking_data(tracking_data)
+        {
+            bootstrap: [
+                { runId: 'My Favorite Run', value: 0.8 },
+                { runId: 'Another favorite run', value: 0.5 },
+                { runId: 'Slick test this one', value: 1 },
+            ],
+            classWeight: [
+                { runId: 'My Favorite Run', value: 23 },
+                { runId: 'Another favorite run', value: 21 },
+                { runId: 'Slick test this one', value: 21 },
+            ]
+        }
+
+    """
+    formatted_tracking_data = defaultdict(list)
+
+    for run_id, run_tracking_data in tracking_data.items():
+        for tracking_name, data in run_tracking_data.items():
+            formatted_tracking_data[tracking_name].append(
+                {"runId": run_id, "value": data}
+            )
+
+    return JSONObject(formatted_tracking_data)
+
+
+def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
+    # pylint: disable=protected-access,import-outside-toplevel
+    """Get all tracking data for a list of runs. Tracking data contains the data from the
+    tracking MetricsDataSet and JSONDataSet instances that have been logged
+    during that specific `kedro run`.
+    Args:
+        run_ids:  List of IDs of runs to fetch the tracking data for.
+
+    Returns:
+        List of TrackingDataSets
+
+    """
+    from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
+
+    all_datasets = []
+    catalog = data_access_manager.catalog.get_catalog()
+    tracking_datasets = [
+        (ds_name, ds_value)
+        for ds_name, ds_value in catalog._data_sets.items()
+        if (isinstance(ds_value, (MetricsDataSet, JSONDataSet)))
+    ]
+
+    for name, dataset in tracking_datasets:
+        all_runs = {}
+        for run_id in run_ids:
+            runid = ID(run_id)
+            file_path = dataset._get_versioned_path(str(runid))
+            if Path(file_path).is_file():
+                with dataset._fs.open(
+                    file_path, **dataset._fs_open_args_load
+                ) as fs_file:
+                    json_data = json.load(fs_file)
+                    all_runs[runid] = json_data
+            else:
+                logger.warning("`%s` could not be found", file_path)
+
+        tracking_dataset = TrackingDataSet(
+            datasetName=name,
+            datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
+            data=format_run_tracking_data(all_runs),
+        )
+        all_datasets.append(tracking_dataset)
+    return all_datasets
+
+
 @strawberry.type
 class Run:
     """Run object format"""
@@ -126,6 +216,11 @@ class TrackingDataSet:
 @strawberry.type
 class Query:
     """Query endpoint to get data from the session store"""
+
+    @strawberry.field
+    def run_tracking_data(self, run_ids: List[ID]) -> List[TrackingDataSet]:
+        """Query to get data for specific runs from the session store"""
+        return get_run_tracking_data(run_ids)
 
     runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
 
