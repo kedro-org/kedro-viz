@@ -15,7 +15,7 @@ import './wrapper.css';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
 export const Wrapper = ({ theme }) => (
-  <Provider useMocks={true}>
+  <Provider useMocks={false}>
     <div
       className={classnames('kedro-pipeline kedro', {
         'kui-theme--dark': theme === 'dark',

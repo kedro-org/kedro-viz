@@ -15,7 +15,7 @@ import './details.css';
  */
 const Details = ({ selectedRuns, sidebarVisible }) => {
   const { loading, error, data } = useQuery(GET_RUN_METADATA, {
-    variables: { runs: 'test' },
+    variables: { runs: selectedRuns },
     skip: selectedRuns.length === 0,
   });
 

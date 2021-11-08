@@ -10,7 +10,6 @@ import {
 import IconButton from '../icon-button';
 import MenuIcon from '../icons/menu';
 import LabelIcon from '../icons/label';
-import PlusIcon from '../icons/plus';
 import ExportIcon from '../icons/export';
 import LayersIcon from '../icons/layers';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
@@ -23,9 +22,7 @@ import './primary-toolbar.css';
  */
 export const PrimaryToolbar = ({
   disableLayerBtn,
-  enableComparisonView,
   isExperimentView,
-  onToggleComparisonView,
   onToggleExportModal,
   onToggleLayers,
   onToggleSidebar,
@@ -49,17 +46,7 @@ export const PrimaryToolbar = ({
         icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
       />
-      {isExperimentView ? (
-        <IconButton
-          ariaLabel={`Turn comparison view ${
-            enableComparisonView ? 'off' : 'on'
-          }`}
-          className={'pipeline-menu-button--comparison'}
-          onClick={onToggleComparisonView}
-          icon={PlusIcon}
-          labelText={`${enableComparisonView ? 'Hide' : 'Show'} comparison`}
-        />
-      ) : (
+      {isExperimentView ? null : (
         <>
           <IconButton
             ariaLive="polite"

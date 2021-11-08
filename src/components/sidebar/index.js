@@ -6,6 +6,7 @@ import MiniMapToolbar from '../minimap-toolbar';
 import NodeList from '../node-list';
 import PipelineList from '../pipeline-list';
 import PrimaryToolbar from '../primary-toolbar';
+import Switch from '../switch';
 
 import RunsList from '../experiment-tracking/runs-list';
 
@@ -36,6 +37,12 @@ export const Sidebar = ({
           })}
         >
           <div className="pipeline-ui">
+            <div className="compare-switch-wrapper">
+              <span className="compare-switch-wrapper__text">
+                Compare runs (max. 3)
+              </span>
+              <Switch onChange={onToggleComparisonView} />
+            </div>
             <RunsList
               disableRunSelection={disableRunSelection}
               enableComparisonView={enableComparisonView}
@@ -45,11 +52,7 @@ export const Sidebar = ({
             />
           </div>
           <nav className="pipeline-toolbar">
-            <PrimaryToolbar
-              enableComparisonView={enableComparisonView}
-              isExperimentView
-              onToggleComparisonView={onToggleComparisonView}
-            />
+            <PrimaryToolbar isExperimentView />
           </nav>
         </div>
       </>
