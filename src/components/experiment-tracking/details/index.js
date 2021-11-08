@@ -4,7 +4,10 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
-import { GET_RUN_METADATA } from '../../../apollo/queries';
+import {
+  GET_RUN_METADATA,
+  GET_RUN_TRACKING_DATA,
+} from '../../../apollo/queries';
 
 import './details.css';
 
@@ -16,19 +19,25 @@ import './details.css';
 const Details = ({ selectedRuns, sidebarVisible }) => {
   const { loading, error, data } = useQuery(GET_RUN_METADATA, {
     variables: { runs: selectedRuns },
-    skip: selectedRuns.length === 0,
   });
 
-  const isSingleRun = data && data.runMetadata.length === 1 ? true : false;
-  const trackingData = [];
+  const {
+    loading: trackingLoading,
+    error: trackingError,
+    data: trackingData,
+  } = useQuery(GET_RUN_TRACKING_DATA, {
+    variables: { runs: selectedRuns },
+  });
 
-  if (loading) {
+  if (loading || trackingLoading) {
     return 'Loading...';
   }
 
-  if (error) {
+  if (error || trackingError) {
     return null;
   }
+
+  const isSingleRun = data.runMetadata.length === 1 ? true : false;
 
   return (
     <>
@@ -37,12 +46,11 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        {data ? (
-          <RunMetadata isSingleRun={isSingleRun} runs={data.runMetadata} />
-        ) : (
-          <div className="details-metadata"></div>
-        )}
-        <RunDataset isSingleRun={isSingleRun} trackingData={trackingData} />
+        <RunMetadata isSingleRun={isSingleRun} runs={data.runMetadata} />
+        <RunDataset
+          isSingleRun={isSingleRun}
+          trackingData={trackingData.runTrackingData}
+        />
       </div>
     </>
   );

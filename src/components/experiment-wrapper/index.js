@@ -64,7 +64,9 @@ const ExperimentWrapper = () => {
             runsListData={data.runsList}
             selectedRuns={selectedRuns}
           />
-          <Details selectedRuns={selectedRuns} />
+          {selectedRuns.length > 0 ? (
+            <Details selectedRuns={selectedRuns} />
+          ) : null}
         </>
       ) : (
         <p>Nothing here yet.</p>

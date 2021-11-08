@@ -16,15 +16,22 @@ export const RunMock = Factory.define(({ sequence }) => {
   };
 });
 
-export const TrackingDataMock = Factory.define(({ sequence }) => ({
-  id: `abcd0m${sequence}`,
-  trackingData: faker.random.words(10),
-}));
+const TrackingDatasetMock = Factory.define(() => {
+  return {
+    runId: faker.random.words(3),
+    value: faker.datatype.number(),
+  };
+});
 
-export const TrackingDatasetMock = Factory.define(({ sequence }) => ({
-  id: `abcd0m${sequence}`,
-  trackingDataName: faker.random.words(),
-}));
+export const TrackingDataMock = Factory.define(() => {
+  return {
+    datasetName: faker.random.words(2),
+    datasetType: faker.random.words(2),
+    data: {
+      [faker.random.words(1)]: TrackingDatasetMock.buildList(1),
+    },
+  };
+});
 
 /** mock for runList data */
 export const runsListQueryMock = {
@@ -62,12 +69,12 @@ export const runTrackingDataMock = {
   request: {
     query: GET_RUN_TRACKING_DATA,
     variables: {
-      run: 'test',
+      runs: 'test',
     },
   },
   result: {
     data: {
-      trackingData: TrackingDataMock.build(),
+      trackingData: TrackingDataMock.buildList(5),
     },
   },
 };

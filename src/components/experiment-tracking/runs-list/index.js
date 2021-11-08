@@ -4,9 +4,6 @@ import RunsListCard from '../runs-list-card';
 
 import './runs-list.css';
 
-/**
- * Main runs-list container.
- */
 const RunsList = ({
   disableRunSelection,
   enableComparisonView,

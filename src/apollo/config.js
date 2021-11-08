@@ -3,7 +3,7 @@ import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 
 const link = createHttpLink({
   /** our graphql endpoint */
-  uri: 'http://localhost:4000/graphql',
+  uri: 'https://apollo-server-simple-demo.herokuapp.com/graphql',
   fetch,
 });
 
