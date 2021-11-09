@@ -1,30 +1,3 @@
-# Copyright 2021 QuantumBlack Visual Analytics Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
-# NONINFRINGEMENT. IN NO EVENT WILL THE LICENSOR OR OTHER CONTRIBUTORS
-# BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF, OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-# The QuantumBlack Visual Analytics Limited ("QuantumBlack") name and logo
-# (either separately or in combination, "QuantumBlack Trademarks") are
-# trademarks of QuantumBlack. The License does not grant you any right or
-# license to the QuantumBlack Trademarks. You may not use the QuantumBlack
-# Trademarks or any confusingly similar mark as a trademark for your product,
-# or use the QuantumBlack Trademarks in any other manner that might cause
-# confusion in the marketplace, including but not limited to in advertising,
-# on websites, or on software.
-#
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """`kedro_viz.data_access.repositories` defines repositories to save and load application data."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from collections import OrderedDict, defaultdict
@@ -45,6 +18,7 @@ from kedro_viz.models.graph import (
     ParametersNode,
     RegisteredPipeline,
     Tag,
+    TranscodedDataNode,
 )
 
 _KEDRO_VERSION = VersionInfo.parse(kedro.__version__)
@@ -188,7 +162,7 @@ class CatalogRepository:
         return dataset_obj
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
-        return self.layers_mapping.get(dataset_name)
+        return self.layers_mapping.get(self.strip_encoding(dataset_name))
 
     @staticmethod
     def is_dataset_param(dataset_name: str) -> bool:
@@ -321,7 +295,7 @@ class ModularPipelinesRepository:
             >>> modular_pipelines.add_input("data_science", model_input_node)
             >>> assert data_science_pipeline.inputs == {model_input_node.id}
         """
-        if not isinstance(input_node, (DataNode, ParametersNode)):
+        if not isinstance(input_node, (DataNode, TranscodedDataNode, ParametersNode)):
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
@@ -354,7 +328,7 @@ class ModularPipelinesRepository:
             >>> modular_pipelines.add_output("data_science", model_output_node)
             >>> assert data_science_pipeline.outputs == {model_output_node.id}
         """
-        if not isinstance(output_node, (DataNode, ParametersNode)):
+        if not isinstance(output_node, (DataNode, TranscodedDataNode, ParametersNode)):
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )

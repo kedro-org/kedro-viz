@@ -184,6 +184,14 @@ This command will launch a Kedro-Viz server at [localhost:4142](http://localhost
 
 > **Note**: Once the development server is launched at port 4142, the local app will always pull data from that server. To prevent this, you can comment out the proxy setting in `package.json` and restart the dev server at port 4141.
 
+#### Launch the development server with the `SQLiteSessionStore`
+
+Kedro-Viz provides a `SQLiteSessionStore` that users can use in their project to enable experiment tracking functionality. If you want to use this session store with the development server, make sure you don't use a relative path when specifying the store's location. For example, to specify the local `data` directory within a project as the session store's location, configure the project's `settings.py` as follow:
+```python
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
+```
+
 ### Data sources
 
 Kedro-Viz uses a unique identifier to determine the data source from one of several available sources. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
