@@ -22,6 +22,10 @@ const ExperimentWrapper = () => {
   const onRunSelection = (id) => {
     if (enableComparisonView) {
       if (selectedRuns.includes(id)) {
+        if (selectedRuns.length === 1) {
+          return;
+        }
+
         setSelectedRuns(selectedRuns.filter((run) => run !== id));
       } else {
         setSelectedRuns([...selectedRuns, id]);
