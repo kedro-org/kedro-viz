@@ -39,6 +39,18 @@ describe('RunsListCard', () => {
     expect(wrapper.find('.runs-list-card__bookmark').length).toBe(1);
   });
 
+  it('renders with an unchecked check icon', () => {
+    const wrapper = shallow(
+      <RunsListCard
+        data={randomRun}
+        enableComparisonView
+        selectedRuns={selectedRuns}
+      />
+    );
+
+    expect(wrapper.find('.runs-list-card__checked--comparing').length).toBe(1);
+  });
+
   it('calls a function on click and adds an active class', () => {
     const setActive = jest.fn();
     const wrapper = mount(

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery } from '@apollo/client';
+import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import RunMetadata from '../run-metadata';
@@ -11,33 +11,26 @@ import {
 
 import './details.css';
 
-/**
- * Main experiment tracking page container. Handles showing/hiding the sidebar
- * nav for experiment tracking, the display of experiment details,
- * as well as the comparison view.
- */
 const Details = ({ selectedRuns, sidebarVisible }) => {
-  const { loading, error, data } = useQuery(GET_RUN_METADATA, {
-    variables: { runs: selectedRuns },
-  });
+  const { data: { runMetadata } = [], error } = useApolloQuery(
+    GET_RUN_METADATA,
+    {
+      skip: selectedRuns.length === 0,
+      variables: { runs: selectedRuns },
+    }
+  );
 
-  const {
-    loading: trackingLoading,
-    error: trackingError,
-    data: trackingData,
-  } = useQuery(GET_RUN_TRACKING_DATA, {
-    variables: { runs: selectedRuns },
-  });
-
-  if (loading || trackingLoading) {
-    return 'Loading...';
-  }
+  const { data: { runTrackingData } = [], error: trackingError } =
+    useApolloQuery(GET_RUN_TRACKING_DATA, {
+      skip: selectedRuns.length === 0,
+      variables: { runs: selectedRuns },
+    });
 
   if (error || trackingError) {
     return null;
   }
 
-  const isSingleRun = data.runMetadata.length === 1 ? true : false;
+  const isSingleRun = runMetadata && runMetadata.length === 1 ? true : false;
 
   return (
     <>
@@ -46,11 +39,8 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadata isSingleRun={isSingleRun} runs={data.runMetadata} />
-        <RunDataset
-          isSingleRun={isSingleRun}
-          trackingData={trackingData.runTrackingData}
-        />
+        <RunMetadata isSingleRun={isSingleRun} runs={runMetadata} />
+        <RunDataset isSingleRun={isSingleRun} trackingData={runTrackingData} />
       </div>
     </>
   );

@@ -28,7 +28,7 @@ const ExperimentWrapper = () => {
       }
     } else {
       if (selectedRuns.includes(id)) {
-        setSelectedRuns([]);
+        return;
       } else {
         setSelectedRuns([id]);
       }
@@ -50,6 +50,13 @@ const ExperimentWrapper = () => {
       setDisableRunSelection(false);
     }
   }, [selectedRuns]);
+
+  useEffect(() => {
+    if (data && data.runsList.length > 0) {
+      // If we return runs, set the first one as the default.
+      setSelectedRuns(data.runsList.map((run) => run.id).slice(0, 1));
+    }
+  }, [data]);
 
   return (
     <>

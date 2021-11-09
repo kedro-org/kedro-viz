@@ -21,10 +21,6 @@ const RunsListCard = ({
 
   const onClick = (id) => {
     onRunSelection(id);
-
-    if (selectedRuns.includes(id)) {
-      setActive(false);
-    }
   };
 
   useEffect(() => {

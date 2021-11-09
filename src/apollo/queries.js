@@ -18,10 +18,8 @@ export const GET_RUN_METADATA = gql`
   query getRunMetadata($runs: [ID]!) {
     runMetadata(runIDs: $runs) {
       author
-      bookmark
       gitBranch
       gitSha
-      id
       notes
       runCommand
       timestamp

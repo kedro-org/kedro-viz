@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import './run-metadata.css';
 
-const RunMetadata = ({ isSingleRun, runs }) => {
+const RunMetadata = ({ isSingleRun, runs = [] }) => {
   let initialState = {};
   for (let i = 0; i < runs.length; i++) {
     initialState[i] = false;
