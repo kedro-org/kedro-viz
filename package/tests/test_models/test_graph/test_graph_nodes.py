@@ -13,6 +13,7 @@ from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
 from kedro.extras.datasets.spark import SparkDataSet
 from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
+from kedro.io.core import Version
 from kedro.pipeline.node import node
 
 from kedro_viz.models.graph import (
@@ -571,7 +572,7 @@ class TestGraphNodeMetadata:
         # tracking_data_filepath as it fails on windows build.
         # This will be cleaned up in the future.
         filename = "temp.json"
-        dataset = MetricsDataSet(filepath=filename)
+        dataset = MetricsDataSet(filepath=filename, version=Version(None, None))
         data = {"col1": 1, "col2": 0.23, "col3": 0.002}
         dataset.save(data)
         assert DataNodeMetadata.load_latest_tracking_data(dataset) == data
