@@ -614,7 +614,7 @@
       }
     }
   },
-  "metrics": {
+  "tracking_data": {
     "recommendations": 0.2160981834063107,
     "recommended_controls": 0.2701227292578884,
     "projected_optimization": 0.32414727510946606
