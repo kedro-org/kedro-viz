@@ -88,13 +88,41 @@ class TestTrackingData:
         self,
         data_access_manager: DataAccessManager,
         save_version,
-        example_tracking_catalog,
         example_tracking_output,
         tmp_path,
     ):
         with mock.patch(
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
         ):
+            metrics_dataset = MetricsDataSet(
+                filepath=(tmp_path / "test.json").as_posix(),
+                version=Version(None, save_version),
+            )
+            metrics_dataset.save({"col1": 1, "col2": 2, "col3": 3})
+
+            dataset = CSVDataSet((tmp_path / "dataset.csv").as_posix())
+
+            more_metrics = MetricsDataSet(
+                filepath=(tmp_path / "metrics.json").as_posix(),
+                version=Version(None, save_version),
+            )
+            more_metrics.save({"col4": 4, "col5": 5, "col6": 6})
+
+            json_dataset = JSONDataSet(
+                filepath=(tmp_path / "tracking.json").as_posix(),
+                version=Version(None, save_version),
+            )
+            json_dataset.save({"col7": "column_seven", "col2": True, "col3": 3})
+
+            example_tracking_catalog = DataCatalog(
+                data_sets={
+                    "metrics": metrics_dataset,
+                    "csv": dataset,
+                    "more_metrics": more_metrics,
+                    "json_tracking": json_dataset,
+                }
+            )
+
             data_access_manager.add_catalog(example_tracking_catalog)
             assert get_run_tracking_data([ID(save_version)]) == example_tracking_output
 
