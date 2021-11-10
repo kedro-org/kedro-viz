@@ -583,6 +583,19 @@ class TestGraphNodeMetadata:
         assert DataNodeMetadata.load_latest_tracking_data(dataset) == new_data
         shutil.rmtree(filename)
 
+    def test_load_latest_tracking_data2(self, tmp_path):
+        dataset = MetricsDataSet(
+            filepath=(tmp_path / "test.json").as_posix(), version=Version(None, None)
+        )
+        data = {"col1": 1, "col2": 0.23, "col3": 0.002}
+        dataset.save(data)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == data
+        # to avoid datasets being saved concurrently
+        time.sleep(1)
+        new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
+        dataset.save(new_data)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == new_data
+
     def test_load_latest_tracking_data_fail(self, mocker, tracking_data_filepath):
         dataset = MetricsDataSet(filepath=f"{tracking_data_filepath}")
         mocker.patch.object(dataset, "_exists_function", return_value=False)
