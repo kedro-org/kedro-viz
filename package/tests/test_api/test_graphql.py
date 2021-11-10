@@ -1,4 +1,3 @@
-import shutil
 from unittest import mock
 from unittest.mock import PropertyMock, call, patch
 
@@ -18,25 +17,23 @@ def save_version():
 
 
 @pytest.fixture
-def example_tracking_catalog(save_version):
-    # Note - filepath is assigned without using tmp_path as it fails on windows build.
-    # This is a temp soln and will be cleaned up in the future.
+def example_tracking_catalog(save_version, tmp_path):
     metrics_dataset = MetricsDataSet(
-        filepath="test.json",
+        filepath=(tmp_path / "test.json").as_posix(),
         version=Version(None, save_version),
     )
     metrics_dataset.save({"col1": 1, "col2": 2, "col3": 3})
 
-    dataset = CSVDataSet(filepath="dataset.csv")
+    dataset = CSVDataSet((tmp_path / "dataset.csv").as_posix())
 
     more_metrics = MetricsDataSet(
-        filepath="metrics.json",
+        filepath=(tmp_path / "metrics.json").as_posix(),
         version=Version(None, save_version),
     )
     more_metrics.save({"col4": 4, "col5": 5, "col6": 6})
 
     json_dataset = JSONDataSet(
-        filepath="tracking.json",
+        filepath=(tmp_path / "tracking.json").as_posix(),
         version=Version(None, save_version),
     )
     json_dataset.save({"col7": "column_seven", "col2": True, "col3": 3})
@@ -51,10 +48,6 @@ def example_tracking_catalog(save_version):
     )
 
     yield catalog
-
-    shutil.rmtree("test.json", ignore_errors=True)
-    shutil.rmtree("metrics.json", ignore_errors=True)
-    shutil.rmtree("tracking.json", ignore_errors=True)
 
 
 @pytest.fixture
