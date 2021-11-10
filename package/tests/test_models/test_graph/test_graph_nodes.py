@@ -698,3 +698,38 @@ class TestMetricsDataSet:
         assert actual_data == test_data
         assert metrics_dataset._fs_open_args_load == {}
         assert metrics_dataset._fs_open_args_save == {"mode": "w"}
+
+    def test_save_data2(self, tmp_path, filepath_json):
+        dataset = MetricsDataSet(filepath=filepath_json, version=Version(None, None))
+        data = {"col1": 1, "col2": 0.23, "col3": 0.002}
+        dataset.save(data)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == data
+        # to avoid datasets being saved concurrently
+        time.sleep(1)
+        new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
+        dataset.save(new_data)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == new_data
+
+    def test_save_data3(self, filepath_json):
+        dataset = MetricsDataSet(filepath=filepath_json, version=Version(None, None))
+        data = {"col1": 1, "col2": 0.23, "col3": 0.002}
+        dataset.save(data)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == data
+        # to avoid datasets being saved concurrently
+        time.sleep(1)
+        new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
+        dataset.save(new_data)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == new_data
+
+    def test_save_data4(self, tmp_path):
+        dataset = MetricsDataSet(
+            filepath=(tmp_path / "test.json").as_posix(), version=Version(None, None)
+        )
+        data = {"col1": 1, "col2": 0.23, "col3": 0.002}
+        dataset.save(data)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == data
+        # to avoid datasets being saved concurrently
+        time.sleep(1)
+        new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
+        dataset.save(new_data)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == new_data
