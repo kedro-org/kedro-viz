@@ -655,3 +655,46 @@ class TestGraphNodeMetadata:
         )
         parameters_node_metadata = ParametersNodeMetadata(parameters_node)
         assert parameters_node_metadata.parameters == {"test_split_ratio": 0.3}
+
+
+@pytest.fixture
+def filepath_json(tmp_path):
+    return (tmp_path / "test.json").as_posix()
+
+
+@pytest.fixture
+def dummy_data():
+    return {"col1": 1, "col2": 2, "col3": 3}
+
+
+class TestMetricsDataSet:
+    def test_save_data(
+        self,
+        dummy_data,
+        tmp_path,
+        filepath_json,
+    ):
+        """Test saving and reloading the data set."""
+        metrics_dataset = MetricsDataSet(
+            filepath=filepath_json, version=Version(None, "blah")
+        )
+        metrics_dataset.save(dummy_data)
+
+        actual_filepath = Path(metrics_dataset._filepath.as_posix())
+        test_filepath = tmp_path / "locally_saved.json"
+
+        test_filepath.parent.mkdir(parents=True, exist_ok=True)
+        with open(test_filepath, "w", encoding="utf-8") as file:
+            json.dump(dummy_data, file)
+
+        with open(test_filepath, encoding="utf-8") as file:
+            test_data = json.load(file)
+
+        with open(
+            (actual_filepath / "blah" / "test.json"), encoding="utf-8"
+        ) as actual_file:
+            actual_data = json.load(actual_file)
+
+        assert actual_data == test_data
+        assert metrics_dataset._fs_open_args_load == {}
+        assert metrics_dataset._fs_open_args_save == {"mode": "w"}
