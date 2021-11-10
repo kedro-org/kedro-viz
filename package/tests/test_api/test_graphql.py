@@ -90,6 +90,7 @@ class TestTrackingData:
         save_version,
         example_tracking_catalog,
         example_tracking_output,
+        tmp_path,
     ):
         with mock.patch(
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
@@ -138,7 +139,7 @@ class TestTrackingData:
 
 
 class TestGraphQLEndpoints:
-    def test_graphql_run_list_endpoint(self, client, example_db_dataset):
+    def test_graphql_run_list_endpoint(self, client, example_db_dataset, tmp_path):
         with mock.patch(
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
