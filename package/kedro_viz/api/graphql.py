@@ -94,7 +94,7 @@ def get_all_runs() -> List[Run]:
     return runs
 
 
-def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
+def format_run_tracking_data(tracking_data: Dict, showDiff: bool) -> JSONObject:
     """Convert tracking data in the front-end format.
 
     Args:
@@ -118,7 +118,7 @@ def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
         >>>         'classWeight":21
         >>>     },
         >>> }
-        >>> format_run_tracking_data(tracking_data)
+        >>> format_run_tracking_data(tracking_data,false)
         {
             bootstrap: [
                 { runId: 'My Favorite Run', value: 0.8 },
@@ -134,17 +134,45 @@ def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
 
     """
     formatted_tracking_data = defaultdict(list)
+    tracking_keys = []
+    for key in tracking_data.keys():
+        for nested_keys in tracking_data[key].keys():
+            tracking_keys.append(nested_keys)
 
-    for run_id, run_tracking_data in tracking_data.items():
-        for tracking_name, data in run_tracking_data.items():
-            formatted_tracking_data[tracking_name].append(
-                {"runId": run_id, "value": data}
-            )
+    if showDiff:
+        formatted_tracking_data = {
+            key: [
+                    {"runId": run_id, "value": tracking_data[run_id][key]}
+                    if key in tracking_data[run_id]  
+                    else {"runId": run_id, "value": None}
+                    for run_id in tracking_data
+                    
+                ]
+                for key in set(sorted(tracking_keys))
+                if tracking_keys.count(key) == len(tracking_data)
+        }
+    else:
+        formatted_tracking_data = {
+            key: [
+                    {"runId": run_id, "value": tracking_data[run_id][key]}
+                    if key in tracking_data[run_id]  
+                    else {"runId": run_id, "value": None}
+                    for run_id in tracking_data
+                    
+                ]
+                for key in set(sorted(tracking_keys))
+        }
+
+    
+
+
+
+
 
     return JSONObject(formatted_tracking_data)
 
 
-def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
+def get_run_tracking_data(run_ids: List[ID], showDiff: bool) -> List[TrackingDataSet]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all tracking data for a list of runs. Tracking data contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
@@ -183,7 +211,7 @@ def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
         tracking_dataset = TrackingDataSet(
             datasetName=name,
             datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
-            data=format_run_tracking_data(all_runs),
+            data=format_run_tracking_data(all_runs, showDiff),
         )
         all_datasets.append(tracking_dataset)
     return all_datasets
@@ -218,9 +246,9 @@ class Query:
     """Query endpoint to get data from the session store"""
 
     @strawberry.field
-    def run_tracking_data(self, run_ids: List[ID]) -> List[TrackingDataSet]:
+    def run_tracking_data(self, run_ids: List[ID], showDiff: bool) -> List[TrackingDataSet]:
         """Query to get data for specific runs from the session store"""
-        return get_run_tracking_data(run_ids)
+        return get_run_tracking_data(run_ids, showDiff)
 
     runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
 
