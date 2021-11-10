@@ -12,6 +12,11 @@
     box-shadow: -1px 0px 0px inset #{$color-accent-blue};
   }
 
+  &--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
   &:hover {
     background: var(--color-run-list-hover);
     cursor: pointer;
@@ -34,10 +39,17 @@
 }
 
 .runs-list-card__checked {
-  fill: #{$color-accent-blue};
   height: 24px;
   margin-right: 0.8em;
   width: 24px;
+
+  &--comparing {
+    fill: var(--color-base-20);
+  }
+
+  &--active {
+    fill: #{$color-accent-blue};
+  }
 }
 
 .runs-list-card__bookmark {

@@ -24,20 +24,15 @@ const typeDefs = gql`
   }
 
   type Run {
-    id: ID!
-    title: String!
-    timestamp: String!
-    author: String
+    author: String
+    bookmark: Boolean
     gitBranch: String
     gitSha: String
-    bookmark: Boolean
+    id: ID!
     notes: String
     runCommand: String
-  }
-
-  type RunTrackingData {
-    runID: ID!
-    trackingData: [TrackingDataset]
+    timestamp: String!
+    title: String!
   }
 
   type TrackingDataset {

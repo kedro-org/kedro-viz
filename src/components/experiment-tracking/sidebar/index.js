@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Route } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import classnames from 'classnames';
 import RunsList from '../runs-list';
@@ -13,7 +12,7 @@ import './sidebar.css';
  * @param {array} props.data The RunsList data
  * @param {boolean} props.visible Whether the sidebar is open/closed
  */
-export const Sidebar = ({ visible }) => {
+export const Sidebar = ({ onRunSelection, visible }) => {
   const { data } = useQuery(GET_RUNS);
 
   if (data) {
@@ -25,9 +24,7 @@ export const Sidebar = ({ visible }) => {
           })}
         >
           <div className="pipeline-ui">
-            <Route path={['/runsList/:id', '/runsList']}>
-              <RunsList runData={data} />
-            </Route>
+            <RunsList onRunSelection={onRunSelection} runData={data} />
           </div>
           <nav className="pipeline-toolbar">
             <PrimaryToolbar />

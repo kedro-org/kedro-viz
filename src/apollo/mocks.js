@@ -1,39 +1,40 @@
 import { Factory } from 'fishery';
 import faker from 'faker';
-import { GET_RUNS, GET_RUN_METADATA, GET_RUNS_TRACKING_DATA } from './queries';
-
-export const MetadataMock = Factory.define(({ sequence }) => ({
-  author: faker.git.shortSha(),
-  bookmark: faker.datatype.boolean(),
-  gitBranch: faker.git.branch(),
-  gitSha: faker.git.commitSha(),
-  notes: faker.random.words(10),
-  runCommand: faker.random.words(5),
-  id: `abcd0m${sequence}`,
-  timestamp: faker.date.past(),
-  title: faker.random.words(3),
-}));
-
-export const TrackingDataMock = Factory.define(({ sequence }) => ({
-  id: `abcd0m${sequence}`,
-  trackingData: faker.random.words(10),
-}));
-
-export const TrackingDatasetMock = Factory.define(({ sequence }) => ({
-  id: `abcd0m${sequence}`,
-  trackingDataName: faker.random.words(),
-}));
+import { GET_RUNS, GET_RUN_METADATA, GET_RUN_TRACKING_DATA } from './queries';
 
 export const RunMock = Factory.define(({ sequence }) => {
   return {
+    author: faker.git.shortSha(),
+    bookmark: faker.datatype.boolean(),
+    gitBranch: faker.git.branch(),
+    gitSha: faker.git.commitSha(),
     id: `abcd0m${sequence}`,
-    metadata: MetadataMock.build(),
-    trackingData: TrackingDataMock.build(),
+    notes: faker.random.words(10),
+    runCommand: faker.random.words(5),
+    timestamp: faker.date.past().toISOString(),
+    title: faker.random.words(3),
+  };
+});
+
+const TrackingDatasetMock = Factory.define(() => {
+  return {
+    runId: faker.random.words(3),
+    value: faker.datatype.number(),
+  };
+});
+
+export const TrackingDataMock = Factory.define(() => {
+  return {
+    datasetName: faker.random.words(2),
+    datasetType: faker.random.words(2),
+    data: {
+      [faker.random.words(1)]: TrackingDatasetMock.buildList(1),
+    },
   };
 });
 
 /** mock for runList data */
-export const runsQueryMock = {
+export const runsListQueryMock = {
   request: {
     query: GET_RUNS,
   },
@@ -46,34 +47,34 @@ export const runsQueryMock = {
 
 /** mock for metadata data*/
 /** WIP: the run variable will be replaced by an input to enable dynamic input of variables*/
-/** This will be enabled with in a seperate ticket*/
+/** This will be enabled with in a separate ticket*/
 export const runMetadataQueryMock = {
   request: {
     query: GET_RUN_METADATA,
     variables: {
-      run: 'test',
+      runs: 'test',
     },
   },
   result: {
     data: {
-      metadata: RunMock.build(),
+      runMetadata: RunMock.buildList(1),
     },
   },
 };
 
 /** mock for tracking data */
 /** WIP: the run variable will be replaced by an input to enable dynamic input of variables*/
-/** This will be enabled with in a seperate ticket*/
+/** This will be enabled with in a separate ticket*/
 export const runTrackingDataMock = {
   request: {
-    query: GET_RUNS_TRACKING_DATA,
+    query: GET_RUN_TRACKING_DATA,
     variables: {
-      run: 'test',
+      runs: 'test',
     },
   },
   result: {
     data: {
-      trackingData: TrackingDataMock.build(),
+      trackingData: TrackingDataMock.buildList(5),
     },
   },
 };

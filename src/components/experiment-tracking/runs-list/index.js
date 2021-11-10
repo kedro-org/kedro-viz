@@ -1,32 +1,32 @@
 import React from 'react';
 import Accordion from '../accordion';
 import RunsListCard from '../runs-list-card';
-import { useRunIdsFromUrl } from '../../../utils';
 
 import './runs-list.css';
 
-/**
- * Main runs-list container.
- */
-const RunsList = ({ runData }) => {
-  const { run, compare } = useRunIdsFromUrl();
-
-  const { runsList } = runData;
-
+const RunsList = ({
+  disableRunSelection,
+  enableComparisonView,
+  onRunSelection,
+  runData,
+  selectedRuns,
+}) => {
   return (
     <>
       <Accordion
         heading="All"
         headingClassName="runs-list__accordion-header"
-        headingDetail={runsList.length}
+        headingDetail={runData.length}
       >
         <div className="runs-list__wrapper">
-          {runsList.map((data, i) => (
+          {runData.map((data, i) => (
             <RunsListCard
               data={data}
+              disableRunSelection={disableRunSelection}
+              enableComparisonView={enableComparisonView}
               key={i}
-              selectedRun={run}
-              selectedRunsToCompare={compare}
+              onRunSelection={onRunSelection}
+              selectedRuns={selectedRuns}
             />
           ))}
         </div>

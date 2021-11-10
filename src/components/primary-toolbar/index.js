@@ -22,6 +22,7 @@ import './primary-toolbar.css';
  */
 export const PrimaryToolbar = ({
   disableLayerBtn,
+  isExperimentView,
   onToggleExportModal,
   onToggleLayers,
   onToggleSidebar,
@@ -45,31 +46,35 @@ export const PrimaryToolbar = ({
         icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
       />
-      <IconButton
-        ariaLive="polite"
-        className={'pipeline-menu-button--labels'}
-        onClick={() => onToggleTextLabels(!textLabels)}
-        icon={LabelIcon}
-        labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
-        visible={visible.labelBtn}
-      />
-      <IconButton
-        ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
-        className={'pipeline-menu-button--layers'}
-        onClick={() => onToggleLayers(!visibleLayers)}
-        icon={LayersIcon}
-        labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
-        disabled={disableLayerBtn}
-        visible={visible.layerBtn}
-      />
-      <IconButton
-        ariaLabel="Export graph as SVG or PNG"
-        className={'pipeline-menu-button--export'}
-        onClick={() => onToggleExportModal(true)}
-        icon={ExportIcon}
-        labelText="Export visualisation"
-        visible={visible.exportBtn}
-      />
+      {isExperimentView ? null : (
+        <>
+          <IconButton
+            ariaLive="polite"
+            className={'pipeline-menu-button--labels'}
+            onClick={() => onToggleTextLabels(!textLabels)}
+            icon={LabelIcon}
+            labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
+            visible={visible.labelBtn}
+          />
+          <IconButton
+            ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
+            className={'pipeline-menu-button--layers'}
+            onClick={() => onToggleLayers(!visibleLayers)}
+            icon={LayersIcon}
+            labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
+            disabled={disableLayerBtn}
+            visible={visible.layerBtn}
+          />
+          <IconButton
+            ariaLabel="Export graph as SVG or PNG"
+            className={'pipeline-menu-button--export'}
+            onClick={() => onToggleExportModal(true)}
+            icon={ExportIcon}
+            labelText="Export visualisation"
+            visible={visible.exportBtn}
+          />
+        </>
+      )}
     </ul>
   </>
 );

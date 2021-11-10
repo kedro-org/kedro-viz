@@ -1,18 +1,36 @@
 import React from 'react';
+import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
+import {
+  GET_RUN_METADATA,
+  GET_RUN_TRACKING_DATA,
+} from '../../../apollo/queries';
 
 import './details.css';
 
-/**
- * Main experiment tracking page container. Handles showing/hiding the sidebar
- * nav for experiment tracking, the display of experiment details,
- * as well as the comparison view.
- */
-const Details = ({ runs, sidebarVisible, trackingData }) => {
-  const isSingleRun = runs.length === 1 ? true : false;
+const Details = ({ selectedRuns, sidebarVisible }) => {
+  const { data: { runMetadata } = [], error } = useApolloQuery(
+    GET_RUN_METADATA,
+    {
+      skip: selectedRuns.length === 0,
+      variables: { runs: selectedRuns },
+    }
+  );
+
+  const { data: { runTrackingData } = [], error: trackingError } =
+    useApolloQuery(GET_RUN_TRACKING_DATA, {
+      skip: selectedRuns.length === 0,
+      variables: { runs: selectedRuns },
+    });
+
+  if (error || trackingError) {
+    return null;
+  }
+
+  const isSingleRun = runMetadata && runMetadata.length === 1 ? true : false;
 
   return (
     <>
@@ -21,8 +39,8 @@ const Details = ({ runs, sidebarVisible, trackingData }) => {
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadata isSingleRun={isSingleRun} runs={runs} />
-        <RunDataset isSingleRun={isSingleRun} trackingData={trackingData} />
+        <RunMetadata isSingleRun={isSingleRun} runs={runMetadata} />
+        <RunDataset isSingleRun={isSingleRun} trackingData={runTrackingData} />
       </div>
     </>
   );

@@ -9,7 +9,7 @@ import './run-dataset.css';
  * @param {array} props.isSingleRun Whether or not this is a single run.
  * @param {array} props.trackingData The experiment tracking run data.
  */
-const RunDataset = ({ isSingleRun, trackingData }) => {
+const RunDataset = ({ isSingleRun, trackingData = [] }) => {
   return (
     <div
       className={classnames('details-dataset', {
