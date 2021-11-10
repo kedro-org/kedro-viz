@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
+import { useApolloQuery } from '../../apollo/utils';
+import { connect } from 'react-redux';
+import Button from '@quantumblack/kedro-ui/lib/components/button';
 import Sidebar from '../sidebar';
 import Details from '../experiment-tracking/details';
 import { GET_RUNS } from '../../apollo/queries';
 
-/**
- * Main experiment tracking page container. Handles showing/hiding the sidebar
- * nav for experiment tracking and the display of the experiment details
- * single / comparison view.
- */
+import './experiment-wrapper.css';
 
 const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three
 
-const ExperimentWrapper = () => {
+const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableComparisonView, setEnableComparisonView] = useState(false);
   const [selectedRuns, setSelectedRuns] = useState([]);
 
-  const { data } = useQuery(GET_RUNS);
+  const { data, loading } = useApolloQuery(GET_RUNS);
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
@@ -62,9 +60,17 @@ const ExperimentWrapper = () => {
     }
   }, [data]);
 
+  if (loading) {
+    return (
+      <div className="experiment-wrapper">
+        <p className="experiment-wrapper__text">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <>
-      {data ? (
+      {data && data.runsList.length > 0 ? (
         <>
           <Sidebar
             disableRunSelection={disableRunSelection}
@@ -80,10 +86,31 @@ const ExperimentWrapper = () => {
           ) : null}
         </>
       ) : (
-        <p>Nothing here yet.</p>
+        <div className="experiment-wrapper">
+          <h2 className="experiment-wrapper__header">
+            You don't have any experiments
+          </h2>
+          <p className="experiment-wrapper__text">
+            Kedro can help you manage your experiments. Learn more how you can
+            enable experiment tracking in your projects from our docs.{' '}
+          </p>
+          <a
+            href="https://github.com/quantumblacklabs/kedro-viz"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <Button onClick={() => {}} theme={theme}>
+              View docs
+            </Button>
+          </a>
+        </div>
       )}
     </>
   );
 };
 
-export default ExperimentWrapper;
+export const mapStateToProps = (state) => ({
+  theme: state.theme,
+});
+
+export default connect(mapStateToProps)(ExperimentWrapper);
