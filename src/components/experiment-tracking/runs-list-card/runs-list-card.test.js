@@ -12,7 +12,7 @@ const randomRun = {
   title: 'Sprint 4 EOW',
 };
 
-const selectedRuns = ['asdf'];
+const selectedRuns = ['ef32bfd'];
 
 const savedRun = {
   bookmark: true,
@@ -56,7 +56,7 @@ describe('RunsListCard', () => {
     const wrapper = mount(
       <RunsListCard
         data={randomRun}
-        onRunSelection={() => setActive('asdf')}
+        onRunSelection={() => setActive('ef32bfd')}
         selectedRuns={selectedRuns}
       />
     );
@@ -65,5 +65,7 @@ describe('RunsListCard', () => {
     onClick.mockImplementation((active) => [active, setActive]);
     wrapper.simulate('click');
     expect(setActive).toBeTruthy();
+    expect(wrapper.find('.runs-list-card--active').length).toBe(1);
+    expect(wrapper.find('svg.runs-list-card__checked--active').length).toBe(1);
   });
 });
