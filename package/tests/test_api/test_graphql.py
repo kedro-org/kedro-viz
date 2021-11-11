@@ -145,7 +145,7 @@ class TestTrackingData:
             data_access_manager.add_catalog(catalog)
 
             assert get_run_tracking_data(
-                [ID(save_version), ID(save_new_version)], False
+                [ID(save_version), ID(save_new_version)], True
             ) == [
                 TrackingDataSet(
                     datasetName="new_metrics",
@@ -168,7 +168,7 @@ class TestTrackingData:
             ]
 
             assert get_run_tracking_data(
-                [ID(save_version), ID(save_new_version)], True
+                [ID(save_version), ID(save_new_version)], False
             ) == [
                 TrackingDataSet(
                     datasetName="new_metrics",
