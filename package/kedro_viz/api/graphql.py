@@ -154,12 +154,12 @@ def format_run_tracking_data(tracking_data: Dict, show_diff: bool) -> JSONObject
                     )
     else:
         for key in sorted(set(tracking_keys)):
+            # check if key is common across all runs that are compared
             if tracking_keys.count(key) == len(tracking_data):
                 for run_id, run_tracking_data in tracking_data.items():
-                    if key in run_tracking_data:
-                        formatted_tracking_data[key].append(
-                            {"runId": run_id, "value": run_tracking_data[key]}
-                        )
+                    formatted_tracking_data[key].append(
+                        {"runId": run_id, "value": run_tracking_data[key]}
+                    )
 
     return JSONObject(formatted_tracking_data)
 
