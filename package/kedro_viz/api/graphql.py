@@ -99,7 +99,8 @@ def format_run_tracking_data(tracking_data: Dict, show_diff: bool) -> JSONObject
 
     Args:
         tracking_data: JSON blob of tracking data for selected runs
-        show_diff : user specified boolean for comparison view
+        show_diff : if false, it will show runs with only common tracking
+        data else it will show all available tracking data
     Returns:
         Dictionary with formatted tracking data for selected runs
 
