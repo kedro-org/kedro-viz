@@ -150,7 +150,7 @@ class TestTrackingData:
                 TrackingDataSet(
                     datasetName="new_metrics",
                     datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                    data={
+                    data=JSONObject({
                         "col1": [
                             {"runId": save_version, "value": 1.0},
                             {"runId": save_new_version, "value": 3.0},
@@ -163,7 +163,7 @@ class TestTrackingData:
                             {"runId": save_version, "value": 3.0},
                             {"runId": save_new_version, "value": None},
                         ],
-                    },
+                    }),
                 )
             ]
 
@@ -173,12 +173,12 @@ class TestTrackingData:
                 TrackingDataSet(
                     datasetName="new_metrics",
                     datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                    data={
+                    data=JSONObject({
                         "col1": [
                             {"runId": save_version, "value": 1.0},
                             {"runId": save_new_version, "value": 3.0},
                         ]
-                    },
+                    }),
                 )
             ]
             shutil.rmtree("test.json", ignore_errors=True)
