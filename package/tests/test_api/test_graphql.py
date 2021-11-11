@@ -64,6 +64,35 @@ def example_tracking_catalog(save_version):
 
 
 @pytest.fixture
+def example_multiple_run_tracking_catalog(save_version, save_new_version):
+    # Note - filepath is assigned without using tmp_path as it fails on windows build.
+    # This is a temp soln and will be cleaned up in the future.
+    new_metrics_dataset = MetricsDataSet(
+        filepath="test.json",
+        version=Version(None, save_version),
+    )
+    new_metrics_dataset.save({"col1": 1, "col3": 3})
+
+    time.sleep(1)
+
+    new_metrics_dataset = MetricsDataSet(
+        filepath="test.json",
+        version=Version(None, save_new_version),
+    )
+    new_data = {"col1": 3, "col2": 3.23}
+    new_metrics_dataset.save(new_data)
+    catalog = DataCatalog(
+        data_sets={
+            "new_metrics": new_metrics_dataset,
+        }
+    )
+
+    yield catalog
+
+    shutil.rmtree("test.json", ignore_errors=True)
+
+
+@pytest.fixture
 def example_tracking_output(save_version):
     yield [
         TrackingDataSet(
@@ -113,36 +142,18 @@ class TestTrackingData:
                 == example_tracking_output
             )
 
-    def test_graphql_run_tracking_data_query_show_diff(
+    def test_graphql_run_tracking_data_query_show_diff_true(
         self,
         save_version,
         save_new_version,
+        example_multiple_run_tracking_catalog,
         data_access_manager: DataAccessManager,
     ):
         with mock.patch(
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
         ):
 
-            new_metrics_dataset = MetricsDataSet(
-                filepath="test.json",
-                version=Version(None, save_version),
-            )
-            new_metrics_dataset.save({"col1": 1, "col3": 3})
-
-            time.sleep(1)
-
-            new_metrics_dataset = MetricsDataSet(
-                filepath="test.json",
-                version=Version(None, save_new_version),
-            )
-            new_data = {"col1": 3, "col2": 3.23}
-            new_metrics_dataset.save(new_data)
-            catalog = DataCatalog(
-                data_sets={
-                    "new_metrics": new_metrics_dataset,
-                }
-            )
-            data_access_manager.add_catalog(catalog)
+            data_access_manager.add_catalog(example_multiple_run_tracking_catalog)
 
             assert get_run_tracking_data(
                 [ID(save_version), ID(save_new_version)], True
@@ -167,6 +178,18 @@ class TestTrackingData:
                 )
             ]
 
+    def test_graphql_run_tracking_data_query_show_diff_false(
+        self,
+        save_version,
+        save_new_version,
+        example_multiple_run_tracking_catalog,
+        data_access_manager: DataAccessManager,
+    ):
+        with mock.patch(
+            "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
+        ):
+            data_access_manager.add_catalog(example_multiple_run_tracking_catalog)
+
             assert get_run_tracking_data(
                 [ID(save_version), ID(save_new_version)], False
             ) == [
@@ -183,7 +206,6 @@ class TestTrackingData:
                     ),
                 )
             ]
-            shutil.rmtree("test.json", ignore_errors=True)
 
     @patch("logging.Logger.warning")
     def test_graphql_run_tracking_no_filepath_query(
