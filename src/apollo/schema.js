@@ -16,7 +16,10 @@ const typeDefs = gql`
   type Query {
     runsList: [Run]!
     runMetadata(runIDs: [ID]!): [Run!]!
-    runTrackingData(runIDs: [ID]!, showDiff: Boolean): [TrackingDataset]!
+    runTrackingData(
+      runIDs: [ID]!
+      showDiff: Boolean = false
+    ): [TrackingDataset]!
   }
 
   type Subscription {
