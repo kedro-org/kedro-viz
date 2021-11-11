@@ -157,12 +157,10 @@ class TestTrackingData:
                                 {"runId": save_new_version, "value": 3.0},
                             ],
                             "col2": [
-                                {"runId": save_version, "value": None},
                                 {"runId": save_new_version, "value": 3.23},
                             ],
                             "col3": [
                                 {"runId": save_version, "value": 3.0},
-                                {"runId": save_new_version, "value": None},
                             ],
                         }
                     ),

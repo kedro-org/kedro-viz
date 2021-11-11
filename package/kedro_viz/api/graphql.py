@@ -136,30 +136,15 @@ def format_run_tracking_data(tracking_data: Dict, show_diff: bool) -> JSONObject
     """
     formatted_tracking_data = defaultdict(list)
 
-    tracking_keys = []
-    for key in tracking_data.keys():
-        for nested_keys in tracking_data[key].keys():
-            tracking_keys.append(nested_keys)
-
-    if show_diff:
-        for key in sorted(set(tracking_keys)):
-            for run_id, run_tracking_data in tracking_data.items():
-                if key in run_tracking_data:
-                    formatted_tracking_data[key].append(
-                        {"runId": run_id, "value": run_tracking_data[key]}
-                    )
-                else:
-                    formatted_tracking_data[key].append(
-                        {"runId": run_id, "value": None}
-                    )
-    else:
-        for key in sorted(set(tracking_keys)):
-            # check if key is common across all runs that are compared
-            if tracking_keys.count(key) == len(tracking_data):
-                for run_id, run_tracking_data in tracking_data.items():
-                    formatted_tracking_data[key].append(
-                        {"runId": run_id, "value": run_tracking_data[key]}
-                    )
+    for run_id, run_tracking_data in tracking_data.items():
+        for tracking_name, data in run_tracking_data.items():
+            formatted_tracking_data[tracking_name].append(
+                {"runId": run_id, "value": data}
+            )
+    if not show_diff:
+        for tracking_key, run_tracking_data in list(formatted_tracking_data.items()):
+            if len(run_tracking_data) != len(tracking_data):
+                del formatted_tracking_data[tracking_key]
 
     return JSONObject(formatted_tracking_data)
 
