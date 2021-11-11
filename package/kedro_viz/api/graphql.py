@@ -143,10 +143,10 @@ def format_run_tracking_data(tracking_data: Dict, show_diff: bool) -> JSONObject
 
     if show_diff:
         for key in sorted(set(tracking_keys)):
-            for run_id in tracking_data:
-                if key in tracking_data[run_id]:
+            for run_id, run_tracking_data in tracking_data.items():
+                if key in run_tracking_data:
                     formatted_tracking_data[key].append(
-                        {"runId": run_id, "value": tracking_data[run_id][key]}
+                        {"runId": run_id, "value": run_tracking_data[key]}
                     )
                 else:
                     formatted_tracking_data[key].append(
@@ -155,10 +155,10 @@ def format_run_tracking_data(tracking_data: Dict, show_diff: bool) -> JSONObject
     else:
         for key in sorted(set(tracking_keys)):
             if tracking_keys.count(key) == len(tracking_data):
-                for run_id in tracking_data:
-                    if key in tracking_data[run_id]:
+                for run_id, run_tracking_data in tracking_data.items():
+                    if key in run_tracking_data:
                         formatted_tracking_data[key].append(
-                            {"runId": run_id, "value": tracking_data[run_id][key]}
+                            {"runId": run_id, "value": run_tracking_data[key]}
                         )
 
     return JSONObject(formatted_tracking_data)
