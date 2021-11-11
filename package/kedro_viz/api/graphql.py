@@ -119,7 +119,7 @@ def format_run_tracking_data(tracking_data: Dict, show_diff: bool) -> JSONObject
         >>>         'classWeight":21
         >>>     },
         >>> }
-        >>> format_run_tracking_data(tracking_data,false)
+        >>> format_run_tracking_data(tracking_data, False)
         {
             bootstrap: [
                 { runId: 'My Favorite Run', value: 0.8 },
