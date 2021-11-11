@@ -150,20 +150,22 @@ class TestTrackingData:
                 TrackingDataSet(
                     datasetName="new_metrics",
                     datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                    data=JSONObject({
-                        "col1": [
-                            {"runId": save_version, "value": 1.0},
-                            {"runId": save_new_version, "value": 3.0},
-                        ],
-                        "col2": [
-                            {"runId": save_version, "value": None},
-                            {"runId": save_new_version, "value": 3.23},
-                        ],
-                        "col3": [
-                            {"runId": save_version, "value": 3.0},
-                            {"runId": save_new_version, "value": None},
-                        ],
-                    }),
+                    data=JSONObject(
+                        {
+                            "col1": [
+                                {"runId": save_version, "value": 1.0},
+                                {"runId": save_new_version, "value": 3.0},
+                            ],
+                            "col2": [
+                                {"runId": save_version, "value": None},
+                                {"runId": save_new_version, "value": 3.23},
+                            ],
+                            "col3": [
+                                {"runId": save_version, "value": 3.0},
+                                {"runId": save_new_version, "value": None},
+                            ],
+                        }
+                    ),
                 )
             ]
 
@@ -173,12 +175,14 @@ class TestTrackingData:
                 TrackingDataSet(
                     datasetName="new_metrics",
                     datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                    data=JSONObject({
-                        "col1": [
-                            {"runId": save_version, "value": 1.0},
-                            {"runId": save_new_version, "value": 3.0},
-                        ]
-                    }),
+                    data=JSONObject(
+                        {
+                            "col1": [
+                                {"runId": save_version, "value": 1.0},
+                                {"runId": save_new_version, "value": 3.0},
+                            ]
+                        }
+                    ),
                 )
             ]
             shutil.rmtree("test.json", ignore_errors=True)
@@ -299,7 +303,7 @@ class TestGraphQLEndpoints:
                 "/graphql",
                 json={
                     "query": """{runTrackingData
-                    (runIds:["%s"], showDiff:false)
+                    (runIds:["%s"])
                     {datasetName, datasetType, data}}"""
                     % save_version
                 },

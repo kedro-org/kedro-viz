@@ -160,7 +160,7 @@ def format_run_tracking_data(tracking_data: Dict, show_diff: bool) -> JSONObject
                         formatted_tracking_data[key].append(
                             {"runId": run_id, "value": tracking_data[run_id][key]}
                         )
- 
+
     return JSONObject(formatted_tracking_data)
 
 
@@ -240,7 +240,7 @@ class Query:
 
     @strawberry.field
     def run_tracking_data(
-        self, run_ids: List[ID], show_diff: Optional[bool] = False
+        self, run_ids: List[ID], show_diff: bool = False
     ) -> List[TrackingDataSet]:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
