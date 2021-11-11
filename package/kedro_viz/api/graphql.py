@@ -240,7 +240,7 @@ class Query:
 
     @strawberry.field
     def run_tracking_data(
-        self, run_ids: List[ID], show_diff: bool
+        self, run_ids: List[ID], show_diff: Optional[bool] = False
     ) -> List[TrackingDataSet]:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
