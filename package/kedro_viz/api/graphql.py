@@ -157,7 +157,8 @@ def get_run_tracking_data(run_ids: List[ID], show_diff: bool) -> List[TrackingDa
     during that specific `kedro run`.
     Args:
         run_ids:  List of IDs of runs to fetch the tracking data for.
-        show_diff : user specified boolean for comparison view
+        show_diff : if false, it will show runs with only common tracking
+        data else it will show all available tracking data
 
     Returns:
         List of TrackingDataSets
