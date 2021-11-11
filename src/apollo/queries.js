@@ -30,8 +30,8 @@ export const GET_RUN_METADATA = gql`
 
 /** query for collapsable run details component */
 export const GET_RUN_TRACKING_DATA = gql`
-  query getRunTrackingData($runs: [ID]!) {
-    runTrackingData(runIDs: $runs) {
+  query getRunTrackingData($runs: [ID]!, $showDiff: Boolean) {
+    runTrackingData(runIDs: $runs, showDiff: $showDiff) {
       datasetName
       datasetType
       data
