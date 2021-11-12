@@ -1,5 +1,4 @@
 import shutil
-import time
 from unittest import mock
 from unittest.mock import PropertyMock, call, patch
 
@@ -72,9 +71,6 @@ def example_multiple_run_tracking_catalog(save_version, save_new_version):
         version=Version(None, save_version),
     )
     new_metrics_dataset.save({"col1": 1, "col3": 3})
-
-    time.sleep(1)
-
     new_metrics_dataset = MetricsDataSet(
         filepath="test.json",
         version=Version(None, save_new_version),
