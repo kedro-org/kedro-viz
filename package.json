@@ -55,6 +55,7 @@
     "d3-shape": "^2.1.0",
     "d3-transition": "^2.0.0",
     "d3-zoom": "^2.0.0",
+    "dayjs": "^1.10.7",
     "deepmerge": "^4.2.2",
     "fetch-mock": "^9.11.0",
     "graphql": "^15.6.1",
