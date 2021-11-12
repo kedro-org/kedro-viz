@@ -1,6 +1,6 @@
-import * as dayjs from 'dayjs';
-import * as relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.extend(relativeTime);
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+const _dayJs = dayjs.extend(relativeTime);
 
 /**
  * Take a timestamp and return a meaningful length of time, e.g. 5 months ago
@@ -8,5 +8,5 @@ dayjs.extend(relativeTime);
  * @returns A human-readable from-now date
  */
 export const toHumanReadableTime = (timestamp) => {
-  return dayjs(timestamp).fromNow();
+  return _dayJs(timestamp).fromNow();
 };
