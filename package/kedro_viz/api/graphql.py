@@ -99,8 +99,8 @@ def format_run_tracking_data(tracking_data: Dict, show_diff: bool = False) -> JS
 
     Args:
         tracking_data: JSON blob of tracking data for selected runs
-        show_diff : if false, it will show runs with only common tracking
-        data else it will show all available tracking data
+        show_diff: If false, show runs with only common tracking
+            data; else show all available tracking data
     Returns:
         Dictionary with formatted tracking data for selected runs
 
@@ -157,8 +157,8 @@ def get_run_tracking_data(run_ids: List[ID], show_diff: bool = False) -> List[Tr
     during that specific `kedro run`.
     Args:
         run_ids:  List of IDs of runs to fetch the tracking data for.
-        show_diff : if false, it will show runs with only common tracking
-        data else it will show all available tracking data
+        show_diff: If false, show runs with only common tracking
+            data; else show all available tracking data
 
     Returns:
         List of TrackingDataSets
