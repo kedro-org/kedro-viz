@@ -70,7 +70,7 @@
     "redux-mock-store": "^1.5.4",
     "redux-thunk": "^2.3.0",
     "redux-watch": "^1.2.0",
-    "reselect": "^4.0.0",
+    "reselect": "^4.1.0",
     "seedrandom": "^3.0.5",
     "svg-crowbar": "^0.6.5",
     "what-input": "^5.2.10"
