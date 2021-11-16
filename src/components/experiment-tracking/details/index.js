@@ -23,7 +23,7 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
   const { data: { runTrackingData } = [], error: trackingError } =
     useApolloQuery(GET_RUN_TRACKING_DATA, {
       skip: selectedRuns.length === 0,
-      variables: { runIds: selectedRuns },
+      variables: { runIds: selectedRuns, showDiff: false },
     });
 
   if (error || trackingError) {
@@ -37,7 +37,8 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
       <div
         className={classnames('kedro', 'details-mainframe', {
           'details-mainframe--sidebar-visible': sidebarVisible,
-        })}>
+        })}
+      >
         <RunMetadata isSingleRun={isSingleRun} runs={runMetadata} />
         <RunDataset isSingleRun={isSingleRun} trackingData={runTrackingData} />
       </div>
