@@ -94,9 +94,7 @@ def get_all_runs() -> List[Run]:
     return runs
 
 
-def format_run_tracking_data(
-    tracking_data: Dict, show_diff: bool = False
-) -> JSONObject:
+def format_run_tracking_data(tracking_data: Dict, show_diff: bool = False) -> JSONObject:
     """Convert tracking data in the front-end format.
 
     Args:
@@ -152,9 +150,7 @@ def format_run_tracking_data(
     return JSONObject(formatted_tracking_data)
 
 
-def get_run_tracking_data(
-    run_ids: List[ID], show_diff: bool = False
-) -> List[TrackingDataSet]:
+def get_run_tracking_data(run_ids: List[ID], show_diff: bool = False) -> List[TrackingDataSet]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all tracking data for a list of runs. Tracking data contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
