@@ -30,7 +30,8 @@ const IconButton = ({
           'pipeline-icon-toolbar__button--active': active,
         })}
         disabled={disabled}
-        onClick={onClick}>
+        onClick={onClick}
+      >
         {Icon && <Icon className="pipeline-icon" />}
         {labelText && (
           <span className="pipeline-toolbar__label">{labelText}</span>

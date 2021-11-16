@@ -10,7 +10,8 @@ const LoadingIcon = ({ className, visible }) => (
     className={classnames(className, 'pipeline-loading-icon', {
       'pipeline-loading-icon--visible': visible,
     })}
-    viewBox="0 0 200 180">
+    viewBox="0 0 200 180"
+  >
     <path d={d} />
     <path d={d} />
   </svg>
