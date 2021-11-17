@@ -15,8 +15,8 @@ export const GET_RUNS = gql`
 
 /** query for details metadata component */
 export const GET_RUN_METADATA = gql`
-  query getRunMetadata($runs: [ID]!) {
-    runMetadata(runIDs: $runs) {
+  query getRunMetadata($runIds: [ID!]!) {
+    runMetadata(runIds: $runIds) {
       author
       gitBranch
       gitSha
@@ -30,8 +30,8 @@ export const GET_RUN_METADATA = gql`
 
 /** query for collapsable run details component */
 export const GET_RUN_TRACKING_DATA = gql`
-  query getRunTrackingData($runs: [ID]!, $showDiff: Boolean) {
-    runTrackingData(runIDs: $runs, showDiff: $showDiff) {
+  query getRunTrackingData($runIds: [ID!]!, $showDiff: Boolean) {
+    runTrackingData(runIds: $runIds, showDiff: $showDiff) {
       datasetName
       datasetType
       data

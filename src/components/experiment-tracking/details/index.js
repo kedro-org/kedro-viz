@@ -16,14 +16,14 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
     GET_RUN_METADATA,
     {
       skip: selectedRuns.length === 0,
-      variables: { runs: selectedRuns },
+      variables: { runIds: selectedRuns },
     }
   );
 
   const { data: { runTrackingData } = [], error: trackingError } =
     useApolloQuery(GET_RUN_TRACKING_DATA, {
       skip: selectedRuns.length === 0,
-      variables: { runs: selectedRuns },
+      variables: { runIds: selectedRuns, showDiff: false },
     });
 
   if (error || trackingError) {

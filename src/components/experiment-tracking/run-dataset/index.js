@@ -17,16 +17,17 @@ const RunDataset = ({ isSingleRun, trackingData = [] }) => {
       })}
     >
       {trackingData.map((dataset) => {
+        const { data, datasetName } = dataset;
         return (
           <Accordion
             className="details-dataset__accordion"
-            heading={dataset.datasetName}
+            heading={datasetName}
             headingClassName="details-dataset__accordion-header"
             key={dataset.datasetName}
             layout="left"
             size="large"
           >
-            {Object.keys(dataset.data)
+            {Object.keys(data)
               .sort()
               .map((key, rowIndex) => {
                 return buildDatasetDataMarkup(
@@ -94,7 +95,7 @@ function buildDatasetDataMarkup(
             })}
             key={value.runId + index}
           >
-            {value.value}
+            {typeof value === 'object' ? JSON.stringify(value) : value.value}
           </span>
         ))}
       </div>
