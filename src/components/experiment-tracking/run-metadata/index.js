@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
+import { toHumanReadableTime } from '../../../utils/date-utils';
 
 import './run-metadata.css';
 
@@ -23,6 +24,8 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
         'details-metadata--single': isSingleRun,
       })}>
       {runs.map((run, i) => {
+        const humanReadableTime = toHumanReadableTime(run.timestamp);
+
         return (
           <div
             className={classnames('details-metadata__run', {
@@ -49,7 +52,7 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
                 </tr>
                 <tr>
                   {i === 0 ? <td>Creation Date</td> : null}
-                  <td>{run.timestamp}</td>
+                  <td>{`${humanReadableTime} (${run.timestamp})`}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Git SHA</td> : null}

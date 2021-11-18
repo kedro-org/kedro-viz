@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
+import { toHumanReadableTime } from '../../../utils/date-utils';
 import CheckIcon from '../../icons/check';
 import BookmarkIcon from '../../icons/bookmark';
 
@@ -18,6 +19,7 @@ const RunsListCard = ({
 }) => {
   const { id, timestamp, title = null, bookmark } = data;
   const [active, setActive] = useState(false);
+  const humanReadableTime = toHumanReadableTime(timestamp);
 
   const onClick = (id) => {
     onRunSelection(id);
@@ -45,10 +47,10 @@ const RunsListCard = ({
       )}
       <div>
         <div className="runs-list-card__title">
-          {typeof title === 'string' ? title : timestamp}
+          {typeof title === 'string' ? title : humanReadableTime}
         </div>
         <div className="runs-list-card__id">{id}</div>
-        <div className="runs-list-card__timestamp">{timestamp}</div>
+        <div className="runs-list-card__timestamp">{humanReadableTime}</div>
       </div>
       {bookmark && <BookmarkIcon className={'runs-list-card__bookmark'} />}
     </div>
