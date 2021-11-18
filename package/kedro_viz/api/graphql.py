@@ -186,6 +186,7 @@ def get_run_tracking_data(run_ids: List[ID], show_diff: bool = False) -> List[Tr
                     json_data = json.load(fs_file)
                     all_runs[run_id] = json_data
             else:
+                all_runs[run_id] = {}
                 logger.warning("`%s` could not be found", file_path)
 
         tracking_dataset = TrackingDataSet(
