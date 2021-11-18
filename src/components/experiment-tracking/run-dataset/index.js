@@ -88,14 +88,16 @@ function buildDatasetDataMarkup(
         >
           {datasetKey}
         </span>
-        {datasetValues.map((value, index) => (
+        {datasetValues.map((data, index) => (
           <span
             className={classnames('details-dataset__value', {
               'details-dataset__value--single': isSingleRun,
             })}
-            key={value.runId + index}
+            key={data.runId + index}
           >
-            {typeof value === 'object' ? JSON.stringify(value) : value.value}
+            {typeof data.value === 'object'
+              ? JSON.stringify(data.value)
+              : data.value}
           </span>
         ))}
       </div>
