@@ -16,12 +16,13 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
     setToggleNotes({ ...toggleNotes, [index]: !toggleNotes[index] });
   };
 
-  return (
+  return runs.length === 0 ? (
+    <div>Loading...</div>
+  ) : (
     <div
       className={classnames('details-metadata', {
         'details-metadata--single': isSingleRun,
-      })}
-    >
+      })}>
       {runs.map((run, i) => {
         const humanReadableTime = toHumanReadableTime(run.timestamp);
 
@@ -30,8 +31,7 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
             className={classnames('details-metadata__run', {
               'details-metadata__run--single': isSingleRun,
             })}
-            key={run.gitSha}
-          >
+            key={run.gitSha}>
             <table className="details-metadata__table">
               <tbody>
                 {isSingleRun ? (
@@ -71,15 +71,13 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
                   <td>
                     <p
                       className="details-metadata__notes"
-                      style={toggleNotes[i] ? { display: 'block' } : null}
-                    >
+                      style={toggleNotes[i] ? { display: 'block' } : null}>
                       {run.notes}
                     </p>
                     {run.notes.length > 100 ? (
                       <button
                         className="details-metadata__show-more kedro"
-                        onClick={() => onToggleNoteExpand(i)}
-                      >
+                        onClick={() => onToggleNoteExpand(i)}>
                         {toggleNotes[i] ? 'Show less' : 'Show more'}
                       </button>
                     ) : null}
