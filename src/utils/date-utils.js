@@ -11,23 +11,5 @@ const _dayJs = dayjs.extend(relativeTime);
  * @returns A human-readable from-now date
  */
 export const toHumanReadableTime = (timestamp) => {
-  const splitTimestamp = timestamp.split('.');
-  let formattedTimestamp = '';
-
-  let i = 0;
-  const length = splitTimestamp.length;
-
-  while (i < length) {
-    if (i < 2) {
-      formattedTimestamp += `${splitTimestamp[i]}:`;
-    } else if (i === 2) {
-      formattedTimestamp += `${splitTimestamp[i]}.`;
-    } else {
-      formattedTimestamp += `${splitTimestamp[i]}`;
-    }
-
-    i++;
-  }
-
-  return _dayJs(formattedTimestamp).fromNow();
+  return _dayJs(timestamp.replace('.', ':').replace('.', ':')).fromNow();
 };
