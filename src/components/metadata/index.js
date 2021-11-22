@@ -199,7 +199,8 @@ const MetaData = ({
                             {
                               visible: showCopied,
                             }
-                          )}>
+                          )}
+                        >
                           Copied to clipboard.
                         </span>
                         <ul className="pipeline-metadata__toolbox">
@@ -219,7 +220,8 @@ const MetaData = ({
                 <>
                   <div
                     className="pipeline-metadata__plot"
-                    onClick={onExpandPlotClick}>
+                    onClick={onExpandPlotClick}
+                  >
                     <PlotlyChart
                       data={metadata.plot.data}
                       layout={metadata.plot.layout}
@@ -228,7 +230,8 @@ const MetaData = ({
                   </div>
                   <button
                     className="pipeline-metadata__expand-plot"
-                    onClick={onExpandPlotClick}>
+                    onClick={onExpandPlotClick}
+                  >
                     <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
                     <span className="pipeline-metadata__expand-plot-text">
                       Expand Plotly Visualization

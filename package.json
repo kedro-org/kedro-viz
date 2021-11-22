@@ -25,7 +25,7 @@
     "lib-test": "npm-run-all -s lib lib-test:setup lib-test:serve",
     "lib-test:setup": "node ./tools/test-lib/setup.js",
     "lib-test:serve": "node ./tools/test-lib/serve.js",
-    "format": "prettier --single-quote --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "lint": "npm-run-all -p lint:js lint:scss",
     "lint:js": "eslint src/ --fix",
     "lint:scss": "stylelint 'src/**/*.scss' --fix",
