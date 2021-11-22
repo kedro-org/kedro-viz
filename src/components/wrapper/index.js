@@ -28,7 +28,7 @@ export const Wrapper = ({ loading, theme }) => (
     <div className="pipeline-wrapper">
       <LargePipelineWarning />
       <FlowChart />
-      <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
+      <LoadingIcon className="pipeline-wrapper__loading" visible={true} />
     </div>
     <ExportModal />
     <SettingsModal />
