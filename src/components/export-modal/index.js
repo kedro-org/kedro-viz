@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Modal from '@quantumblack/kedro-ui/lib/components/modal';
+import Modal from '../modal';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
 import { toggleExportModal } from '../../actions';
 import exportGraph from './export-graph';
@@ -17,15 +17,16 @@ const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
     <Modal
       title="Export pipeline visualisation"
       onClose={() => onToggle(false)}
-      theme={theme}
-      visible={visible.exportModal}>
+      visible={visible.exportModal}
+    >
       <div className="pipeline-export-modal">
         <Button
           theme={theme}
           onClick={() => {
             exportGraph({ format: 'png', theme, graphSize });
             onToggle(false);
-          }}>
+          }}
+        >
           Download PNG
         </Button>
         <Button
@@ -33,7 +34,8 @@ const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
           onClick={() => {
             exportGraph({ format: 'svg', theme, graphSize });
             onToggle(false);
-          }}>
+          }}
+        >
           Download SVG
         </Button>
       </div>

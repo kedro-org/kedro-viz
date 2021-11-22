@@ -128,7 +128,7 @@ def format_run_tracking_data(tracking_data: Dict, show_diff: bool = False) -> JS
                 { runId: 'Slick test this one', value: 1 },
             ],
             classWeight: [
-                { runId: 'My Favorite Run', value: 23 },
+                {},
                 { runId: 'Another favorite run', value: 21 },
                 { runId: 'Slick test this one', value: 21 },
             ]
