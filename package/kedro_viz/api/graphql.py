@@ -94,11 +94,13 @@ def get_all_runs() -> List[Run]:
     return runs
 
 
-def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
+def format_run_tracking_data(tracking_data: Dict, show_diff: bool = False) -> JSONObject:
     """Convert tracking data in the front-end format.
 
     Args:
         tracking_data: JSON blob of tracking data for selected runs
+        show_diff: If false, show runs with only common tracking
+            data; else show all available tracking data
     Returns:
         Dictionary with formatted tracking data for selected runs
 
@@ -118,7 +120,7 @@ def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
         >>>         'classWeight":21
         >>>     },
         >>> }
-        >>> format_run_tracking_data(tracking_data)
+        >>> format_run_tracking_data(tracking_data, False)
         {
             bootstrap: [
                 { runId: 'My Favorite Run', value: 0.8 },
@@ -140,17 +142,23 @@ def format_run_tracking_data(tracking_data: Dict) -> JSONObject:
             formatted_tracking_data[tracking_name].append(
                 {"runId": run_id, "value": data}
             )
+    if not show_diff:
+        for tracking_key, run_tracking_data in list(formatted_tracking_data.items()):
+            if len(run_tracking_data) != len(tracking_data):
+                del formatted_tracking_data[tracking_key]
 
     return JSONObject(formatted_tracking_data)
 
 
-def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
+def get_run_tracking_data(run_ids: List[ID], show_diff: bool = False) -> List[TrackingDataSet]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all tracking data for a list of runs. Tracking data contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
     during that specific `kedro run`.
     Args:
         run_ids:  List of IDs of runs to fetch the tracking data for.
+        show_diff: If false, show runs with only common tracking
+            data; else show all available tracking data
 
     Returns:
         List of TrackingDataSets
@@ -169,21 +177,21 @@ def get_run_tracking_data(run_ids: List[ID]) -> List[TrackingDataSet]:
     for name, dataset in tracking_datasets:
         all_runs = {}
         for run_id in run_ids:
-            runid = ID(run_id)
-            file_path = dataset._get_versioned_path(str(runid))
+            run_id = ID(run_id)
+            file_path = dataset._get_versioned_path(str(run_id))
             if Path(file_path).is_file():
                 with dataset._fs.open(
                     file_path, **dataset._fs_open_args_load
                 ) as fs_file:
                     json_data = json.load(fs_file)
-                    all_runs[runid] = json_data
+                    all_runs[run_id] = json_data
             else:
                 logger.warning("`%s` could not be found", file_path)
 
         tracking_dataset = TrackingDataSet(
             datasetName=name,
             datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
-            data=format_run_tracking_data(all_runs),
+            data=format_run_tracking_data(all_runs, show_diff),
         )
         all_datasets.append(tracking_dataset)
     return all_datasets
@@ -218,9 +226,11 @@ class Query:
     """Query endpoint to get data from the session store"""
 
     @strawberry.field
-    def run_tracking_data(self, run_ids: List[ID]) -> List[TrackingDataSet]:
+    def run_tracking_data(
+        self, run_ids: List[ID], show_diff: bool = False
+    ) -> List[TrackingDataSet]:
         """Query to get data for specific runs from the session store"""
-        return get_run_tracking_data(run_ids)
+        return get_run_tracking_data(run_ids, show_diff)
 
     runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
 

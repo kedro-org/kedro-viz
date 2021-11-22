@@ -18,6 +18,11 @@ def save_version():
 
 
 @pytest.fixture
+def save_new_version():
+    yield "2021-11-03T18.24.24.379Z"
+
+
+@pytest.fixture
 def example_tracking_catalog(save_version):
     # Note - filepath is assigned without using tmp_path as it fails on windows build.
     # This is a temp soln and will be cleaned up in the future.
@@ -55,6 +60,32 @@ def example_tracking_catalog(save_version):
     shutil.rmtree("test.json", ignore_errors=True)
     shutil.rmtree("metrics.json", ignore_errors=True)
     shutil.rmtree("tracking.json", ignore_errors=True)
+
+
+@pytest.fixture
+def example_multiple_run_tracking_catalog(save_version, save_new_version):
+    # Note - filepath is assigned without using tmp_path as it fails on windows build.
+    # This is a temp soln and will be cleaned up in the future.
+    new_metrics_dataset = MetricsDataSet(
+        filepath="test.json",
+        version=Version(None, save_version),
+    )
+    new_metrics_dataset.save({"col1": 1, "col3": 3})
+    new_metrics_dataset = MetricsDataSet(
+        filepath="test.json",
+        version=Version(None, save_new_version),
+    )
+    new_data = {"col1": 3, "col2": 3.23}
+    new_metrics_dataset.save(new_data)
+    catalog = DataCatalog(
+        data_sets={
+            "new_metrics": new_metrics_dataset,
+        }
+    )
+
+    yield catalog
+
+    shutil.rmtree("test.json", ignore_errors=True)
 
 
 @pytest.fixture
@@ -102,7 +133,75 @@ class TestTrackingData:
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
         ):
             data_access_manager.add_catalog(example_tracking_catalog)
-            assert get_run_tracking_data([ID(save_version)]) == example_tracking_output
+            assert (
+                get_run_tracking_data([ID(save_version)], False)
+                == example_tracking_output
+            )
+
+    def test_graphql_run_tracking_data_query_show_diff_true(
+        self,
+        save_version,
+        save_new_version,
+        example_multiple_run_tracking_catalog,
+        data_access_manager: DataAccessManager,
+    ):
+        with mock.patch(
+            "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
+        ):
+
+            data_access_manager.add_catalog(example_multiple_run_tracking_catalog)
+
+            assert get_run_tracking_data(
+                [ID(save_version), ID(save_new_version)], True
+            ) == [
+                TrackingDataSet(
+                    datasetName="new_metrics",
+                    datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                    data=JSONObject(
+                        {
+                            "col1": [
+                                {"runId": save_version, "value": 1.0},
+                                {"runId": save_new_version, "value": 3.0},
+                            ],
+                            "col2": [
+                                {"runId": save_new_version, "value": 3.23},
+                            ],
+                            "col3": [
+                                {"runId": save_version, "value": 3.0},
+                            ],
+                        }
+                    ),
+                )
+            ]
+
+    def test_graphql_run_tracking_data_query_show_diff_false(
+        self,
+        save_version,
+        save_new_version,
+        example_multiple_run_tracking_catalog,
+        data_access_manager: DataAccessManager,
+    ):
+        with mock.patch(
+            "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
+        ):
+            data_access_manager.add_catalog(example_multiple_run_tracking_catalog)
+
+            assert get_run_tracking_data(
+                [ID(save_version), ID(save_new_version)], False
+            ) == [
+                TrackingDataSet(
+                    datasetName="new_metrics",
+                    datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                    data=JSONObject(
+                        {
+                            "col1": [
+                                {"runId": save_version, "value": 1.0},
+                                {"runId": save_new_version, "value": 3.0},
+                            ]
+                        }
+                    ),
+                )
+            ]
 
     @patch("logging.Logger.warning")
     def test_graphql_run_tracking_no_filepath_query(
@@ -126,7 +225,7 @@ class TestTrackingData:
             )
             data_access_manager.add_catalog(catalog)
 
-            assert get_run_tracking_data([ID(save_version)]) == [
+            assert get_run_tracking_data([ID(save_version)], False) == [
                 TrackingDataSet(
                     datasetName="json_tracking",
                     datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
