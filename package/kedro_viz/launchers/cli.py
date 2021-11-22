@@ -65,6 +65,7 @@ def commands():
 )
 @click.option(
     "--autoreload",
+    "-a",
     is_flag=True,
     help="Autoreload viz server when a Python or YAML file change in the Kedro project",
 )
