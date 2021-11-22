@@ -73,32 +73,16 @@ def create_project_with_starter(context, starter):
     assert res.returncode == OK_EXIT_CODE
 
 
-@given('I have executed the kedro command "{command}"')
-def exec_kedro_target_checked(context, command):
-    """Execute Kedro command and check the status."""
-    pin_dynaconf = [context.pip, "install", "dynaconf==3.1.5"]
-    cmd = [context.kedro] + command.split()
-
-    res = run(cmd, env=context.env, cwd=str(context.root_project_dir))
+@given("I have installed the project's requirements")
+def install_project_requirements(context):
+    """Run pip install -U -r src/requirements.txt"""
+    cmd = [context.pip, "install", "-r", str(context.requirements_path)]
+    res = run(cmd, env=context.env)
 
     if res.returncode != OK_EXIT_CODE:
         print(res.stdout)
         print(res.stderr)
         assert False
-
-    # Wait for subprocess completion since on Windows it takes some time
-    # to install dependencies in a separate console
-    if "install" in cmd:
-        result = run(pin_dynaconf)
-        max_duration = 5 * 60  # 5 minutes
-        end_by = time() + max_duration
-
-        while time() < end_by:
-            result = run([context.pip, "show", "pandas"])
-            if result.returncode == OK_EXIT_CODE:
-                # package found
-                return
-            sleep(1.0)
 
 
 @given('I have installed kedro version "{version}"')

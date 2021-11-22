@@ -28,7 +28,7 @@ def _create_etag() -> str:
 
 def _create_base_api_app() -> FastAPI:
     return FastAPI(
-        title="Kedro-Viz API", description="REST API for Kedro Viz", version=__version__
+        title="Kedro-Viz API", description="REST API for Kedro-Viz", version=__version__
     )
 
 
