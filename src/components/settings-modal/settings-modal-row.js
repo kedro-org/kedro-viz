@@ -18,7 +18,8 @@ const SettingsModalRow = ({
       className="pipeline-settings-modal__state"
       title={toggleValue ? 'On' : 'Off'}
       checked={toggleValue}
-      onChange={onToggleChange}></Toggle>
+      onChange={onToggleChange}
+    ></Toggle>
     <div className="pipeline-settings-modal__description">{description}</div>
   </div>
 );

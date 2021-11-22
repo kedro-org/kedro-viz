@@ -17,7 +17,8 @@ const Toggle = ({
   <div
     className={modifiers(classnames('pipeline-toggle', className), {
       enabled,
-    })}>
+    })}
+  >
     <input
       id={`pipeline-toggle-input-${id}`}
       className="pipeline-toggle-input"
@@ -30,7 +31,8 @@ const Toggle = ({
       className={modifiers('pipeline-toggle-label', {
         checked: enabled && checked,
       })}
-      htmlFor={`pipeline-toggle-input-${id}`}>
+      htmlFor={`pipeline-toggle-input-${id}`}
+    >
       {title}
     </label>
   </div>

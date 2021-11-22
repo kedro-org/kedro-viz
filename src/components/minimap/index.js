@@ -329,18 +329,21 @@ export class MiniMap extends Component {
     return (
       <div
         className="pipeline-minimap-container"
-        style={this.props.visible ? transformStyle : {}}>
+        style={this.props.visible ? transformStyle : {}}
+      >
         <div
           className="pipeline-minimap kedro"
           ref={this.containerRef}
-          {...inputEvents}>
+          {...inputEvents}
+        >
           <svg
             id="pipeline-minimap-graph"
             className="pipeline-minimap__graph"
             width={width}
             height={height}
             viewBox={`0 0 ${width} ${height}`}
-            ref={this.svgRef}>
+            ref={this.svgRef}
+          >
             <g id="zoom-wrapper" ref={this.wrapperRef}>
               <g
                 id="minimap-nodes"
