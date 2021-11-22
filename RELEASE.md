@@ -382,7 +382,7 @@ Please note that release >=3.8.0 will not work with projects created with older 
 - Add `--pipeline` option to visualize modular pipeline (#93)
 - Add `--env` option to pass configuration environment (#93)
 - Fix backward-compatibility with Kedro 0.14.\* (#93)
-- Promote Kedro Viz commands from project specific to global commands (#91)
+- Promote Kedro-Viz commands from project specific to global commands (#91)
 - Allow users to run `kedro viz --load-file` outside of a Kedro project (#91)
 
 ## Bug fixes and other changes

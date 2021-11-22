@@ -1,5 +1,5 @@
 /*
- * The Kedro Viz Graph Layout Engine
+ * The Kedro-Viz Graph Layout Engine
  *
  * Refer to LAYOUT_ENGINE.md for description of the approach.
  */
