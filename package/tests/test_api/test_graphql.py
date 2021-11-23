@@ -89,6 +89,57 @@ def example_multiple_run_tracking_catalog(save_version, save_new_version):
 
 
 @pytest.fixture
+def example_multiple_run_tracking_catalog_atleast_one_empty_run(
+    save_version, save_new_version
+):
+    # Note - filepath is assigned without using tmp_path as it fails on windows build.
+    # This is a temp soln and will be cleaned up in the future.
+    new_metrics_dataset = MetricsDataSet(
+        filepath="test.json",
+        version=Version(None, save_version),
+    )
+    new_metrics_dataset.save({"col1": 1, "col3": 3})
+    new_metrics_dataset = MetricsDataSet(
+        filepath="test.json",
+        version=Version(None, save_new_version),
+    )
+    catalog = DataCatalog(
+        data_sets={
+            "new_metrics": new_metrics_dataset,
+        }
+    )
+
+    yield catalog
+
+    shutil.rmtree("test.json", ignore_errors=True)
+
+
+@pytest.fixture
+def example_multiple_run_tracking_catalog_all_empty_runs(
+    save_version, save_new_version
+):
+    # Note - filepath is assigned without using tmp_path as it fails on windows build.
+    # This is a temp soln and will be cleaned up in the future.
+    new_metrics_dataset = MetricsDataSet(
+        filepath="test.json",
+        version=Version(None, save_version),
+    )
+    new_metrics_dataset = MetricsDataSet(
+        filepath="test.json",
+        version=Version(None, save_new_version),
+    )
+    catalog = DataCatalog(
+        data_sets={
+            "new_metrics": new_metrics_dataset,
+        }
+    )
+
+    yield catalog
+
+    shutil.rmtree("test.json", ignore_errors=True)
+
+
+@pytest.fixture
 def example_tracking_output(save_version):
     yield [
         TrackingDataSet(
@@ -122,86 +173,182 @@ def example_tracking_output(save_version):
 
 
 class TestTrackingData:
-    def test_graphql_run_tracking_data_query(
+    @pytest.mark.parametrize(
+        "show_diff,run_tracking_output",
+        [
+            (
+                True,
+                [
+                    TrackingDataSet(
+                        datasetName="new_metrics",
+                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                        data=JSONObject(
+                            {
+                                "col1": [
+                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 1.0},
+                                    {"runId": "2021-11-03T18.24.24.379Z", "value": 3.0},
+                                ],
+                                "col2": [
+                                    {
+                                        "runId": "2021-11-03T18.24.24.379Z",
+                                        "value": 3.23,
+                                    },
+                                ],
+                                "col3": [
+                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 3.0},
+                                ],
+                            }
+                        ),
+                    )
+                ],
+            ),
+            (
+                False,
+                [
+                    TrackingDataSet(
+                        datasetName="new_metrics",
+                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                        data=JSONObject(
+                            {
+                                "col1": [
+                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 1.0},
+                                    {"runId": "2021-11-03T18.24.24.379Z", "value": 3.0},
+                                ]
+                            }
+                        ),
+                    )
+                ],
+            ),
+        ],
+    )
+    def test_graphql_run_tracking_data(
         self,
-        data_access_manager: DataAccessManager,
         save_version,
-        example_tracking_catalog,
-        example_tracking_output,
+        save_new_version,
+        example_multiple_run_tracking_catalog,
+        show_diff,
+        run_tracking_output,
+        data_access_manager: DataAccessManager,
     ):
         with mock.patch(
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
         ):
-            data_access_manager.add_catalog(example_tracking_catalog)
+
+            data_access_manager.add_catalog(example_multiple_run_tracking_catalog)
+
             assert (
-                get_run_tracking_data([ID(save_version)], False)
-                == example_tracking_output
+                get_run_tracking_data(
+                    [ID(save_version), ID(save_new_version)], show_diff
+                )
+                == run_tracking_output
             )
 
-    def test_graphql_run_tracking_data_query_show_diff_true(
+    @pytest.mark.parametrize(
+        "show_diff,run_tracking_output",
+        [
+            (
+                True,
+                [
+                    TrackingDataSet(
+                        datasetName="new_metrics",
+                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                        data=JSONObject(
+                            {
+                                "col1": [
+                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 1.0},
+                                ],
+                                "col3": [
+                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 3.0},
+                                ],
+                            }
+                        ),
+                    )
+                ],
+            ),
+            (
+                False,
+                [
+                    TrackingDataSet(
+                        datasetName="new_metrics",
+                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                        data=JSONObject({}),
+                    )
+                ],
+            ),
+        ],
+    )
+    def test_graphql_run_tracking_data_atleast_one_empty_run(
         self,
         save_version,
         save_new_version,
-        example_multiple_run_tracking_catalog,
+        show_diff,
+        example_multiple_run_tracking_catalog_atleast_one_empty_run,
+        run_tracking_output,
         data_access_manager: DataAccessManager,
     ):
         with mock.patch(
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
         ):
 
-            data_access_manager.add_catalog(example_multiple_run_tracking_catalog)
+            data_access_manager.add_catalog(
+                example_multiple_run_tracking_catalog_atleast_one_empty_run
+            )
 
-            assert get_run_tracking_data(
-                [ID(save_version), ID(save_new_version)], True
-            ) == [
-                TrackingDataSet(
-                    datasetName="new_metrics",
-                    datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                    data=JSONObject(
-                        {
-                            "col1": [
-                                {"runId": save_version, "value": 1.0},
-                                {"runId": save_new_version, "value": 3.0},
-                            ],
-                            "col2": [
-                                {"runId": save_new_version, "value": 3.23},
-                            ],
-                            "col3": [
-                                {"runId": save_version, "value": 3.0},
-                            ],
-                        }
-                    ),
+            assert (
+                get_run_tracking_data(
+                    [ID(save_version), ID(save_new_version)], show_diff
                 )
-            ]
+                == run_tracking_output
+            )
 
-    def test_graphql_run_tracking_data_query_show_diff_false(
+    @pytest.mark.parametrize(
+        "show_diff,run_tracking_output",
+        [
+            (
+                True,
+                [
+                    TrackingDataSet(
+                        datasetName="new_metrics",
+                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                        data=JSONObject({}),
+                    )
+                ],
+            ),
+            (
+                False,
+                [
+                    TrackingDataSet(
+                        datasetName="new_metrics",
+                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                        data=JSONObject({}),
+                    )
+                ],
+            ),
+        ],
+    )
+    def test_graphql_run_tracking_data_all_empty_runs(
         self,
         save_version,
         save_new_version,
-        example_multiple_run_tracking_catalog,
+        example_multiple_run_tracking_catalog_all_empty_runs,
+        show_diff,
+        run_tracking_output,
         data_access_manager: DataAccessManager,
     ):
         with mock.patch(
             "kedro_viz.api.graphql.data_access_manager", new=data_access_manager
         ):
-            data_access_manager.add_catalog(example_multiple_run_tracking_catalog)
 
-            assert get_run_tracking_data(
-                [ID(save_version), ID(save_new_version)], False
-            ) == [
-                TrackingDataSet(
-                    datasetName="new_metrics",
-                    datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                    data=JSONObject(
-                        {
-                            "col1": [
-                                {"runId": save_version, "value": 1.0},
-                                {"runId": save_new_version, "value": 3.0},
-                            ]
-                        }
-                    ),
+            data_access_manager.add_catalog(
+                example_multiple_run_tracking_catalog_all_empty_runs
+            )
+
+            assert (
+                get_run_tracking_data(
+                    [ID(save_version), ID(save_new_version)], show_diff
                 )
-            ]
+                == run_tracking_output
+            )
 
     @patch("logging.Logger.warning")
     def test_graphql_run_tracking_no_filepath_query(
