@@ -24,10 +24,8 @@ const SettingsModal = ({
   visible,
   flags,
 }) => {
-  if (!visible.settingsBtn) {
-    return null;
-  }
   const flagData = getFlagsState();
+
   return (
     <div className="pipeline-settings-modal">
       <Modal

@@ -1,0 +1,15 @@
+@import '../../../styles/variables';
+
+.runs-list__wrapper {
+  bottom: 0;
+  left: 0;
+  overflow-y: scroll;
+  position: absolute;
+  right: 0;
+  top: #{$run-list-controls-height};
+  width: 100%;
+}
+
+.runs-list__accordion-header {
+  padding: 0.8em 3.5em 0.8em 3em;
+}

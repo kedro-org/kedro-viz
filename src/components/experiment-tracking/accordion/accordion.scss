@@ -1,0 +1,94 @@
+@import '../../../styles/variables';
+
+$toggle-icon-padding: 0.3em;
+$toggle-height: 2.2em + $toggle-icon-padding * 2;
+$toggle-width: 1.15em;
+
+// Standard layout
+
+.accordion__heading {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  &--hide {
+    visibility: hidden;
+  }
+}
+
+.accordion__title {
+  font-size: 1.2em;
+  font-weight: 600;
+
+  &--medium {
+    font-size: 1.3em;
+  }
+
+  &--large {
+    font-size: 1.6em;
+  }
+}
+
+.accordion__title__detail {
+  font-weight: normal;
+  margin-left: 8px;
+}
+
+.accordion__toggle {
+  width: $toggle-width;
+  height: $toggle-height;
+  padding: 0;
+  color: var(--color-default-alt);
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1em;
+  text-align: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform ease 0.1s;
+
+  &:focus {
+    outline: none;
+
+    [data-whatintent='keyboard'] & {
+      box-shadow: 0 0 0 3px $color-link inset;
+    }
+  }
+
+  &:before {
+    font-size: 1.8em;
+    opacity: 0.55;
+    content: '▾';
+  }
+
+  &:hover:before {
+    opacity: 1;
+  }
+
+  &--alt {
+    transform: rotate(90deg);
+  }
+}
+
+.accordion__content--hide {
+  display: none;
+}
+
+// Layout with left-side toggle
+
+.accordion--left .accordion__heading {
+  justify-content: flex-start;
+}
+
+.accordion--left .accordion__title {
+  margin-left: $toggle-height - $toggle-width;
+}
+
+.accordion--left .accordion__toggle {
+  &--alt {
+    transform: rotate(-90deg);
+  }
+}

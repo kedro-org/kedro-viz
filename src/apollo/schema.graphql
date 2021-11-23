@@ -1,0 +1,33 @@
+scalar JSONObject # this is a custom type used to handle JSON data
+schema {
+  query: Query
+  subscription: Subscription
+}
+
+type Query {
+  runsList: [Run]!
+  runMetadata(runIDs: [ID]!): [Run!]!
+  runTrackingData(runIDs: [ID]!, showDiff: Boolean = false): [TrackingDataset]! # showDiff as true will return all tracked fields amongst compared runs
+}
+
+type Subscription {
+  runAdded(runID: ID!): Run!
+}
+
+type Run {
+  author: String
+  bookmark: Boolean
+  gitBranch: String
+  gitSha: String
+  id: ID!
+  notes: String
+  runCommand: String
+  timestamp: String!
+  title: String!
+}
+
+type TrackingDataset {
+  datasetName: String
+  datasetType: String
+  data: JSONObject
+}
