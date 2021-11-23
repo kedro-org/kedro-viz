@@ -16,10 +16,10 @@ describe('SettingsModal', () => {
       });
     };
     const wrapper = mount();
-    expect(wrapper.find('.kui-modal__content--visible').length).toBe(1);
-    const closeButton = wrapper.find('.kui-icon--close');
-    closeButton.simulate('click');
-    expect(wrapper.find('.kui-modal__content--visible').length).toBe(0);
+    expect(wrapper.find('.modal__content--visible').length).toBe(1);
+    const closeButton = wrapper.find('.modal__close-button');
+    closeButton.find('button').simulate('click');
+    expect(wrapper.find('.modal__content--visible').length).toBe(0);
   });
 
   it('maps state to props', () => {

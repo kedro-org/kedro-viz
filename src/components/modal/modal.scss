@@ -22,7 +22,7 @@ $duration-visibility: 0.4s;
 }
 /** Implementation **/
 
-.pipeline-modal {
+.modal {
   position: fixed;
 
   top: 0;
@@ -35,11 +35,11 @@ $duration-visibility: 0.4s;
   transition: visibility ease $duration-visibility;
 }
 
-.pipeline-modal--visible {
+.modal--visible {
   visibility: visible;
 }
 
-.pipeline-modal__bg {
+.modal__bg {
   position: absolute;
 
   width: 100%;
@@ -49,16 +49,16 @@ $duration-visibility: 0.4s;
   transition: opacity ease $duration-visibility;
 }
 
-.pipeline-modal__close-button {
+.modal__close-button {
   position: absolute;
   right: 0;
 }
 
-.pipeline-modal__bg--visible {
+.modal__bg--visible {
   opacity: 1;
 }
 
-.pipeline-modal__content {
+.modal__content {
   position: absolute;
 
   top: 50%;
@@ -71,12 +71,12 @@ $duration-visibility: 0.4s;
   transition: opacity $duration-visibility, transform $duration-visibility;
 }
 
-.pipeline-modal__content--visible {
+.modal__content--visible {
   opacity: 1;
   transform: translate(-50%, -50%);
 }
 
-.pipeline-modal__wrapper {
+.modal__wrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -90,7 +90,7 @@ $duration-visibility: 0.4s;
   text-align: center;
 }
 
-.pipeline-modal__title {
+.modal__title {
   font-size: 1.8em;
   line-height: 1.4;
   width: 100%;
@@ -98,13 +98,13 @@ $duration-visibility: 0.4s;
   margin-bottom: $size-spacing;
 }
 
-.pipeline-modal__description {
+.modal__description {
   margin-bottom: $size-spacing;
   color: var(--color-modal-description);
 }
 
 .pipeline-icon {
-  .pipeline-modal & {
+  .modal & {
     position: absolute;
 
     top: $size-pos;

@@ -10,35 +10,31 @@ import './modal.css';
 const Modal = ({ title, onClose, visible, message, children }) => {
   return (
     <div
-      className={classnames('pipeline-modal', {
-        'pipeline-modal--visible': visible,
+      className={classnames('modal', {
+        'modal--visible': visible,
       })}
-      role="dialog"
-    >
+      role="dialog">
       <div
         onClick={onClose}
-        className={classnames('pipeline-modal__bg', {
-          'pipeline-modal__bg--visible': visible,
+        className={classnames('modal__bg', {
+          'modal__bg--visible': visible,
         })}
       />
       <div
-        className={classnames('pipeline-modal__content', {
-          'pipeline-modal__content--visible': visible,
-        })}
-      >
+        className={classnames('modal__content', {
+          'modal__content--visible': visible,
+        })}>
         <IconButton
           container={React.Fragment}
           ariaLabel="Close Modal"
-          className="pipeline-modal__close-button"
+          className="modal__close-button"
           icon={CloseIcon}
           onClick={onClose}
         />
-        <div className="pipeline-modal__wrapper">
-          <div className="pipeline-modal__title">{title}</div>
+        <div className="modal__wrapper">
+          <div className="modal__title">{title}</div>
           {children}
-          {!children && (
-            <div className="pipeline-modal__description">{message}</div>
-          )}
+          {!children && <div className="modal__description">{message}</div>}
         </div>
       </div>
     </div>
