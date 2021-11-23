@@ -6,24 +6,36 @@
   --color-default-alt: #{$color-dark};
   --color-text: #{$color-text-light};
   --color-text-alt: #{$color-text-light-alt};
+  --color-text-faded: rgba(0, 0, 0, 0.55);
   --color-bg-1: #{$color-bg-dev-light-1};
   --color-bg-2: #{$color-bg-light-4};
   --color-bg-3: #{$color-bg-light-3};
+  --color-bg-4: #{$color-bg-light-1};
   --color-bg-alt: #{$color-bg-light-alt};
   --color-sidebar-background: #{$color-bg-light-3};
+  --color-global-toolbar-background: #{$color-bg-light-2};
   --color-sidebar-border: rgba(0, 0, 0, 0.05);
   --color-sidebar-shadow: rgba(0, 0, 0, 0.07);
+  --color-run-list-divider: rgba(0, 0, 0, 0.1);
+  --color-run-list-hover: #{$color-bg-light-4};
+  --color-base-20: rgba(0, 0, 0, 0.2);
 }
 
 .kui-theme--dark {
   --color-default-alt: #{$color-light};
   --color-text: #{$color-text-dark};
   --color-text-alt: #{$color-text-dark-alt};
+  --color-text-faded: rgba(255, 255, 255, 0.55);
   --color-bg-1: #{$color-bg-dark-1};
   --color-bg-2: #{$color-bg-dark-2};
   --color-bg-3: #{$color-bg-dark-2};
+  --color-bg-4: #{$color-bg-dark-3};
   --color-bg-alt: #{$color-light};
   --color-sidebar-background: #{$color-bg-dark-2};
+  --color-global-toolbar-background: #{$color-bg-dark-1};
   --color-sidebar-border: rgba(0, 0, 0, 0.2);
   --color-sidebar-shadow: rgba(0, 0, 0, 0.3);
+  --color-run-list-divider: rgba(255, 255, 255, 0.1);
+  --color-run-list-hover: #{$color-bg-dark-4};
+  --color-base-20: rgba(255, 255, 255, 0.2);
 }

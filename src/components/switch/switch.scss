@@ -1,0 +1,88 @@
+@import '../../styles/variables';
+
+.switch {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+}
+
+.switch__label {
+  font-size: 14px;
+  margin-right: 8px;
+  width: 20px;
+}
+
+.switch__root {
+  display: flex;
+  flex-shrink: 0;
+  height: 14px;
+  overflow: hidden;
+  position: relative;
+  vertical-align: middle;
+  width: 28px;
+  z-index: 0;
+}
+
+.switch__base {
+  align-items: center;
+  background-color: transparent;
+  border-radius: 50%;
+  border: 0px;
+  box-sizing: border-box;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  left: 0px;
+  margin: 0px;
+  outline: 0px;
+  padding: 1px;
+  position: absolute;
+  text-decoration: none;
+  top: 0px;
+  transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  z-index: 1;
+
+  &--active {
+    color: $color-accent-blue;
+    transform: translateX(14px);
+  }
+
+  &--active + .switch__track {
+    background-color: $color-accent-blue;
+    opacity: 0.4;
+  }
+}
+
+.switch__input {
+  cursor: inherit;
+  height: 100%;
+  left: -100%;
+  margin: 0px;
+  opacity: 0;
+  padding: 0px;
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  z-index: 1;
+}
+
+.switch__circle {
+  background-color: currentcolor;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 1px -1px,
+    rgba(0, 0, 0, 0.1) 0px 1px 1px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;
+  height: 12px;
+  width: 12px;
+}
+
+.switch__track {
+  background-color: #526068;
+  border-radius: 7px;
+  height: 100%;
+  transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+    background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  width: 100%;
+  z-index: -1;
+}

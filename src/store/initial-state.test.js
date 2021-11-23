@@ -94,7 +94,7 @@ describe('prepareNonPipelineState', () => {
 
   it('overrides visible with values from prop', () => {
     const props = {
-      visible: { miniMap: true, sidebar: false, themeBtn: false },
+      visible: { miniMap: true, sidebar: false },
     };
     expect(
       prepareNonPipelineState({ data: spaceflights, ...props })
@@ -120,10 +120,8 @@ describe('getInitialState', () => {
       theme: 'dark',
       visible: {
         exportBtn: true,
-        settingsBtn: true,
         labelBtn: true,
         layerBtn: true,
-        themeBtn: true,
       },
     });
   });
@@ -133,11 +131,10 @@ describe('getInitialState', () => {
       getInitialState({
         ...props,
         theme: 'light',
-        visible: { themeBtn: false },
       })
     ).toMatchObject({
       theme: 'light',
-      visible: { labelBtn: true, themeBtn: false },
+      visible: { labelBtn: true },
     });
   });
 
