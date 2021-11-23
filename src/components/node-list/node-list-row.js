@@ -87,7 +87,8 @@ const NodeListRow = memo(
         )}
         title={name}
         onMouseEnter={visible ? onMouseEnter : null}
-        onMouseLeave={visible ? onMouseLeave : null}>
+        onMouseLeave={visible ? onMouseLeave : null}
+      >
         {icon && (
           <NodeIcon
             className={classnames(
@@ -113,7 +114,8 @@ const NodeListRow = memo(
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
-          title={children ? null : name}>
+          title={children ? null : name}
+        >
           <span
             className={classnames(
               'pipeline-nodelist__row__label',
@@ -142,7 +144,8 @@ const NodeListRow = memo(
                 'pipeline-row__toggle--selected': selected,
               }
             )}
-            onClick={(e) => e.stopPropagation()}>
+            onClick={(e) => e.stopPropagation()}
+          >
             <input
               id={id}
               className="pipeline-nodelist__row__checkbox"

@@ -526,19 +526,22 @@ export class FlowChart extends Component {
       <div
         className="pipeline-flowchart kedro"
         ref={this.containerRef}
-        onClick={this.handleChartClick}>
+        onClick={this.handleChartClick}
+      >
         <svg
           id="pipeline-graph"
           className="pipeline-flowchart__graph"
           width={outerWidth}
           height={outerHeight}
-          ref={this.svgRef}>
+          ref={this.svgRef}
+        >
           <g
             id="zoom-wrapper"
             className={classnames('pipeline-zoom-wrapper', {
               'pipeline-zoom-wrapper--hidden': !visibleGraph,
             })}
-            ref={this.wrapperRef}>
+            ref={this.wrapperRef}
+          >
             <defs>
               {[
                 'arrowhead',
@@ -556,7 +559,8 @@ export class FlowChart extends Component {
                   markerUnits="strokeWidth"
                   markerWidth="8"
                   markerHeight="6"
-                  orient="auto">
+                  orient="auto"
+                >
                   <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
                 </marker>
               ))}

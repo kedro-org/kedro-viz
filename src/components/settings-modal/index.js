@@ -34,7 +34,8 @@ const SettingsModal = ({
         title="Settings"
         theme={theme}
         onClose={() => onClose(false)}
-        visible={visible.settingsModal}>
+        visible={visible.settingsModal}
+      >
         <div className="pipeline-settings-modal__content">
           <div className="pipeline-settings-modal__subtitle">General</div>
           <div className="pipeline-settings-modal__header">

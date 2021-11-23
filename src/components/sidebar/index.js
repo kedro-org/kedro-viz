@@ -20,7 +20,8 @@ export const Sidebar = ({ visible }) => {
       <div
         className={classnames('pipeline-sidebar', {
           'pipeline-sidebar--visible': visible,
-        })}>
+        })}
+      >
         <div className="pipeline-ui">
           <PipelineList onToggleOpen={togglePipeline} />
           <NodeList faded={pipelineIsOpen} />

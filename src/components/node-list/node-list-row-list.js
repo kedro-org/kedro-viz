@@ -14,7 +14,8 @@ const NodeRowList = ({
 }) => (
   <LazyList
     height={(start, end) => (end - start) * nodeListRowHeight}
-    total={items.length}>
+    total={items.length}
+  >
     {({
       start,
       end,
@@ -33,7 +34,8 @@ const NodeRowList = ({
           'pipeline-nodelist__children',
           { closed: collapsed },
           'pipeline-nodelist__list pipeline-nodelist__list--nested'
-        )}>
+        )}
+      >
         <li
           className={modifiers('pipeline-nodelist__placeholder-upper', {
             fade: start !== end && start > 0,

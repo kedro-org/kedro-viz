@@ -38,7 +38,8 @@ export const PipelineList = ({
           prettyName
             ? pipeline.name[pipeline.active]
             : pipeline.active || 'Default'
-        }>
+        }
+      >
         {pipeline.ids.map((id) => (
           <MenuOption
             key={`pipeline-${id}`}

@@ -54,7 +54,8 @@ export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
     <div
       ref={container}
       className="pipeline-nodelist-search"
-      onKeyDown={handleKeyDown}>
+      onKeyDown={handleKeyDown}
+    >
       <SearchBar
         onChange={onUpdateSearchValue}
         value={searchValue}

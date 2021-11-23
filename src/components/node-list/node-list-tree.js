@@ -191,7 +191,8 @@ const TreeListProvider = ({
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
         onItemClick={noop}
-        key={node.id}>
+        key={node.id}
+      >
         {children}
       </NodeListTreeItem>
     );
@@ -207,7 +208,8 @@ const TreeListProvider = ({
       expanded={Object.keys(modularPipelinesSearchResult)}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
-      key="modularPipelinesSearchResult">
+      key="modularPipelinesSearchResult"
+    >
       {renderTree(modularPipelinesSearchResult, '__root__')}
     </StyledTreeView>
   ) : (
@@ -217,7 +219,8 @@ const TreeListProvider = ({
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       onNodeToggle={onItemExpandToggle}
-      key="modularPipelinesTree">
+      key="modularPipelinesTree"
+    >
       {renderTree(modularPipelinesTree, '__root__')}
     </StyledTreeView>
   );
