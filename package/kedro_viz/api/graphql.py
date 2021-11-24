@@ -154,7 +154,7 @@ def format_run_tracking_data(
 
 def get_run_tracking_data(
     run_ids: List[ID], show_diff: bool = False
-) -> List[TrackingDataSet]:
+) -> List[TrackingDataset]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all tracking data for a list of runs. Tracking data contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
@@ -165,7 +165,7 @@ def get_run_tracking_data(
             data; else show all available tracking data
 
     Returns:
-        List of TrackingDataSets
+        List of TrackingDatasets
 
     """
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
@@ -193,7 +193,7 @@ def get_run_tracking_data(
                 all_runs[run_id] = {}
                 logger.warning("`%s` could not be found", file_path)
 
-        tracking_dataset = TrackingDataSet(
+        tracking_dataset = TrackingDataset(
             datasetName=name,
             datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
             data=format_run_tracking_data(all_runs, show_diff),
@@ -218,12 +218,21 @@ class Run:
 
 
 @strawberry.type
-class TrackingDataSet:
-    """TrackingDataSet object to structure tracking data for a Run."""
+class TrackingDataset:
+    """TrackingDataset object to structure tracking data for a Run."""
 
     datasetName: str
     datasetType: str
     data: JSONObject
+
+
+@strawberry.type
+class Subscription:
+    """Subscription object to track runs added in real time"""
+
+    @strawberry.subscription
+    def run_added(self, run_id: ID) -> Run:
+        """Subscription to add runs in real-time"""
 
 
 @strawberry.type
@@ -233,7 +242,7 @@ class Query:
     @strawberry.field
     def run_tracking_data(
         self, run_ids: List[ID], show_diff: bool = False
-    ) -> List[TrackingDataSet]:
+    ) -> List[TrackingDataset]:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
 
@@ -245,7 +254,8 @@ class Query:
         return get_runs(run_ids)
 
 
-schema = strawberry.Schema(query=Query)
+schema = strawberry.Schema(query=Query, subscription=Subscription)
+
 
 router = APIRouter()
 

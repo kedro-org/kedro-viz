@@ -1,3 +1,4 @@
+"""Generic scalar type respresenting a JSON object"""
 scalar JSONObject # this is a custom type used to handle JSON data
 schema {
   query: Query
@@ -5,13 +6,13 @@ schema {
 }
 
 type Query {
-  runsList: [Run]!
-  runMetadata(runIDs: [ID]!): [Run!]!
-  runTrackingData(runIDs: [ID]!, showDiff: Boolean = false): [TrackingDataset]! # showDiff as true will return all tracked fields amongst compared runs
+  runsList: [Run!]!
+  runMetadata(runIds: [ID!]!): [Run!]!
+  runTrackingData(runIds: [ID!]!, showDiff: Boolean! = false): [TrackingDataset!]! # showDiff as true will return all tracked fields amongst compared runs
 }
 
 type Subscription {
-  runAdded(runID: ID!): Run!
+  runAdded(runId: ID!): Run!
 }
 
 type Run {
@@ -27,7 +28,7 @@ type Run {
 }
 
 type TrackingDataset {
-  datasetName: String
-  datasetType: String
-  data: JSONObject
+  datasetName: String!
+  datasetType: String!
+  data: JSONObject!
 }

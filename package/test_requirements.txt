@@ -14,6 +14,7 @@ pytest-cov~=2.11.1
 pytest-mock~=3.6.1
 sqlalchemy[mypy]~=1.2
 trufflehog~=2.1.0
+graphql-schema-diff~=1.2.1
 
 # mypy
 types-aiofiles==0.1.3
