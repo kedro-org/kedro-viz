@@ -1,0 +1,68 @@
+.details-dataset {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 5em 0 0 5em;
+
+  &--single {
+    padding: 5em 0 0 9em;
+  }
+}
+
+.details-dataset__accordion {
+  margin-bottom: 36px;
+  max-width: 75em;
+  width: 100%;
+}
+
+.details-dataset__accordion-header {
+  margin-bottom: 16px;
+}
+
+.details-dataset__row {
+  display: flex;
+  font-size: 1.4em;
+
+  & span:nth-child(2),
+  & span:nth-child(3) {
+    margin-right: 130px;
+  }
+
+  & span:last-of-type {
+    margin-right: 50px;
+  }
+}
+
+.details-dataset__name-header,
+.details-dataset__value-header {
+  color: var(--color-text-faded);
+  font-size: 13px;
+}
+
+.details-dataset__label,
+.details-dataset__value,
+.details-dataset__value-header {
+  margin-bottom: 8px;
+}
+
+.details-dataset__label,
+.details-dataset__name-header {
+  display: block;
+  flex-shrink: 0;
+  width: 230px;
+
+  &--single {
+    width: 50%;
+  }
+}
+
+.details-dataset__value,
+.details-dataset__value-header {
+  display: block;
+  flex-shrink: 0;
+  width: 310px;
+
+  &--single {
+    width: 50%;
+  }
+}

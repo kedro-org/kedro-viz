@@ -47,7 +47,8 @@ const NodeListTreeItem = ({
         rowType="tree"
         focused={data.focused}
       />
-    }>
+    }
+  >
     {children}
   </TreeItem>
 );

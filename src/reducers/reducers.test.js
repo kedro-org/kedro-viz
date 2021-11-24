@@ -337,6 +337,8 @@ describe('Reducer', () => {
         right: expect.any(Number),
         top: expect.any(Number),
         width: expect.any(Number),
+        x: expect.any(Number),
+        y: expect.any(Number),
       });
     });
   });

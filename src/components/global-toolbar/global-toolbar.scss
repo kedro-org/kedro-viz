@@ -1,0 +1,45 @@
+@import '../../styles/variables';
+@import '../../styles/extends';
+
+.pipeline-global-toolbar {
+  background: var(--color-global-toolbar-background);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: $global-toolbar-width;
+  z-index: 5;
+}
+
+.pipeline-global-routes-toolbar {
+  @extend %listReset;
+}
+
+.pipeline-global-control-toolbar {
+  @extend %listReset;
+
+  margin-top: auto;
+}
+
+.pipeline-menu-button--large {
+  height: $global-toolbar-width;
+  width: $global-toolbar-width;
+}
+
+.pipeline-menu-button--link {
+  &:hover {
+    background-color: var(--color-bg-2);
+  }
+}
+
+.pipeline-menu-button--logo {
+  margin-bottom: 40px;
+
+  svg {
+    height: 2.9em;
+    opacity: 1;
+    width: 2.9em;
+  }
+}

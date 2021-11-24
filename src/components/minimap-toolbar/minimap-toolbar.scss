@@ -10,14 +10,12 @@
 }
 
 .pipeline-minimap-toolbar {
-  display: block;
+  @extend %listReset;
+
   margin-top: auto;
-  padding: 0;
-  list-style: none;
 }
 
 .pipeline-minimap-button {
-  height: $sidebar-width-closed - 14;
   transition: background-color 300ms ease;
 }
 
@@ -30,11 +28,12 @@
 }
 
 .pipeline-minimap-toolbar__scale {
-  display: block;
-  width: 100%;
-  padding: 6px 8px 6px;
   color: var(--color-text);
+  display: block;
+  font-size: 12px;
   font-weight: bold;
-  font-size: 10px;
+  margin-top: 16px;
+  padding: 6px 8px 6px;
   text-align: center;
+  width: 100%;
 }

@@ -19,7 +19,8 @@ export const LargePipelineWarning = ({
     <div
       className={classnames('kedro', 'pipeline-warning', {
         'pipeline-warning--sidebar-visible': sidebarVisible,
-      })}>
+      })}
+    >
       <h2 className="pipeline-warning__title">
         Whoa, that’s a chonky pipeline!
       </h2>
@@ -36,7 +37,8 @@ export const LargePipelineWarning = ({
         onClick={onDisable}
         size="small"
         mode="secondary"
-        animation="wipe">
+        animation="wipe"
+      >
         Don't show this again
       </Button>
     </div>
