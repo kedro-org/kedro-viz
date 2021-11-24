@@ -7,7 +7,7 @@
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
   bottom: -1px;
-  left: 0;
+  left: $global-toolbar-width;
 
   // Ensures sidebar tooltips are above code panel
   z-index: 1;
@@ -65,4 +65,15 @@
   width: $sidebar-width-closed;
   height: 100%;
   background: var(--color-bg-2);
+}
+
+.compare-switch-wrapper {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+  padding: 2em 3.5em 1.2em 3em;
+}
+
+.compare-switch-wrapper__text {
+  font-size: 14px;
 }

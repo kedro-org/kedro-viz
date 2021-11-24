@@ -338,7 +338,7 @@ class TestGraphNodeMetadata:
     def test_partitioned_data_node_metadata(self):
         dataset = PartitionedDataSet(path="partitioned/", dataset="pandas.CSVDataSet")
         data_node = GraphNode.create_data_node(
-            full_name="dataset",
+            full_name="dataset", 
             layer="raw",
             tags=set(),
             dataset=dataset,
