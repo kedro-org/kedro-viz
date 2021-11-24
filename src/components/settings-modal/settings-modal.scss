@@ -19,17 +19,17 @@
 }
 
 .pipeline-settings-modal {
-  .pipeline-modal__content {
+  .modal__content {
     width: calc(100% - 5em);
     max-width: 900px;
   }
 
-  .pipeline-modal__wrapper {
+  .modal__wrapper {
     align-items: flex-start;
     text-align: left;
   }
 
-  .pipeline-modal__bg--visible {
+  .modal__bg--visible {
     opacity: 0.7;
   }
 }
