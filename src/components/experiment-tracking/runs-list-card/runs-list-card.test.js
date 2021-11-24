@@ -21,6 +21,13 @@ const savedRun = {
   title: 'Sprint 4 EOW',
 };
 
+const nonActiveRun = {
+  bookmark: true,
+  id: 'af32bfd',
+  timestamp: new Date('October 15, 2021 03:24:00').toISOString(),
+  title: 'Sprint 4 EOW',
+};
+
 describe('RunsListCard', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(
@@ -39,11 +46,23 @@ describe('RunsListCard', () => {
     expect(wrapper.find('.runs-list-card__bookmark').length).toBe(1);
   });
 
-  it('renders with an unchecked check icon', () => {
+  it('does not render with check icon for single view', () => {
     const wrapper = shallow(
       <RunsListCard
         data={randomRun}
-        enableComparisonView
+        enableComparisonView={false}
+        selectedRuns={selectedRuns}
+      />
+    );
+
+    expect(wrapper.find('.runs-list-card__checked').length).toBe(0);
+  });
+
+  it('renders with an unchecked check icon for comparison view', () => {
+    const wrapper = shallow(
+      <RunsListCard
+        data={nonActiveRun}
+        enableComparisonView={true}
         selectedRuns={selectedRuns}
       />
     );
@@ -66,6 +85,5 @@ describe('RunsListCard', () => {
     wrapper.simulate('click');
     expect(setActive).toBeTruthy();
     expect(wrapper.find('.runs-list-card--active').length).toBe(1);
-    expect(wrapper.find('svg.runs-list-card__checked--active').length).toBe(1);
   });
 });
