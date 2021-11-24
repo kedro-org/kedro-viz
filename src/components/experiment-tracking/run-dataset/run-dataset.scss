@@ -61,6 +61,7 @@
   display: block;
   flex-shrink: 0;
   width: 310px;
+  word-wrap: break-word;
 
   &--single {
     width: 50%;
