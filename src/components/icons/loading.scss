@@ -2,13 +2,11 @@
 
 $polygon-length: 500;
 $section-length: $polygon-length / 8;
-$section-gap: $section-length / 8;
-$section-gap-2x: $section-gap * 2;
-$start-point: $polygon-length / 2 - $section-gap-2x;
-$spin1-offset-start: $start-point -$section-gap;
-$spin1-offset-end: $start-point -$polygon-length - $section-gap;
-$spin2-offset-start: $start-point -$section-length - $section-gap-2x;
-$spin2-offset-end: $start-point -$polygon-length + -$section-length - $section-gap-2x;
+$start-point: $polygon-length / 2;
+$spin1-offset-start: $start-point;
+$spin1-offset-end: $start-point -$polygon-length;
+$spin2-offset-start: $start-point -$section-length;
+$spin2-offset-end: $start-point -$polygon-length + -$section-length;
 $path1-length: $section-length;
 $path1-gap: $polygon-length - $section-length;
 $path2-length: $polygon-length - $section-length;
