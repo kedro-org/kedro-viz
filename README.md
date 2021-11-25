@@ -106,7 +106,7 @@ Options:
 
 ### Experiment Tracking usage
 
-To enable [experiment tracking](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html) in Kedro-Viz, you need to add the Kedro-Viz SQLiteStore to your Kedro project.
+To enable [experiment tracking](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html) in Kedro-Viz, you need to add the Kedro-Viz `SQLiteStore` to your Kedro project.
 
 This can be done by adding the below code to `settings.py` in the `src` folder of your Kedro project. 
 
