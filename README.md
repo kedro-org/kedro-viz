@@ -122,7 +122,7 @@ Once the above set-up is complete, tracking datasets can be used to track releva
 **Notes:**
 
 * Experiment Tracking is only available for Kedro-Viz >= 4.0.2 and Kedro >= 0.17.5
-* Prior to Kedro 0.17.6, when using `tracking.MetricsDataSet`, you will have to explicitly mark the dataset as `versioned` for it to show up properly in Kedro-Viz experiment tracking tab. From Kedro >= 0.17.6, this is done automatically:
+* Prior to Kedro 0.17.6, when using tracking datasets, you will have to explicitly mark the datasets as `versioned` for it to show up properly in Kedro-Viz experiment tracking tab. From Kedro >= 0.17.6, this is done automatically:
 
 ```yaml
 train_evaluation.r2_score_linear_regression:
