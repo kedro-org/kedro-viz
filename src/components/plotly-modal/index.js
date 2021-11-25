@@ -20,7 +20,6 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
   }
   return (
     <>
-      {' '}
       {metadata && (
         <div className="pipeline-plotly-modal">
           <div className="pipeline-plot-modal__top">
