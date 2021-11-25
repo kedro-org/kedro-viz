@@ -54,7 +54,7 @@ SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 
 ```
 
-Once the above set-up is complete, tracking datasets can be used to track different experiments. More information on how to use tracking datasets can be found [here](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html)
+Once the above set-up is complete, tracking datasets can be used to track relevant data for Kedro runs. More information on how to use tracking datasets can be found [here](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html)
 
 NOTE - Experiment Tracking is only available for Kedro-Viz versions >= 4.0.2 
 ## Installation
