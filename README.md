@@ -25,7 +25,7 @@ Live Demo: <a href="https://quantumblacklabs.github.io/kedro-viz/" target="_blan
 
 ## Introduction
 
-Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/quantumblacklabs/kedro). Kedro-Viz also allows users to view and compare different experiments from the Kedro project. 
+Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/quantumblacklabs/kedro). Kedro-Viz also allows users to view and compare different runs from the Kedro project. 
 
 ## Features
 
