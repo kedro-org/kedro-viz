@@ -20,6 +20,7 @@ export const GlobalToolbar = ({
   onToggleSettingsModal,
   onToggleTheme,
   theme,
+  visible,
 }) => {
   return (
     <>
@@ -70,7 +71,7 @@ export const GlobalToolbar = ({
             className={
               'pipeline-menu-button--settings pipeline-menu-button--large'
             }
-            onClick={() => onToggleSettingsModal(true)}
+            onClick={() => onToggleSettingsModal(!visible.settingsModal)}
             icon={SettingsIcon}
             disabled={false}
             labelText={'Settings'}
@@ -83,6 +84,7 @@ export const GlobalToolbar = ({
 
 export const mapStateToProps = (state) => ({
   theme: state.theme,
+  visible: state.visible,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

@@ -1,19 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classnames from 'classnames';
 import CloseIcon from '../icons/close';
 import IconButton from '../../components/icon-button';
 import './modal.css';
+import utils from '@quantumblack/kedro-ui/lib/utils';
 
 /**
- * Shows a toggle button for code panel
+ * Generic Kedro Modal
  */
 const Modal = ({ title, onClose, visible, message, children }) => {
+  const handleKeyDown = (event) => {
+    utils.handleKeyEvent(event.keyCode, {
+      escape: onClose,
+    });
+  };
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
+
   return (
     <div
       className={classnames('modal', {
         'modal--visible': visible,
       })}
-      role="dialog">
+      role="dialog"
+    >
       <div
         onClick={onClose}
         className={classnames('modal__bg', {
@@ -23,7 +35,8 @@ const Modal = ({ title, onClose, visible, message, children }) => {
       <div
         className={classnames('modal__content', {
           'modal__content--visible': visible,
-        })}>
+        })}
+      >
         <IconButton
           container={React.Fragment}
           ariaLabel="Close Modal"
