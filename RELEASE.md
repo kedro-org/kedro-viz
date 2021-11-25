@@ -36,6 +36,7 @@ Please follow the established format:
 - Fix metadata alignment and overlapping text. (#643)
 - Fix and remove blue tick on single view selection. (#647)
 - Fix routing bugs for experiment tracking. (#648)
+
 # Release 4.0.1
 
 ## Bug fixes and other changes
