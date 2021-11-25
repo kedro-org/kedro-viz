@@ -25,7 +25,7 @@ Live Demo: <a href="https://quantumblacklabs.github.io/kedro-viz/" target="_blan
 
 ## Introduction
 
-Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/quantumblacklabs/kedro). Kedro-Viz also allows users to view and compare different runs from the Kedro project. 
+Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/quantumblacklabs/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project. 
 
 ## Features
 
@@ -36,7 +36,7 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 🔬 Focus mode for modular pipeline visualisation
 - 📊 Rich metadata side panel to display parameters, plots, etc.
 - ♻️ Autoreload on code change
-- 🧪 Supports tracking and comparing runs from a Kedro project
+- 🧪 Supports tracking and comparing runs in a Kedro project
 - 🎩 Many more to come
 
 
@@ -56,7 +56,7 @@ SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 
 Once the above set-up is complete, tracking datasets can be used to track relevant data for Kedro runs. More information on how to use tracking datasets can be found [here](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html)
 
-NOTE - Experiment Tracking is only available for Kedro-Viz versions >= 4.0.2 
+NOTE - Experiment Tracking is only available for Kedro-Viz versions >= 4.0.2 and Kedro >= 0.17.5
 ## Installation
 
 There are two ways you can use Kedro-Viz:
