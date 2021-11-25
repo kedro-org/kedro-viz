@@ -11,7 +11,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Experiment Tracking Front End set of features, as well as GraphQL setup and API integration (#576, #582, #587, #604, #605, #619, #620, #623, #624, #625, #630, #636, #643, #647, #648)
+- Experiment Tracking Front End set of features, as well as GraphQL setup and API integration (#576, #582, #587, #604, #605, #619, #620, #623, #624, #625, #630, #636, #643, #647, #648, #649)
 
 ## Bug fixes and other changes
 
