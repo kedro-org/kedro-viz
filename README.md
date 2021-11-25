@@ -42,7 +42,7 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 
 ## Experiment Tracking on Kedro-Viz 
 
-To enable [experiment tracking](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html) on Kedro-Viz, you need to add the Kedro-Viz SQLiteStore to your Kedro project.
+To enable [experiment tracking](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html) in Kedro-Viz, you need to add the Kedro-Viz SQLiteStore to your Kedro project.
 
 This can be done by adding the below code to `settings.py` in the `src` folder of your Kedro project. 
 
