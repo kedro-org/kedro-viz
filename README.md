@@ -40,22 +40,6 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 🎩 Many more to come
 
 
-## Experiment Tracking on Kedro-Viz 
-
-To enable [experiment tracking](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html) in Kedro-Viz, you need to add the Kedro-Viz SQLiteStore to your Kedro project.
-
-This can be done by adding the below code to `settings.py` in the `src` folder of your Kedro project. 
-
-```python
-from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-from pathlib import Path
-SESSION_STORE_CLASS = SQLiteStore
-SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
-```
-
-Once the above set-up is complete, tracking datasets can be used to track relevant data for Kedro runs. More information on how to use tracking datasets can be found [here](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html)
-
-NOTE - Experiment Tracking is only available for Kedro-Viz >= 4.0.2 and Kedro >= 0.17.5
 ## Installation
 
 There are two ways you can use Kedro-Viz:
@@ -78,7 +62,7 @@ There are two ways you can use Kedro-Viz:
 
 ## Usage
 
-### As a Kedro plugin
+### CLI Usage
 
 To launch Kedro-Viz from the command line as a Kedro plugin, use the following command from the root folder of your Kedro project:
 
@@ -120,7 +104,34 @@ Options:
   -h, --help                Show this message and exit.
 ```
 
-### As a standalone React component
+### Experiment Tracking usage
+
+To enable [experiment tracking](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html) in Kedro-Viz, you need to add the Kedro-Viz `SQLiteStore` to your Kedro project.
+
+This can be done by adding the below code to `settings.py` in the `src` folder of your Kedro project. 
+
+```python
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+from pathlib import Path
+SESSION_STORE_CLASS = SQLiteStore
+SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
+```
+
+Once the above set-up is complete, tracking datasets can be used to track relevant data for Kedro runs. More information on how to use tracking datasets can be found [here](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html)
+
+**Notes:**
+
+* Experiment Tracking is only available for Kedro-Viz >= 4.0.2 and Kedro >= 0.17.5
+* Prior to Kedro 0.17.6, when using tracking datasets, you will have to explicitly mark the datasets as `versioned` for it to show up properly in Kedro-Viz experiment tracking tab. From Kedro >= 0.17.6, this is done automatically:
+
+```yaml
+train_evaluation.r2_score_linear_regression:
+  type: tracking.MetricsDataSet
+  filepath: ${base_location}/09_tracking/linear_score.json
+  versioned: true
+```
+
+### Standalone React component usage
 
 To use Kedro-Viz as a standalone React component, import the component and supply a data JSON as prop:
 
