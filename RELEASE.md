@@ -11,8 +11,17 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Experiment Tracking Front End set of features, as well as GraphQL setup and API integration (#576, #582, #587, #604, #605, #619, #624, #625, #630)
-- Update RunTrackingData schema to show difference. (#623)
+- Experiment Tracking Front End set of features, as well as GraphQL setup and API integration (#576, #582, #587, #604, #605, #619, #623, #624, #625, #630)
+
+## Bug fixes and other changes
+
+- Bug fix for display of JSON tracking data on metadata panel. (#618)
+- Fix MetricsDataSet test. (#620)
+- Fix issues with showDiff when comparing with run without tracking data. (#636)
+- Fix dependencies for e2e tests. (#637)
+- Fix metadata alignment and overlapping text. (#643)
+- Fix and remove blue tick on single view selection. (#647)
+- Fix routing bugs for experiment tracking. (#648)
 - Add extra -a click command for autoreload. (#626)
 - Remove notice from PR template. (#632)
 - Replace the QB favicon with the Kedro one. (#633)
@@ -25,17 +34,6 @@ Please follow the established format:
 - Upgrade redux from 4.1.0 to 4.1.2 (#641)
 - Upgrade reselect from 4.1.0 to 4.1.1 (#642)
 - Update prettier command and config. (#631)
-
-## Bug fixes and other changes
-
-- Bug fix for display of JSON tracking data on metadata panel #618. (#618)
-- Fix MetricsDataSet test. (#620)
-- Fix windows build tmp path. (#622)
-- Fix issues with showDiff when comparing with run without tracking data. (#636)
-- Fix dependencies for e2e tests. (#637)
-- Fix metadata alignment and overlapping text. (#643)
-- Fix and remove blue tick on single view selection. (#647)
-- Fix routing bugs for experiment tracking. (#648)
 
 # Release 4.0.1
 
