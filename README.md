@@ -25,7 +25,7 @@ Live Demo: <a href="https://quantumblacklabs.github.io/kedro-viz/" target="_blan
 
 ## Introduction
 
-Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/quantumblacklabs/kedro).
+Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/quantumblacklabs/kedro). Kedro-Viz also allows users to view and compare different experiments from the Kedro project. 
 
 ## Features
 
@@ -36,7 +36,25 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 🔬 Focus mode for modular pipeline visualisation
 - 📊 Rich metadata side panel to display parameters, plots, etc.
 - ♻️ Autoreload on code change
+- 🧪 Supports tracking and comparing experiments from a Kedro projects
 - 🎩 Many more to come
+
+
+## Experiment Tracking on Kedro-Viz 
+
+To enable [experiment tracking](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html) on Kedro-Viz, you need to add the Kedro-Viz SQLiteStore to your Kedro project.
+
+This can be done by adding the below code to the settings.py in src folder of your project. 
+
+```python
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+from pathlib import Path
+SESSION_STORE_CLASS = SQLiteStore
+SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
+
+```
+
+Once the above set-up is complete, tracking datasets can be used to track different experiments. More information on how to use tracking datasets can be found [here](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html)
 
 ## Installation
 
