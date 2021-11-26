@@ -32,6 +32,7 @@
   font-size: 1.4em;
   padding-bottom: 16px;
   vertical-align: top;
+  word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc
 
   &:first-of-type {
     width: 230px;

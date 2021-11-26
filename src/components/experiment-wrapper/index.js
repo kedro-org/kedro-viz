@@ -97,7 +97,8 @@ const ExperimentWrapper = ({ theme }) => {
           <a
             href="https://github.com/quantumblacklabs/kedro-viz"
             rel="noreferrer"
-            target="_blank">
+            target="_blank"
+          >
             <Button onClick={() => {}} theme={theme}>
               View docs
             </Button>

@@ -4,6 +4,10 @@ import { toHumanReadableTime } from '../../../utils/date-utils';
 
 import './run-metadata.css';
 
+// We are only checking for an empty string as it is the default value
+// returned by the graphql endpoint for empty values ( not null or undefined )
+const sanitiseEmptyValue = (value) => (value !== '' ? value : '-');
+
 const RunMetadata = ({ isSingleRun, runs = [] }) => {
   let initialState = {};
   for (let i = 0; i < runs.length; i++) {
@@ -16,13 +20,12 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
     setToggleNotes({ ...toggleNotes, [index]: !toggleNotes[index] });
   };
 
-  return runs.length === 0 ? (
-    <div>Loading...</div>
-  ) : (
+  return (
     <div
       className={classnames('details-metadata', {
         'details-metadata--single': isSingleRun,
-      })}>
+      })}
+    >
       {runs.map((run, i) => {
         const humanReadableTime = toHumanReadableTime(run.timestamp);
 
@@ -31,53 +34,60 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
             className={classnames('details-metadata__run', {
               'details-metadata__run--single': isSingleRun,
             })}
-            key={run.gitSha}>
+            key={run.title + i} // note: this should revert back to use gitSha once the BE returns the actual value
+          >
             <table className="details-metadata__table">
               <tbody>
                 {isSingleRun ? (
                   <tr>
                     <td className="details-metadata__title" colSpan="2">
-                      {run.title}
+                      {sanitiseEmptyValue(run.title)}
                     </td>
                   </tr>
                 ) : (
                   <tr>
                     {i === 0 ? <td></td> : null}
-                    <td className="details-metadata__title">{run.title}</td>
+                    <td className="details-metadata__title">
+                      {sanitiseEmptyValue(run.title)}
+                    </td>
                   </tr>
                 )}
                 <tr>
                   {i === 0 ? <td>Created By</td> : null}
-                  <td>{run.author}</td>
+                  <td>{sanitiseEmptyValue(run.author)}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Creation Date</td> : null}
-                  <td>{`${humanReadableTime} (${run.timestamp})`}</td>
+                  <td>{`${humanReadableTime} (${sanitiseEmptyValue(
+                    run.timestamp
+                  )})`}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Git SHA</td> : null}
-                  <td>{run.gitSha}</td>
+                  <td>{sanitiseEmptyValue(run.gitSha)}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Git Branch</td> : null}
-                  <td>{run.gitBranch}</td>
+                  <td>{sanitiseEmptyValue(run.gitBranch)}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Run Command</td> : null}
-                  <td>{run.runCommand}</td>
+                  <td>{sanitiseEmptyValue(run.runCommand)}</td>
                 </tr>
                 <tr>
                   {i === 0 ? <td>Notes</td> : null}
                   <td>
                     <p
                       className="details-metadata__notes"
-                      style={toggleNotes[i] ? { display: 'block' } : null}>
-                      {run.notes}
+                      style={toggleNotes[i] ? { display: 'block' } : null}
+                    >
+                      {sanitiseEmptyValue(run.notes)}
                     </p>
                     {run.notes.length > 100 ? (
                       <button
                         className="details-metadata__show-more kedro"
-                        onClick={() => onToggleNoteExpand(i)}>
+                        onClick={() => onToggleNoteExpand(i)}
+                      >
                         {toggleNotes[i] ? 'Show less' : 'Show more'}
                       </button>
                     ) : null}
