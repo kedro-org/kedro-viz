@@ -6,6 +6,20 @@ import { configure, mount, shallow } from 'enzyme';
 
 configure({ adapter: new Adapter() });
 
+const emptyRun = [
+  {
+    id: '',
+    author: '',
+    bookmark: true,
+    timestamp: '',
+    gitSha: '',
+    gitBranch: '',
+    runCommand: '',
+    notes: '',
+    title: '',
+  },
+];
+
 describe('RunMetadata', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(
@@ -26,6 +40,11 @@ describe('RunMetadata', () => {
 
     expect(wrapper.find('.details-metadata').length).toBe(1);
     expect(wrapper.find('.details-metadata__run--single').length).toBe(1);
+  });
+
+  it('shows a "-" for empty values ', () => {
+    const wrapper = mount(<RunMetadata isSingleRun={true} runs={emptyRun} />);
+    expect(wrapper.find('.details-metadata__title').text()).toMatch('-');
   });
 
   it('handles show more/less button click event', () => {

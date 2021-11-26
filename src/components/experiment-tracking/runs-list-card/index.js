@@ -37,7 +37,7 @@ const RunsListCard = ({
       })}
       onClick={() => onClick(id)}
     >
-      {(active || enableComparisonView) && (
+      {enableComparisonView && (
         <CheckIcon
           className={classnames('runs-list-card__checked', {
             'runs-list-card__checked--active': active,
