@@ -4,6 +4,16 @@ import Accordion from '../accordion';
 
 import './run-dataset.css';
 
+const santizeValue = (value) => {
+  if (value === '' || value === null || value === undefined) {
+    return '-';
+  } else if (typeof value === 'object' || typeof value === 'boolean') {
+    return JSON.stringify(value);
+  }
+
+  return value;
+};
+
 /**
  * Display the dataset of the experiment tracking run.
  * @param {array} props.isSingleRun Whether or not this is a single run.
@@ -95,9 +105,7 @@ function buildDatasetDataMarkup(
             })}
             key={data.runId + index}
           >
-            {typeof data.value === 'object'
-              ? JSON.stringify(data.value)
-              : data.value}
+            {santizeValue(data.value)}
           </span>
         ))}
       </div>
