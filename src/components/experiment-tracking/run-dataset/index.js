@@ -7,10 +7,8 @@ import './run-dataset.css';
 const santizeValue = (value) => {
   if (value === '' || value === null || value === undefined) {
     return '-';
-  } else if (typeof value === 'object') {
+  } else if (typeof value === 'object' || typeof value === 'boolean') {
     return JSON.stringify(value);
-  } else if (typeof value === 'boolean') {
-    return value.toString();
   }
 
   return value;
