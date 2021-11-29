@@ -2,6 +2,7 @@
 which stores sessions data in the SQLite database"""
 import json
 import subprocess
+
 # pylint: disable=too-many-ancestors
 from pathlib import Path
 from typing import Any, Generator, Type
@@ -43,11 +44,15 @@ class SQLiteStore(BaseSessionStore):
         session_dict = {}
         for key, value in self.data.items():
             # Get branch info through git_sha
-            if key=='git':
-                sha = [v for k,v in value.items() if k=='commit_sha'] 
-                git = subprocess.Popen(("git","name-rev","--name-only",sha[0]),stdout=subprocess.PIPE)
-                branch = git.communicate()[0].strip().decode("utf-8")
-                value['branch'] = branch
+            if key == "git":
+                sha = [v for k, v in value.items() if k == "commit_sha"]
+                git = subprocess.run(
+                    ("git", "name-rev", "--name-only", sha[0]),
+                    stdout=subprocess.PIPE,
+                    check=True,
+                )
+                branch = git.stdout.decode("utf-8")
+                value["branch"] = branch
                 session_dict[key] = value
             else:
                 if _is_json_serializable(value):
