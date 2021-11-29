@@ -71,7 +71,7 @@ export const GlobalToolbar = ({
             className={
               'pipeline-menu-button--settings pipeline-menu-button--large'
             }
-            onClick={() => onToggleSettingsModal(!visible.settingsModal)}
+            onClick={() => onToggleSettingsModal(true)}
             icon={SettingsIcon}
             disabled={false}
             labelText={'Settings'}

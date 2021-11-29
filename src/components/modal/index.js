@@ -3,17 +3,17 @@ import classnames from 'classnames';
 import CloseIcon from '../icons/close';
 import IconButton from '../../components/icon-button';
 import './modal.css';
-import utils from '@quantumblack/kedro-ui/lib/utils';
 
 /**
  * Generic Kedro Modal
  */
 const Modal = ({ title, onClose, visible, message, children }) => {
   const handleKeyDown = (event) => {
-    utils.handleKeyEvent(event.keyCode, {
-      escape: onClose,
-    });
+    if (event.keyCode === 27) {
+      onClose();
+    }
   };
+
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
