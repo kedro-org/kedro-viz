@@ -20,8 +20,8 @@
   top: 0;
   right: 0;
   bottom: 0;
-  left: 0;
-  z-index: 5;
+  left: 80px;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-content: center;
@@ -31,7 +31,7 @@
   background-color: var(--color-bg-plot);
 
   .pipeline-plotly-chart {
-    width: calc(98% - 80px);
+    width: calc(98% - 160px);
     height: calc(92% - 80px);
     margin: auto;
   }
