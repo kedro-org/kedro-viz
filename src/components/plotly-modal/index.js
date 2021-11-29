@@ -20,7 +20,7 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
   }
   return (
     <>
-      {metadata && (
+      {metadata && metadata.plot && (
         <div className="pipeline-plotly-modal">
           <div className="pipeline-plot-modal__top">
             <button
