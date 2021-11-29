@@ -1,7 +1,7 @@
 import shutil
-from os import path
 from unittest import mock
 from unittest.mock import PropertyMock, call, patch
+from pathlib import Path
 
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
@@ -524,12 +524,9 @@ class TestGraphQLEndpoints:
 
 class TestGraphQLSchema:
     def testApolloSchema(self):
-        here = path.abspath(
-            path.join(path.dirname(__file__), "..", "..", "..", "src", "apollo")
-        )
+        schema_file = Path(__file__).parents[3] / "src" / "apollo" / "schema.graphql"
         changes = []
-        with open(path.join(here, "schema.graphql")) as data:
+        with schema_file.open() as data:
             apollo_schema = data.read()
             changes = diff(apollo_schema, str(schema))
-            print_diff(changes)
-        assert changes == []
+        assert not changes, print_diff(changes)
