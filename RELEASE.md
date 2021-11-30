@@ -7,6 +7,13 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
+# Release 4.1.1
+## Bug fixes and other changes
+
+- Fix display of boolean values on tracking dataset (#652)
+- Fix node IDs in test data after Kedro updates its _str_logic for node (#653)
+
 # Release 4.1.0
 
 ## Major features and improvements
