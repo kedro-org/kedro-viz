@@ -35,6 +35,8 @@ const MetaData = ({
   const [showCopied, setShowCopied] = useState(false);
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
+  // Hide plot modal when selected metadata changes
+  useEffect(() => onTogglePlotModal(false), [metadata, onTogglePlotModal]);
   const isTaskNode = metadata?.node.type === 'task';
   const isDataNode = metadata?.node.type === 'data';
   const isParametersNode = metadata?.node.type === 'parameters';
