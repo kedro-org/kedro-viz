@@ -474,7 +474,8 @@ class DataNode(GraphNode):
         return (
             self.dataset_type
             == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
-            or "kedro.extras.datasets.plotly.json_dataset.JSONDataSet"
+            or self.dataset_type
+            =="kedro.extras.datasets.plotly.json_dataset.JSONDataSet"
         )
 
     def is_metric_node(self):
