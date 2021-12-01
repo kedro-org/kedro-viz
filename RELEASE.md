@@ -8,6 +8,8 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+- Display Plotly JSONDataSet plot in metadata side-panel (#660)
+
 # Release 4.1.1
 ## Bug fixes and other changes
 
