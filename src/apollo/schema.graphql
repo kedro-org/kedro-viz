@@ -8,7 +8,7 @@ schema {
 type Query {
   runsList: [Run!]!
   runMetadata(runIds: [ID!]!): [Run!]!
-  runTrackingData(runIds: [ID!]!, showDiff: Boolean! = false): [TrackingDataset!]! # showDiff as true will return all tracked fields amongst compared runs
+  runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [TrackingDataset!]! # showDiff as true will return all tracked fields amongst compared runs
 }
 
 type Subscription {
@@ -28,7 +28,7 @@ type Run {
 }
 
 type TrackingDataset {
-  datasetName: String!
-  datasetType: String!
-  data: JSONObject!
+  datasetName: String
+  datasetType: String
+  data: JSONObject
 }

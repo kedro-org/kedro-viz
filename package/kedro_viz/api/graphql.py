@@ -221,9 +221,9 @@ class Run:
 class TrackingDataset:
     """TrackingDataset object to structure tracking data for a Run."""
 
-    datasetName: str
-    datasetType: str
-    data: JSONObject
+    datasetName: Optional[str]
+    datasetType: Optional[str]
+    data: Optional[JSONObject]
 
 
 @strawberry.type
@@ -241,7 +241,7 @@ class Query:
 
     @strawberry.field
     def run_tracking_data(
-        self, run_ids: List[ID], show_diff: bool = False
+        self, run_ids: List[ID], show_diff: Optional[bool] = False
     ) -> List[TrackingDataset]:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
