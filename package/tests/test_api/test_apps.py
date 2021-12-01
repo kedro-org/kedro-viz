@@ -71,11 +71,11 @@ def assert_example_data(response_data):
     """Assert graph response for the `example_pipelines` and `example_catalog` fixtures."""
     expected_edges = [
         {"source": "7b140b3f", "target": "d5a8b994"},
-        {"source": "56118ad8", "target": "0ecea0de"},
-        {"source": "13399a82", "target": "56118ad8"},
+        {"source": "fdba147b", "target": "0ecea0de"},
+        {"source": "13399a82", "target": "fdba147b"},
         {"source": "f1f1425b", "target": "7b140b3f"},
         {"source": "0ecea0de", "target": "7b140b3f"},
-        {"source": "c506f374", "target": "56118ad8"},
+        {"source": "c506f374", "target": "fdba147b"},
         {"source": "13399a82", "target": "uk.data_processing"},
         {"source": "uk.data_processing", "target": "0ecea0de"},
         {"source": "c506f374", "target": "uk.data_processing"},
@@ -93,7 +93,7 @@ def assert_example_data(response_data):
     # compare nodes
     expected_nodes = [
         {
-            "id": "56118ad8",
+            "id": "fdba147b",
             "name": "Process Data",
             "full_name": "process_data",
             "tags": ["split"],
@@ -230,7 +230,7 @@ def assert_example_data(response_data):
         "uk.data_processing": {
             "children": [
                 {"id": "13399a82", "type": "data"},
-                {"id": "56118ad8", "type": "task"},
+                {"id": "fdba147b", "type": "task"},
             ],
             "id": "uk.data_processing",
             "inputs": ["c506f374", "13399a82"],
@@ -270,9 +270,9 @@ def assert_example_transcoded_data(response_data):
     and `example_transcoded_catalog` fixtures."""
     expected_edges = [
         {"source": "f1f1425b", "target": "2302ea78"},
-        {"source": "dbad7c24", "target": "0ecea0de"},
-        {"source": "c506f374", "target": "dbad7c24"},
-        {"source": "7c58d8e6", "target": "dbad7c24"},
+        {"source": "20c83b96", "target": "0ecea0de"},
+        {"source": "c506f374", "target": "20c83b96"},
+        {"source": "7c58d8e6", "target": "20c83b96"},
         {"source": "2302ea78", "target": "1d06a0d7"},
         {"source": "0ecea0de", "target": "2302ea78"},
     ]
@@ -282,7 +282,7 @@ def assert_example_transcoded_data(response_data):
     # compare nodes
     expected_nodes = [
         {
-            "id": "dbad7c24",
+            "id": "20c83b96",
             "name": "Process Data",
             "full_name": "process_data",
             "tags": ["split"],
@@ -424,7 +424,6 @@ class TestMainEndpoint:
 
     def test_endpoint_main(self, client):
         response = client.get("/api/main")
-        assert response.status_code == 200
         assert_example_data(response.json())
 
     def test_endpoint_main_no_session_store(self, example_api_no_session_store):
@@ -462,7 +461,7 @@ class TestNodeMetadataEndpoint:
         assert response.status_code == 404
 
     def test_task_node_metadata(self, client):
-        response = client.get("/api/nodes/56118ad8")
+        response = client.get("/api/nodes/fdba147b")
         metadata = response.json()
         assert (
             metadata["code"].lstrip()
@@ -501,7 +500,7 @@ class TestNodeMetadataEndpoint:
 
     def test_no_metadata(self, client):
         with mock.patch.object(TaskNode, "has_metadata", return_value=False):
-            response = client.get("/api/nodes/56118ad8")
+            response = client.get("/api/nodes/fdba147b")
         assert response.json() == {}
 
 
