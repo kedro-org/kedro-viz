@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
-import Button from '@quantumblack/kedro-ui/lib/components/button';
-import Sidebar from '../sidebar';
-import Details from '../experiment-tracking/details';
 import { GET_RUNS } from '../../apollo/queries';
+import Button from '@quantumblack/kedro-ui/lib/components/button';
+import Details from '../experiment-tracking/details';
+import Sidebar from '../sidebar';
 
 import './experiment-wrapper.css';
 
@@ -14,6 +14,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableComparisonView, setEnableComparisonView] = useState(false);
   const [selectedRuns, setSelectedRuns] = useState([]);
+  const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
 
   const { data, loading } = useApolloQuery(GET_RUNS);
 
@@ -54,7 +55,7 @@ const ExperimentWrapper = ({ theme }) => {
   }, [selectedRuns]);
 
   useEffect(() => {
-    if (data && data.runsList.length > 0) {
+    if (data?.runsList.length > 0) {
       // If we return runs, set the first one as the default.
       setSelectedRuns(data.runsList.map((run) => run.id).slice(0, 1));
     }
@@ -70,7 +71,7 @@ const ExperimentWrapper = ({ theme }) => {
 
   return (
     <>
-      {data && data.runsList.length > 0 ? (
+      {data?.runsList.length > 0 ? (
         <>
           <Sidebar
             disableRunSelection={disableRunSelection}
@@ -80,9 +81,15 @@ const ExperimentWrapper = ({ theme }) => {
             onToggleComparisonView={onToggleComparisonView}
             runsListData={data.runsList}
             selectedRuns={selectedRuns}
+            showRunDetailsModal={setShowRunDetailsModal}
           />
           {selectedRuns.length > 0 ? (
-            <Details selectedRuns={selectedRuns} />
+            <Details
+              enableComparisonView={enableComparisonView}
+              selectedRuns={selectedRuns}
+              setShowRunDetailsModal={setShowRunDetailsModal}
+              showRunDetailsModal={showRunDetailsModal}
+            />
           ) : null}
         </>
       ) : (

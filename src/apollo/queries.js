@@ -20,6 +20,7 @@ export const GET_RUN_METADATA = gql`
       author
       gitBranch
       gitSha
+      id
       notes
       runCommand
       timestamp

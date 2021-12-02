@@ -12,6 +12,7 @@ import MenuIcon from '../icons/menu';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
 import LayersIcon from '../icons/layers';
+import PencilIcon from '../icons/pencil';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import './primary-toolbar.css';
 
@@ -27,6 +28,7 @@ export const PrimaryToolbar = ({
   onToggleLayers,
   onToggleSidebar,
   onToggleTextLabels,
+  showRunDetailsModal,
   textLabels,
   visible,
   visibleLayers,
@@ -46,7 +48,15 @@ export const PrimaryToolbar = ({
         icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
       />
-      {isExperimentView ? null : (
+      {isExperimentView ? (
+        <IconButton
+          ariaLive="Edit run details"
+          className={'pipeline-menu-button--labels'}
+          onClick={() => showRunDetailsModal(true)}
+          icon={PencilIcon}
+          labelText={`Edit details`}
+        />
+      ) : (
         <>
           <IconButton
             ariaLive="polite"

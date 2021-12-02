@@ -24,6 +24,7 @@ export const Sidebar = ({
   onToggleComparisonView,
   runsListData,
   selectedRuns,
+  showRunDetailsModal,
   visible,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
@@ -52,7 +53,10 @@ export const Sidebar = ({
             />
           </div>
           <nav className="pipeline-toolbar">
-            <PrimaryToolbar isExperimentView />
+            <PrimaryToolbar
+              isExperimentView
+              showRunDetailsModal={showRunDetailsModal}
+            />
           </nav>
         </div>
       </>
