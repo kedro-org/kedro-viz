@@ -1,14 +1,14 @@
 import shutil
+from pathlib import Path
 from unittest import mock
 from unittest.mock import PropertyMock, call, patch
-from pathlib import Path
 
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 from kedro.io import DataCatalog, Version
-from schemadiff import diff, print_diff
 from strawberry import ID
+from strawberry.printer import print_schema
 
 from kedro_viz.api.graphql import (
     JSONObject,
@@ -525,8 +525,6 @@ class TestGraphQLEndpoints:
 class TestGraphQLSchema:
     def testApolloSchema(self):
         schema_file = Path(__file__).parents[3] / "src" / "apollo" / "schema.graphql"
-        changes = []
         with schema_file.open() as data:
             apollo_schema = data.read()
-            changes = diff(apollo_schema, str(schema))
-        assert not changes, print_diff(changes)
+        assert apollo_schema.strip() == print_schema(schema)

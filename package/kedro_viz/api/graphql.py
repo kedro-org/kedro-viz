@@ -95,7 +95,7 @@ def get_all_runs() -> List[Run]:
 
 
 def format_run_tracking_data(
-    tracking_data: Dict, show_diff: bool = False
+    tracking_data: Dict, show_diff: Optional[bool] = False
 ) -> JSONObject:
     """Convert tracking data in the front-end format.
 
@@ -153,7 +153,7 @@ def format_run_tracking_data(
 
 
 def get_run_tracking_data(
-    run_ids: List[ID], show_diff: bool = False
+    run_ids: List[ID], show_diff: Optional[bool] = False
 ) -> List[TrackingDataset]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all tracking data for a list of runs. Tracking data contains the data from the
@@ -240,6 +240,11 @@ class Query:
     """Query endpoint to get data from the session store"""
 
     @strawberry.field
+    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
+        """Query to get data for specific runs from the session store"""
+        return get_runs(run_ids)
+
+    @strawberry.field
     def run_tracking_data(
         self, run_ids: List[ID], show_diff: Optional[bool] = False
     ) -> List[TrackingDataset]:
@@ -247,11 +252,6 @@ class Query:
         return get_run_tracking_data(run_ids, show_diff)
 
     runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
-
-    @strawberry.field
-    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        """Query to get data for specific runs from the session store"""
-        return get_runs(run_ids)
 
 
 schema = strawberry.Schema(query=Query, subscription=Subscription)
