@@ -15,7 +15,7 @@ from strawberry import ID
 from strawberry.asgi import GraphQL
 
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.run_model import RunModel
+from kedro_viz.models.sql_models import RunModel, UserDetailsModel
 
 logger = logging.getLogger(__name__)
 
@@ -45,15 +45,19 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
     Returns:
         Run object
     """
+    session = data_access_manager.db_session
     git_data = run_blob.get("git")
+    user_details = (
+        session.query(UserDetailsModel).filter(UserDetailsModel.id == run_id).scalar()
+    )
     run = Run(
         id=ID(run_id),
         author="",
         gitBranch="",
         gitSha=git_data.get("commit_sha") if git_data else None,
-        bookmark=False,
-        title=run_blob["session_id"],
-        notes="",
+        bookmark=user_details.bookmark if user_details else False,
+        title=user_details.title if user_details else run_blob["session_id"],
+        notes=user_details.notes if user_details else "",
         timestamp=run_blob["session_id"],
         runCommand=run_blob["cli"]["command_path"],
     )
@@ -245,7 +249,31 @@ class Query:
         return get_runs(run_ids)
 
 
-schema = strawberry.Schema(query=Query)
+@strawberry.input
+class UserDetails:
+    id: str
+    bookmark: bool
+    title: str
+    notes: str
+
+
+@strawberry.type
+class Mutation:
+    @strawberry.mutation
+    def store_user_details(self, details: UserDetails) -> bool:
+        user_details = UserDetailsModel(
+            id=details.id,
+            bookmark=details.bookmark,
+            title=details.title,
+            notes=details.notes,
+        )
+        session = data_access_manager.db_session
+        session.add(user_details)
+        session.commit()
+        return True
+
+
+schema = strawberry.Schema(query=Query, mutation=Mutation)
 
 router = APIRouter()
 
