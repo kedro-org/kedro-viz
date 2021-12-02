@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -12,6 +12,9 @@ import {
 import './details.css';
 
 const Details = ({ selectedRuns, sidebarVisible }) => {
+  const [pinnedRun, setPinnedRun] = useState(); // state used to determine the pinned run in a comparison
+  // *** down the line --> need to adjust for situation where unselected run is the pinned run
+
   const { data: { runMetadata } = [], error } = useApolloQuery(
     GET_RUN_METADATA,
     {
