@@ -15,7 +15,7 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
   const onCollapsePlotClick = () => {
     onToggle(false);
   };
-  if (!visible.plotModal) {
+  if (!visible.plotModal || !metadata?.plot) {
     return null;
   }
   return (
