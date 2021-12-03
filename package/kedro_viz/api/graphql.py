@@ -15,7 +15,7 @@ from strawberry import ID
 from strawberry.asgi import GraphQL
 
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.sql_models import RunModel, UserDetailsModel
+from kedro_viz.models.experiments_tracking import RunModel, UserDetailsModel
 
 logger = logging.getLogger(__name__)
 
@@ -260,7 +260,7 @@ class UserDetails:
 @strawberry.type
 class Mutation:
     @strawberry.mutation
-    def store_user_details(self, details: UserDetails) -> bool:
+    def update_user_run_details(self, details: UserDetails) -> bool:
         user_details = UserDetailsModel(
             id=details.id,
             bookmark=details.bookmark,

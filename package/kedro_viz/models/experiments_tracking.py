@@ -29,7 +29,7 @@ class UserDetailsModel(Base):
     __tablename__ = "user_details"
 
     id = Column(String, ForeignKey(RunModel.id), primary_key=True, index=True)
-    bookmark = Column(Boolean)
+    bookmark = Column(Boolean, default=False)
     title = Column(String)
     notes = Column(String)
 

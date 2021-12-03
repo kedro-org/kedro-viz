@@ -10,7 +10,7 @@ from kedro.framework.session.store import BaseSessionStore
 from sqlalchemy.orm.session import Session
 
 from kedro_viz.database import create_db_engine
-from kedro_viz.models.sql_models import Base, RunModel
+from kedro_viz.models.experiments_tracking import Base, RunModel
 
 
 def get_db(session_class: Type[Session]) -> Generator:
