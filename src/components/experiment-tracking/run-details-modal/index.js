@@ -24,6 +24,7 @@ const RunDetailsModal = ({ onClose, selectedRunMetadata, theme, visible }) => {
               Notes (this is searchable)
             </div>
           </div>
+          <textarea value={selectedRunMetadata?.notes} />
         </div>
       </Modal>
     </div>
