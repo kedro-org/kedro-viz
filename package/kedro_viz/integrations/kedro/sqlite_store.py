@@ -2,7 +2,7 @@
 which stores sessions data in the SQLite database"""
 import json
 import subprocess
-
+from git import Repo
 # pylint: disable=too-many-ancestors
 from pathlib import Path
 from typing import Any, Generator, Type
@@ -43,23 +43,17 @@ class SQLiteStore(BaseSessionStore):
         """Returns session_store information in json format after converting PosixPath to string"""
         session_dict = {}
         for key, value in self.data.items():
-            # Get branch info through git_sha
             if key == "git":
-                sha = [v for k, v in value.items() if k == "commit_sha"]
-                git = subprocess.run(
-                    ("git", "name-rev", "--name-only", sha[0]),
-                    stdout=subprocess.PIPE,
-                    check=True,
-                )
-                branch = git.stdout.decode("utf-8")
-                value["branch"] = branch
+                repo = Repo(search_parent_directories=True)
+                branch = repo.active_branch
+                value["branch"] = branch.name 
+
+            if _is_json_serializable(value):
                 session_dict[key] = value
             else:
-                if _is_json_serializable(value):
-                    session_dict[key] = value
-                else:
-                    session_dict[key] = str(value)
+                session_dict[key] = str(value)
         return json.dumps(session_dict)
+
 
     def save(self):
         """Save the session store info on db ."""
