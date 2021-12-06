@@ -5,7 +5,8 @@ import MiniMap from '../minimap';
 import MiniMapToolbar from '../minimap-toolbar';
 import NodeList from '../node-list';
 import PipelineList from '../pipeline-list';
-import PrimaryToolbar from '../primary-toolbar';
+import FlowchartPrimaryToolbar from '../flowchart-primary-toolbar';
+import ExperimentPrimaryToolbar from '../experiment-tracking/experiment-primary-toolbar';
 import Switch from '../switch';
 
 import RunsList from '../experiment-tracking/runs-list';
@@ -25,6 +26,8 @@ export const Sidebar = ({
   runsListData,
   selectedRuns,
   visible,
+  sidebarVisible,
+  setSidebarVisible,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
@@ -33,7 +36,7 @@ export const Sidebar = ({
       <>
         <div
           className={classnames('pipeline-sidebar', {
-            'pipeline-sidebar--visible': visible,
+            'pipeline-sidebar--visible': sidebarVisible,
           })}
         >
           <div className="pipeline-ui">
@@ -52,7 +55,10 @@ export const Sidebar = ({
             />
           </div>
           <nav className="pipeline-toolbar">
-            <PrimaryToolbar isExperimentView />
+            <ExperimentPrimaryToolbar
+              sidebarVisible={sidebarVisible}
+              setSidebarVisible={setSidebarVisible}
+            />
           </nav>
         </div>
       </>
@@ -70,7 +76,7 @@ export const Sidebar = ({
             <NodeList faded={pipelineIsOpen} />
           </div>
           <nav className="pipeline-toolbar">
-            <PrimaryToolbar />
+            <FlowchartPrimaryToolbar />
             <MiniMapToolbar />
           </nav>
           <MiniMap />
