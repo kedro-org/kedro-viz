@@ -33,7 +33,7 @@ else:
         NewType("JSONObject", dict),
         serialize=lambda v: v,
         parse_value=lambda v: json.loads(v),
-        description="Generic scalar type respresenting a JSON object",
+        description="Generic scalar type representing a JSON object",
     )
 
 
