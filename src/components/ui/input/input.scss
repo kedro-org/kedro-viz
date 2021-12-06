@@ -1,0 +1,13 @@
+@import '../../../styles/extends';
+
+.input {
+  @extend %input;
+
+  &--large {
+    @extend %input--large;
+  }
+
+  &--small {
+    @extend %input--small;
+  }
+}

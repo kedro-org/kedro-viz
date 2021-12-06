@@ -37,3 +37,29 @@
   margin: 0;
   padding: 1em 0;
 }
+
+%input {
+  background-color: unset;
+  border: none;
+  border-bottom: 1px solid var(--color-base-20);
+  color: var(--color-text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-bottom 0.2s ease;
+  width: 100%;
+
+  &:focus-visible {
+    border-bottom: 1px solid $color-accent-blue;
+    outline: none;
+  }
+}
+
+%input--large {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+%input--small {
+  font-size: 14px;
+  font-weight: normal;
+}

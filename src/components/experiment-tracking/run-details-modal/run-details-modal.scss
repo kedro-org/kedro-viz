@@ -1,32 +1,4 @@
-@import '../../../styles/variables';
-
-.run-details-modal-input {
-  background-color: unset;
-  border: none;
-  border-bottom: 1px solid var(--color-base-20);
-  color: var(--color-text);
-  cursor: pointer;
-  font-family: inherit;
-  resize: none;
-  transition: border-bottom 0.2s ease;
-  width: 100%;
-
-  &--large {
-    font-size: 18px;
-    font-weight: 600;
-  }
-
-  &--small {
-    font-size: 14px;
-  }
-
-  &:focus-visible {
-    border-bottom: 1px solid $color-accent-blue;
-    outline: none;
-  }
-}
-
-.run-details-modal-btn-wrapper {
+.run-details-modal-button-wrapper {
   align-items: baseline;
   display: flex;
   justify-content: flex-end;

@@ -1,41 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
+import Input from '../../ui/input';
 import Modal from '@quantumblack/kedro-ui/lib/components/modal';
+import TextArea from '../../ui/textarea';
 
 import '../../settings-modal/settings-modal.css';
 import './run-details-modal.css';
-
-const Input = ({ defaultValue = '', size = 'large', inputType = 'input' }) => {
-  const [value, setValue] = useState(defaultValue);
-
-  useEffect(() => {
-    setValue(defaultValue);
-  }, [defaultValue]);
-
-  const handleChange = (e) => {
-    setValue(e.target.value);
-  };
-
-  if (inputType === 'textarea') {
-    return (
-      <textarea
-        className={`run-details-modal-input run-details-modal-input--${size}`}
-        onChange={handleChange}
-        rows="4"
-        value={value}
-      />
-    );
-  } else {
-    return (
-      <input
-        className={`run-details-modal-input run-details-modal-input--${size}`}
-        onChange={handleChange}
-        type="text"
-        value={value}
-      />
-    );
-  }
-};
 
 const RunDetailsModal = ({ onClose, selectedRunMetadata, theme, visible }) => {
   return (
@@ -58,13 +28,15 @@ const RunDetailsModal = ({ onClose, selectedRunMetadata, theme, visible }) => {
               Notes (this is searchable)
             </div>
           </div>
-          <Input
+          <TextArea
             defaultValue={selectedRunMetadata?.notes || 'Add here'}
             size="small"
             inputType="textarea"
+            limit={500}
+            rows={4}
           />
         </div>
-        <div className="run-details-modal-btn-wrapper">
+        <div className="run-details-modal-button-wrapper">
           <Button
             mode="secondary"
             onClick={() => onClose(false)}
