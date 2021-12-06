@@ -1,9 +1,8 @@
 import json
 from pathlib import Path
-from subprocess import CompletedProcess
-from unittest.mock import patch
+from unittest.mock import patch, PropertyMock
 
-import pytest
+import pytest 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -61,19 +60,14 @@ class TestSQLiteStore:
         db = next(get_db(db_session_class))
         assert db.query(RunModel).count() == 2
 
-    @patch("subprocess.run")
-    def test_update_git_branch(self, patched_subprocess, store_path):
+    def test_update_git_branch(self, store_path, mocker):
         sqlite_store = SQLiteStore(store_path, next(session_id()))
         sqlite_store.data = {
             "project_path": store_path,
             "git": {"commit_sha": "123456"},
-        }
-        patched_subprocess.return_value = CompletedProcess(
-            args=("git", "name-rev", "--name-only", "123456"),
-            returncode=0,
-            stdout=b"test_branch",
-        )
-
+        }  
+        repo = mocker.patch('git.Repo.active_branch.name')
+        
         assert sqlite_store.to_json() == json.dumps(
             {
                 "project_path": str(store_path),
