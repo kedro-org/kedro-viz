@@ -41,7 +41,6 @@
 %input {
   background-color: unset;
   border: none;
-  border-bottom: 1px solid var(--color-base-20);
   color: var(--color-text);
   cursor: pointer;
   font-family: inherit;
@@ -49,8 +48,9 @@
   width: 100%;
 
   &:focus-visible {
-    border-bottom: 1px solid $color-accent-blue;
     outline: none;
+    text-decoration: underline;
+    text-decoration-color: $color-accent-blue;
   }
 }
 

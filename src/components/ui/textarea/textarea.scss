@@ -3,14 +3,19 @@
 .textarea {
   @extend %input;
 
+  min-height: auto;
   resize: none;
 
   &--large {
     @extend %input--large;
+
+    height: 24px;
   }
 
   &--small {
     @extend %input--small;
+
+    height: 20px;
   }
 }
 

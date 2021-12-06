@@ -1,18 +1,31 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import './textarea.css';
 
-const TextArea = ({
-  defaultValue = '',
-  limit = 100,
-  rows = 2,
-  size = 'large',
-}) => {
+const MIN_HEIGHT = 20;
+
+const TextArea = ({ defaultValue = '', limit = 100, size = 'large' }) => {
+  const textareaRef = useRef(null);
   const [value, setValue] = useState(defaultValue);
 
   useEffect(() => {
     setValue(defaultValue);
   }, [defaultValue]);
+
+  useLayoutEffect(() => {
+    textareaRef.current.style.height = 'inherit';
+
+    textareaRef.current.style.height = `${Math.max(
+      textareaRef.current.scrollHeight,
+      MIN_HEIGHT
+    )}px`;
+  }, [value]);
 
   const setLimitedLengthText = useCallback(
     (text) => {
@@ -30,7 +43,7 @@ const TextArea = ({
       <textarea
         className={`textarea textarea--${size}`}
         onChange={handleChange}
-        rows={rows}
+        ref={textareaRef}
         value={value}
       />
       <div className="textarea-character-count">
