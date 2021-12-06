@@ -13,6 +13,7 @@ const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three
 const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableComparisonView, setEnableComparisonView] = useState(false);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [selectedRuns, setSelectedRuns] = useState([]);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
 
@@ -81,6 +82,8 @@ const ExperimentWrapper = ({ theme }) => {
             onToggleComparisonView={onToggleComparisonView}
             runsListData={data.runsList}
             selectedRuns={selectedRuns}
+            sidebarVisible={isSidebarVisible}
+            setSidebarVisible={setIsSidebarVisible}
             showRunDetailsModal={setShowRunDetailsModal}
           />
           {selectedRuns.length > 0 ? (
@@ -89,6 +92,8 @@ const ExperimentWrapper = ({ theme }) => {
               selectedRuns={selectedRuns}
               setShowRunDetailsModal={setShowRunDetailsModal}
               showRunDetailsModal={showRunDetailsModal}
+              sidebarVisible={isSidebarVisible}
+              theme={theme}
             />
           ) : null}
         </>

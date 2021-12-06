@@ -1,37 +1,20 @@
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import {
-  toggleExportModal,
-  toggleLayers,
-  toggleSidebar,
-  toggleTextLabels,
-} from '../../actions';
 import IconButton from '../icon-button';
 import MenuIcon from '../icons/menu';
-import LabelIcon from '../icons/label';
-import ExportIcon from '../icons/export';
-import LayersIcon from '../icons/layers';
-import PencilIcon from '../icons/pencil';
-import { getVisibleLayerIDs } from '../../selectors/disabled';
+
 import './primary-toolbar.css';
 
 /**
- * Main controls for filtering the chart data
- * @param {Function} onToggleTextLabels Handle toggling text labels on/off
- * @param {Boolean} textLabels Whether text labels are displayed
+ * Toolbar to house buttons that controls display options for the main panel (flowchart, experiment details, etc)
+ * @param {JSX} children The content to be rendered within the toolbar
+ * @param {Function} onToggleSidebar Handle toggling of sidebar collapsable view
+ * @param {Boolean} visible Handle display of tooltip text in relation to collapsable view
  */
 export const PrimaryToolbar = ({
-  disableLayerBtn,
-  isExperimentView,
-  onToggleExportModal,
-  onToggleLayers,
+  children,
   onToggleSidebar,
-  onToggleTextLabels,
-  showRunDetailsModal,
-  textLabels,
-  visible,
-  visibleLayers,
+  visible = { sidebar: true },
 }) => (
   <>
     <ul className="pipeline-primary-toolbar kedro">
@@ -48,67 +31,9 @@ export const PrimaryToolbar = ({
         icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
       />
-      {isExperimentView ? (
-        <IconButton
-          ariaLive="Edit run details"
-          className={'pipeline-menu-button--labels'}
-          onClick={() => showRunDetailsModal(true)}
-          icon={PencilIcon}
-          labelText={`Edit details`}
-        />
-      ) : (
-        <>
-          <IconButton
-            ariaLive="polite"
-            className={'pipeline-menu-button--labels'}
-            onClick={() => onToggleTextLabels(!textLabels)}
-            icon={LabelIcon}
-            labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
-            visible={visible.labelBtn}
-          />
-          <IconButton
-            ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
-            className={'pipeline-menu-button--layers'}
-            onClick={() => onToggleLayers(!visibleLayers)}
-            icon={LayersIcon}
-            labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
-            disabled={disableLayerBtn}
-            visible={visible.layerBtn}
-          />
-          <IconButton
-            ariaLabel="Export graph as SVG or PNG"
-            className={'pipeline-menu-button--export'}
-            onClick={() => onToggleExportModal(true)}
-            icon={ExportIcon}
-            labelText="Export visualisation"
-            visible={visible.exportBtn}
-          />
-        </>
-      )}
+      {children}
     </ul>
   </>
 );
 
-export const mapStateToProps = (state) => ({
-  disableLayerBtn: !state.layer.ids.length,
-  textLabels: state.textLabels,
-  visible: state.visible,
-  visibleLayers: Boolean(getVisibleLayerIDs(state).length),
-});
-
-export const mapDispatchToProps = (dispatch) => ({
-  onToggleExportModal: (value) => {
-    dispatch(toggleExportModal(value));
-  },
-  onToggleLayers: (value) => {
-    dispatch(toggleLayers(Boolean(value)));
-  },
-  onToggleSidebar: (visible) => {
-    dispatch(toggleSidebar(visible));
-  },
-  onToggleTextLabels: (value) => {
-    dispatch(toggleTextLabels(Boolean(value)));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PrimaryToolbar);
+export default PrimaryToolbar;

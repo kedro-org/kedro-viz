@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import ExperimentPrimaryToolbar from '../experiment-tracking/experiment-primary-toolbar';
+import FlowchartPrimaryToolbar from '../flowchart-primary-toolbar';
 import MiniMap from '../minimap';
 import MiniMapToolbar from '../minimap-toolbar';
 import NodeList from '../node-list';
 import PipelineList from '../pipeline-list';
-import PrimaryToolbar from '../primary-toolbar';
-import Switch from '../switch';
-
 import RunsList from '../experiment-tracking/runs-list';
+import Switch from '../switch';
 
 import './sidebar.css';
 
@@ -26,6 +26,8 @@ export const Sidebar = ({
   selectedRuns,
   showRunDetailsModal,
   visible,
+  sidebarVisible,
+  setSidebarVisible,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
@@ -34,7 +36,7 @@ export const Sidebar = ({
       <>
         <div
           className={classnames('pipeline-sidebar', {
-            'pipeline-sidebar--visible': visible,
+            'pipeline-sidebar--visible': sidebarVisible,
           })}
         >
           <div className="pipeline-ui">
@@ -53,9 +55,10 @@ export const Sidebar = ({
             />
           </div>
           <nav className="pipeline-toolbar">
-            <PrimaryToolbar
-              isExperimentView
+            <ExperimentPrimaryToolbar
+              setSidebarVisible={setSidebarVisible}
               showRunDetailsModal={showRunDetailsModal}
+              sidebarVisible={sidebarVisible}
             />
           </nav>
         </div>
@@ -74,7 +77,7 @@ export const Sidebar = ({
             <NodeList faded={pipelineIsOpen} />
           </div>
           <nav className="pipeline-toolbar">
-            <PrimaryToolbar />
+            <FlowchartPrimaryToolbar />
             <MiniMapToolbar />
           </nav>
           <MiniMap />

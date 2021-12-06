@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
 import RunDetailsModal from '../run-details-modal';
@@ -70,9 +69,4 @@ const Details = ({
   );
 };
 
-export const mapStateToProps = (state) => ({
-  sidebarVisible: state.visible.sidebar,
-  theme: state.theme,
-});
-
-export default connect(mapStateToProps)(Details);
+export default Details;
