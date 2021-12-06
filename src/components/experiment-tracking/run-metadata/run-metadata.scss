@@ -32,7 +32,7 @@
   font-size: 1.4em;
   padding-bottom: 16px;
   vertical-align: top;
-  word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc
+  word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc.
 
   &:first-of-type {
     width: 230px;
@@ -56,17 +56,33 @@
 }
 
 td.details-metadata__title {
+  cursor: pointer;
   font-weight: 600;
   font-size: 2em;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+  }
 }
 
 .details-metadata__notes {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  cursor: pointer;
   display: -webkit-box;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+  }
 }
 
 .details-metadata__show-more.kedro {

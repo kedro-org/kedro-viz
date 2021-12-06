@@ -8,7 +8,12 @@ import './run-metadata.css';
 // returned by the graphql endpoint for empty values ( not null or undefined )
 const sanitiseEmptyValue = (value) => (value !== '' ? value : '-');
 
-const RunMetadata = ({ isSingleRun, runs = [] }) => {
+const RunMetadata = ({
+  isSingleRun,
+  runs = [],
+  setSelectedMetadataRunId,
+  setShowRunDetailsModal,
+}) => {
   let initialState = {};
   for (let i = 0; i < runs.length; i++) {
     initialState[i] = false;
@@ -18,6 +23,11 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
 
   const onToggleNoteExpand = (index) => {
     setToggleNotes({ ...toggleNotes, [index]: !toggleNotes[index] });
+  };
+
+  const onTitleOrNoteClick = (id) => {
+    setSelectedMetadataRunId(id);
+    setShowRunDetailsModal(true);
   };
 
   return (
@@ -40,14 +50,21 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
               <tbody>
                 {isSingleRun ? (
                   <tr>
-                    <td className="details-metadata__title" colSpan="2">
+                    <td
+                      className="details-metadata__title"
+                      colSpan="2"
+                      onClick={() => onTitleOrNoteClick(run.id)}
+                    >
                       {sanitiseEmptyValue(run.title)}
                     </td>
                   </tr>
                 ) : (
                   <tr>
                     {i === 0 ? <td></td> : null}
-                    <td className="details-metadata__title">
+                    <td
+                      className="details-metadata__title"
+                      onClick={() => onTitleOrNoteClick(run.id)}
+                    >
                       {sanitiseEmptyValue(run.title)}
                     </td>
                   </tr>
@@ -79,6 +96,7 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
                   <td>
                     <p
                       className="details-metadata__notes"
+                      onClick={() => onTitleOrNoteClick(run.id)}
                       style={toggleNotes[i] ? { display: 'block' } : null}
                     >
                       {run.notes !== ''

@@ -44,7 +44,8 @@
   color: var(--color-text);
   cursor: pointer;
   font-family: inherit;
-  transition: border-bottom 0.2s ease;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
   width: 100%;
 
   &:focus-visible {

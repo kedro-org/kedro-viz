@@ -20,6 +20,7 @@ const Details = ({
   theme,
 }) => {
   const [selectedRunMetadata, setSelectedRunMetadata] = useState(null);
+  const [selectedMetadataRunId, setSelectedMetadataRunId] = useState(null);
   const { data: { runMetadata } = [], error } = useApolloQuery(
     GET_RUN_METADATA,
     {
@@ -35,12 +36,22 @@ const Details = ({
     });
 
   useEffect(() => {
-    if (!enableComparisonView && runMetadata) {
+    if (!runMetadata) {
+      return;
+    }
+
+    if (!enableComparisonView) {
       const metadata = runMetadata.find((run) => run.id === selectedRuns[0]);
 
       setSelectedRunMetadata(metadata);
+    } else {
+      const metadata = runMetadata.find(
+        (run) => run.id === selectedMetadataRunId
+      );
+
+      setSelectedRunMetadata(metadata);
     }
-  }, [enableComparisonView, runMetadata, selectedRuns]);
+  }, [enableComparisonView, runMetadata, selectedMetadataRunId, selectedRuns]);
 
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
@@ -62,7 +73,12 @@ const Details = ({
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadata isSingleRun={isSingleRun} runs={runMetadata} />
+        <RunMetadata
+          isSingleRun={isSingleRun}
+          runs={runMetadata}
+          setSelectedMetadataRunId={setSelectedMetadataRunId}
+          setShowRunDetailsModal={setShowRunDetailsModal}
+        />
         <RunDataset isSingleRun={isSingleRun} trackingData={runTrackingData} />
       </div>
     </>
