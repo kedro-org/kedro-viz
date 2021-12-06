@@ -9,7 +9,7 @@
 
   &--active {
     background: var(--color-run-list-hover);
-    box-shadow: -1px 0px 0px inset #{$color-accent-blue};
+    box-shadow: -1px 0px 0px inset $color-accent-blue;
   }
 
   &--disabled {
@@ -48,7 +48,7 @@
   }
 
   &--active {
-    fill: #{$color-accent-blue};
+    fill: $color-accent-blue;
   }
 }
 

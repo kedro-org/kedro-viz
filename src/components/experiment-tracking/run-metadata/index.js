@@ -81,7 +81,9 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
                       className="details-metadata__notes"
                       style={toggleNotes[i] ? { display: 'block' } : null}
                     >
-                      {sanitiseEmptyValue(run.notes)}
+                      {run.notes !== ''
+                        ? run.notes
+                        : '- Add notes here (Notes are searchable)'}
                     </p>
                     {run.notes.length > 100 ? (
                       <button
