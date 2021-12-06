@@ -28,6 +28,7 @@ const RunDataset = ({ isSingleRun, trackingData = [] }) => {
     >
       {trackingData.map((dataset) => {
         const { data, datasetName } = dataset;
+
         return (
           <Accordion
             className="details-dataset__accordion"
