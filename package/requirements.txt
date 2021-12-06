@@ -11,3 +11,4 @@ pandas>=0.24
 sqlalchemy~=1.2
 strawberry-graphql~=0.87.0
 networkx>=1.0
+gitpython~=3.0
