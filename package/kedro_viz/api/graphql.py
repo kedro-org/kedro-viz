@@ -33,7 +33,7 @@ else:
         NewType("JSONObject", dict),
         serialize=lambda v: v,
         parse_value=lambda v: json.loads(v),
-        description="Generic scalar type respresenting a JSON object",
+        description="Generic scalar type representing a JSON object",
     )
 
 
@@ -95,7 +95,7 @@ def get_all_runs() -> List[Run]:
 
 
 def format_run_tracking_data(
-    tracking_data: Dict, show_diff: bool = False
+    tracking_data: Dict, show_diff: Optional[bool] = False
 ) -> JSONObject:
     """Convert tracking data in the front-end format.
 
@@ -153,8 +153,8 @@ def format_run_tracking_data(
 
 
 def get_run_tracking_data(
-    run_ids: List[ID], show_diff: bool = False
-) -> List[TrackingDataSet]:
+    run_ids: List[ID], show_diff: Optional[bool] = False
+) -> List[TrackingDataset]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all tracking data for a list of runs. Tracking data contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
@@ -165,7 +165,7 @@ def get_run_tracking_data(
             data; else show all available tracking data
 
     Returns:
-        List of TrackingDataSets
+        List of TrackingDatasets
 
     """
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
@@ -193,7 +193,7 @@ def get_run_tracking_data(
                 all_runs[run_id] = {}
                 logger.warning("`%s` could not be found", file_path)
 
-        tracking_dataset = TrackingDataSet(
+        tracking_dataset = TrackingDataset(
             datasetName=name,
             datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
             data=format_run_tracking_data(all_runs, show_diff),
@@ -218,12 +218,21 @@ class Run:
 
 
 @strawberry.type
-class TrackingDataSet:
-    """TrackingDataSet object to structure tracking data for a Run."""
+class TrackingDataset:
+    """TrackingDataset object to structure tracking data for a Run."""
 
-    datasetName: str
-    datasetType: str
-    data: JSONObject
+    datasetName: Optional[str]
+    datasetType: Optional[str]
+    data: Optional[JSONObject]
+
+
+@strawberry.type
+class Subscription:
+    """Subscription object to track runs added in real time"""
+
+    @strawberry.subscription
+    def run_added(self, run_id: ID) -> Run:
+        """Subscription to add runs in real-time"""
 
 
 @strawberry.type
@@ -231,21 +240,22 @@ class Query:
     """Query endpoint to get data from the session store"""
 
     @strawberry.field
+    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
+        """Query to get data for specific runs from the session store"""
+        return get_runs(run_ids)
+
+    @strawberry.field
     def run_tracking_data(
-        self, run_ids: List[ID], show_diff: bool = False
-    ) -> List[TrackingDataSet]:
+        self, run_ids: List[ID], show_diff: Optional[bool] = False
+    ) -> List[TrackingDataset]:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
 
     runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
 
-    @strawberry.field
-    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        """Query to get data for specific runs from the session store"""
-        return get_runs(run_ids)
 
+schema = strawberry.Schema(query=Query, subscription=Subscription)
 
-schema = strawberry.Schema(query=Query)
 
 router = APIRouter()
 
