@@ -1,8 +1,7 @@
 import React from 'react';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
-import Input from '../../ui/input';
 import Modal from '@quantumblack/kedro-ui/lib/components/modal';
-import TextArea from '../../ui/textarea';
+import TextArea from '../../ui/input';
 
 import '../../settings-modal/settings-modal.css';
 import './run-details-modal.css';
@@ -20,7 +19,7 @@ const RunDetailsModal = ({ onClose, selectedRunMetadata, theme, visible }) => {
           <div className="pipeline-settings-modal__header">
             <div className="pipeline-settings-modal__name">Run name</div>
           </div>
-          <Input defaultValue={selectedRunMetadata?.title} />
+          <TextArea defaultValue={selectedRunMetadata?.title} size="large" />
         </div>
         <div className="pipeline-settings-modal__content pipeline-settings-modal__content--short">
           <div className="pipeline-settings-modal__header">
@@ -29,11 +28,9 @@ const RunDetailsModal = ({ onClose, selectedRunMetadata, theme, visible }) => {
             </div>
           </div>
           <TextArea
+            characterLimit={500}
             defaultValue={selectedRunMetadata?.notes || 'Add here'}
             size="small"
-            inputType="textarea"
-            limit={500}
-            rows={4}
           />
         </div>
         <div className="run-details-modal-button-wrapper">
