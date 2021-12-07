@@ -1,15 +1,31 @@
 import React from 'react';
 import PrimaryToolbar from '../../primary-toolbar';
+import IconButton from '../../icon-button';
+import ShowChangesIcon from '../../icons/show-changes';
 
 export const ExperimentPrimaryToolbar = ({
   sidebarVisible,
   setSidebarVisible,
+  enableShowChanges,
+  setEnableShowChanges,
+  enableComparisonView,
+  showChangesIconDisabled,
 }) => {
   return (
     <PrimaryToolbar
       visible={{ sidebar: sidebarVisible }}
       onToggleSidebar={setSidebarVisible}
-    />
+    >
+      <IconButton
+        ariaLive="polite"
+        className={'pipeline-menu-button--labels'}
+        onClick={() => setEnableShowChanges(!enableShowChanges)}
+        icon={ShowChangesIcon}
+        labelText={`${enableShowChanges ? 'Disable' : 'Enable'} Show Changes`}
+        visible={enableComparisonView}
+        disabled={showChangesIconDisabled}
+      />
+    </PrimaryToolbar>
   );
 };
 
