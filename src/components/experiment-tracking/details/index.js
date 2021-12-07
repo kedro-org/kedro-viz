@@ -10,7 +10,7 @@ import {
 
 import './details.css';
 
-const Details = ({ selectedRuns, sidebarVisible }) => {
+const Details = ({ selectedRuns, sidebarVisible, enableShowChanges }) => {
   const [pinnedRun, setPinnedRun] = useState(); // state used to determine the pinned run in a comparison
   // *** down the line --> need to adjust for situation where unselected run is the pinned run
 
@@ -33,6 +33,8 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
   }
 
   const isSingleRun = runMetadata && runMetadata.length === 1 ? true : false;
+  console.log('runMetadata', runMetadata);
+  console.log('runTrackingData', runTrackingData);
 
   return (
     <>
@@ -41,7 +43,13 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadata isSingleRun={isSingleRun} runs={runMetadata} />
+        <RunMetadata
+          isSingleRun={isSingleRun}
+          runs={runMetadata}
+          enableShowChanges={enableShowChanges}
+          pinnedRun={pinnedRun}
+          setPinnedRun={setPinnedRun}
+        />
         <RunDataset isSingleRun={isSingleRun} trackingData={runTrackingData} />
       </div>
     </>

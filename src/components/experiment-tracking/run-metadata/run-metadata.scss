@@ -55,6 +55,10 @@
   }
 }
 
+tr.details-metadata__title {
+  display: flex;
+}
+
 td.details-metadata__title {
   font-weight: 600;
   font-size: 2em;

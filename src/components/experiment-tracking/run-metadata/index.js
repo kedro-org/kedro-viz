@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
+import IconButton from '../../icon-button';
+import SelectedPin from '../../icons/selected-pin';
+import NonSelectedPin from '../../icons/non-selected-pin';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 
 import './run-metadata.css';
@@ -8,7 +11,13 @@ import './run-metadata.css';
 // returned by the graphql endpoint for empty values ( not null or undefined )
 const sanitiseEmptyValue = (value) => (value !== '' ? value : '-');
 
-const RunMetadata = ({ isSingleRun, runs = [] }) => {
+const RunMetadata = ({
+  isSingleRun,
+  runs = [],
+  enableShowChanges = false,
+  pinnedRun,
+  setPinnedRun,
+}) => {
   let initialState = {};
   for (let i = 0; i < runs.length; i++) {
     initialState[i] = false;
@@ -45,10 +54,21 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
                     </td>
                   </tr>
                 ) : (
-                  <tr>
+                  <tr classname="details-metadata__title">
                     {i === 0 ? <td></td> : null}
                     <td className="details-metadata__title">
                       {sanitiseEmptyValue(run.title)}
+                    </td>
+                    <td className="details-metadata__title">
+                      <IconButton
+                        ariaLive="polite"
+                        className={'pipeline-menu-button--labels'}
+                        onClick={() => setPinnedRun(run.id)}
+                        icon={
+                          run.id === pinnedRun ? SelectedPin : NonSelectedPin
+                        }
+                        visible={enableShowChanges}
+                      />
                     </td>
                   </tr>
                 )}

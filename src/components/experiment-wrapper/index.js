@@ -91,7 +91,7 @@ const ExperimentWrapper = ({ theme }) => {
             <Details
               selectedRuns={selectedRuns}
               sidebarVisible={isSidebarVisible}
-              enableShowChanges={enableShowChanges}
+              enableShowChanges={enableShowChanges && selectedRuns.length > 1}
             />
           ) : null}
         </>
