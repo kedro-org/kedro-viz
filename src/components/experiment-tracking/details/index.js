@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
@@ -11,7 +11,7 @@ import {
 import './details.css';
 
 const Details = ({ selectedRuns, sidebarVisible, enableShowChanges }) => {
-  const [pinnedRun, setPinnedRun] = useState(); // state used to determine the pinned run in a comparison
+  const [pinnedRun, setPinnedRun] = useState(null); // state used to determine the pinned run in a comparison
   // *** down the line --> need to adjust for situation where unselected run is the pinned run
 
   const { data: { runMetadata } = [], error } = useApolloQuery(
@@ -27,6 +27,13 @@ const Details = ({ selectedRuns, sidebarVisible, enableShowChanges }) => {
       skip: selectedRuns.length === 0,
       variables: { runIds: selectedRuns, showDiff: false },
     });
+
+  // assign the first metadata returned as the first pinned run
+  useEffect(() => {
+    if (pinnedRun === null && typeof runMetadata !== 'undefined') {
+      setPinnedRun(runMetadata[0].gitSha);
+    }
+  }, [runMetadata, pinnedRun]);
 
   if (error || trackingError) {
     return null;

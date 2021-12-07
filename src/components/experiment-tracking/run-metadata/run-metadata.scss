@@ -1,3 +1,6 @@
+@import '../../../styles/variables';
+@import '../../../styles/extends';
+
 .details-metadata {
   background-color: var(--color-bg-1);
   display: flex;
@@ -9,6 +12,28 @@
 
   &--single {
     padding: 5em 0 0 9em;
+  }
+}
+
+.details-metadata__title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.details-matadata__buttons {
+  list-style: none;
+  display: flex;
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+
+  .pipeline-icon-toolbar__button {
+    width: 24px;
+    height: 24px;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
   }
 }
 

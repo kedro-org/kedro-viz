@@ -54,21 +54,23 @@ const RunMetadata = ({
                     </td>
                   </tr>
                 ) : (
-                  <tr classname="details-metadata__title">
+                  <tr>
                     {i === 0 ? <td></td> : null}
                     <td className="details-metadata__title">
                       {sanitiseEmptyValue(run.title)}
-                    </td>
-                    <td className="details-metadata__title">
-                      <IconButton
-                        ariaLive="polite"
-                        className={'pipeline-menu-button--labels'}
-                        onClick={() => setPinnedRun(run.id)}
-                        icon={
-                          run.id === pinnedRun ? SelectedPin : NonSelectedPin
-                        }
-                        visible={enableShowChanges}
-                      />
+                      <ul className="details-matadata__buttons">
+                        <IconButton
+                          ariaLive="polite"
+                          className={'pipeline-menu-button--labels'}
+                          onClick={() => setPinnedRun(run.gitSha)}
+                          icon={
+                            run.gitSha === pinnedRun
+                              ? SelectedPin
+                              : NonSelectedPin
+                          }
+                          visible={enableShowChanges}
+                        />
+                      </ul>
                     </td>
                   </tr>
                 )}
