@@ -1,8 +1,7 @@
 import json
 from pathlib import Path
-from unittest.mock import patch, PropertyMock
 
-import pytest 
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -65,9 +64,9 @@ class TestSQLiteStore:
         sqlite_store.data = {
             "project_path": store_path,
             "git": {"commit_sha": "123456"},
-        }  
-        mocker.patch('git.Repo.active_branch').name = 'test_branch'
-        
+        }
+        mocker.patch("git.Repo.active_branch").name = "test_branch"
+
         assert sqlite_store.to_json() == json.dumps(
             {
                 "project_path": str(store_path),

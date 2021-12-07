@@ -1,8 +1,8 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
-import json
-
 # pylint: disable=too-many-ancestors
+
+import json
 from pathlib import Path
 from typing import Any, Generator, Type
 
@@ -43,7 +43,8 @@ class SQLiteStore(BaseSessionStore):
         session_dict = {}
         for key, value in self.data.items():
             if key == "git":
-                import git
+                import git  # pylint: disable=import-outside-toplevel
+
                 branch = git.Repo(search_parent_directories=True).active_branch
                 value["branch"] = branch.name
 
@@ -52,7 +53,6 @@ class SQLiteStore(BaseSessionStore):
             else:
                 session_dict[key] = str(value)
         return json.dumps(session_dict)
-
 
     def save(self):
         """Save the session store info on db ."""
