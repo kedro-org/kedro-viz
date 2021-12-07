@@ -9,7 +9,7 @@ import './run-details-modal.css';
 
 const RunDetailsModal = ({ onClose, selectedRunMetadata, theme, visible }) => {
   return (
-    <div className="pipeline-settings-modal">
+    <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
       <Modal
         onClose={() => onClose(false)}
         theme={theme}
