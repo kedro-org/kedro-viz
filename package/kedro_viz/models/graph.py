@@ -570,11 +570,11 @@ class DataNodeMetadata(GraphNodeMetadata):
         # Parse plot data
         if data_node.is_plot_node():
             from kedro.extras.datasets.plotly.plotly_dataset import (
-                JSONDataSet,
+                JSONDataSet as PlotlyJSONDataSet,
                 PlotlyDataSet,
             )
 
-            dataset = cast(Union[PlotlyDataSet, JSONDataSet], dataset)
+            dataset = cast(Union[PlotlyDataSet, PlotlyJSONDataSet], dataset)
             if not dataset._exists():
                 return
 
