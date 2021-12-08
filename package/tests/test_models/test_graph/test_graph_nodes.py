@@ -374,9 +374,8 @@ class TestGraphNodeMetadata:
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
 
-    @patch("builtins.__import__", side_effect=import_mock)
     @patch("json.load")
-    def test_plotly_json_dataset_node_metadata(self, patched_json_load, patched_import):
+    def test_plotly_json_dataset_node_metadata(self, patched_json_load):
         mock_plot_data = {
             "data": [
                 {
