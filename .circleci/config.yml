@@ -258,11 +258,6 @@ commands:
             behave
 
 jobs:
-  build_36:
-    executor: circleci_machine
-    environment:
-      CONDA_ENV_PY_VERSION: '3.6'
-    steps: [build]
 
   build_37:
     executor: circleci_machine
@@ -285,13 +280,6 @@ jobs:
     steps: [deploy_to_s3]
 
   # Windows-related jobs
-  win_build_36:
-    executor: win/default
-    working_directory: ~/repo
-    environment:
-      CONDA_ENV_PY_VERSION: '3.6'
-    steps: [win_build]
-
   win_build_37:
     executor: win/default
     working_directory: ~/repo
@@ -359,19 +347,15 @@ workflows:
   version: 2
   build:
     jobs:
-      # - build_36
       # - build_37
       - build_38
-      # - win_build_36
       # - win_build_37
       - win_build_38
       - deploy_s3
       - deploy_demo:
           requires:
-            # - build_36
             # - build_37
             - build_38
-            # - win_build_36
             # - win_build_37
             - win_build_38
           filters:
@@ -386,10 +370,8 @@ workflows:
               only:
                 - main
     jobs:
-      # - build_36
       # - build_37
       - build_38
-      # - win_build_36
       # - win_build_37
       - win_build_38
 
