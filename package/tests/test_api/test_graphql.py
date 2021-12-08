@@ -1,4 +1,5 @@
 import shutil
+from pathlib import Path
 from unittest import mock
 from unittest.mock import PropertyMock, call, patch
 
@@ -7,8 +8,14 @@ from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 from kedro.io import DataCatalog, Version
 from strawberry import ID
+from strawberry.printer import print_schema
 
-from kedro_viz.api.graphql import JSONObject, TrackingDataSet, get_run_tracking_data
+from kedro_viz.api.graphql import (
+    JSONObject,
+    TrackingDataset,
+    get_run_tracking_data,
+    schema,
+)
 from kedro_viz.data_access.managers import DataAccessManager
 
 
@@ -142,7 +149,7 @@ def example_multiple_run_tracking_catalog_all_empty_runs(
 @pytest.fixture
 def example_tracking_output(save_version):
     yield [
-        TrackingDataSet(
+        TrackingDataset(
             datasetName="metrics",
             datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
             data={
@@ -151,7 +158,7 @@ def example_tracking_output(save_version):
                 "col3": [{"runId": save_version, "value": 3.0}],
             },
         ),
-        TrackingDataSet(
+        TrackingDataset(
             datasetName="more_metrics",
             datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
             data={
@@ -160,7 +167,7 @@ def example_tracking_output(save_version):
                 "col6": [{"runId": save_version, "value": 6.0}],
             },
         ),
-        TrackingDataSet(
+        TrackingDataset(
             datasetName="json_tracking",
             datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
             data={
@@ -179,7 +186,7 @@ class TestTrackingData:
             (
                 True,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject(
@@ -205,7 +212,7 @@ class TestTrackingData:
             (
                 False,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject(
@@ -249,7 +256,7 @@ class TestTrackingData:
             (
                 True,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject(
@@ -268,7 +275,7 @@ class TestTrackingData:
             (
                 False,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject({}),
@@ -307,7 +314,7 @@ class TestTrackingData:
             (
                 True,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject({}),
@@ -317,7 +324,7 @@ class TestTrackingData:
             (
                 False,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject({}),
@@ -373,7 +380,7 @@ class TestTrackingData:
             data_access_manager.add_catalog(catalog)
 
             assert get_run_tracking_data([ID(save_version)], False) == [
-                TrackingDataSet(
+                TrackingDataset(
                     datasetName="json_tracking",
                     datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
                     data=JSONObject({}),
@@ -513,3 +520,11 @@ class TestGraphQLEndpoints:
             }
         }
         assert response.json() == expected_response
+
+
+class TestGraphQLSchema:
+    def testApolloSchema(self):
+        schema_file = Path(__file__).parents[3] / "src" / "apollo" / "schema.graphql"
+        with schema_file.open() as data:
+            apollo_schema = data.read()
+        assert apollo_schema.strip() == print_schema(schema)
