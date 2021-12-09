@@ -7,7 +7,7 @@ import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, NewType, Optional, Type
+from typing import TYPE_CHECKING, Dict, List, NewType, Optional
 
 import strawberry
 from fastapi import APIRouter
@@ -289,7 +289,8 @@ class BadInputType:
 
 
 Response = strawberry.union(
-    "UpdateRunDetailsResponse", [UpdateRunDetailsSuccess, BadInputType])
+    "UpdateRunDetailsResponse", (UpdateRunDetailsSuccess, BadInputType)
+)
 
 
 @strawberry.type
@@ -327,12 +328,14 @@ class Mutation:
             session.add(new_user_details)
         session.commit()
         return UpdateRunDetailsSuccess(
-            run_details=JSONObject({
-                "run_id": run_id,
-                "bookmark": details.bookmark,
-                "title": details.title,
-                "notes": details.notes,
-            })
+            run_details=JSONObject(
+                {
+                    "run_id": run_id,
+                    "bookmark": details.bookmark,
+                    "title": details.title,
+                    "notes": details.notes,
+                }
+            )
         )
 
 
