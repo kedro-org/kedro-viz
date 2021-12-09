@@ -7,7 +7,7 @@ import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, NewType, Optional
+from typing import TYPE_CHECKING, Dict, List, NewType, Optional, Type
 
 import strawberry
 from fastapi import APIRouter
@@ -263,70 +263,77 @@ class Query:
 
 schema = strawberry.Schema(query=Query, subscription=Subscription)
 
+
 @strawberry.input
 class RunInput:
-    """User inputs to update bookmark, title and notes"""
+    """Run input to update bookmark, title and notes"""
+
     bookmark: bool
     title: str
     notes: str
 
 
 @strawberry.type
-class UpdateUserDetailsSuccess:
-    user_details: JSONObject
+class UpdateRunDetailsSuccess:
+    """Response type for sucessful update of runs"""
+
+    run_details: JSONObject
 
 
 @strawberry.type
 class BadInputType:
+    """Response type for failed update of runs"""
+
     run_id: ID
     error_message: str
 
 
 Response = strawberry.union(
-    "UpdateUserDetailsResponse", [UpdateUserDetailsSuccess, BadInputType]
-)
+    "UpdateRunDetailsResponse", [UpdateRunDetailsSuccess, BadInputType])
 
 
 @strawberry.type
 class Mutation:
+    """Mutation to update run details with run inputs"""
+
     @strawberry.mutation
-    def update_run_details(self,run_id: ID, details: RunInput) -> Response:
+    def update_run_details(self, run_id: ID, details: RunInput) -> Response:
+        """Updates run details based on run inputs provided by user"""
         session = data_access_manager.db_session
         run_data = get_runs([run_id])
         if not run_data:
             return BadInputType(
                 run_id=run_id, error_message="Given run_id doesn't exist"
             )
-        else:
-            user_details = (
-                session.query(UserDetailsModel)
-                .filter(UserDetailsModel.run_id == run_id)
-                .update(
-                    {
-                        "run_id": run_id,
-                        "bookmark": details.bookmark,
-                        "title": details.title,
-                        "notes": details.notes,
-                    }
-                )
-            )
-            if not user_details:
-                new_user_details = UserDetailsModel(
-                    run_id=run_id,
-                    bookmark=details.bookmark,
-                    title=details.title,
-                    notes=details.notes,
-                )
-                session.add(new_user_details)
-            session.commit()
-            return UpdateUserDetailsSuccess(
-                user_details={
+        user_details = (
+            session.query(UserDetailsModel)
+            .filter(UserDetailsModel.run_id == run_id)
+            .update(
+                {
                     "run_id": run_id,
                     "bookmark": details.bookmark,
                     "title": details.title,
                     "notes": details.notes,
                 }
             )
+        )
+        if not user_details:
+            new_user_details = UserDetailsModel(
+                run_id=run_id,
+                bookmark=details.bookmark,
+                title=details.title,
+                notes=details.notes,
+            )
+            session.add(new_user_details)
+        session.commit()
+        return UpdateRunDetailsSuccess(
+            run_details=JSONObject({
+                "run_id": run_id,
+                "bookmark": details.bookmark,
+                "title": details.title,
+                "notes": details.notes,
+            })
+        )
 
 
 schema = strawberry.Schema(query=Query, mutation=Mutation)
