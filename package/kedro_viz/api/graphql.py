@@ -33,7 +33,7 @@ else:
         NewType("JSONObject", dict),
         serialize=lambda v: v,
         parse_value=lambda v: json.loads(v),
-        description="Generic scalar type respresenting a JSON object",
+        description="Generic scalar type representing a JSON object",
     )
 
 
@@ -48,7 +48,9 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
     session = data_access_manager.db_session
     git_data = run_blob.get("git")
     user_details = (
-        session.query(UserDetailsModel).filter(UserDetailsModel.id == run_id).scalar()
+        session.query(UserDetailsModel)
+        .filter(UserDetailsModel.run_id == run_id)
+        .scalar()
     )
     run = Run(
         id=ID(run_id),
@@ -72,6 +74,7 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
         list of Run objects
     """
     runs: List[Run] = []
+
     session = data_access_manager.db_session
     if not session:
         return runs
@@ -99,7 +102,7 @@ def get_all_runs() -> List[Run]:
 
 
 def format_run_tracking_data(
-    tracking_data: Dict, show_diff: bool = False
+    tracking_data: Dict, show_diff: Optional[bool] = False
 ) -> JSONObject:
     """Convert tracking data in the front-end format.
 
@@ -157,8 +160,8 @@ def format_run_tracking_data(
 
 
 def get_run_tracking_data(
-    run_ids: List[ID], show_diff: bool = False
-) -> List[TrackingDataSet]:
+    run_ids: List[ID], show_diff: Optional[bool] = False
+) -> List[TrackingDataset]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all tracking data for a list of runs. Tracking data contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
@@ -169,7 +172,7 @@ def get_run_tracking_data(
             data; else show all available tracking data
 
     Returns:
-        List of TrackingDataSets
+        List of TrackingDatasets
 
     """
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
@@ -197,7 +200,7 @@ def get_run_tracking_data(
                 all_runs[run_id] = {}
                 logger.warning("`%s` could not be found", file_path)
 
-        tracking_dataset = TrackingDataSet(
+        tracking_dataset = TrackingDataset(
             datasetName=name,
             datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
             data=format_run_tracking_data(all_runs, show_diff),
@@ -222,12 +225,21 @@ class Run:
 
 
 @strawberry.type
-class TrackingDataSet:
-    """TrackingDataSet object to structure tracking data for a Run."""
+class TrackingDataset:
+    """TrackingDataset object to structure tracking data for a Run."""
 
-    datasetName: str
-    datasetType: str
-    data: JSONObject
+    datasetName: Optional[str]
+    datasetType: Optional[str]
+    data: Optional[JSONObject]
+
+
+@strawberry.type
+class Subscription:
+    """Subscription object to track runs added in real time"""
+
+    @strawberry.subscription
+    def run_added(self, run_id: ID) -> Run:
+        """Subscription to add runs in real-time"""
 
 
 @strawberry.type
@@ -235,42 +247,86 @@ class Query:
     """Query endpoint to get data from the session store"""
 
     @strawberry.field
+    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
+        """Query to get data for specific runs from the session store"""
+        return get_runs(run_ids)
+
+    @strawberry.field
     def run_tracking_data(
-        self, run_ids: List[ID], show_diff: bool = False
-    ) -> List[TrackingDataSet]:
+        self, run_ids: List[ID], show_diff: Optional[bool] = False
+    ) -> List[TrackingDataset]:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
 
     runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
 
-    @strawberry.field
-    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        """Query to get data for specific runs from the session store"""
-        return get_runs(run_ids)
 
+schema = strawberry.Schema(query=Query, subscription=Subscription)
 
 @strawberry.input
-class UserDetails:
-    id: str
+class RunInput:
+    """User inputs to update bookmark, title and notes"""
     bookmark: bool
     title: str
     notes: str
 
 
 @strawberry.type
+class UpdateUserDetailsSuccess:
+    user_details: JSONObject
+
+
+@strawberry.type
+class BadInputType:
+    run_id: ID
+    error_message: str
+
+
+Response = strawberry.union(
+    "UpdateUserDetailsResponse", [UpdateUserDetailsSuccess, BadInputType]
+)
+
+
+@strawberry.type
 class Mutation:
     @strawberry.mutation
-    def update_user_run_details(self, details: UserDetails) -> bool:
-        user_details = UserDetailsModel(
-            id=details.id,
-            bookmark=details.bookmark,
-            title=details.title,
-            notes=details.notes,
-        )
+    def update_run_details(self,run_id: ID, details: RunInput) -> Response:
         session = data_access_manager.db_session
-        session.add(user_details)
-        session.commit()
-        return True
+        run_data = get_runs([run_id])
+        if not run_data:
+            return BadInputType(
+                run_id=run_id, error_message="Given run_id doesn't exist"
+            )
+        else:
+            user_details = (
+                session.query(UserDetailsModel)
+                .filter(UserDetailsModel.run_id == run_id)
+                .update(
+                    {
+                        "run_id": run_id,
+                        "bookmark": details.bookmark,
+                        "title": details.title,
+                        "notes": details.notes,
+                    }
+                )
+            )
+            if not user_details:
+                new_user_details = UserDetailsModel(
+                    run_id=run_id,
+                    bookmark=details.bookmark,
+                    title=details.title,
+                    notes=details.notes,
+                )
+                session.add(new_user_details)
+            session.commit()
+            return UpdateUserDetailsSuccess(
+                user_details={
+                    "run_id": run_id,
+                    "bookmark": details.bookmark,
+                    "title": details.title,
+                    "notes": details.notes,
+                }
+            )
 
 
 schema = strawberry.Schema(query=Query, mutation=Mutation)

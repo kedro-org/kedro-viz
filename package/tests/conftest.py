@@ -15,7 +15,7 @@ from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
-from kedro_viz.models.run_model import Base, RunModel
+from kedro_viz.models.experiments_tracking import Base, RunModel
 from kedro_viz.server import populate_data
 
 

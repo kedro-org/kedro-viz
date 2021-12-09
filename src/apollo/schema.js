@@ -5,43 +5,57 @@ import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json';
 import gql from 'graphql-tag';
 
 const typeDefs = gql`
-  scalar JSON
+  type BadInputType {
+    runId: ID!
+    errorMessage: String!
+  }
+
+  """
+  Generic scalar type representing a JSON object
+  """
   scalar JSONObject
 
-  schema {
-    query: Query
-    subscription: Subscription
+  type Mutation {
+    updateRunDetails(runId: ID!, details: RunInput!): UpdateUserDetailsResponse!
   }
 
   type Query {
-    runsList: [Run]!
-    runMetadata(runIDs: [ID]!): [Run!]!
+    runsList: [Run!]!
+    runMetadata(runIds: [ID!]!): [Run!]!
     runTrackingData(
-      runIDs: [ID]!
+      runIds: [ID!]!
       showDiff: Boolean = false
-    ): [TrackingDataset]!
-  }
-
-  type Subscription {
-    runAdded(runID: ID!): Run!
+    ): [TrackingDataset!]!
   }
 
   type Run {
+    id: ID!
+    title: String!
+    timestamp: String!
     author: String
-    bookmark: Boolean
     gitBranch: String
     gitSha: String
-    id: ID!
+    bookmark: Boolean
     notes: String
     runCommand: String
-    timestamp: String!
+  }
+
+  input RunInput {
+    bookmark: Boolean!
     title: String!
+    notes: String!
   }
 
   type TrackingDataset {
     datasetName: String
     datasetType: String
     data: JSONObject
+  }
+
+  union UpdateUserDetailsResponse = UpdateUserDetailsSuccess | BadInputType
+
+  type UpdateUserDetailsSuccess {
+    userDetails: JSONObject!
   }
 `;
 

@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore, get_db
-from kedro_viz.models.run_model import Base, RunModel
+from kedro_viz.models.experiments_tracking import Base, RunModel
 
 
 def session_id():

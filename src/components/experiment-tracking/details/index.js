@@ -1,7 +1,6 @@
 import React from 'react';
 import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
 import {
@@ -46,8 +45,4 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
   );
 };
 
-export const mapStateToProps = (state) => ({
-  sidebarVisible: state.visible.sidebar,
-});
-
-export default connect(mapStateToProps)(Details);
+export default Details;

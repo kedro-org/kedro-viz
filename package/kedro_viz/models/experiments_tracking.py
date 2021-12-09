@@ -1,10 +1,10 @@
 """Data model to represent run data from a Kedro Session."""
 # pylint: disable=too-few-public-methods
 
-from sqlalchemy import Column, String
+from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.types import JSON, Boolean
+from sqlalchemy.types import JSON, Boolean, Integer, String
 
 Base = declarative_base()
 
@@ -28,7 +28,8 @@ class UserDetailsModel(Base):
 
     __tablename__ = "user_details"
 
-    id = Column(String, ForeignKey(RunModel.id), primary_key=True, index=True)
+    id = Column(Integer, autoincrement=True, primary_key=True, index=True)
+    run_id = Column(String, ForeignKey(RunModel.id), unique=True)
     bookmark = Column(Boolean, default=False)
     title = Column(String)
     notes = Column(String)

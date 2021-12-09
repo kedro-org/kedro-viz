@@ -26,7 +26,7 @@ from kedro_viz.models.graph import (
 )
 from kedro_viz.services import layers_services, modular_pipelines_services
 
-from .repositories import (
+from .repositories import (  # ExperimentTrackingRepository,
     CatalogRepository,
     GraphEdgesRepository,
     GraphNodesRepository,
@@ -54,6 +54,7 @@ class DataAccessManager:
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
+        # self.runs = ExperimentTrackingRepository(self._db_session)
 
     @property
     def db_session(self):  # pragma: no cover

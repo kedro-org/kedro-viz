@@ -1,33 +1,47 @@
-scalar JSONObject # this is a custom type used to handle JSON data
-schema {
-  query: Query
-  subscription: Subscription
+type BadInputType {
+  runId: ID!
+  errorMessage: String!
+}
+
+"""Generic scalar type representing a JSON object"""
+scalar JSONObject
+
+type Mutation {
+  updateRunDetails(runId: ID!, details: RunInput!): UpdateUserDetailsResponse!
 }
 
 type Query {
-  runsList: [Run]!
-  runMetadata(runIDs: [ID]!): [Run!]!
-  runTrackingData(runIDs: [ID]!, showDiff: Boolean = false): [TrackingDataset]! # showDiff as true will return all tracked fields amongst compared runs
-}
-
-type Subscription {
-  runAdded(runID: ID!): Run!
+  runsList: [Run!]!
+  runMetadata(runIds: [ID!]!): [Run!]!
+  runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [TrackingDataset!]!
 }
 
 type Run {
+  id: ID!
+  title: String!
+  timestamp: String!
   author: String
-  bookmark: Boolean
   gitBranch: String
   gitSha: String
-  id: ID!
+  bookmark: Boolean
   notes: String
   runCommand: String
-  timestamp: String!
+}
+
+input RunInput {
+  bookmark: Boolean!
   title: String!
+  notes: String!
 }
 
 type TrackingDataset {
   datasetName: String
   datasetType: String
   data: JSONObject
+}
+
+union UpdateUserDetailsResponse = UpdateUserDetailsSuccess | BadInputType
+
+type UpdateUserDetailsSuccess {
+  userDetails: JSONObject!
 }
