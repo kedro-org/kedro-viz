@@ -21,7 +21,10 @@ export const ExperimentPrimaryToolbar = ({
         className={'pipeline-menu-button--labels'}
         onClick={() => setEnableShowChanges(!enableShowChanges)}
         icon={ShowChangesIcon}
-        labelText={`${enableShowChanges ? 'Disable' : 'Enable'} Show Changes`}
+        labelText={
+          !showChangesIconDisabled &&
+          `${enableShowChanges ? 'Disable' : 'Enable'} Show Changes`
+        }
         visible={enableComparisonView}
         disabled={showChangesIconDisabled}
       />
