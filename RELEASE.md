@@ -70,6 +70,7 @@ Please follow the established format:
 
 - Expose metrics data from the latest run as a dataset node. (#554)
 - Visualize and compare metrics from last 10 runs on the metadata panel. (#554)
+- Drop support for Python 3.6.
 
 ## Bug fixes and other changes
 
