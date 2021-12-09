@@ -16,8 +16,23 @@ const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableComparisonView, setEnableComparisonView] = useState(false);
   const [selectedRuns, setSelectedRuns] = useState([]);
+  const [pinnedRun, setPinnedRun] = useState();
 
   const { data, loading } = useApolloQuery(GET_RUNS);
+
+  // runs needs to be sorted by time to ensure runIDs get sent to
+  // graphql endpoint in correct order
+  const sortRunByTime = (runs) => {
+    const runsWithTimestamps = runs.map((run) => ({
+      id: run,
+      dateObj: new Date(run.replace('.', ':').replace('.', ':')),
+    }));
+
+    runsWithTimestamps.sort(
+      (a, b) => new Date(a.dateObj) - new Date(b.dateObj)
+    );
+    return runsWithTimestamps.map((run) => run.id);
+  };
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
@@ -25,10 +40,11 @@ const ExperimentWrapper = ({ theme }) => {
         if (selectedRuns.length === 1) {
           return;
         }
-
-        setSelectedRuns(selectedRuns.filter((run) => run !== id));
+        setSelectedRuns(
+          sortRunByTime(selectedRuns.filter((run) => run !== id))
+        );
       } else {
-        setSelectedRuns([...selectedRuns, id]);
+        setSelectedRuns(sortRunByTime([...selectedRuns, id]));
       }
     } else {
       if (selectedRuns.includes(id)) {
@@ -62,6 +78,13 @@ const ExperimentWrapper = ({ theme }) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (typeof pinnedRun === 'undefined' || !selectedRuns.includes(pinnedRun)) {
+      // assign the first selected run as the first pinned run
+      setPinnedRun(selectedRuns[0]);
+    }
+  }, [selectedRuns, pinnedRun]);
+
   if (loading) {
     return (
       <div className="experiment-wrapper">
@@ -92,6 +115,8 @@ const ExperimentWrapper = ({ theme }) => {
               selectedRuns={selectedRuns}
               sidebarVisible={isSidebarVisible}
               enableShowChanges={enableShowChanges && selectedRuns.length > 1}
+              pinnedRun={pinnedRun}
+              setPinnedRun={setPinnedRun}
             />
           ) : null}
         </>

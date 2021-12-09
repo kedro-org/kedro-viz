@@ -43,7 +43,7 @@ const RunMetadata = ({
             className={classnames('details-metadata__run', {
               'details-metadata__run--single': isSingleRun,
             })}
-            key={run.title + i} // note: this should revert back to use gitSha once the BE returns the actual value
+            key={run.id}
           >
             <table className="details-metadata__table">
               <tbody>
@@ -62,11 +62,9 @@ const RunMetadata = ({
                         <IconButton
                           ariaLive="polite"
                           className={'pipeline-menu-button--labels'}
-                          onClick={() => setPinnedRun(run.gitSha)}
+                          onClick={() => setPinnedRun(run.id)}
                           icon={
-                            run.gitSha === pinnedRun
-                              ? SelectedPin
-                              : NonSelectedPin
+                            run.id === pinnedRun ? SelectedPin : NonSelectedPin
                           }
                           visible={enableShowChanges}
                         />

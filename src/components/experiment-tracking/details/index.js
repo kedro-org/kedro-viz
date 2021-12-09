@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
@@ -10,10 +10,13 @@ import {
 
 import './details.css';
 
-const Details = ({ selectedRuns, sidebarVisible, enableShowChanges }) => {
-  const [pinnedRun, setPinnedRun] = useState(null); // state used to determine the pinned run in a comparison
-  // *** down the line --> need to adjust for situation where unselected run is the pinned run
-
+const Details = ({
+  selectedRuns,
+  sidebarVisible,
+  enableShowChanges,
+  pinnedRun,
+  setPinnedRun,
+}) => {
   const { data: { runMetadata } = [], error } = useApolloQuery(
     GET_RUN_METADATA,
     {
@@ -28,20 +31,11 @@ const Details = ({ selectedRuns, sidebarVisible, enableShowChanges }) => {
       variables: { runIds: selectedRuns, showDiff: false },
     });
 
-  // assign the first metadata returned as the first pinned run
-  useEffect(() => {
-    if (pinnedRun === null && typeof runMetadata !== 'undefined') {
-      setPinnedRun(runMetadata[0].gitSha);
-    }
-  }, [runMetadata, pinnedRun]);
-
   if (error || trackingError) {
     return null;
   }
 
   const isSingleRun = runMetadata && runMetadata.length === 1 ? true : false;
-  console.log('runMetadata', runMetadata);
-  console.log('runTrackingData', runTrackingData);
 
   return (
     <>
@@ -57,7 +51,12 @@ const Details = ({ selectedRuns, sidebarVisible, enableShowChanges }) => {
           pinnedRun={pinnedRun}
           setPinnedRun={setPinnedRun}
         />
-        <RunDataset isSingleRun={isSingleRun} trackingData={runTrackingData} />
+        <RunDataset
+          isSingleRun={isSingleRun}
+          trackingData={runTrackingData}
+          pinnedRun={pinnedRun}
+          enableShowChanges={enableShowChanges}
+        />
       </div>
     </>
   );
