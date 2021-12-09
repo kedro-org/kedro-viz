@@ -43,10 +43,13 @@ class SQLiteStore(BaseSessionStore):
         session_dict = {}
         for key, value in self.data.items():
             if key == "git":
-                import git  # pylint: disable=import-outside-toplevel
+                try:
+                    import git  # pylint: disable=import-outside-toplevel
 
-                branch = git.Repo(search_parent_directories=True).active_branch
-                value["branch"] = branch.name
+                    branch = git.Repo(search_parent_directories=True).active_branch
+                    value["branch"] = branch.name
+                except ModuleNotFoundError as exc:
+                    print(exc.__class__.__name__ + ": " + exc.msg)
 
             if _is_json_serializable(value):
                 session_dict[key] = value
