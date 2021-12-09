@@ -21,6 +21,18 @@ const ObjectTrackingData = [
   },
 ];
 
+const ComparisonTrackingData = [
+  {
+    datasetName: 'Data Analysis',
+    data: {
+      classWeight: [
+        { runId: 'My Favorite Sprint', value: 12 },
+        { runId: 'My second Favorite Sprint', value: 13 },
+      ],
+    },
+  },
+];
+
 describe('RunDataset', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(
@@ -50,5 +62,18 @@ describe('RunDataset', () => {
     const datasetValue = wrapper.find('.details-dataset__value').text();
 
     expect(typeof datasetValue).toBe('string');
+  });
+
+  it('renders the comparison arrow when showChanges is on', () => {
+    const wrapper = mount(
+      <RunDataset
+        isSingleRun={false}
+        trackingData={ComparisonTrackingData}
+        enableShowChanges={true}
+        pinnedRun={'My Favorite Sprint'}
+      />
+    );
+
+    expect(wrapper.find('.dataset-arrow-icon').length).toBe(1);
   });
 });

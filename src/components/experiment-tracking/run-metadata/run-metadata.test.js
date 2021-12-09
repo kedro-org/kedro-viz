@@ -20,6 +20,31 @@ const emptyRun = [
   },
 ];
 
+const twoRuns = [
+  {
+    id: 'run1',
+    author: '',
+    bookmark: true,
+    timestamp: '',
+    gitSha: '',
+    gitBranch: '',
+    runCommand: '',
+    notes: '',
+    title: '',
+  },
+  {
+    id: 'run2',
+    author: '',
+    bookmark: true,
+    timestamp: '',
+    gitSha: '',
+    gitBranch: '',
+    runCommand: '',
+    notes: '',
+    title: '',
+  },
+];
+
 describe('RunMetadata', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(
@@ -73,5 +98,16 @@ describe('RunMetadata', () => {
     expect(wrapper.find('.details-metadata__show-more').text()).toMatch(
       'Show more'
     );
+  });
+
+  it('enables the pin button when show changes is enabled ', () => {
+    const wrapper = mount(
+      <RunMetadata
+        isSingleRun={false}
+        runs={twoRuns}
+        enableShowChanges={true}
+      />
+    );
+    expect(wrapper.find('.details-matadata__buttons').length).toEqual(2);
   });
 });
