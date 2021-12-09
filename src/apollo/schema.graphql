@@ -7,7 +7,7 @@ type BadInputType {
 scalar JSONObject
 
 type Mutation {
-  updateRunDetails(runId: ID!, details: RunInput!): UpdateUserDetailsResponse!
+  updateRunDetails(runId: ID!, details: RunInput!): UpdateRunDetailsResponse!
 }
 
 type Query {
@@ -40,8 +40,8 @@ type TrackingDataset {
   data: JSONObject
 }
 
-union UpdateUserDetailsResponse = UpdateUserDetailsSuccess | BadInputType
+union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | BadInputType
 
-type UpdateUserDetailsSuccess {
-  userDetails: JSONObject!
+type UpdateRunDetailsSuccess {
+  runDetails: JSONObject!
 }
