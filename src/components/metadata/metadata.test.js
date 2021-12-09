@@ -1,12 +1,11 @@
 import React from 'react';
-import MetaData from './index';
+import MetaData, { mapDispatchToProps } from './metadata';
 import { togglePrettyName } from '../../actions';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
 import { toggleModularPipelineExpanded } from '../../actions/modular-pipelines';
 import { setup } from '../../utils/state.mock';
 import nodePlot from '../../utils/data/node_plot.mock.json';
-import { mapDispatchToProps } from './index';
 import nodeParameters from '../../utils/data/node_parameters.mock.json';
 import nodeTask from '../../utils/data/node_task.mock.json';
 import nodeData from '../../utils/data/node_data.mock.json';

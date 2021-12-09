@@ -1,5 +1,5 @@
 import React from 'react';
-import Switch from '.';
+import Switch from './switch';
 import Adapter from 'enzyme-adapter-react-16';
 import { configure, mount, shallow } from 'enzyme';
 

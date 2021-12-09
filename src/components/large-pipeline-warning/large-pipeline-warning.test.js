@@ -3,7 +3,7 @@ import {
   LargePipelineWarning,
   mapStateToProps,
   mapDispatchToProps,
-} from './index';
+} from './large-pipeline-warning';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('LargePipelineWarning', () => {

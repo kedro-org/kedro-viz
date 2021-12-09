@@ -3,7 +3,7 @@ import ConnectedMiniMapToolbar, {
   MiniMapToolbar,
   mapStateToProps,
   mapDispatchToProps,
-} from './index';
+} from './minimap-toolbar';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('MiniMapToolbar', () => {

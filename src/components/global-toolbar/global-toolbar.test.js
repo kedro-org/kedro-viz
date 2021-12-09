@@ -4,7 +4,7 @@ import ConnectedGlobalToolbar, {
   GlobalToolbar,
   mapStateToProps,
   mapDispatchToProps,
-} from './index';
+} from './global-toolbar';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('GlobalToolbar', () => {

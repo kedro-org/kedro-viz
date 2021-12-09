@@ -1,5 +1,5 @@
 import React from 'react';
-import Toggle from './index';
+import Toggle from './toggle';
 import { setup } from '../../utils/state.mock';
 
 describe('Toggle', () => {

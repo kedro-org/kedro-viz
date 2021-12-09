@@ -1,5 +1,5 @@
 import React from 'react';
-import MiniMap, { mapStateToProps, mapDispatchToProps } from './index';
+import MiniMap, { mapStateToProps, mapDispatchToProps } from './minimap';
 import { mockState, setup } from '../../utils/state.mock';
 import { getViewTransform, origin } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';

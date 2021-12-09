@@ -1,5 +1,8 @@
 import React from 'react';
-import SettingsModal, { mapStateToProps, mapDispatchToProps } from './index';
+import SettingsModal, {
+  mapStateToProps,
+  mapDispatchToProps,
+} from './settings-modal';
 import { mockState, setup } from '../../utils/state.mock';
 import { toggleSettingsModal } from '../../actions';
 

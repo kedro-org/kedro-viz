@@ -1,16 +1,3 @@
-import React from 'react';
-import PrimaryToolbar from '../../primary-toolbar';
-
-export const ExperimentPrimaryToolbar = ({
-  sidebarVisible,
-  setSidebarVisible,
-}) => {
-  return (
-    <PrimaryToolbar
-      visible={{ sidebar: sidebarVisible }}
-      onToggleSidebar={setSidebarVisible}
-    />
-  );
-};
+import ExperimentPrimaryToolbar from './experiment-primary-toolbar';
 
 export default ExperimentPrimaryToolbar;
