@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
@@ -19,8 +19,7 @@ const Details = ({
   sidebarVisible,
   theme,
 }) => {
-  const [selectedRunMetadata, setSelectedRunMetadata] = useState(null);
-  const [selectedMetadataRunId, setSelectedMetadataRunId] = useState(null);
+  const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
   const { data: { runMetadata } = [], error } = useApolloQuery(
     GET_RUN_METADATA,
     {
@@ -35,24 +34,6 @@ const Details = ({
       variables: { runIds: selectedRuns, showDiff: false },
     });
 
-  useEffect(() => {
-    if (!runMetadata) {
-      return;
-    }
-
-    if (!enableComparisonView) {
-      const metadata = runMetadata.find((run) => run.id === selectedRuns[0]);
-
-      setSelectedRunMetadata(metadata);
-    } else {
-      const metadata = runMetadata.find(
-        (run) => run.id === selectedMetadataRunId
-      );
-
-      setSelectedRunMetadata(metadata);
-    }
-  }, [enableComparisonView, runMetadata, selectedMetadataRunId, selectedRuns]);
-
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
   if (error || trackingError) {
@@ -64,7 +45,7 @@ const Details = ({
       <RunDetailsModal
         onClose={setShowRunDetailsModal}
         runs={runMetadata}
-        selectedRunMetadata={selectedRunMetadata}
+        runMetadataToEdit={runMetadataToEdit}
         theme={theme}
         visible={showRunDetailsModal}
       />
@@ -76,7 +57,7 @@ const Details = ({
         <RunMetadata
           isSingleRun={isSingleRun}
           runs={runMetadata}
-          setSelectedMetadataRunId={setSelectedMetadataRunId}
+          setRunMetadataToEdit={setRunMetadataToEdit}
           setShowRunDetailsModal={setShowRunDetailsModal}
         />
         <RunDataset isSingleRun={isSingleRun} trackingData={runTrackingData} />

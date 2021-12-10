@@ -11,7 +11,7 @@ const sanitiseEmptyValue = (value) => (value !== '' ? value : '-');
 const RunMetadata = ({
   isSingleRun,
   runs = [],
-  setSelectedMetadataRunId,
+  setRunMetadataToEdit,
   setShowRunDetailsModal,
 }) => {
   let initialState = {};
@@ -26,7 +26,9 @@ const RunMetadata = ({
   };
 
   const onTitleOrNoteClick = (id) => {
-    setSelectedMetadataRunId(id);
+    const metadata = runs.find((run) => run.id === id);
+
+    setRunMetadataToEdit(metadata);
     setShowRunDetailsModal(true);
   };
 

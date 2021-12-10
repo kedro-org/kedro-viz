@@ -1,12 +1,12 @@
 import React from 'react';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
 import Modal from '@quantumblack/kedro-ui/lib/components/modal';
-import TextArea from '../../ui/input';
+import Input from '../../ui/input';
 
 import '../../settings-modal/settings-modal.css';
 import './run-details-modal.css';
 
-const RunDetailsModal = ({ onClose, selectedRunMetadata, theme, visible }) => {
+const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
       <Modal
@@ -19,7 +19,7 @@ const RunDetailsModal = ({ onClose, selectedRunMetadata, theme, visible }) => {
           <div className="pipeline-settings-modal__header">
             <div className="pipeline-settings-modal__name">Run name</div>
           </div>
-          <TextArea defaultValue={selectedRunMetadata?.title} size="large" />
+          <Input defaultValue={runMetadataToEdit?.title} size="large" />
         </div>
         <div className="pipeline-settings-modal__content pipeline-settings-modal__content--short">
           <div className="pipeline-settings-modal__header">
@@ -27,9 +27,9 @@ const RunDetailsModal = ({ onClose, selectedRunMetadata, theme, visible }) => {
               Notes (this is searchable)
             </div>
           </div>
-          <TextArea
+          <Input
             characterLimit={500}
-            defaultValue={selectedRunMetadata?.notes || 'Add here'}
+            defaultValue={runMetadataToEdit?.notes || 'Add here'}
             size="small"
           />
         </div>
