@@ -74,7 +74,6 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
         list of Run objects
     """
     runs: List[Run] = []
-
     session = data_access_manager.db_session
     if not session:
         return runs
