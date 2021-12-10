@@ -3,6 +3,7 @@ which stores sessions data in the SQLite database"""
 # pylint: disable=too-many-ancestors
 
 import json
+import logging
 from pathlib import Path
 from typing import Any, Generator, Type
 
@@ -12,6 +13,8 @@ from sqlalchemy.orm.session import Session
 from kedro_viz.database import create_db_engine
 from kedro_viz.models.run_model import Base, RunModel
 
+
+logger = logging.getLogger(__name__)
 
 def get_db(session_class: Type[Session]) -> Generator:
     """Makes connection to the database"""
@@ -48,8 +51,8 @@ class SQLiteStore(BaseSessionStore):
 
                     branch = git.Repo(search_parent_directories=True).active_branch
                     value["branch"] = branch.name
-                except ModuleNotFoundError as exc:
-                    print(exc.__class__.__name__ + ": " + exc.msg)
+                except ImportError as exc:
+                    logger.warning(exc.__class__.__name__ + ": " + exc.msg)
 
             if _is_json_serializable(value):
                 session_dict[key] = value
