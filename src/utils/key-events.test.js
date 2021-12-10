@@ -1,80 +1,74 @@
-// const {  handleKeyEvent } = utils;
+import handleKeyEvent from './key-events.js';
+import sinon from 'sinon';
 
-// test('handleKeyEvent is a function', () => {
-//     expect(typeof handleKeyEvent)
-//       .toBe('function');
-//   });
+describe('HandleKey Events', () => {
+  it('handleKeyEvent is a function', () => {
+    expect(typeof handleKeyEvent).toBe('function');
+  });
 
-//   test('Invokes the correct actions when supplied a keycode', () => {
-//     const toCall = sinon.spy();
-//     const notToCall = sinon.spy();
+  it('Invokes the correct actions when supplied a keycode', () => {
+    const toCall = sinon.spy();
+    const notToCall = sinon.spy();
 
-//     // 27 is keycode for escape
-//     handleKeyEvent(27, {
-//       escape: toCall,
-//       enter: notToCall
-//     });
+    // 27 is keycode for escape
+    handleKeyEvent(27, {
+      escape: toCall,
+      enter: notToCall,
+    });
 
-//     expect(toCall.callCount)
-//       .toBe(1);
+    expect(toCall.callCount).toBe(1);
 
-//     expect(notToCall.callCount)
-//       .toBe(0);
-//   });
+    expect(notToCall.callCount).toBe(0);
+  });
 
-//   test('Should return function if no actions are supplied', () => {
-//     expect(typeof handleKeyEvent(27))
-//       .toBe('function');
-//   });
+  it('Should return function if no actions are supplied', () => {
+    expect(typeof handleKeyEvent(27)).toBe('function');
+  });
 
-//   test('Should invoke correctly when single key is supplied', () => {
-//     const hke = handleKeyEvent(27);
-//     const spy = sinon.spy();
+  it('Should invoke correctly when single key is supplied', () => {
+    const hke = handleKeyEvent(27);
+    const spy = sinon.spy();
 
-//     hke('escape', spy);
-//   x
-//     expect(spy.callCount)
-//       .toBe(1);
-//   });
+    hke('escape', spy);
 
-//   test('Should invoke correctly when multiple keys are supplied', () => {
-//     const spy = sinon.spy();
+    expect(spy.callCount).toBe(1);
+  });
 
-//     /** Test key code */
-//     const t = keyCode => {
-//       handleKeyEvent(keyCode)('escape,enter', spy);
-//     };
+  it('Should invoke correctly when multiple keys are supplied', () => {
+    const spy = sinon.spy();
 
-//     [27, 13].forEach(v => {
-//       t(v);
-//     });
+    /** Test key code */
+    const test = (keyCode) => {
+      handleKeyEvent(keyCode)('escape,enter', spy);
+    };
 
-//     expect(spy.callCount)
-//       .toBe(2);
-//   });
+    [27, 13].forEach((key) => {
+      test(key);
+    });
 
-//   test('Should throw if invalid values supplied', () => {
-//     /** Test null params */
-//     const t1 = () => {
-//       handleKeyEvent(null, null)();
-//     };
+    expect(spy.callCount).toBe(2);
+  });
 
-//     /** Test empty params */
-//     const t2 = () => {
-//       handleKeyEvent()();
-//     };
+  it('Should throw if invalid values supplied', () => {
+    /** Test null params */
+    const test1 = () => {
+      handleKeyEvent(null, null)();
+    };
 
-//     /** Test invalid params */
-//     const t3 = () => {
-//       handleKeyEvent(123, 'hello')();
-//     };
+    /** Test empty params */
+    const test2 = () => {
+      handleKeyEvent()();
+    };
 
-//     expect(t1)
-//       .toThrow();
+    /** Test invalid params */
+    const test3 = () => {
+      handleKeyEvent(123, 'hello')();
+    };
 
-//     expect(t2)
-//       .toThrow();
+    expect(test1).toThrow();
 
-//     expect(t3)
-//       .toThrow();
-//   });
+    expect(test2).toThrow();
+
+    expect(test3).toThrow();
+  });
+});
