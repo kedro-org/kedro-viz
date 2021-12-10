@@ -298,7 +298,7 @@ class Mutation:
     """Mutation to update run details with run inputs"""
 
     @strawberry.mutation
-    def update_run_details(self, run_id: ID, details: RunInput) -> Response:
+    def update_run_details(self, run_id: ID, run_input: RunInput) -> Response:
         """Updates run details based on run inputs provided by user"""
         session = data_access_manager.db_session
         run_data = get_runs([run_id])
@@ -312,18 +312,18 @@ class Mutation:
             .update(
                 {
                     "run_id": run_id,
-                    "bookmark": details.bookmark,
-                    "title": details.title,
-                    "notes": details.notes,
+                    "bookmark": run_input.bookmark,
+                    "title": run_input.title,
+                    "notes": run_input.notes,
                 }
             )
         )
         if not user_details:
             new_user_details = UserDetailsModel(
                 run_id=run_id,
-                bookmark=details.bookmark,
-                title=details.title,
-                notes=details.notes,
+                bookmark=run_input.bookmark,
+                title=run_input.title,
+                notes=run_input.notes,
             )
             session.add(new_user_details)
         session.commit()
@@ -331,9 +331,9 @@ class Mutation:
             run_details=JSONObject(
                 {
                     "run_id": run_id,
-                    "bookmark": details.bookmark,
-                    "title": details.title,
-                    "notes": details.notes,
+                    "bookmark": run_input.bookmark,
+                    "title": run_input.title,
+                    "notes": run_input.notes,
                 }
             )
         )

@@ -16,7 +16,10 @@ const typeDefs = gql`
   scalar JSONObject
 
   type Mutation {
-    updateRunDetails(runId: ID!, details: RunInput!): UpdateUserDetailsResponse!
+    updateRunDetails(
+      runId: ID!
+      runInput: RunInput!
+    ): UpdateUserDetailsResponse!
   }
 
   type Query {

@@ -7,7 +7,7 @@ type BadInputType {
 scalar JSONObject
 
 type Mutation {
-  updateRunDetails(runId: ID!, details: RunInput!): UpdateRunDetailsResponse!
+  updateRunDetails(runId: ID!, runInput: RunInput!): UpdateRunDetailsResponse!
 }
 
 type Query {

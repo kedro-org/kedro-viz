@@ -20,16 +20,6 @@ from kedro_viz.data_access.managers import DataAccessManager
 
 
 @pytest.fixture
-def save_version():
-    yield "2021-11-02T18.24.24.379Z"
-
-
-@pytest.fixture
-def save_new_version():
-    yield "2021-11-03T18.24.24.379Z"
-
-
-@pytest.fixture
 def example_tracking_catalog(save_version):
     # Note - filepath is assigned without using tmp_path as it fails on windows build.
     # This is a temp soln and will be cleaned up in the future.
@@ -176,6 +166,14 @@ def example_tracking_output(save_version):
                 "col7": [{"runId": save_version, "value": "column_seven"}],
             },
         ),
+    ]
+
+
+@pytest.fixture
+def example_runs(save_version, save_new_version):
+    yield [
+        {"id": save_version},
+        {"id": save_new_version},
     ]
 
 
@@ -398,7 +396,9 @@ class TestTrackingData:
 
 
 class TestGraphQLEndpoints:
-    def test_graphql_run_list_endpoint(self, client, example_db_dataset):
+    def test_graphql_run_list_endpoint(
+        self, client, example_db_dataset, save_version, save_new_version
+    ):
         with mock.patch(
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
@@ -410,8 +410,8 @@ class TestGraphQLEndpoints:
         assert response.json() == {
             "data": {
                 "runsList": [
-                    {"id": "1534326", "bookmark": False},
-                    {"id": "41312339", "bookmark": False},
+                    {"id": save_version, "bookmark": False},
+                    {"id": save_new_version, "bookmark": False},
                 ]
             }
         }
@@ -427,7 +427,9 @@ class TestGraphQLEndpoints:
             )
         assert response.json() == {"data": {"runsList": []}}
 
-    def test_graphql_runs_metadata_endpoint(self, client, example_db_dataset):
+    def test_graphql_runs_metadata_endpoint(
+        self, save_version, client, example_db_dataset
+    ):
         with mock.patch(
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
@@ -435,17 +437,16 @@ class TestGraphQLEndpoints:
             mock_session.return_value = example_db_dataset
             response = client.post(
                 "/graphql",
-                json={"query": "{runMetadata(runIds: [1534326]) {id bookmark}}"},
+                json={
+                    "query": """{runMetadata(runIds: ["%s"]) {id bookmark}}"""
+                    % save_version
+                },
             )
         assert response.json() == {
-            "data": {
-                "runMetadata": [
-                    {"id": "1534326", "bookmark": False},
-                ]
-            }
+            "data": {"runMetadata": [{"id": save_version, "bookmark": False}]}
         }
 
-    def test_graphql_runs_metadata_endpoint_no_dbsession(self, client):
+    def test_graphql_runs_metadata_endpoint_no_dbsession(self, client, save_version):
         with mock.patch(
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
@@ -453,7 +454,10 @@ class TestGraphQLEndpoints:
             mock_session.return_value = None
             response = client.post(
                 "/graphql",
-                json={"query": "{runMetadata(runIds: [1534326]) {id bookmark}}"},
+                json={
+                    "query": """{runMetadata(runIds: ["%s"]) {id bookmark}}"""
+                    % save_version
+                },
             )
         assert response.json() == {"data": {"runMetadata": []}}
 
@@ -522,8 +526,95 @@ class TestGraphQLEndpoints:
         assert response.json() == expected_response
 
 
+class TestGraphQLMutation:
+    def test_update_user_details_success(
+        self, client, save_version, example_runs, example_db_dataset, mocker
+    ):
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = example_db_dataset
+            mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
+            response = client.post(
+                "/graphql",
+                json={
+                    "query": """mutation {updateRunDetails(
+                        runId: "%s",
+                        runInput: {
+                        bookmark: false,
+                        title: "Hello Kedro", notes:
+                        "There are no notes"})
+                        {
+                            __typename
+                            ... on UpdateRunDetailsSuccess {
+                            runDetails
+                            }
+                            ... on BadInputType {
+                            runId
+                            errorMessage
+                            } }
+                            }"""
+                    % save_version
+                },
+            )
+            assert response.json() == {
+                "data": {
+                    "updateRunDetails": {
+                        "__typename": "UpdateRunDetailsSuccess",
+                        "runDetails": {
+                            "run_id": "2021-11-02T18.24.24.379Z",
+                            "bookmark": False,
+                            "title": "Hello Kedro",
+                            "notes": "There are no notes",
+                        },
+                    }
+                }
+            }
+
+    def test_update_user_details_fail(
+        self, client, example_db_dataset, mocker
+    ):
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = example_db_dataset
+            mocker.patch("kedro_viz.api.graphql.get_runs").return_value = None
+            response = client.post(
+                "/graphql",
+                json={
+                    "query": """mutation {updateRunDetails(
+                        runId: "2021-11-02T12.24.24.329Z",
+                        runInput: {
+                        bookmark: false,
+                        title: "Hello Kedro", notes:
+                        "There are no notes"})
+                        {
+                            __typename
+                            ... on UpdateRunDetailsSuccess {
+                            runDetails
+                            }
+                            ... on BadInputType {
+                            runId
+                            errorMessage
+                            } }
+                            }"""
+                },
+            )
+            assert response.json() == {
+                "data": {
+                    "updateRunDetails": {
+                        "__typename": "BadInputType",
+                        "runId": "2021-11-02T12.24.24.329Z",
+                        "errorMessage": "Given run_id doesn't exist",
+                    }
+                }
+            }
+
+
 class TestGraphQLSchema:
-    def testApolloSchema(self):
+    def test_apollo_schema(self):
         schema_file = Path(__file__).parents[3] / "src" / "apollo" / "schema.graphql"
         with schema_file.open() as data:
             apollo_schema = data.read()

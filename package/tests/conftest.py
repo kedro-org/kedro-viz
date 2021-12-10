@@ -214,13 +214,23 @@ def example_db_session(example_session_store_location):
 
 
 @pytest.fixture
-def example_db_dataset(example_db_session):
+def save_version():
+    yield "2021-11-02T18.24.24.379Z"
+
+
+@pytest.fixture
+def save_new_version():
+    yield "2021-11-03T18.24.24.379Z"
+
+
+@pytest.fixture
+def example_db_dataset(example_db_session, save_version, save_new_version):
     session = example_db_session
 
     session_data_1 = {
         "package_name": "testsql",
         "project_path": "/Users/Projects/testsql",
-        "session_id": "2021-10-21T15.02.12.672Z",
+        "session_id": save_version,
         "cli": {
             "args": [],
             "params": {
@@ -243,11 +253,11 @@ def example_db_dataset(example_db_session):
             "command_path": "kedro run",
         },
     }
-    run_1 = RunModel(id="1534326", blob=json.dumps(session_data_1))
+    run_1 = RunModel(id=save_version, blob=json.dumps(session_data_1))
     session_data_2 = {
         "package_name": "my_package",
         "project_path": "/Users/Projects/my_package",
-        "session_id": "2020-11-17T15.02.12.672Z",
+        "session_id": save_new_version,
         "cli": {
             "args": [],
             "params": {
@@ -270,7 +280,7 @@ def example_db_dataset(example_db_session):
             "command_path": "kedro run",
         },
     }
-    run_2 = RunModel(id="41312339", blob=json.dumps(session_data_2))
+    run_2 = RunModel(id=save_new_version, blob=json.dumps(session_data_2))
     session.add(run_1)
     session.add(run_2)
     session.commit()
