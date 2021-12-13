@@ -1,3 +1,5 @@
+@import '../../../styles/variables';
+
 .details-dataset {
   display: flex;
   flex-direction: column;
@@ -61,7 +63,7 @@
   display: flex;
   flex-shrink: 0;
   width: 310px;
-  word-wrap: break-word;
+  word-break: break-all;
   min-height: 1.8em;
 
   &--single {
@@ -73,4 +75,5 @@
   margin-left: 1em;
   width: 1.8em;
   height: 1.8em;
+  fill: #{$color-accent-blue};
 }

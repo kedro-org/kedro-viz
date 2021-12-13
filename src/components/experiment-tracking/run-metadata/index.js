@@ -61,7 +61,13 @@ const RunMetadata = ({
                       <ul className="details-matadata__buttons">
                         <IconButton
                           ariaLive="polite"
-                          className={'pipeline-menu-button--labels'}
+                          className={classnames(
+                            'pipeline-menu-button--labels',
+                            {
+                              'details-matadata__buttons--selected-pin':
+                                run.id === pinnedRun,
+                            }
+                          )}
                           onClick={() => setPinnedRun(run.id)}
                           icon={
                             run.id === pinnedRun ? SelectedPin : NonSelectedPin

@@ -22,8 +22,9 @@ export const ExperimentPrimaryToolbar = ({
         onClick={() => setEnableShowChanges(!enableShowChanges)}
         icon={ShowChangesIcon}
         labelText={
-          !showChangesIconDisabled &&
-          `${enableShowChanges ? 'Disable' : 'Enable'} Show Changes`
+          !showChangesIconDisabled
+            ? `${enableShowChanges ? 'Disable' : 'Enable'} show changes`
+            : null
         }
         visible={enableComparisonView}
         disabled={showChangesIconDisabled}
