@@ -49,7 +49,7 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
     run = Run(
         id=ID(run_id),
         author="",
-        gitBranch="",
+        gitBranch=git_data.get("branch") if git_data else None,
         gitSha=git_data.get("commit_sha") if git_data else None,
         bookmark=False,
         title=run_blob["session_id"],
