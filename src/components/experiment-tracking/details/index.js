@@ -11,11 +11,11 @@ import {
 import './details.css';
 
 const Details = ({
-  selectedRuns,
-  sidebarVisible,
   enableShowChanges,
   pinnedRun,
+  selectedRuns,
   setPinnedRun,
+  sidebarVisible,
 }) => {
   const { data: { runMetadata } = [], error } = useApolloQuery(
     GET_RUN_METADATA,
