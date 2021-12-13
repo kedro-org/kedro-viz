@@ -44,9 +44,9 @@ const typeDefs = gql`
   }
 
   input RunInput {
-    bookmark: Boolean!
-    title: String!
-    notes: String!
+    bookmark: Boolean
+    title: String
+    notes: String
   }
 
   type TrackingDataset {

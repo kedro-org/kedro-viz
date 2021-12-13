@@ -267,9 +267,9 @@ schema = strawberry.Schema(query=Query, subscription=Subscription)
 class RunInput:
     """Run input to update bookmark, title and notes"""
 
-    bookmark: bool
-    title: str
-    notes: str
+    bookmark: Optional[bool] = None
+    title: Optional[str] = None
+    notes: Optional[str] = None
 
 
 @strawberry.type
@@ -305,6 +305,11 @@ class Mutation:
             return BadInputType(
                 run_id=run_id, error_message="Given run_id doesn't exist"
             )
+        
+        run_input.title = run_data[0].title if not run_input.title else run_input.title
+        run_input.bookmark = run_data[0].bookmark if not run_input.bookmark else run_input.bookmark
+        run_input.notes = run_data[0].notes if not run_input.notes else run_input.notes
+
         user_details = (
             session.query(UserDetailsModel)
             .filter(UserDetailsModel.run_id == run_id)
@@ -338,7 +343,7 @@ class Mutation:
         )
 
 
-schema = strawberry.Schema(query=Query, mutation=Mutation)
+schema = strawberry.Schema(query=Query,mutation=Mutation)
 
 router = APIRouter()
 
