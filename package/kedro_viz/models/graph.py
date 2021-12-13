@@ -474,6 +474,8 @@ class DataNode(GraphNode):
         return (
             self.dataset_type
             == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
+            or self.dataset_type
+            == "kedro.extras.datasets.plotly.json_dataset.JSONDataSet"
         )
 
     def is_metric_node(self):
@@ -567,9 +569,12 @@ class DataNodeMetadata(GraphNodeMetadata):
         self.filepath = _parse_filepath(dataset_description)
         # Parse plot data
         if data_node.is_plot_node():
-            from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
+            from kedro.extras.datasets.plotly.plotly_dataset import (
+                JSONDataSet as PlotlyJSONDataSet,
+                PlotlyDataSet,
+            )
 
-            dataset = cast(PlotlyDataSet, dataset)
+            dataset = cast(Union[PlotlyDataSet, PlotlyJSONDataSet], dataset)
             if not dataset._exists():
                 return
 
