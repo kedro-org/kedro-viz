@@ -45,17 +45,17 @@ const Details = ({
         })}
       >
         <RunMetadata
-          isSingleRun={isSingleRun}
-          runs={runMetadata}
           enableShowChanges={enableShowChanges}
+          isSingleRun={isSingleRun}
           pinnedRun={pinnedRun}
+          runs={runMetadata}
           setPinnedRun={setPinnedRun}
         />
         <RunDataset
-          isSingleRun={isSingleRun}
-          trackingData={runTrackingData}
-          pinnedRun={pinnedRun}
           enableShowChanges={enableShowChanges}
+          isSingleRun={isSingleRun}
+          pinnedRun={pinnedRun}
+          trackingData={runTrackingData}
         />
       </div>
     </>
