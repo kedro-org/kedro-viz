@@ -338,7 +338,7 @@ class TestGraphNodeMetadata:
     def test_partitioned_data_node_metadata(self):
         dataset = PartitionedDataSet(path="partitioned/", dataset="pandas.CSVDataSet")
         data_node = GraphNode.create_data_node(
-            full_name="dataset", 
+            full_name="dataset",
             layer="raw",
             tags=set(),
             dataset=dataset,
@@ -373,6 +373,24 @@ class TestGraphNodeMetadata:
         plotly_data_node.kedro_obj._exists.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
+
+    @patch("json.load")
+    def test_plotly_json_dataset_node_metadata(self, patched_json_load):
+        mock_plot_data = {
+            "data": [
+                {
+                    "x": ["giraffes", "orangutans", "monkeys"],
+                    "y": [20, 14, 23],
+                    "type": "bar",
+                }
+            ]
+        }
+        patched_json_load.return_value = mock_plot_data
+        plotly_json_dataset_node = MagicMock()
+        plotly_json_dataset_node.is_plot_node.return_value = True
+        plotly_json_dataset_node.is_metric_node.return_value = False
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_json_dataset_node)
+        assert plotly_node_metadata.plot == mock_plot_data
 
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_versioned_tracking_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
