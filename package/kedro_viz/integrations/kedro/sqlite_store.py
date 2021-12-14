@@ -1,8 +1,9 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
-import json
-
 # pylint: disable=too-many-ancestors
+
+import json
+import logging
 from pathlib import Path
 from typing import Any, Generator, Type
 
@@ -11,6 +12,8 @@ from sqlalchemy.orm.session import Session
 
 from kedro_viz.database import create_db_engine
 from kedro_viz.models.run_model import Base, RunModel
+
+logger = logging.getLogger(__name__)
 
 
 def get_db(session_class: Type[Session]) -> Generator:
@@ -42,6 +45,15 @@ class SQLiteStore(BaseSessionStore):
         """Returns session_store information in json format after converting PosixPath to string"""
         session_dict = {}
         for key, value in self.data.items():
+            if key == "git":
+                try:
+                    import git  # pylint: disable=import-outside-toplevel
+
+                    branch = git.Repo(search_parent_directories=True).active_branch
+                    value["branch"] = branch.name
+                except ImportError as exc: # pragma: no cover
+                    logger.warning("%s:%s", exc.__class__.__name__, exc.msg)
+
             if _is_json_serializable(value):
                 session_dict[key] = value
             else:
