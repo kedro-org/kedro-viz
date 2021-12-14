@@ -103,7 +103,7 @@ function buildDatasetDataMarkup(
   pinnedRun,
   enableShowChanges
 ) {
-  // function to return new set of runData with appropiate pin
+  // function to return new set of runData with appropriate pin from datasetValues and pinnedRun
   const runDataWithPin = resolveRunDataWithPin(datasetValues, pinnedRun);
 
   return (

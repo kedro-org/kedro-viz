@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import classnames from 'classnames';
 import IconButton from '../../icon-button';
 import SelectedPin from '../../icons/selected-pin';
-import NonSelectedPin from '../../icons/non-selected-pin';
+import UnSelectedPin from '../../icons/un-selected-pin';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 
 import './run-metadata.css';
@@ -70,7 +70,7 @@ const RunMetadata = ({
                           )}
                           onClick={() => setPinnedRun(run.id)}
                           icon={
-                            run.id === pinnedRun ? SelectedPin : NonSelectedPin
+                            run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
                           visible={enableShowChanges}
                         />

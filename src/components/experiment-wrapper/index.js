@@ -5,6 +5,7 @@ import Button from '@quantumblack/kedro-ui/lib/components/button';
 import Sidebar from '../sidebar';
 import Details from '../experiment-tracking/details';
 import { GET_RUNS } from '../../apollo/queries';
+import { sortRunByTime } from '../../utils/date-utils';
 
 import './experiment-wrapper.css';
 
@@ -20,20 +21,6 @@ const ExperimentWrapper = ({ theme }) => {
 
   const { data, loading } = useApolloQuery(GET_RUNS);
 
-  // runs needs to be sorted by time to ensure runIDs get sent to
-  // graphql endpoint in correct order
-  const sortRunByTime = (runs) => {
-    const runsWithTimestamps = runs.map((run) => ({
-      id: run,
-      dateObj: new Date(run.replace('.', ':').replace('.', ':')),
-    }));
-
-    runsWithTimestamps.sort(
-      (a, b) => new Date(a.dateObj) - new Date(b.dateObj)
-    );
-    return runsWithTimestamps.map((run) => run.id);
-  };
-
   const onRunSelection = (id) => {
     if (enableComparisonView) {
       if (selectedRuns.includes(id)) {
@@ -41,6 +28,8 @@ const ExperimentWrapper = ({ theme }) => {
           return;
         }
         setSelectedRuns(
+          // runs needs to be sorted by time to ensure runIDs get sent to
+          // graphql endpoint in correct order
           sortRunByTime(selectedRuns.filter((run) => run !== id))
         );
       } else {
