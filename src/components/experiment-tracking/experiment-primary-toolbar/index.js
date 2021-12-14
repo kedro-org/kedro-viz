@@ -5,6 +5,7 @@ import PencilIcon from '../../icons/pencil';
 import PrimaryToolbar from '../../primary-toolbar';
 
 export const ExperimentPrimaryToolbar = ({
+  enableComparisonView,
   sidebarVisible,
   setSidebarVisible,
   showRunDetailsModal,
@@ -14,13 +15,15 @@ export const ExperimentPrimaryToolbar = ({
       visible={{ sidebar: sidebarVisible }}
       onToggleSidebar={setSidebarVisible}
     >
-      <IconButton
-        ariaLive="Edit run details"
-        className={'pipeline-menu-button--labels'}
-        icon={PencilIcon}
-        labelText={`Edit details`}
-        onClick={() => showRunDetailsModal(true)}
-      />
+      {enableComparisonView ? null : (
+        <IconButton
+          ariaLive="Edit run details"
+          className={'pipeline-menu-button--labels'}
+          icon={PencilIcon}
+          labelText={`Edit details`}
+          onClick={() => showRunDetailsModal(true)}
+        />
+      )}
     </PrimaryToolbar>
   );
 };

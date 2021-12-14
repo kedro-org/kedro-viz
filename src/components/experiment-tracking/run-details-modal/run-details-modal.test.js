@@ -5,7 +5,7 @@ import { configure, mount, shallow } from 'enzyme';
 
 configure({ adapter: new Adapter() });
 
-describe('SettingsModal', () => {
+describe('RunDetailsModal', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(<RunDetailsModal visible />);
 

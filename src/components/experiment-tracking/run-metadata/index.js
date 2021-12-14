@@ -46,7 +46,7 @@ const RunMetadata = ({
             className={classnames('details-metadata__run', {
               'details-metadata__run--single': isSingleRun,
             })}
-            key={run.title + i} // Note: change to gitSha once BE returns the value
+            key={run.id + i}
           >
             <table className="details-metadata__table">
               <tbody>
