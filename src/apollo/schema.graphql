@@ -1,8 +1,3 @@
-type BadInputType {
-  runId: ID!
-  errorMessage: String!
-}
-
 """Generic scalar type representing a JSON object"""
 scalar JSONObject
 
@@ -29,9 +24,9 @@ type Run {
 }
 
 input RunInput {
-  bookmark: Boolean
-  title: String
-  notes: String
+  bookmark: Boolean = null
+  title: String = null
+  notes: String = null
 }
 
 type TrackingDataset {
@@ -40,7 +35,12 @@ type TrackingDataset {
   data: JSONObject
 }
 
-union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | BadInputType
+type UpdateRunDetailsFailure {
+  runId: ID!
+  errorMessage: String!
+}
+
+union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | UpdateRunDetailsFailure
 
 type UpdateRunDetailsSuccess {
   runDetails: JSONObject!

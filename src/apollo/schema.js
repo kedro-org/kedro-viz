@@ -5,11 +5,6 @@ import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json';
 import gql from 'graphql-tag';
 
 const typeDefs = gql`
-  type BadInputType {
-    runId: ID!
-    errorMessage: String!
-  }
-
   """
   Generic scalar type representing a JSON object
   """
@@ -44,9 +39,9 @@ const typeDefs = gql`
   }
 
   input RunInput {
-    bookmark: Boolean
-    title: String
-    notes: String
+    bookmark: Boolean = null
+    title: String = null
+    notes: String = null
   }
 
   type TrackingDataset {
@@ -55,7 +50,14 @@ const typeDefs = gql`
     data: JSONObject
   }
 
-  union UpdateUserDetailsResponse = UpdateUserDetailsSuccess | BadInputType
+  type UpdateRunDetailsFailure {
+    runId: ID!
+    errorMessage: String!
+  }
+
+  union UpdateUserDetailsResponse =
+      UpdateUserDetailsSuccess
+    | UpdateRunDetailsFailure
 
   type UpdateUserDetailsSuccess {
     userDetails: JSONObject!

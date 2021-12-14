@@ -12,6 +12,7 @@ from strawberry.printer import print_schema
 
 from kedro_viz.api.graphql import (
     JSONObject,
+    Run,
     TrackingDataset,
     get_run_tracking_data,
     schema,
@@ -170,10 +171,19 @@ def example_tracking_output(save_version):
 
 
 @pytest.fixture
-def example_runs(save_version, save_new_version):
+def example_runs(save_version):
     yield [
-        {"id": save_version},
-        {"id": save_new_version},
+        Run(
+            id=save_version,
+            bookmark=False,
+            notes="Hello World",
+            title="Hello Kedro",
+            timestamp=save_version,
+            author="",
+            gitBranch="",
+            gitSha="",
+            runCommand="",
+        )
     ]
 
 
@@ -438,8 +448,7 @@ class TestGraphQLEndpoints:
             response = client.post(
                 "/graphql",
                 json={
-                    "query": """{runMetadata(runIds: ["%s"]) {id bookmark}}"""
-                    % save_version
+                    "query": f"""{{runMetadata(runIds: ["{ save_version }"]) {{id bookmark}}}}"""
                 },
             )
         assert response.json() == {
@@ -455,8 +464,7 @@ class TestGraphQLEndpoints:
             response = client.post(
                 "/graphql",
                 json={
-                    "query": """{runMetadata(runIds: ["%s"]) {id bookmark}}"""
-                    % save_version
+                    "query": f"""{{runMetadata(runIds: ["{ save_version }"]) {{id bookmark}}}}"""
                 },
             )
         assert response.json() == {"data": {"runMetadata": []}}
@@ -476,10 +484,9 @@ class TestGraphQLEndpoints:
             response = client.post(
                 "/graphql",
                 json={
-                    "query": """{runTrackingData
-                    (runIds:["%s"])
-                    {datasetName, datasetType, data}}"""
-                    % save_version
+                    "query": f"""{{runTrackingData
+                    (runIds:["{save_version}"])
+                    {{datasetName, datasetType, data}}}}"""
                 },
             )
 
@@ -539,23 +546,22 @@ class TestGraphQLMutation:
             response = client.post(
                 "/graphql",
                 json={
-                    "query": """mutation {updateRunDetails(
-                        runId: "%s",
-                        runInput: {
+                    "query": f"""mutation {{updateRunDetails(
+                        runId: "{save_version}",
+                        runInput: {{
                         bookmark: false,
-                        title: "Hello Kedro", notes:
-                        "There are no notes"})
-                        {
+                        title: "Hello Kedro",
+                        notes: "There are notes"}})
+                        {{
                             __typename
-                            ... on UpdateRunDetailsSuccess {
+                            ... on UpdateRunDetailsSuccess {{
                             runDetails
-                            }
-                            ... on BadInputType {
+                            }}
+                            ... on UpdateRunDetailsFailure {{
                             runId
                             errorMessage
-                            } }
-                            }"""
-                    % save_version
+                            }} }}
+                            }}"""
                 },
             )
             assert response.json() == {
@@ -566,15 +572,13 @@ class TestGraphQLMutation:
                             "run_id": "2021-11-02T18.24.24.379Z",
                             "bookmark": False,
                             "title": "Hello Kedro",
-                            "notes": "There are no notes",
+                            "notes": "There are notes",
                         },
                     }
                 }
             }
 
-    def test_update_user_details_fail(
-        self, client, example_db_dataset, mocker
-    ):
+    def test_update_user_details_fail(self, client, example_db_dataset, mocker):
         with mock.patch(
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
@@ -589,13 +593,13 @@ class TestGraphQLMutation:
                         runInput: {
                         bookmark: false,
                         title: "Hello Kedro", notes:
-                        "There are no notes"})
+                        "There are notes"})
                         {
                             __typename
                             ... on UpdateRunDetailsSuccess {
                             runDetails
                             }
-                            ... on BadInputType {
+                            ... on UpdateRunDetailsFailure {
                             runId
                             errorMessage
                             } }
@@ -605,9 +609,9 @@ class TestGraphQLMutation:
             assert response.json() == {
                 "data": {
                     "updateRunDetails": {
-                        "__typename": "BadInputType",
+                        "__typename": "UpdateRunDetailsFailure",
                         "runId": "2021-11-02T12.24.24.329Z",
-                        "errorMessage": "Given run_id doesn't exist",
+                        "errorMessage": "Given run_id: 2021-11-02T12.24.24.329Z doesn't exist",
                     }
                 }
             }

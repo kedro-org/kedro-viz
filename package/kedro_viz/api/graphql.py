@@ -280,7 +280,7 @@ class UpdateRunDetailsSuccess:
 
 
 @strawberry.type
-class BadInputType:
+class UpdateRunDetailsFailure:
     """Response type for failed update of runs"""
 
     run_id: ID
@@ -288,7 +288,7 @@ class BadInputType:
 
 
 Response = strawberry.union(
-    "UpdateRunDetailsResponse", (UpdateRunDetailsSuccess, BadInputType)
+    "UpdateRunDetailsResponse", (UpdateRunDetailsSuccess, UpdateRunDetailsFailure)
 )
 
 
@@ -302,13 +302,15 @@ class Mutation:
         session = data_access_manager.db_session
         run_data = get_runs([run_id])
         if not run_data:
-            return BadInputType(
-                run_id=run_id, error_message="Given run_id doesn't exist"
+            return UpdateRunDetailsFailure(
+                run_id=run_id, error_message=f"Given run_id: {run_id} doesn't exist"
             )
-        
-        run_input.title = run_data[0].title if not run_input.title else run_input.title
-        run_input.bookmark = run_data[0].bookmark if not run_input.bookmark else run_input.bookmark
-        run_input.notes = run_data[0].notes if not run_input.notes else run_input.notes
+        run_info = run_data[0]
+        run_input.title = run_info.title if not run_input.title else run_input.title
+        run_input.bookmark = (
+            run_info.bookmark if not run_input.bookmark else run_input.bookmark
+        )
+        run_input.notes = run_info.notes if not run_input.notes else run_input.notes
 
         user_details = (
             session.query(UserDetailsModel)
@@ -343,7 +345,7 @@ class Mutation:
         )
 
 
-schema = strawberry.Schema(query=Query,mutation=Mutation)
+schema = strawberry.Schema(query=Query, mutation=Mutation)
 
 router = APIRouter()
 
