@@ -58,3 +58,18 @@ class TestSQLiteStore:
         sqlite_store2.save()
         db = next(get_db(db_session_class))
         assert db.query(RunModel).count() == 2
+
+    def test_update_git_branch(self, store_path, mocker):
+        sqlite_store = SQLiteStore(store_path, next(session_id()))
+        sqlite_store.data = {
+            "project_path": store_path,
+            "git": {"commit_sha": "123456"},
+        }
+        mocker.patch("git.Repo.active_branch").name = "test_branch"
+
+        assert sqlite_store.to_json() == json.dumps(
+            {
+                "project_path": str(store_path),
+                "git": {"commit_sha": "123456", "branch": "test_branch"},
+            }
+        )
