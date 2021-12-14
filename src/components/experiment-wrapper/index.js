@@ -5,6 +5,7 @@ import Button from '@quantumblack/kedro-ui/lib/components/button';
 import Sidebar from '../sidebar';
 import Details from '../experiment-tracking/details';
 import { GET_RUNS } from '../../apollo/queries';
+import { sortRunByTime } from '../../utils/date-utils';
 
 import './experiment-wrapper.css';
 
@@ -12,9 +13,11 @@ const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three
 
 const ExperimentWrapper = ({ theme }) => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [enableShowChanges, setEnableShowChanges] = useState(true);
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableComparisonView, setEnableComparisonView] = useState(false);
   const [selectedRuns, setSelectedRuns] = useState([]);
+  const [pinnedRun, setPinnedRun] = useState();
 
   const { data, loading } = useApolloQuery(GET_RUNS);
 
@@ -24,10 +27,13 @@ const ExperimentWrapper = ({ theme }) => {
         if (selectedRuns.length === 1) {
           return;
         }
-
-        setSelectedRuns(selectedRuns.filter((run) => run !== id));
+        setSelectedRuns(
+          // runs needs to be sorted by time to ensure runIDs get sent to
+          // graphql endpoint in correct order
+          sortRunByTime(selectedRuns.filter((run) => run !== id))
+        );
       } else {
-        setSelectedRuns([...selectedRuns, id]);
+        setSelectedRuns(sortRunByTime([...selectedRuns, id]));
       }
     } else {
       if (selectedRuns.includes(id)) {
@@ -61,6 +67,13 @@ const ExperimentWrapper = ({ theme }) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (typeof pinnedRun === 'undefined' || !selectedRuns.includes(pinnedRun)) {
+      // assign the first selected run as the first pinned run
+      setPinnedRun(selectedRuns[0]);
+    }
+  }, [selectedRuns, pinnedRun]);
+
   if (loading) {
     return (
       <div className="experiment-wrapper">
@@ -83,11 +96,16 @@ const ExperimentWrapper = ({ theme }) => {
             selectedRuns={selectedRuns}
             sidebarVisible={isSidebarVisible}
             setSidebarVisible={setIsSidebarVisible}
+            enableShowChanges={enableShowChanges}
+            setEnableShowChanges={setEnableShowChanges}
           />
           {selectedRuns.length > 0 ? (
             <Details
               selectedRuns={selectedRuns}
               sidebarVisible={isSidebarVisible}
+              enableShowChanges={enableShowChanges && selectedRuns.length > 1}
+              pinnedRun={pinnedRun}
+              setPinnedRun={setPinnedRun}
             />
           ) : null}
         </>
