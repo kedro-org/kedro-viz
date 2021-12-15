@@ -12,14 +12,14 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Build out 'Show Changes' user journey. (#667)
+- Build out 'Show Changes' user journey for experiment tracking. (#667)
 - Return gitBranch data. (#657)
+- Drop python 3.6 support. (#659)
 
 ## Bug fixes and other changes
 
 - Bug fix for plotly modal when escape button is pressed. (#654)
 - Display Plotly JSONDataSet plot in metadata side-panel. (#660)
-- Drop python 3.6 support. (#659)
 - Refactor Primary Toolbar setup. (#664)
 - Upgrade @apollo/client from 3.4.16 to 3.5.3. (#661, #668) 
 
