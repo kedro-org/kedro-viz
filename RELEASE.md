@@ -8,7 +8,19 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-- Display Plotly JSONDataSet plot in metadata side-panel (#660)
+# Release 4.2.0
+
+## Major features and improvements
+
+- Build out 'Show Changes' user journey. (#667)
+- Return gitBranch data. (#657)
+
+## Bug fixes and other changes
+
+- Display Plotly JSONDataSet plot in metadata side-panel. (#660)
+- Drop python 3.6 support. (#659)
+- Refactor Primary Toolbar setup. (#664)
+- Upgrade @apollo/client from 3.4.16 to 3.5.3. (#661, #668) 
 
 # Release 4.1.1
 ## Bug fixes and other changes
