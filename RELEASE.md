@@ -17,6 +17,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+- Bug fix for plotly modal when escape button is pressed. (#654)
 - Display Plotly JSONDataSet plot in metadata side-panel. (#660)
 - Drop python 3.6 support. (#659)
 - Refactor Primary Toolbar setup. (#664)
