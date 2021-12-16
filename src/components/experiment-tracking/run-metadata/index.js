@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
+import IconButton from '../../icon-button';
+import SelectedPin from '../../icons/selected-pin';
+import UnSelectedPin from '../../icons/un-selected-pin';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 
 import './run-metadata.css';
@@ -8,7 +11,13 @@ import './run-metadata.css';
 // returned by the graphql endpoint for empty values ( not null or undefined )
 const sanitiseEmptyValue = (value) => (value !== '' ? value : '-');
 
-const RunMetadata = ({ isSingleRun, runs = [] }) => {
+const RunMetadata = ({
+  isSingleRun,
+  runs = [],
+  enableShowChanges = false,
+  pinnedRun,
+  setPinnedRun,
+}) => {
   let initialState = {};
   for (let i = 0; i < runs.length; i++) {
     initialState[i] = false;
@@ -34,7 +43,7 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
             className={classnames('details-metadata__run', {
               'details-metadata__run--single': isSingleRun,
             })}
-            key={run.title + i} // note: this should revert back to use gitSha once the BE returns the actual value
+            key={run.id}
           >
             <table className="details-metadata__table">
               <tbody>
@@ -49,6 +58,23 @@ const RunMetadata = ({ isSingleRun, runs = [] }) => {
                     {i === 0 ? <td></td> : null}
                     <td className="details-metadata__title">
                       {sanitiseEmptyValue(run.title)}
+                      <ul className="details-matadata__buttons">
+                        <IconButton
+                          ariaLive="polite"
+                          className={classnames(
+                            'pipeline-menu-button--labels',
+                            {
+                              'details-matadata__buttons--selected-pin':
+                                run.id === pinnedRun,
+                            }
+                          )}
+                          onClick={() => setPinnedRun(run.id)}
+                          icon={
+                            run.id === pinnedRun ? SelectedPin : UnSelectedPin
+                          }
+                          visible={enableShowChanges}
+                        />
+                      </ul>
                     </td>
                   </tr>
                 )}
