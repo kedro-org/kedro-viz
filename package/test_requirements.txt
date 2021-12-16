@@ -6,7 +6,7 @@ behave>=1.2.6, <2.0
 black==21.5b1
 flake8~=3.9.2
 isort~=5.8.0
-mypy>=0.900
+mypy>=0.900,<0.920 # mypy 0.920 isn't compatible with latest strawberry
 psutil==5.6.6  # same as Kedro for now
 pylint~=2.8.2
 pytest~=6.2.0
