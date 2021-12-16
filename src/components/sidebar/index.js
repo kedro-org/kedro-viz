@@ -28,6 +28,8 @@ export const Sidebar = ({
   visible,
   sidebarVisible,
   setSidebarVisible,
+  enableShowChanges,
+  setEnableShowChanges,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
@@ -58,6 +60,10 @@ export const Sidebar = ({
             <ExperimentPrimaryToolbar
               sidebarVisible={sidebarVisible}
               setSidebarVisible={setSidebarVisible}
+              enableShowChanges={enableShowChanges}
+              setEnableShowChanges={setEnableShowChanges}
+              enableComparisonView={enableComparisonView}
+              showChangesIconDisabled={!(selectedRuns.length > 1)}
             />
           </nav>
         </div>

@@ -10,7 +10,13 @@ import {
 
 import './details.css';
 
-const Details = ({ selectedRuns, sidebarVisible }) => {
+const Details = ({
+  enableShowChanges,
+  pinnedRun,
+  selectedRuns,
+  setPinnedRun,
+  sidebarVisible,
+}) => {
   const { data: { runMetadata } = [], error } = useApolloQuery(
     GET_RUN_METADATA,
     {
@@ -38,8 +44,19 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadata isSingleRun={isSingleRun} runs={runMetadata} />
-        <RunDataset isSingleRun={isSingleRun} trackingData={runTrackingData} />
+        <RunMetadata
+          enableShowChanges={enableShowChanges}
+          isSingleRun={isSingleRun}
+          pinnedRun={pinnedRun}
+          runs={runMetadata}
+          setPinnedRun={setPinnedRun}
+        />
+        <RunDataset
+          enableShowChanges={enableShowChanges}
+          isSingleRun={isSingleRun}
+          pinnedRun={pinnedRun}
+          trackingData={runTrackingData}
+        />
       </div>
     </>
   );
