@@ -1,3 +1,6 @@
+@import '../../../styles/variables';
+@import '../../../styles/extends';
+
 .details-metadata {
   background-color: var(--color-bg-1);
   display: flex;
@@ -10,6 +13,33 @@
   &--single {
     padding: 5em 0 0 9em;
   }
+}
+
+.details-metadata__title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.details-matadata__buttons {
+  list-style: none;
+  display: flex;
+  padding: 0;
+  margin: 0;
+
+  .pipeline-icon-toolbar__button {
+    width: 24px;
+    height: 24px;
+  }
+
+  svg {
+    width: 25px;
+    height: 25px;
+    padding-bottom: 2.5px;
+  }
+}
+
+.details-matadata__buttons--selected-pin svg{
+  fill: #{$color-accent-blue};
 }
 
 .details-metadata__run {
@@ -53,6 +83,10 @@
     min-width: 375px;
     width: 50%;
   }
+}
+
+tr.details-metadata__title {
+  display: flex;
 }
 
 td.details-metadata__title {
