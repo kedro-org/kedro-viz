@@ -18,15 +18,13 @@ class RunModel(Base):
     blob = Column(JSON)
 
     class Config:
-        """Supports data model to map to ORM objects"""
-
         orm_mode = True
 
 
-class UserDetailsModel(Base):
-    """Data model to represent user details data specified in a Kedro Viz Session."""
+class UserRunDetailsModel(Base):
+    """Data model to represent run details as defined by users through Kedro Viz."""
 
-    __tablename__ = "user_details"
+    __tablename__ = "user_run_details"
 
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
     run_id = Column(String, ForeignKey(RunModel.id), unique=True)
@@ -35,6 +33,4 @@ class UserDetailsModel(Base):
     notes = Column(String)
 
     class Config:
-        """Supports data model to map to ORM objects"""
-
         orm_mode = True
