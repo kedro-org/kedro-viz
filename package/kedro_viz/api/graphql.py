@@ -282,10 +282,10 @@ class Mutation:
     @strawberry.mutation
     def update_run_details(self, run_id: ID, run_input: RunInput) -> Response:
         """Updates run details based on run inputs provided by user"""
-        existing_run = get_runs([run_id])
-        if not existing_run:
+        runs = get_runs([run_id])
+        if not runs:
             return UpdateRunDetailsFailure(run_id=run_id, error_message=f"Given run_id: {run_id} doesn't exist")
-        existing_run = existing_run[0]
+        existing_run = runs[0]
         updated_user_run_details = {
             "run_id": run_id,
             "bookmark": run_input.bookmark if run_input.bookmark is not None else existing_run.bookmark,
