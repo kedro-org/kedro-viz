@@ -5,7 +5,17 @@ import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json';
 import gql from 'graphql-tag';
 
 const typeDefs = gql`
+  """
+  Generic scalar type representing a JSON object
+  """
   scalar JSONObject
+
+  type Mutation {
+    updateRunDetails(
+      runId: ID!
+      runInput: RunInput!
+    ): UpdateUserDetailsResponse!
+  }
 
   type Query {
     runsList: [Run!]!
@@ -28,14 +38,29 @@ const typeDefs = gql`
     runCommand: String
   }
 
-  type Subscription {
-    runAdded(runId: ID!): Run!
+  input RunInput {
+    bookmark: Boolean = null
+    title: String = null
+    notes: String = null
   }
 
   type TrackingDataset {
     datasetName: String
     datasetType: String
     data: JSONObject
+  }
+
+  type UpdateRunDetailsFailure {
+    runId: ID!
+    errorMessage: String!
+  }
+
+  union UpdateUserDetailsResponse =
+      UpdateUserDetailsSuccess
+    | UpdateRunDetailsFailure
+
+  type UpdateUserDetailsSuccess {
+    userDetails: JSONObject!
   }
 `;
 
