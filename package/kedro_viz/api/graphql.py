@@ -304,7 +304,7 @@ class Mutation:
         session = data_access_manager.db_session
         user_run_details = session.query(UserRunDetailsModel).filter(UserRunDetailsModel.run_id == run_id).first()
         if not user_run_details:
-            session.add(UserRunDetailsModel(**updated_user_run_details))
+            session.add(UserRunDetailsModel(**updated_user_run_details)) # type: ignore
         else:
             for key, value in updated_user_run_details.items():
                 setattr(user_run_details, key, value)
