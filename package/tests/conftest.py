@@ -15,7 +15,7 @@ from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
-from kedro_viz.models.experiments_tracking import Base, RunModel
+from kedro_viz.models.experiments_tracking import Base, RunModel, UserRunDetailsModel
 from kedro_viz.server import populate_data
 
 
@@ -281,7 +281,9 @@ def example_db_dataset(example_db_session, save_version, save_new_version):
         },
     }
     run_2 = RunModel(id=save_new_version, blob=json.dumps(session_data_2))
+    user_run_details = UserRunDetailsModel(run_id=run_1.id)
     session.add(run_1)
     session.add(run_2)
+    session.add(user_run_details)
     session.commit()
     yield session
