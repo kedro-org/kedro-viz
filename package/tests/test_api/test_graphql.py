@@ -534,45 +534,45 @@ class TestGraphQLEndpoints:
 
 
 class TestGraphQLMutation:
+    @pytest.mark.parametrize("bookmark,notes,title", [
+        (False, "new notes", "new title", ),
+        (True, "new notes", "new title"),
+        (True, "", ""),
+    ])
     def test_update_user_details_success(
-        self, client, save_version, example_runs, example_db_dataset, mocker
+        self, bookmark, notes, title, client, save_version, example_runs, example_db_dataset, mocker
     ):
+        query =f"""
+            mutation updateRun {{
+              updateRunDetails(runId: "{save_version}", runInput: {{bookmark: {str(bookmark).lower()}, notes: "{notes}", title: "{title}"}}) {{
+                __typename
+                ... on UpdateRunDetailsSuccess {{
+                  runDetails
+                }}
+                ... on UpdateRunDetailsFailure {{
+                  runId
+                  errorMessage
+                }}
+              }}
+            }}
+        """
+
         with mock.patch(
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
         ) as mock_session:
             mock_session.return_value = example_db_dataset
             mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
-            response = client.post(
-                "/graphql",
-                json={
-                    "query": f"""mutation {{updateRunDetails(
-                        runId: "{save_version}",
-                        runInput: {{
-                        bookmark: false,
-                        title: "Hello Kedro",
-                        notes: "There are notes"}})
-                        {{
-                            __typename
-                            ... on UpdateRunDetailsSuccess {{
-                            runDetails
-                            }}
-                            ... on UpdateRunDetailsFailure {{
-                            runId
-                            errorMessage
-                            }} }}
-                            }}"""
-                },
-            )
+            response = client.post("/graphql", json={"query": query}) 
             assert response.json() == {
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsSuccess",
                         "runDetails": {
-                            "run_id": "2021-11-02T18.24.24.379Z",
-                            "bookmark": False,
-                            "title": "Hello Kedro",
-                            "notes": "There are notes",
+                            "run_id": save_version,
+                            "bookmark": bookmark,
+                            "title": title if title != "" else save_version,
+                            "notes": notes,
                         },
                     }
                 }

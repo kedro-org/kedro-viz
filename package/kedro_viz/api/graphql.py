@@ -282,11 +282,10 @@ class Mutation:
     @strawberry.mutation
     def update_run_details(self, run_id: ID, run_input: RunInput) -> Response:
         """Updates run details based on run inputs provided by user"""
-        session = data_access_manager.db_session
-        try:
-            existing_run = get_runs([run_id])[0]
-        except IndexError:
+        existing_run = get_runs([run_id])
+        if not existing_run:
             return UpdateRunDetailsFailure(run_id=run_id, error_message=f"Given run_id: {run_id} doesn't exist")
+        existing_run = existing_run[0]
         updated_user_run_details = {
             "run_id": run_id,
             "bookmark": run_input.bookmark if run_input.bookmark is not None else existing_run.bookmark,
@@ -302,6 +301,7 @@ class Mutation:
         else:
             updated_user_run_details["title"] = run_input.title
 
+        session = data_access_manager.db_session
         user_run_details = session.query(UserRunDetailsModel).filter(UserRunDetailsModel.run_id == run_id).first()
         if not user_run_details:
             session.add(UserRunDetailsModel(**updated_user_run_details))
