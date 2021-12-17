@@ -1,10 +1,11 @@
 import React from 'react';
 import classnames from 'classnames';
 import Accordion from '../accordion';
+import PinArrowIcon from '../../icons/pin-arrow';
 
 import './run-dataset.css';
 
-const santizeValue = (value) => {
+const sanitizeValue = (value) => {
   if (value === '' || value === null || value === undefined) {
     return '-';
   } else if (typeof value === 'object' || typeof value === 'boolean') {
@@ -14,12 +15,42 @@ const santizeValue = (value) => {
   return value;
 };
 
+const determinePinIcon = (data, pinValue, pinnedRun) => {
+  if (data.runId !== pinnedRun && typeof data.value === 'number') {
+    if (data.value > pinValue) {
+      return 'upArrow';
+    }
+    if (data.value < pinValue) {
+      return 'downArrow';
+    }
+  }
+  return null;
+};
+
+const resolveRunDataWithPin = (runData, pinnedRun) => {
+  const pinValue = runData.filter((data) => data.runId === pinnedRun)[0]?.value;
+
+  if (typeof pinValue === 'number') {
+    return runData.map((data) => ({
+      pinIcon: determinePinIcon(data, pinValue, pinnedRun),
+      ...data,
+    }));
+  }
+
+  return runData;
+};
+
 /**
  * Display the dataset of the experiment tracking run.
  * @param {array} props.isSingleRun Whether or not this is a single run.
  * @param {array} props.trackingData The experiment tracking run data.
  */
-const RunDataset = ({ isSingleRun, trackingData = [] }) => {
+const RunDataset = ({
+  isSingleRun,
+  trackingData = [],
+  pinnedRun,
+  enableShowChanges,
+}) => {
   return (
     <div
       className={classnames('details-dataset', {
@@ -45,7 +76,9 @@ const RunDataset = ({ isSingleRun, trackingData = [] }) => {
                   key,
                   dataset.data[key],
                   rowIndex,
-                  isSingleRun
+                  isSingleRun,
+                  pinnedRun,
+                  enableShowChanges
                 );
               })}
           </Accordion>
@@ -66,8 +99,13 @@ function buildDatasetDataMarkup(
   datasetKey,
   datasetValues,
   rowIndex,
-  isSingleRun
+  isSingleRun,
+  pinnedRun,
+  enableShowChanges
 ) {
+  // function to return new set of runData with appropriate pin from datasetValues and pinnedRun
+  const runDataWithPin = resolveRunDataWithPin(datasetValues, pinnedRun);
+
   return (
     <React.Fragment key={datasetKey + rowIndex}>
       {rowIndex === 0 ? (
@@ -99,14 +137,15 @@ function buildDatasetDataMarkup(
         >
           {datasetKey}
         </span>
-        {datasetValues.map((data, index) => (
+        {runDataWithPin.map((data, index) => (
           <span
             className={classnames('details-dataset__value', {
               'details-dataset__value--single': isSingleRun,
             })}
             key={data.runId + index}
           >
-            {santizeValue(data.value)}
+            {sanitizeValue(data.value)}
+            {enableShowChanges && <PinArrowIcon icon={data.pinIcon} />}
           </span>
         ))}
       </div>

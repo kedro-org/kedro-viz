@@ -19,11 +19,13 @@ import './sidebar.css';
 export const Sidebar = ({
   disableRunSelection,
   enableComparisonView,
+  enableShowChanges,
   isExperimentView = false,
   onRunSelection,
   onToggleComparisonView,
   runsListData,
   selectedRuns,
+  setEnableShowChanges,
   setSidebarVisible,
   showRunDetailsModal,
   sidebarVisible,
@@ -57,7 +59,10 @@ export const Sidebar = ({
           <nav className="pipeline-toolbar">
             <ExperimentPrimaryToolbar
               enableComparisonView={enableComparisonView}
+              enableShowChanges={enableShowChanges}
+              setEnableShowChanges={setEnableShowChanges}
               setSidebarVisible={setSidebarVisible}
+              showChangesIconDisabled={!(selectedRuns.length > 1)}
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={sidebarVisible}
             />

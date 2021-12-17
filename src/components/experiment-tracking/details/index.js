@@ -12,8 +12,10 @@ import {
 import './details.css';
 
 const Details = ({
-  enableComparisonView,
+  enableShowChanges,
+  pinnedRun,
   selectedRuns,
+  setPinnedRun,
   setShowRunDetailsModal,
   showRunDetailsModal,
   sidebarVisible,
@@ -55,12 +57,20 @@ const Details = ({
         })}
       >
         <RunMetadata
+          enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
+          pinnedRun={pinnedRun}
           runs={runMetadata}
+          setPinnedRun={setPinnedRun}
           setRunMetadataToEdit={setRunMetadataToEdit}
           setShowRunDetailsModal={setShowRunDetailsModal}
         />
-        <RunDataset isSingleRun={isSingleRun} trackingData={runTrackingData} />
+        <RunDataset
+          enableShowChanges={enableShowChanges}
+          isSingleRun={isSingleRun}
+          pinnedRun={pinnedRun}
+          trackingData={runTrackingData}
+        />
       </div>
     </>
   );

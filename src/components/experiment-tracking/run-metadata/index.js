@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
+import IconButton from '../../icon-button';
+import SelectedPin from '../../icons/selected-pin';
+import UnSelectedPin from '../../icons/un-selected-pin';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 
 import './run-metadata.css';
@@ -9,8 +12,11 @@ import './run-metadata.css';
 const sanitiseEmptyValue = (value) => (value !== '' ? value : '-');
 
 const RunMetadata = ({
+  enableShowChanges = false,
   isSingleRun,
+  pinnedRun,
   runs = [],
+  setPinnedRun,
   setRunMetadataToEdit,
   setShowRunDetailsModal,
 }) => {
@@ -46,7 +52,7 @@ const RunMetadata = ({
             className={classnames('details-metadata__run', {
               'details-metadata__run--single': isSingleRun,
             })}
-            key={run.id + i}
+            key={run.id}
           >
             <table className="details-metadata__table">
               <tbody>
@@ -68,6 +74,23 @@ const RunMetadata = ({
                       onClick={() => onTitleOrNoteClick(run.id)}
                     >
                       {sanitiseEmptyValue(run.title)}
+                      <ul className="details-matadata__buttons">
+                        <IconButton
+                          ariaLive="polite"
+                          className={classnames(
+                            'pipeline-menu-button--labels',
+                            {
+                              'details-matadata__buttons--selected-pin':
+                                run.id === pinnedRun,
+                            }
+                          )}
+                          onClick={() => setPinnedRun(run.id)}
+                          icon={
+                            run.id === pinnedRun ? SelectedPin : UnSelectedPin
+                          }
+                          visible={enableShowChanges}
+                        />
+                      </ul>
                     </td>
                   </tr>
                 )}
