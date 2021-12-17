@@ -1,6 +1,10 @@
 """Generic scalar type representing a JSON object"""
 scalar JSONObject
 
+type Mutation {
+  updateRunDetails(runId: ID!, runInput: RunInput!): UpdateRunDetailsResponse!
+}
+
 type Query {
   runsList: [Run!]!
   runMetadata(runIds: [ID!]!): [Run!]!
@@ -19,12 +23,25 @@ type Run {
   runCommand: String
 }
 
-type Subscription {
-  runAdded(runId: ID!): Run!
+input RunInput {
+  bookmark: Boolean = null
+  title: String = null
+  notes: String = null
 }
 
 type TrackingDataset {
   datasetName: String
   datasetType: String
   data: JSONObject
-} 
+}
+
+type UpdateRunDetailsFailure {
+  runId: ID!
+  errorMessage: String!
+}
+
+union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | UpdateRunDetailsFailure
+
+type UpdateRunDetailsSuccess {
+  runDetails: JSONObject!
+}

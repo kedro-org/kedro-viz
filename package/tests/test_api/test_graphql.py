@@ -12,21 +12,12 @@ from strawberry.printer import print_schema
 
 from kedro_viz.api.graphql import (
     JSONObject,
+    Run,
     TrackingDataset,
     get_run_tracking_data,
     schema,
 )
 from kedro_viz.data_access.managers import DataAccessManager
-
-
-@pytest.fixture
-def save_version():
-    yield "2021-11-02T18.24.24.379Z"
-
-
-@pytest.fixture
-def save_new_version():
-    yield "2021-11-03T18.24.24.379Z"
 
 
 @pytest.fixture
@@ -176,6 +167,23 @@ def example_tracking_output(save_version):
                 "col7": [{"runId": save_version, "value": "column_seven"}],
             },
         ),
+    ]
+
+
+@pytest.fixture
+def example_runs(save_version):
+    yield [
+        Run(
+            id=save_version,
+            bookmark=False,
+            notes="Hello World",
+            title="Hello Kedro",
+            timestamp=save_version,
+            author="",
+            gitBranch="",
+            gitSha="",
+            runCommand="",
+        )
     ]
 
 
@@ -398,7 +406,9 @@ class TestTrackingData:
 
 
 class TestGraphQLEndpoints:
-    def test_graphql_run_list_endpoint(self, client, example_db_dataset):
+    def test_graphql_run_list_endpoint(
+        self, client, example_db_dataset, save_version, save_new_version
+    ):
         with mock.patch(
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
@@ -410,8 +420,8 @@ class TestGraphQLEndpoints:
         assert response.json() == {
             "data": {
                 "runsList": [
-                    {"id": "1534326", "bookmark": False},
-                    {"id": "41312339", "bookmark": False},
+                    {"id": save_version, "bookmark": False},
+                    {"id": save_new_version, "bookmark": False},
                 ]
             }
         }
@@ -427,7 +437,9 @@ class TestGraphQLEndpoints:
             )
         assert response.json() == {"data": {"runsList": []}}
 
-    def test_graphql_runs_metadata_endpoint(self, client, example_db_dataset):
+    def test_graphql_runs_metadata_endpoint(
+        self, save_version, client, example_db_dataset
+    ):
         with mock.patch(
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
@@ -435,17 +447,15 @@ class TestGraphQLEndpoints:
             mock_session.return_value = example_db_dataset
             response = client.post(
                 "/graphql",
-                json={"query": "{runMetadata(runIds: [1534326]) {id bookmark}}"},
+                json={
+                    "query": f"""{{runMetadata(runIds: ["{ save_version }"]) {{id bookmark}}}}"""
+                },
             )
         assert response.json() == {
-            "data": {
-                "runMetadata": [
-                    {"id": "1534326", "bookmark": False},
-                ]
-            }
+            "data": {"runMetadata": [{"id": save_version, "bookmark": False}]}
         }
 
-    def test_graphql_runs_metadata_endpoint_no_dbsession(self, client):
+    def test_graphql_runs_metadata_endpoint_no_dbsession(self, client, save_version):
         with mock.patch(
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
@@ -453,7 +463,9 @@ class TestGraphQLEndpoints:
             mock_session.return_value = None
             response = client.post(
                 "/graphql",
-                json={"query": "{runMetadata(runIds: [1534326]) {id bookmark}}"},
+                json={
+                    "query": f"""{{runMetadata(runIds: ["{ save_version }"]) {{id bookmark}}}}"""
+                },
             )
         assert response.json() == {"data": {"runMetadata": []}}
 
@@ -472,10 +484,9 @@ class TestGraphQLEndpoints:
             response = client.post(
                 "/graphql",
                 json={
-                    "query": """{runTrackingData
-                    (runIds:["%s"])
-                    {datasetName, datasetType, data}}"""
-                    % save_version
+                    "query": f"""{{runTrackingData
+                    (runIds:["{save_version}"])
+                    {{datasetName, datasetType, data}}}}"""
                 },
             )
 
@@ -522,8 +533,168 @@ class TestGraphQLEndpoints:
         assert response.json() == expected_response
 
 
+class TestGraphQLMutation:
+    @pytest.mark.parametrize("bookmark,notes,title", [
+        (False, "new notes", "new title", ),
+        (True, "new notes", "new title"),
+        (True, "", ""),
+    ])
+    def test_update_user_details_success(
+        self, bookmark, notes, title, client, save_version, example_runs, example_db_dataset, mocker
+    ):
+        query = f"""
+            mutation updateRun {{
+              updateRunDetails(runId: "{save_version}", runInput: {{bookmark: {str(bookmark).lower()}, notes: "{notes}", title: "{title}"}}) {{
+                __typename
+                ... on UpdateRunDetailsSuccess {{
+                  runDetails
+                }}
+                ... on UpdateRunDetailsFailure {{
+                  runId
+                  errorMessage
+                }}
+              }}
+            }}
+        """
+
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = example_db_dataset
+            mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
+            response = client.post("/graphql", json={"query": query}) 
+            assert response.json() == {
+                "data": {
+                    "updateRunDetails": {
+                        "__typename": "UpdateRunDetailsSuccess",
+                        "runDetails": {
+                            "run_id": save_version,
+                            "bookmark": bookmark,
+                            "title": title if title != "" else save_version,
+                            "notes": notes,
+                        },
+                    }
+                }
+            }
+
+    def test_update_user_details_only_bookmark(
+        self, client, save_version, example_runs, example_db_dataset, mocker
+    ):
+        query = f"""
+            mutation updateRun {{
+              updateRunDetails(runId: "{save_version}", runInput: {{bookmark: true}}) {{
+                __typename
+                ... on UpdateRunDetailsSuccess {{
+                  runDetails
+                }}
+                ... on UpdateRunDetailsFailure {{
+                  runId
+                  errorMessage
+                }}
+              }}
+            }}
+        """
+
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = example_db_dataset
+            mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
+            response = client.post("/graphql", json={"query": query}) 
+            assert response.json() == {
+                "data": {
+                    "updateRunDetails": {
+                        "__typename": "UpdateRunDetailsSuccess",
+                        "runDetails": {
+                            "run_id": save_version,
+                            "bookmark": True,
+                            "title": example_runs[0].title,
+                            "notes": example_runs[0].notes,
+                        },
+                    }
+                }
+            }
+
+    def test_update_user_details_should_add_when_it_does_not_exist(self, save_version, client, example_runs, mocker):
+        query = f"""
+            mutation updateRun {{
+              updateRunDetails(runId: "{save_version}", runInput: {{bookmark: true}}) {{
+                __typename
+                ... on UpdateRunDetailsSuccess {{
+                  runDetails
+                }}
+                ... on UpdateRunDetailsFailure {{
+                  runId
+                  errorMessage
+                }}
+              }}
+            }}
+        """
+
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value.query.return_value.filter.return_value.first.return_value = None
+            mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
+            response = client.post("/graphql", json={"query": query}) 
+            assert response.json() == {
+                "data": {
+                    "updateRunDetails": {
+                        "__typename": "UpdateRunDetailsSuccess",
+                        "runDetails": {
+                            "run_id": save_version,
+                            "bookmark": True,
+                            "title": example_runs[0].title,
+                            "notes": example_runs[0].notes,
+                        },
+                    }
+                }
+            }
+
+    def test_update_user_details_fail(self, client, example_db_dataset, mocker):
+        with mock.patch(
+            "kedro_viz.data_access.DataAccessManager.db_session",
+            new_callable=PropertyMock,
+        ) as mock_session:
+            mock_session.return_value = example_db_dataset
+            mocker.patch("kedro_viz.api.graphql.get_runs").return_value = None
+            response = client.post(
+                "/graphql",
+                json={
+                    "query": """mutation {updateRunDetails(
+                        runId: "2021-11-02T12.24.24.329Z",
+                        runInput: {
+                        bookmark: false,
+                        title: "Hello Kedro", notes:
+                        "There are notes"})
+                        {
+                            __typename
+                            ... on UpdateRunDetailsSuccess {
+                            runDetails
+                            }
+                            ... on UpdateRunDetailsFailure {
+                            runId
+                            errorMessage
+                            } }
+                            }"""
+                },
+            )
+            assert response.json() == {
+                "data": {
+                    "updateRunDetails": {
+                        "__typename": "UpdateRunDetailsFailure",
+                        "runId": "2021-11-02T12.24.24.329Z",
+                        "errorMessage": "Given run_id: 2021-11-02T12.24.24.329Z doesn't exist",
+                    }
+                }
+            }
+
+
 class TestGraphQLSchema:
-    def testApolloSchema(self):
+    def test_apollo_schema(self):
         schema_file = Path(__file__).parents[3] / "src" / "apollo" / "schema.graphql"
         with schema_file.open() as data:
             apollo_schema = data.read()
