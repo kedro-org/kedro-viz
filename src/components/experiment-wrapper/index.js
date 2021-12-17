@@ -12,13 +12,13 @@ import './experiment-wrapper.css';
 const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three
 
 const ExperimentWrapper = ({ theme }) => {
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [enableShowChanges, setEnableShowChanges] = useState(true);
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableComparisonView, setEnableComparisonView] = useState(false);
+  const [enableShowChanges, setEnableShowChanges] = useState(true);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [pinnedRun, setPinnedRun] = useState();
   const [selectedRuns, setSelectedRuns] = useState([]);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
-  const [pinnedRun, setPinnedRun] = useState();
 
   const { data, loading } = useApolloQuery(GET_RUNS);
 

@@ -58,29 +58,26 @@ const RunMetadata = ({
               <tbody>
                 {isSingleRun ? (
                   <tr>
-                    <td
-                      className="details-metadata__title"
-                      colSpan="2"
-                      onClick={() => onTitleOrNoteClick(run.id)}
-                    >
-                      {sanitiseEmptyValue(run.title)}
+                    <td className="details-metadata__title" colSpan="2">
+                      <span onClick={() => onTitleOrNoteClick(run.id)}>
+                        {sanitiseEmptyValue(run.title)}
+                      </span>
                     </td>
                   </tr>
                 ) : (
                   <tr>
                     {i === 0 ? <td></td> : null}
-                    <td
-                      className="details-metadata__title"
-                      onClick={() => onTitleOrNoteClick(run.id)}
-                    >
-                      {sanitiseEmptyValue(run.title)}
-                      <ul className="details-matadata__buttons">
+                    <td className="details-metadata__title">
+                      <span onClick={() => onTitleOrNoteClick(run.id)}>
+                        {sanitiseEmptyValue(run.title)}
+                      </span>
+                      <ul className="details-metadata__buttons">
                         <IconButton
                           ariaLive="polite"
                           className={classnames(
                             'pipeline-menu-button--labels',
                             {
-                              'details-matadata__buttons--selected-pin':
+                              'details-metadata__buttons--selected-pin':
                                 run.id === pinnedRun,
                             }
                           )}

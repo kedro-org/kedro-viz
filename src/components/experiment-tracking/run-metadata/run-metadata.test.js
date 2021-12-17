@@ -108,6 +108,6 @@ describe('RunMetadata', () => {
         enableShowChanges={true}
       />
     );
-    expect(wrapper.find('.details-matadata__buttons').length).toEqual(2);
+    expect(wrapper.find('.details-metadata__buttons').length).toEqual(2);
   });
 });

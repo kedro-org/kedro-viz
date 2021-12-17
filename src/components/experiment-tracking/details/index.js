@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
@@ -12,6 +12,7 @@ import {
 import './details.css';
 
 const Details = ({
+  enableComparisonView,
   enableShowChanges,
   pinnedRun,
   selectedRuns,
@@ -35,6 +36,14 @@ const Details = ({
       skip: selectedRuns.length === 0,
       variables: { runIds: selectedRuns, showDiff: false },
     });
+
+  useEffect(() => {
+    if (runMetadata && !enableComparisonView) {
+      const metadata = runMetadata.find((run) => run.id === selectedRuns[0]);
+
+      setRunMetadataToEdit(metadata);
+    }
+  }, [enableComparisonView, runMetadata, selectedRuns]);
 
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
