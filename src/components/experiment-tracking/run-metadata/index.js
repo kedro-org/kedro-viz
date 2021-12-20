@@ -7,9 +7,10 @@ import { toHumanReadableTime } from '../../../utils/date-utils';
 
 import './run-metadata.css';
 
-// We are only checking for an empty string as it is the default value
-// returned by the graphql endpoint for empty values ( not null or undefined )
-const sanitiseEmptyValue = (value) => (value !== '' ? value : '-');
+// Return a '-' character if the value is empty or null
+const sanitiseEmptyValue = (value) => {
+  return value === '' || value === null ? '-' : value;
+};
 
 const RunMetadata = ({
   enableShowChanges = false,

@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import './input.css';
 
@@ -13,6 +7,7 @@ const MIN_HEIGHT = 20;
 const Input = ({
   characterLimit = false,
   defaultValue = '',
+  onChange,
   size = 'large',
 }) => {
   const isLimitSet = characterLimit > 0;
@@ -33,17 +28,16 @@ const Input = ({
   }, [value]);
 
   const handleChange = (e) => {
-    setLimitedLengthText(e.target.value);
-  };
+    const value = e.target.value;
 
-  const setLimitedLengthText = useCallback(
-    (text) => {
-      isLimitSet
-        ? setValue(text.slice(0, characterLimit))
-        : setValue(text.slice(0));
-    },
-    [characterLimit, isLimitSet]
-  );
+    if (isLimitSet) {
+      setValue(value.slice(0, characterLimit));
+      onChange && onChange(value.slice(0, characterLimit));
+    } else {
+      setValue(value.slice(0));
+      onChange && onChange(value.slice(0));
+    }
+  };
 
   return (
     <>
