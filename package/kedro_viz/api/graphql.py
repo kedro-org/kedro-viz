@@ -15,7 +15,7 @@ from strawberry import ID
 from strawberry.asgi import GraphQL
 
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.run_model import RunModel
+from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,6 @@ if TYPE_CHECKING:  # pragma: no cover
          doesn't support dynamic base.
         https://github.com/python/mypy/issues/2477
         """
-
 
 else:
     JSONObject = strawberry.scalar(
@@ -45,15 +44,17 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
     Returns:
         Run object
     """
+    session = data_access_manager.db_session
     git_data = run_blob.get("git")
+    user_details = session.query(UserRunDetailsModel).filter(UserRunDetailsModel.run_id == run_id).scalar()
     run = Run(
         id=ID(run_id),
         author="",
         gitBranch=git_data.get("branch") if git_data else None,
         gitSha=git_data.get("commit_sha") if git_data else None,
-        bookmark=False,
-        title=run_blob["session_id"],
-        notes="",
+        bookmark=user_details.bookmark if user_details else False,
+        title=user_details.title if user_details else run_blob["session_id"],
+        notes=user_details.notes if user_details else "",
         timestamp=run_blob["session_id"],
         runCommand=run_blob["cli"]["command_path"],
     )
@@ -94,9 +95,7 @@ def get_all_runs() -> List[Run]:
     return runs
 
 
-def format_run_tracking_data(
-    tracking_data: Dict, show_diff: Optional[bool] = False
-) -> JSONObject:
+def format_run_tracking_data(tracking_data: Dict, show_diff: Optional[bool] = False) -> JSONObject:
     """Convert tracking data in the front-end format.
 
     Args:
@@ -141,9 +140,7 @@ def format_run_tracking_data(
 
     for run_id, run_tracking_data in tracking_data.items():
         for tracking_name, data in run_tracking_data.items():
-            formatted_tracking_data[tracking_name].append(
-                {"runId": run_id, "value": data}
-            )
+            formatted_tracking_data[tracking_name].append({"runId": run_id, "value": data})
     if not show_diff:
         for tracking_key, run_tracking_data in list(formatted_tracking_data.items()):
             if len(run_tracking_data) != len(tracking_data):
@@ -152,9 +149,7 @@ def format_run_tracking_data(
     return JSONObject(formatted_tracking_data)
 
 
-def get_run_tracking_data(
-    run_ids: List[ID], show_diff: Optional[bool] = False
-) -> List[TrackingDataset]:
+def get_run_tracking_data(run_ids: List[ID], show_diff: Optional[bool] = False) -> List[TrackingDataset]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all tracking data for a list of runs. Tracking data contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
@@ -184,9 +179,7 @@ def get_run_tracking_data(
             run_id = ID(run_id)
             file_path = dataset._get_versioned_path(str(run_id))
             if Path(file_path).is_file():
-                with dataset._fs.open(
-                    file_path, **dataset._fs_open_args_load
-                ) as fs_file:
+                with dataset._fs.open(file_path, **dataset._fs_open_args_load) as fs_file:
                     json_data = json.load(fs_file)
                     all_runs[run_id] = json_data
             else:
@@ -245,9 +238,7 @@ class Query:
         return get_runs(run_ids)
 
     @strawberry.field
-    def run_tracking_data(
-        self, run_ids: List[ID], show_diff: Optional[bool] = False
-    ) -> List[TrackingDataset]:
+    def run_tracking_data(self, run_ids: List[ID], show_diff: Optional[bool] = False) -> List[TrackingDataset]:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
 
@@ -256,6 +247,74 @@ class Query:
 
 schema = strawberry.Schema(query=Query, subscription=Subscription)
 
+
+@strawberry.input
+class RunInput:
+    """Run input to update bookmark, title and notes"""
+
+    bookmark: Optional[bool] = None
+    title: Optional[str] = None
+    notes: Optional[str] = None
+
+
+@strawberry.type
+class UpdateRunDetailsSuccess:
+    """Response type for sucessful update of runs"""
+
+    run_details: JSONObject
+
+
+@strawberry.type
+class UpdateRunDetailsFailure:
+    """Response type for failed update of runs"""
+
+    run_id: ID
+    error_message: str
+
+
+Response = strawberry.union("UpdateRunDetailsResponse", (UpdateRunDetailsSuccess, UpdateRunDetailsFailure))
+
+
+@strawberry.type
+class Mutation:
+    """Mutation to update run details with run inputs"""
+
+    @strawberry.mutation
+    def update_run_details(self, run_id: ID, run_input: RunInput) -> Response:
+        """Updates run details based on run inputs provided by user"""
+        runs = get_runs([run_id])
+        if not runs:
+            return UpdateRunDetailsFailure(run_id=run_id, error_message=f"Given run_id: {run_id} doesn't exist")
+        existing_run = runs[0]
+        updated_user_run_details = {
+            "run_id": run_id,
+            "bookmark": run_input.bookmark if run_input.bookmark is not None else existing_run.bookmark,
+            "notes": run_input.notes if run_input.notes is not None else existing_run.notes,
+        }
+
+        # if user doesn't provide a new title, use the old title.
+        if run_input.title is None:
+            updated_user_run_details["title"] = existing_run.title
+        # if user provides an empty title, we assume they want to revert to the old timestamp title
+        elif run_input.title.strip() == "":
+            updated_user_run_details["title"] = existing_run.timestamp
+        else:
+            updated_user_run_details["title"] = run_input.title
+
+        session = data_access_manager.db_session
+        user_run_details = session.query(UserRunDetailsModel).filter(UserRunDetailsModel.run_id == run_id).first()
+        if not user_run_details:
+            session.add(UserRunDetailsModel(**updated_user_run_details)) # type: ignore
+        else:
+            for key, value in updated_user_run_details.items():
+                setattr(user_run_details, key, value)
+        session.commit()
+        return UpdateRunDetailsSuccess(
+            run_details=JSONObject(updated_user_run_details)
+        )
+
+
+schema = strawberry.Schema(query=Query, mutation=Mutation)
 
 router = APIRouter()
 
