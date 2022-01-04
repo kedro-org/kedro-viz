@@ -276,10 +276,7 @@ class RunInput:
 class UpdateRunDetailsSuccess:
     """Response type for sucessful update of runs"""
 
-    id: ID
-    bookmark: Optional[bool]
-    title: Optional[str]
-    notes: Optional[str]
+    run: Run
 
 
 @strawberry.type
@@ -308,29 +305,33 @@ class Mutation:
                 id=run_id, error_message=f"Given run_id: {run_id} doesn't exist"
             )
         existing_run = runs[0]
-
-    
-
+        new_run = existing_run
         # if user doesn't provide a new title, use the old title.
         if run_input.title is None:
-            updated_title = existing_run.title
+            new_run.title = existing_run.title
         # if user provides an empty title, we assume they want to revert to the old timestamp title
         elif run_input.title.strip() == "":
-            updated_title = existing_run.timestamp
+            new_run.title = existing_run.timestamp
         else:
-            updated_title = run_input.title
+            new_run.title = run_input.title
 
-        updated_bookmark = run_input.bookmark if run_input.bookmark is not None else existing_run.bookmark
-        
-        updated_notes = run_input.notes if run_input.notes is not None else existing_run.notes
-        
+        new_run.bookmark = (
+            run_input.bookmark
+            if run_input.bookmark is not None
+            else existing_run.bookmark
+        )
+
+        new_run.notes = (
+            run_input.notes if run_input.notes is not None else existing_run.notes
+        )
+
         updated_user_run_details = {
             "run_id": run_id,
-            "title": updated_title,
-            "bookmark": updated_bookmark,
-            "notes": updated_notes
+            "title": new_run.title,
+            "bookmark": new_run.bookmark,
+            "notes": new_run.notes,
         }
-        
+
         session = data_access_manager.db_session
         user_run_details = (
             session.query(UserRunDetailsModel)
@@ -343,12 +344,7 @@ class Mutation:
             for key, value in updated_user_run_details.items():
                 setattr(user_run_details, key, value)
         session.commit()
-        return UpdateRunDetailsSuccess(
-            id=run_id,
-            title=updated_title,
-            bookmark=updated_bookmark,
-            notes=updated_notes,
-        )
+        return UpdateRunDetailsSuccess(new_run)
 
 
 schema = strawberry.Schema(query=Query, mutation=Mutation)

@@ -562,10 +562,12 @@ class TestGraphQLMutation:
               updateRunDetails(runId: "{save_version}", runInput: {{bookmark: {str(bookmark).lower()}, notes: "{notes}", title: "{title}"}}) {{
                 __typename
                 ... on UpdateRunDetailsSuccess {{
-                  id
-                  title
-                  bookmark
-                  notes
+                 run {{
+                    id
+                    title
+                    bookmark
+                    notes
+                    }}
                 }}
                 ... on UpdateRunDetailsFailure {{
                   id
@@ -586,10 +588,12 @@ class TestGraphQLMutation:
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsSuccess",
-                        "id": save_version,
-                        "bookmark": bookmark,
-                        "title": title if title != "" else save_version,
-                        "notes": notes,
+                        "run": {
+                            "id": save_version,
+                            "bookmark": bookmark,
+                            "title": title if title != "" else save_version,
+                            "notes": notes,
+                        },
                     }
                 }
             }
@@ -602,10 +606,12 @@ class TestGraphQLMutation:
               updateRunDetails(runId: "{save_version}", runInput: {{bookmark: true}}) {{
                 __typename
                 ... on UpdateRunDetailsSuccess {{
-                  id
-                  title
-                  bookmark
-                  notes
+                  run {{
+                    id
+                    title
+                    bookmark
+                    notes
+                    }}
                 }}
                 ... on UpdateRunDetailsFailure {{
                   id
@@ -626,10 +632,12 @@ class TestGraphQLMutation:
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsSuccess",
-                        "id": save_version,
-                        "bookmark": True,
-                        "title": example_runs[0].title,
-                        "notes": example_runs[0].notes,
+                        "run": {
+                            "id": save_version,
+                            "bookmark": True,
+                            "title": example_runs[0].title,
+                            "notes": example_runs[0].notes,
+                        },
                     }
                 }
             }
@@ -642,10 +650,12 @@ class TestGraphQLMutation:
               updateRunDetails(runId: "{save_version}", runInput: {{bookmark: true}}) {{
                 __typename
                 ... on UpdateRunDetailsSuccess {{
-                  id
-                  title
-                  notes
-                  bookmark
+                run {{
+                    id
+                    title
+                    bookmark
+                    notes
+                    }}
                 }}
                 ... on UpdateRunDetailsFailure {{
                   id
@@ -668,10 +678,12 @@ class TestGraphQLMutation:
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsSuccess",
-                        "id": save_version,
-                        "bookmark": True,
-                        "title": example_runs[0].title,
-                        "notes": example_runs[0].notes,
+                        "run": {
+                            "id": save_version,
+                            "bookmark": True,
+                            "title": example_runs[0].title,
+                            "notes": example_runs[0].notes,
+                        },
                     }
                 }
             }
@@ -695,10 +707,12 @@ class TestGraphQLMutation:
                         {
                             __typename
                             ... on UpdateRunDetailsSuccess {
-                            id
-                            title
-                            notes
-                            bookmark
+                            run {
+                                id
+                                title
+                                notes
+                                bookmark
+                                }
                             }
                             ... on UpdateRunDetailsFailure {
                             id

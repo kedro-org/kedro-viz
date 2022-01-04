@@ -60,10 +60,7 @@ const typeDefs = gql`
     | UpdateRunDetailsFailure
 
   type UpdateUserDetailsSuccess {
-    id: ID!
-    bookmark: Boolean = null
-    title: String = null
-    notes: String = null
+    run: Run!
   }
 `;
 
