@@ -276,7 +276,7 @@ class RunInput:
 class UpdateRunDetailsSuccess:
     """Response type for sucessful update of runs"""
 
-    run_id: ID
+    id: ID
     bookmark: Optional[bool]
     title: Optional[str]
     notes: Optional[str]
@@ -286,7 +286,7 @@ class UpdateRunDetailsSuccess:
 class UpdateRunDetailsFailure:
     """Response type for failed update of runs"""
 
-    run_id: ID
+    id: ID
     error_message: str
 
 
@@ -305,7 +305,7 @@ class Mutation:
         runs = get_runs([run_id])
         if not runs:
             return UpdateRunDetailsFailure(
-                run_id=run_id, error_message=f"Given run_id: {run_id} doesn't exist"
+                id=run_id, error_message=f"Given run_id: {run_id} doesn't exist"
             )
         existing_run = runs[0]
 
@@ -344,7 +344,7 @@ class Mutation:
                 setattr(user_run_details, key, value)
         session.commit()
         return UpdateRunDetailsSuccess(
-            run_id=run_id,
+            id=run_id,
             title=updated_title,
             bookmark=updated_bookmark,
             notes=updated_notes,

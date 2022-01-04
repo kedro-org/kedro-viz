@@ -36,14 +36,14 @@ type TrackingDataset {
 }
 
 type UpdateRunDetailsFailure {
-  runId: ID!
+  id: ID!
   errorMessage: String!
 }
 
 union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | UpdateRunDetailsFailure
 
 type UpdateRunDetailsSuccess {
-  runId: ID!
+  id: ID!
   bookmark: Boolean
   title: String
   notes: String
