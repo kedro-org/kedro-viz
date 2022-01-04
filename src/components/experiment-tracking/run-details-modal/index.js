@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { client } from '../../../apollo/config';
 import { UPDATE_RUN_DETAILS } from '../../../apollo/mutations';
 import { GET_RUN_METADATA } from '../../../apollo/queries';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
@@ -12,6 +13,7 @@ import './run-details-modal.css';
 const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
   const [valuesToUpdate, setValuesToUpdate] = useState({});
   const [updateRunDetails, { error }] = useMutation(UPDATE_RUN_DETAILS, {
+    client,
     refetchQueries: [GET_RUN_METADATA],
   });
 
@@ -59,9 +61,7 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
         </div>
         <div className="pipeline-settings-modal__content pipeline-settings-modal__content--short">
           <div className="pipeline-settings-modal__header">
-            <div className="pipeline-settings-modal__name">
-              Notes (this is searchable)
-            </div>
+            <div className="pipeline-settings-modal__name">Notes</div>
           </div>
           <Input
             characterLimit={500}

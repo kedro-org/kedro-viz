@@ -122,9 +122,7 @@ const RunMetadata = ({
                       onClick={() => onTitleOrNoteClick(run.id)}
                       style={toggleNotes[i] ? { display: 'block' } : null}
                     >
-                      {run.notes !== ''
-                        ? run.notes
-                        : '- Add notes here (Notes are searchable)'}
+                      {run.notes !== '' ? run.notes : '- Add notes here'}
                     </p>
                     {run.notes.length > 100 ? (
                       <button
