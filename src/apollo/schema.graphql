@@ -43,5 +43,8 @@ type UpdateRunDetailsFailure {
 union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | UpdateRunDetailsFailure
 
 type UpdateRunDetailsSuccess {
-  runDetails: JSONObject!
+  runId: ID!
+  bookmark: Boolean
+  title: String
+  notes: String
 }

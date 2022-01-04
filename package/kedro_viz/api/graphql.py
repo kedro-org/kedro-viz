@@ -261,7 +261,10 @@ class RunInput:
 class UpdateRunDetailsSuccess:
     """Response type for sucessful update of runs"""
 
-    run_details: JSONObject
+    run_id: ID
+    bookmark: Optional[bool] = None
+    title: Optional[str] = None
+    notes: Optional[str] = None
 
 
 @strawberry.type
@@ -310,7 +313,11 @@ class Mutation:
                 setattr(user_run_details, key, value)
         session.commit()
         return UpdateRunDetailsSuccess(
-            run_details=JSONObject(updated_user_run_details)
+            run_id = run_id,
+            title = updated_user_run_details['title'],
+            bookmark= updated_user_run_details["bookmark"],
+            notes= updated_user_run_details["notes"]
+
         )
 
 
