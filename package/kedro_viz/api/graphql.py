@@ -7,7 +7,7 @@ import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, NewType, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, NewType, Optional, Tuple
 
 import strawberry
 from fastapi import APIRouter
@@ -277,9 +277,9 @@ class UpdateRunDetailsSuccess:
     """Response type for sucessful update of runs"""
 
     run_id: ID
-    bookmark: Union[bool, None, str]
-    title: Union[bool, None, str]
-    notes: Union[bool, None, str]
+    bookmark: Optional[bool]
+    title: Optional[str]
+    notes: Optional[str]
 
 
 @strawberry.type
@@ -308,25 +308,29 @@ class Mutation:
                 run_id=run_id, error_message=f"Given run_id: {run_id} doesn't exist"
             )
         existing_run = runs[0]
-        updated_user_run_details = {
-            "run_id": run_id,
-            "bookmark": run_input.bookmark
-            if run_input.bookmark is not None
-            else existing_run.bookmark,
-            "notes": run_input.notes
-            if run_input.notes is not None
-            else existing_run.notes,
-        }
+
+    
 
         # if user doesn't provide a new title, use the old title.
         if run_input.title is None:
-            updated_user_run_details["title"] = existing_run.title
+            updated_title = existing_run.title
         # if user provides an empty title, we assume they want to revert to the old timestamp title
         elif run_input.title.strip() == "":
-            updated_user_run_details["title"] = existing_run.timestamp
+            updated_title = existing_run.timestamp
         else:
-            updated_user_run_details["title"] = run_input.title
+            updated_title = run_input.title
 
+        updated_bookmark = run_input.bookmark if run_input.bookmark is not None else existing_run.bookmark
+        
+        updated_notes = run_input.notes if run_input.notes is not None else existing_run.notes
+        
+        updated_user_run_details = {
+            "run_id": run_id,
+            "title": updated_title,
+            "bookmark": updated_bookmark,
+            "notes": updated_notes
+        }
+        
         session = data_access_manager.db_session
         user_run_details = (
             session.query(UserRunDetailsModel)
@@ -341,9 +345,9 @@ class Mutation:
         session.commit()
         return UpdateRunDetailsSuccess(
             run_id=run_id,
-            title=updated_user_run_details["title"],
-            bookmark=updated_user_run_details["bookmark"],
-            notes=updated_user_run_details["notes"],
+            title=updated_title,
+            bookmark=updated_bookmark,
+            notes=updated_notes,
         )
 
 
