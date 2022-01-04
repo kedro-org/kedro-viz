@@ -534,28 +534,13 @@ class TestGraphQLEndpoints:
 
 
 class TestGraphQLMutation:
-    @pytest.mark.parametrize(
-        "bookmark,notes,title",
-        [
-            (
-                False,
-                "new notes",
-                "new title",
-            ),
-            (True, "new notes", "new title"),
-            (True, "", ""),
-        ],
-    )
+    @pytest.mark.parametrize("bookmark,notes,title", [
+        (False, "new notes", "new title", ),
+        (True, "new notes", "new title"),
+        (True, "", ""),
+    ])
     def test_update_user_details_success(
-        self,
-        bookmark,
-        notes,
-        title,
-        client,
-        save_version,
-        example_runs,
-        example_db_dataset,
-        mocker,
+        self, bookmark, notes, title, client, save_version, example_runs, example_db_dataset, mocker
     ):
         query = f"""
             mutation updateRun {{
@@ -578,7 +563,7 @@ class TestGraphQLMutation:
         ) as mock_session:
             mock_session.return_value = example_db_dataset
             mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
-            response = client.post("/graphql", json={"query": query})
+            response = client.post("/graphql", json={"query": query}) 
             assert response.json() == {
                 "data": {
                     "updateRunDetails": {
@@ -617,7 +602,7 @@ class TestGraphQLMutation:
         ) as mock_session:
             mock_session.return_value = example_db_dataset
             mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
-            response = client.post("/graphql", json={"query": query})
+            response = client.post("/graphql", json={"query": query}) 
             assert response.json() == {
                 "data": {
                     "updateRunDetails": {
@@ -632,9 +617,7 @@ class TestGraphQLMutation:
                 }
             }
 
-    def test_update_user_details_should_add_when_it_does_not_exist(
-        self, save_version, client, example_runs, mocker
-    ):
+    def test_update_user_details_should_add_when_it_does_not_exist(self, save_version, client, example_runs, mocker):
         query = f"""
             mutation updateRun {{
               updateRunDetails(runId: "{save_version}", runInput: {{bookmark: true}}) {{
@@ -654,11 +637,9 @@ class TestGraphQLMutation:
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
         ) as mock_session:
-            mock_session.return_value.query.return_value.filter.return_value.first.return_value = (
-                None
-            )
+            mock_session.return_value.query.return_value.filter.return_value.first.return_value = None
             mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
-            response = client.post("/graphql", json={"query": query})
+            response = client.post("/graphql", json={"query": query}) 
             assert response.json() == {
                 "data": {
                     "updateRunDetails": {
