@@ -7,7 +7,7 @@ import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, NewType, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, NewType, Optional
 
 import strawberry
 from fastapi import APIRouter
