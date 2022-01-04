@@ -116,7 +116,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && make pylint"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
