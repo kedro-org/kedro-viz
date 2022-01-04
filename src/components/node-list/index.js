@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import utils from '@quantumblack/kedro-ui/lib/utils';
 import debounce from 'lodash/debounce';
 import NodeList from './node-list';
 import {
@@ -175,9 +174,9 @@ const NodeListProvider = ({
 
   // Deselect node on Escape key
   const handleKeyDown = (event) => {
-    utils.handleKeyEvent(event.keyCode, {
-      escape: () => onToggleNodeSelected(null),
-    });
+    if (event.keyCode === 27) {
+      onToggleNodeSelected(null);
+    }
   };
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
