@@ -562,13 +562,13 @@ class TestGraphQLMutation:
               updateRunDetails(runId: "{save_version}", runInput: {{bookmark: {str(bookmark).lower()}, notes: "{notes}", title: "{title}"}}) {{
                 __typename
                 ... on UpdateRunDetailsSuccess {{
-                  runId
+                  id
                   title
                   bookmark
                   notes
                 }}
                 ... on UpdateRunDetailsFailure {{
-                  runId
+                  id
                   errorMessage
                 }}
               }}
@@ -586,7 +586,7 @@ class TestGraphQLMutation:
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsSuccess",
-                        "runId": save_version,
+                        "id": save_version,
                         "bookmark": bookmark,
                         "title": title if title != "" else save_version,
                         "notes": notes,
@@ -602,13 +602,13 @@ class TestGraphQLMutation:
               updateRunDetails(runId: "{save_version}", runInput: {{bookmark: true}}) {{
                 __typename
                 ... on UpdateRunDetailsSuccess {{
-                  runId
+                  id
                   title
                   bookmark
                   notes
                 }}
                 ... on UpdateRunDetailsFailure {{
-                  runId
+                  id
                   errorMessage
                 }}
               }}
@@ -626,7 +626,7 @@ class TestGraphQLMutation:
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsSuccess",
-                        "runId": save_version,
+                        "id": save_version,
                         "bookmark": True,
                         "title": example_runs[0].title,
                         "notes": example_runs[0].notes,
@@ -642,13 +642,13 @@ class TestGraphQLMutation:
               updateRunDetails(runId: "{save_version}", runInput: {{bookmark: true}}) {{
                 __typename
                 ... on UpdateRunDetailsSuccess {{
-                  runId
+                  id
                   title
                   notes
                   bookmark
                 }}
                 ... on UpdateRunDetailsFailure {{
-                  runId
+                  id
                   errorMessage
                 }}
               }}
@@ -668,7 +668,7 @@ class TestGraphQLMutation:
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsSuccess",
-                        "runId": save_version,
+                        "id": save_version,
                         "bookmark": True,
                         "title": example_runs[0].title,
                         "notes": example_runs[0].notes,
@@ -695,13 +695,13 @@ class TestGraphQLMutation:
                         {
                             __typename
                             ... on UpdateRunDetailsSuccess {
-                            runId
+                            id
                             title
                             notes
                             bookmark
                             }
                             ... on UpdateRunDetailsFailure {
-                            runId
+                            id
                             errorMessage
                             } }
                             }"""
@@ -711,7 +711,7 @@ class TestGraphQLMutation:
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsFailure",
-                        "runId": "2021-11-02T12.24.24.329Z",
+                        "id": "2021-11-02T12.24.24.329Z",
                         "errorMessage": "Given run_id: 2021-11-02T12.24.24.329Z doesn't exist",
                     }
                 }
