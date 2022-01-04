@@ -34,21 +34,6 @@ describe('HandleKey Events', () => {
     expect(spy.callCount).toBe(1);
   });
 
-  it('Should invoke correctly when multiple keys are supplied', () => {
-    const spy = sinon.spy();
-
-    /** Test key code */
-    const test = (keyCode) => {
-      handleKeyEvent(keyCode)('escape,enter', spy);
-    };
-
-    [27, 13].forEach((key) => {
-      test(key);
-    });
-
-    expect(spy.callCount).toBe(2);
-  });
-
   it('Should throw if invalid values supplied', () => {
     /** Test null params */
     const test1 = () => {
