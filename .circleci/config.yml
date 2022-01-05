@@ -18,11 +18,10 @@ commands:
           command: |
             sudo apt update
             sudo apt install python3 python3-pip
-            python -m pip install -U pip setuptools wheel
       - run:
           name: Install Python environment
           command: |
-            mkdir -p /home/circleci/.venvs && python -m venv /home/circleci/.venvs/kedro-viz
+            mkdir -p /home/circleci/.venvs && python3 -m venv /home/circleci/.venvs/kedro-viz
             echo "source /home/circleci/.venvs/kedro-viz/bin/activate" >> $BASH_ENV
       - run:
           name: Install Python dependencies
