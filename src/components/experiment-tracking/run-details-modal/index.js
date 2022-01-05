@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client';
 import { client } from '../../../apollo/config';
 import { UPDATE_RUN_DETAILS } from '../../../apollo/mutations';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
-import Modal from '@quantumblack/kedro-ui/lib/components/modal';
+import Modal from '../../modal';
 import Input from '../../ui/input';
 
 import '../../settings-modal/settings-modal.css';
