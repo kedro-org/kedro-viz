@@ -6,7 +6,7 @@ orbs:
 executors:
   circleci_machine:
     docker:
-      - image: circleci/node:14.15
+      - image: cimg/node:14.15
     working_directory: ~/repo
 
 commands:
@@ -14,28 +14,20 @@ commands:
     description: Setup Python environment
     steps:
       - run:
-          name: Install python3
+          name: Install python3.8
           command: |
+            sudo apt-get install software-properties-common
+            sudo add-apt-repository ppa:deadsnakes/ppa -y
             sudo apt update
-            sudo apt install python3 python3-pip
+            sudo apt install python3.8 python3-pip python3-venv
       - run:
           name: Install Python environment
           command: |
-            # Get rid of pyenv stuff
-            sudo rm -rf .pyenv/ /opt/circleci/.pyenv/
-            # Download and install miniconda
-            curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh  > miniconda.sh
-            bash miniconda.sh -b -p $HOME/miniconda
-            # Create an anaconda virtualenv for python ${CONDA_ENV_PY_VERSION} and make that the default python interpreter
-            echo ". /home/circleci/miniconda/etc/profile.d/conda.sh" >> $BASH_ENV
-            echo "conda deactivate; conda activate kedro-viz" >> $BASH_ENV
-            . /home/circleci/miniconda/etc/profile.d/conda.sh
-            conda create --name kedro-viz python=${CONDA_ENV_PY_VERSION} -y
-            source $BASH_ENV
+            mkdir -p /home/circleci/.venvs && python3 -m venv /home/circleci/.venvs/kedro-viz
+            echo "source /home/circleci/.venvs/kedro-viz/bin/activate" >> $BASH_ENV
       - run:
-          name: Install Kedro-Viz dependencies
+          name: Install Python dependencies
           command: |
-            python -m pip install -U pip setuptools wheel
             pip install git+https://github.com/quantumblacklabs/kedro@main
             cd package && pip install -r requirements.txt -U
             pip install -r test_requirements.txt -U
@@ -51,7 +43,7 @@ commands:
     steps:
       - run:
           name: Install Node dependencies
-          command: node tools/ci.js
+          command: npm install 
 
   test_lib_transpilation:
     steps:
@@ -174,18 +166,24 @@ commands:
             git commit -m 'Demo build [ci skip]'
             git remote add origin https://github.com/quantumblacklabs/kedro-viz.git
             git push origin gh-pages --force
-
+  
   build:
     description: Run build
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
+            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v${CACHE_VERSION}-dependencies-
       - setup_python_env
       - install_node_dependencies
+      - save_cache:
+          paths:
+            - node_modules
+            - /home/circleci/.venvs/kedro-viz
+            - /home/circleci/.cache/pip/
+          key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - test_lib_transpilation
       - test_lib_import
       - run_eslint
@@ -196,10 +194,6 @@ commands:
       - run_python_tests
       - run_e2e_tests
       - cleanup
-      - save_cache:
-          paths:
-            - node_modules
-          key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
       - build_npm_package
       - package_app
 
@@ -215,10 +209,11 @@ commands:
       - run:
           name: Create 'kedro-viz' conda environment
           command: |
-            conda create --name kedro-viz python=$env:CONDA_ENV_PY_VERSION -y
+            $condaEnvPath = "c:\tools\miniconda3\envs\kedro-viz\"
+            if (-not (Test-Path $condaEnvPath)) { conda create --name kedro-viz python=$env:CONDA_ENV_PY_VERSION -y }
 
   win_setup_requirements:
-    description: Install Kedro-Viz dependencies
+    description: Install Python dependencies
     steps:
       - run:
           name: Install Kedro-Viz dependencies
@@ -239,9 +234,20 @@ commands:
     description: Run build on Windows
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-dependencies-
       - win_setup_conda
       - win_setup_requirements
       - install_node_dependencies
+      - save_cache:
+          paths:
+            - node_modules
+            - c:\tools\miniconda3\envs\kedro-viz\
+            - c:\users\circleci\appdata\local\pip\cache\
+          key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - run:
           name: Run Python unit tests
           command: |
