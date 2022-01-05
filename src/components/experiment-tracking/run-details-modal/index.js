@@ -32,11 +32,6 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
     );
   };
 
-  const closeModal = () => {
-    onClose(false);
-    reset();
-  };
-
   useEffect(() => {
     setValuesToUpdate({
       notes: runMetadataToEdit?.notes,
@@ -44,10 +39,19 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
     });
   }, [runMetadataToEdit]);
 
+  useEffect(() => {
+    /**
+     * If there's a GraphQL error when trying to update the title/notes,
+     * reset the mutation when the modal closes so the error doesn't appear
+     * the next time the modal opens.
+     */
+    reset();
+  }, [reset, visible]);
+
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
       <Modal
-        onClose={() => closeModal(false)}
+        onClose={() => onClose(false)}
         theme={theme}
         title="Edit run details"
         visible={visible}
@@ -77,7 +81,7 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
         <div className="run-details-modal-button-wrapper">
           <Button
             mode="secondary"
-            onClick={() => closeModal(false)}
+            onClick={() => onClose(false)}
             size="small"
             theme={theme}
           >

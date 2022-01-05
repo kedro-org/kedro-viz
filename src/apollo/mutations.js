@@ -8,12 +8,7 @@ export const UPDATE_RUN_DETAILS = gql`
         id
       }
       ... on UpdateRunDetailsSuccess {
-        run {
-          bookmark
-          id
-          notes
-          title
-        }
+        asdf
       }
     }
   }
