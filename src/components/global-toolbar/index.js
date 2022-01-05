@@ -20,6 +20,7 @@ export const GlobalToolbar = ({
   onToggleSettingsModal,
   onToggleTheme,
   theme,
+  visible,
 }) => {
   return (
     <>
@@ -83,6 +84,7 @@ export const GlobalToolbar = ({
 
 export const mapStateToProps = (state) => ({
   theme: state.theme,
+  visible: state.visible,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

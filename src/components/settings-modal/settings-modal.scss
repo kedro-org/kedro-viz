@@ -19,17 +19,17 @@
 }
 
 .pipeline-settings-modal {
-  .kui-modal__content {
+  .modal__content {
     width: calc(100% - 5em);
     max-width: 900px;
   }
 
-  .kui-modal__wrapper {
+  .modal__wrapper {
     align-items: flex-start;
     text-align: left;
   }
 
-  .kui-modal__bg--visible {
+  .modal__bg--visible {
     opacity: 0.7;
   }
 }
