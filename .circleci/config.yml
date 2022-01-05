@@ -6,7 +6,7 @@ orbs:
 executors:
   circleci_machine:
     docker:
-      - image: cimg/node:14.15
+      - image: cmig/node:14.15
     working_directory: ~/repo
 
 commands:
@@ -17,8 +17,9 @@ commands:
           name: Install python3.8
           command: |
             sudo apt-get install software-properties-common
-            sudo apt install python3.8 python3-pip python3-venv
-            python -V
+            sudo add-apt-repository ppa:deadsnakes/ppa -y
+            sudo apt update
+            sudo apt install python3.8 python3.8-pip python3.8-venv
       - run:
           name: Install Python environment
           command: |
