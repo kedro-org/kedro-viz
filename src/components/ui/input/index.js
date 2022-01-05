@@ -8,6 +8,7 @@ const Input = ({
   characterLimit = false,
   defaultValue = '',
   onChange,
+  placeholder,
   size = 'large',
 }) => {
   const isLimitSet = characterLimit > 0;
@@ -44,6 +45,7 @@ const Input = ({
       <textarea
         className={`input input--${size}`}
         onChange={handleChange}
+        placeholder={placeholder}
         ref={ref}
         rows={1}
         value={value}

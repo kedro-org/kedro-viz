@@ -53,6 +53,10 @@
     text-decoration: underline;
     text-decoration-color: $color-accent-blue;
   }
+
+  &::placeholder {
+    color: var(--color-text);
+  }
 }
 
 %input--large {

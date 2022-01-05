@@ -5,10 +5,15 @@ export const UPDATE_RUN_DETAILS = gql`
     updateRunDetails(runId: $runId, runInput: $runInput) {
       ... on UpdateRunDetailsFailure {
         errorMessage
-        runId
+        id
       }
       ... on UpdateRunDetailsSuccess {
-        runDetails
+        run {
+          bookmark
+          id
+          notes
+          title
+        }
       }
     }
   }

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { client } from '../../../apollo/config';
 import { UPDATE_RUN_DETAILS } from '../../../apollo/mutations';
-import { GET_RUN_METADATA } from '../../../apollo/queries';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
 import Modal from '@quantumblack/kedro-ui/lib/components/modal';
 import Input from '../../ui/input';
@@ -12,9 +11,8 @@ import './run-details-modal.css';
 
 const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
   const [valuesToUpdate, setValuesToUpdate] = useState({});
-  const [updateRunDetails, { error }] = useMutation(UPDATE_RUN_DETAILS, {
+  const [updateRunDetails, { error, reset }] = useMutation(UPDATE_RUN_DETAILS, {
     client,
-    refetchQueries: [GET_RUN_METADATA],
   });
 
   const onApplyChanges = () => {
@@ -34,6 +32,11 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
     );
   };
 
+  const closeModal = () => {
+    onClose(false);
+    reset();
+  };
+
   useEffect(() => {
     setValuesToUpdate({
       notes: runMetadataToEdit?.notes,
@@ -44,7 +47,7 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
       <Modal
-        onClose={() => onClose(false)}
+        onClose={() => closeModal(false)}
         theme={theme}
         title="Edit run details"
         visible={visible}
@@ -65,15 +68,16 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
           </div>
           <Input
             characterLimit={500}
-            defaultValue={runMetadataToEdit?.notes || 'Add here'}
+            defaultValue={runMetadataToEdit?.notes || ''}
             onChange={(value) => onChange('notes', value)}
+            placeholder="Add here"
             size="small"
           />
         </div>
         <div className="run-details-modal-button-wrapper">
           <Button
             mode="secondary"
-            onClick={() => onClose(false)}
+            onClick={() => closeModal(false)}
             size="small"
             theme={theme}
           >
