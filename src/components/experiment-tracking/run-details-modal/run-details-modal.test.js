@@ -21,7 +21,7 @@ describe('RunDetailsModal', () => {
 
     onClick.mockImplementation((visible) => [visible, setVisible]);
     const closeButton = wrapper.find(
-      '.pipeline-settings-modal--experiment-tracking .kui-icon--close'
+      '.pipeline-settings-modal--experiment-tracking .modal__close-button.pipeline-icon-toolbar__button'
     );
     closeButton.simulate('click');
     expect(
