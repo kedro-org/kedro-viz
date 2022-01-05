@@ -62,11 +62,11 @@ const ExperimentWrapper = ({ theme }) => {
   }, [selectedRuns]);
 
   useEffect(() => {
-    if (data?.runsList.length > 0) {
+    if (data?.runsList.length > 0 && selectedRuns.length === 0) {
       // If we return runs, set the first one as the default.
       setSelectedRuns(data.runsList.map((run) => run.id).slice(0, 1));
     }
-  }, [data]);
+  }, [data, selectedRuns]);
 
   useEffect(() => {
     if (typeof pinnedRun === 'undefined' || !selectedRuns.includes(pinnedRun)) {
