@@ -33,13 +33,14 @@ commands:
             conda create --name kedro-viz python=${CONDA_ENV_PY_VERSION} -y
             source $BASH_ENV
       - run:
-          name: Install Kedro-Viz dependencies
+          name: Install Python dependencies
           command: |
-            python -m pip install -U pip setuptools wheel
-            pip install git+https://github.com/quantumblacklabs/kedro@main
-            cd package && pip install -r requirements.txt -U
-            pip install -r test_requirements.txt -U
-            cd ..
+            conda info
+            # python -m pip install -U pip setuptools wheel
+            # pip install git+https://github.com/quantumblacklabs/kedro@main
+            # cd package && pip install -r requirements.txt -U
+            # pip install -r test_requirements.txt -U
+            # cd ..
       - run:
           name: Echo package versions
           command: |
