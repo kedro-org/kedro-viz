@@ -32,6 +32,7 @@ pylint:
 	pylint --rcfile=package/.pylintrc -j 0 --disable=missing-docstring,no-name-in-module,unused-argument package/features &
 	flake8 --config=package/.flake8 package &
 	mypy --config-file=package/mypy.ini package &
+	wait
 	echo "Done linting"
 
 secret-scan:
