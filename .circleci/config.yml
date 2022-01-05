@@ -76,7 +76,7 @@ commands:
     steps:
       - run:
           name: Run pylint and flake8
-          command: make -j 8 pylint
+          command: make pylint
 
   run_secret_scan:
     steps:
