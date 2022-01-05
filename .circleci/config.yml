@@ -178,6 +178,12 @@ commands:
             - v${CACHE_VERSION}-dependencies-
       - setup_python_env
       - install_node_dependencies
+      - save_cache:
+          paths:
+            - node_modules
+            - /home/circleci/.venvs/kedro-viz
+            - /home/circleci/.cache/pip/
+          key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - test_lib_transpilation
       - test_lib_import
       - run_eslint
@@ -188,11 +194,6 @@ commands:
       - run_python_tests
       - run_e2e_tests
       - cleanup
-      - save_cache:
-          paths:
-            - node_modules
-            - /home/circleci/.venvs/kedro-viz
-          key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - build_npm_package
       - package_app
 
