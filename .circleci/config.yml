@@ -14,10 +14,11 @@ commands:
     description: Setup Python environment
     steps:
       - run:
-          name: Install python3
+          name: Install python3.8
           command: |
+            sudo add-apt-repository ppa:deadsnakes/ppa -y
             sudo apt update
-            sudo apt install python3 python3-pip python3-venv
+            sudo apt install python3.8 python3.8-pip python3.8-venv
       - run:
           name: Install Python environment
           command: |
