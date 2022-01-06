@@ -7,6 +7,7 @@ executors:
   circleci_machine:
     docker:
       - image: cimg/node:14.15
+    working_directory: ~/repo
 
 commands:
   setup_python_env:
@@ -271,6 +272,7 @@ jobs:
 
   build_38:
     executor: circleci_machine
+    working_directory: ~/repo
     environment:
       CONDA_ENV_PY_VERSION: '3.8'
     steps: [build]
@@ -286,12 +288,14 @@ jobs:
   # Windows-related jobs
   win_build_37:
     executor: win/default
+    working_directory: ~/repo
     environment:
       CONDA_ENV_PY_VERSION: '3.7'
     steps: [win_build]
 
   win_build_38:
     executor: win/default
+    working_directory: ~/repo
     environment:
       CONDA_ENV_PY_VERSION: '3.8'
       NODE_OPTIONS: '--max-old-space-size=8192'
