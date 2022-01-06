@@ -7,7 +7,6 @@ executors:
   circleci_machine:
     docker:
       - image: cimg/node:14.15
-    working_directory: ~/repo
 
 commands:
   setup_python_env:
@@ -43,7 +42,7 @@ commands:
     steps:
       - run:
           name: Install Node dependencies
-          command: npm install 
+          command: npm install
 
   test_lib_transpilation:
     steps:
@@ -166,7 +165,7 @@ commands:
             git commit -m 'Demo build [ci skip]'
             git remote add origin https://github.com/quantumblacklabs/kedro-viz.git
             git push origin gh-pages --force
-  
+
   build:
     description: Run build
     steps:
@@ -264,7 +263,6 @@ commands:
             behave
 
 jobs:
-
   build_37:
     executor: circleci_machine
     environment:
@@ -288,14 +286,12 @@ jobs:
   # Windows-related jobs
   win_build_37:
     executor: win/default
-    working_directory: ~/repo
     environment:
       CONDA_ENV_PY_VERSION: '3.7'
     steps: [win_build]
 
   win_build_38:
     executor: win/default
-    working_directory: ~/repo
     environment:
       CONDA_ENV_PY_VERSION: '3.8'
       NODE_OPTIONS: '--max-old-space-size=8192'
