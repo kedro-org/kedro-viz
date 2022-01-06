@@ -75,6 +75,7 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
             defaultValue={runMetadataToEdit?.notes || ''}
             onChange={(value) => onChange('notes', value)}
             placeholder="Add here"
+            resetValueTrigger={visible}
             size="small"
           />
         </div>

@@ -9,6 +9,7 @@ const Input = ({
   defaultValue = '',
   onChange,
   placeholder,
+  resetValueTrigger,
   size = 'large',
 }) => {
   const isLimitSet = characterLimit > 0;
@@ -18,6 +19,10 @@ const Input = ({
   useEffect(() => {
     setValue(defaultValue);
   }, [defaultValue]);
+
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue, resetValueTrigger]);
 
   useLayoutEffect(() => {
     ref.current.style.height = 'inherit';
