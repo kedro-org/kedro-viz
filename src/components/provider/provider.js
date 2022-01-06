@@ -8,7 +8,7 @@ import {
   runTrackingDataMock,
 } from '../../apollo/mocks';
 
-export const Provider = ({ useMocks, children }) => {
+export const Provider = ({ useMocks = false, children }) => {
   if (useMocks) {
     return (
       <MockedProvider
@@ -18,6 +18,7 @@ export const Provider = ({ useMocks, children }) => {
       </MockedProvider>
     );
   }
+
   return (
     <ApolloProvider client={client}>
       <>{children}</>

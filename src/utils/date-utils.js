@@ -32,5 +32,6 @@ export const sortRunByTime = (runIds) => {
   }));
 
   runsWithTimestamps.sort((a, b) => new Date(a.dateObj) - new Date(b.dateObj));
+
   return runsWithTimestamps.map((run) => run.id);
 };
