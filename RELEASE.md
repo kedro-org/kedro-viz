@@ -1,12 +1,8 @@
 # Upcoming release
 
-<!--
-Use the sections below to add notes for the next release.
-Please follow the established format:
-- Keep each note concise - ideally commit title length
-- Use present tense (e.g. 'Add new feature')
-- Include the ID number for the related PR (or PRs) in parentheses
--->
+## Bug fixes and other changes
+
+- Bug fix for plotly JSONDataSet icon (#684)
 
 # Release 4.2.0
 
