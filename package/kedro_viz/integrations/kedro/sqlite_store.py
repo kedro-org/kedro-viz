@@ -51,7 +51,7 @@ class SQLiteStore(BaseSessionStore):
 
                     branch = git.Repo(search_parent_directories=True).active_branch
                     value["branch"] = branch.name
-                except ImportError as exc: # pragma: no cover
+                except ImportError as exc:  # pragma: no cover
                     logger.warning("%s:%s", exc.__class__.__name__, exc.msg)
 
             if _is_json_serializable(value):

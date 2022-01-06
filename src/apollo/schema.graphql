@@ -36,12 +36,12 @@ type TrackingDataset {
 }
 
 type UpdateRunDetailsFailure {
-  runId: ID!
+  id: ID!
   errorMessage: String!
 }
 
 union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | UpdateRunDetailsFailure
 
 type UpdateRunDetailsSuccess {
-  runDetails: JSONObject!
+  run: Run!
 }

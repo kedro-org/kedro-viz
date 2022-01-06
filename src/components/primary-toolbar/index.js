@@ -2,18 +2,19 @@ import React from 'react';
 import classnames from 'classnames';
 import IconButton from '../icon-button';
 import MenuIcon from '../icons/menu';
+
 import './primary-toolbar.css';
 
 /**
  * Toolbar to house buttons that controls display options for the main panel (flowchart, experiment details, etc)
+ * @param {JSX} children The content to be rendered within the toolbar
  * @param {Function} onToggleSidebar Handle toggling of sidebar collapsable view
  * @param {Boolean} visible Handle display of tooltip text in relation to collapsable view
- * @param {JSX} children The content to be rendered within the toolbar
  */
 export const PrimaryToolbar = ({
+  children,
   onToggleSidebar,
   visible = { sidebar: true },
-  children,
 }) => (
   <>
     <ul className="pipeline-primary-toolbar kedro">
