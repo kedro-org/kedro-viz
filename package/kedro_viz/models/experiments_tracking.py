@@ -1,10 +1,12 @@
 """Data model to represent run data from a Kedro Session."""
 # pylint: disable=too-few-public-methods,missing-class-docstring
+import datetime
 
+from kedro.io.core import VERSION_FORMAT
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.types import JSON, Boolean, Integer, String
+from sqlalchemy.types import JSON, Boolean, DateTime, Integer, String
 
 Base = declarative_base()
 
@@ -16,6 +18,7 @@ class RunModel(Base):
 
     id = Column(String, primary_key=True, index=True)
     blob = Column(JSON)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     class Config:
         orm_mode = True
