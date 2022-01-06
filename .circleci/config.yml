@@ -43,7 +43,7 @@ commands:
     steps:
       - run:
           name: Install Node dependencies
-          command: npm install 
+          command: npm install
 
   test_lib_transpilation:
     steps:
@@ -125,8 +125,8 @@ commands:
       - checkout
       - restore_cache:
           keys:
-            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
-            - v${CACHE_VERSION}-dependencies-
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - install_node_dependencies
       - build_npm_package
       - run:
@@ -146,9 +146,9 @@ commands:
       - checkout
       - restore_cache:
           keys:
-            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
             # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-dependencies-
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - install_node_dependencies
       - build_npm_package
       - add_ssh_keys:
@@ -166,16 +166,16 @@ commands:
             git commit -m 'Demo build [ci skip]'
             git remote add origin https://github.com/quantumblacklabs/kedro-viz.git
             git push origin gh-pages --force
-  
+
   build:
     description: Run build
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-dependencies-
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - setup_python_env
       - install_node_dependencies
       - save_cache:
@@ -183,7 +183,7 @@ commands:
             - node_modules
             - /home/circleci/.venvs/kedro-viz
             - /home/circleci/.cache/pip/
-          key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+          key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - test_lib_transpilation
       - test_lib_import
       - run_eslint
@@ -236,9 +236,9 @@ commands:
       - checkout
       - restore_cache:
           keys:
-            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-dependencies-
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - win_setup_conda
       - win_setup_requirements
       - install_node_dependencies
@@ -247,7 +247,7 @@ commands:
             - node_modules
             - c:\tools\miniconda3\envs\kedro-viz\
             - c:\users\circleci\appdata\local\pip\cache\
-          key: v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+          key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - run:
           name: Run Python unit tests
           command: |
@@ -264,7 +264,6 @@ commands:
             behave
 
 jobs:
-
   build_37:
     executor: circleci_machine
     environment:
@@ -308,8 +307,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
-            - v${CACHE_VERSION}-dependencies-
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - install_node_dependencies
       - build_npm_package
       - run:
@@ -328,9 +327,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v${CACHE_VERSION}-dependencies-{{ checksum "package.json" }}
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
             # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-dependencies-
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - setup_python_env
       - run:
           name: Install twine
