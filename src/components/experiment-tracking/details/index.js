@@ -15,7 +15,7 @@ const Details = ({
   enableComparisonView,
   enableShowChanges,
   pinnedRun,
-  selectedRuns,
+  selectedRunIds,
   setPinnedRun,
   setShowRunDetailsModal,
   showRunDetailsModal,
@@ -26,24 +26,24 @@ const Details = ({
   const { data: { runMetadata } = [], error } = useApolloQuery(
     GET_RUN_METADATA,
     {
-      skip: selectedRuns.length === 0,
-      variables: { runIds: selectedRuns },
+      skip: selectedRunIds.length === 0,
+      variables: { runIds: selectedRunIds },
     }
   );
 
   const { data: { runTrackingData } = [], error: trackingError } =
     useApolloQuery(GET_RUN_TRACKING_DATA, {
-      skip: selectedRuns.length === 0,
-      variables: { runIds: selectedRuns, showDiff: false },
+      skip: selectedRunIds.length === 0,
+      variables: { runIds: selectedRunIds, showDiff: false },
     });
 
   useEffect(() => {
     if (runMetadata && !enableComparisonView) {
-      const metadata = runMetadata.find((run) => run.id === selectedRuns[0]);
+      const metadata = runMetadata.find((run) => run.id === selectedRunIds[0]);
 
       setRunMetadataToEdit(metadata);
     }
-  }, [enableComparisonView, runMetadata, selectedRuns]);
+  }, [enableComparisonView, runMetadata, selectedRunIds]);
 
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 

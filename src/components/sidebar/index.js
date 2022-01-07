@@ -24,7 +24,8 @@ export const Sidebar = ({
   onRunSelection,
   onToggleComparisonView,
   runsListData,
-  selectedRuns,
+  selectedRunData,
+  selectedRunIds,
   setEnableShowChanges,
   setSidebarVisible,
   showRunDetailsModal,
@@ -53,16 +54,17 @@ export const Sidebar = ({
               enableComparisonView={enableComparisonView}
               onRunSelection={onRunSelection}
               runData={runsListData}
-              selectedRuns={selectedRuns}
+              selectedRunIds={selectedRunIds}
             />
           </div>
           <nav className="pipeline-toolbar">
             <ExperimentPrimaryToolbar
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges}
+              selectedRunData={selectedRunData}
               setEnableShowChanges={setEnableShowChanges}
               setSidebarVisible={setSidebarVisible}
-              showChangesIconDisabled={!(selectedRuns.length > 1)}
+              showChangesIconDisabled={!(selectedRunIds.length > 1)}
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={sidebarVisible}
             />

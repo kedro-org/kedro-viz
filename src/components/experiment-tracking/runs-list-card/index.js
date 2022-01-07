@@ -15,7 +15,7 @@ const RunsListCard = ({
   disableRunSelection = false,
   enableComparisonView = false,
   onRunSelection,
-  selectedRuns = [],
+  selectedRunIds = [],
 }) => {
   const { id, timestamp, title = null, bookmark } = data;
   const [active, setActive] = useState(false);
@@ -26,8 +26,8 @@ const RunsListCard = ({
   };
 
   useEffect(() => {
-    setActive(selectedRuns.includes(id));
-  }, [id, selectedRuns]);
+    setActive(selectedRunIds.includes(id));
+  }, [id, selectedRunIds]);
 
   return (
     <div

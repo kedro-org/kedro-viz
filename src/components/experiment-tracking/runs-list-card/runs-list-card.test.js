@@ -12,7 +12,7 @@ const randomRun = {
   title: 'Sprint 4 EOW',
 };
 
-const selectedRuns = ['ef32bfd'];
+const selectedRunIds = ['ef32bfd'];
 
 const savedRun = {
   bookmark: true,
@@ -31,7 +31,7 @@ const nonActiveRun = {
 describe('RunsListCard', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(
-      <RunsListCard data={randomRun} selectedRuns={selectedRuns} />
+      <RunsListCard data={randomRun} selectedRunIds={selectedRunIds} />
     );
 
     expect(wrapper.find('.runs-list-card').length).toBe(1);
@@ -40,7 +40,7 @@ describe('RunsListCard', () => {
 
   it('renders with a bookmark icon', () => {
     const wrapper = shallow(
-      <RunsListCard data={savedRun} selectedRuns={selectedRuns} />
+      <RunsListCard data={savedRun} selectedRunIds={selectedRunIds} />
     );
 
     expect(wrapper.find('.runs-list-card__bookmark').length).toBe(1);
@@ -51,7 +51,7 @@ describe('RunsListCard', () => {
       <RunsListCard
         data={randomRun}
         enableComparisonView={false}
-        selectedRuns={selectedRuns}
+        selectedRunIds={selectedRunIds}
       />
     );
 
@@ -63,7 +63,7 @@ describe('RunsListCard', () => {
       <RunsListCard
         data={nonActiveRun}
         enableComparisonView={true}
-        selectedRuns={selectedRuns}
+        selectedRunIds={selectedRunIds}
       />
     );
 
@@ -76,7 +76,7 @@ describe('RunsListCard', () => {
       <RunsListCard
         data={randomRun}
         onRunSelection={() => setActive('ef32bfd')}
-        selectedRuns={selectedRuns}
+        selectedRunIds={selectedRunIds}
       />
     );
     const onClick = jest.spyOn(React, 'useState');
