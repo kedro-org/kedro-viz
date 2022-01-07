@@ -181,6 +181,7 @@ Then launch the server with:
 make run PROJECT_PATH=<path-to-your-test-project>/new-kedro-project
 ```
 This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142. To avoid needing to supply `PROJECT_PATH` every time you call `make run`, you can set it as an environment variable:
+
 ```bash
 export PROJECT_PATH=<path-to-your-test-project>/new-kedro-project 
 make run
