@@ -36,24 +36,26 @@ const RunsList = ({
           </div>
         </Accordion>
       ) : null}
-      <Accordion
-        heading={`${bookmarkedRuns.length === 0 ? 'All' : 'Unbookmarked'}`}
-        headingClassName="runs-list__accordion-header"
-        headingDetail={runData.filter((run) => run.bookmark === false).length}
-      >
-        <div className="runs-list__wrapper">
-          {unbookmarkedRuns.map((data, i) => (
-            <RunsListCard
-              data={data}
-              disableRunSelection={disableRunSelection}
-              enableComparisonView={enableComparisonView}
-              key={i}
-              onRunSelection={onRunSelection}
-              selectedRunIds={selectedRunIds}
-            />
-          ))}
-        </div>
-      </Accordion>
+      {unbookmarkedRuns.length > 0 ? (
+        <Accordion
+          heading={`${bookmarkedRuns.length === 0 ? 'All' : 'Unbookmarked'}`}
+          headingClassName="runs-list__accordion-header"
+          headingDetail={runData.filter((run) => run.bookmark === false).length}
+        >
+          <div className="runs-list__wrapper">
+            {unbookmarkedRuns.map((data, i) => (
+              <RunsListCard
+                data={data}
+                disableRunSelection={disableRunSelection}
+                enableComparisonView={enableComparisonView}
+                key={i}
+                onRunSelection={onRunSelection}
+                selectedRunIds={selectedRunIds}
+              />
+            ))}
+          </div>
+        </Accordion>
+      ) : null}
     </>
   );
 };

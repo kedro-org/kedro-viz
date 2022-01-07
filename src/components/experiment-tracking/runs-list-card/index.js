@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { client } from '../../../apollo/config';
+import { UPDATE_RUN_DETAILS } from '../../../apollo/mutations';
 import classnames from 'classnames';
 import { toHumanReadableTime } from '../../../utils/date-utils';
-import CheckIcon from '../../icons/check';
 import BookmarkIcon from '../../icons/bookmark';
+import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
+import CheckIcon from '../../icons/check';
 
 import './runs-list-card.css';
 
@@ -19,9 +23,25 @@ const RunsListCard = ({
 }) => {
   const { id, timestamp, title = null, bookmark } = data;
   const [active, setActive] = useState(false);
+  const [updateRunDetails] = useMutation(UPDATE_RUN_DETAILS, { client });
   const humanReadableTime = toHumanReadableTime(timestamp);
 
-  const onClick = (id) => {
+  const onClick = (id, e) => {
+    // We check for the path element so we don't hit a dead zone on click.
+    if (
+      e.target.classList.contains('runs-list-card__bookmark') ||
+      e.target.tagName === 'path'
+    ) {
+      updateRunDetails({
+        variables: {
+          runId: id,
+          runInput: { bookmark: !bookmark },
+        },
+      });
+
+      return;
+    }
+
     onRunSelection(id);
   };
 
@@ -35,7 +55,7 @@ const RunsListCard = ({
         'runs-list-card--active': active,
         'runs-list-card--disabled': disableRunSelection && !active,
       })}
-      onClick={() => onClick(id)}
+      onClick={(e) => onClick(id, e)}
     >
       {enableComparisonView && (
         <CheckIcon
@@ -52,7 +72,15 @@ const RunsListCard = ({
         <div className="runs-list-card__id">{id}</div>
         <div className="runs-list-card__timestamp">{humanReadableTime}</div>
       </div>
-      {bookmark && <BookmarkIcon className={'runs-list-card__bookmark'} />}
+      {bookmark ? (
+        <BookmarkIcon className={'runs-list-card__bookmark'} />
+      ) : (
+        <BookmarkStrokeIcon
+          className={
+            'runs-list-card__bookmark runs-list-card__bookmark--stroke'
+          }
+        />
+      )}
     </div>
   );
 };
