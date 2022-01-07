@@ -319,7 +319,6 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
     """Extract a wrapped decorated function to inspect the source code if available.
     Adapted from https://stackoverflow.com/a/43506509/1684058
     """
-
     if func.__closure__ is None:
         return func
     closure = (c.cell_contents for c in func.__closure__)
