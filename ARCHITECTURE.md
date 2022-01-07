@@ -111,7 +111,9 @@ We have used Kedro-Viz to visualize the selector dependency graph - [visit the d
 
 The `src/apollo` directory contains all the related setup for ingesting data from the GraphQL endpoint for the experiment tracking features. This includes the schema that defines all query, mutation, and subscription types, the config that sets up the Apollo Client to be used within react components, and other files containing helper functions, such as mocks to generate random data for the mock server. 
 
-Note that the schema checked in this folder is the contract that unites both the back end and front end expectations of the graphQL endpoint, and should always be up to date with the schema of the graphQL endpoint. 
+```eval_rst note:: Note that the schema checked in this folder is the contract that unites both the back end and front end expectations of the graphQL endpoint, and should always be up to date with the schema of the graphQL endpoint. 
+```
+
 ## Utils
 
 The `/src/utils/` directory contains miscellaneous reusable utility functions.
