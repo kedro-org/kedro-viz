@@ -319,9 +319,7 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
     """Extract a wrapped decorated function to inspect the source code if available.
     Adapted from https://stackoverflow.com/a/43506509/1684058
     """
-    # # handles partial and curry functions
-    if not hasattr(func,'__closure__'):
-        return func
+
     if func.__closure__ is None:
         return func
     closure = (c.cell_contents for c in func.__closure__)
@@ -405,8 +403,9 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, task_node: TaskNode):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
-        self.code = inspect.getsource(kedro_node._func)
-        
+        self.code = inspect.getsource(
+            _extract_wrapped_func(cast(FunctionType, kedro_node._func))
+        )
         code_full_path = Path(inspect.getfile(kedro_node._func)).expanduser().resolve()
         try:
             filepath = code_full_path.relative_to(Path.cwd().parent)
