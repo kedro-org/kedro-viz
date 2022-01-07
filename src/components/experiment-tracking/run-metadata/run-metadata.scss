@@ -15,30 +15,24 @@
   }
 }
 
-.details-metadata__title {
+.details-metadata__buttons {
   display: flex;
-  justify-content: space-between;
-}
-
-.details-matadata__buttons {
   list-style: none;
-  display: flex;
+  margin: -2px 0 0 0;
   padding: 0;
-  margin: 0;
 
   .pipeline-icon-toolbar__button {
-    width: 24px;
     height: 24px;
+    width: 24px;
   }
 
   svg {
-    width: 25px;
     height: 25px;
-    padding-bottom: 2.5px;
+    width: 25px;
   }
 }
 
-.details-matadata__buttons--selected-pin svg{
+.details-metadata__buttons--selected-pin svg {
   fill: #{$color-accent-blue};
 }
 
@@ -62,7 +56,7 @@
   font-size: 1.4em;
   padding-bottom: 16px;
   vertical-align: top;
-  word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc
+  word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc.
 
   &:first-of-type {
     width: 230px;
@@ -85,22 +79,40 @@
   }
 }
 
-tr.details-metadata__title {
+.details-metadata__title {
+  align-items: center;
   display: flex;
+  justify-content: space-between;
 }
 
-td.details-metadata__title {
+.details-metadata__title span {
+  cursor: pointer;
+  font-size: 20px;
   font-weight: 600;
-  font-size: 2em;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+  }
 }
 
 .details-metadata__notes {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  cursor: pointer;
   display: -webkit-box;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+  }
 }
 
 .details-metadata__show-more.kedro {
