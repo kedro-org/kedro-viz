@@ -42,7 +42,7 @@ export const Sidebar = ({
             'pipeline-sidebar--visible': sidebarVisible,
           })}
         >
-          <div className="pipeline-ui">
+          <div className="pipeline-ui pipeline-ui--experiment-tracking">
             <div className="compare-switch-wrapper">
               <span className="compare-switch-wrapper__text">
                 Compare runs (max. 3)
