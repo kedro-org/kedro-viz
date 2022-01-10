@@ -400,20 +400,28 @@ class TaskNodeMetadata(GraphNodeMetadata):
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
 
+    # use .func instead
+    # node name with lambda, partial
+    # why task in type
+
     def __post_init__(self, task_node: TaskNode):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
-        self.code = inspect.getsource(
-            _extract_wrapped_func(cast(FunctionType, kedro_node._func))
-        )
-        code_full_path = Path(inspect.getfile(kedro_node._func)).expanduser().resolve()
-        try:
-            filepath = code_full_path.relative_to(Path.cwd().parent)
-        except ValueError:  # pragma: no cover
-            # if the filepath can't be resolved relative to the current directory,
-            # e.g. either during tests or during launching development server
-            # outside of a Kedro project, simply return the fullpath to the file.
-            filepath = code_full_path
-        self.filepath = str(filepath)
+        if inspect.isfunction(kedro_node.func):
+            self.code = inspect.getsource(
+                _extract_wrapped_func(cast(FunctionType, kedro_node.func))
+            )
+
+            code_full_path = (
+                Path(inspect.getfile(kedro_node.func)).expanduser().resolve()
+            )
+            try:
+                filepath = code_full_path.relative_to(Path.cwd().parent)
+            except ValueError:  # pragma: no cover
+                # if the filepath can't be resolved relative to the current directory,
+                # e.g. either during tests or during launching development server
+                # outside of a Kedro project, simply return the fullpath to the file.
+                filepath = code_full_path
+            self.filepath = str(filepath)
         self.parameters = task_node.parameters
         self.inputs = [
             _pretty_name(_strip_namespace(name)) for name in kedro_node.inputs
