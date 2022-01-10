@@ -64,10 +64,10 @@ The `localStorage` state is updated automatically on every Redux store update, v
 
 ![Kedro-Viz data flow diagram](/.github/img/app-architecture-data-flow.png)
 
-Kedro-Viz currently utilizes two different methods of data ingestion: the Redux setup for the pipeline and flowchart-view related components, and Graphql via Apollo Client 
+Kedro-Viz currently utilizes two different methods of data ingestion: the Redux setup for the pipeline and flowchart-view related components, and GraphQL via Apollo Client 
 for the experiment tracking components. 
 
-On initialisation for the redux setup, Kedro-Viz [manually normalises pipeline data](/src/store/normalize-data.js), in order to [make immutable state updates as performant as possible](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape).
+On initialisation for the Redux setup, Kedro-Viz [manually normalises pipeline data](/src/store/normalize-data.js), in order to [make immutable state updates as performant as possible](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape).
 
 Next, it [initialises the Redux data store](https://github.com/quantumblacklabs/kedro-viz/blob/main/src/store/initial-state.js), by merging this normalised state with other data sources such as saved user preferences from `localStorage`, URL flags, and default values.
 
@@ -109,10 +109,9 @@ We have used Kedro-Viz to visualize the selector dependency graph - [visit the d
 
 ## Apollo
 
-The `src/apollo` directory contains all the related setup for ingesting data from the GraphQL endpoint for the experiment tracking features. This includes the schema that defines all query, mutation, and subscription types, the config that sets up the Apollo Client to be used within react components, and other files containing helper functions, such as mocks to generate random data for the mock server. 
+The `src/apollo` directory contains all the related setup for ingesting data from the GraphQL endpoint for the experiment tracking features. This includes the schema that defines all query, mutation, and subscription types, the config that sets up the Apollo Client to be used within React components, and other files containing helper functions, such as mocks to generate random data for the mock server. 
 
-```eval_rst note:: Note that the schema checked in this folder is the contract that unites both the back end and front end expectations of the graphQL endpoint, and should always be up to date with the schema of the graphQL endpoint. 
-```
+Note that the schema checked in this folder is the contract that unites both the back end and front end expectations of the GraphQL endpoint, and should always be up to date with the schema of the graphQL endpoint. 
 
 ## Utils
 
