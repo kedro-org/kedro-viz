@@ -14,6 +14,7 @@ import './details.css';
 const Details = ({
   enableComparisonView,
   enableShowChanges,
+  onRunSelection,
   pinnedRun,
   selectedRunIds,
   setPinnedRun,
@@ -68,6 +69,7 @@ const Details = ({
         <RunMetadata
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
+          onRunSelection={onRunSelection}
           pinnedRun={pinnedRun}
           runs={runMetadata}
           setPinnedRun={setPinnedRun}

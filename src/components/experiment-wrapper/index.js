@@ -135,6 +135,7 @@ const ExperimentWrapper = ({ theme }) => {
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
+              onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
               selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}

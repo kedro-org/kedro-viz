@@ -7,16 +7,17 @@ import './icon-button.css';
  * Icon button component
  */
 const IconButton = ({
-  container: Container = 'li',
+  active,
   ariaLabel,
   ariaLive,
+  children,
   className,
+  container: Container = 'li',
   disabled,
   icon,
   labelText,
   onClick,
   visible,
-  active,
 }) => {
   const Icon = icon;
 
@@ -37,6 +38,7 @@ const IconButton = ({
           <span className="pipeline-toolbar__label">{labelText}</span>
         )}
       </button>
+      {children}
     </Container>
   ) : null;
 };

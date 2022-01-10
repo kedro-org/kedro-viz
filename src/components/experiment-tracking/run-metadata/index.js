@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
+import { toHumanReadableTime } from '../../../utils/date-utils';
+import CloseIcon from '../../icons/close';
 import IconButton from '../../icon-button';
+import KebabIcon from '../../icons/kebab';
 import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';
-import { toHumanReadableTime } from '../../../utils/date-utils';
 
 import './run-metadata.css';
 
@@ -12,9 +14,22 @@ const sanitiseEmptyValue = (value) => {
   return value === '' || value === null ? '-' : value;
 };
 
+const HiddenMenu = ({ toggle }) => {
+  return (
+    <div
+      className={classnames('hidden-menu', {
+        'hidden-menu--visible': toggle,
+      })}
+    >
+      <div className="hidden-menu__item">Bookmark</div>
+    </div>
+  );
+};
+
 const RunMetadata = ({
   enableShowChanges = false,
   isSingleRun,
+  onRunSelection,
   pinnedRun,
   runs = [],
   setPinnedRun,
@@ -27,9 +42,17 @@ const RunMetadata = ({
   }
 
   const [toggleNotes, setToggleNotes] = useState(initialState);
+  const [toggleKebabMenu, setToggleKebabMenu] = useState(initialState);
 
   const onToggleNoteExpand = (index) => {
     setToggleNotes({ ...toggleNotes, [index]: !toggleNotes[index] });
+  };
+
+  const onKebabMenuClick = (index) => {
+    setToggleKebabMenu({
+      ...toggleKebabMenu,
+      [index]: !toggleKebabMenu[index],
+    });
   };
 
   const onTitleOrNoteClick = (id) => {
@@ -86,6 +109,22 @@ const RunMetadata = ({
                           icon={
                             run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
+                          visible={enableShowChanges}
+                        />
+                        <IconButton
+                          ariaLive="polite"
+                          className="pipeline-menu-button--labels"
+                          onClick={() => onKebabMenuClick(i)}
+                          icon={KebabIcon}
+                          visible={enableShowChanges}
+                        >
+                          <HiddenMenu toggle={toggleKebabMenu[i]} />
+                        </IconButton>
+                        <IconButton
+                          ariaLive="polite"
+                          className="pipeline-menu-button--labels"
+                          onClick={() => onRunSelection(run.id)}
+                          icon={CloseIcon}
                           visible={enableShowChanges}
                         />
                       </ul>
