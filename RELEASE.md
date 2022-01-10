@@ -8,6 +8,10 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Bug fixes and other changes
+
+- Fix the order of the runs list in experiment tracking. (#691)
+
 # Release 4.2.0
 
 ## Major features and improvements
