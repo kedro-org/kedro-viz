@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
+import { useMutation } from '@apollo/client';
+import { client } from '../../../apollo/config';
+import { UPDATE_RUN_DETAILS } from '../../../apollo/mutations';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import CloseIcon from '../../icons/close';
 import IconButton from '../../icon-button';
@@ -14,14 +17,34 @@ const sanitiseEmptyValue = (value) => {
   return value === '' || value === null ? '-' : value;
 };
 
-const HiddenMenu = ({ toggle }) => {
+const HiddenMenu = ({ children, isBookmarked, runId }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [updateRunDetails] = useMutation(UPDATE_RUN_DETAILS, { client });
+
+  const toggleBookmark = () => {
+    updateRunDetails({
+      variables: {
+        runId: runId,
+        runInput: { bookmark: !isBookmarked },
+      },
+    });
+  };
+
   return (
     <div
-      className={classnames('hidden-menu', {
-        'hidden-menu--visible': toggle,
-      })}
+      className="hidden-menu-wrapper"
+      onClick={() => setIsVisible(!isVisible)}
     >
-      <div className="hidden-menu__item">Bookmark</div>
+      <div
+        className={classnames('hidden-menu', {
+          'hidden-menu--visible': isVisible,
+        })}
+      >
+        <div className="hidden-menu__item" onClick={() => toggleBookmark()}>
+          {isBookmarked ? 'Unbookmark' : 'Bookmark'}
+        </div>
+      </div>
+      {children}
     </div>
   );
 };
@@ -42,17 +65,9 @@ const RunMetadata = ({
   }
 
   const [toggleNotes, setToggleNotes] = useState(initialState);
-  const [toggleKebabMenu, setToggleKebabMenu] = useState(initialState);
 
   const onToggleNoteExpand = (index) => {
     setToggleNotes({ ...toggleNotes, [index]: !toggleNotes[index] });
-  };
-
-  const onKebabMenuClick = (index) => {
-    setToggleKebabMenu({
-      ...toggleKebabMenu,
-      [index]: !toggleKebabMenu[index],
-    });
   };
 
   const onTitleOrNoteClick = (id) => {
@@ -100,6 +115,7 @@ const RunMetadata = ({
                           ariaLive="polite"
                           className={classnames(
                             'pipeline-menu-button--labels',
+                            'pipeline-menu-button__pin',
                             {
                               'details-metadata__buttons--selected-pin':
                                 run.id === pinnedRun,
@@ -111,15 +127,14 @@ const RunMetadata = ({
                           }
                           visible={enableShowChanges}
                         />
-                        <IconButton
-                          ariaLive="polite"
-                          className="pipeline-menu-button--labels"
-                          onClick={() => onKebabMenuClick(i)}
-                          icon={KebabIcon}
-                          visible={enableShowChanges}
-                        >
-                          <HiddenMenu toggle={toggleKebabMenu[i]} />
-                        </IconButton>
+                        <HiddenMenu isBookmarked={run.bookmark} runId={run.id}>
+                          <IconButton
+                            ariaLive="polite"
+                            className="pipeline-menu-button--labels"
+                            icon={KebabIcon}
+                            visible={enableShowChanges}
+                          />
+                        </HiddenMenu>
                         <IconButton
                           ariaLive="polite"
                           className="pipeline-menu-button--labels"

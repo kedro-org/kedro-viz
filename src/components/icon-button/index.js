@@ -10,7 +10,6 @@ const IconButton = ({
   active,
   ariaLabel,
   ariaLive,
-  children,
   className,
   container: Container = 'li',
   disabled,
@@ -38,7 +37,6 @@ const IconButton = ({
           <span className="pipeline-toolbar__label">{labelText}</span>
         )}
       </button>
-      {children}
     </Container>
   ) : null;
 };

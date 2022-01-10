@@ -21,11 +21,12 @@
   margin: -2px 0 0 0;
   padding: 0;
 
-  li {
+  li,
+  .hidden-menu-wrapper {
     margin-right: 5px;
     position: relative;
 
-    &:last-of-type {
+    &:last-of-type:not(.hidden-menu-wrapper) {
       margin-right: 0;
     }
   }
@@ -142,7 +143,7 @@
   right: 0;
   top: 0px;
   transition: opacity 0.1s ease, top 0.2s ease;
-  width: 110px;
+  width: 120px;
 
   &--visible {
     opacity: 1;
