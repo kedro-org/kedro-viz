@@ -27,7 +27,11 @@ const RunsListCard = ({
   const humanReadableTime = toHumanReadableTime(timestamp);
 
   const onClick = (id, e) => {
-    // We check for the path element so we don't hit a dead zone on click.
+    /**
+     * If we click the bookmark icon or the path HTML element within the SVG,
+     * then update the bookmark boolean. If we didn't check for the path, the
+     * user could hit a dead zone, and nothing would happen.
+     */
     if (
       e.target.classList.contains('runs-list-card__bookmark') ||
       e.target.tagName === 'path'
