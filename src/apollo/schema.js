@@ -51,7 +51,7 @@ const typeDefs = gql`
   }
 
   type UpdateRunDetailsFailure {
-    runId: ID!
+    id: ID!
     errorMessage: String!
   }
 
@@ -60,7 +60,7 @@ const typeDefs = gql`
     | UpdateRunDetailsFailure
 
   type UpdateUserDetailsSuccess {
-    userDetails: JSONObject!
+    run: Run!
   }
 `;
 

@@ -7,16 +7,19 @@ import { toHumanReadableTime } from '../../../utils/date-utils';
 
 import './run-metadata.css';
 
-// We are only checking for an empty string as it is the default value
-// returned by the graphql endpoint for empty values ( not null or undefined )
-const sanitiseEmptyValue = (value) => (value !== '' ? value : '-');
+// Return a '-' character if the value is empty or null
+const sanitiseEmptyValue = (value) => {
+  return value === '' || value === null ? '-' : value;
+};
 
 const RunMetadata = ({
-  isSingleRun,
-  runs = [],
   enableShowChanges = false,
+  isSingleRun,
   pinnedRun,
+  runs = [],
   setPinnedRun,
+  setRunMetadataToEdit,
+  setShowRunDetailsModal,
 }) => {
   let initialState = {};
   for (let i = 0; i < runs.length; i++) {
@@ -27,6 +30,13 @@ const RunMetadata = ({
 
   const onToggleNoteExpand = (index) => {
     setToggleNotes({ ...toggleNotes, [index]: !toggleNotes[index] });
+  };
+
+  const onTitleOrNoteClick = (id) => {
+    const metadata = runs.find((run) => run.id === id);
+
+    setRunMetadataToEdit(metadata);
+    setShowRunDetailsModal(true);
   };
 
   return (
@@ -50,21 +60,25 @@ const RunMetadata = ({
                 {isSingleRun ? (
                   <tr>
                     <td className="details-metadata__title" colSpan="2">
-                      {sanitiseEmptyValue(run.title)}
+                      <span onClick={() => onTitleOrNoteClick(run.id)}>
+                        {sanitiseEmptyValue(run.title)}
+                      </span>
                     </td>
                   </tr>
                 ) : (
                   <tr>
                     {i === 0 ? <td></td> : null}
                     <td className="details-metadata__title">
-                      {sanitiseEmptyValue(run.title)}
-                      <ul className="details-matadata__buttons">
+                      <span onClick={() => onTitleOrNoteClick(run.id)}>
+                        {sanitiseEmptyValue(run.title)}
+                      </span>
+                      <ul className="details-metadata__buttons">
                         <IconButton
                           ariaLive="polite"
                           className={classnames(
                             'pipeline-menu-button--labels',
                             {
-                              'details-matadata__buttons--selected-pin':
+                              'details-metadata__buttons--selected-pin':
                                 run.id === pinnedRun,
                             }
                           )}
@@ -105,9 +119,10 @@ const RunMetadata = ({
                   <td>
                     <p
                       className="details-metadata__notes"
+                      onClick={() => onTitleOrNoteClick(run.id)}
                       style={toggleNotes[i] ? { display: 'block' } : null}
                     >
-                      {sanitiseEmptyValue(run.notes)}
+                      {run.notes !== '' ? run.notes : '- Add notes here'}
                     </p>
                     {run.notes.length > 100 ? (
                       <button
