@@ -1,21 +1,31 @@
 import React from 'react';
-import PrimaryToolbar from '../../primary-toolbar';
 import IconButton from '../../icon-button';
+import PencilIcon from '../../icons/pencil';
+import PrimaryToolbar from '../../primary-toolbar';
 import ShowChangesIcon from '../../icons/show-changes';
 
 export const ExperimentPrimaryToolbar = ({
-  sidebarVisible,
-  setSidebarVisible,
+  enableComparisonView,
   enableShowChanges,
   setEnableShowChanges,
-  enableComparisonView,
+  setSidebarVisible,
   showChangesIconDisabled,
+  showRunDetailsModal,
+  sidebarVisible,
 }) => {
   return (
     <PrimaryToolbar
       visible={{ sidebar: sidebarVisible }}
       onToggleSidebar={setSidebarVisible}
     >
+      <IconButton
+        ariaLive="Edit run details"
+        className={'pipeline-menu-button--labels'}
+        icon={PencilIcon}
+        labelText={`Edit details`}
+        onClick={() => showRunDetailsModal(true)}
+        visible={!enableComparisonView}
+      />
       <IconButton
         ariaLive="polite"
         className={'pipeline-menu-button--labels'}

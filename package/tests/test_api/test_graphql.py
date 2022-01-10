@@ -534,23 +534,43 @@ class TestGraphQLEndpoints:
 
 
 class TestGraphQLMutation:
-    @pytest.mark.parametrize("bookmark,notes,title", [
-        (False, "new notes", "new title", ),
-        (True, "new notes", "new title"),
-        (True, "", ""),
-    ])
+    @pytest.mark.parametrize(
+        "bookmark,notes,title",
+        [
+            (
+                False,
+                "new notes",
+                "new title",
+            ),
+            (True, "new notes", "new title"),
+            (True, "", ""),
+        ],
+    )
     def test_update_user_details_success(
-        self, bookmark, notes, title, client, save_version, example_runs, example_db_dataset, mocker
+        self,
+        bookmark,
+        notes,
+        title,
+        client,
+        save_version,
+        example_runs,
+        example_db_dataset,
+        mocker,
     ):
         query = f"""
             mutation updateRun {{
               updateRunDetails(runId: "{save_version}", runInput: {{bookmark: {str(bookmark).lower()}, notes: "{notes}", title: "{title}"}}) {{
                 __typename
                 ... on UpdateRunDetailsSuccess {{
-                  runDetails
+                 run {{
+                    id
+                    title
+                    bookmark
+                    notes
+                    }}
                 }}
                 ... on UpdateRunDetailsFailure {{
-                  runId
+                  id
                   errorMessage
                 }}
               }}
@@ -563,13 +583,13 @@ class TestGraphQLMutation:
         ) as mock_session:
             mock_session.return_value = example_db_dataset
             mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
-            response = client.post("/graphql", json={"query": query}) 
+            response = client.post("/graphql", json={"query": query})
             assert response.json() == {
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsSuccess",
-                        "runDetails": {
-                            "run_id": save_version,
+                        "run": {
+                            "id": save_version,
                             "bookmark": bookmark,
                             "title": title if title != "" else save_version,
                             "notes": notes,
@@ -586,10 +606,15 @@ class TestGraphQLMutation:
               updateRunDetails(runId: "{save_version}", runInput: {{bookmark: true}}) {{
                 __typename
                 ... on UpdateRunDetailsSuccess {{
-                  runDetails
+                  run {{
+                    id
+                    title
+                    bookmark
+                    notes
+                    }}
                 }}
                 ... on UpdateRunDetailsFailure {{
-                  runId
+                  id
                   errorMessage
                 }}
               }}
@@ -602,13 +627,13 @@ class TestGraphQLMutation:
         ) as mock_session:
             mock_session.return_value = example_db_dataset
             mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
-            response = client.post("/graphql", json={"query": query}) 
+            response = client.post("/graphql", json={"query": query})
             assert response.json() == {
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsSuccess",
-                        "runDetails": {
-                            "run_id": save_version,
+                        "run": {
+                            "id": save_version,
                             "bookmark": True,
                             "title": example_runs[0].title,
                             "notes": example_runs[0].notes,
@@ -617,16 +642,23 @@ class TestGraphQLMutation:
                 }
             }
 
-    def test_update_user_details_should_add_when_it_does_not_exist(self, save_version, client, example_runs, mocker):
+    def test_update_user_details_should_add_when_it_does_not_exist(
+        self, save_version, client, example_runs, mocker
+    ):
         query = f"""
             mutation updateRun {{
               updateRunDetails(runId: "{save_version}", runInput: {{bookmark: true}}) {{
                 __typename
                 ... on UpdateRunDetailsSuccess {{
-                  runDetails
+                run {{
+                    id
+                    title
+                    bookmark
+                    notes
+                    }}
                 }}
                 ... on UpdateRunDetailsFailure {{
-                  runId
+                  id
                   errorMessage
                 }}
               }}
@@ -637,15 +669,17 @@ class TestGraphQLMutation:
             "kedro_viz.data_access.DataAccessManager.db_session",
             new_callable=PropertyMock,
         ) as mock_session:
-            mock_session.return_value.query.return_value.filter.return_value.first.return_value = None
+            mock_session.return_value.query.return_value.filter.return_value.first.return_value = (
+                None
+            )
             mocker.patch("kedro_viz.api.graphql.get_runs").return_value = example_runs
-            response = client.post("/graphql", json={"query": query}) 
+            response = client.post("/graphql", json={"query": query})
             assert response.json() == {
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsSuccess",
-                        "runDetails": {
-                            "run_id": save_version,
+                        "run": {
+                            "id": save_version,
                             "bookmark": True,
                             "title": example_runs[0].title,
                             "notes": example_runs[0].notes,
@@ -673,10 +707,15 @@ class TestGraphQLMutation:
                         {
                             __typename
                             ... on UpdateRunDetailsSuccess {
-                            runDetails
+                            run {
+                                id
+                                title
+                                notes
+                                bookmark
+                                }
                             }
                             ... on UpdateRunDetailsFailure {
-                            runId
+                            id
                             errorMessage
                             } }
                             }"""
@@ -686,7 +725,7 @@ class TestGraphQLMutation:
                 "data": {
                     "updateRunDetails": {
                         "__typename": "UpdateRunDetailsFailure",
-                        "runId": "2021-11-02T12.24.24.329Z",
+                        "id": "2021-11-02T12.24.24.329Z",
                         "errorMessage": "Given run_id: 2021-11-02T12.24.24.329Z doesn't exist",
                     }
                 }

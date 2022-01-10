@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
-import Button from '@quantumblack/kedro-ui/lib/components/button';
-import Sidebar from '../sidebar';
-import Details from '../experiment-tracking/details';
 import { GET_RUNS } from '../../apollo/queries';
 import { sortRunByTime } from '../../utils/date-utils';
+import Button from '@quantumblack/kedro-ui/lib/components/button';
+import Details from '../experiment-tracking/details';
+import Sidebar from '../sidebar';
 
 import './experiment-wrapper.css';
 
 const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three
 
 const ExperimentWrapper = ({ theme }) => {
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [enableShowChanges, setEnableShowChanges] = useState(true);
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableComparisonView, setEnableComparisonView] = useState(false);
-  const [selectedRuns, setSelectedRuns] = useState([]);
+  const [enableShowChanges, setEnableShowChanges] = useState(true);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [pinnedRun, setPinnedRun] = useState();
+  const [selectedRuns, setSelectedRuns] = useState([]);
+  const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
 
   const { data, loading } = useApolloQuery(GET_RUNS);
 
@@ -28,8 +29,8 @@ const ExperimentWrapper = ({ theme }) => {
           return;
         }
         setSelectedRuns(
-          // runs needs to be sorted by time to ensure runIDs get sent to
-          // graphql endpoint in correct order
+          // Runs need to be sorted by time to ensure runIDs get sent to the
+          // graphql endpoint in correct order.
           sortRunByTime(selectedRuns.filter((run) => run !== id))
         );
       } else {
@@ -61,15 +62,15 @@ const ExperimentWrapper = ({ theme }) => {
   }, [selectedRuns]);
 
   useEffect(() => {
-    if (data && data.runsList.length > 0) {
+    if (data?.runsList.length > 0 && selectedRuns.length === 0) {
       // If we return runs, set the first one as the default.
       setSelectedRuns(data.runsList.map((run) => run.id).slice(0, 1));
     }
-  }, [data]);
+  }, [data, selectedRuns]);
 
   useEffect(() => {
     if (typeof pinnedRun === 'undefined' || !selectedRuns.includes(pinnedRun)) {
-      // assign the first selected run as the first pinned run
+      // Assign the first selected run as the first pinned run
       setPinnedRun(selectedRuns[0]);
     }
   }, [selectedRuns, pinnedRun]);
@@ -84,28 +85,33 @@ const ExperimentWrapper = ({ theme }) => {
 
   return (
     <>
-      {data && data.runsList.length > 0 ? (
+      {data?.runsList.length > 0 ? (
         <>
           <Sidebar
             disableRunSelection={disableRunSelection}
             enableComparisonView={enableComparisonView}
+            enableShowChanges={enableShowChanges}
             isExperimentView
             onRunSelection={onRunSelection}
             onToggleComparisonView={onToggleComparisonView}
             runsListData={data.runsList}
             selectedRuns={selectedRuns}
-            sidebarVisible={isSidebarVisible}
-            setSidebarVisible={setIsSidebarVisible}
-            enableShowChanges={enableShowChanges}
             setEnableShowChanges={setEnableShowChanges}
+            setSidebarVisible={setIsSidebarVisible}
+            showRunDetailsModal={setShowRunDetailsModal}
+            sidebarVisible={isSidebarVisible}
           />
           {selectedRuns.length > 0 ? (
             <Details
-              selectedRuns={selectedRuns}
-              sidebarVisible={isSidebarVisible}
+              enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRuns.length > 1}
               pinnedRun={pinnedRun}
+              selectedRuns={selectedRuns}
               setPinnedRun={setPinnedRun}
+              setShowRunDetailsModal={setShowRunDetailsModal}
+              showRunDetailsModal={showRunDetailsModal}
+              sidebarVisible={isSidebarVisible}
+              theme={theme}
             />
           ) : null}
         </>
@@ -123,9 +129,7 @@ const ExperimentWrapper = ({ theme }) => {
             rel="noreferrer"
             target="_blank"
           >
-            <Button onClick={() => {}} theme={theme}>
-              View docs
-            </Button>
+            <Button theme={theme}>View docs</Button>
           </a>
         </div>
       )}
