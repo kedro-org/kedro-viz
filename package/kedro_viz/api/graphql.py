@@ -15,7 +15,7 @@ from strawberry import ID
 from strawberry.asgi import GraphQL
 
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.run_model import RunModel
+from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
 
@@ -45,15 +45,21 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
     Returns:
         Run object
     """
+    session = data_access_manager.db_session
     git_data = run_blob.get("git")
+    user_details = (
+        session.query(UserRunDetailsModel)
+        .filter(UserRunDetailsModel.run_id == run_id)
+        .scalar()
+    )
     run = Run(
         id=ID(run_id),
         author="",
-        gitBranch="",
+        gitBranch=git_data.get("branch") if git_data else None,
         gitSha=git_data.get("commit_sha") if git_data else None,
-        bookmark=False,
-        title=run_blob["session_id"],
-        notes="",
+        bookmark=user_details.bookmark if user_details else False,
+        title=user_details.title if user_details else run_blob["session_id"],
+        notes=user_details.notes if user_details else "",
         timestamp=run_blob["session_id"],
         runCommand=run_blob["cli"]["command_path"],
     )
@@ -256,6 +262,92 @@ class Query:
 
 schema = strawberry.Schema(query=Query, subscription=Subscription)
 
+
+@strawberry.input
+class RunInput:
+    """Run input to update bookmark, title and notes"""
+
+    bookmark: Optional[bool] = None
+    title: Optional[str] = None
+    notes: Optional[str] = None
+
+
+@strawberry.type
+class UpdateRunDetailsSuccess:
+    """Response type for sucessful update of runs"""
+
+    run: Run
+
+
+@strawberry.type
+class UpdateRunDetailsFailure:
+    """Response type for failed update of runs"""
+
+    id: ID
+    error_message: str
+
+
+Response = strawberry.union(
+    "UpdateRunDetailsResponse", (UpdateRunDetailsSuccess, UpdateRunDetailsFailure)
+)
+
+
+@strawberry.type
+class Mutation:
+    """Mutation to update run details with run inputs"""
+
+    @strawberry.mutation
+    def update_run_details(self, run_id: ID, run_input: RunInput) -> Response:
+        """Updates run details based on run inputs provided by user"""
+        runs = get_runs([run_id])
+        if not runs:
+            return UpdateRunDetailsFailure(
+                id=run_id, error_message=f"Given run_id: {run_id} doesn't exist"
+            )
+        existing_run = runs[0]
+        new_run = existing_run
+        # if user doesn't provide a new title, use the old title.
+        if run_input.title is None:
+            new_run.title = existing_run.title
+        # if user provides an empty title, we assume they want to revert to the old timestamp title
+        elif run_input.title.strip() == "":
+            new_run.title = existing_run.timestamp
+        else:
+            new_run.title = run_input.title
+
+        new_run.bookmark = (
+            run_input.bookmark
+            if run_input.bookmark is not None
+            else existing_run.bookmark
+        )
+
+        new_run.notes = (
+            run_input.notes if run_input.notes is not None else existing_run.notes
+        )
+
+        updated_user_run_details = {
+            "run_id": run_id,
+            "title": new_run.title,
+            "bookmark": new_run.bookmark,
+            "notes": new_run.notes,
+        }
+
+        session = data_access_manager.db_session
+        user_run_details = (
+            session.query(UserRunDetailsModel)
+            .filter(UserRunDetailsModel.run_id == run_id)
+            .first()
+        )
+        if not user_run_details:
+            session.add(UserRunDetailsModel(**updated_user_run_details))  # type: ignore
+        else:
+            for key, value in updated_user_run_details.items():
+                setattr(user_run_details, key, value)
+        session.commit()
+        return UpdateRunDetailsSuccess(new_run)
+
+
+schema = strawberry.Schema(query=Query, mutation=Mutation)
 
 router = APIRouter()
 

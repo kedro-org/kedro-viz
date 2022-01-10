@@ -8,7 +8,20 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-- Display Plotly JSONDataSet plot in metadata side-panel (#660)
+# Release 4.2.0
+
+## Major features and improvements
+
+- Build out 'Show Changes' user journey for experiment tracking. (#667)
+- Return gitBranch data. (#657)
+- Drop python 3.6 support. (#659)
+
+## Bug fixes and other changes
+
+- Bug fix for plotly modal when escape button is pressed. (#654)
+- Display Plotly JSONDataSet plot in metadata side-panel. (#660)
+- Refactor Primary Toolbar setup. (#664)
+- Upgrade @apollo/client from 3.4.16 to 3.5.3. (#661, #668) 
 
 # Release 4.1.1
 ## Bug fixes and other changes
@@ -70,6 +83,7 @@ Please follow the established format:
 
 - Expose metrics data from the latest run as a dataset node. (#554)
 - Visualize and compare metrics from last 10 runs on the metadata panel. (#554)
+- Drop support for Python 3.6.
 
 ## Bug fixes and other changes
 

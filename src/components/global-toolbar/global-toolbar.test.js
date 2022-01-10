@@ -45,6 +45,20 @@ describe('GlobalToolbar', () => {
   it('maps state to props', () => {
     const expectedResult = {
       theme: expect.stringMatching(/light|dark/),
+      visible: {
+        code: false,
+        exportBtn: true,
+        exportModal: false,
+        graph: true,
+        labelBtn: true,
+        layerBtn: true,
+        miniMap: true,
+        miniMapBtn: true,
+        modularPipelineFocusMode: null,
+        plotModal: false,
+        settingsModal: false,
+        sidebar: true,
+      },
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });

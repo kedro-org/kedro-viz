@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import ExperimentPrimaryToolbar from '../experiment-tracking/experiment-primary-toolbar';
+import FlowchartPrimaryToolbar from '../flowchart-primary-toolbar';
 import MiniMap from '../minimap';
 import MiniMapToolbar from '../minimap-toolbar';
 import NodeList from '../node-list';
 import PipelineList from '../pipeline-list';
-import FlowchartPrimaryToolbar from '../flowchart-primary-toolbar';
-import ExperimentPrimaryToolbar from '../experiment-tracking/experiment-primary-toolbar';
-import Switch from '../switch';
-
 import RunsList from '../experiment-tracking/runs-list';
+import Switch from '../switch';
 
 import './sidebar.css';
 
@@ -20,14 +19,17 @@ import './sidebar.css';
 export const Sidebar = ({
   disableRunSelection,
   enableComparisonView,
+  enableShowChanges,
   isExperimentView = false,
   onRunSelection,
   onToggleComparisonView,
   runsListData,
   selectedRuns,
-  visible,
-  sidebarVisible,
+  setEnableShowChanges,
   setSidebarVisible,
+  showRunDetailsModal,
+  sidebarVisible,
+  visible,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
@@ -56,8 +58,13 @@ export const Sidebar = ({
           </div>
           <nav className="pipeline-toolbar">
             <ExperimentPrimaryToolbar
-              sidebarVisible={sidebarVisible}
+              enableComparisonView={enableComparisonView}
+              enableShowChanges={enableShowChanges}
+              setEnableShowChanges={setEnableShowChanges}
               setSidebarVisible={setSidebarVisible}
+              showChangesIconDisabled={!(selectedRuns.length > 1)}
+              showRunDetailsModal={showRunDetailsModal}
+              sidebarVisible={sidebarVisible}
             />
           </nav>
         </div>

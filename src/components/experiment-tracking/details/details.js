@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
+import RunDetailsModal from '../run-details-modal';
 import {
   GET_RUN_METADATA,
   GET_RUN_TRACKING_DATA,
@@ -10,7 +11,18 @@ import {
 
 import './details.css';
 
-const Details = ({ selectedRuns, sidebarVisible }) => {
+const Details = ({
+  enableComparisonView,
+  enableShowChanges,
+  pinnedRun,
+  selectedRuns,
+  setPinnedRun,
+  setShowRunDetailsModal,
+  showRunDetailsModal,
+  sidebarVisible,
+  theme,
+}) => {
+  const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
   const { data: { runMetadata } = [], error } = useApolloQuery(
     GET_RUN_METADATA,
     {
@@ -25,21 +37,49 @@ const Details = ({ selectedRuns, sidebarVisible }) => {
       variables: { runIds: selectedRuns, showDiff: false },
     });
 
+  useEffect(() => {
+    if (runMetadata && !enableComparisonView) {
+      const metadata = runMetadata.find((run) => run.id === selectedRuns[0]);
+
+      setRunMetadataToEdit(metadata);
+    }
+  }, [enableComparisonView, runMetadata, selectedRuns]);
+
+  const isSingleRun = runMetadata?.length === 1 ? true : false;
+
   if (error || trackingError) {
     return null;
   }
 
-  const isSingleRun = runMetadata && runMetadata.length === 1 ? true : false;
-
   return (
     <>
+      <RunDetailsModal
+        onClose={setShowRunDetailsModal}
+        runs={runMetadata}
+        runMetadataToEdit={runMetadataToEdit}
+        theme={theme}
+        visible={showRunDetailsModal}
+      />
       <div
         className={classnames('kedro', 'details-mainframe', {
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadata isSingleRun={isSingleRun} runs={runMetadata} />
-        <RunDataset isSingleRun={isSingleRun} trackingData={runTrackingData} />
+        <RunMetadata
+          enableShowChanges={enableShowChanges}
+          isSingleRun={isSingleRun}
+          pinnedRun={pinnedRun}
+          runs={runMetadata}
+          setPinnedRun={setPinnedRun}
+          setRunMetadataToEdit={setRunMetadataToEdit}
+          setShowRunDetailsModal={setShowRunDetailsModal}
+        />
+        <RunDataset
+          enableShowChanges={enableShowChanges}
+          isSingleRun={isSingleRun}
+          pinnedRun={pinnedRun}
+          trackingData={runTrackingData}
+        />
       </div>
     </>
   );

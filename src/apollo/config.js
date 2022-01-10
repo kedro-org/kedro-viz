@@ -11,9 +11,11 @@ export const client = new ApolloClient({
   connectToDevTools: true,
   link,
   cache: new InMemoryCache(),
-  resolvers: {},
   defaultOptions: {
     query: {
+      errorPolicy: 'all',
+    },
+    mutate: {
       errorPolicy: 'all',
     },
   },

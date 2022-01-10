@@ -571,8 +571,8 @@ class DataNodeMetadata(GraphNodeMetadata):
         if data_node.is_plot_node():
             from kedro.extras.datasets.plotly.plotly_dataset import (
                 JSONDataSet as PlotlyJSONDataSet,
-                PlotlyDataSet,
             )
+            from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
 
             dataset = cast(Union[PlotlyDataSet, PlotlyJSONDataSet], dataset)
             if not dataset._exists():

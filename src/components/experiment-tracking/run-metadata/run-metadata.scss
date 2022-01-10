@@ -1,3 +1,6 @@
+@import '../../../styles/variables';
+@import '../../../styles/extends';
+
 .details-metadata {
   background-color: var(--color-bg-1);
   display: flex;
@@ -10,6 +13,27 @@
   &--single {
     padding: 5em 0 0 9em;
   }
+}
+
+.details-metadata__buttons {
+  display: flex;
+  list-style: none;
+  margin: -2px 0 0 0;
+  padding: 0;
+
+  .pipeline-icon-toolbar__button {
+    height: 24px;
+    width: 24px;
+  }
+
+  svg {
+    height: 25px;
+    width: 25px;
+  }
+}
+
+.details-metadata__buttons--selected-pin svg {
+  fill: #{$color-accent-blue};
 }
 
 .details-metadata__run {
@@ -32,7 +56,7 @@
   font-size: 1.4em;
   padding-bottom: 16px;
   vertical-align: top;
-  word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc
+  word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc.
 
   &:first-of-type {
     width: 230px;
@@ -55,18 +79,40 @@
   }
 }
 
-td.details-metadata__title {
+.details-metadata__title {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.details-metadata__title span {
+  cursor: pointer;
+  font-size: 20px;
   font-weight: 600;
-  font-size: 2em;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+  }
 }
 
 .details-metadata__notes {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  cursor: pointer;
   display: -webkit-box;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+  }
 }
 
 .details-metadata__show-more.kedro {

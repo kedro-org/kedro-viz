@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Modal from '@quantumblack/kedro-ui/lib/components/modal';
+import Modal from '../modal';
 import {
   changeFlag,
   toggleSettingsModal,
@@ -30,7 +30,6 @@ const SettingsModal = ({
     <div className="pipeline-settings-modal">
       <Modal
         title="Settings"
-        theme={theme}
         onClose={() => onClose(false)}
         visible={visible.settingsModal}
       >
