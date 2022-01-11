@@ -10,7 +10,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Bug fix pretty name for function names. (#686)
+- Bug fix to display the original function names when pretty name is turned off. (#686)
 
 # Release 4.2.0
 
