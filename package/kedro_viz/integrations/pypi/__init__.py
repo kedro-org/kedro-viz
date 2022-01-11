@@ -1,6 +1,6 @@
 """`kedro_viz.integrations.pypi` provides an interface to integrate Kedro-Viz with PyPI."""
 import logging
-from typing import Union
+from typing import Optional, Union
 
 import click
 import requests
@@ -11,7 +11,7 @@ _PYPI_ENDPOINT = "https://pypi.python.org/pypi/kedro-viz/json"
 logger = logging.getLogger(__name__)
 
 
-def get_latest_version() -> Union[LegacyVersion, Version]:
+def get_latest_version() -> Optional[Union[LegacyVersion, Version]]:
     """Get latest Kedro-Viz version available on PyPI."""
     logger.info("Checking for update...")
     try:
