@@ -6,7 +6,7 @@ import FlowChart, {
   mapStateToProps,
   mapDispatchToProps,
   chartSizeTestFallback,
-} from './index';
+} from './flowchart';
 import { mockState, setup } from '../../utils/state.mock';
 import { getViewTransform, getViewExtents, origin } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';
