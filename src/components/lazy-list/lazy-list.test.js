@@ -1,5 +1,10 @@
 import React from 'react';
-import LazyList, { range, rangeUnion, rangeEqual, thresholds } from './index';
+import LazyList, {
+  range,
+  rangeUnion,
+  rangeEqual,
+  thresholds,
+} from './lazy-list';
 import { setup } from '../../utils/state.mock';
 
 describe('LazyList', () => {

@@ -1,4 +1,4 @@
-import { Wrapper, mapStateToProps } from './index';
+import { Wrapper, mapStateToProps } from './wrapper';
 import { mockState, setup } from '../../utils/state.mock';
 
 const { theme } = mockState.spaceflights;

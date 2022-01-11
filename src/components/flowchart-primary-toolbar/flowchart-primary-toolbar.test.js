@@ -3,7 +3,7 @@ import ConnectedFlowchartPrimaryToolbar, {
   FlowchartPrimaryToolbar,
   mapStateToProps,
   mapDispatchToProps,
-} from './index';
+} from './flowchart-primary-toolbar';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('PrimaryToolbar', () => {

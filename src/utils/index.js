@@ -1,26 +1,6 @@
 //--- Useful JS utility functions ---//
 
 import { pathRoot } from '../config';
-import { useLocation } from 'react-router-dom';
-
-/**
- * Custom hook for obtaining query params from URL
- */
-export const useQuery = () => new URLSearchParams(useLocation().search);
-
-/**
- * Custom hook for Obtaining the Ids of the specified run for viewing
- * or comparison from URL used specifically within experiment tracking components.
- */
-export const useRunIdsFromUrl = () => {
-  const query = useQuery();
-
-  const run = query.get('run');
-  const compare = query.get('compare');
-  const compareList = typeof compare === 'string' ? compare.split(' ') : null;
-
-  return { run, compare, compareList };
-};
 
 /**
  * Loop through an array and output to an object
