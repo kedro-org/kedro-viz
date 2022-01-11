@@ -178,7 +178,7 @@ class GraphNode(abc.ABC):
         Returns:
             An instance of TaskNode.
         """
-        node_name = node._name if node._name else node._func_name
+        node_name = node._name or node._func_name
         return TaskNode(
             id=cls._hash(str(node)),
             name=_pretty_name(node_name),
