@@ -96,13 +96,12 @@ class TestGraphNodeCreation:
         assert task_node.modular_pipelines == expected_modular_pipelines
 
     
-    def test_task_node_full_name_when_no_given_name(self, namespace):
+    def test_task_node_full_name_when_no_given_name(self):
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
             tags={"tag"},
-            namespace=namespace,
         )
         task_node = GraphNode.create_task_node(kedro_node)
         assert task_node.full_name == "identity"
