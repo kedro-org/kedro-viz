@@ -8,6 +8,10 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Bug fixes and other changes
+
+- Bug fix for plotly JSONDataSet icon (#684)
+
 # Release 4.2.0
 
 ## Major features and improvements
