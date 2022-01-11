@@ -59,4 +59,5 @@ export const sidebarElementTypes = {
 
 export const shortTypeMapping = {
   'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet': 'plotly',
+  'kedro.extras.datasets.plotly.json_dataset.JSONDataSet': 'plotly',
 };

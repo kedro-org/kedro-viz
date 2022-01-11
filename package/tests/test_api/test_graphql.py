@@ -420,8 +420,8 @@ class TestGraphQLEndpoints:
         assert response.json() == {
             "data": {
                 "runsList": [
-                    {"id": save_version, "bookmark": False},
                     {"id": save_new_version, "bookmark": False},
+                    {"id": save_version, "bookmark": False},
                 ]
             }
         }

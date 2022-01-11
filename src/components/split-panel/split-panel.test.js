@@ -1,6 +1,6 @@
 import React from 'react';
 import { setup } from '../../utils/state.mock';
-import SplitPanel from './index';
+import SplitPanel from './split-panel';
 
 describe('SplitPanel', () => {
   const mockSplitPanel = (props) =>
