@@ -37,3 +37,34 @@
   margin: 0;
   padding: 1em 0;
 }
+
+%input {
+  background-color: unset;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+  width: 100%;
+
+  &:focus-visible {
+    outline: none;
+    text-decoration: underline;
+    text-decoration-color: $color-accent-blue;
+  }
+
+  &::placeholder {
+    color: var(--color-text);
+  }
+}
+
+%input--large {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+%input--small {
+  font-size: 14px;
+  font-weight: normal;
+}
