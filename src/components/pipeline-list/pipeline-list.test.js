@@ -1,5 +1,8 @@
 import React from 'react';
-import PipelineList, { mapStateToProps, mapDispatchToProps } from './index';
+import PipelineList, {
+  mapStateToProps,
+  mapDispatchToProps,
+} from './pipeline-list';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('PipelineList', () => {

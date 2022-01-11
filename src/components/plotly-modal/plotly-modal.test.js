@@ -1,5 +1,5 @@
 import React from 'react';
-import PlotlyModal from './index';
+import PlotlyModal from './plotly-modal';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
 import { setup } from '../../utils/state.mock';
 import { togglePlotModal } from '../../actions';
