@@ -1,4 +1,4 @@
-import Tooltip, { insertZeroWidthSpace } from './index';
+import Tooltip, { insertZeroWidthSpace } from './tooltip';
 import { setup } from '../../utils/state.mock';
 import { sidebarWidth } from '../../config';
 

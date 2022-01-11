@@ -1,5 +1,5 @@
 import React from 'react';
-import ExportModal, { mapStateToProps } from './index';
+import ExportModal, { mapStateToProps } from './export-modal';
 import { mockState, setup } from '../../utils/state.mock';
 import { toggleExportModal } from '../../actions';
 
