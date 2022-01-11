@@ -10,7 +10,9 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+- Fix the order of the runs list in experiment tracking. (#691)
 - Bug fix for plotly JSONDataSet icon (#684)
+
 
 # Release 4.2.0
 
