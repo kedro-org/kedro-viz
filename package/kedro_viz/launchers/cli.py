@@ -6,7 +6,7 @@ from pathlib import Path
 
 import click
 from kedro.framework.cli.utils import KedroCliError
-from packaging import version
+from semver import VersionInfo
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
@@ -74,7 +74,7 @@ def commands():
 )
 def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
     """Visualise a Kedro pipeline using Kedro viz."""
-    current_version = version.parse(__version__)
+    current_version = VersionInfo.parse(__version__)
     latest_version = get_latest_version()
 
     if latest_version is not None and current_version < latest_version:

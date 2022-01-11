@@ -4,18 +4,18 @@ from typing import Optional, Union
 
 import click
 import requests
-from packaging.version import LegacyVersion, Version, parse
+from semver import VersionInfo
 
 # PyPI endpoint to query latest Kedro-Viz version available
 _PYPI_ENDPOINT = "https://pypi.python.org/pypi/kedro-viz/json"
 logger = logging.getLogger(__name__)
 
 
-def get_latest_version() -> Optional[Union[LegacyVersion, Version]]:
+def get_latest_version() -> VersionInfo:
     """Get latest Kedro-Viz version available on PyPI."""
     logger.info("Checking for update...")
     try:
         pypi_response = requests.get(_PYPI_ENDPOINT, timeout=30).json()
     except requests.exceptions.RequestException:
         return None
-    return parse(pypi_response["info"]["version"])
+    return VersionInfo.parse(pypi_response["info"]["version"])

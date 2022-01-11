@@ -1,4 +1,4 @@
-from packaging.version import parse
+from semver import VersionInfo
 
 from kedro_viz.integrations.pypi import get_latest_version
 
@@ -9,4 +9,4 @@ def test_get_latest_version(mocker, mock_http_response):
     requests_get.return_value = mock_http_response(
         data={"info": {"version": mock_version}}
     )
-    assert get_latest_version() == parse(mock_version)
+    assert get_latest_version() == VersionInfo.parse(mock_version)
