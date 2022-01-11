@@ -95,6 +95,40 @@ class TestGraphNodeCreation:
         assert task_node.pipelines == set()
         assert task_node.modular_pipelines == expected_modular_pipelines
 
+    
+    @pytest.mark.parametrize(
+        "namespace,expected_modular_pipelines",
+        [
+            (None, []),
+            (
+                "uk.data_science.model_training",
+                [
+                    "uk",
+                    "uk.data_science",
+                    "uk.data_science.model_training",
+                ],
+            ),
+        ],
+    )
+    def test_create_task_node_no_given_name(self, namespace, expected_modular_pipelines):
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            tags={"tag"},
+            namespace=namespace,
+        )
+        task_node = GraphNode.create_task_node(kedro_node)
+        assert isinstance(task_node, TaskNode)
+        assert task_node.kedro_obj is kedro_node
+        assert task_node.id == GraphNode._hash(str(kedro_node))
+        assert task_node.name == "Identity"
+        assert task_node.full_name == "identity"
+        assert task_node.tags == {"tag"}
+        assert task_node.pipelines == set()
+        assert task_node.modular_pipelines == expected_modular_pipelines
+
+
     @pytest.mark.parametrize(
         "dataset_name,pretty_name,expected_modular_pipelines",
         [
