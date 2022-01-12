@@ -1,7 +1,10 @@
 import pytest
+import requests
 from click.testing import CliRunner
+from semver import VersionInfo
 from watchgod import RegExpWatcher
 
+from kedro_viz import __version__
 from kedro_viz.launchers import cli
 
 
@@ -56,6 +59,58 @@ def test_kedro_viz_command_run_server(command_options, run_server_args, mocker):
         runner.invoke(cli.commands, command_options)
 
     run_server.assert_called_once_with(**run_server_args)
+
+
+def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_response):
+    current_version = VersionInfo.parse(__version__)
+    mock_version = f"{current_version.major + 1}.0.0"
+    requests_get = mocker.patch("requests.get")
+    requests_get.return_value = mock_http_response(
+        data={"info": {"version": mock_version}}
+    )
+    mock_click_echo = mocker.patch("click.echo")
+
+    mocker.patch("kedro_viz.launchers.cli.run_server")
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        runner.invoke(cli.commands, ["viz"])
+
+    mock_click_echo.assert_called_once_with(
+        "\x1b[33mWARNING: You are using an old version of Kedro Viz. "
+        f"You are using version {current_version}; "
+        f"however, version {mock_version} is now available.\n"
+        "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
+        "You can view the complete changelog at "
+        "https://github.com/kedro-org/kedro-viz/releases.\x1b[0m"
+    )
+
+
+def test_kedro_viz_command_should_not_log_latest_version(mocker, mock_http_response):
+    requests_get = mocker.patch("requests.get")
+    requests_get.return_value = mock_http_response(
+        data={"info": {"version": VersionInfo.parse(__version__)}}
+    )
+    mock_click_echo = mocker.patch("click.echo")
+
+    mocker.patch("kedro_viz.launchers.cli.run_server")
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        runner.invoke(cli.commands, ["viz"])
+
+    mock_click_echo.assert_not_called()
+
+
+def test_kedro_viz_command_should_not_log_if_pypi_is_down(mocker, mock_http_response):
+    requests_get = mocker.patch("requests.get")
+    requests_get.side_effect = requests.exceptions.RequestException("PyPI is down")
+    mock_click_echo = mocker.patch("click.echo")
+
+    mocker.patch("kedro_viz.launchers.cli.run_server")
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        runner.invoke(cli.commands, ["viz"])
+
+    mock_click_echo.assert_not_called()
 
 
 def test_kedro_viz_command_with_autoreload(mocker):
