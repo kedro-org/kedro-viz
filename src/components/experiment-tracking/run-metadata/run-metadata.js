@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
-import { useMutation } from '@apollo/client';
-import { client } from '../../../apollo/config';
-import { UPDATE_RUN_DETAILS } from '../../../apollo/mutations';
+import { useUpdateRunDetails } from '../../../apollo/mutations';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import CloseIcon from '../../icons/close';
 import IconButton from '../../icon-button';
@@ -19,14 +17,12 @@ const sanitiseEmptyValue = (value) => {
 
 const HiddenMenu = ({ children, isBookmarked, runId }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [updateRunDetails] = useMutation(UPDATE_RUN_DETAILS, { client });
+  const { updateRunDetails } = useUpdateRunDetails();
 
   const toggleBookmark = () => {
     updateRunDetails({
-      variables: {
-        runId: runId,
-        runInput: { bookmark: !isBookmarked },
-      },
+      runId,
+      runInput: { bookmark: !isBookmarked },
     });
   };
 
@@ -132,7 +128,6 @@ const RunMetadata = ({
                             ariaLive="polite"
                             className="pipeline-menu-button--labels"
                             icon={KebabIcon}
-                            visible={enableShowChanges}
                           />
                         </HiddenMenu>
                         <IconButton
@@ -140,7 +135,6 @@ const RunMetadata = ({
                           className="pipeline-menu-button--labels"
                           onClick={() => onRunSelection(run.id)}
                           icon={CloseIcon}
-                          visible={enableShowChanges}
                         />
                       </ul>
                     </td>

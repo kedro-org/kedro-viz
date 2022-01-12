@@ -1,6 +1,5 @@
 import React from 'react';
-import { useMutation } from '@apollo/client';
-import { UPDATE_RUN_DETAILS } from '../../../apollo/mutations';
+import { useUpdateRunDetails } from '../../../apollo/mutations';
 import IconButton from '../../icon-button';
 import PencilIcon from '../../icons/pencil';
 import BookmarkIcon from '../../icons/bookmark';
@@ -18,14 +17,12 @@ export const ExperimentPrimaryToolbar = ({
   showRunDetailsModal,
   sidebarVisible,
 }) => {
-  const [updateRunDetails] = useMutation(UPDATE_RUN_DETAILS);
+  const { updateRunDetails } = useUpdateRunDetails();
 
   const toggleBookmark = () => {
     updateRunDetails({
-      variables: {
-        runId: selectedRunData.id,
-        runInput: { bookmark: !selectedRunData?.bookmark },
-      },
+      runId: selectedRunData.id,
+      runInput: { bookmark: !selectedRunData?.bookmark },
     });
   };
 
