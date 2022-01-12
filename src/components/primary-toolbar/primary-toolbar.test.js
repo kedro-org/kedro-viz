@@ -1,5 +1,5 @@
 import React from 'react';
-import PrimaryToolbar from './index';
+import PrimaryToolbar from './primary-toolbar';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('PrimaryToolbar', () => {

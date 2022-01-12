@@ -1,5 +1,5 @@
 import React from 'react';
-import MountSidebar, { Sidebar } from './index';
+import MountSidebar, { Sidebar } from './sidebar';
 import { mockState, setup } from '../../utils/state.mock';
 
 const mockProps = {

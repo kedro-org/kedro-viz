@@ -178,10 +178,11 @@ class GraphNode(abc.ABC):
         Returns:
             An instance of TaskNode.
         """
+        node_name = node._name or node._func_name
         return TaskNode(
             id=cls._hash(str(node)),
-            name=_pretty_name(getattr(node, "short_name", node.name)),
-            full_name=getattr(node, "short_name", node.name),
+            name=_pretty_name(node_name),
+            full_name=node_name,
             tags=set(node.tags),
             kedro_obj=node,
         )
