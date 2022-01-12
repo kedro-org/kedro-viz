@@ -24,7 +24,7 @@ const RunsListCard = ({
   const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(timestamp);
 
-  const onClick = (id, e) => {
+  const onRunsListCardClick = (id, e) => {
     /**
      * If we click the bookmark icon or the path HTML element within the SVG,
      * then update the bookmark boolean. If we didn't check for the path, the
@@ -55,7 +55,7 @@ const RunsListCard = ({
         'runs-list-card--active': active,
         'runs-list-card--disabled': disableRunSelection && !active,
       })}
-      onClick={(e) => onClick(id, e)}
+      onClick={(e) => onRunsListCardClick(id, e)}
     >
       {enableComparisonView && (
         <CheckIcon
@@ -73,7 +73,9 @@ const RunsListCard = ({
         <div className="runs-list-card__timestamp">{humanReadableTime}</div>
       </div>
       {bookmark ? (
-        <BookmarkIcon className={'runs-list-card__bookmark'} />
+        <BookmarkIcon
+          className={'runs-list-card__bookmark runs-list-card__bookmark--solid'}
+        />
       ) : (
         <BookmarkStrokeIcon
           className={
