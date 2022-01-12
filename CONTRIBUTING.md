@@ -173,14 +173,19 @@ Build the application with:
 make build
 ```
 
-As far as the development server for the backend is concerned, you only nede to run `make build` once when you first setup the project.
+As far as the development server for the backend is concerned, you only need to run `make build` once when you first setup the project.
 
 Then launch the server with:
 
 ```bash
-PYTHONPATH=$(pwd)/package python3 package/kedro_viz/server.py <path-to-your-test-project>/new-kedro-project
+make run PROJECT_PATH=<path-to-your-test-project>/new-kedro-project
 ```
-This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142. 
+This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142. To avoid needing to supply `PROJECT_PATH` every time you call `make run`, you can set it as an environment variable:
+
+```bash
+export PROJECT_PATH=<path-to-your-test-project>/new-kedro-project 
+make run
+```
 
 > **Note**: Once the development server is launched at port 4142, the local app will always pull data from that server. To prevent this, you can comment out the proxy setting in `package.json` and restart the dev server at port 4141.
 

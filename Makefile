@@ -15,7 +15,7 @@ clean:
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
 
 run:
-	python package/kedro_viz/server.py --port 4141
+	PYTHONPATH=$(shell pwd)/package python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
 pytest: build
 	cd package && pytest --cov-fail-under=100
