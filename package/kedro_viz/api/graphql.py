@@ -15,7 +15,6 @@ from strawberry import ID
 from strawberry.asgi import GraphQL
 
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
 
@@ -45,13 +44,8 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
     Returns:
         Run object
     """
-    session = data_access_manager.db_session
     git_data = run_blob.get("git")
-    user_details = (
-        session.query(UserRunDetailsModel)
-        .filter(UserRunDetailsModel.run_id == run_id)
-        .scalar()
-    )
+    user_details = data_access_manager.runs.get_user_run_details(run_id)
     run = Run(
         id=ID(run_id),
         author="",
@@ -73,15 +67,8 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
     Returns:
         list of Run objects
     """
-    runs: List[Run] = []
-    session = data_access_manager.db_session
-    if not session:
-        return runs
-    all_run_data = session.query(RunModel).filter(RunModel.id.in_(run_ids)).all()
-    for run_data in all_run_data:
-        run = format_run(run_data.id, json.loads(run_data.blob))
-        runs.append(run)
-    return runs
+    runs: List[Run] = data_access_manager.runs.get_runs_by_ids(run_ids)
+    return [format_run(run.id, json.loads(run.blob)) for run in runs] if runs else None
 
 
 def get_all_runs() -> List[Run]:
@@ -90,14 +77,8 @@ def get_all_runs() -> List[Run]:
     Returns:
         list of Run objects
     """
-    runs: List[Run] = []
-    session = data_access_manager.db_session
-    if not session:
-        return runs
-    for run_data in session.query(RunModel).order_by(RunModel.id.desc()).all():
-        run = format_run(run_data.id, json.loads(run_data.blob))
-        runs.append(run)
-    return runs
+    runs: List[Run] = data_access_manager.runs.get_all_runs()
+    return [format_run(run.id, json.loads(run.blob)) for run in runs] if runs else None
 
 
 def format_run_tracking_data(
@@ -332,18 +313,9 @@ class Mutation:
             "notes": new_run.notes,
         }
 
-        session = data_access_manager.db_session
-        user_run_details = (
-            session.query(UserRunDetailsModel)
-            .filter(UserRunDetailsModel.run_id == run_id)
-            .first()
+        data_access_manager.runs.create_or_update_user_run_details(
+            updated_user_run_details
         )
-        if not user_run_details:
-            session.add(UserRunDetailsModel(**updated_user_run_details))  # type: ignore
-        else:
-            for key, value in updated_user_run_details.items():
-                setattr(user_run_details, key, value)
-        session.commit()
         return UpdateRunDetailsSuccess(new_run)
 
 

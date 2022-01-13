@@ -1,4 +1,5 @@
-"""`kedro_viz.data_access.repositories.tags` defines repository to centralise access to registered pipelines data."""
+"""`kedro_viz.data_access.repositories.registered_pipelines`
+defines repository to centralise access to registered pipelines data."""
 # pylint: disable=missing-class-docstring,missing-function-docstring
 from collections import OrderedDict, defaultdict
 from typing import Dict, List, Optional, Set
