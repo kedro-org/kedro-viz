@@ -42,8 +42,10 @@ def _strip_namespace(name: str) -> str:
     pattern = re.compile(r"[A-Za-z0-9-_]+\.")
     return re.sub(pattern, "", name)
 
+
 def _strip_tags(name: str) -> str:
-    return name.replace("<","").replace(">","")
+    return name.replace("<", "").replace(">", "")
+
 
 def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     filepath = dataset_description.get("filepath") or dataset_description.get("path")
@@ -410,7 +412,9 @@ class TaskNodeMetadata(GraphNodeMetadata):
             self.code = inspect.getsource(
                 _extract_wrapped_func(cast(FunctionType, kedro_node.func))
             )
-            code_full_path = Path(inspect.getfile(kedro_node.func)).expanduser().resolve()
+            code_full_path = (
+                Path(inspect.getfile(kedro_node.func)).expanduser().resolve()
+            )
             try:
                 filepath = code_full_path.relative_to(Path.cwd().parent)
             except ValueError:  # pragma: no cover
