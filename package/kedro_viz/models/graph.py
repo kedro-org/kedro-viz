@@ -410,7 +410,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
         if inspect.isfunction(kedro_node.func):
             self.code = inspect.getsource(
-                _extract_wrapped_func(cast(FunctionType, kedro_node.func))
+                _extract_wrapped_func(kedro_node.func)
             )
             code_full_path = (
                 Path(inspect.getfile(kedro_node.func)).expanduser().resolve()
