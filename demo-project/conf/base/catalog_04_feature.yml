@@ -1,0 +1,25 @@
+# Jinja is super powerful, but does come at the cost of readability
+# Set your IDE to Jinja YAML to ensure this is highlighted correctly
+
+{% set namespace = 'feature_engineering' %}
+{% set metric_types = ['weighting', 'scaling'] %}
+{% for metric_type in metric_types %}
+{{ namespace }}.feat_{{ metric_type }}_metrics:
+  type: pandas.ParquetDataSet
+  filepath: ${base_location}/04_feature/feat_{{ metric_type }}_metrics.pq
+  layer: feature
+
+{% endfor %}
+
+
+# This will render to generate the records below...
+#
+# feature_engineering.feat_weighting_metrics:
+#  type: pandas.ParquetDataSet
+#  filepath: ${base_location}/04_feature/feat_weighting_metrics.pq
+#  layer: feature
+#
+# feature_engineering.feat_scaling_metrics:
+#  type: pandas.ParquetDataSet
+#  filepath: ${base_location}/04_feature/feat_scaling_metrics.pq
+#  layer: feature
