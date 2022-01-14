@@ -17,5 +17,3 @@ openpyxl==3.0.9
 pillow==8.3.2
 matplotlib==3.5.0
 pre-commit~=1.17
-kedro-viz
-kedro-telemetry

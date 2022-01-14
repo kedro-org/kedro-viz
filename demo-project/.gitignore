@@ -11,6 +11,8 @@ conf/**/*credentials*
 # ignore everything in the following folders
 data/**
 logs/**
+!data/09_tracking/**
+!data/session_store.db
 
 # except their sub-folders
 !data/**/
