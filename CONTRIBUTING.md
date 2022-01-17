@@ -216,7 +216,7 @@ These are the supported dataset identifiers:
 
 By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a JSON dataset in `/public/api/main`, using `main` as the name of the file, [without an extension](https://www.computerhope.com/issues/ch002089.htm). Note that operating systems often add hidden file extensions, so you might need to use a CLI to confirm the filename.
 
-Alternatively, you can synchronously load one of the mock datasets in `/src/utils/data`. The 'spaceflights' dataset is mainly used as mock data for unit testing, while the 'demo' dataset is used on the [public demo](https://quantumblacklabs.github.io/kedro-viz/).
+Alternatively, you can synchronously load one of the mock datasets in `/src/utils/data`. The 'spaceflights' dataset is mainly used as mock data for unit testing, while the 'demo' dataset is used on the [public demo](https://demo.kedro.org/).
 
 Finally, you can use pseudo-random data, which is procedurally-generated on page load, and is often useful for local development. Random data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
 
