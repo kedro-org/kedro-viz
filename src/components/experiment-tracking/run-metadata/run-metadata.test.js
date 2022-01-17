@@ -100,16 +100,15 @@ describe('RunMetadata', () => {
     );
   });
 
-  // Remove for now.
-  // it('enables the pin button when show changes is enabled ', () => {
-  //   const wrapper = mount(
-  //     <RunMetadata
-  //       enableShowChanges={true}
-  //       isSingleRun={false}
-  //       runs={twoRuns}
-  //     />
-  //   );
+  it('enables the pin button when show changes is enabled ', () => {
+    const wrapper = shallow(
+      <RunMetadata
+        enableShowChanges={true}
+        isSingleRun={false}
+        runs={twoRuns}
+      />
+    );
 
-  //   expect(wrapper.find('.pipeline-menu-button__pin').length).toEqual(4);
-  // });
+    expect(wrapper.find('.pipeline-menu-button__pin').length).toEqual(2);
+  });
 });
