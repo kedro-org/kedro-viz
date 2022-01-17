@@ -1,0 +1,11 @@
+.tours
+.ipython
+.pytest*
+.docs
+.logs
+.notebooks
+data/02*
+data/03*
+data/04*
+data/05*
+data/06*
