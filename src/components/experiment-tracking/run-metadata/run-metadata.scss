@@ -99,8 +99,11 @@
   cursor: pointer;
   font-size: 20px;
   font-weight: 600;
+  overflow: hidden;
   text-decoration-color: transparent;
+  text-overflow: ellipsis;
   transition: text-decoration-color 0.2s ease;
+  white-space: nowrap;
 
   &:hover {
     text-decoration: underline;

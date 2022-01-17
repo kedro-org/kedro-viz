@@ -94,7 +94,10 @@ const RunMetadata = ({
                 {isSingleRun ? (
                   <tr>
                     <td className="details-metadata__title" colSpan="2">
-                      <span onClick={() => onTitleOrNoteClick(run.id)}>
+                      <span
+                        onClick={() => onTitleOrNoteClick(run.id)}
+                        title={sanitiseEmptyValue(run.title)}
+                      >
                         {sanitiseEmptyValue(run.title)}
                       </span>
                     </td>
@@ -103,7 +106,10 @@ const RunMetadata = ({
                   <tr>
                     {i === 0 ? <td></td> : null}
                     <td className="details-metadata__title">
-                      <span onClick={() => onTitleOrNoteClick(run.id)}>
+                      <span
+                        onClick={() => onTitleOrNoteClick(run.id)}
+                        title={sanitiseEmptyValue(run.title)}
+                      >
                         {sanitiseEmptyValue(run.title)}
                       </span>
                       <ul className="details-metadata__buttons">
