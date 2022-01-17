@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { client } from '../../../apollo/config';
-import { UPDATE_RUN_DETAILS } from '../../../apollo/mutations';
+import { useUpdateRunDetails } from '../../../apollo/mutations';
 import classnames from 'classnames';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import BookmarkIcon from '../../icons/bookmark';
@@ -23,10 +21,10 @@ const RunsListCard = ({
 }) => {
   const { id, timestamp, title = null, bookmark } = data;
   const [active, setActive] = useState(false);
-  const [updateRunDetails] = useMutation(UPDATE_RUN_DETAILS, { client });
+  const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(timestamp);
 
-  const onClick = (id, e) => {
+  const onRunsListCardClick = (id, e) => {
     /**
      * If we click the bookmark icon or the path HTML element within the SVG,
      * then update the bookmark boolean. If we didn't check for the path, the
@@ -37,10 +35,8 @@ const RunsListCard = ({
       e.target.tagName === 'path'
     ) {
       updateRunDetails({
-        variables: {
-          runId: id,
-          runInput: { bookmark: !bookmark },
-        },
+        runId: id,
+        runInput: { bookmark: !bookmark },
       });
 
       return;
@@ -59,7 +55,7 @@ const RunsListCard = ({
         'runs-list-card--active': active,
         'runs-list-card--disabled': disableRunSelection && !active,
       })}
-      onClick={(e) => onClick(id, e)}
+      onClick={(e) => onRunsListCardClick(id, e)}
     >
       {enableComparisonView && (
         <CheckIcon
@@ -77,7 +73,9 @@ const RunsListCard = ({
         <div className="runs-list-card__timestamp">{humanReadableTime}</div>
       </div>
       {bookmark ? (
-        <BookmarkIcon className={'runs-list-card__bookmark'} />
+        <BookmarkIcon
+          className={'runs-list-card__bookmark runs-list-card__bookmark--solid'}
+        />
       ) : (
         <BookmarkStrokeIcon
           className={

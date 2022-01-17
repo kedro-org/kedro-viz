@@ -6,8 +6,11 @@ from pathlib import Path
 
 import click
 from kedro.framework.cli.utils import KedroCliError
+from semver import VersionInfo
 from watchgod import RegExpWatcher, run_process
 
+from kedro_viz import __version__
+from kedro_viz.integrations.pypi import get_latest_version
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, is_localhost, run_server
 
 
@@ -71,6 +74,22 @@ def commands():
 )
 def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
     """Visualise a Kedro pipeline using Kedro viz."""
+    current_version = VersionInfo.parse(__version__)
+    latest_version = get_latest_version()
+
+    if latest_version is not None and current_version < latest_version:
+        click.echo(
+            click.style(
+                "WARNING: You are using an old version of Kedro Viz. "
+                f"You are using version {current_version}; "
+                f"however, version {latest_version} is now available.\n"
+                "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
+                "You can view the complete changelog at "
+                "https://github.com/kedro-org/kedro-viz/releases.",
+                fg="yellow",
+            ),
+        )
+
     try:
         run_server_kwargs = {
             "host": host,

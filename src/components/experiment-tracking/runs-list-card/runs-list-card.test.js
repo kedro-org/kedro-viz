@@ -70,6 +70,30 @@ describe('RunsListCard', () => {
     expect(wrapper.find('.runs-list-card__checked--comparing').length).toBe(1);
   });
 
+  it('renders with an inactive bookmark icon', () => {
+    const wrapper = shallow(
+      <RunsListCard
+        data={randomRun}
+        enableComparisonView={false}
+        selectedRunIds={selectedRunIds}
+      />
+    );
+
+    expect(wrapper.find('.runs-list-card__bookmark--stroke').length).toBe(1);
+  });
+
+  it('renders with an active bookmark icon', () => {
+    const wrapper = shallow(
+      <RunsListCard
+        data={savedRun}
+        enableComparisonView={false}
+        selectedRunIds={selectedRunIds}
+      />
+    );
+
+    expect(wrapper.find('.runs-list-card__bookmark--solid').length).toBe(1);
+  });
+
   it('calls a function on click and adds an active class', () => {
     const setActive = jest.fn();
     const wrapper = mount(
@@ -86,4 +110,23 @@ describe('RunsListCard', () => {
     expect(setActive).toBeTruthy();
     expect(wrapper.find('.runs-list-card--active').length).toBe(1);
   });
+
+  // Breaks because of Apollo Client mutation
+  // it('calls the updateRunDetails function', () => {
+  //   const wrapper = shallow(
+  //     <RunsListCard
+  //       data={randomRun}
+  //       enableComparisonView={true}
+  //       selectedRunIds={selectedRunIds}
+  //     />
+  //   );
+
+  //   const instance = wrapper.instance();
+  //   const spy = jest.spyOn(instance, 'onClick');
+  //   instance.forceUpdate();
+
+  //   const div = wrapper.find('.runs-list-card');
+  //   div.simulate('click');
+  //   expect(spy).toHaveBeenCalled();
+  // });
 });

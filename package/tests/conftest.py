@@ -1,4 +1,5 @@
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Optional
 from unittest import mock
@@ -287,3 +288,15 @@ def example_db_dataset(example_db_session, save_version, save_new_version):
     session.add(user_run_details)
     session.commit()
     yield session
+
+
+@pytest.fixture
+def mock_http_response():
+    @dataclass(frozen=True)
+    class MockHTTPResponse:
+        data: dict
+
+        def json(self):
+            return self.data
+
+    return MockHTTPResponse
