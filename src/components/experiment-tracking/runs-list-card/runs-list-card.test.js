@@ -121,12 +121,14 @@ describe('RunsListCard', () => {
   //     />
   //   );
 
-  //   const instance = wrapper.instance();
-  //   const spy = jest.spyOn(instance, 'onClick');
-  //   instance.forceUpdate();
+  //   expect(wrapper.find('.runs-list-card').length).toBe(1);
 
-  //   const div = wrapper.find('.runs-list-card');
-  //   div.simulate('click');
-  //   expect(spy).toHaveBeenCalled();
+  // const instance = wrapper.instance();
+  // const spy = jest.spyOn(instance, 'onClick');
+  // instance.forceUpdate();
+
+  // const div = wrapper.find('.runs-list-card');
+  // div.simulate('click');
+  // expect(spy).toHaveBeenCalled();
   // });
 });
