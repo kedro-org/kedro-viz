@@ -10,11 +10,10 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-
 - Bug fix to display the original function names when pretty name is turned off. (#686)
 - Fix the order of the runs list in experiment tracking. (#691)
-- Bug fix for plotly JSONDataSet icon (#684)
-
+- Bug fix for Plotly JSONDataSet icon. (#684)
+- Bug fix for when some flowchart nodes were being cut off by the sidebar. (#701)
 
 # Release 4.2.0
 
@@ -26,16 +25,17 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Bug fix for plotly modal when escape button is pressed. (#654)
+- Bug fix for Plotly modal when escape button is pressed. (#654)
 - Display Plotly JSONDataSet plot in metadata side-panel. (#660)
 - Refactor Primary Toolbar setup. (#664)
-- Upgrade @apollo/client from 3.4.16 to 3.5.3. (#661, #668) 
+- Upgrade @apollo/client from 3.4.16 to 3.5.3. (#661, #668)
 
 # Release 4.1.1
+
 ## Bug fixes and other changes
 
 - Fix display of boolean values on tracking dataset (#652)
-- Fix node IDs in test data after Kedro updates its _str_logic for node (#653)
+- Fix node IDs in test data after Kedro updates its \_str_logic for node (#653)
 
 # Release 4.1.0
 
@@ -83,7 +83,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Relax pandas and plotly versions.
+- Relax pandas and Plotly versions.
 
 # Release 3.17.0
 
@@ -184,7 +184,7 @@ Please follow the established format:
 - Complete backend rewrite to be more modular and maintainable using FastAPI. (#432)
 - Add layout engine documentation. (#436)
 - Add split panel components and implement into the sidebar. (#448)
-- Visualise plotly charts if user defines them with `kedro.extra.datasets.plotly.PlotlyDataSet` in their Kedro project _(Note: This feature is only available in `kedro>=0.17.4`)._ (#455)
+- Visualise Plotly charts if user defines them with `kedro.extra.datasets.plotly.PlotlyDataSet` in their Kedro project _(Note: This feature is only available in `kedro>=0.17.4`)._ (#455)
 
 ## Bug fixes and other changes
 
