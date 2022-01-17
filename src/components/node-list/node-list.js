@@ -36,6 +36,7 @@ const NodeList = ({
       <NodeListSearch
         onUpdateSearchValue={onUpdateSearchValue}
         searchValue={searchValue}
+        onNodeToggleExpanded={onModularPipelineToggleExpanded}
       />
       <SplitPanel>
         {({ isResizing, props: { container, panelA, panelB, handle } }) => (

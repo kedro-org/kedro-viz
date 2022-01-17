@@ -5,7 +5,6 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import noop from 'lodash.noop';
 import sortBy from 'lodash.sortby';
 
 import { getNodeSelected } from '../../selectors/nodes';
@@ -190,7 +189,7 @@ const TreeListProvider = ({
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
-        onItemClick={noop}
+        onItemClick={onItemClick}
         key={node.id}
       >
         {children}
@@ -199,6 +198,7 @@ const TreeListProvider = ({
   };
 
   const onItemExpandToggle = (event, expandedItemIds) => {
+    console.log(expandedItemIds);
     onNodeToggleExpanded(expandedItemIds);
   };
 

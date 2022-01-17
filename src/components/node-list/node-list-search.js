@@ -1,14 +1,21 @@
 import React, { useEffect, useRef } from 'react';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import { connect } from 'react-redux';
-
+import { getModularPipelinesTree } from '../../selectors/nodes';
+import { getModularPipelinesSearchResult } from '../../selectors/modular-pipelines';
 /**
  * Handle Node List Search
  * @param {function} onUpdateSearchValue Event handler
  * @param {string} searchValue Search text
  * @param {string} theme Light/dark theme for Kedro-UI component
  */
-export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
+export const NodeListSearch = ({
+  onUpdateSearchValue,
+  searchValue,
+  onNodeToggleExpanded,
+  theme,
+  modularPipelinesTree,
+}) => {
   const container = useRef(null);
 
   /**
@@ -50,6 +57,22 @@ export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
     }
   };
 
+  const onSearchChange = (event) => {
+    onUpdateSearchValue(event);
+    const modularPipelinesSearchResult = event
+      ? getModularPipelinesSearchResult(modularPipelinesTree, event)
+      : null;
+    let modularPipelinesItems = [];
+    if (modularPipelinesSearchResult) {
+      modularPipelinesItems = Object.keys(modularPipelinesSearchResult);
+      modularPipelinesItems = modularPipelinesItems.filter(
+        (item) => item !== '__root__'
+      );
+    }
+    console.log(modularPipelinesItems);
+    onNodeToggleExpanded(modularPipelinesItems.reverse());
+  };
+
   return (
     <div
       ref={container}
@@ -57,7 +80,7 @@ export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
       onKeyDown={handleKeyDown}
     >
       <SearchBar
-        onChange={onUpdateSearchValue}
+        onChange={onSearchChange}
         value={searchValue}
         theme={theme}
         placeholder={'Search'}
@@ -68,6 +91,7 @@ export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
 
 export const mapStateToProps = (state) => ({
   theme: state.theme,
+  modularPipelinesTree: getModularPipelinesTree(state),
 });
 
 export default connect(mapStateToProps)(NodeListSearch);
