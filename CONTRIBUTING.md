@@ -284,7 +284,7 @@ make pytest
 ```bash
 make e2e-tests
 ```
-#### Linting tests (`isort`, `pylint` and `flake8`)
+#### Linting tests (`isort`, `black`, `pylint`, `flake8` and `mypy`)
 
 ```bash
 make lint
