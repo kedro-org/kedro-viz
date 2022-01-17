@@ -1,7 +1,6 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
-import logging
-
 # pylint: disable=too-many-instance-attributes
+import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Optional, Union
 
@@ -36,7 +35,7 @@ from .repositories import (
     RunsRepository,
 )
 
-logger = logging.getLogger(__name__)
+logger = .getLogger(__name__)
 
 
 class DataAccessManager:

@@ -72,11 +72,11 @@ commands:
           name: Run JavaScript tests
           command: npm run build:css && npm run test:ci
 
-  run_pylint_and_flake8:
+  run_python_format_and_lint:
     steps:
       - run:
-          name: Run pylint and flake8
-          command: make pylint
+          name: Run Python formatters and linters
+          command: make format-check lint-check
 
   run_secret_scan:
     steps:
@@ -188,7 +188,7 @@ commands:
       - test_lib_import
       - run_eslint
       - run_javascript_tests
-      - run_pylint_and_flake8
+      - run_python_format_and_lint
       - run_secret_scan
       - run_security_scan
       - run_python_tests
