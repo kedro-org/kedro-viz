@@ -225,7 +225,7 @@ We use [Jest](https://jestjs.io/), [Enzyme](https://enzymejs.github.io/enzyme/),
 
 Before you request a review on a PR, be sure to review it yourself [by comparing changes](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-comparing-branches-in-pull-requests) line by line. Make your amends with this style guide in mind.
 
-You should manually test your PR branch [across different browsers](#browser-and-device-support) and for [regressions](https://en.wikipedia.org/wiki/Regression_testing) against the behaviour of the [previous release](https://quantumblacklabs.github.io/kedro-viz/). Resolve problems where practical or otherwise note them in the PR text before you request a review.
+You should manually test your PR branch [across different browsers](#browser-and-device-support) and for [regressions](https://en.wikipedia.org/wiki/Regression_testing) against the behaviour of the [previous release](https://demo.kedro.org/). Resolve problems where practical or otherwise note them in the PR text before you request a review.
 
 As well as manual testing, we aim to include automated high-level [integration tests](https://en.wikipedia.org/wiki/Integration_testing) on a [user story](https://en.wikipedia.org/wiki/User_story) or feature and interface basis, such as [simulating UI interaction](https://testing-library.com/docs/ecosystem-user-event) and observing expected [UI outputs](https://github.com/testing-library/jest-dom#readme).
 

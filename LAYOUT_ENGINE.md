@@ -2,7 +2,7 @@
 
 On this page you'll find high-level details of how we have implemented the engine we use in [Kedro-Viz](https://github.com/quantumblacklabs/kedro-viz). We intend this to be useful as a reference for our project maintainers.  
 
-You can see and interact with the engine's graph drawings on the [Kedro-Viz demo](https://quantumblacklabs.github.io/kedro-viz/) or explore our [code](https://github.com/quantumblacklabs/kedro-viz/tree/main/src/utils/graph) to see how it works in practice, which we describe below in more detail.
+You can see and interact with the engine's graph drawings on the [Kedro-Viz demo](https://demo.kedro.org/) or explore our [code](https://github.com/quantumblacklabs/kedro-viz/tree/main/src/utils/graph) to see how it works in practice, which we describe below in more detail.
 
 <p align="center">
   <img width="450" alt="kedro-viz-drawing" src="https://user-images.githubusercontent.com/45365769/117349544-67d75680-aea3-11eb-8c72-d1b88f4b930c.png">
