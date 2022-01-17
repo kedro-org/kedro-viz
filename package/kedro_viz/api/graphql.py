@@ -52,8 +52,10 @@ def format_run(run_id: str, run_blob: Dict) -> Run:
         gitBranch=git_data.get("branch") if git_data else None,
         gitSha=git_data.get("commit_sha") if git_data else None,
         bookmark=user_details.bookmark if user_details else False,
-        title=user_details.title if user_details else run_blob["session_id"],
-        notes=user_details.notes if user_details else "",
+        title=user_details.title
+        if user_details and user_details.title
+        else run_blob["session_id"],
+        notes=user_details.notes if user_details and user_details.notes else "",
         timestamp=run_blob["session_id"],
         runCommand=run_blob["cli"]["command_path"],
     )
@@ -68,7 +70,7 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
         list of Run objects
     """
     runs: List[Run] = data_access_manager.runs.get_runs_by_ids(run_ids)
-    return [format_run(run.id, json.loads(run.blob)) for run in runs] if runs else None
+    return [format_run(run.id, json.loads(run.blob)) for run in runs] if runs else []
 
 
 def get_all_runs() -> List[Run]:
@@ -78,7 +80,7 @@ def get_all_runs() -> List[Run]:
         list of Run objects
     """
     runs: List[Run] = data_access_manager.runs.get_all_runs()
-    return [format_run(run.id, json.loads(run.blob)) for run in runs] if runs else None
+    return [format_run(run.id, json.loads(run.blob)) for run in runs] if runs else []
 
 
 def format_run_tracking_data(
@@ -155,6 +157,7 @@ def get_run_tracking_data(
         List of TrackingDatasets
 
     """
+    # TODO: this logic should be moved to the data access layer.
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
 
     all_datasets = []
@@ -255,7 +258,7 @@ class RunInput:
 
 @strawberry.type
 class UpdateRunDetailsSuccess:
-    """Response type for sucessful update of runs"""
+    """Response type for successful update of runs"""
 
     run: Run
 
@@ -287,7 +290,8 @@ class Mutation:
             )
         existing_run = runs[0]
         new_run = existing_run
-        # if user doesn't provide a new title, use the old title.
+        # if user doesn't provide a new title, use the old title (if available),
+        # or fallback to run_id.
         if run_input.title is None:
             new_run.title = existing_run.title
         # if user provides an empty title, we assume they want to revert to the old timestamp title
@@ -296,15 +300,8 @@ class Mutation:
         else:
             new_run.title = run_input.title
 
-        new_run.bookmark = (
-            run_input.bookmark
-            if run_input.bookmark is not None
-            else existing_run.bookmark
-        )
-
-        new_run.notes = (
-            run_input.notes if run_input.notes is not None else existing_run.notes
-        )
+        new_run.bookmark = run_input.bookmark or existing_run.bookmark
+        new_run.notes = run_input.notes or existing_run.notes
 
         updated_user_run_details = {
             "run_id": run_id,

@@ -2,13 +2,13 @@
 # pylint: disable=too-many-instance-attributes
 import logging
 from collections import defaultdict
-from typing import Dict, List, Set, Optional, Union
+from typing import Dict, List, Set, Type, Union
 
 import networkx as nx
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (
@@ -31,11 +31,11 @@ from .repositories import (
     GraphNodesRepository,
     ModularPipelinesRepository,
     RegisteredPipelinesRepository,
-    TagsRepository,
     RunsRepository,
+    TagsRepository,
 )
 
-logger = .getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DataAccessManager:
@@ -55,7 +55,7 @@ class DataAccessManager:
         )
         self.runs = RunsRepository()
 
-    def set_db_session(self, db_session: sessionmaker):
+    def set_db_session(self, db_session: Type[Session]):
         """Set db session on repositories that need it."""
         self.runs.db_session = db_session
 

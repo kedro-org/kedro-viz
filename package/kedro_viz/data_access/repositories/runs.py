@@ -1,14 +1,20 @@
-"""`kedro_viz.data_access.repositories.tags` defines repository to centralise access to runs data."""
-from typing import Iterable, Dict, List, Optional
+"""`kedro_viz.data_access.repositories.tags` defines repository to
+centralise access to runs data."""
+# pylint: disable=missing-class-docstring,missing-function-docstring
+import logging
+from typing import Dict, Iterable, List, Optional, Type
 
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
+
 from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
+
+logger = logging.getLogger(__name__)
 
 
 class RunsRepository:
-    _db_session: Optional[sessionmaker]
+    _db_session: Optional[Type[Session]]
 
-    def __init__(self, db_session: Optional[sessionmaker] = None):
+    def __init__(self, db_session: Optional[Type[Session]] = None):
         self._db_session = db_session
 
     @property
@@ -17,7 +23,7 @@ class RunsRepository:
         return self._db_session
 
     @db_session.setter
-    def db_session(self, db_session: Optional[sessionmaker]):
+    def db_session(self, db_session: Optional[Type[Session]]):
         self._db_session = db_session
 
     def get_all_runs(self) -> Optional[Iterable[RunModel]]:
