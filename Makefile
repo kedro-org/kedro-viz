@@ -23,7 +23,7 @@ pytest: build
 e2e-tests: build
 	cd package && behave
 
-lint: format-fix pylint-check
+lint: format-fix lint-check
 
 format-fix:
 	isort package/kedro_viz package/tests package/features
