@@ -23,9 +23,17 @@ pytest: build
 e2e-tests: build
 	cd package && behave
 
-pylint:
-	cd package && isort .
+lint: format-fix lint-check
+
+format-fix:
+	isort package/kedro_viz package/tests package/features
 	black package/kedro_viz package/tests package/features
+
+format-check:
+	isort --check package/kedro_viz package/tests package/features
+	black --check package/kedro_viz package/tests package/features
+
+lint-check:
 	pylint --rcfile=package/.pylintrc -j 0 package/kedro_viz
 	pylint --rcfile=package/.pylintrc -j 0 --disable=protected-access,missing-docstring,redefined-outer-name,no-self-use,invalid-name,too-few-public-methods,no-member,unused-argument,duplicate-code package/tests
 	pylint --rcfile=package/.pylintrc -j 0 --disable=missing-docstring,no-name-in-module,unused-argument package/features
