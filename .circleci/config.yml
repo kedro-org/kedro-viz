@@ -173,7 +173,7 @@ commands:
       - checkout
       - restore_cache:
           keys:
-            # - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - setup_python_env
