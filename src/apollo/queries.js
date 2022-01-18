@@ -17,7 +17,6 @@ export const GET_RUNS = gql`
 export const GET_RUN_METADATA = gql`
   query getRunMetadata($runIds: [ID!]!) {
     runMetadata(runIds: $runIds) {
-      id
       author
       bookmark
       gitBranch
