@@ -65,7 +65,7 @@ class RunsRepository:
         self, updated_user_run_details: Dict
     ) -> Optional[UserRunDetailsModel]:
         db_session_class = cast(sessionmaker, self._db_session_class)
-        with db_session_class.begin() as session:
+        with db_session_class.begin() as session:  # type: ignore
             user_run_details = (
                 session.query(UserRunDetailsModel)
                 .filter(
