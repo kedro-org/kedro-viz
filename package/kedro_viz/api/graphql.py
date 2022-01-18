@@ -253,7 +253,7 @@ class Subscription:
     """Subscription object to track runs added in real time"""
 
     @strawberry.subscription
-    async def runs_added(self) -> AsyncGenerator:
+    async def runs_added(self) -> AsyncGenerator[List[Run]]:
         """Subscription to new runs in real-time"""
         while True:
             new_runs = data_access_manager.runs.get_new_runs()
