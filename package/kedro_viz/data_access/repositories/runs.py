@@ -2,7 +2,7 @@
 centralise access to runs data."""
 # pylint: disable=missing-class-docstring,missing-function-docstring
 import logging
-from typing import Dict, Iterable, List, Optional, Type
+from typing import Dict, Iterable, List, Optional
 
 from sqlalchemy.orm import sessionmaker
 

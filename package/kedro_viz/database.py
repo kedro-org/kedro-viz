@@ -1,12 +1,11 @@
 """Database management layer based on SQLAlchemy"""
 
 from pathlib import Path
-from typing import Tuple, Type
+from typing import Tuple
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import Session
 
 
 def create_db_engine(
