@@ -12,7 +12,7 @@ pylint~=2.8.2
 pytest~=6.2.0
 pytest-cov~=2.11.1
 pytest-mock~=3.6.1
-sqlalchemy[mypy]~=1.4
+sqlalchemy-stubs~=0.4
 trufflehog~=2.1.0
 
 # mypy

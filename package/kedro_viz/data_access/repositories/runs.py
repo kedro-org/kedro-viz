@@ -19,7 +19,7 @@ def check_db_session(method: Callable) -> Callable:
 
     @wraps(method)
     def func(self: "RunsRepository", *method_args, **method_kwargs):
-        if not self._db_session:  # pylint: disable=protected-access
+        if not self._db_session_class:  # pylint: disable=protected-access
             return None
         return method(self, *method_args, **method_kwargs)
 
