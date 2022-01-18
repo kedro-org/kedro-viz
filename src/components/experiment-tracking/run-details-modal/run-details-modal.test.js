@@ -2,8 +2,6 @@ import React from 'react';
 import RunDetailsModal from './index';
 import Adapter from 'enzyme-adapter-react-16';
 import { configure, mount, shallow } from 'enzyme';
-import { MockedProvider } from '@apollo/client/testing';
-import { UPDATE_RUN_DETAILS } from '../../../apollo/mutations';
 
 configure({ adapter: new Adapter() });
 
