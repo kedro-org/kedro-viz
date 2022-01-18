@@ -76,8 +76,9 @@ class RunsRepository:
             .first()
         )
 
+    @check_db_session
     def get_new_runs(self) -> Optional[Iterable[RunModel]]:
-        query = self._db_session_class().query(RunModel)
+        query = self._db_session_class().query(RunModel)  # type: ignore
 
         if self.last_run_id:
             # TODO: change this query to use timestamp once we have added that column

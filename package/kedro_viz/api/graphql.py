@@ -8,7 +8,16 @@ import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Iterable, List, NewType, Optional, cast
+from typing import (
+    TYPE_CHECKING,
+    AsyncGenerator,
+    Dict,
+    Iterable,
+    List,
+    NewType,
+    Optional,
+    cast,
+)
 
 import strawberry
 from fastapi import APIRouter
@@ -79,7 +88,7 @@ def format_runs(runs: Iterable[RunModel]) -> List[Run]:
         return []
     return [
         format_run(
-            cast(str, run.id),
+            run.id,
             json.loads(cast(str, run.blob)),
             data_access_manager.runs.get_user_run_details(run.id),
         )
@@ -244,7 +253,7 @@ class Subscription:
     """Subscription object to track runs added in real time"""
 
     @strawberry.subscription
-    async def runs_added(self) -> List[Run]:
+    async def runs_added(self) -> AsyncGenerator:
         """Subscription to new runs in real-time"""
         while True:
             new_runs = data_access_manager.runs.get_new_runs()
