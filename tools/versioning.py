@@ -13,6 +13,7 @@ from pathlib import Path
 VIZ_INIT_FILE = "package/kedro_viz/__init__.py"
 PACKAGE_JSON_FILE = "package.json"
 PACKAGE_JSON_LOCK_FILE = "package-lock.json"
+DEMO_REQUIREMENT_FILE = "demo-modular-spaceflights/src/docker_requirements.txt"
 VERSION_FMT = r"\d+.\d+.\d+"
 VERSION_MATCHSTR = r'__version__\s*=\s*"{version_fmt}"'.format(version_fmt=VERSION_FMT)
 VERSION_REPLACEMENT = r'__version__ = "{version}"'
@@ -28,6 +29,13 @@ def update_viz_version(version):
         VERSION_MATCHSTR, VERSION_REPLACEMENT.format(version=version), init_file_str
     )
     init_file_obj.write_text(init_file_str_updated)
+
+
+def update_demo_viz_version(version):
+    with open(DEMO_REQUIREMENT_FILE, "w") as f:
+        content = f.read()
+        regex = r"kedro_viz==(?<old_version>.+)"
+        # TODO: replace old version with new version here
 
 
 def git_commit(version):

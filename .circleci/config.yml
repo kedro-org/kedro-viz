@@ -141,31 +141,26 @@ commands:
           name: Publish to S3
           command: aws s3 cp --recursive build s3://kedro-viz-fe/${CIRCLE_BRANCH}
 
-  deploy_gh_pages:
+  deploy_demo:
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v${CACHE_VERSION}-{{ arch }}-dependencies-
-      - install_node_dependencies
-      - build_npm_package
-      - add_ssh_keys:
-          fingerprints:
-            - '9a:fe:61:f4:d6:c2:c1:58:75:c9:72:56:6e:53:fd:8b'
       - run:
-          name: Deploy to GitHub Pages
+          name: Build demo container image
           command: |
-            cd build
-            git config --global user.email circleci@circleci.com
-            git config --global user.name CircleCIBot
-            git init
-            git checkout -b gh-pages
-            git add -A
-            git commit -m 'Demo build [ci skip]'
-            git remote add origin https://github.com/quantumblacklabs/kedro-viz.git
-            git push origin gh-pages --force
+            cd demo-modular-spaceflights
+            docker build -t kedro-viz-live-demo:... .
+            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+            docker push public.ecr.aws/g0x0s3o2/kedro-viz-live-demo:...
+      - run:
+          name: Create a new lightsail deployment
+          command: |
+            # install lightsail cli
+            # run https://docs.aws.amazon.com/cli/latest/reference/lightsail/create-container-service-deployment.html#create-container-service-deployment
 
   build:
     description: Run build
@@ -278,7 +273,7 @@ jobs:
 
   deploy_demo:
     executor: circleci_machine
-    steps: [deploy_gh_pages]
+    steps: [deploy_demo]
 
   deploy_s3:
     executor: circleci_machine
