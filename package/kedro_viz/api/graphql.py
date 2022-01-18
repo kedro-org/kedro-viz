@@ -7,7 +7,7 @@ import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Iterable, List, NewType, Optional
+from typing import cast, TYPE_CHECKING, Dict, Iterable, List, NewType, Optional
 
 import strawberry
 from fastapi import APIRouter
@@ -78,8 +78,8 @@ def format_runs(runs: Iterable[RunModel]) -> List[Run]:
         return []
     return [
         format_run(
-            run.id,
-            json.loads(run.blob),
+            cast(str, run.id),
+            cast(json.loads(run.blob, str)),
             data_access_manager.runs.get_user_run_details(run.id),
         )
         for run in runs
