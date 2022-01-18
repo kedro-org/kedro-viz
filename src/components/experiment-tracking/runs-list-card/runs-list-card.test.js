@@ -5,6 +5,22 @@ import { configure, mount, shallow } from 'enzyme';
 
 configure({ adapter: new Adapter() });
 
+// Mocked methods
+
+const mockUpdateRunDetails = jest.fn();
+
+jest.mock('../../../apollo/mutations', () => {
+  return {
+    useUpdateRunDetails: () => {
+      return {
+        updateRunDetails: mockUpdateRunDetails,
+      };
+    },
+  };
+});
+
+// Setup
+
 const randomRun = {
   bookmark: false,
   id: 'ef32bfd',
@@ -27,6 +43,8 @@ const nonActiveRun = {
   timestamp: new Date('October 15, 2021 03:24:00').toISOString(),
   title: 'Sprint 4 EOW',
 };
+
+// Tests
 
 describe('RunsListCard', () => {
   it('renders without crashing', () => {
@@ -111,16 +129,24 @@ describe('RunsListCard', () => {
     expect(wrapper.find('.runs-list-card--active').length).toBe(1);
   });
 
-  // Breaks because of Apollo Client mutation
-  // it('calls the updateRunDetails function', () => {
-  //   const wrapper = shallow(
-  //     <RunsListCard
-  //       data={randomRun}
-  //       enableComparisonView={true}
-  //       selectedRunIds={selectedRunIds}
-  //     />
-  //   );
+  it('calls the updateRunDetails function', () => {
+    const wrapper = mount(
+      <RunsListCard
+        data={randomRun}
+        enableComparisonView={true}
+        selectedRunIds={selectedRunIds}
+      />
+    );
 
-  //   expect(wrapper.find('.runs-list-card').length).toBe(1);
-  // });
+    wrapper.simulate('click', {
+      target: {
+        classList: {
+          contains: () => true,
+          tagName: 'path',
+        },
+      },
+    });
+
+    expect(mockUpdateRunDetails).toHaveBeenCalled();
+  });
 });

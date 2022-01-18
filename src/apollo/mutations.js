@@ -1,6 +1,5 @@
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
-import { client } from '../apollo/config';
 
 export const UPDATE_RUN_DETAILS = gql`
   mutation updateRunDetails($runId: ID!, $runInput: RunInput!) {
@@ -22,10 +21,8 @@ export const UPDATE_RUN_DETAILS = gql`
 `;
 
 export const useUpdateRunDetails = () => {
-  const [_updateRunDetails, { error, loading, reset }] = useMutation(
-    UPDATE_RUN_DETAILS,
-    { client }
-  );
+  const [_updateRunDetails, { error, loading, reset }] =
+    useMutation(UPDATE_RUN_DETAILS);
 
   return {
     updateRunDetails: function (variables) {
