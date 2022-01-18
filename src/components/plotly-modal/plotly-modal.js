@@ -10,7 +10,7 @@ import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './plotly-modal.css';
 
 const PlotlyModal = ({ metadata, onToggle, visible }) => {
-  const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.node.type);
+  const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
 
   const onCollapsePlotClick = () => {
     onToggle(false);
@@ -30,9 +30,7 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
         </button>
         <div className="pipeline-plot-modal__header">
           <NodeIcon className="pipeline-plot-modal__icon" icon={nodeTypeIcon} />
-          <span className="pipeline-plot-modal__title">
-            {metadata.node.name}
-          </span>
+          <span className="pipeline-plot-modal__title">{metadata.name}</span>
         </div>
       </div>
       <PlotlyChart
