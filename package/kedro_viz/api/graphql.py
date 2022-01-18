@@ -79,7 +79,7 @@ def format_runs(runs: Iterable[RunModel]) -> List[Run]:
     return [
         format_run(
             cast(str, run.id),
-            cast(json.loads(run.blob, str)),
+            json.loads(cast(str, run.blob)),
             data_access_manager.runs.get_user_run_details(run.id),
         )
         for run in runs
