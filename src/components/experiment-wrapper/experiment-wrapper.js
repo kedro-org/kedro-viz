@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
-import { GET_RUNS, NEW_RUN_SUBSCRIPTION } from '../../apollo/queries';
+import { GET_RUNS } from '../../apollo/queries';
+import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import { sortRunByTime } from '../../utils/date-utils';
 import Button from '@quantumblack/kedro-ui/lib/components/button';
 import Details from '../experiment-tracking/details';
@@ -79,13 +80,16 @@ const ExperimentWrapper = ({ theme }) => {
     if (!data?.runsList || data.runsList.length === 0) {
       return;
     }
+
     subscribeToMore({
       document: NEW_RUN_SUBSCRIPTION,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data || !prev?.runsList) {
           return prev;
         }
+
         const newRuns = subscriptionData.data.runsAdded;
+
         return Object.assign({}, prev, {
           runsList: [...newRuns, ...prev.runsList],
         });

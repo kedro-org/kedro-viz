@@ -29,19 +29,6 @@ export const GET_RUN_METADATA = gql`
   }
 `;
 
-/** subscribe to receive new runs */
-export const NEW_RUN_SUBSCRIPTION = gql`
-  subscription {
-    runsAdded {
-      id
-      bookmark
-      gitSha
-      timestamp
-      title
-    }
-  }
-`;
-
 /** query for collapsable run details component */
 export const GET_RUN_TRACKING_DATA = gql`
   query getRunTrackingData($runIds: [ID!]!, $showDiff: Boolean) {
