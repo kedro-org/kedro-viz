@@ -43,9 +43,6 @@ def _strip_namespace(name: str) -> str:
     return re.sub(pattern, "", name)
 
 
-def _strip_tags(name: str) -> str:
-    return name.replace("<", "").replace(">", "")
-
 
 def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     filepath = dataset_description.get("filepath") or dataset_description.get("path")
@@ -186,8 +183,8 @@ class GraphNode(abc.ABC):
         node_name = node._name or node._func_name
         return TaskNode(
             id=cls._hash(str(node)),
-            name=_pretty_name(_strip_tags(node_name)),
-            full_name=_strip_tags(node_name),
+            name=_pretty_name(node_name),
+            full_name=node_name,
             tags=set(node.tags),
             kedro_obj=node,
         )
@@ -408,6 +405,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, task_node: TaskNode):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
+        # this is required to handle partial, curry functions
         if inspect.isfunction(kedro_node.func):
             self.code = inspect.getsource(
                 _extract_wrapped_func(kedro_node.func)

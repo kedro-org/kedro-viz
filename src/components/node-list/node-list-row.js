@@ -70,7 +70,8 @@ const NodeListRow = memo(
         : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
-
+    //to display partial, lambda, curry functions
+    label = label.replace('<', '&lt;').replace('>', '&gt;');
     return (
       <Container
         className={classnames(
