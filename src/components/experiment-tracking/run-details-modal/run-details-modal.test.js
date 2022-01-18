@@ -2,6 +2,8 @@ import React from 'react';
 import RunDetailsModal from './index';
 import Adapter from 'enzyme-adapter-react-16';
 import { configure, mount, shallow } from 'enzyme';
+import { MockedProvider } from '@apollo/client/testing';
+import { UPDATE_RUN_DETAILS } from '../../../apollo/mutations';
 
 configure({ adapter: new Adapter() });
 
@@ -49,5 +51,15 @@ describe('RunDetailsModal', () => {
         '.pipeline-settings-modal--experiment-tracking .kui-modal--visible'
       ).length
     ).toBe(0);
+  });
+
+  it('calls the updateRunDetails function', () => {
+    const wrapper = mount(
+      <RunDetailsModal runMetadataToEdit={{ id: 'test' }} visible={true} />
+    );
+
+    wrapper.find('.kui-button__btn--primary').simulate('click');
+
+    expect(mockUpdateRunDetails).toHaveBeenCalled();
   });
 });

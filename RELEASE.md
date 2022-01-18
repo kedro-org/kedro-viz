@@ -10,7 +10,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Add the toggle bookmark for experiment runs feature. (#689)
+- Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
 
 ## Bug fixes and other changes
 
