@@ -7,7 +7,7 @@ import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, NewType, Optional
+from typing import TYPE_CHECKING, Dict, Iterable, List, NewType, Optional
 
 import strawberry
 from fastapi import APIRouter
@@ -15,6 +15,7 @@ from strawberry import ID
 from strawberry.asgi import GraphQL
 
 from kedro_viz.data_access import data_access_manager
+from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
 
@@ -36,30 +37,53 @@ else:
     )
 
 
-def format_run(run_id: str, run_blob: Dict) -> Run:
+def format_run(
+    run_id: str, run_blob: Dict, user_run_details: Optional[UserRunDetailsModel]
+) -> Run:
     """Convert blob data in the correct Run format.
     Args:
         run_id: ID of the run to fetch
         run_blob: JSON blob of run metadata and tracking data
+        user_run_details: The user run details associated with this run
     Returns:
         Run object
     """
     git_data = run_blob.get("git")
-    user_details = data_access_manager.runs.get_user_run_details(run_id)
+    bookmark = user_run_details.bookmark if user_run_details else False
+    title = (
+        user_run_details.title
+        if user_run_details and user_run_details.title
+        else run_blob["session_id"]
+    )
+    notes = (
+        user_run_details.notes if user_run_details and user_run_details.notes else ""
+    )
     run = Run(
         id=ID(run_id),
         author="",
         gitBranch=git_data.get("branch") if git_data else None,
         gitSha=git_data.get("commit_sha") if git_data else None,
-        bookmark=user_details.bookmark if user_details else False,
-        title=user_details.title
-        if user_details and user_details.title
-        else run_blob["session_id"],
-        notes=user_details.notes if user_details and user_details.notes else "",
+        bookmark=bookmark,
+        title=title,
+        notes=notes,
         timestamp=run_blob["session_id"],
         runCommand=run_blob["cli"]["command_path"],
     )
     return run
+
+
+def format_runs(runs: Iterable[RunModel]) -> List[Run]:
+    """Format a list of RunModel objects into a list of GraphQL Run"""
+    if not runs:
+        return []
+    return [
+        format_run(
+            run.id,
+            json.loads(run.blob),
+            data_access_manager.runs.get_user_run_details(run.id),
+        )
+        for run in runs
+    ]
 
 
 def get_runs(run_ids: List[ID]) -> List[Run]:
@@ -69,8 +93,7 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
     Returns:
         list of Run objects
     """
-    runs = data_access_manager.runs.get_runs_by_ids(run_ids)
-    return [format_run(run.id, json.loads(run.blob)) for run in runs] if runs else []
+    return format_runs(data_access_manager.runs.get_runs_by_ids(run_ids))
 
 
 def get_all_runs() -> List[Run]:
@@ -79,8 +102,7 @@ def get_all_runs() -> List[Run]:
     Returns:
         list of Run objects
     """
-    runs = data_access_manager.runs.get_all_runs()
-    return [format_run(run.id, json.loads(run.blob)) for run in runs] if runs else []
+    return format_runs(data_access_manager.runs.get_all_runs())
 
 
 def format_run_tracking_data(
@@ -288,7 +310,11 @@ class Mutation:
             return UpdateRunDetailsFailure(
                 id=run_id, error_message=f"Given run_id: {run_id} doesn't exist"
             )
-        updated_run = format_run(run.id, json.loads(run.blob))
+        updated_run = format_run(
+            run.id,
+            json.loads(run.blob),
+            data_access_manager.runs.get_user_run_details(run.id),
+        )
 
         # only update user run title if the input is not empty
         if run_input.title is not None and bool(run_input.title.strip()):
