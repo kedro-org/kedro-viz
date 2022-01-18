@@ -1,3 +1,4 @@
+# type: ignore
 """`kedro_viz.data_access.repositories.tags` defines repository to
 centralise access to runs data."""
 # pylint: disable=missing-class-docstring,missing-function-docstring
@@ -35,31 +36,25 @@ class RunsRepository:
         """Sqlite db connection session"""
         self._db_session_class = db_session_class
 
-    @property
-    def db_session_class(self) -> sessionmaker:
-        if self._db_session_class is None:  # pragma: no cover
-            raise ValueError("No db connection has been set for this repository.")
-        return self._db_session_class
-
     @check_db_session
     def add_run(self, run: RunModel):
-        with self.db_session_class.begin() as session:
+        with self._db_session_class.begin() as session:
             session.add(run)
 
     @check_db_session
     def get_all_runs(self) -> Optional[Iterable[RunModel]]:
         return (
-            self.db_session_class().query(RunModel).order_by(RunModel.id.desc()).all()
+            self._db_session_class().query(RunModel).order_by(RunModel.id.desc()).all()
         )
 
     @check_db_session
     def get_run_by_id(self, run_id: str) -> Optional[RunModel]:
-        return self.db_session_class().query(RunModel).get(run_id)
+        return self._db_session_class().query(RunModel).get(run_id)
 
     @check_db_session
     def get_runs_by_ids(self, run_ids: List[str]) -> Optional[Iterable[RunModel]]:
         return (
-            self.db_session_class()
+            self._db_session_class()
             .query(RunModel)
             .filter(RunModel.id.in_(run_ids))
             .all()
@@ -68,7 +63,7 @@ class RunsRepository:
     @check_db_session
     def get_user_run_details(self, run_id: str) -> Optional[UserRunDetailsModel]:
         return (
-            self.db_session_class()
+            self._db_session_class()
             .query(UserRunDetailsModel)
             .filter(UserRunDetailsModel.run_id == run_id)
             .first()
@@ -78,7 +73,7 @@ class RunsRepository:
     def create_or_update_user_run_details(
         self, updated_user_run_details: Dict
     ) -> Optional[UserRunDetailsModel]:
-        with self.db_session_class.begin() as session:
+        with self._db_session_class.begin() as session:
             user_run_details = (
                 session.query(UserRunDetailsModel)
                 .filter(
