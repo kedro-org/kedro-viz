@@ -65,7 +65,7 @@ class RunsRepository:
                 .first()
             )
             if not user_run_details:
-                session.add(UserRunDetailsModel(**updated_user_run_details))  # type: ignore
+                session.add(UserRunDetailsModel(**updated_user_run_details))
             else:
                 for key, value in updated_user_run_details.items():
                     setattr(user_run_details, key, value)
