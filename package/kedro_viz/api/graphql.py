@@ -69,7 +69,7 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
     Returns:
         list of Run objects
     """
-    runs: List[Run] = data_access_manager.runs.get_runs_by_ids(run_ids)
+    runs = data_access_manager.runs.get_runs_by_ids(run_ids)
     return [format_run(run.id, json.loads(run.blob)) for run in runs] if runs else []
 
 
@@ -79,7 +79,7 @@ def get_all_runs() -> List[Run]:
     Returns:
         list of Run objects
     """
-    runs: List[Run] = data_access_manager.runs.get_all_runs()
+    runs = data_access_manager.runs.get_all_runs()
     return [format_run(run.id, json.loads(run.blob)) for run in runs] if runs else []
 
 

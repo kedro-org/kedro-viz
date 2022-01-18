@@ -4,7 +4,7 @@ centralise access to runs data."""
 import logging
 from typing import Dict, Iterable, List, Optional, Type
 
-from sqlalchemy.orm.session import Session
+from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
@@ -12,9 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 class RunsRepository:
-    _db_session: Optional[Type[Session]]
+    _db_session: Optional[sessionmaker]
 
-    def __init__(self, db_session: Optional[Type[Session]] = None):
+    def __init__(self, db_session: Optional[sessionmaker] = None):
         self._db_session = db_session
 
     @property
@@ -23,7 +23,7 @@ class RunsRepository:
         return self._db_session
 
     @db_session.setter
-    def db_session(self, db_session: Optional[Type[Session]]):
+    def db_session(self, db_session: Optional[sessionmaker]):
         self._db_session = db_session
 
     def get_all_runs(self) -> Optional[Iterable[RunModel]]:
