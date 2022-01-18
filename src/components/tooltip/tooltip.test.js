@@ -1,6 +1,6 @@
 import Tooltip, { insertZeroWidthSpace } from './tooltip';
 import { setup } from '../../utils/state.mock';
-import { sidebarWidth } from '../../config';
+import { globalToolbarWidth, sidebarWidth } from '../../config';
 
 const mockProps = {
   chartSize: {
@@ -66,7 +66,7 @@ describe('Tooltip', () => {
   it("should add the 'right' class when the tooltip is towards the right", () => {
     const targetRect = {
       ...mockProps.targetRect,
-      left: mockProps.chartSize.width - 10,
+      left: mockProps.chartSize.width - 10 + globalToolbarWidth,
     };
     const wrapper = setup.shallow(Tooltip, { ...mockProps, targetRect });
     const container = wrapper.find('.pipeline-tooltip--right');
