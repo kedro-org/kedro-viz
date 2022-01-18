@@ -1,30 +1,10 @@
-import asyncio
 import json
-
-import pytest
 
 from kedro_viz.api.graphql import schema
 from kedro_viz.models.experiments_tracking import RunModel
 
 
 class TestRunsAddedSubscription:
-    # @pytest.mark.asyncio
-    # async def test_subscription(self):
-    #     query = """
-    #         subscription {
-    #             count(target: 3)
-    #         }
-    #     """
-
-    #     sub = await schema.subscribe(query)
-
-    #     index = 0
-    #     async for result in sub:
-    #         assert not result.errors
-    #         assert result.data == {"count": index}
-
-    #     index += 1
-
     async def test_runs_added_subscription(
         self, example_run_ids, data_access_manager_with_no_run
     ):
