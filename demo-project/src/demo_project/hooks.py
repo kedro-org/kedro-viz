@@ -24,11 +24,11 @@ class ProjectHooks:
         catalog: Optional[Dict[str, Dict[str, Any]]],
         credentials: Dict[str, Dict[str, Any]],
         load_versions: Dict[str, str],
-        example_run_id: str,
+        save_version: str,
         journal: Journal,
     ) -> DataCatalog:
         return DataCatalog.from_config(
-            catalog, credentials, load_versions, example_run_id, journal
+            catalog, credentials, load_versions, save_version, journal
         )
 
 

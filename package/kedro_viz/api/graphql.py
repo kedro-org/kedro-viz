@@ -267,7 +267,7 @@ class Subscription:
                     )
                     for run in new_runs
                 ]
-            await asyncio.sleep(3)
+            await asyncio.sleep(3)  # pragma: no cover
 
 
 @strawberry.type
