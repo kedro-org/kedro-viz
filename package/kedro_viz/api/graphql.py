@@ -283,37 +283,33 @@ class Mutation:
     @strawberry.mutation
     def update_run_details(self, run_id: ID, run_input: RunInput) -> Response:
         """Updates run details based on run inputs provided by user"""
-        runs = get_runs([run_id])
-        if not runs:
+        run = data_access_manager.runs.get_run_by_id(run_id)
+        if not run:
             return UpdateRunDetailsFailure(
                 id=run_id, error_message=f"Given run_id: {run_id} doesn't exist"
             )
-        existing_run = runs[0]
-        new_run = existing_run
-        # if user doesn't provide a new title, use the old title (if available),
-        # or fallback to run_id.
-        if run_input.title is None:
-            new_run.title = existing_run.title
-        # if user provides an empty title, we assume they want to revert to the old timestamp title
-        elif run_input.title.strip() == "":
-            new_run.title = existing_run.timestamp
-        else:
-            new_run.title = run_input.title
+        updated_run = format_run(run.id, json.loads(run.blob))
 
-        new_run.bookmark = run_input.bookmark or existing_run.bookmark
-        new_run.notes = run_input.notes or existing_run.notes
+        # only update user run title if the input is not empty
+        if run_input.title is not None and bool(run_input.title.strip()):
+            updated_run.title = run_input.title
+
+        if run_input.bookmark:
+            updated_run.bookmark = run_input.bookmark
+
+        if run_input.notes:
+            updated_run.notes = run_input.notes
 
         updated_user_run_details = {
             "run_id": run_id,
-            "title": new_run.title,
-            "bookmark": new_run.bookmark,
-            "notes": new_run.notes,
+            "title": updated_run.title,
+            "bookmark": updated_run.bookmark,
+            "notes": updated_run.notes,
         }
-
         data_access_manager.runs.create_or_update_user_run_details(
             updated_user_run_details
         )
-        return UpdateRunDetailsSuccess(new_run)
+        return UpdateRunDetailsSuccess(updated_run)
 
 
 schema = strawberry.Schema(query=Query, mutation=Mutation)
