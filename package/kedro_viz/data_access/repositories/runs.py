@@ -43,7 +43,10 @@ class RunsRepository:
     @check_db_session
     def get_all_runs(self) -> Optional[Iterable[RunModel]]:
         return (
-            self._db_session_class().query(RunModel).order_by(RunModel.id.desc()).all()  # type: ignore
+            self._db_session_class()  # type: ignore
+            .query(RunModel)
+            .order_by(RunModel.id.desc())
+            .all()
         )
 
     @check_db_session
