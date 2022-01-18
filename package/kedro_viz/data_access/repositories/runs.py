@@ -6,7 +6,6 @@ from functools import wraps
 from typing import Callable, Dict, Iterable, List, Optional, cast
 
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import Session
 
 from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
@@ -38,22 +37,22 @@ class RunsRepository:
 
     @check_db_session
     def get_all_runs(self) -> Optional[Iterable[RunModel]]:
-        db_session_class = cast(Session, self._db_session_class)
+        db_session_class = cast(sessionmaker, self._db_session_class)
         return db_session_class().query(RunModel).order_by(RunModel.id.desc()).all()
 
     @check_db_session
     def get_run_by_id(self, run_id: str) -> Optional[RunModel]:
-        db_session_class = cast(Session, self._db_session_class)
+        db_session_class = cast(sessionmaker, self._db_session_class)
         return db_session_class().query(RunModel).get(run_id)
 
     @check_db_session
     def get_runs_by_ids(self, run_ids: List[str]) -> Optional[Iterable[RunModel]]:
-        db_session_class = cast(Session, self._db_session_class)
+        db_session_class = cast(sessionmaker, self._db_session_class)
         return db_session_class().query(RunModel).filter(RunModel.id.in_(run_ids)).all()
 
     @check_db_session
     def get_user_run_details(self, run_id: str) -> Optional[UserRunDetailsModel]:
-        db_session_class = cast(Session, self._db_session_class)
+        db_session_class = cast(sessionmaker, self._db_session_class)
         return (
             db_session_class()
             .query(UserRunDetailsModel)
@@ -65,7 +64,7 @@ class RunsRepository:
     def create_or_update_user_run_details(
         self, updated_user_run_details: Dict
     ) -> Optional[UserRunDetailsModel]:
-        db_session_class = cast(Session, self._db_session_class)
+        db_session_class = cast(sessionmaker, self._db_session_class)
         with db_session_class.begin() as session:
             user_run_details = (
                 session.query(UserRunDetailsModel)
