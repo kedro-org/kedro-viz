@@ -42,27 +42,24 @@ class RunsRepository:
 
     @check_db_session
     def get_all_runs(self) -> Optional[Iterable[RunModel]]:
-        with self._db_session.begin() as session:
-            return session.query(RunModel).order_by(RunModel.id.desc()).all()
+        return self._db_session().query(RunModel).order_by(RunModel.id.desc()).all()
 
     @check_db_session
     def get_run_by_id(self, run_id: str) -> Optional[RunModel]:
-        with self._db_session.begin() as session:
-            return session.query(RunModel).get(run_id)
+        return self._db_session().query(RunModel).get(run_id)
 
     @check_db_session
     def get_runs_by_ids(self, run_ids: List[str]) -> Optional[Iterable[RunModel]]:
-        with self._db_session.begin() as session:
-            return session.query(RunModel).filter(RunModel.id.in_(run_ids)).all()
+        return self._db_session().query(RunModel).filter(RunModel.id.in_(run_ids)).all()
 
     @check_db_session
     def get_user_run_details(self, run_id: str) -> Optional[UserRunDetailsModel]:
-        with self._db_session.begin() as session:
-            return (
-                session.query(UserRunDetailsModel)
-                .filter(UserRunDetailsModel.run_id == run_id)
-                .first()
-            )
+        return (
+            self._db_session()
+            .query(UserRunDetailsModel)
+            .filter(UserRunDetailsModel.run_id == run_id)
+            .first()
+        )
 
     @check_db_session
     def create_or_update_user_run_details(
