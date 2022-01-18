@@ -59,7 +59,6 @@ export const drawLayerNames = function () {
     layers,
   } = this.props;
 
-  console.log('sidebarWidth: ', sidebarWidth);
   this.el.layerNameGroup
     .transition('layer-names-sidebar-width')
     .duration(this.DURATION)
