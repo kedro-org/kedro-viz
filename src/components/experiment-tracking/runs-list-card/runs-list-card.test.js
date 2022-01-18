@@ -5,6 +5,22 @@ import { configure, mount, shallow } from 'enzyme';
 
 configure({ adapter: new Adapter() });
 
+// Mocked methods
+
+const mockUpdateRunDetails = jest.fn();
+
+jest.mock('../../../apollo/mutations', () => {
+  return {
+    useUpdateRunDetails: () => {
+      return {
+        updateRunDetails: mockUpdateRunDetails,
+      };
+    },
+  };
+});
+
+// Setup
+
 const randomRun = {
   bookmark: false,
   id: 'ef32bfd',
@@ -12,7 +28,7 @@ const randomRun = {
   title: 'Sprint 4 EOW',
 };
 
-const selectedRuns = ['ef32bfd'];
+const selectedRunIds = ['ef32bfd'];
 
 const savedRun = {
   bookmark: true,
@@ -28,10 +44,12 @@ const nonActiveRun = {
   title: 'Sprint 4 EOW',
 };
 
+// Tests
+
 describe('RunsListCard', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(
-      <RunsListCard data={randomRun} selectedRuns={selectedRuns} />
+      <RunsListCard data={randomRun} selectedRunIds={selectedRunIds} />
     );
 
     expect(wrapper.find('.runs-list-card').length).toBe(1);
@@ -40,7 +58,7 @@ describe('RunsListCard', () => {
 
   it('renders with a bookmark icon', () => {
     const wrapper = shallow(
-      <RunsListCard data={savedRun} selectedRuns={selectedRuns} />
+      <RunsListCard data={savedRun} selectedRunIds={selectedRunIds} />
     );
 
     expect(wrapper.find('.runs-list-card__bookmark').length).toBe(1);
@@ -51,7 +69,7 @@ describe('RunsListCard', () => {
       <RunsListCard
         data={randomRun}
         enableComparisonView={false}
-        selectedRuns={selectedRuns}
+        selectedRunIds={selectedRunIds}
       />
     );
 
@@ -63,11 +81,35 @@ describe('RunsListCard', () => {
       <RunsListCard
         data={nonActiveRun}
         enableComparisonView={true}
-        selectedRuns={selectedRuns}
+        selectedRunIds={selectedRunIds}
       />
     );
 
     expect(wrapper.find('.runs-list-card__checked--comparing').length).toBe(1);
+  });
+
+  it('renders with an inactive bookmark icon', () => {
+    const wrapper = shallow(
+      <RunsListCard
+        data={randomRun}
+        enableComparisonView={false}
+        selectedRunIds={selectedRunIds}
+      />
+    );
+
+    expect(wrapper.find('.runs-list-card__bookmark--stroke').length).toBe(1);
+  });
+
+  it('renders with an active bookmark icon', () => {
+    const wrapper = shallow(
+      <RunsListCard
+        data={savedRun}
+        enableComparisonView={false}
+        selectedRunIds={selectedRunIds}
+      />
+    );
+
+    expect(wrapper.find('.runs-list-card__bookmark--solid').length).toBe(1);
   });
 
   it('calls a function on click and adds an active class', () => {
@@ -76,7 +118,7 @@ describe('RunsListCard', () => {
       <RunsListCard
         data={randomRun}
         onRunSelection={() => setActive('ef32bfd')}
-        selectedRuns={selectedRuns}
+        selectedRunIds={selectedRunIds}
       />
     );
     const onClick = jest.spyOn(React, 'useState');
@@ -85,5 +127,26 @@ describe('RunsListCard', () => {
     wrapper.simulate('click');
     expect(setActive).toBeTruthy();
     expect(wrapper.find('.runs-list-card--active').length).toBe(1);
+  });
+
+  it('calls the updateRunDetails function', () => {
+    const wrapper = mount(
+      <RunsListCard
+        data={randomRun}
+        enableComparisonView={true}
+        selectedRunIds={selectedRunIds}
+      />
+    );
+
+    wrapper.simulate('click', {
+      target: {
+        classList: {
+          contains: () => true,
+          tagName: 'path',
+        },
+      },
+    });
+
+    expect(mockUpdateRunDetails).toHaveBeenCalled();
   });
 });

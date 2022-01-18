@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
+import { useUpdateRunDetails } from '../../../apollo/mutations';
+import { toHumanReadableTime } from '../../../utils/date-utils';
+import CloseIcon from '../../icons/close';
 import IconButton from '../../icon-button';
+import KebabIcon from '../../icons/kebab';
 import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';
-import { toHumanReadableTime } from '../../../utils/date-utils';
 
 import './run-metadata.css';
 
@@ -12,9 +15,40 @@ const sanitiseEmptyValue = (value) => {
   return value === '' || value === null ? '-' : value;
 };
 
+const HiddenMenu = ({ children, isBookmarked, runId }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const { updateRunDetails } = useUpdateRunDetails();
+
+  const toggleBookmark = () => {
+    updateRunDetails({
+      runId,
+      runInput: { bookmark: !isBookmarked },
+    });
+  };
+
+  return (
+    <div
+      className="hidden-menu-wrapper"
+      onClick={() => setIsVisible(!isVisible)}
+    >
+      <div
+        className={classnames('hidden-menu', {
+          'hidden-menu--visible': isVisible,
+        })}
+      >
+        <div className="hidden-menu__item" onClick={() => toggleBookmark()}>
+          {isBookmarked ? 'Unbookmark' : 'Bookmark'}
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+};
+
 const RunMetadata = ({
   enableShowChanges = false,
   isSingleRun,
+  onRunSelection,
   pinnedRun,
   runs = [],
   setPinnedRun,
@@ -60,7 +94,10 @@ const RunMetadata = ({
                 {isSingleRun ? (
                   <tr>
                     <td className="details-metadata__title" colSpan="2">
-                      <span onClick={() => onTitleOrNoteClick(run.id)}>
+                      <span
+                        onClick={() => onTitleOrNoteClick(run.id)}
+                        title={sanitiseEmptyValue(run.title)}
+                      >
                         {sanitiseEmptyValue(run.title)}
                       </span>
                     </td>
@@ -69,7 +106,10 @@ const RunMetadata = ({
                   <tr>
                     {i === 0 ? <td></td> : null}
                     <td className="details-metadata__title">
-                      <span onClick={() => onTitleOrNoteClick(run.id)}>
+                      <span
+                        onClick={() => onTitleOrNoteClick(run.id)}
+                        title={sanitiseEmptyValue(run.title)}
+                      >
                         {sanitiseEmptyValue(run.title)}
                       </span>
                       <ul className="details-metadata__buttons">
@@ -77,6 +117,7 @@ const RunMetadata = ({
                           ariaLive="polite"
                           className={classnames(
                             'pipeline-menu-button--labels',
+                            'pipeline-menu-button__pin',
                             {
                               'details-metadata__buttons--selected-pin':
                                 run.id === pinnedRun,
@@ -87,6 +128,19 @@ const RunMetadata = ({
                             run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
                           visible={enableShowChanges}
+                        />
+                        <HiddenMenu isBookmarked={run.bookmark} runId={run.id}>
+                          <IconButton
+                            ariaLive="polite"
+                            className="pipeline-menu-button--labels"
+                            icon={KebabIcon}
+                          />
+                        </HiddenMenu>
+                        <IconButton
+                          ariaLive="polite"
+                          className="pipeline-menu-button--labels"
+                          onClick={() => onRunSelection(run.id)}
+                          icon={CloseIcon}
                         />
                       </ul>
                     </td>
