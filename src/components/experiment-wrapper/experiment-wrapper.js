@@ -83,7 +83,7 @@ const ExperimentWrapper = ({ theme }) => {
   useEffect(() => {
     /**
      * If we return runs and aren't in comparison view, set a single selected
-     * run data object for use in other components.
+     * run data object for use in the ExperimentPrimaryToolbar component.
      */
     if (data?.runsList.length > 0 && !enableComparisonView) {
       const singleSelectedRunData = data.runsList.filter((run) => {
