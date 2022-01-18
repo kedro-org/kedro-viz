@@ -3,9 +3,10 @@ centralise access to runs data."""
 # pylint: disable=missing-class-docstring,missing-function-docstring
 import logging
 from functools import wraps
-from typing import Callable, Dict, Iterable, List, Optional
+from typing import Callable, Dict, Iterable, List, Optional, cast
 
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
 
 from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
@@ -26,36 +27,35 @@ def check_db_session(method: Callable) -> Callable:
 
 
 class RunsRepository:
-    _db_session: Optional[sessionmaker]
+    _db_session_class: Optional[sessionmaker]
 
-    def __init__(self, db_session: Optional[sessionmaker] = None):
-        self._db_session = db_session
+    def __init__(self, db_session_class: Optional[sessionmaker] = None):
+        self._db_session_class = db_session_class
 
-    @property
-    def db_session(self):  # pragma: no cover
+    def set_db_session(self, db_session_class: sessionmaker):  # pragma: no cover
         """Sqlite db connection session"""
-        return self._db_session
-
-    @db_session.setter
-    def db_session(self, db_session: Optional[sessionmaker]):
-        self._db_session = db_session
+        self._db_session_class = db_session_class
 
     @check_db_session
     def get_all_runs(self) -> Optional[Iterable[RunModel]]:
-        return self._db_session().query(RunModel).order_by(RunModel.id.desc()).all()
+        db_session_class = cast(Session, self._db_session_class)
+        return db_session_class().query(RunModel).order_by(RunModel.id.desc()).all()
 
     @check_db_session
     def get_run_by_id(self, run_id: str) -> Optional[RunModel]:
-        return self._db_session().query(RunModel).get(run_id)
+        db_session_class = cast(Session, self._db_session_class)
+        return db_session_class().query(RunModel).get(run_id)
 
     @check_db_session
     def get_runs_by_ids(self, run_ids: List[str]) -> Optional[Iterable[RunModel]]:
-        return self._db_session().query(RunModel).filter(RunModel.id.in_(run_ids)).all()
+        db_session_class = cast(Session, self._db_session_class)
+        return db_session_class().query(RunModel).filter(RunModel.id.in_(run_ids)).all()
 
     @check_db_session
     def get_user_run_details(self, run_id: str) -> Optional[UserRunDetailsModel]:
+        db_session_class = cast(Session, self._db_session_class)
         return (
-            self._db_session()
+            db_session_class()
             .query(UserRunDetailsModel)
             .filter(UserRunDetailsModel.run_id == run_id)
             .first()
@@ -65,7 +65,8 @@ class RunsRepository:
     def create_or_update_user_run_details(
         self, updated_user_run_details: Dict
     ) -> Optional[UserRunDetailsModel]:
-        with self._db_session.begin() as session:
+        db_session_class = cast(Session, self._db_session_class)
+        with db_session_class.begin() as session:
             user_run_details = (
                 session.query(UserRunDetailsModel)
                 .filter(

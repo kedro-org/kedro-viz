@@ -55,9 +55,9 @@ class DataAccessManager:
         )
         self.runs = RunsRepository()
 
-    def set_db_session(self, db_session: sessionmaker):
+    def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
-        self.runs.db_session = db_session
+        self.runs.set_db_session(db_session_class)
 
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository.
