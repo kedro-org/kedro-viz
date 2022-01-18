@@ -14,6 +14,7 @@ Please follow the established format:
 - Fix the order of the runs list in experiment tracking. (#691)
 - Bug fix for Plotly JSONDataSet icon. (#684)
 - Bug fix for when some flowchart nodes were being cut off by the sidebar. (#701)
+- Bug fix empty metadata panel when clicking on modular pipeline nodes during search. (#704)
 
 # Release 4.2.0
 
