@@ -1,6 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars';
+import SearchList from '../search-list';
 import NodeListSearch from './node-list-search';
 import NodeListGroups from './node-list-groups';
 import NodeListTree from './node-list-tree';
@@ -33,7 +34,7 @@ const NodeList = ({
         'pipeline-nodelist--fade': faded,
       })}
     >
-      <NodeListSearch
+      <SearchList
         onUpdateSearchValue={onUpdateSearchValue}
         searchValue={searchValue}
       />
