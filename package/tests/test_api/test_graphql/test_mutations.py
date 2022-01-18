@@ -200,14 +200,13 @@ class TestGraphQLMutation:
     ):
         # add a new run
         example_run_id = "test_id"
-        with data_access_manager_with_no_run.runs.db_session.begin() as session:
-            run = RunModel(
-                id=example_run_id,
-                blob=json.dumps(
-                    {"session_id": example_run_id, "cli": {"command_path": "kedro run"}}
-                ),
-            )
-            session.add(run)
+        run = RunModel(
+            id=example_run_id,
+            blob=json.dumps(
+                {"session_id": example_run_id, "cli": {"command_path": "kedro run"}}
+            ),
+        )
+        data_access_manager_with_no_run.runs.add_run(run)
 
         query = f"""
             mutation updateRun {{
