@@ -8,6 +8,10 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Major features and improvements
+
+- Auto-update experiment runs list whenever user has a new Kedro run (#703)
+
 ## Bug fixes and other changes
 
 
