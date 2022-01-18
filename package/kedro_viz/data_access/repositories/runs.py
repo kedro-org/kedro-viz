@@ -50,7 +50,8 @@ class RunsRepository:
             .order_by(RunModel.id.desc())
             .all()
         )
-        self.last_run_id = all_runs[0].id
+        if all_runs:
+            self.last_run_id = all_runs[0].id
         return all_runs
 
     @check_db_session
