@@ -98,4 +98,5 @@ class TestRunsAddedSubscription:
                     }
                 ]
             }
+            assert data_access_manager_with_runs.runs.last_run_id == example_new_run_id
             break

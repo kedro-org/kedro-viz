@@ -258,6 +258,7 @@ class Subscription:
         while True:
             new_runs = data_access_manager.runs.get_new_runs()
             if new_runs:
+                data_access_manager.runs.last_run_id = new_runs[0].id
                 yield [
                     format_run(
                         run.id,
@@ -266,7 +267,6 @@ class Subscription:
                     )
                     for run in new_runs
                 ]
-                data_access_manager.runs.last_run_id = new_runs[0].id
             await asyncio.sleep(3)
 
 
