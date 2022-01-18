@@ -3,11 +3,12 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import cast, TYPE_CHECKING, Dict, Iterable, List, NewType, Optional
+from typing import TYPE_CHECKING, Dict, Iterable, List, NewType, Optional, cast
 
 import strawberry
 from fastapi import APIRouter
@@ -243,8 +244,23 @@ class Subscription:
     """Subscription object to track runs added in real time"""
 
     @strawberry.subscription
-    def run_added(self, run_id: ID) -> Run:
-        """Subscription to add runs in real-time"""
+    async def runs_added(self) -> List[Run]:
+        """Subscription to new runs in real-time"""
+        while True:
+            new_runs = data_access_manager.runs.get_new_runs()
+            print(new_runs)
+            if new_runs:
+                yield [
+                    format_run(
+                        run.id,
+                        json.loads(run.blob),
+                        data_access_manager.runs.get_user_run_details(run.id),
+                    )
+                    for run in new_runs
+                ]
+                data_access_manager.runs.last_run_id = new_runs[0].id
+                return
+            await asyncio.sleep(3)
 
 
 @strawberry.type
@@ -338,8 +354,10 @@ class Mutation:
         return UpdateRunDetailsSuccess(updated_run)
 
 
-schema = strawberry.Schema(query=Query, mutation=Mutation)
+schema = strawberry.Schema(query=Query, mutation=Mutation, subscription=Subscription)
 
 router = APIRouter()
 
-router.add_route("/graphql", GraphQL(schema))
+graphql_app = GraphQL(schema)
+router.add_route("/graphql", graphql_app)
+router.add_websocket_route("/graphql", graphql_app)

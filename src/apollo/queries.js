@@ -21,9 +21,21 @@ export const GET_RUN_METADATA = gql`
       author
       gitBranch
       gitSha
-      id
       notes
       runCommand
+      timestamp
+      title
+    }
+  }
+`;
+
+/** subscribe to receive new runs */
+export const NEW_RUN_SUBSCRIPTION = gql`
+  subscription {
+    runsAdded {
+      id
+      bookmark
+      gitSha
       timestamp
       title
     }
