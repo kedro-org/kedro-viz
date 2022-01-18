@@ -49,3 +49,4 @@ class TestRunsAddedSubscription:
                     }
                 ]
             }
+            break
