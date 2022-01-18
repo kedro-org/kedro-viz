@@ -18,7 +18,7 @@ def check_db_session(method: Callable) -> Callable:
 
     @wraps(method)
     def func(self: "RunsRepository", *method_args, **method_kwargs):
-        if not self.db_session:
+        if not self._db_session:
             return None
         return method(self, *method_args, **method_kwargs)
 
