@@ -1,12 +1,6 @@
 @import '../../../styles/variables';
 
 .runs-list__wrapper {
-  bottom: 0;
-  left: 0;
-  overflow-y: scroll;
-  position: absolute;
-  right: 0;
-  top: #{$run-list-controls-height};
   width: 100%;
 }
 

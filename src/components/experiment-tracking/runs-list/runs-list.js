@@ -9,28 +9,53 @@ const RunsList = ({
   enableComparisonView,
   onRunSelection,
   runData,
-  selectedRuns,
+  selectedRunIds,
 }) => {
+  const bookmarkedRuns = runData.filter((run) => run.bookmark === true);
+  const unbookmarkedRuns = runData.filter((run) => run.bookmark === false);
+
   return (
     <>
-      <Accordion
-        heading="All"
-        headingClassName="runs-list__accordion-header"
-        headingDetail={runData.length}
-      >
-        <div className="runs-list__wrapper">
-          {runData.map((data, i) => (
-            <RunsListCard
-              data={data}
-              disableRunSelection={disableRunSelection}
-              enableComparisonView={enableComparisonView}
-              key={i}
-              onRunSelection={onRunSelection}
-              selectedRuns={selectedRuns}
-            />
-          ))}
-        </div>
-      </Accordion>
+      {bookmarkedRuns.length > 0 ? (
+        <Accordion
+          heading="Bookmarked"
+          headingClassName="runs-list__accordion-header"
+          headingDetail={runData.filter((run) => run.bookmark === true).length}
+        >
+          <div className="runs-list__wrapper">
+            {bookmarkedRuns.map((data, i) => (
+              <RunsListCard
+                data={data}
+                disableRunSelection={disableRunSelection}
+                enableComparisonView={enableComparisonView}
+                key={i}
+                onRunSelection={onRunSelection}
+                selectedRunIds={selectedRunIds}
+              />
+            ))}
+          </div>
+        </Accordion>
+      ) : null}
+      {unbookmarkedRuns.length > 0 ? (
+        <Accordion
+          heading={`${bookmarkedRuns.length === 0 ? 'All' : 'Unbookmarked'}`}
+          headingClassName="runs-list__accordion-header"
+          headingDetail={runData.filter((run) => run.bookmark === false).length}
+        >
+          <div className="runs-list__wrapper">
+            {unbookmarkedRuns.map((data, i) => (
+              <RunsListCard
+                data={data}
+                disableRunSelection={disableRunSelection}
+                enableComparisonView={enableComparisonView}
+                key={i}
+                onRunSelection={onRunSelection}
+                selectedRunIds={selectedRunIds}
+              />
+            ))}
+          </div>
+        </Accordion>
+      ) : null}
     </>
   );
 };
