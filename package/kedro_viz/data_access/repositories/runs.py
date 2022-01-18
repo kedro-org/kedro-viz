@@ -1,4 +1,3 @@
-# type: ignore
 """`kedro_viz.data_access.repositories.tags` defines repository to
 centralise access to runs data."""
 # pylint: disable=missing-class-docstring,missing-function-docstring
@@ -38,7 +37,7 @@ class RunsRepository:
 
     @check_db_session
     def add_run(self, run: RunModel):
-        with self._db_session_class.begin() as session:
+        with self._db_session_class.begin() as session:  # type: ignore
             session.add(run)
 
     @check_db_session
@@ -49,12 +48,12 @@ class RunsRepository:
 
     @check_db_session
     def get_run_by_id(self, run_id: str) -> Optional[RunModel]:
-        return self._db_session_class().query(RunModel).get(run_id)
+        return self._db_session_class().query(RunModel).get(run_id)  # type: ignore
 
     @check_db_session
     def get_runs_by_ids(self, run_ids: List[str]) -> Optional[Iterable[RunModel]]:
         return (
-            self._db_session_class()
+            self._db_session_class()  # type: ignore
             .query(RunModel)
             .filter(RunModel.id.in_(run_ids))
             .all()
@@ -63,7 +62,7 @@ class RunsRepository:
     @check_db_session
     def get_user_run_details(self, run_id: str) -> Optional[UserRunDetailsModel]:
         return (
-            self._db_session_class()
+            self._db_session_class()  # type: ignore
             .query(UserRunDetailsModel)
             .filter(UserRunDetailsModel.run_id == run_id)
             .first()
@@ -73,7 +72,7 @@ class RunsRepository:
     def create_or_update_user_run_details(
         self, updated_user_run_details: Dict
     ) -> Optional[UserRunDetailsModel]:
-        with self._db_session_class.begin() as session:
+        with self._db_session_class.begin() as session:  # type: ignore
             user_run_details = (
                 session.query(UserRunDetailsModel)
                 .filter(
