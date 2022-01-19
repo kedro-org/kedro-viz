@@ -72,15 +72,25 @@ def format_run(
     return run
 
 
-def format_runs(runs: Iterable[RunModel]) -> List[Run]:
-    """Format a list of RunModel objects into a list of GraphQL Run"""
+def format_runs(
+    runs: Iterable[RunModel],
+    user_run_details: Optional[Dict[str, UserRunDetailsModel]] = None,
+) -> List[Run]:
+    """Format a list of RunModel objects into a list of GraphQL Run
+
+    Args:
+        runs: The collection of RunModels to format.
+        user_run_details: the collection pf user_run_details associated with the given runs.
+    Returns:
+        The list of formatted Runs.
+    """
     if not runs:
         return []
     return [
         format_run(
-            cast(str, run.id),
+            run.id,
             json.loads(cast(str, run.blob)),
-            data_access_manager.runs.get_user_run_details(run.id),
+            user_run_details.get(run.id) if user_run_details else None,
         )
         for run in runs
     ]
@@ -93,7 +103,10 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
     Returns:
         list of Run objects
     """
-    return format_runs(data_access_manager.runs.get_runs_by_ids(run_ids))
+    return format_runs(
+        data_access_manager.runs.get_runs_by_ids(run_ids),
+        data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
+    )
 
 
 def get_all_runs() -> List[Run]:

@@ -72,6 +72,18 @@ class RunsRepository:
         )
 
     @check_db_session
+    def get_user_run_details_by_run_ids(
+        self, run_ids: List[str]
+    ) -> Optional[Dict[str, UserRunDetailsModel]]:
+        return {
+            user_run_details.run_id: user_run_details
+            for user_run_details in self._db_session_class()  # type: ignore
+            .query(UserRunDetailsModel)
+            .filter(UserRunDetailsModel.run_id.in_(run_ids))
+            .all()
+        }
+
+    @check_db_session
     def create_or_update_user_run_details(
         self, updated_user_run_details: Dict
     ) -> Optional[UserRunDetailsModel]:
