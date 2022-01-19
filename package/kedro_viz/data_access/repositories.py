@@ -167,7 +167,7 @@ class CatalogRepository:
     @staticmethod
     def is_dataset_param(dataset_name: str) -> bool:
         """Return whether a dataset is a parameter"""
-        return dataset_name.lower().startswith("param")
+        return dataset_name.lower().startswith("params:") or dataset_name == 'parameters'
 
 
 class RegisteredPipelinesRepository:
