@@ -3,11 +3,21 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Iterable, List, NewType, Optional, cast
+from typing import (
+    TYPE_CHECKING,
+    AsyncGenerator,
+    Dict,
+    Iterable,
+    List,
+    NewType,
+    Optional,
+    cast,
+)
 
 import strawberry
 from fastapi import APIRouter
@@ -115,7 +125,13 @@ def get_all_runs() -> List[Run]:
     Returns:
         list of Run objects
     """
-    return format_runs(data_access_manager.runs.get_all_runs())
+    all_runs = data_access_manager.runs.get_all_runs()
+    if not all_runs:
+        return []
+    all_run_ids = [run.id for run in all_runs]
+    return format_runs(
+        all_runs, data_access_manager.runs.get_user_run_details_by_run_ids(all_run_ids)
+    )
 
 
 def format_run_tracking_data(
@@ -256,8 +272,21 @@ class Subscription:
     """Subscription object to track runs added in real time"""
 
     @strawberry.subscription
-    def run_added(self, run_id: ID) -> Run:
-        """Subscription to add runs in real-time"""
+    async def runs_added(self) -> AsyncGenerator[List[Run], None]:
+        """Subscription to new runs in real-time"""
+        while True:
+            new_runs = data_access_manager.runs.get_new_runs()
+            if new_runs:
+                data_access_manager.runs.last_run_id = new_runs[0].id
+                yield [
+                    format_run(
+                        run.id,
+                        json.loads(run.blob),
+                        data_access_manager.runs.get_user_run_details(run.id),
+                    )
+                    for run in new_runs
+                ]
+            await asyncio.sleep(3)  # pragma: no cover
 
 
 @strawberry.type
@@ -348,8 +377,10 @@ class Mutation:
         return UpdateRunDetailsSuccess(updated_run)
 
 
-schema = strawberry.Schema(query=Query, mutation=Mutation)
+schema = strawberry.Schema(query=Query, mutation=Mutation, subscription=Subscription)
 
 router = APIRouter()
 
-router.add_route("/graphql", GraphQL(schema))
+graphql_app = GraphQL(schema)
+router.add_route("/graphql", graphql_app)
+router.add_websocket_route("/graphql", graphql_app)

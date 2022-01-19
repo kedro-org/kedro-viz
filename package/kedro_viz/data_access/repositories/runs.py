@@ -27,9 +27,11 @@ def check_db_session(method: Callable) -> Callable:
 
 class RunsRepository:
     _db_session_class: Optional[sessionmaker]
+    last_run_id: Optional[str]
 
     def __init__(self, db_session_class: Optional[sessionmaker] = None):
         self._db_session_class = db_session_class
+        self.last_run_id = None
 
     def set_db_session(self, db_session_class: sessionmaker):
         """Sqlite db connection session"""
@@ -42,12 +44,15 @@ class RunsRepository:
 
     @check_db_session
     def get_all_runs(self) -> Optional[Iterable[RunModel]]:
-        return (
+        all_runs = (
             self._db_session_class()  # type: ignore
             .query(RunModel)
             .order_by(RunModel.id.desc())
             .all()
         )
+        if all_runs:
+            self.last_run_id = all_runs[0].id
+        return all_runs
 
     @check_db_session
     def get_run_by_id(self, run_id: str) -> Optional[RunModel]:
@@ -70,6 +75,16 @@ class RunsRepository:
             .filter(UserRunDetailsModel.run_id == run_id)
             .first()
         )
+
+    @check_db_session
+    def get_new_runs(self) -> Optional[Iterable[RunModel]]:
+        query = self._db_session_class().query(RunModel)  # type: ignore
+
+        if self.last_run_id:
+            # TODO: change this query to use timestamp once we have added that column
+            query = query.filter(RunModel.id > self.last_run_id)
+
+        return query.order_by(RunModel.id.desc()).all()
 
     @check_db_session
     def get_user_run_details_by_run_ids(
@@ -102,5 +117,4 @@ class RunsRepository:
                 user_run_details.title = title
                 user_run_details.bookmark = bookmark
                 user_run_details.notes = notes
-
         return user_run_details
