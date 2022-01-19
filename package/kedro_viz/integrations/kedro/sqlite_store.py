@@ -5,10 +5,10 @@ which stores sessions data in the SQLite database"""
 import json
 import logging
 from pathlib import Path
-from typing import Any, Generator, Type
+from typing import Any, Generator
 
 from kedro.framework.session.store import BaseSessionStore
-from sqlalchemy.orm.session import Session
+from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
 from kedro_viz.models.experiments_tracking import Base, RunModel
@@ -16,7 +16,7 @@ from kedro_viz.models.experiments_tracking import Base, RunModel
 logger = logging.getLogger(__name__)
 
 
-def get_db(session_class: Type[Session]) -> Generator:
+def get_db(session_class: sessionmaker) -> Generator:
     """Makes connection to the database"""
     try:
         database = session_class()
