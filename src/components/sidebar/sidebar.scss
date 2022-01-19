@@ -54,6 +54,10 @@
     visibility: visible;
     transition: visibility 0s;
   }
+
+  &--experiment-tracking {
+    overflow-y: scroll;
+  }
 }
 
 .pipeline-toolbar {
@@ -69,9 +73,13 @@
 
 .compare-switch-wrapper {
   align-items: baseline;
+  background: var(--color-bg-3);
   display: flex;
   justify-content: space-between;
   padding: 2em 3.5em 1.2em 3em;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .compare-switch-wrapper__text {

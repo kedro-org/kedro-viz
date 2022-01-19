@@ -17,30 +17,31 @@ const ExperimentWrapper = ({ theme }) => {
   const [enableShowChanges, setEnableShowChanges] = useState(true);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [pinnedRun, setPinnedRun] = useState();
-  const [selectedRuns, setSelectedRuns] = useState([]);
+  const [selectedRunIds, setSelectedRunIds] = useState([]);
+  const [selectedRunData, setSelectedRunData] = useState(null);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
 
   const { data, loading } = useApolloQuery(GET_RUNS);
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
-      if (selectedRuns.includes(id)) {
-        if (selectedRuns.length === 1) {
+      if (selectedRunIds.includes(id)) {
+        if (selectedRunIds.length === 1) {
           return;
         }
-        setSelectedRuns(
+        setSelectedRunIds(
           // Runs need to be sorted by time to ensure runIDs get sent to the
           // graphql endpoint in correct order.
-          sortRunByTime(selectedRuns.filter((run) => run !== id))
+          sortRunByTime(selectedRunIds.filter((run) => run !== id))
         );
       } else {
-        setSelectedRuns(sortRunByTime([...selectedRuns, id]));
+        setSelectedRunIds(sortRunByTime([...selectedRunIds, id]));
       }
     } else {
-      if (selectedRuns.includes(id)) {
+      if (selectedRunIds.includes(id)) {
         return;
       } else {
-        setSelectedRuns([id]);
+        setSelectedRunIds([id]);
       }
     }
   };
@@ -48,32 +49,60 @@ const ExperimentWrapper = ({ theme }) => {
   const onToggleComparisonView = () => {
     setEnableComparisonView(!enableComparisonView);
 
-    if (enableComparisonView && selectedRuns.length > 1) {
-      setSelectedRuns(selectedRuns.slice(0, 1));
+    if (enableComparisonView && selectedRunIds.length > 1) {
+      setSelectedRunIds(selectedRunIds.slice(0, 1));
     }
   };
 
   useEffect(() => {
-    if (selectedRuns.length > MAX_NUMBER_COMPARISONS) {
+    if (selectedRunIds.length > MAX_NUMBER_COMPARISONS) {
       setDisableRunSelection(true);
     } else {
       setDisableRunSelection(false);
     }
-  }, [selectedRuns]);
+  }, [selectedRunIds]);
 
   useEffect(() => {
-    if (data?.runsList.length > 0 && selectedRuns.length === 0) {
-      // If we return runs, set the first one as the default.
-      setSelectedRuns(data.runsList.map((run) => run.id).slice(0, 1));
+    if (data?.runsList.length > 0 && selectedRunIds.length === 0) {
+      /**
+       * If we return runs and don't yet have a selected run, set the first one
+       * as the default, with precedence given to runs that are bookmarked.
+       */
+      const bookmarkedRuns = data.runsList.filter((run) => {
+        return run.bookmark === true;
+      });
+
+      if (bookmarkedRuns.length > 0) {
+        setSelectedRunIds(bookmarkedRuns.map((run) => run.id).slice(0, 1));
+      } else {
+        setSelectedRunIds(data.runsList.map((run) => run.id).slice(0, 1));
+      }
     }
-  }, [data, selectedRuns]);
+  }, [data, selectedRunIds]);
 
   useEffect(() => {
-    if (typeof pinnedRun === 'undefined' || !selectedRuns.includes(pinnedRun)) {
-      // Assign the first selected run as the first pinned run
-      setPinnedRun(selectedRuns[0]);
+    /**
+     * If we return runs and aren't in comparison view, set a single selected
+     * run data object for use in the ExperimentPrimaryToolbar component.
+     */
+    if (data?.runsList.length > 0 && !enableComparisonView) {
+      const singleSelectedRunData = data.runsList.filter((run) => {
+        return run.id === selectedRunIds[0];
+      })[0];
+
+      setSelectedRunData(singleSelectedRunData);
     }
-  }, [selectedRuns, pinnedRun]);
+  }, [data, enableComparisonView, selectedRunIds]);
+
+  useEffect(() => {
+    if (
+      typeof pinnedRun === 'undefined' ||
+      !selectedRunIds.includes(pinnedRun)
+    ) {
+      // Assign the first selected run as the first pinned run.
+      setPinnedRun(selectedRunIds[0]);
+    }
+  }, [selectedRunIds, pinnedRun]);
 
   if (loading) {
     return (
@@ -95,18 +124,20 @@ const ExperimentWrapper = ({ theme }) => {
             onRunSelection={onRunSelection}
             onToggleComparisonView={onToggleComparisonView}
             runsListData={data.runsList}
-            selectedRuns={selectedRuns}
+            selectedRunData={selectedRunData}
+            selectedRunIds={selectedRunIds}
             setEnableShowChanges={setEnableShowChanges}
             setSidebarVisible={setIsSidebarVisible}
             showRunDetailsModal={setShowRunDetailsModal}
             sidebarVisible={isSidebarVisible}
           />
-          {selectedRuns.length > 0 ? (
+          {selectedRunIds.length > 0 ? (
             <Details
               enableComparisonView={enableComparisonView}
-              enableShowChanges={enableShowChanges && selectedRuns.length > 1}
+              enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
+              onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
-              selectedRuns={selectedRuns}
+              selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}
               showRunDetailsModal={showRunDetailsModal}
