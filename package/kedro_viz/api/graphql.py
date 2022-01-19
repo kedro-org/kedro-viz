@@ -339,14 +339,11 @@ class Mutation:
         if run_input.notes:
             updated_run.notes = run_input.notes
 
-        updated_user_run_details = {
-            "run_id": run_id,
-            "title": updated_run.title,
-            "bookmark": updated_run.bookmark,
-            "notes": updated_run.notes,
-        }
         data_access_manager.runs.create_or_update_user_run_details(
-            updated_user_run_details
+            run_id,
+            updated_run.title,
+            updated_run.bookmark,
+            updated_run.notes,
         )
         return UpdateRunDetailsSuccess(updated_run)
 
