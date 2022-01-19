@@ -1,0 +1,2 @@
+split_options:
+  test_size: 0.4

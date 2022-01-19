@@ -5,21 +5,23 @@ export const localStorageName = 'KedroViz';
 // These values are used in both SCSS and JS, and we don't have variable-sharing
 // across Sass and JavaScript, so they're defined in two places. If you update their
 // value here, please also update their corresponding value in src/styles/_variables.scss
+export const globalToolbarWidth = 80;
+
 export const metaSidebarWidth = {
   open: 400,
   closed: 0,
 };
+
 export const sidebarWidth = {
-  open: 400,
-  closed: 56,
+  open: 400 + globalToolbarWidth,
+  closed: 56 + globalToolbarWidth,
   breakpoint: 700,
 };
+
 export const codeSidebarWidth = {
   open: 480,
   closed: 0,
 };
-
-export const globalToolbarWidth = 80;
 
 export const chartMinWidthScale = 0.25;
 
