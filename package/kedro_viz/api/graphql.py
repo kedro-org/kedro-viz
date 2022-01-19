@@ -48,7 +48,7 @@ else:
 
 
 def format_run(
-    run_id: str, run_blob: Dict, user_run_details: Optional[UserRunDetailsModel]
+    run_id: str, run_blob: Dict, user_run_details: Optional[UserRunDetailsModel] = None
 ) -> Run:
     """Convert blob data in the correct Run format.
     Args:
@@ -82,15 +82,25 @@ def format_run(
     return run
 
 
-def format_runs(runs: Iterable[RunModel]) -> List[Run]:
-    """Format a list of RunModel objects into a list of GraphQL Run"""
+def format_runs(
+    runs: Iterable[RunModel],
+    user_run_details: Optional[Dict[str, UserRunDetailsModel]] = None,
+) -> List[Run]:
+    """Format a list of RunModel objects into a list of GraphQL Run
+
+    Args:
+        runs: The collection of RunModels to format.
+        user_run_details: the collection pf user_run_details associated with the given runs.
+    Returns:
+        The list of formatted Runs.
+    """
     if not runs:
         return []
     return [
         format_run(
             run.id,
             json.loads(cast(str, run.blob)),
-            data_access_manager.runs.get_user_run_details(run.id),
+            user_run_details.get(run.id) if user_run_details else None,
         )
         for run in runs
     ]
@@ -103,7 +113,10 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
     Returns:
         list of Run objects
     """
-    return format_runs(data_access_manager.runs.get_runs_by_ids(run_ids))
+    return format_runs(
+        data_access_manager.runs.get_runs_by_ids(run_ids),
+        data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
+    )
 
 
 def get_all_runs() -> List[Run]:
@@ -349,14 +362,11 @@ class Mutation:
         if run_input.notes:
             updated_run.notes = run_input.notes
 
-        updated_user_run_details = {
-            "run_id": run_id,
-            "title": updated_run.title,
-            "bookmark": updated_run.bookmark,
-            "notes": updated_run.notes,
-        }
         data_access_manager.runs.create_or_update_user_run_details(
-            updated_user_run_details
+            run_id,
+            updated_run.title,
+            updated_run.bookmark,
+            updated_run.notes,
         )
         return UpdateRunDetailsSuccess(updated_run)
 

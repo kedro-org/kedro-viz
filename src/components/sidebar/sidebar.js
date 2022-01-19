@@ -24,7 +24,8 @@ export const Sidebar = ({
   onRunSelection,
   onToggleComparisonView,
   runsListData,
-  selectedRuns,
+  selectedRunData,
+  selectedRunIds,
   setEnableShowChanges,
   setSidebarVisible,
   showRunDetailsModal,
@@ -41,7 +42,7 @@ export const Sidebar = ({
             'pipeline-sidebar--visible': sidebarVisible,
           })}
         >
-          <div className="pipeline-ui">
+          <div className="pipeline-ui pipeline-ui--experiment-tracking">
             <div className="compare-switch-wrapper">
               <span className="compare-switch-wrapper__text">
                 Compare runs (max. 3)
@@ -53,16 +54,17 @@ export const Sidebar = ({
               enableComparisonView={enableComparisonView}
               onRunSelection={onRunSelection}
               runData={runsListData}
-              selectedRuns={selectedRuns}
+              selectedRunIds={selectedRunIds}
             />
           </div>
           <nav className="pipeline-toolbar">
             <ExperimentPrimaryToolbar
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges}
+              selectedRunData={selectedRunData}
               setEnableShowChanges={setEnableShowChanges}
               setSidebarVisible={setSidebarVisible}
-              showChangesIconDisabled={!(selectedRuns.length > 1)}
+              showChangesIconDisabled={!(selectedRunIds.length > 1)}
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={sidebarVisible}
             />

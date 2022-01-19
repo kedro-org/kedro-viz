@@ -7,4 +7,9 @@ class TestRunsRepository:
         assert runs_repository.get_all_runs() is None
         assert runs_repository.get_runs_by_ids(["id"]) is None
         assert runs_repository.get_user_run_details(["id"]) is None
-        assert runs_repository.create_or_update_user_run_details({}) is None
+        assert (
+            runs_repository.create_or_update_user_run_details(
+                1, "title", False, "notes"
+            )
+            is None
+        )

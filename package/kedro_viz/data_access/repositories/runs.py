@@ -86,22 +86,34 @@ class RunsRepository:
 
         return query.order_by(RunModel.id.desc()).all()
 
+    def get_user_run_details_by_run_ids(
+        self, run_ids: List[str]
+    ) -> Optional[Dict[str, UserRunDetailsModel]]:
+        return {
+            user_run_details.run_id: user_run_details
+            for user_run_details in self._db_session_class()  # type: ignore
+            .query(UserRunDetailsModel)
+            .filter(UserRunDetailsModel.run_id.in_(run_ids))
+            .all()
+        }
+
     @check_db_session
     def create_or_update_user_run_details(
-        self, updated_user_run_details: Dict
+        self, run_id: str, title: str, bookmark: bool, notes: str
     ) -> Optional[UserRunDetailsModel]:
         with self._db_session_class.begin() as session:  # type: ignore
             user_run_details = (
                 session.query(UserRunDetailsModel)
-                .filter(
-                    UserRunDetailsModel.run_id == updated_user_run_details["run_id"]
-                )
+                .filter(UserRunDetailsModel.run_id == run_id)
                 .first()
             )
             if not user_run_details:
-                session.add(UserRunDetailsModel(**updated_user_run_details))
+                user_run_details = UserRunDetailsModel(
+                    run_id=run_id, title=title, bookmark=bookmark, notes=notes
+                )
+                session.add(user_run_details)
             else:
-                for key, value in updated_user_run_details.items():
-                    setattr(user_run_details, key, value)
-
+                user_run_details.title = title
+                user_run_details.bookmark = bookmark
+                user_run_details.notes = notes
         return user_run_details

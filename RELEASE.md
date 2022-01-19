@@ -10,6 +10,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
+- Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
 - Auto-update experiment runs list whenever user has a new Kedro run (#703)
 
 ## Bug fixes and other changes

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useUpdateRunDetails } from '../../../apollo/mutations';
 import classnames from 'classnames';
 import { toHumanReadableTime } from '../../../utils/date-utils';
-import CheckIcon from '../../icons/check';
 import BookmarkIcon from '../../icons/bookmark';
+import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
+import CheckIcon from '../../icons/check';
 
 import './runs-list-card.css';
 
@@ -15,19 +17,37 @@ const RunsListCard = ({
   disableRunSelection = false,
   enableComparisonView = false,
   onRunSelection,
-  selectedRuns = [],
+  selectedRunIds = [],
 }) => {
   const { id, timestamp, title = null, bookmark } = data;
   const [active, setActive] = useState(false);
+  const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(timestamp);
 
-  const onClick = (id) => {
+  const onRunsListCardClick = (id, e) => {
+    /**
+     * If we click the bookmark icon or the path HTML element within the SVG,
+     * then update the bookmark boolean. If we didn't check for the path, the
+     * user could hit a dead zone, and nothing would happen.
+     */
+    if (
+      e.target.classList.contains('runs-list-card__bookmark') ||
+      e.target.tagName === 'path'
+    ) {
+      updateRunDetails({
+        runId: id,
+        runInput: { bookmark: !bookmark },
+      });
+
+      return;
+    }
+
     onRunSelection(id);
   };
 
   useEffect(() => {
-    setActive(selectedRuns.includes(id));
-  }, [id, selectedRuns]);
+    setActive(selectedRunIds.includes(id));
+  }, [id, selectedRunIds]);
 
   return (
     <div
@@ -35,7 +55,7 @@ const RunsListCard = ({
         'runs-list-card--active': active,
         'runs-list-card--disabled': disableRunSelection && !active,
       })}
-      onClick={() => onClick(id)}
+      onClick={(e) => onRunsListCardClick(id, e)}
     >
       {enableComparisonView && (
         <CheckIcon
@@ -52,7 +72,17 @@ const RunsListCard = ({
         <div className="runs-list-card__id">{id}</div>
         <div className="runs-list-card__timestamp">{humanReadableTime}</div>
       </div>
-      {bookmark && <BookmarkIcon className={'runs-list-card__bookmark'} />}
+      {bookmark ? (
+        <BookmarkIcon
+          className={'runs-list-card__bookmark runs-list-card__bookmark--solid'}
+        />
+      ) : (
+        <BookmarkStrokeIcon
+          className={
+            'runs-list-card__bookmark runs-list-card__bookmark--stroke'
+          }
+        />
+      )}
     </div>
   );
 };
