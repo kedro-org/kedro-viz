@@ -38,7 +38,7 @@ else:
 
 
 def format_run(
-    run_id: str, run_blob: Dict, user_run_details: Optional[UserRunDetailsModel]
+    run_id: str, run_blob: Dict, user_run_details: Optional[UserRunDetailsModel] = None
 ) -> Run:
     """Convert blob data in the correct Run format.
     Args:
