@@ -42,6 +42,7 @@ def _strip_namespace(name: str) -> str:
     pattern = re.compile(r"[A-Za-z0-9-_]+\.")
     return re.sub(pattern, "", name)
 
+
 def _strip_tags(name: str) -> str:
     return name.replace("<", "&lt;").replace(">", "&gt;")
 
@@ -408,9 +409,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
         # this is required to handle partial, curry functions
         if inspect.isfunction(kedro_node.func):
-            self.code = inspect.getsource(
-                _extract_wrapped_func(kedro_node.func)
-            )
+            self.code = inspect.getsource(_extract_wrapped_func(kedro_node.func))
             code_full_path = (
                 Path(inspect.getfile(kedro_node.func)).expanduser().resolve()
             )
