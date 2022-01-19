@@ -24,21 +24,16 @@ const RunsListCard = ({
   selectedRunIds = [],
   searchValue,
 }) => {
-  const { id, timestamp, notes, title = null, bookmark } = data;
+  const { id, timestamp, notes, title = null, bookmark, gitSha } = data;
   const [active, setActive] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(timestamp);
 
-  const isTitleMatchSearch = searchValue
-    ? textMatchesSearch(title, searchValue)
-    : false;
-  const isNotesMatchSearch = searchValue
-    ? textMatchesSearch(notes, searchValue)
-    : false;
+  const isMatchSearchValue = (text) =>
+    searchValue ? textMatchesSearch(text, searchValue) : false;
 
-  const displayTitle = isTitleMatchSearch
-    ? getHighlightedText(title, searchValue)
-    : title;
+  const displayValue = (value) =>
+    isMatchSearchValue(value) ? getHighlightedText(value, searchValue) : value;
 
   const onRunsListCardClick = (id, e) => {
     /**
@@ -83,9 +78,9 @@ const RunsListCard = ({
       )}
       <div>
         <div className="runs-list-card__title">
-          {typeof title === 'string' ? title : humanReadableTime}
+          {typeof title === 'string' ? displayValue(title) : humanReadableTime}
         </div>
-        <div className="runs-list-card__id">{id}</div>
+        <div className="runs-list-card__id">{displayValue(gitSha)}</div>
         <div className="runs-list-card__timestamp">{humanReadableTime}</div>
       </div>
       {bookmark ? (

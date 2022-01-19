@@ -18,7 +18,8 @@ const getFilteredRunList = (runData, searchValue) => {
   const filteredRuns = runData?.filter(
     (run) =>
       textMatchesSearch(run.title, searchValue) ||
-      textMatchesSearch(run.notes, searchValue)
+      textMatchesSearch(run.notes, searchValue) ||
+      textMatchesSearch(run.gitSha, searchValue)
   );
 
   return filteredRuns;
