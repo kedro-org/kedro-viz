@@ -39,7 +39,7 @@ class TestQueryWithRuns:
         assert response.json() == {
             "data": {
                 "runsList": [
-                    {"id": run_id, "bookmark": False} for run_id in example_run_ids
+                    {"id": run_id, "bookmark": True} for run_id in example_run_ids
                 ]
             }
         }
@@ -52,7 +52,7 @@ class TestQueryWithRuns:
             },
         )
         assert response.json() == {
-            "data": {"runMetadata": [{"id": example_run_ids[0], "bookmark": False}]}
+            "data": {"runMetadata": [{"id": example_run_ids[0], "bookmark": True}]}
         }
 
     def test_run_tracking_data_query(
