@@ -15,7 +15,7 @@ const { escapeRegExp, getHighlightedText } = utils;
  * @param {string} searchValue
  * @return {boolean} True if node matches or no search value given
  */
-export const textMatchesSearch = (text, searchValue) => {
+const textMatchesSearch = (text, searchValue) => {
   if (searchValue) {
     return new RegExp(escapeRegExp(searchValue), 'gi').test(text);
   }
@@ -29,22 +29,15 @@ export const textMatchesSearch = (text, searchValue) => {
  * @param {string} searchValue Search term
  * @return {object} Grouped nodes
  */
-export const filterRuns = (runData, searchValue) => {
+const getFilteredRunList = (runData, searchValue) => {
   // filter the runs that matches the runId
-  const filteredRuns = runData.filter(
+  const filteredRuns = runData?.filter(
     (run) =>
       textMatchesSearch(run.title, searchValue) ||
       textMatchesSearch(run.notes, searchValue)
   );
 
-  console.log(filteredRuns);
-  // for (const runId of Object.keys(nodeGroups)) {
-  //   filteredGroups[nodeGroupId] = nodeGroups[nodeGroupId].filter((node) =>
-  //     textMatchesSearch(node, searchValue)
-  //   );
-  // }
-
-  // return filteredGroups;
+  return filteredRuns;
 };
 
 const RunsList = ({
@@ -55,22 +48,14 @@ const RunsList = ({
   runData,
   selectedRunIds,
 }) => {
-  const bookmarkedRuns = runData.filter((run) => run.bookmark === true);
-  const unbookmarkedRuns = runData.filter((run) => run.bookmark === false);
   const [searchValue, updateSearchValue] = useState('');
 
-  // const filteredRunList;
+  const filteredRunList = getFilteredRunList(runData, searchValue);
 
-  // function to filter runsData according to search value
-  const getFilteredRunList = (runData, searchValue) => {
-    // filter the runs that matches the runId
-    const filteredRuns = runData.filter(
-      (run) =>
-        textMatchesSearch(run.title, searchValue) ||
-        textMatchesSearch(run.notes, searchValue)
-    );
-    console.log(filteredRuns);
-  };
+  const bookmarkedRuns = filteredRunList.filter((run) => run.bookmark === true);
+  const unbookmarkedRuns = filteredRunList.filter(
+    (run) => run.bookmark === false
+  );
 
   useEffect(() => {
     getFilteredRunList();
