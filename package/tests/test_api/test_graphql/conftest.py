@@ -56,7 +56,7 @@ def example_db_session_with_runs(example_db_session, example_run_ids):
                 },
             }
             run = RunModel(id=run_id, blob=json.dumps(session_data))
-            user_run_details = UserRunDetailsModel(run_id=run.id)
+            user_run_details = UserRunDetailsModel(run_id=run.id, bookmark=True)
             session.add(run)
             session.add(user_run_details)
     yield example_db_session

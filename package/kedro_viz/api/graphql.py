@@ -362,10 +362,10 @@ class Mutation:
         if run_input.title is not None and bool(run_input.title.strip()):
             updated_run.title = run_input.title
 
-        if run_input.bookmark:
+        if run_input.bookmark is not None:
             updated_run.bookmark = run_input.bookmark
 
-        if run_input.notes:
+        if run_input.notes is not None and bool(run_input.notes.strip()):
             updated_run.notes = run_input.notes
 
         data_access_manager.runs.create_or_update_user_run_details(
