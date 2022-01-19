@@ -126,6 +126,8 @@ def get_all_runs() -> List[Run]:
         list of Run objects
     """
     all_runs = data_access_manager.runs.get_all_runs()
+    if not all_runs:
+        return []
     all_run_ids = [run.id for run in all_runs]
     return format_runs(
         all_runs, data_access_manager.runs.get_user_run_details_by_run_ids(all_run_ids)
