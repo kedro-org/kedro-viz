@@ -1,11 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
+import utils from '@quantumblack/kedro-ui/lib/utils';
 import SearchList from '../../search-list';
 import Switch from '../../switch';
 import Accordion from '../accordion';
 import RunsListCard from '../runs-list-card';
-
 import './runs-list.css';
+
+const { escapeRegExp, getHighlightedText } = utils;
+
+/**
+ * Check whether a piece of text matches the searchvalue, true if no search value given
+ * @param {object} text
+ * @param {string} searchValue
+ * @return {boolean} True if node matches or no search value given
+ */
+export const textMatchesSearch = (text, searchValue) => {
+  if (searchValue) {
+    return new RegExp(escapeRegExp(searchValue), 'gi').test(text);
+  }
+
+  return true;
+};
+
+/**
+ * Return only the runs that match the search text
+ * @param {object} runData original set of runs
+ * @param {string} searchValue Search term
+ * @return {object} Grouped nodes
+ */
+export const filterRuns = (runData, searchValue) => {
+  // filter the runs that matches the runId
+  const filteredRuns = runData.filter(
+    (run) =>
+      textMatchesSearch(run.title, searchValue) ||
+      textMatchesSearch(run.notes, searchValue)
+  );
+
+  console.log(filteredRuns);
+  // for (const runId of Object.keys(nodeGroups)) {
+  //   filteredGroups[nodeGroupId] = nodeGroups[nodeGroupId].filter((node) =>
+  //     textMatchesSearch(node, searchValue)
+  //   );
+  // }
+
+  // return filteredGroups;
+};
 
 const RunsList = ({
   disableRunSelection,
@@ -18,6 +58,23 @@ const RunsList = ({
   const bookmarkedRuns = runData.filter((run) => run.bookmark === true);
   const unbookmarkedRuns = runData.filter((run) => run.bookmark === false);
   const [searchValue, updateSearchValue] = useState('');
+
+  // const filteredRunList;
+
+  // function to filter runsData according to search value
+  const getFilteredRunList = (runData, searchValue) => {
+    // filter the runs that matches the runId
+    const filteredRuns = runData.filter(
+      (run) =>
+        textMatchesSearch(run.title, searchValue) ||
+        textMatchesSearch(run.notes, searchValue)
+    );
+    console.log(filteredRuns);
+  };
+
+  useEffect(() => {
+    getFilteredRunList();
+  }, [searchValue, runData]);
 
   return (
     <>
