@@ -97,7 +97,7 @@ const RunsListCard = ({
           <div
             className="runs-list-card__notes"
             dangerouslySetInnerHTML={{
-              __html: `Notes: ${displayValue(notes)}`,
+              __html: `Notes:  <em>${displayValue(notes)}</em>`,
             }}
           />
         )}
