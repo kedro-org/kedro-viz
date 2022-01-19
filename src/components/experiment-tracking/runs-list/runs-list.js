@@ -1,27 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import debounce from 'lodash/debounce';
-import utils from '@quantumblack/kedro-ui/lib/utils';
+import { textMatchesSearch } from '../../../utils';
 import SearchList from '../../search-list';
 import Switch from '../../switch';
 import Accordion from '../accordion';
 import RunsListCard from '../runs-list-card';
 import './runs-list.css';
-
-const { escapeRegExp, getHighlightedText } = utils;
-
-/**
- * Check whether a piece of text matches the searchvalue, true if no search value given
- * @param {object} text
- * @param {string} searchValue
- * @return {boolean} True if node matches or no search value given
- */
-const textMatchesSearch = (text, searchValue) => {
-  if (searchValue) {
-    return new RegExp(escapeRegExp(searchValue), 'gi').test(text);
-  }
-
-  return true;
-};
 
 /**
  * Return only the runs that match the search text
@@ -57,10 +41,6 @@ const RunsList = ({
     (run) => run.bookmark === false
   );
 
-  useEffect(() => {
-    getFilteredRunList();
-  }, [searchValue, runData]);
-
   return (
     <>
       <div className="search-bar-wrapper">
@@ -90,6 +70,7 @@ const RunsList = ({
                 key={i}
                 onRunSelection={onRunSelection}
                 selectedRunIds={selectedRunIds}
+                searchValue={searchValue}
               />
             ))}
           </div>
@@ -110,6 +91,7 @@ const RunsList = ({
                 key={i}
                 onRunSelection={onRunSelection}
                 selectedRunIds={selectedRunIds}
+                searchValue={searchValue}
               />
             ))}
           </div>

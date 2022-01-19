@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import utils from '@quantumblack/kedro-ui/lib/utils';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import classnames from 'classnames';
+import { textMatchesSearch } from '../../../utils';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import BookmarkIcon from '../../icons/bookmark';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import CheckIcon from '../../icons/check';
 
 import './runs-list-card.css';
+
+const { getHighlightedText } = utils;
 
 /**
  * Display a card showing run info from an experiment
@@ -18,11 +22,23 @@ const RunsListCard = ({
   enableComparisonView = false,
   onRunSelection,
   selectedRunIds = [],
+  searchValue,
 }) => {
-  const { id, timestamp, title = null, bookmark } = data;
+  const { id, timestamp, notes, title = null, bookmark } = data;
   const [active, setActive] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(timestamp);
+
+  const isTitleMatchSearch = searchValue
+    ? textMatchesSearch(title, searchValue)
+    : false;
+  const isNotesMatchSearch = searchValue
+    ? textMatchesSearch(notes, searchValue)
+    : false;
+
+  const displayTitle = isTitleMatchSearch
+    ? getHighlightedText(title, searchValue)
+    : title;
 
   const onRunsListCardClick = (id, e) => {
     /**
