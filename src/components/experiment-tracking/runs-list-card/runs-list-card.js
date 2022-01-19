@@ -35,6 +35,8 @@ const RunsListCard = ({
   const displayValue = (value) =>
     isMatchSearchValue(value) ? getHighlightedText(value, searchValue) : value;
 
+  const isNotesContainSearchValue = isMatchSearchValue(notes);
+
   const onRunsListCardClick = (id, e) => {
     /**
      * If we click the bookmark icon or the path HTML element within the SVG,
@@ -77,11 +79,28 @@ const RunsListCard = ({
         />
       )}
       <div>
-        <div className="runs-list-card__title">
-          {typeof title === 'string' ? displayValue(title) : humanReadableTime}
-        </div>
-        <div className="runs-list-card__id">{displayValue(gitSha)}</div>
+        <div
+          className="runs-list-card__title"
+          dangerouslySetInnerHTML={{
+            __html: displayValue(title),
+          }}
+        />
+
+        <div
+          className="runs-list-card__gitsha"
+          dangerouslySetInnerHTML={{
+            __html: displayValue(gitSha),
+          }}
+        />
         <div className="runs-list-card__timestamp">{humanReadableTime}</div>
+        {isNotesContainSearchValue && (
+          <div
+            className="runs-list-card__notes"
+            dangerouslySetInnerHTML={{
+              __html: `Notes: ${displayValue(notes)}`,
+            }}
+          />
+        )}
       </div>
       {bookmark ? (
         <BookmarkIcon
