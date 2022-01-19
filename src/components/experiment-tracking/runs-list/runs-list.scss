@@ -1,9 +1,28 @@
 @import '../../../styles/variables';
 
+.search-bar-wrapper {
+  padding: 24px 0;
+}
+
 .runs-list__wrapper {
   width: 100%;
 }
 
 .runs-list__accordion-header {
   padding: 0.8em 3.5em 0.8em 3em;
+}
+
+.compare-switch-wrapper {
+  align-items: baseline;
+  background: var(--color-bg-3);
+  display: flex;
+  justify-content: space-between;
+  padding: 2em 3.5em 1.2em 3em;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.compare-switch-wrapper__text {
+  font-size: 14px;
 }

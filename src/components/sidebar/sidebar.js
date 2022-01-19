@@ -43,18 +43,13 @@ export const Sidebar = ({
           })}
         >
           <div className="pipeline-ui pipeline-ui--experiment-tracking">
-            <div className="compare-switch-wrapper">
-              <span className="compare-switch-wrapper__text">
-                Compare runs (max. 3)
-              </span>
-              <Switch onChange={onToggleComparisonView} />
-            </div>
             <RunsList
               disableRunSelection={disableRunSelection}
               enableComparisonView={enableComparisonView}
               onRunSelection={onRunSelection}
               runData={runsListData}
               selectedRunIds={selectedRunIds}
+              onToggleComparisonView={onToggleComparisonView}
             />
           </div>
           <nav className="pipeline-toolbar">
