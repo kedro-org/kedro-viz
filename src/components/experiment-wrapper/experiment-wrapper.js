@@ -116,7 +116,6 @@ const ExperimentWrapper = ({ theme }) => {
         if (!subscriptionData.data || !prev?.runsList) {
           return prev;
         }
-
         const newRuns = subscriptionData.data.runsAdded;
 
         return Object.assign({}, prev, {

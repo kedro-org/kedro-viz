@@ -86,6 +86,7 @@ class RunsRepository:
 
         return query.order_by(RunModel.id.desc()).all()
 
+    @check_db_session
     def get_user_run_details_by_run_ids(
         self, run_ids: List[str]
     ) -> Optional[Dict[str, UserRunDetailsModel]]:
