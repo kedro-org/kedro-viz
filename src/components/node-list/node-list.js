@@ -5,6 +5,7 @@ import NodeListSearch from './node-list-search';
 import NodeListGroups from './node-list-groups';
 import NodeListTree from './node-list-tree';
 import SplitPanel from '../split-panel';
+
 import './styles/node-list.css';
 
 /**
@@ -25,6 +26,7 @@ const NodeList = ({
   onItemMouseLeave,
   onItemChange,
   onModularPipelineToggleExpanded,
+  onToggleNodeSelected,
   focusMode,
 }) => {
   return (

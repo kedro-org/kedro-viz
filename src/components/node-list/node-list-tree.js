@@ -7,6 +7,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import sortBy from 'lodash.sortby';
 
+import { loadNodeData } from '../../actions/nodes';
 import { getNodeSelected } from '../../selectors/nodes';
 import { isModularPipelineType } from '../../selectors/node-types';
 import NodeListTreeItem from './node-list-tree-item';
@@ -117,6 +118,7 @@ const TreeListProvider = ({
   onNodeToggleExpanded,
   focusMode,
   expanded,
+  onToggleNodeSelected,
 }) => {
   const classes = useStyles();
 
@@ -197,8 +199,12 @@ const TreeListProvider = ({
     );
   };
 
-  const onItemExpandToggle = (event, expandedItemIds) => {
+  const onItemExpandCollapseToggle = (event, expandedItemIds) => {
     onNodeToggleExpanded(expandedItemIds);
+    //when tree is collapsed
+    if (expandedItemIds.length === 0) {
+      onToggleNodeSelected(null);
+    }
   };
 
   return modularPipelinesSearchResult ? (
@@ -217,7 +223,7 @@ const TreeListProvider = ({
       className={classes.root}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
-      onNodeToggle={onItemExpandToggle}
+      onNodeToggle={onItemExpandCollapseToggle}
       key="modularPipelinesTree"
     >
       {renderTree(modularPipelinesTree, '__root__')}
@@ -230,4 +236,10 @@ export const mapStateToProps = (state) => ({
   expanded: state.modularPipeline.expanded,
 });
 
-export default connect(mapStateToProps)(TreeListProvider);
+export const mapDispatchToProps = (dispatch) => ({
+  onToggleNodeSelected: (nodeID) => {
+    dispatch(loadNodeData(nodeID));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TreeListProvider);
