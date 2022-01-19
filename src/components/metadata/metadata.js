@@ -82,7 +82,7 @@ const MetaData = ({
                   className="pipeline-metadata__icon"
                   icon={nodeTypeIcon}
                 />
-                <span
+                <h2
                   className="pipeline-metadata__title"
                   dangerouslySetInnerHTML={{ __html: metadata.node.name }}
                 />
