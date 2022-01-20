@@ -11,6 +11,7 @@ Please follow the established format:
 ## Major features and improvements
 
 - Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
+- Setup subscription for auto update of experiment runs list on new Kedro runs. (#703)
 
 ## Bug fixes and other changes
 
@@ -18,6 +19,7 @@ Please follow the established format:
 - Fix the order of the runs list in experiment tracking. (#691)
 - Bug fix for Plotly JSONDataSet icon. (#684)
 - Bug fix for when some flowchart nodes were being cut off by the sidebar. (#701)
+- Bug fix for when the exported pipeline image was sometimes cutting off elements. (#705)
 
 # Release 4.2.0
 
