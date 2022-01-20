@@ -26,7 +26,6 @@ const NodeList = ({
   onItemMouseLeave,
   onItemChange,
   onModularPipelineToggleExpanded,
-  onToggleNodeSelected,
   focusMode,
 }) => {
   return (
