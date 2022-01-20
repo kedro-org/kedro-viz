@@ -8,7 +8,7 @@ import networkx as nx
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
-from sqlalchemy.orm import Session as DatabaseSession
+from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (
@@ -31,6 +31,7 @@ from .repositories import (
     GraphNodesRepository,
     ModularPipelinesRepository,
     RegisteredPipelinesRepository,
+    RunsRepository,
     TagsRepository,
 )
 
@@ -46,24 +47,17 @@ class DataAccessManager:
         self.registered_pipelines = RegisteredPipelinesRepository()
         self.tags = TagsRepository()
         self.modular_pipelines = ModularPipelinesRepository()
-        self._db_session = None
         # Make sure each registered pipeline has a distinct collection of edges.
         self.edges: Dict[str, GraphEdgesRepository] = defaultdict(GraphEdgesRepository)
         # Make sure the node dependencies are built separately for each registered pipeline.
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
+        self.runs = RunsRepository()
 
-    @property
-    def db_session(self):  # pragma: no cover
-        """Sqlite db connection session"""
-        if not self._db_session:
-            logger.warning("Database connection was unsuccessful")
-        return self._db_session
-
-    @db_session.setter
-    def db_session(self, db_session: DatabaseSession):
-        self._db_session = db_session
+    def set_db_session(self, db_session_class: sessionmaker):
+        """Set db session on repositories that need it."""
+        self.runs.set_db_session(db_session_class)
 
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository.
