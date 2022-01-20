@@ -3,6 +3,7 @@ import datetime
 import json
 import shutil
 import time
+from functools import partial
 from pathlib import Path
 from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
@@ -59,6 +60,16 @@ def decorator(fun):
 @decorator
 def decorated(x):
     return x
+
+
+# A normal function
+def full_func(a, b, c, x):
+    return 1000 * a + 100 * b + 10 * c + x
+
+
+# A partial function that calls f with
+# a as 3, b as 1 and c as 4.
+partial_func = partial(full_func, 3, 1, 4)
 
 
 class TestGraphNodeCreation:
@@ -305,6 +316,24 @@ class TestGraphNodeMetadata:
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
         assert task_node_metadata.parameters == {}
+
+    def test_task_node_metadata_with_partial_func(self):
+        kedro_node = node(
+            partial_func,
+            inputs="x",
+            outputs="y",
+            tags={"tag"},
+            namespace="namespace",
+        )
+        task_node = GraphNode.create_task_node(kedro_node)
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+        assert task_node.name == "&lt;partial&gt;"
+        assert task_node.full_name == "&lt;partial&gt;"
+        assert not hasattr(task_node_metadata, "code")
+        assert not hasattr(task_node_metadata, "filepath")
+        assert task_node_metadata.parameters == {}
+        assert task_node_metadata.inputs == ["X"]
+        assert task_node_metadata.outputs == ["Y"]
 
     def test_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")
