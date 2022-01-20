@@ -88,9 +88,9 @@ NodeAPIResponse = Union[
 
 
 class TaskNodeMetadataAPIResponse(BaseAPIResponse):
-    code: str
-    filepath: str
-    parameters: Dict
+    code: Optional[str]
+    filepath: Optional[str]
+    parameters: Optional[Dict]
     inputs: List[str]
     outputs: List[str]
     run_command: Optional[str]

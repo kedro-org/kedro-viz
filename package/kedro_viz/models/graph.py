@@ -43,6 +43,10 @@ def _strip_namespace(name: str) -> str:
     return re.sub(pattern, "", name)
 
 
+def _strip_tags(name: str) -> str:
+    return name.replace("<", "&lt;").replace(">", "&gt;")
+
+
 def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     filepath = dataset_description.get("filepath") or dataset_description.get("path")
     return str(filepath) if filepath else None
@@ -181,8 +185,8 @@ class GraphNode(abc.ABC):
         node_name = node._name or node._func_name
         return TaskNode(
             id=cls._hash(str(node)),
-            name=_pretty_name(node_name),
-            full_name=node_name,
+            name=_pretty_name(_strip_tags(node_name)),
+            full_name=_strip_tags(node_name),
             tags=set(node.tags),
             kedro_obj=node,
         )
@@ -403,18 +407,20 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, task_node: TaskNode):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
-        self.code = inspect.getsource(
-            _extract_wrapped_func(cast(FunctionType, kedro_node._func))
-        )
-        code_full_path = Path(inspect.getfile(kedro_node._func)).expanduser().resolve()
-        try:
-            filepath = code_full_path.relative_to(Path.cwd().parent)
-        except ValueError:  # pragma: no cover
-            # if the filepath can't be resolved relative to the current directory,
-            # e.g. either during tests or during launching development server
-            # outside of a Kedro project, simply return the fullpath to the file.
-            filepath = code_full_path
-        self.filepath = str(filepath)
+        # this is required to handle partial, curry functions
+        if inspect.isfunction(kedro_node.func):
+            self.code = inspect.getsource(_extract_wrapped_func(kedro_node.func))
+            code_full_path = (
+                Path(inspect.getfile(kedro_node.func)).expanduser().resolve()
+            )
+            try:
+                filepath = code_full_path.relative_to(Path.cwd().parent)
+            except ValueError:  # pragma: no cover
+                # if the filepath can't be resolved relative to the current directory,
+                # e.g. either during tests or during launching development server
+                # outside of a Kedro project, simply return the fullpath to the file.
+                filepath = code_full_path
+            self.filepath = str(filepath)
         self.parameters = task_node.parameters
         self.inputs = [
             _pretty_name(_strip_namespace(name)) for name in kedro_node.inputs
