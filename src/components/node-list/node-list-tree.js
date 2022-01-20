@@ -201,7 +201,7 @@ const TreeListProvider = ({
 
   const onItemExpandCollapseToggle = (event, expandedItemIds) => {
     onNodeToggleExpanded(expandedItemIds);
-    //when tree is collapsed
+    //when the parent modular pipeline tree of the selected node is collapsed
     if (expandedItemIds.length === 0) {
       onToggleNodeSelected(null);
     }
