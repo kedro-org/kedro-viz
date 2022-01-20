@@ -27,6 +27,7 @@ Please follow the established format:
 - Build out 'Show Changes' user journey for experiment tracking. (#667)
 - Return gitBranch data. (#657)
 - Drop python 3.6 support. (#659)
+- Allow users to search through runs list by title, notes and gitSha. 
 
 ## Bug fixes and other changes
 
