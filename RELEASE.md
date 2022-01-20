@@ -8,6 +8,11 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Major features and improvements
+
+- Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
+- Setup subscription for auto update of experiment runs list on new Kedro runs. (#703)
+
 ## Bug fixes and other changes
 
 - Bug fix to display the original function names when pretty name is turned off. (#686)

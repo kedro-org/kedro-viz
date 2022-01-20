@@ -20,6 +20,10 @@
   &:hover {
     background: var(--color-run-list-hover);
     cursor: pointer;
+
+    .runs-list-card__bookmark--stroke {
+      opacity: 1;
+    }
   }
 }
 
@@ -56,5 +60,16 @@
   fill: var(--color-default-alt);
   height: 24px;
   margin-left: auto;
+  opacity: 0.7;
+  transition: opacity 300ms ease;
   width: 24px;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &--stroke {
+    opacity: 0;
+    transition: opacity 0ms ease;
+  }
 }
