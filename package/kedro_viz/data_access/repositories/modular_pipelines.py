@@ -19,6 +19,8 @@ class ModularPipelinesRepository:
     Internally, the repository models the set of modular pipelines as a tree using child-references.
     For more detail about this representation, see:
     https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
+
+    
     The reason is because under the hood, Kedro uses a materialized path approach
     to namespace representation, which forms a tree. See:
     https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-materialized-paths/
