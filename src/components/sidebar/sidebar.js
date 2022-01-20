@@ -8,7 +8,6 @@ import MiniMapToolbar from '../minimap-toolbar';
 import NodeList from '../node-list';
 import PipelineList from '../pipeline-list';
 import RunsList from '../experiment-tracking/runs-list';
-import Switch from '../switch';
 
 import './sidebar.css';
 
