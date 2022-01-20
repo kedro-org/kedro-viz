@@ -19,8 +19,6 @@ class ModularPipelinesRepository:
     Internally, the repository models the set of modular pipelines as a tree using child-references.
     For more detail about this representation, see:
     https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
-
-
     The reason is because under the hood, Kedro uses a materialized path approach
     to namespace representation, which forms a tree. See:
     https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-materialized-paths/
@@ -34,14 +32,12 @@ class ModularPipelinesRepository:
     It also provides a clean algebraic query syntax,
     i.e. `pipeline.only_nodes_with_namespace("data_science")`.
     Both are well-known properties of the materialized path representation of a tree.
-
     However, when the tree needs to be displayed visually, it's much more convenient to work with
     the child-references representation. Specifically:
     - Each tree node has an ID, a name derived from the ID and a set of children.
     - Each child of a node could be a data node, a task node, a parameters node or
     another modular pipeline node.
     - There is a designated root node with a __root__ ID.
-
     With this representation, a folder-like render of the tree is simply a recursive in-order
     tree traversal. To improve the performance on the client, we perform the conversion between
     these two representations on the backend by extracting the modular pipeline from a Kedro project
@@ -70,7 +66,6 @@ class ModularPipelinesRepository:
     ) -> ModularPipelineNode:
         """Get the modular pipeline node with the given ID from the repository.
         If it doesn't exist, create the node, add to the repository and return the instance.
-
         Args:
             modular_pipeline_id: The ID of the modular pipeline to retrieve from the repository.
         Returns:
@@ -97,7 +92,6 @@ class ModularPipelinesRepository:
         The input also has knowledge of which modular pipelines it belongs to
         based on its namespace. This information can be accessed with through
         `input_node.modular_pipelines`.
-
         Args:
             modular_pipeline_id: ID of the modular pipeline to add the input to.
             input_node: The input node to add.
@@ -130,7 +124,6 @@ class ModularPipelinesRepository:
         """Add an output to a modular pipeline based on whether it's an internal or external output.
         The output has knowledge of which modular pipelines it belongs to based on its namespace.
         The information can be accessed with through `output_node.modular_pipelines`.
-
         Args:
             modular_pipeline_id: ID of the modular pipeline to add the output to.
             output_node: The output node to add.
@@ -182,7 +175,6 @@ class ModularPipelinesRepository:
     def extract_from_node(self, node: GraphNode) -> Optional[str]:
         """Extract the namespace from a graph node and add it as a modular pipeline node
         to the modular pipeline repository.
-
         Args:
             node: The GraphNode from which to extract modular pipeline.
         Returns:
