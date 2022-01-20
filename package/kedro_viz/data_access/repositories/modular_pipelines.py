@@ -1,4 +1,3 @@
-
 """`kedro_viz.data_access.repositories.modular_pipelines`
 defines repository to centralise access to modular pipelines data."""
 from typing import Dict, Optional, Union
