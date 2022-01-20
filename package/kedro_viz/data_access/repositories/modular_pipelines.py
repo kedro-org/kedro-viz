@@ -239,4 +239,3 @@ class ModularPipelinesRepository:
     def as_dict(self) -> Dict[str, ModularPipelineNode]:
         """Return the repository as a dictionary."""
         return self.tree
-
