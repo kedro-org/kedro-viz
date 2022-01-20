@@ -8,6 +8,9 @@ executors:
     docker:
       - image: cimg/node:14.15
     working_directory: ~/repo
+  demo_executor:
+    docker:
+      - image: cimg/python:3.8
 
 commands:
   setup_python_env:
@@ -144,23 +147,33 @@ commands:
   deploy_demo:
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
-            # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-
+      - setup_remote_docker
+      - run:
+          name: Setup environment
+          command: |
+            cd demo-modular-spaceflights
+            # use credentials for kedro-ecr-publish as the credentials in this jobs
+            echo "AWS_ACCESS_KEY_ID=$AWS_ECR_ACCESS_KEY_ID" >> $BASH_ENV
+            echo "AWS_SECRET_ACCESS_KEY=$AWS_ECR_SECRET_ACCESS_KEY" >> $BASH_ENV
+            echo "AWS_ECR_URL=public.ecr.aws/g0x0s3o2/kedro-viz-live-demo" >> $BASH_ENV
+            echo "KEDRO_VIZ_VERSION=$(cat .version)" >> $BASH_ENV
+            echo "cd demo-modular-spaceflights" >> $BASH_ENV
+      - run:
+          name: Install AWS CLI
+          command: pip3 install awscli
       - run:
           name: Build demo container image
           command: |
-            cd demo-modular-spaceflights
-            docker build -t kedro-viz-live-demo:... .
+            echo "kedro_viz==$KEDRO_VIZ_VERSION" >> src/docker_requirements.txt
+            docker build -t $AWS_ECR_URL:$KEDRO_VIZ_VERSION .
             aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
-            docker push public.ecr.aws/g0x0s3o2/kedro-viz-live-demo:...
+            docker push $AWS_ECR_URL:$KEDRO_VIZ_VERSION
       - run:
           name: Create a new lightsail deployment
           command: |
             # install lightsail cli
             # run https://docs.aws.amazon.com/cli/latest/reference/lightsail/create-container-service-deployment.html#create-container-service-deployment
+            aws lightsail create-container-service-deployment --region eu-west-2 --cli-input-json file://./lightsail.json
 
   build:
     description: Run build
@@ -272,7 +285,7 @@ jobs:
     steps: [build]
 
   deploy_demo:
-    executor: circleci_machine
+    executor: demo_executor
     steps: [deploy_demo]
 
   deploy_s3:
