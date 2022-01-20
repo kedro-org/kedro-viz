@@ -151,29 +151,15 @@ describe('RunsListCard', () => {
     expect(mockUpdateRunDetails).toHaveBeenCalled();
   });
 
-  describe('Search', () => {
-    // it('displays the title in the runs card when notes matches search value', () => {
-    //   const wrapper = mount(
-    //     <RunsListCard
-    //       data={savedRun}
-    //       selectedRunIds={selectedRunIds}
-    //       searchValue={'Sprint'}
-    //     />
-    //   );
+  it('displays the notes in the runs card when notes matches search value', () => {
+    const wrapper = mount(
+      <RunsListCard
+        data={savedRun}
+        selectedRunIds={selectedRunIds}
+        searchValue={'star'}
+      />
+    );
 
-    //   expect(wrapper.find('.runs-list-card__title b').length).toBe(1);
-    // });
-
-    it('displays the notes in the runs card when notes matches search value', () => {
-      const wrapper = mount(
-        <RunsListCard
-          data={savedRun}
-          selectedRunIds={selectedRunIds}
-          searchValue={'star'}
-        />
-      );
-
-      expect(wrapper.find('.runs-list-card__notes').length).toBe(1);
-    });
+    expect(wrapper.find('.runs-list-card__notes').length).toBe(1);
   });
 });
