@@ -69,7 +69,7 @@ for the experiment tracking components.
 
 On initialisation for the Redux setup, Kedro-Viz [manually normalises pipeline data](/src/store/normalize-data.js), in order to [make immutable state updates as performant as possible](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape).
 
-Next, it [initialises the Redux data store](https://github.com/quantumblacklabs/kedro-viz/blob/main/src/store/initial-state.js), by merging this normalised state with other data sources such as saved user preferences from `localStorage`, URL flags, and default values.
+Next, it [initialises the Redux data store](https://github.com/kedro-org/kedro-viz/blob/main/src/store/initial-state.js), by merging this normalised state with other data sources such as saved user preferences from `localStorage`, URL flags, and default values.
 
 During preparation, the initial state is separated into two parts: pipeline and non-pipeline state. This is because the non-pipeline state should persist for the session duration, even if the pipeline state is reset/overwritten - i.e. if the user selects a new top-level pipeline.
 
@@ -137,7 +137,7 @@ An edge is a link between two Kedro-Viz nodes - that is, the input/output for a 
 
 ## Layout calculations
 
-Kedro-Viz includes a graph layout engine, for details see the [layout engine documentation](https://github.com/quantumblacklabs/kedro-viz/blob/main/LAYOUT_ENGINE.md).
+Kedro-Viz includes a graph layout engine, for details see the [layout engine documentation](https://github.com/kedro-org/kedro-viz/blob/main/LAYOUT_ENGINE.md).
 
 Our layout engine runs inside a web worker, which asynchronously performs these expensive calculations in a separate CPU thread, in order to avoid this blocking other operations on the main thread (e.g. CSS transitions and other state updates).
 

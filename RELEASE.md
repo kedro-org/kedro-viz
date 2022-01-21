@@ -20,7 +20,9 @@ Please follow the established format:
 - Fix the order of the runs list in experiment tracking. (#691)
 - Bug fix for Plotly JSONDataSet icon. (#684)
 - Bug fix for when some flowchart nodes were being cut off by the sidebar. (#701)
+- Bug fix for datasets when params is used as a prefix. (#707)
 - Bug fix for when the exported pipeline image was sometimes cutting off elements. (#705)
+
 
 # Release 4.2.0
 
@@ -168,7 +170,7 @@ Please follow the established format:
 
 - Implement new tree list with modular pipelines and search UI for new sidebar navigation. (#479)
 - Implement element filters and further design updates to the filter panel for new sidebar navigation. (#454)
-- Implement [`kedro-telemetry`](https://github.com/quantumblacklabs/kedro-telemetry) in production to enable Heap Analytics analysis for Kedro-Viz. (#481, #487)
+- Implement [`kedro-telemetry`](https://github.com/kedro-org/kedro-plugins/tree/main/kedro-telemetry) in production to enable Heap Analytics analysis for Kedro-Viz. (#481, #487)
 - Show decorated function's source code on code panel. (#493)
 - Enable the display of entire parameter object with react-json-viewer on the metadata panel. (#494)
 
@@ -535,7 +537,7 @@ Please note that release >=3.8.0 will not work with projects created with older 
 
 If you are just using Kedro-Viz with Kedro as a Python package, you won't need to do anything. The breaking changes in this release only affect the few users who are working on the application locally, or importing it from [npm](https://www.npmjs.com/package/@quantumblack/kedro-viz) and consuming it as a React component.
 
-- The format for data passed to Kedro-Viz has changed. You can see examples of the new data format in the [`src/utils/data`](./src/utils/data) directory. The main change is that the format no longer supports multiple snapshots in a single dataset. Instead of [this](https://github.com/quantumblacklabs/kedro-viz/blob/243fd1bb513023086e77bca9f8469e00d1182437/src/utils/data.mock.js):
+- The format for data passed to Kedro-Viz has changed. You can see examples of the new data format in the [`src/utils/data`](./src/utils/data) directory. The main change is that the format no longer supports multiple snapshots in a single dataset. Instead of [this](https://github.com/kedro-org/kedro-viz/blob/243fd1bb513023086e77bca9f8469e00d1182437/src/utils/data.mock.js):
   ```
   {
     snapshots: [
@@ -549,7 +551,7 @@ If you are just using Kedro-Viz with Kedro as a Python package, you won't need t
     ]
   }
   ```
-  You can now use something like [this](https://github.com/quantumblacklabs/kedro-viz/blob/c75c499507617a01fb327c366b9d639229f1d921/src/utils/data/demo.mock.js):
+  You can now use something like [this](https://github.com/kedro-org/kedro-viz/blob/c75c499507617a01fb327c366b9d639229f1d921/src/utils/data/demo.mock.js):
   ```
   {
     nodes: [...],
@@ -627,7 +629,7 @@ If you are just using Kedro-Viz with Kedro as a Python package, you won't need t
 
 ## Migration guide from Kedro-Viz 1.\*.\* to Kedro-Viz 2.0.0
 
-- The data input format has been significantly changed. This will only affect users of the JavaScript package - regular Kedro users will not be affected. To see examples of the old API format compares to the new one, see the changes to `data.mock.js` in [this commit](https://github.com/quantumblacklabs/kedro-viz/pull/8/files#diff-837826676eaada9374ec654c892af095).
+- The data input format has been significantly changed. This will only affect users of the JavaScript package - regular Kedro users will not be affected. To see examples of the old API format compares to the new one, see the changes to `data.mock.js` in [this commit](https://github.com/kedro-org/kedro-viz/pull/8/files#diff-837826676eaada9374ec654c892af095).
 
 ## Thanks for supporting contributions
 
