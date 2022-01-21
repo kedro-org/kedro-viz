@@ -15,7 +15,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 <br />
 
-[![CircleCI](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/main.svg?style=shield)](https://circleci.com/gh/quantumblacklabs/kedro-viz/tree/main)
+[![CircleCI](https://circleci.com/gh/kedro-org/kedro-viz/tree/main.svg?style=shield)](https://circleci.com/gh/kedro-org/kedro-viz/tree/main)
 [![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)
 [![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8-orange.svg)](https://pypi.org/project/kedro-viz/)
 [![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
@@ -25,7 +25,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 ## Introduction
 
-Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/quantumblacklabs/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project. 
+Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project. 
 
 ## Features
 
@@ -161,7 +161,7 @@ Kedro-Viz also logs a message in your browser's [developer console](https://deve
 
 ## Maintainers
 
-Kedro-Viz is maintained by the [product team from QuantumBlack](https://kedro.readthedocs.io/en/stable/12_faq/01_faq.html#who-maintains-kedro) and a number of [contributors from across the world](https://github.com/quantumblacklabs/Kedro-Viz/contributors).
+Kedro-Viz is maintained by the [kedro team](https://kedro.readthedocs.io/en/stable/12_faq/01_faq.html#who-maintains-kedro) and a number of [contributors from across the world](https://github.com/kedro-org/Kedro-Viz/contributors).
 
 ## Contribution
 
@@ -169,7 +169,7 @@ If you want to contribute to Kedro-Viz, please check out our [contributing guide
 
 ## License
 
-Kedro-Viz is licensed under the [Apache 2.0](https://github.com/quantumblacklabs/kedro-viz/blob/main/LICENSE.md) License.
+Kedro-Viz is licensed under the [Apache 2.0](https://github.com/kedro-org/kedro-viz/blob/main/LICENSE.md) License.
 
 ## Citation
 

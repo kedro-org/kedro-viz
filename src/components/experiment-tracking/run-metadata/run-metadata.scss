@@ -21,6 +21,16 @@
   margin: -2px 0 0 0;
   padding: 0;
 
+  li,
+  .hidden-menu-wrapper {
+    margin-right: 5px;
+    position: relative;
+
+    &:last-of-type:not(.hidden-menu-wrapper) {
+      margin-right: 0;
+    }
+  }
+
   .pipeline-icon-toolbar__button {
     height: 24px;
     width: 24px;
@@ -89,8 +99,11 @@
   cursor: pointer;
   font-size: 20px;
   font-weight: 600;
+  overflow: hidden;
   text-decoration-color: transparent;
+  text-overflow: ellipsis;
   transition: text-decoration-color 0.2s ease;
+  white-space: nowrap;
 
   &:hover {
     text-decoration: underline;
@@ -123,4 +136,31 @@
   font-size: 14px;
   margin: 2px 0 0;
   padding: 0;
+}
+
+.hidden-menu {
+  background: #f1f1f1;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0px;
+  transition: opacity 0.1s ease, top 0.2s ease;
+  width: 120px;
+
+  &--visible {
+    opacity: 1;
+    pointer-events: all;
+    top: 30px;
+  }
+}
+
+.hidden-menu__item {
+  color: rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+  padding: 6px 0 6px 20px;
+
+  &:hover {
+    background: #fff;
+  }
 }

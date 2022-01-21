@@ -7,16 +7,16 @@ import './icon-button.css';
  * Icon button component
  */
 const IconButton = ({
-  container: Container = 'li',
+  active,
   ariaLabel,
   ariaLive,
   className,
+  container: Container = 'li',
   disabled,
   icon,
   labelText,
   onClick,
   visible,
-  active,
 }) => {
   const Icon = icon;
 

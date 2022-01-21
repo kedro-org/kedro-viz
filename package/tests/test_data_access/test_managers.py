@@ -266,6 +266,19 @@ class TestAddDataSet:
         assert graph_node.is_single_parameter()
         assert graph_node.parameter_value == 0.1
 
+    def test_add_dataset_with_params_prefix(
+        self, data_access_manager: DataAccessManager
+    ):
+        catalog = DataCatalog()
+        catalog.add_feed_dict({"params_train_test_split": 0.1})
+        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_dataset("my_pipeline", "params_train_test_split")
+        nodes_list = data_access_manager.nodes.as_list()
+        assert len(nodes_list) == 1
+        graph_node = nodes_list[0]
+        assert not isinstance(graph_node, ParametersNode)
+        assert isinstance(graph_node, DataNode)
+
 
 class TestAddPipelines:
     def test_add_pipelines(
