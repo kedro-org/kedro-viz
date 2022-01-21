@@ -27,6 +27,13 @@ const runDataList = [
     title: 'Run 3',
     notes: 'notes of run 3 is a star',
   },
+  {
+    bookmark: true,
+    id: 'run4',
+    timestamp: new Date('October 15, 2021 03:29:00').toISOString(),
+    title: 'Run 4',
+    notes: 'notes of run 4 is a star',
+  },
 ];
 
 describe('RunsListCard', () => {
@@ -35,7 +42,7 @@ describe('RunsListCard', () => {
       <RunsList runData={runDataList} selectedRunIds={['run3']} />
     );
 
-    expect(wrapper.find('.runs-list__wrapper').length).toBe(1);
+    expect(wrapper.find('.runs-list__wrapper').length).toBe(2);
   });
 
   it('renders the search bar', () => {
@@ -59,6 +66,6 @@ describe('RunsListCard', () => {
       </ApolloProvider>
     );
 
-    expect(wrapper.find('.runs-list-card').length).toBe(3);
+    expect(wrapper.find('.runs-list-card').length).toBe(4);
   });
 });

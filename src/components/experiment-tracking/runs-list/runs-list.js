@@ -81,7 +81,7 @@ const RunsList = ({
       ) : null}
       {unbookmarkedRuns.length > 0 ? (
         <Accordion
-          heading={`${unbookmarkedRuns.length === 0 ? 'All' : 'Unbookmarked'}`}
+          heading={`${bookmarkedRuns.length === 0 ? 'All' : 'Unbookmarked'}`}
           headingClassName="runs-list__accordion-header"
           headingDetail={unbookmarkedRuns.length}
         >
