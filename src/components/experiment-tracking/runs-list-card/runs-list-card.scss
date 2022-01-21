@@ -1,11 +1,11 @@
 @import '../../../styles/variables';
 
 .kui-theme--light {
-  --color-runlist-highlight: #{darken($color-primary, 10%)};
+  --color-run-list-highlight: #{darken($color-primary, 10%)};
 }
 
 .kui-theme--dark {
-  --color-runlist-highlight: #{$color-primary};
+  --color-run-list-highlight: #{$color-primary};
 }
 
 .runs-list-card {
@@ -40,7 +40,7 @@
   line-height: 1.5;
 
   b {
-    color: var(--color-runlist-highlight);
+    color: var(--color-run-list-highlight);
     font-weight: normal;
   }
 }
@@ -51,7 +51,7 @@
   margin: 4px 0 12px;
 
   b {
-    color: var(--color-runlist-highlight);
+    color: var(--color-run-list-highlight);
     font-weight: normal;
   }
 }
@@ -65,7 +65,7 @@
   font-size: 1.3em;
 
   b {
-    color: var(--color-runlist-highlight);
+    color: var(--color-run-list-highlight);
     font-weight: normal;
   }
 }

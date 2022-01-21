@@ -44,23 +44,25 @@ const RunsList = ({
 
   return (
     <>
-      <div className="search-bar-wrapper">
-        <SearchList
-          onUpdateSearchValue={debounce(updateSearchValue, 250)}
-          searchValue={searchValue}
-        />
-      </div>
-      <div className="compare-switch-wrapper">
-        <span className="compare-switch-wrapper__text">
-          Compare runs (max. 3)
-        </span>
-        <Switch onChange={onToggleComparisonView} />
+      <div className="runs-list-top-wrapper">
+        <div className="search-bar-wrapper">
+          <SearchList
+            onUpdateSearchValue={debounce(updateSearchValue, 250)}
+            searchValue={searchValue}
+          />
+        </div>
+        <div className="compare-switch-wrapper">
+          <span className="compare-switch-wrapper__text">
+            Compare runs (max. 3)
+          </span>
+          <Switch onChange={onToggleComparisonView} />
+        </div>
       </div>
       {bookmarkedRuns.length > 0 ? (
         <Accordion
           heading="Bookmarked"
           headingClassName="runs-list__accordion-header"
-          headingDetail={runData.filter((run) => run.bookmark === true).length}
+          headingDetail={bookmarkedRuns.length}
         >
           <div className="runs-list__wrapper">
             {bookmarkedRuns.map((data, i) => (
@@ -79,9 +81,9 @@ const RunsList = ({
       ) : null}
       {unbookmarkedRuns.length > 0 ? (
         <Accordion
-          heading={`${bookmarkedRuns.length === 0 ? 'All' : 'Unbookmarked'}`}
+          heading={`${unbookmarkedRuns.length === 0 ? 'All' : 'Unbookmarked'}`}
           headingClassName="runs-list__accordion-header"
-          headingDetail={runData.filter((run) => run.bookmark === false).length}
+          headingDetail={unbookmarkedRuns.length}
         >
           <div className="runs-list__wrapper">
             {unbookmarkedRuns.map((data, i) => (

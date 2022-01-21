@@ -12,6 +12,7 @@ Please follow the established format:
 
 - Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
 - Setup subscription for auto update of experiment runs list on new Kedro runs. (#703)
+- Allow users to search through the runs list by title, notes, and Git SHA. (#709)
 
 ## Bug fixes and other changes
 
@@ -28,7 +29,6 @@ Please follow the established format:
 - Build out 'Show Changes' user journey for experiment tracking. (#667)
 - Return gitBranch data. (#657)
 - Drop python 3.6 support. (#659)
-- Allow users to search through runs list by title, notes and gitSha. 
 
 ## Bug fixes and other changes
 
