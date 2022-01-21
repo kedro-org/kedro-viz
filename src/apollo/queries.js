@@ -9,6 +9,7 @@ export const GET_RUNS = gql`
       id
       timestamp
       title
+      notes
     }
   }
 `;

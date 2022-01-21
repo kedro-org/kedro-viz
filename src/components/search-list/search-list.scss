@@ -1,4 +1,6 @@
-.pipeline-nodelist-search {
+@import '../../styles/variables';
+
+.pipeline-search-list {
   padding: 2px ($sidebar-padding - 0.4) 0 ($sidebar-padding - 0.4);
 
   .kui-searchbar,
