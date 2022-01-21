@@ -10,21 +10,21 @@ The Kedro team pledges to foster and maintain a welcoming and friendly community
 
 # Get started
 
-We use [GitHub Issues](https://github.com/quantumblacklabs/kedro-viz/issues) to keep track of known bugs. We keep a close eye on them and try to make it clear when we have an internal fix in progress. Before reporting a new issue, please do your best to ensure your problem hasn't already been reported. If so, it's often better to just leave a comment on an existing issue, rather than create a new one. Old issues also can often include helpful tips and solutions to common problems.
+We use [GitHub Issues](https://github.com/kedro-org/kedro-viz/issues) to keep track of known bugs. We keep a close eye on them and try to make it clear when we have an internal fix in progress. Before reporting a new issue, please do your best to ensure your problem hasn't already been reported. If so, it's often better to just leave a comment on an existing issue, rather than create a new one. Old issues also can often include helpful tips and solutions to common problems.
 
 If you are looking for help with your code, please consider posting a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/kedro-viz) or our [Discord channel](https://discord.gg/4qeKKspFf8). 
 
-If you have already checked the [existing issues](https://github.com/quantumblacklabs/kedro-viz/issues) on GitHub and are still convinced that you have found odd or erroneous behaviour then please file a [new issue](https://github.com/quantumblacklabs/kedro-viz/issues/new/choose). We have a template that helps you provide the necessary information we'll need in order to address your query.
+If you have already checked the [existing issues](https://github.com/kedro-org/kedro-viz/issues) on GitHub and are still convinced that you have found odd or erroneous behaviour then please file a [new issue](https://github.com/kedro-org/kedro-viz/issues/new/choose). We have a template that helps you provide the necessary information we'll need in order to address your query.
 
 ## Feature requests
 
 ### Suggest a new feature
 
-If you have new ideas for Kedro-Viz functionality then please open a [GitHub issue](https://github.com/quantumblacklabs/kedro-viz/issues) with the label `Type: Enhancement`. Please describe in your own words the feature you would like to see, why you need it, and how it should work.
+If you have new ideas for Kedro-Viz functionality then please open a [GitHub issue](https://github.com/kedro-org/kedro-viz/issues) with the label `Type: Enhancement`. Please describe in your own words the feature you would like to see, why you need it, and how it should work.
 
 ### Contribute a new feature
 
-If you're unsure where to begin contributing to Kedro-Viz, please start by looking through the `good first issues` and `Request: Help Wanted` on [GitHub](https://github.com/quantumblacklabs/kedro-viz/issues).
+If you're unsure where to begin contributing to Kedro-Viz, please start by looking through the `good first issues` and `Request: Help Wanted` on [GitHub](https://github.com/kedro-org/kedro-viz/issues).
 
 Typically, small contributions to Kedro-Viz are more preferable due to an easier review process, but we accept any new features if they prove to be essential for the functioning of the plugin or if we believe that they are used by most projects.
 
@@ -63,7 +63,7 @@ def count_truthy(elements: List[Any]) -> int:
 
 - Keep UI elements fully keyboard accessible, and aim to support screen-readers where possible
 - Maintain a high level of animation performance, and minimise page-load time
-- Comply with the set of colours defined in the [Kedro-Viz Style Guide](https://github.com/quantumblacklabs/kedro-viz/blob/main/STYLE_GUIDE.md) for all colour variables and usage
+- Comply with the set of colours defined in the [Kedro-Viz Style Guide](https://github.com/kedro-org/kedro-viz/blob/main/STYLE_GUIDE.md) for all colour variables and usage
 
 ## Git branching guidelines
 
@@ -135,7 +135,7 @@ Before launching a development server with a real Kedro project, you'd need to h
 
 After setting up Python and Kedro, you will need to have a Kedro project setup. If you don't have any existing Kedro project, you can create a new one with the `spaceflights` example:
 
-> **Note**: You can use any other [starters](https://github.com/quantumblacklabs/kedro-starters), except `mini-kedro`, for the purpose of this development server, not just `spaceflights`.
+> **Note**: You can use any other [starters](https://github.com/kedro-org/kedro-starters), except `mini-kedro`, for the purpose of this development server, not just `spaceflights`.
 
 ```bash
 cd $HOME # or wherever you prefer to keep your test project
@@ -308,7 +308,7 @@ make version VERSION=<version-to-release>
 - Commit, raise a PR and get it merged into `main`.
 
 - Once the release commit is in `main`, trigger the release by:
-    * Create a Release through [Github UI](https://github.com/quantumblacklabs/kedro-viz/releases/new).
+    * Create a Release through [Github UI](https://github.com/kedro-org/kedro-viz/releases/new).
     * Input the version as the tag version with Target set to `main`
     * Paste the release note in the text box.
     * Publish the release.

@@ -27,8 +27,7 @@ from demo_project import __version__ as release
 # -- Project information -----------------------------------------------------
 
 project = "demo_project"
-copyright = "2021, QuantumBlack Visual Analytics Limited"
-author = "QuantumBlack"
+author = "Kedro"
 
 # The short X.Y version.
 version = re.match(r"^([0-9]+\.[0-9]+).*", release).group(1)
@@ -151,7 +150,7 @@ latex_documents = [
         master_doc,
         "demo_project.tex",
         "demo_project Documentation",
-        "QuantumBlack",
+        "Kedro",
         "manual",
     )
 ]
