@@ -63,7 +63,7 @@ export const changed = (props, objectA, objectB) => {
 
 const { escapeRegExp } = utils;
 /**
- * Check whether a piece of text matches the searchvalue, true if no search value given
+ * Check whether a piece of text matches the search value
  * @param {object} text
  * @param {string} searchValue
  * @return {boolean} True if node matches or no search value given
