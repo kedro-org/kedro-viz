@@ -35,7 +35,7 @@ const RunsListCard = ({
   const displayValue = (value) =>
     isMatchSearchValue(value) ? getHighlightedText(value, searchValue) : value;
 
-  const isNotesContainSearchValue = isMatchSearchValue(notes);
+  const isSearchValueInNotes = isMatchSearchValue(notes);
 
   const onRunsListCardClick = (id, e) => {
     /**
@@ -93,7 +93,7 @@ const RunsListCard = ({
           }}
         />
         <div className="runs-list-card__timestamp">{humanReadableTime}</div>
-        {isNotesContainSearchValue && (
+        {isSearchValueInNotes && (
           <div
             className="runs-list-card__notes"
             dangerouslySetInnerHTML={{
