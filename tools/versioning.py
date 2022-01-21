@@ -51,7 +51,12 @@ def update_npm_package(version):
 
 
 def git_stage_files():
-    files_to_stage = [VIZ_INIT_FILE, PACKAGE_JSON_FILE, PACKAGE_JSON_LOCK_FILE]
+    files_to_stage = [
+        VIZ_INIT_FILE,
+        PACKAGE_JSON_FILE,
+        PACKAGE_JSON_LOCK_FILE,
+        DEMO_VERSION_FILE,
+    ]
     subprocess.check_call(["git", "add"] + files_to_stage)
 
 
