@@ -86,6 +86,7 @@ def count_truthy(elements: List[Any]) -> int:
 Alternatively, if you know the JIRA ticket number of the issue that you are fixing, you can prefix your branch name with it, e.g. `KED-<JIRA-ticket-number>/short-description-of-the-issue`.
 
 
+
 ## Developer Certificate of Origin
 We require that all contributions comply with the [Developer Certificate of Origin (DCO)](https://developercertificate.org/). This certifies that the contributor wrote or otherwise has the right to submit their contribution.
 
