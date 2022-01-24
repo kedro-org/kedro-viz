@@ -29,6 +29,10 @@ input RunInput {
   notes: String = null
 }
 
+type Subscription {
+  runsAdded: [Run!]!
+}
+
 type TrackingDataset {
   datasetName: String
   datasetType: String
