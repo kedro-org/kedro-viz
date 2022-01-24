@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { toggleSettingsModal, toggleTheme } from '../../actions';
 import ExperimentsIcon from '../icons/experiments';
 import IconButton from '../icon-button';
@@ -32,7 +32,7 @@ export const GlobalToolbar = ({
             disabled={false}
             icon={LogoIcon}
           />
-          <Link to={{ pathname: '/' }}>
+          <NavLink exact to={{ pathname: '/' }}>
             <IconButton
               ariaLabel={'View your pipeline'}
               className={
@@ -41,8 +41,8 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={TreeIcon}
             />
-          </Link>
-          <Link to={{ pathname: '/runsList' }}>
+          </NavLink>
+          <NavLink exact to={{ pathname: '/runsList' }}>
             <IconButton
               ariaLabel={'View your experiments'}
               className={
@@ -51,7 +51,7 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={ExperimentsIcon}
             />
-          </Link>
+          </NavLink>
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
           <IconButton
