@@ -43,3 +43,11 @@
     width: 2.9em;
   }
 }
+
+.pipeline-global-routes-toolbar a.active .pipeline-menu-button--link {
+  background-color: var(--color-bg-2);
+}
+
+.pipeline-global-routes-toolbar a.active .pipeline-menu-button--link svg {
+  opacity: 1;
+}
