@@ -84,7 +84,7 @@ const MetaData = ({
                 />
                 <h2
                   className="pipeline-metadata__title"
-                  dangerouslySetInnerHTML={{ __html: metadata.node.name }}
+                  dangerouslySetInnerHTML={{ __html: metadata.name }}
                 />
               </div>
               <IconButton
