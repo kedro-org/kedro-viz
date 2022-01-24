@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import utils from '@quantumblack/kedro-ui/lib/utils';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import classnames from 'classnames';
+import { textMatchesSearch } from '../../../utils';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import BookmarkIcon from '../../icons/bookmark';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import CheckIcon from '../../icons/check';
 
 import './runs-list-card.css';
+
+const { getHighlightedText } = utils;
 
 /**
  * Display a card showing run info from an experiment
@@ -18,11 +22,20 @@ const RunsListCard = ({
   enableComparisonView = false,
   onRunSelection,
   selectedRunIds = [],
+  searchValue,
 }) => {
-  const { id, timestamp, title = null, bookmark } = data;
+  const { id, timestamp, notes, title = null, bookmark, gitSha } = data;
   const [active, setActive] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(timestamp);
+
+  const isMatchSearchValue = (text) =>
+    searchValue ? textMatchesSearch(text, searchValue) : false;
+
+  const displayValue = (value) =>
+    isMatchSearchValue(value) ? getHighlightedText(value, searchValue) : value;
+
+  const isSearchValueInNotes = isMatchSearchValue(notes);
 
   const onRunsListCardClick = (id, e) => {
     /**
@@ -66,11 +79,28 @@ const RunsListCard = ({
         />
       )}
       <div>
-        <div className="runs-list-card__title">
-          {typeof title === 'string' ? title : humanReadableTime}
-        </div>
-        <div className="runs-list-card__id">{id}</div>
+        <div
+          className="runs-list-card__title"
+          dangerouslySetInnerHTML={{
+            __html: displayValue(title),
+          }}
+        />
+
+        <div
+          className="runs-list-card__gitsha"
+          dangerouslySetInnerHTML={{
+            __html: displayValue(gitSha),
+          }}
+        />
         <div className="runs-list-card__timestamp">{humanReadableTime}</div>
+        {isSearchValueInNotes && (
+          <div
+            className="runs-list-card__notes"
+            dangerouslySetInnerHTML={{
+              __html: `Notes:  <em>${displayValue(notes)}</em>`,
+            }}
+          />
+        )}
       </div>
       {bookmark ? (
         <BookmarkIcon
