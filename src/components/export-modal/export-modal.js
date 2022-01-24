@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Modal from '../modal';
-import Button from '@quantumblack/kedro-ui/lib/components/button';
+import Button from '../button';
 import { toggleExportModal } from '../../actions';
 import exportGraph from './export-graph';
 import './export-modal.css';

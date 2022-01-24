@@ -32,13 +32,15 @@ $secondary-underline-offset-hover: 4px;
 }
 
 .kui-button__btn {
-  @extend %type--subhead-2;
-  @extend %type--semibold;
+  font-size: 1.6em;
+  line-height: 1em;
+  font-weight: 600;
+  letter-spacing: 0.1px;
   color: var(--color-button__text);
+  outline: 2px solid var(--color-button--outline);
   display: inline-block;
   margin: 2px;
   padding: 0.7em 0.8em 0.8em;
-  line-height: 1em;
   border: none;
   border-radius: 0;
 
@@ -48,158 +50,22 @@ $secondary-underline-offset-hover: 4px;
   font-family: inherit;
   transition: background ease $timing-primary,
     outline-color ease $timing-primary, color ease $timing-primary;
-  outline: 2px solid transparent;
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-
-  .kui-icon {
-    margin-right: 2px;
-  }
-}
-
-.kui-button__btn--small {
-  @extend %type--body-1;
-
-  padding: 0.6em 0.85em 0.7em;
-}
-
-.kui-button__btn--primary {
-  @mixin themed outline-color, button, outline;
-  @mixin themedState: hover, color, button, textHover;
-  @mixin themedState: active, color, button, textHover;
-  @mixin themedState: hover, background, button, outline;
-  @mixin themedState: active, background, button, active;
-  @mixin themedState: disabled, color, text;
-
-  &.kui-theme--light:focus {
-    box-shadow: 0 0 0 7px map(themes, light, focus, secondary);
-  }
-
-  &.kui-theme--dark:focus {
-    box-shadow: 0 0 0 7px map(themes, dark, focus, secondary);
-  }
 
   &:active {
     transition: none;
     outline-width: 0;
+    color: var(--color-button__text--hover);
+    background: var(--color-button--active);
   }
 
-  &:disabled,
-  &.kui-theme--light:disabled,
-  &.kui-theme--dark:disabled {
-    background: none;
-  }
-
-  .kui-icon__graphics {
-    transition: fill ease $timing-primary;
-  }
-
-  &.kui-theme--light:hover,
-  &.kui-theme--light:active {
-    .kui-icon__graphics {
-      fill: map(themes, light, button, textHover);
-    }
-  }
-
-  &.kui-theme--dark:hover,
-  &.kui-theme--dark:active {
-    .kui-icon__graphics {
-      fill: map(themes, dark, button, textHover);
-    }
-  }
-
-  &.kui-button__btn--wipe {
-    position: relative;
-
-    /**
-     * Force a new z-index stacking context without invoking z-index
-     * See https://philipwalton.com/articles/what-no-one-told-you-about-z-index/
-     */
-    transform: translate(0, 0);
-
-    &:active,
-    &:hover {
-      background: none;
-    }
-
-    &::after {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1;
-      content: '';
-
-      width: 0;
-      height: 100%;
-      transition: width ease $timing-primary;
-    }
-
-    @mixin themedState: after, background, button, outline;
-
-    &:active::after,
-    &:hover::after {
-      width: 100%;
-    }
-  }
-
-  [data-whatinput='mouse'] &:focus {
-    box-shadow: none;
+  &:hover {
+    color: var(--color-button__text--hover);
+    background: var(--color-button--outline);
   }
 }
 
-.kui-button__btn--secondary {
-  @mixin themedState: hover: : after, background, button, outline;
-  @mixin themedState: focus, outline-color, focus, secondary;
-
-  outline: 4px solid transparent;
-
-  &::after {
-    display: block;
-    content: '';
-
-    width: 100%;
-    height: $secondary-underline-height;
-
-    /* Offset the underline height so it doesn't affect text vertical alignment */
-    margin-bottom: -$secondary-underline-height;
-    transform: translateY($secondary-underline-offset);
-    transition: transform ease 0.1s, background ease 0.1s;
-
-    background: none;
-  }
-
-  &:hover::after {
-    transform: translateY($secondary-underline-offset-hover);
-  }
-
-  &:active {
-    background-color: $color-secondary-active;
-    outline-color: $color-secondary-active;
-  }
-
-  &:disabled::after {
-    display: none;
-  }
-
-  &.kui-button__btn--wipe {
-    &::after {
-      width: 0;
-      transition: width ease 0.2s;
-      transform: translateY(4px);
-    }
-
-    @mixin themedState: after, background, button, outline;
-
-    &:active::after,
-    &:hover::after {
-      width: 100%;
-    }
-  }
-
-  [data-whatinput='mouse'] &:focus {
-    outline: none;
-  }
+.kui-button__btn--small {
+  font-size: 1.4em;
+  letter-spacing: 0.1px;
+  padding: 0.6em 0.85em 0.7em;
 }
