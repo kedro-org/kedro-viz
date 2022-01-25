@@ -314,3 +314,10 @@ make version VERSION=<version-to-release>
     * Publish the release.
 
 - Once the release tag is published on Github, a CircleCI job will be triggered to push it to npm and PyPI accordingly.
+- Once the new version is on PyPI, you can deploy it to https://demo.kedro.org by merging `main` into the `demo` branch. A CI job will automatically build a container using the [demo project](./demo-project) with the newly released version and deploy it.
+
+```bash
+git checkout demo
+git merge main
+git push
+```
