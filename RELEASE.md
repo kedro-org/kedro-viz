@@ -12,6 +12,7 @@ Please follow the established format:
 
 - Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
 - Setup subscription for auto update of experiment runs list on new Kedro runs. (#703)
+- Allow users to search through the runs list by title, notes, and Git SHA. (#709)
 
 ## Bug fixes and other changes
 
@@ -19,6 +20,7 @@ Please follow the established format:
 - Fix the order of the runs list in experiment tracking. (#691)
 - Bug fix for Plotly JSONDataSet icon. (#684)
 - Bug fix for when some flowchart nodes were being cut off by the sidebar. (#701)
+- Bug fix empty metadata panel when clicking on modular pipeline nodes during search. (#704)
 - Bug fix for datasets when params is used as a prefix. (#707)
 - Bug fix for when the exported pipeline image was sometimes cutting off elements. (#705)
 

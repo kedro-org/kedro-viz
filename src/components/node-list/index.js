@@ -84,7 +84,9 @@ const NodeListProvider = ({
   const onItemClick = (item) => {
     if (isGroupType(item.type)) {
       onGroupItemChange(item, item.checked);
-    } else if (!isModularPipelineType(item.tye)) {
+    } else if (isModularPipelineType(item.type)) {
+      onToggleNodeSelected(null);
+    } else {
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
       } else {
