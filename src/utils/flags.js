@@ -78,7 +78,7 @@ export const getFlagsMessage = (flagsEnabled) => {
     });
 
     info += `\n\nSee docs on flags for more info 📖`;
-    info += `\nhttps://github.com/quantumblacklabs/kedro-viz#flags`;
+    info += `\nhttps://github.com/kedro-org/kedro-viz#flags`;
 
     return info;
   }

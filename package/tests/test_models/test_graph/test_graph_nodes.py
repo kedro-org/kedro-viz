@@ -47,7 +47,7 @@ def decorator(fun):
     """
     Not the best way to write decorator
     but trying to stay faithful to the bug report here:
-    https://github.com/quantumblacklabs/kedro-viz/issues/484
+    https://github.com/kedro-org/kedro-viz/issues/484
     """
 
     def _new_fun(*args, **kwargs):

@@ -28,7 +28,7 @@ commands:
       - run:
           name: Install Python dependencies
           command: |
-            pip install git+https://github.com/quantumblacklabs/kedro@main
+            pip install git+https://github.com/kedro-org/kedro@main
             cd package && pip install -r requirements.txt -U
             pip install -r test_requirements.txt -U
             cd ..
@@ -164,7 +164,7 @@ commands:
             git checkout -b gh-pages
             git add -A
             git commit -m 'Demo build [ci skip]'
-            git remote add origin https://github.com/quantumblacklabs/kedro-viz.git
+            git remote add origin https://github.com/kedro-org/kedro-viz.git
             git push origin gh-pages --force
 
   build:
@@ -220,7 +220,7 @@ commands:
           command: |
             conda activate kedro-viz
             python -m pip install -U pip setuptools wheel
-            pip install git+https://github.com/quantumblacklabs/kedro@main
+            pip install git+https://github.com/kedro-org/kedro@main
             pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions

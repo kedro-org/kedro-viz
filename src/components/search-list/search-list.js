@@ -1,14 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
 import { connect } from 'react-redux';
+import './search-list.css';
 
 /**
- * Handle Node List Search
+ * Handle Searching of List
  * @param {function} onUpdateSearchValue Event handler
  * @param {string} searchValue Search text
  * @param {string} theme Light/dark theme for Kedro-UI component
  */
-export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
+export const SearchList = ({ onUpdateSearchValue, searchValue, theme }) => {
   const container = useRef(null);
 
   /**
@@ -53,7 +54,7 @@ export const NodeListSearch = ({ onUpdateSearchValue, searchValue, theme }) => {
   return (
     <div
       ref={container}
-      className="pipeline-nodelist-search"
+      className="pipeline-search-list"
       onKeyDown={handleKeyDown}
     >
       <SearchBar
@@ -70,4 +71,4 @@ export const mapStateToProps = (state) => ({
   theme: state.theme,
 });
 
-export default connect(mapStateToProps)(NodeListSearch);
+export default connect(mapStateToProps)(SearchList);
