@@ -151,13 +151,13 @@ commands:
       - run:
           name: Setup environment
           command: |
-            cd demo-modular-spaceflights
+            cd demo-project
             # use credentials for kedro-ecr-publish as the credentials in this jobs
             echo "AWS_ACCESS_KEY_ID=$AWS_ECR_ACCESS_KEY_ID" >> $BASH_ENV
             echo "AWS_SECRET_ACCESS_KEY=$AWS_ECR_SECRET_ACCESS_KEY" >> $BASH_ENV
             echo "AWS_ECR_URL=public.ecr.aws/g0x0s3o2/kedro-viz-live-demo" >> $BASH_ENV
             echo "KEDRO_VIZ_VERSION=$(cat .version)" >> $BASH_ENV
-            echo "cd demo-modular-spaceflights" >> $BASH_ENV
+            echo "cd demo-project" >> $BASH_ENV
       - run:
           name: Install AWS CLI
           command: pip3 install awscli

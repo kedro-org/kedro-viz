@@ -13,7 +13,8 @@ from pathlib import Path
 VIZ_INIT_FILE = "package/kedro_viz/__init__.py"
 PACKAGE_JSON_FILE = "package.json"
 PACKAGE_JSON_LOCK_FILE = "package-lock.json"
-DEMO_VERSION_FILE = "demo-modular-spaceflights/.version"
+DEMO_VERSION_FILE = "demo-project/.version"
+DEMO_DEPLOYMENT_FILE = "demo-project/lightsail.json"
 VERSION_FMT = r"\d+.\d+.\d+"
 VERSION_MATCHSTR = r'__version__\s*=\s*"{version_fmt}"'.format(version_fmt=VERSION_FMT)
 VERSION_REPLACEMENT = r'__version__ = "{version}"'
@@ -34,6 +35,13 @@ def update_viz_version(version):
 def update_demo_version(version):
     with open(DEMO_VERSION_FILE, "w") as f:
         f.write(version)
+
+    with open(DEMO_DEPLOYMENT_FILE, "r") as f:
+        deployment_config = json.load(f)
+        deployment_config["containers"]["kedro-viz-live-demo"]["image"] = f"public.ecr.aws/g0x0s3o2/kedro-viz-live-demo:{version}"
+        
+    with open(DEMO_DEPLOYMENT_FILE, "w") as f:
+        json.dump(deployment_config, f, indent=2)
 
 
 def git_commit(version):
@@ -67,9 +75,9 @@ def main(argv):
     version = argv[1]
     update_viz_version(version)
     update_npm_package(version)
-    git_stage_files()
-    git_commit(version)
     update_demo_version(version)
+    # git_stage_files()
+    # git_commit(version)
 
 
 if __name__ == "__main__":
