@@ -8,6 +8,8 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.3.0
+
 ## Major features and improvements
 
 - Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
