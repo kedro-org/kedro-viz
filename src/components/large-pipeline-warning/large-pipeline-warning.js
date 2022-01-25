@@ -29,7 +29,7 @@ export const LargePipelineWarning = ({
         graph.
       </p>
       <Button onClick={onHide}>Render it anyway</Button>
-      <Button onClick={onDisable} size="small">
+      <Button mode="secondary" onClick={onDisable} size="small">
         Don't show this again
       </Button>
     </div>

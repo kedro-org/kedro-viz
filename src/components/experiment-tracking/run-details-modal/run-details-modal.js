@@ -74,7 +74,7 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
           />
         </div>
         <div className="run-details-modal-button-wrapper">
-          <Button onClick={() => onClose(false)} size="small">
+          <Button mode="secondary" onClick={() => onClose(false)} size="small">
             Cancel
           </Button>
           <Button onClick={onApplyChanges} size="small">

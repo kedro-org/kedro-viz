@@ -5,7 +5,11 @@
 
 /** Variables **/
 
+$color-secondary-active: rgba(0, 0, 0, 0.12);
 $timing-primary: 0.2s;
+$secondary-underline-height: 2px;
+$secondary-underline-offset: 8px;
+$secondary-underline-offset-hover: 4px;
 
 .kui-theme--light {
   --color-button--active: #{rgba($color-dark, 0.85)};
@@ -44,7 +48,15 @@ $timing-primary: 0.2s;
   font-family: inherit;
   transition: background ease $timing-primary,
     outline-color ease $timing-primary, color ease $timing-primary;
+}
 
+.kui-button__btn--small {
+  font-size: 1.4em;
+  letter-spacing: 0.1px;
+  padding: 0.6em 0.85em 0.7em;
+}
+
+.kui-button__btn--primary {
   &:active {
     transition: none;
     outline-width: 0;
@@ -56,10 +68,41 @@ $timing-primary: 0.2s;
     color: var(--color-button__text--hover);
     background: var(--color-button--outline);
   }
+
+  [data-whatinput='mouse'] &:focus {
+    box-shadow: none;
+  }
 }
 
-.kui-button__btn--small {
-  font-size: 1.4em;
-  letter-spacing: 0.1px;
-  padding: 0.6em 0.85em 0.7em;
+.kui-button__btn--secondary {
+  outline: 4px solid transparent;
+
+  &::after {
+    display: block;
+    content: '';
+
+    width: 100%;
+    height: $secondary-underline-height;
+
+    /* Offset the underline height so it doesn't affect text vertical alignment */
+    margin-bottom: -$secondary-underline-height;
+    transform: translateY($secondary-underline-offset);
+    transition: transform ease 0.1s, background ease 0.1s;
+
+    background: none;
+  }
+
+  &:hover::after {
+    background: var(--color-button--outline);
+    transform: translateY($secondary-underline-offset-hover);
+  }
+
+  &:active {
+    background-color: $color-secondary-active;
+    outline-color: $color-secondary-active;
+  }
+
+  [data-whatinput='mouse'] &:focus {
+    outline: none;
+  }
 }

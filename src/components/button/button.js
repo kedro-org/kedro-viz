@@ -6,10 +6,14 @@ import './button.css';
 /**
  * Generic Kedro Button
  */
-const Button = ({ onClick, size, children }) => (
+const Button = ({ children, onClick, size, mode }) => (
   <span className="kedro kui-button">
     <button
-      className={classnames('kui-button__btn', `kui-button__btn--${size}`)}
+      className={classnames(
+        'kui-button__btn',
+        `kui-button__btn--${size}`,
+        `kui-button__btn--${mode}`
+      )}
       onClick={onClick}
     >
       {children}
@@ -20,11 +24,13 @@ const Button = ({ onClick, size, children }) => (
 Button.defaultProps = {
   onClick: null,
   size: 'regular',
+  mode: 'primary',
 };
 
 Button.propTypes = {
   onClick: PropTypes.func,
   size: PropTypes.oneOf(['regular', 'small']),
+  mode: PropTypes.oneOf(['primary', 'secondary']),
 };
 
 export default Button;
