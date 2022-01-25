@@ -76,8 +76,8 @@ def main(argv):
     update_viz_version(version)
     update_npm_package(version)
     update_demo_version(version)
-    # git_stage_files()
-    # git_commit(version)
+    git_stage_files()
+    git_commit(version)
 
 
 if __name__ == "__main__":
