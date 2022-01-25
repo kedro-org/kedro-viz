@@ -177,7 +177,7 @@ const ExperimentWrapper = ({ theme }) => {
             enable experiment tracking in your projects from our docs.{' '}
           </p>
           <a
-            href="https://github.com/quantumblacklabs/kedro-viz"
+            href="https://github.com/kedro-org/kedro-viz"
             rel="noreferrer"
             target="_blank"
           >
