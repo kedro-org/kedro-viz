@@ -5,15 +5,10 @@
 
 /** Variables **/
 
-$color-secondary-active: rgba(0, 0, 0, 0.12);
 $timing-primary: 0.2s;
-$secondary-underline-height: 2px;
-$secondary-underline-offset: 8px;
-$secondary-underline-offset-hover: 4px;
 
 .kui-theme--light {
   --color-button--active: #{rgba($color-dark, 0.85)};
-  --color-button--focus: #{rgba($color-dark, 0.3)};
   --color-button--outline: #{$color-dark};
   --color-button__text--hover: #{rgba($color-light, 0.85)};
   --color-button__text: #{rgba($color-dark, 0.85)};
@@ -21,7 +16,6 @@ $secondary-underline-offset-hover: 4px;
 
 .kui-theme--dark {
   --color-button--active: #{rgba($color-light, 0.85)};
-  --color-button--focus: #{rgba($color-light, 0.3)};
   --color-button--outline: #{$color-light};
   --color-button__text--hover: #{rgba($color-dark, 0.85)};
   --color-button__text: #{rgba($color-light, 0.85)};
