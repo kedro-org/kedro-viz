@@ -1,5 +1,15 @@
 # Upcoming release
 
+<!--
+Use the sections below to add notes for the next release.
+Please follow the established format:
+- Keep each note concise - ideally commit title length
+- Use present tense (e.g. 'Add new feature')
+- Include the ID number for the related PR (or PRs) in parentheses
+-->
+
+# Release 4.3.1
+
 ## Bug fixes and other changes
 
 - Fix websocket connection for deploying Kedro-Viz over HTTPS. (#719)
