@@ -1,12 +1,8 @@
 # Upcoming release
 
-<!--
-Use the sections below to add notes for the next release.
-Please follow the established format:
-- Keep each note concise - ideally commit title length
-- Use present tense (e.g. 'Add new feature')
-- Include the ID number for the related PR (or PRs) in parentheses
--->
+## Bug fixes and other changes
+
+- Fix websocket connection for deploying Kedro-Viz over HTTPS. (#719)
 
 # Release 4.3.0
 
@@ -25,7 +21,6 @@ Please follow the established format:
 - Bug fix empty metadata panel when clicking on modular pipeline nodes during search. (#704)
 - Bug fix for datasets when params is used as a prefix. (#707)
 - Bug fix for when the exported pipeline image was sometimes cutting off elements. (#705)
-
 
 # Release 4.2.0
 
