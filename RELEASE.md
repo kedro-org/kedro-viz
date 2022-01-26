@@ -13,6 +13,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix websocket connection for deploying Kedro-Viz over HTTPS. (#719)
+- Update demo deployment setup on CI. (#718)
 
 # Release 4.3.0
 
@@ -21,6 +22,7 @@ Please follow the established format:
 - Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
 - Setup subscription for auto update of experiment runs list on new Kedro runs. (#703)
 - Allow users to search through the runs list by title, notes, and Git SHA. (#709)
+- Setup new demo deployment on CI. (#712)
 
 ## Bug fixes and other changes
 
