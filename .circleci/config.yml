@@ -152,9 +152,6 @@ commands:
           name: Setup environment
           command: |
             cd demo-project
-            # use credentials for kedro-ecr-publish as the credentials in this job
-            echo "AWS_ACCESS_KEY_ID=$AWS_ECR_ACCESS_KEY_ID" >> $BASH_ENV
-            echo "AWS_SECRET_ACCESS_KEY=$AWS_ECR_SECRET_ACCESS_KEY" >> $BASH_ENV
             echo "AWS_ECR_URL=public.ecr.aws/g0x0s3o2/kedro-viz-live-demo" >> $BASH_ENV
             echo "KEDRO_VIZ_VERSION=$(cat .version)" >> $BASH_ENV
             echo "cd demo-project" >> $BASH_ENV
