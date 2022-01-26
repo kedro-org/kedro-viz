@@ -8,6 +8,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.3.1
+
+## Bug fixes and other changes
+
+- Fix websocket connection for deploying Kedro-Viz over HTTPS. (#719)
+
 # Release 4.3.0
 
 ## Major features and improvements
@@ -25,7 +31,6 @@ Please follow the established format:
 - Bug fix empty metadata panel when clicking on modular pipeline nodes during search. (#704)
 - Bug fix for datasets when params is used as a prefix. (#707)
 - Bug fix for when the exported pipeline image was sometimes cutting off elements. (#705)
-
 
 # Release 4.2.0
 

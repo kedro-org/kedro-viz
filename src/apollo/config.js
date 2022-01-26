@@ -13,8 +13,10 @@ const wsHost =
     ? 'localhost:4142'
     : window.location.host;
 
+const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+
 const wsLink = new WebSocketLink({
-  uri: `ws://${wsHost}/graphql`,
+  uri: `${wsProtocol}://${wsHost}/graphql`,
   options: {
     reconnect: true,
   },
