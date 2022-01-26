@@ -18,4 +18,10 @@
   .kui-menu-option {
     height: 58px;
   }
+
+  .kui-menu-option {
+    &.pipeline-list__option--active {
+      border-left-color: $color-primary;
+    }
+  }
 }

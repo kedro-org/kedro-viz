@@ -45,10 +45,6 @@ $menu-item-padding: 12px;
   &:hover {
     background: var(--menu-option-bg-hover);
   }
-
-  &:active {
-    border-left-color: $color-primary;
-  }
 }
 
 .kui-menu-option__content {
