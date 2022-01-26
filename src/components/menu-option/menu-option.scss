@@ -1,0 +1,63 @@
+@import '../../styles/variables';
+
+/** Variables */
+
+/* the height of each item/row */
+$menu-item-height: 40px;
+
+/* padding at the top and bottom of each group of items */
+$menu-group-padding: 4px;
+
+/* the padding of each item (either side of the text ) */
+$menu-item-padding: 12px;
+
+.kui-theme--light {
+  --menu-option-border-width: 1px 0 0 2px;
+  --menu-option-border-color: #{rgba(black, 0.06)};
+  --menu-option-bg-hover: #{rgba(white, 0.3)};
+}
+
+.kui-theme--dark {
+  --menu-option-border-width: 0 0 1px 2px;
+  --menu-option-border-color: #{rgba(white, 0.06)};
+  --menu-option-bg-hover: #{rgba(white, 0.03)};
+}
+
+.kui-menu-option {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+
+  height: $menu-item-height;
+
+  padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
+  border-color: var(--menu-option-border-color) transparent;
+  border-style: solid;
+  border-width: var(--menu-option-border-width);
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+
+  &.kui-menu-option--focused,
+  &:focus,
+  &:hover {
+    background: var(--menu-option-bg-hover);
+  }
+
+  &:active {
+    border-left-color: $color-primary;
+  }
+}
+
+.kui-menu-option__content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  text-overflow: ellipsis;
+  font-size: 1.6em;
+  letter-spacing: 0.1px;
+  line-height: 1.25;
+}

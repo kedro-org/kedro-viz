@@ -91,8 +91,6 @@ $menu-item-padding: 12px;
   max-height: $menu-max-height;
   overflow: auto;
   margin: 0;
-  border-style: solid;
-  border-width: 1px 0 0;
   transition: opacity ease 0.2s, transform ease 0.2s, visibility ease 0.2s;
   transform: translateY(-10px);
   opacity: 0;

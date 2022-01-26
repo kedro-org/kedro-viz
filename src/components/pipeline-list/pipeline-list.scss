@@ -18,21 +18,4 @@
   .kui-menu-option {
     height: 58px;
   }
-
-  .kui-menu-option {
-    padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
-    border-color: var(--pipeline-list-option-border-color) transparent;
-    border-style: solid;
-    border-width: var(--pipeline-list-option-border-width);
-
-    &--focused,
-    &:focus,
-    &:hover {
-      background: var(--pipeline-list-option-bg-hover);
-    }
-
-    &.pipeline-list__option--active {
-      border-left-color: $color-primary;
-    }
-  }
 }
