@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import Dropdown from '@quantumblack/kedro-ui/lib/components/dropdown';
+import Dropdown from '../dropdown';
 import MenuOption from '@quantumblack/kedro-ui/lib/components/menu-option';
 import { loadPipelineData } from '../../actions/pipelines';
 import { toggleFocusMode } from '../../actions';
