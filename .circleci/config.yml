@@ -8,6 +8,9 @@ executors:
     docker:
       - image: cimg/node:14.15
     working_directory: ~/repo
+  demo_executor:
+    docker:
+      - image: cimg/python:3.8
 
 commands:
   setup_python_env:
@@ -141,31 +144,36 @@ commands:
           name: Publish to S3
           command: aws s3 cp --recursive build s3://kedro-viz-fe/${CIRCLE_BRANCH}
 
-  deploy_gh_pages:
+  deploy_demo:
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-
-      - install_node_dependencies
-      - build_npm_package
-      - add_ssh_keys:
-          fingerprints:
-            - '9a:fe:61:f4:d6:c2:c1:58:75:c9:72:56:6e:53:fd:8b'
+      - setup_remote_docker
       - run:
-          name: Deploy to GitHub Pages
+          name: Setup environment
           command: |
-            cd build
-            git config --global user.email circleci@circleci.com
-            git config --global user.name CircleCIBot
-            git init
-            git checkout -b gh-pages
-            git add -A
-            git commit -m 'Demo build [ci skip]'
-            git remote add origin https://github.com/kedro-org/kedro-viz.git
-            git push origin gh-pages --force
+            cd demo-project
+            # use credentials for kedro-ecr-publish as the credentials in this job
+            echo "AWS_ACCESS_KEY_ID=$AWS_ECR_ACCESS_KEY_ID" >> $BASH_ENV
+            echo "AWS_SECRET_ACCESS_KEY=$AWS_ECR_SECRET_ACCESS_KEY" >> $BASH_ENV
+            echo "AWS_ECR_URL=public.ecr.aws/g0x0s3o2/kedro-viz-live-demo" >> $BASH_ENV
+            echo "KEDRO_VIZ_VERSION=$(cat .version)" >> $BASH_ENV
+            echo "cd demo-project" >> $BASH_ENV
+      - run:
+          name: Install AWS CLI
+          command: pip3 install awscli
+      - run:
+          name: Build demo container image
+          command: |
+            echo "kedro_viz==$KEDRO_VIZ_VERSION" >> src/docker_requirements.txt
+            docker build -t $AWS_ECR_URL:$KEDRO_VIZ_VERSION .
+            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+            docker push $AWS_ECR_URL:$KEDRO_VIZ_VERSION
+      - run:
+          name: Create a new lightsail deployment
+          command: |
+            # install lightsail cli
+            # run https://docs.aws.amazon.com/cli/latest/reference/lightsail/create-container-service-deployment.html#create-container-service-deployment
+            aws lightsail create-container-service-deployment --region eu-west-2 --cli-input-json file://./lightsail.json
 
   build:
     description: Run build
@@ -277,8 +285,8 @@ jobs:
     steps: [build]
 
   deploy_demo:
-    executor: circleci_machine
-    steps: [deploy_gh_pages]
+    executor: demo_executor
+    steps: [deploy_demo]
 
   deploy_s3:
     executor: circleci_machine

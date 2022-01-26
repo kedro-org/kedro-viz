@@ -8,6 +8,8 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.3.0
+
 ## Major features and improvements
 
 - Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
@@ -20,6 +22,7 @@ Please follow the established format:
 - Fix the order of the runs list in experiment tracking. (#691)
 - Bug fix for Plotly JSONDataSet icon. (#684)
 - Bug fix for when some flowchart nodes were being cut off by the sidebar. (#701)
+- Bug fix empty metadata panel when clicking on modular pipeline nodes during search. (#704)
 - Bug fix for datasets when params is used as a prefix. (#707)
 - Bug fix for when the exported pipeline image was sometimes cutting off elements. (#705)
 
