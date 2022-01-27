@@ -108,13 +108,14 @@ if __name__ == "__main__":  # pragma: no cover
     )
     args = parser.parse_args()
 
-    source_dir = bootstrap_project(args.project_path)
+    project_path = (Path.cwd() / args.project_path).absolute()
+    bootstrap_project(project_path)
     run_process(
-        args.project_path,
+        project_path,
         run_server,
         kwargs={
             "host": args.host,
             "port": args.port,
-            "project_path": args.project_path,
+            "project_path": project_path,
         },
     )

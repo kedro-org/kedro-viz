@@ -14,6 +14,8 @@ clean:
 	find . -regex ".*/__pycache__" -exec rm -rf {} +
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
 
+PROJECT_PATH ?= demo-project
+
 run:
 	PYTHONPATH=$(shell pwd)/package python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
