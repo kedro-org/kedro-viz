@@ -10,11 +10,21 @@ Please follow the established format:
 ## Bug fixes and other changes
 - Migrate Kedro-UI buttons to Kedro-viz as Kedro-UI is now deprecated. (#716)
 
+# Release 4.3.1
+
+## Bug fixes and other changes
+
+- Fix websocket connection for deploying Kedro-Viz over HTTPS. (#719)
+- Update demo deployment setup on CI. (#718)
+
+# Release 4.3.0
+
 ## Major features and improvements
 
 - Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
 - Setup subscription for auto update of experiment runs list on new Kedro runs. (#703)
 - Allow users to search through the runs list by title, notes, and Git SHA. (#709)
+- Setup new demo deployment on CI. (#712)
 
 ## Bug fixes and other changes
 
@@ -25,7 +35,6 @@ Please follow the established format:
 - Bug fix empty metadata panel when clicking on modular pipeline nodes during search. (#704)
 - Bug fix for datasets when params is used as a prefix. (#707)
 - Bug fix for when the exported pipeline image was sometimes cutting off elements. (#705)
-
 
 # Release 4.2.0
 
