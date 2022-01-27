@@ -194,7 +194,7 @@ class Dropdown extends React.Component {
    * This is particularly useful for screen-readers and keyboard users.
    */
   _focusLabel() {
-    this.dropdown.querySelector('.kui-dropdown__label').focus();
+    this.dropdown.querySelector('.dropdown__label').focus();
 
     this.setState({
       focusedOption: null,
@@ -224,9 +224,7 @@ class Dropdown extends React.Component {
       // Focus either the button label or the active option.
       // This is so screen-readers will follow the active element
       const focusClass =
-        focusedOption !== null
-          ? '.kui-menu-option--focused'
-          : '.kui-dropdown__label';
+        focusedOption !== null ? '.menu-option--focused' : '.dropdown__label';
 
       this.dropdown.querySelector(focusClass).focus();
     });
@@ -310,12 +308,13 @@ class Dropdown extends React.Component {
    * @return {object} JSX for this component
    */
   render() {
-    const { children, defaultText, width } = this.props;
+    const { children, defaultText, disabled, width } = this.props;
     const { open, focusedOption, selectedOption } = this.state;
 
     return (
       <DropdownRenderer
         defaultText={defaultText}
+        disabled={disabled}
         handleRef={this._handleRef}
         onLabelClicked={this._handleLabelClicked}
         onOptionSelected={this._handleOptionSelected}
@@ -334,6 +333,7 @@ class Dropdown extends React.Component {
 Dropdown.defaultProps = {
   children: null,
   defaultText: 'Please select...',
+  disabled: false,
   onChanged: null,
   onClosed: null,
   onOpened: null,

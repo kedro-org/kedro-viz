@@ -14,12 +14,12 @@
 }
 
 .pipeline-list {
-  .kui-dropdown__label,
-  .kui-menu-option {
+  .dropdown__label,
+  .menu-option {
     height: 58px;
   }
 
-  .kui-menu-option {
+  .menu-option {
     &.pipeline-list__option--active {
       border-left-color: $color-primary;
     }

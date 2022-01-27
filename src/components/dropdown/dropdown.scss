@@ -29,7 +29,7 @@ $menu-item-padding: 12px;
   --dropdown-options-bg: #{$color-bg-dark-1};
 }
 
-.kui-dropdown {
+.dropdown {
   position: relative;
   box-sizing: border-box;
   display: block;
@@ -39,13 +39,13 @@ $menu-item-padding: 12px;
   border: 1px solid var(--dropdown-border);
 }
 
-.kui-dropdown--open {
+.dropdown--open {
   position: relative;
 
   z-index: 9;
 }
 
-.kui-dropdown__label {
+.dropdown__label {
   position: relative;
   z-index: 8;
 
@@ -68,6 +68,10 @@ $menu-item-padding: 12px;
   cursor: pointer;
   user-select: none;
 
+  &:disabled {
+    cursor: not-allowed;
+  }
+
   &:focus {
     &:focus {
       outline: none;
@@ -80,7 +84,7 @@ $menu-item-padding: 12px;
   }
 }
 
-.kui-dropdown__options {
+.dropdown__options {
   z-index: 2; // fix closing transition animation bug
   background: var(--dropdown-options-bg);
   border-top: none;
@@ -95,11 +99,15 @@ $menu-item-padding: 12px;
   transform: translateY(-10px);
   opacity: 0;
 
-  .kui-dropdown--open & {
+  .dropdown--open & {
     visibility: visible;
     transition: opacity ease 0.3s, transform ease 0.3s, visibility ease 0.3s;
     opacity: 1;
     transform: translateY(0);
+  }
+
+  .dropdown--disabled {
+    opacity: 0.5;
   }
 
   > section {

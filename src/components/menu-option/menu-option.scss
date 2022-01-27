@@ -23,7 +23,7 @@ $menu-item-padding: 12px;
   --menu-option-bg-hover: #{rgba(white, 0.03)};
 }
 
-.kui-menu-option {
+.menu-option {
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -40,14 +40,14 @@ $menu-item-padding: 12px;
   user-select: none;
   outline: none;
 
-  &.kui-menu-option--focused,
+  &.menu-option--focused,
   &:focus,
   &:hover {
     background: var(--menu-option-bg-hover);
   }
 }
 
-.kui-menu-option__content {
+.menu-option__content {
   position: relative;
   display: flex;
   align-items: center;

@@ -15,9 +15,9 @@ const MenuOption = ({
   selected,
   value,
 }) => {
-  const wrapperClasses = classnames('kedro', 'kui-menu-option', className, {
-    'kui-menu-option--focused': focused,
-    'kui-menu-option--selected': selected,
+  const wrapperClasses = classnames('kedro', 'menu-option', className, {
+    'menu-option--focused': focused,
+    'menu-option--selected': selected,
   });
 
   /**
@@ -53,7 +53,7 @@ const MenuOption = ({
       role="option"
       tabIndex="-1"
     >
-      <div className="kui-menu-option__content" title={primaryText}>
+      <div className="menu-option__content" title={primaryText}>
         <span>{primaryText}</span>
       </div>
     </div>

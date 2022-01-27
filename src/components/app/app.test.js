@@ -95,7 +95,7 @@ describe('App', () => {
     const pipelineDropdown = container.querySelector('.pipeline-list');
     const menuOption = within(pipelineDropdown).getByText(activePipeline.name);
     const pipelineDropdownLabel = pipelineDropdown.querySelector(
-      '.kui-dropdown__label > span:first-child'
+      '.dropdown__label > span:first-child'
     );
     expect(pipelineDropdownLabel.innerHTML).toBe('Default');
     fireEvent.click(menuOption);
