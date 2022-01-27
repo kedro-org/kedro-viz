@@ -116,6 +116,6 @@ if __name__ == "__main__":  # pragma: no cover
         kwargs={
             "host": args.host,
             "port": args.port,
-            "project_path": project_path,
+            "project_path": str(project_path),
         },
     )
