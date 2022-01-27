@@ -7,12 +7,12 @@ import './button.css';
  * Generic Kedro Button
  */
 const Button = ({ children, onClick, size, mode }) => (
-  <span className="kedro kui-button">
+  <span className="kedro button">
     <button
       className={classnames(
-        'kui-button__btn',
-        `kui-button__btn--${size}`,
-        `kui-button__btn--${mode}`
+        'button__btn',
+        `button__btn--${size}`,
+        `button__btn--${mode}`
       )}
       onClick={onClick}
     >

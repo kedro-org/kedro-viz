@@ -25,11 +25,11 @@ $secondary-underline-offset-hover: 4px;
   --color-button__text: #{rgba($color-light, 0.85)};
 }
 
-.kui-button {
+.button {
   display: inline-block;
 }
 
-.kui-button__btn {
+.button__btn {
   font-size: 1.6em;
   line-height: 1em;
   font-weight: 600;
@@ -50,13 +50,13 @@ $secondary-underline-offset-hover: 4px;
     outline-color ease $timing-primary, color ease $timing-primary;
 }
 
-.kui-button__btn--small {
+.button__btn--small {
   font-size: 1.4em;
   letter-spacing: 0.1px;
   padding: 0.6em 0.85em 0.7em;
 }
 
-.kui-button__btn--primary {
+.button__btn--primary {
   &:active {
     transition: none;
     outline-width: 0;
@@ -74,7 +74,7 @@ $secondary-underline-offset-hover: 4px;
   }
 }
 
-.kui-button__btn--secondary {
+.button__btn--secondary {
   outline: 4px solid transparent;
 
   &::after {
