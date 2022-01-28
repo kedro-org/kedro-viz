@@ -186,13 +186,13 @@ make run PROJECT_PATH=<path-to-your-test-project>/new-kedro-project
 
 #### Launch the development server with the `SQLiteSessionStore`
 
-Kedro-Viz provides a `SQLiteSessionStore` that users can use in their project to enable experiment tracking functionality. If you want to use this session store with the development server, make sure you don't use a relative path when specifying the store's location. For example, to specify the local `data` directory within a project as the session store's location, configure the project's `settings.py` as follows:
+Kedro-Viz provides a `SQLiteSessionStore` that users can use in their project to enable experiment tracking functionality. If you want to use this session store with the development server, make sure you don't use a relative path when specifying the store's location in `settings.py`. For example, `demo-project` specifies the local `data` directory within a project as the session store's location as follows: 
 ```python
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 ```
 
-`demo-project` includes a `settings.py` file that includes this option. Owing to this coupling between the project settings and Kedro-Viz, if you wish to execute any Kedro commands on `demo-project` (including `kedro run`), you will need to install the Kedro-Viz Python package. To make sure that you are installing the one that you are developing against, run:
+Owing to this coupling between the project settings and Kedro-Viz, if you wish to execute any Kedro commands on `demo-project` (including `kedro run`), you will need to install the Kedro-Viz Python package. To install your local development version of the package, run:
 
 ```bash
 pip3 install -e package
