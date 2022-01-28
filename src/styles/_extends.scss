@@ -68,28 +68,3 @@
   font-size: 14px;
   font-weight: normal;
 }
-
-%shadow-light {
-  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.08);
-}
-
-%shadow-light--hover {
-  box-shadow: -2px 0 4px 0 rgba(0, 0, 0, 0.08), 2px 0 4px 0 rgba(0, 0, 0, 0.08),
-    0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 2px 0 rgba(0, 0, 0, 0.12);
-}
-
-%shadow-dark {
-  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.12),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.03);
-}
-
-%shadow-dark--hover {
-  box-shadow: -2px 0 4px 0 rgba(0, 0, 0, 0.08), 2px 0 4px 0 rgba(0, 0, 0, 0.08),
-    0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 2px 0 rgba(0, 0, 0, 0.24),
-    0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.12),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.03);
-}
-
-%shadow-light--active {
-  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.08);
-}
