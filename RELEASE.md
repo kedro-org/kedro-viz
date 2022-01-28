@@ -9,6 +9,7 @@ Please follow the established format:
 -->
 ## Bug fixes and other changes
 - Migrate Kedro-UI buttons to Kedro-viz as Kedro-UI is now deprecated. (#716)
+- Migrate Kedro-UI dropdown and menu-options to Kedro-viz as Kedro-UI is now deprecated. (#716)
 
 # Release 4.3.1
 
