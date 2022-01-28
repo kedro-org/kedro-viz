@@ -148,7 +148,7 @@ By default in production, the app asynchronously loads JSON from the `/api/main`
 
 Alternatively, you can synchronously load one of the mock datasets in `/src/utils/data`. The 'spaceflights' dataset is mainly used as mock data for unit testing.
 
-Finally, you can use pseudo-random data, which is procedurally-generated on page load, and is often useful for local development. Random data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
+Finally, you can use pseudo-random data, which is procedurally-generated on page load, and is often useful for local development. Random data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed query to the URL, the app will generate a new pseudo-random seed on every browser refresh, and will output it to the browser console in case you wish to reuse it.
 
 ### Launch a development server with a real Kedro project
 
