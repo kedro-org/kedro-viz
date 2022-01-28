@@ -1,0 +1,108 @@
+/** Imports **/
+
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+/** Variables **/
+
+$color-secondary-active: rgba(0, 0, 0, 0.12);
+$timing-primary: 0.2s;
+$secondary-underline-height: 2px;
+$secondary-underline-offset: 8px;
+$secondary-underline-offset-hover: 4px;
+
+.kui-theme--light {
+  --color-button--active: #{rgba($color-dark, 0.85)};
+  --color-button--outline: #{$color-dark};
+  --color-button__text--hover: #{rgba($color-light, 0.85)};
+  --color-button__text: #{rgba($color-dark, 0.85)};
+}
+
+.kui-theme--dark {
+  --color-button--active: #{rgba($color-light, 0.85)};
+  --color-button--outline: #{$color-light};
+  --color-button__text--hover: #{rgba($color-dark, 0.85)};
+  --color-button__text: #{rgba($color-light, 0.85)};
+}
+
+.button {
+  display: inline-block;
+}
+
+.button__btn {
+  font-size: 1.6em;
+  line-height: 1em;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  color: var(--color-button__text);
+  outline: 2px solid var(--color-button--outline);
+  display: inline-block;
+  margin: 2px;
+  padding: 0.7em 0.8em 0.8em;
+  border: none;
+  border-radius: 0;
+
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background ease $timing-primary,
+    outline-color ease $timing-primary, color ease $timing-primary;
+}
+
+.button__btn--small {
+  font-size: 1.4em;
+  letter-spacing: 0.1px;
+  padding: 0.6em 0.85em 0.7em;
+}
+
+.button__btn--primary {
+  &:active {
+    transition: none;
+    outline-width: 0;
+    color: var(--color-button__text--hover);
+    background: var(--color-button--active);
+  }
+
+  &:hover {
+    color: var(--color-button__text--hover);
+    background: var(--color-button--outline);
+  }
+
+  [data-whatinput='mouse'] &:focus {
+    box-shadow: none;
+  }
+}
+
+.button__btn--secondary {
+  outline: 4px solid transparent;
+
+  &::after {
+    display: block;
+    content: '';
+
+    width: 100%;
+    height: $secondary-underline-height;
+
+    /* Offset the underline height so it doesn't affect text vertical alignment */
+    margin-bottom: -$secondary-underline-height;
+    transform: translateY($secondary-underline-offset);
+    transition: transform ease 0.1s, background ease 0.1s;
+
+    background: none;
+  }
+
+  &:hover::after {
+    background: var(--color-button--outline);
+    transform: translateY($secondary-underline-offset-hover);
+  }
+
+  &:active {
+    background-color: $color-secondary-active;
+    outline-color: $color-secondary-active;
+  }
+
+  [data-whatinput='mouse'] &:focus {
+    outline: none;
+  }
+}

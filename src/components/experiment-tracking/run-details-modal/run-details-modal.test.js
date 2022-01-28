@@ -56,7 +56,7 @@ describe('RunDetailsModal', () => {
       <RunDetailsModal runMetadataToEdit={{ id: 'test' }} visible={true} />
     );
 
-    wrapper.find('.kui-button__btn--primary').simulate('click');
+    wrapper.find('.button__btn--primary').simulate('click');
 
     expect(mockUpdateRunDetails).toHaveBeenCalled();
   });
