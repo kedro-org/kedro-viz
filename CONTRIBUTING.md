@@ -107,7 +107,7 @@ Alternatively, if you know the JIRA ticket number of the issue that you are fixi
 
 ### JavaScript development
 
-_*Note*: We use `node==14` in our development environment._
+_*Note*: We use the [latest release of v14 Node.js](https://nodejs.org/download/release/latest-v14.x/) in our development environment._
 
 First clone this repo, then download and install dependencies:
 
@@ -127,13 +127,36 @@ This will serve the app at [localhost:4141](http://localhost:4141/), and watch f
 npm run lib
 ```
 
+### Data sources
+
+Kedro-Viz uses a unique identifier to determine the data source from one of several available sources. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
+
+```bash
+DATA=random npm start
+```
+
+These are the supported dataset identifiers:
+
+| Identifier | Data source |
+|------------|-------------|
+| `json` (default) | `/public/api/main` |
+| `random` | Randomly-generated data |
+| `demo` | `/src/utils/data/demo.mock.js` |
+| `spaceflights` | `/src/utils/data/spaceflights.mock.json` |
+
+By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a JSON dataset in `/public/api/main`, using `main` as the name of the file, [without an extension](https://www.computerhope.com/issues/ch002089.htm). Note that operating systems often add hidden file extensions, so you might need to use a CLI to confirm the filename.
+
+Alternatively, you can synchronously load one of the mock datasets in `/src/utils/data`. The 'spaceflights' dataset is mainly used as mock data for unit testing.
+
+Finally, you can use pseudo-random data, which is procedurally-generated on page load, and is often useful for local development. Random data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
+
 ### Launch a development server with a real Kedro project
 
 > **Note**: Kedro-Viz>=3.8.0 will not work with projects created with Kedro<=0.16.6. Please consider migrating your project to Kedro>=0.17.0 before you develop against the latest version of Kedro-Viz. 
 
 Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.7, <3.9) installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's [guide to installing conda](https://kedro.readthedocs.io/en/latest/02_get_started/01_prerequisites.html#conda) for more information.
 
-The Kedro-Viz repository comes with an example project in the `demo-project` folder. To use this you need to install both the Kedro-Viz dependencies and a minimal set of dependencies  for the demo project:
+The Kedro-Viz repository comes with an example project in the `demo-project` folder. This is used on the [public demo](https://demo.kedro.org/). To use it in your development environment, you need to install both the Kedro-Viz dependencies and a minimal set of dependencies  for the demo project:
 ```bash
 pip3 install -r package/test_requirements.txt
 pip3 install -r demo-project/src/docker_requirements.txt
@@ -174,29 +197,6 @@ SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 ```bash
 pip3 install -e package
 ```
-
-### Data sources
-
-Kedro-Viz uses a unique identifier to determine the data source from one of several available sources. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
-
-```bash
-DATA=random npm start
-```
-
-These are the supported dataset identifiers:
-
-| Identifier | Data source |
-|------------|-------------|
-| `json` (default) | `/public/api/main` |
-| `random` | Randomly-generated data |
-| `demo` | `/src/utils/data/demo.mock.js` |
-| `spaceflights` | `/src/utils/data/spaceflights.mock.json` |
-
-By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a JSON dataset in `/public/api/main`, using `main` as the name of the file, [without an extension](https://www.computerhope.com/issues/ch002089.htm). Note that operating systems often add hidden file extensions, so you might need to use a CLI to confirm the filename.
-
-Alternatively, you can synchronously load one of the mock datasets in `/src/utils/data`. The 'spaceflights' dataset is mainly used as mock data for unit testing, while the 'demo' dataset is used on the [public demo](https://demo.kedro.org/).
-
-Finally, you can use pseudo-random data, which is procedurally-generated on page load, and is often useful for local development. Random data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
 
 ## Testing guidelines
 
