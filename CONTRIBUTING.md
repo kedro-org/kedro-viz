@@ -107,7 +107,7 @@ Alternatively, if you know the JIRA ticket number of the issue that you are fixi
 
 ### JavaScript development
 
-_*Note*: We use the [latest release of v14 Node.js](https://nodejs.org/download/release/latest-v14.x/) in our development environment._
+_*Note*: We suggest using the [latest release of Node.js v14](https://nodejs.org/download/release/latest-v14.x/) in your development environment._
 
 First clone this repo, then download and install dependencies:
 
