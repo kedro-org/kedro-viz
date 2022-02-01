@@ -85,6 +85,21 @@ def count_truthy(elements: List[Any]) -> int:
 
 Alternatively, if you know the JIRA ticket number of the issue that you are fixing, you can prefix your branch name with it, e.g. `KED-<JIRA-ticket-number>/short-description-of-the-issue`.
 
+## Developer Certificate of Origin
+We require that all contributions comply with the [Developer Certificate of Origin (DCO)](https://developercertificate.org/). This certifies that the contributor wrote or otherwise has the right to submit their contribution.
+
+All commits must be signed off by including a `Signed-off-by` line in the commit message:
+```
+This is my commit message
+Signed-off-by: Random J Developer <random@developer.example.org>
+```
+The sign-off can be added automatically to your commit message using the `-s` option:
+```bash
+git commit -s -m "This is my commit message"
+```
+
+To avoid needing to remember the `-s` flag on every commit, you might like to set up an [alias](https://git-scm.com/book/en/v2/Git-Basics-Git-Aliases) for `git commit -s`. Alternatively, run `make sign-off` to setup a [`commit-msg` Git hook](https://git-scm.com/docs/githooks#_commit_msg) that automatically signs off all commits (including merge commits) you make while working on the Kedro-Viz repository.
+
 ## PR authoring guidelines
 
 - PRs for releasable changes must always be made against `main`. As per Trunk-based Development convention, `main` branch must always be releasable.

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { GET_RUNS } from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import { sortRunByTime } from '../../utils/date-utils';
-import Button from '@quantumblack/kedro-ui/lib/components/button';
+import Button from '../button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 
@@ -181,7 +181,7 @@ const ExperimentWrapper = ({ theme }) => {
             rel="noreferrer"
             target="_blank"
           >
-            <Button theme={theme}>View docs</Button>
+            <Button>View docs</Button>
           </a>
         </div>
       )}

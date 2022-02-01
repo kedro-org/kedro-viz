@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { changeFlag, toggleIgnoreLargeWarning } from '../../actions';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTriggerLargeGraphWarning } from '../../selectors/layout';
-import Button from '@quantumblack/kedro-ui/lib/components/button';
+import Button from '../button';
 import './large-pipeline-warning.css';
 
 export const LargePipelineWarning = ({
@@ -12,7 +12,6 @@ export const LargePipelineWarning = ({
   onHide,
   nodes,
   sidebarVisible,
-  theme,
   visible,
 }) => {
   return visible ? (
@@ -29,16 +28,8 @@ export const LargePipelineWarning = ({
         while to render. You can use the sidebar controls to select a smaller
         graph.
       </p>
-      <Button theme={theme} onClick={onHide}>
-        Render it anyway
-      </Button>
-      <Button
-        theme={theme}
-        onClick={onDisable}
-        size="small"
-        mode="secondary"
-        animation="wipe"
-      >
+      <Button onClick={onHide}>Render it anyway</Button>
+      <Button mode="secondary" onClick={onDisable} size="small">
         Don't show this again
       </Button>
     </div>
