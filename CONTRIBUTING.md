@@ -189,15 +189,15 @@ As far as the development server for the backend is concerned, you only need to 
 make run
 ```
 
-This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from `demo-project`. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142.
+This command will launch a Kedro-Viz backend server at [localhost:4142](http://localhost:4142) and serve data from `demo-project`. If you wish to also launch the frontend app then execute `npm start` in a separate terminal window. [localhost:4141](http://localhost:4141) will then pull data from the backend Kedro-Viz server that is running on port 4142.
 
-If you wish to point the server to a different Kedro project then you can do so by altering the `PROJECT_PATH` variable:
+If you wish to point the backend server to a different Kedro project then you can do so by altering the `PROJECT_PATH` variable:
 
 ```bash
 make run PROJECT_PATH=<path-to-your-test-project>/new-kedro-project
 ```
 
-> **Note**: Once the development server is launched at port 4142, the local app will always pull data from that server. To prevent this, you can comment out the proxy setting in `package.json` and restart the dev server at port 4141.
+> **Note**: Once the backend development server is launched at port 4142, the local app will always pull data from that server. To prevent this, you can comment out the proxy setting in `package.json` and restart the dev server at port 4141.
 
 #### Launch the development server with the `SQLiteSessionStore`
 
