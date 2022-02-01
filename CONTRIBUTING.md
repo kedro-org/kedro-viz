@@ -142,6 +142,8 @@ This will serve the app at [localhost:4141](http://localhost:4141/), and watch f
 npm run lib
 ```
 
+We also have in place a pre-commit hook. Before committing, the hook will lint and prettify your changed files and also run our full test suite. This ensures the local changes haven't caused any breakages, and if they have, you'll be notified and can remedy then and there. 
+
 ### Launch a development server with a real Kedro project
 
 > **Note**: Kedro-Viz>=3.8.0 will not work with projects created with Kedro<=0.16.6. Please consider migrating your project to Kedro>=0.17.0 before you develop against the latest version of Kedro-Viz. 
