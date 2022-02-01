@@ -42,7 +42,7 @@ describe('RunDataset', () => {
       />
     );
 
-    expect(wrapper.find('.details-dataset').length).toBe(5);
+    expect(wrapper.find('.details-dataset').length).toBe(1);
     expect(wrapper.find('.details-dataset__accordion').length).toBe(3);
   });
 
