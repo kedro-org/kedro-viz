@@ -52,7 +52,7 @@ def run_server(
     env: str = None,
     project_path: str = None,
     autoreload: bool = False,
-):
+):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
 
@@ -108,13 +108,14 @@ if __name__ == "__main__":  # pragma: no cover
     )
     args = parser.parse_args()
 
-    source_dir = bootstrap_project(args.project_path)
+    project_path = (Path.cwd() / args.project_path).absolute()
+    bootstrap_project(project_path)
     run_process(
-        args.project_path,
+        project_path,
         run_server,
         kwargs={
             "host": args.host,
             "port": args.port,
-            "project_path": args.project_path,
+            "project_path": str(project_path),
         },
     )
