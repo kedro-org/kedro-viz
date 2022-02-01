@@ -122,7 +122,7 @@ To avoid needing to remember the `-s` flag on every commit, you might like to se
 
 ### JavaScript development
 
-_*Note*: We use `node==14` in our development environment._
+_*Note*: We suggest using the [latest release of Node.js v14](https://nodejs.org/download/release/latest-v14.x/) in your development environment._
 
 First clone this repo, then download and install dependencies:
 
@@ -140,76 +140,6 @@ This will serve the app at [localhost:4141](http://localhost:4141/), and watch f
 
 ```bash
 npm run lib
-```
-
-### Launch a development server with a real Kedro project
-
-> **Note**: Kedro-Viz>=3.8.0 will not work with projects created with Kedro<=0.16.6. Please consider migrating your project to Kedro>=0.17.0 before you develop against the latest version of Kedro-Viz. 
-
-Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.7, <3.9) and Kedro installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's guide for installing [conda](https://kedro.readthedocs.io/en/latest/02_get_started/01_prerequisites.html#conda) and [how to get started with Kedro](https://kedro.readthedocs.io/en/latest/02_get_started/02_install.html) for more information.
-
-After setting up Python and Kedro, you will need to have a Kedro project setup. If you don't have any existing Kedro project, you can create a new one with the `spaceflights` example:
-
-> **Note**: You can use any other [starters](https://github.com/kedro-org/kedro-starters), except `mini-kedro`, for the purpose of this development server, not just `spaceflights`.
-
-```bash
-cd $HOME # or wherever you prefer to keep your test project
-kedro new --starter=spaceflights
-```
-
-You can use default values when creating the project, which will create a new project called `new-kedro-project`. Changing your directory into that project and install the project's dependencies:
-
-```bash
-cd new-kedro-project
-kedro install
-```
-
-After installing the project's dependencies, make sure you can run it with:
-
-```bash
-kedro run
-```
-
-Now you are ready to launch a new viz's development server with a real Kedro project. First, changing your directory back to kedro-viz:
-
-```bash
-cd /path/to/kedro-viz
-```
-
-Install kedro-viz's development dependencies with:
-
-```bash
-pip3 install -r package/test_requirements.txt
-```
-
-Build the application with:
-
-```bash
-make build
-```
-
-As far as the development server for the backend is concerned, you only need to run `make build` once when you first setup the project.
-
-Then launch the server with:
-
-```bash
-make run PROJECT_PATH=<path-to-your-test-project>/new-kedro-project
-```
-This command will launch a Kedro-Viz server at [localhost:4142](http://localhost:4142) and serve data from a real Kedro pipeline located at the project path supplied to the command. From then on, launching the app locally at [localhost:4141](http://localhost:4141) will pull data from the Kedro-Viz server that is running on port 4142. To avoid needing to supply `PROJECT_PATH` every time you call `make run`, you can set it as an environment variable:
-
-```bash
-export PROJECT_PATH=<path-to-your-test-project>/new-kedro-project 
-make run
-```
-
-> **Note**: Once the development server is launched at port 4142, the local app will always pull data from that server. To prevent this, you can comment out the proxy setting in `package.json` and restart the dev server at port 4141.
-
-#### Launch the development server with the `SQLiteSessionStore`
-
-Kedro-Viz provides a `SQLiteSessionStore` that users can use in their project to enable experiment tracking functionality. If you want to use this session store with the development server, make sure you don't use a relative path when specifying the store's location. For example, to specify the local `data` directory within a project as the session store's location, configure the project's `settings.py` as follow:
-```python
-from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 ```
 
 ### Data sources
@@ -231,9 +161,57 @@ These are the supported dataset identifiers:
 
 By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a JSON dataset in `/public/api/main`, using `main` as the name of the file, [without an extension](https://www.computerhope.com/issues/ch002089.htm). Note that operating systems often add hidden file extensions, so you might need to use a CLI to confirm the filename.
 
-Alternatively, you can synchronously load one of the mock datasets in `/src/utils/data`. The 'spaceflights' dataset is mainly used as mock data for unit testing, while the 'demo' dataset is used on the [public demo](https://demo.kedro.org/).
+Alternatively, you can synchronously load one of the mock datasets in `/src/utils/data`. The 'spaceflights' dataset is mainly used as mock data for unit testing.
 
-Finally, you can use pseudo-random data, which is procedurally-generated on page load, and is often useful for local development. Random data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed, the app will generate a new pseudo-random one every time, and will output it to the browser console in case you wish to reuse it.
+Finally, you can use pseudo-random data, which is procedurally-generated on page load, and is often useful for local development. Random data can be seeded with a hash string, which will allow you to replicate a generated layout. You can supply a seed with a `seed` query string in the URL, e.g. `http://localhost:4141/?data=random&seed=oM4xauN4Whyse`. If you do not supply a seed query to the URL, the app will generate a new pseudo-random seed on every browser refresh, and will output it to the browser console in case you wish to reuse it.
+
+### Launch a development server with a real Kedro project
+
+> **Note**: Kedro-Viz>=3.8.0 will not work with projects created with Kedro<=0.16.6. Please consider migrating your project to Kedro>=0.17.0 before you develop against the latest version of Kedro-Viz. 
+
+Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.7, <3.9) installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's [guide to installing conda](https://kedro.readthedocs.io/en/latest/02_get_started/01_prerequisites.html#conda) for more information.
+
+The Kedro-Viz repository comes with an example project in the `demo-project` folder. This is used on the [public demo](https://demo.kedro.org/). To use it in your development environment, you need to install both the Kedro-Viz dependencies and a minimal set of dependencies  for the demo project:
+```bash
+pip3 install -r package/test_requirements.txt
+pip3 install -r demo-project/src/docker_requirements.txt
+```
+
+Now build the application with:
+
+```bash
+make build
+```
+
+As far as the development server for the backend is concerned, you only need to run `make build` once when you first setup the project. You can then launch the server with:
+
+```bash
+make run
+```
+
+This command will launch a Kedro-Viz backend server at [localhost:4142](http://localhost:4142) and serve data from `demo-project`. If you wish to also launch the frontend app then execute `npm start` in a separate terminal window. [localhost:4141](http://localhost:4141) will then pull data from the backend Kedro-Viz server that is running on port 4142.
+
+If you wish to point the backend server to a different Kedro project then you can do so by altering the `PROJECT_PATH` variable:
+
+```bash
+make run PROJECT_PATH=<path-to-your-test-project>/new-kedro-project
+```
+
+> **Note**: Once the backend development server is launched at port 4142, the local app will always pull data from that server. To prevent this, you can comment out the proxy setting in `package.json` and restart the dev server at port 4141.
+
+#### Launch the development server with the `SQLiteSessionStore`
+
+Kedro-Viz provides a `SQLiteSessionStore` that users can use in their project to enable experiment tracking functionality. If you want to use this session store with the development server, make sure you don't use a relative path when specifying the store's location in `settings.py`. For example, `demo-project` specifies the local `data` directory within a project as the session store's location as follows: 
+```python
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
+```
+
+Owing to this coupling between the project settings and Kedro-Viz, if you wish to execute any Kedro commands on `demo-project` (including `kedro run`), you will need to install the Kedro-Viz Python package. To install your local development version of the package, run:
+
+```bash
+pip3 install -e package
+```
 
 ## Testing guidelines
 
