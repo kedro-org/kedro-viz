@@ -142,7 +142,7 @@ This will serve the app at [localhost:4141](http://localhost:4141/), and watch f
 npm run lib
 ```
 
-We also have in place a pre-commit hook. Before committing, the hook will lint and prettify your changed files and also run our full test suite. This ensures the local changes haven't caused any breakages, and if they have, you'll be notified and can remedy then and there. 
+We also have in place a pre-commit and pre-push hook. Before committing, the pre-commit hook will lint and prettify your changed files. Before pushing those committed changes, the pre-push hook will run our full test suite. This ensures the local changes haven't caused any breakages, and if they have, you'll be notified and can remedy then and there (note: you may need to restart your code editor or source control application for these hooks to work properly).
 
 ### Launch a development server with a real Kedro project
 
