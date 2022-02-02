@@ -18,8 +18,8 @@ from typing import (
     Optional,
     cast,
 )
-import requests
 
+import requests
 import strawberry
 from fastapi import APIRouter
 from strawberry import ID
@@ -121,19 +121,16 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
     )
 
 
-def get_version():
+def get_version() -> Version:
     """Get the user's installed Viz version and the latest version on PyPI.
     Returns:
         the currently installed and most-recent released version of Viz.
     """
-    package = 'kedro-viz'
-    response = requests.get(f'https://pypi.org/pypi/{package}/json')
-    latest_version = response.json()['info']['version']
+    package = "kedro-viz"
+    response = requests.get(f"https://pypi.org/pypi/{package}/json")
+    latest_version = response.json()["info"]["version"]
 
-    version = Version(
-        current=__version__,
-        latest=latest_version
-    )
+    version = Version(current=__version__, latest=latest_version)
     return version
 
 
