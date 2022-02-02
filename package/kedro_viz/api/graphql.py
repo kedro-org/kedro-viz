@@ -18,12 +18,14 @@ from typing import (
     Optional,
     cast,
 )
+import requests
 
 import strawberry
 from fastapi import APIRouter
 from strawberry import ID
 from strawberry.asgi import GraphQL
 
+from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
@@ -117,6 +119,22 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
         data_access_manager.runs.get_runs_by_ids(run_ids),
         data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
     )
+
+
+def get_version():
+    """Get the user's installed Viz version and the latest version on PyPI.
+    Returns:
+        the currently installed and most-recent released version of Viz.
+    """
+    package = 'kedro-viz'
+    response = requests.get(f'https://pypi.org/pypi/{package}/json')
+    latest_version = response.json()['info']['version']
+
+    version = Version(
+        current=__version__,
+        latest=latest_version
+    )
+    return version
 
 
 def get_all_runs() -> List[Run]:
@@ -268,6 +286,14 @@ class TrackingDataset:
 
 
 @strawberry.type
+class Version:
+    """The latest and current Kedro Viz versions."""
+
+    current: str
+    latest: str
+
+
+@strawberry.type
 class Subscription:
     """Subscription object to track runs added in real time"""
 
@@ -304,6 +330,11 @@ class Query:
     ) -> List[TrackingDataset]:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
+
+    @strawberry.field
+    def version(self) -> Version:
+        """Query to get current and latest Kedro Viz versions"""
+        return get_version()
 
     runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
 
