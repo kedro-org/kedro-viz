@@ -49,3 +49,8 @@ union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | UpdateRunDetailsFailu
 type UpdateRunDetailsSuccess {
   run: Run!
 }
+
+type Version {
+  current: String!
+  latest: String!
+}
