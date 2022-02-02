@@ -7,6 +7,8 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+## Bug fixes and other changes
+- Migrate Kedro-UI buttons to Kedro-viz as Kedro-UI is now deprecated. (#716)
 
 # Release 4.3.1
 

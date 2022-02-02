@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
-import Button from '@quantumblack/kedro-ui/lib/components/button';
+import Button from '../../button';
 import Modal from '../../modal';
 import Input from '../../ui/input';
 
@@ -74,15 +74,10 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
           />
         </div>
         <div className="run-details-modal-button-wrapper">
-          <Button
-            mode="secondary"
-            onClick={() => onClose(false)}
-            size="small"
-            theme={theme}
-          >
+          <Button mode="secondary" onClick={() => onClose(false)} size="small">
             Cancel
           </Button>
-          <Button onClick={onApplyChanges} size="small" theme={theme}>
+          <Button onClick={onApplyChanges} size="small">
             Apply changes
           </Button>
         </div>
