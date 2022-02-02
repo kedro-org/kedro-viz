@@ -10,6 +10,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 - Migrate Kedro-UI buttons to Kedro-viz as Kedro-UI is now deprecated. (#716)
 - Add a Husky pre-push hook. (#723)
+- Create a `version` GraphQL query to get versions of Kedro-Viz. (#727)
 
 # Release 4.3.1
 

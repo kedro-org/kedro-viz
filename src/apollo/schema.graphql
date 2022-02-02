@@ -6,10 +6,10 @@ type Mutation {
 }
 
 type Query {
+  version: Version!
   runsList: [Run!]!
   runMetadata(runIds: [ID!]!): [Run!]!
   runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [TrackingDataset!]!
-  version: Version!
 }
 
 type Run {
