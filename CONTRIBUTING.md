@@ -142,6 +142,8 @@ This will serve the app at [localhost:4141](http://localhost:4141/), and watch f
 npm run lib
 ```
 
+Lastly, we have in place a pre-commit and pre-push hook. Before committing, the pre-commit hook will lint and prettify your changed files. Before pushing those committed changes, the pre-push hook will run our JavaScript test suite. This ensures the local changes haven't caused any breakages, and if they have, you'll be notified and can remedy then and there (note: you may need to restart your code editor or source control application for these hooks to work properly).
+
 ### Data sources
 
 Kedro-Viz uses a unique identifier to determine the data source from one of several available sources. You can configure this by appending a query string to the URL, e.g. `http://localhost:4141/?data=random`. Alternatively, you can set it with an environment variable when starting up the dev server:
