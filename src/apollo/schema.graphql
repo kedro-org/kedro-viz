@@ -9,6 +9,7 @@ type Query {
   runsList: [Run!]!
   runMetadata(runIds: [ID!]!): [Run!]!
   runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [TrackingDataset!]!
+  version: Version!
 }
 
 type Run {
@@ -51,6 +52,6 @@ type UpdateRunDetailsSuccess {
 }
 
 type Version {
-  current: String!
+  installed: String!
   latest: String!
 }

@@ -127,7 +127,7 @@ def get_version() -> Version:
         the currently installed and most-recent released version of Viz.
     """
     latest_version = get_latest_version()
-    version = Version(current=__version__, latest=latest_version)
+    version = Version(installed=__version__, latest=latest_version)
     return version
 
 
@@ -281,9 +281,9 @@ class TrackingDataset:
 
 @strawberry.type
 class Version:
-    """The latest and current Kedro Viz versions."""
+    """The installed and latest Kedro Viz versions."""
 
-    current: str
+    installed: str
     latest: str
 
 
