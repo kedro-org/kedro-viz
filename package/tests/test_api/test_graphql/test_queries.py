@@ -132,10 +132,12 @@ class TestQueryWithRuns:
         assert response.json() == expected_response
 
 
-class TestVersionQuery:
+class TestQueryVersion:
     def test_graphql_version_endpoint(self, client, mocker):
-        mocker.patch("kedro_viz.integrations.pypi.get_latest_version",
-                     return_value=VersionInfo.parse("1.0.0"))
+        mocker.patch(
+            "kedro_viz.api.graphql.get_latest_version",
+            return_value=VersionInfo.parse("1.0.0"),
+        )
         response = client.post(
             "/graphql",
             json={"query": "{version {installed isOutdated latest}}"},
@@ -144,7 +146,7 @@ class TestVersionQuery:
             "data": {
                 "version": {
                     "installed": __version__,
-                    "isOutdated": True,
+                    "isOutdated": False,
                     "latest": "1.0.0",
                 }
             }
