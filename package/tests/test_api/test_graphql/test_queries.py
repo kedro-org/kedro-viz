@@ -61,7 +61,7 @@ class TestQueryWithRuns:
     def test_graphql_version_endpoint(self, client):
         response = client.post(
             "/graphql",
-            json={"query": "{{version {{installed latest}}}}"},
+            json={"query": "{version {installed latest}}"},
         )
         assert response.json() == {
             "data": {
