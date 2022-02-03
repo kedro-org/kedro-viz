@@ -2,7 +2,6 @@ import pytest
 from semver import VersionInfo
 
 from kedro_viz import __version__
-from kedro_viz.integrations.pypi import get_latest_version
 
 
 class TestQueryNoSessionStore:
