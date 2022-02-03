@@ -71,15 +71,15 @@ def format_run(
         user_run_details.notes if user_run_details and user_run_details.notes else ""
     )
     run = Run(
-        id=ID(run_id),
         author="",
+        bookmark=bookmark,
         gitBranch=git_data.get("branch") if git_data else None,
         gitSha=git_data.get("commit_sha") if git_data else None,
-        bookmark=bookmark,
-        title=title,
+        id=ID(run_id),
         notes=notes,
-        timestamp=run_blob["session_id"],
         runCommand=run_blob["cli"]["command_path"],
+        timestamp=run_blob["session_id"],
+        title=title,
     )
     return run
 
@@ -259,24 +259,24 @@ def get_run_tracking_data(
 class Run:
     """Run object format"""
 
-    id: ID
-    title: str
-    timestamp: str
     author: Optional[str]
+    bookmark: Optional[bool]
     gitBranch: Optional[str]
     gitSha: Optional[str]
-    bookmark: Optional[bool]
+    id: ID
     notes: Optional[str]
     runCommand: Optional[str]
+    timestamp: str
+    title: str
 
 
 @strawberry.type
 class TrackingDataset:
     """TrackingDataset object to structure tracking data for a Run."""
 
+    data: Optional[JSONObject]
     datasetName: Optional[str]
     datasetType: Optional[str]
-    data: Optional[JSONObject]
 
 
 @strawberry.type
@@ -315,8 +315,13 @@ class Query:
 
     @strawberry.field
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        """Query to get data for specific runs from the session store"""
+        """Query to get data for specific run metadata from the session store"""
         return get_runs(run_ids)
+
+    @strawberry.field
+    def runs_list(self) -> List[Run]:
+        """Query to get data for all the runs from the session store"""
+        return get_all_runs()
 
     @strawberry.field
     def run_tracking_data(
@@ -325,9 +330,10 @@ class Query:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
 
-    version: Version = strawberry.field(resolver=get_version)
-
-    runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
+    @strawberry.field
+    def version(self) -> Version:
+        """Query to get Kedro-Viz version"""
+        return get_version()
 
 
 schema = strawberry.Schema(query=Query, subscription=Subscription)
@@ -338,8 +344,8 @@ class RunInput:
     """Run input to update bookmark, title and notes"""
 
     bookmark: Optional[bool] = None
-    title: Optional[str] = None
     notes: Optional[str] = None
+    title: Optional[str] = None
 
 
 @strawberry.type

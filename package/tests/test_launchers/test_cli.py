@@ -62,8 +62,8 @@ def test_kedro_viz_command_run_server(command_options, run_server_args, mocker):
 
 
 def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_response):
-    current_version = VersionInfo.parse(__version__)
-    mock_version = f"{current_version.major + 1}.0.0"
+    installed_version = VersionInfo.parse(__version__)
+    mock_version = f"{installed_version.major + 1}.0.0"
     requests_get = mocker.patch("requests.get")
     requests_get.return_value = mock_http_response(
         data={"info": {"version": mock_version}}
@@ -77,7 +77,7 @@ def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_respons
 
     mock_click_echo.assert_called_once_with(
         "\x1b[33mWARNING: You are using an old version of Kedro Viz. "
-        f"You are using version {current_version}; "
+        f"You are using version {installed_version}; "
         f"however, version {mock_version} is now available.\n"
         "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
         "You can view the complete changelog at "

@@ -1,5 +1,8 @@
 import pytest
 
+from kedro_viz import __version__
+from kedro_viz.integrations.pypi import get_latest_version
+
 
 class TestQueryNoSessionStore:
     def test_graphql_run_list_endpoint(self, client):
@@ -53,6 +56,17 @@ class TestQueryWithRuns:
         )
         assert response.json() == {
             "data": {"runMetadata": [{"id": example_run_ids[0], "bookmark": True}]}
+        }
+
+    def test_graphql_version_endpoint(self, client):
+        response = client.post(
+            "/graphql",
+            json={"query": "{{version {{installed latest}}}}"},
+        )
+        assert response.json() == {
+            "data": {
+                "version": {"installed": __version__, "latest": get_latest_version()}
+            }
         }
 
     def test_run_tracking_data_query(
