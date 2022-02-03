@@ -6,27 +6,28 @@ type Mutation {
 }
 
 type Query {
-  runsList: [Run!]!
   runMetadata(runIds: [ID!]!): [Run!]!
+  runsList: [Run!]!
   runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [TrackingDataset!]!
+  version: Version!
 }
 
 type Run {
-  id: ID!
-  title: String!
-  timestamp: String!
   author: String
+  bookmark: Boolean
   gitBranch: String
   gitSha: String
-  bookmark: Boolean
+  id: ID!
   notes: String
   runCommand: String
+  timestamp: String!
+  title: String!
 }
 
 input RunInput {
   bookmark: Boolean = null
-  title: String = null
   notes: String = null
+  title: String = null
 }
 
 type Subscription {
@@ -34,9 +35,9 @@ type Subscription {
 }
 
 type TrackingDataset {
+  data: JSONObject
   datasetName: String
   datasetType: String
-  data: JSONObject
 }
 
 type UpdateRunDetailsFailure {
@@ -48,4 +49,10 @@ union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | UpdateRunDetailsFailu
 
 type UpdateRunDetailsSuccess {
   run: Run!
+}
+
+type Version {
+  installed: String!
+  isOutdated: Boolean!
+  latest: String!
 }
