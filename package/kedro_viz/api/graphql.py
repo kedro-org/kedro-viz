@@ -21,12 +21,13 @@ from typing import (
 
 import strawberry
 from fastapi import APIRouter
+from semver import VersionInfo
 from strawberry import ID
 from strawberry.asgi import GraphQL
 
 from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.integrations.pypi import get_latest_version
+from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
@@ -126,9 +127,13 @@ def get_version() -> Version:
     Returns:
         the currently installed and most-recent released version of Viz.
     """
+    installed_version = VersionInfo.parse(__version__)
     latest_version = get_latest_version()
-    version = Version(installed=__version__, latest=latest_version)
-    return version
+    return Version(
+        installed=installed_version,
+        isOutdated=is_running_outdated_version(installed_version, latest_version),
+        latest=latest_version or "",
+    )
 
 
 def get_all_runs() -> List[Run]:
@@ -284,6 +289,7 @@ class Version:
     """The installed and latest Kedro Viz versions."""
 
     installed: str
+    isOutdated: bool
     latest: str
 
 

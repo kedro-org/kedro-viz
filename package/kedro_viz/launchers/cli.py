@@ -10,7 +10,7 @@ from semver import VersionInfo
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
-from kedro_viz.integrations.pypi import get_latest_version
+from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, is_localhost, run_server
 
 
@@ -77,7 +77,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
     installed_version = VersionInfo.parse(__version__)
     latest_version = get_latest_version()
 
-    if latest_version is not None and installed_version < latest_version:
+    if is_running_outdated_version(installed_version, latest_version):
         click.echo(
             click.style(
                 "WARNING: You are using an old version of Kedro Viz. "
