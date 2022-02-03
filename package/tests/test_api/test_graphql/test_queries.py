@@ -59,17 +59,6 @@ class TestQueryWithRuns:
             "data": {"runMetadata": [{"id": example_run_ids[0], "bookmark": True}]}
         }
 
-    def test_graphql_version_endpoint(self, client):
-        response = client.post(
-            "/graphql",
-            json={"query": "{version {installed latest}}"},
-        )
-        assert response.json() == {
-            "data": {
-                "version": {"installed": __version__, "latest": get_latest_version()}
-            }
-        }
-
     def test_run_tracking_data_query(
         self,
         example_run_ids,
