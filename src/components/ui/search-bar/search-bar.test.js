@@ -14,7 +14,6 @@ test('SearchBar should be a function', () => {
 test('SearchBar should render correctly', () => {
   const wrapper = shallow(<SearchBar />);
 
-  expect(wrapper.props().iconType).toBe('search');
   expect(typeof wrapper.props().onChange).toBe('function');
   expect(typeof wrapper.props().onClear).toBe('function');
 });

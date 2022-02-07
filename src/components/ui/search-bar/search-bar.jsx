@@ -1,155 +1,119 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import SearchBarRenderer from './search-bar-renderer';
 
 import './search-bar.css';
 
-class SearchBar extends React.Component {
-  // Life cycle
+const SearchBar = ({
+  children,
+  onBlur,
+  onChange,
+  onClear,
+  onFocus,
+  onSubmit,
+  placeholder,
+  theme,
+  value: inputValue,
+}) => {
+  const [value, setValue] = useState(inputValue);
+  const [isFocused, setIsFocused] = useState(false);
+  const [showClearButton, setShowClearButton] = useState(inputValue !== '');
 
-  /**
-   * constructor - create new SearchBar
-   * @param  {type} props properties passed to component
-   */
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      value: this.props.value,
-      isFocused: false,
-      showClearButton: this.props.value !== '',
-    };
-
-    this._handleBlurred = this._handleBlurred.bind(this);
-    this._handleFocused = this._handleFocused.bind(this);
-    this._handleChanged = this._handleChanged.bind(this);
-    this._handleCleared = this._handleCleared.bind(this);
-    this._handleSubmit = this._handleSubmit.bind(this);
-  }
-
-  /**
-   * React lifecycle method
-   * Update the value in state if props chage
-   * {@link https://facebook.github.io/react/docs/react-component.html#componentdidupdate}
-   * @return {object} JSX for this component
-   */
-  componentDidUpdate(prevProps) {
-    if (this.props.value !== prevProps.value) {
-      this.setState({
-        value: this.props.value,
-        showClearButton: this.props.value !== '',
-      });
-    }
-  }
-
-  // Events
+  useEffect(() => {
+    setValue(inputValue);
+    setShowClearButton(inputValue !== '');
+  }, [inputValue]);
 
   /**
    * onChange - fired for onChange events in input field
    * @param  {Event} e native change event
    */
-  _handleChanged(e) {
-    this.setState({
-      value: e.target.value,
-      showClearButton: e.target.value !== '',
-    });
+  const _handleChanged = (e) => {
+    setValue(e.target.value);
+    setShowClearButton(e.target.value !== '');
 
     // trigger onChange prop if available
-    if (typeof this.props.onChange === 'function') {
-      this.props.onChange(e.target.value);
+    if (typeof onChange === 'function') {
+      onChange(e.target.value);
     }
-  }
+  };
 
   /**
    * onFocus - fired for onFocus events in input field
    * @param  {Event} e native change event
    */
-  _handleFocused(e) {
-    this.setState({
-      isFocused: true,
-    });
+  const _handleFocused = (e) => {
+    setIsFocused(true);
 
     // trigger onFocus prop if available
-    if (typeof this.props.onFocus === 'function') {
-      this.props.onFocus(e.target.value);
+    if (typeof onFocus === 'function') {
+      onFocus(e.target.value);
     }
-  }
+  };
 
   /**
    * onBlurred - fired for onBlur events in input field
    * @param  {Event} e native change event
    */
-  _handleBlurred(e) {
-    this.setState({
-      isFocused: false,
-    });
+  const _handleBlurred = (e) => {
+    setIsFocused(false);
 
     // trigger onBlur prop if available
-    if (typeof this.props.onBlur === 'function') {
-      this.props.onBlur(e.target.value);
+    if (typeof onBlur === 'function') {
+      onBlur(e.target.value);
     }
-  }
+  };
 
   /**
    * onClose - clear the text in the input
    */
-  _handleCleared(event) {
-    this.setState({
-      value: '',
-      showClearButton: false,
-    });
+  const _handleCleared = (event) => {
+    setValue('');
+    setShowClearButton(false);
 
     // trigger onClear prop if available
-    if (typeof this.props.onClear === 'function') {
-      this.props.onClear();
+    if (typeof onClear === 'function') {
+      onClear();
     }
 
     // trigger onChange prop if available
-    if (typeof this.props.onChange === 'function') {
-      this.props.onChange('');
+    if (typeof onChange === 'function') {
+      onChange('');
     }
 
     event.preventDefault();
-  }
+  };
 
   /**
    * Trigger onSubmit prop if available
    * @param {Object} e native change event
    */
-  _handleSubmit(e) {
-    if (typeof this.props.onSubmit === 'function') {
-      this.props.onSubmit({
+  const _handleSubmit = (e) => {
+    if (typeof onSubmit === 'function') {
+      onSubmit({
         e,
-        data: this.state.value,
+        data: value,
       });
     }
-  }
+  };
 
-  // Rendering
-
-  /**
-   * render - render the component
-   * @return {ReactElement} markup
-   */
-  render() {
-    return (
-      <SearchBarRenderer
-        onBlur={this._handleBlurred}
-        isFocused={this.state.isFocused}
-        placeholder={this.props.placeholder}
-        onChange={this._handleChanged}
-        onClear={this._handleCleared}
-        onFocus={this._handleFocused}
-        onSubmit={this._handleSubmit}
-        showClearButton={this.state.showClearButton}
-        value={this.state.value}
-        theme={this.props.theme}
-      >
-        {this.props.children}
-      </SearchBarRenderer>
-    );
-  }
-}
+  return (
+    <SearchBarRenderer
+      onBlur={_handleBlurred}
+      isFocused={isFocused}
+      placeholder={placeholder}
+      onChange={_handleChanged}
+      onClear={_handleCleared}
+      onFocus={_handleFocused}
+      onSubmit={_handleSubmit}
+      showClearButton={showClearButton}
+      value={value}
+      theme={theme}
+    >
+      {children}
+    </SearchBarRenderer>
+  );
+};
 
 SearchBar.defaultProps = {
   children: null,

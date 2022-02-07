@@ -12,7 +12,6 @@ test('SearchBarRenderer should be a function', () => {
 test('SearchBarRenderer should render correct structure', () => {
   const wrapper = shallow(
     <SearchBarRenderer
-      iconType="refresh"
       placeholder="hello world"
       isFocused={true}
       onBlur={() => {}}
@@ -25,5 +24,6 @@ test('SearchBarRenderer should render correct structure', () => {
     />
   );
 
-  expect(wrapper.find('Icon')).toHaveLength(2);
+  expect(wrapper.find('SearchIcon')).toHaveLength(1);
+  expect(wrapper.find('CloseIcon')).toHaveLength(1);
 });
