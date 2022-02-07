@@ -1,3 +1,5 @@
+@import '../../../styles/variables';
+
 $default-input-width: 320px;
 $size-icon: 24px;
 $size-input-offset: 44px;
@@ -74,7 +76,23 @@ $size-pos-base: 10px;
 }
 
 .icon--close {
+  background: none;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
   cursor: pointer;
+  height: 20px;
+  outline: 4px solid transparent;
+  padding: 0;
+  position: absolute;
+  right: 2px;
+  top: 18px;
+  transform: translateY(-50%);
+  width: 20px;
+
+  &:focus {
+    outline-color: $color-link;
+  }
 
   .search-bar & {
     right: $size-pos-base;
@@ -82,6 +100,13 @@ $size-pos-base: 10px;
     width: $size-icon;
     height: $size-icon;
   }
+}
+
+.icon__graphics {
+  height: 100%;
+  pointer-events: none;
+  right: 0;
+  width: 100%;
 }
 
 .search-bar__label {

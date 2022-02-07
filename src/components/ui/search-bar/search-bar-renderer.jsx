@@ -53,11 +53,14 @@ const SearchBarRenderer = (props) => {
           'search-bar__dynamic-icon--visible': showClearButton,
         })}
       >
-        <CloseIcon
-          className="icon icon--close icon__graphics"
+        <button
+          className="icon--close"
           onBlur={onBlur}
           onClick={onClear}
-        />
+          onFocus={onFocus}
+        >
+          <CloseIcon className="icon icon__graphics" />
+        </button>
       </div>
       {children}
     </form>
