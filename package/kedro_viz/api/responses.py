@@ -5,7 +5,6 @@ from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
-from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID
 from kedro_viz.data_access import data_access_manager
 
 
