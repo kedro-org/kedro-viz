@@ -5,7 +5,6 @@ from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
-from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID
 from kedro_viz.data_access import data_access_manager
 
 
@@ -242,28 +241,24 @@ class GraphAPIResponse(BaseAPIResponse):
 
 def get_default_response() -> GraphAPIResponse:
     """Default response for `/api/main`."""
-    default_selected_pipeline_id = (
-        data_access_manager.get_default_selected_pipeline().id
-    )
-
     modular_pipelines_tree = (
         data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
-            default_selected_pipeline_id
+            DEFAULT_REGISTERED_PIPELINE_ID
         )
     )
 
     return GraphAPIResponse(
         nodes=data_access_manager.get_nodes_for_registered_pipeline(
-            default_selected_pipeline_id
+            DEFAULT_REGISTERED_PIPELINE_ID
         ),
         edges=data_access_manager.get_edges_for_registered_pipeline(
-            default_selected_pipeline_id
+            DEFAULT_REGISTERED_PIPELINE_ID
         ),
         tags=data_access_manager.tags.as_list(),
         layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
-            default_selected_pipeline_id
+            DEFAULT_REGISTERED_PIPELINE_ID
         ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
         modular_pipelines=modular_pipelines_tree,
-        selected_pipeline=default_selected_pipeline_id,
+        selected_pipeline=data_access_manager.get_default_selected_pipeline().id,
     )
