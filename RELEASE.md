@@ -11,7 +11,7 @@ Please follow the established format:
 - Migrate Kedro-UI buttons to Kedro-viz as Kedro-UI is now deprecated. (#716)
 - Add a Husky pre-push hook. (#723)
 - Create a `version` GraphQL query to get versions of Kedro-Viz. (#727)
-- Fix Kedro-Viz to work with projects that have no `__default__` registered pipeline. This also fixes the `--pipeline` CLI option to show the selected pipeline. (#729)
+- Fix Kedro-Viz to work with projects that have no `__default__` registered pipeline. This also fixes the `--pipeline` CLI option. (#729)
 
 # Release 4.3.1
 
