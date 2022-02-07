@@ -17,7 +17,6 @@ import {
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
-  UPDATE_FONT_LOADED,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -340,16 +339,6 @@ describe('Reducer', () => {
         x: expect.any(Number),
         y: expect.any(Number),
       });
-    });
-  });
-
-  describe('UPDATE_FONT_LOADED', () => {
-    it('should update the state when the webfont is loaded', () => {
-      const newState = reducer(mockState.spaceflights, {
-        type: UPDATE_FONT_LOADED,
-        fontLoaded: true,
-      });
-      expect(newState.fontLoaded).toBe(true);
     });
   });
 
