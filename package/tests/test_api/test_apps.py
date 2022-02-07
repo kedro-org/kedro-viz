@@ -432,6 +432,16 @@ class TestMainEndpoint:
         assert response.status_code == 200
         assert_example_data(response.json())
 
+    def test_endpoint_main_no_default_pipeline(self, example_api_no_default_pipeline):
+        client = TestClient(example_api_no_default_pipeline)
+        response = client.get("/api/main")
+        assert len(response.json()["nodes"]) == 6
+        assert len(response.json()["edges"]) == 9
+        assert response.json()["pipelines"] == [
+            {"id": "data_science", "name": "Data Science"},
+            {"id": "data_processing", "name": "Data Processing"},
+        ]
+
 
 class TestTranscodedDataset:
     """Test a viz API created from a Kedro project."""
