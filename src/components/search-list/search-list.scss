@@ -3,28 +3,24 @@
 .pipeline-search-list {
   padding: 2px ($sidebar-padding - 0.4) 0 ($sidebar-padding - 0.4);
 
-  .kui-searchbar,
+  .search-bar,
   .kui-input-wrapper {
     max-width: none;
   }
 
-  .kui-searchbar .kui-icon {
-    opacity: 1;
-  }
-
-  .kui-searchbar .kui-icon--close {
+  .search-bar .icon--close {
     top: 18px;
     right: 2px;
     width: 20px;
     height: 20px;
   }
 
-  .kui-searchbar .kui-icon__graphics {
+  .search-bar .icon__graphics {
     opacity: 0.45;
     fill: var(--color-default-alt) !important;
   }
 
-  .kui-searchbar--focused .kui-icon__graphics {
+  .search-bar--focused .icon__graphics {
     opacity: 0.75;
   }
 
@@ -70,7 +66,7 @@
     font-size: 1.65em;
   }
 
-  .kui-searchbar__iconwrapper .kui-icon {
+  .search-bar__icon-wrapper .icon {
     top: 16px;
     left: 6px;
   }
@@ -86,11 +82,11 @@
     transition: background-color 0.3s, opacity 0.3s;
   }
 
-  .kui-searchbar--focused .kui-input__line:before {
+  .search-bar--focused .kui-input__line:before {
     opacity: 0.55;
   }
 
-  .kui-searchbar .kui-input__line:not([data-value='']):before {
+  .search-bar .kui-input__line:not([data-value='']):before {
     background-color: $color-primary;
     opacity: 1;
   }

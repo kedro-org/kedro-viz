@@ -1,0 +1,97 @@
+$default-input-width: 320px;
+$size-icon: 24px;
+$size-input-offset: 44px;
+$size-pos-base: 10px;
+
+.search-bar {
+  position: relative;
+
+  width: 100%;
+  max-width: $default-input-width;
+}
+
+.kui-input {
+  .search-bar & {
+    padding-left: $size-input-offset;
+  }
+}
+
+.icon {
+  transition: 0.3s opacity;
+
+  .search-bar & {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+
+    opacity: 0.3;
+
+    transform: translate(0, -50%);
+  }
+
+  .search-bar--focused & {
+    opacity: 1;
+  }
+}
+
+.search-bar__icon-wrapper {
+  transition: 0.3s opacity;
+
+  .icon {
+    top: calc(#{$size-pos-base} * 2);
+    left: calc(#{$size-icon} / 2);
+
+    width: $size-icon;
+    height: $size-icon;
+
+    opacity: 0.45;
+    fill: var(--color-default-alt) !important;
+  }
+}
+
+.kui-input__field {
+  .search-bar & {
+    max-width: calc(100% - #{$size-icon});
+  }
+}
+
+.kui-input__line::before {
+  .search-bar & {
+    max-width: calc(100% - #{$size-icon});
+  }
+}
+
+.search-bar__dynamic-icon {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.1s, visibility 0.1s;
+
+  &--visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.1s;
+  }
+}
+
+.icon--close {
+  cursor: pointer;
+
+  .search-bar & {
+    right: $size-pos-base;
+
+    width: $size-icon;
+    height: $size-icon;
+  }
+}
+
+.search-bar__label {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
