@@ -21,10 +21,13 @@ from typing import (
 
 import strawberry
 from fastapi import APIRouter
+from semver import VersionInfo
 from strawberry import ID
 from strawberry.asgi import GraphQL
 
+from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
+from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
@@ -69,15 +72,15 @@ def format_run(
         user_run_details.notes if user_run_details and user_run_details.notes else ""
     )
     run = Run(
-        id=ID(run_id),
         author="",
+        bookmark=bookmark,
         gitBranch=git_data.get("branch") if git_data else None,
         gitSha=git_data.get("commit_sha") if git_data else None,
-        bookmark=bookmark,
-        title=title,
+        id=ID(run_id),
         notes=notes,
-        timestamp=run_blob["session_id"],
         runCommand=run_blob["cli"]["command_path"],
+        timestamp=run_blob["session_id"],
+        title=title,
     )
     return run
 
@@ -116,6 +119,20 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
     return format_runs(
         data_access_manager.runs.get_runs_by_ids(run_ids),
         data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
+    )
+
+
+def get_version() -> Version:
+    """Get the user's installed Viz version and the latest version on PyPI.
+    Returns:
+        the currently installed and most-recent released version of Viz.
+    """
+    installed_version = VersionInfo.parse(__version__)
+    latest_version = get_latest_version()
+    return Version(
+        installed=installed_version,
+        isOutdated=is_running_outdated_version(installed_version, latest_version),
+        latest=latest_version or "",
     )
 
 
@@ -247,24 +264,33 @@ def get_run_tracking_data(
 class Run:
     """Run object format"""
 
-    id: ID
-    title: str
-    timestamp: str
     author: Optional[str]
+    bookmark: Optional[bool]
     gitBranch: Optional[str]
     gitSha: Optional[str]
-    bookmark: Optional[bool]
+    id: ID
     notes: Optional[str]
     runCommand: Optional[str]
+    timestamp: str
+    title: str
 
 
 @strawberry.type
 class TrackingDataset:
     """TrackingDataset object to structure tracking data for a Run."""
 
+    data: Optional[JSONObject]
     datasetName: Optional[str]
     datasetType: Optional[str]
-    data: Optional[JSONObject]
+
+
+@strawberry.type
+class Version:
+    """The installed and latest Kedro Viz versions."""
+
+    installed: str
+    isOutdated: bool
+    latest: str
 
 
 @strawberry.type
@@ -295,8 +321,13 @@ class Query:
 
     @strawberry.field
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        """Query to get data for specific runs from the session store"""
+        """Query to get data for specific run metadata from the session store"""
         return get_runs(run_ids)
+
+    @strawberry.field
+    def runs_list(self) -> List[Run]:
+        """Query to get data for all the runs from the session store"""
+        return get_all_runs()
 
     @strawberry.field
     def run_tracking_data(
@@ -305,7 +336,10 @@ class Query:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
 
-    runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
+    @strawberry.field
+    def version(self) -> Version:
+        """Query to get Kedro-Viz version"""
+        return get_version()
 
 
 schema = strawberry.Schema(query=Query, subscription=Subscription)
@@ -316,8 +350,8 @@ class RunInput:
     """Run input to update bookmark, title and notes"""
 
     bookmark: Optional[bool] = None
-    title: Optional[str] = None
     notes: Optional[str] = None
+    title: Optional[str] = None
 
 
 @strawberry.type
