@@ -51,13 +51,13 @@ $size-pos-base: 10px;
   }
 }
 
-.kui-input__field {
+.search-input__field {
   .search-bar & {
     max-width: calc(100% - #{$size-icon});
   }
 }
 
-.kui-input__line::before {
+.search-input__line::before {
   .search-bar & {
     max-width: calc(100% - #{$size-icon});
   }

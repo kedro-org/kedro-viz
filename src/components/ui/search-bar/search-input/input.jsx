@@ -12,11 +12,8 @@ const Input = ({
   onChange,
   onFocus,
   placeholder,
-  status,
-  statusDescription,
   theme,
   value: inputValue,
-  variant,
 }) => {
   const [focused, setFocused] = useState(false);
   const [value, setValue] = useState(inputValue);
@@ -58,28 +55,8 @@ const Input = ({
     }
   };
 
-  // status indicating error or success; ignored when it is default
-  const validatedStatus = status !== 'default' ? status : false;
-  const hasDescription = status !== 'default' && statusDescription;
-
   const labelWrapper = label && (
     <div className="search-input__label">{label}</div>
-  );
-
-  // description's div has to be always rendered, even if its content is empty
-  // to enable the animation to run when the component receives a description; otherwise the animation is ignored
-  const description = (
-    <div
-      className={classnames('search-input__description', {
-        'search-input__description--has-content': hasDescription,
-      })}
-    >
-      {statusDescription && (
-        <div className="search-input__description-content">
-          {statusDescription}
-        </div>
-      )}
-    </div>
   );
 
   return (
@@ -87,19 +64,16 @@ const Input = ({
       <div
         className={classnames(
           'kui-input',
-          `kui-theme--${theme}`,
-          { [`kui-input--${validatedStatus}`]: !!validatedStatus },
-          { 'kui-input--disabled': disabled },
-          { 'kui-input--focused': focused },
-          { 'kui-input--variant-one': variant === 1 },
-          { 'kui-input--variant-two': variant === 2 }
+          `search-theme--${theme}`,
+          { 'search-input--disabled': disabled },
+          { 'search-input--focused': focused }
         )}
         onFocus={_handleFocused}
         onBlur={_handleBlurred}
       >
         {labelWrapper}
         <input
-          className="kui-input__field"
+          className="search-input__field"
           type="text"
           placeholder={placeholder || ''}
           disabled={disabled}
@@ -110,11 +84,10 @@ const Input = ({
         />
         <div
           aria-hidden="true"
-          className="kui-input__line"
+          className="search-input__line"
           data-value={value || ''}
         />
       </div>
-      {description}
     </div>
   );
 };
@@ -126,11 +99,8 @@ Input.defaultProps = {
   onFocus: null,
   onChange: null,
   placeholder: null,
-  status: 'default',
-  statusDescription: null,
   theme: 'light',
   value: null,
-  variant: 0,
 };
 
 Input.propTypes = {
@@ -159,17 +129,6 @@ Input.propTypes = {
    */
   placeholder: PropTypes.string,
   /**
-   * Status of the input - either 'default', 'success' or 'error'.
-   * Will trigger change in colouring of the component.
-   */
-  status: PropTypes.oneOf(['error', 'success', 'default']),
-  /**
-   * Description of the status - either message on success or an error.
-   * Will be displayed only if the status is different than 'default'.
-   * Can be only a string of arbitrary length, but not HTML or other formats.
-   */
-  statusDescription: PropTypes.string,
-  /**
    * Theme of the input - either 'dark' or 'light'.
    */
   theme: PropTypes.oneOf(['dark', 'light']),
@@ -177,10 +136,6 @@ Input.propTypes = {
    * Value to be displayed inside the input field, it is editable and can change if not disabled.
    */
   value: PropTypes.string,
-  /**
-   * Style variant for displaying status.
-   */
-  variant: PropTypes.oneOf([0, 1, 2]),
 };
 
 export default Input;

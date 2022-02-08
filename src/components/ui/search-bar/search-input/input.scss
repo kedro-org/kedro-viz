@@ -45,7 +45,7 @@ $duration-input-transition: 0.3s;
   border: $height-tiny solid rgba(0, 0, 0, 0.12);
   box-sizing: border-box;
 
-  .kui-theme--dark & {
+  .search-theme--dark & {
     @extend %shadow-dark;
 
     &:hover {
@@ -64,14 +64,14 @@ $duration-input-transition: 0.3s;
   }
 }
 
-.kui-input--focused {
+.search-input--focused {
   @extend %shadow-light--active;
 
-  &.kui-theme--light {
+  &.search-theme--light {
     outline: 4px solid;
   }
 
-  &.kui-theme--dark {
+  &.search-theme--dark {
     outline: 4px solid;
   }
 
@@ -84,7 +84,7 @@ $duration-input-transition: 0.3s;
   }
 }
 
-.kui-input__field {
+.search-input__field {
   background: transparent;
   border: none;
   font-family: 'Titillium Web', sans-serif;
@@ -104,12 +104,12 @@ $duration-input-transition: 0.3s;
   }
 
   /** more specific selector needs to be stated so the changes apply **/
-  .kui-input.kui-input--disabled & {
+  .kui-input.search-input--disabled & {
     cursor: not-allowed;
   }
 }
 
-.kui-theme--dark .kui-input__field {
+.search-theme--dark .search-input__field {
   color: $color-text-dark;
 }
 
@@ -121,7 +121,7 @@ $duration-input-transition: 0.3s;
   margin-bottom: $offset-top-bottom-small;
 }
 
-.kui-input__line {
+.search-input__line {
   display: flex;
   font-size: 1.6em;
   font-weight: 400;
@@ -148,39 +148,9 @@ $duration-input-transition: 0.3s;
       flex $duration-input-transition;
   }
 
-  .kui-input__field:focus + &::after,
-  .kui-input__field:active + &::after {
+  .search-input__field:focus + &::after,
+  .search-input__field:active + &::after {
     flex: 1;
     transition-timing-function: ease-out;
   }
-}
-
-.search-input__description {
-  display: flex;
-  padding: 0;
-  visibility: hidden;
-  opacity: 0;
-  transform: scaleY(0.8);
-  transform-origin: top;
-  height: 0;
-  transition: visibility $duration-input-transition,
-    opacity $duration-input-transition, height $duration-input-transition,
-    transform $duration-input-transition;
-
-  &--has-content {
-    visibility: visible;
-    opacity: 1;
-    height: auto;
-    transform: scaleY(1);
-    transition: opacity $duration-input-transition,
-      height $duration-input-transition, transform $duration-input-transition;
-  }
-}
-
-.search-input__description-content {
-  font-size: 1.4em;
-  font-weight: 400;
-  letter-spacing: 0.1px;
-  line-height: 1.4;
-  padding: $offset-top-bottom-small $padding-left-right;
 }
