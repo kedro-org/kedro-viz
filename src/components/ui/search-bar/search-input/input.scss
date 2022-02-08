@@ -1,0 +1,186 @@
+@import '../../../../styles/variables';
+
+%shadow-dark {
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.12),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+%shadow-dark--hover {
+  box-shadow: -2px 0 4px 0 rgba(0, 0, 0, 0.08), 2px 0 4px 0 rgba(0, 0, 0, 0.08),
+    0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 2px 0 rgba(0, 0, 0, 0.24),
+    0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.12),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+%shadow-light--hover {
+  box-shadow: -2px 0 4px 0 rgba(0, 0, 0, 0.08), 2px 0 4px 0 rgba(0, 0, 0, 0.08),
+    0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+%shadow-light--active {
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.08);
+}
+
+/** Variables **/
+
+$default-input-width: 320px;
+$padding-left-right: 11px;
+$padding-top-bottom: 7px;
+$offset-top-bottom-small: 4px;
+$margin-top-line: 3px;
+$height-tiny: 1px;
+$duration-input-transition: 0.3s;
+
+/** Implementation **/
+
+.search-input-wrapper {
+  width: 100%;
+  max-width: $default-input-width;
+}
+
+.kui-input {
+  /** padding top can be overriden if label is generated (see below) **/
+  padding: $padding-top-bottom $padding-left-right;
+
+  border: $height-tiny solid rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+
+  .kui-theme--dark & {
+    @extend %shadow-dark;
+
+    &:hover {
+      @extend %shadow-dark--hover;
+    }
+  }
+
+  &:hover:not([disabled]) {
+    @extend %shadow-light--hover;
+  }
+
+  &--disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+  }
+}
+
+.kui-input--focused {
+  @extend %shadow-light--active;
+
+  &.kui-theme--light {
+    outline: 4px solid;
+  }
+
+  &.kui-theme--dark {
+    outline: 4px solid;
+  }
+
+  [data-whatintent='keyboard'] & {
+    box-shadow: none;
+  }
+
+  [data-whatintent='mouse'] & {
+    outline: none;
+  }
+}
+
+.kui-input__field {
+  background: transparent;
+  border: none;
+  font-family: 'Titillium Web', sans-serif;
+  font-size: 1.6em;
+  font-weight: 400;
+  letter-spacing: 0.1px;
+  line-height: 1.3;
+  outline: none;
+  padding: 0;
+  width: 100%;
+
+  &,
+  &:hover,
+  &:active,
+  &:focus {
+    box-shadow: none;
+  }
+
+  /** more specific selector needs to be stated so the changes apply **/
+  .kui-input.kui-input--disabled & {
+    cursor: not-allowed;
+  }
+}
+
+.kui-theme--dark .kui-input__field {
+  color: $color-text-dark;
+}
+
+.search-input__label {
+  display: flex;
+  font-size: 1.4em;
+  letter-spacing: 0.1px;
+  line-height: 1.4;
+  margin-bottom: $offset-top-bottom-small;
+}
+
+.kui-input__line {
+  display: flex;
+  font-size: 1.6em;
+  font-weight: 400;
+  height: $height-tiny;
+  letter-spacing: 0.1px;
+  line-height: 1.3;
+  margin-top: $margin-top-line;
+  pointer-events: none;
+
+  &::before {
+    content: attr(data-value);
+    overflow: hidden;
+    white-space: pre;
+    background-color: transparent;
+    color: transparent;
+    transition: background-color $duration-input-transition;
+  }
+
+  &::after {
+    content: '';
+    flex: 0;
+    background-color: transparent;
+    transition: background-color $duration-input-transition,
+      flex $duration-input-transition;
+  }
+
+  .kui-input__field:focus + &::after,
+  .kui-input__field:active + &::after {
+    flex: 1;
+    transition-timing-function: ease-out;
+  }
+}
+
+.search-input__description {
+  display: flex;
+  padding: 0;
+  visibility: hidden;
+  opacity: 0;
+  transform: scaleY(0.8);
+  transform-origin: top;
+  height: 0;
+  transition: visibility $duration-input-transition,
+    opacity $duration-input-transition, height $duration-input-transition,
+    transform $duration-input-transition;
+
+  &--has-content {
+    visibility: visible;
+    opacity: 1;
+    height: auto;
+    transform: scaleY(1);
+    transition: opacity $duration-input-transition,
+      height $duration-input-transition, transform $duration-input-transition;
+  }
+}
+
+.search-input__description-content {
+  font-size: 1.4em;
+  font-weight: 400;
+  letter-spacing: 0.1px;
+  line-height: 1.4;
+  padding: $offset-top-bottom-small $padding-left-right;
+}

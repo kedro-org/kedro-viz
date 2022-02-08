@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 import CloseIcon from '../../icons/close';
-import Input from '@quantumblack/kedro-ui/lib/components/input';
+import Input from './search-input/';
 import SearchIcon from '../../icons/search';
 
 /**
