@@ -4,7 +4,7 @@
   padding: 2px ($sidebar-padding - 0.4) 0 ($sidebar-padding - 0.4);
 
   .search-bar,
-  .kui-input-wrapper {
+  .search-input-wrapper {
     max-width: none;
   }
 
@@ -24,13 +24,13 @@
     opacity: 0.75;
   }
 
-  .kui-input {
+  .search-input {
     padding: 5px;
   }
 
-  .kui-input:active:not(.search-input--disabled),
-  .kui-input:hover:not([disabled]),
-  .kui-input,
+  .search-input:active:not(.search-input--disabled),
+  .search-input:hover:not([disabled]),
+  .search-input,
   .search-input--focused,
   .search-input__field {
     background: none;

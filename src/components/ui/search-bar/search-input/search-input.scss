@@ -21,15 +21,13 @@
   box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.08);
 }
 
-/** Variables **/
-
 $default-input-width: 320px;
+$duration-input-transition: 0.3s;
+$height-tiny: 1px;
+$margin-top-line: 3px;
+$offset-top-bottom-small: 4px;
 $padding-left-right: 11px;
 $padding-top-bottom: 7px;
-$offset-top-bottom-small: 4px;
-$margin-top-line: 3px;
-$height-tiny: 1px;
-$duration-input-transition: 0.3s;
 
 /** Implementation **/
 
@@ -38,7 +36,7 @@ $duration-input-transition: 0.3s;
   max-width: $default-input-width;
 }
 
-.kui-input {
+.search-input {
   /** padding top can be overriden if label is generated (see below) **/
   padding: $padding-top-bottom $padding-left-right;
 
@@ -104,7 +102,7 @@ $duration-input-transition: 0.3s;
   }
 
   /** more specific selector needs to be stated so the changes apply **/
-  .kui-input.search-input--disabled & {
+  .search-input.search-input--disabled & {
     cursor: not-allowed;
   }
 }

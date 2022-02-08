@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import 'what-input';
 
-import './input.css';
+import './search-input.css';
 
-const Input = ({
+const SearchInput = ({
   disabled,
   label,
   onBlur,
@@ -63,7 +63,7 @@ const Input = ({
     <div className="kedro search-input-wrapper">
       <div
         className={classnames(
-          'kui-input',
+          'search-input',
           `search-theme--${theme}`,
           { 'search-input--disabled': disabled },
           { 'search-input--focused': focused }
@@ -74,13 +74,13 @@ const Input = ({
         {labelWrapper}
         <input
           className="search-input__field"
-          type="text"
-          placeholder={placeholder || ''}
           disabled={disabled}
-          value={value || ''}
+          onBlur={_handleBlurred}
           onChange={_handleChanged}
           onFocus={_handleFocused}
-          onBlur={_handleBlurred}
+          placeholder={placeholder || ''}
+          type="text"
+          value={value || ''}
         />
         <div
           aria-hidden="true"
@@ -92,18 +92,18 @@ const Input = ({
   );
 };
 
-Input.defaultProps = {
+SearchInput.defaultProps = {
   disabled: false,
   label: null,
   onBlur: null,
-  onFocus: null,
   onChange: null,
+  onFocus: null,
   placeholder: null,
   theme: 'light',
   value: null,
 };
 
-Input.propTypes = {
+SearchInput.propTypes = {
   /**
    * Whether the input should be editable or not.
    */
@@ -138,4 +138,4 @@ Input.propTypes = {
   value: PropTypes.string,
 };
 
-export default Input;
+export default SearchInput;

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 import CloseIcon from '../../icons/close';
-import Input from './search-input/';
 import SearchIcon from '../../icons/search';
+import SearchInput from './search-input/';
 
 /**
  * SearchBarRenderer, used to output the actual DOM markup for the component
@@ -38,7 +38,7 @@ const SearchBarRenderer = (props) => {
       <div className="search-bar__icon-wrapper">
         <SearchIcon className="icon icon__graphics" />
       </div>
-      <Input
+      <SearchInput
         id="search-bar"
         placeholder={placeholder}
         onChange={onChange}
