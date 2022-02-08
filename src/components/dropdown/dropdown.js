@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { flatten, find, flow, isEqual, map } from 'lodash/fp';
 import 'what-input';
@@ -6,62 +6,37 @@ import './dropdown.css';
 import DropdownRenderer from './dropdown-renderer';
 import EventController from './event-controller.js';
 
-class Dropdown extends React.Component {
-  /**
-   * Create a new Dropdown
-   * @param  {Object} props
-   */
-  constructor(props) {
-    super(props);
+const Dropdown = ({
+  children,
+  defaultText,
+  disabled,
+  onChanged,
+  onClosed,
+  onOpened,
+  width,
+})=>{
 
-    this.displayName = 'Dropdown';
+    const [focusedOption, setFocusedOption] = useState(null);
+    const [selectedOption, setSelectedOption] = useState(findSelectedOption());
+    const [open, setOpen] = useState(false);
 
-    // bind method scope
-    this._handleRef = this._handleRef.bind(this);
-    this._getOptionsList = this._getOptionsList.bind(this);
-    this._handleLabelClicked = this._handleLabelClicked.bind(this);
-    this._handleOptionSelected = this._handleOptionSelected.bind(this);
-    this._handleFocusChange = this._handleFocusChange.bind(this);
-    this._handleBodyClicked = this._handleBodyClicked.bind(this);
-    this.open = this.open.bind(this);
-    this.close = this.close.bind(this);
+    useEffect(() => {
+      setSelectedOption(findSelectedOption())
+    }, [selectedOption]);
 
-    this.state = {
-      focusedOption: null,
-      selectedOption: this._findSelectedOption(),
-      open: false,
-    };
-  }
-
-  /**
-   * React lifecycle method
-   * {@link https://facebook.github.io/react/docs/react-component.html#componentwillupdate}
-   * @param {Object} New component props
-   */
-  componentDidUpdate(prevProps) {
-    if (this._childrenHaveChanged(prevProps)) {
-      this.setState({
-        selectedOption: this._findSelectedOption(prevProps),
-      });
-    }
-  }
-
-  /**
-   * React lifecycle method
-   * {@link https://facebook.github.io/react/docs/react-component.html#componentwillunmount}
-   * @return {object} JSX for this component
-   */
-  componentWillUnmount() {
-    EventController.removeBodyListeners();
-  }
+    useEffect(()=>{
+      return()=>
+      EventController.removeBodyListeners();
+    });
+  const dropdownRef= useRef(null)
 
   /**
    * Handler for closing a dropdown if a click occured outside the dropdown.
    * @param {object} e - event object
    */
-  _handleBodyClicked(e) {
-    if (!this.dropdown.contains(e.target) && this.state.open) {
-      this.close();
+  const _handleBodyClicked = (e) => {
+    if (!dropdownRef.current.contains(e.target) && open) {
+      setOpen(false)
     }
   }
 
@@ -70,7 +45,7 @@ class Dropdown extends React.Component {
    * @param {Object} nextProps - New component props
    * @return {Boolean} True if new children are different from current ones
    */
-  _childrenHaveChanged(nextProps) {
+  const _childrenHaveChanged = (nextProps) => {
     const children = [this.props, nextProps].map((props) =>
       React.Children.toArray(props.children)
     );
@@ -83,7 +58,7 @@ class Dropdown extends React.Component {
    * @param {Object} props - Component props
    * @return {Object} Selected option object for use in the state
    */
-  _findSelectedOption(props) {
+  const _findSelectedOption = (props) => {
     const selectedOptionElement = this._findSelectedOptionElement(props);
 
     // check children for a selected option
@@ -110,7 +85,7 @@ class Dropdown extends React.Component {
    * @param {Object} props - Component props (optional)
    * @return {Object} Selected option element
    */
-  _findSelectedOptionElement(props = this.props) {
+  const _findSelectedOptionElement = (props = this.props) => {
     const children = React.Children.toArray(props.children);
 
     if (!children.length) {
@@ -133,7 +108,7 @@ class Dropdown extends React.Component {
   /**
    * Event handler which is fired when the label is clicked
    */
-  _handleLabelClicked() {
+  const _handleLabelClicked = () => {
     const { open } = this.state;
     const { onOpened, onClosed } = this.props;
 
@@ -162,7 +137,7 @@ class Dropdown extends React.Component {
    * with any Sections removed.
    * @return {Object} A flat list of MenuOptions
    */
-  _getOptionsList() {
+  const _getOptionsList = () => {
     /**
      * Recurse through sections to retrieve a list of all MenuOptions
      * @param  {Object} previous The Options array as of the previous iteration
@@ -193,7 +168,7 @@ class Dropdown extends React.Component {
    * Convenience method to return focus from an option to the label.
    * This is particularly useful for screen-readers and keyboard users.
    */
-  _focusLabel() {
+  const _focusLabel = () => {
     this.dropdown.querySelector('.dropdown__label').focus();
 
     this.setState({
@@ -207,7 +182,7 @@ class Dropdown extends React.Component {
    * @param {number} direction - The direction that focus is travelling through the list:
    * negative is up and positive is down.
    */
-  _handleFocusChange(direction) {
+  const _handleFocusChange = (direction) => {
     let { focusedOption } = this.state;
     const optionsLength = this._getOptionsList().length;
 
@@ -233,7 +208,7 @@ class Dropdown extends React.Component {
   /**
    * Event handler which is fired when a child item is selected
    */
-  _handleOptionSelected(obj) {
+  const _handleOptionSelected = (obj) => {
     const { label, id, value } = obj;
     const { onChanged, onClosed } = this.props;
 
@@ -265,16 +240,16 @@ class Dropdown extends React.Component {
    * and assign it to a class-wide variable property.
    * @param {object} el - The ref for the Dropdown container node
    */
-  _handleRef(el) {
+  const _handleRef = (el) => {
     this.dropdown = el;
   }
 
   /**
    * API method to open the dropdown
    */
-  open() {
-    const { onOpened } = this.props;
-
+  const _handleOpen = () => {
+  
+    setOpen(true)
     this.setState({ open: true }, () => {
       this._focusLabel();
       if (typeof onOpened === 'function') {
@@ -289,8 +264,7 @@ class Dropdown extends React.Component {
   /**
    * API method to close the dropdown
    */
-  close() {
-    const { onClosed } = this.props;
+  const _handleClose = () => {
 
     this.setState({ open: false }, () => {
       if (typeof onClosed === 'function') {
@@ -302,14 +276,7 @@ class Dropdown extends React.Component {
     EventController.removeBodyListeners();
   }
 
-  /**
-   * React lifecycle method
-   * {@link https://facebook.github.io/react/docs/react-component.html#render}
-   * @return {object} JSX for this component
-   */
-  render() {
-    const { children, defaultText, disabled, width } = this.props;
-    const { open, focusedOption, selectedOption } = this.state;
+
 
     return (
       <DropdownRenderer
@@ -323,11 +290,12 @@ class Dropdown extends React.Component {
         focusedOption={focusedOption}
         selectedOption={selectedOption}
         width={width}
+        ref={dropdownRef}
       >
         {children}
       </DropdownRenderer>
     );
-  }
+
 }
 
 Dropdown.defaultProps = {
