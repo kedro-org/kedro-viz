@@ -31,6 +31,7 @@ import {
 } from '../actions/node-type';
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 import { TOGGLE_MODULAR_PIPELINE_ACTIVE } from '../actions/modular-pipelines';
+import { TOGGLE_GRAPH_LOADING } from '../actions/graph';
 
 describe('Reducer', () => {
   it('should return an Object', () => {
@@ -382,6 +383,16 @@ describe('Reducer', () => {
         active: true,
       });
       expect(newState.modularPipeline.active).toEqual({ nested: true });
+    });
+  });
+
+  describe('TOGGLE_GRAPH_LOADING', () => {
+    it('should toggle the loading state of the graph', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: TOGGLE_GRAPH_LOADING,
+        loading: true,
+      });
+      expect(newState.loading.graph).toBe(true);
     });
   });
 });

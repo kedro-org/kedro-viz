@@ -17,6 +17,7 @@ export const createInitialState = () => ({
   prettyName: settings.prettyName.default,
   ignoreLargeWarning: false,
   loading: {
+    graph: false,
     pipeline: false,
     node: false,
   },

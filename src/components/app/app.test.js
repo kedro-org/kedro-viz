@@ -64,12 +64,6 @@ describe('App', () => {
       expect(getState(wrapper).node.disabled).toEqual(localState.node.disabled);
       window.localStorage.clear();
     });
-
-    test('but does not override non-pipeline values', () => {
-      const wrapper = shallow(<App data={demo} />);
-      wrapper.setProps({ data: spaceflights });
-      expect(getState(wrapper)).toMatchObject(prepareNonPipelineState({}));
-    });
   });
 
   describe('feature flags', () => {
