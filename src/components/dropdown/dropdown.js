@@ -309,7 +309,6 @@ const Dropdown = (props) => {
       focusedOption={focusedOption}
       selectedOption={selectedOption}
       width={width}
-      ref={dropdownRef}
     >
       {children}
     </DropdownRenderer>
