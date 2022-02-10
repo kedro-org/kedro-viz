@@ -2,10 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import 'what-input';
-import '@quantumblack/kedro-ui/lib/styles/app-no-webfont.css';
-import LoadWebFont from '@quantumblack/kedro-ui/lib/utils/webfont.js';
 import configureStore from '../../store';
-import { resetData, updateFontLoaded } from '../../actions';
+import { resetData } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
 import Wrapper from '../wrapper';
 import getInitialState, {
@@ -33,7 +31,6 @@ class App extends React.Component {
     if (this.props.data === 'json') {
       this.store.dispatch(loadInitialPipelineData());
     }
-    this.loadWebFonts();
     this.announceFlags(this.store.getState().flags);
   }
 
@@ -52,20 +49,6 @@ class App extends React.Component {
     if (message && typeof jest === 'undefined') {
       console.info(message);
     }
-  }
-
-  /**
-   * Dispatch an action once the webfont has loaded.
-   * Uses https://github.com/typekit/webfontloader
-   */
-  loadWebFonts() {
-    const setFontLoaded = () => {
-      this.store.dispatch(updateFontLoaded(true));
-    };
-    LoadWebFont({
-      active: setFontLoaded,
-      inactive: setFontLoaded,
-    });
   }
 
   /**

@@ -15,7 +15,6 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
-  UPDATE_FONT_LOADED,
   TOGGLE_IGNORE_LARGE_WARNING,
   TOGGLE_PRETTY_NAME,
 } from '../actions';
@@ -68,7 +67,6 @@ const combinedReducer = combineReducers({
   // These props have very simple non-nested actions
   chartSize: createReducer({}, UPDATE_CHART_SIZE, 'chartSize'),
   zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),
-  fontLoaded: createReducer(false, UPDATE_FONT_LOADED, 'fontLoaded'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
   prettyName: createReducer(true, TOGGLE_PRETTY_NAME, 'prettyName'),

@@ -13,7 +13,6 @@ import {
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
-  UPDATE_FONT_LOADED,
   TOGGLE_CODE,
   TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
   changeFlag,
@@ -30,7 +29,6 @@ import {
   toggleTextLabels,
   toggleTheme,
   updateChartSize,
-  updateFontLoaded,
   toggleFocusMode,
 } from '../actions';
 import {
@@ -272,15 +270,6 @@ describe('actions', () => {
       chartSize,
     };
     expect(updateChartSize(chartSize)).toEqual(expectedAction);
-  });
-
-  it('should create an action to update the state when the webfont has loaded', () => {
-    const fontLoaded = true;
-    const expectedAction = {
-      type: UPDATE_FONT_LOADED,
-      fontLoaded,
-    };
-    expect(updateFontLoaded(fontLoaded)).toEqual(expectedAction);
   });
 
   it('should create an action to change a flag', () => {
