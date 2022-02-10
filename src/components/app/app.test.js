@@ -9,6 +9,8 @@ import { mockState } from '../../utils/state.mock';
 import { Flags } from '../../utils/flags';
 import { saveState } from '../../store/helpers';
 import { prepareNonPipelineState } from '../../store/initial-state';
+import reducer from '../../reducers/index';
+import { TOGGLE_GRAPH_LOADING } from '../../actions/graph';
 
 describe('App', () => {
   const getState = (wrapper) => wrapper.instance().store.getState();
@@ -68,7 +70,13 @@ describe('App', () => {
     test('but does not override non-pipeline values', () => {
       const wrapper = shallow(<App data={demo} />);
       wrapper.setProps({ data: spaceflights });
-      expect(getState(wrapper)).toMatchObject(prepareNonPipelineState({}));
+
+      const newState = reducer(getState(wrapper), {
+        type: TOGGLE_GRAPH_LOADING,
+        loading: false,
+      });
+
+      expect(newState).toMatchObject(prepareNonPipelineState({}));
     });
   });
 

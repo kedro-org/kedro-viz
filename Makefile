@@ -14,6 +14,8 @@ clean:
 	find . -regex ".*/__pycache__" -exec rm -rf {} +
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
 
+PROJECT_PATH ?= demo-project
+
 run:
 	PYTHONPATH=$(shell pwd)/package python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
@@ -51,3 +53,9 @@ version:
 
 install-pip-setuptools:
 	python -m pip install -U "pip>=18.0, <19.0" "setuptools>=38.0, <39.0" wheel
+
+sign-off:
+	echo "git interpret-trailers --if-exists doNothing \c" > .git/hooks/commit-msg
+	echo '--trailer "Signed-off-by: $$(git config user.name) <$$(git config user.email)>" \c' >> .git/hooks/commit-msg
+	echo '--in-place "$$1"' >> .git/hooks/commit-msg
+	chmod +x .git/hooks/commit-msg

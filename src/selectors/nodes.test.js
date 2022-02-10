@@ -15,7 +15,6 @@ import {
 } from './nodes';
 import {
   toggleTextLabels,
-  updateFontLoaded,
   toggleFocusMode,
   togglePrettyName,
 } from '../actions';
@@ -34,7 +33,6 @@ const getNodeName = (state) => state.node.name;
 const getNodeType = (state) => state.node.type;
 const getNodePipelines = (state) => state.node.pipelines;
 
-const noFontState = reducer(mockState.spaceflights, updateFontLoaded(false));
 const parameterNodesID = ['65d0d789'];
 
 describe('Selectors', () => {
@@ -225,33 +223,25 @@ describe('getGroupedNodes', () => {
 });
 
 describe('getNodeTextWidth', () => {
-  describe('when fonts have not yet loaded', () => {
-    it('returns an empty object', () => {
-      expect(getNodeTextWidth(noFontState)).toEqual({});
-    });
+  const nodeTextWidth = getNodeTextWidth(mockState.spaceflights);
+  const values = Object.values(nodeTextWidth);
+
+  it('returns an object', () => {
+    expect(nodeTextWidth).toEqual(expect.objectContaining({}));
   });
 
-  describe('when fonts have loaded', () => {
-    const nodeTextWidth = getNodeTextWidth(mockState.spaceflights);
-    const values = Object.values(nodeTextWidth);
+  it('returns an object with nodeIDs for keys', () => {
+    const keys = Object.keys(nodeTextWidth);
+    expect(keys.sort()).toEqual(getNodeIDs(mockState.spaceflights).sort());
+  });
 
-    it('returns an object', () => {
-      expect(nodeTextWidth).toEqual(expect.objectContaining({}));
-    });
+  it('returns an object whose values are all numbers', () => {
+    expect(values.length).toEqual(getNodeIDs(mockState.spaceflights).length);
+    expect(values.every((value) => typeof value === 'number')).toBe(true);
+  });
 
-    it('returns an object with nodeIDs for keys', () => {
-      const keys = Object.keys(nodeTextWidth);
-      expect(keys.sort()).toEqual(getNodeIDs(mockState.spaceflights).sort());
-    });
-
-    it('returns an object whose values are all numbers', () => {
-      expect(values.length).toEqual(getNodeIDs(mockState.spaceflights).length);
-      expect(values.every((value) => typeof value === 'number')).toBe(true);
-    });
-
-    it('returns width=0 if svg getBBox is not supported', () => {
-      expect(values.every((value) => value === 0)).toBe(true);
-    });
+  it('returns width=0 if svg getBBox is not supported', () => {
+    expect(values.every((value) => value === 0)).toBe(true);
   });
 });
 
@@ -287,112 +277,96 @@ describe('getPadding', () => {
 });
 
 describe('getNodeSize', () => {
-  describe('when fonts have not yet loaded', () => {
-    it('returns an empty object', () => {
-      expect(getNodeSize(noFontState)).toEqual({});
+  it('returns an object containing objects with numerical properties', () => {
+    expect(getNodeSize(mockState.spaceflights)).toEqual(expect.any(Object));
+    expect(Object.values(getNodeSize(mockState.spaceflights))).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          showText: expect.any(Boolean),
+          width: expect.any(Number),
+          height: expect.any(Number),
+          textOffset: expect.any(Number),
+          iconOffset: expect.any(Number),
+          iconSize: expect.any(Number),
+        }),
+      ])
+    );
+  });
+
+  it('erases the generated SVG node', () => {
+    getNodeSize(mockState.spaceflights);
+    const svg = document.querySelectorAll('svg');
+    expect(svg.length).toEqual(0);
+  });
+
+  describe('when text labels are disabled', () => {
+    const newMockState = reducer(
+      mockState.spaceflights,
+      toggleTextLabels(false)
+    );
+
+    it('returns identical width and height', () => {
+      const node0 = Object.values(getNodeSize(newMockState))[0];
+      expect(node0.width).toBe(node0.height);
+    });
+
+    it('returns an iconOffset equal to iconSize/-2', () => {
+      const node0 = Object.values(getNodeSize(newMockState))[0];
+      expect(node0.iconOffset).toBe(node0.iconSize / -2);
     });
   });
 
-  describe('when fonts have loaded', () => {
-    it('returns an object containing objects with numerical properties', () => {
-      expect(getNodeSize(mockState.spaceflights)).toEqual(expect.any(Object));
-      expect(Object.values(getNodeSize(mockState.spaceflights))).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            showText: expect.any(Boolean),
-            width: expect.any(Number),
-            height: expect.any(Number),
-            textOffset: expect.any(Number),
-            iconOffset: expect.any(Number),
-            iconSize: expect.any(Number),
-          }),
-        ])
-      );
+  describe('when text labels are enabled', () => {
+    const newMockState = reducer(
+      mockState.spaceflights,
+      toggleTextLabels(true)
+    );
+
+    it('returns a width greater than the height', () => {
+      const node0 = Object.values(getNodeSize(newMockState))[0];
+      expect(node0.width).toBeGreaterThan(node0.height);
     });
 
-    it('erases the generated SVG node', () => {
-      getNodeSize(mockState.spaceflights);
-      const svg = document.querySelectorAll('svg');
-      expect(svg.length).toEqual(0);
-    });
-
-    describe('when text labels are disabled', () => {
-      const newMockState = reducer(
-        mockState.spaceflights,
-        toggleTextLabels(false)
+    it('returns an iconOffset with a greater magnitude than iconSize / 2', () => {
+      const node0 = Object.values(getNodeSize(newMockState))[0];
+      expect(Math.abs(node0.iconOffset)).toBeGreaterThan(
+        Math.abs(node0.iconSize / 2)
       );
-
-      it('returns identical width and height', () => {
-        const node0 = Object.values(getNodeSize(newMockState))[0];
-        expect(node0.width).toBe(node0.height);
-      });
-
-      it('returns an iconOffset equal to iconSize/-2', () => {
-        const node0 = Object.values(getNodeSize(newMockState))[0];
-        expect(node0.iconOffset).toBe(node0.iconSize / -2);
-      });
-    });
-
-    describe('when text labels are enabled', () => {
-      const newMockState = reducer(
-        mockState.spaceflights,
-        toggleTextLabels(true)
-      );
-
-      it('returns a width greater than the height', () => {
-        const node0 = Object.values(getNodeSize(newMockState))[0];
-        expect(node0.width).toBeGreaterThan(node0.height);
-      });
-
-      it('returns an iconOffset with a greater magnitude than iconSize / 2', () => {
-        const node0 = Object.values(getNodeSize(newMockState))[0];
-        expect(Math.abs(node0.iconOffset)).toBeGreaterThan(
-          Math.abs(node0.iconSize / 2)
-        );
-      });
     });
   });
 });
 
 describe('getVisibleNodes', () => {
-  describe('when fonts have not yet loaded', () => {
-    it('returns an empty array', () => {
-      expect(getVisibleNodes(noFontState)).toEqual([]);
-    });
+  it('returns visible nodes as an array', () => {
+    expect(getVisibleNodes(mockState.spaceflights)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(String),
+          name: expect.any(String),
+          fullName: expect.any(String),
+          type: expect.any(String),
+          width: expect.any(Number),
+          height: expect.any(Number),
+          textOffset: expect.any(Number),
+          iconOffset: expect.any(Number),
+          iconSize: expect.any(Number),
+        }),
+      ])
+    );
   });
 
-  describe('when fonts have loaded', () => {
-    it('returns visible nodes as an array', () => {
-      expect(getVisibleNodes(mockState.spaceflights)).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            id: expect.any(String),
-            name: expect.any(String),
-            fullName: expect.any(String),
-            type: expect.any(String),
-            width: expect.any(Number),
-            height: expect.any(Number),
-            textOffset: expect.any(Number),
-            iconOffset: expect.any(Number),
-            iconSize: expect.any(Number),
-          }),
-        ])
-      );
-    });
-
-    it('returns only visible nodes', () => {
-      const nodes = getVisibleNodeIDs(mockState.spaceflights);
-      const nodeID = nodes[0];
-      const newMockState = reducer(
-        mockState.spaceflights,
-        toggleNodesDisabled([nodeID], true)
-      );
-      const visibleNodeIDs = getVisibleNodes(newMockState).map((d) => d.id);
-      expect(visibleNodeIDs.sort()).toEqual(
-        nodes.filter((id) => id !== nodeID).sort()
-      );
-      expect(visibleNodeIDs.includes(nodeID)).toEqual(false);
-    });
+  it('returns only visible nodes', () => {
+    const nodes = getVisibleNodeIDs(mockState.spaceflights);
+    const nodeID = nodes[0];
+    const newMockState = reducer(
+      mockState.spaceflights,
+      toggleNodesDisabled([nodeID], true)
+    );
+    const visibleNodeIDs = getVisibleNodes(newMockState).map((d) => d.id);
+    expect(visibleNodeIDs.sort()).toEqual(
+      nodes.filter((id) => id !== nodeID).sort()
+    );
+    expect(visibleNodeIDs.includes(nodeID)).toEqual(false);
   });
 });
 

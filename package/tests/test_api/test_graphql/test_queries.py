@@ -1,4 +1,7 @@
 import pytest
+from semver import VersionInfo
+
+from kedro_viz import __version__
 
 
 class TestQueryNoSessionStore:
@@ -115,3 +118,24 @@ class TestQueryWithRuns:
             }
         }
         assert response.json() == expected_response
+
+
+class TestQueryVersion:
+    def test_graphql_version_endpoint(self, client, mocker):
+        mocker.patch(
+            "kedro_viz.api.graphql.get_latest_version",
+            return_value=VersionInfo.parse("1.0.0"),
+        )
+        response = client.post(
+            "/graphql",
+            json={"query": "{version {installed isOutdated latest}}"},
+        )
+        assert response.json() == {
+            "data": {
+                "version": {
+                    "installed": __version__,
+                    "isOutdated": False,
+                    "latest": "1.0.0",
+                }
+            }
+        }
