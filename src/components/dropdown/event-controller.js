@@ -12,7 +12,7 @@ class EventController {
       window.__bodyEventHandlers = [];
     }
 
-    // add event handler to the array attached to the windown so that it can be retrieved outside of component
+    // add event handler to the array attached to the window so that it can be retrieved outside of component
     window.__bodyEventHandlers.push(eventHandler);
     // add the event handler to the body
     document.body.addEventListener('click', eventHandler);

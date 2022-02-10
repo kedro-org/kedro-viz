@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { flatten, find, flow, isEqual, map } from 'lodash/fp';
 import 'what-input';
-import './dropdown.css';
-import DropdownRenderer from './dropdown-renderer';
+import { flatten, find, flow, isEqual, map } from 'lodash/fp';
 import EventController from './event-controller.js';
 import { usePrevious } from '../../utils/hooks';
+import DropdownRenderer from './dropdown-renderer';
+
+import './dropdown.css';
 
 const Dropdown = (props) => {
   const {
