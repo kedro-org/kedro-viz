@@ -14,7 +14,6 @@ import {
 const getSizeWarningFlag = (state) => state.flags.sizewarning;
 const getVisibleSidebar = (state) => state.visible.sidebar;
 const getVisibleCode = (state) => state.visible.code;
-const getFontLoaded = (state) => state.fontLoaded;
 const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
 const getGraphHasNodes = (state) => Boolean(state.graph?.nodes?.length);
 const getChartSizeState = (state) => state.chartSize;
@@ -49,15 +48,14 @@ export const getGraphInput = createSelector(
     getVisibleNodes,
     getVisibleEdges,
     getVisibleLayerIDs,
-    getFontLoaded,
     getTriggerLargeGraphWarning,
   ],
-  (nodes, edges, layers, fontLoaded, triggerLargeGraphWarning) => {
-    if (!fontLoaded || triggerLargeGraphWarning) {
+  (nodes, edges, layers, triggerLargeGraphWarning) => {
+    if (triggerLargeGraphWarning) {
       return null;
     }
 
-    return { nodes, edges, layers, fontLoaded };
+    return { nodes, edges, layers };
   }
 );
 
