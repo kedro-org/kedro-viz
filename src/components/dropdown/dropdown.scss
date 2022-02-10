@@ -43,17 +43,23 @@ $menu-item-padding: 12px;
   position: relative;
 
   z-index: 9;
+
+  .dropdown__icon {
+    transform: rotate(180deg);
+    transition: transform ease 0.2s, background ease 0.2s;
+  }
 }
 
 .dropdown__label {
   position: relative;
   z-index: 8;
-
+  list-style: none;
   display: flex;
+  justify-content: space-between;
   width: 100%;
   align-items: center;
   height: $menu-item-height;
-  padding: 0 $sidebar-padding / 1.6; // divide by 1.6em font-size on element
+  padding: 0 0 0 $sidebar-padding / 1.6; // divide by 1.6em font-size on element
   overflow: hidden;
   border: none;
   border-radius: 0;
@@ -81,6 +87,11 @@ $menu-item-padding: 12px;
         box-shadow: none;
       }
     }
+  }
+
+  .dropdown__icon {
+    float: right;
+    transition: transform ease 0.2s, background ease 0.2s;
   }
 }
 

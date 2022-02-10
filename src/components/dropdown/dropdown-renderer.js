@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import handleKeyEvent from '../../utils/key-events';
 import uniqueId from 'lodash/uniqueId';
+import DropdownArrow from '../icons/dropdown-arrow';
+import IconButton from '../icon-button';
 
 /**
  * Renderer for the Dropdown component
@@ -127,6 +129,11 @@ const DropdownRenderer = ({
         onClick={onLabelClicked}
       >
         <span>{selectedOption.label || defaultText}</span>
+        <IconButton
+          disabled={false}
+          icon={DropdownArrow}
+          className="dropdown__icon"
+        />
       </button>
       <div className="dropdown__options">{optionsNode}</div>
     </div>
