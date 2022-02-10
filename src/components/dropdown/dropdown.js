@@ -82,7 +82,6 @@ const Dropdown = (props) => {
   const dropdownRef = useRef();
   const handleOptionSelectedRef = useRef({ open, selectedOption });
   const selectedObjRef = useRef(selectedObject);
-  const openRef = useRef(open);
 
   const mounted = useRef(false); // ref for detecting mounting of component
 
