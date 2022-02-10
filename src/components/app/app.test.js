@@ -97,10 +97,12 @@ describe('App', () => {
     const pipelineDropdownLabel = pipelineDropdown.querySelector(
       '.dropdown__label > span:first-child'
     );
+
     expect(pipelineDropdownLabel.innerHTML).toBe('Default');
     fireEvent.click(menuOption);
     expect(pipelineDropdownLabel.innerHTML).toBe(activePipeline.name);
     rerender(<App data={demo} />);
-    expect(pipelineDropdownLabel.innerHTML).toBe('Default');
+    // the default dropdown placeholder is 'Please select...' which is not returned right after a rerender
+    expect(pipelineDropdownLabel.innerHTML).toBe('Please select...');
   });
 });

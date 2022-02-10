@@ -1,57 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { flatten, find, flow, isEqual, map } from 'lodash/fp';
 import 'what-input';
 import './dropdown.css';
 import DropdownRenderer from './dropdown-renderer';
 import EventController from './event-controller.js';
+import { usePrevious } from '../../utils/hooks';
 
-const Dropdown = ({
-  children,
-  defaultText,
-  disabled,
-  onChanged,
-  onClosed,
-  onOpened,
-  width,
-})=>{
-
-    const [focusedOption, setFocusedOption] = useState(null);
-    const [selectedOption, setSelectedOption] = useState(findSelectedOption());
-    const [open, setOpen] = useState(false);
-
-    useEffect(() => {
-      setSelectedOption(findSelectedOption())
-    }, [selectedOption]);
-
-    useEffect(()=>{
-      return()=>
-      EventController.removeBodyListeners();
-    });
-  const dropdownRef= useRef(null)
-
-  /**
-   * Handler for closing a dropdown if a click occured outside the dropdown.
-   * @param {object} e - event object
-   */
-  const _handleBodyClicked = (e) => {
-    if (!dropdownRef.current.contains(e.target) && open) {
-      setOpen(false)
-    }
-  }
-
-  /**
-   * Check whether new props contain updated children
-   * @param {Object} nextProps - New component props
-   * @return {Boolean} True if new children are different from current ones
-   */
-  const _childrenHaveChanged = (nextProps) => {
-    const children = [this.props, nextProps].map((props) =>
-      React.Children.toArray(props.children)
-    );
-
-    return !isEqual(...children);
-  }
+const Dropdown = (props) => {
+  const {
+    children,
+    defaultText,
+    disabled,
+    onChanged,
+    onClosed,
+    onOpened,
+    width,
+  } = props;
 
   /**
    * Format the selected option props for adding to state
@@ -59,7 +24,7 @@ const Dropdown = ({
    * @return {Object} Selected option object for use in the state
    */
   const _findSelectedOption = (props) => {
-    const selectedOptionElement = this._findSelectedOptionElement(props);
+    const selectedOptionElement = _findSelectedOptionElement(props);
 
     // check children for a selected option
     if (selectedOptionElement) {
@@ -78,14 +43,14 @@ const Dropdown = ({
       label: null,
       value: null,
     };
-  }
+  };
 
   /**
    * Find the selected option by traversing sections and MenuOptions
    * @param {Object} props - Component props (optional)
    * @return {Object} Selected option element
    */
-  const _findSelectedOptionElement = (props = this.props) => {
+  const _findSelectedOptionElement = (props) => {
     const children = React.Children.toArray(props.children);
 
     if (!children.length) {
@@ -103,34 +68,125 @@ const Dropdown = ({
     }
 
     return find((child) => child.props.selected)(children);
-  }
+  };
+
+  const prevProps = usePrevious(props);
+  const [focusedOption, setFocusedOption] = useState(null);
+  const [haveClicked, setHaveClicked] = useState(false); // tracker for detecting _handleLabelClicked
+  const [selectedOption, setSelectedOption] = useState(
+    _findSelectedOption(props)
+  );
+  const [open, setOpen] = useState(false);
+  const [selectedObject, setSelectedObject] = useState(null); // this is to store the object that was passed from the handleOptionSelected eventhandler
+
+  const dropdownRef = useRef();
+  const handleOptionSelectedRef = useRef({ open, selectedOption });
+  const selectedObjRef = useRef(selectedObject);
+  const openRef = useRef(open);
+
+  const mounted = useRef(false); // ref for detecting mounting of component
+
+  useEffect(() => {
+    if (!mounted.current) {
+      // update mounted on componentDidMount
+      mounted.current = true;
+    } else {
+      // triggers every time on componentDidUpdate
+      if (_childrenHaveChanged(prevProps)) {
+        setSelectedOption(_findSelectedOption(prevProps));
+      }
+    }
+  });
+
+  useEffect(() => {
+    if (haveClicked === true) {
+      console.log('have clicked');
+      console.log('open', open);
+      // set callbacks, if defined
+      if (typeof onOpened === 'function' && open) {
+        onOpened();
+      } else if (typeof onClosed === 'function' && !open) {
+        onClosed();
+      }
+
+      // reset haveClicked
+      setHaveClicked(false);
+    }
+  }, [haveClicked, onOpened, onClosed, open]);
+
+  // use effect to be fired after state changes triggered by handleOptionSelected eventhandler
+  useEffect(() => {
+    // this check is to ensure that only the changes in the handleOptionSelected eventhandler will trigger this useEffect
+    if (selectedObjRef.current !== selectedObject) {
+      if (
+        !open &&
+        handleOptionSelectedRef.current.handleOptionSelectedRef !==
+          selectedOption
+      ) {
+        if (typeof onChanged === 'function') {
+          onChanged(selectedObject);
+        }
+      }
+      if (!open && typeof onClosed === 'function') {
+        onClosed();
+      }
+    }
+  });
+
+  // event to be fired on componentWillUnmount
+  useEffect(() => {
+    return () => EventController.removeBodyListeners();
+  }, []);
+
+  useEffect(() => {
+    // Focus either the button label or the active option.
+    // This is so screen-readers will follow the active element
+    const focusClass =
+      focusedOption !== null ? '.menu-option--focused' : '.dropdown__label';
+
+    dropdownRef.current.querySelector(focusClass).focus();
+  }, [focusedOption]);
+
+  /**
+   * Handler for closing a dropdown if a click occured outside the dropdown.
+   * @param {object} e - event object
+   */
+  const _handleBodyClicked = (e) => {
+    if (!dropdownRef.current.contains(e.target) && open) {
+      _handleClose();
+    }
+  };
+
+  /**
+   * Check whether new props contain updated children
+   * @param {Object} nextProps - New component props
+   * @return {Boolean} True if new children are different from current ones
+   */
+  const _childrenHaveChanged = (nextProps) => {
+    const children = [props, nextProps].map((props) =>
+      React.Children.toArray(props.children)
+    );
+
+    return !isEqual(...children);
+  };
 
   /**
    * Event handler which is fired when the label is clicked
    */
   const _handleLabelClicked = () => {
-    const { open } = this.state;
-    const { onOpened, onClosed } = this.props;
-
-    let callback = null;
-
-    // set callbacks, if defined
-    if (typeof onOpened === 'function' && !open) {
-      callback = onOpened;
-    } else if (typeof onClosed === 'function' && open) {
-      callback = onClosed;
-    }
-
     // remove or add the event listeners for
     if (open) {
       EventController.removeBodyListeners();
     } else {
-      EventController.addBodyListener(this._handleBodyClicked);
+      EventController.addBodyListener(_handleBodyClicked);
     }
+    // revert the state of open
+    setOpen(!open);
+    // set the click tracker to true to trigger the userEffect callback
+    setHaveClicked(true);
 
-    this.setState({ open: !open }, callback);
-    this._focusLabel();
-  }
+    _focusLabel();
+  };
 
   /**
    * Sort, filter and flatten the list of children to retrieve just the MenuOptions,
@@ -162,19 +218,17 @@ const Dropdown = ({
       getSectionChildren,
       []
     );
-  }
+  };
 
   /**
    * Convenience method to return focus from an option to the label.
    * This is particularly useful for screen-readers and keyboard users.
    */
   const _focusLabel = () => {
-    this.dropdown.querySelector('.dropdown__label').focus();
+    dropdownRef.current.querySelector('.dropdown__label').focus();
 
-    this.setState({
-      focusedOption: null,
-    });
-  }
+    setFocusedOption(null);
+  };
 
   /**
    * When the focused option changes (e.g. via up/down keyboard controls),
@@ -183,57 +237,43 @@ const Dropdown = ({
    * negative is up and positive is down.
    */
   const _handleFocusChange = (direction) => {
-    let { focusedOption } = this.state;
-    const optionsLength = this._getOptionsList().length;
+    let newFocusedOption = focusedOption;
+    const optionsLength = _getOptionsList().length;
 
     if (focusedOption === null) {
-      focusedOption = direction > 0 ? 0 : optionsLength - 1;
+      newFocusedOption = direction > 0 ? 0 : optionsLength - 1;
     } else {
-      focusedOption += direction;
+      newFocusedOption += direction;
     }
-    if (focusedOption >= optionsLength || focusedOption < 0) {
-      focusedOption = null;
+    if (newFocusedOption >= optionsLength || newFocusedOption < 0) {
+      newFocusedOption = null;
     }
 
-    this.setState({ focusedOption }, () => {
-      // Focus either the button label or the active option.
-      // This is so screen-readers will follow the active element
-      const focusClass =
-        focusedOption !== null ? '.menu-option--focused' : '.dropdown__label';
-
-      this.dropdown.querySelector(focusClass).focus();
-    });
-  }
+    setFocusedOption(newFocusedOption);
+  };
 
   /**
    * Event handler which is fired when a child item is selected
    */
   const _handleOptionSelected = (obj) => {
     const { label, id, value } = obj;
-    const { onChanged, onClosed } = this.props;
+    // this is not needed now as it is imported
+    // const { onChanged, onClosed } = this.props;
+
+    setSelectedObject(obj);
 
     // detect if the selected item has changed
-    const hasChanged = value !== this.state.selectedOption.value;
+    const hasChanged = value !== selectedOption.value;
     if (hasChanged) {
-      const selectedOption = { label, value, id };
-      this.setState({ open: false, selectedOption }, () => {
-        if (typeof onChanged === 'function') {
-          onChanged(obj);
-        }
+      const newSelectedOption = { label, value, id };
 
-        if (typeof onClosed === 'function') {
-          onClosed();
-        }
-      });
+      setOpen(false);
+      setSelectedOption(newSelectedOption);
     } else {
-      this.setState({ open: false }, () => {
-        if (typeof onClosed === 'function') {
-          onClosed();
-        }
-      });
+      setOpen(false);
     }
-    this._focusLabel();
-  }
+    _focusLabel();
+  };
 
   /**
    * Retrieve a reference to the dropdown DOM node (from the renderer component),
@@ -241,30 +281,14 @@ const Dropdown = ({
    * @param {object} el - The ref for the Dropdown container node
    */
   const _handleRef = (el) => {
-    this.dropdown = el;
-  }
-
-  /**
-   * API method to open the dropdown
-   */
-  const _handleOpen = () => {
-  
-    setOpen(true)
-    this.setState({ open: true }, () => {
-      this._focusLabel();
-      if (typeof onOpened === 'function') {
-        onOpened();
-      }
-    });
-
-    // add event listener to automatically close the dropdown
-    EventController.addBodyListener(this._handleBodyClicked);
-  }
+    dropdownRef.current = el;
+  };
 
   /**
    * API method to close the dropdown
    */
   const _handleClose = () => {
+    setOpen(false);
 
     this.setState({ open: false }, () => {
       if (typeof onClosed === 'function') {
@@ -274,29 +298,26 @@ const Dropdown = ({
 
     // remove event listener
     EventController.removeBodyListeners();
-  }
+  };
 
-
-
-    return (
-      <DropdownRenderer
-        defaultText={defaultText}
-        disabled={disabled}
-        handleRef={this._handleRef}
-        onLabelClicked={this._handleLabelClicked}
-        onOptionSelected={this._handleOptionSelected}
-        onSelectChanged={this._handleFocusChange}
-        open={open}
-        focusedOption={focusedOption}
-        selectedOption={selectedOption}
-        width={width}
-        ref={dropdownRef}
-      >
-        {children}
-      </DropdownRenderer>
-    );
-
-}
+  return (
+    <DropdownRenderer
+      defaultText={defaultText}
+      disabled={disabled}
+      handleRef={_handleRef}
+      onLabelClicked={_handleLabelClicked}
+      onOptionSelected={_handleOptionSelected}
+      onSelectChanged={_handleFocusChange}
+      open={open}
+      focusedOption={focusedOption}
+      selectedOption={selectedOption}
+      width={width}
+      ref={dropdownRef}
+    >
+      {children}
+    </DropdownRenderer>
+  );
+};
 
 Dropdown.defaultProps = {
   children: null,
