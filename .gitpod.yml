@@ -18,7 +18,7 @@ tasks:
       pip install https://github.com/kedro-org/kedro/archive/main.zip --no-deps --user --force-reinstall
     command: | 
       gp sync-await build_complete
-      pip install -e package --no-deps
+      pip install package --no-deps
       gp sync-done kedro_installed
       make run
   - name: demo-project
