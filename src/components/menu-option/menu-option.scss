@@ -24,21 +24,16 @@ $menu-item-padding: 12px;
 }
 
 .menu-option {
-  display: flex;
   align-items: center;
   box-sizing: border-box;
-
-  height: $menu-item-height;
-
-  padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
-  border-color: var(--menu-option-border-color) transparent;
-  border-style: solid;
-  border-width: var(--menu-option-border-width);
-  white-space: nowrap;
-  overflow: hidden;
   cursor: pointer;
-  user-select: none;
+  display: flex;
+  height: $menu-item-height;
   outline: none;
+  overflow: hidden;
+  padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
+  user-select: none;
+  white-space: nowrap;
 
   &.menu-option--focused,
   &:focus,

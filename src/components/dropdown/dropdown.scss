@@ -30,49 +30,46 @@ $menu-item-padding: 12px;
 }
 
 .dropdown {
-  position: relative;
-  box-sizing: border-box;
-  display: block;
   border: none;
   box-shadow: 0 1px 1px var(--dropdown-shadow);
+  box-sizing: border-box;
   color: var(--color-text);
-  border: 1px solid var(--dropdown-border);
+  display: block;
+  position: relative;
 }
 
 .dropdown--open {
   position: relative;
 
-  z-index: 9;
-
-  .dropdown__icon {
-    transform: rotate(180deg);
+  .dropdown__label > .dropdown__icon {
+    transform: rotate(0deg);
     transition: transform ease 0.2s, background ease 0.2s;
   }
 }
 
 .dropdown__label {
-  position: relative;
-  z-index: 8;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
   align-items: center;
-  height: $menu-item-height;
-  padding: 0 0 0 $sidebar-padding / 1.6; // divide by 1.6em font-size on element
-  overflow: hidden;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  outline: 4px solid transparent;
-  font-family: inherit;
-  font-size: 1.6em;
-  letter-spacing: 0.1px;
-  line-height: 1.25em;
   background: var(--dropdown-label-bg);
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
   color: var(--color-text);
   cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: 1.6em;
+  height: $menu-item-height;
+  justify-content: space-between;
+  letter-spacing: 0.1px;
+  line-height: 1.25em;
+  list-style: none;
+  outline: 4px solid transparent;
+  overflow: hidden;
+  padding: 0 0 0 $sidebar-padding / 1.6; // divide by 1.6em font-size on element
+  position: relative;
   user-select: none;
+  width: 100%;
+  z-index: 8;
 
   &:disabled {
     cursor: not-allowed;
@@ -90,8 +87,21 @@ $menu-item-padding: 12px;
   }
 
   .dropdown__icon {
-    float: right;
+    height: 24px;
+    margin: 0 8px 0 12px;
+    position: absolute;
+    right: 0;
+    transform: rotate(180deg);
+    transform-origin: center;
     transition: transform ease 0.2s, background ease 0.2s;
+    width: auto;
+
+    > svg {
+      fill: var(--color-default-alt);
+      height: 24px;
+      opacity: 0.5;
+      width: 24px;
+    }
   }
 }
 

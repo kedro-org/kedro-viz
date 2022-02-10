@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { flatten, find, flow, isEqual, map } from 'lodash/fp';
 import 'what-input';
@@ -23,7 +23,7 @@ const Dropdown = (props) => {
    * @param {Object} props - Component props
    * @return {Object} Selected option object for use in the state
    */
-  const _findSelectedOption = (props) => {
+  const _findSelectedOption = useCallback((props) => {
     const selectedOptionElement = _findSelectedOptionElement(props);
 
     // check children for a selected option
@@ -43,7 +43,7 @@ const Dropdown = (props) => {
       label: null,
       value: null,
     };
-  };
+  }, []);
 
   /**
    * Find the selected option by traversing sections and MenuOptions
@@ -77,7 +77,7 @@ const Dropdown = (props) => {
     _findSelectedOption(props)
   );
   const [open, setOpen] = useState(false);
-  const [selectedObject, setSelectedObject] = useState(null); // this is to store the object that was passed from the handleOptionSelected eventhandler
+  const [selectedObject, setSelectedObject] = useState(null); // this is to store the object that was passed from the handleOptionSelected event handler
 
   const dropdownRef = useRef();
   const handleOptionSelectedRef = useRef({ open, selectedOption });
@@ -86,6 +86,19 @@ const Dropdown = (props) => {
   const mounted = useRef(false); // ref for detecting mounting of component
 
   useEffect(() => {
+    /**
+     * Check whether new props contain updated children
+     * @param {Object} nextProps - New component props
+     * @return {Boolean} True if new children are different from current ones
+     */
+    const _childrenHaveChanged = (nextProps) => {
+      const children = [props, nextProps].map((props) =>
+        React.Children.toArray(props.children)
+      );
+
+      return !isEqual(...children);
+    };
+
     if (!mounted.current) {
       // update mounted on componentDidMount
       mounted.current = true;
@@ -95,12 +108,10 @@ const Dropdown = (props) => {
         setSelectedOption(_findSelectedOption(prevProps));
       }
     }
-  });
+  }, [_findSelectedOption, prevProps, props]);
 
   useEffect(() => {
     if (haveClicked === true) {
-      console.log('have clicked');
-      console.log('open', open);
       // set callbacks, if defined
       if (typeof onOpened === 'function' && open) {
         onOpened();
@@ -113,9 +124,9 @@ const Dropdown = (props) => {
     }
   }, [haveClicked, onOpened, onClosed, open]);
 
-  // use effect to be fired after state changes triggered by handleOptionSelected eventhandler
+  // Use effect to be fired after state changes triggered by handleOptionSelected event handler
   useEffect(() => {
-    // this check is to ensure that only the changes in the handleOptionSelected eventhandler will trigger this useEffect
+    // This check is to ensure that only the changes in the handleOptionSelected event handler will trigger this useEffect
     if (selectedObjRef.current !== selectedObject) {
       if (
         !open &&
@@ -132,7 +143,7 @@ const Dropdown = (props) => {
     }
   });
 
-  // event to be fired on componentWillUnmount
+  // Event to be fired on componentWillUnmount
   useEffect(() => {
     return () => EventController.removeBodyListeners();
   }, []);
@@ -154,19 +165,6 @@ const Dropdown = (props) => {
     if (!dropdownRef.current.contains(e.target) && open) {
       _handleClose();
     }
-  };
-
-  /**
-   * Check whether new props contain updated children
-   * @param {Object} nextProps - New component props
-   * @return {Boolean} True if new children are different from current ones
-   */
-  const _childrenHaveChanged = (nextProps) => {
-    const children = [props, nextProps].map((props) =>
-      React.Children.toArray(props.children)
-    );
-
-    return !isEqual(...children);
   };
 
   /**
