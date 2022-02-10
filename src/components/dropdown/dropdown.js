@@ -159,7 +159,7 @@ const Dropdown = (props) => {
   }, [focusedOption]);
 
   /**
-   * Handler for closing a dropdown if a click occured outside the dropdown.
+   * Handler for closing a dropdown if a click occurred outside the dropdown.
    * @param {object} e - event object
    */
   const _handleBodyClicked = (e) => {
@@ -212,7 +212,7 @@ const Dropdown = (props) => {
       return previous;
     };
 
-    return React.Children.toArray(this.props.children).reduce(
+    return React.Children.toArray(props.children).reduce(
       getSectionChildren,
       []
     );
@@ -288,11 +288,9 @@ const Dropdown = (props) => {
   const _handleClose = () => {
     setOpen(false);
 
-    this.setState({ open: false }, () => {
-      if (typeof onClosed === 'function') {
-        onClosed();
-      }
-    });
+    if (typeof onClosed === 'function') {
+      onClosed();
+    }
 
     // remove event listener
     EventController.removeBodyListeners();
