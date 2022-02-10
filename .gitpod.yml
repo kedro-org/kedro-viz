@@ -18,7 +18,8 @@ tasks:
       pip install https://github.com/kedro-org/kedro/archive/main.zip --no-deps --user --force-reinstall
     command: | 
       gp sync-await build_complete
-      pip install package --no-deps
+      # Need no-use-pep517 as a workaround for https://github.com/pypa/pip/issues/7953.
+      pip install -e /workspace/kedro-viz/package --no-deps --no-use-pep517
       gp sync-done kedro_installed
       make run
   - name: demo-project
