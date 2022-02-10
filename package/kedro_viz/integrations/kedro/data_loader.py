@@ -5,7 +5,7 @@ load data from projects created in a range of Kedro versions.
 # pylint: disable=import-outside-toplevel
 # pylint: disable=protected-access
 from pathlib import Path
-from typing import Dict, Optional, Tuple, cast
+from typing import Dict, Optional, Tuple
 
 from kedro import __version__
 from kedro.io import DataCatalog
