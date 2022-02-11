@@ -7,11 +7,14 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
 ## Bug fixes and other changes
+
 - Migrate Kedro-UI buttons to Kedro-viz as Kedro-UI is now deprecated. (#716)
 - Add a Husky pre-push hook. (#723)
 - Create a `version` GraphQL query to get versions of Kedro-Viz. (#727)
 - Fix Kedro-Viz to work with projects that have no `__default__` registered pipeline. This also fixes the `--pipeline` CLI option. (#729)
+- Fix lazy pipelines loading causes `get_current_session` to throw an error. (#726, #727)
 
 # Release 4.3.1
 
