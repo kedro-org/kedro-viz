@@ -3,99 +3,95 @@
 .pipeline-search-list {
   padding: 2px ($sidebar-padding - 0.4) 0 ($sidebar-padding - 0.4);
 
-  .kui-searchbar,
-  .kui-input-wrapper {
+  .search-bar,
+  .search-input-wrapper {
     max-width: none;
   }
 
-  .kui-searchbar .kui-icon {
-    opacity: 1;
-  }
-
-  .kui-searchbar .kui-icon--close {
+  .search-bar .icon--close {
     top: 18px;
     right: 2px;
     width: 20px;
     height: 20px;
   }
 
-  .kui-searchbar .kui-icon__graphics {
+  .search-bar .icon__graphics {
     opacity: 0.45;
     fill: var(--color-default-alt) !important;
   }
 
-  .kui-searchbar--focused .kui-icon__graphics {
+  .search-bar--focused .icon__graphics {
     opacity: 0.75;
   }
 
-  .kui-input {
+  .search-input {
     padding: 5px;
   }
 
-  .kui-input:active:not(.kui-input--disabled),
-  .kui-input:hover:not([disabled]),
-  .kui-input,
-  .kui-input--focused,
-  .kui-input__field {
+  .search-input:active:not(.search-input--disabled),
+  .search-input:hover:not([disabled]),
+  .search-input,
+  .search-input--focused,
+  .search-input__field {
     background: none;
     border: none;
     box-shadow: none;
   }
 
-  .kui-input--focused {
+  .search-input--focused {
     position: relative;
     z-index: 1;
     outline-color: $color-primary;
   }
 
-  .kui-input__field::placeholder {
+  .search-input__field::placeholder {
     opacity: 1;
   }
 
-  .kui-input__field::placeholder {
+  .search-input__field::placeholder {
     color: var(--color-default-alt) !important;
     opacity: 0.5;
   }
 
-  .kui-input__field:hover::placeholder {
+  .search-input__field:hover::placeholder {
     opacity: 0.7;
   }
 
-  .kui-input__field:focus::placeholder {
+  .search-input__field:focus::placeholder {
     opacity: 0.95;
   }
 
-  .kui-input__field {
+  .search-input__field {
     margin: 0 0 2px 32px;
     font-size: 1.65em;
   }
 
-  .kui-searchbar__iconwrapper .kui-icon {
+  .search-bar__icon-wrapper .icon {
     top: 16px;
     left: 6px;
   }
 
-  .kui-input__line:before {
+  .search-input__line:before {
     flex: 1;
     max-width: none;
   }
 
-  .kui-input__line:before {
+  .search-input__line:before {
     background-color: var(--color-default-alt);
     opacity: 0.3;
     transition: background-color 0.3s, opacity 0.3s;
   }
 
-  .kui-searchbar--focused .kui-input__line:before {
+  .search-bar--focused .search-input__line:before {
     opacity: 0.55;
   }
 
-  .kui-searchbar .kui-input__line:not([data-value='']):before {
+  .search-bar .search-input__line:not([data-value='']):before {
     background-color: $color-primary;
     opacity: 1;
   }
 
-  .kui-input__line:after {
+  .search-input__line:after {
     display: none;
   }
 }
