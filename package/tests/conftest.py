@@ -150,20 +150,6 @@ def example_api(
 
 
 @pytest.fixture
-def example_api_no_session_store(
-    data_access_manager: DataAccessManager,
-    example_pipelines: Dict[str, Pipeline],
-    example_catalog: DataCatalog,
-    mocker,
-):
-    api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(data_access_manager, example_catalog, example_pipelines, None)
-    mocker.patch("kedro_viz.api.responses.data_access_manager", new=data_access_manager)
-    mocker.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager)
-    yield api
-
-
-@pytest.fixture
 def example_api_no_default_pipeline(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],

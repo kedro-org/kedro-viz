@@ -426,12 +426,6 @@ class TestMainEndpoint:
         response = client.get("/api/main")
         assert_example_data(response.json())
 
-    def test_endpoint_main_no_session_store(self, example_api_no_session_store):
-        client = TestClient(example_api_no_session_store)
-        response = client.get("/api/main")
-        assert response.status_code == 200
-        assert_example_data(response.json())
-
     def test_endpoint_main_no_default_pipeline(self, example_api_no_default_pipeline):
         client = TestClient(example_api_no_default_pipeline)
         response = client.get("/api/main")
