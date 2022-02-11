@@ -1,4 +1,4 @@
-FROM gitpod/workspace-full:latest
+FROM gitpod/workspace-full:legacy-dazzle-v1
 
 RUN bash -c ". .nvm/nvm.sh && nvm install lts/fermium && nvm use lts/fermium && nvm alias default lts/fermium"
 
