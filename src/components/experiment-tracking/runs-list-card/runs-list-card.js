@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import utils from '@quantumblack/kedro-ui/lib/utils';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import classnames from 'classnames';
-import { textMatchesSearch } from '../../../utils';
+import {
+  getHighlightedText,
+  textMatchesSearch,
+} from '../../../utils/search-utils';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import BookmarkIcon from '../../icons/bookmark';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import CheckIcon from '../../icons/check';
 
 import './runs-list-card.css';
-
-const { getHighlightedText } = utils;
 
 /**
  * Display a card showing run info from an experiment
