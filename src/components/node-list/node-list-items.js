@@ -1,4 +1,3 @@
-import utils from '@quantumblack/kedro-ui/lib/utils';
 import { createSelector } from 'reselect';
 import { sidebarElementTypes, sidebarGroups } from '../../config';
 import IndicatorIcon from '../icons/indicator';
@@ -6,7 +5,7 @@ import IndicatorOffIcon from '../icons/indicator-off';
 import IndicatorPartialIcon from '../icons/indicator-partial';
 import InvisibleIcon from '../icons/invisible';
 import VisibleIcon from '../icons/visible';
-const { escapeRegExp, getHighlightedText } = utils;
+import { escapeRegExp, getHighlightedText } from '../../utils/search-utils';
 
 export const isTagType = (type) => type === 'tag';
 export const isElementType = (type) => type === 'elementType';
