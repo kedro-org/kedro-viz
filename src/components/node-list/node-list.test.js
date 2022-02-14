@@ -47,7 +47,7 @@ describe('NodeList', () => {
       test.each(searches)(
         'display only the nodes matching the search text "%s", as well as their modular pipelines',
         (searchText) => {
-          const search = () => wrapper.find('.kui-input__field');
+          const search = () => wrapper.find('.search-input__field');
           search().simulate('change', { target: { value: searchText } });
           const nodeList = wrapper.find(
             '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
@@ -86,7 +86,7 @@ describe('NodeList', () => {
       const wrapper = setup.mount(<NodeList />);
       const searchWrapper = wrapper.find('.pipeline-search-list');
       // Re-find elements from root each time to see updates
-      const search = () => wrapper.find('.kui-input__field');
+      const search = () => wrapper.find('.search-input__field');
       const nodeList = () =>
         wrapper.find(
           '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
@@ -132,7 +132,7 @@ describe('NodeList', () => {
       );
       const searchWrapper = wrapper.find('.pipeline-search-list');
       // Re-find elements from root each time to see updates
-      const search = () => wrapper.find('.kui-input__field');
+      const search = () => wrapper.find('.search-input__field');
       const nodeList = () =>
         wrapper.find(
           '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
