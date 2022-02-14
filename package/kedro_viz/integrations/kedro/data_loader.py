@@ -5,7 +5,7 @@ load data from projects created in a range of Kedro versions.
 # pylint: disable=import-outside-toplevel
 # pylint: disable=protected-access
 from pathlib import Path
-from typing import Dict, Optional, Tuple, cast
+from typing import Dict, Optional, Tuple
 
 from kedro import __version__
 from kedro.io import DataCatalog
@@ -65,8 +65,14 @@ def load_data(
             session_store_location = None
             if isinstance(session_store, SQLiteStore):
                 session_store_location = session_store.location
+            catalog = context.catalog
 
-        return context.catalog, cast(Dict, pipelines), session_store_location
+            # Pipelines is a lazy dict-like object, so we force it to populate here
+            # in case user doesn't have an active session down the line when it's first accessed.
+            # Useful for users who have `get_current_session` in their `register_pipelines()`.
+            pipelines_dict = dict(pipelines)
+
+        return catalog, pipelines_dict, session_store_location
 
     if KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession

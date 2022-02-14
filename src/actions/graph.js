@@ -42,7 +42,7 @@ const layoutWorker = preventWorkerQueues(worker, layout);
  * Async action to calculate graph layout in a web worker
  * whiled displaying a loading spinner
  * @param {Object} graphState A subset of main state
- * @return {function} A promise that resolves when the calcuation is done
+ * @return {function} A promise that resolves when the calculation is done
  */
 export function calculateGraph(graphState) {
   if (!graphState) {

@@ -5,11 +5,7 @@ import {
   getGraphInput,
   getTriggerLargeGraphWarning,
 } from './layout';
-import {
-  changeFlag,
-  toggleIgnoreLargeWarning,
-  updateFontLoaded,
-} from '../actions';
+import { changeFlag, toggleIgnoreLargeWarning } from '../actions';
 import { updateGraph } from '../actions/graph';
 import { toggleTypeDisabled } from '../actions/node-type';
 import reducer from '../reducers';
@@ -113,14 +109,8 @@ describe('Selectors', () => {
           nodes: expect.any(Array),
           edges: expect.any(Array),
           layers: expect.any(Array),
-          fontLoaded: expect.any(Boolean),
         })
       );
-    });
-
-    it('returns null if fontLoaded is false', () => {
-      const newMockState = reducer(mockState, updateFontLoaded(false));
-      expect(getGraphInput(newMockState)).toEqual(null);
     });
   });
 
