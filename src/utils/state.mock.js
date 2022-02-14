@@ -6,7 +6,6 @@ import getInitialState from '../store/initial-state';
 import spaceflights from './data/spaceflights.mock.json';
 import demo from './data/demo.mock.json';
 import reducer from '../reducers';
-import { updateFontLoaded } from '../actions';
 import { getGraphInput } from '../selectors/layout';
 import { updateGraph } from '../actions/graph';
 import { graphNew } from './graph';
@@ -26,8 +25,6 @@ export const prepareState = ({
 }) => {
   const initialState = getInitialState(props);
   const actions = [
-    // Set fontLoaded = true:
-    () => updateFontLoaded(true),
     // Per-test provided actions before layout:
     ...beforeLayoutActions,
     // Precalculate graph layout:
