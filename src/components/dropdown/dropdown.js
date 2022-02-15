@@ -113,21 +113,19 @@ const Dropdown = (props) => {
 
   useEffect(() => {
     if (haveClicked === true) {
-      // set callbacks, if defined
       if (typeof onOpened === 'function' && open) {
         onOpened();
       } else if (typeof onClosed === 'function' && !open) {
         onClosed();
       }
 
-      // reset haveClicked
       setHaveClicked(false);
     }
   }, [haveClicked, onOpened, onClosed, open]);
 
-  // Use effect to be fired after state changes triggered by handleOptionSelected event handler
+  // to be fired after state changes triggered by handleOptionSelected event handler
   useEffect(() => {
-    // This check is to ensure that only the changes in the handleOptionSelected event handler will trigger this useEffect
+    // This check is to ensure that only the changes in the handleOptionSelected event handler will trigger this effect
     if (selectedObjRef.current !== selectedObject) {
       if (
         !open &&
@@ -255,8 +253,6 @@ const Dropdown = (props) => {
    */
   const _handleOptionSelected = (obj) => {
     const { label, id, value } = obj;
-    // this is not needed now as it is imported
-    // const { onChanged, onClosed } = this.props;
 
     setSelectedObject(obj);
 
