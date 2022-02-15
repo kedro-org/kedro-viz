@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import modifiers from '../../utils/modifiers';
+import modifiers from '../../../utils/modifiers';
 import './toggle.css';
 
 /**

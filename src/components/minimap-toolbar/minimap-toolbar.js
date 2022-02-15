@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { toggleMiniMap, updateZoom } from '../../actions';
 import { getChartZoom } from '../../selectors/layout';
-import IconButton from '../icon-button';
+import IconButton from '../ui/icon-button';
 import MapIcon from '../icons/map';
 import PlusIcon from '../icons/plus';
 import MinusIcon from '../icons/minus';

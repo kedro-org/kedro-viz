@@ -1,7 +1,7 @@
 import React from 'react';
 import sinon from 'sinon';
 import Button from './button';
-import { setup } from '../../utils/state.mock';
+import { setup } from '../../../utils/state.mock';
 
 describe('Button', () => {
   it('should be a function', () => {

@@ -50,3 +50,10 @@
   letter-spacing: 0.1px;
   line-height: 1.4;
 }
+
+*,
+:after,
+:before {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}

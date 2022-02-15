@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Modal from '../modal';
+import Modal from '../ui/modal';
 import {
   changeFlag,
   toggleSettingsModal,

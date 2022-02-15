@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import handleKeyEvent from '../../utils/key-events';
+import handleKeyEvent from '../../../utils/key-events';
 import './menu-option.css';
+
 /**
-Generic Kedro Menu Option 
+ * Generic Kedro Menu Option
  */
 const MenuOption = ({
   className,

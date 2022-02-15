@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
-import Button from '../../button';
-import Modal from '../../modal';
+import Button from '../../ui/button';
+import Modal from '../../ui/modal';
 import Input from '../../ui/input';
 
 import '../../settings-modal/settings-modal.css';

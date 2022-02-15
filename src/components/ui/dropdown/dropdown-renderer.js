@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import handleKeyEvent from '../../utils/key-events';
+import handleKeyEvent from '../../../utils/key-events';
 import uniqueId from 'lodash/uniqueId';
-import DropdownArrow from '../icons/dropdown-arrow';
+import DropdownArrow from '../../icons/dropdown-arrow';
 
 /**
  * Renderer for the Dropdown component
