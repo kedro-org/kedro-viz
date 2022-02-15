@@ -1,8 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import Dropdown from '@quantumblack/kedro-ui/lib/components/dropdown';
-import MenuOption from '@quantumblack/kedro-ui/lib/components/menu-option';
+import Dropdown from '../dropdown';
+import MenuOption from '../menu-option';
 import { loadPipelineData } from '../../actions/pipelines';
 import { toggleFocusMode } from '../../actions';
 import './pipeline-list.css';
@@ -31,7 +31,6 @@ export const PipelineList = ({
         disabled={!pipeline.ids.length}
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
-        theme={theme}
         width={null}
         onChanged={onUpdateActivePipeline}
         defaultText={
@@ -59,7 +58,6 @@ export const mapStateToProps = (state) => ({
   asyncDataSource: state.dataSource === 'json',
   pipeline: state.pipeline,
   prettyName: state.prettyName,
-  theme: state.theme,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
