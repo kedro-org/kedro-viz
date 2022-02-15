@@ -7,7 +7,7 @@ import exportGraph from './export-graph';
 import './export-modal.css';
 
 /**
- * Kedro-UI modal to allow users to choose between SVG/PNG export formats
+ * Modal to allow users to choose between SVG/PNG export formats
  */
 const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
   if (!visible.exportBtn) {
