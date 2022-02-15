@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
+import { GraphQLProvider } from '../provider/provider';
 import 'what-input';
 import configureStore from '../../store';
 import { resetData } from '../../actions';
@@ -62,7 +63,9 @@ class App extends React.Component {
   render() {
     return this.props.data ? (
       <Provider store={this.store}>
-        <Wrapper />
+        <GraphQLProvider useMocks={false}>
+          <Wrapper />
+        </GraphQLProvider>
       </Provider>
     ) : null;
   }

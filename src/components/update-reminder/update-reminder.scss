@@ -1,0 +1,63 @@
+@import '../../styles/variables';
+
+.update-reminder-unexpanded {
+  height: 32px;
+  width: 296px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  background-color: $color-accent-yellow;
+  z-index: 100;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-around;
+
+  p {
+    color: $color-bg-dark-2;
+    margin-top: 6px;
+  }
+
+  button {
+    color: $color-bg-dark-2;
+    border: none;
+    background-color: $color-accent-yellow;
+    font-size: 12px;
+  }
+}
+
+.update-reminder-expanded {
+  height: 48px;
+  width: 484px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  background-color: $color-accent-yellow;
+  z-index: 100;
+  font-size: 12px;
+  display: flex;
+  justify-content: start;
+
+  p {
+    color: $color-bg-dark-2;
+    padding: 6px 24px;
+    margin-top: 6px;
+  }
+
+  button {
+    color: $color-bg-dark-2;
+    // margin-top: 8px;
+    border: none;
+    background-color: $color-accent-yellow;
+    font-size: 16px;
+  }
+}
+
+.expanded-detail {
+  height: 340px;
+  width: 484px;
+  position: absolute;
+  right: 0px;
+  top: 48px;
+
+  background-color: $color-bg-dark-4;
+}

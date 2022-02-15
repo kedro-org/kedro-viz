@@ -1,21 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { useApolloQuery } from '../../apollo/utils';
+import { GET_VERSIONS } from '../../apollo/queries';
 import { isLoading } from '../../selectors/loading';
 import classnames from 'classnames';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
 import ExperimentWrapper from '../experiment-wrapper';
 import SettingsModal from '../settings-modal';
-import { Provider } from '../provider/provider';
+import UpdateReminder from '../update-reminder';
 
 import './wrapper.css';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ theme }) => (
-  <Provider useMocks={false}>
+export const Wrapper = ({ theme }) => {
+  const { data } = useApolloQuery(GET_VERSIONS);
+  const [dismissed, setDismissed] = useState(false);
+
+  return (
     <div
       className={classnames('kedro-pipeline kedro', {
         'kui-theme--dark': theme === 'dark',
@@ -26,6 +31,14 @@ export const Wrapper = ({ theme }) => (
       <Router>
         <GlobalToolbar />
         <SettingsModal />
+        {/* need to add check for isOutdated here when wrapping up after development*/}
+        {data && !dismissed && (
+          <UpdateReminder
+            dismissed={dismissed}
+            versions={data.version}
+            setDismiss={setDismissed}
+          />
+        )}
         <Switch>
           <Route exact path={['/', '/flowchart']}>
             <FlowChartWrapper />
@@ -36,8 +49,8 @@ export const Wrapper = ({ theme }) => (
         </Switch>
       </Router>
     </div>
-  </Provider>
-);
+  );
+};
 
 export const mapStateToProps = (state) => ({
   loading: isLoading(state),
