@@ -284,10 +284,6 @@ const Dropdown = (props) => {
   const _handleClose = () => {
     setOpen(false);
 
-    if (typeof onClosed === 'function') {
-      onClosed();
-    }
-
     // remove event listener
     EventController.removeBodyListeners();
   };
