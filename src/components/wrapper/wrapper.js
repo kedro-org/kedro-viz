@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useApolloQuery } from '../../apollo/utils';
+import { client } from '../../apollo/config';
+import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
 import { isLoading } from '../../selectors/loading';
 import classnames from 'classnames';
@@ -17,7 +19,7 @@ import './wrapper.css';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
 export const Wrapper = ({ theme }) => {
-  const { data } = useApolloQuery(GET_VERSIONS);
+  const { data } = useApolloQuery(GET_VERSIONS, { client });
   const [dismissed, setDismissed] = useState(false);
   const [isOutdated, setIsOutdated] = useState(false);
   const [latest, setLatest] = useState(null);
@@ -30,33 +32,35 @@ export const Wrapper = ({ theme }) => {
   }, [data]);
 
   return (
-    <div
-      className={classnames('kedro-pipeline kedro', {
-        'kui-theme--dark': theme === 'dark',
-        'kui-theme--light': theme === 'light',
-      })}
-    >
-      <h1 className="pipeline-title">Kedro-Viz</h1>
-      <Router>
-        <GlobalToolbar isOutdated={isOutdated} />
-        <SettingsModal isOutdated={isOutdated} latest={latest} />
-        {data && isOutdated && !dismissed && (
-          <UpdateReminder
-            dismissed={dismissed}
-            versions={data.version}
-            setDismiss={setDismissed}
-          />
-        )}
-        <Switch>
-          <Route exact path={['/', '/flowchart']}>
-            <FlowChartWrapper />
-          </Route>
-          <Route path={['/runsList', '/runsList/:id']}>
-            <ExperimentWrapper />
-          </Route>
-        </Switch>
-      </Router>
-    </div>
+    <GraphQLProvider useMocks={false}>
+      <div
+        className={classnames('kedro-pipeline kedro', {
+          'kui-theme--dark': theme === 'dark',
+          'kui-theme--light': theme === 'light',
+        })}
+      >
+        <h1 className="pipeline-title">Kedro-Viz</h1>
+        <Router>
+          <GlobalToolbar isOutdated={isOutdated} />
+          <SettingsModal isOutdated={isOutdated} latest={latest} />
+          {data && isOutdated && !dismissed && (
+            <UpdateReminder
+              dismissed={dismissed}
+              versions={data.version}
+              setDismiss={setDismissed}
+            />
+          )}
+          <Switch>
+            <Route exact path={['/', '/flowchart']}>
+              <FlowChartWrapper />
+            </Route>
+            <Route path={['/runsList', '/runsList/:id']}>
+              <ExperimentWrapper />
+            </Route>
+          </Switch>
+        </Router>
+      </div>
+    </GraphQLProvider>
   );
 };
 
