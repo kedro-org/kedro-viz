@@ -103,12 +103,14 @@ describe('App', () => {
     const pipelineDropdown = container.querySelector('.pipeline-list');
     const menuOption = within(pipelineDropdown).getByText(activePipeline.name);
     const pipelineDropdownLabel = pipelineDropdown.querySelector(
-      '.kui-dropdown__label > span:first-child'
+      '.dropdown__label > span:first-child'
     );
+
     expect(pipelineDropdownLabel.innerHTML).toBe('Default');
     fireEvent.click(menuOption);
     expect(pipelineDropdownLabel.innerHTML).toBe(activePipeline.name);
     rerender(<App data={demo} />);
-    expect(pipelineDropdownLabel.innerHTML).toBe('Default');
+    // the default dropdown placeholder is 'Please select...' which is not returned right after a rerender
+    expect(pipelineDropdownLabel.innerHTML).toBe('Please select...');
   });
 });
