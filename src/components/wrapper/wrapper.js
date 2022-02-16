@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useApolloQuery } from '../../apollo/utils';
@@ -19,6 +19,15 @@ import './wrapper.css';
 export const Wrapper = ({ theme }) => {
   const { data } = useApolloQuery(GET_VERSIONS);
   const [dismissed, setDismissed] = useState(false);
+  const [isOutdated, setIsOutdated] = useState(false);
+  const [latest, setLatest] = useState(null);
+
+  useEffect(() => {
+    if (data) {
+      setIsOutdated(data.version.isOutdated);
+      setLatest(data.version.latest);
+    }
+  }, [data]);
 
   return (
     <div
@@ -29,10 +38,9 @@ export const Wrapper = ({ theme }) => {
     >
       <h1 className="pipeline-title">Kedro-Viz</h1>
       <Router>
-        <GlobalToolbar />
-        <SettingsModal />
-        {/* need to add check for isOutdated here when wrapping up after development*/}
-        {data && !dismissed && (
+        <GlobalToolbar isOutdated={isOutdated} />
+        <SettingsModal isOutdated={isOutdated} latest={latest} />
+        {data && isOutdated && !dismissed && (
           <UpdateReminder
             dismissed={dismissed}
             versions={data.version}

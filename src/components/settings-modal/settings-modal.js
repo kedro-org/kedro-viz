@@ -23,6 +23,8 @@ const SettingsModal = ({
   onTogglePrettyName,
   visible,
   flags,
+  isOutdated,
+  latest,
 }) => {
   const flagData = getFlagsState();
 
@@ -62,6 +64,19 @@ const SettingsModal = ({
               }
             />
           ))}
+          {isOutdated && (
+            <div className="pipeline-settings-modal__upgrade-reminder">
+              <span>&#8226;</span>
+              <span> Kedro-Viz {latest} is here! </span>
+              <a
+                href="https://github.com/kedro-org/kedro-viz/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View release notes
+              </a>
+            </div>
+          )}
         </div>
       </Modal>
     </div>

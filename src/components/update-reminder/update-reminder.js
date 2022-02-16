@@ -1,22 +1,59 @@
 import React, { useState } from 'react';
-import classnames from 'classnames';
+import CommandCopier from '../ui/command-copier/command-copier';
+import IconButton from '../icon-button';
+import CloseIcon from '../icons/close';
+
 import './update-reminder.css';
 
 const UpdateReminder = ({ versions, setDismiss }) => {
   const [expand, setExpand] = useState(false);
   const { latest } = versions;
 
-  // expanded version of the update reminder
+  const runCommand = 'pip install -U kedro-viz && kedro viz';
+
   if (expand) {
     return (
-      <div>
-        <div className="update-reminder-expanded">
+      <>
+        <div className="update-reminder-expanded-header">
           <button className="kedro" onClick={() => setExpand(false)}>
-            <p>Kedro-Viz {latest} is here </p>
+            <p>Kedro-Viz {latest} is here! </p>
           </button>
+
+          <div className="close-button-container">
+            <IconButton
+              container={React.Fragment}
+              ariaLabel="Close Upgrade Reminder Panel"
+              className="close-button"
+              icon={CloseIcon}
+              onClick={() => setDismiss(true)}
+            />
+          </div>
         </div>
-        <div className="expanded-detail">hello</div>
-      </div>
+        <div className="update-reminder-expanded-detail">
+          <p>
+            We're excited to announce that Kedro-Viz {latest} has been released.{' '}
+            <br />
+            To update Kedro-Viz, copy and paste the following update command
+            into your terminal.
+          </p>
+
+          <p className="subtext">Update command</p>
+          <div className="command-copier">
+            <CommandCopier runCommand={runCommand} />
+          </div>
+
+          <p className="subtext">
+            Refer to the release page for the set of changes introduced. <br />
+            <a
+              href="https://github.com/kedro-org/kedro-viz/releases"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View release notes
+            </a>
+          </p>
+        </div>
+      </>
     );
   }
 
@@ -25,7 +62,7 @@ const UpdateReminder = ({ versions, setDismiss }) => {
       <button className="kedro" onClick={() => setExpand(true)}>
         <p>Kedro-Viz {latest} is here </p>
       </button>
-      <button className="kedro" onClick={() => setExpand(true)}>
+      <button className="kedro" onClick={() => setDismiss(true)}>
         Dismiss
       </button>
     </div>

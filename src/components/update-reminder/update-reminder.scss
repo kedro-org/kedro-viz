@@ -1,13 +1,27 @@
 @import '../../styles/variables';
 
+.kui-theme--light {
+  --color-header-bg: #{$color-accent-yellow};
+  --color-detail-bg: #{$color-bg-light-4};
+  --color-text: #{$color-bg-light-2};
+  --color-subtext: #{$color-text-light-2};
+}
+
+.kui-theme--dark {
+  --color-header-bg: #{$color-accent-yellow};
+  --color-detail-bg: #{$color-bg-dark-4};
+  --color-text: #{$color-bg-dark-2};
+  --color-subtext: #{$color-text-dark-2};
+}
+
 .update-reminder-unexpanded {
   height: 32px;
   width: 296px;
   position: absolute;
   right: 0px;
   top: 0px;
-  background-color: $color-accent-yellow;
-  z-index: 100;
+  background-color: var(--color-header-bg);
+  z-index: 2;
   font-size: 12px;
   display: flex;
   justify-content: space-around;
@@ -20,22 +34,26 @@
   button {
     color: $color-bg-dark-2;
     border: none;
-    background-color: $color-accent-yellow;
+    background-color: var(--color-header-bg);
     font-size: 12px;
   }
 }
 
-.update-reminder-expanded {
+.update-reminder-expanded-header {
   height: 48px;
   width: 484px;
   position: absolute;
   right: 0px;
   top: 0px;
-  background-color: $color-accent-yellow;
-  z-index: 100;
+  background-color: var(--color-header-bg);
+  z-index: 2;
   font-size: 12px;
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
+
+  .close-button-container {
+    padding-right: 20px;
+  }
 
   p {
     color: $color-bg-dark-2;
@@ -45,19 +63,51 @@
 
   button {
     color: $color-bg-dark-2;
-    // margin-top: 8px;
     border: none;
-    background-color: $color-accent-yellow;
+    background-color: var(--color-header-bg);
     font-size: 16px;
+    padding-left: 24px;
   }
 }
 
-.expanded-detail {
+.update-reminder-expanded-detail {
   height: 340px;
   width: 484px;
   position: absolute;
   right: 0px;
   top: 48px;
+  z-index: 2;
 
-  background-color: $color-bg-dark-4;
+  background-color: var(--color-detail-bg);
+
+  p {
+    padding-top: 30px;
+    padding-left: 48px;
+    font-size: 14px;
+    width: 400px;
+
+    a {
+      color: $color-primary-2;
+    }
+  }
+
+  .subtext {
+    padding-top: 20px;
+    font-size: 12px;
+    color: var(--color-subtext);
+  }
+
+  .command-copier {
+    padding-left: 48px;
+    font-size: 14px;
+    width: 400px;
+  }
+}
+
+.close-button {
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: $color-text-dark-alt;
+  }
 }

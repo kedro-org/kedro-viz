@@ -17,6 +17,7 @@ const IconButton = ({
   labelText,
   onClick,
   visible,
+  hasReminder,
 }) => {
   const Icon = icon;
 
@@ -32,7 +33,7 @@ const IconButton = ({
         disabled={disabled}
         onClick={onClick}
       >
-        {Icon && <Icon className="pipeline-icon" />}
+        {Icon && <Icon className="pipeline-icon" hasReminder={hasReminder} />}
         {labelText && (
           <span className="pipeline-toolbar__label">{labelText}</span>
         )}
@@ -50,6 +51,7 @@ IconButton.propTypes = {
   onClick: PropTypes.func,
   visible: PropTypes.bool,
   active: PropTypes.bool,
+  hasReminder: PropTypes.bool,
 };
 
 IconButton.defaultProps = {
@@ -61,6 +63,7 @@ IconButton.defaultProps = {
   onClick: null,
   visible: true,
   active: false,
+  hasReminder: false,
 };
 
 export default IconButton;

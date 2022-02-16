@@ -21,6 +21,7 @@ export const GlobalToolbar = ({
   onToggleTheme,
   theme,
   visible,
+  isOutdated,
 }) => {
   return (
     <>
@@ -75,6 +76,7 @@ export const GlobalToolbar = ({
             icon={SettingsIcon}
             disabled={false}
             labelText={'Settings'}
+            hasReminder={isOutdated}
           />
         </ul>
       </div>
