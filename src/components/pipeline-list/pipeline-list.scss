@@ -2,72 +2,24 @@
 @import '../../styles/variables';
 
 .kui-theme--light {
-  --pipeline-list-shadow: rgba(black, 0.03);
-  --pipeline-list-label-bg: #{$color-bg-light-1};
-  --pipeline-list-options-bg: #{$color-bg-light-3};
   --pipeline-list-option-border-width: 1px 0 0 2px;
   --pipeline-list-option-border-color: #{rgba(black, 0.06)};
   --pipeline-list-option-bg-hover: #{rgba(white, 0.3)};
 }
 
 .kui-theme--dark {
-  --pipeline-list-shadow: rgba(black, 0.1);
-  --pipeline-list-label-bg: #{$color-bg-dark-3};
-  --pipeline-list-options-bg: #{$color-bg-dark-1};
   --pipeline-list-option-border-width: 0 0 1px 2px;
   --pipeline-list-option-border-color: #{rgba(white, 0.06)};
   --pipeline-list-option-bg-hover: #{rgba(white, 0.03)};
 }
 
 .pipeline-list {
-  .kui-dropdown {
-    display: block;
-    border: none;
-    box-shadow: 0 1px 1px var(--pipeline-list-shadow) !important;
-  }
-
-  .kui-dropdown__label,
-  .kui-menu-option {
+  .dropdown__label,
+  .menu-option {
     height: 58px;
   }
 
-  .kui-dropdown__label {
-    padding: 0 $sidebar-padding / 1.6; // divide by 1.6em font-size on element
-    background: var(--pipeline-list-label-bg);
-
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 4px $color-primary inset;
-
-      [data-whatinput='mouse'] & {
-        box-shadow: none;
-      }
-    }
-  }
-
-  .kui-dropdown__options {
-    z-index: 2; // fix closing transition animation bug
-    background: var(--pipeline-list-options-bg);
-    border-top: none;
-    box-shadow: 0 0 2px rgba(black, 0.1);
-
-    > section {
-      padding: 0;
-    }
-  }
-
-  .kui-menu-option {
-    padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
-    border-color: var(--pipeline-list-option-border-color) transparent;
-    border-style: solid;
-    border-width: var(--pipeline-list-option-border-width);
-
-    &--focused,
-    &:focus,
-    &:hover {
-      background: var(--pipeline-list-option-bg-hover);
-    }
-
+  .menu-option {
     &.pipeline-list__option--active {
       border-left-color: $color-primary;
     }

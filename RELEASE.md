@@ -10,7 +10,8 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Migrate Kedro-UI buttons to Kedro-viz as Kedro-UI is now deprecated. (#716)
+- Migrate Kedro-UI buttons to Kedro-Viz as Kedro-UI is now deprecated. (#716)
+- Migrate Kedro-UI dropdown and menu-options to Kedro-Viz as Kedro-UI is now deprecated. (#721)
 - Add a Husky pre-push hook. (#723)
 - Create a `version` GraphQL query to get versions of Kedro-Viz. (#727)
 - Fix Kedro-Viz to work with projects that have no `__default__` registered pipeline. This also fixes the `--pipeline` CLI option. (#729)
@@ -124,8 +125,8 @@ Please follow the established format:
 
 - Overwrite material UI selected row defaults. (#568)
 - Fix URI param parsing for data source. (#578)
-- Add a graphql test endpoint on Kedro-viz server. (#570)
-- Update the demo dataset on Kedro-viz. (#574)
+- Add a graphql test endpoint on Kedro-Viz server. (#570)
+- Update the demo dataset on Kedro-Viz. (#574)
 - Fix auto-reload for metrics run data. (#572)
 - Refactor tests for metadata panel. (#580)
 - Fix metrics tree to get latest metrics data. (#573)
