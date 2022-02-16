@@ -175,7 +175,7 @@ const MetaData = ({
                   value={metadata.pipeline}
                 />
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
-                  <CommandCopier runCommand={runCommand} />
+                  <CommandCopier command={runCommand} />
                 </MetaDataRow>
               </dl>
               {hasPlot && (

@@ -5,11 +5,11 @@ import IconButton from '../../ui/icon-button';
 import CopyIcon from '../../icons/copy';
 import './command-copier.css';
 
-const CommandCopier = ({ runCommand }) => {
+const CommandCopier = ({ command }) => {
   const [showCopied, setShowCopied] = useState(false);
 
   const onCopyClick = () => {
-    window.navigator.clipboard.writeText(runCommand);
+    window.navigator.clipboard.writeText(command);
     setShowCopied(true);
     setTimeout(() => setShowCopied(false), 1500);
   };
@@ -21,9 +21,9 @@ const CommandCopier = ({ runCommand }) => {
         className={modifiers('run-command-value', {
           visible: !showCopied,
         })}
-        value={runCommand}
+        value={command}
       />
-      {window.navigator.clipboard && runCommand && (
+      {window.navigator.clipboard && command && (
         <>
           <span
             className={modifiers('copy-message', {

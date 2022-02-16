@@ -9,7 +9,7 @@ const UpdateReminder = ({ versions, setDismiss }) => {
   const [expand, setExpand] = useState(false);
   const { latest } = versions;
 
-  const runCommand = 'pip install -U kedro-viz && kedro viz';
+  const command = 'pip install -U kedro-viz && kedro viz';
 
   if (expand) {
     return (
@@ -39,7 +39,7 @@ const UpdateReminder = ({ versions, setDismiss }) => {
 
           <p className="subtext">Update command</p>
           <div className="command-copier">
-            <CommandCopier runCommand={runCommand} />
+            <CommandCopier command={command} />
           </div>
 
           <p className="subtext">
