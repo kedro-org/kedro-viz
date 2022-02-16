@@ -1,6 +1,6 @@
 import React from 'react';
 import Toggle from './toggle';
-import { setup } from '../../utils/state.mock';
+import { setup } from '../../../utils/state.mock';
 
 describe('Toggle', () => {
   const input = (wrapper) => wrapper.find('.pipeline-toggle-input');

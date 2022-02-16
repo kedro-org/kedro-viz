@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Modal from '../modal';
-import Button from '../button';
+import Modal from '../ui/modal';
+import Button from '../ui/button';
 import { toggleExportModal } from '../../actions';
 import exportGraph from './export-graph';
 import './export-modal.css';
 
 /**
- * Kedro-UI modal to allow users to choose between SVG/PNG export formats
+ * Modal to allow users to choose between SVG/PNG export formats
  */
 const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
   if (!visible.exportBtn) {

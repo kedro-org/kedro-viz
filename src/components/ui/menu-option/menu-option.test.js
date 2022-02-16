@@ -1,7 +1,7 @@
 import React from 'react';
-import { setup } from '../../utils/state.mock';
+import { setup } from '../../../utils/state.mock';
 import sinon from 'sinon';
-import MenuOption from '../menu-option';
+import MenuOption from '.';
 
 const mockData = [
   {

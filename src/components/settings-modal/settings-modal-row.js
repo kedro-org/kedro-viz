@@ -1,5 +1,5 @@
 import React from 'react';
-import Toggle from '../toggle';
+import Toggle from '../ui/toggle';
 
 /**
  * Shows a list of MetaDataValue

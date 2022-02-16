@@ -6,7 +6,7 @@ import {
   toggleSidebar,
   toggleTextLabels,
 } from '../../actions';
-import IconButton from '../icon-button';
+import IconButton from '../ui/icon-button';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
 import LayersIcon from '../icons/layers';

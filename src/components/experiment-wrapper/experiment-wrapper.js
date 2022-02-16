@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { GET_RUNS } from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import { sortRunByTime } from '../../utils/date-utils';
-import Button from '../button';
+import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 

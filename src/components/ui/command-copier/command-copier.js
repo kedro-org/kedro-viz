@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import modifiers from '../../../utils/modifiers';
 import MetaDataValue from '../../metadata/metadata-value';
-import IconButton from '../../icon-button';
+import IconButton from '../../ui/icon-button';
 import CopyIcon from '../../icons/copy';
 import './command-copier.css';
 

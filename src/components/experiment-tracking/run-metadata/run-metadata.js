@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import CloseIcon from '../../icons/close';
-import IconButton from '../../icon-button';
+import IconButton from '../../ui/icon-button';
 import KebabIcon from '../../icons/kebab';
 import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';

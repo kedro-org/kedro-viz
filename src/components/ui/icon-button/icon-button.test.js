@@ -1,6 +1,6 @@
 import IconButton from '.';
-import { setup } from '../../utils/state.mock';
-import MenuIcon from '../icons/menu';
+import { setup } from '../../../utils/state.mock';
+import MenuIcon from '../../icons/menu';
 
 describe('IconButton', () => {
   it('renders without crashing', () => {

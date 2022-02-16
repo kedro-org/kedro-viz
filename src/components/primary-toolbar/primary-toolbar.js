@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import IconButton from '../icon-button';
+import IconButton from '../ui/icon-button';
 import MenuIcon from '../icons/menu';
 
 import './primary-toolbar.css';

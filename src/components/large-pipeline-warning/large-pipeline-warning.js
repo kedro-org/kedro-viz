@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { changeFlag, toggleIgnoreLargeWarning } from '../../actions';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTriggerLargeGraphWarning } from '../../selectors/layout';
-import Button from '../button';
+import Button from '../ui/button';
 import './large-pipeline-warning.css';
 
 export const LargePipelineWarning = ({

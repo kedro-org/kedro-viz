@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import classnames from 'classnames';
-import CloseIcon from '../icons/close';
-import IconButton from '../../components/icon-button';
+import CloseIcon from '../../icons/close';
+import IconButton from '../../ui/icon-button';
 import './modal.css';
 
 /**

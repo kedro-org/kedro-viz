@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Modal from '../modal';
+import Modal from '../ui/modal';
 import {
   changeFlag,
   toggleSettingsModal,
@@ -12,7 +12,7 @@ import { settings as settingsConfig } from '../../config';
 import './settings-modal.css';
 
 /**
- * Kedro-UI modal to allow users to change the flag settings
+ * Modal to allow users to change the flag settings
  */
 
 const SettingsModal = ({

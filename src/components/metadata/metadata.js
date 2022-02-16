@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
-import IconButton from '../../components/icon-button';
+import IconButton from '../../components/ui/icon-button';
 import CommandCopier from '../ui/command-copier/command-copier';
 import PlotlyChart from '../plotly-chart';
 import CloseIcon from '../icons/close';
 import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
 import MetaDataCode from './metadata-code';
-import Toggle from '../toggle';
+import Toggle from '../ui/toggle';
 import {
   getVisibleMetaSidebar,
   getClickedNodeMetaData,
