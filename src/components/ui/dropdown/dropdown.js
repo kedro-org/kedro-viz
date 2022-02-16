@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import 'what-input';
 import { flatten, find, flow, isEqual, map } from 'lodash/fp';
 import EventController from './event-controller.js';
-import { usePrevious } from '../../utils/hooks';
+import { usePrevious } from '../../../utils/hooks';
 import DropdownRenderer from './dropdown-renderer';
 
 import './dropdown.css';

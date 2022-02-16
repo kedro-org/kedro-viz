@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from './index';
-import { setup } from '../../utils/state.mock';
+import { setup } from '../../../utils/state.mock';
 
 describe('Modal', () => {
   const onClose = jest.fn();

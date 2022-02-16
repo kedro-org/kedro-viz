@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import modifiers from '../../utils/modifiers';
-import NodeIcon from '../../components/icons/node-icon';
-import IconButton from '../../components/icon-button';
+import NodeIcon from '../icons/node-icon';
+import IconButton from '../ui/icon-button';
 import PlotlyChart from '../plotly-chart';
 import CopyIcon from '../icons/copy';
 import CloseIcon from '../icons/close';
@@ -10,7 +10,7 @@ import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
 import MetaDataValue from './metadata-value';
 import MetaDataCode from './metadata-code';
-import Toggle from '../toggle';
+import Toggle from '../ui/toggle';
 import {
   getVisibleMetaSidebar,
   getClickedNodeMetaData,

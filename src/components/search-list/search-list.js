@@ -7,7 +7,7 @@ import './search-list.css';
  * Handle Searching of List
  * @param {function} onUpdateSearchValue Event handler
  * @param {string} searchValue Search text
- * @param {string} theme Light/dark theme for Kedro-UI component
+ * @param {string} theme Light/dark theme for SearchBar component
  */
 export const SearchList = ({ onUpdateSearchValue, searchValue, theme }) => {
   const container = useRef(null);

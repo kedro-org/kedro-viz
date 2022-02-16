@@ -2,7 +2,7 @@ import React from 'react';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import Dropdown from './dropdown';
-import MenuOption from '../menu-option/menu-option';
+import MenuOption from '../menu-option';
 
 const mockData = [
   {
