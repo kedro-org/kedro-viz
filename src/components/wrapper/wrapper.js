@@ -19,17 +19,17 @@ import './wrapper.css';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
 export const Wrapper = ({ theme }) => {
-  const { data } = useApolloQuery(GET_VERSIONS, { client });
+  const { data: versionData } = useApolloQuery(GET_VERSIONS, { client });
   const [dismissed, setDismissed] = useState(false);
   const [isOutdated, setIsOutdated] = useState(false);
   const [latest, setLatest] = useState(null);
 
   useEffect(() => {
-    if (data) {
-      setIsOutdated(data.version.isOutdated);
-      setLatest(data.version.latest);
+    if (versionData) {
+      setIsOutdated(versionData.version.isOutdated);
+      setLatest(versionData.version.latest);
     }
-  }, [data]);
+  }, [versionData]);
 
   return (
     <GraphQLProvider useMocks={false}>
@@ -43,10 +43,10 @@ export const Wrapper = ({ theme }) => {
         <Router>
           <GlobalToolbar isOutdated={isOutdated} />
           <SettingsModal isOutdated={isOutdated} latestVersion={latest} />
-          {data && isOutdated && !dismissed && (
+          {versionData && isOutdated && !dismissed && (
             <UpdateReminder
               dismissed={dismissed}
-              versions={data.version}
+              versions={versionData.version}
               setDismiss={setDismissed}
             />
           )}

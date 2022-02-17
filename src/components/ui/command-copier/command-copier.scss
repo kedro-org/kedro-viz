@@ -19,7 +19,7 @@
 
 .copy-message {
   position: absolute;
-  top: 0;
+  top: 0px;
   left: 0;
 
   &--no-visible {
@@ -31,7 +31,7 @@
   display: block;
   width: 26px;
   height: 34px;
-  margin: -0.5em 0 0 auto;
+  margin: -0.1em 0 0 auto;
   padding: 0;
   list-style: none;
 }

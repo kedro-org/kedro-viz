@@ -32,7 +32,6 @@ const UpdateReminder = ({ versions, setDismiss }) => {
         <div className="update-reminder-expanded-detail">
           <p>
             We're excited to announce that Kedro-Viz {latest} has been released.{' '}
-            <br />
             To update Kedro-Viz, copy and paste the following update command
             into your terminal.
           </p>

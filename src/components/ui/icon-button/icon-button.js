@@ -13,11 +13,11 @@ const IconButton = ({
   className,
   container: Container = 'li',
   disabled,
+  hasReminder,
   icon,
   labelText,
   onClick,
   visible,
-  hasReminder,
 }) => {
   const Icon = icon;
 
