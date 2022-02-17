@@ -9,7 +9,7 @@ const UpdateReminder = ({ versions, setDismiss }) => {
   const [expand, setExpand] = useState(false);
   const { latest } = versions;
 
-  const command = 'pip install -U kedro-viz && kedro viz';
+  const command = 'pip install -U kedro-viz';
 
   if (expand) {
     return (
@@ -59,7 +59,7 @@ const UpdateReminder = ({ versions, setDismiss }) => {
   return (
     <div className="update-reminder-unexpanded">
       <button className="kedro" onClick={() => setExpand(true)}>
-        <p>Kedro-Viz {latest} is here </p>
+        <p>Kedro-Viz {latest} is here! </p>
       </button>
       <button className="kedro" onClick={() => setDismiss(true)}>
         Dismiss

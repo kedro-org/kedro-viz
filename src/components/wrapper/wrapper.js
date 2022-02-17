@@ -22,12 +22,12 @@ export const Wrapper = ({ theme }) => {
   const { data: versionData } = useApolloQuery(GET_VERSIONS, { client });
   const [dismissed, setDismissed] = useState(false);
   const [isOutdated, setIsOutdated] = useState(false);
-  const [latest, setLatest] = useState(null);
+  const [latestVersion, setLatestVersion] = useState(null);
 
   useEffect(() => {
     if (versionData) {
       setIsOutdated(versionData.version.isOutdated);
-      setLatest(versionData.version.latest);
+      setLatestVersion(versionData.version.latest);
     }
   }, [versionData]);
 
@@ -42,8 +42,11 @@ export const Wrapper = ({ theme }) => {
         <h1 className="pipeline-title">Kedro-Viz</h1>
         <Router>
           <GlobalToolbar isOutdated={isOutdated} />
-          <SettingsModal isOutdated={isOutdated} latestVersion={latest} />
-          {versionData && isOutdated && !dismissed && (
+          <SettingsModal
+            isOutdated={isOutdated}
+            latestVersion={latestVersion}
+          />
+          {versionData && !dismissed && (
             <UpdateReminder
               dismissed={dismissed}
               versions={versionData.version}
