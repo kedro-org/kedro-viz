@@ -46,7 +46,7 @@ export const Wrapper = ({ theme }) => {
             isOutdated={isOutdated}
             latestVersion={latestVersion}
           />
-          {versionData && !dismissed && (
+          {versionData && isOutdated && !dismissed && (
             <UpdateReminder
               dismissed={dismissed}
               versions={versionData.version}
