@@ -12,23 +12,25 @@ describe('Update Reminder', () => {
     expect(wrapper.find('.update-reminder-unexpanded').length).toBe(1);
   });
 
-  it('dismisses when the dismiss button is clicked', () => {
-    const wrapper = mount(
-      <UpdateReminder versions={versions} setDismiss={setDismiss} />
-    );
-    const dismissButton = wrapper.find('.update-reminder-unexpanded');
-
-    dismissButton.find('button').at(1).simulate('click');
-    expect(wrapper.find('.update-reminder-unexpanded').length).toBe(0);
-  });
-
   it('popup expands when it is clicked', () => {
     const wrapper = mount(
       <UpdateReminder versions={versions} setDismiss={setDismiss} />
     );
-    const dismissButton = wrapper.find('.update-reminder-unexpanded');
+    const container = wrapper.find('.update-reminder-unexpanded');
 
-    dismissButton.find('button').at(0).simulate('click');
+    container.find('button').at(0).simulate('click');
     expect(wrapper.find('.update-reminder-expanded-header').length).toBe(1);
+  });
+
+  it('dismisses when the dismiss button is clicked', () => {
+    const wrapper = mount(
+      <UpdateReminder versions={versions} setDismiss={setDismiss} />
+    );
+    const container = wrapper.find('.update-reminder-unexpanded');
+    container.find('button').at(0).simulate('click');
+    const expandContainer = wrapper.find('.update-reminder-expanded-header');
+
+    expandContainer.find('button').at(1).simulate('click');
+    expect(wrapper.find('.update-reminder-unexpanded').length).toBe(0);
   });
 });
