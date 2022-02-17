@@ -17,11 +17,11 @@ import './global-toolbar.css';
  * @param {string} theme Kedro UI light/dark theme
  */
 export const GlobalToolbar = ({
+  isOutdated,
   onToggleSettingsModal,
   onToggleTheme,
   theme,
   visible,
-  isOutdated,
 }) => {
   return (
     <>

@@ -42,7 +42,7 @@ export const Wrapper = ({ theme }) => {
         <h1 className="pipeline-title">Kedro-Viz</h1>
         <Router>
           <GlobalToolbar isOutdated={isOutdated} />
-          <SettingsModal isOutdated={isOutdated} latest={latest} />
+          <SettingsModal isOutdated={isOutdated} latestVersion={latest} />
           {data && isOutdated && !dismissed && (
             <UpdateReminder
               dismissed={dismissed}
