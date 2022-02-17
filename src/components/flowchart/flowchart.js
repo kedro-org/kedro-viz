@@ -26,7 +26,7 @@ import {
   setViewExtents,
   getViewExtents,
 } from '../../utils/view';
-import Tooltip from '../tooltip';
+import Tooltip from '../ui/tooltip';
 import './styles/flowchart.css';
 
 /**

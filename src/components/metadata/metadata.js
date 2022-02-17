@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import modifiers from '../../utils/modifiers';
-import NodeIcon from '../../components/icons/node-icon';
-import IconButton from '../../components/icon-button';
+import NodeIcon from '../icons/node-icon';
+import IconButton from '../ui/icon-button';
 import PlotlyChart from '../plotly-chart';
 import CopyIcon from '../icons/copy';
 import CloseIcon from '../icons/close';
@@ -10,7 +10,7 @@ import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
 import MetaDataValue from './metadata-value';
 import MetaDataCode from './metadata-code';
-import Toggle from '../toggle';
+import Toggle from '../ui/toggle';
 import {
   getVisibleMetaSidebar,
   getClickedNodeMetaData,
@@ -37,10 +37,10 @@ const MetaData = ({
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
   // Hide plot modal when selected metadata changes
   useEffect(() => onTogglePlotModal(false), [metadata, onTogglePlotModal]);
-  const isTaskNode = metadata?.node.type === 'task';
-  const isDataNode = metadata?.node.type === 'data';
-  const isParametersNode = metadata?.node.type === 'parameters';
-  const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.node.type);
+  const isTaskNode = metadata?.type === 'task';
+  const isDataNode = metadata?.type === 'data';
+  const isParametersNode = metadata?.type === 'parameters';
+  const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
   const hasPlot = Boolean(metadata?.plot);
   const hasTrackingData = Boolean(metadata?.trackingData);
   const hasCode = Boolean(metadata?.code);
@@ -82,9 +82,10 @@ const MetaData = ({
                   className="pipeline-metadata__icon"
                   icon={nodeTypeIcon}
                 />
-                <h2 className="pipeline-metadata__title">
-                  {metadata.node.name}
-                </h2>
+                <h2
+                  className="pipeline-metadata__title"
+                  dangerouslySetInnerHTML={{ __html: metadata.name }}
+                />
               </div>
               <IconButton
                 container={React.Fragment}
@@ -109,7 +110,7 @@ const MetaData = ({
             </div>
             <div className="pipeline-metadata__list">
               <dl className="pipeline-metadata__properties">
-                <MetaDataRow label="Type:" value={metadata.node.type} />
+                <MetaDataRow label="Type:" value={metadata.type} />
                 {!isTranscoded && (
                   <MetaDataRow
                     label="Dataset Type:"

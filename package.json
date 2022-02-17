@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "4.2.0",
+  "version": "4.3.1",
   "main": "lib/components/app/index.js",
   "files": [
     "lib"
@@ -43,7 +43,6 @@
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
-    "@quantumblack/kedro-ui": "1.1.7",
     "batching-toposort": "^1.2.0",
     "classnames": "^2.3.1",
     "d3-fetch": "^2.0.0",
@@ -79,6 +78,7 @@
     "reselect": "^4.1.5",
     "seedrandom": "^3.0.5",
     "sinon": "^12.0.1",
+    "subscriptions-transport-ws": "^0.11.0",
     "svg-crowbar": "^0.6.5",
     "what-input": "^5.2.10"
   },
@@ -100,7 +100,7 @@
     "fishery": "^1.4.0",
     "husky": "^4.3.8",
     "lint-staged": "^10.5.4",
-    "node-sass": "^5.0.0",
+    "node-sass": "^7.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.3.1",
     "react": "^16.14.0",
@@ -116,7 +116,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test:ci"
     }
   },
   "lint-staged": {

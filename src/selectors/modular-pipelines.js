@@ -1,6 +1,4 @@
-import utils from '@quantumblack/kedro-ui/lib/utils';
-
-const { escapeRegExp, getHighlightedText } = utils;
+import { escapeRegExp, getHighlightedText } from '../utils/search-utils';
 export const getModularPipelineIDs = (state) => state.modularPipeline.ids;
 export const getFocusedModularPipeline = (state) =>
   state.visible.modularPipelineFocusMode;

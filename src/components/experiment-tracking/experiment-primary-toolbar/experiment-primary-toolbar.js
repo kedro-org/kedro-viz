@@ -1,6 +1,6 @@
 import React from 'react';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
-import IconButton from '../../icon-button';
+import IconButton from '../../ui/icon-button';
 import PencilIcon from '../../icons/pencil';
 import BookmarkIcon from '../../icons/bookmark';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';

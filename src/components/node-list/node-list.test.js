@@ -25,7 +25,7 @@ describe('NodeList', () => {
 
   it('renders without crashing', () => {
     const wrapper = setup.mount(<NodeList />);
-    const search = wrapper.find('.pipeline-nodelist-search');
+    const search = wrapper.find('.pipeline-search-list');
     const nodeList = wrapper.find('.pipeline-nodelist__list');
     expect(search.length).toBe(1);
     expect(nodeList.length).toBeGreaterThan(0);
@@ -47,7 +47,7 @@ describe('NodeList', () => {
       test.each(searches)(
         'display only the nodes matching the search text "%s", as well as their modular pipelines',
         (searchText) => {
-          const search = () => wrapper.find('.kui-input__field');
+          const search = () => wrapper.find('.search-input__field');
           search().simulate('change', { target: { value: searchText } });
           const nodeList = wrapper.find(
             '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
@@ -84,9 +84,9 @@ describe('NodeList', () => {
     });
     it('clears the search input and resets the list when hitting the Escape key', () => {
       const wrapper = setup.mount(<NodeList />);
-      const searchWrapper = wrapper.find('.pipeline-nodelist-search');
+      const searchWrapper = wrapper.find('.pipeline-search-list');
       // Re-find elements from root each time to see updates
-      const search = () => wrapper.find('.kui-input__field');
+      const search = () => wrapper.find('.search-input__field');
       const nodeList = () =>
         wrapper.find(
           '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
@@ -130,9 +130,9 @@ describe('NodeList', () => {
       const wrapper = setup.mount(
         <NodeList focusMode={{ id: 'data_science' }} />
       );
-      const searchWrapper = wrapper.find('.pipeline-nodelist-search');
+      const searchWrapper = wrapper.find('.pipeline-search-list');
       // Re-find elements from root each time to see updates
-      const search = () => wrapper.find('.kui-input__field');
+      const search = () => wrapper.find('.search-input__field');
       const nodeList = () =>
         wrapper.find(
           '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'

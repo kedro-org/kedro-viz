@@ -3,18 +3,31 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, NewType, Optional
+from typing import (
+    TYPE_CHECKING,
+    AsyncGenerator,
+    Dict,
+    Iterable,
+    List,
+    NewType,
+    Optional,
+    cast,
+)
 
 import strawberry
 from fastapi import APIRouter
+from semver import VersionInfo
 from strawberry import ID
 from strawberry.asgi import GraphQL
 
+from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
+from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
@@ -37,33 +50,63 @@ else:
     )
 
 
-def format_run(run_id: str, run_blob: Dict) -> Run:
+def format_run(
+    run_id: str, run_blob: Dict, user_run_details: Optional[UserRunDetailsModel] = None
+) -> Run:
     """Convert blob data in the correct Run format.
     Args:
         run_id: ID of the run to fetch
         run_blob: JSON blob of run metadata and tracking data
+        user_run_details: The user run details associated with this run
     Returns:
         Run object
     """
-    session = data_access_manager.db_session
     git_data = run_blob.get("git")
-    user_details = (
-        session.query(UserRunDetailsModel)
-        .filter(UserRunDetailsModel.run_id == run_id)
-        .scalar()
+    bookmark = user_run_details.bookmark if user_run_details else False
+    title = (
+        user_run_details.title
+        if user_run_details and user_run_details.title
+        else run_blob["session_id"]
+    )
+    notes = (
+        user_run_details.notes if user_run_details and user_run_details.notes else ""
     )
     run = Run(
-        id=ID(run_id),
         author="",
+        bookmark=bookmark,
         gitBranch=git_data.get("branch") if git_data else None,
         gitSha=git_data.get("commit_sha") if git_data else None,
-        bookmark=user_details.bookmark if user_details else False,
-        title=user_details.title if user_details else run_blob["session_id"],
-        notes=user_details.notes if user_details else "",
-        timestamp=run_blob["session_id"],
+        id=ID(run_id),
+        notes=notes,
         runCommand=run_blob["cli"]["command_path"],
+        timestamp=run_blob["session_id"],
+        title=title,
     )
     return run
+
+
+def format_runs(
+    runs: Iterable[RunModel],
+    user_run_details: Optional[Dict[str, UserRunDetailsModel]] = None,
+) -> List[Run]:
+    """Format a list of RunModel objects into a list of GraphQL Run
+
+    Args:
+        runs: The collection of RunModels to format.
+        user_run_details: the collection pf user_run_details associated with the given runs.
+    Returns:
+        The list of formatted Runs.
+    """
+    if not runs:
+        return []
+    return [
+        format_run(
+            run.id,
+            json.loads(cast(str, run.blob)),
+            user_run_details.get(run.id) if user_run_details else None,
+        )
+        for run in runs
+    ]
 
 
 def get_runs(run_ids: List[ID]) -> List[Run]:
@@ -73,15 +116,24 @@ def get_runs(run_ids: List[ID]) -> List[Run]:
     Returns:
         list of Run objects
     """
-    runs: List[Run] = []
-    session = data_access_manager.db_session
-    if not session:
-        return runs
-    all_run_data = session.query(RunModel).filter(RunModel.id.in_(run_ids)).all()
-    for run_data in all_run_data:
-        run = format_run(run_data.id, json.loads(run_data.blob))
-        runs.append(run)
-    return runs
+    return format_runs(
+        data_access_manager.runs.get_runs_by_ids(run_ids),
+        data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
+    )
+
+
+def get_version() -> Version:
+    """Get the user's installed Viz version and the latest version on PyPI.
+    Returns:
+        the currently installed and most-recent released version of Viz.
+    """
+    installed_version = VersionInfo.parse(__version__)
+    latest_version = get_latest_version()
+    return Version(
+        installed=installed_version,
+        isOutdated=is_running_outdated_version(installed_version, latest_version),
+        latest=latest_version or "",
+    )
 
 
 def get_all_runs() -> List[Run]:
@@ -90,14 +142,13 @@ def get_all_runs() -> List[Run]:
     Returns:
         list of Run objects
     """
-    runs: List[Run] = []
-    session = data_access_manager.db_session
-    if not session:
-        return runs
-    for run_data in session.query(RunModel).order_by(RunModel.id.desc()).all():
-        run = format_run(run_data.id, json.loads(run_data.blob))
-        runs.append(run)
-    return runs
+    all_runs = data_access_manager.runs.get_all_runs()
+    if not all_runs:
+        return []
+    all_run_ids = [run.id for run in all_runs]
+    return format_runs(
+        all_runs, data_access_manager.runs.get_user_run_details_by_run_ids(all_run_ids)
+    )
 
 
 def format_run_tracking_data(
@@ -174,6 +225,7 @@ def get_run_tracking_data(
         List of TrackingDatasets
 
     """
+    # TODO: this logic should be moved to the data access layer.
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
 
     all_datasets = []
@@ -212,24 +264,33 @@ def get_run_tracking_data(
 class Run:
     """Run object format"""
 
-    id: ID
-    title: str
-    timestamp: str
     author: Optional[str]
+    bookmark: Optional[bool]
     gitBranch: Optional[str]
     gitSha: Optional[str]
-    bookmark: Optional[bool]
+    id: ID
     notes: Optional[str]
     runCommand: Optional[str]
+    timestamp: str
+    title: str
 
 
 @strawberry.type
 class TrackingDataset:
     """TrackingDataset object to structure tracking data for a Run."""
 
+    data: Optional[JSONObject]
     datasetName: Optional[str]
     datasetType: Optional[str]
-    data: Optional[JSONObject]
+
+
+@strawberry.type
+class Version:
+    """The installed and latest Kedro Viz versions."""
+
+    installed: str
+    isOutdated: bool
+    latest: str
 
 
 @strawberry.type
@@ -237,8 +298,21 @@ class Subscription:
     """Subscription object to track runs added in real time"""
 
     @strawberry.subscription
-    def run_added(self, run_id: ID) -> Run:
-        """Subscription to add runs in real-time"""
+    async def runs_added(self) -> AsyncGenerator[List[Run], None]:
+        """Subscription to new runs in real-time"""
+        while True:
+            new_runs = data_access_manager.runs.get_new_runs()
+            if new_runs:
+                data_access_manager.runs.last_run_id = new_runs[0].id
+                yield [
+                    format_run(
+                        run.id,
+                        json.loads(run.blob),
+                        data_access_manager.runs.get_user_run_details(run.id),
+                    )
+                    for run in new_runs
+                ]
+            await asyncio.sleep(3)  # pragma: no cover
 
 
 @strawberry.type
@@ -247,8 +321,13 @@ class Query:
 
     @strawberry.field
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        """Query to get data for specific runs from the session store"""
+        """Query to get data for specific run metadata from the session store"""
         return get_runs(run_ids)
+
+    @strawberry.field
+    def runs_list(self) -> List[Run]:
+        """Query to get data for all the runs from the session store"""
+        return get_all_runs()
 
     @strawberry.field
     def run_tracking_data(
@@ -257,7 +336,10 @@ class Query:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
 
-    runs_list: List[Run] = strawberry.field(resolver=get_all_runs)
+    @strawberry.field
+    def version(self) -> Version:
+        """Query to get Kedro-Viz version"""
+        return get_version()
 
 
 schema = strawberry.Schema(query=Query, subscription=Subscription)
@@ -268,13 +350,13 @@ class RunInput:
     """Run input to update bookmark, title and notes"""
 
     bookmark: Optional[bool] = None
-    title: Optional[str] = None
     notes: Optional[str] = None
+    title: Optional[str] = None
 
 
 @strawberry.type
 class UpdateRunDetailsSuccess:
-    """Response type for sucessful update of runs"""
+    """Response type for successful update of runs"""
 
     run: Run
 
@@ -299,56 +381,40 @@ class Mutation:
     @strawberry.mutation
     def update_run_details(self, run_id: ID, run_input: RunInput) -> Response:
         """Updates run details based on run inputs provided by user"""
-        runs = get_runs([run_id])
-        if not runs:
+        run = data_access_manager.runs.get_run_by_id(run_id)
+        if not run:
             return UpdateRunDetailsFailure(
                 id=run_id, error_message=f"Given run_id: {run_id} doesn't exist"
             )
-        existing_run = runs[0]
-        new_run = existing_run
-        # if user doesn't provide a new title, use the old title.
-        if run_input.title is None:
-            new_run.title = existing_run.title
-        # if user provides an empty title, we assume they want to revert to the old timestamp title
-        elif run_input.title.strip() == "":
-            new_run.title = existing_run.timestamp
-        else:
-            new_run.title = run_input.title
-
-        new_run.bookmark = (
-            run_input.bookmark
-            if run_input.bookmark is not None
-            else existing_run.bookmark
+        updated_run = format_run(
+            run.id,
+            json.loads(run.blob),
+            data_access_manager.runs.get_user_run_details(run.id),
         )
 
-        new_run.notes = (
-            run_input.notes if run_input.notes is not None else existing_run.notes
+        # only update user run title if the input is not empty
+        if run_input.title is not None and bool(run_input.title.strip()):
+            updated_run.title = run_input.title
+
+        if run_input.bookmark is not None:
+            updated_run.bookmark = run_input.bookmark
+
+        if run_input.notes is not None and bool(run_input.notes.strip()):
+            updated_run.notes = run_input.notes
+
+        data_access_manager.runs.create_or_update_user_run_details(
+            run_id,
+            updated_run.title,
+            updated_run.bookmark,
+            updated_run.notes,
         )
-
-        updated_user_run_details = {
-            "run_id": run_id,
-            "title": new_run.title,
-            "bookmark": new_run.bookmark,
-            "notes": new_run.notes,
-        }
-
-        session = data_access_manager.db_session
-        user_run_details = (
-            session.query(UserRunDetailsModel)
-            .filter(UserRunDetailsModel.run_id == run_id)
-            .first()
-        )
-        if not user_run_details:
-            session.add(UserRunDetailsModel(**updated_user_run_details))  # type: ignore
-        else:
-            for key, value in updated_user_run_details.items():
-                setattr(user_run_details, key, value)
-        session.commit()
-        return UpdateRunDetailsSuccess(new_run)
+        return UpdateRunDetailsSuccess(updated_run)
 
 
-schema = strawberry.Schema(query=Query, mutation=Mutation)
+schema = strawberry.Schema(query=Query, mutation=Mutation, subscription=Subscription)
 
 router = APIRouter()
 
-router.add_route("/graphql", GraphQL(schema))
+graphql_app = GraphQL(schema)
+router.add_route("/graphql", graphql_app)
+router.add_websocket_route("/graphql", graphql_app)

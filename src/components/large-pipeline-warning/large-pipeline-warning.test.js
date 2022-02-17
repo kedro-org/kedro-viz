@@ -28,7 +28,7 @@ describe('LargePipelineWarning', () => {
       visible: true,
     };
     const wrapper = setup.mount(<LargePipelineWarning {...props} />);
-    wrapper.find('.kui-button__btn').at(0).simulate('click');
+    wrapper.find('.button__btn').at(0).simulate('click');
     expect(mockFn.mock.calls.length).toBe(1);
   });
 
@@ -41,7 +41,7 @@ describe('LargePipelineWarning', () => {
       visible: true,
     };
     const wrapper = setup.mount(<LargePipelineWarning {...props} />);
-    wrapper.find('.kui-button__btn').at(1).simulate('click');
+    wrapper.find('.button__btn').at(1).simulate('click');
     expect(mockFn.mock.calls.length).toBe(1);
   });
 

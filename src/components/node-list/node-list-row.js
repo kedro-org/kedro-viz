@@ -70,7 +70,6 @@ const NodeListRow = memo(
         : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
-
     return (
       <Container
         className={classnames(

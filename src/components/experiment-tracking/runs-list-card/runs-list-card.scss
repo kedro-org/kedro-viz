@@ -1,5 +1,13 @@
 @import '../../../styles/variables';
 
+.kui-theme--light {
+  --color-run-list-highlight: #{darken($color-primary, 10%)};
+}
+
+.kui-theme--dark {
+  --color-run-list-highlight: #{$color-primary};
+}
+
 .runs-list-card {
   align-items: flex-start;
   background: var(--color-bg-4);
@@ -30,16 +38,36 @@
 .runs-list-card__title {
   font-size: 1.6em;
   line-height: 1.5;
+
+  b {
+    color: var(--color-run-list-highlight);
+    font-weight: normal;
+  }
 }
 
-.runs-list-card__id {
+.runs-list-card__gitsha {
   color: var(--color-text-faded);
   font-size: 1.3em;
   margin: 4px 0 12px;
+
+  b {
+    color: var(--color-run-list-highlight);
+    font-weight: normal;
+  }
 }
 
 .runs-list-card__timestamp {
   font-size: 1.3em;
+}
+
+.runs-list-card__notes {
+  padding-top: 24px;
+  font-size: 1.3em;
+
+  b {
+    color: var(--color-run-list-highlight);
+    font-weight: normal;
+  }
 }
 
 .runs-list-card__checked {

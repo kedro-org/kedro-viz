@@ -426,11 +426,15 @@ class TestMainEndpoint:
         response = client.get("/api/main")
         assert_example_data(response.json())
 
-    def test_endpoint_main_no_session_store(self, example_api_no_session_store):
-        client = TestClient(example_api_no_session_store)
+    def test_endpoint_main_no_default_pipeline(self, example_api_no_default_pipeline):
+        client = TestClient(example_api_no_default_pipeline)
         response = client.get("/api/main")
-        assert response.status_code == 200
-        assert_example_data(response.json())
+        assert len(response.json()["nodes"]) == 6
+        assert len(response.json()["edges"]) == 9
+        assert response.json()["pipelines"] == [
+            {"id": "data_science", "name": "Data Science"},
+            {"id": "data_processing", "name": "Data Processing"},
+        ]
 
 
 class TestTranscodedDataset:
