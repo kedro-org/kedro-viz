@@ -81,8 +81,7 @@ const SettingsModal = ({
               <span>&#8226;</span>
               <span>
                 {' '}
-                You are already on the latest version of Kedro-Viz (
-                {latestVersion})
+                You are on the latest version of Kedro-Viz ({latestVersion})
               </span>
             </div>
           )}
