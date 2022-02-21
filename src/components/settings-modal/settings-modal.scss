@@ -8,6 +8,7 @@
   --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
   --color-toggle--off: #{$color-bg-dark-5};
   --color-toggle-bar--off: #{rgba($color-bg-dark-5, 0.3)};
+  --color-upgrade-reminder-text: #{$color-accent-blue};
 }
 
 .kui-theme--dark {
@@ -16,6 +17,7 @@
   --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
   --color-toggle--off: #{$color-bg-light-3};
   --color-toggle-bar--off: #{$color-bg-dark-2};
+  --color-upgrade-reminder-text: #{$color-accent-yellow};
 }
 
 .pipeline-settings-modal {
@@ -75,4 +77,17 @@
 
 .pipeline-settings-modal__state {
   @include flexColumn(3);
+}
+
+.pipeline-settings-modal__upgrade-reminder {
+  display: inline;
+  color: var(--color-upgrade-reminder-text);
+
+  a {
+    color: var(--color-upgrade-reminder-text);
+  }
+}
+
+.pipeline-settings-modal__already-latest {
+  color: var(--color-modal-header-text);
 }

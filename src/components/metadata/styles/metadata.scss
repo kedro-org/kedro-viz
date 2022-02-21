@@ -203,64 +203,6 @@ $list-inline-spacing: 0.2em;
   content: ', ';
 }
 
-.pipeline-metadata__toolbox-container {
-  position: relative;
-  display: flex;
-}
-
-.pipeline-metadata__toolbox {
-  display: block;
-  width: 26px;
-  height: 34px;
-  margin: -0.5em 0 0 auto;
-  padding: 0;
-  list-style: none;
-}
-
-.pipeline-metadata__run-command-value {
-  display: flex;
-  flex-grow: 1;
-  align-items: center;
-  font-family: $font-monospace;
-  font-size: 0.9em;
-
-  &--no-visible {
-    opacity: 0;
-  }
-}
-
-.pipeline-metadata__copy-button {
-  width: auto;
-  height: auto;
-  margin-top: 0.3em;
-  margin-right: -0.6em;
-  opacity: 0.55;
-
-  .pipeline-icon {
-    width: 26px;
-    height: 26px;
-  }
-
-  &:hover {
-    opacity: 1;
-  }
-
-  &:active {
-    transform: translateY(1px);
-    opacity: 0.85;
-  }
-}
-
-.pipeline-metadata__copy-message {
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  &--no-visible {
-    display: none;
-  }
-}
-
 .pipeline-metadata__plot {
   display: flex;
   height: 300px;

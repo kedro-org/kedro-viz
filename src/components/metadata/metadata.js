@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import modifiers from '../../utils/modifiers';
-import NodeIcon from '../icons/node-icon';
-import IconButton from '../ui/icon-button';
+import NodeIcon from '../../components/icons/node-icon';
+import IconButton from '../../components/ui/icon-button';
+import CommandCopier from '../ui/command-copier/command-copier';
 import PlotlyChart from '../plotly-chart';
-import CopyIcon from '../icons/copy';
 import CloseIcon from '../icons/close';
 import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
-import MetaDataValue from './metadata-value';
 import MetaDataCode from './metadata-code';
 import Toggle from '../ui/toggle';
 import {
@@ -32,7 +31,6 @@ const MetaData = ({
   onToggleNodeSelected,
   onTogglePlotModal,
 }) => {
-  const [showCopied, setShowCopied] = useState(false);
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
   // Hide plot modal when selected metadata changes
@@ -54,12 +52,6 @@ const MetaData = ({
       ? 'Please provide a name argument for this node in order to see a run command.'
       : null;
   }
-
-  const onCopyClick = () => {
-    window.navigator.clipboard.writeText(runCommand);
-    setShowCopied(true);
-    setTimeout(() => setShowCopied(false), 1500);
-  };
 
   const onCloseClick = () => {
     // Deselecting a node automatically hides MetaData panel
@@ -183,40 +175,7 @@ const MetaData = ({
                   value={metadata.pipeline}
                 />
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
-                  <div className="pipeline-metadata__toolbox-container">
-                    <MetaDataValue
-                      container={'code'}
-                      className={modifiers(
-                        'pipeline-metadata__run-command-value',
-                        {
-                          visible: !showCopied,
-                        }
-                      )}
-                      value={runCommand}
-                    />
-                    {window.navigator.clipboard && metadata.runCommand && (
-                      <>
-                        <span
-                          className={modifiers(
-                            'pipeline-metadata__copy-message',
-                            {
-                              visible: showCopied,
-                            }
-                          )}
-                        >
-                          Copied to clipboard.
-                        </span>
-                        <ul className="pipeline-metadata__toolbox">
-                          <IconButton
-                            ariaLabel="Copy run command to clipboard."
-                            className="pipeline-metadata__copy-button"
-                            icon={CopyIcon}
-                            onClick={onCopyClick}
-                          />
-                        </ul>
-                      </>
-                    )}
-                  </div>
+                  <CommandCopier command={runCommand} />
                 </MetaDataRow>
               </dl>
               {hasPlot && (
