@@ -18,7 +18,7 @@ describe('Update Reminder', () => {
     );
     const container = wrapper.find('.update-reminder-unexpanded');
 
-    container.find('button').at(0).simulate('click');
+    container.find('.buttons-container').find('button').at(0).simulate('click');
     expect(wrapper.find('.update-reminder-expanded-header').length).toBe(1);
   });
 
@@ -27,10 +27,7 @@ describe('Update Reminder', () => {
       <UpdateReminder versions={versions} setDismiss={setDismiss} />
     );
     const container = wrapper.find('.update-reminder-unexpanded');
-    container.find('button').at(0).simulate('click');
-    const expandContainer = wrapper.find('.update-reminder-expanded-header');
-
-    expandContainer.find('button').at(1).simulate('click');
-    expect(wrapper.find('.update-reminder-unexpanded').length).toBe(0);
+    container.find('.buttons-container').find('button').at(1).simulate('click');
+    expect(wrapper.find('.update-reminder-expanded-header').length).toBe(0);
   });
 });

@@ -7,7 +7,7 @@ import './update-reminder.css';
 
 const UpdateReminder = ({ versions, setDismiss }) => {
   const [expand, setExpand] = useState(false);
-  const { latest } = versions;
+  const { latest, installed } = versions;
 
   const command = 'pip install -U kedro-viz';
 
@@ -15,9 +15,7 @@ const UpdateReminder = ({ versions, setDismiss }) => {
     return (
       <>
         <div className="update-reminder-expanded-header">
-          <button className="kedro" onClick={() => setExpand(false)}>
-            <p>Kedro-Viz {latest} is here! </p>
-          </button>
+          <p>Kedro-Viz {latest} is here! </p>
 
           <div className="close-button-container">
             <IconButton
@@ -25,15 +23,17 @@ const UpdateReminder = ({ versions, setDismiss }) => {
               ariaLabel="Close Upgrade Reminder Panel"
               className="close-button"
               icon={CloseIcon}
-              onClick={() => setDismiss(true)}
+              onClick={() => setExpand(false)}
             />
           </div>
         </div>
         <div className="update-reminder-expanded-detail">
           <p>
-            We're excited to announce that Kedro-Viz {latest} has been released.{' '}
+            We're excited to announce that Kedro-Viz {latest} has been released.
             To update Kedro-Viz, copy and paste the following update command
-            into your terminal.
+            into your terminal. <br />
+            <br />
+            You are currently on Kedro-Viz {installed}.
           </p>
 
           <p className="subtext">Update command</p>
@@ -58,12 +58,15 @@ const UpdateReminder = ({ versions, setDismiss }) => {
 
   return (
     <div className="update-reminder-unexpanded">
-      <button className="kedro" onClick={() => setExpand(true)}>
-        <p>Kedro-Viz {latest} is here! </p>
-      </button>
-      <button className="kedro" onClick={() => setDismiss(true)}>
-        Dismiss
-      </button>
+      <p>Kedro-Viz {latest} is here! </p>
+      <div className="buttons-container">
+        <button className="kedro" onClick={() => setExpand(true)}>
+          Expand
+        </button>
+        <button className="kedro" onClick={() => setDismiss(true)}>
+          Dismiss
+        </button>
+      </div>
     </div>
   );
 };

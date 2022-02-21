@@ -28,7 +28,13 @@
 
   p {
     color: $color-bg-dark-2;
-    margin-top: 6px;
+    text-align: center;
+    margin-top: 7.5px;
+    font-size: 12px;
+  }
+
+  .buttons-container {
+    margin-top: 6.5px;
   }
 
   button {
@@ -58,8 +64,9 @@
 
   p {
     color: $color-bg-dark-2;
-    padding: 6px 24px;
+    padding: 6px 48px;
     margin-top: 6px;
+    font-size: 16px;
   }
 
   button {
@@ -67,7 +74,7 @@
     border: none;
     background-color: var(--color-header-bg);
     font-size: 16px;
-    padding-left: 24px;
+    padding: 0 0 5px 24px;
     cursor: pointer;
   }
 }
@@ -85,7 +92,7 @@
     padding-top: 30px;
     padding-left: 48px;
     font-size: 14px;
-    width: 400px;
+    width: 430px;
 
     a {
       color: $color-primary-2;
