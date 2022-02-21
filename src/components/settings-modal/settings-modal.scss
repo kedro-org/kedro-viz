@@ -81,7 +81,6 @@
 
 .pipeline-settings-modal__upgrade-reminder {
   display: inline;
-  @include flexColumn(6);
   color: var(--color-upgrade-reminder-text);
 
   a {

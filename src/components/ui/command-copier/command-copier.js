@@ -18,7 +18,7 @@ const CommandCopier = ({ command }) => {
     <div className="container">
       <MetaDataValue
         container={'code'}
-        className={modifiers('run-command-value', {
+        className={modifiers('command-value', {
           visible: !showCopied,
         })}
         value={command}
