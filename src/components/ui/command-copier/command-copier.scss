@@ -19,8 +19,8 @@
 
 .copy-message {
   position: absolute;
-  top: 0px;
   left: 0;
+  padding-top: 4px;
 
   &--no-visible {
     display: none;
