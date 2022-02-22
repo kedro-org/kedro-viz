@@ -17,6 +17,7 @@ import './global-toolbar.css';
  * @param {string} theme Kedro UI light/dark theme
  */
 export const GlobalToolbar = ({
+  isOutdated,
   onToggleSettingsModal,
   onToggleTheme,
   theme,
@@ -75,6 +76,7 @@ export const GlobalToolbar = ({
             icon={SettingsIcon}
             disabled={false}
             labelText={'Settings'}
+            hasReminder={isOutdated}
           />
         </ul>
       </div>

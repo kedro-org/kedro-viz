@@ -16,13 +16,15 @@ import './settings-modal.css';
  */
 
 const SettingsModal = ({
-  theme,
-  prettyName,
+  flags,
+  isOutdated,
   onClose,
   onToggleFlag,
   onTogglePrettyName,
+  latestVersion,
+  prettyName,
   visible,
-  flags,
+  theme,
 }) => {
   const flagData = getFlagsState();
 
@@ -62,6 +64,25 @@ const SettingsModal = ({
               }
             />
           ))}
+          {isOutdated ? (
+            <div className="pipeline-settings-modal__upgrade-reminder">
+              <span>&#8226; Kedro-Viz {latestVersion} is here! </span>
+              <a
+                href="https://github.com/kedro-org/kedro-viz/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View release notes
+              </a>
+            </div>
+          ) : (
+            <div className="pipeline-settings-modal__already-latest">
+              <span>
+                &#8226; You are on the latest version of Kedro-Viz (
+                {latestVersion})
+              </span>
+            </div>
+          )}
         </div>
       </Modal>
     </div>
