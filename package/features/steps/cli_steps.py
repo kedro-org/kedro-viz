@@ -87,7 +87,7 @@ def install_project_requirements(context):
 
 @given('I have installed kedro version "{version}"')
 def install_kedro(context, version):
-    """Run ``pip install kedro``."""
+    """Install kedro using pip."""
     if version == "latest":
         cmd = [context.pip, "install", "-U", "kedro"]
     else:
