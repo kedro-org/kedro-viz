@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
-import { GET_RUNS } from '../../apollo/queries';
+import {
+  GET_RUNS,
+  GET_RUN_METADATA,
+  GET_RUN_TRACKING_DATA,
+} from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import { sortRunByTime } from '../../utils/date-utils';
 import Button from '../ui/button';
@@ -23,6 +27,21 @@ const ExperimentWrapper = ({ theme }) => {
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
 
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
+
+  // fetch all metadata and tracking data from selected runs
+  const { data: { runMetadata } = [], metadataError } = useApolloQuery(
+    GET_RUN_METADATA,
+    {
+      skip: selectedRunIds.length === 0,
+      variables: { runIds: selectedRunIds },
+    }
+  );
+
+  const { data: { runTrackingData } = [], error: trackingDataError } =
+    useApolloQuery(GET_RUN_TRACKING_DATA, {
+      skip: selectedRunIds.length === 0,
+      variables: { runIds: selectedRunIds, showDiff: false },
+    });
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
@@ -151,6 +170,8 @@ const ExperimentWrapper = ({ theme }) => {
             setSidebarVisible={setIsSidebarVisible}
             showRunDetailsModal={setShowRunDetailsModal}
             sidebarVisible={isSidebarVisible}
+            runMetadata={runMetadata}
+            runTrackingData={runTrackingData}
           />
           {selectedRunIds.length > 0 ? (
             <Details
@@ -164,6 +185,10 @@ const ExperimentWrapper = ({ theme }) => {
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
+              runMetadata={runMetadata}
+              runTrackingData={runTrackingData}
+              trackingDataError={trackingDataError}
+              metadataError={metadataError}
             />
           ) : null}
         </>
