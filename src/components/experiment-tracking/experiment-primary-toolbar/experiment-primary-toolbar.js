@@ -1,15 +1,23 @@
 import React from 'react';
+import { CSVLink } from 'react-csv';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import IconButton from '../../ui/icon-button';
 import PencilIcon from '../../icons/pencil';
 import BookmarkIcon from '../../icons/bookmark';
+import ExportIcon from '../../icons/export';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import PrimaryToolbar from '../../primary-toolbar';
 import ShowChangesIcon from '../../icons/show-changes';
+import {
+  constructExportData,
+  generateCsvFileName,
+} from '../../../utils/experiment-tracking';
 
 export const ExperimentPrimaryToolbar = ({
   enableComparisonView,
   enableShowChanges,
+  runMetadata,
+  runTrackingData,
   selectedRunData,
   setEnableShowChanges,
   setSidebarVisible,
@@ -25,6 +33,8 @@ export const ExperimentPrimaryToolbar = ({
       runInput: { bookmark: !selectedRunData?.bookmark },
     });
   };
+
+  const exportData = constructExportData(runMetadata, runTrackingData);
 
   return (
     <PrimaryToolbar
@@ -60,6 +70,14 @@ export const ExperimentPrimaryToolbar = ({
         visible={enableComparisonView}
         disabled={showChangesIconDisabled}
       />
+      <CSVLink data={exportData} filename={generateCsvFileName(runMetadata)}>
+        <IconButton
+          ariaLabel="Export graph as SVG or PNG"
+          className={'pipeline-menu-button--export'}
+          icon={ExportIcon}
+          labelText="Export run data"
+        />
+      </CSVLink>
     </PrimaryToolbar>
   );
 };
