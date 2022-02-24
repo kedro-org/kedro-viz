@@ -39,7 +39,7 @@ export const constructExportData = (runMetadata, runTrackingData) => {
       ['Notes', ...notes]
     );
 
-    // create empty line
+    // create empty line between metadata fields and tracking data fields
     csvData.push([]);
 
     runTrackingData.forEach((trackingDataset) => {
@@ -49,7 +49,6 @@ export const constructExportData = (runMetadata, runTrackingData) => {
       dataKeyNames.forEach((key) => {
         let keyData = [key];
         data[key].forEach((datafield) => keyData.push(datafield.value));
-        console.log(`keyData for ${key}`, keyData);
         csvData.push(keyData);
       });
       csvData.push([]);
