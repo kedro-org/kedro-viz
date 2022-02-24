@@ -11,7 +11,7 @@ import ShowChangesIcon from '../../icons/show-changes';
 import {
   constructExportData,
   generateCsvFileName,
-} from '../../../utils/experiment-tracking';
+} from '../../../utils/experiment-tracking-utils';
 
 export const ExperimentPrimaryToolbar = ({
   enableComparisonView,

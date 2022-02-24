@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
-import { sanitizeValue } from '../../../utils/experiment-tracking';
+import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 
 import './run-dataset.css';
 
