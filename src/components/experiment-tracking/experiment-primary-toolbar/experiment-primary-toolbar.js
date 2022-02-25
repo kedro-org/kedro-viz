@@ -70,7 +70,7 @@ export const ExperimentPrimaryToolbar = ({
         visible={enableComparisonView}
         disabled={showChangesIconDisabled}
       />
-      <CSVLink data={exportData} filename={generateCsvFileName(runMetadata)}>
+      <CSVLink data={exportData} filename="run-data.csv">
         <IconButton
           ariaLabel="Export graph as SVG or PNG"
           className={'pipeline-menu-button--export'}

@@ -9,6 +9,7 @@ import './details.css';
 const Details = ({
   enableComparisonView,
   enableShowChanges,
+  metadataError,
   onRunSelection,
   pinnedRun,
   selectedRunIds,
@@ -17,10 +18,9 @@ const Details = ({
   showRunDetailsModal,
   sidebarVisible,
   theme,
+  trackingDataError,
   runMetadata,
   runTrackingData,
-  metadataError,
-  trackingDataError,
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
 

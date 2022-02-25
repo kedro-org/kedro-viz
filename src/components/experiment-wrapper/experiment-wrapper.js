@@ -28,7 +28,7 @@ const ExperimentWrapper = ({ theme }) => {
 
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
 
-  // fetch all metadata and tracking data from selected runs
+  // Fetch all metadata and tracking data from selected runs
   const { data: { runMetadata } = [], metadataError } = useApolloQuery(
     GET_RUN_METADATA,
     {
@@ -164,20 +164,21 @@ const ExperimentWrapper = ({ theme }) => {
             onRunSelection={onRunSelection}
             onToggleComparisonView={onToggleComparisonView}
             runsListData={data.runsList}
+            runMetadata={runMetadata}
+            runTrackingData={runTrackingData}
             selectedRunData={selectedRunData}
             selectedRunIds={selectedRunIds}
             setEnableShowChanges={setEnableShowChanges}
             setSidebarVisible={setIsSidebarVisible}
             showRunDetailsModal={setShowRunDetailsModal}
             sidebarVisible={isSidebarVisible}
-            runMetadata={runMetadata}
-            runTrackingData={runTrackingData}
           />
           {selectedRunIds.length > 0 ? (
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
               onRunSelection={onRunSelection}
+              metadataError={metadataError}
               pinnedRun={pinnedRun}
               selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}
@@ -185,10 +186,9 @@ const ExperimentWrapper = ({ theme }) => {
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
+              trackingDataError={trackingDataError}
               runMetadata={runMetadata}
               runTrackingData={runTrackingData}
-              trackingDataError={trackingDataError}
-              metadataError={metadataError}
             />
           ) : null}
         </>

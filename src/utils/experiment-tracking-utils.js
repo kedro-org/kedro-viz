@@ -44,13 +44,17 @@ export const constructExportData = (runMetadata, runTrackingData) => {
 
     runTrackingData.forEach((trackingDataset) => {
       const { datasetName, data } = trackingDataset;
-      csvData.push([datasetName]);
       const dataKeyNames = Object.keys(data);
+
+      csvData.push([datasetName]);
+
       dataKeyNames.forEach((key) => {
         let keyData = [key];
+
         data[key].forEach((datafield) => keyData.push(datafield.value));
         csvData.push(keyData);
       });
+
       csvData.push([]);
     });
   }
@@ -62,7 +66,7 @@ export const constructExportData = (runMetadata, runTrackingData) => {
  * @param {array} runMetadata The set of runMetadata to be exported
  * @returns A string to be used as the file name
  */
-export const generateCsvFileName = (runMetadata) => {
+export const generateCSVFileName = (runMetadata) => {
   let filename = 'rundata';
   runMetadata?.forEach((run) => (filename += `-${run.id}`));
   filename += '.csv';
