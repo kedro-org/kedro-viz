@@ -8,10 +8,7 @@ import ExportIcon from '../../icons/export';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import PrimaryToolbar from '../../primary-toolbar';
 import ShowChangesIcon from '../../icons/show-changes';
-import {
-  constructExportData,
-  generateCsvFileName,
-} from '../../../utils/experiment-tracking-utils';
+import { constructExportData } from '../../../utils/experiment-tracking-utils';
 
 export const ExperimentPrimaryToolbar = ({
   enableComparisonView,
