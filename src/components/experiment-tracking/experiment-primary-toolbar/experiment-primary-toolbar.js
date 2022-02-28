@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import IconButton from '../../ui/icon-button';
@@ -23,6 +23,7 @@ export const ExperimentPrimaryToolbar = ({
   sidebarVisible,
 }) => {
   const { updateRunDetails } = useUpdateRunDetails();
+  const [exportData, setExportData] = useState([]);
 
   const toggleBookmark = () => {
     updateRunDetails({
@@ -31,7 +32,9 @@ export const ExperimentPrimaryToolbar = ({
     });
   };
 
-  const exportData = constructExportData(runMetadata, runTrackingData);
+  const updateExportData = useCallback(() => {
+    setExportData(constructExportData(runMetadata, runTrackingData));
+  }, [runMetadata, runTrackingData]);
 
   return (
     <PrimaryToolbar
@@ -67,7 +70,12 @@ export const ExperimentPrimaryToolbar = ({
         visible={enableComparisonView}
         disabled={showChangesIconDisabled}
       />
-      <CSVLink data={exportData} filename="run-data.csv">
+      <CSVLink
+        data={exportData}
+        asyncOnClick={true}
+        onClick={updateExportData}
+        filename="run-data.csv"
+      >
         <IconButton
           ariaLabel="Export graph as SVG or PNG"
           className={'pipeline-menu-button--export'}
