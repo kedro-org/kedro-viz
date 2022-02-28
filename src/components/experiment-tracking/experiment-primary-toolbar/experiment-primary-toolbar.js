@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import IconButton from '../../ui/icon-button';
@@ -32,9 +32,9 @@ export const ExperimentPrimaryToolbar = ({
     });
   };
 
-  const updateExportData = () => {
+  const updateExportData = useCallback(() => {
     setExportData(constructExportData(runMetadata, runTrackingData));
-  };
+  }, [runMetadata, runTrackingData]);
 
   return (
     <PrimaryToolbar
