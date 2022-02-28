@@ -2,18 +2,9 @@ import React from 'react';
 import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
+import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 
 import './run-dataset.css';
-
-const sanitizeValue = (value) => {
-  if (value === '' || value === null || value === undefined) {
-    return '-';
-  } else if (typeof value === 'object' || typeof value === 'boolean') {
-    return JSON.stringify(value);
-  }
-
-  return value;
-};
 
 const determinePinIcon = (data, pinValue, pinnedRun) => {
   if (data.runId !== pinnedRun && typeof data.value === 'number') {

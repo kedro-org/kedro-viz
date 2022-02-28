@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useApolloQuery } from '../../../apollo/utils';
 import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
 import RunDetailsModal from '../run-details-modal';
-import {
-  GET_RUN_METADATA,
-  GET_RUN_TRACKING_DATA,
-} from '../../../apollo/queries';
 
 import './details.css';
 
 const Details = ({
   enableComparisonView,
   enableShowChanges,
+  metadataError,
   onRunSelection,
   pinnedRun,
   selectedRunIds,
@@ -22,21 +18,11 @@ const Details = ({
   showRunDetailsModal,
   sidebarVisible,
   theme,
+  trackingDataError,
+  runMetadata,
+  runTrackingData,
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
-  const { data: { runMetadata } = [], error } = useApolloQuery(
-    GET_RUN_METADATA,
-    {
-      skip: selectedRunIds.length === 0,
-      variables: { runIds: selectedRunIds },
-    }
-  );
-
-  const { data: { runTrackingData } = [], error: trackingError } =
-    useApolloQuery(GET_RUN_TRACKING_DATA, {
-      skip: selectedRunIds.length === 0,
-      variables: { runIds: selectedRunIds, showDiff: false },
-    });
 
   useEffect(() => {
     if (runMetadata && !enableComparisonView) {
@@ -48,7 +34,7 @@ const Details = ({
 
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
-  if (error || trackingError) {
+  if (metadataError || trackingDataError) {
     return null;
   }
 
