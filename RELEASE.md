@@ -8,6 +8,10 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Major features and improvements
+- Set up of a pop-up reminder to nudge users to upgrade Kedro-Viz when a new version is released. (#746)
+- Set up the 'export run' button to allow exporting of selected run data into a csv file for download. (#757)
+
 ## Bug fixes and other changes
 
 - Migrate Kedro-UI buttons to Kedro-Viz as Kedro-UI is now deprecated. (#716)

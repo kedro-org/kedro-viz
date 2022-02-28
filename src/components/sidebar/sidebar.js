@@ -23,6 +23,8 @@ export const Sidebar = ({
   onRunSelection,
   onToggleComparisonView,
   runsListData,
+  runMetadata,
+  runTrackingData,
   selectedRunData,
   selectedRunIds,
   setEnableShowChanges,
@@ -61,6 +63,8 @@ export const Sidebar = ({
               showChangesIconDisabled={!(selectedRunIds.length > 1)}
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={sidebarVisible}
+              runMetadata={runMetadata}
+              runTrackingData={runTrackingData}
             />
           </nav>
         </div>
