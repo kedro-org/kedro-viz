@@ -123,27 +123,6 @@ commands:
           name: Package app
           command: make package
 
-  deploy_to_s3:
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-
-      - install_node_dependencies
-      - build_npm_package
-      - run:
-          name: Install python3
-          command: |
-            sudo apt update
-            sudo apt install python3 python3-pip
-      - run:
-          name: install_aw_cli
-          command: pip3 install awscli
-      - run:
-          name: Publish to S3
-          command: aws s3 cp --recursive build s3://kedro-viz-fe/${CIRCLE_BRANCH}
-
   deploy_demo:
     steps:
       - checkout
@@ -285,10 +264,6 @@ jobs:
     executor: demo_executor
     steps: [deploy_demo]
 
-  deploy_s3:
-    executor: circleci_machine
-    steps: [deploy_to_s3]
-
   # Windows-related jobs
   win_build_37:
     executor: win/default
@@ -361,7 +336,6 @@ workflows:
       - build_38
       # - win_build_37
       - win_build_38
-      - deploy_s3
       - deploy_demo:
           requires:
             # - build_37

@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
+import { CSVLink } from 'react-csv';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
-import IconButton from '../../icon-button';
+import IconButton from '../../ui/icon-button';
 import PencilIcon from '../../icons/pencil';
 import BookmarkIcon from '../../icons/bookmark';
+import ExportIcon from '../../icons/export';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import PrimaryToolbar from '../../primary-toolbar';
 import ShowChangesIcon from '../../icons/show-changes';
+import { constructExportData } from '../../../utils/experiment-tracking-utils';
 
 export const ExperimentPrimaryToolbar = ({
   enableComparisonView,
   enableShowChanges,
+  runMetadata,
+  runTrackingData,
   selectedRunData,
   setEnableShowChanges,
   setSidebarVisible,
@@ -18,6 +23,7 @@ export const ExperimentPrimaryToolbar = ({
   sidebarVisible,
 }) => {
   const { updateRunDetails } = useUpdateRunDetails();
+  const [exportData, setExportData] = useState([]);
 
   const toggleBookmark = () => {
     updateRunDetails({
@@ -25,6 +31,10 @@ export const ExperimentPrimaryToolbar = ({
       runInput: { bookmark: !selectedRunData?.bookmark },
     });
   };
+
+  const updateExportData = useCallback(() => {
+    setExportData(constructExportData(runMetadata, runTrackingData));
+  }, [runMetadata, runTrackingData]);
 
   return (
     <PrimaryToolbar
@@ -60,6 +70,19 @@ export const ExperimentPrimaryToolbar = ({
         visible={enableComparisonView}
         disabled={showChangesIconDisabled}
       />
+      <CSVLink
+        data={exportData}
+        asyncOnClick={true}
+        onClick={updateExportData}
+        filename="run-data.csv"
+      >
+        <IconButton
+          ariaLabel="Export graph as SVG or PNG"
+          className={'pipeline-menu-button--export'}
+          icon={ExportIcon}
+          labelText="Export run data"
+        />
+      </CSVLink>
     </PrimaryToolbar>
   );
 };

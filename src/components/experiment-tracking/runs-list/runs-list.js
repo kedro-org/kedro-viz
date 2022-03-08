@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import debounce from 'lodash/debounce';
 import { textMatchesSearch } from '../../../utils/search-utils';
 import SearchList from '../../search-list';
-import Switch from '../../switch';
+import Switch from '../../ui/switch';
 import Accordion from '../accordion';
 import RunsListCard from '../runs-list-card';
 import './runs-list.css';

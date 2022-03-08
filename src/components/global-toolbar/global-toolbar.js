@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { toggleSettingsModal, toggleTheme } from '../../actions';
 import ExperimentsIcon from '../icons/experiments';
-import IconButton from '../icon-button';
+import IconButton from '../ui/icon-button';
 import LogoIcon from '../icons/logo';
 import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
@@ -17,6 +17,7 @@ import './global-toolbar.css';
  * @param {string} theme Kedro UI light/dark theme
  */
 export const GlobalToolbar = ({
+  isOutdated,
   onToggleSettingsModal,
   onToggleTheme,
   theme,
@@ -75,6 +76,7 @@ export const GlobalToolbar = ({
             icon={SettingsIcon}
             disabled={false}
             labelText={'Settings'}
+            hasReminder={isOutdated}
           />
         </ul>
       </div>

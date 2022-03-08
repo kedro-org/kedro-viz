@@ -258,9 +258,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTask,
         });
 
-        const copyButton = wrapper.find(
-          'button.pipeline-metadata__copy-button'
-        );
+        const copyButton = wrapper.find('button.copy-button');
 
         copyButton.simulate('click');
 
@@ -362,9 +360,7 @@ describe('MetaData', () => {
           mockMetadata: nodeData,
         });
 
-        const copyButton = wrapper.find(
-          'button.pipeline-metadata__copy-button'
-        );
+        const copyButton = wrapper.find('button.copy-button');
 
         copyButton.simulate('click');
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import Dropdown from '../dropdown';
-import MenuOption from '../menu-option';
+import Dropdown from '../ui/dropdown';
+import MenuOption from '../ui/menu-option';
 import { loadPipelineData } from '../../actions/pipelines';
 import { toggleFocusMode } from '../../actions';
 import './pipeline-list.css';
@@ -12,14 +12,12 @@ import './pipeline-list.css';
  * @param {Object} pipeline Pipeline IDs, names, and active pipeline
  * @param {Function} onUpdateActivePipeline Handle updating the active pipeline
  * @param {Function} onToggleOpen Callback when opening/closing the dropdown
- * @param {string} theme Kedro UI light/dark theme
  */
 export const PipelineList = ({
   asyncDataSource,
   onUpdateActivePipeline,
   pipeline,
   prettyName,
-  theme,
   onToggleOpen,
 }) => {
   if (!pipeline.ids.length && !asyncDataSource) {

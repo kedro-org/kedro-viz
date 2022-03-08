@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Modal from '../modal';
+import Modal from '../ui/modal';
 import {
   changeFlag,
   toggleSettingsModal,
@@ -12,17 +12,19 @@ import { settings as settingsConfig } from '../../config';
 import './settings-modal.css';
 
 /**
- * Kedro-UI modal to allow users to change the flag settings
+ * Modal to allow users to change the flag settings
  */
 
 const SettingsModal = ({
-  theme,
-  prettyName,
+  flags,
+  isOutdated,
   onClose,
   onToggleFlag,
   onTogglePrettyName,
+  latestVersion,
+  prettyName,
   visible,
-  flags,
+  theme,
 }) => {
   const flagData = getFlagsState();
 
@@ -62,6 +64,25 @@ const SettingsModal = ({
               }
             />
           ))}
+          {isOutdated ? (
+            <div className="pipeline-settings-modal__upgrade-reminder">
+              <span>&#8226; Kedro-Viz {latestVersion} is here! </span>
+              <a
+                href="https://github.com/kedro-org/kedro-viz/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View release notes
+              </a>
+            </div>
+          ) : (
+            <div className="pipeline-settings-modal__already-latest">
+              <span>
+                &#8226; You are on the latest version of Kedro-Viz (
+                {latestVersion})
+              </span>
+            </div>
+          )}
         </div>
       </Modal>
     </div>
