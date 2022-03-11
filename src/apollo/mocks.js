@@ -1,5 +1,5 @@
 import { Factory } from 'fishery';
-import faker from 'faker';
+import faker from '@faker-js/faker';
 import { GET_RUNS, GET_RUN_METADATA, GET_RUN_TRACKING_DATA } from './queries';
 
 export const RunMock = Factory.define(({ sequence }) => {
