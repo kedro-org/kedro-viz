@@ -59,7 +59,17 @@ There are two ways you can use Kedro-Viz:
     ```bash
     npm install @quantumblack/kedro-viz
     ```
+  Once the Kedro-Viz npm package is installed as a dependency in your project, you can invoke the component in your React web application as follows:
 
+    ```javascript
+    <div style={{ height: "100vh" }}>
+      <KedroViz
+        data={dataPipeline}
+      />
+    </div>
+    ```
+  
+  Please ensure that the relevant pipeline data is passed as a prop into the component. We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
 ## Usage
 
 ### CLI Usage
