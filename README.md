@@ -139,10 +139,11 @@ import KedroViz from '@quantumblack/kedro-viz';
 
 const MyApp = () => (
   <div style={{ height: "100vh" }}>
-      <KedroViz
-        data={json}
-      />
-    </div>
+    <KedroViz
+      data={json}
+    />
+  </div>
+)
 ```
 
 The JSON can be obtained by running:
