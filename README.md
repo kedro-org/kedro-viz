@@ -59,7 +59,6 @@ There are two ways you can use Kedro-Viz:
     ```bash
     npm install @quantumblack/kedro-viz
     ```
-
 ## Usage
 
 ### CLI Usage
@@ -138,7 +137,13 @@ To use Kedro-Viz as a standalone React component, import the component and suppl
 ```javascript
 import KedroViz from '@quantumblack/kedro-viz';
 
-const MyApp = () => <KedroViz data={json} />;
+const MyApp = () => (
+  <div style={{ height: "100vh" }}>
+    <KedroViz
+      data={json}
+    />
+  </div>
+)
 ```
 
 The JSON can be obtained by running:
@@ -146,6 +151,8 @@ The JSON can be obtained by running:
 ```bash
 kedro viz --save-file=filename.json
 ```
+
+We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
 
 ## Feature Flags
 
