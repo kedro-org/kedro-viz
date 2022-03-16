@@ -35,6 +35,12 @@ export const createInitialState = () => ({
     miniMap: true,
     modularPipelineFocusMode: null,
   },
+  display: {
+    globalToolBar: false,
+    sidebar: true,
+    miniMap: true,
+    expandAllPipelines: false,
+  },
   zoom: {},
 });
 

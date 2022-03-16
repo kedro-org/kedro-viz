@@ -32,6 +32,7 @@ export const Sidebar = ({
   showRunDetailsModal,
   sidebarVisible,
   visible,
+  displayGlobalToolbar,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
@@ -76,6 +77,7 @@ export const Sidebar = ({
         <div
           className={classnames('pipeline-sidebar', {
             'pipeline-sidebar--visible': visible,
+            'pipeline-sidebar--no-global-toolbar': !displayGlobalToolbar,
           })}
         >
           <div className="pipeline-ui">
@@ -95,6 +97,7 @@ export const Sidebar = ({
 
 const mapStateToProps = (state) => ({
   visible: state.visible.sidebar,
+  displayGlobalToolbar: state.display.globalToolBar,
 });
 
 export default connect(mapStateToProps)(Sidebar);

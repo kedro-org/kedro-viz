@@ -99,6 +99,12 @@ App.propTypes = {
     exportBtn: PropTypes.bool,
     sidebar: PropTypes.bool,
   }),
+  display: PropTypes.shape({
+    globalToolBar: PropTypes.bool,
+    sidebar: PropTypes.bool,
+    miniMap: PropTypes.bool,
+    expandAllPipelines: PropTypes.bool,
+  }),
 };
 
 export default App;

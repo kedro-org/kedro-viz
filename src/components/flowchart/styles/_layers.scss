@@ -63,4 +63,8 @@
   font-weight: bold;
   font-size: 1.6em;
   white-space: nowrap;
+
+  &--no-global-toolbar {
+    left: -70px;
+  }
 }
