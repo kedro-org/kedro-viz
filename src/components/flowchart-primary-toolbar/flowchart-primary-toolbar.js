@@ -69,7 +69,7 @@ export const mapStateToProps = (state) => ({
   textLabels: state.textLabels,
   visible: state.visible,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
-  displaySidebar: state.display.sideBar,
+  displaySidebar: state.display.sidebar,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

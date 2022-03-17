@@ -17,6 +17,8 @@ import './sidebar.css';
  */
 export const Sidebar = ({
   disableRunSelection,
+  displayGlobalToolbar,
+  displaySidebar,
   enableComparisonView,
   enableShowChanges,
   isExperimentView = false,
@@ -32,7 +34,6 @@ export const Sidebar = ({
   showRunDetailsModal,
   sidebarVisible,
   visible,
-  displayGlobalToolbar,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
@@ -97,7 +98,8 @@ export const Sidebar = ({
 
 const mapStateToProps = (state) => ({
   visible: state.visible.sidebar,
-  displayGlobalToolbar: state.display.globalToolBar,
+  displayGlobalToolbar: state.display.globalToolbar,
+  displaySidebar: state.display.sidebar,
 });
 
 export default connect(mapStateToProps)(Sidebar);

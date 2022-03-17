@@ -94,8 +94,11 @@ export function loadInitialPipelineData() {
     // in order to obtain the list of pipelines, which is required for determining
     // whether the active pipeline (from localStorage) exists in the data.
     const url = getUrl('main');
+    // obtain the status of expandAllPipelines to decide whether it needs to overwrite the
+    // list of visible nodes
+    const expandAllPipelines = state.display.expandAllPipelines;
     let newState = await loadJsonData(url).then((data) =>
-      preparePipelineState(data, true)
+      preparePipelineState(data, true, expandAllPipelines)
     );
     // If the active pipeline isn't 'main' then request data from new URL
     if (requiresSecondRequest(newState.pipeline)) {

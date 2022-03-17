@@ -70,7 +70,7 @@ export const Wrapper = ({ theme, displayGlobalToolbar }) => {
 export const mapStateToProps = (state) => ({
   loading: isLoading(state),
   theme: state.theme,
-  displayGlobalToolbar: state.display.globalToolBar,
+  displayGlobalToolbar: state.display.globalToolbar,
 });
 
 export default connect(mapStateToProps)(Wrapper);

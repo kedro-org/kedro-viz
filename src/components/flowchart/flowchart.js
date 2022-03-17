@@ -608,7 +608,7 @@ export const mapStateToProps = (state, ownProps) => ({
   clickedNode: state.node.clicked,
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
-  displayGlobalToolbar: state.display.globalToolBar,
+  displayGlobalToolbar: state.display.globalToolbar,
   edges: state.graph.edges || emptyEdges,
   focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,

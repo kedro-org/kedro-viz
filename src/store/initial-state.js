@@ -36,10 +36,10 @@ export const createInitialState = () => ({
     modularPipelineFocusMode: null,
   },
   display: {
-    globalToolBar: false,
-    sidebar: true,
+    globalToolbar: false,
+    sidebar: false,
     miniMap: true,
-    expandAllPipelines: false,
+    expandAllPipelines: true,
   },
   zoom: {},
 });
@@ -70,13 +70,35 @@ export const mergeLocalStorage = (state) => {
  * @param {object} data Data prop passed to App component
  * @param {boolean} applyFixes Whether to override initialState
  */
-export const preparePipelineState = (data, applyFixes) => {
+export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   const state = mergeLocalStorage(normalizeData(data));
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
       state.pipeline.active = state.pipeline.main;
     }
+  }
+  // Cater for expandAllPipelines in component props or within flag
+  // expandAllPipelines needs to happen after the deepmerge of localStorage to overwrite
+  // any saved visible state of the nodes
+  if (expandAllPipelines) {
+    const modularPipelinesIds = state.modularPipeline.ids;
+    const nodeIds = state.node.ids;
+
+    // filter out the nodeIds that is the same id as the modualrPipelines and assign everything else to true
+    const newModularPipelineState = {
+      visible: {},
+      expanded: modularPipelinesIds,
+    };
+    nodeIds.forEach((nodeId) => {
+      if (!modularPipelinesIds.includes(nodeId)) {
+        newModularPipelineState.visible[nodeId] = true;
+      }
+    });
+    return {
+      ...state,
+      modularPipeline: { ...state.modularPipeline, ...newModularPipelineState },
+    };
   }
   return state;
 };
@@ -91,11 +113,21 @@ export const preparePipelineState = (data, applyFixes) => {
 export const prepareNonPipelineState = (props) => {
   const state = mergeLocalStorage(createInitialState());
 
+  let newVisibleProps = {};
+  if (props.display?.sidebar === false || state.display.sidebar === false) {
+    newVisibleProps['sidebar'] = false;
+  }
+
+  if (props.display?.minimap === false) {
+    newVisibleProps['minimap'] = false;
+  }
+
   return {
     ...state,
     flags: { ...state.flags, ...getFlagsFromUrl() },
     theme: props.theme || state.theme,
-    visible: { ...state.visible, ...props.visible },
+    visible: { ...state.visible, ...props.visible, ...newVisibleProps },
+    display: { ...state.display, ...props.display },
   };
 };
 
@@ -114,7 +146,13 @@ const getInitialState = (props = {}) => {
       disabled: { parameters: true, task: false, data: false },
     },
   });
-  const pipelineState = preparePipelineState(props.data, props.data !== 'json');
+
+  const expandAllPipelines = nonPipelineState.display.expandAllPipelines;
+  const pipelineState = preparePipelineState(
+    props.data,
+    props.data !== 'json',
+    expandAllPipelines
+  );
   return {
     ...nonPipelineState,
     ...pipelineState,

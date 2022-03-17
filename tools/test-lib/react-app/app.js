@@ -24,8 +24,22 @@ const Radio = ({ current, value, onChange }) => (
 );
 
 const App = ({ initialData }) => {
+  const initialDisplayValues = {
+    globalToolbar: true,
+    sidebar: true,
+    minimap: true,
+    expandAllPipelines: false,
+  };
+
+  const [displayValues, updateDisplayValue] = useState(initialDisplayValues);
+
   const [dataKey, updateDataKey] = useState(initialData);
   const onChange = (e) => updateDataKey(e.target.value);
+  const onUpdateDisplayValue = (e) =>
+    updateDisplayValue({
+      ...displayValues,
+      [e.target.value]: e.target.checked,
+    });
 
   return (
     <div style={{ padding: 30, height: '80vh' }}>
@@ -36,7 +50,28 @@ const App = ({ initialData }) => {
         <Radio value="spaceflights" onChange={onChange} current={dataKey} />
         <Radio value="demo" onChange={onChange} current={dataKey} />
       </p>
-      <KedroViz data={dataSources[dataKey]()} />
+      <div>
+        Display:
+        <input
+          type="checkbox"
+          id="globalToolbar"
+          name="globalToolbar"
+          value="globalToolbar"
+          checked={displayValues.globalToolBar}
+          onChange={onUpdateDisplayValue}
+        />
+        <label for="globalToolbar">Global ToolBar</label>
+        <input
+          type="checkbox"
+          id="sidebar"
+          name="sidebar"
+          value="sidebar"
+          checked={displayValues.sidebar}
+          onChange={onUpdateDisplayValue}
+        />
+        <label for="sidebar">sidebar</label>
+      </div>
+      <KedroViz data={dataSources[dataKey]()} display={displayValues} />
     </div>
   );
 };
