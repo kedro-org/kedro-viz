@@ -13,6 +13,7 @@ import './minimap-toolbar.css';
  * Controls for minimap
  */
 export const MiniMapToolbar = ({
+  displayMiniMap,
   onToggleMiniMap,
   visible,
   chartZoom,
@@ -23,15 +24,17 @@ export const MiniMapToolbar = ({
   return (
     <>
       <ul className="pipeline-minimap-toolbar kedro">
-        <IconButton
-          icon={MapIcon}
-          className={'pipeline-minimap-button pipeline-minimap-button--map'}
-          ariaLabel={`Turn minimap ${visible.miniMap ? 'off' : 'on'}`}
-          onClick={() => onToggleMiniMap(!visible.miniMap)}
-          labelText={`${visible.miniMap ? 'Hide' : 'Show'} minimap`}
-          visible={visible.miniMapBtn}
-          active={visible.miniMap}
-        />
+        {displayMiniMap && (
+          <IconButton
+            icon={MapIcon}
+            className={'pipeline-minimap-button pipeline-minimap-button--map'}
+            ariaLabel={`Turn minimap ${visible.miniMap ? 'off' : 'on'}`}
+            onClick={() => onToggleMiniMap(!visible.miniMap)}
+            labelText={`${visible.miniMap ? 'Hide' : 'Show'} minimap`}
+            visible={visible.miniMapBtn}
+            active={visible.miniMap}
+          />
+        )}
         <IconButton
           icon={PlusIcon}
           className={'pipeline-minimap-button pipeline-minimap-button--zoom-in'}
@@ -79,6 +82,7 @@ const scaleZoom = ({ scale }, factor) => ({
 
 export const mapStateToProps = (state) => ({
   visible: state.visible,
+  displayMiniMap: state.display.miniMap,
   chartZoom: getChartZoom(state),
 });
 

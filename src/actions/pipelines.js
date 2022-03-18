@@ -96,7 +96,8 @@ export function loadInitialPipelineData() {
     const url = getUrl('main');
     // obtain the status of expandAllPipelines to decide whether it needs to overwrite the
     // list of visible nodes
-    const expandAllPipelines = state.display.expandAllPipelines;
+    const expandAllPipelines =
+      state.display.expandAllPipelines || state.flags.expandAllPipelines;
     let newState = await loadJsonData(url).then((data) =>
       preparePipelineState(data, true, expandAllPipelines)
     );

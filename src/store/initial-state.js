@@ -36,10 +36,10 @@ export const createInitialState = () => ({
     modularPipelineFocusMode: null,
   },
   display: {
-    globalToolbar: false,
-    sidebar: false,
+    globalToolbar: true,
+    sidebar: true,
     miniMap: true,
-    expandAllPipelines: true,
+    expandAllPipelines: false,
   },
   zoom: {},
 });
@@ -78,6 +78,7 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
       state.pipeline.active = state.pipeline.main;
     }
   }
+
   // Cater for expandAllPipelines in component props or within flag
   // expandAllPipelines needs to happen after the deepmerge of localStorage to overwrite
   // any saved visible state of the nodes
@@ -94,6 +95,11 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
       if (!modularPipelinesIds.includes(nodeId)) {
         newModularPipelineState.visible[nodeId] = true;
       }
+    });
+
+    console.log('entered here', {
+      ...state.modularPipeline,
+      ...newModularPipelineState,
     });
     return {
       ...state,
@@ -118,8 +124,8 @@ export const prepareNonPipelineState = (props) => {
     newVisibleProps['sidebar'] = false;
   }
 
-  if (props.display?.minimap === false) {
-    newVisibleProps['minimap'] = false;
+  if (props.display?.minimap === false || state.display.miniMap === false) {
+    newVisibleProps['miniMap'] = false;
   }
 
   return {
@@ -139,6 +145,8 @@ export const prepareNonPipelineState = (props) => {
  * @return {object} Initial state
  */
 const getInitialState = (props = {}) => {
+  console.log('props', props);
+
   const nonPipelineState = prepareNonPipelineState(props);
   saveState({
     nodeType: {
@@ -147,7 +155,10 @@ const getInitialState = (props = {}) => {
     },
   });
 
-  const expandAllPipelines = nonPipelineState.display.expandAllPipelines;
+  const expandAllPipelines =
+    nonPipelineState.display.expandAllPipelines ||
+    nonPipelineState.flags.expandAllPipelines;
+
   const pipelineState = preparePipelineState(
     props.data,
     props.data !== 'json',
