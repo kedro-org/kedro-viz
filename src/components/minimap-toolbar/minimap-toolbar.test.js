@@ -25,6 +25,7 @@ describe('MiniMapToolbar', () => {
       const mockFn = jest.fn();
       const props = {
         chartZoom: { scale: 1, minScale: 0.5, maxScale: 1.5 },
+        displayMiniMap: true,
         visible: { miniMap: false },
         [callback]: mockFn,
       };
@@ -37,6 +38,7 @@ describe('MiniMapToolbar', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
+      displayMiniMap: true,
       chartZoom: expect.any(Object),
       visible: expect.objectContaining({
         miniMap: expect.any(Boolean),

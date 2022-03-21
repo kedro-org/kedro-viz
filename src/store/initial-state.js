@@ -145,8 +145,6 @@ export const prepareNonPipelineState = (props) => {
  * @return {object} Initial state
  */
 const getInitialState = (props = {}) => {
-  console.log('props', props);
-
   const nonPipelineState = prepareNonPipelineState(props);
   saveState({
     nodeType: {

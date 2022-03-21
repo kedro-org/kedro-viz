@@ -4,7 +4,7 @@ import { mockState, setup } from '../../utils/state.mock';
 
 describe('PrimaryToolbar', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.mount(<PrimaryToolbar />);
+    const wrapper = setup.mount(<PrimaryToolbar displaySidebar={true} />);
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
   });
 
@@ -12,7 +12,9 @@ describe('PrimaryToolbar', () => {
     const visible = {
       sidebar: true,
     };
-    const wrapper = setup.mount(<PrimaryToolbar visible={visible} />);
+    const wrapper = setup.mount(
+      <PrimaryToolbar displaySidebar={true} visible={visible} />
+    );
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
   });
 
@@ -20,7 +22,9 @@ describe('PrimaryToolbar', () => {
     const visible = {
       sidebar: true,
     };
-    const wrapper = setup.mount(<PrimaryToolbar visible={visible} />);
+    const wrapper = setup.mount(
+      <PrimaryToolbar displaySidebar={true} visible={visible} />
+    );
     expect(wrapper.find('.pipeline-menu-button--inverse').length).toBe(0);
   });
 
@@ -28,7 +32,9 @@ describe('PrimaryToolbar', () => {
     const visible = {
       sidebar: false,
     };
-    const wrapper = setup.mount(<PrimaryToolbar visible={visible} />);
+    const wrapper = setup.mount(
+      <PrimaryToolbar displaySidebar={true} visible={visible} />
+    );
     expect(wrapper.find('.pipeline-menu-button--inverse').length).toBe(2);
   });
 
@@ -41,6 +47,7 @@ describe('PrimaryToolbar', () => {
       const props = {
         textLabels: mockState.spaceflights.textLabels,
         visible: mockState.spaceflights.visible,
+        displaySidebar: true,
         [callback]: mockFn,
       };
       const wrapper = setup.mount(<PrimaryToolbar {...props} />);

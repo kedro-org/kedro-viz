@@ -4,6 +4,7 @@ import { mockState, setup } from '../../utils/state.mock';
 const { theme } = mockState.spaceflights;
 const mockProps = {
   theme,
+  displayGlobalToolbar: true,
 };
 
 describe('Wrapper', () => {
@@ -24,6 +25,7 @@ describe('Wrapper', () => {
     expect(mapStateToProps(mockState.spaceflights)).toEqual({
       loading: false,
       theme,
+      displayGlobalToolbar: true,
     });
   });
 });
