@@ -11,6 +11,8 @@ Please follow the established format:
 ## Major features and improvements
 - Set up of a pop-up reminder to nudge users to upgrade Kedro-Viz when a new version is released. (#746)
 - Set up the 'export run' button to allow exporting of selected run data into a csv file for download. (#757)
+- Set up new display props to standalone React component. (#786)
+- Set up 'expandAllPipelines' flag to allow the expanded display of all modular pipelines on initial load. (#786)
 
 ## Bug fixes and other changes
 
