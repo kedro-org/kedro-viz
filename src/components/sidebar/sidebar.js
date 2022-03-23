@@ -18,7 +18,6 @@ import './sidebar.css';
 export const Sidebar = ({
   disableRunSelection,
   displayGlobalToolbar,
-  displaySidebar,
   enableComparisonView,
   enableShowChanges,
   isExperimentView = false,
@@ -99,7 +98,6 @@ export const Sidebar = ({
 const mapStateToProps = (state) => ({
   visible: state.visible.sidebar,
   displayGlobalToolbar: state.display.globalToolbar,
-  displaySidebar: state.display.sidebar,
 });
 
 export default connect(mapStateToProps)(Sidebar);

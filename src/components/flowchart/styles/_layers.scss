@@ -48,7 +48,7 @@
   }
 
   &--no-global-toolbar {
-    left: -70px;
+    left: var(--global-toolbar-width);
   }
 
   @media print {

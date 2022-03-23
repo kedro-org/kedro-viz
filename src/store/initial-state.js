@@ -80,13 +80,11 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   }
 
   // Cater for expandAllPipelines in component props or within flag
-  // expandAllPipelines needs to happen after the deepmerge of localStorage to overwrite
-  // any saved visible state of the nodes
   if (expandAllPipelines) {
     const modularPipelinesIds = state.modularPipeline.ids;
     const nodeIds = state.node.ids;
 
-    // filter out the nodeIds that is the same id as the modualrPipelines and assign everything else to true
+    // Filter out the nodeIds that is the same id as the modualrPipelines and assign everything else to true
     const newModularPipelineState = {
       visible: {},
       expanded: modularPipelinesIds,
@@ -97,10 +95,6 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
       }
     });
 
-    console.log('entered here', {
-      ...state.modularPipeline,
-      ...newModularPipelineState,
-    });
     return {
       ...state,
       modularPipeline: { ...state.modularPipeline, ...newModularPipelineState },
@@ -162,6 +156,7 @@ const getInitialState = (props = {}) => {
     props.data !== 'json',
     expandAllPipelines
   );
+
   return {
     ...nonPipelineState,
     ...pipelineState,
