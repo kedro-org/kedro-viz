@@ -39,7 +39,7 @@ export const createInitialState = () => ({
     globalToolbar: true,
     sidebar: true,
     miniMap: true,
-    expandAllPipelines: false,
+    expandAllPipelines: true,
   },
   zoom: {},
 });
@@ -71,7 +71,7 @@ export const mergeLocalStorage = (state) => {
  * @param {boolean} applyFixes Whether to override initialState
  */
 export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
-  const state = mergeLocalStorage(normalizeData(data));
+  const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
@@ -79,27 +79,6 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
     }
   }
 
-  // Cater for expandAllPipelines in component props or within flag
-  if (expandAllPipelines) {
-    const modularPipelinesIds = state.modularPipeline.ids;
-    const nodeIds = state.node.ids;
-
-    // Filter out the nodeIds that is the same id as the modualrPipelines and assign everything else to true
-    const newModularPipelineState = {
-      visible: {},
-      expanded: modularPipelinesIds,
-    };
-    nodeIds.forEach((nodeId) => {
-      if (!modularPipelinesIds.includes(nodeId)) {
-        newModularPipelineState.visible[nodeId] = true;
-      }
-    });
-
-    return {
-      ...state,
-      modularPipeline: { ...state.modularPipeline, ...newModularPipelineState },
-    };
-  }
   return state;
 };
 

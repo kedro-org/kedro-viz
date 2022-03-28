@@ -7,6 +7,11 @@ const mockProps = {
   displayGlobalToolbar: true,
 };
 
+const mockPropsNoGlobalToolbar = {
+  theme,
+  displayGlobalToolbar: false,
+};
+
 describe('Wrapper', () => {
   it('renders without crashing', () => {
     const wrapper = setup.shallow(Wrapper, mockProps);
@@ -19,6 +24,12 @@ describe('Wrapper', () => {
     const container = wrapper.find('.kedro-pipeline');
     expect(container.hasClass(`kui-theme--light`)).toBe(theme === 'light');
     expect(container.hasClass(`kui-theme--dark`)).toBe(theme === 'dark');
+  });
+
+  it('does not display the global toolbar when displayGlobalToolbar is false', () => {
+    const wrapper = setup.mount(Wrapper, mockPropsNoGlobalToolbar);
+    const container = wrapper.find('.pipeline-global-toolbar');
+    expect(container.length).toBe(0);
   });
 
   it('maps state to props', () => {
