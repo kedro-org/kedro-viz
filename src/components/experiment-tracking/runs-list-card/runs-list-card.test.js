@@ -21,13 +21,14 @@ jest.mock('../../../apollo/mutations', () => {
 
 // Setup
 
+const randomRunId = new Date('October 15, 2021 03:24:00').toISOString();
 const randomRun = {
   bookmark: false,
-  id: new Date('October 15, 2021 03:24:00').toISOString(),
+  id: randomRunId,
   title: 'Sprint 4 EOW',
 };
 
-const selectedRunIds = ['ef32bfd'];
+const selectedRunIds = [randomRunId];
 
 const savedRun = {
   bookmark: true,
@@ -115,7 +116,7 @@ describe('RunsListCard', () => {
     const wrapper = mount(
       <RunsListCard
         data={randomRun}
-        onRunSelection={() => setActive('ef32bfd')}
+        onRunSelection={() => setActive(randomRunId)}
         selectedRunIds={selectedRunIds}
       />
     );
