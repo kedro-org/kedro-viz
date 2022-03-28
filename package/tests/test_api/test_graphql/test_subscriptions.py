@@ -14,7 +14,6 @@ class TestRunsAddedSubscription:
                     id
                     bookmark
                     gitSha
-                    timestamp
                     title
                 }
             }
@@ -44,7 +43,6 @@ class TestRunsAddedSubscription:
                         "id": example_new_run_id,
                         "bookmark": False,
                         "gitSha": None,
-                        "timestamp": example_new_run_id,
                         "title": example_new_run_id,
                     }
                 ]
@@ -60,7 +58,6 @@ class TestRunsAddedSubscription:
                     id
                     bookmark
                     gitSha
-                    timestamp
                     title
                 }
             }
@@ -93,7 +90,6 @@ class TestRunsAddedSubscription:
                         "id": example_new_run_id,
                         "bookmark": False,
                         "gitSha": None,
-                        "timestamp": example_new_run_id,
                         "title": example_new_run_id,
                     }
                 ]

@@ -7,7 +7,6 @@ export const GET_RUNS = gql`
       bookmark
       gitSha
       id
-      timestamp
       title
       notes
     }
@@ -25,7 +24,6 @@ export const GET_RUN_METADATA = gql`
       gitSha
       notes
       runCommand
-      timestamp
       title
     }
   }
