@@ -66,6 +66,7 @@ const Details = ({
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
           pinnedRun={pinnedRun}
+          selectedRunIds={selectedRunIds}
           trackingData={runTrackingData}
         />
       </div>

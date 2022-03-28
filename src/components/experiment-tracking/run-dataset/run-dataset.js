@@ -37,10 +37,11 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
  * @param {array} props.trackingData The experiment tracking run data.
  */
 const RunDataset = ({
-  isSingleRun,
-  trackingData = [],
-  pinnedRun,
   enableShowChanges,
+  isSingleRun,
+  pinnedRun,
+  selectedRunIds,
+  trackingData = [],
 }) => {
   return (
     <div
@@ -61,7 +62,9 @@ const RunDataset = ({
             size="large"
           >
             {Object.keys(data)
-              .sort()
+              .sort((a, b) => {
+                return a.localeCompare(b);
+              })
               .map((key, rowIndex) => {
                 return buildDatasetDataMarkup(
                   key,
@@ -69,7 +72,8 @@ const RunDataset = ({
                   rowIndex,
                   isSingleRun,
                   pinnedRun,
-                  enableShowChanges
+                  enableShowChanges,
+                  selectedRunIds
                 );
               })}
           </Accordion>
@@ -92,10 +96,11 @@ function buildDatasetDataMarkup(
   rowIndex,
   isSingleRun,
   pinnedRun,
-  enableShowChanges
+  enableShowChanges,
+  selectedRunIds
 ) {
-  // function to return new set of runData with appropriate pin from datasetValues and pinnedRun
-  const runDataWithPin = resolveRunDataWithPin(datasetValues, pinnedRun);
+  const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
+  const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
 
   return (
     <React.Fragment key={datasetKey + rowIndex}>
@@ -142,6 +147,25 @@ function buildDatasetDataMarkup(
       </div>
     </React.Fragment>
   );
+}
+
+function fillEmptyMetrics(datasetValues, selectedRunIds) {
+  const metrics = [];
+
+  selectedRunIds.forEach((id) => {
+    const foundIdIndex = datasetValues.findIndex((item) => {
+      return item.runId === id;
+    });
+
+    // We didn't find a metric with this runID, so add a placeholder
+    if (foundIdIndex === -1) {
+      metrics.push({ runId: id, value: null });
+    } else {
+      metrics.push(datasetValues[foundIdIndex]);
+    }
+  });
+
+  return metrics;
 }
 
 export default RunDataset;

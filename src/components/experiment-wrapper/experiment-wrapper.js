@@ -40,7 +40,7 @@ const ExperimentWrapper = ({ theme }) => {
   const { data: { runTrackingData } = [], error: trackingDataError } =
     useApolloQuery(GET_RUN_TRACKING_DATA, {
       skip: selectedRunIds.length === 0,
-      variables: { runIds: selectedRunIds, showDiff: false },
+      variables: { runIds: selectedRunIds, showDiff: true },
     });
 
   const onRunSelection = (id) => {
