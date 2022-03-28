@@ -1,9 +1,8 @@
 export const runs = [
   {
-    id: 'My Favorite Sprint',
     author: 'Luke Skywalker',
     bookmark: true,
-    timestamp: '2021-09-08T10:55:36.810Z',
+    id: '2021-09-08T10:55:36.810Z',
     gitSha: 'ad60192',
     gitBranch: 'feature/new-feature',
     runCommand: 'kedro run --pipeline my_pipeline',
@@ -12,10 +11,9 @@ export const runs = [
     title: 'My Favorite Sprint',
   },
   {
-    id: 'Another favorite sprint',
     author: 'Leia Organa',
     bookmark: false,
-    timestamp: '2021-09-07T11:36:24.560Z',
+    id: '2021-09-07T11:36:24.560Z',
     gitSha: 'bt60142',
     gitBranch: 'feature/new-feature',
     runCommand: 'kedro run --pipeline my_pipeline',
@@ -24,10 +22,9 @@ export const runs = [
     title: 'Another favorite sprint',
   },
   {
-    id: 'Slick test this one',
     author: 'Obi-wan Kenobi',
     bookmark: false,
-    timestamp: '2021-09-04T04:36:24.560Z',
+    id: '2021-09-04T04:36:24.560Z',
     gitSha: 'tz24689',
     gitBranch: 'feature/new-feature',
     runCommand: 'kedro run --pipeline my_pipeline',

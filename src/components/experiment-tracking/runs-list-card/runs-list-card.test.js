@@ -23,8 +23,7 @@ jest.mock('../../../apollo/mutations', () => {
 
 const randomRun = {
   bookmark: false,
-  id: 'ef32bfd',
-  timestamp: new Date('October 15, 2021 03:24:00').toISOString(),
+  id: new Date('October 15, 2021 03:24:00').toISOString(),
   title: 'Sprint 4 EOW',
 };
 
@@ -32,16 +31,14 @@ const selectedRunIds = ['ef32bfd'];
 
 const savedRun = {
   bookmark: true,
-  id: 'ef32bfd',
-  timestamp: new Date('October 15, 2021 03:24:00').toISOString(),
+  id: new Date('October 15, 2021 03:24:00').toISOString(),
   title: 'Sprint 4 EOW',
   notes: 'star',
 };
 
 const nonActiveRun = {
   bookmark: true,
-  id: 'af32bfd',
-  timestamp: new Date('October 15, 2021 03:24:00').toISOString(),
+  id: new Date('October 15, 2021 03:24:00').toISOString(),
   title: 'Sprint 4 EOW',
 };
 
