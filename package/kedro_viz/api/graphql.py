@@ -78,7 +78,7 @@ def format_run(
         gitSha=git_data.get("commit_sha") if git_data else None,
         id=ID(run_id),
         notes=notes,
-        runCommand=run_blob.get('cli', {}).get('command_path'),
+        runCommand=run_blob.get("cli", {}).get("command_path"),
         title=title,
     )
     return run
