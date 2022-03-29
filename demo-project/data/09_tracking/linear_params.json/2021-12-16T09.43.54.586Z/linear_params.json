@@ -3,6 +3,5 @@
   "fit_intercept": true,
   "normalize": false,
   "copy_X": true,
-  "positive": false,
-  "hello": true
+  "positive": false
 }
