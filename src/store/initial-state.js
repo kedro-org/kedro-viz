@@ -39,7 +39,7 @@ export const createInitialState = () => ({
     globalToolbar: true,
     sidebar: true,
     miniMap: true,
-    expandAllPipelines: true,
+    expandAllPipelines: false,
   },
   zoom: {},
 });
