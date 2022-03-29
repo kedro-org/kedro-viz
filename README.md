@@ -156,10 +156,9 @@ We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX elem
 
 Kedro-Viz uses features flags to roll out some experimental features. The following flags are currently in use:
 
-| Flag               | Description                                                                             |
-| ------------------ | --------------------------------------------------------------------------------------- |
-| sizewarning        | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
-| expandAllPipelines | From release v4.3.2. Expand all modular pipelines on first load (default `false`)       |
+| Flag        | Description                                                                             |
+| ----------- | --------------------------------------------------------------------------------------- |
+| sizewarning | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
 
 To enable or disable a flag, click on the settings icon in the toolbar and toggle the flag on/off.
 
