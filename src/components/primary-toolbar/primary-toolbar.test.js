@@ -18,6 +18,16 @@ describe('PrimaryToolbar', () => {
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
   });
 
+  it('does not shows the collapse sidebar icon button if diesplay sidebar is false', () => {
+    const visible = {
+      sidebar: false,
+    };
+    const wrapper = setup.mount(
+      <PrimaryToolbar displaySidebar={false} visible={visible} />
+    );
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(0);
+  });
+
   it('shows the original menu button when visible sidebar prop is true', () => {
     const visible = {
       sidebar: true,
