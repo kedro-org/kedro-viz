@@ -12,6 +12,8 @@ const Details = ({
   metadataError,
   onRunSelection,
   pinnedRun,
+  runMetadata,
+  runTrackingData,
   selectedRunIds,
   setPinnedRun,
   setShowRunDetailsModal,
@@ -19,8 +21,6 @@ const Details = ({
   sidebarVisible,
   theme,
   trackingDataError,
-  runMetadata,
-  runTrackingData,
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
 

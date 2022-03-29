@@ -33,7 +33,10 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
 
 /**
  * Display the dataset of the experiment tracking run.
- * @param {array} props.isSingleRun Whether or not this is a single run.
+ * @param {boolean} props.enableShowChanges Are changes enabled or not.
+ * @param {boolean} props.isSingleRun Whether or not this is a single run.
+ * @param {string} props.pinnedRun ID of the pinned run.
+ * @param {array} props.selectedRunIds Array of strings of runIds.
  * @param {array} props.trackingData The experiment tracking run data.
  */
 const RunDataset = ({
@@ -89,6 +92,9 @@ const RunDataset = ({
  * @param {array} datasetValues A single dataset array from a run.
  * @param {number} rowIndex The array index of the dataset data.
  * @param {boolean} isSingleRun Whether or not this is a single run.
+ * @param {string} pinnedRun ID of the pinned run.
+ * @param {boolean} enableShowChanges Are changes enabled or not.
+ * @param {array} selectedRunIds Array of strings of runIds.
  */
 function buildDatasetDataMarkup(
   datasetKey,
@@ -149,7 +155,18 @@ function buildDatasetDataMarkup(
   );
 }
 
+/**
+ * Fill in missing run metrics if they don't match the number of runIds.
+ * @param {array} datasetValues Array of objects for a metric, e.g. r2_score.
+ * @param {array} selectedRunIds Array of strings of runIds.
+ * @returns Array of objects, the length of which matches the length
+ * of the selectedRunIds.
+ */
 function fillEmptyMetrics(datasetValues, selectedRunIds) {
+  if (datasetValues.length === selectedRunIds.length) {
+    return datasetValues;
+  }
+
   const metrics = [];
 
   selectedRunIds.forEach((id) => {
@@ -157,7 +174,7 @@ function fillEmptyMetrics(datasetValues, selectedRunIds) {
       return item.runId === id;
     });
 
-    // We didn't find a metric with this runID, so add a placeholder
+    // We didn't find a metric with this runId, so add a placeholder.
     if (foundIdIndex === -1) {
       metrics.push({ runId: id, value: null });
     } else {
