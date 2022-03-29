@@ -38,6 +38,7 @@ describe('RunDataset', () => {
     const wrapper = shallow(
       <RunDataset
         isSingleRun={runs.length === 1 ? true : false}
+        selectedRunIds={['abc']}
         trackingData={trackingData}
       />
     );
@@ -48,7 +49,11 @@ describe('RunDataset', () => {
 
   it('renders a boolean value as a string', () => {
     const wrapper = mount(
-      <RunDataset isSingleRun={true} trackingData={booleanTrackingData} />
+      <RunDataset
+        isSingleRun={true}
+        selectedRunIds={['abc']}
+        trackingData={booleanTrackingData}
+      />
     );
 
     expect(wrapper.find('.details-dataset__value').text()).toBe('false');
@@ -56,7 +61,11 @@ describe('RunDataset', () => {
 
   it('renders a boolean value as a string', () => {
     const wrapper = mount(
-      <RunDataset isSingleRun={true} trackingData={ObjectTrackingData} />
+      <RunDataset
+        isSingleRun={true}
+        selectedRunIds={['abc']}
+        trackingData={ObjectTrackingData}
+      />
     );
 
     const datasetValue = wrapper.find('.details-dataset__value').text();
@@ -67,10 +76,11 @@ describe('RunDataset', () => {
   it('renders the comparison arrow when showChanges is on', () => {
     const wrapper = mount(
       <RunDataset
-        isSingleRun={false}
-        trackingData={ComparisonTrackingData}
         enableShowChanges={true}
+        isSingleRun={false}
         pinnedRun={'My Favorite Sprint'}
+        selectedRunIds={['abc', 'def']}
+        trackingData={ComparisonTrackingData}
       />
     );
 
