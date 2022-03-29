@@ -48,7 +48,7 @@
   }
 
   &--no-global-toolbar {
-    left: calc(-1 * #{$global-toolbar-width});
+    left: -#{$global-toolbar-width};
   }
 
   @media print {
