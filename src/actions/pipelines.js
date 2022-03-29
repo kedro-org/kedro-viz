@@ -73,6 +73,7 @@ export const requiresSecondRequest = (pipeline) => {
   if (!pipeline.active) {
     return false;
   }
+
   // The active pipeline is not 'main'
   return pipeline.active !== pipeline.main;
 };
@@ -105,7 +106,7 @@ export function loadInitialPipelineData() {
     if (requiresSecondRequest(newState.pipeline)) {
       const url = getPipelineUrl(newState.pipeline);
       newState = await loadJsonData(url).then((data) =>
-        preparePipelineState(data, true, expandAllPipelines)
+        preparePipelineState(data, false, expandAllPipelines)
       );
     }
     dispatch(resetData(newState));
@@ -135,7 +136,7 @@ export function loadPipelineData(pipelineID) {
       const expandAllPipelines =
         display.expandAllPipelines || flags.expandAllPipelines;
       const newState = await loadJsonData(url).then((data) =>
-        preparePipelineState(data, true, expandAllPipelines)
+        preparePipelineState(data, false, expandAllPipelines)
       );
       // Set active pipeline here rather than dispatching two separate actions,
       // to improve performance by only requiring one state recalculation
