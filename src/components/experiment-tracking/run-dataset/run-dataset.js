@@ -34,7 +34,7 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
 /**
  * Display the dataset of the experiment tracking run.
  * @param {boolean} props.enableShowChanges Are changes enabled or not.
- * @param {boolean} props.isSingleRun Whether or not this is a single run.
+ * @param {boolean} props.isSingleRun Indication to display a single run.
  * @param {string} props.pinnedRun ID of the pinned run.
  * @param {array} props.selectedRunIds Array of strings of runIds.
  * @param {array} props.trackingData The experiment tracking run data.
