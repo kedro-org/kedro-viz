@@ -41,7 +41,7 @@ const showDiffTrackingData = [
         { runId: 'My Favorite Sprint', value: 12 },
         { runId: 'My second Favorite Sprint', value: 13 },
       ],
-      r2Score: [{ runId: 'My Favorite Sprint', value: 0.2342356 }],
+      r2Score: [{ runId: 'My second Favorite Sprint', value: 0.2342356 }],
     },
   },
 ];
@@ -109,6 +109,8 @@ describe('RunDataset', () => {
       />
     );
 
-    expect(wrapper.find('.details-dataset__value').last().text()).toBe('-');
+    console.log(wrapper.debug());
+
+    expect(wrapper.find('.details-dataset__value').at(2).text()).toBe('-');
   });
 });
