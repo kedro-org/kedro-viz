@@ -23,8 +23,8 @@ Please follow the established format:
 - Create a `version` GraphQL query to get versions of Kedro-Viz. (#727)
 - Fix Kedro-Viz to work with projects that have no `__default__` registered pipeline. This also fixes the `--pipeline` CLI option. (#729)
 - Fix lazy pipelines loading causes `get_current_session` to throw an error. (#726, #727)
-- Fix experiment tracking not showing all metrics. (#788)
-- Fix experiment tracking not display the correct empty table cells. (#788)
+- Fix experiment tracking not showing all metrics. (#798)
+- Fix experiment tracking not display the correct empty table cells. (#798)
 
 # Release 4.3.1
 
