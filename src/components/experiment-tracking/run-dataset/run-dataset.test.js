@@ -12,7 +12,7 @@ const booleanTrackingData = [
   },
 ];
 
-const ObjectTrackingData = [
+const objectTrackingData = [
   {
     datasetName: 'Data Analysis',
     data: {
@@ -21,7 +21,7 @@ const ObjectTrackingData = [
   },
 ];
 
-const ComparisonTrackingData = [
+const comparisonTrackingData = [
   {
     datasetName: 'Data Analysis',
     data: {
@@ -29,6 +29,19 @@ const ComparisonTrackingData = [
         { runId: 'My Favorite Sprint', value: 12 },
         { runId: 'My second Favorite Sprint', value: 13 },
       ],
+    },
+  },
+];
+
+const showDiffTrackingData = [
+  {
+    datasetName: 'Data Analysis',
+    data: {
+      classWeight: [
+        { runId: 'My Favorite Sprint', value: 12 },
+        { runId: 'My second Favorite Sprint', value: 13 },
+      ],
+      r2Score: [{ runId: 'My Favorite Sprint', value: 0.2342356 }],
     },
   },
 ];
@@ -64,7 +77,7 @@ describe('RunDataset', () => {
       <RunDataset
         isSingleRun={true}
         selectedRunIds={['abc']}
-        trackingData={ObjectTrackingData}
+        trackingData={objectTrackingData}
       />
     );
 
@@ -80,10 +93,22 @@ describe('RunDataset', () => {
         isSingleRun={false}
         pinnedRun={'My Favorite Sprint'}
         selectedRunIds={['abc', 'def']}
-        trackingData={ComparisonTrackingData}
+        trackingData={comparisonTrackingData}
       />
     );
 
     expect(wrapper.find('.dataset-arrow-icon').length).toBe(1);
+  });
+
+  it('for runs with different metrics, it renders a cell with a - value', () => {
+    const wrapper = mount(
+      <RunDataset
+        isSingleRun={true}
+        selectedRunIds={['My Favorite Sprint', 'My second Favorite Sprint']}
+        trackingData={showDiffTrackingData}
+      />
+    );
+
+    expect(wrapper.find('.details-dataset__value').last().text()).toBe('-');
   });
 });
