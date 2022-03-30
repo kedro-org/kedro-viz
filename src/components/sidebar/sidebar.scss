@@ -9,6 +9,10 @@
   bottom: -1px;
   left: $global-toolbar-width;
 
+  &--no-global-toolbar {
+    left: 0;
+  }
+
   // Ensures sidebar tooltips are above code panel
   z-index: 1;
   display: flex;

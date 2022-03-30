@@ -35,6 +35,12 @@ export const createInitialState = () => ({
     miniMap: true,
     modularPipelineFocusMode: null,
   },
+  display: {
+    globalToolbar: true,
+    sidebar: true,
+    miniMap: true,
+    expandAllPipelines: false,
+  },
   zoom: {},
 });
 
@@ -64,14 +70,15 @@ export const mergeLocalStorage = (state) => {
  * @param {object} data Data prop passed to App component
  * @param {boolean} applyFixes Whether to override initialState
  */
-export const preparePipelineState = (data, applyFixes) => {
-  const state = mergeLocalStorage(normalizeData(data));
+export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
+  const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
       state.pipeline.active = state.pipeline.main;
     }
   }
+
   return state;
 };
 
@@ -85,11 +92,21 @@ export const preparePipelineState = (data, applyFixes) => {
 export const prepareNonPipelineState = (props) => {
   const state = mergeLocalStorage(createInitialState());
 
+  let newVisibleProps = {};
+  if (props.display?.sidebar === false || state.display.sidebar === false) {
+    newVisibleProps['sidebar'] = false;
+  }
+
+  if (props.display?.minimap === false || state.display.miniMap === false) {
+    newVisibleProps['miniMap'] = false;
+  }
+
   return {
     ...state,
     flags: { ...state.flags, ...getFlagsFromUrl() },
     theme: props.theme || state.theme,
-    visible: { ...state.visible, ...props.visible },
+    visible: { ...state.visible, ...props.visible, ...newVisibleProps },
+    display: { ...state.display, ...props.display },
   };
 };
 
@@ -108,7 +125,17 @@ const getInitialState = (props = {}) => {
       disabled: { parameters: true, task: false, data: false },
     },
   });
-  const pipelineState = preparePipelineState(props.data, props.data !== 'json');
+
+  const expandAllPipelines =
+    nonPipelineState.display.expandAllPipelines ||
+    nonPipelineState.flags.expandAllPipelines;
+
+  const pipelineState = preparePipelineState(
+    props.data,
+    props.data !== 'json',
+    expandAllPipelines
+  );
+
   return {
     ...nonPipelineState,
     ...pipelineState,

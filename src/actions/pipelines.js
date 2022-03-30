@@ -73,6 +73,7 @@ export const requiresSecondRequest = (pipeline) => {
   if (!pipeline.active) {
     return false;
   }
+
   // The active pipeline is not 'main'
   return pipeline.active !== pipeline.main;
 };
@@ -94,13 +95,19 @@ export function loadInitialPipelineData() {
     // in order to obtain the list of pipelines, which is required for determining
     // whether the active pipeline (from localStorage) exists in the data.
     const url = getUrl('main');
+    // obtain the status of expandAllPipelines to decide whether it needs to overwrite the
+    // list of visible nodes
+    const expandAllPipelines =
+      state.display.expandAllPipelines || state.flags.expandAllPipelines;
     let newState = await loadJsonData(url).then((data) =>
-      preparePipelineState(data, true)
+      preparePipelineState(data, true, expandAllPipelines)
     );
     // If the active pipeline isn't 'main' then request data from new URL
     if (requiresSecondRequest(newState.pipeline)) {
       const url = getPipelineUrl(newState.pipeline);
-      newState = await loadJsonData(url).then(preparePipelineState);
+      newState = await loadJsonData(url).then((data) =>
+        preparePipelineState(data, false, expandAllPipelines)
+      );
     }
     dispatch(resetData(newState));
     dispatch(toggleLoading(false));
@@ -114,7 +121,7 @@ export function loadInitialPipelineData() {
  */
 export function loadPipelineData(pipelineID) {
   return async function (dispatch, getState) {
-    const { dataSource, pipeline } = getState();
+    const { dataSource, pipeline, display, flags } = getState();
     if (pipelineID && pipelineID === pipeline.active) {
       return;
     }
@@ -126,7 +133,11 @@ export function loadPipelineData(pipelineID) {
         main: pipeline.main,
         active: pipelineID,
       });
-      const newState = await loadJsonData(url).then(preparePipelineState);
+      const expandAllPipelines =
+        display.expandAllPipelines || flags.expandAllPipelines;
+      const newState = await loadJsonData(url).then((data) =>
+        preparePipelineState(data, false, expandAllPipelines)
+      );
       // Set active pipeline here rather than dispatching two separate actions,
       // to improve performance by only requiring one state recalculation
       newState.pipeline.active = pipelineID;
