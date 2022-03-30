@@ -18,7 +18,7 @@ import './wrapper.css';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ theme }) => {
+export const Wrapper = ({ theme, displayGlobalToolbar }) => {
   const { data: versionData } = useApolloQuery(GET_VERSIONS, { client });
   const [dismissed, setDismissed] = useState(false);
   const [isOutdated, setIsOutdated] = useState(false);
@@ -41,7 +41,7 @@ export const Wrapper = ({ theme }) => {
       >
         <h1 className="pipeline-title">Kedro-Viz</h1>
         <Router>
-          <GlobalToolbar isOutdated={isOutdated} />
+          {displayGlobalToolbar && <GlobalToolbar isOutdated={isOutdated} />}
           <SettingsModal
             isOutdated={isOutdated}
             latestVersion={latestVersion}
@@ -70,6 +70,7 @@ export const Wrapper = ({ theme }) => {
 export const mapStateToProps = (state) => ({
   loading: isLoading(state),
   theme: state.theme,
+  displayGlobalToolbar: state.display.globalToolbar,
 });
 
 export default connect(mapStateToProps)(Wrapper);

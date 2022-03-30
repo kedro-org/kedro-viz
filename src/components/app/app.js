@@ -99,6 +99,15 @@ App.propTypes = {
     exportBtn: PropTypes.bool,
     sidebar: PropTypes.bool,
   }),
+  /**
+   * Determines if certain elements are displayed, e.g global tool bar, sidebar
+   */
+  display: PropTypes.shape({
+    globalToolbar: PropTypes.bool,
+    sidebar: PropTypes.bool,
+    miniMap: PropTypes.bool,
+    expandAllPipelines: PropTypes.bool,
+  }),
 };
 
 export default App;

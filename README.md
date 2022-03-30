@@ -161,6 +161,7 @@ Kedro-Viz uses features flags to roll out some experimental features. The follow
 | Flag | Description |
 |------| ------------|
 | sizewarning | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
+| expandAllPipelines | From release v4.3.2. Expand all modular pipelines on first load (default `false`) |
 
 To enable or disable a flag, click on the settings icon in the toolbar and toggle the flag on/off.
 
