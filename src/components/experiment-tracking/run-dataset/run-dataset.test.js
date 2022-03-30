@@ -103,7 +103,7 @@ describe('RunDataset', () => {
   it('for runs with different metrics, it renders a cell with a - value', () => {
     const wrapper = mount(
       <RunDataset
-        isSingleRun={true}
+        isSingleRun={false}
         selectedRunIds={['My Favorite Sprint', 'My second Favorite Sprint']}
         trackingData={showDiffTrackingData}
       />
