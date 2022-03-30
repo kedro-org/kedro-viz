@@ -9,6 +9,7 @@ Please follow the established format:
 -->
 
 ## Major features and improvements
+
 - Set up of a pop-up reminder to nudge users to upgrade Kedro-Viz when a new version is released. (#746)
 - Set up the 'export run' button to allow exporting of selected run data into a csv file for download. (#757)
 - Set up new display props to standalone React component. (#786)
@@ -22,6 +23,8 @@ Please follow the established format:
 - Create a `version` GraphQL query to get versions of Kedro-Viz. (#727)
 - Fix Kedro-Viz to work with projects that have no `__default__` registered pipeline. This also fixes the `--pipeline` CLI option. (#729)
 - Fix lazy pipelines loading causes `get_current_session` to throw an error. (#726, #727)
+- Fix experiment tracking not showing all metrics. (#798)
+- Fix experiment tracking not display the correct empty table cells. (#798)
 
 # Release 4.3.1
 

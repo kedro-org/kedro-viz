@@ -25,7 +25,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 ## Introduction
 
-Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project. 
+Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project.
 
 ## Features
 
@@ -39,26 +39,26 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 🧪 Supports tracking and comparing runs in a Kedro project
 - 🎩 Many more to come
 
-
 ## Installation
 
 There are two ways you can use Kedro-Viz:
 
-* As a [Kedro plugin](https://kedro.readthedocs.io/en/stable/07_extend_kedro/04_plugins.html) (the most common way).
+- As a [Kedro plugin](https://kedro.readthedocs.io/en/stable/07_extend_kedro/04_plugins.html) (the most common way).
 
-    To install Kedro-Viz as a Kedro plugin:
+  To install Kedro-Viz as a Kedro plugin:
 
-    ```bash
-    pip install kedro-viz
-    ```
+  ```bash
+  pip install kedro-viz
+  ```
 
-* As a standalone React component (for embedding Kedro-Viz in your web application).
+- As a standalone React component (for embedding Kedro-Viz in your web application).
 
-   To install the standalone React component:
+  To install the standalone React component:
 
-    ```bash
-    npm install @quantumblack/kedro-viz
-    ```
+  ```bash
+  npm install @quantumblack/kedro-viz
+  ```
+
 ## Usage
 
 ### CLI Usage
@@ -107,7 +107,7 @@ Options:
 
 To enable [experiment tracking](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html) in Kedro-Viz, you need to add the Kedro-Viz `SQLiteStore` to your Kedro project.
 
-This can be done by adding the below code to `settings.py` in the `src` folder of your Kedro project. 
+This can be done by adding the below code to `settings.py` in the `src` folder of your Kedro project.
 
 ```python
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
@@ -120,8 +120,8 @@ Once the above set-up is complete, tracking datasets can be used to track releva
 
 **Notes:**
 
-* Experiment Tracking is only available for Kedro-Viz >= 4.0.2 and Kedro >= 0.17.5
-* Prior to Kedro 0.17.6, when using tracking datasets, you will have to explicitly mark the datasets as `versioned` for it to show up properly in Kedro-Viz experiment tracking tab. From Kedro >= 0.17.6, this is done automatically:
+- Experiment Tracking is only available for Kedro-Viz >= 4.0.2 and Kedro >= 0.17.5
+- Prior to Kedro 0.17.6, when using tracking datasets, you will have to explicitly mark the datasets as `versioned` for it to show up properly in Kedro-Viz experiment tracking tab. From Kedro >= 0.17.6, this is done automatically:
 
 ```yaml
 train_evaluation.r2_score_linear_regression:
@@ -138,12 +138,10 @@ To use Kedro-Viz as a standalone React component, import the component and suppl
 import KedroViz from '@quantumblack/kedro-viz';
 
 const MyApp = () => (
-  <div style={{ height: "100vh" }}>
-    <KedroViz
-      data={json}
-    />
+  <div style={{ height: '100vh' }}>
+    <KedroViz data={json} />
   </div>
-)
+);
 ```
 
 The JSON can be obtained by running:
@@ -158,8 +156,8 @@ We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX elem
 
 Kedro-Viz uses features flags to roll out some experimental features. The following flags are currently in use:
 
-| Flag | Description |
-|------| ------------|
+| Flag        | Description                                                                             |
+| ----------- | --------------------------------------------------------------------------------------- |
 | sizewarning | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
 | expandAllPipelines | From release v4.3.2. Expand all modular pipelines on first load (default `false`) |
 

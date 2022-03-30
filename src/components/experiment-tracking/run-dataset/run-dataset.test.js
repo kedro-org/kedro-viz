@@ -12,7 +12,7 @@ const booleanTrackingData = [
   },
 ];
 
-const ObjectTrackingData = [
+const objectTrackingData = [
   {
     datasetName: 'Data Analysis',
     data: {
@@ -21,7 +21,7 @@ const ObjectTrackingData = [
   },
 ];
 
-const ComparisonTrackingData = [
+const comparisonTrackingData = [
   {
     datasetName: 'Data Analysis',
     data: {
@@ -33,11 +33,25 @@ const ComparisonTrackingData = [
   },
 ];
 
+const showDiffTrackingData = [
+  {
+    datasetName: 'Data Analysis',
+    data: {
+      classWeight: [
+        { runId: 'My Favorite Sprint', value: 12 },
+        { runId: 'My second Favorite Sprint', value: 13 },
+      ],
+      r2Score: [{ runId: 'My second Favorite Sprint', value: 0.2342356 }],
+    },
+  },
+];
+
 describe('RunDataset', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(
       <RunDataset
         isSingleRun={runs.length === 1 ? true : false}
+        selectedRunIds={['abc']}
         trackingData={trackingData}
       />
     );
@@ -48,7 +62,11 @@ describe('RunDataset', () => {
 
   it('renders a boolean value as a string', () => {
     const wrapper = mount(
-      <RunDataset isSingleRun={true} trackingData={booleanTrackingData} />
+      <RunDataset
+        isSingleRun={true}
+        selectedRunIds={['abc']}
+        trackingData={booleanTrackingData}
+      />
     );
 
     expect(wrapper.find('.details-dataset__value').text()).toBe('false');
@@ -56,7 +74,11 @@ describe('RunDataset', () => {
 
   it('renders a boolean value as a string', () => {
     const wrapper = mount(
-      <RunDataset isSingleRun={true} trackingData={ObjectTrackingData} />
+      <RunDataset
+        isSingleRun={true}
+        selectedRunIds={['abc']}
+        trackingData={objectTrackingData}
+      />
     );
 
     const datasetValue = wrapper.find('.details-dataset__value').text();
@@ -67,13 +89,28 @@ describe('RunDataset', () => {
   it('renders the comparison arrow when showChanges is on', () => {
     const wrapper = mount(
       <RunDataset
-        isSingleRun={false}
-        trackingData={ComparisonTrackingData}
         enableShowChanges={true}
+        isSingleRun={false}
         pinnedRun={'My Favorite Sprint'}
+        selectedRunIds={['abc', 'def']}
+        trackingData={comparisonTrackingData}
       />
     );
 
     expect(wrapper.find('.dataset-arrow-icon').length).toBe(1);
+  });
+
+  it('for runs with different metrics, it renders a cell with a - value', () => {
+    const wrapper = mount(
+      <RunDataset
+        isSingleRun={false}
+        selectedRunIds={['My Favorite Sprint', 'My second Favorite Sprint']}
+        trackingData={showDiffTrackingData}
+      />
+    );
+
+    console.log(wrapper.debug());
+
+    expect(wrapper.find('.details-dataset__value').at(2).text()).toBe('-');
   });
 });

@@ -11,5 +11,6 @@
   "oob_score": false,
   "verbose": 0,
   "warm_start": false,
-  "ccp_alpha": 0
+  "ccp_alpha": 0,
+  "model_author": "richard feynman"
 }
