@@ -81,6 +81,7 @@ def _setup_context_with_venv(context, venv_dir):
             "pip>=21.2",
             "setuptools>=38.0",
             "wheel",
+            "PyYAML>=4.2, <6.0",
         ],
         env=context.env,
     )
