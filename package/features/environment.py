@@ -78,7 +78,7 @@ def _setup_context_with_venv(context, venv_dir):
             "pip",
             "install",
             "-U",
-            "pip>=20.0,<21.3",
+            "pip>=21.2",
             "setuptools>=38.0",
             "cookiecutter>=1.7.2",
             "wheel",
