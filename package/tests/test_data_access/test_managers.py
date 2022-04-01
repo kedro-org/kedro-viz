@@ -302,7 +302,7 @@ class TestAddPipelines:
             "uk.data_processing.raw_data",
             "model_inputs",
             "parameters",
-            "params:train_test_split",
+            "params:uk.data_processing.train_test_split",
         }
         assert data_access_manager.tags.as_list() == [Tag("split"), Tag("train")]
         assert sorted(data_access_manager.modular_pipelines.as_dict().keys()) == sorted(
