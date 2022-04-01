@@ -71,18 +71,18 @@ def assert_example_data(response_data):
     """Assert graph response for the `example_pipelines` and `example_catalog` fixtures."""
     expected_edges = [
         {"source": "7b140b3f", "target": "d5a8b994"},
-        {"source": "fdba147b", "target": "0ecea0de"},
-        {"source": "13399a82", "target": "fdba147b"},
+        {"source": "f2e4bf0e", "target": "0ecea0de"},
+        {"source": "13399a82", "target": "f2e4bf0e"},
         {"source": "f1f1425b", "target": "7b140b3f"},
         {"source": "0ecea0de", "target": "7b140b3f"},
-        {"source": "c506f374", "target": "fdba147b"},
+        {"source": "f0ebef01", "target": "f2e4bf0e"},
         {"source": "13399a82", "target": "uk.data_processing"},
         {"source": "uk.data_processing", "target": "0ecea0de"},
-        {"source": "c506f374", "target": "uk.data_processing"},
+        {"source": "f0ebef01", "target": "uk.data_processing"},
         {"source": "f1f1425b", "target": "uk"},
         {"source": "13399a82", "target": "uk"},
         {"source": "f1f1425b", "target": "uk.data_science"},
-        {"source": "c506f374", "target": "uk"},
+        {"source": "f0ebef01", "target": "uk"},
         {"source": "uk.data_science", "target": "d5a8b994"},
         {"source": "0ecea0de", "target": "uk.data_science"},
         {"source": "uk", "target": "d5a8b994"},
@@ -93,14 +93,14 @@ def assert_example_data(response_data):
     # compare nodes
     expected_nodes = [
         {
-            "id": "fdba147b",
+            "id": "f2e4bf0e",
             "name": "Process Data",
             "full_name": "process_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "task",
-            "parameters": {"train_test_split": 0.1},
+            "parameters": {"uk.data_processing.train_test_split": 0.1},
         },
         {
             "id": "13399a82",
@@ -114,12 +114,12 @@ def assert_example_data(response_data):
             "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
         },
         {
-            "id": "c506f374",
+            "id": "f0ebef01",
             "name": "Params: Train Test Split",
-            "full_name": "params:train_test_split",
+            "full_name": "params:uk.data_processing.train_test_split",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": [],
+            "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "parameters",
             "layer": None,
             "dataset_type": None,
@@ -143,7 +143,10 @@ def assert_example_data(response_data):
             "pipelines": ["__default__", "data_science"],
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "task",
-            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
+            "parameters": {
+                "train_test_split": 0.1,
+                "num_epochs": 1000,
+            },
         },
         {
             "id": "f1f1425b",
@@ -165,7 +168,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
-            "dataset_type": "kedro.io.memory_data_set.MemoryDataSet",
+            "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
         },
         {
             "id": "uk.data_processing",
@@ -209,7 +212,6 @@ def assert_example_data(response_data):
             "children": [
                 {"id": "0ecea0de", "type": "data"},
                 {"id": "f1f1425b", "type": "parameters"},
-                {"id": "c506f374", "type": "parameters"},
                 {"id": "uk", "type": "modularPipeline"},
             ],
             "id": "__root__",
@@ -223,17 +225,17 @@ def assert_example_data(response_data):
                 {"id": "uk.data_processing", "type": "modularPipeline"},
             ],
             "id": "uk",
-            "inputs": ["c506f374", "13399a82", "f1f1425b"],
+            "inputs": ["f0ebef01", "13399a82", "f1f1425b"],
             "name": "Uk",
             "outputs": ["d5a8b994"],
         },
         "uk.data_processing": {
             "children": [
                 {"id": "13399a82", "type": "data"},
-                {"id": "fdba147b", "type": "task"},
+                {"id": "f2e4bf0e", "type": "task"},
             ],
             "id": "uk.data_processing",
-            "inputs": ["c506f374", "13399a82"],
+            "inputs": ["f0ebef01", "13399a82"],
             "name": "Data Processing",
             "outputs": ["0ecea0de"],
         },
@@ -270,9 +272,9 @@ def assert_example_transcoded_data(response_data):
     and `example_transcoded_catalog` fixtures."""
     expected_edges = [
         {"source": "f1f1425b", "target": "2302ea78"},
-        {"source": "20c83b96", "target": "0ecea0de"},
-        {"source": "c506f374", "target": "20c83b96"},
-        {"source": "7c58d8e6", "target": "20c83b96"},
+        {"source": "f2b74919", "target": "0ecea0de"},
+        {"source": "f0ebef01", "target": "f2b74919"},
+        {"source": "7c58d8e6", "target": "f2b74919"},
         {"source": "2302ea78", "target": "1d06a0d7"},
         {"source": "0ecea0de", "target": "2302ea78"},
     ]
@@ -282,14 +284,14 @@ def assert_example_transcoded_data(response_data):
     # compare nodes
     expected_nodes = [
         {
-            "id": "20c83b96",
+            "id": "f2b74919",
             "name": "Process Data",
             "full_name": "process_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": [],
             "type": "task",
-            "parameters": {"train_test_split": 0.1},
+            "parameters": {"uk.data_processing.train_test_split": 0.1},
         },
         {
             "id": "7c58d8e6",
@@ -303,12 +305,12 @@ def assert_example_transcoded_data(response_data):
             "dataset_type": None,
         },
         {
-            "id": "c506f374",
+            "id": "f0ebef01",
             "name": "Params: Train Test Split",
-            "full_name": "params:train_test_split",
+            "full_name": "params:uk.data_processing.train_test_split",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": [],
+            "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "parameters",
             "layer": None,
             "dataset_type": None,
@@ -332,7 +334,10 @@ def assert_example_transcoded_data(response_data):
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": [],
             "type": "task",
-            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
+            "parameters": {
+                "train_test_split": 0.1,
+                "num_epochs": 1000,
+            },
         },
         {
             "id": "f1f1425b",
@@ -465,13 +470,13 @@ class TestNodeMetadataEndpoint:
         assert response.status_code == 404
 
     def test_task_node_metadata(self, client):
-        response = client.get("/api/nodes/fdba147b")
+        response = client.get("/api/nodes/f2e4bf0e")
         metadata = response.json()
         assert (
             metadata["code"].lstrip()
             == "def process_data(raw_data, train_test_split):\n        ...\n"
         )
-        assert metadata["parameters"] == {"train_test_split": 0.1}
+        assert metadata["parameters"] == {"uk.data_processing.train_test_split": 0.1}
         assert metadata["inputs"] == ["Raw Data", "Params: Train Test Split"]
         assert metadata["outputs"] == ["Model Inputs"]
         assert metadata["run_command"] == 'kedro run --to-nodes="process_data"'
@@ -499,12 +504,14 @@ class TestNodeMetadataEndpoint:
         }
 
     def test_single_parameter_node_metadata(self, client):
-        response = client.get("/api/nodes/c506f374")
-        assert response.json() == {"parameters": {"train_test_split": 0.1}}
+        response = client.get("/api/nodes/f0ebef01")
+        assert response.json() == {
+            "parameters": {"uk.data_processing.train_test_split": 0.1}
+        }
 
     def test_no_metadata(self, client):
         with mock.patch.object(TaskNode, "has_metadata", return_value=False):
-            response = client.get("/api/nodes/fdba147b")
+            response = client.get("/api/nodes/f2e4bf0e")
         assert response.json() == {}
 
 
@@ -547,7 +554,10 @@ class TestSinglePipelineEndpoint:
                 "pipelines": ["__default__", "data_science"],
                 "modular_pipelines": ["uk", "uk.data_science"],
                 "type": "task",
-                "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
+                "parameters": {
+                    "train_test_split": 0.1,
+                    "num_epochs": 1000,
+                },
             },
             {
                 "id": "f1f1425b",
@@ -569,7 +579,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": ["uk", "uk.data_science"],
                 "type": "data",
                 "layer": None,
-                "dataset_type": "kedro.io.memory_data_set.MemoryDataSet",
+                "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
             },
             {
                 "id": "uk",

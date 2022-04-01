@@ -1,23 +1,23 @@
 {
   "nodes": [
     {
-      "id": "fdba147b",
+      "id": "f2e4bf0e",
       "name": "Process Data",
       "full_name": "process_data",
       "tags": ["split"],
       "pipelines": ["data_processing", "__default__"],
       "type": "task",
       "modular_pipelines": ["uk", "uk.data_processing"],
-      "parameters": { "train_test_split": 0.1 }
+      "parameters": { "uk.data_processing.train_test_split": 0.1 }
     },
     {
-      "id": "c506f374",
+      "id": "f0ebef01",
       "name": "Params: Train Test Split",
-      "full_name": "params:train_test_split",
+      "full_name": "params:uk.data_processing.train_test_split",
       "tags": ["split"],
       "pipelines": ["data_processing", "__default__"],
       "type": "parameters",
-      "modular_pipelines": [],
+      "modular_pipelines": ["uk", "uk.data_processing"],
       "layer": null,
       "dataset_type": null
     },
@@ -73,7 +73,7 @@
       "type": "data",
       "modular_pipelines": ["uk", "uk.data_science"],
       "layer": null,
-      "dataset_type": "kedro.io.memory_data_set.MemoryDataSet"
+      "dataset_type": "kedro.io.memory_dataset.MemoryDataSet"
     },
     {
       "id": "uk.data_processing",
@@ -112,18 +112,18 @@
   "edges": [
     { "source": "f1f1425b", "target": "7b140b3f" },
     { "source": "0ecea0de", "target": "uk.data_science" },
-    { "source": "c506f374", "target": "uk" },
+    { "source": "f0ebef01", "target": "uk" },
     { "source": "7b140b3f", "target": "d5a8b994" },
-    { "source": "c506f374", "target": "uk.data_processing" },
-    { "source": "13399a82", "target": "fdba147b" },
+    { "source": "f0ebef01", "target": "uk.data_processing" },
+    { "source": "13399a82", "target": "f2e4bf0e" },
     { "source": "uk.data_science", "target": "d5a8b994" },
     { "source": "f1f1425b", "target": "uk" },
     { "source": "0ecea0de", "target": "7b140b3f" },
     { "source": "uk", "target": "d5a8b994" },
     { "source": "f1f1425b", "target": "uk.data_science" },
-    { "source": "fdba147b", "target": "0ecea0de" },
+    { "source": "f2e4bf0e", "target": "0ecea0de" },
     { "source": "uk.data_processing", "target": "0ecea0de" },
-    { "source": "c506f374", "target": "fdba147b" },
+    { "source": "f0ebef01", "target": "f2e4bf0e" },
     { "source": "13399a82", "target": "uk" },
     { "source": "13399a82", "target": "uk.data_processing" }
   ],
@@ -146,24 +146,23 @@
       "children": [
         { "id": "f1f1425b", "type": "parameters" },
         { "id": "uk", "type": "modularPipeline" },
-        { "id": "c506f374", "type": "parameters" },
         { "id": "0ecea0de", "type": "data" }
       ]
     },
     "uk.data_processing": {
       "id": "uk.data_processing",
       "name": "Data Processing",
-      "inputs": ["13399a82", "c506f374"],
+      "inputs": ["13399a82", "f0ebef01"],
       "outputs": ["0ecea0de"],
       "children": [
         { "id": "13399a82", "type": "data" },
-        { "id": "fdba147b", "type": "task" }
+        { "id": "f2e4bf0e", "type": "task" }
       ]
     },
     "uk": {
       "id": "uk",
       "name": "Uk",
-      "inputs": ["13399a82", "c506f374", "f1f1425b"],
+      "inputs": ["13399a82", "f0ebef01", "f1f1425b"],
       "outputs": ["d5a8b994"],
       "children": [
         { "id": "uk.data_science", "type": "modularPipeline" },
