@@ -114,8 +114,7 @@ def load_data(
         return context.catalog, context.pipelines, session_store_location
 
     # pre-0.17 load_context version
-    # pylint: disable=no-name-in-module
-    from kedro.framework.context import load_context
+    from kedro.framework.context import load_context  # type: ignore # pylint: disable=no-name-in-module
 
     context = load_context(project_path=project_path, env=env)
     return context.catalog, context.pipelines, None
