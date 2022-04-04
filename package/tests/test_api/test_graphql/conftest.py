@@ -129,12 +129,12 @@ def example_multiple_run_tracking_catalog(example_run_ids, tmp_path):
     # Note - filepath is assigned without using tmp_path as it fails on windows build.
     # This is a temp soln and will be cleaned up in the future.
     new_metrics_dataset = MetricsDataSet(
-        filepath=Path(tmp_path /"test.json"),
+        filepath=Path(tmp_path / "test.json"),
         version=Version(None, example_run_ids[1]),
     )
     new_metrics_dataset.save({"col1": 1, "col3": 3})
     new_metrics_dataset = MetricsDataSet(
-        filepath=Path(tmp_path /"test.json"),
+        filepath=Path(tmp_path / "test.json"),
         version=Version(None, example_run_ids[0]),
     )
     new_data = {"col1": 3, "col2": 3.23}
@@ -151,7 +151,9 @@ def example_multiple_run_tracking_catalog(example_run_ids, tmp_path):
 
 
 @pytest.fixture
-def example_multiple_run_tracking_catalog_at_least_one_empty_run(example_run_ids, tmp_path):
+def example_multiple_run_tracking_catalog_at_least_one_empty_run(
+    example_run_ids, tmp_path
+):
     # Note - filepath is assigned without using tmp_path as it fails on windows build.
     # This is a temp soln and will be cleaned up in the future.
     new_metrics_dataset = MetricsDataSet(
@@ -160,7 +162,7 @@ def example_multiple_run_tracking_catalog_at_least_one_empty_run(example_run_ids
     )
     new_metrics_dataset.save({"col1": 1, "col3": 3})
     new_metrics_dataset = MetricsDataSet(
-        filepath= Path(tmp_path /"test.json"),
+        filepath=Path(tmp_path / "test.json"),
         version=Version(None, example_run_ids[0]),
     )
     catalog = DataCatalog(
@@ -179,11 +181,11 @@ def example_multiple_run_tracking_catalog_all_empty_runs(example_run_ids, tmp_pa
     # Note - filepath is assigned without using tmp_path as it fails on windows build.
     # This is a temp soln and will be cleaned up in the future.
     new_metrics_dataset = MetricsDataSet(
-        filepath=Path(tmp_path /"test.json"),
+        filepath=Path(tmp_path / "test.json"),
         version=Version(None, example_run_ids[1]),
     )
     new_metrics_dataset = MetricsDataSet(
-        filepath=Path(tmp_path /"test.json"),
+        filepath=Path(tmp_path / "test.json"),
         version=Version(None, example_run_ids[0]),
     )
     catalog = DataCatalog(
