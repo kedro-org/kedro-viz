@@ -20,7 +20,7 @@ from typing import (
 
 import strawberry
 from fastapi import APIRouter
-from kedro.io.core import Version as CatalogVersion
+from kedro.io.core import Version as DatasetVersion
 from kedro.io.core import get_filepath_str
 from semver import VersionInfo
 from strawberry import ID
@@ -241,7 +241,7 @@ def get_run_tracking_data(
         all_runs = {}
         for run_id in run_ids:
             run_id = ID(run_id)
-            dataset._version = CatalogVersion(run_id, None)
+            dataset._version = DatasetVersion(run_id, None)
             if dataset.exists():
                 load_path = get_filepath_str(
                     dataset._get_load_path(), dataset._protocol
