@@ -30,6 +30,8 @@ from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
+from kedro.io.core import Version as CatalogVersion, get_filepath_str
+
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -240,11 +242,11 @@ def get_run_tracking_data(
         all_runs = {}
         for run_id in run_ids:
             run_id = ID(run_id)
+            dataset._version = CatalogVersion(run_id, None)
             file_path = dataset._get_versioned_path(str(run_id))
-            if Path(file_path).is_file():
-                with dataset._fs.open(
-                    file_path, **dataset._fs_open_args_load
-                ) as fs_file:
+            if dataset.exists():
+                load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
+                with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                     json_data = json.load(fs_file)
                     all_runs[run_id] = json_data
             else:
