@@ -7,7 +7,6 @@ import asyncio
 import json
 import logging
 from collections import defaultdict
-from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     AsyncGenerator,
@@ -21,6 +20,8 @@ from typing import (
 
 import strawberry
 from fastapi import APIRouter
+from kedro.io.core import Version as CatalogVersion
+from kedro.io.core import get_filepath_str
 from semver import VersionInfo
 from strawberry import ID
 from strawberry.asgi import GraphQL
@@ -29,8 +30,6 @@ from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
-
-from kedro.io.core import Version as CatalogVersion, get_filepath_str
 
 logger = logging.getLogger(__name__)
 
@@ -243,15 +242,20 @@ def get_run_tracking_data(
         for run_id in run_ids:
             run_id = ID(run_id)
             dataset._version = CatalogVersion(run_id, None)
-            file_path = dataset._get_versioned_path(str(run_id))
             if dataset.exists():
-                load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
-                with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
+                load_path = get_filepath_str(
+                    dataset._get_load_path(), dataset._protocol
+                )
+                with dataset._fs.open(
+                    load_path, **dataset._fs_open_args_load
+                ) as fs_file:
                     json_data = json.load(fs_file)
                     all_runs[run_id] = json_data
             else:
                 all_runs[run_id] = {}
-                logger.warning("`%s` could not be found", file_path)
+                logger.warning(
+                    "`%s` could not be found", dataset._get_versioned_path(str(run_id))
+                )
 
         tracking_dataset = TrackingDataset(
             datasetName=name,
