@@ -96,7 +96,7 @@ def example_tracking_catalog(example_run_ids, tmp_path):
     dataset = CSVDataSet(filepath="dataset.csv")
 
     more_metrics = MetricsDataSet(
-        filepath=Path(tmp_path / "metrics.json"),
+        filepath=Path(tmp_path / "metrics.json").as_posix(),
         version=Version(None, example_run_id),
     )
     more_metrics.save({"col4": 4, "col5": 5, "col6": 6})
