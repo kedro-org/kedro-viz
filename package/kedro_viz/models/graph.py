@@ -655,17 +655,17 @@ class DataNodeMetadata(GraphNodeMetadata):
         versions = {}
         for version in version_list[:num_versions]:
             try:
-                timestamp = datetime.strptime(version.name, VERSION_FORMAT)
+                run_id = datetime.strptime(version.name, VERSION_FORMAT)
             except ValueError:
                 logger.warning(
-                    """Expected timestamp of format YYYY-MM-DDTHH:MM:SS.ffffff.
+                    """Expected run_id (timestamp) of format YYYY-MM-DDTHH:MM:SS.ffffff.
                     Skip when loading tracking data."""
                 )
                 continue
             else:
                 path = version / Path(filepath).name
                 with open(path) as fs_file:
-                    versions[timestamp] = json.load(fs_file)
+                    versions[run_id] = json.load(fs_file)
         return versions
 
     @staticmethod
