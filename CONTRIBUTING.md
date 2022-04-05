@@ -215,6 +215,8 @@ Owing to this coupling between the project settings and Kedro-Viz, if you wish t
 pip3 install -e package
 ```
 
+Since Kedro 0.18, a session can only contain one run. In Kedro-Viz, once a session has been retrieved from the store we always use the terminology "run" rather than "session", e.g. `run_id` rather than `session_id`.
+
 ## Testing guidelines
 
 - Scope out major journeys from acceptance criteria from the ticket for manual end-to-end testing
