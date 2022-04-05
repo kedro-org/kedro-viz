@@ -7,7 +7,6 @@ import asyncio
 import json
 import logging
 from collections import defaultdict
-from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     AsyncGenerator,
@@ -21,6 +20,8 @@ from typing import (
 
 import strawberry
 from fastapi import APIRouter
+from kedro.io.core import Version as DataSetVersion
+from kedro.io.core import get_filepath_str
 from semver import VersionInfo
 from strawberry import ID
 from strawberry.asgi import GraphQL
@@ -239,16 +240,18 @@ def get_run_tracking_data(
         all_runs = {}
         for run_id in run_ids:
             run_id = ID(run_id)
-            file_path = dataset._get_versioned_path(str(run_id))
-            if Path(file_path).is_file():
+            # Set the load_version to run_id
+            dataset._version = DataSetVersion(run_id, None)
+            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
+            if dataset.exists():
                 with dataset._fs.open(
-                    file_path, **dataset._fs_open_args_load
+                    load_path, **dataset._fs_open_args_load
                 ) as fs_file:
                     json_data = json.load(fs_file)
                     all_runs[run_id] = json_data
             else:
                 all_runs[run_id] = {}
-                logger.warning("`%s` could not be found", file_path)
+                logger.warning("`%s` could not be found", load_path)
 
         tracking_dataset = TrackingDataset(
             datasetName=name,
