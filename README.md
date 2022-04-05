@@ -25,7 +25,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 ## Introduction
 
-Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs (a.k.a sessions) in the Kedro project.
+Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project.
 
 ## Features
 
@@ -36,7 +36,7 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 🔬 Focus mode for modular pipeline visualisation
 - 📊 Rich metadata side panel to display parameters, plots, etc.
 - ♻️ Autoreload on code change
-- 🧪 Supports tracking and comparing runs (a.k.a sessions) in a Kedro project
+- 🧪 Supports tracking and comparing runs fin a Kedro project
 - 🎩 Many more to come
 
 ## Installation
@@ -116,7 +116,7 @@ SESSION_STORE_CLASS = SQLiteStore
 SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 ```
 
-Once the above set-up is complete, tracking datasets can be used to track relevant data for Kedro runs (a.k.a sessions). More information on how to use tracking datasets can be found [here](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html)
+Once the above set-up is complete, tracking datasets can be used to track relevant data for Kedro runs. More information on how to use tracking datasets can be found [here](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html)
 
 **Notes:**
 
