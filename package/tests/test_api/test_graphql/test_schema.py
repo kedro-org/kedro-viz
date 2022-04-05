@@ -186,10 +186,7 @@ class TestTrackingData:
         mocker,
     ):
         patched_warning = mocker.patch("logging.Logger.warning")
-        json_dataset = JSONDataSet(
-            filepath="not_exist.json",
-            version=Version(None, example_run_ids[0]),
-        )
+        json_dataset = JSONDataSet(filepath="not_exist.json")
         json_dataset._version = Version(example_run_ids[0], None)
         load_path = get_filepath_str(
             json_dataset._get_load_path(), json_dataset._protocol
