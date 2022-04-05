@@ -25,7 +25,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 ## Introduction
 
-Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs (a.k.a sessions) in the Kedro project.
+Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project.
 
 ## Features
 
