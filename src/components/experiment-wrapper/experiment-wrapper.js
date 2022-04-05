@@ -14,7 +14,7 @@ import Sidebar from '../sidebar';
 
 import './experiment-wrapper.css';
 
-const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three
+const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
 
 const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
@@ -26,9 +26,10 @@ const ExperimentWrapper = ({ theme }) => {
   const [selectedRunData, setSelectedRunData] = useState(null);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
 
+  // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
 
-  // Fetch all metadata and tracking data from selected runs
+  // Fetch all metadata for selected runs.
   const { data: { runMetadata } = [], metadataError } = useApolloQuery(
     GET_RUN_METADATA,
     {
@@ -37,10 +38,11 @@ const ExperimentWrapper = ({ theme }) => {
     }
   );
 
+  // Fetch all tracking data for selected runs.
   const { data: { runTrackingData } = [], error: trackingDataError } =
     useApolloQuery(GET_RUN_TRACKING_DATA, {
       skip: selectedRunIds.length === 0,
-      variables: { runIds: selectedRunIds, showDiff: false },
+      variables: { runIds: selectedRunIds, showDiff: true },
     });
 
   const onRunSelection = (id) => {
@@ -163,8 +165,8 @@ const ExperimentWrapper = ({ theme }) => {
             isExperimentView
             onRunSelection={onRunSelection}
             onToggleComparisonView={onToggleComparisonView}
-            runsListData={data.runsList}
             runMetadata={runMetadata}
+            runsListData={data.runsList}
             runTrackingData={runTrackingData}
             selectedRunData={selectedRunData}
             selectedRunIds={selectedRunIds}
@@ -177,9 +179,11 @@ const ExperimentWrapper = ({ theme }) => {
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
-              onRunSelection={onRunSelection}
               metadataError={metadataError}
+              onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
+              runMetadata={runMetadata}
+              runTrackingData={runTrackingData}
               selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}
@@ -187,8 +191,6 @@ const ExperimentWrapper = ({ theme }) => {
               sidebarVisible={isSidebarVisible}
               theme={theme}
               trackingDataError={trackingDataError}
-              runMetadata={runMetadata}
-              runTrackingData={runTrackingData}
             />
           ) : null}
         </>

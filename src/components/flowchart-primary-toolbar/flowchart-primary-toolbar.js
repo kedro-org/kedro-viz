@@ -20,6 +20,7 @@ import { getVisibleLayerIDs } from '../../selectors/disabled';
  */
 export const FlowchartPrimaryToolbar = ({
   disableLayerBtn,
+  displaySidebar,
   onToggleExportModal,
   onToggleLayers,
   onToggleSidebar,
@@ -29,7 +30,11 @@ export const FlowchartPrimaryToolbar = ({
   visibleLayers,
 }) => (
   <>
-    <PrimaryToolbar onToggleSidebar={onToggleSidebar} visible={visible}>
+    <PrimaryToolbar
+      onToggleSidebar={onToggleSidebar}
+      visible={visible}
+      displaySidebar={displaySidebar}
+    >
       <IconButton
         ariaLive="polite"
         className={'pipeline-menu-button--labels'}
@@ -64,6 +69,7 @@ export const mapStateToProps = (state) => ({
   textLabels: state.textLabels,
   visible: state.visible,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
+  displaySidebar: state.display.sidebar,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

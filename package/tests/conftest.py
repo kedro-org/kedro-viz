@@ -29,32 +29,28 @@ def example_pipelines():
         ...
 
     data_processing_pipeline = pipeline(
-        Pipeline(
-            [
-                node(
-                    process_data,
-                    inputs=["raw_data", "params:train_test_split"],
-                    outputs="model_inputs",
-                    name="process_data",
-                    tags=["split"],
-                )
-            ]
-        ),
+        [
+            node(
+                process_data,
+                inputs=["raw_data", "params:train_test_split"],
+                outputs="model_inputs",
+                name="process_data",
+                tags=["split"],
+            )
+        ],
         namespace="uk.data_processing",
         outputs="model_inputs",
     )
     data_science_pipeline = pipeline(
-        Pipeline(
-            [
-                node(
-                    train_model,
-                    inputs=["model_inputs", "parameters"],
-                    outputs="model",
-                    name="train_model",
-                    tags=["train"],
-                )
-            ]
-        ),
+        [
+            node(
+                train_model,
+                inputs=["model_inputs", "parameters"],
+                outputs="model",
+                name="train_model",
+                tags=["train"],
+            )
+        ],
         namespace="uk.data_science",
         inputs="model_inputs",
     )
@@ -75,7 +71,7 @@ def example_catalog():
         },
         feed_dict={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
-            "params:train_test_split": 0.1,
+            "params:uk.data_processing.train_test_split": 0.1,
         },
         layers={
             "raw": {
@@ -95,24 +91,22 @@ def example_transcoded_pipelines():
         ...
 
     data_processing_pipeline = pipeline(
-        Pipeline(
-            [
-                node(
-                    process_data,
-                    inputs=["raw_data", "params:train_test_split"],
-                    outputs="model_inputs@spark",
-                    name="process_data",
-                    tags=["split"],
-                ),
-                node(
-                    train_model,
-                    inputs=["model_inputs@pandas", "parameters"],
-                    outputs="model",
-                    name="train_model",
-                    tags=["train"],
-                ),
-            ]
-        ),
+        [
+            node(
+                process_data,
+                inputs=["raw_data", "params:uk.data_processing.train_test_split"],
+                outputs="model_inputs@spark",
+                name="process_data",
+                tags=["split"],
+            ),
+            node(
+                train_model,
+                inputs=["model_inputs@pandas", "parameters"],
+                outputs="model",
+                name="train_model",
+                tags=["train"],
+            ),
+        ]
     )
 
     yield {
@@ -130,7 +124,7 @@ def example_transcoded_catalog():
         },
         feed_dict={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
-            "params:train_test_split": 0.1,
+            "params:uk.data_processing.train_test_split": 0.1,
         },
     )
 

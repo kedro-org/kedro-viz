@@ -33,14 +33,18 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
 
 /**
  * Display the dataset of the experiment tracking run.
- * @param {array} props.isSingleRun Whether or not this is a single run.
+ * @param {boolean} props.enableShowChanges Are changes enabled or not.
+ * @param {boolean} props.isSingleRun Indication to display a single run.
+ * @param {string} props.pinnedRun ID of the pinned run.
+ * @param {array} props.selectedRunIds Array of strings of runIds.
  * @param {array} props.trackingData The experiment tracking run data.
  */
 const RunDataset = ({
-  isSingleRun,
-  trackingData = [],
-  pinnedRun,
   enableShowChanges,
+  isSingleRun,
+  pinnedRun,
+  selectedRunIds,
+  trackingData = [],
 }) => {
   return (
     <div
@@ -61,7 +65,9 @@ const RunDataset = ({
             size="large"
           >
             {Object.keys(data)
-              .sort()
+              .sort((a, b) => {
+                return a.localeCompare(b);
+              })
               .map((key, rowIndex) => {
                 return buildDatasetDataMarkup(
                   key,
@@ -69,7 +75,8 @@ const RunDataset = ({
                   rowIndex,
                   isSingleRun,
                   pinnedRun,
-                  enableShowChanges
+                  enableShowChanges,
+                  selectedRunIds
                 );
               })}
           </Accordion>
@@ -85,6 +92,9 @@ const RunDataset = ({
  * @param {array} datasetValues A single dataset array from a run.
  * @param {number} rowIndex The array index of the dataset data.
  * @param {boolean} isSingleRun Whether or not this is a single run.
+ * @param {string} pinnedRun ID of the pinned run.
+ * @param {boolean} enableShowChanges Are changes enabled or not.
+ * @param {array} selectedRunIds Array of strings of runIds.
  */
 function buildDatasetDataMarkup(
   datasetKey,
@@ -92,10 +102,11 @@ function buildDatasetDataMarkup(
   rowIndex,
   isSingleRun,
   pinnedRun,
-  enableShowChanges
+  enableShowChanges,
+  selectedRunIds
 ) {
-  // function to return new set of runData with appropriate pin from datasetValues and pinnedRun
-  const runDataWithPin = resolveRunDataWithPin(datasetValues, pinnedRun);
+  const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
+  const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
 
   return (
     <React.Fragment key={datasetKey + rowIndex}>
@@ -142,6 +153,36 @@ function buildDatasetDataMarkup(
       </div>
     </React.Fragment>
   );
+}
+
+/**
+ * Fill in missing run metrics if they don't match the number of runIds.
+ * @param {array} datasetValues Array of objects for a metric, e.g. r2_score.
+ * @param {array} selectedRunIds Array of strings of runIds.
+ * @returns Array of objects, the length of which matches the length
+ * of the selectedRunIds.
+ */
+function fillEmptyMetrics(datasetValues, selectedRunIds) {
+  if (datasetValues.length === selectedRunIds.length) {
+    return datasetValues;
+  }
+
+  const metrics = [];
+
+  selectedRunIds.forEach((id) => {
+    const foundIdIndex = datasetValues.findIndex((item) => {
+      return item.runId === id;
+    });
+
+    // We didn't find a metric with this runId, so add a placeholder.
+    if (foundIdIndex === -1) {
+      metrics.push({ runId: id, value: null });
+    } else {
+      metrics.push(datasetValues[foundIdIndex]);
+    }
+  });
+
+  return metrics;
 }
 
 export default RunDataset;

@@ -52,7 +52,7 @@ version:
 	python3 tools/versioning.py $(VERSION)
 
 install-pip-setuptools:
-	python -m pip install -U "pip>=18.0, <19.0" "setuptools>=38.0, <39.0" wheel
+	pip install -U "pip>=21.2" "setuptools>=38.0" wheel
 
 sign-off:
 	echo "git interpret-trailers --if-exists doNothing \c" > .git/hooks/commit-msg

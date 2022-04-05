@@ -519,7 +519,8 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { chartSize, layers, visibleGraph } = this.props;
+    const { chartSize, layers, visibleGraph, displayGlobalToolbar } =
+      this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
     return (
@@ -577,6 +578,8 @@ export class FlowChart extends Component {
         <ul
           className={classnames('pipeline-flowchart__layer-names', {
             'pipeline-flowchart__layer-names--visible': layers.length,
+            'pipeline-flowchart__layer-names--no-global-toolbar':
+              !displayGlobalToolbar,
           })}
           ref={this.layerNamesRef}
         />
@@ -605,7 +608,9 @@ export const mapStateToProps = (state, ownProps) => ({
   clickedNode: state.node.clicked,
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
+  displayGlobalToolbar: state.display.globalToolbar,
   edges: state.graph.edges || emptyEdges,
+  focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,
   hoveredParameters: state.hoveredParameters,
   layers: getLayers(state),
@@ -621,7 +626,6 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
-  focusMode: state.visible.modularPipelineFocusMode,
   ...ownProps,
 });
 

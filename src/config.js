@@ -36,6 +36,12 @@ export const flags = {
     default: true,
     icon: '🐳',
   },
+  expandAllPipelines: {
+    name: 'Expand all modular pipelines',
+    description: 'Expand all modular pipelines on first load',
+    default: false,
+    icon: '🔛',
+  },
 };
 
 export const settings = {
