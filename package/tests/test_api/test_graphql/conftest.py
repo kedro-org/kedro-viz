@@ -143,8 +143,6 @@ def example_multiple_run_tracking_catalog(example_run_ids, tmp_path):
 def example_multiple_run_tracking_catalog_at_least_one_empty_run(
     example_run_ids, tmp_path
 ):
-    # Note - filepath is assigned without using tmp_path as it fails on windows build.
-    # This is a temp soln and will be cleaned up in the future.
     new_metrics_dataset = MetricsDataSet(
         filepath=Path(tmp_path / "test.json").as_posix(),
         version=Version(None, example_run_ids[1]),

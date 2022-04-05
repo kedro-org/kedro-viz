@@ -20,7 +20,7 @@ from typing import (
 
 import strawberry
 from fastapi import APIRouter
-from kedro.io.core import Version as DatasetVersion
+from kedro.io.core import Version as DataSetVersion
 from kedro.io.core import get_filepath_str
 from semver import VersionInfo
 from strawberry import ID
@@ -241,11 +241,10 @@ def get_run_tracking_data(
         all_runs = {}
         for run_id in run_ids:
             run_id = ID(run_id)
-            dataset._version = DatasetVersion(run_id, None)
+            # Set the load_version to run_id
+            dataset._version = DataSetVersion(run_id, None)
+            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             if dataset.exists():
-                load_path = get_filepath_str(
-                    dataset._get_load_path(), dataset._protocol
-                )
                 with dataset._fs.open(
                     load_path, **dataset._fs_open_args_load
                 ) as fs_file:
@@ -253,9 +252,7 @@ def get_run_tracking_data(
                     all_runs[run_id] = json_data
             else:
                 all_runs[run_id] = {}
-                logger.warning(
-                    "`%s` could not be found", dataset._get_versioned_path(str(run_id))
-                )
+                logger.warning("`%s` could not be found", load_path)
 
         tracking_dataset = TrackingDataset(
             datasetName=name,
