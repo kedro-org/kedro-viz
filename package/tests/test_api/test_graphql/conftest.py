@@ -205,7 +205,6 @@ def example_runs(example_run_ids):
             bookmark=False,
             notes="Hello World",
             title="Hello Kedro",
-            timestamp=run_id,
             author="",
             gitBranch="",
             gitSha="",

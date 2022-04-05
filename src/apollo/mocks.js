@@ -11,7 +11,6 @@ export const RunMock = Factory.define(({ sequence }) => {
     id: `abcd0m${sequence}`,
     notes: faker.random.words(10),
     runCommand: faker.random.words(5),
-    timestamp: faker.date.past().toISOString(),
     title: faker.random.words(3),
   };
 });

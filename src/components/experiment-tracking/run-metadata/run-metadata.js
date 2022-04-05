@@ -80,7 +80,7 @@ const RunMetadata = ({
       })}
     >
       {runs.map((run, i) => {
-        const humanReadableTime = toHumanReadableTime(run.timestamp);
+        const humanReadableTime = toHumanReadableTime(run.id);
 
         return (
           <div
@@ -153,7 +153,7 @@ const RunMetadata = ({
                 <tr>
                   {i === 0 ? <td>Creation Date</td> : null}
                   <td>{`${humanReadableTime} (${sanitiseEmptyValue(
-                    run.timestamp
+                    run.id
                   )})`}</td>
                 </tr>
                 <tr>

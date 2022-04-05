@@ -8,29 +8,25 @@ import { setup } from '../../../utils/state.mock';
 const runDataList = [
   {
     bookmark: false,
-    id: 'run1',
-    timestamp: new Date('October 15, 2021 03:24:00').toISOString(),
+    id: new Date('October 15, 2021 03:24:00').toISOString(),
     title: 'Run 1',
     notes: 'notes of run 1 is a duck',
   },
   {
     bookmark: false,
-    id: 'run2',
-    timestamp: new Date('October 15, 2021 03:26:00').toISOString(),
+    id: new Date('October 15, 2021 03:26:00').toISOString(),
     title: 'Run 2',
     notes: 'notes of run 2 is a fish',
   },
   {
     bookmark: false,
-    id: 'run3',
-    timestamp: new Date('October 15, 2021 03:29:00').toISOString(),
+    id: new Date('October 15, 2021 03:29:00').toISOString(),
     title: 'Run 3',
     notes: 'notes of run 3 is a star',
   },
   {
     bookmark: true,
-    id: 'run4',
-    timestamp: new Date('October 15, 2021 03:29:00').toISOString(),
+    id: new Date('October 15, 2021 03:29:00').toISOString(),
     title: 'Run 4',
     notes: 'notes of run 4 is a star',
   },

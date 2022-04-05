@@ -602,7 +602,7 @@ class TestGraphNodeMetadata:
         return source_dir
 
     @pytest.fixture
-    def tracking_data_filepath_invalid_timestamp(self, tmp_path):
+    def tracking_data_filepath_invalid_run_id(self, tmp_path):
         dir_name = ["2021", "2021"]
         filename = "metrics.json"
         json_content = [
@@ -678,16 +678,16 @@ class TestGraphNodeMetadata:
         )
 
     @patch("logging.Logger.warning")
-    def test_load_tracking_data_versioned_data_invalid_timestamp(
-        self, patched_warning, tracking_data_filepath_invalid_timestamp
+    def test_load_tracking_data_versioned_data_invalid_run_id(
+        self, patched_warning, tracking_data_filepath_invalid_run_id
     ):
         DataNodeMetadata.load_versioned_tracking_data(
-            tracking_data_filepath_invalid_timestamp
+            tracking_data_filepath_invalid_run_id
         )
         patched_warning.assert_has_calls(
             [
                 call(
-                    """Expected timestamp of format YYYY-MM-DDTHH:MM:SS.ffffff.
+                    """Expected run_id (timestamp) of format YYYY-MM-DDTHH:MM:SS.ffffff.
                     Skip when loading tracking data."""
                 )
             ]
