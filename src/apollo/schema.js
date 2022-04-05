@@ -29,7 +29,6 @@ const typeDefs = gql`
   type Run {
     id: ID!
     title: String!
-    timestamp: String!
     author: String
     gitBranch: String
     gitSha: String

@@ -14,7 +14,7 @@ import './runs-list-card.css';
 
 /**
  * Display a card showing run info from an experiment
- * @param {object} data High-level data from the run (id, timestamp, etc.)
+ * @param {object} data High-level data from the run (id, etc.)
  */
 const RunsListCard = ({
   data,
@@ -24,10 +24,10 @@ const RunsListCard = ({
   selectedRunIds = [],
   searchValue,
 }) => {
-  const { id, timestamp, notes, title = null, bookmark, gitSha } = data;
+  const { id, notes, title = null, bookmark, gitSha } = data;
   const [active, setActive] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
-  const humanReadableTime = toHumanReadableTime(timestamp);
+  const humanReadableTime = toHumanReadableTime(id);
 
   const isMatchSearchValue = (text) =>
     searchValue ? textMatchesSearch(text, searchValue) : false;

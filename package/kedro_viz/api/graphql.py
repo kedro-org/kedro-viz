@@ -67,7 +67,7 @@ def format_run(
     title = (
         user_run_details.title
         if user_run_details and user_run_details.title
-        else run_blob["session_id"]
+        else run_id
     )
     notes = (
         user_run_details.notes if user_run_details and user_run_details.notes else ""
@@ -79,8 +79,7 @@ def format_run(
         gitSha=git_data.get("commit_sha") if git_data else None,
         id=ID(run_id),
         notes=notes,
-        runCommand=run_blob["cli"]["command_path"],
-        timestamp=run_blob["session_id"],
+        runCommand=run_blob.get("cli", {}).get("command_path"),
         title=title,
     )
     return run
@@ -274,7 +273,6 @@ class Run:
     id: ID
     notes: Optional[str]
     runCommand: Optional[str]
-    timestamp: str
     title: str
 
 
