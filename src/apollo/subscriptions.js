@@ -7,7 +7,6 @@ export const NEW_RUN_SUBSCRIPTION = gql`
       id
       bookmark
       gitSha
-      timestamp
       title
     }
   }
