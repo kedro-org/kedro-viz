@@ -260,6 +260,18 @@ jobs:
       CONDA_ENV_PY_VERSION: '3.8'
     steps: [build]
 
+  build_39:
+    executor: circleci_machine
+    environment:
+      CONDA_ENV_PY_VERSION: '3.9'
+    steps: [build]
+  
+  build_310:
+    executor: circleci_machine
+    environment:
+      CONDA_ENV_PY_VERSION: '3.10'
+    steps: [build]
+
   deploy_demo:
     executor: demo_executor
     steps: [deploy_demo]
@@ -277,6 +289,22 @@ jobs:
     working_directory: ~/repo
     environment:
       CONDA_ENV_PY_VERSION: '3.8'
+      NODE_OPTIONS: '--max-old-space-size=8192'
+    steps: [win_build]
+
+  win_build_39:
+    executor: win/default
+    working_directory: ~/repo
+    environment:
+      CONDA_ENV_PY_VERSION: '3.9'
+      NODE_OPTIONS: '--max-old-space-size=8192'
+    steps: [win_build]
+
+  win_build_310:
+    executor: win/default
+    working_directory: ~/repo
+    environment:
+      CONDA_ENV_PY_VERSION: '3.10'
       NODE_OPTIONS: '--max-old-space-size=8192'
     steps: [win_build]
 
@@ -332,10 +360,14 @@ workflows:
   version: 2
   build:
     jobs:
-      # - build_37
+      - build_37
       - build_38
-      # - win_build_37
+      - build_39
+      - build_310
+      - win_build_37
       - win_build_38
+      - win_build_39
+      - win-build_310
       - deploy_demo:
           requires:
             # - build_37
@@ -354,10 +386,14 @@ workflows:
               only:
                 - main
     jobs:
-      # - build_37
+      - build_37
       - build_38
-      # - win_build_37
+      - build_39
+      - build_310
+      - win_build_37
       - win_build_38
+      - win_build_39
+      - win_build_310
 
   release:
     jobs:
