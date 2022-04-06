@@ -360,11 +360,11 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_37
+      # - build_37
       - build_38
       - build_39
       - build_310
-      - win_build_37
+      # - win_build_37
       - win_build_38
       - win_build_39
       - win-build_310
@@ -386,11 +386,11 @@ workflows:
               only:
                 - main
     jobs:
-      - build_37
+      # - build_37
       - build_38
       - build_39
       - build_310
-      - win_build_37
+      # - win_build_37
       - win_build_38
       - win_build_39
       - win_build_310
