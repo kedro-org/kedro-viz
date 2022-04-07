@@ -250,34 +250,30 @@ commands:
 
 jobs:
   build_37:
-    executor:
-      name: circleci_machine
-      python_version: '3.7'
+    executor: circleci_machine
     environment:
+      PYTHON_ENV: 'python3.7'
       CONDA_ENV_PY_VERSION: '3.7'
     steps: [build]
 
   build_38:
-    executor:
-      name: circleci_machine
-      python_version: '3.8'
+    executor: circleci_machine
     environment:
+      PYTHON_ENV: 'python3.8'
       CONDA_ENV_PY_VERSION: '3.8'
     steps: [build]
 
   build_39:
-    executor:
-      name: circleci_machine
-      python_version: '3.9'
+    executor: circleci_machine
     environment:
+      PYTHON_ENV: 'python3.9'
       CONDA_ENV_PY_VERSION: '3.9'
     steps: [build]
 
   build_310:
-    executor:
-      name: circleci_machine
-      python_version: '3.10'
+    executor: circleci_machine
     environment:
+      PYTHON_ENV: 'python3.10'
       CONDA_ENV_PY_VERSION: '3.10'
     steps: [build]
 
@@ -290,7 +286,6 @@ jobs:
     executor: win/default
     working_directory: ~/repo
     environment:
-      PYTHON_ENV: 'python3.7'
       CONDA_ENV_PY_VERSION: '3.7'
     steps: [win_build]
 
@@ -298,7 +293,6 @@ jobs:
     executor: win/default
     working_directory: ~/repo
     environment:
-      PYTHON_ENV: 'python3.8'
       CONDA_ENV_PY_VERSION: '3.8'
       NODE_OPTIONS: '--max-old-space-size=8192'
     steps: [win_build]
@@ -307,7 +301,6 @@ jobs:
     executor: win/default
     working_directory: ~/repo
     environment:
-      PYTHON_ENV: 'python3.9'
       CONDA_ENV_PY_VERSION: '3.9'
       NODE_OPTIONS: '--max-old-space-size=8192'
     steps: [win_build]
@@ -316,7 +309,6 @@ jobs:
     executor: win/default
     working_directory: ~/repo
     environment:
-      PYTHON_ENV: 'python3.10'
       CONDA_ENV_PY_VERSION: '3.10'
       NODE_OPTIONS: '--max-old-space-size=8192'
     steps: [win_build]
