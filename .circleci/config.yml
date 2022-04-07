@@ -5,12 +5,8 @@ orbs:
 
 executors:
   circleci_machine:
-    parameters:
-      python_version:
-        type: string
     docker:
       - image: cimg/node:14.15
-      - image: cimg/python:<<parameters.python_version>>
 
     working_directory: ~/repo
   demo_executor:
@@ -31,7 +27,7 @@ commands:
       - run:
           name: Install Python environment
           command: |
-            mkdir -p /home/circleci/.venvs && python3 -m venv /home/circleci/.venvs/kedro-viz
+            mkdir -p /home/circleci/.venvs && $env:PYTHON_ENV -m venv /home/circleci/.venvs/kedro-viz
             echo "source /home/circleci/.venvs/kedro-viz/bin/activate" >> $BASH_ENV
       - run:
           name: Install Python dependencies
@@ -256,7 +252,7 @@ jobs:
   build_37:
     executor:
       name: circleci_machine
-      python_version: "3.7"
+      python_version: '3.7'
     environment:
       CONDA_ENV_PY_VERSION: '3.7'
     steps: [build]
@@ -264,7 +260,7 @@ jobs:
   build_38:
     executor:
       name: circleci_machine
-      python_version: "3.8"
+      python_version: '3.8'
     environment:
       CONDA_ENV_PY_VERSION: '3.8'
     steps: [build]
@@ -272,7 +268,7 @@ jobs:
   build_39:
     executor:
       name: circleci_machine
-      python_version: "3.9"
+      python_version: '3.9'
     environment:
       CONDA_ENV_PY_VERSION: '3.9'
     steps: [build]
@@ -280,7 +276,7 @@ jobs:
   build_310:
     executor:
       name: circleci_machine
-      python_version: "3.10"
+      python_version: '3.10'
     environment:
       CONDA_ENV_PY_VERSION: '3.10'
     steps: [build]
@@ -294,6 +290,7 @@ jobs:
     executor: win/default
     working_directory: ~/repo
     environment:
+      PYTHON_ENV: 'python3.7'
       CONDA_ENV_PY_VERSION: '3.7'
     steps: [win_build]
 
@@ -301,6 +298,7 @@ jobs:
     executor: win/default
     working_directory: ~/repo
     environment:
+      PYTHON_ENV: 'python3.8'
       CONDA_ENV_PY_VERSION: '3.8'
       NODE_OPTIONS: '--max-old-space-size=8192'
     steps: [win_build]
@@ -309,6 +307,7 @@ jobs:
     executor: win/default
     working_directory: ~/repo
     environment:
+      PYTHON_ENV: 'python3.9'
       CONDA_ENV_PY_VERSION: '3.9'
       NODE_OPTIONS: '--max-old-space-size=8192'
     steps: [win_build]
@@ -317,14 +316,15 @@ jobs:
     executor: win/default
     working_directory: ~/repo
     environment:
+      PYTHON_ENV: 'python3.10'
       CONDA_ENV_PY_VERSION: '3.10'
       NODE_OPTIONS: '--max-old-space-size=8192'
     steps: [win_build]
 
   release_to_npm:
-    executor: 
+    executor:
       name: circleci_machine
-      python_version: "3.8"
+      python_version: '3.8'
     description: Build Kedro-Viz as an npm package and push it to npm
     steps:
       - checkout
@@ -342,9 +342,9 @@ jobs:
           command: npm publish
 
   release_to_pypi:
-    executor: 
+    executor:
       name: circleci_machine
-      python_version: "3.8"
+      python_version: '3.8'
     description: Build Kedro-Viz as a Python package and push it to PyPI
     environment:
       CONDA_ENV_PY_VERSION: '3.8'
