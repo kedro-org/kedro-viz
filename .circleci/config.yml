@@ -23,11 +23,11 @@ commands:
             sudo apt-get install software-properties-common
             sudo add-apt-repository ppa:deadsnakes/ppa -y
             sudo apt update
-            sudo apt install python3 python3-pip python3-venv
+            sudo apt install ${PYTHON_ENV} python3-pip python3-venv
       - run:
           name: Install Python environment
           command: |
-            mkdir -p /home/circleci/.venvs && $env:PYTHON_ENV -m venv /home/circleci/.venvs/kedro-viz
+            mkdir -p /home/circleci/.venvs && python3 -m venv /home/circleci/.venvs/kedro-viz
             echo "source /home/circleci/.venvs/kedro-viz/bin/activate" >> $BASH_ENV
       - run:
           name: Install Python dependencies
