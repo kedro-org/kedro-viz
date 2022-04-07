@@ -5,9 +5,12 @@ orbs:
 
 executors:
   circleci_machine:
+    parameters:
+      python_version:
+        type: string
     docker:
       - image: cimg/node:14.15
-      - image: cimg/python:$env:CONDA_ENV_PY_VERSION
+      - image: cimg/python:<<parameters.python_version>>
 
     working_directory: ~/repo
   demo_executor:
@@ -251,25 +254,33 @@ commands:
 
 jobs:
   build_37:
-    executor: circleci_machine
+    executor:
+      name: circleci_machine
+      python_version: "3.7"
     environment:
       CONDA_ENV_PY_VERSION: '3.7'
     steps: [build]
 
   build_38:
-    executor: circleci_machine
+    executor:
+      name: circleci_machine
+      python_version: "3.8"
     environment:
       CONDA_ENV_PY_VERSION: '3.8'
     steps: [build]
 
   build_39:
-    executor: circleci_machine
+    executor:
+      name: circleci_machine
+      python_version: "3.9"
     environment:
       CONDA_ENV_PY_VERSION: '3.9'
     steps: [build]
 
   build_310:
-    executor: circleci_machine
+    executor:
+      name: circleci_machine
+      python_version: "3.10"
     environment:
       CONDA_ENV_PY_VERSION: '3.10'
     steps: [build]
@@ -311,7 +322,9 @@ jobs:
     steps: [win_build]
 
   release_to_npm:
-    executor: circleci_machine
+    executor: 
+      name: circleci_machine
+      python_version: "3.8"
     description: Build Kedro-Viz as an npm package and push it to npm
     steps:
       - checkout
@@ -329,7 +342,9 @@ jobs:
           command: npm publish
 
   release_to_pypi:
-    executor: circleci_machine
+    executor: 
+      name: circleci_machine
+      python_version: "3.8"
     description: Build Kedro-Viz as a Python package and push it to PyPI
     environment:
       CONDA_ENV_PY_VERSION: '3.8'
