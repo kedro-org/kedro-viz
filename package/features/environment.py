@@ -84,7 +84,7 @@ def _setup_context_with_venv(context, venv_dir):
             "wheel",
             "botocore",
             "PyYAML>=4.2, <6.0",
-            "click>=8.1.0",
+            "click<9.0",
         ],
         env=context.env,
     )
