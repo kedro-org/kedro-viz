@@ -23,6 +23,7 @@ commands:
             sudo add-apt-repository ppa:deadsnakes/ppa -y
             sudo apt update
             sudo apt install ${PYTHON_ENV}-venv
+            sudo apt-get install ${PYTHON_ENV}-dev
       - run:
           name: Install Python environment
           command: |
