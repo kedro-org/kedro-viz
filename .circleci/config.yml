@@ -159,7 +159,7 @@ commands:
           keys:
             - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
-            - v0-dependencies-
+            - v0-{{ arch }}-dependencies-
       - setup_python_env
       - install_node_dependencies
       - save_cache:
@@ -222,7 +222,7 @@ commands:
           keys:
             - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
-            - v0-dependencies-
+            - v0-{{ arch }}-dependencies-
       - win_setup_conda
       - win_setup_requirements
       - install_node_dependencies
@@ -231,7 +231,7 @@ commands:
             - node_modules
             - c:\tools\miniconda3\envs\kedro-viz\
             - c:\users\circleci\appdata\local\pip\cache\
-          key: v0--{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+          key: v0-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - run:
           name: Run Python unit tests
           command: |
@@ -289,7 +289,7 @@ jobs:
           keys:
             - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}
              # fallback to using the latest cache if no exact match is found
-            - v0-dependencies-
+            - v0-{{ arch }}-dependencies-
       - install_node_dependencies
       - build_npm_package
       - run:
@@ -310,7 +310,7 @@ jobs:
           keys:
             - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}
              # fallback to using the latest cache if no exact match is found
-            - v0-dependencies-
+            - v0-{{ arch }}-dependencies-
       - setup_python_env
       - run:
           name: Install twine
