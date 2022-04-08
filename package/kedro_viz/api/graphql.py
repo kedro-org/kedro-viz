@@ -41,7 +41,6 @@ if TYPE_CHECKING:  # pragma: no cover
         https://github.com/python/mypy/issues/2477
         """
 
-
 else:
     JSONObject = strawberry.scalar(
         NewType("JSONObject", dict),
