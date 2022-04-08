@@ -1,4 +1,4 @@
-black==21.3
+black==21.5b
 flake8>=3.7.9, <4.0
 ipython~=7.0
 isort~=5.0
