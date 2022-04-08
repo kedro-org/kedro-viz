@@ -312,7 +312,7 @@ jobs:
     steps: [win_build]
 
   release_to_npm:
-    executor: circleci_machine
+    executor: circleci_machine_38
 
     description: Build Kedro-Viz as an npm package and push it to npm
     steps:
@@ -331,7 +331,7 @@ jobs:
           command: npm publish
 
   release_to_pypi:
-    executor: circleci_machine
+    executor: circleci_machine_38
     description: Build Kedro-Viz as a Python package and push it to PyPI
     environment:
       CONDA_ENV_PY_VERSION: '3.8'
