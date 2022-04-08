@@ -44,6 +44,7 @@ commands:
             python -V
             pip -V
             kedro -V
+            node -v
 
   install_node_dependencies:
     steps:
@@ -75,8 +76,14 @@ commands:
   run_javascript_tests:
     steps:
       - run:
+          name: Echo node versions
+          command: node -v
+      - run:
           name: Run JavaScript tests
           command: npm run build:css && npm run test:ci
+      - run:
+          name: Echo node versions
+          command: node -v
 
   run_python_format_and_lint:
     steps:
