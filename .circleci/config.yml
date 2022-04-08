@@ -6,23 +6,19 @@ orbs:
 executors:
   circleci_machine_37:
     docker:
-      - image: cimg/node:14.15
-      - image: cimg/python:3.7
+      - image: cimg/python:3.7-node
     working_directory: ~/repo
   circleci_machine_38:
     docker:
-      - image: cimg/node:14.15
-      - image: cimg/python:3.8
+      - image: cimg/python:3.8-node
     working_directory: ~/repo
   circleci_machine_39:
     docker:
-      - image: cimg/node:14.15
-      - image: cimg/python:3.9
+      - image: cimg/python:3.9-node
     working_directory: ~/repo
   circleci_machine_310:
     docker:
-      - image: cimg/node:14.15
-      - image: cimg/python:3.10
+      - image: cimg/python:3.10-node
     working_directory: ~/repo
   demo_executor:
     docker:
