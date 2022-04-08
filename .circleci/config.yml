@@ -158,7 +158,7 @@ commands:
       - restore_cache:
           keys:
             - v0-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
-            # fallback to using the latest 0 if no exact match is found
+            # fallback to using the latest cache if no exact match is found
             - v0-dependencies-
       - setup_python_env
       - install_node_dependencies
