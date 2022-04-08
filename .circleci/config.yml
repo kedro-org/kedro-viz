@@ -158,19 +158,8 @@ commands:
     description: Run build
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
-            # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - setup_python_env
       - install_node_dependencies
-      - save_cache:
-          paths:
-            - node_modules
-            - /home/circleci/.venvs/kedro-viz
-            - /home/circleci/.cache/pip/
-          key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - test_lib_transpilation
       - test_lib_import
       - run_eslint
