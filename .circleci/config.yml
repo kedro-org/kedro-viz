@@ -157,7 +157,7 @@ commands:
       - checkout
       - restore_cache:
           keys:
-            - v0-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+            - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v0-dependencies-
       - setup_python_env
@@ -167,7 +167,7 @@ commands:
             - node_modules
             - /home/circleci/.venvs/kedro-viz
             - /home/circleci/.cache/pip/
-          key: v0-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+          key: v0-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - test_lib_transpilation
       - test_lib_import
       - run_eslint
@@ -220,7 +220,7 @@ commands:
       - checkout
       - restore_cache:
           keys:
-            - v0-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+            - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v0-dependencies-
       - win_setup_conda
@@ -231,7 +231,7 @@ commands:
             - node_modules
             - c:\tools\miniconda3\envs\kedro-viz\
             - c:\users\circleci\appdata\local\pip\cache\
-          key: v0-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+          key: v0--{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - run:
           name: Run Python unit tests
           command: |
@@ -287,7 +287,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v0-dependencies-{{ checksum "package.json" }}
+            - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}
              # fallback to using the latest cache if no exact match is found
             - v0-dependencies-
       - install_node_dependencies
@@ -308,7 +308,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v0-dependencies-{{ checksum "package.json" }}
+            - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}
              # fallback to using the latest cache if no exact match is found
             - v0-dependencies-
       - setup_python_env
