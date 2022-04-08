@@ -19,7 +19,7 @@ executors:
       - image: cimg/node:14.15
       - image: cimg/python:3.9
     working_directory: ~/repo
-  circleci_machine_39:
+  circleci_machine_310:
     docker:
       - image: cimg/node:14.15
       - image: cimg/python:3.10
