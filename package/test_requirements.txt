@@ -3,7 +3,7 @@ kedro[pandas,spark]>=0.16.0
 kedro-telemetry>=0.1.1  # for testing telemetry integration
 bandit~=1.6.2
 behave>=1.2.6, <2.0
-black==21.5b1
+black~=22.0
 flake8~=3.9.2
 isort~=5.8.0
 mypy~=0.930
