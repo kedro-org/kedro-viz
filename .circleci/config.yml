@@ -4,9 +4,25 @@ orbs:
   win: circleci/windows@2.4.0
 
 executors:
-  circleci_machine:
+  circleci_machine_37:
     docker:
       - image: cimg/node:14.15
+      - image: cimg/python:3.7
+    working_directory: ~/repo
+  circleci_machine_38:
+    docker:
+      - image: cimg/node:14.15
+      - image: cimg/python:3.8
+    working_directory: ~/repo
+  circleci_machine_39:
+    docker:
+      - image: cimg/node:14.15
+      - image: cimg/python:3.9
+    working_directory: ~/repo
+  circleci_machine_39:
+    docker:
+      - image: cimg/node:14.15
+      - image: cimg/python:3.10
     working_directory: ~/repo
   demo_executor:
     docker:
@@ -16,19 +32,9 @@ commands:
   setup_python_env:
     description: Setup Python environment
     steps:
-      - run:
-          name: Install python3
-          command: |
-            sudo apt-get install software-properties-common
-            sudo add-apt-repository ppa:deadsnakes/ppa -y
-            sudo apt update
-            sudo apt install ${PYTHON_ENV}-venv
-            sudo apt-get install ${PYTHON_ENV}-dev
-      - run:
-          name: Install Python environment
-          command: |
-            mkdir -p /home/circleci/.venvs && ${PYTHON_ENV} -m venv /home/circleci/.venvs/kedro-viz
-            echo "source /home/circleci/.venvs/kedro-viz/bin/activate" >> $BASH_ENV
+      - run: 
+          name: Install Python
+          command: python --version
       - run:
           name: Install Python dependencies
           command: |
@@ -250,27 +256,23 @@ commands:
 
 jobs:
   build_37:
-    executor: circleci_machine
+    executor: circleci_machine_37
     environment:
-      PYTHON_ENV: 'python3.7'
     steps: [build]
 
   build_38:
-    executor: circleci_machine
+    executor: circleci_machine_38
     environment:
-      PYTHON_ENV: 'python3.8'
     steps: [build]
 
   build_39:
-    executor: circleci_machine
+    executor: circleci_machine_39
     environment:
-      PYTHON_ENV: 'python3.9'
     steps: [build]
 
   build_310:
-    executor: circleci_machine
+    executor: circleci_machine_310
     environment:
-      PYTHON_ENV: 'python3.10'
     steps: [build]
 
   deploy_demo:
