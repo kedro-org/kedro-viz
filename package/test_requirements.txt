@@ -15,6 +15,7 @@ pytest-cov~=2.11.1
 pytest-mock~=3.6.1
 sqlalchemy-stubs~=0.4
 trufflehog~=2.1.0
+tables~=3.7.0
 
 # mypy
 types-aiofiles==0.1.3
