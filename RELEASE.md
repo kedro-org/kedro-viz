@@ -1,4 +1,3 @@
-
 <!--
 Use the sections below to add notes for the next release.
 Please follow the established format:
@@ -7,7 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Bug fixes and other changes
+
+- Change route name from `runsList` to `experiment-tracking`. (#820)
+
 # Release 4.4.0
+
 ## Major features and improvements
 
 - Set up a pop-up reminder to nudge users to upgrade Kedro-Viz when a new version is released. (#746)
