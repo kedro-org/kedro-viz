@@ -216,22 +216,14 @@ commands:
 
   win_build:
     description: Run build on Windows
+    parameters: 
+      python_version: string
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
-            # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-
-      - win_setup_conda
+      - win_setup_conda:
+          python_version: <<parameters.python_version>>
       - win_setup_requirements
       - install_node_dependencies
-      - save_cache:
-          paths:
-            - node_modules
-            - c:\tools\miniconda3\envs\kedro-viz\
-            - c:\users\circleci\appdata\local\pip\cache\
-          key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - run:
           name: Run Python unit tests
           command: |
