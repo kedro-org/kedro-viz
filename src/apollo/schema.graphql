@@ -20,7 +20,6 @@ type Run {
   id: ID!
   notes: String
   runCommand: String
-  timestamp: String!
   title: String!
 }
 
