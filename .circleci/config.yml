@@ -214,8 +214,8 @@ commands:
             pip -V
             kedro -V
 
-  win_build:
-    description: Run build on Windows
+  win_tests:
+    description: Run tests on Windows
     parameters: 
       python_version: 
         type: string
@@ -243,22 +243,18 @@ commands:
 jobs:
   build_37:
     executor: circleci_machine_37
-    environment:
     steps: [build]
 
   build_38:
     executor: circleci_machine_38
-    environment:
     steps: [build]
 
   build_39:
     executor: circleci_machine_39
-    environment:
     steps: [build]
 
   build_310:
     executor: circleci_machine_310
-    environment:
     steps: [build]
 
   deploy_demo:
@@ -272,7 +268,10 @@ jobs:
       python_version: 
         type: string
     working_directory: ~/repo
-    steps: [win_build]
+    steps:
+      - checkout
+      - win_build:
+          python_version: <<parameters.python_version>>
 
   win_build_38:
     executor: win/default
@@ -280,7 +279,10 @@ jobs:
       python_version: 
         type: string
     working_directory: ~/repo
-    steps: [win_build]
+    steps: 
+      - checkout
+      - win_build:
+          python_version: <<parameters.python_version>>
 
   win_build_39:
     executor: win/default
@@ -288,7 +290,10 @@ jobs:
       python_version: 
         type: string
     working_directory: ~/repo
-    steps: [win_build]
+    steps: 
+      - checkout
+      - win_build:
+          python_version: <<parameters.python_version>>
 
   win_build_310:
     executor: win/default
@@ -296,7 +301,10 @@ jobs:
       python_version: 
         type: string
     working_directory: ~/repo
-    steps: [win_build]
+    steps: 
+      - checkout
+      - win_build:
+          python_version: <<parameters.python_version>>
 
   release_to_npm:
     executor: circleci_machine_38
