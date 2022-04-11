@@ -67,47 +67,47 @@ commands:
             cd tools/test-lib/react-app
             npm run test:ci
 
-  # run_eslint:
-  #   steps:
-  #     - run:
-  #         name: Run Eslint
-  #         command: npm run lint
+  run_eslint:
+    steps:
+      - run:
+          name: Run Eslint
+          command: npm run lint
 
-  # run_javascript_tests:
-  #   steps:
-  #     - run:
-  #         name: Echo node versions
-  #         command: node -v
-  #     - run:
-  #         name: Run JavaScript tests
-  #         command: npm run build:css && npm run test:ci
-  #     - run:
-  #         name: Echo node versions
-  #         command: node -v
+  run_javascript_tests:
+    steps:
+      - run:
+          name: Echo node versions
+          command: node -v
+      - run:
+          name: Run JavaScript tests
+          command: npm run build:css && npm run test:ci
+      - run:
+          name: Echo node versions
+          command: node -v
 
-  # run_python_format_and_lint:
-  #   steps:
-  #     - run:
-  #         name: Run Python formatters and linters
-  #         command: make format-check lint-check
+  run_python_format_and_lint:
+    steps:
+      - run:
+          name: Run Python formatters and linters
+          command: make format-check lint-check
 
-  # run_secret_scan:
-  #   steps:
-  #     - run:
-  #         name: Run secret scan
-  #         command: make secret-scan
+  run_secret_scan:
+    steps:
+      - run:
+          name: Run secret scan
+          command: make secret-scan
 
-  # run_security_scan:
-  #   steps:
-  #     - run:
-  #         name: Run security scan
-  #         command: make security-scan
+  run_security_scan:
+    steps:
+      - run:
+          name: Run security scan
+          command: make security-scan
 
-  # run_python_tests:
-  #   steps:
-  #     - run:
-  #         name: Run Python tests
-  #         command: make pytest
+  run_python_tests:
+    steps:
+      - run:
+          name: Run Python tests
+          command: make pytest
 
   run_e2e_tests:
     steps:
