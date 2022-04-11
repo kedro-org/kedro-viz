@@ -373,10 +373,8 @@ workflows:
           requires:
             - build_37
             - build_38
-            - win_build_37:
-                python_version: '3.7'
-            - win_build_38:
-                python_version: '3.8'
+            - win_build_37
+            - win_build_38
           filters:
             branches:
               only: demo
