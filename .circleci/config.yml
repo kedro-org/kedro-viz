@@ -214,8 +214,8 @@ commands:
             pip -V
             kedro -V
 
-  win_tests:
-    description: Run tests on Windows
+  win_build:
+    description: Run build on Windows
     parameters: 
       python_version: 
         type: string
