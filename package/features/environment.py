@@ -22,9 +22,6 @@ def call(cmd, env, verbose=False):
     assert res.returncode == 0
 
 
-=
-
-
 def before_scenario(context, scenario):
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
@@ -81,12 +78,11 @@ def _setup_context_with_venv(context, venv_dir):
             "botocore",
             "PyYAML>=4.2, <6.0",
             "click<9.0",
-            "."
         ],
         env=context.env,
     )
 
-    # call([context.python, "-m", "pip", "install", "."], env=context.env)
+    call([context.python, "-m", "pip", "install", "."], env=context.env)
     return context
 
 
