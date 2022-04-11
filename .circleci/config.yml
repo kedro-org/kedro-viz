@@ -185,15 +185,16 @@ commands:
     # Miniconda3 is pre-installed on the machine:
     # https://circleci.com/docs/2.0/hello-world-windows/
     description: Setup conda
+    parameters:
+      python_version:
+        type: string
     steps:
       - run:
           name: Initialize conda
           command: conda init powershell
       - run:
           name: Create 'kedro-viz' conda environment
-          command: |
-            $condaEnvPath = "c:\tools\miniconda3\envs\kedro-viz\"
-            if (-not (Test-Path $condaEnvPath)) { conda create --name kedro-viz python=$env:CONDA_ENV_PY_VERSION -y }
+          command: conda create --name kedro-viz python=<<parameters.python_version>> -y 
 
   win_setup_requirements:
     description: Install Python dependencies
@@ -275,32 +276,29 @@ jobs:
   win_build_37:
     executor: win/default
     working_directory: ~/repo
-    environment:
-      CONDA_ENV_PY_VERSION: '3.7'
+    parameters:
+      python_version: '3.7'
     steps: [win_build]
 
   win_build_38:
     executor: win/default
     working_directory: ~/repo
-    environment:
-      CONDA_ENV_PY_VERSION: '3.8'
-      NODE_OPTIONS: '--max-old-space-size=8192'
+    parameters:
+      python_version: '3.8'
     steps: [win_build]
 
   win_build_39:
     executor: win/default
     working_directory: ~/repo
-    environment:
-      CONDA_ENV_PY_VERSION: '3.9'
-      NODE_OPTIONS: '--max-old-space-size=8192'
+    parameters:
+      python_version: '3.9'
     steps: [win_build]
 
   win_build_310:
     executor: win/default
     working_directory: ~/repo
-    environment:
-      CONDA_ENV_PY_VERSION: '3.10'
-      NODE_OPTIONS: '--max-old-space-size=8192'
+    parameters:
+      python_version: '3.10'
     steps: [win_build]
 
   release_to_npm:
@@ -325,8 +323,6 @@ jobs:
   release_to_pypi:
     executor: circleci_machine_38
     description: Build Kedro-Viz as a Python package and push it to PyPI
-    environment:
-      CONDA_ENV_PY_VERSION: '3.8'
     steps:
       - checkout
       - restore_cache:
