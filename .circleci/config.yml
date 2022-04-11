@@ -268,43 +268,27 @@ jobs:
   # Windows-related jobs
   win_build_37:
     executor: win/default
-    parameters: 
-      python_version: 
-        type: string
+    python_version: '3.7'
     working_directory: ~/repo
-    steps:
-      - win_build: 
-          python_version: <<parameters.python_version>>
+    steps: [win_build]
 
   win_build_38:
     executor: win/default
-    parameters: 
-      python_version: 
-        type: string
+    python_version: '3.8'
     working_directory: ~/repo
-    steps:
-      - win_build: 
-          python_version: <<parameters.python_version>>
+    steps: [win_build]
 
   win_build_39:
     executor: win/default
-    parameters: 
-      python_version: 
-        type: string
+    python_version: '3.9'
     working_directory: ~/repo
-    steps:
-      - win_build: 
-          python_version: <<parameters.python_version>>
+    steps: [win_build]
 
   win_build_310:
     executor: win/default
-    parameters: 
-      python_version: 
-        type: string
+    python_version: '3.10'
     working_directory: ~/repo
-    steps:
-      - win_build: 
-          python_version: <<parameters.python_version>>
+    steps: [win_build]
 
   release_to_npm:
     executor: circleci_machine_38
