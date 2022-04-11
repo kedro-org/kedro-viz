@@ -272,10 +272,7 @@ jobs:
       python_version: 
         type: string
     working_directory: ~/repo
-    steps: 
-      win_build: 
-        python_version: <<parameters.python_version>>
-
+    steps: [win_build]
 
   win_build_38:
     executor: win/default
@@ -283,9 +280,7 @@ jobs:
       python_version: 
         type: string
     working_directory: ~/repo
-    steps: 
-      win_build: 
-        python_version: <<parameters.python_version>>
+    steps: [win_build]
 
   win_build_39:
     executor: win/default
@@ -293,9 +288,7 @@ jobs:
       python_version: 
         type: string
     working_directory: ~/repo
-    steps: 
-      win_build: 
-        python_version: <<parameters.python_version>>
+    steps: [win_build]
 
   win_build_310:
     executor: win/default
@@ -303,9 +296,7 @@ jobs:
       python_version: 
         type: string
     working_directory: ~/repo
-    steps: 
-      win_build: 
-        python_version: <<parameters.python_version>>
+    steps: [win_build]
 
   release_to_npm:
     executor: circleci_machine_38
