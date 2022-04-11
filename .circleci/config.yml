@@ -217,7 +217,8 @@ commands:
   win_build:
     description: Run build on Windows
     parameters: 
-      python_version: string
+      python_version: 
+        type: string
     steps:
       - checkout
       - win_setup_conda:
