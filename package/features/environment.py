@@ -58,6 +58,8 @@ def _setup_context_with_venv(context, venv_dir):
     context.python = str(bin_dir / "python")
     context.kedro = str(bin_dir / "kedro")
     context.requirements_path = Path("requirements.txt").resolve()
+    print("Hello World")
+    print(context)
 
     # clone the environment, remove any condas and venvs and insert our venv
     context.env = os.environ.copy()
