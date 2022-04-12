@@ -1,0 +1,16 @@
+companies:
+  type: pandas.CSVDataSet
+  filepath: ${base_location}/01_raw/companies.csv
+  layer: raw
+
+reviews:
+  type: pandas.CSVDataSet
+  filepath: ${base_location}/01_raw/reviews.csv
+  layer: raw
+
+shuttles:
+  type: pandas.ExcelDataSet
+  filepath: ${base_location}/01_raw/shuttles.xlsx
+  layer: raw
+  load_args:
+    engine: openpyxl

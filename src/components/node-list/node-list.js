@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars';
-import NodeListSearch from './node-list-search';
+import SearchList from '../search-list';
 import NodeListGroups from './node-list-groups';
 import NodeListTree from './node-list-tree';
 import SplitPanel from '../split-panel';
+
 import './styles/node-list.css';
 
 /**
@@ -13,6 +14,8 @@ import './styles/node-list.css';
 const NodeList = ({
   faded,
   items,
+  modularPipelinesTree,
+  modularPipelinesSearchResult,
   groups,
   searchValue,
   getGroupState,
@@ -22,20 +25,16 @@ const NodeList = ({
   onItemMouseEnter,
   onItemMouseLeave,
   onItemChange,
+  onModularPipelineToggleExpanded,
   focusMode,
 }) => {
-  const [searching, setSearching] = useState(false);
-
-  useEffect(() => {
-    setSearching(searchValue !== '');
-  }, [searchValue]);
-
   return (
     <div
       className={classnames('pipeline-nodelist', {
         'pipeline-nodelist--fade': faded,
-      })}>
-      <NodeListSearch
+      })}
+    >
+      <SearchList
         onUpdateSearchValue={onUpdateSearchValue}
         searchValue={searchValue}
       />
@@ -45,22 +44,26 @@ const NodeList = ({
             className={classnames('pipeline-nodelist__split', {
               'pipeline-nodelist__split--resizing': isResizing,
             })}
-            {...container}>
+            {...container}
+          >
             <div className="pipeline-nodelist__elements-panel" {...panelA}>
               <Scrollbars
                 className="pipeline-nodelist-scrollbars"
                 style={{ width: 'auto' }}
                 autoHide
-                hideTracksWhenNotNeeded>
+                hideTracksWhenNotNeeded
+              >
                 <div className="pipeline-nodelist-section">
                   <NodeListTree
+                    modularPipelinesSearchResult={modularPipelinesSearchResult}
+                    modularPipelinesTree={modularPipelinesTree}
                     searchValue={searchValue}
                     faded={faded}
                     onItemClick={onItemClick}
                     onItemMouseEnter={onItemMouseEnter}
                     onItemMouseLeave={onItemMouseLeave}
                     onItemChange={onItemChange}
-                    searching={searching}
+                    onNodeToggleExpanded={onModularPipelineToggleExpanded}
                     focusMode={focusMode}
                   />
                 </div>
@@ -72,7 +75,8 @@ const NodeList = ({
                 className="pipeline-nodelist-scrollbars"
                 style={{ width: 'auto' }}
                 autoHide
-                hideTracksWhenNotNeeded>
+                hideTracksWhenNotNeeded
+              >
                 <h2 className="pipeline-nodelist-section__title">Filters</h2>
                 <NodeListGroups
                   items={items}

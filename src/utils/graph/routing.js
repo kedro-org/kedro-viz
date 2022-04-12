@@ -79,8 +79,8 @@ export const routing = ({
     let currentPoint = startPoint;
 
     // For each row between the source and target rows exclusive
-    for (let l = source.row + 1; l < target.row; l += 1) {
-      const firstNode = rows[l][0];
+    for (let i = source.row + 1; i < target.row; i += 1) {
+      const firstNode = rows[i][0];
 
       // Initialise search for next point
       let nearestPoint = { x: nodeLeft(firstNode) - spaceX, y: firstNode.y };
@@ -89,7 +89,7 @@ export const routing = ({
       // Extend the row 'to infinity' on each side in X
       const rowExtended = [
         { ...firstNode, x: Number.MIN_SAFE_INTEGER },
-        ...rows[l],
+        ...rows[i],
         { ...firstNode, x: Number.MAX_SAFE_INTEGER },
       ];
 

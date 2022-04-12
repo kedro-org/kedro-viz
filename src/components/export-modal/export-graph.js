@@ -1,4 +1,5 @@
 import downloadSvg, { downloadPng } from 'svg-crowbar';
+import { globalToolbarWidth } from '../../config';
 
 /**
  * Handle onClick for the SVG/PNG download button
@@ -29,6 +30,9 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
     clone.setAttribute('viewBox', `0 0 ${width} ${height}`);
   }
   clone.querySelector('#zoom-wrapper').removeAttribute('transform');
+  clone
+    .querySelector('#zoom-wrapper')
+    .setAttribute('transform', `translate(${globalToolbarWidth}, 0)`);
 
   // Impose a maximum size on PNGs because otherwise they break when downloading
   if (format === 'png') {

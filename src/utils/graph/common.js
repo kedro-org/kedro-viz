@@ -1,7 +1,10 @@
+/* eslint-disable id-length */
+
 /**
  * PI / 2 constant
  */
-export const halfPI = Math.PI * 0.5;
+
+export const HALF_PI = Math.PI * 0.5;
 
 /**
  * Clamps the value between min and max

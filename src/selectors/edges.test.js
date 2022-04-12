@@ -1,15 +1,34 @@
-import { mockState } from '../utils/state.mock';
+import { prepareState } from '../utils/state.mock';
 import { getEdgeDisabled } from './disabled';
-import { addNewEdge, getTransitiveEdges, getVisibleEdges } from './edges';
+import {
+  addNewEdge,
+  getTransitiveEdges,
+  getVisibleEdges,
+  getInputOutputDataEdges,
+} from './edges';
+
+import spaceflights from '../utils/data/spaceflights.mock.json';
 import { toggleNodesDisabled } from '../actions/nodes';
+import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
+import { toggleFocusMode } from '../actions';
 import reducer from '../reducers';
 
-const getNodeIDs = (state) => state.node.ids;
-const getEdgeIDs = (state) => state.edge.ids;
-const getEdgeSources = (state) => state.edge.sources;
-const getEdgeTargets = (state) => state.edge.targets;
-
 describe('Selectors', () => {
+  const mockState = prepareState({
+    data: spaceflights,
+    beforeLayoutActions: [
+      () => toggleModularPipelineExpanded(['data_science']),
+    ],
+  });
+  const { nodes, edges } = mockState.graph;
+  const disabledNode = nodes.find((node) =>
+    node.name.includes('Train Model')
+  ).id;
+  const sourceToDisabledNode = edges.find(
+    (edge) =>
+      edge.target === disabledNode && edge.sourceNode.type !== 'parameters'
+  ).source;
+
   describe('addNewEdge', () => {
     const transitiveEdges = {};
     beforeEach(() => {
@@ -45,25 +64,9 @@ describe('Selectors', () => {
   });
 
   describe('getTransitiveEdges', () => {
-    const edgeSources = getEdgeSources(mockState.animals);
-    const edgeTargets = getEdgeTargets(mockState.animals);
-    // Find a node which has multiple inputs and outputs, which we can disable
-    const disabledNode = getNodeIDs(mockState.animals).find((node) => {
-      const hasMultipleConnections = (edgeNodes) =>
-        Object.values(edgeNodes).filter((edge) => edge === node).length > 1;
-      return (
-        hasMultipleConnections(edgeSources) &&
-        hasMultipleConnections(edgeTargets)
-      );
-    });
-    const sourceEdge = getEdgeIDs(mockState.animals).find(
-      (edge) => edgeTargets[edge] === disabledNode
-    );
-    const source = edgeSources[sourceEdge];
-
     describe('if all edges are enabled', () => {
       it('creates no transitive edges', () => {
-        expect(getTransitiveEdges(mockState.animals)).toEqual({
+        expect(getTransitiveEdges(mockState)).toEqual({
           edgeIDs: [],
           sources: {},
           targets: {},
@@ -76,20 +79,25 @@ describe('Selectors', () => {
       let alteredMockState;
       beforeEach(() => {
         alteredMockState = reducer(
-          mockState.animals,
-          toggleNodesDisabled([disabledNode], true)
+          mockState,
+          toggleNodesDisabled([disabledNode], true),
+          toggleModularPipelineExpanded(['data_science'])
         );
       });
 
       it('creates transitive edges matching the source node', () => {
         expect(getTransitiveEdges(alteredMockState).edgeIDs).toEqual(
-          expect.arrayContaining([expect.stringContaining(source)])
+          expect.arrayContaining([
+            expect.stringContaining(sourceToDisabledNode),
+          ])
         );
       });
 
       it('creates transitive edges not matching the source node', () => {
         expect(getTransitiveEdges(alteredMockState).edgeIDs).toEqual(
-          expect.arrayContaining([expect.not.stringContaining(source)])
+          expect.arrayContaining([
+            expect.not.stringContaining(sourceToDisabledNode),
+          ])
         );
       });
 
@@ -103,14 +111,14 @@ describe('Selectors', () => {
 
   describe('getVisibleEdges', () => {
     it('gets only the visible edges', () => {
-      const edgeDisabled = getEdgeDisabled(mockState.animals);
-      expect(
-        getVisibleEdges(mockState.animals).map((d) => edgeDisabled[d.id])
-      ).toEqual(expect.arrayContaining([false]));
+      const edgeDisabled = getEdgeDisabled(mockState);
+      expect(getVisibleEdges(mockState).map((d) => edgeDisabled[d.id])).toEqual(
+        expect.arrayContaining([false])
+      );
     });
 
     it('formats the edges into an array of objects', () => {
-      expect(getVisibleEdges(mockState.animals)).toEqual(
+      expect(getVisibleEdges(mockState)).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(String),
@@ -122,22 +130,33 @@ describe('Selectors', () => {
     });
 
     it('includes transitive edges when necessary', () => {
-      // Find a node which has multiple inputs and outputs, which we can disable
-      const disabledNodeID = getNodeIDs(mockState.animals).find((node) => {
-        const hasMultipleConnections = (edgeNodes) =>
-          Object.values(edgeNodes).filter((edge) => edge === node).length > 1;
-        return (
-          hasMultipleConnections(getEdgeSources(mockState.animals)) &&
-          hasMultipleConnections(getEdgeTargets(mockState.animals))
-        );
-      });
       const alteredMockState = reducer(
-        mockState.animals,
-        toggleNodesDisabled([disabledNodeID], true)
+        mockState,
+        toggleNodesDisabled([disabledNode], true)
       );
-      expect(getVisibleEdges(alteredMockState).length).toBeGreaterThan(
-        getVisibleEdges(mockState.animals).length
+      expect(new Set(getVisibleEdges(alteredMockState))).not.toEqual(
+        new Set(getVisibleEdges(mockState))
       );
+    });
+  });
+
+  describe('getInputOutputDataEdges', () => {
+    const modularPipelineId = 'data_processing';
+    it('includes input output edges related to a modular pipeline in the returned object', () => {
+      const newMockState = reducer(
+        mockState,
+        toggleFocusMode({ id: modularPipelineId })
+      );
+
+      const inputs = ['f192326a', '90ebe5f3', '0abef172'];
+      const outputs = ['23c94afb'];
+      const expectedEdges = inputs
+        .map((input) => `${input}|${modularPipelineId}`)
+        .concat(outputs.map((output) => `${modularPipelineId}|${output}`));
+      const result = getInputOutputDataEdges(newMockState);
+      expectedEdges.forEach((edge) => {
+        expect(result).toHaveProperty(edge);
+      });
     });
   });
 });

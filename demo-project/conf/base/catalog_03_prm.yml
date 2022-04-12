@@ -1,0 +1,9 @@
+prm_shuttle_company_reviews:
+  type: pandas.ParquetDataSet
+  filepath: ${base_location}/03_primary/prm_shuttle_company_reviews.pq
+  layer: primary
+
+prm_spine_table:
+  type: pandas.ParquetDataSet
+  filepath: ${base_location}/03_primary/prm_spine_table.pq
+  layer: primary

@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge';
 import { loadState, saveState } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
-import { sidebarWidth } from '../config';
+import { settings, sidebarWidth } from '../config';
 
 /**
  * Create new default state instance for properties that aren't overridden
@@ -14,6 +14,7 @@ export const createInitialState = () => ({
   flags: Flags.defaults(),
   textLabels: true,
   theme: 'dark',
+  prettyName: settings.prettyName.default,
   ignoreLargeWarning: false,
   loading: {
     graph: false,
@@ -25,15 +26,20 @@ export const createInitialState = () => ({
     labelBtn: true,
     layerBtn: true,
     exportBtn: true,
-    settingsBtn: true,
     exportModal: false,
     plotModal: false,
     settingsModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
     code: false,
-    themeBtn: true,
     miniMapBtn: true,
     miniMap: true,
+    modularPipelineFocusMode: null,
+  },
+  display: {
+    globalToolbar: true,
+    sidebar: true,
+    miniMap: true,
+    expandAllPipelines: false,
   },
   zoom: {},
 });
@@ -64,14 +70,15 @@ export const mergeLocalStorage = (state) => {
  * @param {object} data Data prop passed to App component
  * @param {boolean} applyFixes Whether to override initialState
  */
-export const preparePipelineState = (data, applyFixes) => {
-  const state = mergeLocalStorage(normalizeData(data));
+export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
+  const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
       state.pipeline.active = state.pipeline.main;
     }
   }
+
   return state;
 };
 
@@ -85,11 +92,21 @@ export const preparePipelineState = (data, applyFixes) => {
 export const prepareNonPipelineState = (props) => {
   const state = mergeLocalStorage(createInitialState());
 
+  let newVisibleProps = {};
+  if (props.display?.sidebar === false || state.display.sidebar === false) {
+    newVisibleProps['sidebar'] = false;
+  }
+
+  if (props.display?.minimap === false || state.display.miniMap === false) {
+    newVisibleProps['miniMap'] = false;
+  }
+
   return {
     ...state,
     flags: { ...state.flags, ...getFlagsFromUrl() },
     theme: props.theme || state.theme,
-    visible: { ...state.visible, ...props.visible },
+    visible: { ...state.visible, ...props.visible, ...newVisibleProps },
+    display: { ...state.display, ...props.display },
   };
 };
 
@@ -102,15 +119,23 @@ export const prepareNonPipelineState = (props) => {
  */
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
-  if (nonPipelineState.flags.newparams) {
-    saveState({
-      nodeType: {
-        // Default to disabled parameters and other types enabled
-        disabled: { parameters: true, task: false, data: false },
-      },
-    });
-  }
-  const pipelineState = preparePipelineState(props.data, props.data !== 'json');
+  saveState({
+    nodeType: {
+      // Default to disabled parameters and other types enabled
+      disabled: { parameters: true, task: false, data: false },
+    },
+  });
+
+  const expandAllPipelines =
+    nonPipelineState.display.expandAllPipelines ||
+    nonPipelineState.flags.expandAllPipelines;
+
+  const pipelineState = preparePipelineState(
+    props.data,
+    props.data !== 'json',
+    expandAllPipelines
+  );
+
   return {
     ...nonPipelineState,
     ...pipelineState,

@@ -1,0 +1,30 @@
+split_options:
+  test_size: 0.2
+  random_state: 3
+  target: "price"
+
+model_options:
+  linear_regression:
+    module: sklearn.linear_model
+    class: LinearRegression
+    kwargs:
+      fit_intercept: True
+      normalize: False
+      copy_X: True
+      positive: False
+  random_forest:
+    module: sklearn.ensemble
+    class: RandomForestRegressor
+    kwargs:
+      n_estimators: 100
+      criterion: "mse"
+      min_samples_split: 2
+      min_samples_leaf: 1
+      min_weight_fraction_leaf: 0
+      max_features: "auto"
+      min_impurity_decrease: 0
+      bootstrap: True
+      oob_score: False
+      verbose: 0
+      warm_start: False
+      ccp_alpha: 0

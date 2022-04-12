@@ -1,5 +1,5 @@
 import React from 'react';
-import MiniMap, { mapStateToProps, mapDispatchToProps } from './index';
+import MiniMap, { mapStateToProps, mapDispatchToProps } from './minimap';
 import { mockState, setup } from '../../utils/state.mock';
 import { getViewTransform, origin } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';
@@ -14,7 +14,7 @@ describe('MiniMap', () => {
   it('renders nodes with D3', () => {
     const wrapper = setup.mount(<MiniMap />);
     const nodes = wrapper.render().find('.pipeline-minimap-node');
-    const mockNodes = getVisibleNodeIDs(mockState.animals);
+    const mockNodes = getVisibleNodeIDs(mockState.spaceflights);
     expect(nodes.length).toEqual(mockNodes.length);
   });
 
@@ -47,7 +47,7 @@ describe('MiniMap', () => {
   it('adds and removes global wheel event handler', () => {
     const windowEvents = {};
     window.addEventListener = jest.fn(
-      (event, cb) => (windowEvents[event] = cb)
+      (event, callback) => (windowEvents[event] = callback)
     );
     window.removeEventListener = jest.fn((event) => delete windowEvents[event]);
 
@@ -60,7 +60,7 @@ describe('MiniMap', () => {
   it('adds and removes global pointer event handler when supported', () => {
     const windowEvents = {};
     window.addEventListener = jest.fn(
-      (event, cb) => (windowEvents[event] = cb)
+      (event, callback) => (windowEvents[event] = callback)
     );
     window.removeEventListener = jest.fn((event) => delete windowEvents[event]);
     window.PointerEvent = {};
@@ -75,7 +75,7 @@ describe('MiniMap', () => {
   it('adds and removes global mouse event handler when pointer events not supported', () => {
     const windowEvents = {};
     window.addEventListener = jest.fn(
-      (event, cb) => (windowEvents[event] = cb)
+      (event, callback) => (windowEvents[event] = callback)
     );
     window.removeEventListener = jest.fn((event) => delete windowEvents[event]);
     window.PointerEvent = null;
@@ -156,7 +156,7 @@ describe('MiniMap', () => {
       nodes: expect.any(Array),
       textLabels: expect.any(Boolean),
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', () => {

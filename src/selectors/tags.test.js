@@ -4,8 +4,8 @@ import { toggleTagFilter } from '../actions/tags';
 import reducer from '../reducers';
 
 const getTagIDs = (state) => state.tag.ids;
-const tagIDs = getTagIDs(mockState.animals);
-const tagData = getTagData(mockState.animals);
+const tagIDs = getTagIDs(mockState.spaceflights);
+const tagData = getTagData(mockState.spaceflights);
 
 describe('Selectors', () => {
   describe('getTagData', () => {
@@ -29,12 +29,12 @@ describe('Selectors', () => {
 
   describe('getTagCount', () => {
     const newMockState = reducer(
-      mockState.animals,
+      mockState.spaceflights,
       toggleTagFilter(tagIDs[0], true)
     );
 
     it('retrieves the total and enabled number of tags', () => {
-      expect(getTagCount(mockState.animals)).toEqual(
+      expect(getTagCount(mockState.spaceflights)).toEqual(
         expect.objectContaining({
           enabled: 0,
           total: tagIDs.length,
@@ -54,8 +54,13 @@ describe('Selectors', () => {
 
   describe('getTagNodeCounts', () => {
     it('gets the total number of nodes for each tag', () => {
-      expect(getTagNodeCounts(mockState.animals)).toEqual(
-        expect.objectContaining({ large: 7, medium: 7, small: 8 })
+      expect(getTagNodeCounts(mockState.spaceflights)).toEqual(
+        expect.objectContaining({
+          features: 5,
+          preprocessing: 6,
+          split: 7,
+          train: 4,
+        })
       );
     });
   });

@@ -2,10 +2,7 @@
 @import '../../styles/extends';
 
 .pipeline-primary-toolbar {
-  display: block;
-  margin: 0;
-  padding: 1em 0;
-  list-style: none;
+  @extend %listReset;
 }
 
 .pipeline-menu-button svg {

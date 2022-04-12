@@ -1,5 +1,5 @@
 import getPipelineData, { getSourceID, getDataValue } from './data-source';
-import animals from './data/animals.mock.json';
+import spaceflights from './data/spaceflights.mock.json';
 import demo from './data/demo.mock.json';
 
 describe('getSourceID', () => {
@@ -20,8 +20,8 @@ describe('getSourceID', () => {
   });
 
   it('should return the given datasource if set via environment variable', () => {
-    process.env.REACT_APP_DATA_SOURCE = 'animals';
-    expect(getSourceID()).toEqual('animals');
+    process.env.REACT_APP_DATA_SOURCE = 'spaceflights';
+    expect(getSourceID()).toEqual('spaceflights');
     process.env.REACT_APP_DATA_SOURCE = 'demo';
     expect(getSourceID()).toEqual('demo');
   });
@@ -29,7 +29,7 @@ describe('getSourceID', () => {
 
 describe('getDataValue', () => {
   it('should return the correct dataset when passed a dataset string', () => {
-    expect(getDataValue('animals')).toEqual(animals);
+    expect(getDataValue('spaceflights')).toEqual(spaceflights);
     expect(getDataValue('demo')).toEqual(demo);
   });
 
@@ -78,8 +78,8 @@ describe('getPipelineData', () => {
   });
 
   it('should return the given datasource if set', () => {
-    process.env.REACT_APP_DATA_SOURCE = 'animals';
-    expect(getPipelineData()).toEqual(animals);
+    process.env.REACT_APP_DATA_SOURCE = 'spaceflights';
+    expect(getPipelineData()).toEqual(spaceflights);
   });
 
   it('should return random data if requested', () => {

@@ -10,31 +10,31 @@ const getNodeLayer = (state) => state.node.layer;
 describe('Selectors', () => {
   describe('getLayerNodes', () => {
     it('returns an array containing an array of node IDs', () => {
-      expect(getLayerNodes(mockState.animals)).toEqual(
+      expect(getLayerNodes(mockState.spaceflights)).toEqual(
         expect.arrayContaining([expect.arrayContaining([expect.any(String)])])
       );
     });
 
     test('all node IDs are in the correct layer', () => {
-      const layerIDs = getVisibleLayerIDs(mockState.animals);
-      const nodeLayer = getNodeLayer(mockState.animals);
+      const layerIDs = getVisibleLayerIDs(mockState.spaceflights);
+      const nodeLayer = getNodeLayer(mockState.spaceflights);
       expect(
-        getLayerNodes(mockState.animals).every((layerNodeIDs, i) =>
+        getLayerNodes(mockState.spaceflights).every((layerNodeIDs, i) =>
           layerNodeIDs.every((nodeID) => nodeLayer[nodeID] === layerIDs[i])
         )
       ).toBe(true);
     });
 
     it('returns an empty array if layers are disabled', () => {
-      const newMockState = reducer(mockState.animals, toggleLayers(false));
+      const newMockState = reducer(mockState.spaceflights, toggleLayers(false));
       expect(getLayerNodes(newMockState)).toEqual([]);
     });
   });
 
   describe('getNodeRank', () => {
-    const nodeRank = getNodeRank(mockState.animals);
-    const nodeIDs = getVisibleNodeIDs(mockState.animals);
-    const edges = getVisibleEdges(mockState.animals);
+    const nodeRank = getNodeRank(mockState.spaceflights);
+    const nodeIDs = getVisibleNodeIDs(mockState.spaceflights);
+    const edges = getVisibleEdges(mockState.spaceflights);
 
     it('returns an object', () => {
       expect(nodeRank).toEqual(expect.any(Object));
@@ -56,7 +56,7 @@ describe('Selectors', () => {
     });
 
     it('returns an empty object if layers are disabled', () => {
-      const newMockState = reducer(mockState.animals, toggleLayers(false));
+      const newMockState = reducer(mockState.spaceflights, toggleLayers(false));
       expect(getNodeRank(newMockState)).toEqual({});
     });
   });

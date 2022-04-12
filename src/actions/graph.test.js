@@ -11,15 +11,15 @@ describe('graph actions', () => {
     });
 
     it('sets loading to true immediately', () => {
-      const store = createStore(reducer, mockState.animals);
+      const store = createStore(reducer, mockState.spaceflights);
       expect(store.getState().loading.graph).not.toBe(true);
-      calculateGraph(getGraphInput(mockState.animals))(store.dispatch);
+      calculateGraph(getGraphInput(mockState.spaceflights))(store.dispatch);
       expect(store.getState().loading.graph).toBe(true);
     });
 
     it('sets loading to false and graph visibility to true after finishing calculation', () => {
-      const store = createStore(reducer, mockState.animals);
-      return calculateGraph(getGraphInput(mockState.animals))(
+      const store = createStore(reducer, mockState.spaceflights);
+      return calculateGraph(getGraphInput(mockState.spaceflights))(
         store.dispatch
       ).then(() => {
         const state = store.getState();
@@ -29,7 +29,7 @@ describe('graph actions', () => {
     });
 
     it('calculates a graph', () => {
-      const state = Object.assign({}, mockState.animals);
+      const state = Object.assign({}, mockState.spaceflights);
       delete state.graph;
       const store = createStore(reducer, state);
       expect(store.getState().graph).toEqual({});

@@ -20,7 +20,8 @@ const NodeIcon = ({ className, icon }) =>
   paths[icon] ? (
     <svg
       className={modifiers('pipeline-node-icon', { icon }, className)}
-      viewBox="0 0 24 24">
+      viewBox="0 0 24 24"
+    >
       <path d={paths[icon]} />
     </svg>
   ) : null;

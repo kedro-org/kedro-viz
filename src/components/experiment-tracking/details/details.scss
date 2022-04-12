@@ -1,0 +1,24 @@
+@import '../../../styles/variables';
+
+.details-mainframe {
+  background-color: var(--color-sidebar-shadow);
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-start;
+  left: #{$global-toolbar-width};
+  overflow-y: scroll;
+  position: absolute;
+  top: 0;
+  transform: translateX($sidebar-width-closed);
+  transition: transform 0.4s ease, width ease 0.4s;
+  width: calc((100% - #{$sidebar-width-closed} - #{$global-toolbar-width}));
+
+  @media (min-width: $sidebar-width-breakpoint) {
+    &--sidebar-visible {
+      width: calc((100% - #{$sidebar-width-open} - #{$global-toolbar-width}));
+      transform: translateX($sidebar-width-open);
+    }
+  }
+}

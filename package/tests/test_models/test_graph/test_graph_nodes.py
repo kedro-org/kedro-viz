@@ -1,49 +1,33 @@
-# Copyright 2021 QuantumBlack Visual Analytics Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
-# NONINFRINGEMENT. IN NO EVENT WILL THE LICENSOR OR OTHER CONTRIBUTORS
-# BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF, OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-# The QuantumBlack Visual Analytics Limited ("QuantumBlack") name and logo
-# (either separately or in combination, "QuantumBlack Trademarks") are
-# trademarks of QuantumBlack. The License does not grant you any right or
-# license to the QuantumBlack Trademarks. You may not use the QuantumBlack
-# Trademarks or any confusingly similar mark as a trademark for your product,
-# or use the QuantumBlack Trademarks in any other manner that might cause
-# confusion in the marketplace, including but not limited to in advertising,
-# on websites, or on software.
-#
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# pylint: disable=too-many-public-methods
+import datetime
+import json
+import shutil
+import time
+from functools import partial
 from pathlib import Path
 from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
 
+import pandas as pd
 import pytest
-from kedro.extras.datasets.pandas import CSVDataSet
+from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
+from kedro.extras.datasets.spark import SparkDataSet
+from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
+from kedro.io.core import Version
 from kedro.pipeline.node import node
 
 from kedro_viz.models.graph import (
     DataNode,
     DataNodeMetadata,
     GraphNode,
-    ModularPipeline,
     ParametersNode,
     ParametersNodeMetadata,
     RegisteredPipeline,
     TaskNode,
     TaskNodeMetadata,
+    TranscodedDataNode,
+    TranscodedDataNodeMetadata,
 )
 
 orig_import = __import__
@@ -63,7 +47,7 @@ def decorator(fun):
     """
     Not the best way to write decorator
     but trying to stay faithful to the bug report here:
-    https://github.com/quantumblacklabs/kedro-viz/issues/484
+    https://github.com/kedro-org/kedro-viz/issues/484
     """
 
     def _new_fun(*args, **kwargs):
@@ -76,6 +60,16 @@ def decorator(fun):
 @decorator
 def decorated(x):
     return x
+
+
+# A normal function
+def full_func(a, b, c, x):
+    return 1000 * a + 100 * b + 10 * c + x
+
+
+# A partial function that calls f with
+# a as 3, b as 1 and c as 4.
+partial_func = partial(full_func, 3, 1, 4)
 
 
 class TestGraphNodeCreation:
@@ -109,8 +103,18 @@ class TestGraphNodeCreation:
         assert task_node.name == "Identity Node"
         assert task_node.full_name == "identity_node"
         assert task_node.tags == {"tag"}
-        assert task_node.pipelines == []
+        assert task_node.pipelines == set()
         assert task_node.modular_pipelines == expected_modular_pipelines
+
+    def test_task_node_full_name_when_no_given_name(self):
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            tags={"tag"},
+        )
+        task_node = GraphNode.create_task_node(kedro_node)
+        assert task_node.full_name == "identity"
 
     @pytest.mark.parametrize(
         "dataset_name,pretty_name,expected_modular_pipelines",
@@ -143,9 +147,28 @@ class TestGraphNodeCreation:
         assert data_node.name == pretty_name
         assert data_node.layer == "raw"
         assert data_node.tags == set()
-        assert data_node.pipelines == []
+        assert data_node.pipelines == set()
         assert data_node.modular_pipelines == expected_modular_pipelines
         assert not data_node.is_plot_node()
+        assert not data_node.is_metric_node()
+
+    def test_create_transcoded_data_node(self):
+        dataset_name = "dataset@spark"
+        original_name = "dataset"
+        pretty_name = "Dataset"
+        kedro_dataset = CSVDataSet(filepath="foo.csv")
+        data_node = GraphNode.create_data_node(
+            full_name=dataset_name,
+            layer="raw",
+            tags=set(),
+            dataset=kedro_dataset,
+        )
+        assert isinstance(data_node, TranscodedDataNode)
+        assert data_node.id == GraphNode._hash(original_name)
+        assert data_node.name == pretty_name
+        assert data_node.layer == "raw"
+        assert data_node.tags == set()
+        assert data_node.pipelines == set()
 
     def test_create_parameters_all_parameters(self):
         parameters_dataset = MemoryDataSet(
@@ -207,7 +230,7 @@ class TestGraphNodePipelines:
         assert pipeline.name == "Default"
 
     def test_modular_pipeline_pretty_name(self):
-        pipeline = ModularPipeline("data_engineering")
+        pipeline = GraphNode.create_modular_pipeline_node("data_engineering")
         assert pipeline.name == "Data Engineering"
 
     def test_add_node_to_pipeline(self):
@@ -215,15 +238,15 @@ class TestGraphNodePipelines:
         another_pipeline = RegisteredPipeline("testing")
         kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
-            full_name="dataset",
+            full_name="dataset@transcoded",
             layer="raw",
             tags=set(),
             dataset=kedro_dataset,
         )
-        assert data_node.pipelines == []
-        data_node.add_pipeline(default_pipeline)
-        assert data_node.belongs_to_pipeline(default_pipeline)
-        assert not data_node.belongs_to_pipeline(another_pipeline)
+        assert data_node.pipelines == set()
+        data_node.add_pipeline(default_pipeline.id)
+        assert data_node.belongs_to_pipeline(default_pipeline.id)
+        assert not data_node.belongs_to_pipeline(another_pipeline.id)
 
 
 class TestGraphNodeMetadata:
@@ -294,6 +317,24 @@ class TestGraphNodeMetadata:
         )
         assert task_node_metadata.parameters == {}
 
+    def test_task_node_metadata_with_partial_func(self):
+        kedro_node = node(
+            partial_func,
+            inputs="x",
+            outputs="y",
+            tags={"tag"},
+            namespace="namespace",
+        )
+        task_node = GraphNode.create_task_node(kedro_node)
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+        assert task_node.name == "&lt;partial&gt;"
+        assert task_node.full_name == "&lt;partial&gt;"
+        assert not hasattr(task_node_metadata, "code")
+        assert not hasattr(task_node_metadata, "filepath")
+        assert task_node_metadata.parameters == {}
+        assert task_node_metadata.inputs == ["X"]
+        assert task_node_metadata.outputs == ["Y"]
+
     def test_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")
         data_node = GraphNode.create_data_node(
@@ -309,6 +350,29 @@ class TestGraphNodeMetadata:
         )
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == 'kedro run --to-outputs="dataset"'
+
+    def test_transcoded_data_node_metadata(self):
+        dataset = CSVDataSet(filepath="/tmp/dataset.csv")
+        transcoded_data_node = GraphNode.create_data_node(
+            full_name="dataset@spark",
+            layer="raw",
+            tags=set(),
+            dataset=dataset,
+        )
+        transcoded_data_node.original_name = "dataset"
+        transcoded_data_node.original_version = ParquetDataSet(filepath="foo.parquet")
+        transcoded_data_node.transcoded_versions = [SparkDataSet(filepath="foo.csv")]
+        transcoded_data_node_metadata = TranscodedDataNodeMetadata(
+            transcoded_data_node=transcoded_data_node
+        )
+        assert (
+            transcoded_data_node_metadata.original_type
+            == "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+        )
+
+        assert transcoded_data_node_metadata.transcoded_types == [
+            "kedro.extras.datasets.spark.spark_dataset.SparkDataSet"
+        ]
 
     def test_partitioned_data_node_metadata(self):
         dataset = PartitionedDataSet(path="partitioned/", dataset="pandas.CSVDataSet")
@@ -336,6 +400,7 @@ class TestGraphNodeMetadata:
         patched_json_load.return_value = mock_plot_data
         plotly_data_node = MagicMock()
         plotly_data_node.is_plot_node.return_value = True
+        plotly_data_node.is_metric_node.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot == mock_plot_data
 
@@ -343,9 +408,290 @@ class TestGraphNodeMetadata:
     def test_plotly_data_node_dataset_not_exist(self, patched_import):
         plotly_data_node = MagicMock()
         plotly_data_node.is_plot_node.return_value = True
+        plotly_data_node.is_metric_node.return_value = False
         plotly_data_node.kedro_obj._exists.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
+
+    @patch("json.load")
+    def test_plotly_json_dataset_node_metadata(self, patched_json_load):
+        mock_plot_data = {
+            "data": [
+                {
+                    "x": ["giraffes", "orangutans", "monkeys"],
+                    "y": [20, 14, 23],
+                    "type": "bar",
+                }
+            ]
+        }
+        patched_json_load.return_value = mock_plot_data
+        plotly_json_dataset_node = MagicMock()
+        plotly_json_dataset_node.is_plot_node.return_value = True
+        plotly_json_dataset_node.is_metric_node.return_value = False
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_json_dataset_node)
+        assert plotly_node_metadata.plot == mock_plot_data
+
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_versioned_tracking_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.create_metrics_plot")
+    def test_metrics_data_node_metadata(
+        self,
+        patched_metrics_plot,
+        patched_latest_metrics,
+        patched_data_loader,
+    ):
+        mock_metrics_data = {
+            "recommendations": 0.0009277445547700936,
+            "recommended_controls": 0.001159680693462617,
+            "projected_optimization": 0.0013916168321551402,
+        }
+        mock_version_data = {
+            datetime.datetime(2021, 9, 10, 9, 2, 44, 245000): {
+                "recommendations": 0.3866563620506992,
+                "recommended_controls": 0.48332045256337397,
+                "projected_optimization": 0.5799845430760487,
+            },
+            datetime.datetime(2021, 9, 10, 9, 3, 23, 733000): {
+                "recommendations": 0.200383330721228,
+                "recommended_controls": 0.250479163401535,
+                "projected_optimization": 0.30057499608184196,
+            },
+        }
+        mock_plot_data = {
+            "data": [
+                {
+                    "metrics": ["giraffes", "orangutans", "monkeys"],
+                    "value": [20, 14, 23],
+                    "type": "bar",
+                }
+            ]
+        }
+        patched_data_loader.return_value = mock_version_data
+        patched_latest_metrics.return_value = mock_metrics_data
+        patched_metrics_plot.return_value = mock_plot_data
+        metrics_data_node = MagicMock()
+        metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_tracking_node.return_value = True
+        metrics_data_node.is_metric_node.return_value = True
+        metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
+        assert metrics_node_metadata.tracking_data == mock_metrics_data
+        assert metrics_node_metadata.plot == mock_plot_data
+
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    def test_json_data_node_metadata(
+        self,
+        patched_latest_json,
+    ):
+        mock_json_data = {
+            "recommendations": "test string",
+            "recommended_controls": False,
+            "projected_optimization": 0.0013902,
+        }
+
+        patched_latest_json.return_value = mock_json_data
+        json_data_node = MagicMock()
+        json_data_node.is_plot_node.return_value = False
+        json_data_node.is_tracking_node.return_value = True
+        json_data_node.is_metric_node.return_value = False
+        json_node_metadata = DataNodeMetadata(data_node=json_data_node)
+        assert json_node_metadata.tracking_data == mock_json_data
+        assert not hasattr(json_node_metadata, "plot")
+
+    def test_metrics_data_node_metadata_dataset_not_exist(self):
+        metrics_data_node = MagicMock()
+        metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_metric_node.return_value = True
+        metrics_data_node.kedro_obj._exists.return_value = False
+        metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
+        assert not hasattr(metrics_node_metadata, "metrics")
+        assert not hasattr(metrics_node_metadata, "plot")
+
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    def test_data_node_metadata_latest_tracking_data_not_exist(
+        self,
+        patched_latest_tracking_data,
+    ):
+        patched_latest_tracking_data.return_value = None
+        tracking_data_node = MagicMock()
+        tracking_data_node.is_plot_node.return_value = False
+        tracking_data_node.is_metric_node.return_value = True
+        tracking_data_node_metadata = DataNodeMetadata(data_node=tracking_data_node)
+        assert not hasattr(tracking_data_node_metadata, "metrics")
+        assert not hasattr(tracking_data_node_metadata, "plot")
+
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    @patch("kedro_viz.models.graph.DataNodeMetadata.load_versioned_tracking_data")
+    def test_tracking_data_node_metadata_versioned_dataset_not_exist(
+        self,
+        patched_data_loader,
+        patched_latest_tracking_data,
+    ):
+        mock_metrics_data = {
+            "recommendations": 0.0009277445547700936,
+            "recommended_controls": 0.001159680693462617,
+            "projected_optimization": 0.0013916168321551402,
+        }
+        patched_latest_tracking_data.return_value = mock_metrics_data
+        patched_data_loader.return_value = {}
+        tracking_data_node = MagicMock()
+        tracking_data_node.is_plot_node.return_value = False
+        tracking_data_node.is_metric_node.return_value = True
+        tracking_data_node_metadata = DataNodeMetadata(data_node=tracking_data_node)
+        assert tracking_data_node_metadata.tracking_data == mock_metrics_data
+        assert not hasattr(tracking_data_node_metadata, "plot")
+
+    def test_data_node_metadata_create_metrics_plot(self):
+        test_versioned_data = {
+            "index": [
+                datetime.datetime(2021, 9, 10, 9, 2, 44, 245000),
+                datetime.datetime(2021, 9, 11, 9, 2, 44, 245000),
+            ],
+            "recommendations": [1, 2],
+            "recommended_controls": [3, 4],
+            "projected_optimization": [5, 6],
+        }
+        data_frame = pd.DataFrame(data=test_versioned_data)
+        test_plot = DataNodeMetadata.create_metrics_plot(data_frame)
+        assert "data" in test_plot
+        assert "layout" in test_plot
+
+    @pytest.fixture
+    def tracking_data_filepath(self, tmp_path):
+        dir_name = ["2021-09-10T09.02.44.245Z", "2021-09-10T09.03.23.733Z"]
+        filename = "metrics.json"
+        json_content = [
+            {
+                "recommendations": 0.3866563620506992,
+                "recommended_controls": 0.48332045256337397,
+                "projected_optimization": 0.5799845430760487,
+            },
+            {
+                "recommendations": 0.200383330721228,
+                "recommended_controls": 0.250479163401535,
+                "projected_optimization": 0.30057499608184196,
+            },
+        ]
+        source_dir = Path(tmp_path / filename)
+        for index, directory in enumerate(dir_name):
+            filepath = Path(source_dir / directory / filename)
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+            filepath.write_text(json.dumps(json_content[index]))
+        return source_dir
+
+    @pytest.fixture
+    def tracking_data_filepath_reload(self, tmp_path):
+        dir_name = ["2021-09-10T09.03.55.245Z", "2021-09-10T09.03.56.733Z"]
+        filename = "metrics.json"
+        json_content = [
+            {
+                "recommendations": 0.4,
+                "recommended_controls": 0.5,
+                "projected_optimization": 0.6,
+            },
+            {
+                "recommendations": 0.7,
+                "recommended_controls": 0.8,
+                "projected_optimization": 0.9,
+            },
+        ]
+        source_dir = Path(tmp_path / filename)
+        for index, directory in enumerate(dir_name):
+            filepath = Path(source_dir / directory / filename)
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+            filepath.write_text(json.dumps(json_content[index]))
+        return source_dir
+
+    @pytest.fixture
+    def tracking_data_filepath_invalid_timestamp(self, tmp_path):
+        dir_name = ["2021", "2021"]
+        filename = "metrics.json"
+        json_content = [
+            {
+                "recommendations": 0.3866563620506992,
+                "recommended_controls": 0.48332045256337397,
+                "projected_optimization": 0.5799845430760487,
+            },
+            {
+                "recommendations": 0.200383330721228,
+                "recommended_controls": 0.250479163401535,
+                "projected_optimization": 0.30057499608184196,
+            },
+        ]
+        source_dir = Path(tmp_path / filename)
+        for index, directory in enumerate(dir_name):
+            filepath = Path(source_dir / directory / filename)
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+            filepath.write_text(json.dumps(json_content[index]))
+        return source_dir
+
+    def test_load_latest_tracking_data(self):
+        # Note - filepath is assigned temp.json as temp solution instead of
+        # tracking_data_filepath as it fails on windows build.
+        # This will be cleaned up in the future.
+        filename = "temp.json"
+        dataset = MetricsDataSet(filepath=filename, version=Version(None, None))
+        data = {"col1": 1, "col2": 0.23, "col3": 0.002}
+        dataset.save(data)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == data
+        # to avoid datasets being saved concurrently
+        time.sleep(1)
+        new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
+        dataset.save(new_data)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) == new_data
+        shutil.rmtree(filename)
+
+    def test_load_latest_tracking_data_fail(self, mocker, tracking_data_filepath):
+        dataset = MetricsDataSet(filepath=f"{tracking_data_filepath}")
+        mocker.patch.object(dataset, "_exists_function", return_value=False)
+        assert DataNodeMetadata.load_latest_tracking_data(dataset) is None
+
+    def test_load_metrics_versioned_data(self, tracking_data_filepath):
+        mock_tracking_data_json = {
+            datetime.datetime(2021, 9, 10, 9, 2, 44, 245000): {
+                "recommendations": 0.3866563620506992,
+                "recommended_controls": 0.48332045256337397,
+                "projected_optimization": 0.5799845430760487,
+            },
+            datetime.datetime(2021, 9, 10, 9, 3, 23, 733000): {
+                "recommendations": 0.200383330721228,
+                "recommended_controls": 0.250479163401535,
+                "projected_optimization": 0.30057499608184196,
+            },
+        }
+        assert (
+            DataNodeMetadata.load_versioned_tracking_data(tracking_data_filepath)
+            == mock_tracking_data_json
+        )
+
+    def test_load_tracking_data_versioned_data_set_limit(self, tracking_data_filepath):
+        mock_tracking_data_json = {
+            datetime.datetime(2021, 9, 10, 9, 3, 23, 733000): {
+                "recommendations": 0.200383330721228,
+                "recommended_controls": 0.250479163401535,
+                "projected_optimization": 0.30057499608184196,
+            },
+        }
+        limit = 1
+        assert (
+            DataNodeMetadata.load_versioned_tracking_data(tracking_data_filepath, limit)
+            == mock_tracking_data_json
+        )
+
+    @patch("logging.Logger.warning")
+    def test_load_tracking_data_versioned_data_invalid_timestamp(
+        self, patched_warning, tracking_data_filepath_invalid_timestamp
+    ):
+        DataNodeMetadata.load_versioned_tracking_data(
+            tracking_data_filepath_invalid_timestamp
+        )
+        patched_warning.assert_has_calls(
+            [
+                call(
+                    """Expected timestamp of format YYYY-MM-DDTHH:MM:SS.ffffff.
+                    Skip when loading tracking data."""
+                )
+            ]
+        )
 
     def test_parameters_metadata_all_parameters(self):
         parameters = {"test_split_ratio": 0.3, "num_epochs": 1000}

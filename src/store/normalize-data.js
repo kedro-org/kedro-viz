@@ -11,8 +11,9 @@ export const createInitialPipelineState = () => ({
   },
   modularPipeline: {
     ids: [],
-    name: {},
-    enabled: {},
+    tree: {},
+    visible: {},
+    expanded: [],
     active: {},
   },
   node: {
@@ -33,16 +34,20 @@ export const createInitialPipelineState = () => ({
     inputs: {},
     outputs: {},
     plot: {},
+    trackingData: {},
     datasetType: {},
+    originalType: {},
+    transcodedTypes: {},
     runCommand: {},
     modularPipelines: {},
   },
   nodeType: {
-    ids: ['task', 'data', 'parameters'],
+    ids: ['task', 'data', 'parameters', 'modularPipeline'],
     name: {
       data: 'Datasets',
       task: 'Nodes',
       parameters: 'Parameters',
+      modularPipeline: 'Modular Pipelines',
     },
     disabled: {},
   },
@@ -111,20 +116,6 @@ const addPipeline = (state) => (pipeline) => {
 };
 
 /**
- * Add a new modular pipeline
- * @param {string} modularPipeline.id - Unique namespace of the modular pipeline
- * @param {string} modularPipeline.name - modular pipeline name
- */
-const addModularPipeline = (state) => (modularPipeline) => {
-  const { id, name } = modularPipeline;
-  if (state.modularPipeline.name[id]) {
-    return;
-  }
-  state.modularPipeline.ids.push(id);
-  state.modularPipeline.name[id] = name;
-};
-
-/**
  * Add a new node if it doesn't already exist
  * @param {string} name - Default node name
  * @param {string} type - 'data' or 'task'
@@ -150,6 +141,8 @@ const addNode = (state) => (node) => {
   state.node.filepath[id] = node.filepath;
   state.node.plot[id] = node.plot;
   state.node.datasetType[id] = node.dataset_type;
+  state.node.originalType[id] = node.original_type;
+  state.node.transcodedTypes[id] = node.transcoded_types;
   state.node.runCommand[id] = node.runCommand;
   state.node.modularPipelines[id] = node.modular_pipelines || [];
 };
@@ -197,7 +190,7 @@ const addLayer = (state) => (layer) => {
  * @param {Object} data Raw unformatted data input
  * @return {Object} Formatted, normalized state
  */
-const normalizeData = (data) => {
+const normalizeData = (data, expandAllPipelines) => {
   const state = createInitialPipelineState();
 
   if (data === 'json') {
@@ -220,8 +213,27 @@ const normalizeData = (data) => {
     }
   }
   if (data.modular_pipelines) {
-    data.modular_pipelines.forEach(addModularPipeline(state));
+    state.modularPipeline.ids = Object.keys(data.modular_pipelines);
+    state.modularPipeline.tree = data.modular_pipelines;
+
+    // Case for expandAllPipelines in component props or within flag
+    if (expandAllPipelines) {
+      // assign all modular pipelines into expanded state
+      state.modularPipeline.expanded = state.modularPipeline.ids;
+      // assign all nodes as visible nodes in modular pipelines
+      const nodeIds = state.node.ids;
+      nodeIds.forEach((nodeId) => {
+        if (!state.modularPipeline.ids.includes(nodeId)) {
+          state.modularPipeline.visible[nodeId] = true;
+        }
+      });
+    } else {
+      for (const child of data.modular_pipelines['__root__'].children) {
+        state.modularPipeline.visible[child.id] = true;
+      }
+    }
   }
+
   if (data.tags) {
     data.tags.forEach(addTag(state));
   }

@@ -1,4 +1,4 @@
-import { halfPI, snap, angle, compare, groupByRow } from './common';
+import { HALF_PI, snap, angle, compare, groupByRow } from './common';
 import { solveLoose, solveStrict } from './solver';
 import {
   rowConstraint,
@@ -222,8 +222,8 @@ const createSeparationConstraints = (rows, constants) => {
   const separationConstraints = [];
 
   // For each row of nodes
-  for (let l = 0; l < rows.length; l += 1) {
-    const rowNodes = rows[l];
+  for (let i = 0; i < rows.length; i += 1) {
+    const rowNodes = rows[i];
 
     // Stable sort row nodes horizontally, breaks ties with ids
     rowNodes.sort((a, b) => compare(a.x, b.x, a.id, b.id));
@@ -303,7 +303,7 @@ const rowDensity = (edges) => {
   for (const edge of edges) {
     // Find the normalized angle of the edge source and target nodes, relative to the X axis
     const edgeAngle =
-      Math.abs(angle(edge.targetNode, edge.sourceNode) - halfPI) / halfPI;
+      Math.abs(angle(edge.targetNode, edge.sourceNode) - HALF_PI) / HALF_PI;
 
     const sourceRow = edge.sourceNode.row;
     const targetRow = edge.targetNode.row - 1;

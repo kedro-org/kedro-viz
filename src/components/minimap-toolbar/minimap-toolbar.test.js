@@ -3,7 +3,7 @@ import ConnectedMiniMapToolbar, {
   MiniMapToolbar,
   mapStateToProps,
   mapDispatchToProps,
-} from './index';
+} from './minimap-toolbar';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('MiniMapToolbar', () => {
@@ -25,6 +25,7 @@ describe('MiniMapToolbar', () => {
       const mockFn = jest.fn();
       const props = {
         chartZoom: { scale: 1, minScale: 0.5, maxScale: 1.5 },
+        displayMiniMap: true,
         visible: { miniMap: false },
         [callback]: mockFn,
       };
@@ -35,15 +36,26 @@ describe('MiniMapToolbar', () => {
     }
   );
 
+  it('does not display the toggle minimap button if displayMinimap is false', () => {
+    const props = {
+      chartZoom: { scale: 1, minScale: 0.5, maxScale: 1.5 },
+      displayMiniMap: false,
+      visible: { miniMap: false },
+    };
+    const wrapper = setup.mount(<MiniMapToolbar {...props} />);
+    expect(wrapper.find('.pipeline-minimap-button--map').length).toBe(0);
+  });
+
   it('maps state to props', () => {
     const expectedResult = {
+      displayMiniMap: true,
       chartZoom: expect.any(Object),
       visible: expect.objectContaining({
         miniMap: expect.any(Boolean),
         miniMapBtn: expect.any(Boolean),
       }),
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
 
   it('mapDispatchToProps', () => {

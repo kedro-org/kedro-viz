@@ -89,6 +89,19 @@ export function toggleTextLabels(textLabels) {
   };
 }
 
+export const TOGGLE_PRETTY_NAME = 'TOGGLE_PRETTY_NAME';
+
+/**
+ * Toggle whether to show pretty name on/off
+ * @param {Boolean} prettyName True if pretty name is to be shown
+ */
+export function togglePrettyName(prettyName) {
+  return {
+    type: TOGGLE_PRETTY_NAME,
+    prettyName,
+  };
+}
+
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**
@@ -138,19 +151,6 @@ export function updateZoom(zoom) {
   return {
     type: UPDATE_ZOOM,
     zoom,
-  };
-}
-
-export const UPDATE_FONT_LOADED = 'UPDATE_FONT_LOADED';
-
-/**
- * Update whether the webfont has loaded, which should block the chart render
- * @param {Boolean} fontLoaded Whether the font has loaded
- */
-export function updateFontLoaded(fontLoaded) {
-  return {
-    type: UPDATE_FONT_LOADED,
-    fontLoaded,
   };
 }
 
@@ -218,5 +218,19 @@ export function toggleParametersHovered(hoveredParameters) {
   return {
     type: TOGGLE_PARAMETERS_HOVERED,
     hoveredParameters,
+  };
+}
+
+export const TOGGLE_MODULAR_PIPELINE_FOCUS_MODE =
+  'TOGGLE_MODULAR_PIPELINE_FOCUS_MODE';
+
+/**
+ * Update the value of the selected modular pipeline under focus mode
+ * @param {Object} modularPipeline The selected modular pipeline for focus mode
+ */
+export function toggleFocusMode(modularPipeline) {
+  return {
+    type: TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
+    modularPipeline,
   };
 }

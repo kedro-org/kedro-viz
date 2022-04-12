@@ -1,4 +1,3 @@
-# Upcoming release
 
 <!--
 Use the sections below to add notes for the next release.
@@ -8,9 +7,170 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.4.0
 ## Major features and improvements
 
-- Add `--autoreload` flag to `kedro viz` to automatically reload Kedro Viz tab when the Kedro project code changes.
+- Set up a pop-up reminder to nudge users to upgrade Kedro-Viz when a new version is released. (#746)
+- Set up the 'export run' button to allow exporting of selected run data into a csv file for download. (#757)
+- Set up new display props to standalone React component. (#786)
+- Set up 'expandAllPipelines' flag to allow the expanded display of all modular pipelines on initial load. (#786)
+
+## Bug fixes and other changes
+
+- Migrate Kedro-UI buttons to Kedro-Viz as Kedro-UI is now deprecated. (#716)
+- Migrate Kedro-UI dropdown and menu-options to Kedro-Viz as Kedro-UI is now deprecated. (#721)
+- Add a Husky pre-push hook. (#723)
+- Create a `version` GraphQL query to get versions of Kedro-Viz. (#727)
+- Fix Kedro-Viz to work with projects that have no `__default__` registered pipeline. This also fixes the `--pipeline` CLI option. (#729)
+- Fix lazy pipelines loading causes `get_current_session` to throw an error. (#726, #727)
+- Fix experiment tracking not showing all metrics. (#798)
+- Fix experiment tracking not display the correct empty table cells. (#798)
+
+# Release 4.3.1
+
+## Bug fixes and other changes
+
+- Fix websocket connection for deploying Kedro-Viz over HTTPS. (#719)
+- Update demo deployment setup on CI. (#718)
+
+# Release 4.3.0
+
+## Major features and improvements
+
+- Create the toggle-bookmark journey that allows bookmarking runs and displaying them as a separate list. (#689)
+- Setup subscription for auto update of experiment runs list on new Kedro runs. (#703)
+- Allow users to search through the runs list by title, notes, and Git SHA. (#709)
+- Setup new demo deployment on CI. (#712)
+
+## Bug fixes and other changes
+
+- Bug fix to display the original function names when pretty name is turned off. (#686)
+- Fix the order of the runs list in experiment tracking. (#691)
+- Bug fix for Plotly JSONDataSet icon. (#684)
+- Bug fix for when some flowchart nodes were being cut off by the sidebar. (#701)
+- Bug fix empty metadata panel when clicking on modular pipeline nodes during search. (#704)
+- Bug fix for datasets when params is used as a prefix. (#707)
+- Bug fix for when the exported pipeline image was sometimes cutting off elements. (#705)
+
+# Release 4.2.0
+
+## Major features and improvements
+
+- Build out 'Show Changes' user journey for experiment tracking. (#667)
+- Return gitBranch data. (#657)
+- Drop python 3.6 support. (#659)
+
+## Bug fixes and other changes
+
+- Bug fix for Plotly modal when escape button is pressed. (#654)
+- Display Plotly JSONDataSet plot in metadata side-panel. (#660)
+- Refactor Primary Toolbar setup. (#664)
+- Upgrade @apollo/client from 3.4.16 to 3.5.3. (#661, #668)
+
+# Release 4.1.1
+
+## Bug fixes and other changes
+
+- Fix display of boolean values on tracking dataset (#652)
+- Fix node IDs in test data after Kedro updates its \_str_logic for node (#653)
+
+# Release 4.1.0
+
+## Major features and improvements
+
+- Experiment Tracking Front End set of features, as well as GraphQL setup and API integration (#576, #582, #587, #604, #605, #619, #620, #623, #624, #625, #630, #636, #643, #647, #648, #649)
+
+## Bug fixes and other changes
+
+- Bug fix for display of JSON tracking data on metadata panel. (#618)
+- Fix dependencies for e2e tests. (#637)
+- Add extra -a click command for autoreload. (#626)
+- Remove notice from PR template. (#632)
+- Replace the QB favicon with the Kedro one. (#633)
+- Update "Kedro Viz" to "Kedro-Viz". (#634)
+- Update loader animation to match kedro branding (#639)
+- Upgrade reselect from 4.0.0 to 4.1.0. (#627)
+- Upgrade react-redux from 7.2.4 to 7.2.6. (#628)
+- Upgrade react-redux from 7.2.4 to 7.2.6. (#628)
+- Upgrade redux-thunk from 2.3.0 to 2.4.0. (#629)
+- Upgrade redux from 4.1.0 to 4.1.2 (#641)
+- Upgrade reselect from 4.1.0 to 4.1.1 (#642)
+- Update prettier command and config. (#631)
+
+# Release 4.0.1
+
+## Bug fixes and other changes
+
+- Display JSON tracking (`tracking.JSONDataSet`) on the metadata panel. (#608)
+- Fix layers visualisation for transcoded datasets. (#614, #615)
+
+# Release 4.0.0
+
+## Major features and improvements
+
+- Allow expand and collapse modular pipelines on the graph. (#600)
+
+## Bug fixes and other changes
+
+- Disable layers visualisation instead of throwing an error when there is a cycle in layers. (#383)
+- Disable layers when their dependency cannot be established in a disjoint graph. (#584)
+- Change syntax for session creation to fix improperly thrown No Active Session error. (#603)
+
+# Release 3.17.1
+
+## Bug fixes and other changes
+
+- Relax pandas and Plotly versions.
+
+# Release 3.17.0
+
+## Major features and improvements
+
+- Expose metrics data from the latest run as a dataset node. (#554)
+- Visualize and compare metrics from last 10 runs on the metadata panel. (#554)
+- Drop support for Python 3.6.
+
+## Bug fixes and other changes
+
+- Overwrite material UI selected row defaults. (#568)
+- Fix URI param parsing for data source. (#578)
+- Add a graphql test endpoint on Kedro-Viz server. (#570)
+- Update the demo dataset on Kedro-Viz. (#574)
+- Fix auto-reload for metrics run data. (#572)
+- Refactor tests for metadata panel. (#580)
+- Fix metrics tree to get latest metrics data. (#573)
+
+# Release 3.16.0
+
+## Major features and improvements
+
+- Improve pretty-name algorithm. (#546)
+- Setup CI for automatic deployment. (#555)
+- Turn on/off pretty naming on the settings panel. (#542)
+
+## Bug fixes and other changes
+
+- Fix focus mode search (#549)
+- Fix focus mode error when switching pipelines (#553)
+- Pin dynaconf before Kedro is released. (#559)
+- Refactor colors based on latest palette (#552)
+
+# Release 3.15.0
+
+## Major features and improvements
+
+- Visualise related data nodes of a modular pipeline in focus mode. (#530)
+- Show parameter names when hovering over parameters indicator in the flowchart. (#512)
+
+## Bug fixes and other changes
+
+- Fix the display of transcoded data nodes and their metadata. (#491, #525)
+- Remove `newparams` flag. (#528)
+- Add notice about Kedro-UI deprecation on the Styleguide. (#529)
+- Add more eslint rule. (#532)
+- Refactor `LazyList` component to fix eslint error. (#539)
+- Update deprecated `highlight.js` call. (#540)
+- Unify monospace fonts. (#540)
 
 # Release 3.14.0
 
@@ -18,11 +178,11 @@ Please follow the established format:
 
 - Implement first version of focus mode feature to allow selective display of modular pipelines on the flowchart. (#514)
 - Add `--autoreload` to relaunch viz server on file change. (#498)
-- Updated demo data set to shuttle factory example. (#518)
+- Update demo data set to shuttle factory example. (#518)
 
 ## Bug fixes and other changes
 
-- Removed build/api after running build. (#515)
+- Remove build/api after running build. (#515)
 - Fix path parsing for PartitionedDataSet (#516)
 - Fix dev server port (#517)
 
@@ -38,7 +198,7 @@ Please follow the established format:
 
 - Implement new tree list with modular pipelines and search UI for new sidebar navigation. (#479)
 - Implement element filters and further design updates to the filter panel for new sidebar navigation. (#454)
-- Implement [`kedro-telemetry`](https://github.com/quantumblacklabs/kedro-telemetry) in production to enable Heap Analytics analysis for Kedro-Viz. (#481, #487)
+- Implement [`kedro-telemetry`](https://github.com/kedro-org/kedro-plugins/tree/main/kedro-telemetry) in production to enable Heap Analytics analysis for Kedro-Viz. (#481, #487)
 - Show decorated function's source code on code panel. (#493)
 - Enable the display of entire parameter object with react-json-viewer on the metadata panel. (#494)
 
@@ -61,7 +221,7 @@ Please follow the established format:
 - Complete backend rewrite to be more modular and maintainable using FastAPI. (#432)
 - Add layout engine documentation. (#436)
 - Add split panel components and implement into the sidebar. (#448)
-- Visualise plotly charts if user defines them with `kedro.extra.datasets.plotly.PlotlyDataSet` in their Kedro project _(Note: This feature is only available in `kedro>=0.17.4`)._ (#455)
+- Visualise Plotly charts if user defines them with `kedro.extra.datasets.plotly.PlotlyDataSet` in their Kedro project _(Note: This feature is only available in `kedro>=0.17.4`)._ (#455)
 
 ## Bug fixes and other changes
 
@@ -73,6 +233,7 @@ Please follow the established format:
 # Release 3.11.0
 
 ## Major features and improvements
+
 - Allow the selection and filtering of nodes by modular pipeline on the flowchart via the sidebar under the categories section. This includes changes to both the server to include modualr pipeline data in the responses, as well as front end changes to enable the new modular pipeline data type. (#391, #394, #401, #402, #408, #410, #421)
 - Add Architecture docs. (#382, #393)
 - Add metadata to random data generator. (#397)
@@ -82,6 +243,7 @@ Please follow the established format:
 - Remove 'lazy' flag to enable lazy loading of the sidebar by default. (#404)
 
 ## Bug fixes and other changes
+
 - Remove 'id' reducer prop. (#396)
 - Remove leftover visible layer reducer. (#399)
 - Delete 'Description' field from metadata panel. (#403)
@@ -311,7 +473,7 @@ Please note that release >=3.8.0 will not work with projects created with older 
 - Add `--pipeline` option to visualize modular pipeline (#93)
 - Add `--env` option to pass configuration environment (#93)
 - Fix backward-compatibility with Kedro 0.14.\* (#93)
-- Promote Kedro Viz commands from project specific to global commands (#91)
+- Promote Kedro-Viz commands from project specific to global commands (#91)
 - Allow users to run `kedro viz --load-file` outside of a Kedro project (#91)
 
 ## Bug fixes and other changes
@@ -403,7 +565,7 @@ Please note that release >=3.8.0 will not work with projects created with older 
 
 If you are just using Kedro-Viz with Kedro as a Python package, you won't need to do anything. The breaking changes in this release only affect the few users who are working on the application locally, or importing it from [npm](https://www.npmjs.com/package/@quantumblack/kedro-viz) and consuming it as a React component.
 
-- The format for data passed to Kedro-Viz has changed. You can see examples of the new data format in the [`src/utils/data`](./src/utils/data) directory. The main change is that the format no longer supports multiple snapshots in a single dataset. Instead of [this](https://github.com/quantumblacklabs/kedro-viz/blob/243fd1bb513023086e77bca9f8469e00d1182437/src/utils/data.mock.js):
+- The format for data passed to Kedro-Viz has changed. You can see examples of the new data format in the [`src/utils/data`](./src/utils/data) directory. The main change is that the format no longer supports multiple snapshots in a single dataset. Instead of [this](https://github.com/kedro-org/kedro-viz/blob/243fd1bb513023086e77bca9f8469e00d1182437/src/utils/data.mock.js):
   ```
   {
     snapshots: [
@@ -417,7 +579,7 @@ If you are just using Kedro-Viz with Kedro as a Python package, you won't need t
     ]
   }
   ```
-  You can now use something like [this](https://github.com/quantumblacklabs/kedro-viz/blob/c75c499507617a01fb327c366b9d639229f1d921/src/utils/data/demo.mock.js):
+  You can now use something like [this](https://github.com/kedro-org/kedro-viz/blob/c75c499507617a01fb327c366b9d639229f1d921/src/utils/data/demo.mock.js):
   ```
   {
     nodes: [...],
@@ -495,7 +657,7 @@ If you are just using Kedro-Viz with Kedro as a Python package, you won't need t
 
 ## Migration guide from Kedro-Viz 1.\*.\* to Kedro-Viz 2.0.0
 
-- The data input format has been significantly changed. This will only affect users of the JavaScript package - regular Kedro users will not be affected. To see examples of the old API format compares to the new one, see the changes to `data.mock.js` in [this commit](https://github.com/quantumblacklabs/kedro-viz/pull/8/files#diff-837826676eaada9374ec654c892af095).
+- The data input format has been significantly changed. This will only affect users of the JavaScript package - regular Kedro users will not be affected. To see examples of the old API format compares to the new one, see the changes to `data.mock.js` in [this commit](https://github.com/kedro-org/kedro-viz/pull/8/files#diff-837826676eaada9374ec654c892af095).
 
 ## Thanks for supporting contributions
 

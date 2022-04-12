@@ -3,6 +3,8 @@ Plotly templates are defined to override user-specified styles with Kedro-viz st
 More details can be found here - https://plotly.com/python/templates/
 */
 
+/* eslint-disable id-length,camelcase */
+
 const lightTemplate = {
   autosize: true,
   annotationdefaults: {
@@ -179,14 +181,19 @@ export const lightPreviewTemplate = {
   ...lightTemplate,
   height: 300,
   margin: {
-    l: 100,
+    l: 70,
     r: 40,
-    t: 40,
+    t: 60,
     b: 70,
   },
   showlegend: false,
-  title: '',
   width: 400,
+  title: {
+    font: {
+      size: 12,
+    },
+    x: 0.09,
+  },
   xaxis: {
     ...lightTemplate.xaxis,
     title: {

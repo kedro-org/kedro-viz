@@ -1,30 +1,3 @@
-# Copyright 2021 QuantumBlack Visual Analytics Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
-# NONINFRINGEMENT. IN NO EVENT WILL THE LICENSOR OR OTHER CONTRIBUTORS
-# BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF, OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-# The QuantumBlack Visual Analytics Limited ("QuantumBlack") name and logo
-# (either separately or in combination, "QuantumBlack Trademarks") are
-# trademarks of QuantumBlack. The License does not grant you any right or
-# license to the QuantumBlack Trademarks. You may not use the QuantumBlack
-# Trademarks or any confusingly similar mark as a trademark for your product,
-# or use the QuantumBlack Trademarks in any other manner that might cause
-# confusion in the marketplace, including but not limited to in advertising,
-# on websites, or on software.
-#
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """`kedro_viz.launchers.cli` launches the viz server as a CLI app."""
 
 import traceback
@@ -33,8 +6,11 @@ from pathlib import Path
 
 import click
 from kedro.framework.cli.utils import KedroCliError
+from semver import VersionInfo
 from watchgod import RegExpWatcher, run_process
 
+from kedro_viz import __version__
+from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, is_localhost, run_server
 
 
@@ -77,7 +53,7 @@ def commands():
     "--pipeline",
     type=str,
     default=None,
-    help="Name of the modular pipeline to visualise. "
+    help="Name of the registered pipeline to visualise. "
     "If not set, the default pipeline is visualised",
 )
 @click.option(
@@ -92,11 +68,28 @@ def commands():
 )
 @click.option(
     "--autoreload",
+    "-a",
     is_flag=True,
-    help="Autoreload viz server when a Python file change in the Kedro project",
+    help="Autoreload viz server when a Python or YAML file change in the Kedro project",
 )
 def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
     """Visualise a Kedro pipeline using Kedro viz."""
+    installed_version = VersionInfo.parse(__version__)
+    latest_version = get_latest_version()
+
+    if is_running_outdated_version(installed_version, latest_version):
+        click.echo(
+            click.style(
+                "WARNING: You are using an old version of Kedro Viz. "
+                f"You are using version {installed_version}; "
+                f"however, version {latest_version} is now available.\n"
+                "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
+                "You can view the complete changelog at "
+                "https://github.com/kedro-org/kedro-viz/releases.",
+                fg="yellow",
+            ),
+        )
+
     try:
         run_server_kwargs = {
             "host": host,
@@ -122,7 +115,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
                 target=run_server,
                 kwargs=run_server_kwargs,
                 watcher_cls=RegExpWatcher,
-                watcher_kwargs=dict(re_files=r"^.*(\.yml|\.yaml|\.py)$"),
+                watcher_kwargs=dict(re_files=r"^.*(\.yml|\.yaml|\.py|\.json)$"),
             )
 
         else:

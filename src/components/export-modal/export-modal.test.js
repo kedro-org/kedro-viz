@@ -1,11 +1,25 @@
 import React from 'react';
-import ExportModal, { mapStateToProps } from './index';
+import ExportModal, { mapStateToProps } from './export-modal';
 import { mockState, setup } from '../../utils/state.mock';
+import { toggleExportModal } from '../../actions';
 
 describe('ExportModal', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<ExportModal />);
     expect(wrapper.find('.pipeline-export-modal').length).toBe(1);
+  });
+
+  it('modal closes when X button is clicked', () => {
+    const mount = () => {
+      return setup.mount(<ExportModal />, {
+        afterLayoutActions: [() => toggleExportModal(true)],
+      });
+    };
+    const wrapper = mount();
+    expect(wrapper.find('.modal__content--visible').length).toBe(1);
+    const closeButton = wrapper.find('.modal__close-button');
+    closeButton.find('button').simulate('click');
+    expect(wrapper.find('.modal__content--visible').length).toBe(0);
   });
 
   it('maps state to props', () => {
@@ -19,11 +33,10 @@ describe('ExportModal', () => {
       theme: expect.stringMatching(/light|dark/),
       visible: expect.objectContaining({
         exportBtn: expect.any(Boolean),
-        settingsBtn: expect.any(Boolean),
         exportModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
       }),
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
 });

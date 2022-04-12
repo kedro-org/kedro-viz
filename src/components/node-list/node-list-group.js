@@ -29,7 +29,8 @@ export const NodeListGroup = ({
       {
         'pipeline-nodelist__group--all-unchecked': allUnchecked,
       }
-    )}>
+    )}
+  >
     <h3 className="pipeline-nodelist__heading">
       <NodeListRow
         id={id}
@@ -43,7 +44,8 @@ export const NodeListGroup = ({
         rowType="filter"
         onChange={(e) => {
           onToggleChecked(id, !e.target.checked);
-        }}>
+        }}
+      >
         <button
           aria-label={`${collapsed ? 'Show' : 'Hide'} ${name.toLowerCase()}`}
           onClick={() => onToggleCollapsed(id)}

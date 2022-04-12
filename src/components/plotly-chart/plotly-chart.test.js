@@ -1,5 +1,5 @@
 import React from 'react';
-import PlotlyChart from './index';
+import PlotlyChart from './plotly-chart';
 import { setup } from '../../utils/state.mock';
 import { toggleTheme } from '../../actions';
 

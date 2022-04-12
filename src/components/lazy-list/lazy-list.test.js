@@ -1,5 +1,10 @@
 import React from 'react';
-import LazyList, { range, rangeUnion, rangeEqual, thresholds } from './index';
+import LazyList, {
+  range,
+  rangeUnion,
+  rangeEqual,
+  thresholds,
+} from './lazy-list';
 import { setup } from '../../utils/state.mock';
 
 describe('LazyList', () => {
@@ -34,7 +39,8 @@ describe('LazyList', () => {
         dispose={true}
         height={test.itemHeights}
         total={test.items.length}
-        container={(element) => element?.parentElement}>
+        container={(element) => element?.parentElement}
+      >
         {test.listRender}
       </LazyList>
     );
@@ -127,12 +133,14 @@ const setupTest = ({
           overflowY: 'scroll',
           height: containerHeight,
           width: containerWidth,
-        }}>
+        }}
+      >
         {/* List container */}
         <ul
           className="test-list"
           ref={listRef}
-          style={{ ...listStyle, width: listWidth }}>
+          style={{ ...listStyle, width: listWidth }}
+        >
           {/* Upper placeholder */}
           <li ref={upperRef} style={upperStyle} />
           {/* Lower placeholder */}
@@ -152,12 +160,12 @@ const setupTest = ({
   window.innerHeight = viewportHeight;
 
   // Emulate RAF with immediate callback
-  window.requestAnimationFrame = (cb) => cb(0);
+  window.requestAnimationFrame = (callback) => callback(0);
 
   // Emulate IntersectionObserver with immediate callback
-  window.IntersectionObserver = function (cb) {
+  window.IntersectionObserver = function (callback) {
     return {
-      observe: () => cb(),
+      observe: () => callback(),
       disconnect: () => null,
     };
   };

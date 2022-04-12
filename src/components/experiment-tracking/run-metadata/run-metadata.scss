@@ -1,0 +1,166 @@
+@import '../../../styles/variables';
+@import '../../../styles/extends';
+
+.details-metadata {
+  background-color: var(--color-bg-1);
+  display: flex;
+  flex-shrink: 0;
+  min-height: 350px;
+  min-width: 100%;
+  padding: 5em 0 0.8em 5em;
+  width: max-content;
+
+  &--single {
+    padding: 5em 0 0 9em;
+  }
+}
+
+.details-metadata__buttons {
+  display: flex;
+  list-style: none;
+  margin: -2px 0 0 0;
+  padding: 0;
+
+  li,
+  .hidden-menu-wrapper {
+    margin-right: 5px;
+    position: relative;
+
+    &:last-of-type:not(.hidden-menu-wrapper) {
+      margin-right: 0;
+    }
+  }
+
+  .pipeline-icon-toolbar__button {
+    height: 24px;
+    width: 24px;
+  }
+
+  svg {
+    height: 25px;
+    width: 25px;
+  }
+}
+
+.details-metadata__buttons--selected-pin svg {
+  fill: #{$color-accent-blue};
+}
+
+.details-metadata__run {
+  flex-shrink: 0;
+  margin-right: 13em;
+
+  &:last-of-type {
+    margin-right: 5em;
+  }
+}
+
+.details-metadata__table {
+  border-collapse: collapse;
+  max-width: 75em;
+  margin-left: -1px; // For exact alignment with content below.
+  width: 100%;
+}
+
+.details-metadata__run td {
+  font-size: 1.4em;
+  padding-bottom: 16px;
+  vertical-align: top;
+  word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc.
+
+  &:first-of-type {
+    width: 230px;
+  }
+
+  &:last-of-type {
+    width: 310px;
+  }
+}
+
+.details-metadata__run--single td {
+  &:first-of-type {
+    min-width: 375px;
+    width: 50%;
+  }
+
+  &:last-of-type {
+    min-width: 375px;
+    width: 50%;
+  }
+}
+
+.details-metadata__title {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.details-metadata__title span {
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 600;
+  overflow: hidden;
+  text-decoration-color: transparent;
+  text-overflow: ellipsis;
+  transition: text-decoration-color 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+  }
+}
+
+.details-metadata__notes {
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  cursor: pointer;
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+  }
+}
+
+.details-metadata__show-more.kedro {
+  background-color: unset;
+  border: none;
+  color: var(--color-text-faded);
+  cursor: pointer;
+  font-size: 14px;
+  margin: 2px 0 0;
+  padding: 0;
+}
+
+.hidden-menu {
+  background: #f1f1f1;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0px;
+  transition: opacity 0.1s ease, top 0.2s ease;
+  width: 120px;
+
+  &--visible {
+    opacity: 1;
+    pointer-events: all;
+    top: 30px;
+  }
+}
+
+.hidden-menu__item {
+  color: rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+  padding: 6px 0 6px 20px;
+
+  &:hover {
+    background: #fff;
+  }
+}

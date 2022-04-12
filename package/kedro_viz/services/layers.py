@@ -1,37 +1,13 @@
-# Copyright 2021 QuantumBlack Visual Analytics Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
-# NONINFRINGEMENT. IN NO EVENT WILL THE LICENSOR OR OTHER CONTRIBUTORS
-# BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF, OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-# The QuantumBlack Visual Analytics Limited ("QuantumBlack") name and logo
-# (either separately or in combination, "QuantumBlack Trademarks") are
-# trademarks of QuantumBlack. The License does not grant you any right or
-# license to the QuantumBlack Trademarks. You may not use the QuantumBlack
-# Trademarks or any confusingly similar mark as a trademark for your product,
-# or use the QuantumBlack Trademarks in any other manner that might cause
-# confusion in the marketplace, including but not limited to in advertising,
-# on websites, or on software.
-#
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """`kedro_viz.services.layers` defines layers-related logic."""
+import logging
 from collections import defaultdict
 from typing import Dict, List, Set
 
-from toposort import toposort_flatten
+from toposort import CircularDependencyError, toposort_flatten
 
 from kedro_viz.models.graph import GraphNode
+
+logger = logging.getLogger(__name__)
 
 
 def sort_layers(
@@ -88,6 +64,14 @@ def sort_layers(
 
         node_layers[node_id] = set()
 
+        # The layer of the current node can also be considered as depending on that node.
+        # This is to cater for the edge case where all nodes are completely disjoint from each other
+        # and no dependency graph for layers can be constructed,
+        # yet the layers still need to be displayed.
+        node_layer = getattr(nodes[node_id], "layer", None)
+        if node_layer is not None:
+            node_layers[node_id].add(node_layer)
+
         # for each child node of the given node_id,
         # mark its layer and all layers that depend on it as child layers of the given node_id.
         for child_node_id in dependencies[node_id]:
@@ -118,4 +102,10 @@ def sort_layers(
 
     # toposort the layer_dependencies to find the layer order.
     # Note that for string, toposort_flatten will default to alphabetical order for tie-break.
-    return toposort_flatten(layer_dependencies)
+    try:
+        return toposort_flatten(layer_dependencies)
+    except CircularDependencyError:
+        logger.warning(
+            "Layers visualisation is disabled as circular dependency detected among layers."
+        )
+        return []

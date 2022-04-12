@@ -37,6 +37,38 @@
   }
 }
 
+.pipeline-node--dataset-input {
+  text {
+    fill: var(--node-input-fill);
+  }
+
+  .pipeline-node__bg {
+    fill: none;
+    stroke: var(--node-input-fill);
+    stroke-dasharray: 3px 3px;
+  }
+
+  .pipeline-node__icon {
+    fill: var(--node-input-fill);
+  }
+}
+
+.pipeline-node--parameter-input {
+  text {
+    fill: var(--node-input-fill);
+  }
+
+  .pipeline-node__bg {
+    fill: none;
+    stroke: var(--parameter-accent-input);
+    stroke-dasharray: 3px 3px;
+  }
+
+  .pipeline-node__icon {
+    fill: var(--node-input-fill);
+  }
+}
+
 .pipeline-node__parameter-indicator {
   opacity: 0;
   transition: opacity 0.3s ease;

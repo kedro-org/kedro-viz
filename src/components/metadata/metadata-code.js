@@ -24,7 +24,7 @@ export const MetaDataCode = ({
   const highlighted = useMemo(() => {
     const detected = hljs.highlightAuto(value);
     const language = detected.language || detected.second_best.language;
-    return language ? hljs.highlight(language, value).value : value;
+    return language ? hljs.highlight(value, { language }).value : value;
   }, [value]);
 
   return (
@@ -33,7 +33,8 @@ export const MetaDataCode = ({
         'pipeline-metadata-code',
         { visible, sidebarVisible },
         'kedro'
-      )}>
+      )}
+    >
       <h2 className="pipeline-metadata-code__title">Code block</h2>
       <code className="pipeline-metadata-code__code">
         <pre ref={codeRef} dangerouslySetInnerHTML={{ __html: highlighted }} />
