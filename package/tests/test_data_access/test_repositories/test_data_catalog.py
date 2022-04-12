@@ -12,10 +12,8 @@ class TestDataCatalogRepository:
                 "filepath": "cars.csv",
                 "layer": "raw",
             },
-            "cars@spark": {"type": "spark.SparkDataSet", "filepath": "cars.parquet"},
         }
         catalog = DataCatalog.from_config(catalog_config)
         repo.set_catalog(catalog)
         assert repo.get_layer_for_dataset("cars") == "raw"
         assert repo.get_layer_for_dataset("cars@pandas") == "raw"
-        assert repo.get_layer_for_dataset("cars@spark") == "raw"
