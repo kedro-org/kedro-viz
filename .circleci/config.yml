@@ -24,16 +24,13 @@ commands:
             sudo apt update
             sudo apt install python3.8 python3-pip python3-venv
       - run:
+          name: Cleanup any existing virtual environment directories
+          command: rm -rf /home/circleci/.venvs
+      - run:
           name: Install Python environment
           command: |
-            python3 -V
-            rm -rf /home/circleci/.venvs
             mkdir -p /home/circleci/.venvs && python3 -m venv /home/circleci/.venvs/kedro-viz
             echo "source /home/circleci/.venvs/kedro-viz/bin/activate" >> $BASH_ENV
-      - run:
-          name: Echo python version
-          command: |
-            python -V
       - run:
           name: Install Python dependencies
           command: |
