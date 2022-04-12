@@ -44,7 +44,6 @@ commands:
             python -V
             pip -V
             kedro -V
-            node -v
 
   install_node_dependencies:
     steps:
@@ -76,14 +75,8 @@ commands:
   run_javascript_tests:
     steps:
       - run:
-          name: Echo node versions
-          command: node -v
-      - run:
           name: Run JavaScript tests
           command: npm run build:css && npm run test:ci
-      - run:
-          name: Echo node versions
-          command: node -v
 
   run_python_format_and_lint:
     steps:
@@ -165,8 +158,19 @@ commands:
     description: Run build
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - setup_python_env
       - install_node_dependencies
+      - save_cache:
+          paths:
+            - node_modules
+            - /home/circleci/.venvs/kedro-viz
+            - /home/circleci/.cache/pip/
+          key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - test_lib_transpilation
       - test_lib_import
       - run_eslint
@@ -221,10 +225,21 @@ commands:
         type: string
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - win_setup_conda:
           python_version: <<parameters.python_version>>
       - win_setup_requirements
       - install_node_dependencies
+      - save_cache:
+          paths:
+            - node_modules
+            - c:\tools\miniconda3\envs\kedro-viz\
+            - c:\users\circleci\appdata\local\pip\cache\
+          key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}-{{ checksum "package/requirements.txt" }}-{{ checksum "package/test_requirements.txt" }}
       - run:
           name: Run Python unit tests
           command: |

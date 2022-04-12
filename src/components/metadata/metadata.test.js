@@ -388,7 +388,7 @@ describe('MetaData', () => {
         });
         const row = rowByLabel(wrapper, 'Transcoded Types:');
         expect(textOf(rowValue(row))).toEqual([
-          'kedro.extras.datasets.pandas.parquet_dataset.CSVDataSet',
+          'kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet',
         ]);
       });
     });
