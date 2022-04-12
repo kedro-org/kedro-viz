@@ -4,6 +4,7 @@ from unittest.mock import call
 import pytest
 from kedro.extras.datasets.tracking import JSONDataSet
 from kedro.io import DataCatalog, Version
+from kedro.io.core import get_filepath_str
 from strawberry import ID
 from strawberry.printer import print_schema
 
@@ -185,11 +186,11 @@ class TestTrackingData:
         mocker,
     ):
         patched_warning = mocker.patch("logging.Logger.warning")
-        json_dataset = JSONDataSet(
-            filepath="not_exist.json",
-            version=Version(None, example_run_ids[0]),
+        json_dataset = JSONDataSet(filepath="not_exist.json")
+        json_dataset._version = Version(example_run_ids[0], None)
+        load_path = get_filepath_str(
+            json_dataset._get_load_path(), json_dataset._protocol
         )
-
         catalog = DataCatalog(
             data_sets={
                 "json_tracking": json_dataset,
@@ -205,14 +206,7 @@ class TestTrackingData:
             )
         ]
 
-        patched_warning.assert_has_calls(
-            [
-                call(
-                    "`%s` could not be found",
-                    json_dataset._get_versioned_path(str(example_run_ids[0])),
-                )
-            ]
-        )
+        patched_warning.assert_has_calls([call("`%s` could not be found", load_path)])
 
 
 class TestGraphQLSchema:
