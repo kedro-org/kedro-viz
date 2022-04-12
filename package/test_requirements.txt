@@ -1,12 +1,13 @@
 -r requirements.txt
-kedro[pandas,spark]>=0.16.0  
+kedro>=0.17.0  
 kedro-telemetry>=0.1.1  # for testing telemetry integration
 bandit~=1.6.2
 behave>=1.2.6, <2.0
-black==22.3.0
+black~=22.0
 flake8~=3.9.2
 isort~=5.8.0
 mypy~=0.930
+pandas>=0.24
 psutil==5.6.6  # same as Kedro for now
 pylint~=2.8.2
 pytest~=6.2.0
@@ -15,7 +16,6 @@ pytest-cov~=2.11.1
 pytest-mock~=3.6.1
 sqlalchemy-stubs~=0.4
 trufflehog~=2.1.0
-tables~=3.7.0
 
 # mypy
 types-aiofiles==0.1.3
