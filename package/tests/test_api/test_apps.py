@@ -456,11 +456,11 @@ class TestTranscodedDataset:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "original_type": "kedro.extras.datasets.spark.spark_dataset.SparkDataSet",
+            "original_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
             "transcoded_types": [
                 "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
             ],
-            "run_command": 'kedro run --to-outputs="model_inputs@spark"',
+            "run_command": 'kedro run --to-outputs="model_inputs@pandas2"',
         }
 
 
