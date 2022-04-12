@@ -11,6 +11,7 @@ pandas>=0.24
 psutil==5.8.0  # same as Kedro for now
 pyarrow>=1.0, <7.0
 pylint~=2.8.2
+pyspark>=2.2, <4.0
 pytest~=6.2.0
 pytest-asyncio~=0.17.2
 pytest-cov~=2.11.1
