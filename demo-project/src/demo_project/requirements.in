@@ -1,12 +1,11 @@
-black==21.5b1
+black==22.1.0
 flake8>=3.7.9, <4.0
 ipython~=7.0
 isort~=5.0
 jupyter~=1.0
 jupyter_client>=5.1, <7.0
 jupyterlab~=3.0
-kedro==0.17.6
-kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet, plotly.PlotlyDataSet]==0.17.6
+kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet, plotly.PlotlyDataSet]==0.18.0
 nbstripout~=0.4
 pytest-cov~=2.5
 pytest-mock>=1.7.1, <2.0

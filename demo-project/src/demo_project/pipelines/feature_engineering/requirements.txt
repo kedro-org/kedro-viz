@@ -1,1 +1,1 @@
-kedro[pandas.ParquetDataSet]==0.17.6
+kedro[pandas.ParquetDataSet]==0.18.0
