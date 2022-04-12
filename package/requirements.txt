@@ -10,4 +10,3 @@ pandas>=0.24
 sqlalchemy~=1.2
 strawberry-graphql>=0.93.14, <1.0
 networkx>=1.0
-tables~=3.7.0
