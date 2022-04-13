@@ -1,6 +1,6 @@
 """Project settings."""
-from kedro.config import TemplatedConfigLoader, ConfigLoader
-
+from kedro.config import ConfigLoader
+from demo_project.templated_config_loader import TemplatedConfigLoader 
 # List the installed plugins for which to disable auto-registry
 # DISABLE_HOOKS_FOR_PLUGINS = ("kedro-viz",)
 
