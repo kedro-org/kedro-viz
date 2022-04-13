@@ -81,7 +81,7 @@ def create_pipeline(model_types: List[str]) -> Pipeline:
         pipeline(
             pipe=new_train_eval_template(),
             parameters={
-                "params:dummy_model_options": f"params:model_options.{model_type}"
+                "dummy_model_options": f"model_options.{model_type}"
             },
             inputs={k: k for k in test_train_refs},
             outputs={  # both of these are tracked as experiments
