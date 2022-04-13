@@ -5,17 +5,6 @@ from typing import Any, Dict, Iterable, Optional
 
 from kedro.framework.hooks import hook_impl
 
-
-# Previous hook setup that is kept here for reference only
-# class ProjectHooks:
-    # @hook_impl
-    # def register_config_loader(
-    #     self, conf_paths: Iterable[str], env: str, extra_params: Dict[str, Any]
-    # ) -> TemplatedConfigLoader:
-    #     return TemplatedConfigLoader(
-    #         conf_paths, globals_pattern="*globals.yml", globals_dict={}
-    #     )
-
 class TimingHooks:
     """
     This class is designed to highlight how hooks can be added
