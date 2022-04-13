@@ -16,7 +16,7 @@ def new_train_eval_template() -> Pipeline:
         allows the user to implement different parametrised Sklearn
         modelling approaches via modular pipeline instances.
     """
-    return Pipeline(
+    return pipeline(
         [
             node(
                 func=train_model,
@@ -32,7 +32,7 @@ def new_train_eval_template() -> Pipeline:
     )
 
 
-def new_modeling_pipeline(model_types: List[str]) -> Pipeline:
+def create_pipeline(model_types: List[str]) -> Pipeline:
     """This function will create a complete modelling
     pipeline that consolidates a single shared 'split' stage,
     several modular instances of the 'train test evaluate' stage
@@ -66,7 +66,7 @@ def new_modeling_pipeline(model_types: List[str]) -> Pipeline:
     test_train_refs = ["X_train", "X_test", "y_train", "y_test"]
 
     # Split the model_input data
-    split_stage_pipeline = Pipeline(
+    split_stage_pipeline = pipeline(
         [
             node(
                 func=split_data,
@@ -88,7 +88,7 @@ def new_modeling_pipeline(model_types: List[str]) -> Pipeline:
                 "experiment_params": f"hyperparams_{model_type}",
                 "r2_score": f"r2_score_{model_type}",
             },
-            namespace=f"{model_type}",
+            namespace=model_type,
         )
         for model_type in model_types
     ]
