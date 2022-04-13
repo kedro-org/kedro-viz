@@ -7,6 +7,14 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.1.0
+
+## Major features and improvements
+
+## Bug fixes and other changes
+
+- Update feature flag description to remind the user of the need for page refresh to apply settings. (#821)
+
 # Release 4.4.0
 ## Major features and improvements
 
