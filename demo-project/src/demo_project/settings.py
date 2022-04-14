@@ -1,7 +1,9 @@
 """Project settings."""
 from kedro.config import ConfigLoader
+
 # temporary work-around to fix Jinja templating
-from demo_project.templated_config_loader import TemplatedConfigLoader 
+from demo_project.templated_config_loader import TemplatedConfigLoader
+
 # List the installed plugins for which to disable auto-registry
 # DISABLE_HOOKS_FOR_PLUGINS = ("kedro-viz",)
 
@@ -24,7 +26,4 @@ SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 ConfigLoader.__subclasses__ = lambda: [TemplatedConfigLoader]
 CONFIG_LOADER_CLASS = TemplatedConfigLoader
 # Keyword arguments to pass to the `CONFIG_LOADER_CLASS` constructor.
-CONFIG_LOADER_ARGS = {
-    "globals_pattern": "*globals.yml", 
-    "globals_dict":{} 
-}
+CONFIG_LOADER_ARGS = {"globals_pattern": "*globals.yml", "globals_dict": {}}

@@ -5,6 +5,7 @@ from typing import Any, Dict, Iterable, Optional
 
 from kedro.framework.hooks import hook_impl
 
+
 class TimingHooks:
     """
     This class is designed to highlight how hooks can be added

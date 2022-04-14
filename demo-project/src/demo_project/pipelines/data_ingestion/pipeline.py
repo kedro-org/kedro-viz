@@ -12,8 +12,8 @@ from .nodes import (
 
 def create_pipeline(**kwargs) -> Pipeline:
     """This method imports the python functions which accept raw data,
-    add types and wrangle into primary layer outputs. The pipeline 
-    inputs and outputs are appropriately namespaced and the 
+    add types and wrangle into primary layer outputs. The pipeline
+    inputs and outputs are appropriately namespaced and the
     input/output datasets are mapped to the right catalog values.
 
     Returns:

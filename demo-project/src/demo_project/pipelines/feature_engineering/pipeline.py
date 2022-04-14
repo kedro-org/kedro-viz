@@ -46,7 +46,7 @@ def create_pipeline() -> Pipeline:
                 ],
                 outputs="model_input_table",
             ),
-        ], 
+        ],
         inputs=["prm_shuttle_company_reviews", "prm_spine_table"],
         outputs="model_input_table",
         namespace="feature_engineering",
