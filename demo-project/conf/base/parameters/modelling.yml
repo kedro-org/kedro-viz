@@ -10,7 +10,6 @@ train_evaluation:
       class: LinearRegression
       kwargs:
         fit_intercept: True
-        normalize: False
         copy_X: True
         positive: False
     random_forest:
