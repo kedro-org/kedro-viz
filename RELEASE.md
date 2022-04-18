@@ -6,9 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Major features and improvements
+
 ## Bug fixes and other changes
 
 - Change route name from `runsList` to `experiment-tracking`. (#820)
+- Update feature flag description to remind the user of the need for page refresh to apply settings. (#821)
 
 # Release 4.4.0
 
