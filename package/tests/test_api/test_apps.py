@@ -272,9 +272,9 @@ def assert_example_transcoded_data(response_data):
     and `example_transcoded_catalog` fixtures."""
     expected_edges = [
         {"source": "f1f1425b", "target": "2302ea78"},
-        {"source": "f2b74919", "target": "0ecea0de"},
-        {"source": "f0ebef01", "target": "f2b74919"},
-        {"source": "7c58d8e6", "target": "f2b74919"},
+        {"source": "f0ebef01", "target": "2a1abe98"},
+        {"source": "7c58d8e6", "target": "2a1abe98"},
+        {"source": "2a1abe98", "target": "0ecea0de"},
         {"source": "2302ea78", "target": "1d06a0d7"},
         {"source": "0ecea0de", "target": "2302ea78"},
     ]
@@ -284,13 +284,13 @@ def assert_example_transcoded_data(response_data):
     # compare nodes
     expected_nodes = [
         {
-            "id": "f2b74919",
+            "id": "2a1abe98",
             "name": "Process Data",
             "full_name": "process_data",
             "tags": ["split"],
-            "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": [],
+            "pipelines": ["data_processing", "__default__"],
             "type": "task",
+            "modular_pipelines": [],
             "parameters": {"uk.data_processing.train_test_split": 0.1},
         },
         {
@@ -298,9 +298,9 @@ def assert_example_transcoded_data(response_data):
             "name": "Raw Data",
             "full_name": "raw_data",
             "tags": ["split"],
-            "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": [],
+            "pipelines": ["data_processing", "__default__"],
             "type": "data",
+            "modular_pipelines": [],
             "layer": None,
             "dataset_type": None,
         },
@@ -309,9 +309,9 @@ def assert_example_transcoded_data(response_data):
             "name": "Params: Train Test Split",
             "full_name": "params:uk.data_processing.train_test_split",
             "tags": ["split"],
-            "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": ["uk", "uk.data_processing"],
+            "pipelines": ["data_processing", "__default__"],
             "type": "parameters",
+            "modular_pipelines": ["uk", "uk.data_processing"],
             "layer": None,
             "dataset_type": None,
         },
@@ -320,9 +320,9 @@ def assert_example_transcoded_data(response_data):
             "name": "Model Inputs",
             "full_name": "model_inputs",
             "tags": ["train", "split"],
-            "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": [],
+            "pipelines": ["data_processing", "__default__"],
             "type": "data",
+            "modular_pipelines": [],
             "layer": None,
             "dataset_type": None,
         },
@@ -331,22 +331,19 @@ def assert_example_transcoded_data(response_data):
             "name": "Train Model",
             "full_name": "train_model",
             "tags": ["train"],
-            "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": [],
+            "pipelines": ["data_processing", "__default__"],
             "type": "task",
-            "parameters": {
-                "train_test_split": 0.1,
-                "num_epochs": 1000,
-            },
+            "modular_pipelines": [],
+            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
         },
         {
             "id": "f1f1425b",
             "name": "Parameters",
             "full_name": "parameters",
             "tags": ["train"],
-            "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": [],
+            "pipelines": ["data_processing", "__default__"],
             "type": "parameters",
+            "modular_pipelines": [],
             "layer": None,
             "dataset_type": None,
         },
@@ -355,9 +352,9 @@ def assert_example_transcoded_data(response_data):
             "name": "Model",
             "full_name": "model",
             "tags": ["train"],
-            "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": [],
+            "pipelines": ["data_processing", "__default__"],
             "type": "data",
+            "modular_pipelines": [],
             "layer": None,
             "dataset_type": None,
         },
@@ -456,11 +453,11 @@ class TestTranscodedDataset:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "original_type": "kedro.extras.datasets.spark.spark_dataset.SparkDataSet",
+            "original_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
             "transcoded_types": [
                 "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
             ],
-            "run_command": 'kedro run --to-outputs="model_inputs@spark"',
+            "run_command": 'kedro run --to-outputs="model_inputs@pandas2"',
         }
 
 
