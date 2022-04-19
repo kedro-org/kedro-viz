@@ -57,7 +57,7 @@ export const Wrapper = ({ theme, displayGlobalToolbar }) => {
             <Route exact path={['/', '/flowchart']}>
               <FlowChartWrapper />
             </Route>
-            <Route path={['/runsList', '/runsList/:id']}>
+            <Route path={['/experiment-tracking', '/experiment-tracking/:id']}>
               <ExperimentWrapper />
             </Route>
           </Switch>
