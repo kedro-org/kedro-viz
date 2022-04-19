@@ -32,13 +32,15 @@ export const largeGraphThreshold = 1000;
 export const flags = {
   sizewarning: {
     name: 'Size Warning',
-    description: 'Show a warning before rendering very large graphs',
+    description:
+      'Show a warning before rendering very large graphs (page reload required)',
     default: true,
     icon: '🐳',
   },
   expandAllPipelines: {
     name: 'Expand all modular pipelines',
-    description: 'Expand all modular pipelines on first load',
+    description:
+      'Expand all modular pipelines on first load (page reload required)',
     default: false,
     icon: '🔛',
   },
