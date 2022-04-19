@@ -327,11 +327,11 @@ jobs:
     description: Build Kedro-Viz as an npm package and push it to npm
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}
-             # fallback to using the latest cache if no exact match is found
-            - v0-{{ arch }}-dependencies-
+      # - restore_cache:
+      #     keys:
+      #       - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}
+      #        # fallback to using the latest cache if no exact match is found
+      #       - v0-{{ arch }}-dependencies-
       - install_node_dependencies
       - build_npm_package
       - run:
@@ -346,11 +346,11 @@ jobs:
     description: Build Kedro-Viz as a Python package and push it to PyPI
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}
-             # fallback to using the latest cache if no exact match is found
-            - v0-{{ arch }}-dependencies-
+      # - restore_cache:
+      #     keys:
+      #       - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}
+      #        # fallback to using the latest cache if no exact match is found
+      #       - v0-{{ arch }}-dependencies-
       - setup_python_env
       - run:
           name: Install twine
@@ -391,6 +391,8 @@ workflows:
             - build_38
             - win_build_37
             - win_build_38
+            - win_build_39
+            - win_build_310
           filters:
             branches:
               only: demo
