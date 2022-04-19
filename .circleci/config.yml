@@ -386,6 +386,8 @@ workflows:
       - win_build_310:
            python_version: '3.10'
       - deploy_demo:
+          context:
+            - kedro-ecr-publish
           requires:
             - build_37
             - build_38
