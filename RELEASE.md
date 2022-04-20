@@ -7,6 +7,7 @@ Please follow the established format:
 -->
 
 ## Major features and improvements
+- Added support for Python 3.9 and 3.10. (#815)
 
 ## Bug fixes and other changes
 
