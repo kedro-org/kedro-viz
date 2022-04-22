@@ -7,11 +7,13 @@ Please follow the established format:
 -->
 
 ## Major features and improvements
+- Added support for Python 3.9 and 3.10. (#815)
 
 ## Bug fixes and other changes
 
 - Change route name from `runsList` to `experiment-tracking`. (#820)
 - Update feature flag description to remind the user of the need for page refresh to apply settings. (#821)
+- Fix experiment tracking not showing run details bug on Windows. (#809)
 
 # Release 4.4.0
 

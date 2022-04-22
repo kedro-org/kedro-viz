@@ -1,6 +1,6 @@
 # Modelling pipeline
 
-> *Note:* This `README.md` was generated using `Kedro 0.17.6` for illustration purposes. Please modify it according to your pipeline structure and contents.
+> *Note:* This `README.md` was generated using `Kedro 0.18.0` for illustration purposes. Please modify it according to your pipeline structure and contents.
 
 - This part of the pipeline handles the `spit` / `train` / `test` elements of the ML process.
 - The `split_data` method is parametrised to create a single source of `train` and `test` data.

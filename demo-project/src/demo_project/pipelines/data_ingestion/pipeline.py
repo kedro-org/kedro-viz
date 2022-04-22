@@ -12,13 +12,16 @@ from .nodes import (
 
 def create_pipeline(**kwargs) -> Pipeline:
     """This method imports the python functions which accept raw data,
-    add types and wrangle into primary layer outputs.
+    add types and wrangle into primary layer outputs. The pipeline
+    inputs and outputs are appropriately namespaced and the
+    input/output datasets are mapped to the right catalog values.
 
     Returns:
         Pipeline: A set of nodes which take data from the raw to
         the intermediate then primary layers.
     """
-    return Pipeline(
+
+    return pipeline(
         [
             node(
                 func=apply_types_to_companies,
@@ -51,25 +54,8 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs=["prm_shuttle_company_reviews", "prm_spine_table"],
                 name="combine_step",
             ),
-        ]
-    )
-
-
-def new_ingestion_pipeline(namespace: str = "ingestion") -> Pipeline:
-    """This function creates a new instance of the ingestion pipeline
-    declared above, however it ensures
-    that the pipeline inputs and outputs are appropriately namespaced
-    and the input/output datasets are mapped to the right catalog values.
-
-    Args:
-        namespace (str): The namespace to apply
-
-    Returns:
-        Pipeline: The correctly namespaced pipeline
-    """
-    return pipeline(
-        pipe=create_pipeline(),
-        namespace=namespace,  # provide inputs
+        ],
+        namespace="ingestion",  # provide inputs
         inputs={"reviews", "shuttles", "companies"},  # map inputs outside of namespace
         outputs={
             "prm_spine_table",
