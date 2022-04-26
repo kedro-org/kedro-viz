@@ -1,9 +1,9 @@
-from typing import Dict, Optional
+from typing import Dict
 
 import networkx as nx
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
-from kedro.io import DataCatalog, Version
+from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 
