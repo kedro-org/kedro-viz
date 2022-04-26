@@ -29,7 +29,9 @@ if KEDRO_VERSION.match(">=0.16.0") and KEDRO_VERSION.match("<0.18.1"):
             )
 
         data_set = self._data_sets[data_set_name]
-        if version and isinstance(data_set, AbstractVersionedDataSet):  # pragma: no cover
+        if version and isinstance(
+            data_set, AbstractVersionedDataSet
+        ):  # pragma: no cover
             # we only want to return a similar-looking dataset,
             # not modify the one stored in the current catalog
             data_set = data_set._copy(  # pylint: disable=protected-access
