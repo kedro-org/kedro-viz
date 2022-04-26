@@ -26,7 +26,7 @@ def identity(x):
 class TestAddCatalog:
     @pytest.mark.parametrize("version", [None, Version(None, None)])
     def test_add_catalog(
-        self, data_access_manager: DataAccessManager, version: Optional[Version] = None
+        self, data_access_manager: DataAccessManager, version: Optional[Version]
     ):
         dataset = CSVDataSet(filepath="dataset.csv", version=version)
         catalog = DataCatalog(data_sets={"dataset": dataset})
