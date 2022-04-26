@@ -65,11 +65,8 @@ class TestAddNode:
             "uk.data_science.modular_pipeline",
         ]
 
-    @pytest.mark.parametrize("version", [None, Version(None, None)])
-    def test_add_node_input(
-        self, data_access_manager: DataAccessManager, version: Optional[Version]
-    ):
-        dataset = CSVDataSet(filepath="dataset.csv", version=version)
+    def test_add_node_input(self, data_access_manager: DataAccessManager):
+        dataset = CSVDataSet(filepath="dataset.csv")
         dataset_name = "x"
         registered_pipeline_id = "my_pipeline"
 
