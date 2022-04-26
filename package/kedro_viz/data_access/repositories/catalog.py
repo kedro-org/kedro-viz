@@ -83,13 +83,11 @@ class CatalogRepository:
             try:
                 if KEDRO_VERSION.match(">=0.18.1"):
                     dataset_obj = self._catalog._get_dataset(
-                        dataset_name, suggest=False
+                        dataset_name, suggest=False  # type: ignore
                     )
                 else:
                     with patch.object(DataCatalog, "_get_dataset", new=_get_dataset):
-                        dataset_obj = self._catalog._get_dataset(
-                            dataset_name, suggest=False
-                        )
+                        dataset_obj = self._catalog._get_dataset(dataset_name)
             except DataSetNotFoundError:  # pragma: no cover
                 dataset_obj = None
         else:
