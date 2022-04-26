@@ -1,9 +1,9 @@
-from typing import Dict
+from typing import Dict, Optional
 
 import networkx as nx
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
-from kedro.io import DataCatalog
+from kedro.io import DataCatalog, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 
@@ -24,8 +24,11 @@ def identity(x):
 
 
 class TestAddCatalog:
-    def test_add_catalog(self, data_access_manager: DataAccessManager):
-        dataset = CSVDataSet(filepath="dataset.csv")
+    @pytest.mark.parametrize("version", [None, Version(None, None)])
+    def test_add_catalog(
+        self, data_access_manager: DataAccessManager, version: Optional[Version] = None
+    ):
+        dataset = CSVDataSet(filepath="dataset.csv", version=version)
         catalog = DataCatalog(data_sets={"dataset": dataset})
         data_access_manager.add_catalog(catalog)
         assert data_access_manager.catalog.get_catalog() is catalog

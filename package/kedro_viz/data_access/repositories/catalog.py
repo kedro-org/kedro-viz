@@ -82,7 +82,7 @@ class CatalogRepository:
         if KEDRO_VERSION.match(">=0.16.0"):
             try:
                 if KEDRO_VERSION.match(">=0.18.1"):
-                    dataset_obj = self._catalog._get_dataset(
+                    dataset_obj = self._catalog._get_dataset(  # pragma: no cover
                         dataset_name, suggest=False  # type: ignore
                     )
                 else:
