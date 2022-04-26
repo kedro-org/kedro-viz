@@ -24,11 +24,8 @@ def identity(x):
 
 
 class TestAddCatalog:
-    @pytest.mark.parametrize("version", [None, Version(None, None)])
-    def test_add_catalog(
-        self, data_access_manager: DataAccessManager, version: Optional[Version]
-    ):
-        dataset = CSVDataSet(filepath="dataset.csv", version=version)
+    def test_add_catalog(self, data_access_manager: DataAccessManager):
+        dataset = CSVDataSet(filepath="dataset.csv")
         catalog = DataCatalog(data_sets={"dataset": dataset})
         data_access_manager.add_catalog(catalog)
         assert data_access_manager.catalog.get_catalog() is catalog
@@ -68,8 +65,11 @@ class TestAddNode:
             "uk.data_science.modular_pipeline",
         ]
 
-    def test_add_node_input(self, data_access_manager: DataAccessManager):
-        dataset = CSVDataSet(filepath="dataset.csv")
+    @pytest.mark.parametrize("version", [None, Version(None, None)])
+    def test_add_node_input(
+        self, data_access_manager: DataAccessManager, version: Optional[Version]
+    ):
+        dataset = CSVDataSet(filepath="dataset.csv", version=version)
         dataset_name = "x"
         registered_pipeline_id = "my_pipeline"
 
