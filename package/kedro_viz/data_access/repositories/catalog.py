@@ -8,7 +8,6 @@ from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 
 from kedro_viz.constants import KEDRO_VERSION
 
-
 # Kedro-Viz doesn't need to know the close matches for missing datasets,
 # and `difflib.get_close_matches` is too costly if performed repeatedly.
 # Before Kedro 0.18.1, use the `_get_dataset` method without the verbose
