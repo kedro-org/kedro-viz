@@ -4,7 +4,7 @@ centralise access to Kedro data catalog."""
 from typing import Optional
 from unittest.mock import patch
 
-from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
+from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, Version
 
 from kedro_viz.constants import KEDRO_VERSION
 
