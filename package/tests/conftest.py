@@ -5,7 +5,6 @@ from unittest import mock
 import pytest
 from fastapi.testclient import TestClient
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
-from kedro.extras.datasets.spark import SparkDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
@@ -95,7 +94,7 @@ def example_transcoded_pipelines():
             node(
                 process_data,
                 inputs=["raw_data", "params:uk.data_processing.train_test_split"],
-                outputs="model_inputs@spark",
+                outputs="model_inputs@pandas2",
                 name="process_data",
                 tags=["split"],
             ),
@@ -120,7 +119,7 @@ def example_transcoded_catalog():
     yield DataCatalog(
         data_sets={
             "model_inputs@pandas": ParquetDataSet(filepath="model_inputs.parquet"),
-            "model_inputs@spark": SparkDataSet(filepath="model_inputs.csv"),
+            "model_inputs@pandas2": CSVDataSet(filepath="model_inputs.csv"),
         },
         feed_dict={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},

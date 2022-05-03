@@ -1,2 +1,1 @@
-kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet]==0.17.6
-openpyxl==3.0.9
+kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet]==0.18.0
