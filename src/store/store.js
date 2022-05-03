@@ -15,10 +15,12 @@ const updateGraphOnChange = (store) => {
   // we need to dispatch the calculateGraph action to ensure the graph nodes still gets rendered
   // on initial load if using static data
   store.dispatch(calculateGraph(getGraphInput(store.getState())));
+
   const watchGraph = watch(() => getGraphInput(store.getState()));
+  // this ensures we continuously subscribe to the state to fire calculateGraph events for updating
+  // the graph on store updates
   store.subscribe(
     watchGraph((graphInput) => {
-      console.log('graphInput', graphInput);
       store.dispatch(calculateGraph(graphInput));
     })
   );
