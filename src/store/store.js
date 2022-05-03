@@ -12,9 +12,13 @@ import { saveState, pruneFalseyKeys } from './helpers';
  * @param {object} store Redux store
  */
 const updateGraphOnChange = (store) => {
+  // we need to dispatch the calculateGraph action to ensure the graph nodes still gets rendered
+  // on initial load if using static data
+  store.dispatch(calculateGraph(getGraphInput(store.getState())));
   const watchGraph = watch(() => getGraphInput(store.getState()));
   store.subscribe(
     watchGraph((graphInput) => {
+      console.log('graphInput', graphInput);
       store.dispatch(calculateGraph(graphInput));
     })
   );
