@@ -32,6 +32,12 @@ describe('Wrapper', () => {
     expect(container.length).toBe(0);
   });
 
+  it('does not display the settings modal when displayGlobalToolbar is false', () => {
+    const wrapper = setup.mount(Wrapper, mockPropsNoGlobalToolbar);
+    const container = wrapper.find('.pipeline-settings-modal');
+    expect(container.length).toBe(0);
+  });
+
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.spaceflights)).toEqual({
       displayGlobalToolbar: true,
