@@ -3,13 +3,13 @@ import { mockState, setup } from '../../utils/state.mock';
 
 const { theme } = mockState.spaceflights;
 const mockProps = {
-  theme,
   displayGlobalToolbar: true,
+  theme,
 };
 
 const mockPropsNoGlobalToolbar = {
-  theme,
   displayGlobalToolbar: false,
+  theme,
 };
 
 describe('Wrapper', () => {
@@ -34,9 +34,8 @@ describe('Wrapper', () => {
 
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.spaceflights)).toEqual({
-      loading: false,
-      theme,
       displayGlobalToolbar: true,
+      theme,
     });
   });
 });
