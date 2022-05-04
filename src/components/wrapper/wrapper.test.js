@@ -1,5 +1,6 @@
 import { Wrapper, mapStateToProps } from './wrapper';
 import { mockState, setup } from '../../utils/state.mock';
+import { MemoryRouter } from 'react-router-dom';
 
 const { theme } = mockState.spaceflights;
 const mockProps = {
@@ -32,9 +33,15 @@ describe('Wrapper', () => {
     expect(container.length).toBe(0);
   });
 
-  it('does not display the settings modal when displayGlobalToolbar is false', () => {
-    const wrapper = setup.mount(Wrapper, mockPropsNoGlobalToolbar);
-    const container = wrapper.find('.pipeline-settings-modal');
+  it('does not perform any routing when displayGlobalToolbar is false', () => {
+    const wrapper = setup.mount(
+      <MemoryRouter initialEntries={['/experiment-tracking']}>
+        <Wrapper />
+      </MemoryRouter>,
+      mockPropsNoGlobalToolbar
+    );
+
+    const container = wrapper.find('.pipeline-ui--experiment-tracking');
     expect(container.length).toBe(0);
   });
 
