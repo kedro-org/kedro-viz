@@ -11,14 +11,8 @@ import { saveState, pruneFalseyKeys } from './helpers';
  * update state.graph via a web worker when it changes.
  * @param {object} store Redux store
  */
-const updateGraphOnChange = (store) => {
-  // we need to dispatch the calculateGraph action to ensure the graph nodes still gets rendered
-  // on initial load if using static data
-  store.dispatch(calculateGraph(getGraphInput(store.getState())));
-
+export const updateGraphOnChange = (store) => {
   const watchGraph = watch(() => getGraphInput(store.getState()));
-  // this ensures we continuously subscribe to the state to fire calculateGraph events for updating
-  // the graph on store updates
   store.subscribe(
     watchGraph((graphInput) => {
       store.dispatch(calculateGraph(graphInput));
@@ -68,7 +62,7 @@ const saveStateToLocalStorage = (state) => {
  * @param {Object} initialState Initial Redux state (from initial-state.js)
  * @return {Object} Redux store
  */
-export default function configureStore(initialState) {
+export default function configureStore(initialState, dataType) {
   const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   const store = createStore(
@@ -76,6 +70,13 @@ export default function configureStore(initialState) {
     initialState,
     composeEnhancers(applyMiddleware(thunk))
   );
+
+  // dispatch the calculateGraph action to ensure the graph nodes still gets rendered
+  // on initial load if data is loaded via data prop instead of fetching from Rest API
+  if (dataType !== 'json') {
+    store.dispatch(calculateGraph(getGraphInput(store.getState())));
+  }
+
   updateGraphOnChange(store);
   store.subscribe(() => {
     saveStateToLocalStorage(store.getState());

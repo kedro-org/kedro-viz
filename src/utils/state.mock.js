@@ -73,7 +73,9 @@ export const setup = {
       prepareState({ data: spaceflights, ...props })
     );
     return mount(
-      <Provider store={configureStore(initialState)}>{children}</Provider>
+      <Provider store={configureStore(initialState, 'json')}>
+        {children}
+      </Provider>
     );
   },
   /**
