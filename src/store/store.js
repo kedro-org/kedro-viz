@@ -60,6 +60,7 @@ const saveStateToLocalStorage = (state) => {
 /**
  * Configure initial state and create the Redux store
  * @param {Object} initialState Initial Redux state (from initial-state.js)
+ * @param {Object} dataType type of pipeline data - "static" or "json" (if data is loaded from API)
  * @return {Object} Redux store
  */
 export default function configureStore(initialState, dataType) {
