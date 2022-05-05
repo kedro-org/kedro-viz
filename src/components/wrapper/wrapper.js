@@ -5,7 +5,6 @@ import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
-import { isLoading } from '../../selectors/loading';
 import classnames from 'classnames';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
@@ -18,8 +17,11 @@ import './wrapper.css';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ theme, displayGlobalToolbar }) => {
-  const { data: versionData } = useApolloQuery(GET_VERSIONS, { client });
+export const Wrapper = ({ displayGlobalToolbar, theme }) => {
+  const { data: versionData } = useApolloQuery(GET_VERSIONS, {
+    client,
+    skip: !displayGlobalToolbar,
+  });
   const [dismissed, setDismissed] = useState(false);
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
@@ -32,45 +34,50 @@ export const Wrapper = ({ theme, displayGlobalToolbar }) => {
   }, [versionData]);
 
   return (
-    <GraphQLProvider useMocks={false}>
-      <div
-        className={classnames('kedro-pipeline kedro', {
-          'kui-theme--dark': theme === 'dark',
-          'kui-theme--light': theme === 'light',
-        })}
-      >
-        <h1 className="pipeline-title">Kedro-Viz</h1>
-        <Router>
-          {displayGlobalToolbar && <GlobalToolbar isOutdated={isOutdated} />}
-          <SettingsModal
-            isOutdated={isOutdated}
-            latestVersion={latestVersion}
-          />
-          {versionData && isOutdated && !dismissed && (
-            <UpdateReminder
-              dismissed={dismissed}
-              versions={versionData.version}
-              setDismiss={setDismissed}
+    <div
+      className={classnames('kedro-pipeline kedro', {
+        'kui-theme--dark': theme === 'dark',
+        'kui-theme--light': theme === 'light',
+      })}
+    >
+      <h1 className="pipeline-title">Kedro-Viz</h1>
+      {displayGlobalToolbar ? (
+        <GraphQLProvider>
+          <Router>
+            <GlobalToolbar isOutdated={isOutdated} />
+            <SettingsModal
+              isOutdated={isOutdated}
+              latestVersion={latestVersion}
             />
-          )}
-          <Switch>
-            <Route exact path={['/', '/flowchart']}>
-              <FlowChartWrapper />
-            </Route>
-            <Route path={['/experiment-tracking', '/experiment-tracking/:id']}>
-              <ExperimentWrapper />
-            </Route>
-          </Switch>
-        </Router>
-      </div>
-    </GraphQLProvider>
+            {versionData && isOutdated && !dismissed && (
+              <UpdateReminder
+                dismissed={dismissed}
+                setDismiss={setDismissed}
+                versions={versionData.version}
+              />
+            )}
+            <Switch>
+              <Route exact path={['/', '/flowchart']}>
+                <FlowChartWrapper />
+              </Route>
+              <Route
+                path={['/experiment-tracking', '/experiment-tracking/:id']}
+              >
+                <ExperimentWrapper />
+              </Route>
+            </Switch>
+          </Router>
+        </GraphQLProvider>
+      ) : (
+        <FlowChartWrapper />
+      )}
+    </div>
   );
 };
 
 export const mapStateToProps = (state) => ({
-  loading: isLoading(state),
-  theme: state.theme,
   displayGlobalToolbar: state.display.globalToolbar,
+  theme: state.theme,
 });
 
 export default connect(mapStateToProps)(Wrapper);
