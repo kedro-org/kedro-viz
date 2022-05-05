@@ -44,7 +44,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
       {displayGlobalToolbar ? (
         <GraphQLProvider>
           <Router>
-            {displayGlobalToolbar && <GlobalToolbar isOutdated={isOutdated} />}
+            <GlobalToolbar isOutdated={isOutdated} />
             <SettingsModal
               isOutdated={isOutdated}
               latestVersion={latestVersion}
