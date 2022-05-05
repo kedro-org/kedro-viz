@@ -26,12 +26,9 @@ describe('Wrapper', () => {
     expect(container.hasClass(`kui-theme--dark`)).toBe(theme === 'dark');
   });
 
-  it('does not display the global toolbar or settings modal when displayGlobalToolbar is false', () => {
-    const wrapper = setup.mount(Wrapper, mockPropsNoGlobalToolbar);
-    const globalToolbar = wrapper.find('.pipeline-global-toolbar');
-    const settingsModal = wrapper.find('.pipeline-settings-modal');
-    expect(globalToolbar.length).toBe(0);
-    expect(settingsModal.length).toBe(0);
+  it('only displays the h1 and the FlowChartWrapper when displayGlobalToolbar is false', () => {
+    const wrapper = setup.shallow(Wrapper, mockPropsNoGlobalToolbar);
+    expect(wrapper.children()).toHaveLength(2);
   });
 
   it('maps state to props', () => {
