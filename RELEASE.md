@@ -17,6 +17,7 @@ Please follow the established format:
 - Fix experiment tracking not showing run details bug on Windows. (#809)
 - Fix rendering of React component instance with custom routes. (#838)
 - Improve performance when many datasets are missing. (#832)
+- Fix flowchart not showing on initial load for static data inputs. (#843)
 
 # Release 4.4.0
 
