@@ -21,7 +21,6 @@ export const GlobalToolbar = ({
   onToggleSettingsModal,
   onToggleTheme,
   theme,
-  visible,
 }) => {
   return (
     <>
