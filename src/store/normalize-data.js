@@ -5,6 +5,10 @@ import { arrayToObject } from '../utils';
  * @return {object} state
  */
 export const createInitialPipelineState = () => ({
+  app: {
+    ids: [],
+    urls: {},
+  },
   pipeline: {
     ids: [],
     name: {},
@@ -42,12 +46,13 @@ export const createInitialPipelineState = () => ({
     modularPipelines: {},
   },
   nodeType: {
-    ids: ['task', 'data', 'parameters', 'modularPipeline'],
+    ids: ['task', 'data', 'parameters', 'modularPipeline', 'app'],
     name: {
       data: 'Datasets',
       task: 'Nodes',
       parameters: 'Parameters',
       modularPipeline: 'Modular Pipelines',
+      app: 'App',
     },
     disabled: {},
   },
@@ -145,6 +150,10 @@ const addNode = (state) => (node) => {
   state.node.transcodedTypes[id] = node.transcoded_types;
   state.node.runCommand[id] = node.runCommand;
   state.node.modularPipelines[id] = node.modular_pipelines || [];
+  if (node.type === 'app') {
+    state.app.ids.push(id);
+    state.app.urls[id] = node.url;
+  }
 };
 
 /**

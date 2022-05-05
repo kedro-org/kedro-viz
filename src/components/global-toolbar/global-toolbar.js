@@ -22,7 +22,9 @@ export const GlobalToolbar = ({
   onToggleTheme,
   theme,
   visible,
+  app,
 }) => {
+  const { ids } = app;
   return (
     <>
       <div className="pipeline-global-toolbar">
@@ -53,6 +55,21 @@ export const GlobalToolbar = ({
               icon={ExperimentsIcon}
             />
           </NavLink>
+          {ids.map((id) => {
+            const url = '/' + id;
+            return (
+              <NavLink exact to={{ pathname: url }}>
+                <IconButton
+                  ariaLabel={'View your experiments'}
+                  className={
+                    'pipeline-menu-button--large pipeline-menu-button--link'
+                  }
+                  disabled={false}
+                  icon={ExperimentsIcon}
+                />
+              </NavLink>
+            );
+          })}
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
           <IconButton
@@ -87,6 +104,7 @@ export const GlobalToolbar = ({
 export const mapStateToProps = (state) => ({
   theme: state.theme,
   visible: state.visible,
+  app: state.app,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

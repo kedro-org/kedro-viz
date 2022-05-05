@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/ui/icon-button';
@@ -38,6 +39,7 @@ const MetaData = ({
   const isTaskNode = metadata?.type === 'task';
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
+  const isMetricsNode = metadata?.datasetType?.includes('MetricsDataSet');
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
   const hasPlot = Boolean(metadata?.plot);
   const hasTrackingData = Boolean(metadata?.trackingData);
@@ -190,15 +192,27 @@ const MetaData = ({
                       view="preview"
                     />
                   </div>
-                  <button
-                    className="pipeline-metadata__expand-plot"
-                    onClick={onExpandPlotClick}
-                  >
-                    <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
-                    <span className="pipeline-metadata__expand-plot-text">
-                      Expand Plotly Visualization
-                    </span>
-                  </button>
+                  {!isMetricsNode && (
+                    <button
+                      className="pipeline-metadata__expand-plot"
+                      onClick={onExpandPlotClick}
+                    >
+                      <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
+                      <span className="pipeline-metadata__expand-plot-text">
+                        Expand Plotly Visualization
+                      </span>
+                    </button>
+                  )}
+                  {isMetricsNode && (
+                    <NavLink exact to={{ pathname: '/experiment-tracking' }}>
+                      <button className="pipeline-metadata__expand-plot">
+                        <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
+                        <span className="pipeline-metadata__expand-plot-text">
+                          Expand Dashboard
+                        </span>
+                      </button>
+                    </NavLink>
+                  )}
                 </>
               )}
             </div>
