@@ -28,7 +28,7 @@ commands:
   setup_python_env:
     description: Setup Python environment
     steps:
-      - run: 
+      - run:
           name: Install Python
           command: python --version
       - run:
@@ -198,7 +198,7 @@ commands:
           command: conda init powershell
       - run:
           name: Create 'kedro-viz' conda environment
-          command: conda create --name kedro-viz python=<<parameters.python_version>> -y 
+          command: conda create --name kedro-viz python=<<parameters.python_version>> -y
 
   win_setup_requirements:
     description: Install Python dependencies
@@ -220,8 +220,8 @@ commands:
 
   win_build:
     description: Run build on Windows
-    parameters: 
-      python_version: 
+    parameters:
+      python_version:
         type: string
     steps:
       - checkout
@@ -279,8 +279,8 @@ jobs:
   # Windows-related jobs
   win_build_37:
     executor: win/default
-    parameters: 
-      python_version: 
+    parameters:
+      python_version:
         type: string
     working_directory: ~/repo
     steps:
@@ -290,33 +290,33 @@ jobs:
 
   win_build_38:
     executor: win/default
-    parameters: 
-      python_version: 
+    parameters:
+      python_version:
         type: string
     working_directory: ~/repo
-    steps: 
+    steps:
       - checkout
       - win_build:
           python_version: <<parameters.python_version>>
 
   win_build_39:
     executor: win/default
-    parameters: 
-      python_version: 
+    parameters:
+      python_version:
         type: string
     working_directory: ~/repo
-    steps: 
+    steps:
       - checkout
       - win_build:
           python_version: <<parameters.python_version>>
 
   win_build_310:
     executor: win/default
-    parameters: 
-      python_version: 
+    parameters:
+      python_version:
         type: string
     working_directory: ~/repo
-    steps: 
+    steps:
       - checkout
       - win_build:
           python_version: <<parameters.python_version>>
@@ -346,12 +346,8 @@ jobs:
     description: Build Kedro-Viz as a Python package and push it to PyPI
     steps:
       - checkout
-      # - restore_cache:
-      #     keys:
-      #       - v0-{{ arch }}-dependencies-{{ checksum "package.json" }}
-      #        # fallback to using the latest cache if no exact match is found
-      #       - v0-{{ arch }}-dependencies-
       - setup_python_env
+      - install_node_dependencies
       - run:
           name: Install twine
           command: python -m pip install -U twine
@@ -378,13 +374,13 @@ workflows:
       - build_39
       - build_310
       - win_build_37:
-           python_version: '3.7'
+          python_version: '3.7'
       - win_build_38:
-           python_version: '3.8'
+          python_version: '3.8'
       - win_build_39:
-           python_version: '3.9'
+          python_version: '3.9'
       - win_build_310:
-           python_version: '3.10'
+          python_version: '3.10'
       - deploy_demo:
           context:
             - kedro-ecr-publish
@@ -412,13 +408,13 @@ workflows:
       - build_39
       - build_310
       - win_build_37:
-           python_version: '3.7'
+          python_version: '3.7'
       - win_build_38:
-           python_version: '3.8'
+          python_version: '3.8'
       - win_build_39:
-           python_version: '3.9'
+          python_version: '3.9'
       - win_build_310:
-           python_version: '3.10'
+          python_version: '3.10'
 
   release:
     jobs:
