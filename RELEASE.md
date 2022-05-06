@@ -6,6 +6,8 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.5.0
+
 ## Major features and improvements
 
 - Added support for Python 3.9 and 3.10. (#815)
