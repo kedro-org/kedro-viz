@@ -21,7 +21,6 @@ export const GlobalToolbar = ({
   onToggleSettingsModal,
   onToggleTheme,
   theme,
-  visible,
 }) => {
   return (
     <>
@@ -43,7 +42,7 @@ export const GlobalToolbar = ({
               icon={TreeIcon}
             />
           </NavLink>
-          <NavLink exact to={{ pathname: '/runsList' }}>
+          <NavLink exact to={{ pathname: '/experiment-tracking' }}>
             <IconButton
               ariaLabel={'View your experiments'}
               className={

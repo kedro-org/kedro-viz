@@ -1,31 +1,30 @@
 # This is a boilerplate parameters config generated for pipeline 'feature_engineering'
-# using Kedro 0.17.6.
+# using Kedro 0.18.0.
 #
 # Documentation for this file format can be found in "Parameters"
-# Link: https://kedro.readthedocs.io/en/0.17.6/04_kedro_project_setup/02_configuration.html#parameters
-
-
-feature:
-  static:
-    - engines
-    - passenger_capacity
-    - crew
-    - d_check_complete
-    - moon_clearance_complete
-    - iata_approved
-    - company_rating
-    - review_scores_rating
-    - price
-  derived:
-    - column_a: number_of_reviews
-      column_b: total_fleet_count
-      numpy_method: divide
-      conjunction: over # {column_a}_{over}_{column_b}
-    - column_a: number_of_reviews
-      column_b: total_fleet_count
-      numpy_method: divide
-      conjunction: over
-    - column_a: reviews_per_month
-      column_b: company_rating
-      numpy_method: multiply
-      conjunction: by
+# Link: https://kedro.readthedocs.io/en/0.18.0/04_kedro_project_setup/02_configuration.html#parameters
+feature_engineering:
+  feature:
+    static:
+      - engines
+      - passenger_capacity
+      - crew
+      - d_check_complete
+      - moon_clearance_complete
+      - iata_approved
+      - company_rating
+      - review_scores_rating
+      - price
+    derived:
+      - column_a: number_of_reviews
+        column_b: total_fleet_count
+        numpy_method: divide
+        conjunction: over # {column_a}_{over}_{column_b}
+      - column_a: number_of_reviews
+        column_b: total_fleet_count
+        numpy_method: divide
+        conjunction: over
+      - column_a: reviews_per_month
+        column_b: company_rating
+        numpy_method: multiply
+        conjunction: by

@@ -1,9 +1,9 @@
 """
 This is a boilerplate pipeline 'reporting'
-generated using Kedro 0.17.6
+generated using Kedro 0.18.0
 """
 
-from kedro.pipeline import Pipeline, node
+from kedro.pipeline import Pipeline, node, pipeline
 
 from demo_project.pipelines.reporting.nodes import (
     make_cancel_policy_bar_chart,
@@ -14,7 +14,7 @@ from demo_project.pipelines.reporting.nodes import (
 
 def create_pipeline(**kwargs) -> Pipeline:
     """This is a simple pipeline which generates a series of plots"""
-    return Pipeline(
+    return pipeline(
         [
             node(
                 func=make_cancel_policy_bar_chart,
@@ -31,5 +31,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs="prm_shuttle_company_reviews",
                 outputs="cancellation_policy_grid",
             ),
-        ]
+        ],
+        inputs=["prm_shuttle_company_reviews"],
+        namespace="reporting",
     )

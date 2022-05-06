@@ -1,6 +1,6 @@
 # Feature engineering pipeline
 
-> *Note:* This `README.md` was generated using `Kedro 0.17.6` for illustration purposes. Please modify it according to your pipeline structure and contents.
+> *Note:* This `README.md` was generated using `Kedro 0.18.0` for illustration purposes. Please modify it according to your pipeline structure and contents.
 
 This pipeline creates features from two different sources:
 

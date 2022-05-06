@@ -11,7 +11,6 @@ from unittest.mock import MagicMock, call, patch
 import pandas as pd
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
-from kedro.extras.datasets.spark import SparkDataSet
 from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.io.core import Version
@@ -153,7 +152,7 @@ class TestGraphNodeCreation:
         assert not data_node.is_metric_node()
 
     def test_create_transcoded_data_node(self):
-        dataset_name = "dataset@spark"
+        dataset_name = "dataset@pandas2"
         original_name = "dataset"
         pretty_name = "Dataset"
         kedro_dataset = CSVDataSet(filepath="foo.csv")
@@ -354,14 +353,14 @@ class TestGraphNodeMetadata:
     def test_transcoded_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")
         transcoded_data_node = GraphNode.create_data_node(
-            full_name="dataset@spark",
+            full_name="dataset@pandas2",
             layer="raw",
             tags=set(),
             dataset=dataset,
         )
         transcoded_data_node.original_name = "dataset"
         transcoded_data_node.original_version = ParquetDataSet(filepath="foo.parquet")
-        transcoded_data_node.transcoded_versions = [SparkDataSet(filepath="foo.csv")]
+        transcoded_data_node.transcoded_versions = [CSVDataSet(filepath="foo.csv")]
         transcoded_data_node_metadata = TranscodedDataNodeMetadata(
             transcoded_data_node=transcoded_data_node
         )
@@ -371,7 +370,7 @@ class TestGraphNodeMetadata:
         )
 
         assert transcoded_data_node_metadata.transcoded_types == [
-            "kedro.extras.datasets.spark.spark_dataset.SparkDataSet"
+            "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
         ]
 
     def test_partitioned_data_node_metadata(self):

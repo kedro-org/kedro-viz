@@ -24,7 +24,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     const initialState = getInitialState(props);
-    this.store = configureStore(initialState);
+    this.store = configureStore(initialState, this.props.data);
   }
 
   componentDidMount() {
