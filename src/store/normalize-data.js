@@ -190,7 +190,7 @@ const addLayer = (state) => (layer) => {
  * @param {Object} data Raw unformatted data input
  * @return {Object} Formatted, normalized state
  */
-const normalizeData = (data) => {
+const normalizeData = (data, expandAllPipelines) => {
   const state = createInitialPipelineState();
 
   if (data === 'json') {
@@ -215,8 +215,22 @@ const normalizeData = (data) => {
   if (data.modular_pipelines) {
     state.modularPipeline.ids = Object.keys(data.modular_pipelines);
     state.modularPipeline.tree = data.modular_pipelines;
-    for (const child of data.modular_pipelines['__root__'].children) {
-      state.modularPipeline.visible[child.id] = true;
+
+    // Case for expandAllPipelines in component props or within flag
+    if (expandAllPipelines) {
+      // assign all modular pipelines into expanded state
+      state.modularPipeline.expanded = state.modularPipeline.ids;
+      // assign all nodes as visible nodes in modular pipelines
+      const nodeIds = state.node.ids;
+      nodeIds.forEach((nodeId) => {
+        if (!state.modularPipeline.ids.includes(nodeId)) {
+          state.modularPipeline.visible[nodeId] = true;
+        }
+      });
+    } else {
+      for (const child of data.modular_pipelines['__root__'].children) {
+        state.modularPipeline.visible[child.id] = true;
+      }
     }
   }
 

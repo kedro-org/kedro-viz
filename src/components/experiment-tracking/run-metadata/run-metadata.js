@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import CloseIcon from '../../icons/close';
-import IconButton from '../../icon-button';
+import IconButton from '../../ui/icon-button';
 import KebabIcon from '../../icons/kebab';
 import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';
@@ -80,7 +80,7 @@ const RunMetadata = ({
       })}
     >
       {runs.map((run, i) => {
-        const humanReadableTime = toHumanReadableTime(run.timestamp);
+        const humanReadableTime = toHumanReadableTime(run.id);
 
         return (
           <div
@@ -153,7 +153,7 @@ const RunMetadata = ({
                 <tr>
                   {i === 0 ? <td>Creation Date</td> : null}
                   <td>{`${humanReadableTime} (${sanitiseEmptyValue(
-                    run.timestamp
+                    run.id
                   )})`}</td>
                 </tr>
                 <tr>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import SearchBar from '@quantumblack/kedro-ui/lib/components/search-bar';
+import SearchBar from '../ui/search-bar';
 import { connect } from 'react-redux';
 import './search-list.css';
 
@@ -7,7 +7,7 @@ import './search-list.css';
  * Handle Searching of List
  * @param {function} onUpdateSearchValue Event handler
  * @param {string} searchValue Search text
- * @param {string} theme Light/dark theme for Kedro-UI component
+ * @param {string} theme Light/dark theme for SearchBar component
  */
 export const SearchList = ({ onUpdateSearchValue, searchValue, theme }) => {
   const container = useRef(null);
@@ -53,15 +53,15 @@ export const SearchList = ({ onUpdateSearchValue, searchValue, theme }) => {
 
   return (
     <div
-      ref={container}
       className="pipeline-search-list"
       onKeyDown={handleKeyDown}
+      ref={container}
     >
       <SearchBar
         onChange={onUpdateSearchValue}
-        value={searchValue}
-        theme={theme}
         placeholder={'Search'}
+        theme={theme}
+        value={searchValue}
       />
     </div>
   );

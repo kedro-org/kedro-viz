@@ -17,12 +17,15 @@ import './sidebar.css';
  */
 export const Sidebar = ({
   disableRunSelection,
+  displayGlobalToolbar,
   enableComparisonView,
   enableShowChanges,
   isExperimentView = false,
   onRunSelection,
   onToggleComparisonView,
   runsListData,
+  runMetadata,
+  runTrackingData,
   selectedRunData,
   selectedRunIds,
   setEnableShowChanges,
@@ -61,6 +64,8 @@ export const Sidebar = ({
               showChangesIconDisabled={!(selectedRunIds.length > 1)}
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={sidebarVisible}
+              runMetadata={runMetadata}
+              runTrackingData={runTrackingData}
             />
           </nav>
         </div>
@@ -72,6 +77,7 @@ export const Sidebar = ({
         <div
           className={classnames('pipeline-sidebar', {
             'pipeline-sidebar--visible': visible,
+            'pipeline-sidebar--no-global-toolbar': !displayGlobalToolbar,
           })}
         >
           <div className="pipeline-ui">
@@ -91,6 +97,7 @@ export const Sidebar = ({
 
 const mapStateToProps = (state) => ({
   visible: state.visible.sidebar,
+  displayGlobalToolbar: state.display.globalToolbar,
 });
 
 export default connect(mapStateToProps)(Sidebar);

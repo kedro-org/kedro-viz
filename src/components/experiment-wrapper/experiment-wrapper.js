@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
-import { GET_RUNS } from '../../apollo/queries';
+import {
+  GET_RUNS,
+  GET_RUN_METADATA,
+  GET_RUN_TRACKING_DATA,
+} from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import { sortRunByTime } from '../../utils/date-utils';
-import Button from '@quantumblack/kedro-ui/lib/components/button';
+import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 
 import './experiment-wrapper.css';
 
-const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three
+const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
 
 const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
@@ -22,7 +26,24 @@ const ExperimentWrapper = ({ theme }) => {
   const [selectedRunData, setSelectedRunData] = useState(null);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
 
+  // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
+
+  // Fetch all metadata for selected runs.
+  const { data: { runMetadata } = [], metadataError } = useApolloQuery(
+    GET_RUN_METADATA,
+    {
+      skip: selectedRunIds.length === 0,
+      variables: { runIds: selectedRunIds },
+    }
+  );
+
+  // Fetch all tracking data for selected runs.
+  const { data: { runTrackingData } = [], error: trackingDataError } =
+    useApolloQuery(GET_RUN_TRACKING_DATA, {
+      skip: selectedRunIds.length === 0,
+      variables: { runIds: selectedRunIds, showDiff: true },
+    });
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
@@ -144,7 +165,9 @@ const ExperimentWrapper = ({ theme }) => {
             isExperimentView
             onRunSelection={onRunSelection}
             onToggleComparisonView={onToggleComparisonView}
+            runMetadata={runMetadata}
             runsListData={data.runsList}
+            runTrackingData={runTrackingData}
             selectedRunData={selectedRunData}
             selectedRunIds={selectedRunIds}
             setEnableShowChanges={setEnableShowChanges}
@@ -156,14 +179,18 @@ const ExperimentWrapper = ({ theme }) => {
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
+              metadataError={metadataError}
               onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
+              runMetadata={runMetadata}
+              runTrackingData={runTrackingData}
               selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
+              trackingDataError={trackingDataError}
             />
           ) : null}
         </>
@@ -181,7 +208,7 @@ const ExperimentWrapper = ({ theme }) => {
             rel="noreferrer"
             target="_blank"
           >
-            <Button theme={theme}>View docs</Button>
+            <Button>View docs</Button>
           </a>
         </div>
       )}

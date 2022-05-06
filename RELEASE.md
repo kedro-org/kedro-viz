@@ -1,4 +1,3 @@
-# Upcoming release
 
 <!--
 Use the sections below to add notes for the next release.
@@ -7,6 +6,25 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
+# Release 4.4.0
+## Major features and improvements
+
+- Set up a pop-up reminder to nudge users to upgrade Kedro-Viz when a new version is released. (#746)
+- Set up the 'export run' button to allow exporting of selected run data into a csv file for download. (#757)
+- Set up new display props to standalone React component. (#786)
+- Set up 'expandAllPipelines' flag to allow the expanded display of all modular pipelines on initial load. (#786)
+
+## Bug fixes and other changes
+
+- Migrate Kedro-UI buttons to Kedro-Viz as Kedro-UI is now deprecated. (#716)
+- Migrate Kedro-UI dropdown and menu-options to Kedro-Viz as Kedro-UI is now deprecated. (#721)
+- Add a Husky pre-push hook. (#723)
+- Create a `version` GraphQL query to get versions of Kedro-Viz. (#727)
+- Fix Kedro-Viz to work with projects that have no `__default__` registered pipeline. This also fixes the `--pipeline` CLI option. (#729)
+- Fix lazy pipelines loading causes `get_current_session` to throw an error. (#726, #727)
+- Fix experiment tracking not showing all metrics. (#798)
+- Fix experiment tracking not display the correct empty table cells. (#798)
 
 # Release 4.3.1
 
@@ -116,8 +134,8 @@ Please follow the established format:
 
 - Overwrite material UI selected row defaults. (#568)
 - Fix URI param parsing for data source. (#578)
-- Add a graphql test endpoint on Kedro-viz server. (#570)
-- Update the demo dataset on Kedro-viz. (#574)
+- Add a graphql test endpoint on Kedro-Viz server. (#570)
+- Update the demo dataset on Kedro-Viz. (#574)
 - Fix auto-reload for metrics run data. (#572)
 - Refactor tests for metadata panel. (#580)
 - Fix metrics tree to get latest metrics data. (#573)

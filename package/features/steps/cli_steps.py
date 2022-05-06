@@ -75,7 +75,7 @@ def create_project_with_starter(context, starter):
 
 @given("I have installed the project's requirements")
 def install_project_requirements(context):
-    """Run pip install -U -r src/requirements.txt"""
+    """Run ``pip install -r src/requirements.txt``."""
     cmd = [context.pip, "install", "-r", str(context.requirements_path)]
     res = run(cmd, env=context.env)
 
@@ -87,7 +87,7 @@ def install_project_requirements(context):
 
 @given('I have installed kedro version "{version}"')
 def install_kedro(context, version):
-    """Execute Kedro command and check the status."""
+    """Install Kedro using pip."""
     if version == "latest":
         cmd = [context.pip, "install", "-U", "kedro"]
     else:
@@ -102,7 +102,7 @@ def install_kedro(context, version):
 
 @when('I execute the kedro viz command "{command}"')
 def exec_viz_command(context, command):
-    """Execute Kedro viz command"""
+    """Execute Kedro-Viz command."""
     split_command = command.split()
     make_cmd = [context.kedro] + split_command
 
@@ -113,7 +113,7 @@ def exec_viz_command(context, command):
 
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
-    """Check that kedro-viz is up and responding to requests"""
+    """Check that Kedro-Viz is up and responding to requests."""
     max_duration = 30  # 30 seconds
     end_by = time() + max_duration
 
