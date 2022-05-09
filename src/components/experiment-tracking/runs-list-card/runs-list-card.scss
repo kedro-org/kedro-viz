@@ -1,0 +1,103 @@
+@import '../../../styles/variables';
+
+.kui-theme--light {
+  --color-run-list-highlight: #{darken($color-primary, 10%)};
+}
+
+.kui-theme--dark {
+  --color-run-list-highlight: #{$color-primary};
+}
+
+.runs-list-card {
+  align-items: flex-start;
+  background: var(--color-bg-4);
+  border-bottom: 1px solid var(--color-run-list-divider);
+  display: flex;
+  padding: 1.6em 2.8em 2em 3em;
+
+  &--active {
+    background: var(--color-run-list-hover);
+    box-shadow: -1px 0px 0px inset $color-accent-blue;
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &:hover {
+    background: var(--color-run-list-hover);
+    cursor: pointer;
+
+    .runs-list-card__bookmark--stroke {
+      opacity: 1;
+    }
+  }
+}
+
+.runs-list-card__title {
+  font-size: 1.6em;
+  line-height: 1.5;
+
+  b {
+    color: var(--color-run-list-highlight);
+    font-weight: normal;
+  }
+}
+
+.runs-list-card__gitsha {
+  color: var(--color-text-faded);
+  font-size: 1.3em;
+  margin: 4px 0 12px;
+
+  b {
+    color: var(--color-run-list-highlight);
+    font-weight: normal;
+  }
+}
+
+.runs-list-card__timestamp {
+  font-size: 1.3em;
+}
+
+.runs-list-card__notes {
+  padding-top: 24px;
+  font-size: 1.3em;
+
+  b {
+    color: var(--color-run-list-highlight);
+    font-weight: normal;
+  }
+}
+
+.runs-list-card__checked {
+  height: 24px;
+  margin-right: 0.8em;
+  width: 24px;
+
+  &--comparing {
+    fill: var(--color-base-20);
+  }
+
+  &--active {
+    fill: $color-accent-blue;
+  }
+}
+
+.runs-list-card__bookmark {
+  fill: var(--color-default-alt);
+  height: 24px;
+  margin-left: auto;
+  opacity: 0.7;
+  transition: opacity 300ms ease;
+  width: 24px;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &--stroke {
+    opacity: 0;
+    transition: opacity 0ms ease;
+  }
+}

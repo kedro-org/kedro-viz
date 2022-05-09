@@ -21,7 +21,7 @@
 
 @include transparentColour(
   '--layer-bg-transparent',
-  $color-bg-light-1,
+  $color-bg-dev-light-1,
   $color-bg-dark-1
 );
 
@@ -45,6 +45,10 @@
 
   &--visible {
     opacity: 1;
+  }
+
+  &--no-global-toolbar {
+    left: -#{$global-toolbar-width};
   }
 
   @media print {

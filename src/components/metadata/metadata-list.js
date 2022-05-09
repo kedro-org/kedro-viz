@@ -28,7 +28,8 @@ const MetaDataList = ({
         className={modifiers('pipeline-metadata__value-list', {
           inline,
           commas,
-        })}>
+        })}
+      >
         {showValues.map((item, index) => (
           <li key={index}>
             <MetaDataValue
@@ -43,7 +44,8 @@ const MetaDataList = ({
         <button
           className="pipeline-metadata__value-list-expand"
           aria-expanded={expanded}
-          onClick={() => setExpanded(true)}>
+          onClick={() => setExpanded(true)}
+        >
           + {remainder} more
         </button>
       ) : null}

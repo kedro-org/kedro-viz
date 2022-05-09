@@ -1,12 +1,11 @@
 import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import { LOREM_IPSUM } from '@quantumblack/kedro-viz/lib/utils/random-utils';
 import App, { dataSources } from './app';
 
 configure({ adapter: new Adapter() });
 
-const keys = Object.keys(dataSources);
+const keys = Object.keys(dataSources).filter((key) => key !== 'random');
 
 describe('lib-test', () => {
   test('renders without crashing', () => {
@@ -17,7 +16,7 @@ describe('lib-test', () => {
    * Get the name of the first node in the NodeList, and check that it's
    * included in the list of the node names in the dataset
    * @param {object} wrapper App component mounted by Enzyme
-   * @param {string} key dataSources key: animals/demo/random
+   * @param {string} key dataSources key: spaceflights/demo/random
    */
   const testFirstNodeNameMatch = (wrapper, key) => {
     const firstNodeName = wrapper
@@ -27,10 +26,11 @@ describe('lib-test', () => {
       .first()
       .text();
 
-      const modularPipelineNames = dataSources[key]().modular_pipelines.map(
-        (modularPipeline) => modularPipeline.name
-      );
-      expect(modularPipelineNames).toContain(firstNodeName);
+    const modularPipelinesTree = dataSources[key]().modular_pipelines;
+    const modularPipelineNames = Object.keys(modularPipelinesTree).map(
+      (modularPipelineID) => modularPipelinesTree[modularPipelineID].name
+    );
+    expect(modularPipelineNames).toContain(firstNodeName);
   };
 
   test.each(keys)(`uses %s dataset when provided as prop`, (key) => {

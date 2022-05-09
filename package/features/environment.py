@@ -1,35 +1,7 @@
-# Copyright 2021 QuantumBlack Visual Analytics Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
-# NONINFRINGEMENT. IN NO EVENT WILL THE LICENSOR OR OTHER CONTRIBUTORS
-# BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF, OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-# The QuantumBlack Visual Analytics Limited ("QuantumBlack") name and logo
-# (either separately or in combination, "QuantumBlack Trademarks") are
-# trademarks of QuantumBlack. The License does not grant you any right or
-# license to the QuantumBlack Trademarks. You may not use the QuantumBlack
-# Trademarks or any confusingly similar mark as a trademark for your product,
-# or use the QuantumBlack Trademarks in any other manner that might cause
-# confusion in the marketplace, including but not limited to in advertising,
-# on websites, or on software.
-#
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """Behave environment setup commands"""
 
 import os
 import shutil
-import sys
 import tempfile
 import venv
 from pathlib import Path
@@ -49,17 +21,10 @@ def call(cmd, env, verbose=False):
     assert res.returncode == 0
 
 
-def _should_exclude_scenario(scenario):
-    pre_16_scenario = any(key in scenario.name for key in "0.15")
-    return sys.version_info >= (3, 8) and pre_16_scenario
-
-
 def before_scenario(context, scenario):
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
-    if _should_exclude_scenario(scenario):
-        scenario.skip()
 
     # make a venv
     kedro_install_venv_dir = _create_new_venv()
@@ -94,6 +59,9 @@ def _setup_context_with_venv(context, venv_dir):
     path = [str(bin_dir)] + path
     # Activate environment
     context.env["PATH"] = path_sep.join(path)
+    # Windows thinks the pip version check warning is a failure
+    # so disable it here.
+    context.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
 
     call(
         [
@@ -102,16 +70,18 @@ def _setup_context_with_venv(context, venv_dir):
             "pip",
             "install",
             "-U",
-            "pip>=20.0",
+            "pip>=21.2",
             "setuptools>=38.0",
             "cookiecutter>=1.7.2",
             "wheel",
             "botocore",
+            "PyYAML>=4.2, <6.0",
+            "click<9.0",
         ],
         env=context.env,
     )
 
-    call([context.python, "setup.py", "install"], env=context.env)
+    call([context.python, "-m", "pip", "install", "."], env=context.env)
     return context
 
 

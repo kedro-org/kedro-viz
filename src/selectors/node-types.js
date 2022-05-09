@@ -7,6 +7,7 @@ const getNodeType = (state) => state.node.type;
 export const getNodeTypeIDs = (state) => state.nodeType.ids;
 const getNodeTypeName = (state) => state.nodeType.name;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
+export const isModularPipelineType = (type) => type === 'modularPipeline';
 
 /**
  * Calculate the total number of nodes (and the number of visible nodes)

@@ -77,6 +77,12 @@ export function loadNodeData(nodeID) {
   return async function (dispatch, getState) {
     const { dataSource, node } = getState();
 
+    // since we don't have design for a modular pipeline metadata side panel just yet,
+    // disable clicking on modular pipeline node
+    if (node.type[nodeID] === 'modularPipeline') {
+      return;
+    }
+
     dispatch(toggleNodeClicked(nodeID));
 
     if (dataSource === 'json' && nodeID && !node.fetched[nodeID]) {

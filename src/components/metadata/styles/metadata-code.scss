@@ -4,11 +4,11 @@
 @import './metadata-code-themes.scss';
 
 .kui-theme--light {
-  --color-metadata-code-bg: #{$color-bg-light-4};
+  --color-metadata-code-bg: #{$color-bg-light-1};
 }
 
 .kui-theme--dark {
-  --color-metadata-code-bg: #{$color-bg-dark-3};
+  --color-metadata-code-bg: #{$color-bg-dark-2};
 }
 
 .pipeline-metadata-code {

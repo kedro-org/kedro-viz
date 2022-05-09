@@ -1,5 +1,8 @@
 import React from 'react';
-import SettingsModal, { mapStateToProps, mapDispatchToProps } from './index';
+import SettingsModal, {
+  mapStateToProps,
+  mapDispatchToProps,
+} from './settings-modal';
 import { mockState, setup } from '../../utils/state.mock';
 import { toggleSettingsModal } from '../../actions';
 
@@ -16,24 +19,24 @@ describe('SettingsModal', () => {
       });
     };
     const wrapper = mount();
-    expect(wrapper.find('.kui-modal__content--visible').length).toBe(1);
-    const closeButton = wrapper.find('.kui-icon--close');
-    closeButton.simulate('click');
-    expect(wrapper.find('.kui-modal__content--visible').length).toBe(0);
+    expect(wrapper.find('.modal__content--visible').length).toBe(1);
+    const closeButton = wrapper.find('.modal__close-button');
+    closeButton.find('button').simulate('click');
+    expect(wrapper.find('.modal__content--visible').length).toBe(0);
   });
 
   it('maps state to props', () => {
     const expectedResult = {
       visible: expect.objectContaining({
         exportBtn: expect.any(Boolean),
-        settingsBtn: expect.any(Boolean),
         exportModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
       }),
       theme: expect.stringMatching(/light|dark/),
       flags: expect.any(Object),
+      prettyName: expect.any(Boolean),
     };
-    expect(mapStateToProps(mockState.animals)).toEqual(expectedResult);
+    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
 
   it('maps dispatch to props', async () => {
@@ -50,6 +53,12 @@ describe('SettingsModal', () => {
       type: 'CHANGE_FLAG',
       name: 'sizewarning',
       value: false,
+    });
+
+    mapDispatchToProps(dispatch).onTogglePrettyName(false);
+    expect(dispatch.mock.calls[2][0]).toEqual({
+      type: 'TOGGLE_PRETTY_NAME',
+      prettyName: false,
     });
   });
 });

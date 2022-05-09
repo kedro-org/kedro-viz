@@ -1,5 +1,5 @@
 import normalizeData, { createInitialPipelineState } from './normalize-data';
-import animals from '../utils/data/animals.mock.json';
+import spaceflights from '../utils/data/spaceflights.mock.json';
 
 const initialState = createInitialPipelineState();
 
@@ -24,7 +24,7 @@ describe('normalizeData', () => {
   });
 
   it('should not add tags if tags are not supplied', () => {
-    const data = Object.assign({}, animals, { tags: undefined });
+    const data = Object.assign({}, spaceflights, { tags: undefined });
     data.nodes.forEach((node) => {
       delete node.tags;
     });
@@ -32,7 +32,7 @@ describe('normalizeData', () => {
   });
 
   it('should not add pipelines if pipelines are not supplied', () => {
-    const data = Object.assign({}, animals, { pipelines: undefined });
+    const data = Object.assign({}, spaceflights, { pipelines: undefined });
     data.nodes.forEach((node) => {
       delete node.pipelines;
     });
@@ -40,7 +40,7 @@ describe('normalizeData', () => {
   });
 
   it('should not add an active pipeline if pipelines.length is 0', () => {
-    const data = Object.assign({}, animals, { pipelines: [] });
+    const data = Object.assign({}, spaceflights, { pipelines: [] });
     data.nodes.forEach((node) => {
       node.pipelines = [];
     });
@@ -50,32 +50,24 @@ describe('normalizeData', () => {
   it('should not add modular pipelines if modular pipelines are not supplied', () => {
     const data = Object.assign(
       {},
-      animals,
+      spaceflights,
       //eslint-disable-next-line camelcase
       { modular_pipelines: undefined }
     );
     expect(normalizeData(data).modularPipeline.ids).toHaveLength(0);
   });
 
-  it('should not add duplicate modular pipelines', () => {
-    const data = Object.assign({}, animals, {
-      //eslint-disable-next-line camelcase
-      modular_pipelines: [
-        {
-          id: 'pipeline1',
-          name: 'Pipeline 1',
-        },
-        {
-          id: 'pipeline1',
-          name: 'Pipeline 1',
-        },
-      ],
-    });
-    expect(normalizeData(data).modularPipeline.ids).toHaveLength(1);
+  it('should add all mmodualr pipeliens and nodes if expandAllPipelines is true', () => {
+    const data = Object.assign({}, spaceflights);
+
+    const { modularPipeline } = normalizeData(data, true);
+
+    expect(modularPipeline.expanded).toHaveLength(3);
+    expect(Object.keys(modularPipeline.visible)).toHaveLength(19);
   });
 
   it('should not add layers if layers are not supplied', () => {
-    const data = Object.assign({}, animals, { layers: undefined });
+    const data = Object.assign({}, spaceflights, { layers: undefined });
     data.nodes.forEach((node) => {
       delete node.layer;
     });
@@ -83,17 +75,17 @@ describe('normalizeData', () => {
   });
 
   it('should not add duplicate nodes', () => {
-    const data = Object.assign({}, animals);
+    const data = Object.assign({}, spaceflights);
     data.nodes.push(data.nodes[0]);
     data.nodes.push(data.nodes[1]);
     data.nodes.push(data.nodes[2]);
     expect(normalizeData(data).node.ids.length).toEqual(
-      normalizeData(animals).node.ids.length
+      normalizeData(spaceflights).node.ids.length
     );
   });
 
   it('should fall back to node.name if node.full_name is not supplied', () => {
-    const data = Object.assign({}, animals);
+    const data = Object.assign({}, spaceflights);
     data.nodes.forEach((node) => {
       node.name = node.name + '-name';
       delete node.full_name;

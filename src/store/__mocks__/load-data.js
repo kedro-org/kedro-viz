@@ -1,5 +1,5 @@
 import { getUrl } from '../../utils';
-import animals from '../../utils/data/animals.mock.json';
+import spaceflights from '../../utils/data/spaceflights.mock.json';
 import demo from '../../utils/data/demo.mock.json';
 import nodeTask from '../../utils/data/node_task.mock.json';
 import nodePlot from '../../utils/data/node_plot.mock.json';
@@ -36,9 +36,9 @@ const loadJsonData = async (path = getUrl('main')) => {
   // which should help catch race conditions
   await timeout(50);
 
-  // Use animals dataset in place of 'main' endpoint
+  // Use spaceflights dataset in place of 'main' endpoint
   if (path.includes('main')) {
-    return mockAPIFeatureSupport(animals);
+    return mockAPIFeatureSupport(spaceflights);
   }
 
   // Use nodeParameters dataset for node data

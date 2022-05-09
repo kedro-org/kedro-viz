@@ -14,12 +14,12 @@
   --node-stroke-selected: #{$color-primary};
   --node-labeltext-fill: #{$color-text-light};
   --edge-stroke: #888;
-  --edge-arrowhead-fill: #{$color-bg-dark-6};
-  --layer-fill: #{mix($color-bg-light-1, $color-bg-light-2)};
+  --edge-arrowhead-fill: #{$color-bg-dark-5};
+  --layer-fill: #{mix($color-bg-dev-light-1, $color-bg-light-4)};
   --layer-text: #{rgba(black, 0.65)};
   --node-input-fill: #{rgba(black, 0.4)};
-  --parameter-accent: #{rgba(160, 0, 188, 1)};
-  --parameter-accent-input: #{rgba(160, 0, 188, 0.6)};
+  --parameter-accent: #{$color-accent-purple};
+  --parameter-accent-input: #{rgba($color-accent-purple, 0.6)};
 
   @mixin export {
     --node-fill-default: #{$color-bg-light-3};
@@ -39,7 +39,7 @@
 
 .kui-theme--dark {
   --node-icon-fill: #{$color-text-dark};
-  --node-fill-default: #{$color-bg-dark-6};
+  --node-fill-default: #{$color-bg-dark-5};
   --node-stroke-default: #354854;
   --node-fill-active: #124066;
   --node-stroke-active: #234f73;
@@ -51,6 +51,6 @@
   --layer-fill: #{mix($color-bg-dark-1, $color-bg-dark-2)};
   --layer-text: #{rgba(white, 0.65)};
   --node-input-fill: #{rgba(white, 0.4)};
-  --parameter-accent: #{rgba(255, 188, 0, 1)};
-  --parameter-accent-input: #{rgba(255, 188, 0, 0.6)};
+  --parameter-accent: #{$color-accent-yellow};
+  --parameter-accent-input: #{rgba($color-accent-yellow, 0.6)};
 }

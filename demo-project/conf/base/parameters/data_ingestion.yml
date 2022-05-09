@@ -1,0 +1,5 @@
+ingestion:
+  typing:
+    reviews:
+      columns_as_floats:
+        - reviews_per_month

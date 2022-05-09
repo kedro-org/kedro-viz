@@ -1,0 +1,2 @@
+kedro[pandas.ParquetDataSet]==0.18.0
+scikit-learn~=1.0

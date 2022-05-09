@@ -15,6 +15,26 @@
   transform: translate(0, 0);
   cursor: default;
 
+  // overwrite material-ui selected row background color settings
+  &--overwrite {
+    .Mui-selected & {
+      .kui-theme--dark & {
+        background-color: #{$color-bg-dark-2};
+      }
+
+      .kui-theme--light & {
+        background-color: #{$color-bg-light-3};
+      }
+    }
+  }
+
+  // overwrite with highlighted background for row on hover
+  &--overwrite:hover {
+    .Mui-selected & {
+      background-color: var(--color-nodelist-row-active);
+    }
+  }
+
   &--kind-filter {
     padding: 0 $row-offset-right 0 $row-offset-left;
   }

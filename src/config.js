@@ -5,15 +5,19 @@ export const localStorageName = 'KedroViz';
 // These values are used in both SCSS and JS, and we don't have variable-sharing
 // across Sass and JavaScript, so they're defined in two places. If you update their
 // value here, please also update their corresponding value in src/styles/_variables.scss
+export const globalToolbarWidth = 80;
+
 export const metaSidebarWidth = {
   open: 400,
   closed: 0,
 };
+
 export const sidebarWidth = {
-  open: 400,
-  closed: 56,
+  open: 400 + globalToolbarWidth,
+  closed: 56 + globalToolbarWidth,
   breakpoint: 700,
 };
+
 export const codeSidebarWidth = {
   open: 480,
   closed: 0,
@@ -28,9 +32,25 @@ export const largeGraphThreshold = 1000;
 export const flags = {
   sizewarning: {
     name: 'Size Warning',
-    description: 'Show a warning before rendering very large graphs',
+    description:
+      'Show a warning before rendering very large graphs (page reload required)',
     default: true,
     icon: '🐳',
+  },
+  expandAllPipelines: {
+    name: 'Expand all modular pipelines',
+    description:
+      'Expand all modular pipelines on first load (page reload required)',
+    default: false,
+    icon: '🔛',
+  },
+};
+
+export const settings = {
+  prettyName: {
+    name: 'Pretty Name',
+    description: 'Display a formatted name for the kedro nodes',
+    default: true,
   },
 };
 
@@ -49,4 +69,5 @@ export const sidebarElementTypes = {
 
 export const shortTypeMapping = {
   'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet': 'plotly',
+  'kedro.extras.datasets.plotly.json_dataset.JSONDataSet': 'plotly',
 };

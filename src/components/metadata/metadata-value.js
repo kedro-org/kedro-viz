@@ -15,7 +15,8 @@ const MetaDataValue = ({
   <>
     <Container
       title={value}
-      className={modifiers('pipeline-metadata__value', { kind }, className)}>
+      className={modifiers('pipeline-metadata__value', { kind }, className)}
+    >
       {!value && value !== 0 ? empty : value}
     </Container>
   </>

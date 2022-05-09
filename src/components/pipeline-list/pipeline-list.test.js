@@ -1,9 +1,15 @@
 import React from 'react';
-import PipelineList, { mapStateToProps, mapDispatchToProps } from './index';
+import PipelineList, {
+  mapStateToProps,
+  mapDispatchToProps,
+} from './pipeline-list';
 import { mockState, setup } from '../../utils/state.mock';
 
 describe('PipelineList', () => {
-  const pipelineIDs = mockState.animals.pipeline.ids.map((id, i) => [id, i]);
+  const pipelineIDs = mockState.spaceflights.pipeline.ids.map((id, i) => [
+    id,
+    i,
+  ]);
 
   it('renders without crashing', () => {
     const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
@@ -14,15 +20,15 @@ describe('PipelineList', () => {
   it('should call onToggleOpen when opening/closing', () => {
     const onToggleOpen = jest.fn();
     const wrapper = setup.mount(<PipelineList onToggleOpen={onToggleOpen} />);
-    wrapper.find('.kui-dropdown__label').simulate('click');
+    wrapper.find('.dropdown__label').simulate('click');
     expect(onToggleOpen).toHaveBeenLastCalledWith(true);
-    wrapper.find('.kui-dropdown__label').simulate('click');
+    wrapper.find('.dropdown__label').simulate('click');
     expect(onToggleOpen).toHaveBeenLastCalledWith(false);
   });
 
   it('should be disabled when there are no pipelines in the store', () => {
     const wrapper = setup.mount(<PipelineList />, { data: 'json' });
-    expect(wrapper.find('.kui-dropdown__label').prop('disabled')).toBe(true);
+    expect(wrapper.find('.dropdown__label').prop('disabled')).toBe(true);
   });
 
   test.each(pipelineIDs)(
@@ -55,7 +61,7 @@ describe('PipelineList', () => {
   });
 
   it('maps state to props', () => {
-    expect(mapStateToProps(mockState.animals)).toEqual({
+    expect(mapStateToProps(mockState.spaceflights)).toEqual({
       asyncDataSource: expect.any(Boolean),
       pipeline: {
         active: expect.any(String),
@@ -63,7 +69,7 @@ describe('PipelineList', () => {
         name: expect.any(Object),
         ids: expect.any(Array),
       },
-      theme: mockState.animals.theme,
+      prettyName: expect.any(Boolean),
     });
   });
 

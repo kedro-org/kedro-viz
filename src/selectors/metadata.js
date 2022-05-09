@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getGraphNodes } from './nodes';
+import { getNodeLabel } from './nodes';
 const getClickedNode = (state) => state.node.clicked;
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
@@ -20,7 +20,8 @@ export const getVisibleMetaSidebar = createSelector(
 export const getClickedNodeMetaData = createSelector(
   [
     getClickedNode,
-    getGraphNodes,
+    getNodeLabel,
+    (state) => state.node.type,
     (state) => state.node.tags,
     (state) => state.tag.name,
     (state) => state.pipeline,
@@ -30,6 +31,7 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.code,
     (state) => state.node.parameters,
     (state) => state.node.plot,
+    (state) => state.node.trackingData,
     (state) => state.node.datasetType,
     (state) => state.node.originalType,
     (state) => state.node.transcodedTypes,
@@ -37,7 +39,8 @@ export const getClickedNodeMetaData = createSelector(
   ],
   (
     nodeId,
-    nodes = {},
+    nodeLabel,
+    nodeType,
     nodeTags,
     tagNames,
     pipeline,
@@ -47,32 +50,44 @@ export const getClickedNodeMetaData = createSelector(
     nodeCodes,
     nodeParameters,
     nodePlot,
+    nodeTrackingData,
     nodeDatasetTypes,
     nodeOriginalTypes,
     nodeTranscodedTypes,
     nodeRunCommand
   ) => {
-    const node = nodes[nodeId];
-    if (!node) {
+    if (!nodeId) {
       return null;
     }
+    //rounding of tracking data
+    nodeTrackingData[nodeId] &&
+      Object.entries(nodeTrackingData[nodeId]).forEach(([key, value]) => {
+        if (typeof value === 'number') {
+          nodeTrackingData[nodeId][key] = Math.round(value * 100) / 100;
+        }
+      });
+
     const metadata = {
-      node,
-      tags: [...nodeTags[node.id]]
+      id: nodeId,
+      name: nodeLabel[nodeId],
+      type: nodeType[nodeId],
+      tags: [...nodeTags[nodeId]]
         .map((tagId) => tagNames[tagId])
         .sort(sortAlpha),
       pipeline: pipeline.name[pipeline.active],
-      parameters: nodeParameters[node.id],
-      runCommand: nodeRunCommand[node.id],
-      code: nodeCodes[node.id],
-      filepath: nodeFilepaths[node.id],
-      plot: nodePlot[node.id],
-      datasetType: nodeDatasetTypes[node.id],
-      originalType: nodeOriginalTypes[node.id],
-      transcodedTypes: nodeTranscodedTypes[node.id],
-      inputs: nodeInputs[node.id],
-      outputs: nodeOutputs[node.id],
+      parameters: nodeParameters[nodeId],
+      runCommand: nodeRunCommand[nodeId],
+      code: nodeCodes[nodeId],
+      filepath: nodeFilepaths[nodeId],
+      plot: nodePlot[nodeId],
+      trackingData: nodeTrackingData[nodeId],
+      datasetType: nodeDatasetTypes[nodeId],
+      originalType: nodeOriginalTypes[nodeId],
+      transcodedTypes: nodeTranscodedTypes[nodeId],
+      inputs: nodeInputs[nodeId],
+      outputs: nodeOutputs[nodeId],
     };
+
     return metadata;
   }
 );

@@ -5,14 +5,14 @@ import { setup, mockState } from '../../utils/state.mock';
 
 describe('NodeListGroup', () => {
   it('renders without throwing', () => {
-    const type = getNodeTypes(mockState.animals)[0];
+    const type = getNodeTypes(mockState.spaceflights)[0];
     expect(() =>
       setup.mount(<NodeListGroup id={type.id} name={type.name} />)
     ).not.toThrow();
   });
 
   it('handles checkbox change events', () => {
-    const type = getNodeTypes(mockState.animals)[0];
+    const type = getNodeTypes(mockState.spaceflights)[0];
     const onToggleChecked = jest.fn();
     const wrapper = setup.mount(
       <NodeListGroup
@@ -27,7 +27,7 @@ describe('NodeListGroup', () => {
   });
 
   it('handles collapse button click events', () => {
-    const type = getNodeTypes(mockState.animals)[0];
+    const type = getNodeTypes(mockState.spaceflights)[0];
     const onToggleCollapsed = jest.fn();
     const wrapper = setup.mount(
       <NodeListGroup
@@ -41,7 +41,7 @@ describe('NodeListGroup', () => {
   });
 
   it('adds class when collapsed prop true', () => {
-    const type = getNodeTypes(mockState.animals)[0];
+    const type = getNodeTypes(mockState.spaceflights)[0];
     const wrapper = setup.mount(
       <NodeListGroup id={type.id} name={type.name} collapsed={true} />
     );
@@ -50,7 +50,7 @@ describe('NodeListGroup', () => {
   });
 
   it('removes class when collapsed prop false', () => {
-    const type = getNodeTypes(mockState.animals)[0];
+    const type = getNodeTypes(mockState.spaceflights)[0];
     const wrapper = setup.mount(
       <NodeListGroup id={type.id} name={type.name} collapsed={false} />
     );

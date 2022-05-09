@@ -1,5 +1,10 @@
 import React from 'react';
-import LazyList, { range, rangeUnion, rangeEqual, thresholds } from './index';
+import LazyList, {
+  range,
+  rangeUnion,
+  rangeEqual,
+  thresholds,
+} from './lazy-list';
 import { setup } from '../../utils/state.mock';
 
 describe('LazyList', () => {
@@ -34,7 +39,8 @@ describe('LazyList', () => {
         dispose={true}
         height={test.itemHeights}
         total={test.items.length}
-        container={(element) => element?.parentElement}>
+        container={(element) => element?.parentElement}
+      >
         {test.listRender}
       </LazyList>
     );
@@ -127,12 +133,14 @@ const setupTest = ({
           overflowY: 'scroll',
           height: containerHeight,
           width: containerWidth,
-        }}>
+        }}
+      >
         {/* List container */}
         <ul
           className="test-list"
           ref={listRef}
-          style={{ ...listStyle, width: listWidth }}>
+          style={{ ...listStyle, width: listWidth }}
+        >
           {/* Upper placeholder */}
           <li ref={upperRef} style={upperStyle} />
           {/* Lower placeholder */}

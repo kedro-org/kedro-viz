@@ -1,4 +1,4 @@
-import animals from '../utils/data/animals.mock.json';
+import spaceflights from '../utils/data/spaceflights.mock.json';
 import {
   CHANGE_FLAG,
   RESET_DATA,
@@ -9,10 +9,10 @@ import {
   TOGGLE_MINIMAP,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
+  TOGGLE_PRETTY_NAME,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
-  UPDATE_FONT_LOADED,
   TOGGLE_CODE,
   TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
   changeFlag,
@@ -25,10 +25,10 @@ import {
   toggleParametersHovered,
   toggleCode,
   toggleSidebar,
+  togglePrettyName,
   toggleTextLabels,
   toggleTheme,
   updateChartSize,
-  updateFontLoaded,
   toggleFocusMode,
 } from '../actions';
 import {
@@ -47,9 +47,9 @@ import {
 } from '../actions/tags';
 import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
-  TOGGLE_MODULAR_PIPELINE_FILTER,
+  TOGGLE_MODULAR_PIPELINE_EXPANDED,
   toggleModularPipelineActive,
-  toggleModularPipelineFilter,
+  toggleModularPipelineExpanded,
 } from '../actions/modular-pipelines';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
@@ -57,9 +57,9 @@ describe('actions', () => {
   it('should create an action to reset pipeline data', () => {
     const expectedAction = {
       type: RESET_DATA,
-      data: animals,
+      data: spaceflights,
     };
-    expect(resetData(animals)).toEqual(expectedAction);
+    expect(resetData(spaceflights)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether to show layers', () => {
@@ -145,6 +145,15 @@ describe('actions', () => {
     expect(toggleNodesDisabled(nodeIDs, isDisabled)).toEqual(expectedAction);
   });
 
+  it('should create an action to toggle whether to show pretty names on/off', () => {
+    const prettyName = false;
+    const expectedAction = {
+      type: TOGGLE_PRETTY_NAME,
+      prettyName,
+    };
+    expect(togglePrettyName(prettyName)).toEqual(expectedAction);
+  });
+
   it('should create an action to toggle whether to show text labels on/off', () => {
     const textLabels = false;
     const expectedAction = {
@@ -202,7 +211,7 @@ describe('actions', () => {
    * Tests for modular pipelines related actions
    */
 
-  it('should create an action to toggle an array of modular pipeliness active state on/off', () => {
+  it('should create an action to toggle an array of modular pipelines active state on/off', () => {
     const modularPipelineIDs = ['12345', '67890'];
     const active = false;
     const expectedAction = {
@@ -215,15 +224,13 @@ describe('actions', () => {
     );
   });
 
-  it('should create an action to toggle an array of modular pipelines on/off', () => {
+  it('should create an action to expand an array of modular pipelines', () => {
     const modularPipelineIDs = ['12345', '67890'];
-    const enabled = false;
     const expectedAction = {
-      type: TOGGLE_MODULAR_PIPELINE_FILTER,
-      modularPipelineIDs,
-      enabled,
+      type: TOGGLE_MODULAR_PIPELINE_EXPANDED,
+      expandedIDs: modularPipelineIDs,
     };
-    expect(toggleModularPipelineFilter(modularPipelineIDs, enabled)).toEqual(
+    expect(toggleModularPipelineExpanded(modularPipelineIDs)).toEqual(
       expectedAction
     );
   });
@@ -263,15 +270,6 @@ describe('actions', () => {
       chartSize,
     };
     expect(updateChartSize(chartSize)).toEqual(expectedAction);
-  });
-
-  it('should create an action to update the state when the webfont has loaded', () => {
-    const fontLoaded = true;
-    const expectedAction = {
-      type: UPDATE_FONT_LOADED,
-      fontLoaded,
-    };
-    expect(updateFontLoaded(fontLoaded)).toEqual(expectedAction);
   });
 
   it('should create an action to change a flag', () => {

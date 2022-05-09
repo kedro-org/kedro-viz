@@ -1,9 +1,16 @@
 {
   "parameters": {
-    "test_params": {
-      "example_learning_rate": 0.01,
-      "example_num_train_iter": 10000,
-      "example_test_data_ratio": 0.2
-    }
+    "test_size": 0.2,
+    "random_state": 3,
+    "features": [
+      "engines",
+      "passenger_capacity",
+      "crew",
+      "d_check_complete",
+      "moon_clearance_complete",
+      "iata_approved",
+      "company_rating",
+      "review_scores_rating"
+    ]
   }
 }

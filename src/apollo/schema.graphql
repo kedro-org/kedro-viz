@@ -1,0 +1,57 @@
+"""Generic scalar type representing a JSON object"""
+scalar JSONObject
+
+type Mutation {
+  updateRunDetails(runId: ID!, runInput: RunInput!): UpdateRunDetailsResponse!
+}
+
+type Query {
+  runMetadata(runIds: [ID!]!): [Run!]!
+  runsList: [Run!]!
+  runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [TrackingDataset!]!
+  version: Version!
+}
+
+type Run {
+  author: String
+  bookmark: Boolean
+  gitBranch: String
+  gitSha: String
+  id: ID!
+  notes: String
+  runCommand: String
+  title: String!
+}
+
+input RunInput {
+  bookmark: Boolean = null
+  notes: String = null
+  title: String = null
+}
+
+type Subscription {
+  runsAdded: [Run!]!
+}
+
+type TrackingDataset {
+  data: JSONObject
+  datasetName: String
+  datasetType: String
+}
+
+type UpdateRunDetailsFailure {
+  id: ID!
+  errorMessage: String!
+}
+
+union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | UpdateRunDetailsFailure
+
+type UpdateRunDetailsSuccess {
+  run: Run!
+}
+
+type Version {
+  installed: String!
+  isOutdated: Boolean!
+  latest: String!
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { setup } from '../../utils/state.mock';
-import SplitPanel from './index';
+import SplitPanel from './split-panel';
 
 describe('SplitPanel', () => {
   const mockSplitPanel = (props) =>
@@ -15,7 +15,8 @@ describe('SplitPanel', () => {
             className="split-panel__container"
             data-is-resizing={isResizing}
             data-split={split}
-            {...container}>
+            {...container}
+          >
             <div className="split-panel__panel-a" {...panelA} />
             <div className="split-panel__handle" {...handle} />
             <div className="split-panel__panel-b" {...panelB} />

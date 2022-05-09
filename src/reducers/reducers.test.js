@@ -13,10 +13,10 @@ import {
   TOGGLE_CODE,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
+  TOGGLE_PRETTY_NAME,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
-  UPDATE_FONT_LOADED,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -30,10 +30,8 @@ import {
   NODE_TYPE_DISABLED_UNSET,
 } from '../actions/node-type';
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
-import {
-  TOGGLE_MODULAR_PIPELINE_ACTIVE,
-  TOGGLE_MODULAR_PIPELINE_FILTER,
-} from '../actions/modular-pipelines';
+import { TOGGLE_MODULAR_PIPELINE_ACTIVE } from '../actions/modular-pipelines';
+import { TOGGLE_GRAPH_LOADING } from '../actions/graph';
 
 describe('Reducer', () => {
   it('should return an Object', () => {
@@ -43,11 +41,11 @@ describe('Reducer', () => {
   describe('RESET_DATA', () => {
     it('should return the same data when given the same input', () => {
       expect(
-        reducer(mockState.animals, {
+        reducer(mockState.spaceflights, {
           type: RESET_DATA,
-          data: mockState.animals,
+          data: mockState.spaceflights,
         })
-      ).toEqual(mockState.animals);
+      ).toEqual(mockState.spaceflights);
     });
 
     it('should reset the state with new data', () => {
@@ -59,16 +57,18 @@ describe('Reducer', () => {
       };
       const newState = reducer(mockState.demo, {
         type: RESET_DATA,
-        data: mockState.animals,
+        data: mockState.spaceflights,
       });
-      expect(removeGraph(newState)).toEqual(removeGraph(mockState.animals));
+      expect(removeGraph(newState)).toEqual(
+        removeGraph(mockState.spaceflights)
+      );
     });
   });
 
   describe('TOGGLE_NODE_CLICKED', () => {
     it('should toggle the given node active', () => {
       const nodeClicked = 'abc123';
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_NODE_CLICKED,
         nodeClicked,
       });
@@ -79,7 +79,7 @@ describe('Reducer', () => {
   describe('TOGGLE_NODE_HOVERED', () => {
     it('should toggle the given node active', () => {
       const nodeHovered = 'abc123';
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_NODE_HOVERED,
         nodeHovered,
       });
@@ -89,7 +89,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_NODES_DISABLED', () => {
     it('should toggle the given nodes disabled', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_NODES_DISABLED,
         nodeIDs: ['123', 'abc'],
         isDisabled: true,
@@ -103,7 +103,7 @@ describe('Reducer', () => {
         type: TOGGLE_NODE_CLICKED,
         nodeClicked: nodeID,
       };
-      const clickedState = reducer(mockState.animals, clickNodeAction);
+      const clickedState = reducer(mockState.spaceflights, clickNodeAction);
       expect(clickedState.node.clicked).toEqual(nodeID);
       const disableNodeAction = {
         type: TOGGLE_NODES_DISABLED,
@@ -115,20 +115,31 @@ describe('Reducer', () => {
     });
   });
 
+  describe('TOGGLE_PRETTY_NAME', () => {
+    it('should toggle the value of prettyName', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: TOGGLE_PRETTY_NAME,
+        prettyName: true,
+      });
+      expect(mockState.spaceflights.prettyName).toBe(true);
+      expect(newState.prettyName).toBe(true);
+    });
+  });
+
   describe('TOGGLE_TEXT_LABELS', () => {
     it('should toggle the value of textLabels', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_TEXT_LABELS,
         textLabels: true,
       });
-      expect(mockState.animals.textLabels).toBe(true);
+      expect(mockState.spaceflights.textLabels).toBe(true);
       expect(newState.textLabels).toBe(true);
     });
   });
 
   describe('TOGGLE_TAG_ACTIVE', () => {
     it('should toggle the given tag active', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_TAG_ACTIVE,
         tagIDs: ['huge'],
         active: true,
@@ -139,7 +150,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_TAG_FILTER', () => {
     it('should disable a given tag', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_TAG_FILTER,
         tagIDs: ['small'],
         enabled: true,
@@ -150,7 +161,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_THEME', () => {
     it('should toggle the theme to light', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_THEME,
         theme: 'light',
       });
@@ -165,7 +176,7 @@ describe('Reducer', () => {
         parameters: true,
         task: true,
       };
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_TYPE_DISABLED,
         typeIDs: mockDisabledState,
       });
@@ -178,7 +189,7 @@ describe('Reducer', () => {
         parameters: false,
         task: true,
       };
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_TYPE_DISABLED,
         typeIDs: mockDisabledState,
       });
@@ -195,7 +206,7 @@ describe('Reducer', () => {
         parameters: true,
         task: true,
       };
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_TYPE_DISABLED,
         typeIDs: mockDisabledState,
       });
@@ -209,7 +220,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_LAYERS', () => {
     it('should toggle whether layers are shown', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_LAYERS,
         visible: false,
       });
@@ -219,7 +230,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_SIDEBAR', () => {
     it('should toggle whether the sidebar is open', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_SIDEBAR,
         visible: false,
       });
@@ -229,7 +240,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_EXPORT_MODAL', () => {
     it('should toggle whether the export modal is visible', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_EXPORT_MODAL,
         visible: false,
       });
@@ -239,7 +250,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_SETTINGS_MODAL', () => {
     it('should toggle whether the export modal is visible', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_SETTINGS_MODAL,
         visible: false,
       });
@@ -249,7 +260,7 @@ describe('Reducer', () => {
 
   describe('TOGGLE_MINIMAP', () => {
     it('should toggle whether the minimap is open', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_MINIMAP,
         visible: false,
       });
@@ -266,7 +277,7 @@ describe('Reducer', () => {
     const hoverAction = { type: TOGGLE_NODE_HOVERED, nodeHovered };
     const oldState = [clickAction, hoverAction].reduce(
       reducer,
-      mockState.animals
+      mockState.spaceflights
     );
     const newState = reducer(oldState, pipelineAction);
 
@@ -315,7 +326,7 @@ describe('Reducer', () => {
 
   describe('UPDATE_CHART_SIZE', () => {
     it("should update the chart's dimensions", () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: UPDATE_CHART_SIZE,
         chartSize: document.body.getBoundingClientRect(),
       });
@@ -326,23 +337,15 @@ describe('Reducer', () => {
         right: expect.any(Number),
         top: expect.any(Number),
         width: expect.any(Number),
+        x: expect.any(Number),
+        y: expect.any(Number),
       });
-    });
-  });
-
-  describe('UPDATE_FONT_LOADED', () => {
-    it('should update the state when the webfont is loaded', () => {
-      const newState = reducer(mockState.animals, {
-        type: UPDATE_FONT_LOADED,
-        fontLoaded: true,
-      });
-      expect(newState.fontLoaded).toBe(true);
     });
   });
 
   describe('TOGGLE_CODE', () => {
     it('should toggle whether the code panel is open', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_CODE,
         visible: true,
       });
@@ -352,7 +355,7 @@ describe('Reducer', () => {
 
   describe('CHANGE_FLAG', () => {
     it('should update the state when a flag is changed', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: CHANGE_FLAG,
         name: 'testFlag',
         value: true,
@@ -363,18 +366,18 @@ describe('Reducer', () => {
 
   describe('TOGGLE_PARAMETERS_HOVERED', () => {
     it('should toggle the value of hoveredParameters', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_PARAMETERS_HOVERED,
         hoveredParameters: true,
       });
-      expect(mockState.animals.hoveredParameters).toBe(false);
+      expect(mockState.spaceflights.hoveredParameters).toBe(false);
       expect(newState.hoveredParameters).toBe(true);
     });
   });
 
   describe('TOGGLE_MODULAR_PIPELINE_ACTIVE', () => {
     it('should toggle whether a modular pipeline is active', () => {
-      const newState = reducer(mockState.animals, {
+      const newState = reducer(mockState.spaceflights, {
         type: TOGGLE_MODULAR_PIPELINE_ACTIVE,
         modularPipelineIDs: ['nested'],
         active: true,
@@ -383,14 +386,13 @@ describe('Reducer', () => {
     });
   });
 
-  describe('TOGGLE_MODULAR_PIPELINE_FILTER', () => {
-    it('should toggle whether a modular pipeline filter is enabled', () => {
-      const newState = reducer(mockState.animals, {
-        type: TOGGLE_MODULAR_PIPELINE_FILTER,
-        modularPipelineIDs: ['nested'],
-        enabled: true,
+  describe('TOGGLE_GRAPH_LOADING', () => {
+    it('should toggle the loading state of the graph', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: TOGGLE_GRAPH_LOADING,
+        loading: true,
       });
-      expect(newState.modularPipeline.enabled).toEqual({ nested: true });
+      expect(newState.loading.graph).toBe(true);
     });
   });
 });

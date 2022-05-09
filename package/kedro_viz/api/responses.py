@@ -1,30 +1,3 @@
-# Copyright 2021 QuantumBlack Visual Analytics Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
-# NONINFRINGEMENT. IN NO EVENT WILL THE LICENSOR OR OTHER CONTRIBUTORS
-# BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF, OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-# The QuantumBlack Visual Analytics Limited ("QuantumBlack") name and logo
-# (either separately or in combination, "QuantumBlack Trademarks") are
-# trademarks of QuantumBlack. The License does not grant you any right or
-# license to the QuantumBlack Trademarks. You may not use the QuantumBlack
-# Trademarks or any confusingly similar mark as a trademark for your product,
-# or use the QuantumBlack Trademarks in any other manner that might cause
-# confusion in the marketplace, including but not limited to in advertising,
-# on websites, or on software.
-#
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """`kedro_viz.api.responses` defines API response types"""
 # pylint: disable=missing-class-docstring,too-few-public-methods
 import abc
@@ -50,8 +23,10 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     full_name: str
     tags: List[str]
     pipelines: List[str]
-    modular_pipelines: List[str]
     type: str
+
+    # If a node is a ModularPipeline node, this value will be None, hence Optional.
+    modular_pipelines: Optional[List[str]]
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
@@ -112,9 +87,9 @@ NodeAPIResponse = Union[
 
 
 class TaskNodeMetadataAPIResponse(BaseAPIResponse):
-    code: str
-    filepath: str
-    parameters: Dict
+    code: Optional[str]
+    filepath: Optional[str]
+    parameters: Optional[Dict]
     inputs: List[str]
     outputs: List[str]
     run_command: Optional[str]
@@ -136,6 +111,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     filepath: str
     type: str
     plot: Optional[Dict]
+    tracking_data: Optional[Dict]
     run_command: Optional[str]
 
     class Config:
@@ -201,24 +177,92 @@ class NamedEntityAPIResponse(BaseAPIResponse):
     name: Optional[str]
 
 
+class ModularPipelineChildAPIResponse(BaseAPIResponse):
+    """Model a child in a modular pipeline's children field in the API response."""
+
+    id: str
+    type: str
+
+
+class ModularPipelinesTreeNodeAPIResponse(BaseAPIResponse):
+    """Model a node in the tree representation of modular pipelines in the API response."""
+
+    id: str
+    name: str
+    inputs: List[str]
+    outputs: List[str]
+    children: List[ModularPipelineChildAPIResponse]
+
+
+# Represent the modular pipelines in the API response as a tree.
+# The root node is always designated with the __root__ key.
+# Example:
+# {
+#     "__root__": {
+#            "id": "__root__",
+#            "name": "Root",
+#            "inputs": [],
+#            "outputs": [],
+#            "children": [
+#                {"id": "d577578a", "type": "parameters"},
+#                {"id": "data_science", "type": "modularPipeline"},
+#                {"id": "f1f1425b", "type": "parameters"},
+#                {"id": "data_engineering", "type": "modularPipeline"},
+#            ],
+#        },
+#        "data_engineering": {
+#            "id": "data_engineering",
+#            "name": "Data Engineering",
+#            "inputs": ["d577578a"],
+#            "outputs": [],
+#            "children": [],
+#        },
+#        "data_science": {
+#            "id": "data_science",
+#            "name": "Data Science",
+#            "inputs": ["f1f1425b"],
+#            "outputs": [],
+#            "children": [],
+#        },
+#    }
+# }
+ModularPipelinesTreeAPIResponse = Dict[str, ModularPipelinesTreeNodeAPIResponse]
+
+
 class GraphAPIResponse(BaseAPIResponse):
     nodes: List[NodeAPIResponse]
     edges: List[GraphEdgeAPIResponse]
     layers: List[str]
     tags: List[NamedEntityAPIResponse]
     pipelines: List[NamedEntityAPIResponse]
-    modular_pipelines: List[NamedEntityAPIResponse]
+    modular_pipelines: ModularPipelinesTreeAPIResponse
     selected_pipeline: str
 
 
 def get_default_response() -> GraphAPIResponse:
     """Default response for `/api/main`."""
+    default_selected_pipeline_id = (
+        data_access_manager.get_default_selected_pipeline().id
+    )
+
+    modular_pipelines_tree = (
+        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+            default_selected_pipeline_id
+        )
+    )
+
     return GraphAPIResponse(
-        nodes=data_access_manager.nodes.as_list(),
-        edges=data_access_manager.edges.as_list(),
+        nodes=data_access_manager.get_nodes_for_registered_pipeline(
+            default_selected_pipeline_id
+        ),
+        edges=data_access_manager.get_edges_for_registered_pipeline(
+            default_selected_pipeline_id
+        ),
         tags=data_access_manager.tags.as_list(),
-        layers=data_access_manager.layers.as_list(),
+        layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
+            default_selected_pipeline_id
+        ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
-        modular_pipelines=data_access_manager.modular_pipelines.as_list(),
-        selected_pipeline=data_access_manager.get_default_selected_pipeline().id,
+        modular_pipelines=modular_pipelines_tree,
+        selected_pipeline=default_selected_pipeline_id,
     )

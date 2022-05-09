@@ -6,7 +6,8 @@ const FocusModeIcon = ({ className, checked }) => (
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
-    viewBox="0 0 24 24">
+    viewBox="0 0 24 24"
+  >
     <g>
       <path
         d="M5 0L5 2 2 2 2 5 0 5 0 0z"

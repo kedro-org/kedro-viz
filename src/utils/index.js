@@ -1,5 +1,4 @@
 //--- Useful JS utility functions ---//
-
 import { pathRoot } from '../config';
 
 /**

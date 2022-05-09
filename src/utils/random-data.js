@@ -17,8 +17,6 @@ const MAX_TAG_COUNT = 20;
 const PARAMETERS_FREQUENCY = 0.2;
 const MIN_PIPELINES_COUNT = 2;
 const MAX_PIPELINES_COUNT = 15;
-const MIN_MODULAR_PIPELINES_COUNT = 2;
-const MAX_MODULAR_PIPELINES_COUNT = 15;
 const LAYERS = [
   'Raw',
   'Intermediate',
@@ -35,12 +33,12 @@ class Pipeline {
   constructor() {
     this.utils = randomUtils();
     this.pipelines = this.generatePipelines();
-    this.modularPipelines = this.generateModularPipelines();
     this.rankCount = this.getRankCount();
     this.rankLayers = this.getRankLayers();
     this.tags = this.generateTags();
     this.nodes = this.generateNodes();
     this.edges = this.generateEdges();
+    this.modularPipelines = this.generateModularPipelines(this.nodes);
 
     this.update();
     this.finalise();
@@ -63,21 +61,17 @@ class Pipeline {
   }
 
   /**
-   * Create the modular pipelines array
-   * @returns {number} Rank count total
+   * Create the modular pipelines tree from nodes in the graph
+   * @returns {Object} A modular pipelines tree
    */
-  generateModularPipelines() {
-    const modularPipelines = ['Data Science'];
-    const pipelineCount = this.utils.randomNumberBetween(
-      MIN_MODULAR_PIPELINES_COUNT,
-      MAX_MODULAR_PIPELINES_COUNT
-    );
-    for (let i = 1; i < pipelineCount; i++) {
-      modularPipelines.push(
-        this.utils.getRandomName(this.utils.randomNumber(4), ' ')
-      );
-    }
-    return modularPipelines.filter(unique);
+  generateModularPipelines(nodes) {
+    return {
+      __root__: {
+        id: '__root__',
+        name: 'Root',
+        children: nodes.map((node) => ({ id: node.id, type: node.type })),
+      },
+    };
   }
 
   /**
@@ -193,7 +187,7 @@ class Pipeline {
       rank: initialRank,
       layer: layer,
       pipelines: this.getNodePipelines(),
-      modular_pipelines: this.getNodeModularPipelines(), //eslint-disable-line camelcase
+      modular_pipelines: null, //eslint-disable-line camelcase
       tags: this.getRandomTags(),
       _sources: [],
       _targets: [],
@@ -255,19 +249,6 @@ class Pipeline {
         return pipelines.concat(id);
       }
       return pipelines;
-    }, []);
-  }
-
-  /**
-   * Create a list of the modular pipelines that the node will be included in
-   * @returns {array} Node pipelines
-   */
-  getNodeModularPipelines() {
-    return this.modularPipelines.reduce((modularPipelines, id, i) => {
-      if (i === 0 || this.utils.randomIndex(2)) {
-        return modularPipelines.concat(id);
-      }
-      return modularPipelines;
     }, []);
   }
 
@@ -466,10 +447,7 @@ class Pipeline {
       nodes: this.nodes,
       pipelines: this.pipelines.map((name) => ({ id: name, name })),
       //eslint-disable-next-line camelcase
-      modular_pipelines: this.modularPipelines.map((name) => ({
-        id: name,
-        name,
-      })),
+      modular_pipelines: this.modularPipelines,
       tags: this.tags,
     };
   }
