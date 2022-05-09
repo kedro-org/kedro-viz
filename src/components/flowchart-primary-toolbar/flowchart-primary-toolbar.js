@@ -46,6 +46,7 @@ export const FlowchartPrimaryToolbar = ({
       <IconButton
         ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
         className={'pipeline-menu-button--layers'}
+        dataHeapEvent={`visible.layers.${visibleLayers}`}
         onClick={() => onToggleLayers(!visibleLayers)}
         icon={LayersIcon}
         labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
