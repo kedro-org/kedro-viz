@@ -40,6 +40,7 @@ export const GlobalToolbar = ({
               }
               disabled={false}
               icon={TreeIcon}
+              labelText="Flowchart"
             />
           </NavLink>
           <NavLink exact to={{ pathname: '/experiment-tracking' }}>
@@ -50,6 +51,7 @@ export const GlobalToolbar = ({
               }
               disabled={false}
               icon={ExperimentsIcon}
+              labelText="Experiment tracking"
             />
           </NavLink>
         </ul>
@@ -62,20 +64,20 @@ export const GlobalToolbar = ({
             className={
               'pipeline-menu-button--theme pipeline-menu-button--large'
             }
-            onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
             icon={ThemeIcon}
             labelText="Toggle theme"
+            onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
           />
           <IconButton
             ariaLabel={'Change the settings flags'}
             className={
               'pipeline-menu-button--settings pipeline-menu-button--large'
             }
-            onClick={() => onToggleSettingsModal(true)}
-            icon={SettingsIcon}
             disabled={false}
-            labelText={'Settings'}
             hasReminder={isOutdated}
+            icon={SettingsIcon}
+            labelText={'Settings'}
+            onClick={() => onToggleSettingsModal(true)}
           />
         </ul>
       </div>
