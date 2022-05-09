@@ -6,7 +6,10 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.5.0
+
 ## Major features and improvements
+
 - Added support for Python 3.9 and 3.10. (#815)
 
 ## Bug fixes and other changes
@@ -14,7 +17,9 @@ Please follow the established format:
 - Change route name from `runsList` to `experiment-tracking`. (#820)
 - Update feature flag description to remind the user of the need for page refresh to apply settings. (#821)
 - Fix experiment tracking not showing run details bug on Windows. (#809)
+- Fix rendering of React component instance with custom routes. (#838)
 - Improve performance when many datasets are missing. (#832)
+- Fix flowchart not showing on initial load for static data inputs. (#843)
 
 # Release 4.4.0
 
