@@ -124,9 +124,8 @@ const NodeListRow = memo(
                 'pipeline-nodelist__row__label--disabled': disabled,
               }
             )}
-          >
-            {label}
-          </span>
+            dangerouslySetInnerHTML={{ __html: label }}
+          />
         </TextButton>
         {typeof count === 'number' && (
           <span onClick={onClick} className={'pipeline-nodelist__row__count'}>
