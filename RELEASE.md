@@ -8,7 +8,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Fix lambda Python functions not rendering correctly on flowchart. (#851)
+- Fix lambda and partial Python functions not rendering correctly on flowchart. (#851)
 
 # Release 4.5.0
 
