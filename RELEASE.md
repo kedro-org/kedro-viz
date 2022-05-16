@@ -6,6 +6,10 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Bug fixes and other changes
+
+- Fix lambda Python functions not rendering correctly on flowchart. (#851)
+
 # Release 4.5.0
 
 ## Major features and improvements
