@@ -18,7 +18,7 @@ Please follow the established format:
 - Update feature flag description to remind the user of the need for page refresh to apply settings. (#821)
 - Fix experiment tracking not showing run details bug on Windows. (#809)
 - Fix rendering of React component instance with custom routes. (#838)
-- Improve performance when many datasets are missing. (#832)
+- Improve performance when many datasets are missing (requires `kedro>=0.18.1`). (#832)
 - Fix flowchart not showing on initial load for static data inputs. (#843)
 
 # Release 4.4.0
