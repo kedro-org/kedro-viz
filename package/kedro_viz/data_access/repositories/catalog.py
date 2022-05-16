@@ -2,14 +2,11 @@
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from typing import Optional
-from unittest.mock import patch
 
 from kedro.io import (
     AbstractDataSet,
-    AbstractVersionedDataSet,
-    DataCatalog,
+     DataCatalog,
     DataSetNotFoundError,
-    Version,
 )
 
 from kedro_viz.constants import KEDRO_VERSION
