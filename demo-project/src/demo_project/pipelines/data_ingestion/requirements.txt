@@ -1,1 +1,1 @@
-kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet]==0.18.0
+kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet]==0.18.1
