@@ -5,7 +5,7 @@ from typing import Optional
 
 from kedro.io import (
     AbstractDataSet,
-     DataCatalog,
+    DataCatalog,
     DataSetNotFoundError,
 )
 
