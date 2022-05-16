@@ -71,7 +71,7 @@ const toReplace = {
 };
 
 export const replaceMatches = (str) => {
-  if (str && str.length > 0) {
+  if (str?.length > 0) {
     const regex = new RegExp(Object.keys(toReplace).join('|'), 'gi');
 
     return str.replace(regex, (matched) => {
