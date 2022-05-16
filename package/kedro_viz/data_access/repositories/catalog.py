@@ -3,11 +3,7 @@ centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from typing import Optional
 
-from kedro.io import (
-    AbstractDataSet,
-    DataCatalog,
-    DataSetNotFoundError,
-)
+from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 
 from kedro_viz.constants import KEDRO_VERSION
 
