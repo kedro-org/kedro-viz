@@ -1,4 +1,4 @@
-import { arrayToObject, getUrl, unique } from './index';
+import { arrayToObject, getUrl, unique, replaceMatches } from './index';
 
 describe('utils', () => {
   describe('arrayToObject', () => {
@@ -44,6 +44,12 @@ describe('utils', () => {
   describe('unique', () => {
     it('removes duplicates from an array', () => {
       expect([1, 1, 2, 2, 3, 3, 1].filter(unique)).toEqual([1, 2, 3]);
+    });
+  });
+
+  describe('replaceMatches', () => {
+    it('replaces matched characters from a string', () => {
+      expect(replaceMatches('&lt;lambda&gt;')).toEqual('<lambda>');
     });
   });
 });
