@@ -326,8 +326,8 @@ class TestGraphNodeMetadata:
         )
         task_node = GraphNode.create_task_node(kedro_node)
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
-        assert task_node.name == "&lt;partial&gt;"
-        assert task_node.full_name == "&lt;partial&gt;"
+        assert task_node.name == "<partial>"
+        assert task_node.full_name == "<partial>"
         assert not hasattr(task_node_metadata, "code")
         assert not hasattr(task_node_metadata, "filepath")
         assert task_node_metadata.parameters == {}

@@ -48,8 +48,15 @@ describe('utils', () => {
   });
 
   describe('replaceMatches', () => {
+    const entitiesToReplace = {
+      '&lt;': '<',
+      '&gt;': '>',
+    };
+
     it('replaces matched characters from a string', () => {
-      expect(replaceMatches('&lt;lambda&gt;')).toEqual('<lambda>');
+      expect(replaceMatches('&lt;lambda&gt;', entitiesToReplace)).toEqual(
+        '<lambda>'
+      );
     });
   });
 });

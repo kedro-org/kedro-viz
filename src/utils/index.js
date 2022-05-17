@@ -63,14 +63,10 @@ export const changed = (props, objectA, objectB) => {
 /**
  * Replace any parts of a string that match the keys in the toReplace object
  * @param {string} str The string to check
+ * @param {object} toReplace The object of strings to replace and their replacements
  * @returns {string} The string with or without replaced values
  */
-const toReplace = {
-  '&lt;': '<',
-  '&gt;': '>',
-};
-
-export const replaceMatches = (str) => {
+export const replaceMatches = (str, toReplace) => {
   if (str?.length > 0) {
     const regex = new RegExp(Object.keys(toReplace).join('|'), 'gi');
 

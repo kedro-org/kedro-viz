@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { changed } from '../../utils';
+import { changed, replaceMatches } from '../../utils';
 import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
@@ -10,6 +10,13 @@ import { getNodeActive } from '../../selectors/nodes';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 37;
+
+// HTML tags to replace partial and curry Python functions so we
+// don't get a conflict with using dangerouslySetInnerHTML
+const stringsToReplace = {
+  '<lambda>': '&lt;lambda&gt;',
+  '<partial>': '&lt;partial&gt;',
+};
 
 /**
  * Returns `true` if there are no props changes, therefore the last render can be reused.
@@ -124,9 +131,10 @@ const NodeListRow = memo(
                 'pipeline-nodelist__row__label--disabled': disabled,
               }
             )}
-          >
-            {label}
-          </span>
+            dangerouslySetInnerHTML={{
+              __html: replaceMatches(label, stringsToReplace),
+            }}
+          />
         </TextButton>
         {typeof count === 'number' && (
           <span onClick={onClick} className={'pipeline-nodelist__row__count'}>
