@@ -1,2 +1,2 @@
-kedro[pandas.ParquetDataSet]==0.18.0
+kedro[pandas.ParquetDataSet]==0.18.1
 scikit-learn~=1.0
