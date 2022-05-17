@@ -36,7 +36,7 @@ const MetaData = ({
   // Hide plot modal when selected metadata changes
   useEffect(() => onTogglePlotModal(false), [metadata, onTogglePlotModal]);
   const isTaskNode = metadata?.type === 'task';
-  const isDataNode = metadata?.type === 'data';
+  const isDatasetNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
   const hasPlot = Boolean(metadata?.plot);
@@ -52,6 +52,17 @@ const MetaData = ({
       ? 'Please provide a name argument for this node in order to see a run command.'
       : null;
   }
+
+  // translates the naming for the different types of nodes
+  const translateMetadataType = (metaDataType) => {
+    if (metaDataType === 'task') {
+      return 'node';
+    }
+    if (metaDataType === 'data') {
+      return 'dataset';
+    }
+    return metaDataType;
+  };
 
   const onCloseClick = () => {
     // Deselecting a node automatically hides MetaData panel
@@ -102,11 +113,14 @@ const MetaData = ({
             </div>
             <div className="pipeline-metadata__list">
               <dl className="pipeline-metadata__properties">
-                <MetaDataRow label="Type:" value={metadata.type} />
+                <MetaDataRow
+                  label="Type:"
+                  value={translateMetadataType(metadata.type)}
+                />
                 {!isTranscoded && (
                   <MetaDataRow
                     label="Dataset Type:"
-                    visible={isDataNode}
+                    visible={isDatasetNode}
                     kind="type"
                     value={metadata.datasetType}
                   />
@@ -115,13 +129,13 @@ const MetaData = ({
                   <>
                     <MetaDataRow
                       label="Original Type:"
-                      visible={isDataNode}
+                      visible={isDatasetNode}
                       kind="type"
                       value={metadata.originalType}
                     />
                     <MetaDataRow
                       label="Transcoded Types:"
-                      visible={isDataNode}
+                      visible={isDatasetNode}
                       kind="type"
                       value={metadata.transcodedTypes}
                     />
@@ -136,7 +150,7 @@ const MetaData = ({
                   <MetaDataRow
                     label="Tracking data from last run:"
                     theme={theme}
-                    visible={isDataNode}
+                    visible={isDatasetNode}
                     kind="trackingData"
                     commas={false}
                     inline={false}
