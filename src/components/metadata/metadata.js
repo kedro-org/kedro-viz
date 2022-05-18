@@ -36,7 +36,7 @@ const MetaData = ({
   // Hide plot modal when selected metadata changes
   useEffect(() => onTogglePlotModal(false), [metadata, onTogglePlotModal]);
   const isTaskNode = metadata?.type === 'task';
-  const isDatasetNode = metadata?.type === 'data';
+  const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
   const hasPlot = Boolean(metadata?.plot);
@@ -57,10 +57,10 @@ const MetaData = ({
   const translateMetadataType = (metaDataType) => {
     if (metaDataType === 'task') {
       return 'node';
-    }
-    if (metaDataType === 'data') {
+    } else if (metaDataType === 'data') {
       return 'dataset';
     }
+
     return metaDataType;
   };
 
@@ -120,7 +120,7 @@ const MetaData = ({
                 {!isTranscoded && (
                   <MetaDataRow
                     label="Dataset Type:"
-                    visible={isDatasetNode}
+                    visible={isDataNode}
                     kind="type"
                     value={metadata.datasetType}
                   />
@@ -129,13 +129,13 @@ const MetaData = ({
                   <>
                     <MetaDataRow
                       label="Original Type:"
-                      visible={isDatasetNode}
+                      visible={isDataNode}
                       kind="type"
                       value={metadata.originalType}
                     />
                     <MetaDataRow
                       label="Transcoded Types:"
-                      visible={isDatasetNode}
+                      visible={isDataNode}
                       kind="type"
                       value={metadata.transcodedTypes}
                     />
@@ -150,7 +150,7 @@ const MetaData = ({
                   <MetaDataRow
                     label="Tracking data from last run:"
                     theme={theme}
-                    visible={isDatasetNode}
+                    visible={isDataNode}
                     kind="trackingData"
                     commas={false}
                     inline={false}
