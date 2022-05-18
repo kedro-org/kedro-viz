@@ -22,6 +22,7 @@ export const PrimaryToolbar = ({
       {displaySidebar && (
         <IconButton
           ariaLabel={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
+          dataHeapEvent={`visible.sidebar.${visible.sidebar}`}
           className={classnames(
             'pipeline-menu-button',
             'pipeline-menu-button--menu',
