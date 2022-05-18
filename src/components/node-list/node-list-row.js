@@ -11,9 +11,7 @@ import { getNodeActive } from '../../selectors/nodes';
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 37;
 
-// HTML tags to replace partial and curry Python functions so we
-// don't get a conflict with using dangerouslySetInnerHTML
-const stringsToReplace = {
+const toReplace = {
   '<lambda>': '&lt;lambda&gt;',
   '<partial>': '&lt;partial&gt;',
 };
@@ -117,6 +115,7 @@ const NodeListRow = memo(
             `pipeline-nodelist__row__text--kind-${kind}`,
             `pipeline-nodelist__row__text--${rowType}`
           )}
+          data-heap-event={`clicked.sidebar.${icon}`}
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
@@ -132,7 +131,7 @@ const NodeListRow = memo(
               }
             )}
             dangerouslySetInnerHTML={{
-              __html: replaceMatches(label, stringsToReplace),
+              __html: replaceMatches(label, toReplace),
             }}
           />
         </TextButton>
@@ -157,6 +156,11 @@ const NodeListRow = memo(
             <input
               id={id}
               className="pipeline-nodelist__row__checkbox"
+              data-heap-event={
+                kind === 'element'
+                  ? `focusMode.checked.${checked}`
+                  : `visible.${name}.${checked}`
+              }
               type="checkbox"
               checked={checked}
               disabled={disabled}
