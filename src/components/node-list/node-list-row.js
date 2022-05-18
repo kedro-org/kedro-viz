@@ -11,7 +11,8 @@ import { getNodeActive } from '../../selectors/nodes';
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 37;
 
-const toReplace = {
+// This allows lambda and partial Python functions to render via dangerouslySetInnerHTML
+const replaceTagsWithEntities = {
   '<lambda>': '&lt;lambda&gt;',
   '<partial>': '&lt;partial&gt;',
 };
@@ -131,7 +132,7 @@ const NodeListRow = memo(
               }
             )}
             dangerouslySetInnerHTML={{
-              __html: replaceMatches(label, toReplace),
+              __html: replaceMatches(label, replaceTagsWithEntities),
             }}
           />
         </TextButton>

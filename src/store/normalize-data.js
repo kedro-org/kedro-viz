@@ -1,9 +1,4 @@
-import { arrayToObject, replaceMatches } from '../utils';
-
-const entitiesToReplace = {
-  '&lt;': '<',
-  '&gt;': '>',
-};
+import { arrayToObject } from '../utils';
 
 /**
  * Create new default pipeline state instance
@@ -132,10 +127,8 @@ const addNode = (state) => (node) => {
     return;
   }
   state.node.ids.push(id);
-  state.node.name[id] = replaceMatches(node.name, entitiesToReplace);
-  state.node.fullName[id] =
-    replaceMatches(node.full_name, entitiesToReplace) ||
-    replaceMatches(node.name, entitiesToReplace);
+  state.node.name[id] = node.name;
+  state.node.fullName[id] = node.full_name || node.name;
   state.node.type[id] = node.type;
   state.node.layer[id] = node.layer;
   state.node.pipelines[id] = node.pipelines
