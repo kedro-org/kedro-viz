@@ -10,6 +10,7 @@ Please follow the established format:
 
 - Fix lambda and partial Python functions not rendering correctly on flowchart. (#851)
 - Add tooltip label text to page-navigation links. (#846)
+- Change `Type` naming on Metadata Side Panel. (#852)
 
 # Release 4.5.0
 
