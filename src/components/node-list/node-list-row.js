@@ -7,9 +7,15 @@ import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
 import { getNodeActive } from '../../selectors/nodes';
+import { replaceMatches } from '../../utils';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 37;
+
+const toReplace = {
+  '<lambda>': '&lt;lambda&gt;',
+  '<partial>': '&lt;partial&gt;',
+};
 
 /**
  * Returns `true` if there are no props changes, therefore the last render can be reused.
@@ -124,7 +130,9 @@ const NodeListRow = memo(
                 'pipeline-nodelist__row__label--disabled': disabled,
               }
             )}
-            dangerouslySetInnerHTML={{ __html: label }}
+            dangerouslySetInnerHTML={{
+              __html: replaceMatches(label, toReplace),
+            }}
           />
         </TextButton>
         {typeof count === 'number' && (
