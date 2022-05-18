@@ -65,7 +65,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.noop": "^3.0.1",
     "lodash.sortby": "^4.7.0",
-    "plotly.js-cartesian-dist": "^1.58.4",
+    "plotly.js-dist-min": "^1.58.4",
     "react-csv": "^2.2.2",
     "react-custom-scrollbars": "^4.2.1",
     "react-json-view": "^1.21.3",
