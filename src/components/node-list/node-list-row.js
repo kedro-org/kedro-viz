@@ -1,13 +1,12 @@
 import React, { memo } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { changed } from '../../utils';
+import { changed, replaceMatches } from '../../utils';
 import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
 import { getNodeActive } from '../../selectors/nodes';
-import { replaceMatches } from '../../utils';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 37;
