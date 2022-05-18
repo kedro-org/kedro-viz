@@ -53,6 +53,17 @@ const MetaData = ({
       : null;
   }
 
+  // translates the naming for the different types of nodes
+  const translateMetadataType = (metaDataType) => {
+    if (metaDataType === 'task') {
+      return 'node';
+    } else if (metaDataType === 'data') {
+      return 'dataset';
+    }
+
+    return metaDataType;
+  };
+
   const onCloseClick = () => {
     // Deselecting a node automatically hides MetaData panel
     onToggleNodeSelected(null);
@@ -102,7 +113,10 @@ const MetaData = ({
             </div>
             <div className="pipeline-metadata__list">
               <dl className="pipeline-metadata__properties">
-                <MetaDataRow label="Type:" value={metadata.type} />
+                <MetaDataRow
+                  label="Type:"
+                  value={translateMetadataType(metadata.type)}
+                />
                 {!isTranscoded && (
                   <MetaDataRow
                     label="Dataset Type:"

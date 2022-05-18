@@ -152,7 +152,7 @@ describe('MetaData', () => {
         mockMetadata: nodeTask,
       });
       const row = rowByLabel(wrapper, 'Type:');
-      expect(textOf(rowValue(row))).toEqual(['task']);
+      expect(textOf(rowValue(row))).toEqual(['node']);
     });
 
     it('does not display the node parameter row when there are no parameters', () => {
@@ -294,7 +294,7 @@ describe('MetaData', () => {
         mockMetadata: nodeData,
       });
       const row = rowByLabel(wrapper, 'Type:');
-      expect(textOf(rowValue(row))).toEqual(['data']);
+      expect(textOf(rowValue(row))).toEqual(['dataset']);
     });
 
     it('shows the node dataset type', () => {
