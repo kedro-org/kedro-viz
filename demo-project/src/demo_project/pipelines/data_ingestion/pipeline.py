@@ -54,6 +54,11 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs=["prm_shuttle_company_reviews", "prm_spine_table"],
                 name="combine_step",
             ),
+            node(
+                func=lambda x: x,
+                inputs='x',
+                outputs='y'
+            )
         ],
         namespace="ingestion",  # provide inputs
         inputs={"reviews", "shuttles", "companies"},  # map inputs outside of namespace

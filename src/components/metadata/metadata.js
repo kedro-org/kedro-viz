@@ -85,10 +85,7 @@ const MetaData = ({
                   className="pipeline-metadata__icon"
                   icon={nodeTypeIcon}
                 />
-                <h2
-                  className="pipeline-metadata__title"
-                  dangerouslySetInnerHTML={{ __html: metadata.name }}
-                />
+                <h2 className="pipeline-metadata__title">{metadata.name}</h2>
               </div>
               <IconButton
                 container={React.Fragment}

@@ -9,10 +9,11 @@
   }
 
   .search-bar .icon--close {
-    top: 18px;
-    right: 2px;
-    width: 20px;
     height: 20px;
+    right: 2px;
+    top: 18px;
+    width: 20px;
+    z-index: 1;
   }
 
   .search-bar .icon__graphics {
