@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.5.1
+
+## Major features and improvements
+
+- Added support for all Plotly chart types. (#853)
+
 ## Bug fixes and other changes
 
 - Fix lambda and partial Python functions not rendering correctly on flowchart. (#851)
