@@ -6,7 +6,7 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 4.5.1
+# Release 4.6.0
 
 ## Major features and improvements
 
@@ -17,6 +17,7 @@ Please follow the established format:
 - Fix lambda and partial Python functions not rendering correctly on flowchart. (#851)
 - Add tooltip label text to page-navigation links. (#846)
 - Change `Type` naming on Metadata Side Panel. (#852)
+- Improve Heap event tracking. (#556)
 
 # Release 4.5.0
 
