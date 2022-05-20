@@ -35,6 +35,7 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 🔎 Highly interactive, filterable and searchable
 - 🔬 Focus mode for modular pipeline visualisation
 - 📊 Rich metadata side panel to display parameters, plots, etc.
+- 📊 Supports all types of [Plotly charts](https://plotly.com/javascript/)
 - ♻️ Autoreload on code change
 - 🧪 Supports tracking and comparing runs in a Kedro project
 - 🎩 Many more to come
