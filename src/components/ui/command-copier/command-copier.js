@@ -36,6 +36,7 @@ const CommandCopier = ({ command }) => {
             <IconButton
               ariaLabel="Copy run command to clipboard."
               className="copy-button"
+              dataHeapEvent={`clicked.run_command`}
               icon={CopyIcon}
               onClick={onCopyClick}
             />

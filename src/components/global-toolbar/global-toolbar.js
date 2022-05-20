@@ -64,9 +64,10 @@ export const GlobalToolbar = ({
             className={
               'pipeline-menu-button--theme pipeline-menu-button--large'
             }
+            dataHeapEvent={`theme.${theme}`}
+            onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
             icon={ThemeIcon}
             labelText="Toggle theme"
-            onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
           />
           <IconButton
             ariaLabel={'Change the settings flags'}
