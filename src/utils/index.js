@@ -59,3 +59,21 @@ export const changed = (props, objectA, objectB) => {
     objectA && objectB && props.some((prop) => objectA[prop] !== objectB[prop])
   );
 };
+
+/**
+ * Replace any parts of a string that match the keys in the toReplace object
+ * @param {string} str The string to check
+ * @param {object} toReplace The object of strings to replace and their replacements
+ * @returns {string} The string with or without replaced values
+ */
+export const replaceMatches = (str, toReplace) => {
+  if (str?.length > 0) {
+    const regex = new RegExp(Object.keys(toReplace).join('|'), 'gi');
+
+    return str.replace(regex, (matched) => {
+      return toReplace[matched];
+    });
+  } else {
+    return str;
+  }
+};
