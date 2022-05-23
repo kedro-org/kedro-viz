@@ -10,7 +10,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Added warning message when filtered pipeline is empty. () 
+- Added warning message when filtered pipeline is empty. (#864) 
 
 # Release 4.6.0
 
