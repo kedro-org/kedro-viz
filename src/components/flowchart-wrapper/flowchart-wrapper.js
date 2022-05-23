@@ -4,6 +4,7 @@ import { isLoading } from '../../selectors/loading';
 import ExportModal from '../export-modal';
 import FlowChart from '../flowchart';
 import LargePipelineWarning from '../large-pipeline-warning';
+import EmptyPipelineWarning from '../empty-pipeline-warning';
 import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import PlotlyModal from '../plotly-modal';
@@ -20,6 +21,7 @@ export const FlowChartWrapper = ({ loading }) => (
     <MetaData />
     <div className="pipeline-wrapper">
       <LargePipelineWarning />
+      <EmptyPipelineWarning />
       <FlowChart />
       <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
     </div>
