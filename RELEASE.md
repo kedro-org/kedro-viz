@@ -5,6 +5,12 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+## Major features and improvements
+
+
+## Bug fixes and other changes
+
+- Added warning message when filtered pipeline is empty. (#864) 
 
 # Release 4.6.0
 
