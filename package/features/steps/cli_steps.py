@@ -100,14 +100,13 @@ def install_kedro(context, version):
         assert False
 
 
-@when('I execute the kedro viz command "{command}"')
-def exec_viz_command(context, command):
+@when("I execute the kedro viz command")
+def exec_viz_command(context):
     """Execute Kedro-Viz command."""
-    split_command = command.split()
-    make_cmd = [context.kedro] + split_command
-
     context.result = ChildTerminatingPopen(
-        make_cmd + ["--no-browser"], env=context.env, cwd=str(context.root_project_dir)
+        [context.kedro, "viz", "--no-browser"],
+        env=context.env,
+        cwd=str(context.root_project_dir),
     )
 
 
