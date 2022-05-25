@@ -8,13 +8,14 @@ import Button from '../ui/button';
 import './pipeline-warning.css';
 
 export const PipelineWarning = ({
+  nodes,
   onDisable,
   onHide,
-  nodes,
   sidebarVisible,
   visible,
 }) => {
   const isEmptyPipeline = nodes.length === 0;
+
   return (
     <div
       className={classnames('kedro', 'pipeline-warning', {
@@ -53,9 +54,9 @@ export const PipelineWarning = ({
 };
 
 export const mapStateToProps = (state) => ({
-  theme: state.theme,
-  sidebarVisible: state.visible.sidebar,
   nodes: getVisibleNodes(state),
+  sidebarVisible: state.visible.sidebar,
+  theme: state.theme,
   visible: getTriggerLargeGraphWarning(state),
 });
 
