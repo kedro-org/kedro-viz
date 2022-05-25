@@ -159,7 +159,6 @@ export const drawNodes = function (changed) {
     enterNodes
       .attr('tabindex', '0')
       .attr('class', 'pipeline-node')
-      .attr('data-heap-event', (node) => `clicked.graph.${node.type}`)
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
       .classed(
@@ -181,7 +180,12 @@ export const drawNodes = function (changed) {
       .duration(this.DURATION)
       .attr('opacity', 1);
 
-    enterNodes.append('rect').attr('class', 'pipeline-node__bg');
+    enterNodes
+      .append('rect')
+      .attr(
+        'class',
+        (node) => `pipeline-node__bg pipeline-node__bg--${node.type}`
+      );
 
     enterNodes
       .append('rect')
