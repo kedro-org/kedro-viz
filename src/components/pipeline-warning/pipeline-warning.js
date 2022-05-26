@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { changeFlag, toggleIgnoreLargeWarning } from '../../actions';
@@ -14,16 +14,25 @@ export const PipelineWarning = ({
   sidebarVisible,
   visible,
 }) => {
+  const [componentLoaded, setComponentLoaded] = useState(false);
   const isEmptyPipeline = nodes.length === 0;
 
+  // Only run this once, when the component mounts
+  useEffect(() => {
+    if (nodes.length > 0) {
+      setComponentLoaded(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <div
-      className={classnames('kedro', 'pipeline-warning', {
-        'pipeline-warning--sidebar-visible': sidebarVisible,
-      })}
-    >
+    <>
       {visible && (
-        <>
+        <div
+          className={classnames('kedro', 'pipeline-warning', {
+            'pipeline-warning--sidebar-visible': sidebarVisible,
+          })}
+        >
           <h2 className="pipeline-warning__title">
             Whoa, that’s a chonky pipeline!
           </h2>
@@ -36,10 +45,15 @@ export const PipelineWarning = ({
           <Button mode="secondary" onClick={onDisable} size="small">
             Don't show this again
           </Button>
-        </>
+        </div>
       )}
       {isEmptyPipeline && (
-        <>
+        <div
+          className={classnames('kedro', {
+            'pipeline-warning': componentLoaded,
+            'pipeline-warning--sidebar-visible': sidebarVisible,
+          })}
+        >
           <h2 className="pipeline-warning__title">
             Oops, there's nothing to see here
           </h2>
@@ -47,9 +61,9 @@ export const PipelineWarning = ({
             This selection has nothing. Please unselect your filters or modular
             pipeline selection to see pipeline elements.
           </p>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
