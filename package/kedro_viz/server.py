@@ -1,5 +1,4 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
-import logging
 import webbrowser
 from pathlib import Path
 from typing import Dict, Optional
