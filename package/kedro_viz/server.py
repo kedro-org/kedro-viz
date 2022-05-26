@@ -91,7 +91,7 @@ def run_server(
 
     if browser and is_localhost(host):
         webbrowser.open_new(f"http://{host}:{port}/")
-    uvicorn.run(app, host=host, port=port, log_config=None, log_level=logging.INFO)
+    uvicorn.run(app, host=host, port=port, log_config=None)
 
 
 if __name__ == "__main__":  # pragma: no cover
