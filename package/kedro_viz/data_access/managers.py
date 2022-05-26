@@ -433,6 +433,12 @@ class DataAccessManager:
                 edges.remove_edge(GraphEdge(bad_input, modular_pipeline_id))
                 node_dependencies[bad_input].remove(modular_pipeline_id)
 
+        modular_pipelines_ids = modular_pipelines_tree.keys()
+
+        for modular_pipeline_id in modular_pipelines_ids:
+            if not modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID:
+                modular_pipelines_tree[modular_pipeline_id].children = set()
+
         for node_id, node in self.nodes.as_dict().items():
             if (
                 node.type == GraphNodeType.MODULAR_PIPELINE
@@ -445,5 +451,17 @@ class DataAccessManager:
                         node_id, self.nodes.get_node_by_id(node_id).type
                     )
                 )
+
+            for modular_pipeline_id in modular_pipelines_ids:
+                if not modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID:
+                    if (
+                        node.belongs_to_pipeline(registered_pipeline_id)
+                        and modular_pipeline_id in node.modular_pipelines
+                    ):
+                        modular_pipelines_tree[modular_pipeline_id].children.add(
+                            ModularPipelineChild(
+                                node.id, self.nodes.get_node_by_id(node.id).type
+                            )
+                        )
 
         return modular_pipelines_tree
