@@ -11,6 +11,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Added warning message when filtered pipeline is empty. (#864) 
+- Disabled uvicorn's logger so that log messages are no longer duplicated. (#870)
 
 # Release 4.6.0
 
