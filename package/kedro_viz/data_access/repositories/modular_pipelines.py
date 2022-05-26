@@ -212,13 +212,6 @@ class ModularPipelinesRepository:
         # Basically this means if the node belongs to the "__default__" pipeline, for example,
         # so does the modular pipeline.
         modular_pipeline.pipelines.update(node.pipelines)
-
-        # Since we extract the modular pipeline from the node's namespace,
-        # the node is by definition a child of the modular pipeline.
-        self.add_child(
-            modular_pipeline_id,
-            ModularPipelineChild(id=node.id, type=GraphNodeType(node.type)),
-        )
         return modular_pipeline_id
 
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
