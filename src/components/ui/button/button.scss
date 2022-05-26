@@ -69,9 +69,14 @@ $secondary-underline-offset-hover: 4px;
     box-shadow: 0 0 0 7px $color-accent-blue;
   }
 
-  &:hover {
+  &:hover:not(:disabled) {
     color: var(--color-button__text--hover);
     background: var(--color-button--outline);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
   }
 
   [data-whatinput='mouse'] &:focus {

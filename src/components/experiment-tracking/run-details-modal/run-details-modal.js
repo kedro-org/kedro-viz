@@ -9,6 +9,7 @@ import './run-details-modal.css';
 
 const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
   const [valuesToUpdate, setValuesToUpdate] = useState({});
+  const [hasNotInteracted, setHasNotInteracted] = useState(true);
   const { updateRunDetails, error, reset } = useUpdateRunDetails();
 
   const onApplyChanges = () => {
@@ -16,6 +17,7 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
       runId: runMetadataToEdit.id,
       runInput: { notes: valuesToUpdate.notes, title: valuesToUpdate.title },
     });
+    onClose(false);
   };
 
   const onChange = (key, value) => {
@@ -24,6 +26,7 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
         [key]: value,
       })
     );
+    setHasNotInteracted(false);
   };
 
   useEffect(() => {
@@ -40,7 +43,8 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
      * the next time the modal opens.
      */
     reset();
-  }, [reset, visible]);
+    setHasNotInteracted(true);
+  }, [reset, runMetadataToEdit, visible]);
 
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
@@ -57,6 +61,7 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
           <Input
             defaultValue={runMetadataToEdit?.title}
             onChange={(value) => onChange('title', value)}
+            resetValueTrigger={visible}
             size="large"
           />
         </div>
@@ -77,8 +82,12 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
           <Button mode="secondary" onClick={() => onClose(false)} size="small">
             Cancel
           </Button>
-          <Button onClick={onApplyChanges} size="small">
-            Apply changes
+          <Button
+            disabled={hasNotInteracted}
+            onClick={onApplyChanges}
+            size="small"
+          >
+            Apply changes and close
           </Button>
         </div>
         {error ? (

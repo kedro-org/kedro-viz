@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import Modal from '../ui/modal';
 import {
   changeFlag,
   toggleSettingsModal,
@@ -9,6 +8,10 @@ import {
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
 import { settings as settingsConfig } from '../../config';
+
+import Modal from '../ui/modal';
+import Button from '../ui/button';
+
 import './settings-modal.css';
 
 /**
@@ -18,14 +21,14 @@ import './settings-modal.css';
 const SettingsModal = ({
   flags,
   isOutdated,
+  latestVersion,
   onClose,
   onToggleFlag,
   onTogglePrettyName,
-  latestVersion,
   prettyName,
   visible,
-  theme,
 }) => {
+  const [hasNotInteracted, setHasNotInteracted] = useState(true);
   const flagData = getFlagsState();
 
   return (
@@ -49,19 +52,23 @@ const SettingsModal = ({
             name={settingsConfig['prettyName'].name}
             toggleValue={prettyName}
             description={settingsConfig['prettyName'].description}
-            onToggleChange={(event) => onTogglePrettyName(event.target.checked)}
+            onToggleChange={(event) => {
+              onTogglePrettyName(event.target.checked);
+              setHasNotInteracted(false);
+            }}
           />
           <div className="pipeline-settings-modal__subtitle">Experiments</div>
-          {flagData.map(({ name, value, description }, index) => (
+          {flagData.map(({ name, value, description }) => (
             <SettingsModalRow
-              key={value}
-              id={value}
-              name={name}
-              toggleValue={flags[value]}
               description={description}
-              onToggleChange={(event) =>
-                onToggleFlag(value, event.target.checked)
-              }
+              id={value}
+              key={value}
+              name={name}
+              onToggleChange={(event) => {
+                onToggleFlag(value, event.target.checked);
+                setHasNotInteracted(false);
+              }}
+              toggleValue={flags[value]}
             />
           ))}
           {isOutdated ? (
@@ -83,6 +90,22 @@ const SettingsModal = ({
               </span>
             </div>
           )}
+          <div className="run-details-modal-button-wrapper">
+            <Button
+              mode="secondary"
+              onClick={() => onClose(false)}
+              size="small"
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={hasNotInteracted}
+              onClick={() => onClose(false)}
+              size="small"
+            >
+              Apply changes and close
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>
@@ -90,10 +113,9 @@ const SettingsModal = ({
 };
 
 export const mapStateToProps = (state) => ({
-  visible: state.visible,
-  theme: state.theme,
-  prettyName: state.prettyName,
   flags: state.flags,
+  prettyName: state.prettyName,
+  visible: state.visible,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
