@@ -8,7 +8,7 @@ import Button from '../ui/button';
 import './pipeline-warning.css';
 
 export const PipelineWarning = ({
-  nodes = undefined,
+  nodes,
   onDisable,
   onHide,
   sidebarVisible,
