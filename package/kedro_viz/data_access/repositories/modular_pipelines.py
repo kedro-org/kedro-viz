@@ -5,8 +5,7 @@ from typing import Dict, Optional, Union
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.graph import (
     DataNode,
-    GraphNode,
-    GraphNodeType,
+g    GraphNode,
     ModularPipelineChild,
     ModularPipelineNode,
     ParametersNode,
