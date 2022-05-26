@@ -1,4 +1,5 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
+import logging
 import webbrowser
 from pathlib import Path
 from typing import Dict, Optional
@@ -90,7 +91,7 @@ def run_server(
 
     if browser and is_localhost(host):
         webbrowser.open_new(f"http://{host}:{port}/")
-    uvicorn.run(app, host=host, port=port)
+    uvicorn.run(app, host=host, port=port, log_config=None, log_level=logging.INFO)
 
 
 if __name__ == "__main__":  # pragma: no cover
