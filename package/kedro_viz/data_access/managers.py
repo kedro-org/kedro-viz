@@ -453,7 +453,7 @@ class DataAccessManager:
                 )
 
             for modular_pipeline_id in modular_pipelines_ids:
-                if not modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID:
+                if modular_pipeline_id != ROOT_MODULAR_PIPELINE_ID:
                     if (
                         node.belongs_to_pipeline(registered_pipeline_id)
                         and modular_pipeline_id in node.modular_pipelines
