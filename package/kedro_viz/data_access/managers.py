@@ -436,7 +436,7 @@ class DataAccessManager:
         modular_pipelines_ids = modular_pipelines_tree.keys()
 
         for modular_pipeline_id in modular_pipelines_ids:
-            if not modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID:
+            if modular_pipeline_id != ROOT_MODULAR_PIPELINE_ID:
                 modular_pipelines_tree[modular_pipeline_id].children = set()
 
         for node_id, node in self.nodes.as_dict().items():
