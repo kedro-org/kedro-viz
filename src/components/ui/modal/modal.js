@@ -5,10 +5,10 @@ import './modal.css';
 /**
  * Generic Kedro Modal
  */
-const Modal = ({ title, onClose, visible, message, children }) => {
+const Modal = ({ title, closeModal, visible, message, children }) => {
   const handleKeyDown = (event) => {
     if (event.keyCode === 27) {
-      onClose();
+      closeModal(true);
     }
   };
 
@@ -25,7 +25,7 @@ const Modal = ({ title, onClose, visible, message, children }) => {
       role="dialog"
     >
       <div
-        onClick={onClose}
+        onClick={closeModal}
         className={classnames('modal__bg', {
           'modal__bg--visible': visible,
         })}

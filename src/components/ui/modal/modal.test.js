@@ -3,7 +3,7 @@ import Modal from './index';
 import { setup } from '../../../utils/state.mock';
 
 describe('Modal', () => {
-  const onClose = jest.fn();
+  const closeModal = jest.fn();
 
   it('renders without crashing', () => {
     const wrapper = setup.mount(<Modal visible={true} />);
@@ -16,7 +16,7 @@ describe('Modal', () => {
 
   it('should have correct structure', () => {
     const wrapper = setup.mount(
-      <Modal title="Hello Test" onClose={onClose}>
+      <Modal title="Hello Test" closeModal={closeModal}>
         <div />
       </Modal>
     );
@@ -25,18 +25,18 @@ describe('Modal', () => {
     expect(wrapper.find('.modal__content').length === 1).toBeTruthy();
     expect(wrapper.find('.modal__wrapper').length === 1).toBeTruthy();
     expect(wrapper.find('.modal__content').length === 1).toBeTruthy();
-    expect(wrapper.find('button').length === 1).toBeTruthy();
   });
 
   it('should have button and description when supplied no children', () => {
-    const wrapper = setup.mount(<Modal title="Hello Test" onClose={onClose} />);
+    const wrapper = setup.mount(
+      <Modal title="Hello Test" closeModal={closeModal} />
+    );
     expect(wrapper.find('.modal__description').length === 1).toBeTruthy();
-    expect(wrapper.find('button').length === 1).toBeTruthy();
   });
 
   it('Modal should have correct structure when supplied children', () => {
     const wrapper = setup.mount(
-      <Modal title="Hello Test" onClose={onClose}>
+      <Modal title="Hello Test" closeModal={closeModal}>
         <button>Hello World</button>
       </Modal>
     );

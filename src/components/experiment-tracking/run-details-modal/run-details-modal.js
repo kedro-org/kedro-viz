@@ -52,6 +52,7 @@ const RunDetailsModal = ({
         setShowRunDetailsModal(false);
       }, 1500);
 
+      // Delay the reset so the user can't see the button text change.
       resetTimeout = setTimeout(() => {
         resetState();
       }, 2000);
@@ -83,7 +84,7 @@ const RunDetailsModal = ({
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
       <Modal
-        onClose={() => setShowRunDetailsModal(false)}
+        closeModal={() => setShowRunDetailsModal(false)}
         theme={theme}
         title="Edit run details"
         visible={visible}

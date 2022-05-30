@@ -32,12 +32,14 @@ describe('RunDetailsModal', () => {
     ).toBe(1);
   });
 
-  it('modal closes when X button is clicked', () => {
+  it('modal closes when cancel button is clicked', () => {
     const setVisible = jest.fn();
-    const wrapper = mount(<RunDetailsModal onClose={() => setVisible(true)} />);
+    const wrapper = mount(
+      <RunDetailsModal setShowRunDetailsModal={() => setVisible(true)} />
+    );
     const onClick = jest.spyOn(React, 'useState');
     const closeButton = wrapper.find(
-      '.pipeline-settings-modal--experiment-tracking .modal__close-button.pipeline-icon-toolbar__button'
+      '.pipeline-settings-modal--experiment-tracking .button__btn.button__btn--secondary'
     );
 
     onClick.mockImplementation((visible) => [visible, setVisible]);
@@ -55,8 +57,8 @@ describe('RunDetailsModal', () => {
     const setVisible = jest.fn();
     const wrapper = mount(
       <RunDetailsModal
-        onClose={() => setVisible(true)}
         runMetadataToEdit={{ id: 'test' }}
+        setShowRunDetailsModal={() => setVisible(true)}
         visible={true}
       />
     );
