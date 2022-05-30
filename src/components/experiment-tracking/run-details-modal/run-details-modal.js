@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
+
 import Button from '../../ui/button';
 import Modal from '../../ui/modal';
 import Input from '../../ui/input';
@@ -7,9 +8,15 @@ import Input from '../../ui/input';
 import '../../settings-modal/settings-modal.css';
 import './run-details-modal.css';
 
-const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
+const RunDetailsModal = ({
+  runMetadataToEdit,
+  setShowRunDetailsModal,
+  theme,
+  visible,
+}) => {
   const [valuesToUpdate, setValuesToUpdate] = useState({});
   const [hasNotInteracted, setHasNotInteracted] = useState(true);
+  const [editsAreSuccessful, setEditsAreSuccessful] = useState(false);
   const { updateRunDetails, error, reset } = useUpdateRunDetails();
 
   const onApplyChanges = () => {
@@ -17,7 +24,10 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
       runId: runMetadataToEdit.id,
       runInput: { notes: valuesToUpdate.notes, title: valuesToUpdate.title },
     });
-    onClose(false);
+
+    if (!error) {
+      setEditsAreSuccessful(true);
+    }
   };
 
   const onChange = (key, value) => {
@@ -28,6 +38,30 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
     );
     setHasNotInteracted(false);
   };
+
+  const resetState = () => {
+    setHasNotInteracted(true);
+    setEditsAreSuccessful(false);
+  };
+
+  useEffect(() => {
+    let modalTimeout, resetTimeout;
+
+    if (editsAreSuccessful) {
+      modalTimeout = setTimeout(() => {
+        setShowRunDetailsModal(false);
+      }, 1500);
+
+      resetTimeout = setTimeout(() => {
+        resetState();
+      }, 2000);
+    }
+
+    return () => {
+      clearTimeout(modalTimeout);
+      clearTimeout(resetTimeout);
+    };
+  }, [editsAreSuccessful, setShowRunDetailsModal]);
 
   useEffect(() => {
     setValuesToUpdate({
@@ -49,7 +83,7 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
       <Modal
-        onClose={() => onClose(false)}
+        onClose={() => setShowRunDetailsModal(false)}
         theme={theme}
         title="Edit run details"
         visible={visible}
@@ -79,15 +113,26 @@ const RunDetailsModal = ({ onClose, runMetadataToEdit, theme, visible }) => {
           />
         </div>
         <div className="run-details-modal-button-wrapper">
-          <Button mode="secondary" onClick={() => onClose(false)} size="small">
+          <Button
+            mode="secondary"
+            onClick={() => setShowRunDetailsModal(false)}
+            size="small"
+          >
             Cancel
           </Button>
           <Button
             disabled={hasNotInteracted}
             onClick={onApplyChanges}
+            mode={editsAreSuccessful ? 'success' : 'primary'}
             size="small"
           >
-            Apply changes and close
+            {editsAreSuccessful ? (
+              <>
+                Changes applied <span className="success-check-mark">✓</span>
+              </>
+            ) : (
+              'Apply changes and close'
+            )}
           </Button>
         </div>
         {error ? (

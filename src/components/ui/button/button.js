@@ -31,7 +31,7 @@ Button.defaultProps = {
 
 Button.propTypes = {
   disabled: PropTypes.bool,
-  mode: PropTypes.oneOf(['primary', 'secondary']),
+  mode: PropTypes.oneOf(['primary', 'secondary', 'success']),
   onClick: PropTypes.func,
   size: PropTypes.oneOf(['regular', 'small']),
 };
