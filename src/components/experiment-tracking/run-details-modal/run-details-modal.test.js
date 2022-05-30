@@ -52,8 +52,13 @@ describe('RunDetailsModal', () => {
   });
 
   it('calls the updateRunDetails function', () => {
+    const setVisible = jest.fn();
     const wrapper = mount(
-      <RunDetailsModal runMetadataToEdit={{ id: 'test' }} visible={true} />
+      <RunDetailsModal
+        onClose={() => setVisible(true)}
+        runMetadataToEdit={{ id: 'test' }}
+        visible={true}
+      />
     );
 
     wrapper.find('.button__btn--primary').simulate('click');

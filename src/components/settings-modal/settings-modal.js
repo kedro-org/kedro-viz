@@ -35,7 +35,10 @@ const SettingsModal = ({
     <div className="pipeline-settings-modal">
       <Modal
         title="Settings"
-        onClose={() => onClose(false)}
+        onClose={() => {
+          onClose(false);
+          setHasNotInteracted(true);
+        }}
         visible={visible.settingsModal}
       >
         <div className="pipeline-settings-modal__content">
@@ -93,14 +96,20 @@ const SettingsModal = ({
           <div className="run-details-modal-button-wrapper">
             <Button
               mode="secondary"
-              onClick={() => onClose(false)}
+              onClick={() => {
+                onClose(false);
+                setHasNotInteracted(true);
+              }}
               size="small"
             >
               Cancel
             </Button>
             <Button
               disabled={hasNotInteracted}
-              onClick={() => onClose(false)}
+              onClick={() => {
+                onClose(false);
+                setHasNotInteracted(true);
+              }}
               size="small"
             >
               Apply changes and close

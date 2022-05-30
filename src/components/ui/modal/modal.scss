@@ -50,11 +50,6 @@ $duration-visibility: 0.4s;
   transition: opacity ease $duration-visibility;
 }
 
-.modal__close-button {
-  position: absolute;
-  right: 0;
-}
-
 .modal__bg--visible {
   opacity: 1;
 }

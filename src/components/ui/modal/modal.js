@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import classnames from 'classnames';
-import CloseIcon from '../../icons/close';
-import IconButton from '../../ui/icon-button';
 import './modal.css';
 
 /**
@@ -37,13 +35,6 @@ const Modal = ({ title, onClose, visible, message, children }) => {
           'modal__content--visible': visible,
         })}
       >
-        <IconButton
-          container={React.Fragment}
-          ariaLabel="Close Modal"
-          className="modal__close-button"
-          icon={CloseIcon}
-          onClick={onClose}
-        />
         <div className="modal__wrapper">
           <div className="modal__title">{title}</div>
           {children}
