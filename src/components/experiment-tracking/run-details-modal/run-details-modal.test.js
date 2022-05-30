@@ -2,6 +2,7 @@ import React from 'react';
 import RunDetailsModal from './index';
 import Adapter from 'enzyme-adapter-react-16';
 import { configure, mount, shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 
 configure({ adapter: new Adapter() });
 
@@ -32,6 +33,12 @@ describe('RunDetailsModal', () => {
     ).toBe(1);
   });
 
+  it('renders with a disabled primary button', () => {
+    const { getByText } = render(<RunDetailsModal visible />);
+
+    expect(getByText(/Apply changes and close/i)).toBeDisabled();
+  });
+
   it('modal closes when cancel button is clicked', () => {
     const setVisible = jest.fn();
     const wrapper = mount(
@@ -51,20 +58,5 @@ describe('RunDetailsModal', () => {
         '.pipeline-settings-modal--experiment-tracking .kui-modal--visible'
       ).length
     ).toBe(0);
-  });
-
-  it('calls the updateRunDetails function', () => {
-    const setVisible = jest.fn();
-    const wrapper = mount(
-      <RunDetailsModal
-        runMetadataToEdit={{ id: 'test' }}
-        setShowRunDetailsModal={() => setVisible(true)}
-        visible={true}
-      />
-    );
-
-    wrapper.find('.button__btn--primary').simulate('click');
-
-    expect(mockUpdateRunDetails).toHaveBeenCalled();
   });
 });

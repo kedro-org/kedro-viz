@@ -1,4 +1,5 @@
 import React from 'react';
+import { render } from '@testing-library/react';
 import SettingsModal, {
   mapStateToProps,
   mapDispatchToProps,
@@ -10,6 +11,18 @@ describe('SettingsModal', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<SettingsModal />);
     expect(wrapper.find('.pipeline-settings-modal__content').length).toBe(1);
+  });
+
+  it('renders with a disabled primary button', () => {
+    const mount = () => {
+      return setup.mount(<SettingsModal />, {
+        afterLayoutActions: [() => toggleSettingsModal(true)],
+      });
+    };
+    const wrapper = mount();
+
+    const content = wrapper.find('.pipeline-settings-modal__content');
+    expect(content.find('.button__btn--primary').length).toBe(1);
   });
 
   it('modal closes when cancel button is clicked', () => {
