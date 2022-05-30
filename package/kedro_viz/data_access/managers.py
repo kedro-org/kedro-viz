@@ -47,10 +47,15 @@ class DataAccessManager:
         self.nodes = GraphNodesRepository()
         self.registered_pipelines = RegisteredPipelinesRepository()
         self.tags = TagsRepository()
-        self.modular_pipelines = ModularPipelinesRepository()
-        # Make sure each registered pipeline has a distinct collection of edges.
+
+        # Make sure each registered pipeline has a distinct collection of
+        # - modular pipelines
+        # - edges
+        # - node dependencies
+        self.modular_pipelines: Dict[str, ModularPipelinesRepository] = defaultdict(
+            ModularPipelinesRepository
+        )
         self.edges: Dict[str, GraphEdgesRepository] = defaultdict(GraphEdgesRepository)
-        # Make sure the node dependencies are built separately for each registered pipeline.
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
@@ -91,6 +96,7 @@ class DataAccessManager:
             pipeline: The Kedro pipeline instance to convert to graph models
                 and add to relevant repositories representing the graph.
         """
+        modular_pipelines = self.modular_pipelines[registered_pipeline_id]
         self.registered_pipelines.add_pipeline(registered_pipeline_id)
         free_inputs = pipeline.inputs()
 
@@ -98,9 +104,7 @@ class DataAccessManager:
             task_node = self.add_node(registered_pipeline_id, node)
             self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
 
-            current_modular_pipeline = self.modular_pipelines.extract_from_node(
-                task_node
-            )
+            current_modular_pipeline = modular_pipelines.extract_from_node(task_node)
 
             # Add node's inputs as DataNode to the graph
             for input_ in node.inputs:
@@ -121,11 +125,9 @@ class DataAccessManager:
                 # Add the input as an input of the task_node's modular_pipeline, if any.
                 # The method `add_input` will take care of figuring out whether
                 # it is an internal or external input of the modular pipeline.
-                self.modular_pipelines.extract_from_node(input_node)
+                modular_pipelines.extract_from_node(input_node)
                 if current_modular_pipeline is not None:
-                    self.modular_pipelines.add_input(
-                        current_modular_pipeline, input_node
-                    )
+                    modular_pipelines.add_input(current_modular_pipeline, input_node)
 
             # Add node outputs as DataNode to the graph.
             # It follows similar logic to adding inputs.
@@ -140,11 +142,9 @@ class DataAccessManager:
                     output_node.original_name = output
                     output_node.original_version = self.catalog.get_dataset(output)
 
-                self.modular_pipelines.extract_from_node(output_node)
+                modular_pipelines.extract_from_node(output_node)
                 if current_modular_pipeline is not None:
-                    self.modular_pipelines.add_output(
-                        current_modular_pipeline, output_node
-                    )
+                    modular_pipelines.add_output(current_modular_pipeline, output_node)
 
     def add_node(self, registered_pipeline_id: str, node: KedroNode) -> TaskNode:
         """Add a Kedro node as a TaskNode to the NodesRepository
@@ -360,8 +360,9 @@ class DataAccessManager:
 
         edges = self.edges[registered_pipeline_id]
         node_dependencies = self.node_dependencies[registered_pipeline_id]
+        modular_pipelines = self.modular_pipelines[registered_pipeline_id]
         modular_pipelines_tree = modular_pipelines_services.expand_tree(
-            self.modular_pipelines.as_dict(), registered_pipeline_id
+            modular_pipelines.as_dict()
         )
         root_children_ids = set()
 
@@ -375,6 +376,8 @@ class DataAccessManager:
                 continue
 
             modular_pipeline_node = self.nodes.add_node(modular_pipeline_node)
+            modular_pipeline_node.pipelines = {registered_pipeline_id}
+
             self.registered_pipelines.add_node(
                 registered_pipeline_id, modular_pipeline_node.id
             )
