@@ -1,6 +1,7 @@
 """`kedro_viz.models.graph` defines data models to represent Kedro entities in a viz graph."""
 # pylint: disable=protected-access
 import abc
+import base64
 import hashlib
 import inspect
 import json
@@ -12,7 +13,6 @@ from enum import Enum
 from pathlib import Path
 from types import FunctionType
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
-import base64
 
 import pandas as pd
 import plotly.express as px
@@ -608,7 +608,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with open(load_path, "rb") as img_file:
                 b64_string = base64.b64encode(img_file.read())
-                self.image = b64_string.decode('utf-8')
+                self.image = b64_string.decode("utf-8")
 
         if data_node.is_tracking_node():
             from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
