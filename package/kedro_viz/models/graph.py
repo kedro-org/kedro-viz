@@ -598,7 +598,9 @@ class DataNodeMetadata(GraphNodeMetadata):
                 self.plot = json.load(fs_file)
 
         if data_node.is_image_node():
-            from kedro.extras.datasets.matplotlib.matplotlib_writer import MatplotlibWriter
+            from kedro.extras.datasets.matplotlib.matplotlib_writer import (
+                MatplotlibWriter,
+            )
 
             dataset = cast(MatplotlibWriter, dataset)
             if not dataset._exists():
