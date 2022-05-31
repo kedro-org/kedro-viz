@@ -3,26 +3,25 @@ import { connect } from 'react-redux';
 import PlotlyChart from '../plotly-chart';
 import CollapseIcon from '../icons/collapse';
 import BackIcon from '../icons/back';
-import NodeIcon from '../../components/icons/node-icon';
+import NodeIcon from '../icons/node-icon';
 import { togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
-import './plotly-modal.css';
+import './metadata-modal.css';
 
-const PlotlyModal = ({ metadata, onToggle, visible }) => {
-  console.log('visible: ', visible);
-  console.log('metadata: ', metadata);
+const MetadataModal = ({ metadata, onToggle, visible }) => {
+  if (!visible.metadataModal || (!metadata?.plot && !metadata?.image)) {
+    return null;
+  }
+
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
 
   const onCollapsePlotClick = () => {
     onToggle(false);
   };
 
-  if (!visible.plotModal || !metadata?.plot) {
-    return null;
-  }
   return (
-    <div className="pipeline-plotly-modal">
+    <div className="pipeline-metadata-modal">
       <div className="pipeline-plot-modal__top">
         <button
           className="pipeline-plot-modal__back"
@@ -36,11 +35,21 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
           <span className="pipeline-plot-modal__title">{metadata.name}</span>
         </div>
       </div>
-      <PlotlyChart
-        data={metadata.plot.data}
-        layout={metadata.plot.layout}
-        view="modal"
-      />
+      {metadata?.plot ? (
+        <PlotlyChart
+          data={metadata.plot.data}
+          layout={metadata.plot.layout}
+          view="modal"
+        />
+      ) : (
+        <div className="pipeline-matplolib-chart">
+          <img
+            alt="Matplotlib rendering"
+            className="pipeline-metadata__plot-image"
+            src={`data:image/png;base64,${metadata.image}`}
+          />
+        </div>
+      )}
       <div className="pipeline-plot-modal__bottom">
         <button
           className="pipeline-plot-modal__collapse-plot"
@@ -48,7 +57,9 @@ const PlotlyModal = ({ metadata, onToggle, visible }) => {
         >
           <CollapseIcon className="pipeline-plot-modal__collapse-plot-icon"></CollapseIcon>
           <span className="pipeline-plot-modal__collapse-plot-text">
-            Collapse Plotly Visualization
+            {metadata?.plot
+              ? 'Collapse Plotly Visualization'
+              : 'Collapse Matplotlib Image'}
           </span>
         </button>
       </div>
@@ -68,4 +79,4 @@ export const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PlotlyModal);
+export default connect(mapStateToProps, mapDispatchToProps)(MetadataModal);

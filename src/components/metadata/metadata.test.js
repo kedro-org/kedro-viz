@@ -544,12 +544,12 @@ describe('MetaData', () => {
       });
     });
 
-    it('onTogglePlotModal', () => {
+    it('onToggleMetadataModal', () => {
       const dispatch = jest.fn();
-      mapDispatchToProps(dispatch).onTogglePlotModal(true);
+      mapDispatchToProps(dispatch).onToggleMetadataModal(true);
       expect(dispatch.mock.calls[0][0]).toEqual({
         visible: true,
-        type: 'TOGGLE_PLOT_MODAL',
+        type: 'TOGGLE_METADATA_MODAL',
       });
     });
   });
