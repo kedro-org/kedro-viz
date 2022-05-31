@@ -209,6 +209,10 @@ $list-inline-spacing: 0.2em;
   cursor: pointer;
 }
 
+.pipeline-metadata__plot-image {
+  width: 100%;
+}
+
 .pipeline-metadata__properties {
   flex-grow: 1;
   height: 0px;

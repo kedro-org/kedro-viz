@@ -10,11 +10,14 @@ import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './plotly-modal.css';
 
 const PlotlyModal = ({ metadata, onToggle, visible }) => {
+  console.log('visible: ', visible);
+  console.log('metadata: ', metadata);
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
 
   const onCollapsePlotClick = () => {
     onToggle(false);
   };
+
   if (!visible.plotModal || !metadata?.plot) {
     return null;
   }

@@ -12,6 +12,7 @@ from enum import Enum
 from pathlib import Path
 from types import FunctionType
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
+import base64
 
 import pandas as pd
 import plotly.express as px
@@ -481,6 +482,13 @@ class DataNode(GraphNode):
             == "kedro.extras.datasets.plotly.json_dataset.JSONDataSet"
         )
 
+    def is_image_node(self):
+        """Check if the current node is a matplotlib image node."""
+        return (
+            self.dataset_type
+            == "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter"
+        )
+
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
         return (
@@ -559,6 +567,10 @@ class DataNodeMetadata(GraphNodeMetadata):
     # currently only applicable for PlotlyDataSet
     plot: Optional[Dict] = field(init=False)
 
+    # the optional image data if the underlying dataset has a image.
+    # currently only applicable for matplotlib.MatplotlibWriter
+    image: Optional[str] = field(init=False)
+
     tracking_data: Optional[Dict] = field(init=False)
 
     # command to run the pipeline to this data node
@@ -584,6 +596,19 @@ class DataNodeMetadata(GraphNodeMetadata):
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
+
+        # if there is a matplotlib node, do the base64 stuff....!!!!!!
+        if data_node.is_image_node():
+            from kedro.extras.datasets.matplotlib import MatplotlibWriter
+
+            dataset = cast(MatplotlibWriter, dataset)
+            if not dataset._exists():
+                return
+
+            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
+            with open(load_path, "rb") as img_file:
+                b64_string = base64.b64encode(img_file.read())
+                self.image = b64_string.decode('utf-8')
 
         if data_node.is_tracking_node():
             from kedro.extras.datasets.tracking.json_dataset import JSONDataSet

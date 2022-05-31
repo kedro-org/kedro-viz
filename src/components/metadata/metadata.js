@@ -40,6 +40,7 @@ const MetaData = ({
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
   const hasPlot = Boolean(metadata?.plot);
+  const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -208,6 +209,29 @@ const MetaData = ({
                     <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
                     <span className="pipeline-metadata__expand-plot-text">
                       Expand Plotly Visualization
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasImage && (
+                <>
+                  <div
+                    className="pipeline-metadata__plot"
+                    onClick={onExpandPlotClick}
+                  >
+                    <img
+                      alt="Matplotlib rendering"
+                      className="pipeline-metadata__plot-image"
+                      src={`data:image/png;base64,${metadata.image}`}
+                    />
+                  </div>
+                  <button
+                    className="pipeline-metadata__expand-plot"
+                    onClick={onExpandPlotClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__expand-plot-text">
+                      Expand Matplotlib Image
                     </span>
                   </button>
                 </>
