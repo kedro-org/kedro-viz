@@ -47,7 +47,7 @@ import {
 } from '../actions/tags';
 import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
-  TOGGLE_MODULAR_PIPELINE_EXPANDED,
+  TOGGLE_MODULAR_PIPELINES_EXPANDED,
   toggleModularPipelineActive,
   toggleModularPipelineExpanded,
 } from '../actions/modular-pipelines';
@@ -227,7 +227,7 @@ describe('actions', () => {
   it('should create an action to expand an array of modular pipelines', () => {
     const modularPipelineIDs = ['12345', '67890'];
     const expectedAction = {
-      type: TOGGLE_MODULAR_PIPELINE_EXPANDED,
+      type: TOGGLE_MODULAR_PIPELINES_EXPANDED,
       expandedIDs: modularPipelineIDs,
     };
     expect(toggleModularPipelineExpanded(modularPipelineIDs)).toEqual(
