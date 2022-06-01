@@ -91,8 +91,6 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
           );
         });
       }
-      console.log(expandedIDs);
-      console.log(newVisibleState);
 
       return updateState({
         expanded: expandedIDs,
