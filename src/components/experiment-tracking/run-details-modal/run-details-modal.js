@@ -129,7 +129,7 @@ const RunDetailsModal = ({
           >
             {editsAreSuccessful ? (
               <>
-                Changes applied <span className="success-check-mark">✓</span>
+                Changes applied <span className="success-check-mark">✅</span>
               </>
             ) : (
               'Apply changes and close'
