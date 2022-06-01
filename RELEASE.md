@@ -13,6 +13,7 @@ Please follow the established format:
 - Added warning message when filtered pipeline is empty. (#864)
 - Disabled uvicorn's logger so that log messages are no longer duplicated. (#870)
 - Enhance _Apply and close_ behavior of modals. (#875)
+- Fix namespace collison when two different registered pipelines have a modular pipeline with the same name. (#871)
 
 # Release 4.6.0
 

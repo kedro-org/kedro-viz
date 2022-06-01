@@ -90,7 +90,9 @@ class ModularPipelinesRepository:
         return self.tree[modular_pipeline_id]
 
     def add_input(
-        self, modular_pipeline_id: str, input_node: Union[DataNode, ParametersNode]
+        self,
+        modular_pipeline_id: str,
+        input_node: Union[DataNode, TranscodedDataNode, ParametersNode],
     ) -> None:
         """Add an input to a modular pipeline based on whether it's an internal or external input.
         The input to a modular pipeline can only be a data node or parameter node.
