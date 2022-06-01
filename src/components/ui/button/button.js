@@ -6,7 +6,7 @@ import './button.css';
 /**
  * Generic Kedro Button
  */
-const Button = ({ children, onClick, size, mode }) => (
+const Button = ({ children, disabled, onClick, size, mode }) => (
   <span className="kedro button">
     <button
       className={classnames(
@@ -14,6 +14,7 @@ const Button = ({ children, onClick, size, mode }) => (
         `button__btn--${size}`,
         `button__btn--${mode}`
       )}
+      disabled={disabled}
       onClick={onClick}
     >
       {children}
@@ -22,15 +23,17 @@ const Button = ({ children, onClick, size, mode }) => (
 );
 
 Button.defaultProps = {
+  disabled: false,
+  mode: 'primary',
   onClick: null,
   size: 'regular',
-  mode: 'primary',
 };
 
 Button.propTypes = {
+  disabled: PropTypes.bool,
+  mode: PropTypes.oneOf(['primary', 'secondary', 'success']),
   onClick: PropTypes.func,
   size: PropTypes.oneOf(['regular', 'small']),
-  mode: PropTypes.oneOf(['primary', 'secondary']),
 };
 
 export default Button;

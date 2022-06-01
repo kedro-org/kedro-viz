@@ -5,13 +5,14 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-## Major features and improvements
 
+## Major features and improvements
 
 ## Bug fixes and other changes
 
 - Added warning message when filtered pipeline is empty. (#864)
 - Disabled uvicorn's logger so that log messages are no longer duplicated. (#870)
+- Enhance _Apply and close_ behavior of modals. (#875)
 - Fix namespace collison when two different registered pipelines have a modular pipeline with the same name. (#871)
 
 # Release 4.6.0

@@ -15,8 +15,8 @@ const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
   }
   return (
     <Modal
+      closeModal={() => onToggle(false)}
       title="Export pipeline visualisation"
-      onClose={() => onToggle(false)}
       visible={visible.exportModal}
     >
       <div className="pipeline-export-modal">
