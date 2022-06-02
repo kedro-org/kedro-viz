@@ -1,4 +1,5 @@
 import React from 'react';
+import { render } from '@testing-library/react';
 import SettingsModal, {
   mapStateToProps,
   mapDispatchToProps,
@@ -12,7 +13,19 @@ describe('SettingsModal', () => {
     expect(wrapper.find('.pipeline-settings-modal__content').length).toBe(1);
   });
 
-  it('modal closes when X button is clicked', () => {
+  it('renders with a disabled primary button', () => {
+    const mount = () => {
+      return setup.mount(<SettingsModal />, {
+        afterLayoutActions: [() => toggleSettingsModal(true)],
+      });
+    };
+    const wrapper = mount();
+
+    const content = wrapper.find('.pipeline-settings-modal__content');
+    expect(content.find('.button__btn--primary').length).toBe(1);
+  });
+
+  it('modal closes when cancel button is clicked', () => {
     const mount = () => {
       return setup.mount(<SettingsModal />, {
         afterLayoutActions: [() => toggleSettingsModal(true)],
@@ -20,8 +33,10 @@ describe('SettingsModal', () => {
     };
     const wrapper = mount();
     expect(wrapper.find('.modal__content--visible').length).toBe(1);
-    const closeButton = wrapper.find('.modal__close-button');
-    closeButton.find('button').simulate('click');
+    const closeButton = wrapper.find(
+      '.pipeline-settings-modal .button__btn.button__btn--secondary'
+    );
+    closeButton.simulate('click');
     expect(wrapper.find('.modal__content--visible').length).toBe(0);
   });
 
@@ -32,7 +47,6 @@ describe('SettingsModal', () => {
         exportModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
       }),
-      theme: expect.stringMatching(/light|dark/),
       flags: expect.any(Object),
       prettyName: expect.any(Boolean),
     };
@@ -42,7 +56,7 @@ describe('SettingsModal', () => {
   it('maps dispatch to props', async () => {
     const dispatch = jest.fn();
 
-    mapDispatchToProps(dispatch).onClose(false);
+    mapDispatchToProps(dispatch).showSettingsModal(false);
     expect(dispatch.mock.calls[0][0]).toEqual({
       type: 'TOGGLE_SETTINGS_MODAL',
       visible: false,

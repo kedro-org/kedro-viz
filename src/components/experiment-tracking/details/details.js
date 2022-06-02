@@ -41,9 +41,9 @@ const Details = ({
   return (
     <>
       <RunDetailsModal
-        onClose={setShowRunDetailsModal}
-        runs={runMetadata}
         runMetadataToEdit={runMetadataToEdit}
+        runs={runMetadata}
+        setShowRunDetailsModal={setShowRunDetailsModal}
         theme={theme}
         visible={showRunDetailsModal}
       />

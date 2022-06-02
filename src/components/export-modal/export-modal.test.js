@@ -17,9 +17,6 @@ describe('ExportModal', () => {
     };
     const wrapper = mount();
     expect(wrapper.find('.modal__content--visible').length).toBe(1);
-    const closeButton = wrapper.find('.modal__close-button');
-    closeButton.find('button').simulate('click');
-    expect(wrapper.find('.modal__content--visible').length).toBe(0);
   });
 
   it('maps state to props', () => {
