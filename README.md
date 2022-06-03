@@ -77,19 +77,19 @@ Kedro-Viz also supports the following additional arguments on the command line:
 ```bash
 Usage: kedro viz [OPTIONS]
 
-  Visualise a Kedro pipeline using Kedro viz.
+  Visualise a Kedro pipeline using Kedro-Viz.
 
 Options:
   --host TEXT               Host that viz will listen to. Defaults to
                             localhost.
-  
+
   --port INTEGER            TCP port that viz will listen to. Defaults to
                             4141.
-  
+
   --browser / --no-browser  Whether to open viz interface in the default
                             browser or not. Browser will only be opened if
                             host is localhost. Defaults to True.
-  
+
   --load-file FILE          Path to load the pipeline JSON file
   --save-file FILE          Path to save the pipeline JSON file
   --pipeline TEXT           Name of the registered pipeline to visualise. If not
@@ -100,7 +100,7 @@ Options:
 
   --autoreload              Autoreload viz server when a Python or YAML file change in
                             the Kedro project
-  
+
   --params TEXT             Specify extra parameters that you want to pass to
                             the context initializer. Items must be separated
                             by comma, keys - by colon, example:
@@ -109,7 +109,7 @@ Options:
                             allowed to contain colons, parameter keys are not.
                             To pass a nested dictionary as parameter, separate
                             keys by '.', example: param_group.param1:value1.
-  
+
   -h, --help                Show this message and exit.
 ```
 
