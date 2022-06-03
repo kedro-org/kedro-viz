@@ -1,7 +1,7 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
 import webbrowser
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
 import uvicorn
 from kedro.io import DataCatalog
@@ -42,6 +42,7 @@ def populate_data(
     data_access_manager.add_pipelines(pipelines)
 
 
+# pylint: disable=too-many-locals
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
@@ -52,6 +53,7 @@ def run_server(
     env: str = None,
     project_path: str = None,
     autoreload: bool = False,
+    extra_params: Dict[str, Any] = None,
 ):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
@@ -69,11 +71,15 @@ def run_server(
         autoreload: Whether the API app should support autoreload.
         project_path: the optional path of the Kedro project that contains the pipelines
             to visualise. If not supplied, the current working directory will be used.
+        extra_params: Optional dictionary containing extra project parameters
+            for underlying KedroContext. If specified, will update (and therefore
+            take precedence over) the parameters retrieved from the project
+            configuration.
     """
     if load_file is None:
         path = Path(project_path) if project_path else Path.cwd()
         catalog, pipelines, session_store_location = kedro_data_loader.load_data(
-            path, env
+            path, env, extra_params
         )
         pipelines = (
             pipelines

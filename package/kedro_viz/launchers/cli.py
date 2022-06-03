@@ -5,13 +5,20 @@ import webbrowser
 from pathlib import Path
 
 import click
-from kedro.framework.cli.utils import KedroCliError
+from kedro.framework.cli.utils import KedroCliError, _split_params
 from semver import VersionInfo
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, is_localhost, run_server
+
+PARAMS_ARG_HELP = """Specify extra parameters that you want to pass
+to the context initializer. Items must be separated by comma, keys - by colon,
+example: param1:value1,param2:value2. Each parameter is split by the first comma,
+so parameter values are allowed to contain colons, parameter keys are not.
+To pass a nested dictionary as parameter, separate keys by '.', example:
+param_group.param1:value1."""
 
 
 @click.group(name="Kedro-Viz")
@@ -72,7 +79,14 @@ def commands():
     is_flag=True,
     help="Autoreload viz server when a Python or YAML file change in the Kedro project",
 )
-def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
+@click.option(
+    "--params",
+    type=click.UNPROCESSED,
+    default="",
+    help=PARAMS_ARG_HELP,
+    callback=_split_params,
+)
+def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, params):
     """Visualise a Kedro pipeline using Kedro viz."""
     installed_version = VersionInfo.parse(__version__)
     latest_version = get_latest_version()
@@ -100,6 +114,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
             "env": env,
             "browser": browser,
             "autoreload": autoreload,
+            "extra_params": params,
         }
         if autoreload:
             if browser and is_localhost(host):
