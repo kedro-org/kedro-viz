@@ -43,11 +43,13 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
         />
       ) : (
         <div className="pipeline-matplolib-chart">
-          <img
-            alt="Matplotlib rendering"
-            className="pipeline-metadata__plot-image"
-            src={`data:image/png;base64,${metadata.image}`}
-          />
+          <div className="pipeline-metadata__plot-image-container">
+            <img
+              alt="Matplotlib rendering"
+              className="pipeline-metadata__plot-image--expanded"
+              src={`data:image/png;base64,${metadata.image}`}
+            />
+          </div>
         </div>
       )}
       <div className="pipeline-plot-modal__bottom">

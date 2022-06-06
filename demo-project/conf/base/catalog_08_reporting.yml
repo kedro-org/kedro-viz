@@ -20,3 +20,7 @@ reporting.price_histogram:
 reporting.cancellation_policy_grid:
   type: demo_project.extras.datasets.image_dataset.ImageDataSet
   filepath: ${base_location}/08_reporting/cancellation_policy_grid.png
+
+reporting.matplotlib_image:
+  type: matplotlib.MatplotlibWriter
+  filepath: ${base_location}/08_reporting/matplot_lib_single_plot.png
