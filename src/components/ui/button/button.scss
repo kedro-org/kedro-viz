@@ -5,6 +5,7 @@
 
 /** Variables **/
 
+$color-success: #31e27b;
 $color-secondary-active: rgba(0, 0, 0, 0.12);
 $timing-primary: 0.2s;
 $secondary-underline-height: 2px;
@@ -14,15 +15,19 @@ $secondary-underline-offset-hover: 4px;
 .kui-theme--light {
   --color-button--active: #{rgba($color-dark, 0.85)};
   --color-button--outline: #{$color-dark};
+  --color-button--outline--disabled: #{rgba($color-dark, 0.3)};
   --color-button__text--hover: #{rgba($color-light, 0.85)};
   --color-button__text: #{rgba($color-dark, 0.85)};
+  --color-button__text--disabled: #{rgba($color-dark, 0.3)};
 }
 
 .kui-theme--dark {
   --color-button--active: #{rgba($color-light, 0.85)};
   --color-button--outline: #{$color-light};
+  --color-button--outline--disabled: #{rgba($color-light, 0.3)};
   --color-button__text--hover: #{rgba($color-dark, 0.85)};
   --color-button__text: #{rgba($color-light, 0.85)};
+  --color-button__text--disabled: #{rgba($color-light, 0.3)};
 }
 
 .button {
@@ -30,22 +35,22 @@ $secondary-underline-offset-hover: 4px;
 }
 
 .button__btn {
-  font-size: 1.6em;
-  line-height: 1.3;
-  font-weight: 600;
-  letter-spacing: 0.1px;
-  color: var(--color-button__text);
-  outline: 2px solid var(--color-button--outline);
-  display: inline-block;
-  margin: 2px;
-  padding: 0.7em 0.8em 0.8em;
-  border: none;
-  border-radius: 0;
-
   background: none;
+  border-radius: 0;
+  border: none;
   box-shadow: none;
+  color: var(--color-button__text);
   cursor: pointer;
+  display: flex;
   font-family: inherit;
+  font-size: 1.6em;
+  font-weight: 600;
+  justify-content: center;
+  letter-spacing: 0.1px;
+  line-height: 1.3;
+  margin: 2px;
+  outline: 2px solid var(--color-button--outline);
+  padding: 0.7em 0.8em 0.8em;
   transition: background ease $timing-primary,
     outline-color ease $timing-primary, color ease $timing-primary;
 }
@@ -58,7 +63,7 @@ $secondary-underline-offset-hover: 4px;
 }
 
 .button__btn--primary {
-  &:active {
+  &:active:not(:disabled) {
     transition: none;
     outline-width: 0;
     color: var(--color-button__text--hover);
@@ -69,9 +74,15 @@ $secondary-underline-offset-hover: 4px;
     box-shadow: 0 0 0 7px $color-accent-blue;
   }
 
-  &:hover {
+  &:hover:not(:disabled) {
     color: var(--color-button__text--hover);
     background: var(--color-button--outline);
+  }
+
+  &:disabled {
+    color: var(--color-button--outline--disabled);
+    cursor: not-allowed;
+    outline: 2px solid var(--color-button--outline--disabled);
   }
 
   [data-whatinput='mouse'] &:focus {
@@ -113,5 +124,47 @@ $secondary-underline-offset-hover: 4px;
 
   [data-whatinput='mouse'] &:focus {
     outline: none;
+  }
+}
+
+.button__btn--success {
+  animation: scale 0.35s ease;
+  background-color: $color-success;
+  color: $color-dark;
+  outline: 2px solid $color-success;
+  width: 172px; // Match the `Apply and close` width to avoid a layout shift.
+}
+
+.success-check-mark {
+  animation: grow 0.35s 0.4s ease forwards;
+  display: block;
+  margin-left: 0.5em;
+  transform: scale(0);
+}
+
+@keyframes scale {
+  0% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(1.15);
+  }
+  75% {
+    transform: scaleX(0.9);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes grow {
+  0% {
+    transform: scale(0);
+  }
+  80% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
   }
 }
