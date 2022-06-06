@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import Modal from '../ui/modal';
 import {
   changeFlag,
   toggleSettingsModal,
@@ -9,6 +8,10 @@ import {
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
 import { settings as settingsConfig } from '../../config';
+
+import Modal from '../ui/modal';
+import Button from '../ui/button';
+
 import './settings-modal.css';
 
 /**
@@ -18,21 +21,49 @@ import './settings-modal.css';
 const SettingsModal = ({
   flags,
   isOutdated,
-  onClose,
+  latestVersion,
+  showSettingsModal,
   onToggleFlag,
   onTogglePrettyName,
-  latestVersion,
   prettyName,
   visible,
-  theme,
 }) => {
+  const [hasNotInteracted, setHasNotInteracted] = useState(true);
+  const [hasClickedApplyAndClose, setHasClickApplyAndClose] = useState(false);
   const flagData = getFlagsState();
+
+  useEffect(() => {
+    let modalTimeout, resetTimeout;
+
+    if (hasClickedApplyAndClose) {
+      modalTimeout = setTimeout(() => {
+        showSettingsModal(false);
+      }, 1500);
+
+      // Delay the reset so the user can't see the button text change.
+      resetTimeout = setTimeout(() => {
+        setHasNotInteracted(true);
+        setHasClickApplyAndClose(false);
+        window.location.reload();
+      }, 2000);
+    }
+
+    return () => {
+      clearTimeout(modalTimeout);
+      clearTimeout(resetTimeout);
+    };
+  }, [hasClickedApplyAndClose, showSettingsModal]);
+
+  const resetStateCloseModal = () => {
+    showSettingsModal(false);
+    setHasNotInteracted(true);
+  };
 
   return (
     <div className="pipeline-settings-modal">
       <Modal
+        closeModal={() => resetStateCloseModal()}
         title="Settings"
-        onClose={() => onClose(false)}
         visible={visible.settingsModal}
       >
         <div className="pipeline-settings-modal__content">
@@ -49,19 +80,23 @@ const SettingsModal = ({
             name={settingsConfig['prettyName'].name}
             toggleValue={prettyName}
             description={settingsConfig['prettyName'].description}
-            onToggleChange={(event) => onTogglePrettyName(event.target.checked)}
+            onToggleChange={(event) => {
+              onTogglePrettyName(event.target.checked);
+              setHasNotInteracted(false);
+            }}
           />
           <div className="pipeline-settings-modal__subtitle">Experiments</div>
-          {flagData.map(({ name, value, description }, index) => (
+          {flagData.map(({ name, value, description }) => (
             <SettingsModalRow
-              key={value}
-              id={value}
-              name={name}
-              toggleValue={flags[value]}
               description={description}
-              onToggleChange={(event) =>
-                onToggleFlag(value, event.target.checked)
-              }
+              id={value}
+              key={value}
+              name={name}
+              onToggleChange={(event) => {
+                onToggleFlag(value, event.target.checked);
+                setHasNotInteracted(false);
+              }}
+              toggleValue={flags[value]}
             />
           ))}
           {isOutdated ? (
@@ -83,6 +118,34 @@ const SettingsModal = ({
               </span>
             </div>
           )}
+          <div className="run-details-modal-button-wrapper">
+            <Button
+              mode="secondary"
+              onClick={() => {
+                showSettingsModal(false);
+                setHasNotInteracted(true);
+              }}
+              size="small"
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={hasNotInteracted}
+              onClick={() => {
+                setHasClickApplyAndClose(true);
+              }}
+              mode={hasClickedApplyAndClose ? 'success' : 'primary'}
+              size="small"
+            >
+              {hasClickedApplyAndClose ? (
+                <>
+                  Changes applied <span className="success-check-mark">✅</span>
+                </>
+              ) : (
+                'Apply changes and close'
+              )}
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>
@@ -90,14 +153,13 @@ const SettingsModal = ({
 };
 
 export const mapStateToProps = (state) => ({
-  visible: state.visible,
-  theme: state.theme,
-  prettyName: state.prettyName,
   flags: state.flags,
+  prettyName: state.prettyName,
+  visible: state.visible,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
-  onClose: (value) => {
+  showSettingsModal: (value) => {
     dispatch(toggleSettingsModal(value));
   },
   onToggleFlag: (name, value) => {

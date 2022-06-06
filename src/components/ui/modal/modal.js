@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react';
 import classnames from 'classnames';
-import CloseIcon from '../../icons/close';
-import IconButton from '../../ui/icon-button';
 import './modal.css';
 
 /**
  * Generic Kedro Modal
  */
-const Modal = ({ title, onClose, visible, message, children }) => {
+const Modal = ({ title, closeModal, visible, message, children }) => {
   const handleKeyDown = (event) => {
     if (event.keyCode === 27) {
-      onClose();
+      closeModal(true);
     }
   };
 
@@ -27,7 +25,7 @@ const Modal = ({ title, onClose, visible, message, children }) => {
       role="dialog"
     >
       <div
-        onClick={onClose}
+        onClick={closeModal}
         className={classnames('modal__bg', {
           'modal__bg--visible': visible,
         })}
@@ -37,13 +35,6 @@ const Modal = ({ title, onClose, visible, message, children }) => {
           'modal__content--visible': visible,
         })}
       >
-        <IconButton
-          container={React.Fragment}
-          ariaLabel="Close Modal"
-          className="modal__close-button"
-          icon={CloseIcon}
-          onClick={onClose}
-        />
         <div className="modal__wrapper">
           <div className="modal__title">{title}</div>
           {children}
