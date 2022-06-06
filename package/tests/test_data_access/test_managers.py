@@ -305,7 +305,11 @@ class TestAddPipelines:
             "params:uk.data_processing.train_test_split",
         }
         assert data_access_manager.tags.as_list() == [Tag("split"), Tag("train")]
-        assert sorted(data_access_manager.modular_pipelines.as_dict().keys()) == sorted(
+        assert sorted(
+            data_access_manager.modular_pipelines[DEFAULT_REGISTERED_PIPELINE_ID]
+            .as_dict()
+            .keys()
+        ) == sorted(
             [
                 ROOT_MODULAR_PIPELINE_ID,
                 "uk.data_processing",
@@ -335,6 +339,30 @@ class TestAddPipelines:
             isinstance(node, TranscodedDataNode)
             for node in data_access_manager.nodes.as_list()
         )
+
+    def test_different_reigstered_pipelines_having_modular_pipeline_with_same_name(
+        self,
+        data_access_manager: DataAccessManager,
+    ):
+        # this test case was taken from the following user's report:
+        # https://github.com/kedro-org/kedro-viz/issues/858
+        registered_pipelines = {
+            "__default__": pipeline(
+                [node(func=lambda a: False, inputs="tst.a", outputs="d")]
+            ),
+            "pipe2": pipeline(
+                [node(func=lambda a: False, inputs="tst.b", outputs="tst.c")]
+            ),
+        }
+
+        data_access_manager.add_catalog(DataCatalog())
+        data_access_manager.add_pipelines(registered_pipelines)
+        modular_pipeline_tree = (
+            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+                DEFAULT_REGISTERED_PIPELINE_ID
+            )
+        )
+        assert len(modular_pipeline_tree["tst"].children) == 1
 
     def test_get_default_selected_pipelines_without_default(
         self,

@@ -1,6 +1,6 @@
 """
 This is a boilerplate pipeline 'reporting'
-generated using Kedro 0.18.0
+generated using Kedro 0.18.1
 """
 import pandas as pd
 import PIL
@@ -13,7 +13,6 @@ from .image_utils import DrawTable
 def make_cancel_policy_bar_chart(
     model_input_data: pd.DataFrame, top_counties: int = 20
 ) -> pd.DataFrame:
-
     """This function performs a group by on the input table, limits the
     results to the top n countries based on price and returns the
     data needed to visualise a stacked bar chart. The DataFrame is

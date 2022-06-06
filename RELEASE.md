@@ -6,6 +6,28 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Major features and improvements
+
+## Bug fixes and other changes
+
+- Added warning message when filtered pipeline is empty. (#864)
+- Disabled uvicorn's logger so that log messages are no longer duplicated. (#870)
+- Enhance _Apply and close_ behavior of modals. (#875)
+- Fix namespace collison when two different registered pipelines have a modular pipeline with the same name. (#871)
+
+# Release 4.6.0
+
+## Major features and improvements
+
+- Added support for all Plotly chart types. (#853)
+
+## Bug fixes and other changes
+
+- Fix lambda and partial Python functions not rendering correctly on flowchart. (#851)
+- Add tooltip label text to page-navigation links. (#846)
+- Change `Type` naming on Metadata Side Panel. (#852)
+- Improve Heap event tracking. (#556)
+
 # Release 4.5.0
 
 ## Major features and improvements
@@ -15,10 +37,10 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Change route name from `runsList` to `experiment-tracking`. (#820)
-- Update feature flag description to remind the user of the need for page refresh to apply settings. (#821)
+- Update feature flag description to remind the user of the need for page refresh to apply settings. (#823)
 - Fix experiment tracking not showing run details bug on Windows. (#809)
 - Fix rendering of React component instance with custom routes. (#838)
-- Improve performance when many datasets are missing. (#832)
+- Improve performance when many datasets are missing (requires `kedro>=0.18.1`). (#832)
 - Fix flowchart not showing on initial load for static data inputs. (#843)
 
 # Release 4.4.0

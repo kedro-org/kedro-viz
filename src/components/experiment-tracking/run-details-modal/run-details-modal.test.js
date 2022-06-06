@@ -2,6 +2,7 @@ import React from 'react';
 import RunDetailsModal from './index';
 import Adapter from 'enzyme-adapter-react-16';
 import { configure, mount, shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 
 configure({ adapter: new Adapter() });
 
@@ -32,12 +33,20 @@ describe('RunDetailsModal', () => {
     ).toBe(1);
   });
 
-  it('modal closes when X button is clicked', () => {
+  it('renders with a disabled primary button', () => {
+    const { getByText } = render(<RunDetailsModal visible />);
+
+    expect(getByText(/Apply changes and close/i)).toBeDisabled();
+  });
+
+  it('modal closes when cancel button is clicked', () => {
     const setVisible = jest.fn();
-    const wrapper = mount(<RunDetailsModal onClose={() => setVisible(true)} />);
+    const wrapper = mount(
+      <RunDetailsModal setShowRunDetailsModal={() => setVisible(true)} />
+    );
     const onClick = jest.spyOn(React, 'useState');
     const closeButton = wrapper.find(
-      '.pipeline-settings-modal--experiment-tracking .modal__close-button.pipeline-icon-toolbar__button'
+      '.pipeline-settings-modal--experiment-tracking .button__btn.button__btn--secondary'
     );
 
     onClick.mockImplementation((visible) => [visible, setVisible]);
@@ -49,15 +58,5 @@ describe('RunDetailsModal', () => {
         '.pipeline-settings-modal--experiment-tracking .kui-modal--visible'
       ).length
     ).toBe(0);
-  });
-
-  it('calls the updateRunDetails function', () => {
-    const wrapper = mount(
-      <RunDetailsModal runMetadataToEdit={{ id: 'test' }} visible={true} />
-    );
-
-    wrapper.find('.button__btn--primary').simulate('click');
-
-    expect(mockUpdateRunDetails).toHaveBeenCalled();
   });
 });

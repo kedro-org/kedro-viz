@@ -180,7 +180,12 @@ export const drawNodes = function (changed) {
       .duration(this.DURATION)
       .attr('opacity', 1);
 
-    enterNodes.append('rect').attr('class', 'pipeline-node__bg');
+    enterNodes
+      .append('rect')
+      .attr(
+        'class',
+        (node) => `pipeline-node__bg pipeline-node__bg--${node.type}`
+      );
 
     enterNodes
       .append('rect')

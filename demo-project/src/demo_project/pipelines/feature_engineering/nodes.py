@@ -1,6 +1,6 @@
 """
 This is a boilerplate pipeline 'feature_engineering'
-generated using Kedro 0.18.0
+generated using Kedro 0.18.1
 """
 
 from functools import reduce
