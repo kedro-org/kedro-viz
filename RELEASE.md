@@ -8,6 +8,8 @@ Please follow the established format:
 
 ## Major features and improvements
 
+- Allow the display of Matplotlib images in the metadata panel and modal. (#887)
+
 ## Bug fixes and other changes
 
 - Added warning message when filtered pipeline is empty. (#864)
