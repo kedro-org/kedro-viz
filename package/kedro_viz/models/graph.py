@@ -608,8 +608,8 @@ class DataNodeMetadata(GraphNodeMetadata):
 
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with open(load_path, "rb") as img_file:
-                b64_string = base64.b64encode(img_file.read())
-            self.image = b64_string.decode("utf-8")
+                base64_bytes = base64.b64encode(img_file.read())
+            self.image = base64_bytes.decode("utf-8")
 
         if data_node.is_tracking_node():
             from kedro.extras.datasets.tracking.json_dataset import JSONDataSet

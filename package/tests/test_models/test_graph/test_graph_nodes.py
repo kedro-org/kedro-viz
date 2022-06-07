@@ -1,4 +1,5 @@
 # pylint: disable=too-many-public-methods
+import base64
 import datetime
 import json
 import shutil
@@ -6,7 +7,7 @@ import time
 from functools import partial
 from pathlib import Path
 from textwrap import dedent
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, call, mock_open, patch
 
 import pandas as pd
 import pytest
@@ -432,18 +433,27 @@ class TestGraphNodeMetadata:
         assert plotly_node_metadata.plot == mock_plot_data
 
     @patch("builtins.__import__", side_effect=import_mock)
-    @patch("base64.b64encode")
+    @patch(
+        "builtins.open",
+        new_callable=mock_open,
+        read_data=base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
+            "AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+        ),
+    )
     def test_image_data_node_metadata(self, patched_base64, patched_import):
         image_dataset_node = MagicMock()
-        base_64_encoded = b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
-        base_64_decoded = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
-        patched_base64.return_value = base_64_encoded
+        base64_encoded_string = (
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
+            "AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+        )
         image_dataset_node.is_image_node.return_value = True
         image_dataset_node.is_plot_node.return_value = False
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
-        assert image_node_metadata.image == base_64_decoded
+        assert image_node_metadata.image == base64_encoded_string
 
-    def test_image_data_node_dataset_not_exist(self):
+    @patch("builtins.__import__", side_effect=import_mock)
+    def test_image_data_node_dataset_not_exist(self, patched_import):
         image_dataset_node = MagicMock()
         image_dataset_node.is_image_node.return_value = True
         image_dataset_node.is_plot_node.return_value = False
