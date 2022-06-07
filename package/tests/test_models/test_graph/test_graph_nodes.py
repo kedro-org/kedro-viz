@@ -33,7 +33,7 @@ orig_import = __import__
 
 
 def import_mock(name, *args):
-    if name.startswith("plotly"):
+    if name.startswith("matplotlib"):
         return MagicMock()
     return orig_import(name, *args)
 
@@ -408,7 +408,7 @@ class TestGraphNodeMetadata:
         plotly_data_node.is_plot_node.return_value = True
         plotly_data_node.is_image_node.return_value = False
         plotly_data_node.is_tracking_node.return_value = False
-        plotly_data_node.kedro_obj._exists.return_value = False
+        plotly_data_node.kedro_obj.exists.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
 
@@ -431,8 +431,9 @@ class TestGraphNodeMetadata:
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_json_dataset_node)
         assert plotly_node_metadata.plot == mock_plot_data
 
+    @patch("builtins.__import__", side_effect=import_mock)
     @patch("base64.b64encode")
-    def test_image_data_node_metadata(self, patched_base64):
+    def test_image_data_node_metadata(self, patched_base64, patched_import):
         image_dataset_node = MagicMock()
         base_64_encoded = b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
         base_64_decoded = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
@@ -446,7 +447,7 @@ class TestGraphNodeMetadata:
         image_dataset_node = MagicMock()
         image_dataset_node.is_image_node.return_value = True
         image_dataset_node.is_plot_node.return_value = False
-        image_dataset_node.kedro_obj._exists.return_value = False
+        image_dataset_node.kedro_obj.exists.return_value = False
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
         assert not hasattr(image_node_metadata, "image")
 
@@ -523,7 +524,7 @@ class TestGraphNodeMetadata:
         metrics_data_node.is_plot_node.return_value = False
         metrics_data_node.is_image_node.return_value = False
         metrics_data_node.is_metric_node.return_value = True
-        metrics_data_node.kedro_obj._exists.return_value = False
+        metrics_data_node.kedro_obj.exists.return_value = False
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
         assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
