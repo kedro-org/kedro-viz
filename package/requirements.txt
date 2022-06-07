@@ -6,7 +6,6 @@ aiofiles==0.6.0
 uvicorn[standard]~=0.17.0
 watchgod~=0.8.0
 plotly>=4.0
-matplotlib~=3.5.2
 pandas>=0.24
 sqlalchemy~=1.2
 strawberry-graphql>=0.93.14, <1.0
