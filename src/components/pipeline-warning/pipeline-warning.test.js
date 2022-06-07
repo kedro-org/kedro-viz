@@ -5,6 +5,7 @@ import {
   mapDispatchToProps,
 } from './pipeline-warning';
 import { mockState, setup } from '../../utils/state.mock';
+import { act } from 'react-dom/test-utils';
 
 describe('PipelineWarning', () => {
   describe('LargePipelineWarning', () => {
@@ -48,20 +49,29 @@ describe('PipelineWarning', () => {
   });
 
   describe('EmptyPipelineWarning', () => {
+    let wrapper;
+    const mockFn = jest.fn();
+    const emptyProps = {
+      onDisable: mockFn,
+      onHide: mockFn,
+      nodes: [],
+      visible: false,
+    };
+
+    beforeAll(() => {
+      jest.useFakeTimers();
+      wrapper = setup.mount(<PipelineWarning {...emptyProps} />);
+    });
+
     it('renders empty pipeline warning without crashing', () => {
-      const mockFn = jest.fn();
-      const props = {
-        onDisable: mockFn,
-        onHide: mockFn,
-        nodes: [],
-        visible: false,
-      };
-      const wrapper = setup.mount(<PipelineWarning {...props} />);
+      act(() => {
+        jest.runOnlyPendingTimers();
+      });
+      wrapper.update();
       expect(wrapper.find('.pipeline-warning__title').length).toBe(1);
     });
 
     it('does not render empty pipeline warning when pipeline is not empty', () => {
-      const mockFn = jest.fn();
       const props = {
         onDisable: mockFn,
         onHide: mockFn,
