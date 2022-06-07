@@ -2,14 +2,14 @@ import { getLinkedNodes } from './linked-nodes';
 import { prepareState } from '../utils/state.mock';
 import { toggleNodeClicked } from '../actions/nodes';
 import spaceflights from '../utils/data/spaceflights.mock.json';
-import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
+import { toggleModularPipelinesExpanded } from '../actions/modular-pipelines';
 import reducer from '../reducers';
 
 describe('getLinkedNodes function', () => {
   const mockState = prepareState({
     data: spaceflights,
     beforeLayoutActions: [
-      () => toggleModularPipelineExpanded(['data_science', 'data_processing']),
+      () => toggleModularPipelinesExpanded(['data_science', 'data_processing']),
     ],
   });
 

@@ -29,7 +29,7 @@ import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleParametersHovered, toggleFocusMode } from '../../actions';
 import {
   toggleModularPipelineActive,
-  toggleModularPipelineExpanded,
+  toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
 import {
   loadNodeData,
@@ -233,7 +233,7 @@ export const mapDispatchToProps = (dispatch) => ({
     dispatch(loadNodeData(nodeID));
   },
   onToggleModularPipelineExpanded: (expanded) => {
-    dispatch(toggleModularPipelineExpanded(expanded));
+    dispatch(toggleModularPipelinesExpanded(expanded));
   },
   onToggleNodeActive: (nodeID) => {
     dispatch(toggleNodeHovered(nodeID));

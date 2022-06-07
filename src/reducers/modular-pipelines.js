@@ -31,10 +31,12 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
 
     case TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED: {
       const newVisibleState = { ...modularPipelineState.visible };
+
       newVisibleState[action.modularPipelineID] = false;
       modularPipelineState.tree[action.modularPipelineID].children.forEach(
         (child) => (newVisibleState[child.id] = true)
       );
+
       return updateState({
         expanded: [...modularPipelineState.expanded, action.modularPipelineID],
         visible: newVisibleState,

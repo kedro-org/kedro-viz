@@ -9,7 +9,7 @@ import {
 
 import spaceflights from '../utils/data/spaceflights.mock.json';
 import { toggleNodesDisabled } from '../actions/nodes';
-import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
+import { toggleModularPipelinesExpanded } from '../actions/modular-pipelines';
 import { toggleFocusMode } from '../actions';
 import reducer from '../reducers';
 
@@ -17,7 +17,7 @@ describe('Selectors', () => {
   const mockState = prepareState({
     data: spaceflights,
     beforeLayoutActions: [
-      () => toggleModularPipelineExpanded(['data_science']),
+      () => toggleModularPipelinesExpanded(['data_science']),
     ],
   });
   const { nodes, edges } = mockState.graph;
@@ -81,7 +81,7 @@ describe('Selectors', () => {
         alteredMockState = reducer(
           mockState,
           toggleNodesDisabled([disabledNode], true),
-          toggleModularPipelineExpanded(['data_science'])
+          toggleModularPipelinesExpanded(['data_science'])
         );
       });
 

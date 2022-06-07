@@ -1,5 +1,5 @@
 import { toggleLayers } from '../actions';
-import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
+import { toggleModularPipelinesExpanded } from '../actions/modular-pipelines';
 import { toggleNodesDisabled } from '../actions/nodes';
 import { toggleTypeDisabled } from '../actions/node-type';
 import { toggleTagFilter } from '../actions/tags';
@@ -24,7 +24,7 @@ describe('Selectors', () => {
   const mockState = prepareState({
     data: spaceflights,
     beforeLayoutActions: [
-      () => toggleModularPipelineExpanded(['data_science', 'data_processing']),
+      () => toggleModularPipelinesExpanded(['data_science', 'data_processing']),
     ],
   });
 
