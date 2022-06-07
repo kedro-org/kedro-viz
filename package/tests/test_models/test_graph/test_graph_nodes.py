@@ -434,8 +434,8 @@ class TestGraphNodeMetadata:
     @patch("base64.b64encode")
     def test_image_data_node_metadata(self, patched_base64):
         image_dataset_node = MagicMock()
-        base_64_encoded = b"Base64MockString="
-        base_64_decoded = "Base64MockString="
+        base_64_encoded = b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+        base_64_decoded = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
         patched_base64.return_value = base_64_encoded
         image_dataset_node.is_image_node.return_value = True
         image_dataset_node.is_plot_node.return_value = False

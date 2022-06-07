@@ -590,7 +590,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
 
             dataset = cast(Union[PlotlyDataSet, PlotlyJSONDataSet], dataset)
-            if not dataset._exists():
+            if not dataset.exists():
                 return
 
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
@@ -603,19 +603,19 @@ class DataNodeMetadata(GraphNodeMetadata):
             )
 
             dataset = cast(MatplotlibWriter, dataset)
-            if not dataset._exists():
+            if not dataset.exists():
                 return
 
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with open(load_path, "rb") as img_file:
                 b64_string = base64.b64encode(img_file.read())
-                self.image = b64_string.decode("utf-8")
+            self.image = b64_string.decode("utf-8")
 
         if data_node.is_tracking_node():
             from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
             from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
-            if not dataset._exists() or self.filepath is None:
+            if not dataset.exists() or self.filepath is None:
                 return
 
             dataset = cast(Union[JSONDataSet, MetricsDataSet], dataset)

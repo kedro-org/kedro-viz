@@ -31,7 +31,7 @@
   background-color: var(--color-bg-plot);
 
   .pipeline-plotly-chart,
-  .pipeline-matplolib-chart {
+  .pipeline-matplotlib-chart {
     width: calc(98% - 80px - #{$global-toolbar-width});
     height: calc(92% - 80px);
     margin: auto;

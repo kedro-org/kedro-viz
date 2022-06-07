@@ -15,6 +15,8 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
   }
 
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
+  const hasPlot = Boolean(metadata?.plot);
+  const hasImage = Boolean(metadata?.image);
 
   const onCollapsePlotClick = () => {
     onToggle(false);
@@ -35,14 +37,15 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
           <span className="pipeline-plot-modal__title">{metadata.name}</span>
         </div>
       </div>
-      {metadata?.plot ? (
+      {hasPlot && (
         <PlotlyChart
           data={metadata.plot.data}
           layout={metadata.plot.layout}
           view="modal"
         />
-      ) : (
-        <div className="pipeline-matplolib-chart">
+      )}
+      {hasImage && (
+        <div className="pipeline-matplotlib-chart">
           <div className="pipeline-metadata__plot-image-container">
             <img
               alt="Matplotlib rendering"
