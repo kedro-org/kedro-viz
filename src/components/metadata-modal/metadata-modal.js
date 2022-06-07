@@ -10,13 +10,14 @@ import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './metadata-modal.css';
 
 const MetadataModal = ({ metadata, onToggle, visible }) => {
-  if (!visible.metadataModal || (!metadata?.plot && !metadata?.image)) {
+  const hasPlot = Boolean(metadata?.plot);
+  const hasImage = Boolean(metadata?.image);
+
+  if (!visible.metadataModal || (!hasPlot && !hasImage)) {
     return null;
   }
 
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPlot = Boolean(metadata?.plot);
-  const hasImage = Boolean(metadata?.image);
 
   const onCollapsePlotClick = () => {
     onToggle(false);
@@ -62,7 +63,7 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
         >
           <CollapseIcon className="pipeline-plot-modal__collapse-plot-icon"></CollapseIcon>
           <span className="pipeline-plot-modal__collapse-plot-text">
-            {metadata?.plot
+            {hasPlot
               ? 'Collapse Plotly Visualization'
               : 'Collapse Matplotlib Image'}
           </span>
