@@ -17,12 +17,13 @@ export const PipelineWarning = ({
   const [componentLoaded, setComponentLoaded] = useState(false);
   const isEmptyPipeline = nodes.length === 0;
 
-  // Only run this once, when the component mounts
+  // Only run this once, when the component mounts.
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setComponentLoaded(true);
     }, 1500);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
