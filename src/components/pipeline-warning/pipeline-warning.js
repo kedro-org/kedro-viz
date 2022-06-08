@@ -17,12 +17,13 @@ export const PipelineWarning = ({
   const [componentLoaded, setComponentLoaded] = useState(false);
   const isEmptyPipeline = nodes.length === 0;
 
-  // Only run this once, when the component mounts
+  // Only run this once, when the component mounts.
   useEffect(() => {
-    if (nodes.length > 0) {
+    const timer = setTimeout(() => {
       setComponentLoaded(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -47,10 +48,9 @@ export const PipelineWarning = ({
           </Button>
         </div>
       )}
-      {isEmptyPipeline && (
+      {isEmptyPipeline && componentLoaded && (
         <div
-          className={classnames('kedro', {
-            'pipeline-warning': componentLoaded,
+          className={classnames('kedro', 'pipeline-warning', {
             'pipeline-warning--sidebar-visible': sidebarVisible,
           })}
         >
