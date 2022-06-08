@@ -101,6 +101,15 @@ Options:
   --autoreload              Autoreload viz server when a Python or YAML file change in
                             the Kedro project
 
+  --params TEXT             Specify extra parameters that you want to pass to
+                            the context initializer. Items must be separated
+                            by comma, keys - by colon, example:
+                            param1:value1,param2:value2. Each parameter is
+                            split by the first comma, so parameter values are
+                            allowed to contain colons, parameter keys are not.
+                            To pass a nested dictionary as parameter, separate
+                            keys by '.', example: param_group.param1:value1.
+
   -h, --help                Show this message and exit.
 ```
 

@@ -5,7 +5,7 @@ load data from projects created in a range of Kedro versions.
 # pylint: disable=import-outside-toplevel
 # pylint: disable=protected-access
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
 from kedro.io import DataCatalog
@@ -36,13 +36,17 @@ def _bootstrap(project_path: Path):
 
 
 def load_data(
-    project_path: Path, env: str = None
+    project_path: Path, env: str = None, extra_params: Dict[str, Any] = None
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], Optional[Path]]:
     """Load data from a Kedro project.
     Args:
         project_path: the path whether the Kedro project is located.
         env: the Kedro environment to load the data. If not provided.
             it will use Kedro default, which is local.
+        extra_params: Optional dictionary containing extra project parameters
+            for underlying KedroContext. If specified, will update (and therefore
+            take precedence over) the parameters retrieved from the project
+            configuration.
     Returns:
         A tuple containing the data catalog and the pipeline dictionary
         and the session store location path (this can be NONE if session_store
@@ -57,7 +61,10 @@ def load_data(
         from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
         with KedroSession.create(
-            project_path=project_path, env=env, save_on_close=False
+            project_path=project_path,
+            env=env,
+            save_on_close=False,
+            extra_params=extra_params,
         ) as session:
 
             context = session.load_context()
@@ -80,7 +87,10 @@ def load_data(
         from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
         with KedroSession.create(
-            project_path=project_path, env=env, save_on_close=False
+            project_path=project_path,
+            env=env,
+            save_on_close=False,
+            extra_params=extra_params,
         ) as session:
 
             context = session.load_context()
@@ -103,6 +113,7 @@ def load_data(
             project_path=project_path,
             env=env,
             save_on_close=False,
+            extra_params=extra_params,
         ) as session:
 
             context = session.load_context()
