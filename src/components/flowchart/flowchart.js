@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
+import { toggleSingleModularPipelineExpanded } from '../../actions/modular-pipelines';
 import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
 import {
   getNodeActive,
@@ -422,7 +423,11 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = (event, node) => {
-    this.props.onLoadNodeData(node.id);
+    if (node.type === 'modularPipeline') {
+      this.props.onClickToExpandModularPipeline(node.id);
+    } else {
+      this.props.onLoadNodeData(node.id);
+    }
     event.stopPropagation();
   };
 
@@ -630,6 +635,9 @@ export const mapStateToProps = (state, ownProps) => ({
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
+  onClickToExpandModularPipeline: (modularPipelineId) => {
+    dispatch(toggleSingleModularPipelineExpanded(modularPipelineId));
+  },
   onLoadNodeData: (nodeClicked) => {
     dispatch(loadNodeData(nodeClicked));
   },
