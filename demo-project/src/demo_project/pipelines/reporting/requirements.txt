@@ -1,3 +1,2 @@
-kedro[plotly.PlotlyDataSet, plotly.JSONDataSet]==0.18.1
-matplotlib==3.5.0
+kedro[plotly.PlotlyDataSet, plotly.JSONDataSet, matplotlib.MatplotlibWriter]==0.18.1
 pillow==9.0.1

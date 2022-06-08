@@ -2,6 +2,7 @@
 This is a boilerplate pipeline 'reporting'
 generated using Kedro 0.18.1
 """
+import matplotlib.pyplot as plt
 import pandas as pd
 import PIL
 import plotly.express as px
@@ -87,3 +88,8 @@ def make_price_analysis_image(model_input_table: pd.DataFrame) -> PIL.Image:
 
     pil_table = DrawTable(analysis_df)
     return pil_table.image
+
+
+def create_matplotlib_chart(companies: pd.DataFrame):
+    plt.plot([1, 2, 3], [4, 5, 6])
+    return plt

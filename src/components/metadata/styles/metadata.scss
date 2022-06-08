@@ -209,6 +209,23 @@ $list-inline-spacing: 0.2em;
   cursor: pointer;
 }
 
+.pipeline-metadata__plot-image-container {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.pipeline-metadata__plot-image {
+  width: 100%;
+}
+
+.pipeline-metadata__plot-image--expanded {
+  height: 100%;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+}
+
 .pipeline-metadata__properties {
   flex-grow: 1;
   height: 0px;

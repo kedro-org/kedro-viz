@@ -34,6 +34,7 @@ export const createInitialPipelineState = () => ({
     inputs: {},
     outputs: {},
     plot: {},
+    image: {},
     trackingData: {},
     datasetType: {},
     originalType: {},
@@ -140,6 +141,7 @@ const addNode = (state) => (node) => {
   state.node.parameters[id] = node.parameters;
   state.node.filepath[id] = node.filepath;
   state.node.plot[id] = node.plot;
+  state.node.image[id] = node.image;
   state.node.datasetType[id] = node.dataset_type;
   state.node.originalType[id] = node.original_type;
   state.node.transcodedTypes[id] = node.transcoded_types;

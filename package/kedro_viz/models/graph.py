@@ -1,6 +1,7 @@
 """`kedro_viz.models.graph` defines data models to represent Kedro entities in a viz graph."""
 # pylint: disable=protected-access
 import abc
+import base64
 import hashlib
 import inspect
 import json
@@ -481,6 +482,13 @@ class DataNode(GraphNode):
             == "kedro.extras.datasets.plotly.json_dataset.JSONDataSet"
         )
 
+    def is_image_node(self):
+        """Check if the current node is a matplotlib image node."""
+        return (
+            self.dataset_type
+            == "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter"
+        )
+
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
         return (
@@ -559,6 +567,10 @@ class DataNodeMetadata(GraphNodeMetadata):
     # currently only applicable for PlotlyDataSet
     plot: Optional[Dict] = field(init=False)
 
+    # the optional image data if the underlying dataset has a image.
+    # currently only applicable for matplotlib.MatplotlibWriter
+    image: Optional[str] = field(init=False)
+
     tracking_data: Optional[Dict] = field(init=False)
 
     # command to run the pipeline to this data node
@@ -578,18 +590,32 @@ class DataNodeMetadata(GraphNodeMetadata):
             from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
 
             dataset = cast(Union[PlotlyDataSet, PlotlyJSONDataSet], dataset)
-            if not dataset._exists():
+            if not dataset.exists():
                 return
 
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
             with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
                 self.plot = json.load(fs_file)
 
+        if data_node.is_image_node():
+            from kedro.extras.datasets.matplotlib.matplotlib_writer import (
+                MatplotlibWriter,
+            )
+
+            dataset = cast(MatplotlibWriter, dataset)
+            if not dataset.exists():
+                return
+
+            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
+            with open(load_path, "rb") as img_file:
+                base64_bytes = base64.b64encode(img_file.read())
+            self.image = base64_bytes.decode("utf-8")
+
         if data_node.is_tracking_node():
             from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
             from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
-            if not dataset._exists() or self.filepath is None:
+            if not dataset.exists() or self.filepath is None:
                 return
 
             dataset = cast(Union[JSONDataSet, MetricsDataSet], dataset)

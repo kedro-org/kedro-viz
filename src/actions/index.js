@@ -50,7 +50,7 @@ export function toggleSettingsModal(visible) {
   };
 }
 
-export const TOGGLE_PLOT_MODAL = 'TOGGLE_PLOT_MODAL';
+export const TOGGLE_METADATA_MODAL = 'TOGGLE_METADATA_MODAL';
 
 /**
  * Toggle whether to show the plot modal
@@ -58,7 +58,7 @@ export const TOGGLE_PLOT_MODAL = 'TOGGLE_PLOT_MODAL';
  */
 export function togglePlotModal(visible) {
   return {
-    type: TOGGLE_PLOT_MODAL,
+    type: TOGGLE_METADATA_MODAL,
     visible,
   };
 }
