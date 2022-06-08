@@ -1,4 +1,5 @@
 # pylint: disable=too-many-public-methods
+import base64
 import datetime
 import json
 import shutil
@@ -6,7 +7,7 @@ import time
 from functools import partial
 from pathlib import Path
 from textwrap import dedent
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, call, mock_open, patch
 
 import pandas as pd
 import pytest
@@ -33,7 +34,7 @@ orig_import = __import__
 
 
 def import_mock(name, *args):
-    if name.startswith("plotly"):
+    if name.startswith("matplotlib"):
         return MagicMock()
     return orig_import(name, *args)
 
@@ -384,9 +385,8 @@ class TestGraphNodeMetadata:
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.filepath == "partitioned/"
 
-    @patch("builtins.__import__", side_effect=import_mock)
     @patch("json.load")
-    def test_plotly_data_node_metadata(self, patched_json_load, patched_import):
+    def test_plotly_data_node_metadata(self, patched_json_load):
         mock_plot_data = {
             "data": [
                 {
@@ -399,16 +399,17 @@ class TestGraphNodeMetadata:
         patched_json_load.return_value = mock_plot_data
         plotly_data_node = MagicMock()
         plotly_data_node.is_plot_node.return_value = True
-        plotly_data_node.is_metric_node.return_value = False
+        plotly_data_node.is_image_node.return_value = False
+        plotly_data_node.is_tracking_node.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot == mock_plot_data
 
-    @patch("builtins.__import__", side_effect=import_mock)
-    def test_plotly_data_node_dataset_not_exist(self, patched_import):
+    def test_plotly_data_node_dataset_not_exist(self):
         plotly_data_node = MagicMock()
         plotly_data_node.is_plot_node.return_value = True
-        plotly_data_node.is_metric_node.return_value = False
-        plotly_data_node.kedro_obj._exists.return_value = False
+        plotly_data_node.is_image_node.return_value = False
+        plotly_data_node.is_tracking_node.return_value = False
+        plotly_data_node.kedro_obj.exists.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
 
@@ -426,9 +427,39 @@ class TestGraphNodeMetadata:
         patched_json_load.return_value = mock_plot_data
         plotly_json_dataset_node = MagicMock()
         plotly_json_dataset_node.is_plot_node.return_value = True
-        plotly_json_dataset_node.is_metric_node.return_value = False
+        plotly_json_dataset_node.is_image_node.return_value = False
+        plotly_json_dataset_node.is_tracking_node.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_json_dataset_node)
         assert plotly_node_metadata.plot == mock_plot_data
+
+    @patch("builtins.__import__", side_effect=import_mock)
+    @patch(
+        "builtins.open",
+        new_callable=mock_open,
+        read_data=base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
+            "AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+        ),
+    )
+    def test_image_data_node_metadata(self, patched_base64, patched_import):
+        image_dataset_node = MagicMock()
+        base64_encoded_string = (
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
+            "AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+        )
+        image_dataset_node.is_image_node.return_value = True
+        image_dataset_node.is_plot_node.return_value = False
+        image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
+        assert image_node_metadata.image == base64_encoded_string
+
+    @patch("builtins.__import__", side_effect=import_mock)
+    def test_image_data_node_dataset_not_exist(self, patched_import):
+        image_dataset_node = MagicMock()
+        image_dataset_node.is_image_node.return_value = True
+        image_dataset_node.is_plot_node.return_value = False
+        image_dataset_node.kedro_obj.exists.return_value = False
+        image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
+        assert not hasattr(image_node_metadata, "image")
 
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_versioned_tracking_data")
     @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
@@ -470,6 +501,7 @@ class TestGraphNodeMetadata:
         patched_metrics_plot.return_value = mock_plot_data
         metrics_data_node = MagicMock()
         metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_image_node.return_value = False
         metrics_data_node.is_tracking_node.return_value = True
         metrics_data_node.is_metric_node.return_value = True
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
@@ -490,6 +522,7 @@ class TestGraphNodeMetadata:
         patched_latest_json.return_value = mock_json_data
         json_data_node = MagicMock()
         json_data_node.is_plot_node.return_value = False
+        json_data_node.is_image_node.return_value = False
         json_data_node.is_tracking_node.return_value = True
         json_data_node.is_metric_node.return_value = False
         json_node_metadata = DataNodeMetadata(data_node=json_data_node)
@@ -499,8 +532,9 @@ class TestGraphNodeMetadata:
     def test_metrics_data_node_metadata_dataset_not_exist(self):
         metrics_data_node = MagicMock()
         metrics_data_node.is_plot_node.return_value = False
+        metrics_data_node.is_image_node.return_value = False
         metrics_data_node.is_metric_node.return_value = True
-        metrics_data_node.kedro_obj._exists.return_value = False
+        metrics_data_node.kedro_obj.exists.return_value = False
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
         assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
@@ -513,6 +547,7 @@ class TestGraphNodeMetadata:
         patched_latest_tracking_data.return_value = None
         tracking_data_node = MagicMock()
         tracking_data_node.is_plot_node.return_value = False
+        tracking_data_node.is_image_node.return_value = False
         tracking_data_node.is_metric_node.return_value = True
         tracking_data_node_metadata = DataNodeMetadata(data_node=tracking_data_node)
         assert not hasattr(tracking_data_node_metadata, "metrics")
@@ -534,6 +569,7 @@ class TestGraphNodeMetadata:
         patched_data_loader.return_value = {}
         tracking_data_node = MagicMock()
         tracking_data_node.is_plot_node.return_value = False
+        tracking_data_node.is_image_node.return_value = False
         tracking_data_node.is_metric_node.return_value = True
         tracking_data_node_metadata = DataNodeMetadata(data_node=tracking_data_node)
         assert tracking_data_node_metadata.tracking_data == mock_metrics_data

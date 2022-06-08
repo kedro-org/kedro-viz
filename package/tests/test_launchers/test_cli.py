@@ -22,6 +22,7 @@ from kedro_viz.launchers import cli
                 pipeline_name=None,
                 env=None,
                 autoreload=False,
+                extra_params={},
             ),
         ),
         (
@@ -38,6 +39,8 @@ from kedro_viz.launchers import cli
                 "data_science",
                 "--env",
                 "local",
+                "--params",
+                "extra_param:param",
             ],
             dict(
                 host="8.8.8.8",
@@ -48,6 +51,7 @@ from kedro_viz.launchers import cli
                 pipeline_name="data_science",
                 env="local",
                 autoreload=False,
+                extra_params={"extra_param": "param"},
             ),
         ),
     ],
@@ -135,6 +139,7 @@ def test_kedro_viz_command_with_autoreload(mocker):
             "autoreload": True,
             "browser": False,
             "project_path": mock_project_path,
+            "extra_params": {},
         },
         watcher_cls=RegExpWatcher,
         watcher_kwargs={"re_files": "^.*(\\.yml|\\.yaml|\\.py|\\.json)$"},

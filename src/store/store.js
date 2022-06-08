@@ -28,7 +28,7 @@ const saveStateToLocalStorage = (state) => {
   // does not save modal state to localStorage
   const {
     exportModal,
-    plotModal,
+    metadataModal,
     settingsModal,
     modularPipelineFocusMode,
     ...otherVisibleProps

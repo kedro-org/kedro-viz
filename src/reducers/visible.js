@@ -2,7 +2,7 @@ import {
   TOGGLE_GRAPH,
   TOGGLE_EXPORT_MODAL,
   TOGGLE_SETTINGS_MODAL,
-  TOGGLE_PLOT_MODAL,
+  TOGGLE_METADATA_MODAL,
   TOGGLE_SIDEBAR,
   TOGGLE_CODE,
   TOGGLE_MINIMAP,
@@ -17,9 +17,9 @@ function visibleReducer(visibleState = {}, action) {
       });
     }
 
-    case TOGGLE_PLOT_MODAL: {
+    case TOGGLE_METADATA_MODAL: {
       return Object.assign({}, visibleState, {
-        plotModal: action.visible,
+        metadataModal: action.visible,
       });
     }
 

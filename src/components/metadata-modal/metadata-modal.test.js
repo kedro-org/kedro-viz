@@ -1,5 +1,5 @@
 import React from 'react';
-import PlotlyModal from './plotly-modal';
+import MetadataModal from './metadata-modal';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
 import { setup } from '../../utils/state.mock';
 import { togglePlotModal } from '../../actions';
@@ -9,7 +9,7 @@ const metricsNodeID = '966b9734';
 
 describe('Plotly Modal', () => {
   const mount = (props) => {
-    return setup.mount(<PlotlyModal />, {
+    return setup.mount(<MetadataModal />, {
       beforeLayoutActions: [() => toggleNodeClicked(props.nodeId)],
       afterLayoutActions: [
         () => togglePlotModal(true),
@@ -19,19 +19,19 @@ describe('Plotly Modal', () => {
   };
   it('renders without crashing', () => {
     const wrapper = mount({ nodeId: metricsNodeID });
-    expect(wrapper.find('.pipeline-plotly-modal').length).toBe(1);
+    expect(wrapper.find('.pipeline-metadata-modal').length).toBe(1);
   });
 
   it('modal closes when collapse button is clicked', () => {
     const wrapper = mount({ nodeId: metricsNodeID });
     wrapper.find('.pipeline-plot-modal__collapse-plot').simulate('click');
-    expect(wrapper.find('.pipeline-plotly-modal').length).toBe(0);
+    expect(wrapper.find('.pipeline-metadata-modal').length).toBe(0);
   });
 
   it('modal closes when back button is clicked', () => {
     const wrapper = mount({ nodeId: metricsNodeID });
     wrapper.find('.pipeline-plot-modal__back').simulate('click');
-    expect(wrapper.find('.pipeline-plotly-modal').length).toBe(0);
+    expect(wrapper.find('.pipeline-metadata-modal').length).toBe(0);
   });
 
   it('shows plot when a plot node is clicked', () => {
