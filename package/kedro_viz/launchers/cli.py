@@ -5,6 +5,7 @@ import webbrowser
 from pathlib import Path
 
 import click
+from kedro.framework.cli.project import PARAMS_ARG_HELP
 from kedro.framework.cli.utils import KedroCliError, _split_params
 from semver import VersionInfo
 from watchgod import RegExpWatcher, run_process
@@ -12,13 +13,6 @@ from watchgod import RegExpWatcher, run_process
 from kedro_viz import __version__
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, is_localhost, run_server
-
-PARAMS_ARG_HELP = """Specify extra parameters that you want to pass
-to the context initializer. Items must be separated by comma, keys - by colon,
-example: param1:value1,param2:value2. Each parameter is split by the first comma,
-so parameter values are allowed to contain colons, parameter keys are not.
-To pass a nested dictionary as parameter, separate keys by '.', example:
-param_group.param1:value1."""
 
 
 @click.group(name="Kedro-Viz")

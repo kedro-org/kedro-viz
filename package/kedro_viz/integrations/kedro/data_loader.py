@@ -87,7 +87,10 @@ def load_data(
         from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
         with KedroSession.create(
-            project_path=project_path, env=env, save_on_close=False
+            project_path=project_path,
+            env=env,
+            save_on_close=False,
+            extra_params=extra_params,
         ) as session:
 
             context = session.load_context()
@@ -110,6 +113,7 @@ def load_data(
             project_path=project_path,
             env=env,
             save_on_close=False,
+            extra_params=extra_params,
         ) as session:
 
             context = session.load_context()
