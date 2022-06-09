@@ -25,17 +25,17 @@ const RunExportModal = ({
   const handleClick = () => {
     const setLocalStateTimeout = setTimeout(() => {
       setIsExported(true);
-    }, 800);
+    }, 500);
 
     // so user is able to see the success message on the button first before the modal goes away
     const resetTimeout = setTimeout(() => {
       setShowRunExportModal(false);
-    }, 2000);
+    }, 1500);
 
     // so the user can't see the button text change.
     const resetLocalStateTimeout = setTimeout(() => {
       setIsExported(false);
-    }, 2500);
+    }, 2000);
 
     return () => {
       clearTimeout(setLocalStateTimeout);
