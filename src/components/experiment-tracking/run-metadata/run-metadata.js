@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
+import { useOutsideClick } from '../../../utils/hooks';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import CloseIcon from '../../icons/close';
@@ -19,6 +20,12 @@ const HiddenMenu = ({ children, isBookmarked, runId }) => {
   const [isVisible, setIsVisible] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
 
+  const handleClickOutside = () => {
+    setIsVisible(false);
+  };
+
+  const ref = useOutsideClick(handleClickOutside);
+
   const toggleBookmark = () => {
     updateRunDetails({
       runId,
@@ -29,6 +36,7 @@ const HiddenMenu = ({ children, isBookmarked, runId }) => {
   return (
     <div
       className="hidden-menu-wrapper"
+      ref={ref}
       onClick={() => setIsVisible(!isVisible)}
     >
       <div
