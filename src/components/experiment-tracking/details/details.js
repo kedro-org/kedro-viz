@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
 import RunDetailsModal from '../run-details-modal';
+import RunExportModal from '../run-export-modal.js';
 
 import './details.css';
 
@@ -21,6 +22,8 @@ const Details = ({
   sidebarVisible,
   theme,
   trackingDataError,
+  showRunExportModal,
+  setShowRunExportModal,
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
 
@@ -46,6 +49,13 @@ const Details = ({
         setShowRunDetailsModal={setShowRunDetailsModal}
         theme={theme}
         visible={showRunDetailsModal}
+      />
+      <RunExportModal
+        theme={theme}
+        visible={showRunExportModal}
+        setShowRunExportModal={setShowRunExportModal}
+        runMetadata={runMetadata}
+        runTrackingData={runTrackingData}
       />
       <div
         className={classnames('kedro', 'details-mainframe', {
