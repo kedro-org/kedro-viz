@@ -18,7 +18,7 @@ tasks:
       # Install latest kedro and all its dependencies.
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user
       # force-reinstall kedro to ensure that the latest version from main is installed even when 
-      # its version number is the same as that give in docker_requirements.txt.
+      # its version number is the same as that specified in docker_requirements.txt.
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user --force-reinstall --no-deps
       
     command: | 
