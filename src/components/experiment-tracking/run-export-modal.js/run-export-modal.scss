@@ -9,3 +9,8 @@
 
   width: 100%;
 }
+
+// set fix width for export button for when the text is shorter, eg "Done"
+.pipeline-run-export-modal--experiment-tracking .button__btn--primary {
+  width: 160px;
+}
