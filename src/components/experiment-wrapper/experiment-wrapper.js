@@ -27,8 +27,6 @@ const ExperimentWrapper = ({ theme }) => {
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
   const [showRunExportModal, setShowRunExportModal] = useState(false);
 
-  console.log(showRunExportModal, 'showRunExportModal');
-
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
 
