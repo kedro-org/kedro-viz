@@ -33,6 +33,7 @@ export const Sidebar = ({
   showRunDetailsModal,
   sidebarVisible,
   visible,
+  setShowRunExportModal,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
@@ -66,6 +67,7 @@ export const Sidebar = ({
               sidebarVisible={sidebarVisible}
               runMetadata={runMetadata}
               runTrackingData={runTrackingData}
+              setShowRunExportModal={setShowRunExportModal}
             />
           </nav>
         </div>
