@@ -31,9 +31,9 @@ export const FlowchartPrimaryToolbar = ({
 }) => (
   <>
     <PrimaryToolbar
+      displaySidebar={displaySidebar}
       onToggleSidebar={onToggleSidebar}
       visible={visible}
-      displaySidebar={displaySidebar}
     >
       <IconButton
         ariaLive="polite"
@@ -67,10 +67,10 @@ export const FlowchartPrimaryToolbar = ({
 
 export const mapStateToProps = (state) => ({
   disableLayerBtn: !state.layer.ids.length,
+  displaySidebar: state.display.sidebar,
   textLabels: state.textLabels,
   visible: state.visible,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
-  displaySidebar: state.display.sidebar,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
