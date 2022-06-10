@@ -12,6 +12,11 @@ export const usePrevious = (value) => {
   return ref.current;
 };
 
+/**
+ * Custom hook to detect clicks outside of a specified element.
+ * @param {function} callback The function to fire on an outside click.
+ * @returns A React ref of the element you want to click outside of.
+ */
 export const useOutsideClick = (callback) => {
   const ref = useRef();
 
@@ -27,8 +32,7 @@ export const useOutsideClick = (callback) => {
     return () => {
       document.removeEventListener('click', handleClick, true);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ref]);
+  }, [callback, ref]);
 
   return ref;
 };

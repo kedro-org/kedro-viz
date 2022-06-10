@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import classnames from 'classnames';
 import { useOutsideClick } from '../../../utils/hooks';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
@@ -20,23 +20,26 @@ const HiddenMenu = ({ children, isBookmarked, runId }) => {
   const [isVisible, setIsVisible] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
 
-  const handleClickOutside = () => {
+  const handleClickOutside = useCallback(() => {
     setIsVisible(false);
-  };
+  }, []);
 
-  const ref = useOutsideClick(handleClickOutside);
+  const menuRef = useOutsideClick(handleClickOutside);
 
   const toggleBookmark = () => {
     updateRunDetails({
       runId,
       runInput: { bookmark: !isBookmarked },
     });
+
+    // Close the menu when the bookmark is toggled.
+    setIsVisible(false);
   };
 
   return (
     <div
       className="hidden-menu-wrapper"
-      ref={ref}
+      ref={menuRef}
       onClick={() => setIsVisible(!isVisible)}
     >
       <div
@@ -44,7 +47,13 @@ const HiddenMenu = ({ children, isBookmarked, runId }) => {
           'hidden-menu--visible': isVisible,
         })}
       >
-        <div className="hidden-menu__item" onClick={() => toggleBookmark()}>
+        <div
+          className="hidden-menu__item"
+          onClick={(e) => {
+            toggleBookmark();
+            e.stopPropagation();
+          }}
+        >
           {isBookmarked ? 'Unbookmark' : 'Bookmark'}
         </div>
       </div>
