@@ -15,7 +15,12 @@ tasks:
     before: echo PIP_USER=no >> ~/.bashrc && export PIP_USER=no
     init: |
       pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt --user
-      pip install https://github.com/kedro-org/kedro/archive/main.zip --no-deps --user --force-reinstall
+      # Install latest kedro and all its dependencies.
+      pip install https://github.com/kedro-org/kedro/archive/main.zip --user
+      # force-reinstall kedro to ensure that the latest version from main is installed even when 
+      # its version number is the same as that specified in docker_requirements.txt.
+      pip install https://github.com/kedro-org/kedro/archive/main.zip --user --force-reinstall --no-deps
+      
     command: | 
       gp sync-await build_complete
       pip install -e package --no-deps
