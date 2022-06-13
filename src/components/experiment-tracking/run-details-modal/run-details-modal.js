@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
+
+import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';
 
 import Button from '../../ui/button';
 import Modal from '../../ui/modal';
@@ -15,9 +17,15 @@ const RunDetailsModal = ({
   visible,
 }) => {
   const [valuesToUpdate, setValuesToUpdate] = useState({});
-  const [hasNotInteracted, setHasNotInteracted] = useState(true);
-  const [editsAreSuccessful, setEditsAreSuccessful] = useState(false);
   const { updateRunDetails, error, reset } = useUpdateRunDetails();
+  const {
+    isSuccessful,
+    showModal,
+    hasInteracted,
+    handleClick,
+    setHasInteracted,
+    setIsSuccessful,
+  } = useContext(ButtonTimeoutContext);
 
   const onApplyChanges = () => {
     updateRunDetails({
@@ -25,8 +33,10 @@ const RunDetailsModal = ({
       runInput: { notes: valuesToUpdate.notes, title: valuesToUpdate.title },
     });
 
+    handleClick();
+
     if (!error) {
-      setEditsAreSuccessful(true);
+      setIsSuccessful(true);
     }
   };
 
@@ -36,33 +46,14 @@ const RunDetailsModal = ({
         [key]: value,
       })
     );
-    setHasNotInteracted(false);
-  };
-
-  const resetState = () => {
-    setHasNotInteracted(true);
-    setEditsAreSuccessful(false);
+    setHasInteracted(true);
   };
 
   useEffect(() => {
-    let modalTimeout, resetTimeout;
-
-    if (editsAreSuccessful) {
-      modalTimeout = setTimeout(() => {
-        setShowRunDetailsModal(false);
-      }, 1500);
-
-      // Delay the reset so the user can't see the button text change.
-      resetTimeout = setTimeout(() => {
-        resetState();
-      }, 2000);
+    if (isSuccessful) {
+      setShowRunDetailsModal(showModal);
     }
-
-    return () => {
-      clearTimeout(modalTimeout);
-      clearTimeout(resetTimeout);
-    };
-  }, [editsAreSuccessful, setShowRunDetailsModal]);
+  }, [showModal, setShowRunDetailsModal, isSuccessful]);
 
   useEffect(() => {
     setValuesToUpdate({
@@ -78,8 +69,7 @@ const RunDetailsModal = ({
      * the next time the modal opens.
      */
     reset();
-    setHasNotInteracted(true);
-  }, [reset, runMetadataToEdit, visible]);
+  }, [runMetadataToEdit, visible, setHasInteracted, reset]);
 
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
@@ -122,12 +112,12 @@ const RunDetailsModal = ({
             Cancel
           </Button>
           <Button
-            disabled={hasNotInteracted}
+            disabled={!hasInteracted}
             onClick={onApplyChanges}
-            mode={editsAreSuccessful ? 'success' : 'primary'}
+            mode={isSuccessful ? 'success' : 'primary'}
             size="small"
           >
-            {editsAreSuccessful ? (
+            {isSuccessful ? (
               <>
                 Changes applied <span className="success-check-mark">✅</span>
               </>
