@@ -4,6 +4,7 @@ import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
 import RunDetailsModal from '../run-details-modal';
 import RunExportModal from '../run-export-modal.js';
+import { ButtonTimeoutContextProvider } from '../../../utils/button-timeout-context';
 
 import './details.css';
 
@@ -43,20 +44,26 @@ const Details = ({
 
   return (
     <>
-      <RunDetailsModal
-        runMetadataToEdit={runMetadataToEdit}
-        runs={runMetadata}
-        setShowRunDetailsModal={setShowRunDetailsModal}
-        theme={theme}
-        visible={showRunDetailsModal}
-      />
-      <RunExportModal
-        theme={theme}
-        visible={showRunExportModal}
-        setShowRunExportModal={setShowRunExportModal}
-        runMetadata={runMetadata}
-        runTrackingData={runTrackingData}
-      />
+      <ButtonTimeoutContextProvider>
+        {showRunDetailsModal && (
+          <RunDetailsModal
+            runMetadataToEdit={runMetadataToEdit}
+            runs={runMetadata}
+            setShowRunDetailsModal={setShowRunDetailsModal}
+            theme={theme}
+            visible={showRunDetailsModal}
+          />
+        )}
+        {showRunExportModal && (
+          <RunExportModal
+            theme={theme}
+            visible={showRunExportModal}
+            setShowRunExportModal={setShowRunExportModal}
+            runMetadata={runMetadata}
+            runTrackingData={runTrackingData}
+          />
+        )}
+      </ButtonTimeoutContextProvider>
       <div
         className={classnames('kedro', 'details-mainframe', {
           'details-mainframe--sidebar-visible': sidebarVisible,
