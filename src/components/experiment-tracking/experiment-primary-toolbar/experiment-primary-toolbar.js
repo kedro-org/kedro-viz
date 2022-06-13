@@ -63,8 +63,8 @@ export const ExperimentPrimaryToolbar = ({
         disabled={showChangesIconDisabled}
       />
       <IconButton
-        ariaLabel="Export graph as SVG or PNG"
-        className={'pipeline-menu-button--export'}
+        ariaLabel="Export Run Data"
+        className={'pipeline-menu-button--export-runs'}
         icon={ExportIcon}
         labelText="Export run data"
         onClick={() => setShowRunExportModal(true)}
