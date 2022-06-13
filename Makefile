@@ -1,9 +1,9 @@
-package: install
+package: build
 	cd package && python setup.py clean --all
 	cd package && python setup.py sdist bdist_wheel
 
-install: build
-	cd package && python setup.py install
+# install: build
+# 	cd package && python setup.py install
 
 build: clean
 	npm run build
@@ -19,10 +19,10 @@ PROJECT_PATH ?= demo-project
 run:
 	PYTHONPATH=$(shell pwd)/package python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
-pytest: build
+pytest: 
 	cd package && pytest --cov-fail-under=100
 
-e2e-tests: build
+e2e-tests: 
 	cd package && behave
 
 lint: format-fix lint-check
