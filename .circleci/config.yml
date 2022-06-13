@@ -101,12 +101,6 @@ commands:
           name: Run security scan
           command: make security-scan
 
-  cleanup:
-    steps:
-      - run:
-          name: Cleanup
-          command: make clean
-
   build_npm_package:
     steps:
       - run:
@@ -222,6 +216,7 @@ jobs:
       - win_setup_conda:
           python_version: <<parameters.python_version>>
       - win_setup_requirements
+      - install_node_dependencies
       - run_win_e2e_tests
 
   unit_tests:
@@ -247,6 +242,7 @@ jobs:
       - win_setup_conda:
           python_version: <<parameters.python_version>>
       - win_setup_requirements
+      - install_node_dependencies
       - run_win_python_tests
 
   
@@ -291,7 +287,6 @@ jobs:
       - install_node_dependencies
       - run_secret_scan
       - run_security_scan
-      - cleanup
       - build_npm_package
       - package_app
 
