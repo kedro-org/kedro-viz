@@ -149,13 +149,13 @@ const RunMetadata = ({
                         <HiddenMenu isBookmarked={run.bookmark} runId={run.id}>
                           <IconButton
                             ariaLive="polite"
-                            className="pipeline-menu-button--labels"
+                            className="pipeline-menu-button--labels__kebab"
                             icon={KebabIcon}
                           />
                         </HiddenMenu>
                         <IconButton
                           ariaLive="polite"
-                          className="pipeline-menu-button--labels"
+                          className="pipeline-menu-button--labels__close"
                           onClick={() => onRunSelection(run.id)}
                           icon={CloseIcon}
                         />
