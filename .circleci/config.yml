@@ -234,6 +234,7 @@ jobs:
       name: docker
       python_version: <<parameters.python_version>>
     steps:
+      - checkout 
       - setup_python_env
       - install_node_dependencies
       - run_python_tests
@@ -244,6 +245,7 @@ jobs:
         type: string
     executor: win/default
     steps:
+      - checkout 
       - win_setup_conda:
           python_version: <<parameters.python_version>>
       - win_setup_requirements
