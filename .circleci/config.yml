@@ -20,6 +20,7 @@ commands:
   setup_python_env:
     description: Setup Python environment
     steps:
+      - checkout
       - run:
           name: Install Python
           command: python --version
@@ -178,6 +179,10 @@ commands:
             python -V
             pip -V
             kedro -V
+      - run:
+          name: Install 'make' command
+          command: choco install make
+
 
   run_win_python_tests:
     steps:
@@ -185,10 +190,7 @@ commands:
           name: Run Python tests on Windows
           command: |
             conda activate kedro-viz
-            rm -r build, package/dist, package/kedro_viz/html, pip-wheel-metadata, package/kedro_viz.egg-info -ErrorAction Ignore
-            npm run build
-            cp -R build package/kedro_viz/html
-            pytest package/tests --no-cov
+            make pytest
 
   run_win_e2e_tests:
     steps:
@@ -196,8 +198,7 @@ commands:
           name: Run all end to end tests on Windows
           command: |
             conda activate kedro-viz
-            cd package
-            behave
+            make e2e-tests
 
 
 jobs:
