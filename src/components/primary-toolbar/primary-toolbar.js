@@ -13,28 +13,25 @@ import './primary-toolbar.css';
  */
 export const PrimaryToolbar = ({
   children,
-  displaySidebar,
   onToggleSidebar,
   visible = { sidebar: true },
 }) => (
   <>
     <ul className="pipeline-primary-toolbar kedro">
-      {displaySidebar && (
-        <IconButton
-          ariaLabel={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
-          dataHeapEvent={`visible.sidebar.${visible.sidebar}`}
-          className={classnames(
-            'pipeline-menu-button',
-            'pipeline-menu-button--menu',
-            {
-              'pipeline-menu-button--inverse': !visible.sidebar,
-            }
-          )}
-          onClick={() => onToggleSidebar(!visible.sidebar)}
-          icon={MenuIcon}
-          labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
-        />
-      )}
+      <IconButton
+        ariaLabel={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
+        dataHeapEvent={`visible.sidebar.${visible.sidebar}`}
+        className={classnames(
+          'pipeline-menu-button',
+          'pipeline-menu-button--menu',
+          {
+            'pipeline-menu-button--inverse': !visible.sidebar,
+          }
+        )}
+        onClick={() => onToggleSidebar(!visible.sidebar)}
+        icon={MenuIcon}
+        labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
+      />
       {children}
     </ul>
   </>

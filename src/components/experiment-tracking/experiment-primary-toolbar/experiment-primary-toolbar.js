@@ -11,6 +11,7 @@ import ShowChangesIcon from '../../icons/show-changes';
 import { constructExportData } from '../../../utils/experiment-tracking-utils';
 
 export const ExperimentPrimaryToolbar = ({
+  displaySidebar,
   enableComparisonView,
   enableShowChanges,
   runMetadata,
@@ -38,8 +39,9 @@ export const ExperimentPrimaryToolbar = ({
 
   return (
     <PrimaryToolbar
-      visible={{ sidebar: sidebarVisible }}
+      displaySidebar={displaySidebar}
       onToggleSidebar={setSidebarVisible}
+      visible={{ sidebar: sidebarVisible }}
     >
       <IconButton
         ariaLive="Toggle run bookmark"
