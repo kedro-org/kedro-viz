@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import { CSVLink } from 'react-csv';
 
 import { constructExportData } from '../../../utils/experiment-tracking-utils';
+import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';
 
 import Button from '../../ui/button';
 import Modal from '../../ui/modal';
@@ -16,33 +17,18 @@ const RunExportModal = ({
   runTrackingData,
 }) => {
   const [exportData, setExportData] = useState([]);
-  const [isExported, setIsExported] = useState(false);
+  const { isSuccessful, showModal, handleClick } =
+    useContext(ButtonTimeoutContext);
 
   const updateExportData = useCallback(() => {
     setExportData(constructExportData(runMetadata, runTrackingData));
   }, [runMetadata, runTrackingData]);
 
-  const handleClick = () => {
-    const setLocalStateTimeout = setTimeout(() => {
-      setIsExported(true);
-    }, 500);
-
-    // so user is able to see the success message on the button first before the modal goes away
-    const resetTimeout = setTimeout(() => {
-      setShowRunExportModal(false);
-    }, 1500);
-
-    // so the user can't see the button text change.
-    const resetLocalStateTimeout = setTimeout(() => {
-      setIsExported(false);
-    }, 2000);
-
-    return () => {
-      clearTimeout(setLocalStateTimeout);
-      clearTimeout(resetTimeout);
-      clearTimeout(resetLocalStateTimeout);
-    };
-  };
+  useEffect(() => {
+    if (isSuccessful) {
+      setShowRunExportModal(showModal);
+    }
+  }, [showModal, setShowRunExportModal, isSuccessful]);
 
   return (
     <div className="pipeline-run-export-modal pipeline-run-export-modal--experiment-tracking">
@@ -62,8 +48,11 @@ const RunExportModal = ({
             onClick={updateExportData}
             filename="run-data.csv"
           >
-            <Button onClick={handleClick}>
-              {isExported ? (
+            <Button
+              onClick={handleClick}
+              mode={isSuccessful ? 'success' : 'primary'}
+            >
+              {isSuccessful ? (
                 <>
                   Done <span className="success-check-mark">✅</span>
                 </>
