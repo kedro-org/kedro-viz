@@ -1,28 +1,26 @@
 package: build
+	find . -regex ".*/__pycache__" -exec rm -rf {} +
+	find . -regex ".*\.egg-info" -exec rm -rf {} +
 	cd package && python setup.py clean --all
 	cd package && python setup.py sdist bdist_wheel
 
 # install: build
 # 	cd package && python setup.py install
 
-build: clean
+build: 
+	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
 	npm run build
 	cp -R build package/kedro_viz/html
-
-clean:
-	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
-	find . -regex ".*/__pycache__" -exec rm -rf {} +
-	find . -regex ".*\.egg-info" -exec rm -rf {} +
 
 PROJECT_PATH ?= demo-project
 
 run:
 	PYTHONPATH=$(shell pwd)/package python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
-pytest: 
+pytest: build
 	cd package && pytest --cov-fail-under=100
 
-e2e-tests: 
+e2e-tests: build
 	cd package && behave
 
 lint: format-fix lint-check
