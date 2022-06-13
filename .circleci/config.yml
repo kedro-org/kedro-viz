@@ -211,6 +211,7 @@ jobs:
       python_version: <<parameters.python_version>>
     steps:
       - setup_python_env
+      - install_node_dependencies
       - run_e2e_tests
   
   win_e2e_tests:
@@ -223,7 +224,6 @@ jobs:
       - win_setup_conda:
           python_version: <<parameters.python_version>>
       - win_setup_requirements
-      - install_node_dependencies
       - run_win_e2e_tests
 
   unit_tests:
