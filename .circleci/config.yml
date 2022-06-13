@@ -82,11 +82,11 @@ commands:
           name: Run all end to end tests
           command: make e2e-tests
 
-    run_python_format_and_lint:
-      steps:
-        - run:
-            name: Run Python formatters and linters
-            command: make format-check lint-check
+  run_python_format_and_lint:
+    steps:
+      - run:
+          name: Run Python formatters and linters
+          command: make format-check lint-check
 
   run_secret_scan:
     steps:
@@ -207,7 +207,7 @@ jobs:
         type: string
     executor:
       name: docker
-      python_version: <<parameters.python_version>
+      python_version: <<parameters.python_version>>
     steps:
       - setup_python_env
       - run_e2e_tests
@@ -261,6 +261,12 @@ jobs:
 
   
   javascript_lint_and_tests:
+    parameters:
+      python_version:
+        type: string
+    executor:
+      name: docker
+      python_version: <<parameters.python_version>>
     description: Run javascript commands and tests
     steps:
       - checkout 
@@ -271,6 +277,12 @@ jobs:
       - run_javascript_tests
 
   build_package: 
+    parameters:
+      python_version:
+        type: string
+    executor:
+        name: docker
+        python_version: <<parameters.python_version>>
     steps:
       - checkout
       - setup_python_env
@@ -347,29 +359,32 @@ workflows:
           matrix:
             parameters:
               python_version: ["3.7", "3.8", "3.9", "3.10"]
-      - javascript_lint_and_tests
+      - javascript_lint_and_tests:
+          matrix:
+              parameters:
+                python_version: ["3.8"]
       - build_package:
           matrix:
             parameters:
               python_version: ["3.8"]
 
-  release:
-    jobs:
-      - build_package:
-          <<: *release_filter
-          matrix:
-            parameters:
-              python_version: ["3.8"]
-      - release_to_npm:
-          <<: *release_filter
-          matrix:
-            parameters:
-              python_version: ["3.8"]
-      - release_to_pypi:
-          <<: *release_filter
-          matrix:
-            parameters:
-              python_version: ["3.8"]
+  # release:
+  #   jobs:
+  #     - build_package:
+  #         <<: *release_filter
+  #         matrix:
+  #           parameters:
+  #             python_version: ["3.8"]
+  #     - release_to_npm:
+  #         <<: *release_filter
+  #         matrix:
+  #           parameters:
+  #             python_version: ["3.8"]
+  #     - release_to_pypi:
+  #         <<: *release_filter
+  #         matrix:
+  #           parameters:
+  #             python_version: ["3.8"]
       
       
 
