@@ -223,7 +223,7 @@ jobs:
       - win_setup_conda:
           python_version: <<parameters.python_version>>
       - win_setup_requirements
-      # - install_node_dependencies
+      - install_node_dependencies
       - run_win_e2e_tests
 
   unit_tests:
