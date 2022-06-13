@@ -9,6 +9,7 @@ import PrimaryToolbar from '../../primary-toolbar';
 import ShowChangesIcon from '../../icons/show-changes';
 
 export const ExperimentPrimaryToolbar = ({
+  displaySidebar,
   enableComparisonView,
   enableShowChanges,
   selectedRunData,
@@ -30,8 +31,9 @@ export const ExperimentPrimaryToolbar = ({
 
   return (
     <PrimaryToolbar
-      visible={{ sidebar: sidebarVisible }}
+      displaySidebar={displaySidebar}
       onToggleSidebar={setSidebarVisible}
+      visible={{ sidebar: sidebarVisible }}
     >
       <IconButton
         ariaLive="Toggle run bookmark"

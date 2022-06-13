@@ -18,13 +18,14 @@ import './sidebar.css';
 export const Sidebar = ({
   disableRunSelection,
   displayGlobalToolbar,
+  displaySidebar,
   enableComparisonView,
   enableShowChanges,
   isExperimentView = false,
   onRunSelection,
   onToggleComparisonView,
-  runsListData,
   runMetadata,
+  runsListData,
   runTrackingData,
   selectedRunData,
   selectedRunIds,
@@ -50,23 +51,24 @@ export const Sidebar = ({
               disableRunSelection={disableRunSelection}
               enableComparisonView={enableComparisonView}
               onRunSelection={onRunSelection}
+              onToggleComparisonView={onToggleComparisonView}
               runData={runsListData}
               selectedRunIds={selectedRunIds}
-              onToggleComparisonView={onToggleComparisonView}
             />
           </div>
           <nav className="pipeline-toolbar">
             <ExperimentPrimaryToolbar
+              displaySidebar={displaySidebar}
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges}
+              runMetadata={runMetadata}
+              runTrackingData={runTrackingData}
               selectedRunData={selectedRunData}
               setEnableShowChanges={setEnableShowChanges}
               setSidebarVisible={setSidebarVisible}
               showChangesIconDisabled={!(selectedRunIds.length > 1)}
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={sidebarVisible}
-              runMetadata={runMetadata}
-              runTrackingData={runTrackingData}
               setShowRunExportModal={setShowRunExportModal}
             />
           </nav>
@@ -98,8 +100,9 @@ export const Sidebar = ({
 };
 
 const mapStateToProps = (state) => ({
-  visible: state.visible.sidebar,
   displayGlobalToolbar: state.display.globalToolbar,
+  displaySidebar: state.display.sidebar,
+  visible: state.visible.sidebar,
 });
 
 export default connect(mapStateToProps)(Sidebar);
