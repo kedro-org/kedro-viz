@@ -11,8 +11,8 @@ build: clean
 
 clean:
 	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
-	find . -regex ".*/__pycache__" -exec rm -rf {} +
-	find . -regex ".*\.egg-info" -exec rm -rf {} +
+	Select-String  . -regex ".*/__pycache__" -exec rm -rf {} +
+	Select-String  . -regex ".*\.egg-info" -exec rm -rf {} +
 
 PROJECT_PATH ?= demo-project
 
