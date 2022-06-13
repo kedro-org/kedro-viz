@@ -1,8 +1,9 @@
 import React from 'react';
 import RunExportModal from './index';
 import Adapter from 'enzyme-adapter-react-16';
-import { configure, mount, shallow } from 'enzyme';
+import { configure, mount } from 'enzyme';
 import { render, screen } from '@testing-library/react';
+import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';
 
 // to help find text which is made by multiple HTML elements
 // eg: <div>Hello <span>world</span></div>
@@ -17,11 +18,23 @@ const findTextWithTags = (textMatch) => {
   });
 };
 
+const mockValue = {
+  isSuccessful: false,
+  showModal: false,
+  hasInteracted: false,
+  handleClick: jest.fn(),
+  setIsSuccessful: jest.fn(),
+  setHasInteracted: jest.fn(),
+};
 configure({ adapter: new Adapter() });
 
 describe('RunExportModal', () => {
   it('renders the component without crashing', () => {
-    const wrapper = shallow(<RunExportModal visible />);
+    const wrapper = mount(
+      <ButtonTimeoutContext.Provider value={mockValue}>
+        <RunExportModal visible />
+      </ButtonTimeoutContext.Provider>
+    );
 
     expect(
       wrapper.find('.pipeline-run-export-modal--experiment-tracking').length
@@ -31,7 +44,9 @@ describe('RunExportModal', () => {
   it('modal closes when cancel button is clicked', () => {
     const setVisible = jest.fn();
     const wrapper = mount(
-      <RunExportModal setShowRunExportModal={() => setVisible(true)} />
+      <ButtonTimeoutContext.Provider value={mockValue}>
+        <RunExportModal setShowRunExportModal={() => setVisible(true)} />
+      </ButtonTimeoutContext.Provider>
     );
     const onClick = jest.spyOn(React, 'useState');
     const closeButton = wrapper.find(
@@ -52,11 +67,17 @@ describe('RunExportModal', () => {
   it('Text is updated to "Done ✅" when the "Export all and close" is clicked, and modal is closed', () => {
     const setVisible = jest.fn();
     const wrapper = mount(
-      <RunExportModal setShowRunExportModal={() => setVisible(true)} />
+      <ButtonTimeoutContext.Provider value={mockValue}>
+        <RunExportModal setShowRunExportModal={() => setVisible(true)} />
+      </ButtonTimeoutContext.Provider>
     );
 
     // original text should be "Export all and close"
-    const { getByText } = render(<RunExportModal visible />);
+    const { getByText } = render(
+      <ButtonTimeoutContext.Provider value={mockValue}>
+        <RunExportModal visible />
+      </ButtonTimeoutContext.Provider>
+    );
     expect(getByText(/Export all and close/i)).toBeVisible();
 
     const onClick = jest.spyOn(React, 'useState');
