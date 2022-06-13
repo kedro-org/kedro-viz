@@ -1,4 +1,3 @@
-kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet, plotly.PlotlyDataSet]==0.18.1
+kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet, plotly.PlotlyDataSet, matplotlib.MatplotlibWriter]==0.18.1
 scikit-learn~=1.0
 pillow~=9.0
-matplotlib==3.5.0

@@ -378,7 +378,7 @@ class DataAccessManager:
             # Add the modular pipeline node to the global list of nodes if necessary
             # and update the list of pipelines it belongs to.
             # N.B. Ideally we will have different modular pipeline nodes for
-            # different registered pipelinesm, but that requires a bit of a bigger refactor
+            # different registered pipelines, but that requires a bit of a bigger refactor
             # so we will just use the same node for now.
             self.nodes.add_node(modular_pipeline_node)
             self.nodes.get_node_by_id(modular_pipeline_node.id).pipelines = {

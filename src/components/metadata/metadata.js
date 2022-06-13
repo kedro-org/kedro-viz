@@ -29,22 +29,28 @@ const MetaData = ({
   visibleCode,
   onToggleCode,
   onToggleNodeSelected,
-  onTogglePlotModal,
+  onToggleMetadataModal,
 }) => {
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
   // Hide plot modal when selected metadata changes
-  useEffect(() => onTogglePlotModal(false), [metadata, onTogglePlotModal]);
+  useEffect(
+    () => onToggleMetadataModal(false),
+    [metadata, onToggleMetadataModal]
+  );
+
   const isTaskNode = metadata?.type === 'task';
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
   const hasPlot = Boolean(metadata?.plot);
+  const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
+
   let runCommand = metadata?.runCommand;
   if (!runCommand) {
     // provide a help text for user to know why the run command is not available for the task node
@@ -70,7 +76,7 @@ const MetaData = ({
   };
 
   const onExpandPlotClick = () => {
-    onTogglePlotModal(true);
+    onToggleMetadataModal(true);
   };
 
   return (
@@ -212,6 +218,29 @@ const MetaData = ({
                   </button>
                 </>
               )}
+              {hasImage && (
+                <>
+                  <div
+                    className="pipeline-metadata__plot"
+                    onClick={onExpandPlotClick}
+                  >
+                    <img
+                      alt="Matplotlib rendering"
+                      className="pipeline-metadata__plot-image"
+                      src={`data:image/png;base64,${metadata.image}`}
+                    />
+                  </div>
+                  <button
+                    className="pipeline-metadata__expand-plot"
+                    onClick={onExpandPlotClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__expand-plot-text">
+                      Expand Matplotlib Image
+                    </span>
+                  </button>
+                </>
+              )}
             </div>
           </>
         )}
@@ -235,7 +264,7 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleCode: (visible) => {
     dispatch(toggleCode(visible));
   },
-  onTogglePlotModal: (visible) => {
+  onToggleMetadataModal: (visible) => {
     dispatch(togglePlotModal(visible));
   },
 });

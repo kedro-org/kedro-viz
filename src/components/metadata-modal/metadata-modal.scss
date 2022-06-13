@@ -15,7 +15,7 @@
   --color-button-text: #{$color-light};
 }
 
-.pipeline-plotly-modal {
+.pipeline-metadata-modal {
   position: absolute;
   top: 0;
   right: 0;
@@ -30,7 +30,8 @@
   height: 100%; /* Full height (cover the whole page) */
   background-color: var(--color-bg-plot);
 
-  .pipeline-plotly-chart {
+  .pipeline-plotly-chart,
+  .pipeline-matplotlib-chart {
     width: calc(98% - 80px - #{$global-toolbar-width});
     height: calc(92% - 80px);
     margin: auto;
@@ -126,7 +127,7 @@
   font-size: 1.6em;
 }
 
-@media (max-width: $plotly-modal-breakpoint) {
+@media (max-width: $metadata-modal-breakpoint) {
   .pipeline-plot-modal__collapse-plot {
     width: auto;
   }
