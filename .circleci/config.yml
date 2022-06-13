@@ -188,17 +188,15 @@ commands:
     steps:
       - run:
           name: Run Python tests on Windows
-          command: |
-            conda activate kedro-viz
-            make pytest
+          command:
+            conda activate kedro-viz; make pytest
 
   run_win_e2e_tests:
     steps:
       - run:
           name: Run all end to end tests on Windows
-          command: |
-            conda activate kedro-viz
-            make e2e-tests
+          command:
+            conda activate kedro-viz; make e2e-tests
 
 
 jobs:
