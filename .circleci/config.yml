@@ -291,6 +291,9 @@ jobs:
       - package_app
 
   release_to_npm:
+    parameters:
+      python_version:
+        type: string
     executor:
       name: docker
       python_version: <<parameters.python_version>>
@@ -307,6 +310,9 @@ jobs:
           command: npm publish
 
   release_to_pypi:
+    parameters:
+      python_version:
+        type: string
     executor:
       name: docker
       python_version: <<parameters.python_version>>
@@ -365,23 +371,25 @@ workflows:
             parameters:
               python_version: ["3.8"]
 
-  # release:
-  #   jobs:
-  #     - build_package:
-  #         <<: *release_filter
-  #         matrix:
-  #           parameters:
-  #             python_version: ["3.8"]
-  #     - release_to_npm:
-  #         <<: *release_filter
-  #         matrix:
-  #           parameters:
-  #             python_version: ["3.8"]
-  #     - release_to_pypi:
-  #         <<: *release_filter
-  #         matrix:
-  #           parameters:
-  #             python_version: ["3.8"]
+  release:
+    jobs:
+      - build_package:
+          matrix:
+            parameters:
+              python_version: ["3.8"]
+          <<: *release_filter
+      - release_to_npm:
+          matrix:
+            parameters:
+              python_version: ["3.8"]
+          <<: *release_filter
+      - release_to_pypi:
+          matrix:
+            parameters:
+              python_version: ["3.8"]
+          <<: *release_filter
+          requires:
+            - build_package
       
       
 
