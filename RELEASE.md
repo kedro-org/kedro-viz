@@ -17,8 +17,9 @@ Please follow the established format:
 - Disabled uvicorn's logger so that log messages are no longer duplicated. (#870)
 - Enhance _Apply and close_ behavior of modals. (#875)
 - Fix namespace collison when two different registered pipelines have a modular pipeline with the same name. (#871)
-- Add --params option to `kedro viz` CLI command (#883)
+- Add --params option to `kedro viz` CLI command. (#883)
 - Fix namespace collision when two registered pipelines have a modular pipeline with the same name. (#871)
+- Improve bundle size of the JavaScript package. (#906)
 
 # Release 4.6.0
 
