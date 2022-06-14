@@ -10,11 +10,11 @@ import Modal from '../../ui/modal';
 import './run-export-modal.css';
 
 const RunExportModal = ({
-  theme,
-  visible,
-  setShowRunExportModal,
   runMetadata,
   runTrackingData,
+  setShowRunExportModal,
+  theme,
+  visible,
 }) => {
   const [exportData, setExportData] = useState([]);
   const { isSuccessful, showModal, handleClick } =
@@ -40,18 +40,23 @@ const RunExportModal = ({
         visible={visible}
       >
         <div className="run-export-modal-button-wrapper">
-          <Button mode="secondary" onClick={() => setShowRunExportModal(false)}>
+          <Button
+            mode="secondary"
+            onClick={() => setShowRunExportModal(false)}
+            size="small"
+          >
             Cancel
           </Button>
           <CSVLink
-            data={exportData}
             asyncOnClick={true}
-            onClick={updateExportData}
+            data={exportData}
             filename="run-data.csv"
+            onClick={updateExportData}
           >
             <Button
-              onClick={handleClick}
               mode={isSuccessful ? 'success' : 'primary'}
+              onClick={handleClick}
+              size="small"
             >
               {isSuccessful ? (
                 <>

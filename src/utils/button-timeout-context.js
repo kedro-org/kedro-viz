@@ -39,12 +39,12 @@ export const ButtonTimeoutContextProvider = ({ children }) => {
   return (
     <ButtonTimeoutContext.Provider
       value={{
-        isSuccessful,
-        showModal,
-        hasNotInteracted,
         handleClick,
-        setIsSuccessful: (state) => setIsSuccessful(state),
+        hasNotInteracted,
+        isSuccessful,
         setHasNotInteracted: (state) => setHasNotInteracted(state),
+        setIsSuccessful: (state) => setIsSuccessful(state),
+        showModal,
       }}
     >
       {children}

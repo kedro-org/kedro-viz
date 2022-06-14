@@ -19,10 +19,10 @@ const findTextWithTags = (textMatch) => {
 };
 
 const mockValue = {
-  isSuccessful: false,
-  showModal: false,
   handleClick: jest.fn(),
+  isSuccessful: false,
   setIsSuccessful: jest.fn(),
+  showModal: false,
 };
 configure({ adapter: new Adapter() });
 

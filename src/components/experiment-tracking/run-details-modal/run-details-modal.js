@@ -19,12 +19,12 @@ const RunDetailsModal = ({
   const [valuesToUpdate, setValuesToUpdate] = useState({});
   const { updateRunDetails, error, reset } = useUpdateRunDetails();
   const {
-    isSuccessful,
-    showModal,
-    hasNotInteracted,
     handleClick,
+    hasNotInteracted,
+    isSuccessful,
     setHasNotInteracted,
     setIsSuccessful,
+    showModal,
   } = useContext(ButtonTimeoutContext);
 
   const onApplyChanges = () => {

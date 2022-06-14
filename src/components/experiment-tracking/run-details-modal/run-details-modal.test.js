@@ -24,12 +24,12 @@ jest.mock('../../../apollo/mutations', () => {
 });
 
 const mockValue = {
-  isSuccessful: false,
-  showModal: false,
-  hasNotInteracted: true,
   handleClick: jest.fn(),
-  setIsSuccessful: jest.fn(),
+  hasNotInteracted: true,
+  isSuccessful: false,
   setHasNotInteracted: jest.fn(),
+  setIsSuccessful: jest.fn(),
+  showModal: false,
 };
 
 // Tests

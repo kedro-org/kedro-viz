@@ -53,11 +53,11 @@ const Details = ({
           visible={showRunDetailsModal}
         />
         <RunExportModal
-          theme={theme}
-          visible={showRunExportModal}
-          setShowRunExportModal={setShowRunExportModal}
           runMetadata={runMetadata}
           runTrackingData={runTrackingData}
+          setShowRunExportModal={setShowRunExportModal}
+          theme={theme}
+          visible={showRunExportModal}
         />
       </ButtonTimeoutContextProvider>
       <div
