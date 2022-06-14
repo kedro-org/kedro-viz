@@ -14,23 +14,15 @@ executors:
         type: string
     docker:
         - image: cimg/python:<<parameters.python_version>>-node
-    working_directory: ~/repo
 
 commands:
   setup_python_env:
-    description: Setup Python environment
     steps:
-      - checkout
-      - run:
-          name: Install Python
-          command: python --version
       - run:
           name: Install Python dependencies
           command: |
             pip install git+https://github.com/kedro-org/kedro@main
-            cd package && pip install -r requirements.txt -U
-            pip install -r test_requirements.txt -U
-            cd ..
+            pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions
           command: |
@@ -42,77 +34,20 @@ commands:
     steps:
       - run:
           name: Install Node dependencies
-          command: npm install
-  
-  test_lib_transpilation:
-    steps:
-      - run:
-          name: Test lib transpilation
-          command: npm run lib
+          command: npm install            
 
-  test_lib_import:
-    steps:
-      - run:
-          name: Test JS library imports
-          command: |
-            npm run lib-test:setup
-            cd tools/test-lib/react-app
-            npm run test:ci
-
-  run_eslint:
-    steps:
-      - run:
-          name: Run Eslint
-          command: npm run lint
-
-  run_javascript_tests:
-    steps:
-      - run:
-          name: Run JavaScript tests
-          command: npm run build:css && npm run test:ci
-
-  run_python_tests:
-    steps:
-      - run:
-          name: Run Python tests
-          command: make pytest
-
-  run_e2e_tests:
-    steps:
-      - run:
-          name: Run all end to end tests
-          command: make e2e-tests
-
-  run_python_format_and_lint:
-    steps:
-      - run:
-          name: Run Python formatters and linters
-          command: make format-check lint-check
-
-  run_secret_scan:
-    steps:
-      - run:
-          name: Run secret scan
-          command: make secret-scan
-
-  run_security_scan:
-    steps:
-      - run:
-          name: Run security scan
-          command: make security-scan
-
-  build_npm_package:
+  build_package:
     steps:
       - run:
           name: Build application
-          command: npm run build
+          command: make build
 
   package_app:
     steps:
       - run:
-          name: Package app
+          name: Build package
           command: make package
-
+      
   deploy_demo:
     steps:
       - checkout
@@ -144,7 +79,6 @@ commands:
   win_setup_conda:
     # Miniconda3 is pre-installed on the machine:
     # https://circleci.com/docs/2.0/hello-world-windows/
-    description: Setup conda
     parameters:
       python_version:
         type: string
@@ -157,13 +91,11 @@ commands:
           command: conda create --name kedro-viz python=<<parameters.python_version>> -y
 
   win_setup_requirements:
-    description: Install Python dependencies
     steps:
       - run:
           name: Install Kedro-Viz dependencies
           command: |
             conda activate kedro-viz
-            python -m pip install -U pip setuptools wheel
             pip install git+https://github.com/kedro-org/kedro@main
             pip install -r package/test_requirements.txt -U
       - run:
@@ -176,23 +108,29 @@ commands:
       - run:
           name: Install 'make' command
           command: choco install make
-
-
-  run_win_python_tests:
+  
+  setup:
     steps:
-      - run:
-          name: Run Python tests on Windows
-          command:
-            conda activate kedro-viz; make pytest
-
-  run_win_e2e_tests:
+      - checkout
+      - setup_python_env
+      - install_node_dependencies
+      - build_package 
+  
+  win_setup:
+    parameters:
+      python_version:
+        type: string
+    executor:
     steps:
-      - run:
-          name: Run all end to end tests on Windows
-          command:
-            conda activate kedro-viz; make e2e-tests
+      - checkout
+      - win_setup_conda:
+          python_version: <<parameters.python_version>>
+      - win_setup_requirements
+      - install_node_dependencies
+      - build_package
+    
 
-
+     
 jobs:
   e2e_tests:
     parameters:
@@ -202,9 +140,10 @@ jobs:
       name: docker
       python_version: <<parameters.python_version>>
     steps:
-      - setup_python_env
-      - install_node_dependencies
-      - run_e2e_tests
+      - setup
+      - run:
+          name: Run all end to end tests
+          command: make e2e-tests
   
   win_e2e_tests:
     parameters:
@@ -212,12 +151,12 @@ jobs:
         type: string
     executor: win/default
     steps:
-      - checkout
-      - win_setup_conda:
+      - win_setup:
           python_version: <<parameters.python_version>>
-      - win_setup_requirements
-      - install_node_dependencies
-      - run_win_e2e_tests
+      - run:
+          name: Run all end to end tests on Windows
+          command:
+            conda activate kedro-viz; make e2e-tests
 
   unit_tests:
     parameters:
@@ -227,10 +166,10 @@ jobs:
       name: docker
       python_version: <<parameters.python_version>>
     steps:
-      - checkout 
-      - setup_python_env
-      - install_node_dependencies
-      - run_python_tests
+      - setup
+      - run:
+          name: Run Python tests
+          command: make pytest
 
   win_unit_tests:
     parameters:
@@ -238,14 +177,13 @@ jobs:
         type: string
     executor: win/default
     steps:
-      - checkout 
-      - win_setup_conda:
+      - win_setup:
           python_version: <<parameters.python_version>>
-      - win_setup_requirements
-      - install_node_dependencies
-      - run_win_python_tests
+      - run:
+          name: Run Python tests on Windows
+          command:
+            conda activate kedro-viz; make pytest
 
-  
   lint:
     parameters:
       python_version:
@@ -254,54 +192,57 @@ jobs:
       name: docker
       python_version: <<parameters.python_version>>
     steps:
+      - checkout 
       - setup_python_env
-      - run_python_format_and_lint
+      - run:
+          name: Run Python formatters and linters
+          command: make format-check lint-check
 
-  
   javascript_lint_and_tests:
-    parameters:
-      python_version:
-        type: string
     executor:
       name: docker
-      python_version: <<parameters.python_version>>
-    description: Run javascript commands and tests
+      python_version: "3.8"
     steps:
       - checkout 
       - install_node_dependencies
-      - test_lib_transpilation
-      - test_lib_import
-      - run_eslint
-      - run_javascript_tests
+      - run:
+          name: Test lib transpilation
+          command: npm run lib
+      - run:
+          name: Test JS library imports
+          command: |
+            npm run lib-test:setup
+            cd tools/test-lib/react-app
+            npm run test:ci
+      - run:
+          name: Run Eslint
+          command: npm run lint
+      - run:
+          name: Run JavaScript tests
+          command: npm run build:css && npm run test:ci
 
-  build_package: 
-    parameters:
-      python_version:
-        type: string
+  build_app: 
     executor:
         name: docker
-        python_version: <<parameters.python_version>>
+        python_version: "3.8"
     steps:
-      - checkout
-      - setup_python_env
-      - install_node_dependencies
-      - run_secret_scan
-      - run_security_scan
-      - build_npm_package
+      - setup
+      - run:
+          name: Run secret scan
+          command: make secret-scan
+      - run:
+          name: Run security scan
+          command: make security-scan
       - package_app
 
   release_to_npm:
-    parameters:
-      python_version:
-        type: string
     executor:
       name: docker
-      python_version: <<parameters.python_version>>
-    description: Build Kedro-Viz as an npm package and push it to npm
+      python_version: "3.8"
     steps:
       - checkout
       - install_node_dependencies
-      - build_npm_package
+      - build_package
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
@@ -310,13 +251,9 @@ jobs:
           command: npm publish
 
   release_to_pypi:
-    parameters:
-      python_version:
-        type: string
     executor:
       name: docker
-      python_version: <<parameters.python_version>>
-    description: Build Kedro-Viz as a Python package and push it to PyPI
+      python_version: "3.8"
     steps:
       - checkout
       - setup_python_env
@@ -324,12 +261,18 @@ jobs:
       - run:
           name: Install twine
           command: python -m pip install -U twine
-      - run:
-          name: Build Python package
-          command: make package
+      - package_app
       - run:
           name: Publish to PyPI
           command: python -m twine upload package/dist/*
+    
+    all_circleci_checks_succeeded:
+    docker:
+      - image: circleci/python # any light-weight image
+    steps:
+      - run:
+          name: Success!
+          command: echo "All checks passed"
 
 release_filter: &release_filter
   filters:
@@ -362,34 +305,28 @@ workflows:
           matrix:
             parameters:
               python_version: ["3.7", "3.8", "3.9", "3.10"]
-      - javascript_lint_and_tests:
-          matrix:
-              parameters:
-                python_version: ["3.8"]
-      - build_package:
-          matrix:
-            parameters:
-              python_version: ["3.8"]
+      - javascript_lint_and_tests
+      - build_app
+      - all_circleci_checks_succeeded:
+          requires:
+            - e2e_tests
+            - win_e2e_tests
+            - unit_tests
+            - win_unit_tests
+            - lint
+            - javascript_lint_and_tests
+            - build_app
 
   release:
     jobs:
-      - build_package:
-          matrix:
-            parameters:
-              python_version: ["3.8"]
+      - build_app:
           <<: *release_filter
       - release_to_npm:
-          matrix:
-            parameters:
-              python_version: ["3.8"]
           <<: *release_filter
       - release_to_pypi:
-          matrix:
-            parameters:
-              python_version: ["3.8"]
           <<: *release_filter
           requires:
-            - build_package
+            - build_app
       
       
 
