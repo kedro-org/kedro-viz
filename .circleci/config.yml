@@ -13,7 +13,7 @@ executors:
       python_version:
         type: string
     docker:
-        - image: cimg/python:<<parameters.python_version>>-node
+          - image: cimg/python:<<parameters.python_version>>-node
 
 commands:
   setup_python_env:
@@ -266,7 +266,7 @@ jobs:
           name: Publish to PyPI
           command: python -m twine upload package/dist/*
     
-    all_circleci_checks_succeeded:
+  all_circleci_checks_succeeded:
     docker:
       - image: circleci/python # any light-weight image
     steps:
