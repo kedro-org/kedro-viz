@@ -21,9 +21,9 @@ const RunDetailsModal = ({
   const {
     isSuccessful,
     showModal,
-    hasInteracted,
+    hasNotInteracted,
     handleClick,
-    setHasInteracted,
+    setHasNotInteracted,
     setIsSuccessful,
   } = useContext(ButtonTimeoutContext);
 
@@ -46,7 +46,7 @@ const RunDetailsModal = ({
         [key]: value,
       })
     );
-    setHasInteracted(true);
+    setHasNotInteracted(false);
   };
 
   // only if the component is visible first, then apply isSuccessful to show or hide modal
@@ -70,7 +70,7 @@ const RunDetailsModal = ({
      * the next time the modal opens.
      */
     reset();
-  }, [runMetadataToEdit, visible, setHasInteracted, reset]);
+  }, [runMetadataToEdit, visible, setHasNotInteracted, reset]);
 
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
@@ -113,7 +113,7 @@ const RunDetailsModal = ({
             Cancel
           </Button>
           <Button
-            disabled={!hasInteracted}
+            disabled={hasNotInteracted}
             onClick={onApplyChanges}
             mode={isSuccessful ? 'success' : 'primary'}
             size="small"

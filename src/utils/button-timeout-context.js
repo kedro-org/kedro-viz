@@ -4,12 +4,12 @@ export const ButtonTimeoutContext = createContext(null);
 
 /**
  * provides a way to pass different states to button depends on whether its successful, or not
- * {@return hasInteracted and setHasInteracted} these 2 are only used for modal with editable fields
+ * {@return hasNotInteracted and setHasNotInteracted} these 2 are only used for modal with editable fields
  */
 export const ButtonTimeoutContextProvider = ({ children }) => {
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const [hasNotInteracted, setHasNotInteracted] = useState(true);
 
   const handleClick = () => {
     setShowModal(true);
@@ -26,7 +26,7 @@ export const ButtonTimeoutContextProvider = ({ children }) => {
     // Delay the reset so the user can't see the button text change.
     const resetTimeout = setTimeout(() => {
       setIsSuccessful(false);
-      setHasInteracted(false);
+      setHasNotInteracted(true);
     }, 2000);
 
     return () => {
@@ -41,10 +41,10 @@ export const ButtonTimeoutContextProvider = ({ children }) => {
       value={{
         isSuccessful,
         showModal,
-        hasInteracted,
+        hasNotInteracted,
         handleClick,
         setIsSuccessful: (state) => setIsSuccessful(state),
-        setHasInteracted: (state) => setHasInteracted(state),
+        setHasNotInteracted: (state) => setHasNotInteracted(state),
       }}
     >
       {children}
