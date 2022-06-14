@@ -49,11 +49,12 @@ const RunDetailsModal = ({
     setHasInteracted(true);
   };
 
+  // only if the component is visible first, then apply isSuccessful to show or hide modal
   useEffect(() => {
-    if (isSuccessful) {
+    if (visible && isSuccessful) {
       setShowRunDetailsModal(showModal);
     }
-  }, [showModal, setShowRunDetailsModal, isSuccessful]);
+  }, [showModal, setShowRunDetailsModal, isSuccessful, visible]);
 
   useEffect(() => {
     setValuesToUpdate({

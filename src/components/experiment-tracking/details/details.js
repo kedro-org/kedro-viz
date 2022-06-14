@@ -45,24 +45,20 @@ const Details = ({
   return (
     <>
       <ButtonTimeoutContextProvider>
-        {showRunDetailsModal && (
-          <RunDetailsModal
-            runMetadataToEdit={runMetadataToEdit}
-            runs={runMetadata}
-            setShowRunDetailsModal={setShowRunDetailsModal}
-            theme={theme}
-            visible={showRunDetailsModal}
-          />
-        )}
-        {showRunExportModal && (
-          <RunExportModal
-            theme={theme}
-            visible={showRunExportModal}
-            setShowRunExportModal={setShowRunExportModal}
-            runMetadata={runMetadata}
-            runTrackingData={runTrackingData}
-          />
-        )}
+        <RunDetailsModal
+          runMetadataToEdit={runMetadataToEdit}
+          runs={runMetadata}
+          setShowRunDetailsModal={setShowRunDetailsModal}
+          theme={theme}
+          visible={showRunDetailsModal}
+        />
+        <RunExportModal
+          theme={theme}
+          visible={showRunExportModal}
+          setShowRunExportModal={setShowRunExportModal}
+          runMetadata={runMetadata}
+          runTrackingData={runTrackingData}
+        />
       </ButtonTimeoutContextProvider>
       <div
         className={classnames('kedro', 'details-mainframe', {

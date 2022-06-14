@@ -24,11 +24,12 @@ const RunExportModal = ({
     setExportData(constructExportData(runMetadata, runTrackingData));
   }, [runMetadata, runTrackingData]);
 
+  // only if the component is visible first, then apply isSuccessful to show or hide modal
   useEffect(() => {
-    if (isSuccessful) {
+    if (visible && isSuccessful) {
       setShowRunExportModal(showModal);
     }
-  }, [showModal, setShowRunExportModal, isSuccessful]);
+  }, [showModal, setShowRunExportModal, isSuccessful, visible]);
 
   return (
     <div className="pipeline-run-export-modal pipeline-run-export-modal--experiment-tracking">
