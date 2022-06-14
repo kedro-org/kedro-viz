@@ -52,12 +52,15 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  display: none;
   margin-top: -1.2em;
   margin-left: 1.6em;
   padding: 0.5em 0.7em;
   font-size: 1.4em;
   white-space: nowrap;
+  display: inline-block;
+  opacity: 0;
+  transition: opacity ease 0.1s;
+  pointer-events: none;
 
   @media (max-width: $sidebar-width-breakpoint) {
     .pipeline-sidebar--visible & {
@@ -70,7 +73,9 @@
 
   .pipeline-icon-toolbar__button:hover &,
   [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {
-    display: inline-block;
+    opacity: 1;
+    transition-delay: 1s;
+    pointer-events: all;
   }
 
   &::after {
