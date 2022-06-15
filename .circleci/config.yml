@@ -76,7 +76,7 @@ commands:
             # run https://docs.aws.amazon.com/cli/latest/reference/lightsail/create-container-service-deployment.html#create-container-service-deployment
             aws lightsail create-container-service-deployment --region eu-west-2 --cli-input-json file://./lightsail.json
 
-  win_setup_conda:
+  win_setup_python_env:
     # Miniconda3 is pre-installed on the machine:
     # https://circleci.com/docs/2.0/hello-world-windows/
     parameters:
@@ -89,9 +89,6 @@ commands:
       - run:
           name: Create 'kedro-viz' conda environment
           command: conda create --name kedro-viz python=<<parameters.python_version>> -y
-
-  win_setup_requirements:
-    steps:
       - run:
           name: Install Kedro-Viz dependencies
           command: |
@@ -123,9 +120,8 @@ commands:
     executor:
     steps:
       - checkout
-      - win_setup_conda:
+      - win_setup_python_env:
           python_version: <<parameters.python_version>>
-      - win_setup_requirements
       - install_node_dependencies
       - build_package
     
@@ -151,7 +147,7 @@ jobs:
         type: string
     executor: win/default
     steps:
-      - win_setup:
+      - win_setup_python_env:
           python_version: <<parameters.python_version>>
       - run:
           name: Run all end to end tests on Windows
