@@ -109,6 +109,11 @@ commands:
   setup:
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - setup_python_env
       - install_node_dependencies
       - build_package 
@@ -120,6 +125,11 @@ commands:
     executor:
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - win_setup_python_env:
           python_version: <<parameters.python_version>>
       - install_node_dependencies
@@ -200,6 +210,11 @@ jobs:
       python_version: "3.8"
     steps:
       - checkout 
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - install_node_dependencies
       - run:
           name: Test lib transpilation
@@ -237,7 +252,16 @@ jobs:
       python_version: "3.8"
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - install_node_dependencies
+      - save_cache:
+          paths:
+            - node_modules
+          key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
       - build_package
       - run:
           name: Authenticate with registry
@@ -252,6 +276,11 @@ jobs:
       python_version: "3.8"
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - setup_python_env
       - install_node_dependencies
       - run:
@@ -281,6 +310,7 @@ workflows:
   version: 2.1
   build: 
     jobs:
+      - build_app
       - e2e_tests:
           matrix:
             parameters:
@@ -302,7 +332,6 @@ workflows:
             parameters:
               python_version: ["3.7", "3.8", "3.9", "3.10"]
       - javascript_lint_and_tests
-      - build_app
       - all_circleci_checks_succeeded:
           requires:
             - e2e_tests
