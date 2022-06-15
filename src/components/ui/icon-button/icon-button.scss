@@ -44,6 +44,10 @@
     width: 2.175em;
     height: 2.175em;
   }
+
+  &--active svg {
+    opacity: 1;
+  }
 }
 
 .pipeline-toolbar__label {
