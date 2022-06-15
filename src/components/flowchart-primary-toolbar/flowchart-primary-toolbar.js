@@ -42,6 +42,7 @@ export const FlowchartPrimaryToolbar = ({
         icon={LabelIcon}
         labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
         visible={visible.labelBtn}
+        active={textLabels}
       />
       <IconButton
         ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
@@ -52,6 +53,7 @@ export const FlowchartPrimaryToolbar = ({
         labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
         disabled={disableLayerBtn}
         visible={visible.layerBtn}
+        active={visibleLayers}
       />
       <IconButton
         ariaLabel="Export graph as SVG or PNG"

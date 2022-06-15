@@ -50,6 +50,7 @@ export const ExperimentPrimaryToolbar = ({
         labelText={`${selectedRunData?.bookmark ? 'Unbookmark' : 'Bookmark'}`}
         onClick={() => toggleBookmark()}
         visible={!enableComparisonView}
+        active={selectedRunData?.bookmark}
       />
       <IconButton
         ariaLive="Edit run details"
@@ -71,6 +72,7 @@ export const ExperimentPrimaryToolbar = ({
         }
         visible={enableComparisonView}
         disabled={showChangesIconDisabled}
+        active={enableShowChanges}
       />
       <CSVLink
         data={exportData}
