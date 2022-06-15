@@ -16,7 +16,7 @@ const sanitiseEmptyValue = (value) => {
   return value === '' || value === null ? '-' : value;
 };
 
-const HiddenMenu = ({ children, isBookmarked, runId }) => {
+const HiddenMenu = ({ isBookmarked, runId }) => {
   const [isVisible, setIsVisible] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
 
@@ -57,7 +57,12 @@ const HiddenMenu = ({ children, isBookmarked, runId }) => {
           {isBookmarked ? 'Unbookmark' : 'Bookmark'}
         </div>
       </div>
-      {children}
+      <IconButton
+        ariaLive="polite"
+        className="pipeline-menu-button--labels__kebab"
+        icon={KebabIcon}
+        active={isVisible}
+      />
     </div>
   );
 };
@@ -147,13 +152,10 @@ const RunMetadata = ({
                           visible={enableShowChanges}
                           active={run.id === pinnedRun}
                         />
-                        <HiddenMenu isBookmarked={run.bookmark} runId={run.id}>
-                          <IconButton
-                            ariaLive="polite"
-                            className="pipeline-menu-button--labels__kebab"
-                            icon={KebabIcon}
-                          />
-                        </HiddenMenu>
+                        <HiddenMenu
+                          isBookmarked={run.bookmark}
+                          runId={run.id}
+                        />
                         <IconButton
                           ariaLive="polite"
                           className="pipeline-menu-button--labels__close"
