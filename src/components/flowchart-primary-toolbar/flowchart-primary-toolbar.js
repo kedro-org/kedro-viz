@@ -36,7 +36,7 @@ export const FlowchartPrimaryToolbar = ({
       visible={visible}
     >
       <IconButton
-        ariaLive="polite"
+        ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
         className={'pipeline-menu-button--labels'}
         onClick={() => onToggleTextLabels(!textLabels)}
         icon={LabelIcon}
