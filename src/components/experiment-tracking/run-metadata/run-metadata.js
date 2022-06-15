@@ -145,6 +145,7 @@ const RunMetadata = ({
                             run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
                           visible={enableShowChanges}
+                          active={run.id === pinnedRun}
                         />
                         <HiddenMenu isBookmarked={run.bookmark} runId={run.id}>
                           <IconButton
