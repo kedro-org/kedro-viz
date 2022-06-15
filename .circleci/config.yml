@@ -339,7 +339,9 @@ workflows:
           matrix:
             parameters:
               python_version: ["3.7", "3.8", "3.9", "3.10"]
-      - javascript_lint_and_tests
+      - javascript_lint_and_tests:
+          requires:
+            - build_app
       - all_circleci_checks_succeeded:
           requires:
             - e2e_tests
