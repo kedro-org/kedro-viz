@@ -147,7 +147,7 @@ jobs:
         type: string
     executor: win/default
     steps:
-      - win_setup_python_env:
+      - win_setup:
           python_version: <<parameters.python_version>>
       - run:
           name: Run all end to end tests on Windows
