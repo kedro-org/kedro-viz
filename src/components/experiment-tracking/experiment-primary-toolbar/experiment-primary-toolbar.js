@@ -1,5 +1,4 @@
-import React, { useCallback, useState } from 'react';
-import { CSVLink } from 'react-csv';
+import React from 'react';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import IconButton from '../../ui/icon-button';
 import PencilIcon from '../../icons/pencil';
@@ -8,23 +7,20 @@ import ExportIcon from '../../icons/export';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import PrimaryToolbar from '../../primary-toolbar';
 import ShowChangesIcon from '../../icons/show-changes';
-import { constructExportData } from '../../../utils/experiment-tracking-utils';
 
 export const ExperimentPrimaryToolbar = ({
   displaySidebar,
   enableComparisonView,
   enableShowChanges,
-  runMetadata,
-  runTrackingData,
   selectedRunData,
   setEnableShowChanges,
   setSidebarVisible,
   showChangesIconDisabled,
   showRunDetailsModal,
   sidebarVisible,
+  setShowRunExportModal,
 }) => {
   const { updateRunDetails } = useUpdateRunDetails();
-  const [exportData, setExportData] = useState([]);
 
   const toggleBookmark = () => {
     updateRunDetails({
@@ -32,10 +28,6 @@ export const ExperimentPrimaryToolbar = ({
       runInput: { bookmark: !selectedRunData?.bookmark },
     });
   };
-
-  const updateExportData = useCallback(() => {
-    setExportData(constructExportData(runMetadata, runTrackingData));
-  }, [runMetadata, runTrackingData]);
 
   return (
     <PrimaryToolbar
@@ -72,19 +64,13 @@ export const ExperimentPrimaryToolbar = ({
         visible={enableComparisonView}
         disabled={showChangesIconDisabled}
       />
-      <CSVLink
-        data={exportData}
-        asyncOnClick={true}
-        onClick={updateExportData}
-        filename="run-data.csv"
-      >
-        <IconButton
-          ariaLabel="Export graph as SVG or PNG"
-          className={'pipeline-menu-button--export'}
-          icon={ExportIcon}
-          labelText="Export run data"
-        />
-      </CSVLink>
+      <IconButton
+        ariaLabel="Export Run Data"
+        className={'pipeline-menu-button--export-runs'}
+        icon={ExportIcon}
+        labelText="Export run data"
+        onClick={() => setShowRunExportModal(true)}
+      />
     </PrimaryToolbar>
   );
 };

@@ -25,6 +25,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [selectedRunIds, setSelectedRunIds] = useState([]);
   const [selectedRunData, setSelectedRunData] = useState(null);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
+  const [showRunExportModal, setShowRunExportModal] = useState(false);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -165,15 +166,14 @@ const ExperimentWrapper = ({ theme }) => {
             isExperimentView
             onRunSelection={onRunSelection}
             onToggleComparisonView={onToggleComparisonView}
-            runMetadata={runMetadata}
             runsListData={data.runsList}
-            runTrackingData={runTrackingData}
             selectedRunData={selectedRunData}
             selectedRunIds={selectedRunIds}
             setEnableShowChanges={setEnableShowChanges}
             setSidebarVisible={setIsSidebarVisible}
             showRunDetailsModal={setShowRunDetailsModal}
             sidebarVisible={isSidebarVisible}
+            setShowRunExportModal={setShowRunExportModal}
           />
           {selectedRunIds.length > 0 ? (
             <Details
@@ -191,6 +191,8 @@ const ExperimentWrapper = ({ theme }) => {
               sidebarVisible={isSidebarVisible}
               theme={theme}
               trackingDataError={trackingDataError}
+              showRunExportModal={showRunExportModal}
+              setShowRunExportModal={setShowRunExportModal}
             />
           ) : null}
         </>
