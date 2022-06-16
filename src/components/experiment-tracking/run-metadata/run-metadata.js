@@ -59,8 +59,8 @@ const HiddenMenu = ({ isBookmarked, runId }) => {
       </div>
       <IconButton
         active={isVisible}
-        ariaLive="polite"
-        className="pipeline-menu-button--labels__kebab"
+        ariaLabel="Runs menu"
+        className="pipeline-menu-button--labels"
         icon={KebabIcon}
       />
     </div>
@@ -157,8 +157,8 @@ const RunMetadata = ({
                           runId={run.id}
                         />
                         <IconButton
-                          ariaLive="polite"
-                          className="pipeline-menu-button--labels__close"
+                          ariaLabel="Close run"
+                          className="pipeline-menu-button--labels"
                           icon={CloseIcon}
                           onClick={() => onRunSelection(run.id)}
                         />
