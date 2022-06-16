@@ -146,6 +146,10 @@ const RunMetadata = ({
                             run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
                           visible={enableShowChanges}
+                          labelText={
+                            run.id === pinnedRun ? null : 'Make baseline'
+                          }
+                          labelTextPosition="bottom"
                         />
                         <HiddenMenu isBookmarked={run.bookmark} runId={run.id}>
                           <IconButton
@@ -157,8 +161,10 @@ const RunMetadata = ({
                         <IconButton
                           ariaLive="polite"
                           className="pipeline-menu-button--labels__close"
-                          onClick={() => onRunSelection(run.id)}
                           icon={CloseIcon}
+                          labelText="Remove run"
+                          labelTextPosition="bottom"
+                          onClick={() => onRunSelection(run.id)}
                         />
                       </ul>
                     </td>
