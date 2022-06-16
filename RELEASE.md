@@ -6,6 +6,8 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.7.0
+
 ## Major features and improvements
 
 - Allow the display of Matplotlib images in the metadata panel and modal. (#887)
