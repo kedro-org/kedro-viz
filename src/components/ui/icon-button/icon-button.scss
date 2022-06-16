@@ -1,6 +1,8 @@
 @import '../../../styles/variables';
 @import '../../../styles/extends';
 
+$triangle-size: 7px;
+
 .pipeline-icon-toolbar__button {
   position: relative;
   width: $sidebar-width-closed;
@@ -50,11 +52,7 @@
   @extend %tooltip;
 
   position: absolute;
-  top: 50%;
-  left: 50%;
   display: none;
-  margin-top: -1.2em;
-  margin-left: 1.6em;
   padding: 0.5em 0.7em;
   font-size: 1.4em;
   white-space: nowrap;
@@ -74,16 +72,12 @@
   }
 
   &::after {
-    $triangle-size: 7px;
-
     position: absolute;
-    top: calc(50% - #{$triangle-size});
-    left: -$triangle-size + 0.5;
+
     width: 0;
     height: 0;
-    border-color: transparent var(--color-bg-alt) transparent transparent;
     border-style: solid;
-    border-width: $triangle-size $triangle-size $triangle-size 0;
+
     content: '';
 
     @media (max-width: $sidebar-width-breakpoint) {
@@ -94,6 +88,71 @@
         border-width: $triangle-size 0 $triangle-size $triangle-size;
       }
     }
+  }
+}
+
+// REMINDER TO DO: include breakpoints
+.pipeline-toolbar__label-right {
+  top: 50%;
+  left: 50%;
+
+  margin-top: -1.2em;
+  margin-left: 1.6em;
+
+  &::after {
+    top: calc(50% - #{$triangle-size});
+    left: -$triangle-size + 0.5;
+
+    border-color: transparent var(--color-bg-alt) transparent transparent;
+    border-width: $triangle-size $triangle-size $triangle-size 0;
+  }
+}
+
+.pipeline-toolbar__label-left {
+  top: 50%;
+  right: 50%;
+
+  margin-top: -1.2em;
+  margin-right: 1.6em;
+
+  &::after {
+    top: calc(50% - #{$triangle-size});
+    right: $triangle-size + 0.5;
+
+    border-color: transparent transparent transparent var(--color-bg-alt);
+    border-width: $triangle-size 0 $triangle-size $triangle-size;
+  }
+}
+
+.pipeline-toolbar__label-bottom {
+  left: 50%;
+  transform: translateX(-50%);
+
+  margin-top: 0.5em;
+
+  &::after {
+    bottom: 100%;
+    left: calc(50% - #{$triangle-size});
+
+    border-color: transparent transparent var(--color-bg-alt) transparent;
+    border-width: 0 $triangle-size $triangle-size $triangle-size;
+  }
+}
+
+.pipeline-toolbar__label-top {
+  bottom: 100%;
+
+  left: 50%;
+  transform: translateX(-50%);
+
+  margin-bottom: 0.5em;
+
+  &::after {
+    top: 100%;
+    right: calc(50% - #{$triangle-size});
+
+    border-color: var(--color-bg-alt) transparent transparent transparent;
+    border-width: $triangle-size $triangle-size 0 $triangle-size;
   }
 }
 
