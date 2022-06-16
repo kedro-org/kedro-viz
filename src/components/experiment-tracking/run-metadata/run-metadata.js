@@ -39,8 +39,8 @@ const HiddenMenu = ({ isBookmarked, runId }) => {
   return (
     <div
       className="hidden-menu-wrapper"
-      ref={menuRef}
       onClick={() => setIsVisible(!isVisible)}
+      ref={menuRef}
     >
       <div
         className={classnames('hidden-menu', {
@@ -58,10 +58,10 @@ const HiddenMenu = ({ isBookmarked, runId }) => {
         </div>
       </div>
       <IconButton
+        active={isVisible}
         ariaLive="polite"
         className="pipeline-menu-button--labels__kebab"
         icon={KebabIcon}
-        active={isVisible}
       />
     </div>
   );
@@ -136,6 +136,7 @@ const RunMetadata = ({
                       </span>
                       <ul className="details-metadata__buttons">
                         <IconButton
+                          active={run.id === pinnedRun}
                           ariaLive="polite"
                           className={classnames(
                             'pipeline-menu-button--labels',
@@ -145,12 +146,11 @@ const RunMetadata = ({
                                 run.id === pinnedRun,
                             }
                           )}
-                          onClick={() => setPinnedRun(run.id)}
                           icon={
                             run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
+                          onClick={() => setPinnedRun(run.id)}
                           visible={enableShowChanges}
-                          active={run.id === pinnedRun}
                         />
                         <HiddenMenu
                           isBookmarked={run.bookmark}
@@ -159,8 +159,8 @@ const RunMetadata = ({
                         <IconButton
                           ariaLive="polite"
                           className="pipeline-menu-button--labels__close"
-                          onClick={() => onRunSelection(run.id)}
                           icon={CloseIcon}
+                          onClick={() => onRunSelection(run.id)}
                         />
                       </ul>
                     </td>

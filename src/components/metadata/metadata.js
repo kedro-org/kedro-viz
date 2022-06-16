@@ -94,11 +94,11 @@ const MetaData = ({
                 <h2 className="pipeline-metadata__title">{metadata.name}</h2>
               </div>
               <IconButton
-                container={React.Fragment}
                 ariaLabel="Close Metadata Panel"
                 className={modifiers('pipeline-metadata__close-button', {
                   hasCode,
                 })}
+                container={React.Fragment}
                 icon={CloseIcon}
                 onClick={onCloseClick}
               />

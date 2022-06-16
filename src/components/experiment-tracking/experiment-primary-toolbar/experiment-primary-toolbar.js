@@ -44,13 +44,13 @@ export const ExperimentPrimaryToolbar = ({
       visible={{ sidebar: sidebarVisible }}
     >
       <IconButton
+        active={selectedRunData?.bookmark}
         ariaLive="Toggle run bookmark"
         className={'pipeline-menu-button--labels'}
         icon={selectedRunData?.bookmark ? BookmarkIcon : BookmarkStrokeIcon}
         labelText={`${selectedRunData?.bookmark ? 'Unbookmark' : 'Bookmark'}`}
         onClick={() => toggleBookmark()}
         visible={!enableComparisonView}
-        active={selectedRunData?.bookmark}
       />
       <IconButton
         ariaLive="Edit run details"
@@ -61,24 +61,24 @@ export const ExperimentPrimaryToolbar = ({
         visible={!enableComparisonView}
       />
       <IconButton
+        active={enableShowChanges}
         ariaLive="polite"
         className={'pipeline-menu-button--labels'}
-        onClick={() => setEnableShowChanges(!enableShowChanges)}
+        disabled={showChangesIconDisabled}
         icon={ShowChangesIcon}
         labelText={
           !showChangesIconDisabled
             ? `${enableShowChanges ? 'Disable' : 'Enable'} show changes`
             : null
         }
+        onClick={() => setEnableShowChanges(!enableShowChanges)}
         visible={enableComparisonView}
-        disabled={showChangesIconDisabled}
-        active={enableShowChanges}
       />
       <CSVLink
-        data={exportData}
         asyncOnClick={true}
-        onClick={updateExportData}
+        data={exportData}
         filename="run-data.csv"
+        onClick={updateExportData}
       >
         <IconButton
           ariaLabel="Export graph as SVG or PNG"
