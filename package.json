@@ -5,7 +5,11 @@
   "files": [
     "lib"
   ],
-  "homepage": "https://github.com/kedro-org/kedro-viz",
+  "homepage": ".",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kedro-org/kedro-viz.git"
+  },
   "proxy": "http://localhost:4142/",
   "scripts": {
     "build": "npm run build:css && react-scripts build",
