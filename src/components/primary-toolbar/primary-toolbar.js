@@ -31,6 +31,7 @@ export const PrimaryToolbar = ({
         onClick={() => onToggleSidebar(!visible.sidebar)}
         icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
+        active={visible.sidebar}
       />
       {children}
     </ul>
