@@ -147,7 +147,7 @@ const RunMetadata = ({
                           }
                           visible={enableShowChanges}
                           labelText={
-                            run.id === pinnedRun ? null : 'Make baseline'
+                            run.id === pinnedRun ? 'Baseline' : 'Make baseline'
                           }
                           labelTextPosition="bottom"
                         />
