@@ -15,16 +15,30 @@ export function toggleModularPipelineActive(modularPipelineIDs, active) {
   };
 }
 
-export const TOGGLE_MODULAR_PIPELINE_EXPANDED =
-  'TOGGLE_MODULAR_PIPELINE_EXPANDED';
+export const TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED =
+  'TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED';
+
+/**
+ * Toggle a singular modular pipeline to be expanded.
+ * @param {string} modularPipelineID
+ */
+export function toggleSingleModularPipelineExpanded(modularPipelineID) {
+  return {
+    type: TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED,
+    modularPipelineID,
+  };
+}
+
+export const TOGGLE_MODULAR_PIPELINES_EXPANDED =
+  'TOGGLE_MODULAR_PIPELINES_EXPANDED';
 
 /**
  * Toggle a set of modular pipelines to be expanded.
  * @param {Array[Number]} expandedIDs
  */
-export function toggleModularPipelineExpanded(expandedIDs) {
+export function toggleModularPipelinesExpanded(expandedIDs) {
   return {
-    type: TOGGLE_MODULAR_PIPELINE_EXPANDED,
+    type: TOGGLE_MODULAR_PIPELINES_EXPANDED,
     expandedIDs,
   };
 }

@@ -47,9 +47,11 @@ import {
 } from '../actions/tags';
 import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
-  TOGGLE_MODULAR_PIPELINE_EXPANDED,
+  TOGGLE_MODULAR_PIPELINES_EXPANDED,
+  TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED,
   toggleModularPipelineActive,
-  toggleModularPipelineExpanded,
+  toggleModularPipelinesExpanded,
+  toggleSingleModularPipelineExpanded,
 } from '../actions/modular-pipelines';
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
@@ -227,10 +229,21 @@ describe('actions', () => {
   it('should create an action to expand an array of modular pipelines', () => {
     const modularPipelineIDs = ['12345', '67890'];
     const expectedAction = {
-      type: TOGGLE_MODULAR_PIPELINE_EXPANDED,
+      type: TOGGLE_MODULAR_PIPELINES_EXPANDED,
       expandedIDs: modularPipelineIDs,
     };
-    expect(toggleModularPipelineExpanded(modularPipelineIDs)).toEqual(
+    expect(toggleModularPipelinesExpanded(modularPipelineIDs)).toEqual(
+      expectedAction
+    );
+  });
+
+  it('should create an action to expand a single modular pipeline', () => {
+    const modularPipelineID = '12345';
+    const expectedAction = {
+      type: TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED,
+      modularPipelineID,
+    };
+    expect(toggleSingleModularPipelineExpanded(modularPipelineID)).toEqual(
       expectedAction
     );
   });

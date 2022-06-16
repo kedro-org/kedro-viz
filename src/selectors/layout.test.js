@@ -13,13 +13,13 @@ import { graphNew } from '../utils/graph';
 import { sidebarWidth, largeGraphThreshold } from '../config';
 import spaceflights from '../utils/data/spaceflights.mock.json';
 import { getVisibleNodeIDs } from './disabled';
-import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
+import { toggleModularPipelinesExpanded } from '../actions/modular-pipelines';
 
 describe('Selectors', () => {
   const mockState = prepareState({
     data: spaceflights,
     beforeLayoutActions: [
-      () => toggleModularPipelineExpanded(['data_science', 'data_processing']),
+      () => toggleModularPipelinesExpanded(['data_science', 'data_processing']),
     ],
   });
   describe('getTriggerLargeGraphWarning', () => {
@@ -57,7 +57,7 @@ describe('Selectors', () => {
         data: prepareLargeDataset(),
         beforeLayoutActions: [
           () =>
-            toggleModularPipelineExpanded(['data_science', 'data_processing']),
+            toggleModularPipelinesExpanded(['data_science', 'data_processing']),
         ],
       });
       expect(getTriggerLargeGraphWarning(state)).toBe(true);
