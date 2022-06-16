@@ -124,6 +124,7 @@ const RunMetadata = ({
                     {i === 0 ? <td></td> : null}
                     <td className="details-metadata__title">
                       <span
+                        className="details-metadata__title-detail"
                         onClick={() => onTitleOrNoteClick(run.id)}
                         title={sanitiseEmptyValue(run.title)}
                       >
