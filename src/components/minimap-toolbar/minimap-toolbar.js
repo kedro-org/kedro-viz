@@ -13,11 +13,11 @@ import './minimap-toolbar.css';
  * Controls for minimap
  */
 export const MiniMapToolbar = ({
+  chartZoom,
   displayMiniMap,
   onToggleMiniMap,
-  visible,
-  chartZoom,
   onUpdateChartZoom,
+  visible,
 }) => {
   const { scale, minScale, maxScale } = chartZoom;
 
@@ -26,42 +26,42 @@ export const MiniMapToolbar = ({
       <ul className="pipeline-minimap-toolbar kedro">
         {displayMiniMap && (
           <IconButton
-            icon={MapIcon}
-            className={'pipeline-minimap-button pipeline-minimap-button--map'}
-            ariaLabel={`Turn minimap ${visible.miniMap ? 'off' : 'on'}`}
-            onClick={() => onToggleMiniMap(!visible.miniMap)}
-            labelText={`${visible.miniMap ? 'Hide' : 'Show'} minimap`}
-            visible={visible.miniMapBtn}
             active={visible.miniMap}
+            ariaLabel={`Turn minimap ${visible.miniMap ? 'off' : 'on'}`}
+            className={'pipeline-minimap-button pipeline-minimap-button--map'}
+            icon={MapIcon}
+            labelText={`${visible.miniMap ? 'Hide' : 'Show'} minimap`}
+            onClick={() => onToggleMiniMap(!visible.miniMap)}
+            visible={visible.miniMapBtn}
           />
         )}
         <IconButton
-          icon={PlusIcon}
-          className={'pipeline-minimap-button pipeline-minimap-button--zoom-in'}
           ariaLabel={'Zoom in'}
-          labelText={'Zoom in'}
-          visible={visible.miniMapBtn}
+          className={'pipeline-minimap-button pipeline-minimap-button--zoom-in'}
           disabled={scale >= maxScale}
+          icon={PlusIcon}
+          labelText={'Zoom in'}
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 1.3))}
+          visible={visible.miniMapBtn}
         />
         <IconButton
-          icon={MinusIcon}
+          ariaLabel={'Zoom out'}
           className={
             'pipeline-minimap-button pipeline-minimap-button--zoom-out'
           }
-          ariaLabel={'Zoom out'}
-          labelText={'Zoom out'}
-          visible={visible.miniMapBtn}
           disabled={scale <= minScale}
+          icon={MinusIcon}
+          labelText={'Zoom out'}
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 0.7))}
+          visible={visible.miniMapBtn}
         />
         <IconButton
-          icon={ResetIcon}
-          className={'pipeline-minimap-button pipeline-minimap-button--reset'}
           ariaLabel={'Reset zoom'}
+          className={'pipeline-minimap-button pipeline-minimap-button--reset'}
+          icon={ResetIcon}
           labelText={'Reset zoom'}
-          visible={visible.miniMapBtn}
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 0))}
+          visible={visible.miniMapBtn}
         />
         <li>
           <span className="pipeline-minimap-toolbar__scale" title="Zoom level">
