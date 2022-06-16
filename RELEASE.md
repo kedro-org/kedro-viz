@@ -16,11 +16,11 @@ Please follow the established format:
 
 - Added warning message when filtered pipeline is empty. (#864)
 - Improve telemetry to track flowchart events. (#865)
-- Disabled uvicorn's logger so that log messages are no longer duplicated. (#870)
-- Enhance _Apply and close_ behavior of modals. (#875)
+- Disable Uvicorn's logger so that log messages are no longer duplicated. (#870)
 - Fix namespace collision when two different registered pipelines have a modular pipeline with the same name. (#871)
+- Enhance _Apply and close_ behavior of modals. (#875)
+- Enable clicks on the flowchart to expand modular pipelines. (#879)
 - Add --params option to `kedro viz` CLI command. (#883)
-- Fix namespace collision when two registered pipelines have a modular pipeline with the same name. (#871)
 - Improve bundle size of the JavaScript package. (#906)
 - General design-debt fixes. (#896, #898, #899, #904, #908)
 
