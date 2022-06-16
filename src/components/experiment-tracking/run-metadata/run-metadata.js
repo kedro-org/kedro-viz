@@ -16,7 +16,7 @@ const sanitiseEmptyValue = (value) => {
   return value === '' || value === null ? '-' : value;
 };
 
-const HiddenMenu = ({ children, isBookmarked, runId }) => {
+const HiddenMenu = ({ isBookmarked, runId }) => {
   const [isVisible, setIsVisible] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
 
@@ -39,8 +39,8 @@ const HiddenMenu = ({ children, isBookmarked, runId }) => {
   return (
     <div
       className="hidden-menu-wrapper"
-      ref={menuRef}
       onClick={() => setIsVisible(!isVisible)}
+      ref={menuRef}
     >
       <div
         className={classnames('hidden-menu', {
@@ -57,7 +57,12 @@ const HiddenMenu = ({ children, isBookmarked, runId }) => {
           {isBookmarked ? 'Unbookmark' : 'Bookmark'}
         </div>
       </div>
-      {children}
+      <IconButton
+        active={isVisible}
+        ariaLabel="Runs menu"
+        className="pipeline-menu-button--labels"
+        icon={KebabIcon}
+      />
     </div>
   );
 };
@@ -131,6 +136,7 @@ const RunMetadata = ({
                       </span>
                       <ul className="details-metadata__buttons">
                         <IconButton
+                          active={run.id === pinnedRun}
                           ariaLive="polite"
                           className={classnames(
                             'pipeline-menu-button--labels',
@@ -140,24 +146,21 @@ const RunMetadata = ({
                                 run.id === pinnedRun,
                             }
                           )}
-                          onClick={() => setPinnedRun(run.id)}
                           icon={
                             run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
+                          onClick={() => setPinnedRun(run.id)}
                           visible={enableShowChanges}
                         />
-                        <HiddenMenu isBookmarked={run.bookmark} runId={run.id}>
-                          <IconButton
-                            ariaLabel="Runs menu"
-                            className="pipeline-menu-button--labels"
-                            icon={KebabIcon}
-                          />
-                        </HiddenMenu>
+                        <HiddenMenu
+                          isBookmarked={run.bookmark}
+                          runId={run.id}
+                        />
                         <IconButton
                           ariaLabel="Close run"
                           className="pipeline-menu-button--labels"
-                          onClick={() => onRunSelection(run.id)}
                           icon={CloseIcon}
+                          onClick={() => onRunSelection(run.id)}
                         />
                       </ul>
                     </td>

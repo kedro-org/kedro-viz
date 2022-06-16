@@ -36,6 +36,7 @@ export const ExperimentPrimaryToolbar = ({
       visible={{ sidebar: sidebarVisible }}
     >
       <IconButton
+        active={selectedRunData?.bookmark}
         ariaLabel="Toggle run bookmark"
         className={'pipeline-menu-button--labels'}
         icon={selectedRunData?.bookmark ? BookmarkIcon : BookmarkStrokeIcon}
@@ -52,17 +53,18 @@ export const ExperimentPrimaryToolbar = ({
         visible={!enableComparisonView}
       />
       <IconButton
+        active={enableShowChanges}
         ariaLabel="Toggle show changes"
         className={'pipeline-menu-button--labels'}
-        onClick={() => setEnableShowChanges(!enableShowChanges)}
+        disabled={showChangesIconDisabled}
         icon={ShowChangesIcon}
         labelText={
           !showChangesIconDisabled
             ? `${enableShowChanges ? 'Disable' : 'Enable'} show changes`
             : null
         }
+        onClick={() => setEnableShowChanges(!enableShowChanges)}
         visible={enableComparisonView}
-        disabled={showChangesIconDisabled}
       />
       <IconButton
         ariaLabel="Export Run Data"

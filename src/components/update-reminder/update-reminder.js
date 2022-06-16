@@ -19,9 +19,9 @@ const UpdateReminder = ({ versions, setDismiss }) => {
 
           <div className="close-button-container">
             <IconButton
-              container={React.Fragment}
               ariaLabel="Close Upgrade Reminder Panel"
               className="close-button"
+              container={React.Fragment}
               icon={CloseIcon}
               onClick={() => setExpand(false)}
             />
