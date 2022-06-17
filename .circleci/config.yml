@@ -292,6 +292,11 @@ workflows:
           matrix:
             parameters:
               python_version: ["3.7", "3.8", "3.9", "3.10"]
+          filters:
+            branches:
+              only: 
+              - main
+              - demo
       - unit_tests:
           matrix:
             parameters:
@@ -300,6 +305,11 @@ workflows:
           matrix:
             parameters:
               python_version: ["3.7", "3.8", "3.9", "3.10"]
+          filters:
+            branches:
+              only: 
+                - main
+                - demo
       - lint:
           matrix:
             parameters:
@@ -323,9 +333,7 @@ workflows:
       - all_circleci_checks_succeeded:
           requires:
             - e2e_tests
-            - win_e2e_tests
             - unit_tests
-            - win_unit_tests
             - lint
             - javascript_lint_and_tests
             - build_app
