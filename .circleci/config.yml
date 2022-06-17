@@ -234,6 +234,9 @@ jobs:
           command: python -m twine upload package/dist/*
 
   deploy_demo:
+    executor:
+      name: docker
+      python_version: "3.8"
     steps:
       - checkout
       - setup_remote_docker
