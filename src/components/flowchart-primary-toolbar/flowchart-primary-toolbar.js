@@ -31,34 +31,36 @@ export const FlowchartPrimaryToolbar = ({
 }) => (
   <>
     <PrimaryToolbar
+      displaySidebar={displaySidebar}
       onToggleSidebar={onToggleSidebar}
       visible={visible}
-      displaySidebar={displaySidebar}
     >
       <IconButton
-        ariaLive="polite"
+        active={textLabels}
+        ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
         className={'pipeline-menu-button--labels'}
-        onClick={() => onToggleTextLabels(!textLabels)}
         icon={LabelIcon}
         labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
+        onClick={() => onToggleTextLabels(!textLabels)}
         visible={visible.labelBtn}
       />
       <IconButton
+        active={visibleLayers}
         ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
         className={'pipeline-menu-button--layers'}
         dataHeapEvent={`visible.layers.${visibleLayers}`}
-        onClick={() => onToggleLayers(!visibleLayers)}
+        disabled={disableLayerBtn}
         icon={LayersIcon}
         labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
-        disabled={disableLayerBtn}
+        onClick={() => onToggleLayers(!visibleLayers)}
         visible={visible.layerBtn}
       />
       <IconButton
         ariaLabel="Export graph as SVG or PNG"
         className={'pipeline-menu-button--export'}
-        onClick={() => onToggleExportModal(true)}
         icon={ExportIcon}
         labelText="Export visualisation"
+        onClick={() => onToggleExportModal(true)}
         visible={visible.exportBtn}
       />
     </PrimaryToolbar>
@@ -67,10 +69,10 @@ export const FlowchartPrimaryToolbar = ({
 
 export const mapStateToProps = (state) => ({
   disableLayerBtn: !state.layer.ids.length,
+  displaySidebar: state.display.sidebar,
   textLabels: state.textLabels,
   visible: state.visible,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
-  displaySidebar: state.display.sidebar,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

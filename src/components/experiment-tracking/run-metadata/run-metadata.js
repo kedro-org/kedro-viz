@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import classnames from 'classnames';
+import { useOutsideClick } from '../../../utils/hooks';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import CloseIcon from '../../icons/close';
@@ -15,32 +16,53 @@ const sanitiseEmptyValue = (value) => {
   return value === '' || value === null ? '-' : value;
 };
 
-const HiddenMenu = ({ children, isBookmarked, runId }) => {
+const HiddenMenu = ({ isBookmarked, runId }) => {
   const [isVisible, setIsVisible] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
+
+  const handleClickOutside = useCallback(() => {
+    setIsVisible(false);
+  }, []);
+
+  const menuRef = useOutsideClick(handleClickOutside);
 
   const toggleBookmark = () => {
     updateRunDetails({
       runId,
       runInput: { bookmark: !isBookmarked },
     });
+
+    // Close the menu when the bookmark is toggled.
+    setIsVisible(false);
   };
 
   return (
     <div
       className="hidden-menu-wrapper"
       onClick={() => setIsVisible(!isVisible)}
+      ref={menuRef}
     >
       <div
         className={classnames('hidden-menu', {
           'hidden-menu--visible': isVisible,
         })}
       >
-        <div className="hidden-menu__item" onClick={() => toggleBookmark()}>
+        <div
+          className="hidden-menu__item"
+          onClick={(e) => {
+            toggleBookmark();
+            e.stopPropagation();
+          }}
+        >
           {isBookmarked ? 'Unbookmark' : 'Bookmark'}
         </div>
       </div>
-      {children}
+      <IconButton
+        active={isVisible}
+        ariaLabel="Runs menu"
+        className="pipeline-menu-button--labels"
+        icon={KebabIcon}
+      />
     </div>
   );
 };
@@ -114,6 +136,7 @@ const RunMetadata = ({
                       </span>
                       <ul className="details-metadata__buttons">
                         <IconButton
+                          active={run.id === pinnedRun}
                           ariaLive="polite"
                           className={classnames(
                             'pipeline-menu-button--labels',
@@ -123,24 +146,21 @@ const RunMetadata = ({
                                 run.id === pinnedRun,
                             }
                           )}
-                          onClick={() => setPinnedRun(run.id)}
                           icon={
                             run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
+                          onClick={() => setPinnedRun(run.id)}
                           visible={enableShowChanges}
                         />
-                        <HiddenMenu isBookmarked={run.bookmark} runId={run.id}>
-                          <IconButton
-                            ariaLive="polite"
-                            className="pipeline-menu-button--labels__kebab"
-                            icon={KebabIcon}
-                          />
-                        </HiddenMenu>
+                        <HiddenMenu
+                          isBookmarked={run.bookmark}
+                          runId={run.id}
+                        />
                         <IconButton
-                          ariaLive="polite"
-                          className="pipeline-menu-button--labels__close"
-                          onClick={() => onRunSelection(run.id)}
+                          ariaLabel="Close run"
+                          className="pipeline-menu-button--labels"
                           icon={CloseIcon}
+                          onClick={() => onRunSelection(run.id)}
                         />
                       </ul>
                     </td>

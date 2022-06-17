@@ -9,7 +9,7 @@
   align-items: center;
 
   // Fixed row height required for lazy list, apply any changes to node-list-row.js.
-  height: 37px;
+  height: 32px;
 
   // Force gpu layers to avoid drawing lag on scroll.
   transform: translate(0, 0);

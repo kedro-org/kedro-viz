@@ -57,17 +57,17 @@ export const GlobalToolbar = ({
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
           <IconButton
-            ariaLive="polite"
             ariaLabel={`Change to ${
               theme === 'light' ? 'dark' : 'light'
             } theme`}
+            ariaLive="polite"
             className={
               'pipeline-menu-button--theme pipeline-menu-button--large'
             }
             dataHeapEvent={`theme.${theme}`}
-            onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
             icon={ThemeIcon}
             labelText="Toggle theme"
+            onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
           />
           <IconButton
             ariaLabel={'Change the settings flags'}
