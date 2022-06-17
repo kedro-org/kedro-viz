@@ -27,8 +27,7 @@ commands:
           name: Echo package versions
           command: |
             python -V
-            pip -V
-            kedro -V
+            pip freeze
 
   install_node_dependencies:
     steps:
@@ -36,46 +35,19 @@ commands:
           name: Install Node dependencies
           command: npm install            
 
-  build_package:
+  npm_build:
     steps:
       - run:
-          name: Build application
+          name: Build React application
           command: make build
 
-  package_app:
+  python_package:
     steps:
       - run:
-          name: Build package
+          name: Make Python package
           command: make package
       
-  deploy_demo:
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: Setup environment
-          command: |
-            cd demo-project
-            echo "AWS_ECR_URL=public.ecr.aws/g0x0s3o2/kedro-viz-live-demo" >> $BASH_ENV
-            echo "KEDRO_VIZ_VERSION=$(cat .version)" >> $BASH_ENV
-            echo "cd demo-project" >> $BASH_ENV
-      - run:
-          name: Install AWS CLI
-          command: pip3 install awscli
-      - run:
-          name: Build demo container image
-          command: |
-            echo "kedro_viz==$KEDRO_VIZ_VERSION" >> src/docker_requirements.txt
-            docker build -t $AWS_ECR_URL:$KEDRO_VIZ_VERSION .
-            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
-            docker push $AWS_ECR_URL:$KEDRO_VIZ_VERSION
-      - run:
-          name: Create a new lightsail deployment
-          command: |
-            # install lightsail cli
-            # run https://docs.aws.amazon.com/cli/latest/reference/lightsail/create-container-service-deployment.html#create-container-service-deployment
-            aws lightsail create-container-service-deployment --region eu-west-2 --cli-input-json file://./lightsail.json
-
+  
   win_setup_python_env:
     # Miniconda3 is pre-installed on the machine:
     # https://circleci.com/docs/2.0/hello-world-windows/
@@ -100,8 +72,7 @@ commands:
           command: |
             conda activate kedro-viz
             python -V
-            pip -V
-            kedro -V
+            pip freeze
       - run:
           name: Install 'make' command
           command: choco install make
@@ -111,7 +82,7 @@ commands:
       - checkout
       - setup_python_env
       - install_node_dependencies
-      - build_package 
+      - npm_build 
   
   win_setup:
     parameters:
@@ -123,7 +94,7 @@ commands:
       - win_setup_python_env:
           python_version: <<parameters.python_version>>
       - install_node_dependencies
-      - build_package
+      - npm_build
     
 
      
@@ -229,7 +200,7 @@ jobs:
       - run:
           name: Run security scan
           command: make security-scan
-      - package_app
+      - python_package
 
   release_to_npm:
     executor:
@@ -238,7 +209,7 @@ jobs:
     steps:
       - checkout
       - install_node_dependencies
-      - build_package
+      - npm_build
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
@@ -254,13 +225,42 @@ jobs:
       - checkout
       - setup_python_env
       - install_node_dependencies
+      - python_package
       - run:
           name: Install twine
           command: python -m pip install -U twine
-      - package_app
       - run:
           name: Publish to PyPI
           command: python -m twine upload package/dist/*
+
+  deploy_demo:
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Setup environment
+          command: |
+            cd demo-project
+            echo "AWS_ECR_URL=public.ecr.aws/g0x0s3o2/kedro-viz-live-demo" >> $BASH_ENV
+            echo "KEDRO_VIZ_VERSION=$(cat .version)" >> $BASH_ENV
+            echo "cd demo-project" >> $BASH_ENV
+      - run:
+          name: Install AWS CLI
+          command: pip3 install awscli
+      - run:
+          name: Build demo container image
+          command: |
+            echo "kedro_viz==$KEDRO_VIZ_VERSION" >> src/docker_requirements.txt
+            docker build -t $AWS_ECR_URL:$KEDRO_VIZ_VERSION .
+            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+            docker push $AWS_ECR_URL:$KEDRO_VIZ_VERSION
+      - run:
+          name: Create a new lightsail deployment
+          command: |
+            # install lightsail cli
+            # run https://docs.aws.amazon.com/cli/latest/reference/lightsail/create-container-service-deployment.html#create-container-service-deployment
+            aws lightsail create-container-service-deployment --region eu-west-2 --cli-input-json file://./lightsail.json
+
     
   all_circleci_checks_succeeded:
     docker:
@@ -303,6 +303,20 @@ workflows:
               python_version: ["3.7", "3.8", "3.9", "3.10"]
       - javascript_lint_and_tests
       - build_app
+      - deploy_demo:
+          context:
+            - kedro-ecr-publish
+          requires:
+            - e2e_tests
+            - win_e2e_tests
+            - unit_tests
+            - win_unit_tests
+            - lint
+            - javascript_lint_and_tests
+            - build_app
+          filters:
+            branches:
+              only: demo
       - all_circleci_checks_succeeded:
           requires:
             - e2e_tests
@@ -323,6 +337,40 @@ workflows:
           <<: *release_filter
           requires:
             - build_app
+
+  daily:
+    triggers:
+      - schedule:
+          cron: '0 1 * * *'
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - e2e_tests:
+          matrix:
+            parameters:
+              python_version: ["3.7", "3.8", "3.9", "3.10"]
+      - win_e2e_tests:
+          matrix:
+            parameters:
+              python_version: ["3.7", "3.8", "3.9", "3.10"]
+      - unit_tests:
+          matrix:
+            parameters:
+              python_version: ["3.7", "3.8", "3.9", "3.10"]
+      - win_unit_tests:
+          matrix:
+            parameters:
+              python_version: ["3.7", "3.8", "3.9", "3.10"]
+      - lint:
+          matrix:
+            parameters:
+              python_version: ["3.7", "3.8", "3.9", "3.10"]
+      - javascript_lint_and_tests
+      - build_app
+
+   
       
       
 
