@@ -34,13 +34,13 @@ const IconButton = ({
   return visible ? (
     <Container>
       <button
-        data-heap-event={dataHeapEvent}
         aria-label={ariaLabel}
         aria-live={ariaLive}
         className={classnames(className, {
           'pipeline-icon-toolbar__button': true,
           'pipeline-icon-toolbar__button--active': active,
         })}
+        data-heap-event={dataHeapEvent}
         disabled={disabled}
         onClick={onClick}
       >
@@ -61,29 +61,29 @@ const IconButton = ({
 };
 
 IconButton.propTypes = {
+  active: PropTypes.bool,
   ariaLabel: PropTypes.string,
   ariaLive: PropTypes.string,
+  dataHeapEvent: PropTypes.string,
   disabled: PropTypes.bool,
+  hasReminder: PropTypes.bool,
   icon: PropTypes.func,
   labelText: PropTypes.string,
-  dataHeapEvent: PropTypes.string,
   onClick: PropTypes.func,
   visible: PropTypes.bool,
-  active: PropTypes.bool,
-  hasReminder: PropTypes.bool,
 };
 
 IconButton.defaultProps = {
+  active: false,
   ariaLabel: null,
   ariaLive: null,
+  dataHeapEvent: null,
   disabled: false,
+  hasReminder: false,
   icon: null,
   labelText: null,
-  dataHeapEvent: null,
   onClick: null,
   visible: true,
-  active: false,
-  hasReminder: false,
 };
 
 export default IconButton;

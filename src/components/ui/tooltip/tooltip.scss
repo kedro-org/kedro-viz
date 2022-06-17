@@ -13,7 +13,7 @@ $triangle-size: 10px;
   width: 100vw;
   visibility: hidden;
   opacity: 0;
-  transition: opacity ease 0.1s, visibility ease 0.1s;
+  transition: opacity ease 0.1s, visibility ease 0.1s 1s;
   pointer-events: none;
 
   &--visible {

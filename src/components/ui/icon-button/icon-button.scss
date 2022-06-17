@@ -4,19 +4,19 @@
 $triangle-size: 7px;
 
 .pipeline-icon-toolbar__button {
-  position: relative;
-  width: $sidebar-width-closed;
-  height: $sidebar-width-closed;
-  padding: 0;
-  color: inherit;
-  font-size: 1.1em;
-  text-align: center;
-  vertical-align: middle;
   background: none;
   border: none;
   box-shadow: none;
+  color: inherit;
   cursor: pointer;
+  font-size: 1.1em;
+  height: $sidebar-width-closed;
+  padding: 0;
+  position: relative;
+  text-align: center;
   user-select: none;
+  vertical-align: middle;
+  width: $sidebar-width-closed;
 
   @media (max-height: 550px) {
     height: $sidebar-width-closed - 14;
@@ -46,15 +46,26 @@ $triangle-size: 7px;
     width: 2.175em;
     height: 2.175em;
   }
+
+  &--active svg {
+    opacity: 1;
+  }
 }
 
 .pipeline-toolbar__label {
   @extend %tooltip;
 
-  position: absolute;
-  display: none;
-  padding: 0.5em 0.7em;
+  display: inline-block;
+
   font-size: 1.4em;
+  opacity: 0;
+
+  padding: 0.5em 0.7em;
+  pointer-events: none;
+
+  position: absolute;
+
+  transition: opacity ease 0.1s;
   white-space: nowrap;
 
   // to ensure the tooltip will show on the top of the bookmark dropdown
@@ -62,16 +73,18 @@ $triangle-size: 7px;
 
   @media (max-width: $sidebar-width-breakpoint) {
     .pipeline-sidebar--visible & {
-      right: 50%;
       left: auto;
-      margin-right: 1.6em;
       margin-left: auto;
+      margin-right: 1.6em;
+      right: 50%;
     }
   }
 
   .pipeline-icon-toolbar__button:hover &,
   [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {
-    display: inline-block;
+    opacity: 1;
+    pointer-events: all;
+    transition-delay: 1s;
   }
 
   &::after {
@@ -85,10 +98,10 @@ $triangle-size: 7px;
 
     @media (max-width: $sidebar-width-breakpoint) {
       .pipeline-sidebar--visible & {
-        right: -$triangle-size + 0.5;
-        left: auto;
         border-color: transparent transparent transparent var(--color-bg-alt);
         border-width: $triangle-size 0 $triangle-size $triangle-size;
+        left: auto;
+        right: -$triangle-size + 0.5;
       }
     }
   }
@@ -159,7 +172,7 @@ $triangle-size: 7px;
 }
 
 .pipeline-icon {
+  fill: var(--color-default-alt);
   opacity: 0.7;
   transition: opacity 300ms ease;
-  fill: var(--color-default-alt);
 }

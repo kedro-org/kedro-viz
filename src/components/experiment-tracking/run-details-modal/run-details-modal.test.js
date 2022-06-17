@@ -1,8 +1,9 @@
 import React from 'react';
 import RunDetailsModal from './index';
 import Adapter from 'enzyme-adapter-react-16';
-import { configure, mount, shallow } from 'enzyme';
+import { configure, mount } from 'enzyme';
 import { render } from '@testing-library/react';
+import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';
 
 configure({ adapter: new Adapter() });
 
@@ -22,11 +23,24 @@ jest.mock('../../../apollo/mutations', () => {
   };
 });
 
+const mockValue = {
+  handleClick: jest.fn(),
+  hasNotInteracted: true,
+  isSuccessful: false,
+  setHasNotInteracted: jest.fn(),
+  setIsSuccessful: jest.fn(),
+  showModal: false,
+};
+
 // Tests
 
 describe('RunDetailsModal', () => {
   it('renders without crashing', () => {
-    const wrapper = shallow(<RunDetailsModal visible />);
+    const wrapper = mount(
+      <ButtonTimeoutContext.Provider value={mockValue}>
+        <RunDetailsModal visible />
+      </ButtonTimeoutContext.Provider>
+    );
 
     expect(
       wrapper.find('.pipeline-settings-modal--experiment-tracking').length
@@ -34,7 +48,11 @@ describe('RunDetailsModal', () => {
   });
 
   it('renders with a disabled primary button', () => {
-    const { getByText } = render(<RunDetailsModal visible />);
+    const { getByText } = render(
+      <ButtonTimeoutContext.Provider value={mockValue}>
+        <RunDetailsModal visible />
+      </ButtonTimeoutContext.Provider>
+    );
 
     expect(getByText(/Apply changes and close/i)).toBeDisabled();
   });
@@ -42,7 +60,9 @@ describe('RunDetailsModal', () => {
   it('modal closes when cancel button is clicked', () => {
     const setVisible = jest.fn();
     const wrapper = mount(
-      <RunDetailsModal setShowRunDetailsModal={() => setVisible(true)} />
+      <ButtonTimeoutContext.Provider value={mockValue}>
+        <RunDetailsModal setShowRunDetailsModal={() => setVisible(true)} />
+      </ButtonTimeoutContext.Provider>
     );
     const onClick = jest.spyOn(React, 'useState');
     const closeButton = wrapper.find(

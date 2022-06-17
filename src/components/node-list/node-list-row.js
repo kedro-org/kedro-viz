@@ -9,7 +9,7 @@ import FocusModeIcon from '../icons/focus-mode';
 import { getNodeActive } from '../../selectors/nodes';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
-export const nodeListRowHeight = 37;
+export const nodeListRowHeight = 32;
 
 // This allows lambda and partial Python functions to render via dangerouslySetInnerHTML
 const replaceTagsWithEntities = {
