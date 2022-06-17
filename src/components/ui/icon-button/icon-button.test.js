@@ -30,7 +30,7 @@ describe('IconButton', () => {
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(0);
   });
 
-  it('when passing a value for labelText without specificly define labelTextPosition, the default value for labelTextPosition should be "right"', () => {
+  it('when passing a value for labelText without specifically defined labelTextPosition, the default value for labelTextPosition should be "right"', () => {
     const wrapper = setup.shallow(IconButton, {
       labelText: 'Toggle theme',
       visible: true,
