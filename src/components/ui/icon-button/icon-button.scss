@@ -57,6 +57,9 @@ $triangle-size: 7px;
   font-size: 1.4em;
   white-space: nowrap;
 
+  // to ensure the tooltip will show on the top of the bookmark dropdown
+  z-index: 1;
+
   @media (max-width: $sidebar-width-breakpoint) {
     .pipeline-sidebar--visible & {
       right: 50%;
