@@ -1,28 +1,23 @@
-package: install
+package: build
+	find . -regex ".*/__pycache__" -exec rm -rf {} +
+	find . -regex ".*\.egg-info" -exec rm -rf {} +
 	cd package && python setup.py clean --all
 	cd package && python setup.py sdist bdist_wheel
 
-install: build
-	cd package && python setup.py install
-
-build: clean
+build: 
+	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
 	npm run build
 	cp -R build package/kedro_viz/html
-
-clean:
-	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
-	find . -regex ".*/__pycache__" -exec rm -rf {} +
-	find . -regex ".*\.egg-info" -exec rm -rf {} +
 
 PROJECT_PATH ?= demo-project
 
 run:
 	PYTHONPATH=$(shell pwd)/package python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
-pytest: build
+pytest: 
 	cd package && pytest --cov-fail-under=100
 
-e2e-tests: build
+e2e-tests: 
 	cd package && behave
 
 lint: format-fix lint-check
@@ -50,9 +45,6 @@ security-scan:
 
 version:
 	python3 tools/versioning.py $(VERSION)
-
-install-pip-setuptools:
-	pip install -U "pip>=21.2" "setuptools>=38.0" wheel
 
 sign-off:
 	echo "git interpret-trailers --if-exists doNothing \c" > .git/hooks/commit-msg
