@@ -129,6 +129,7 @@ const RunMetadata = ({
                     {i === 0 ? <td></td> : null}
                     <td className="details-metadata__title">
                       <span
+                        className="details-metadata__title-detail"
                         onClick={() => onTitleOrNoteClick(run.id)}
                         title={sanitiseEmptyValue(run.title)}
                       >
@@ -149,6 +150,10 @@ const RunMetadata = ({
                           icon={
                             run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
+                          labelText={
+                            run.id === pinnedRun ? 'Baseline' : 'Make baseline'
+                          }
+                          labelTextPosition="bottom"
                           onClick={() => setPinnedRun(run.id)}
                           visible={enableShowChanges}
                         />
@@ -157,9 +162,11 @@ const RunMetadata = ({
                           runId={run.id}
                         />
                         <IconButton
-                          ariaLabel="Close run"
-                          className="pipeline-menu-button--labels"
+                          ariaLive="polite"
+                          className="pipeline-menu-button--labels__close"
                           icon={CloseIcon}
+                          labelText="Remove run"
+                          labelTextPosition="bottom"
                           onClick={() => onRunSelection(run.id)}
                         />
                       </ul>
