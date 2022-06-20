@@ -1,17 +1,19 @@
 @import '../../styles/variables';
 
 .kui-theme--light {
-  --color-header-bg: #{$color-accent-yellow};
   --color-detail-bg: #{$color-bg-light-4};
-  --color-text: #{$color-bg-light-2};
+  --color-header-bg: #{$color-accent-yellow};
+  --color-link: #076e9c;
   --color-subtext: #{$color-text-light-2};
+  --color-text: #{$color-bg-light-2};
 }
 
 .kui-theme--dark {
-  --color-header-bg: #{$color-accent-yellow};
   --color-detail-bg: #{$color-bg-dark-4};
-  --color-text: #{$color-bg-dark-2};
+  --color-header-bg: #{$color-accent-yellow};
+  --color-link: #{$color-accent-blue};
   --color-subtext: #{$color-text-dark-2};
+  --color-text: #{$color-bg-dark-2};
 }
 
 .update-reminder-unexpanded {
@@ -100,7 +102,7 @@
     width: 430px;
 
     a {
-      color: $color-accent-blue;
+      color: var(--color-link);
     }
   }
 
