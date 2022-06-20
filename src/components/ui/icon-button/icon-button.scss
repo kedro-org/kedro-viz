@@ -1,6 +1,8 @@
 @import '../../../styles/variables';
 @import '../../../styles/extends';
 
+$triangle-size: 7px;
+
 .pipeline-icon-toolbar__button {
   background: none;
   border: none;
@@ -54,17 +56,20 @@
   @extend %tooltip;
 
   display: inline-block;
+
   font-size: 1.4em;
-  left: 50%;
-  margin-left: 1.6em;
-  margin-top: -1.2em;
   opacity: 0;
+
   padding: 0.5em 0.7em;
   pointer-events: none;
+
   position: absolute;
-  top: 50%;
+
   transition: opacity ease 0.1s;
   white-space: nowrap;
+
+  // to ensure the tooltip will show on the top of the bookmark dropdown
+  z-index: 1;
 
   @media (max-width: $sidebar-width-breakpoint) {
     .pipeline-sidebar--visible & {
@@ -83,17 +88,13 @@
   }
 
   &::after {
-    $triangle-size: 7px;
-
-    border-color: transparent var(--color-bg-alt) transparent transparent;
-    border-style: solid;
-    border-width: $triangle-size $triangle-size $triangle-size 0;
-    content: '';
-    height: 0;
-    left: -$triangle-size + 0.5;
     position: absolute;
-    top: calc(50% - #{$triangle-size});
+
     width: 0;
+    height: 0;
+    border-style: solid;
+
+    content: '';
 
     @media (max-width: $sidebar-width-breakpoint) {
       .pipeline-sidebar--visible & {
@@ -103,6 +104,70 @@
         right: -$triangle-size + 0.5;
       }
     }
+  }
+}
+
+.pipeline-toolbar__label-right {
+  top: 50%;
+  left: 50%;
+
+  margin-top: -1.2em;
+  margin-left: 1.6em;
+
+  &::after {
+    top: calc(50% - #{$triangle-size});
+    left: -$triangle-size + 0.5;
+
+    border-color: transparent var(--color-bg-alt) transparent transparent;
+    border-width: $triangle-size $triangle-size $triangle-size 0;
+  }
+}
+
+.pipeline-toolbar__label-left {
+  top: 50%;
+  right: 50%;
+
+  margin-top: -1.2em;
+  margin-right: 1.6em;
+
+  &::after {
+    top: calc(50% - #{$triangle-size});
+    right: $triangle-size + 0.5;
+
+    border-color: transparent transparent transparent var(--color-bg-alt);
+    border-width: $triangle-size 0 $triangle-size $triangle-size;
+  }
+}
+
+.pipeline-toolbar__label-bottom {
+  left: 50%;
+  transform: translateX(-50%);
+
+  margin-top: 0.5em;
+
+  &::after {
+    bottom: 100%;
+    left: calc(50% - #{$triangle-size});
+
+    border-color: transparent transparent var(--color-bg-alt) transparent;
+    border-width: 0 $triangle-size $triangle-size $triangle-size;
+  }
+}
+
+.pipeline-toolbar__label-top {
+  bottom: 100%;
+
+  left: 50%;
+  transform: translateX(-50%);
+
+  margin-bottom: 0.5em;
+
+  &::after {
+    top: 100%;
+    right: calc(50% - #{$triangle-size});
+
+    border-color: var(--color-bg-alt) transparent transparent transparent;
+    border-width: $triangle-size $triangle-size 0 $triangle-size;
   }
 }
 
