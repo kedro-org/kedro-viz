@@ -150,12 +150,12 @@ const RunMetadata = ({
                           icon={
                             run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
-                          onClick={() => setPinnedRun(run.id)}
-                          visible={enableShowChanges}
                           labelText={
                             run.id === pinnedRun ? 'Baseline' : 'Make baseline'
                           }
                           labelTextPosition="bottom"
+                          onClick={() => setPinnedRun(run.id)}
+                          visible={enableShowChanges}
                         />
                         <HiddenMenu
                           isBookmarked={run.bookmark}

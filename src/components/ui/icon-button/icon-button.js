@@ -14,12 +14,12 @@ const IconButton = ({
   ariaLive,
   className,
   container: Container = 'li',
+  dataHeapEvent,
   disabled,
   hasReminder,
   icon,
   labelText,
   labelTextPosition = 'right',
-  dataHeapEvent,
   onClick,
   visible,
 }) => {
