@@ -1,6 +1,8 @@
 @import '../../../styles/variables';
 
 .pipeline-node {
+  cursor: pointer;
+
   text {
     font-weight: 600;
     font-size: 1.4em;

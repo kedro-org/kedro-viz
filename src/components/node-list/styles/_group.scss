@@ -81,6 +81,10 @@ $placeholder-fade: 120px;
     position: relative;
     opacity: 0.65;
   }
+
+  .pipeline-nodelist__row__text .pipeline-nodelist__row__label {
+    font-size: 1.3em;
+  }
 }
 
 .pipeline-nodelist__elements-panel .pipeline-nodelist__heading {
