@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import './icon-button.css';
 
+const labelPositionTypes = ['right', 'left', 'bottom', 'top'];
+
 /**
  * Icon button component
  */
@@ -17,10 +19,17 @@ const IconButton = ({
   hasReminder,
   icon,
   labelText,
+  labelTextPosition = 'right',
   onClick,
   visible,
 }) => {
   const Icon = icon;
+
+  const labelPosition = labelPositionTypes.includes(
+    labelTextPosition.toLowerCase()
+  )
+    ? labelTextPosition.toLocaleLowerCase()
+    : 'right';
 
   return visible ? (
     <Container>
@@ -37,7 +46,14 @@ const IconButton = ({
       >
         {Icon && <Icon className="pipeline-icon" hasReminder={hasReminder} />}
         {labelText && (
-          <span className="pipeline-toolbar__label">{labelText}</span>
+          <span
+            className={classnames(
+              'pipeline-toolbar__label',
+              `pipeline-toolbar__label-${labelPosition}`
+            )}
+          >
+            {labelText}
+          </span>
         )}
       </button>
     </Container>
