@@ -75,57 +75,61 @@ const SettingsModal = ({
         visible={visible.settingsModal}
       >
         <div className="pipeline-settings-modal__content">
-          <div className="pipeline-settings-modal__subtitle">General</div>
-          <div className="pipeline-settings-modal__header">
-            <div className="pipeline-settings-modal__name">Name</div>
-            <div className="pipeline-settings-modal__state">State</div>
-            <div className="pipeline-settings-modal__description">
-              Description
+          <div className="pipeline-settings-modal__group">
+            <div className="pipeline-settings-modal__subtitle">General</div>
+            <div className="pipeline-settings-modal__header">
+              <div className="pipeline-settings-modal__name">Name</div>
+              <div className="pipeline-settings-modal__state">State</div>
+              <div className="pipeline-settings-modal__description">
+                Description
+              </div>
             </div>
-          </div>
-          <SettingsModalRow
-            id="prettyName"
-            name={settingsConfig['prettyName'].name}
-            toggleValue={isPrettyNameOn}
-            description={settingsConfig['prettyName'].description}
-            onToggleChange={(event) => {
-              setIsPrettyNameOn(event.target.checked);
-              setHasNotInteracted(false);
-            }}
-          />
-          <div className="pipeline-settings-modal__subtitle">Experiments</div>
-          {flagData.map(({ name, value, description }) => (
             <SettingsModalRow
-              description={description}
-              id={value}
-              key={value}
-              name={name}
+              id="prettyName"
+              name={settingsConfig['prettyName'].name}
+              toggleValue={isPrettyNameOn}
+              description={settingsConfig['prettyName'].description}
               onToggleChange={(event) => {
-                onToggleFlag(value, event.target.checked);
+                setIsPrettyNameOn(event.target.checked);
                 setHasNotInteracted(false);
               }}
-              toggleValue={flags[value]}
             />
-          ))}
-          {isOutdated ? (
-            <div className="pipeline-settings-modal__upgrade-reminder">
-              <span>&#8226; Kedro-Viz {latestVersion} is here! </span>
-              <a
-                href="https://github.com/kedro-org/kedro-viz/releases"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View release notes
-              </a>
-            </div>
-          ) : (
-            <div className="pipeline-settings-modal__already-latest">
-              <span>
-                &#8226; You are on the latest version of Kedro-Viz (
-                {latestVersion})
-              </span>
-            </div>
-          )}
+          </div>
+          <div className="pipeline-settings-modal__group">
+            <div className="pipeline-settings-modal__subtitle">Experiments</div>
+            {flagData.map(({ name, value, description }) => (
+              <SettingsModalRow
+                description={description}
+                id={value}
+                key={value}
+                name={name}
+                onToggleChange={(event) => {
+                  onToggleFlag(value, event.target.checked);
+                  setHasNotInteracted(false);
+                }}
+                toggleValue={flags[value]}
+              />
+            ))}
+            {isOutdated ? (
+              <div className="pipeline-settings-modal__upgrade-reminder">
+                <span>&#8226; Kedro-Viz {latestVersion} is here! </span>
+                <a
+                  href="https://github.com/kedro-org/kedro-viz/releases"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View release notes
+                </a>
+              </div>
+            ) : (
+              <div className="pipeline-settings-modal__already-latest">
+                <span>
+                  &#8226; You are on the latest version of Kedro-Viz (
+                  {latestVersion})
+                </span>
+              </div>
+            )}
+          </div>
           <div className="run-details-modal-button-wrapper">
             <Button
               mode="secondary"
