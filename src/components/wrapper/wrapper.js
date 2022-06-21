@@ -49,16 +49,11 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
               isOutdated={isOutdated}
               latestVersion={latestVersion}
             />
-            {true && !dismissed && (
+            {versionData && isOutdated && !dismissed && (
               <UpdateReminder
                 dismissed={dismissed}
                 setDismiss={setDismissed}
-                versions={{
-                  installed: '4.6.0',
-                  isOutdated: true,
-                  latest: '4.7.0',
-                  __typename: 'Version',
-                }}
+                versions={versionData.version}
               />
             )}
             <Switch>
