@@ -9,8 +9,8 @@ import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
 import { settings as settingsConfig } from '../../config';
 
-import Modal from '../ui/modal';
 import Button from '../ui/button';
+import Modal from '../ui/modal';
 
 import './settings-modal.css';
 
@@ -22,15 +22,16 @@ const SettingsModal = ({
   flags,
   isOutdated,
   latestVersion,
-  showSettingsModal,
   onToggleFlag,
   onTogglePrettyName,
   prettyName,
+  showSettingsModal,
   visible,
 }) => {
+  const flagData = getFlagsState();
   const [hasNotInteracted, setHasNotInteracted] = useState(true);
   const [hasClickedApplyAndClose, setHasClickApplyAndClose] = useState(false);
-  const flagData = getFlagsState();
+  const [isPrettyNameOn, setIsPrettyNameOn] = useState(prettyName);
 
   useEffect(() => {
     let modalTimeout, resetTimeout;
@@ -42,8 +43,10 @@ const SettingsModal = ({
 
       // Delay the reset so the user can't see the button text change.
       resetTimeout = setTimeout(() => {
+        onTogglePrettyName(isPrettyNameOn);
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
+
         window.location.reload();
       }, 2000);
     }
@@ -52,7 +55,12 @@ const SettingsModal = ({
       clearTimeout(modalTimeout);
       clearTimeout(resetTimeout);
     };
-  }, [hasClickedApplyAndClose, showSettingsModal]);
+  }, [
+    hasClickedApplyAndClose,
+    isPrettyNameOn,
+    onTogglePrettyName,
+    showSettingsModal,
+  ]);
 
   const resetStateCloseModal = () => {
     showSettingsModal(false);
@@ -78,10 +86,10 @@ const SettingsModal = ({
           <SettingsModalRow
             id="prettyName"
             name={settingsConfig['prettyName'].name}
-            toggleValue={prettyName}
+            toggleValue={isPrettyNameOn}
             description={settingsConfig['prettyName'].description}
             onToggleChange={(event) => {
-              onTogglePrettyName(event.target.checked);
+              setIsPrettyNameOn(event.target.checked);
               setHasNotInteracted(false);
             }}
           />
