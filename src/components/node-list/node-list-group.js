@@ -4,23 +4,23 @@ import NodeListRow from './node-list-row';
 import NodeRowList from './node-list-row-list';
 
 export const NodeListGroup = ({
-  items,
-  group,
-  collapsed,
-  id,
-  name,
-  kind,
-  checked,
   allUnchecked,
-  visibleIcon,
+  checked,
+  collapsed,
+  disabledGroup,
+  group,
+  id,
   invisibleIcon,
-  onToggleChecked,
-  onToggleCollapsed,
-  onItemClick,
+  items,
+  kind,
+  name,
   onItemChange,
+  onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
-  disabledGroup,
+  onToggleChecked,
+  onToggleCollapsed,
+  visibleIcon,
 }) => (
   <li
     className={classnames(
@@ -34,37 +34,37 @@ export const NodeListGroup = ({
   >
     <h3 className="pipeline-nodelist__heading">
       <NodeListRow
-        id={id}
-        kind={kind}
-        name={name}
-        label={name}
         allUnchecked={allUnchecked}
         checked={checked}
-        visibleIcon={visibleIcon}
+        disabled={disabledGroup}
+        id={id}
         invisibleIcon={invisibleIcon}
-        rowType="filter"
+        kind={kind}
+        label={name}
+        name={name}
         onChange={(e) => {
           onToggleChecked(id, !e.target.checked);
         }}
-        disabled={disabledGroup}
+        rowType="filter"
+        visibleIcon={visibleIcon}
       >
         <button
           aria-label={`${collapsed ? 'Show' : 'Hide'} ${name.toLowerCase()}`}
-          onClick={() => onToggleCollapsed(id)}
           className={classnames('pipeline-type-group-toggle', {
             'pipeline-type-group-toggle--alt': collapsed,
             'pipeline-type-group-toggle--disabled': disabledGroup,
           })}
           disabled={disabledGroup}
+          onClick={() => onToggleCollapsed(id)}
         />
       </NodeListRow>
     </h3>
     <NodeRowList
-      items={items}
-      group={group}
       collapsed={collapsed}
-      onItemClick={onItemClick}
+      group={group}
+      items={items}
       onItemChange={onItemChange}
+      onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
     />
