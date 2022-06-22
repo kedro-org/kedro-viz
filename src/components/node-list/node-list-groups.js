@@ -49,6 +49,7 @@ const NodeListGroups = ({
             onItemChange={onItemChange}
             onItemMouseEnter={onItemMouseEnter}
             onItemMouseLeave={onItemMouseLeave}
+            disabledGroup={items[group.id].length === 0}
           />
         ))}
       </ul>

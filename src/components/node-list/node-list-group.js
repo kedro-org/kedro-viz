@@ -20,6 +20,7 @@ export const NodeListGroup = ({
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
+  disabledGroup,
 }) => (
   <li
     className={classnames(
@@ -45,13 +46,16 @@ export const NodeListGroup = ({
         onChange={(e) => {
           onToggleChecked(id, !e.target.checked);
         }}
+        disabled={disabledGroup}
       >
         <button
           aria-label={`${collapsed ? 'Show' : 'Hide'} ${name.toLowerCase()}`}
           onClick={() => onToggleCollapsed(id)}
           className={classnames('pipeline-type-group-toggle', {
             'pipeline-type-group-toggle--alt': collapsed,
+            'pipeline-type-group-toggle--disabled': disabledGroup,
           })}
+          disabled={disabledGroup}
         />
       </NodeListRow>
     </h3>
