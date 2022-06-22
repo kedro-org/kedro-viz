@@ -19,10 +19,6 @@
   }
 }
 
-.pipeline-layer:hover > ul.pipeline-layer-name {
-  opacity: 1;
-}
-
 @include transparentColour(
   '--layer-bg-transparent',
   $color-bg-dev-light-1,
