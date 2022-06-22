@@ -10,7 +10,7 @@ Other than that, we mostly recommend following the [AirBnB JavaScript Style Guid
 
 ## Browser and device support
 
-We aim to support recent versions of major modern browsers - i.e. Chome, Firefox, Edge, Safari, and Opera, on both MacOS and Windows. Keeping progressive enhancement in mind, we aim for decent mobile support where possible, i.e. nothing should be broken on mobile, but it's okay for mobile/older browsers to have a slightly degraded experience. 
+We aim to support recent versions of major modern browsers - i.e. Chome, Firefox, Edge, Safari, and Opera, on both MacOS and Windows. Keeping progressive enhancement in mind, we aim for decent mobile support where possible, i.e. nothing should be broken on mobile, but it's okay for mobile/older browsers to have a slightly degraded experience.
 
 ## Accessibility
 
@@ -263,7 +263,7 @@ Resolves: #123
 
 ### Pull Requests
 
-Like commit titles, PR titles should ideally be written in the imperative present tense and should summarise the changes made. If there is a JIRA ticket for the task, add the ticket ID to the PR/issue title.
+Like commit titles, PR titles should ideally be written in the imperative present tense and should summarise the changes made.
 
 Avoid:
 
@@ -271,10 +271,10 @@ Avoid:
 
 Prefer:
 
-> [KED-1234] Fix broken API queries
+> Fix broken API queries
 
-PR descritions should contain a description of what's been changed and why. Use the 'Development notes' and 'QA notes' sections to explain anything that maintainers should be aware of when reviewing the code and QAing the branch, respectively. For instance, if there's something you were unsure about, mention it in your notes so that the reviewer knows to pay it extra attention - maybe they'll have a suggestion for how you can improve it.
+PR descriptions should contain a description of what's been changed and why. Use the 'Development notes' and 'QA notes' sections to explain anything that maintainers should be aware of when reviewing the code and QAing the branch, respectively. For instance, if there's something you were unsure about, mention it in your notes so that the reviewer knows to pay it extra attention - maybe they'll have a suggestion for how you can improve it.
 
-When merging a PR, use a squash commit. Remove the JIRA ticket ID from the merge commit subject, as including it often truncates the commit subject. If necessary, edit the commit subject to ensure that it fits under 50 characters. Click the 'Cancel' link to avoid updating the PR title when you do this.
+When merging a PR, use a squash commit. If necessary, edit the commit subject to ensure that it fits under 50 characters. Click the 'Cancel' link to avoid updating the PR title when you do this.
 
 Add a detailed description to the merge commit - usually, the PR description will suffice. This commit is what shows up in the git blame/history, so it’s critical to make sure that it’s useful and informative.
