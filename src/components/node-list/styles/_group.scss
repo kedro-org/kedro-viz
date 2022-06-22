@@ -166,6 +166,6 @@ $placeholder-fade: 120px;
   }
 
   &--disabled {
-    color: rgba(255, 255, 255, 0.3);
+    color: $color-button-disabled;
   }
 }
