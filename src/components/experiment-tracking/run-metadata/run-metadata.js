@@ -117,6 +117,7 @@ const RunMetadata = ({
                   <tr>
                     <td className="details-metadata__title" colSpan="2">
                       <span
+                        className="details-metadata__title-detail"
                         onClick={() => onTitleOrNoteClick(run.id)}
                         title={sanitiseEmptyValue(run.title)}
                       >
