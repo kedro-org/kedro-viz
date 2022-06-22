@@ -19,6 +19,10 @@
   }
 }
 
+.pipeline-layer:hover > ul.pipeline-layer-name {
+  opacity: 1;
+}
+
 @include transparentColour(
   '--layer-bg-transparent',
   $color-bg-dev-light-1,
@@ -67,4 +71,8 @@
   font-weight: bold;
   font-size: 1.6em;
   white-space: nowrap;
+}
+
+.pipeline-layer-name--active {
+  opacity: 1 !important;
 }
