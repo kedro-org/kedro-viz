@@ -37,7 +37,9 @@ export const drawLayers = function () {
   const enterLayers = this.el.layers
     .enter()
     .append('rect')
-    .attr('class', 'pipeline-layer');
+    .attr('class', 'pipeline-layer')
+    .on('mouseover', this.handleLayerMouseOver)
+    .on('mouseout', this.handleLayerMouseOut);
 
   this.el.layers.exit().remove();
 
@@ -66,7 +68,8 @@ export const drawLayerNames = function () {
 
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.pipeline-layer-name')
-    .data(layers, (layer) => layer.id);
+    .data(layers, (layer) => layer.id)
+    .attr('data-id', (node) => node.name);
 
   const enterLayerNames = this.el.layerNames
     .enter()
@@ -77,11 +80,11 @@ export const drawLayerNames = function () {
     .style('opacity', 0)
     .transition('enter-layer-names')
     .duration(this.DURATION)
-    .style('opacity', 1);
+    .style('opacity', 0.55);
 
   this.el.layerNames
     .exit()
-    .style('opacity', 1)
+    .style('opacity', 0.55)
     .transition('exit-layer-names')
     .duration(this.DURATION)
     .style('opacity', 0)
