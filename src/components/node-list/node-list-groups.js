@@ -35,7 +35,6 @@ const NodeListGroups = ({
             allUnchecked={group.allUnchecked}
             checked={group.checked}
             collapsed={Boolean(searchValue) ? false : collapsed[group.id]}
-            disabledGroup={items[group.id].length === 0}
             group={group}
             id={group.id}
             invisibleIcon={group.invisibleIcon}
