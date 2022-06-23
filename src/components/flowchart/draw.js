@@ -74,7 +74,7 @@ export const drawLayerNames = function () {
     .enter()
     .append('li')
     .attr('class', 'pipeline-layer-name')
-    .attr('data-id', (node) => node.name);
+    .attr('data-id', (node) => `layer-label--${node.name}`);
 
   enterLayerNames
     .style('opacity', 0)

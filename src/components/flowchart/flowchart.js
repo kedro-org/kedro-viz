@@ -462,7 +462,9 @@ export class FlowChart extends Component {
     }
 
     const { activeLayer } = this.state;
-    const layerName = document.querySelector(`[data-id="${activeLayer}"]`);
+    const layerName = document.querySelector(
+      `[data-id="layer-label--${node.name}"]`
+    );
 
     if (activeLayer && layerName) {
       layerName.classList.add('pipeline-layer-name--active');
@@ -476,7 +478,9 @@ export class FlowChart extends Component {
    */
   handleLayerMouseOut = (event, node) => {
     const { activeLayer } = this.state;
-    const layerName = document.querySelector(`[data-id="${activeLayer}"]`);
+    const layerName = document.querySelector(
+      `[data-id="layer-label--${node.name}"]`
+    );
 
     if (activeLayer && layerName) {
       layerName.classList.remove('pipeline-layer-name--active');
