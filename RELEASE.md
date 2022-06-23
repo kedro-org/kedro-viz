@@ -9,6 +9,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - General design-debt fixes. (#933, #934)
+- Ensure `Created by` is set in experiment tracking metadata. (#937)
 
 # Release 4.7.0
 
