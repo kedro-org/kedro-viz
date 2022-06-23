@@ -17,7 +17,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 [![CircleCI](https://circleci.com/gh/kedro-org/kedro-viz/tree/main.svg?style=shield)](https://circleci.com/gh/kedro-org/kedro-viz/tree/main)
 [![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)
-[![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8-orange.svg)](https://pypi.org/project/kedro-viz/)
+[![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-orange.svg)](https://pypi.org/project/kedro-viz/)
 [![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-3da639.svg)](https://opensource.org/licenses/Apache-2.0)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4355948.svg)](https://doi.org/10.5281/zenodo.4355948)
@@ -25,7 +25,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 ## Introduction
 
-Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project. 
+Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project.
 
 ## Features
 
@@ -35,30 +35,30 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 🔎 Highly interactive, filterable and searchable
 - 🔬 Focus mode for modular pipeline visualisation
 - 📊 Rich metadata side panel to display parameters, plots, etc.
+- 📊 Supports all types of [Plotly charts](https://plotly.com/javascript/)
 - ♻️ Autoreload on code change
 - 🧪 Supports tracking and comparing runs in a Kedro project
 - 🎩 Many more to come
-
 
 ## Installation
 
 There are two ways you can use Kedro-Viz:
 
-* As a [Kedro plugin](https://kedro.readthedocs.io/en/stable/07_extend_kedro/04_plugins.html) (the most common way).
+- As a [Kedro plugin](https://kedro.readthedocs.io/en/stable/07_extend_kedro/04_plugins.html) (the most common way).
 
-    To install Kedro-Viz as a Kedro plugin:
+  To install Kedro-Viz as a Kedro plugin:
 
-    ```bash
-    pip install kedro-viz
-    ```
+  ```bash
+  pip install kedro-viz
+  ```
 
-* As a standalone React component (for embedding Kedro-Viz in your web application).
+- As a standalone React component (for embedding Kedro-Viz in your web application).
 
-   To install the standalone React component:
+  To install the standalone React component:
 
-    ```bash
-    npm install @quantumblack/kedro-viz
-    ```
+  ```bash
+  npm install @quantumblack/kedro-viz
+  ```
 
 ## Usage
 
@@ -101,6 +101,15 @@ Options:
   --autoreload              Autoreload viz server when a Python or YAML file change in
                             the Kedro project
 
+  --params TEXT             Specify extra parameters that you want to pass to
+                            the context initializer. Items must be separated
+                            by comma, keys - by colon, example:
+                            param1:value1,param2:value2. Each parameter is
+                            split by the first comma, so parameter values are
+                            allowed to contain colons, parameter keys are not.
+                            To pass a nested dictionary as parameter, separate
+                            keys by '.', example: param_group.param1:value1.
+
   -h, --help                Show this message and exit.
 ```
 
@@ -108,7 +117,7 @@ Options:
 
 To enable [experiment tracking](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html) in Kedro-Viz, you need to add the Kedro-Viz `SQLiteStore` to your Kedro project.
 
-This can be done by adding the below code to `settings.py` in the `src` folder of your Kedro project. 
+This can be done by adding the below code to `settings.py` in the `src` folder of your Kedro project.
 
 ```python
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
@@ -121,8 +130,8 @@ Once the above set-up is complete, tracking datasets can be used to track releva
 
 **Notes:**
 
-* Experiment Tracking is only available for Kedro-Viz >= 4.0.2 and Kedro >= 0.17.5
-* Prior to Kedro 0.17.6, when using tracking datasets, you will have to explicitly mark the datasets as `versioned` for it to show up properly in Kedro-Viz experiment tracking tab. From Kedro >= 0.17.6, this is done automatically:
+- Experiment Tracking is only available for Kedro-Viz >= 4.0.2 and Kedro >= 0.17.5
+- Prior to Kedro 0.17.6, when using tracking datasets, you will have to explicitly mark the datasets as `versioned` for it to show up properly in Kedro-Viz experiment tracking tab. From Kedro >= 0.17.6, this is done automatically:
 
 ```yaml
 train_evaluation.r2_score_linear_regression:
@@ -138,7 +147,11 @@ To use Kedro-Viz as a standalone React component, import the component and suppl
 ```javascript
 import KedroViz from '@quantumblack/kedro-viz';
 
-const MyApp = () => <KedroViz data={json} />;
+const MyApp = () => (
+  <div style={{ height: '100vh' }}>
+    <KedroViz data={json} />
+  </div>
+);
 ```
 
 The JSON can be obtained by running:
@@ -147,13 +160,16 @@ The JSON can be obtained by running:
 kedro viz --save-file=filename.json
 ```
 
+We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
+
 ## Feature Flags
 
 Kedro-Viz uses features flags to roll out some experimental features. The following flags are currently in use:
 
-| Flag | Description |
-|------| ------------|
+| Flag        | Description                                                                             |
+| ----------- | --------------------------------------------------------------------------------------- |
 | sizewarning | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
+| expandAllPipelines | From release v4.3.2. Expand all modular pipelines on first load (default `false`) |
 
 To enable or disable a flag, click on the settings icon in the toolbar and toggle the flag on/off.
 

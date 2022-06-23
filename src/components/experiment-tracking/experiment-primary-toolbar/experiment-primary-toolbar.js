@@ -1,13 +1,15 @@
 import React from 'react';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
-import IconButton from '../../icon-button';
+import IconButton from '../../ui/icon-button';
 import PencilIcon from '../../icons/pencil';
 import BookmarkIcon from '../../icons/bookmark';
+import ExportIcon from '../../icons/export';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import PrimaryToolbar from '../../primary-toolbar';
 import ShowChangesIcon from '../../icons/show-changes';
 
 export const ExperimentPrimaryToolbar = ({
+  displaySidebar,
   enableComparisonView,
   enableShowChanges,
   selectedRunData,
@@ -16,6 +18,7 @@ export const ExperimentPrimaryToolbar = ({
   showChangesIconDisabled,
   showRunDetailsModal,
   sidebarVisible,
+  setShowRunExportModal,
 }) => {
   const { updateRunDetails } = useUpdateRunDetails();
 
@@ -28,11 +31,13 @@ export const ExperimentPrimaryToolbar = ({
 
   return (
     <PrimaryToolbar
-      visible={{ sidebar: sidebarVisible }}
+      displaySidebar={displaySidebar}
       onToggleSidebar={setSidebarVisible}
+      visible={{ sidebar: sidebarVisible }}
     >
       <IconButton
-        ariaLive="Toggle run bookmark"
+        active={selectedRunData?.bookmark}
+        ariaLabel="Toggle run bookmark"
         className={'pipeline-menu-button--labels'}
         icon={selectedRunData?.bookmark ? BookmarkIcon : BookmarkStrokeIcon}
         labelText={`${selectedRunData?.bookmark ? 'Unbookmark' : 'Bookmark'}`}
@@ -40,7 +45,7 @@ export const ExperimentPrimaryToolbar = ({
         visible={!enableComparisonView}
       />
       <IconButton
-        ariaLive="Edit run details"
+        ariaLabel="Edit run details"
         className={'pipeline-menu-button--labels'}
         icon={PencilIcon}
         labelText={`Edit details`}
@@ -48,17 +53,25 @@ export const ExperimentPrimaryToolbar = ({
         visible={!enableComparisonView}
       />
       <IconButton
-        ariaLive="polite"
+        active={enableShowChanges}
+        ariaLabel="Toggle show changes"
         className={'pipeline-menu-button--labels'}
-        onClick={() => setEnableShowChanges(!enableShowChanges)}
+        disabled={showChangesIconDisabled}
         icon={ShowChangesIcon}
         labelText={
           !showChangesIconDisabled
             ? `${enableShowChanges ? 'Disable' : 'Enable'} show changes`
             : null
         }
+        onClick={() => setEnableShowChanges(!enableShowChanges)}
         visible={enableComparisonView}
-        disabled={showChangesIconDisabled}
+      />
+      <IconButton
+        ariaLabel="Export Run Data"
+        className={'pipeline-menu-button--export-runs'}
+        icon={ExportIcon}
+        labelText="Export run data"
+        onClick={() => setShowRunExportModal(true)}
       />
     </PrimaryToolbar>
   );

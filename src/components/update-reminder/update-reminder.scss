@@ -1,0 +1,135 @@
+@import '../../styles/variables';
+
+.kui-theme--light {
+  --color-detail-bg: #{$color-bg-light-4};
+  --color-header-bg: #{$color-accent-yellow};
+  --color-link: #076e9c;
+  --color-subtext: #{$color-text-light-2};
+  --color-text: #{$color-bg-light-2};
+}
+
+.kui-theme--dark {
+  --color-detail-bg: #{$color-bg-dark-4};
+  --color-header-bg: #{$color-accent-yellow};
+  --color-link: #{$color-accent-blue};
+  --color-subtext: #{$color-text-dark-2};
+  --color-text: #{$color-bg-dark-2};
+}
+
+.update-reminder-unexpanded {
+  background-color: var(--color-header-bg);
+  display: flex;
+  font-size: 12px;
+  height: 32px;
+  justify-content: space-around;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  width: 296px;
+  z-index: 2;
+
+  p {
+    color: $color-bg-dark-2;
+    text-align: center;
+    margin-top: 7.5px;
+    font-size: 12px;
+  }
+
+  .buttons-container {
+    margin-top: 6.5px;
+  }
+
+  button {
+    background-color: var(--color-header-bg);
+    border: none;
+    color: $color-text-light-2;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $color-text-dark-alt;
+    }
+  }
+}
+
+.update-reminder-expanded-header {
+  background-color: var(--color-header-bg);
+  display: flex;
+  font-size: 12px;
+  height: 48px;
+  justify-content: space-between;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  width: 484px;
+  z-index: 2;
+
+  .close-button-container {
+    margin-right: 20px;
+  }
+
+  p {
+    color: $color-bg-dark-2;
+    font-size: 16px;
+    margin-top: 6px;
+    padding: 6px 48px;
+  }
+
+  button {
+    color: $color-bg-dark-2;
+    border: none;
+    background-color: var(--color-header-bg);
+    font-size: 16px;
+    padding: 0 0 5px 24px;
+    cursor: pointer;
+  }
+}
+
+.update-reminder-expanded-detail {
+  background-color: var(--color-detail-bg);
+  position: absolute;
+  right: 0px;
+  top: 48px;
+  width: 484px;
+  z-index: 2;
+
+  p {
+    font-size: 14px;
+    padding-left: 48px;
+    padding-top: 30px;
+    width: 430px;
+
+    a {
+      color: var(--color-link);
+    }
+  }
+
+  .subtext {
+    color: var(--color-subtext);
+    font-size: 13px;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    padding-top: 20px;
+
+    &--small {
+      font-size: 12px;
+      margin: 0 0 50px;
+    }
+  }
+
+  .command-copier {
+    font-size: 14px;
+    padding-left: 48px;
+    width: 400px;
+  }
+}
+
+.close-button {
+  svg {
+    fill: $color-text-dark-alt;
+    height: 24px;
+    width: 24px;
+  }
+}

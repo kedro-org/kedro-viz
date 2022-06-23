@@ -20,7 +20,9 @@
 }
 
 .pipeline-minimap-button.pipeline-icon-toolbar__button--active {
-  background: var(--minimap-toolbar-active);
+  svg {
+    opacity: 1;
+  }
 }
 
 .pipeline-minimap-button--map {

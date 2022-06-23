@@ -20,15 +20,15 @@ describe('PipelineList', () => {
   it('should call onToggleOpen when opening/closing', () => {
     const onToggleOpen = jest.fn();
     const wrapper = setup.mount(<PipelineList onToggleOpen={onToggleOpen} />);
-    wrapper.find('.kui-dropdown__label').simulate('click');
+    wrapper.find('.dropdown__label').simulate('click');
     expect(onToggleOpen).toHaveBeenLastCalledWith(true);
-    wrapper.find('.kui-dropdown__label').simulate('click');
+    wrapper.find('.dropdown__label').simulate('click');
     expect(onToggleOpen).toHaveBeenLastCalledWith(false);
   });
 
   it('should be disabled when there are no pipelines in the store', () => {
     const wrapper = setup.mount(<PipelineList />, { data: 'json' });
-    expect(wrapper.find('.kui-dropdown__label').prop('disabled')).toBe(true);
+    expect(wrapper.find('.dropdown__label').prop('disabled')).toBe(true);
   });
 
   test.each(pipelineIDs)(
@@ -70,7 +70,6 @@ describe('PipelineList', () => {
         ids: expect.any(Array),
       },
       prettyName: expect.any(Boolean),
-      theme: mockState.spaceflights.theme,
     });
   });
 

@@ -17,12 +17,16 @@ import './sidebar.css';
  */
 export const Sidebar = ({
   disableRunSelection,
+  displayGlobalToolbar,
+  displaySidebar,
   enableComparisonView,
   enableShowChanges,
   isExperimentView = false,
   onRunSelection,
   onToggleComparisonView,
+  runMetadata,
   runsListData,
+  runTrackingData,
   selectedRunData,
   selectedRunIds,
   setEnableShowChanges,
@@ -30,6 +34,7 @@ export const Sidebar = ({
   showRunDetailsModal,
   sidebarVisible,
   visible,
+  setShowRunExportModal,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
@@ -46,21 +51,25 @@ export const Sidebar = ({
               disableRunSelection={disableRunSelection}
               enableComparisonView={enableComparisonView}
               onRunSelection={onRunSelection}
+              onToggleComparisonView={onToggleComparisonView}
               runData={runsListData}
               selectedRunIds={selectedRunIds}
-              onToggleComparisonView={onToggleComparisonView}
             />
           </div>
           <nav className="pipeline-toolbar">
             <ExperimentPrimaryToolbar
+              displaySidebar={displaySidebar}
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges}
+              runMetadata={runMetadata}
+              runTrackingData={runTrackingData}
               selectedRunData={selectedRunData}
               setEnableShowChanges={setEnableShowChanges}
               setSidebarVisible={setSidebarVisible}
               showChangesIconDisabled={!(selectedRunIds.length > 1)}
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={sidebarVisible}
+              setShowRunExportModal={setShowRunExportModal}
             />
           </nav>
         </div>
@@ -72,6 +81,7 @@ export const Sidebar = ({
         <div
           className={classnames('pipeline-sidebar', {
             'pipeline-sidebar--visible': visible,
+            'pipeline-sidebar--no-global-toolbar': !displayGlobalToolbar,
           })}
         >
           <div className="pipeline-ui">
@@ -90,6 +100,8 @@ export const Sidebar = ({
 };
 
 const mapStateToProps = (state) => ({
+  displayGlobalToolbar: state.display.globalToolbar,
+  displaySidebar: state.display.sidebar,
   visible: state.visible.sidebar,
 });
 

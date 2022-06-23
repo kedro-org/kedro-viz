@@ -1,5 +1,3 @@
-kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet, plotly.PlotlyDataSet]==0.17.6
-scikit-learn~=0.24
-openpyxl==3.0.9
-pillow==8.3.2
-matplotlib==3.5.0
+kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet, plotly.PlotlyDataSet, matplotlib.MatplotlibWriter]==0.18.1
+scikit-learn~=1.0
+pillow~=9.0

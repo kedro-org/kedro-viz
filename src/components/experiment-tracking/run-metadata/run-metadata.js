@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import classnames from 'classnames';
+import { useOutsideClick } from '../../../utils/hooks';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import CloseIcon from '../../icons/close';
-import IconButton from '../../icon-button';
+import IconButton from '../../ui/icon-button';
 import KebabIcon from '../../icons/kebab';
 import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';
@@ -15,32 +16,53 @@ const sanitiseEmptyValue = (value) => {
   return value === '' || value === null ? '-' : value;
 };
 
-const HiddenMenu = ({ children, isBookmarked, runId }) => {
+const HiddenMenu = ({ isBookmarked, runId }) => {
   const [isVisible, setIsVisible] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
+
+  const handleClickOutside = useCallback(() => {
+    setIsVisible(false);
+  }, []);
+
+  const menuRef = useOutsideClick(handleClickOutside);
 
   const toggleBookmark = () => {
     updateRunDetails({
       runId,
       runInput: { bookmark: !isBookmarked },
     });
+
+    // Close the menu when the bookmark is toggled.
+    setIsVisible(false);
   };
 
   return (
     <div
       className="hidden-menu-wrapper"
       onClick={() => setIsVisible(!isVisible)}
+      ref={menuRef}
     >
       <div
         className={classnames('hidden-menu', {
           'hidden-menu--visible': isVisible,
         })}
       >
-        <div className="hidden-menu__item" onClick={() => toggleBookmark()}>
+        <div
+          className="hidden-menu__item"
+          onClick={(e) => {
+            toggleBookmark();
+            e.stopPropagation();
+          }}
+        >
           {isBookmarked ? 'Unbookmark' : 'Bookmark'}
         </div>
       </div>
-      {children}
+      <IconButton
+        active={isVisible}
+        ariaLabel="Runs menu"
+        className="pipeline-menu-button--labels"
+        icon={KebabIcon}
+      />
     </div>
   );
 };
@@ -80,7 +102,7 @@ const RunMetadata = ({
       })}
     >
       {runs.map((run, i) => {
-        const humanReadableTime = toHumanReadableTime(run.timestamp);
+        const humanReadableTime = toHumanReadableTime(run.id);
 
         return (
           <div
@@ -95,6 +117,7 @@ const RunMetadata = ({
                   <tr>
                     <td className="details-metadata__title" colSpan="2">
                       <span
+                        className="details-metadata__title-detail"
                         onClick={() => onTitleOrNoteClick(run.id)}
                         title={sanitiseEmptyValue(run.title)}
                       >
@@ -107,6 +130,7 @@ const RunMetadata = ({
                     {i === 0 ? <td></td> : null}
                     <td className="details-metadata__title">
                       <span
+                        className="details-metadata__title-detail"
                         onClick={() => onTitleOrNoteClick(run.id)}
                         title={sanitiseEmptyValue(run.title)}
                       >
@@ -114,6 +138,7 @@ const RunMetadata = ({
                       </span>
                       <ul className="details-metadata__buttons">
                         <IconButton
+                          active={run.id === pinnedRun}
                           ariaLive="polite"
                           className={classnames(
                             'pipeline-menu-button--labels',
@@ -123,24 +148,27 @@ const RunMetadata = ({
                                 run.id === pinnedRun,
                             }
                           )}
-                          onClick={() => setPinnedRun(run.id)}
                           icon={
                             run.id === pinnedRun ? SelectedPin : UnSelectedPin
                           }
+                          labelText={
+                            run.id === pinnedRun ? 'Baseline' : 'Make baseline'
+                          }
+                          labelTextPosition="bottom"
+                          onClick={() => setPinnedRun(run.id)}
                           visible={enableShowChanges}
                         />
-                        <HiddenMenu isBookmarked={run.bookmark} runId={run.id}>
-                          <IconButton
-                            ariaLive="polite"
-                            className="pipeline-menu-button--labels"
-                            icon={KebabIcon}
-                          />
-                        </HiddenMenu>
+                        <HiddenMenu
+                          isBookmarked={run.bookmark}
+                          runId={run.id}
+                        />
                         <IconButton
                           ariaLive="polite"
-                          className="pipeline-menu-button--labels"
-                          onClick={() => onRunSelection(run.id)}
+                          className="pipeline-menu-button--labels__close"
                           icon={CloseIcon}
+                          labelText="Remove run"
+                          labelTextPosition="bottom"
+                          onClick={() => onRunSelection(run.id)}
                         />
                       </ul>
                     </td>
@@ -153,7 +181,7 @@ const RunMetadata = ({
                 <tr>
                   {i === 0 ? <td>Creation Date</td> : null}
                   <td>{`${humanReadableTime} (${sanitiseEmptyValue(
-                    run.timestamp
+                    run.id
                   )})`}</td>
                 </tr>
                 <tr>

@@ -50,7 +50,7 @@ export function toggleSettingsModal(visible) {
   };
 }
 
-export const TOGGLE_PLOT_MODAL = 'TOGGLE_PLOT_MODAL';
+export const TOGGLE_METADATA_MODAL = 'TOGGLE_METADATA_MODAL';
 
 /**
  * Toggle whether to show the plot modal
@@ -58,7 +58,7 @@ export const TOGGLE_PLOT_MODAL = 'TOGGLE_PLOT_MODAL';
  */
 export function togglePlotModal(visible) {
   return {
-    type: TOGGLE_PLOT_MODAL,
+    type: TOGGLE_METADATA_MODAL,
     visible,
   };
 }
@@ -151,19 +151,6 @@ export function updateZoom(zoom) {
   return {
     type: UPDATE_ZOOM,
     zoom,
-  };
-}
-
-export const UPDATE_FONT_LOADED = 'UPDATE_FONT_LOADED';
-
-/**
- * Update whether the webfont has loaded, which should block the chart render
- * @param {Boolean} fontLoaded Whether the font has loaded
- */
-export function updateFontLoaded(fontLoaded) {
-  return {
-    type: UPDATE_FONT_LOADED,
-    fontLoaded,
   };
 }
 

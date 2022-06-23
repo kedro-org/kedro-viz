@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { isLoading } from '../../selectors/loading';
 import ExportModal from '../export-modal';
 import FlowChart from '../flowchart';
-import LargePipelineWarning from '../large-pipeline-warning';
+import PipelineWarning from '../pipeline-warning';
 import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
-import PlotlyModal from '../plotly-modal';
+import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
 import './flowchart-wrapper.css';
 
@@ -19,12 +19,12 @@ export const FlowChartWrapper = ({ loading }) => (
     <Sidebar />
     <MetaData />
     <div className="pipeline-wrapper">
-      <LargePipelineWarning />
+      <PipelineWarning />
       <FlowChart />
       <LoadingIcon className="pipeline-wrapper__loading" visible={loading} />
     </div>
     <ExportModal />
-    <PlotlyModal />
+    <MetadataModal />
   </div>
 );
 

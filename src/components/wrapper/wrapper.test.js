@@ -3,6 +3,12 @@ import { mockState, setup } from '../../utils/state.mock';
 
 const { theme } = mockState.spaceflights;
 const mockProps = {
+  displayGlobalToolbar: true,
+  theme,
+};
+
+const mockPropsNoGlobalToolbar = {
+  displayGlobalToolbar: false,
   theme,
 };
 
@@ -20,9 +26,14 @@ describe('Wrapper', () => {
     expect(container.hasClass(`kui-theme--dark`)).toBe(theme === 'dark');
   });
 
+  it('only displays the h1 and the FlowChartWrapper when displayGlobalToolbar is false', () => {
+    const wrapper = setup.shallow(Wrapper, mockPropsNoGlobalToolbar);
+    expect(wrapper.children()).toHaveLength(2);
+  });
+
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.spaceflights)).toEqual({
-      loading: false,
+      displayGlobalToolbar: true,
       theme,
     });
   });

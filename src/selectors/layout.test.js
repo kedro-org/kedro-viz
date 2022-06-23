@@ -5,11 +5,7 @@ import {
   getGraphInput,
   getTriggerLargeGraphWarning,
 } from './layout';
-import {
-  changeFlag,
-  toggleIgnoreLargeWarning,
-  updateFontLoaded,
-} from '../actions';
+import { changeFlag, toggleIgnoreLargeWarning } from '../actions';
 import { updateGraph } from '../actions/graph';
 import { toggleTypeDisabled } from '../actions/node-type';
 import reducer from '../reducers';
@@ -17,13 +13,13 @@ import { graphNew } from '../utils/graph';
 import { sidebarWidth, largeGraphThreshold } from '../config';
 import spaceflights from '../utils/data/spaceflights.mock.json';
 import { getVisibleNodeIDs } from './disabled';
-import { toggleModularPipelineExpanded } from '../actions/modular-pipelines';
+import { toggleModularPipelinesExpanded } from '../actions/modular-pipelines';
 
 describe('Selectors', () => {
   const mockState = prepareState({
     data: spaceflights,
     beforeLayoutActions: [
-      () => toggleModularPipelineExpanded(['data_science', 'data_processing']),
+      () => toggleModularPipelinesExpanded(['data_science', 'data_processing']),
     ],
   });
   describe('getTriggerLargeGraphWarning', () => {
@@ -61,7 +57,7 @@ describe('Selectors', () => {
         data: prepareLargeDataset(),
         beforeLayoutActions: [
           () =>
-            toggleModularPipelineExpanded(['data_science', 'data_processing']),
+            toggleModularPipelinesExpanded(['data_science', 'data_processing']),
         ],
       });
       expect(getTriggerLargeGraphWarning(state)).toBe(true);
@@ -113,14 +109,8 @@ describe('Selectors', () => {
           nodes: expect.any(Array),
           edges: expect.any(Array),
           layers: expect.any(Array),
-          fontLoaded: expect.any(Boolean),
         })
       );
-    });
-
-    it('returns null if fontLoaded is false', () => {
-      const newMockState = reducer(mockState, updateFontLoaded(false));
-      expect(getGraphInput(newMockState)).toEqual(null);
     });
   });
 

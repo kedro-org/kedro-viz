@@ -12,11 +12,6 @@ Other than that, we mostly recommend following the [AirBnB JavaScript Style Guid
 
 We aim to support recent versions of major modern browsers - i.e. Chome, Firefox, Edge, Safari, and Opera, on both MacOS and Windows. Keeping progressive enhancement in mind, we aim for decent mobile support where possible, i.e. nothing should be broken on mobile, but it's okay for mobile/older browsers to have a slightly degraded experience.
 
-## Kedro UI
-
-Kedro-Viz uses [Kedro-UI](https://quantumblacklabs.github.io/kedro-ui/), our UI component library, for generic/reusable interface components like buttons, modals, dropdowns, etc. 
-Kedro-UI is a legacy repo and will no longer be maintained. Hence, we recommend not using Kedro-UI for newer components.  
-
 ## Accessibility
 
 We aim to meet [WCAG 2.1 Level AA](https://www.w3.org/WAI/standards-guidelines/wcag/) standards where possible, while acknowledging that this is a data visualization tool, so some criteria will be difficult to pass.
@@ -91,7 +86,7 @@ Prefer:
 
 ### Typography
 
-Typography styles are set using the `.kedro` class. It should wrap all text elements, in order to enforce a consistent font-size/font-family etc, allowing the font-sizes to be set relatively using `em` but keeping them independent of parent app font styles. This class is [inherited from Kedro-UI](https://github.com/quantumblacklabs/kedro-ui/blob/master/src/styles/typography/styles.css), where it's used to establish a base of 10px allowing all other `em` based units to equal the equivalent in pixels divided by ten.
+Typography styles are set using the `.kedro` class. It should wrap all text elements, in order to enforce a consistent font-size/font-family etc, allowing the font-sizes to be set relatively using `em` but keeping them independent of parent app font styles. This class is used to establish a base of 10px allowing all other `em` based units to equal the equivalent in pixels divided by ten.
 
 ### Units
 
@@ -123,7 +118,7 @@ Kedro-Viz has both light and dark themes, and every component must be styled app
 
 ![Kedro-Viz Color Styleguide](./.github/img/kedro_colours.png)
 
-The themes are set using the same theme classes that Kedro-UI uses - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. To simplify code and avoid increasing CSS specificity, we use CSS custom properties to handle theme colours. We recommend that you use these too where possible - they are defined in the App component.
+The themes are set using two classes - `kui-theme--light` and `kui-theme--dark` - applied on the top-level container element. To simplify code and avoid increasing CSS specificity, we use CSS custom properties to handle theme colours. We recommend that you use these too where possible - they are defined in the App component.
 
 Avoid:
 
@@ -268,7 +263,7 @@ Resolves: #123
 
 ### Pull Requests
 
-Like commit titles, PR titles should ideally be written in the imperative present tense and should summarise the changes made. If there is a JIRA ticket for the task, add the ticket ID to the PR/issue title.
+Like commit titles, PR titles should ideally be written in the imperative present tense and should summarise the changes made.
 
 Avoid:
 
@@ -276,10 +271,10 @@ Avoid:
 
 Prefer:
 
-> [KED-1234] Fix broken API queries
+> Fix broken API queries
 
-PR descritions should contain a description of what's been changed and why. Use the 'Development notes' and 'QA notes' sections to explain anything that maintainers should be aware of when reviewing the code and QAing the branch, respectively. For instance, if there's something you were unsure about, mention it in your notes so that the reviewer knows to pay it extra attention - maybe they'll have a suggestion for how you can improve it.
+PR descriptions should contain a description of what's been changed and why. Use the 'Development notes' and 'QA notes' sections to explain anything that maintainers should be aware of when reviewing the code and QAing the branch, respectively. For instance, if there's something you were unsure about, mention it in your notes so that the reviewer knows to pay it extra attention - maybe they'll have a suggestion for how you can improve it.
 
-When merging a PR, use a squash commit. Remove the JIRA ticket ID from the merge commit subject, as including it often truncates the commit subject. If necessary, edit the commit subject to ensure that it fits under 50 characters. Click the 'Cancel' link to avoid updating the PR title when you do this.
+When merging a PR, use a squash commit. If necessary, edit the commit subject to ensure that it fits under 50 characters. Click the 'Cancel' link to avoid updating the PR title when you do this.
 
 Add a detailed description to the merge commit - usually, the PR description will suffice. This commit is what shows up in the git blame/history, so it’s critical to make sure that it’s useful and informative.

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { toggleSettingsModal, toggleTheme } from '../../actions';
 import ExperimentsIcon from '../icons/experiments';
-import IconButton from '../icon-button';
+import IconButton from '../ui/icon-button';
 import LogoIcon from '../icons/logo';
 import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
@@ -17,10 +17,10 @@ import './global-toolbar.css';
  * @param {string} theme Kedro UI light/dark theme
  */
 export const GlobalToolbar = ({
+  isOutdated,
   onToggleSettingsModal,
   onToggleTheme,
   theme,
-  visible,
 }) => {
   return (
     <>
@@ -40,9 +40,10 @@ export const GlobalToolbar = ({
               }
               disabled={false}
               icon={TreeIcon}
+              labelText="Flowchart"
             />
           </NavLink>
-          <NavLink exact to={{ pathname: '/runsList' }}>
+          <NavLink exact to={{ pathname: '/experiment-tracking' }}>
             <IconButton
               ariaLabel={'View your experiments'}
               className={
@@ -50,31 +51,34 @@ export const GlobalToolbar = ({
               }
               disabled={false}
               icon={ExperimentsIcon}
+              labelText="Experiment tracking"
             />
           </NavLink>
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
           <IconButton
-            ariaLive="polite"
             ariaLabel={`Change to ${
               theme === 'light' ? 'dark' : 'light'
             } theme`}
+            ariaLive="polite"
             className={
               'pipeline-menu-button--theme pipeline-menu-button--large'
             }
-            onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
+            dataHeapEvent={`theme.${theme}`}
             icon={ThemeIcon}
             labelText="Toggle theme"
+            onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
           />
           <IconButton
             ariaLabel={'Change the settings flags'}
             className={
               'pipeline-menu-button--settings pipeline-menu-button--large'
             }
-            onClick={() => onToggleSettingsModal(true)}
-            icon={SettingsIcon}
             disabled={false}
+            hasReminder={isOutdated}
+            icon={SettingsIcon}
             labelText={'Settings'}
+            onClick={() => onToggleSettingsModal(true)}
           />
         </ul>
       </div>

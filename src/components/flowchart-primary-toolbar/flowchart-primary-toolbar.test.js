@@ -46,6 +46,7 @@ describe('PrimaryToolbar', () => {
     (selector, callback) => {
       const mockFn = jest.fn();
       const props = {
+        displaySidebar: true,
         textLabels: mockState.spaceflights.textLabels,
         visible: mockState.spaceflights.visible,
         [callback]: mockFn,
@@ -61,10 +62,11 @@ describe('PrimaryToolbar', () => {
     const expectedResult = {
       disableLayerBtn: expect.any(Boolean),
       textLabels: expect.any(Boolean),
+      displaySidebar: true,
       visible: expect.objectContaining({
         exportBtn: expect.any(Boolean),
         exportModal: expect.any(Boolean),
-        plotModal: expect.any(Boolean),
+        metadataModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),

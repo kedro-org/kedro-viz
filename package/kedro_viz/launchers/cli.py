@@ -5,12 +5,13 @@ import webbrowser
 from pathlib import Path
 
 import click
-from kedro.framework.cli.utils import KedroCliError
+from kedro.framework.cli.project import PARAMS_ARG_HELP
+from kedro.framework.cli.utils import KedroCliError, _split_params
 from semver import VersionInfo
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
-from kedro_viz.integrations.pypi import get_latest_version
+from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, is_localhost, run_server
 
 
@@ -72,16 +73,23 @@ def commands():
     is_flag=True,
     help="Autoreload viz server when a Python or YAML file change in the Kedro project",
 )
-def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
+@click.option(
+    "--params",
+    type=click.UNPROCESSED,
+    default="",
+    help=PARAMS_ARG_HELP,
+    callback=_split_params,
+)
+def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, params):
     """Visualise a Kedro pipeline using Kedro viz."""
-    current_version = VersionInfo.parse(__version__)
+    installed_version = VersionInfo.parse(__version__)
     latest_version = get_latest_version()
 
-    if latest_version is not None and current_version < latest_version:
+    if is_running_outdated_version(installed_version, latest_version):
         click.echo(
             click.style(
                 "WARNING: You are using an old version of Kedro Viz. "
-                f"You are using version {current_version}; "
+                f"You are using version {installed_version}; "
                 f"however, version {latest_version} is now available.\n"
                 "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
                 "You can view the complete changelog at "
@@ -100,6 +108,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload):
             "env": env,
             "browser": browser,
             "autoreload": autoreload,
+            "extra_params": params,
         }
         if autoreload:
             if browser and is_localhost(host):

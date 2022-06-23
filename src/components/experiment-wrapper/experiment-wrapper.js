@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
-import { GET_RUNS } from '../../apollo/queries';
+import {
+  GET_RUNS,
+  GET_RUN_METADATA,
+  GET_RUN_TRACKING_DATA,
+} from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import { sortRunByTime } from '../../utils/date-utils';
-import Button from '../button';
+import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 
 import './experiment-wrapper.css';
 
-const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three
+const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
 
 const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
@@ -21,8 +25,26 @@ const ExperimentWrapper = ({ theme }) => {
   const [selectedRunIds, setSelectedRunIds] = useState([]);
   const [selectedRunData, setSelectedRunData] = useState(null);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
+  const [showRunExportModal, setShowRunExportModal] = useState(false);
 
+  // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
+
+  // Fetch all metadata for selected runs.
+  const { data: { runMetadata } = [], metadataError } = useApolloQuery(
+    GET_RUN_METADATA,
+    {
+      skip: selectedRunIds.length === 0,
+      variables: { runIds: selectedRunIds },
+    }
+  );
+
+  // Fetch all tracking data for selected runs.
+  const { data: { runTrackingData } = [], error: trackingDataError } =
+    useApolloQuery(GET_RUN_TRACKING_DATA, {
+      skip: selectedRunIds.length === 0,
+      variables: { runIds: selectedRunIds, showDiff: true },
+    });
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
@@ -151,19 +173,26 @@ const ExperimentWrapper = ({ theme }) => {
             setSidebarVisible={setIsSidebarVisible}
             showRunDetailsModal={setShowRunDetailsModal}
             sidebarVisible={isSidebarVisible}
+            setShowRunExportModal={setShowRunExportModal}
           />
           {selectedRunIds.length > 0 ? (
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
+              metadataError={metadataError}
               onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
+              runMetadata={runMetadata}
+              runTrackingData={runTrackingData}
               selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}
               showRunDetailsModal={showRunDetailsModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
+              trackingDataError={trackingDataError}
+              showRunExportModal={showRunExportModal}
+              setShowRunExportModal={setShowRunExportModal}
             />
           ) : null}
         </>

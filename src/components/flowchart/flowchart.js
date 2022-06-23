@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
+import { toggleSingleModularPipelineExpanded } from '../../actions/modular-pipelines';
 import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
 import {
   getNodeActive,
@@ -26,7 +27,7 @@ import {
   setViewExtents,
   getViewExtents,
 } from '../../utils/view';
-import Tooltip from '../tooltip';
+import Tooltip from '../ui/tooltip';
 import './styles/flowchart.css';
 
 /**
@@ -422,7 +423,11 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = (event, node) => {
-    this.props.onLoadNodeData(node.id);
+    if (node.type === 'modularPipeline') {
+      this.props.onClickToExpandModularPipeline(node.id);
+    } else {
+      this.props.onLoadNodeData(node.id);
+    }
     event.stopPropagation();
   };
 
@@ -519,7 +524,8 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { chartSize, layers, visibleGraph } = this.props;
+    const { chartSize, layers, visibleGraph, displayGlobalToolbar } =
+      this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
     return (
@@ -577,6 +583,8 @@ export class FlowChart extends Component {
         <ul
           className={classnames('pipeline-flowchart__layer-names', {
             'pipeline-flowchart__layer-names--visible': layers.length,
+            'pipeline-flowchart__layer-names--no-global-toolbar':
+              !displayGlobalToolbar,
           })}
           ref={this.layerNamesRef}
         />
@@ -605,7 +613,9 @@ export const mapStateToProps = (state, ownProps) => ({
   clickedNode: state.node.clicked,
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
+  displayGlobalToolbar: state.display.globalToolbar,
   edges: state.graph.edges || emptyEdges,
+  focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,
   hoveredParameters: state.hoveredParameters,
   layers: getLayers(state),
@@ -621,11 +631,13 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
-  focusMode: state.visible.modularPipelineFocusMode,
   ...ownProps,
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
+  onClickToExpandModularPipeline: (modularPipelineId) => {
+    dispatch(toggleSingleModularPipelineExpanded(modularPipelineId));
+  },
   onLoadNodeData: (nodeClicked) => {
     dispatch(loadNodeData(nodeClicked));
   },
