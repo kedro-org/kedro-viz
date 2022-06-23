@@ -466,7 +466,7 @@ export class FlowChart extends Component {
 
     if (activeLayer && layerName) {
       layerName.classList.add('pipeline-layer-name--active');
-    } 
+    }
   };
 
   /**
@@ -478,14 +478,15 @@ export class FlowChart extends Component {
     const { activeLayer } = this.state;
     const layerName = document.querySelector(`[data-id="${activeLayer}"]`);
 
-    activeLayer &&
-      layerName &&
+    if (activeLayer && layerName) {
       layerName.classList.remove('pipeline-layer-name--active');
+    }
 
-    node &&
+    if (node) {
       this.setState({
         activeLayer: undefined,
       });
+    }
   };
 
   /**
