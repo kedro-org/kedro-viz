@@ -167,5 +167,6 @@ $placeholder-fade: 120px;
 
   &--disabled {
     color: $color-button-disabled;
+    transform: rotate(90deg);
   }
 }
