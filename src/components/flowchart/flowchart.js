@@ -455,10 +455,11 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleLayerMouseOver = (event, node) => {
-    node &&
+    if (node) {
       this.setState({
         activeLayer: node.name,
       });
+    }
 
     const { activeLayer } = this.state;
     const layerName = document.querySelector(`[data-id="${activeLayer}"]`);
