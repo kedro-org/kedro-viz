@@ -6,6 +6,11 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Bug fixes and other changes
+
+- General design-debt fixes. (#933, #934)
+- Ensure `Created by` is set in experiment tracking metadata. (#937)
+
 # Release 4.7.0
 
 ## Major features and improvements

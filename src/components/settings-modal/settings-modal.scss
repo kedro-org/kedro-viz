@@ -37,7 +37,6 @@
 }
 
 .pipeline-settings-modal__content {
-  font-size: 1.25em;
   width: 100%;
 
   &--short {
@@ -47,13 +46,25 @@
   .button {
     margin: 0 10px;
   }
+
+  .pipeline-toggle {
+    margin-bottom: 0;
+  }
+}
+
+.pipeline-settings-modal__group:nth-of-type(2) {
+  margin-top: 50px;
+}
+
+.pipeline-settings-modal__column {
+  margin-bottom: 1.145em;
 }
 
 .pipeline-settings-modal__column,
 .pipeline-settings-modal__header {
   display: flex;
   flex-wrap: wrap;
-  font-size: 1.2em;
+  font-size: 1.4em;
 }
 
 .pipeline-settings-modal__header {
@@ -62,8 +73,8 @@
 }
 
 .pipeline-settings-modal__subtitle {
-  margin-bottom: 10px;
-  font-size: 1.5em;
+  margin-bottom: 24px;
+  font-size: 1.8em;
 }
 
 .pipeline-settings-modal__name {
@@ -89,5 +100,6 @@
 
 .pipeline-settings-modal__already-latest {
   color: var(--color-modal-header-text);
-  margin-bottom: 2.4em;
+  font-size: 1.3em;
+  margin: 2em 0 2.4em;
 }

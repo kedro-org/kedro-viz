@@ -72,7 +72,7 @@ def format_run(
         user_run_details.notes if user_run_details and user_run_details.notes else ""
     )
     run = Run(
-        author="",
+        author=run_blob.get("username"),
         bookmark=bookmark,
         gitBranch=git_data.get("branch") if git_data else None,
         gitSha=git_data.get("commit_sha") if git_data else None,
