@@ -35,5 +35,4 @@
 
 @mixin flexColumn($col-num) {
   flex: 0 0 calc(100% / 12 * #{$col-num});
-  margin-top: 10px;
 }

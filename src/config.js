@@ -31,16 +31,14 @@ export const largeGraphThreshold = 1000;
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
   sizewarning: {
-    name: 'Size Warning',
-    description:
-      'Show a warning before rendering very large graphs (page reload required)',
+    name: 'Size warning',
+    description: 'Show a warning before rendering very large graphs',
     default: true,
     icon: '🐳',
   },
   expandAllPipelines: {
     name: 'Expand all modular pipelines',
-    description:
-      'Expand all modular pipelines on first load (page reload required)',
+    description: 'Expand all modular pipelines on first load',
     default: false,
     icon: '🔛',
   },
@@ -48,7 +46,7 @@ export const flags = {
 
 export const settings = {
   prettyName: {
-    name: 'Pretty Name',
+    name: 'Pretty name',
     description: 'Display a formatted name for the kedro nodes',
     default: true,
   },

@@ -12,7 +12,7 @@ The Kedro team pledges to foster and maintain a welcoming and friendly community
 
 We use [GitHub Issues](https://github.com/kedro-org/kedro-viz/issues) to keep track of known bugs. We keep a close eye on them and try to make it clear when we have an internal fix in progress. Before reporting a new issue, please do your best to ensure your problem hasn't already been reported. If so, it's often better to just leave a comment on an existing issue, rather than create a new one. Old issues also can often include helpful tips and solutions to common problems.
 
-If you are looking for help with your code, please consider posting a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/kedro-viz) or our [Discord channel](https://discord.gg/4qeKKspFf8). 
+If you are looking for help with your code, please consider posting a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/kedro-viz) or our [Discord channel](https://discord.gg/4qeKKspFf8).
 
 If you have already checked the [existing issues](https://github.com/kedro-org/kedro-viz/issues) on GitHub and are still convinced that you have found odd or erroneous behaviour then please file a [new issue](https://github.com/kedro-org/kedro-viz/issues/new/choose). We have a template that helps you provide the necessary information we'll need in order to address your query.
 
@@ -37,10 +37,10 @@ Working on your first pull request? You can learn how from these resources:
 
 ## Contribution process
 
--  Fork the project
--  Develop your contribution in a new branch and open a PR against the `main` branch
--  Make sure the CI builds are green (have a look at the section [Running checks locally](#running-checks-locally) below)
--  Update the PR according to the reviewer's comments
+- Fork the project
+- Develop your contribution in a new branch and open a PR against the `main` branch
+- Make sure the CI builds are green (have a look at the section [Running checks locally](#running-checks-locally) below)
+- Update the PR according to the reviewer's comments
 
 # Contribution guidelines
 
@@ -68,32 +68,35 @@ def count_truthy(elements: List[Any]) -> int:
 ## Git branching guidelines
 
 - We practice [Trunk-Based Development](https://trunkbaseddevelopment.com/).
-- We bias towards small, complete pieces of work that can be merged into trunk. "Complete" is defined as:
-    - A working user-journey, however small
-    - A backward-compatible change that paves the way for future features implementations
-    - A non-breaking refactoring of the code
-    - Note: to be considered complete, the branch must include tests (end to end or unit tests) for the newly introduced feature or fix
+- We bias towards small, complete pieces of work that can be merged into the trunk. "Complete" is defined as:
+  - A working user-journey, however small
+  - A backward-compatible change that paves the way for future features implementations
+  - A non-breaking refactoring of the code
+  - Note: to be considered complete, the branch must include tests (end to end or unit tests) for the newly introduced feature or fix
 - We embrace freedom to make exception when absolutely necessary.
 - We use a naming convention that helps us keep track of branches in a logical, consistent way. All branches should have the hyphen-separated convention of: `<type-of-change>/<short-description-of-change>` e.g. `feature/awesome-new-feature`.
 
-| Types of changes | Description |
-| ---------------- | ----------- |
-| `docs`    | Changes to the documentation of the plugin |
-| `feature` | Non-breaking change which adds functionality |
-| `fix`     | Non-breaking change which fixes an issue |
-| `tests`   | Changes to project unit (`tests/`) and / or integration (`features/`) tests |
-
-Alternatively, if you know the JIRA ticket number of the issue that you are fixing, you can prefix your branch name with it, e.g. `KED-<JIRA-ticket-number>/short-description-of-the-issue`.
+| Types of changes | Description                                                                 |
+| ---------------- | --------------------------------------------------------------------------- |
+| `docs`           | Changes to the documentation of the plugin                                  |
+| `feature`        | Non-breaking change which adds functionality                                |
+| `chore`          | Non-breaking change which updates UX, UI, dependencies, etc.                |
+| `fix`            | Non-breaking change which fixes an issue                                    |
+| `tests`          | Changes to project unit (`tests/`) and / or integration (`features/`) tests |
 
 ## Developer Certificate of Origin
+
 We require that all contributions comply with the [Developer Certificate of Origin (DCO)](https://developercertificate.org/). This certifies that the contributor wrote or otherwise has the right to submit their contribution.
 
 All commits must be signed off by including a `Signed-off-by` line in the commit message:
+
 ```
 This is my commit message
 Signed-off-by: Random J Developer <random@developer.example.org>
 ```
+
 The sign-off can be added automatically to your commit message using the `-s` option:
+
 ```bash
 git commit -s -m "This is my commit message"
 ```
@@ -116,7 +119,7 @@ To avoid needing to remember the `-s` flag on every commit, you might like to se
 - Disagree and commit fast before discussion derails to bike shedding
 - Mark optional review suggestions with `Optional` or `Nit`. These suggestions should still be respected, discussed and resolved, but the PR author can choose to disagree
 - Assume review suggestions and questions are made from a helpful, knowledge-sharing, collaborative frame by default
-- Normalise pointing out improvements unrelated to the current PR in review, then file a JIRA ticket to resolve it in another PR
+- Normalise pointing out improvements unrelated to the current PR in review, then file a GitHub issue to resolve it in another PR
 
 ## Development guidelines
 
@@ -154,12 +157,12 @@ DATA=random npm start
 
 These are the supported dataset identifiers:
 
-| Identifier | Data source |
-|------------|-------------|
-| `json` (default) | `/public/api/main` |
-| `random` | Randomly-generated data |
-| `demo` | `/src/utils/data/demo.mock.js` |
-| `spaceflights` | `/src/utils/data/spaceflights.mock.json` |
+| Identifier       | Data source                              |
+| ---------------- | ---------------------------------------- |
+| `json` (default) | `/public/api/main`                       |
+| `random`         | Randomly-generated data                  |
+| `demo`           | `/src/utils/data/demo.mock.js`           |
+| `spaceflights`   | `/src/utils/data/spaceflights.mock.json` |
 
 By default in production, the app asynchronously loads JSON from the `/api/main` endpoint. You can replicate this in development by placing a JSON dataset in `/public/api/main`, using `main` as the name of the file, [without an extension](https://www.computerhope.com/issues/ch002089.htm). Note that operating systems often add hidden file extensions, so you might need to use a CLI to confirm the filename.
 
@@ -169,11 +172,12 @@ Finally, you can use pseudo-random data, which is procedurally-generated on page
 
 ### Launch a development server with a real Kedro project
 
-> **Note**: Kedro-Viz>=3.8.0 will not work with projects created with Kedro<=0.16.6. Please consider migrating your project to Kedro>=0.17.0 before you develop against the latest version of Kedro-Viz. 
+> **Note**: Kedro-Viz>=3.8.0 will not work with projects created with Kedro<=0.16.6. Please consider migrating your project to Kedro>=0.17.0 before you develop against the latest version of Kedro-Viz.
 
 Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.7, <3.11) installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's [guide to installing conda](https://kedro.readthedocs.io/en/latest/02_get_started/01_prerequisites.html#conda) for more information.
 
-The Kedro-Viz repository comes with an example project in the `demo-project` folder. This is used on the [public demo](https://demo.kedro.org/). To use it in your development environment, you need to install both the Kedro-Viz dependencies and a minimal set of dependencies  for the demo project:
+The Kedro-Viz repository comes with an example project in the `demo-project` folder. This is used on the [public demo](https://demo.kedro.org/). To use it in your development environment, you need to install both the Kedro-Viz dependencies and a minimal set of dependencies for the demo project:
+
 ```bash
 pip3 install -r package/test_requirements.txt
 pip3 install -r demo-project/src/docker_requirements.txt
@@ -203,7 +207,8 @@ make run PROJECT_PATH=<path-to-your-test-project>/new-kedro-project
 
 #### Launch the development server with the `SQLiteSessionStore`
 
-Kedro-Viz provides a `SQLiteSessionStore` that users can use in their project to enable experiment tracking functionality. If you want to use this session store with the development server, make sure you don't use a relative path when specifying the store's location in `settings.py`. For example, `demo-project` specifies the local `data` directory within a project as the session store's location as follows: 
+Kedro-Viz provides a `SQLiteSessionStore` that users can use in their project to enable experiment tracking functionality. If you want to use this session store with the development server, make sure you don't use a relative path when specifying the store's location in `settings.py`. For example, `demo-project` specifies the local `data` directory within a project as the session store's location as follows:
+
 ```python
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
@@ -281,6 +286,7 @@ make pytest
 ```bash
 make e2e-tests
 ```
+
 #### Linting tests (`isort`, `black`, `pylint`, `flake8` and `mypy`)
 
 ```bash
@@ -300,15 +306,16 @@ make lint
 make version VERSION=<version-to-release>
 ```
 
-> *Notes*: Kedro-Viz uses [Semantic Versioning](https://semver.org/) as the versioning scheme. 
+> _Notes_: Kedro-Viz uses [Semantic Versioning](https://semver.org/) as the versioning scheme.
 
 - Commit, raise a PR and get it merged into `main`.
 
 - Once the release commit is in `main`, trigger the release by:
-    * Create a Release through [Github UI](https://github.com/kedro-org/kedro-viz/releases/new).
-    * Input the version as the tag version with Target set to `main`
-    * Paste the release note in the text box.
-    * Publish the release.
+
+  - Create a Release through [Github UI](https://github.com/kedro-org/kedro-viz/releases/new).
+  - Input the version as the tag version with Target set to `main`
+  - Paste the release note in the text box.
+  - Publish the release.
 
 - Once the release tag is published on Github, a CircleCI job will be triggered to push it to npm and PyPI accordingly.
 - Once the new version is on PyPI, you can deploy it to https://demo.kedro.org by merging `main` into the `demo` branch. A CI job will automatically build a container using the [demo project](./demo-project) with the newly released version and deploy it.
