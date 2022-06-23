@@ -95,7 +95,7 @@
   justify-content: space-between;
 }
 
-.details-metadata__title span {
+.details-metadata__title-detail {
   cursor: pointer;
   font-size: 20px;
   font-weight: 600;
@@ -109,6 +109,10 @@
     text-decoration: underline;
     text-decoration-color: var(--color-text);
   }
+}
+
+.details-metadata__title .pipeline-toolbar__label {
+  font-size: 1em;
 }
 
 .details-metadata__notes {

@@ -41,7 +41,7 @@ const UpdateReminder = ({ versions, setDismiss }) => {
             <CommandCopier command={command} />
           </div>
 
-          <p className="subtext">
+          <p className="subtext--small">
             Refer to the release page for the set of changes introduced. <br />
             <a
               href="https://github.com/kedro-org/kedro-viz/releases"
