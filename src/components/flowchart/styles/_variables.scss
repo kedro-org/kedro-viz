@@ -16,7 +16,7 @@
   --edge-stroke: #888;
   --edge-arrowhead-fill: #{$color-bg-dark-5};
   --layer-fill: #d1d7dd;
-  --layer-text: #{rgba(black, 0.65)};
+  --layer-text: black;
   --node-input-fill: #{rgba(black, 0.4)};
   --parameter-accent: #{$color-accent-purple};
   --parameter-accent-input: #{rgba($color-accent-purple, 0.6)};
@@ -49,7 +49,7 @@
   --edge-stroke: #666;
   --edge-arrowhead-fill: #cacaca;
   --layer-fill: #072030;
-  --layer-text: #{rgba(white, 0.65)};
+  --layer-text: white;
   --node-input-fill: #{rgba(white, 0.4)};
   --parameter-accent: #{$color-accent-yellow};
   --parameter-accent-input: #{rgba($color-accent-yellow, 0.6)};
