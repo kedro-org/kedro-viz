@@ -68,13 +68,13 @@ export const drawLayerNames = function () {
 
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.pipeline-layer-name')
-    .data(layers, (layer) => layer.id)
-    .attr('data-id', (node) => node.name);
+    .data(layers, (layer) => layer.id);
 
   const enterLayerNames = this.el.layerNames
     .enter()
     .append('li')
-    .attr('class', 'pipeline-layer-name');
+    .attr('class', 'pipeline-layer-name')
+    .attr('data-id', (node) => node.name);
 
   enterLayerNames
     .style('opacity', 0)
