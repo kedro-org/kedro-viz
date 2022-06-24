@@ -6,19 +6,20 @@
 $menu-item-height: 40px;
 
 .kui-theme--light {
-  --menu-option-border-color: #{rgba(black, 0.06)};
   --menu-option-bg-hover: #{$color-bg-dark-3};
+  --menu-option-border-color: #{rgba(black, 0.06)};
   --menu-option-text-color: #{$color-text-dark-alt};
 }
 
 .kui-theme--dark {
-  --menu-option-border-color: #{rgba(white, 0.06)};
   --menu-option-bg-hover: #{$color-bg-dark-3};
+  --menu-option-border-color: #{rgba(white, 0.06)};
   --menu-option-text-color: #{$color-text-light-alt};
 }
 
 .menu-option {
   align-items: center;
+  border-bottom: solid var(--menu-option-border-color);
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
@@ -28,15 +29,14 @@ $menu-item-height: 40px;
   padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
   user-select: none;
   white-space: nowrap;
-  border-bottom: solid var(--menu-option-border-color);
 
   &:hover {
     background: var(--menu-option-bg-hover);
   }
-}
 
-.menu-option:last-of-type {
-  border-bottom: none;
+  &:last-of-type {
+    border-bottom: none;
+  }
 }
 
 .menu-option__content {
