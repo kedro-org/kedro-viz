@@ -57,14 +57,25 @@
 }
 
 .pipeline-layer-name {
-  position: absolute;
-  top: -10px;
-  display: flex;
   align-items: center;
+
+  color: var(--layer-text);
+
+  display: flex;
+
+  font-size: 1.6em;
+  font-weight: bold;
+
   height: 20px;
   padding-left: 18px;
-  color: var(--layer-text);
-  font-weight: bold;
-  font-size: 1.6em;
+  position: absolute;
+  top: -10px;
+
+  transition: opacity ease 0.5s;
+
   white-space: nowrap;
+}
+
+.pipeline-layer-name--active {
+  opacity: 1 !important;
 }
