@@ -35,6 +35,10 @@ $menu-item-height: 40px;
   }
 }
 
+.menu-option:last-of-type {
+  border-bottom: none;
+}
+
 .menu-option__content {
   align-items: center;
   color: var(--menu-option-text-color);
