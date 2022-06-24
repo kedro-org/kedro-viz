@@ -2,12 +2,12 @@
 @import '../../styles/variables';
 
 .kui-theme--light {
-  --pipeline-list-option-bg-hover: #{$color-bg-light-4};
+  --pipeline-list-option-bg-active: #{$color-bg-light-4};
   --pipeline-list-option-text-color: #{$color-text-dark-alt};
 }
 
 .kui-theme--dark {
-  --pipeline-list-option-bg-hover: #{$color-bg-dark-4};
+  --pipeline-list-option-bg-active: #{$color-bg-dark-4};
   --pipeline-list-option-text-color: #{$color-text-light-alt};
 }
 
@@ -17,7 +17,7 @@
     height: 58px;
 
     &.pipeline-list__option--active {
-      background: var(--pipeline-list-option-bg-hover);
+      background: var(--pipeline-list-option-bg-active);
       border-left: solid $color-active-menu-option;
       color: var(--pipeline-list-option-text-color);
     }
