@@ -6,11 +6,13 @@
 $menu-item-height: 40px;
 
 .kui-theme--light {
+  --menu-option-border-color: #{rgba(black, 0.06)};
   --menu-option-bg-hover: #{$color-bg-light-2};
   --menu-option-text-color: #{$color-text-dark-alt};
 }
 
 .kui-theme--dark {
+  --menu-option-border-color: #{rgba(white, 0.06)};
   --menu-option-bg-hover: #{$color-bg-dark-3};
   --menu-option-text-color: #{$color-text-light-alt};
 }
@@ -26,6 +28,7 @@ $menu-item-height: 40px;
   padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
   user-select: none;
   white-space: nowrap;
+  border-bottom: solid var(--menu-option-border-color);
 
   &:hover {
     background: var(--menu-option-bg-hover);
