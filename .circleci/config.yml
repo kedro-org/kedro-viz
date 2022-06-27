@@ -79,8 +79,17 @@ commands:
   setup:
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - setup_python_env
       - install_node_dependencies
+      - save_cache:
+          paths:
+            - node_modules
+          key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
       - npm_build
 
   win_setup:
@@ -90,6 +99,11 @@ commands:
     executor:
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - win_setup_python_env:
           python_version: <<parameters.python_version>>
       - install_node_dependencies
@@ -166,6 +180,11 @@ jobs:
       python_version: '3.8'
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - install_node_dependencies
       - run:
           name: Test lib transpilation
@@ -282,10 +301,14 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
+          requires:
+            - build_app
       - win_e2e_tests:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
+          requires:
+            - build_app
           filters:
             branches:
               only:
@@ -295,10 +318,14 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
+          requires:
+            - build_app
       - win_unit_tests:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
+          requires:
+            - build_app
           filters:
             branches:
               only:
