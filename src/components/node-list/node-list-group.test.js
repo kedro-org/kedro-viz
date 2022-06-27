@@ -73,4 +73,16 @@ describe('NodeListGroup', () => {
       false
     );
   });
+
+  it('adds disabled class when items list is empty', () => {
+    const type = getNodeTypes(mockState.spaceflights)[0];
+    const wrapper = setup.mount(
+      <NodeListGroup id={type.id} name={type.name} items={items} />
+    );
+    expect(items.length).toBe(0);
+    const button = () => wrapper.find('button');
+    expect(button().hasClass('pipeline-type-group-toggle--disabled')).toBe(
+      true
+    );
+  });
 });
