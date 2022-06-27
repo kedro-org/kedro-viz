@@ -39,6 +39,7 @@ export class FlowChart extends Component {
 
     this.state = {
       tooltip: { visible: false },
+      activeLayer: undefined,
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -446,6 +447,50 @@ export class FlowChart extends Component {
   handleNodeMouseOver = (event, node) => {
     this.props.onToggleNodeHovered(node.id);
     node && this.showTooltip(event, node.fullName);
+  };
+
+  /**
+   * Enable a layer's active state when hovering it, update labelName's active className accordingly
+   * @param {Object} event Event object
+   * @param {Object} node Datum for a single node
+   */
+  handleLayerMouseOver = (event, node) => {
+    if (node) {
+      this.setState({
+        activeLayer: node.name,
+      });
+    }
+
+    const { activeLayer } = this.state;
+    const layerName = document.querySelector(
+      `[data-id="layer-label--${node.name}"]`
+    );
+
+    if (activeLayer && layerName) {
+      layerName.classList.add('pipeline-layer-name--active');
+    }
+  };
+
+  /**
+   * Remove the current labelName's active className when not hovering, and update layer's active state accordingly
+   * @param {Object} event Event object
+   * @param {Object} node Datum for a single node
+   */
+  handleLayerMouseOut = (event, node) => {
+    const { activeLayer } = this.state;
+    const layerName = document.querySelector(
+      `[data-id="layer-label--${node.name}"]`
+    );
+
+    if (activeLayer && layerName) {
+      layerName.classList.remove('pipeline-layer-name--active');
+    }
+
+    if (node) {
+      this.setState({
+        activeLayer: undefined,
+      });
+    }
   };
 
   /**
