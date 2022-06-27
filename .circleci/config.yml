@@ -218,6 +218,7 @@ jobs:
       name: docker
       python_version: '3.8'
     steps:
+      - checkout
       - setup
       - persist_to_workspace:
           root: .
