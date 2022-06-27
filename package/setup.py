@@ -50,10 +50,6 @@ setup(
     package_data={"kedro_viz": list(files)},
     zip_safe=False,
     entry_points={
-        "jupyter_serverproxy_servers": [
-            # name = packagename:function_name
-            "kedro_viz = kedro_viz.launchers.jupyter:jupyter_server_proxy",
-        ],
         "kedro.global_commands": ["kedro-viz = kedro_viz.launchers.cli:commands"],
         "kedro.line_magic": ["line_magic = kedro_viz.launchers.jupyter:run_viz"],
     },
