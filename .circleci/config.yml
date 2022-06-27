@@ -79,8 +79,6 @@ commands:
   setup:
     steps:
       - checkout
-      - attach_workspace:
-          at: ./build
       - restore_cache:
           keys:
             - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
@@ -93,10 +91,6 @@ commands:
             - node_modules
           key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
       - npm_build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - build/*
 
   win_setup:
     parameters:
@@ -105,8 +99,6 @@ commands:
     executor:
     steps:
       - checkout
-      - attach_workspace:
-          at: ./build
       - restore_cache:
           keys:
             - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
@@ -126,6 +118,8 @@ jobs:
       name: docker
       python_version: <<parameters.python_version>>
     steps:
+      - attach_workspace:
+         at: ./build
       - setup
       - run:
           name: Run all end to end tests
@@ -137,6 +131,8 @@ jobs:
         type: string
     executor: win/default
     steps:
+      - attach_workspace:
+         at: ./build
       - win_setup:
           python_version: <<parameters.python_version>>
       - run:
@@ -151,6 +147,8 @@ jobs:
       name: docker
       python_version: <<parameters.python_version>>
     steps:
+      - attach_workspace:
+         at: ./build
       - setup
       - run:
           name: Run Python tests
@@ -162,6 +160,8 @@ jobs:
         type: string
     executor: win/default
     steps:
+      - attach_workspace:
+         at: ./build
       - win_setup:
           python_version: <<parameters.python_version>>
       - run:
@@ -216,6 +216,10 @@ jobs:
       python_version: '3.8'
     steps:
       - setup
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/*
       - run:
           name: Run secret scan
           command: make secret-scan
